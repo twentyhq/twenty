@@ -6,45 +6,51 @@ icon: layer-group
 
 Bir mantık fonksiyonu çalıştırması, `timeoutSeconds` değeriyle sınırlandırılır (en fazla 900 saniye). Bu sürede tamamlanamayan her şey — tam bir yeniden eşitleme, kayıt başına dağıtım, sizi hız sınırına takan üçüncü taraf bir API — daha küçük çalıştırmalara bölünmek zorundadır.
 
-`enqueueJob` tam olarak bunu yapar: Twenty işleyicilerinden, uygulamanızın mantık fonksiyonlarından birini daha sonra, kendi işleminde ve kendi zaman aşımı bütçesiyle çalıştırmasını ister. Çağıran hemen döner.
+`enqueueJobs` tam olarak bunu yapar: Twenty işleyicilerinden, uygulamanızın mantık fonksiyonlarından birini daha sonra, her veri yükü için bir kez, her çalıştırma kendi işleminde ve kendi zaman aşımı bütçesiyle çalıştırmasını ister. Çağıran hemen döner.
 
 ```text
-  ┌─────────────────┐  enqueueJob(...)   ┌──────────────┐   ┌────────────────────┐
+  ┌─────────────────┐  enqueueJobs(...)  ┌──────────────┐   ┌────────────────────┐
   │ Logic function  │ ─────────────────▶ │ Job queue    │──▶│ Logic function     │
   │ (returns now)   │                    │ (workers)    │   │ (fresh run/timeout)│
   └─────────────────┘                    └──────────────┘   └────────────────────┘
 ```
 
-## Bir çalıştırmayı kuyruğa al
+## Çalıştırmaları kuyruğa al
 
-`enqueueJob` fonksiyonunu `twenty-sdk/logic-function` içinden içe aktarın ve çalıştırmak istediğiniz mantık fonksiyonunun `universalIdentifier` değerini işaret edin.
+`enqueueJobs` fonksiyonunu `twenty-sdk/logic-function` içinden içe aktarın, çalıştırılacak mantık fonksiyonunun `universalIdentifier` değerini belirtin ve kuyruğa almak üzere her çalıştırma için bir veri yükü iletin.
 
 ```ts src/logic-functions/sync-all-contacts.ts
-import { enqueueJob } from 'twenty-sdk/logic-function';
+import { enqueueJobs } from 'twenty-sdk/logic-function';
 
-await enqueueJob({
+await enqueueJobs({
   logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
-  payload: { page: 1 },
+  payloads: [{ page: 1 }],
 });
 ```
 
-Hedef fonksiyon, tıpkı diğer tetikleyicilerde olduğu gibi işleyici argümanı olarak `payload` alır. Çağrıyı yapanla **aynı uygulamaya** ait olmalıdır — başka bir uygulamanın fonksiyonunu kuyruğa alma girişimi `Logic function not found` hatasıyla reddedilir.
+Her çalıştırma, tıpkı diğer tetikleyicilerde olduğu gibi, veri yükünü işleyici argümanı olarak alır. Hedef, çağrıyı yapanla **aynı uygulamaya** ait olmalıdır — başka bir uygulamanın fonksiyonunu kuyruğa alma girişimi `Logic function not found` hatasıyla reddedilir ve hiçbir şey kuyruğa alınmaz. Tek bir çağrı en fazla `200` veri yükünü kabul eder.
 
 <Note>
-`enqueueJob`, iş kabul edilir edilmez döner; işin çalışması bitince değil. Hedefin sonucunu döndürmez — çıktısını daha sonra okumak istiyorsanız, hedefin ürettiği veriyi [anahtar-değer deposuna](/l/tr/developers/extend/apps/logic/key-value-store) veya bir çalışma alanı kaydına yazmasını sağlayın.
+`enqueueJobs`, işler kabul edilir edilmez döner; işler çalıştığında değil. Hedeflerin sonuçlarını döndürmez — bunları daha sonra okumanız gerekiyorsa, her hedefin ürettiği veriyi [anahtar-değer deposuna](/l/tr/developers/extend/apps/logic/key-value-store) veya bir çalışma alanı kaydına yazmasını sağlayın.
+</Note>
+
+<Note>
+Her çağrıda tek bir işi kuyruğa alan eski `enqueueJob` yardımcısı kullanım dışı bırakılmıştır. Bunun yerine tek öğeli bir `payloads` listesiyle `enqueueJobs` kullanın.
 </Note>
 
 ## İş seçenekleri
 
+Seçenekler, toplu işlemdeki her çalıştırma için geçerlidir.
+
 | Seçenek      | Varsayılan | Aralık                  | Ne yapar                                                                                                                                                                            |
 | ------------ | ---------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `retryLimit` | `0`        | `0`–`10`                | Toplam ek kuyruk denemeleri. Uygulama tarafından istenen yeniden denemeler `3` ile sınırlandırılmıştır. Bunu yalnızca iki kez çalıştırılması güvenli olan işleyiciler için artırın. |
-| `delayMs`    | `0`        | `0`–`604800000` (7 gün) | Çalıştırma uygun hale gelmeden önce bu kadar süre bekleyin.                                                                                                                         |
+| `delayMs`    | `0`        | `0`–`604800000` (7 gün) | Çalıştırmalar uygun hale gelmeden önce bu kadar süre bekleyin.                                                                                                                      |
 
 ```ts
-await enqueueJob({
+await enqueueJobs({
   logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
-  payload: { page: 1 },
+  payloads: [{ page: 1 }],
   retryLimit: 3,
   delayMs: 60_000,
 });
@@ -96,7 +102,7 @@ Klasik biçim, bir sonraki imleçle *kendini* kuyruğa alan bir fonksiyondur. He
 
 ```ts src/logic-functions/sync-contacts-page.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { enqueueJob } from 'twenty-sdk/logic-function';
+import { enqueueJobs } from 'twenty-sdk/logic-function';
 
 const SYNC_CONTACTS_PAGE = '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33';
 
@@ -106,9 +112,9 @@ const handler = async (params: { cursor?: string }) => {
   await importContacts(contacts);
 
   if (nextCursor) {
-    await enqueueJob({
+    await enqueueJobs({
       logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
-      payload: { cursor: nextCursor },
+      payloads: [{ cursor: nextCursor }],
       delayMs: 2_000,
     });
   }
@@ -126,20 +132,16 @@ export default defineLogicFunction({
 
 ## Kayıt başına fan-out
 
-İş doğal olarak öğe bazındaysa, her öğe için bir iş kuyruğa alın ve döngüyü satır içi çalıştırmak yerine çalışanların bunları paralel olarak işlemesine izin verin.
+İş doğal olarak öğe bazındaysa, tek bir çağrıda her öğe için bir işi kuyruğa alın ve döngüyü satır içi çalıştırmak yerine çalışanların bunları paralel olarak işlemesine izin verin.
 
 ```ts
 const companies = await listCompaniesToEnrich();
 
-await Promise.all(
-  companies.map((company) =>
-    enqueueJob({
-      logicFunctionUniversalIdentifier: ENRICH_COMPANY,
-      payload: { companyId: company.id },
-      retryLimit: 2,
-    }),
-  ),
-);
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+  payloads: companies.map((company) => ({ companyId: company.id })),
+  retryLimit: 2,
+});
 ```
 
 ## Uzun süre çalışan işler için iyi uygulamalar
@@ -150,7 +152,7 @@ Her şeyi tek seferde yapmaya çalışan bir çalıştırma, hata senaryosudur �
 
 ```ts src/logic-functions/enrich-companies-batch.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { enqueueJob, kv } from 'twenty-sdk/logic-function';
+import { enqueueJobs, kv } from 'twenty-sdk/logic-function';
 
 const ENRICH_COMPANIES_BATCH = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
 const CHUNK_SIZE = 50;
@@ -169,9 +171,9 @@ const handler = async (params: { offset?: number }) => {
   await kv.set('enrich:progress', { offset: offset + companies.length });
 
   if (companies.length === CHUNK_SIZE) {
-    await enqueueJob({
+    await enqueueJobs({
       logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
-      payload: { offset: offset + CHUNK_SIZE },
+      payloads: [{ offset: offset + CHUNK_SIZE }],
     });
   }
 

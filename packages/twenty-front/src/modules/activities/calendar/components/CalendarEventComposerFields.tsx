@@ -1,6 +1,7 @@
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { ComposerHeader } from '@/activities/components/ComposerHeader';
 import { StyledComposerTextInput } from '@/activities/components/ComposerTextInput';
+import { CalendarEventLocationInput } from '@/activities/calendar/components/CalendarEventLocationInput';
 import { type useCalendarEventComposer } from '@/activities/calendar/hooks/useCalendarEventComposer';
 import { EmailRecipientsFieldInput } from '@/activities/emails/recipients/components/EmailRecipientsFieldInput';
 import { useEmailRecipientsDragAndDrop } from '@/activities/emails/recipients/hooks/useEmailRecipientsDragAndDrop';
@@ -139,13 +140,11 @@ export const CalendarEventComposerFields = ({
               label={t`Location`}
               labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
             >
-              <StyledComposerTextInput
-                type="text"
-                aria-label={t`Location`}
+              <CalendarEventLocationInput
+                ariaLabel={t`Location`}
                 placeholder={t`Add a location`}
-                onChange={(event) =>
-                  composerState.setLocation(event.target.value)
-                }
+                value={composerState.location}
+                onChange={composerState.setLocation}
               />
             </ComposerFieldRow>
             <ComposerFieldRow

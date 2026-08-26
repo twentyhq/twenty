@@ -12,9 +12,9 @@ import {
   WorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/global-workspace-datasource/types/workspace-transaction-scope.type';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -30,7 +30,7 @@ export class WorkflowVersionCoreSyncService {
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -280,8 +280,8 @@ export class WorkflowVersionCoreSyncService {
       transactionScope: WorkspaceTransactionScope,
     ) => Promise<string>,
   ): Promise<void> {
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      await this.workspaceOrmManager.runInWorkspaceTransaction(
         async (transactionScope) => {
           const workflowVersionRepository =
             transactionScope.getRepository<WorkflowVersionWorkspaceEntity>(
@@ -336,26 +336,22 @@ export class WorkflowVersionCoreSyncService {
     }
 
     const coreWorkflowVersionIds =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const workflowVersionRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-              workspaceId,
-              'workflowVersion',
-              { shouldBypassPermissionChecks: true },
-            );
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workflowVersionRepository =
+          this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+            'workflowVersion',
+            { shouldBypassPermissionChecks: true },
+          );
 
-          const versions = await workflowVersionRepository.find({
-            where: { id: In(workflowVersionIds) },
-            withDeleted: true,
-          });
+        const versions = await workflowVersionRepository.find({
+          where: { id: In(workflowVersionIds) },
+          withDeleted: true,
+        });
 
-          return versions
-            .map((version) => version.coreWorkflowVersionId)
-            .filter(isNonEmptyString);
-        },
-        buildSystemAuthContext(workspaceId),
-      );
+        return versions
+          .map((version) => version.coreWorkflowVersionId)
+          .filter(isNonEmptyString);
+      }, buildSystemAuthContext(workspaceId));
 
     await this.deleteFromCore(workspaceId, coreWorkflowVersionIds);
   }
@@ -364,10 +360,9 @@ export class WorkflowVersionCoreSyncService {
     workspaceId: string,
     workflowId: string,
   ): Promise<void> {
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowVersionRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-          workspaceId,
+        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
           'workflowVersion',
           { shouldBypassPermissionChecks: true },
         );
@@ -396,10 +391,9 @@ export class WorkflowVersionCoreSyncService {
       return;
     }
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceWorkflowVersionRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-          workspaceId,
+        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
           'workflowVersion',
           { shouldBypassPermissionChecks: true },
         );

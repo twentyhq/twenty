@@ -8,16 +8,23 @@ export const FIND_ALL_APPLICATION_REGISTRATIONS = gql`
     $offset: Int
     $searchTerm: String
     $isPreInstalledOnly: Boolean
+    $sourceTypes: [ApplicationRegistrationSourceType!]
+    $isListed: Boolean
+    $isConfigured: Boolean
   ) {
     findAllApplicationRegistrations(
       limit: $limit
       offset: $offset
       searchTerm: $searchTerm
       isPreInstalledOnly: $isPreInstalledOnly
+      sourceTypes: $sourceTypes
+      isListed: $isListed
+      isConfigured: $isConfigured
     ) {
       registrations {
         ...ApplicationRegistrationFragment
       }
+      totalCount
       hasMore
     }
   }

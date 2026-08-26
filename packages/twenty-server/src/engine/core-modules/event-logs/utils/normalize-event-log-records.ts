@@ -1,6 +1,6 @@
 import { EventLogTable } from 'twenty-shared/types';
 
-import { parseClickHouseDateTime } from 'src/database/clickHouse/clickHouse.util';
+import { parseClickHouseDateTime } from 'src/database/clickhouse/utils/parse-clickhouse-date-time.util';
 import { type EventLogRecord } from 'src/engine/core-modules/event-logs/dtos/event-log-result.dto';
 import { EVENT_LOG_TYPES } from 'src/engine/core-modules/event-logs/registry/event-log-registry';
 

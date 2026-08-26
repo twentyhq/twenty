@@ -11,7 +11,7 @@
     "lint": "npx oxlint -c .oxlintrc.json ."
   },
   "dependencies": {
-    "mintlify": "^4.2.594"
+    "mintlify": "^4.2.790"
   },
   "devDependencies": {
     "tsx": "^4.19.3",

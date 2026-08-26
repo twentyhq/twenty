@@ -5,6 +5,7 @@ describe('isPageLayoutSidePanelPage', () => {
   const pageLayoutPages: SidePanelPages[] = [
     SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
     SidePanelPages.PageLayoutTabSettings,
+    SidePanelPages.PageLayoutWidgetSettings,
     SidePanelPages.DashboardChartSettings,
     SidePanelPages.DashboardIframeSettings,
     SidePanelPages.DashboardRecordTableSettings,

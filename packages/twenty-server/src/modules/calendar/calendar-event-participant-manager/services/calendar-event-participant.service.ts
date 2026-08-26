@@ -9,8 +9,8 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/global-workspace-datasource/types/workspace-transaction-scope.type';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CALENDAR_EVENT_PARTICIPANT_CHUNK_SIZE } from 'src/modules/calendar/calendar-event-participant-manager/constants/calendar-event-participant-chunk-size';
 import { type CalendarEventParticipantSaveOperations } from 'src/modules/calendar/calendar-event-participant-manager/types/calendar-event-participant-save-operations.type';
@@ -24,7 +24,7 @@ import { MatchParticipantService } from 'src/modules/match-participant/match-par
 @Injectable()
 export class CalendarEventParticipantService {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly matchParticipantService: MatchParticipantService<CalendarEventParticipantWorkspaceEntity>,
     @InjectMessageQueue(MessageQueue.contactCreationQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -32,14 +32,11 @@ export class CalendarEventParticipantService {
 
   public async findCalendarEventParticipantsByCalendarEventIds({
     calendarEventIds,
-    workspaceId,
   }: {
     calendarEventIds: string[];
-    workspaceId: string;
   }): Promise<CalendarEventParticipantWorkspaceEntity[]> {
     const calendarEventParticipantRepository =
-      await this.globalWorkspaceOrmManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
-        workspaceId,
+      this.workspaceOrmManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
         'calendarEventParticipant',
       );
 
@@ -93,11 +90,10 @@ export class CalendarEventParticipantService {
   }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const calendarEventParticipantRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
-            workspaceId,
+          this.workspaceOrmManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
             'calendarEventParticipant',
           );
 
@@ -135,7 +131,6 @@ export class CalendarEventParticipantService {
           participants: savedParticipants,
           objectMetadataName: 'calendarEventParticipant',
           matchWith: 'workspaceMemberAndPerson',
-          workspaceId,
         });
       },
       authContext,

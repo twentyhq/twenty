@@ -14,7 +14,8 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { fetchImageWithTypeFromUrl } from 'src/utils/image';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -34,6 +35,7 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ProvisionedWorksp
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly filesFieldService: FilesFieldService,
     private readonly secureHttpClientService: SecureHttpClientService,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {
     super(workspaceIteratorService);
   }
@@ -88,10 +90,10 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ProvisionedWorksp
       return;
     }
 
-    const personRepository = dataSource.getRepository<PersonWorkspaceEntity>(
-      'person',
-      { shouldBypassPermissionChecks: true },
-    );
+    const personRepository =
+      this.workspaceOrmManager.getRepository<PersonWorkspaceEntity>('person',
+        { shouldBypassPermissionChecks: true },
+      );
 
     let candidateCount = 0;
     let migratedCount = 0;

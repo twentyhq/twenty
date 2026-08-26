@@ -293,7 +293,6 @@ msgstr "Egy szükséges mező hiányzik."
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Hiányzik egy kötelező mező. Adja meg az összes kötelező értéket, majd próbálja újra."
 
@@ -430,6 +429,11 @@ msgstr "Hiba történt a nézet rendezésénél."
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "A webhook with this configuration already exists."
 msgstr "Már létezik ilyen konfigurációjú webhook."
+
+#. js-lingui-id: I0rHKG
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "A widget header action was not found"
+msgstr "Nem található widgetfejléc-művelet."
 
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -2032,6 +2036,16 @@ msgctxt "fieldMetadata.label"
 msgid "Color Scheme"
 msgstr "Színséma"
 
+#. js-lingui-id: 8nN8qg
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
+msgstr "A widgetfejléc által hivatkozott {commandMenuItemUniversalIdentifier} parancsmenüelem egy másik alkalmazáshoz tartozik."
+
+#. js-lingui-id: fmk0Wo
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
+msgstr "A widgetfejléc által hivatkozott {commandMenuItemUniversalIdentifier} parancsmenüelem nem található."
+
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -3485,18 +3499,6 @@ msgstr "Esemény azonosító"
 msgctxt "fieldMetadata.label"
 msgid "Event ID"
 msgstr "Esemény azonosító"
-
-#. js-lingui-id: ygoA2u
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Event name"
-msgstr "Esemény neve"
-
-#. js-lingui-id: AvDRPM
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Event name"
-msgstr "Esemény neve"
 
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -6660,6 +6662,16 @@ msgstr "Navigációs menüelem nem található."
 msgid "Navigation menu item type is required"
 msgstr "A Navigációs menüelem típusa kötelező"
 
+#. js-lingui-id: sq8J4x
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object metadata not found"
+msgstr "A navigáció célobjektumának metaadatai nem találhatók"
+
+#. js-lingui-id: 4/QAvg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object not found"
+msgstr "A navigáció célobjektuma nem található"
+
 #. js-lingui-id: B/prgH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -7033,6 +7045,8 @@ msgstr "Az objektum címkéje túl rövid"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
@@ -8293,6 +8307,11 @@ msgstr "Kérés állapota"
 msgctxt "fieldMetadata.label"
 msgid "Requested"
 msgstr "Igényelve"
+
+#. js-lingui-id: c1RSQl
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Requested file range cannot be served."
+msgstr "A kért fájltartomány nem szolgálható ki."
 
 #. js-lingui-id: MU8Slt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -9824,7 +9843,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "A fájlkiterjesztés nem egyezik a fájl tartalmával. Kérjük, ellenőrizze, hogy a fájl nem sérült, és a kiterjesztése helyes."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "A fájl még nem került feltöltésre. Töltse fel, mielőtt megerősíti."
 
@@ -10035,7 +10054,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "Az a leiratkozási témakör, amely alatt ezt a kampányt elküldték"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "A feltöltött fájl mérete nem egyezik a megadott mérettel. Próbálja meg újra a feltöltést."
@@ -10156,11 +10175,6 @@ msgstr "Nincs korábbi bevezetési lépés, amelyre vissza lehetne lépni."
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Ezeket a mezőket nem lehet frissíteni, amíg a munkaterület nincs aktiválva: {fieldsList}."
-
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr "Ez a(z) {fieldLabel} már használatban van. Kérjük, ellenőrizze az adatait és próbálja meg újra."
 
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -10332,7 +10346,7 @@ msgid "This field references an object that could not be found"
 msgstr "Ez a mező egy olyan objektumra hivatkozik, amely nem található"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "Ez a fájlformátum nem támogatott."
 
@@ -10415,11 +10429,6 @@ msgstr "Ez az objektumengedély már be van állítva a szerepkör számára"
 msgid "This operation is not allowed."
 msgstr "Ez a művelet nem engedélyezett."
 
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-datasource.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "Ez a művelet nem engedélyezett. Kérjük, próbálkozzon más megközelítéssel, vagy ha szükséges, vegye fel a kapcsolatot a támogatással."
-
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "This operation is not supported."
@@ -10427,7 +10436,6 @@ msgstr "Ez a művelet nem támogatott."
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Ez a művelet egy olyan rekordra hivatkozik, amely nem létezik, vagy nem módosítható a meglévő kapcsolatok miatt."
 
@@ -10459,7 +10467,6 @@ msgstr "Ez a rekord már létezik. Kérjük, ellenőrizze az adatait és próbá
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Ez a rekord nem törölhető, mert más rekordok még hivatkoznak rá."
 
@@ -11810,6 +11817,21 @@ msgstr "A widget meghaladja a rács magasságát."
 msgid "Widget extends beyond grid width"
 msgstr "A widget meghaladja a rács szélességét."
 
+#. js-lingui-id: GE0fWY
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must be unique"
+msgstr "A widget fejlécműveleteinek egyedieknek kell lenniük."
+
+#. js-lingui-id: djzz9p
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must belong to the same application as the widget"
+msgstr "A widget fejlécműveleteinek ugyanahhoz az alkalmazáshoz kell tartozniuk, mint a widgetnek."
+
+#. js-lingui-id: pjpuGA
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header command menu item references must be unique"
+msgstr "A widget fejlécparancsmenüelem-hivatkozásainak egyedieknek kell lenniük."
+
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
 msgid "Widget index must be a non-negative integer"
@@ -12402,9 +12424,8 @@ msgid "You can only update one record with files field at once."
 msgstr "Egyszerre csak egy, fájlok mezőt tartalmazó rekord frissíthető."
 
 #. js-lingui-id: 4ysDL0
-#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
+#: src/engine/twenty-orm/repository/workspace-repository.ts
+#: src/engine/twenty-orm/repository/workspace-repository.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 
@@ -12438,6 +12459,11 @@ msgstr "Nem távolíthatja el az adminisztrátori szerepkört az utolsó adminis
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
 msgid "You cannot revoke admin panel access from the last server administrator."
 msgstr "Nem vonhatja vissza az adminisztrációs felülethez való hozzáférést az utolsó kiszolgáló‑adminisztrátortól."
+
+#. js-lingui-id: y2sD5W
+#: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
+msgid "You cannot send from this address."
+msgstr "Nem küldhet erről a címről."
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts

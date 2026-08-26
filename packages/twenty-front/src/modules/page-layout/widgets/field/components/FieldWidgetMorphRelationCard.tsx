@@ -17,6 +17,7 @@ import {
 import { usePersistField } from '@/object-record/record-field/ui/hooks/usePersistField';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMorphRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { StyledWidgetContentContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { FieldWidgetShowMoreButton } from '@/page-layout/widgets/field/components/FieldWidgetShowMoreButton';
 import { FIELD_WIDGET_RELATION_CARD_INITIAL_VISIBLE_ITEMS } from '@/page-layout/widgets/field/constants/FieldWidgetRelationCardInitialVisibleItems';
 import { FIELD_WIDGET_RELATION_CARD_LOAD_MORE_INCREMENT } from '@/page-layout/widgets/field/constants/FieldWidgetRelationCardLoadMoreIncrement';
@@ -144,31 +145,37 @@ export const FieldWidgetMorphRelationCard = ({
           }}
         >
           <FieldInputEventContext.Provider value={{ onSubmit: handleSubmit }}>
-            <RecordDetailRecordsListContainer>
-              {visibleRecords.map((item) => (
-                <Fragment key={`${item.value.id}-${item.fieldMetadataId}`}>
-                  <RecordDetailRelationRecordsListItemEffect
-                    relationRecordId={item.value.id}
-                    relationObjectMetadataNameSingular={item.objectNameSingular}
-                  />
-                  <RecordDetailRelationRecordsListItem
-                    isExpanded={expandedItem === item.value.id}
-                    onClick={handleItemClick}
-                    relationRecord={item.value}
-                    relationObjectMetadataNameSingular={item.objectNameSingular}
-                    relationFieldMetadataId={item.fieldMetadataId}
-                  />
-                </Fragment>
-              ))}
-              {hasMoreRecords && (
-                <StyledShowMoreButtonContainer>
-                  <FieldWidgetShowMoreButton
-                    remainingCount={remainingCount}
-                    onClick={handleShowMore}
-                  />
-                </StyledShowMoreButtonContainer>
-              )}
-            </RecordDetailRecordsListContainer>
+            <StyledWidgetContentContainer>
+              <RecordDetailRecordsListContainer>
+                {visibleRecords.map((item) => (
+                  <Fragment key={`${item.value.id}-${item.fieldMetadataId}`}>
+                    <RecordDetailRelationRecordsListItemEffect
+                      relationRecordId={item.value.id}
+                      relationObjectMetadataNameSingular={
+                        item.objectNameSingular
+                      }
+                    />
+                    <RecordDetailRelationRecordsListItem
+                      isExpanded={expandedItem === item.value.id}
+                      onClick={handleItemClick}
+                      relationRecord={item.value}
+                      relationObjectMetadataNameSingular={
+                        item.objectNameSingular
+                      }
+                      relationFieldMetadataId={item.fieldMetadataId}
+                    />
+                  </Fragment>
+                ))}
+                {hasMoreRecords && (
+                  <StyledShowMoreButtonContainer>
+                    <FieldWidgetShowMoreButton
+                      remainingCount={remainingCount}
+                      onClick={handleShowMore}
+                    />
+                  </StyledShowMoreButtonContainer>
+                )}
+              </RecordDetailRecordsListContainer>
+            </StyledWidgetContentContainer>
           </FieldInputEventContext.Provider>
         </FieldContext.Provider>
       </RecordFieldsScopeContextProvider>

@@ -293,7 +293,6 @@ msgstr "Pakollinen kenttä puuttuu."
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Pakollinen kenttä puuttuu. Anna kaikki vaaditut arvot ja yritä uudelleen."
 
@@ -430,6 +429,11 @@ msgstr "Näkymän lajittelussa tapahtui virhe."
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "A webhook with this configuration already exists."
 msgstr "Tämän määrityksen mukainen webhook on jo olemassa."
+
+#. js-lingui-id: I0rHKG
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "A widget header action was not found"
+msgstr "Widgetin otsikkotoimintoa ei löytynyt"
 
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -2032,6 +2036,16 @@ msgctxt "fieldMetadata.label"
 msgid "Color Scheme"
 msgstr "Värimaailma"
 
+#. js-lingui-id: 8nN8qg
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
+msgstr "Widgetin otsikon viittaama komentovalikon kohde {commandMenuItemUniversalIdentifier} kuuluu toiseen sovellukseen"
+
+#. js-lingui-id: fmk0Wo
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
+msgstr "Widgetin otsikon viittaamaa komentovalikon kohdetta {commandMenuItemUniversalIdentifier} ei löytynyt"
+
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -3485,18 +3499,6 @@ msgstr "Tapahtuman ID"
 msgctxt "fieldMetadata.label"
 msgid "Event ID"
 msgstr "Tapahtuman ID"
-
-#. js-lingui-id: ygoA2u
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Event name"
-msgstr "Tapahtuman nimi"
-
-#. js-lingui-id: AvDRPM
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Event name"
-msgstr "Tapahtuman nimi"
 
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -6660,6 +6662,16 @@ msgstr "Navigointivalikon kohtaa ei löytynyt."
 msgid "Navigation menu item type is required"
 msgstr "Navigointivalikon kohteen tyyppi vaaditaan"
 
+#. js-lingui-id: sq8J4x
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object metadata not found"
+msgstr "Navigointikohdeobjektin metatietoja ei löytynyt"
+
+#. js-lingui-id: 4/QAvg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object not found"
+msgstr "Navigointikohdeobjektia ei löytynyt"
+
 #. js-lingui-id: B/prgH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -7033,6 +7045,8 @@ msgstr "Kohteen tunniste on liian lyhyt"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
@@ -8293,6 +8307,11 @@ msgstr "Pyynnön tila"
 msgctxt "fieldMetadata.label"
 msgid "Requested"
 msgstr "Pyydetty"
+
+#. js-lingui-id: c1RSQl
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Requested file range cannot be served."
+msgstr "Pyydettyä tiedostoaluetta ei voida palvella."
 
 #. js-lingui-id: MU8Slt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -9824,7 +9843,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "Tiedostopääte ei vastaa tiedoston sisältöä. Tarkista, ettei tiedosto ole vioittunut ja että sillä on oikea tiedostopääte."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "Tiedostoa ei ole vielä ladattu. Lataa se ennen vahvistamista."
 
@@ -10035,7 +10054,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "Peruutusaihe, jonka alla tämä kampanja lähetettiin"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "Ladattu tiedosto ei vastaa ilmoitettua kokoa. Yritä latausta uudelleen."
@@ -10156,11 +10175,6 @@ msgstr "Ei ole aiempaa käyttöönoton vaihetta, johon voisi palata."
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Näitä kenttiä ei voida päivittää ennen kuin työtila on aktivoitu: {fieldsList}."
-
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr "Tämä {fieldLabel}-arvo on jo käytössä. Tarkista tietosi ja yritä uudelleen."
 
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -10332,7 +10346,7 @@ msgid "This field references an object that could not be found"
 msgstr "Tämä kenttä viittaa objektiin, jota ei löytynyt"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "Tätä tiedostomuotoa ei tueta."
 
@@ -10415,11 +10429,6 @@ msgstr "Tämä kohteen käyttöoikeus on jo asetettu roolille"
 msgid "This operation is not allowed."
 msgstr "Tämä toiminto ei ole sallittu."
 
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-datasource.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "Tätä toimintoa ei sallita. Yritä toista lähestymistapaa tai ota yhteyttä tukeen, jos tarvitset apua."
-
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "This operation is not supported."
@@ -10427,7 +10436,6 @@ msgstr "Tätä toimintoa ei tueta."
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Tämä toimenpide viittaa tietueeseen, jota ei ole olemassa tai jota ei voida muokata olemassa olevien suhteiden vuoksi."
 
@@ -10459,7 +10467,6 @@ msgstr "Tämä tietue on jo olemassa. Tarkista tietosi ja yritä uudelleen."
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Tätä tietuetta ei voi poistaa, koska muut tietueet viittaavat siihen edelleen."
 
@@ -11810,6 +11817,21 @@ msgstr "Widget ulottuu ruudukon korkeuden yli"
 msgid "Widget extends beyond grid width"
 msgstr "Widget ulottuu ruudukon leveyden yli"
 
+#. js-lingui-id: GE0fWY
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must be unique"
+msgstr "Pienoisohjelman otsaketoimintojen on oltava yksilöllisiä."
+
+#. js-lingui-id: djzz9p
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must belong to the same application as the widget"
+msgstr "Pienoisohjelman otsaketoimintojen on kuuluttava samaan sovellukseen kuin pienoisohjelma."
+
+#. js-lingui-id: pjpuGA
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header command menu item references must be unique"
+msgstr "Pienoisohjelman otsakkeen komentovalikkokohteiden viittausten on oltava yksilöllisiä."
+
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
 msgid "Widget index must be a non-negative integer"
@@ -12402,9 +12424,8 @@ msgid "You can only update one record with files field at once."
 msgstr "Voit päivittää kerrallaan vain yhden tietueen, jossa on tiedostokenttä."
 
 #. js-lingui-id: 4ysDL0
-#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
+#: src/engine/twenty-orm/repository/workspace-repository.ts
+#: src/engine/twenty-orm/repository/workspace-repository.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 
@@ -12438,6 +12459,11 @@ msgstr "Et voi poistaa viimeiseltä ylläpitäjältä admin-roolia. Määritä e
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
 msgid "You cannot revoke admin panel access from the last server administrator."
 msgstr "Et voi peruuttaa ylläpitopaneelin käyttöoikeutta viimeiseltä palvelinylläpitäjältä."
+
+#. js-lingui-id: y2sD5W
+#: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
+msgid "You cannot send from this address."
+msgstr "Et voi lähettää tästä osoitteesta."
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts

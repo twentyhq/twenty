@@ -1,18 +1,16 @@
 import { type FilterableTimelineActivity } from '@/activities/timeline-activities/types/FilterableTimelineActivity';
 import { type TimelineActivityTypeMaps } from '@/activities/timeline-activities/types/TimelineActivityTypeMaps';
 import { getTimelineActivityType } from '@/activities/timeline-activities/utils/getTimelineActivityType';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
-// No selection means no filter, so an untouched timeline shows everything
-// rather than nothing.
 export const keepTimelineActivitiesOfSelectedTypes = <
   TTimelineActivity extends FilterableTimelineActivity,
 >(
   timelineActivities: TTimelineActivity[],
-  selectedTimelineActivityTypeUniversalIdentifiers: string[],
+  selectedTimelineActivityTypeUniversalIdentifiers: string[] | null,
   timelineActivityTypeMaps: TimelineActivityTypeMaps,
 ): TTimelineActivity[] =>
-  !isNonEmptyArray(selectedTimelineActivityTypeUniversalIdentifiers)
+  !isDefined(selectedTimelineActivityTypeUniversalIdentifiers)
     ? timelineActivities
     : timelineActivities.filter((timelineActivity) => {
         const timelineActivityTypeUniversalIdentifier = getTimelineActivityType(

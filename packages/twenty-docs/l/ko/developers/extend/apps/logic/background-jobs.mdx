@@ -6,10 +6,10 @@ icon: layer-group
 
 로직 함수 실행은 `timeoutSeconds`(최대 900초)로 제한됩니다. 해당 시간 안에 끝나지 않는 모든 작업(전체 재동기화, 레코드별 팬아웃, 속도 제한이 걸린 서드파티 API 등)은 더 작은 실행 단위로 나눠야 합니다.
 
-`enqueueJob`은 바로 그 일을 합니다. Twenty 워커에게 나중에 별도 프로세스와 별도의 타임아웃 한도 내에서 앱의 로직 함수 중 하나를 실행해 달라고 요청합니다. 호출은 즉시 반환됩니다.
+`enqueueJobs`는 바로 그 일을 합니다. Twenty 워커에게 나중에 앱의 로직 함수 중 하나를 실행해 달라고 요청하며, 각 페이로드당 한 번씩 실행되고 각 실행은 자체 프로세스에서 자체 타임아웃 한도로 처리됩니다. 호출은 즉시 반환됩니다.
 
 ```text
-  ┌─────────────────┐  enqueueJob(...)   ┌──────────────┐   ┌────────────────────┐
+  ┌─────────────────┐  enqueueJobs(...)  ┌──────────────┐   ┌────────────────────┐
   │ Logic function  │ ─────────────────▶ │ Job queue    │──▶│ Logic function     │
   │ (returns now)   │                    │ (workers)    │   │ (fresh run/timeout)│
   └─────────────────┘                    └──────────────┘   └────────────────────┘
@@ -17,24 +17,30 @@ icon: layer-group
 
 ## 실행 대기열에 추가하기
 
-`twenty-sdk/logic-function`에서 `enqueueJob`을 가져와서, 실행하려는 로직 함수의 `universalIdentifier`를 가리키도록 설정하세요.
+`twenty-sdk/logic-function`에서 `enqueueJobs`를 가져와 실행할 로직 함수의 `universalIdentifier`를 지정하고, 대기열에 추가할 각 실행마다 하나의 페이로드를 전달하세요.
 
 ```ts src/logic-functions/sync-all-contacts.ts
-import { enqueueJob } from 'twenty-sdk/logic-function';
+import { enqueueJobs } from 'twenty-sdk/logic-function';
 
-await enqueueJob({
+await enqueueJobs({
   logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
-  payload: { page: 1 },
+  payloads: [{ page: 1 }],
 });
 ```
 
-대상 함수는 다른 트리거와 정확히 동일하게, 핸들러 인자로 `payload`를 전달받습니다. 대상 함수는 호출자와 **동일한 애플리케이션**에 속해야 합니다. 다른 앱의 함수를 대기열에 추가하려고 하면 `Logic function not found` 오류와 함께 거부됩니다.
+각 실행은 다른 모든 트리거와 정확히 동일하게 핸들러 인수로 해당 페이로드를 받습니다. 대상은 호출자와 **동일한 애플리케이션**에 속해야 합니다. 다른 앱의 함수를 대기열에 추가하려고 하면 `Logic function not found` 오류와 함께 거부되며 아무것도 대기열에 추가되지 않습니다. 한 번의 호출로 최대 `200`개의 페이로드를 허용합니다.
 
 <Note>
-`enqueueJob`은 작업이 실행을 마쳤을 때가 아니라, 작업이 수락되는 즉시 반환됩니다. 대상 함수의 결과를 반환하지는 않습니다. 결과를 다시 읽어와야 한다면, 대상 함수가 생성한 내용을 [키-값 스토어](/l/ko/developers/extend/apps/logic/key-value-store) 또는 워크스페이스 레코드에 기록하도록 하세요.
+`enqueueJobs`는 작업이 실행되었을 때가 아니라 작업이 수락되는 즉시 반환됩니다. 대상들의 결과를 반환하지는 않습니다. 결과를 다시 읽어와야 한다면, 각 대상이 생성한 내용을 [키-값 스토어](/l/ko/developers/extend/apps/logic/key-value-store) 또는 워크스페이스 레코드에 기록하도록 하세요.
+</Note>
+
+<Note>
+호출당 하나의 작업을 대기열에 추가하는 이전 `enqueueJob` 도우미는 더 이상 사용되지 않습니다. 대신 요소가 하나인 `payloads` 목록과 함께 `enqueueJobs`를 사용하세요.
 </Note>
 
 ## 작업 옵션
+
+옵션은 배치의 모든 실행에 적용됩니다.
 
 | 옵션           | 기본값 | 범위                       | 하는 일                                                                            |
 | ------------ | --- | ------------------------ | ------------------------------------------------------------------------------- |
@@ -42,9 +48,9 @@ await enqueueJob({
 | `delayMs`    | `0` | `0`–`604800000` (7 days) | 실행이 가능해지기 전까지 이만큼 대기합니다.                                                        |
 
 ```ts
-await enqueueJob({
+await enqueueJobs({
   logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
-  payload: { page: 1 },
+  payloads: [{ page: 1 }],
   retryLimit: 3,
   delayMs: 60_000,
 });
@@ -96,7 +102,7 @@ export const handler = async (
 
 ```ts src/logic-functions/sync-contacts-page.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { enqueueJob } from 'twenty-sdk/logic-function';
+import { enqueueJobs } from 'twenty-sdk/logic-function';
 
 const SYNC_CONTACTS_PAGE = '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33';
 
@@ -106,9 +112,9 @@ const handler = async (params: { cursor?: string }) => {
   await importContacts(contacts);
 
   if (nextCursor) {
-    await enqueueJob({
+    await enqueueJobs({
       logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
-      payload: { cursor: nextCursor },
+      payloads: [{ cursor: nextCursor }],
       delayMs: 2_000,
     });
   }
@@ -126,20 +132,16 @@ export default defineLogicFunction({
 
 ## 레코드별로 팬아웃하기
 
-작업이 본질적으로 항목 단위일 때는, 항목마다 하나의 작업을 대기열에 추가하고, 워커들이 인라인 루프를 도는 대신 병렬로 처리하도록 하세요.
+작업이 본질적으로 항목 단위일 때는, 단일 호출에서 항목마다 하나의 작업을 대기열에 추가하고 워커들이 인라인 루프를 도는 대신 병렬로 처리하도록 하세요.
 
 ```ts
 const companies = await listCompaniesToEnrich();
 
-await Promise.all(
-  companies.map((company) =>
-    enqueueJob({
-      logicFunctionUniversalIdentifier: ENRICH_COMPANY,
-      payload: { companyId: company.id },
-      retryLimit: 2,
-    }),
-  ),
-);
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+  payloads: companies.map((company) => ({ companyId: company.id })),
+  retryLimit: 2,
+});
 ```
 
 ## 장시간 실행 작업을 위한 모범 사례
@@ -150,7 +152,7 @@ await Promise.all(
 
 ```ts src/logic-functions/enrich-companies-batch.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { enqueueJob, kv } from 'twenty-sdk/logic-function';
+import { enqueueJobs, kv } from 'twenty-sdk/logic-function';
 
 const ENRICH_COMPANIES_BATCH = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
 const CHUNK_SIZE = 50;
@@ -169,9 +171,9 @@ const handler = async (params: { offset?: number }) => {
   await kv.set('enrich:progress', { offset: offset + companies.length });
 
   if (companies.length === CHUNK_SIZE) {
-    await enqueueJob({
+    await enqueueJobs({
       logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
-      payload: { offset: offset + CHUNK_SIZE },
+      payloads: [{ offset: offset + CHUNK_SIZE }],
     });
   }
 

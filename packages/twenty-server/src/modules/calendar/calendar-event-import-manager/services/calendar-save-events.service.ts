@@ -4,7 +4,7 @@ import { Any } from 'typeorm';
 
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { buildCalendarEventSaveOperations } from 'src/modules/calendar/calendar-event-import-manager/utils/build-calendar-event-save-operations.util';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
@@ -16,7 +16,7 @@ import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fet
 @Injectable()
 export class CalendarSaveEventsService {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly calendarEventParticipantService: CalendarEventParticipantService,
   ) {}
 
@@ -29,11 +29,10 @@ export class CalendarSaveEventsService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     const savedParticipantIds =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      await this.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const calendarChannelEventAssociationRepository =
-            await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
-              workspaceId,
+            this.workspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
               'calendarChannelEventAssociation',
             );
 
@@ -63,7 +62,6 @@ export class CalendarSaveEventsService {
                 calendarEventIds: participantsOfExistingEvents.map(
                   (participant) => participant.calendarEventId,
                 ),
-                workspaceId,
               },
             );
 
@@ -76,7 +74,7 @@ export class CalendarSaveEventsService {
               existingParticipants,
             });
 
-          await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
+          await this.workspaceOrmManager.runInWorkspaceTransaction(
             async (transactionScope) => {
               const calendarEventRepository =
                 transactionScope.getRepository<CalendarEventWorkspaceEntity>(

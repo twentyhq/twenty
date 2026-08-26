@@ -236,8 +236,6 @@ export class ReplaceTimelineActivityNameWithTypeCommand extends ProvisionedWorks
       const result = await dataSource.query(
         backfillQuery.sql,
         backfillQuery.parameters,
-        undefined,
-        { shouldBypassPermissionChecks: true },
       );
 
       lastBatchRowCount = result?.[1] ?? 0;

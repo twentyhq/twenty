@@ -76,9 +76,11 @@ const readPartnerTier = (value: unknown): PartnerTier | null =>
   PARTNER_TIERS.find((tier) => tier === value) ?? null;
 
 // The live source: normalize the CRM payload into MarketplacePartner. Degrades
-// to [] when the API is unreachable or shapeless (matching the old getPartners)
-// so the page renders the empty state rather than crashing. A payload that
-// breaks the ranking contract throws instead — see assertRankingContract.
+// to [] when the API is unreachable, shapeless, or breaks the ranking contract
+// (matching the old getPartners) so the page renders the empty state rather
+// than crashing. The whole list goes, not the offending row: one unrankable
+// partner makes every seat below it unearned, and a silently mis-ranked
+// directory is worse than none.
 export async function fetchLiveMarketplacePartners(): Promise<
   readonly RankedMarketplacePartner[]
 > {
@@ -101,38 +103,43 @@ export async function fetchLiveMarketplacePartners(): Promise<
     return [];
   }
 
-  return partners.map((apiPartner) => {
-    assertRankingContract(apiPartner);
+  try {
+    return partners.map((apiPartner) => {
+      assertRankingContract(apiPartner);
 
-    return {
-      slug: apiPartner.slug,
-      name: apiPartner.name,
-      description: apiPartner.introduction ?? '',
-      languagesSpoken: apiPartner.languagesSpoken,
-      partnerScope: apiPartner.partnerScope ?? [],
-      region: apiPartner.region,
-      calendarLink: linkUrl(apiPartner.calendarLink),
-      hourlyRateUsd: microsToUsd(apiPartner.hourlyRate),
-      projectBudgetMinUsd: microsToUsd(apiPartner.projectBudgetMin),
-      links: {
-        linkedin: linkUrl(apiPartner.linkedin) || null,
-        website: linkUrl(apiPartner.website) || null,
-        x: null,
-        github: null,
-      },
-      profilePictureUrl: linkUrl(apiPartner.profilePicture),
-      skills: apiPartner.skills ?? [],
-      city: apiPartner.city ?? '',
-      country: apiPartner.country ?? '',
-      services: [],
-      portfolio: [],
-      clients: [],
-      partnerTier: readPartnerTier(apiPartner.partnerTier),
-      serviceCount: apiPartner.serviceCount,
-      approvedCaseStudyCount: apiPartner.approvedCaseStudyCount,
-      approvedCaseStudyWithCoverCount:
-        apiPartner.approvedCaseStudyWithCoverCount,
-      rotationKey: apiPartner.rotationKey,
-    };
-  });
+      return {
+        slug: apiPartner.slug,
+        name: apiPartner.name,
+        description: apiPartner.introduction ?? '',
+        languagesSpoken: apiPartner.languagesSpoken,
+        partnerScope: apiPartner.partnerScope ?? [],
+        region: apiPartner.region,
+        calendarLink: linkUrl(apiPartner.calendarLink),
+        hourlyRateUsd: microsToUsd(apiPartner.hourlyRate),
+        projectBudgetMinUsd: microsToUsd(apiPartner.projectBudgetMin),
+        links: {
+          linkedin: linkUrl(apiPartner.linkedin) || null,
+          website: linkUrl(apiPartner.website) || null,
+          x: null,
+          github: null,
+        },
+        profilePictureUrl: linkUrl(apiPartner.profilePicture),
+        skills: apiPartner.skills ?? [],
+        city: apiPartner.city ?? '',
+        country: apiPartner.country ?? '',
+        services: [],
+        portfolio: [],
+        clients: [],
+        partnerTier: readPartnerTier(apiPartner.partnerTier),
+        serviceCount: apiPartner.serviceCount,
+        approvedCaseStudyCount: apiPartner.approvedCaseStudyCount,
+        approvedCaseStudyWithCoverCount:
+          apiPartner.approvedCaseStudyWithCoverCount,
+        rotationKey: apiPartner.rotationKey,
+      };
+    });
+  } catch (error) {
+    console.error('[partners-marketplace] ranking contract broken:', error);
+    return [];
+  }
 }

@@ -32,10 +32,12 @@ export const useOpenJunctionRelationFieldInput = () => {
       fieldDefinition,
       recordId,
       prefix,
+      recordPickerInstanceId,
     }: {
       fieldDefinition: FieldDefinition<FieldRelationMetadata>;
       recordId: string;
       prefix?: string;
+      recordPickerInstanceId?: string;
     }) => {
       const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
@@ -49,6 +51,8 @@ export const useOpenJunctionRelationFieldInput = () => {
         settings: fieldDefinition.metadata.settings,
         relationObjectMetadataId:
           fieldDefinition.metadata.relationObjectMetadataId,
+        relationTargetFieldMetadataId:
+          fieldDefinition.metadata.relationFieldMetadataId,
         sourceObjectMetadataId,
         objectMetadataItems,
       });
@@ -63,11 +67,13 @@ export const useOpenJunctionRelationFieldInput = () => {
         return;
       }
 
-      const recordPickerInstanceId = getRecordFieldInputInstanceId({
-        recordId,
-        fieldName: fieldDefinition.metadata.fieldName,
-        prefix,
-      });
+      const resolvedRecordPickerInstanceId =
+        recordPickerInstanceId ??
+        getRecordFieldInputInstanceId({
+          recordId,
+          fieldName: fieldDefinition.metadata.fieldName,
+          prefix,
+        });
 
       const junctionRecords = store.get(
         recordStoreFamilySelector.selectorFamily({
@@ -96,39 +102,39 @@ export const useOpenJunctionRelationFieldInput = () => {
 
       store.set(
         multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
-          instanceId: recordPickerInstanceId,
+          instanceId: resolvedRecordPickerInstanceId,
         }),
         pickableMorphItems,
       );
 
       store.set(
         multipleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily(
-          { instanceId: recordPickerInstanceId },
+          { instanceId: resolvedRecordPickerInstanceId },
         ),
         searchableObjectMetadataItems,
       );
 
       store.set(
         multipleRecordPickerSearchFilterComponentState.atomFamily({
-          instanceId: recordPickerInstanceId,
+          instanceId: resolvedRecordPickerInstanceId,
         }),
         '',
       );
 
-      openMultipleRecordPicker(recordPickerInstanceId);
+      openMultipleRecordPicker(resolvedRecordPickerInstanceId);
 
       performSearch({
-        multipleRecordPickerInstanceId: recordPickerInstanceId,
+        multipleRecordPickerInstanceId: resolvedRecordPickerInstanceId,
         forceSearchFilter: '',
         forceSearchableObjectMetadataItems: searchableObjectMetadataItems,
         forcePickableMorphItems: pickableMorphItems,
       });
 
       pushFocusItemToFocusStack({
-        focusId: recordPickerInstanceId,
+        focusId: resolvedRecordPickerInstanceId,
         component: {
           type: FocusComponentType.DROPDOWN,
-          instanceId: recordPickerInstanceId,
+          instanceId: resolvedRecordPickerInstanceId,
         },
         globalHotkeysConfig: {
           enableGlobalHotkeysConflictingWithKeyboard: false,

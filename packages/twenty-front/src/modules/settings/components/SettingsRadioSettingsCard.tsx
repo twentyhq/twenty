@@ -15,7 +15,7 @@ type SettingsRadioSettingsCardProps<Option extends { value: string }> = {
 };
 
 const StyledCardContentContainer = styled.div`
-  > * {
+  > div {
     cursor: pointer;
 
     &:hover {

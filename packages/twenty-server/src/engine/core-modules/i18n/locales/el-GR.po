@@ -293,7 +293,6 @@ msgstr "Λείπει απαιτούμενο πεδίο."
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Λείπει ένα απαιτούμενο πεδίο. Παρακαλούμε δώστε όλες τις απαιτούμενες τιμές και προσπαθήστε ξανά."
 
@@ -430,6 +429,11 @@ msgstr "Παρουσιάστηκε σφάλμα ταξινόμησης προβ�
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "A webhook with this configuration already exists."
 msgstr "Υπάρχει ήδη webhook με αυτήν τη διαμόρφωση."
+
+#. js-lingui-id: I0rHKG
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "A widget header action was not found"
+msgstr "Δεν βρέθηκε ενέργεια κεφαλίδας γραφικού στοιχείου"
 
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -2032,6 +2036,16 @@ msgctxt "fieldMetadata.label"
 msgid "Color Scheme"
 msgstr "Χρωματικό θέμα"
 
+#. js-lingui-id: 8nN8qg
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
+msgstr "Το στοιχείο μενού εντολών {commandMenuItemUniversalIdentifier} στο οποίο αναφέρεται η κεφαλίδα του γραφικού στοιχείου ανήκει σε άλλη εφαρμογή"
+
+#. js-lingui-id: fmk0Wo
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
+msgstr "Δεν βρέθηκε το στοιχείο μενού εντολών {commandMenuItemUniversalIdentifier} στο οποίο αναφέρεται η κεφαλίδα του γραφικού στοιχείου"
+
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -3485,18 +3499,6 @@ msgstr "ID Συμβάντος"
 msgctxt "fieldMetadata.label"
 msgid "Event ID"
 msgstr "ID Συμβάντος"
-
-#. js-lingui-id: ygoA2u
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Event name"
-msgstr "Όνομα Συμβάντος"
-
-#. js-lingui-id: AvDRPM
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Event name"
-msgstr "Όνομα Συμβάντος"
 
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -6660,6 +6662,16 @@ msgstr "Το στοιχείο μενού πλοήγησης δεν βρέθηκ�
 msgid "Navigation menu item type is required"
 msgstr "Απαιτείται τύπος στοιχείου μενού πλοήγησης"
 
+#. js-lingui-id: sq8J4x
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object metadata not found"
+msgstr "Δεν βρέθηκαν τα μεταδεδομένα του αντικειμένου στόχου πλοήγησης"
+
+#. js-lingui-id: 4/QAvg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object not found"
+msgstr "Δεν βρέθηκε το αντικείμενο στόχος πλοήγησης"
+
 #. js-lingui-id: B/prgH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -7033,6 +7045,8 @@ msgstr "Η ετικέτα αντικειμένου είναι πολύ μικρ�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
@@ -8293,6 +8307,11 @@ msgstr "Κατάσταση αιτήματος"
 msgctxt "fieldMetadata.label"
 msgid "Requested"
 msgstr "Ζητήθηκε"
+
+#. js-lingui-id: c1RSQl
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Requested file range cannot be served."
+msgstr "Δεν είναι δυνατή η εξυπηρέτηση του ζητούμενου εύρους αρχείου."
 
 #. js-lingui-id: MU8Slt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -9824,7 +9843,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "Η επέκταση του αρχείου δεν αντιστοιχεί στο περιεχόμενο του αρχείου. Παρακαλούμε ελέγξτε ότι το αρχείο σας δεν είναι κατεστραμμένο και έχει τη σωστή επέκταση."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "Το αρχείο δεν έχει ανέβει ακόμη. Παρακαλούμε ανεβάστε το πριν το επιβεβαιώσετε."
 
@@ -10035,7 +10054,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "Το θέμα διαγραφής από τη λίστα (unsubscribe) υπό το οποίο στάλθηκε αυτή η καμπάνια"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "Το αρχείο που μεταφορτώθηκε δεν αντιστοιχεί στο δηλωμένο μέγεθος. Παρακαλούμε δοκιμάστε ξανά τη μεταφόρτωση."
@@ -10156,11 +10175,6 @@ msgstr "Δεν υπάρχει προηγούμενο βήμα στη διαδι�
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Αυτά τα πεδία δεν μπορούν να ενημερωθούν πριν ενεργοποιηθεί ο χώρος εργασίας: {fieldsList}."
-
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr "Η τιμή {fieldLabel} χρησιμοποιείται ήδη. Παρακαλώ ελέγξτε τα δεδομένα σας και δοκιμάστε ξανά."
 
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -10332,7 +10346,7 @@ msgid "This field references an object that could not be found"
 msgstr "Αυτό το πεδίο αναφέρεται σε αντικείμενο που δεν βρέθηκε"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "Αυτή η μορφή αρχείου δεν υποστηρίζεται."
 
@@ -10415,11 +10429,6 @@ msgstr "Αυτό το δικαίωμα αντικειμένου έχει ήδη 
 msgid "This operation is not allowed."
 msgstr "Αυτή η λειτουργία δεν επιτρέπεται."
 
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-datasource.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "Αυτή η ενέργεια δεν επιτρέπεται. Παρακαλώ δοκιμάστε μια άλλη προσέγγιση ή επικοινωνήστε με την υποστήριξη για βοήθεια."
-
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "This operation is not supported."
@@ -10427,7 +10436,6 @@ msgstr "Αυτή η λειτουργία δεν υποστηρίζεται."
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Αυτή η λειτουργία αναφέρεται σε εγγραφή που δεν υπάρχει ή δεν μπορεί να τροποποιηθεί λόγω υπαρχουσών σχέσεων."
 
@@ -10459,7 +10467,6 @@ msgstr "Αυτή η εγγραφή υπάρχει ήδη. Παρακαλώ ελ�
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Αυτή η εγγραφή δεν μπορεί να διαγραφεί επειδή εξακολουθεί να αναφέρεται από άλλες εγγραφές."
 
@@ -11810,6 +11817,21 @@ msgstr "Το widget εκτείνεται πέρα από το ύψος του π
 msgid "Widget extends beyond grid width"
 msgstr "Το widget εκτείνεται πέρα από το πλάτος του πλέγματος"
 
+#. js-lingui-id: GE0fWY
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must be unique"
+msgstr "Οι ενέργειες κεφαλίδας του widget πρέπει να είναι μοναδικές"
+
+#. js-lingui-id: djzz9p
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must belong to the same application as the widget"
+msgstr "Οι ενέργειες κεφαλίδας του widget πρέπει να ανήκουν στην ίδια εφαρμογή με το widget"
+
+#. js-lingui-id: pjpuGA
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header command menu item references must be unique"
+msgstr "Οι αναφορές στοιχείων μενού εντολών κεφαλίδας του widget πρέπει να είναι μοναδικές"
+
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
 msgid "Widget index must be a non-negative integer"
@@ -12402,9 +12424,8 @@ msgid "You can only update one record with files field at once."
 msgstr "Μπορείτε να ενημερώσετε μόνο μία εγγραφή με πεδίο αρχείων κάθε φορά."
 
 #. js-lingui-id: 4ysDL0
-#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
+#: src/engine/twenty-orm/repository/workspace-repository.ts
+#: src/engine/twenty-orm/repository/workspace-repository.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 
@@ -12438,6 +12459,11 @@ msgstr "Δεν μπορείτε να αφαιρέσετε τον ρόλο δια
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
 msgid "You cannot revoke admin panel access from the last server administrator."
 msgstr "Δεν μπορείτε να ανακαλέσετε την πρόσβαση στον πίνακα διαχείρισης από τον τελευταίο διαχειριστή διακομιστή."
+
+#. js-lingui-id: y2sD5W
+#: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
+msgid "You cannot send from this address."
+msgstr "Δεν μπορείτε να στείλετε από αυτήν τη διεύθυνση."
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts

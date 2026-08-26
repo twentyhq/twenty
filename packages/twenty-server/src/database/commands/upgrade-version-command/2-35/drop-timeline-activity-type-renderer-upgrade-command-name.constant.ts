@@ -1,0 +1,2 @@
+export const DROP_TIMELINE_ACTIVITY_TYPE_RENDERER_UPGRADE_COMMAND_NAME =
+  '2.35.0_DropTimelineActivityTypeRendererFastInstanceCommand_1787648000001';

@@ -97,7 +97,7 @@ On an **Application** record, command menu → **Run workflow → Mark as Winner
 | Trigger | Manual, single **Opportunity** | Manual, single **Application** |
 | Action | Create **Application** | Update linked **Opportunity** |
 | Published label | **Apply** (on brief) | **Mark as Winner** (on application) |
-| Who runs it | Partner (WORKFLOWS flag) | Admin / Partner Ops |
+| Who runs it | Partner (WORKFLOWS flag) | Admin |
 
 Repeat for each workspace after install. Workflows are workspace metadata — they do not
 travel with `deploy` / `install`.

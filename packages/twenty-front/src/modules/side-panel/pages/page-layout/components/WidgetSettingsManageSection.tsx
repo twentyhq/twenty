@@ -7,7 +7,7 @@ import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pa
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { WidgetVisibilityDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityDropdownContent';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
-import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
+import { useOpenReplaceWidgetPicker } from '@/side-panel/pages/page-layout/hooks/useOpenReplaceWidgetPicker';
 import { useTranslatedVisibilityLabel } from '@/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -18,7 +18,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconEyeX,
@@ -55,7 +54,7 @@ export const WidgetSettingsManageSection = ({
   const { resetPageLayoutWidgetToDefault } =
     useResetPageLayoutWidgetToDefault(pageLayoutId);
 
-  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
+  const { openReplaceWidgetPicker } = useOpenReplaceWidgetPicker(pageLayoutId);
 
   const { openModal } = useModal();
 
@@ -81,12 +80,6 @@ export const WidgetSettingsManageSection = ({
 
   const handleConfirmReset = () => {
     resetPageLayoutWidgetToDefault(pageLayoutEditingWidgetId);
-  };
-
-  const handleReplaceWidget = () => {
-    navigatePageLayoutSidePanel({
-      sidePanelPage: SidePanelPages.PageLayoutRecordPageWidgetTypeSelect,
-    });
   };
 
   const handleDeleteWidget = () => {
@@ -140,14 +133,14 @@ export const WidgetSettingsManageSection = ({
         )}
         <SelectableListItem
           itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.REPLACE_WIDGET}
-          onEnter={handleReplaceWidget}
+          onEnter={openReplaceWidgetPicker}
         >
           <CommandMenuItem
             id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.REPLACE_WIDGET}
             Icon={IconSwitchHorizontal}
             label={t`Replace widget`}
             hasSubMenu
-            onClick={handleReplaceWidget}
+            onClick={openReplaceWidgetPicker}
           />
         </SelectableListItem>
         <SelectableListItem
