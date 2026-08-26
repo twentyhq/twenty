@@ -4,10 +4,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  isWorkspaceProvisioned,
-  WorkspaceActivationStatus,
-} from 'twenty-shared/workspace';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
   QueryFailedError,
   Repository,
@@ -40,6 +37,10 @@ import {
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
 import { MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/auth/constants/max-workspaces-without-enterprise-key.constants';
+import {
+  getSignUpWithoutWorkspaceDecision,
+  hasProvisionedSignUpDestination,
+} from 'src/engine/core-modules/auth/utils/get-sign-up-without-workspace-decision.util';
 import { DEFAULT_DPA_REGION } from 'src/engine/core-modules/dpa/config/dpa-region-config.constant';
 import { DpaAgreementEntity } from 'src/engine/core-modules/dpa/entities/dpa-agreement.entity';
 import { DpaAgreementType } from 'src/engine/core-modules/dpa/enums/dpa-agreement-type.enum';
@@ -485,39 +486,29 @@ export class SignInUpService {
     }
   }
 
-  // A sign up outside of any workspace is a request for a destination: it may
-  // only go through if the account will have somewhere to land. Checking it
-  // here rather than at workspace creation is what stops restricted instances
-  // from accumulating verified users that can never reach a workspace.
+  // Enforced here rather than at workspace creation so a restricted instance
+  // stops accumulating verified users that can never reach a workspace.
   private async assertSignUpWithoutWorkspaceAllowed(
     email: string,
   ): Promise<void> {
-    await this.assertSignUpEnabled();
-
-    if (
-      !this.twentyConfigService.get(
+    const decision = getSignUpWithoutWorkspaceDecision({
+      isMultiWorkspaceEnabled: this.twentyConfigService.get(
+        'IS_MULTIWORKSPACE_ENABLED',
+      ),
+      isWorkspaceCreationLimitedToServerAdmins: this.twentyConfigService.get(
         'IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS',
-      )
-    ) {
+      ),
+      workspaceCount: await this.workspaceRepository.count(),
+    });
+
+    if (decision === 'allowed') {
       return;
     }
 
-    const { availableWorkspacesForSignUp } =
-      await this.userWorkspaceService.findAvailableWorkspacesByEmail(email);
-
-    // A workspace that is not provisioned yet cannot be joined, so it is not a
-    // destination this sign up could land on.
     if (
-      availableWorkspacesForSignUp.some(({ workspace }) =>
-        isWorkspaceProvisioned(workspace),
-      )
+      decision === 'requiresDestination' &&
+      (await this.hasProvisionedDestination(email))
     ) {
-      return;
-    }
-
-    // Initial setup has no workspace to be invited to yet, so the restriction
-    // cannot apply to the very first sign up.
-    if ((await this.workspaceRepository.count()) === 0) {
       return;
     }
 
@@ -525,6 +516,13 @@ export class SignInUpService {
       'New workspace setup is disabled',
       AuthExceptionCode.SIGNUP_DISABLED,
     );
+  }
+
+  private async hasProvisionedDestination(email: string): Promise<boolean> {
+    const { availableWorkspacesForSignUp } =
+      await this.userWorkspaceService.findAvailableWorkspacesByEmail(email);
+
+    return hasProvisionedSignUpDestination(availableWorkspacesForSignUp);
   }
 
   private async hasServerAdmin(): Promise<boolean> {
