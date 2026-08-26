@@ -11,7 +11,6 @@ import { viewTypeIconMapping } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
-import { viewPickerCalendarEndFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerCalendarEndFieldMetadataIdComponentState';
 import { viewPickerCalendarFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerCalendarFieldMetadataIdComponentState';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
@@ -21,7 +20,6 @@ import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/sta
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 import { viewPickerVisibilityComponentState } from '@/views/view-picker/states/viewPickerVisibilityComponentState';
-import { getAvailableCalendarEndFieldMetadataItems } from '@/views/view-picker/utils/getAvailableCalendarEndFieldMetadataItems';
 import { isDefined } from 'twenty-shared/utils';
 import {
   ViewVisibility,
@@ -47,10 +45,6 @@ export const ViewPickerContentEffect = () => {
 
   const setViewPickerCalendarFieldMetadataId = useSetAtomComponentState(
     viewPickerCalendarFieldMetadataIdComponentState,
-  );
-
-  const setViewPickerCalendarEndFieldMetadataId = useSetAtomComponentState(
-    viewPickerCalendarEndFieldMetadataIdComponentState,
   );
 
   const [viewPickerType, setViewPickerType] = useAtomComponentState(
@@ -113,21 +107,7 @@ export const ViewPickerContentEffect = () => {
           ? referenceView.calendarFieldMetadataId
           : (availableFieldsForCalendar[0]?.id ?? '');
 
-      const availableCalendarEndFieldMetadataItems =
-        getAvailableCalendarEndFieldMetadataItems({
-          availableFieldsForCalendar,
-          calendarFieldMetadataId,
-        });
-
       setViewPickerCalendarFieldMetadataId(calendarFieldMetadataId);
-      setViewPickerCalendarEndFieldMetadataId(
-        availableCalendarEndFieldMetadataItems.some(
-          (fieldMetadataItem) =>
-            fieldMetadataItem.id === referenceView.calendarEndFieldMetadataId,
-        )
-          ? (referenceView.calendarEndFieldMetadataId ?? '')
-          : '',
-      );
     }
   }, [
     referenceView,
@@ -135,7 +115,6 @@ export const ViewPickerContentEffect = () => {
     setViewPickerSelectedIcon,
     setViewPickerType,
     setViewPickerCalendarFieldMetadataId,
-    setViewPickerCalendarEndFieldMetadataId,
     setViewPickerVisibility,
     viewPickerIsPersisting,
     viewPickerIsDirty,

@@ -12,8 +12,6 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { getSupportedRecordCalendarLayout } from '@/object-record/record-calendar/utils/getSupportedRecordCalendarLayout';
-import { getEffectiveRecordCalendarEndFieldMetadataId } from '@/object-record/record-calendar/utils/getEffectiveRecordCalendarEndFieldMetadataId';
-import { recordIndexCalendarEndFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdComponentState';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 
@@ -342,15 +340,6 @@ export const useLoadRecordIndexStates = () => {
                 instanceId: recordCalendarInstanceId,
               }),
               view.calendarFieldMetadataId ?? null,
-            );
-            batchSet(
-              recordIndexCalendarEndFieldMetadataIdComponentState.atomFamily({
-                instanceId: recordCalendarInstanceId,
-              }),
-              getEffectiveRecordCalendarEndFieldMetadataId({
-                calendarEndFieldMetadataId: view.calendarEndFieldMetadataId,
-                isCalendarWeekViewEnabled,
-              }),
             );
             batchSet(
               recordIndexCalendarLayoutComponentState.atomFamily({

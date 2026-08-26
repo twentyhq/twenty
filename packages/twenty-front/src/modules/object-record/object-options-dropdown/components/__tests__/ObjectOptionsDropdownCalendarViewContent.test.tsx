@@ -1,7 +1,31 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { I18nProvider } from '@lingui/react';
+import { i18n } from '@lingui/core';
+import { ObjectOptionsDropdownCalendarFieldsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent';
 
 import { ObjectOptionsDropdownCalendarViewContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
+
+const mockCalendarFields = [
+  { id: 'date-field', label: 'Due date', type: 'DATE' },
+  { id: 'date-time-field', label: 'Created at', type: 'DATE_TIME' },
+];
+const mockSetCalendarField = jest.fn();
+
+jest.mock('@/views/view-picker/hooks/useGetAvailableFieldsForCalendar', () => ({
+  useGetAvailableFieldsForCalendar: () => ({
+    availableFieldsForCalendar: mockCalendarFields,
+    navigateToDateFieldSettings: jest.fn(),
+  }),
+}));
+jest.mock('@/ui/utilities/state/jotai/hooks/useAtomComponentState', () => ({
+  useAtomComponentState: () => ['date-field', mockSetCalendarField],
+}));
+jest.mock('twenty-ui/icon', () => ({
+  ...jest.requireActual('twenty-ui/icon'),
+  useIcons: () => ({ getIcon: () => () => null }),
+}));
 
 const mockCloseDropdown = jest.fn();
 const mockResetContent = jest.fn();
@@ -14,6 +38,7 @@ jest.mock(
   '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown',
   () => ({
     useObjectOptionsDropdown: jest.fn(() => ({
+      objectMetadataItem: { fields: mockCalendarFields },
       closeDropdown: mockCloseDropdown,
       resetContent: mockResetContent,
     })),
@@ -72,6 +97,7 @@ jest.mock('twenty-ui/data-display', () => ({
   Pill: ({ label }: { label: string }) => <span>{label}</span>,
 }));
 jest.mock('twenty-ui/navigation', () => ({
+  MenuItem: ({ text }: { text: string }) => <span>{text}</span>,
   MenuItemSelect: ({
     contextualText,
     disabled,
@@ -143,5 +169,59 @@ describe('ObjectOptionsDropdownCalendarViewContent', () => {
 
     expect(mockSetRecordIndexCalendarLayout).not.toHaveBeenCalled();
     expect(mockUpdateCurrentView).not.toHaveBeenCalled();
+  });
+});
+
+describe('ObjectOptionsDropdownCalendarFieldsContent', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockUseIsFeatureEnabled.mockReturnValue(true);
+    mockUpdateCurrentView.mockResolvedValue(undefined);
+  });
+
+  it.each(mockCalendarFields)(
+    'selects $label directly and clears legacy end-field configuration',
+    async ({ id, label }) => {
+      const user = userEvent.setup();
+      render(
+        <I18nProvider i18n={i18n}>
+          <ObjectOptionsDropdownCalendarFieldsContent />
+        </I18nProvider>,
+      );
+
+      expect(
+        screen.getByRole('button', { name: 'Due date' }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Created at' }),
+      ).toBeInTheDocument();
+      expect(screen.queryByText('End date field')).not.toBeInTheDocument();
+      await user.click(screen.getByRole('button', { name: label }));
+
+      expect(mockSetCalendarField).toHaveBeenCalledWith(id);
+      expect(mockUpdateCurrentView).toHaveBeenCalledWith({
+        calendarFieldMetadataId: id,
+        calendarEndFieldMetadataId: null,
+      });
+      expect(mockCloseDropdown).toHaveBeenCalled();
+    },
+  );
+
+  it('searches Date and DateTime fields in the same picker', async () => {
+    const user = userEvent.setup();
+    render(
+      <I18nProvider i18n={i18n}>
+        <ObjectOptionsDropdownCalendarFieldsContent />
+      </I18nProvider>,
+    );
+
+    await user.type(screen.getByPlaceholderText('Search fields'), 'created');
+
+    expect(
+      screen.queryByRole('button', { name: 'Due date' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Created at' }),
+    ).toBeInTheDocument();
   });
 });

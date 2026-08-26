@@ -9,11 +9,11 @@ export const getSupportedRecordCalendarLayout = ({
   calendarLayout,
   isCalendarWeekViewEnabled,
 }: GetSupportedRecordCalendarLayoutArgs) => {
-  const isTimeGridLayout =
+  const isWeekOrDayLayout =
     calendarLayout === ViewCalendarLayout.DAY ||
     calendarLayout === ViewCalendarLayout.WEEK;
 
-  return isCalendarWeekViewEnabled && isTimeGridLayout
+  return isCalendarWeekViewEnabled && isWeekOrDayLayout
     ? calendarLayout
     : ViewCalendarLayout.MONTH;
 };
