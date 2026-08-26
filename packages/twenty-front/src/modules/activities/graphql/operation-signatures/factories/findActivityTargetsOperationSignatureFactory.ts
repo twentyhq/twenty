@@ -2,7 +2,7 @@ import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { type RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
-import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
+import { getObjectMorphJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getObjectMorphJunctionConfig';
 import { isDefined } from 'twenty-shared/utils';
 
 type FindActivityTargetsOperationSignatureFactory = {
@@ -25,8 +25,8 @@ export const findActivityTargetsOperationSignatureFactory: RecordGqlOperationSig
     throw new Error('Cannot resolve activity junction metadata');
   }
 
-  const junctionConfig = getActivityTargetJunctionConfig({
-    activityObjectMetadata: activityObjectMetadataItem,
+  const junctionConfig = getObjectMorphJunctionConfig({
+    objectMetadata: activityObjectMetadataItem,
     objectMetadataItems,
   });
 
@@ -35,10 +35,10 @@ export const findActivityTargetsOperationSignatureFactory: RecordGqlOperationSig
   }
 
   const {
-    activityTargetField,
+    junctionField,
     junctionObjectMetadata,
-    activityRelationField,
-    activityJoinColumnName,
+    sourceField,
+    sourceJoinColumnName,
   } = junctionConfig;
 
   const activityFieldKeys = generateDepthRecordGqlFieldsFromObject({
@@ -55,10 +55,10 @@ export const findActivityTargetsOperationSignatureFactory: RecordGqlOperationSig
       __typename: true,
       createdAt: true,
       updatedAt: true,
-      [activityJoinColumnName]: true,
-      [activityRelationField.name]: {
+      [sourceJoinColumnName]: true,
+      [sourceField.name]: {
         ...activityFieldKeys,
-        [activityTargetField.name]: generateDepthRecordGqlFieldsFromObject({
+        [junctionField.name]: generateDepthRecordGqlFieldsFromObject({
           objectMetadataItems,
           objectMetadataItem: junctionObjectMetadata,
           depth: 1,

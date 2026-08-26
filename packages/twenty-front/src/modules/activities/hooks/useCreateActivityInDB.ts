@@ -14,7 +14,7 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
 import { createOneActivityOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/createOneActivityOperationSignatureFactory';
-import { useActivityTargetJunctionConfig } from '@/activities/hooks/useActivityTargetJunctionConfig';
+import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
 import { type ActivityTarget } from '@/activities/types/ActivityTarget';
 import { getActivityTargetsFromRecord } from '@/activities/utils/getActivityTargetRecordValues';
 import { capitalize, isDefined } from 'twenty-shared/utils';
@@ -44,14 +44,14 @@ export const useCreateActivityInDB = ({
       objectNameSingular: activityObjectNameSingular,
     });
 
-  const activityTargetJunctionConfig = useActivityTargetJunctionConfig({
-    activityObjectNameSingular,
+  const morphJunctionConfig = useObjectMorphJunctionConfig({
+    objectNameSingular: activityObjectNameSingular,
   });
 
   const { createManyRecords: createManyActivityTargets } =
     useCreateManyRecords<ActivityTarget>({
       objectNameSingular:
-        activityTargetJunctionConfig?.junctionObjectMetadata.nameSingular ??
+        morphJunctionConfig?.junctionObjectMetadata.nameSingular ??
         activityObjectNameSingular,
       shouldMatchRootQueryFilter: true,
     });
@@ -66,16 +66,15 @@ export const useCreateActivityInDB = ({
         updatedAt: new Date().toISOString(),
       });
 
-      if (!isDefined(activityTargetJunctionConfig)) {
+      if (!isDefined(morphJunctionConfig)) {
         throw new Error('Activity target relation metadata is missing');
       }
 
-      const { junctionObjectMetadata, activityTargetField } =
-        activityTargetJunctionConfig;
+      const { junctionObjectMetadata, junctionField } = morphJunctionConfig;
 
       const activityTargetsToCreate = getActivityTargetsFromRecord({
         record: activityToCreate,
-        fieldName: activityTargetField.name,
+        fieldName: junctionField.name,
       });
 
       if (isNonEmptyArray(activityTargetsToCreate)) {
@@ -100,14 +99,14 @@ export const useCreateActivityInDB = ({
         recordId: createdActivity.id,
         cache,
         fieldModifiers: {
-          [activityTargetField.name]: () => activityTargetsConnection,
+          [junctionField.name]: () => activityTargetsConnection,
         },
         objectMetadataItem: objectMetadataItemActivity,
       });
 
       store.set(recordStoreFamilyState.atomFamily(createdActivity.id), {
         ...createdActivity,
-        [activityTargetField.name]: activityTargetsToCreate,
+        [junctionField.name]: activityTargetsToCreate,
       });
     },
     [
@@ -115,7 +114,7 @@ export const useCreateActivityInDB = ({
       cache,
       createManyActivityTargets,
       createOneActivity,
-      activityTargetJunctionConfig,
+      morphJunctionConfig,
       objectMetadataItemActivity,
       objectMetadataItems,
     ],

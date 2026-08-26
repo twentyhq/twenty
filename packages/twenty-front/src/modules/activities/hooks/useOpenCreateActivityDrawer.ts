@@ -14,7 +14,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
-import { useActivityTargetJunctionConfig } from '@/activities/hooks/useActivityTargetJunctionConfig';
+import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useOpenCreateActivityDrawer = ({
@@ -32,13 +32,13 @@ export const useOpenCreateActivityDrawer = ({
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const activityTargetJunctionConfig = useActivityTargetJunctionConfig({
-    activityObjectNameSingular,
+  const morphJunctionConfig = useObjectMorphJunctionConfig({
+    objectNameSingular: activityObjectNameSingular,
   });
 
   const { createManyRecords: createActivityTargets } = useCreateManyRecords({
     objectNameSingular:
-      activityTargetJunctionConfig?.junctionObjectMetadata.nameSingular ??
+      morphJunctionConfig?.junctionObjectMetadata.nameSingular ??
       activityObjectNameSingular,
     shouldMatchRootQueryFilter: true,
   });
@@ -77,12 +77,12 @@ export const useOpenCreateActivityDrawer = ({
     });
 
     if (targetableObjects.length > 0) {
-      if (!isDefined(activityTargetJunctionConfig)) {
+      if (!isDefined(morphJunctionConfig)) {
         throw new Error('Activity target junction metadata is invalid');
       }
 
-      const { junctionObjectMetadata, activityJoinColumnName } =
-        activityTargetJunctionConfig;
+      const { junctionObjectMetadata, sourceJoinColumnName } =
+        morphJunctionConfig;
 
       const recordsToCreate = targetableObjects.map((targetableObject) => {
         const targetObjectMetadata = objectMetadataItems.find(
@@ -102,7 +102,7 @@ export const useOpenCreateActivityDrawer = ({
         }
 
         return {
-          [activityJoinColumnName]: activity.id,
+          [sourceJoinColumnName]: activity.id,
           [targetFieldInfo.joinColumnName]: targetableObject.id,
         };
       });

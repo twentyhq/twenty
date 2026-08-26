@@ -4,7 +4,7 @@ import {
 } from 'twenty-shared/types';
 
 import { findActivityTargetsOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/findActivityTargetsOperationSignatureFactory';
-import { useActivityTargetJunctionConfig } from '@/activities/hooks/useActivityTargetJunctionConfig';
+import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { type ActivityTarget } from '@/activities/types/ActivityTarget';
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
@@ -44,16 +44,14 @@ export const useActivityTargetsForTargetableObjects = ({
       objectMetadataItems,
     });
 
-  const activityTargetJunctionConfig = useActivityTargetJunctionConfig({
-    activityObjectNameSingular: objectNameSingular,
-  });
+  const morphJunctionConfig = useObjectMorphJunctionConfig({ objectNameSingular });
 
-  if (!isDefined(activityTargetJunctionConfig)) {
+  if (!isDefined(morphJunctionConfig)) {
     throw new Error('Activity target junction metadata is missing');
   }
 
-  const { junctionObjectMetadata, activityRelationField } =
-    activityTargetJunctionConfig;
+  const { junctionObjectMetadata, sourceField } =
+    morphJunctionConfig;
 
   const activityTargetsFilter = getActivityTargetsFilter({
     targetableObjects,
@@ -77,7 +75,7 @@ export const useActivityTargetsForTargetableObjects = ({
     filter: activityTargetsFilter,
     recordGqlFields: FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.fields,
     onCompleted: (records) =>
-      onCompleted?.(records, activityRelationField.name),
+      onCompleted?.(records, sourceField.name),
     orderBy: activityTargetsOrderByVariables,
     limit,
   });
@@ -88,6 +86,6 @@ export const useActivityTargetsForTargetableObjects = ({
     totalCountActivityTargets: totalCountActivityTargets ?? 0,
     fetchMoreActivityTargets,
     hasNextPage,
-    activityRelationFieldName: activityRelationField.name,
+    activityRelationFieldName: sourceField.name,
   };
 };

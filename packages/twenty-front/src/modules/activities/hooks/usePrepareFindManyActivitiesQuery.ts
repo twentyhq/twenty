@@ -10,7 +10,7 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { useActivityTargetJunctionConfig } from '@/activities/hooks/useActivityTargetJunctionConfig';
+import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
 import {
   getActivityIdFromTarget,
   getActivityTargetsFromRecord,
@@ -37,8 +37,8 @@ export const usePrepareFindManyActivitiesQuery = ({
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const activityTargetJunctionConfig = useActivityTargetJunctionConfig({
-    activityObjectNameSingular,
+  const morphJunctionConfig = useObjectMorphJunctionConfig({
+    objectNameSingular: activityObjectNameSingular,
   });
 
   const { upsertFindManyRecordsQueryInCache: upsertFindManyActivitiesInCache } =
@@ -75,22 +75,19 @@ export const usePrepareFindManyActivitiesQuery = ({
       objectPermissionsByObjectMetadataId,
     });
 
-    if (!isDefined(activityTargetJunctionConfig)) {
+    if (!isDefined(morphJunctionConfig)) {
       throw new Error('Activity target junction metadata is invalid');
     }
 
-    const {
-      junctionObjectMetadata,
-      activityRelationField,
-      activityJoinColumnName,
-    } = activityTargetJunctionConfig;
+    const { junctionObjectMetadata, sourceField, sourceJoinColumnName } =
+      morphJunctionConfig;
 
-    const activityTargetFieldName = targetableObjectMetadataItem.fields.find(
+    const junctionFieldName = targetableObjectMetadataItem.fields.find(
       (field) =>
         field.relation?.targetObjectMetadata.id === junctionObjectMetadata.id,
     )?.name;
 
-    if (!isDefined(activityTargetFieldName)) {
+    if (!isDefined(junctionFieldName)) {
       throw new Error(
         `Cannot find activity target relation on ${targetableObject.targetObjectNameSingular}`,
       );
@@ -98,7 +95,7 @@ export const usePrepareFindManyActivitiesQuery = ({
 
     const activityTargets = getActivityTargetsFromRecord({
       record: targetableObjectRecord ?? {},
-      fieldName: activityTargetFieldName,
+      fieldName: junctionFieldName,
     });
 
     const activityIds = [
@@ -107,8 +104,8 @@ export const usePrepareFindManyActivitiesQuery = ({
           .map((activityTarget) =>
             getActivityIdFromTarget({
               activityTarget,
-              relationFieldName: activityRelationField.name,
-              relationFieldIdName: activityJoinColumnName,
+              relationFieldName: sourceField.name,
+              relationFieldIdName: sourceJoinColumnName,
             }),
           )
           .filter(isDefined),
