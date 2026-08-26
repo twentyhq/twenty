@@ -1,6 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { FilesFieldModule } from 'src/engine/core-modules/file/files-field/files-field.module';
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { ActionToolProvider } from 'src/engine/core-modules/tool-provider/providers/action-tool.provider';
@@ -13,6 +14,7 @@ import { RoleToolProvider } from 'src/engine/core-modules/tool-provider/provider
 import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
 import { WebhookToolProvider } from 'src/engine/core-modules/tool-provider/providers/webhook-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
+import { AgentChatFilesFieldResolverService } from 'src/engine/core-modules/tool-provider/services/agent-chat-files-field-resolver.service';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -52,6 +54,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
   imports: [
     ToolModule,
     RecordCrudModule,
+    FilesFieldModule,
     AiModelsModule,
     forwardRef(() => AiAgentExecutionModule),
     ObjectMetadataModule,
@@ -74,6 +77,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
   providers: [
     ToolIndexResolver,
     ToolExecutorService,
+    AgentChatFilesFieldResolverService,
     ActionToolProvider,
     DashboardToolProvider,
     DatabaseToolProvider,

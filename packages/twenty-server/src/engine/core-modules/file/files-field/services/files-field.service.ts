@@ -7,7 +7,7 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -109,6 +109,42 @@ export class FilesFieldService {
         fileFolder: FileFolder.FilesField,
       }),
     };
+  }
+
+  async prepareAgentChatFilesForFilesField({
+    fileIds,
+    workspaceId,
+    fieldMetadataId,
+  }: {
+    fileIds: string[];
+    workspaceId: string;
+    fieldMetadataId: string;
+  }): Promise<Map<string, string>> {
+    const fileIdSubstitutions = new Map<string, string>();
+
+    if (fileIds.length === 0) {
+      return fileIdSubstitutions;
+    }
+
+    const files = await this.fileRepository.find(workspaceId, {
+      where: { id: In([...new Set(fileIds)]) },
+    });
+
+    const agentChatFileIds = files
+      .filter((file) => file.path.startsWith(`${FileFolder.AgentChat}/`))
+      .map((file) => file.id);
+
+    for (const fileId of agentChatFileIds) {
+      const copiedFile = await this.copyAgentChatFileIntoFilesField({
+        fileId,
+        workspaceId,
+        fieldMetadataId,
+      });
+
+      fileIdSubstitutions.set(fileId, copiedFile.id);
+    }
+
+    return fileIdSubstitutions;
   }
 
   async copyAgentChatFileIntoFilesField({

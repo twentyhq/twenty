@@ -22,7 +22,7 @@ The user has uploaded the following files in this conversation:
 ${uploadedFilesJson}
 \`\`\`
 
-To store an uploaded file on a record, call \`prepare_uploaded_file\` first, then use the fieldValue it returns when creating or updating the record. A record cannot reference an uploaded fileId directly. For example, to attach a document to a person: call \`prepare_uploaded_file\` for the \`file\` field of the \`attachment\` object, then create an \`attachment\` record with that fieldValue and \`targetPersonId\`.`,
+To store an uploaded file on a record, put it directly in a files-type field value when creating or updating a single record: set the field to an array of \`{ "fileId": "<uploaded fileId>", "label": "<filename>" }\` entries. For example, to attach a document to a person, create an \`attachment\` record with \`file\` set that way and \`targetPersonId\` set. The file is copied automatically and the stored record references the copy's fileId. When updating an existing record, append the new entry to the field's current value: files missing from the new value are detached from the record.`,
   ];
 
   if (isNonEmptyArray(codeInterpreterFiles)) {

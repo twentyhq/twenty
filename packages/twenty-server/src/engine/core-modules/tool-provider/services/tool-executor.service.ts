@@ -21,6 +21,7 @@ import { UpdateRecordService } from 'src/engine/core-modules/record-crud/service
 import { UpsertManyRecordsService } from 'src/engine/core-modules/record-crud/services/upsert-many-records.service';
 import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
+import { AgentChatFilesFieldResolverService } from 'src/engine/core-modules/tool-provider/services/agent-chat-files-field-resolver.service';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolExecutionRef } from 'src/engine/core-modules/tool-provider/types/tool-execution-ref.type';
@@ -49,6 +50,7 @@ export class ToolExecutorService {
     private readonly deleteRecordService: DeleteRecordService,
     private readonly deleteManyRecordsService: DeleteManyRecordsService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
+    private readonly agentChatFilesFieldResolverService: AgentChatFilesFieldResolverService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
@@ -143,25 +145,45 @@ export class ToolExecutorService {
         });
       }
 
-      case 'create_one':
-        return this.createRecordService.execute({
+      case 'create_one': {
+        const { records, notes } =
+          await this.agentChatFilesFieldResolverService.resolveRecordsInput({
+            objectNameSingular: ref.objectNameSingular,
+            records: [args],
+            workspaceId: context.workspaceId,
+          });
+
+        const output = await this.createRecordService.execute({
           objectName: ref.objectNameSingular,
-          objectRecord: args,
+          objectRecord: records[0],
           authContext,
           rolePermissionConfig: context.rolePermissionConfig,
           createdBy: context.actorContext,
           slimResponse: true,
         });
 
-      case 'create_many':
-        return this.createManyRecordsService.execute({
+        return this.appendAgentChatFileNotes(output, notes);
+      }
+
+      case 'create_many': {
+        const { records, notes } =
+          await this.agentChatFilesFieldResolverService.resolveRecordsInput({
+            objectNameSingular: ref.objectNameSingular,
+            records: args.records as Record<string, unknown>[],
+            workspaceId: context.workspaceId,
+          });
+
+        const output = await this.createManyRecordsService.execute({
           objectName: ref.objectNameSingular,
-          objectRecords: args.records as Record<string, unknown>[],
+          objectRecords: records,
           authContext,
           rolePermissionConfig: context.rolePermissionConfig,
           createdBy: context.actorContext,
           slimResponse: true,
         });
+
+        return this.appendAgentChatFileNotes(output, notes);
+      }
 
       case 'update_one': {
         const { id, ...fields } = args;
@@ -169,14 +191,23 @@ export class ToolExecutorService {
           Object.entries(fields).filter(([, value]) => value !== undefined),
         );
 
-        return this.updateRecordService.execute({
+        const { records, notes } =
+          await this.agentChatFilesFieldResolverService.resolveRecordsInput({
+            objectNameSingular: ref.objectNameSingular,
+            records: [objectRecord],
+            workspaceId: context.workspaceId,
+          });
+
+        const output = await this.updateRecordService.execute({
           objectName: ref.objectNameSingular,
           objectRecordId: id as string,
-          objectRecord,
+          objectRecord: records[0],
           authContext,
           rolePermissionConfig: context.rolePermissionConfig,
           slimResponse: true,
         });
+
+        return this.appendAgentChatFileNotes(output, notes);
       }
 
       case 'update_many':
@@ -189,15 +220,25 @@ export class ToolExecutorService {
           slimResponse: true,
         });
 
-      case 'upsert_many':
-        return this.upsertManyRecordsService.execute({
+      case 'upsert_many': {
+        const { records, notes } =
+          await this.agentChatFilesFieldResolverService.resolveRecordsInput({
+            objectNameSingular: ref.objectNameSingular,
+            records: args.records as Record<string, unknown>[],
+            workspaceId: context.workspaceId,
+          });
+
+        const output = await this.upsertManyRecordsService.execute({
           objectName: ref.objectNameSingular,
-          objectRecords: args.records as Record<string, unknown>[],
+          objectRecords: records,
           authContext,
           rolePermissionConfig: context.rolePermissionConfig,
           createdBy: context.actorContext,
           slimResponse: true,
         });
+
+        return this.appendAgentChatFileNotes(output, notes);
+      }
 
       case 'delete_one':
         return this.deleteRecordService.execute({
@@ -241,6 +282,20 @@ export class ToolExecutorService {
         });
       }
     }
+  }
+
+  private appendAgentChatFileNotes(
+    output: ToolOutput,
+    notes: string[],
+  ): ToolOutput {
+    if (!output.success || notes.length === 0) {
+      return output;
+    }
+
+    return {
+      ...output,
+      message: `${output.message} ${notes.join(' ')}`,
+    };
   }
 
   private async dispatchStaticTool(
