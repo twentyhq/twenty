@@ -39,6 +39,38 @@ export class ApplicationVersionValidationService {
   async validateServerCompatibility(
     requiredServerVersion: string | undefined,
   ): Promise<VersionValidationResult> {
+    const [result] = await this.validateManyServerCompatibilities([
+      requiredServerVersion,
+    ]);
+
+    return result;
+  }
+
+  // Fetches the instance completed version once for the whole batch.
+  async validateManyServerCompatibilities(
+    requiredServerVersions: (string | null | undefined)[],
+  ): Promise<VersionValidationResult[]> {
+    const hasAnyRequiredVersion = requiredServerVersions.some(isDefined);
+
+    const instanceCompletedVersion = hasAnyRequiredVersion
+      ? await this.upgradeStatusService.getInstanceCompletedVersion()
+      : null;
+
+    return requiredServerVersions.map((requiredServerVersion) =>
+      this.validateServerCompatibilityAgainstInstanceVersion({
+        requiredServerVersion: requiredServerVersion ?? undefined,
+        instanceCompletedVersion,
+      }),
+    );
+  }
+
+  private validateServerCompatibilityAgainstInstanceVersion({
+    requiredServerVersion,
+    instanceCompletedVersion,
+  }: {
+    requiredServerVersion: string | undefined;
+    instanceCompletedVersion: string | null;
+  }): VersionValidationResult {
     if (!isDefined(requiredServerVersion)) {
       return { compatible: true };
     }
@@ -50,9 +82,6 @@ export class ApplicationVersionValidationService {
         message: `App manifest declares invalid engines.twenty value "${requiredServerVersion}". Must be a valid semver range.`,
       };
     }
-
-    const instanceCompletedVersion =
-      await this.upgradeStatusService.getInstanceCompletedVersion();
 
     return this.validateVersionAgainstRange({
       version: instanceCompletedVersion,

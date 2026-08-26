@@ -10,5 +10,7 @@ export const MARKETPLACE_APP_FRAGMENT = gql`
     logoUrl
     sourcePackage
     isVetted
+    requiredServerVersionRange
+    isServerVersionCompatible
   }
 `;

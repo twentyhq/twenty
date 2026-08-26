@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { CoreEntityCache } from 'src/engine/core-entity-cache/decorators/core-entity-cache.decorator';
 import { CoreEntityCacheProvider } from 'src/engine/core-entity-cache/interfaces/core-entity-cache-provider.service';
-import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
+import { type MarketplaceCatalogCachedApp } from 'src/engine/core-modules/application/application-marketplace/types/marketplace-catalog-cached-app.type';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import {
   type ApplicationRegistrationCatalogCard,
@@ -12,7 +12,7 @@ import {
 @Injectable()
 @CoreEntityCache('marketplaceCatalog')
 export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvider<
-  Record<string, MarketplaceAppDTO>
+  Record<string, MarketplaceCatalogCachedApp>
 > {
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
@@ -21,7 +21,9 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
     super();
   }
 
-  async computeForCache(): Promise<Record<string, MarketplaceAppDTO>> {
+  async computeForCache(): Promise<
+    Record<string, MarketplaceCatalogCachedApp>
+  > {
     const registrations =
       await this.applicationRegistrationService.findManyListedCatalogCards();
 
@@ -36,10 +38,10 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
 
     return registrations
       .filter((registration) => configuredStatuses.get(registration.id) ?? true)
-      .reduce<Record<string, MarketplaceAppDTO>>(
+      .reduce<Record<string, MarketplaceCatalogCachedApp>>(
         (accumulator, registration) => {
           accumulator[registration.universalIdentifier] =
-            this.toMarketplaceAppDTO(registration);
+            this.toMarketplaceCatalogCachedApp(registration);
 
           return accumulator;
         },
@@ -47,9 +49,9 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
       );
   }
 
-  private toMarketplaceAppDTO(
+  private toMarketplaceCatalogCachedApp(
     catalogCard: ApplicationRegistrationCatalogCard,
-  ): MarketplaceAppDTO {
+  ): MarketplaceCatalogCachedApp {
     return {
       id: catalogCard.universalIdentifier,
       name: catalogCard.name,
@@ -59,6 +61,8 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
       logoUrl: catalogCard.logoUrl ?? undefined,
       sourcePackage: catalogCard.sourcePackage ?? undefined,
       isVetted: catalogCard.isVetted,
+      requiredServerVersionRange:
+        catalogCard.requiredServerVersionRange ?? undefined,
     };
   }
 }

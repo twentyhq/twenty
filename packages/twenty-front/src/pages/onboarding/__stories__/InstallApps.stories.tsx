@@ -32,6 +32,8 @@ const buildMarketplaceApp = (id: string, name: string, isVetted = true) => ({
   logo: null,
   sourcePackage: name,
   isVetted,
+  requiredServerVersionRange: null,
+  isServerVersionCompatible: true,
 });
 
 const currentUserHandler = graphql.query(

@@ -37,6 +37,15 @@ export class MarketplaceAppDetailDTO {
   @Field({ nullable: true })
   latestAvailableVersion?: string;
 
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  requiredServerVersionRange?: string;
+
+  @IsBoolean()
+  @Field(() => Boolean)
+  isServerVersionCompatible: boolean;
+
   @IsBoolean()
   @Field(() => Boolean)
   isListed: boolean;

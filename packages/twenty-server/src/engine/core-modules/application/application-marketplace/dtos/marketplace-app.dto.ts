@@ -46,4 +46,13 @@ export class MarketplaceAppDTO {
   @IsBoolean()
   @Field(() => Boolean)
   isVetted: boolean;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  requiredServerVersionRange?: string;
+
+  @IsBoolean()
+  @Field(() => Boolean)
+  isServerVersionCompatible: boolean;
 }

@@ -15,12 +15,14 @@ import {
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 
 @Injectable()
 export class MarketplaceQueryService {
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
+    private readonly applicationVersionValidationService: ApplicationVersionValidationService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
@@ -37,7 +39,7 @@ export class MarketplaceQueryService {
         MARKETPLACE_CATALOG_CACHE_ENTITY_ID,
       )) ?? {};
 
-    const apps = isNonEmptyArray(universalIdentifiers)
+    const cachedApps = isNonEmptyArray(universalIdentifiers)
       ? universalIdentifiers
           .map(
             (universalIdentifier) =>
@@ -45,6 +47,16 @@ export class MarketplaceQueryService {
           )
           .filter(isDefined)
       : Object.values(appsByUniversalIdentifier);
+
+    const compatibilityResults =
+      await this.applicationVersionValidationService.validateManyServerCompatibilities(
+        cachedApps.map((app) => app.requiredServerVersionRange),
+      );
+
+    const apps = cachedApps.map((app, index) => ({
+      ...app,
+      isServerVersionCompatible: compatibilityResults[index].compatible,
+    }));
 
     if (!isDefined(isVetted)) {
       return apps;
@@ -80,12 +92,21 @@ export class MarketplaceQueryService {
     return registration;
   }
 
-  private toMarketplaceAppDetailDTO(
+  private async toMarketplaceAppDetailDTO(
     registration: ApplicationRegistrationEntity,
-  ): MarketplaceAppDetailDTO {
+  ): Promise<MarketplaceAppDetailDTO> {
     const galleryImageUrls =
       this.applicationRegistrationAssetUrlService.buildGalleryImageUrls(
         registration,
+      );
+
+    const requiredServerVersionRange =
+      registration.manifest?.application?.requiredServerVersionRange ??
+      undefined;
+
+    const compatibilityResult =
+      await this.applicationVersionValidationService.validateServerCompatibility(
+        requiredServerVersionRange,
       );
 
     return {
@@ -95,6 +116,8 @@ export class MarketplaceQueryService {
       sourceType: registration.sourceType,
       sourcePackage: registration.sourcePackage ?? undefined,
       latestAvailableVersion: registration.latestAvailableVersion ?? undefined,
+      requiredServerVersionRange,
+      isServerVersionCompatible: compatibilityResult.compatible,
       isListed: registration.isListed,
       isVetted: registration.isVetted,
       description:

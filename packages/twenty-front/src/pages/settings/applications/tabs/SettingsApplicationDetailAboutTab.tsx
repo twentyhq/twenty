@@ -4,10 +4,13 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { Tag } from 'twenty-ui/data-display';
 import { IconCheck, IconDownload, IconTrash, IconUpload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type ContentEntry,
@@ -17,6 +20,8 @@ import {
 import { SettingsApplicationScreenshotGallery } from '@/settings/applications/components/SettingsApplicationScreenshotGallery';
 
 const UNINSTALL_APPLICATION_MODAL_ID = 'uninstall-application-modal';
+const INSTALL_INCOMPATIBLE_TOOLTIP_ANCHOR_ID =
+  'install-incompatible-tooltip-anchor';
 
 type SettingsApplicationDetailAboutTabProps = {
   displayName: string;
@@ -30,6 +35,8 @@ type SettingsApplicationDetailAboutTabProps = {
   latestAvailableVersion?: string;
   developerLinks?: DeveloperLinks;
   isInstalled: boolean;
+  isServerVersionCompatible?: boolean;
+  requiredServerVersionRange?: string;
   canInstallMarketplaceApps?: boolean;
   onInstall?: () => void;
   isInstalling?: boolean;
@@ -44,6 +51,13 @@ type SettingsApplicationDetailAboutTabProps = {
 const StyledContentContainer = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[4]};
+`;
+
+const StyledIncompatibleInstallContainer = styled.div`
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledMainContent = styled.div`
@@ -106,6 +120,8 @@ export const SettingsApplicationDetailAboutTab = ({
   latestAvailableVersion,
   developerLinks,
   isInstalled,
+  isServerVersionCompatible,
+  requiredServerVersionRange,
   canInstallMarketplaceApps,
   onInstall,
   isInstalling,
@@ -131,6 +147,41 @@ export const SettingsApplicationDetailAboutTab = ({
     }
 
     if (!isInstalled) {
+      if (isServerVersionCompatible === false) {
+        const incompatibleTagText = isNonEmptyString(requiredServerVersionRange)
+          ? t`Requires Twenty ${requiredServerVersionRange}`
+          : t`Incompatible version`;
+
+        const incompatibleTooltipContent = isNonEmptyString(
+          requiredServerVersionRange,
+        )
+          ? t`This application cannot be installed on this instance: it requires Twenty ${requiredServerVersionRange} and this instance's version is lower.`
+          : t`This application cannot be installed on this instance: the instance version is incompatible.`;
+
+        return (
+          <StyledIncompatibleInstallContainer>
+            <div id={INSTALL_INCOMPATIBLE_TOOLTIP_ANCHOR_ID}>
+              <Button
+                Icon={IconDownload}
+                title={t`Install`}
+                variant={'primary'}
+                accent={'blue'}
+                disabled={true}
+              />
+            </div>
+            <Tag color="orange" text={incompatibleTagText} />
+            <AppTooltip
+              anchorSelect={`#${INSTALL_INCOMPATIBLE_TOOLTIP_ANCHOR_ID}`}
+              content={incompatibleTooltipContent}
+              noArrow
+              place="bottom"
+              positionStrategy="fixed"
+              delay={TooltipDelay.shortDelay}
+            />
+          </StyledIncompatibleInstallContainer>
+        );
+      }
+
       return (
         <Button
           Icon={IconDownload}

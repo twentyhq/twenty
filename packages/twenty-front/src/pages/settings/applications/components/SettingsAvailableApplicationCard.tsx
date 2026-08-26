@@ -5,10 +5,11 @@ import {
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar, Tag } from 'twenty-ui/data-display';
 import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type MarketplaceApp } from '~/generated-metadata/graphql';
@@ -25,6 +26,12 @@ const StyledLinkContainer = styled.div`
     height: 100%;
     text-decoration: none;
   }
+`;
+
+const StyledTitleRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledDescription = styled.div`
@@ -51,6 +58,12 @@ export const SettingsAvailableApplicationCard = ({
     application.description,
   );
 
+  const incompatibleTagText = isNonEmptyString(
+    application.requiredServerVersionRange,
+  )
+    ? t`Requires Twenty ${application.requiredServerVersionRange}`
+    : t`Incompatible version`;
+
   return (
     <StyledLinkContainer>
       <Link
@@ -68,9 +81,14 @@ export const SettingsAvailableApplicationCard = ({
               type="squared"
             />
             <div>
-              <StyledSettingsCardTitle>
-                {application.name}
-              </StyledSettingsCardTitle>
+              <StyledTitleRow>
+                <StyledSettingsCardTitle>
+                  {application.name}
+                </StyledSettingsCardTitle>
+                {!application.isServerVersionCompatible && (
+                  <Tag color="orange" text={incompatibleTagText} />
+                )}
+              </StyledTitleRow>
               <StyledDescription>{descriptionSummary}</StyledDescription>
               <StyledSettingsCardThirdLine>
                 {t`by {author}`} {application.author}

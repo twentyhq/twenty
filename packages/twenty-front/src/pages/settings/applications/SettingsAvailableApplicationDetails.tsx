@@ -240,6 +240,10 @@ export const SettingsAvailableApplicationDetails = () => {
               sourcePackageUrl,
             }}
             isInstalled={isAlreadyInstalled}
+            isServerVersionCompatible={detail.isServerVersionCompatible}
+            requiredServerVersionRange={
+              detail.requiredServerVersionRange ?? undefined
+            }
             canInstallMarketplaceApps={canInstallMarketplaceApps}
             onInstall={requestInstall}
             isInstalling={isInstalling}
