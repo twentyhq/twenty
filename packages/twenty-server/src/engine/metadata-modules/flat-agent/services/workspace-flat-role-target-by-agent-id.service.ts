@@ -1,22 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
-import { NonNullableRequired } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
 import { FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
 import { fromRoleTargetEntityToFlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/utils/from-role-target-entity-to-flat-role-target.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
-import {
-  type CacheEntityFetchShape,
-  type CacheFetchableEntity,
-} from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
+import { type CacheEntityFetchShape } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 
+// grouping by agentId skips null foreign keys, so byAgentId carries exactly
+// the agent-linked role targets the previous agentId IS NOT NULL query fetched
 const FLAT_ROLE_TARGET_BY_AGENT_ID_ROWS_REQUIREMENT = {
-  roleTarget: true,
+  roleTarget: { columns: true, groupBy: ['agentId'] },
   application: ['id', 'universalIdentifier'],
   role: ['id', 'universalIdentifier'],
   agent: ['id', 'universalIdentifier'],
@@ -40,12 +36,6 @@ export class WorkspaceFlatRoleTargetByAgentIdService extends WorkspaceCacheProvi
       agent: agents,
     } = rows;
 
-    // the recompute context only filters on workspaceId: the previous
-    // agentId IS NOT NULL condition moved in memory
-    const roleTargetEntities = roleTargets.filter((roleTarget) =>
-      isDefined(roleTarget.agentId),
-    );
-
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
     const roleIdToUniversalIdentifierMap =
@@ -55,18 +45,17 @@ export class WorkspaceFlatRoleTargetByAgentIdService extends WorkspaceCacheProvi
 
     const flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps = {};
 
-    for (const roleTargetEntity of roleTargetEntities as Array<
-      Omit<CacheFetchableEntity<'roleTarget'>, 'agentId'> &
-        NonNullableRequired<Pick<CacheFetchableEntity<'roleTarget'>, 'agentId'>>
-    >) {
-      const flatRoleTarget = fromRoleTargetEntityToFlatRoleTarget({
-        entity: roleTargetEntity,
-        applicationIdToUniversalIdentifierMap,
-        roleIdToUniversalIdentifierMap,
-        agentIdToUniversalIdentifierMap,
-      });
+    for (const [agentId, agentRoleTargets] of roleTargets.byAgentId) {
+      // last one wins per agent, matching the previous overwrite order
+      const roleTargetEntity = agentRoleTargets[agentRoleTargets.length - 1];
 
-      flatRoleTargetByAgentIdMaps[roleTargetEntity.agentId] = flatRoleTarget;
+      flatRoleTargetByAgentIdMaps[agentId] =
+        fromRoleTargetEntityToFlatRoleTarget({
+          entity: roleTargetEntity,
+          applicationIdToUniversalIdentifierMap,
+          roleIdToUniversalIdentifierMap,
+          agentIdToUniversalIdentifierMap,
+        });
     }
 
     return flatRoleTargetByAgentIdMaps;
