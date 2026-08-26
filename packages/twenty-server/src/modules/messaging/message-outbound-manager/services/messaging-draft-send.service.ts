@@ -67,7 +67,7 @@ export class MessagingDraftSendService {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const messageChannelMessageAssociationRepository =
-          await this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+          this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
             'messageChannelMessageAssociation',
           );
 
@@ -135,7 +135,7 @@ export class MessagingDraftSendService {
       await this.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const messageChannelMessageAssociationRepository =
-            await this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+            this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
               'messageChannelMessageAssociation',
             );
 

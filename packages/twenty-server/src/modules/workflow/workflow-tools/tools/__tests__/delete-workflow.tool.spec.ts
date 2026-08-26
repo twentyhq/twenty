@@ -8,7 +8,7 @@ const buildTool = () => {
   };
   const workspaceOrmManager = {
     executeInWorkspaceContext: jest.fn((callback: () => unknown) => callback()),
-    getRepository: jest.fn().mockResolvedValue(workflowRepository),
+    getRepository: jest.fn().mockReturnValue(workflowRepository),
   };
   const workflowCommonService = {
     handleWorkflowSubEntities: jest.fn().mockResolvedValue(undefined),

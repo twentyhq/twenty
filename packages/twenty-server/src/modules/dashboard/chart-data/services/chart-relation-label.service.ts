@@ -203,7 +203,7 @@ export class ChartRelationLabelService {
             return [];
           }
 
-          const repository = await this.workspaceOrmManager.getRepository(
+          const repository = this.workspaceOrmManager.getRepository(
             targetFlatObjectMetadata.nameSingular,
             rolePermissionConfig,
           );

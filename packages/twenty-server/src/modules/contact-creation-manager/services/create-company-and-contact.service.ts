@@ -18,8 +18,8 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
-  TwentyORMException,
-  TwentyORMExceptionCode,
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -38,8 +38,8 @@ import { computeDisplayName } from 'src/utils/compute-display-name';
 import { isWorkDomain, isWorkEmail } from 'src/utils/is-work-email';
 
 const isDuplicateEntryError = (error: unknown) =>
-  error instanceof TwentyORMException &&
-  error.code === TwentyORMExceptionCode.DUPLICATE_ENTRY_DETECTED;
+  error instanceof TwentyOrmException &&
+  error.code === TwentyOrmExceptionCode.DUPLICATE_ENTRY_DETECTED;
 
 @Injectable()
 export class CreateCompanyAndPersonService {
@@ -70,18 +70,17 @@ export class CreateCompanyAndPersonService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const personRepository = await this.workspaceOrmManager.getRepository(
+      const personRepository = this.workspaceOrmManager.getRepository(
         PersonWorkspaceEntity,
         {
           shouldBypassPermissionChecks: true,
         },
       );
 
-      const workspaceMemberRepository =
-        await this.workspaceOrmManager.getRepository(
-          WorkspaceMemberWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
+      const workspaceMemberRepository = this.workspaceOrmManager.getRepository(
+        WorkspaceMemberWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
 
       const workspaceMembers = await workspaceMemberRepository.find();
 
@@ -202,7 +201,7 @@ export class CreateCompanyAndPersonService {
     const accountOwner =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workspaceMemberRepository =
-          await this.workspaceOrmManager.getRepository(
+          this.workspaceOrmManager.getRepository(
             WorkspaceMemberWorkspaceEntity,
             { shouldBypassPermissionChecks: true },
           );

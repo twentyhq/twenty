@@ -763,7 +763,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               .filter((field) => field.type === FieldMetadataType.RELATION)
               .map((field) => field.name);
 
-            const repository = await this.workspaceOrmManager.getRepository(
+            const repository = this.workspaceOrmManager.getRepository(
               field.settings.objectName,
               { shouldBypassPermissionChecks: true },
             );
@@ -922,7 +922,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowVersionRepository =
-        await this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
           'workflowVersion',
           { shouldBypassPermissionChecks: true },
         );
@@ -991,7 +991,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowVersionRepository =
-        await this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
           'workflowVersion',
           { shouldBypassPermissionChecks: true },
         );

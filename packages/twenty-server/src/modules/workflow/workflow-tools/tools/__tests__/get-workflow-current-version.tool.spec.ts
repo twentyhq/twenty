@@ -21,11 +21,11 @@ const buildDeps = ({
 }) => {
   const getRepositoryMock = jest.fn();
 
-  getRepositoryMock.mockResolvedValueOnce({
+  getRepositoryMock.mockReturnValueOnce({
     findOne: jest.fn().mockResolvedValue(workflow),
   });
 
-  getRepositoryMock.mockResolvedValueOnce({
+  getRepositoryMock.mockReturnValueOnce({
     find: jest.fn().mockResolvedValue(versions),
   });
 

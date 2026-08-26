@@ -83,7 +83,7 @@ export class RelatedPersonIdsService {
       }
 
       const repository =
-        await this.workspaceOrmManager.getRepository<RelationWalkRecord>(
+        this.workspaceOrmManager.getRepository<RelationWalkRecord>(
           hop.queryObjectNameSingular,
           { shouldBypassPermissionChecks: true },
         );

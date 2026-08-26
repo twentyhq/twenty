@@ -80,19 +80,19 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends Provisioned
     const isDryRun = options.dryRun ?? false;
 
     const connectedAccountWorkspaceRepository =
-      await this.workspaceOrmManager.getRepository<LegacyConnectedAccountWorkspaceEntity>('connectedAccount',
+      this.workspaceOrmManager.getRepository<LegacyConnectedAccountWorkspaceEntity>('connectedAccount',
       );
 
     const messageChannelWorkspaceRepository =
-      await this.workspaceOrmManager.getRepository<MessageChannelEntity>('messageChannel',
+      this.workspaceOrmManager.getRepository<MessageChannelEntity>('messageChannel',
       );
 
     const calendarChannelWorkspaceRepository =
-      await this.workspaceOrmManager.getRepository<CalendarChannelEntity>('calendarChannel',
+      this.workspaceOrmManager.getRepository<CalendarChannelEntity>('calendarChannel',
       );
 
     const messageFolderWorkspaceRepository =
-      await this.workspaceOrmManager.getRepository<MessageFolderEntity>('messageFolder',
+      this.workspaceOrmManager.getRepository<MessageFolderEntity>('messageFolder',
       );
 
     const connectedAccounts = await connectedAccountWorkspaceRepository.find();
@@ -365,7 +365,7 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends Provisioned
     workspaceId: string,
   ): Promise<Map<string, string>> {
     const workspaceMemberRepository =
-      await this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>('workspaceMember',
+      this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>('workspaceMember',
         { shouldBypassPermissionChecks: true },
       );
 

@@ -23,7 +23,7 @@ export class MessageCampaignStatisticsService {
     campaignId: string;
   }): Promise<void> {
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageRepository = await this.workspaceOrmManager.getRepository(
+      const messageRepository = this.workspaceOrmManager.getRepository(
         MessageWorkspaceEntity,
         { shouldBypassPermissionChecks: true },
       );
@@ -55,7 +55,7 @@ export class MessageCampaignStatisticsService {
           CAMPAIGN_MESSAGE_DELIVERY_STATUS.COMPLAINED,
         ) ?? 0;
 
-      const campaignRepository = await this.workspaceOrmManager.getRepository(
+      const campaignRepository = this.workspaceOrmManager.getRepository(
         MessageCampaignWorkspaceEntity,
         { shouldBypassPermissionChecks: true },
       );

@@ -1,4 +1,4 @@
-import { TwentyOrmV2Exception } from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 
 describe('compileNamedParameters', () => {
@@ -69,7 +69,7 @@ describe('compileNamedParameters', () => {
 
   it('should throw when a referenced parameter was not provided', () => {
     expect(() => compileNamedParameters('"id" = :missing', {})).toThrow(
-      TwentyOrmV2Exception,
+      TwentyOrmException,
     );
   });
 
@@ -93,12 +93,12 @@ describe('compileNamedParameters', () => {
   it('should throw when a spread parameter is not an array', () => {
     expect(() =>
       compileNamedParameters('"id" IN (:...ids)', { ids: 'a' }),
-    ).toThrow(TwentyOrmV2Exception);
+    ).toThrow(TwentyOrmException);
   });
 
   it('should throw on an unterminated string literal', () => {
     expect(() => compileNamedParameters(`"a" = 'unterminated`, {})).toThrow(
-      TwentyOrmV2Exception,
+      TwentyOrmException,
     );
   });
 

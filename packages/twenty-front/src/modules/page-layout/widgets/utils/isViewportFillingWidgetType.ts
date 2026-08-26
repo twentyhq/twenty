@@ -10,7 +10,6 @@ export const isViewportFillingWidgetType = (
     case WidgetType.EMAILS:
     case WidgetType.EMAIL_THREAD:
     case WidgetType.FILES:
-    case WidgetType.MESSAGE_CAMPAIGN_BODY:
     case WidgetType.NOTES:
     case WidgetType.TASKS:
     case WidgetType.TIMELINE:
@@ -25,6 +24,10 @@ export const isViewportFillingWidgetType = (
 
     case WidgetType.RECORD_TABLE:
       // Record tables keep their own interactive frame and are not collapsed.
+      return false;
+
+    case WidgetType.MESSAGE_CAMPAIGN_BODY:
+      // Campaign documents grow with their content so the tab owns scrolling.
       return false;
 
     case WidgetType.MESSAGE_CAMPAIGN_DETAILS:

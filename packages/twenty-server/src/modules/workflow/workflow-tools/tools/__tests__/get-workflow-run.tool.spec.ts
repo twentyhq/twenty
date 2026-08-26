@@ -11,7 +11,7 @@ const ROLE_ID = '20202020-cccc-4d02-bf25-6aeccf7ea419';
 const buildDeps = (findOneResult: unknown) => ({
   workspaceOrmManager: {
     executeInWorkspaceContext: jest.fn().mockImplementation(async (fn) => fn()),
-    getRepository: jest.fn().mockResolvedValue({
+    getRepository: jest.fn().mockReturnValue({
       findOne: jest.fn().mockResolvedValue(findOneResult),
     }),
   },

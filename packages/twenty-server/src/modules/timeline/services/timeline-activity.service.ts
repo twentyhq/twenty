@@ -11,7 +11,6 @@ import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-r
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -23,7 +22,6 @@ import {
   type TimelineActivityTypeResolver,
 } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
 import { TimelineActivityTargetQueryService } from 'src/modules/timeline/services/timeline-activity-target-query.service';
-import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { type ResolvedTimelineActivityTarget } from 'src/modules/timeline/types/resolved-timeline-activity-target.type';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
 import { type TimelineActivityRuleAction } from 'src/modules/timeline/types/timeline-activity-rule-action.type';
@@ -101,7 +99,6 @@ const buildLinkedPayload = ({
 @Injectable()
 export class TimelineActivityService {
   constructor(
-    @InjectObjectMetadataRepository(TimelineActivityWorkspaceEntity)
     private readonly timelineActivityRepository: TimelineActivityRepository,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly timelineActivityRoutingPlanService: TimelineActivityRoutingPlanService,
@@ -487,13 +484,12 @@ export class TimelineActivityService {
       return events;
     }
 
-    const workspaceMemberRepository =
-      await this.workspaceOrmManager.getRepository(
-        WorkspaceMemberWorkspaceEntity,
-        {
-          shouldBypassPermissionChecks: true,
-        },
-      );
+    const workspaceMemberRepository = this.workspaceOrmManager.getRepository(
+      WorkspaceMemberWorkspaceEntity,
+      {
+        shouldBypassPermissionChecks: true,
+      },
+    );
 
     const workspaceMembers = await workspaceMemberRepository.findBy({
       userId: In(userIds),
