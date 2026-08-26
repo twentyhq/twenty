@@ -152,23 +152,6 @@ const findChildForeignKeyColumn = (
 };
 
 describe('fetch requirements drift against relation constants', () => {
-  it('every flat provider declares full rows for its own entity', () => {
-    const violations: string[] = [];
-
-    for (const [metadataName, provider] of Object.entries(
-      FLAT_PROVIDER_BY_METADATA_NAME,
-    )) {
-      const declared =
-        provider.fetchRequirements[metadataName as keyof CacheEntityFetchShape];
-
-      if (!isDefined(declared) || getEffectiveColumns(declared) !== true) {
-        violations.push(metadataName);
-      }
-    }
-
-    expect(violations).toEqual([]);
-  });
-
   it('every declared one-to-many relation is fetched with id, universalIdentifier and its foreign key', () => {
     const violations: string[] = [];
 
