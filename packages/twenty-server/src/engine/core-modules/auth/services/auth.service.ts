@@ -645,7 +645,7 @@ export class AuthService {
       this.twentyConfigService.get('SERVER_URL'),
     );
 
-    redirectUriValidation.parsed.searchParams.set('iss', serverUrl);
+    redirectUriValidation.parsed.searchParams.set('iss', serverUrl ?? '');
     redirectUriValidation.parsed.searchParams.set('code', authorizationCode);
 
     if (authorizeAppInput.state) {
