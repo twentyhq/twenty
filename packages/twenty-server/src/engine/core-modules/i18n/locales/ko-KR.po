@@ -1601,12 +1601,6 @@ msgstr "캘린더 뷰에는 캘린더 필드가 있어야 합니다."
 msgid "Calendar view must have a calendar layout"
 msgstr "캘린더 뷰에는 캘린더 레이아웃이 있어야 합니다."
 
-#. js-lingui-id: D9pZ2l
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-msgid "Calendar widget views only support the month layout"
-msgstr "캘린더 위젯 뷰는 월 레이아웃만 지원합니다"
-
 #. js-lingui-id: 0U7DBn
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"

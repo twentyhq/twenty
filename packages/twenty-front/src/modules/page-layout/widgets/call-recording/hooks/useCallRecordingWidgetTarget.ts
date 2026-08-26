@@ -1,10 +1,6 @@
+import { type CallRecordingWidgetTarget } from '@/page-layout/widgets/call-recording/types/CallRecordingWidgetTarget';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-
-export type CallRecordingWidgetTarget = {
-  targetKind: 'calendarEvent' | 'callRecording';
-  recordId: string;
-};
 
 export const useCallRecordingWidgetTarget = ():
   | CallRecordingWidgetTarget

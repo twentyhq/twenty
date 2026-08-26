@@ -4,10 +4,12 @@ exports[`stub-twenty-sdk-define plugin > matches the recorded export partition 1
 {
   "any": [
     "AggregateOperations",
+    "CommandMenuItemAvailabilityType",
     "DateDisplayFormat",
     "FieldMetadataSettingsOnClickAction",
     "FieldType",
     "HTTPMethod",
+    "IndexType",
     "MetadataWritability",
     "NavigationMenuItemType",
     "NumberDataType",
@@ -33,6 +35,7 @@ exports[`stub-twenty-sdk-define plugin > matches the recorded export partition 1
     "ViewSortDirection",
     "ViewType",
     "ViewVisibility",
+    "WidgetType",
     "canAccessFullAdminPanel",
     "canImpersonate",
     "every",

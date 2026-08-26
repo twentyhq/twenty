@@ -1601,12 +1601,6 @@ msgstr "Vizualizarea de tip calendar trebuie să aibă un câmp de calendar"
 msgid "Calendar view must have a calendar layout"
 msgstr "Vizualizarea de tip calendar trebuie să aibă o dispunere de calendar"
 
-#. js-lingui-id: D9pZ2l
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-msgid "Calendar widget views only support the month layout"
-msgstr "Vizualizările widgetului Calendar suportă doar aspectul lunar"
-
 #. js-lingui-id: 0U7DBn
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"

@@ -1,0 +1,194 @@
+import { t } from '@lingui/core/macro';
+import { useStore } from 'jotai';
+import { useState } from 'react';
+import { Temporal } from 'temporal-polyfill';
+import { isDefined } from 'twenty-shared/utils';
+
+import { getRecordIdFromRecordCalendarCardDraggableId } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardDraggableId';
+import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
+import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecordDrag';
+import { useProcessCalendarCardDrop } from '@/object-record/record-drag/hooks/useProcessCalendarCardDrop';
+import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
+import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
+import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
+import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
+import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorCallbackState';
+import { recordCalendarSelectedRecordIdsComponentSelector } from '@/object-record/record-calendar/states/selectors/recordCalendarSelectedRecordIdsComponentSelector';
+import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
+import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
+import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { logError } from '~/utils/logError';
+
+type DragStartPayload = DragDropProviderDragStartEvent<DragDropItemData>;
+type DragMovePayload = DragDropProviderDragMoveEvent<DragDropItemData>;
+type DragEndPayload = DragDropProviderDragEndEvent<DragDropItemData>;
+
+export type RecordCalendarDndKitContextValues = {
+  activeDropTargetIndex: number | null;
+  activeDroppableId: string | null;
+};
+
+export const useRecordCalendarDndKit = (): {
+  contextValues: RecordCalendarDndKitContextValues;
+  handlers: {
+    onDragStart: (event: DragStartPayload) => void;
+    onDragMove: (event: DragMovePayload) => void;
+    onDragEnd: (event: DragEndPayload) => void;
+  };
+} => {
+  const store = useStore();
+
+  const { userTimezone } = useUserTimezone();
+
+  const { enqueueErrorSnackBar } = useSnackBar();
+
+  const { startRecordDrag } = useStartRecordDrag();
+  const { endRecordDrag } = useEndRecordDrag();
+  const { processCalendarCardDrop } = useProcessCalendarCardDrop();
+
+  const calendarDayRecordIdsSelector =
+    useAtomComponentFamilySelectorCallbackState(
+      calendarDayRecordIdsComponentFamilySelector,
+    );
+
+  const recordCalendarSelectedRecordIds = useAtomComponentSelectorCallbackState(
+    recordCalendarSelectedRecordIdsComponentSelector,
+  );
+
+  const originalDragSelectionCallbackState = useAtomComponentStateCallbackState(
+    originalDragSelectionComponentState,
+  );
+
+  const [activeDropTargetIndex, setActiveDropTargetIndex] = useState<
+    number | null
+  >(null);
+
+  const [activeDroppableId, setActiveDroppableId] = useState<string | null>(
+    null,
+  );
+
+  const getDroppableItemCount = (droppableId: string) =>
+    store.get(
+      calendarDayRecordIdsSelector({
+        day: Temporal.PlainDate.from(droppableId),
+        timeZone: userTimezone,
+      }),
+    ).length;
+
+  const clearDragState = () => {
+    endRecordDrag();
+    setActiveDropTargetIndex(null);
+    setActiveDroppableId(null);
+  };
+
+  const handleDragStart = (event: DragStartPayload) => {
+    const draggedId = event.operation.source?.id;
+
+    if (!isDefined(draggedId)) {
+      return;
+    }
+
+    const draggedRecordId = getRecordIdFromRecordCalendarCardDraggableId(
+      String(draggedId),
+    );
+
+    const currentSelectedRecordIds = store.get(recordCalendarSelectedRecordIds);
+    startRecordDrag(draggedRecordId, currentSelectedRecordIds);
+  };
+
+  const handleDragMove = (event: DragMovePayload) => {
+    const { target, position } = event.operation;
+
+    const resolvedDrop = resolveDropFromPointer({
+      target,
+      pointer: position.current,
+      defaultOrientation: 'horizontal',
+      getDroppableItemCount,
+    });
+
+    if (!isDefined(resolvedDrop)) {
+      setActiveDropTargetIndex(null);
+      setActiveDroppableId(null);
+      return;
+    }
+
+    setActiveDropTargetIndex(resolvedDrop.dropTargetIndex);
+    setActiveDroppableId(resolvedDrop.droppableId);
+  };
+
+  const handleDragEnd = (event: DragEndPayload) => {
+    const { source, target, position } = event.operation;
+
+    if (event.canceled || !isDefined(source)) {
+      clearDragState();
+      return;
+    }
+
+    const sourceRecordId = getRecordIdFromRecordCalendarCardDraggableId(
+      String(source.id),
+    );
+    const sourceDroppableId = (source.data as DragDropItemData).droppableId;
+    const sourceIndex = (source.data as DragDropItemData).index;
+
+    const resolvedDrop = resolveDropFromPointer({
+      target,
+      pointer: position.current,
+      defaultOrientation: 'horizontal',
+      getDroppableItemCount,
+    });
+    if (!isDefined(resolvedDrop)) {
+      clearDragState();
+      return;
+    }
+
+    const destinationDroppableId = resolvedDrop.droppableId;
+
+    const destinationIndex = getDestinationIndex({
+      dropTargetIndex: resolvedDrop.dropTargetIndex,
+      sourceIndex,
+      sourceDroppableId,
+      destinationDroppableId,
+    });
+
+    const isSameDay = sourceDroppableId === destinationDroppableId;
+
+    if (isSameDay && destinationIndex === sourceIndex) {
+      clearDragState();
+      return;
+    }
+
+    const originalDragSelection = store.get(originalDragSelectionCallbackState);
+
+    void processCalendarCardDrop({
+      recordId: sourceRecordId,
+      sourceDate: sourceDroppableId,
+      destinationDate: destinationDroppableId,
+      destinationIndex,
+      selectedRecordIds: originalDragSelection,
+    }).catch((error) => {
+      logError(error);
+      enqueueErrorSnackBar({ message: t`Failed to move record` });
+    });
+
+    clearDragState();
+  };
+
+  const contextValues: RecordCalendarDndKitContextValues = {
+    activeDropTargetIndex,
+    activeDroppableId,
+  };
+
+  return {
+    contextValues,
+    handlers: {
+      onDragStart: handleDragStart,
+      onDragMove: handleDragMove,
+      onDragEnd: handleDragEnd,
+    },
+  };
+};

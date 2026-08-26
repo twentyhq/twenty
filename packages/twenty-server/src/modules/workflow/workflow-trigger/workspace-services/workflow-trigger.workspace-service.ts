@@ -1,6 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import { Injectable, Logger } from '@nestjs/common';
-import { type ActorMetadata } from 'twenty-shared/types';
+import {
+  type ActorMetadata,
+  CommandMenuItemAvailabilityType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
@@ -9,7 +12,6 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
-import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';

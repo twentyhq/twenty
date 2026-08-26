@@ -6,7 +6,6 @@ const tableName = 'featureFlag';
 const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
   [FeatureFlagKey.IS_APP_CLAIMING_ENABLED]: false,
   [FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED]: false,
-  [FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED]: true,
   [FeatureFlagKey.IS_EMAIL_GROUP_ENABLED]: true,
   [FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED]: true,
 };

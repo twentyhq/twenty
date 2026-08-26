@@ -1,4 +1,5 @@
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
+import { type CommandMenuItemAvailabilityType } from '@/types';
 
 export type CommandMenuItemManifest = SyncableEntityOptions & {
   label: string;
@@ -6,11 +7,7 @@ export type CommandMenuItemManifest = SyncableEntityOptions & {
   /** @deprecated icon will be ignored in favor of application icon */
   icon?: string;
   isPinned?: boolean;
-  availabilityType?:
-    | 'GLOBAL'
-    | 'GLOBAL_OBJECT_CONTEXT'
-    | 'RECORD_SELECTION'
-    | 'FALLBACK';
+  availabilityType?: `${CommandMenuItemAvailabilityType}`;
   availabilityObjectUniversalIdentifier?: string;
   frontComponentUniversalIdentifier: string;
   conditionalAvailabilityExpression?: string;

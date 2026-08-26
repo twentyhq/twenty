@@ -3,14 +3,14 @@ import {
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
 import {
-  PageLayoutTabLayoutMode,
   type FieldMetadataType,
+  PageLayoutTabLayoutMode,
+  WidgetType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import {
   GRID_POSITIONS,
   VERTICAL_LIST_LAYOUT_POSITIONS,

@@ -1,18 +1,12 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { getSupportedRecordCalendarLayout } from '@/object-record/record-calendar/utils/getSupportedRecordCalendarLayout';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { type RecordTableWidgetLayoutViewType } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { type RecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/types/RecordTableWidgetViewSnapshot';
 import { buildDraftViewGroupsForFieldMetadataItem } from '@/page-layout/widgets/record-table/utils/buildDraftViewGroupsForFieldMetadataItem';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  FeatureFlagKey,
-  type ViewCalendarLayout,
-  ViewType,
-} from '~/generated-metadata/graphql';
+import { ViewCalendarLayout, ViewType } from '~/generated-metadata/graphql';
 
 type UseRecordTableWidgetLayoutCallbacksParams = {
   pageLayoutId: string;
@@ -29,22 +23,6 @@ export const useRecordTableWidgetLayoutCallbacks = ({
   );
 
   const store = useStore();
-
-  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
-  );
-
-  // Clamp a widget calendar's layout to what the workspace supports (MONTH
-  // while the day/week feature is off), reusing the shared resolver so widget
-  // and index calendars can't diverge and no stale day/week value is sent back
-  // to — and rejected by — the server.
-  const resolveCalendarLayout = (
-    calendarLayout: ViewCalendarLayout | null | undefined,
-  ) =>
-    getSupportedRecordCalendarLayout({
-      calendarLayout,
-      isCalendarWeekViewEnabled,
-    });
 
   // Returning the received snapshot unchanged from the updater leaves the
   // whole draft map untouched (no state update is published).
@@ -143,9 +121,8 @@ export const useRecordTableWidgetLayoutCallbacks = ({
           view: {
             ...widgetViewDraft.view,
             type: targetViewType,
-            calendarLayout: resolveCalendarLayout(
-              widgetViewDraft.view.calendarLayout,
-            ),
+            calendarLayout:
+              widgetViewDraft.view.calendarLayout ?? ViewCalendarLayout.MONTH,
             calendarFieldMetadataId: hasCalendarField
               ? widgetViewDraft.view.calendarFieldMetadataId
               : defaultCalendarFieldMetadataItem?.id,
@@ -169,9 +146,9 @@ export const useRecordTableWidgetLayoutCallbacks = ({
       view: {
         ...widgetViewDraft.view,
         calendarFieldMetadataId: fieldMetadataItem.id,
-        calendarLayout: resolveCalendarLayout(
-          widgetViewDraft.view.calendarLayout,
-        ),
+        calendarEndFieldMetadataId: null,
+        calendarLayout:
+          widgetViewDraft.view.calendarLayout ?? ViewCalendarLayout.MONTH,
       },
     }));
   };
@@ -181,7 +158,7 @@ export const useRecordTableWidgetLayoutCallbacks = ({
       ...widgetViewDraft,
       view: {
         ...widgetViewDraft.view,
-        calendarLayout: resolveCalendarLayout(calendarLayout),
+        calendarLayout,
       },
     }));
   };

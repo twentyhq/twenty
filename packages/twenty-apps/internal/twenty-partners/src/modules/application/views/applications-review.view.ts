@@ -1,7 +1,6 @@
 import { ViewSortDirection, ViewType, defineView } from 'twenty-sdk/define';
 
 import {
-  APPLICATION_LAST_ACTIVITY_AT_FIELD_ID,
   APPLICATION_NAME_FIELD_ID,
   APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
   APPLICATION_OPPORTUNITY_FIELD_ID,
@@ -94,13 +93,6 @@ export default defineView({
       position: 4,
       isVisible: true,
       size: 280,
-    },
-    {
-      universalIdentifier: '651dfe47-a00f-4ad5-9af8-95a656ec0b31',
-      fieldMetadataUniversalIdentifier: APPLICATION_LAST_ACTIVITY_AT_FIELD_ID,
-      position: 5,
-      isVisible: true,
-      size: 180,
     },
   ],
   sorts: [

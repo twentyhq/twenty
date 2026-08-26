@@ -32,7 +32,6 @@ export function BrowseDirectoryButton() {
       href={`#${PARTNER_DIRECTORY_ANCHOR_ID}`}
       label={i18n._(msg`Browse partners`)}
       onClick={scrollToDirectory}
-      variant="outlined"
     />
   );
 }
