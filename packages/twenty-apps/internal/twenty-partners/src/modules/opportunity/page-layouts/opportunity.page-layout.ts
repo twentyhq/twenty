@@ -1,8 +1,6 @@
 import {
   PageLayoutTabLayoutMode,
-  PageLayoutType,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-  WidgetType,
   definePageLayout,
 } from 'twenty-sdk/define';
 
@@ -16,7 +14,7 @@ const OPPORTUNITY_RECORD_PAGE_FIELDS_VIEW_ID =
 export default definePageLayout({
   universalIdentifier: 'cf2c66e4-0a4b-48ce-8669-fdf39dd64148',
   name: 'Default Opportunity Layout',
-  type: PageLayoutType.RECORD_PAGE,
+  type: 'RECORD_PAGE',
   objectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
   tabs: [
@@ -30,7 +28,7 @@ export default definePageLayout({
         {
           universalIdentifier: 'dd849e57-42b8-48bc-afd1-c942baab2bf4',
           title: 'Fields',
-          type: WidgetType.FIELDS,
+          type: 'FIELDS',
           configuration: {
             configurationType: 'FIELDS',
             viewUniversalIdentifier: OPPORTUNITY_RECORD_PAGE_FIELDS_VIEW_ID,
@@ -48,7 +46,7 @@ export default definePageLayout({
         {
           universalIdentifier: '98c9aac6-5a93-4725-84c7-15c5db445ea3',
           title: 'Timeline',
-          type: WidgetType.TIMELINE,
+          type: 'TIMELINE',
           configuration: { configurationType: 'TIMELINE' },
         },
       ],

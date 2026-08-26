@@ -1,9 +1,4 @@
-import {
-  PageLayoutTabLayoutMode,
-  PageLayoutType,
-  WidgetType,
-  definePageLayout,
-} from 'twenty-sdk/define';
+import { PageLayoutTabLayoutMode, definePageLayout } from 'twenty-sdk/define';
 
 import {
   MY_PROFILE_FRONT_COMPONENT_ID,
@@ -15,7 +10,7 @@ import {
 export default definePageLayout({
   universalIdentifier: MY_PROFILE_PAGE_LAYOUT_ID,
   name: 'My Profile',
-  type: PageLayoutType.STANDALONE_PAGE,
+  type: 'STANDALONE_PAGE',
   tabs: [
     {
       universalIdentifier: MY_PROFILE_PAGE_TAB_ID,
@@ -27,7 +22,7 @@ export default definePageLayout({
         {
           universalIdentifier: MY_PROFILE_PAGE_WIDGET_ID,
           title: 'My Profile',
-          type: WidgetType.FRONT_COMPONENT,
+          type: 'FRONT_COMPONENT',
           gridPosition: { row: 0, column: 0, rowSpan: 14, columnSpan: 12 },
           configuration: {
             configurationType: 'FRONT_COMPONENT',

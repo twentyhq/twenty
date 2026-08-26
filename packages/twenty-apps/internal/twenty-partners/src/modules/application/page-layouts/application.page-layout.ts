@@ -1,9 +1,4 @@
-import {
-  PageLayoutTabLayoutMode,
-  PageLayoutType,
-  WidgetType,
-  definePageLayout,
-} from 'twenty-sdk/define';
+import { PageLayoutTabLayoutMode, definePageLayout } from 'twenty-sdk/define';
 
 import { APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/modules/application/objects/application.object';
 import { APPLICATION_RECORD_PAGE_FIELDS_VIEW_ID } from 'src/modules/application/views/application-record-page-fields.view';
@@ -14,7 +9,7 @@ import { APPLICATION_RECORD_PAGE_FIELDS_VIEW_ID } from 'src/modules/application/
 export default definePageLayout({
   universalIdentifier: '7280910c-a409-4afc-9dac-ae9a8b3ca244',
   name: 'Default Application Layout',
-  type: PageLayoutType.RECORD_PAGE,
+  type: 'RECORD_PAGE',
   objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
   tabs: [
     {
@@ -27,7 +22,7 @@ export default definePageLayout({
         {
           universalIdentifier: '7f4a57f9-44f8-4fa4-bcdb-b25055c33db0',
           title: 'Fields',
-          type: WidgetType.FIELDS,
+          type: 'FIELDS',
           configuration: {
             configurationType: 'FIELDS',
             viewUniversalIdentifier: APPLICATION_RECORD_PAGE_FIELDS_VIEW_ID,
@@ -45,7 +40,7 @@ export default definePageLayout({
         {
           universalIdentifier: '3e9acb85-9445-40d5-9c65-57461df8483c',
           title: 'Timeline',
-          type: WidgetType.TIMELINE,
+          type: 'TIMELINE',
           configuration: { configurationType: 'TIMELINE' },
         },
       ],
