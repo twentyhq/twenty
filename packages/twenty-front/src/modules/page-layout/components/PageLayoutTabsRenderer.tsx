@@ -149,7 +149,6 @@ export const PageLayoutTabsRenderer = () => {
       addTabStrategy={addTabStrategy}
       isReorderEnabled={canEnableTabEditing}
       pageLayoutType={currentPageLayout.type}
-      pinnedTab={isPageLayoutInEditMode ? pinnedLeftTab : undefined}
     />
   );
 
@@ -160,6 +159,7 @@ export const PageLayoutTabsRenderer = () => {
           <PageLayoutRecordIdentifierBar
             targetRecordIdentifier={targetRecordIdentifier}
             hasPinnedTab={isDefined(pinnedLeftTab)}
+            pinnedTabToEdit={isPageLayoutInEditMode ? pinnedLeftTab : undefined}
             tabList={tabList}
           />
         )}

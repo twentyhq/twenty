@@ -1,15 +1,21 @@
 import { RecordIdentifierBarTitle } from '@/object-record/record-show/components/RecordIdentifierBarTitle';
+import { useOpenPageLayoutTabSettings } from '@/page-layout/hooks/useOpenPageLayoutTabSettings';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH } from '@/page-layout/constants/PageLayoutLeftPanelContainerWidth';
 import { PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_HEIGHT } from '@/page-layout/constants/PageLayoutRecordIdentifierBarHeight';
 import { PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_SIDE_MIN_WIDTH } from '@/page-layout/constants/PageLayoutRecordIdentifierBarSideMinWidth';
+import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
 import { TAB_LIST_ROW_HEIGHT_CSS_VARIABLE } from '@/ui/layout/tab-list/constants/TabListRowHeightCssVariable';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useId, type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { IconPinned } from 'twenty-ui/icon';
+import { TabButton } from 'twenty-ui/input';
 import { AppTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
@@ -46,6 +52,7 @@ const StyledBar = styled.div<{ hasPinnedTab: boolean }>`
 
 const StyledIdentifierCell = styled.div<{ hasPinnedTab: boolean }>`
   align-items: center;
+  justify-content: space-between;
   border-right: ${({ hasPinnedTab }) =>
     hasPinnedTab
       ? `1px solid ${themeCssVariables.border.color.medium}`
@@ -59,6 +66,15 @@ const StyledIdentifierCell = styled.div<{ hasPinnedTab: boolean }>`
   min-width: 0;
   padding-left: ${themeCssVariables.spacing[3]};
   padding-right: ${themeCssVariables.spacing[2]};
+`;
+
+// The chip sits at the end of the identifier cell, over the column it pins.
+const StyledPinnedTab = styled.div`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  height: 100%;
+  margin-left: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTabsCell = styled.div<{ hasPinnedTab: boolean }>`
@@ -113,14 +129,18 @@ const StyledCreatedAt = styled.span`
 type PageLayoutRecordIdentifierBarProps = {
   targetRecordIdentifier: TargetRecordIdentifier;
   hasPinnedTab: boolean;
+  pinnedTabToEdit?: PageLayoutTab;
   tabList?: ReactNode;
 };
 
 export const PageLayoutRecordIdentifierBar = ({
   targetRecordIdentifier,
   hasPinnedTab,
+  pinnedTabToEdit,
   tabList,
 }: PageLayoutRecordIdentifierBarProps) => {
+  const { t } = useLingui();
+  const { openTabSettings } = useOpenPageLayoutTabSettings();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   const recordCreatedAt = useAtomFamilySelectorValue(
@@ -143,6 +163,19 @@ export const PageLayoutRecordIdentifierBar = ({
           objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
           objectRecordId={targetRecordIdentifier.id}
         />
+
+        {isDefined(pinnedTabToEdit) && (
+          <StyledPinnedTab>
+            <TabButton
+              id={pinnedTabToEdit.id}
+              title={pinnedTabToEdit.title}
+              LeftIcon={IconPinned}
+              onClick={() => openTabSettings(pinnedTabToEdit.id)}
+              tooltipContent={t`Pinned tab, always shown on the left`}
+              disableTestId
+            />
+          </StyledPinnedTab>
+        )}
       </StyledIdentifierCell>
 
       <StyledTabsCell hasPinnedTab={hasPinnedTab}>{tabList}</StyledTabsCell>

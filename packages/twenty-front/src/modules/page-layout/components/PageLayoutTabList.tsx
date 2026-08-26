@@ -1,9 +1,9 @@
 import { useDragDropMonitor } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IconPinned, IconPlus, useIcons } from 'twenty-ui/icon';
+import { IconPlus, useIcons } from 'twenty-ui/icon';
 import { TabButton } from 'twenty-ui/input';
 
 import { isPageLayoutTabDraggingComponentState } from '@/page-layout/states/isPageLayoutTabDraggingComponentState';
@@ -29,20 +29,19 @@ import { PageLayoutTabListNewTabDropdownContent } from '@/page-layout/components
 import { PageLayoutTabListReorderableOverflowDropdown } from '@/page-layout/components/PageLayoutTabListReorderableOverflowDropdown';
 import { PageLayoutTabListVisibleTabs } from '@/page-layout/components/PageLayoutTabListVisibleTabs';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { useOpenPageLayoutTabSettings } from '@/page-layout/hooks/useOpenPageLayoutTabSettings';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type PageLayoutAddTabStrategy } from '@/page-layout/types/PageLayoutAddTabStrategy';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidgetDndData } from '@/page-layout/types/PageLayoutWidgetDndData';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
-import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { TabListDropdown } from '@/ui/layout/tab-list/components/TabListDropdown';
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -82,20 +81,12 @@ const StyledAddButton = styled.div`
   margin-left: ${TAB_LIST_GAP}px;
 `;
 
-const StyledPinnedTab = styled.div`
-  align-items: center;
-  display: flex;
-  height: var(${TAB_LIST_ROW_HEIGHT_CSS_VARIABLE}, ${TAB_LIST_HEIGHT});
-  margin-right: ${TAB_LIST_GAP}px;
-`;
-
 type PageLayoutTabListProps = Omit<TabListProps, 'tabs'> & {
   tabs: PageLayoutTab[];
   isReorderEnabled: boolean;
   addTabStrategy?: PageLayoutAddTabStrategy;
   behaveAsLinks: boolean;
   pageLayoutType: PageLayoutType;
-  pinnedTab?: PageLayoutTab;
 };
 
 export const PageLayoutTabList = ({
@@ -109,11 +100,9 @@ export const PageLayoutTabList = ({
   addTabStrategy,
   isReorderEnabled,
   pageLayoutType,
-  pinnedTab,
 }: PageLayoutTabListProps) => {
   const { getIcon } = useIcons();
   const { t } = useLingui();
-  const [pinnedTabWidth, setPinnedTabWidth] = useState(0);
 
   const tabsWithIcons: SingleTabProps[] = tabs.map((tab) => ({
     id: tab.id,
@@ -248,51 +237,27 @@ export const PageLayoutTabList = ({
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
-  const setPageLayoutTabSettingsOpenTabId = useSetAtomComponentState(
-    pageLayoutTabSettingsOpenTabIdComponentState,
-    pageLayoutId,
-  );
-  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
-
-  const openTabSettings = useCallback(
-    (tabId: string) => {
-      setPageLayoutTabSettingsOpenTabId(tabId);
-      navigatePageLayoutSidePanel({
-        sidePanelPage: SidePanelPages.PageLayoutTabSettings,
-        resetNavigationStack: true,
-      });
-    },
-    [setPageLayoutTabSettingsOpenTabId, navigatePageLayoutSidePanel],
-  );
+  const { openTabSettings } = useOpenPageLayoutTabSettings(pageLayoutId);
 
   const isTabSettingsOpen = isDefined(pageLayoutTabSettingsOpenTabId);
 
-  // The strip prepends the pinned tab and appends an end drop zone that the tab
-  // measurement does not know about; reserve their width so the tabs it does
-  // measure never get clipped.
+  // The reorderable strip appends an end drop zone the tab measurement does
+  // not know about; reserve its width so visible tabs never get clipped.
   const handleContainerWidthChange = useCallback(
     (dimensions: { width: number; height: number }) => {
-      const reservedWidth =
-        (isReorderEnabled ? PAGE_LAYOUT_TAB_LIST_END_DROP_ZONE_WIDTH : 0) +
-        pinnedTabWidth;
-
       onContainerWidthChange(
-        reservedWidth > 0
+        isReorderEnabled
           ? {
               ...dimensions,
-              width: Math.max(dimensions.width - reservedWidth, 0),
+              width: Math.max(
+                dimensions.width - PAGE_LAYOUT_TAB_LIST_END_DROP_ZONE_WIDTH,
+                0,
+              ),
             }
           : dimensions,
       );
     },
-    [onContainerWidthChange, isReorderEnabled, pinnedTabWidth],
-  );
-
-  const handlePinnedTabWidthChange = useCallback(
-    (dimensions: { width: number; height: number }) => {
-      setPinnedTabWidth(dimensions.width);
-    },
-    [],
+    [onContainerWidthChange, isReorderEnabled],
   );
 
   const handleSelectTab = useCallback(
@@ -419,21 +384,6 @@ export const PageLayoutTabList = ({
 
       <NodeDimension onDimensionChange={handleContainerWidthChange}>
         <StyledContainer className={className}>
-          {isDefined(pinnedTab) && (
-            <NodeDimension onDimensionChange={handlePinnedTabWidthChange}>
-              <StyledPinnedTab>
-                <TabButton
-                  id={pinnedTab.id}
-                  title={pinnedTab.title}
-                  LeftIcon={IconPinned}
-                  onClick={() => openTabSettings(pinnedTab.id)}
-                  tooltipContent={t`Pinned tab, always shown on the left`}
-                  disableTestId
-                />
-              </StyledPinnedTab>
-            </NodeDimension>
-          )}
-
           <PageLayoutTabListVisibleTabs
             visibleTabs={tabsWithIcons}
             visibleTabCount={
