@@ -677,6 +677,14 @@ export interface RichTextBody {
     __typename: 'RichTextBody'
 }
 
+export interface GridPosition {
+    row: Scalars['Float']
+    column: Scalars['Float']
+    rowSpan: Scalars['Float']
+    columnSpan: Scalars['Float']
+    __typename: 'GridPosition'
+}
+
 export interface PageLayoutWidget {
     id: Scalars['UUID']
     universalIdentifier: Scalars['UUID']
@@ -686,6 +694,8 @@ export interface PageLayoutWidget {
     title: Scalars['String']
     type: WidgetType
     objectMetadataId?: Scalars['UUID']
+    /** @deprecated Use `position` instead. */
+    gridPosition?: GridPosition
     position?: PageLayoutWidgetPosition
     configuration: WidgetConfiguration
     conditionalDisplay?: Scalars['JSON']
@@ -4012,6 +4022,15 @@ export interface RichTextBodyGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface GridPositionGenqlSelection{
+    row?: boolean | number
+    column?: boolean | number
+    rowSpan?: boolean | number
+    columnSpan?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface PageLayoutWidgetGenqlSelection{
     id?: boolean | number
     universalIdentifier?: boolean | number
@@ -4021,6 +4040,8 @@ export interface PageLayoutWidgetGenqlSelection{
     title?: boolean | number
     type?: boolean | number
     objectMetadataId?: boolean | number
+    /** @deprecated Use `position` instead. */
+    gridPosition?: GridPositionGenqlSelection
     position?: PageLayoutWidgetPositionGenqlSelection
     configuration?: WidgetConfigurationGenqlSelection
     conditionalDisplay?: boolean | number
@@ -7552,6 +7573,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
       return RichTextBody_possibleTypes.includes(obj.__typename)
     }
     
+
+
+    const GridPosition_possibleTypes: string[] = ['GridPosition']
+    export const isGridPosition = (obj?: { __typename?: any } | null): obj is GridPosition => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isGridPosition"')
+      return GridPosition_possibleTypes.includes(obj.__typename)
+    }
+
 
 
     const PageLayoutWidget_possibleTypes: string[] = ['PageLayoutWidget']

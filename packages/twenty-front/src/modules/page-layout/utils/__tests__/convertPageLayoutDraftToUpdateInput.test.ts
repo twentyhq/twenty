@@ -261,17 +261,11 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     });
   });
 
-  it('should preserve grid coordinates when tab layoutMode is undefined', () => {
+  it('should fall back to legacy grid coordinates when position is null', () => {
     const widget = makeWidget({
       id: 'w1',
-      position: {
-        __typename: 'PageLayoutWidgetGridPosition' as const,
-        layoutMode: PageLayoutTabLayoutMode.GRID,
-        row: 1,
-        column: 2,
-        rowSpan: 3,
-        columnSpan: 4,
-      },
+      position: null,
+      gridPosition: { row: 1, column: 2, rowSpan: 3, columnSpan: 4 },
     });
     const draft = makeDraft([makeTab('tab-1', [widget])]);
 

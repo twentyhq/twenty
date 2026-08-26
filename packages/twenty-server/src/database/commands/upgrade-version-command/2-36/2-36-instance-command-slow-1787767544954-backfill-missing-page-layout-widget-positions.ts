@@ -4,7 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
 @RegisteredInstanceCommand('2.36.0', 1787767544954, { type: 'slow' })
-export class RemoveLegacyGridPositionSlowInstanceCommand implements SlowInstanceCommand {
+export class BackfillMissingPageLayoutWidgetPositionsSlowInstanceCommand implements SlowInstanceCommand {
   async runDataMigration(dataSource: DataSource): Promise<void> {
     await dataSource.query(`
       WITH missing_positions AS (
@@ -25,7 +25,10 @@ export class RemoveLegacyGridPositionSlowInstanceCommand implements SlowInstance
                   widget."createdAt", widget."id"
               ) - 1
             )
-            ELSE widget."gridPosition" || jsonb_build_object('layoutMode', 'GRID')
+            ELSE COALESCE(
+              widget."gridPosition",
+              '{"row": 0, "column": 0, "rowSpan": 1, "columnSpan": 12}'::jsonb
+            ) || jsonb_build_object('layoutMode', 'GRID')
           END AS "position"
         FROM "core"."pageLayoutWidget" widget
         JOIN "core"."pageLayoutTab" tab ON tab."id" = widget."pageLayoutTabId"
@@ -38,25 +41,11 @@ export class RemoveLegacyGridPositionSlowInstanceCommand implements SlowInstance
     `);
   }
 
-  public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      'ALTER TABLE "core"."pageLayoutWidget" DROP COLUMN "gridPosition"',
-    );
+  public async up(_queryRunner: QueryRunner): Promise<void> {
+    return;
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      'ALTER TABLE "core"."pageLayoutWidget" ADD "gridPosition" jsonb',
-    );
-    await queryRunner.query(`
-      UPDATE "core"."pageLayoutWidget"
-      SET "gridPosition" = CASE
-        WHEN "position"->>'layoutMode' = 'GRID' THEN "position" - 'layoutMode'
-        ELSE '{"row": 0, "column": 0, "rowSpan": 1, "columnSpan": 12}'::jsonb
-      END
-    `);
-    await queryRunner.query(
-      'ALTER TABLE "core"."pageLayoutWidget" ALTER COLUMN "gridPosition" SET NOT NULL',
-    );
+  public async down(_queryRunner: QueryRunner): Promise<void> {
+    return;
   }
 }

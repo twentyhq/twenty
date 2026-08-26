@@ -940,6 +940,13 @@ type RichTextBody {
   markdown: String
 }
 
+type GridPosition {
+  row: Float!
+  column: Float!
+  rowSpan: Float!
+  columnSpan: Float!
+}
+
 type PageLayoutWidget {
   id: UUID!
   universalIdentifier: UUID!
@@ -949,6 +956,7 @@ type PageLayoutWidget {
   title: String!
   type: WidgetType!
   objectMetadataId: UUID
+  gridPosition: GridPosition @deprecated(reason: "Use `position` instead.")
   position: PageLayoutWidgetPosition
   configuration: WidgetConfiguration!
   conditionalDisplay: JSON
