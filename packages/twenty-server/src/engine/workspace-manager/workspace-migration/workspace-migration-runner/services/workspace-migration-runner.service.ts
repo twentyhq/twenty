@@ -121,13 +121,12 @@ export class WorkspaceMigrationRunnerService {
         cacheKeyNamesToInvalidate,
       );
 
-    await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-      workspaceId,
-      flatMapsKeys: allFlatEntityMapsKeys,
-      rowsBatchLoader,
-    });
-
     const invalidationResults = await Promise.allSettled([
+      this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId,
+        flatMapsKeys: allFlatEntityMapsKeys,
+        rowsBatchLoader,
+      }),
       ...(shouldIncrementMetadataGraphqlSchemaVersion
         ? [
             this.workspaceMetadataVersionService.incrementMetadataVersion(
@@ -153,7 +152,7 @@ export class WorkspaceMigrationRunnerService {
     if (invalidationFailures.length > 0) {
       invalidationFailures.forEach((err) =>
         this.logger.error(
-          `Failed to invalidate a legacy cache ${err.reason}`,
+          `Failed to invalidate a cache ${err.reason}`,
           'Runner',
         ),
       );
