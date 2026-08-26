@@ -931,16 +931,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
     }
 
-    const columnsToReturnSet = new Set(columnsToReturn);
     const rawRows =
       columnsToReturn.length === 0
         ? []
         : insertedRows.map(
             (record) =>
               Object.fromEntries(
-                Object.entries(record).filter(([columnName]) =>
-                  columnsToReturnSet.has(columnName),
-                ),
+                columnsToReturn.map((columnName) => [
+                  columnName,
+                  record[columnName],
+                ]),
               ) as ObjectRecord,
           );
     const generatedMaps = this.formatResult<ObjectRecord[]>(rawRows);
