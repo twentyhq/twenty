@@ -4,6 +4,7 @@ import { PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH } from '@/page-layout/constants/
 import { PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_HEIGHT } from '@/page-layout/constants/PageLayoutRecordIdentifierBarHeight';
 import { PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_SIDE_MIN_WIDTH } from '@/page-layout/constants/PageLayoutRecordIdentifierBarSideMinWidth';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
+import { TAB_LIST_ROW_HEIGHT_CSS_VARIABLE } from '@/ui/layout/tab-list/constants/TabListRowHeightCssVariable';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -27,7 +28,9 @@ export const PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_TAB_LIST_CLASS_NAME =
 const StyledBar = styled.div<{ hasPinnedTab: boolean }>`
   align-items: stretch;
   background: ${themeCssVariables.background.secondary};
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  // The bottom line sits inside the box so the tab strip can fill the whole row
+  // and land its active indicator on that line rather than above it.
+  box-shadow: inset 0 -1px 0 ${themeCssVariables.border.color.light};
   box-sizing: border-box;
   display: grid;
   grid-template-columns: ${({ hasPinnedTab }) =>
@@ -64,10 +67,12 @@ const StyledTabsCell = styled.div`
     min-width: 0;
   }
 
-  // The bar already draws the row's bottom border, so the strip drops its own
-  // and grows over that border instead, keeping the active tab indicator on it.
+  // The bar already draws the row's bottom line, so the strip drops its own and
+  // fills the row instead. Buttons the dropdown wraps in a fit-content box read
+  // their height from the variable.
   .${PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_TAB_LIST_CLASS_NAME} {
-    height: calc(100% + 1px);
+    ${TAB_LIST_ROW_HEIGHT_CSS_VARIABLE}: ${PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_HEIGHT}px;
+    height: 100%;
     padding-right: ${themeCssVariables.spacing[2]};
 
     &::after {

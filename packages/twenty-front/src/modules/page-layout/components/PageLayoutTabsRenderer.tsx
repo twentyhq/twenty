@@ -149,6 +149,7 @@ export const PageLayoutTabsRenderer = () => {
       addTabStrategy={addTabStrategy}
       isReorderEnabled={canEnableTabEditing}
       pageLayoutType={currentPageLayout.type}
+      pinnedTab={isPageLayoutInEditMode ? pinnedLeftTab : undefined}
     />
   );
 
