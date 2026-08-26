@@ -4,7 +4,6 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
 import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
-import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
 import { getReverseJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getReverseJunctionConfig';
 import {
   computeMorphRelationGqlFieldName,
@@ -81,18 +80,16 @@ export const generateDepthRecordGqlFieldsFromFields = ({
           };
         }
 
-        if (isJunctionRelationField(fieldMetadata)) {
-          const junctionGqlFields = generateJunctionRelationGqlFields({
-            fieldMetadataItem: fieldMetadata,
-            objectMetadataItems,
-          });
+        const junctionGqlFields = generateJunctionRelationGqlFields({
+          fieldMetadataItem: fieldMetadata,
+          objectMetadataItems,
+        });
 
-          if (isDefined(junctionGqlFields) && depth === 1) {
-            return {
-              ...recordGqlFields,
-              [fieldMetadata.name]: junctionGqlFields,
-            };
-          }
+        if (isDefined(junctionGqlFields) && depth === 1) {
+          return {
+            ...recordGqlFields,
+            [fieldMetadata.name]: junctionGqlFields,
+          };
         }
 
         const relationIdentifierSubGqlFields = buildIdentifierGqlFields(

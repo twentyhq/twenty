@@ -9,7 +9,6 @@ import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/ui
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getReverseJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getReverseJunctionConfig';
-import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { styled } from '@linaria/react';
@@ -39,10 +38,6 @@ export const RelationFromManyFieldDisplay = () => {
   const relationObjectNameSingular =
     fieldDefinition?.metadata.relationObjectMetadataNameSingular;
 
-  const isJunctionRelation = hasJunctionConfig(
-    fieldDefinition.metadata.settings,
-  );
-
   const sourceObjectMetadataId = objectMetadataItems.find(
     (item) => item.nameSingular === objectMetadataNameSingular,
   )?.id;
@@ -50,6 +45,8 @@ export const RelationFromManyFieldDisplay = () => {
   const junctionConfig = getJunctionConfig({
     settings: fieldDefinition.metadata.settings,
     relationObjectMetadataId: fieldDefinition.metadata.relationObjectMetadataId,
+    relationTargetFieldMetadataId:
+      fieldDefinition.metadata.relationFieldMetadataId,
     sourceObjectMetadataId,
     objectMetadataItems,
   });
@@ -72,7 +69,7 @@ export const RelationFromManyFieldDisplay = () => {
     return null;
   }
 
-  if (isJunctionRelation && isDefined(junctionConfig)) {
+  if (isDefined(junctionConfig)) {
     const { targetFields } = junctionConfig;
 
     if (targetFields.length === 0) {

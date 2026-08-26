@@ -5,8 +5,7 @@ import {
   type JunctionConfig,
 } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
-import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { isConfiguredJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isConfiguredJunctionRelationField';
 import { isDefined } from 'twenty-shared/utils';
 
 type ObjectMorphJunctionConfig = JunctionConfig & {
@@ -19,33 +18,6 @@ type ObjectMorphJunctionConfig = JunctionConfig & {
   junctionObjectMetadata: EnrichedObjectMetadataItem;
 };
 
-const getInferredMorphTargetFieldId = ({
-  junctionField,
-  objectMetadataItems,
-}: {
-  junctionField: FieldMetadataItem;
-  objectMetadataItems: EnrichedObjectMetadataItem[];
-}): string | null => {
-  if (!isDefined(junctionField.relation)) {
-    return null;
-  }
-
-  const junctionObjectMetadata = objectMetadataItems.find(
-    ({ id }) => id === junctionField.relation?.targetObjectMetadata.id,
-  );
-  const sourceField = junctionObjectMetadata?.fields.find(
-    ({ id }) => id === junctionField.relation?.targetFieldMetadata.id,
-  );
-  const morphTargetFields = junctionObjectMetadata?.fields.filter(
-    ({ type }) => type === FieldMetadataType.MORPH_RELATION,
-  );
-
-  return sourceField?.type === FieldMetadataType.RELATION &&
-    morphTargetFields?.length === 1
-    ? morphTargetFields[0].id
-    : null;
-};
-
 export const getObjectMorphJunctionConfig = ({
   objectMetadata,
   objectMetadataItems,
@@ -56,43 +28,15 @@ export const getObjectMorphJunctionConfig = ({
   const inferredJunctionConfigs: ObjectMorphJunctionConfig[] = [];
 
   for (const junctionField of objectMetadata.fields) {
-    const explicitJunctionConfig = isJunctionRelationField(junctionField)
-      ? getJunctionConfig({
-          settings: junctionField.settings,
-          relationObjectMetadataId:
-            junctionField.relation?.targetObjectMetadata.id ?? '',
-          sourceObjectMetadataId: objectMetadata.id,
-          objectMetadataItems,
-        })
-      : null;
-
-    if (
-      isDefined(explicitJunctionConfig) &&
-      !explicitJunctionConfig.isMorphRelation
-    ) {
-      continue;
-    }
-
-    const inferredTargetFieldId = isDefined(explicitJunctionConfig)
-      ? null
-      : getInferredMorphTargetFieldId({
-          junctionField,
-          objectMetadataItems,
-        });
-    const junctionConfig =
-      explicitJunctionConfig ??
-      (isDefined(inferredTargetFieldId)
-        ? getJunctionConfig({
-            settings: {
-              ...junctionField.settings,
-              junctionTargetFieldId: inferredTargetFieldId,
-            },
-            relationObjectMetadataId:
-              junctionField.relation?.targetObjectMetadata.id ?? '',
-            sourceObjectMetadataId: objectMetadata.id,
-            objectMetadataItems,
-          })
-        : null);
+    const junctionConfig = getJunctionConfig({
+      settings: junctionField.settings,
+      relationObjectMetadataId:
+        junctionField.relation?.targetObjectMetadata.id ?? '',
+      relationTargetFieldMetadataId:
+        junctionField.relation?.targetFieldMetadata.id,
+      sourceObjectMetadataId: objectMetadata.id,
+      objectMetadataItems,
+    });
 
     if (
       !junctionConfig?.isMorphRelation ||
@@ -124,7 +68,7 @@ export const getObjectMorphJunctionConfig = ({
       sourceJoinColumnName,
     };
 
-    if (isDefined(explicitJunctionConfig)) {
+    if (isConfiguredJunctionRelationField(junctionField)) {
       return resolvedJunctionConfig;
     }
 

@@ -1,6 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
-import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
+import { isConfiguredJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isConfiguredJunctionRelationField';
 
 type IsFieldMetadataAvailableForViewFieldArgs = {
   fieldMetadata: Pick<
@@ -18,7 +18,7 @@ export const isActiveFieldMetadataItem = ({
 
   // A junction relation is a system field that must stay visible, since it is the only
   // way to reach the records it links to.
-  if (isJunctionRelationField(fieldMetadata)) {
+  if (isConfiguredJunctionRelationField(fieldMetadata)) {
     return true;
   }
 

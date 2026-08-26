@@ -17,7 +17,7 @@ import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/t
 import { isFieldMorphRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationOneToMany';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
-import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
+import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -62,9 +62,24 @@ export const useOpenFieldInputEditMode = () => {
       const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
       const isOneToMany = isFieldRelationOneToMany(fieldDefinition);
-      const fieldHasJunctionConfig = hasJunctionConfig(
-        fieldDefinition.metadata.settings,
-      );
+      const sourceObjectMetadataId = objectMetadataItems.find(
+        ({ nameSingular }) =>
+          nameSingular === fieldDefinition.metadata.objectMetadataNameSingular,
+      )?.id;
+      const relationMetadata =
+        fieldDefinition.metadata as FieldRelationMetadata;
+      const fieldHasJunctionConfig =
+        isOneToMany &&
+        isDefined(
+          getJunctionConfig({
+            settings: relationMetadata.settings,
+            relationObjectMetadataId: relationMetadata.relationObjectMetadataId,
+            relationTargetFieldMetadataId:
+              relationMetadata.relationFieldMetadataId,
+            sourceObjectMetadataId,
+            objectMetadataItems,
+          }),
+        );
 
       if (isFieldFiles(fieldDefinition)) {
         const objectMetadataItem = objectMetadataItems.find(

@@ -1,3 +1,4 @@
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useOpenJunctionRelationFieldInput } from '@/object-record/record-field/ui/hooks/useOpenJunctionRelationFieldInput';
 import { useOpenMorphRelationManyToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenMorphRelationManyToOneFieldInput';
 import { useOpenMorphRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenMorphRelationOneToManyFieldInput';
@@ -11,7 +12,7 @@ import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/t
 import { isFieldMorphRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationOneToMany';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
-import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
+import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -20,6 +21,7 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useOpenFieldWidgetFieldInputEditMode = () => {
+  const { objectMetadataItems } = useObjectMetadataItems();
   const { openRelationToOneFieldInput } = useOpenRelationToOneFieldInput();
   const { openRelationFromManyFieldInput } =
     useOpenRelationFromManyFieldInput();
@@ -49,7 +51,21 @@ export const useOpenFieldWidgetFieldInputEditMode = () => {
     }) => {
       if (
         isFieldRelationOneToMany(fieldDefinition) &&
-        hasJunctionConfig(fieldDefinition.metadata.settings)
+        isDefined(
+          getJunctionConfig({
+            settings: fieldDefinition.metadata.settings,
+            relationObjectMetadataId:
+              fieldDefinition.metadata.relationObjectMetadataId,
+            relationTargetFieldMetadataId:
+              fieldDefinition.metadata.relationFieldMetadataId,
+            sourceObjectMetadataId: objectMetadataItems.find(
+              ({ nameSingular }) =>
+                nameSingular ===
+                fieldDefinition.metadata.objectMetadataNameSingular,
+            )?.id,
+            objectMetadataItems,
+          }),
+        )
       ) {
         openJunctionRelationFieldInput({
           fieldDefinition,
@@ -118,6 +134,7 @@ export const useOpenFieldWidgetFieldInputEditMode = () => {
       });
     },
     [
+      objectMetadataItems,
       instanceId,
       openJunctionRelationFieldInput,
       openMorphRelationManyToOneFieldInput,

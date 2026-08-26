@@ -1,6 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
+import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -11,6 +12,7 @@ type ObjectPermissionsByObjectMetadataId = Record<
 
 type CategorizeRelationFieldsArgs = {
   relationFields: FieldMetadataItem[];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
   objectPermissionsByObjectMetadataId: ObjectPermissionsByObjectMetadataId;
 };
 
@@ -45,6 +47,7 @@ const canReadRelationTarget = (
 
 export const categorizeRelationFields = ({
   relationFields,
+  objectMetadataItems,
   objectPermissionsByObjectMetadataId,
 }: CategorizeRelationFieldsArgs): CategorizedRelationFields => {
   const inlineRelationFields: FieldMetadataItem[] = [];
@@ -52,7 +55,15 @@ export const categorizeRelationFields = ({
   const boxedRelationFields: FieldMetadataItem[] = [];
 
   for (const field of relationFields) {
-    if (isJunctionRelationField(field)) {
+    const junctionConfig = getJunctionConfig({
+      settings: field.settings,
+      relationObjectMetadataId: field.relation?.targetObjectMetadata.id ?? '',
+      relationTargetFieldMetadataId: field.relation?.targetFieldMetadata.id,
+      sourceObjectMetadataId: field.relation?.sourceObjectMetadata.id,
+      objectMetadataItems,
+    });
+
+    if (isDefined(junctionConfig)) {
       inlineRelationFields.push(field);
       junctionRelationFields.push(field);
       continue;

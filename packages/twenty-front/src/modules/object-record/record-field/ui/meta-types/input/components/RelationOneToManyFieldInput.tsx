@@ -17,7 +17,6 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
-import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
@@ -56,8 +55,6 @@ export const RelationOneToManyFieldInput = () => {
     onSubmit?.({ skipPersist: true });
   };
 
-  const isJunctionRelation = hasJunctionConfig(fieldMetadataItem.settings);
-
   const relationFieldDefinition =
     fieldDefinition as FieldDefinition<FieldRelationMetadata>;
 
@@ -68,16 +65,18 @@ export const RelationOneToManyFieldInput = () => {
       recordId,
     });
 
-  const junctionConfig =
-    isJunctionRelation && isJunctionConfigValid
-      ? getJunctionConfig({
-          settings: fieldMetadataItem.settings,
-          relationObjectMetadataId:
-            relationFieldDefinition.metadata.relationObjectMetadataId,
-          sourceObjectMetadataId: objectMetadataItem.id,
-          objectMetadataItems,
-        })
-      : null;
+  const junctionConfig = isJunctionConfigValid
+    ? getJunctionConfig({
+        settings: fieldMetadataItem.settings,
+        relationObjectMetadataId:
+          relationFieldDefinition.metadata.relationObjectMetadataId,
+        relationTargetFieldMetadataId:
+          fieldMetadataItem.relation?.targetFieldMetadata.id,
+        sourceObjectMetadataId: objectMetadataItem.id,
+        objectMetadataItems,
+      })
+    : null;
+  const isJunctionRelation = isDefined(junctionConfig);
 
   const junctionTargetObjectMetadata = (() => {
     if (!junctionConfig || junctionConfig.isMorphRelation) {

@@ -80,6 +80,7 @@ export const useFieldListFieldMetadataItems = ({
   const { inlineRelationFields, junctionRelationFields, boxedRelationFields } =
     categorizeRelationFields({
       relationFields: relationFieldMetadataItems ?? [],
+      objectMetadataItems,
       objectPermissionsByObjectMetadataId,
     });
 

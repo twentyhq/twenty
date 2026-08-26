@@ -3,7 +3,6 @@ import {
   type JunctionObjectMetadataItem,
 } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
-import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
 import { isDefined } from 'twenty-shared/utils';
 
 type ReverseJunctionConfig = {
@@ -35,9 +34,8 @@ export const getReverseJunctionConfig = ({
   for (const relatedObjectMetadata of objectMetadataItems) {
     for (const forwardJunctionField of relatedObjectMetadata.fields) {
       if (
-        !isJunctionRelationField(forwardJunctionField) ||
         forwardJunctionField.relation?.targetObjectMetadata.id !==
-          junctionObjectMetadataId
+        junctionObjectMetadataId
       ) {
         continue;
       }
@@ -45,6 +43,8 @@ export const getReverseJunctionConfig = ({
       const junctionConfig = getJunctionConfig({
         settings: forwardJunctionField.settings,
         relationObjectMetadataId: junctionObjectMetadataId,
+        relationTargetFieldMetadataId:
+          forwardJunctionField.relation?.targetFieldMetadata.id,
         sourceObjectMetadataId: relatedObjectMetadata.id,
         objectMetadataItems,
       });

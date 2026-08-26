@@ -51,6 +51,8 @@ export const useOpenJunctionRelationFieldInput = () => {
         settings: fieldDefinition.metadata.settings,
         relationObjectMetadataId:
           fieldDefinition.metadata.relationObjectMetadataId,
+        relationTargetFieldMetadataId:
+          fieldDefinition.metadata.relationFieldMetadataId,
         sourceObjectMetadataId,
         objectMetadataItems,
       });
