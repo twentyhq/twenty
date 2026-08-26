@@ -29,7 +29,10 @@ jobs:
       (github.event_name == 'pull_request' &&
        contains(github.event.pull_request.labels.*.name, 'run-merge-queue'))
     runs-on: ubuntu-latest-8-cores
-    timeout-minutes: 30
+    # 60 so build + suite plus the QA Scout's 15-minute step cap cannot hit
+    # the job ceiling: a job timeout overrides step continue-on-error and
+    # would redden the status check.
+    timeout-minutes: 60
     outputs:
       qa-scout-run: ${{ steps.qa-scout-pr.outputs.run }}
       qa-scout-pr-number: ${{ steps.qa-scout-pr.outputs.pr_number }}
@@ -235,7 +238,7 @@ jobs:
         id: qa-scout-run
         if: ${{ !cancelled() && steps.qa-scout-pr.outputs.run == 'true' }}
         continue-on-error: true
-        timeout-minutes: 20
+        timeout-minutes: 15
         uses: anthropics/claude-code-action@ac7e24bf2938964b8ab203e417a2773802392ddd # v1.0.146
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -371,6 +374,13 @@ jobs:
             exit 0
           fi
           VERDICT=$(jq -r '.verdict // empty' "$VERDICT_FILE")
+          case "$VERDICT" in
+            PASS | INVESTIGATE | FAIL) ;;
+            *)
+              echo "Invalid or missing verdict '${VERDICT}' in verdict.json; not posting."
+              exit 0
+              ;;
+          esac
           ARTIFACT_PR=$(jq -r '.prNumber // empty' "$VERDICT_FILE")
           if [ "$ARTIFACT_PR" != "$PR_NUMBER" ]; then
             echo "verdict.json prNumber (${ARTIFACT_PR:-none}) differs from the trusted target #${PR_NUMBER}; the trusted target wins."
