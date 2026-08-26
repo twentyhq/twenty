@@ -1,5 +1,4 @@
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
-
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { flattenNavigationMenuItemsWithFolderChildren } from '@/navigation-menu-item/common/utils/flattenNavigationMenuItemsWithFolderChildren';
 import { getWorkspaceSidebarOrphanItemsInDisplayOrder } from '@/navigation-menu-item/display/utils/getWorkspaceSidebarOrphanItemsInDisplayOrder';
@@ -39,8 +38,19 @@ export const useNavigationMenuItemSectionItems = (): NavigationMenuItem[] => {
     includeInaccessibleObjectBackedItems: isLayoutCustomizationModeEnabled,
   });
 
-  return flattenNavigationMenuItemsWithFolderChildren(
+  const flattenedItems = flattenNavigationMenuItemsWithFolderChildren(
     flatItems,
     workspaceNavigationMenuItemsByFolder,
   );
+
+  const seenItemIds = new Set<string>();
+
+  return flattenedItems.filter((item) => {
+    if (seenItemIds.has(item.id)) {
+      return false;
+    }
+
+    seenItemIds.add(item.id);
+    return true;
+  });
 };
