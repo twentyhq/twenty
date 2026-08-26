@@ -2,6 +2,7 @@ import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import {
   AggregateOperations,
+  PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
   type PageLayoutWidget,
@@ -105,5 +106,75 @@ describe('addWidgetToTab', () => {
     expect(result).not.toBe(mockTabs);
     expect(mockTabs[0].widgets).toHaveLength(0);
     expect(result[0].widgets).toHaveLength(1);
+  });
+
+  it('should normalize an appended widget before a viewport-filling widget in a vertical-list tab', () => {
+    const timelineWidget = {
+      ...mockWidget,
+      id: 'timeline-widget',
+      type: WidgetType.TIMELINE,
+    };
+    const verticalListTab = {
+      ...mockTabs[0],
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      widgets: [timelineWidget],
+    };
+
+    const result = addWidgetToTab([verticalListTab], 'tab-1', mockWidget);
+
+    expect(result[0].widgets.map(({ id }) => id)).toEqual([
+      'widget-1',
+      'timeline-widget',
+    ]);
+    expect(result[0].widgets.map(({ position }) => position)).toEqual([
+      {
+        __typename: 'PageLayoutWidgetVerticalListPosition',
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index: 0,
+      },
+      {
+        __typename: 'PageLayoutWidgetVerticalListPosition',
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index: 1,
+      },
+    ]);
+  });
+
+  it('should preserve saved vertical-list order when appending to an unsorted widget array', () => {
+    const widgetA = {
+      ...mockWidget,
+      id: 'widget-a',
+      position: {
+        __typename: 'PageLayoutWidgetVerticalListPosition' as const,
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index: 1,
+      },
+    };
+    const widgetB = {
+      ...mockWidget,
+      id: 'widget-b',
+      position: {
+        __typename: 'PageLayoutWidgetVerticalListPosition' as const,
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index: 0,
+      },
+    };
+    const verticalListTab = {
+      ...mockTabs[0],
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      widgets: [widgetA, widgetB],
+    };
+    const newWidget = {
+      ...mockWidget,
+      id: 'widget-c',
+    };
+
+    const result = addWidgetToTab([verticalListTab], 'tab-1', newWidget);
+
+    expect(result[0].widgets.map(({ id }) => id)).toEqual([
+      'widget-b',
+      'widget-a',
+      'widget-c',
+    ]);
   });
 });

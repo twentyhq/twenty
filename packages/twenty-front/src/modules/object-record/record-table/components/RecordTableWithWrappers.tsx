@@ -18,7 +18,7 @@ const StyledRecordTablePrintBoundary = styled.div`
 
   @media print {
     display: block;
-    max-height: 100vh;
+    max-height: calc(100vh / var(--t-zoom, 1));
     overflow: hidden;
   }
 `;

@@ -4,7 +4,7 @@ import { isNumber } from '@sniptt/guards';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { sanitizeNumber } from 'src/engine/utils/sanitize-number.utli';
 
@@ -17,9 +17,7 @@ export type RecordPositionServiceCreateArgs = {
 
 @Injectable()
 export class RecordPositionService {
-  constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-  ) {}
+  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
   async buildRecordPosition({
     objectMetadata,
@@ -162,24 +160,20 @@ export class RecordPositionService {
   ): Promise<{ id: string; position: number } | null> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const repository = await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          objectMetadata.nameSingular,
-          {
-            shouldBypassPermissionChecks: true,
-          },
-        );
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const repository = this.workspaceOrmManager.getRepository(
+        objectMetadata.nameSingular,
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
 
-        const record = await repository.findOneBy({
-          position: positionValue,
-        });
+      const record = await repository.findOneBy({
+        position: positionValue,
+      });
 
-        return record ? { id: record.id, position: record.position } : null;
-      },
-      authContext,
-    );
+      return record ? { id: record.id, position: record.position } : null;
+    }, authContext);
   }
 
   async updatePosition(
@@ -190,9 +184,8 @@ export class RecordPositionService {
   ): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const repository = await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const repository = this.workspaceOrmManager.getRepository(
         objectMetadata.nameSingular,
         {
           shouldBypassPermissionChecks: true,
@@ -211,21 +204,19 @@ export class RecordPositionService {
   ): Promise<number | null> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    const result =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const repository = await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            objectMetadata.nameSingular,
-            {
-              shouldBypassPermissionChecks: true,
-            },
-          );
+    const result = await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const repository = this.workspaceOrmManager.getRepository(
+          objectMetadata.nameSingular,
+          {
+            shouldBypassPermissionChecks: true,
+          },
+        );
 
-          return await repository.minimum('position');
-        },
-        authContext,
-      );
+        return await repository.minimum('position');
+      },
+      authContext,
+    );
 
     return sanitizeNumber(result);
   }
@@ -236,21 +227,19 @@ export class RecordPositionService {
   ): Promise<number | null> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    const result =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const repository = await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            objectMetadata.nameSingular,
-            {
-              shouldBypassPermissionChecks: true,
-            },
-          );
+    const result = await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const repository = this.workspaceOrmManager.getRepository(
+          objectMetadata.nameSingular,
+          {
+            shouldBypassPermissionChecks: true,
+          },
+        );
 
-          return await repository.maximum('position');
-        },
-        authContext,
-      );
+        return await repository.maximum('position');
+      },
+      authContext,
+    );
 
     return sanitizeNumber(result);
   }

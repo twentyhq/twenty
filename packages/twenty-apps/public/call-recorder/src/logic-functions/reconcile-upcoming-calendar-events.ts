@@ -1,56 +1,49 @@
-import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { RECONCILE_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/reconcile-upcoming-calendar-events-logic-function-universal-identifier';
-import { RECONCILE_UPCOMING_CALENDAR_EVENTS_ROUTE_PATH } from 'src/constants/reconcile-upcoming-calendar-events-route-path';
-import { fetchUpcomingCalendarEventIds } from 'src/logic-functions/data/fetch-upcoming-calendar-event-ids.util';
-import { reconcileUpcomingCalendarEventBatches } from 'src/logic-functions/flows/reconcile-upcoming-calendar-event-batches.util';
-import { type ReconcileUpcomingCalendarEventBatchesResult } from 'src/logic-functions/flows/reconcile-upcoming-calendar-event-batches-result.type';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { countReconciliationActions } from 'src/logic-functions/domain/count-reconciliation-actions.util';
+import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
+import { type CallRecorderReconciliationActionCounts } from 'src/logic-functions/types/call-recorder-reconciliation-action-counts.type';
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
+import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
+import { toIdList } from 'src/logic-functions/utils/to-id-list.util';
 
-const TIMEOUT_SECONDS = 900;
-const CONTINUATION_RESERVE_MS = 30_000;
-
-type ReconcileUpcomingCalendarEventsRouteBody = {
-  calendarEventIds?: unknown;
-};
-
-type ReconcileUpcomingCalendarEventsRouteResult =
+type ReconcileUpcomingCalendarEventsResult =
   | { outcome: 'nothing-selected' }
-  | { outcome: 'nothing-to-reconcile' }
-  | ({ outcome: 'processed' } & ReconcileUpcomingCalendarEventBatchesResult);
-
-const toIdList = (value: unknown): string[] =>
-  Array.isArray(value) ? value.filter(isNonEmptyString) : [];
+  | {
+      outcome: 'processed';
+      reconciledCalendarEventIds: string[];
+      actionCounts: CallRecorderReconciliationActionCounts;
+    };
 
 export const reconcileUpcomingCalendarEventsHandler = async (
-  payload: RoutePayload<ReconcileUpcomingCalendarEventsRouteBody>,
-): Promise<ReconcileUpcomingCalendarEventsRouteResult> => {
-  const startedAtMs = Date.now();
-  const client = new CoreApiClient();
-
-  const requestedCalendarEventIds = payload.body?.calendarEventIds;
-  const isSweep = isUndefined(requestedCalendarEventIds);
-
-  const calendarEventIds = isSweep
-    ? await fetchUpcomingCalendarEventIds(client, new Date(startedAtMs))
-    : toIdList(requestedCalendarEventIds);
+  payload: unknown,
+): Promise<ReconcileUpcomingCalendarEventsResult> => {
+  const calendarEventIds = toIdList(asRecord(payload)?.calendarEventIds);
 
   if (calendarEventIds.length === 0) {
-    return isSweep
-      ? { outcome: 'nothing-to-reconcile' }
-      : { outcome: 'nothing-selected' };
+    return { outcome: 'nothing-selected' };
   }
 
-  const result = await reconcileUpcomingCalendarEventBatches({
-    client,
-    calendarEventIds,
-    deadlineAtMs:
-      startedAtMs + TIMEOUT_SECONDS * 1000 - CONTINUATION_RESERVE_MS,
-  });
+  try {
+    const reconciliationResults =
+      await reconcileCallRecorderForCalendarEventIds({
+        client: new CoreApiClient(),
+        calendarEventIds,
+      });
 
-  return { outcome: 'processed', ...result };
+    return {
+      outcome: 'processed',
+      reconciledCalendarEventIds: calendarEventIds,
+      actionCounts: countReconciliationActions(reconciliationResults),
+    };
+  } catch (error) {
+    throw buildRetryableStepFailure(
+      'upcoming calendar event batch reconciliation',
+      error,
+    );
+  }
 };
 
 export default defineLogicFunction({
@@ -58,12 +51,7 @@ export default defineLogicFunction({
     RECONCILE_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'reconcile-upcoming-calendar-events',
   description:
-    'Sweeps upcoming calendar events through reconciliation, self-continuing with the remaining ids near the timeout.',
-  timeoutSeconds: TIMEOUT_SECONDS,
+    'Reconciles one enqueued batch of upcoming calendar events so their recording bots match the recording policy.',
+  timeoutSeconds: 900,
   handler: reconcileUpcomingCalendarEventsHandler,
-  httpRouteTriggerSettings: {
-    path: RECONCILE_UPCOMING_CALENDAR_EVENTS_ROUTE_PATH,
-    httpMethod: 'POST',
-    isAuthRequired: true,
-  },
 });

@@ -1,4 +1,3 @@
-import { styled } from '@linaria/react';
 import { useCallback, useState } from 'react';
 
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
@@ -10,25 +9,16 @@ import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPref
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
 import { getEmailDraftPrefillFromMessage } from '@/activities/emails/utils/getEmailDraftPrefillFromMessage';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import {
+  StyledWidgetContentContainer,
+  StyledWidgetScrollContainer,
+} from '@/ui/layout/components/WidgetContentContainer';
 import { EmailThreadComposer } from '@/page-layout/widgets/email-thread/components/EmailThreadComposer';
 import { EmailThreadIntermediaryMessages } from '@/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-
-const StyledWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
-
-const StyledContainer = styled.div`
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-`;
 
 type EmailThreadWidgetProps = {
   widget: PageLayoutWidget;
@@ -102,17 +92,17 @@ export const EmailThreadWidget = ({
 
   if (threadLoading || !thread || !messages.length) {
     return (
-      <StyledWrapper>
-        <StyledContainer>
+      <StyledWidgetContentContainer>
+        <StyledWidgetScrollContainer>
           <EmailLoader loadingText={t`Loading thread`} />
-        </StyledContainer>
-      </StyledWrapper>
+        </StyledWidgetScrollContainer>
+      </StyledWidgetContentContainer>
     );
   }
 
   return (
-    <StyledWrapper>
-      <StyledContainer>
+    <StyledWidgetContentContainer>
+      <StyledWidgetScrollContainer>
         {firstMessages.map((message) => (
           <EmailThreadMessage
             key={message.id}
@@ -135,7 +125,7 @@ export const EmailThreadWidget = ({
           loading={threadLoading}
           onLastRowVisible={fetchMoreMessages}
         />
-      </StyledContainer>
+      </StyledWidgetScrollContainer>
       {canReply && (
         <EmailThreadComposer
           key={draftPrefill?.messageId ?? 'reply'}
@@ -146,6 +136,6 @@ export const EmailThreadWidget = ({
           draftPrefill={draftPrefill}
         />
       )}
-    </StyledWrapper>
+    </StyledWidgetContentContainer>
   );
 };

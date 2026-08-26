@@ -23,6 +23,7 @@ import { type ApolloManager } from '@/apollo/types/apolloManager.interface';
 import { getIsCookieAuthActive } from '@/apollo/utils/getIsCookieAuthActive';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { setIsCookieAuthActive } from '@/apollo/utils/setIsCookieAuthActive';
+import { isMissingCredentialGraphQLError } from '@/apollo/utils/isMissingCredentialGraphQLError';
 import { isUnauthenticatedGraphQLError } from '@/apollo/utils/isUnauthenticatedGraphQLError';
 import { loggerLink } from '@/apollo/utils/loggerLink';
 import { StreamingRestLink } from '@/apollo/utils/streamingRestLink';
@@ -209,6 +210,14 @@ export class ApolloFactory implements ApolloManager {
         }
       };
 
+      const canFallBackFromCookieAuth = (
+        operation: ApolloLink.Operation,
+      ): boolean =>
+        getIsCookieAuthActive() &&
+        operation.getContext().skipAuthToken !== true &&
+        operation.getContext().hasAttemptedCookieAuthFallback !== true &&
+        isDefined(getTokenPair()?.refreshToken?.token);
+
       const handleTokenRenewal = (
         operation: ApolloLink.Operation,
         forward: ApolloLink.ForwardFunction,
@@ -226,11 +235,7 @@ export class ApolloFactory implements ApolloManager {
         // rollback. Fall back to the retained token pair instead of signing the
         // user out. Attempted once per operation so a genuinely expired token
         // still reaches the renewal path below.
-        if (
-          getIsCookieAuthActive() &&
-          operation.getContext().hasAttemptedCookieAuthFallback !== true &&
-          isDefined(getTokenPair()?.refreshToken?.token)
-        ) {
+        if (canFallBackFromCookieAuth(operation)) {
           setIsCookieAuthActive(false);
           operation.setContext({ hasAttemptedCookieAuthFallback: true });
           // Deactivation is sticky for the rest of the mount by design. Both
@@ -349,6 +354,21 @@ export class ApolloFactory implements ApolloManager {
             if (isUnauthenticatedGraphQLError(graphQLError)) {
               // oxlint-disable-next-line no-console
               console.log('Unauthenticated, triggering token renewal');
+              return handleTokenRenewal(operation, forward, error);
+            }
+
+            // Goes through handleTokenRenewal rather than replaying directly:
+            // ErrorLink subscribes a replay straight to the original observer,
+            // so an UNAUTHENTICATED on it never re-enters this handler.
+            if (
+              isMissingCredentialGraphQLError(graphQLError) &&
+              canFallBackFromCookieAuth(operation)
+            ) {
+              // oxlint-disable-next-line no-console
+              console.log(
+                'Session cookie was not accepted, falling back to the token pair',
+              );
+
               return handleTokenRenewal(operation, forward, error);
             }
 

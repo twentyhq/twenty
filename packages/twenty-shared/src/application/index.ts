@@ -31,10 +31,12 @@ export { APPLICATION_VARIABLE_FIELD_METADATA_TYPES } from './applicationVariable
 export type { AssetManifest } from './assetManifestType';
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
 export type { ConnectionProviderType } from './connectionProviderType';
+export { APPLICATION_FILE_UPLOAD_BATCH_SIZE } from './constants/ApplicationFileUploadBatchSize';
 export { ASSETS_DIR } from './constants/AssetDirectory';
 export { DEFAULT_API_KEY_NAME } from './constants/DefaultApiKeyName';
 export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
 export { DEFAULT_APP_ACCESS_TOKEN_NAME } from './constants/DefaultAppAccessTokenName';
+export { DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME } from './constants/DefaultAppApplicationAccessTokenName';
 export { DEFAULT_FUNCTIONS_URL_NAME } from './constants/DefaultFunctionsUrlName';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH } from './constants/FrontComponentSharedDependenciesBuiltPath';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from './constants/FrontComponentSharedDependenciesImportSpecifier';
@@ -95,6 +97,8 @@ export type {
   EnqueueJobOptions,
   EnqueueJobInput,
   EnqueueJobResult,
+  EnqueueJobsInput,
+  EnqueueJobsResult,
 } from './enqueueJobType';
 export { SyncableEntity } from './enums/syncable-entities.enum';
 export type {
@@ -152,6 +156,11 @@ export type { SettingsFrontComponentApplicationManifest } from './settingsFrontC
 export type { SkillManifest } from './skillManifestType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
+export type {
+  TimelineActivityTypeEmitThroughManifest,
+  TimelineActivityTypeEmitManifest,
+  TimelineActivityTypeManifest,
+} from './timelineActivityTypeManifestType';
 export type { ToolTriggerSettings } from './toolTriggerSettingsType';
 export type { UninstallLogicFunctionApplicationManifest } from './uninstallLogicFunctionApplicationType';
 export {

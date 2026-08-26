@@ -6,7 +6,7 @@ import { Any, Repository } from 'typeorm';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
 import {
@@ -25,7 +25,7 @@ export class CalendarFetchEventsService {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.ModuleCalendar)
     private readonly cacheStorage: CacheStorageService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
@@ -50,7 +50,7 @@ export class CalendarFetchEventsService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         try {
           const { calendarEventIds, calendarEventIdsToDelete, nextSyncCursor } =
@@ -61,8 +61,7 @@ export class CalendarFetchEventsService {
 
           if (calendarEventIdsToDelete.length > 0) {
             const calendarChannelEventAssociationRepository =
-              await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
-                workspaceId,
+              this.workspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
                 'calendarChannelEventAssociation',
               );
 

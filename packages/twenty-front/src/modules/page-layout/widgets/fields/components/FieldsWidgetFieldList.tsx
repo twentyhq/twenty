@@ -52,7 +52,6 @@ export const FieldsWidgetFieldList = ({
       fieldMetadataItem={fieldMetadataItem}
       globalIndex={globalIndex}
       recordId={targetRecord.id}
-      targetObjectNameSingular={targetRecord.targetObjectNameSingular}
       objectMetadataItem={objectMetadataItem}
       objectMetadataItems={objectMetadataItems}
       objectPermissionsByObjectMetadataId={objectPermissionsByObjectMetadataId}

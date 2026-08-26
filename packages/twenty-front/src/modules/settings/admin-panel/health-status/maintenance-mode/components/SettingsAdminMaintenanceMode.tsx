@@ -19,7 +19,7 @@ import { adminPanelMaintenanceModeState } from '@/settings/admin-panel/health-st
 import { SettingsDatePickerInput } from '@/settings/components/SettingsDatePickerInput';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { InputHint } from '@/ui/input/components/InputHint';
+import { InputHint } from 'twenty-ui/input';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';

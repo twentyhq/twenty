@@ -45,7 +45,9 @@ export type { RoutePayload } from '@/sdk/define/logic-functions/triggers/route-p
 
 export {
   jsonSchemaToInputSchema,
+  RetryableLogicFunctionError,
   type InputJsonSchema,
+  type LogicFunctionExecutionContext,
 } from 'twenty-shared/logic-function';
 
 export { getConnection } from '@/sdk/logic-function/connections/get-connection';
@@ -59,11 +61,20 @@ export { runAgent } from '@/sdk/logic-function/agents/run-agent';
 export type { RunAgentInput, RunAgentResult } from 'twenty-shared/application';
 
 export { enqueueJob } from '@/sdk/logic-function/jobs/enqueue-job';
+export { enqueueJobs } from '@/sdk/logic-function/jobs/enqueue-jobs';
 export type {
   EnqueueJobInput,
   EnqueueJobOptions,
   EnqueueJobResult,
+  EnqueueJobsInput,
+  EnqueueJobsResult,
 } from 'twenty-shared/application';
+
+export { createTimelineActivity } from '@/sdk/logic-function/timeline/create-timeline-activity';
+export type {
+  CreatedTimelineActivity,
+  CreateTimelineActivityInput,
+} from '@/sdk/logic-function/timeline/create-timeline-activity';
 
 export { kv } from '@/sdk/logic-function/key-value/kv';
 export type { AppKeyValue, AppKeyValueScope } from 'twenty-shared/application';

@@ -8,7 +8,6 @@ import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsDeviceSessionRowDropdownMenu } from '@/settings/profile/devices/components/SettingsDeviceSessionRowDropdownMenu';
 import { parseUserAgentDescription } from '@/settings/profile/devices/utils/parseUserAgentDescription';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { isCookieSessionEnabledState } from '@/client-config/states/isCookieSessionEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Status } from 'twenty-ui/data-display';
 import { IconDeviceDesktop, IconLogout } from 'twenty-ui/icon';
@@ -44,11 +43,9 @@ export const SettingsProfileDevicesSection = () => {
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
-  const isCookieSessionEnabled = useAtomStateValue(isCookieSessionEnabledState);
-
   const { data, loading, error, refetch } = useQuery(
     CurrentUserSessionsDocument,
-    { fetchPolicy: 'network-only', skip: !isCookieSessionEnabled },
+    { fetchPolicy: 'network-only' },
   );
 
   useSnackBarOnQueryError(error);

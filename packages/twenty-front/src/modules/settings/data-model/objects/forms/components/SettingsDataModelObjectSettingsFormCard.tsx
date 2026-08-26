@@ -16,7 +16,7 @@ type SettingsDataModelObjectSettingsFormCardProps = {
 };
 
 const StyledTopCardContentContainer = styled.div`
-  > * {
+  > div {
     background-color: ${themeCssVariables.background.transparent.lighter};
   }
 `;
@@ -24,14 +24,14 @@ const StyledTopCardContentContainer = styled.div`
 const StyledObjectSummaryCardContainer = styled.div`
   max-width: 480px;
 
-  > * {
+  > div {
     border-radius: ${themeCssVariables.border.radius.md};
     color: ${themeCssVariables.font.color.primary};
   }
 `;
 
 const StyledObjectSummaryCardContentContainer = styled.div`
-  > * {
+  > div {
     padding: ${themeCssVariables.spacing[2]};
   }
 `;

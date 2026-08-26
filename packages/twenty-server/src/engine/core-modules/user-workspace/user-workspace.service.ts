@@ -11,6 +11,8 @@ import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/i
 
 import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
+import { getJoinableWorkspacesFromApprovedAccessDomains } from 'src/engine/core-modules/approved-access-domain/utils/get-joinable-workspaces-from-approved-access-domains.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -35,9 +37,11 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
@@ -51,21 +55,20 @@ export class UserWorkspaceService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    // softRemove is not supported by WorkspaceScopedRepository.
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
-    @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
+    @InjectWorkspaceScopedRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     private readonly roleValidationService: RoleValidationService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly loginTokenService: LoginTokenService,
     private readonly approvedAccessDomainService: ApprovedAccessDomainService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly userRoleService: UserRoleService,
     private readonly fileCorePictureService: FileCorePictureService,
     private readonly fileUrlService: FileUrlService,
     private readonly onboardingService: OnboardingService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async findById(id: string): Promise<UserWorkspaceEntity | null> {
@@ -159,10 +162,9 @@ export class UserWorkspaceService {
   ) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceMemberRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          workspaceId,
+        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
           'workspaceMember',
           { shouldBypassPermissionChecks: true },
         );
@@ -188,6 +190,7 @@ export class UserWorkspaceService {
           lastName: user.lastName,
         },
         colorScheme: 'System',
+        uiScale: 'Default',
         openRecordIn: OpenRecordIn.SIDE_PANEL,
         userId: user.id,
         userEmail: user.email,
@@ -340,21 +343,21 @@ export class UserWorkspaceService {
     return await this.userWorkspaceRepository.count({ where: { userId } });
   }
 
-  // TODO migrate roleTargetRepository to WorkspaceScopedRepository once workspaceId
-  // is threaded through all deleteUserWorkspace callers (user.service.ts does not
-  // currently have it at the call site).
   async deleteUserWorkspace({
     userWorkspaceId,
+    workspaceId,
     softDelete = false,
   }: {
     userWorkspaceId: string;
+    workspaceId: string;
     softDelete?: boolean;
   }): Promise<void> {
     if (softDelete) {
-      await this.roleTargetRepository.softRemove({ userWorkspaceId });
+      // roleTarget has no deletedAt column, so its rows cannot be soft deleted.
+      // Access stays gated by the soft-deleted userWorkspace.
       await this.userWorkspaceRepository.softDelete({ id: userWorkspaceId });
     } else {
-      await this.roleTargetRepository.delete({ userWorkspaceId }); // TODO remove once userWorkspace foreign key is added on roleTarget
+      await this.roleTargetRepository.delete(workspaceId, { userWorkspaceId }); // TODO remove once userWorkspace foreign key is added on roleTarget
       await this.userWorkspaceRepository.delete({ id: userWorkspaceId });
     }
   }
@@ -391,18 +394,17 @@ export class UserWorkspaceService {
     );
 
     // Email-domain discovery is the only "listing" source: PUBLIC only.
-    const workspacesFromApprovedAccessDomain = (
-      await this.approvedAccessDomainService.findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain(
-        getDomainFromEmailOrThrow(email),
-      )
+    const workspacesFromApprovedAccessDomain = this.twentyConfigService.get(
+      'IS_EMAIL_VERIFICATION_REQUIRED',
     )
-      .filter(
-        ({ workspace }) =>
-          !alreadyMemberWorkspacesIds.includes(workspace.id) &&
-          workspace.workspaceDiscoverability ===
-            WorkspaceDiscoverability.PUBLIC,
-      )
-      .map(({ workspace }) => ({ workspace }));
+      ? getJoinableWorkspacesFromApprovedAccessDomains({
+          approvedAccessDomains:
+            await this.approvedAccessDomainService.findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain(
+              getDomainFromEmailOrThrow(email),
+            ),
+          alreadyMemberWorkspaceIds: alreadyMemberWorkspacesIds,
+        })
+      : [];
 
     const workspacesFromApprovedAccessDomainIds =
       workspacesFromApprovedAccessDomain.map(({ workspace }) => workspace.id);
@@ -484,23 +486,19 @@ export class UserWorkspaceService {
   }): Promise<WorkspaceMemberWorkspaceEntity | null> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const workspaceMemberRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
-            'workspaceMember',
-            { shouldBypassPermissionChecks: true },
-          );
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workspaceMemberRepository =
+        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+          'workspaceMember',
+          { shouldBypassPermissionChecks: true },
+        );
 
-        return workspaceMemberRepository.findOne({
-          where: {
-            id: workspaceMemberId,
-          },
-        });
-      },
-      authContext,
-    );
+      return workspaceMemberRepository.findOne({
+        where: {
+          id: workspaceMemberId,
+        },
+      });
+    }, authContext);
   }
 
   async getWorkspaceMemberOrThrow({

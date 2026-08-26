@@ -8,13 +8,20 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
+import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
+import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
+import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { StyledWidgetScrollContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Decorator } from '@storybook/react-vite';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
 } from '~/generated-metadata/graphql';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
@@ -29,10 +36,30 @@ export const getCallRecordingWidgetStoryDecorator =
     widgetId: string;
   }): Decorator =>
   (Story) => {
-    setTestObjectMetadataItemsInMetadataStore(
-      jotaiStore,
-      getTestEnrichedObjectMetadataItemsMock(),
+    const widget = pageLayout.tabs
+      .flatMap((tab) => tab.widgets)
+      .find((pageLayoutWidget) => pageLayoutWidget.id === widgetId);
+
+    if (!isDefined(widget)) {
+      throw new Error(`Widget ${widgetId} was not found in the page layout`);
+    }
+
+    const calendarEventObjectMetadataItem = getMockObjectMetadataItemOrThrow(
+      CoreObjectNameSingular.CalendarEvent,
     );
+
+    setTestObjectMetadataItemsInMetadataStore(jotaiStore, [
+      ...getTestEnrichedObjectMetadataItemsMock(),
+      {
+        ...calendarEventObjectMetadataItem,
+        id: 'call-recording-object-metadata-id',
+        nameSingular: CoreObjectNameSingular.CallRecording,
+        namePlural: 'callRecordings',
+        labelSingular: 'Call Recording',
+        labelPlural: 'Call Recordings',
+        fields: [],
+      },
+    ]);
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
@@ -48,13 +75,16 @@ export const getCallRecordingWidgetStoryDecorator =
     );
 
     return (
-      <div style={{ width: '500px', height: '360px', display: 'flex' }}>
+      <div style={{ display: 'flex', height: 360, width: 500 }}>
         <PageLayoutTestWrapper store={jotaiStore}>
           <LayoutRenderingProvider
             value={{
               isInSidePanel: false,
               layoutType: PageLayoutType.RECORD_PAGE,
-              targetRecordIdentifier: undefined,
+              targetRecordIdentifier: {
+                id: 'calendar-event-id',
+                targetObjectNameSingular: CoreObjectNameSingular.CalendarEvent,
+              },
             }}
           >
             <PageLayoutContentProvider
@@ -65,9 +95,34 @@ export const getCallRecordingWidgetStoryDecorator =
               }}
             >
               <WidgetComponentInstanceContext.Provider
-                value={{ instanceId: widgetId }}
+                value={{ instanceId: widget.id }}
               >
-                <Story />
+                <WidgetCard
+                  variant="flush"
+                  isEditable={false}
+                  isEditing={false}
+                  isDragging={false}
+                  isResizing={false}
+                >
+                  <WidgetCardHeader
+                    className="widget-card-header"
+                    widgetId={widget.id}
+                    variant="flush"
+                    isInEditMode={false}
+                    hasAccess={true}
+                    isResizing={false}
+                    title={widget.title}
+                  />
+                  <WidgetCardContent
+                    variant="flush"
+                    hasHeader={true}
+                    isEditable={false}
+                  >
+                    <StyledWidgetScrollContainer>
+                      <Story />
+                    </StyledWidgetScrollContainer>
+                  </WidgetCardContent>
+                </WidgetCard>
               </WidgetComponentInstanceContext.Provider>
             </PageLayoutContentProvider>
           </LayoutRenderingProvider>

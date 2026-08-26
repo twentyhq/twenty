@@ -3,9 +3,9 @@
 //
 // 1. Upserts row-level-permission predicates on the Partner role:
 //    - "partnerUser IS the current member" on partner/person/company/partnerLink/partnerService/
-//      partnerContent/application. The Apply workflow must map Partner User to the clicking
-//      member at insert (see src/workflows/README.md) — RLS validates the insert against the
-//      row as submitted, so a row created without partnerUser is rejected.
+//      partnerContent/application. RLS validates an insert against the row as submitted, so a
+//      row created without partnerUser is rejected — which is why the apply route sets
+//      partnerUser when it creates the Application.
 //    - "(partnerUser IS me) OR (isListed = true)" on opportunity (marketplace briefs)
 //    - "id IS the current member" on workspaceMember (self-scope; internal roster hidden)
 //
@@ -14,11 +14,15 @@
 //    (ROLE_BELONGS_TO_ANOTHER_APPLICATION), so those must come from the manifest; if any
 //    expected lock is missing, the script exits non-zero and tells you to re-sync.
 //
-// 3. Verifies Application field permissions the same way (pitch editable; rest locked).
+// 3. Verifies Application field permissions the same way. The Partner role cannot write
+//    Application at all (canUpdateObjectRecords: false); the field locks are kept as
+//    intent on top of that object-level block, not as the mechanism.
 //
 // Usage:
 //   yarn rls:configure          # against .env.local
 //   yarn rls:configure:prod     # against .env.prod
+
+import { createHash } from 'node:crypto';
 
 import { config } from 'dotenv';
 config({ path: process.env.ENV_FILE ?? '.env.local' });
@@ -43,12 +47,25 @@ const SIMPLE_TARGET_OBJECTS = [
 ] as const;
 type SimpleTargetObject = (typeof SIMPLE_TARGET_OBJECTS)[number];
 
+// A UUIDv5-shaped id derived from a seed: stable across re-runs, distinct per workspace.
+const deriveUuid = (seed: string): string => {
+  const hex = createHash('sha1').update(seed).digest('hex');
+  const version = `5${hex.slice(13, 16)}`;
+  const variant = ((parseInt(hex.slice(16, 18), 16) & 0x3f) | 0x80)
+    .toString(16)
+    .padStart(2, '0');
+
+  return [
+    hex.slice(0, 8),
+    hex.slice(8, 12),
+    version,
+    variant + hex.slice(18, 20),
+    hex.slice(20, 32),
+  ].join('-');
+};
+
 // opportunity uses an OR group (handled separately), but still needs an existence check.
 const ALL_TARGET_OBJECTS = [...SIMPLE_TARGET_OBJECTS, 'opportunity'] as const;
-
-// Stable id for the OR predicate group — re-runs upsert in place instead of creating
-// a duplicate group.
-const OPPORTUNITY_RLS_OR_GROUP_ID = 'b7e7f3a0-4c5d-4e8f-9a1b-2c3d4e5f6789';
 
 // Opportunity fields that must NOT be locked: system columns and updatedBy/position
 // (server-managed — locking them breaks every update; see src/roles/partner.role.ts).
@@ -62,17 +79,19 @@ const OPPORTUNITY_FIELD_LOCK_SKIP = new Set([
   'position',
 ]);
 
-// Application fields that must be locked (pitch + opportunity are partner-editable).
+// Application fields that must be locked. pitch + opportunity are exempt from this set —
+// not because a partner can edit them (they can't; the whole object is write-blocked) but
+// because the apply route sets both once, at creation, under the application role.
 const APPLICATION_FIELD_LOCK_EXPECTED = new Set([
   'name',
   'partner',
   'partnerUser',
   'state',
-  'lastActivityAt',
 ]);
 
 // Application fields that must NOT be locked: system columns, pitch + opportunity
-// (editable), and updatedBy/position (server-managed — locking them breaks every update).
+// (set once by the apply route, not by the partner), and updatedBy/position
+// (server-managed — locking them breaks every update).
 const APPLICATION_FIELD_LOCK_SKIP = new Set([
   'id',
   'createdAt',
@@ -86,11 +105,10 @@ const APPLICATION_FIELD_LOCK_SKIP = new Set([
 ]);
 
 const APPLY_WORKFLOW_WARNING =
-  `[rls:configure] \u26a0 The "Apply to Brief" workflow in this workspace MUST map\n` +
-  `  Partner User -> {{trigger.workspaceMember}} and map no other field, and every\n` +
-  `  Application created before this run needs \`yarn backfill:partner-user\`.\n` +
-  `  Otherwise partners cannot apply, and admin invites stay invisible to them.\n` +
-  `  See src/workflows/README.md.\n`;
+  `[rls:configure] The apply path ships in the app manifest: a command menu item\n` +
+  `  opens a front component that calls POST /apply-to-brief. No workflow needs\n` +
+  `  building for it. That app route creates the Application under the\n` +
+  `  application role.\n`;
 
 type ObjectInfo = {
   objectMetadataId: string;
@@ -363,6 +381,12 @@ async function main() {
     'id',
   );
 
+  const workspaceData = await metadataFetch<{
+    currentWorkspace: { id: string };
+  }>(metadataUrl, apiKey, `{ currentWorkspace { id } }`);
+
+  const workspaceId = workspaceData.currentWorkspace.id;
+
   // ── 3. Resolve Partner role id and fetch field permissions in one request ──────
   //
   // getRoles returns a flat array (not a connection) and does NOT expose
@@ -500,13 +524,19 @@ async function main() {
 
   // Opportunity: (partnerUser IS me) OR (isListed = true) — listed briefs visible to all partners.
   {
+    // Predicate-group ids are unique across the whole metadata schema, not per workspace,
+    // so a hardcoded id collides on a server that hosts more than one workspace.
+    const opportunityGroupId = deriveUuid(
+      `${workspaceId}:opportunity-rls-or-group`,
+    );
+
     const oppPredicates = await upsertPredicates(
       {
         roleId: partnerRole.id,
         objectMetadataId: opportunityObjectId,
         predicateGroups: [
           {
-            id: OPPORTUNITY_RLS_OR_GROUP_ID,
+            id: opportunityGroupId,
             objectMetadataId: opportunityObjectId,
             logicalOperator: 'OR',
             parentRowLevelPermissionPredicateGroupId: null,
@@ -517,14 +547,14 @@ async function main() {
             fieldMetadataId: opportunityPartnerUserFieldId,
             operand: 'IS',
             workspaceMemberFieldMetadataId: workspaceMemberIdFieldId,
-            rowLevelPermissionPredicateGroupId: OPPORTUNITY_RLS_OR_GROUP_ID,
+            rowLevelPermissionPredicateGroupId: opportunityGroupId,
             positionInRowLevelPermissionPredicateGroup: 0,
           },
           {
             fieldMetadataId: opportunityIsListedFieldId,
             operand: 'IS',
             value: true,
-            rowLevelPermissionPredicateGroupId: OPPORTUNITY_RLS_OR_GROUP_ID,
+            rowLevelPermissionPredicateGroupId: opportunityGroupId,
             positionInRowLevelPermissionPredicateGroup: 1,
           },
         ],
@@ -543,7 +573,7 @@ async function main() {
     }
 
     console.log(
-      `[rls:configure] ✓ opportunity: OR group id=${OPPORTUNITY_RLS_OR_GROUP_ID} ` +
+      `[rls:configure] ✓ opportunity: OR group id=${opportunityGroupId} ` +
         `(${oppPredicates.length} predicates: partnerUser IS me OR isListed = true)`,
     );
   }
@@ -636,7 +666,7 @@ async function main() {
   }
 
   console.log(
-    `[rls:configure] ✓ ${oppLockedFps.length} Opportunity fields locked (stage + amount read-only) — field permissions verified`,
+    `[rls:configure] ✓ ${oppLockedFps.length} Opportunity fields locked (Partner role cannot write Opportunity at all; locks kept as intent) — field permissions verified`,
   );
 
   // ── 6. Verify Application field permissions (set via manifest, not here — see header) ─
@@ -684,8 +714,9 @@ async function main() {
 
   if (pitchIsLocked) {
     console.warn(
-      `[rls:configure] WARNING: pitch field is locked — it should be editable. ` +
-        `Remove it from fieldPermissions in partner.role.ts and re-sync.`,
+      `[rls:configure] NOTE: pitch field is locked on the Partner role, beyond the ` +
+        `expected set. Harmless — canUpdateObjectRecords already blocks every Partner ` +
+        `write to Application, so this lock has no additional effect.`,
     );
   }
 
@@ -713,7 +744,7 @@ async function main() {
   }
 
   console.log(
-    `[rls:configure] ✓ ${appLockedFps.length} Application fields locked (pitch editable) — field permissions verified`,
+    `[rls:configure] ✓ ${appLockedFps.length} Application fields locked (Partner role cannot write Application at all; locks kept as intent) — field permissions verified`,
   );
 }
 

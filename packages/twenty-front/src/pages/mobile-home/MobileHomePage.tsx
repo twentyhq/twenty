@@ -1,16 +1,11 @@
+import { MobileHomeAiChatSection } from '@/ai/components/MobileHomeAiChatSection';
 import { MainNavigationDrawerNavigationContent } from '@/navigation/components/MainNavigationDrawerNavigationContent';
-import { MobileHomeTabsRow } from '@/navigation/components/MobileHomeTabsRow';
-import { NavigationDrawerTabbedContent } from '@/navigation/components/NavigationDrawerTabbedContent';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
-import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
-import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
-import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { Navigate } from 'react-router-dom';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -27,20 +22,15 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledTopRow = styled.div`
-  align-items: center;
+const StyledSections = styled.div`
   display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  justify-content: space-between;
-  width: 100%;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
 `;
 
 export const MobileHomePage = () => {
   const isMobile = useIsMobile();
   const { defaultHomePagePath } = useDefaultHomePagePath();
-  const navigationDrawerActiveTab = useAtomStateValue(
-    navigationDrawerActiveTabState,
-  );
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
   // Desktop keeps the drawer, so the page has nothing to show there.
@@ -48,34 +38,17 @@ export const MobileHomePage = () => {
     return <Navigate to={defaultHomePagePath} replace />;
   }
 
-  const showAiChatContent =
-    hasAiPermission &&
-    navigationDrawerActiveTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY;
-
-  const showSettingsContent =
-    navigationDrawerActiveTab === NAVIGATION_DRAWER_TABS.SETTINGS;
-
   return (
     <StyledContainer>
       <NavigationDrawerFixedContent>
-        <StyledTopRow>
-          <MobileHomeTabsRow />
-          <MultiWorkspaceDropdownButton shouldHideLabel />
-        </StyledTopRow>
+        <MultiWorkspaceDropdownButton />
       </NavigationDrawerFixedContent>
 
       <NavigationDrawerScrollableContent>
-        <NavigationDrawerTabbedContent
-          showAiChatContent={showAiChatContent}
-          shouldMountAiChatContent={hasAiPermission}
-          navigationContent={
-            showSettingsContent ? (
-              <SettingsNavigationDrawerItems />
-            ) : (
-              <MainNavigationDrawerNavigationContent />
-            )
-          }
-        />
+        <StyledSections>
+          <MainNavigationDrawerNavigationContent />
+          {hasAiPermission && <MobileHomeAiChatSection />}
+        </StyledSections>
       </NavigationDrawerScrollableContent>
     </StyledContainer>
   );

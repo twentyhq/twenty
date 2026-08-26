@@ -1,20 +1,58 @@
 import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
+import { Readable } from 'stream';
+
 import { S3Driver } from 'src/engine/core-modules/file-storage/drivers/s3.driver';
+
+const mockS3Send = jest.fn();
 
 jest.mock('@aws-sdk/client-s3', () => {
   const actual = jest.requireActual('@aws-sdk/client-s3');
 
   return {
     ...actual,
-    S3: jest.fn().mockImplementation(() => ({})),
+    S3: jest.fn().mockImplementation(() => ({ send: mockS3Send })),
   };
 });
 
 jest.mock('@aws-sdk/s3-request-presigner', () => ({
   getSignedUrl: jest.fn(),
 }));
+
+describe('S3Driver.readFile', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should request only the specified byte range', async () => {
+    mockS3Send.mockResolvedValue({
+      Body: Readable.from([Buffer.from('requested bytes')]),
+    });
+
+    const driver = new S3Driver({
+      bucketName: 'test-bucket',
+      region: 'us-east-1',
+    });
+
+    await driver.readFile({
+      filePath: 'recordings/video.mp4',
+      byteRange: { startByte: 100, endByte: 199 },
+    });
+
+    expect(mockS3Send).toHaveBeenCalledTimes(1);
+
+    expect(mockS3Send).toHaveBeenCalledWith(
+      expect.objectContaining({
+        input: expect.objectContaining({
+          Bucket: 'test-bucket',
+          Key: 'recordings/video.mp4',
+          Range: 'bytes=100-199',
+        }),
+      }),
+    );
+  });
+});
 
 describe('S3Driver.getPresignedUrl', () => {
   afterEach(() => {

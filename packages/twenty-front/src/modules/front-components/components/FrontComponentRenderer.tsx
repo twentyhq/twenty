@@ -2,6 +2,7 @@ import { FrontComponentApplicationTokenPairEffect } from '@/front-components/com
 import { FrontComponentLoadErrorSnackBarEffect } from '@/front-components/components/FrontComponentLoadErrorSnackBarEffect';
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
+import { useFrontComponentMediaSession } from '@/front-components/media-session/hooks/useFrontComponentMediaSession';
 import { useOnApplicationSdkClientChecksumsUpdated } from '@/front-components/hooks/useOnApplicationSdkClientChecksumsUpdated';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
 import { getFingerprintedRestUrl } from '@/front-components/utils/getFingerprintedRestUrl';
@@ -25,7 +26,9 @@ type FrontComponentRendererProps = {
   frontComponentId: string;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
+  timelineActivityId?: string;
   loadingFallback?: ReactNode;
+  unavailableFallback?: ReactNode;
 };
 
 type ResolvedFrontComponent = NonNullable<
@@ -36,6 +39,7 @@ type FrontComponentRendererContentProps = {
   frontComponent: ResolvedFrontComponent;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
+  timelineActivityId?: string;
   loadingFallback?: ReactNode;
 };
 
@@ -43,7 +47,9 @@ export const FrontComponentRenderer = ({
   frontComponentId,
   commandMenuItemId,
   selectedRecordIds,
+  timelineActivityId,
   loadingFallback,
+  unavailableFallback,
 }: FrontComponentRendererProps) => {
   const { data, loading, error } = useQuery(FindOneFrontComponentDocument, {
     variables: { id: frontComponentId },
@@ -59,11 +65,15 @@ export const FrontComponentRenderer = ({
     <>
       <FrontComponentLoadErrorSnackBarEffect errorMessage={error?.message} />
       {loading && loadingFallback}
-      {!loading && isDefined(frontComponent) && (
+      {!loading &&
+        (!isDefined(frontComponent) || isDefined(error)) &&
+        unavailableFallback}
+      {!loading && isDefined(frontComponent) && !isDefined(error) && (
         <FrontComponentRendererContent
           frontComponent={frontComponent}
           commandMenuItemId={commandMenuItemId}
           selectedRecordIds={selectedRecordIds}
+          timelineActivityId={timelineActivityId}
           loadingFallback={loadingFallback}
         />
       )}
@@ -75,6 +85,7 @@ const FrontComponentRendererContent = ({
   frontComponent,
   commandMenuItemId,
   selectedRecordIds,
+  timelineActivityId,
   loadingFallback,
 }: FrontComponentRendererContentProps) => {
   const { colorScheme } = useContext(ThemeContext);
@@ -97,8 +108,11 @@ const FrontComponentRendererContent = ({
     applicationId,
     commandMenuItemId,
     selectedRecordIds,
+    timelineActivityId,
     colorScheme,
   });
+
+  const { mediaSessionHost } = useFrontComponentMediaSession();
 
   const handleError = useCallback(
     (error?: Error) => {
@@ -174,6 +188,7 @@ const FrontComponentRendererContent = ({
             frontComponentHostCommunicationApi={
               frontComponentHostCommunicationApi
             }
+            mediaSessionHost={mediaSessionHost}
             applicationVariables={applicationVariables}
             storageNamespace={storageNamespace}
             onError={handleError}

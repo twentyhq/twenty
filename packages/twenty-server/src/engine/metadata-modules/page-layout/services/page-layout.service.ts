@@ -7,8 +7,11 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { type FlatPageLayoutMaps } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout-maps.type';
 import { compareFlatPageLayoutsByCreation } from 'src/engine/metadata-modules/page-layout/utils/compare-flat-page-layouts-by-creation.util';
 import { fromCreatePageLayoutInputToFlatPageLayoutToCreate } from 'src/engine/metadata-modules/flat-page-layout/utils/from-create-page-layout-input-to-flat-page-layout-to-create.util';
@@ -33,7 +36,7 @@ import { fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto } from 'src/engine/
 import { type MetadataCursorPage } from 'src/engine/metadata-modules/pagination/types/metadata-cursor-page.type';
 import { type MetadataCursorPagination } from 'src/engine/metadata-modules/pagination/types/metadata-cursor-pagination.type';
 import { paginateMetadataOrderedItems } from 'src/engine/metadata-modules/pagination/utils/paginate-metadata-ordered-items.util';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -42,7 +45,7 @@ import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashbo
 @Injectable()
 export class PageLayoutService {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
@@ -85,27 +88,18 @@ export class PageLayoutService {
     };
   }): Promise<PageLayoutDTO[]> {
     const {
+      flatObjectMetadataMaps,
       flatPageLayoutMaps,
       flatPageLayoutTabMaps,
       flatPageLayoutWidgetMaps,
     } = await this.getPageLayoutFlatEntityMaps(workspaceId);
 
-    const activeLayouts = Object.values(
-      flatPageLayoutMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter((layout) => {
-        const isNotDeleted = !isDefined(layout.deletedAt);
-        const matchesObjectMetadataId = isNonEmptyString(objectMetadataId)
-          ? layout.objectMetadataId === objectMetadataId
-          : true;
-        const matchesPageLayoutType = isDefined(pageLayoutType)
-          ? layout.type === pageLayoutType
-          : true;
-
-        return isNotDeleted && matchesObjectMetadataId && matchesPageLayoutType;
-      })
-      .sort(compareFlatPageLayoutsByCreation);
+    const activeLayouts = this.findActiveFlatPageLayouts({
+      objectMetadataId,
+      pageLayoutType,
+      flatObjectMetadataMaps,
+      flatPageLayoutMaps,
+    });
 
     return activeLayouts.map((layout) =>
       fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto(
@@ -130,27 +124,21 @@ export class PageLayoutService {
     pagination: MetadataCursorPagination;
   }): Promise<MetadataCursorPage<PageLayoutDTO> & { totalCount: number }> {
     const {
+      flatObjectMetadataMaps,
       flatPageLayoutMaps,
       flatPageLayoutTabMaps,
       flatPageLayoutWidgetMaps,
     } = await this.getPageLayoutFlatEntityMaps(workspaceId);
-    const activeLayouts = Object.values(
-      flatPageLayoutMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter(
-        (layout) =>
-          !isDefined(layout.deletedAt) &&
-          (!isNonEmptyString(objectMetadataId) ||
-            layout.objectMetadataId === objectMetadataId) &&
-          (!isDefined(pageLayoutType) || layout.type === pageLayoutType),
-      )
-      .sort(compareFlatPageLayoutsByCreation);
+    const activeLayouts = this.findActiveFlatPageLayouts({
+      objectMetadataId,
+      pageLayoutType,
+      flatObjectMetadataMaps,
+      flatPageLayoutMaps,
+    });
     const page = paginateMetadataOrderedItems({
       items: activeLayouts,
       pagination,
     });
-
     return {
       ...page,
       items: page.items.map((layout) =>
@@ -207,6 +195,7 @@ export class PageLayoutService {
   }
 
   private async getPageLayoutFlatEntityMaps(workspaceId: string): Promise<{
+    flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
     flatPageLayoutMaps: FlatPageLayoutMaps;
     flatPageLayoutTabMaps: FlatPageLayoutTabMaps;
     flatPageLayoutWidgetMaps: FlatPageLayoutWidgetMaps;
@@ -215,12 +204,67 @@ export class PageLayoutService {
       {
         workspaceId,
         flatMapsKeys: [
+          'flatObjectMetadataMaps',
           'flatPageLayoutMaps',
           'flatPageLayoutTabMaps',
           'flatPageLayoutWidgetMaps',
         ],
       },
     );
+  }
+
+  private findActiveFlatPageLayouts({
+    objectMetadataId,
+    pageLayoutType,
+    flatObjectMetadataMaps,
+    flatPageLayoutMaps,
+  }: {
+    objectMetadataId?: string;
+    pageLayoutType?: PageLayoutType;
+    flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
+    flatPageLayoutMaps: FlatPageLayoutMaps;
+  }): FlatPageLayout[] {
+    const candidateFlatPageLayouts = isNonEmptyString(objectMetadataId)
+      ? this.findFlatPageLayoutsByObjectMetadataId({
+          objectMetadataId,
+          flatObjectMetadataMaps,
+          flatPageLayoutMaps,
+        })
+      : Object.values(flatPageLayoutMaps.byUniversalIdentifier).filter(
+          isDefined,
+        );
+
+    return candidateFlatPageLayouts
+      .filter(
+        (layout) =>
+          !isDefined(layout.deletedAt) &&
+          (!isDefined(pageLayoutType) || layout.type === pageLayoutType),
+      )
+      .sort(compareFlatPageLayoutsByCreation);
+  }
+
+  private findFlatPageLayoutsByObjectMetadataId({
+    objectMetadataId,
+    flatObjectMetadataMaps,
+    flatPageLayoutMaps,
+  }: {
+    objectMetadataId: string;
+    flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
+    flatPageLayoutMaps: FlatPageLayoutMaps;
+  }): FlatPageLayout[] {
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: objectMetadataId,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
+
+    if (!isDefined(flatObjectMetadata)) {
+      return [];
+    }
+
+    return findManyFlatEntityByIdInFlatEntityMaps({
+      flatEntityMaps: flatPageLayoutMaps,
+      flatEntityIds: flatObjectMetadata.pageLayoutIds,
+    });
   }
 
   async create({
@@ -517,13 +561,13 @@ export class PageLayoutService {
   }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const dashboardRepository =
-        await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          'dashboard',
-          { shouldBypassPermissionChecks: true },
-        );
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const dashboardRepository = this.workspaceOrmManager.getRepository(
+        'dashboard',
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
 
       const dashboards = await dashboardRepository.find({
         where: {

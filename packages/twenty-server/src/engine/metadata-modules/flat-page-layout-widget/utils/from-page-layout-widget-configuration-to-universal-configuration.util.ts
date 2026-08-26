@@ -58,13 +58,23 @@ const convertChartFilterToUniversalFilter = ({
   return {
     ...filter,
     recordFilters: filter.recordFilters?.map(
-      ({ fieldMetadataId, ...rest }) => ({
+      ({ fieldMetadataId, relationTargetFieldMetadataId, ...rest }) => ({
         ...rest,
         fieldMetadataUniversalIdentifier: getFieldMetadataUniversalIdentifier({
           fieldMetadataId,
           fieldMetadataUniversalIdentifierById,
           shouldThrowOnMissingIdentifier: false,
         }),
+        ...(isDefined(relationTargetFieldMetadataId)
+          ? {
+              relationTargetFieldMetadataUniversalIdentifier:
+                getFieldMetadataUniversalIdentifier({
+                  fieldMetadataId: relationTargetFieldMetadataId,
+                  fieldMetadataUniversalIdentifierById,
+                  shouldThrowOnMissingIdentifier: false,
+                }),
+            }
+          : {}),
       }),
     ),
   };
@@ -304,7 +314,11 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
     }
 
     case WidgetConfigurationType.FRONT_COMPONENT: {
-      const { frontComponentId, configurationType } = configuration;
+      const {
+        frontComponentId,
+        configurationType,
+        headerCommandMenuItemUniversalIdentifiers,
+      } = configuration;
 
       const frontComponentUniversalIdentifier: string | null =
         frontComponentUniversalIdentifierById[frontComponentId] ?? null;
@@ -322,6 +336,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       return {
         configurationType,
         frontComponentUniversalIdentifier,
+        headerCommandMenuItemUniversalIdentifiers,
       };
     }
 

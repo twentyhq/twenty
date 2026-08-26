@@ -1,4 +1,3 @@
-import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { useGetIsMetadataItemFromStandardApplication } from '@/object-metadata/hooks/useGetIsMetadataItemFromStandardApplication';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -24,10 +23,7 @@ import { useRecordShowContainerData } from '@/object-record/record-show/hooks/us
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import {
-  FieldMetadataType,
-  type CoreObjectNameSingular,
-} from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 type RecordFieldListProps = {
   instanceId: string;
@@ -79,16 +75,13 @@ export const RecordFieldList = ({
     setRecordFieldListHoverPosition(index);
   };
 
-  const {
-    inlineFieldMetadataItems,
-    legacyActivityTargetFieldMetadataItems,
-    boxedRelationFieldMetadataItems,
-  } = useFieldListFieldMetadataItems({
-    objectNameSingular,
-    excludeFieldMetadataIds,
-    showRelationSections,
-    excludeCreatedAtAndUpdatedAt,
-  });
+  const { inlineFieldMetadataItems, boxedRelationFieldMetadataItems } =
+    useFieldListFieldMetadataItems({
+      objectNameSingular,
+      excludeFieldMetadataIds,
+      showRelationSections,
+      excludeCreatedAtAndUpdatedAt,
+    });
 
   return (
     <RecordFieldListComponentInstanceContext.Provider
@@ -97,72 +90,6 @@ export const RecordFieldList = ({
       }}
     >
       <PropertyBox dataTestId="record-fields-list-container">
-        {legacyActivityTargetFieldMetadataItems?.map(
-          (fieldMetadataItem, index) => {
-            const fieldDefinition = formatFieldMetadataItemAsColumnDefinition({
-              field: fieldMetadataItem,
-              position: index,
-              objectMetadataItem,
-              showLabel: true,
-              labelWidth: 90,
-            });
-
-            return (
-              <FieldContext.Provider
-                key={objectRecordId + fieldMetadataItem.id}
-                value={{
-                  recordId: objectRecordId,
-                  maxWidth: 200,
-                  isLabelIdentifier: false,
-                  fieldDefinition,
-                  useUpdateRecord: useUpdateOneObjectRecordMutation,
-                  isDisplayModeFixHeight: true,
-                  onMouseEnter: () => handleMouseEnter(index),
-                  anchorId: `${getRecordFieldInputInstanceId({
-                    recordId: objectRecordId,
-                    fieldName: fieldMetadataItem.name,
-                    prefix: instanceId,
-                  })}`,
-                  isRecordFieldReadOnly: isRecordFieldReadOnly({
-                    isRecordReadOnly,
-                    isSystemObject: objectMetadataItem.isSystem,
-                    objectPermissions:
-                      getObjectPermissionsFromMapByObjectMetadataId({
-                        objectPermissionsByObjectMetadataId,
-                        objectMetadataId: objectMetadataItem.id,
-                      }),
-                    isFieldFromStandardApplication:
-                      getIsMetadataItemFromStandardApplication(
-                        fieldMetadataItem,
-                      ),
-                    fieldMetadataItem: {
-                      id: fieldMetadataItem.id,
-                      isUIEditable: fieldMetadataItem.isUIEditable ?? true,
-                    },
-                    fieldDefinition,
-                    objectPermissionsByObjectMetadataId,
-                  }),
-                }}
-              >
-                <ActivityTargetsInlineCell
-                  componentInstanceId={getRecordFieldInputInstanceId({
-                    recordId: objectRecordId,
-                    fieldName: fieldMetadataItem.name,
-                    prefix: instanceId,
-                  })}
-                  activityObjectNameSingular={
-                    objectNameSingular as
-                      | CoreObjectNameSingular.Note
-                      | CoreObjectNameSingular.Task
-                  }
-                  activityRecordId={objectRecordId}
-                  showLabel={true}
-                  maxWidth={200}
-                />
-              </FieldContext.Provider>
-            );
-          },
-        )}
         {inlineFieldMetadataItems?.map((fieldMetadataItem, index) => {
           const fieldDefinition = formatFieldMetadataItemAsColumnDefinition({
             field: fieldMetadataItem,
@@ -199,11 +126,7 @@ export const RecordFieldList = ({
                   fieldDefinition,
                   objectPermissionsByObjectMetadataId,
                 }),
-                onMouseEnter: () =>
-                  handleMouseEnter(
-                    index +
-                      (legacyActivityTargetFieldMetadataItems?.length ?? 0),
-                  ),
+                onMouseEnter: () => handleMouseEnter(index),
                 anchorId: `${getRecordFieldInputInstanceId({
                   recordId: objectRecordId,
                   fieldName: fieldMetadataItem.name,

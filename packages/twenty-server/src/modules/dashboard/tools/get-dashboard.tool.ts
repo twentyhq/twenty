@@ -20,9 +20,7 @@ const getDashboardSchema = z.object({
 export const createGetDashboardTool = (
   deps: Pick<
     DashboardToolDependencies,
-    | 'pageLayoutService'
-    | 'globalWorkspaceOrmManager'
-    | 'flatEntityMapsCacheService'
+    'pageLayoutService' | 'workspaceOrmManager' | 'flatEntityMapsCacheService'
   >,
   context: DashboardToolContext,
 ) => ({
@@ -71,18 +69,13 @@ export const createGetDashboardTool = (
         });
 
       const dashboard =
-        await deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
-          async () => {
-            const repo = await deps.globalWorkspaceOrmManager.getRepository(
-              context.workspaceId,
-              'dashboard',
-              { shouldBypassPermissionChecks: true },
-            );
+        await deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
+          const repo = deps.workspaceOrmManager.getRepository('dashboard', {
+            shouldBypassPermissionChecks: true,
+          });
 
-            return repo.findOne({ where: { id: parameters.dashboardId } });
-          },
-          authContext,
-        );
+          return repo.findOne({ where: { id: parameters.dashboardId } });
+        }, authContext);
 
       if (!isDefined(dashboard)) {
         return {

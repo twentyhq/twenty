@@ -6,6 +6,7 @@ import {
   IconChartPie,
   IconFrame,
   IconList,
+  IconLayoutDashboard,
   IconPlus,
   IconTable,
 } from 'twenty-ui/icon';
@@ -20,6 +21,8 @@ export const getPageLayoutIcon = (page: PageLayoutSidePanelPage) => {
       return IconFrame;
     case SidePanelPages.PageLayoutTabSettings:
       return IconAppWindow;
+    case SidePanelPages.PageLayoutWidgetSettings:
+      return IconLayoutDashboard;
     case SidePanelPages.RecordPageFieldsSettings:
       return IconList;
     case SidePanelPages.RecordPageFieldSettings:

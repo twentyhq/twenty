@@ -15,6 +15,7 @@ import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-reco
 import { computeLastRecordTableColumnWidth } from '@/object-record/record-table/utils/computeLastRecordTableColumnWidth';
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { updateRecordTableCSSVariable } from '@/object-record/record-table/utils/updateRecordTableCSSVariable';
+import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
@@ -79,9 +80,14 @@ export const useResizeTableHeader = () => {
   const isRecordTableCheckboxColumnHidden =
     useIsRecordTableCheckboxColumnHidden(recordTableId);
 
+  // captured once per drag: reading computed style on every move would
+  // force a synchronous style recalc, and the zoom cannot change mid-drag
+  const [dragUiZoom, setDragUiZoom] = useState(1);
+
   const handleResizeHandlerStart = useCallback<PointerEventListener>(
     ({ x }) => {
       resetTableRowSelection();
+      setDragUiZoom(getUiZoom());
       setInitialPointerPositionX(x);
     },
     [resetTableRowSelection],
@@ -93,7 +99,7 @@ export const useResizeTableHeader = () => {
 
       throwIfNotDefined(recordField, 'recordField');
 
-      const newResizeOffset = x - initialPointerPositionX;
+      const newResizeOffset = (x - initialPointerPositionX) / dragUiZoom;
 
       const newRecordFieldSizeWithOffset = recordField.size + newResizeOffset;
 
@@ -140,9 +146,10 @@ export const useResizeTableHeader = () => {
         `${newGroupSectionLastColumnWidth}px`,
       );
 
-      setResizeFieldOffset(x - initialPointerPositionX);
+      setResizeFieldOffset((x - initialPointerPositionX) / dragUiZoom);
     },
     [
+      dragUiZoom,
       initialPointerPositionX,
       recordField,
       recordTableId,

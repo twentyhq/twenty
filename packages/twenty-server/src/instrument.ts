@@ -1,8 +1,10 @@
+import os from 'os';
 import process from 'process';
 
 import { metrics as otelMetrics } from '@opentelemetry/api';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
+import { resourceFromAttributes } from '@opentelemetry/resources';
 import {
   AggregationTemporality,
   ConsoleMetricExporter,
@@ -83,10 +85,13 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
       nodeProfilingIntegration(),
     ],
     tracesSampleRate,
+    tracesSampler: ({ name, inheritOrSampleWith }) =>
+      name.startsWith('ai.') ? 1 : inheritOrSampleWith(tracesSampleRate),
     profilesSampleRate: parseSampleRate({
       value: process.env.SENTRY_PROFILES_SAMPLE_RATE,
       fallback: 0.01,
     }),
+    maxValueLength: 8192,
     sendDefaultPii: true,
     debug: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
     beforeSendSpan: (span) => {
@@ -120,6 +125,10 @@ const prometheusExporter = meterDrivers.includes(MeterDriver.Prometheus)
   : null;
 
 const meterProvider = new MeterProvider({
+  resource: resourceFromAttributes({
+    'service.name': process.env.OTEL_SERVICE_NAME ?? 'twenty-server',
+    'k8s.pod.name': process.env.HOSTNAME ?? os.hostname(),
+  }),
   readers: [
     ...(meterDrivers.includes(MeterDriver.Console)
       ? [

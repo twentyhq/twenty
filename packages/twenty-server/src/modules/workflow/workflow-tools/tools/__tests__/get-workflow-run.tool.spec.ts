@@ -9,9 +9,9 @@ const WORKFLOW_RUN_ID = '20202020-bbbb-4d02-bf25-6aeccf7ea419';
 const ROLE_ID = '20202020-cccc-4d02-bf25-6aeccf7ea419';
 
 const buildDeps = (findOneResult: unknown) => ({
-  globalWorkspaceOrmManager: {
+  workspaceOrmManager: {
     executeInWorkspaceContext: jest.fn().mockImplementation(async (fn) => fn()),
-    getRepository: jest.fn().mockResolvedValue({
+    getRepository: jest.fn().mockReturnValue({
       findOne: jest.fn().mockResolvedValue(findOneResult),
     }),
   },
@@ -28,17 +28,13 @@ describe('get_workflow_run tool', () => {
     const context = buildContext();
 
     const tool = createGetWorkflowRunTool(
-      deps as unknown as Pick<
-        WorkflowToolDependencies,
-        'globalWorkspaceOrmManager'
-      >,
+      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
       context,
     );
 
     await tool.execute({ workflowRunId: WORKFLOW_RUN_ID });
 
-    expect(deps.globalWorkspaceOrmManager.getRepository).toHaveBeenCalledWith(
-      WORKSPACE_ID,
+    expect(deps.workspaceOrmManager.getRepository).toHaveBeenCalledWith(
       'workflowRun',
       context.rolePermissionConfig,
     );
@@ -76,10 +72,7 @@ describe('get_workflow_run tool', () => {
     const context = buildContext();
 
     const tool = createGetWorkflowRunTool(
-      deps as unknown as Pick<
-        WorkflowToolDependencies,
-        'globalWorkspaceOrmManager'
-      >,
+      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
       context,
     );
 
@@ -105,10 +98,7 @@ describe('get_workflow_run tool', () => {
     const context = buildContext();
 
     const tool = createGetWorkflowRunTool(
-      deps as unknown as Pick<
-        WorkflowToolDependencies,
-        'globalWorkspaceOrmManager'
-      >,
+      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
       context,
     );
 

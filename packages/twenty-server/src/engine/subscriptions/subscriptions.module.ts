@@ -1,9 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ProcessNestedRelationsV2Helper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations-v2.helper';
-import { ProcessNestedRelationsOrmV2Helper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations-orm-v2.helper';
-import { TwentyORMV2Module } from 'src/engine/twenty-orm-v2/twenty-orm-v2.module';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
 import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
@@ -12,12 +9,14 @@ import { I18nModule } from 'src/engine/core-modules/i18n/i18n.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { EventStreamResolver } from 'src/engine/subscriptions/event-stream.resolver';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
 import { MetadataEventPublisher } from 'src/engine/subscriptions/metadata-event/metadata-event-publisher';
+import { MetadataEventResolutionService } from 'src/engine/subscriptions/metadata-event/services/metadata-event-resolution.service';
 import { MetadataEventsToDbListener } from 'src/engine/subscriptions/metadata-event/metadata-events-to-db.listener';
 import { ObjectRecordEventPublisher } from 'src/engine/subscriptions/object-record-event/object-record-event-publisher';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
@@ -27,7 +26,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 @Global()
 @Module({
   imports: [
-    TwentyORMV2Module,
     RedisClientModule,
     CacheStorageModule,
     CacheLockModule,
@@ -37,6 +35,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     NavigationMenuItemModule,
     I18nModule,
+    ApplicationTranslationCatalogModule,
   ],
   providers: [
     SubscriptionService,
@@ -44,12 +43,11 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     EventStreamResolver,
     ObjectRecordEventPublisher,
     MetadataEventPublisher,
+    MetadataEventResolutionService,
     MetadataEventEmitter,
     MetadataEventsToDbListener,
     WorkspaceEventBroadcaster,
     ProcessNestedRelationsHelper,
-    ProcessNestedRelationsV2Helper,
-    ProcessNestedRelationsOrmV2Helper,
     CommonSelectFieldsHelper,
   ],
   exports: [

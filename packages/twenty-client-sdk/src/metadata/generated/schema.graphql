@@ -116,6 +116,7 @@ type CommandMenuItem {
   hotKeys: [String!]
   conditionalAvailabilityExpression: String
   availabilityObjectMetadataId: UUID
+  navigationTargetObjectMetadataId: UUID
   pageLayoutId: UUID
   universalIdentifier: UUID
   applicationId: UUID
@@ -212,7 +213,7 @@ type PathCommandMenuItemPayload {
 }
 
 type ObjectMetadataCommandMenuItemPayload {
-  objectMetadataItemId: UUID!
+  objectMetadataItemId: UUID! @deprecated(reason: "Use CommandMenuItem.navigationTargetObjectMetadataId instead, which is the modelled relation. This variant is dual-written and kept for backward compatibility.")
 }
 
 type LogicFunction {
@@ -358,6 +359,7 @@ type WorkspaceMember {
   name: FullName!
   userEmail: String!
   colorScheme: String!
+  uiScale: String!
   openRecordIn: OpenRecordIn!
   avatarUrl: String
   locale: String
@@ -1218,6 +1220,7 @@ type CalendarConfiguration {
 type FrontComponentConfiguration {
   configurationType: WidgetConfigurationType!
   frontComponentId: UUID!
+  headerCommandMenuItemUniversalIdentifiers: [UUID!]
 }
 
 type EmailsConfiguration {
@@ -1745,11 +1748,9 @@ enum FeatureFlagKey {
   IS_LIST_VIEW_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
-  IS_SETTINGS_DISCOVERY_HERO_ENABLED
   IS_WORKFLOW_VERSION_IN_CORE_ENABLED
+  IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED
   IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED
-  IS_NATIVE_CALL_RECORDING_TABS_ENABLED
-  IS_ORM_V2_READ_PATH_ENABLED
 }
 
 type WorkspaceUrls {
@@ -1888,6 +1889,7 @@ type Sentry {
   environment: String
   release: String
   dsn: String
+  tracesSampleRate: Float
 }
 
 type Captcha {
@@ -2149,10 +2151,18 @@ type MarketplaceAppDetail {
 type WorkspaceCompanyEnrichmentResult {
   outcome: WorkspaceCompanyEnrichmentOutcome!
   enrichment: JSON
+  personOutcome: WorkspacePersonEnrichmentOutcome!
+  personEnrichment: JSON
   isBookCallOnboardingStepPending: Boolean!
 }
 
 enum WorkspaceCompanyEnrichmentOutcome {
+  matched
+  unavailable
+  transientError
+}
+
+enum WorkspacePersonEnrichmentOutcome {
   matched
   unavailable
   transientError
@@ -2559,6 +2569,60 @@ type ApplicationAuthorization {
   createdAt: DateTime!
 }
 
+type File {
+  id: UUID!
+  path: String!
+  size: Float!
+  createdAt: DateTime!
+}
+
+type ApplicationFileCompletionError {
+  fileId: UUID!
+  message: String!
+}
+
+type CompleteApplicationFileUploadsResult {
+  files: [File!]!
+  errors: [ApplicationFileCompletionError!]!
+}
+
+type ApplicationFileUploadTarget {
+  fileId: UUID!
+  fileFolder: FileFolder!
+  filePath: String!
+  uploadUrl: String!
+  contentType: String!
+  expiresAt: DateTime!
+}
+
+enum FileFolder {
+  CorePicture
+  AgentChat
+  BuiltLogicFunction
+  BuiltFrontComponent
+  PublicAsset
+  Source
+  FilesField
+  Dependencies
+  Workflow
+  EmailAttachment
+  EmailImage
+  AppTarball
+  GeneratedSdkClient
+  Dpa
+}
+
+type ApplicationFileUploadError {
+  fileFolder: FileFolder!
+  filePath: String!
+  message: String!
+}
+
+type CreateApplicationFileUploadsResult {
+  targets: [ApplicationFileUploadTarget!]!
+  errors: [ApplicationFileUploadError!]!
+}
+
 type DevelopmentApplication {
   id: String!
   universalIdentifier: String!
@@ -2567,13 +2631,6 @@ type DevelopmentApplication {
 type WorkspaceMigration {
   applicationUniversalIdentifier: String!
   actions: JSON!
-}
-
-type File {
-  id: UUID!
-  path: String!
-  size: Float!
-  createdAt: DateTime!
 }
 
 type PublicDomain {
@@ -3075,6 +3132,12 @@ type EnqueueJobResult {
   logicFunctionUniversalIdentifier: String!
 }
 
+type EnqueueJobsResult {
+  enqueued: Boolean!
+  logicFunctionUniversalIdentifier: String!
+  enqueuedJobsCount: Int!
+}
+
 type AppKeyValue {
   key: String!
   value: JSON
@@ -3156,6 +3219,55 @@ enum MessageFolderPendingSyncAction {
   NONE
 }
 
+type MetadataTranslation {
+  metadataName: String!
+  recordId: UUID!
+  objectMetadataId: UUID
+  property: String!
+  locale: String!
+  sourceValue: String!
+  canonicalValue: String!
+  value: String!
+  provenance: MetadataTranslationProvenance!
+}
+
+"""
+Where a resolved metadata label comes from: a workspace-authored translation, a shipped application catalog, or inheritance from the canonical value
+"""
+enum MetadataTranslationProvenance {
+  WORKSPACE
+  SHIPPED
+  INHERITED
+}
+
+type TimelineActivityTypeEmitThrough {
+  relationFieldUniversalIdentifier: UUID!
+  triggerFieldUniversalIdentifiers: [UUID!]
+}
+
+type TimelineActivityTypeEmit {
+  on: String!
+  objectUniversalIdentifier: UUID
+  through: TimelineActivityTypeEmitThrough
+}
+
+type TimelineActivityType {
+  id: UUID!
+  universalIdentifier: UUID!
+  name: String!
+  label: String!
+  emit: TimelineActivityTypeEmit
+  action: String @deprecated(reason: "Use emit.on")
+  icon: String
+  frontComponentUniversalIdentifier: UUID
+  objectUniversalIdentifier: UUID @deprecated(reason: "Use emit.objectUniversalIdentifier")
+  replacesTimelineActivityTypeUniversalIdentifier: UUID
+  isActive: Boolean!
+  applicationId: UUID
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type CollectionHash {
   collectionName: AllMetadataName!
   hash: String!
@@ -3193,6 +3305,7 @@ enum AllMetadataName {
   applicationVariable
   connectionProvider
   searchFieldMetadata
+  timelineActivityType
 }
 
 type MinimalObjectMetadata {
@@ -3338,6 +3451,8 @@ type Query {
   skills: [Skill!]!
   skill(id: UUID!): Skill
   agentTurns(agentId: UUID!): [AgentTurn!]!
+  timelineActivityTypes: [TimelineActivityType!]!
+  metadataTranslations(input: MetadataTranslationsInput!): [MetadataTranslation!]!
   checkUserExists(email: String!, captchaToken: String): CheckUserExist!
   checkWorkspaceInviteHashIsValid(inviteHash: String!): WorkspaceInviteHashValid!
   findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
@@ -3371,6 +3486,7 @@ input ObjectFilter {
   and: [ObjectFilter!]
   or: [ObjectFilter!]
   id: UUIDFilterComparison
+  universalIdentifier: UUIDFilterComparison
   isActive: BooleanFieldComparison
   isRemote: BooleanFieldComparison
   isSearchable: BooleanFieldComparison
@@ -3402,6 +3518,12 @@ input ListAppConnectionsInput {
   providerName: String
   userWorkspaceId: String
   visibility: String
+}
+
+input MetadataTranslationsInput {
+  objectMetadataId: UUID
+  fieldMetadataId: UUID
+  locale: String
 }
 
 input EventLogQueryInput {
@@ -3635,7 +3757,8 @@ type Mutation {
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   setAppKeyValue(input: SetAppKeyValueInput!): AppKeyValue!
   deleteAppKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): Boolean!
-  enqueueJob(input: EnqueueJobInput!): EnqueueJobResult!
+  enqueueJob(input: EnqueueJobInput!): EnqueueJobResult! @deprecated(reason: "Use enqueueJobs instead.")
+  enqueueJobs(input: EnqueueJobsInput!): EnqueueJobsResult!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
   retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
@@ -3646,7 +3769,7 @@ type Mutation {
   unarchiveChatThread(id: UUID!): AgentChatThread!
   deleteChatThread(id: UUID!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
-  startWorkspaceSetupChat(companyContext: JSON): StartWorkspaceSetupChatResult!
+  startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   createSkill(input: CreateSkillInput!): Skill!
   updateSkill(input: UpdateSkillInput!): Skill!
   deleteSkill(id: UUID!): Skill!
@@ -3654,6 +3777,8 @@ type Mutation {
   deactivateSkill(id: UUID!): Skill!
   evaluateAgentTurn(turnId: UUID!): AgentTurnEvaluation!
   runEvaluationInput(agentId: UUID!, input: String!): AgentTurn!
+  updateTimelineActivityType(input: UpdateTimelineActivityTypeInput!): TimelineActivityType!
+  resetTimelineActivityType(id: UUID!): TimelineActivityType!
   getAuthorizationUrlForSSO(input: GetAuthorizationUrlForSSOInput!): GetAuthorizationUrlForSSO!
   getLoginTokenFromCredentials(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String, origin: String!): LoginToken!
   signIn(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
@@ -3703,6 +3828,8 @@ type Mutation {
   createDevelopmentApplication(universalIdentifier: String!, name: String!): DevelopmentApplication!
   syncApplication(manifest: JSON!, dryRun: Boolean): WorkspaceMigration!
   uploadApplicationFile(file: Upload!, applicationUniversalIdentifier: String!, fileFolder: FileFolder!, filePath: String!): File!
+  createApplicationFileUploads(applicationUniversalIdentifier: String!, files: [ApplicationFileUploadRequestInput!]!): CreateApplicationFileUploadsResult!
+  completeApplicationFileUploads(applicationUniversalIdentifier: String!, fileIds: [UUID!]!): CompleteApplicationFileUploadsResult!
   revokeApplicationAuthorization(applicationAuthorizationId: UUID!): Boolean!
   generateApplicationToken(applicationId: UUID!): ApplicationTokenPair!
   renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!
@@ -3751,23 +3878,6 @@ input UpdateNavigationMenuItemInput {
   icon: String
   color: String
   pageLayoutId: UUID
-}
-
-enum FileFolder {
-  CorePicture
-  AgentChat
-  BuiltLogicFunction
-  BuiltFrontComponent
-  PublicAsset
-  Source
-  FilesField
-  Dependencies
-  Workflow
-  EmailAttachment
-  EmailImage
-  AppTarball
-  GeneratedSdkClient
-  Dpa
 }
 
 """The `Upload` scalar type represents a file upload."""
@@ -4286,6 +4396,13 @@ input UpdateObjectPayload {
   isLabelSyncedWithName: Boolean
   isSearchable: Boolean
   openRecordIn: ObjectOpenRecordIn
+  translations: [MetadataTranslationOverrideInput!]
+}
+
+input MetadataTranslationOverrideInput {
+  locale: String!
+  property: String!
+  value: String
 }
 
 input CreateOneIndexInput {
@@ -4540,6 +4657,7 @@ input UpdateFieldInput {
   objectMetadataId: UUID
   isLabelSyncedWithName: Boolean
   morphRelationsUpdatePayload: [JSON!]
+  translations: [MetadataTranslationOverrideInput!]
 }
 
 input DeleteOneFieldInput {
@@ -4820,6 +4938,13 @@ input EnqueueJobInput {
   delayMs: Int
 }
 
+input EnqueueJobsInput {
+  logicFunctionUniversalIdentifier: String!
+  payloads: [JSON!]!
+  retryLimit: Int
+  delayMs: Int
+}
+
 input FileAttachmentInput {
   id: UUID!
   filename: String!
@@ -4848,6 +4973,14 @@ input UpdateSkillInput {
   description: String
   content: String
   isActive: Boolean
+}
+
+input UpdateTimelineActivityTypeInput {
+  id: UUID!
+  label: String
+  icon: String
+  isActive: Boolean
+  translations: [MetadataTranslationOverrideInput!]
 }
 
 input GetAuthorizationUrlForSSOInput {
@@ -4911,6 +5044,7 @@ input CreateCalendarEventInput {
 
 input SendEmailInput {
   connectedAccountId: String!
+  fromHandle: String
   to: String!
   cc: String
   bcc: String
@@ -4944,6 +5078,12 @@ input ConnectionParametersInput {
 input UpdateLabPublicFeatureFlagInput {
   publicFeatureFlag: String!
   value: Boolean!
+}
+
+input ApplicationFileUploadRequestInput {
+  fileFolder: FileFolder!
+  filePath: String!
+  size: Int!
 }
 
 type Subscription {

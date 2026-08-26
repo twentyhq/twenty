@@ -13,7 +13,6 @@ import {
   PARTNER_SERVICE_OBJECT_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import {
-  APPLICATION_LAST_ACTIVITY_AT_FIELD_ID,
   APPLICATION_NAME_FIELD_ID,
   APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
   APPLICATION_PARTNER_FIELD_ID,
@@ -55,23 +54,27 @@ import { REFERRED_BY_PARTNER_ON_OPPORTUNITY_FIELD_ID } from 'src/modules/opportu
 // Shared with configure-partner-rls.ts, which locates the role by this label.
 export const PARTNER_ROLE_LABEL = 'Partner';
 
-// External partner self-service role: a partner sees only its own records, can edit its
-// own Partner profile and an Application's pitch (and set opportunity on apply/create); Company/
-// Person are read-only. Opportunity stage/amount are admin-only (read-only for partners).
-// Application rows are scoped to own partnerUser (RLS). Row-level predicates can't ship in
-// the manifest, so run `yarn rls:configure` after install.
+// External partner self-service role: a partner sees only its own records and can edit its
+// own Partner profile. Company, Person, Opportunity and Application are read-only — the
+// pitch is set once by the apply route (application role) at creation and is never editable
+// by the partner afterwards. Application rows are scoped to own partnerUser (RLS).
+// Row-level predicates can't ship in the manifest, so run `yarn rls:configure` after install.
 //
-// `updatedBy` and `position` must stay editable even though they're not partner-facing: the
-// server injects `updatedBy` into every update (ActorFromAuthContextService) and co-writes
-// `position` with `stage` on a kanban drag, so locking either makes ALL opportunity updates
-// fail with PERMISSION_DENIED. The server overwrites both regardless, so there's nothing to
-// protect. `createdBy` stays locked (not injected on update); `searchVector` is a generated
-// column, so its lock is an inert no-op.
+// The Opportunity and Application field locks below are moot now that neither object is
+// writable at all. They stay because configure-partner-rls.ts asserts on them and exits
+// non-zero on drift, and because they still describe intent if object access ever reopens.
+//
+// `updatedBy` and `position` are left unlocked on purpose: the server injects `updatedBy`
+// into every update (ActorFromAuthContextService) and co-writes `position` with `stage` on a
+// kanban drag, so locking either would make every opportunity update fail with
+// PERMISSION_DENIED if object-level write returned. The server overwrites both regardless,
+// so there's nothing to protect. `createdBy` stays locked (not injected on update);
+// `searchVector` is a generated column, so its lock is an inert no-op.
 export default defineRole({
   universalIdentifier: PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
   label: PARTNER_ROLE_LABEL,
   description:
-    'External partner self-service role. Sees only its own Partner/Person/Company/PartnerLink/PartnerService/PartnerContent/Opportunity/Application records (row-level). Can edit its own Partner profile and an Application’s pitch; Opportunity stage/amount are read-only. Configure predicates with `yarn rls:configure` after install.',
+    'External partner self-service role. Sees only its own Partner/Person/Company/PartnerLink/PartnerService/PartnerContent/Opportunity/Application records (row-level). Can edit its own Partner profile; Application is read-only (the pitch is set once at apply time and cannot be edited afterwards); Opportunity stage/amount are read-only. Configure predicates with `yarn rls:configure` after install.',
   icon: 'IconBuildingStore',
   canBeAssignedToUsers: true,
   canUpdateAllSettings: false,
@@ -312,11 +315,6 @@ export default defineRole({
       canUpdateFieldValue: false,
     },
     {
-      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
-      fieldUniversalIdentifier: '5412e4ca-cc96-4be8-8652-b73dace7673b',
-      canUpdateFieldValue: false,
-    },
-    {
       // Partner Tier — read-locked too: admin-only on the record page, hidden from partners.
       objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
       fieldUniversalIdentifier: 'd4fa6461-37b6-49ee-9181-dd482e74a70b',
@@ -414,10 +412,12 @@ export default defineRole({
       fieldUniversalIdentifier: PARTNER_USER_ON_PARTNER_CONTENT_FIELD_ID,
       canUpdateFieldValue: false,
     },
-    // Application — lock every field except pitch and opportunity (partner sets opportunity
-    // on apply/create; state is populated by on-application-created as the app). partnerUser
-    // is listed as locked but stays writable at insert — the server exempts RLS predicate
-    // fields there (permissions.utils.ts, insert case only).
+    // Application — lock every field except pitch and opportunity: the apply route sets
+    // both once, at creation, under the application role — not the partner role, which
+    // cannot write this object at all (canUpdateObjectRecords: false). state is populated
+    // by on-application-created as the app. partnerUser is listed as locked but stays
+    // writable at insert — the server exempts RLS predicate fields there
+    // (permissions.utils.ts, insert case only).
     // System/server-managed fields (id, timestamps, updatedBy, position, searchVector) stay
     // out — locking updatedBy/position breaks every update (same trap as Opportunity above).
     {
@@ -440,11 +440,6 @@ export default defineRole({
       fieldUniversalIdentifier: APPLICATION_STATE_FIELD_ID,
       canUpdateFieldValue: false,
     },
-    {
-      objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
-      fieldUniversalIdentifier: APPLICATION_LAST_ACTIVITY_AT_FIELD_ID,
-      canUpdateFieldValue: false,
-    },
   ],
   objectPermissions: [
     {
@@ -457,8 +452,10 @@ export default defineRole({
     {
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+      // Also what hides the "New Opportunity" button: the standard command menu item is
+      // gated on objectPermissions.canUpdateObjectRecords.
       canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
+      canUpdateObjectRecords: false,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     },
@@ -480,8 +477,10 @@ export default defineRole({
     },
     {
       objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      // Insert permission checks canUpdateObjectRecords; disabling prevents
+      // partners from creating bare Applications (created by apply-to-brief route instead).
       canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
+      canUpdateObjectRecords: false,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     },

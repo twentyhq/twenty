@@ -27,7 +27,6 @@ export { isCallRecordingTranscriptStatusMarker } from './callRecording/isCallRec
 export { parseCallRecordingTranscriptEntries } from './callRecording/parseCallRecordingTranscriptEntries';
 export { conditionalAvailabilityParser } from './command-menu-items/conditionalAvailabilityParser';
 export { evaluateConditionalAvailabilityExpression } from './command-menu-items/evaluateConditionalAvailabilityExpression';
-export { interpolateCommandMenuItemTemplate } from './command-menu-items/interpolateCommandMenuItemTemplate';
 export { resolveObjectMetadataLabel } from './command-menu-items/resolveObjectMetadataLabel';
 export { safeGetNestedProperty } from './command-menu-items/safeGetNestedProperty';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
@@ -52,6 +51,7 @@ export { turnPlainDateIntoUserTimeZoneInstantString } from './date/turnPlainDate
 export { turnPlainDateToShiftedDateInSystemTimeZone } from './date/turnPlainDateToShiftedDateInSystemTimeZone';
 export { deepMerge } from './deepMerge';
 export { formatEmailAddress } from './email/formatEmailAddress';
+export { getSendableEmailHandles } from './email/getSendableEmailHandles';
 export type { ParsedEmailAddress } from './email/parseEmailAddressList';
 export { parseEmailAddressList } from './email/parseEmailAddressList';
 export { CustomError } from './errors/CustomError';
@@ -200,6 +200,7 @@ export {
 } from './image/getLogoUrlFromDomainName';
 export { getUniqueConstraintsFields } from './indexMetadata/getUniqueConstraintsFields';
 export { isAutoSelectModelId } from './isAutoSelectModelId';
+export { isFieldValueRestricted } from './isFieldValueRestricted';
 export { fastDeepEqual } from './json/fast-deep-equal';
 export { getAppPath } from './navigation/getAppPath';
 export { getSettingsPath } from './navigation/getSettingsPath';
@@ -308,6 +309,6 @@ export { isValidVariable } from './validation/isValidVariable';
 export { normalizeLocale } from './validation/normalizeLocale';
 export { getCountryCodesForCallingCode } from './validation/phones-value/getCountryCodesForCallingCode';
 export { isValidCountryCode } from './validation/phones-value/isValidCountryCode';
-export { resolveInput } from './variable-resolver';
+export { isVariableReference, resolveInput } from './variable-resolver';
 export { getViewLayoutFromViewType } from './views/getViewLayoutFromViewType';
 export { isWidgetViewType } from './views/isWidgetViewType';

@@ -16,6 +16,7 @@ export enum SidePanelPages {
   AskAI = 'ask-ai',
   PageLayoutDashboardWidgetTypeSelect = 'page-layout-dashboard-widget-type-select',
   PageLayoutTabSettings = 'page-layout-tab-settings',
+  PageLayoutWidgetSettings = 'page-layout-widget-settings',
   DashboardChartSettings = 'dashboard-chart-settings',
   DashboardIframeSettings = 'dashboard-iframe-settings',
   DashboardRecordTableSettings = 'dashboard-record-table-settings',
@@ -27,6 +28,9 @@ export enum SidePanelPages {
   CommandMenuEdit = 'command-menu-edit',
   PageLayoutRecordPageWidgetTypeSelect = 'page-layout-record-page-widget-type-select',
   ComposeEmail = 'compose-email',
+  ComposeCalendarEvent = 'compose-calendar-event',
+  CreateRelatedRecord = 'create-related-record',
   SendCampaignTest = 'send-campaign-test',
   EmailBlockSettings = 'email-block-settings',
+  SettingsMetadataTranslations = 'settings-metadata-translations',
 }

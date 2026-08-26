@@ -1,4 +1,4 @@
-export const DARK_MOVING_IMAGE: Record<string, string> = {
+export const DARK_MOVING_IMAGE = {
   noFile: '/images/placeholders/dark-moving-image/no_file.png',
   noNote: '/images/placeholders/dark-moving-image/no_note.png',
   noRecord: '/images/placeholders/dark-moving-image/no_record.png',

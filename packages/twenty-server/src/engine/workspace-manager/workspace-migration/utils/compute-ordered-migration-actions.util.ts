@@ -125,6 +125,9 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.connectionProvider.delete,
     ...aggregatedOrchestratorActionsReport.connectionProvider.create,
     ...aggregatedOrchestratorActionsReport.connectionProvider.update,
+    ...aggregatedOrchestratorActionsReport.timelineActivityType.delete,
+    ...aggregatedOrchestratorActionsReport.timelineActivityType.create,
+    ...aggregatedOrchestratorActionsReport.timelineActivityType.update,
     ///
   ];
 };

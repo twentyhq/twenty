@@ -1,19 +1,14 @@
 import { useContext } from 'react';
 
-import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
-import { type NoteTarget } from '@/activities/types/NoteTarget';
-import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { isActivityTargetField } from '@/object-record/record-field-list/utils/categorizeRelationFields';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { MAX_RELATION_CHIPS_DISPLAYED_INLINE } from '@/object-record/record-field/ui/meta-types/display/constants/MaxRelationChipsDisplayedInline';
 import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useRelationFromManyFieldDisplay';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
-import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
+import { getReverseJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getReverseJunctionConfig';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { styled } from '@linaria/react';
@@ -38,14 +33,10 @@ export const RelationFromManyFieldDisplay = () => {
   const { disableChipClick, triggerEvent } = useContext(FieldContext);
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const { fieldName, objectMetadataNameSingular } = fieldDefinition.metadata;
+  const { objectMetadataNameSingular } = fieldDefinition.metadata;
 
   const relationObjectNameSingular =
     fieldDefinition?.metadata.relationObjectMetadataNameSingular;
-
-  const isJunctionRelation = hasJunctionConfig(
-    fieldDefinition.metadata.settings,
-  );
 
   const sourceObjectMetadataId = objectMetadataItems.find(
     (item) => item.nameSingular === objectMetadataNameSingular,
@@ -54,14 +45,17 @@ export const RelationFromManyFieldDisplay = () => {
   const junctionConfig = getJunctionConfig({
     settings: fieldDefinition.metadata.settings,
     relationObjectMetadataId: fieldDefinition.metadata.relationObjectMetadataId,
+    relationTargetFieldMetadataId:
+      fieldDefinition.metadata.relationFieldMetadataId,
     sourceObjectMetadataId,
     objectMetadataItems,
   });
 
-  const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
-    '',
-    fieldValue as NoteTarget[] | TaskTarget[],
-  );
+  const reverseJunctionConfig = getReverseJunctionConfig({
+    junctionObjectMetadataId: fieldDefinition.metadata.relationObjectMetadataId,
+    sourceObjectMetadataId,
+    objectMetadataItems,
+  });
 
   if (!isDefined(fieldValue)) {
     return null;
@@ -75,59 +69,7 @@ export const RelationFromManyFieldDisplay = () => {
     return null;
   }
 
-  const isRelationFromActivityTargets = isActivityTargetField(
-    fieldName,
-    objectMetadataNameSingular ?? '',
-  );
-
-  const isRelationFromManyActivities =
-    (fieldName === 'noteTargets' &&
-      objectMetadataNameSingular !== CoreObjectNameSingular.Note) ||
-    (fieldName === 'taskTargets' &&
-      objectMetadataNameSingular !== CoreObjectNameSingular.Task);
-
-  if (isRelationFromManyActivities) {
-    const objectNameSingular =
-      fieldName === 'noteTargets'
-        ? CoreObjectNameSingular.Note
-        : CoreObjectNameSingular.Task;
-    const relationFieldName = fieldName === 'noteTargets' ? 'note' : 'task';
-
-    const chips = fieldValue
-      .map((record) => {
-        if (!isDefined(record) || !isDefined(record[relationFieldName])) {
-          return undefined;
-        }
-        return (
-          <RecordChip
-            key={record.id}
-            objectNameSingular={objectNameSingular}
-            record={record[relationFieldName]}
-            forceDisableClick={disableChipClick}
-          />
-        );
-      })
-      .filter(isDefined);
-
-    if (isFocused) {
-      return (
-        <ExpandableList
-          isChipCountDisplayed={isFocused}
-          maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
-        >
-          {chips}
-        </ExpandableList>
-      );
-    }
-
-    return (
-      <StyledContainer>
-        {chips.slice(0, MAX_RELATION_CHIPS_DISPLAYED_INLINE)}
-      </StyledContainer>
-    );
-  }
-
-  if (isJunctionRelation && isDefined(junctionConfig)) {
+  if (isDefined(junctionConfig)) {
     const { targetFields } = junctionConfig;
 
     if (targetFields.length === 0) {
@@ -175,21 +117,44 @@ export const RelationFromManyFieldDisplay = () => {
     );
   }
 
-  if (isRelationFromActivityTargets) {
-    return (
-      <ExpandableList
-        isChipCountDisplayed={isFocused}
-        maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
-      >
-        {activityTargetObjectRecords.filter(isDefined).map((record) => (
+  if (isDefined(reverseJunctionConfig)) {
+    const chips = fieldValue
+      .map((junctionRecord) => {
+        const relatedRecord =
+          junctionRecord?.[reverseJunctionConfig.relationFieldName];
+
+        if (!isDefined(junctionRecord) || !isDefined(relatedRecord)) {
+          return undefined;
+        }
+
+        return (
           <RecordChip
-            key={record.targetObject.id}
-            objectNameSingular={record.targetObjectMetadataItem.nameSingular}
-            record={record.targetObject}
+            key={junctionRecord.id}
+            objectNameSingular={
+              reverseJunctionConfig.relatedObjectMetadata.nameSingular
+            }
+            record={relatedRecord}
             forceDisableClick={disableChipClick}
           />
-        ))}
-      </ExpandableList>
+        );
+      })
+      .filter(isDefined);
+
+    if (isFocused) {
+      return (
+        <ExpandableList
+          isChipCountDisplayed
+          maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
+        >
+          {chips}
+        </ExpandableList>
+      );
+    }
+
+    return (
+      <StyledContainer>
+        {chips.slice(0, MAX_RELATION_CHIPS_DISPLAYED_INLINE)}
+      </StyledContainer>
     );
   }
 
