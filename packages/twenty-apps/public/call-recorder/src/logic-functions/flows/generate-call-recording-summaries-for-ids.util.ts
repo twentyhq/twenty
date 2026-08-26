@@ -40,7 +40,7 @@ export const generateCallRecordingSummariesForIds = async ({
       generatedCallRecordingIds.push(callRecordingId);
     } else if (outcome === 'empty-summary') {
       failedCallRecordingIds.push(callRecordingId);
-    } else if (outcome === 'generation-error') {
+    } else if (outcome === 'generation-error' || outcome === 'save-error') {
       erroredCallRecordingIds.push(callRecordingId);
     } else {
       skippedCallRecordingIds.push(callRecordingId);

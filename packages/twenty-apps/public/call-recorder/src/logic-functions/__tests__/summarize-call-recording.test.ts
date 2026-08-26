@@ -154,6 +154,23 @@ describe('summarize-call-recording logic function', () => {
     });
   });
 
+  it('returns a save error without rethrowing so a paid agent run is never redelivered', async () => {
+    mutationMock.mockRejectedValue(new Error('Write timed out'));
+
+    const result = await summarizeCallRecordingHandler(
+      buildEvent({
+        name: 'callRecording.updated',
+        updatedFields: ['transcript'],
+      }),
+    );
+
+    expect(result).toEqual({
+      callRecordingId: 'call-recording-1',
+      outcome: 'save-error',
+    });
+    expect(runAgentMock).toHaveBeenCalledTimes(1);
+  });
+
   it('skips summary-only updates to avoid re-entrancy', async () => {
     const result = await summarizeCallRecordingHandler(
       buildEvent({

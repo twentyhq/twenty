@@ -24,6 +24,7 @@ describe('generateCallRecordingSummariesForIds', () => {
       .mockResolvedValueOnce({ outcome: 'generated' })
       .mockResolvedValueOnce({ outcome: 'empty-summary' })
       .mockRejectedValueOnce(new Error('agent failed'))
+      .mockResolvedValueOnce({ outcome: 'save-error' })
       .mockResolvedValueOnce({ outcome: 'already-summarized' });
 
     const result = await generateCallRecordingSummariesForIds({
@@ -33,14 +34,15 @@ describe('generateCallRecordingSummariesForIds', () => {
         'call-recording-2',
         'call-recording-3',
         'call-recording-4',
+        'call-recording-5',
       ],
     });
 
     expect(result).toEqual({
       generatedCallRecordingIds: ['call-recording-1'],
       failedCallRecordingIds: ['call-recording-2'],
-      erroredCallRecordingIds: ['call-recording-3'],
-      skippedCallRecordingIds: ['call-recording-4'],
+      erroredCallRecordingIds: ['call-recording-3', 'call-recording-4'],
+      skippedCallRecordingIds: ['call-recording-5'],
     });
   });
 

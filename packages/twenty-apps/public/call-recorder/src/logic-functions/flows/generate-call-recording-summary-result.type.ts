@@ -5,5 +5,6 @@ export type GenerateCallRecordingSummaryResult = {
     | 'not-app-recording'
     | 'already-summarized'
     | 'empty-summary'
+    | 'save-error'
     | 'generated';
 };

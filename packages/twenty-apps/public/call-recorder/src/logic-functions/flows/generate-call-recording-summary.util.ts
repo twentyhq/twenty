@@ -9,6 +9,7 @@ import { extractCallRecordingSummaryMarkdown } from 'src/logic-functions/domain/
 import { isCallRecordingCreatedByCallRecorder } from 'src/logic-functions/domain/is-call-recording-created-by-call-recorder.util';
 import { isRealTranscript } from 'src/logic-functions/domain/is-real-transcript.util';
 import { type GenerateCallRecordingSummaryResult } from 'src/logic-functions/flows/generate-call-recording-summary-result.type';
+import { buildStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 import { getCallRecorderAdditionalSummaryPrompt } from 'src/logic-functions/utils/get-call-recorder-additional-summary-prompt.util';
 import { isCallRecordingSummaryEnabled } from 'src/logic-functions/utils/is-call-recording-summary-enabled.util';
 
@@ -67,10 +68,17 @@ export const generateCallRecordingSummary = async (
     return { outcome: 'empty-summary' };
   }
 
-  await updateCallRecording(client, {
-    id: callRecordingId,
-    data: { summary: { blocknote: null, markdown } },
-  });
+  try {
+    await updateCallRecording(client, {
+      id: callRecordingId,
+      data: { summary: { blocknote: null, markdown } },
+    });
+  } catch (error) {
+    // Not rethrown: a redelivery would re-bill the agent run that already succeeded.
+    buildStepFailure('call recording summary save', error);
+
+    return { outcome: 'save-error' };
+  }
 
   return { outcome: 'generated' };
 };
