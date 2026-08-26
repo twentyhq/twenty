@@ -539,7 +539,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'When enabled, only server admins can create new workspaces. Ignored during initial setup when no workspace exists.',
+      'When enabled, only server admins can create new workspaces, and signing up without a pending invitation or an approved access domain is refused. Ignored during initial setup when no workspace exists.',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
