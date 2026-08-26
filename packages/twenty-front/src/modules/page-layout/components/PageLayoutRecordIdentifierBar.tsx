@@ -21,10 +21,13 @@ import {
 export const PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_TAB_LIST_CLASS_NAME =
   'page-layout-record-identifier-bar-tab-list';
 
-// Both side tracks are 1fr so they stay equal, which is what puts the tabs at
-// the center of the page. The tabs track has a 0 minimum so it yields space to
-// them instead of overflowing, letting the tab list collapse into its more
-// dropdown; the created-at track never shrinks below its own text.
+const SIDE_TRACK = `minmax(${PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_SIDE_MIN_WIDTH}px, max-content)`;
+
+// The side tracks hug their own text and the tabs track takes everything left
+// between them. Sizing the tabs from the leftover rather than from their own
+// content is what lets the strip grow back once the window widens, and it
+// leaves the two sides equal, so the strip centers on the page, whenever their
+// text is of similar length.
 const StyledBar = styled.div<{ hasPinnedTab: boolean }>`
   align-items: stretch;
   background: ${themeCssVariables.background.secondary};
@@ -36,7 +39,7 @@ const StyledBar = styled.div<{ hasPinnedTab: boolean }>`
   grid-template-columns: ${({ hasPinnedTab }) =>
     hasPinnedTab
       ? `${PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH}px minmax(0, 1fr) auto`
-      : `minmax(${PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_SIDE_MIN_WIDTH}px, 1fr) minmax(0, auto) minmax(max-content, 1fr)`};
+      : `${SIDE_TRACK} minmax(0, 1fr) ${SIDE_TRACK}`};
   height: ${PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_HEIGHT}px;
   width: 100%;
 `;
@@ -49,12 +52,16 @@ const StyledIdentifierCell = styled.div<{ hasPinnedTab: boolean }>`
       : 'none'};
   box-sizing: border-box;
   display: flex;
+  // Unpinned, the cell grows with the record name, up to the width it would
+  // have had as a pinned column so a long name cannot crowd out the tabs.
+  max-width: ${({ hasPinnedTab }) =>
+    hasPinnedTab ? 'none' : `${PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH}px`};
   min-width: 0;
   padding-left: ${themeCssVariables.spacing[3]};
   padding-right: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledTabsCell = styled.div`
+const StyledTabsCell = styled.div<{ hasPinnedTab: boolean }>`
   align-items: stretch;
   display: flex;
   min-width: 0;
@@ -73,6 +80,10 @@ const StyledTabsCell = styled.div`
   .${PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_TAB_LIST_CLASS_NAME} {
     ${TAB_LIST_ROW_HEIGHT_CSS_VARIABLE}: ${PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_HEIGHT}px;
     height: 100%;
+    // Without a pinned tab the strip fills the track it is centered in, so its
+    // own content carries the centering.
+    justify-content: ${({ hasPinnedTab }) =>
+      hasPinnedTab ? 'flex-start' : 'center'};
     padding-right: ${themeCssVariables.spacing[2]};
 
     &::after {
@@ -134,7 +145,7 @@ export const PageLayoutRecordIdentifierBar = ({
         />
       </StyledIdentifierCell>
 
-      <StyledTabsCell>{tabList}</StyledTabsCell>
+      <StyledTabsCell hasPinnedTab={hasPinnedTab}>{tabList}</StyledTabsCell>
 
       <StyledCreatedAtCell>
         {hasCreatedAt && (
