@@ -60,10 +60,6 @@ const buildTabIdByUniversalIdentifier = ({
   return tabIdByUniversalIdentifier;
 };
 
-// Tabs are created after their page layout, but a page layout create can reference
-// one of them through defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier
-// (deferred FK). Minting tab ids up-front lets the create resolve that reference
-// before the tab action runs.
 const buildTabIdByUniversalIdentifierForTabActions = ({
   actions,
   providedTabIdByUniversalIdentifier,

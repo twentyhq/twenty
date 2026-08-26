@@ -94,9 +94,6 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.pageLayoutTab.create,
     ...aggregatedOrchestratorActionsReport.pageLayoutTab.update,
 
-    // Page layout updates run after tab creates so
-    // defaultTabToFocusOnMobileAndSidePanel can reference a tab created in the
-    // same migration
     ...aggregatedOrchestratorActionsReport.pageLayout.update,
 
     ...aggregatedOrchestratorActionsReport.pageLayoutWidget.delete,
