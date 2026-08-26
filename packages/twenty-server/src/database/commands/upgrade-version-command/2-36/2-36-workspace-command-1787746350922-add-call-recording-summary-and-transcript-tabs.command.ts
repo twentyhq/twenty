@@ -7,7 +7,7 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
-import { computeAppendedPageLayoutTabPositions } from 'src/database/commands/upgrade-version-command/2-35/utils/compute-appended-page-layout-tab-positions.util';
+import { computeAppendedPageLayoutTabPositions } from 'src/database/commands/upgrade-version-command/2-36/utils/compute-appended-page-layout-tab-positions.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
@@ -46,9 +46,9 @@ const APPENDED_WIDGET_UNIVERSAL_IDENTIFIERS = [
   TRANSCRIPT_WIDGET_UNIVERSAL_IDENTIFIER,
 ];
 
-@RegisteredWorkspaceCommand('2.35.0', 1787660000000)
+@RegisteredWorkspaceCommand('2.36.0', 1787746350922)
 @Command({
-  name: 'upgrade:2-35:add-call-recording-summary-and-transcript-tabs',
+  name: 'upgrade:2-36:add-call-recording-summary-and-transcript-tabs',
   description:
     'Add the Summary and Call Recording tabs with their call recording summary and transcript widgets to the CallRecording record page in existing workspaces',
 })

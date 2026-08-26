@@ -1,4 +1,4 @@
-import { computeAppendedPageLayoutTabPositions } from 'src/database/commands/upgrade-version-command/2-35/utils/compute-appended-page-layout-tab-positions.util';
+import { computeAppendedPageLayoutTabPositions } from 'src/database/commands/upgrade-version-command/2-36/utils/compute-appended-page-layout-tab-positions.util';
 
 const buildPageLayoutTab = ({
   position,
