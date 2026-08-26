@@ -7582,7 +7582,7 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
       if (!obj?.__typename) throw new Error('__typename is missing in "isGridPosition"')
       return GridPosition_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const PageLayoutWidget_possibleTypes: string[] = ['PageLayoutWidget']
