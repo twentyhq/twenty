@@ -1,15 +1,15 @@
 import { isObjectWithId } from '@/object-record/record-field/ui/utils/junction/isObjectWithId';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { getRecordFieldValue } from '@/object-record/utils/getRecordFieldValue';
+import { safeGetNestedProperty } from 'twenty-shared/utils';
 
-export const getRecordArrayField = ({
+export const getJunctionRecordsFromRecord = ({
   record,
-  fieldName,
+  junctionFieldName,
 }: {
   record: object | null | undefined;
-  fieldName: string;
+  junctionFieldName: string;
 }): ObjectRecord[] => {
-  const fieldValue = getRecordFieldValue({ record, fieldName });
+  const fieldValue = safeGetNestedProperty(record, junctionFieldName);
 
   return Array.isArray(fieldValue) ? fieldValue.filter(isObjectWithId) : [];
 };

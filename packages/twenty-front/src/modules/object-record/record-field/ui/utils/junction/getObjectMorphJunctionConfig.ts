@@ -8,7 +8,7 @@ import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/j
 import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
 import { isDefined } from 'twenty-shared/utils';
 
-export type ObjectMorphJunctionConfig = JunctionConfig & {
+type ObjectMorphJunctionConfig = JunctionConfig & {
   // Field on the object holding the junction records, e.g. `note.noteTargets`
   junctionField: FieldMetadataItem;
   // Field on the junction pointing back at the object, e.g. `noteTarget.note`

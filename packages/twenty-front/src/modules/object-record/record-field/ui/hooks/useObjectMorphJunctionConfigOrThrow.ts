@@ -1,16 +1,13 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import {
-  getObjectMorphJunctionConfig,
-  type ObjectMorphJunctionConfig,
-} from '@/object-record/record-field/ui/utils/junction/getObjectMorphJunctionConfig';
+import { getObjectMorphJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getObjectMorphJunctionConfig';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useObjectMorphJunctionConfigOrThrow = ({
   objectNameSingular,
 }: {
   objectNameSingular: string;
-}): ObjectMorphJunctionConfig => {
+}) => {
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
   const { objectMetadataItems } = useObjectMetadataItems();
 

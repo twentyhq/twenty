@@ -6,7 +6,7 @@ import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-fiel
 import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
 import { isDefined } from 'twenty-shared/utils';
 
-export type ReverseJunctionConfig = {
+type ReverseJunctionConfig = {
   junctionObjectMetadata: JunctionObjectMetadataItem;
   relatedObjectMetadata: JunctionObjectMetadataItem;
   relationFieldName: string;

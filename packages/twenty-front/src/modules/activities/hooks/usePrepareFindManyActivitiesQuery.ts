@@ -11,9 +11,9 @@ import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCac
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useObjectMorphJunctionConfigOrThrow } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfigOrThrow';
+import { getJunctionRecordsFromRecord } from '@/object-record/record-field/ui/utils/junction/getJunctionRecordsFromRecord';
 import { getRelatedRecordIdFromJunction } from '@/object-record/record-field/ui/utils/junction/getRelatedRecordIdFromJunction';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { getRecordArrayField } from '@/object-record/utils/getRecordArrayField';
 import { isDefined } from 'twenty-shared/utils';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 import { useMemo } from 'react';
@@ -95,9 +95,9 @@ export const usePrepareFindManyActivitiesQuery = ({
     )?.name;
 
     const activityTargets = isDefined(junctionFieldName)
-      ? getRecordArrayField({
+      ? getJunctionRecordsFromRecord({
           record: targetableObjectRecord ?? {},
-          fieldName: junctionFieldName,
+          junctionFieldName,
         })
       : [];
 

@@ -1,6 +1,6 @@
 import { isObjectWithId } from '@/object-record/record-field/ui/utils/junction/isObjectWithId';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { getRecordFieldValue } from '@/object-record/utils/getRecordFieldValue';
+import { safeGetNestedProperty } from 'twenty-shared/utils';
 
 export const getRelatedRecordFromJunction = ({
   junctionRecord,
@@ -9,10 +9,10 @@ export const getRelatedRecordFromJunction = ({
   junctionRecord: object;
   relationFieldName: string;
 }): ObjectRecord | undefined => {
-  const relatedRecord = getRecordFieldValue({
-    record: junctionRecord,
-    fieldName: relationFieldName,
-  });
+  const relatedRecord = safeGetNestedProperty(
+    junctionRecord,
+    relationFieldName,
+  );
 
   return isObjectWithId(relatedRecord) ? relatedRecord : undefined;
 };

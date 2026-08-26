@@ -15,8 +15,8 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 
 import { createOneActivityOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/createOneActivityOperationSignatureFactory';
 import { useObjectMorphJunctionConfigOrThrow } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfigOrThrow';
+import { getJunctionRecordsFromRecord } from '@/object-record/record-field/ui/utils/junction/getJunctionRecordsFromRecord';
 import { type ActivityTarget } from '@/activities/types/ActivityTarget';
-import { getRecordArrayField } from '@/object-record/utils/getRecordArrayField';
 import { capitalize } from 'twenty-shared/utils';
 
 export const useCreateActivityInDB = ({
@@ -67,9 +67,9 @@ export const useCreateActivityInDB = ({
 
       const { junctionObjectMetadata, junctionField } = morphJunctionConfig;
 
-      const activityTargetsToCreate = getRecordArrayField({
+      const activityTargetsToCreate = getJunctionRecordsFromRecord({
         record: activityToCreate,
-        fieldName: junctionField.name,
+        junctionFieldName: junctionField.name,
       });
 
       if (isNonEmptyArray(activityTargetsToCreate)) {

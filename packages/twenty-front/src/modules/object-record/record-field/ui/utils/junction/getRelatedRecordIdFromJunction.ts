@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { getRelatedRecordFromJunction } from '@/object-record/record-field/ui/utils/junction/getRelatedRecordFromJunction';
-import { getRecordFieldValue } from '@/object-record/utils/getRecordFieldValue';
+import { safeGetNestedProperty } from 'twenty-shared/utils';
 
 export const getRelatedRecordIdFromJunction = ({
   junctionRecord,
@@ -12,10 +12,7 @@ export const getRelatedRecordIdFromJunction = ({
   relationFieldName: string;
   joinColumnName: string;
 }): string | undefined => {
-  const joinColumnValue = getRecordFieldValue({
-    record: junctionRecord,
-    fieldName: joinColumnName,
-  });
+  const joinColumnValue = safeGetNestedProperty(junctionRecord, joinColumnName);
 
   return isNonEmptyString(joinColumnValue)
     ? joinColumnValue
