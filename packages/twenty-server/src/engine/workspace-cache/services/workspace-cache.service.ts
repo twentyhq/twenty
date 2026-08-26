@@ -64,6 +64,7 @@ const MIN_IDLE_BEFORE_PACKING_MS = 60 * 1000;
 const MAX_LOCAL_ENTRIES_BY_KEY_NAME = new Map<string, number>([
   ['ORMEntityMetadatas', 128],
   ['flatFieldMetadataMaps', 256],
+  ['flatFieldMetadataMapsOrm', 512],
 ]);
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
 type StoredCacheDataType = WorkspaceCacheStoredDataMap[WorkspaceCacheKeyName];
