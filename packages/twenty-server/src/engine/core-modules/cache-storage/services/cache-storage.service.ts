@@ -4,6 +4,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { type Milliseconds } from 'cache-manager';
 import { type RedisCache } from 'cache-manager-redis-yet';
 
+import {
+  CacheStorageException,
+  CacheStorageExceptionCode,
+} from 'src/engine/core-modules/cache-storage/exceptions/cache-storage.exception';
 import { type CacheScript } from 'src/engine/core-modules/cache-storage/types/cache-script.type';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 
@@ -394,7 +398,10 @@ end`;
     args: string[];
   }): Promise<TResult> {
     if (!this.isRedisCache(this.cache)) {
-      throw new Error('runScript is only supported with Redis cache');
+      throw new CacheStorageException(
+        'runScript is only supported with Redis cache',
+        CacheStorageExceptionCode.REDIS_CACHE_REQUIRED,
+      );
     }
 
     try {
@@ -403,8 +410,9 @@ end`;
         arguments: args,
       })) as TResult;
     } catch (error) {
-      throw new Error(
+      throw new CacheStorageException(
         `Cache script "${script.name}" failed: ${error instanceof Error ? error.message : 'unknown error'}`,
+        CacheStorageExceptionCode.SCRIPT_EXECUTION_FAILED,
       );
     }
   }

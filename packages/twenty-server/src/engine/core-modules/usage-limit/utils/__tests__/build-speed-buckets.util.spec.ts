@@ -174,6 +174,15 @@ describe('buildSpeedBuckets with rules configured', () => {
     ]);
   });
 
+  it('tells the platform default apart from a configured rule', () => {
+    const buckets = buildBuckets({
+      authContext: apiKeyContext,
+      rules: [buildRule({ spenderId: '', windowSeconds: 60, limitValue: 10 })],
+    });
+
+    expect(buckets.map((bucket) => bucket.isFallback)).toEqual([false, true]);
+  });
+
   it('applies a workspace rule to a caller that no other rule covers', () => {
     const buckets = buildBuckets({
       authContext: userContext,

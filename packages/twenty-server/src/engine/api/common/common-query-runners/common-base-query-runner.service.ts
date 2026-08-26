@@ -58,6 +58,7 @@ import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.se
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
+import { type ExhaustedScope } from 'src/engine/core-modules/usage-limit/types/exhausted-scope.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -561,21 +562,49 @@ export abstract class CommonBaseQueryRunnerService<
     } catch (error) {
       if (
         error instanceof UsageLimitException &&
-        error.exhaustedScope?.spenderType === 'application' &&
-        isApplicationAuthContext(authContext)
+        isDefined(error.exhaustedScope) &&
+        error.exhaustedScope.isFallback
       ) {
-        await this.metricsService.incrementCounterForEvent({
-          key: MetricsKeys.CommonApiApplicationQueryRateLimited,
-          shouldStoreInCache: false,
-          attributes: {
-            universal_identifier: authContext.application.universalIdentifier,
-            app_name: authContext.application.name,
-            source_type: authContext.application.sourceType,
-          },
+        await this.incrementApiSpeedCeilingMetrics({
+          authContext,
+          exhaustedScope: error.exhaustedScope,
         });
       }
 
       throw error;
+    }
+  }
+
+  // Only built-in ceilings are metered, matching the throttler this replaces: a
+  // denial from a workspace-configured rule is that workspace's own policy, not
+  // the platform limit these counters watch.
+  private async incrementApiSpeedCeilingMetrics({
+    authContext,
+    exhaustedScope,
+  }: {
+    authContext: WorkspaceAuthContext;
+    exhaustedScope: ExhaustedScope;
+  }) {
+    if (exhaustedScope.spenderType === 'apiKey') {
+      await this.metricsService.incrementCounterForEvent({
+        key: MetricsKeys.CommonApiQueryRateLimited,
+        shouldStoreInCache: false,
+      });
+    }
+
+    if (
+      exhaustedScope.spenderType === 'application' &&
+      isApplicationAuthContext(authContext)
+    ) {
+      await this.metricsService.incrementCounterForEvent({
+        key: MetricsKeys.CommonApiApplicationQueryRateLimited,
+        shouldStoreInCache: false,
+        attributes: {
+          universal_identifier: authContext.application.universalIdentifier,
+          app_name: authContext.application.name,
+          source_type: authContext.application.sourceType,
+        },
+      });
     }
   }
 

@@ -1,12 +1,17 @@
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
+import { generateApiKeyToken } from 'test/integration/graphql/utils/generate-api-key-token.util';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
+import { gql } from 'graphql-tag';
 import { createClient } from 'redis';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { type Repository } from 'typeorm';
 
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -19,21 +24,29 @@ const LIMIT_VALUE = 1;
 describe('API rate limiting', () => {
   let usageLimitRepository: Repository<UsageLimitEntity>;
   let featureFlagRepository: Repository<FeatureFlagEntity>;
+  let apiKeyRepository: Repository<ApiKeyEntity>;
   let redis: Awaited<ReturnType<typeof createClient>>;
   let usageLimitId: string;
+  let apiKeyId: string;
+  let apiKeyToken: string;
 
   const findCompaniesOverGraphql = () =>
-    makeGraphqlAPIRequestWithApiKey(
+    makeGraphqlAPIRequest(
       findManyOperationFactory({
         objectMetadataSingularName: 'company',
         objectMetadataPluralName: 'companies',
         gqlFields: 'id',
         first: 1,
       }),
+      apiKeyToken,
     );
 
   const findCompaniesOverRest = () =>
-    makeRestAPIRequest({ method: 'get', path: '/companies?limit=1' });
+    makeRestAPIRequest({
+      method: 'get',
+      path: '/companies?limit=1',
+      bearer: apiKeyToken,
+    });
 
   // Every test starts from a full bucket so it does not inherit whatever the
   // previous one spent.
@@ -53,12 +66,66 @@ describe('API rate limiting', () => {
     await new Promise((resolve) => setTimeout(resolve, 300));
   };
 
+  // The rule targets a key created for this suite alone. A workspace-scoped one
+  // would meter every caller in the seeded workspace, and deleting it here
+  // cannot undo that: the workspace cache memoizes resolved entries in process
+  // for MEMOIZER_TTL_MS, so the next spec file would still be rate limited.
+  const createDedicatedApiKey = async () => {
+    const rolesResponse = await makeMetadataAPIRequest({
+      query: gql`
+        query GetRoles {
+          getRoles {
+            id
+            label
+          }
+        }
+      `,
+    });
+
+    const adminRoleId = rolesResponse.body.data?.getRoles?.find(
+      (role: { label: string }) => role.label === 'Admin',
+    )?.id;
+
+    jestExpectToBeDefined(adminRoleId);
+
+    const createResponse = await makeMetadataAPIRequest({
+      query: gql`
+        mutation CreateApiKey($input: CreateApiKeyInput!) {
+          createApiKey(input: $input) {
+            id
+          }
+        }
+      `,
+      variables: {
+        input: {
+          name: 'API rate limiting test key',
+          expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+          roleId: adminRoleId,
+        },
+      },
+    });
+
+    apiKeyId = createResponse.body.data?.createApiKey?.id;
+    jestExpectToBeDefined(apiKeyId);
+
+    const tokenResponse = await generateApiKeyToken({
+      apiKeyId,
+      accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+
+    apiKeyToken = tokenResponse.body.data?.generateApiKeyToken?.token;
+    jestExpectToBeDefined(apiKeyToken);
+  };
+
   beforeAll(async () => {
     usageLimitRepository =
       getCoreRepository<UsageLimitEntity>(UsageLimitEntity);
     featureFlagRepository =
       getCoreRepository<FeatureFlagEntity>(FeatureFlagEntity);
+    apiKeyRepository = getCoreRepository<ApiKeyEntity>(ApiKeyEntity);
     redis = await createClient({ url: process.env.REDIS_URL }).connect();
+
+    await createDedicatedApiKey();
 
     await featureFlagRepository.delete({
       key: FeatureFlagKey.IS_API_RATE_LIMIT_V2_ENABLED,
@@ -75,8 +142,8 @@ describe('API rate limiting', () => {
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         resourceType: UsageResourceType.API,
         operationType: UsageOperationType.API_REQUEST,
-        spenderType: 'workspace',
-        spenderId: '',
+        spenderType: 'apiKey',
+        spenderId: apiKeyId,
         limitKind: 'speed',
         windowSeconds: WINDOW_SECONDS,
         limitValueType: 'absolute',
@@ -96,6 +163,7 @@ describe('API rate limiting', () => {
       key: FeatureFlagKey.IS_API_RATE_LIMIT_V2_ENABLED,
       workspaceId: SEED_APPLE_WORKSPACE_ID,
     });
+    await apiKeyRepository.delete({ id: apiKeyId });
     await invalidateWorkspaceCaches();
     await redis.quit();
   });
@@ -138,7 +206,7 @@ describe('API rate limiting', () => {
         limit: LIMIT_VALUE,
         remaining: 0,
         windowSeconds: WINDOW_SECONDS,
-        scope: { spenderType: 'workspace' },
+        scope: { spenderType: 'apiKey', spenderId: apiKeyId },
       });
       expect(extensions.retryAfterMs).toBeGreaterThan(0);
     });
@@ -181,7 +249,7 @@ describe('API rate limiting', () => {
         remaining: 0,
         windowSeconds: WINDOW_SECONDS,
         retryAfterSeconds: 1,
-        scope: { spenderType: 'workspace' },
+        scope: { spenderType: 'apiKey', spenderId: apiKeyId },
       });
       expect(body.messages).toHaveLength(1);
     });

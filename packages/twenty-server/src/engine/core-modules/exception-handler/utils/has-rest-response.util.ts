@@ -6,5 +6,7 @@ export const hasRestResponse = (
   exception: unknown,
 ): exception is HttpExceptionWithRestResponse =>
   isObject(exception) &&
-  isFunction((exception as HttpExceptionWithRestResponse).getResponseHeaders) &&
-  isFunction((exception as HttpExceptionWithRestResponse).getResponseBody);
+  'getResponseHeaders' in exception &&
+  isFunction(exception.getResponseHeaders) &&
+  'getResponseBody' in exception &&
+  isFunction(exception.getResponseBody);

@@ -38,6 +38,7 @@ export const buildSpeedBuckets = ({
 
     const ruleBuckets = spenderRules.map((rule) => ({
       key: buildSpeedBucketKey({
+        counterScope: 'perWorkspace',
         workspaceId: authContext.workspace.id,
         resourceType,
         operationType,
@@ -50,6 +51,7 @@ export const buildSpeedBuckets = ({
       windowMs: rule.windowSeconds * 1000,
       spenderType: spender.spenderType,
       spenderId: rule.spenderId === '' ? null : rule.spenderId,
+      isFallback: false,
     }));
 
     const windowsCoveredByRules = new Set(

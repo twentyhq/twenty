@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageException } from 'src/engine/core-modules/cache-storage/exceptions/cache-storage.exception';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -20,7 +21,7 @@ import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usa
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-const ADMITTED: SpeedBucketOutcome = { admitted: true, remainingByBucket: [] };
+const ADMITTED: SpeedBucketOutcome = { admitted: true };
 
 @Injectable()
 export class UsageLimitSpeedService {
@@ -68,13 +69,17 @@ export class UsageLimitSpeedService {
           remaining: 0,
           windowSeconds: Math.ceil(outcome.exhausted.windowMs / 1000),
           retryAfterMs: outcome.retryAfterMs,
+          isFallback: outcome.exhausted.isFallback,
         },
       },
     );
   }
 
-  // Resolving the rules touches Redis too, so it belongs inside the guard: a
-  // rate limiter that has lost its counter must not take the API down with it.
+  // Fails open on cache storage alone: a rate limiter that has lost its counter
+  // must not take the API down with it. Resolving the rules stays outside the
+  // guard, because the feature flag read that got us here already went through
+  // the same workspace cache, and anything else thrown here is a bug that has
+  // to surface rather than silently disable enforcement.
   private async consumeAdmittingOnFailure({
     resourceType,
     authContext,
@@ -86,22 +91,24 @@ export class UsageLimitSpeedService {
     operationType: UsageOperationType;
     cost: number;
   }): Promise<SpeedBucketOutcome> {
+    const buckets = await this.buildBuckets({
+      resourceType,
+      authContext,
+      operationType,
+    });
+
+    if (buckets.length === 0) {
+      return ADMITTED;
+    }
+
     try {
-      const buckets = await this.buildBuckets({
-        resourceType,
-        authContext,
-        operationType,
-      });
-
-      if (buckets.length === 0) {
-        return ADMITTED;
-      }
-
       return await this.consumeTokens({ buckets, cost });
     } catch (error) {
-      this.logger.error(
-        `Usage limit enforcement degraded: ${error instanceof Error ? error.message : 'unknown error'}`,
-      );
+      if (!(error instanceof CacheStorageException)) {
+        throw error;
+      }
+
+      this.logger.error(`Usage limit enforcement degraded: ${error.message}`);
 
       return ADMITTED;
     }
@@ -120,7 +127,7 @@ export class UsageLimitSpeedService {
       windowMs: bucket.windowMs,
     }));
 
-    const [admitted, failedIndex, retryAfterMs, ...remainingByBucket] =
+    const [admitted, failedIndex, retryAfterMs] =
       await this.cacheStorage.runScript<number[]>({
         script: TRY_CONSUME_TOKEN_BUCKETS_SCRIPT,
         keys: buckets.map((bucket) => bucket.key),
@@ -128,7 +135,7 @@ export class UsageLimitSpeedService {
       });
 
     if (admitted === 1) {
-      return { admitted: true, remainingByBucket };
+      return ADMITTED;
     }
 
     const exhausted = buckets[failedIndex - 1];

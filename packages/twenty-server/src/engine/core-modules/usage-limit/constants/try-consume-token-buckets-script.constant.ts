@@ -44,15 +44,13 @@ for i = 1, #KEYS do
 end
 
 for i = 1, #KEYS do
+  local bucket = buckets[i]
   redis.call('HSET', KEYS[i], 't', tostring(available[i] - cost), 'ts', tostring(nowMs))
-  redis.call('PEXPIRE', KEYS[i], buckets[i].windowMs * 2)
+  -- Never expire before an empty bucket would have refilled, or the key
+  -- vanishing hands back a full burst the elapsed time had not yet earned.
+  redis.call('PEXPIRE', KEYS[i], math.ceil(bucket.burst / bucket.refill * bucket.windowMs))
 end
 
-local result = { 1, 0, 0 }
-for i = 1, #KEYS do
-  result[#result + 1] = math.floor(available[i] - cost)
-end
-
-return result
+return { 1, 0, 0 }
 `,
 };
