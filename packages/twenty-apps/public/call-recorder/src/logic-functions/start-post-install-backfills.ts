@@ -32,9 +32,7 @@ export default definePostInstallLogicFunction({
   description:
     'Schedules recording bots for upcoming meetings when the app is installed.',
   timeoutSeconds: 30,
-  // Upgrades deliberately trigger nothing: unattended agent runs are billed,
-  // so historical summaries are only generated on explicit user request, and
-  // the daily cron already sweeps the scheduling window.
+  // No upgrade hook on purpose: a summaries backfill would silently bill agent runs.
   shouldRunOnVersionUpgrade: false,
   handler: startPostInstallBackfillsHandler,
 });

@@ -45,9 +45,6 @@ export const summarizeCallRecordingHandler = async (
 
     return { callRecordingId: event.recordId, ...result };
   } catch (error) {
-    // Only a typed retryable failure makes the platform redeliver this
-    // trigger, and it is the sole unattended summary path: a plain throw
-    // would leave the recording without a summary until a user asks again.
     throw buildRetryableStepFailure('call recording summarization', error);
   }
 };
