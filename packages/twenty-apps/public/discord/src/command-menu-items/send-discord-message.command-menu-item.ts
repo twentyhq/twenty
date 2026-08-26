@@ -1,4 +1,7 @@
-import { defineCommandMenuItem } from 'twenty-sdk/define';
+import {
+  CommandMenuItemAvailabilityType,
+  defineCommandMenuItem,
+} from 'twenty-sdk/define';
 
 import {
   SEND_DISCORD_MESSAGE_COMMAND_UNIVERSAL_IDENTIFIER,
@@ -11,7 +14,7 @@ export default defineCommandMenuItem({
   shortLabel: 'Discord message',
   icon: 'IconBrandDiscord',
   isPinned: false,
-  availabilityType: 'GLOBAL',
+  availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
   frontComponentUniversalIdentifier:
     SEND_MESSAGE_FORM_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
 });

@@ -1,4 +1,7 @@
-import { defineCommandMenuItem } from 'twenty-sdk/define';
+import {
+  CommandMenuItemAvailabilityType,
+  defineCommandMenuItem,
+} from 'twenty-sdk/define';
 
 import {
   CREATE_ISSUE_COMMAND_UNIVERSAL_IDENTIFIER,
@@ -11,7 +14,7 @@ export default defineCommandMenuItem({
   shortLabel: 'Linear issue',
   icon: 'IconPlaylistAdd',
   isPinned: false,
-  availabilityType: 'GLOBAL',
+  availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
   frontComponentUniversalIdentifier:
     CREATE_ISSUE_FORM_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
 });

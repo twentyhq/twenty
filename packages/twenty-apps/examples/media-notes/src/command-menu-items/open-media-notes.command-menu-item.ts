@@ -1,4 +1,7 @@
-import { defineCommandMenuItem } from 'twenty-sdk/define';
+import {
+  CommandMenuItemAvailabilityType,
+  defineCommandMenuItem,
+} from 'twenty-sdk/define';
 import { MEDIA_NOTES_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../components/media-notes.front-component';
 
 export default defineCommandMenuItem({
@@ -7,7 +10,7 @@ export default defineCommandMenuItem({
   shortLabel: 'Media note',
   icon: 'IconMicrophone',
   isPinned: true,
-  availabilityType: 'GLOBAL',
+  availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
   frontComponentUniversalIdentifier:
     MEDIA_NOTES_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
 });

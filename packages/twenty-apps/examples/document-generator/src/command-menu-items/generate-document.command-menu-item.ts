@@ -1,6 +1,7 @@
 import {
-  defineCommandMenuItem,
+  CommandMenuItemAvailabilityType,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  defineCommandMenuItem,
 } from 'twenty-sdk/define';
 
 import {
@@ -15,7 +16,7 @@ export default defineCommandMenuItem({
   label: 'Generate document',
   shortLabel: 'Generate',
   isPinned: false,
-  availabilityType: 'RECORD_SELECTION',
+  availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
   availabilityObjectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
   frontComponentUniversalIdentifier:

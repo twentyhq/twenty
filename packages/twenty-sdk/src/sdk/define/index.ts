@@ -190,6 +190,7 @@ export type {
 
 export {
   AggregateOperations,
+  CommandMenuItemAvailabilityType,
   DateDisplayFormat,
   FieldMetadataSettingsOnClickAction,
   HTTPMethod,
