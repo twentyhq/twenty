@@ -1601,12 +1601,6 @@ msgstr "Takvim görünümünün bir takvim alanı olmalıdır"
 msgid "Calendar view must have a calendar layout"
 msgstr "Takvim görünümünün bir takvim düzeni olmalıdır"
 
-#. js-lingui-id: D9pZ2l
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-msgid "Calendar widget views only support the month layout"
-msgstr "Takvim bileşeni görünümleri yalnızca ay düzenini destekler"
-
 #. js-lingui-id: 0U7DBn
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
