@@ -1,4 +1,4 @@
-import { useCallRecordingsSeeAllHref } from '@/page-layout/widgets/calendar-event-call-recording/hooks/useCallRecordingsSeeAllHref';
+import { useCallRecordingsSeeAllHref } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingsSeeAllHref';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { callRecordingTranscriptHeaderDataComponentFamilyState } from '@/page-layout/widgets/call-recording-transcript/states/callRecordingTranscriptHeaderDataComponentFamilyState';
 import { widgetHeaderCountComponentFamilyState } from '@/page-layout/widgets/states/widgetHeaderCountComponentFamilyState';
