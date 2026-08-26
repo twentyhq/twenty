@@ -1,7 +1,6 @@
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { useRecordCalendarDaysRange } from '@/object-record/record-calendar/hooks/useRecordCalendarDaysRange';
-import { getSupportedRecordCalendarLayout } from '@/object-record/record-calendar/utils/getSupportedRecordCalendarLayout';
 import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
@@ -11,7 +10,6 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type Temporal } from 'temporal-polyfill';
 import {
   combineFilters,
@@ -20,10 +18,7 @@ import {
   turnAnyFieldFilterIntoRecordGqlFilter,
   turnPlainDateIntoUserTimeZoneInstantString,
 } from 'twenty-shared/utils';
-import {
-  FeatureFlagKey,
-  FieldMetadataType,
-} from '~/generated-metadata/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useRecordCalendarQueryDateRangeFilter = (
   selectedDate: Temporal.PlainDate,
@@ -33,16 +28,9 @@ export const useRecordCalendarQueryDateRangeFilter = (
   const recordIndexCalendarLayout = useAtomComponentStateValue(
     recordIndexCalendarLayoutComponentState,
   );
-  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
-  );
-  const supportedCalendarLayout = getSupportedRecordCalendarLayout({
-    calendarLayout: recordIndexCalendarLayout,
-    isCalendarWeekViewEnabled,
-  });
   const { firstDay, lastDay } = useRecordCalendarDaysRange(
     selectedDate,
-    supportedCalendarLayout,
+    recordIndexCalendarLayout,
   );
   const { userTimezone } = useUserTimezone();
   const currentRecordFilterGroups = useAtomComponentStateValue(

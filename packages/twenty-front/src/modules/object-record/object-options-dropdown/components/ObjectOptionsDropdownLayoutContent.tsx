@@ -1,7 +1,6 @@
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useSetViewTypeFromLayoutOptionsMenu } from '@/object-record/object-options-dropdown/hooks/useSetViewTypeFromLayoutOptionsMenu';
-import { getSupportedRecordCalendarLayout } from '@/object-record/record-calendar/utils/getSupportedRecordCalendarLayout';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -70,13 +69,6 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   const isListViewEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_LIST_VIEW_ENABLED,
   );
-  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
-  );
-  const supportedCalendarLayout = getSupportedRecordCalendarLayout({
-    calendarLayout: recordIndexCalendarLayout,
-    isCalendarWeekViewEnabled,
-  });
   const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
@@ -274,9 +266,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     LeftIcon={IconCalendarWeek}
                     text={t`Calendar view`}
                     contextualText={
-                      supportedCalendarLayout === ViewCalendarLayout.MONTH
+                      recordIndexCalendarLayout === ViewCalendarLayout.MONTH
                         ? t`Month`
-                        : supportedCalendarLayout === ViewCalendarLayout.WEEK
+                        : recordIndexCalendarLayout === ViewCalendarLayout.WEEK
                           ? t`Week`
                           : t`Day`
                     }
