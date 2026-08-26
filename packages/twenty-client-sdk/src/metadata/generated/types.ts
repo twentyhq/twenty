@@ -4151,6 +4151,12 @@ export default {
             "isVetted": [
                 8
             ],
+            "requiredServerVersionRange": [
+                1
+            ],
+            "isServerVersionCompatible": [
+                8
+            ],
             "__typename": [
                 1
             ]
@@ -4260,6 +4266,12 @@ export default {
             ],
             "latestAvailableVersion": [
                 1
+            ],
+            "requiredServerVersionRange": [
+                1
+            ],
+            "isServerVersionCompatible": [
+                8
             ],
             "isListed": [
                 8

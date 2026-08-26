@@ -1763,6 +1763,8 @@ export interface MarketplaceApp {
     logoUrl?: Scalars['String']
     sourcePackage?: Scalars['String']
     isVetted: Scalars['Boolean']
+    requiredServerVersionRange?: Scalars['String']
+    isServerVersionCompatible: Scalars['Boolean']
     __typename: 'MarketplaceApp'
 }
 
@@ -1809,6 +1811,8 @@ export interface MarketplaceAppDetail {
     sourceType: ApplicationRegistrationSourceType
     sourcePackage?: Scalars['String']
     latestAvailableVersion?: Scalars['String']
+    requiredServerVersionRange?: Scalars['String']
+    isServerVersionCompatible: Scalars['Boolean']
     isListed: Scalars['Boolean']
     isVetted: Scalars['Boolean']
     description?: Scalars['String']
@@ -5138,6 +5142,8 @@ export interface MarketplaceAppGenqlSelection{
     logoUrl?: boolean | number
     sourcePackage?: boolean | number
     isVetted?: boolean | number
+    requiredServerVersionRange?: boolean | number
+    isServerVersionCompatible?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5188,6 +5194,8 @@ export interface MarketplaceAppDetailGenqlSelection{
     sourceType?: boolean | number
     sourcePackage?: boolean | number
     latestAvailableVersion?: boolean | number
+    requiredServerVersionRange?: boolean | number
+    isServerVersionCompatible?: boolean | number
     isListed?: boolean | number
     isVetted?: boolean | number
     description?: boolean | number

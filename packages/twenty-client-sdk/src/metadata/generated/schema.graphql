@@ -2088,6 +2088,8 @@ type MarketplaceApp {
   logoUrl: String
   sourcePackage: String
   isVetted: Boolean!
+  requiredServerVersionRange: String
+  isServerVersionCompatible: Boolean!
 }
 
 type MarketplaceAppRoleObjectPermission {
@@ -2130,6 +2132,8 @@ type MarketplaceAppDetail {
   sourceType: ApplicationRegistrationSourceType!
   sourcePackage: String
   latestAvailableVersion: String
+  requiredServerVersionRange: String
+  isServerVersionCompatible: Boolean!
   isListed: Boolean!
   isVetted: Boolean!
   description: String
