@@ -19,10 +19,10 @@ import {
   AggregateOperations,
   PageLayoutType,
   ViewFilterOperand,
+  WidgetType,
 } from 'twenty-shared/types';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 
 type TestContext = {
   id: string;

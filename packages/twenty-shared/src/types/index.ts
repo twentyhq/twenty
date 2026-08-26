@@ -237,6 +237,7 @@ export { PageLayoutTabLayoutMode } from './page-layout/PageLayoutTabLayoutMode';
 export { PageLayoutType } from './page-layout/PageLayoutType';
 export type { PageLayoutWidgetConditionalDisplay } from './page-layout/PageLayoutWidgetConditionalDisplay';
 export type { RatioAggregateConfig } from './page-layout/ratio-aggregate-config.type';
+export { WidgetType } from './page-layout/WidgetType';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';
 export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOption';
 export type { QueryCursorDirection } from './QueryCursorDirection';

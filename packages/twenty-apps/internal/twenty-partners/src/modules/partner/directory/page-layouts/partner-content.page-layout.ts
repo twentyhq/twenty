@@ -1,6 +1,7 @@
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
+  WidgetType,
   definePageLayout,
 } from 'twenty-sdk/define';
 
@@ -23,7 +24,7 @@ export default definePageLayout({
         {
           universalIdentifier: 'd5833c26-aa65-418d-a359-b420369990f6',
           title: 'Fields',
-          type: 'FIELDS',
+          type: WidgetType.FIELDS,
           configuration: {
             configurationType: 'FIELDS',
             viewUniversalIdentifier: PARTNER_CONTENT_RECORD_PAGE_FIELDS_VIEW_ID,
@@ -41,7 +42,7 @@ export default definePageLayout({
         {
           universalIdentifier: '1d293bf5-f6d4-41c4-a6f6-db7955759f35',
           title: 'Timeline',
-          type: 'TIMELINE',
+          type: WidgetType.TIMELINE,
           configuration: { configurationType: 'TIMELINE' },
         },
       ],

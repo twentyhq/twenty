@@ -3,8 +3,7 @@ import {
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
 
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { PageLayoutType } from 'twenty-shared/types';
+import { PageLayoutType, WidgetType } from 'twenty-shared/types';
 import {
   GRID_POSITIONS,
   TAB_PROPS,

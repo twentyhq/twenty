@@ -1,6 +1,7 @@
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
+  WidgetType,
   definePageLayout,
 } from 'twenty-sdk/define';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from 'src/objects/post-card.object';
@@ -23,7 +24,7 @@ export default definePageLayout({
         {
           universalIdentifier: '3d388201-f421-4189-8266-f632e494091b',
           title: 'Post Card Fields',
-          type: 'FIELDS',
+          type: WidgetType.FIELDS,
           configuration: {
             configurationType: 'FIELDS',
           },
@@ -39,7 +40,7 @@ export default definePageLayout({
         {
           universalIdentifier: 'd70f837e-8d0c-4fe2-b70e-89b5bc173499',
           title: 'Card Preview',
-          type: 'FRONT_COMPONENT',
+          type: WidgetType.FRONT_COMPONENT,
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:

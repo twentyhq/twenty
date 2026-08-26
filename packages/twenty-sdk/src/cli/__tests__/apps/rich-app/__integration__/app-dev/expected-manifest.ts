@@ -10,6 +10,7 @@ import {
   RelationType,
   ViewCalendarLayout,
   ViewType,
+  WidgetType,
 } from 'twenty-shared/types';
 
 export const EXPECTED_MANIFEST: Manifest = {
@@ -52,7 +53,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           universalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000011',
           title: 'Extra Widget',
-          type: 'FRONT_COMPONENT',
+          type: WidgetType.FRONT_COMPONENT,
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:
@@ -62,7 +63,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           universalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000012',
           title: 'Total Priority',
-          type: 'GRAPH',
+          type: WidgetType.GRAPH,
           objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
           configuration: {
             configurationType: 'AGGREGATE_CHART',

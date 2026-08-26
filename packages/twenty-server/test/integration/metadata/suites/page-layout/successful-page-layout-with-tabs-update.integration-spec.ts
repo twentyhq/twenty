@@ -8,11 +8,14 @@ import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
-import { AggregateOperations, PageLayoutType } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  PageLayoutType,
+  WidgetType,
+} from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 
 const MOCK_IFRAME_CONFIGURATION = {

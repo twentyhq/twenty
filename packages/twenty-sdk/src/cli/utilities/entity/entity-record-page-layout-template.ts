@@ -9,7 +9,7 @@ export const getRecordPageLayoutBaseFile = ({
   objectUniversalIdentifier: string;
   fieldsWidgetViewUniversalIdentifier: string;
 }) => {
-  return `import { definePageLayout, PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-sdk/define';
+  return `import { definePageLayout, PageLayoutTabLayoutMode, PageLayoutType, WidgetType } from 'twenty-sdk/define';
 
 export default definePageLayout({
   universalIdentifier: '${uuidv4()}',
@@ -27,7 +27,7 @@ export default definePageLayout({
         {
           universalIdentifier: '${uuidv4()}',
           title: 'Fields',
-          type: 'FIELDS',
+          type: WidgetType.FIELDS,
           configuration: {
             configurationType: 'FIELDS',
             viewUniversalIdentifier: '${fieldsWidgetViewUniversalIdentifier}',
@@ -45,7 +45,7 @@ export default definePageLayout({
         {
           universalIdentifier: '${uuidv4()}',
           title: 'Timeline',
-          type: 'TIMELINE',
+          type: WidgetType.TIMELINE,
           configuration: {
             configurationType: 'TIMELINE',
           },

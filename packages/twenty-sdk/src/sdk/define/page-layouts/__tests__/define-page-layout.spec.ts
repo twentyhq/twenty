@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { PageLayoutType } from 'twenty-shared/types';
+import { PageLayoutType, WidgetType } from 'twenty-shared/types';
 
 import { definePageLayout } from '@/sdk/define';
 
@@ -19,7 +19,7 @@ const makePageLayoutConfig = (
         {
           universalIdentifier: '33333333-3333-4333-8333-333333333333',
           title: 'Post card preview',
-          type: 'FRONT_COMPONENT',
+          type: WidgetType.FRONT_COMPONENT,
           configuration: {
             configurationType: 'FRONT_COMPONENT' as const,
             frontComponentUniversalIdentifier:

@@ -5,7 +5,11 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { type Manifest } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-shared/types';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  WidgetType,
+} from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 const TEST_APP_ID = uuidv4();
@@ -32,7 +36,8 @@ describe('Failing manifest sync - RECORD_TABLE widget with unknown view universa
       name: 'Test Application',
       description:
         'App for testing a RECORD_TABLE widget referencing an unknown view universal identifier',
-      sourcePath: 'test-manifest-record-table-unknown-view-universal-identifier',
+      sourcePath:
+        'test-manifest-record-table-unknown-view-universal-identifier',
     });
   }, 60000);
 
@@ -60,7 +65,7 @@ describe('Failing manifest sync - RECORD_TABLE widget with unknown view universa
                   {
                     universalIdentifier: TEST_WIDGET_ID,
                     title: 'RT test table',
-                    type: 'RECORD_TABLE',
+                    type: WidgetType.RECORD_TABLE,
                     objectUniversalIdentifier:
                       PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
                     gridPosition: {

@@ -1,7 +1,7 @@
 import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
 
 import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-widget-manifest-to-universal-flat-page-layout-widget.util';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { WidgetType } from 'twenty-shared/types';
 
 describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
   const now = '2026-01-01T00:00:00.000Z';
@@ -49,7 +49,7 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
       pageLayoutWidgetManifest: {
         universalIdentifier: 'widget-uuid-2',
         title: 'Iframe Widget',
-        type: 'IFRAME',
+        type: WidgetType.IFRAME,
         objectUniversalIdentifier: 'obj-uuid-1',
         configuration: {
           configurationType: 'IFRAME',

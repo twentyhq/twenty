@@ -1,7 +1,6 @@
 import { type PageLayoutWidgetManifest } from 'twenty-shared/application';
 import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
 
-import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 
 export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
@@ -22,7 +21,7 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
     title: pageLayoutWidgetManifest.title,
     isActive: true,
     isSystemSideEffect: false,
-    type: pageLayoutWidgetManifest.type as WidgetType,
+    type: pageLayoutWidgetManifest.type,
     objectMetadataUniversalIdentifier:
       pageLayoutWidgetManifest.objectUniversalIdentifier ?? null,
     conditionalDisplay: pageLayoutWidgetManifest.conditionalDisplay ?? null,

@@ -1,7 +1,8 @@
 import {
   AggregateOperations,
-  definePageLayoutTab,
   PageLayoutTabLayoutMode,
+  WidgetType,
+  definePageLayoutTab,
 } from 'twenty-sdk/define';
 
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
@@ -17,7 +18,7 @@ export default definePageLayoutTab({
     {
       universalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000011',
       title: 'Extra Widget',
-      type: 'FRONT_COMPONENT',
+      type: WidgetType.FRONT_COMPONENT,
       configuration: {
         configurationType: 'FRONT_COMPONENT',
         frontComponentUniversalIdentifier:
@@ -27,7 +28,7 @@ export default definePageLayoutTab({
     {
       universalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000012',
       title: 'Total Priority',
-      type: 'GRAPH',
+      type: WidgetType.GRAPH,
       objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
       configuration: {
         configurationType: 'AGGREGATE_CHART',

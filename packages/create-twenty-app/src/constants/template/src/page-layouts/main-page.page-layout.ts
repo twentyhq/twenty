@@ -1,6 +1,7 @@
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
+  WidgetType,
   definePageLayout,
 } from 'twenty-sdk/define';
 
@@ -27,7 +28,7 @@ export default definePageLayout({
         {
           universalIdentifier: MAIN_PAGE_WIDGET_UNIVERSAL_IDENTIFIER,
           title: ' ',
-          type: 'FRONT_COMPONENT',
+          type: WidgetType.FRONT_COMPONENT,
           gridPosition: { row: 0, column: 0, rowSpan: 12, columnSpan: 12 },
           configuration: {
             configurationType: 'FRONT_COMPONENT',

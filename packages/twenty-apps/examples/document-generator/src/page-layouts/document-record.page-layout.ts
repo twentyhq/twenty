@@ -1,6 +1,7 @@
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
+  WidgetType,
   definePageLayout,
 } from 'twenty-sdk/define';
 
@@ -35,7 +36,7 @@ export default definePageLayout({
           universalIdentifier:
             DOCUMENT_FIELDS_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
           title: 'Document fields',
-          type: 'FIELDS',
+          type: WidgetType.FIELDS,
           configuration: {
             configurationType: 'FIELDS',
           },
@@ -52,7 +53,7 @@ export default definePageLayout({
         {
           universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
           title: 'Document preview',
-          type: 'FRONT_COMPONENT',
+          type: WidgetType.FRONT_COMPONENT,
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:

@@ -5,11 +5,14 @@ import { createOnePageLayout } from 'test/integration/metadata/suites/page-layou
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import { updateOnePageLayoutWithTabsAndWidgets } from 'test/integration/metadata/suites/page-layout/utils/update-one-page-layout-with-tabs-and-widgets.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
-import { AggregateOperations, PageLayoutType } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  PageLayoutType,
+  WidgetType,
+} from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 
 describe('Page layout widget restore via bulk update should succeed', () => {
   let testFieldMetadataIds: {
