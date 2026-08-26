@@ -1,5 +1,6 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
+import { SLACK_USER_LINKS_SET_ROUTE_PATH } from 'src/constants/slack-user-links-route-path.constant';
 import { SLACK_SET_USER_LINK_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { slackSetUserLinkHandler } from 'src/logic-functions/handlers/slack-set-user-link-handler';
 import { slackSetUserLinkInputSchema } from './schemas/slack-set-user-link-input.schema';
@@ -12,6 +13,11 @@ export default defineLogicFunction({
   timeoutSeconds: 30,
   toolTriggerSettings: {
     inputSchema: slackSetUserLinkInputSchema,
+  },
+  httpRouteTriggerSettings: {
+    path: SLACK_USER_LINKS_SET_ROUTE_PATH,
+    httpMethod: 'POST',
+    isAuthRequired: true,
   },
   handler: slackSetUserLinkHandler,
 });
