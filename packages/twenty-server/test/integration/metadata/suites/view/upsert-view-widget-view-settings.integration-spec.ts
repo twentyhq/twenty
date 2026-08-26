@@ -18,11 +18,11 @@ import {
   FieldMetadataType,
   ViewCalendarLayout,
   ViewType,
+  WidgetType,
 } from 'twenty-shared/types';
 
 import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 
 const VIEW_SETTINGS_GQL_FIELDS = `
   id

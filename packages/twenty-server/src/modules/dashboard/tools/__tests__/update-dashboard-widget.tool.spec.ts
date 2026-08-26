@@ -1,7 +1,10 @@
-import { AggregateOperations, ViewFilterOperand } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  ViewFilterOperand,
+  WidgetType,
+} from 'twenty-shared/types';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type DashboardToolDependencies } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
 import { createUpdateDashboardWidgetTool } from 'src/modules/dashboard/tools/update-dashboard-widget.tool';
 
