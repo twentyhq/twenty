@@ -1,5 +1,4 @@
 import { getShiftedRecordCalendarDateTime } from '@/object-record/record-drag/utils/getShiftedRecordCalendarDateTime';
-import { Temporal } from 'temporal-polyfill';
 
 const timeZone = 'Europe/Paris';
 
@@ -7,8 +6,7 @@ describe('getShiftedRecordCalendarDateTime', () => {
   it('moves a timed event by the rendered day offset and preserves duration', () => {
     expect(
       getShiftedRecordCalendarDateTime({
-        sourceDay: Temporal.PlainDate.from('2026-07-08'),
-        destinationDay: Temporal.PlainDate.from('2026-07-11'),
+        dayOffset: 3,
         startDateTime: '2026-07-08T15:59:00Z',
         endDateTime: '2026-07-10T18:59:00Z',
         timeZone,
@@ -22,8 +20,7 @@ describe('getShiftedRecordCalendarDateTime', () => {
   it('moves a continuation fragment by its visual anchor', () => {
     expect(
       getShiftedRecordCalendarDateTime({
-        sourceDay: Temporal.PlainDate.from('2026-07-10'),
-        destinationDay: Temporal.PlainDate.from('2026-07-11'),
+        dayOffset: 1,
         startDateTime: '2026-07-08T15:59:00Z',
         endDateTime: '2026-07-10T18:59:00Z',
         timeZone,
@@ -37,8 +34,7 @@ describe('getShiftedRecordCalendarDateTime', () => {
   it('lands on the requested local time and preserves duration across DST', () => {
     expect(
       getShiftedRecordCalendarDateTime({
-        sourceDay: Temporal.PlainDate.from('2026-03-28'),
-        destinationDay: Temporal.PlainDate.from('2026-03-29'),
+        dayOffset: 1,
         startDateTime: '2026-03-28T09:00:00Z',
         endDateTime: '2026-03-28T11:00:00Z',
         timeZone,
@@ -52,8 +48,7 @@ describe('getShiftedRecordCalendarDateTime', () => {
   it('preserves the later offset when the source start is a repeated DST time', () => {
     expect(
       getShiftedRecordCalendarDateTime({
-        sourceDay: Temporal.PlainDate.from('2026-10-25'),
-        destinationDay: Temporal.PlainDate.from('2026-10-26'),
+        dayOffset: 1,
         startDateTime: '2026-10-25T01:30:00Z',
         endDateTime: '2026-10-25T02:30:00Z',
         timeZone,
@@ -67,8 +62,7 @@ describe('getShiftedRecordCalendarDateTime', () => {
   it('keeps the local start time when a continuation moves across DST', () => {
     expect(
       getShiftedRecordCalendarDateTime({
-        sourceDay: Temporal.PlainDate.from('2026-03-29'),
-        destinationDay: Temporal.PlainDate.from('2026-03-30'),
+        dayOffset: 1,
         startDateTime: '2026-03-28T09:00:00Z',
         endDateTime: '2026-03-30T10:00:00Z',
         timeZone,
@@ -82,8 +76,7 @@ describe('getShiftedRecordCalendarDateTime', () => {
   it('does not synthesize an end when it is unusable', () => {
     expect(
       getShiftedRecordCalendarDateTime({
-        sourceDay: Temporal.PlainDate.from('2026-07-08'),
-        destinationDay: Temporal.PlainDate.from('2026-07-09'),
+        dayOffset: 1,
         startDateTime: '2026-07-08T15:59:00Z',
         endDateTime: 'not-a-date',
         timeZone,
@@ -96,8 +89,7 @@ describe('getShiftedRecordCalendarDateTime', () => {
   it('shifts an end that is equal to the start', () => {
     expect(
       getShiftedRecordCalendarDateTime({
-        sourceDay: Temporal.PlainDate.from('2026-07-08'),
-        destinationDay: Temporal.PlainDate.from('2026-07-09'),
+        dayOffset: 1,
         startDateTime: '2026-07-08T15:59:00Z',
         endDateTime: '2026-07-08T15:59:00Z',
         timeZone,
@@ -111,9 +103,8 @@ describe('getShiftedRecordCalendarDateTime', () => {
   it('returns null for an unusable start', () => {
     expect(
       getShiftedRecordCalendarDateTime({
-        sourceDay: Temporal.PlainDate.from('2026-07-08'),
-        destinationDay: Temporal.PlainDate.from('2026-07-09'),
-        startDateTime: 'not-a-date',
+        dayOffset: 1,
+        startDateTime: undefined,
         timeZone,
       }),
     ).toBeNull();

@@ -14,8 +14,18 @@ jest.mock(
 jest.mock(
   '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCard',
   () => ({
-    RecordCalendarCard: ({ recordId }: { recordId: string }) => (
-      <div data-testid="date-card" data-record-id={recordId} />
+    RecordCalendarCard: ({
+      recordId,
+      calendarDay,
+    }: {
+      recordId: string;
+      calendarDay: string;
+    }) => (
+      <div
+        data-testid="date-card"
+        data-record-id={recordId}
+        data-calendar-day={calendarDay}
+      />
     ),
   }),
 );
@@ -55,10 +65,16 @@ describe('RecordCalendarDateGrid', () => {
     expect(screen.getByText('15')).toBeInTheDocument();
     expect(screen.getByText('16')).toBeInTheDocument();
     expect(
-      screen
-        .getAllByTestId('date-card')
-        .map((element) => element.dataset.recordId),
-    ).toEqual(['first', 'second', 'third', 'fourth']);
+      screen.getAllByTestId('date-card').map((element) => ({
+        recordId: element.dataset.recordId,
+        calendarDay: element.dataset.calendarDay,
+      })),
+    ).toEqual([
+      { recordId: 'first', calendarDay: '2026-07-15' },
+      { recordId: 'second', calendarDay: '2026-07-15' },
+      { recordId: 'third', calendarDay: '2026-07-15' },
+      { recordId: 'fourth', calendarDay: '2026-07-16' },
+    ]);
     expect(screen.queryByText('All day')).not.toBeInTheDocument();
   });
 });

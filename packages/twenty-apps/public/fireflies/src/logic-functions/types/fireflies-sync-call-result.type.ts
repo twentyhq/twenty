@@ -1,4 +1,4 @@
-import { type FirefliesSyncableField } from 'src/logic-functions/utils/sync-fireflies-call-to-call-recording';
+import { type FirefliesSyncableField } from 'src/logic-functions/types/fireflies-syncable-field.type';
 
 export type FirefliesSyncCallFieldOutcome =
   | { field: FirefliesSyncableField; status: 'updated' }

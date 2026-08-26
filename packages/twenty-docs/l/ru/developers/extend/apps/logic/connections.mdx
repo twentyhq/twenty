@@ -42,6 +42,12 @@ export default defineConnectionProvider({
     // Optional: provider's RFC 7009 token revocation endpoint, called on disconnect.
     // revokeEndpoint: 'https://example.com/oauth/revoke',
   },
+  // Optional: a logic function in this app to run right after a connection is
+  // established. See "Run a logic function on connect".
+  // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
+  // Optional: a logic function in this app to run right after a connection is
+  // removed. See "Run a logic function on disconnect".
+  // onDisconnectLogicFunction: { universalIdentifier: '4d5e6f70-...-...' },
 });
 ```
 
@@ -84,6 +90,76 @@ URL обратного вызова OAuth, который вашему пров�
 ```
 https://<your-twenty-server>/auth/apps/callback
 ```
+
+</Accordion>
+
+<Accordion title="Запускайте логическую функцию при подключении" description="Реагируйте в момент установления соединения">
+
+Некоторые провайдеры передают вам данные в момент подключения, которые нужно сохранить до того, как соединение станет пригодным к использованию — классический пример — Slack, где OAuth-ответ указывает `team_id` рабочей области, по которому будут определяться входящие события. Установите `onConnectLogicFunction`, чтобы сослаться на логическую функцию в том же приложении (по её `universalIdentifier`), и она будет выполнена сразу после создания `ConnectedAccount`.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs claimSlackTeam after every successful Slack connection.
+  onConnectLogicFunction: {
+    universalIdentifier: '3a2b1c0d-1111-4222-8333-444455556666',
+  },
+});
+```
+
+Хук выполняется **асинхронно в подключающейся рабочей области** (он ставится в очередь, а не ожидается), поэтому медленный или падающий хук никогда не блокирует и не ломает OAuth-callback — сделайте его идемпотентным и обеспечьте собственную обработку повторных попыток. Обработчик получает:
+
+```ts
+type OnConnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+Оттуда используйте `getConnection(connectedAccountId)`, чтобы прочитать новый access token и вызвать API провайдера (например, Slack `auth.test`) или сохранить отображение с помощью [key-value store](/l/ru/developers/extend/apps/logic/key-value-store).
+
+</Accordion>
+
+<Accordion title="Запускайте логическую функцию при отключении" description="Выполняйте очистку при удалении подключения">
+
+Всё, на что приложение заявляет права при подключении, должно быть освобождено, когда подключение прекращается. Интеграция со Slack, которая, например, заявляет `team_id` при подключении, должна освободить это право, чтобы другое рабочее пространство могло подключить ту же Slack-команду. Установите `onDisconnectLogicFunction`, чтобы сослаться на логическую функцию в том же приложении, и она будет выполнена сразу после удаления `ConnectedAccount`.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs releaseSlackTeam after every Slack disconnection.
+  onDisconnectLogicFunction: {
+    universalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
+  },
+});
+```
+
+Как и hook on-connect, он запускается **асинхронно в отключаемом рабочем пространстве** и никогда не блокирует отключение. Обработчик получает тот же формат полезной нагрузки:
+
+```ts
+type OnDisconnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+`ConnectedAccount` уже удалён к моменту запуска hook, поэтому `getConnection(connectedAccountId)` больше не возвращает результат. Всё, что требуется для очистки (например, `team_id`, внешний идентификатор подписки), должно быть записано в [key-value store](/l/ru/developers/extend/apps/logic/key-value-store) в момент подключения, с ключом `connectedAccountId`.
+
+Hook срабатывает, когда соединение удаляется само по себе. При удалении приложения его соединения удаляются каскадом на уровне базы данных, поэтому hook в этом случае не запускается. Объявите `uninstallLogicFunction` в `defineApplication` для этого сценария: она запускается до удаления метаданных приложения, поэтому всё ещё может вызвать `listConnections` и выполнить оставшуюся очистку.
 
 </Accordion>
 
@@ -136,15 +212,16 @@ export const createLinearIssueHandler = async (input: {
 
 Каждое подключение имеет:
 
-| Поле              | Описание                                                                                                                    |
-| ----------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `id`              | Уникальный идентификатор записи; передайте его в `getConnection(id)`, чтобы повторно получить одну запись                   |
-| `visibility`      | `'user'` (приватно для одного участника рабочего пространства) или `'workspace'` (доступно всем участникам)                 |
-| `scopes`          | Разрешения OAuth, предоставленные внешним провайдером (отличаются от `visibility` — это несвязанные вещи)                   |
-| `userWorkspaceId` | Идентификатор userWorkspace владельца — полезно для выбора "подключения пользователя запроса" в триггерах HTTP-маршрутов    |
-| `accessToken`     | Актуальный токен доступа OAuth (обновляется автоматически при истечении срока действия)                                     |
-| `name` / `handle` | Отображаемое имя подключения (автоматически определяется при обратном вызове OAuth, может быть переименовано пользователем) |
-| `authFailedAt`    | Устанавливается, если последняя попытка обновления не удалась; пользователю нужно переподключиться                          |
+| Поле              | Описание                                                                                                                                                                                                                                                    |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`              | Уникальный идентификатор записи; передайте его в `getConnection(id)`, чтобы повторно получить одну запись                                                                                                                                                   |
+| `visibility`      | `'user'` (приватно для одного участника рабочего пространства) или `'workspace'` (доступно всем участникам)                                                                                                                                                 |
+| `scopes`          | Разрешения OAuth, предоставленные внешним провайдером (отличаются от `visibility` — это несвязанные вещи)                                                                                                                                                   |
+| `userWorkspaceId` | Идентификатор userWorkspace владельца — полезно для выбора "подключения пользователя запроса" в триггерах HTTP-маршрутов                                                                                                                                    |
+| `accessToken`     | Актуальный токен доступа OAuth (обновляется автоматически при истечении срока действия)                                                                                                                                                                     |
+| `name`            | Отображаемое имя подключения (автоматически определяется при обратном вызове OAuth, может быть переименовано пользователем)                                                                                                                                 |
+| «Обработка»       | Подключенная почта учётной записи в потоке, обновляется при каждом переподключении; решил из OIDC `id_token` возвратился при обмене токенов, возвращаясь обратно к подключению электронной почты Twenty пользователей, когда провайдер не возвращает одного |
+| `authFailedAt`    | Устанавливается, если последняя попытка обновления не удалась; пользователю нужно переподключиться                                                                                                                                                          |
 
 Основные моменты:
 

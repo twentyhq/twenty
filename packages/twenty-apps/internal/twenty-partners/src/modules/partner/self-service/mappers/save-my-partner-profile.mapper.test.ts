@@ -16,9 +16,9 @@ describe('saveProfileSchema', () => {
     expect(saveProfileSchema.safeParse({}).success).toBe(true);
   });
 
-  it('rejects an unknown key (region)', () => {
-    const parsed = saveProfileSchema.safeParse({ region: ['EUROPE'] });
-    expect(parsed.success).toBe(false);
+  it('accepts a region array', () => {
+    const parsed = saveProfileSchema.safeParse({ region: ['EUROPE', 'MENA'] });
+    expect(parsed.success).toBe(true);
   });
 
   it('rejects an unknown key (validationStage)', () => {
@@ -101,6 +101,15 @@ describe('validateProfileOptionValues', () => {
   it('accepts a null country (clearing it)', () => {
     expect(validateProfileOptionValues({ country: null })).toBeNull();
   });
+
+  it('rejects an unknown region', () => {
+    const result = validateProfileOptionValues({ region: ['EUROPE', 'ATLANTIS'] });
+    expect(result).toEqual({ error: 'Unknown region: ATLANTIS' });
+  });
+
+  it('accepts known regions', () => {
+    expect(validateProfileOptionValues({ region: ['EUROPE', 'MENA'] })).toBeNull();
+  });
 });
 
 describe('buildPartnerUpdateData', () => {
@@ -165,5 +174,16 @@ describe('buildPartnerUpdateData', () => {
 
   it('returns an empty object for an empty input', () => {
     expect(buildPartnerUpdateData({})).toEqual({});
+  });
+
+  it('maps region values as provided', () => {
+    expect(buildPartnerUpdateData({ region: ['EUROPE', 'MENA'] }).region).toEqual([
+      'EUROPE',
+      'MENA',
+    ]);
+  });
+
+  it('leaves region off the payload when absent', () => {
+    expect('region' in buildPartnerUpdateData({ name: 'Nine Dots Ventures' })).toBe(false);
   });
 });

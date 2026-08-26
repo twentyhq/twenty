@@ -31,7 +31,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
+import { OpenRecordIn } from 'twenty-shared/types';
 
 export type OpenTableCellArgs = {
   initialValue?: string;
@@ -122,7 +122,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
       if ((isFirstColumnCell && !isEmpty) || isNavigating) {
         leaveTableFocus();
 
-        if (openRecordIn === ViewOpenRecordIn.SIDE_PANEL) {
+        if (openRecordIn === OpenRecordIn.SIDE_PANEL) {
           activateRecordTableRow(cellPosition.row);
           unfocusRecordTableRow();
         }

@@ -1,4 +1,4 @@
-export const BACKGROUND: Record<string, string> = {
+export const BACKGROUND = {
   noFile: '/images/placeholders/background/no_file_bg.png',
   noNote: '/images/placeholders/background/no_note_bg.png',
   noRecord: '/images/placeholders/background/no_record_bg.png',

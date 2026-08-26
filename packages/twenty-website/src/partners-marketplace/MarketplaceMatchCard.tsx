@@ -103,7 +103,7 @@ export function MarketplaceMatchCard({ index = 0 }: { index?: number }) {
       <Content>
         <Copy>
           <Eyebrow>{i18n._(msg`Partner matching`)}</Eyebrow>
-          <Heading as="h2" size="sm" weight="light">
+          <Heading as="h3" size="sm" weight="light">
             {i18n._(msg`Let us *match* you`)}
           </Heading>
           <Body muted size="sm">

@@ -4,10 +4,10 @@ import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identi
 
 export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-  displayName: 'Twenty Slack',
+  displayName: 'Slack',
   description:
     'Your CRM, in the conversation. Mention the bot or DM it to ask about your records and create, update or soft-delete them without leaving Slack, and use the Slack steps to post messages, ephemerals, updates, deletes and reactions from your workflows.',
-  logoUrl: 'public/twenty-slack.svg',
+  logoUrl: 'public/slack.svg',
   author: 'Twenty',
   category: 'Communication',
   websiteUrl: 'https://docs.twenty.com/developers/extend/apps/getting-started',

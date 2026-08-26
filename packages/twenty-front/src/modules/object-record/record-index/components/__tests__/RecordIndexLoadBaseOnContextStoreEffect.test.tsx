@@ -84,4 +84,47 @@ describe('RecordIndexLoadBaseOnContextStoreEffect', () => {
       FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
     );
   });
+
+  it('reloads the persisted view state when the view groups change', () => {
+    const viewWithGroups = {
+      id: 'view-id',
+      viewGroups: [{ id: 'group-1' }],
+    };
+    useAtomFamilySelectorValueMock.mockReturnValue(viewWithGroups);
+
+    const { rerender } = render(<RecordIndexLoadBaseOnContextStoreEffect />);
+
+    expect(loadRecordIndexStates).toHaveBeenCalledTimes(1);
+
+    rerender(<RecordIndexLoadBaseOnContextStoreEffect />);
+
+    expect(loadRecordIndexStates).toHaveBeenCalledTimes(1);
+
+    useAtomFamilySelectorValueMock.mockReturnValue({
+      ...viewWithGroups,
+      viewGroups: [...viewWithGroups.viewGroups, { id: 'group-2' }],
+    });
+    rerender(<RecordIndexLoadBaseOnContextStoreEffect />);
+
+    expect(loadRecordIndexStates).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not reload when the view groups are only reordered', () => {
+    useAtomFamilySelectorValueMock.mockReturnValue({
+      id: 'view-id',
+      viewGroups: [{ id: 'group-1' }, { id: 'group-2' }],
+    });
+
+    const { rerender } = render(<RecordIndexLoadBaseOnContextStoreEffect />);
+
+    expect(loadRecordIndexStates).toHaveBeenCalledTimes(1);
+
+    useAtomFamilySelectorValueMock.mockReturnValue({
+      id: 'view-id',
+      viewGroups: [{ id: 'group-2' }, { id: 'group-1' }],
+    });
+    rerender(<RecordIndexLoadBaseOnContextStoreEffect />);
+
+    expect(loadRecordIndexStates).toHaveBeenCalledTimes(1);
+  });
 });

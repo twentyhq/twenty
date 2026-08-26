@@ -325,7 +325,7 @@ export class ViewFilterGroupService {
       where: {
         deletedAt: IsNull(),
       },
-      order: { positionInViewFilterGroup: 'ASC' },
+      order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
       relations: [
         'workspace',
         'view',
@@ -345,7 +345,7 @@ export class ViewFilterGroupService {
         viewId,
         deletedAt: IsNull(),
       },
-      order: { positionInViewFilterGroup: 'ASC' },
+      order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
       relations: [
         'workspace',
         'view',

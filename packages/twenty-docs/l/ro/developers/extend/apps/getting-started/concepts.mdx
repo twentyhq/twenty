@@ -34,28 +34,29 @@ your-app/
 
 ## Tipuri de entități
 
-| Entitate                          | Scop                                                       | Documentație                                                                  |
-| --------------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| **Aplicație**                     | Identitatea aplicației, rolul implicit, variabile          | [Application Config](/l/ro/developers/extend/apps/config/application)              |
-| **Rol**                           | Seturi de permisiuni pentru obiecte și câmpuri             | [Roles & Permissions](/l/ro/developers/extend/apps/config/roles)                   |
-| **Obiect**                        | Tipuri de înregistrări personalizate cu câmpuri            | [Objects](/l/ro/developers/extend/apps/data/objects)                               |
-| **Câmp**                          | Adăugați câmpuri la obiecte din alte aplicații             | [Extending Objects](/l/ro/developers/extend/apps/data/extending-objects)           |
-| **Relație**                       | Legături bidirecționale între obiecte                      | [Relations](/l/ro/developers/extend/apps/data/relations)                           |
-| **Funcție logică**                | TypeScript pe partea de server cu declanșatoare            | [Funcții logice](/l/ro/developers/extend/apps/logic/logic-functions)               |
-| **Abilitate**                     | Instrucțiuni reutilizabile pentru agenți AI                | [Abilități și agenți](/l/ro/developers/extend/apps/logic/skills-and-agents)        |
-| **Agent**                         | Agenți AI cu prompturi personalizate                       | [Abilități și agenți](/l/ro/developers/extend/apps/logic/skills-and-agents)        |
-| **Furnizor de conexiune**         | Date de autentificare OAuth pentru API-uri terțe           | [Connections](/l/ro/developers/extend/apps/logic/connections)                      |
-| **Vizualizare**                   | Vizualizări preconfigurate ale listelor de înregistrări    | [Views](/l/ro/developers/extend/apps/layout/views)                                 |
-| **Element de meniu de navigare**  | Intrări personalizate în bara laterală                     | [Navigation Menu Items](/l/ro/developers/extend/apps/layout/navigation-menu-items) |
-| **Layout pagină**                 | File și widgeturi pe pagina de detalii a unei înregistrări | [Page Layouts](/l/ro/developers/extend/apps/layout/page-layouts)                   |
-| **Componentă front-end**          | Interfață React izolată (sandboxed) în Twenty              | [Componente front-end](/l/ro/developers/extend/apps/layout/front-components)       |
-| **Element din meniul de comenzi** | Acțiuni rapide și intrări Cmd+K                            | [Command Menu Items](/l/ro/developers/extend/apps/layout/command-menu-items)       |
+| Entitate                          | Scop                                                                                       | Documentație                                                                                                         |
+| --------------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| **Aplicație**                     | Identitatea aplicației, rolul implicit, variabile                                          | [Application Config](/l/ro/developers/extend/apps/config/application)                                                     |
+| **Rol**                           | Seturi de permisiuni pentru obiecte și câmpuri                                             | [Roles & Permissions](/l/ro/developers/extend/apps/config/roles)                                                          |
+| **Obiect**                        | Tipuri de înregistrări personalizate cu câmpuri                                            | [Objects](/l/ro/developers/extend/apps/data/objects)                                                                      |
+| **Câmp**                          | Adăugați câmpuri la obiecte din alte aplicații                                             | [Extending Objects](/l/ro/developers/extend/apps/data/extending-objects)                                                  |
+| **Relație**                       | Legături bidirecționale între obiecte                                                      | [Relations](/l/ro/developers/extend/apps/data/relations)                                                                  |
+| **Funcție logică**                | TypeScript pe partea de server cu declanșatoare                                            | [Funcții logice](/l/ro/developers/extend/apps/logic/logic-functions)                                                      |
+| **Abilitate**                     | Instrucțiuni reutilizabile pentru agenți AI                                                | [Abilități și agenți](/l/ro/developers/extend/apps/logic/skills-and-agents)                                               |
+| **Agent**                         | Agenți AI cu prompturi personalizate                                                       | [Abilități și agenți](/l/ro/developers/extend/apps/logic/skills-and-agents)                                               |
+| **Furnizor de conexiune**         | Date de autentificare OAuth pentru API-uri terțe                                           | [Connections](/l/ro/developers/extend/apps/logic/connections)                                                             |
+| **Vizualizare**                   | Vizualizări preconfigurate ale listelor de înregistrări                                    | [Views](/l/ro/developers/extend/apps/layout/views)                                                                        |
+| **Element de meniu de navigare**  | Intrări personalizate în bara laterală                                                     | [Navigation Menu Items](/l/ro/developers/extend/apps/layout/navigation-menu-items)                                        |
+| **Layout pagină**                 | File și widgeturi pe pagina de detalii a unei înregistrări                                 | [Page Layouts](/l/ro/developers/extend/apps/layout/page-layouts)                                                          |
+| **Componentă front-end**          | Interfață React izolată (sandboxed) în Twenty                                              | [Componente front-end](/l/ro/developers/extend/apps/layout/front-components)                                              |
+| **Dependențe partajate**          | Dependențele partajate de componentele front-end ale aplicației, declarate în package.json | [Dependențe partajate](/l/ro/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components) |
+| **Element din meniul de comenzi** | Acțiuni rapide și intrări Cmd+K                                                            | [Command Menu Items](/l/ro/developers/extend/apps/layout/command-menu-items)                                              |
 
 ## Izolare (sandboxing)
 
-* **Funcțiile logice** rulează în procese Node.js izolate pe server. Acestea accesează datele doar prin clientul API tipizat, limitat de permisiunile rolului aplicației.
+* **Funcțiile logice** rulează în procese Node.js izolate pe server. Acestea accesează datele numai prin clientul API tipizat, care acționează fie ca persoana care a declanșat execuția, fie ca aplicația în sine. Consultați [Ce acces utilizează un apel](/l/ro/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 * **Componentele front-end** rulează în Web Workers folosind Remote DOM — izolate de pagina principală, dar randând elemente DOM native (nu iframes). Acestea comunică cu Twenty printr-un API al gazdei bazat pe transmiterea de mesaje.
-* **Permisiunile** sunt aplicate la nivelul API-ului. Tokenul de rulare (`TWENTY_APP_ACCESS_TOKEN`) este derivat din rolul definit în `defineApplication()`.
+* **Permisiunile** sunt aplicate la nivelul API-ului. Sunt injectate două tokenuri de execuție, ambele derivate din rolul declarat cu `defineApplicationRole()`; cel implicit este restrâns suplimentar la ceea ce poate face persoana care a declanșat execuția, ori de câte ori o persoană se află în spatele execuției.
 
 ## Ciclul de viață al aplicației
 

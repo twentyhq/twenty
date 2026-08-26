@@ -25,6 +25,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "key",
       "description",
       "isSecret",
+      "isDeprecated",
       "type",
       "options",
     ],
@@ -42,6 +43,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "availabilityType",
       "conditionalAvailabilityExpression",
       "availabilityObjectMetadataUniversalIdentifier",
+      "navigationTargetObjectMetadataUniversalIdentifier",
       "engineComponentKey",
       "payload",
       "hotKeys",
@@ -61,6 +63,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "type",
       "oauthConfig",
       "onConnectLogicFunctionUniversalIdentifier",
+      "onDisconnectLogicFunctionUniversalIdentifier",
     ],
     "propertiesToStringify": [
       "oauthConfig",
@@ -80,6 +83,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "overrides",
       "universalSettings",
       "isUIEditable",
+      "writability",
       "isNullable",
     ],
     "propertiesToStringify": [
@@ -166,6 +170,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   },
   "objectMetadata": {
     "propertiesToCompare": [
+      "openRecordIn",
       "color",
       "description",
       "icon",
@@ -178,6 +183,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "labelIdentifierFieldMetadataUniversalIdentifier",
       "overrides",
       "isUIEditable",
+      "writability",
       "isUICreatable",
       "isSearchable",
       "imageIdentifierFieldMetadataUniversalIdentifier",
@@ -213,6 +219,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "position",
       "deletedAt",
       "icon",
+      "layoutMode",
       "isActive",
       "overrides",
     ],
@@ -327,6 +334,24 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isActive",
     ],
     "propertiesToStringify": [],
+  },
+  "timelineActivityType": {
+    "propertiesToCompare": [
+      "name",
+      "label",
+      "action",
+      "icon",
+      "frontComponentUniversalIdentifier",
+      "objectUniversalIdentifier",
+      "targetRelationFieldUniversalIdentifier",
+      "triggerFieldUniversalIdentifiers",
+      "replacesTimelineActivityTypeUniversalIdentifier",
+      "isActive",
+      "overrides",
+    ],
+    "propertiesToStringify": [
+      "overrides",
+    ],
   },
   "view": {
     "propertiesToCompare": [

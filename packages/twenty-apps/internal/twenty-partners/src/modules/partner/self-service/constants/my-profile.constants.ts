@@ -15,6 +15,7 @@ export type ProfileOptions = {
   partnerScope: SelectOption[];
   typeOfTeam: SelectOption[];
   availability: SelectOption[];
+  region: SelectOption[];
 };
 
 // These mirror the option lists declared on the Partner object (partner.object.ts).
@@ -35,6 +36,14 @@ export const PROFILE_OPTIONS: ProfileOptions = {
   availability: [
     { value: 'AVAILABLE', label: 'Available' },
     { value: 'UNAVAILABLE', label: 'Unavailable' },
+  ],
+  region: [
+    { value: 'EUROPE', label: 'Europe' },
+    { value: 'US', label: 'US' },
+    { value: 'LATAM', label: 'LATAM' },
+    { value: 'MENA', label: 'MENA' },
+    { value: 'APAC', label: 'APAC' },
+    { value: 'AFRICA', label: 'Africa' },
   ],
   languagesSpoken: [
     { value: 'ENGLISH', label: 'English' },

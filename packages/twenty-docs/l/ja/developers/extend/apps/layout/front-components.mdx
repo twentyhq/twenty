@@ -333,6 +333,8 @@ export default defineLogicFunction({
 
 アプリの HTTP ルートを呼び出したり、フロントコンポーネントから Twenty のレコードを読み書きしたりするには、`twenty-client-sdk/rest` の `RestApiClient` を使用します。 これは、`/s/...` のパスをワークスペースの関数のベース URL に送り、`/rest/...` を含むそれ以外のすべてのパスを `TWENTY_API_URL` に送信します。
 
+常にページを見ている人として動作します。 `runAs: 'application'` はロジック関数専用のオプションです。コンポーネントにはアプリケーション自身のトークンが渡されないため、ここでそれを要求するとエラーになります。 アプリ自身のアクセスが必要な処理はロジック関数内に置き、代わりにその関数を呼び出してください。
+
 | メソッド                              | 説明                                   |
 | --------------------------------- | ------------------------------------ |
 | `get(path, options?)`             | `GET` リクエストを送信します                    |
@@ -413,6 +415,7 @@ export default defineFrontComponent({
 | `useSelectedRecordIds()`                      | `string[]`             | 選択されたレコードIDの配列（未選択の場合は空配列）                       |
 | `useRecordId()`                               | `string` または `null`    | **非推奨。** 代わりに `useSelectedRecordIds()` を使用してください |
 | `useFrontComponentId()`                       | `string`               | このコンポーネントインスタンスの ID                              |
+| `useTimelineActivityId()`                     | `string` または `null`    | カスタムタイムライン行をレンダリングする際の現在のタイムラインアクティビティ ID        |
 | `useColorScheme()`                            | `'light'` または `'dark'` | ホスト UI のアクティブなカラースキーム（`System` はすでに解決済み）         |
 | `useFrontComponentExecutionContext(selector)` | 項目により異なる               | セレクター関数で実行コンテキスト全体にアクセス                          |
 
@@ -445,10 +448,10 @@ export default defineFrontComponent({
 
 次のシステム変数は、常に `process.env` 経由で利用できます。
 
-| 変数                        | 説明                         |
-| ------------------------- | -------------------------- |
-| `TWENTY_API_URL`          | Twenty コア API のベース URL     |
-| `TWENTY_APP_ACCESS_TOKEN` | アプリのロールにスコープされた有効期間の短いトークン |
+| 変数                        | 説明                                                                               |
+| ------------------------- | -------------------------------------------------------------------------------- |
+| `TWENTY_API_URL`          | Twenty コア API のベース URL                                                           |
+| `TWENTY_APP_ACCESS_TOKEN` | サインインしている人のロールとアプリのロールの共通部分にスコープ設定された短期間有効なトークン。そのため、コンポーネントが閲覧者以上の権限を持つことはありません |
 
 ### `TWENTY_FUNCTIONS_URL`
 
@@ -466,15 +469,16 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 フロントコンポーネントは、`twenty-sdk` の関数を使用してナビゲーション、モーダル、通知をトリガーできます：
 
-| 機能                                              | 説明             |
-| ----------------------------------------------- | -------------- |
-| `navigate(to, params?, queryParams?, options?)` | アプリ内のページに移動    |
-| `openSidePanelPage(params)`                     | サイドパネルを開く      |
-| `closeSidePanel()`                              | サイドパネルを閉じる     |
-| `openCommandConfirmationModal(params)`          | 確認ダイアログを表示     |
-| `enqueueSnackbar(params)`                       | トースト通知を表示      |
-| `unmountFrontComponent()`                       | コンポーネントをアンマウント |
-| `updateProgress(progress)`                      | 進行状況インジケーターを更新 |
+| 機能                                                 | 説明                                                                                                                                                                                    |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | アプリ内のページに移動                                                                                                                                                                           |
+| `openSidePanelPage(params)`                        | サイドパネルを開く                                                                                                                                                                             |
+| `closeSidePanel()`                                 | サイドパネルを閉じる                                                                                                                                                                            |
+| `openCommandConfirmationModal(params)`             | 確認ダイアログを表示                                                                                                                                                                            |
+| `enqueueSnackbar(params)`                          | トースト通知を表示                                                                                                                                                                             |
+| `unmountFrontComponent()`                          | コンポーネントをアンマウント                                                                                                                                                                        |
+| `updateProgress(progress)`                         | 進行状況インジケーターを更新                                                                                                                                                                        |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | `Blob` を FILES フィールドにアップロードします。返り値は `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` または `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` です。 |
 
 アクション完了後にホスト API を使用してスナックバーを表示し、サイドパネルを閉じる例です:
 
@@ -519,6 +523,39 @@ export default defineFrontComponent({
   component: ArchiveRecord,
 });
 ```
+
+### ストレージ
+
+`localStorage` と `sessionStorage` は、通常のページと同様に、標準的な同期 API として動作します。 キーはアプリのインストールとサインインしているユーザーにスコープされており、他のアプリがそれらを読み取ることはできません。また、同じブラウザに別のユーザーがサインインした場合は、空のストアから開始します。 `localStorage` に書き込まれた値は、リロードをまたいでもデバイス上に保持されます。一方、`sessionStorage` はブラウザセッションの間だけ有効です。
+
+```tsx src/front-components/note-draft.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const NoteDraft = () => {
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '');
+
+  const handleChange = (nextDraft: string) => {
+    setDraft(nextDraft);
+    localStorage.setItem('draft', nextDraft);
+  };
+
+  return (
+    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-def0-890123456789',
+  name: 'note-draft',
+  description: 'Keeps an unsaved note on this device',
+  component: NoteDraft,
+});
+```
+
+Twenty はアプリに代わって値を保存するため、書き込みはローカルに即座に反映され、その後バックグラウンドで保存されます。 読み取り処理がホストで待機することはありません。 何も同期されません。値は別のブラウザやマシンには引き継がれないため、デバイス変更後も保持する必要があるものには、ロジック関数の[key-value store](/l/ja/developers/extend/apps/logic/key-value-store)を使用してください。
+
+書き込みには上限があり、すべての制限はバイト数ではなく文字数でカウントされます。キーは最大 512 文字、1 つの値は最大 262,144 文字、各ストレージはアプリおよびユーザーごとに最大 1,048,576 文字です。 制限を超える書き込みは、ブラウザ API と同様に `QuotaExceededError` をスローします。
 
 ### 複数のレコードを扱う
 
@@ -600,6 +637,43 @@ export default defineFrontComponent({
 ```
 
 詳細は[公開アセットのセクション](/l/ja/developers/extend/apps/config/public-assets)を参照してください。
+
+## フロントコンポーネント間で依存関係を共有することについて
+
+デフォルトでは、各フロントコンポーネントはインポートするライブラリのコピーをそれぞれ同梱するため、5つのコンポーネントを持つアプリでは、React が5回配信されます。 共有する依存関係をアプリの `package.json` に宣言すると、それらのライブラリを一度だけビルドし、アプリ内のすべてのコンポーネントが単一のキャッシュ済みファイルから読み込むようにできます:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+その後、各コンポーネントはこれまでどおり依存関係をインポートするだけで済み、コンポーネントコード側で変更する必要はありません:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+知っておくべきこと：
+
+* **アプリごとに1つの共有依存関係バンドル。** バンドルはアプリ自身の依存関係からビルドされるため、配信するバージョンを完全にコントロールできます。
+* **インポートする正確な指定子を列挙してください。** `twenty-ui/input` と `twenty-ui/display` は 2 つのエントリです。パッケージ名だけでは、そのサブパスは対象になりません。 `react` を列挙すると、自動的に `react/jsx-runtime` も対象になります。
+* **`react` と一緒に `react-dom/client` を共有してください。** すべてのコンポーネントは `createRoot` を通じてレンダーされるため、これを含めない場合、各コンポーネントは引き続き React DOM を同梱することになります。
+* **バンドルはキャッシュされます。** バンドルは長期間有効な不変キャッシュ付きのコンテンツハッシュ URL で提供されるため、一度ダウンロードされると、その依存関係のいずれかが変更されるまでアプリのすべてのコンポーネントで再利用されます。
+* **共有パッケージを一切インポートしないコンポーネントは、バンドルをダウンロードすることはありません。**
 
 ## スタイリング
 
@@ -703,24 +777,24 @@ const Card = () => {
 
 ## 現在の制限
 
-Front components は現在も積極的に開発が進められています。 レンダリング、スタイリング、イベント処理は問題なく動作します。 レンダリングを*越えた*処理（要素の計測、ref に対する DOM メソッドの呼び出し、ツリーの外へのポータル、ブラウザー ストレージへのアクセス）については、現在は未実装または不完全であり、そのほとんどは例外も出さずに黙って失敗します。スキャフォールドがフルなブラウザー DOM を前提に型付けされているため、TypeScript エラーも発生しません。
+Front components は現在も積極的に開発が進められています。 レンダリング、スタイリング、イベント処理、要素の計測、およびブラウザー ストレージの操作は問題なく動作します。 それらを*越えた*処理（ref に対する DOM メソッドの呼び出し、要素リサイズの監視、ツリーの外へのポータル）については、現在は未実装または不完全であり、そのほとんどは例外も出さずに黙って失敗します。スキャフォールドがフルなブラウザー DOM を前提に型付けされているため、TypeScript エラーも発生しません。
 
 これらのいずれかが原因でブロックされている場合は、[issue を作成](https://github.com/twentyhq/twenty/issues/new/choose)して、優先度を上げてもらってください。
 
 ### レイアウトと計測
 
-まだ自分自身を計測できるものはありません。
+要素は自分自身を計測できます。ホストがジオメトリをサンドボックス側にミラーリングするため、読み取りはローカルで応答されますが、最大 1 フレーム分までは古い値になる可能性があり、まだ一度も計測されていない要素の最初の読み取りは 0 を返します。 書き込み後は、`requestAnimationFrame` コールバックまたはエフェクト内で再度読み取ってください。
 
-| API                                                           | 何が起きるか                                                                     |
-| ------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `getBoundingClientRect()`, `getClientRects()`                 | 例外を投げます                                                                    |
-| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | 黙って `undefined` になるため、`width ?? 0` は `0` になり、`width > 600` は常に false になります |
-| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError`（`typeof` ガードは機能します）                                       |
-| `window.matchMedia()`, `window.getComputedStyle()`            | 例外を投げます                                                                    |
-| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | 黙って `undefined` になります                                                      |
-| `new MutationObserver(fn)`                                    | コンストラクタ呼び出しは成功しますが、その後の `.observe()` が例外を投げます                              |
+| API                                                                                      | 何が起きるか                                                                                       |
+| ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | ミラーからは動作しますが、`scrollTop` / `scrollLeft` を代入しても何も起こりません (no-op)                               |
+| `getClientRects()`, `window.matchMedia()`                                                | 例外を投げます                                                                                      |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | **ブラウザーのビューポート** を報告する点では動作します。ウィジェット自体のサイズは `document.body.clientWidth` / `clientHeight` です |
+| `window.getComputedStyle()`                                                              | 要素のインラインスタイルのみを返し、ホストで計算されたカスケードは一切返しません                                                     |
+| `ResizeObserver`, `IntersectionObserver`                                                 | `ReferenceError`（`typeof` ガードは機能します）                                                         |
+| `MutationObserver`                                                                       | `subtree`、`attributeFilter`、旧値、および `takeRecords()` を含めて動作します                                 |
 
-そのため、recharts の `ResponsiveContainer`、Floating UI / Popper、リストの仮想化、およびドラッグによるサイズ変更はまだ動作しません。 代わりに CSS でレイアウトしてください。スタイルシートは実際のページに適用されるので、flexbox、grid、`aspect-ratio`、`clamp()`、`@container` はすべて通常どおり動作します。
+`getBoundingClientRect` による位置決めは現在動作しますが、`ResizeObserver` を介してサイズ変更を監視しているもの（recharts の `ResponsiveContainer`、Floating UI の `autoUpdate`）は依然として動作しません。 レイアウトにはいずれにせよ CSS を優先してください。スタイルシートは実際のページに適用されるので、flexbox、grid、`aspect-ratio`、`clamp()`、`@container` はフレーム遅延なしで通常どおり動作します。
 
 <Note>
 `requestAnimationFrame`, `fetch`, `setTimeout`, `queueMicrotask` は、`window.` プレフィックスなしで動作します。 `window.requestAnimationFrame(...)` などを使った場合だけ例外が投げられます。
@@ -730,32 +804,32 @@ Front components は現在も積極的に開発が進められています。 �
 
 `ref` が返すのは `HTMLElement` ではなくサンドボックス要素です。
 
-| 記述するコード                                                                                                     | 何が起きるか                                 | 代わりに使うもの                                                          |
-| ----------------------------------------------------------------------------------------------------------- | -------------------------------------- | ----------------------------------------------------------------- |
-| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | 例外を投げます                                | 制御されたコンポーネントを使い、値は `event.target` から読み取ります                        |
-| `element.classList.add(...)`                                                                                | 例外を投げます（`classList` は `undefined` です）  | `className` 文字列を自分で組み立ててください                                      |
-| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | 例外を投げます                                | 動作する `querySelector()` / `querySelectorAll()` を使ってください            |
-| `document.activeElement`                                                                                    | 常に `undefined` です                      | `onFocus` / `onBlur` でフォーカスを追跡してください                              |
-| `\<canvas>`                                                                                | 何もレンダリングされず、エラーも出ません                   | SVG を使うか、オフスクリーンで描画して `<img src={dataUrl}>` として表示してください           |
-| `createPortal(node, document.body)`                                                                         | `isConnected` は成功を報告しますが、何もレンダリングされません | `position: absolute` によるインラインのオーバーレイを使うか、ライブラリに自前のコンテナー要素を渡してください |
+| 記述するコード                                                                                                     | 何が起きるか                                 | 代わりに使うもの                                                                                                                                         |
+| ----------------------------------------------------------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | 例外を投げます                                | 制御されたコンポーネントを使い、値は `event.target` から読み取ります                                                                                                       |
+| `element.classList.add(...)`                                                                                | 例外を投げます（`classList` は `undefined` です）  | `className` 文字列を自分で組み立ててください                                                                                                                     |
+| `document.createTreeWalker()`                                                                               | 例外を投げます                                | `querySelector()` / `querySelectorAll()` と `getElementById()` は動作します。`getElementsByClassName()` も動作しますが、ライブな `HTMLCollection` ではなく静的なコレクションを返します |
+| `document.activeElement`                                                                                    | 常に `undefined` です                      | `onFocus` / `onBlur` でフォーカスを追跡してください                                                                                                             |
+| `canvas`                                                                                                    | 何もレンダリングされず、エラーも出ません                   | SVG、またはオフスクリーンで描画して、その結果を `img` 要素で表示します                                                                                                         |
+| `createPortal(node, document.body)`                                                                         | `isConnected` は成功を報告しますが、何もレンダリングされません | `position: absolute` によるインラインのオーバーレイを使うか、ライブラリに自前のコンテナー要素を渡してください                                                                                |
 
 このポータルのギャップが原因で、Radix、Headless UI、MUI、react-select のポップオーバーはデフォルトでは何もレンダリングしません。 ほとんどのライブラリは container プロップを受け付けるので、自分がレンダリングした要素を指定してください。
 
 ### イベント
 
-マウス、ポインター、タッチ、ドラッグ、キーボード、フォーカス、`input`/`change`/`submit`、`scroll`/`wheel`/`contextmenu`、そして `animationend`/`transitionend` はホストへ渡されます。さらに、要素ごとにいくつかのイベントも渡されます：`<img>` の `load`/`error`、`<input>`/`\<textarea>` のクリップボードおよびコンポジション、`\<video>`/`\<audio>` のメディア、`\<details>`/`\<dialog>` の `toggle` などです。 それ以外（`onAuxClick`、`onSelect`、`onInvalid`、`onReset`、`onAnimationStart`、pointer capture、`<img>` の `onLoad`）は、警告なしに破棄されます。
+マウス、ポインター、タッチ、ドラッグ、キーボード、フォーカス、`input`/`change`/`submit`、`scroll`/`wheel`/`contextmenu`、そして `animationend`/`transitionend` はホストへ渡されます。さらに、要素ごとにいくつかのイベントも渡されます：`img` の `load`/`error`、`input`/`textarea` のクリップボードおよびコンポジション、`video`/`audio` のメディア、`details`/`dialog` の `toggle` などです。 それ以外（`onAuxClick`、`onSelect`、`onInvalid`、`onReset`、`onAnimationStart`、pointer capture、`img` の `onLoad`）は、警告なしに破棄されます。
 
 `document.addEventListener()` と `window.addEventListener()` はエラーなく登録されますが、一度も発火しません。そのため、ドラッグは開始した要素からポインターが離れた瞬間に止まります。 `event.preventDefault()` も渡されません。フォーム送信、`dragover`/`drop`、およびリンクのクリックは、すでに保護されています。
 
 ### 属性とスタイリング
 
-各要素は自分自身のプロパティをホスト DOM にフォワードします（`\<a>` の `href`、`<img>` の `src`/`alt`、`<input>` の `value`/`placeholder`/`disabled` など）。さらに、すべての要素に共通のプロパティセットもフォワードされます：`id`、`className`、`style`、`title`、`tabIndex`、`role`、`draggable`、および任意の `aria-*` / `data-*` 属性（ハイフン区切りのため、`ariaLabel` は破棄されます）。 それ以外のものはすべて暗黙的に破棄されるため、カスタム状態は `data-*` として表現してください。
+各要素は自分自身のプロパティをホスト DOM にフォワードします（`a` の `href`、`img` の `src`/`alt`、`input` の `value`/`placeholder`/`disabled` など）。さらに、すべての要素に共通のプロパティセットもフォワードされます：`id`、`className`、`style`、`title`、`tabIndex`、`role`、`draggable`、および任意の `aria-*` / `data-*` 属性（ハイフン区切りのため、`ariaLabel` は破棄されます）。 それ以外のものはすべて暗黙的に破棄されるため、カスタム状態は `data-*` として表現してください。
 
-コンポーネントの CSS（`import './styles.css'`、CSS-in-JS、または `\<style>` 要素のいずれであっても）は、ホストページの `\<head>` に **スコープなし（unscoped）** で挿入されます。 そのため、クラス名が Twenty 独自のクラス名と衝突します（プレフィックスを付け、決して素の `div { ... }` セレクタは書かないでください）。また、`@media` はウィジェットではなくブラウザウィンドウに対してマッチします（独自の `container-type` を指定した `@container` を使用してください）。 インラインの `style` props には影響しません。
+コンポーネントの CSS（`import './styles.css'`、CSS-in-JS、または `style` 要素のいずれであっても）は、ホストページの `head` に **スコープなし（unscoped）** で挿入されます。 そのため、クラス名が Twenty 独自のクラス名と衝突します（プレフィックスを付け、決して素の `div { ... }` セレクタは書かないでください）。また、`@media` はウィジェットではなくブラウザウィンドウに対してマッチします（独自の `container-type` を指定した `@container` を使用してください）。 インラインの `style` props には影響しません。
 
 ### ストレージとネットワーク
 
-`localStorage`、`sessionStorage`、IndexedDB、Cookie、Cache API、および `BroadcastChannel` はすべて利用できません。コンポーネントはオペークなオリジンの worker 内で実行されるためです。 状態を永続化するには、[ロジック関数](/l/ja/developers/extend/apps/logic/logic-functions)を呼び出し、その[キー・バリュー ストア](/l/ja/developers/extend/apps/logic/key-value-store)を使用してください。
+`localStorage` と `sessionStorage` はブラウザではなく Twenty によって提供されます。コンポーネントは不透明なオリジンのワーカー内で実行されるため、ホストがアプリに代わって値を保存します。 スコープと制限については、[storage](#storage) を参照してください。 IndexedDB、Cookie、Cache API、および `BroadcastChannel` は引き続き利用できません。 デバイス間で状態を永続化するには、[logic function](/l/ja/developers/extend/apps/logic/logic-functions)を呼び出し、その[key-value store](/l/ja/developers/extend/apps/logic/key-value-store)を使用してください。
 
 `fetch` は動作しますが、いくつか注意点があります。
 
@@ -763,9 +837,13 @@ Front components は現在も積極的に開発が進められています。 �
 * その他のオリジンからのリクエストは、`Origin: null` を付けてサンドボックスの外へ送信されるため、サードパーティ API は `Access-Control-Allow-Origin: *` を返す場合にのみ応答します。 代わりにロジック関数から呼び出してください。
 * `fetch('/rest/people')` は、サンドボックスに相対パスを解決するためのページ URL がないため、Twenty API には決してマッチしません。
 
+### メディアキャプチャ
+
+`navigator.mediaDevices.getUserMedia()` と `MediaRecorder` は、サンドボックス polyfill を通じて front コンポーネント内で動作するため、標準的な録画コードは変更なしで実行でき、一般的なコンテナ／コーデックの組み合わせに対しては `MediaRecorder.isTypeSupported` が応答します。 詳細な `getUserMedia` 制約オブジェクトは受け付けられますが転送はされません。ホストは、要求された種類に対してデフォルト設定でキャプチャを行い、アプリケーション全体を通して同時にライブにできるキャプチャは 1 つだけです。 記録された `Blob` を `uploadFile` ホスト関数で保存します。
+
 ### その他のギャップ
 
-* **ファイル内容。** `<input type="file">` は、ハンドラーにファイルのメタデータのみを渡し、バイト列は渡さないため、`FileReader` やアップロードはまだ利用できません。
+* **ファイル内容。** type が `file` の `input` は、ハンドラーにファイルのメタデータのみを渡し、バイト列は渡さないため、`FileReader` は利用できません。 `MediaRecorder` で生成されたものなど、コードですでに保持している `Blob` をアップロードするには、`uploadFile` ホスト関数を使用します。
 * **ドラッグ＆ドロップのペイロード。** ドラッグイベントは発火しますが、`event.dataTransfer` は `undefined` です。
 * **Node 組み込みモジュール。** `fs`、`path`、`node:crypto` はビルドに失敗するため、その処理は [ロジック関数](/l/ja/developers/extend/apps/logic/logic-functions) に移動してください。 Web Crypto、`fetch`、`TextEncoder`、および `URL` は利用可能です。
-* **`\<iframe>`** は常に `allow-same-origin` なしで再サンドボックス化されるため、独自のセッションに依存する埋め込みは、ログアウト状態としてレンダリングされます。 また、`onLoad` もありません。
+* **`iframe`** は常に `allow-same-origin` なしで再サンドボックス化されるため、独自のセッションに依存する埋め込みは、ログアウト状態としてレンダリングされます。 また、`onLoad` もありません。

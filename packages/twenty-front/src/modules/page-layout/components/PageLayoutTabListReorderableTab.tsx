@@ -2,10 +2,12 @@ import { PageLayoutTabWidgetDropTarget } from '@/page-layout/components/dnd/Page
 import { PAGE_LAYOUT_TAB_DND_TYPE } from '@/page-layout/constants/PageLayoutTabDndType';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type PageLayoutTabDragData } from '@/page-layout/types/PageLayoutTabDragData';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 import { StyledTabContainer, TabContent } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -13,10 +15,10 @@ type PageLayoutTabListReorderableTabProps = {
   tab: SingleTabProps;
   index: number;
   group: string;
+  nextTabId: string | null;
   isActive: boolean;
   disabled?: boolean;
-  isWidgetDropTarget?: boolean;
-  dropLineOrientation?: 'horizontal' | 'vertical';
+  widgetDropTargetWidgets?: PageLayoutWidget[];
   onSelect: () => void;
 };
 
@@ -31,10 +33,10 @@ export const PageLayoutTabListReorderableTab = ({
   tab,
   index,
   group,
+  nextTabId,
   isActive,
   disabled,
-  isWidgetDropTarget = false,
-  dropLineOrientation = 'vertical',
+  widgetDropTargetWidgets,
   onSelect,
 }: PageLayoutTabListReorderableTabProps) => {
   const pageLayoutTabSettingsOpenTabId = useAtomComponentStateValue(
@@ -46,6 +48,7 @@ export const PageLayoutTabListReorderableTab = ({
   const tabDragData: PageLayoutTabDragData = {
     type: 'tab',
     tabId: tab.id,
+    nextTabId,
   };
 
   const draggableTab = (
@@ -59,7 +62,7 @@ export const PageLayoutTabListReorderableTab = ({
       disabled={disabled}
       fill
       hasTransition={false}
-      dropLine={dropLineOrientation}
+      orientation="vertical"
     >
       <StyledTabContainer
         onClick={onSelect}
@@ -81,12 +84,15 @@ export const PageLayoutTabListReorderableTab = ({
     </DragDropItemSortableCell>
   );
 
-  if (!isWidgetDropTarget) {
+  if (!isDefined(widgetDropTargetWidgets)) {
     return draggableTab;
   }
 
   return (
-    <PageLayoutTabWidgetDropTarget tabId={tab.id}>
+    <PageLayoutTabWidgetDropTarget
+      tabId={tab.id}
+      destinationWidgets={widgetDropTargetWidgets}
+    >
       {draggableTab}
     </PageLayoutTabWidgetDropTarget>
   );

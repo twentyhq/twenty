@@ -85,6 +85,7 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
     userWorkspaceId: 'user-workspace-id',
     workspace,
     text: kickoffText,
+    modelId: 'default-fast-model',
   };
 
   it('should return null without queueing a visible copy when the claim is lost', async () => {
@@ -124,7 +125,7 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
     });
   });
 
-  it('should enqueue the hidden kickoff turn without a pinned model and without notifying thread activity', async () => {
+  it('should enqueue the hidden kickoff turn with the given model and without notifying thread activity', async () => {
     const { service, threadRepository, agentChatService, messageQueueService } =
       buildService();
 
@@ -143,13 +144,13 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
       expect.objectContaining({
         threadId: 'thread-id',
         browsingContext: null,
+        modelId: 'default-fast-model',
         lastUserMessageText: kickoffText,
         lastUserMessageParts: [{ type: 'text', text: kickoffText }],
         hasTitle: true,
         existingTurnId: 'kickoff-turn-id',
       }),
     );
-    expect(messageQueueService.add.mock.calls[0][1].modelId).toBeUndefined();
     expect(agentChatService.notifyThreadActivityUpdated).not.toHaveBeenCalled();
     expect(result).toEqual({
       streamId: expect.any(String),

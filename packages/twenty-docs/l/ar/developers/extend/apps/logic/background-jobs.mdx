@@ -6,45 +6,51 @@ icon: layer-group
 
 تشغيل الدالة المنطقية محدّد بحده الأقصى `timeoutSeconds` ‏(900 ثانية كحد أقصى). أي شيء لا يمكنه أن ينتهي ضمن تلك المهلة الزمنية — مثل إعادة المزامنة الكاملة، أو التوزيع على مستوى كل سجل، أو واجهة برمجة تطبيقات لطرف ثالث تفرض حدودًا على المعدل — يجب تقسيمه إلى عمليات تشغيل أصغر.
 
-تقوم `enqueueJob` بذلك بالضبط: فهي تطلب من عمّال Twenty تشغيل واحدة من دوال المنطق في تطبيقك لاحقًا، في عملية مستقلة، وبمهلة زمنية خاصة بها. يعود المستدعي فورًا.
+يقوم `enqueueJobs` بذلك بالضبط: فهو يطلب من عمّال Twenty تشغيل إحدى دوال منطق تطبيقك لاحقًا، مرة واحدة لكل حمولة، بحيث يتم كل تشغيل في عملية مستقلة وبمهلة زمنية خاصة به. يعود المستدعي فورًا.
 
 ```text
-  ┌─────────────────┐  enqueueJob(...)   ┌──────────────┐   ┌────────────────────┐
+  ┌─────────────────┐  enqueueJobs(...)  ┌──────────────┐   ┌────────────────────┐
   │ Logic function  │ ─────────────────▶ │ Job queue    │──▶│ Logic function     │
   │ (returns now)   │                    │ (workers)    │   │ (fresh run/timeout)│
   └─────────────────┘                    └──────────────┘   └────────────────────┘
 ```
 
-## إضافة تشغيل إلى قائمة الانتظار (Enqueue)
+## إضافة عمليات التشغيل إلى قائمة الانتظار
 
-قم باستيراد `enqueueJob` من `twenty-sdk/logic-function` ووجّهه إلى `universalIdentifier` الخاص بوظيفة المنطق التي تريد تشغيلها.
+استورد `enqueueJobs` من `twenty-sdk/logic-function`، ووجّهه إلى `universalIdentifier` الخاص بدالة المنطق المراد تشغيلها، ومرّر حمولة واحدة لكل تشغيل لإضافتها إلى قائمة الانتظار.
 
 ```ts src/logic-functions/sync-all-contacts.ts
-import { enqueueJob } from 'twenty-sdk/logic-function';
+import { enqueueJobs } from 'twenty-sdk/logic-function';
 
-await enqueueJob({
+await enqueueJobs({
   logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
-  payload: { page: 1 },
+  payloads: [{ page: 1 }],
 });
 ```
 
-تستقبل الدالة الهدف `payload` كوسيط للمعالج الخاص بها، تمامًا مثل أي مشغّل (trigger) آخر. يجب أن تنتمي إلى **نفس التطبيق** مثل الدالة المستدعية — تمت إضافة دالة في تطبيق آخر إلى قائمة الانتظار سيتم رفضها برسالة `Logic function not found`.
+يتلقى كل تشغيل حمولته كوسيط للمعالج، تمامًا مثل أي مشغّل آخر. يجب أن تنتمي الدالة الهدف إلى **نفس التطبيق** الذي تنتمي إليه الدالة المستدعية — يُرفض وضع دالة تطبيق آخر في قائمة الانتظار مع ظهور `Logic function not found`، ولا تتم إضافة أي شيء إلى قائمة الانتظار. تقبل المكالمة الواحدة ما يصل إلى `200` حمولة.
 
 <Note>
-تُرجِع `enqueueJob` فور قبول المهمة، وليس عند تشغيلها. لا تُرجِع ناتج الدالة الهدف — اطلب من الدالة الهدف أن تكتب ما تُنتجه في [مخزن المفاتيح والقيم](/l/ar/developers/extend/apps/logic/key-value-store) أو في سجل مساحة العمل إذا كنت بحاجة إلى قراءته لاحقًا.
+تُرجِع `enqueueJobs` فور قبول المهام، وليس عند تشغيلها. لا تُرجِع نتائج الأهداف — اجعل كل دالة هدف تكتب ما تُنتجه في [مخزن المفاتيح والقيم](/l/ar/developers/extend/apps/logic/key-value-store) أو في سجل مساحة العمل إذا كنت بحاجة إلى قراءته لاحقًا.
+</Note>
+
+<Note>
+تم إهمال المساعد الأقدم `enqueueJob`، الذي يضيف مهمة واحدة إلى قائمة الانتظار لكل استدعاء. استخدم `enqueueJobs` مع قائمة `payloads` ذات عنصر واحد بدلًا من ذلك.
 </Note>
 
 ## خيارات المهمة
 
-| الخيار       | الإعداد الافتراضي | النطاق                   | ماذا يفعل                                                                                             |
-| ------------ | ----------------- | ------------------------ | ----------------------------------------------------------------------------------------------------- |
-| `retryLimit` | `0`               | `0`–`10`                 | محاولات إضافية إذا رمى التشغيل استثناءً. لا تقم بزيادة هذه القيمة إلا للمعالجات الآمنة للتشغيل مرتين. |
-| `delayMs`    | `0`               | `0`–`604800000` (7 أيام) | انتظر هذه المدة قبل أن يصبح التشغيل مؤهّلًا للتنفيذ.                                                  |
+تنطبق الخيارات على كل عملية تشغيل في الدفعة.
+
+| الخيار       | الإعداد الافتراضي | النطاق                   | ماذا يفعل                                                                                                                                                     |
+| ------------ | ----------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `retryLimit` | `0`               | `0`–`10`                 | إجمالي محاولات قائمة الانتظار الإضافية. تقتصر عمليات إعادة المحاولة التي يطلبها التطبيق على `3`. لا تقم بزيادة هذه القيمة إلا للمعالجات الآمنة للتشغيل مرتين. |
+| `delayMs`    | `0`               | `0`–`604800000` (7 أيام) | انتظر هذه المدة قبل أن تصبح عمليات التشغيل مؤهلة للتنفيذ.                                                                                                     |
 
 ```ts
-await enqueueJob({
+await enqueueJobs({
   logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
-  payload: { page: 1 },
+  payloads: [{ page: 1 }],
   retryLimit: 3,
   delayMs: 60_000,
 });
@@ -56,13 +62,47 @@ await enqueueJob({
 
 يرث التشغيل المُضاف إلى قائمة الانتظار المستخدم الفعلي (acting user) الخاص بالدالة التي أضافته، لذلك يعمل بنفس الأذونات.
 
+## أعِد محاولة فشل عابر.
+
+لا يعيد Twenty محاولة كل استثناء صادر عن تعليمات التطبيق البرمجية. يُعامل الخطأ العادي الذي تم طرحه على أنه فشل دائم. بالنسبة إلى فشل عابر، يمكن لدالة منطقية موضوعة في قائمة الانتظار طلب ما يصل إلى ثلاث إعادات محاولة عبر طرح `RetryableLogicFunctionError`.
+
+```ts
+import {
+  type LogicFunctionExecutionContext,
+  RetryableLogicFunctionError,
+} from 'twenty-sdk/logic-function';
+
+export const handler = async (
+  _payload: unknown,
+  { retryCount, maxRetries }: LogicFunctionExecutionContext,
+) => {
+  const response = await fetch('https://api.example.com/contacts');
+
+  if (response.status === 429 || response.status >= 500) {
+    throw new RetryableLogicFunctionError(
+      `The contacts API is temporarily unavailable (${response.status}); retry ${retryCount} of ${maxRetries}`,
+    );
+  }
+};
+```
+
+اطرح `RetryableLogicFunctionError` مباشرةً عندما يكون ذلك ممكنًا. إذا وسّعته، فلا تستبدل `name` الخاص به: يتعرّف Twenty على الاسم المُسلسل `RetryableLogicFunctionError` عبر بيئات وقت التشغيل المختلفة.
+
+تكون قيمة `retryCount` هي `0` للتنفيذ الأولي، ولا تزداد إلا عندما تطلب تعليمات التطبيق البرمجية إعادة محاولة. تكون قيمة `maxRetries` بحد أقصى `3`، وقد تكون أقل عندما تكون للمهمة الموضوعة في قائمة الانتظار حدود إجمالية أصغر لإعادة المحاولة. لا تؤدي حالات فشل المنصة إلى زيادة `retryCount`، رغم أنها لا تزال تستهلك ميزانية الأمان الإجمالية لقائمة الانتظار.
+
+تؤخر قائمة الانتظار محاولات إعادة المحاولة باستخدام تراجع أسي وتذبذب. لا يُضمن التأخير الدقيق عمدًا، لذا ينبغي ألا تعتمد تعليمات التطبيق البرمجية على حدوث إعادة محاولة في وقت محدد بدقة. بمجرد الوصول إلى `maxRetries`، يُسجَّل `RetryableLogicFunctionError` آخر باعتباره فشل التطبيق النهائي دون تنفيذ آخر.
+
+<Warning>
+تعيد عمليات إعادة المحاولة تشغيل المعالج بالكامل، وقد تحدث بعد نجاح بعض الآثار الجانبية. اجعل المعالج متوافقًا مع التكرار قبل طلب إعادات المحاولة.
+</Warning>
+
 ## طريقة الاستخدام: التمرير عبر مزامنة طويلة
 
 النمط الكلاسيكي هو دالة تضيف *نفسها* إلى قائمة الانتظار مع المؤشر (cursor) التالي. يقوم كل تشغيل بتنفيذ صفحة واحدة من العمل ضمن مهلة التنفيذ الخاصة به، وتتوقّف السلسلة عندما لا يبقى شيء.
 
 ```ts src/logic-functions/sync-contacts-page.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { enqueueJob } from 'twenty-sdk/logic-function';
+import { enqueueJobs } from 'twenty-sdk/logic-function';
 
 const SYNC_CONTACTS_PAGE = '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33';
 
@@ -72,9 +112,9 @@ const handler = async (params: { cursor?: string }) => {
   await importContacts(contacts);
 
   if (nextCursor) {
-    await enqueueJob({
+    await enqueueJobs({
       logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
-      payload: { cursor: nextCursor },
+      payloads: [{ cursor: nextCursor }],
       delayMs: 2_000,
     });
   }
@@ -92,20 +132,16 @@ export default defineLogicFunction({
 
 ## توزيع متشعّب لكل سجل
 
-عندما يكون العمل بطبيعته لكل عنصر، أضِف مهمة واحدة لكل عنصر إلى قائمة الانتظار ودع العمال (workers) يعالجونها بالتوازي بدلًا من استخدام حلقة داخلية.
+عندما يكون العمل بطبيعته لكل عنصر، أضِف مهمة واحدة لكل عنصر إلى قائمة الانتظار ضمن استدعاء واحد، ودع العمال يعالجونها بالتوازي بدلًا من استخدام حلقة داخلية.
 
 ```ts
 const companies = await listCompaniesToEnrich();
 
-await Promise.all(
-  companies.map((company) =>
-    enqueueJob({
-      logicFunctionUniversalIdentifier: ENRICH_COMPANY,
-      payload: { companyId: company.id },
-      retryLimit: 2,
-    }),
-  ),
-);
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+  payloads: companies.map((company) => ({ companyId: company.id })),
+  retryLimit: 2,
+});
 ```
 
 ## ممارسات جيدة للعمل طويل الأمد
@@ -116,7 +152,7 @@ await Promise.all(
 
 ```ts src/logic-functions/enrich-companies-batch.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { enqueueJob, kv } from 'twenty-sdk/logic-function';
+import { enqueueJobs, kv } from 'twenty-sdk/logic-function';
 
 const ENRICH_COMPANIES_BATCH = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
 const CHUNK_SIZE = 50;
@@ -135,9 +171,9 @@ const handler = async (params: { offset?: number }) => {
   await kv.set('enrich:progress', { offset: offset + companies.length });
 
   if (companies.length === CHUNK_SIZE) {
-    await enqueueJob({
+    await enqueueJobs({
       logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
-      payload: { offset: offset + CHUNK_SIZE },
+      payloads: [{ offset: offset + CHUNK_SIZE }],
     });
   }
 
@@ -159,7 +195,3 @@ export default defineLogicFunction({
 * **ثبّت التقدّم قبل إضافة التشغيل التالي إلى قائمة الانتظار،** بحيث يُعاد تشغيل الحلقة الفاشلة من آخر جزء مكتمل بدلًا من البداية.
 * **اجعل كل جزء قابلًا للتكرار دون آثار جانبية (idempotent).** يجب ألّا يؤدّي إعادة معالجة جزء واحد بعد إعادة المحاولة إلى كتابة مزدوجة — اربط عمليات الكتابة بالسجل أو المعرّف الخارجي الذي تعالجه.
 * **فضّل سلسلة مجزّأة على توزيع واحد ضخم (giant fan-out)** عندما يتعامل العمل مع طرف ثالث محدود المعدّل (rate-limited): سلسلة مع `delayMs` تنظّم نفسها، في حين أن آلاف المهام المضافة إلى قائمة الانتظار دفعة واحدة تصبح جميعها مؤهّلة فورًا.
-
-<Warning>
-عمليات إعادة المحاولة تعيد تشغيل المعالج بالكامل. حافظ على أن تكون المعالجات في قائمة الانتظار قابلة للتكرار دون آثار جانبية (idempotent) قبل ضبط `retryLimit` على قيمة أعلى من `0`.
-</Warning>

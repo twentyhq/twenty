@@ -79,4 +79,26 @@ describe('buildDraftViewGroupsForFieldMetadataItem', () => {
 
     expect(viewGroups).toHaveLength(0);
   });
+
+  it('should build only the empty group for nullable many-to-one relation fields', () => {
+    const viewGroups = buildDraftViewGroupsForFieldMetadataItem({
+      viewId: VIEW_ID,
+      fieldMetadataItem: {
+        ...baseFieldMetadataItem,
+        isNullable: true,
+        type: FieldMetadataType.RELATION,
+        relation: {
+          type: RelationType.MANY_TO_ONE,
+        } as FieldMetadataItem['relation'],
+      },
+    });
+
+    expect(viewGroups).toHaveLength(1);
+    expect(viewGroups[0]).toMatchObject({
+      viewId: VIEW_ID,
+      fieldValue: '',
+      position: 0,
+      isVisible: true,
+    });
+  });
 });

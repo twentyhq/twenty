@@ -1,6 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { type PermissionFlagType } from 'twenty-shared/constants';
+import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { type ObjectLiteral } from 'typeorm';
+
+import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 
@@ -16,6 +21,8 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
+import { isRecordFilterEmpty } from 'src/engine/api/common/common-query-runners/utils/is-record-filter-empty.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
@@ -30,6 +37,7 @@ import {
   CommonQueryResult,
 } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
 import { OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS } from 'src/engine/api/graphql/graphql-query-runner/constants/objects-with-settings-permissions-requirements';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
@@ -45,7 +53,9 @@ import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   PermissionsException,
@@ -53,9 +63,12 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { RelationNestedQueries } from 'src/engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
+import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -78,7 +91,7 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly orderByWithGroupByArgProcessor: OrderByWithGroupByArgProcessorService;
   @Inject()
-  protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager;
+  protected readonly workspaceOrmManager: WorkspaceOrmManager;
   @Inject()
   protected readonly processNestedRelationsHelper: ProcessNestedRelationsHelper;
   @Inject()
@@ -143,16 +156,15 @@ export abstract class CommonBaseQueryRunnerService<
       queryRunnerContext,
     );
 
-    const results =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () =>
-          this.executeQueryAndEnrichResults(
-            processedArgs,
-            queryRunnerContext,
-            commonQueryParser,
-          ),
-        authContext,
-      );
+    const results = await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () =>
+        this.executeQueryAndEnrichResults(
+          processedArgs,
+          queryRunnerContext,
+          commonQueryParser,
+        ),
+      authContext,
+    );
 
     return {
       results,
@@ -333,21 +345,182 @@ export abstract class CommonBaseQueryRunnerService<
       );
     }
 
-    const globalWorkspaceDataSource = this.isReadOnly
-      ? await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceReplica()
-      : await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
-
-    const repository = globalWorkspaceDataSource.getRepository(
+    const repository = this.workspaceOrmManager.getRepository<ObjectLiteral>(
       queryRunnerContext.flatObjectMetadata.nameSingular,
       rolePermissionConfig,
+      { useReplica: this.isReadOnly },
     );
 
     return {
       ...queryRunnerContext,
       authContext: context.authContext,
-      workspaceDataSource: globalWorkspaceDataSource,
       rolePermissionConfig,
       repository,
+      featureFlagsMap: context.featureFlagsMap,
+    };
+  }
+
+  // useReplica follows isReadOnly so reads on read-only runners hit the replica
+  // and everything else the primary, keeping root read and nested-relation
+  // loading consistent.
+  protected getReadRepository({
+    rolePermissionConfig,
+    flatObjectMetadata,
+  }: Pick<
+    CommonExtendedQueryRunnerContext,
+    'rolePermissionConfig' | 'flatObjectMetadata'
+  >): WorkspaceRepository {
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.OrmV2ReadPathUsed,
+      amount: 1,
+      attributes: { operation: this.operationName },
+    });
+
+    return this.workspaceOrmManager.getRepository(
+      flatObjectMetadata.nameSingular,
+      rolePermissionConfig,
+      { useReplica: this.isReadOnly },
+    );
+  }
+
+  // Writes always hit the primary, so useReplica is pinned false regardless of isReadOnly.
+  protected getWriteRepository({
+    rolePermissionConfig,
+    flatObjectMetadata,
+  }: Pick<
+    CommonExtendedQueryRunnerContext,
+    'rolePermissionConfig' | 'flatObjectMetadata'
+  >): WorkspaceRepository {
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.OrmV2WritePathUsed,
+      amount: 1,
+      attributes: { operation: this.operationName },
+    });
+
+    return this.workspaceOrmManager.getRepository(
+      flatObjectMetadata.nameSingular,
+      rolePermissionConfig,
+    );
+  }
+
+  protected async runFilteredMutation({
+    queryRunnerContext,
+    filter,
+    columnsToReturn,
+    kind,
+    data,
+  }: {
+    queryRunnerContext: CommonExtendedQueryRunnerContext;
+    filter: Partial<ObjectRecordFilter>;
+    columnsToReturn: string[];
+    kind: MutationKind;
+    data?: Partial<ObjectRecord>;
+  }): Promise<ObjectRecord[]> {
+    const { flatObjectMetadata, commonQueryParser } = queryRunnerContext;
+    const alias = flatObjectMetadata.nameSingular;
+
+    if (isRecordFilterEmpty(filter)) {
+      throw new CommonQueryRunnerException(
+        'A non-empty filter is required for a bulk mutation',
+        CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
+    }
+
+    const writeRepository = this.getWriteRepository(queryRunnerContext);
+
+    const resolvedData =
+      kind === 'update' && isDefined(data)
+        ? (
+            await this.resolveNestedRelations({
+              records: [data],
+              queryRunnerContext,
+              writeRepository,
+            })
+          )[0]
+        : data;
+
+    const { selectQueryBuilder, rowLevelPermissionsApplied } =
+      buildMutationQueryBuilder({
+        repository: writeRepository,
+        alias,
+        filter,
+        commonQueryParser,
+      });
+
+    return writeRepository.runMutation({
+      selectQueryBuilder,
+      rowLevelPermissionsApplied,
+      kind,
+      columnsToReturn,
+      data: resolvedData,
+    });
+  }
+
+  protected async resolveNestedRelations({
+    records,
+    queryRunnerContext,
+    writeRepository,
+  }: {
+    records: Partial<ObjectRecord>[];
+    queryRunnerContext: CommonExtendedQueryRunnerContext;
+    writeRepository: WorkspaceRepository;
+  }): Promise<Partial<ObjectRecord>[]> {
+    const { flatObjectMetadata, flatFieldMetadataMaps, rolePermissionConfig } =
+      queryRunnerContext;
+    const nameSingular = flatObjectMetadata.nameSingular;
+
+    const relationNestedQueries = new RelationNestedQueries(
+      writeRepository.getInternalContext(),
+      this.workspaceOrmManager,
+      rolePermissionConfig,
+    );
+
+    const relationNestedConfig =
+      relationNestedQueries.prepareNestedRelationQueries(records, nameSingular);
+
+    if (!isDefined(relationNestedConfig)) {
+      return records;
+    }
+
+    const resolvedRecords =
+      await relationNestedQueries.processRelationNestedQueries({
+        entities: records,
+        relationNestedConfig,
+      });
+
+    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+    );
+
+    return resolvedRecords.map((record) => {
+      const columnKeyedRecord: Partial<ObjectRecord> = {};
+
+      for (const [fieldName, value] of Object.entries(record)) {
+        const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: fieldIdByName[fieldName],
+          flatEntityMaps: flatFieldMetadataMaps,
+        });
+
+        if (
+          isDefined(fieldMetadata) &&
+          (fieldMetadata.type === FieldMetadataType.RELATION ||
+            fieldMetadata.type === FieldMetadataType.MORPH_RELATION)
+        ) {
+          continue;
+        }
+
+        columnKeyedRecord[fieldName] = value;
+      }
+
+      return columnKeyedRecord;
+    });
+  }
+
+  protected getNestedRelationsReadPathOptions(): NestedRelationsReadPathOptions {
+    return {
+      useReplica: this.isReadOnly,
     };
   }
 

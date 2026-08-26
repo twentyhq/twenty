@@ -55,8 +55,8 @@ const Card = ({ count, name }: { count: number; name: string }) => {
 
 ### Wann Sie welches verwenden sollten
 
-* **`<Trans>…</Trans>`** – statischer Text in JSX. Verwenden Sie die Props `message` und `values`
-  zur Interpolation (`<Trans message="Hi {name}" values={{ name }} />`);
+* **`Trans`** – statischer Text in JSX. Verwenden Sie die Props `message` und `values`
+  zur Interpolation, wie in `Trans message="Hi {name}" values={{ name }}`;
   eine direkte Interpolation in den Children ist nicht statisch extrahierbar.
 * **`useTranslate().t`** – dynamische Zeichenketten innerhalb einer Komponente. Wird neu gerendert, wenn der
   Benutzer die Sprache wechselt. Bevorzugen Sie dies innerhalb von Render-Funktionen.
@@ -76,6 +76,8 @@ t({ message: 'Open', context: 'window' });
 <Trans context="card-title">Untitled</Trans>
 ```
 
+Kontextbezogene Zeichenketten erscheinen in Gebietsschema-Katalogen als Gruppe, die über ihren Kontext geschlüsselt ist: `"\<context>": { "\<message>": "\<translation>" }`. Manifestbeschriftungen sind ihrer Konstruktion nach kontextabhängig – jede von ihnen trägt die Rolle, die sie in den Metadaten spielt (`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), sodass dasselbe Wort sich als Objektname und als Ansichtsname unterschiedlich übersetzen kann.
+
 ## Extrahieren und Übersetzen
 
 Führen Sie den Extract-Befehl aus Ihrem App-Verzeichnis aus:
@@ -85,16 +87,25 @@ twenty dev:translations-extract                  # collect strings into locales/
 twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 ```
 
-Die Extraktion sammelt sowohl Ihre Manifest-Labels als auch die `t()`-/`msg()`-/`\<Trans>`-Zeichenketten aus Ihrem Front-Komponenten-Quellcode in `locales/\<locale>.json`, indiziert nach der Quellzeichenkette. Füllen Sie die Übersetzungen aus:
+Die Extraktion sammelt sowohl Ihre Manifest-Labels als auch die `t()`-/`msg()`-/`Trans`-
+Zeichenketten aus Ihrem Front-Komponenten-Quellcode in `locales/\<locale>.json`, indiziert nach der Quellzeichenkette. Füllen Sie die Übersetzungen aus:
 
 ```json
 // locales/fr-FR.json
 {
   "Loading postcard…": "Chargement de la carte…",
   "Hi {name}": "Bonjour {name}",
-  "Saved {count} cards": "{count} cartes enregistrées"
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
 }
 ```
+
+Kontextfreie Zeichenketten sind flache Einträge; kontextbezogene Zeichenketten – einschließlich jeder Manifestbeschriftung – sind unter ihrem Kontextschlüssel verschachtelt.
 
 Platzhalter wie `{name}` werden zur Laufzeit ersetzt – behalten Sie sie in der
 Übersetzung bei. Jede Zeichenkette, die leer bleibt, fällt auf den Quelltext zurück.
@@ -104,16 +115,21 @@ Platzhalter wie `{name}` werden zur Laufzeit ersetzt – behalten Sie sie in der
 `twenty dev:build` kompiliert die Kataloge und stellt die richtige Sprache für den aktuellen Benutzer bereit: Manifest-Labels werden serverseitig aufgelöst und Front-Komponenten-Kataloge werden in jedes Komponenten-Bundle eingebunden. Zur Laufzeit liest eine Komponente die
 Locale aus ihrem Ausführungskontext (der aktuellen Sprache des Hosts) und löst
 jede Zeichenkette gegen ihren Katalog auf, wobei auf die Quelle zurückgegriffen
-wird, wenn eine Übersetzung fehlt. Das Umschalten der Sprache im Host rendert `\<Trans>`- und
+wird, wenn eine Übersetzung fehlt. Das Umschalten der Sprache im Host rendert `Trans`- und
 `useTranslate().t`-Zeichenketten live neu.
 
-Da Kataloge zur Build-Zeit kompiliert werden, bedeutet das Aktualisieren einer Übersetzung,
-`twenty dev:build` erneut auszuführen (und erneut bereitzustellen), genau wie bei jeder anderen Änderung.
+Manifest-Bezeichnungen werden bei jeder Synchronisierung kompiliert – bei `twenty dev:build`, `twenty apply`
+und der fortlaufenden `twenty dev`-Überwachung –, sodass das Bearbeiten einer Locale-Datei und
+das Synchronisieren ausreichen, um den neuen Text zu sehen. Front-Komponentenkataloge werden zur Build-Zeit in
+jedes Komponenten-Bundle integriert, sodass das Ändern eines davon weiterhin das
+erneute Ausführen von `twenty dev:build` (und ein erneutes Deployment) erfordert.
 
-<Note>
-Übersetzungen werden durch `twenty dev:build` (und `twenty apply`) kompiliert. Der
-kontinuierliche `twenty dev`-Watch zeigt Quellzeichenketten an, daher sollten Sie die lokalisierte Ausgabe
-mit einem einmaligen Build testen.
-</Note>
+`Trans`-Text-Children können sich über mehrere Zeilen erstrecken – Leerraum wird auf dieselbe Weise zusammengefasst, wie JSX ihn zusammenfasst, sodass beide zum Schlüssel `Welcome back` extrahiert werden:
 
-`<Trans>`-Text-Children können sich über mehrere Zeilen erstrecken – Leerraum wird auf dieselbe Weise zusammengefasst, wie JSX ihn zusammenfasst, sodass sowohl `<Trans>Welcome\n  back</Trans>` als auch der extrahierte Schlüssel zu `Welcome back` werden.
+```tsx
+<Trans>Welcome back</Trans>
+<Trans>
+  Welcome
+  back
+</Trans>
+```

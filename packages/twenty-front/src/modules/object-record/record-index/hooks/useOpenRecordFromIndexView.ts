@@ -9,10 +9,9 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { AppPath, SidePanelPages } from 'twenty-shared/types';
+import { AppPath, OpenRecordIn, SidePanelPages } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useOpenRecordFromIndexView = () => {
@@ -65,7 +64,7 @@ export const useOpenRecordFromIndexView = () => {
         },
       );
 
-      if (openRecordIn === ViewOpenRecordIn.SIDE_PANEL) {
+      if (openRecordIn === OpenRecordIn.SIDE_PANEL) {
         openRecordInSidePanel({
           recordId,
           objectNameSingular,

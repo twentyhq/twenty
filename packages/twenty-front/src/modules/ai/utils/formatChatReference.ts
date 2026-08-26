@@ -1,8 +1,17 @@
 import { type ChatReferenceIdentity } from '@/ai/types/ChatReferenceIdentity';
-import { getChatReferenceCloseTag } from '@/ai/utils/getChatReferenceCloseTag';
 import { getChatReferenceIdentitySegment } from '@/ai/utils/getChatReferenceIdentitySegment';
+import { formatRecordReference } from 'twenty-shared/ai';
 
 export const formatChatReference = (
   reference: ChatReferenceIdentity & { displayName: string },
-): string =>
-  `[[${reference.kind}:${getChatReferenceIdentitySegment(reference)}:${reference.displayName}${getChatReferenceCloseTag(reference.kind)}`;
+): string => {
+  if (reference.kind === 'record') {
+    return formatRecordReference(reference);
+  }
+
+  if (reference.kind === 'legacyFieldById') {
+    return `[[field:${getChatReferenceIdentitySegment(reference)}:${reference.displayName}]]`;
+  }
+
+  return `[[${reference.kind}:${getChatReferenceIdentitySegment(reference)}:${reference.displayName}]]`;
+};

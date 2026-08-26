@@ -1,10 +1,24 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`Page layout tab update should succeed should update page layout tab layout mode 1`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "id": Any<String>,
+  "layoutMode": "VERTICAL_LIST",
+  "pageLayoutId": Any<String>,
+  "position": 0,
+  "title": "Original Tab Title",
+  "updatedAt": Any<String>,
+}
+`;
+
 exports[`Page layout tab update should succeed should update page layout tab position 1`] = `
 {
   "createdAt": Any<String>,
   "deletedAt": null,
   "id": Any<String>,
+  "layoutMode": "GRID",
   "pageLayoutId": Any<String>,
   "position": 10,
   "title": "Original Tab Title",
@@ -17,6 +31,7 @@ exports[`Page layout tab update should succeed should update page layout tab tit
   "createdAt": Any<String>,
   "deletedAt": null,
   "id": Any<String>,
+  "layoutMode": "GRID",
   "pageLayoutId": Any<String>,
   "position": 0,
   "title": "Updated Tab Title",

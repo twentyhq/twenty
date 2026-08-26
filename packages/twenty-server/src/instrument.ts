@@ -1,14 +1,17 @@
+import os from 'os';
 import process from 'process';
 
 import { metrics as otelMetrics } from '@opentelemetry/api';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
+import { resourceFromAttributes } from '@opentelemetry/resources';
 import {
   AggregationTemporality,
   ConsoleMetricExporter,
   MeterProvider,
   PeriodicExportingMetricReader,
 } from '@opentelemetry/sdk-metrics';
+import { isNonEmptyString } from '@sniptt/guards';
 import * as Sentry from '@sentry/node';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
 
@@ -24,11 +27,37 @@ const meterDrivers = parseArrayEnvVar(
   [],
 );
 
+const parseSampleRate = ({
+  value,
+  fallback,
+}: {
+  value: string | undefined;
+  fallback: number;
+}) => {
+  if (!isNonEmptyString(value?.trim())) {
+    return fallback;
+  }
+
+  const parsed = Number(value);
+
+  return Number.isFinite(parsed) && parsed >= 0 && parsed <= 1
+    ? parsed
+    : fallback;
+};
+
 if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
+  const tracesSampleRate = parseSampleRate({
+    value: process.env.SENTRY_TRACES_SAMPLE_RATE,
+    fallback: 0.1,
+  });
+
   Sentry.init({
     environment: process.env.SENTRY_ENVIRONMENT,
     release: process.env.APP_VERSION,
     dsn: process.env.SENTRY_DSN,
+    defaultIntegrations: Sentry.getDefaultIntegrations({
+      tracesSampleRate,
+    }).filter((integration) => integration.name !== 'Modules'),
     integrations: [
       Sentry.redisIntegration(),
       Sentry.httpIntegration(),
@@ -55,8 +84,14 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
       }),
       nodeProfilingIntegration(),
     ],
-    tracesSampleRate: 0.1,
-    profilesSampleRate: 0.3,
+    tracesSampleRate,
+    tracesSampler: ({ name, inheritOrSampleWith }) =>
+      name.startsWith('ai.') ? 1 : inheritOrSampleWith(tracesSampleRate),
+    profilesSampleRate: parseSampleRate({
+      value: process.env.SENTRY_PROFILES_SAMPLE_RATE,
+      fallback: 0.01,
+    }),
+    maxValueLength: 8192,
     sendDefaultPii: true,
     debug: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
     beforeSendSpan: (span) => {
@@ -85,13 +120,15 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
   });
 }
 
-// Meter setup
-
 const prometheusExporter = meterDrivers.includes(MeterDriver.Prometheus)
   ? new PrometheusExporter({ port: 9464 })
   : null;
 
 const meterProvider = new MeterProvider({
+  resource: resourceFromAttributes({
+    'service.name': process.env.OTEL_SERVICE_NAME ?? 'twenty-server',
+    'k8s.pod.name': process.env.HOSTNAME ?? os.hostname(),
+  }),
   readers: [
     ...(meterDrivers.includes(MeterDriver.Console)
       ? [

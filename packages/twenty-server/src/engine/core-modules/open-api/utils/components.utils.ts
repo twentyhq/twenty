@@ -47,7 +47,6 @@ const getSchemaComponentsExample = (
   flatFieldMetadatas: FlatFieldMetadata[],
 ): OpenApiExample => {
   return flatFieldMetadatas.reduce((node, field) => {
-    // If field is required
     if (!field.isNullable && field.defaultValue === null) {
       return {
         ...node,
@@ -202,7 +201,6 @@ const computeSchemaComponent = ({
 
   const withRequiredFields = !forResponse && !forUpdate;
 
-  // Create a temporary object that looks like ObjectMetadataEntity for the converter
   const tempItem = {
     ...item,
     fields: flatFieldMetadatas,
@@ -292,9 +290,10 @@ export const computeSchemaComponents = (
   );
 };
 
-export const computeParameterComponents = (
-  fromMetadata = false,
-): Record<string, OpenAPIV3_1.ParameterObject> => {
+export const computeParameterComponents = (): Record<
+  string,
+  OpenAPIV3_1.ParameterObject
+> => {
   return {
     idPath: computeIdPathParameter(),
     startingAfter: computeStartingAfterParameters(),
@@ -304,7 +303,7 @@ export const computeParameterComponents = (
     upsert: computeUpsertParameters(),
     softDelete: computeSoftDeleteParameters(),
     orderBy: computeOrderByParameters(),
-    limit: computeLimitParameters(fromMetadata),
+    limit: computeLimitParameters(),
     groupBy: computeGroupByParameters(),
     viewId: computeViewIdParameters(),
     aggregate: computeAggregateParameters(),

@@ -34,10 +34,7 @@ export const SidePanelTopBarRightCornerIcon = () => {
     );
   }
 
-  const isOnAskAiPage = [
-    SidePanelPages.AskAI,
-    SidePanelPages.ViewPreviousAiChats,
-  ].includes(sidePanelPage);
+  const isOnAskAiPage = sidePanelPage === SidePanelPages.AskAI;
 
   if (isMobile || !isOnAskAiPage) {
     return null;

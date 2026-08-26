@@ -2,8 +2,11 @@ import { type CoreSchema } from 'twenty-client-sdk/core';
 
 import { stripMarkdown } from 'src/modules/shared/utils/strip-markdown.util';
 
-import { isCaseStudy } from 'src/modules/partner/utils/content-type';
-import { firstFileUrl, resolvePartnerPictureUrl } from 'src/modules/partner/utils/profile-picture';
+import { isApprovedCaseStudy } from 'src/modules/partner/utils/content-type';
+import {
+  resolveCoverUrl,
+  resolvePartnerPictureUrl,
+} from 'src/modules/partner/utils/profile-picture';
 
 export type MapPartnerDetail = 'list' | 'profile';
 
@@ -202,12 +205,12 @@ const mapPortfolio = (
   edges: ReadonlyArray<PartnerContentEdge>,
 ): MarketplaceProfilePartner['portfolio'] =>
   sortByPositionAscNullsLast(edges)
-    .filter(({ node }) => isCaseStudy(node.contentType) && node.status === 'APPROVED')
+    .filter(({ node }) => isApprovedCaseStudy(node))
     .map(({ node }) => ({
       client: node.clientName ?? '',
       title: node.headline ?? '',
       body: node.body?.markdown ?? '',
-      imageUrl: node.coverImageUrl ?? firstFileUrl(node.coverImage),
+      imageUrl: resolveCoverUrl(node.coverImageUrl, node.coverImage),
       link: node.caseStudyLink?.primaryLinkUrl ?? null,
     }));
 

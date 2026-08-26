@@ -3,8 +3,17 @@ import { styled } from '@linaria/react';
 
 import { BecomePartnerButton } from '@/partner-application';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { GRADIENT, HERO_COMPOSITION, mediaUp, spacing } from '@/tokens';
-import { Body, Button, Heading, HeadingPair, SectionShell } from '@/ui';
+import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
+import {
+  fontFamily,
+  GRADIENT,
+  HERO_COMPOSITION,
+  mediaUp,
+  semanticColor,
+  spacing,
+  typeRampDeclarations,
+} from '@/tokens';
+import { Body, Heading, HeadingPair, SectionShell } from '@/ui';
 
 import { PartnerVisual } from './PartnerVisual';
 
@@ -48,11 +57,32 @@ const BodyMeasure = styled.div`
   }
 `;
 
-const CtaRow = styled.div`
+// The hero's single CTA sits on the shared 32px Body->CTA step (IntroStack's
+// owl rhythm); the buyer hand-off hangs 12px under it so it reads as a
+// footnote to the CTA rather than as a second step in that rhythm.
+const CtaStack = styled.div`
+  align-items: center;
   display: flex;
-  flex-wrap: wrap;
-  gap: ${spacing(3)};
-  justify-content: center;
+  flex-direction: column;
+
+  & > * + * {
+    margin-top: ${spacing(3)};
+  }
+`;
+
+// Deliberately duplicated from partner-lead/PartnerBecomeStrip's LearnMoreLink:
+// sections may not import each other, so the recipe is copied, not shared.
+const HireLink = styled(LocalizedLink)`
+  color: ${semanticColor.inkMuted};
+  display: inline-block;
+  font-family: ${fontFamily('sans')};
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  ${typeRampDeclarations('bodySm')}
+
+  &:hover {
+    color: ${semanticColor.ink};
+  }
 `;
 
 const VisualStage = styled.div`
@@ -79,19 +109,17 @@ export function PartnerHero() {
           <BodyMeasure>
             <Body muted size="sm">
               {i18n._(
-                msg`We're building the #1 Open Source CRM, but we can't do it alone. Join our partner ecosystem and grow with us.`,
+                msg`Get certified as a Twenty partner: a vetted badge, a directory profile your clients can check, and matched client briefs for the best partners.`,
               )}
             </Body>
           </BodyMeasure>
         </HeadingPair>
-        <CtaRow>
+        <CtaStack>
           <BecomePartnerButton label={msg`Become a partner`} />
-          <Button
-            href="/partners/list"
-            label={i18n._(msg`Find a partner`)}
-            variant="outlined"
-          />
-        </CtaRow>
+          <HireLink href="/partners">
+            {i18n._(msg`Looking to hire a partner?`)}
+          </HireLink>
+        </CtaStack>
       </IntroStack>
       <VisualStage>
         <PartnerVisual />

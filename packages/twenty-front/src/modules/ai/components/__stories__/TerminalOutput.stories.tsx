@@ -50,14 +50,11 @@ export const WithStderr: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Should show stdout by default
     expect(await canvas.findByText(/Starting process/)).toBeVisible();
 
-    // Click stderr tab to switch
     const stderrTab = await canvas.findByText('stderr');
     await userEvent.click(stderrTab);
 
-    // Should now show stderr content
     expect(await canvas.findByText(/Connection timeout/)).toBeVisible();
   },
 };

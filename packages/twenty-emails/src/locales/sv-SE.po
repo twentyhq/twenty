@@ -31,7 +31,7 @@ msgstr "{senderName} (<0>{senderEmail}</0>): Var vänlig och validera denna dom�
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "A heads up before your trial ends"
-msgstr "En påminnelse innan din testperiod slutar"
+msgstr "En förvarning innan din testperiod slutar"
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -96,7 +96,7 @@ msgstr "Github"
 #. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Good news first: your workspace <0>{workspaceDisplayName}</0> is only paused — none of your data is gone."
-msgstr "Goda nyheter först: din arbetsyta <0>{workspaceDisplayName}</0> är bara pausad — ingen av dina data har försvunnit."
+msgstr "Goda nyheter först: din arbetsyta <0>{workspaceDisplayName}</0> är bara pausad — inga av dina data har försvunnit."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
@@ -206,7 +206,7 @@ msgstr "San Francisco / Paris"
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "Server administrator access changed"
-msgstr "Serveradministratörsåtkomst har ändrats"
+msgstr "Serveradministratörsbehörighet har ändrats"
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -261,7 +261,7 @@ msgstr "Den här länken är bara giltig under de nästa {duration}. Om länken 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx
 msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
-msgstr "För att behålla din arbetsyta och allt du har byggt, lägg till en betalningsmetod och välj ett paket."
+msgstr "För att behålla din arbetsyta och allt du har byggt, lägg till en betalningsmetod och välj en plan."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -337,7 +337,7 @@ msgstr "Din kostnadsfria testperiod för <0>{workspaceDisplayName}</0> slutar de
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "Your plan renews soon"
-msgstr "Din plan förnyas snart"
+msgstr "Ditt abonnemang förnyas snart"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-trial-ending.email.tsx

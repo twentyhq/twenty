@@ -44,7 +44,7 @@ AI může být zcela vypnuta vypnutím všech modelů AI v Nastavení → AI →
 Všechna data jsou šifrována při přenosu i v klidu. Data jednotlivých tenantů jsou izolována pomocí nastavení se samostatným schématem pro každý tenant a šifrovací klíče jsou pravidelně rotovány.
 </Accordion>
 <Accordion title="Které dvacet zaměstnanců nebo dílčí procesory mohou mít přístup k pracovnímu prostoru zákazníka, za jakým účelem a jak je přístup schválen a zaznamenán?">
-Inženýrské a podpůrné týmy Twenty mohou přistupovat k pracovním prostorům zákazníků pouze poté, co zákazník nahlásí problém a udělí přístup prostřednictvím Nastavení → Obecné → Zabezpečení.
+Dvacet týmů pro inženýrství a podporu může získat přístup ke zákaznickým pracovním prostorům za účelem prozkoumání a řešení problémů. Vlastníci pracovního prostoru ovládají toto: přístup k podpoře může být kdykoli zakázán v Nastavení → Obecné → Bezpečnost, a zůstane vypnutý, dokud jej nevypnete zpět.
 </Accordion>
 <Accordion title="Jaký je váš proces oznamování incidentů a časový rámec oznámení po potvrzeném bezpečnostním incidentu ovlivňujícím naše údaje?">
 V případě potvrzeného narušení bezpečnosti osobních údajů, které má vliv na vaše údaje, vás budeme informovat bez zbytečného odkladu a v každém případě do 48 hodin poté, co se o tom dozvědět. Naše oznámení bude obsahovat, pokud je v té době známo: povahu porušení, kategorie a přibližný objem dotčených údajů a osob, pravděpodobné důsledky, jakož i přijatá nebo plánovaná opatření k nápravě a zmírňování. Budeme poskytovat aktualizace, jak bude pokračovat vyšetřování.
@@ -64,7 +64,7 @@ Dočasně smazané záznamy jsou ve výchozím nastavení uchovávány po dobu 1
 Odstraněný záznam zůstává v zálohách po dobu 30 dní, poté je trvale smazán.
 </Accordion>
 <Accordion title="Pokud je pracovní prostor uzavřen nebo je požadováno úplné smazání, jaká přesná časová osa se vztahuje na výrobní údaje, přílohy, logy a zálohy?">
-Když je pracovní prostor smazán, jeho data jsou okamžitě odstraněna z aktivních systémů. Zálohy jsou uchovávány po dobu 7 dní, poté jsou všechna data trvale smazána.
+Když je pracovní prostor odstraněn, jsou jeho data odstraněna z živých systémů během přibližně 90 dnů od ukončení služby a obvykle mnohem dříve. Záložní a archivační kopie jsou pak přepsány nebo vymazány do dalších 90 dnů, po jejichž uplynutí jsou všechna data trvale smazána. V obou obdobích jsou údaje odděleny od jakéhokoli provozního využití. Na vyžádání můžeme po dokončení čištění poskytnout písemné osvědčení. Úplné podmínky viz bod 4.9 dohody o zpracování údajů.
 </Accordion>
 <Accordion title="Je během doby uchovávání záloh vymazána data oddělená od provozního přístupu a používání?">
 Ano, během doby uchovávání záloh jsou vymazané údaje izolovány od provozního použití.
@@ -105,6 +105,20 @@ Ano, dvacet je [vyhovující SOC 2](https://trust.twenty.com/?tab=securityContro
 </Accordion>
 <Accordion title="Je dvacet HIPAA v souladu?">
 Ne, dvacet let se stává v souladu s pravidly HIPAA.
+</Accordion>
+</AccordionGroup>
+
+## Licencování
+
+<AccordionGroup>
+<Accordion title="Pokud změním kód a přidám funkce určené pouze pro interní použití v mém týmu, musím tyto změny zveřejnit?">
+Ne. Provozování upravené verze pro váš vlastní tým není šířením, takže z toho nevyplývá žádná povinnost cokoli zveřejňovat. Síťové ustanovení AGPL se uplatní, když lidé mimo vaši organizaci interagují s vaší upravenou instancí přes síť.
+</Accordion>
+<Accordion title="Pokud vytvořím samostatný frontend a použiji Twenty jako nezměněný backend, musím tyto změny zveřejnit?">
+Ne. Váš frontend je vaším vlastním, samostatným dílem a komunikace s Twenty prostřednictvím jeho API na tom nic nemění. Protože samotné Twenty je beze změn, není co zveřejňovat.
+</Accordion>
+<Accordion title="Pokud změním kód, abych přidal funkce a dále jej přeprodával, musím tyto změny zveřejnit?">
+Ano, protože upravujete kód za účelem jeho šíření ostatním, máte povinnost tyto změny zveřejnit. Pokud nechcete své změny zveřejnit, můžete získat licenci Organization.
 </Accordion>
 </AccordionGroup>
 

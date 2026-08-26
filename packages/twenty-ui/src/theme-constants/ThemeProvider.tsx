@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { createContext, useLayoutEffect, useRef, useState } from 'react';
 
@@ -53,6 +54,19 @@ export type ThemeContextType = {
 
 export type ThemeOverrides = Record<string, string | number>;
 
+const resolveTokenValue = (
+  cssVariableReference: string,
+  computedValue: string,
+): string | number => {
+  if (!isNonEmptyString(computedValue)) {
+    return cssVariableReference;
+  }
+
+  const numericValue = Number(computedValue);
+
+  return Number.isNaN(numericValue) ? computedValue : numericValue;
+};
+
 const computeThemeFromCss = (sourceElement?: HTMLElement): ThemeType => {
   if (
     typeof document === 'undefined' ||
@@ -73,9 +87,11 @@ const computeThemeFromCss = (sourceElement?: HTMLElement): ThemeType => {
 
       if (typeof value === 'string' && value.startsWith('var(')) {
         const varName = value.slice(4, -1);
-        const raw = computedStyle.getPropertyValue(varName).trim();
-        const num = Number(raw);
-        result[key] = raw !== '' && !isNaN(num) ? num : raw;
+
+        result[key] = resolveTokenValue(
+          value,
+          computedStyle.getPropertyValue(varName).trim(),
+        );
       } else if (typeof value === 'object' && value !== null) {
         result[key] = resolve(value as Record<string, unknown>);
       } else {
@@ -110,12 +126,14 @@ export const ThemeProvider = ({
   applyToRoot = true,
   overrides,
   className,
+  scale,
 }: {
   children: React.ReactNode;
   colorScheme: 'light' | 'dark';
   applyToRoot?: boolean;
   overrides?: ThemeOverrides;
   className?: string;
+  scale?: number;
 }) => {
   const isScoped = isDefined(overrides) || !applyToRoot;
 
@@ -145,6 +163,27 @@ export const ThemeProvider = ({
     );
     setScopeContainer(isScoped ? wrapperRef.current : null);
   }, [colorScheme, applyToRoot, isScoped, overridesKey]);
+
+  // The interface scale preference is consumed by the root zoom rule in the
+  // app stylesheet through --t-scale-user, which only reads from the html
+  // element, so scoped providers ignore the prop instead of writing a value
+  // nothing consumes. Computed styles stay unzoomed, so no theme recompute is
+  // needed when the value changes. The cleanup is only registered from the
+  // branch that set the property, so a provider mounted without a scale can
+  // never clear a value another provider owns.
+  useLayoutEffect(() => {
+    if (typeof document === 'undefined' || isScoped || !isDefined(scale)) {
+      return;
+    }
+
+    const scaleTarget = document.documentElement;
+
+    scaleTarget.style.setProperty('--t-scale-user', String(scale));
+
+    return () => {
+      scaleTarget.style.removeProperty('--t-scale-user');
+    };
+  }, [scale, isScoped]);
 
   const contextValue = { theme, colorScheme };
 

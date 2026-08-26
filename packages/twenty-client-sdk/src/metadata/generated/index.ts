@@ -67,13 +67,19 @@ function(options?: ClientOptions): Client {
       }
     
 // MetadataApiClient (auto-injected by twenty-client-sdk)
+import type { TwentyClientRunAs } from '../shared/twenty-client-run-as.type';
+
 // Ambient type stubs for the genql-generated code this template gets
 // injected into. They enable full typecheck/lint on this file.
 
 const APP_ACCESS_TOKEN_ENV_KEY = 'TWENTY_APP_ACCESS_TOKEN';
+const APP_APPLICATION_ACCESS_TOKEN_ENV_KEY =
+  'TWENTY_APP_APPLICATION_ACCESS_TOKEN';
 const API_KEY_ENV_KEY = 'TWENTY_API_KEY';
 
-type MetadataApiClientOptions = ClientOptions;
+export type MetadataApiClientOptions = ClientOptions & {
+  runAs?: TwentyClientRunAs;
+};
 
 type ProcessEnvironment = Record<string, string | undefined>;
 
@@ -197,6 +203,7 @@ export class MetadataApiClient {
       fetch: customFetchImplementation,
       fetcher: _fetcher,
       batch: _batch,
+      runAs,
       ...requestOptions
     } = merged;
 
@@ -211,10 +218,15 @@ export class MetadataApiClient {
       typeof headers === 'function' ? undefined : headers,
     );
 
-    // Priority: explicit header > app access token > api key (legacy).
+    // Priority: explicit header > the token for the requested access > api key
+    // (legacy).
     this.authorizationToken =
       tokenFromHeaders ??
-      processEnvironment[APP_ACCESS_TOKEN_ENV_KEY] ??
+      processEnvironment[
+        runAs === 'application'
+          ? APP_APPLICATION_ACCESS_TOKEN_ENV_KEY
+          : APP_ACCESS_TOKEN_ENV_KEY
+      ] ??
       processEnvironment[API_KEY_ENV_KEY] ??
       null;
 

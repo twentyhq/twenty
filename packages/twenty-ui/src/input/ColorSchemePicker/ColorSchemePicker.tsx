@@ -26,6 +26,7 @@ export const ColorSchemePicker = ({
     <div className={clsx(styles.container, className)}>
       <div className={styles.cardContainer}>
         <ColorSchemeCard
+          className={styles.card}
           onClick={() => onChange('Light')}
           variant="Light"
           selected={value === 'Light'}
@@ -34,6 +35,7 @@ export const ColorSchemePicker = ({
       </div>
       <div className={styles.cardContainer}>
         <ColorSchemeCard
+          className={styles.card}
           onClick={() => onChange('Dark')}
           variant="Dark"
           selected={value === 'Dark'}
@@ -42,6 +44,7 @@ export const ColorSchemePicker = ({
       </div>
       <div className={styles.cardContainer}>
         <ColorSchemeCard
+          className={styles.card}
           onClick={() => onChange('System')}
           variant="System"
           selected={value === 'System'}

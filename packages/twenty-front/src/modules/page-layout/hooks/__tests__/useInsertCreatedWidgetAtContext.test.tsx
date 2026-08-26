@@ -9,7 +9,10 @@ import {
 import { act, renderHook } from '@testing-library/react';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
-import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
+import {
+  PageLayoutTabLayoutMode,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
@@ -99,6 +102,44 @@ describe('useInsertCreatedWidgetAtContext', () => {
     const widgetIds = draft.tabs[0].widgets.map((w) => w.id);
 
     expect(widgetIds).toEqual(['widget-a', 'widget-c', 'widget-b']);
+  });
+
+  it('should normalize a newly inserted widget before the viewport-filling widget', () => {
+    const store = createStore();
+    const wrapper = getWrapper(store);
+
+    const widgetA = makeWidget('widget-a', 0);
+    const timelineWidget = {
+      ...makeWidget('timeline-widget', 1),
+      type: WidgetType.TIMELINE,
+    };
+    const newWidget = makeWidget('new-widget', 2);
+
+    store.set(
+      getDraftAtom(),
+      makeDraft([makeTab('tab-1', [widgetA, timelineWidget, newWidget])]),
+    );
+    store.set(getInsertionContextAtom(), {
+      targetWidgetId: 'timeline-widget',
+      direction: 'below',
+    });
+
+    const { result } = renderHook(
+      () => useInsertCreatedWidgetAtContext(PAGE_LAYOUT_TEST_INSTANCE_ID),
+      { wrapper },
+    );
+
+    act(() => {
+      result.current.insertCreatedWidgetAtContext('new-widget');
+    });
+
+    const draft = store.get(getDraftAtom());
+
+    expect(draft.tabs[0].widgets.map(({ id }) => id)).toEqual([
+      'widget-a',
+      'new-widget',
+      'timeline-widget',
+    ]);
   });
 
   it('should reindex all widgets with sequential positions', () => {

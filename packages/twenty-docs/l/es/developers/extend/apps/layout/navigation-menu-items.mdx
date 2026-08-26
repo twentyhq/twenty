@@ -42,5 +42,5 @@ export default defineNavigationMenuItem({
 * `folderUniversalIdentifier` también está disponible en cualquier elemento para anidarlo dentro de un elemento padre de tipo `FOLDER`.
 
 <Note>
-**Error común:** crear un objeto sin una vista asociada y un elemento del menú de navegación hace que ese objeto sea invisible para los usuarios. A menos que sea un objeto técnico/interno, cada objeto personalizado debería tener una vista predeterminada *y* una entrada en la barra lateral que apunte a ella.
+**Error común:** crear un objeto sin un elemento de menú de navegación asociado hace que ese objeto sea inaccesible desde la barra lateral. A menos que sea un objeto técnico/interno, cada objeto personalizado debería tener una entrada en la barra lateral que apunte a él.
 </Note>

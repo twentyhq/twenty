@@ -53,9 +53,33 @@ export default definePageLayout({
 
 * `type` es uno de `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` o `'STANDALONE_PAGE'`. Use `'RECORD_PAGE'` para personalizar la vista de detalles de un objeto específico.
 * `objectUniversalIdentifier` especifica a qué objeto se aplica este diseño.
-* Cada `tab` define una sección de la página con un `title`, `position` y `layoutMode` (`VERTICAL_LIST` para páginas de registros, `GRID` para paneles). Una pestaña que contiene un solo widget lo muestra automáticamente a todo lo ancho; con varios widgets, se apilan como tarjetas.
+* Cada `tab` define una sección de la página con un `title`, `position` y `layoutMode`: `VERTICAL_LIST` para páginas de registros y páginas independientes, `GRID` para paneles y `CANVAS` para un único widget que debe ocupar el área de visualización de la pestaña. Una pestaña `VERTICAL_LIST` apila los widgets verticalmente. Los widgets integrados que gestionan su propio desplazamiento, como las líneas de tiempo, los archivos, las notas, las tareas y los flujos de trabajo, ocupan un área de visualización; los campos, los componentes front, los gráficos y otros widgets de ajuste al contenido se representan a la altura de su contenido o a la altura configurada. Una pestaña `GRID` siempre distribuye sus widgets como tarjetas en una cuadrícula de 12 columnas. Un widget `CANVAS` no tiene una posición explícita; si una pestaña de lienzo contiene varios widgets, se representan a la altura de su contenido en lugar de llenar la ventana gráfica.
+* Establece `layoutMode` explícitamente. Omitirlo te da `VERTICAL_LIST` en una `STANDALONE_PAGE` y `GRID` en todos los demás casos, lo cual rara vez es lo que quieres en una página de registro.
 * Cada `widget` dentro de una pestaña puede renderizar un [componente de frontend](/l/es/developers/extend/apps/layout/front-components), una lista de relaciones u otros tipos de widget integrados.
+* Un widget `FRONT_COMPONENT` puede establecer `headerCommandMenuItemUniversalIdentifiers` en una matriz ordenada de identificadores universales de elementos de menú de comandos de la misma aplicación. Estas acciones aparecen como botones de icono en el encabezado de la tarjeta del widget y conservan sus comprobaciones de disponibilidad y permisos a nivel de comando. Los identificadores deben ser únicos y deben resolverse cuando se instala la aplicación.
 * `position` en las pestañas controla su orden. Usa valores más altos (p. ej., 50) para colocar pestañas personalizadas después de las integradas.
+
+### Widgets de campos
+
+Un widget `FIELD` representa un campo del registro. Para los campos de relación, también puede incrustar una lista de registros relacionados:
+
+```ts
+{
+  universalIdentifier: 'c1c2c3c4-c5c6-4000-8000-000000000003',
+  title: 'People → Opportunities',
+  type: 'FIELD',
+  configuration: {
+    configurationType: 'FIELD',
+    fieldMetadataId: PEOPLE_FIELD_UNIVERSAL_IDENTIFIER,
+    fieldDisplayMode: 'TABLE',
+    nestedRelationFieldMetadataId: OPPORTUNITIES_FIELD_UNIVERSAL_IDENTIFIER,
+  },
+}
+```
+
+* `fieldMetadataId` toma el identificador universal de un campo en el objeto del layout.
+* `fieldDisplayMode` es uno de `'FIELD'`, `'CARD'`, `'EDITOR'`, `'VIEW'` o `'TABLE'`. `TABLE` incrusta una vista que lista los registros de un campo de relación de uno a muchos.
+* `nestedRelationFieldMetadataId` es opcional y toma el identificador universal de un campo de relación de uno a muchos en el objeto de destino de la relación, para enumerar registros a dos saltos de relación (por ejemplo, una página de Company que enumera las oportunidades de las personas de la compañía, o una página de Person que enumera las oportunidades de la compañía de la persona). El primer salto puede ser un campo de relación de uno a muchos o de muchos a uno, el segundo debe ser de uno a muchos (las relaciones de unión no son compatibles) y requiere `fieldDisplayMode: 'TABLE'` — combinarlo con cualquier otro modo de visualización es un error de validación, ya que un widget anidado siempre se representa como una vista incrustada.
 
 ## definePageLayoutTab
 
@@ -113,8 +137,10 @@ export default definePageLayoutTab({
   Cada entrada de diseño también expone sus `tabs` y sus `widgets`, para que puedas hacer referencia a cualquier nivel:
 
   ```ts
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.universalIdentifier
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets.fields.universalIdentifier
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home
+    .universalIdentifier;
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets
+    .fields.universalIdentifier;
   ```
 
   También hay disponible un alias corto `STANDARD_PAGE_LAYOUT`:

@@ -4,7 +4,8 @@ import type {
   ObjectRecordCreateEvent,
 } from 'twenty-sdk/define';
 
-import { findPartnerByMember } from 'src/modules/application/graphql/queries/find-partner-by-member';
+import { findPartnerByMember } from 'src/modules/shared/graphql/queries/find-partner-by-member';
+import { getPartnerOwner } from 'src/modules/shared/graphql/queries/get-partner-owner';
 import { findDuplicateApplication } from 'src/modules/application/graphql/queries/find-duplicate-application';
 import { deleteApplication } from 'src/modules/application/graphql/mutations/delete-application';
 import { updateApplication } from 'src/modules/application/graphql/mutations/update-application';
@@ -13,18 +14,30 @@ type ApplicationCreatedProperties = DatabaseEventPayload<
   ObjectRecordCreateEvent<CoreSchema.Application>
 >['properties'];
 
-// A partner self-applies via the "Apply to brief as partner" workflow: a Create Record action
-// makes an Application with the opportunity set and createdBy = the clicking member, but no
-// partner. Resolve the partner from createdBy and complete the candidacy. Admin-created
-// applications (partner already set, or the creator is not a partner) are left untouched. The
-// name is set by on-application-set-name, which fires on the partnerId update below.
+// The app route POST /apply-to-brief creates the Application with partnerId and
+// partnerUserId already set, so this service returns at its first branch and does nothing.
+// It still serves the admin path: an invite or an import sets partnerId but no
+// partnerUserId, and this service stamps the partner's user so RLS doesn't hide the row
+// from its own partner. The createdBy-based self-apply branch below is a fallback for rows
+// created by a member without a partner set.
 export async function resolveCandidacy(
   client: CoreApiClient,
   after: ApplicationCreatedProperties['after'],
 ): Promise<Record<string, unknown>> {
   const applicationId = after?.id;
   if (!applicationId) return {};
-  if (after.partnerId) return {}; // already linked (admin path) — leave it
+
+  // Admin path (invite/import): without partnerUser, RLS hides the row from its own partner.
+  if (after.partnerId) {
+    if (after.partnerUserId) return {};
+
+    const ownerRes = await getPartnerOwner(client, after.partnerId);
+    const partnerUserId = ownerRes.partners?.edges?.[0]?.node?.partnerUserId;
+    if (!partnerUserId) return { skipped: true, reason: 'partner_has_no_user' };
+
+    await updateApplication(client, applicationId, { partnerUserId });
+    return { stamped: partnerUserId };
+  }
 
   const memberId = after.createdBy?.workspaceMemberId;
   if (!memberId) return {}; // no member actor (system/import) — not a self-apply
@@ -45,12 +58,10 @@ export async function resolveCandidacy(
     }
   }
 
-  const now = new Date().toISOString();
   await updateApplication(client, applicationId, {
     partnerId,
     partnerUserId: memberId,
     state: 'APPLIED',
-    lastActivityAt: now,
   });
   // ponytail: dedupe by (opportunity, partner) above; two near-simultaneous creates could still both pass before either stamps — acceptable.
   return { applied: true, partnerId };

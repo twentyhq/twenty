@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { CAMPAIGN_MESSAGE_DELIVERY_STATUS } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
@@ -13,9 +13,7 @@ type DeliveryStatusCountRow = {
 
 @Injectable()
 export class MessageCampaignStatisticsService {
-  constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-  ) {}
+  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
   async refreshCampaignCounts({
     workspaceId,
@@ -24,13 +22,11 @@ export class MessageCampaignStatisticsService {
     workspaceId: string;
     campaignId: string;
   }): Promise<void> {
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageRepository =
-        await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          MessageWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const messageRepository = this.workspaceOrmManager.getRepository(
+        MessageWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
 
       const deliveryStatusCountRows = await messageRepository
         .createQueryBuilder('message')
@@ -59,12 +55,10 @@ export class MessageCampaignStatisticsService {
           CAMPAIGN_MESSAGE_DELIVERY_STATUS.COMPLAINED,
         ) ?? 0;
 
-      const campaignRepository =
-        await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          MessageCampaignWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
+      const campaignRepository = this.workspaceOrmManager.getRepository(
+        MessageCampaignWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
 
       await campaignRepository.update(
         { id: campaignId },

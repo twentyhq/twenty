@@ -207,7 +207,7 @@ describe('submit-partner-application handler — upsert', () => {
     expect(node?.hourlyRate).toEqual({ amountMicros: 175_000_000, currencyCode: 'USD' });
   });
 
-  it('preserves staff-owned columns (validationStage, ranking, reviewed) on resubmission', async () => {
+  it('preserves staff-owned columns (validationStage, reviewed) on resubmission', async () => {
     const first = await handler(authedEvent(baseInput({ email: 'staff.preserve@example.com' })));
     await trackCreated(first);
     expect(first.ok).toBe(true);
@@ -217,7 +217,7 @@ describe('submit-partner-application handler — upsert', () => {
       updatePartner: {
         __args: {
           id: first.partnerId,
-          data: { validationStage: 'VALIDATED', reviewed: true, ranking: 'RATING_4' },
+          data: { validationStage: 'VALIDATED', reviewed: true },
         },
         id: true,
       },
@@ -232,14 +232,12 @@ describe('submit-partner-application handler — upsert', () => {
         __args: { filter: { id: { eq: second.partnerId } } },
         validationStage: true,
         reviewed: true,
-        ranking: true,
         city: true,
       },
     });
     const node = partner.partner;
     expect(node?.validationStage).toBe('VALIDATED');
     expect(node?.reviewed).toBe(true);
-    expect(node?.ranking).toBe('RATING_4');
     expect(node?.city).toBe('Berlin');
   });
 

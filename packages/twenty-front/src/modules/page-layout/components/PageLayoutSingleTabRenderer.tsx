@@ -10,6 +10,7 @@ import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutIn
 import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutIsInitializedComponentState } from '@/page-layout/states/pageLayoutIsInitializedComponentState';
+import { RecordTableWidgetViewDraftsInitializationEffect } from '@/page-layout/widgets/record-table/components/RecordTableWidgetViewDraftsInitializationEffect';
 import { getTabLayoutMode } from '@/page-layout/utils/getTabLayoutMode';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { getTabPresentation } from '@/page-layout/utils/getTabPresentation';
@@ -18,6 +19,7 @@ import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingC
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { isDefined } from 'twenty-shared/utils';
 
 type PageLayoutSingleTabRendererProps = {
   pageLayoutId: string;
@@ -39,16 +41,39 @@ const PageLayoutSingleTabRendererInner = () => {
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
   const targetRecordIdentifier = useTargetRecord();
   const { isInSidePanel } = useLayoutRenderingContext();
-  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   const sortedActiveTabs = sortTabsByPosition(
     currentPageLayout.tabs.filter((tab) => tab.isActive),
   );
-  const firstTab = sortedActiveTabs[0];
+  const firstTab = sortedActiveTabs.at(0);
 
-  const firstTabWithVisibleWidgets = usePageLayoutTabWithVisibleWidgetsOrThrow(
-    firstTab.id,
+  return (
+    <>
+      <SummaryCard
+        objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
+        objectRecordId={targetRecordIdentifier.id}
+        isInSidePanel={isInSidePanel}
+      />
+
+      {isDefined(firstTab) && (
+        <PageLayoutSingleTabRendererTabContent firstTabId={firstTab.id} />
+      )}
+    </>
   );
+};
+
+type PageLayoutSingleTabRendererTabContentProps = {
+  firstTabId: string;
+};
+
+const PageLayoutSingleTabRendererTabContent = ({
+  firstTabId,
+}: PageLayoutSingleTabRendererTabContentProps) => {
+  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+
+  const firstTabWithVisibleWidgets =
+    usePageLayoutTabWithVisibleWidgetsOrThrow(firstTabId);
 
   const layoutMode = getTabLayoutMode({
     tab: firstTabWithVisibleWidgets,
@@ -62,25 +87,17 @@ const PageLayoutSingleTabRendererInner = () => {
   });
 
   return (
-    <>
-      <SummaryCard
-        objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
-        objectRecordId={targetRecordIdentifier.id}
-        isInSidePanel={isInSidePanel}
-      />
-
-      <PageLayoutContentProvider
-        value={{
-          tabId: firstTab.id,
-          layoutMode,
-          presentation,
-        }}
-      >
-        <PageLayoutWidgetDndProvider>
-          <PageLayoutContent />
-        </PageLayoutWidgetDndProvider>
-      </PageLayoutContentProvider>
-    </>
+    <PageLayoutContentProvider
+      value={{
+        tabId: firstTabId,
+        layoutMode,
+        presentation,
+      }}
+    >
+      <PageLayoutWidgetDndProvider>
+        <PageLayoutContent />
+      </PageLayoutWidgetDndProvider>
+    </PageLayoutContentProvider>
   );
 };
 
@@ -112,6 +129,7 @@ export const PageLayoutSingleTabRenderer = ({
         >
           <PageLayoutInitializationQueryEffect pageLayoutId={pageLayoutId} />
           <PageLayoutRecordPageCustomizationSessionRegistrationEffect />
+          <RecordTableWidgetViewDraftsInitializationEffect />
           <PageLayoutSingleTabRendererContent />
         </PageLayoutEditModeProvider>
       </TabListComponentInstanceContext.Provider>

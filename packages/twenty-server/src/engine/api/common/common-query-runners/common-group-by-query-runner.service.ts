@@ -15,8 +15,6 @@ import {
   isDefined,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
-import { ObjectLiteral } from 'typeorm';
-
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
@@ -55,8 +53,8 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
-import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { formatColumnNameForRelationField } from 'src/engine/twenty-orm/utils/format-column-name-for-relation-field.util';
+import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
 @Injectable()
 export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -80,7 +78,6 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<CommonGroupByOutputItem[]> {
     const {
-      repository,
       commonQueryParser,
       flatObjectMetadata,
       flatObjectMetadataMaps,
@@ -90,7 +87,9 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
 
     const objectAlias = getObjectAlias(flatObjectMetadata);
 
-    let queryBuilder = repository.createQueryBuilder(objectAlias);
+    const readRepository = this.getReadRepository(queryRunnerContext);
+
+    let queryBuilder = readRepository.createQueryBuilder(objectAlias);
 
     const groupByFields =
       this.groupByArgProcessor.validateAndTransformGroupByFieldsOrThrow({
@@ -153,12 +152,15 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       return this.groupByWithRecordsService.resolveWithRecords({
         queryBuilderWithFiltersAndWithoutGroupBy,
         queryBuilderWithGroupBy: queryBuilder,
+        readRepository,
         groupByDefinitions,
         selectedFieldsResult: args.selectedFieldsResult,
         queryRunnerContext,
         orderByForRecords: args.orderByForRecords ?? [],
         groupLimit: args.limit,
         offsetForRecords: args.offsetForRecords,
+        nestedRelationsReadPathOptions:
+          this.getNestedRelationsReadPathOptions(),
       });
     }
 
@@ -303,7 +305,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   }: {
     args: GroupByQueryArgs;
     appliedFilters: ObjectRecordFilter;
-    queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>;
+    queryBuilder: WorkspaceSelectQueryBuilder;
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     workspaceId: string;
@@ -339,7 +341,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     selectedFieldsResult,
     groupLimit,
   }: {
-    queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>;
+    queryBuilder: WorkspaceSelectQueryBuilder;
     groupByDefinitions: GroupByDefinition[];
     selectedFieldsResult: CommonSelectedFieldsResult;
     groupLimit?: number;
@@ -362,7 +364,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     groupByFields,
     objectAlias,
   }: {
-    queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>;
+    queryBuilder: WorkspaceSelectQueryBuilder;
     groupByFields: GroupByField[];
     objectAlias: string;
   }): void {

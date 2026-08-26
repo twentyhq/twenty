@@ -4,6 +4,8 @@ import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/fla
 import { type FlatCommandMenuItemMaps } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item-maps.type';
 import { type FlatConnectionProviderMaps } from 'src/engine/metadata-modules/flat-connection-provider/types/flat-connection-provider-maps.type';
 import { type FlatConnectionProvider } from 'src/engine/metadata-modules/flat-connection-provider/types/flat-connection-provider.type';
+import { type FlatTimelineActivityTypeMaps } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type-maps.type';
+import { type FlatTimelineActivityType } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type.type';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
@@ -62,6 +64,7 @@ import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-module
 import { type UniversalFlatAgent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-agent.type';
 import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-command-menu-item.type';
 import { type UniversalFlatConnectionProvider } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-connection-provider.type';
+import { type UniversalFlatTimelineActivityType } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-timeline-activity-type.type';
 import { type UniversalFlatEntityFrom } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 import { type UniversalFlatFieldPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-permission.type';
 import { type UniversalFlatFrontComponent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-front-component.type';
@@ -114,6 +117,14 @@ import {
   type UniversalDeleteConnectionProviderAction,
   type UniversalUpdateConnectionProviderAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/connection-provider/types/workspace-migration-connection-provider-action.type';
+import {
+  type FlatCreateTimelineActivityTypeAction,
+  type FlatDeleteTimelineActivityTypeAction,
+  type FlatUpdateTimelineActivityTypeAction,
+  type UniversalCreateTimelineActivityTypeAction,
+  type UniversalDeleteTimelineActivityTypeAction,
+  type UniversalUpdateTimelineActivityTypeAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/timeline-activity-type/types/workspace-migration-timeline-activity-type-action.type';
 import {
   type FlatCreateFieldPermissionAction,
   type FlatDeleteFieldPermissionAction,
@@ -838,5 +849,21 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatSearchFieldMetadata;
     universalFlatEntity: UniversalFlatSearchFieldMetadata;
     entity: MetadataEntity<'searchFieldMetadata'>;
+  };
+  timelineActivityType: {
+    flatEntityMaps: FlatTimelineActivityTypeMaps;
+    universalActions: {
+      create: UniversalCreateTimelineActivityTypeAction;
+      update: UniversalUpdateTimelineActivityTypeAction;
+      delete: UniversalDeleteTimelineActivityTypeAction;
+    };
+    flatActions: {
+      create: FlatCreateTimelineActivityTypeAction;
+      update: FlatUpdateTimelineActivityTypeAction;
+      delete: FlatDeleteTimelineActivityTypeAction;
+    };
+    flatEntity: FlatTimelineActivityType;
+    universalFlatEntity: UniversalFlatTimelineActivityType;
+    entity: MetadataEntity<'timelineActivityType'>;
   };
 };

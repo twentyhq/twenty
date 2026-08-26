@@ -35,18 +35,22 @@ A **camada de dados** de um app Twenty é o conjunto de dados que seu app *adici
   <Card title="Relações" icon="diagram-project" href="/l/pt/developers/extend/apps/data/relations">
     Conexões bidirecionais `MANY_TO_ONE` / `ONE_TO_MANY` entre objetos.
   </Card>
+  <Card title="Tipos de atividade da cronologia" icon="clock-rotate-left" href="/l/pt/developers/extend/apps/data/timeline-activity-types">
+    Defina eventos de auditoria automáticos e eventos explícitos do app para linhas do tempo de registros.
+  </Card>
 </CardGroup>
 
 ## Entidades em resumo
 
-| Entidade    | Finalidade                                                                                                                                       | Definido com                             |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------- |
-| **Objeto**  | Um novo tipo de registro personalizado (por exemplo, PostCard, Invoice) com seus próprios campos                                                 | `defineObject()`                         |
-| **Campo**   | Uma coluna em um objeto. Campos independentes podem estender objetos que você não criou (por exemplo, adicionar `loyaltyTier` ao objeto Company) | `defineField()`                          |
-| **Relação** | Um vínculo bidirecional entre dois objetos — ambos os lados declarados como campos                                                               | `defineField()` com `FieldType.RELATION` |
-| **Índice**  | Um índice de banco de dados para acelerar uma consulta recorrente em um dos seus objetos                                                         | `defineIndex()`                          |
+| Entidade                            | Finalidade                                                                                                                                       | Definido com                             |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------- |
+| **Objeto**                          | Um novo tipo de registro personalizado (por exemplo, PostCard, Invoice) com seus próprios campos                                                 | `defineObject()`                         |
+| **Campo**                           | Uma coluna em um objeto. Campos independentes podem estender objetos que você não criou (por exemplo, adicionar `loyaltyTier` ao objeto Company) | `defineField()`                          |
+| **Relação**                         | Um vínculo bidirecional entre dois objetos — ambos os lados declarados como campos                                                               | `defineField()` com `FieldType.RELATION` |
+| **Índice**                          | Um índice de banco de dados para acelerar uma consulta recorrente em um dos seus objetos                                                         | `defineIndex()`                          |
+| **Tipo de atividade da cronologia** | Um evento de auditoria automático ou evento de domínio explícito exibido nas linhas do tempo de registros                                        | `defineTimelineActivityType()`           |
 
-O SDK detecta esses elementos por meio de análise de AST em tempo de build, então a organização dos arquivos fica a seu critério — a convenção é `src/objects/`, `src/fields/` e `src/indexes/`. UUIDs `universalIdentifier` estáveis conectam tudo em implantações diferentes.
+O SDK detecta esses elementos por meio de análise de AST em tempo de build, então a organização dos arquivos fica a seu critério — a convenção é `src/objects/`, `src/fields/`, `src/indexes/` e `src/timeline-activity-types/`. UUIDs `universalIdentifier` estáveis conectam tudo em implantações diferentes.
 
 ## Índices (Opcional)
 

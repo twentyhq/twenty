@@ -6,6 +6,7 @@ export enum CoreObjectNameSingular {
   Blocklist = 'blocklist',
   CalendarChannel = 'calendarChannel',
   CalendarEvent = 'calendarEvent',
+  CallRecording = 'callRecording',
   Comment = 'comment',
   Company = 'company',
   Dashboard = 'dashboard',

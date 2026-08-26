@@ -1,10 +1,9 @@
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
+import { CoreObjectNameSingular, OpenRecordIn } from 'twenty-shared/types';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { t } from '@lingui/core/macro';
 import { type MouseEvent } from 'react';
@@ -60,7 +59,7 @@ export const RecordChip = ({
 
   const handleCustomClick = isDefined(onClick)
     ? onClick
-    : openRecordIn === ViewOpenRecordIn.SIDE_PANEL
+    : openRecordIn === OpenRecordIn.SIDE_PANEL
       ? (_event: MouseEvent<HTMLElement>) => {
           openRecordInSidePanel({
             recordId: record.id,

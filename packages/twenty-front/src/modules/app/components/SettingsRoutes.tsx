@@ -302,6 +302,14 @@ const SettingsApplicationCommandMenuItemDetail = lazy(() =>
   ),
 );
 
+const SettingsApplicationTimelineActivityTypeDetail = lazy(() =>
+  import('~/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail').then(
+    (module) => ({
+      default: module.SettingsApplicationTimelineActivityTypeDetail,
+    }),
+  ),
+);
+
 const SettingsLayout = lazy(() =>
   import('~/pages/settings/layout/SettingsLayout').then((module) => ({
     default: module.SettingsLayout,
@@ -619,6 +627,12 @@ const SettingsAdminWorkspaceChatThread = lazy(() =>
       default: module.SettingsAdminWorkspaceChatThread,
     }),
   ),
+);
+
+const SettingsAdminChats = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminChats').then((module) => ({
+    default: module.SettingsAdminChats,
+  })),
 );
 
 const SettingsCommunity = lazy(() =>
@@ -996,6 +1010,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsApplicationCommandMenuItemDetail />}
         />
         <Route
+          path={SettingsPath.ApplicationTimelineActivityTypeDetail}
+          element={<SettingsApplicationTimelineActivityTypeDetail />}
+        />
+        <Route
           path={SettingsPath.ApplicationViewDetail}
           element={<SettingsLayoutViewDetail />}
         />
@@ -1093,6 +1111,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           <Route
             path={SettingsPath.AdminPanelWorkspaceChatThread}
             element={<SettingsAdminWorkspaceChatThread />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelChats}
+            element={<SettingsAdminChats />}
           />
         </>
       )}

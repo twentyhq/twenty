@@ -108,9 +108,7 @@ describe('MCP Controller (integration)', () => {
       expect(res.body.jsonrpc).toBe('2.0');
       expect(res.body.result).toBeDefined();
       expect(Array.isArray(res.body.result.tools)).toBe(true);
-      // In a seeded workspace, there should be at least one tool
       expect(res.body.result.tools.length).toBeGreaterThanOrEqual(0);
-      // If tools exist, they should have name, description and inputSchema
       const first = res.body.result.tools[0];
 
       if (first) {
@@ -172,7 +170,6 @@ describe('MCP Controller (integration)', () => {
 
         expect(res.body.jsonrpc).toBe('2.0');
         expect(res.body.id).toBe(id);
-        // Either a structured result or an error is acceptable depending on validation/business rules
         const hasResultContent = !!res.body?.result?.content;
         const hasError = !!res.body?.error;
 
@@ -232,7 +229,6 @@ describe('MCP Controller (integration)', () => {
 
       expect(events.length).toBeGreaterThanOrEqual(1);
 
-      // The last event should be the JSON-RPC response
       const lastEvent = events[events.length - 1];
 
       expect(lastEvent).toMatchObject({
@@ -257,13 +253,17 @@ describe('MCP Controller (integration)', () => {
       });
     });
 
-    it('should include progress notification before tool call result in SSE', async () => {
+    it('should echo the client progress token before the tool call result in SSE', async () => {
       const res = await postMcp(
         {
           jsonrpc: '2.0',
           method: 'tools/call',
           id: 'sse-tool-1',
-          params: { name: 'learn_tools', arguments: { toolNames: [] } },
+          params: {
+            name: 'learn_tools',
+            arguments: { toolNames: [] },
+            _meta: { progressToken: 'client-token-1' },
+          },
         },
         API_KEY_ACCESS_TOKEN,
         'application/json, text/event-stream',
@@ -273,23 +273,20 @@ describe('MCP Controller (integration)', () => {
 
       const events = parseSseEvents(res.text);
 
-      // Should have at least a progress notification and the final response
       expect(events.length).toBeGreaterThanOrEqual(2);
 
-      // First event should be a progress notification
       const progressEvent = events[0];
 
       expect(progressEvent).toMatchObject({
         jsonrpc: '2.0',
         method: 'notifications/progress',
         params: {
-          progressToken: 'tool-call-sse-tool-1',
+          progressToken: 'client-token-1',
           progress: 0,
           total: 1,
         },
       });
 
-      // Last event should be the final JSON-RPC response
       const lastEvent = events[events.length - 1];
 
       expect(lastEvent).toMatchObject({
@@ -297,11 +294,36 @@ describe('MCP Controller (integration)', () => {
         jsonrpc: '2.0',
       });
 
-      // Should have either result.content or error
       const hasResultContent = !!(lastEvent as any)?.result?.content;
       const hasError = !!(lastEvent as any)?.error;
 
       expect(hasResultContent || hasError).toBe(true);
+    });
+
+    it('should send no progress notification when the client did not supply a token', async () => {
+      const res = await postMcp(
+        {
+          jsonrpc: '2.0',
+          method: 'tools/call',
+          id: 'sse-tool-no-progress',
+          params: { name: 'learn_tools', arguments: { toolNames: [] } },
+        },
+        API_KEY_ACCESS_TOKEN,
+        'application/json, text/event-stream',
+      ).expect(200);
+
+      const events = parseSseEvents(res.text);
+
+      expect(
+        events.some((event) => event.method === 'notifications/progress'),
+      ).toBe(false);
+
+      const lastEvent = events[events.length - 1];
+
+      expect(lastEvent).toMatchObject({
+        id: 'sse-tool-no-progress',
+        jsonrpc: '2.0',
+      });
     });
   });
 });

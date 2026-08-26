@@ -6,12 +6,10 @@ export const camelCase = <T>(text: T) =>
   lodashCamelCase(text as unknown as string) as CamelCase<T>;
 
 export const camelCaseDeep = <T>(value: T): CamelCasedPropertiesDeep<T> => {
-  // Check if it's an array
   if (Array.isArray(value)) {
     return value.map(camelCaseDeep) as CamelCasedPropertiesDeep<T>;
   }
 
-  // Check if it's an object
   if (isObject(value)) {
     // oxlint-disable-next-line typescript/no-explicit-any
     const result: Record<string, any> = {};

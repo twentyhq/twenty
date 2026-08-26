@@ -37,6 +37,7 @@ Notas:
 * Las funciones de preinstalación, posinstalación y desinstalación se detectan automáticamente durante la compilación del manifiesto; no necesitas referenciarlas en `defineApplication()`.
 * Pasar `defaultRoleUniversalIdentifier` explícitamente sigue siendo compatible por motivos de retrocompatibilidad, pero está en desuso en favor de `defineApplicationRole()`.
 * `serverVariables` son configuraciones y secretos con ámbito de instancia (por ejemplo, claves de API). A diferencia de `applicationVariables`, no declaran ningún valor en el manifiesto: el operador del espacio de trabajo los completa desde la configuración de la aplicación, y se inyectan en las funciones lógicas solo una vez que se han establecido.
+* Ambos tipos de variable aceptan `isDeprecated: true`. Úsala para retirar una variable en lugar de eliminarla: mantener la clave declarada conserva el valor almacenado (eliminarla destruye el valor que el operador introdujo), y la variable sigue siendo inyectada, por lo que tu código puede recurrir a ella — `process.env.NEW_API_KEY ?? process.env.API_KEY`. Una variable obsoleta desaparece de la configuración de la app una vez que no tiene ningún valor y nunca cuenta para la verificación de configuración de la app, por lo que `isDeprecated` tiene prioridad sobre `isRequired`.
 * Para mostrar una interfaz de configuración personalizada dentro de la pestaña **Settings** de la aplicación (en lugar de la sección predeterminada de configuración de variables), declara un componente de frontend con [`defineSettingsFrontComponent()`](/l/es/developers/extend/apps/layout/front-components#custom-settings-component) en su propio archivo. Solo se permite uno por aplicación. Las secciones gestionadas por el sistema (actualización automática, App URL, conexiones) siempre permanecen visibles.
 
 ## Tipos de variables
@@ -96,7 +97,7 @@ Lo mismo se aplica a los componentes de interfaz que leen valores mediante `getA
 
 El rol declarado con [`defineApplicationRole()`](/l/es/developers/extend/apps/config/roles) controla a qué pueden acceder las funciones de lógica y los componentes de interfaz de la aplicación:
 
-* El token en tiempo de ejecución inyectado como `TWENTY_APP_ACCESS_TOKEN` se deriva de este rol.
+* Los tokens en tiempo de ejecución inyectados en tus funciones de lógica se derivan de este rol. Una llamada que actúa como una persona se limita aún más a lo que esa persona puede hacer, por lo que nunca puede superar ninguno de los dos. Consulta [Qué acceso usa una llamada](/l/es/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 * El cliente de API tipado está restringido a los permisos otorgados a ese rol.
 * Sigue el principio de mínimo privilegio: declara solo los permisos que necesitan tus funciones.
 

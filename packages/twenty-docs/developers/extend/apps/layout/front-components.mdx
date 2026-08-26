@@ -333,6 +333,8 @@ export default defineLogicFunction({
 
 To call app HTTP routes or read and write Twenty records from a front component, use `RestApiClient` from `twenty-client-sdk/rest`. It sends `/s/...` paths to your workspace's functions base URL and every other path, including `/rest/...`, to `TWENTY_API_URL`.
 
+It always acts as the person looking at the page. `runAs: 'application'` is a logic-function option only: a component never receives your application's own token, so asking for it here throws. Put work that needs the app's own access behind a logic function and call that instead.
+
 | Method | Description |
 |--------|-------------|
 | `get(path, options?)` | Sends a `GET` request |
@@ -413,6 +415,7 @@ Available hooks:
 | `useSelectedRecordIds()` | `string[]` | All selected record IDs (empty array if none selected) |
 | `useRecordId()` | `string` or `null` | **Deprecated.** Use `useSelectedRecordIds()` instead |
 | `useFrontComponentId()` | `string` | This component instance's ID |
+| `useTimelineActivityId()` | `string` or `null` | The current timeline activity ID when rendering a custom timeline row |
 | `useColorScheme()` | `'light'` or `'dark'` | The host UI's active color scheme (`System` is already resolved) |
 | `useFrontComponentExecutionContext(selector)` | varies | Access the full execution context with a selector function |
 
@@ -448,7 +451,7 @@ The following system variables are always available via `process.env`:
 | Variable | Description |
 |----------|-------------|
 | `TWENTY_API_URL` | Base URL of the Twenty core API |
-| `TWENTY_APP_ACCESS_TOKEN` | Short-lived token scoped to your app's role |
+| `TWENTY_APP_ACCESS_TOKEN` | Short-lived token scoped to the signed-in person's role intersected with your app's, so a component can never do more than the person looking at it |
 
 ### `TWENTY_FUNCTIONS_URL`
 
@@ -475,6 +478,7 @@ Front components can trigger navigation, modals, and notifications using functio
 | `enqueueSnackbar(params)` | Show a toast notification |
 | `unmountFrontComponent()` | Unmount the component |
 | `updateProgress(progress)` | Update a progress indicator |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | Upload a `Blob` into a FILES field; resolves to `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` or `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
 
 Here is an example that uses the host API to show a snackbar and close the side panel after an action completes:
 
@@ -519,6 +523,39 @@ export default defineFrontComponent({
   component: ArchiveRecord,
 });
 ```
+
+### Storage
+
+`localStorage` and `sessionStorage` work as they do in a normal page, with the standard synchronous API. Your keys are scoped to your app install and the signed-in user: no other app can read them, and another user signing into the same browser starts from an empty store. Values written to `localStorage` stay on the device across reloads; `sessionStorage` lasts for the browser session.
+
+```tsx src/front-components/note-draft.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const NoteDraft = () => {
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '');
+
+  const handleChange = (nextDraft: string) => {
+    setDraft(nextDraft);
+    localStorage.setItem('draft', nextDraft);
+  };
+
+  return (
+    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-def0-890123456789',
+  name: 'note-draft',
+  description: 'Keeps an unsaved note on this device',
+  component: NoteDraft,
+});
+```
+
+Twenty stores the values on your app's behalf, so a write is applied locally right away and saved in the background. Reads never wait on the host. Nothing is synced: the values do not follow the user to another browser or machine, so use a logic function's [key-value store](/developers/extend/apps/logic/key-value-store) for anything that must survive a device change.
+
+Writes are capped, and every limit counts characters rather than bytes: keys are at most 512 characters, a single value at most 262,144 characters, and each storage at most 1,048,576 characters per app and user. A write that breaks a limit throws a `QuotaExceededError`, like the browser API.
 
 ### Working with multiple records
 
@@ -600,6 +637,43 @@ export default defineFrontComponent({
 ```
 
 See the [public assets section](/developers/extend/apps/config/public-assets) for details.
+
+## Sharing dependencies across front components
+
+By default, every front component bundles its own copy of the libraries it imports, so an app with five components ships React five times. Declare shared dependencies in your app's `package.json` to build those libraries once and have every component of the app load them from a single cached file:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+Each component then imports its dependencies exactly as before — nothing changes in your component code:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+A few things to know:
+
+- **One shared dependencies bundle per app.** The bundle is built from your app's own dependencies, so you keep full control of the versions you ship.
+- **List the exact specifiers you import.** `twenty-ui/input` and `twenty-ui/display` are two entries; a package name alone does not cover its subpaths. Listing `react` automatically covers `react/jsx-runtime`.
+- **Share `react-dom/client` alongside `react`.** Every component renders through `createRoot`, so leaving it out means each component still bundles React DOM.
+- **The bundle is cached.** It is served under a content-hash URL with a long-lived immutable cache, so it is downloaded once and reused across all components of the app until one of its dependencies changes.
+- **Components that import none of the shared packages never download it.**
 
 ## Styling
 
@@ -703,24 +777,24 @@ To branch on the active scheme explicitly, read it with `useColorScheme()` from 
 
 ## Current limitations
 
-Front components are under active development. Rendering, styling and handling events works well. Anything that reaches *past* rendering (measuring an element, calling a DOM method on a ref, portaling outside your tree, touching browser storage) is missing or incomplete today, and most of it fails silently: no exception, and no TypeScript error either, since the scaffold is typed against the full browser DOM.
+Front components are under active development. Rendering, styling, handling events, measuring elements and browser storage work well. Anything that reaches *past* those (calling a DOM method on a ref, observing element resizes, portaling outside your tree) is missing or incomplete today, and most of it fails silently: no exception, and no TypeScript error either, since the scaffold is typed against the full browser DOM.
 
 If one of these blocks you, [open an issue](https://github.com/twentyhq/twenty/issues/new/choose) so it gets prioritized.
 
 ### Layout and measurement
 
-Nothing can measure itself yet.
+Elements can measure themselves: the host mirrors geometry into the sandbox, so reads are answered locally but can be up to one frame stale, and the first read of a never-measured element returns zeros. After writing, re-read in a `requestAnimationFrame` callback or an effect.
 
 | API | What happens |
 |-----|--------------|
-| `getBoundingClientRect()`, `getClientRects()` | Throws |
-| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Silently `undefined`, so `width ?? 0` yields `0` and `width > 600` is always false |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Work, from the mirror; assigning `scrollTop` / `scrollLeft` is a no-op |
+| `getClientRects()`, `window.matchMedia()` | Throws |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY` | Work, reporting the **browser viewport**; your widget's own size is `document.body.clientWidth` / `clientHeight` |
+| `window.getComputedStyle()` | Returns the element's inline styles only, never the host-computed cascade |
 | `ResizeObserver`, `IntersectionObserver` | `ReferenceError` (`typeof` guards do work) |
-| `window.matchMedia()`, `window.getComputedStyle()` | Throws |
-| `window.innerWidth`, `innerHeight`, `devicePixelRatio` | Silently `undefined` |
-| `new MutationObserver(fn)` | Constructs, then `.observe()` throws |
+| `MutationObserver` | Works, including `subtree`, `attributeFilter`, old values and `takeRecords()` |
 
-So recharts `ResponsiveContainer`, Floating UI / Popper, list virtualization and drag-to-resize do not work yet. Do layout in CSS instead: your stylesheet reaches the real page, so flexbox, grid, `aspect-ratio`, `clamp()` and `@container` all behave normally.
+Positioning from `getBoundingClientRect` now works, but anything watching size changes through `ResizeObserver` (recharts `ResponsiveContainer`, Floating UI's `autoUpdate`) still does not. Prefer CSS for layout anyway: your stylesheet reaches the real page, so flexbox, grid, `aspect-ratio`, `clamp()` and `@container` behave normally, with no frame lag.
 
 <Note>
 `requestAnimationFrame`, `fetch`, `setTimeout` and `queueMicrotask` work without the `window.` prefix. Only `window.requestAnimationFrame(...)` and friends throw.
@@ -734,28 +808,28 @@ A `ref` gives you a sandbox element, not an `HTMLElement`.
 |----------------|--------------|-------------|
 | `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Throws | Controlled components; read values from `event.target` |
 | `element.classList.add(...)` | Throws (`classList` is `undefined`) | Build the `className` string yourself |
-| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()` | Throws | `querySelector()` / `querySelectorAll()`, which work |
+| `document.createTreeWalker()` | Throws | `querySelector()` / `querySelectorAll()` and `getElementById()` work; `getElementsByClassName()` works too, but returns a static collection, not a live `HTMLCollection` |
 | `document.activeElement` | Always `undefined` | Track focus with `onFocus` / `onBlur` |
-| `<canvas>` | Renders nothing, no error | SVG, or draw offscreen and show an `<img src={dataUrl}>` |
+| `canvas` | Renders nothing, no error | SVG, or draw offscreen and show the result in an `img` element |
 | `createPortal(node, document.body)` | Renders nothing, while `isConnected` reports success | Overlays inline with `position: absolute`, or pass the library your own container element |
 
 The portal gap is why Radix, Headless UI, MUI and react-select popovers render nothing by default. Most accept a container prop; point it at an element you rendered.
 
 ### Events
 
-Mouse, pointer, touch, drag, keyboard, focus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` and `animationend`/`transitionend` cross to the host, plus a few per element: `load`/`error` on `<img>`, clipboard and composition on `<input>`/`<textarea>`, media on `<video>`/`<audio>`, `toggle` on `<details>`/`<dialog>`. Anything else (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, pointer capture, `onLoad` off `<img>`) is dropped without warning.
+Mouse, pointer, touch, drag, keyboard, focus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` and `animationend`/`transitionend` cross to the host, plus a few per element: `load`/`error` on `img`, clipboard and composition on `input`/`textarea`, media on `video`/`audio`, `toggle` on `details`/`dialog`. Anything else (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, pointer capture, `onLoad` off `img`) is dropped without warning.
 
 `document.addEventListener()` and `window.addEventListener()` register without error and never fire, which is why a drag stops as soon as the pointer leaves the element it started on. `event.preventDefault()` does not cross either; form submission, `dragover`/`drop` and link clicks are already guarded for you.
 
 ### Attributes and styling
 
-Each element forwards its own properties to the host DOM (`href` on `<a>`, `src`/`alt` on `<img>`, `value`/`placeholder`/`disabled` on `<input>`, and so on), plus a common set on every element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` and any `aria-*` / `data-*` attribute (hyphenated, so `ariaLabel` is dropped). Anything outside that is silently discarded, so express custom state as `data-*`.
+Each element forwards its own properties to the host DOM (`href` on `a`, `src`/`alt` on `img`, `value`/`placeholder`/`disabled` on `input`, and so on), plus a common set on every element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` and any `aria-*` / `data-*` attribute (hyphenated, so `ariaLabel` is dropped). Anything outside that is silently discarded, so express custom state as `data-*`.
 
-Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `<style>` element, is injected into the host page's `<head>` **unscoped**. So class names collide with Twenty's own (prefix them, and never write bare `div { ... }` selectors), and `@media` matches the browser window rather than your widget (use `@container` with your own `container-type`). Inline `style` props are unaffected.
+Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `style` element, is injected into the host page's `head` **unscoped**. So class names collide with Twenty's own (prefix them, and never write bare `div { ... }` selectors), and `@media` matches the browser window rather than your widget (use `@container` with your own `container-type`). Inline `style` props are unaffected.
 
 ### Storage and network
 
-`localStorage`, `sessionStorage`, IndexedDB, cookies, the Cache API and `BroadcastChannel` are all unavailable, since the component runs in a worker at an opaque origin. To persist state, call a [logic function](/developers/extend/apps/logic/logic-functions) and use its [key-value store](/developers/extend/apps/logic/key-value-store).
+`localStorage` and `sessionStorage` are provided by Twenty rather than the browser: the component runs in a worker at an opaque origin, so the host stores the values on your app's behalf. See [storage](#storage) for their scoping and limits. IndexedDB, cookies, the Cache API and `BroadcastChannel` remain unavailable. To persist state across devices, call a [logic function](/developers/extend/apps/logic/logic-functions) and use its [key-value store](/developers/extend/apps/logic/key-value-store).
 
 `fetch` works, with caveats:
 
@@ -763,9 +837,13 @@ Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `<style>` el
 - Other origins leave the sandbox with `Origin: null`, so a third-party API answers only if it sends `Access-Control-Allow-Origin: *`. Call it from a logic function instead.
 - `fetch('/rest/people')` is never matched to the Twenty API, because the sandbox has no page URL to resolve a relative path against.
 
+### Media capture
+
+`navigator.mediaDevices.getUserMedia()` and `MediaRecorder` work inside front components through sandbox polyfills, so standard recording code runs unchanged and `MediaRecorder.isTypeSupported` answers for common container/codec combinations. Detailed `getUserMedia` constraint objects are accepted but not forwarded — the host captures with its defaults for the requested kinds — and only one capture can be live at a time across applications. Store a recorded `Blob` with the `uploadFile` host function.
+
 ### Other gaps
 
-- **File contents.** `<input type="file">` gives your handler file metadata only, not the bytes, so `FileReader` and uploads are not possible yet.
+- **File contents.** An `input` of type `file` gives your handler file metadata only, not the bytes, so `FileReader` is not available. To upload a `Blob` your code already holds — e.g. one produced by `MediaRecorder` — use the `uploadFile` host function.
 - **Drag-and-drop payloads.** Drag events fire, but `event.dataTransfer` is `undefined`.
 - **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` and `URL` are available.
-- **`<iframe>`** is always re-sandboxed without `allow-same-origin`, so an embed relying on its own session renders logged out. It has no `onLoad` either.
+- **`iframe`** is always re-sandboxed without `allow-same-origin`, so an embed relying on its own session renders logged out. It has no `onLoad` either.

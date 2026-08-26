@@ -4,6 +4,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -16,6 +17,9 @@ import {
 
 type DriftCounts = Record<string, number>;
 
+const CRON_INTERVAL_HOURS = 3;
+const SHARD_TOTAL = 24 / CRON_INTERVAL_HOURS;
+
 // Detect drift between the workspace source-of-truth records and their core
 // mirror. The dual-write is best-effort (async, not transactional), so core can
 // silently fall out of sync; this quantifies that per workspace as metrics.
@@ -26,41 +30,53 @@ export class WorkflowCoreConsistencyService {
   constructor(
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
+    private readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly metricsService: MetricsService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   async runConsistencyCheck(): Promise<void> {
-    // Only workspaces that actually use workflows; the soft-ref makes this a
-    // cheap central lookup that skips the vast majority of workspaces.
-    const workspaces: Array<{ workspaceId: string }> =
-      await this.coreDataSource.query(
-        `SELECT DISTINCT "workspaceId" FROM core."workflow"`,
-      );
+    const shard = {
+      index:
+        Math.floor(new Date().getUTCHours() / CRON_INTERVAL_HOURS) %
+        SHARD_TOTAL,
+      total: SHARD_TOTAL,
+    };
 
-    for (const { workspaceId } of workspaces) {
-      try {
-        await this.checkWorkspace(workspaceId);
-      } catch (error) {
-        this.exceptionHandlerService.captureExceptions([error], {
-          workspace: { id: workspaceId },
-        });
-      }
+    const report = await this.workspaceIteratorService.iterate({
+      shard,
+      callback: async ({ workspaceId, databaseSchema }) => {
+        if (!isDefined(databaseSchema)) {
+          return;
+        }
+
+        await this.checkWorkspace(workspaceId, databaseSchema);
+      },
+    });
+
+    for (const { workspaceId, error } of report.fail) {
+      this.exceptionHandlerService.captureExceptions([error], {
+        workspace: { id: workspaceId },
+      });
     }
   }
 
-  private async checkWorkspace(workspaceId: string): Promise<void> {
-    const [workspace] = await this.coreDataSource.query(
-      `SELECT "databaseSchema" FROM core."workspace" WHERE id = $1`,
+  private async checkWorkspace(
+    workspaceId: string,
+    schema: string,
+  ): Promise<void> {
+    const [{ shouldCheck }] = await this.coreDataSource.query(
+      `SELECT (
+         EXISTS (SELECT 1 FROM "${schema}"."workflow" WHERE "deletedAt" IS NULL)
+         OR EXISTS (SELECT 1 FROM core."workflow" WHERE "workspaceId" = $1)
+       ) AS "shouldCheck"`,
       [workspaceId],
     );
 
-    if (!isDefined(workspace?.databaseSchema)) {
+    if (!shouldCheck) {
       return;
     }
-
-    const schema: string = workspace.databaseSchema;
 
     await this.checkWorkflowSync(workspaceId, schema);
     await this.checkWorkflowVersionSync(workspaceId, schema);
@@ -170,7 +186,7 @@ export class WorkflowCoreConsistencyService {
       type: AutomatedTriggerType;
       settings: BaseDatabaseEventTriggerSettings | CronTriggerSettings | null;
     }> = await this.coreDataSource.query(
-      `SELECT "workflowId", type, settings FROM "${schema}"."workflowAutomatedTrigger"`,
+      `SELECT "workflowId", type, settings FROM "${schema}"."workflowAutomatedTrigger" WHERE "deletedAt" IS NULL`,
     );
 
     const tableByWorkflowId = new Map(

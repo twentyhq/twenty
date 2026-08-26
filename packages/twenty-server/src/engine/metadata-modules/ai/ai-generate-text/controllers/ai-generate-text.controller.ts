@@ -2,6 +2,7 @@ import { Body, Controller, Post, UseFilters, UseGuards } from '@nestjs/common';
 
 import { generateText } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { ApiPath } from 'twenty-shared/types';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -20,9 +21,11 @@ import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/serv
 import { AiRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/filters/ai-api-exception.filter';
 import { GenerateTextInput } from 'src/engine/metadata-modules/ai/ai-generate-text/dtos/generate-text.input';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
+import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 
-@Controller('rest/ai')
+@Controller(`${ApiPath.Rest}/ai`)
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
 @UseFilters(
   PermissionsRestApiExceptionFilter,
@@ -67,11 +70,18 @@ export class AiGenerateTextController {
     let result: Awaited<ReturnType<typeof generateText>> | undefined;
 
     try {
-      result = await generateText({
-        model: registeredModel.model,
-        system: body.systemPrompt,
-        prompt: body.userPrompt,
-      });
+      result = await withDedicatedAiTrace(() =>
+        generateText({
+          model: registeredModel.model,
+          system: body.systemPrompt,
+          prompt: body.userPrompt,
+          experimental_telemetry: buildAiTelemetry({
+            functionId: 'ai-generate-text',
+            workspaceId: workspace.id,
+            userWorkspaceId,
+          }),
+        }),
+      );
 
       return {
         text: result.text,

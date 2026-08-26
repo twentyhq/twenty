@@ -302,11 +302,13 @@ export class AgentChatStreamingService {
     userWorkspaceId,
     workspace,
     text,
+    modelId,
   }: {
     thread: AgentChatThreadEntity;
     userWorkspaceId: string;
     workspace: WorkspaceEntity;
     text: string;
+    modelId: string;
   }): Promise<{ streamId: string; messageId: string; turnId: string } | null> {
     const threadId = thread.id;
     const streamId = generateId();
@@ -372,6 +374,7 @@ export class AgentChatStreamingService {
           workspaceId: workspace.id,
           messages,
           browsingContext: null,
+          modelId,
           lastUserMessageText: text,
           lastUserMessageParts: [{ type: 'text' as const, text }],
           hasTitle: !!thread.title,
@@ -389,7 +392,7 @@ export class AgentChatStreamingService {
         key: MetricsKeys.AiChatTurnFailed,
         amount: 1,
         attributes: {
-          model: 'unknown',
+          model: modelId,
           failure_phase: 'enqueue',
           error_code: streamError.code,
         },
@@ -533,6 +536,7 @@ export class AgentChatStreamingService {
     userWorkspaceId,
     workspace,
     modelId,
+    fileAttachments,
   }: {
     threadId: string;
     messageId: string;
@@ -540,6 +544,7 @@ export class AgentChatStreamingService {
     userWorkspaceId: string;
     workspace: WorkspaceEntity;
     modelId?: string;
+    fileAttachments?: AiChatFileAttachment[];
   }): Promise<{ streamId: string; turnId: string | null }> {
     const streamId = generateId();
 
@@ -563,7 +568,28 @@ export class AgentChatStreamingService {
       throw error;
     }
 
+    let attachmentMessageId: string | null = null;
+
     try {
+      const fileParts = await this.buildFilePartsFromAttachments(
+        fileAttachments,
+        workspace.id,
+      );
+
+      if (isNonEmptyArray(fileParts)) {
+        const attachmentMessage = await this.agentChatService.addMessage({
+          threadId,
+          uiMessage: {
+            role: AgentMessageRole.USER,
+            parts: fileParts,
+          },
+          turnId: resolved.turnId ?? undefined,
+          workspaceId: workspace.id,
+        });
+
+        attachmentMessageId = attachmentMessage.id;
+      }
+
       await this.enqueueResumeStream({
         threadId,
         userWorkspaceId,
@@ -573,6 +599,14 @@ export class AgentChatStreamingService {
         modelId,
       });
     } catch (error) {
+      if (isDefined(attachmentMessageId)) {
+        await this.agentChatService
+          .deleteMessage({
+            messageId: attachmentMessageId,
+            workspaceId: workspace.id,
+          })
+          .catch(() => {});
+      }
       await this.agentChatService.restorePendingQuestion({
         threadId,
         messageId,

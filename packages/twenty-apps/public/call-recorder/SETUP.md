@@ -16,7 +16,12 @@ and to receive recordings back. Two things must be configured:
    update, and cancel bots.
 2. A **webhook** from Recall.ai back to your deployment, so the app learns when
    a recording is ready and can ingest it.
-3. A **Gladia API key** in the Recall.ai dashboard (**Transcription → Gladia**, per region) — transcripts fail without it.
+
+Transcription runs on Recall.ai's own provider by default, which needs no extra
+credentials. If a workspace switches `CALL_RECORDER_TRANSCRIPT_PROVIDER` to
+Gladia, add a **Gladia API key** in the Recall.ai dashboard
+(**Transcription → Gladia**) for every region in use, or transcripts for that
+workspace fail.
 
 ## Server variables
 
@@ -31,7 +36,8 @@ Set these on the application registration after installing
 | `RECALL_WEBHOOK_SECRET` | Yes | Svix signing secret (`whsec_…`) used to verify incoming Recall webhooks. |
 
 > **Bot behavior settings** (display name, join timing, lobby and leave
-> timeouts) and the summary settings (`CALL_RECORDER_SUMMARY_ENABLED`,
+> timeouts), the transcription provider (`CALL_RECORDER_TRANSCRIPT_PROVIDER`)
+> and the summary settings (`CALL_RECORDER_SUMMARY_ENABLED`,
 > `CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT`) are **application variables**
 > that a workspace admin tunes inside the app — not server variables.
 

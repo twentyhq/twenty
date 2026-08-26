@@ -1,5 +1,5 @@
 import { Inject, UseGuards, UseInterceptors } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
@@ -22,6 +22,7 @@ import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/d
 import { UpdateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/update-front-component.input';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 import { FrontComponentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/front-component/interceptors/front-component-graphql-api-exception.interceptor';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
 @UseGuards(WorkspaceAuthGuard)
@@ -37,7 +38,24 @@ export class FrontComponentResolver {
     @Inject(ApplicationTokenService)
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly applicationVariableService: ApplicationVariableEntityService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
+
+  @ResolveField(() => String, { nullable: true })
+  async frontComponentSharedDependenciesChecksum(
+    @Parent() frontComponent: FrontComponentDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<string | null> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatApplicationMaps',
+      ]);
+
+    return (
+      flatApplicationMaps.byId[frontComponent.applicationId]
+        ?.frontComponentSharedDependenciesChecksum ?? null
+    );
+  }
 
   @Query(() => [FrontComponentDTO])
   @UseGuards(NoPermissionGuard)

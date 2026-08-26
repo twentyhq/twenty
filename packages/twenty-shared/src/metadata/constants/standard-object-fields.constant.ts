@@ -24,7 +24,12 @@ export const STANDARD_OBJECT_FIELDS = {
     ...buildStandardObjectSystemFields(
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
     ),
-    name: { universalIdentifier: '20202020-7207-46e8-9dab-849505ae8497' },
+    timelineActivityTypeId: {
+      universalIdentifier: '20202020-e5f8-4839-9dcf-781e260624ee',
+    },
+    timelineActivityTypeSnapshot: {
+      universalIdentifier: '20202020-e006-493a-9b07-f2a768a204ca',
+    },
     happensAt: {
       universalIdentifier: '20202020-9526-4993-b339-c4318c4d39f0',
     },
@@ -1032,6 +1037,12 @@ export const STANDARD_OBJECT_FIELDS = {
     name: { universalIdentifier: '20202020-e914-43a6-9c26-3603c59065f4' },
     colorScheme: {
       universalIdentifier: '20202020-66bc-47f2-adac-f2ef7c598b63',
+    },
+    uiScale: {
+      universalIdentifier: '20202020-1581-4bfb-b87d-58fa9cd5b817',
+    },
+    openRecordIn: {
+      universalIdentifier: '20202020-1b16-419d-9323-6f3ea850e5d9',
     },
     locale: {
       universalIdentifier: '20202020-402e-4695-b169-794fa015afbe',

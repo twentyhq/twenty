@@ -14,6 +14,7 @@ import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorF
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { viewableRecordIdState } from '@/object-record/record-side-panel/states/viewableRecordIdState';
 import { useOpenNewRecordTitleCell } from '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell';
+import { newRecordTitleCellToOpenState } from '@/object-record/record-title-cell/states/newRecordTitleCellToOpenState';
 import { setRecordPageActiveTabId } from '@/page-layout/utils/setRecordPageActiveTabId';
 import {
   AppPath,
@@ -79,22 +80,19 @@ export const useOpenRecordInSidePanel = () => {
           ? getLabelIdentifierFieldMetadataItem(objectMetadataItemForRecordPage)
           : undefined;
 
+        if (isNewRecord && isDefined(labelIdentifierField)) {
+          store.set(newRecordTitleCellToOpenState.atom, {
+            recordId,
+            fieldName: labelIdentifierField.name,
+          });
+        }
+
         closeSidePanelMenu();
 
-        navigate(
-          AppPath.RecordShowPage,
-          { objectNameSingular, objectRecordId: recordId },
-          undefined,
-          isNewRecord
-            ? {
-                state: {
-                  isNewRecord: true,
-                  objectRecordId: recordId,
-                  labelIdentifierFieldName: labelIdentifierField?.name,
-                },
-              }
-            : undefined,
-        );
+        navigate(AppPath.RecordShowPage, {
+          objectNameSingular,
+          objectRecordId: recordId,
+        });
 
         return;
       }

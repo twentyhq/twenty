@@ -23,17 +23,24 @@ export const extractRecallBotSyncState = (
 ): RecallBotSyncState => {
   const { statusChanges } = bot;
   const latestStatusChange = getLatestStatusChange(statusChanges);
-  const status = mapRecallStatusCodeToCallRecordingStatus(
-    latestStatusChange?.code,
-  );
   const recording = bot.recordings[0];
+  // A later 'done' change hides the no-capture sub code, so scan the history.
+  const notRecordedStatusChange = isUndefined(recording)
+    ? findNotRecordedStatusChange(statusChanges)
+    : undefined;
+  const status = isUndefined(notRecordedStatusChange)
+    ? mapRecallStatusCodeToCallRecordingStatus({
+        statusCode: latestStatusChange?.code,
+      })
+    : CallRecordingStatus.NOT_RECORDED;
 
   return {
     status,
-    failureReason:
-      status === CallRecordingStatus.FAILED
-        ? latestStatusChange?.code
-        : undefined,
+    failureReason: getFailureReason({
+      status,
+      latestStatusChange,
+      notRecordedStatusChange,
+    }),
     startedAt: normalizeRecallTimestamp(
       recording?.startedAt ??
         findStatusChangeTimestamp(statusChanges, 'in_call_recording'),
@@ -47,6 +54,37 @@ export const extractRecallBotSyncState = (
       !isUndefined(recording?.completedAt) ||
       statusChanges.some((statusChange) => statusChange.code === 'done'),
   };
+};
+
+const findNotRecordedStatusChange = (
+  statusChanges: RecallBotStatusChange[],
+): RecallBotStatusChange | undefined =>
+  statusChanges.find(
+    (statusChange) =>
+      mapRecallStatusCodeToCallRecordingStatus({
+        statusCode: statusChange.code,
+        statusSubCode: statusChange.subCode,
+      }) === CallRecordingStatus.NOT_RECORDED,
+  );
+
+const getFailureReason = ({
+  status,
+  latestStatusChange,
+  notRecordedStatusChange,
+}: {
+  status: CallRecordingStatus | undefined;
+  latestStatusChange: RecallBotStatusChange | undefined;
+  notRecordedStatusChange: RecallBotStatusChange | undefined;
+}): string | undefined => {
+  if (status === CallRecordingStatus.NOT_RECORDED) {
+    return notRecordedStatusChange?.subCode;
+  }
+
+  if (status === CallRecordingStatus.FAILED) {
+    return latestStatusChange?.subCode ?? latestStatusChange?.code;
+  }
+
+  return undefined;
 };
 
 const getLatestStatusChange = (

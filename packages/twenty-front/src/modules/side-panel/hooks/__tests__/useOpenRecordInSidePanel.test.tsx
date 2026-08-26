@@ -7,7 +7,8 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
-import { getDefaultRecordPageLayoutId } from '@/page-layout/utils/getDefaultRecordPageLayoutId';
+import { newRecordTitleCellToOpenState } from '@/object-record/record-title-cell/states/newRecordTitleCellToOpenState';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
@@ -64,6 +65,19 @@ const personMockObjectMetadataItem =
   getTestEnrichedObjectMetadataItemsMock().find(
     (item) => item.nameSingular === 'person',
   )!;
+
+const personRecordPageLayout = {
+  id: 'person-record-page-layout-id',
+  name: 'Person record page',
+  type: PageLayoutType.RECORD_PAGE,
+  objectMetadataId: personMockObjectMetadataItem.id,
+  universalIdentifier: 'person-record-page-layout-universal-identifier',
+  isSystemSideEffect: true,
+  defaultTabToFocusOnMobileAndSidePanelId: null,
+  createdAt: '2024-01-01T00:00:00Z',
+  updatedAt: '2024-01-01T00:00:00Z',
+  deletedAt: null,
+};
 
 const wrapper = getJestMetadataAndApolloMocksAndCommandMenuWrapper({
   apolloMocks: [],
@@ -133,6 +147,12 @@ describe('useOpenRecordInSidePanel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsMobile = false;
+    jotaiStore.set(newRecordTitleCellToOpenState.atom, null);
+    jotaiStore.set(metadataStoreState.atomFamily('pageLayouts'), {
+      current: [personRecordPageLayout],
+      draft: [],
+      status: 'up-to-date',
+    });
   });
 
   it('should set the correct states and navigate to the record page', () => {
@@ -241,9 +261,7 @@ describe('useOpenRecordInSidePanel', () => {
     });
 
     const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
-      pageLayoutId: getDefaultRecordPageLayoutId({
-        targetObjectNameSingular: objectNameSingular,
-      }),
+      pageLayoutId: personRecordPageLayout.id,
       layoutType: PageLayoutType.RECORD_PAGE,
       targetRecordIdentifier: {
         id: recordId,
@@ -284,13 +302,12 @@ describe('useOpenRecordInSidePanel', () => {
       });
     });
 
-    expect(mockNavigateApp).toHaveBeenCalledWith(
-      AppPath.RecordShowPage,
-      { objectNameSingular: 'person', objectRecordId: 'record-123' },
-      undefined,
-      undefined,
-    );
+    expect(mockNavigateApp).toHaveBeenCalledWith(AppPath.RecordShowPage, {
+      objectNameSingular: 'person',
+      objectRecordId: 'record-123',
+    });
     expect(mockNavigateSidePanel).not.toHaveBeenCalled();
+    expect(jotaiStore.get(newRecordTitleCellToOpenState.atom)).toBeNull();
   });
 
   it('should forward new record state to the record page on mobile', () => {
@@ -305,20 +322,16 @@ describe('useOpenRecordInSidePanel', () => {
       });
     });
 
-    expect(mockNavigateApp).toHaveBeenCalledWith(
-      AppPath.RecordShowPage,
-      { objectNameSingular: 'person', objectRecordId: 'new-record-123' },
-      undefined,
-      {
-        state: {
-          isNewRecord: true,
-          objectRecordId: 'new-record-123',
-          labelIdentifierFieldName: getLabelIdentifierFieldMetadataItem(
-            personMockObjectMetadataItem,
-          )?.name,
-        },
-      },
-    );
+    expect(mockNavigateApp).toHaveBeenCalledWith(AppPath.RecordShowPage, {
+      objectNameSingular: 'person',
+      objectRecordId: 'new-record-123',
+    });
+    expect(jotaiStore.get(newRecordTitleCellToOpenState.atom)).toEqual({
+      recordId: 'new-record-123',
+      fieldName: getLabelIdentifierFieldMetadataItem(
+        personMockObjectMetadataItem,
+      )?.name,
+    });
     expect(mockOpenNewRecordTitleCell).not.toHaveBeenCalled();
   });
 
@@ -338,9 +351,7 @@ describe('useOpenRecordInSidePanel', () => {
     });
 
     const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
-      pageLayoutId: getDefaultRecordPageLayoutId({
-        targetObjectNameSingular: objectNameSingular,
-      }),
+      pageLayoutId: personRecordPageLayout.id,
       layoutType: PageLayoutType.RECORD_PAGE,
       targetRecordIdentifier: {
         id: recordId,

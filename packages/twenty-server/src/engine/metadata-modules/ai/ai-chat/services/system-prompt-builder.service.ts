@@ -1,18 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import { getValidTimeZoneOrUndefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
-import { LOAD_SKILL_TOOL_NAME } from 'src/engine/core-modules/tool-provider/tools';
-import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { buildToolCatalogSection } from 'src/engine/core-modules/tool-provider/utils/build-tool-catalog-section.util';
-import {
-  AgentActorContextService,
-  type UserContext,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
+import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/constants/chat-system-prompts.const';
-import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
+import { buildSkillCatalogSection } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-skill-catalog-section.util';
+import { buildUserContextSection } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-user-context-section.util';
+import { buildWorkspaceInstructionsSection } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-instructions-section.util';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
 export type SystemPromptSection = {
@@ -74,11 +71,11 @@ export class SystemPromptBuilderService {
       estimatedTokenCount: estimateTokenCount(responseFormatContent),
     });
 
-    if (workspaceInstructions) {
-      const workspaceSection = this.buildWorkspaceInstructionsSection(
-        workspaceInstructions,
-      );
+    const workspaceSection = buildWorkspaceInstructionsSection(
+      workspaceInstructions ?? '',
+    );
 
+    if (isNonEmptyString(workspaceSection)) {
       sections.push({
         title: 'Workspace Instructions',
         content: workspaceSection,
@@ -87,7 +84,7 @@ export class SystemPromptBuilderService {
     }
 
     if (userContext) {
-      const userSection = this.buildUserContextSection(userContext);
+      const userSection = buildUserContextSection(userContext);
 
       sections.push({
         title: 'User Context',
@@ -107,7 +104,7 @@ export class SystemPromptBuilderService {
       estimatedTokenCount: estimateTokenCount(toolSection),
     });
 
-    const skillSection = this.buildSkillCatalogSection(skillCatalog);
+    const skillSection = buildSkillCatalogSection(skillCatalog);
 
     if (skillSection) {
       sections.push({
@@ -126,128 +123,5 @@ export class SystemPromptBuilderService {
       sections,
       estimatedTokenCount: totalTokens,
     };
-  }
-
-  buildFullPrompt(
-    toolCatalog: ToolIndexEntry[],
-    skillCatalog: FlatSkill[],
-    preloadedTools: string[],
-    storedFiles?: Array<{
-      filename: string;
-      fileId: string;
-    }>,
-    workspaceInstructions?: string,
-    userContext?: UserContext,
-  ): string {
-    const parts: string[] = [
-      CHAT_SYSTEM_PROMPTS.BASE,
-      CHAT_SYSTEM_PROMPTS.BROWSING_CONTEXT_INSTRUCTION,
-      CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT,
-    ];
-
-    if (workspaceInstructions) {
-      parts.push(this.buildWorkspaceInstructionsSection(workspaceInstructions));
-    }
-
-    if (userContext) {
-      parts.push(this.buildUserContextSection(userContext));
-    }
-
-    parts.push(buildToolCatalogSection(toolCatalog, preloadedTools));
-
-    const skillSection = this.buildSkillCatalogSection(skillCatalog);
-
-    if (skillSection) {
-      parts.push(skillSection);
-    }
-
-    if (storedFiles && storedFiles.length > 0) {
-      parts.push(this.buildUploadedFilesSection(storedFiles));
-    }
-
-    return parts.join('\n');
-  }
-
-  buildWorkspaceInstructionsSection(instructions: string): string {
-    return `
-## Workspace Instructions
-
-The following are custom instructions provided by the workspace administrator:
-
-${instructions}`;
-  }
-
-  buildUserContextSection(userContext: UserContext): string {
-    const parts = [
-      `User: ${userContext.firstName} ${userContext.lastName}`.trim(),
-      `Locale: ${userContext.locale}`,
-    ];
-
-    const resolvedTimeZone = getValidTimeZoneOrUndefined(userContext.timezone);
-
-    if (resolvedTimeZone) {
-      parts.push(`Timezone: ${resolvedTimeZone}`);
-    }
-
-    parts.push(`Current date: ${this.formatCurrentDate(userContext.timezone)}`);
-
-    return `
-## User Context
-
-${parts.join('\n')}`;
-  }
-
-  private formatCurrentDate(timezone: string | null): string {
-    return new Intl.DateTimeFormat('en-US', {
-      timeZone: getValidTimeZoneOrUndefined(timezone),
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    }).format(new Date());
-  }
-
-  buildUploadedFilesSection(
-    storedFiles: Array<{ filename: string; fileId: string }>,
-  ): string {
-    const fileList = storedFiles.map((f) => `- ${f.filename}`).join('\n');
-
-    const filesJson = JSON.stringify(
-      storedFiles.map((f) => ({ filename: f.filename, fileId: f.fileId })),
-    );
-
-    return `
-## Uploaded Files
-
-The user has uploaded the following files:
-${fileList}
-
-**IMPORTANT**: Use the \`code_interpreter\` tool to analyze these files.
-When calling code_interpreter, include the files parameter with these values (use fileId to reference uploaded files):
-\`\`\`json
-${filesJson}
-\`\`\`
-
-In your Python code, access files at \`/home/user/{filename}\`.`;
-  }
-
-  buildSkillCatalogSection(skillCatalog: FlatSkill[]): string {
-    if (skillCatalog.length === 0) {
-      return '';
-    }
-
-    const skillsList = skillCatalog
-      .map(
-        (skill) => `- \`${skill.name}\`: ${skill.description ?? skill.label}`,
-      )
-      .join('\n');
-
-    return `
-## Available Skills
-
-Skills provide detailed expertise for specialized tasks. Load a skill before attempting complex operations.
-To load a skill, call \`${LOAD_SKILL_TOOL_NAME}\` with the skill name(s).
-
-${skillsList}`;
   }
 }

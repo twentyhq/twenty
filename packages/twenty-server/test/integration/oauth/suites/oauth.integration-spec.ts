@@ -1,7 +1,9 @@
 import crypto from 'crypto';
 
 import bcrypt from 'bcrypt';
+import gql from 'graphql-tag';
 import request from 'supertest';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
@@ -781,7 +783,6 @@ describe('OAuth (integration)', () => {
 
       createdEntityIds.tokens.push(tokenId);
 
-      // First use succeeds
       await postToken({
         grant_type: 'authorization_code',
         code,
@@ -790,7 +791,6 @@ describe('OAuth (integration)', () => {
         redirect_uri: 'https://example.com/callback',
       }).expect(200);
 
-      // Second use detects replay
       const res = await postToken({
         grant_type: 'authorization_code',
         code,
@@ -893,6 +893,288 @@ describe('OAuth (integration)', () => {
         .post('/oauth/introspect')
         .send({ token: 'some-token' })
         .expect(401);
+    });
+  });
+
+  describe('Per-user authorizations', () => {
+    const exchangeForTokens = async (
+      scope = 'read write',
+    ): Promise<{
+      accessToken: string;
+      refreshToken: string;
+    }> => {
+      const code = crypto.randomBytes(42).toString('hex');
+      const hashedCode = crypto.createHash('sha256').update(code).digest('hex');
+
+      const tokenId = await insertAppToken(ds, {
+        value: hashedCode,
+        type: AppTokenType.AuthorizationCode,
+        userId: TEST_USER_ID,
+        workspaceId: TEST_WORKSPACE_ID,
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+        context: {
+          redirectUri: 'https://example.com/callback',
+          clientId: testRegistration.oAuthClientId,
+          scope,
+        },
+      });
+
+      createdEntityIds.tokens.push(tokenId);
+
+      const res = await postToken({
+        grant_type: 'authorization_code',
+        code,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+        redirect_uri: 'https://example.com/callback',
+      }).expect(200);
+
+      return {
+        accessToken: res.body.access_token,
+        refreshToken: res.body.refresh_token,
+      };
+    };
+
+    const findAuthorization = async () => {
+      const [authorization] = await ds.query(
+        `SELECT "scopes", "lastAuthorizedAt", "revokedAt"
+         FROM core."applicationAuthorization"
+         WHERE "userId" = $1 AND "applicationId" = $2`,
+        [TEST_USER_ID, testApplication.id],
+      );
+
+      return authorization;
+    };
+
+    const deleteAuthorization = () =>
+      ds.query(
+        `DELETE FROM core."applicationAuthorization"
+         WHERE "userId" = $1 AND "applicationId" = $2`,
+        [TEST_USER_ID, testApplication.id],
+      );
+
+    const revokeRefreshToken = (refreshToken: string) =>
+      request(baseUrl)
+        .post('/oauth/revoke')
+        .send({
+          token: refreshToken,
+          client_id: testRegistration.oAuthClientId,
+          client_secret: testClientSecret,
+        })
+        .expect(200);
+
+    // 'read' alone, not the registration's full scope list, so the assertion
+    // fails if the granted scope is ignored in favour of the declared one.
+    it('should record the authorization with the scopes the user granted', async () => {
+      await exchangeForTokens('read');
+
+      const authorization = await findAuthorization();
+
+      expect(authorization).toBeDefined();
+      expect(authorization.scopes).toEqual(['read']);
+      expect(authorization.revokedAt).toBeNull();
+    });
+
+    it('should stop the refresh token being redeemed once the authorization is revoked', async () => {
+      const { refreshToken } = await exchangeForTokens();
+
+      await revokeRefreshToken(refreshToken);
+
+      expect((await findAuthorization()).revokedAt).not.toBeNull();
+
+      const res = await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+      }).expect(400);
+
+      expect(res.body.error).toBe('invalid_grant');
+    });
+
+    it('should let the user authorize again after revoking', async () => {
+      const { refreshToken: revokedRefreshToken } = await exchangeForTokens();
+
+      await revokeRefreshToken(revokedRefreshToken);
+
+      const { refreshToken } = await exchangeForTokens();
+
+      expect((await findAuthorization()).revokedAt).toBeNull();
+
+      await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+      }).expect(200);
+    });
+
+    // Deleting the row leaves a refresh token in the state every token minted
+    // before this table existed is in.
+    it('should backfill a refresh token that predates the authorization record without inventing a consent', async () => {
+      const { refreshToken } = await exchangeForTokens('read write');
+
+      await deleteAuthorization();
+
+      await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+      }).expect(200);
+
+      const authorization = await findAuthorization();
+
+      expect(authorization).toBeDefined();
+      expect(authorization.scopes).toBeNull();
+      expect(authorization.lastAuthorizedAt).toBeNull();
+      expect(authorization.revokedAt).toBeNull();
+    });
+
+    it('should keep a refresh token predating the authorization record revoked', async () => {
+      const { refreshToken } = await exchangeForTokens();
+
+      await deleteAuthorization();
+
+      await revokeRefreshToken(refreshToken);
+
+      const res = await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+      }).expect(400);
+
+      expect(res.body.error).toBe('invalid_grant');
+    });
+
+    const LIST_AUTHORIZATIONS_OPERATION = {
+      query: gql`
+        query CurrentUserApplicationAuthorizations {
+          currentUserApplicationAuthorizations {
+            id
+            applicationId
+            applicationName
+            scopes
+          }
+        }
+      `,
+    };
+
+    const revokeAuthorizationOperation = (
+      applicationAuthorizationId: string,
+    ) => ({
+      query: gql`
+        mutation RevokeApplicationAuthorization(
+          $applicationAuthorizationId: UUID!
+        ) {
+          revokeApplicationAuthorization(
+            applicationAuthorizationId: $applicationAuthorizationId
+          )
+        }
+      `,
+      variables: { applicationAuthorizationId },
+    });
+
+    const findListedAuthorization = async (
+      token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    ) => {
+      const res = await makeMetadataAPIRequest(
+        LIST_AUTHORIZATIONS_OPERATION,
+        token,
+      );
+
+      expect(res.body.errors).toBeUndefined();
+
+      return res.body.data.currentUserApplicationAuthorizations.find(
+        (authorization: { applicationId: string }) =>
+          authorization.applicationId === testApplication.id,
+      );
+    };
+
+    const revokeListedAuthorization = (
+      applicationAuthorizationId: string,
+      token: string,
+    ) =>
+      makeMetadataAPIRequest(
+        revokeAuthorizationOperation(applicationAuthorizationId),
+        token,
+      );
+
+    it('should list the authorization to the user who granted it', async () => {
+      await exchangeForTokens('read');
+
+      const authorization = await findListedAuthorization();
+
+      expect(authorization).toBeDefined();
+      expect(authorization.applicationName).toBe(testRegistration.name);
+      expect(authorization.scopes).toEqual(['read']);
+    });
+
+    it('should stop the refresh token being redeemed when revoked from the list', async () => {
+      const { refreshToken } = await exchangeForTokens();
+
+      const { id } = await findListedAuthorization();
+
+      const revokeResponse = await revokeListedAuthorization(
+        id,
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(revokeResponse.body.errors).toBeUndefined();
+      expect(revokeResponse.body.data.revokeApplicationAuthorization).toBe(
+        true,
+      );
+
+      const res = await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+      }).expect(400);
+
+      expect(res.body.error).toBe('invalid_grant');
+      expect(await findListedAuthorization()).toBeUndefined();
+    });
+
+    it('should report a repeated revocation as a no-op', async () => {
+      await exchangeForTokens();
+
+      const { id } = await findListedAuthorization();
+
+      const firstRevoke = await revokeListedAuthorization(
+        id,
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(firstRevoke.body.data.revokeApplicationAuthorization).toBe(true);
+
+      const secondRevoke = await revokeListedAuthorization(
+        id,
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(secondRevoke.body.data.revokeApplicationAuthorization).toBe(false);
+    });
+
+    it('should not let another user see or revoke the authorization', async () => {
+      await exchangeForTokens();
+
+      const { id } = await findListedAuthorization();
+
+      expect(
+        await findListedAuthorization(APPLE_JONY_MEMBER_ACCESS_TOKEN),
+      ).toBeUndefined();
+
+      const revokeResponse = await revokeListedAuthorization(
+        id,
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(revokeResponse.body.data.revokeApplicationAuthorization).toBe(
+        false,
+      );
+      expect((await findAuthorization()).revokedAt).toBeNull();
     });
   });
 });

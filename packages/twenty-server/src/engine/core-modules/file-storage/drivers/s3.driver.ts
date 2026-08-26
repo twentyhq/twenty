@@ -24,11 +24,18 @@ import { Upload } from '@aws-sdk/lib-storage';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  FILE_STORAGE_S3_CONNECTION_TIMEOUT_MS,
+  FILE_STORAGE_S3_MAX_SOCKETS,
+  FILE_STORAGE_S3_REQUEST_TIMEOUT_MS,
+} from 'src/engine/core-modules/file-storage/constants/s3-client-timeouts.constant';
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+import { type ByteRange } from 'src/engine/core-modules/file-storage/types/byte-range.type';
+import { buildAwsRequestHandlerOptions } from 'src/utils/aws-request-handler.util';
 
 export interface S3DriverOptions extends S3ClientConfig {
   bucketName: string;
@@ -58,12 +65,23 @@ export class S3Driver implements StorageDriver {
       return;
     }
 
-    this.s3Client = new S3({ ...s3Options, region, endpoint });
+    const requestHandler = buildAwsRequestHandlerOptions({
+      requestTimeoutMs: FILE_STORAGE_S3_REQUEST_TIMEOUT_MS,
+      connectionTimeoutMs: FILE_STORAGE_S3_CONNECTION_TIMEOUT_MS,
+      maxSockets: FILE_STORAGE_S3_MAX_SOCKETS,
+    });
+
+    this.s3Client = new S3({ ...s3Options, region, endpoint, requestHandler });
     this.bucketName = bucketName;
 
     if (presignEnabled) {
       this.presignClient = presignEndpoint
-        ? new S3({ ...s3Options, region, endpoint: presignEndpoint })
+        ? new S3({
+            ...s3Options,
+            region,
+            endpoint: presignEndpoint,
+            requestHandler,
+          })
         : this.s3Client;
     }
   }
@@ -72,10 +90,16 @@ export class S3Driver implements StorageDriver {
     return this.s3Client;
   }
 
-  async readFile(params: { filePath: string }): Promise<Readable> {
+  async readFile(params: {
+    filePath: string;
+    byteRange?: ByteRange;
+  }): Promise<Readable> {
     const command = new GetObjectCommand({
       Key: params.filePath,
       Bucket: this.bucketName,
+      Range: isDefined(params.byteRange)
+        ? `bytes=${params.byteRange.startByte}-${params.byteRange.endByte}`
+        : undefined,
     });
 
     try {

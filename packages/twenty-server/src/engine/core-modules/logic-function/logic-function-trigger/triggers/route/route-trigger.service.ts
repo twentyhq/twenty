@@ -239,6 +239,8 @@ export class RouteTriggerService {
           return RouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND;
         case LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED:
           return RouteTriggerExceptionCode.FORBIDDEN_EXCEPTION;
+        case LogicFunctionExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED:
+          return RouteTriggerExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED;
       }
     }
 

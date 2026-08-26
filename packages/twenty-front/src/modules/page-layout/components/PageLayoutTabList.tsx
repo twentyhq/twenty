@@ -17,6 +17,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -31,6 +32,7 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type PageLayoutAddTabStrategy } from '@/page-layout/types/PageLayoutAddTabStrategy';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type PageLayoutWidgetDndData } from '@/page-layout/types/PageLayoutWidgetDndData';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
@@ -110,6 +112,7 @@ export const PageLayoutTabList = ({
   }));
 
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const [activeTabId, setActiveTabId] = useAtomComponentState(
     activeTabIdComponentState,
@@ -335,26 +338,29 @@ export const PageLayoutTabList = ({
 
   const canReorderTabs = isReorderEnabled;
 
+  const shouldScrollTabs = isMobile && !canReorderTabs;
+
   const shouldRenderReorderableDropdown = hasHiddenTabs && canReorderTabs;
 
-  const shouldRenderStaticDropdown = hasHiddenTabs && !canReorderTabs;
+  const shouldRenderStaticDropdown =
+    hasHiddenTabs && !canReorderTabs && !shouldScrollTabs;
 
   // Record pages accept widget drops on vertical-list tabs (dnd-kit drags);
   // dashboards accept them on grid tabs (react-grid-layout drags bridged by
   // pointer hit-testing).
-  const widgetDropTargetTabIds = new Set(
+  const widgetDropTargetWidgetsByTabId = new Map<string, PageLayoutWidget[]>(
     pageLayoutType === PageLayoutType.RECORD_PAGE
       ? tabs
           .filter(
             (tab) => tab.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST,
           )
-          .map((tab) => tab.id)
+          .map((tab) => [tab.id, tab.widgets] as const)
       : pageLayoutType === PageLayoutType.DASHBOARD
         ? tabs
             .filter(
               (tab) => tab.layoutMode !== PageLayoutTabLayoutMode.VERTICAL_LIST,
             )
-            .map((tab) => tab.id)
+            .map((tab) => [tab.id, tab.widgets] as const)
         : [],
   );
 
@@ -367,7 +373,7 @@ export const PageLayoutTabList = ({
         tabListIds={tabsWithIcons.map((tab) => tab.id)}
       />
 
-      {tabsWithIcons.length > 1 && (
+      {tabsWithIcons.length > 1 && !shouldScrollTabs && (
         <TabListHiddenMeasurements
           visibleTabs={tabsWithIcons}
           activeTabId={activeTabId}
@@ -396,14 +402,17 @@ export const PageLayoutTabList = ({
         <StyledContainer className={className}>
           <PageLayoutTabListVisibleTabs
             visibleTabs={tabsWithIcons}
-            visibleTabCount={visibleTabCount}
+            visibleTabCount={
+              shouldScrollTabs ? tabsWithIcons.length : visibleTabCount
+            }
+            isScrollable={shouldScrollTabs}
             activeTabId={activeTabId}
             behaveAsLinks={behaveAsLinks}
             loading={loading}
             onChangeTab={onChangeTab}
             onSelectTab={handleSelectTab}
             canReorder={canReorderTabs}
-            widgetDropTargetTabIds={widgetDropTargetTabIds}
+            widgetDropTargetWidgetsByTabId={widgetDropTargetWidgetsByTabId}
             firstHiddenTabId={
               hasHiddenTabs ? (hiddenTabs[0]?.id ?? null) : null
             }

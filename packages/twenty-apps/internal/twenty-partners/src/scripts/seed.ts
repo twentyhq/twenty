@@ -15,7 +15,7 @@ config({ path: process.env.ENV_FILE ?? '.env.local' });
 
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-import { backfillPartnerUserOnChildren } from './backfill-partner-user-on-children';
+import { backfillPartnerUserOnChildren } from 'src/modules/shared/services/backfill-partner-user-on-children.service';
 
 const requireEnv = (name: string): string => {
   const value = process.env[name];

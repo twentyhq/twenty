@@ -140,7 +140,10 @@ const RecordCalendarDateGridDayCell = ({
       <StyledCards>
         {recordIds.map((recordId) => (
           <div key={recordId} data-selectable-id={recordId}>
-            <RecordCalendarCard recordId={recordId} />
+            <RecordCalendarCard
+              recordId={recordId}
+              calendarDay={day.toString()}
+            />
           </div>
         ))}
       </StyledCards>

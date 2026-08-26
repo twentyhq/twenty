@@ -38,7 +38,7 @@
     "lodash.upperfirst": "^4.3.1",
     "nodemailer": "^9.0.1",
     "psl": "^1.15.0",
-    "sharp": "^0.34.5",
+    "sharp": "^0.35.3",
     "uuid": "^11.1.1",
     "winston": "^3.14.2"
   }

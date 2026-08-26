@@ -44,17 +44,17 @@ const StyledContainer = styled.div`
   align-items: flex-start;
   align-self: stretch;
   display: flex;
+  flex: 1;
   flex-direction: column;
   height: 100%;
-  justify-content: center;
-  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[6]}
-    ${themeCssVariables.spacing[6]};
-  width: calc(100% - ${themeCssVariables.spacing[12]});
+  min-height: 0;
+  width: 100%;
 `;
 
 const StyledDropZoneContainer = styled.div`
+  flex: 1;
   height: 100%;
-  overflow: auto;
+  min-height: 0;
   width: 100%;
 `;
 
@@ -62,7 +62,7 @@ const StyledLoadingContainer = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.primary};
   display: flex;
-  height: 80vh;
+  height: calc(80vh / var(--t-zoom, 1));
   justify-content: center;
   width: 100%;
 `;

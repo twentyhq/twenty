@@ -88,11 +88,14 @@ export class AgentChatService {
     id?: string;
     title?: string;
   }) {
-    const savedThread = await this.threadRepository.save(workspaceId, {
-      ...(isDefined(id) ? { id } : {}),
-      ...(isDefined(title) ? { title } : {}),
-      userWorkspaceId,
-    });
+    const savedThread = await this.threadRepository.insertAndReturnOne(
+      workspaceId,
+      {
+        ...(isDefined(id) ? { id } : {}),
+        ...(isDefined(title) ? { title } : {}),
+        userWorkspaceId,
+      },
+    );
 
     await this.workspaceEventBroadcaster.broadcast({
       workspaceId,
@@ -161,8 +164,6 @@ export class AgentChatService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<(AgentChatThreadEntity & { lastMessageAt: Date | null })[]> {
-    // Query builder uses the scoped wrapper's escape hatch; we add the
-    // workspaceId predicate manually below.
     const rankedThreads = await this.threadRepository
       .createQueryBuilder('thread')
       .select('thread.id', 'id')
@@ -611,6 +612,16 @@ export class AgentChatService {
     });
 
     return (result.affected ?? 0) > 0;
+  }
+
+  async deleteMessage({
+    messageId,
+    workspaceId,
+  }: {
+    messageId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.messageRepository.delete(workspaceId, { id: messageId });
   }
 
   async promoteQueuedMessage({

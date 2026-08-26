@@ -27,7 +27,6 @@ export type RandomWorkspaceMemberData = {
   userId: string;
 };
 
-// Hardcoded lists of realistic names
 const FIRST_NAMES = [
   'James',
   'Mary',
@@ -461,7 +460,6 @@ export function generateRandomUsers(): {
     '$2b$10$3LwXjJRtLsfx4hLuuXhxt.3mWgismTiZFCZSG3z9kDrSfsrBl0fT6';
 
   for (let i = 1; i <= 1000; i++) {
-    // Generate deterministic random indices for names
     const firstNameIndex = Math.floor(
       seededRandom(i * 1000) * FIRST_NAMES.length,
     );
@@ -476,7 +474,6 @@ export function generateRandomUsers(): {
     const lastName = LAST_NAMES[lastNameIndex];
     const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${i}@apple.dev`;
 
-    // Generate consistent UUIDs based on index
     const userId =
       `30303030-${i.toString().padStart(4, '0')}-4000-8000-000000000000`.replace(
         /0{4}-4000-8000-000000000000$/,

@@ -1,7 +1,7 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
@@ -12,7 +12,7 @@ import {
 } from '@/object-record/record-field/ui/form-types/types/RecordPickerValue';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import { Field } from 'twenty-ui/input';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isString } from '@sniptt/guards';
@@ -115,7 +115,7 @@ export const FormMorphRelationToOneFieldInput = ({
   if (hasForbiddenSelectedRecord) {
     return (
       <FormFieldInputContainer data-testid={testId}>
-        {label ? <InputLabel>{label}</InputLabel> : null}
+        {label ? <Field.Label>{label}</Field.Label> : null}
         <FormFieldInputRowContainer>
           <StyledReadonlyContainer>
             <FormFieldInputInnerContainer
@@ -135,7 +135,7 @@ export const FormMorphRelationToOneFieldInput = ({
   if (readableObjectNameSingulars.length === 0) {
     return (
       <FormFieldInputContainer data-testid={testId}>
-        {label ? <InputLabel>{label}</InputLabel> : null}
+        {label ? <Field.Label>{label}</Field.Label> : null}
         <FormFieldInputRowContainer>
           <StyledReadonlyContainer>
             <FormFieldInputInnerContainer

@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "lib": ["ES2020", "DOM", "ES2021.WeakRef"],
     "allowJs": false,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
@@ -28,7 +29,6 @@
     "vite.config.ts"
   ],
   "exclude": [
-    "src/remote/mock/**/*",
     "src/host/generated/host-component-registry.ts",
     "src/remote/generated/remote-components.ts",
     "src/remote/generated/remote-elements.ts",

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -10,6 +11,9 @@ import { fromCreateViewFilterInputToFlatViewFilterToCreate } from 'src/engine/me
 import { fromDeleteViewFilterInputToFlatViewFilterOrThrow } from 'src/engine/metadata-modules/flat-view-filter/utils/from-delete-view-filter-input-to-flat-view-filter-or-throw.util';
 import { fromDestroyViewFilterInputToFlatViewFilterOrThrow } from 'src/engine/metadata-modules/flat-view-filter/utils/from-destroy-view-filter-input-to-flat-view-filter-or-throw.util';
 import { fromUpdateViewFilterInputToFlatViewFilterToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-filter/utils/from-update-view-filter-input-to-flat-view-filter-to-update-or-throw.util';
+import { type MetadataCursorPage } from 'src/engine/metadata-modules/pagination/types/metadata-cursor-page.type';
+import { type MetadataCursorPagination } from 'src/engine/metadata-modules/pagination/types/metadata-cursor-pagination.type';
+import { paginateMetadataOrderedItems } from 'src/engine/metadata-modules/pagination/utils/paginate-metadata-ordered-items.util';
 import { CreateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/create-view-filter.input';
 import { DeleteViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/delete-view-filter.input';
 import { DestroyViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/destroy-view-filter.input';
@@ -324,9 +328,53 @@ export class ViewFilterService {
       where: {
         deletedAt: IsNull(),
       },
-      order: { positionInViewFilterGroup: 'ASC' },
+      order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
       relations: ['workspace', 'view', 'viewFilterGroup'],
     });
+  }
+
+  async findManyPaginated({
+    workspaceId,
+    viewId,
+    pagination,
+  }: {
+    workspaceId: string;
+    viewId?: string;
+    pagination: MetadataCursorPagination;
+  }): Promise<MetadataCursorPage<ViewFilterDTO> & { totalCount: number }> {
+    const { flatViewFilterMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewFilterMaps'],
+        },
+      );
+    const flatViewFilters = Object.values(
+      flatViewFilterMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter(
+        (flatViewFilter) =>
+          flatViewFilter.workspaceId === workspaceId &&
+          flatViewFilter.deletedAt === null &&
+          (!isDefined(viewId) || flatViewFilter.viewId === viewId),
+      )
+      .sort(
+        (first, second) =>
+          (first.positionInViewFilterGroup ?? Number.POSITIVE_INFINITY) -
+            (second.positionInViewFilterGroup ?? Number.POSITIVE_INFINITY) ||
+          first.id.localeCompare(second.id),
+      );
+    const page = paginateMetadataOrderedItems({
+      items: flatViewFilters,
+      pagination,
+    });
+
+    return {
+      ...page,
+      items: page.items.map(fromFlatViewFilterToViewFilterDto),
+      totalCount: flatViewFilters.length,
+    };
   }
 
   async findByViewId(
@@ -338,7 +386,7 @@ export class ViewFilterService {
         viewId,
         deletedAt: IsNull(),
       },
-      order: { positionInViewFilterGroup: 'ASC' },
+      order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
       relations: ['workspace', 'view', 'viewFilterGroup'],
     });
   }

@@ -56,12 +56,25 @@ const convertUniversalFilterToChartFilter = ({
   return {
     ...filter,
     recordFilters: filter.recordFilters?.map(
-      ({ fieldMetadataUniversalIdentifier, ...rest }) => ({
+      ({
+        fieldMetadataUniversalIdentifier,
+        relationTargetFieldMetadataUniversalIdentifier,
+        ...rest
+      }) => ({
         ...rest,
         fieldMetadataId: resolveFieldMetadataIdOrThrow({
           fieldMetadataUniversalIdentifier,
           flatFieldMetadataMaps,
         }),
+        ...(isDefined(relationTargetFieldMetadataUniversalIdentifier)
+          ? {
+              relationTargetFieldMetadataId: resolveFieldMetadataIdOrThrow({
+                fieldMetadataUniversalIdentifier:
+                  relationTargetFieldMetadataUniversalIdentifier,
+                flatFieldMetadataMaps,
+              }),
+            }
+          : {}),
       }),
     ),
   };
@@ -260,10 +273,9 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     }
 
     case WidgetConfigurationType.RECORD_TABLE: {
-      const { viewId: viewUniversalIdentifier, ...rest } =
-        universalConfiguration;
+      const { viewUniversalIdentifier, ...rest } = universalConfiguration;
 
-      let viewId: string | undefined = undefined;
+      let viewId: string | null = null;
 
       if (isDefined(viewUniversalIdentifier)) {
         const flatView = findFlatEntityByUniversalIdentifier({
@@ -285,8 +297,11 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     }
 
     case WidgetConfigurationType.FRONT_COMPONENT: {
-      const { frontComponentUniversalIdentifier, configurationType } =
-        universalConfiguration;
+      const {
+        frontComponentUniversalIdentifier,
+        configurationType,
+        headerCommandMenuItemUniversalIdentifiers,
+      } = universalConfiguration;
 
       if (!isDefined(frontComponentUniversalIdentifier)) {
         throw new FlatEntityMapsException(
@@ -310,6 +325,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
       return {
         configurationType,
         frontComponentId: flatFrontComponent.id,
+        headerCommandMenuItemUniversalIdentifiers,
       };
     }
 
@@ -317,6 +333,8 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
       const {
         fieldMetadataId: fieldMetadataUniversalIdentifier,
         viewId: viewUniversalIdentifier,
+        nestedRelationFieldMetadataId:
+          nestedRelationFieldMetadataUniversalIdentifier,
         ...rest
       } = universalConfiguration;
 
@@ -324,6 +342,16 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         fieldMetadataUniversalIdentifier,
         flatFieldMetadataMaps,
       });
+
+      const nestedRelationFieldMetadataId = isDefined(
+        nestedRelationFieldMetadataUniversalIdentifier,
+      )
+        ? resolveFieldMetadataIdOrThrow({
+            fieldMetadataUniversalIdentifier:
+              nestedRelationFieldMetadataUniversalIdentifier,
+            flatFieldMetadataMaps,
+          })
+        : undefined;
 
       let viewId: string | undefined = undefined;
 
@@ -343,7 +371,14 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         viewId = flatView.id;
       }
 
-      return { ...rest, fieldMetadataId, viewId };
+      return {
+        ...rest,
+        fieldMetadataId,
+        viewId,
+        ...(isDefined(nestedRelationFieldMetadataId)
+          ? { nestedRelationFieldMetadataId }
+          : {}),
+      };
     }
 
     case WidgetConfigurationType.VIEW:
@@ -360,6 +395,8 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     case WidgetConfigurationType.IFRAME:
     case WidgetConfigurationType.STANDALONE_RICH_TEXT:
     case WidgetConfigurationType.EMAIL_THREAD:
+    case WidgetConfigurationType.CALL_RECORDING_SUMMARY:
+    case WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT:
     case WidgetConfigurationType.MESSAGE_CAMPAIGN_BODY:
     case WidgetConfigurationType.MESSAGE_CAMPAIGN_DETAILS:
       return universalConfiguration;

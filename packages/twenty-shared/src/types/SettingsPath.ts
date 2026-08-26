@@ -52,6 +52,7 @@ export enum SettingsPath {
   ApplicationLogicFunctionDetail = 'applications/:applicationId/logicFunctions/:logicFunctionId',
   ApplicationFrontComponentDetail = 'applications/:applicationId/frontComponents/:frontComponentId',
   ApplicationCommandMenuItemDetail = 'applications/:applicationId/commandMenuItems/:commandMenuItemId',
+  ApplicationTimelineActivityTypeDetail = 'applications/:applicationId/timelineActivityTypes/:timelineActivityTypeId',
   ApplicationViewDetail = 'applications/:applicationId/views/:viewUniversalIdentifier',
   ApplicationPageLayoutDetail = 'applications/:applicationId/pageLayouts/:pageLayoutUniversalIdentifier',
   AvailableApplicationDetail = 'applications/available/:availableApplicationId',
@@ -87,6 +88,7 @@ export enum SettingsPath {
   AdminPanelWorkspaceDetail = 'admin-panel/workspaces/:workspaceId',
   AdminPanelApplicationRegistrationDetail = 'admin-panel/applications/registrations/:applicationRegistrationId',
   AdminPanelWorkspaceChatThread = 'admin-panel/workspaces/:workspaceId/threads/:threadId',
+  AdminPanelChats = 'admin-panel/chats',
 
   Roles = 'members/roles',
   RoleCreate = 'members/roles/create',

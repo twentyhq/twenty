@@ -12,8 +12,9 @@ import { RecordCard } from '@/object-record/record-card/components/RecordCard';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { viewableRecordIdState } from '@/object-record/record-side-panel/states/viewableRecordIdState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { DRAG_SOURCE_OPACITY } from '@/ui/utilities/drag-and-drop/constants/DragSourceOpacity';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useDraggable } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { type Temporal } from 'temporal-polyfill';
@@ -32,6 +33,7 @@ const StyledDateTimeEventCard = styled(RecordCard)`
 `;
 
 const StyledEventPositioner = styled.div<{
+  $isDragSourceFaded: boolean;
   columnCount: number;
   columnIndex: number;
   heightInPixels: number;
@@ -50,6 +52,8 @@ const StyledEventPositioner = styled.div<{
           columnIndex,
         }).left};
   min-width: 0;
+  opacity: ${({ $isDragSourceFaded }) =>
+    $isDragSourceFaded ? DRAG_SOURCE_OPACITY : 1};
   overflow: hidden;
   position: ${({ isAllDay }) => (isAllDay ? 'relative' : 'absolute')};
   right: auto;
@@ -250,6 +254,7 @@ export const RecordCalendarWeekEvent = ({
   return (
     <StyledEventPositioner
       ref={draggableRef}
+      $isDragSourceFaded={isDragSource}
       columnCount={columnCount}
       columnIndex={columnIndex}
       heightInPixels={heightInPixels}

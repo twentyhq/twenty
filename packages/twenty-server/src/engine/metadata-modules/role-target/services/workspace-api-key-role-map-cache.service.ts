@@ -10,7 +10,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 
 @Injectable()
-@WorkspaceCache('apiKeyRoleMap')
+@WorkspaceCache('apiKeyRoleMap', { packingPonderation: 1 })
 export class WorkspaceApiKeyRoleMapCacheService extends WorkspaceCacheProvider<
   Record<string, string>
 > {

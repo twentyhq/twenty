@@ -9,7 +9,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { computeTwentyStandardApplicationAllFlatEntityMapsPre231 } from 'src/database/commands/upgrade-version-command/2-10/utils/compute-twenty-standard-application-all-flat-entity-maps-pre-2-31.util';
 import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
+import { toPre231RecordPageUniversalIdentifier } from 'src/database/commands/upgrade-version-command/2-10/utils/remap-record-page-universal-identifiers-to-pre-2-31.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
@@ -19,17 +21,20 @@ import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-f
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const getUniversalIdentifiers = (
   entitiesByName: Record<string, { universalIdentifier: string }>,
 ): string[] =>
-  Object.values(entitiesByName).map((entity) => entity.universalIdentifier);
+  Object.values(entitiesByName).map((entity) =>
+    toPre231RecordPageUniversalIdentifier(entity.universalIdentifier),
+  );
 
 const CALENDAR_EVENT_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_OBJECTS.calendarEvent.views.calendarEventRecordPageFields
-    .universalIdentifier,
+  toPre231RecordPageUniversalIdentifier(
+    STANDARD_OBJECTS.calendarEvent.views.calendarEventRecordPageFields
+      .universalIdentifier,
+  ),
 ];
 
 const CALENDAR_EVENT_RECORD_PAGE_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS =
@@ -45,29 +50,43 @@ const CALENDAR_EVENT_RECORD_PAGE_VIEW_FIELD_UNIVERSAL_IDENTIFIERS =
   );
 
 const CALENDAR_EVENT_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
-    .universalIdentifier,
+  toPre231RecordPageUniversalIdentifier(
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
+      .universalIdentifier,
+  ),
 ];
 
 const CALENDAR_EVENT_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs.home
-    .universalIdentifier,
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
-    .timeline.universalIdentifier,
+  toPre231RecordPageUniversalIdentifier(
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs.home
+      .universalIdentifier,
+  ),
+  toPre231RecordPageUniversalIdentifier(
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
+      .timeline.universalIdentifier,
+  ),
 ];
 
 const CALENDAR_EVENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs.home
-    .widgets.fields.universalIdentifier,
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs.home
-    .widgets.participants.universalIdentifier,
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
-    .timeline.widgets.timeline.universalIdentifier,
+  toPre231RecordPageUniversalIdentifier(
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs.home
+      .widgets.fields.universalIdentifier,
+  ),
+  toPre231RecordPageUniversalIdentifier(
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs.home
+      .widgets.participants.universalIdentifier,
+  ),
+  toPre231RecordPageUniversalIdentifier(
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
+      .timeline.widgets.timeline.universalIdentifier,
+  ),
 ];
 
 const CALENDAR_EVENT_CALL_RECORDINGS_WIDGET_UNIVERSAL_IDENTIFIER =
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs.home
-    .widgets.callRecordings.universalIdentifier;
+  toPre231RecordPageUniversalIdentifier(
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs.home
+      .widgets.callRecordings.universalIdentifier,
+  );
 
 const CALENDAR_EVENT_CALL_RECORDINGS_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.calendarEvent.fields.callRecordings.universalIdentifier;
@@ -145,8 +164,8 @@ export class SyncCalendarEventRecordPageCommand extends ProvisionedWorkspaceComm
         ]
       : CALENDAR_EVENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS;
 
-    const { allFlatEntityMaps: standardAllFlatEntityMaps } =
-      computeTwentyStandardApplicationAllFlatEntityMaps({
+    const standardAllFlatEntityMaps =
+      computeTwentyStandardApplicationAllFlatEntityMapsPre231({
         now: new Date().toISOString(),
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
@@ -155,11 +174,13 @@ export class SyncCalendarEventRecordPageCommand extends ProvisionedWorkspaceComm
     const viewsToCreate = getStandardFlatEntitiesToCreateOrThrow<FlatView>({
       standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewMaps,
       existingFlatEntityMaps: flatViewMaps,
-      universalIdentifiers: CALENDAR_EVENT_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIERS,
+      universalIdentifiers:
+        CALENDAR_EVENT_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIERS,
     });
     const viewFieldGroupsToCreate =
       getStandardFlatEntitiesToCreateOrThrow<FlatViewFieldGroup>({
-        standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewFieldGroupMaps,
+        standardFlatEntityMaps:
+          standardAllFlatEntityMaps.flatViewFieldGroupMaps,
         existingFlatEntityMaps: flatViewFieldGroupMaps,
         universalIdentifiers:
           CALENDAR_EVENT_RECORD_PAGE_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS,

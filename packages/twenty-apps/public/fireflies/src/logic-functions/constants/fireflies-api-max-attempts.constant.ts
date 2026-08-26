@@ -1,0 +1,1 @@
+export const FIREFLIES_API_MAX_ATTEMPTS = 3;

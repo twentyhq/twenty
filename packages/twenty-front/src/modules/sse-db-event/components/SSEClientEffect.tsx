@@ -1,4 +1,5 @@
-import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
@@ -20,7 +21,7 @@ import { useStore } from 'jotai';
 
 export const SSEClientEffect = () => {
   const store = useStore();
-  const hasAccessTokenPair = useHasAccessTokenPair();
+  const isLogged = useIsLogged();
   const [sseClient, setSseClient] = useAtomState(sseClientState);
   const tokenPair = useAtomStateValue(tokenPairState);
   const { resyncMetadataStore } = useResyncMetadataStore();
@@ -57,10 +58,20 @@ export const SSEClientEffect = () => {
     useHandleSseClientConnectionRetry();
 
   useEffect(() => {
-    if (hasAccessTokenPair && !isDefined(sseClient) && isDefined(tokenPair)) {
+    if (isLogged && !isDefined(sseClient)) {
       const newSseClient = createClient({
         url: `${REACT_APP_SERVER_BASE_URL}/metadata`,
-        headers: () => {
+        credentials: 'include',
+        headers: (): Record<string, string> => {
+          // Same rule as the Apollo auth link: the retained token pair is a
+          // dormant fallback once cookie auth is active and must not be sent.
+          // The server prefers Bearer over the session cookie, so attaching a
+          // token nothing refreshes any more authenticates the stream with a
+          // credential that expires and never recovers.
+          if (store.get(isCookieAuthActiveState.atom)) {
+            return {};
+          }
+
           const currentTokenPair = store.get(tokenPairState.atom);
           const token = currentTokenPair?.accessOrWorkspaceAgnosticToken?.token;
 
@@ -80,7 +91,7 @@ export const SSEClientEffect = () => {
     }
   }, [
     handleSSEClientConnected,
-    hasAccessTokenPair,
+    isLogged,
     setSseClient,
     sseClient,
     store,

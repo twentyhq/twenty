@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { type Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -9,11 +10,17 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { IMPERSONATION_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/impersonation/impersonation';
 import { IMPERSONATION_DENIAL_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant';
 import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
+import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
+import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
@@ -26,6 +33,9 @@ export class ImpersonationService {
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly impersonationAuthorizationService: ImpersonationAuthorizationService,
+    private readonly twentyConfigService: TwentyConfigService,
+    private readonly userSessionService: UserSessionService,
+    private readonly userSessionCookieService: UserSessionCookieService,
   ) {}
 
   async impersonate(
@@ -85,6 +95,121 @@ export class ImpersonationService {
       toImpersonateUserWorkspace,
       authorizationResult.level,
     );
+  }
+
+  // Hands the impersonator back the session parked when impersonation started.
+  // Nothing is minted on the strength of the impersonated user's cookie.
+  async stopImpersonation({
+    impersonationContext,
+    workspaceId,
+    request,
+  }: {
+    impersonationContext: AuthContext['impersonationContext'];
+    workspaceId: string;
+    request: Request;
+  }): Promise<{ canRestoreImpersonatorSession: boolean }> {
+    if (!isDefined(impersonationContext)) {
+      throw new AuthException(
+        'Not currently impersonating',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    const impersonatorUserWorkspace =
+      await this.userWorkspaceRepository.findOne({
+        where: { id: impersonationContext.impersonatorUserWorkspaceId },
+        relations: ['user', 'workspace'],
+      });
+
+    if (!isDefined(impersonatorUserWorkspace)) {
+      throw new AuthException(
+        'Impersonator user workspace not found',
+        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    const presentedSessionToken =
+      this.userSessionCookieService.extractSessionTokenFromRequest(request);
+
+    if (isDefined(presentedSessionToken)) {
+      await this.userSessionService.revokeSessionByToken(
+        presentedSessionToken,
+        UserSessionRevokedReason.ImpersonationEnded,
+      );
+    }
+
+    const eventLogContext = this.eventLogEmitterService.createContext({
+      workspaceId,
+      userId: impersonatorUserWorkspace.userId,
+    });
+
+    void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
+      level: 'workspace',
+      action: 'ended',
+      message: `Impersonation ended by impersonatorUserWorkspaceId=${impersonationContext.impersonatorUserWorkspaceId}; workspaceId=${workspaceId}`,
+    });
+
+    if (!isDefined(request.res)) {
+      return { canRestoreImpersonatorSession: false };
+    }
+
+    const canRestoreImpersonatorSession = await this.restoreImpersonatorSession(
+      request,
+      impersonatorUserWorkspace.id,
+    );
+
+    if (!canRestoreImpersonatorSession) {
+      this.userSessionCookieService.clearSessionCookie(request.res);
+    }
+
+    this.userSessionCookieService.clearImpersonatorSessionCookie(request.res);
+
+    return { canRestoreImpersonatorSession };
+  }
+
+  // The parked token is evidence of nothing on its own, so it is re-resolved
+  // and checked against the impersonator the impersonation session names.
+  private async restoreImpersonatorSession(
+    request: Request,
+    impersonatorUserWorkspaceId: string,
+  ): Promise<boolean> {
+    const response = request.res;
+
+    if (!isDefined(response)) {
+      return false;
+    }
+
+    const impersonatorSessionToken =
+      this.userSessionCookieService.extractImpersonatorSessionTokenFromRequest(
+        request,
+      );
+
+    if (!isDefined(impersonatorSessionToken)) {
+      return false;
+    }
+
+    try {
+      const { payload, expiresAt } =
+        await this.userSessionService.resolveSession(impersonatorSessionToken);
+
+      if (
+        payload.type !== JwtTokenTypeEnum.ACCESS ||
+        payload.isImpersonating === true ||
+        payload.userWorkspaceId !== impersonatorUserWorkspaceId
+      ) {
+        return false;
+      }
+
+      this.userSessionCookieService.attachSessionTokenToResponse(
+        response,
+        impersonatorSessionToken,
+        expiresAt,
+      );
+
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   async generateImpersonationLoginToken(

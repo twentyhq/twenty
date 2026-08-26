@@ -1,4 +1,9 @@
 import { isDefined } from 'src/utils/is-defined';
+import { sleepForMilliseconds } from 'src/utils/sleep-for-milliseconds.util';
+
+import { FIREFLIES_API_MAX_ATTEMPTS } from 'src/logic-functions/constants/fireflies-api-max-attempts.constant';
+import { FIREFLIES_API_RETRY_DELAY_MILLISECONDS } from 'src/logic-functions/constants/fireflies-api-retry-delay-milliseconds.constant';
+import { isRetryableFirefliesApiStatus } from 'src/logic-functions/utils/is-retryable-fireflies-api-status.util';
 
 const FIREFLIES_API_URL = 'https://api.fireflies.ai/graphql';
 
@@ -25,6 +30,12 @@ type FirefliesGraphqlError = {
   };
 };
 
+const HTTP_STATUS_BY_FIREFLIES_ERROR_CODE: Record<string, number> = {
+  request_timeout: 408,
+  too_many_requests: 429,
+  invariant_violation: 500,
+};
+
 type FirefliesGraphqlEnvelope<TData> = {
   data?: TData;
   errors?: FirefliesGraphqlError[];
@@ -36,7 +47,39 @@ type FirefliesApiRequestParams = {
   variables?: Record<string, unknown>;
 };
 
-export const firefliesApiRequest = async <TData = unknown>({
+export const firefliesApiRequest = async <TData = unknown>(
+  params: FirefliesApiRequestParams,
+): Promise<FirefliesApiResult<TData>> =>
+  performFirefliesApiRequestWithRetries<TData>({ params, attemptNumber: 1 });
+
+const performFirefliesApiRequestWithRetries = async <TData>({
+  params,
+  attemptNumber,
+}: {
+  params: FirefliesApiRequestParams;
+  attemptNumber: number;
+}): Promise<FirefliesApiResult<TData>> => {
+  const result = await performFirefliesApiRequest<TData>(params);
+
+  if (
+    result.ok ||
+    !isRetryableFirefliesApiStatus(result.status) ||
+    attemptNumber >= FIREFLIES_API_MAX_ATTEMPTS
+  ) {
+    return result;
+  }
+
+  await sleepForMilliseconds(
+    FIREFLIES_API_RETRY_DELAY_MILLISECONDS * attemptNumber,
+  );
+
+  return performFirefliesApiRequestWithRetries<TData>({
+    params,
+    attemptNumber: attemptNumber + 1,
+  });
+};
+
+const performFirefliesApiRequest = async <TData = unknown>({
   apiKey,
   query,
   variables,
@@ -74,11 +117,16 @@ export const firefliesApiRequest = async <TData = unknown>({
     isDefined(envelope.errors) &&
     envelope.errors.length > 0
   ) {
+    const firefliesGraphqlError = envelope.errors[0];
+
     return {
       ok: false,
-      status: response.status,
+      status:
+        HTTP_STATUS_BY_FIREFLIES_ERROR_CODE[
+          firefliesGraphqlError?.extensions?.code ?? ''
+        ] ?? response.status,
       errorMessage: `Fireflies GraphQL error: ${formatFirefliesGraphqlError(
-        envelope.errors[0],
+        firefliesGraphqlError,
       )}`,
     };
   }

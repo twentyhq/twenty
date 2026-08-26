@@ -11,12 +11,9 @@ type Assertions = [
   Expect<Equal<IndexOf<'1.22.0', Versions>, 2>>,
   Expect<Equal<IndexOf<'1.23.0', Versions>, 3>>,
 
-  // Not found resolves to never
   Expect<Equal<IndexOf<'1.99.0', Versions>, never>>,
 
-  // Single element tuple
   Expect<Equal<IndexOf<'a', readonly ['a']>, 0>>,
 
-  // Empty tuple
   Expect<Equal<IndexOf<'a', readonly []>, never>>,
 ];

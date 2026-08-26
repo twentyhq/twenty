@@ -37,7 +37,11 @@ export type ObjectRecordOrderBy = Array<
   ObjectRecordOrderByForScalarField | ObjectRecordOrderByForCompositeField
 >;
 
-export type ObjectRecordCursorLeafScalarValue = string | number | boolean;
+export type ObjectRecordCursorLeafScalarValue =
+  | string
+  | number
+  | boolean
+  | null;
 export type ObjectRecordCursorLeafCompositeValue = Record<
   string,
   ObjectRecordCursorLeafScalarValue

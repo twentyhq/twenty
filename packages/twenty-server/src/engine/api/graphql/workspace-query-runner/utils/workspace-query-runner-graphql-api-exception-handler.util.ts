@@ -18,8 +18,8 @@ import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.
 import { throttlerToGraphqlApiExceptionHandler } from 'src/engine/core-modules/throttler/utils/throttler-to-graphql-api-exception-handler.util';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { permissionGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util';
-import { TwentyORMException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { twentyORMGraphqlApiExceptionHandler } from 'src/engine/twenty-orm/utils/twenty-orm-graphql-api-exception-handler.util';
+import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { twentyOrmGraphqlApiExceptionHandler } from 'src/engine/twenty-orm/utils/twenty-orm-graphql-api-exception-handler.util';
 import { WorkflowQueryValidationException } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 import { workflowQueryValidationGraphqlApiExceptionHandler } from 'src/modules/workflow/common/utils/workflow-query-validation-graphql-api-exception-handler.util';
 
@@ -39,8 +39,8 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
       return workspaceExceptionHandler(error);
     case error instanceof GraphqlQueryRunnerException:
       return graphqlQueryRunnerExceptionHandler(error);
-    case error instanceof TwentyORMException:
-      return twentyORMGraphqlApiExceptionHandler(error);
+    case error instanceof TwentyOrmException:
+      return twentyOrmGraphqlApiExceptionHandler(error);
     case error instanceof CommonQueryRunnerException:
       return commonQueryRunnerToGraphqlApiExceptionHandler(error);
     case error instanceof AuthException:

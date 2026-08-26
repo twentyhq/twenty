@@ -2,6 +2,8 @@ import { isNull, isNumber, isString } from '@sniptt/guards';
 
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { isOpenRecordIn } from '@/workspace-member/utils/toOpenRecordInPreference';
+import { type OpenRecordIn } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import {
   WorkspaceMemberDateFormatEnum,
@@ -18,6 +20,7 @@ export type WorkspaceMemberSettingsUpdateInput = {
   name?: WorkspaceMemberNameUpdate;
   jobTitle?: string | null;
   colorScheme?: string;
+  openRecordIn?: OpenRecordIn;
   avatarUrl?: string | null;
   locale?: string;
   calendarStartDay?: number;
@@ -109,6 +112,10 @@ export const mergeWorkspaceMemberSettingsIntoCurrent = (
     if (isColorScheme(payload.colorScheme)) {
       next = { ...next, colorScheme: payload.colorScheme };
     }
+  }
+
+  if ('openRecordIn' in payload && isOpenRecordIn(payload.openRecordIn)) {
+    next = { ...next, openRecordIn: payload.openRecordIn };
   }
 
   if ('avatarUrl' in payload) {

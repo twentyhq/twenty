@@ -29,15 +29,16 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
   AllStandardObjectFieldName<'timelineActivity'>,
   FlatFieldMetadata
 > => ({
-  // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
-      label: i18nLabel(msg`Id`),
-      description: i18nLabel(msg`Id`),
+      label: i18nLabel(msg({ message: `Id`, context: 'fieldMetadata.label' })),
+      description: i18nLabel(
+        msg({ message: `Id`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'Icon123',
       isSystem: true,
       isNullable: false,
@@ -55,8 +56,12 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Creation date`),
-      description: i18nLabel(msg`Creation date`),
+      label: i18nLabel(
+        msg({ message: `Creation date`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Creation date`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: false,
@@ -75,8 +80,15 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Last update`),
-      description: i18nLabel(msg`Last time the record was changed`),
+      label: i18nLabel(
+        msg({ message: `Last update`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Last time the record was changed`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCalendarClock',
       isSystem: true,
       isNullable: false,
@@ -95,8 +107,15 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Deleted at`),
-      description: i18nLabel(msg`Date when the record was deleted`),
+      label: i18nLabel(
+        msg({ message: `Deleted at`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Date when the record was deleted`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCalendarMinus',
       isSystem: true,
       isNullable: true,
@@ -114,8 +133,15 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'createdBy',
       type: FieldMetadataType.ACTOR,
-      label: i18nLabel(msg`Created by`),
-      description: i18nLabel(msg`The creator of the record`),
+      label: i18nLabel(
+        msg({ message: `Created by`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `The creator of the record`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCreativeCommonsSa',
       isSystem: true,
       isUIEditable: false,
@@ -137,9 +163,14 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'updatedBy',
       type: FieldMetadataType.ACTOR,
-      label: i18nLabel(msg`Updated by`),
+      label: i18nLabel(
+        msg({ message: `Updated by`, context: 'fieldMetadata.label' }),
+      ),
       description: i18nLabel(
-        msg`The workspace member who last updated the record`,
+        msg({
+          message: `The workspace member who last updated the record`,
+          context: 'fieldMetadata.description',
+        }),
       ),
       icon: 'IconUserCircle',
       isSystem: true,
@@ -162,8 +193,15 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
-      label: i18nLabel(msg`Position`),
-      description: i18nLabel(msg`Timeline activity record position`),
+      label: i18nLabel(
+        msg({ message: `Position`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Timeline activity record position`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconHierarchy2',
       isSystem: true,
       isNullable: false,
@@ -174,15 +212,18 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  // TimelineActivity-specific fields
   happensAt: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
       fieldName: 'happensAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Creation date`),
-      description: i18nLabel(msg`Creation date`),
+      label: i18nLabel(
+        msg({ message: `Creation date`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Creation date`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconCalendar',
       isNullable: false,
       isUIEditable: false,
@@ -193,15 +234,48 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  name: createStandardFieldFlatMetadata({
+  timelineActivityTypeId: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      fieldName: 'name',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(msg`Event name`),
-      description: i18nLabel(msg`Event name`),
+      fieldName: 'timelineActivityTypeId',
+      type: FieldMetadataType.UUID,
+      label: i18nLabel(
+        msg({ message: `Event type`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Timeline activity type describing this event`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconAbc',
+      isSystem: true,
+      isNullable: true,
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  timelineActivityTypeSnapshot: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'timelineActivityTypeSnapshot',
+      type: FieldMetadataType.RAW_JSON,
+      label: i18nLabel(
+        msg({ message: `Event type`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Timeline activity type describing this event`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconArchive',
+      isSystem: true,
       isNullable: true,
       isUIEditable: false,
     },
@@ -216,8 +290,15 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'properties',
       type: FieldMetadataType.RAW_JSON,
-      label: i18nLabel(msg`Event details`),
-      description: i18nLabel(msg`Json value for event details`),
+      label: i18nLabel(
+        msg({ message: `Event details`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Json value for event details`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconListDetails',
       isNullable: true,
       isUIEditable: false,
@@ -233,8 +314,18 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'linkedRecordCachedName',
       type: FieldMetadataType.TEXT,
-      label: i18nLabel(msg`Linked Record cached name`),
-      description: i18nLabel(msg`Cached record name`),
+      label: i18nLabel(
+        msg({
+          message: `Linked Record cached name`,
+          context: 'fieldMetadata.label',
+        }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Cached record name`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconAbc',
       isSystem: true,
       isNullable: true,
@@ -251,8 +342,15 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'linkedRecordId',
       type: FieldMetadataType.UUID,
-      label: i18nLabel(msg`Linked Record id`),
-      description: i18nLabel(msg`Linked Record id`),
+      label: i18nLabel(
+        msg({ message: `Linked Record id`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Linked Record id`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconAbc',
       isSystem: true,
       isNullable: true,
@@ -269,8 +367,18 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'linkedObjectMetadataId',
       type: FieldMetadataType.UUID,
-      label: i18nLabel(msg`Linked Object Metadata Id`),
-      description: i18nLabel(msg`Linked Object Metadata Id`),
+      label: i18nLabel(
+        msg({
+          message: `Linked Object Metadata Id`,
+          context: 'fieldMetadata.label',
+        }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Linked Object Metadata Id`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconAbc',
       isSystem: true,
       isNullable: true,
@@ -282,7 +390,6 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     now,
   }),
 
-  // Relation fields
   workspaceMember: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -290,8 +397,15 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'workspaceMember',
-      label: i18nLabel(msg`Workspace Member`),
-      description: i18nLabel(msg`Event workspace member`),
+      label: i18nLabel(
+        msg({ message: `Workspace Member`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Event workspace member`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCircleUser',
       isNullable: true,
       isUIEditable: false,
@@ -315,8 +429,12 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.MORPH_RELATION,
       morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
       fieldName: 'targetPerson',
-      label: i18nLabel(msg`Person`),
-      description: i18nLabel(msg`Event target`),
+      label: i18nLabel(
+        msg({ message: `Person`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Event target`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconTimelineEvent',
       isNullable: true,
       isUIEditable: false,
@@ -341,8 +459,12 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.MORPH_RELATION,
       morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
       fieldName: 'targetCompany',
-      label: i18nLabel(msg`Company`),
-      description: i18nLabel(msg`Event target`),
+      label: i18nLabel(
+        msg({ message: `Company`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Event target`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconTimelineEvent',
       isNullable: true,
       isUIEditable: false,
@@ -367,8 +489,12 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.MORPH_RELATION,
       morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
       fieldName: 'targetOpportunity',
-      label: i18nLabel(msg`Opportunity`),
-      description: i18nLabel(msg`Event target`),
+      label: i18nLabel(
+        msg({ message: `Opportunity`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Event target`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconTimelineEvent',
       isNullable: true,
       isUIEditable: false,
@@ -393,8 +519,12 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.MORPH_RELATION,
       morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
       fieldName: 'targetNote',
-      label: i18nLabel(msg`Note`),
-      description: i18nLabel(msg`Event target`),
+      label: i18nLabel(
+        msg({ message: `Note`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Event target`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconTimelineEvent',
       isNullable: true,
       isUIEditable: false,
@@ -419,8 +549,12 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.MORPH_RELATION,
       morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
       fieldName: 'targetTask',
-      label: i18nLabel(msg`Task`),
-      description: i18nLabel(msg`Event target`),
+      label: i18nLabel(
+        msg({ message: `Task`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Event target`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconTimelineEvent',
       isNullable: true,
       isUIEditable: false,
@@ -445,8 +579,12 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.MORPH_RELATION,
       morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
       fieldName: 'targetWorkflow',
-      label: i18nLabel(msg`Workflow`),
-      description: i18nLabel(msg`Event target`),
+      label: i18nLabel(
+        msg({ message: `Workflow`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Event target`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconTimelineEvent',
       isNullable: true,
       isUIEditable: false,
@@ -471,8 +609,12 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.MORPH_RELATION,
       morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
       fieldName: 'targetWorkflowVersion',
-      label: i18nLabel(msg`WorkflowVersion`),
-      description: i18nLabel(msg`Event target`),
+      label: i18nLabel(
+        msg({ message: `WorkflowVersion`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Event target`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconTimelineEvent',
       isNullable: true,
       isUIEditable: false,
@@ -497,8 +639,12 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.MORPH_RELATION,
       morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
       fieldName: 'targetWorkflowRun',
-      label: i18nLabel(msg`WorkflowRun`),
-      description: i18nLabel(msg`Event target`),
+      label: i18nLabel(
+        msg({ message: `WorkflowRun`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Event target`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconTimelineEvent',
       isNullable: true,
       isUIEditable: false,
@@ -523,8 +669,12 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.MORPH_RELATION,
       morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
       fieldName: 'targetDashboard',
-      label: i18nLabel(msg`Dashboard`),
-      description: i18nLabel(msg`Event target`),
+      label: i18nLabel(
+        msg({ message: `Dashboard`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Event target`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconTimelineEvent',
       isNullable: true,
       isUIEditable: false,
@@ -549,8 +699,12 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.MORPH_RELATION,
       morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
       fieldName: 'targetMessageList',
-      label: i18nLabel(msg`MessageList`),
-      description: i18nLabel(msg`Event target`),
+      label: i18nLabel(
+        msg({ message: `MessageList`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Event target`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconTimelineEvent',
       isNullable: true,
       isUIEditable: false,
@@ -575,8 +729,12 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.MORPH_RELATION,
       morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
       fieldName: 'targetMessageCampaign',
-      label: i18nLabel(msg`MessageCampaign`),
-      description: i18nLabel(msg`Event target`),
+      label: i18nLabel(
+        msg({ message: `MessageCampaign`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Event target`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconTimelineEvent',
       isNullable: true,
       isUIEditable: false,
@@ -600,8 +758,15 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'searchVector',
       type: FieldMetadataType.TS_VECTOR,
-      label: i18nLabel(msg`Search vector`),
-      description: i18nLabel(msg`Field used for full-text search`),
+      label: i18nLabel(
+        msg({ message: `Search vector`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Field used for full-text search`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
