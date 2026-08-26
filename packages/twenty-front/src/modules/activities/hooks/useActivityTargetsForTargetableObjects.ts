@@ -5,8 +5,7 @@ import {
 
 import { findActivityTargetsOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/findActivityTargetsOperationSignatureFactory';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { type NoteTarget } from '@/activities/types/NoteTarget';
-import { type TaskTarget } from '@/activities/types/TaskTarget';
+import { type ActivityTarget } from '@/activities/types/ActivityTarget';
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -27,22 +26,52 @@ export const useActivityTargetsForTargetableObjects = ({
     'id' | 'targetObjectNameSingular'
   >[];
   skip?: boolean;
-  onCompleted?: (activityTargets: (TaskTarget | NoteTarget)[]) => void;
+  onCompleted?: (
+    activityTargets: ActivityTarget[],
+    activityRelationFieldName: string,
+  ) => void;
   activityTargetsOrderByVariables: RecordGqlOperationOrderBy;
   limit: number;
 }) => {
   const objectMetadataItems = useAtomStateValue<EnrichedObjectMetadataItem[]>(
     objectMetadataItemsSelector,
   );
-  const activityTargetsFilter = getActivityTargetsFilter({
-    targetableObjects,
-  });
-
   const FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE =
     findActivityTargetsOperationSignatureFactory({
       objectNameSingular,
       objectMetadataItems,
     });
+
+  const activityTargetObjectMetadata = objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular ===
+      FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.objectNameSingular,
+  );
+
+  if (!activityTargetObjectMetadata) {
+    throw new Error('Activity target object metadata is missing');
+  }
+
+  const activityObjectMetadata = objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular === objectNameSingular,
+  );
+
+  const activityRelationFieldName = activityTargetObjectMetadata.fields.find(
+    (fieldMetadataItem) =>
+      fieldMetadataItem.relation?.targetObjectMetadata.id ===
+      activityObjectMetadata?.id,
+  )?.name;
+
+  if (!activityRelationFieldName) {
+    throw new Error('Activity relation metadata is missing');
+  }
+
+  const activityTargetsFilter = getActivityTargetsFilter({
+    targetableObjects,
+    activityTargetObjectMetadata,
+    objectMetadataItems,
+  });
 
   // TODO: We want to optimistically remove from this request
   //   If we are on a show page and we remove the current show page object corresponding activity target
@@ -53,13 +82,13 @@ export const useActivityTargetsForTargetableObjects = ({
     totalCount: totalCountActivityTargets,
     fetchMoreRecords: fetchMoreActivityTargets,
     hasNextPage,
-  } = useFindManyRecords<TaskTarget | NoteTarget>({
+  } = useFindManyRecords<ActivityTarget>({
     skip,
     objectNameSingular:
       FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.objectNameSingular,
     filter: activityTargetsFilter,
     recordGqlFields: FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.fields,
-    onCompleted,
+    onCompleted: (records) => onCompleted?.(records, activityRelationFieldName),
     orderBy: activityTargetsOrderByVariables,
     limit,
   });
@@ -70,5 +99,6 @@ export const useActivityTargetsForTargetableObjects = ({
     totalCountActivityTargets: totalCountActivityTargets ?? 0,
     fetchMoreActivityTargets,
     hasNextPage,
+    activityRelationFieldName,
   };
 };

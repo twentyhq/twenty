@@ -7,6 +7,8 @@ import { type Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { generateCreateOneRecordMutation } from '@/object-metadata/utils/generateCreateOneRecordMutation';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { mockedTaskRecords } from '~/testing/mock-data/generated/data/tasks/mock-tasks-data';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
@@ -91,5 +93,10 @@ describe('useCreateActivityInDB', () => {
     });
 
     expect(mockResult).toHaveBeenCalled();
+    expect(jotaiStore.get(recordStoreFamilyState.atomFamily(id))).toMatchObject(
+      {
+        taskTargets: [],
+      },
+    );
   });
 });

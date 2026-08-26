@@ -50,6 +50,7 @@ describe('useActivities', () => {
       {
         activityTargets: [{ ...mockActivityTarget, task: mockActivity }],
         loadingActivityTargets: false,
+        activityRelationFieldName: 'task',
       },
     );
 

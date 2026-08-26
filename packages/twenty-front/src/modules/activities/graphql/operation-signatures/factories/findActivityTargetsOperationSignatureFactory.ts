@@ -1,8 +1,8 @@
-import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameSingular';
 import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { type RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
+import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
 import { isDefined } from 'twenty-shared/utils';
 
 type FindActivityTargetsOperationSignatureFactory = {
@@ -16,25 +16,26 @@ export const findActivityTargetsOperationSignatureFactory: RecordGqlOperationSig
   objectNameSingular,
   objectMetadataItems,
 }: FindActivityTargetsOperationSignatureFactory) => {
-  const targetObjectNameSingular =
-    getJoinObjectNameSingular(objectNameSingular);
-
-  const targetObjectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItem) =>
-      objectMetadataItem.nameSingular === targetObjectNameSingular,
-  );
-
   const activityObjectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>
       objectMetadataItem.nameSingular === objectNameSingular,
   );
 
-  if (
-    !isDefined(targetObjectMetadataItem) ||
-    !isDefined(activityObjectMetadataItem)
-  ) {
-    throw new Error(`Cannot find target or targetable object metadata item`);
+  if (!isDefined(activityObjectMetadataItem)) {
+    throw new Error('Cannot resolve activity junction metadata');
   }
+
+  const junctionConfig = getActivityTargetJunctionConfig({
+    activityObjectMetadata: activityObjectMetadataItem,
+    objectMetadataItems,
+  });
+
+  if (!isDefined(junctionConfig) || !isDefined(junctionConfig.sourceField)) {
+    throw new Error('Cannot resolve activity relation on junction object');
+  }
+
+  const { activityTargetField, junctionObjectMetadata, sourceField } =
+    junctionConfig;
 
   const activityFieldKeys = generateDepthRecordGqlFieldsFromObject({
     objectMetadataItems,
@@ -43,21 +44,20 @@ export const findActivityTargetsOperationSignatureFactory: RecordGqlOperationSig
   });
 
   return {
-    objectNameSingular: targetObjectNameSingular,
+    objectNameSingular: junctionObjectMetadata.nameSingular,
     variables: {},
     fields: {
       id: true,
       __typename: true,
       createdAt: true,
       updatedAt: true,
-      [objectNameSingular]: {
+      [sourceField.name]: {
         ...activityFieldKeys,
-        [targetObjectMetadataItem.namePlural]:
-          generateDepthRecordGqlFieldsFromObject({
-            objectMetadataItems,
-            objectMetadataItem: targetObjectMetadataItem,
-            depth: 1,
-          }),
+        [activityTargetField.name]: generateDepthRecordGqlFieldsFromObject({
+          objectMetadataItems,
+          objectMetadataItem: junctionObjectMetadata,
+          depth: 1,
+        }),
       },
     },
   };
