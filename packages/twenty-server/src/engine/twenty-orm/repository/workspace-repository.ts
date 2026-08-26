@@ -563,6 +563,29 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return insertResult;
   }
 
+  async insertOrIgnore(
+    entityOrEntities: Partial<ObjectRecord> | Partial<ObjectRecord>[],
+  ): Promise<InsertResult> {
+    const records = Array.isArray(entityOrEntities)
+      ? entityOrEntities
+      : [entityOrEntities];
+
+    const { identifiers, generatedMaps, raw } = await this.runInsert({
+      records,
+      columnsToReturn: this.options.shouldBypassPermissionChecks
+        ? Object.keys(this.options.tableShape.columnShapeByColumnName)
+        : ['id'],
+      onConflictDoNothing: true,
+    });
+    const insertResult = new InsertResult();
+
+    insertResult.identifiers = identifiers;
+    insertResult.generatedMaps = generatedMaps;
+    insertResult.raw = raw;
+
+    return insertResult;
+  }
+
   async update(
     criteria: MutationCriteria,
     partialEntity: Partial<ObjectRecord>,
@@ -872,9 +895,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   async runInsert({
     records,
     columnsToReturn,
+    onConflictDoNothing,
   }: {
     records: Partial<ObjectRecord>[];
     columnsToReturn: string[];
+    onConflictDoNothing?: boolean;
   }): Promise<{
     identifiers: { id: string }[];
     generatedMaps: ObjectRecord[];
@@ -923,6 +948,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       columnNames,
       rows,
       returningColumns: columnsToReturn,
+      onConflictDoNothing,
     });
 
     const rawRows = await this.executeRaw<ObjectRecord>(sql, parameters);

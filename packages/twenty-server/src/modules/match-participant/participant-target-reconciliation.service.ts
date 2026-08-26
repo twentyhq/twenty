@@ -6,6 +6,7 @@ import { In, type ObjectLiteral } from 'typeorm';
 
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { getWorkspaceRepositoryWithOptionalTransaction } from 'src/engine/twenty-orm/utils/get-workspace-repository-with-optional-transaction.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
@@ -106,10 +107,22 @@ export class ParticipantTargetReconciliationService {
       'message',
       transactionScope,
     );
-    const changedMessages = await messageRepository.find({
-      where: { id: In([...new Set(messageIds)]) },
-      select: { id: true, messageThreadId: true },
-    });
+    const changedMessages: Pick<
+      MessageWorkspaceEntity,
+      'id' | 'messageThreadId'
+    >[] = [];
+
+    for (const messageIdChunk of chunk(
+      [...new Set(messageIds)],
+      RECONCILIATION_CHUNK_SIZE,
+    )) {
+      changedMessages.push(
+        ...(await messageRepository.find({
+          where: { id: In(messageIdChunk) },
+          select: { id: true, messageThreadId: true },
+        })),
+      );
+    }
     const messageThreadIds = [
       ...new Set(
         changedMessages
@@ -158,13 +171,22 @@ export class ParticipantTargetReconciliationService {
           transactionScope,
         );
       const messageIds = [...messageThreadIdByMessageId.keys()];
-      const participants =
-        messageIds.length === 0
-          ? []
-          : await participantRepository.find({
-              where: { messageId: In(messageIds) },
-              select: { messageId: true, personId: true },
-            });
+      const participants: Pick<
+        MessageParticipantWorkspaceEntity,
+        'messageId' | 'personId'
+      >[] = [];
+
+      for (const messageIdChunk of chunk(
+        messageIds,
+        RECONCILIATION_CHUNK_SIZE,
+      )) {
+        participants.push(
+          ...(await participantRepository.find({
+            where: { messageId: In(messageIdChunk) },
+            select: { messageId: true, personId: true },
+          })),
+        );
+      }
 
       await this.reconcileTargets({
         parentIds: messageThreadIdChunk,
@@ -230,7 +252,7 @@ export class ParticipantTargetReconciliationService {
     });
 
     if (operations.targetsToCreate.length > 0) {
-      await targetRepository.insert(
+      await targetRepository.insertOrIgnore(
         operations.targetsToCreate.map(({ parentId, ...target }) => ({
           ...target,
           [parentFieldName]: parentId,
@@ -389,14 +411,11 @@ export class ParticipantTargetReconciliationService {
     objectMetadataName: string,
     transactionScope?: WorkspaceTransactionScope,
   ): Promise<WorkspaceRepository<T>> {
-    if (isDefined(transactionScope)) {
-      return transactionScope.getRepository<T>(objectMetadataName, {
-        shouldBypassPermissionChecks: true,
-      });
-    }
-
-    return this.workspaceOrmManager.getRepository<T>(objectMetadataName, {
-      shouldBypassPermissionChecks: true,
+    return getWorkspaceRepositoryWithOptionalTransaction<T>({
+      objectMetadataName,
+      transactionScope,
+      workspaceOrmManager: this.workspaceOrmManager,
+      rolePermissionConfig: { shouldBypassPermissionChecks: true },
     });
   }
 }

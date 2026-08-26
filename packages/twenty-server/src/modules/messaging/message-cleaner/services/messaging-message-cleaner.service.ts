@@ -284,6 +284,10 @@ export class MessagingMessageCleanerService {
     messageRepository: WorkspaceRepository<MessageWorkspaceEntity>,
     threadIds: string[],
   ): Promise<string[]> {
+    if (threadIds.length === 0) {
+      return [];
+    }
+
     const messages = await messageRepository.find({
       where: { messageThreadId: In(threadIds) },
       select: { messageThreadId: true },
