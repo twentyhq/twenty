@@ -38,22 +38,44 @@ export type WidenedCacheEntityFetchSpec =
   | readonly string[]
   | GroupedCacheEntityFetchSpec;
 
-type GroupedEntityRows<
+// Rows are typed as exactly the declared columns (plus groupBy keys, which
+// the plan auto-fetches), so reading an undeclared column is a compile error
+// instead of a silent runtime undefined. The type is a lower bound: a shared
+// batch may physically fetch more columns for another provider, but each
+// provider only sees what it declared.
+type PickedRow<
   TName extends CacheFetchableEntityName,
+  TColumns extends readonly string[] | true,
+> = TColumns extends readonly string[]
+  ? Pick<
+      CacheFetchableEntity<TName>,
+      TColumns[number] & keyof CacheFetchableEntity<TName>
+    >
+  : CacheFetchableEntity<TName>;
+
+type GroupedRow<
+  TName extends CacheFetchableEntityName,
+  TColumns extends readonly string[] | true,
   TGroupBy extends readonly string[],
-> = {
-  rows: CacheFetchableEntity<TName>[];
-} & {
-  [TForeignKey in TGroupBy[number] as `by${Capitalize<TForeignKey>}`]: Map<
-    string,
-    CacheFetchableEntity<TName>[]
-  >;
-};
+> = TColumns extends readonly string[]
+  ? Pick<
+      CacheFetchableEntity<TName>,
+      (TColumns[number] | TGroupBy[number]) & keyof CacheFetchableEntity<TName>
+    >
+  : CacheFetchableEntity<TName>;
 
 export type CacheEntityFetchShapeRows<TShape extends CacheEntityFetchShape> = {
   [TName in keyof TShape & CacheFetchableEntityName]: TShape[TName] extends {
+    columns: infer TColumns extends readonly string[] | true;
     groupBy: infer TGroupBy extends readonly string[];
   }
-    ? GroupedEntityRows<TName, TGroupBy>
-    : CacheFetchableEntity<TName>[];
+    ? { rows: GroupedRow<TName, TColumns, TGroupBy>[] } & {
+        [TForeignKey in TGroupBy[number] as `by${Capitalize<TForeignKey>}`]: Map<
+          string,
+          GroupedRow<TName, TColumns, TGroupBy>[]
+        >;
+      }
+    : TShape[TName] extends readonly string[]
+      ? PickedRow<TName, TShape[TName]>[]
+      : CacheFetchableEntity<TName>[];
 };

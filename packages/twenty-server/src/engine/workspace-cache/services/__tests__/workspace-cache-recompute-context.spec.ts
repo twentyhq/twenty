@@ -235,6 +235,27 @@ describe('WorkspaceCacheRecomputeContext', () => {
     expect([...objectMetadata.byLabelIdentifierFieldMetadataId.keys()]).toEqual(
       ['field-1'],
     );
+
+    // grouped rows are typed as the declared columns plus the groupBy keys
+    expect(objectMetadata.rows[0].labelIdentifierFieldMetadataId).toBe(
+      'field-1',
+    );
+    // @ts-expect-error an undeclared column is a compile error, not undefined
+    void objectMetadata.rows[0].nameSingular;
+  });
+
+  it('types plain rows as exactly the declared columns', async () => {
+    const { recomputeContext } = setup();
+
+    await recomputeContext.resolveFetchShapes([{ objectMetadata: ['id'] }]);
+
+    const { objectMetadata } = recomputeContext.getRowsByName({
+      objectMetadata: ['id'],
+    } as const);
+
+    expect(objectMetadata[0].id).toBe('object-row');
+    // @ts-expect-error an undeclared column is a compile error, not undefined
+    void objectMetadata[0].nameSingular;
   });
 
   it('throws when reading an entity name no shape declared', async () => {
