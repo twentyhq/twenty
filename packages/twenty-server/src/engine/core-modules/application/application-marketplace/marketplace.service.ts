@@ -117,7 +117,9 @@ export class MarketplaceService {
     try {
       let from = 0;
 
-      while (true) {
+      // Guards against an infinite loop on its own, whatever the pages hold:
+      // every continued iteration advances from by a full page.
+      while (from < REGISTRY_SEARCH_MAX_RESULTS) {
         const { data } = await axios.get(
           `${registryUrl}/-/v1/search?text=keywords:twenty-app&size=${REGISTRY_SEARCH_PAGE_SIZE}&from=${from}`,
           {

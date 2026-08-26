@@ -119,6 +119,34 @@ describe('MarketplaceService', () => {
       expect(packages).toHaveLength(251);
     });
 
+    it('stops at the max results cap when the registry keeps returning full pages', async () => {
+      let pageIndex = 0;
+
+      mockedAxiosGet.mockImplementation(() => {
+        const objects = buildSearchObjects(250, pageIndex * 250);
+
+        pageIndex++;
+
+        return Promise.resolve({ data: { objects, total: 100_000 } });
+      });
+
+      const packages = await service.fetchAppsFromRegistry();
+
+      expect(mockedAxiosGet).toHaveBeenCalledTimes(40);
+      expect(packages).toHaveLength(10_000);
+    });
+
+    it('stops at the max results cap when the registry replays the same page forever', async () => {
+      mockedAxiosGet.mockResolvedValue({
+        data: { objects: buildSearchObjects(250, 0) },
+      });
+
+      const packages = await service.fetchAppsFromRegistry();
+
+      expect(mockedAxiosGet).toHaveBeenCalledTimes(40);
+      expect(packages).toHaveLength(250);
+    });
+
     it('returns the packages fetched before a page fails', async () => {
       mockedAxiosGet
         .mockResolvedValueOnce({
