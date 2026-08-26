@@ -5,11 +5,7 @@ describe('getRecordArrayField', () => {
     expect(
       getRecordArrayField({
         record: {
-          customTargets: [
-            { id: 'target-1' },
-            null,
-            { invalid: true },
-          ],
+          customTargets: [{ id: 'target-1' }, null, { invalid: true }],
         },
         fieldName: 'customTargets',
       }),

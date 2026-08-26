@@ -10,8 +10,6 @@ export const getRecordFieldValue = ({
   record: object | null | undefined;
   fieldName: string;
 }): unknown =>
-  record !== null &&
-  record !== undefined &&
-  hasField(record, fieldName)
+  record !== null && record !== undefined && hasField(record, fieldName)
     ? record[fieldName]
     : undefined;
