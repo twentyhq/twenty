@@ -246,8 +246,6 @@ export class BullMQDriver
             ...(isDefined(workspaceId) && { workspace_id: workspaceId }),
           };
 
-          // job.delay is intentional scheduling, not congestion: subtract it
-          // so the latency only measures time spent waiting for a free worker
           const queueLatency = Math.max(
             0,
             Date.now() - job.timestamp - (job.delay ?? 0),
