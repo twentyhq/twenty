@@ -947,7 +947,7 @@ export class AuthResolver {
       authorizeAppInput,
       user,
       workspace,
-      issuer: getRequestBaseUrl(context.req),
+      requestBaseUrl: getRequestBaseUrl(context.req),
     });
   }
 

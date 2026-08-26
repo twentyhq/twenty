@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import gql from 'graphql-tag';
 import request from 'supertest';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { base64UrlEncode } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
 import { AppTokenType } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -317,6 +317,8 @@ describe('OAuth (integration)', () => {
       expect(code).toMatch(/^[0-9a-f]+$/);
       expect(callbackUrl.searchParams.get('iss')).toBe(metadata.body.issuer);
       expect(callbackUrl.searchParams.get('state')).toBe(state);
+
+      assertIsDefinedOrThrow(code);
 
       const [issuedToken] = await ds.query(
         `SELECT id FROM core."appToken" WHERE value = $1`,
