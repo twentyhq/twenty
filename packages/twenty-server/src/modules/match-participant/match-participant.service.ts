@@ -74,7 +74,7 @@ export class MatchParticipantService<
         );
       }
 
-      return await this.workspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
+      return this.workspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
         objectMetadataName,
       );
     }
@@ -85,7 +85,7 @@ export class MatchParticipantService<
       );
     }
 
-    return await this.workspaceOrmManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
+    return this.workspaceOrmManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
       objectMetadataName,
     );
   }
@@ -101,10 +101,9 @@ export class MatchParticipantService<
     }
 
     const personRepository =
-      await this.workspaceOrmManager.getRepository<PersonWorkspaceEntity>(
-        'person',
-        { shouldBypassPermissionChecks: true },
-      );
+      this.workspaceOrmManager.getRepository<PersonWorkspaceEntity>('person', {
+        shouldBypassPermissionChecks: true,
+      });
 
     const participantRepository = await this.getParticipantRepository({
       objectMetadataName,
@@ -112,7 +111,7 @@ export class MatchParticipantService<
     });
 
     const workspaceMemberRepository =
-      await this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+      this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
         'workspaceMember',
         { shouldBypassPermissionChecks: true },
       );

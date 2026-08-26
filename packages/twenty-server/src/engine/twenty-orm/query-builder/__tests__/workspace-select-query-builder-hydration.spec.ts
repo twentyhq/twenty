@@ -1,4 +1,4 @@
-import { TwentyOrmV2Exception } from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import {
   SCHEMA_NAME,
   buildQueryBuilder,
@@ -130,7 +130,7 @@ describe('WorkspaceSelectQueryBuilder joined hydration', () => {
     queryBuilder.leftJoin('person.company', 'company');
 
     queryBuilder.addSelect('unknown.name');
-    expect(() => queryBuilder.getQuery()).toThrow(TwentyOrmV2Exception);
+    expect(() => queryBuilder.getQuery()).toThrow(TwentyOrmException);
   });
 
   it('should keep the v1 permission surface for joinAndSelect projections', () => {
@@ -151,7 +151,7 @@ describe('WorkspaceSelectQueryBuilder joined hydration', () => {
     queryBuilder.setFindOptions({ select: { id: true } });
     queryBuilder.leftJoinAndSelect('person.people', 'people');
 
-    await expect(queryBuilder.getMany()).rejects.toThrow(TwentyOrmV2Exception);
+    await expect(queryBuilder.getMany()).rejects.toThrow(TwentyOrmException);
   });
 
   it('should render an added join condition on a selected inner join', () => {

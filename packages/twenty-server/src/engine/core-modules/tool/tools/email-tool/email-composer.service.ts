@@ -275,7 +275,7 @@ export class EmailComposerService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageRepository =
-        await this.workspaceOrmManager.getRepository<MessageWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<MessageWorkspaceEntity>(
           'message',
         );
 
@@ -292,7 +292,7 @@ export class EmailComposerService {
       }
 
       const associationRepository =
-        await this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
           'messageChannelMessageAssociation',
         );
 

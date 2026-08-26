@@ -1,11 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { In } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -60,7 +58,6 @@ export class WorkflowCommonWorkspaceService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly commandMenuItemService: CommandMenuItemService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async getWorkflowVersionOrFail({
@@ -81,7 +78,7 @@ export class WorkflowCommonWorkspaceService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowVersionRepository =
-        await this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
           'workflowVersion',
           { shouldBypassPermissionChecks: true },
         );
@@ -106,15 +103,7 @@ export class WorkflowCommonWorkspaceService {
     workspaceId: string,
     workflowVersion: WorkflowVersionWorkspaceEntity,
   ): Promise<WorkflowVersionWorkspaceEntity> {
-    const isCoreReadEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_WORKFLOW_VERSION_IN_CORE_ENABLED,
-      workspaceId,
-    );
-
-    if (
-      !isCoreReadEnabled ||
-      !isDefined(workflowVersion.coreWorkflowVersionId)
-    ) {
+    if (!isDefined(workflowVersion.coreWorkflowVersionId)) {
       return workflowVersion;
     }
 
@@ -162,7 +151,7 @@ export class WorkflowCommonWorkspaceService {
     const workflows = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const workflowRepository =
-          await this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+          this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
             'workflow',
             { shouldBypassPermissionChecks: true },
           );
@@ -314,19 +303,19 @@ export class WorkflowCommonWorkspaceService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowVersionRepository =
-        await this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
           'workflowVersion',
           { shouldBypassPermissionChecks: true },
         );
 
       const workflowRunRepository =
-        await this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
           'workflowRun',
           { shouldBypassPermissionChecks: true },
         );
 
       const workflowAutomatedTriggerRepository =
-        await this.workspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
           'workflowAutomatedTrigger',
           { shouldBypassPermissionChecks: true },
         );

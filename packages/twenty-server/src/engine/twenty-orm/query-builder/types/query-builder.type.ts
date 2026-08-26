@@ -57,11 +57,3 @@ export type FindOptionsSelectLike = Record<string, boolean>;
 export type FindOptionsLike = {
   select?: FindOptionsSelectLike;
 };
-
-export type ExpressionMapLike = {
-  queryType: 'select';
-  joinAttributes: {
-    alias: { name: string };
-    relation: { isOneToMany: boolean; isManyToMany: boolean };
-  }[];
-};

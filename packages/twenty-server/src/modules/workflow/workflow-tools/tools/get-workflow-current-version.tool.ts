@@ -43,7 +43,7 @@ export const createGetWorkflowCurrentVersionTool = (
       return await deps.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const workflowRepository =
-            await deps.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+            deps.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
               'workflow',
               context.rolePermissionConfig,
             );
@@ -60,7 +60,7 @@ export const createGetWorkflowCurrentVersionTool = (
           }
 
           const workflowVersionRepository =
-            await deps.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+            deps.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
               'workflowVersion',
               context.rolePermissionConfig,
             );

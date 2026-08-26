@@ -3500,18 +3500,6 @@ msgctxt "fieldMetadata.label"
 msgid "Event ID"
 msgstr "Իրադարձության ID"
 
-#. js-lingui-id: ygoA2u
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Event name"
-msgstr "Իրադարձության անուն"
-
-#. js-lingui-id: AvDRPM
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Event name"
-msgstr "Իրադարձության անուն"
-
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -9855,7 +9843,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "Ֆայլի ընդլայնումը չի համապատասխանում ֆայլի բովանդակությանը։ Խնդրում ենք ստուգել, որ ձեր ֆայլը վնասված չէ և ունի ճիշտ ընդլայնում։"
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "Ֆայլը դեռ վերբեռնված չէ։ Խնդրում ենք այն վերբեռնել մինչև հաստատելը։"
 
@@ -10066,7 +10054,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "Բաժանորդագրությունից հրաժարվելու թեման, որի շրջանակում ուղարկվել է այս արշավը"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "Վերբեռնված ֆայլը չի համապատասխանում հայտարարված չափին։ Խնդրում ենք կրկին փորձել վերբեռնել։"
@@ -10358,7 +10346,7 @@ msgid "This field references an object that could not be found"
 msgstr "Այս դաշտը հղվում է օբյեկտի, որը չի գտնվել"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "Այս ֆայլի ձևաչափը չի աջակցվում։"
 
@@ -10440,11 +10428,6 @@ msgstr "Այս օբյեկտի արտոնությունը արդեն սահման
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This operation is not allowed."
 msgstr "Այս գործողությունը թույլատրելի չէ։"
-
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-datasource.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "Այս գործողությունն արգելված է։ Խնդրում ենք փորձել այլ մոտեցում կամ օգնության կարիք լինելու դեպքում կապ հաստատել աջակցման խմբի հետ։"
 
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
@@ -12441,8 +12424,8 @@ msgid "You can only update one record with files field at once."
 msgstr "Դուք կարող եք մեկ անգամում թարմացնել միայն մեկ գրառում files դաշտով։"
 
 #. js-lingui-id: 4ysDL0
-#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
+#: src/engine/twenty-orm/repository/workspace-repository.ts
+#: src/engine/twenty-orm/repository/workspace-repository.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr "Դուք կարող եք մեկ փորձով թարմացնել առավելագույնը {QUERY_MAX_RECORDS} գրառում։"
 

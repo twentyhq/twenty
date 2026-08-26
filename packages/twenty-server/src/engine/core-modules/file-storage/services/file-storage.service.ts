@@ -268,6 +268,7 @@ export class FileStorageService {
   async createPendingFile({
     fileFolder,
     applicationUniversalIdentifier,
+    applicationId,
     workspaceId,
     resourcePath,
     fileId,
@@ -275,15 +276,18 @@ export class FileStorageService {
     mimeType,
     settings,
   }: ResourceIdentifier & {
+    applicationId?: string;
     fileId: string;
     size: number;
     mimeType: string;
     settings: FileSettings;
   }): Promise<FileEntity> {
-    const applicationId = await this.resolveApplicationIdOrThrow({
-      applicationUniversalIdentifier,
-      workspaceId,
-    });
+    const resolvedApplicationId =
+      applicationId ??
+      (await this.resolveApplicationIdOrThrow({
+        applicationUniversalIdentifier,
+        workspaceId,
+      }));
 
     const { filePath } = this.validateAndBuildFileStoragePathOrThrow({
       workspaceId,
@@ -296,7 +300,7 @@ export class FileStorageService {
       workspaceId,
       {
         path: filePath,
-        applicationId,
+        applicationId: resolvedApplicationId,
         id: fileId,
         mimeType,
         size,

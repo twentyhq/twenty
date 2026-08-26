@@ -238,7 +238,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       const writeRepository = this.getWriteRepository(queryRunnerContext);
 
       return writeRepository.runInsert({
-        records: await this.resolveNestedRelationsForOrmV2({
+        records: await this.resolveNestedRelations({
           records: args.data,
           queryRunnerContext,
           writeRepository,
@@ -461,7 +461,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       }));
 
     const writeRepository = this.getWriteRepository(queryRunnerContext);
-    const resolvedData = await this.resolveNestedRelationsForOrmV2({
+    const resolvedData = await this.resolveNestedRelations({
       records: updateInputs.map((input) => input.data),
       queryRunnerContext,
       writeRepository,
@@ -501,7 +501,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const writeRepository = this.getWriteRepository(queryRunnerContext);
 
     const insertResult = await writeRepository.runInsert({
-      records: await this.resolveNestedRelationsForOrmV2({
+      records: await this.resolveNestedRelations({
         records: recordsToInsert,
         queryRunnerContext,
         writeRepository,

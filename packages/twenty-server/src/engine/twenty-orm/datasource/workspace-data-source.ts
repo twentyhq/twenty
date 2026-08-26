@@ -12,13 +12,14 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { ClientQueryExecutor } from 'src/engine/twenty-orm/executor/client-query-executor';
 import { PoolQueryExecutor } from 'src/engine/twenty-orm/executor/pool-query-executor';
 import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
 import {
-  TwentyOrmV2Exception,
-  TwentyOrmV2ExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { runInRollbackSafeTransaction } from 'src/engine/twenty-orm/datasource/utils/run-in-rollback-safe-transaction.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
@@ -29,17 +30,6 @@ const tableShapeCacheByFlatObjectMetadataMaps = new WeakMap<
   object,
   Map<string, WorkspaceTableShape>
 >();
-
-export type WorkspaceTransactionScopeV2 = {
-  getRepository: (
-    nameSingular: string,
-    rolePermissionConfig?: RolePermissionConfig,
-  ) => WorkspaceRepository;
-  executeRawQuery: (
-    sql: string,
-    parameters?: unknown[],
-  ) => Promise<Record<string, unknown>[]>;
-};
 
 export class WorkspaceDataSource {
   private readonly pool: Pool;
@@ -76,12 +66,15 @@ export class WorkspaceDataSource {
   }
 
   async transaction<T>(
-    work: (transactionScope: WorkspaceTransactionScopeV2) => Promise<T>,
+    work: (transactionScope: WorkspaceTransactionScope) => Promise<T>,
   ): Promise<T> {
     return this.runInClientTransaction((executor) =>
       work({
-        getRepository: (nameSingular, rolePermissionConfig) =>
-          this.buildRepository({
+        getRepository: <T extends ObjectLiteral = ObjectRecord>(
+          nameSingular: string,
+          rolePermissionConfig?: RolePermissionConfig,
+        ) =>
+          this.buildRepository<T>({
             nameSingular,
             rolePermissionConfig,
             executor,
@@ -117,9 +110,9 @@ export class WorkspaceDataSource {
       this.internalContext.objectIdByNameSingular[nameSingular];
 
     if (!isDefined(objectMetadataId)) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Object "${nameSingular}" does not exist in this workspace`,
-        TwentyOrmV2ExceptionCode.UNKNOWN_OBJECT,
+        TwentyOrmExceptionCode.UNKNOWN_OBJECT,
       );
     }
 

@@ -9843,7 +9843,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "L'estensione del file non corrisponde al contenuto del file. Verifica che il tuo file non sia danneggiato e che abbia l'estensione corretta."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "Il file non è ancora stato caricato. Caricalo prima di confermare."
 
@@ -10054,7 +10054,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "L'argomento di disiscrizione sotto il quale è stata inviata questa campagna"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "Il file caricato non corrisponde alla dimensione dichiarata. Riprova il caricamento."
@@ -10346,7 +10346,7 @@ msgid "This field references an object that could not be found"
 msgstr "Questo campo fa riferimento a un oggetto che non è stato trovato"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "Questo formato di file non è supportato."
 
@@ -10428,11 +10428,6 @@ msgstr "Questo permesso dell'oggetto è già impostato per il ruolo"
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This operation is not allowed."
 msgstr "Questa operazione non è consentita."
-
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-schema.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "Questa operazione non è permessa. Si prega di provare un approccio diverso o contattare il supporto se serve assistenza."
 
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts

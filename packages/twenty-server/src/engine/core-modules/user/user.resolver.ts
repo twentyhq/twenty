@@ -407,7 +407,7 @@ export class UserResolver {
     const workspaceMemberToDelete =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workspaceMemberRepository =
-          await this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
             'workspaceMember',
             { shouldBypassPermissionChecks: true },
           );

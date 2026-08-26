@@ -222,7 +222,7 @@ const createWorkflow = async ({
   const authContext = buildSystemAuthContext(context.workspaceId);
 
   return deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
-    const workflowRepository = await deps.workspaceOrmManager.getRepository(
+    const workflowRepository = deps.workspaceOrmManager.getRepository(
       'workflow',
       context.rolePermissionConfig,
     );
@@ -309,7 +309,7 @@ const updateWorkflowStatus = async ({
   const authContext = buildSystemAuthContext(context.workspaceId);
 
   await deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
-    const workflowRepository = await deps.workspaceOrmManager.getRepository(
+    const workflowRepository = deps.workspaceOrmManager.getRepository(
       'workflow',
       context.rolePermissionConfig,
     );

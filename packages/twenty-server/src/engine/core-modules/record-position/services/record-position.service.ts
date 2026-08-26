@@ -161,7 +161,7 @@ export class RecordPositionService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const repository = await this.workspaceOrmManager.getRepository(
+      const repository = this.workspaceOrmManager.getRepository(
         objectMetadata.nameSingular,
         {
           shouldBypassPermissionChecks: true,
@@ -185,7 +185,7 @@ export class RecordPositionService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const repository = await this.workspaceOrmManager.getRepository(
+      const repository = this.workspaceOrmManager.getRepository(
         objectMetadata.nameSingular,
         {
           shouldBypassPermissionChecks: true,
@@ -206,7 +206,7 @@ export class RecordPositionService {
 
     const result = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const repository = await this.workspaceOrmManager.getRepository(
+        const repository = this.workspaceOrmManager.getRepository(
           objectMetadata.nameSingular,
           {
             shouldBypassPermissionChecks: true,
@@ -229,7 +229,7 @@ export class RecordPositionService {
 
     const result = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const repository = await this.workspaceOrmManager.getRepository(
+        const repository = this.workspaceOrmManager.getRepository(
           objectMetadata.nameSingular,
           {
             shouldBypassPermissionChecks: true,

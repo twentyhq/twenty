@@ -1,9 +1,9 @@
 import { type DataSource, type QueryRunner } from 'typeorm';
 
 import {
-  TwentyOrmV2Exception,
-  TwentyOrmV2ExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { RepairOrphanCoreWorkflowVersionsCommand } from 'src/database/commands/upgrade-version-command/2-28/2-28-workspace-command-1785600000000-repair-orphan-core-workflow-versions.command';
@@ -55,9 +55,9 @@ const setup = ({
 
   const count = objectMissing
     ? jest.fn().mockRejectedValue(
-        new TwentyOrmV2Exception(
+        new TwentyOrmException(
           'Object "workflowVersion" does not exist in this workspace',
-          TwentyOrmV2ExceptionCode.UNKNOWN_OBJECT,
+          TwentyOrmExceptionCode.UNKNOWN_OBJECT,
         ),
       )
     : jest.fn().mockResolvedValue(0);

@@ -21,8 +21,8 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import {
-  TwentyORMException,
-  TwentyORMExceptionCode,
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -99,7 +99,7 @@ export class WorkflowTriggerController {
       const { workflow } =
         await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
           const workflowRepository =
-            await this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+            this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
               'workflow',
               { shouldBypassPermissionChecks: true },
             );
@@ -126,7 +126,7 @@ export class WorkflowTriggerController {
           }
 
           const workflowVersionRepository =
-            await this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+            this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
               'workflowVersion',
               { shouldBypassPermissionChecks: true },
             );
@@ -186,10 +186,10 @@ export class WorkflowTriggerController {
     workspaceId: string,
   ): never {
     if (
-      error instanceof TwentyORMException &&
+      error instanceof TwentyOrmException &&
       [
-        TwentyORMExceptionCode.WORKSPACE_NOT_FOUND,
-        TwentyORMExceptionCode.WORKSPACE_SCHEMA_NOT_FOUND,
+        TwentyOrmExceptionCode.WORKSPACE_NOT_FOUND,
+        TwentyOrmExceptionCode.WORKSPACE_SCHEMA_NOT_FOUND,
       ].includes(error.code)
     ) {
       throw new WorkflowTriggerException(

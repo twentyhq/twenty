@@ -1,15 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { msg } from '@lingui/core/macro';
-import { type DataSource, type EntityManager, Repository } from 'typeorm';
+import { type DataSource, Repository } from 'typeorm';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import {
   WorkspaceDataSourceException,
   WorkspaceDataSourceExceptionCode,
@@ -62,22 +57,5 @@ export class WorkspaceSchemaService {
     } finally {
       await queryRunner.release();
     }
-  }
-
-  public async executeRawQuery(
-    _query: string,
-    // oxlint-disable-next-line typescript/no-explicit-any
-    _parameters: any[] = [],
-    _workspaceId: string,
-    _transactionManager?: EntityManager,
-    // oxlint-disable-next-line typescript/no-explicit-any
-  ): Promise<any> {
-    throw new PermissionsException(
-      'Method not allowed as permissions are not handled at datasource level.',
-      PermissionsExceptionCode.METHOD_NOT_ALLOWED,
-      {
-        userFriendlyMessage: msg`This operation is not allowed. Please try a different approach or contact support if you need assistance.`,
-      },
-    );
   }
 }
