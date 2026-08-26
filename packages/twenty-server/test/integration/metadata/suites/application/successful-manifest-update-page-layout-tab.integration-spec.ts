@@ -6,7 +6,7 @@ import { findPageLayoutTabs } from 'test/integration/metadata/suites/page-layout
 import { findPageLayoutWidgets } from 'test/integration/metadata/suites/page-layout-widget/utils/find-page-layout-widgets.util';
 import { type Manifest } from 'twenty-shared/application';
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
-import { PageLayoutTabLayoutMode, WidgetType } from 'twenty-shared/types';
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 const TEST_APP_ID = uuidv4();
@@ -185,7 +185,7 @@ describe('Manifest update - page layout tabs (standalone)', () => {
         {
           universalIdentifier: TEST_WIDGET_ID,
           title: 'Timeline',
-          type: WidgetType.TIMELINE,
+          type: 'TIMELINE' as const,
           configuration: {
             configurationType: 'TIMELINE' as const,
           },
@@ -227,7 +227,7 @@ describe('Manifest update - page layout tabs (standalone)', () => {
       applicationId: testApplicationId,
       pageLayoutTabId: tabAfterFirstSync.id,
       title: 'Timeline',
-      type: WidgetType.TIMELINE,
+      type: 'TIMELINE' as const,
       configuration: {
         configurationType: 'TIMELINE',
       },
@@ -267,7 +267,7 @@ describe('Manifest update - page layout tabs (standalone)', () => {
         applicationId: testApplicationId,
         pageLayoutTabId: tabAfterSecondSync.id,
         title: 'Timeline',
-        type: WidgetType.TIMELINE,
+        type: 'TIMELINE' as const,
         configuration: {
           configurationType: 'TIMELINE',
         },

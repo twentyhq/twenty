@@ -16,19 +16,14 @@ A **page layout** controls how a record's detail page is arranged: which tabs ap
 Use this when you own the entire detail page — typically for a custom object you defined yourself.
 
 ```ts src/page-layouts/example-record-page-layout.ts
-import {
-  definePageLayout,
-  PageLayoutTabLayoutMode,
-  PageLayoutType,
-  WidgetType,
-} from 'twenty-sdk/define';
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
 
 export default definePageLayout({
   universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
   name: 'Example Record Page',
-  type: PageLayoutType.RECORD_PAGE,
+  type: 'RECORD_PAGE',
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
   tabs: [
     {
@@ -41,7 +36,7 @@ export default definePageLayout({
         {
           universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
           title: 'Hello World',
-          type: WidgetType.FRONT_COMPONENT,
+          type: 'FRONT_COMPONENT',
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:
@@ -56,7 +51,7 @@ export default definePageLayout({
 
 ### Key points
 
-- `type` is a `PageLayoutType` enum value: `RECORD_INDEX`, `RECORD_PAGE`, `DASHBOARD` or `STANDALONE_PAGE`. Use `PageLayoutType.RECORD_PAGE` to customize the detail view of a specific object.
+- `type` is one of `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` or `'STANDALONE_PAGE'`. Use `'RECORD_PAGE'` to customize the detail view of a specific object.
 - `objectUniversalIdentifier` specifies which object this layout applies to.
 - Each `tab` defines a section of the page with a `title`, `position`, and `layoutMode`: `VERTICAL_LIST` for record pages and standalone pages, `GRID` for dashboards, and `CANVAS` for a single widget that should fill the tab viewport. A `VERTICAL_LIST` tab stacks widgets vertically. Built-in widgets that manage their own scrolling, such as timelines, files, notes, tasks, and workflows, fill one viewport; fields, front components, graphs, and other fit-content widgets render at their content or configured height. A `GRID` tab always lays its widgets out as cards on a 12-column grid. A `CANVAS` widget has no explicit position; if a canvas tab contains multiple widgets, they render at their content height instead of filling the viewport.
 - Set `layoutMode` explicitly. Omitting it gives you `VERTICAL_LIST` on a `STANDALONE_PAGE` and `GRID` everywhere else, which is rarely what you want on a record page.
@@ -72,7 +67,7 @@ A `FIELD` widget renders one field of the record. For relation fields it can als
 {
   universalIdentifier: 'c1c2c3c4-c5c6-4000-8000-000000000003',
   title: 'People → Opportunities',
-  type: WidgetType.FIELD,
+  type: 'FIELD',
   configuration: {
     configurationType: 'FIELD',
     fieldMetadataId: PEOPLE_FIELD_UNIVERSAL_IDENTIFIER,
@@ -95,7 +90,6 @@ import {
   definePageLayoutTab,
   PageLayoutTabLayoutMode,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
-  WidgetType,
 } from 'twenty-sdk/define';
 import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
 
@@ -112,7 +106,7 @@ export default definePageLayoutTab({
     {
       universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
       title: 'Hello World',
-      type: WidgetType.FRONT_COMPONENT,
+      type: 'FRONT_COMPONENT',
       configuration: {
         configurationType: 'FRONT_COMPONENT',
         frontComponentUniversalIdentifier:

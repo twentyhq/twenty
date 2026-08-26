@@ -7,17 +7,14 @@ icon: "terminal"
 A **command menu item** is the bridge between the user and a [front component](/developers/extend/apps/layout/front-components). It registers the component in Twenty's command menu (Cmd+K) and, optionally, as a pinned quick-action button in the top-right corner of the page.
 
 ```ts src/command-menu-items/open-dashboard.command-menu-item.ts
-import {
-  CommandMenuItemAvailabilityType,
-  defineCommandMenuItem,
-} from 'twenty-sdk/define';
+import { defineCommandMenuItem } from 'twenty-sdk/define';
 
 export default defineCommandMenuItem({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   label: 'Open Dashboard',
   shortLabel: 'Dashboard',
   isPinned: true,
-  availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+  availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
 });
 ```
@@ -32,7 +29,7 @@ export default defineCommandMenuItem({
 | `shortLabel` | No | Shorter label displayed on the pinned quick-action button |
 | `icon` | No | **Deprecated** — ignored in favor of the application icon; the build emits a warning if set |
 | `isPinned` | No | When `true`, shows the command as a quick-action button in the top-right corner of the page |
-| `availabilityType` | No | Controls where the command appears — a `CommandMenuItemAvailabilityType` enum value: `GLOBAL` (always available), `GLOBAL_OBJECT_CONTEXT` (only on pages with an object context — index and record pages), `RECORD_SELECTION` (only when records are selected), or `FALLBACK` (shown when no other commands match) |
+| `availabilityType` | No | Controls where the command appears: `'GLOBAL'` (always available), `'GLOBAL_OBJECT_CONTEXT'` (only on pages with an object context — index and record pages), `'RECORD_SELECTION'` (only when records are selected), or `'FALLBACK'` (shown when no other commands match) |
 | `availabilityObjectUniversalIdentifier` | No | Restrict the command to pages of a specific object type (e.g. only on Company records) |
 | `conditionalAvailabilityExpression` | No | A boolean expression that dynamically controls visibility (see below) |
 
@@ -58,7 +55,6 @@ The `conditionalAvailabilityExpression` field lets you control when a command is
 
 ```ts src/command-menu-items/bulk-update.command-menu-item.ts
 import {
-  CommandMenuItemAvailabilityType,
   defineCommandMenuItem,
   objectPermissions,
   everyEquals,
@@ -67,7 +63,7 @@ import {
 export default defineCommandMenuItem({
   universalIdentifier: '...',
   label: 'Bulk Update',
-  availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+  availabilityType: 'RECORD_SELECTION',
   frontComponentUniversalIdentifier: '...',
   conditionalAvailabilityExpression: everyEquals(
     objectPermissions,

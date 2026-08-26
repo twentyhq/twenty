@@ -49,17 +49,14 @@ export default defineFrontComponent({
 ```
 
 ```ts src/command-menu-items/hello-world.command-menu-item.ts
-import {
-  CommandMenuItemAvailabilityType,
-  defineCommandMenuItem,
-} from 'twenty-sdk/define';
+import { defineCommandMenuItem } from 'twenty-sdk/define';
 
 export default defineCommandMenuItem({
   universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
   shortLabel: 'Hello',
   label: 'Hello World',
   isPinned: true,
-  availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+  availabilityType: 'GLOBAL',
   frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
 });
 ```
@@ -612,15 +609,12 @@ export default defineFrontComponent({
 Surface it with a [command menu item](/developers/extend/apps/layout/command-menu-items) restricted to record selections:
 
 ```ts src/command-menu-items/bulk-export.command-menu-item.ts
-import {
-  CommandMenuItemAvailabilityType,
-  defineCommandMenuItem,
-} from 'twenty-sdk/define';
+import { defineCommandMenuItem } from 'twenty-sdk/define';
 
 export default defineCommandMenuItem({
   universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
   label: 'Bulk Export',
-  availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+  availabilityType: 'RECORD_SELECTION',
   frontComponentUniversalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
 });
 ```

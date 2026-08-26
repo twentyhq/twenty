@@ -1,16 +1,11 @@
 import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object';
 import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/front-components/hello-world';
-import {
-  PageLayoutTabLayoutMode,
-  PageLayoutType,
-  WidgetType,
-  definePageLayout,
-} from 'twenty-sdk/define';
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 
 export default definePageLayout({
   universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
   name: 'Example Record Page',
-  type: PageLayoutType.RECORD_PAGE,
+  type: 'RECORD_PAGE',
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
   tabs: [
     {
@@ -23,7 +18,7 @@ export default definePageLayout({
         {
           universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
           title: 'Hello World',
-          type: WidgetType.FRONT_COMPONENT,
+          type: 'FRONT_COMPONENT',
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:

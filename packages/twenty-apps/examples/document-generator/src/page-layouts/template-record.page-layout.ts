@@ -1,9 +1,4 @@
-import {
-  PageLayoutTabLayoutMode,
-  PageLayoutType,
-  WidgetType,
-  definePageLayout,
-} from 'twenty-sdk/define';
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 
 import {
   DOCUMENT_TEMPLATE_OBJECT_UNIVERSAL_IDENTIFIER,
@@ -20,7 +15,7 @@ import {
 export default definePageLayout({
   universalIdentifier: TEMPLATE_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
   name: 'Template record page',
-  type: PageLayoutType.RECORD_PAGE,
+  type: 'RECORD_PAGE',
   objectUniversalIdentifier: DOCUMENT_TEMPLATE_OBJECT_UNIVERSAL_IDENTIFIER,
   tabs: [
     {
@@ -34,7 +29,7 @@ export default definePageLayout({
           universalIdentifier:
             TEMPLATE_FIELDS_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
           title: 'Fields',
-          type: WidgetType.FIELDS,
+          type: 'FIELDS',
           configuration: {
             configurationType: 'FIELDS',
           },
@@ -50,7 +45,7 @@ export default definePageLayout({
         {
           universalIdentifier: TEMPLATE_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
           title: 'Template',
-          type: WidgetType.FIELD,
+          type: 'FIELD',
           gridPosition: { row: 0, column: 0, rowSpan: 12, columnSpan: 12 },
           configuration: {
             configurationType: 'FIELD',
@@ -70,7 +65,7 @@ export default definePageLayout({
         {
           universalIdentifier: TIMELINE_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
           title: 'Timeline',
-          type: WidgetType.TIMELINE,
+          type: 'TIMELINE',
           configuration: {
             configurationType: 'TIMELINE',
           },

@@ -10,7 +10,7 @@ import {
 
 export type PageLayoutWidgetManifest = SyncableEntityOptions & {
   title: string;
-  type: WidgetType;
+  type: `${WidgetType}`;
   objectUniversalIdentifier?: string;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay;
   gridPosition?: GridPosition;
@@ -28,7 +28,7 @@ export type PageLayoutTabManifest = SyncableEntityOptions & {
 
 export type PageLayoutManifest = SyncableEntityOptions & {
   name: string;
-  type: PageLayoutType;
+  type: `${PageLayoutType}`;
   objectUniversalIdentifier?: string;
   defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier?: string;
   tabs?: PageLayoutTabManifest[];

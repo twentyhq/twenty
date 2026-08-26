@@ -49,7 +49,7 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
       pageLayoutWidgetManifest: {
         universalIdentifier: 'widget-uuid-2',
         title: 'Iframe Widget',
-        type: WidgetType.IFRAME,
+        type: 'IFRAME',
         objectUniversalIdentifier: 'obj-uuid-1',
         configuration: {
           configurationType: 'IFRAME',

@@ -1,4 +1,3 @@
-import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { describe, expect, it } from 'vitest';
 
 import { defineCommandMenuItem } from '@/sdk/define';
@@ -59,7 +58,7 @@ describe('defineCommandMenuItem', () => {
       icon: 'IconRocket',
       shortLabel: 'Open',
       isPinned: true,
-      availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+      availabilityType: 'GLOBAL',
     });
 
     expect(result.success).toBe(true);

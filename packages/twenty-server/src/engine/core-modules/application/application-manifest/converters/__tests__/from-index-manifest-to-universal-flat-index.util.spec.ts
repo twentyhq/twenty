@@ -28,7 +28,7 @@ describe('fromIndexManifestToUniversalFlatIndex', () => {
   const baseManifest = {
     universalIdentifier: 'idx-uuid-1',
     objectUniversalIdentifier: 'obj-uuid-1',
-    indexType: IndexType.BTREE,
+    indexType: 'BTREE' as const,
   };
 
   it('builds a flat index from a scalar field', () => {
@@ -221,7 +221,7 @@ describe('fromIndexManifestToUniversalFlatIndex', () => {
       fromIndexManifestToUniversalFlatIndex({
         indexManifest: {
           ...baseManifest,
-          indexType: IndexType.GIN,
+          indexType: 'GIN',
           fields: [
             {
               universalIdentifier: 'field-entry-1',
@@ -247,7 +247,7 @@ describe('fromIndexManifestToUniversalFlatIndex', () => {
     const result = fromIndexManifestToUniversalFlatIndex({
       indexManifest: {
         ...baseManifest,
-        indexType: IndexType.GIN,
+        indexType: 'GIN',
         fields: [
           {
             universalIdentifier: 'field-entry-1',

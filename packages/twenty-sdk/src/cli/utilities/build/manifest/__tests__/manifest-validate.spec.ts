@@ -9,7 +9,6 @@ import {
   AggregateOperations,
   FieldMetadataType,
   RelationType,
-  WidgetType,
 } from 'twenty-shared/types';
 import { manifestValidate } from '@/cli/utilities/build/manifest/manifest-validate';
 
@@ -574,7 +573,7 @@ describe('manifestValidate', () => {
         {
           universalIdentifier: 'b0a5f0f2-6c2e-4d1c-9d0b-2f8a4c3e1a02',
           title: 'Total opportunities',
-          type: WidgetType.GRAPH,
+          type: 'GRAPH',
           configuration,
         },
       ],

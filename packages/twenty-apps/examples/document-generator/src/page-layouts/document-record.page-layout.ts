@@ -1,9 +1,4 @@
-import {
-  PageLayoutTabLayoutMode,
-  PageLayoutType,
-  WidgetType,
-  definePageLayout,
-} from 'twenty-sdk/define';
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 
 import {
   DOCUMENT_FIELDS_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
@@ -22,7 +17,7 @@ import {
 export default definePageLayout({
   universalIdentifier: DOCUMENT_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
   name: 'Document record page',
-  type: PageLayoutType.RECORD_PAGE,
+  type: 'RECORD_PAGE',
   objectUniversalIdentifier: DOCUMENT_OBJECT_UNIVERSAL_IDENTIFIER,
   tabs: [
     {
@@ -36,7 +31,7 @@ export default definePageLayout({
           universalIdentifier:
             DOCUMENT_FIELDS_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
           title: 'Document fields',
-          type: WidgetType.FIELDS,
+          type: 'FIELDS',
           configuration: {
             configurationType: 'FIELDS',
           },
@@ -53,7 +48,7 @@ export default definePageLayout({
         {
           universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
           title: 'Document preview',
-          type: WidgetType.FRONT_COMPONENT,
+          type: 'FRONT_COMPONENT',
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:

@@ -1,7 +1,5 @@
 import { describe, expect, it } from 'vitest';
 
-import { PageLayoutType, WidgetType } from 'twenty-shared/types';
-
 import { definePageLayout } from '@/sdk/define';
 
 const makePageLayoutConfig = (
@@ -9,7 +7,7 @@ const makePageLayoutConfig = (
 ) => ({
   universalIdentifier: '11111111-1111-4111-8111-111111111111',
   name: 'Post card record page',
-  type: PageLayoutType.RECORD_PAGE,
+  type: 'RECORD_PAGE' as const,
   tabs: [
     {
       universalIdentifier: '22222222-2222-4222-8222-222222222222',
@@ -19,7 +17,7 @@ const makePageLayoutConfig = (
         {
           universalIdentifier: '33333333-3333-4333-8333-333333333333',
           title: 'Post card preview',
-          type: WidgetType.FRONT_COMPONENT,
+          type: 'FRONT_COMPONENT' as const,
           configuration: {
             configurationType: 'FRONT_COMPONENT' as const,
             frontComponentUniversalIdentifier:

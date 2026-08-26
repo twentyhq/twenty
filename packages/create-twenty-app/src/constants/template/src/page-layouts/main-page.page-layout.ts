@@ -1,9 +1,4 @@
-import {
-  PageLayoutTabLayoutMode,
-  PageLayoutType,
-  WidgetType,
-  definePageLayout,
-} from 'twenty-sdk/define';
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 
 import {
   APP_DISPLAY_NAME,
@@ -16,7 +11,7 @@ import {
 export default definePageLayout({
   universalIdentifier: MAIN_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
   name: APP_DISPLAY_NAME,
-  type: PageLayoutType.STANDALONE_PAGE,
+  type: 'STANDALONE_PAGE',
   tabs: [
     {
       universalIdentifier: MAIN_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
@@ -28,7 +23,7 @@ export default definePageLayout({
         {
           universalIdentifier: MAIN_PAGE_WIDGET_UNIVERSAL_IDENTIFIER,
           title: ' ',
-          type: WidgetType.FRONT_COMPONENT,
+          type: 'FRONT_COMPONENT',
           gridPosition: { row: 0, column: 0, rowSpan: 12, columnSpan: 12 },
           configuration: {
             configurationType: 'FRONT_COMPONENT',
