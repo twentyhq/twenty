@@ -13,6 +13,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
 import { buildFlatSearchFieldMetadataForField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/build-flat-search-field-metadata-for-field.util';
+import { getTargetSearchFieldMetadatasForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/get-target-search-field-metadatas-for-ts-vector-field.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -94,54 +95,33 @@ export class BackfillTimelineActivitySearchFieldMetadataCommand extends Provisio
         universalIdentifier: SEARCH_VECTOR_FIELD_UNIVERSAL_IDENTIFIER,
       });
 
-    const existingFlatSearchFieldMetadatas =
-      timelineActivityFlatObjectMetadata.searchFieldMetadataUniversalIdentifiers
-        .map(
-          (searchFieldMetadataUniversalIdentifier) =>
-            flatSearchFieldMetadataMaps.byUniversalIdentifier[
-              searchFieldMetadataUniversalIdentifier
-            ],
-        )
-        .filter(isDefined);
-
-    const alignedFlatSearchFieldMetadata =
-      existingFlatSearchFieldMetadatas.find(
-        (flatSearchFieldMetadata) =>
-          flatSearchFieldMetadata.fieldMetadataUniversalIdentifier ===
-          LINKED_RECORD_CACHED_NAME_FIELD_UNIVERSAL_IDENTIFIER,
-      );
-
-    // timelineActivity declares linkedRecordCachedName as its only search field, so any
-    // other row indexes a field the standard definition no longer declares.
-    const divergentFlatSearchFieldMetadatas =
-      existingFlatSearchFieldMetadatas.filter(
-        (flatSearchFieldMetadata) =>
-          flatSearchFieldMetadata.fieldMetadataUniversalIdentifier !==
-          LINKED_RECORD_CACHED_NAME_FIELD_UNIVERSAL_IDENTIFIER,
-      );
+    // timelineActivity declares linkedRecordCachedName as its only search field, so the
+    // search vector indexes at most this one row.
+    const [indexedFlatSearchFieldMetadata] = isDefined(
+      searchVectorFlatFieldMetadata,
+    )
+      ? getTargetSearchFieldMetadatasForTsVectorField({
+          tsVectorFieldMetadataId: searchVectorFlatFieldMetadata.id,
+          flatSearchFieldMetadataMaps,
+        })
+      : [];
 
     if (
-      isDefined(searchVectorFlatFieldMetadata) &&
-      isDefined(alignedFlatSearchFieldMetadata) &&
-      divergentFlatSearchFieldMetadatas.length === 0
+      indexedFlatSearchFieldMetadata?.fieldMetadataUniversalIdentifier ===
+      LINKED_RECORD_CACHED_NAME_FIELD_UNIVERSAL_IDENTIFIER
     ) {
       this.logger.log(
-        `timelineActivity search vector already indexes linkedRecordCachedName only for workspace ${workspaceId}, skipping`,
+        `timelineActivity search vector already indexes linkedRecordCachedName for workspace ${workspaceId}, skipping`,
       );
 
       return;
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Converging the timelineActivity search vector for workspace ${workspaceId}: ${
-        isDefined(searchVectorFlatFieldMetadata)
-          ? 'searchVector present'
-          : 'searchVector missing'
-      }, ${
-        isDefined(alignedFlatSearchFieldMetadata)
-          ? 'linkedRecordCachedName indexed'
-          : 'linkedRecordCachedName not indexed'
-      }, ${divergentFlatSearchFieldMetadatas.length} divergent row(s)`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Repointing the timelineActivity search vector to linkedRecordCachedName for workspace ${workspaceId}, currently indexing ${
+        indexedFlatSearchFieldMetadata?.fieldMetadataUniversalIdentifier ??
+        'nothing'
+      }`,
     );
 
     if (isDryRun) {
@@ -165,21 +145,21 @@ export class BackfillTimelineActivitySearchFieldMetadataCommand extends Provisio
               twentyStandardApplicationId: twentyStandardFlatApplication.id,
             }),
           ],
-      flatSearchFieldMetadatasToCreate: isDefined(
-        alignedFlatSearchFieldMetadata,
+      flatSearchFieldMetadatasToCreate: [
+        buildFlatSearchFieldMetadataForField({
+          flatObjectMetadata: timelineActivityFlatObjectMetadata,
+          flatFieldMetadata: linkedRecordCachedNameFlatFieldMetadata,
+          tsVectorFlatFieldMetadata: {
+            universalIdentifier: SEARCH_VECTOR_FIELD_UNIVERSAL_IDENTIFIER,
+          },
+          position: 0,
+        }),
+      ],
+      flatSearchFieldMetadatasToDelete: isDefined(
+        indexedFlatSearchFieldMetadata,
       )
-        ? []
-        : [
-            buildFlatSearchFieldMetadataForField({
-              flatObjectMetadata: timelineActivityFlatObjectMetadata,
-              flatFieldMetadata: linkedRecordCachedNameFlatFieldMetadata,
-              tsVectorFlatFieldMetadata: {
-                universalIdentifier: SEARCH_VECTOR_FIELD_UNIVERSAL_IDENTIFIER,
-              },
-              position: 0,
-            }),
-          ],
-      flatSearchFieldMetadatasToDelete: divergentFlatSearchFieldMetadatas,
+        ? [indexedFlatSearchFieldMetadata]
+        : [],
     });
 
     await this.rebuildSearchVector({
