@@ -8,7 +8,7 @@ import {
   type CacheFetchableEntityName,
 } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
 
-type OneToManyChildNames<TMetadataName extends AllMetadataName> = {
+export type OneToManyChildNames<TMetadataName extends AllMetadataName> = {
   [TRelationProperty in keyof (typeof ALL_ONE_TO_MANY_METADATA_RELATIONS)[TMetadataName]]: (typeof ALL_ONE_TO_MANY_METADATA_RELATIONS)[TMetadataName][TRelationProperty] extends {
     metadataName: infer TChildMetadataName extends AllMetadataName;
   }
@@ -16,7 +16,7 @@ type OneToManyChildNames<TMetadataName extends AllMetadataName> = {
     : never;
 }[keyof (typeof ALL_ONE_TO_MANY_METADATA_RELATIONS)[TMetadataName]];
 
-type ManyToOneTargetNames<TMetadataName extends AllMetadataName> = {
+export type ManyToOneTargetNames<TMetadataName extends AllMetadataName> = {
   [TRelationProperty in keyof (typeof ALL_MANY_TO_ONE_METADATA_RELATIONS)[TMetadataName]]: (typeof ALL_MANY_TO_ONE_METADATA_RELATIONS)[TMetadataName][TRelationProperty] extends {
     metadataName: infer TTargetMetadataName extends AllMetadataName;
   }
@@ -58,18 +58,3 @@ export type FlatEntityFetchShape<TMetadataName extends AllMetadataName> = {
     RequiredFetchNames<TMetadataName>
   >]?: CacheEntityFetchSpec<TName>;
 };
-
-// Fail-open canary: the derivations above walk the relation constants through
-// `extends { metadataName: infer ... }` patterns that would silently collapse
-// to never if the constants' value shape changed, turning FlatEntityFetchShape
-// into an empty requirement while typecheck stays green. Anchoring on names
-// known to carry relations makes such a refactor fail to compile here instead.
-type Expect<TCondition extends true> = TCondition;
-type IsNotNever<TValue> = [TValue] extends [never] ? false : true;
-
-export type OneToManyDerivationCanary = Expect<
-  IsNotNever<OneToManyChildNames<'objectMetadata'>>
->;
-export type ManyToOneDerivationCanary = Expect<
-  IsNotNever<ManyToOneTargetNames<'fieldMetadata'>>
->;
