@@ -2,6 +2,7 @@ import {
   getJunctionConfig,
   type JunctionObjectMetadataItem,
 } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
 import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,6 +18,8 @@ type GetReverseJunctionConfigArgs = {
   objectMetadataItems: JunctionObjectMetadataItem[];
 };
 
+// Only the owning side of a junction carries the junction settings, so reaching the owner
+// from one of its targets means looking for the object whose junction field points here.
 export const getReverseJunctionConfig = ({
   junctionObjectMetadataId,
   sourceObjectMetadataId,
@@ -52,11 +55,8 @@ export const getReverseJunctionConfig = ({
 
       const targetsSourceObject = junctionConfig.targetFields.some(
         (targetField) =>
-          targetField.relation?.targetObjectMetadata.id ===
-            sourceObjectMetadataId ||
-          targetField.morphRelations?.some(
-            (morphRelation) =>
-              morphRelation.targetObjectMetadata.id === sourceObjectMetadataId,
+          getTargetObjectMetadataIdsFromField(targetField).includes(
+            sourceObjectMetadataId,
           ),
       );
 
