@@ -3551,7 +3551,7 @@ msgstr "Enregistrement d'appel indisponible"
 #. js-lingui-id: 81EMVN
 #: src/modules/page-layout/widgets/call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
 msgid "Call recordings are not available on this record."
-msgstr ""
+msgstr "Les enregistrements des appels ne sont pas disponibles sur cet enregistrement."
 
 #. js-lingui-id: +Kx1Id
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts

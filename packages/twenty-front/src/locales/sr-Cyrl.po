@@ -3551,7 +3551,7 @@ msgstr "Снимање позива није доступно"
 #. js-lingui-id: 81EMVN
 #: src/modules/page-layout/widgets/call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
 msgid "Call recordings are not available on this record."
-msgstr ""
+msgstr "Снимци позива нису доступни у овом запису."
 
 #. js-lingui-id: +Kx1Id
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts

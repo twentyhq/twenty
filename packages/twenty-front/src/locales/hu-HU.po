@@ -3551,7 +3551,7 @@ msgstr "Hívásfelvétel nem érhető el"
 #. js-lingui-id: 81EMVN
 #: src/modules/page-layout/widgets/call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
 msgid "Call recordings are not available on this record."
-msgstr ""
+msgstr "A hívásfelvételek nem érhetők el ennél a rekordnál."
 
 #. js-lingui-id: +Kx1Id
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
