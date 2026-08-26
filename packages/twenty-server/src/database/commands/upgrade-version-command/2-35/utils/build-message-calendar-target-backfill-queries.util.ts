@@ -77,6 +77,11 @@ export const buildMessageCalendarTargetBackfillQueries = ({
     candidateFromSql: `FROM (
   SELECT participant."calendarEventId" AS "parentId", participant."personId" AS "targetId"
   FROM "${schemaName}"."calendarEventParticipant" participant
+  INNER JOIN "${schemaName}"."calendarEvent" calendar_event ON calendar_event."id" = participant."calendarEventId"
+  INNER JOIN "${schemaName}"."person" person ON person."id" = participant."personId"
+  WHERE participant."deletedAt" IS NULL
+    AND calendar_event."deletedAt" IS NULL
+    AND person."deletedAt" IS NULL
 ) source`,
   }),
   buildTargetBackfillQuery({
@@ -89,7 +94,13 @@ export const buildMessageCalendarTargetBackfillQueries = ({
     candidateFromSql: `FROM (
   SELECT participant."calendarEventId" AS "parentId", person."companyId" AS "targetId"
   FROM "${schemaName}"."calendarEventParticipant" participant
+  INNER JOIN "${schemaName}"."calendarEvent" calendar_event ON calendar_event."id" = participant."calendarEventId"
   INNER JOIN "${schemaName}"."person" person ON person."id" = participant."personId"
+  INNER JOIN "${schemaName}"."company" company ON company."id" = person."companyId"
+  WHERE participant."deletedAt" IS NULL
+    AND calendar_event."deletedAt" IS NULL
+    AND person."deletedAt" IS NULL
+    AND company."deletedAt" IS NULL
 ) source`,
   }),
   buildTargetBackfillQuery({
@@ -102,7 +113,13 @@ export const buildMessageCalendarTargetBackfillQueries = ({
     candidateFromSql: `FROM (
   SELECT participant."calendarEventId" AS "parentId", opportunity."id" AS "targetId"
   FROM "${schemaName}"."calendarEventParticipant" participant
+  INNER JOIN "${schemaName}"."calendarEvent" calendar_event ON calendar_event."id" = participant."calendarEventId"
+  INNER JOIN "${schemaName}"."person" person ON person."id" = participant."personId"
   INNER JOIN "${schemaName}"."opportunity" opportunity ON opportunity."pointOfContactId" = participant."personId"
+  WHERE participant."deletedAt" IS NULL
+    AND calendar_event."deletedAt" IS NULL
+    AND person."deletedAt" IS NULL
+    AND opportunity."deletedAt" IS NULL
 ) source`,
   }),
   buildTargetBackfillQuery({
@@ -116,6 +133,12 @@ export const buildMessageCalendarTargetBackfillQueries = ({
   SELECT message."messageThreadId" AS "parentId", participant."personId" AS "targetId"
   FROM "${schemaName}"."messageParticipant" participant
   INNER JOIN "${schemaName}"."message" message ON message."id" = participant."messageId"
+  INNER JOIN "${schemaName}"."messageThread" message_thread ON message_thread."id" = message."messageThreadId"
+  INNER JOIN "${schemaName}"."person" person ON person."id" = participant."personId"
+  WHERE participant."deletedAt" IS NULL
+    AND message."deletedAt" IS NULL
+    AND message_thread."deletedAt" IS NULL
+    AND person."deletedAt" IS NULL
 ) source`,
   }),
   buildTargetBackfillQuery({
@@ -129,7 +152,14 @@ export const buildMessageCalendarTargetBackfillQueries = ({
   SELECT message."messageThreadId" AS "parentId", person."companyId" AS "targetId"
   FROM "${schemaName}"."messageParticipant" participant
   INNER JOIN "${schemaName}"."message" message ON message."id" = participant."messageId"
+  INNER JOIN "${schemaName}"."messageThread" message_thread ON message_thread."id" = message."messageThreadId"
   INNER JOIN "${schemaName}"."person" person ON person."id" = participant."personId"
+  INNER JOIN "${schemaName}"."company" company ON company."id" = person."companyId"
+  WHERE participant."deletedAt" IS NULL
+    AND message."deletedAt" IS NULL
+    AND message_thread."deletedAt" IS NULL
+    AND person."deletedAt" IS NULL
+    AND company."deletedAt" IS NULL
 ) source`,
   }),
   buildTargetBackfillQuery({
@@ -143,7 +173,14 @@ export const buildMessageCalendarTargetBackfillQueries = ({
   SELECT message."messageThreadId" AS "parentId", opportunity."id" AS "targetId"
   FROM "${schemaName}"."messageParticipant" participant
   INNER JOIN "${schemaName}"."message" message ON message."id" = participant."messageId"
+  INNER JOIN "${schemaName}"."messageThread" message_thread ON message_thread."id" = message."messageThreadId"
+  INNER JOIN "${schemaName}"."person" person ON person."id" = participant."personId"
   INNER JOIN "${schemaName}"."opportunity" opportunity ON opportunity."pointOfContactId" = participant."personId"
+  WHERE participant."deletedAt" IS NULL
+    AND message."deletedAt" IS NULL
+    AND message_thread."deletedAt" IS NULL
+    AND person."deletedAt" IS NULL
+    AND opportunity."deletedAt" IS NULL
 ) source`,
   }),
 ];

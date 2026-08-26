@@ -34,4 +34,27 @@ describe('buildMessageCalendarTargetBackfillQueries', () => {
       expect(insertSql).toContain('"workspace_test"');
     }
   });
+
+  it.each(queries)(
+    'excludes soft-deleted source records from $label',
+    ({ label, insertSql }) => {
+      expect(insertSql).toContain('participant."deletedAt" IS NULL');
+      expect(insertSql).toContain('person."deletedAt" IS NULL');
+
+      if (label.startsWith('calendar event')) {
+        expect(insertSql).toContain('calendar_event."deletedAt" IS NULL');
+      } else {
+        expect(insertSql).toContain('message."deletedAt" IS NULL');
+        expect(insertSql).toContain('message_thread."deletedAt" IS NULL');
+      }
+
+      if (label.includes('company')) {
+        expect(insertSql).toContain('company."deletedAt" IS NULL');
+      }
+
+      if (label.includes('opportunity')) {
+        expect(insertSql).toContain('opportunity."deletedAt" IS NULL');
+      }
+    },
+  );
 });

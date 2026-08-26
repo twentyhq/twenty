@@ -77,6 +77,27 @@ export class SyncMessageCalendarTargetMetadataCommand extends ProvisionedWorkspa
         'flatFieldMetadataMaps',
         'flatIndexMaps',
       ]);
+    const requiredObjectNames = [
+      'calendarEvent',
+      'messageThread',
+      'person',
+      'company',
+      'opportunity',
+    ] as const;
+    const missingObjectNames = requiredObjectNames.filter(
+      (objectName) =>
+        !flatObjectMetadataMaps.byUniversalIdentifier[
+          STANDARD_OBJECTS[objectName].universalIdentifier
+        ],
+    );
+
+    if (missingObjectNames.length > 0) {
+      this.logger.warn(
+        `Skipping message and calendar target metadata for workspace ${workspaceId}: missing ${missingObjectNames.join(', ')} metadata`,
+      );
+
+      return;
+    }
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },

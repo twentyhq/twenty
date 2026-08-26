@@ -6,11 +6,18 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { buildMessageCalendarTargetBackfillQueries } from 'src/database/commands/upgrade-version-command/2-35/utils/build-message-calendar-target-backfill-queries.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import {
+  MESSAGE_CALENDAR_TARGET_BACKFILL_TIMESTAMP,
+  MESSAGE_CALENDAR_TARGET_MIGRATION_VERSION,
+} from 'src/engine/core-modules/target/constants/message-calendar-target-migration.constants';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 const BACKFILL_BATCH_SIZE = 5_000;
 
-@RegisteredWorkspaceCommand('2.35.0', 1787688001000)
+@RegisteredWorkspaceCommand(
+  MESSAGE_CALENDAR_TARGET_MIGRATION_VERSION,
+  MESSAGE_CALENDAR_TARGET_BACKFILL_TIMESTAMP,
+)
 @Command({
   name: 'upgrade:2-35:backfill-message-calendar-targets',
   description:
@@ -29,12 +36,43 @@ export class BackfillMessageCalendarTargetsCommand extends ProvisionedWorkspaceC
     dataSource,
   }: RunOnWorkspaceArgs): Promise<void> {
     if (!isDefined(dataSource)) {
-      throw new Error('A data source is required to backfill target records');
+      this.logger.warn(
+        `Skipping message and calendar target backfill for workspace ${workspaceId}: no workspace data source`,
+      );
+
+      return;
+    }
+
+    const schemaName = getWorkspaceSchemaName(workspaceId);
+    const [targetTables] = await dataSource.query<
+      Array<{
+        calendarEventTarget: string | null;
+        messageThreadTarget: string | null;
+      }>
+    >(
+      `SELECT
+        to_regclass($1) AS "calendarEventTarget",
+        to_regclass($2) AS "messageThreadTarget"`,
+      [
+        `"${schemaName}"."calendarEventTarget"`,
+        `"${schemaName}"."messageThreadTarget"`,
+      ],
+    );
+
+    if (
+      !isDefined(targetTables?.calendarEventTarget) ||
+      !isDefined(targetTables.messageThreadTarget)
+    ) {
+      this.logger.warn(
+        `Skipping message and calendar target backfill for workspace ${workspaceId}: target tables are not provisioned`,
+      );
+
+      return;
     }
 
     const queries = buildMessageCalendarTargetBackfillQueries({
       batchSize: BACKFILL_BATCH_SIZE,
-      schemaName: getWorkspaceSchemaName(workspaceId),
+      schemaName,
     });
 
     if (options.dryRun) {
