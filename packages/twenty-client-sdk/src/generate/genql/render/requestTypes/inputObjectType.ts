@@ -13,9 +13,12 @@ export const inputObjectType = (type: GraphQLInputObjectType, ctx: RenderContext
     }
 
   
+  const fieldTypeOverrides = ctx.config?.fieldTypeOverrides?.[type.name]
+
   const fieldStrings = Object.keys(fields).map(fieldName => {
     const field = fields[fieldName]
-    return `${argumentComment(field)}${field.name}${renderTyping(field.type, false, true)}`
+    const overriddenType = fieldTypeOverrides?.[field.name]
+    return `${argumentComment(field)}${field.name}${renderTyping(field.type, false, true, true, overriddenType ? () => overriddenType : undefined)}`
   })
 
   ctx.addCodeBlock(`${typeComment(type)}export interface ${type.name} {${fieldStrings.join(',')}}`)

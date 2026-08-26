@@ -34,6 +34,13 @@ in abandoned and vulnerable transitive packages (`undici`, `native-fetch`,
   (`verbose`) options were removed. The renderers are otherwise verbatim, so the
   generated client still defaults its url/fetch to `undefined` (Twenty's wrapper
   supplies them) and the output is unchanged.
+- **Added `fieldTypeOverrides`** to `Config`: per-type/per-field TypeScript type
+  overrides applied by the response and request-input renderers, preserving the
+  schema's nullability wrapping. Twenty uses it to give RAW_JSON composite
+  sub-fields (e.g. `Emails.additionalEmails`) their real shape instead of the
+  JSON scalar's `Record<string, unknown>` (see
+  `../composite-field-type-overrides.ts`). Without overrides the output is
+  unchanged.
 
 The renderers are vendored verbatim from `@genql/cli@3.0.5`. Formatting now runs
 on `prettier@^3` (the version the monorepo resolves): it needs the explicit
