@@ -1,11 +1,15 @@
-import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  definePageLayout,
+} from 'twenty-sdk/define';
 import { SHOWING_UNIVERSAL_IDENTIFIER } from '../objects/showing.object';
 import { SHOWING_RECORD_PAGE_FIELDS_VIEW_ID } from '../views/showing-record-page-fields.view';
 
 export default definePageLayout({
   universalIdentifier: 'dc95166e-85f3-427d-91ef-dbdcdb1cee13',
   name: 'Showing Record Page',
-  type: 'RECORD_PAGE',
+  type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: SHOWING_UNIVERSAL_IDENTIFIER,
   tabs: [
     {

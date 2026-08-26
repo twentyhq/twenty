@@ -1,8 +1,9 @@
 import {
   AggregateOperations,
-  definePageLayout,
   PageLayoutTabLayoutMode,
+  PageLayoutType,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  definePageLayout,
 } from 'twenty-sdk/define';
 import {
   PROPERTY_NAME_FIELD_UNIVERSAL_IDENTIFIER,
@@ -39,7 +40,7 @@ const BAR = {
 export default definePageLayout({
   universalIdentifier: AGENCY_DASHBOARD_PAGE_LAYOUT_ID,
   name: 'Agency Overview',
-  type: 'STANDALONE_PAGE',
+  type: PageLayoutType.STANDALONE_PAGE,
   tabs: [
     {
       universalIdentifier: '62f7f9e3-75c9-4a60-9ae9-151b417a2c4c',

@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { PageLayoutType } from 'twenty-shared/types';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';

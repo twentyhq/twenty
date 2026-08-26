@@ -15,7 +15,7 @@ import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layo
 import { updateOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/update-one-page-layout.util';
 
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { PageLayoutType } from 'twenty-shared/types';
 
 type TestContext = {
   pageLayoutId: string;

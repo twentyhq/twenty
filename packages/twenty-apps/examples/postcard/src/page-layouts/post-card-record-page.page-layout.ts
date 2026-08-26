@@ -1,4 +1,8 @@
-import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  definePageLayout,
+} from 'twenty-sdk/define';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from 'src/objects/post-card.object';
 import { CARD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/components/card.front-component';
 import { GENERATE_POST_CARD_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER } from 'src/command-menu-items/generate-post-card.command-menu-item';
@@ -6,7 +10,7 @@ import { GENERATE_POST_CARD_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER } from 'src/c
 export default definePageLayout({
   universalIdentifier: 'f2bf4b9f-0485-46f0-89bb-9a65d2b939b1',
   name: 'Post Card Record Page',
-  type: 'RECORD_PAGE',
+  type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
   tabs: [
     {

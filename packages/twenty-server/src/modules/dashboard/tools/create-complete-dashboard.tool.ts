@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { PageLayoutType } from 'twenty-shared/types';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   gridPositionSchema,

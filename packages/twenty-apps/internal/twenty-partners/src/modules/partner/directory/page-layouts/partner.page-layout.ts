@@ -1,4 +1,8 @@
-import { PageLayoutTabLayoutMode, definePageLayout } from 'twenty-sdk/define';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  definePageLayout,
+} from 'twenty-sdk/define';
 
 import { PARTNER_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { PARTNER_RECORD_PAGE_FIELDS_VIEW_ID } from 'src/modules/partner/directory/views/partner-record-page-fields.view';
@@ -9,7 +13,7 @@ import { PARTNER_RECORD_PAGE_FIELDS_VIEW_ID } from 'src/modules/partner/director
 export default definePageLayout({
   universalIdentifier: 'd3257b1c-42eb-4b75-a4db-c966ef946b91',
   name: 'Default Partner Layout',
-  type: 'RECORD_PAGE',
+  type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
   tabs: [
     {

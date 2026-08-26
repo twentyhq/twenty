@@ -15,11 +15,14 @@ import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
-import { AggregateOperations, ViewFilterOperand } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  PageLayoutType,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 
 type TestContext = {
   id: string;

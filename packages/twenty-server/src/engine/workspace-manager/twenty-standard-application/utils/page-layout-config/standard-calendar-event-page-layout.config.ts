@@ -2,10 +2,9 @@ import {
   STANDARD_OBJECTS,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
-import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
+import { PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-shared/types';
 
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
   GRID_POSITIONS,
   TAB_PROPS,

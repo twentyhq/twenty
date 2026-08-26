@@ -4,7 +4,7 @@ import {
 } from 'twenty-shared/metadata';
 
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { PageLayoutType } from 'twenty-shared/types';
 import {
   GRID_POSITIONS,
   TAB_PROPS,

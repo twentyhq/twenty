@@ -1,5 +1,6 @@
 import {
   PageLayoutTabLayoutMode,
+  PageLayoutType,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
   definePageLayout,
 } from 'twenty-sdk/define';
@@ -14,7 +15,7 @@ const OPPORTUNITY_RECORD_PAGE_FIELDS_VIEW_ID =
 export default definePageLayout({
   universalIdentifier: 'cf2c66e4-0a4b-48ce-8669-fdf39dd64148',
   name: 'Default Opportunity Layout',
-  type: 'RECORD_PAGE',
+  type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
   tabs: [

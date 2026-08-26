@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { PageLayoutType } from 'twenty-shared/types';
+
 import { definePageLayout } from '@/sdk/define';
 
 const makePageLayoutConfig = (
@@ -7,7 +9,7 @@ const makePageLayoutConfig = (
 ) => ({
   universalIdentifier: '11111111-1111-4111-8111-111111111111',
   name: 'Post card record page',
-  type: 'RECORD_PAGE' as const,
+  type: PageLayoutType.RECORD_PAGE,
   tabs: [
     {
       universalIdentifier: '22222222-2222-4222-8222-222222222222',

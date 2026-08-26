@@ -1,4 +1,8 @@
-import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  definePageLayout,
+} from 'twenty-sdk/define';
 
 import {
   DOCUMENT_FIELDS_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
@@ -17,7 +21,7 @@ import {
 export default definePageLayout({
   universalIdentifier: DOCUMENT_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
   name: 'Document record page',
-  type: 'RECORD_PAGE',
+  type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: DOCUMENT_OBJECT_UNIVERSAL_IDENTIFIER,
   tabs: [
     {

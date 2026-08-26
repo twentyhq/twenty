@@ -1,4 +1,8 @@
-import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  definePageLayout,
+} from 'twenty-sdk/define';
 
 import {
   APP_DISPLAY_NAME,
@@ -11,7 +15,7 @@ import {
 export default definePageLayout({
   universalIdentifier: MAIN_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
   name: APP_DISPLAY_NAME,
-  type: 'STANDALONE_PAGE',
+  type: PageLayoutType.STANDALONE_PAGE,
   tabs: [
     {
       universalIdentifier: MAIN_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
