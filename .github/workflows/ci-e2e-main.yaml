@@ -414,8 +414,25 @@ jobs:
           if [ "$ARTIFACT_PR" != "$PR_NUMBER" ]; then
             echo "verdict.json prNumber (${ARTIFACT_PR:-none}) differs from the trusted target #${PR_NUMBER}; the trusted target wins."
           fi
+          EXISTING=$(gh api --paginate "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments?per_page=100" \
+            --jq '.[] | select((.body // "") | startswith("<!-- qa-scout -->")) | .id' \
+            | jq -rs 'first // empty')
           if [ "$VERDICT" = "PASS" ]; then
-            echo "Verdict PASS for PR #${PR_NUMBER}; staying quiet (report is in the job summary and artifact)."
+            if [ -z "$EXISTING" ]; then
+              echo "Verdict PASS for PR #${PR_NUMBER}; staying quiet (report is in the job summary and artifact)."
+              exit 0
+            fi
+            # A stale FAIL/INVESTIGATE comment misleads forever if a later
+            # PASS never speaks: refresh the existing comment, still without
+            # creating one.
+            {
+              echo "<!-- qa-scout -->"
+              echo "> [!NOTE]"
+              echo "> A newer QA Scout run passed; the earlier finding on this PR no longer stands."
+              echo ""
+              echo "[QA Scout run](${RUN_URL}) · verdict: PASS · re-run: Actions → CI E2E Main → Run workflow with pr_number=${PR_NUMBER}"
+            } > comment.md
+            gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${EXISTING}" -F body=@comment.md
             exit 0
           fi
           {
@@ -435,9 +452,6 @@ jobs:
             echo "Refusing to post: comment contains an Anthropic token shape."
             exit 1
           fi
-          EXISTING=$(gh api --paginate "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments?per_page=100" \
-            --jq '.[] | select((.body // "") | startswith("<!-- qa-scout -->")) | .id' \
-            | jq -rs 'first // empty')
           if [ -n "$EXISTING" ]; then
             gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${EXISTING}" -F body=@comment.md
           else
