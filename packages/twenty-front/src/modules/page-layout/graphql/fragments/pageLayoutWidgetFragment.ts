@@ -15,12 +15,6 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
     deletedAt
     conditionalDisplay
     conditionalAvailabilityExpression
-    gridPosition {
-      column
-      columnSpan
-      row
-      rowSpan
-    }
     position {
       ... on PageLayoutWidgetGridPosition {
         layoutMode

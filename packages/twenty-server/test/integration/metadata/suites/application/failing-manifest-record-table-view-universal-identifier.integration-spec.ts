@@ -64,7 +64,8 @@ describe('Failing manifest sync - RECORD_TABLE widget with unknown view universa
                     type: 'RECORD_TABLE',
                     objectUniversalIdentifier:
                       PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
-                    gridPosition: {
+                    position: {
+                      layoutMode: PageLayoutTabLayoutMode.GRID,
                       row: 0,
                       column: 0,
                       rowSpan: 4,

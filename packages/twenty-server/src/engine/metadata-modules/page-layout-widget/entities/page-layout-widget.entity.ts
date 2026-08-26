@@ -1,7 +1,6 @@
 import { ObjectType } from '@nestjs/graphql';
 
 import {
-  type GridPosition,
   PageLayoutWidgetConditionalDisplay,
   PageLayoutWidgetPosition,
   type SerializedRelation,
@@ -91,9 +90,6 @@ export class PageLayoutWidgetEntity<
 
   @Column({ type: 'varchar', nullable: true })
   conditionalAvailabilityExpression: string | null;
-
-  @Column({ type: 'jsonb', nullable: false })
-  gridPosition: JsonbProperty<GridPosition>;
 
   @Column({ type: 'jsonb', nullable: true })
   position: JsonbProperty<PageLayoutWidgetPosition | null>;

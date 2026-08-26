@@ -1,0 +1,62 @@
+import { DataSource, QueryRunner } from 'typeorm';
+
+import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
+import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
+
+@RegisteredInstanceCommand('2.36.0', 1787767544954, { type: 'slow' })
+export class RemoveLegacyGridPositionSlowInstanceCommand implements SlowInstanceCommand {
+  async runDataMigration(dataSource: DataSource): Promise<void> {
+    await dataSource.query(`
+      WITH missing_positions AS (
+        SELECT widget."id",
+          CASE tab."layoutMode"
+            WHEN 'CANVAS' THEN jsonb_build_object('layoutMode', 'CANVAS')
+            WHEN 'VERTICAL_LIST' THEN jsonb_build_object(
+              'layoutMode', 'VERTICAL_LIST',
+              'index', COALESCE((
+                SELECT MAX((existing."position"->>'index')::integer) + 1
+                FROM "core"."pageLayoutWidget" existing
+                WHERE existing."pageLayoutTabId" = widget."pageLayoutTabId"
+                  AND existing."position"->>'layoutMode' = 'VERTICAL_LIST'
+              ), 0) + ROW_NUMBER() OVER (
+                PARTITION BY widget."pageLayoutTabId"
+                ORDER BY (widget."gridPosition"->>'row')::integer,
+                  (widget."gridPosition"->>'column')::integer,
+                  widget."createdAt", widget."id"
+              ) - 1
+            )
+            ELSE widget."gridPosition" || jsonb_build_object('layoutMode', 'GRID')
+          END AS "position"
+        FROM "core"."pageLayoutWidget" widget
+        JOIN "core"."pageLayoutTab" tab ON tab."id" = widget."pageLayoutTabId"
+        WHERE widget."position" IS NULL
+      )
+      UPDATE "core"."pageLayoutWidget" widget
+      SET "position" = missing_positions."position"
+      FROM missing_positions
+      WHERE widget."id" = missing_positions."id"
+    `);
+  }
+
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      'ALTER TABLE "core"."pageLayoutWidget" DROP COLUMN "gridPosition"',
+    );
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      'ALTER TABLE "core"."pageLayoutWidget" ADD "gridPosition" jsonb',
+    );
+    await queryRunner.query(`
+      UPDATE "core"."pageLayoutWidget"
+      SET "gridPosition" = CASE
+        WHEN "position"->>'layoutMode' = 'GRID' THEN "position" - 'layoutMode'
+        ELSE '{"row": 0, "column": 0, "rowSpan": 1, "columnSpan": 12}'::jsonb
+      END
+    `);
+    await queryRunner.query(
+      'ALTER TABLE "core"."pageLayoutWidget" ALTER COLUMN "gridPosition" SET NOT NULL',
+    );
+  }
+}
