@@ -1,4 +1,5 @@
 import { getObjectMorphJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getObjectMorphJunctionConfig';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
@@ -57,6 +58,63 @@ describe('getObjectMorphJunctionConfig', () => {
     expect(
       getObjectMorphJunctionConfig({
         objectMetadata: getMockObjectMetadataItemOrThrow('person'),
+        objectMetadataItems,
+      }),
+    ).toBeNull();
+  });
+
+  it('infers an unambiguous morph junction without junction settings', () => {
+    const taskObjectMetadata = getMockObjectMetadataItemOrThrow('task');
+    const objectMetadataWithoutJunctionSettings = {
+      ...taskObjectMetadata,
+      fields: taskObjectMetadata.fields.map((field) =>
+        field.name === 'taskTargets'
+          ? { ...field, settings: undefined }
+          : field,
+      ),
+    };
+
+    expect(
+      getObjectMorphJunctionConfig({
+        objectMetadata: objectMetadataWithoutJunctionSettings,
+        objectMetadataItems,
+      }),
+    ).toMatchObject({
+      junctionObjectMetadata: { nameSingular: 'taskTarget' },
+      junctionField: { name: 'taskTargets' },
+      sourceField: { name: 'task' },
+      sourceJoinColumnName: 'taskId',
+      isMorphRelation: true,
+    });
+  });
+
+  it('does not guess between unconfigured morph junctions', () => {
+    const taskObjectMetadata = getMockObjectMetadataItemOrThrow('task');
+    const taskTargetsField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: taskObjectMetadata,
+      fieldName: 'taskTargets',
+    });
+
+    const unconfiguredTaskTargetsField = {
+      ...taskTargetsField,
+      settings: undefined,
+    };
+
+    expect(
+      getObjectMorphJunctionConfig({
+        objectMetadata: {
+          ...taskObjectMetadata,
+          fields: [
+            ...taskObjectMetadata.fields.filter(
+              ({ name }) => name !== 'taskTargets',
+            ),
+            unconfiguredTaskTargetsField,
+            {
+              ...unconfiguredTaskTargetsField,
+              id: 'another-junction-field-id',
+            },
+          ],
+        },
         objectMetadataItems,
       }),
     ).toBeNull();

@@ -6,6 +6,7 @@ import {
 } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
 import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type ObjectMorphJunctionConfig = JunctionConfig & {
@@ -18,8 +19,33 @@ type ObjectMorphJunctionConfig = JunctionConfig & {
   junctionObjectMetadata: EnrichedObjectMetadataItem;
 };
 
-// A morph junction is the one an object uses to reach records of any type, so an object has
-// at most one: unlike a junction to a single object, it needs no other to reach the rest.
+const getInferredMorphTargetFieldId = ({
+  junctionField,
+  objectMetadataItems,
+}: {
+  junctionField: FieldMetadataItem;
+  objectMetadataItems: EnrichedObjectMetadataItem[];
+}): string | null => {
+  if (!isDefined(junctionField.relation)) {
+    return null;
+  }
+
+  const junctionObjectMetadata = objectMetadataItems.find(
+    ({ id }) => id === junctionField.relation?.targetObjectMetadata.id,
+  );
+  const sourceField = junctionObjectMetadata?.fields.find(
+    ({ id }) => id === junctionField.relation?.targetFieldMetadata.id,
+  );
+  const morphTargetFields = junctionObjectMetadata?.fields.filter(
+    ({ type }) => type === FieldMetadataType.MORPH_RELATION,
+  );
+
+  return sourceField?.type === FieldMetadataType.RELATION &&
+    morphTargetFields?.length === 1
+    ? morphTargetFields[0].id
+    : null;
+};
+
 export const getObjectMorphJunctionConfig = ({
   objectMetadata,
   objectMetadataItems,
@@ -27,18 +53,46 @@ export const getObjectMorphJunctionConfig = ({
   objectMetadata: EnrichedObjectMetadataItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
 }): ObjectMorphJunctionConfig | null => {
+  const inferredJunctionConfigs: ObjectMorphJunctionConfig[] = [];
+
   for (const junctionField of objectMetadata.fields) {
-    if (!isJunctionRelationField(junctionField)) {
+    const explicitJunctionConfig = isJunctionRelationField(junctionField)
+      ? getJunctionConfig({
+          settings: junctionField.settings,
+          relationObjectMetadataId:
+            junctionField.relation?.targetObjectMetadata.id ?? '',
+          sourceObjectMetadataId: objectMetadata.id,
+          objectMetadataItems,
+        })
+      : null;
+
+    if (
+      isDefined(explicitJunctionConfig) &&
+      !explicitJunctionConfig.isMorphRelation
+    ) {
       continue;
     }
 
-    const junctionConfig = getJunctionConfig({
-      settings: junctionField.settings,
-      relationObjectMetadataId:
-        junctionField.relation?.targetObjectMetadata.id ?? '',
-      sourceObjectMetadataId: objectMetadata.id,
-      objectMetadataItems,
-    });
+    const inferredTargetFieldId = isDefined(explicitJunctionConfig)
+      ? null
+      : getInferredMorphTargetFieldId({
+          junctionField,
+          objectMetadataItems,
+        });
+    const junctionConfig =
+      explicitJunctionConfig ??
+      (isDefined(inferredTargetFieldId)
+        ? getJunctionConfig({
+            settings: {
+              ...junctionField.settings,
+              junctionTargetFieldId: inferredTargetFieldId,
+            },
+            relationObjectMetadataId:
+              junctionField.relation?.targetObjectMetadata.id ?? '',
+            sourceObjectMetadataId: objectMetadata.id,
+            objectMetadataItems,
+          })
+        : null);
 
     if (
       !junctionConfig?.isMorphRelation ||
@@ -48,10 +102,8 @@ export const getObjectMorphJunctionConfig = ({
     }
 
     const junctionObjectMetadata = objectMetadataItems.find(
-      (objectMetadataItem) =>
-        objectMetadataItem.id === junctionConfig.junctionObjectMetadata.id,
+      ({ id }) => id === junctionConfig.junctionObjectMetadata.id,
     );
-
     const sourceJoinColumnName = getSourceJoinColumnName({
       sourceField: junctionConfig.sourceField,
       sourceObjectMetadata: objectMetadata,
@@ -64,14 +116,24 @@ export const getObjectMorphJunctionConfig = ({
       continue;
     }
 
-    return {
+    const resolvedJunctionConfig = {
       ...junctionConfig,
       junctionObjectMetadata,
       junctionField,
       sourceField: junctionConfig.sourceField,
       sourceJoinColumnName,
     };
+
+    if (isDefined(explicitJunctionConfig)) {
+      return resolvedJunctionConfig;
+    }
+
+    inferredJunctionConfigs.push(resolvedJunctionConfig);
   }
 
-  return null;
+  // Older workspaces can lack the junction target marker. The relation graph is
+  // still authoritative when it describes exactly one morph junction.
+  return inferredJunctionConfigs.length === 1
+    ? inferredJunctionConfigs[0]
+    : null;
 };
