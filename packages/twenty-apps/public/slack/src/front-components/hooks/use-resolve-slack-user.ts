@@ -28,7 +28,7 @@ const parseResult = (value: unknown): ResolveSlackUserResult => {
     return GENERIC_ERROR;
   }
 
-  if (record.success !== true) {
+  if (!record.success) {
     return {
       success: false,
       error: isString(record.error)

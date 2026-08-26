@@ -1,4 +1,4 @@
-import { isNonEmptyString, isObject } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type RoutePayload } from 'twenty-sdk/define';
 import { isDefined } from 'twenty-sdk/utils';
 
@@ -8,16 +8,12 @@ import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-us
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { resolveSlackUserByEmail } from 'src/logic-functions/utils/resolve-slack-user-by-email';
-
-const readOptionalString = (value: unknown): string | undefined =>
-  isNonEmptyString(value) ? value : undefined;
+import { asRecord, readOptionalString } from 'src/logic-functions/utils/route-body.util';
 
 const readBody = (
   payload: RoutePayload<unknown>,
 ): { email?: string; slackUserId?: string; slackTeamId?: string } => {
-  const body: Record<string, unknown> = isObject(payload.body)
-    ? (payload.body as Record<string, unknown>)
-    : {};
+  const body = asRecord(payload.body);
 
   return {
     email: readOptionalString(body.email),

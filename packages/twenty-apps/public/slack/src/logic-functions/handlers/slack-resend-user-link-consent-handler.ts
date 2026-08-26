@@ -1,4 +1,4 @@
-import { isNonEmptyString, isObject } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type RoutePayload } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
@@ -9,18 +9,17 @@ import { findWorkspaceMemberNameById } from 'src/logic-functions/data/find-works
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/utils/current-user-has-workspace-members-permission';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
+import { asRecord, readOptionalString } from 'src/logic-functions/utils/route-body.util';
 import { sendSlackUserLinkConsentDm } from 'src/logic-functions/utils/send-slack-user-link-consent-dm';
 
 const readBody = (
   payload: RoutePayload<unknown>,
 ): { slackTeamId?: string; slackUserId?: string } => {
-  const body: Record<string, unknown> = isObject(payload.body)
-    ? (payload.body as Record<string, unknown>)
-    : {};
+  const body = asRecord(payload.body);
 
   return {
-    slackTeamId: isNonEmptyString(body.slackTeamId) ? body.slackTeamId : undefined,
-    slackUserId: isNonEmptyString(body.slackUserId) ? body.slackUserId : undefined,
+    slackTeamId: readOptionalString(body.slackTeamId),
+    slackUserId: readOptionalString(body.slackUserId),
   };
 };
 

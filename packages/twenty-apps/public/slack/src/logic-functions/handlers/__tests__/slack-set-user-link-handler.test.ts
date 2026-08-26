@@ -229,6 +229,27 @@ describe('slackSetUserLinkHandler', () => {
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
+  it('should keep an already-active link active when re-linking the same member', async () => {
+    findSlackUserLinkMock.mockResolvedValue({
+      id: 'link-1',
+      workspaceMemberId: INPUT.workspaceMemberId,
+      source: 'MANUAL',
+      consentState: 'ACTIVE',
+    });
+
+    const result = await slackSetUserLinkHandler({ ...INPUT, name: 'Ada' });
+
+    expect(result.success).toBe(true);
+    expect(updateSlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
+      id: 'link-1',
+      workspaceMemberId: INPUT.workspaceMemberId,
+      name: 'Ada',
+      source: 'MANUAL',
+      consentState: undefined,
+    });
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
   it('should read the input from the route payload body', async () => {
     const result = await slackSetUserLinkHandler({
       body: { ...INPUT, name: 'Ada' },

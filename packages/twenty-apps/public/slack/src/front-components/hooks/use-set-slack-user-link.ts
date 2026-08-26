@@ -1,30 +1,17 @@
-import { isBoolean, isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { RestApiClient } from 'twenty-client-sdk/rest';
 
 import { SLACK_USER_LINKS_SET_ROUTE_PATH } from 'src/constants/slack-user-links-route-path.constant';
-import { asRecord } from 'src/front-components/utils/as-record.util';
+import { parseSlackToolResult } from 'src/front-components/utils/parse-slack-tool-result.util';
 import { type SlackSetUserLinkInput } from 'src/logic-functions/types/slack-set-user-link-input.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 
+const FALLBACK_MESSAGE = 'Could not save the link';
+
 const GENERIC_ERROR_RESULT: SlackToolResult = {
   success: false,
-  message: 'Could not save the link',
+  message: FALLBACK_MESSAGE,
   error: 'The request failed. Please try again.',
-};
-
-const toSlackToolResult = (value: unknown): SlackToolResult => {
-  const record = asRecord(value);
-
-  if (record === undefined || !isBoolean(record.success)) {
-    return GENERIC_ERROR_RESULT;
-  }
-
-  return {
-    success: record.success,
-    message: isString(record.message) ? record.message : '',
-    error: isString(record.error) ? record.error : undefined,
-  };
 };
 
 type SetSlackUserLinkState = {
@@ -46,7 +33,7 @@ export const useSetSlackUserLink = (): SetSlackUserLinkState => {
         input,
       );
 
-      return toSlackToolResult(result);
+      return parseSlackToolResult(result, FALLBACK_MESSAGE);
     } catch {
       return GENERIC_ERROR_RESULT;
     } finally {

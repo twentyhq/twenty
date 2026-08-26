@@ -1,18 +1,14 @@
-import { isNonEmptyString, isObject } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type RoutePayload } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { deleteSlackUserLink } from 'src/logic-functions/data/delete-slack-user-link';
 import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/utils/current-user-has-workspace-members-permission';
+import { asRecord, readOptionalString } from 'src/logic-functions/utils/route-body.util';
 
-const readId = (payload: RoutePayload<unknown>): string | undefined => {
-  const body: Record<string, unknown> = isObject(payload.body)
-    ? (payload.body as Record<string, unknown>)
-    : {};
-
-  return isNonEmptyString(body.id) ? body.id : undefined;
-};
+const readId = (payload: RoutePayload<unknown>): string | undefined =>
+  readOptionalString(asRecord(payload.body).id);
 
 export const slackRemoveUserLinkHandler = async (
   payload: RoutePayload<unknown>,
