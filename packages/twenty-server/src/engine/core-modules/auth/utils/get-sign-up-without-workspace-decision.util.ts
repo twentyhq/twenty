@@ -1,13 +1,10 @@
-import {
-  isWorkspaceProvisioned,
-  type WorkspaceActivationStatus,
-} from 'twenty-shared/workspace';
-
 export type SignUpWithoutWorkspaceDecision =
   | 'allowed'
   | 'refused'
   | 'requiresDestination';
 
+// Tri-state rather than a boolean so callers only pay for the destination
+// lookup on instances that restrict workspace creation.
 export const getSignUpWithoutWorkspaceDecision = ({
   isMultiWorkspaceEnabled,
   isWorkspaceCreationLimitedToServerAdmins,
@@ -31,12 +28,3 @@ export const getSignUpWithoutWorkspaceDecision = ({
 
   return 'requiresDestination';
 };
-
-export const hasProvisionedSignUpDestination = (
-  availableWorkspacesForSignUp: {
-    workspace: { activationStatus: WorkspaceActivationStatus };
-  }[],
-): boolean =>
-  availableWorkspacesForSignUp.some(({ workspace }) =>
-    isWorkspaceProvisioned(workspace),
-  );
