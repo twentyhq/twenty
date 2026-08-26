@@ -94,16 +94,12 @@ export const usePrepareFindManyActivitiesQuery = ({
         field.relation?.targetObjectMetadata.id === junctionObjectMetadata.id,
     )?.name;
 
-    if (!isDefined(junctionFieldName)) {
-      throw new Error(
-        `Cannot find activity target relation on ${targetableObject.targetObjectNameSingular}`,
-      );
-    }
-
-    const activityTargets = getRecordArrayField({
-      record: targetableObjectRecord ?? {},
-      fieldName: junctionFieldName,
-    });
+    const activityTargets = isDefined(junctionFieldName)
+      ? getRecordArrayField({
+          record: targetableObjectRecord ?? {},
+          fieldName: junctionFieldName,
+        })
+      : [];
 
     const activityIds = [
       ...new Set(
