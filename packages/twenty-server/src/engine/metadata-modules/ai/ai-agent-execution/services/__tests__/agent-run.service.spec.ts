@@ -18,7 +18,10 @@ const buildService = ({
 } = {}) => {
   const executeAgent = jest
     .fn()
-    .mockResolvedValue({ result: { ok: true }, hasNoMoreAvailableCredits: false });
+    .mockResolvedValue({
+      result: { ok: true },
+      hasNoMoreAvailableCredits: false,
+    });
 
   const buildRunAsWorkspaceMemberContext = jest.fn().mockResolvedValue({
     actorContext: {},

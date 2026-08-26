@@ -10,7 +10,10 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import {
+  type UserWorkspaceAuthContext,
+  type WorkspaceAuthContext,
+} from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
@@ -40,7 +43,7 @@ type RunAgentServiceInput = {
 // run is capped to: [member], [role], or [member, role].
 type ResolvedRunAsContext = {
   actorContext?: ActorMetadata;
-  authContext?: WorkspaceAuthContext;
+  authContext?: UserWorkspaceAuthContext;
   roleIds: string[];
 };
 
@@ -143,7 +146,8 @@ export class AgentRunService {
           authContext,
           workspaceId: workspace.id,
           userWorkspaceId:
-            runAsContext?.authContext?.userWorkspaceId ?? requestUserWorkspaceId,
+            runAsContext?.authContext?.userWorkspaceId ??
+            requestUserWorkspaceId,
           runAsRoleIds: runAsContext?.roleIds,
           operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
           toolLoadingStrategy: 'lazy',
@@ -221,7 +225,10 @@ export class AgentRunService {
     }
 
     const runAsRoleIdOrUndefined = isDefined(runAsRoleId)
-      ? await this.resolveRunAsRoleIdOrThrow({ roleId: runAsRoleId, workspaceId })
+      ? await this.resolveRunAsRoleIdOrThrow({
+          roleId: runAsRoleId,
+          workspaceId,
+        })
       : undefined;
 
     if (isDefined(runAsWorkspaceMemberId)) {
