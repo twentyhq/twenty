@@ -14,9 +14,9 @@ export default defineApplication({
   logoUrl: 'public/twenty-fireflies.svg',
   author: 'Twenty',
   category: 'Productivity',
-  screenshots: [
-    'public/gallery/workflow-builder-actions.png',
-    'public/gallery/app-settings.png',
+  galleryImages: [
+    'public/gallery/fireflies-cover-image-1.png',
+    'public/gallery/fireflies-cover-image-2.png',
   ],
   websiteUrl: 'https://docs.twenty.com/developers/extend/apps/getting-started',
   termsUrl: 'https://www.twenty.com/terms',

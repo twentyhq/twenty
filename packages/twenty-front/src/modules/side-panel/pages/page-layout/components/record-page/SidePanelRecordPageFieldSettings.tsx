@@ -28,7 +28,6 @@ import { getWidgetViewLayoutSettingsItemIds } from '@/side-panel/pages/page-layo
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -37,11 +36,7 @@ import {
   IconList,
   IconListDetails,
 } from 'twenty-ui/icon';
-import {
-  FeatureFlagKey,
-  FieldDisplayMode,
-  ViewType,
-} from '~/generated-metadata/graphql';
+import { FieldDisplayMode, ViewType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -116,10 +111,6 @@ export const SidePanelRecordPageFieldSettings = () => {
     pageLayoutId,
   });
 
-  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
-  );
-
   if (!isDefined(widgetInEditMode)) {
     return null;
   }
@@ -181,7 +172,6 @@ export const SidePanelRecordPageFieldSettings = () => {
     ...(showViewLayoutRows
       ? getWidgetViewLayoutSettingsItemIds({
           isCalendarLayout: isEmbeddedViewCalendarLayout,
-          isCalendarWeekViewEnabled,
           hasGroupBy: embeddedViewHasGroupBy,
           isLayoutRowHidden: true,
         })

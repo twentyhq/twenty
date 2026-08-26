@@ -49,6 +49,10 @@ import {
   MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-message-association-data-seeds.constant';
 import {
+  MESSAGE_CAMPAIGN_DATA_SEED_COLUMNS,
+  MESSAGE_CAMPAIGN_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/message-campaign-data-seeds.constant';
+import {
   MESSAGE_DATA_SEED_COLUMNS,
   MESSAGE_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-data-seeds.constant';
@@ -195,6 +199,11 @@ const getRecordSeedsBatches = (
       tableName: 'messageThread',
       pgColumns: MESSAGE_THREAD_DATA_SEED_COLUMNS,
       recordSeeds: MESSAGE_THREAD_DATA_SEEDS,
+    },
+    {
+      tableName: 'messageCampaign',
+      pgColumns: MESSAGE_CAMPAIGN_DATA_SEED_COLUMNS,
+      recordSeeds: MESSAGE_CAMPAIGN_DATA_SEEDS,
     },
     {
       tableName: '_employmentHistory',

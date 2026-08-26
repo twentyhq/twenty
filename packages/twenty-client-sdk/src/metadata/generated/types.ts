@@ -178,6 +178,9 @@ export default {
             "description": [
                 1
             ],
+            "label": [
+                1
+            ],
             "isSecret": [
                 8
             ],
@@ -9706,6 +9709,9 @@ export default {
                         1
                     ],
                     "scope": [
+                        1
+                    ],
+                    "issuer": [
                         1
                     ]
                 }

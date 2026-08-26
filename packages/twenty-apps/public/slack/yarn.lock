@@ -1475,8 +1475,8 @@ __metadata:
     oxlint: "npm:^0.16.0"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
-    twenty-client-sdk: "npm:^2.35.0"
-    twenty-sdk: "npm:^2.35.0"
+    twenty-client-sdk: "npm:^2.35.1"
+    twenty-sdk: "npm:^2.35.1"
     twenty-ui: "npm:^1.0.0-alpha.1"
     typescript: "npm:^5.9.3"
     vite-tsconfig-paths: "npm:^4.2.1"
@@ -3484,9 +3484,9 @@ __metadata:
   linkType: hard
 
 "reselect@npm:^5.2.0":
-  version: 5.2.0
-  resolution: "reselect@npm:5.2.0"
-  checksum: 10c0/d0a8497e404b25a769fe792eacae88b9b576c30870450cd243d76ec9427d91a59c4a2cc00d824d283448b444c4c698a8f961d771c8ae39c759313afb31950e2e
+  version: 5.3.0
+  resolution: "reselect@npm:5.3.0"
+  checksum: 10c0/c79728e4f315152bfb2d82456d35075b705392d9e72c485d7d9b1061bd80af628416216d80f02a42f24dbb24d738aec7fec45806930aaa1d17c32e9875fa1bd6
   languageName: node
   linkType: hard
 
@@ -4073,22 +4073,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-client-sdk@npm:2.35.0, twenty-client-sdk@npm:^2.35.0":
-  version: 2.35.0
-  resolution: "twenty-client-sdk@npm:2.35.0"
+"twenty-client-sdk@npm:2.35.1, twenty-client-sdk@npm:^2.35.1":
+  version: 2.35.1
+  resolution: "twenty-client-sdk@npm:2.35.1"
   dependencies:
     "@genql/runtime": "npm:^2.10.0"
     esbuild: "npm:^0.28.1"
     graphql: "npm:^16.8.1"
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.8.3"
-  checksum: 10c0/2ce66e4647c6c6f4b4897896858f8abab3dd8aa6112b8c5c6387082ce484b6a2fb9b90060526601b13329c207ae530d25a6ba80197868a8653156505e0736f5d
+  checksum: 10c0/c3618f929bb5e92bc02dfe9bb506c903c0f30a4fee6ad23578a0544dcfc8a0b8cebceef8ef3925eaaefa798e1f57bf8cb4f249bb1ad38a45eec8ca8a83edaf34
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:^2.35.0":
-  version: 2.35.0
-  resolution: "twenty-sdk@npm:2.35.0"
+"twenty-sdk@npm:^2.35.1":
+  version: 2.35.1
+  resolution: "twenty-sdk@npm:2.35.1"
   dependencies:
     "@sniptt/guards": "npm:^0.2.0"
     axios: "npm:^1.16.0"
@@ -4107,12 +4107,12 @@ __metadata:
     semver: "npm:7.6.3"
     sharp: "npm:^0.35.3"
     tinyglobby: "npm:^0.2.15"
-    twenty-client-sdk: "npm:2.35.0"
+    twenty-client-sdk: "npm:2.35.1"
     typescript: "npm:^5.9.3"
     uuid: "npm:^13.0.2"
   bin:
     twenty: dist/cli.cjs
-  checksum: 10c0/4cb27d3b449b2fbe692516cc29b2689232e4f40de1181132ea3d9743a1fc1c9284204ddf50632fc737d06748ff9c6903630124c02382b4f61eec120beaa9f9d5
+  checksum: 10c0/589f9af78aff68f529eaad5697cd31b530ab3b348e5866acb08dd17b254bbe83fcce0488f46143b3bab9a292e34c6a6fbe67733a8bafa4caa8a07bc6d2dcaefb
   languageName: node
   linkType: hard
 

@@ -1,7 +1,6 @@
 import { render } from '@testing-library/react';
 
 import { RecordIndexLoadBaseOnContextStoreEffect } from '@/object-record/record-index/components/RecordIndexLoadBaseOnContextStoreEffect';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 jest.mock(
   '@/object-record/record-index/hooks/useLoadRecordIndexStates',
@@ -27,9 +26,6 @@ jest.mock(
     useContextStoreObjectMetadataItemOrThrow: jest.fn(),
   }),
 );
-jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: jest.fn(),
-}));
 
 const useLoadRecordIndexStatesMock = jest.requireMock(
   '@/object-record/record-index/hooks/useLoadRecordIndexStates',
@@ -43,9 +39,6 @@ const useAtomFamilySelectorValueMock = jest.requireMock(
 const useContextStoreObjectMetadataItemOrThrowMock = jest.requireMock(
   '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow',
 ).useContextStoreObjectMetadataItemOrThrow;
-const useIsFeatureEnabledMock = jest.requireMock(
-  '@/workspace/hooks/useIsFeatureEnabled',
-).useIsFeatureEnabled;
 
 describe('RecordIndexLoadBaseOnContextStoreEffect', () => {
   const loadRecordIndexStates = jest.fn();
@@ -60,10 +53,9 @@ describe('RecordIndexLoadBaseOnContextStoreEffect', () => {
     useContextStoreObjectMetadataItemOrThrowMock.mockReturnValue({
       objectMetadataItem,
     });
-    useIsFeatureEnabledMock.mockReturnValue(false);
   });
 
-  it('reloads the persisted view state when the week-view flag changes', () => {
+  it('does not reload an unchanged view', () => {
     const { rerender } = render(<RecordIndexLoadBaseOnContextStoreEffect />);
 
     expect(loadRecordIndexStates).toHaveBeenCalledTimes(1);
@@ -75,14 +67,6 @@ describe('RecordIndexLoadBaseOnContextStoreEffect', () => {
     rerender(<RecordIndexLoadBaseOnContextStoreEffect />);
 
     expect(loadRecordIndexStates).toHaveBeenCalledTimes(1);
-
-    useIsFeatureEnabledMock.mockReturnValue(true);
-    rerender(<RecordIndexLoadBaseOnContextStoreEffect />);
-
-    expect(loadRecordIndexStates).toHaveBeenCalledTimes(2);
-    expect(useIsFeatureEnabledMock).toHaveBeenCalledWith(
-      FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
-    );
   });
 
   it('reloads the persisted view state when the view groups change', () => {

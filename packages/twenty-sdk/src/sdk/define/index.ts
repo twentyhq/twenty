@@ -190,9 +190,11 @@ export type {
 
 export {
   AggregateOperations,
+  CommandMenuItemAvailabilityType,
   DateDisplayFormat,
   FieldMetadataSettingsOnClickAction,
   HTTPMethod,
+  IndexType,
   MetadataWritability,
   NavigationMenuItemType,
   NumberDataType,
@@ -207,6 +209,7 @@ export {
   ViewSortDirection,
   ViewType,
   ViewVisibility,
+  WidgetType,
 } from 'twenty-shared/types';
 export type {
   GridPosition,

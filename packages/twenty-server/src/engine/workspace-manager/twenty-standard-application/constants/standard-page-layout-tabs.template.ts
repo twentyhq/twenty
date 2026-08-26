@@ -1,12 +1,11 @@
 import {
-  PageLayoutTabLayoutMode,
   type GridPosition,
+  PageLayoutTabLayoutMode,
   type PageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetGridPosition,
   type PageLayoutWidgetVerticalListPosition,
+  WidgetType,
 } from 'twenty-shared/types';
-
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 
 export const CONDITIONAL_DISPLAY_DEVICE_MOBILE = {
   and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],

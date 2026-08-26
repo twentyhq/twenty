@@ -17,7 +17,7 @@ import {
   errorResponse,
   failureResponse,
   resolvePartnerFromRequest,
-} from 'src/modules/partner/self-service/services/resolve-partner-from-request.service';
+} from 'src/modules/shared/http/resolve-partner-from-request.service';
 import { buildReconcilePlan } from 'src/modules/partner/self-service/utils/reconcile-children';
 import { isCaseStudy } from 'src/modules/partner/utils/content-type';
 
