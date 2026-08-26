@@ -5,10 +5,7 @@ import { useOpenRelationFromManyFieldInput } from '@/object-record/record-field/
 import { useOpenRelationToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenRelationToOneFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
-import {
-  type FieldMetadata,
-  type FieldRelationMetadata,
-} from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
 import { isFieldMorphRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationOneToMany';
@@ -55,8 +52,7 @@ export const useOpenFieldWidgetFieldInputEditMode = () => {
         hasJunctionConfig(fieldDefinition.metadata.settings)
       ) {
         openJunctionRelationFieldInput({
-          fieldDefinition:
-            fieldDefinition as FieldDefinition<FieldRelationMetadata>,
+          fieldDefinition,
           recordId,
           recordPickerInstanceId: instanceId,
         });

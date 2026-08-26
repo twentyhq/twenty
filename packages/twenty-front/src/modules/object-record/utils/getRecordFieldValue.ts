@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 const hasField = <FieldName extends string>(
   record: object,
   fieldName: FieldName,
@@ -10,6 +12,6 @@ export const getRecordFieldValue = ({
   record: object | null | undefined;
   fieldName: string;
 }): unknown =>
-  record !== null && record !== undefined && hasField(record, fieldName)
+  isDefined(record) && hasField(record, fieldName)
     ? record[fieldName]
     : undefined;

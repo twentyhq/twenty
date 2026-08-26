@@ -43,14 +43,13 @@ type TriggerUpdateRelationsOptimisticEffectArgs = {
 // Comments are the one remaining relation that cascades without being a junction.
 const shouldCascadeDeleteOnDetach = ({
   targetObjectMetadata,
-  objectMetadataItems,
+  junctionObjectMetadataIds,
 }: {
   targetObjectMetadata: FieldMetadataItemRelation['targetObjectMetadata'];
-  objectMetadataItems: EnrichedObjectMetadataItem[];
+  junctionObjectMetadataIds: ReadonlySet<string>;
 }) =>
-  getJunctionObjectMetadataIds(objectMetadataItems).has(
-    targetObjectMetadata.id,
-  ) || targetObjectMetadata.nameSingular === CoreObjectNameSingular.Comment;
+  junctionObjectMetadataIds.has(targetObjectMetadata.id) ||
+  targetObjectMetadata.nameSingular === CoreObjectNameSingular.Comment;
 
 export const triggerUpdateRelationsOptimisticEffect = ({
   cache,
@@ -64,6 +63,8 @@ export const triggerUpdateRelationsOptimisticEffect = ({
   const isDeletion =
     isDefined(updatedSourceRecord) &&
     isDefined(updatedSourceRecord['deletedAt']);
+  const junctionObjectMetadataIds =
+    getJunctionObjectMetadataIds(objectMetadataItems);
 
   sourceObjectMetadataItem.fields.forEach((fieldMetadataItemOnSourceRecord) => {
     if (
@@ -84,6 +85,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         isDeletion,
         upsertRecordsInStore,
         objectPermissionsByObjectMetadataId,
+        junctionObjectMetadataIds,
       });
     }
 
@@ -98,6 +100,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         isDeletion,
         upsertRecordsInStore,
         objectPermissionsByObjectMetadataId,
+        junctionObjectMetadataIds,
       });
     }
   });
@@ -113,6 +116,7 @@ const triggerUpdateRelationOptimisticEffect = ({
   isDeletion,
   upsertRecordsInStore,
   objectPermissionsByObjectMetadataId,
+  junctionObjectMetadataIds,
 }: {
   fieldMetadataItemOnSourceRecord: FieldMetadataItem;
   updatedSourceRecord: RecordGqlNode | null;
@@ -126,6 +130,7 @@ const triggerUpdateRelationOptimisticEffect = ({
     string,
     ObjectPermissions & { objectMetadataId: string }
   >;
+  junctionObjectMetadataIds: ReadonlySet<string>;
 }) => {
   const fieldDoesNotExist =
     isDefined(updatedSourceRecord) &&
@@ -191,7 +196,7 @@ const triggerUpdateRelationOptimisticEffect = ({
 
   const shouldCascadeDeleteTargetRecords = shouldCascadeDeleteOnDetach({
     targetObjectMetadata,
-    objectMetadataItems,
+    junctionObjectMetadataIds,
   });
 
   const gqlFieldNameOnTargetRecord =
@@ -267,6 +272,7 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
   isDeletion,
   objectPermissionsByObjectMetadataId,
   upsertRecordsInStore,
+  junctionObjectMetadataIds,
 }: {
   fieldMetadataItemOnSourceRecord: FieldMetadataItem;
   updatedSourceRecord: RecordGqlNode | null;
@@ -280,6 +286,7 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
     string,
     ObjectPermissions & { objectMetadataId: string }
   >;
+  junctionObjectMetadataIds: ReadonlySet<string>;
 }) => {
   const morphRelations = fieldMetadataItemOnSourceRecord.morphRelations;
   if (!morphRelations) {
@@ -355,7 +362,7 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
 
     const shouldCascadeDeleteTargetRecords = shouldCascadeDeleteOnDetach({
       targetObjectMetadata,
-      objectMetadataItems,
+      junctionObjectMetadataIds,
     });
     if (
       shouldCascadeDeleteTargetRecords &&
