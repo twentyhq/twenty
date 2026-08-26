@@ -2,9 +2,9 @@ import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/ho
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { useCalendarEventTargetRecordId } from '@/page-layout/widgets/calendar-event-call-recording/hooks/useCalendarEventTargetRecordId';
-import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
-import { selectCalendarEventCallRecording } from '@/page-layout/widgets/calendar-event-call-recording/utils/selectCalendarEventCallRecording';
+import { useCallRecordingWidgetTarget } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingWidgetTarget';
+import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
+import { selectWidgetCallRecording } from '@/page-layout/widgets/call-recording/utils/selectWidgetCallRecording';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -42,12 +42,12 @@ const CALL_RECORDING_ORDER_BY: RecordGqlOperationOrderBy = [
   { id: 'AscNullsFirst' },
 ];
 
-type CalendarEventCallRecordingQueryScope =
+type CallRecordingWidgetQueryScope =
   | 'call-recording-summary'
   | 'call-recording-transcript';
 
 const REQUIRED_FIELD_NAMES_BY_QUERY_SCOPE: Record<
-  CalendarEventCallRecordingQueryScope,
+  CallRecordingWidgetQueryScope,
   string[]
 > = {
   'call-recording-summary': ['status', 'summary', 'createdAt'],
@@ -58,7 +58,7 @@ const getCallRecordingRecordFields = ({
   queryScope,
   isVideoFieldRestricted,
 }: {
-  queryScope: CalendarEventCallRecordingQueryScope;
+  queryScope: CallRecordingWidgetQueryScope;
   isVideoFieldRestricted: boolean;
 }): RecordGqlOperationGqlRecordFields => {
   if (queryScope === 'call-recording-summary') {
@@ -72,19 +72,21 @@ const getCallRecordingRecordFields = ({
   return CALL_RECORDING_TRANSCRIPT_WITH_VIDEO_RECORD_FIELDS;
 };
 
-export const useCalendarEventCallRecording = ({
+export const useWidgetCallRecording = ({
   queryScope,
 }: {
-  queryScope: CalendarEventCallRecordingQueryScope;
+  queryScope: CallRecordingWidgetQueryScope;
 }): {
-  callRecording: CalendarEventCallRecordingCandidate | undefined;
+  callRecording: WidgetCallRecordingCandidate | undefined;
   callRecordingsCount: number;
   loading: boolean;
   error: Error | undefined;
   restriction: WidgetAccessDenialInfo | undefined;
   refetch: () => Promise<unknown>;
 } => {
-  const calendarEventId = useCalendarEventTargetRecordId();
+  const callRecordingWidgetTarget = useCallRecordingWidgetTarget();
+  const targetKind = callRecordingWidgetTarget?.targetKind;
+  const targetRecordId = callRecordingWidgetTarget?.recordId;
 
   const { objectMetadataItem: callRecordingObjectMetadataItem } =
     useObjectMetadataItem({
@@ -132,7 +134,7 @@ export const useCalendarEventCallRecording = ({
 
   const restriction = objectRestriction ?? fieldRestriction;
 
-  const shouldSkipQuery = !isDefined(calendarEventId) || isDefined(restriction);
+  const shouldSkipQuery = !isDefined(targetRecordId) || isDefined(restriction);
 
   const videoFieldMetadataItem = callRecordingObjectMetadataItem.fields.find(
     (fieldMetadataItem) => fieldMetadataItem.name === 'video',
@@ -147,13 +149,15 @@ export const useCalendarEventCallRecording = ({
     isVideoFieldRestricted,
   });
 
-  const callRecordingFilter = useMemo(
-    () =>
-      isDefined(calendarEventId)
-        ? { calendarEventId: { eq: calendarEventId } }
-        : undefined,
-    [calendarEventId],
-  );
+  const callRecordingFilter = useMemo(() => {
+    if (!isDefined(targetRecordId)) {
+      return undefined;
+    }
+
+    return targetKind === 'calendarEvent'
+      ? { calendarEventId: { eq: targetRecordId } }
+      : { id: { eq: targetRecordId } };
+  }, [targetKind, targetRecordId]);
 
   const {
     records: callRecordings,
@@ -161,12 +165,13 @@ export const useCalendarEventCallRecording = ({
     loading,
     error,
     refetch,
-  } = useFindManyRecords<CalendarEventCallRecordingCandidate>({
+  } = useFindManyRecords<WidgetCallRecordingCandidate>({
     objectNameSingular: CoreObjectNameSingular.CallRecording,
     filter: callRecordingFilter,
     orderBy: CALL_RECORDING_ORDER_BY,
     recordGqlFields: callRecordingRecordFields,
     limit: CALL_RECORDING_QUERY_LIMIT,
+    withSoftDeleted: targetKind === 'callRecording',
     skip: shouldSkipQuery,
   });
 
@@ -185,7 +190,7 @@ export const useCalendarEventCallRecording = ({
   }, [refetch]);
 
   useListenToEventsForQuery({
-    queryId: `${queryScope}-${calendarEventId}`,
+    queryId: `${queryScope}-${targetRecordId}`,
     operationSignature,
     skip: shouldSkipQuery,
     onSseReconnected: refetchCallRecordingOnSseReconnected,
@@ -204,7 +209,7 @@ export const useCalendarEventCallRecording = ({
     objectMetadataItemId: callRecordingObjectMetadataItem.id,
   });
 
-  const callRecording = selectCalendarEventCallRecording(callRecordings);
+  const callRecording = selectWidgetCallRecording(callRecordings);
 
   return {
     callRecording,

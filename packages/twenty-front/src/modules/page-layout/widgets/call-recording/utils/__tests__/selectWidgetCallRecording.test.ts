@@ -1,4 +1,4 @@
-import { selectCalendarEventCallRecording } from '@/page-layout/widgets/calendar-event-call-recording/utils/selectCalendarEventCallRecording';
+import { selectWidgetCallRecording } from '@/page-layout/widgets/call-recording/utils/selectWidgetCallRecording';
 import { CallRecordingStatus } from '~/generated/graphql';
 
 const createCallRecording = ({
@@ -17,9 +17,9 @@ const createCallRecording = ({
   createdAt: '2026-08-01T00:00:00.000Z',
 });
 
-describe('selectCalendarEventCallRecording', () => {
+describe('selectWidgetCallRecording', () => {
   it('selects the first completed recording over earlier in-progress ones', () => {
-    const selected = selectCalendarEventCallRecording([
+    const selected = selectWidgetCallRecording([
       createCallRecording({
         id: 'in-progress',
         status: CallRecordingStatus.PROCESSING,
@@ -34,7 +34,7 @@ describe('selectCalendarEventCallRecording', () => {
   });
 
   it('selects the earliest created recording when several are completed', () => {
-    const selected = selectCalendarEventCallRecording([
+    const selected = selectWidgetCallRecording([
       createCallRecording({
         id: 'first-completed',
         status: CallRecordingStatus.COMPLETED,
@@ -49,7 +49,7 @@ describe('selectCalendarEventCallRecording', () => {
   });
 
   it('falls back to the first in-progress recording when none is completed', () => {
-    const selected = selectCalendarEventCallRecording([
+    const selected = selectWidgetCallRecording([
       createCallRecording({
         id: 'failed',
         status: CallRecordingStatus.FAILED,
@@ -68,7 +68,7 @@ describe('selectCalendarEventCallRecording', () => {
   });
 
   it('falls back to the first recording when all are terminal', () => {
-    const selected = selectCalendarEventCallRecording([
+    const selected = selectWidgetCallRecording([
       createCallRecording({
         id: 'failed',
         status: CallRecordingStatus.FAILED,
@@ -83,6 +83,6 @@ describe('selectCalendarEventCallRecording', () => {
   });
 
   it('returns undefined for an empty candidate list', () => {
-    expect(selectCalendarEventCallRecording([])).toBeUndefined();
+    expect(selectWidgetCallRecording([])).toBeUndefined();
   });
 });
