@@ -32,7 +32,5 @@ export default definePostInstallLogicFunction({
   description:
     'Schedules recording bots for upcoming meetings when the app is installed.',
   timeoutSeconds: 30,
-  // No upgrade hook on purpose: a summaries backfill would silently bill agent runs.
-  shouldRunOnVersionUpgrade: false,
   handler: startPostInstallBackfillsHandler,
 });

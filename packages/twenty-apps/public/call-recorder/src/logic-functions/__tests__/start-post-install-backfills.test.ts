@@ -24,8 +24,10 @@ describe('start-post-install-backfills', () => {
       expect.objectContaining({
         name: 'start-post-install-backfills',
         timeoutSeconds: 30,
-        shouldRunOnVersionUpgrade: false,
       }),
+    );
+    expect(postInstallLogicFunction.config).not.toHaveProperty(
+      'shouldRunOnVersionUpgrade',
     );
   });
 
