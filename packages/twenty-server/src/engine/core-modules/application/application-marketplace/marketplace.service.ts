@@ -41,6 +41,8 @@ const registrySearchResultSchema = z.object({
   total: z.number().optional(),
 });
 
+type RegistrySearchResult = z.infer<typeof registrySearchResultSchema>;
+
 @Injectable()
 export class MarketplaceService {
   private readonly logger = new Logger(MarketplaceService.name);
@@ -114,67 +116,83 @@ export class MarketplaceService {
     const registryUrl = this.twentyConfigService.get('APP_REGISTRY_URL');
     const packageInfoByName = new Map<string, RegistryPackageInfo>();
 
-    try {
-      let from = 0;
+    let from = 0;
 
-      while (from < REGISTRY_SEARCH_MAX_RESULTS) {
-        const { data } = await axios.get(
-          `${registryUrl}/-/v1/search?text=keywords:twenty-app&size=${REGISTRY_SEARCH_PAGE_SIZE}&from=${from}`,
-          {
-            headers: { 'User-Agent': 'Twenty-Marketplace' },
-            timeout: 10_000,
-          },
-        );
+    while (from < REGISTRY_SEARCH_MAX_RESULTS) {
+      const searchResult = await this.fetchRegistrySearchPage(
+        registryUrl,
+        from,
+      );
 
-        const parsed = registrySearchResultSchema.safeParse(data);
+      if (!isDefined(searchResult)) {
+        break;
+      }
 
-        if (!parsed.success) {
-          this.logger.warn(
-            `Unexpected registry search response shape: ${parsed.error.message}`,
-          );
+      const { objects, total } = searchResult;
 
-          break;
-        }
+      for (const result of objects) {
+        const { name, version, description, author, links } = result.package;
 
-        const { objects, total } = parsed.data;
-
-        for (const result of objects) {
-          const { name, version, description, author, links } = result.package;
-
-          if (!packageInfoByName.has(name)) {
-            packageInfoByName.set(name, {
-              name,
-              version,
-              description: description ?? '',
-              author: author?.name ?? 'Unknown',
-              websiteUrl: links?.homepage ?? links?.npm,
-            });
-          }
-        }
-
-        from += objects.length;
-
-        if (
-          objects.length < REGISTRY_SEARCH_PAGE_SIZE ||
-          (isDefined(total) && from >= total)
-        ) {
-          break;
-        }
-
-        if (from >= REGISTRY_SEARCH_MAX_RESULTS) {
-          this.logger.warn(
-            `Registry search truncated at ${REGISTRY_SEARCH_MAX_RESULTS} results`,
-          );
-
-          break;
+        if (!packageInfoByName.has(name)) {
+          packageInfoByName.set(name, {
+            name,
+            version,
+            description: description ?? '',
+            author: author?.name ?? 'Unknown',
+            websiteUrl: links?.homepage ?? links?.npm,
+          });
         }
       }
+
+      from += objects.length;
+
+      if (
+        objects.length < REGISTRY_SEARCH_PAGE_SIZE ||
+        (isDefined(total) && from >= total)
+      ) {
+        break;
+      }
+
+      if (from >= REGISTRY_SEARCH_MAX_RESULTS) {
+        this.logger.warn(
+          `Registry search truncated at ${REGISTRY_SEARCH_MAX_RESULTS} results`,
+        );
+      }
+    }
+
+    return Array.from(packageInfoByName.values());
+  }
+
+  private async fetchRegistrySearchPage(
+    registryUrl: string,
+    from: number,
+  ): Promise<RegistrySearchResult | null> {
+    try {
+      const { data } = await axios.get(
+        `${registryUrl}/-/v1/search?text=keywords:twenty-app&size=${REGISTRY_SEARCH_PAGE_SIZE}&from=${from}`,
+        {
+          headers: { 'User-Agent': 'Twenty-Marketplace' },
+          timeout: 10_000,
+        },
+      );
+
+      const parsed = registrySearchResultSchema.safeParse(data);
+
+      if (!parsed.success) {
+        this.logger.warn(
+          `Unexpected registry search response shape: ${parsed.error.message}`,
+        );
+
+        return null;
+      }
+
+      return parsed.data;
     } catch (error) {
       this.logger.warn(
         `Failed to fetch apps from registry ${registryUrl}: ${error instanceof Error ? error.message : String(error)}`,
       );
-    }
 
-    return Array.from(packageInfoByName.values());
+      return null;
+    }
   }
 }
