@@ -28,8 +28,6 @@ export type AdditionalCacheDataMaps = {
   apiKeyMap: Record<string, FlatApiKey>;
   flatApplicationMaps: FlatApplicationCacheMaps;
   ORMEntityMetadatas: EntityMetadata[];
-  // ORM projection of flatFieldMetadataMaps for the record query/execution path. Recomputed and
-  // invalidated as a derived sibling of flatFieldMetadataMaps (see WorkspaceCacheService).
   flatFieldMetadataMapsOrm: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;

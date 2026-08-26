@@ -17,11 +17,6 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
-// ORM projection of flatFieldMetadataMaps for the record query/execution path (held live in
-// ORMWorkspaceContext on every request). Drops the view/permission relation arrays, their
-// universal-identifier twins and universalSettings, so the hot per-workspace working set is a
-// fraction of the full map and the collector traces far less. Recompute needs only field rows +
-// unique indexes (2 queries) instead of the full builder's 9 joins.
 @Injectable()
 @WorkspaceCache('flatFieldMetadataMapsOrm', { packingPonderation: 8 })
 export class WorkspaceOrmFlatFieldMetadataMapCacheService extends WorkspaceCacheProvider<
