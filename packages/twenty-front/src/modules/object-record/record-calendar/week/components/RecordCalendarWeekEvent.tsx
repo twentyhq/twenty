@@ -21,7 +21,6 @@ import { type Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipVariant } from 'twenty-ui/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const RECORD_CALENDAR_WEEK_EVENT_TIME_ROW_HEIGHT = 14;
 const RECORD_CALENDAR_WEEK_EVENT_EXPANDED_MIN_HEIGHT =
@@ -37,42 +36,30 @@ const StyledEventPositioner = styled.div<{
   columnCount: number;
   columnIndex: number;
   heightInPixels: number;
-  isAllDay: boolean;
   isFocused: boolean;
   topInPixels: number;
 }>`
   box-sizing: border-box;
-  height: ${({ heightInPixels, isAllDay }) =>
-    isAllDay ? '22px' : `${heightInPixels}px`};
-  left: ${({ columnCount, columnIndex, isAllDay }) =>
-    isAllDay
-      ? 'auto'
-      : getRecordCalendarWeekEventHorizontalPosition({
-          columnCount,
-          columnIndex,
-        }).left};
+  height: ${({ heightInPixels }) => `${heightInPixels}px`};
+  left: ${({ columnCount, columnIndex }) =>
+    getRecordCalendarWeekEventHorizontalPosition({
+      columnCount,
+      columnIndex,
+    }).left};
   min-width: 0;
   opacity: ${({ $isDragSourceFaded }) =>
     $isDragSourceFaded ? DRAG_SOURCE_OPACITY : 1};
   overflow: hidden;
-  position: ${({ isAllDay }) => (isAllDay ? 'relative' : 'absolute')};
+  position: absolute;
   right: auto;
-  top: ${({ isAllDay, topInPixels }) =>
-    isAllDay
-      ? 'auto'
-      : `${topInPixels + RECORD_CALENDAR_WEEK_DIMENSIONS.eventVerticalGap / 2}px`};
-  width: ${({ columnCount, columnIndex, isAllDay }) =>
-    isAllDay
-      ? '100%'
-      : getRecordCalendarWeekEventHorizontalPosition({
-          columnCount,
-          columnIndex,
-        }).width};
-  z-index: ${({ columnCount, columnIndex, isAllDay, isFocused }) => {
-    if (isAllDay) {
-      return 1;
-    }
-
+  top: ${({ topInPixels }) =>
+    `${topInPixels + RECORD_CALENDAR_WEEK_DIMENSIONS.eventVerticalGap / 2}px`};
+  width: ${({ columnCount, columnIndex }) =>
+    getRecordCalendarWeekEventHorizontalPosition({
+      columnCount,
+      columnIndex,
+    }).width};
+  z-index: ${({ columnCount, columnIndex, isFocused }) => {
     const { focusedStackingOrder, stackingOrder } =
       getRecordCalendarWeekEventHorizontalPosition({
         columnCount,
@@ -87,18 +74,15 @@ const StyledEventPositioner = styled.div<{
   }
 `;
 
-const StyledEventContent = styled.div<{ isAllDay: boolean }>`
-  align-items: ${({ isAllDay }) => (isAllDay ? 'center' : 'flex-start')};
+const StyledEventContent = styled.div`
+  align-items: flex-start;
   box-sizing: border-box;
   display: flex;
-  flex-direction: ${({ isAllDay }) => (isAllDay ? 'row' : 'column')};
+  flex-direction: column;
   height: 100%;
   min-width: 0;
   overflow: hidden;
-  padding: ${({ isAllDay }) =>
-    isAllDay
-      ? `0 ${themeCssVariables.spacing['0.5']}`
-      : `${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[1]}`};
+  padding: ${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[1]};
   position: relative;
   width: 100%;
 `;
@@ -111,16 +95,14 @@ const StyledEventHeader = styled.div`
   width: 100%;
 `;
 
-const StyledEventLabel = styled.div<{ isDateOnly: boolean }>`
+const StyledEventLabel = styled.div`
   align-items: center;
   display: flex;
   flex: 1;
-  font-size: ${({ isDateOnly }) =>
-    isDateOnly ? themeCssVariables.font.size.xs : '12px'};
-  font-weight: ${({ isDateOnly }) =>
-    isDateOnly ? 'inherit' : themeCssVariables.font.weight.medium};
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
   height: 20px;
-  line-height: ${({ isDateOnly }) => (isDateOnly ? 'normal' : '1.4')};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
   min-width: 0;
   overflow: hidden;
 `;
@@ -145,7 +127,7 @@ const StyledRecordChipContainer = styled.div`
 const StyledCompactEventStartTime = styled.span`
   color: ${themeCssVariables.font.color.light};
   flex-shrink: 0;
-  font-size: 9px;
+  font-size: ${themeCssVariables.font.size.xxs};
   font-weight: ${themeCssVariables.font.weight.semiBold};
   line-height: normal;
   white-space: nowrap;
@@ -162,7 +144,7 @@ const StyledEventTimeRow = styled.div`
 
 const StyledEventTime = styled.span`
   color: ${themeCssVariables.font.color.light};
-  font-size: 9px;
+  font-size: ${themeCssVariables.font.size.xxs};
   font-weight: ${themeCssVariables.font.weight.semiBold};
   line-height: normal;
   white-space: nowrap;
@@ -172,11 +154,9 @@ type RecordCalendarWeekEventProps = {
   calendarDay: Temporal.PlainDate;
   calendarEndFieldName?: string;
   calendarFieldName: string;
-  calendarFieldType: FieldMetadataType;
   columnCount?: number;
   columnIndex?: number;
   endInPixels?: number;
-  isAllDay: boolean;
   recordId: string;
   startInPixels?: number;
   timeFormat: string;
@@ -187,11 +167,9 @@ export const RecordCalendarWeekEvent = ({
   calendarDay,
   calendarEndFieldName,
   calendarFieldName,
-  calendarFieldType,
   columnCount = 1,
   columnIndex = 0,
   endInPixels = 0,
-  isAllDay,
   recordId,
   startInPixels = 0,
   timeFormat,
@@ -211,7 +189,7 @@ export const RecordCalendarWeekEvent = ({
         kind: 'record-calendar-week-event',
         recordId,
       },
-      disabled: isAllDay || dragIsDisabled,
+      disabled: dragIsDisabled,
       feedback: 'clone',
     });
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
@@ -223,33 +201,23 @@ export const RecordCalendarWeekEvent = ({
   const viewableRecordId = useAtomStateValue(viewableRecordIdState);
   const isFocused = viewableRecordId === recordId;
 
-  const isDateOnly = calendarFieldType === FieldMetadataType.DATE;
-
-  if (
-    !isDefined(recordStore) ||
-    typeof recordDate !== 'string' ||
-    isAllDay !== isDateOnly
-  ) {
+  if (!isDefined(recordStore) || typeof recordDate !== 'string') {
     return null;
   }
 
-  const eventTimes = !isDateOnly
-    ? formatRecordCalendarWeekEventTimes({
-        startDateTime: recordDate,
-        endDateTime: recordEndDate,
-        timeFormat,
-        timeZone,
-      })
-    : null;
+  const eventTimes = formatRecordCalendarWeekEventTimes({
+    startDateTime: recordDate,
+    endDateTime: recordEndDate,
+    timeFormat,
+    timeZone,
+  });
   const heightInPixels = getRecordCalendarWeekTimedEventHeight({
     endInPixels,
     startInPixels,
   });
   const isCompactTimedEvent =
-    !isAllDay &&
     heightInPixels < RECORD_CALENDAR_WEEK_EVENT_EXPANDED_MIN_HEIGHT;
   const expandedEventTime = eventTimes?.timeRange;
-  const EventCard = isDateOnly ? RecordCard : StyledDateTimeEventCard;
 
   return (
     <StyledEventPositioner
@@ -258,12 +226,11 @@ export const RecordCalendarWeekEvent = ({
       columnCount={columnCount}
       columnIndex={columnIndex}
       heightInPixels={heightInPixels}
-      isAllDay={isAllDay}
       isFocused={isFocused}
       topInPixels={startInPixels}
       data-selectable-id={recordId}
     >
-      <EventCard
+      <StyledDateTimeEventCard
         data-click-outside-id={RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID}
         data-focused={isFocused}
         onClick={() => {
@@ -272,9 +239,9 @@ export const RecordCalendarWeekEvent = ({
           }
         }}
       >
-        <StyledEventContent isAllDay={isAllDay}>
+        <StyledEventContent>
           <StyledEventHeader>
-            <StyledEventLabel isDateOnly={isDateOnly}>
+            <StyledEventLabel>
               <StyledRecordChipContainer>
                 <RecordChip
                   objectNameSingular={objectNameSingular}
@@ -292,15 +259,13 @@ export const RecordCalendarWeekEvent = ({
               )}
             </StyledEventLabel>
           </StyledEventHeader>
-          {!isAllDay &&
-            !isCompactTimedEvent &&
-            isDefined(expandedEventTime) && (
-              <StyledEventTimeRow>
-                <StyledEventTime>{expandedEventTime}</StyledEventTime>
-              </StyledEventTimeRow>
-            )}
+          {!isCompactTimedEvent && isDefined(expandedEventTime) && (
+            <StyledEventTimeRow>
+              <StyledEventTime>{expandedEventTime}</StyledEventTime>
+            </StyledEventTimeRow>
+          )}
         </StyledEventContent>
-      </EventCard>
+      </StyledDateTimeEventCard>
     </StyledEventPositioner>
   );
 };

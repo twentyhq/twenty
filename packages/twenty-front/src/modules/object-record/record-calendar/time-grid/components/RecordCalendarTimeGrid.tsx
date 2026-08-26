@@ -215,7 +215,6 @@ const StyledScrollAnchor = styled.div<{ topInPixels: number }>`
 type WeekDayCellProps = {
   calendarEndFieldName?: string;
   calendarFieldName: string;
-  calendarFieldType: FieldMetadataType;
   day: Temporal.PlainDate;
   timeFormat: string;
   timeZone: string;
@@ -236,7 +235,6 @@ const RecordCalendarWeekDayColumn = memo(
     activeSlotIndex,
     calendarEndFieldName,
     calendarFieldName,
-    calendarFieldType,
     dayString,
     onActiveSlotIndexChange,
     timeFormat,
@@ -249,35 +247,30 @@ const RecordCalendarWeekDayColumn = memo(
       { day, timeZone },
     );
 
-    const eventLayoutInputs =
-      calendarFieldType === FieldMetadataType.DATE
-        ? []
-        : recordIds
-            .map((recordId) => {
-              const record = store.get(
-                recordStoreFamilyState.atomFamily(recordId),
-              );
-              const recordDate = record?.[calendarFieldName];
-              const recordEndDate = isDefined(calendarEndFieldName)
-                ? record?.[calendarEndFieldName]
-                : undefined;
-              const metrics = getRecordCalendarWeekTimedEventMetrics({
-                day,
-                startDateTime: recordDate,
-                endDateTime: recordEndDate,
-                timeZone,
-              });
+    const eventLayoutInputs = recordIds
+      .map((recordId) => {
+        const record = store.get(recordStoreFamilyState.atomFamily(recordId));
+        const recordDate = record?.[calendarFieldName];
+        const recordEndDate = isDefined(calendarEndFieldName)
+          ? record?.[calendarEndFieldName]
+          : undefined;
+        const metrics = getRecordCalendarWeekTimedEventMetrics({
+          day,
+          startDateTime: recordDate,
+          endDateTime: recordEndDate,
+          timeZone,
+        });
 
-              if (metrics === null) {
-                return null;
-              }
+        if (metrics === null) {
+          return null;
+        }
 
-              return {
-                ...metrics,
-                recordId,
-              };
-            })
-            .filter(isDefined);
+        return {
+          ...metrics,
+          recordId,
+        };
+      })
+      .filter(isDefined);
 
     const eventLayouts =
       computeRecordCalendarWeekEventLayouts(eventLayoutInputs);
@@ -393,11 +386,9 @@ const RecordCalendarWeekDayColumn = memo(
               calendarDay={day}
               calendarEndFieldName={calendarEndFieldName}
               calendarFieldName={calendarFieldName}
-              calendarFieldType={calendarFieldType}
               columnCount={columnCount}
               columnIndex={columnIndex}
               endInPixels={endInPixels}
-              isAllDay={false}
               recordId={recordId}
               startInPixels={startInPixels}
               timeFormat={timeFormat}
@@ -611,7 +602,6 @@ export const RecordCalendarTimeGrid = ({
                   }
                   calendarEndFieldName={compatibleCalendarEndFieldName}
                   calendarFieldName={calendarFieldMetadataItem.name}
-                  calendarFieldType={calendarFieldMetadataItem.type}
                   dayString={dateString}
                   onActiveSlotIndexChange={handleActiveSlotIndexChange}
                   timeFormat={timeFormat}
