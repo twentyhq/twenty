@@ -230,6 +230,7 @@ export class FilesFieldService {
       applicationId: fieldMetadata.applicationId,
       mimeType: sourceFile.mimeType,
       size: sourceFile.size,
+      status: FILE_STATUS.UPLOADED,
       settings: {
         isTemporaryFile: true,
         toDelete: false,

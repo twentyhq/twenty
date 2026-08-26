@@ -288,7 +288,7 @@ export class ToolExecutorService {
     output: ToolOutput,
     notes: string[],
   ): ToolOutput {
-    if (!output.success || notes.length === 0) {
+    if (notes.length === 0) {
       return output;
     }
 
