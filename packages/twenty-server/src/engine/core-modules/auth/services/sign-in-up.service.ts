@@ -482,6 +482,42 @@ export class SignInUpService {
     }
   }
 
+  // A sign up outside of any workspace is a request for a destination: it may
+  // only go through if the account will have somewhere to land. Checking it
+  // here rather than at workspace creation is what stops restricted instances
+  // from accumulating verified users that can never reach a workspace.
+  private async assertSignUpWithoutWorkspaceAllowed(
+    email: string,
+  ): Promise<void> {
+    await this.assertSignUpEnabled();
+
+    if (
+      !this.twentyConfigService.get(
+        'IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS',
+      )
+    ) {
+      return;
+    }
+
+    const { availableWorkspacesForSignUp } =
+      await this.userWorkspaceService.findAvailableWorkspacesByEmail(email);
+
+    if (availableWorkspacesForSignUp.length > 0) {
+      return;
+    }
+
+    // Initial setup has no workspace to be invited to yet, so the restriction
+    // cannot apply to the very first sign up.
+    if ((await this.workspaceRepository.count()) === 0) {
+      return;
+    }
+
+    throw new AuthException(
+      'New workspace setup is disabled',
+      AuthExceptionCode.SIGNUP_DISABLED,
+    );
+  }
+
   private async hasServerAdmin(): Promise<boolean> {
     const adminCount = await this.userRepository.count({
       where: { canAccessFullAdminPanel: true },
@@ -771,7 +807,7 @@ export class SignInUpService {
       );
     }
 
-    await this.assertSignUpEnabled();
+    await this.assertSignUpWithoutWorkspaceAllowed(newUserParams.email);
 
     const shouldGrantServerAdmin = !(await this.hasServerAdmin());
 
