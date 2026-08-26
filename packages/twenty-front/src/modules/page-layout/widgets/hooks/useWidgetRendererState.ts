@@ -10,10 +10,8 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WIDGET_TYPES_WITH_ALWAYS_VISIBLE_SOLO_HEADER } from '@/page-layout/widgets/constants/WidgetTypesWithAlwaysVisibleSoloHeader';
 import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
-import { widgetHasHeaderCountComponentFamilySelector } from '@/page-layout/widgets/states/selectors/widgetHasHeaderCountComponentFamilySelector';
 import { getWidgetCardVariant } from '@/page-layout/widgets/utils/getWidgetCardVariant';
 import { useOpenWidgetSettingsInSidePanel } from '@/side-panel/hooks/useOpenWidgetSettingsInSidePanel';
-import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { type MouseEvent } from 'react';
@@ -60,17 +58,10 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
   const hideHeaderInViewMode =
     isHeaderHiddenInViewMode && !isPageLayoutInEditMode;
 
-  const hasWidgetHeaderCount = useAtomComponentFamilySelectorValue(
-    widgetHasHeaderCountComponentFamilySelector,
-    widget.id,
-  );
-
-  const hasWidgetHeaderInfo =
-    hasWidgetHeaderCount ||
-    WIDGET_TYPES_WITH_ALWAYS_VISIBLE_SOLO_HEADER.includes(widget.type);
-
   const showHeader =
-    presentation === 'solo' ? hasWidgetHeaderInfo : !hideHeaderInViewMode;
+    presentation === 'solo'
+      ? WIDGET_TYPES_WITH_ALWAYS_VISIBLE_SOLO_HEADER.includes(widget.type)
+      : !hideHeaderInViewMode;
 
   const handleClick = () => {
     openWidgetSettingsInSidePanel({

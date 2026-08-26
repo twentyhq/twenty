@@ -10,7 +10,6 @@ import {
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
 import {
-  type ExpressionMapLike,
   type FindOptionsLike,
   type ObjectWhereLike,
   type OrderByConditionLike,
@@ -100,23 +99,17 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     this.context = context;
   }
 
-  get expressionMap(): ExpressionMapLike {
-    return {
-      queryType: 'select',
-      joinAttributes: [
-        ...this.joinClauses.map((joinClause) => ({
-          alias: { name: joinClause.alias },
-          relation: {
-            isOneToMany: joinClause.relationType === RelationType.ONE_TO_MANY,
-            isManyToMany: false,
-          },
-        })),
-        ...this.existsFilterClauses.map((existsFilterClause) => ({
-          alias: { name: existsFilterClause.alias },
-          relation: { isOneToMany: false, isManyToMany: false },
-        })),
-      ],
-    };
+  getJoinAliases(): { name: string; isToMany: boolean }[] {
+    return [
+      ...this.joinClauses.map((joinClause) => ({
+        name: joinClause.alias,
+        isToMany: joinClause.relationType === RelationType.ONE_TO_MANY,
+      })),
+      ...this.existsFilterClauses.map((existsFilterClause) => ({
+        name: existsFilterClause.alias,
+        isToMany: false,
+      })),
+    ];
   }
 
   clone(): WorkspaceSelectQueryBuilder {

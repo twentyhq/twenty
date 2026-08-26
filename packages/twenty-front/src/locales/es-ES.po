@@ -3539,14 +3539,19 @@ msgid "Call recorder"
 msgstr "Grabador de llamadas"
 
 #. js-lingui-id: ahn0Ti
-#: src/modules/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
+#: src/modules/page-layout/widgets/call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
 msgid "Call recording is not available in this workspace."
 msgstr "La grabación de llamadas no está disponible en este espacio de trabajo."
 
 #. js-lingui-id: z9jSP/
-#: src/modules/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
+#: src/modules/page-layout/widgets/call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
 msgid "Call Recording Unavailable"
 msgstr "Grabación de llamada no disponible"
+
+#. js-lingui-id: 81EMVN
+#: src/modules/page-layout/widgets/call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
+msgid "Call recordings are not available on this record."
+msgstr "Las grabaciones de llamadas no están disponibles en este registro."
 
 #. js-lingui-id: +Kx1Id
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -15859,7 +15864,6 @@ msgid "Relation type"
 msgstr "Tipo de relación"
 
 #. js-lingui-id: g87L9j
-#: src/modules/activities/inline-cell/components/ActivityTargetsInlineCell.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Relations"
 msgstr "Relaciones"

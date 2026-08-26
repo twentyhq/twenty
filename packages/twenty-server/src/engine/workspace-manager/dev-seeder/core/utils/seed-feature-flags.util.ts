@@ -9,8 +9,6 @@ const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
   [FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED]: true,
   [FeatureFlagKey.IS_EMAIL_GROUP_ENABLED]: true,
   [FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED]: true,
-  [FeatureFlagKey.IS_WORKFLOW_VERSION_IN_CORE_ENABLED]: true,
-  [FeatureFlagKey.IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED]: true,
 };
 
 type SeedFeatureFlagsArgs = {

@@ -11,7 +11,7 @@ msgstr ""
 "PO-Revision-Date: 2025-01-01 00:00\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n==2 ? 1 : 2);\n"
 "X-Crowdin-Project: cf448e737e0d6d7b78742f963d761c61\n"
 "X-Crowdin-Project-ID: 1\n"
 "X-Crowdin-Language: he\n"
@@ -9843,7 +9843,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "סיומת הקובץ אינה תואמת את תוכן הקובץ. יש לבדוק שהקובץ אינו פגום ושיש לו את הסיומת הנכונה."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "הקובץ טרם הועלה. אנא העלה אותו לפני האישור."
 
@@ -10054,7 +10054,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "נושא ביטול הרישום שבמסגרתו נשלח הקמפיין הזה"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "הקובץ שהועלה אינו תואם לגודל שהוצהר. אנא נסה להעלות שוב."
@@ -10346,7 +10346,7 @@ msgid "This field references an object that could not be found"
 msgstr "שדה זה מפנה לאובייקט שלא ניתן היה למצוא"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "פורמט קובץ זה אינו נתמך."
 
@@ -10428,11 +10428,6 @@ msgstr "הרשאת האובייקט הזו כבר מוגדרת עבור התפק
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This operation is not allowed."
 msgstr "פעולה זו אינה מותרת."
-
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-schema.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "הפעולה הזו אינה מותרת. אנא נסה גישה אחרת או פנה לתמיכה אם אתה צריך עזרה."
 
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts

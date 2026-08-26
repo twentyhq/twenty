@@ -9843,7 +9843,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "L'extensió del fitxer no coincideix amb el contingut del fitxer. Comproveu que el fitxer no estigui malmès i que tingui l'extensió correcta."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "El fitxer encara no s'ha carregat. Carrega'l abans de confirmar."
 
@@ -10054,7 +10054,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "El tema de baixa sota el qual s'ha enviat aquesta campanya"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "El fitxer carregat no coincideix amb la mida declarada. Torna a intentar la càrrega."
@@ -10346,7 +10346,7 @@ msgid "This field references an object that could not be found"
 msgstr "Aquest camp fa referència a un objecte que no s'ha pogut trobar"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "Aquest format de fitxer no és compatible."
 
@@ -10428,11 +10428,6 @@ msgstr "Aquest permís d'objecte ja està assignat al rol"
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This operation is not allowed."
 msgstr "Aquesta operació no està permesa."
-
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-schema.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "Aquesta operació no està permesa. Si us plau, prova un enfocament diferent o contacta amb el suport si necessites ajuda."
 
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts

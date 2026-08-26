@@ -9843,7 +9843,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "파일 확장자가 파일 내용과 일치하지 않습니다. 파일이 손상되지 않았고 올바른 확장자를 사용하고 있는지 확인하세요."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "파일이 아직 업로드되지 않았습니다. 확인하기 전에 파일을 업로드하세요."
 
@@ -10054,7 +10054,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "이 캠페인이 전송된 수신 거부 주제"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "업로드된 파일이 선언된 크기와 일치하지 않습니다. 다시 업로드해 주세요."
@@ -10346,7 +10346,7 @@ msgid "This field references an object that could not be found"
 msgstr "이 필드는 찾을 수 없는 객체를 참조합니다."
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "이 파일 형식은 지원되지 않습니다."
 
@@ -10428,11 +10428,6 @@ msgstr "이 객체 권한은 이미 해당 역할에 설정되어 있습니다"
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This operation is not allowed."
 msgstr "이 작업은 허용되지 않습니다."
-
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-schema.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "이 작업은 허용되지 않습니다. 다른 방법을 시도하든지 지원팀에 문의하십시오."
 
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts

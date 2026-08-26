@@ -2,11 +2,19 @@ import {
   STANDARD_OBJECTS,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
-import { type FieldMetadataType } from 'twenty-shared/types';
+import {
+  PageLayoutTabLayoutMode,
+  type FieldMetadataType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import {
+  GRID_POSITIONS,
+  VERTICAL_LIST_LAYOUT_POSITIONS,
+} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
 const WORKSPACE_ID = '20202020-1111-4111-8111-111111111111';
@@ -133,6 +141,80 @@ describe('CallRecording standard metadata build', () => {
     expect(viewFieldFieldUniversalIdentifiers).not.toContain(
       STANDARD_OBJECTS.callRecording.fields.createdBy.universalIdentifier,
     );
+  });
+
+  it('configures the native summary tab on the call recording record page', () => {
+    const summaryTabUniversalIdentifier =
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage.tabs
+        .summary.universalIdentifier;
+    const summaryWidgetUniversalIdentifier =
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage.tabs
+        .summary.widgets.summary.universalIdentifier;
+
+    expect(
+      Object.keys(
+        STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage.tabs,
+      ),
+    ).toEqual(['home', 'timeline', 'summary', 'callRecording']);
+
+    expect(
+      allFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier[
+        summaryTabUniversalIdentifier
+      ],
+    ).toMatchObject({
+      title: 'Summary',
+      icon: 'IconFileText',
+      position: 30,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    });
+    expect(
+      allFlatEntityMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier[
+        summaryWidgetUniversalIdentifier
+      ],
+    ).toMatchObject({
+      title: 'Summary',
+      type: WidgetType.CALL_RECORDING_SUMMARY,
+      pageLayoutTabUniversalIdentifier: summaryTabUniversalIdentifier,
+      gridPosition: GRID_POSITIONS.FULL_WIDTH,
+      position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
+      universalConfiguration: {
+        configurationType: WidgetConfigurationType.CALL_RECORDING_SUMMARY,
+      },
+    });
+  });
+
+  it('configures the native call recording tab on the call recording record page', () => {
+    const callRecordingTabUniversalIdentifier =
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage.tabs
+        .callRecording.universalIdentifier;
+    const transcriptWidgetUniversalIdentifier =
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage.tabs
+        .callRecording.widgets.transcript.universalIdentifier;
+
+    expect(
+      allFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier[
+        callRecordingTabUniversalIdentifier
+      ],
+    ).toMatchObject({
+      title: 'Call Recording',
+      icon: 'IconVideo',
+      position: 40,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    });
+    expect(
+      allFlatEntityMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier[
+        transcriptWidgetUniversalIdentifier
+      ],
+    ).toMatchObject({
+      title: 'Transcript',
+      type: WidgetType.CALL_RECORDING_TRANSCRIPT,
+      pageLayoutTabUniversalIdentifier: callRecordingTabUniversalIdentifier,
+      gridPosition: GRID_POSITIONS.FULL_WIDTH,
+      position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
+      universalConfiguration: {
+        configurationType: WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT,
+      },
+    });
   });
 
   it('links the callRecording fields widget to its record-page fields view', () => {

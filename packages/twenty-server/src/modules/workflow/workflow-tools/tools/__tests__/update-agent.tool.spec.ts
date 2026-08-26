@@ -26,7 +26,7 @@ const buildTool = ({
     find: jest.fn().mockResolvedValue(draftVersions),
   };
   const workspaceOrmManager = {
-    getRepository: jest.fn().mockResolvedValue(workflowVersionRepository),
+    getRepository: jest.fn().mockReturnValue(workflowVersionRepository),
   };
   const flatEntityMapsCacheService = {
     invalidateFlatEntityMaps: jest.fn().mockResolvedValue(undefined),
