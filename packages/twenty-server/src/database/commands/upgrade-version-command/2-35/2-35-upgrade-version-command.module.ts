@@ -6,8 +6,6 @@ import { BackfillCommandMenuItemTargetObjectMetadataCommand } from 'src/database
 import { RestoreStandardDefaultRelationFieldsCommand } from 'src/database/commands/upgrade-version-command/2-35/2-35-workspace-command-1787582101000-restore-standard-default-relation-fields.command';
 import { RepairTimelineActivityTargetFieldNamesCommand } from 'src/database/commands/upgrade-version-command/2-35/2-35-workspace-command-1787641226000-repair-timeline-activity-target-field-names.command';
 import { ContractTimelineActivityCompatibilityCommand } from 'src/database/commands/upgrade-version-command/2-35/2-35-workspace-command-1787648000000-contract-timeline-activity-compatibility.command';
-import { SyncMessageCalendarTargetMetadataCommand } from 'src/database/commands/upgrade-version-command/2-35/2-35-workspace-command-1787688000000-sync-message-calendar-target-metadata.command';
-import { BackfillMessageCalendarTargetsCommand } from 'src/database/commands/upgrade-version-command/2-35/2-35-workspace-command-1787688001000-backfill-message-calendar-targets.command';
 import { BackfillTimelineActivitySearchFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/2-35/2-35-workspace-command-1787749300000-backfill-timeline-activity-search-field-metadata.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -28,8 +26,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     RestoreStandardDefaultRelationFieldsCommand,
     RepairTimelineActivityTargetFieldNamesCommand,
     ContractTimelineActivityCompatibilityCommand,
-    SyncMessageCalendarTargetMetadataCommand,
-    BackfillMessageCalendarTargetsCommand,
     BackfillTimelineActivitySearchFieldMetadataCommand,
   ],
 })

@@ -1,4 +1,4 @@
-import { buildMessageCalendarTargetBackfillQueries } from 'src/database/commands/upgrade-version-command/2-35/utils/build-message-calendar-target-backfill-queries.util';
+import { buildMessageCalendarTargetBackfillQueries } from 'src/database/commands/upgrade-version-command/2-36/utils/build-message-calendar-target-backfill-queries.util';
 
 describe('buildMessageCalendarTargetBackfillQueries', () => {
   const queries = buildMessageCalendarTargetBackfillQueries({

@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildMessageCalendarTargetBackfillQueries } from 'src/database/commands/upgrade-version-command/2-35/utils/build-message-calendar-target-backfill-queries.util';
+import { buildMessageCalendarTargetBackfillQueries } from 'src/database/commands/upgrade-version-command/2-36/utils/build-message-calendar-target-backfill-queries.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import {
   MESSAGE_CALENDAR_TARGET_BACKFILL_TIMESTAMP,
@@ -19,7 +19,7 @@ const BACKFILL_BATCH_SIZE = 5_000;
   MESSAGE_CALENDAR_TARGET_BACKFILL_TIMESTAMP,
 )
 @Command({
-  name: 'upgrade:2-35:backfill-message-calendar-targets',
+  name: 'upgrade:2-36:backfill-message-calendar-targets',
   description:
     'Backfill message and calendar target junctions without emitting record events',
 })

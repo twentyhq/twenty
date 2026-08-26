@@ -5,7 +5,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import {
   buildTargetFieldCollisionRenameUpdates,
   buildTargetObjectCollisionRenameUpdates,
-} from 'src/database/commands/upgrade-version-command/2-35/utils/build-target-metadata-collision-renames.util';
+} from 'src/database/commands/upgrade-version-command/2-36/utils/build-target-metadata-collision-renames.util';
 
 const NOW = '2026-08-25T00:00:00.000Z';
 
