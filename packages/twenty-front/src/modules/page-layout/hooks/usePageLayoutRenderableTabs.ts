@@ -3,6 +3,7 @@ import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageL
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { usePageLayoutTabsFilteredByFeatureFlags } from '@/page-layout/hooks/usePageLayoutTabsFilteredByFeatureFlags';
 import { useWidgetVisibilityContext } from '@/page-layout/hooks/useWidgetVisibilityContext';
+import { getIsFirstTabPinned } from '@/page-layout/utils/getIsFirstTabPinned';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { getTabsRenderableForTargetObject } from '@/page-layout/utils/getTabsRenderableForTargetObject';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
@@ -49,6 +50,7 @@ export const usePageLayoutRenderableTabs = () => {
     pageLayoutType: currentPageLayout.type,
     isMobile,
     isInSidePanel,
+    isFirstTabPinned: getIsFirstTabPinned(currentPageLayout),
   });
 
   return {

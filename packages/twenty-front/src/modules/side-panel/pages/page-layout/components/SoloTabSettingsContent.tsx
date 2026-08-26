@@ -17,6 +17,7 @@ import {
   IconChevronRight,
   IconEyeX,
   IconPinned,
+  IconPinnedOff,
   IconRefreshDot,
   IconTrash,
 } from 'twenty-ui/icon';
@@ -29,6 +30,7 @@ type SoloTabSettingsContentProps = {
   pageLayoutId: string;
   soloWidget: PageLayoutWidget | undefined;
   canSetAsPinned: boolean;
+  canUnpin: boolean;
   canMoveLeft: boolean;
   canMoveRight: boolean;
   isResetToDefaultDisabled: boolean;
@@ -36,6 +38,7 @@ type SoloTabSettingsContentProps = {
   onMoveLeft: () => void;
   onMoveRight: () => void;
   onSetAsPinned: () => void;
+  onUnpin: () => void;
   onResetToDefault: () => void;
   onDelete: () => void;
 };
@@ -44,6 +47,7 @@ export const SoloTabSettingsContent = ({
   pageLayoutId,
   soloWidget,
   canSetAsPinned,
+  canUnpin,
   canMoveLeft,
   canMoveRight,
   isResetToDefaultDisabled,
@@ -51,6 +55,7 @@ export const SoloTabSettingsContent = ({
   onMoveLeft,
   onMoveRight,
   onSetAsPinned,
+  onUnpin,
   onResetToDefault,
   onDelete,
 }: SoloTabSettingsContentProps) => {
@@ -70,6 +75,7 @@ export const SoloTabSettingsContent = ({
 
   const selectableItemIds = [
     ...(canSetAsPinned ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.SET_AS_PINNED] : []),
+    ...(canUnpin ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.UNPIN] : []),
     ...(canMoveLeft ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_LEFT] : []),
     ...(canMoveRight ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_RIGHT] : []),
     ...(isDefined(soloWidget)
@@ -93,6 +99,19 @@ export const SoloTabSettingsContent = ({
                 Icon={IconPinned}
                 label={t`Pin tab`}
                 onClick={onSetAsPinned}
+              />
+            </SelectableListItem>
+          )}
+          {canUnpin && (
+            <SelectableListItem
+              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.UNPIN}
+              onEnter={onUnpin}
+            >
+              <CommandMenuItem
+                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.UNPIN}
+                Icon={IconPinnedOff}
+                label={t`Unpin tab`}
+                onClick={onUnpin}
               />
             </SelectableListItem>
           )}

@@ -5,7 +5,7 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
-export const useSetAsPinnedTab = (pageLayoutIdFromProps?: string) => {
+export const useUnpinTab = (pageLayoutIdFromProps?: string) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
@@ -18,22 +18,12 @@ export const useSetAsPinnedTab = (pageLayoutIdFromProps?: string) => {
 
   const store = useStore();
 
-  const setAsPinnedTab = useCallback(
-    (tabId: string) => {
-      store.set(pageLayoutDraftState, (prev) => {
-        const minPosition = Math.min(...prev.tabs.map((t) => t.position));
+  const unpinTab = useCallback(() => {
+    store.set(pageLayoutDraftState, (prev) => ({
+      ...prev,
+      isFirstTabPinned: false,
+    }));
+  }, [pageLayoutDraftState, store]);
 
-        return {
-          ...prev,
-          isFirstTabPinned: true,
-          tabs: prev.tabs.map((t) =>
-            t.id === tabId ? { ...t, position: minPosition - 1 } : t,
-          ),
-        };
-      });
-    },
-    [pageLayoutDraftState, store],
-  );
-
-  return { setAsPinnedTab };
+  return { unpinTab };
 };

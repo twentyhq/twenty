@@ -27,6 +27,7 @@ export const usePageLayoutDraftState = (pageLayoutIdFromProps?: string) => {
         name: pageLayoutPersisted.name,
         type: pageLayoutPersisted.type,
         objectMetadataId: pageLayoutPersisted.objectMetadataId,
+        isFirstTabPinned: pageLayoutPersisted.isFirstTabPinned,
         tabs: pageLayoutPersisted.tabs,
       })
     : pageLayoutDraft.name.trim().length > 0 || pageLayoutDraft.tabs.length > 0;

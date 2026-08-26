@@ -57,6 +57,7 @@ export const PageLayoutInitializationQueryEffect = ({
         name: layout.name,
         type: layout.type,
         objectMetadataId: layout.objectMetadataId,
+        isFirstTabPinned: layout.isFirstTabPinned,
         tabs: layout.tabs,
         defaultTabToFocusOnMobileAndSidePanelId:
           layout.defaultTabToFocusOnMobileAndSidePanelId,

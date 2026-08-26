@@ -120,6 +120,7 @@ export const createStandardPageLayoutFlatMetadata = ({
     objectMetadataId,
     objectMetadataUniversalIdentifier: objectUniversalIdentifier,
     isSystemSideEffect: type === PageLayoutType.RECORD_PAGE,
+    isFirstTabPinned: true,
     tabIds: [],
     tabUniversalIdentifiers: [],
     createdAt: now,

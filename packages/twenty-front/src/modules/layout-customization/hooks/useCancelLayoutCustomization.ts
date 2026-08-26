@@ -46,6 +46,7 @@ export const useCancelLayoutCustomization = () => {
             tabs: persisted.tabs,
             defaultTabToFocusOnMobileAndSidePanelId:
               persisted.defaultTabToFocusOnMobileAndSidePanelId,
+            isFirstTabPinned: persisted.isFirstTabPinned,
           } satisfies DraftPageLayout,
         );
 

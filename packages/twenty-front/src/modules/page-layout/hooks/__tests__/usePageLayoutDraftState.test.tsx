@@ -39,6 +39,7 @@ describe('usePageLayoutDraftState', () => {
         id: 'test-layout',
         name: '   ',
         type: PageLayoutType.DASHBOARD,
+        isFirstTabPinned: true,
         objectMetadataId: null,
         tabs: [],
       });
@@ -61,6 +62,7 @@ describe('usePageLayoutDraftState', () => {
         id: 'test-layout',
         name: 'Updated Name',
         type: PageLayoutType.DASHBOARD,
+        isFirstTabPinned: true,
         objectMetadataId: null,
         tabs: [],
       });
@@ -84,6 +86,7 @@ describe('usePageLayoutDraftState', () => {
         id: 'test-layout',
         name: 'Test Layout',
         type: PageLayoutType.DASHBOARD,
+        isFirstTabPinned: true,
         objectMetadataId: null,
         tabs: [
           {

@@ -4,8 +4,10 @@ import { useDuplicatePageLayoutTab } from '@/page-layout/hooks/useDuplicatePageL
 import { useMovePageLayoutTab } from '@/page-layout/hooks/useMovePageLayoutTab';
 import { useResetPageLayoutTabToDefault } from '@/page-layout/hooks/useResetPageLayoutTabToDefault';
 import { useSetAsPinnedTab } from '@/page-layout/hooks/useSetAsPinnedTab';
+import { useUnpinTab } from '@/page-layout/hooks/useUnpinTab';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
+import { getIsFirstTabPinned } from '@/page-layout/utils/getIsFirstTabPinned';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { getTabPresentation } from '@/page-layout/utils/getTabPresentation';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
@@ -65,6 +67,7 @@ export const SidePanelPageLayoutTabSettingsContent = ({
     tabListInstanceId,
   });
   const { setAsPinnedTab } = useSetAsPinnedTab(pageLayoutId);
+  const { unpinTab } = useUnpinTab(pageLayoutId);
   const { resetPageLayoutTabToDefault } =
     useResetPageLayoutTabToDefault(pageLayoutId);
 
@@ -79,13 +82,17 @@ export const SidePanelPageLayoutTabSettingsContent = ({
   if (currentIndex < 0) return null;
   const tab = tabsSorted[currentIndex];
   const isRecordPage = pageLayoutDraft.type === PageLayoutType.RECORD_PAGE;
-  const hasPinnedTab = isRecordPage && tabsSorted.length > 1;
+  const hasPinnedTab =
+    isRecordPage &&
+    tabsSorted.length > 1 &&
+    getIsFirstTabPinned(pageLayoutDraft);
   const canMoveLeft = hasPinnedTab ? currentIndex > 1 : currentIndex > 0;
   const canMoveRight = currentIndex < tabsSorted.length - 1;
   const canDelete = tabsSorted.length > 1;
-  const isAlreadyPinned = currentIndex === 0;
+  const isAlreadyPinned = hasPinnedTab && currentIndex === 0;
   const canSetAsPinned =
     isRecordPage && !isAlreadyPinned && tabsSorted.length > 1;
+  const canUnpin = isAlreadyPinned;
 
   const isResetToDefaultDisabled =
     !isNonEmptyString(tab.applicationId) ||
@@ -115,6 +122,7 @@ export const SidePanelPageLayoutTabSettingsContent = ({
         pageLayoutId={pageLayoutId}
         soloWidget={activeWidgets.at(0)}
         canSetAsPinned={canSetAsPinned}
+        canUnpin={canUnpin}
         canMoveLeft={canMoveLeft}
         canMoveRight={canMoveRight}
         isResetToDefaultDisabled={isResetToDefaultDisabled}
@@ -122,6 +130,7 @@ export const SidePanelPageLayoutTabSettingsContent = ({
         onMoveLeft={() => moveLeft(tab.id)}
         onMoveRight={() => moveRight(tab.id)}
         onSetAsPinned={() => setAsPinnedTab(tab.id)}
+        onUnpin={unpinTab}
         onResetToDefault={handleResetToDefault}
         onDelete={handleDelete}
       />
@@ -131,6 +140,7 @@ export const SidePanelPageLayoutTabSettingsContent = ({
   return (
     <RegularTabSettingsContent
       canSetAsPinned={canSetAsPinned}
+      canUnpin={canUnpin}
       canMoveLeft={canMoveLeft}
       canMoveRight={canMoveRight}
       isResetToDefaultDisabled={isResetToDefaultDisabled}
@@ -138,6 +148,7 @@ export const SidePanelPageLayoutTabSettingsContent = ({
       onMoveLeft={() => moveLeft(tab.id)}
       onMoveRight={() => moveRight(tab.id)}
       onSetAsPinned={() => setAsPinnedTab(tab.id)}
+      onUnpin={unpinTab}
       onDuplicate={() => {
         const newTabId = duplicateTab(tab.id);
         navigate(`#${newTabId}`);

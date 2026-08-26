@@ -51,6 +51,7 @@ export const useIsLayoutCustomizationDirty = () => {
             tabs: persisted.tabs,
             defaultTabToFocusOnMobileAndSidePanelId:
               persisted.defaultTabToFocusOnMobileAndSidePanelId,
+            isFirstTabPinned: persisted.isFirstTabPinned,
           };
 
           if (!isDeeplyEqual(draft, persistedAsDraft)) {

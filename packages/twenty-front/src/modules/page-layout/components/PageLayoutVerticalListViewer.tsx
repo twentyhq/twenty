@@ -12,6 +12,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledVerticalListContainer = styled.div<{
   variant: PageLayoutVerticalListViewerVariant;
   shouldUseWhiteBackground: boolean;
+  isInPinnedTab: boolean;
 }>`
   background: ${({ shouldUseWhiteBackground }) =>
     shouldUseWhiteBackground
@@ -21,8 +22,12 @@ const StyledVerticalListContainer = styled.div<{
   flex-direction: column;
   gap: ${({ variant }) =>
     variant === 'side-column' ? 0 : themeCssVariables.spacing[2]};
-  padding: ${({ variant }) =>
-    variant === 'side-column' ? 0 : themeCssVariables.spacing[2]};
+  // The pinned tab sits next to the main tab area, so it keeps that area's
+  // padding to line their widgets up rather than the tighter side-column one.
+  padding: ${({ variant, isInPinnedTab }) =>
+    variant === 'side-column' && !isInPinnedTab
+      ? 0
+      : themeCssVariables.spacing[2]};
 `;
 
 type PageLayoutVerticalListViewerProps = {
@@ -46,6 +51,7 @@ export const PageLayoutVerticalListViewer = ({
     <StyledVerticalListContainer
       variant={variant}
       shouldUseWhiteBackground={!isInPinnedTab || isMobile}
+      isInPinnedTab={isInPinnedTab}
     >
       {widgets.map((widget) => (
         <div key={widget.id}>

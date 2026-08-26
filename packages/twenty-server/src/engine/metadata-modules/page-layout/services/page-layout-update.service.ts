@@ -114,6 +114,8 @@ export class PageLayoutUpdateService {
       name: updateData.name,
       type: updateData.type,
       objectMetadataId: updateData.objectMetadataId,
+      isFirstTabPinned:
+        updateData.isFirstTabPinned ?? existingPageLayout.isFirstTabPinned,
       updatedAt: new Date().toISOString(),
     };
 

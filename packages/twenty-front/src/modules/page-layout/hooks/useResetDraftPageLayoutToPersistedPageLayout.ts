@@ -119,6 +119,7 @@ export const useResetDraftPageLayoutToPersistedPageLayout = ({
         tabs: pageLayoutPersisted.tabs,
         defaultTabToFocusOnMobileAndSidePanelId:
           pageLayoutPersisted.defaultTabToFocusOnMobileAndSidePanelId,
+        isFirstTabPinned: pageLayoutPersisted.isFirstTabPinned,
       };
       store.set(pageLayoutDraftState, persistedAsDraft);
 

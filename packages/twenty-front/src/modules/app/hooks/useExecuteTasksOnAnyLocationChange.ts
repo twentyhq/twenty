@@ -43,6 +43,7 @@ export const useExecuteTasksOnAnyLocationChange = () => {
             name: pageLayoutPersisted.name,
             type: pageLayoutPersisted.type,
             objectMetadataId: pageLayoutPersisted.objectMetadataId,
+            isFirstTabPinned: pageLayoutPersisted.isFirstTabPinned,
             tabs: pageLayoutPersisted.tabs,
           },
         );

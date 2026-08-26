@@ -1,0 +1,2 @@
+export const ADD_PAGE_LAYOUT_IS_FIRST_TAB_PINNED_UPGRADE_COMMAND_NAME =
+  '2.33.0_AddPageLayoutIsFirstTabPinnedFastInstanceCommand_1787758628789';
