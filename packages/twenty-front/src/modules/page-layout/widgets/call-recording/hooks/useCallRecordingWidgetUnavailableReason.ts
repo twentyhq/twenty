@@ -1,11 +1,8 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCallRecordingWidgetTarget } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingWidgetTarget';
+import { type CallRecordingWidgetUnavailableReason } from '@/page-layout/widgets/call-recording/types/CallRecordingWidgetUnavailableReason';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-
-export type CallRecordingWidgetUnavailableReason =
-  | 'workspaceWithoutCallRecording'
-  | 'recordWithoutCallRecording';
 
 export const useCallRecordingWidgetUnavailableReason = ():
   | CallRecordingWidgetUnavailableReason
