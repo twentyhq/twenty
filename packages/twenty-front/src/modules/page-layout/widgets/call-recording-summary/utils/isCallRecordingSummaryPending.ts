@@ -1,6 +1,6 @@
-import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
-import { isCallRecordingTranscriptPending } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingTranscriptPending';
+import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
+import { isCallRecordingTranscriptPending } from '@/page-layout/widgets/call-recording/utils/isCallRecordingTranscriptPending';
 
 export const isCallRecordingSummaryPending = (
-  callRecording: CalendarEventCallRecordingCandidate,
+  callRecording: WidgetCallRecordingCandidate,
 ): boolean => isCallRecordingTranscriptPending(callRecording);
