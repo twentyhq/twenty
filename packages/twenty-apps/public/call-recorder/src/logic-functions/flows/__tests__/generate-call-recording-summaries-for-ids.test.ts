@@ -25,7 +25,8 @@ describe('generateCallRecordingSummariesForIds', () => {
       .mockResolvedValueOnce({ outcome: 'empty-summary' })
       .mockRejectedValueOnce(new Error('agent failed'))
       .mockResolvedValueOnce({ outcome: 'save-error' })
-      .mockResolvedValueOnce({ outcome: 'already-summarized' });
+      .mockResolvedValueOnce({ outcome: 'already-summarized' })
+      .mockResolvedValueOnce({ outcome: 'not-summarizable' });
 
     const result = await generateCallRecordingSummariesForIds({
       client,
@@ -35,6 +36,7 @@ describe('generateCallRecordingSummariesForIds', () => {
         'call-recording-3',
         'call-recording-4',
         'call-recording-5',
+        'call-recording-6',
       ],
     });
 
@@ -43,6 +45,7 @@ describe('generateCallRecordingSummariesForIds', () => {
       failedCallRecordingIds: ['call-recording-2'],
       erroredCallRecordingIds: ['call-recording-3', 'call-recording-4'],
       skippedCallRecordingIds: ['call-recording-5'],
+      unavailableCallRecordingIds: ['call-recording-6'],
     });
   });
 
@@ -66,6 +69,7 @@ describe('generateCallRecordingSummariesForIds', () => {
       failedCallRecordingIds: [],
       erroredCallRecordingIds: [],
       skippedCallRecordingIds: [],
+      unavailableCallRecordingIds: [],
     });
   });
 });

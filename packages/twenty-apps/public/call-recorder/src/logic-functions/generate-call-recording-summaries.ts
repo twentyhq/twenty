@@ -57,7 +57,7 @@ export default defineLogicFunction({
     GENERATE_CALL_RECORDING_SUMMARIES_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'generate-call-recording-summaries',
   description:
-    'Generates missing AI summaries on demand for the requested call recordings or for the recordings of the requested calendar events.',
+    'Generates or regenerates AI summaries on demand for the requested call recordings or for the recordings of the requested calendar events.',
   timeoutSeconds: 900,
   handler: generateCallRecordingSummariesHandler,
   httpRouteTriggerSettings: {

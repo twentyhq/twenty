@@ -3,4 +3,5 @@ export type GenerateCallRecordingSummariesForIdsResult = {
   failedCallRecordingIds: string[];
   erroredCallRecordingIds: string[];
   skippedCallRecordingIds: string[];
+  unavailableCallRecordingIds: string[];
 };

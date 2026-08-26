@@ -106,6 +106,7 @@ const BATCH_RESULT = {
   failedCallRecordingIds: [],
   erroredCallRecordingIds: [],
   skippedCallRecordingIds: [],
+  unavailableCallRecordingIds: [],
 };
 
 describe('generateCallRecordingSummariesHandler', () => {
@@ -194,6 +195,26 @@ describe('generateCallRecordingSummariesHandler', () => {
         }),
       }),
     );
+  });
+
+  it('regenerates an existing summary when requested from a calendar event', async () => {
+    seedCallRecordingQueries({
+      calendarEventNodes: [{ id: 'call-recording-1' }],
+      callRecordingsById: {
+        'call-recording-1': {
+          ...buildSummarizableCallRecordingNode('call-recording-1'),
+          summary: { markdown: '## Overview\nOld summary.' },
+        },
+      },
+    });
+
+    const result = await generateCallRecordingSummariesHandler(
+      buildRoutePayload({ calendarEventIds: ['calendar-event-1'] }),
+    );
+
+    expect(result).toEqual({ outcome: 'processed', ...BATCH_RESULT });
+    expect(runAgentMock).toHaveBeenCalledTimes(1);
+    expect(mutationMock).toHaveBeenCalledTimes(1);
   });
 
   it('reports when the selected calendar events have no recordings instead of enqueuing', async () => {

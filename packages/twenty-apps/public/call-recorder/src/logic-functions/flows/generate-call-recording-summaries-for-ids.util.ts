@@ -19,6 +19,7 @@ export const generateCallRecordingSummariesForIds = async ({
   const failedCallRecordingIds: string[] = [];
   const erroredCallRecordingIds: string[] = [];
   const skippedCallRecordingIds: string[] = [];
+  const unavailableCallRecordingIds: string[] = [];
 
   for (const callRecordingId of callRecordingIds) {
     let outcome: SummaryOutcome;
@@ -26,6 +27,7 @@ export const generateCallRecordingSummariesForIds = async ({
     try {
       ({ outcome } = await generateCallRecordingSummary(client, {
         callRecordingId,
+        shouldRegenerateExistingSummary: true,
       }));
     } catch {
       outcome = 'generation-error';
@@ -38,6 +40,8 @@ export const generateCallRecordingSummariesForIds = async ({
 
     if (outcome === 'generated') {
       generatedCallRecordingIds.push(callRecordingId);
+    } else if (outcome === 'not-summarizable') {
+      unavailableCallRecordingIds.push(callRecordingId);
     } else if (outcome === 'empty-summary') {
       failedCallRecordingIds.push(callRecordingId);
     } else if (outcome === 'generation-error' || outcome === 'save-error') {
@@ -52,5 +56,6 @@ export const generateCallRecordingSummariesForIds = async ({
     failedCallRecordingIds,
     erroredCallRecordingIds,
     skippedCallRecordingIds,
+    unavailableCallRecordingIds,
   };
 };
