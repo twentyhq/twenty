@@ -78,19 +78,18 @@ const StyledGripContainer = styled.span`
   display: flex;
 `;
 
-const StyledRowWrapper = styled.div`
-  .settings-field-visibility-toggle {
-    opacity: 0;
-  }
-
-  &:hover .settings-field-visibility-toggle {
-    opacity: 1;
-  }
-`;
-
-const StyledVisibilityToggleContainer = styled.span`
+const StyledVisibilityToggleContainer = styled.span<{
+  isAlwaysShown: boolean;
+}>`
   align-items: center;
   display: flex;
+  opacity: ${({ isAlwaysShown }) => (isAlwaysShown ? 1 : 0)};
+`;
+
+const StyledRowWrapper = styled.div`
+  &:hover ${StyledVisibilityToggleContainer} {
+    opacity: 1;
+  }
 `;
 
 export const SettingsObjectFieldItemTableRow = ({
@@ -258,11 +257,7 @@ export const SettingsObjectFieldItemTableRow = ({
               )}
               {isDefined(onToggleVisibility) && canToggleField && (
                 <StyledVisibilityToggleContainer
-                  className={
-                    isVisibleInLayout
-                      ? 'settings-field-visibility-toggle'
-                      : undefined
-                  }
+                  isAlwaysShown={!isVisibleInLayout}
                 >
                   <LightIconButton
                     Icon={IconEyeOff}

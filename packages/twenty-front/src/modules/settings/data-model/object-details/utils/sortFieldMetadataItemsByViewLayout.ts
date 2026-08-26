@@ -1,13 +1,19 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 
-export const sortFieldMetadataItemsByViewLayout = ({
+type FieldMetadataLayoutSortable = {
+  id: string;
+  label: string;
+};
+
+export const sortFieldMetadataItemsByViewLayout = <
+  TField extends FieldMetadataLayoutSortable,
+>({
   fieldMetadataItems,
   positionByFieldMetadataId,
 }: {
-  fieldMetadataItems: FieldMetadataItem[];
+  fieldMetadataItems: TField[];
   positionByFieldMetadataId: Map<string, number>;
-}): FieldMetadataItem[] =>
+}): TField[] =>
   [...fieldMetadataItems].sort((fieldA, fieldB) => {
     const positionA = positionByFieldMetadataId.get(fieldA.id);
     const positionB = positionByFieldMetadataId.get(fieldB.id);

@@ -2,8 +2,6 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
-import { computeFieldMetadataLayoutPositionUpdates } from '@/settings/data-model/object-details/utils/computeFieldMetadataLayoutPositionUpdates';
-import { sortFieldMetadataItemsByViewLayout } from '@/settings/data-model/object-details/utils/sortFieldMetadataItemsByViewLayout';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
@@ -26,8 +24,6 @@ import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
-import { useViewOrDefaultView } from '@/views/hooks/useViewOrDefaultView';
 import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
@@ -40,7 +36,7 @@ import { IconArchive, IconCircleDashed, IconSettings } from 'twenty-ui/icon';
 import { SearchInput } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { v4 } from 'uuid';
+import { useIndexViewFieldsLayout } from '@/settings/data-model/object-details/hooks/useIndexViewFieldsLayout';
 import { useMostlyEmptyFieldMetadataIds } from '@/settings/data-model/object-details/hooks/useMostlyEmptyFieldMetadataIds';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/settings/data-model/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
 import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
@@ -74,13 +70,6 @@ const SETTINGS_OBJECT_FIELD_TABLE_METADATA: TableMetadata<SettingsObjectDetailTa
       },
     ],
   };
-
-const DEFAULT_CREATED_VIEW_FIELD_SIZE = 100;
-
-type PendingViewFieldLayout = {
-  position?: number;
-  isVisible?: boolean;
-};
 
 export type SettingsObjectFieldTableProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -125,67 +114,16 @@ export const SettingsObjectFieldTable = ({
     setSettingsObjectFields(objectMetadataItem.fields);
   }, [objectMetadataItem, setSettingsObjectFields]);
 
-  const { view: indexView } = useViewOrDefaultView({
-    objectMetadataItemId: objectMetadataItem.id,
+  const {
+    hasEditableIndexView,
+    layoutOrderedFields,
+    getEffectiveLayout,
+    toggleFieldVisibility,
+    reorderFieldFromDropResult,
+  } = useIndexViewFieldsLayout({
+    objectMetadataItem,
+    fieldMetadataItems: settingsObjectFields ?? [],
   });
-
-  const { performViewFieldAPICreate, performViewFieldAPIUpdate } =
-    usePerformViewFieldAPIPersist();
-
-  const [pendingLayoutByFieldMetadataId, setPendingLayoutByFieldMetadataId] =
-    useState<Map<string, PendingViewFieldLayout>>(new Map());
-
-  const viewFieldByFieldMetadataId = useMemo(
-    () =>
-      new Map(
-        (indexView?.viewFields ?? []).map((viewField) => [
-          viewField.fieldMetadataId,
-          viewField,
-        ]),
-      ),
-    [indexView],
-  );
-
-  const getEffectiveLayout = (
-    fieldMetadataId: string,
-  ): { position: number | null; isVisible: boolean } => {
-    const pending = pendingLayoutByFieldMetadataId.get(fieldMetadataId);
-    const viewField = viewFieldByFieldMetadataId.get(fieldMetadataId);
-
-    return {
-      position: pending?.position ?? viewField?.position ?? null,
-      isVisible: pending?.isVisible ?? viewField?.isVisible ?? false,
-    };
-  };
-
-  const positionByFieldMetadataId = useMemo(() => {
-    const positions = new Map<string, number>();
-
-    for (const field of settingsObjectFields ?? []) {
-      const pending = pendingLayoutByFieldMetadataId.get(field.id);
-      const viewField = viewFieldByFieldMetadataId.get(field.id);
-      const position = pending?.position ?? viewField?.position;
-
-      if (isDefined(position)) {
-        positions.set(field.id, position);
-      }
-    }
-
-    return positions;
-  }, [
-    settingsObjectFields,
-    pendingLayoutByFieldMetadataId,
-    viewFieldByFieldMetadataId,
-  ]);
-
-  const layoutOrderedFields = useMemo(
-    () =>
-      sortFieldMetadataItemsByViewLayout({
-        fieldMetadataItems: settingsObjectFields ?? [],
-        positionByFieldMetadataId,
-      }),
-    [settingsObjectFields, positionByFieldMetadataId],
-  );
 
   const allObjectSettingsDetailItems = useMemo(() => {
     const filteredBySystem = showSystemFields
@@ -262,157 +200,18 @@ export const SettingsObjectFieldTable = ({
     mostlyEmptyFieldMetadataIds,
   ]);
 
-  const isLayoutEditable = mode === 'view' && !readonly && isDefined(indexView);
+  const isLayoutEditable = mode === 'view' && !readonly && hasEditableIndexView;
 
   const isReorderEnabled =
     isLayoutEditable && !isDefined(sortedFieldByTable) && searchTerm === '';
 
-  const persistLayoutUpdates = async (
-    layoutUpdates: {
-      fieldMetadataId: string;
-      layout: PendingViewFieldLayout;
-    }[],
-  ) => {
-    if (!isDefined(indexView)) {
-      return;
-    }
-
-    setPendingLayoutByFieldMetadataId((previousPending) => {
-      const newPending = new Map(previousPending);
-
-      for (const { fieldMetadataId, layout } of layoutUpdates) {
-        newPending.set(fieldMetadataId, {
-          ...newPending.get(fieldMetadataId),
-          ...layout,
-        });
-      }
-
-      return newPending;
-    });
-
-    const viewFieldsToCreate = [];
-    const viewFieldsToUpdate = [];
-
-    for (const { fieldMetadataId, layout } of layoutUpdates) {
-      const existingViewField = viewFieldByFieldMetadataId.get(fieldMetadataId);
-
-      if (isDefined(existingViewField)) {
-        viewFieldsToUpdate.push({
-          input: {
-            id: existingViewField.id,
-            update: {
-              ...(isDefined(layout.position)
-                ? { position: layout.position }
-                : {}),
-              ...(isDefined(layout.isVisible)
-                ? { isVisible: layout.isVisible }
-                : {}),
-            },
-          },
-        });
-      } else {
-        const lastPosition = Math.max(
-          -1,
-          ...Array.from(positionByFieldMetadataId.values()),
-        );
-
-        viewFieldsToCreate.push({
-          id: v4(),
-          viewId: indexView.id,
-          fieldMetadataId,
-          position: layout.position ?? lastPosition + 1,
-          isVisible: layout.isVisible ?? false,
-          size: DEFAULT_CREATED_VIEW_FIELD_SIZE,
-        });
-      }
-    }
-
-    try {
-      if (viewFieldsToCreate.length > 0) {
-        await performViewFieldAPICreate({ inputs: viewFieldsToCreate });
-      }
-      if (viewFieldsToUpdate.length > 0) {
-        await performViewFieldAPIUpdate(viewFieldsToUpdate);
-      }
-    } finally {
-      setPendingLayoutByFieldMetadataId((previousPending) => {
-        const newPending = new Map(previousPending);
-
-        for (const { fieldMetadataId } of layoutUpdates) {
-          newPending.delete(fieldMetadataId);
-        }
-
-        return newPending;
-      });
-    }
-  };
-
-  const handleToggleFieldVisibility = async (fieldMetadataId: string) => {
-    const { isVisible } = getEffectiveLayout(fieldMetadataId);
-
-    await persistLayoutUpdates([
-      { fieldMetadataId, layout: { isVisible: !isVisible } },
-    ]);
-  };
-
   const handleReorderDragEnd = async (result: DraggableListDropResult) => {
-    if (!isDefined(result.destination)) {
-      return;
-    }
-
-    const movedFieldMetadataId = result.draggableId;
-
-    if (
-      movedFieldMetadataId === objectMetadataItem.labelIdentifierFieldMetadataId
-    ) {
-      return;
-    }
-
-    const visibleFieldsWithoutMoved = filteredItems
-      .map((tableItem) => tableItem.fieldMetadataItem)
-      .filter((field) => field.id !== movedFieldMetadataId);
-    const layoutOrderedFieldsWithoutMoved = layoutOrderedFields.filter(
-      (field) => field.id !== movedFieldMetadataId,
-    );
-
-    const nextVisibleField =
-      visibleFieldsWithoutMoved[result.destination.index] ?? null;
-    const precedingField = isDefined(nextVisibleField)
-      ? (layoutOrderedFieldsWithoutMoved[
-          layoutOrderedFieldsWithoutMoved.findIndex(
-            (field) => field.id === nextVisibleField.id,
-          ) - 1
-        ] ?? null)
-      : (visibleFieldsWithoutMoved[visibleFieldsWithoutMoved.length - 1] ??
-        null);
-
-    const labelIdentifierIsFirst =
-      layoutOrderedFieldsWithoutMoved[0]?.id ===
-      objectMetadataItem.labelIdentifierFieldMetadataId;
-    const clampedPrecedingField =
-      !isDefined(precedingField) && labelIdentifierIsFirst
-        ? layoutOrderedFieldsWithoutMoved[0]
-        : precedingField;
-
-    const positionUpdates = computeFieldMetadataLayoutPositionUpdates({
-      orderedFieldMetadataItems: layoutOrderedFields.map((field) => ({
-        id: field.id,
-        position: positionByFieldMetadataId.get(field.id) ?? null,
-      })),
-      movedFieldMetadataId,
-      precedingFieldMetadataId: clampedPrecedingField?.id ?? null,
+    await reorderFieldFromDropResult({
+      dropResult: result,
+      visibleFieldMetadataItems: filteredItems.map(
+        (tableItem) => tableItem.fieldMetadataItem,
+      ),
     });
-
-    if (positionUpdates.length === 0) {
-      return;
-    }
-
-    await persistLayoutUpdates(
-      positionUpdates.map((update) => ({
-        fieldMetadataId: update.fieldMetadataId,
-        layout: { position: update.position },
-      })),
-    );
   };
 
   const fieldTableRows = filteredItems.map(
@@ -442,7 +241,7 @@ export const SettingsObjectFieldTable = ({
           }
           onToggleVisibility={
             isLayoutEditable && isLayoutManageableField
-              ? () => handleToggleFieldVisibility(fieldMetadataId)
+              ? () => toggleFieldVisibility(fieldMetadataId)
               : undefined
           }
         />
