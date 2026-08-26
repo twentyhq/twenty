@@ -246,18 +246,18 @@ jobs:
           claude_args: '--max-turns 120 --model opus --mcp-config /tmp/qa-scout/mcp.json --allowedTools "Read,Grep,Glob,Write,Bash(cat *),Bash(tail *),Bash(head *),Bash(wc *),Bash(ls *),Bash(grep *),Bash(mkdir *),Bash(sleep *),Bash(date *),mcp__playwright"'
 
       # The agent process necessarily holds the inference credential, and a
-      # prompt-injected agent could copy it into its report. Every public sink
-      # (PR comment, artifact, job summary) reads from /tmp/qa-scout/output,
-      # so redact Anthropic token shapes here, in the trusted lane, before
-      # anything is published.
+      # prompt-injected agent could copy it into any file it can write. The
+      # artifact ships the whole /tmp/qa-scout tree (context, browser output,
+      # logs, report), so redact Anthropic token shapes across all of it, in
+      # the trusted lane, before anything is published.
       - name: QA Scout / Scrub outputs
         if: ${{ !cancelled() && steps.qa-scout-pr.outputs.run == 'true' }}
         continue-on-error: true
         run: |
           set -euo pipefail
-          MATCHES=$(grep -rIl 'sk-ant-' /tmp/qa-scout/output 2>/dev/null || true)
+          MATCHES=$(grep -rIl 'sk-ant-' /tmp/qa-scout 2>/dev/null || true)
           if [ -n "$MATCHES" ]; then
-            echo "Redacting Anthropic token shapes from Scout outputs:"
+            echo "Redacting Anthropic token shapes from Scout files:"
             echo "$MATCHES"
             echo "$MATCHES" | xargs sed -i -E 's/sk-ant-[A-Za-z0-9_-]+/[REDACTED]/g'
           fi
