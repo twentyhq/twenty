@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-25 12:14\n"
+"PO-Revision-Date: 2026-08-26 18:42\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -1762,7 +1762,7 @@ msgstr "인증과 함께 고객이 확인할 수 있는 디렉터리 프로필�
 #. js-lingui-id: 4W4gsr
 #: src/sections/partner-hero/PartnerLeadHero.tsx
 msgid "Certified partners who set up your CRM to match how your company works, from the migration to the custom apps."
-msgstr ""
+msgstr "마이그레이션부터 맞춤형 앱까지, 회사의 업무 방식에 맞게 CRM을 설정해 주는 인증된 파트너"
 
 #. js-lingui-id: iI3Dq9
 #: src/partner-application/data/partner-country-options.ts
@@ -3904,7 +3904,7 @@ msgstr "힌디어"
 #. js-lingui-id: 6NGgln
 #: src/sections/partner-hero/PartnerLeadHero.tsx
 msgid "Hire the people who *build on Twenty*"
-msgstr ""
+msgstr "*Twenty를 구축하는* 사람들을 채용하세요"
 
 #. js-lingui-id: qfSbUb
 #: src/case-studies/case-study-stories.ts
