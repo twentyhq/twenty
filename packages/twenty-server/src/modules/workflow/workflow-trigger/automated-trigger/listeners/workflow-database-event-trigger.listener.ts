@@ -41,8 +41,6 @@ import {
   type WorkflowTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
 
-// Both the workspace workflowAutomatedTrigger entity and the core-derived
-// trigger-map entry satisfy this shape, so dispatch can evaluate either source.
 type DatabaseEventTriggerListener = {
   workflowId: string;
   settings: AutomatedTriggerSettings;

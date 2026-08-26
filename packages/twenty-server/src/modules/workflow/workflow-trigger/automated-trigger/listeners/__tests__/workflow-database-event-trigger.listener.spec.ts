@@ -31,10 +31,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     } as never);
   };
 
-  const mockRepository = {
-    find: jest.fn(),
-  };
-
   const createMockFlatObjectMetadata = (
     overrides: Partial<FlatObjectMetadata>,
   ): FlatObjectMetadata =>
@@ -65,7 +61,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
 
   beforeEach(async () => {
     workspaceOrmManager = {
-      getRepository: jest.fn().mockReturnValue(mockRepository),
+      getRepository: jest.fn().mockReturnValue({ find: jest.fn() }),
       executeInWorkspaceContext: jest
         .fn()
         .mockImplementation((fn: () => any, _authContext?: any) => fn()),
@@ -74,8 +70,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     messageQueueService = {
       add: jest.fn(),
     } as any;
-
-    // Default flag off so the existing suite exercises the workspace-entity path.
 
     workspaceCacheService = {
       getOrRecompute: jest.fn().mockResolvedValue({
