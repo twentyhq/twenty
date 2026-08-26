@@ -35,6 +35,8 @@ import { WorkspaceFlatViewSortMapCacheService } from 'src/engine/metadata-module
 import { WorkspaceFlatWebhookMapCacheService } from 'src/engine/metadata-modules/flat-webhook/services/workspace-flat-webhook-map-cache.service';
 import { WorkspaceFlatLogicFunctionMapCacheService } from 'src/engine/metadata-modules/logic-function/services/workspace-flat-logic-function-map-cache.service';
 import { WorkspaceFlatRoleMapCacheService } from 'src/engine/metadata-modules/role/services/workspace-flat-role-map-cache.service';
+import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { WORKSPACE_CACHE_KEY } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import {
   type CacheEntityFetchShape,
   type WidenedCacheEntityFetchSpec,
@@ -55,9 +57,13 @@ const getEffectiveColumns = (
 };
 
 // The flat map provider owning each metadata name; its declared fetch shape
-// is diffed against what the relation constants predict.
-const FLAT_PROVIDER_BY_METADATA_NAME: Partial<
-  Record<AllMetadataName, { fetchRequirements: CacheEntityFetchShape }>
+// is diffed against what the relation constants predict. The full Record
+// makes adding a metadata name without registering its provider here a
+// compile error, and the pairing test below catches a name mapped to the
+// wrong provider.
+const FLAT_PROVIDER_BY_METADATA_NAME: Record<
+  AllMetadataName,
+  { fetchRequirements: CacheEntityFetchShape }
 > = {
   objectMetadata: new WorkspaceFlatObjectMetadataMapCacheService(),
   fieldMetadata: new WorkspaceFlatFieldMetadataMapCacheService(),
@@ -133,6 +139,28 @@ const findChildForeignKeyColumn = (
 };
 
 describe('fetch requirements drift against relation constants', () => {
+  it('pairs every metadata name with the provider caching its flat maps key', () => {
+    const violations: string[] = [];
+
+    for (const [metadataName, provider] of Object.entries(
+      FLAT_PROVIDER_BY_METADATA_NAME,
+    ) as [AllMetadataName, { fetchRequirements: CacheEntityFetchShape }][]) {
+      const decoratedCacheKey = Reflect.getMetadata(
+        WORKSPACE_CACHE_KEY,
+        provider.constructor,
+      );
+      const expectedCacheKey = getMetadataFlatEntityMapsKey(metadataName);
+
+      if (decoratedCacheKey !== expectedCacheKey) {
+        violations.push(
+          `${metadataName}: paired with the provider caching "${decoratedCacheKey}" instead of "${expectedCacheKey}"`,
+        );
+      }
+    }
+
+    expect(violations).toEqual([]);
+  });
+
   it('every declared one-to-many relation is fetched with id, universalIdentifier and its foreign key', () => {
     const violations: string[] = [];
 
