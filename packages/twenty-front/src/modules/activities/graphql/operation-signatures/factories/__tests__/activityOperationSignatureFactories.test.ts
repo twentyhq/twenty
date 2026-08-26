@@ -33,6 +33,7 @@ describe('activity operation signature factories', () => {
 
     expect(result.objectNameSingular).toBe(CoreObjectNameSingular.TaskTarget);
     expect(result.fields).toMatchObject({
+      taskId: true,
       task: {
         id: true,
         taskTargets: {

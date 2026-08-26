@@ -7,6 +7,7 @@ import { generateJunctionRelationGqlFields } from '@/object-record/graphql/recor
 import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
 import { getReverseJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getReverseJunctionConfig';
 import {
+  computeRelationGqlFieldJoinColumnName,
   computeMorphRelationGqlFieldName,
   isDefined,
 } from 'twenty-shared/utils';
@@ -77,6 +78,9 @@ export const generateDepthRecordGqlFieldsFromFields = ({
               ...buildIdentifierGqlFields(
                 reverseJunctionConfig.junctionObjectMetadata,
               ),
+              [computeRelationGqlFieldJoinColumnName({
+                name: reverseJunctionConfig.relationFieldName,
+              })]: true,
               [reverseJunctionConfig.relationFieldName]:
                 buildIdentifierGqlFields(
                   reverseJunctionConfig.relatedObjectMetadata,

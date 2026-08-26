@@ -16,6 +16,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { createOneActivityOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/createOneActivityOperationSignatureFactory';
 import { type ActivityTarget } from '@/activities/types/ActivityTarget';
 import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
+import { getActivityTargetsFromRecord } from '@/activities/utils/getActivityTargetRecordValues';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
 export const useCreateActivityInDB = ({
@@ -78,10 +79,10 @@ export const useCreateActivityInDB = ({
         throw new Error('Activity target relation metadata is missing');
       }
 
-      const activityTargetsToCreate =
-        (activityToCreate[
-          activityTargetFieldName as keyof ActivityForEditor
-        ] as ActivityTarget[] | undefined) ?? [];
+      const activityTargetsToCreate = getActivityTargetsFromRecord({
+        record: activityToCreate,
+        fieldName: activityTargetFieldName,
+      });
 
       if (isNonEmptyArray(activityTargetsToCreate)) {
         await createManyActivityTargets({

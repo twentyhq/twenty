@@ -7,10 +7,12 @@ import { findActivityTargetsOperationSignatureFactory } from '@/activities/graph
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { type ActivityTarget } from '@/activities/types/ActivityTarget';
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
+import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useActivityTargetsForTargetableObjects = ({
   objectNameSingular,
@@ -36,36 +38,40 @@ export const useActivityTargetsForTargetableObjects = ({
   const objectMetadataItems = useAtomStateValue<EnrichedObjectMetadataItem[]>(
     objectMetadataItemsSelector,
   );
-  const FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE =
-    findActivityTargetsOperationSignatureFactory({
-      objectNameSingular,
-      objectMetadataItems,
-    });
-
-  const activityTargetObjectMetadata = objectMetadataItems.find(
-    (objectMetadataItem) =>
-      objectMetadataItem.nameSingular ===
-      FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.objectNameSingular,
-  );
-
-  if (!activityTargetObjectMetadata) {
-    throw new Error('Activity target object metadata is missing');
-  }
-
   const activityObjectMetadata = objectMetadataItems.find(
     (objectMetadataItem) =>
       objectMetadataItem.nameSingular === objectNameSingular,
   );
 
-  const activityRelationFieldName = activityTargetObjectMetadata.fields.find(
-    (fieldMetadataItem) =>
-      fieldMetadataItem.relation?.targetObjectMetadata.id ===
-      activityObjectMetadata?.id,
-  )?.name;
-
-  if (!activityRelationFieldName) {
-    throw new Error('Activity relation metadata is missing');
+  if (!isDefined(activityObjectMetadata)) {
+    throw new Error('Activity object metadata is missing');
   }
+
+  const junctionConfig = getActivityTargetJunctionConfig({
+    activityObjectMetadata,
+    objectMetadataItems,
+  });
+
+  if (!isDefined(junctionConfig?.sourceField)) {
+    throw new Error('Activity target junction metadata is invalid');
+  }
+
+  const activityTargetObjectMetadata = objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.id === junctionConfig.junctionObjectMetadata.id,
+  );
+
+  if (!isDefined(activityTargetObjectMetadata)) {
+    throw new Error('Activity target object metadata is missing');
+  }
+
+  const activityRelationFieldName = junctionConfig.sourceField.name;
+
+  const FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE =
+    findActivityTargetsOperationSignatureFactory({
+      objectNameSingular,
+      objectMetadataItems,
+    });
 
   const activityTargetsFilter = getActivityTargetsFilter({
     targetableObjects,

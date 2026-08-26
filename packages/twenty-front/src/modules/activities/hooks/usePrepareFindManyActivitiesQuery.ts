@@ -1,6 +1,5 @@
 import { findActivitiesOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/findActivitiesOperationSignatureFactory';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { type ActivityTarget } from '@/activities/types/ActivityTarget';
 import { type Note } from '@/activities/types/Note';
 import { type Task } from '@/activities/types/Task';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -12,8 +11,15 @@ import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hook
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
+import {
+  getActivityIdFromTarget,
+  getActivityTargetsFromRecord,
+} from '@/activities/utils/getActivityTargetRecordValues';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  computeRelationGqlFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 
 export const usePrepareFindManyActivitiesQuery = ({
@@ -78,6 +84,9 @@ export const usePrepareFindManyActivitiesQuery = ({
     }
 
     const activityRelationFieldName = junctionConfig.sourceField.name;
+    const activityRelationFieldIdName = computeRelationGqlFieldJoinColumnName({
+      name: activityRelationFieldName,
+    });
     const activityTargetObjectMetadataId =
       junctionConfig.junctionObjectMetadata.id;
 
@@ -87,22 +96,22 @@ export const usePrepareFindManyActivitiesQuery = ({
         activityTargetObjectMetadataId,
     )?.name;
 
-    const activityTargets =
-      (isDefined(activityTargetFieldName)
-        ? (targetableObjectRecord?.[activityTargetFieldName] as
-            | ActivityTarget[]
-            | undefined)
-        : undefined) ?? [];
+    const activityTargets = isDefined(activityTargetFieldName)
+      ? getActivityTargetsFromRecord({
+          record: targetableObjectRecord ?? {},
+          fieldName: activityTargetFieldName,
+        })
+      : [];
 
     const activityIds = [
       ...new Set(
         activityTargets
           .map((activityTarget) => {
-            const activity = activityTarget[activityRelationFieldName] as
-              | ObjectRecord
-              | undefined;
-
-            return activity?.id;
+            return getActivityIdFromTarget({
+              activityTarget,
+              relationFieldName: activityRelationFieldName,
+              relationFieldIdName: activityRelationFieldIdName,
+            });
           })
           .filter(isDefined),
       ),

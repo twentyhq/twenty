@@ -4,8 +4,7 @@ import { useStore } from 'jotai';
 import { useActivityTargetsForTargetableObjects } from '@/activities/hooks/useActivityTargetsForTargetableObjects';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { type ActivityTarget } from '@/activities/types/ActivityTarget';
-import { type Note } from '@/activities/types/Note';
-import { type Task } from '@/activities/types/Task';
+import { getActivityFromTarget } from '@/activities/utils/getActivityTargetRecordValues';
 import {
   type CoreObjectNameSingular,
   type RecordGqlOperationOrderBy,
@@ -14,7 +13,7 @@ import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getR
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useActivities = <T extends Task | Note>({
+export const useActivities = ({
   objectNameSingular,
   targetableObjects,
   activityTargetsOrderByVariables,
@@ -31,9 +30,10 @@ export const useActivities = <T extends Task | Note>({
   const updateActivitiesInStore = useCallback(
     (activityTargets: ActivityTarget[], activityRelationFieldName: string) => {
       for (const activityTarget of activityTargets) {
-        const activity = activityTarget[activityRelationFieldName] as
-          | T
-          | undefined;
+        const activity = getActivityFromTarget({
+          activityTarget,
+          relationFieldName: activityRelationFieldName,
+        });
 
         if (!isDefined(activity)) {
           continue;
@@ -63,9 +63,12 @@ export const useActivities = <T extends Task | Note>({
 
   const activities = activityTargets
     .map((activityTarget) => {
-      return activityTarget[activityRelationFieldName] as T | undefined;
+      return getActivityFromTarget({
+        activityTarget,
+        relationFieldName: activityRelationFieldName,
+      });
     })
-    .filter(isDefined) as T[];
+    .filter(isDefined);
 
   const fetchMoreActivities = async () => {
     const result = await fetchMoreActivityTargets();
@@ -82,13 +85,16 @@ export const useActivities = <T extends Task | Note>({
 
     return activityTargets
       .map((activityTarget) => {
-        return activityTarget[activityRelationFieldName] as T | undefined;
+        return getActivityFromTarget({
+          activityTarget,
+          relationFieldName: activityRelationFieldName,
+        });
       })
-      .filter(isDefined) as T[];
+      .filter(isDefined);
   };
 
   return {
-    activities: activities as T[],
+    activities,
     loading: loadingActivityTargets,
     totalCountActivities: totalCountActivityTargets,
     fetchMoreActivities,

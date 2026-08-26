@@ -3,7 +3,10 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { type RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
 import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  computeRelationGqlFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 
 type FindActivityTargetsOperationSignatureFactory = {
   objectNameSingular: CoreObjectNameSingular.Note | CoreObjectNameSingular.Task;
@@ -51,6 +54,7 @@ export const findActivityTargetsOperationSignatureFactory: RecordGqlOperationSig
       __typename: true,
       createdAt: true,
       updatedAt: true,
+      [computeRelationGqlFieldJoinColumnName({ name: sourceField.name })]: true,
       [sourceField.name]: {
         ...activityFieldKeys,
         [activityTargetField.name]: generateDepthRecordGqlFieldsFromObject({

@@ -69,6 +69,7 @@ describe('getReverseJunctionConfig', () => {
     expect(result).toMatchObject({
       noteTargets: {
         id: true,
+        noteId: true,
         note: {
           id: true,
           title: true,

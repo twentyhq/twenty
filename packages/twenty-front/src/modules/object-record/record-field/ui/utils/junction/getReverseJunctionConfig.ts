@@ -17,12 +17,7 @@ type GetReverseJunctionConfigArgs = {
   objectMetadataItems: JunctionObjectMetadataItem[];
 };
 
-const reverseJunctionConfigCache = new WeakMap<
-  JunctionObjectMetadataItem[],
-  Map<string, ReverseJunctionConfig | null>
->();
-
-const resolveReverseJunctionConfig = ({
+export const getReverseJunctionConfig = ({
   junctionObjectMetadataId,
   sourceObjectMetadataId,
   objectMetadataItems,
@@ -76,36 +71,4 @@ const resolveReverseJunctionConfig = ({
   }
 
   return null;
-};
-
-export const getReverseJunctionConfig = (
-  args: GetReverseJunctionConfigArgs,
-): ReverseJunctionConfig | null => {
-  const {
-    junctionObjectMetadataId,
-    sourceObjectMetadataId,
-    objectMetadataItems,
-  } = args;
-
-  if (
-    !isDefined(junctionObjectMetadataId) ||
-    !isDefined(sourceObjectMetadataId)
-  ) {
-    return null;
-  }
-
-  const cacheKey = `${junctionObjectMetadataId}:${sourceObjectMetadataId}`;
-  const cachedConfigs = reverseJunctionConfigCache.get(objectMetadataItems);
-
-  if (cachedConfigs?.has(cacheKey)) {
-    return cachedConfigs.get(cacheKey) ?? null;
-  }
-
-  const resolvedConfig = resolveReverseJunctionConfig(args);
-  const configs = cachedConfigs ?? new Map();
-
-  configs.set(cacheKey, resolvedConfig);
-  reverseJunctionConfigCache.set(objectMetadataItems, configs);
-
-  return resolvedConfig;
 };
