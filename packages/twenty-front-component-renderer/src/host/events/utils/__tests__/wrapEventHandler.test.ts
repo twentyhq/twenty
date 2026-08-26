@@ -24,7 +24,11 @@ describe('wrapEventHandler', () => {
   it('should leave the default alone when no rule is given', () => {
     const preventDefault = jest.fn();
 
-    wrapEventHandler(jest.fn())({ type: 'keydown', key: 'Enter', preventDefault });
+    wrapEventHandler(jest.fn())({
+      type: 'keydown',
+      key: 'Enter',
+      preventDefault,
+    });
 
     expect(preventDefault).not.toHaveBeenCalled();
   });

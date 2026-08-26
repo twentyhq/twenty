@@ -8,10 +8,16 @@ describe('matchesPreventDefaultRule', () => {
 
   it('should match a key only when the type matches too', () => {
     expect(
-      matchesPreventDefaultRule('keydown:Enter', { type: 'keydown', key: 'Enter' }),
+      matchesPreventDefaultRule('keydown:Enter', {
+        type: 'keydown',
+        key: 'Enter',
+      }),
     ).toBe(true);
     expect(
-      matchesPreventDefaultRule('keydown:Enter', { type: 'keyup', key: 'Enter' }),
+      matchesPreventDefaultRule('keydown:Enter', {
+        type: 'keyup',
+        key: 'Enter',
+      }),
     ).toBe(false);
     expect(
       matchesPreventDefaultRule('keydown:Enter', { type: 'keydown', key: 'a' }),

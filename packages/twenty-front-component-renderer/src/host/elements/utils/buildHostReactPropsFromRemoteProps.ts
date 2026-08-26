@@ -31,7 +31,9 @@ const readPreventDefaultRules = (
     return undefined;
   }
 
-  const rules = value.filter((rule): rule is string => typeof rule === 'string');
+  const rules = value.filter(
+    (rule): rule is string => typeof rule === 'string',
+  );
 
   return rules.length > 0 ? rules : undefined;
 };
