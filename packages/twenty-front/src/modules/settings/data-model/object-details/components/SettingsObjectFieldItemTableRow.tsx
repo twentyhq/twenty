@@ -19,6 +19,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
+import { DragDropItemSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableHandle';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   IconChevronRight,
@@ -216,12 +217,14 @@ export const SettingsObjectFieldItemTableRow = ({
             gap={themeCssVariables.spacing[2]}
           >
             {showDragGrip && (
-              <StyledGripContainer>
-                <IconGripVertical
-                  size={theme.icon.size.md}
-                  stroke={theme.icon.stroke.sm}
-                />
-              </StyledGripContainer>
+              <DragDropItemSortableHandle>
+                <StyledGripContainer>
+                  <IconGripVertical
+                    size={theme.icon.size.md}
+                    stroke={theme.icon.stroke.sm}
+                  />
+                </StyledGripContainer>
+              </DragDropItemSortableHandle>
             )}
             {isDefined(Icon) && (
               <Icon

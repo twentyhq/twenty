@@ -75,6 +75,8 @@ const SETTINGS_OBJECT_FIELD_TABLE_METADATA: TableMetadata<SettingsObjectDetailTa
     ],
   };
 
+const DEFAULT_CREATED_VIEW_FIELD_SIZE = 100;
+
 type PendingViewFieldLayout = {
   position?: number;
   isVisible?: boolean;
@@ -226,6 +228,14 @@ export const SettingsObjectFieldTable = ({
     sortedFieldByTableFamilyState,
     { tableId: tableMetadata.tableId },
   );
+  const setSortedFieldByTable = useSetAtomFamilyState(
+    sortedFieldByTableFamilyState,
+    { tableId: tableMetadata.tableId },
+  );
+
+  useEffect(() => {
+    setSortedFieldByTable(null);
+  }, [setSortedFieldByTable]);
 
   const filteredItems = useMemo(() => {
     const searchNormalized = normalizeSearchText(searchTerm);
@@ -301,15 +311,18 @@ export const SettingsObjectFieldTable = ({
           },
         });
       } else {
+        const lastPosition = Math.max(
+          -1,
+          ...Array.from(positionByFieldMetadataId.values()),
+        );
+
         viewFieldsToCreate.push({
           id: v4(),
           viewId: indexView.id,
           fieldMetadataId,
-          position:
-            layout.position ??
-            getEffectiveLayout(fieldMetadataId).position ??
-            0,
+          position: layout.position ?? lastPosition + 1,
           isVisible: layout.isVisible ?? false,
+          size: DEFAULT_CREATED_VIEW_FIELD_SIZE,
         });
       }
     }
@@ -347,38 +360,47 @@ export const SettingsObjectFieldTable = ({
       return;
     }
 
-    const visibleFields = filteredItems.map(
-      (tableItem) => tableItem.fieldMetadataItem,
-    );
-    const movedField = visibleFields[result.source.index];
+    const movedFieldMetadataId = result.draggableId;
 
     if (
-      !isDefined(movedField) ||
-      movedField.id === objectMetadataItem.labelIdentifierFieldMetadataId
+      movedFieldMetadataId === objectMetadataItem.labelIdentifierFieldMetadataId
     ) {
       return;
     }
 
-    const visibleFieldsWithoutMoved = visibleFields.filter(
-      (field) => field.id !== movedField.id,
+    const visibleFieldsWithoutMoved = filteredItems
+      .map((tableItem) => tableItem.fieldMetadataItem)
+      .filter((field) => field.id !== movedFieldMetadataId);
+    const layoutOrderedFieldsWithoutMoved = layoutOrderedFields.filter(
+      (field) => field.id !== movedFieldMetadataId,
     );
-    const firstVisibleField = visibleFieldsWithoutMoved[0];
-    const precedingField =
-      result.destination.index === 0
-        ? isDefined(firstVisibleField) &&
-          firstVisibleField.id ===
-            objectMetadataItem.labelIdentifierFieldMetadataId
-          ? firstVisibleField
-          : null
-        : (visibleFieldsWithoutMoved[result.destination.index - 1] ?? null);
+
+    const nextVisibleField =
+      visibleFieldsWithoutMoved[result.destination.index] ?? null;
+    const precedingField = isDefined(nextVisibleField)
+      ? (layoutOrderedFieldsWithoutMoved[
+          layoutOrderedFieldsWithoutMoved.findIndex(
+            (field) => field.id === nextVisibleField.id,
+          ) - 1
+        ] ?? null)
+      : (visibleFieldsWithoutMoved[visibleFieldsWithoutMoved.length - 1] ??
+        null);
+
+    const labelIdentifierIsFirst =
+      layoutOrderedFieldsWithoutMoved[0]?.id ===
+      objectMetadataItem.labelIdentifierFieldMetadataId;
+    const clampedPrecedingField =
+      !isDefined(precedingField) && labelIdentifierIsFirst
+        ? layoutOrderedFieldsWithoutMoved[0]
+        : precedingField;
 
     const positionUpdates = computeFieldMetadataLayoutPositionUpdates({
       orderedFieldMetadataItems: layoutOrderedFields.map((field) => ({
         id: field.id,
         position: positionByFieldMetadataId.get(field.id) ?? null,
       })),
-      movedFieldMetadataId: movedField.id,
-      precedingFieldMetadataId: precedingField?.id ?? null,
+      movedFieldMetadataId,
+      precedingFieldMetadataId: clampedPrecedingField?.id ?? null,
     });
 
     if (positionUpdates.length === 0) {
@@ -398,6 +420,10 @@ export const SettingsObjectFieldTable = ({
       const fieldMetadataId = objectSettingsDetailItem.fieldMetadataItem.id;
       const isLabelIdentifierField =
         fieldMetadataId === objectMetadataItem.labelIdentifierFieldMetadataId;
+      const isLayoutManageableField =
+        !isLabelIdentifierField &&
+        (objectSettingsDetailItem.fieldMetadataItem.isActive ?? false) &&
+        !isHiddenSystemField(objectSettingsDetailItem.fieldMetadataItem);
       const status = objectSettingsDetailItem.fieldMetadataItem.isActive
         ? 'active'
         : 'disabled';
@@ -409,13 +435,13 @@ export const SettingsObjectFieldTable = ({
           status={status}
           mode={mode}
           isMostlyEmpty={mostlyEmptyFieldMetadataIds.has(fieldMetadataId)}
-          showDragGrip={isReorderEnabled && !isLabelIdentifierField}
+          showDragGrip={isReorderEnabled && isLayoutManageableField}
           isVisibleInLayout={
             isLabelIdentifierField ||
             getEffectiveLayout(fieldMetadataId).isVisible
           }
           onToggleVisibility={
-            isLayoutEditable && !isLabelIdentifierField
+            isLayoutEditable && isLayoutManageableField
               ? () => handleToggleFieldVisibility(fieldMetadataId)
               : undefined
           }
@@ -431,7 +457,7 @@ export const SettingsObjectFieldTable = ({
           key={fieldMetadataId}
           draggableId={fieldMetadataId}
           index={index}
-          isDragDisabled={isLabelIdentifierField}
+          isDragDisabled={!isLayoutManageableField}
           itemComponent={row}
         />
       );
