@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
+import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
@@ -20,7 +20,7 @@ const FLAT_NAVIGATION_MENU_ITEM_ROWS_REQUIREMENT = {
 
 @Injectable()
 @WorkspaceCache('flatNavigationMenuItemMaps', { packingPonderation: 1 })
-export class WorkspaceFlatNavigationMenuItemMapCacheService extends FlatEntityMapCacheProvider<'navigationMenuItem'> {
+export class WorkspaceFlatNavigationMenuItemMapCacheService extends MetadataFlatEntityMapsCacheProvider<'navigationMenuItem'> {
   override readonly rowsRequirement =
     FLAT_NAVIGATION_MENU_ITEM_ROWS_REQUIREMENT;
 

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
+import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatSearchFieldMetadataMaps } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata-maps.type';
@@ -29,7 +29,7 @@ const FLAT_SEARCH_FIELD_METADATA_ROWS_REQUIREMENT = {
 
 @Injectable()
 @WorkspaceCache('flatSearchFieldMetadataMaps', { packingPonderation: 1 })
-export class WorkspaceFlatSearchFieldMetadataMapCacheService extends FlatEntityMapCacheProvider<'searchFieldMetadata'> {
+export class WorkspaceFlatSearchFieldMetadataMapCacheService extends MetadataFlatEntityMapsCacheProvider<'searchFieldMetadata'> {
   override readonly rowsRequirement =
     FLAT_SEARCH_FIELD_METADATA_ROWS_REQUIREMENT;
 

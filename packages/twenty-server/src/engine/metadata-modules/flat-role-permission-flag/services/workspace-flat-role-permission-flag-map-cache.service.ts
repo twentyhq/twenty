@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatRolePermissionFlagMaps } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag-maps.type';
 import { fromRolePermissionFlagEntityToFlatRolePermissionFlag } from 'src/engine/metadata-modules/flat-role-permission-flag/utils/from-role-permission-flag-entity-to-flat-role-permission-flag.util';
-import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
+import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
@@ -18,7 +18,7 @@ const FLAT_ROLE_PERMISSION_FLAG_ROWS_REQUIREMENT = {
 
 @Injectable()
 @WorkspaceCache('flatRolePermissionFlagMaps', { packingPonderation: 1 })
-export class WorkspaceFlatRolePermissionFlagMapCacheService extends FlatEntityMapCacheProvider<'rolePermissionFlag'> {
+export class WorkspaceFlatRolePermissionFlagMapCacheService extends MetadataFlatEntityMapsCacheProvider<'rolePermissionFlag'> {
   override readonly rowsRequirement =
     FLAT_ROLE_PERMISSION_FLAG_ROWS_REQUIREMENT;
 

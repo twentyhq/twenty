@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
+import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
 
 import { type FlatCommandMenuItemMaps } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item-maps.type';
 import { fromCommandMenuItemEntityToFlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-command-menu-item-entity-to-flat-command-menu-item.util';
@@ -20,7 +20,7 @@ const FLAT_COMMAND_MENU_ITEM_ROWS_REQUIREMENT = {
 
 @Injectable()
 @WorkspaceCache('flatCommandMenuItemMaps', { packingPonderation: 4 })
-export class WorkspaceFlatCommandMenuItemMapCacheService extends FlatEntityMapCacheProvider<'commandMenuItem'> {
+export class WorkspaceFlatCommandMenuItemMapCacheService extends MetadataFlatEntityMapsCacheProvider<'commandMenuItem'> {
   override readonly rowsRequirement = FLAT_COMMAND_MENU_ITEM_ROWS_REQUIREMENT;
 
   computeForCache({

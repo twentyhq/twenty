@@ -10,7 +10,7 @@ import { type FlatEntityFetchShape } from 'src/engine/workspace-cache/types/flat
 // name derives the computed maps type, and the fetch shape is strictly typed
 // against the metadata relation constants.
 @Injectable()
-export abstract class FlatEntityMapCacheProvider<
+export abstract class MetadataFlatEntityMapsCacheProvider<
   TMetadataName extends AllMetadataName,
   TCompact = AllFlatEntityTypesByMetadataName[TMetadataName]['flatEntityMaps'],
 > extends WorkspaceCacheProvider<

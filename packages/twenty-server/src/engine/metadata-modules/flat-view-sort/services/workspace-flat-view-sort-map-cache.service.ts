@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
+import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
 
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { FlatViewSortMaps } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort-maps.type';
@@ -19,7 +19,7 @@ const FLAT_VIEW_SORT_ROWS_REQUIREMENT = {
 
 @Injectable()
 @WorkspaceCache('flatViewSortMaps', { packingPonderation: 1 })
-export class WorkspaceFlatViewSortMapCacheService extends FlatEntityMapCacheProvider<'viewSort'> {
+export class WorkspaceFlatViewSortMapCacheService extends MetadataFlatEntityMapsCacheProvider<'viewSort'> {
   override readonly rowsRequirement = FLAT_VIEW_SORT_ROWS_REQUIREMENT;
 
   computeForCache({

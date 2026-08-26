@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
+import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
 
 import { type FlatAgentMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-agent-maps.type';
 import { transformAgentEntityToFlatAgent } from 'src/engine/metadata-modules/flat-agent/utils/transform-agent-entity-to-flat-agent.util';
@@ -17,7 +17,7 @@ const FLAT_AGENT_ROWS_REQUIREMENT = {
 
 @Injectable()
 @WorkspaceCache('flatAgentMaps', { packingPonderation: 1 })
-export class WorkspaceFlatAgentMapCacheService extends FlatEntityMapCacheProvider<'agent'> {
+export class WorkspaceFlatAgentMapCacheService extends MetadataFlatEntityMapsCacheProvider<'agent'> {
   override readonly rowsRequirement = FLAT_AGENT_ROWS_REQUIREMENT;
 
   computeForCache({

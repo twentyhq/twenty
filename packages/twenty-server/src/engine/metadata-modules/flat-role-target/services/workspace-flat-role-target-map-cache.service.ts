@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
+import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatRoleTargetMaps } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target-maps.type';
@@ -19,7 +19,7 @@ const FLAT_ROLE_TARGET_ROWS_REQUIREMENT = {
 
 @Injectable()
 @WorkspaceCache('flatRoleTargetMaps', { packingPonderation: 1 })
-export class WorkspaceFlatRoleTargetMapCacheService extends FlatEntityMapCacheProvider<'roleTarget'> {
+export class WorkspaceFlatRoleTargetMapCacheService extends MetadataFlatEntityMapsCacheProvider<'roleTarget'> {
   override readonly rowsRequirement = FLAT_ROLE_TARGET_ROWS_REQUIREMENT;
 
   computeForCache({

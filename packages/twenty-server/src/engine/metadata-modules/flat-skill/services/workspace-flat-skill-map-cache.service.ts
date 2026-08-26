@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
+import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatSkillMaps } from 'src/engine/metadata-modules/flat-skill/types/flat-skill-maps.type';
@@ -17,7 +17,7 @@ const FLAT_SKILL_ROWS_REQUIREMENT = {
 
 @Injectable()
 @WorkspaceCache('flatSkillMaps', { packingPonderation: 2 })
-export class WorkspaceFlatSkillMapCacheService extends FlatEntityMapCacheProvider<'skill'> {
+export class WorkspaceFlatSkillMapCacheService extends MetadataFlatEntityMapsCacheProvider<'skill'> {
   override readonly rowsRequirement = FLAT_SKILL_ROWS_REQUIREMENT;
 
   computeForCache({

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
+import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatLogicFunctionMaps } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function-maps.type';
@@ -19,7 +19,7 @@ const FLAT_LOGIC_FUNCTION_ROWS_REQUIREMENT = {
 
 @Injectable()
 @WorkspaceCache('flatLogicFunctionMaps', { packingPonderation: 12 })
-export class WorkspaceFlatLogicFunctionMapCacheService extends FlatEntityMapCacheProvider<'logicFunction'> {
+export class WorkspaceFlatLogicFunctionMapCacheService extends MetadataFlatEntityMapsCacheProvider<'logicFunction'> {
   override readonly rowsRequirement = FLAT_LOGIC_FUNCTION_ROWS_REQUIREMENT;
 
   computeForCache({

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
+import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatIndexMetadataMaps } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata-maps.type';
@@ -23,7 +23,7 @@ const FLAT_INDEX_ROWS_REQUIREMENT = {
 
 @Injectable()
 @WorkspaceCache('flatIndexMaps', { packingPonderation: 8 })
-export class WorkspaceFlatIndexMapCacheService extends FlatEntityMapCacheProvider<'index'> {
+export class WorkspaceFlatIndexMapCacheService extends MetadataFlatEntityMapsCacheProvider<'index'> {
   override readonly rowsRequirement = FLAT_INDEX_ROWS_REQUIREMENT;
 
   computeForCache({

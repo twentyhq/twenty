@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
+import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatTimelineActivityTypeMaps } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type-maps.type';
@@ -19,7 +19,7 @@ const FLAT_TIMELINE_ACTIVITY_TYPE_ROWS_REQUIREMENT = {
 
 @Injectable()
 @WorkspaceCache('flatTimelineActivityTypeMaps', { packingPonderation: 1 })
-export class WorkspaceFlatTimelineActivityTypeMapCacheService extends FlatEntityMapCacheProvider<'timelineActivityType'> {
+export class WorkspaceFlatTimelineActivityTypeMapCacheService extends MetadataFlatEntityMapsCacheProvider<'timelineActivityType'> {
   override readonly rowsRequirement =
     FLAT_TIMELINE_ACTIVITY_TYPE_ROWS_REQUIREMENT;
 

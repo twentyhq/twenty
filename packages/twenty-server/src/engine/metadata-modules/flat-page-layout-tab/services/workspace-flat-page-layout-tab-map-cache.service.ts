@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
+import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
@@ -22,7 +22,7 @@ const FLAT_PAGE_LAYOUT_TAB_ROWS_REQUIREMENT = {
 
 @Injectable()
 @WorkspaceCache('flatPageLayoutTabMaps', { packingPonderation: 2 })
-export class WorkspaceFlatPageLayoutTabMapCacheService extends FlatEntityMapCacheProvider<'pageLayoutTab'> {
+export class WorkspaceFlatPageLayoutTabMapCacheService extends MetadataFlatEntityMapsCacheProvider<'pageLayoutTab'> {
   override readonly rowsRequirement = FLAT_PAGE_LAYOUT_TAB_ROWS_REQUIREMENT;
 
   computeForCache({

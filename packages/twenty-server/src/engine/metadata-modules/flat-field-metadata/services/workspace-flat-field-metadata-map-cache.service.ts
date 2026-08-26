@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
+import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-maps.type';
@@ -56,7 +56,7 @@ const FLAT_FIELD_METADATA_ROWS_REQUIREMENT = {
 
 @Injectable()
 @WorkspaceCache('flatFieldMetadataMaps', { packingPonderation: 64 })
-export class WorkspaceFlatFieldMetadataMapCacheService extends FlatEntityMapCacheProvider<
+export class WorkspaceFlatFieldMetadataMapCacheService extends MetadataFlatEntityMapsCacheProvider<
   'fieldMetadata',
   CompactFlatFieldMetadataMaps
 > {

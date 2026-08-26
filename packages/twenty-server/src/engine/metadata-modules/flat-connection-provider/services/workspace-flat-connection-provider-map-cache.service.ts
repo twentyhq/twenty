@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
+import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatConnectionProviderMaps } from 'src/engine/metadata-modules/flat-connection-provider/types/flat-connection-provider-maps.type';
@@ -19,7 +19,7 @@ const FLAT_CONNECTION_PROVIDER_ROWS_REQUIREMENT = {
 
 @Injectable()
 @WorkspaceCache('flatConnectionProviderMaps', { packingPonderation: 1 })
-export class WorkspaceFlatConnectionProviderMapCacheService extends FlatEntityMapCacheProvider<'connectionProvider'> {
+export class WorkspaceFlatConnectionProviderMapCacheService extends MetadataFlatEntityMapsCacheProvider<'connectionProvider'> {
   override readonly rowsRequirement = FLAT_CONNECTION_PROVIDER_ROWS_REQUIREMENT;
 
   computeForCache({

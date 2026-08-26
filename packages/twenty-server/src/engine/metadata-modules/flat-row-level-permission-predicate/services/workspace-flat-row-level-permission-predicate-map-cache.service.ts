@@ -2,7 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
+import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { fromRowLevelPermissionPredicateEntityToFlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-row-level-permission-predicate-entity-to-flat-row-level-permission-predicate.util';
@@ -25,7 +25,7 @@ const FLAT_ROW_LEVEL_PERMISSION_PREDICATE_ROWS_REQUIREMENT = {
 @WorkspaceCache('flatRowLevelPermissionPredicateMaps', {
   packingPonderation: 1,
 })
-export class WorkspaceFlatRowLevelPermissionPredicateMapCacheService extends FlatEntityMapCacheProvider<'rowLevelPermissionPredicate'> {
+export class WorkspaceFlatRowLevelPermissionPredicateMapCacheService extends MetadataFlatEntityMapsCacheProvider<'rowLevelPermissionPredicate'> {
   override readonly rowsRequirement =
     FLAT_ROW_LEVEL_PERMISSION_PREDICATE_ROWS_REQUIREMENT;
 

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
+import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatWebhookMaps } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook-maps.type';
@@ -19,7 +19,7 @@ const FLAT_WEBHOOK_ROWS_REQUIREMENT = {
 
 @Injectable()
 @WorkspaceCache('flatWebhookMaps', { packingPonderation: 1 })
-export class WorkspaceFlatWebhookMapCacheService extends FlatEntityMapCacheProvider<'webhook'> {
+export class WorkspaceFlatWebhookMapCacheService extends MetadataFlatEntityMapsCacheProvider<'webhook'> {
   override readonly rowsRequirement = FLAT_WEBHOOK_ROWS_REQUIREMENT;
 
   computeForCache({

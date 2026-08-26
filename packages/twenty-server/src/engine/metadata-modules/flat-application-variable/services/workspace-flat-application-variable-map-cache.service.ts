@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
+import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatApplicationVariableMaps } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable-maps.type';
@@ -19,7 +19,7 @@ const FLAT_APPLICATION_VARIABLE_ROWS_REQUIREMENT = {
 
 @Injectable()
 @WorkspaceCache('flatApplicationVariableMaps', { packingPonderation: 1 })
-export class WorkspaceFlatApplicationVariableMapCacheService extends FlatEntityMapCacheProvider<'applicationVariable'> {
+export class WorkspaceFlatApplicationVariableMapCacheService extends MetadataFlatEntityMapsCacheProvider<'applicationVariable'> {
   override readonly rowsRequirement =
     FLAT_APPLICATION_VARIABLE_ROWS_REQUIREMENT;
 
