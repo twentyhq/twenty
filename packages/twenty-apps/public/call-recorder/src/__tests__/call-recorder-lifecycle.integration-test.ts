@@ -30,8 +30,6 @@ import { processRecallWebhookHandler } from 'src/logic-functions/process-recall-
 
 const WORKSPACE_API_KEY_ENV = 'TWENTY_API_KEY';
 const RECALL_BASE_URL = 'https://us-west-2.recall.ai/api/v1';
-const FUNCTIONS_URL = 'https://call-recorder-functions.test';
-const ARTIFACT_IMPORT_ROUTE = '/call-recorder/import-call-recording-artifacts';
 const RESTRICTED_TITLE_PLACEHOLDER =
   'FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED';
 
@@ -108,9 +106,9 @@ const hoursAgo = (hours: number) =>
   new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
 
 // ---------------------------------------------------------------------------
-// Recall API fake, installed as a fetch interceptor. Twenty API traffic is
-// never intercepted: the shared client is built before the interceptor and
-// unknown URLs fall through to the real fetch.
+// Recall API fake, installed as a fetch interceptor. Twenty API traffic falls
+// through to the real fetch, except the metadata enqueueJobs mutation, which is
+// captured here so fanned-out jobs do not run inside the test.
 // ---------------------------------------------------------------------------
 
 type FakeRecallBot = {
@@ -140,10 +138,29 @@ class FakeRecallApi {
   handle(requestUrl: string, requestInit?: any): Response | undefined {
     const method: string = requestInit?.method ?? 'GET';
 
-    if (requestUrl.startsWith(`${FUNCTIONS_URL}${ARTIFACT_IMPORT_ROUTE}`)) {
-      this.artifactImportRequests.push(JSON.parse(requestInit?.body ?? '{}'));
+    // Capture the artifact-import enqueue instead of letting the job run.
+    if (
+      requestUrl === `${process.env.TWENTY_API_URL}/metadata` &&
+      String(requestInit?.body ?? '').includes('enqueueJobs')
+    ) {
+      const sentBody = JSON.parse(requestInit?.body ?? '{}');
+      const [input] = Object.values(sentBody.variables ?? {}) as {
+        logicFunctionUniversalIdentifier: string;
+        payloads: object[];
+      }[];
 
-      return jsonResponse(200, {});
+      this.artifactImportRequests.push(...(input?.payloads ?? []));
+
+      return jsonResponse(200, {
+        data: {
+          enqueueJobs: {
+            enqueued: true,
+            logicFunctionUniversalIdentifier:
+              input?.logicFunctionUniversalIdentifier ?? '',
+            enqueuedJobsCount: input?.payloads?.length ?? 0,
+          },
+        },
+      });
     }
 
     if (!requestUrl.startsWith(RECALL_BASE_URL)) {
@@ -339,7 +356,6 @@ describe('call recorder app lifecycle (integration)', () => {
     vi.stubEnv('RECALL_API_KEY', 'recall-api-key');
     vi.stubEnv('RECALL_REGION', 'us-west-2');
     vi.stubEnv('CALL_RECORDER_USE_WORKSPACE_LOGO', 'false');
-    vi.stubEnv('TWENTY_FUNCTIONS_URL', FUNCTIONS_URL);
     // Logic functions normally run with an app access token; the workspace
     // API key is a token with the same workspaceId claim.
     vi.stubEnv(
@@ -636,8 +652,8 @@ describe('call recorder app lifecycle (integration)', () => {
         'recall-recording-1',
       );
       expect(processedCallRecording.endedAt).toBeTruthy();
-      // recording.done hands media and transcript work to the artifact
-      // import route.
+      // recording.done hands media and transcript work to the enqueued
+      // artifact import job.
       expect(recall.artifactImportRequests).toHaveLength(1);
       expect(recall.artifactImportRequests[0]).toMatchObject({
         callRecordingId,

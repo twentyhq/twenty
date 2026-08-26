@@ -1,8 +1,7 @@
-export type GenerateMissingCallRecordingSummariesResult = {
+export type GenerateCallRecordingSummariesForIdsResult = {
   generatedCallRecordingIds: string[];
   failedCallRecordingIds: string[];
   erroredCallRecordingIds: string[];
   skippedCallRecordingIds: string[];
-  remainingCallRecordingIds: string[];
-  continuationRequested: boolean;
+  unavailableCallRecordingIds: string[];
 };

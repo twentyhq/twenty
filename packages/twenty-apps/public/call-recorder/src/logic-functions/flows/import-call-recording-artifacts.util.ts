@@ -44,7 +44,7 @@ export type ImportCallRecordingArtifactsResult =
       reason: string;
     };
 
-// Route callers can forge provider ids, so imports resolve only from the
+// Job payloads can carry forged provider ids, so imports resolve only from the
 // CallRecording's persisted Recall bot.
 export const importCallRecordingArtifacts = async ({
   client,
