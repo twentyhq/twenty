@@ -816,7 +816,7 @@ export class AuthService {
     }
 
     if ('email' in params) {
-      qr.andWhere('"appToken".context->>\'email\' = :email', {
+      qr.andWhere('lower("appToken".context->>\'email\') = lower(:email)', {
         email: params.email,
       });
     }
