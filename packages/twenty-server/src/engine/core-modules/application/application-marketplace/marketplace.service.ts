@@ -2,12 +2,15 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import axios from 'axios';
 import { type Manifest } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { buildRegistryCdnUrl } from 'src/engine/core-modules/application/application-marketplace/utils/build-registry-cdn-url.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const MAX_REGISTRY_ASSET_SIZE_BYTES = 10 * 1024 * 1024; // 10Mb
+const REGISTRY_SEARCH_PAGE_SIZE = 250; // npm search API hard-caps size at 250
+const REGISTRY_SEARCH_MAX_RESULTS = 10_000; // npm search API rejects offsets beyond 10k
 
 export type RegistryPackageInfo = {
   name: string;
@@ -35,6 +38,7 @@ const registrySearchResultSchema = z.object({
       }),
     }),
   ),
+  total: z.number().optional(),
 });
 
 @Injectable()
@@ -108,43 +112,70 @@ export class MarketplaceService {
 
   async fetchAppsFromRegistry(): Promise<RegistryPackageInfo[]> {
     const registryUrl = this.twentyConfigService.get('APP_REGISTRY_URL');
+    const packageInfoByName = new Map<string, RegistryPackageInfo>();
 
     try {
-      const { data } = await axios.get(
-        `${registryUrl}/-/v1/search?text=keywords:twenty-app&size=250`,
-        {
-          headers: { 'User-Agent': 'Twenty-Marketplace' },
-          timeout: 10_000,
-        },
-      );
+      let from = 0;
 
-      const parsed = registrySearchResultSchema.safeParse(data);
-
-      if (!parsed.success) {
-        this.logger.warn(
-          `Unexpected registry search response shape: ${parsed.error.message}`,
+      while (true) {
+        const { data } = await axios.get(
+          `${registryUrl}/-/v1/search?text=keywords:twenty-app&size=${REGISTRY_SEARCH_PAGE_SIZE}&from=${from}`,
+          {
+            headers: { 'User-Agent': 'Twenty-Marketplace' },
+            timeout: 10_000,
+          },
         );
 
-        return [];
+        const parsed = registrySearchResultSchema.safeParse(data);
+
+        if (!parsed.success) {
+          this.logger.warn(
+            `Unexpected registry search response shape: ${parsed.error.message}`,
+          );
+
+          break;
+        }
+
+        const { objects, total } = parsed.data;
+
+        for (const result of objects) {
+          const { name, version, description, author, links } = result.package;
+
+          // Results can shift between pages; keep the first occurrence.
+          if (!packageInfoByName.has(name)) {
+            packageInfoByName.set(name, {
+              name,
+              version,
+              description: description ?? '',
+              author: author?.name ?? 'Unknown',
+              websiteUrl: links?.homepage ?? links?.npm,
+            });
+          }
+        }
+
+        from += objects.length;
+
+        if (
+          objects.length < REGISTRY_SEARCH_PAGE_SIZE ||
+          (isDefined(total) && from >= total)
+        ) {
+          break;
+        }
+
+        if (from >= REGISTRY_SEARCH_MAX_RESULTS) {
+          this.logger.warn(
+            `Registry search truncated at ${REGISTRY_SEARCH_MAX_RESULTS} results`,
+          );
+
+          break;
+        }
       }
-
-      return parsed.data.objects.map((result) => {
-        const { name, version, description, author, links } = result.package;
-
-        return {
-          name,
-          version,
-          description: description ?? '',
-          author: author?.name ?? 'Unknown',
-          websiteUrl: links?.homepage ?? links?.npm,
-        };
-      });
     } catch (error) {
       this.logger.warn(
         `Failed to fetch apps from registry ${registryUrl}: ${error instanceof Error ? error.message : String(error)}`,
       );
-
-      return [];
     }
+
+    return Array.from(packageInfoByName.values());
   }
 }
