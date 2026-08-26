@@ -11,6 +11,9 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 const MAX_REGISTRY_ASSET_SIZE_BYTES = 10 * 1024 * 1024; // 10Mb
 const REGISTRY_SEARCH_PAGE_SIZE = 250;
 const REGISTRY_SEARCH_MAX_RESULTS = 10_000;
+const REGISTRY_SEARCH_MAX_PAGES = Math.ceil(
+  REGISTRY_SEARCH_MAX_RESULTS / REGISTRY_SEARCH_PAGE_SIZE,
+);
 
 export type RegistryPackageInfo = {
   name: string;
@@ -116,9 +119,8 @@ export class MarketplaceService {
     const registryUrl = this.twentyConfigService.get('APP_REGISTRY_URL');
     const packageInfoByName = new Map<string, RegistryPackageInfo>();
 
-    let from = 0;
-
-    while (from < REGISTRY_SEARCH_MAX_RESULTS) {
+    for (let pageIndex = 0; pageIndex < REGISTRY_SEARCH_MAX_PAGES; pageIndex++) {
+      const from = pageIndex * REGISTRY_SEARCH_PAGE_SIZE;
       const searchResult = await this.fetchRegistrySearchPage(
         registryUrl,
         from,
@@ -144,16 +146,16 @@ export class MarketplaceService {
         }
       }
 
-      from += objects.length;
+      const fetchedCount = from + objects.length;
 
       if (
         objects.length < REGISTRY_SEARCH_PAGE_SIZE ||
-        (isDefined(total) && from >= total)
+        (isDefined(total) && fetchedCount >= total)
       ) {
         break;
       }
 
-      if (from >= REGISTRY_SEARCH_MAX_RESULTS) {
+      if (pageIndex === REGISTRY_SEARCH_MAX_PAGES - 1) {
         this.logger.warn(
           `Registry search truncated at ${REGISTRY_SEARCH_MAX_RESULTS} results`,
         );
