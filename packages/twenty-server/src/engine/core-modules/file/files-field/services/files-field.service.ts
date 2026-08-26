@@ -111,10 +111,7 @@ export class FilesFieldService {
     };
   }
 
-  // FILES field values may only reference files stored under
-  // files-field/<fieldUniversalIdentifier>/, so a file uploaded elsewhere
-  // (an AI chat upload) has to be copied into that partition first.
-  async copyFileIntoFilesField({
+  async copyAgentChatFileIntoFilesField({
     fileId,
     workspaceId,
     fieldMetadataId,
@@ -173,8 +170,9 @@ export class FilesFieldService {
 
     const copiedFileId = v4();
     const extension = extname(sourceFile.path);
+    const resourcePath = `${fieldMetadata.universalIdentifier}/${copiedFileId}${extension}`;
 
-    return this.fileStorageService.copyFile({
+    await this.fileStorageService.copy({
       from: {
         workspaceId,
         applicationUniversalIdentifier: sourceApplication.universalIdentifier,
@@ -186,9 +184,14 @@ export class FilesFieldService {
         applicationUniversalIdentifier:
           destinationApplication.universalIdentifier,
         fileFolder: FileFolder.FilesField,
-        resourcePath: `${fieldMetadata.universalIdentifier}/${copiedFileId}${extension}`,
+        resourcePath,
       },
-      fileId: copiedFileId,
+    });
+
+    return this.fileRepository.insertAndReturnOne(workspaceId, {
+      id: copiedFileId,
+      path: `${FileFolder.FilesField}/${resourcePath}`,
+      applicationId: fieldMetadata.applicationId,
       mimeType: sourceFile.mimeType,
       size: sourceFile.size,
       settings: {

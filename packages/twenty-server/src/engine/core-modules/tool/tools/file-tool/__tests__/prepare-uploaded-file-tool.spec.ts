@@ -63,7 +63,7 @@ describe('PrepareUploadedFileTool', () => {
 
   beforeEach(() => {
     filesFieldService = {
-      copyFileIntoFilesField: jest
+      copyAgentChatFileIntoFilesField: jest
         .fn()
         .mockResolvedValue({ id: preparedFileId }),
     } as unknown as jest.Mocked<FilesFieldService>;
@@ -82,7 +82,7 @@ describe('PrepareUploadedFileTool', () => {
   it('should copy the file into the target field and return the field value', async () => {
     const result = await buildTool().execute(validInput, { workspaceId });
 
-    expect(filesFieldService.copyFileIntoFilesField).toHaveBeenCalledWith({
+    expect(filesFieldService.copyAgentChatFileIntoFilesField).toHaveBeenCalledWith({
       fileId: uploadedFileId,
       workspaceId,
       fieldMetadataId: 'file-field-id',
@@ -101,7 +101,7 @@ describe('PrepareUploadedFileTool', () => {
 
     expect(result.success).toBe(false);
     expect(result.message).toBe('Invalid prepare_uploaded_file input');
-    expect(filesFieldService.copyFileIntoFilesField).not.toHaveBeenCalled();
+    expect(filesFieldService.copyAgentChatFileIntoFilesField).not.toHaveBeenCalled();
   });
 
   it('should fail when the object does not exist', async () => {
@@ -112,7 +112,7 @@ describe('PrepareUploadedFileTool', () => {
 
     expect(result.success).toBe(false);
     expect(result.message).toContain('Object "unknownObject" not found');
-    expect(filesFieldService.copyFileIntoFilesField).not.toHaveBeenCalled();
+    expect(filesFieldService.copyAgentChatFileIntoFilesField).not.toHaveBeenCalled();
   });
 
   it('should fail when the object is inactive', async () => {
@@ -136,7 +136,7 @@ describe('PrepareUploadedFileTool', () => {
     expect(result.message).toContain(
       'Field "unknownField" not found on object "attachment"',
     );
-    expect(filesFieldService.copyFileIntoFilesField).not.toHaveBeenCalled();
+    expect(filesFieldService.copyAgentChatFileIntoFilesField).not.toHaveBeenCalled();
   });
 
   it('should fail and list the files fields when the target field is not a files field', async () => {
@@ -147,11 +147,11 @@ describe('PrepareUploadedFileTool', () => {
 
     expect(result.success).toBe(false);
     expect(result.message).toContain('is not a files field');
-    expect(filesFieldService.copyFileIntoFilesField).not.toHaveBeenCalled();
+    expect(filesFieldService.copyAgentChatFileIntoFilesField).not.toHaveBeenCalled();
   });
 
   it('should report a failed copy instead of throwing', async () => {
-    filesFieldService.copyFileIntoFilesField.mockRejectedValue(
+    filesFieldService.copyAgentChatFileIntoFilesField.mockRejectedValue(
       new Error('File not found'),
     );
 

@@ -99,7 +99,8 @@ export class PrepareUploadedFileTool implements Tool {
     }
 
     try {
-      const preparedFile = await this.filesFieldService.copyFileIntoFilesField({
+      const preparedFile =
+        await this.filesFieldService.copyAgentChatFileIntoFilesField({
         fileId,
         workspaceId,
         fieldMetadataId: flatFieldMetadata.id,
