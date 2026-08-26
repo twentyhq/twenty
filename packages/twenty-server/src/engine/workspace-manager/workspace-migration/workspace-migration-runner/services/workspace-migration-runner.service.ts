@@ -49,20 +49,17 @@ export class WorkspaceMigrationRunnerService {
     allFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[],
   ): {
     shouldIncrementMetadataGraphqlSchemaVersion: boolean;
-    legacyCacheKeyBatches: WorkspaceCacheKeyName[][];
+    legacyCacheKeyNames: WorkspaceCacheKeyName[];
   } {
     const flatMapsKeysSet = new Set(allFlatEntityMapsKeys);
-    const legacyCacheKeyBatches: WorkspaceCacheKeyName[][] = [];
+    const legacyCacheKeyNames: WorkspaceCacheKeyName[] = [];
 
     const shouldIncrementMetadataGraphqlSchemaVersion =
       flatMapsKeysSet.has('flatObjectMetadataMaps') ||
       flatMapsKeysSet.has('flatFieldMetadataMaps');
 
     if (shouldIncrementMetadataGraphqlSchemaVersion) {
-      legacyCacheKeyBatches.push([
-        'ORMEntityMetadatas',
-        'graphQLResolverNameMap',
-      ]);
+      legacyCacheKeyNames.push('ORMEntityMetadatas', 'graphQLResolverNameMap');
     }
 
     const shouldInvalidateRoleMapCache =
@@ -75,22 +72,22 @@ export class WorkspaceMigrationRunnerService {
       flatMapsKeysSet.has('flatRolePermissionFlagMaps');
 
     if (shouldInvalidateRoleMapCache || shouldInvalidateRolesPermissionsCache) {
-      legacyCacheKeyBatches.push([
+      legacyCacheKeyNames.push(
         'rolesPermissions',
         'userWorkspaceRoleMap',
         'flatRoleTargetMaps',
         'apiKeyRoleMap',
         'flatRoleTargetByAgentIdMaps',
-      ]);
+      );
     }
 
     if (flatMapsKeysSet.has('flatApplicationVariableMaps')) {
-      legacyCacheKeyBatches.push(['applicationVariableMaps']);
+      legacyCacheKeyNames.push('applicationVariableMaps');
     }
 
     return {
       shouldIncrementMetadataGraphqlSchemaVersion,
-      legacyCacheKeyBatches,
+      legacyCacheKeyNames,
     };
   }
 
@@ -106,13 +103,11 @@ export class WorkspaceMigrationRunnerService {
       `Cache invalidation ${allFlatEntityMapsKeys.join()}`,
     );
 
-    const {
-      shouldIncrementMetadataGraphqlSchemaVersion,
-      legacyCacheKeyBatches,
-    } = this.getLegacyCacheInvalidation(allFlatEntityMapsKeys);
+    const { shouldIncrementMetadataGraphqlSchemaVersion, legacyCacheKeyNames } =
+      this.getLegacyCacheInvalidation(allFlatEntityMapsKeys);
 
     const cacheKeyNamesToInvalidate = [
-      ...new Set([...allFlatEntityMapsKeys, ...legacyCacheKeyBatches.flat()]),
+      ...new Set([...allFlatEntityMapsKeys, ...legacyCacheKeyNames]),
     ];
 
     await this.workspaceCacheService.flush(
@@ -140,13 +135,15 @@ export class WorkspaceMigrationRunnerService {
             ),
           ]
         : []),
-      ...legacyCacheKeyBatches.map((legacyCacheKeys) =>
-        this.workspaceCacheService.invalidateAndRecompute(
-          workspaceId,
-          legacyCacheKeys,
-          rowsBatchLoader,
-        ),
-      ),
+      ...(legacyCacheKeyNames.length > 0
+        ? [
+            this.workspaceCacheService.invalidateAndRecompute(
+              workspaceId,
+              legacyCacheKeyNames,
+              rowsBatchLoader,
+            ),
+          ]
+        : []),
     ]);
 
     const invalidationFailures = invalidationResults.filter(
