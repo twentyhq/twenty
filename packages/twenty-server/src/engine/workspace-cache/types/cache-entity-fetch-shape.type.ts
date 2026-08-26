@@ -1,13 +1,13 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
-import { CACHE_FETCHABLE_ENTITY_BY_NAME } from 'src/engine/workspace-cache/constants/cache-fetchable-entity-by-name.constant';
+import { ALL_WORKSPACE_CACHE_ENTITY_BY_NAME } from 'src/engine/workspace-cache/constants/all-workspace-cache-entity-by-name.constant';
 
 export type CacheFetchableEntityName =
-  keyof typeof CACHE_FETCHABLE_ENTITY_BY_NAME;
+  keyof typeof ALL_WORKSPACE_CACHE_ENTITY_BY_NAME;
 
 export type CacheFetchableEntity<TName extends CacheFetchableEntityName> =
-  InstanceType<(typeof CACHE_FETCHABLE_ENTITY_BY_NAME)[TName]>;
+  InstanceType<(typeof ALL_WORKSPACE_CACHE_ENTITY_BY_NAME)[TName]>;
 
 type EntityColumns<TName extends CacheFetchableEntityName> =
   readonly (keyof CacheFetchableEntity<TName> & string)[];

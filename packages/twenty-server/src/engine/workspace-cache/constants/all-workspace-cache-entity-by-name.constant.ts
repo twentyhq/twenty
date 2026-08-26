@@ -6,7 +6,7 @@ import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-meta
 
 // Metadata entities plus the few core entities cache providers fetch that
 // have no metadata name.
-export const CACHE_FETCHABLE_ENTITY_BY_NAME = {
+export const ALL_WORKSPACE_CACHE_ENTITY_BY_NAME = {
   ...ALL_METADATA_ENTITY_BY_METADATA_NAME,
   application: ApplicationEntity,
   indexFieldMetadata: IndexFieldMetadataEntity,

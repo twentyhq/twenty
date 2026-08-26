@@ -6,7 +6,7 @@ import {
 
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
-import { CACHE_FETCHABLE_ENTITY_BY_NAME } from 'src/engine/workspace-cache/constants/cache-fetchable-entity-by-name.constant';
+import { ALL_WORKSPACE_CACHE_ENTITY_BY_NAME } from 'src/engine/workspace-cache/constants/all-workspace-cache-entity-by-name.constant';
 import {
   type CacheEntityFetchShape,
   type CacheEntityFetchShapeRows,
@@ -236,7 +236,9 @@ export class WorkspaceCacheRecomputeContext {
     }
 
     return this.coreDataSource
-      .getRepository<ObjectLiteral>(CACHE_FETCHABLE_ENTITY_BY_NAME[entityName])
+      .getRepository<ObjectLiteral>(
+        ALL_WORKSPACE_CACHE_ENTITY_BY_NAME[entityName],
+      )
       .find(findOptions);
   }
 }

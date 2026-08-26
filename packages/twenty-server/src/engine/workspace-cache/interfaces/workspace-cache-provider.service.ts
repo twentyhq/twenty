@@ -15,7 +15,7 @@ export abstract class WorkspaceCacheProvider<
   TCompact = T,
 > {
   // Every core-schema table computeForCache reads must be declared here,
-  // keyed by CACHE_FETCHABLE_ENTITY_BY_NAME entries; the requirements of all
+  // keyed by ALL_WORKSPACE_CACHE_ENTITY_BY_NAME entries; the requirements of all
   // providers recomputed together are merged into one deterministic fetch
   // plan executed before any computeForCache runs, and the context's rows
   // carry exactly what was declared.
