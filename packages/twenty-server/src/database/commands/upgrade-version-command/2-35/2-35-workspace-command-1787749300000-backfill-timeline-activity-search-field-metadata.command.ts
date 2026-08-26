@@ -256,12 +256,16 @@ export class BackfillTimelineActivitySearchFieldMetadataCommand extends Provisio
       objectMetadata: timelineActivityFlatObjectMetadata,
     });
 
+    // pg_attribute scoped to the single table, not the instance-wide
+    // information_schema.columns view, which is slow on many-tenant instances.
     const rows = await dataSource.query<{ exists: boolean }[]>(
       `SELECT EXISTS (
-         SELECT 1 FROM information_schema.columns
-         WHERE table_schema = $1 AND table_name = $2 AND column_name = $3
+         SELECT 1 FROM pg_attribute
+         WHERE attrelid = to_regclass($1)
+           AND attname = $2
+           AND NOT attisdropped
        ) AS "exists"`,
-      [schemaName, tableName, columnName],
+      [`"${schemaName}"."${tableName}"`, columnName],
     );
 
     return rows[0]?.exists === true;
