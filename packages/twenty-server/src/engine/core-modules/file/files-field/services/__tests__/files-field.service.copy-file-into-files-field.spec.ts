@@ -9,7 +9,7 @@ import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-describe('FilesFieldService.copyAgentChatFileIntoFilesField', () => {
+describe('FilesFieldService.copyFileIntoFilesField', () => {
   const workspaceId = '20202020-0000-4000-8000-000000000001';
   const chatFileId = '20202020-0000-4000-8000-000000000002';
   const fieldMetadataId = '20202020-0000-4000-8000-000000000004';
@@ -71,7 +71,7 @@ describe('FilesFieldService.copyAgentChatFileIntoFilesField', () => {
 
   it('should throw when the file does not exist', async () => {
     await expect(
-      buildService().copyAgentChatFileIntoFilesField({
+      buildService().copyFileIntoFilesField({
         fileId: chatFileId,
         workspaceId,
         fieldMetadataId,
@@ -87,7 +87,7 @@ describe('FilesFieldService.copyAgentChatFileIntoFilesField', () => {
     );
 
     await expect(
-      buildService().copyAgentChatFileIntoFilesField({
+      buildService().copyFileIntoFilesField({
         fileId: chatFileId,
         workspaceId,
         fieldMetadataId,
@@ -97,26 +97,10 @@ describe('FilesFieldService.copyAgentChatFileIntoFilesField', () => {
     expect(fileStorageService.copy).not.toHaveBeenCalled();
   });
 
-  it('should throw when the file lives in a folder that cannot be copied', async () => {
-    fileRepository.findOne.mockResolvedValue(
-      buildChatFile({ path: 'core-picture/logo.png' }),
-    );
-
-    await expect(
-      buildService().copyAgentChatFileIntoFilesField({
-        fileId: chatFileId,
-        workspaceId,
-        fieldMetadataId,
-      }),
-    ).rejects.toThrow(`File ${chatFileId} cannot be copied into a files field`);
-
-    expect(fileStorageService.copy).not.toHaveBeenCalled();
-  });
-
   it('should copy an agent-chat file into the files field partition', async () => {
     fileRepository.findOne.mockResolvedValue(buildChatFile());
 
-    const result = await buildService().copyAgentChatFileIntoFilesField({
+    const result = await buildService().copyFileIntoFilesField({
       fileId: chatFileId,
       workspaceId,
       fieldMetadataId,
@@ -165,7 +149,7 @@ describe('FilesFieldService.copyAgentChatFileIntoFilesField', () => {
       buildChatFile({ path: `agent-chat/${chatFileId}.csv` }),
     );
 
-    await buildService().copyAgentChatFileIntoFilesField({
+    await buildService().copyFileIntoFilesField({
       fileId: chatFileId,
       workspaceId,
       fieldMetadataId,

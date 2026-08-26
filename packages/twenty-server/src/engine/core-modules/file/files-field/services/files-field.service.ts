@@ -7,7 +7,7 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -111,43 +111,7 @@ export class FilesFieldService {
     };
   }
 
-  async prepareAgentChatFilesForFilesField({
-    fileIds,
-    workspaceId,
-    fieldMetadataId,
-  }: {
-    fileIds: string[];
-    workspaceId: string;
-    fieldMetadataId: string;
-  }): Promise<Map<string, string>> {
-    const fileIdSubstitutions = new Map<string, string>();
-
-    if (fileIds.length === 0) {
-      return fileIdSubstitutions;
-    }
-
-    const files = await this.fileRepository.find(workspaceId, {
-      where: { id: In([...new Set(fileIds)]) },
-    });
-
-    const agentChatFileIds = files
-      .filter((file) => file.path.startsWith(`${FileFolder.AgentChat}/`))
-      .map((file) => file.id);
-
-    for (const fileId of agentChatFileIds) {
-      const copiedFile = await this.copyAgentChatFileIntoFilesField({
-        fileId,
-        workspaceId,
-        fieldMetadataId,
-      });
-
-      fileIdSubstitutions.set(fileId, copiedFile.id);
-    }
-
-    return fileIdSubstitutions;
-  }
-
-  async copyAgentChatFileIntoFilesField({
+  async copyFileIntoFilesField({
     fileId,
     workspaceId,
     fieldMetadataId,
@@ -178,16 +142,6 @@ export class FilesFieldService {
       );
     }
 
-    if (!sourceFile.path.startsWith(`${FileFolder.AgentChat}/`)) {
-      throw new FilesFieldException(
-        `File ${fileId} cannot be copied into a files field`,
-        FilesFieldExceptionCode.BAD_REQUEST,
-        {
-          userFriendlyMessage: msg`This file cannot be attached to a record.`,
-        },
-      );
-    }
-
     const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail({
       select: ['applicationId', 'universalIdentifier'],
       where: { id: fieldMetadataId, workspaceId },
@@ -207,12 +161,13 @@ export class FilesFieldService {
     const copiedFileId = v4();
     const extension = extname(sourceFile.path);
     const resourcePath = `${fieldMetadata.universalIdentifier}/${copiedFileId}${extension}`;
+    const sourceFileFolder = sourceFile.path.split('/')[0] as FileFolder;
 
     await this.fileStorageService.copy({
       from: {
         workspaceId,
         applicationUniversalIdentifier: sourceApplication.universalIdentifier,
-        fileFolder: FileFolder.AgentChat,
+        fileFolder: sourceFileFolder,
         resourcePath: removeFileFolderFromFileEntityPath(sourceFile.path),
       },
       to: {

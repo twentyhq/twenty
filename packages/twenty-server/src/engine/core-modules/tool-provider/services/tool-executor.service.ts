@@ -21,7 +21,7 @@ import { UpdateRecordService } from 'src/engine/core-modules/record-crud/service
 import { UpsertManyRecordsService } from 'src/engine/core-modules/record-crud/services/upsert-many-records.service';
 import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
-import { AgentChatFilesFieldResolverService } from 'src/engine/core-modules/tool-provider/services/agent-chat-files-field-resolver.service';
+import { RecordFilesResolverService } from 'src/engine/core-modules/tool-provider/services/record-files-resolver.service';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolExecutionRef } from 'src/engine/core-modules/tool-provider/types/tool-execution-ref.type';
@@ -50,7 +50,7 @@ export class ToolExecutorService {
     private readonly deleteRecordService: DeleteRecordService,
     private readonly deleteManyRecordsService: DeleteManyRecordsService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
-    private readonly agentChatFilesFieldResolverService: AgentChatFilesFieldResolverService,
+    private readonly recordFilesResolverService: RecordFilesResolverService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
@@ -147,7 +147,7 @@ export class ToolExecutorService {
 
       case 'create_one': {
         const { records, notes } =
-          await this.agentChatFilesFieldResolverService.resolveRecordsInput({
+          await this.recordFilesResolverService.resolveRecordsInput({
             objectNameSingular: ref.objectNameSingular,
             records: [args],
             workspaceId: context.workspaceId,
@@ -162,12 +162,12 @@ export class ToolExecutorService {
           slimResponse: true,
         });
 
-        return this.appendAgentChatFileNotes(output, notes);
+        return this.appendFileResolutionNotes(output, notes);
       }
 
       case 'create_many': {
         const { records, notes } =
-          await this.agentChatFilesFieldResolverService.resolveRecordsInput({
+          await this.recordFilesResolverService.resolveRecordsInput({
             objectNameSingular: ref.objectNameSingular,
             records: args.records as Record<string, unknown>[],
             workspaceId: context.workspaceId,
@@ -182,7 +182,7 @@ export class ToolExecutorService {
           slimResponse: true,
         });
 
-        return this.appendAgentChatFileNotes(output, notes);
+        return this.appendFileResolutionNotes(output, notes);
       }
 
       case 'update_one': {
@@ -192,7 +192,7 @@ export class ToolExecutorService {
         );
 
         const { records, notes } =
-          await this.agentChatFilesFieldResolverService.resolveRecordsInput({
+          await this.recordFilesResolverService.resolveRecordsInput({
             objectNameSingular: ref.objectNameSingular,
             records: [objectRecord],
             workspaceId: context.workspaceId,
@@ -207,7 +207,7 @@ export class ToolExecutorService {
           slimResponse: true,
         });
 
-        return this.appendAgentChatFileNotes(output, notes);
+        return this.appendFileResolutionNotes(output, notes);
       }
 
       case 'update_many':
@@ -222,7 +222,7 @@ export class ToolExecutorService {
 
       case 'upsert_many': {
         const { records, notes } =
-          await this.agentChatFilesFieldResolverService.resolveRecordsInput({
+          await this.recordFilesResolverService.resolveRecordsInput({
             objectNameSingular: ref.objectNameSingular,
             records: args.records as Record<string, unknown>[],
             workspaceId: context.workspaceId,
@@ -237,7 +237,7 @@ export class ToolExecutorService {
           slimResponse: true,
         });
 
-        return this.appendAgentChatFileNotes(output, notes);
+        return this.appendFileResolutionNotes(output, notes);
       }
 
       case 'delete_one':
@@ -284,7 +284,7 @@ export class ToolExecutorService {
     }
   }
 
-  private appendAgentChatFileNotes(
+  private appendFileResolutionNotes(
     output: ToolOutput,
     notes: string[],
   ): ToolOutput {
