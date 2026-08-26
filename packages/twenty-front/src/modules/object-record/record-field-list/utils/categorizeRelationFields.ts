@@ -1,10 +1,8 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
-import {
-  CoreObjectNameSingular,
-  type ObjectPermissions,
-} from 'twenty-shared/types';
+import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type ObjectPermissionsByObjectMetadataId = Record<
@@ -14,31 +12,15 @@ type ObjectPermissionsByObjectMetadataId = Record<
 
 type CategorizeRelationFieldsArgs = {
   relationFields: FieldMetadataItem[];
-  objectNameSingular: string;
+  objectMetadataItems: EnrichedObjectMetadataItem[];
   objectPermissionsByObjectMetadataId: ObjectPermissionsByObjectMetadataId;
-  isJunctionRelationsEnabled: boolean;
 };
 
 type CategorizedRelationFields = {
-  activityTargetFields: FieldMetadataItem[];
   inlineRelationFields: FieldMetadataItem[];
   junctionRelationFields: FieldMetadataItem[];
   boxedRelationFields: FieldMetadataItem[];
 };
-
-export const isActivityTargetField = (
-  fieldName: string,
-  objectNameSingular: string,
-): boolean =>
-  (objectNameSingular === CoreObjectNameSingular.Note &&
-    fieldName === 'noteTargets') ||
-  (objectNameSingular === CoreObjectNameSingular.Task &&
-    fieldName === 'taskTargets');
-
-const isActivityTargetRelation = (
-  fieldMetadataItem: FieldMetadataItem,
-  objectNameSingular: string,
-): boolean => isActivityTargetField(fieldMetadataItem.name, objectNameSingular);
 
 const canReadRelationTarget = (
   fieldMetadataItem: FieldMetadataItem,
@@ -65,22 +47,23 @@ const canReadRelationTarget = (
 
 export const categorizeRelationFields = ({
   relationFields,
-  objectNameSingular,
+  objectMetadataItems,
   objectPermissionsByObjectMetadataId,
-  isJunctionRelationsEnabled,
 }: CategorizeRelationFieldsArgs): CategorizedRelationFields => {
-  const activityTargetFields: FieldMetadataItem[] = [];
   const inlineRelationFields: FieldMetadataItem[] = [];
   const junctionRelationFields: FieldMetadataItem[] = [];
   const boxedRelationFields: FieldMetadataItem[] = [];
 
   for (const field of relationFields) {
-    if (isActivityTargetRelation(field, objectNameSingular)) {
-      activityTargetFields.push(field);
-      continue;
-    }
+    const junctionConfig = getJunctionConfig({
+      settings: field.settings,
+      relationObjectMetadataId: field.relation?.targetObjectMetadata.id ?? '',
+      relationTargetFieldMetadataId: field.relation?.targetFieldMetadata.id,
+      sourceObjectMetadataId: field.relation?.sourceObjectMetadata.id,
+      objectMetadataItems,
+    });
 
-    if (isJunctionRelationsEnabled && isJunctionRelationField(field)) {
+    if (isDefined(junctionConfig)) {
       inlineRelationFields.push(field);
       junctionRelationFields.push(field);
       continue;
@@ -92,7 +75,6 @@ export const categorizeRelationFields = ({
   }
 
   return {
-    activityTargetFields,
     inlineRelationFields,
     junctionRelationFields,
     boxedRelationFields,

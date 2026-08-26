@@ -2,7 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { FieldMetadataType } from 'twenty-shared/types';
 import { hasJunctionConfig } from './hasJunctionConfig';
 
-export const isJunctionRelationField = (
+export const isConfiguredJunctionRelationField = (
   fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'settings'>,
 ): boolean =>
   fieldMetadataItem.type === FieldMetadataType.RELATION &&

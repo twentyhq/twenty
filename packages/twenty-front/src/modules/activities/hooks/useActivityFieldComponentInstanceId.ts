@@ -1,6 +1,6 @@
 import { useIsInSidePanelOrThrow } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 
-export const useActivityTargetsComponentInstanceId = (
+export const useActivityFieldComponentInstanceId = (
   baseComponentInstanceId: string,
 ) => {
   const { isInSidePanel } = useIsInSidePanelOrThrow();

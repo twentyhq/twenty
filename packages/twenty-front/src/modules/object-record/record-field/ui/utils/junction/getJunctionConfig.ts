@@ -24,6 +24,7 @@ export type JunctionConfig = {
 type GetJunctionConfigArgs = {
   settings: FieldMetadataItem['settings'] | undefined;
   relationObjectMetadataId: string;
+  relationTargetFieldMetadataId?: string;
   sourceObjectMetadataId?: string;
   objectMetadataItems: JunctionObjectMetadataItem[];
 };
@@ -31,6 +32,7 @@ type GetJunctionConfigArgs = {
 export const getJunctionConfig = ({
   settings,
   relationObjectMetadataId,
+  relationTargetFieldMetadataId,
   sourceObjectMetadataId,
   objectMetadataItems,
 }: GetJunctionConfigArgs): JunctionConfig | null => {
@@ -71,13 +73,37 @@ export const getJunctionConfig = ({
     );
   };
 
-  if (!hasJunctionTargetFieldId(settings)) {
-    return null;
-  }
+  const configuredTargetField = hasJunctionTargetFieldId(settings)
+    ? junctionObjectMetadata.fields.find(
+        (field) => field.id === settings.junctionTargetFieldId,
+      )
+    : undefined;
+  const relationSourceField = isDefined(relationTargetFieldMetadataId)
+    ? junctionObjectMetadata.fields.find(
+        (field) => field.id === relationTargetFieldMetadataId,
+      )
+    : undefined;
+  const sourceField =
+    relationSourceField ?? findSourceField(configuredTargetField?.id);
 
-  const targetField = junctionObjectMetadata.fields.find(
-    (field) => field.id === settings.junctionTargetFieldId,
+  // Legacy workspaces can lack the target marker. Only infer a pure junction:
+  // an unlabeled intermediate record with exactly one morph target.
+  const inferredMorphTargetFields = isDefined(configuredTargetField)
+    ? []
+    : junctionObjectMetadata.fields.filter(
+        (field) => field.type === FieldMetadataType.MORPH_RELATION,
+      );
+  const labelIdentifierField = junctionObjectMetadata.fields.find(
+    (field) =>
+      field.id === junctionObjectMetadata.labelIdentifierFieldMetadataId,
   );
+  const targetField =
+    configuredTargetField ??
+    (sourceField?.type === FieldMetadataType.RELATION &&
+    labelIdentifierField?.type === FieldMetadataType.UUID &&
+    inferredMorphTargetFields.length === 1
+      ? inferredMorphTargetFields[0]
+      : undefined);
 
   if (!isDefined(targetField)) {
     return null;
@@ -92,7 +118,7 @@ export const getJunctionConfig = ({
   return {
     junctionObjectMetadata,
     targetFields: [targetField],
-    sourceField: findSourceField(settings.junctionTargetFieldId),
+    sourceField,
     isMorphRelation,
   };
 };
