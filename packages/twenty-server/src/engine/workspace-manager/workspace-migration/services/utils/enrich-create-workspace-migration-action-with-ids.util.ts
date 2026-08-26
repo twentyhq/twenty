@@ -150,10 +150,6 @@ const buildReferencedFieldIdByUniversalIdentifierForFieldAction = ({
   return referencedFieldIdByUniversalIdentifier;
 };
 
-// Every create action leaves here with a definitive id so that
-// same-migration references can be preallocated by the runner
-// (see buildPreallocatedIdByUniversalIdentifierFromActions) regardless
-// of action execution order.
 export const enrichCreateWorkspaceMigrationActionsWithIds = ({
   workspaceMigration,
   idByUniversalIdentifierByMetadataName,

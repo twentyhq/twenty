@@ -31,8 +31,6 @@ export class CreatePageLayoutActionHandlerService extends WorkspaceMigrationRunn
     workspaceId,
     preallocatedIdByUniversalIdentifierByMetadataName,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreatePageLayoutAction>): Promise<FlatCreatePageLayoutAction> {
-    // The default tab can be created later in the same migration; its id is
-    // preallocated and the FK is DEFERRABLE INITIALLY DEFERRED.
     const { objectMetadataId, defaultTabToFocusOnMobileAndSidePanelId } =
       resolveUniversalRelationIdentifiersToIds<
         'pageLayout',
