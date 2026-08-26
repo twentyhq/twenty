@@ -1982,10 +1982,10 @@ msgstr "Accès à Toutes les Actions"
 msgid "All App Registrations"
 msgstr "Tous les enregistrements d'applications"
 
-#. js-lingui-id: ZrLLkh
+#. js-lingui-id: REq7rb
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-msgid "All application registrations across the platform, including orphaned marketplace apps"
-msgstr "Tous les enregistrements d'applications sur l'ensemble de la plateforme, y compris les applications orphelines de la marketplace"
+msgid "All application registrations across the platform, including orphaned marketplace apps ({totalCount} matching)"
+msgstr "Tous les enregistrements d'applications sur l'ensemble de la plateforme, y compris les applications orphelines de la marketplace ({totalCount} correspondantes)"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -3768,6 +3768,11 @@ msgstr "Changer la couleur"
 msgid "Change email"
 msgstr "Changer l'adresse e-mail"
 
+#. js-lingui-id: qTyVHs
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeOptionsDropdown.tsx
+msgid "Change node"
+msgstr "Modifier le nœud"
+
 #. js-lingui-id: Vf6hT6
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "Change node type"
@@ -4164,7 +4169,7 @@ msgid "Close menu"
 msgstr "Fermer le menu"
 
 #. js-lingui-id: saip/v
-#: src/modules/side-panel/components/SidePanelTopBar.tsx
+#: src/modules/side-panel/components/SidePanelCloseButton.tsx
 msgid "Close side panel"
 msgstr "Fermer le panneau latéral"
 
@@ -4597,6 +4602,8 @@ msgstr "Configurer vos paramètres de courriel et de calendrier."
 #. js-lingui-id: M1co/O
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Configured"
 msgstr ""
 
@@ -5005,6 +5012,16 @@ msgstr "Copier dans le presse-papiers"
 #: src/modules/object-record/record-field/ui/components/LightCopyIconButton.tsx
 msgid "Copy to Clipboard"
 msgstr "Copier dans le presse-papiers"
+
+#. js-lingui-id: rG2gDo
+#: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
+msgid "Copy transcript"
+msgstr "Copier la transcription"
+
+#. js-lingui-id: afZp3R
+#: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
+msgid "Copy video download link"
+msgstr "Copier le lien de téléchargement de la vidéo"
 
 #. js-lingui-id: 4Tb3Ry
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -6401,8 +6418,7 @@ msgid "Delete group"
 msgstr "Supprimer le groupe"
 
 #. js-lingui-id: Wk+A9S
-#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeDeleteButton.tsx
-#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
 msgid "Delete node"
 msgstr "Supprimer le nœud"
 
@@ -6970,7 +6986,7 @@ msgid "Duplicate"
 msgstr ""
 
 #. js-lingui-id: qaE1sk
-#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
 msgid "Duplicate node"
 msgstr "Dupliquer le nœud"
 
@@ -10972,6 +10988,12 @@ msgstr "Connexion en cours"
 msgid "JSON"
 msgstr ""
 
+#. js-lingui-id: KTaki5
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
+msgid "Jump to current"
+msgstr "Aller à l'élément actuel"
+
 #. js-lingui-id: UpNpMK
 #: src/pages/settings/applications/components/SettingsApplicationConnectScopePickerModal.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -11540,6 +11562,7 @@ msgstr "Lien"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/LinksFieldDisplay.tsx
 #: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
+#: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
 msgid "Link copied to clipboard"
 msgstr "Lien copié dans le presse-papiers"
@@ -11583,6 +11606,8 @@ msgid "List widget"
 msgstr "Widget de liste"
 
 #. js-lingui-id: Ap948/
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Listed"
 msgstr "Répertorié"
@@ -13646,12 +13671,12 @@ msgid "No topic"
 msgstr "Aucun sujet"
 
 #. js-lingui-id: 3Y/oDZ
-#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptContent.tsx
 msgid "No Transcript"
 msgstr "Aucune transcription"
 
 #. js-lingui-id: du4Icj
-#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptContent.tsx
 msgid "No transcript is available for this recording."
 msgstr "Aucune transcription n'est disponible pour cet enregistrement."
 
@@ -13776,6 +13801,11 @@ msgstr "Aucun espace de travail ne correspond à vos critères de recherche."
 msgid "Node"
 msgstr "Nœud"
 
+#. js-lingui-id: 6cjyK/
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeOptionsDropdown.tsx
+msgid "Node options"
+msgstr "Options du nœud"
+
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarDateFieldsContent.tsx
@@ -13829,6 +13859,11 @@ msgstr "Non disponible en vue par défaut"
 msgid "Not available on Default View"
 msgstr "Non disponible en vue par défaut"
 
+#. js-lingui-id: SDND4q
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "Not configured"
+msgstr "Non configuré"
+
 #. js-lingui-id: 4wUkDk
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Not empty"
@@ -13843,6 +13878,11 @@ msgstr "Introuvable"
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTableRow.tsx
 msgid "Not included"
 msgstr "Non inclus"
+
+#. js-lingui-id: i/2ImT
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "Not listed"
+msgstr "Non répertorié"
 
 #. js-lingui-id: iXlml9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -15002,6 +15042,11 @@ msgstr "Prévu pour {formattedStartDate}"
 msgid "Plans"
 msgstr "Forfaits"
 
+#. js-lingui-id: XdRQm7
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
+msgid "Playback failed"
+msgstr "Échec de la lecture"
+
 #. js-lingui-id: VUi6Nf
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Please check your cron expression syntax."
@@ -15139,7 +15184,7 @@ msgid "Prefix"
 msgstr "Préfixe"
 
 #. js-lingui-id: dVCM1s
-#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptContent.tsx
 msgid "Preparing Transcript"
 msgstr "Préparation de la transcription"
 
@@ -16264,6 +16309,7 @@ msgstr "Reprendre"
 
 #. js-lingui-id: 6gRgw8
 #: src/modules/ai/components/AiChatErrorMessage.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
 #: src/pages/onboarding/PaymentSuccess.tsx
@@ -17034,6 +17080,11 @@ msgstr "Voir {objectLabelPlural}"
 msgid "See all {relationLabelPlural} linked to this record"
 msgstr "Voir tous les {relationLabelPlural} liés à cet enregistrement"
 
+#. js-lingui-id: OhVSE4
+#: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
+msgid "See all call recordings linked to this calendar event"
+msgstr "Voir tous les enregistrements d'appels liés à cet événement de calendrier"
+
 #. js-lingui-id: 3o+CgI
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 msgid "See app page"
@@ -17079,6 +17130,11 @@ msgstr "Visualisez votre structure de données sous forme de diagramme interacti
 #: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "Seeded"
 msgstr "Préinstallée"
+
+#. js-lingui-id: 5iyrla
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryListItem.tsx
+msgid "Seek recording to {formattedStartTimestamp}"
+msgstr "Rechercher l'enregistrement jusqu'à {formattedStartTimestamp}"
 
 #. js-lingui-id: rG3WVm
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiRecordFieldChips.tsx
@@ -18022,6 +18078,7 @@ msgstr "Tris"
 #. js-lingui-id: wdxz7K
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -18950,6 +19007,11 @@ msgstr "La page que vous recherchez a disparu ou n'a jamais existé. Revenons su
 msgid "The PDF is pre-signed by Twenty and executed with your legal entity and authorized signatory."
 msgstr "Le PDF est pré-signé par Twenty et exécuté avec votre entité légale et votre signataire autorisé."
 
+#. js-lingui-id: 8vRPIJ
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
+msgid "The recording could not be loaded."
+msgstr "L'enregistrement n'a pas pu être chargé."
+
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "the selected object"
@@ -18971,7 +19033,7 @@ msgid "The shared email you want to use."
 msgstr "L'e-mail partagé que vous souhaitez utiliser."
 
 #. js-lingui-id: 9q0gnf
-#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptContent.tsx
 msgid "The transcript could not be generated."
 msgstr "La transcription n’a pas pu être générée."
 
@@ -19700,13 +19762,23 @@ msgstr "Temps total"
 msgid "Track AI consumption across your workspace."
 msgstr "Suivez la consommation d'IA dans votre espace de travail."
 
+#. js-lingui-id: DDziIo
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
+msgid "Transcript"
+msgstr "Transcription"
+
+#. js-lingui-id: hfpzKV
+#: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
+msgid "Transcript copied to clipboard"
+msgstr "Transcription copiée dans le presse-papiers"
+
 #. js-lingui-id: U2CSqa
-#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptContent.tsx
 msgid "Transcript Failed"
 msgstr "Échec de la transcription"
 
 #. js-lingui-id: zDTPYv
-#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptContent.tsx
 msgid "Transcript is being prepared…"
 msgstr "La transcription est en cours de préparation…"
 
@@ -20179,6 +20251,7 @@ msgstr "Objet inconnu"
 
 #. js-lingui-id: 0Wy3/1
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryListItem.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/utils/buildCallRecordingTranscriptPlainText.ts
 msgid "Unknown speaker"
 msgstr "Locuteur inconnu"
 

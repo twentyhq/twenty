@@ -1823,7 +1823,6 @@ export enum FeatureFlagKey {
   IS_JUNCTION_RELATIONS_ENABLED = 'IS_JUNCTION_RELATIONS_ENABLED',
   IS_LIST_VIEW_ENABLED = 'IS_LIST_VIEW_ENABLED',
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED = 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED',
-  IS_NATIVE_CALL_RECORDING_TABS_ENABLED = 'IS_NATIVE_CALL_RECORDING_TABS_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
   IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED = 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED',
@@ -5636,8 +5635,6 @@ export type TimelineActivityType = {
   name: Scalars['String']['output'];
   /** @deprecated Use emit.objectUniversalIdentifier */
   objectUniversalIdentifier?: Maybe<Scalars['UUID']['output']>;
-  /** @deprecated Use frontComponentUniversalIdentifier */
-  renderer?: Maybe<Scalars['String']['output']>;
   replacesTimelineActivityTypeUniversalIdentifier?: Maybe<Scalars['UUID']['output']>;
   universalIdentifier: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];

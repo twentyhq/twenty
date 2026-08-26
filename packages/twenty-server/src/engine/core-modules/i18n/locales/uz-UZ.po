@@ -3500,18 +3500,6 @@ msgctxt "fieldMetadata.label"
 msgid "Event ID"
 msgstr "Hodisa ID"
 
-#. js-lingui-id: ygoA2u
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Event name"
-msgstr "Hodisa nomi"
-
-#. js-lingui-id: AvDRPM
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Event name"
-msgstr "Hodisa nomi"
-
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10441,11 +10429,6 @@ msgstr "Bu obyekt ruxsati ushbu rol uchun allaqachon o‘rnatilgan"
 msgid "This operation is not allowed."
 msgstr "Ushbu operatsiyaga ruxsat berilmaydi."
 
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-datasource.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "Bu amalni bajarishga ruxsat berilmagan. Iltimos, boshqa yondashuvni sinab ko‘ring yoki yordam uchun texnik qo‘llab-quvvatlash xizmatiga murojaat qiling."
-
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "This operation is not supported."
@@ -12441,8 +12424,8 @@ msgid "You can only update one record with files field at once."
 msgstr "Bir vaqtning o‘zida faqat bitta yozuvning fayllar maydonini yangilashingiz mumkin."
 
 #. js-lingui-id: 4ysDL0
-#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
+#: src/engine/twenty-orm/repository/workspace-repository.ts
+#: src/engine/twenty-orm/repository/workspace-repository.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr "Bir vaqtning o‘zida faqat {QUERY_MAX_RECORDS} tagacha yozuvni yangilashingiz mumkin."
 

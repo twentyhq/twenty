@@ -4,9 +4,10 @@ export type FilterableTimelineActivity = Pick<TimelineActivity, 'properties'> &
   Partial<
     Pick<
       TimelineActivity,
-      | 'name'
       | 'linkedObjectMetadataId'
       | 'timelineActivityTypeId'
       | 'timelineActivityTypeSnapshot'
     >
-  >;
+  > & {
+    name?: string | null;
+  };

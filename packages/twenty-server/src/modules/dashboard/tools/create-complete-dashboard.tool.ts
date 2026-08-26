@@ -240,13 +240,13 @@ const createDashboardRecord = async (
 ): Promise<string> => {
   const authContext = buildSystemAuthContext(context.workspaceId);
 
-  return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-    const dashboardRepository =
-      await deps.globalWorkspaceOrmManager.getRepository(
-        context.workspaceId,
-        'dashboard',
-        { shouldBypassPermissionChecks: true },
-      );
+  return deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
+    const dashboardRepository = deps.workspaceOrmManager.getRepository(
+      'dashboard',
+      {
+        shouldBypassPermissionChecks: true,
+      },
+    );
 
     const position = await deps.recordPositionService.buildRecordPosition({
       value: 'first',

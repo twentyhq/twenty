@@ -6391,9 +6391,6 @@ export default {
             "icon": [
                 1
             ],
-            "renderer": [
-                1
-            ],
             "frontComponentUniversalIdentifier": [
                 3
             ],

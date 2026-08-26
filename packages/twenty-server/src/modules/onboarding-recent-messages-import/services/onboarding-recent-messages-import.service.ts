@@ -9,7 +9,7 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
@@ -27,7 +27,7 @@ export class OnboardingRecentMessagesImportService {
     private readonly cacheStorage: CacheStorageService,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly messagingMessagesImportService: MessagingMessagesImportService,
     private readonly recentMessagesService: RecentMessagesService,
@@ -43,7 +43,7 @@ export class OnboardingRecentMessagesImportService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     try {
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      await this.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const messageChannel = await this.messageChannelRepository.findOne({
             where: { id: messageChannelId, workspaceId },
