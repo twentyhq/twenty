@@ -10,10 +10,10 @@ import { isFlatFieldMetadataOfTypes } from 'src/engine/metadata-modules/flat-fie
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 export const isMorphOrRelationFlatFieldMetadata = <
-  Field extends OrmFlatFieldMetadata<FieldMetadataType>,
+  T extends OrmFlatFieldMetadata<FieldMetadataType>,
 >(
-  flatFieldMetadata: Field,
-): flatFieldMetadata is Field &
+  flatFieldMetadata: T,
+): flatFieldMetadata is T &
   FlatFieldMetadata<MorphOrRelationFieldMetadataType> =>
   isFlatFieldMetadataOfTypes(flatFieldMetadata, [
     ...MORPH_OR_RELATION_FIELD_TYPES,
