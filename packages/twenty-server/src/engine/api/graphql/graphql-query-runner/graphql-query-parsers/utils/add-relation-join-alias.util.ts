@@ -11,9 +11,9 @@ export const addRelationJoinAliasToQueryBuilder = ({
   parentAlias,
   relationName,
 }: AddRelationJoinAliasToQueryBuilderArgs): void => {
-  const alreadyJoined = queryBuilder.expressionMap.joinAttributes.some(
-    (joinAttribute) => joinAttribute.alias.name === relationName,
-  );
+  const alreadyJoined = queryBuilder
+    .getJoinAliases()
+    .some((joinAlias) => joinAlias.name === relationName);
 
   if (alreadyJoined) {
     return;

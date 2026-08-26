@@ -51,7 +51,7 @@ export class DeleteWorkflowRunsCommand extends ProvisionedWorkspaceCommandRunner
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       try {
         const workflowRunRepository =
-          await this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+          this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
             'workflowRun',
             { shouldBypassPermissionChecks: true },
           );

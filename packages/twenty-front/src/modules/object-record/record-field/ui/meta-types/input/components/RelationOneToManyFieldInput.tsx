@@ -2,20 +2,13 @@ import { useCallback, useContext } from 'react';
 import { useStore } from 'jotai';
 import { v4 } from 'uuid';
 
-import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
-import { useUpdateActivityTargetFromCell } from '@/activities/inline-cell/hooks/useUpdateActivityTargetFromCell';
-import { type NoteTarget } from '@/activities/types/NoteTarget';
-import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { isActivityTargetField } from '@/object-record/record-field-list/utils/categorizeRelationFields';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useUpdateJunctionRelationFromCell } from '@/object-record/record-field/ui/hooks/useUpdateJunctionRelationFromCell';
-import { useRelationField } from '@/object-record/record-field/ui/meta-types/hooks/useRelationField';
 import { useAddNewRecordAndOpenSidePanel } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenSidePanel';
 import { useUpdateRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateRelationOneToManyFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -24,7 +17,6 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
-import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
@@ -48,7 +40,6 @@ export const RelationOneToManyFieldInput = () => {
   const { onSubmit } = useContext(FieldInputEventContext);
 
   const { updateRelation } = useUpdateRelationOneToManyFieldInput();
-  const fieldName = fieldDefinition.metadata.fieldName;
   const { objectMetadataItems } = useObjectMetadataItems();
   const { fieldMetadataItem, objectMetadataItem } = getFieldMetadataItemById({
     fieldMetadataId: fieldDefinition.fieldMetadataId,
@@ -60,33 +51,9 @@ export const RelationOneToManyFieldInput = () => {
       'FIELD_METADATA_ITEM_OR_OBJECT_METADATA_ITEM_NOT_FOUND',
     );
   }
-  const objectMetadataNameSingular =
-    fieldDefinition.metadata.objectMetadataNameSingular;
-
-  const { updateActivityTargetFromCell } = useUpdateActivityTargetFromCell({
-    activityObjectNameSingular: objectMetadataNameSingular as
-      | CoreObjectNameSingular.Note
-      | CoreObjectNameSingular.Task,
-    activityId: recordId,
-  });
-
-  const { fieldValue } = useRelationField();
-
   const handleSubmit = () => {
     onSubmit?.({ skipPersist: true });
   };
-
-  const isRelationFromActivityTargets = isActivityTargetField(
-    fieldName,
-    objectMetadataNameSingular ?? '',
-  );
-
-  const isJunctionRelation = hasJunctionConfig(fieldMetadataItem.settings);
-
-  const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
-    recordId,
-    fieldValue as NoteTarget[] | TaskTarget[],
-  );
 
   const relationFieldDefinition =
     fieldDefinition as FieldDefinition<FieldRelationMetadata>;
@@ -98,16 +65,18 @@ export const RelationOneToManyFieldInput = () => {
       recordId,
     });
 
-  const junctionConfig =
-    isJunctionRelation && isJunctionConfigValid
-      ? getJunctionConfig({
-          settings: fieldMetadataItem.settings,
-          relationObjectMetadataId:
-            relationFieldDefinition.metadata.relationObjectMetadataId,
-          sourceObjectMetadataId: objectMetadataItem.id,
-          objectMetadataItems,
-        })
-      : null;
+  const junctionConfig = isJunctionConfigValid
+    ? getJunctionConfig({
+        settings: fieldMetadataItem.settings,
+        relationObjectMetadataId:
+          relationFieldDefinition.metadata.relationObjectMetadataId,
+        relationTargetFieldMetadataId:
+          fieldMetadataItem.relation?.targetFieldMetadata.id,
+        sourceObjectMetadataId: objectMetadataItem.id,
+        objectMetadataItems,
+      })
+    : null;
+  const isJunctionRelation = isDefined(junctionConfig);
 
   const junctionTargetObjectMetadata = (() => {
     if (!junctionConfig || junctionConfig.isMorphRelation) {
@@ -277,9 +246,8 @@ export const RelationOneToManyFieldInput = () => {
     ],
   );
 
-  // Disable "Add New" for activity targets and MORPH junction relations
-  // (For MORPH, we don't know which object type to create)
-  const canCreateNew = !isRelationFromActivityTargets && !isMorphJunction;
+  // For MORPH junctions, we don't know which object type to create.
+  const canCreateNew = !isMorphJunction;
 
   // For junction relations, use the target object for "Add New", not the junction object
   const objectMetadataItemIdForCreate =
@@ -293,13 +261,7 @@ export const RelationOneToManyFieldInput = () => {
       componentInstanceId={instanceId}
       onSubmit={handleSubmit}
       onChange={(morphItem) => {
-        if (isRelationFromActivityTargets) {
-          updateActivityTargetFromCell({
-            morphItem,
-            activityTargetWithTargetRecords: activityTargetObjectRecords,
-            recordPickerInstanceId: instanceId,
-          });
-        } else if (isJunctionRelation && isJunctionConfigValid) {
+        if (isJunctionRelation && isJunctionConfigValid) {
           updateJunctionRelationFromCell({
             morphItem,
           });

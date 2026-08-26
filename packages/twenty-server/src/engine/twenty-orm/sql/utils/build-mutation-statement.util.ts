@@ -1,8 +1,8 @@
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import {
-  TwentyOrmV2Exception,
-  TwentyOrmV2ExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-column-result-alias.util';
 import {
   quoteColumn,
@@ -72,9 +72,9 @@ export const buildMutationStatement = (
   }
 
   if (state.setClauses.length === 0) {
-    throw new TwentyOrmV2Exception(
+    throw new TwentyOrmException(
       `An UPDATE on "${state.tableShape.nameSingular}" needs at least one column to set`,
-      TwentyOrmV2ExceptionCode.INVALID_QUERY,
+      TwentyOrmExceptionCode.INVALID_QUERY,
     );
   }
 

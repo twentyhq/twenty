@@ -6,9 +6,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 import {
-  TwentyOrmV2Exception,
-  TwentyOrmV2ExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 export const resolveObjectRecordsPermissions = ({
@@ -38,9 +38,9 @@ export const resolveObjectRecordsPermissions = ({
 
   if ('unionOf' in rolePermissionConfig) {
     if (rolePermissionConfig.unionOf.length !== 1) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         'Union permission logic for multiple roles not yet implemented',
-        TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+        TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
       );
     }
 
