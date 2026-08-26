@@ -22,8 +22,6 @@ const fieldMapsCache = new WeakMap<
   WeakMap<FlatObjectMetadata, FieldMapsForObject>
 >();
 
-// Generic over the field shape (lite from the record query path, full from the metadata layer):
-// only name, id and settings are read, all present in the lite projection.
 export const buildFieldMapsFromFlatObjectMetadata = <
   T extends LiteFlatFieldMetadata = FlatFieldMetadata,
 >(
@@ -40,12 +38,10 @@ export const buildFieldMapsFromFlatObjectMetadata = <
   const fieldIdByName: Record<string, string> = {};
   const fieldIdByJoinColumnName: Record<string, string> = {};
 
-  // The type guards below narrow on `type` and read `settings` — both core columns. Cast to the
-  // full type so the guard narrowing applies; no dropped property is read.
   const objectFields = getFlatFieldsFromFlatObjectMetadata(
     flatObjectMetadata,
     flatFieldMetadataMaps,
-  ) as unknown as FlatFieldMetadata[];
+  );
 
   for (const field of objectFields) {
     fieldIdByName[field.name] = field.id;
