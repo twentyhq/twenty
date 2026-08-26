@@ -433,7 +433,7 @@ jobs:
             exit 1
           fi
           EXISTING=$(gh api --paginate "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments?per_page=100" \
-            --jq '.[] | select(.body | startswith("<!-- qa-scout -->")) | .id' \
+            --jq '.[] | select((.body // "") | startswith("<!-- qa-scout -->")) | .id' \
             | jq -rs 'first // empty')
           if [ -n "$EXISTING" ]; then
             gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${EXISTING}" -F body=@comment.md
