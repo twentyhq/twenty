@@ -9843,7 +9843,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "La extensión del archivo no coincide con el contenido del archivo. Compruebe que su archivo no esté dañado y que tenga la extensión correcta."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "El archivo aún no se ha cargado. Cárgalo antes de confirmar."
 
@@ -10054,7 +10054,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "El tema de cancelación de suscripción bajo el cual se envió esta campaña"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "El archivo cargado no coincide con el tamaño declarado. Vuelve a intentar la carga."
@@ -10346,7 +10346,7 @@ msgid "This field references an object that could not be found"
 msgstr "Este campo hace referencia a un objeto que no se pudo encontrar"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "Este formato de archivo no es compatible."
 

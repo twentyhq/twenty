@@ -9843,7 +9843,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "Phần mở rộng tệp không khớp với nội dung tệp. Vui lòng kiểm tra để đảm bảo tệp của bạn không bị hỏng và có phần mở rộng chính xác."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "Tệp vẫn chưa được tải lên. Vui lòng tải lên trước khi xác nhận."
 
@@ -10054,7 +10054,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "Chủ đề hủy đăng ký mà chiến dịch này được gửi dưới nó"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "Tệp đã tải lên không khớp với kích thước đã khai báo. Vui lòng thử tải lên lại."
@@ -10346,7 +10346,7 @@ msgid "This field references an object that could not be found"
 msgstr "Trường này tham chiếu đến một đối tượng không thể tìm thấy"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "Định dạng tệp này không được hỗ trợ."
 

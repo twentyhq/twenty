@@ -31,6 +31,7 @@ export { APPLICATION_VARIABLE_FIELD_METADATA_TYPES } from './applicationVariable
 export type { AssetManifest } from './assetManifestType';
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
 export type { ConnectionProviderType } from './connectionProviderType';
+export { APPLICATION_FILE_UPLOAD_BATCH_SIZE } from './constants/ApplicationFileUploadBatchSize';
 export { ASSETS_DIR } from './constants/AssetDirectory';
 export { DEFAULT_API_KEY_NAME } from './constants/DefaultApiKeyName';
 export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';

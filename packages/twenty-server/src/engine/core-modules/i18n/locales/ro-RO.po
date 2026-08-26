@@ -9843,7 +9843,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "Extensia fișierului nu corespunde conținutului fișierului. Vă rugăm să verificați că fișierul nu este corupt și are extensia corectă."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "Fișierul nu a fost încă încărcat. Vă rugăm să îl încărcați înainte de a confirma."
 
@@ -10054,7 +10054,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "Subiectul de dezabonare sub care a fost trimisă această campanie"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "Fișierul încărcat nu corespunde dimensiunii declarate. Vă rugăm să reîncercați încărcarea."
@@ -10346,7 +10346,7 @@ msgid "This field references an object that could not be found"
 msgstr "Acest câmp face referire la un obiect care nu a putut fi găsit"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "Acest format de fișier nu este acceptat."
 
