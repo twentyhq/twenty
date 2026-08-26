@@ -1761,6 +1761,11 @@ msgstr "Central African Republic 🇨🇫"
 msgid "Certification, plus a directory profile your clients can verify. The best partners also receive client briefs matched to their scope."
 msgstr "認定に加え、クライアントが確認できるディレクトリプロフィールを提供します。優れたパートナーには、対応範囲に合ったクライアント概要も届きます。"
 
+#. js-lingui-id: 4W4gsr
+#: src/sections/partner-hero/PartnerLeadHero.tsx
+msgid "Certified partners who set up your CRM to match how your company works, from the migration to the custom apps."
+msgstr ""
+
 #. js-lingui-id: iI3Dq9
 #: src/partner-application/data/partner-country-options.ts
 msgid "Chad 🇹🇩"
@@ -3897,6 +3902,11 @@ msgstr "変更を非表示"
 #: src/partner-application/data/partner-language-options.ts
 msgid "Hindi"
 msgstr "Hindi"
+
+#. js-lingui-id: 6NGgln
+#: src/sections/partner-hero/PartnerLeadHero.tsx
+msgid "Hire the people who *build on Twenty*"
+msgstr ""
 
 #. js-lingui-id: qfSbUb
 #: src/case-studies/case-study-stories.ts
@@ -6924,11 +6934,6 @@ msgstr "スキル"
 msgid "Skip for now"
 msgstr "今はスキップ"
 
-#. js-lingui-id: BXjtWS
-#: src/sections/partner-hero/PartnerLeadHero.tsx
-msgid "Skip the browsing. Describe your project and we connect you with a certified Twenty partner who fits it."
-msgstr "探す手間は不要です。プロジェクトについてお聞かせいただければ、適した認定Twentyパートナーをご紹介します。"
-
 #. js-lingui-id: t6ComU
 #: src/sections/feature-cards/FeatureCards.tsx
 msgid "Skip the clunky UX that always comes with custom."
@@ -7380,11 +7385,6 @@ msgstr "必要なものをお聞かせいただければ、48時間以内に認�
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
 msgid "Tell us what you need and we'll match you with a certified Twenty partner."
 msgstr "ご要望をお聞かせいただければ、認定 Twenty パートナーの中から最適な相手をマッチングします。"
-
-#. js-lingui-id: 7CRTri
-#: src/sections/partner-hero/PartnerLeadHero.tsx
-msgid "Tell us what you need, we match you in *48 hours*"
-msgstr "必要なものをお聞かせください。*48時間以内*にマッチングします"
 
 #. js-lingui-id: Hevu8X
 #: src/app-preview/terminal/TerminalToggle.tsx

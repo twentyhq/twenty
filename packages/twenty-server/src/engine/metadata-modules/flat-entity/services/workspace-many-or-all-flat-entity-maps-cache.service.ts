@@ -59,8 +59,10 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
   }): Promise<void> {
     await this.workspaceCacheService.invalidateAndRecompute(
       workspaceId,
-      (flatMapsKeys ??
-        ALL_FLAT_ENTITY_MAPS_PROPERTIES) as (keyof WorkspaceCacheDataMap)[],
+      this.withDerivedFieldMetadataMaps(
+        (flatMapsKeys ??
+          ALL_FLAT_ENTITY_MAPS_PROPERTIES) as (keyof WorkspaceCacheDataMap)[],
+      ),
     );
   }
 
@@ -75,8 +77,20 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
   }): Promise<void> {
     await this.workspaceCacheService.flush(
       workspaceId,
-      (flatMapsKeys ??
-        ALL_FLAT_ENTITY_MAPS_PROPERTIES) as (keyof WorkspaceCacheDataMap)[],
+      this.withDerivedFieldMetadataMaps(
+        (flatMapsKeys ??
+          ALL_FLAT_ENTITY_MAPS_PROPERTIES) as (keyof WorkspaceCacheDataMap)[],
+      ),
     );
+  }
+
+  // flatFieldMetadataMapsOrm is a projection of flatFieldMetadataMaps, so it has
+  // to be recomputed whenever the field metadata maps are.
+  private withDerivedFieldMetadataMaps(
+    keys: (keyof WorkspaceCacheDataMap)[],
+  ): (keyof WorkspaceCacheDataMap)[] {
+    return keys.includes('flatFieldMetadataMaps')
+      ? [...keys, 'flatFieldMetadataMapsOrm']
+      : keys;
   }
 }

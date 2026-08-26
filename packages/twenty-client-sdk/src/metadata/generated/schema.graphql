@@ -42,6 +42,7 @@ type ApplicationVariable {
   key: String!
   value: String!
   description: String!
+  label: String!
   isSecret: Boolean!
   isDeprecated: Boolean!
   type: String!
@@ -1742,7 +1743,6 @@ enum FeatureFlagKey {
   IS_APP_CLAIMING_ENABLED
   IS_UNIQUE_INDEXES_ENABLED
   IS_JSON_FILTER_ENABLED
-  IS_CALENDAR_WEEK_VIEW_ENABLED
   IS_EMAIL_GROUP_ENABLED
   IS_JUNCTION_RELATIONS_ENABLED
   IS_LIST_VIEW_ENABLED
@@ -3792,7 +3792,7 @@ type Mutation {
   generateTransientToken: TransientToken!
   getAuthTokensFromLoginToken(loginToken: String!, origin: String!): AuthTokens!
   getAuthTokensFromSSOExchangeToken(ssoExchangeToken: String!): AuthTokens!
-  authorizeApp(clientId: String!, codeChallenge: String, redirectUrl: String!, state: String, scope: String): AuthorizeApp!
+  authorizeApp(clientId: String!, codeChallenge: String, redirectUrl: String!, state: String, scope: String, issuer: String): AuthorizeApp!
   renewToken(appToken: String!): AuthTokens!
   signOut(refreshToken: String): Boolean!
   generateApiKeyToken(apiKeyId: UUID!, expiresAt: String!): ApiKeyToken!

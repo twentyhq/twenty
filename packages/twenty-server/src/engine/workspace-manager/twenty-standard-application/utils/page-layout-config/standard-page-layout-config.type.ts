@@ -1,12 +1,11 @@
 import {
   type GridPosition,
   type PageLayoutTabLayoutMode,
+  type PageLayoutType,
   type PageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetPosition,
+  type WidgetType,
 } from 'twenty-shared/types';
-
-import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { type PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 
 export type StandardPageLayoutWidgetConfig = {
   universalIdentifier: string;

@@ -1761,6 +1761,11 @@ msgstr "Orta Afrika Cumhuriyeti 🇨🇫"
 msgid "Certification, plus a directory profile your clients can verify. The best partners also receive client briefs matched to their scope."
 msgstr "Sertifikasyonun yanı sıra müşterilerinizin doğrulayabileceği bir dizin profili. En iyi iş ortakları ayrıca kapsamlarıyla eşleşen müşteri özetleri alır."
 
+#. js-lingui-id: 4W4gsr
+#: src/sections/partner-hero/PartnerLeadHero.tsx
+msgid "Certified partners who set up your CRM to match how your company works, from the migration to the custom apps."
+msgstr ""
+
 #. js-lingui-id: iI3Dq9
 #: src/partner-application/data/partner-country-options.ts
 msgid "Chad 🇹🇩"
@@ -3897,6 +3902,11 @@ msgstr "Değişiklikleri gizle"
 #: src/partner-application/data/partner-language-options.ts
 msgid "Hindi"
 msgstr "Hintçe"
+
+#. js-lingui-id: 6NGgln
+#: src/sections/partner-hero/PartnerLeadHero.tsx
+msgid "Hire the people who *build on Twenty*"
+msgstr ""
 
 #. js-lingui-id: qfSbUb
 #: src/case-studies/case-study-stories.ts
@@ -6924,11 +6934,6 @@ msgstr "Beceriler"
 msgid "Skip for now"
 msgstr "Şimdilik atla"
 
-#. js-lingui-id: BXjtWS
-#: src/sections/partner-hero/PartnerLeadHero.tsx
-msgid "Skip the browsing. Describe your project and we connect you with a certified Twenty partner who fits it."
-msgstr "Göz atmayı atlayın. Projenizi açıklayın, sizi ona uygun sertifikalı bir Twenty iş ortağıyla buluşturalım."
-
 #. js-lingui-id: t6ComU
 #: src/sections/feature-cards/FeatureCards.tsx
 msgid "Skip the clunky UX that always comes with custom."
@@ -7380,11 +7385,6 @@ msgstr "Neye ihtiyacınız olduğunu bize söyleyin; 48 saat içinde sertifikal�
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
 msgid "Tell us what you need and we'll match you with a certified Twenty partner."
 msgstr "İhtiyacınızı bize söyleyin, sizi sertifikalı bir Twenty iş ortağıyla eşleştirelim."
-
-#. js-lingui-id: 7CRTri
-#: src/sections/partner-hero/PartnerLeadHero.tsx
-msgid "Tell us what you need, we match you in *48 hours*"
-msgstr "Neye ihtiyacınız olduğunu söyleyin, sizi *48 saat* içinde eşleştirelim"
 
 #. js-lingui-id: Hevu8X
 #: src/app-preview/terminal/TerminalToggle.tsx
