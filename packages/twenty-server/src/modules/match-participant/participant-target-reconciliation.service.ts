@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { In, type ObjectLiteral } from 'typeorm';
 
@@ -251,9 +252,14 @@ export class ParticipantTargetReconciliationService {
       existingTargets,
     });
 
-    if (operations.targetsToCreate.length > 0) {
+    // Targets per parent are unbounded, so write batches are re-chunked to
+    // stay under the ORM's per-call record cap.
+    for (const targetsToCreateChunk of chunk(
+      operations.targetsToCreate,
+      QUERY_MAX_RECORDS,
+    )) {
       await targetRepository.insertOrIgnore(
-        operations.targetsToCreate.map(({ parentId, ...target }) => ({
+        targetsToCreateChunk.map(({ parentId, ...target }) => ({
           ...target,
           [parentFieldName]: parentId,
           isAutomaticallyAssigned: true,
@@ -262,27 +268,36 @@ export class ParticipantTargetReconciliationService {
       );
     }
 
-    if (operations.targetsToMarkAutomatic.length > 0) {
+    for (const targetIdsToMarkAutomaticChunk of chunk(
+      operations.targetsToMarkAutomatic,
+      QUERY_MAX_RECORDS,
+    )) {
       await targetRepository.updateMany(
-        operations.targetsToMarkAutomatic.map((id) => ({
+        targetIdsToMarkAutomaticChunk.map((id) => ({
           criteria: id,
           partialEntity: { isAutomaticallyAssigned: true },
         })),
       );
     }
 
-    if (operations.targetsToMarkNotAutomatic.length > 0) {
+    for (const targetIdsToMarkNotAutomaticChunk of chunk(
+      operations.targetsToMarkNotAutomatic,
+      QUERY_MAX_RECORDS,
+    )) {
       await targetRepository.updateMany(
-        operations.targetsToMarkNotAutomatic.map((id) => ({
+        targetIdsToMarkNotAutomaticChunk.map((id) => ({
           criteria: id,
           partialEntity: { isAutomaticallyAssigned: false },
         })),
       );
     }
 
-    if (operations.targetIdsToDelete.length > 0) {
+    for (const targetIdsToDeleteChunk of chunk(
+      operations.targetIdsToDelete,
+      QUERY_MAX_RECORDS,
+    )) {
       await targetRepository.delete({
-        id: In(operations.targetIdsToDelete),
+        id: In(targetIdsToDeleteChunk),
       });
     }
   }
@@ -314,6 +329,9 @@ export class ParticipantTargetReconciliationService {
       where: { id: In(personIds) },
       select: { id: true, companyId: true },
     });
+    // find() excludes soft-deleted people, so this set keeps desired targets
+    // aligned with the backfill, which only joins live people.
+    const livePersonIds = new Set(people.map(({ id }) => id));
     const companyIdByPersonId = new Map(
       people.map(({ id, companyId }) => [id, companyId]),
     );
@@ -347,6 +365,10 @@ export class ParticipantTargetReconciliationService {
     return parentIds.flatMap((parentId) =>
       [...(participantPersonIdsByParentId.get(parentId) ?? [])].flatMap(
         (personId): TargetIdentity[] => {
+          if (!livePersonIds.has(personId)) {
+            return [];
+          }
+
           const companyId = companyIdByPersonId.get(personId);
           const opportunityIds = opportunityIdsByPersonId.get(personId) ?? [];
 

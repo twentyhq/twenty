@@ -89,14 +89,20 @@ export class MatchParticipantService<
     matchWith = 'workspaceMemberAndPerson',
     transactionScope,
   }: MatchParticipantsArgs<ParticipantWorkspaceEntity>) {
+    // Desired targets derive from personId only, so a workspaceMemberOnly
+    // rematch can never change them; skip the recompute in that case.
+    const shouldReconcileTargets = matchWith !== 'workspaceMemberOnly';
+
     if (participants.length === 0) {
-      await this.participantTargetReconciliationService.reconcileParticipantTargets(
-        {
-          sourceRecordIds,
-          objectMetadataName,
-          transactionScope,
-        },
-      );
+      if (shouldReconcileTargets) {
+        await this.participantTargetReconciliationService.reconcileParticipantTargets(
+          {
+            sourceRecordIds,
+            objectMetadataName,
+            transactionScope,
+          },
+        );
+      }
 
       return;
     }
@@ -205,13 +211,15 @@ export class MatchParticipantService<
       );
     }
 
-    await this.participantTargetReconciliationService.reconcileParticipantTargets(
-      {
-        sourceRecordIds,
-        objectMetadataName,
-        transactionScope,
-      },
-    );
+    if (shouldReconcileTargets) {
+      await this.participantTargetReconciliationService.reconcileParticipantTargets(
+        {
+          sourceRecordIds,
+          objectMetadataName,
+          transactionScope,
+        },
+      );
+    }
   }
 
   public async matchParticipantsForWorkspaceMembers({
