@@ -237,14 +237,27 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |
-            Read .claude/skills/qa-scout/SKILL.md and follow it exactly. You are
-            the QA Scout for the merged pull request described in
-            /tmp/qa-scout/context/pr.json (files.json and pr.diff sit beside it).
-            The app is already running and seeded at http://localhost:3000
-            (login tim@apple.dev / tim@apple.dev, workspace Apple). Server log:
-            /tmp/qa-scout/server.log. Worker log: /tmp/qa-scout/worker.log.
-            Write verdict.json and report.md to /tmp/qa-scout/output/.
+            Read .claude/skills/qa-scout/SKILL.md and follow it exactly. This is
+            the CI invocation: every path and credential in the skill's Inputs
+            table applies verbatim.
           claude_args: '--max-turns 120 --model opus --mcp-config /tmp/qa-scout/mcp.json --allowedTools "Read,Grep,Glob,Write,Bash(cat *),Bash(tail *),Bash(head *),Bash(wc *),Bash(ls *),Bash(grep *),Bash(mkdir *),Bash(sleep *),Bash(date *),mcp__playwright"'
+
+      # The agent process necessarily holds the inference credential, and a
+      # prompt-injected agent could copy it into its report. Every public sink
+      # (PR comment, artifact, job summary) reads from /tmp/qa-scout/output,
+      # so redact Anthropic token shapes here, in the trusted lane, before
+      # anything is published.
+      - name: QA Scout / Scrub outputs
+        if: ${{ !cancelled() && steps.qa-scout-pr.outputs.run == 'true' }}
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          MATCHES=$(grep -rIl 'sk-ant-' /tmp/qa-scout/output 2>/dev/null || true)
+          if [ -n "$MATCHES" ]; then
+            echo "Redacting Anthropic token shapes from Scout outputs:"
+            echo "$MATCHES"
+            echo "$MATCHES" | xargs sed -i -E 's/sk-ant-[A-Za-z0-9_-]+/[REDACTED]/g'
+          fi
 
       - name: QA Scout / Job summary
         if: ${{ !cancelled() && steps.qa-scout-pr.outputs.run == 'true' }}
@@ -361,6 +374,13 @@ jobs:
             echo ""
             echo "[QA Scout run](${RUN_URL}) · verdict: ${VERDICT} · re-run: Actions → CI E2E Main → Run workflow with pr_number=${PR_NUMBER}"
           } > comment.md
+          # Belt over the scrub step's suspenders: a token shape surviving to
+          # here means the scrub was bypassed, so fail loudly instead of
+          # publishing.
+          if grep -q 'sk-ant-' comment.md; then
+            echo "Refusing to post: comment contains an Anthropic token shape."
+            exit 1
+          fi
           EXISTING=$(gh api --paginate --slurp "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments?per_page=100" \
             --jq '[.[][] | select(.body | startswith("<!-- qa-scout -->")) | .id] | first // empty')
           if [ -n "$EXISTING" ]; then
