@@ -2,7 +2,6 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import { type ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-relations.constant';
 import { type ALL_ONE_TO_MANY_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-one-to-many-metadata-relations.constant';
-import { type KNOWN_FETCH_GAPS } from 'src/engine/workspace-cache/constants/known-fetch-gaps.constant';
 import {
   type CacheEntityFetchSpec,
   type CacheFetchableEntity,
@@ -25,18 +24,11 @@ type ManyToOneTargetNames<TMetadataName extends AllMetadataName> = {
     : never;
 }[keyof (typeof ALL_MANY_TO_ONE_METADATA_RELATIONS)[TMetadataName]];
 
-type KnownGapChildNames<TMetadataName extends AllMetadataName> =
-  TMetadataName extends keyof typeof KNOWN_FETCH_GAPS
-    ? (typeof KNOWN_FETCH_GAPS)[TMetadataName][number]
-    : never;
-
 type RequiredFetchNames<TMetadataName extends AllMetadataName> =
   | TMetadataName
   | 'application'
-  | Exclude<
-      OneToManyChildNames<TMetadataName> | ManyToOneTargetNames<TMetadataName>,
-      KnownGapChildNames<TMetadataName>
-    >;
+  | OneToManyChildNames<TMetadataName>
+  | ManyToOneTargetNames<TMetadataName>;
 
 // Strict per-metadata-name variant of CacheEntityFetchShape: the own entity
 // (full rows), every one-to-many child, every many-to-one target, and the

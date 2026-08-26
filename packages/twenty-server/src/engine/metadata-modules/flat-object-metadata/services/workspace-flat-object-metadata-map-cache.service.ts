@@ -33,6 +33,10 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends FlatEntityMapCac
       columns: ['id', 'universalIdentifier'],
       groupBy: ['objectMetadataId'],
     },
+    fieldPermission: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['objectMetadataId'],
+    },
     searchFieldMetadata: {
       columns: ['id', 'universalIdentifier'],
       groupBy: ['objectMetadataId'],
@@ -57,6 +61,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends FlatEntityMapCac
       index: indexMetadatas,
       view: views,
       objectPermission: objectPermissions,
+      fieldPermission: fieldPermissions,
       searchFieldMetadata: searchFieldMetadatas,
       pageLayout: pageLayouts,
       commandMenuItem: commandMenuItems,
@@ -82,6 +87,9 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends FlatEntityMapCac
           views: views.byObjectMetadataId.get(objectMetadataEntity.id) || [],
           objectPermissions:
             objectPermissions.byObjectMetadataId.get(objectMetadataEntity.id) ||
+            [],
+          fieldPermissions:
+            fieldPermissions.byObjectMetadataId.get(objectMetadataEntity.id) ||
             [],
           searchFieldMetadatas:
             searchFieldMetadatas.byObjectMetadataId.get(

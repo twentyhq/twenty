@@ -55,6 +55,10 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends FlatEntityMapCach
       columns: ['id', 'universalIdentifier'],
       groupBy: ['fieldMetadataId'],
     },
+    fieldPermission: {
+      columns: ['id', 'universalIdentifier'],
+      groupBy: ['fieldMetadataId'],
+    },
   } as const;
 
   override compactForStorage(
@@ -83,6 +87,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends FlatEntityMapCach
       viewSort: viewSorts,
       view: views,
       searchFieldMetadata: searchFieldMetadatas,
+      fieldPermission: fieldPermissions,
     } = recomputeContext.getRowsByName(this.fetchRequirements);
 
     const fieldMetadataIdToUniversalIdentifierMap =
@@ -128,6 +133,9 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends FlatEntityMapCach
             searchFieldMetadatas.byFieldMetadataId.get(
               fieldMetadataEntity.id,
             ) || [],
+          fieldPermissions:
+            fieldPermissions.byFieldMetadataId.get(fieldMetadataEntity.id) ||
+            [],
         },
         fieldMetadataIdToUniversalIdentifierMap,
         objectMetadataIdToUniversalIdentifierMap,
