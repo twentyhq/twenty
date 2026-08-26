@@ -19,6 +19,9 @@ export const buildCalendarEventTargetStandardFlatIndexMetadatas = (
     },
     indexNames: {
       parentIdIndex: 'calendarEventIdIndex',
+      personIdIndex: 'personIdIndex',
+      companyIdIndex: 'companyIdIndex',
+      opportunityIdIndex: 'opportunityIdIndex',
       personUniqueIndex: 'calendarEventPersonUniqueIndex',
       companyUniqueIndex: 'calendarEventCompanyUniqueIndex',
       opportunityUniqueIndex: 'calendarEventOpportunityUniqueIndex',
@@ -27,6 +30,9 @@ export const buildCalendarEventTargetStandardFlatIndexMetadatas = (
 
   return {
     calendarEventIdIndex: indexes.parentIdIndex,
+    personIdIndex: indexes.personIdIndex,
+    companyIdIndex: indexes.companyIdIndex,
+    opportunityIdIndex: indexes.opportunityIdIndex,
     calendarEventPersonUniqueIndex: indexes.personUniqueIndex,
     calendarEventCompanyUniqueIndex: indexes.companyUniqueIndex,
     calendarEventOpportunityUniqueIndex: indexes.opportunityUniqueIndex,

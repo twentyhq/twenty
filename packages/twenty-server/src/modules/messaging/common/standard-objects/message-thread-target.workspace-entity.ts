@@ -6,8 +6,8 @@ import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standar
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 export class MessageThreadTargetWorkspaceEntity extends BaseWorkspaceEntity {
-  messageThread: EntityRelation<MessageThreadWorkspaceEntity> | null;
-  messageThreadId: string | null;
+  messageThread: EntityRelation<MessageThreadWorkspaceEntity>;
+  messageThreadId: string;
   isAutomaticallyAssigned: boolean;
   isManuallyAssigned: boolean;
   targetPerson: EntityRelation<PersonWorkspaceEntity> | null;

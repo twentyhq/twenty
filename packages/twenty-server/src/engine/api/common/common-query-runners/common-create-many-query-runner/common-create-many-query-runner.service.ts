@@ -18,6 +18,7 @@ import { PartialObjectRecordWithId } from 'src/engine/api/common/common-query-ru
 import { buildWhereConditions } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/build-where-conditions.util';
 import { categorizeRecords } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/categorize-records.util';
 import { getConflictingFields } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-conflicting-fields.util';
+import { prepareRecordForUpsertUpdate } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/prepare-record-for-upsert-update.util';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -447,6 +448,13 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     columnsToReturn: string[];
     queryRunnerContext: CommonExtendedQueryRunnerContext;
   }): Promise<void> {
+    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+    );
+    const hasManualAssignmentField = isDefined(
+      fieldIdByName.isManuallyAssigned,
+    );
     const updateInputs = partialRecordsToUpdate
       .map((record) =>
         this.getRecordWithoutCreatedBy(
@@ -457,7 +465,10 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       )
       .map((record) => ({
         id: record.id,
-        data: { ...record, deletedAt: null },
+        data: prepareRecordForUpsertUpdate({
+          record,
+          hasManualAssignmentField,
+        }),
       }));
 
     const writeRepository = this.getWriteRepository(queryRunnerContext);

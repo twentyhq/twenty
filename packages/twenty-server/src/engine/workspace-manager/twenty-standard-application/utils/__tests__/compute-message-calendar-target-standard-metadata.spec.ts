@@ -63,6 +63,30 @@ describe('Message and calendar target standard metadata build', () => {
   );
 
   it.each(['calendarEventTarget', 'messageThreadTarget'] as const)(
+    'indexes each %s target relation for target-first timeline reads',
+    (objectName) => {
+      for (const indexName of [
+        'personIdIndex',
+        'companyIdIndex',
+        'opportunityIdIndex',
+      ] as const) {
+        const { universalIdentifier } =
+          STANDARD_OBJECTS[objectName].indexes[indexName];
+        const indexMetadata =
+          allFlatEntityMaps.flatIndexMaps.byUniversalIdentifier[
+            universalIdentifier
+          ];
+
+        expect(indexMetadata).toMatchObject({
+          isUnique: false,
+          indexWhereClause: null,
+        });
+        expect(indexMetadata?.flatIndexFieldMetadatas).toHaveLength(1);
+      }
+    },
+  );
+
+  it.each(['calendarEventTarget', 'messageThreadTarget'] as const)(
     'uses one morph group for all %s target types',
     (objectName) => {
       const targetFields = [

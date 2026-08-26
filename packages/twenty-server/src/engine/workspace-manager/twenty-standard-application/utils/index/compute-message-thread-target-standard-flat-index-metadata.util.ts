@@ -19,6 +19,9 @@ export const buildMessageThreadTargetStandardFlatIndexMetadatas = (
     },
     indexNames: {
       parentIdIndex: 'messageThreadIdIndex',
+      personIdIndex: 'personIdIndex',
+      companyIdIndex: 'companyIdIndex',
+      opportunityIdIndex: 'opportunityIdIndex',
       personUniqueIndex: 'messageThreadPersonUniqueIndex',
       companyUniqueIndex: 'messageThreadCompanyUniqueIndex',
       opportunityUniqueIndex: 'messageThreadOpportunityUniqueIndex',
@@ -27,6 +30,9 @@ export const buildMessageThreadTargetStandardFlatIndexMetadatas = (
 
   return {
     messageThreadIdIndex: indexes.parentIdIndex,
+    personIdIndex: indexes.personIdIndex,
+    companyIdIndex: indexes.companyIdIndex,
+    opportunityIdIndex: indexes.opportunityIdIndex,
     messageThreadPersonUniqueIndex: indexes.personUniqueIndex,
     messageThreadCompanyUniqueIndex: indexes.companyUniqueIndex,
     messageThreadOpportunityUniqueIndex: indexes.opportunityUniqueIndex,

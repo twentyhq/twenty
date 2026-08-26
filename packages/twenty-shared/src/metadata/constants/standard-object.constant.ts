@@ -250,6 +250,15 @@ export const STANDARD_OBJECTS = {
       calendarEventIdIndex: {
         universalIdentifier: 'ce1c180c-0236-4673-ad1d-359dddf59f93',
       },
+      personIdIndex: {
+        universalIdentifier: 'f151bc84-ba45-40cb-b064-02ef359ac17b',
+      },
+      companyIdIndex: {
+        universalIdentifier: '30413277-505d-4f08-be38-a56257460f9f',
+      },
+      opportunityIdIndex: {
+        universalIdentifier: '7920092d-281f-473a-8ea4-53c209b36a37',
+      },
       calendarEventPersonUniqueIndex: {
         universalIdentifier: '15b9e394-d451-4186-aaf0-612f6be1ea91',
       },
@@ -634,6 +643,15 @@ export const STANDARD_OBJECTS = {
     indexes: {
       messageThreadIdIndex: {
         universalIdentifier: '222fdd8b-0863-4f2a-816a-29745537b6b6',
+      },
+      personIdIndex: {
+        universalIdentifier: '280ee419-ac3c-4599-bd62-3e5cb268342c',
+      },
+      companyIdIndex: {
+        universalIdentifier: 'b98005e4-3811-41b6-82d0-3ccd27757eba',
+      },
+      opportunityIdIndex: {
+        universalIdentifier: '7679ee05-cf6c-40a7-9ee6-c3e8053caca5',
       },
       messageThreadPersonUniqueIndex: {
         universalIdentifier: '087f97cb-8c3c-4ea1-9556-933acde6c83b',

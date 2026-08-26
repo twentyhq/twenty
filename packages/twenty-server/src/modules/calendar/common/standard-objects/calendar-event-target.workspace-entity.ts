@@ -6,8 +6,8 @@ import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standar
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 export class CalendarEventTargetWorkspaceEntity extends BaseWorkspaceEntity {
-  calendarEvent: EntityRelation<CalendarEventWorkspaceEntity> | null;
-  calendarEventId: string | null;
+  calendarEvent: EntityRelation<CalendarEventWorkspaceEntity>;
+  calendarEventId: string;
   isAutomaticallyAssigned: boolean;
   isManuallyAssigned: boolean;
   targetPerson: EntityRelation<PersonWorkspaceEntity> | null;

@@ -10,6 +10,9 @@ type StandardTargetObjectName = 'calendarEventTarget' | 'messageThreadTarget';
 
 type TargetIndexNames<T extends StandardTargetObjectName> = {
   parentIdIndex: AllStandardObjectIndexName<T>;
+  personIdIndex: AllStandardObjectIndexName<T>;
+  companyIdIndex: AllStandardObjectIndexName<T>;
+  opportunityIdIndex: AllStandardObjectIndexName<T>;
   personUniqueIndex: AllStandardObjectIndexName<T>;
   companyUniqueIndex: AllStandardObjectIndexName<T>;
   opportunityUniqueIndex: AllStandardObjectIndexName<T>;
@@ -24,6 +27,9 @@ type TargetFieldNames<T extends StandardTargetObjectName> = {
 
 type BuiltTargetIndexes = {
   parentIdIndex: FlatIndexMetadata;
+  personIdIndex: FlatIndexMetadata;
+  companyIdIndex: FlatIndexMetadata;
+  opportunityIdIndex: FlatIndexMetadata;
   personUniqueIndex: FlatIndexMetadata;
   companyUniqueIndex: FlatIndexMetadata;
   opportunityUniqueIndex: FlatIndexMetadata;
@@ -45,6 +51,27 @@ export const buildStandardTargetFlatIndexMetadatas = <
     context: {
       indexName: indexNames.parentIdIndex,
       relatedFieldNames: [fieldNames.parent],
+    },
+  }),
+  personIdIndex: createStandardIndexFlatMetadata({
+    ...args,
+    context: {
+      indexName: indexNames.personIdIndex,
+      relatedFieldNames: [fieldNames.person],
+    },
+  }),
+  companyIdIndex: createStandardIndexFlatMetadata({
+    ...args,
+    context: {
+      indexName: indexNames.companyIdIndex,
+      relatedFieldNames: [fieldNames.company],
+    },
+  }),
+  opportunityIdIndex: createStandardIndexFlatMetadata({
+    ...args,
+    context: {
+      indexName: indexNames.opportunityIdIndex,
+      relatedFieldNames: [fieldNames.opportunity],
     },
   }),
   personUniqueIndex: createStandardIndexFlatMetadata({
