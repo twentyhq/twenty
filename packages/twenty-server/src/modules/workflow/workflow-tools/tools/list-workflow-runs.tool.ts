@@ -57,7 +57,7 @@ export const createListWorkflowRunsTool = (
       return await deps.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const workflowRunRepository =
-            await deps.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+            deps.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
               'workflowRun',
               context.rolePermissionConfig,
             );

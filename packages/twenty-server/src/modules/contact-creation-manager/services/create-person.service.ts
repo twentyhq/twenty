@@ -21,7 +21,7 @@ export class CreatePersonService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const personRepository = await this.workspaceOrmManager.getRepository(
+      const personRepository = this.workspaceOrmManager.getRepository(
         PersonWorkspaceEntity,
         { shouldBypassPermissionChecks: true },
       );
@@ -51,7 +51,7 @@ export class CreatePersonService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const personRepository = await this.workspaceOrmManager.getRepository(
+      const personRepository = this.workspaceOrmManager.getRepository(
         PersonWorkspaceEntity,
         {
           shouldBypassPermissionChecks: true,
@@ -83,7 +83,7 @@ export class CreatePersonService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const personRepository = await this.workspaceOrmManager.getRepository(
+      const personRepository = this.workspaceOrmManager.getRepository(
         PersonWorkspaceEntity,
         {
           shouldBypassPermissionChecks: true,

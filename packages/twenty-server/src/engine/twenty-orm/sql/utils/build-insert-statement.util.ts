@@ -1,8 +1,8 @@
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import {
-  TwentyOrmV2Exception,
-  TwentyOrmV2ExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
 export type InsertRowValue =
@@ -30,9 +30,9 @@ const buildReturningClause = (returningColumns: string[]): string => {
 
 export const buildInsertStatement = (state: InsertStatementState): string => {
   if (state.columnNames.length === 0 || state.rows.length === 0) {
-    throw new TwentyOrmV2Exception(
+    throw new TwentyOrmException(
       `An INSERT on "${state.tableShape.nameSingular}" needs at least one column and one row`,
-      TwentyOrmV2ExceptionCode.INVALID_QUERY,
+      TwentyOrmExceptionCode.INVALID_QUERY,
     );
   }
 

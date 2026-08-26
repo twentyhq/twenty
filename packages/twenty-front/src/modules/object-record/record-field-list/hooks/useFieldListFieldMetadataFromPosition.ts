@@ -19,16 +19,12 @@ export const useFieldListFieldMetadataFromPosition = ({
     recordFieldListCellEditModePositionComponentState,
   );
 
-  const {
-    inlineFieldMetadataItems,
-    legacyActivityTargetFieldMetadataItems,
-    boxedRelationFieldMetadataItems,
-  } = useFieldListFieldMetadataItems({
-    objectNameSingular,
-  });
+  const { inlineFieldMetadataItems, boxedRelationFieldMetadataItems } =
+    useFieldListFieldMetadataItems({
+      objectNameSingular,
+    });
 
   const fieldMetadataItems = [
-    ...legacyActivityTargetFieldMetadataItems,
     ...inlineFieldMetadataItems,
     ...boxedRelationFieldMetadataItems,
   ];

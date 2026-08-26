@@ -55,7 +55,7 @@ export class CreateCompanyService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const companyRepository = await this.workspaceOrmManager.getRepository(
+      const companyRepository = this.workspaceOrmManager.getRepository(
         CompanyWorkspaceEntity,
         {
           shouldBypassPermissionChecks: true,

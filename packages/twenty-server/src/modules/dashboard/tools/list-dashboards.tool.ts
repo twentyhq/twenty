@@ -30,10 +30,9 @@ export const createListDashboardsTool = (
 
       const dashboards =
         await deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
-          const repo = await deps.workspaceOrmManager.getRepository(
-            'dashboard',
-            { shouldBypassPermissionChecks: true },
-          );
+          const repo = deps.workspaceOrmManager.getRepository('dashboard', {
+            shouldBypassPermissionChecks: true,
+          });
 
           return repo.find({ take: limit, order: { position: 'ASC' } });
         }, authContext);

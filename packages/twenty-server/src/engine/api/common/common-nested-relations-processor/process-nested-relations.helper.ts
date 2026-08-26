@@ -31,8 +31,7 @@ import {
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace-data-source';
-import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
@@ -60,20 +59,13 @@ type ProcessNestedRelationsArgs<T extends ObjectRecord = ObjectRecord> = {
 
 @Injectable()
 export class ProcessNestedRelationsHelper {
-  constructor(
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-  ) {}
+  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
   public async processNestedRelations<T extends ObjectRecord = ObjectRecord>(
     args: ProcessNestedRelationsArgs<T>,
   ): Promise<void> {
-    const dataSource = this.workspaceDataSourceService.getDataSource({
-      useReplica: args.useReplica ?? false,
-    });
-
     await this.processNestedRelationsWithLimiter(
       args,
-      dataSource,
       createConcurrencyLimiter(NESTED_RELATION_QUERY_MAX_CONCURRENCY),
     );
   }
@@ -95,7 +87,6 @@ export class ProcessNestedRelationsHelper {
       rolePermissionConfig,
       selectedFields,
     }: ProcessNestedRelationsArgs<T>,
-    dataSource: WorkspaceDataSource,
     relationQueryLimiter: ConcurrencyLimiter,
   ): Promise<void> {
     const processRelationTasks = Object.entries(relations).map(
@@ -112,7 +103,6 @@ export class ProcessNestedRelationsHelper {
           limit,
           authContext,
           useReplica,
-          dataSource,
           rolePermissionConfig,
           relationQueryLimiter,
           selectedFields:
@@ -137,7 +127,6 @@ export class ProcessNestedRelationsHelper {
     limit,
     authContext,
     useReplica,
-    dataSource,
     rolePermissionConfig,
     relationQueryLimiter,
     selectedFields,
@@ -154,7 +143,6 @@ export class ProcessNestedRelationsHelper {
     limit: number;
     authContext: WorkspaceAuthContext;
     useReplica: boolean;
-    dataSource: WorkspaceDataSource;
     rolePermissionConfig?: RolePermissionConfig;
     relationQueryLimiter: ConcurrencyLimiter;
     selectedFields: Record<string, unknown>;
@@ -204,9 +192,10 @@ export class ProcessNestedRelationsHelper {
         fieldMaps,
       });
 
-    const targetObjectRepository = dataSource.getRepository(
+    const targetObjectRepository = this.workspaceOrmManager.getRepository(
       targetObjectMetadata.nameSingular,
       rolePermissionConfig,
+      { useReplica },
     );
 
     const targetObjectNameSingular = targetObjectMetadata.nameSingular;
@@ -318,7 +307,6 @@ export class ProcessNestedRelationsHelper {
           rolePermissionConfig,
           selectedFields,
         },
-        dataSource,
         relationQueryLimiter,
       );
     }

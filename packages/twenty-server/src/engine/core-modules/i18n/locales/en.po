@@ -9838,7 +9838,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "The file extension doesn't match the file content. Please check that your file is not corrupted and has the correct extension."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "The file has not been uploaded yet. Please upload it before confirming."
 
@@ -10049,7 +10049,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "The unsubscribe topic this campaign was sent under"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "The uploaded file does not match the declared size. Please retry the upload."
@@ -10341,7 +10341,7 @@ msgid "This field references an object that could not be found"
 msgstr "This field references an object that could not be found"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "This file format is not supported."
 
@@ -10423,11 +10423,6 @@ msgstr "This object permission is already set for the role"
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This operation is not allowed."
 msgstr "This operation is not allowed."
-
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-schema.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "This operation is not allowed. Please try a different approach or contact support if you need assistance."
 
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts

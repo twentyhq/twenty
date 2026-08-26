@@ -1,9 +1,9 @@
 import { In } from 'typeorm';
 
 import {
-  TwentyOrmV2Exception,
-  TwentyOrmV2ExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type ObjectWhereLike } from 'src/engine/twenty-orm/query-builder/types/query-builder.type';
 
@@ -24,9 +24,9 @@ export const applyMutationCriteriaToQueryBuilder = (
 ): WorkspaceSelectQueryBuilder => {
   if (typeof criteria === 'string') {
     if (criteria.length === 0) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         'A mutation criteria id cannot be an empty string',
-        TwentyOrmV2ExceptionCode.INVALID_PARAMETER,
+        TwentyOrmExceptionCode.INVALID_PARAMETER,
       );
     }
 
@@ -37,9 +37,9 @@ export const applyMutationCriteriaToQueryBuilder = (
 
   if (Array.isArray(criteria)) {
     if (criteria.length === 0) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         'A mutation criteria array cannot be empty',
-        TwentyOrmV2ExceptionCode.INVALID_PARAMETER,
+        TwentyOrmExceptionCode.INVALID_PARAMETER,
       );
     }
 
@@ -50,9 +50,9 @@ export const applyMutationCriteriaToQueryBuilder = (
     }
 
     if (!criteria.every(isPlainObject)) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         'A mutation criteria array must be all ids or all where objects',
-        TwentyOrmV2ExceptionCode.INVALID_PARAMETER,
+        TwentyOrmExceptionCode.INVALID_PARAMETER,
       );
     }
 

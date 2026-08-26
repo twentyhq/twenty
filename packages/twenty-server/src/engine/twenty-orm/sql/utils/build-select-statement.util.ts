@@ -6,9 +6,9 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-column-result-alias.util';
 import {
-  TwentyOrmV2Exception,
-  TwentyOrmV2ExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type FindOptionsLike } from 'src/engine/twenty-orm/query-builder/types/query-builder.type';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
@@ -155,9 +155,9 @@ const buildJoinPropertyPath = (
     );
 
     if (!isDefined(joinClause)) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Alias "${currentAlias}" does not belong to this statement`,
-        TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+        TwentyOrmExceptionCode.UNKNOWN_RELATION,
       );
     }
 
@@ -227,9 +227,9 @@ export const buildProjection = (
 
   for (const columnName of selectedColumnNames) {
     if (!isDefined(state.tableShape.columnShapeByColumnName[columnName])) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Column "${columnName}" does not exist on "${state.tableShape.nameSingular}"`,
-        TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
+        TwentyOrmExceptionCode.UNKNOWN_COLUMN,
       );
     }
   }
@@ -433,9 +433,9 @@ export const buildJoinClause = (state: SelectStatementState): string =>
           : undefined);
 
       if (!isDefined(condition)) {
-        throw new TwentyOrmV2Exception(
+        throw new TwentyOrmException(
           `Only to-one relations can be joined; "${joinClause.alias}" is to-many and must be loaded as a separate query`,
-          TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+          TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
         );
       }
 
@@ -502,8 +502,8 @@ export const buildOrderByClause = (state: SelectStatementState): string => {
     .join(', ')}`;
 };
 
-export const LIMIT_PARAMETER_NAME = 'ormV2Limit';
-export const OFFSET_PARAMETER_NAME = 'ormV2Offset';
+export const LIMIT_PARAMETER_NAME = 'ormLimit';
+export const OFFSET_PARAMETER_NAME = 'ormOffset';
 
 export const RESERVED_PARAMETER_NAMES: string[] = [
   LIMIT_PARAMETER_NAME,

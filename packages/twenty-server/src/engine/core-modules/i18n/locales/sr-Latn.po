@@ -3500,18 +3500,6 @@ msgctxt "fieldMetadata.label"
 msgid "Event ID"
 msgstr "ID događaja"
 
-#. js-lingui-id: ygoA2u
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Event name"
-msgstr "Naziv događaja"
-
-#. js-lingui-id: AvDRPM
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Event name"
-msgstr "Naziv događaja"
-
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -9855,7 +9843,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "Ekstenzija datoteke se ne poklapa sa sadržajem datoteke. Proverite da li vaša datoteka nije oštećena i da li ima ispravnu ekstenziju."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "Datoteka još nije otpremljena. Otpremite je pre potvrđivanja."
 
@@ -10066,7 +10054,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "Tema za odjavu pod kojom je ova kampanja poslata"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "Otpremljena datoteka ne odgovara prijavljenoj veličini. Pokušajte ponovo da otpremite datoteku."
@@ -10358,7 +10346,7 @@ msgid "This field references an object that could not be found"
 msgstr "Ovo polje referencira objekat koji nije pronađen"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "Ovaj format datoteke nije podržan."
 
@@ -10440,11 +10428,6 @@ msgstr "Ova dozvola objekta je već dodeljena ulozi"
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This operation is not allowed."
 msgstr "Ova operacija nije dozvoljena."
-
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-datasource.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "Operacija nije dozvoljena. Molimo pokušajte drugačiji pristup ili kontaktirajte podršku ako vam je potrebna pomoć."
 
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
@@ -12441,8 +12424,8 @@ msgid "You can only update one record with files field at once."
 msgstr "Možete istovremeno da ažurirate samo jedan zapis sa poljem datoteka."
 
 #. js-lingui-id: 4ysDL0
-#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
+#: src/engine/twenty-orm/repository/workspace-repository.ts
+#: src/engine/twenty-orm/repository/workspace-repository.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr "Možete ažurirati najviše {QUERY_MAX_RECORDS} zapisa odjednom."
 

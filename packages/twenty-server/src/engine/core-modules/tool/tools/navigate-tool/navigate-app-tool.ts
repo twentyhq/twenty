@@ -335,11 +335,10 @@ export class NavigateAppTool implements Tool {
 
     const records = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const repository =
-          await this.workspaceOrmManager.getRepository<ObjectRecord>(
-            objectNameSingular,
-            { shouldBypassPermissionChecks: true },
-          );
+        const repository = this.workspaceOrmManager.getRepository<ObjectRecord>(
+          objectNameSingular,
+          { shouldBypassPermissionChecks: true },
+        );
 
         return repository.find({
           select: selectColumns,

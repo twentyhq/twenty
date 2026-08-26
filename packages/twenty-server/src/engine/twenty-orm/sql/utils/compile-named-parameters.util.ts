@@ -1,7 +1,7 @@
 import {
-  TwentyOrmV2Exception,
-  TwentyOrmV2ExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 
 export type NamedParameters = Record<string, unknown>;
 
@@ -81,9 +81,9 @@ export const compileNamedParameters = (
     const parameterName = sql.slice(nameStartIndex, nameEndIndex);
 
     if (!(parameterName in parameters)) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Parameter ":${parameterName}" is referenced by the query but was never provided`,
-        TwentyOrmV2ExceptionCode.MISSING_PARAMETER,
+        TwentyOrmExceptionCode.MISSING_PARAMETER,
       );
     }
 
@@ -91,9 +91,9 @@ export const compileNamedParameters = (
 
     if (isSpread) {
       if (!Array.isArray(parameterValue)) {
-        throw new TwentyOrmV2Exception(
+        throw new TwentyOrmException(
           `Parameter ":...${parameterName}" expects an array`,
-          TwentyOrmV2ExceptionCode.INVALID_PARAMETER,
+          TwentyOrmExceptionCode.INVALID_PARAMETER,
         );
       }
 
@@ -137,8 +137,8 @@ const findClosingQuoteIndex = (
     return index;
   }
 
-  throw new TwentyOrmV2Exception(
+  throw new TwentyOrmException(
     `Unterminated ${quote === "'" ? 'string literal' : 'quoted identifier'} in SQL`,
-    TwentyOrmV2ExceptionCode.MALFORMED_SQL,
+    TwentyOrmExceptionCode.MALFORMED_SQL,
   );
 };

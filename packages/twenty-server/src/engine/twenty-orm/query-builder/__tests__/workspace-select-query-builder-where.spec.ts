@@ -1,6 +1,6 @@
 import { And, Equal, In, LessThan, Not } from 'typeorm';
 
-import { TwentyOrmV2Exception } from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { buildQueryBuilder } from 'src/engine/twenty-orm/query-builder/__tests__/workspace-select-query-builder-test-shapes.util';
 
 describe('WorkspaceSelectQueryBuilder where', () => {
@@ -95,8 +95,8 @@ describe('WorkspaceSelectQueryBuilder where', () => {
     const { queryBuilder } = buildQueryBuilder();
 
     expect(() =>
-      queryBuilder.andWhere('"person"."id" = :ormV2Limit', { ormV2Limit: 1 }),
-    ).toThrow(TwentyOrmV2Exception);
+      queryBuilder.andWhere('"person"."id" = :ormLimit', { ormLimit: 1 }),
+    ).toThrow(TwentyOrmException);
   });
 
   it('should render an object-literal where with In as a bound IN clause', () => {
@@ -129,7 +129,7 @@ describe('WorkspaceSelectQueryBuilder where', () => {
     const { queryBuilder } = buildQueryBuilder();
 
     expect(() => queryBuilder.where({ missing: In(['x']) })).toThrow(
-      TwentyOrmV2Exception,
+      TwentyOrmException,
     );
   });
 
