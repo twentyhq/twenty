@@ -13,7 +13,8 @@ vi.mock('twenty-client-sdk/core', () => ({
   },
 }));
 
-vi.mock('twenty-sdk/logic-function', () => ({
+vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
   runAgent: runAgentMock,
 }));
 
@@ -134,6 +135,22 @@ describe('summarize-call-recording logic function', () => {
         },
         id: true,
       },
+    });
+  });
+
+  it('rethrows a generation failure as retryable so the trigger is redelivered', async () => {
+    runAgentMock.mockRejectedValue(new Error('Agent unavailable'));
+
+    await expect(
+      summarizeCallRecordingHandler(
+        buildEvent({
+          name: 'callRecording.updated',
+          updatedFields: ['transcript'],
+        }),
+      ),
+    ).rejects.toMatchObject({
+      name: 'RetryableLogicFunctionError',
+      message: expect.stringContaining('Agent unavailable'),
     });
   });
 
