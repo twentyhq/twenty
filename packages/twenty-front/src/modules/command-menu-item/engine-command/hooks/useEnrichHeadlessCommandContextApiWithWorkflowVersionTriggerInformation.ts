@@ -15,7 +15,7 @@ import { type CommandMenuItemAvailabilityType } from '~/generated-metadata/graph
 
 type WorkflowVersionRecord = Pick<
   WorkflowVersion,
-  'id' | 'workflowId' | 'trigger' | '__typename'
+  'id' | 'workflowId' | '__typename'
 >;
 
 type EnrichParams = {
@@ -31,7 +31,7 @@ export const useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInforma
     const { findOneRecord: findOneWorkflowVersion } =
       useLazyFindOneRecord<WorkflowVersionRecord>({
         objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-        recordGqlFields: { id: true, workflowId: true, trigger: true },
+        recordGqlFields: { id: true, workflowId: true },
       });
 
     const fetchTriggerFromCore = useCallback(
