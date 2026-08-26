@@ -4,7 +4,10 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import {
+  isWorkspaceProvisioned,
+  WorkspaceActivationStatus,
+} from 'twenty-shared/workspace';
 import {
   QueryFailedError,
   Repository,
@@ -502,7 +505,13 @@ export class SignInUpService {
     const { availableWorkspacesForSignUp } =
       await this.userWorkspaceService.findAvailableWorkspacesByEmail(email);
 
-    if (availableWorkspacesForSignUp.length > 0) {
+    // A workspace that is not provisioned yet cannot be joined, so it is not a
+    // destination this sign up could land on.
+    if (
+      availableWorkspacesForSignUp.some(({ workspace }) =>
+        isWorkspaceProvisioned(workspace),
+      )
+    ) {
       return;
     }
 

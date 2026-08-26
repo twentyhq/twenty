@@ -1,6 +1,8 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+
 import { AuthExceptionCode } from 'src/engine/core-modules/auth/auth.exception';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -42,12 +44,14 @@ describe('SignInUpService', () => {
     twentyConfigService.get.mockImplementation((key: string) => values[key]);
   };
 
-  const mockAvailableWorkspacesForSignUp = (count: number) => {
+  const mockAvailableWorkspacesForSignUp = (
+    activationStatuses: WorkspaceActivationStatus[],
+  ) => {
     userWorkspaceService.findAvailableWorkspacesByEmail.mockResolvedValue({
       availableWorkspacesForSignIn: [],
-      availableWorkspacesForSignUp: Array.from({ length: count }, () => ({
-        workspace: {},
-      })),
+      availableWorkspacesForSignUp: activationStatuses.map(
+        (activationStatus) => ({ workspace: { activationStatus } }),
+      ),
     });
   };
 
@@ -60,7 +64,7 @@ describe('SignInUpService', () => {
     };
     twentyConfigService = { get: jest.fn() };
 
-    mockAvailableWorkspacesForSignUp(0);
+    mockAvailableWorkspacesForSignUp([]);
 
     const optionalProviders = [
       WorkspaceInvitationService,
@@ -128,7 +132,42 @@ describe('SignInUpService', () => {
         IS_MULTIWORKSPACE_ENABLED: true,
         IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS: true,
       });
-      mockAvailableWorkspacesForSignUp(1);
+      mockAvailableWorkspacesForSignUp([WorkspaceActivationStatus.ACTIVE]);
+
+      await expect(
+        signInUpService.signUpWithoutWorkspace(
+          SIGN_UP_PARAMS.newUserParams,
+          SIGN_UP_PARAMS.authParams,
+        ),
+      ).resolves.toEqual({ id: 'user-id' });
+    });
+
+    it('should refuse a sign up whose only destination is not provisioned yet', async () => {
+      mockConfig({
+        IS_MULTIWORKSPACE_ENABLED: true,
+        IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS: true,
+      });
+      mockAvailableWorkspacesForSignUp([
+        WorkspaceActivationStatus.PENDING_CREATION,
+      ]);
+
+      await expect(
+        signInUpService.signUpWithoutWorkspace(
+          SIGN_UP_PARAMS.newUserParams,
+          SIGN_UP_PARAMS.authParams,
+        ),
+      ).rejects.toMatchObject({ code: AuthExceptionCode.SIGNUP_DISABLED });
+    });
+
+    it('should allow a sign up into a suspended workspace it can still be a member of', async () => {
+      mockConfig({
+        IS_MULTIWORKSPACE_ENABLED: true,
+        IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS: true,
+      });
+      mockAvailableWorkspacesForSignUp([
+        WorkspaceActivationStatus.PENDING_CREATION,
+        WorkspaceActivationStatus.SUSPENDED,
+      ]);
 
       await expect(
         signInUpService.signUpWithoutWorkspace(
