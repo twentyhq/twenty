@@ -194,6 +194,7 @@ export class FieldMetadataEntity<
   @Column({ nullable: true, type: 'double precision' })
   position: number | null;
 
+  // Default layout visibility (base view); a view's own layout overrides it
   @WasIntroducedInUpgrade({
     upgradeCommandName:
       ADD_FIELD_METADATA_POSITION_AND_VISIBILITY_UPGRADE_COMMAND_NAME,
