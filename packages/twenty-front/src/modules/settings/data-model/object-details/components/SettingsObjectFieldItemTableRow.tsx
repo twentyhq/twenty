@@ -43,6 +43,7 @@ type SettingsObjectFieldItemTableRowProps = {
   status: 'active' | 'disabled';
   mode: 'view' | 'new-field';
   isMostlyEmpty?: boolean;
+  hasDragGripGutter?: boolean;
   showDragGrip?: boolean;
   isVisibleInLayout?: boolean;
   onToggleVisibility?: () => void;
@@ -78,6 +79,11 @@ const StyledGripContainer = styled.span`
   display: flex;
 `;
 
+const StyledGripGutter = styled.span<{ gutterWidth: number }>`
+  display: flex;
+  min-width: ${({ gutterWidth }) => `${gutterWidth}px`};
+`;
+
 const StyledVisibilityToggleContainer = styled.span<{
   isAlwaysShown: boolean;
 }>`
@@ -97,6 +103,7 @@ export const SettingsObjectFieldItemTableRow = ({
   mode,
   status,
   isMostlyEmpty = false,
+  hasDragGripGutter = false,
   showDragGrip = false,
   isVisibleInLayout = true,
   onToggleVisibility,
@@ -215,15 +222,19 @@ export const SettingsObjectFieldItemTableRow = ({
             color={themeCssVariables.font.color.primary}
             gap={themeCssVariables.spacing[2]}
           >
-            {showDragGrip && (
-              <DragDropItemSortableHandle>
-                <StyledGripContainer>
-                  <IconGripVertical
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.sm}
-                  />
-                </StyledGripContainer>
-              </DragDropItemSortableHandle>
+            {hasDragGripGutter && (
+              <StyledGripGutter gutterWidth={theme.icon.size.md}>
+                {showDragGrip && (
+                  <DragDropItemSortableHandle>
+                    <StyledGripContainer>
+                      <IconGripVertical
+                        size={theme.icon.size.md}
+                        stroke={theme.icon.stroke.sm}
+                      />
+                    </StyledGripContainer>
+                  </DragDropItemSortableHandle>
+                )}
+              </StyledGripGutter>
             )}
             {isDefined(Icon) && (
               <Icon

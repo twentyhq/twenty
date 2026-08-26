@@ -235,6 +235,7 @@ export const SettingsObjectFieldTable = ({
           status={status}
           mode={mode}
           isMostlyEmpty={mostlyEmptyFieldMetadataIds.has(fieldMetadataId)}
+          hasDragGripGutter={isReorderEnabled}
           showDragGrip={isReorderEnabled && isLayoutManageableField}
           isVisibleInLayout={
             isLabelIdentifierField ||
