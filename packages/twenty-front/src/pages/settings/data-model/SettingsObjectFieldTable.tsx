@@ -130,8 +130,6 @@ export const SettingsObjectFieldTable = ({
   const { performViewFieldAPICreate, performViewFieldAPIUpdate } =
     usePerformViewFieldAPIPersist();
 
-  // Overlay applied while viewField writes are in flight, so rows do not snap
-  // back before the view state carries the persisted values.
   const [pendingLayoutByFieldMetadataId, setPendingLayoutByFieldMetadataId] =
     useState<Map<string, PendingViewFieldLayout>>(new Map());
 
@@ -354,16 +352,24 @@ export const SettingsObjectFieldTable = ({
     );
     const movedField = visibleFields[result.source.index];
 
-    if (!isDefined(movedField)) {
+    if (
+      !isDefined(movedField) ||
+      movedField.id === objectMetadataItem.labelIdentifierFieldMetadataId
+    ) {
       return;
     }
 
     const visibleFieldsWithoutMoved = visibleFields.filter(
       (field) => field.id !== movedField.id,
     );
+    const firstVisibleField = visibleFieldsWithoutMoved[0];
     const precedingField =
       result.destination.index === 0
-        ? null
+        ? isDefined(firstVisibleField) &&
+          firstVisibleField.id ===
+            objectMetadataItem.labelIdentifierFieldMetadataId
+          ? firstVisibleField
+          : null
         : (visibleFieldsWithoutMoved[result.destination.index - 1] ?? null);
 
     const positionUpdates = computeFieldMetadataLayoutPositionUpdates({
@@ -390,6 +396,8 @@ export const SettingsObjectFieldTable = ({
   const fieldTableRows = filteredItems.map(
     (objectSettingsDetailItem, index) => {
       const fieldMetadataId = objectSettingsDetailItem.fieldMetadataItem.id;
+      const isLabelIdentifierField =
+        fieldMetadataId === objectMetadataItem.labelIdentifierFieldMetadataId;
       const status = objectSettingsDetailItem.fieldMetadataItem.isActive
         ? 'active'
         : 'disabled';
@@ -401,10 +409,13 @@ export const SettingsObjectFieldTable = ({
           status={status}
           mode={mode}
           isMostlyEmpty={mostlyEmptyFieldMetadataIds.has(fieldMetadataId)}
-          showDragGrip={isReorderEnabled}
-          isVisibleInLayout={getEffectiveLayout(fieldMetadataId).isVisible}
+          showDragGrip={isReorderEnabled && !isLabelIdentifierField}
+          isVisibleInLayout={
+            isLabelIdentifierField ||
+            getEffectiveLayout(fieldMetadataId).isVisible
+          }
           onToggleVisibility={
-            isLayoutEditable
+            isLayoutEditable && !isLabelIdentifierField
               ? () => handleToggleFieldVisibility(fieldMetadataId)
               : undefined
           }
@@ -420,6 +431,7 @@ export const SettingsObjectFieldTable = ({
           key={fieldMetadataId}
           draggableId={fieldMetadataId}
           index={index}
+          isDragDisabled={isLabelIdentifierField}
           itemComponent={row}
         />
       );
