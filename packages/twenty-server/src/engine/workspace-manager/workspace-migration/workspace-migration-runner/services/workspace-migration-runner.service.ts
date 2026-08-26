@@ -114,11 +114,25 @@ export class WorkspaceMigrationRunnerService {
       legacyCacheKeyBatches,
     } = this.getLegacyCacheInvalidation(allFlatEntityMapsKeys);
 
+    const cacheKeyNamesToInvalidate = [
+      ...allFlatEntityMapsKeys,
+      ...legacyCacheKeyBatches.flat(),
+    ];
+
+    // Flush before resolving the fetch plan: if a fetch fails, every key is
+    // empty and the next getOrRecompute rebuilds it, instead of the whole
+    // batch keeping pre-migration data under a valid hash. The flush inside
+    // each invalidateAndRecompute below is then an idempotent no-op.
+    await this.workspaceCacheService.flush(
+      workspaceId,
+      cacheKeyNamesToInvalidate,
+    );
+
     const recomputeContext =
-      await this.workspaceCacheService.prepareRecomputeContext(workspaceId, [
-        ...allFlatEntityMapsKeys,
-        ...legacyCacheKeyBatches.flat(),
-      ]);
+      await this.workspaceCacheService.prepareRecomputeContext(
+        workspaceId,
+        cacheKeyNamesToInvalidate,
+      );
 
     await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
       workspaceId,
