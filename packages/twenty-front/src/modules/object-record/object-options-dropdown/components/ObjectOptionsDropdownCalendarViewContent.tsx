@@ -62,11 +62,11 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
   ];
 
   const handleCalendarViewChange = async (calendarView: ViewCalendarLayout) => {
-    const isTimeGridLayout =
+    const isWeekOrDayLayout =
       calendarView === ViewCalendarLayout.DAY ||
       calendarView === ViewCalendarLayout.WEEK;
 
-    if (isTimeGridLayout && !isCalendarWeekViewEnabled) {
+    if (isWeekOrDayLayout && !isCalendarWeekViewEnabled) {
       return;
     }
 

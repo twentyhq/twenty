@@ -12,16 +12,16 @@ const mockSetRecordIndexCalendarLayout = jest.fn();
 const mockUpdateCurrentView = jest.fn();
 const mockUseAtomComponentState = jest.fn();
 const mockUseAtomStateValue = jest.fn();
-const mockUseRecordCalendarWeekDaysRange = jest.fn();
+const mockUseRecordCalendarDaysRange = jest.fn();
 
 jest.mock('@/localization/hooks/useDateTimeFormat', () => ({
   useDateTimeFormat: jest.fn(() => ({ timeZone: 'UTC' })),
 }));
 jest.mock(
-  '@/object-record/record-calendar/week/hooks/useRecordCalendarWeekDaysRange',
+  '@/object-record/record-calendar/hooks/useRecordCalendarDaysRange',
   () => ({
-    useRecordCalendarWeekDaysRange: (...args: unknown[]) =>
-      mockUseRecordCalendarWeekDaysRange(...args),
+    useRecordCalendarDaysRange: (...args: unknown[]) =>
+      mockUseRecordCalendarDaysRange(...args),
   }),
 );
 jest.mock(
@@ -117,9 +117,9 @@ describe('RecordCalendarTopBar', () => {
       locale: 'en-US',
       localeCatalog: enUS,
     });
-    mockUseRecordCalendarWeekDaysRange.mockReturnValue({
-      firstDayOfWeek: Temporal.PlainDate.from('2026-07-13'),
-      lastDayOfWeek: Temporal.PlainDate.from('2026-07-19'),
+    mockUseRecordCalendarDaysRange.mockReturnValue({
+      firstDay: Temporal.PlainDate.from('2026-07-13'),
+      lastDay: Temporal.PlainDate.from('2026-07-19'),
     });
   });
 
@@ -134,7 +134,7 @@ describe('RecordCalendarTopBar', () => {
         screen.getByTestId('layout-select').querySelectorAll('option'),
       ).map((option) => option.textContent),
     ).toEqual(['Day', 'Week', 'Month']);
-    expect(screen.queryByTestId('time-zone')).not.toBeInTheDocument();
+    expect(screen.getByTestId('time-zone')).toBeInTheDocument();
   });
 
   it('navigates the Day layout one day at a time', () => {

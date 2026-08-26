@@ -3,8 +3,8 @@ import { RecordCalendarComponentInstanceContext } from '@/object-record/record-c
 import { isRecordCalendarReadOnlyComponentState } from '@/object-record/record-calendar/states/isRecordCalendarReadOnlyComponentState';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { getSupportedRecordCalendarLayout } from '@/object-record/record-calendar/utils/getSupportedRecordCalendarLayout';
-import { useRecordCalendarWeekDaysRange } from '@/object-record/record-calendar/week/hooks/useRecordCalendarWeekDaysRange';
-import { formatRecordCalendarWeekRange } from '@/object-record/record-calendar/week/utils/formatRecordCalendarWeekRange';
+import { useRecordCalendarDaysRange } from '@/object-record/record-calendar/hooks/useRecordCalendarDaysRange';
+import { formatRecordCalendarWeekRange } from '@/object-record/record-calendar/utils/formatRecordCalendarWeekRange';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { DatePickerWithoutCalendar } from '@/ui/input/components/internal/date/components/DatePickerWithoutCalendar';
@@ -97,9 +97,11 @@ export const RecordCalendarTopBar = () => {
 
   const dateLocale = useAtomStateValue(dateLocaleState);
   const { timeZone } = useDateTimeFormat();
-  const { firstDayOfWeek, lastDayOfWeek } = useRecordCalendarWeekDaysRange(
-    recordCalendarSelectedDate,
-  );
+  const { firstDay: firstDayOfWeek, lastDay: lastDayOfWeek } =
+    useRecordCalendarDaysRange(
+      recordCalendarSelectedDate,
+      supportedCalendarLayout,
+    );
 
   const { updateCurrentView } = useUpdateCurrentView();
 
@@ -136,11 +138,11 @@ export const RecordCalendarTopBar = () => {
   };
 
   const handleCalendarLayoutChange = (calendarLayout: ViewCalendarLayout) => {
-    const isTimeGridLayout =
+    const isWeekOrDayLayout =
       calendarLayout === ViewCalendarLayout.DAY ||
       calendarLayout === ViewCalendarLayout.WEEK;
 
-    if (isTimeGridLayout && !isCalendarWeekViewEnabled) {
+    if (isWeekOrDayLayout && !isCalendarWeekViewEnabled) {
       return;
     }
 
@@ -217,9 +219,7 @@ export const RecordCalendarTopBar = () => {
           }
           dropdownOffset={dropdownContentOffset}
         />
-        {supportedCalendarLayout === ViewCalendarLayout.MONTH && (
-          <TimeZoneAbbreviation instant={Temporal.Now.instant()} />
-        )}
+        <TimeZoneAbbreviation instant={Temporal.Now.instant()} />
       </StyledLeftSection>
 
       <StyledNavigationSection>

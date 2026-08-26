@@ -169,6 +169,7 @@ export const useRecordTableWidgetLayoutCallbacks = ({
       view: {
         ...widgetViewDraft.view,
         calendarFieldMetadataId: fieldMetadataItem.id,
+        calendarEndFieldMetadataId: null,
         calendarLayout: resolveCalendarLayout(
           widgetViewDraft.view.calendarLayout,
         ),

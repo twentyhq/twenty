@@ -126,12 +126,7 @@ export const ObjectOptionsDropdownCustomView = ({
     'Visibility',
     'Fields',
     ...(customViewData?.type === ViewType.CALENDAR
-      ? [
-          isCalendarWeekViewEnabled
-            ? 'CalendarDateFields'
-            : 'CalendarDateField',
-          'CalendarView',
-        ]
+      ? ['CalendarDateField', 'CalendarView']
       : []),
     ...(customViewData?.type !== ViewType.CALENDAR ? ['Group'] : []),
     'Delete view',
@@ -195,51 +190,27 @@ export const ObjectOptionsDropdownCustomView = ({
         <DropdownMenuItemsContainer scrollable={false}>
           {customViewData?.type === ViewType.CALENDAR && (
             <>
-              {isCalendarWeekViewEnabled ? (
-                <div id="calendar-date-fields-picker-menu-item">
-                  <SelectableListItem
-                    itemId="CalendarDateFields"
-                    onEnter={() => onContentChange('calendarDateFields')}
-                  >
-                    <MenuItem
-                      focused={selectedItemId === 'CalendarDateFields'}
-                      onClick={() => onContentChange('calendarDateFields')}
-                      LeftIcon={IconCalendar}
-                      text={t`Date fields`}
-                      contextualText={
-                        isDefaultView
-                          ? t`Not available on Default View`
-                          : calendarFieldMetadata?.label
-                      }
-                      contextualTextPosition="right"
-                      hasSubMenu
-                      disabled={isDefaultView}
-                    />
-                  </SelectableListItem>
-                </div>
-              ) : (
-                <div id="calendar-date-field-picker-menu-item">
-                  <SelectableListItem
-                    itemId="CalendarDateField"
-                    onEnter={() => onContentChange('calendarFields')}
-                  >
-                    <MenuItem
-                      focused={selectedItemId === 'CalendarDateField'}
-                      onClick={() => onContentChange('calendarFields')}
-                      LeftIcon={IconCalendar}
-                      text={t`Date field`}
-                      contextualText={
-                        isDefaultView
-                          ? t`Not available on Default View`
-                          : calendarFieldMetadata?.label
-                      }
-                      contextualTextPosition="right"
-                      hasSubMenu
-                      disabled={isDefaultView}
-                    />
-                  </SelectableListItem>
-                </div>
-              )}
+              <div id="calendar-date-field-picker-menu-item">
+                <SelectableListItem
+                  itemId="CalendarDateField"
+                  onEnter={() => onContentChange('calendarFields')}
+                >
+                  <MenuItem
+                    focused={selectedItemId === 'CalendarDateField'}
+                    onClick={() => onContentChange('calendarFields')}
+                    LeftIcon={IconCalendar}
+                    text={t`Date field`}
+                    contextualText={
+                      isDefaultView
+                        ? t`Not available on Default View`
+                        : calendarFieldMetadata?.label
+                    }
+                    contextualTextPosition="right"
+                    hasSubMenu
+                    disabled={isDefaultView}
+                  />
+                </SelectableListItem>
+              </div>
               <SelectableListItem
                 itemId="CalendarView"
                 onEnter={() => onContentChange('calendarView')}
