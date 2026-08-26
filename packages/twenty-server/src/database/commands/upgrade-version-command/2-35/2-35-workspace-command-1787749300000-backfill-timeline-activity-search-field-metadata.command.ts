@@ -113,19 +113,21 @@ export class BackfillTimelineActivitySearchFieldMetadataCommand extends Provisio
         })
       ];
 
-    const isSearchVectorColumnMissing = isDefined(searchVectorFlatFieldMetadata)
-      ? !(await this.searchVectorColumnExists({
+    // When the field metadata itself is missing, the create path recreates the
+    // column; only probe the schema for a field the metadata claims to have.
+    const searchVectorColumnExists = isDefined(searchVectorFlatFieldMetadata)
+      ? await this.checkSearchVectorColumnExists({
           dataSource,
           workspaceId,
           timelineActivityFlatObjectMetadata,
           columnName: searchVectorFlatFieldMetadata.name,
-        }))
-      : false;
+        })
+      : true;
 
     if (
       isDefined(standardFlatSearchFieldMetadata) &&
       isDefined(searchVectorFlatFieldMetadata) &&
-      !isSearchVectorColumnMissing
+      searchVectorColumnExists
     ) {
       this.logger.log(
         `timelineActivity search vector already indexes linkedRecordCachedName for workspace ${workspaceId}, skipping`,
@@ -142,7 +144,7 @@ export class BackfillTimelineActivitySearchFieldMetadataCommand extends Provisio
         ...(isDefined(searchVectorFlatFieldMetadata)
           ? []
           : ['searchVector field']),
-        ...(isSearchVectorColumnMissing ? ['searchVector column'] : []),
+        ...(searchVectorColumnExists ? [] : ['searchVector column']),
       ].join(' and ')} for workspace ${workspaceId}`,
     );
 
@@ -240,7 +242,7 @@ export class BackfillTimelineActivitySearchFieldMetadataCommand extends Provisio
     );
   }
 
-  private async searchVectorColumnExists({
+  private async checkSearchVectorColumnExists({
     dataSource,
     workspaceId,
     timelineActivityFlatObjectMetadata,
