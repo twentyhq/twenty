@@ -1,4 +1,4 @@
-import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
+import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
 import { isCallRecordingTranscriptStatusMarker } from 'twenty-shared/utils';
 import { CallRecordingStatus } from '~/generated/graphql';
 
@@ -8,7 +8,7 @@ const UNAVAILABLE_CALL_RECORDING_STATUSES = new Set<CallRecordingStatus>([
 ]);
 
 export const isCallRecordingTranscriptFailed = (
-  callRecording: CalendarEventCallRecordingCandidate,
+  callRecording: WidgetCallRecordingCandidate,
 ): boolean =>
   UNAVAILABLE_CALL_RECORDING_STATUSES.has(callRecording.status) ||
   (isCallRecordingTranscriptStatusMarker(callRecording.transcript) &&

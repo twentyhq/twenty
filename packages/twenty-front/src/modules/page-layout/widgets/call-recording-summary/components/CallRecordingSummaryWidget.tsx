@@ -1,15 +1,16 @@
-import { CallRecordingWidgetUnavailableDisplay } from '@/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetUnavailableDisplay';
-import { useIsCalendarEventCallRecordingWidgetVisible } from '@/page-layout/widgets/calendar-event-call-recording/hooks/useIsCalendarEventCallRecordingWidgetVisible';
+import { CallRecordingWidgetUnavailableDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetUnavailableDisplay';
+import { useCallRecordingWidgetUnavailableReason } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingWidgetUnavailableReason';
 import { CallRecordingSummaryWidgetContent } from '@/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryWidgetContent';
 import { StyledWidgetScrollContainer } from '@/ui/layout/components/WidgetContentContainer';
+import { isDefined } from 'twenty-shared/utils';
 
 export const CallRecordingSummaryWidget = () => {
-  const isWidgetVisible = useIsCalendarEventCallRecordingWidgetVisible();
+  const unavailableReason = useCallRecordingWidgetUnavailableReason();
 
-  if (!isWidgetVisible) {
+  if (isDefined(unavailableReason)) {
     return (
       <StyledWidgetScrollContainer>
-        <CallRecordingWidgetUnavailableDisplay />
+        <CallRecordingWidgetUnavailableDisplay reason={unavailableReason} />
       </StyledWidgetScrollContainer>
     );
   }

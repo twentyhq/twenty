@@ -1,4 +1,4 @@
-import { isCallRecordingTranscriptPending } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingTranscriptPending';
+import { isCallRecordingTranscriptPending } from '@/page-layout/widgets/call-recording/utils/isCallRecordingTranscriptPending';
 import { CallRecordingStatus } from '~/generated/graphql';
 
 const createCallRecording = ({
