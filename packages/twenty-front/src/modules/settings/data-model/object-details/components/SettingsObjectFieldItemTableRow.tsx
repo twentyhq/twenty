@@ -22,6 +22,8 @@ import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   IconChevronRight,
+  IconEyeOff,
+  IconGripVertical,
   IconMinus,
   IconPlus,
   useIcons,
@@ -40,6 +42,9 @@ type SettingsObjectFieldItemTableRowProps = {
   status: 'active' | 'disabled';
   mode: 'view' | 'new-field';
   isMostlyEmpty?: boolean;
+  showDragGrip?: boolean;
+  isVisibleInLayout?: boolean;
+  onToggleVisibility?: () => void;
 };
 
 export const OBJECT_FIELD_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
@@ -65,11 +70,36 @@ const StyledIconChevronRightContainer = styled.span`
   display: flex;
 `;
 
+const StyledGripContainer = styled.span`
+  align-items: center;
+  color: ${themeCssVariables.font.color.extraLight};
+  cursor: grab;
+  display: flex;
+`;
+
+const StyledRowWrapper = styled.div`
+  .settings-field-visibility-toggle {
+    opacity: 0;
+  }
+
+  &:hover .settings-field-visibility-toggle {
+    opacity: 1;
+  }
+`;
+
+const StyledVisibilityToggleContainer = styled.span`
+  align-items: center;
+  display: flex;
+`;
+
 export const SettingsObjectFieldItemTableRow = ({
   settingsObjectDetailTableItem,
   mode,
   status,
   isMostlyEmpty = false,
+  showDragGrip = false,
+  isVisibleInLayout = true,
+  onToggleVisibility,
 }: SettingsObjectFieldItemTableRowProps) => {
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
@@ -134,6 +164,14 @@ export const SettingsObjectFieldItemTableRow = ({
     { objectMetadataItemId: objectMetadataItem.id },
   );
 
+  const handleToggleVisibility = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    event.stopPropagation();
+    event.preventDefault();
+    onToggleVisibility?.();
+  };
+
   const handleToggleField = () => {
     setSettingsObjectFields((previousFields) => {
       const newFields = isDefined(previousFields)
@@ -167,125 +205,155 @@ export const SettingsObjectFieldItemTableRow = ({
       : relationObjectMetadataItem?.labelPlural;
 
   return (
-    <TableRow
-      gridTemplateColumns={OBJECT_FIELD_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
-      onClick={mode === 'view' ? navigateToFieldEdit : undefined}
-    >
-      <UndecoratedLink to={linkToNavigate}>
-        <TableCell
-          color={themeCssVariables.font.color.primary}
-          gap={themeCssVariables.spacing[2]}
-        >
-          {isDefined(Icon) && (
-            <Icon
-              style={{
-                minWidth: theme.icon.size.md,
-              }}
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.sm}
-            />
-          )}
-          <StyledNameContainer>
-            <StyledNameLabel title={fieldMetadataItem.label}>
-              {fieldMetadataItem.label}
-            </StyledNameLabel>
-            {!fieldMetadataItem.isActive && (
-              <SettingsNameCellSecondaryLabel>
-                {t`Deactivated`}
-              </SettingsNameCellSecondaryLabel>
-            )}
-            {fieldMetadataItem.isActive && isMostlyEmpty && (
-              <>
-                <SettingsNameCellSecondaryLabel id={mostlyEmptyLabelId}>
-                  {t`Mostly empty`}
-                </SettingsNameCellSecondaryLabel>
-                <AppTooltip
-                  anchorSelect={`#${mostlyEmptyLabelId}`}
-                  content={t`Appears filled in fewer than 5% of ${objectMetadataItem.labelPlural}. Fields that stay empty can be deactivated.`}
-                  delay={TooltipDelay.shortDelay}
-                />
-              </>
-            )}
-          </StyledNameContainer>
-        </TableCell>
-      </UndecoratedLink>
-
-      <TableCell>
-        <SettingsItemTypeTag
-          item={{
-            applicationId: fieldMetadataItem.applicationId,
-          }}
-        />
-      </TableCell>
-      <TableCell>
-        <SettingsObjectFieldDataType
-          Icon={RelationIcon}
-          label={label}
-          labelDetail={
-            fieldMetadataItem.settings?.type === 'percentage' ? '%' : undefined
-          }
-          to={
-            isRelatedObjectLinkable
-              ? getSettingsPath(SettingsPath.Objects, {
-                  objectNamePlural: relationObjectMetadataItem.namePlural,
-                })
-              : undefined
-          }
-          value={fieldType}
-          onClick={(e) => {
-            if (isRelatedObjectLinkable) {
-              e.stopPropagation();
-            }
-          }}
-        />
-      </TableCell>
-      <TableCell
-        align="center"
-        padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+    <StyledRowWrapper>
+      <TableRow
+        gridTemplateColumns={OBJECT_FIELD_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+        onClick={mode === 'view' ? navigateToFieldEdit : undefined}
       >
-        {status === 'active' ? (
-          mode === 'view' ? (
-            <UndecoratedLink to={linkToNavigate}>
-              <StyledIconChevronRightContainer>
-                <IconChevronRight
+        <UndecoratedLink to={linkToNavigate}>
+          <TableCell
+            color={themeCssVariables.font.color.primary}
+            gap={themeCssVariables.spacing[2]}
+          >
+            {showDragGrip && (
+              <StyledGripContainer>
+                <IconGripVertical
                   size={theme.icon.size.md}
                   stroke={theme.icon.stroke.sm}
                 />
-              </StyledIconChevronRightContainer>
-            </UndecoratedLink>
-          ) : (
-            canToggleField && (
-              <LightIconButton
-                Icon={IconMinus}
-                accent="tertiary"
-                onClick={handleToggleField}
+              </StyledGripContainer>
+            )}
+            {isDefined(Icon) && (
+              <Icon
+                style={{
+                  minWidth: theme.icon.size.md,
+                }}
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
               />
+            )}
+            <StyledNameContainer>
+              <StyledNameLabel title={fieldMetadataItem.label}>
+                {fieldMetadataItem.label}
+              </StyledNameLabel>
+              {!fieldMetadataItem.isActive && (
+                <SettingsNameCellSecondaryLabel>
+                  {t`Deactivated`}
+                </SettingsNameCellSecondaryLabel>
+              )}
+              {fieldMetadataItem.isActive && isMostlyEmpty && (
+                <>
+                  <SettingsNameCellSecondaryLabel id={mostlyEmptyLabelId}>
+                    {t`Mostly empty`}
+                  </SettingsNameCellSecondaryLabel>
+                  <AppTooltip
+                    anchorSelect={`#${mostlyEmptyLabelId}`}
+                    content={t`Appears filled in fewer than 5% of ${objectMetadataItem.labelPlural}. Fields that stay empty can be deactivated.`}
+                    delay={TooltipDelay.shortDelay}
+                  />
+                </>
+              )}
+              {isDefined(onToggleVisibility) && canToggleField && (
+                <StyledVisibilityToggleContainer
+                  className={
+                    isVisibleInLayout
+                      ? 'settings-field-visibility-toggle'
+                      : undefined
+                  }
+                >
+                  <LightIconButton
+                    Icon={IconEyeOff}
+                    accent={isVisibleInLayout ? 'tertiary' : 'secondary'}
+                    onClick={handleToggleVisibility}
+                  />
+                </StyledVisibilityToggleContainer>
+              )}
+            </StyledNameContainer>
+          </TableCell>
+        </UndecoratedLink>
+
+        <TableCell>
+          <SettingsItemTypeTag
+            item={{
+              applicationId: fieldMetadataItem.applicationId,
+            }}
+          />
+        </TableCell>
+        <TableCell>
+          <SettingsObjectFieldDataType
+            Icon={RelationIcon}
+            label={label}
+            labelDetail={
+              fieldMetadataItem.settings?.type === 'percentage'
+                ? '%'
+                : undefined
+            }
+            to={
+              isRelatedObjectLinkable
+                ? getSettingsPath(SettingsPath.Objects, {
+                    objectNamePlural: relationObjectMetadataItem.namePlural,
+                  })
+                : undefined
+            }
+            value={fieldType}
+            onClick={(e) => {
+              if (isRelatedObjectLinkable) {
+                e.stopPropagation();
+              }
+            }}
+          />
+        </TableCell>
+        <TableCell
+          align="center"
+          padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+        >
+          {status === 'active' ? (
+            mode === 'view' ? (
+              <UndecoratedLink to={linkToNavigate}>
+                <StyledIconChevronRightContainer>
+                  <IconChevronRight
+                    size={theme.icon.size.md}
+                    stroke={theme.icon.stroke.sm}
+                  />
+                </StyledIconChevronRightContainer>
+              </UndecoratedLink>
+            ) : (
+              canToggleField && (
+                <LightIconButton
+                  Icon={IconMinus}
+                  accent="tertiary"
+                  onClick={handleToggleField}
+                />
+              )
             )
-          )
-        ) : mode === 'view' ? (
-          <SettingsObjectFieldInactiveActionDropdown
-            isCustomField={getIsMetadataItemCustom(fieldMetadataItem)}
-            isSystemField={fieldMetadataItem.isSystem === true}
-            readonly={readonly}
-            fieldMetadataItemId={fieldMetadataItem.id}
-            onEdit={navigateToFieldEdit}
-            onActivate={() =>
-              activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id)
-            }
-            onDelete={() =>
-              deleteOneFieldMetadataItem({
-                idToDelete: fieldMetadataItem.id,
-              })
-            }
-          />
-        ) : (
-          <LightIconButton
-            Icon={IconPlus}
-            accent="tertiary"
-            onClick={handleToggleField}
-          />
-        )}
-      </TableCell>
-    </TableRow>
+          ) : mode === 'view' ? (
+            <SettingsObjectFieldInactiveActionDropdown
+              isCustomField={getIsMetadataItemCustom(fieldMetadataItem)}
+              isSystemField={fieldMetadataItem.isSystem === true}
+              readonly={readonly}
+              fieldMetadataItemId={fieldMetadataItem.id}
+              onEdit={navigateToFieldEdit}
+              onActivate={() =>
+                activateMetadataField(
+                  fieldMetadataItem.id,
+                  objectMetadataItem.id,
+                )
+              }
+              onDelete={() =>
+                deleteOneFieldMetadataItem({
+                  idToDelete: fieldMetadataItem.id,
+                })
+              }
+            />
+          ) : (
+            <LightIconButton
+              Icon={IconPlus}
+              accent="tertiary"
+              onClick={handleToggleField}
+            />
+          )}
+        </TableCell>
+      </TableRow>
+    </StyledRowWrapper>
   );
 };
