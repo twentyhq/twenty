@@ -9,8 +9,8 @@ import { buildRegistryCdnUrl } from 'src/engine/core-modules/application/applica
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const MAX_REGISTRY_ASSET_SIZE_BYTES = 10 * 1024 * 1024; // 10Mb
-const REGISTRY_SEARCH_PAGE_SIZE = 250; // npm search API hard-caps size at 250
-const REGISTRY_SEARCH_MAX_RESULTS = 10_000; // npm search API rejects offsets beyond 10k
+const REGISTRY_SEARCH_PAGE_SIZE = 250;
+const REGISTRY_SEARCH_MAX_RESULTS = 10_000;
 
 export type RegistryPackageInfo = {
   name: string;
@@ -117,8 +117,6 @@ export class MarketplaceService {
     try {
       let from = 0;
 
-      // Guards against an infinite loop on its own, whatever the pages hold:
-      // every continued iteration advances from by a full page.
       while (from < REGISTRY_SEARCH_MAX_RESULTS) {
         const { data } = await axios.get(
           `${registryUrl}/-/v1/search?text=keywords:twenty-app&size=${REGISTRY_SEARCH_PAGE_SIZE}&from=${from}`,
@@ -143,7 +141,6 @@ export class MarketplaceService {
         for (const result of objects) {
           const { name, version, description, author, links } = result.package;
 
-          // Results can shift between pages; keep the first occurrence.
           if (!packageInfoByName.has(name)) {
             packageInfoByName.set(name, {
               name,
