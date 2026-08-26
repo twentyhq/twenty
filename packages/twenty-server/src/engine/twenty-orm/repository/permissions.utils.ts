@@ -10,7 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type LiteFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/lite-flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   PermissionsException,
@@ -37,7 +37,7 @@ type ValidateOperationIsPermittedOrThrowArgs = {
   operationType: OperationType;
   objectsPermissions: ObjectsPermissions;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   objectIdByNameSingular: Record<string, string>;
   selectedColumns: string[] | '*';
   allFieldsSelected: boolean;
@@ -243,7 +243,7 @@ const buildFieldPermissionDeniedMessage = ({
   column: string;
   fieldMetadataId: string;
   entityName: string;
-  flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): string => {
   const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: fieldMetadataId,
@@ -266,7 +266,7 @@ const validateReadFieldPermissionOrThrow = ({
   selectedColumns: string[] | '*';
   columnNameToFieldMetadataIdMap: Record<string, string>;
   entityName: string;
-  flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   allFieldsSelected?: boolean;
 }) => {
   const noReadRestrictions =
@@ -319,7 +319,7 @@ const validateUpdateFieldPermissionOrThrow = ({
   updatedColumns: string[];
   columnNameToFieldMetadataIdMap: Record<string, string>;
   entityName: string;
-  flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }) => {
   if (isEmpty(restrictedFields)) {
     return;

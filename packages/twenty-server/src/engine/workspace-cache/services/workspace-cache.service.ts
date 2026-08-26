@@ -64,14 +64,14 @@ const MIN_IDLE_BEFORE_PACKING_MS = 60 * 1000;
 const MAX_LOCAL_ENTRIES_BY_KEY_NAME = new Map<string, number>([
   ['ORMEntityMetadatas', 128],
   ['flatFieldMetadataMaps', 256],
-  ['flatFieldMetadataMapsLite', 512],
+  ['flatFieldMetadataMapsOrm', 512],
 ]);
 // Derived caches that must be flushed/recomputed whenever their source key is invalidated. Keeps
 // the projection coherent from a single place instead of every metadata-mutation call site.
 const DERIVED_SIBLING_CACHE_KEYS: Partial<
   Record<WorkspaceCacheKeyName, WorkspaceCacheKeyName[]>
 > = {
-  flatFieldMetadataMaps: ['flatFieldMetadataMapsLite'],
+  flatFieldMetadataMaps: ['flatFieldMetadataMapsOrm'],
 };
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
 type StoredCacheDataType = WorkspaceCacheStoredDataMap[WorkspaceCacheKeyName];

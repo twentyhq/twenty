@@ -5,7 +5,7 @@ import {
 import { type EntityMetadata } from 'typeorm';
 
 import { type CompactFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/compact-flat-field-metadata-maps.type';
-import { type LiteFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/lite-flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type ResolverNameMapEntry } from 'src/engine/api/graphql/direct-execution/utils/build-resolver-name-map.util';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
@@ -28,9 +28,9 @@ export type AdditionalCacheDataMaps = {
   apiKeyMap: Record<string, FlatApiKey>;
   flatApplicationMaps: FlatApplicationCacheMaps;
   ORMEntityMetadatas: EntityMetadata[];
-  // Lite projection of flatFieldMetadataMaps for the record query/execution path. Recomputed and
+  // ORM projection of flatFieldMetadataMaps for the record query/execution path. Recomputed and
   // invalidated as a derived sibling of flatFieldMetadataMaps (see WorkspaceCacheService).
-  flatFieldMetadataMapsLite: FlatEntityMaps<LiteFlatFieldMetadata>;
+  flatFieldMetadataMapsOrm: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;

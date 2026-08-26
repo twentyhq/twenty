@@ -1,7 +1,7 @@
 import { type CompositeType } from 'twenty-shared/types';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type LiteFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/lite-flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import {
@@ -11,7 +11,7 @@ import {
 
 export function getFieldMetadataIdToColumnNamesMap(
   flatObjectMetadata: FlatObjectMetadata,
-  flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
 ) {
   const fieldMetadataToColumnNamesMap = new Map<string, string[]>();
 
@@ -22,7 +22,7 @@ export function getFieldMetadataIdToColumnNamesMap(
       compositeType,
     }: {
       fieldMetadataId: string;
-      fieldMetadata: LiteFlatFieldMetadata;
+      fieldMetadata: OrmFlatFieldMetadata;
       compositeType: CompositeType;
     }) => {
       compositeType.properties.forEach((compositeProperty) => {
@@ -54,7 +54,7 @@ export function getFieldMetadataIdToColumnNamesMap(
       columnName,
     }: {
       fieldMetadataId: string;
-      fieldMetadata: LiteFlatFieldMetadata;
+      fieldMetadata: OrmFlatFieldMetadata;
       columnName: string;
     }) => {
       fieldMetadataToColumnNamesMap.set(fieldMetadataId, [columnName]);

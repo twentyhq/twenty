@@ -8,8 +8,8 @@ import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/wo
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type LiteFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/lite-flat-field-metadata.type';
-import { fromFieldMetadataEntityToLiteFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-field-metadata-entity-to-lite-flat-field-metadata.util';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
+import { fromFieldMetadataEntityToOrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-field-metadata-entity-to-orm-flat-field-metadata.util';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { computeUniqueFieldMetadataIdsFromIndexEntities } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-index-entities.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -17,15 +17,15 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
-// Lite projection of flatFieldMetadataMaps for the record query/execution path (held live in
+// ORM projection of flatFieldMetadataMaps for the record query/execution path (held live in
 // ORMWorkspaceContext on every request). Drops the view/permission relation arrays, their
 // universal-identifier twins and universalSettings, so the hot per-workspace working set is a
 // fraction of the full map and the collector traces far less. Recompute needs only field rows +
 // unique indexes (2 queries) instead of the full builder's 9 joins.
 @Injectable()
-@WorkspaceCache('flatFieldMetadataMapsLite', { packingPonderation: 8 })
-export class WorkspaceLiteFlatFieldMetadataMapCacheService extends WorkspaceCacheProvider<
-  FlatEntityMaps<LiteFlatFieldMetadata>
+@WorkspaceCache('flatFieldMetadataMapsOrm', { packingPonderation: 8 })
+export class WorkspaceOrmFlatFieldMetadataMapCacheService extends WorkspaceCacheProvider<
+  FlatEntityMaps<OrmFlatFieldMetadata>
 > {
   constructor(
     @InjectRepository(FieldMetadataEntity)
@@ -38,7 +38,7 @@ export class WorkspaceLiteFlatFieldMetadataMapCacheService extends WorkspaceCach
 
   async computeForCache(
     workspaceId: string,
-  ): Promise<FlatEntityMaps<LiteFlatFieldMetadata>> {
+  ): Promise<FlatEntityMaps<OrmFlatFieldMetadata>> {
     const [fieldMetadatas, indexMetadatas] = await Promise.all([
       this.fieldMetadataRepository.find({
         where: { workspaceId },
@@ -54,21 +54,21 @@ export class WorkspaceLiteFlatFieldMetadataMapCacheService extends WorkspaceCach
     const uniqueFieldMetadataIds =
       computeUniqueFieldMetadataIdsFromIndexEntities(indexMetadatas);
 
-    const liteFlatFieldMetadataMaps = createEmptyFlatEntityMaps();
+    const ormFlatFieldMetadataMaps = createEmptyFlatEntityMaps();
 
     for (const fieldMetadataEntity of fieldMetadatas) {
-      const liteFlatFieldMetadata =
-        fromFieldMetadataEntityToLiteFlatFieldMetadata({
+      const ormFlatFieldMetadata =
+        fromFieldMetadataEntityToOrmFlatFieldMetadata({
           entity: fieldMetadataEntity,
           isUnique: uniqueFieldMetadataIds.has(fieldMetadataEntity.id),
         });
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
-        flatEntity: liteFlatFieldMetadata,
-        flatEntityMapsToMutate: liteFlatFieldMetadataMaps,
+        flatEntity: ormFlatFieldMetadata,
+        flatEntityMapsToMutate: ormFlatFieldMetadataMaps,
       });
     }
 
-    return liteFlatFieldMetadataMaps;
+    return ormFlatFieldMetadataMaps;
   }
 }

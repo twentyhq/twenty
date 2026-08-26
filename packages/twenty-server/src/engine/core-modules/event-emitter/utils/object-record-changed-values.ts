@@ -10,7 +10,7 @@ import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-m
 import { getJoinColumnNameForRelationField } from 'src/engine/metadata-modules/field-metadata/utils/get-join-column-name-for-relation-field.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type LiteFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/lite-flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -26,7 +26,7 @@ const buildRelationFieldChangeValue = (
 });
 
 const isManyToOneMorphOrRelationField = (
-  field: LiteFlatFieldMetadata,
+  field: OrmFlatFieldMetadata,
 ): boolean => {
   return (
     isMorphOrRelationFlatFieldMetadata(field) &&
@@ -37,7 +37,7 @@ const isManyToOneMorphOrRelationField = (
 export const computeUpdatedFieldsFromDiff = (
   diff: Record<string, unknown>,
   objectMetadataItem: FlatObjectMetadata,
-  flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
 ): string[] => {
   const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
     flatFieldMetadataMaps,
@@ -71,7 +71,7 @@ export const objectRecordChangedValues = (
   oldRecord: Partial<ObjectRecord>,
   newRecord: Partial<ObjectRecord>,
   objectMetadataItem: FlatObjectMetadata,
-  flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
 ) => {
   const { fieldIdByName, fieldIdByJoinColumnName } =
     buildFieldMapsFromFlatObjectMetadata(

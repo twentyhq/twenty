@@ -1,12 +1,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { type LiteFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/lite-flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 
 export const formatCompositeFieldValue = (
   value: unknown,
   compositePropertyName: string,
-  fieldMetadata: LiteFlatFieldMetadata,
+  fieldMetadata: OrmFlatFieldMetadata,
 ) => {
   switch (fieldMetadata.type) {
     case FieldMetadataType.CURRENCY: {
