@@ -4,7 +4,7 @@ import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-c
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 
-export const EditRecordPageLayoutSingleRecordCommand = () => {
+export const EditRecordPageLayoutCommand = () => {
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { resetLocationHash } = useResetLocationHash();

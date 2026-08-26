@@ -376,9 +376,9 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: i18nLabel(
       msg({ message: `Edit Layout`, context: 'commandMenuItem.shortLabel' }),
     ),
-    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
     conditionalAvailabilityExpression:
-      'pageType == "RECORD_PAGE" and not isLayoutCustomizationModeEnabled and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"',
+      '(pageType == "INDEX_PAGE" or (pageType == "RECORD_PAGE" and noneDefined(selectedRecords, "deletedAt"))) and not isLayoutCustomizationModeEnabled and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT,
