@@ -187,5 +187,4 @@ describe('enrichCreateWorkspaceMigrationActionsWithIds', () => {
 
     expect(enrichedAction.id).toBe('external-tab-id');
   });
-
 });

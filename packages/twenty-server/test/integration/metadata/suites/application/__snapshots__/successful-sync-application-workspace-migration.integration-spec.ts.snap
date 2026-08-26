@@ -1161,7 +1161,6 @@ exports[`syncApplication should delete old field and create equivalent one when 
         },
         "id": Any<String>,
         "metadataName": "pageLayout",
-        "tabIdByUniversalIdentifier": Any<Object>,
         "type": "create",
       },
       {
@@ -2682,7 +2681,6 @@ This is a test skill.",
         },
         "id": Any<String>,
         "metadataName": "pageLayout",
-        "tabIdByUniversalIdentifier": Any<Object>,
         "type": "create",
       },
       {
