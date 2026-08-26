@@ -7,6 +7,13 @@ on:
   pull_request:
     types: [labeled, synchronize, opened, reopened]
 
+  # Manual QA Scout run against an already-merged PR (executes on main).
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Merged PR number for the QA Scout (defaults to the PR of the latest main commit)"
+        required: false
+
 permissions:
   contents: read
 
@@ -18,10 +25,13 @@ jobs:
   e2e-test:
     if: >
       github.event_name == 'push' ||
+      github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' &&
        contains(github.event.pull_request.labels.*.name, 'run-merge-queue'))
     runs-on: ubuntu-latest-8-cores
     timeout-minutes: 30
+    outputs:
+      qa-scout-run: ${{ steps.qa-scout-pr.outputs.run }}
     env:
       NODE_OPTIONS: "--max-old-space-size=10240"
     services:
@@ -103,15 +113,18 @@ jobs:
       - name: Serve the frontend from the server
         run: cp -r packages/twenty-front/build packages/twenty-server/dist/front
 
+      # Logs are teed to files so the QA Scout can diff its own log window; the
+      # console output is unchanged.
       - name: Start server
         run: |
-          npx nx run twenty-server:start:ci &
+          mkdir -p /tmp/qa-scout
+          npx nx run twenty-server:start:ci 2>&1 | tee /tmp/qa-scout/server.log &
           echo "Waiting for server to be ready..."
           timeout 120 bash -c 'until curl -sf http://localhost:3000/healthz > /dev/null; do sleep 2; done'
 
       - name: Start worker
         run: |
-          npx nx run twenty-server:worker &
+          npx nx run twenty-server:worker 2>&1 | tee /tmp/qa-scout/worker.log &
           echo "Worker started"
 
       - name: Run Playwright tests
@@ -128,6 +141,126 @@ jobs:
             packages/twenty-e2e-testing/run_results/
             packages/twenty-e2e-testing/test-results/
           retention-days: 7
+
+      # ── QA Scout ─────────────────────────────────────────────────────────
+      # Post-merge browser QA agent (.claude/skills/qa-scout/SKILL.md): scopes
+      # scenarios from the merged PR's diff, drives the already-running app,
+      # watches server/worker logs, and writes a verdict. Shadow-safe: every
+      # step is continue-on-error so the Scout can never redden main CI. Runs
+      # after the deterministic suite even when it failed (a broken main is
+      # exactly when a loud report helps), but not on merge-queue PR runs.
+      - name: QA Scout / Prepare merged PR context
+        id: qa-scout-pr
+        if: ${{ !cancelled() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_PR_NUMBER: ${{ github.event.inputs.pr_number }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/qa-scout/context /tmp/qa-scout/output /tmp/qa-scout/browser
+          PR_NUMBER="${INPUT_PR_NUMBER:-}"
+          if [ -z "$PR_NUMBER" ]; then
+            PR_NUMBER=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls" --jq '.[0].number // empty' || true)
+          fi
+          if ! [[ "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
+            echo "No merged PR associated with ${GITHUB_SHA}; skipping QA Scout."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" \
+            --json number,title,body,author,url,mergedAt > /tmp/qa-scout/context/pr.json
+          TITLE=$(jq -r '.title' /tmp/qa-scout/context/pr.json)
+          # Mirrors mustBeQa in the eng app: [no-qa]/[noqa] escape hatch, i18n
+          # translation PRs are auto-generated and never QA candidates.
+          LOWER=$(printf '%s' "$TITLE" | tr '[:upper:]' '[:lower:]')
+          case "$LOWER" in
+            *"[no-qa]"* | *"[noqa]"*)
+              echo "Skipping QA Scout: [no-qa] in PR title."
+              echo "run=false" >> "$GITHUB_OUTPUT"
+              exit 0
+              ;;
+            i18n*translation*)
+              echo "Skipping QA Scout: i18n translation PR."
+              echo "run=false" >> "$GITHUB_OUTPUT"
+              exit 0
+              ;;
+          esac
+          gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files?per_page=100" \
+            --jq '[.[] | {path: .filename, additions, deletions, status}]' > /tmp/qa-scout/context/files.json
+          gh pr diff "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" > /tmp/qa-scout/full.diff
+          head -c 2000000 /tmp/qa-scout/full.diff > /tmp/qa-scout/context/pr.diff
+          rm /tmp/qa-scout/full.diff
+          cat > /tmp/qa-scout/mcp.json <<'EOF'
+          {
+            "mcpServers": {
+              "playwright": {
+                "command": "npx",
+                "args": [
+                  "-y",
+                  "@playwright/mcp@0.0.79",
+                  "--headless",
+                  "--browser", "chrome",
+                  "--isolated",
+                  "--output-dir", "/tmp/qa-scout/browser",
+                  "--allowed-origins", "http://localhost:3000;http://127.0.0.1:3000"
+                ]
+              }
+            }
+          }
+          EOF
+          echo "run=true" >> "$GITHUB_OUTPUT"
+          echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+
+      # The agent step runs under the workflow's read-only token and gets no
+      # write capability; the PR comment is posted by the qa-scout-comment job
+      # from the uploaded verdict, so untrusted page/log content the agent
+      # reads can never reach a privileged credential.
+      - name: QA Scout / Run
+        id: qa-scout-run
+        if: ${{ !cancelled() && steps.qa-scout-pr.outputs.run == 'true' }}
+        continue-on-error: true
+        timeout-minutes: 20
+        uses: anthropics/claude-code-action@ac7e24bf2938964b8ab203e417a2773802392ddd # v1.0.146
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Read .claude/skills/qa-scout/SKILL.md and follow it exactly. You are
+            the QA Scout for the merged pull request described in
+            /tmp/qa-scout/context/pr.json (files.json and pr.diff sit beside it).
+            The app is already running and seeded at http://localhost:3000
+            (login tim@apple.dev / tim@apple.dev, workspace Apple). Server log:
+            /tmp/qa-scout/server.log. Worker log: /tmp/qa-scout/worker.log.
+            Write verdict.json and report.md to /tmp/qa-scout/output/.
+          claude_args: '--max-turns 120 --model opus --mcp-config /tmp/qa-scout/mcp.json --allowedTools "Read,Grep,Glob,Write,Bash(cat *),Bash(tail *),Bash(head *),Bash(wc *),Bash(ls *),Bash(grep *),Bash(mkdir *),Bash(sleep *),Bash(date *),mcp__playwright"'
+
+      - name: QA Scout / Job summary
+        if: ${{ !cancelled() && steps.qa-scout-pr.outputs.run == 'true' }}
+        continue-on-error: true
+        run: |
+          {
+            echo "## QA Scout"
+            if [ -f /tmp/qa-scout/output/report.md ]; then
+              cat /tmp/qa-scout/output/report.md
+            else
+              echo "No report produced (agent run failed or timed out); see the qa-scout-report artifact and step logs."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: QA Scout / Upload report
+        if: ${{ !cancelled() && steps.qa-scout-pr.outputs.run == 'true' }}
+        continue-on-error: true
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: qa-scout-report
+          path: |
+            /tmp/qa-scout/context/
+            /tmp/qa-scout/output/
+            /tmp/qa-scout/browser/
+            /tmp/qa-scout/server.log
+            /tmp/qa-scout/worker.log
+          if-no-files-found: ignore
+          retention-days: 14
 
   ci-e2e-main-status-check:
     if: always() && !cancelled()
@@ -154,3 +287,65 @@ jobs:
               "actor": "${{ github.actor }}",
               "run_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             }'
+
+  # Posts the QA Scout verdict as a comment on the merged PR. Separate job so
+  # pull-requests:write never coexists with the agent step: the agent reads
+  # untrusted page/log content, this job only reads the structured artifact.
+  # Quiet on PASS; FAIL/INVESTIGATE post (or update) a single marked comment.
+  # Kill switch: set repo variable QA_SCOUT_DISABLE_COMMENTS=true.
+  qa-scout-comment:
+    if: >
+      always() && !cancelled() &&
+      needs.e2e-test.outputs.qa-scout-run == 'true' &&
+      vars.QA_SCOUT_DISABLE_COMMENTS != 'true'
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    needs: [e2e-test]
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Download QA Scout report
+        id: download
+        continue-on-error: true
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: qa-scout-report
+          path: qa-scout-report
+
+      - name: Post verdict comment
+        if: steps.download.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          VERDICT_FILE=$(find qa-scout-report -name verdict.json | head -1 || true)
+          REPORT_FILE=$(find qa-scout-report -name report.md | head -1 || true)
+          if [ -z "$VERDICT_FILE" ] || [ -z "$REPORT_FILE" ]; then
+            echo "No verdict or report in the artifact; nothing to post."
+            exit 0
+          fi
+          VERDICT=$(jq -r '.verdict // empty' "$VERDICT_FILE")
+          PR_NUMBER=$(jq -r '.prNumber // empty' "$VERDICT_FILE")
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No prNumber in verdict.json; nothing to post."
+            exit 0
+          fi
+          if [ "$VERDICT" = "PASS" ]; then
+            echo "Verdict PASS for PR #${PR_NUMBER}; staying quiet (report is in the job summary and artifact)."
+            exit 0
+          fi
+          {
+            echo "<!-- qa-scout -->"
+            cat "$REPORT_FILE"
+            echo ""
+            echo "[QA Scout run](${RUN_URL}) · verdict: ${VERDICT} · re-run: Actions → CI E2E Main → Run workflow with pr_number=${PR_NUMBER}"
+          } > comment.md
+          EXISTING=$(gh api "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments?per_page=100" \
+            --jq '[.[] | select(.body | startswith("<!-- qa-scout -->")) | .id] | first // empty')
+          if [ -n "$EXISTING" ]; then
+            gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${EXISTING}" -F body=@comment.md
+          else
+            gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" -F body=@comment.md
+          fi
