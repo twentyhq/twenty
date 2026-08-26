@@ -193,6 +193,7 @@ export {
   DateDisplayFormat,
   FieldMetadataSettingsOnClickAction,
   HTTPMethod,
+  IndexType,
   MetadataWritability,
   NavigationMenuItemType,
   NumberDataType,

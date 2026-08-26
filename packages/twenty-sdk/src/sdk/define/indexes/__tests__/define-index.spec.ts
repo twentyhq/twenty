@@ -1,3 +1,4 @@
+import { IndexType } from 'twenty-shared/types';
 import { describe, expect, it } from 'vitest';
 
 import { defineIndex } from '@/sdk/define';
@@ -5,7 +6,7 @@ import { defineIndex } from '@/sdk/define';
 const baseValidConfig = {
   universalIdentifier: '4f1b9f9f-1111-2222-3333-444444444444',
   objectUniversalIdentifier: '4f1b9f9f-aaaa-bbbb-cccc-dddddddddddd',
-  indexType: 'BTREE' as const,
+  indexType: IndexType.BTREE,
   fields: [
     {
       universalIdentifier: '4f1b9f9f-1111-1111-1111-111111111111',
