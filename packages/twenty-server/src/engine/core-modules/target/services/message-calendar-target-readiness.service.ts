@@ -15,6 +15,10 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 @Injectable()
 export class MessageCalendarTargetReadinessService {
+  // Backfill completion is monotonic per workspace, so positive results are
+  // memoized to keep the per-request timeline path off the core database.
+  private readonly backfillCompletedWorkspaceIds = new Set<string>();
+
   constructor(
     private readonly upgradeMigrationService: UpgradeMigrationService,
     private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
@@ -62,6 +66,22 @@ export class MessageCalendarTargetReadinessService {
   }
 
   private async isBackfillCompleted(workspaceId: string): Promise<boolean> {
+    if (this.backfillCompletedWorkspaceIds.has(workspaceId)) {
+      return true;
+    }
+
+    const isCompleted = await this.resolveBackfillCompletion(workspaceId);
+
+    if (isCompleted) {
+      this.backfillCompletedWorkspaceIds.add(workspaceId);
+    }
+
+    return isCompleted;
+  }
+
+  private async resolveBackfillCompletion(
+    workspaceId: string,
+  ): Promise<boolean> {
     if (
       await this.upgradeMigrationService.isLastAttemptCompleted({
         name: MESSAGE_CALENDAR_TARGET_BACKFILL_UPGRADE_COMMAND_NAME,
