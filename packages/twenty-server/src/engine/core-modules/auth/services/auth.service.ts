@@ -72,6 +72,7 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { assertIssuerIsPublishedOrThrow } from 'src/engine/core-modules/auth/utils/assert-issuer-is-published.util';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { isEmailInApprovedAccessDomains } from 'src/engine/core-modules/approved-access-domain/utils/is-email-in-approved-access-domains.util';
 
@@ -505,11 +506,17 @@ export class AuthService {
     return { isValid: !!workspace };
   }
 
-  async generateAuthorizationCode(
-    authorizeAppInput: AuthorizeAppInput,
-    user: AuthContextUser,
-    workspace: WorkspaceEntity,
-  ): Promise<AuthorizeAppDTO> {
+  async generateAuthorizationCode({
+    authorizeAppInput,
+    user,
+    workspace,
+    requestBaseUrl,
+  }: {
+    authorizeAppInput: AuthorizeAppInput;
+    user: AuthContextUser;
+    workspace: WorkspaceEntity;
+    requestBaseUrl: string;
+  }): Promise<AuthorizeAppDTO> {
     const { clientId, codeChallenge } = authorizeAppInput;
 
     const applicationRegistration =
@@ -641,6 +648,16 @@ export class AuthService {
     await this.appTokenRepository.save(token);
 
     redirectUriValidation.parsed.searchParams.set('code', authorizationCode);
+
+    const issuer = authorizeAppInput.issuer ?? requestBaseUrl;
+
+    assertIssuerIsPublishedOrThrow({
+      issuer,
+      requestBaseUrl,
+      serverUrl: this.twentyConfigService.get('SERVER_URL'),
+    });
+
+    redirectUriValidation.parsed.searchParams.set('iss', issuer);
 
     if (authorizeAppInput.state) {
       redirectUriValidation.parsed.searchParams.set(
