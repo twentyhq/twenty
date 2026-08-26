@@ -227,7 +227,7 @@ describe('Manifest update - page layout tabs (standalone)', () => {
       applicationId: testApplicationId,
       pageLayoutTabId: tabAfterFirstSync.id,
       title: 'Timeline',
-      type: 'TIMELINE' as const,
+      type: 'TIMELINE',
       configuration: {
         configurationType: 'TIMELINE',
       },
@@ -267,7 +267,7 @@ describe('Manifest update - page layout tabs (standalone)', () => {
         applicationId: testApplicationId,
         pageLayoutTabId: tabAfterSecondSync.id,
         title: 'Timeline',
-        type: 'TIMELINE' as const,
+        type: 'TIMELINE',
         configuration: {
           configurationType: 'TIMELINE',
         },
