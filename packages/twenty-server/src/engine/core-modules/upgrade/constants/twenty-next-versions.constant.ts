@@ -8,5 +8,5 @@
  */
 
 export const TWENTY_NEXT_VERSIONS = [
-  '2.36.0',
+  '2.37.0',
 ] as const;

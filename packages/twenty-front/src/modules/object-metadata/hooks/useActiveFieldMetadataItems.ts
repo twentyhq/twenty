@@ -14,13 +14,11 @@ export const useActiveFieldMetadataItems = ({
       isDefined(objectMetadataItem)
         ? dedupeMorphRelationFieldMetadataItems(
             objectMetadataItem.readableFields.filter(
-              ({ id, isActive, isSystem, name }) =>
-                isActiveFieldMetadataItem({
-                  objectNameSingular: objectMetadataItem.nameSingular,
-                  fieldMetadata: { isActive, isSystem, name },
-                }) ||
+              (fieldMetadata) =>
+                isActiveFieldMetadataItem({ fieldMetadata }) ||
                 // Allow label identifier field even if it's a system field
-                id === objectMetadataItem.labelIdentifierFieldMetadataId,
+                fieldMetadata.id ===
+                  objectMetadataItem.labelIdentifierFieldMetadataId,
             ),
           )
         : [],
