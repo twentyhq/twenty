@@ -1,7 +1,7 @@
-import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetEmptyStateDisplay';
-import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
-import { isCallRecordingTranscriptFailed } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingTranscriptFailed';
-import { isCallRecordingTranscriptPending } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingTranscriptPending';
+import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetEmptyStateDisplay';
+import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
+import { isCallRecordingTranscriptFailed } from '@/page-layout/widgets/call-recording/utils/isCallRecordingTranscriptFailed';
+import { isCallRecordingTranscriptPending } from '@/page-layout/widgets/call-recording/utils/isCallRecordingTranscriptPending';
 import { CallRecordingTranscriptEntryList } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList';
 import { type CallRecordingTranscriptPlayback } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptPlayback';
 import { styled } from '@linaria/react';
@@ -15,7 +15,7 @@ const StyledEmptyStateScrollContainer = styled.div`
 `;
 
 type CallRecordingTranscriptContentProps = {
-  callRecording: CalendarEventCallRecordingCandidate;
+  callRecording: WidgetCallRecordingCandidate;
   transcriptEntries: CallRecordingParsedTranscriptEntry[] | undefined;
   playback?: CallRecordingTranscriptPlayback;
 };

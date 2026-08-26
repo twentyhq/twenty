@@ -1,4 +1,4 @@
-import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
+import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
 import { CallRecordingStatus } from '~/generated/graphql';
 
 const IN_PROGRESS_CALL_RECORDING_STATUSES = new Set<CallRecordingStatus>([
@@ -9,5 +9,5 @@ const IN_PROGRESS_CALL_RECORDING_STATUSES = new Set<CallRecordingStatus>([
 ]);
 
 export const isCallRecordingInProgress = (
-  callRecording: CalendarEventCallRecordingCandidate,
+  callRecording: WidgetCallRecordingCandidate,
 ): boolean => IN_PROGRESS_CALL_RECORDING_STATUSES.has(callRecording.status);
