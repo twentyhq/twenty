@@ -6,23 +6,26 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatSkillMaps } from 'src/engine/metadata-modules/flat-skill/types/flat-skill-maps.type';
 import { fromSkillEntityToFlatSkill } from 'src/engine/metadata-modules/flat-skill/utils/from-skill-entity-to-flat-skill.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+
+const FLAT_SKILL_ROWS_REQUIREMENT = {
+  skill: true,
+  application: ['id', 'universalIdentifier'],
+} as const;
 
 @Injectable()
 @WorkspaceCache('flatSkillMaps', { packingPonderation: 2 })
 export class WorkspaceFlatSkillMapCacheService extends FlatEntityMapCacheProvider<'skill'> {
-  override readonly fetchRequirements = {
-    skill: true,
-    application: ['id', 'universalIdentifier'],
-  } as const;
+  override readonly rowsRequirement = FLAT_SKILL_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FlatSkillMaps {
-    const { skill: skills, application: applications } =
-      recomputeContext.getRowsByName(this.fetchRequirements);
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_SKILL_ROWS_REQUIREMENT
+  >): FlatSkillMaps {
+    const { skill: skills, application: applications } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

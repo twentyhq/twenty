@@ -8,25 +8,29 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatConnectionProviderMaps } from 'src/engine/metadata-modules/flat-connection-provider/types/flat-connection-provider-maps.type';
 import { fromConnectionProviderEntityToFlatConnectionProvider } from 'src/engine/metadata-modules/flat-connection-provider/utils/from-connection-provider-entity-to-flat-connection-provider.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+
+const FLAT_CONNECTION_PROVIDER_ROWS_REQUIREMENT = {
+  connectionProvider: true,
+  application: ['id', 'universalIdentifier', 'deletedAt'],
+} as const;
 
 @Injectable()
 @WorkspaceCache('flatConnectionProviderMaps', { packingPonderation: 1 })
 export class WorkspaceFlatConnectionProviderMapCacheService extends FlatEntityMapCacheProvider<'connectionProvider'> {
-  override readonly fetchRequirements = {
-    connectionProvider: true,
-    application: ['id', 'universalIdentifier', 'deletedAt'],
-  } as const;
+  override readonly rowsRequirement = FLAT_CONNECTION_PROVIDER_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FlatConnectionProviderMaps {
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_CONNECTION_PROVIDER_ROWS_REQUIREMENT
+  >): FlatConnectionProviderMaps {
     const {
       connectionProvider: connectionProviders,
       application: applications,
-    } = recomputeContext.getRowsByName(this.fetchRequirements);
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(

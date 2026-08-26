@@ -10,35 +10,40 @@ import { FlatSearchFieldMetadataMaps } from 'src/engine/metadata-modules/flat-se
 import { fromSearchFieldMetadataEntityToFlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/from-search-field-metadata-entity-to-flat-search-field-metadata.util';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+
+const FLAT_SEARCH_FIELD_METADATA_ROWS_REQUIREMENT = {
+  searchFieldMetadata: true,
+  application: ['id', 'universalIdentifier'],
+  objectMetadata: ['id', 'universalIdentifier'],
+  fieldMetadata: [
+    'id',
+    'universalIdentifier',
+    'name',
+    'type',
+    'objectMetadataId',
+  ],
+} as const;
 
 @Injectable()
 @WorkspaceCache('flatSearchFieldMetadataMaps', { packingPonderation: 1 })
 export class WorkspaceFlatSearchFieldMetadataMapCacheService extends FlatEntityMapCacheProvider<'searchFieldMetadata'> {
-  override readonly fetchRequirements = {
-    searchFieldMetadata: true,
-    application: ['id', 'universalIdentifier'],
-    objectMetadata: ['id', 'universalIdentifier'],
-    fieldMetadata: [
-      'id',
-      'universalIdentifier',
-      'name',
-      'type',
-      'objectMetadataId',
-    ],
-  } as const;
+  override readonly rowsRequirement =
+    FLAT_SEARCH_FIELD_METADATA_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FlatSearchFieldMetadataMaps {
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_SEARCH_FIELD_METADATA_ROWS_REQUIREMENT
+  >): FlatSearchFieldMetadataMaps {
     const {
       searchFieldMetadata: existingSearchFieldMetadatas,
       application: applications,
       objectMetadata: objectMetadatas,
       fieldMetadata: fieldMetadatas,
-    } = recomputeContext.getRowsByName(this.fetchRequirements);
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

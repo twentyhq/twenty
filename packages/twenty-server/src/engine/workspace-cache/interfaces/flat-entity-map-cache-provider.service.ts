@@ -17,5 +17,5 @@ export abstract class FlatEntityMapCacheProvider<
   AllFlatEntityTypesByMetadataName[TMetadataName]['flatEntityMaps'],
   TCompact
 > {
-  abstract override readonly fetchRequirements: FlatEntityFetchShape<TMetadataName>;
+  abstract override readonly rowsRequirement: FlatEntityFetchShape<TMetadataName>;
 }

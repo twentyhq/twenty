@@ -8,7 +8,7 @@ import {
 } from 'src/engine/api/graphql/direct-execution/utils/build-resolver-name-map.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 
 @Injectable()
 @WorkspaceCache('graphQLResolverNameMap', { packingPonderation: 4 })
@@ -19,14 +19,15 @@ export class WorkspaceResolverNameMapCacheService extends WorkspaceCacheProvider
     super();
   }
 
-  async computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): Promise<Record<string, ResolverNameMapEntry>> {
+  async computeForCache({
+    workspaceId,
+  }: WorkspaceCacheProviderContext): Promise<
+    Record<string, ResolverNameMapEntry>
+  > {
     const { flatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(
-        recomputeContext.workspaceId,
-        ['flatObjectMetadataMaps'],
-      );
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
 
     return buildResolverNameMap(flatObjectMetadataMaps);
   }

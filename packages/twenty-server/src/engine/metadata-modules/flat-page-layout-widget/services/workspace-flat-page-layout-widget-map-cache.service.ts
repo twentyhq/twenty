@@ -6,26 +6,30 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { fromPageLayoutWidgetEntityToFlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-entity-to-flat-page-layout-widget.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+
+const FLAT_PAGE_LAYOUT_WIDGET_ROWS_REQUIREMENT = {
+  pageLayoutWidget: true,
+  application: ['id', 'universalIdentifier'],
+  pageLayoutTab: ['id', 'universalIdentifier'],
+  objectMetadata: ['id', 'universalIdentifier'],
+  fieldMetadata: ['id', 'universalIdentifier'],
+  frontComponent: ['id', 'universalIdentifier'],
+  view: ['id', 'universalIdentifier'],
+} as const;
 
 @Injectable()
 @WorkspaceCache('flatPageLayoutWidgetMaps', { packingPonderation: 5 })
 export class WorkspaceFlatPageLayoutWidgetMapCacheService extends FlatEntityMapCacheProvider<'pageLayoutWidget'> {
-  override readonly fetchRequirements = {
-    pageLayoutWidget: true,
-    application: ['id', 'universalIdentifier'],
-    pageLayoutTab: ['id', 'universalIdentifier'],
-    objectMetadata: ['id', 'universalIdentifier'],
-    fieldMetadata: ['id', 'universalIdentifier'],
-    frontComponent: ['id', 'universalIdentifier'],
-    view: ['id', 'universalIdentifier'],
-  } as const;
+  override readonly rowsRequirement = FLAT_PAGE_LAYOUT_WIDGET_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FlatPageLayoutWidgetMaps {
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_PAGE_LAYOUT_WIDGET_ROWS_REQUIREMENT
+  >): FlatPageLayoutWidgetMaps {
     const {
       pageLayoutWidget: existingPageLayoutWidgets,
       application: applications,
@@ -34,7 +38,7 @@ export class WorkspaceFlatPageLayoutWidgetMapCacheService extends FlatEntityMapC
       fieldMetadata: fieldMetadatas,
       frontComponent: frontComponents,
       view: views,
-    } = recomputeContext.getRowsByName(this.fetchRequirements);
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

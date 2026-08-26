@@ -5,22 +5,24 @@ import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/wo
 import { FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { fromApplicationEntityToFlatApplication } from 'src/engine/core-modules/application/utils/from-application-entity-to-flat-application.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { type CacheEntityFetchShape } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
+
+const FLAT_APPLICATION_ROWS_REQUIREMENT = {
+  application: true,
+} as const satisfies CacheEntityFetchShape;
 
 @Injectable()
 @WorkspaceCache('flatApplicationMaps', { packingPonderation: 1 })
 export class WorkspaceFlatApplicationMapCacheService extends WorkspaceCacheProvider<FlatApplicationCacheMaps> {
-  override readonly fetchRequirements = {
-    application: true,
-  } as const satisfies CacheEntityFetchShape;
+  override readonly rowsRequirement = FLAT_APPLICATION_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FlatApplicationCacheMaps {
-    const { application: applicationEntities } = recomputeContext.getRowsByName(
-      this.fetchRequirements,
-    );
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_APPLICATION_ROWS_REQUIREMENT
+  >): FlatApplicationCacheMaps {
+    const { application: applicationEntities } = rows;
 
     const flatApplicationMaps: FlatApplicationCacheMaps = {
       byId: {},

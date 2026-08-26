@@ -5,30 +5,34 @@ import { type FlatPermissionFlagMaps } from 'src/engine/metadata-modules/flat-pe
 import { fromPermissionFlagEntityToFlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/utils/from-permission-flag-entity-to-flat-permission-flag.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { FlatEntityMapCacheProvider } from 'src/engine/workspace-cache/interfaces/flat-entity-map-cache-provider.service';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+
+const FLAT_PERMISSION_FLAG_ROWS_REQUIREMENT = {
+  permissionFlag: true,
+  application: ['id', 'universalIdentifier'],
+  rolePermissionFlag: {
+    columns: true,
+    groupBy: ['permissionFlagId'],
+  },
+} as const;
 
 @Injectable()
 @WorkspaceCache('flatPermissionFlagMaps', { packingPonderation: 1 })
 export class WorkspaceFlatPermissionFlagMapCacheService extends FlatEntityMapCacheProvider<'permissionFlag'> {
-  override readonly fetchRequirements = {
-    permissionFlag: true,
-    application: ['id', 'universalIdentifier'],
-    rolePermissionFlag: {
-      columns: true,
-      groupBy: ['permissionFlagId'],
-    },
-  } as const;
+  override readonly rowsRequirement = FLAT_PERMISSION_FLAG_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FlatPermissionFlagMaps {
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_PERMISSION_FLAG_ROWS_REQUIREMENT
+  >): FlatPermissionFlagMaps {
     const {
       permissionFlag: permissionFlags,
       application: applications,
       rolePermissionFlag: rolePermissionFlags,
-    } = recomputeContext.getRowsByName(this.fetchRequirements);
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

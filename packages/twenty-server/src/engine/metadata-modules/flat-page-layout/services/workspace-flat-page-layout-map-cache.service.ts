@@ -6,32 +6,36 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatPageLayoutMaps } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout-maps.type';
 import { transformPageLayoutEntityToFlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/utils/transform-page-layout-entity-to-flat-page-layout.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+
+const FLAT_PAGE_LAYOUT_ROWS_REQUIREMENT = {
+  pageLayout: true,
+  pageLayoutTab: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['pageLayoutId'],
+  },
+  application: ['id', 'universalIdentifier'],
+  objectMetadata: ['id', 'universalIdentifier'],
+} as const;
 
 @Injectable()
 @WorkspaceCache('flatPageLayoutMaps', { packingPonderation: 1 })
 export class WorkspaceFlatPageLayoutMapCacheService extends FlatEntityMapCacheProvider<'pageLayout'> {
-  override readonly fetchRequirements = {
-    pageLayout: true,
-    pageLayoutTab: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['pageLayoutId'],
-    },
-    application: ['id', 'universalIdentifier'],
-    objectMetadata: ['id', 'universalIdentifier'],
-  } as const;
+  override readonly rowsRequirement = FLAT_PAGE_LAYOUT_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FlatPageLayoutMaps {
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_PAGE_LAYOUT_ROWS_REQUIREMENT
+  >): FlatPageLayoutMaps {
     const {
       pageLayout: pageLayouts,
       pageLayoutTab: pageLayoutTabs,
       application: applications,
       objectMetadata: objectMetadatas,
-    } = recomputeContext.getRowsByName(this.fetchRequirements);
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

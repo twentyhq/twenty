@@ -8,32 +8,37 @@ import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/wo
 import { FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
 import { fromRoleTargetEntityToFlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/utils/from-role-target-entity-to-flat-role-target.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import {
   type CacheEntityFetchShape,
   type CacheFetchableEntity,
 } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 
+const FLAT_ROLE_TARGET_BY_AGENT_ID_ROWS_REQUIREMENT = {
+  roleTarget: true,
+  application: ['id', 'universalIdentifier'],
+  role: ['id', 'universalIdentifier'],
+  agent: ['id', 'universalIdentifier'],
+} as const satisfies CacheEntityFetchShape;
+
 @Injectable()
 @WorkspaceCache('flatRoleTargetByAgentIdMaps', { packingPonderation: 1 })
 export class WorkspaceFlatRoleTargetByAgentIdService extends WorkspaceCacheProvider<FlatRoleTargetByAgentIdMaps> {
-  override readonly fetchRequirements = {
-    roleTarget: true,
-    application: ['id', 'universalIdentifier'],
-    role: ['id', 'universalIdentifier'],
-    agent: ['id', 'universalIdentifier'],
-  } as const satisfies CacheEntityFetchShape;
+  override readonly rowsRequirement =
+    FLAT_ROLE_TARGET_BY_AGENT_ID_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FlatRoleTargetByAgentIdMaps {
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_ROLE_TARGET_BY_AGENT_ID_ROWS_REQUIREMENT
+  >): FlatRoleTargetByAgentIdMaps {
     const {
       roleTarget: roleTargets,
       application: applications,
       role: roles,
       agent: agents,
-    } = recomputeContext.getRowsByName(this.fetchRequirements);
+    } = rows;
 
     // the recompute context only filters on workspaceId: the previous
     // agentId IS NOT NULL condition moved in memory

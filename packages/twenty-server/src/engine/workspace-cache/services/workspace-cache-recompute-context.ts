@@ -213,7 +213,7 @@ export class WorkspaceCacheRecomputeContext {
 
     if (!isDefined(fetchState) || !isDefined(fetchState.settledRows)) {
       throw new Error(
-        `Rows for entity "${entityName}" were not resolved in this recompute batch: declare it in the provider's fetchRequirements`,
+        `Rows for entity "${entityName}" were not resolved in this recompute batch: declare it in the provider's rowsRequirement`,
       );
     }
 

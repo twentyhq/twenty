@@ -6,35 +6,39 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatViewFilterGroupMaps } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group-maps.type';
 import { fromViewFilterGroupEntityToFlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-view-filter-group-entity-to-flat-view-filter-group.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+
+const FLAT_VIEW_FILTER_GROUP_ROWS_REQUIREMENT = {
+  viewFilterGroup: {
+    columns: true,
+    groupBy: ['parentViewFilterGroupId'],
+  },
+  application: ['id', 'universalIdentifier'],
+  viewFilter: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['viewFilterGroupId'],
+  },
+  view: ['id', 'universalIdentifier'],
+} as const;
 
 @Injectable()
 @WorkspaceCache('flatViewFilterGroupMaps', { packingPonderation: 1 })
 export class WorkspaceFlatViewFilterGroupMapCacheService extends FlatEntityMapCacheProvider<'viewFilterGroup'> {
-  override readonly fetchRequirements = {
-    viewFilterGroup: {
-      columns: true,
-      groupBy: ['parentViewFilterGroupId'],
-    },
-    application: ['id', 'universalIdentifier'],
-    viewFilter: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['viewFilterGroupId'],
-    },
-    view: ['id', 'universalIdentifier'],
-  } as const;
+  override readonly rowsRequirement = FLAT_VIEW_FILTER_GROUP_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FlatViewFilterGroupMaps {
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_VIEW_FILTER_GROUP_ROWS_REQUIREMENT
+  >): FlatViewFilterGroupMaps {
     const {
       viewFilterGroup: viewFilterGroups,
       application: applications,
       viewFilter: viewFilters,
       view: views,
-    } = recomputeContext.getRowsByName(this.fetchRequirements);
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

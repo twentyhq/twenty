@@ -6,31 +6,35 @@ import { type FlatCommandMenuItemMaps } from 'src/engine/metadata-modules/flat-c
 import { fromCommandMenuItemEntityToFlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-command-menu-item-entity-to-flat-command-menu-item.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+
+const FLAT_COMMAND_MENU_ITEM_ROWS_REQUIREMENT = {
+  commandMenuItem: true,
+  application: ['id', 'universalIdentifier'],
+  objectMetadata: ['id', 'universalIdentifier'],
+  frontComponent: ['id', 'universalIdentifier'],
+  pageLayout: ['id', 'universalIdentifier'],
+} as const;
 
 @Injectable()
 @WorkspaceCache('flatCommandMenuItemMaps', { packingPonderation: 4 })
 export class WorkspaceFlatCommandMenuItemMapCacheService extends FlatEntityMapCacheProvider<'commandMenuItem'> {
-  override readonly fetchRequirements = {
-    commandMenuItem: true,
-    application: ['id', 'universalIdentifier'],
-    objectMetadata: ['id', 'universalIdentifier'],
-    frontComponent: ['id', 'universalIdentifier'],
-    pageLayout: ['id', 'universalIdentifier'],
-  } as const;
+  override readonly rowsRequirement = FLAT_COMMAND_MENU_ITEM_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FlatCommandMenuItemMaps {
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_COMMAND_MENU_ITEM_ROWS_REQUIREMENT
+  >): FlatCommandMenuItemMaps {
     const {
       commandMenuItem: commandMenuItems,
       application: applications,
       objectMetadata: objectMetadatas,
       frontComponent: frontComponents,
       pageLayout: pageLayouts,
-    } = recomputeContext.getRowsByName(this.fetchRequirements);
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

@@ -6,23 +6,26 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatFrontComponentMaps } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component-maps.type';
 import { fromFrontComponentEntityToFlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/utils/from-front-component-entity-to-flat-front-component.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+
+const FLAT_FRONT_COMPONENT_ROWS_REQUIREMENT = {
+  frontComponent: true,
+  application: ['id', 'universalIdentifier'],
+} as const;
 
 @Injectable()
 @WorkspaceCache('flatFrontComponentMaps', { packingPonderation: 1 })
 export class WorkspaceFlatFrontComponentMapCacheService extends FlatEntityMapCacheProvider<'frontComponent'> {
-  override readonly fetchRequirements = {
-    frontComponent: true,
-    application: ['id', 'universalIdentifier'],
-  } as const;
+  override readonly rowsRequirement = FLAT_FRONT_COMPONENT_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FlatFrontComponentMaps {
-    const { frontComponent: frontComponents, application: applications } =
-      recomputeContext.getRowsByName(this.fetchRequirements);
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_FRONT_COMPONENT_ROWS_REQUIREMENT
+  >): FlatFrontComponentMaps {
+    const { frontComponent: frontComponents, application: applications } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

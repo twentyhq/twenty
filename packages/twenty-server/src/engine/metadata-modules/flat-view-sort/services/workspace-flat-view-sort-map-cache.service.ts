@@ -7,28 +7,32 @@ import { FlatViewSortMaps } from 'src/engine/metadata-modules/flat-view-sort/typ
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { fromViewSortEntityToFlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/utils/from-view-sort-entity-to-flat-view-sort.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+
+const FLAT_VIEW_SORT_ROWS_REQUIREMENT = {
+  viewSort: true,
+  application: ['id', 'universalIdentifier'],
+  view: ['id', 'universalIdentifier'],
+  fieldMetadata: ['id', 'universalIdentifier'],
+} as const;
 
 @Injectable()
 @WorkspaceCache('flatViewSortMaps', { packingPonderation: 1 })
 export class WorkspaceFlatViewSortMapCacheService extends FlatEntityMapCacheProvider<'viewSort'> {
-  override readonly fetchRequirements = {
-    viewSort: true,
-    application: ['id', 'universalIdentifier'],
-    view: ['id', 'universalIdentifier'],
-    fieldMetadata: ['id', 'universalIdentifier'],
-  } as const;
+  override readonly rowsRequirement = FLAT_VIEW_SORT_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FlatViewSortMaps {
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_VIEW_SORT_ROWS_REQUIREMENT
+  >): FlatViewSortMaps {
     const {
       viewSort: existingViewSorts,
       application: applications,
       view: views,
       fieldMetadata: fieldMetadatas,
-    } = recomputeContext.getRowsByName(this.fetchRequirements);
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

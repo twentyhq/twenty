@@ -17,7 +17,7 @@ import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/wo
 import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { type CacheEntityFetchShape } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
 
 const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = [
@@ -28,28 +28,32 @@ const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = [
 const WORKSPACE_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.workspaceMember.universalIdentifier;
 
+const ROLES_PERMISSIONS_ROWS_REQUIREMENT = {
+  role: true,
+  objectPermission: { columns: true, groupBy: ['roleId'] },
+  rolePermissionFlag: { columns: true, groupBy: ['roleId'] },
+  permissionFlag: true,
+  fieldPermission: { columns: true, groupBy: ['roleId'] },
+  rowLevelPermissionPredicate: { columns: true, groupBy: ['roleId'] },
+  rowLevelPermissionPredicateGroup: { columns: true, groupBy: ['roleId'] },
+  objectMetadata: [
+    'id',
+    'isSystem',
+    'universalIdentifier',
+    'labelIdentifierFieldMetadataId',
+  ],
+} as const satisfies CacheEntityFetchShape;
+
 @Injectable()
 @WorkspaceCache('rolesPermissions', { packingPonderation: 2 })
 export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvider<ObjectsPermissionsByRoleId> {
-  override readonly fetchRequirements = {
-    role: true,
-    objectPermission: { columns: true, groupBy: ['roleId'] },
-    rolePermissionFlag: { columns: true, groupBy: ['roleId'] },
-    permissionFlag: true,
-    fieldPermission: { columns: true, groupBy: ['roleId'] },
-    rowLevelPermissionPredicate: { columns: true, groupBy: ['roleId'] },
-    rowLevelPermissionPredicateGroup: { columns: true, groupBy: ['roleId'] },
-    objectMetadata: [
-      'id',
-      'isSystem',
-      'universalIdentifier',
-      'labelIdentifierFieldMetadataId',
-    ],
-  } as const satisfies CacheEntityFetchShape;
+  override readonly rowsRequirement = ROLES_PERMISSIONS_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): ObjectsPermissionsByRoleId {
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof ROLES_PERMISSIONS_ROWS_REQUIREMENT
+  >): ObjectsPermissionsByRoleId {
     const {
       role: roles,
       objectPermission: objectPermissions,
@@ -59,7 +63,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       rowLevelPermissionPredicate: rowLevelPermissionPredicates,
       rowLevelPermissionPredicateGroup: rowLevelPermissionPredicateGroups,
       objectMetadata: workspaceObjectMetadataCollection,
-    } = recomputeContext.getRowsByName(this.fetchRequirements);
+    } = rows;
 
     // the recompute context cannot load relations: the permissionFlag
     // relation is rebuilt in memory per role below (undefined when the FK is

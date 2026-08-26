@@ -6,31 +6,35 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatViewFilterMaps } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter-maps.type';
 import { fromViewFilterEntityToFlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/utils/from-view-filter-entity-to-flat-view-filter.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+
+const FLAT_VIEW_FILTER_ROWS_REQUIREMENT = {
+  viewFilter: true,
+  application: ['id', 'universalIdentifier'],
+  fieldMetadata: ['id', 'universalIdentifier'],
+  viewFilterGroup: ['id', 'universalIdentifier'],
+  view: ['id', 'universalIdentifier'],
+} as const;
 
 @Injectable()
 @WorkspaceCache('flatViewFilterMaps', { packingPonderation: 1 })
 export class WorkspaceFlatViewFilterMapCacheService extends FlatEntityMapCacheProvider<'viewFilter'> {
-  override readonly fetchRequirements = {
-    viewFilter: true,
-    application: ['id', 'universalIdentifier'],
-    fieldMetadata: ['id', 'universalIdentifier'],
-    viewFilterGroup: ['id', 'universalIdentifier'],
-    view: ['id', 'universalIdentifier'],
-  } as const;
+  override readonly rowsRequirement = FLAT_VIEW_FILTER_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FlatViewFilterMaps {
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_VIEW_FILTER_ROWS_REQUIREMENT
+  >): FlatViewFilterMaps {
     const {
       viewFilter: viewFilters,
       application: applications,
       fieldMetadata: fieldMetadatas,
       viewFilterGroup: viewFilterGroups,
       view: views,
-    } = recomputeContext.getRowsByName(this.fetchRequirements);
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

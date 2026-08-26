@@ -6,22 +6,24 @@ import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/wo
 
 import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { type CacheEntityFetchShape } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
+
+const USER_WORKSPACE_ROLE_ROWS_REQUIREMENT = {
+  roleTarget: true,
+} as const satisfies CacheEntityFetchShape;
 
 @Injectable()
 @WorkspaceCache('userWorkspaceRoleMap', { packingPonderation: 1 })
 export class WorkspaceUserWorkspaceRoleMapCacheService extends WorkspaceCacheProvider<UserWorkspaceRoleMap> {
-  override readonly fetchRequirements = {
-    roleTarget: true,
-  } as const satisfies CacheEntityFetchShape;
+  override readonly rowsRequirement = USER_WORKSPACE_ROLE_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): UserWorkspaceRoleMap {
-    const { roleTarget: roleTargets } = recomputeContext.getRowsByName(
-      this.fetchRequirements,
-    );
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof USER_WORKSPACE_ROLE_ROWS_REQUIREMENT
+  >): UserWorkspaceRoleMap {
+    const { roleTarget: roleTargets } = rows;
 
     // the recompute context only filters on workspaceId: the previous
     // userWorkspaceId IS NOT NULL condition moved in memory

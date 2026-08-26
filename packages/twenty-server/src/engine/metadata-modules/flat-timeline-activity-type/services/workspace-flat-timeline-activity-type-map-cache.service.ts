@@ -8,25 +8,30 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatTimelineActivityTypeMaps } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type-maps.type';
 import { fromTimelineActivityTypeEntityToFlatTimelineActivityType } from 'src/engine/metadata-modules/flat-timeline-activity-type/utils/from-timeline-activity-type-entity-to-flat-timeline-activity-type.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+
+const FLAT_TIMELINE_ACTIVITY_TYPE_ROWS_REQUIREMENT = {
+  timelineActivityType: true,
+  application: ['id', 'universalIdentifier', 'deletedAt'],
+} as const;
 
 @Injectable()
 @WorkspaceCache('flatTimelineActivityTypeMaps', { packingPonderation: 1 })
 export class WorkspaceFlatTimelineActivityTypeMapCacheService extends FlatEntityMapCacheProvider<'timelineActivityType'> {
-  override readonly fetchRequirements = {
-    timelineActivityType: true,
-    application: ['id', 'universalIdentifier', 'deletedAt'],
-  } as const;
+  override readonly rowsRequirement =
+    FLAT_TIMELINE_ACTIVITY_TYPE_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FlatTimelineActivityTypeMaps {
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_TIMELINE_ACTIVITY_TYPE_ROWS_REQUIREMENT
+  >): FlatTimelineActivityTypeMaps {
     const {
       timelineActivityType: timelineActivityTypes,
       application: applications,
-    } = recomputeContext.getRowsByName(this.fetchRequirements);
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(

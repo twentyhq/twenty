@@ -313,7 +313,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
   private collectFetchShapes(cacheKeyNames: WorkspaceCacheKeyName[]) {
     return cacheKeyNames.map(
-      (keyName) => this.getProviderOrThrow(keyName).fetchRequirements,
+      (keyName) => this.getProviderOrThrow(keyName).rowsRequirement,
     );
   }
 
@@ -574,7 +574,11 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
               'cache.local_data_only': isLocalDataOnly,
             },
           },
-          () => provider.computeForCache(recomputeContext),
+          () =>
+            provider.computeForCache({
+              workspaceId,
+              rows: recomputeContext.getRowsByName(provider.rowsRequirement),
+            }),
         );
 
         if (hashResolution.strategy === 'mint') {

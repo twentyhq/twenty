@@ -4,21 +4,24 @@ import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/wo
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { type CacheEntityFetchShape } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
+
+const FEATURE_FLAGS_ROWS_REQUIREMENT = {
+  featureFlag: true,
+} as const satisfies CacheEntityFetchShape;
 
 @Injectable()
 @WorkspaceCache('featureFlagsMap', { packingPonderation: 1 })
 export class WorkspaceFeatureFlagsMapCacheService extends WorkspaceCacheProvider<FeatureFlagMap> {
-  override readonly fetchRequirements = {
-    featureFlag: true,
-  } as const satisfies CacheEntityFetchShape;
+  override readonly rowsRequirement = FEATURE_FLAGS_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FeatureFlagMap {
-    const { featureFlag: workspaceFeatureFlags } =
-      recomputeContext.getRowsByName(this.fetchRequirements);
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FEATURE_FLAGS_ROWS_REQUIREMENT
+  >): FeatureFlagMap {
+    const { featureFlag: workspaceFeatureFlags } = rows;
 
     return workspaceFeatureFlags.reduce((result, currentFeatureFlag) => {
       result[currentFeatureFlag.key] = currentFeatureFlag.value;

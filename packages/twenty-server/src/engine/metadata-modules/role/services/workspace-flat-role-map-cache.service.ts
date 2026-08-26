@@ -7,45 +7,49 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { fromRoleEntityToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/from-role-entity-to-flat-role.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+
+const FLAT_ROLE_ROWS_REQUIREMENT = {
+  role: true,
+  application: ['id', 'universalIdentifier'],
+  roleTarget: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['roleId'],
+  },
+  objectPermission: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['roleId'],
+  },
+  rolePermissionFlag: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['roleId'],
+  },
+  fieldPermission: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['roleId'],
+  },
+  rowLevelPermissionPredicate: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['roleId'],
+  },
+  rowLevelPermissionPredicateGroup: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['roleId'],
+  },
+} as const;
 
 @Injectable()
 @WorkspaceCache('flatRoleMaps', { packingPonderation: 1 })
 export class WorkspaceFlatRoleMapCacheService extends FlatEntityMapCacheProvider<'role'> {
-  override readonly fetchRequirements = {
-    role: true,
-    application: ['id', 'universalIdentifier'],
-    roleTarget: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['roleId'],
-    },
-    objectPermission: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['roleId'],
-    },
-    rolePermissionFlag: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['roleId'],
-    },
-    fieldPermission: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['roleId'],
-    },
-    rowLevelPermissionPredicate: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['roleId'],
-    },
-    rowLevelPermissionPredicateGroup: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['roleId'],
-    },
-  } as const;
+  override readonly rowsRequirement = FLAT_ROLE_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FlatEntityMaps<FlatRole> {
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_ROLE_ROWS_REQUIREMENT
+  >): FlatEntityMaps<FlatRole> {
     const {
       role: roles,
       application: applications,
@@ -55,7 +59,7 @@ export class WorkspaceFlatRoleMapCacheService extends FlatEntityMapCacheProvider
       fieldPermission: fieldPermissions,
       rowLevelPermissionPredicate: rowLevelPermissionPredicates,
       rowLevelPermissionPredicateGroup: rowLevelPermissionPredicateGroups,
-    } = recomputeContext.getRowsByName(this.fetchRequirements);
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

@@ -271,6 +271,6 @@ describe('WorkspaceCacheRecomputeContext', () => {
 
     expect(() =>
       recomputeContext.getRowsByName({ application: ['id'] }),
-    ).toThrow(/application.*fetchRequirements/);
+    ).toThrow(/application.*rowsRequirement/);
   });
 });

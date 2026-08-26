@@ -11,9 +11,49 @@ import { expandFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-fi
 import { fromFieldMetadataEntityToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-field-metadata-entity-to-flat-field-metadata.util';
 import { computeUniqueFieldMetadataIdsFromIndexes } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-indexes.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+
+const FLAT_FIELD_METADATA_ROWS_REQUIREMENT = {
+  fieldMetadata: true,
+  index: ['id', 'isUnique', 'isSystemSideEffect'],
+  indexFieldMetadata: {
+    columns: ['id', 'fieldMetadataId', 'subFieldName'],
+    groupBy: ['indexMetadataId'],
+  },
+  objectMetadata: ['id', 'universalIdentifier'],
+  application: ['id', 'universalIdentifier'],
+  viewField: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['fieldMetadataId'],
+  },
+  viewFilter: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['fieldMetadataId'],
+  },
+  viewSort: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['fieldMetadataId'],
+  },
+  view: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: [
+      'kanbanAggregateOperationFieldMetadataId',
+      'calendarFieldMetadataId',
+      'calendarEndFieldMetadataId',
+      'mainGroupByFieldMetadataId',
+    ],
+  },
+  searchFieldMetadata: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['fieldMetadataId'],
+  },
+  fieldPermission: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['fieldMetadataId'],
+  },
+} as const;
 
 @Injectable()
 @WorkspaceCache('flatFieldMetadataMaps', { packingPonderation: 64 })
@@ -21,45 +61,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends FlatEntityMapCach
   'fieldMetadata',
   CompactFlatFieldMetadataMaps
 > {
-  override readonly fetchRequirements = {
-    fieldMetadata: true,
-    index: ['id', 'isUnique', 'isSystemSideEffect'],
-    indexFieldMetadata: {
-      columns: ['id', 'fieldMetadataId', 'subFieldName'],
-      groupBy: ['indexMetadataId'],
-    },
-    objectMetadata: ['id', 'universalIdentifier'],
-    application: ['id', 'universalIdentifier'],
-    viewField: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['fieldMetadataId'],
-    },
-    viewFilter: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['fieldMetadataId'],
-    },
-    viewSort: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['fieldMetadataId'],
-    },
-    view: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: [
-        'kanbanAggregateOperationFieldMetadataId',
-        'calendarFieldMetadataId',
-        'calendarEndFieldMetadataId',
-        'mainGroupByFieldMetadataId',
-      ],
-    },
-    searchFieldMetadata: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['fieldMetadataId'],
-    },
-    fieldPermission: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['fieldMetadataId'],
-    },
-  } as const;
+  override readonly rowsRequirement = FLAT_FIELD_METADATA_ROWS_REQUIREMENT;
 
   override compactForStorage(
     data: FlatEntityMaps<FlatFieldMetadata>,
@@ -73,9 +75,11 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends FlatEntityMapCach
     return expandFlatFieldMetadataMaps(compactData);
   }
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FlatEntityMaps<FlatFieldMetadata> {
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_FIELD_METADATA_ROWS_REQUIREMENT
+  >): FlatEntityMaps<FlatFieldMetadata> {
     const {
       fieldMetadata: fieldMetadatas,
       index: indexMetadatas,
@@ -88,7 +92,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends FlatEntityMapCach
       view: views,
       searchFieldMetadata: searchFieldMetadatas,
       fieldPermission: fieldPermissions,
-    } = recomputeContext.getRowsByName(this.fetchRequirements);
+    } = rows;
 
     const fieldMetadataIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(fieldMetadatas);

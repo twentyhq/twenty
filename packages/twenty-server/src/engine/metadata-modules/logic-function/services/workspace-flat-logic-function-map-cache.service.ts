@@ -9,23 +9,26 @@ import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/fl
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { fromLogicFunctionEntityToFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/from-logic-function-entity-to-flat-logic-function.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+
+const FLAT_LOGIC_FUNCTION_ROWS_REQUIREMENT = {
+  logicFunction: true,
+  application: ['id', 'universalIdentifier', 'deletedAt'],
+} as const;
 
 @Injectable()
 @WorkspaceCache('flatLogicFunctionMaps', { packingPonderation: 12 })
 export class WorkspaceFlatLogicFunctionMapCacheService extends FlatEntityMapCacheProvider<'logicFunction'> {
-  override readonly fetchRequirements = {
-    logicFunction: true,
-    application: ['id', 'universalIdentifier', 'deletedAt'],
-  } as const;
+  override readonly rowsRequirement = FLAT_LOGIC_FUNCTION_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FlatEntityMaps<FlatLogicFunction> {
-    const { logicFunction: logicFunctions, application: applications } =
-      recomputeContext.getRowsByName(this.fetchRequirements);
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_LOGIC_FUNCTION_ROWS_REQUIREMENT
+  >): FlatEntityMaps<FlatLogicFunction> {
+    const { logicFunction: logicFunctions, application: applications } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(

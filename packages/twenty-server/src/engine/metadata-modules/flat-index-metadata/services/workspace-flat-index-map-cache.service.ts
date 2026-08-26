@@ -9,32 +9,36 @@ import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/fl
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { fromIndexMetadataEntityToFlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/utils/from-index-metadata-entity-to-flat-index-metadata.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { type CacheFetchableEntity } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
+const FLAT_INDEX_ROWS_REQUIREMENT = {
+  index: true,
+  indexFieldMetadata: true,
+  application: ['id', 'universalIdentifier', 'deletedAt'],
+  objectMetadata: ['id', 'universalIdentifier'],
+  fieldMetadata: ['id', 'universalIdentifier'],
+} as const;
+
 @Injectable()
 @WorkspaceCache('flatIndexMaps', { packingPonderation: 8 })
 export class WorkspaceFlatIndexMapCacheService extends FlatEntityMapCacheProvider<'index'> {
-  override readonly fetchRequirements = {
-    index: true,
-    indexFieldMetadata: true,
-    application: ['id', 'universalIdentifier', 'deletedAt'],
-    objectMetadata: ['id', 'universalIdentifier'],
-    fieldMetadata: ['id', 'universalIdentifier'],
-  } as const;
+  override readonly rowsRequirement = FLAT_INDEX_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FlatEntityMaps<FlatIndexMetadata> {
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_INDEX_ROWS_REQUIREMENT
+  >): FlatEntityMaps<FlatIndexMetadata> {
     const {
       index: indexes,
       indexFieldMetadata: indexFieldMetadatas,
       application: applications,
       objectMetadata: objectMetadatas,
       fieldMetadata: fieldMetadatas,
-    } = recomputeContext.getRowsByName(this.fetchRequirements);
+    } = rows;
 
     const indexFieldMetadatasByIndexMetadataId = new Map<
       string,

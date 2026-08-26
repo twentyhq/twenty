@@ -6,31 +6,35 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { FlatViewFieldMaps } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field-maps.type';
 import { fromViewFieldEntityToFlatViewField } from 'src/engine/metadata-modules/flat-view-field/utils/from-view-field-entity-to-flat-view-field.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+
+const FLAT_VIEW_FIELD_ROWS_REQUIREMENT = {
+  viewField: true,
+  application: ['id', 'universalIdentifier'],
+  fieldMetadata: ['id', 'universalIdentifier'],
+  view: ['id', 'universalIdentifier'],
+  viewFieldGroup: ['id', 'universalIdentifier'],
+} as const;
 
 @Injectable()
 @WorkspaceCache('flatViewFieldMaps', { packingPonderation: 32 })
 export class WorkspaceFlatViewFieldMapCacheService extends FlatEntityMapCacheProvider<'viewField'> {
-  override readonly fetchRequirements = {
-    viewField: true,
-    application: ['id', 'universalIdentifier'],
-    fieldMetadata: ['id', 'universalIdentifier'],
-    view: ['id', 'universalIdentifier'],
-    viewFieldGroup: ['id', 'universalIdentifier'],
-  } as const;
+  override readonly rowsRequirement = FLAT_VIEW_FIELD_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FlatViewFieldMaps {
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_VIEW_FIELD_ROWS_REQUIREMENT
+  >): FlatViewFieldMaps {
     const {
       viewField: viewFields,
       application: applications,
       fieldMetadata: fieldMetadatas,
       view: views,
       viewFieldGroup: viewFieldGroups,
-    } = recomputeContext.getRowsByName(this.fetchRequirements);
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

@@ -7,53 +7,57 @@ import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/fl
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-entity-to-flat-object-metadata.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+
+const FLAT_OBJECT_METADATA_ROWS_REQUIREMENT = {
+  objectMetadata: true,
+  application: ['id', 'universalIdentifier'],
+  fieldMetadata: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['objectMetadataId'],
+  },
+  index: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['objectMetadataId'],
+  },
+  view: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['objectMetadataId'],
+  },
+  objectPermission: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['objectMetadataId'],
+  },
+  fieldPermission: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['objectMetadataId'],
+  },
+  searchFieldMetadata: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['objectMetadataId'],
+  },
+  pageLayout: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['objectMetadataId'],
+  },
+  commandMenuItem: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['navigationTargetObjectMetadataId'],
+  },
+} as const;
 
 @Injectable()
 @WorkspaceCache('flatObjectMetadataMaps', { packingPonderation: 6 })
 export class WorkspaceFlatObjectMetadataMapCacheService extends FlatEntityMapCacheProvider<'objectMetadata'> {
-  override readonly fetchRequirements = {
-    objectMetadata: true,
-    application: ['id', 'universalIdentifier'],
-    fieldMetadata: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['objectMetadataId'],
-    },
-    index: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['objectMetadataId'],
-    },
-    view: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['objectMetadataId'],
-    },
-    objectPermission: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['objectMetadataId'],
-    },
-    fieldPermission: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['objectMetadataId'],
-    },
-    searchFieldMetadata: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['objectMetadataId'],
-    },
-    pageLayout: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['objectMetadataId'],
-    },
-    commandMenuItem: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['navigationTargetObjectMetadataId'],
-    },
-  } as const;
+  override readonly rowsRequirement = FLAT_OBJECT_METADATA_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FlatEntityMaps<FlatObjectMetadata> {
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_OBJECT_METADATA_ROWS_REQUIREMENT
+  >): FlatEntityMaps<FlatObjectMetadata> {
     const {
       objectMetadata: objectMetadatas,
       application: applications,
@@ -65,7 +69,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends FlatEntityMapCac
       searchFieldMetadata: searchFieldMetadatas,
       pageLayout: pageLayouts,
       commandMenuItem: commandMenuItems,
-    } = recomputeContext.getRowsByName(this.fetchRequirements);
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

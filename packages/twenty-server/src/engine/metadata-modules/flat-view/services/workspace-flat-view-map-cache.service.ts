@@ -6,47 +6,51 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
 import { fromViewEntityToFlatView } from 'src/engine/metadata-modules/flat-view/utils/from-view-entity-to-flat-view.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+
+const FLAT_VIEW_ROWS_REQUIREMENT = {
+  view: true,
+  application: ['id', 'universalIdentifier'],
+  objectMetadata: ['id', 'universalIdentifier'],
+  fieldMetadata: ['id', 'universalIdentifier'],
+  viewField: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['viewId'],
+  },
+  viewFilter: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['viewId'],
+  },
+  viewGroup: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['viewId'],
+  },
+  viewFilterGroup: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['viewId'],
+  },
+  viewSort: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['viewId'],
+  },
+  viewFieldGroup: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['viewId'],
+  },
+} as const;
 
 @Injectable()
 @WorkspaceCache('flatViewMaps', { packingPonderation: 8 })
 export class WorkspaceFlatViewMapCacheService extends FlatEntityMapCacheProvider<'view'> {
-  override readonly fetchRequirements = {
-    view: true,
-    application: ['id', 'universalIdentifier'],
-    objectMetadata: ['id', 'universalIdentifier'],
-    fieldMetadata: ['id', 'universalIdentifier'],
-    viewField: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['viewId'],
-    },
-    viewFilter: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['viewId'],
-    },
-    viewGroup: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['viewId'],
-    },
-    viewFilterGroup: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['viewId'],
-    },
-    viewSort: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['viewId'],
-    },
-    viewFieldGroup: {
-      columns: ['id', 'universalIdentifier'],
-      groupBy: ['viewId'],
-    },
-  } as const;
+  override readonly rowsRequirement = FLAT_VIEW_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FlatViewMaps {
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_VIEW_ROWS_REQUIREMENT
+  >): FlatViewMaps {
     const {
       view: views,
       application: applications,
@@ -58,7 +62,7 @@ export class WorkspaceFlatViewMapCacheService extends FlatEntityMapCacheProvider
       viewFilterGroup: viewFilterGroups,
       viewSort: viewSorts,
       viewFieldGroup: viewFieldGroups,
-    } = recomputeContext.getRowsByName(this.fetchRequirements);
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);

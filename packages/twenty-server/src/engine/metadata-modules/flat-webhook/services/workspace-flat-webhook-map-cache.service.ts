@@ -8,23 +8,26 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatWebhookMaps } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook-maps.type';
 import { fromWebhookEntityToFlatWebhook } from 'src/engine/metadata-modules/flat-webhook/utils/from-webhook-entity-to-flat-webhook.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+
+const FLAT_WEBHOOK_ROWS_REQUIREMENT = {
+  webhook: true,
+  application: ['id', 'universalIdentifier', 'deletedAt'],
+} as const;
 
 @Injectable()
 @WorkspaceCache('flatWebhookMaps', { packingPonderation: 1 })
 export class WorkspaceFlatWebhookMapCacheService extends FlatEntityMapCacheProvider<'webhook'> {
-  override readonly fetchRequirements = {
-    webhook: true,
-    application: ['id', 'universalIdentifier', 'deletedAt'],
-  } as const;
+  override readonly rowsRequirement = FLAT_WEBHOOK_ROWS_REQUIREMENT;
 
-  computeForCache(
-    recomputeContext: WorkspaceCacheRecomputeContext,
-  ): FlatWebhookMaps {
-    const { webhook: allWebhooks, application: applications } =
-      recomputeContext.getRowsByName(this.fetchRequirements);
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_WEBHOOK_ROWS_REQUIREMENT
+  >): FlatWebhookMaps {
+    const { webhook: allWebhooks, application: applications } = rows;
 
     // the previous fetches filtered soft-deleted rows in SQL
     const webhooks = allWebhooks.filter(
