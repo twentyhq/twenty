@@ -1,4 +1,4 @@
-import { isCallRecordingInProgress } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingInProgress';
+import { isCallRecordingInProgress } from '@/page-layout/widgets/call-recording/utils/isCallRecordingInProgress';
 import { CallRecordingStatus } from '~/generated/graphql';
 
 const createCallRecording = (status: CallRecordingStatus) => ({

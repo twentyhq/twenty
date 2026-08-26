@@ -1,4 +1,4 @@
-import { isCallRecordingTranscriptFailed } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingTranscriptFailed';
+import { isCallRecordingTranscriptFailed } from '@/page-layout/widgets/call-recording/utils/isCallRecordingTranscriptFailed';
 import { CallRecordingStatus } from '~/generated/graphql';
 
 const createCallRecording = ({

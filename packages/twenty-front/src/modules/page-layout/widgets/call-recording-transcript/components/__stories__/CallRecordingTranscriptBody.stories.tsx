@@ -1,9 +1,9 @@
 import { PAGE_LAYOUT_TEST_INSTANCE_ID } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { getCallRecordingWidgetStoryDecorator } from '@/page-layout/widgets/calendar-event-call-recording/testing/getCallRecordingWidgetStoryDecorator';
-import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
-import { getCallRecordingVideoFileUrl } from '@/page-layout/widgets/calendar-event-call-recording/utils/getCallRecordingVideoFileUrl';
+import { getCallRecordingWidgetStoryDecorator } from '@/page-layout/widgets/call-recording/testing/getCallRecordingWidgetStoryDecorator';
+import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
+import { getCallRecordingVideoFileUrl } from '@/page-layout/widgets/call-recording/utils/getCallRecordingVideoFileUrl';
 import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody';
 import { CallRecordingTranscriptHeaderDataEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptHeaderDataEffect';
 import { CALL_RECORDING_TRANSCRIPT_CURRENT_SPOKEN_WORD_DATA_ATTRIBUTE } from '@/page-layout/widgets/call-recording-transcript/constants/CallRecordingTranscriptCurrentSpokenWordDataAttribute';
@@ -95,7 +95,7 @@ const pageLayoutWithTranscriptWidget: PageLayout = {
   deletedAt: null,
 };
 
-const completedCallRecording: CalendarEventCallRecordingCandidate = {
+const completedCallRecording: WidgetCallRecordingCandidate = {
   __typename: 'CallRecording',
   id: 'call-recording-id',
   status: CallRecordingStatus.COMPLETED,
@@ -105,13 +105,13 @@ const completedCallRecording: CalendarEventCallRecordingCandidate = {
   createdAt: '2026-01-01T00:00:00Z',
 };
 
-const pendingCallRecording: CalendarEventCallRecordingCandidate = {
+const pendingCallRecording: WidgetCallRecordingCandidate = {
   ...completedCallRecording,
   status: CallRecordingStatus.PROCESSING,
   transcript: { status: 'PENDING' },
 };
 
-const failedCallRecording: CalendarEventCallRecordingCandidate = {
+const failedCallRecording: WidgetCallRecordingCandidate = {
   ...completedCallRecording,
   status: CallRecordingStatus.FAILED,
   transcript: null,
@@ -229,12 +229,12 @@ const rawTranscript = [
   }),
 ];
 
-const readableCallRecording: CalendarEventCallRecordingCandidate = {
+const readableCallRecording: WidgetCallRecordingCandidate = {
   ...completedCallRecording,
   transcript: rawTranscript,
 };
 
-const recordedCallRecording: CalendarEventCallRecordingCandidate = {
+const recordedCallRecording: WidgetCallRecordingCandidate = {
   ...readableCallRecording,
   video: [
     {
@@ -246,7 +246,7 @@ const recordedCallRecording: CalendarEventCallRecordingCandidate = {
   ],
 };
 
-const unplayableRecordedCallRecording: CalendarEventCallRecordingCandidate = {
+const unplayableRecordedCallRecording: WidgetCallRecordingCandidate = {
   ...recordedCallRecording,
   video: [
     {
