@@ -45,8 +45,7 @@ export class ApplicationVariableEntity extends SyncableEntity {
   description: string;
 
   @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      ADD_LABEL_TO_APPLICATION_VARIABLE_UPGRADE_COMMAND_NAME,
+    upgradeCommandName: ADD_LABEL_TO_APPLICATION_VARIABLE_UPGRADE_COMMAND_NAME,
   })
   @Column({ nullable: false, type: 'text', default: '' })
   label: string;
