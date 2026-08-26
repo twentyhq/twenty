@@ -15,32 +15,25 @@ export const getActivityTargetsFilter = ({
   activityTargetObjectMetadata: EnrichedObjectMetadataItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
 }) => {
-  const findManyActivityTargetsQueryFilter = Object.fromEntries(
-    targetableObjects
-      .map((targetableObject) => {
-        const targetObjectMetadata = objectMetadataItems.find(
-          (objectMetadataItem) =>
-            objectMetadataItem.nameSingular ===
-            targetableObject.targetObjectNameSingular,
-        );
+  const targetFilters = targetableObjects
+    .map((targetableObject) => {
+      const targetObjectMetadata = objectMetadataItems.find(
+        (objectMetadataItem) =>
+          objectMetadataItem.nameSingular ===
+          targetableObject.targetObjectNameSingular,
+      );
 
-        const joinColumnName = findTargetFieldInfo(
-          activityTargetObjectMetadata.fields,
-          targetObjectMetadata?.id ?? '',
-          objectMetadataItems,
-        )?.joinColumnName;
+      const joinColumnName = findTargetFieldInfo(
+        activityTargetObjectMetadata.fields,
+        targetObjectMetadata?.id ?? '',
+        objectMetadataItems,
+      )?.joinColumnName;
 
-        return isDefined(joinColumnName)
-          ? [
-              joinColumnName,
-              {
-                eq: targetableObject.id,
-              },
-            ]
-          : undefined;
-      })
-      .filter(isDefined),
-  );
+      return isDefined(joinColumnName)
+        ? { [joinColumnName]: { eq: targetableObject.id } }
+        : undefined;
+    })
+    .filter(isDefined);
 
-  return findManyActivityTargetsQueryFilter;
+  return { or: targetFilters };
 };
