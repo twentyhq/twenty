@@ -112,8 +112,7 @@ export class WorkspaceMigrationRunnerService {
     } = this.getLegacyCacheInvalidation(allFlatEntityMapsKeys);
 
     const cacheKeyNamesToInvalidate = [
-      ...allFlatEntityMapsKeys,
-      ...legacyCacheKeyBatches.flat(),
+      ...new Set([...allFlatEntityMapsKeys, ...legacyCacheKeyBatches.flat()]),
     ];
 
     await this.workspaceCacheService.flush(
