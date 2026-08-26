@@ -105,17 +105,32 @@ describe('MakeUserEmailCaseInsensitive instance command (integration)', () => {
     expect(await uniqueIndexDefinition()).toContain('"deletedAt" IS NULL');
   });
 
-  it('leaves the database untouched when live addresses differ only by casing', async () => {
+  it('skips without failing the upgrade when live addresses differ only by casing', async () => {
     await insertUser({ email: `${PROBE_PREFIX}-clash@example.com` });
     await insertUser({ email: `${PROBE_PREFIX}-CLASH@example.com` });
 
     const before = await uniqueIndexDefinition();
     const result = await runCommandLikeUpgradeRunner('up');
 
-    expect(result.threw).toBe(true);
-    expect(result.message).toContain(`${PROBE_PREFIX}-clash@example.com`);
+    expect(result.threw).toBe(false);
     expect(await columnType()).toBe('varchar');
     expect(await uniqueIndexDefinition()).toBe(before);
+  });
+
+  it('converts on a later run once the colliding addresses are gone', async () => {
+    await insertUser({ email: `${PROBE_PREFIX}-retry@example.com` });
+    await insertUser({ email: `${PROBE_PREFIX}-RETRY@example.com` });
+
+    expect((await runCommandLikeUpgradeRunner('up')).threw).toBe(false);
+    expect(await columnType()).toBe('varchar');
+
+    await global.testDataSource.query(
+      `DELETE FROM core."user" WHERE email = $1`,
+      [`${PROBE_PREFIX}-RETRY@example.com`],
+    );
+
+    expect((await runCommandLikeUpgradeRunner('up')).threw).toBe(false);
+    expect(await columnType()).toBe('citext');
   });
 
   it('ignores soft-deleted addresses that collide with a live one', async () => {
