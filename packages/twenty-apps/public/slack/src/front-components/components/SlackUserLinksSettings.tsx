@@ -46,8 +46,7 @@ export const SlackUserLinksSettings = () => {
     refetchSlackUserLinks,
   } = useSlackUserLinks();
   const { removeSlackUserLink, removingLinkId } = useRemoveSlackUserLink();
-  const { resendConsent, resendingLinkId, setResendingLinkId } =
-    useResendSlackUserLinkConsent();
+  const { resendConsent, resendingLinkId } = useResendSlackUserLinkConsent();
 
   const handleRemove = async (slackUserLink: SlackUserLinkRecord) => {
     const result = await removeSlackUserLink(slackUserLink.id);
@@ -70,24 +69,19 @@ export const SlackUserLinksSettings = () => {
       return;
     }
 
-    setResendingLinkId(slackUserLink.id);
+    const result = await resendConsent({
+      id: slackUserLink.id,
+      slackTeamId: slackUserLink.slackTeamId,
+      slackUserId: slackUserLink.slackUserId,
+    });
 
-    try {
-      const result = await resendConsent({
-        slackTeamId: slackUserLink.slackTeamId,
-        slackUserId: slackUserLink.slackUserId,
-      });
+    enqueueSnackbar({
+      message: isNonEmptyString(result.error) ? result.error : result.message,
+      variant: result.success ? 'success' : 'error',
+    });
 
-      enqueueSnackbar({
-        message: isNonEmptyString(result.error) ? result.error : result.message,
-        variant: result.success ? 'success' : 'error',
-      });
-
-      if (result.success) {
-        await refetchSlackUserLinks();
-      }
-    } finally {
-      setResendingLinkId(undefined);
+    if (result.success) {
+      await refetchSlackUserLinks();
     }
   };
 
