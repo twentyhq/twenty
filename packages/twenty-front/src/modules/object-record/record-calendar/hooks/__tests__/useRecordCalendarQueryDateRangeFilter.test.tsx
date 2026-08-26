@@ -14,7 +14,6 @@ const mockCalendarField = {
   type: FieldMetadataType.DATE_TIME,
 };
 let mockLayout = ViewCalendarLayout.DAY;
-let mockFeatureEnabled = true;
 
 jest.mock(
   '@/object-record/record-calendar/contexts/RecordCalendarContext',
@@ -27,9 +26,6 @@ jest.mock(
 );
 jest.mock('@/ui/input/components/internal/date/hooks/useUserTimezone', () => ({
   useUserTimezone: () => ({ userTimezone: 'America/Los_Angeles' }),
-}));
-jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: () => mockFeatureEnabled,
 }));
 jest.mock(
   '@/object-record/record-filter/hooks/useFilterValueDependencies',
@@ -80,7 +76,6 @@ const withViewFilters = (gte: string, lt: string) => ({
 
 describe('useRecordCalendarQueryDateRangeFilter', () => {
   beforeEach(() => {
-    mockFeatureEnabled = true;
     mockCalendarField.type = FieldMetadataType.DATE_TIME;
     mockLayout = ViewCalendarLayout.DAY;
   });
@@ -100,12 +95,5 @@ describe('useRecordCalendarQueryDateRangeFilter', () => {
   it('uses plain dates without shifting Date fields by the timezone', () => {
     mockCalendarField.type = FieldMetadataType.DATE;
     expect(getFilter()).toEqual(withViewFilters('2026-03-08', '2026-03-09'));
-  });
-
-  it('queries the month when a saved day layout is disabled by the feature flag', () => {
-    mockFeatureEnabled = false;
-    expect(getFilter()).toEqual(
-      withViewFilters('2026-02-23T08:00:00Z', '2026-04-06T07:00:00Z'),
-    );
   });
 });

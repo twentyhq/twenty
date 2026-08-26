@@ -3,10 +3,7 @@ import { Temporal } from 'temporal-polyfill';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 
 import { RecordCalendar } from '@/object-record/record-calendar/components/RecordCalendar';
-import {
-  FeatureFlagKey,
-  ViewCalendarLayout,
-} from '~/generated-metadata/graphql';
+import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 jest.mock(
   '@/object-record/record-calendar/components/RecordCalendarTopBar',
@@ -108,28 +105,18 @@ jest.mock(
     useAtomComponentStateValue: jest.fn(),
   }),
 );
-jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: jest.fn(),
-}));
 
 const useAtomComponentStateValueMock = jest.requireMock(
   '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue',
 ).useAtomComponentStateValue;
-const useIsFeatureEnabledMock = jest.requireMock(
-  '@/workspace/hooks/useIsFeatureEnabled',
-).useIsFeatureEnabled;
 
 describe('RecordCalendar', () => {
-  const renderCalendar = (
-    calendarLayout: ViewCalendarLayout,
-    isEnabled = true,
-  ) => {
+  const renderCalendar = (calendarLayout: ViewCalendarLayout) => {
     useAtomComponentStateValueMock.mockImplementation((state: unknown) =>
       state === recordCalendarSelectedDateComponentState
         ? Temporal.PlainDate.from('2026-07-15')
         : calendarLayout,
     );
-    useIsFeatureEnabledMock.mockReturnValue(isEnabled);
     return render(<RecordCalendar />);
   };
 
@@ -151,18 +138,6 @@ describe('RecordCalendar', () => {
       expect(screen.getByText('Wed')).toBeInTheDocument();
       expect(screen.queryByText('All day')).not.toBeInTheDocument();
       expect(screen.queryByText(/\d{1,2}:00/)).not.toBeInTheDocument();
-    },
-  );
-
-  it.each([ViewCalendarLayout.DAY, ViewCalendarLayout.WEEK])(
-    'renders the month grid when a persisted %s layout is disabled',
-    (layout) => {
-      renderCalendar(layout, false);
-
-      expect(screen.getAllByRole('article')).toHaveLength(35);
-      expect(useIsFeatureEnabledMock).toHaveBeenCalledWith(
-        FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
-      );
     },
   );
 });

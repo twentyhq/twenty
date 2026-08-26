@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { I18nProvider } from '@lingui/react';
 import { i18n } from '@lingui/core';
@@ -31,7 +31,6 @@ const mockCloseDropdown = jest.fn();
 const mockResetContent = jest.fn();
 const mockSetRecordIndexCalendarLayout = jest.fn();
 const mockUpdateCurrentView = jest.fn();
-const mockUseIsFeatureEnabled = jest.fn();
 const mockUseCalendarLayoutValue = jest.fn();
 
 jest.mock(
@@ -90,9 +89,6 @@ jest.mock('@/views/hooks/useUpdateCurrentView', () => ({
     updateCurrentView: mockUpdateCurrentView,
   })),
 }));
-jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: (...args: unknown[]) => mockUseIsFeatureEnabled(...args),
-}));
 jest.mock('twenty-ui/data-display', () => ({
   Pill: ({ label }: { label: string }) => <span>{label}</span>,
 }));
@@ -122,7 +118,6 @@ describe('ObjectOptionsDropdownCalendarViewContent', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseCalendarLayoutValue.mockReturnValue(ViewCalendarLayout.MONTH);
-    mockUseIsFeatureEnabled.mockReturnValue(true);
     mockUpdateCurrentView.mockResolvedValue(undefined);
   });
 
@@ -138,44 +133,26 @@ describe('ObjectOptionsDropdownCalendarViewContent', () => {
     expect(screen.getByText('Timeline').closest('button')).toBeDisabled();
   });
 
-  it('persists Day without treating it as Timeline', async () => {
+  it.each([
+    ['Day', ViewCalendarLayout.DAY],
+    ['Week', ViewCalendarLayout.WEEK],
+  ])('persists %s without a feature flag', async (label, calendarLayout) => {
+    const user = userEvent.setup();
     render(<ObjectOptionsDropdownCalendarViewContent />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Day' }));
+    await user.click(screen.getByRole('button', { name: label }));
 
     expect(mockSetRecordIndexCalendarLayout).toHaveBeenCalledWith(
-      ViewCalendarLayout.DAY,
+      calendarLayout,
     );
-    expect(mockUpdateCurrentView).toHaveBeenCalledWith({
-      calendarLayout: ViewCalendarLayout.DAY,
-    });
+    expect(mockUpdateCurrentView).toHaveBeenCalledWith({ calendarLayout });
     await waitFor(() => expect(mockCloseDropdown).toHaveBeenCalled());
-  });
-
-  it('keeps Day and Week unavailable when the feature flag is disabled', () => {
-    mockUseIsFeatureEnabled.mockReturnValue(false);
-
-    render(<ObjectOptionsDropdownCalendarViewContent />);
-
-    const dayButton = screen.getByText('Day').closest('button');
-    const weekButton = screen.getByText('Week').closest('button');
-
-    expect(dayButton).toBeDisabled();
-    expect(weekButton).toBeDisabled();
-
-    if (dayButton !== null) {
-      fireEvent.click(dayButton);
-    }
-
-    expect(mockSetRecordIndexCalendarLayout).not.toHaveBeenCalled();
-    expect(mockUpdateCurrentView).not.toHaveBeenCalled();
   });
 });
 
 describe('ObjectOptionsDropdownCalendarFieldsContent', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseIsFeatureEnabled.mockReturnValue(true);
     mockUpdateCurrentView.mockResolvedValue(undefined);
   });
 
