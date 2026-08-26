@@ -32,6 +32,7 @@ jobs:
     timeout-minutes: 30
     outputs:
       qa-scout-run: ${{ steps.qa-scout-pr.outputs.run }}
+      qa-scout-pr-number: ${{ steps.qa-scout-pr.outputs.pr_number }}
     env:
       NODE_OPTIONS: "--max-old-space-size=10240"
     services:
@@ -170,6 +171,13 @@ jobs:
           fi
           gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" \
             --json number,title,body,author,url,mergedAt > /tmp/qa-scout/context/pr.json
+          # The Scout QAs main, so an unmerged PR (reachable via manual
+          # dispatch) would get a verdict about code it does not contain.
+          if [ -z "$(jq -r '.mergedAt // empty' /tmp/qa-scout/context/pr.json)" ]; then
+            echo "PR #${PR_NUMBER} is not merged; skipping QA Scout."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           TITLE=$(jq -r '.title' /tmp/qa-scout/context/pr.json)
           # Mirrors mustBeQa in the eng app: [no-qa]/[noqa] escape hatch, i18n
           # translation PRs are auto-generated and never QA candidates.
@@ -186,10 +194,14 @@ jobs:
               exit 0
               ;;
           esac
-          gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files?per_page=100" \
-            --jq '[.[] | {path: .filename, additions, deletions, status}]' > /tmp/qa-scout/context/files.json
+          gh api --paginate --slurp "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files?per_page=100" \
+            --jq '[.[][] | {path: .filename, additions, deletions, status}]' > /tmp/qa-scout/context/files.json
           gh pr diff "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" > /tmp/qa-scout/full.diff
+          DIFF_BYTES=$(wc -c < /tmp/qa-scout/full.diff)
           head -c 2000000 /tmp/qa-scout/full.diff > /tmp/qa-scout/context/pr.diff
+          if [ "$DIFF_BYTES" -gt 2000000 ]; then
+            printf '\n[pr.diff truncated: 2000000 of %s bytes shown; files.json is complete]\n' "$DIFF_BYTES" >> /tmp/qa-scout/context/pr.diff
+          fi
           rm /tmp/qa-scout/full.diff
           cat > /tmp/qa-scout/mcp.json <<'EOF'
           {
@@ -290,7 +302,9 @@ jobs:
 
   # Posts the QA Scout verdict as a comment on the merged PR. Separate job so
   # pull-requests:write never coexists with the agent step: the agent reads
-  # untrusted page/log content, this job only reads the structured artifact.
+  # untrusted page/log content, so the write TARGET is bound to the prepare
+  # step's trusted pr_number output and the agent-authored artifact can only
+  # influence the comment's content, never where it lands.
   # Quiet on PASS; FAIL/INVESTIGATE post (or update) a single marked comment.
   # Kill switch: set repo variable QA_SCOUT_DISABLE_COMMENTS=true.
   qa-scout-comment:
@@ -318,8 +332,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          PR_NUMBER: ${{ needs.e2e-test.outputs.qa-scout-pr-number }}
         run: |
           set -euo pipefail
+          if ! [[ "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
+            echo "No trusted PR number from the prepare step; nothing to post."
+            exit 0
+          fi
           VERDICT_FILE=$(find qa-scout-report -name verdict.json | head -1 || true)
           REPORT_FILE=$(find qa-scout-report -name report.md | head -1 || true)
           if [ -z "$VERDICT_FILE" ] || [ -z "$REPORT_FILE" ]; then
@@ -327,10 +346,9 @@ jobs:
             exit 0
           fi
           VERDICT=$(jq -r '.verdict // empty' "$VERDICT_FILE")
-          PR_NUMBER=$(jq -r '.prNumber // empty' "$VERDICT_FILE")
-          if [ -z "$PR_NUMBER" ]; then
-            echo "No prNumber in verdict.json; nothing to post."
-            exit 0
+          ARTIFACT_PR=$(jq -r '.prNumber // empty' "$VERDICT_FILE")
+          if [ "$ARTIFACT_PR" != "$PR_NUMBER" ]; then
+            echo "verdict.json prNumber (${ARTIFACT_PR:-none}) differs from the trusted target #${PR_NUMBER}; the trusted target wins."
           fi
           if [ "$VERDICT" = "PASS" ]; then
             echo "Verdict PASS for PR #${PR_NUMBER}; staying quiet (report is in the job summary and artifact)."
@@ -338,7 +356,8 @@ jobs:
           fi
           {
             echo "<!-- qa-scout -->"
-            cat "$REPORT_FILE"
+            head -c 60000 "$REPORT_FILE"
+            echo ""
             echo ""
             echo "[QA Scout run](${RUN_URL}) · verdict: ${VERDICT} · re-run: Actions → CI E2E Main → Run workflow with pr_number=${PR_NUMBER}"
           } > comment.md
