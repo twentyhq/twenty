@@ -4,6 +4,8 @@ export type FieldMetadataOverrides = {
   label?: string | null;
   description?: string | null;
   icon?: string | null;
+  position?: number | null;
+  isVisibleByDefault?: boolean | null;
   translations?: Partial<
     Record<
       keyof typeof APP_LOCALES,

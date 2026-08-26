@@ -18,7 +18,11 @@ import { ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
-import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
+import {
+  FIELD_METADATA_PRESENTATION_PROPERTIES,
+  resolveEffectiveEntityPlainProperty,
+  resolveEffectiveEntityProperty,
+} from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type CursorConnection } from 'src/engine/metadata-modules/pagination/dtos/cursor-connection-type.factory';
@@ -116,13 +120,21 @@ export class FieldMetadataConnectionLoaderFactory {
             ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME.fieldMetadata.reduce(
               (acc, property) => ({
                 ...acc,
-                [property]: resolveEffectiveEntityProperty({
-                  metadataName: 'fieldMetadata',
-                  baseValue: flatFieldMetadata[property],
-                  overrides,
+                [property]: FIELD_METADATA_PRESENTATION_PROPERTIES.includes(
                   property,
-                  i18nContext,
-                }),
+                )
+                  ? resolveEffectiveEntityProperty({
+                      metadataName: 'fieldMetadata',
+                      baseValue: flatFieldMetadata[property] as string | null,
+                      overrides,
+                      property,
+                      i18nContext,
+                    })
+                  : resolveEffectiveEntityPlainProperty({
+                      baseValue: flatFieldMetadata[property],
+                      overrides,
+                      property,
+                    }),
               }),
               flatFieldMetadata,
             );

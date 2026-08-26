@@ -21,6 +21,8 @@ exports[`registry-derived override property maps derives the overridable propert
     "description",
     "icon",
     "label",
+    "position",
+    "isVisibleByDefault",
   ],
   "fieldPermission": [],
   "frontComponent": [],

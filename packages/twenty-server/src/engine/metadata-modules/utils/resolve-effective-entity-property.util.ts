@@ -97,6 +97,29 @@ const resolveEffectiveProperty = ({
   });
 };
 
+export const FIELD_METADATA_PRESENTATION_PROPERTIES: readonly string[] = [
+  'label',
+  'description',
+  'icon',
+];
+
+// For overridable properties that are plain values, not presentation strings
+// (fieldMetadata.position, isVisibleByDefault): no locale, no catalog, no ''
+// coercion — the override wins when set, the base value otherwise.
+export const resolveEffectiveEntityPlainProperty = <TValue>({
+  baseValue,
+  overrides,
+  property,
+}: {
+  baseValue: TValue;
+  overrides: unknown;
+  property: string;
+}): TValue => {
+  const overrideValue = readOverrideProperty(overrides, property);
+
+  return isDefined(overrideValue) ? (overrideValue as TValue) : baseValue;
+};
+
 export const resolveEffectiveEntityProperty = <T extends AllMetadataName>({
   metadataName,
   baseValue,
