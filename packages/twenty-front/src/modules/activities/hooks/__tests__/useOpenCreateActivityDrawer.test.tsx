@@ -126,4 +126,33 @@ describe('useOpenCreateActivityDrawer', () => {
       targetableObjects,
     );
   });
+
+  it('should ignore targets not supported by the junction metadata', async () => {
+    const unsupportedTarget = {
+      id: 'unsupported-id',
+      targetObjectNameSingular: 'unsupportedObject',
+    };
+
+    const { result } = renderHook(
+      () =>
+        useOpenCreateActivityDrawer({
+          activityObjectNameSingular: CoreObjectNameSingular.Note,
+        }),
+      { wrapper: Wrapper },
+    );
+
+    await act(async () => {
+      await result.current({
+        targetableObjects: [unsupportedTarget],
+      });
+    });
+
+    expect(mockCreateManyNoteTargets).not.toHaveBeenCalled();
+    expect(mockOpenRecordInSidePanel).toHaveBeenCalledWith({
+      recordId: fakeNoteId,
+      objectNameSingular: CoreObjectNameSingular.Note,
+      isNewRecord: true,
+    });
+    expect(jotaiStore.get(activityTargetableEntityArrayState.atom)).toEqual([]);
+  });
 });

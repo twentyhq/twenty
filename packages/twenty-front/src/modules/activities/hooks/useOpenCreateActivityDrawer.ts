@@ -74,37 +74,43 @@ export const useOpenCreateActivityDrawer = ({
       position: 'last',
     });
 
-    if (targetableObjects.length > 0) {
-      const { junctionObjectMetadata, sourceJoinColumnName } =
-        morphJunctionConfig;
+    const { junctionObjectMetadata, sourceJoinColumnName } =
+      morphJunctionConfig;
 
-      const recordsToCreate = targetableObjects.map((targetableObject) => {
-        const targetObjectMetadata = objectMetadataItems.find(
-          (item) =>
-            item.nameSingular === targetableObject.targetObjectNameSingular,
-        );
-        const targetFieldInfo = findTargetFieldInfo(
-          junctionObjectMetadata.fields,
-          targetObjectMetadata?.id ?? '',
-          objectMetadataItems,
-        );
+    const supportedTargets = targetableObjects.flatMap((targetableObject) => {
+      const targetObjectMetadata = objectMetadataItems.find(
+        (item) =>
+          item.nameSingular === targetableObject.targetObjectNameSingular,
+      );
+      const targetFieldInfo = findTargetFieldInfo(
+        junctionObjectMetadata.fields,
+        targetObjectMetadata?.id ?? '',
+        objectMetadataItems,
+      );
 
-        if (!isDefined(targetFieldInfo?.joinColumnName)) {
-          throw new Error(
-            `Activity target junction does not support ${targetableObject.targetObjectNameSingular}`,
-          );
-        }
+      if (!isDefined(targetFieldInfo?.joinColumnName)) {
+        return [];
+      }
 
-        return {
+      return [
+        { targetableObject, joinColumnName: targetFieldInfo.joinColumnName },
+      ];
+    });
+
+    if (supportedTargets.length > 0) {
+      const recordsToCreate = supportedTargets.map(
+        ({ targetableObject, joinColumnName }) => ({
           [sourceJoinColumnName]: activity.id,
-          [targetFieldInfo.joinColumnName]: targetableObject.id,
-        };
-      });
+          [joinColumnName]: targetableObject.id,
+        }),
+      );
 
       await createActivityTargets({ recordsToCreate, upsert: true });
     }
 
-    setActivityTargetableEntityArray(targetableObjects);
+    setActivityTargetableEntityArray(
+      supportedTargets.map(({ targetableObject }) => targetableObject),
+    );
 
     openRecordInSidePanel({
       recordId: activity.id,

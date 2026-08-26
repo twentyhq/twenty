@@ -11,6 +11,7 @@ import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCac
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useObjectMorphJunctionConfigOrThrow } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfigOrThrow';
+import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
 import { getJunctionRecordsFromRecord } from '@/object-record/record-field/ui/utils/junction/getJunctionRecordsFromRecord';
 import { getRelatedRecordIdFromJunction } from '@/object-record/record-field/ui/utils/junction/getRelatedRecordIdFromJunction';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -89,10 +90,11 @@ export const usePrepareFindManyActivitiesQuery = ({
     const { junctionObjectMetadata, sourceField, sourceJoinColumnName } =
       morphJunctionConfig;
 
-    const junctionFieldName = targetableObjectMetadataItem.fields.find(
-      (field) =>
-        field.relation?.targetObjectMetadata.id === junctionObjectMetadata.id,
-    )?.name;
+    const junctionFieldName = findTargetFieldInfo(
+      targetableObjectMetadataItem.fields,
+      junctionObjectMetadata.id,
+      objectMetadataItems,
+    )?.fieldName;
 
     const activityTargets = isDefined(junctionFieldName)
       ? getJunctionRecordsFromRecord({
