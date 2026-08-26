@@ -361,8 +361,8 @@ jobs:
             echo ""
             echo "[QA Scout run](${RUN_URL}) · verdict: ${VERDICT} · re-run: Actions → CI E2E Main → Run workflow with pr_number=${PR_NUMBER}"
           } > comment.md
-          EXISTING=$(gh api "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments?per_page=100" \
-            --jq '[.[] | select(.body | startswith("<!-- qa-scout -->")) | .id] | first // empty')
+          EXISTING=$(gh api --paginate --slurp "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments?per_page=100" \
+            --jq '[.[][] | select(.body | startswith("<!-- qa-scout -->")) | .id] | first // empty')
           if [ -n "$EXISTING" ]; then
             gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${EXISTING}" -F body=@comment.md
           else
