@@ -922,19 +922,33 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       tableShape: this.options.tableShape,
       columnNames,
       rows,
-      returningColumns: columnsToReturn,
+      returningColumns: this.options.tableShape.columnNames,
     });
 
-    const rawRows = await this.executeRaw<ObjectRecord>(sql, parameters);
+    const insertedRows = await this.executeRaw<ObjectRecord>(sql, parameters);
 
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
     }
 
+    const columnsToReturnSet = new Set(columnsToReturn);
+    const rawRows =
+      columnsToReturn.length === 0
+        ? []
+        : insertedRows.map(
+            (record) =>
+              Object.fromEntries(
+                Object.entries(record).filter(([columnName]) =>
+                  columnsToReturnSet.has(columnName),
+                ),
+              ) as ObjectRecord,
+          );
     const generatedMaps = this.formatResult<ObjectRecord[]>(rawRows);
-    const insertedIds = rawRows.map((row) => row.id).filter(isNonEmptyString);
+    const insertedIds = insertedRows
+      .map((row) => row.id)
+      .filter(isNonEmptyString);
 
-    await this.emitCreateEvents(insertedIds);
+    this.emitCreateEvents(this.formatResult<ObjectRecord[]>(insertedRows));
 
     return {
       identifiers: insertedIds.map((id) => ({ id })),
@@ -1134,16 +1148,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     };
   }
 
-  private async emitCreateEvents(insertedIds: string[]): Promise<void> {
-    if (insertedIds.length === 0) {
+  private emitCreateEvents(recordsAfter: ObjectRecord[]): void {
+    if (recordsAfter.length === 0) {
       return;
     }
-
-    const recordsAfter = await this.buildIdsEventSnapshotQueryBuilder(
-      insertedIds,
-    ).getMany<ObjectRecord>({ noFormatting: true });
-
-    const formattedAfter = this.formatResult<ObjectRecord[]>(recordsAfter);
 
     for (const action of [
       DatabaseEventAction.CREATED,
@@ -1155,7 +1163,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         flatFieldMetadataMaps:
           this.options.internalContext.flatFieldMetadataMaps,
         workspaceId: this.options.internalContext.workspaceId,
-        recordsAfter: formattedAfter,
+        recordsAfter,
         authContext: this.options.authContext,
       });
 

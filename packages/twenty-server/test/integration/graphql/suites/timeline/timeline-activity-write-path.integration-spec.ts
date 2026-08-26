@@ -1,4 +1,5 @@
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
@@ -26,6 +27,7 @@ const TIMELINE_ACTIVITY_GQL_FIELDS = `
   linkedObjectMetadataId
   targetCompanyId
   targetPersonId
+  targetOpportunityId
   targetNoteId
   targetTaskId
 `;
@@ -41,6 +43,7 @@ type TimelineActivityRow = {
   linkedObjectMetadataId: string | null;
   targetCompanyId: string | null;
   targetPersonId: string | null;
+  targetOpportunityId: string | null;
   targetNoteId: string | null;
   targetTaskId: string | null;
 };
@@ -55,6 +58,27 @@ const createRecord = async ({
   const response = await makeGraphqlAPIRequest(
     createOneOperationFactory({
       objectMetadataSingularName,
+      gqlFields: 'id',
+      data,
+    }),
+  );
+
+  expect(response.body.errors).toBeUndefined();
+};
+
+const createRecords = async ({
+  objectMetadataSingularName,
+  objectMetadataPluralName,
+  data,
+}: {
+  objectMetadataSingularName: string;
+  objectMetadataPluralName: string;
+  data: object[];
+}): Promise<void> => {
+  const response = await makeGraphqlAPIRequest(
+    createManyOperationFactory({
+      objectMetadataSingularName,
+      objectMetadataPluralName,
       gqlFields: 'id',
       data,
     }),
@@ -157,6 +181,7 @@ const timelineActivityTypeIdForOrThrow = (
 };
 
 const NOTE_UNIVERSAL_IDENTIFIER = STANDARD_OBJECTS.note.universalIdentifier;
+const TASK_UNIVERSAL_IDENTIFIER = STANDARD_OBJECTS.task.universalIdentifier;
 const MESSAGE_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.message.universalIdentifier;
 const CALENDAR_EVENT_UNIVERSAL_IDENTIFIER =
@@ -179,6 +204,11 @@ const ROUTED_CALENDAR_EVENT_PARTICIPANT_ID =
   '20202020-7171-4000-8000-000000000015';
 const ATTACHMENT_ID = '20202020-7171-4000-8000-000000000016';
 const ORM_V2_COMPOSITE_COMPANY_ID = '20202020-7171-4000-8000-000000000017';
+const ACTIVITY_OPPORTUNITY_ID = '20202020-7171-4000-8000-000000000018';
+const ACTIVITY_NOTE_ID = '20202020-7171-4000-8000-000000000019';
+const ACTIVITY_TASK_ID = '20202020-7171-4000-8000-000000000020';
+const ACTIVITY_NOTE_TARGET_ID = '20202020-7171-4000-8000-000000000021';
+const ACTIVITY_TASK_TARGET_ID = '20202020-7171-4000-8000-000000000022';
 const BATCH_COMPANY_IDS = [
   '20202020-7171-4000-8000-000000000008',
   '20202020-7171-4000-8000-000000000009',
@@ -186,6 +216,20 @@ const BATCH_COMPANY_IDS = [
 
 const CREATED_RECORD_IDS: { objectMetadataSingularName: string; id: string }[] =
   [
+    {
+      objectMetadataSingularName: 'taskTarget',
+      id: ACTIVITY_TASK_TARGET_ID,
+    },
+    {
+      objectMetadataSingularName: 'noteTarget',
+      id: ACTIVITY_NOTE_TARGET_ID,
+    },
+    { objectMetadataSingularName: 'task', id: ACTIVITY_TASK_ID },
+    { objectMetadataSingularName: 'note', id: ACTIVITY_NOTE_ID },
+    {
+      objectMetadataSingularName: 'opportunity',
+      id: ACTIVITY_OPPORTUNITY_ID,
+    },
     { objectMetadataSingularName: 'attachment', id: ATTACHMENT_ID },
     {
       objectMetadataSingularName: 'calendarEventParticipant',
@@ -581,6 +625,92 @@ describe('timeline activity write path (integration)', () => {
 
       expect(timelineActivities).toHaveLength(1);
       expect(timelineActivities[0].linkedRecordId).toBe(NOTE_ID);
+    });
+  });
+
+  describe('activities linked to an opportunity', () => {
+    it('should emit activity own and linked events through createMany targets', async () => {
+      await createRecord({
+        objectMetadataSingularName: 'opportunity',
+        data: {
+          id: ACTIVITY_OPPORTUNITY_ID,
+          name: 'Activity target opportunity',
+        },
+      });
+      await createRecord({
+        objectMetadataSingularName: 'note',
+        data: { id: ACTIVITY_NOTE_ID, title: 'Opportunity note' },
+      });
+      await createRecord({
+        objectMetadataSingularName: 'task',
+        data: { id: ACTIVITY_TASK_ID, title: 'Opportunity task' },
+      });
+
+      await createRecords({
+        objectMetadataSingularName: 'noteTarget',
+        objectMetadataPluralName: 'noteTargets',
+        data: [
+          {
+            id: ACTIVITY_NOTE_TARGET_ID,
+            noteId: ACTIVITY_NOTE_ID,
+            targetOpportunityId: ACTIVITY_OPPORTUNITY_ID,
+          },
+        ],
+      });
+      await createRecords({
+        objectMetadataSingularName: 'taskTarget',
+        objectMetadataPluralName: 'taskTargets',
+        data: [
+          {
+            id: ACTIVITY_TASK_TARGET_ID,
+            taskId: ACTIVITY_TASK_ID,
+            targetOpportunityId: ACTIVITY_OPPORTUNITY_ID,
+          },
+        ],
+      });
+
+      const activityCases = [
+        {
+          activityId: ACTIVITY_NOTE_ID,
+          activityUniversalIdentifier: NOTE_UNIVERSAL_IDENTIFIER,
+          targetFieldName: 'targetNoteId',
+        },
+        {
+          activityId: ACTIVITY_TASK_ID,
+          activityUniversalIdentifier: TASK_UNIVERSAL_IDENTIFIER,
+          targetFieldName: 'targetTaskId',
+        },
+      ];
+
+      for (const {
+        activityId,
+        activityUniversalIdentifier,
+        targetFieldName,
+      } of activityCases) {
+        const ownTimelineActivities = await findTimelineActivities({
+          [targetFieldName]: { eq: activityId },
+          timelineActivityTypeId: {
+            eq: timelineActivityTypeIdForOrThrow('created'),
+          },
+        });
+
+        expect(ownTimelineActivities).toHaveLength(1);
+
+        const opportunityTimelineActivities = await findTimelineActivities({
+          targetOpportunityId: { eq: ACTIVITY_OPPORTUNITY_ID },
+          timelineActivityTypeId: {
+            eq: timelineActivityTypeIdForOrThrow(
+              'linked',
+              activityUniversalIdentifier,
+            ),
+          },
+        });
+
+        expect(opportunityTimelineActivities).toHaveLength(1);
+        expect(opportunityTimelineActivities[0].linkedRecordId).toBe(
+          activityId,
+        );
+      }
     });
   });
 
