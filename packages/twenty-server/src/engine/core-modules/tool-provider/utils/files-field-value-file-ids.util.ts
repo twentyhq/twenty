@@ -1,12 +1,11 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isObject } from '@sniptt/guards';
 
 type FilesFieldValueEntry = Record<string, unknown> & { fileId: string };
 
 const isFilesFieldValueEntry = (
   entry: unknown,
 ): entry is FilesFieldValueEntry =>
-  typeof entry === 'object' &&
-  entry !== null &&
+  isObject(entry) &&
   isNonEmptyString((entry as Record<string, unknown>).fileId);
 
 export const collectFileIdsFromFilesFieldValue = (value: unknown): string[] => {
