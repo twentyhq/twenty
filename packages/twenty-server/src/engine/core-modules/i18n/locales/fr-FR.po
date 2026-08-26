@@ -1601,12 +1601,6 @@ msgstr "La vue calendrier doit avoir un champ de calendrier"
 msgid "Calendar view must have a calendar layout"
 msgstr "La vue calendrier doit avoir une disposition de calendrier"
 
-#. js-lingui-id: D9pZ2l
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-msgid "Calendar widget views only support the month layout"
-msgstr "Les vues du widget calendrier ne prennent en charge que l’affichage mensuel"
-
 #. js-lingui-id: 0U7DBn
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"

@@ -178,6 +178,9 @@ export default {
             "description": [
                 1
             ],
+            "label": [
+                1
+            ],
             "isSecret": [
                 8
             ],

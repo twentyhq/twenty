@@ -28,7 +28,6 @@ import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWid
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -44,7 +43,6 @@ import {
   IconListDetails,
 } from 'twenty-ui/icon';
 import {
-  FeatureFlagKey,
   ViewCalendarLayout,
   ViewType,
   WidgetConfigurationType,
@@ -146,10 +144,6 @@ export const SidePanelDashboardRecordTableSettings = () => {
 
   const calendarFieldMetadataId = widgetView?.calendarFieldMetadataId ?? null;
 
-  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
-  );
-
   const currentCalendarLayout =
     widgetView?.calendarLayout ?? ViewCalendarLayout.MONTH;
 
@@ -194,12 +188,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
           'record-table-filter',
           'record-table-sort',
           ...(isCalendarLayout
-            ? [
-                'record-table-calendar-field',
-                ...(isCalendarWeekViewEnabled
-                  ? ['record-table-calendar-layout']
-                  : []),
-              ]
+            ? ['record-table-calendar-field', 'record-table-calendar-layout']
             : ['record-table-group-by']),
           ...(!isCalendarLayout && hasGroupBy
             ? ['record-table-hide-empty-groups']
@@ -347,7 +336,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                       />
                     </SelectableListItem>
                   )}
-                  {isCalendarLayout && isCalendarWeekViewEnabled && (
+                  {isCalendarLayout && (
                     <SelectableListItem itemId="record-table-calendar-layout">
                       <CommandMenuItemDropdown
                         Icon={IconCalendar}

@@ -157,6 +157,7 @@ import { TimelineActivityTypeOverridableEntityFastInstanceCommand } from 'src/da
 import { EnforceTimelineActivityTypeEmitUniquenessFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787471608316-enforce-timeline-activity-type-emit-uniqueness';
 import { AddCommandMenuItemTargetObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-35/2-35-instance-command-fast-1787573269955-add-command-menu-item-target-object-metadata';
 import { DropTimelineActivityTypeRendererFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-35/2-35-instance-command-fast-1787648000001-drop-timeline-activity-type-renderer';
+import { AddLabelToApplicationVariableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-36/2-36-instance-command-fast-1787761629092-add-label-to-application-variable';
 import { BackfillMissingPageLayoutWidgetPositionsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-36/2-36-instance-command-slow-1787767544954-backfill-missing-page-layout-widget-positions';
 import { MakePageLayoutWidgetGridPositionNullableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-36/2-36-instance-command-fast-1787770252056-make-page-layout-widget-grid-position-nullable';
 
@@ -318,6 +319,7 @@ export const INSTANCE_COMMANDS = [
   EnforceTimelineActivityTypeEmitUniquenessFastInstanceCommand,
   AddCommandMenuItemTargetObjectMetadataFastInstanceCommand,
   DropTimelineActivityTypeRendererFastInstanceCommand,
+  AddLabelToApplicationVariableFastInstanceCommand,
   BackfillMissingPageLayoutWidgetPositionsSlowInstanceCommand,
   MakePageLayoutWidgetGridPositionNullableFastInstanceCommand,
 ];

@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-25 12:14\n"
+"PO-Revision-Date: 2026-08-26 18:42\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -1764,7 +1764,7 @@ msgstr "认证，以及可供客户验证的目录资料。最优秀的合作伙
 #. js-lingui-id: 4W4gsr
 #: src/sections/partner-hero/PartnerLeadHero.tsx
 msgid "Certified partners who set up your CRM to match how your company works, from the migration to the custom apps."
-msgstr ""
+msgstr "认证合作伙伴会根据贵公司的工作方式设置您的 CRM，涵盖从迁移到定制应用的各个环节。"
 
 #. js-lingui-id: iI3Dq9
 #: src/partner-application/data/partner-country-options.ts
@@ -3906,7 +3906,7 @@ msgstr "印地语"
 #. js-lingui-id: 6NGgln
 #: src/sections/partner-hero/PartnerLeadHero.tsx
 msgid "Hire the people who *build on Twenty*"
-msgstr ""
+msgstr "聘请*基于 Twenty 构建的*专业人士"
 
 #. js-lingui-id: qfSbUb
 #: src/case-studies/case-study-stories.ts

@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-25 12:14\n"
+"PO-Revision-Date: 2026-08-26 18:42\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1764,7 +1764,7 @@ msgstr "Zertifizierung sowie ein Verzeichnisprofil, das Ihre Kunden überprüfen
 #. js-lingui-id: 4W4gsr
 #: src/sections/partner-hero/PartnerLeadHero.tsx
 msgid "Certified partners who set up your CRM to match how your company works, from the migration to the custom apps."
-msgstr ""
+msgstr "Zertifizierte Partner, die Ihr CRM von der Migration bis hin zu den benutzerdefinierten Apps so einrichten, dass es zur Arbeitsweise Ihres Unternehmens passt."
 
 #. js-lingui-id: iI3Dq9
 #: src/partner-application/data/partner-country-options.ts
@@ -3906,7 +3906,7 @@ msgstr "Hindi"
 #. js-lingui-id: 6NGgln
 #: src/sections/partner-hero/PartnerLeadHero.tsx
 msgid "Hire the people who *build on Twenty*"
-msgstr ""
+msgstr "Engagieren Sie die Menschen, die *auf Twenty aufbauen*"
 
 #. js-lingui-id: qfSbUb
 #: src/case-studies/case-study-stories.ts

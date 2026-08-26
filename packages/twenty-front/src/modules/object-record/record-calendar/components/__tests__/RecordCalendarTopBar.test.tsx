@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { enUS } from 'date-fns/locale';
 import { Temporal } from 'temporal-polyfill';
 
@@ -35,8 +36,20 @@ jest.mock(
   }),
 );
 jest.mock('@/ui/input/components/Select', () => ({
-  Select: ({ options }: { options: { label: string; value: string }[] }) => (
-    <select data-testid="layout-select">
+  Select: ({
+    options,
+    value,
+    onChange,
+  }: {
+    options: { label: string; value: ViewCalendarLayout }[];
+    value: ViewCalendarLayout;
+    onChange: (value: ViewCalendarLayout) => void;
+  }) => (
+    <select
+      data-testid="layout-select"
+      value={value}
+      onChange={(event) => onChange(event.target.value as ViewCalendarLayout)}
+    >
       {options.map(({ label, value }) => (
         <option key={value} value={value}>
           {label}
@@ -76,9 +89,6 @@ jest.mock('@/views/hooks/useUpdateCurrentView', () => ({
   useUpdateCurrentView: jest.fn(() => ({
     updateCurrentView: mockUpdateCurrentView,
   })),
-}));
-jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: jest.fn(() => true),
 }));
 jest.mock('twenty-ui/input', () => ({
   Button: ({
@@ -151,5 +161,19 @@ describe('RecordCalendarTopBar', () => {
       2,
       Temporal.PlainDate.from('2026-07-16'),
     );
+  });
+
+  it('persists a week selection from the top bar', async () => {
+    const user = userEvent.setup();
+    render(<RecordCalendarTopBar />);
+
+    await user.selectOptions(screen.getByRole('combobox'), 'WEEK');
+
+    expect(mockSetRecordIndexCalendarLayout).toHaveBeenCalledWith(
+      ViewCalendarLayout.WEEK,
+    );
+    expect(mockUpdateCurrentView).toHaveBeenCalledWith({
+      calendarLayout: ViewCalendarLayout.WEEK,
+    });
   });
 });
