@@ -33,6 +33,8 @@ import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants
 import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
+import { getWorkspaceIdFromJobData } from 'src/engine/core-modules/message-queue/utils/get-workspace-id-from-job-data.util';
+import { JOB_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/job-duration-ms-bucket-boundaries.constant';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { applyWorkspaceSentryContextFromJobData } from 'src/engine/core-modules/sentry/utils/apply-workspace-sentry-context-from-job-data.util';
@@ -85,6 +87,45 @@ export class BullMQDriver
           } catch (error) {
             this.logger.error(
               `Failed to collect waiting jobs metrics for queue ${queueName}`,
+              error,
+            );
+          }
+        }
+
+        return observations;
+      },
+    });
+
+    this.metricsService.createMultiObservableGauge({
+      metricName: 'twenty_queue_jobs_by_state_total',
+      options: {
+        description: 'Current number of jobs in queue broken down by state',
+      },
+      callback: async () => {
+        const observations: Array<{
+          value: number;
+          attributes: { queue: string; state: string };
+        }> = [];
+
+        for (const [queueName, queue] of Object.entries(this.queueMap)) {
+          try {
+            const jobCounts = await queue.getJobCounts(
+              'active',
+              'waiting',
+              'prioritized',
+              'delayed',
+              'failed',
+            );
+
+            for (const [state, count] of Object.entries(jobCounts)) {
+              observations.push({
+                value: count,
+                attributes: { queue: queueName, state },
+              });
+            }
+          } catch (error) {
+            this.logger.error(
+              `Failed to collect job state metrics for queue ${queueName}`,
               error,
             );
           }
@@ -198,18 +239,30 @@ export class BullMQDriver
         Sentry.withIsolationScope(async () => {
           applyWorkspaceSentryContextFromJobData(job.data);
 
-          const queueLatency = Math.max(0, Date.now() - job.timestamp);
+          const workspaceId = getWorkspaceIdFromJobData(job.data);
+          const jobAttributes = {
+            queue: queueName,
+            job_name: job.name,
+            ...(isDefined(workspaceId) && { workspace_id: workspaceId }),
+          };
+
+          // job.delay is intentional scheduling, not congestion: subtract it
+          // so the latency only measures time spent waiting for a free worker
+          const queueLatency = Math.max(
+            0,
+            Date.now() - job.timestamp - (job.delay ?? 0),
+          );
 
           this.metricsService.recordHistogram({
             key: MetricsKeys.JobLatencyMs,
             value: queueLatency,
             unit: 'ms',
-            attributes: { queue: queueName, job_name: job.name },
+            attributes: jobAttributes,
+            bucketBoundaries: JOB_DURATION_MS_BUCKET_BOUNDARIES,
           });
 
           // TODO: Correctly support for job.id
           const timeStart = performance.now();
-          const workspaceId = job.data?.workspaceId;
           const workspaceSuffix = workspaceId
             ? ` [workspace=${workspaceId}]`
             : '';
@@ -217,28 +270,62 @@ export class BullMQDriver
           this.logger.log(
             `Processing job ${job.id} with name ${job.name} on queue ${queueName}${workspaceSuffix}`,
           );
-          await handler({
-            data: job.data,
-            id: job.id ?? '',
-            name: job.name,
-            retryLimit: Math.max(0, (job.opts.attempts ?? 1) - 1),
-            updateData: (data) => job.updateData(data),
-            abortSignal,
-          });
-          const timeEnd = performance.now();
-          const executionTime = timeEnd - timeStart;
 
-          this.logger.log(
-            `Job ${job.id} with name ${job.name} processed on queue ${queueName} in ${executionTime.toFixed(2)}ms${workspaceSuffix}`,
-          );
+          let jobSucceeded = false;
+
+          try {
+            await handler({
+              data: job.data,
+              id: job.id ?? '',
+              name: job.name,
+              retryLimit: Math.max(0, (job.opts.attempts ?? 1) - 1),
+              updateData: (data) => job.updateData(data),
+              abortSignal,
+            });
+            jobSucceeded = true;
+          } finally {
+            const executionTime = performance.now() - timeStart;
+            const attributes = {
+              ...jobAttributes,
+              status: jobSucceeded ? 'completed' : 'failed',
+            };
+
+            this.metricsService.recordHistogram({
+              key: MetricsKeys.JobExecutionDurationMs,
+              value: executionTime,
+              unit: 'ms',
+              attributes,
+              bucketBoundaries: JOB_DURATION_MS_BUCKET_BOUNDARIES,
+            });
+
+            this.metricsService.recordHistogram({
+              key: MetricsKeys.JobTotalDurationMs,
+              value: queueLatency + executionTime,
+              unit: 'ms',
+              attributes,
+              bucketBoundaries: JOB_DURATION_MS_BUCKET_BOUNDARIES,
+            });
+
+            if (jobSucceeded) {
+              this.logger.log(
+                `Job ${job.id} with name ${job.name} processed on queue ${queueName} in ${executionTime.toFixed(2)}ms${workspaceSuffix}`,
+              );
+            }
+          }
         }),
       workerOptions,
     );
 
     this.workerMap[queueName].on('completed', (job) => {
+      const workspaceId = getWorkspaceIdFromJobData(job?.data);
+
       void this.metricsService.incrementCounterForEvent({
         key: MetricsKeys.JobCompleted,
-        attributes: { queue: queueName, job_name: job?.name ?? '' },
+        attributes: {
+          queue: queueName,
+          job_name: job?.name ?? '',
+          ...(isDefined(workspaceId) && { workspace_id: workspaceId }),
+        },
         shouldStoreInCache: false,
       });
     });
@@ -248,12 +335,15 @@ export class BullMQDriver
         return;
       }
 
+      const workspaceId = getWorkspaceIdFromJobData(job.data);
+
       void this.metricsService.incrementCounterForEvent({
         key: MetricsKeys.JobFailed,
         attributes: {
           queue: queueName,
           job_name: job.name,
           error_type: error.name,
+          ...(isDefined(workspaceId) && { workspace_id: workspaceId }),
         },
         shouldStoreInCache: false,
       });
@@ -389,6 +479,8 @@ export class BullMQDriver
     const queueOptions = this.buildJobsOptions({ queueName, options });
 
     await this.queueMap[queueName].add(jobName, data, queueOptions);
+
+    this.recordEnqueuedJobsMetric(queueName, jobName, [data]);
   }
 
   async bulkAdd<T>(
@@ -421,6 +513,37 @@ export class BullMQDriver
         },
       })),
     );
+
+    this.recordEnqueuedJobsMetric(queueName, jobName, dataItems);
+  }
+
+  private recordEnqueuedJobsMetric<T>(
+    queueName: MessageQueue,
+    jobName: string,
+    dataItems: T[],
+  ): void {
+    const enqueuedCountByWorkspaceId = new Map<string | undefined, number>();
+
+    for (const data of dataItems) {
+      const workspaceId = getWorkspaceIdFromJobData(data);
+
+      enqueuedCountByWorkspaceId.set(
+        workspaceId,
+        (enqueuedCountByWorkspaceId.get(workspaceId) ?? 0) + 1,
+      );
+    }
+
+    for (const [workspaceId, amount] of enqueuedCountByWorkspaceId) {
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.JobEnqueued,
+        amount,
+        attributes: {
+          queue: queueName,
+          job_name: jobName,
+          ...(isDefined(workspaceId) && { workspace_id: workspaceId }),
+        },
+      });
+    }
   }
 
   async getInFlightJobs<T extends MessageQueueJobData>(

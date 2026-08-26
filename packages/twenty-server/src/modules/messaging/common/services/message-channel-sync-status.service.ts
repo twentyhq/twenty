@@ -340,6 +340,7 @@ export class MessageChannelSyncStatusService {
         await this.metricsService.incrementCounterForEvents({
           key: metricsKey,
           eventIds: messageChannelIds,
+          attributes: { workspace_id: workspaceId },
         });
 
         if (

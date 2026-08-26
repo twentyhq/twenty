@@ -387,6 +387,7 @@ export class WorkflowRunnerWorkspaceService {
       void this.metricsService.incrementCounterForEvent({
         key: MetricsKeys.WorkflowRunThrottled,
         eventId: workspaceId,
+        attributes: { workspace_id: workspaceId },
       });
 
       return true;

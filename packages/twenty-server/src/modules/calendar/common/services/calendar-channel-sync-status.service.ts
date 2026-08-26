@@ -284,6 +284,7 @@ export class CalendarChannelSyncStatusService {
     await this.metricsService.incrementCounterForEvents({
       key: MetricsKeys.CalendarEventSyncJobFailedUnknown,
       eventIds: calendarChannelIds,
+      attributes: { workspace_id: workspaceId },
     });
   }
 
@@ -346,6 +347,7 @@ export class CalendarChannelSyncStatusService {
     await this.metricsService.incrementCounterForEvents({
       key: MetricsKeys.CalendarEventSyncJobFailedInsufficientPermissions,
       eventIds: calendarChannelIds,
+      attributes: { workspace_id: workspaceId },
     });
   }
 

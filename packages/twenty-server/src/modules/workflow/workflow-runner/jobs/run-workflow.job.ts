@@ -127,6 +127,7 @@ export class RunWorkflowJob {
     await this.incrementTriggerMetrics({
       workflowRunId,
       triggerType: workflowVersion.trigger.type,
+      workspaceId,
     });
 
     const stepIds = workflowVersion.trigger.nextStepIds ?? [];
@@ -246,9 +247,11 @@ export class RunWorkflowJob {
   private async incrementTriggerMetrics({
     workflowRunId,
     triggerType,
+    workspaceId,
   }: {
     workflowRunId: string;
     triggerType: string;
+    workspaceId: string;
   }) {
     let key: MetricsKeys;
 
@@ -272,6 +275,7 @@ export class RunWorkflowJob {
     await this.metricsService.incrementCounterForEvent({
       key,
       eventId: workflowRunId,
+      attributes: { workspace_id: workspaceId },
     });
   }
 }

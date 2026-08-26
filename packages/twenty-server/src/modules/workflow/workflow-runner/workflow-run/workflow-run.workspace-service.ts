@@ -223,12 +223,14 @@ export class WorkflowRunWorkspaceService {
     await this.metricsService.incrementCounterForEvent({
       key: metricKey,
       eventId: workflowRunId,
+      attributes: { workspace_id: workspaceId },
     });
 
     if (isSystemError) {
       await this.metricsService.incrementCounterForEvent({
         key: MetricsKeys.WorkflowRunSystemError,
         eventId: workflowRunId,
+        attributes: { workspace_id: workspaceId },
         debugLog: `[Workflow Run System Error] Workflow run ${workflowRunId} in workspace ${workspaceId} ended with system error`,
       });
     }

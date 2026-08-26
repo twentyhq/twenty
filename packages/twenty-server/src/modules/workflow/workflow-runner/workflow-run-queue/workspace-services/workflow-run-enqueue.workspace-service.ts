@@ -154,6 +154,7 @@ export class WorkflowRunEnqueueWorkspaceService {
         await this.metricsService.incrementCounterForEvent({
           key: MetricsKeys.WorkflowRunFailedToEnqueue,
           eventId: workspaceId,
+          attributes: { workspace_id: workspaceId },
         });
       } catch {
         // Metrics may fail if Redis is shutting down — safe to ignore
