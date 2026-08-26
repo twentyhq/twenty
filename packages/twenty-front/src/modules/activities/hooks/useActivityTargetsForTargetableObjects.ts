@@ -4,10 +4,10 @@ import {
 } from 'twenty-shared/types';
 
 import { findActivityTargetsOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/findActivityTargetsOperationSignatureFactory';
+import { useActivityTargetJunctionConfig } from '@/activities/hooks/useActivityTargetJunctionConfig';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { type ActivityTarget } from '@/activities/types/ActivityTarget';
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
-import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -38,44 +38,26 @@ export const useActivityTargetsForTargetableObjects = ({
   const objectMetadataItems = useAtomStateValue<EnrichedObjectMetadataItem[]>(
     objectMetadataItemsSelector,
   );
-  const activityObjectMetadata = objectMetadataItems.find(
-    (objectMetadataItem) =>
-      objectMetadataItem.nameSingular === objectNameSingular,
-  );
-
-  if (!isDefined(activityObjectMetadata)) {
-    throw new Error('Activity object metadata is missing');
-  }
-
-  const junctionConfig = getActivityTargetJunctionConfig({
-    activityObjectMetadata,
-    objectMetadataItems,
-  });
-
-  if (!isDefined(junctionConfig?.sourceField)) {
-    throw new Error('Activity target junction metadata is invalid');
-  }
-
-  const activityTargetObjectMetadata = objectMetadataItems.find(
-    (objectMetadataItem) =>
-      objectMetadataItem.id === junctionConfig.junctionObjectMetadata.id,
-  );
-
-  if (!isDefined(activityTargetObjectMetadata)) {
-    throw new Error('Activity target object metadata is missing');
-  }
-
-  const activityRelationFieldName = junctionConfig.sourceField.name;
-
   const FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE =
     findActivityTargetsOperationSignatureFactory({
       objectNameSingular,
       objectMetadataItems,
     });
 
+  const activityTargetJunctionConfig = useActivityTargetJunctionConfig({
+    activityObjectNameSingular: objectNameSingular,
+  });
+
+  if (!isDefined(activityTargetJunctionConfig)) {
+    throw new Error('Activity target junction metadata is missing');
+  }
+
+  const { junctionObjectMetadata, activityRelationField } =
+    activityTargetJunctionConfig;
+
   const activityTargetsFilter = getActivityTargetsFilter({
     targetableObjects,
-    activityTargetObjectMetadata,
+    activityTargetObjectMetadata: junctionObjectMetadata,
     objectMetadataItems,
   });
 
@@ -94,7 +76,8 @@ export const useActivityTargetsForTargetableObjects = ({
       FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.objectNameSingular,
     filter: activityTargetsFilter,
     recordGqlFields: FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.fields,
-    onCompleted: (records) => onCompleted?.(records, activityRelationFieldName),
+    onCompleted: (records) =>
+      onCompleted?.(records, activityRelationField.name),
     orderBy: activityTargetsOrderByVariables,
     limit,
   });
@@ -105,6 +88,6 @@ export const useActivityTargetsForTargetableObjects = ({
     totalCountActivityTargets: totalCountActivityTargets ?? 0,
     fetchMoreActivityTargets,
     hasNextPage,
-    activityRelationFieldName,
+    activityRelationFieldName: activityRelationField.name,
   };
 };

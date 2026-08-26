@@ -14,7 +14,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
-import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
+import { useActivityTargetJunctionConfig } from '@/activities/hooks/useActivityTargetJunctionConfig';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useOpenCreateActivityDrawer = ({
@@ -32,22 +32,14 @@ export const useOpenCreateActivityDrawer = ({
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const activityObjectMetadata = objectMetadataItems.find(
-    (item) => item.nameSingular === activityObjectNameSingular,
-  );
-
-  const activityTargetJunctionConfig = isDefined(activityObjectMetadata)
-    ? getActivityTargetJunctionConfig({
-        activityObjectMetadata,
-        objectMetadataItems,
-      })
-    : null;
-  const activityTargetObjectMetadata =
-    activityTargetJunctionConfig?.junctionObjectMetadata;
+  const activityTargetJunctionConfig = useActivityTargetJunctionConfig({
+    activityObjectNameSingular,
+  });
 
   const { createManyRecords: createActivityTargets } = useCreateManyRecords({
     objectNameSingular:
-      activityTargetObjectMetadata?.nameSingular ?? activityObjectNameSingular,
+      activityTargetJunctionConfig?.junctionObjectMetadata.nameSingular ??
+      activityObjectNameSingular,
     shouldMatchRootQueryFilter: true,
   });
 
@@ -85,19 +77,12 @@ export const useOpenCreateActivityDrawer = ({
     });
 
     if (targetableObjects.length > 0) {
-      const sourceFieldInfo = findTargetFieldInfo(
-        activityTargetObjectMetadata?.fields ?? [],
-        activityObjectMetadata?.id ?? '',
-        objectMetadataItems,
-      );
-      const sourceJoinColumnName = sourceFieldInfo?.joinColumnName;
-
-      if (
-        !isDefined(activityTargetObjectMetadata) ||
-        !isDefined(sourceJoinColumnName)
-      ) {
+      if (!isDefined(activityTargetJunctionConfig)) {
         throw new Error('Activity target junction metadata is invalid');
       }
+
+      const { junctionObjectMetadata, activityJoinColumnName } =
+        activityTargetJunctionConfig;
 
       const recordsToCreate = targetableObjects.map((targetableObject) => {
         const targetObjectMetadata = objectMetadataItems.find(
@@ -105,7 +90,7 @@ export const useOpenCreateActivityDrawer = ({
             item.nameSingular === targetableObject.targetObjectNameSingular,
         );
         const targetFieldInfo = findTargetFieldInfo(
-          activityTargetObjectMetadata.fields,
+          junctionObjectMetadata.fields,
           targetObjectMetadata?.id ?? '',
           objectMetadataItems,
         );
@@ -117,7 +102,7 @@ export const useOpenCreateActivityDrawer = ({
         }
 
         return {
-          [sourceJoinColumnName]: activity.id,
+          [activityJoinColumnName]: activity.id,
           [targetFieldInfo.joinColumnName]: targetableObject.id,
         };
       });
