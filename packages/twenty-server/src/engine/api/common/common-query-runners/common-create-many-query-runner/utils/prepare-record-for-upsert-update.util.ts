@@ -2,12 +2,12 @@ import { type ObjectRecord } from 'twenty-shared/types';
 
 export const prepareRecordForUpsertUpdate = ({
   record,
-  hasManualAssignmentField,
+  shouldMarkManuallyAssigned,
 }: {
   record: Partial<ObjectRecord>;
-  hasManualAssignmentField: boolean;
+  shouldMarkManuallyAssigned: boolean;
 }): Partial<ObjectRecord> => ({
   ...record,
   deletedAt: null,
-  ...(hasManualAssignmentField ? { isManuallyAssigned: true } : {}),
+  ...(shouldMarkManuallyAssigned ? { isManuallyAssigned: true } : {}),
 });

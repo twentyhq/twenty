@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -49,6 +50,11 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+
+const TARGET_JUNCTION_OBJECT_UNIVERSAL_IDENTIFIERS: string[] = [
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventTarget,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageThreadTarget,
+];
 
 @Injectable()
 export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -452,9 +458,10 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatFieldMetadataMaps,
       flatObjectMetadata,
     );
-    const hasManualAssignmentField = isDefined(
-      fieldIdByName.isManuallyAssigned,
-    );
+    const shouldMarkManuallyAssigned =
+      TARGET_JUNCTION_OBJECT_UNIVERSAL_IDENTIFIERS.includes(
+        flatObjectMetadata.universalIdentifier,
+      ) && isDefined(fieldIdByName.isManuallyAssigned);
     const updateInputs = partialRecordsToUpdate
       .map((record) =>
         this.getRecordWithoutCreatedBy(
@@ -467,7 +474,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         id: record.id,
         data: prepareRecordForUpsertUpdate({
           record,
-          hasManualAssignmentField,
+          shouldMarkManuallyAssigned,
         }),
       }));
 
