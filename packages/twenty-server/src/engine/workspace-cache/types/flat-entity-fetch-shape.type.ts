@@ -4,8 +4,8 @@ import { type ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-mod
 import { type ALL_ONE_TO_MANY_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-one-to-many-metadata-relations.constant';
 import {
   type CacheEntityFetchSpec,
-  type CacheFetchableEntity,
   type CacheFetchableEntityName,
+  type GroupByColumns,
 } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
 
 export type OneToManyChildNames<TMetadataName extends AllMetadataName> = {
@@ -34,15 +34,13 @@ type RequiredFetchNames<TMetadataName extends AllMetadataName> =
 // (full rows), every one-to-many child, every many-to-one target, and the
 // application identity map are required by the relation constants; adding a
 // relation there makes every provider missing the fetch fail to compile.
-// Column-level requirements stay enforced by the fetch-requirements drift
-// spec, where violations are reported by name.
 // The own entity always needs full rows; groupBy stays allowed for
 // self-referential relations (e.g. viewFilterGroup by parentViewFilterGroupId)
 type OwnEntityFetchSpec<TName extends CacheFetchableEntityName> =
   | true
   | {
       columns: true;
-      groupBy: readonly (keyof CacheFetchableEntity<TName> & string)[];
+      groupBy: GroupByColumns<TName>;
     };
 
 export type FlatEntityFetchShape<TMetadataName extends AllMetadataName> = {

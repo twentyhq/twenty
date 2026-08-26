@@ -1,3 +1,6 @@
+import { type AllMetadataName } from 'twenty-shared/metadata';
+
+import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
 import { CACHE_FETCHABLE_ENTITY_BY_NAME } from 'src/engine/workspace-cache/constants/cache-fetchable-entity-by-name.constant';
 
 export type CacheFetchableEntityName =
@@ -9,6 +12,14 @@ export type CacheFetchableEntity<TName extends CacheFetchableEntityName> =
 type EntityColumns<TName extends CacheFetchableEntityName> =
   readonly (keyof CacheFetchableEntity<TName> & string)[];
 
+// Metadata entities can only be grouped by a foreign key declared in
+// ALL_MANY_TO_ONE_METADATA_RELATIONS; the few cache-fetched entities without
+// a metadata name fall back to plain columns.
+export type GroupByColumns<TName extends CacheFetchableEntityName> =
+  readonly (TName extends AllMetadataName
+    ? MetadataManyToOneJoinColumn<TName> & string
+    : keyof CacheFetchableEntity<TName> & string)[];
+
 // true = full rows; a column array = exactly what computeForCache reads,
 // typo-checked against the named entity. The grouped form additionally asks
 // getRowsByName to index the rows by the given foreign key columns; groupBy
@@ -19,7 +30,7 @@ export type CacheEntityFetchSpec<TName extends CacheFetchableEntityName> =
   | true
   | {
       columns: EntityColumns<TName> | true;
-      groupBy: EntityColumns<TName>;
+      groupBy: GroupByColumns<TName>;
     };
 
 export type CacheEntityFetchShape = {

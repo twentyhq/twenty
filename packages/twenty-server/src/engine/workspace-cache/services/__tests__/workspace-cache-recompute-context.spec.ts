@@ -2,6 +2,7 @@ import { type DataSource, type EntityTarget } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000000';
@@ -23,6 +24,14 @@ describe('WorkspaceCacheRecomputeContext', () => {
             workspaceId: WORKSPACE_ID,
           },
         ]),
+      ],
+      [
+        ViewFieldEntity,
+        jest
+          .fn()
+          .mockResolvedValue([
+            { id: 'view-field-row', workspaceId: WORKSPACE_ID },
+          ]),
       ],
     ]);
 
@@ -179,19 +188,19 @@ describe('WorkspaceCacheRecomputeContext', () => {
 
     await recomputeContext.resolveFetchShapes([
       {
-        objectMetadata: {
+        viewField: {
           columns: ['id'],
-          groupBy: ['labelIdentifierFieldMetadataId'],
+          groupBy: ['fieldMetadataId'],
         },
       },
     ]);
 
-    const findMock = findMocksByEntity.get(ObjectMetadataEntity)!;
+    const findMock = findMocksByEntity.get(ViewFieldEntity)!;
 
     expect(findMock).toHaveBeenCalledTimes(1);
     expect(findMock.mock.calls[0][0].select).toHaveLength(2);
     expect(findMock.mock.calls[0][0].select).toEqual(
-      expect.arrayContaining(['id', 'labelIdentifierFieldMetadataId']),
+      expect.arrayContaining(['id', 'fieldMetadataId']),
     );
   });
 
@@ -199,49 +208,46 @@ describe('WorkspaceCacheRecomputeContext', () => {
     const { recomputeContext, findMocksByEntity } = setup();
     const rows = [
       {
-        id: 'object-a',
-        labelIdentifierFieldMetadataId: 'field-1',
+        id: 'view-field-a',
+        fieldMetadataId: 'field-1',
         workspaceId: WORKSPACE_ID,
       },
       {
-        id: 'object-b',
-        labelIdentifierFieldMetadataId: 'field-1',
+        id: 'view-field-b',
+        fieldMetadataId: 'field-1',
         workspaceId: WORKSPACE_ID,
       },
       {
-        id: 'object-c',
-        labelIdentifierFieldMetadataId: null,
+        id: 'view-field-c',
+        fieldMetadataId: null,
         workspaceId: WORKSPACE_ID,
       },
     ];
 
-    findMocksByEntity.get(ObjectMetadataEntity)!.mockResolvedValue(rows);
+    findMocksByEntity.get(ViewFieldEntity)!.mockResolvedValue(rows);
 
     const shape = {
-      objectMetadata: {
+      viewField: {
         columns: ['id'],
-        groupBy: ['labelIdentifierFieldMetadataId'],
+        groupBy: ['fieldMetadataId'],
       },
     } as const;
 
     await recomputeContext.resolveFetchShapes([shape]);
 
-    const { objectMetadata } = recomputeContext.getRowsByName(shape);
+    const { viewField } = recomputeContext.getRowsByName(shape);
 
-    expect(objectMetadata.rows).toBe(rows);
-    expect(
-      objectMetadata.byLabelIdentifierFieldMetadataId.get('field-1'),
-    ).toEqual([rows[0], rows[1]]);
-    expect([...objectMetadata.byLabelIdentifierFieldMetadataId.keys()]).toEqual(
-      ['field-1'],
-    );
+    expect(viewField.rows).toBe(rows);
+    expect(viewField.byFieldMetadataId.get('field-1')).toEqual([
+      rows[0],
+      rows[1],
+    ]);
+    expect([...viewField.byFieldMetadataId.keys()]).toEqual(['field-1']);
 
     // grouped rows are typed as the declared columns plus the groupBy keys
-    expect(objectMetadata.rows[0].labelIdentifierFieldMetadataId).toBe(
-      'field-1',
-    );
+    expect(viewField.rows[0].fieldMetadataId).toBe('field-1');
     // @ts-expect-error an undeclared column is a compile error, not undefined
-    void objectMetadata.rows[0].nameSingular;
+    void viewField.rows[0].isVisible;
   });
 
   it('types plain rows as exactly the declared columns', async () => {
