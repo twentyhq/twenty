@@ -25,13 +25,9 @@ export class WorkspaceUserWorkspaceRoleMapCacheService extends WorkspaceCachePro
   >): UserWorkspaceRoleMap {
     const { roleTarget: roleTargets } = rows;
 
-    const roleTargetsMap = roleTargets.filter((roleTarget) =>
-      isDefined(roleTarget.userWorkspaceId),
-    );
-
-    return roleTargetsMap.reduce((acc, roleTarget) => {
-      if (isDefined(roleTarget.userWorkspaceId)) {
-        acc[roleTarget.userWorkspaceId] = roleTarget.roleId;
+    return roleTargets.reduce((acc, { userWorkspaceId, roleId }) => {
+      if (isDefined(userWorkspaceId)) {
+        acc[userWorkspaceId] = roleId;
       }
 
       return acc;
