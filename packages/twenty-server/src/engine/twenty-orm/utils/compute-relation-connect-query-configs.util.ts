@@ -122,7 +122,7 @@ const updateConnectQueryConfigs = (
 const createConnectQueryConfig = (
   connectFieldName: string,
   recordToConnectCondition: UniqueConstraintCondition,
-  uniqueConstraintFields: OrmFlatFieldMetadata[],
+  uniqueConstraintFields: OrmFlatFieldMetadata<FieldMetadataType>[],
   targetObjectNameSingular: string,
   entityIndex: number,
 ) => {
@@ -149,7 +149,7 @@ const computeRecordToConnectCondition = (
   fieldMaps: FieldMapsForObject,
 ): {
   recordToConnectCondition: UniqueConstraintCondition;
-  uniqueConstraintFields: OrmFlatFieldMetadata[];
+  uniqueConstraintFields: OrmFlatFieldMetadata<FieldMetadataType>[];
   targetObjectNameSingular: string;
 } => {
   const field = findFlatEntityByIdInFlatEntityMaps({
@@ -298,7 +298,7 @@ const checkNoRelationFieldConflictOrThrow = (
 };
 
 const computeUniqueConstraintCondition = (
-  uniqueConstraintFields: OrmFlatFieldMetadata[],
+  uniqueConstraintFields: OrmFlatFieldMetadata<FieldMetadataType>[],
   connectObject: ConnectObject,
 ): UniqueConstraintCondition => {
   return uniqueConstraintFields.reduce((acc, uniqueConstraintField) => {
@@ -326,7 +326,7 @@ const computeUniqueConstraintCondition = (
 
 const checkUniqueConstraintsAreSameOrThrow = (
   relationConnectQueryConfig: RelationConnectQueryConfig,
-  uniqueConstraintFields: OrmFlatFieldMetadata[],
+  uniqueConstraintFields: OrmFlatFieldMetadata<FieldMetadataType>[],
 ) => {
   if (
     !fastDeepEqual(

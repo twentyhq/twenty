@@ -1,3 +1,5 @@
+import { type FieldMetadataType } from 'twenty-shared/types';
+
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 export const ORM_FLAT_FIELD_METADATA_KEYS = [
@@ -23,7 +25,9 @@ export const ORM_FLAT_FIELD_METADATA_KEYS = [
 export type OrmFlatFieldMetadataKey =
   (typeof ORM_FLAT_FIELD_METADATA_KEYS)[number];
 
-export type OrmFlatFieldMetadata = Pick<
-  FlatFieldMetadata,
-  OrmFlatFieldMetadataKey
+export type OrmFlatFieldMetadata<
+  T extends FieldMetadataType = FieldMetadataType,
+> = Pick<
+  FlatFieldMetadata<T>,
+  Extract<keyof FlatFieldMetadata<T>, OrmFlatFieldMetadataKey>
 >;
