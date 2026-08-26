@@ -8,7 +8,7 @@ import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/fie
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type LiteFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/lite-flat-field-metadata.type';
 import {
   buildFieldMapsFromFlatObjectMetadata,
   type FieldMapsForObject,
@@ -18,7 +18,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 export function formatData<T>(
   data: T,
   flatObjectMetadata: FlatObjectMetadata,
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>,
   fieldMapsForObject?: FieldMapsForObject,
 ): T {
   if (!data) {
@@ -75,7 +75,7 @@ export function formatData<T>(
 export function formatCompositeField(
   // oxlint-disable-next-line typescript/no-explicit-any
   value: any,
-  fieldMetadata: FlatFieldMetadata,
+  fieldMetadata: LiteFlatFieldMetadata,
   // oxlint-disable-next-line typescript/no-explicit-any
 ): Record<string, any> {
   const compositeType = compositeTypeDefinitions.get(
@@ -98,7 +98,7 @@ export function formatCompositeField(
     if (value && value[subFieldKey] !== undefined) {
       formattedCompositeField[fullFieldName] = formatFieldMetadataValue(
         value[subFieldKey],
-        property as unknown as FlatFieldMetadata,
+        property as unknown as LiteFlatFieldMetadata,
       );
     }
   }
@@ -109,7 +109,7 @@ export function formatCompositeField(
 function formatFieldMetadataValue(
   // oxlint-disable-next-line typescript/no-explicit-any
   value: any,
-  fieldMetadata: FlatFieldMetadata,
+  fieldMetadata: LiteFlatFieldMetadata,
 ) {
   if (
     fieldMetadata.type === FieldMetadataType.RAW_JSON &&

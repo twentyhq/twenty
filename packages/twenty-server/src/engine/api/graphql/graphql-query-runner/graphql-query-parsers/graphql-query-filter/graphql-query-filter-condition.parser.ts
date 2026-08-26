@@ -4,7 +4,7 @@ import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-
 
 import { applyFilterEntriesToWhereExpression } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/apply-filter-entries-to-where-expression.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type LiteFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/lite-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 import { GraphqlQueryFilterFieldParser } from './graphql-query-filter-field.parser';
@@ -15,7 +15,7 @@ export class GraphqlQueryFilterConditionParser {
 
   constructor(
     flatObjectMetadata: FlatObjectMetadata,
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>,
     flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>,
     depth = 0,
   ) {

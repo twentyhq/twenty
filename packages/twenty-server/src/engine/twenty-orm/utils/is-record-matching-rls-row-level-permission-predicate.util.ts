@@ -50,7 +50,7 @@ import {
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type LiteFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/lite-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 const isLeafFilter = (
@@ -85,7 +85,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
   record: any;
   filter: RecordGqlOperationFilter;
   flatObjectMetadata: FlatObjectMetadata;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>;
   shouldIgnoreSoftDeleteDefaultFilter?: boolean;
 }): boolean => {
   if (Object.keys(filter).length === 0 && record.deletedAt === null) {

@@ -4,6 +4,7 @@ import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-m
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type LiteFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/lite-flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -17,12 +18,16 @@ export type FieldMapsForObject = {
 // be memoized by identity: several helpers rebuild them per request otherwise
 // (order parsing, cursor encoding per record, cursor conditions per key).
 const fieldMapsCache = new WeakMap<
-  FlatEntityMaps<FlatFieldMetadata>,
+  FlatEntityMaps<LiteFlatFieldMetadata>,
   WeakMap<FlatObjectMetadata, FieldMapsForObject>
 >();
 
-export const buildFieldMapsFromFlatObjectMetadata = (
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+// Generic over the field shape (lite from the record query path, full from the metadata layer):
+// only name, id and settings are read, all present in the lite projection.
+export const buildFieldMapsFromFlatObjectMetadata = <
+  T extends LiteFlatFieldMetadata = FlatFieldMetadata,
+>(
+  flatFieldMetadataMaps: FlatEntityMaps<T>,
   flatObjectMetadata: FlatObjectMetadata,
 ): FieldMapsForObject => {
   const cachedByObjectMetadata = fieldMapsCache.get(flatFieldMetadataMaps);
@@ -35,10 +40,12 @@ export const buildFieldMapsFromFlatObjectMetadata = (
   const fieldIdByName: Record<string, string> = {};
   const fieldIdByJoinColumnName: Record<string, string> = {};
 
+  // The type guards below narrow on `type` and read `settings` — both core columns. Cast to the
+  // full type so the guard narrowing applies; no dropped property is read.
   const objectFields = getFlatFieldsFromFlatObjectMetadata(
     flatObjectMetadata,
     flatFieldMetadataMaps,
-  );
+  ) as unknown as FlatFieldMetadata[];
 
   for (const field of objectFields) {
     fieldIdByName[field.name] = field.id;
