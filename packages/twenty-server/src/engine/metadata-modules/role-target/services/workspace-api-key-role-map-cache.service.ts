@@ -6,11 +6,11 @@ import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/wo
 
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
-import { type CacheEntityFetchShape } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
+import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
 
 const API_KEY_ROLE_ROWS_REQUIREMENT = {
   roleTarget: true,
-} as const satisfies CacheEntityFetchShape;
+} as const satisfies WorkspaceCacheRowsRequirement;
 
 @Injectable()
 @WorkspaceCache('apiKeyRoleMap', { packingPonderation: 1 })

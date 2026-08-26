@@ -8,7 +8,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { fromFieldMetadataEntityToOrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-field-metadata-entity-to-orm-flat-field-metadata.util';
 import { computeUniqueFieldMetadataIdsFromIndexes } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-indexes.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { type CacheEntityFetchShape } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
+import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
@@ -19,7 +19,7 @@ const ORM_FLAT_FIELD_METADATA_ROWS_REQUIREMENT = {
     columns: ['id', 'fieldMetadataId', 'subFieldName'],
     groupBy: ['indexMetadataId'],
   },
-} as const satisfies CacheEntityFetchShape;
+} as const satisfies WorkspaceCacheRowsRequirement;
 
 @Injectable()
 @WorkspaceCache('flatFieldMetadataMapsOrm', { packingPonderation: 8 })

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { WorkspaceCacheRowsBatchLoader } from 'src/engine/workspace-cache/services/workspace-cache-rows-batch-loader';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
   type WorkspaceCacheDataMap,
@@ -54,11 +54,11 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
   >({
     flatMapsKeys,
     workspaceId,
-    recomputeContext,
+    rowsBatchLoader,
   }: {
     workspaceId: string;
     flatMapsKeys?: T;
-    recomputeContext?: WorkspaceCacheRecomputeContext;
+    rowsBatchLoader?: WorkspaceCacheRowsBatchLoader;
   }): Promise<void> {
     await this.workspaceCacheService.invalidateAndRecompute(
       workspaceId,
@@ -66,7 +66,7 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
         (flatMapsKeys ??
           ALL_FLAT_ENTITY_MAPS_PROPERTIES) as (keyof WorkspaceCacheDataMap)[],
       ),
-      recomputeContext,
+      rowsBatchLoader,
     );
   }
 

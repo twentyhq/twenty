@@ -22,7 +22,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
 import { WorkspaceCacheMetricsService } from 'src/engine/workspace-cache/services/workspace-cache-metrics.service';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { WorkspaceCacheRowsBatchLoader } from 'src/engine/workspace-cache/services/workspace-cache-rows-batch-loader';
 import {
   WORKSPACE_CACHE_KEY,
   WORKSPACE_CACHE_OPTIONS,
@@ -296,23 +296,21 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   // post-commit state (e.g. the migration runner's fan-out): one context
   // pre-resolved for the union of every batch's keys lets all batches share
   // a single fetch plan.
-  public async prepareRecomputeContext(
+  public async prepareRowsBatchLoader(
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
-  ): Promise<WorkspaceCacheRecomputeContext> {
-    const recomputeContext = new WorkspaceCacheRecomputeContext(
+  ): Promise<WorkspaceCacheRowsBatchLoader> {
+    const rowsBatchLoader = new WorkspaceCacheRowsBatchLoader(
       this.coreDataSource,
       workspaceId,
     );
 
-    await recomputeContext.resolveFetchShapes(
-      this.collectFetchShapes(cacheKeyNames),
-    );
+    await rowsBatchLoader.loadRows(this.collectRowsRequirements(cacheKeyNames));
 
-    return recomputeContext;
+    return rowsBatchLoader;
   }
 
-  private collectFetchShapes(cacheKeyNames: WorkspaceCacheKeyName[]) {
+  private collectRowsRequirements(cacheKeyNames: WorkspaceCacheKeyName[]) {
     return cacheKeyNames.map(
       (keyName) => this.getProviderOrThrow(keyName).rowsRequirement,
     );
@@ -321,7 +319,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   public async invalidateAndRecompute(
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
-    recomputeContext?: WorkspaceCacheRecomputeContext,
+    rowsBatchLoader?: WorkspaceCacheRowsBatchLoader,
   ): Promise<void> {
     return Sentry.startSpan(
       {
@@ -340,7 +338,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           {
             strategy: 'mint',
           },
-          recomputeContext,
+          rowsBatchLoader,
         );
 
         // Clear memoizer again after recomputation to evict any stale entries
@@ -540,7 +538,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
     hashResolution: RecomputeHashResolution,
-    sharedRecomputeContext?: WorkspaceCacheRecomputeContext,
+    sharedRowsBatchLoader?: WorkspaceCacheRowsBatchLoader,
   ): Promise<CacheEntriesResult> {
     const result: CacheEntriesResult = { data: {}, hashes: {} };
 
@@ -548,15 +546,13 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       return result;
     }
 
-    const recomputeContext =
-      sharedRecomputeContext ??
-      new WorkspaceCacheRecomputeContext(this.coreDataSource, workspaceId);
+    const rowsBatchLoader =
+      sharedRowsBatchLoader ??
+      new WorkspaceCacheRowsBatchLoader(this.coreDataSource, workspaceId);
 
     // No-op for keys a shared context already covers; fetches the plan of the
     // remaining ones in one round before any provider runs.
-    await recomputeContext.resolveFetchShapes(
-      this.collectFetchShapes(cacheKeyNames),
-    );
+    await rowsBatchLoader.loadRows(this.collectRowsRequirements(cacheKeyNames));
 
     const computePromises = cacheKeyNames.map(async (keyName) => {
       const provider = this.getProviderOrThrow(keyName);
@@ -578,7 +574,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           () =>
             provider.computeForCache({
               workspaceId,
-              rows: recomputeContext.getRowsByName(provider.rowsRequirement),
+              rows: rowsBatchLoader.readRows(provider.rowsRequirement),
             }),
         );
 

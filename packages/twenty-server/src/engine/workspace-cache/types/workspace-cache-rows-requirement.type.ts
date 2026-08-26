@@ -22,10 +22,10 @@ export type GroupByColumns<TName extends CacheFetchableEntityName> =
 
 // true = full rows; a column array = exactly what computeForCache reads,
 // typo-checked against the named entity. The grouped form additionally asks
-// getRowsByName to index the rows by the given foreign key columns; groupBy
+// readRows to index the rows by the given foreign key columns; groupBy
 // keys are auto-added to the fetched columns, so a declared grouping is
 // always backed by fetched data.
-export type CacheEntityFetchSpec<TName extends CacheFetchableEntityName> =
+export type EntityRowsRequirement<TName extends CacheFetchableEntityName> =
   | EntityColumns<TName>
   | true
   | {
@@ -33,21 +33,21 @@ export type CacheEntityFetchSpec<TName extends CacheFetchableEntityName> =
       groupBy: GroupByColumns<TName>;
     };
 
-export type CacheEntityFetchShape = {
-  [TName in CacheFetchableEntityName]?: CacheEntityFetchSpec<TName>;
+export type WorkspaceCacheRowsRequirement = {
+  [TName in CacheFetchableEntityName]?: EntityRowsRequirement<TName>;
 };
 
-export type GroupedCacheEntityFetchSpec = {
+export type GroupedEntityRowsRequirement = {
   columns: readonly string[] | true;
   groupBy: readonly string[];
 };
 
-// Widened form every CacheEntityFetchSpec<TName> is assignable to, for code
+// Widened form every EntityRowsRequirement<TName> is assignable to, for code
 // that processes specs generically across entity names.
-export type WidenedCacheEntityFetchSpec =
+export type WidenedEntityRowsRequirement =
   | true
   | readonly string[]
-  | GroupedCacheEntityFetchSpec;
+  | GroupedEntityRowsRequirement;
 
 // Rows are typed as exactly the declared columns (plus groupBy keys, which
 // the plan auto-fetches), so reading an undeclared column is a compile error
@@ -75,8 +75,8 @@ type GroupedRow<
     >
   : CacheFetchableEntity<TName>;
 
-export type CacheEntityFetchShapeRows<TShape extends CacheEntityFetchShape> = {
-  [TName in keyof TShape & CacheFetchableEntityName]: TShape[TName] extends {
+export type WorkspaceCacheRows<TRowsRequirement extends WorkspaceCacheRowsRequirement> = {
+  [TName in keyof TRowsRequirement & CacheFetchableEntityName]: TRowsRequirement[TName] extends {
     columns: infer TColumns extends readonly string[] | true;
     groupBy: infer TGroupBy extends readonly string[];
   }
@@ -86,7 +86,7 @@ export type CacheEntityFetchShapeRows<TShape extends CacheEntityFetchShape> = {
           GroupedRow<TName, TColumns, TGroupBy>[]
         >;
       }
-    : TShape[TName] extends readonly string[]
-      ? PickedRow<TName, TShape[TName]>[]
+    : TRowsRequirement[TName] extends readonly string[]
+      ? PickedRow<TName, TRowsRequirement[TName]>[]
       : CacheFetchableEntity<TName>[];
 };

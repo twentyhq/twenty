@@ -3,11 +3,11 @@ import { type DataSource, type EntityTarget } from 'typeorm';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
-import { WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
+import { WorkspaceCacheRowsBatchLoader } from 'src/engine/workspace-cache/services/workspace-cache-rows-batch-loader';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000000';
 
-describe('WorkspaceCacheRecomputeContext', () => {
+describe('WorkspaceCacheRowsBatchLoader', () => {
   const setup = () => {
     const findMocksByEntity = new Map<EntityTarget<object>, jest.Mock>([
       [
@@ -42,7 +42,7 @@ describe('WorkspaceCacheRecomputeContext', () => {
     } as unknown as DataSource;
 
     return {
-      recomputeContext: new WorkspaceCacheRecomputeContext(
+      rowsBatchLoader: new WorkspaceCacheRowsBatchLoader(
         dataSource,
         WORKSPACE_ID,
       ),
@@ -51,12 +51,12 @@ describe('WorkspaceCacheRecomputeContext', () => {
   };
 
   it('fetches all workspace rows including soft-deleted ones', async () => {
-    const { recomputeContext, findMocksByEntity } = setup();
+    const { rowsBatchLoader, findMocksByEntity } = setup();
 
-    await recomputeContext.resolveFetchShapes([{ objectMetadata: true }]);
+    await rowsBatchLoader.loadRows([{ objectMetadata: true }]);
 
     expect(
-      recomputeContext.getRowsByName({ objectMetadata: true }).objectMetadata,
+      rowsBatchLoader.readRows({ objectMetadata: true }).objectMetadata,
     ).toEqual([{ id: 'object-row', workspaceId: WORKSPACE_ID }]);
     expect(findMocksByEntity.get(ObjectMetadataEntity)).toHaveBeenCalledWith({
       where: { workspaceId: WORKSPACE_ID },
@@ -64,10 +64,10 @@ describe('WorkspaceCacheRecomputeContext', () => {
     });
   });
 
-  it('merges shapes into one query per entity with the union of declared columns', async () => {
-    const { recomputeContext, findMocksByEntity } = setup();
+  it('merges requirements into one query per entity with the union of declared columns', async () => {
+    const { rowsBatchLoader, findMocksByEntity } = setup();
 
-    await recomputeContext.resolveFetchShapes([
+    await rowsBatchLoader.loadRows([
       { objectMetadata: ['id'] },
       {
         objectMetadata: ['id', 'nameSingular'],
@@ -85,10 +85,10 @@ describe('WorkspaceCacheRecomputeContext', () => {
     expect(findMocksByEntity.get(ApplicationEntity)).toHaveBeenCalledTimes(1);
   });
 
-  it('drops the column selection once any shape needs full rows', async () => {
-    const { recomputeContext, findMocksByEntity } = setup();
+  it('drops the column selection once any requirement needs full rows', async () => {
+    const { rowsBatchLoader, findMocksByEntity } = setup();
 
-    await recomputeContext.resolveFetchShapes([
+    await rowsBatchLoader.loadRows([
       { objectMetadata: ['id'] },
       { objectMetadata: true },
     ]);
@@ -100,30 +100,30 @@ describe('WorkspaceCacheRecomputeContext', () => {
   });
 
   it('treats an already-covered later resolution as a no-op', async () => {
-    const { recomputeContext, findMocksByEntity } = setup();
+    const { rowsBatchLoader, findMocksByEntity } = setup();
 
-    await recomputeContext.resolveFetchShapes([
+    await rowsBatchLoader.loadRows([
       { objectMetadata: ['id', 'nameSingular'] },
     ]);
-    const firstRows = recomputeContext.getRowsByName({
+    const firstRows = rowsBatchLoader.readRows({
       objectMetadata: ['id'],
     }).objectMetadata;
 
-    await recomputeContext.resolveFetchShapes([{ objectMetadata: ['id'] }]);
+    await rowsBatchLoader.loadRows([{ objectMetadata: ['id'] }]);
 
     expect(findMocksByEntity.get(ObjectMetadataEntity)).toHaveBeenCalledTimes(
       1,
     );
     expect(
-      recomputeContext.getRowsByName({ objectMetadata: ['id'] }).objectMetadata,
+      rowsBatchLoader.readRows({ objectMetadata: ['id'] }).objectMetadata,
     ).toBe(firstRows);
   });
 
   it('refetches with the widened union when a later resolution is not covered', async () => {
-    const { recomputeContext, findMocksByEntity } = setup();
+    const { rowsBatchLoader, findMocksByEntity } = setup();
 
-    await recomputeContext.resolveFetchShapes([{ objectMetadata: ['id'] }]);
-    await recomputeContext.resolveFetchShapes([
+    await rowsBatchLoader.loadRows([{ objectMetadata: ['id'] }]);
+    await rowsBatchLoader.loadRows([
       { objectMetadata: ['nameSingular'] },
     ]);
 
@@ -137,11 +137,11 @@ describe('WorkspaceCacheRecomputeContext', () => {
   });
 
   it('shares one query across concurrent resolutions of the same entity', async () => {
-    const { recomputeContext, findMocksByEntity } = setup();
+    const { rowsBatchLoader, findMocksByEntity } = setup();
 
     await Promise.all([
-      recomputeContext.resolveFetchShapes([{ objectMetadata: ['id'] }]),
-      recomputeContext.resolveFetchShapes([{ objectMetadata: ['id'] }]),
+      rowsBatchLoader.loadRows([{ objectMetadata: ['id'] }]),
+      rowsBatchLoader.loadRows([{ objectMetadata: ['id'] }]),
     ]);
 
     expect(findMocksByEntity.get(ObjectMetadataEntity)).toHaveBeenCalledTimes(
@@ -150,7 +150,7 @@ describe('WorkspaceCacheRecomputeContext', () => {
   });
 
   it('keeps previously resolved rows readable while a widening refetch is in flight', async () => {
-    const { recomputeContext, findMocksByEntity } = setup();
+    const { rowsBatchLoader, findMocksByEntity } = setup();
     const findMock = findMocksByEntity.get(ObjectMetadataEntity)!;
     const initialRows = [{ id: 'first-generation', workspaceId: WORKSPACE_ID }];
     const widenedRows = [
@@ -165,28 +165,28 @@ describe('WorkspaceCacheRecomputeContext', () => {
       .mockResolvedValueOnce(initialRows)
       .mockResolvedValueOnce(widenedRows);
 
-    await recomputeContext.resolveFetchShapes([{ objectMetadata: ['id'] }]);
+    await rowsBatchLoader.loadRows([{ objectMetadata: ['id'] }]);
 
-    const wideningPromise = recomputeContext.resolveFetchShapes([
+    const wideningPromise = rowsBatchLoader.loadRows([
       { objectMetadata: ['id', 'nameSingular'] },
     ]);
 
     expect(
-      recomputeContext.getRowsByName({ objectMetadata: ['id'] }).objectMetadata,
+      rowsBatchLoader.readRows({ objectMetadata: ['id'] }).objectMetadata,
     ).toBe(initialRows);
 
     await wideningPromise;
 
     expect(findMock).toHaveBeenCalledTimes(2);
     expect(
-      recomputeContext.getRowsByName({ objectMetadata: ['id'] }).objectMetadata,
+      rowsBatchLoader.readRows({ objectMetadata: ['id'] }).objectMetadata,
     ).toBe(widenedRows);
   });
 
   it('widens the fetched columns with the declared groupBy keys', async () => {
-    const { recomputeContext, findMocksByEntity } = setup();
+    const { rowsBatchLoader, findMocksByEntity } = setup();
 
-    await recomputeContext.resolveFetchShapes([
+    await rowsBatchLoader.loadRows([
       {
         viewField: {
           columns: ['id'],
@@ -205,7 +205,7 @@ describe('WorkspaceCacheRecomputeContext', () => {
   });
 
   it('returns rows and grouped maps for a groupBy declaration, skipping null foreign keys', async () => {
-    const { recomputeContext, findMocksByEntity } = setup();
+    const { rowsBatchLoader, findMocksByEntity } = setup();
     const rows = [
       {
         id: 'view-field-a',
@@ -226,16 +226,16 @@ describe('WorkspaceCacheRecomputeContext', () => {
 
     findMocksByEntity.get(ViewFieldEntity)!.mockResolvedValue(rows);
 
-    const shape = {
+    const rowsRequirement = {
       viewField: {
         columns: ['id'],
         groupBy: ['fieldMetadataId'],
       },
     } as const;
 
-    await recomputeContext.resolveFetchShapes([shape]);
+    await rowsBatchLoader.loadRows([rowsRequirement]);
 
-    const { viewField } = recomputeContext.getRowsByName(shape);
+    const { viewField } = rowsBatchLoader.readRows(rowsRequirement);
 
     expect(viewField.rows).toBe(rows);
     expect(viewField.byFieldMetadataId.get('field-1')).toEqual([
@@ -251,11 +251,11 @@ describe('WorkspaceCacheRecomputeContext', () => {
   });
 
   it('types plain rows as exactly the declared columns', async () => {
-    const { recomputeContext } = setup();
+    const { rowsBatchLoader } = setup();
 
-    await recomputeContext.resolveFetchShapes([{ objectMetadata: ['id'] }]);
+    await rowsBatchLoader.loadRows([{ objectMetadata: ['id'] }]);
 
-    const { objectMetadata } = recomputeContext.getRowsByName({
+    const { objectMetadata } = rowsBatchLoader.readRows({
       objectMetadata: ['id'],
     } as const);
 
@@ -264,13 +264,13 @@ describe('WorkspaceCacheRecomputeContext', () => {
     void objectMetadata[0].nameSingular;
   });
 
-  it('throws when reading an entity name no shape declared', async () => {
-    const { recomputeContext } = setup();
+  it('throws when reading an entity name no requirement declared', async () => {
+    const { rowsBatchLoader } = setup();
 
-    await recomputeContext.resolveFetchShapes([{ objectMetadata: true }]);
+    await rowsBatchLoader.loadRows([{ objectMetadata: true }]);
 
     expect(() =>
-      recomputeContext.getRowsByName({ application: ['id'] }),
+      rowsBatchLoader.readRows({ application: ['id'] }),
     ).toThrow(/application.*rowsRequirement/);
   });
 });

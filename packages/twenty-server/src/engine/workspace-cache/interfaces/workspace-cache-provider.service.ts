@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { type CacheEntityFetchShape } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
+import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import {
   type WorkspaceCacheDataMap,
@@ -19,7 +19,7 @@ export abstract class WorkspaceCacheProvider<
   // providers recomputed together are merged into one deterministic fetch
   // plan executed before any computeForCache runs, and the context's rows
   // carry exactly what was declared.
-  readonly rowsRequirement: CacheEntityFetchShape = {};
+  readonly rowsRequirement: WorkspaceCacheRowsRequirement = {};
 
   abstract computeForCache(
     context: WorkspaceCacheProviderContext,

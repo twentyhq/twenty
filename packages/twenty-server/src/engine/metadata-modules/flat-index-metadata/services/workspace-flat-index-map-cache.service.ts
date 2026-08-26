@@ -9,7 +9,7 @@ import { type FlatIndexMetadataMaps } from 'src/engine/metadata-modules/flat-ind
 import { fromIndexMetadataEntityToFlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/utils/from-index-metadata-entity-to-flat-index-metadata.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
-import { type CacheFetchableEntity } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
+import { type CacheFetchableEntity } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 

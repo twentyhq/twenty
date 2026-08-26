@@ -8,25 +8,25 @@ import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { ALL_WORKSPACE_CACHE_ENTITY_BY_NAME } from 'src/engine/workspace-cache/constants/all-workspace-cache-entity-by-name.constant';
 import {
-  type CacheEntityFetchShape,
-  type CacheEntityFetchShapeRows,
+  type WorkspaceCacheRowsRequirement,
+  type WorkspaceCacheRows,
   type CacheFetchableEntityName,
-  type GroupedCacheEntityFetchSpec,
-  type WidenedCacheEntityFetchSpec,
-} from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
+  type GroupedEntityRowsRequirement,
+  type WidenedEntityRowsRequirement,
+} from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
 import { groupRowsByForeignKey } from 'src/engine/workspace-cache/utils/group-rows-by-foreign-key.util';
-import { isGroupedCacheEntityFetchSpec } from 'src/engine/workspace-cache/utils/is-grouped-cache-entity-fetch-spec.util';
+import { isGroupedEntityRowsRequirement } from 'src/engine/workspace-cache/utils/is-grouped-entity-rows-requirement.util';
 
-const normalizeFetchSpec = (
-  fetchSpec: WidenedCacheEntityFetchSpec,
-): GroupedCacheEntityFetchSpec =>
-  isGroupedCacheEntityFetchSpec(fetchSpec)
-    ? fetchSpec
-    : { columns: fetchSpec, groupBy: [] };
+const normalizeEntityRowsRequirement = (
+  entityRowsRequirement: WidenedEntityRowsRequirement,
+): GroupedEntityRowsRequirement =>
+  isGroupedEntityRowsRequirement(entityRowsRequirement)
+    ? entityRowsRequirement
+    : { columns: entityRowsRequirement, groupBy: [] };
 
 type EntityFetchGeneration = {
   id: number;
-  // null once any shape asked for full rows
+  // null once any requirement asked for full rows
   columns: ReadonlySet<string> | null;
   rowsPromise: Promise<ObjectLiteral[]>;
 };
@@ -37,17 +37,17 @@ type EntityFetchState = {
   settledRows?: ObjectLiteral[];
 };
 
-// Scoped to a single recompute batch: the providers' declared fetch shapes
-// are merged into one deterministic plan (union of column sets per entity
-// name, full rows once any provider needs them, always withDeleted) and
-// executed as one query per entity before computeForCache runs. Resolving
-// again with covered shapes is a no-op; uncovered ones (a later batch sharing
-// this context) dispatch a new generation with the widened union. Generations
-// are additive: every awaiter records the settled rows within its own
-// continuation, so after awaiting a resolution the rows covering it are
-// always readable through getRowsByName, whatever other generations are still
-// in flight. Reading an undeclared entity name throws.
-export class WorkspaceCacheRecomputeContext {
+// Scoped to a single recompute batch: the providers' declared rows
+// requirements are merged into one deterministic plan (union of column sets
+// per entity name, full rows once any provider needs them, always
+// withDeleted) and executed as one query per entity before computeForCache
+// runs. Loading again with covered requirements is a no-op; uncovered ones
+// (a later batch sharing this loader) dispatch a new generation with the
+// widened union. Generations are additive: every awaiter records the settled
+// rows within its own continuation, so after awaiting a load the rows
+// covering it are always readable through readRows, whatever other
+// generations are still in flight. Reading an undeclared entity name throws.
+export class WorkspaceCacheRowsBatchLoader {
   private readonly fetchStateByEntityName = new Map<
     CacheFetchableEntityName,
     EntityFetchState
@@ -58,22 +58,22 @@ export class WorkspaceCacheRecomputeContext {
     readonly workspaceId: string,
   ) {}
 
-  async resolveFetchShapes(shapes: CacheEntityFetchShape[]): Promise<void> {
+  async loadRows(rowsRequirements: WorkspaceCacheRowsRequirement[]): Promise<void> {
     const plannedColumnsByEntityName = new Map<
       CacheFetchableEntityName,
       Set<string> | null
     >();
 
-    for (const shape of shapes) {
-      for (const [entityName, fetchSpec] of Object.entries(shape) as [
+    for (const rowsRequirement of rowsRequirements) {
+      for (const [entityName, entityRowsRequirement] of Object.entries(rowsRequirement) as [
         CacheFetchableEntityName,
-        WidenedCacheEntityFetchSpec | undefined,
+        WidenedEntityRowsRequirement | undefined,
       ][]) {
-        if (!isDefined(fetchSpec)) {
+        if (!isDefined(entityRowsRequirement)) {
           continue;
         }
 
-        const { columns, groupBy } = normalizeFetchSpec(fetchSpec);
+        const { columns, groupBy } = normalizeEntityRowsRequirement(entityRowsRequirement);
         const planned = plannedColumnsByEntityName.get(entityName);
 
         if (columns === true) {
@@ -170,30 +170,30 @@ export class WorkspaceCacheRecomputeContext {
     );
   }
 
-  getRowsByName<TShape extends CacheEntityFetchShape>(
-    shape: TShape,
-  ): CacheEntityFetchShapeRows<TShape> {
+  readRows<TRowsRequirement extends WorkspaceCacheRowsRequirement>(
+    rowsRequirement: TRowsRequirement,
+  ): WorkspaceCacheRows<TRowsRequirement> {
     const rowsByEntityName: Partial<Record<CacheFetchableEntityName, unknown>> =
       {};
 
-    for (const [entityName, fetchSpec] of Object.entries(shape) as [
+    for (const [entityName, entityRowsRequirement] of Object.entries(rowsRequirement) as [
       CacheFetchableEntityName,
-      WidenedCacheEntityFetchSpec | undefined,
+      WidenedEntityRowsRequirement | undefined,
     ][]) {
-      if (!isDefined(fetchSpec)) {
+      if (!isDefined(entityRowsRequirement)) {
         continue;
       }
 
       const rows = this.getRowsForEntityName(entityName);
 
-      if (!isGroupedCacheEntityFetchSpec(fetchSpec)) {
+      if (!isGroupedEntityRowsRequirement(entityRowsRequirement)) {
         rowsByEntityName[entityName] = rows;
         continue;
       }
 
       const groupedEntry: Record<string, unknown> = { rows };
 
-      for (const foreignKey of fetchSpec.groupBy) {
+      for (const foreignKey of entityRowsRequirement.groupBy) {
         groupedEntry[`by${capitalize(foreignKey)}`] = groupRowsByForeignKey({
           rows,
           foreignKey,
@@ -203,7 +203,7 @@ export class WorkspaceCacheRecomputeContext {
       rowsByEntityName[entityName] = groupedEntry;
     }
 
-    return rowsByEntityName as CacheEntityFetchShapeRows<TShape>;
+    return rowsByEntityName as WorkspaceCacheRows<TRowsRequirement>;
   }
 
   private getRowsForEntityName(

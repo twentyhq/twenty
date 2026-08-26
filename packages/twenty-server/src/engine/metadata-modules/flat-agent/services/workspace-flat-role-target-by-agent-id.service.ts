@@ -6,7 +6,7 @@ import { FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-ag
 import { fromRoleTargetEntityToFlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/utils/from-role-target-entity-to-flat-role-target.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
-import { type CacheEntityFetchShape } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
+import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 
 // grouping by agentId skips null foreign keys, so byAgentId carries exactly
@@ -16,7 +16,7 @@ const FLAT_ROLE_TARGET_BY_AGENT_ID_ROWS_REQUIREMENT = {
   application: ['id', 'universalIdentifier'],
   role: ['id', 'universalIdentifier'],
   agent: ['id', 'universalIdentifier'],
-} as const satisfies CacheEntityFetchShape;
+} as const satisfies WorkspaceCacheRowsRequirement;
 
 @Injectable()
 @WorkspaceCache('flatRoleTargetByAgentIdMaps', { packingPonderation: 1 })

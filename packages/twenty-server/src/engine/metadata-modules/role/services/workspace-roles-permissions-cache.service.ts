@@ -18,7 +18,7 @@ import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permi
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
-import { type CacheEntityFetchShape } from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
+import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
 
 const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.workflow.universalIdentifier,
@@ -42,7 +42,7 @@ const ROLES_PERMISSIONS_ROWS_REQUIREMENT = {
     'universalIdentifier',
     'labelIdentifierFieldMetadataId',
   ],
-} as const satisfies CacheEntityFetchShape;
+} as const satisfies WorkspaceCacheRowsRequirement;
 
 @Injectable()
 @WorkspaceCache('rolesPermissions', { packingPonderation: 2 })

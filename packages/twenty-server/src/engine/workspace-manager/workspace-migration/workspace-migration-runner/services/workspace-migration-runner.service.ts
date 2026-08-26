@@ -128,8 +128,8 @@ export class WorkspaceMigrationRunnerService {
       cacheKeyNamesToInvalidate,
     );
 
-    const recomputeContext =
-      await this.workspaceCacheService.prepareRecomputeContext(
+    const rowsBatchLoader =
+      await this.workspaceCacheService.prepareRowsBatchLoader(
         workspaceId,
         cacheKeyNamesToInvalidate,
       );
@@ -137,7 +137,7 @@ export class WorkspaceMigrationRunnerService {
     await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
       workspaceId,
       flatMapsKeys: allFlatEntityMapsKeys,
-      recomputeContext,
+      rowsBatchLoader,
     });
 
     const invalidationResults = await Promise.allSettled([
@@ -152,7 +152,7 @@ export class WorkspaceMigrationRunnerService {
         this.workspaceCacheService.invalidateAndRecompute(
           workspaceId,
           legacyCacheKeys,
-          recomputeContext,
+          rowsBatchLoader,
         ),
       ),
     ]);

@@ -13,18 +13,18 @@ const WORKSPACE_ID = '20202020-0000-4000-8000-000000000000';
 
 describe('WorkspaceMigrationRunnerService.invalidateCache', () => {
   const setup = ({
-    prepareRecomputeContextError,
-  }: { prepareRecomputeContextError?: Error } = {}) => {
+    prepareRowsBatchLoaderError,
+  }: { prepareRowsBatchLoaderError?: Error } = {}) => {
     const callOrder: string[] = [];
 
     const flush = jest.fn(async () => {
       callOrder.push('flush');
     });
-    const prepareRecomputeContext = jest.fn(async () => {
-      callOrder.push('prepareRecomputeContext');
+    const prepareRowsBatchLoader = jest.fn(async () => {
+      callOrder.push('prepareRowsBatchLoader');
 
-      if (prepareRecomputeContextError) {
-        throw prepareRecomputeContextError;
+      if (prepareRowsBatchLoaderError) {
+        throw prepareRowsBatchLoaderError;
       }
 
       return {};
@@ -50,7 +50,7 @@ describe('WorkspaceMigrationRunnerService.invalidateCache', () => {
       } as unknown as WorkspaceMetadataVersionService,
       {
         flush,
-        prepareRecomputeContext,
+        prepareRowsBatchLoader,
         invalidateAndRecompute,
       } as unknown as WorkspaceCacheService,
       {} as unknown as MetricsService,
@@ -66,7 +66,7 @@ describe('WorkspaceMigrationRunnerService.invalidateCache', () => {
       runnerService,
       callOrder,
       flush,
-      prepareRecomputeContext,
+      prepareRowsBatchLoader,
       invalidateAndRecompute,
       invalidateFlatEntityMaps,
       incrementMetadataVersion,
@@ -74,8 +74,7 @@ describe('WorkspaceMigrationRunnerService.invalidateCache', () => {
   };
 
   it('flushes the union of main and legacy keys before resolving the fetch plan', async () => {
-    const { runnerService, callOrder, flush, prepareRecomputeContext } =
-      setup();
+    const { runnerService, callOrder, flush, prepareRowsBatchLoader } = setup();
 
     await runnerService.invalidateCache({
       allFlatEntityMapsKeys: ['flatObjectMetadataMaps'],
@@ -89,12 +88,12 @@ describe('WorkspaceMigrationRunnerService.invalidateCache', () => {
     ];
 
     expect(flush).toHaveBeenCalledWith(WORKSPACE_ID, expectedCacheKeyNames);
-    expect(prepareRecomputeContext).toHaveBeenCalledWith(
+    expect(prepareRowsBatchLoader).toHaveBeenCalledWith(
       WORKSPACE_ID,
       expectedCacheKeyNames,
     );
     expect(callOrder.indexOf('flush')).toBeLessThan(
-      callOrder.indexOf('prepareRecomputeContext'),
+      callOrder.indexOf('prepareRowsBatchLoader'),
     );
   });
 
@@ -106,7 +105,7 @@ describe('WorkspaceMigrationRunnerService.invalidateCache', () => {
       incrementMetadataVersion,
       invalidateAndRecompute,
     } = setup({
-      prepareRecomputeContextError: new Error('connection terminated'),
+      prepareRowsBatchLoaderError: new Error('connection terminated'),
     });
 
     await expect(

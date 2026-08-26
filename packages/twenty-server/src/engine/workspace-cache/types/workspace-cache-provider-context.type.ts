@@ -1,14 +1,15 @@
 import {
-  type CacheEntityFetchShape,
-  type CacheEntityFetchShapeRows,
-} from 'src/engine/workspace-cache/types/cache-entity-fetch-shape.type';
+  type WorkspaceCacheRowsRequirement,
+  type WorkspaceCacheRows,
+} from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
 
 // What computeForCache receives: the batch-fetched rows matching the
 // provider's rowsRequirement, plus the workspace scope. Providers type it
 // with `typeof` their requirement constant to get precisely typed rows.
 export type WorkspaceCacheProviderContext<
-  TShape extends CacheEntityFetchShape = CacheEntityFetchShape,
+  TRowsRequirement extends WorkspaceCacheRowsRequirement =
+    WorkspaceCacheRowsRequirement,
 > = {
   workspaceId: string;
-  rows: CacheEntityFetchShapeRows<TShape>;
+  rows: WorkspaceCacheRows<TRowsRequirement>;
 };
