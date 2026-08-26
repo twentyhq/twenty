@@ -1601,12 +1601,6 @@ msgstr "Kalendervyn måste ha ett kalenderfält"
 msgid "Calendar view must have a calendar layout"
 msgstr "Kalendervyn måste ha en kalenderlayout"
 
-#. js-lingui-id: D9pZ2l
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-msgid "Calendar widget views only support the month layout"
-msgstr "Kalenderwidgetvyer stöder endast månadsvisning"
-
 #. js-lingui-id: 0U7DBn
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -9849,7 +9843,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "Filändelsen stämmer inte överens med filens innehåll. Kontrollera att filen inte är skadad och att den har rätt filändelse."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "Filen har inte laddats upp ännu. Ladda upp den innan du bekräftar."
 
@@ -10060,7 +10054,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "Ämnet för avregistrering som denna kampanj skickades under"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "Den uppladdade filen matchar inte den angivna storleken. Försök att ladda upp igen."
@@ -10352,7 +10346,7 @@ msgid "This field references an object that could not be found"
 msgstr "Detta fält refererar till ett objekt som inte kunde hittas"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "Detta filformat stöds inte."
 

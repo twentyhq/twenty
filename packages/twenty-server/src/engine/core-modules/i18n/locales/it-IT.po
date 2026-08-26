@@ -1601,12 +1601,6 @@ msgstr "La vista calendario deve avere un campo calendario"
 msgid "Calendar view must have a calendar layout"
 msgstr "La vista calendario deve avere un layout del calendario"
 
-#. js-lingui-id: D9pZ2l
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-msgid "Calendar widget views only support the month layout"
-msgstr "Le viste del widget calendario supportano solo il layout mensile"
-
 #. js-lingui-id: 0U7DBn
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -9843,7 +9837,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "L'estensione del file non corrisponde al contenuto del file. Verifica che il tuo file non sia danneggiato e che abbia l'estensione corretta."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "Il file non è ancora stato caricato. Caricalo prima di confermare."
 
@@ -10054,7 +10048,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "L'argomento di disiscrizione sotto il quale è stata inviata questa campagna"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "Il file caricato non corrisponde alla dimensione dichiarata. Riprova il caricamento."
@@ -10346,7 +10340,7 @@ msgid "This field references an object that could not be found"
 msgstr "Questo campo fa riferimento a un oggetto che non è stato trovato"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "Questo formato di file non è supportato."
 

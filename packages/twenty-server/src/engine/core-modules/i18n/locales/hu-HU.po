@@ -1601,12 +1601,6 @@ msgstr "A naptárnézetnek rendelkeznie kell egy naptári mezővel"
 msgid "Calendar view must have a calendar layout"
 msgstr "A naptárnézetnek rendelkeznie kell egy naptárelrendezéssel"
 
-#. js-lingui-id: D9pZ2l
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-msgid "Calendar widget views only support the month layout"
-msgstr "A naptár widget nézetei csak a havi elrendezést támogatják"
-
 #. js-lingui-id: 0U7DBn
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -9843,7 +9837,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "A fájlkiterjesztés nem egyezik a fájl tartalmával. Kérjük, ellenőrizze, hogy a fájl nem sérült, és a kiterjesztése helyes."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "A fájl még nem került feltöltésre. Töltse fel, mielőtt megerősíti."
 
@@ -10054,7 +10048,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "Az a leiratkozási témakör, amely alatt ezt a kampányt elküldték"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "A feltöltött fájl mérete nem egyezik a megadott mérettel. Próbálja meg újra a feltöltést."
@@ -10346,7 +10340,7 @@ msgid "This field references an object that could not be found"
 msgstr "Ez a mező egy olyan objektumra hivatkozik, amely nem található"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "Ez a fájlformátum nem támogatott."
 

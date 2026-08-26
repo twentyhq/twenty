@@ -20,7 +20,7 @@ import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layo
 
 import { type UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { WidgetType } from 'twenty-shared/types';
 
 const DEFAULT_GRID_POSITION = {
   row: 0,

@@ -1731,11 +1731,6 @@ msgstr "crwdns1787:0crwdne1787:0"
 msgid "After a set amount of time"
 msgstr "crwdns8682:0crwdne8682:0"
 
-#. js-lingui-id: YPnvqG
-#: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
-msgid "After or equal"
-msgstr "crwdns105146:0crwdne105146:0"
-
 #. js-lingui-id: fcYF58
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -1991,7 +1986,6 @@ msgstr "crwdns140893:0{totalCount}crwdne140893:0"
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventRow.tsx
-#: src/modules/object-record/record-calendar/time-grid/components/RecordCalendarTimeGrid.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "All day"
 msgstr "crwdns65908:0crwdne65908:0"
@@ -3117,11 +3111,6 @@ msgstr "crwdns107768:0crwdne107768:0"
 msgid "Because this workflow is not using a manual trigger, the form will not open on top of the interface. To fill it, open the corresponding workflow run and complete the form there."
 msgstr "crwdns108202:0crwdne108202:0"
 
-#. js-lingui-id: EmSrGB
-#: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
-msgid "Before"
-msgstr "crwdns65946:0crwdne65946:0"
-
 #. js-lingui-id: +MqoSu
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
 #: src/modules/settings/admin-panel/utils/getUpgradeHealthStatusBadge.ts
@@ -3539,14 +3528,19 @@ msgid "Call recorder"
 msgstr "crwdns133041:0crwdne133041:0"
 
 #. js-lingui-id: ahn0Ti
-#: src/modules/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
+#: src/modules/page-layout/widgets/call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
 msgid "Call recording is not available in this workspace."
 msgstr "crwdns137977:0crwdne137977:0"
 
 #. js-lingui-id: z9jSP/
-#: src/modules/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
+#: src/modules/page-layout/widgets/call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
 msgid "Call Recording Unavailable"
 msgstr "crwdns138175:0crwdne138175:0"
+
+#. js-lingui-id: 81EMVN
+#: src/modules/page-layout/widgets/call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
+msgid "Call recordings are not available on this record."
+msgstr "crwdns140899:0crwdne140899:0"
 
 #. js-lingui-id: +Kx1Id
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -5341,13 +5335,6 @@ msgstr "crwdns7564:0crwdne7564:0"
 msgid "Create record"
 msgstr "crwdns134655:0crwdne134655:0"
 
-#. js-lingui-id: 8ETbKP
-#. placeholder {0}: cardDate.toLocaleString(undefined, { dateStyle: 'full', })
-#. placeholder {1}: cardTime.toLocaleString(undefined, { timeStyle: 'short' })
-#: src/modules/object-record/record-calendar/components/RecordCalendarAddNew.tsx
-msgid "Create record on {0} at {1}"
-msgstr "crwdns134657:0{0}crwdnd134657:0{1}crwdne134657:0"
-
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
 #: src/modules/side-panel/hooks/useOpenCreateRelatedRecordInSidePanel.ts
@@ -6026,7 +6013,6 @@ msgid "Date"
 msgstr "crwdns257:0crwdne257:0"
 
 #. js-lingui-id: QIIAIQ
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarDateFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -6035,13 +6021,6 @@ msgstr "crwdns257:0crwdne257:0"
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Date field"
 msgstr "crwdns7734:0crwdne7734:0"
-
-#. js-lingui-id: rMlHl2
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarDateFieldsContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
-msgid "Date fields"
-msgstr "crwdns136667:0crwdne136667:0"
 
 #. js-lingui-id: Lhd0oQ
 #: src/modules/settings/experience/components/DateTimeSettingsDateFormatSelect.tsx
@@ -7543,13 +7522,6 @@ msgstr "crwdns133229:0crwdne133229:0"
 msgid "End date"
 msgstr "crwdns115340:0crwdne115340:0"
 
-#. js-lingui-id: DqIce1
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarDateFieldsContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
-#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
-msgid "End date field"
-msgstr "crwdns134659:0crwdne134659:0"
-
 #. js-lingui-id: Fqu/aC
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "End date must be after start date."
@@ -8591,8 +8563,7 @@ msgid "Failed to merge records. Please try again."
 msgstr "crwdns66096:0crwdne66096:0"
 
 #. js-lingui-id: DvNGzq
-#: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarMonthDndKit.ts
-#: src/modules/object-record/record-calendar/week/components/RecordCalendarWeekDragDropContext.tsx
+#: src/modules/object-record/record-calendar/hooks/useRecordCalendarDndKit.ts
 msgid "Failed to move record"
 msgstr "crwdns134661:0crwdne134661:0"
 
@@ -13776,8 +13747,6 @@ msgstr "crwdns140873:0crwdne140873:0"
 
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarDateFieldsContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -13796,7 +13765,6 @@ msgstr "crwdns140873:0crwdne140873:0"
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/WidgetViewLayoutSettingsRows.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
-#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -13819,7 +13787,6 @@ msgid "Not available for default view"
 msgstr "crwdns5666:0crwdne5666:0"
 
 #. js-lingui-id: 0qBE9S
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -15827,7 +15794,6 @@ msgid "Relation type"
 msgstr "crwdns5241:0crwdne5241:0"
 
 #. js-lingui-id: g87L9j
-#: src/modules/activities/inline-cell/components/ActivityTargetsInlineCell.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Relations"
 msgstr "crwdns66330:0crwdne66330:0"
@@ -16836,7 +16802,6 @@ msgstr "crwdns133691:0crwdne133691:0"
 
 #. js-lingui-id: 7taA9j
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
@@ -17991,8 +17956,6 @@ msgid "Something went wrong while loading logs. Please try again."
 msgstr "crwdns133749:0crwdne133749:0"
 
 #. js-lingui-id: yHwG3y
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/settings/components/SettingsCard.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx

@@ -1601,12 +1601,6 @@ msgstr "日历视图必须具有日历字段"
 msgid "Calendar view must have a calendar layout"
 msgstr "日历视图必须具有日历布局"
 
-#. js-lingui-id: D9pZ2l
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-msgid "Calendar widget views only support the month layout"
-msgstr "日历小组件视图仅支持按月布局"
-
 #. js-lingui-id: 0U7DBn
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -9843,7 +9837,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "文件扩展名与文件内容不匹配。请检查您的文件未损坏且具有正确的扩展名。"
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "文件尚未上传。请在确认前先上传文件。"
 
@@ -10054,7 +10048,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "此营销活动发送所属的退订主题"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "已上传的文件与声明的大小不匹配。请重试上传。"
@@ -10346,7 +10340,7 @@ msgid "This field references an object that could not be found"
 msgstr "此字段引用了一个无法找到的对象"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "不支持此文件格式。"
 

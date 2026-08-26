@@ -1601,12 +1601,6 @@ msgstr "Η προβολή ημερολογίου πρέπει να έχει έν
 msgid "Calendar view must have a calendar layout"
 msgstr "Η προβολή ημερολογίου πρέπει να έχει διάταξη ημερολογίου"
 
-#. js-lingui-id: D9pZ2l
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-msgid "Calendar widget views only support the month layout"
-msgstr "Οι προβολές του γραφικού στοιχείου ημερολογίου υποστηρίζουν μόνο τη μηνιαία διάταξη"
-
 #. js-lingui-id: 0U7DBn
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -9843,7 +9837,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "Η επέκταση του αρχείου δεν αντιστοιχεί στο περιεχόμενο του αρχείου. Παρακαλούμε ελέγξτε ότι το αρχείο σας δεν είναι κατεστραμμένο και έχει τη σωστή επέκταση."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "Το αρχείο δεν έχει ανέβει ακόμη. Παρακαλούμε ανεβάστε το πριν το επιβεβαιώσετε."
 
@@ -10054,7 +10048,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "Το θέμα διαγραφής από τη λίστα (unsubscribe) υπό το οποίο στάλθηκε αυτή η καμπάνια"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "Το αρχείο που μεταφορτώθηκε δεν αντιστοιχεί στο δηλωμένο μέγεθος. Παρακαλούμε δοκιμάστε ξανά τη μεταφόρτωση."
@@ -10346,7 +10340,7 @@ msgid "This field references an object that could not be found"
 msgstr "Αυτό το πεδίο αναφέρεται σε αντικείμενο που δεν βρέθηκε"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "Αυτή η μορφή αρχείου δεν υποστηρίζεται."
 

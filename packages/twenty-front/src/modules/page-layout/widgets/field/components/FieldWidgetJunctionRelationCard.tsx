@@ -116,6 +116,7 @@ export const FieldWidgetJunctionRelationCard = ({
   const junctionConfig = getJunctionConfig({
     settings: fieldMetadata.settings,
     relationObjectMetadataId: fieldMetadata.relationObjectMetadataId,
+    relationTargetFieldMetadataId: fieldMetadata.relationFieldMetadataId,
     sourceObjectMetadataId,
     objectMetadataItems,
   });

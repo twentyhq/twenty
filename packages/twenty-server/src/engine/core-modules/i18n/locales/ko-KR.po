@@ -1601,12 +1601,6 @@ msgstr "캘린더 뷰에는 캘린더 필드가 있어야 합니다."
 msgid "Calendar view must have a calendar layout"
 msgstr "캘린더 뷰에는 캘린더 레이아웃이 있어야 합니다."
 
-#. js-lingui-id: D9pZ2l
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-msgid "Calendar widget views only support the month layout"
-msgstr "캘린더 위젯 뷰는 월 레이아웃만 지원합니다"
-
 #. js-lingui-id: 0U7DBn
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -9843,7 +9837,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "파일 확장자가 파일 내용과 일치하지 않습니다. 파일이 손상되지 않았고 올바른 확장자를 사용하고 있는지 확인하세요."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "파일이 아직 업로드되지 않았습니다. 확인하기 전에 파일을 업로드하세요."
 
@@ -10054,7 +10048,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "이 캠페인이 전송된 수신 거부 주제"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "업로드된 파일이 선언된 크기와 일치하지 않습니다. 다시 업로드해 주세요."
@@ -10346,7 +10340,7 @@ msgid "This field references an object that could not be found"
 msgstr "이 필드는 찾을 수 없는 객체를 참조합니다."
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "이 파일 형식은 지원되지 않습니다."
 
