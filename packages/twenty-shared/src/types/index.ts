@@ -121,11 +121,16 @@ export {
 export type {
   FieldNumberVariant,
   FieldCurrencyFormat,
+  FieldLinksVariant,
   FieldMetadataSettingsMapping,
   AllFieldMetadataSettings,
   FieldMetadataSettings,
 } from './FieldMetadataSettings';
-export { NumberDataType, DateDisplayFormat } from './FieldMetadataSettings';
+export {
+  NumberDataType,
+  DateDisplayFormat,
+  FIELD_LINKS_VARIANTS,
+} from './FieldMetadataSettings';
 export { FieldMetadataType } from './FieldMetadataType';
 export type { FieldMetadataUniversalSettings } from './FieldMetadataUniversalSettings';
 export type { FieldRatingValue } from './FieldRatingValue';

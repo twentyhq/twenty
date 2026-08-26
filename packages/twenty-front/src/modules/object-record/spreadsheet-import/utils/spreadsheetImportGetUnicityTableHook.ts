@@ -9,16 +9,22 @@ import {
   type SpreadsheetImportTableHook,
 } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  type FieldLinksVariant,
+  type FieldMetadataSettings,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 import {
   getUniqueConstraintsFields,
   isDefined,
+  normalizeDomain,
   normalizeUrlOrigin,
 } from 'twenty-shared/utils';
 
 type Column = {
   columnName: string;
   fieldType: FieldMetadataType;
+  linksVariant?: FieldLinksVariant;
 };
 
 export const spreadsheetImportGetUnicityTableHook = (
@@ -43,10 +49,19 @@ export const spreadsheetImportGetUnicityTableHook = (
           return uniqueSubFields.map((subField) => ({
             columnName: getCompositeSubFieldKey(field, subField.subFieldName),
             fieldType: field.type,
+            linksVariant: (
+              field.settings as FieldMetadataSettings<FieldMetadataType.LINKS>
+            )?.type,
           }));
         }
 
-        return [{ columnName: field.name, fieldType: field.type }];
+        return [
+          {
+            columnName: field.name,
+            fieldType: field.type,
+            linksVariant: undefined,
+          },
+        ];
       }),
     );
   const tableHook: SpreadsheetImportTableHook = (table, addError) => {
@@ -95,7 +110,7 @@ const getUniqueValues = (
   uniqueConstraint: Column[],
 ) => {
   return uniqueConstraint
-    .map(({ columnName, fieldType }) => {
+    .map(({ columnName, fieldType, linksVariant }) => {
       // need to ensure the primary link url is processed before import as on server side
       if (
         fieldType === FieldMetadataType.LINKS &&
@@ -104,7 +119,11 @@ const getUniqueValues = (
             .primaryLinkUrl,
         )
       ) {
-        return normalizeUrlOrigin(row?.[columnName]?.toString().trim() || '');
+        const rawPrimaryLinkUrl = row?.[columnName]?.toString().trim() || '';
+
+        return linksVariant === 'domain'
+          ? normalizeDomain(rawPrimaryLinkUrl)
+          : normalizeUrlOrigin(rawPrimaryLinkUrl);
       }
 
       return row?.[columnName]?.toString().trim().toLowerCase();

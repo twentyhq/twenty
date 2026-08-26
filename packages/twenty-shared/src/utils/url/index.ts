@@ -7,6 +7,7 @@ export * from './getUrlHostnameOrThrow';
 export * from './isAbsoluteUrl';
 export * from './isValidHostname';
 export * from './isValidUrl';
+export * from './normalizeDomain';
 export * from './normalizeUrl';
 export * from './normalizeUrlOrigin';
 export * from './buildSignedPath';

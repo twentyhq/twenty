@@ -167,7 +167,15 @@ export const convertObjectMetadataToSchemaProperties = ({
           ),
         };
         break;
-      case FieldMetadataType.LINKS:
+      case FieldMetadataType.LINKS: {
+        const linksSettings =
+          field.settings as FieldMetadataSettings<FieldMetadataType.LINKS>;
+
+        const secondaryLinkUrlProperty: SchemaObject =
+          linksSettings?.type === 'domain'
+            ? { type: 'string' }
+            : { type: 'string', format: 'uri' };
+
         itemProperty = {
           type: 'object',
           properties: {
@@ -183,10 +191,7 @@ export const convertObjectMetadataToSchemaProperties = ({
                 type: 'object',
                 description: 'A secondary link',
                 properties: {
-                  url: {
-                    type: 'string',
-                    format: 'uri',
-                  },
+                  url: secondaryLinkUrlProperty,
                   label: {
                     type: 'string',
                   },
@@ -196,6 +201,7 @@ export const convertObjectMetadataToSchemaProperties = ({
           },
         };
         break;
+      }
       case FieldMetadataType.CURRENCY:
         itemProperty = {
           type: 'object',

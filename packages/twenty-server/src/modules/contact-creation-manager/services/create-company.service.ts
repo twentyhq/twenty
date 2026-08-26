@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type AxiosInstance } from 'axios';
 import uniqBy from 'lodash.uniqby';
 import { TWENTY_COMPANIES_BASE_URL } from 'twenty-shared/constants';
@@ -7,16 +8,16 @@ import {
   type ConnectedAccountProvider,
   type FieldActorSource,
 } from 'twenty-shared/types';
-import { isDefined, normalizeUrlOrigin } from 'twenty-shared/utils';
-import { type DeepPartial, ILike } from 'typeorm';
+import { isDefined, normalizeDomain } from 'twenty-shared/utils';
+import { type DeepPartial, In } from 'typeorm';
 
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
-import { extractDomainFromLink } from 'src/modules/contact-creation-manager/utils/extract-domain-from-link.util';
 import { getCompanyNameFromDomainName } from 'src/modules/contact-creation-manager/utils/get-company-name-from-domain-name.util';
+import { getDomainNamesFromLinks } from 'src/modules/contact-creation-manager/utils/get-domain-names-from-links.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { computeDisplayName } from 'src/utils/compute-display-name';
 
@@ -62,37 +63,67 @@ export class CreateCompanyService {
         },
       );
 
-      const companiesWithoutTrailingSlash = companies.map((company) => ({
+      const normalizedCompanies = companies.map((company) => ({
         ...company,
         domainName: company.domainName
-          ? normalizeUrlOrigin(company.domainName)
+          ? normalizeDomain(company.domainName)
           : undefined,
       }));
 
-      const uniqueCompanies = uniqBy(
-        companiesWithoutTrailingSlash,
-        'domainName',
-      );
-      const conditions = uniqueCompanies.map((companyToCreate) => ({
-        domainName: {
-          primaryLinkUrl: ILike(`%${companyToCreate.domainName}%`),
-        },
-      }));
+      const uniqueCompanies = uniqBy(normalizedCompanies, 'domainName');
 
-      const existingCompanies = await companyRepository.find({
-        where: conditions,
+      const domainNames = uniqueCompanies
+        .map((companyToCreate) => companyToCreate.domainName)
+        .filter(isNonEmptyString);
+
+      if (domainNames.length === 0) {
+        return {};
+      }
+
+      const companiesMatchedOnPrimaryLink = await companyRepository.find({
+        where: {
+          domainName: {
+            primaryLinkUrl: In(domainNames),
+          },
+        },
         withDeleted: true,
       });
+
+      const domainNamesWithoutCompany = domainNames.filter(
+        (domainName) =>
+          !isDefined(
+            this.findExistingCompanyByDomainName({
+              existingCompanies: companiesMatchedOnPrimaryLink,
+              domainName,
+            }),
+          ),
+      );
+
+      const companiesMatchedOnSecondaryLinks =
+        await this.findCompaniesBySecondaryDomainNames({
+          domainNames: domainNamesWithoutCompany,
+        });
+
+      const companyIdsMatchedOnPrimaryLink = new Set(
+        companiesMatchedOnPrimaryLink.map((company) => company.id),
+      );
+
+      const existingCompanies = [
+        ...companiesMatchedOnPrimaryLink,
+        ...companiesMatchedOnSecondaryLinks.filter(
+          (company) => !companyIdsMatchedOnPrimaryLink.has(company.id),
+        ),
+      ];
+
       const existingCompanyIdsMap = this.createCompanyMap(existingCompanies);
 
       const newCompaniesToCreate = uniqueCompanies.filter(
         (company) =>
-          !existingCompanies.some(
-            (existingCompany) =>
-              existingCompany.domainName &&
-              extractDomainFromLink(
-                existingCompany.domainName.primaryLinkUrl,
-              ) === company.domainName,
+          !isDefined(
+            this.findExistingCompanyByDomainName({
+              existingCompanies,
+              domainName: company.domainName,
+            }),
           ),
       );
 
@@ -152,18 +183,69 @@ export class CreateCompanyService {
     }, authContext);
   }
 
+  private async findCompaniesBySecondaryDomainNames({
+    domainNames,
+  }: {
+    domainNames: string[];
+  }): Promise<CompanyWorkspaceEntity[]> {
+    if (domainNames.length === 0) {
+      return [];
+    }
+
+    const companyRepository = this.workspaceOrmManager.getRepository(
+      CompanyWorkspaceEntity,
+      {
+        shouldBypassPermissionChecks: true,
+      },
+    );
+
+    const containmentConditions = domainNames
+      .map(
+        (_, index) =>
+          `"company"."domainNameSecondaryLinks" @> CAST(:secondaryLink${index} AS jsonb)`,
+      )
+      .join(' OR ');
+
+    const containmentParameters = Object.fromEntries(
+      domainNames.map((domainName, index) => [
+        `secondaryLink${index}`,
+        JSON.stringify([{ url: domainName }]),
+      ]),
+    );
+
+    return companyRepository
+      .createQueryBuilder('company')
+      .where(containmentConditions, containmentParameters)
+      .withDeleted()
+      .getMany();
+  }
+
+  private findExistingCompanyByDomainName({
+    existingCompanies,
+    domainName,
+  }: {
+    existingCompanies: CompanyWorkspaceEntity[];
+    domainName: string | undefined;
+  }): CompanyWorkspaceEntity | undefined {
+    if (!isNonEmptyString(domainName)) {
+      return undefined;
+    }
+
+    return existingCompanies.find((existingCompany) =>
+      getDomainNamesFromLinks(existingCompany.domainName).includes(domainName),
+    );
+  }
+
   private filterCompaniesToRestore(
     uniqueCompanies: CompanyToCreate[],
     existingCompanies: CompanyWorkspaceEntity[],
   ) {
     return uniqueCompanies
       .map((company) => {
-        const existingCompany = existingCompanies.find(
-          (existingCompany) =>
-            existingCompany.domainName &&
-            extractDomainFromLink(existingCompany.domainName.primaryLinkUrl) ===
-              company.domainName,
-        );
+        const existingCompany = this.findExistingCompanyByDomainName({
+          existingCompanies,
+          domainName: company.domainName,
+        });
 
         return isDefined(existingCompany)
           ? {
@@ -189,7 +271,7 @@ export class CreateCompanyService {
 
     return {
       domainName: {
-        primaryLinkUrl: 'https://' + company.domainName,
+        primaryLinkUrl: company.domainName ?? '',
       },
       name,
       createdBy: {
@@ -212,12 +294,13 @@ export class CreateCompanyService {
   ) {
     return companies.reduce(
       (acc, company) => {
-        if (!company.domainName?.primaryLinkUrl || !company.id) {
+        if (!company.id) {
           return acc;
         }
-        const key = extractDomainFromLink(company.domainName.primaryLinkUrl);
 
-        acc[key] = company.id;
+        for (const domainName of getDomainNamesFromLinks(company.domainName)) {
+          acc[domainName] = company.id;
+        }
 
         return acc;
       },
