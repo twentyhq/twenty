@@ -57,7 +57,10 @@ export const getObjectMorphJunctionConfig = ({
       sourceObjectMetadata: objectMetadata,
     });
 
-    if (!isDefined(junctionObjectMetadata) || !isDefined(sourceJoinColumnName)) {
+    if (
+      !isDefined(junctionObjectMetadata) ||
+      !isDefined(sourceJoinColumnName)
+    ) {
       continue;
     }
 

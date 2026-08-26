@@ -20,7 +20,6 @@ exports[`generateDepthRecordGqlFieldsFromObject should generate depth one record
       "id": true,
       "name": true,
     },
-    "petId": true,
   },
   "createdAt": true,
   "createdBy": true,
@@ -38,7 +37,6 @@ exports[`generateDepthRecordGqlFieldsFromObject should generate depth one record
       "id": true,
       "title": true,
     },
-    "noteId": true,
   },
   "opportunities": {
     "id": true,
@@ -57,7 +55,6 @@ exports[`generateDepthRecordGqlFieldsFromObject should generate depth one record
       "id": true,
       "name": true,
     },
-    "personId": true,
   },
   "searchVector": true,
   "tagline": true,
@@ -67,7 +64,6 @@ exports[`generateDepthRecordGqlFieldsFromObject should generate depth one record
       "id": true,
       "title": true,
     },
-    "taskId": true,
   },
   "timelineActivities": {
     "id": true,

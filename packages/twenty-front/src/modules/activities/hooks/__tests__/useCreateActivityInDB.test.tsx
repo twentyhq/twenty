@@ -4,7 +4,7 @@ import { act, renderHook } from '@testing-library/react';
 import { createOneActivityOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/createOneActivityOperationSignatureFactory';
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
 import { type Task } from '@/activities/types/Task';
-import { getActivityTargetJunctionConfig } from '@/activities/utils/getActivityTargetJunctionConfig';
+import { getObjectMorphJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getObjectMorphJunctionConfig';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { generateCreateOneRecordMutation } from '@/object-metadata/utils/generateCreateOneRecordMutation';
@@ -36,10 +36,10 @@ const mockedActivity = {
 
 const taskMetadataItem = getMockObjectMetadataItemOrThrow('task');
 const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
-const activityTargetFieldName = getActivityTargetJunctionConfig({
-  activityObjectMetadata: taskMetadataItem,
+const activityTargetFieldName = getObjectMorphJunctionConfig({
+  objectMetadata: taskMetadataItem,
   objectMetadataItems,
-})?.activityTargetField.name;
+})?.junctionField.name;
 
 if (!isDefined(activityTargetFieldName)) {
   throw new Error('Task target junction metadata is missing');

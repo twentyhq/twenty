@@ -4,7 +4,7 @@ import {
 } from 'twenty-shared/types';
 
 import { findActivityTargetsOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/findActivityTargetsOperationSignatureFactory';
-import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
+import { useObjectMorphJunctionConfigOrThrow } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfigOrThrow';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { type ActivityTarget } from '@/activities/types/ActivityTarget';
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
@@ -12,7 +12,6 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useActivityTargetsForTargetableObjects = ({
   objectNameSingular,
@@ -44,14 +43,11 @@ export const useActivityTargetsForTargetableObjects = ({
       objectMetadataItems,
     });
 
-  const morphJunctionConfig = useObjectMorphJunctionConfig({ objectNameSingular });
+  const morphJunctionConfig = useObjectMorphJunctionConfigOrThrow({
+    objectNameSingular,
+  });
 
-  if (!isDefined(morphJunctionConfig)) {
-    throw new Error('Activity target junction metadata is missing');
-  }
-
-  const { junctionObjectMetadata, sourceField } =
-    morphJunctionConfig;
+  const { junctionObjectMetadata, sourceField } = morphJunctionConfig;
 
   const activityTargetsFilter = getActivityTargetsFilter({
     targetableObjects,
@@ -74,8 +70,7 @@ export const useActivityTargetsForTargetableObjects = ({
       FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.objectNameSingular,
     filter: activityTargetsFilter,
     recordGqlFields: FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.fields,
-    onCompleted: (records) =>
-      onCompleted?.(records, sourceField.name),
+    onCompleted: (records) => onCompleted?.(records, sourceField.name),
     orderBy: activityTargetsOrderByVariables,
     limit,
   });

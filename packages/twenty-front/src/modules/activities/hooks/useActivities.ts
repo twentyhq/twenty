@@ -4,7 +4,7 @@ import { useStore } from 'jotai';
 import { useActivityTargetsForTargetableObjects } from '@/activities/hooks/useActivityTargetsForTargetableObjects';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { type ActivityTarget } from '@/activities/types/ActivityTarget';
-import { getActivityFromTarget } from '@/activities/utils/getActivityTargetRecordValues';
+import { getRelatedRecordFromJunction } from '@/object-record/record-field/ui/utils/junction/getRelatedRecordFromJunction';
 import {
   type CoreObjectNameSingular,
   type RecordGqlOperationOrderBy,
@@ -30,8 +30,8 @@ export const useActivities = ({
   const updateActivitiesInStore = useCallback(
     (activityTargets: ActivityTarget[], activityRelationFieldName: string) => {
       for (const activityTarget of activityTargets) {
-        const activity = getActivityFromTarget({
-          activityTarget,
+        const activity = getRelatedRecordFromJunction({
+          junctionRecord: activityTarget,
           relationFieldName: activityRelationFieldName,
         });
 
@@ -63,8 +63,8 @@ export const useActivities = ({
 
   const activities = activityTargets
     .map((activityTarget) => {
-      return getActivityFromTarget({
-        activityTarget,
+      return getRelatedRecordFromJunction({
+        junctionRecord: activityTarget,
         relationFieldName: activityRelationFieldName,
       });
     })
@@ -85,8 +85,8 @@ export const useActivities = ({
 
     return activityTargets
       .map((activityTarget) => {
-        return getActivityFromTarget({
-          activityTarget,
+        return getRelatedRecordFromJunction({
+          junctionRecord: activityTarget,
           relationFieldName: activityRelationFieldName,
         });
       })

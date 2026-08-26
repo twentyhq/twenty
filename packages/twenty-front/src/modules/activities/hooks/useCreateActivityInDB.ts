@@ -14,10 +14,10 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
 import { createOneActivityOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/createOneActivityOperationSignatureFactory';
-import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
+import { useObjectMorphJunctionConfigOrThrow } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfigOrThrow';
 import { type ActivityTarget } from '@/activities/types/ActivityTarget';
-import { getActivityTargetsFromRecord } from '@/activities/utils/getActivityTargetRecordValues';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { getRecordArrayField } from '@/object-record/utils/getRecordArrayField';
+import { capitalize } from 'twenty-shared/utils';
 
 export const useCreateActivityInDB = ({
   activityObjectNameSingular,
@@ -44,15 +44,14 @@ export const useCreateActivityInDB = ({
       objectNameSingular: activityObjectNameSingular,
     });
 
-  const morphJunctionConfig = useObjectMorphJunctionConfig({
+  const morphJunctionConfig = useObjectMorphJunctionConfigOrThrow({
     objectNameSingular: activityObjectNameSingular,
   });
 
   const { createManyRecords: createManyActivityTargets } =
     useCreateManyRecords<ActivityTarget>({
       objectNameSingular:
-        morphJunctionConfig?.junctionObjectMetadata.nameSingular ??
-        activityObjectNameSingular,
+        morphJunctionConfig.junctionObjectMetadata.nameSingular,
       shouldMatchRootQueryFilter: true,
     });
 
@@ -66,13 +65,9 @@ export const useCreateActivityInDB = ({
         updatedAt: new Date().toISOString(),
       });
 
-      if (!isDefined(morphJunctionConfig)) {
-        throw new Error('Activity target relation metadata is missing');
-      }
-
       const { junctionObjectMetadata, junctionField } = morphJunctionConfig;
 
-      const activityTargetsToCreate = getActivityTargetsFromRecord({
+      const activityTargetsToCreate = getRecordArrayField({
         record: activityToCreate,
         fieldName: junctionField.name,
       });

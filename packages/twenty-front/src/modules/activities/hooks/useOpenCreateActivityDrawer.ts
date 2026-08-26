@@ -14,7 +14,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
-import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
+import { useObjectMorphJunctionConfigOrThrow } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfigOrThrow';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useOpenCreateActivityDrawer = ({
@@ -32,14 +32,12 @@ export const useOpenCreateActivityDrawer = ({
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const morphJunctionConfig = useObjectMorphJunctionConfig({
+  const morphJunctionConfig = useObjectMorphJunctionConfigOrThrow({
     objectNameSingular: activityObjectNameSingular,
   });
 
   const { createManyRecords: createActivityTargets } = useCreateManyRecords({
-    objectNameSingular:
-      morphJunctionConfig?.junctionObjectMetadata.nameSingular ??
-      activityObjectNameSingular,
+    objectNameSingular: morphJunctionConfig.junctionObjectMetadata.nameSingular,
     shouldMatchRootQueryFilter: true,
   });
 
@@ -77,10 +75,6 @@ export const useOpenCreateActivityDrawer = ({
     });
 
     if (targetableObjects.length > 0) {
-      if (!isDefined(morphJunctionConfig)) {
-        throw new Error('Activity target junction metadata is invalid');
-      }
-
       const { junctionObjectMetadata, sourceJoinColumnName } =
         morphJunctionConfig;
 
