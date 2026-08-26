@@ -119,7 +119,11 @@ export class MarketplaceService {
     const registryUrl = this.twentyConfigService.get('APP_REGISTRY_URL');
     const packageInfoByName = new Map<string, RegistryPackageInfo>();
 
-    for (let pageIndex = 0; pageIndex < REGISTRY_SEARCH_MAX_PAGES; pageIndex++) {
+    for (
+      let pageIndex = 0;
+      pageIndex < REGISTRY_SEARCH_MAX_PAGES;
+      pageIndex++
+    ) {
       const from = pageIndex * REGISTRY_SEARCH_PAGE_SIZE;
       const searchResult = await this.fetchRegistrySearchPage(
         registryUrl,
