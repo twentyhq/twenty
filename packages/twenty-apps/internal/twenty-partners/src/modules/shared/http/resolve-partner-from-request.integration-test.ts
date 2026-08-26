@@ -5,7 +5,7 @@ import {
   decodeJwtClaims,
   resolvePartnerByUserId,
   resolvePartnerFromRequest,
-} from '../services/resolve-partner-from-request.service';
+} from 'src/modules/shared/http/resolve-partner-from-request.service';
 
 function requireId(id: string | null | undefined, what: string): string {
   if (!id) throw new Error(`${what} returned no id`);
@@ -28,12 +28,16 @@ async function getWorkspaceMember(
   return { id: node.id, userId: node.userId };
 }
 
-async function createPartner(client: CoreApiClient, memberId: string): Promise<string> {
+async function createPartner(
+  client: CoreApiClient,
+  memberId: string,
+): Promise<{ id: string; name: string }> {
+  const name = `[test-resolve] partner ${Date.now()}`;
   const r = await client.mutation({
     createPartner: {
       __args: {
         data: {
-          name: `[test-resolve] partner ${Date.now()}`,
+          name,
           slug: `test-resolve-${Date.now()}`,
           partnerUserId: memberId,
         },
@@ -41,7 +45,7 @@ async function createPartner(client: CoreApiClient, memberId: string): Promise<s
       id: true,
     },
   });
-  return requireId(r.createPartner?.id, 'createPartner');
+  return { id: requireId(r.createPartner?.id, 'createPartner'), name };
 }
 
 async function destroyPartner(client: CoreApiClient, id: string) {
@@ -78,12 +82,16 @@ describe('resolvePartnerByUserId', () => {
 
   it('resolves partnerId and workspaceMemberId for a member with a linked partner', async () => {
     const member = await getWorkspaceMember(client);
-    const partnerId = await createPartner(client, member.id);
-    createdPartnerIds.push(partnerId);
+    const partner = await createPartner(client, member.id);
+    createdPartnerIds.push(partner.id);
 
     const result = await resolvePartnerByUserId(client, member.userId);
 
-    expect(result).toEqual({ partnerId, workspaceMemberId: member.id });
+    expect(result).toEqual({
+      partnerId: partner.id,
+      partnerName: partner.name,
+      workspaceMemberId: member.id,
+    });
   });
 
   it('returns null for a userId with no matching workspace member', async () => {
