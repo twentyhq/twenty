@@ -58,12 +58,14 @@ const AUTO_LINK = {
   id: 'link-1',
   workspaceMemberId: 'member-1',
   source: 'AUTO',
+  consentState: 'ACTIVE',
 };
 
 const MANUAL_LINK = {
   id: 'link-1',
   workspaceMemberId: 'member-1',
   source: 'MANUAL',
+  consentState: 'ACTIVE',
 };
 
 describe('resolveSlackRunAsWorkspaceMemberId', () => {
@@ -128,6 +130,60 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
     ).toBe('member-2');
     expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+  });
+
+  it('should treat an admin-set manual link as consented', async () => {
+    findSlackUserLinkMock.mockResolvedValue({
+      ...MANUAL_LINK,
+      consentState: 'ADMIN_SET',
+    });
+
+    expect(
+      await resolveSlackRunAsWorkspaceMemberId({
+        client,
+        slackClient,
+        identity: IDENTITY,
+      }),
+    ).toBe('member-1');
+    expect(findWorkspaceMemberIdByEmailMock).not.toHaveBeenCalled();
+  });
+
+  it('should fall through to the email match for a pending manual link, without touching it', async () => {
+    findSlackUserLinkMock.mockResolvedValue({
+      ...MANUAL_LINK,
+      workspaceMemberId: 'member-2',
+      consentState: 'PENDING',
+    });
+    findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
+
+    expect(
+      await resolveSlackRunAsWorkspaceMemberId({
+        client,
+        slackClient,
+        identity: IDENTITY,
+      }),
+    ).toBe('member-1');
+    expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+  });
+
+  it('should not run as anyone for a declined manual link, even when the email matches', async () => {
+    findSlackUserLinkMock.mockResolvedValue({
+      ...MANUAL_LINK,
+      consentState: 'DECLINED',
+    });
+    findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
+
+    expect(
+      await resolveSlackRunAsWorkspaceMemberId({
+        client,
+        slackClient,
+        identity: IDENTITY,
+      }),
+    ).toBeUndefined();
+    expect(findWorkspaceMemberIdByEmailMock).not.toHaveBeenCalled();
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
   it('should honor a matched link when the live email match still agrees', async () => {

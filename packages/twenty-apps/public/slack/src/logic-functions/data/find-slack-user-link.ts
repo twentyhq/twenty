@@ -17,7 +17,12 @@ export const findSlackUserLink = async (
         first: 1,
       },
       edges: {
-        node: { id: true, workspaceMemberId: true, source: true },
+        node: {
+          id: true,
+          workspaceMemberId: true,
+          source: true,
+          consentState: true,
+        },
       },
     },
   });
@@ -32,5 +37,6 @@ export const findSlackUserLink = async (
     id: node.id,
     workspaceMemberId: node.workspaceMemberId ?? undefined,
     source: node.source ?? undefined,
+    consentState: node.consentState ?? undefined,
   };
 };

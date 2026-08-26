@@ -17,6 +17,7 @@ type SlackUserLinkRestRecord = {
   slackUserId?: string | null;
   slackTeamId?: string | null;
   source?: string | null;
+  consentState?: string | null;
   workspaceMemberId?: string | null;
   workspaceMember?: {
     id?: string | null;
@@ -67,6 +68,7 @@ export const useSlackUserLinks = (): SlackUserLinksState => {
           slackUserId: record.slackUserId ?? null,
           slackTeamId: record.slackTeamId ?? null,
           source: record.source ?? null,
+          consentState: record.consentState ?? null,
           workspaceMemberId: record.workspaceMemberId ?? null,
           workspaceMemberName: record.workspaceMember
             ? formatWorkspaceMemberName(record.workspaceMember.name)
