@@ -7,10 +7,7 @@ import { useOpenMorphRelationOneToManyFieldInput } from '@/object-record/record-
 import { useOpenRelationFromManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenRelationFromManyFieldInput';
 import { useOpenRelationToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenRelationToOneFieldInput';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
-import {
-  type FieldMetadata,
-  type FieldRelationMetadata,
-} from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldFiles } from '@/object-record/record-field/ui/types/guards/isFieldFiles';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
@@ -61,21 +58,19 @@ export const useOpenFieldInputEditMode = () => {
     }) => {
       const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
-      const isOneToMany = isFieldRelationOneToMany(fieldDefinition);
       const sourceObjectMetadataId = objectMetadataItems.find(
         ({ nameSingular }) =>
           nameSingular === fieldDefinition.metadata.objectMetadataNameSingular,
       )?.id;
-      const relationMetadata =
-        fieldDefinition.metadata as FieldRelationMetadata;
       const fieldHasJunctionConfig =
-        isOneToMany &&
+        isFieldRelationOneToMany(fieldDefinition) &&
         isDefined(
           getJunctionConfig({
-            settings: relationMetadata.settings,
-            relationObjectMetadataId: relationMetadata.relationObjectMetadataId,
+            settings: fieldDefinition.metadata.settings,
+            relationObjectMetadataId:
+              fieldDefinition.metadata.relationObjectMetadataId,
             relationTargetFieldMetadataId:
-              relationMetadata.relationFieldMetadataId,
+              fieldDefinition.metadata.relationFieldMetadataId,
             sourceObjectMetadataId,
             objectMetadataItems,
           }),
@@ -112,10 +107,9 @@ export const useOpenFieldInputEditMode = () => {
         }
       }
 
-      if (isOneToMany && fieldHasJunctionConfig) {
+      if (isFieldRelationOneToMany(fieldDefinition) && fieldHasJunctionConfig) {
         openJunctionRelationFieldInput({
-          fieldDefinition:
-            fieldDefinition as FieldDefinition<FieldRelationMetadata>,
+          fieldDefinition,
           recordId,
           prefix,
         });
