@@ -71,7 +71,8 @@ const getFilter = (selectedDate = '2026-03-08') =>
 
 const withViewFilters = (gte: string, lt: string) => ({
   and: [
-    { scheduledAt: { gte, lt } },
+    { scheduledAt: { gte } },
+    { scheduledAt: { lt } },
     { status: { eq: 'OPEN' } },
     { name: { ilike: '%Acme%' } },
   ],
@@ -89,7 +90,7 @@ describe('useRecordCalendarQueryDateRangeFilter', () => {
     [ViewCalendarLayout.WEEK, '2026-03-02T08:00:00Z', '2026-03-09T07:00:00Z'],
     [ViewCalendarLayout.MONTH, '2026-02-23T08:00:00Z', '2026-04-06T07:00:00Z'],
   ])(
-    'queries exactly the %s grid across DST and preserves view/search filters',
+    'queries the %s grid across DST with separate bounds and preserves view/search filters',
     (layout, gte, lt) => {
       mockLayout = layout;
       expect(getFilter()).toEqual(withViewFilters(gte, lt));

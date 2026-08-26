@@ -76,11 +76,15 @@ export const useRecordCalendarQueryDateRangeFilter = (
   const nextDay = lastDay.add({ days: 1 });
   const isDateTimeField =
     calendarFieldMetadataItem.type === FieldMetadataType.DATE_TIME;
-  const dateRangeFilter = {
+  const dateRangeFilterAfter = {
     [calendarFieldMetadataItem.name]: {
       gte: isDateTimeField
         ? turnPlainDateIntoUserTimeZoneInstantString(firstDay, userTimezone)
         : firstDay.toString(),
+    },
+  };
+  const dateRangeFilterBefore = {
+    [calendarFieldMetadataItem.name]: {
       lt: isDateTimeField
         ? turnPlainDateIntoUserTimeZoneInstantString(nextDay, userTimezone)
         : nextDay.toString(),
@@ -100,7 +104,8 @@ export const useRecordCalendarQueryDateRangeFilter = (
 
   return {
     dateRangeFilter: combineFilters([
-      dateRangeFilter,
+      dateRangeFilterAfter,
+      dateRangeFilterBefore,
       viewFilter,
       anyFieldFilter,
     ]),
