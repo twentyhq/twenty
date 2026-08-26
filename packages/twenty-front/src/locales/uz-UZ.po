@@ -1731,11 +1731,6 @@ msgstr "Afrikaans"
 msgid "After a set amount of time"
 msgstr "Belgilangan vaqt miqdoridan keyin"
 
-#. js-lingui-id: YPnvqG
-#: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
-msgid "After or equal"
-msgstr "Keyin yoki teng"
-
 #. js-lingui-id: fcYF58
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -1991,7 +1986,6 @@ msgstr "Platformadagi barcha ilova ro‘yxatdan o‘tkazishlari, jumladan egasiz
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventRow.tsx
-#: src/modules/object-record/record-calendar/time-grid/components/RecordCalendarTimeGrid.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "All day"
 msgstr "Butun kun"
@@ -3116,11 +3110,6 @@ msgstr "BCC"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Because this workflow is not using a manual trigger, the form will not open on top of the interface. To fill it, open the corresponding workflow run and complete the form there."
 msgstr "Bu ish jarayoni qo‘lda ishga tushirishdan foydalanmaganligi sababli, shakl interfeys ustiga ochilmaydi. Uni to‘ldirish uchun mos ish jarayoni bajarilishini oching va shaklni u yerda yakunlang."
-
-#. js-lingui-id: EmSrGB
-#: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
-msgid "Before"
-msgstr "Oldin"
 
 #. js-lingui-id: +MqoSu
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -5346,13 +5335,6 @@ msgstr "Profil yaratish"
 msgid "Create record"
 msgstr "Yozuv yarating"
 
-#. js-lingui-id: 8ETbKP
-#. placeholder {0}: cardDate.toLocaleString(undefined, { dateStyle: 'full', })
-#. placeholder {1}: cardTime.toLocaleString(undefined, { timeStyle: 'short' })
-#: src/modules/object-record/record-calendar/components/RecordCalendarAddNew.tsx
-msgid "Create record on {0} at {1}"
-msgstr "{0} kuni soat {1} da yozuv yarating"
-
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
 #: src/modules/side-panel/hooks/useOpenCreateRelatedRecordInSidePanel.ts
@@ -6031,7 +6013,6 @@ msgid "Date"
 msgstr "Sana"
 
 #. js-lingui-id: QIIAIQ
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarDateFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -6040,13 +6021,6 @@ msgstr "Sana"
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Date field"
 msgstr "Sana maydoni"
-
-#. js-lingui-id: rMlHl2
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarDateFieldsContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
-msgid "Date fields"
-msgstr "Sana maydonlari"
 
 #. js-lingui-id: Lhd0oQ
 #: src/modules/settings/experience/components/DateTimeSettingsDateFormatSelect.tsx
@@ -7548,13 +7522,6 @@ msgstr "Shifrlash kalitini aylantirish"
 msgid "End date"
 msgstr "Tugash sanasi"
 
-#. js-lingui-id: DqIce1
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarDateFieldsContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
-#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
-msgid "End date field"
-msgstr "Tugash sanasi maydoni"
-
 #. js-lingui-id: Fqu/aC
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "End date must be after start date."
@@ -8596,8 +8563,7 @@ msgid "Failed to merge records. Please try again."
 msgstr "Yozuvlarni birlashtirib boʻlmadi. Iltimos, qayta urinib koʻring."
 
 #. js-lingui-id: DvNGzq
-#: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarMonthDndKit.ts
-#: src/modules/object-record/record-calendar/week/components/RecordCalendarWeekDragDropContext.tsx
+#: src/modules/object-record/record-calendar/hooks/useRecordCalendarDndKit.ts
 msgid "Failed to move record"
 msgstr "Yozuvni ko‘chirib bo‘lmadi"
 
@@ -13795,8 +13761,6 @@ msgstr "Tugun parametrlari"
 
 #. js-lingui-id: EdQY6l
 #: src/modules/ai/constants/AgentChatThreadGroupByLabels.ts
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarDateFieldsContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -13815,7 +13779,6 @@ msgstr "Tugun parametrlari"
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/WidgetViewLayoutSettingsRows.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
-#: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -13838,7 +13801,6 @@ msgid "Not available for default view"
 msgstr "Standart ko‘rinish uchun mavjud emas"
 
 #. js-lingui-id: 0qBE9S
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -16854,7 +16816,6 @@ msgstr "qidiruv maydoni metamaʼlumotlari"
 
 #. js-lingui-id: 7taA9j
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarEndFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
@@ -18009,8 +17970,6 @@ msgid "Something went wrong while loading logs. Please try again."
 msgstr "Jurnallarni yuklashda nimadir noto‘g‘ri bo‘ldi. Iltimos, qayta urinib ko‘ring."
 
 #. js-lingui-id: yHwG3y
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/settings/components/SettingsCard.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
