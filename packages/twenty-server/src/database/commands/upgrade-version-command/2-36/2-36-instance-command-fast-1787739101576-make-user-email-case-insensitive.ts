@@ -11,7 +11,7 @@ export class MakeUserEmailCaseInsensitiveFastInstanceCommand
     await this.assertNoAddressesDifferingOnlyByCase(queryRunner);
 
     await queryRunner.query('CREATE EXTENSION IF NOT EXISTS citext');
-    await queryRunner.query('DROP INDEX "core"."UQ_USER_EMAIL"');
+    await queryRunner.query('DROP INDEX IF EXISTS "core"."UQ_USER_EMAIL"');
     await queryRunner.query(
       'ALTER TABLE "core"."user" ALTER COLUMN "email" TYPE citext USING "email"::citext',
     );
@@ -21,7 +21,7 @@ export class MakeUserEmailCaseInsensitiveFastInstanceCommand
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('DROP INDEX "core"."UQ_USER_EMAIL"');
+    await queryRunner.query('DROP INDEX IF EXISTS "core"."UQ_USER_EMAIL"');
     await queryRunner.query(
       'ALTER TABLE "core"."user" ALTER COLUMN "email" TYPE character varying USING "email"::character varying',
     );
