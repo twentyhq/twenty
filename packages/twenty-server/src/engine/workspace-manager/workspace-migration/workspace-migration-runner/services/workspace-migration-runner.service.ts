@@ -106,9 +106,6 @@ export class WorkspaceMigrationRunnerService {
       `Cache invalidation ${allFlatEntityMapsKeys.join()}`,
     );
 
-    // All the invalidations below recompute from the same post-commit state,
-    // so one context pre-resolved for the union of the main and legacy key
-    // sets executes a single fetch plan that every batch shares.
     const {
       shouldIncrementMetadataGraphqlSchemaVersion,
       legacyCacheKeyBatches,
@@ -119,10 +116,6 @@ export class WorkspaceMigrationRunnerService {
       ...legacyCacheKeyBatches.flat(),
     ];
 
-    // Flush before resolving the fetch plan: if a fetch fails, every key is
-    // empty and the next getOrRecompute rebuilds it, instead of the whole
-    // batch keeping pre-migration data under a valid hash. The flush inside
-    // each invalidateAndRecompute below is then an idempotent no-op.
     await this.workspaceCacheService.flush(
       workspaceId,
       cacheKeyNamesToInvalidate,

@@ -31,7 +31,6 @@ export class WorkspaceFlatLogicFunctionMapCacheService extends MetadataFlatEntit
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(
-        // the previous application fetch excluded soft-deleted rows
         applications.filter((application) => !isDefined(application.deletedAt)),
       );
 

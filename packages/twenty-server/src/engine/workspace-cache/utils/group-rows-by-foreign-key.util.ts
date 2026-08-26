@@ -2,7 +2,6 @@ import { type ObjectLiteral } from 'typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 
-// Rows with a null foreign key are not indexed.
 export const groupRowsByForeignKey = ({
   rows,
   foreignKey,

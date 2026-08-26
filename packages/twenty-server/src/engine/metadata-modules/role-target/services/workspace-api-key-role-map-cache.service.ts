@@ -26,8 +26,6 @@ export class WorkspaceApiKeyRoleMapCacheService extends WorkspaceCacheProvider<
   >): Record<string, string> {
     const { roleTarget: roleTargets } = rows;
 
-    // the recompute context only filters on workspaceId: the previous
-    // apiKeyId IS NOT NULL condition moved in memory
     const roleTargetsMap = roleTargets.filter((roleTarget) =>
       isDefined(roleTarget.apiKeyId),
     );

@@ -26,7 +26,6 @@ const normalizeEntityRowsRequirement = (
 
 type EntityFetchGeneration = {
   id: number;
-  // null once any requirement asked for full rows
   columns: ReadonlySet<string> | null;
   rowsPromise: Promise<ObjectLiteral[]>;
 };
@@ -37,16 +36,6 @@ type EntityFetchState = {
   settledRows?: ObjectLiteral[];
 };
 
-// Scoped to a single recompute batch: the providers' declared rows
-// requirements are merged into one deterministic plan (union of column sets
-// per entity name, full rows once any provider needs them, always
-// withDeleted) and executed as one query per entity before computeForCache
-// runs. Loading again with covered requirements is a no-op; uncovered ones
-// (a later batch sharing this loader) dispatch a new generation with the
-// widened union. Generations are additive: every awaiter records the settled
-// rows within its own continuation, so after awaiting a load the rows
-// covering it are always readable through readRows, whatever other
-// generations are still in flight. Reading an undeclared entity name throws.
 export class WorkspaceCacheRowsBatchLoader {
   private readonly fetchStateByEntityName = new Map<
     CacheFetchableEntityName,
@@ -58,14 +47,18 @@ export class WorkspaceCacheRowsBatchLoader {
     readonly workspaceId: string,
   ) {}
 
-  async loadRows(rowsRequirements: WorkspaceCacheRowsRequirement[]): Promise<void> {
+  async loadRows(
+    rowsRequirements: WorkspaceCacheRowsRequirement[],
+  ): Promise<void> {
     const plannedColumnsByEntityName = new Map<
       CacheFetchableEntityName,
       Set<string> | null
     >();
 
     for (const rowsRequirement of rowsRequirements) {
-      for (const [entityName, entityRowsRequirement] of Object.entries(rowsRequirement) as [
+      for (const [entityName, entityRowsRequirement] of Object.entries(
+        rowsRequirement,
+      ) as [
         CacheFetchableEntityName,
         WidenedEntityRowsRequirement | undefined,
       ][]) {
@@ -73,7 +66,9 @@ export class WorkspaceCacheRowsBatchLoader {
           continue;
         }
 
-        const { columns, groupBy } = normalizeEntityRowsRequirement(entityRowsRequirement);
+        const { columns, groupBy } = normalizeEntityRowsRequirement(
+          entityRowsRequirement,
+        );
         const planned = plannedColumnsByEntityName.get(entityName);
 
         if (columns === true) {
@@ -85,8 +80,6 @@ export class WorkspaceCacheRowsBatchLoader {
           continue;
         }
 
-        // groupBy keys widen the fetch like ordinary columns, so a declared
-        // grouping is always backed by fetched data
         const columnsWithGroupByKeys = [...columns, ...groupBy];
 
         if (!isDefined(planned)) {
@@ -160,8 +153,6 @@ export class WorkspaceCacheRowsBatchLoader {
       generationsToAwait.map(async ({ fetchState, generation }) => {
         const rows = await generation.rowsPromise;
 
-        // A newer generation always fetches a superset of columns, so only
-        // move the settled pointer forward.
         if (generation.id > fetchState.settledGenerationId) {
           fetchState.settledGenerationId = generation.id;
           fetchState.settledRows = rows;
@@ -176,7 +167,9 @@ export class WorkspaceCacheRowsBatchLoader {
     const rowsByEntityName: Partial<Record<CacheFetchableEntityName, unknown>> =
       {};
 
-    for (const [entityName, entityRowsRequirement] of Object.entries(rowsRequirement) as [
+    for (const [entityName, entityRowsRequirement] of Object.entries(
+      rowsRequirement,
+    ) as [
       CacheFetchableEntityName,
       WidenedEntityRowsRequirement | undefined,
     ][]) {

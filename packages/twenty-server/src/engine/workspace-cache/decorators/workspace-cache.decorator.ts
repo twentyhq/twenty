@@ -14,9 +14,6 @@ export type WorkspaceCacheOptions = {
 export const WORKSPACE_CACHE_KEY = 'WORKSPACE_CACHE_KEY';
 export const WORKSPACE_CACHE_OPTIONS = 'WORKSPACE_CACHE_OPTIONS';
 
-// The key name pins the decorated provider's computed type to
-// WorkspaceCacheDataMap[key], so a provider decorated with the wrong key
-// fails to compile instead of being silently stored under it.
 export const WorkspaceCache =
   <TKeyName extends WorkspaceCacheKeyName>(
     workspaceCacheKeyName: TKeyName,

@@ -14,11 +14,6 @@ export abstract class WorkspaceCacheProvider<
   T extends WorkspaceCacheDataType = WorkspaceCacheDataType,
   TCompact = T,
 > {
-  // Every core-schema table computeForCache reads must be declared here,
-  // keyed by ALL_WORKSPACE_CACHE_ENTITY_BY_NAME entries; the requirements of all
-  // providers recomputed together are merged into one deterministic fetch
-  // plan executed before any computeForCache runs, and the context's rows
-  // carry exactly what was declared.
   readonly rowsRequirement: WorkspaceCacheRowsRequirement = {};
 
   abstract computeForCache(

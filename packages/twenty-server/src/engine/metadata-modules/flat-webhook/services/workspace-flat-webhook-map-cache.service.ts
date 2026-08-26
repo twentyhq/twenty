@@ -29,7 +29,6 @@ export class WorkspaceFlatWebhookMapCacheService extends MetadataFlatEntityMapsC
   >): FlatWebhookMaps {
     const { webhook: allWebhooks, application: applications } = rows;
 
-    // the previous fetches filtered soft-deleted rows in SQL
     const webhooks = allWebhooks.filter(
       (webhook) => !isDefined(webhook.deletedAt),
     );

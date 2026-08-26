@@ -6,9 +6,6 @@ import { type AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modul
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 import { type FlatEntityRowsRequirement } from 'src/engine/workspace-cache/types/flat-entity-rows-requirement.type';
 
-// Base for the providers owning one metadata name's flat entity maps: the
-// name derives the computed maps type, and the rows requirement is strictly
-// typed against the metadata relation constants.
 @Injectable()
 export abstract class MetadataFlatEntityMapsCacheProvider<
   TMetadataName extends AllMetadataName,

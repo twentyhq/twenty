@@ -65,9 +65,6 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       objectMetadata: workspaceObjectMetadataCollection,
     } = rows;
 
-    // the recompute context cannot load relations: the permissionFlag
-    // relation is rebuilt in memory per role below (undefined when the FK is
-    // absent, so the legacy `flag` fallback still applies)
     const permissionFlagById = new Map(
       permissionFlags.map((permissionFlag) => [
         permissionFlag.id,
@@ -93,8 +90,6 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       );
       const roleFieldPermissions = fieldPermissions.byRoleId.get(role.id) ?? [];
 
-      // the recompute context fetches withDeleted: these two tables previously
-      // excluded soft-deleted rows, so filter them out in memory
       const roleRowLevelPermissionPredicates = (
         rowLevelPermissionPredicates.byRoleId.get(role.id) ?? []
       ).filter(

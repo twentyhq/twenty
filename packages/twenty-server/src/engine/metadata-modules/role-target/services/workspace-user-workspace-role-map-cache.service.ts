@@ -25,8 +25,6 @@ export class WorkspaceUserWorkspaceRoleMapCacheService extends WorkspaceCachePro
   >): UserWorkspaceRoleMap {
     const { roleTarget: roleTargets } = rows;
 
-    // the recompute context only filters on workspaceId: the previous
-    // userWorkspaceId IS NOT NULL condition moved in memory
     const roleTargetsMap = roleTargets.filter((roleTarget) =>
       isDefined(roleTarget.userWorkspaceId),
     );

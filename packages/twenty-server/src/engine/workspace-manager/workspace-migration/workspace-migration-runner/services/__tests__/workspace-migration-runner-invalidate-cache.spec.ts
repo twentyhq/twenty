@@ -115,8 +115,6 @@ describe('WorkspaceMigrationRunnerService.invalidateCache', () => {
       }),
     ).rejects.toThrow('connection terminated');
 
-    // the flush already happened, so no key keeps pre-migration data under a
-    // valid hash: the next getOrRecompute rebuilds from scratch
     expect(flush).toHaveBeenCalledTimes(1);
     expect(invalidateFlatEntityMaps).not.toHaveBeenCalled();
     expect(incrementMetadataVersion).not.toHaveBeenCalled();

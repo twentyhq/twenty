@@ -3,9 +3,6 @@ import {
   type WorkspaceCacheRows,
 } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
 
-// What computeForCache receives: the batch-fetched rows matching the
-// provider's rowsRequirement, plus the workspace scope. Providers type it
-// with `typeof` their requirement constant to get precisely typed rows.
 export type WorkspaceCacheProviderContext<
   TRowsRequirement extends WorkspaceCacheRowsRequirement =
     WorkspaceCacheRowsRequirement,

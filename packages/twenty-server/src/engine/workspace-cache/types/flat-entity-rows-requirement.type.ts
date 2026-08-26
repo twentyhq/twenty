@@ -30,12 +30,6 @@ type RequiredFetchNames<TMetadataName extends AllMetadataName> =
   | OneToManyChildNames<TMetadataName>
   | ManyToOneTargetNames<TMetadataName>;
 
-// Strict per-metadata-name variant of WorkspaceCacheRowsRequirement: the own entity
-// (full rows), every one-to-many child, every many-to-one target, and the
-// application identity map are required by the relation constants; adding a
-// relation there makes every provider missing the fetch fail to compile.
-// The own entity always needs full rows; groupBy stays allowed for
-// self-referential relations (e.g. viewFilterGroup by parentViewFilterGroupId)
 type OwnEntityRowsRequirement<TName extends CacheFetchableEntityName> =
   | true
   | {

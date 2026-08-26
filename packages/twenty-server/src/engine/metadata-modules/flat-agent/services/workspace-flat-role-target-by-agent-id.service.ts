@@ -9,8 +9,6 @@ import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/t
 import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 
-// grouping by agentId skips null foreign keys, so byAgentId carries exactly
-// the agent-linked role targets the previous agentId IS NOT NULL query fetched
 const FLAT_ROLE_TARGET_BY_AGENT_ID_ROWS_REQUIREMENT = {
   roleTarget: { columns: true, groupBy: ['agentId'] },
   application: ['id', 'universalIdentifier'],
@@ -46,7 +44,6 @@ export class WorkspaceFlatRoleTargetByAgentIdService extends WorkspaceCacheProvi
     const flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps = {};
 
     for (const [agentId, agentRoleTargets] of roleTargets.byAgentId) {
-      // last one wins per agent, matching the previous overwrite order
       const roleTargetEntity = agentRoleTargets[agentRoleTargets.length - 1];
 
       flatRoleTargetByAgentIdMaps[agentId] =

@@ -123,9 +123,7 @@ describe('WorkspaceCacheRowsBatchLoader', () => {
     const { rowsBatchLoader, findMocksByEntity } = setup();
 
     await rowsBatchLoader.loadRows([{ objectMetadata: ['id'] }]);
-    await rowsBatchLoader.loadRows([
-      { objectMetadata: ['nameSingular'] },
-    ]);
+    await rowsBatchLoader.loadRows([{ objectMetadata: ['nameSingular'] }]);
 
     const findMock = findMocksByEntity.get(ObjectMetadataEntity)!;
 
@@ -244,7 +242,6 @@ describe('WorkspaceCacheRowsBatchLoader', () => {
     ]);
     expect([...viewField.byFieldMetadataId.keys()]).toEqual(['field-1']);
 
-    // grouped rows are typed as the declared columns plus the groupBy keys
     expect(viewField.rows[0].fieldMetadataId).toBe('field-1');
     // @ts-expect-error an undeclared column is a compile error, not undefined
     void viewField.rows[0].isVisible;
@@ -269,8 +266,8 @@ describe('WorkspaceCacheRowsBatchLoader', () => {
 
     await rowsBatchLoader.loadRows([{ objectMetadata: true }]);
 
-    expect(() =>
-      rowsBatchLoader.readRows({ application: ['id'] }),
-    ).toThrow(/application.*rowsRequirement/);
+    expect(() => rowsBatchLoader.readRows({ application: ['id'] })).toThrow(
+      /application.*rowsRequirement/,
+    );
   });
 });

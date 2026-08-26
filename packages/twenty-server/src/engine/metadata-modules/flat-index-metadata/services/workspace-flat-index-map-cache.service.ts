@@ -62,7 +62,6 @@ export class WorkspaceFlatIndexMapCacheService extends MetadataFlatEntityMapsCac
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(
-        // the previous application fetch excluded soft-deleted rows
         applications.filter((application) => !isDefined(application.deletedAt)),
       );
     const objectMetadataIdToUniversalIdentifierMap =

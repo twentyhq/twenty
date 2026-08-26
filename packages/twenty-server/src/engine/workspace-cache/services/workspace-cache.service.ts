@@ -292,10 +292,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     );
   }
 
-  // For callers issuing several invalidateAndRecompute calls over the same
-  // post-commit state (e.g. the migration runner's fan-out): one context
-  // pre-resolved for the union of every batch's keys lets all batches share
-  // a single fetch plan.
   public async prepareRowsBatchLoader(
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
@@ -550,8 +546,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       sharedRowsBatchLoader ??
       new WorkspaceCacheRowsBatchLoader(this.coreDataSource, workspaceId);
 
-    // No-op for keys a shared context already covers; fetches the plan of the
-    // remaining ones in one round before any provider runs.
     await rowsBatchLoader.loadRows(this.collectRowsRequirements(cacheKeyNames));
 
     const computePromises = cacheKeyNames.map(async (keyName) => {
