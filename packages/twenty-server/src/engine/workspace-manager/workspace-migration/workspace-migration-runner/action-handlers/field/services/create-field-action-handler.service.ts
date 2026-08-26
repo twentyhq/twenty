@@ -11,6 +11,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
@@ -154,7 +155,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
     for (const [
       objectMetadataId,
-      objectFlatFieldMetadatas,
+      createdFlatFieldMetadatas,
     ] of fieldsByObjectMetadataId) {
       const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityMaps: flatObjectMetadataMaps,
@@ -166,7 +167,15 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         objectMetadata: flatObjectMetadata,
       });
 
-      for (const flatFieldMetadata of objectFlatFieldMetadatas) {
+      const objectFlatFieldMetadatas = [
+        ...findManyFlatEntityByIdInFlatEntityMaps({
+          flatEntityMaps: flatFieldMetadataMaps,
+          flatEntityIds: flatObjectMetadata.fieldIds,
+        }),
+        ...createdFlatFieldMetadatas,
+      ];
+
+      for (const flatFieldMetadata of createdFlatFieldMetadatas) {
         await this.executeSingleFieldMetadataWorkspaceSchema({
           flatFieldMetadata,
           flatObjectMetadata,
