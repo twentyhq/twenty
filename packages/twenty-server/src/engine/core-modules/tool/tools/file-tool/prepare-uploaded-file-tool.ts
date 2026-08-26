@@ -101,10 +101,10 @@ export class PrepareUploadedFileTool implements Tool {
     try {
       const preparedFile =
         await this.filesFieldService.copyAgentChatFileIntoFilesField({
-        fileId,
-        workspaceId,
-        fieldMetadataId: flatFieldMetadata.id,
-      });
+          fileId,
+          workspaceId,
+          fieldMetadataId: flatFieldMetadata.id,
+        });
 
       return {
         success: true,
