@@ -60,6 +60,42 @@ const buildTabIdByUniversalIdentifier = ({
   return tabIdByUniversalIdentifier;
 };
 
+// Tabs are created after their page layout, but a page layout create can reference
+// one of them through defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier
+// (deferred FK). Minting tab ids up-front lets the create resolve that reference
+// before the tab action runs.
+const buildTabIdByUniversalIdentifierForTabActions = ({
+  actions,
+  providedTabIdByUniversalIdentifier,
+}: {
+  actions: WorkspaceMigration['actions'];
+  providedTabIdByUniversalIdentifier?: Record<string, string>;
+}): Record<string, string> | undefined => {
+  const tabIdByUniversalIdentifier = {
+    ...providedTabIdByUniversalIdentifier,
+  };
+
+  for (const action of actions) {
+    if (action.type !== 'create' || action.metadataName !== 'pageLayoutTab') {
+      continue;
+    }
+
+    const { universalIdentifier } = action.flatEntity;
+
+    if (isDefined(tabIdByUniversalIdentifier[universalIdentifier])) {
+      continue;
+    }
+
+    tabIdByUniversalIdentifier[universalIdentifier] = action.id ?? v4();
+  }
+
+  if (Object.keys(tabIdByUniversalIdentifier).length === 0) {
+    return undefined;
+  }
+
+  return tabIdByUniversalIdentifier;
+};
+
 const buildFieldIdByUniversalIdentifierForFieldActions = ({
   actions,
   providedFieldIdByUniversalIdentifier,
@@ -189,6 +225,12 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
         fieldMetadataIdByUniversalIdentifier,
     });
 
+  const tabIdByUniversalIdentifierForTabActions =
+    buildTabIdByUniversalIdentifierForTabActions({
+      actions: workspaceMigration.actions,
+      providedTabIdByUniversalIdentifier: pageLayoutTabIdByUniversalIdentifier,
+    });
+
   const enrichedActions = workspaceMigration.actions.map((action) => {
     if (action.type !== 'create') {
       return action;
@@ -202,7 +244,7 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
       action.metadataName !== 'objectMetadata' &&
       !isDefined(idByUniversalIdentifier) &&
       !isDefined(fieldMetadataIdByUniversalIdentifier) &&
-      !isDefined(pageLayoutTabIdByUniversalIdentifier)
+      !isDefined(tabIdByUniversalIdentifierForTabActions)
     ) {
       return action;
     }
@@ -265,11 +307,12 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
           ? idByUniversalIdentifier[action.flatEntity.universalIdentifier]
           : undefined;
         const tabIdByUniversalIdentifier = isDefined(
-          pageLayoutTabIdByUniversalIdentifier,
+          tabIdByUniversalIdentifierForTabActions,
         )
           ? buildTabIdByUniversalIdentifier({
               action,
-              pageLayoutTabIdByUniversalIdentifier,
+              pageLayoutTabIdByUniversalIdentifier:
+                tabIdByUniversalIdentifierForTabActions,
             })
           : undefined;
 
@@ -277,6 +320,17 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
           ...action,
           id,
           tabIdByUniversalIdentifier,
+        };
+      }
+      case 'pageLayoutTab': {
+        const id =
+          tabIdByUniversalIdentifierForTabActions?.[
+            action.flatEntity.universalIdentifier
+          ] ?? action.id;
+
+        return {
+          ...action,
+          id,
         };
       }
       case 'view':
@@ -294,7 +348,6 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
       case 'agent':
       case 'skill':
       case 'pageLayoutWidget':
-      case 'pageLayoutTab':
       case 'commandMenuItem':
       case 'navigationMenuItem':
       case 'frontComponent':
