@@ -194,8 +194,11 @@ jobs:
               exit 0
               ;;
           esac
-          gh api --paginate --slurp "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files?per_page=100" \
-            --jq '[.[][] | {path: .filename, additions, deletions, status}]' > /tmp/qa-scout/context/files.json
+          # gh rejects --slurp together with --jq, so aggregate the per-page
+          # jq output with a local jq instead.
+          gh api --paginate "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files?per_page=100" \
+            --jq '.[] | {path: .filename, additions, deletions, status}' \
+            | jq -s '.' > /tmp/qa-scout/context/files.json
           gh pr diff "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" > /tmp/qa-scout/full.diff
           DIFF_BYTES=$(wc -c < /tmp/qa-scout/full.diff)
           head -c 2000000 /tmp/qa-scout/full.diff > /tmp/qa-scout/context/pr.diff
@@ -259,16 +262,25 @@ jobs:
             echo "$MATCHES" | xargs sed -i -E 's/sk-ant-[A-Za-z0-9_-]+/[REDACTED]/g'
           fi
 
+      # Always leaves a breadcrumb on push/dispatch runs so a broken prepare
+      # step can never disable the Scout silently.
       - name: QA Scout / Job summary
-        if: ${{ !cancelled() && steps.qa-scout-pr.outputs.run == 'true' }}
+        if: ${{ !cancelled() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') }}
         continue-on-error: true
+        env:
+          SCOUT_RUN: ${{ steps.qa-scout-pr.outputs.run }}
+          SCOUT_PREP_OUTCOME: ${{ steps.qa-scout-pr.outcome }}
         run: |
           {
             echo "## QA Scout"
             if [ -f /tmp/qa-scout/output/report.md ]; then
               cat /tmp/qa-scout/output/report.md
-            else
+            elif [ "$SCOUT_RUN" = "true" ]; then
               echo "No report produced (agent run failed or timed out); see the qa-scout-report artifact and step logs."
+            elif [ "$SCOUT_PREP_OUTCOME" = "failure" ]; then
+              echo "Did not run: the prepare step failed; see its logs."
+            else
+              echo "Did not run: skipped by the prepare step (no merged PR, [no-qa], or i18n translation PR)."
             fi
           } >> "$GITHUB_STEP_SUMMARY"
 
@@ -381,8 +393,9 @@ jobs:
             echo "Refusing to post: comment contains an Anthropic token shape."
             exit 1
           fi
-          EXISTING=$(gh api --paginate --slurp "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments?per_page=100" \
-            --jq '[.[][] | select(.body | startswith("<!-- qa-scout -->")) | .id] | first // empty')
+          EXISTING=$(gh api --paginate "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments?per_page=100" \
+            --jq '.[] | select(.body | startswith("<!-- qa-scout -->")) | .id' \
+            | jq -rs 'first // empty')
           if [ -n "$EXISTING" ]; then
             gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${EXISTING}" -F body=@comment.md
           else
