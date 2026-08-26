@@ -7,16 +7,15 @@ import { type TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messag
 import { TimelineMessagingService } from 'src/engine/core-modules/messaging/services/timeline-messaging.service';
 import { formatThreads } from 'src/engine/core-modules/messaging/utils/format-threads.util';
 import { RelatedPersonIdsService } from 'src/engine/core-modules/related-person-ids/services/related-person-ids.service';
-import {
-  getTargetFieldNameForObjectRecord,
-  type TargetFilter,
-} from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
+import { type TargetFilter } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
+import { MessageCalendarTargetReadinessService } from 'src/engine/core-modules/target/services/message-calendar-target-readiness.service';
 
 @Injectable()
 export class GetMessagesService {
   constructor(
     private readonly timelineMessagingService: TimelineMessagingService,
     private readonly relatedPersonIdsService: RelatedPersonIdsService,
+    private readonly messageCalendarTargetReadinessService: MessageCalendarTargetReadinessService,
   ) {}
 
   async getMessagesFromPersonIds(
@@ -87,10 +86,14 @@ export class GetMessagesService {
       objectNameSingular,
       recordId,
     });
-    const targetFieldName =
-      getTargetFieldNameForObjectRecord(objectNameSingular);
+    const targetFilter =
+      await this.messageCalendarTargetReadinessService.resolveTargetFilter({
+        objectNameSingular,
+        recordId,
+        workspaceId,
+      });
 
-    if (!isDefined(targetFieldName) && personIds.length === 0) {
+    if (!isDefined(targetFilter) && personIds.length === 0) {
       return {
         totalNumberOfThreads: 0,
         timelineThreads: [],
@@ -104,9 +107,7 @@ export class GetMessagesService {
       workspaceId,
       page,
       pageSize,
-      isDefined(targetFieldName)
-        ? { fieldName: targetFieldName, recordId }
-        : undefined,
+      targetFilter,
     );
   }
 }
