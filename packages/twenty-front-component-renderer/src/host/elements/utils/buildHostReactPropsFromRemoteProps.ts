@@ -9,7 +9,32 @@ import { parseCssString } from '@/host/elements/utils/parseCssString';
 import { wrapEventHandler } from '@/host/events/utils/wrapEventHandler';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
-const INTERNAL_PROPS = new Set(['element', 'receiver', 'components', 'ref']);
+// `preventDefaultOn` is instruction for the host, not an attribute: it says
+// which events must have their default suppressed while the real event is
+// still in hand, so it never reaches the DOM.
+const PREVENT_DEFAULT_PROP = 'preventDefaultOn';
+
+const INTERNAL_PROPS = new Set([
+  'element',
+  'receiver',
+  'components',
+  'ref',
+  PREVENT_DEFAULT_PROP,
+]);
+
+const readPreventDefaultRules = (
+  remoteProps: Record<string, unknown>,
+): readonly string[] | undefined => {
+  const value = remoteProps[PREVENT_DEFAULT_PROP];
+
+  if (!Array.isArray(value)) {
+    return undefined;
+  }
+
+  const rules = value.filter((rule): rule is string => typeof rule === 'string');
+
+  return rules.length > 0 ? rules : undefined;
+};
 
 // Both spellings are indexed: dblclick arrives as ondblclick or onDoubleClick.
 const LOWERCASE_EVENT_PROP_TO_REACT_PROP: Record<string, string> =
@@ -27,6 +52,7 @@ export const buildHostReactPropsFromRemoteProps = (
   htmlTag: string,
 ): Record<string, unknown> => {
   const hostReactProps: Record<string, unknown> = {};
+  const preventDefaultRules = readPreventDefaultRules(remoteProps);
 
   for (const [remotePropName, remotePropValue] of Object.entries(remoteProps)) {
     if (INTERNAL_PROPS.has(remotePropName) || isUndefined(remotePropValue)) {
@@ -49,6 +75,7 @@ export const buildHostReactPropsFromRemoteProps = (
       if (isDefined(reactPropName) && isFunction(remotePropValue)) {
         hostReactProps[reactPropName] = wrapEventHandler(
           remotePropValue as (detail: SerializedEventData) => void,
+          preventDefaultRules,
         );
       }
       continue;
