@@ -36,7 +36,7 @@ import { IconArchive, IconCircleDashed, IconSettings } from 'twenty-ui/icon';
 import { SearchInput } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useIndexViewFieldsLayout } from '@/settings/data-model/object-details/hooks/useIndexViewFieldsLayout';
+import { useDefaultViewFieldsLayout } from '@/settings/data-model/object-details/hooks/useDefaultViewFieldsLayout';
 import { useMostlyEmptyFieldMetadataIds } from '@/settings/data-model/object-details/hooks/useMostlyEmptyFieldMetadataIds';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/settings/data-model/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
 import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
@@ -115,12 +115,12 @@ export const SettingsObjectFieldTable = ({
   }, [objectMetadataItem, setSettingsObjectFields]);
 
   const {
-    hasEditableIndexView,
+    hasEditableDefaultView,
     layoutOrderedFields,
     getEffectiveLayout,
     toggleFieldVisibility,
     reorderFieldFromDropResult,
-  } = useIndexViewFieldsLayout({
+  } = useDefaultViewFieldsLayout({
     objectMetadataItem,
     fieldMetadataItems: settingsObjectFields ?? [],
   });
@@ -200,7 +200,8 @@ export const SettingsObjectFieldTable = ({
     mostlyEmptyFieldMetadataIds,
   ]);
 
-  const isLayoutEditable = mode === 'view' && !readonly && hasEditableIndexView;
+  const isLayoutEditable =
+    mode === 'view' && !readonly && hasEditableDefaultView;
 
   const isReorderEnabled =
     isLayoutEditable && !isDefined(sortedFieldByTable) && searchTerm === '';

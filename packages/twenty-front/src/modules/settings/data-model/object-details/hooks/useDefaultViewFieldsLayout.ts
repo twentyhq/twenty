@@ -21,14 +21,14 @@ type ViewFieldLayoutUpdate = {
   layout: PendingViewFieldLayout;
 };
 
-export const useIndexViewFieldsLayout = ({
+export const useDefaultViewFieldsLayout = ({
   objectMetadataItem,
   fieldMetadataItems,
 }: {
   objectMetadataItem: EnrichedObjectMetadataItem;
   fieldMetadataItems: FieldMetadataItem[];
 }) => {
-  const { view: indexView } = useViewOrDefaultView({
+  const { view: defaultView } = useViewOrDefaultView({
     objectMetadataItemId: objectMetadataItem.id,
   });
 
@@ -41,12 +41,12 @@ export const useIndexViewFieldsLayout = ({
   const viewFieldByFieldMetadataId = useMemo(
     () =>
       new Map(
-        (indexView?.viewFields ?? []).map((viewField) => [
+        (defaultView?.viewFields ?? []).map((viewField) => [
           viewField.fieldMetadataId,
           viewField,
         ]),
       ),
-    [indexView],
+    [defaultView],
   );
 
   const getEffectiveLayout = (
@@ -93,7 +93,7 @@ export const useIndexViewFieldsLayout = ({
   const persistLayoutUpdates = async (
     layoutUpdates: ViewFieldLayoutUpdate[],
   ) => {
-    if (!isDefined(indexView)) {
+    if (!isDefined(defaultView)) {
       return;
     }
 
@@ -138,7 +138,7 @@ export const useIndexViewFieldsLayout = ({
 
         viewFieldsToCreate.push({
           id: v4(),
-          viewId: indexView.id,
+          viewId: defaultView.id,
           fieldMetadataId,
           position: layout.position ?? lastPosition + 1,
           isVisible: layout.isVisible ?? false,
@@ -270,7 +270,7 @@ export const useIndexViewFieldsLayout = ({
   };
 
   return {
-    hasEditableIndexView: isDefined(indexView),
+    hasEditableDefaultView: isDefined(defaultView),
     layoutOrderedFields,
     getEffectiveLayout,
     toggleFieldVisibility,
