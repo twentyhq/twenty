@@ -4,7 +4,7 @@ import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/wo
 import { type WorkspaceCacheRecomputeContext } from 'src/engine/workspace-cache/services/workspace-cache-recompute-context';
 
 import { FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -15,9 +15,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   packingPonderation: 1,
 })
 export class WorkspaceFlatWorkspaceMemberMapCacheService extends WorkspaceCacheProvider<FlatWorkspaceMemberMaps> {
-  constructor(
-    protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-  ) {
+  constructor(protected readonly workspaceOrmManager: WorkspaceOrmManager) {
     super();
   }
 
@@ -25,32 +23,29 @@ export class WorkspaceFlatWorkspaceMemberMapCacheService extends WorkspaceCacheP
     recomputeContext: WorkspaceCacheRecomputeContext,
   ): Promise<FlatWorkspaceMemberMaps> {
     const flatWorkspaceMemberMaps =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const workspaceMemberRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              'workspaceMember',
-              { shouldBypassPermissionChecks: true },
-            );
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workspaceMemberRepository =
+          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
 
-          const flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps = {
-            byId: {},
-            idByUserId: {},
-          };
-          const workspaceMembers = await workspaceMemberRepository.find({
-            withDeleted: true,
-          });
+        const flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps = {
+          byId: {},
+          idByUserId: {},
+        };
+        const workspaceMembers = await workspaceMemberRepository.find({
+          withDeleted: true,
+        });
 
-          for (const workspaceMember of workspaceMembers) {
-            flatWorkspaceMemberMaps.byId[workspaceMember.id] = workspaceMember;
-            flatWorkspaceMemberMaps.idByUserId[workspaceMember.userId] =
-              workspaceMember.id;
-          }
+        for (const workspaceMember of workspaceMembers) {
+          flatWorkspaceMemberMaps.byId[workspaceMember.id] = workspaceMember;
+          flatWorkspaceMemberMaps.idByUserId[workspaceMember.userId] =
+            workspaceMember.id;
+        }
 
-          return flatWorkspaceMemberMaps;
-        },
-        buildSystemAuthContext(recomputeContext.workspaceId),
-      );
+        return flatWorkspaceMemberMaps;
+      }, buildSystemAuthContext(recomputeContext.workspaceId));
 
     return flatWorkspaceMemberMaps;
   }

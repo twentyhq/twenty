@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
-import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
+import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
 export class ProcessAggregateHelper {
   public static addSelectedAggregatedFieldsQueriesToQueryBuilder = ({
@@ -13,7 +13,7 @@ export class ProcessAggregateHelper {
   }: {
     selectedAggregatedFields: Record<string, AggregationField>;
     // oxlint-disable-next-line typescript/no-explicit-any
-    queryBuilder: WorkspaceSelectQueryBuilderV2;
+    queryBuilder: WorkspaceSelectQueryBuilder;
     objectMetadataNameSingular: string;
   }) => {
     queryBuilder.select([]);

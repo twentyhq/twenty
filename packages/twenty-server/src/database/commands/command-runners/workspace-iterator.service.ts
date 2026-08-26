@@ -13,7 +13,7 @@ import { DataSource, MoreThanOrEqual, Raw, Repository } from 'typeorm';
 import { CommandShutdownService } from 'src/database/commands/command-runners/command-shutdown.service';
 import { activationStatusIn } from 'src/database/commands/command-runners/utils/activation-status-in.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMigrationRunnerException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 
@@ -62,7 +62,7 @@ export class WorkspaceIteratorService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly commandShutdownService: CommandShutdownService,
   ) {}
 
@@ -107,36 +107,33 @@ export class WorkspaceIteratorService {
       try {
         const authContext = buildSystemAuthContext(workspaceId);
 
-        await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-          async () => {
-            const workspace = await this.workspaceRepository.findOne({
-              select: ['databaseSchema'],
-              where: { id: workspaceId },
-            });
+        await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+          const workspace = await this.workspaceRepository.findOne({
+            select: ['databaseSchema'],
+            where: { id: workspaceId },
+          });
 
-            const dataSource = isNonEmptyString(workspace?.databaseSchema)
-              ? this.coreDataSource
-              : undefined;
+          const dataSource = isNonEmptyString(workspace?.databaseSchema)
+            ? this.coreDataSource
+            : undefined;
 
-            if (!isDefined(dataSource)) {
-              this.logger.warn(
-                `Could not retrieve a workspace data source for workspace ${workspaceId} ` +
-                  `(index ${index + 1}/${workspaceIdsToProcess.length}): ` +
-                  `workspaceRowFound=${isDefined(workspace)}, ` +
-                  `databaseSchema=${JSON.stringify(workspace?.databaseSchema ?? null)}`,
-              );
-            }
+          if (!isDefined(dataSource)) {
+            this.logger.warn(
+              `Could not retrieve a workspace data source for workspace ${workspaceId} ` +
+                `(index ${index + 1}/${workspaceIdsToProcess.length}): ` +
+                `workspaceRowFound=${isDefined(workspace)}, ` +
+                `databaseSchema=${JSON.stringify(workspace?.databaseSchema ?? null)}`,
+            );
+          }
 
-            await callback({
-              workspaceId,
-              databaseSchema: workspace?.databaseSchema ?? undefined,
-              dataSource,
-              index,
-              total: workspaceIdsToProcess.length,
-            });
-          },
-          authContext,
-        );
+          await callback({
+            workspaceId,
+            databaseSchema: workspace?.databaseSchema ?? undefined,
+            dataSource,
+            index,
+            total: workspaceIdsToProcess.length,
+          });
+        }, authContext);
 
         report.success.push({ workspaceId });
       } catch (error: unknown) {

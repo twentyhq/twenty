@@ -73,7 +73,7 @@ import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/worksp
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
+import { isEmailInApprovedAccessDomains } from 'src/engine/core-modules/approved-access-domain/utils/is-email-in-approved-access-domains.util';
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
@@ -904,11 +904,14 @@ export class AuthService {
         : userData.existingUser.email;
 
     if (
-      workspace?.approvedAccessDomains.some(
-        (trustDomain) =>
-          trustDomain.isValidated &&
-          trustDomain.domain === getDomainFromEmail(email),
-      )
+      isDefined(workspace) &&
+      isEmailInApprovedAccessDomains({
+        email,
+        approvedAccessDomains: workspace.approvedAccessDomains,
+        isEmailVerificationRequired: this.twentyConfigService.get(
+          'IS_EMAIL_VERIFICATION_REQUIRED',
+        ),
+      })
     ) {
       return;
     }

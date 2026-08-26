@@ -2,7 +2,7 @@ import { Logger, Module } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { ClickHouseModule } from 'src/database/clickHouse/clickHouse.module';
+import { ClickHouseModule } from 'src/database/clickhouse/clickhouse.module';
 import { ClickHouseEventSink } from 'src/engine/core-modules/event-logs/ingest/clickhouse-event.sink';
 import { ConsoleEventSink } from 'src/engine/core-modules/event-logs/ingest/console-event.sink';
 import { CreateEventLogFromInternalEvent } from 'src/engine/core-modules/event-logs/ingest/create-event-log-from-internal-event';

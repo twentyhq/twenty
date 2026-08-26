@@ -122,6 +122,7 @@ export class EntityEventsToDbListener {
         >(
           UpsertTimelineActivityFromInternalEvent.name,
           batchEvent as WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>,
+          { retryLimit: 1 },
         ),
       );
     }
@@ -131,6 +132,7 @@ export class EntityEventsToDbListener {
         this.entityEventsToDbQueueService.add<WorkspaceEventBatch<T>>(
           CreateEventLogFromInternalEvent.name,
           batchEvent,
+          { retryLimit: 1 },
         ),
       );
     }

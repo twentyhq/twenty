@@ -3500,18 +3500,6 @@ msgctxt "fieldMetadata.label"
 msgid "Event ID"
 msgstr "crwdns138855:0crwdne138855:0"
 
-#. js-lingui-id: ygoA2u
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Event name"
-msgstr "crwdns138857:0crwdne138857:0"
-
-#. js-lingui-id: AvDRPM
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Event name"
-msgstr "crwdns138859:0crwdne138859:0"
-
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10441,11 +10429,6 @@ msgstr "crwdns111560:0crwdne111560:0"
 msgid "This operation is not allowed."
 msgstr "crwdns65722:0crwdne65722:0"
 
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-datasource.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "crwdns8478:0crwdne8478:0"
-
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "This operation is not supported."
@@ -12441,8 +12424,8 @@ msgid "You can only update one record with files field at once."
 msgstr "crwdns107738:0crwdne107738:0"
 
 #. js-lingui-id: 4ysDL0
-#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
+#: src/engine/twenty-orm/repository/workspace-repository.ts
+#: src/engine/twenty-orm/repository/workspace-repository.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr "crwdns64658:0{QUERY_MAX_RECORDS}crwdne64658:0"
 

@@ -9,7 +9,7 @@ import {
   CalendarChannelVisibility,
 } from 'twenty-shared/types';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 export type CreateCalendarChannelInput = {
@@ -23,9 +23,7 @@ export type CreateCalendarChannelInput = {
 
 @Injectable()
 export class CreateCalendarChannelService {
-  constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-  ) {}
+  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
   async createCalendarChannel(
     input: CreateCalendarChannelInput,
@@ -41,27 +39,24 @@ export class CreateCalendarChannelService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const newCalendarChannelId = v4();
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const newCalendarChannelId = v4();
 
-        await transactionManager.getRepository(CalendarChannelEntity).save({
-          id: newCalendarChannelId,
-          connectedAccountId,
-          handle,
-          visibility: calendarVisibility || CalendarChannelVisibility.METADATA,
-          syncStatus: skipMessageChannelConfiguration
-            ? CalendarChannelSyncStatus.ONGOING
-            : CalendarChannelSyncStatus.NOT_SYNCED,
-          syncStage: skipMessageChannelConfiguration
-            ? CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING
-            : CalendarChannelSyncStage.PENDING_CONFIGURATION,
-          workspaceId,
-        } as CalendarChannelEntity);
+      await transactionManager.getRepository(CalendarChannelEntity).save({
+        id: newCalendarChannelId,
+        connectedAccountId,
+        handle,
+        visibility: calendarVisibility || CalendarChannelVisibility.METADATA,
+        syncStatus: skipMessageChannelConfiguration
+          ? CalendarChannelSyncStatus.ONGOING
+          : CalendarChannelSyncStatus.NOT_SYNCED,
+        syncStage: skipMessageChannelConfiguration
+          ? CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING
+          : CalendarChannelSyncStage.PENDING_CONFIGURATION,
+        workspaceId,
+      } as CalendarChannelEntity);
 
-        return newCalendarChannelId;
-      },
-      authContext,
-    );
+      return newCalendarChannelId;
+    }, authContext);
   }
 }
