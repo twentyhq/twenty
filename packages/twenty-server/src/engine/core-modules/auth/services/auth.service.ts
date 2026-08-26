@@ -505,12 +505,17 @@ export class AuthService {
     return { isValid: !!workspace };
   }
 
-  async generateAuthorizationCode(
-    authorizeAppInput: AuthorizeAppInput,
-    user: AuthContextUser,
-    workspace: WorkspaceEntity,
-    issuer: string,
-  ): Promise<AuthorizeAppDTO> {
+  async generateAuthorizationCode({
+    authorizeAppInput,
+    user,
+    workspace,
+    issuer,
+  }: {
+    authorizeAppInput: AuthorizeAppInput;
+    user: AuthContextUser;
+    workspace: WorkspaceEntity;
+    issuer: string;
+  }): Promise<AuthorizeAppDTO> {
     const { clientId, codeChallenge } = authorizeAppInput;
 
     const applicationRegistration =
@@ -643,9 +648,6 @@ export class AuthService {
 
     redirectUriValidation.parsed.searchParams.set('code', authorizationCode);
 
-    // RFC 9207: return `iss` so clients can detect mix-up attacks. Must match
-    // the issuer advertised at oauth-authorization-server, which is derived
-    // the same way (see OAuthDiscoveryController).
     redirectUriValidation.parsed.searchParams.set('iss', issuer);
 
     if (authorizeAppInput.state) {

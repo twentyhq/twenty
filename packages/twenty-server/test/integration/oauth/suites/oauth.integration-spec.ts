@@ -3,7 +3,6 @@ import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 import gql from 'graphql-tag';
 import request from 'supertest';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
@@ -259,6 +258,19 @@ describe('OAuth (integration)', () => {
       expect(res.body.scopes_supported).toBeDefined();
       expect(res.body.response_types_supported).toContain('code');
     });
+
+    it('should promise `iss` when it serves its own authorization endpoint', async () => {
+      const res = await request(baseUrl)
+        .get('/.well-known/oauth-authorization-server')
+        .expect(200);
+
+      expect(res.body.authorization_endpoint).toBe(
+        `${res.body.issuer}/authorize`,
+      );
+      expect(res.body.authorization_response_iss_parameter_supported).toBe(
+        true,
+      );
+    });
   });
 
   describe('Authorization endpoint (authorizeApp)', () => {
@@ -278,10 +290,10 @@ describe('OAuth (integration)', () => {
       }
     `;
 
-    it('should return an `iss` matching the advertised issuer alongside code and state (RFC 9207)', async () => {
+    it('should return an `iss` matching the advertised issuer alongside code and state', async () => {
       const state = 'integration-state-123';
 
-      const response = await makeGraphqlAPIRequest({
+      const response = await makeMetadataAPIRequest({
         query: authorizeAppMutation,
         variables: {
           clientId: testRegistration.oAuthClientId,
@@ -292,19 +304,26 @@ describe('OAuth (integration)', () => {
 
       expect(response.body.errors).toBeUndefined();
 
-      const redirectUrl = new URL(
-        response.body.data.authorizeApp.redirectUrl,
-      );
+      const callbackUrl = new URL(response.body.data.authorizeApp.redirectUrl);
+      const code = callbackUrl.searchParams.get('code');
 
-      const discovery = await request(baseUrl)
+      const metadata = await request(baseUrl)
         .get('/.well-known/oauth-authorization-server')
         .expect(200);
 
-      expect(redirectUrl.origin).toBe('https://example.com');
-      expect(redirectUrl.pathname).toBe('/callback');
-      expect(redirectUrl.searchParams.get('iss')).toBe(discovery.body.issuer);
-      expect(redirectUrl.searchParams.get('code')).toMatch(/^[0-9a-f]+$/);
-      expect(redirectUrl.searchParams.get('state')).toBe(state);
+      expect(`${callbackUrl.origin}${callbackUrl.pathname}`).toBe(
+        testRegistration.oAuthRedirectUris[0],
+      );
+      expect(code).toMatch(/^[0-9a-f]+$/);
+      expect(callbackUrl.searchParams.get('iss')).toBe(metadata.body.issuer);
+      expect(callbackUrl.searchParams.get('state')).toBe(state);
+
+      const [issuedToken] = await ds.query(
+        `SELECT id FROM core."appToken" WHERE value = $1`,
+        [crypto.createHash('sha256').update(code).digest('hex')],
+      );
+
+      createdEntityIds.tokens.push(issuedToken.id);
     });
   });
 

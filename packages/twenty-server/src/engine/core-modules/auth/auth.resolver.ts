@@ -943,12 +943,12 @@ export class AuthResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { req: Request },
   ): Promise<AuthorizeAppDTO> {
-    return await this.authService.generateAuthorizationCode(
+    return await this.authService.generateAuthorizationCode({
       authorizeAppInput,
       user,
       workspace,
-      getRequestBaseUrl(context.req),
-    );
+      issuer: getRequestBaseUrl(context.req),
+    });
   }
 
   @Mutation(() => AuthTokens)
