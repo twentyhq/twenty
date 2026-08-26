@@ -1761,6 +1761,11 @@ msgstr "中非共和国 🇨🇫"
 msgid "Certification, plus a directory profile your clients can verify. The best partners also receive client briefs matched to their scope."
 msgstr "认证，以及可供客户验证的目录资料。最优秀的合作伙伴还会收到与其服务范围相匹配的客户简介。"
 
+#. js-lingui-id: 4W4gsr
+#: src/sections/partner-hero/PartnerLeadHero.tsx
+msgid "Certified partners who set up your CRM to match how your company works, from the migration to the custom apps."
+msgstr ""
+
 #. js-lingui-id: iI3Dq9
 #: src/partner-application/data/partner-country-options.ts
 msgid "Chad 🇹🇩"
@@ -3897,6 +3902,11 @@ msgstr "隐藏更改"
 #: src/partner-application/data/partner-language-options.ts
 msgid "Hindi"
 msgstr "印地语"
+
+#. js-lingui-id: 6NGgln
+#: src/sections/partner-hero/PartnerLeadHero.tsx
+msgid "Hire the people who *build on Twenty*"
+msgstr ""
 
 #. js-lingui-id: qfSbUb
 #: src/case-studies/case-study-stories.ts
@@ -6924,11 +6934,6 @@ msgstr "技能"
 msgid "Skip for now"
 msgstr "暂时跳过"
 
-#. js-lingui-id: BXjtWS
-#: src/sections/partner-hero/PartnerLeadHero.tsx
-msgid "Skip the browsing. Describe your project and we connect you with a certified Twenty partner who fits it."
-msgstr "无需浏览。描述您的项目，我们会为您对接一位合适的认证 Twenty 合作伙伴。"
-
 #. js-lingui-id: t6ComU
 #: src/sections/feature-cards/FeatureCards.tsx
 msgid "Skip the clunky UX that always comes with custom."
@@ -7380,11 +7385,6 @@ msgstr "告诉我们您的需求，我们将在 48 小时内为您匹配认证 T
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
 msgid "Tell us what you need and we'll match you with a certified Twenty partner."
 msgstr "告诉我们你的需求，我们会为你匹配经过认证的 Twenty 合作伙伴。"
-
-#. js-lingui-id: 7CRTri
-#: src/sections/partner-hero/PartnerLeadHero.tsx
-msgid "Tell us what you need, we match you in *48 hours*"
-msgstr "告诉我们您的需求，我们将在 *48 小时内*为您匹配合作伙伴"
 
 #. js-lingui-id: Hevu8X
 #: src/app-preview/terminal/TerminalToggle.tsx
