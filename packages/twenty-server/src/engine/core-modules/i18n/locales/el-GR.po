@@ -9843,7 +9843,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "Η επέκταση του αρχείου δεν αντιστοιχεί στο περιεχόμενο του αρχείου. Παρακαλούμε ελέγξτε ότι το αρχείο σας δεν είναι κατεστραμμένο και έχει τη σωστή επέκταση."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "Το αρχείο δεν έχει ανέβει ακόμη. Παρακαλούμε ανεβάστε το πριν το επιβεβαιώσετε."
 
@@ -10054,7 +10054,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "Το θέμα διαγραφής από τη λίστα (unsubscribe) υπό το οποίο στάλθηκε αυτή η καμπάνια"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "Το αρχείο που μεταφορτώθηκε δεν αντιστοιχεί στο δηλωμένο μέγεθος. Παρακαλούμε δοκιμάστε ξανά τη μεταφόρτωση."
@@ -10346,7 +10346,7 @@ msgid "This field references an object that could not be found"
 msgstr "Αυτό το πεδίο αναφέρεται σε αντικείμενο που δεν βρέθηκε"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "Αυτή η μορφή αρχείου δεν υποστηρίζεται."
 
@@ -10428,11 +10428,6 @@ msgstr "Αυτό το δικαίωμα αντικειμένου έχει ήδη 
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This operation is not allowed."
 msgstr "Αυτή η λειτουργία δεν επιτρέπεται."
-
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-schema.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "Αυτή η ενέργεια δεν επιτρέπεται. Παρακαλώ δοκιμάστε μια άλλη προσέγγιση ή επικοινωνήστε με την υποστήριξη για βοήθεια."
 
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts

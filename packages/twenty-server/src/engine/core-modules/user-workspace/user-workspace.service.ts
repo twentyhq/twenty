@@ -11,6 +11,8 @@ import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/i
 
 import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
+import { getJoinableWorkspacesFromApprovedAccessDomains } from 'src/engine/core-modules/approved-access-domain/utils/get-joinable-workspaces-from-approved-access-domains.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -66,6 +68,7 @@ export class UserWorkspaceService {
     private readonly fileUrlService: FileUrlService,
     private readonly onboardingService: OnboardingService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async findById(id: string): Promise<UserWorkspaceEntity | null> {
@@ -161,7 +164,7 @@ export class UserWorkspaceService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceMemberRepository =
-        await this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
           'workspaceMember',
           { shouldBypassPermissionChecks: true },
         );
@@ -391,18 +394,17 @@ export class UserWorkspaceService {
     );
 
     // Email-domain discovery is the only "listing" source: PUBLIC only.
-    const workspacesFromApprovedAccessDomain = (
-      await this.approvedAccessDomainService.findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain(
-        getDomainFromEmailOrThrow(email),
-      )
+    const workspacesFromApprovedAccessDomain = this.twentyConfigService.get(
+      'IS_EMAIL_VERIFICATION_REQUIRED',
     )
-      .filter(
-        ({ workspace }) =>
-          !alreadyMemberWorkspacesIds.includes(workspace.id) &&
-          workspace.workspaceDiscoverability ===
-            WorkspaceDiscoverability.PUBLIC,
-      )
-      .map(({ workspace }) => ({ workspace }));
+      ? getJoinableWorkspacesFromApprovedAccessDomains({
+          approvedAccessDomains:
+            await this.approvedAccessDomainService.findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain(
+              getDomainFromEmailOrThrow(email),
+            ),
+          alreadyMemberWorkspaceIds: alreadyMemberWorkspacesIds,
+        })
+      : [];
 
     const workspacesFromApprovedAccessDomainIds =
       workspacesFromApprovedAccessDomain.map(({ workspace }) => workspace.id);
@@ -486,7 +488,7 @@ export class UserWorkspaceService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceMemberRepository =
-        await this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
           'workspaceMember',
           { shouldBypassPermissionChecks: true },
         );

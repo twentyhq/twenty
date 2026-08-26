@@ -73,7 +73,7 @@ const resyncAiAgentStepOutputSchemas = async (
   });
 
   const workflowVersionRepository =
-    await deps.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+    deps.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
       'workflowVersion',
       { shouldBypassPermissionChecks: true },
     );

@@ -51,7 +51,7 @@ export class WorkflowVersionValidationWorkspaceService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowVersionRepository =
-        await this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
           'workflowVersion',
           { shouldBypassPermissionChecks: true },
         );
@@ -133,7 +133,7 @@ export class WorkflowVersionValidationWorkspaceService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowVersionRepository =
-        await this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
           'workflowVersion',
           { shouldBypassPermissionChecks: true },
         );

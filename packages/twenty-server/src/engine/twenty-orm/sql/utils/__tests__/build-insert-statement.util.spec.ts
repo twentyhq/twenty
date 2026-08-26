@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { TwentyOrmV2Exception } from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { buildInsertStatement } from 'src/engine/twenty-orm/sql/utils/build-insert-statement.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
@@ -36,15 +36,15 @@ describe('buildInsertStatement', () => {
         columnNames: ['id', 'jobTitle'],
         rows: [
           [
-            { kind: 'parameter', parameterName: 'ormV2Insert_0' },
-            { kind: 'parameter', parameterName: 'ormV2Insert_1' },
+            { kind: 'parameter', parameterName: 'ormInsert_0' },
+            { kind: 'parameter', parameterName: 'ormInsert_1' },
           ],
         ],
         returningColumns: ['id', 'jobTitle'],
       }),
     ).toBe(
       `INSERT INTO "${SCHEMA_NAME}"."person" ("id", "jobTitle") ` +
-        'VALUES (:ormV2Insert_0, :ormV2Insert_1) ' +
+        'VALUES (:ormInsert_0, :ormInsert_1) ' +
         'RETURNING "id", "jobTitle"',
     );
   });
@@ -56,11 +56,11 @@ describe('buildInsertStatement', () => {
         columnNames: ['id', 'jobTitle'],
         rows: [
           [
-            { kind: 'parameter', parameterName: 'ormV2Insert_0' },
-            { kind: 'parameter', parameterName: 'ormV2Insert_1' },
+            { kind: 'parameter', parameterName: 'ormInsert_0' },
+            { kind: 'parameter', parameterName: 'ormInsert_1' },
           ],
           [
-            { kind: 'parameter', parameterName: 'ormV2Insert_2' },
+            { kind: 'parameter', parameterName: 'ormInsert_2' },
             { kind: 'default' },
           ],
         ],
@@ -68,7 +68,7 @@ describe('buildInsertStatement', () => {
       }),
     ).toBe(
       `INSERT INTO "${SCHEMA_NAME}"."person" ("id", "jobTitle") ` +
-        'VALUES (:ormV2Insert_0, :ormV2Insert_1), (:ormV2Insert_2, DEFAULT) ' +
+        'VALUES (:ormInsert_0, :ormInsert_1), (:ormInsert_2, DEFAULT) ' +
         'RETURNING "id"',
     );
   });
@@ -78,11 +78,11 @@ describe('buildInsertStatement', () => {
       buildInsertStatement({
         tableShape: personTableShape,
         columnNames: ['id'],
-        rows: [[{ kind: 'parameter', parameterName: 'ormV2Insert_0' }]],
+        rows: [[{ kind: 'parameter', parameterName: 'ormInsert_0' }]],
         returningColumns: [],
       }),
     ).toBe(
-      `INSERT INTO "${SCHEMA_NAME}"."person" ("id") VALUES (:ormV2Insert_0)`,
+      `INSERT INTO "${SCHEMA_NAME}"."person" ("id") VALUES (:ormInsert_0)`,
     );
   });
 
@@ -94,6 +94,6 @@ describe('buildInsertStatement', () => {
         rows: [],
         returningColumns: ['id'],
       }),
-    ).toThrow(TwentyOrmV2Exception);
+    ).toThrow(TwentyOrmException);
   });
 });

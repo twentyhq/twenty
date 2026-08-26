@@ -1,6 +1,13 @@
 import { enrichCreateWorkspaceMigrationActionsWithIds } from 'src/engine/workspace-manager/workspace-migration/services/utils/enrich-create-workspace-migration-action-with-ids.util';
 import { type UniversalCreateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
+import { type UniversalCreatePageLayoutTabAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-tab/types/workspace-migration-page-layout-tab-action.type';
+import { type UniversalCreatePageLayoutAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout/types/workspace-migration-page-layout-action.type';
 import { type WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
+
+type SpecMigrationAction =
+  | UniversalCreateFieldAction
+  | UniversalCreatePageLayoutAction
+  | UniversalCreatePageLayoutTabAction;
 
 const buildCreateFieldAction = ({
   fieldUniversalIdentifier,
@@ -25,8 +32,41 @@ const buildCreateFieldAction = ({
       : undefined,
   }) as unknown as UniversalCreateFieldAction;
 
+const buildCreatePageLayoutAction = ({
+  pageLayoutUniversalIdentifier,
+  defaultTabUniversalIdentifier,
+}: {
+  pageLayoutUniversalIdentifier: string;
+  defaultTabUniversalIdentifier?: string;
+}): UniversalCreatePageLayoutAction =>
+  ({
+    type: 'create',
+    metadataName: 'pageLayout',
+    flatEntity: {
+      universalIdentifier: pageLayoutUniversalIdentifier,
+      defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier:
+        defaultTabUniversalIdentifier ?? null,
+    },
+  }) as unknown as UniversalCreatePageLayoutAction;
+
+const buildCreatePageLayoutTabAction = ({
+  tabUniversalIdentifier,
+  pageLayoutUniversalIdentifier,
+}: {
+  tabUniversalIdentifier: string;
+  pageLayoutUniversalIdentifier: string;
+}): UniversalCreatePageLayoutTabAction =>
+  ({
+    type: 'create',
+    metadataName: 'pageLayoutTab',
+    flatEntity: {
+      universalIdentifier: tabUniversalIdentifier,
+      pageLayoutUniversalIdentifier,
+    },
+  }) as unknown as UniversalCreatePageLayoutTabAction;
+
 const buildWorkspaceMigration = (
-  actions: UniversalCreateFieldAction[],
+  actions: SpecMigrationAction[],
 ): WorkspaceMigration =>
   ({
     applicationUniversalIdentifier: 'app',
@@ -129,5 +169,67 @@ describe('enrichCreateWorkspaceMigrationActionsWithIds', () => {
       workspaceMigration.actions as UniversalCreateFieldAction[];
 
     expect(enrichedAction.id).toBe('external-id');
+  });
+
+  it('should stamp a pageLayout create with the id minted for a pageLayoutTab created in the same migration', () => {
+    const pageLayoutAction = buildCreatePageLayoutAction({
+      pageLayoutUniversalIdentifier: 'layout',
+      defaultTabUniversalIdentifier: 'tab',
+    });
+    const pageLayoutTabAction = buildCreatePageLayoutTabAction({
+      tabUniversalIdentifier: 'tab',
+      pageLayoutUniversalIdentifier: 'layout',
+    });
+
+    const workspaceMigration = enrichCreateWorkspaceMigrationActionsWithIds({
+      workspaceMigration: buildWorkspaceMigration([
+        pageLayoutAction,
+        pageLayoutTabAction,
+      ]),
+      idByUniversalIdentifierByMetadataName: {},
+    });
+
+    const [enrichedPageLayoutAction, enrichedPageLayoutTabAction] =
+      workspaceMigration.actions as [
+        UniversalCreatePageLayoutAction,
+        UniversalCreatePageLayoutTabAction,
+      ];
+
+    expect(enrichedPageLayoutTabAction.id).toEqual(expect.any(String));
+    expect(enrichedPageLayoutAction.tabIdByUniversalIdentifier?.tab).toBe(
+      enrichedPageLayoutTabAction.id,
+    );
+  });
+
+  it('should use the provided pageLayoutTab id for both the tab create and the pageLayout create', () => {
+    const pageLayoutAction = buildCreatePageLayoutAction({
+      pageLayoutUniversalIdentifier: 'layout',
+      defaultTabUniversalIdentifier: 'tab',
+    });
+    const pageLayoutTabAction = buildCreatePageLayoutTabAction({
+      tabUniversalIdentifier: 'tab',
+      pageLayoutUniversalIdentifier: 'layout',
+    });
+
+    const workspaceMigration = enrichCreateWorkspaceMigrationActionsWithIds({
+      workspaceMigration: buildWorkspaceMigration([
+        pageLayoutAction,
+        pageLayoutTabAction,
+      ]),
+      idByUniversalIdentifierByMetadataName: {
+        pageLayoutTab: { tab: 'external-tab-id' },
+      },
+    });
+
+    const [enrichedPageLayoutAction, enrichedPageLayoutTabAction] =
+      workspaceMigration.actions as [
+        UniversalCreatePageLayoutAction,
+        UniversalCreatePageLayoutTabAction,
+      ];
+
+    expect(enrichedPageLayoutTabAction.id).toBe('external-tab-id');
+    expect(enrichedPageLayoutAction.tabIdByUniversalIdentifier?.tab).toBe(
+      'external-tab-id',
+    );
   });
 });

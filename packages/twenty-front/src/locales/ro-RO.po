@@ -1982,10 +1982,10 @@ msgstr "Acces la Toate Acțiunile"
 msgid "All App Registrations"
 msgstr "Toate înregistrările de aplicații"
 
-#. js-lingui-id: ZrLLkh
+#. js-lingui-id: REq7rb
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-msgid "All application registrations across the platform, including orphaned marketplace apps"
-msgstr "Toate înregistrările de aplicații din întreaga platformă, inclusiv aplicațiile orfane din marketplace"
+msgid "All application registrations across the platform, including orphaned marketplace apps ({totalCount} matching)"
+msgstr "Toate înregistrările de aplicații de pe platformă, inclusiv aplicațiile orfane din marketplace ({totalCount} potriviri)"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -4601,6 +4601,8 @@ msgstr "Configurați setările de e-mail și calendar."
 
 #. js-lingui-id: M1co/O
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Configured"
 msgstr "Configurat"
@@ -11605,6 +11607,8 @@ msgstr "Widget listă"
 
 #. js-lingui-id: Ap948/
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Listed"
 msgstr "Listată"
 
@@ -13855,6 +13859,11 @@ msgstr "Nu este disponibil pentru vizualizarea implicită"
 msgid "Not available on Default View"
 msgstr "Nu este disponibil pe Vizualizare Implicită"
 
+#. js-lingui-id: SDND4q
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "Not configured"
+msgstr "Neconfigurat"
+
 #. js-lingui-id: 4wUkDk
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Not empty"
@@ -13869,6 +13878,11 @@ msgstr "Nu a fost găsit"
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTableRow.tsx
 msgid "Not included"
 msgstr "Neinclus"
+
+#. js-lingui-id: i/2ImT
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "Not listed"
+msgstr "Nelistat"
 
 #. js-lingui-id: iXlml9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
@@ -15845,7 +15859,6 @@ msgid "Relation type"
 msgstr "Tip relație"
 
 #. js-lingui-id: g87L9j
-#: src/modules/activities/inline-cell/components/ActivityTargetsInlineCell.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 msgid "Relations"
 msgstr "Relații"
@@ -18063,6 +18076,7 @@ msgstr "Sortări"
 
 #. js-lingui-id: wdxz7K
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx

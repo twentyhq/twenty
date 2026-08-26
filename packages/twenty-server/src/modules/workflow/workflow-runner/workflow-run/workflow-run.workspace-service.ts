@@ -57,7 +57,7 @@ export class WorkflowRunWorkspaceService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowRunRepository =
-        await this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
           'workflowRun',
           { shouldBypassPermissionChecks: true },
         );
@@ -68,7 +68,7 @@ export class WorkflowRunWorkspaceService {
           workflowVersionId,
         });
 
-      const workflowRepository = await this.workspaceOrmManager.getRepository(
+      const workflowRepository = this.workspaceOrmManager.getRepository(
         'workflow',
         {
           shouldBypassPermissionChecks: true,
@@ -362,7 +362,7 @@ export class WorkflowRunWorkspaceService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowRunRepository =
-        await this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
           'workflowRun',
           { shouldBypassPermissionChecks: true },
         );
@@ -408,7 +408,7 @@ export class WorkflowRunWorkspaceService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowRunRepository =
-        await this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+        this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
           'workflowRun',
           { shouldBypassPermissionChecks: true },
         );

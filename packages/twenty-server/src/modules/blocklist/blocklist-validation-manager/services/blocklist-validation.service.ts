@@ -13,7 +13,6 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { isDomain } from 'src/engine/utils/is-domain';
@@ -33,7 +32,6 @@ export type BlocklistItem = Omit<
 @Injectable()
 export class BlocklistValidationService {
   constructor(
-    @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
@@ -103,7 +101,7 @@ export class BlocklistValidationService {
     const currentWorkspaceMember =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workspaceMemberRepository =
-          await this.workspaceOrmManager.getRepository(
+          this.workspaceOrmManager.getRepository(
             WorkspaceMemberWorkspaceEntity,
             { shouldBypassPermissionChecks: true },
           );
@@ -185,7 +183,7 @@ export class BlocklistValidationService {
     const currentWorkspaceMember =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workspaceMemberRepository =
-          await this.workspaceOrmManager.getRepository(
+          this.workspaceOrmManager.getRepository(
             WorkspaceMemberWorkspaceEntity,
             { shouldBypassPermissionChecks: true },
           );

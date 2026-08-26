@@ -6,8 +6,8 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
-  TwentyORMException,
-  TwentyORMExceptionCode,
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 
@@ -85,7 +85,7 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
   } as any;
 
   describe('UPDATED action', () => {
-    it('should throw TwentyORMException when no matching before entity is found in array of beforeEntities', () => {
+    it('should throw TwentyOrmException when no matching before entity is found in array of beforeEntities', () => {
       const afterEntities = [
         {
           id: 'record-1',
@@ -119,11 +119,11 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
           recordsBefore: beforeEntities,
         });
       } catch (error) {
-        expect(error).toBeInstanceOf(TwentyORMException);
-        expect((error as TwentyORMException).code).toBe(
-          TwentyORMExceptionCode.ORM_EVENT_DATA_CORRUPTED,
+        expect(error).toBeInstanceOf(TwentyOrmException);
+        expect((error as TwentyOrmException).code).toBe(
+          TwentyOrmExceptionCode.ORM_EVENT_DATA_CORRUPTED,
         );
-        expect((error as TwentyORMException).message).toBe(
+        expect((error as TwentyOrmException).message).toBe(
           'Record mismatch detected while computing event data for UPDATED action',
         );
       }

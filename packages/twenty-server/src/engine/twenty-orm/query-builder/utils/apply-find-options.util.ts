@@ -10,34 +10,34 @@ import {
 import { type ToManyDedupOrder } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
-export type FindOptionsRelationsV2 = {
-  [relationFieldName: string]: boolean | FindOptionsRelationsV2;
+export type WorkspaceFindOptionsRelations = {
+  [relationFieldName: string]: boolean | WorkspaceFindOptionsRelations;
 };
 
-export type FindOptionsSelectV2 = FindOptionsSelectLike | string[];
+export type WorkspaceFindOptionsSelect = FindOptionsSelectLike | string[];
 
-export type FindOptionsOrderV2 = {
+export type WorkspaceFindOptionsOrder = {
   [key: string]: OrderByValueLike | OrderByConditionLike;
 };
 
-export type FindOptionsV2 = {
+export type WorkspaceFindOptions = {
   where?: ObjectWhereLike | ObjectWhereLike[];
-  select?: FindOptionsSelectV2;
-  order?: FindOptionsOrderV2;
+  select?: WorkspaceFindOptionsSelect;
+  order?: WorkspaceFindOptionsOrder;
   take?: number;
   skip?: number;
   withDeleted?: boolean;
-  relations?: FindOptionsRelationsV2 | string[];
+  relations?: WorkspaceFindOptionsRelations | string[];
 };
 
 export const normalizeFindOptionsRelations = (
-  relations: FindOptionsRelationsV2 | string[],
-): FindOptionsRelationsV2 => {
+  relations: WorkspaceFindOptionsRelations | string[],
+): WorkspaceFindOptionsRelations => {
   if (!Array.isArray(relations)) {
     return relations;
   }
 
-  const normalized: FindOptionsRelationsV2 = {};
+  const normalized: WorkspaceFindOptionsRelations = {};
 
   for (const relationPath of relations) {
     let currentLevel = normalized;
@@ -54,7 +54,9 @@ export const normalizeFindOptionsRelations = (
   return normalized;
 };
 
-const normalizeSelect = (select: FindOptionsSelectV2): FindOptionsSelectLike =>
+const normalizeSelect = (
+  select: WorkspaceFindOptionsSelect,
+): FindOptionsSelectLike =>
   Array.isArray(select)
     ? Object.fromEntries(select.map((columnName) => [columnName, true]))
     : select;
@@ -104,7 +106,7 @@ const isRelationOrderEntry = (
 
 export const splitFindOptionsOrder = (
   tableShape: WorkspaceTableShape,
-  order?: FindOptionsOrderV2,
+  order?: WorkspaceFindOptionsOrder,
 ): {
   columnOrder: OrderByConditionLike;
   orderByRelationFieldName: Record<string, OrderByConditionLike>;
@@ -162,7 +164,7 @@ const applyRelationOrderEntry = (
 
 const applyOrder = (
   queryBuilder: WorkspaceSelectQueryBuilder,
-  order: FindOptionsOrderV2,
+  order: WorkspaceFindOptionsOrder,
 ): void => {
   for (const [key, value] of Object.entries(order)) {
     if (isRelationOrderEntry(queryBuilder.tableShape, key, value)) {
@@ -186,7 +188,7 @@ const toOrderByArguments = (
 
 export const applyFindOptionsToQueryBuilder = (
   queryBuilder: WorkspaceSelectQueryBuilder,
-  options?: FindOptionsV2,
+  options?: WorkspaceFindOptions,
 ): WorkspaceSelectQueryBuilder => {
   if (!isDefined(options)) {
     return queryBuilder;

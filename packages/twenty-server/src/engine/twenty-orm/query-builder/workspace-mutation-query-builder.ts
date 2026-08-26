@@ -1,9 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  TwentyOrmV2Exception,
-  TwentyOrmV2ExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
 import {
   buildColumnNameByResultAlias,
@@ -24,13 +24,13 @@ let mutationSetParameterSequence = 0;
 const UPDATED_AT_COLUMN_NAME = 'updatedAt';
 const DELETED_AT_COLUMN_NAME = 'deletedAt';
 
-export type MutationQueryBuilderV2Context = {
+export type MutationQueryBuilderContext = {
   tableShape: WorkspaceTableShape;
   executor: QueryExecutor;
   formatResult: <T>(records: unknown) => T;
 };
 
-export type MutationResultV2 = {
+export type MutationResult = {
   // oxlint-disable-next-line typescript/no-explicit-any
   generatedMaps: any[];
 };
@@ -39,7 +39,7 @@ export class WorkspaceMutationQueryBuilder {
   readonly alias: string;
   readonly tableShape: WorkspaceTableShape;
 
-  private readonly context: MutationQueryBuilderV2Context;
+  private readonly context: MutationQueryBuilderContext;
   private readonly kind: MutationKind;
   private readonly whereClauses: WhereClause[];
   private parameters: Record<string, unknown>;
@@ -55,7 +55,7 @@ export class WorkspaceMutationQueryBuilder {
   }: {
     alias: string;
     kind: MutationKind;
-    context: MutationQueryBuilderV2Context;
+    context: MutationQueryBuilderContext;
     whereClauses: WhereClause[];
     parameters: Record<string, unknown>;
   }) {
@@ -90,7 +90,7 @@ export class WorkspaceMutationQueryBuilder {
     return this.buildStatement().sql;
   }
 
-  async execute(): Promise<MutationResultV2> {
+  async execute(): Promise<MutationResult> {
     const { sql, parameters } = this.buildStatement();
     const compiled = compileNamedParameters(sql, parameters);
     const rows = await this.context.executor.execute(compiled);
@@ -157,16 +157,16 @@ export class WorkspaceMutationQueryBuilder {
       this.assertColumnExists(columnName);
 
       if (typeof value === 'function') {
-        throw new TwentyOrmV2Exception(
+        throw new TwentyOrmException(
           `Function-valued updates are not supported on "${columnName}"`,
-          TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+          TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
         );
       }
 
-      let parameterName = `ormV2Set_${mutationSetParameterSequence++}`;
+      let parameterName = `ormSet_${mutationSetParameterSequence++}`;
 
       while (parameterName in parameters) {
-        parameterName = `ormV2Set_${mutationSetParameterSequence++}`;
+        parameterName = `ormSet_${mutationSetParameterSequence++}`;
       }
 
       parameters[parameterName] = serializeJsonbWriteValue(
@@ -206,18 +206,18 @@ export class WorkspaceMutationQueryBuilder {
 
   private assertDeletedAtColumnExists(): void {
     if (!this.tableShape.hasDeletedAtColumn) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `"${this.tableShape.nameSingular}" has no "${DELETED_AT_COLUMN_NAME}" column, so it cannot be soft-deleted or restored`,
-        TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+        TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
       );
     }
   }
 
   private assertColumnExists(columnName: string): void {
     if (!isDefined(this.tableShape.columnShapeByColumnName[columnName])) {
-      throw new TwentyOrmV2Exception(
+      throw new TwentyOrmException(
         `Column "${columnName}" does not exist on "${this.tableShape.nameSingular}"`,
-        TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
+        TwentyOrmExceptionCode.UNKNOWN_COLUMN,
       );
     }
   }

@@ -7,7 +7,7 @@ import {
   personTableShape,
 } from 'src/engine/twenty-orm/query-builder/__tests__/workspace-select-query-builder-test-shapes.util';
 import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-column-result-alias.util';
-import { TwentyOrmV2Exception } from 'src/engine/twenty-orm/exceptions/twenty-orm-v2.exception';
+import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 
 describe('WorkspaceSelectQueryBuilder selection', () => {
   it('should select the requested columns with alias-prefixed output names', () => {
@@ -56,7 +56,7 @@ describe('WorkspaceSelectQueryBuilder selection', () => {
 
     queryBuilder.setFindOptions({ select: { nonExistent: true } });
 
-    expect(() => queryBuilder.getQuery()).toThrow(TwentyOrmV2Exception);
+    expect(() => queryBuilder.getQuery()).toThrow(TwentyOrmException);
   });
 
   it('should select only aggregate expressions after select([])', () => {

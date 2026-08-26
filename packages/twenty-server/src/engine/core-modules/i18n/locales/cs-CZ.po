@@ -9843,7 +9843,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "Přípona souboru neodpovídá obsahu souboru. Zkontrolujte, zda soubor není poškozený a má správnou příponu."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "Soubor ještě nebyl nahrán. Nahrajte jej prosím před potvrzením."
 
@@ -10054,7 +10054,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "Téma odhlášení z odběru, v jehož rámci byla tato kampaň odeslána"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "Nahraný soubor neodpovídá deklarované velikosti. Zkuste prosím nahrávání znovu."
@@ -10346,7 +10346,7 @@ msgid "This field references an object that could not be found"
 msgstr "Toto pole odkazuje na objekt, který nelze najít"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "Tento formát souboru není podporován."
 
@@ -10428,11 +10428,6 @@ msgstr "Toto oprávnění k objektu je již pro roli nastaveno"
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This operation is not allowed."
 msgstr "Tato operace není povolena."
-
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-schema.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "Tato operace není povolena. Zkuste prosím jiný přístup nebo kontaktujte podporu, pokud potřebujete pomoc."
 
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
