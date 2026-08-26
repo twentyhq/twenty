@@ -22,12 +22,15 @@ const StyledVerticalListContainer = styled.div<{
   flex-direction: column;
   gap: ${({ variant }) =>
     variant === 'side-column' ? 0 : themeCssVariables.spacing[2]};
-  // The pinned tab sits next to the main tab area, so it keeps that area's
-  // padding to line their widgets up rather than the tighter side-column one.
+  // The pinned tab sits next to the main tab area, so it takes that area's
+  // vertical padding to line their widgets up, and keeps the flush side-column
+  // edges horizontally where the narrow column needs the room.
   padding: ${({ variant, isInPinnedTab }) =>
-    variant === 'side-column' && !isInPinnedTab
-      ? 0
-      : themeCssVariables.spacing[2]};
+    isInPinnedTab
+      ? `${themeCssVariables.spacing[2]} 0`
+      : variant === 'side-column'
+        ? 0
+        : themeCssVariables.spacing[2]};
 `;
 
 type PageLayoutVerticalListViewerProps = {

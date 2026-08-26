@@ -29,12 +29,15 @@ const StyledVerticalListContainer = styled.div<{
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
-  // The pinned tab sits next to the main tab area, so it keeps that area's
-  // padding to line their widgets up rather than the tighter side-column one.
+  // The pinned tab sits next to the main tab area, so it takes that area's
+  // vertical padding to line their widgets up, and keeps the tighter
+  // side-column one horizontally where the narrow column needs the room.
   padding: ${({ variant, isInPinnedTab }) =>
-    variant === 'side-column' && !isInPinnedTab
-      ? themeCssVariables.spacing[1]
-      : themeCssVariables.spacing[2]};
+    isInPinnedTab
+      ? `${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[1]}`
+      : variant === 'side-column'
+        ? themeCssVariables.spacing[1]
+        : themeCssVariables.spacing[2]};
 `;
 
 const StyledDropTarget = styled.div`
