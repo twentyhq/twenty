@@ -1,8 +1,7 @@
 import {
-  CommandMenuItemAvailabilityType,
-  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
   defineCommandMenuItem,
   isSelectAll,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
 
 import { GENERATE_CALL_RECORDING_SUMMARY_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER } from 'src/constants/generate-call-recording-summary-command-menu-item-universal-identifier';
@@ -16,6 +15,6 @@ export default defineCommandMenuItem({
   frontComponentUniversalIdentifier:
     GENERATE_CALL_RECORDING_SUMMARY_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   label: 'Generate call summary',
-  availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+  availabilityType: 'RECORD_SELECTION',
   conditionalAvailabilityExpression: !isSelectAll,
 });
