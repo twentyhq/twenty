@@ -1,25 +1,20 @@
 import { Command } from 'nest-commander';
 
+import { getSearchFieldUniversalIdentifier } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
 import { buildFlatSearchFieldMetadataForField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/build-flat-search-field-metadata-for-field.util';
-import { getTargetSearchFieldMetadatasForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/get-target-search-field-metadatas-for-ts-vector-field.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { type UniversalUpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
-import { WORKSPACE_MIGRATION_ACTION_TYPE } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/constants/workspace-migration-action-type.constant';
-import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 const TIMELINE_ACTIVITY = STANDARD_OBJECTS.timelineActivity;
 const LINKED_RECORD_CACHED_NAME_FIELD_UNIVERSAL_IDENTIFIER =
@@ -31,15 +26,13 @@ const SEARCH_VECTOR_FIELD_UNIVERSAL_IDENTIFIER =
 @Command({
   name: 'upgrade:2-35:backfill-timeline-activity-search-field-metadata',
   description:
-    'Converge the timelineActivity search field metadata to the standard declaration (linkedRecordCachedName), restoring the searchVector field when it is missing and dropping the rows that still index another field, then rebuild the generated column. Repairs workspaces whose search vector was derived from the legacy name field. Idempotent.',
+    'Create the timelineActivity linkedRecordCachedName search field metadata row where it is missing, restoring the searchVector field itself when the workspace lost it. Workspaces upgraded from before the 2.33 search repoint never had this row, and dropping the legacy name field cascades away both their old row and the generated column. Idempotent.',
 })
 export class BackfillTimelineActivitySearchFieldMetadataCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
-    private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
-    private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
   ) {
     super(workspaceIteratorService);
   }
@@ -95,20 +88,19 @@ export class BackfillTimelineActivitySearchFieldMetadataCommand extends Provisio
         universalIdentifier: SEARCH_VECTOR_FIELD_UNIVERSAL_IDENTIFIER,
       });
 
-    // timelineActivity declares linkedRecordCachedName as its only search field, so the
-    // search vector indexes at most this one row.
-    const [indexedFlatSearchFieldMetadata] = isDefined(
-      searchVectorFlatFieldMetadata,
-    )
-      ? getTargetSearchFieldMetadatasForTsVectorField({
-          tsVectorFieldMetadataId: searchVectorFlatFieldMetadata.id,
-          flatSearchFieldMetadataMaps,
+    const standardFlatSearchFieldMetadata =
+      flatSearchFieldMetadataMaps.byUniversalIdentifier[
+        getSearchFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            timelineActivityFlatObjectMetadata.applicationUniversalIdentifier,
+          fieldMetadataUniversalIdentifier:
+            LINKED_RECORD_CACHED_NAME_FIELD_UNIVERSAL_IDENTIFIER,
         })
-      : [];
+      ];
 
     if (
-      indexedFlatSearchFieldMetadata?.fieldMetadataUniversalIdentifier ===
-      LINKED_RECORD_CACHED_NAME_FIELD_UNIVERSAL_IDENTIFIER
+      isDefined(standardFlatSearchFieldMetadata) &&
+      isDefined(searchVectorFlatFieldMetadata)
     ) {
       this.logger.log(
         `timelineActivity search vector already indexes linkedRecordCachedName for workspace ${workspaceId}, skipping`,
@@ -118,58 +110,75 @@ export class BackfillTimelineActivitySearchFieldMetadataCommand extends Provisio
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Repointing the timelineActivity search vector to linkedRecordCachedName for workspace ${workspaceId}, currently indexing ${
-        indexedFlatSearchFieldMetadata?.fieldMetadataUniversalIdentifier ??
-        'nothing'
-      }`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Restoring the timelineActivity ${[
+        ...(isDefined(standardFlatSearchFieldMetadata)
+          ? []
+          : ['search field metadata']),
+        ...(isDefined(searchVectorFlatFieldMetadata)
+          ? []
+          : ['searchVector field']),
+      ].join(' and ')} for workspace ${workspaceId}`,
     );
 
     if (isDryRun) {
       return;
     }
 
-    const { twentyStandardFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+        {
+          isSystemBuild: true,
+          workspaceId,
+          applicationUniversalIdentifier:
+            timelineActivityFlatObjectMetadata.applicationUniversalIdentifier,
+          allFlatEntityOperationByMetadataName: {
+            fieldMetadata: {
+              flatEntityToCreate: isDefined(searchVectorFlatFieldMetadata)
+                ? []
+                : [
+                    this.getStandardSearchVectorFlatFieldMetadata({
+                      workspaceId,
+                      twentyStandardApplicationId:
+                        timelineActivityFlatObjectMetadata.applicationId,
+                    }),
+                  ],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+            searchFieldMetadata: {
+              flatEntityToCreate: isDefined(standardFlatSearchFieldMetadata)
+                ? []
+                : [
+                    buildFlatSearchFieldMetadataForField({
+                      flatObjectMetadata: timelineActivityFlatObjectMetadata,
+                      flatFieldMetadata:
+                        linkedRecordCachedNameFlatFieldMetadata,
+                      tsVectorFlatFieldMetadata: {
+                        universalIdentifier:
+                          SEARCH_VECTOR_FIELD_UNIVERSAL_IDENTIFIER,
+                      },
+                      position: 0,
+                    }),
+                  ],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+          },
+        },
       );
 
-    await this.applyConvergence({
-      workspaceId,
-      applicationUniversalIdentifier:
-        twentyStandardFlatApplication.universalIdentifier,
-      flatFieldMetadatasToCreate: isDefined(searchVectorFlatFieldMetadata)
-        ? []
-        : [
-            this.getStandardSearchVectorFlatFieldMetadata({
-              workspaceId,
-              twentyStandardApplicationId: twentyStandardFlatApplication.id,
-            }),
-          ],
-      flatSearchFieldMetadatasToCreate: [
-        buildFlatSearchFieldMetadataForField({
-          flatObjectMetadata: timelineActivityFlatObjectMetadata,
-          flatFieldMetadata: linkedRecordCachedNameFlatFieldMetadata,
-          tsVectorFlatFieldMetadata: {
-            universalIdentifier: SEARCH_VECTOR_FIELD_UNIVERSAL_IDENTIFIER,
-          },
-          position: 0,
-        }),
-      ],
-      flatSearchFieldMetadatasToDelete: isDefined(
-        indexedFlatSearchFieldMetadata,
-      )
-        ? [indexedFlatSearchFieldMetadata]
-        : [],
-    });
-
-    await this.rebuildSearchVector({
-      workspaceId,
-      applicationUniversalIdentifier:
-        twentyStandardFlatApplication.universalIdentifier,
-    });
+    if (validateAndBuildResult.status === 'fail') {
+      throw new Error(
+        `Failed to restore the timelineActivity search field metadata for workspace ${workspaceId}:\n${JSON.stringify(
+          validateAndBuildResult,
+          null,
+          2,
+        )}`,
+      );
+    }
 
     this.logger.log(
-      `Converged the timelineActivity search vector for workspace ${workspaceId}`,
+      `Restored the timelineActivity search vector for workspace ${workspaceId}`,
     );
   }
 
@@ -204,86 +213,5 @@ export class BackfillTimelineActivitySearchFieldMetadataCommand extends Provisio
       viewFieldIds: [],
       viewFieldUniversalIdentifiers: [],
     };
-  }
-
-  // Repointing a row is not expressible as an update: the engine treats a search field
-  // metadata's indexed field as immutable (it is not part of its compared properties),
-  // so the divergent rows are dropped and the standard one recreated in the same matrix.
-  // Legacy path so the system searchVector field is restored exactly as declared,
-  // without the record-page companions the side-effect engine injects for a new field.
-  private async applyConvergence({
-    workspaceId,
-    applicationUniversalIdentifier,
-    flatFieldMetadatasToCreate,
-    flatSearchFieldMetadatasToCreate,
-    flatSearchFieldMetadatasToDelete,
-  }: {
-    workspaceId: string;
-    applicationUniversalIdentifier: string;
-    flatFieldMetadatasToCreate: FlatFieldMetadata[];
-    flatSearchFieldMetadatasToCreate: ReturnType<
-      typeof buildFlatSearchFieldMetadataForField
-    >[];
-    flatSearchFieldMetadatasToDelete: FlatSearchFieldMetadata[];
-  }): Promise<void> {
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
-        {
-          isSystemBuild: true,
-          workspaceId,
-          applicationUniversalIdentifier,
-          allFlatEntityOperationByMetadataName: {
-            fieldMetadata: {
-              flatEntityToCreate: flatFieldMetadatasToCreate,
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-            searchFieldMetadata: {
-              flatEntityToCreate: flatSearchFieldMetadatasToCreate,
-              flatEntityToDelete: flatSearchFieldMetadatasToDelete,
-              flatEntityToUpdate: [],
-            },
-          },
-        },
-      );
-
-    if (validateAndBuildResult.status === 'fail') {
-      throw new Error(
-        `Failed to converge the timelineActivity search field metadata for workspace ${workspaceId}:\n${JSON.stringify(
-          validateAndBuildResult,
-          null,
-          2,
-        )}`,
-      );
-    }
-  }
-
-  // Search field metadata operations never touch the workspace schema, so the generated
-  // column keeps the expression it was built with (the dropped name column, or nothing
-  // at all once its cascade took the column down with it).
-  private async rebuildSearchVector({
-    workspaceId,
-    applicationUniversalIdentifier,
-  }: {
-    workspaceId: string;
-    applicationUniversalIdentifier: string;
-  }): Promise<void> {
-    const actions: UniversalUpdateFieldAction[] = [
-      {
-        type: WORKSPACE_MIGRATION_ACTION_TYPE.update,
-        metadataName: 'fieldMetadata',
-        universalIdentifier: SEARCH_VECTOR_FIELD_UNIVERSAL_IDENTIFIER,
-        update: {},
-        rebuildSearchVector: true,
-      },
-    ];
-
-    await this.workspaceMigrationRunnerService.run({
-      workspaceMigration: {
-        applicationUniversalIdentifier,
-        actions,
-      },
-      workspaceId,
-    });
   }
 }
