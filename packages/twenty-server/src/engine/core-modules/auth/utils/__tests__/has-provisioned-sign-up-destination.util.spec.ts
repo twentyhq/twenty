@@ -1,5 +1,7 @@
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
+import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
+
 import { hasProvisionedSignUpDestination } from 'src/engine/core-modules/auth/utils/has-provisioned-sign-up-destination.util';
 
 describe('hasProvisionedSignUpDestination', () => {
@@ -35,6 +37,21 @@ describe('hasProvisionedSignUpDestination', () => {
     expect(
       hasProvisionedSignUpDestination([{ workspace: { activationStatus } }]),
     ).toBe(false);
+  });
+
+  // Callers pass invitations to hidden workspaces straight in, so nothing here
+  // may key off discoverability.
+  it('should find a destination regardless of workspace discoverability', () => {
+    const hiddenWorkspaceInvitation = {
+      workspace: {
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+        workspaceDiscoverability: WorkspaceDiscoverability.HIDDEN,
+      },
+    };
+
+    expect(hasProvisionedSignUpDestination([hiddenWorkspaceInvitation])).toBe(
+      true,
+    );
   });
 
   it('should find a destination when only one of several candidates is provisioned', () => {

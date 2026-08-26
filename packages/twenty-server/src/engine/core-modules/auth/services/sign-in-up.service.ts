@@ -517,6 +517,16 @@ export class SignInUpService {
   }
 
   private async hasProvisionedDestination(email: string): Promise<boolean> {
+    // Invitations are read directly instead of through the sign-in picker,
+    // which hides HIDDEN workspaces: that is a listing rule, not a statement
+    // that the invitee has nowhere to land.
+    const invitations =
+      await this.workspaceInvitationService.findInvitationsByEmail(email);
+
+    if (hasProvisionedSignUpDestination(invitations)) {
+      return true;
+    }
+
     const { availableWorkspacesForSignUp } =
       await this.userWorkspaceService.findAvailableWorkspacesByEmail(email);
 
