@@ -66,11 +66,6 @@ const MAX_LOCAL_ENTRIES_BY_KEY_NAME = new Map<string, number>([
   ['flatFieldMetadataMaps', 256],
   ['flatFieldMetadataMapsOrm', 512],
 ]);
-const DERIVED_SIBLING_CACHE_KEYS: Partial<
-  Record<WorkspaceCacheKeyName, WorkspaceCacheKeyName[]>
-> = {
-  flatFieldMetadataMaps: ['flatFieldMetadataMapsOrm'],
-};
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
 type StoredCacheDataType = WorkspaceCacheStoredDataMap[WorkspaceCacheKeyName];
 
@@ -303,12 +298,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         attributes: { 'cache.key_count': cacheKeyNames.length },
       },
       async () => {
-        const keysWithSiblings = this.expandWithDerivedSiblings(cacheKeyNames);
-
         await this.memoizer.clearKeys(`${workspaceId}-`);
 
-        await this.flush(workspaceId, keysWithSiblings);
-        await this.recomputeDataFromProvider(workspaceId, keysWithSiblings, {
+        await this.flush(workspaceId, cacheKeyNames);
+        await this.recomputeDataFromProvider(workspaceId, cacheKeyNames, {
           strategy: 'mint',
         });
 
@@ -348,25 +341,9 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<void> {
-    const keysWithSiblings = this.expandWithDerivedSiblings(cacheKeyNames);
+    await this.deleteFromRedis(workspaceId, cacheKeyNames);
 
-    await this.deleteFromRedis(workspaceId, keysWithSiblings);
-
-    this.deleteFromLocalCache(workspaceId, keysWithSiblings);
-  }
-
-  private expandWithDerivedSiblings(
-    cacheKeyNames: WorkspaceCacheKeyName[],
-  ): WorkspaceCacheKeyName[] {
-    const keys = new Set(cacheKeyNames);
-
-    for (const cacheKeyName of cacheKeyNames) {
-      for (const siblingKey of DERIVED_SIBLING_CACHE_KEYS[cacheKeyName] ?? []) {
-        keys.add(siblingKey);
-      }
-    }
-
-    return [...keys];
+    this.deleteFromLocalCache(workspaceId, cacheKeyNames);
   }
 
   private assertValidCacheParameters(
