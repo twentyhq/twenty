@@ -66,6 +66,9 @@ jobs:
       # weeks of audit data, egress-policy block with that allowlist makes
       # real-time exfiltration impossible rather than merely unscoped.
       - name: Harden runner (egress audit)
+        # Fail-open while auditing: an observer must never redden the status
+        # check. The eventual block-mode flip drops this so it fails closed.
+        continue-on-error: true
         uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
         with:
           egress-policy: audit
