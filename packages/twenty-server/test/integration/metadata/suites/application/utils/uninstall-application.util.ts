@@ -2,8 +2,8 @@ import { uninstallApplicationQueryFactory } from 'test/integration/metadata/suit
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
+import { drainApplicationJobs } from 'test/integration/metadata/suites/application/utils/drain-application-jobs.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
-import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { isDefined } from 'twenty-shared/utils';
 
 export const uninstallApplication = async ({
@@ -26,7 +26,7 @@ export const uninstallApplication = async ({
   // The mutation only enqueues the uninstall; drain the queue so callers
   // observe the completed removal.
   if (!isDefined(response.body.errors)) {
-    await waitForAllJobsToFinish();
+    await drainApplicationJobs();
   }
 
   if (expectToFail === true) {

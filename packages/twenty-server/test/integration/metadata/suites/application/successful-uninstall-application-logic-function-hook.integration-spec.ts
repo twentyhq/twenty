@@ -124,7 +124,7 @@ describe('Uninstall application logic function hook', () => {
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: appId,
     });
-  });
+  }, 60000);
 
   it('executes the uninstall hook before deleting the application', async () => {
     await syncTestApplication({ withUninstallHook: true });

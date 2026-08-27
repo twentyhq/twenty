@@ -5,8 +5,8 @@ import {
 } from 'test/integration/metadata/suites/application/utils/install-application-query-factory.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
+import { drainApplicationJobs } from 'test/integration/metadata/suites/application/utils/drain-application-jobs.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
-import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { isDefined } from 'twenty-shared/utils';
 
 export const installApplication = async ({
@@ -27,7 +27,7 @@ export const installApplication = async ({
   // The mutation only enqueues the install; drain the queue so callers
   // observe the completed (or rolled back) installation.
   if (!isDefined(response.body.errors)) {
-    await waitForAllJobsToFinish();
+    await drainApplicationJobs();
   }
 
   if (expectToFail === true) {

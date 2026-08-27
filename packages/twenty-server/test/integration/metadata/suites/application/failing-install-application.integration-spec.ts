@@ -23,7 +23,7 @@ describe('Install application should fail when entity does not exist', () => {
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: INVALID_UUID_APP_ID,
     });
-  });
+  }, 60000);
 
   it('should fail with execution error when installing non-existent app registration', async () => {
     const { errors } = await installApplication({

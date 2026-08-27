@@ -31,7 +31,7 @@ describe('Uninstall application with package file FKs populated', () => {
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: TEST_APP_ID,
     });
-  });
+  }, 60000);
 
   it('uninstalls the application and deletes its file rows in one pass', async () => {
     jest.useRealTimers();
