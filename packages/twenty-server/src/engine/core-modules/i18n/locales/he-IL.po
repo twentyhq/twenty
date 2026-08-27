@@ -9854,7 +9854,7 @@ msgstr "הקובץ ריק או חורג מהגודל המרבי המותר."
 #. js-lingui-id: 2hrpBa
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "The file upload has not been completed. Please retry the upload."
-msgstr ""
+msgstr "העלאת הקובץ לא הושלמה. נא לנסות להעלות שוב."
 
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
