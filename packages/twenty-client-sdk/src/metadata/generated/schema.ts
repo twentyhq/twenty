@@ -8220,7 +8220,7 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicConnectionParametersOutput"')
       return PublicConnectionParametersOutput_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const PublicImapSmtpCaldavConnectionParameters_possibleTypes: string[] = ['PublicImapSmtpCaldavConnectionParameters']
@@ -8228,7 +8228,7 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicImapSmtpCaldavConnectionParameters"')
       return PublicImapSmtpCaldavConnectionParameters_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ConnectedAccountPublicDTO_possibleTypes: string[] = ['ConnectedAccountPublicDTO']
@@ -8236,7 +8236,7 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
       if (!obj?.__typename) throw new Error('__typename is missing in "isConnectedAccountPublicDTO"')
       return ConnectedAccountPublicDTO_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const UsageLimit_possibleTypes: string[] = ['UsageLimit']
@@ -8244,7 +8244,7 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageLimit"')
       return UsageLimit_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const FeatureFlag_possibleTypes: string[] = ['FeatureFlag']
