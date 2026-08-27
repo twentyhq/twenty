@@ -2,6 +2,7 @@ import { CallRecordingTranscriptEntryListItem } from '@/page-layout/widgets/call
 import { CallRecordingTranscriptFollowScrollEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptFollowScrollEffect';
 import { type CallRecordingTranscriptPlayback } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptPlayback';
 import { getCallRecordingTranscriptEntryPlaybackPhase } from '@/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptEntryPlaybackPhase';
+import { ScrollOverlayButton } from '@/ui/utilities/scroll/components/ScrollOverlayButton';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
@@ -13,7 +14,6 @@ import {
 } from 'react';
 import { type CallRecordingParsedTranscriptEntry } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTranscriptContainer = styled.div`
@@ -38,13 +38,6 @@ const StyledEntryList = styled.ul<{ hasPlaybackControls: boolean }>`
     hasPlaybackControls
       ? `${themeCssVariables.spacing[4]} 0 ${themeCssVariables.spacing[10]}`
       : '0'};
-`;
-
-const StyledResumeFollowButton = styled.div`
-  bottom: ${themeCssVariables.spacing[3]};
-  left: 50%;
-  position: absolute;
-  transform: translateX(-50%);
 `;
 
 const MANUAL_SCROLL_KEYS = [
@@ -141,16 +134,13 @@ export const CallRecordingTranscriptEntryList = ({
           })}
         </StyledEntryList>
       </StyledTranscriptScrollContainer>
-      {hasPlayback && !isFollowingPlayback && (
-        <StyledResumeFollowButton>
-          <Button
-            ariaLabel={t`Jump to current`}
-            size="small"
-            title={t`Jump to current`}
-            variant="secondary"
-            onClick={resumeFollowingPlayback}
-          />
-        </StyledResumeFollowButton>
+      {hasPlayback && (
+        <ScrollOverlayButton
+          ariaLabel={t`Jump to current`}
+          isVisible={!isFollowingPlayback}
+          title={t`Jump to current`}
+          onClick={resumeFollowingPlayback}
+        />
       )}
     </StyledTranscriptContainer>
   );
