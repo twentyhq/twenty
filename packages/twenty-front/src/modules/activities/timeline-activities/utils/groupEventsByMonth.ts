@@ -8,20 +8,20 @@ export type EventGroup = {
 };
 
 export const groupEventsByMonth = (events: TimelineActivity[]) => {
-  const acitivityGroups: EventGroup[] = [];
+  const activityGroups: EventGroup[] = [];
 
   for (const event of events) {
-    const d = new Date(event.createdAt);
-    const month = d.getMonth();
-    const year = d.getFullYear();
+    const date = new Date(event.happensAt);
+    const month = date.getMonth();
+    const year = date.getFullYear();
 
-    const matchingGroup = acitivityGroups.find(
-      (x) => x.year === year && x.month === month,
+    const matchingGroup = activityGroups.find(
+      (group) => group.year === year && group.month === month,
     );
     if (isDefined(matchingGroup)) {
       matchingGroup.items.push(event);
     } else {
-      acitivityGroups.push({
+      activityGroups.push({
         year,
         month,
         items: [event],
@@ -29,5 +29,5 @@ export const groupEventsByMonth = (events: TimelineActivity[]) => {
     }
   }
 
-  return acitivityGroups.sort((a, b) => b.year - a.year || b.month - a.month);
+  return activityGroups.sort((a, b) => b.year - a.year || b.month - a.month);
 };

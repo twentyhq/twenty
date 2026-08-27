@@ -1,6 +1,7 @@
 import { useMoveWidgetToTab } from '@/page-layout/hooks/useMoveWidgetToTab';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { canVerticalListAcceptWidget } from '@/page-layout/utils/canVerticalListAcceptWidget';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -33,10 +34,19 @@ export const MoveToTabDropdownContent = () => {
       )
     : undefined;
 
+  const currentWidget = currentTab?.widgets.find(
+    (widget) => widget.id === pageLayoutEditingWidgetId,
+  );
+
   const eligibleTabs = pageLayoutDraft.tabs.filter(
     (tab) =>
       tab.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST &&
-      tab.id !== currentTab?.id,
+      tab.id !== currentTab?.id &&
+      isDefined(currentWidget) &&
+      canVerticalListAcceptWidget({
+        destinationWidgets: tab.widgets,
+        widget: currentWidget,
+      }),
   );
 
   if (!isDefined(pageLayoutEditingWidgetId)) {

@@ -53,9 +53,10 @@ export default definePageLayout({
 
 * `type` est l'un de `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` ou `'STANDALONE_PAGE'`. Utilisez `'RECORD_PAGE'` pour personnaliser la vue détaillée d'un objet spécifique.
 * `objectUniversalIdentifier` spécifie à quel objet cette mise en page s'applique.
-* Chaque `tab` définit une section de la page avec un `title`, une `position` et un `layoutMode` : `VERTICAL_LIST` pour les pages d'enregistrement et les pages autonomes, `GRID` pour les tableaux de bord. Dans un onglet `VERTICAL_LIST`, un seul widget est affiché en pleine largeur et occupe tout l'onglet ; avec plusieurs widgets, ils sont empilés sous forme de cartes. Un onglet `GRID` dispose toujours ses widgets sous forme de cartes sur une grille de 12 colonnes, quel que soit leur nombre ; choisissez donc `VERTICAL_LIST` lorsque vous voulez qu'un seul widget remplisse la page.
+* Chaque `tab` définit une section de la page avec un `title`, une `position` et un `layoutMode` : `VERTICAL_LIST` pour les pages d'enregistrement et les pages autonomes, `GRID` pour les tableaux de bord et `CANVAS` pour un seul widget qui doit remplir la zone d'affichage de l'onglet. Un onglet `VERTICAL_LIST` empile les widgets verticalement. Les widgets intégrés qui gèrent leur propre défilement, tels que les chronologies, les fichiers, les notes, les tâches et les workflows, remplissent une zone d'affichage ; les champs, les composants front, les graphiques et les autres widgets fit-content s'affichent à la hauteur de leur contenu ou à la hauteur configurée. Un onglet `GRID` dispose toujours ses widgets sous forme de cartes sur une grille de 12 colonnes. Un widget `CANVAS` n’a pas de position explicite ; si un onglet de canevas contient plusieurs widgets, ils s’affichent à la hauteur de leur contenu au lieu de remplir la fenêtre d’affichage.
 * Définissez `layoutMode` explicitement. Si vous l’omettez, vous obtenez `VERTICAL_LIST` sur une `STANDALONE_PAGE` et `GRID` partout ailleurs, ce qui est rarement ce que vous voulez sur une page d’enregistrement.
 * Chaque `widget` à l'intérieur d'un onglet peut afficher un [front component](/l/fr/developers/extend/apps/layout/front-components), une liste de relations ou d'autres types de widgets intégrés.
+* Un widget `FRONT_COMPONENT` peut définir `headerCommandMenuItemUniversalIdentifiers` sur un tableau ordonné d’identifiants universels d’éléments du menu de commandes provenant de la même app. Ces actions apparaissent sous forme de boutons d’icône dans l’en-tête de la carte du widget et conservent leur disponibilité au niveau de la commande ainsi que leurs vérifications des autorisations. Les identifiants doivent être uniques et doivent pouvoir être résolus lors de l’installation de l’app.
 * La `position` des onglets contrôle leur ordre. Utilisez des valeurs plus élevées (p. ex., 50) pour placer les onglets personnalisés après les onglets intégrés.
 
 ### Widgets des champs
@@ -136,8 +137,10 @@ export default definePageLayoutTab({
   Chaque entrée de mise en page expose également ses `tabs` et leurs `widgets`, afin que vous puissiez faire référence à n’importe quel niveau :
 
   ```ts
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.universalIdentifier
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets.fields.universalIdentifier
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home
+    .universalIdentifier;
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets
+    .fields.universalIdentifier;
   ```
 
   Un alias court `STANDARD_PAGE_LAYOUT` est également disponible :

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
@@ -11,41 +11,33 @@ import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-r
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
-import { TimelineActivityRuleBuilderService } from 'src/modules/timeline/services/timeline-activity-rule-builder.service';
-import { type TimelineActivityTypeResolver } from 'src/modules/timeline/utils/resolve-timeline-activity-type-id.util';
+import { TimelineActivityRoutingPlanService } from 'src/modules/timeline/services/timeline-activity-routing-plan.service';
+import {
+  type ResolvedTimelineActivityType,
+  type TimelineActivityTypeResolver,
+} from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
 import { TimelineActivityTargetQueryService } from 'src/modules/timeline/services/timeline-activity-target-query.service';
-import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { type ResolvedTimelineActivityTarget } from 'src/modules/timeline/types/resolved-timeline-activity-target.type';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
 import { type TimelineActivityRuleAction } from 'src/modules/timeline/types/timeline-activity-rule-action.type';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { resolveLinkedRecordCachedName } from 'src/modules/timeline/utils/resolve-linked-record-cached-name.util';
+import { resolveTimelineActivityHappensAt } from 'src/modules/timeline/utils/resolve-timeline-activity-happens-at.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { doesTimelineActivityLinkChange } from 'src/modules/timeline/utils/does-timeline-activity-link-change.util';
+import { resolveTimelineActivityRuleAction } from 'src/modules/timeline/utils/resolve-timeline-activity-rule-action.util';
 
-// An event on the junction object is a change to the link, not to the linked
-// record. `updated` covers a junction row being repointed at another target.
-const JUNCTION_EVENT_ACTIONS: Partial<
-  Record<DatabaseEventAction, TimelineActivityRuleAction>
-> = {
-  created: 'linked',
-  restored: 'linked',
-  updated: 'linked',
-  deleted: 'unlinked',
-};
-
-const SOURCE_EVENT_ACTIONS: Partial<
-  Record<DatabaseEventAction, TimelineActivityRuleAction>
-> = {
-  created: 'created',
-  updated: 'updated',
-  deleted: 'deleted',
-  restored: 'restored',
+type BuildPayloadsForRuleArgs = {
+  rule: TimelineActivityRule;
+  events: ObjectRecordBaseEvent[];
+  action: DatabaseEventAction;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  resolveTimelineActivityType: TimelineActivityTypeResolver;
 };
 
 // Only the diff is worth storing: the rest of an event payload is the record
@@ -58,29 +50,43 @@ const keepDiffOnly = (
   return isDefined(diff) && Object.keys(diff).length > 0 ? { diff } : {};
 };
 
-// Both event streams write the same row shape; only the linked record, its
-// cached name and the persisted properties differ.
+const resolveEventRecordForRuleAction = ({
+  event,
+  eventAction,
+  ruleAction,
+}: {
+  event: ObjectRecordBaseEvent;
+  eventAction: DatabaseEventAction;
+  ruleAction: TimelineActivityRuleAction;
+}): ObjectRecord | undefined =>
+  (eventAction === 'deleted' || ruleAction === 'unlinked'
+    ? (event.properties.before ?? event.properties.after)
+    : (event.properties.after ?? event.properties.before)) as
+    | ObjectRecord
+    | undefined;
+
 const buildLinkedPayload = ({
   rule,
-  name,
-  timelineActivityTypeId,
+  timelineActivityType,
   target,
   workspaceMemberId,
   linkedRecordId,
   linkedRecordCachedName,
+  happensAt,
   properties,
 }: {
   rule: TimelineActivityRule;
-  name: string;
-  timelineActivityTypeId: string;
+  timelineActivityType: ResolvedTimelineActivityType;
   target: ResolvedTimelineActivityTarget;
   workspaceMemberId: string | undefined;
   linkedRecordId: string;
   linkedRecordCachedName: string | undefined;
+  happensAt: Date;
   properties: ObjectRecordBaseEvent['properties'];
 }): TimelineActivityPayload => ({
-  name,
-  timelineActivityTypeId,
+  happensAt,
+  timelineActivityTypeId: timelineActivityType.id,
+  timelineActivityTypeSnapshot: timelineActivityType.snapshot,
   objectSingularName: target.targetObjectNameSingular,
   recordId: target.targetRecordId,
   workspaceMemberId,
@@ -92,13 +98,10 @@ const buildLinkedPayload = ({
 
 @Injectable()
 export class TimelineActivityService {
-  private readonly logger = new Logger(TimelineActivityService.name);
-
   constructor(
-    @InjectObjectMetadataRepository(TimelineActivityWorkspaceEntity)
     private readonly timelineActivityRepository: TimelineActivityRepository,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly timelineActivityRuleBuilderService: TimelineActivityRuleBuilderService,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly timelineActivityRoutingPlanService: TimelineActivityRoutingPlanService,
     private readonly timelineActivityTargetQueryService: TimelineActivityTargetQueryService,
   ) {}
 
@@ -118,8 +121,8 @@ export class TimelineActivityService {
       sourceRules,
       junctionRules,
       flatFieldMetadataMaps,
-      resolveTimelineActivityTypeId,
-    } = await this.timelineActivityRuleBuilderService.getRulesForEventBatch({
+      resolveTimelineActivityType,
+    } = await this.timelineActivityRoutingPlanService.getRulesForEventBatch({
       workspaceId,
       flatObjectMetadata: objectMetadata,
     });
@@ -135,40 +138,34 @@ export class TimelineActivityService {
     });
 
     const payloads = (
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          // Resolved after the rule check so batches without rules, system
-          // objects mostly, never pay the workspace member query.
-          const enrichedEvents = await this.enrichEventsWithWorkspaceMemberId({
-            events: eventsWithoutPositionDiff,
-            workspaceId,
-          });
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        // Resolved after the rule check so batches without rules, system
+        // objects mostly, never pay the workspace member query.
+        const enrichedEvents = await this.enrichEventsWithWorkspaceMemberId({
+          events: eventsWithoutPositionDiff,
+        });
 
-          return Promise.all([
-            ...sourceRules.map((rule) =>
-              this.buildPayloadsForSourceRule({
-                rule,
-                events: enrichedEvents,
-                action,
-                workspaceId,
-                flatFieldMetadataMaps,
-                resolveTimelineActivityTypeId,
-              }),
-            ),
-            ...junctionRules.map((rule) =>
-              this.buildPayloadsForJunctionRule({
-                rule,
-                events: enrichedEvents,
-                action,
-                workspaceId,
-                flatFieldMetadataMaps,
-                resolveTimelineActivityTypeId,
-              }),
-            ),
-          ]);
-        },
-        buildSystemAuthContext(workspaceId),
-      )
+        return Promise.all([
+          ...sourceRules.map((rule) =>
+            this.buildPayloadsForSourceRule({
+              rule,
+              events: enrichedEvents,
+              action,
+              flatFieldMetadataMaps,
+              resolveTimelineActivityType,
+            }),
+          ),
+          ...junctionRules.map((rule) =>
+            this.buildPayloadsForJunctionRule({
+              rule,
+              events: enrichedEvents,
+              action,
+              flatFieldMetadataMaps,
+              resolveTimelineActivityType,
+            }),
+          ),
+        ]);
+      }, buildSystemAuthContext(workspaceId))
     ).flat();
 
     if (payloads.length === 0) {
@@ -217,49 +214,67 @@ export class TimelineActivityService {
     );
   }
 
+  private resolveTimelineActivityTypeForRule({
+    rule,
+    ruleAction,
+    resolveTimelineActivityType,
+  }: {
+    rule: TimelineActivityRule;
+    ruleAction: TimelineActivityRuleAction;
+    resolveTimelineActivityType: TimelineActivityTypeResolver;
+  }): ResolvedTimelineActivityType | undefined {
+    return (
+      rule.timelineActivityType ??
+      resolveTimelineActivityType({
+        action: ruleAction,
+        objectUniversalIdentifier:
+          rule.sourceFlatObjectMetadata.universalIdentifier,
+      })
+    );
+  }
+
   private async buildPayloadsForSourceRule({
     rule,
     events,
     action,
-    workspaceId,
     flatFieldMetadataMaps,
-    resolveTimelineActivityTypeId,
-  }: {
-    rule: TimelineActivityRule;
-    events: ObjectRecordBaseEvent[];
-    action: DatabaseEventAction;
-    workspaceId: string;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    resolveTimelineActivityTypeId: TimelineActivityTypeResolver;
-  }): Promise<TimelineActivityPayload[]> {
-    const ruleAction = SOURCE_EVENT_ACTIONS[action];
+    resolveTimelineActivityType,
+  }: BuildPayloadsForRuleArgs): Promise<TimelineActivityPayload[]> {
+    const ruleAction = resolveTimelineActivityRuleAction({
+      actions: rule.actions,
+      targetShape: rule.targetShape,
+      eventAction: action,
+      eventSource: 'SOURCE',
+    });
 
     if (!isDefined(ruleAction)) {
       return [];
     }
 
-    // A self rule writes the record's own row, which carries no linked record,
-    // so it must not take the object-bound type: that one renders as a linked
-    // entry and has no linked object to draw.
-    const timelineActivityTypeId = resolveTimelineActivityTypeId({
-      action: ruleAction,
-      objectUniversalIdentifier:
-        rule.targetShape.kind === 'SELF'
-          ? undefined
-          : rule.sourceFlatObjectMetadata.universalIdentifier,
+    const timelineActivityType = this.resolveTimelineActivityTypeForRule({
+      rule,
+      ruleAction,
+      resolveTimelineActivityType,
     });
 
-    if (!isDefined(timelineActivityTypeId)) {
-      this.logger.warn(
-        `No timeline activity type resolves ${ruleAction} on ${rule.sourceFlatObjectMetadata.nameSingular} in workspace ${workspaceId}, dropping ${events.length} events`,
-      );
-
+    if (!isDefined(timelineActivityType)) {
       return [];
     }
 
-    const matchingEvents = events.filter((event) =>
-      this.ruleMatchesEvent({ rule, ruleAction, event }),
-    );
+    const matchingEvents = events
+      .filter(
+        (event) =>
+          rule.targetShape.kind !== 'DIRECT_RELATION' ||
+          action !== 'updated' ||
+          ruleAction === 'updated' ||
+          doesTimelineActivityLinkChange({
+            event,
+            joinColumnNames: rule.targetShape.targetJoinColumns.map(
+              ({ joinColumnName }) => joinColumnName,
+            ),
+          }),
+      )
+      .filter((event) => this.ruleMatchesEvent({ rule, ruleAction, event }));
 
     if (matchingEvents.length === 0) {
       return [];
@@ -279,8 +294,9 @@ export class TimelineActivityService {
 
         return [
           {
-            name: `${nameSingular}.${action}`,
-            timelineActivityTypeId,
+            timelineActivityTypeId: timelineActivityType.id,
+            timelineActivityTypeSnapshot: timelineActivityType.snapshot,
+            happensAt: resolveTimelineActivityHappensAt(event),
             objectSingularName: nameSingular,
             recordId: event.recordId,
             workspaceMemberId: event.workspaceMemberId,
@@ -290,12 +306,47 @@ export class TimelineActivityService {
       });
     }
 
+    if (rule.targetShape.kind === 'DIRECT_RELATION') {
+      return matchingEvents.flatMap((event) => {
+        const record = resolveEventRecordForRuleAction({
+          event,
+          eventAction: action,
+          ruleAction,
+        });
+        const target =
+          this.timelineActivityTargetQueryService.resolveTargetFromRecord({
+            rule,
+            record,
+          });
+
+        if (!isDefined(target)) {
+          return [];
+        }
+
+        return [
+          buildLinkedPayload({
+            rule,
+            timelineActivityType,
+            target,
+            workspaceMemberId: event.workspaceMemberId,
+            linkedRecordId: event.recordId,
+            linkedRecordCachedName: resolveLinkedRecordCachedName({
+              rule,
+              record,
+              flatFieldMetadataMaps,
+            }),
+            happensAt: resolveTimelineActivityHappensAt(event),
+            properties: event.properties,
+          }),
+        ];
+      });
+    }
+
     const targetsBySourceRecordId =
       await this.timelineActivityTargetQueryService.resolveTargetsBySourceRecordId(
         {
           rule,
           sourceRecordIds: matchingEvents.map((event) => event.recordId),
-          workspaceId,
         },
       );
 
@@ -303,8 +354,7 @@ export class TimelineActivityService {
       (targetsBySourceRecordId.get(event.recordId) ?? []).map((target) =>
         buildLinkedPayload({
           rule,
-          name: `linked-${rule.sourceFlatObjectMetadata.nameSingular}.${action}`,
-          timelineActivityTypeId,
+          timelineActivityType,
           target,
           workspaceMemberId: event.workspaceMemberId,
           linkedRecordId: event.recordId,
@@ -313,6 +363,7 @@ export class TimelineActivityService {
             record: event.properties.after as ObjectRecord | undefined,
             flatFieldMetadataMaps,
           }),
+          happensAt: resolveTimelineActivityHappensAt(event),
           properties: event.properties,
         }),
       ),
@@ -323,50 +374,60 @@ export class TimelineActivityService {
     rule,
     events,
     action,
-    workspaceId,
     flatFieldMetadataMaps,
-    resolveTimelineActivityTypeId,
-  }: {
-    rule: TimelineActivityRule;
-    events: ObjectRecordBaseEvent[];
-    action: DatabaseEventAction;
-    workspaceId: string;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    resolveTimelineActivityTypeId: TimelineActivityTypeResolver;
-  }): Promise<TimelineActivityPayload[]> {
-    const ruleAction = JUNCTION_EVENT_ACTIONS[action];
+    resolveTimelineActivityType,
+  }: BuildPayloadsForRuleArgs): Promise<TimelineActivityPayload[]> {
+    const ruleAction = resolveTimelineActivityRuleAction({
+      actions: rule.actions,
+      targetShape: rule.targetShape,
+      eventAction: action,
+      eventSource: 'JUNCTION',
+    });
 
     if (!isDefined(ruleAction) || rule.targetShape.kind !== 'JUNCTION') {
       return [];
     }
 
-    const timelineActivityTypeId = resolveTimelineActivityTypeId({
-      action: ruleAction,
-      objectUniversalIdentifier:
-        rule.sourceFlatObjectMetadata.universalIdentifier,
+    const timelineActivityType = this.resolveTimelineActivityTypeForRule({
+      rule,
+      ruleAction,
+      resolveTimelineActivityType,
     });
 
-    if (!isDefined(timelineActivityTypeId)) {
-      this.logger.warn(
-        `No timeline activity type resolves ${ruleAction} on ${rule.sourceFlatObjectMetadata.nameSingular} in workspace ${workspaceId}, dropping ${events.length} events`,
-      );
-
+    if (!isDefined(timelineActivityType)) {
       return [];
     }
 
-    const { junctionSourceJoinColumnName } = rule.targetShape;
+    const targetShape = rule.targetShape;
+    const { junctionSourceJoinColumnName } = targetShape;
 
     const eventsWithJunctionRecord = events
+      .filter(
+        (event) =>
+          action !== 'updated' ||
+          doesTimelineActivityLinkChange({
+            event,
+            joinColumnNames: [
+              targetShape.junctionSourceJoinColumnName,
+              ...targetShape.targetJoinColumns.map(
+                ({ joinColumnName }) => joinColumnName,
+              ),
+            ],
+          }),
+      )
       .filter((event) => this.ruleMatchesEvent({ rule, ruleAction, event }))
       .map((event) => {
-        const junctionRecord = event.properties.after as
-          | ObjectRecord
-          | undefined;
+        const junctionRecord = resolveEventRecordForRuleAction({
+          event,
+          eventAction: action,
+          ruleAction,
+        });
 
         const target =
-          this.timelineActivityTargetQueryService.resolveTargetFromJunctionRecord(
-            { rule, junctionRecord },
-          );
+          this.timelineActivityTargetQueryService.resolveTargetFromRecord({
+            rule,
+            record: junctionRecord,
+          });
 
         const sourceRecordId = junctionRecord?.[junctionSourceJoinColumnName];
 
@@ -389,38 +450,33 @@ export class TimelineActivityService {
           recordIds: eventsWithJunctionRecord.map(
             ({ sourceRecordId }) => sourceRecordId,
           ),
-          workspaceId,
         },
       );
 
-    return eventsWithJunctionRecord
-      .filter(({ sourceRecordId }) =>
-        sourceRecordsByRecordId.has(sourceRecordId),
-      )
-      .map(({ event, target, sourceRecordId }) =>
-        buildLinkedPayload({
+    // The junction event is the semantic fact; this enrichment read can race
+    // the transaction that created the linked record.
+    return eventsWithJunctionRecord.map(({ event, target, sourceRecordId }) =>
+      buildLinkedPayload({
+        rule,
+        timelineActivityType,
+        target,
+        workspaceMemberId: event.workspaceMemberId,
+        linkedRecordId: sourceRecordId,
+        linkedRecordCachedName: resolveLinkedRecordCachedName({
           rule,
-          name: `linked-${rule.sourceFlatObjectMetadata.nameSingular}.${action}`,
-          timelineActivityTypeId,
-          target,
-          workspaceMemberId: event.workspaceMemberId,
-          linkedRecordId: sourceRecordId,
-          linkedRecordCachedName: resolveLinkedRecordCachedName({
-            rule,
-            record: sourceRecordsByRecordId.get(sourceRecordId),
-            flatFieldMetadataMaps,
-          }),
-          properties: {},
+          record: sourceRecordsByRecordId.get(sourceRecordId),
+          flatFieldMetadataMaps,
         }),
-      );
+        happensAt: resolveTimelineActivityHappensAt(event),
+        properties: {},
+      }),
+    );
   }
 
   private async enrichEventsWithWorkspaceMemberId({
     events,
-    workspaceId,
   }: {
     events: ObjectRecordBaseEvent[];
-    workspaceId: string;
   }): Promise<ObjectRecordBaseEvent[]> {
     const userIds = events.map((event) => event.userId).filter(isDefined);
 
@@ -428,14 +484,12 @@ export class TimelineActivityService {
       return events;
     }
 
-    const workspaceMemberRepository =
-      await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        WorkspaceMemberWorkspaceEntity,
-        {
-          shouldBypassPermissionChecks: true,
-        },
-      );
+    const workspaceMemberRepository = this.workspaceOrmManager.getRepository(
+      WorkspaceMemberWorkspaceEntity,
+      {
+        shouldBypassPermissionChecks: true,
+      },
+    );
 
     const workspaceMembers = await workspaceMemberRepository.findBy({
       userId: In(userIds),

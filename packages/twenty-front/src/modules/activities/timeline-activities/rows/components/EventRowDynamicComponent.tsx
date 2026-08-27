@@ -1,61 +1,98 @@
-import { TIMELINE_ACTIVITY_ROW_COMPONENT_BY_RENDERER } from '@/activities/timeline-activities/constants/TimelineActivityRowComponentByRenderer';
 import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type TimelineActivityRenderer } from 'twenty-shared/timeline';
+import { EventCard } from '@/activities/timeline-activities/rows/components/EventCard';
+import { EventCardToggleButton } from '@/activities/timeline-activities/rows/components/EventCardToggleButton';
+import { EventRowGenericLinked } from '@/activities/timeline-activities/rows/generic/components/EventRowGenericLinked';
+import { EventRowMainObject } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObject';
+import { styled } from '@linaria/react';
+import { lazy, Suspense, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const getLegacyTimelineActivityRenderer = (
-  linkedObjectNameSingular: string | undefined,
-): TimelineActivityRenderer => {
-  switch (linkedObjectNameSingular) {
-    case CoreObjectNameSingular.Note:
-    case CoreObjectNameSingular.Task:
-      return 'activity';
-    case CoreObjectNameSingular.Message:
-      return 'message';
-    case CoreObjectNameSingular.CalendarEvent:
-      return 'calendarEvent';
-    default:
-      return isDefined(linkedObjectNameSingular)
-        ? 'genericLinked'
-        : 'mainObject';
-  }
-};
+const FrontComponentRenderer = lazy(() =>
+  import('@/front-components/components/FrontComponentRenderer').then(
+    (module) => ({ default: module.FrontComponentRenderer }),
+  ),
+);
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
+  width: 100%;
+`;
+
+const StyledNativeRowContainer = styled.div`
+  align-items: flex-start;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  width: 100%;
+`;
+
+const StyledNativeRow = styled.div`
+  min-width: 0;
+  width: 100%;
+`;
 
 export const EventRowDynamicComponent = ({
   labelIdentifierValue,
   event,
   eventAction,
-  eventRenderer,
+  eventTypeLabel,
+  renderer,
   mainObjectMetadataItem,
   linkedObjectMetadataItem,
   authorFullName,
-  createdAt,
+  happensAt,
 }: EventRowDynamicComponentProps) => {
-  const renderer =
-    eventRenderer ??
-    // Old pods can write name-only rows after the 2.33 backfill has run.
-    (isDefined(event.timelineActivityTypeId)
-      ? isDefined(linkedObjectMetadataItem)
-        ? 'genericLinked'
-        : 'mainObject'
-      : getLegacyTimelineActivityRenderer(
-          linkedObjectMetadataItem?.nameSingular,
-        ));
+  const [isRendererOpen, setIsRendererOpen] = useState(false);
+  const EventRowComponent = isDefined(event.linkedRecordId)
+    ? EventRowGenericLinked
+    : EventRowMainObject;
 
-  const EventRowComponent =
-    TIMELINE_ACTIVITY_ROW_COMPONENT_BY_RENDERER[renderer];
-
-  return (
+  const nativeRenderer = (
     <EventRowComponent
       labelIdentifierValue={labelIdentifierValue}
       event={event}
       eventAction={eventAction}
-      eventRenderer={eventRenderer}
+      eventTypeLabel={eventTypeLabel}
+      hasRenderer={isDefined(renderer)}
       mainObjectMetadataItem={mainObjectMetadataItem}
       linkedObjectMetadataItem={linkedObjectMetadataItem}
       authorFullName={authorFullName}
-      createdAt={createdAt}
+      happensAt={happensAt}
     />
+  );
+
+  if (!isDefined(renderer)) {
+    return nativeRenderer;
+  }
+
+  return (
+    <StyledContainer>
+      <StyledNativeRowContainer>
+        <StyledNativeRow>{nativeRenderer}</StyledNativeRow>
+        <EventCardToggleButton
+          isOpen={isRendererOpen}
+          setIsOpen={setIsRendererOpen}
+        />
+      </StyledNativeRowContainer>
+      {isRendererOpen && (
+        <EventCard isOpen>
+          <Suspense fallback={null}>
+            {renderer.type === 'standard' ? (
+              <renderer.Component
+                event={event}
+                authorFullName={authorFullName}
+              />
+            ) : (
+              <FrontComponentRenderer
+                frontComponentId={renderer.frontComponentId}
+                timelineActivityId={event.id}
+              />
+            )}
+          </Suspense>
+        </EventCard>
+      )}
+    </StyledContainer>
   );
 };

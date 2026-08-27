@@ -714,6 +714,45 @@ const handler = async (params: { parentMessageId?: string }) => {
 **Yükleme kancaları** — ön yükleme, yükleme sonrası ve kaldırma işleyicileri — bu çalışma zamanını paylaşır ancak kendi tanımlama işlevleriyle bildirilir ve tetikleyici ayarlarını almaz. `definePreInstallLogicFunction`, `definePostInstallLogicFunction` ve `defineUninstallLogicFunction` için [Yükleme Kancaları](/l/tr/developers/extend/apps/config/install-hooks) bölümüne bakın.
 </Note>
 
+## Bir zaman çizelgesi etkinliği oluşturun.
+
+Bir mantık işlevinden açık bir alan olayı yayımlamak için `createTimelineActivity()` kullanın. Önce olayı bir [zaman çizelgesi etkinliği türü](/l/tr/developers/extend/apps/data/timeline-activity-types) olarak tanımlayın, ardından türü ve nesneleri kararlı evrensel tanımlayıcılarıyla belirtin:
+
+```ts
+import { createTimelineActivity } from 'twenty-sdk/logic-function';
+
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  happensAt: new Date().toISOString(),
+  properties: {
+    deliveryProvider: 'postal-service',
+  },
+});
+```
+
+Twenty, evrensel tanımlayıcıları kuruluma özgü meta veri kimliklerine çözümler, zaman çizelgesi etkinliği türünün çağıran uygulamaya ait olduğunu doğrular ve sunum meta verilerini yeni etkinlikte anlık görüntü olarak kaydeder.
+
+Gerekli girdiler `timelineActivityTypeUniversalIdentifier`, `targetObjectUniversalIdentifier` ve `targetRecordId` öğeleridir. Ayrıca `happensAt`, `properties` ve `workspaceMemberId` sağlayabilirsiniz. `happensAt`, olayın zaman çizelgesindeki konumunu ve görüntülenen zamanını denetler; varsayılan olarak oluşturulma zamanıdır.
+
+Başka bir kaydı olayla ilişkilendirmek için `linkedRecordId` ve `linkedObjectMetadataUniversalIdentifier` öğelerini birlikte sağlayın. Geçmişe yönelik bir görüntüleme yedeği olarak ayrıca `linkedRecordCachedName` sağlayabilirsiniz:
+
+```ts
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  linkedObjectMetadataUniversalIdentifier: RECIPIENT_UNIVERSAL_IDENTIFIER,
+  linkedRecordId: recipientId,
+  linkedRecordCachedName: recipientName,
+});
+```
+
+Mantık işlevinin rolü, standart `timelineActivity` nesnesi için yazma iznine ihtiyaç duyar. Açık olay türlerini bir `action` öğesine bağlı tutmayın; bir eyleme bağlı tür zaten otomatik denetim olayları alır ve aksi takdirde yinelenen satırlar üretir.
+
 ## Tipli API istemcileri (twenty-client-sdk)
 
 `twenty-client-sdk` paketi, mantık fonksiyonlarınızdan ve ön uç bileşenlerinizden Twenty API ile etkileşim kurmak için tip tanımlı iki GraphQL istemcisi sağlar.

@@ -97,6 +97,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { getRequestBaseUrl } from 'src/utils/get-request-base-url.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 import { ApiKeyToken } from './dto/api-key-token.dto';
@@ -940,12 +941,14 @@ export class AuthResolver {
     @Args() authorizeAppInput: AuthorizeAppInput,
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @Context() context: { req: Request },
   ): Promise<AuthorizeAppDTO> {
-    return await this.authService.generateAuthorizationCode(
+    return await this.authService.generateAuthorizationCode({
       authorizeAppInput,
       user,
       workspace,
-    );
+      requestBaseUrl: getRequestBaseUrl(context.req),
+    });
   }
 
   @Mutation(() => AuthTokens)

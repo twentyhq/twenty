@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { type Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { ClientBriefModalRoot, GetMatchedButton } from '@/client-brief';
 import { getCommunityStats } from '@/platform/community';
 import { getRouteI18n } from '@/platform/i18n/get-route-i18n';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
@@ -59,16 +60,26 @@ export default async function PartnerProfilePage({
           [
             { name: 'Home', path: '/' },
             { name: 'Partners', path: '/partners' },
-            { name: 'Marketplace', path: '/partners/list' },
             { name: partner.name, path: `/partners/profile/${partner.slug}` },
           ],
           locale,
         )}
       />
       <Menu communityStats={communityStats} scheme="muted" />
-      <main aria-labelledby="partner-name">
-        <PartnerProfile partner={partner} />
-      </main>
+      <ClientBriefModalRoot>
+        <main aria-labelledby="partner-name">
+          <PartnerProfile
+            cta={
+              <GetMatchedButton
+                label={msg`Submit a brief`}
+                partnerSlug={partner.slug}
+                variant="outlined"
+              />
+            }
+            partner={partner}
+          />
+        </main>
+      </ClientBriefModalRoot>
     </>
   );
 }

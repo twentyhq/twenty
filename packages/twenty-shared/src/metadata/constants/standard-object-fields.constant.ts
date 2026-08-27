@@ -24,9 +24,11 @@ export const STANDARD_OBJECT_FIELDS = {
     ...buildStandardObjectSystemFields(
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
     ),
-    name: { universalIdentifier: '20202020-7207-46e8-9dab-849505ae8497' },
     timelineActivityTypeId: {
       universalIdentifier: '20202020-e5f8-4839-9dcf-781e260624ee',
+    },
+    timelineActivityTypeSnapshot: {
+      universalIdentifier: '20202020-e006-493a-9b07-f2a768a204ca',
     },
     happensAt: {
       universalIdentifier: '20202020-9526-4993-b339-c4318c4d39f0',
@@ -334,8 +336,55 @@ export const STANDARD_OBJECT_FIELDS = {
     calendarEventParticipants: {
       universalIdentifier: '20202020-e07e-4ccb-88f5-6f3d00458eec',
     },
+    calendarEventTargets: {
+      universalIdentifier: '2b4a0785-3462-485f-b1a8-79ebb2078eab',
+    },
     callRecordings: {
       universalIdentifier: '48d6d151-18e2-4111-b405-d85fb9d860d8',
+    },
+  },
+  calendarEventTarget: {
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventTarget,
+    ),
+    calendarEvent: {
+      universalIdentifier: 'a47824b0-0e64-4c1f-bbad-ce45209d119b',
+    },
+    isAutomaticallyAssigned: {
+      universalIdentifier: 'b6374fed-9cf2-49ef-b45a-1d6814c16264',
+    },
+    isManuallyAssigned: {
+      universalIdentifier: '6afbd5b8-25b5-4c04-82e5-281e6f90f453',
+    },
+    targetPerson: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventTarget,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
+      }),
+    },
+    targetCompany: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventTarget,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
+      }),
+    },
+    targetOpportunity: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventTarget,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity,
+      }),
     },
   },
   callRecording: {
@@ -419,6 +468,26 @@ export const STANDARD_OBJECT_FIELDS = {
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
         relationTargetObjectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget,
+      }),
+    },
+    calendarEventTargets: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventTarget,
+      }),
+    },
+    messageThreadTargets: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageThreadTarget,
       }),
     },
     opportunities: {
@@ -626,6 +695,53 @@ export const STANDARD_OBJECT_FIELDS = {
     subject: {
       universalIdentifier: 'a8ddbf8c-1137-45d1-b89e-5ffbd83f67c8',
     },
+    messageThreadTargets: {
+      universalIdentifier: '8d7c8b17-b835-4082-96bd-de704c491d49',
+    },
+  },
+  messageThreadTarget: {
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageThreadTarget,
+    ),
+    messageThread: {
+      universalIdentifier: '23ca09e6-149d-452f-bed7-a4aad24d1314',
+    },
+    isAutomaticallyAssigned: {
+      universalIdentifier: '04403730-e960-415a-8790-f0c0f82f3477',
+    },
+    isManuallyAssigned: {
+      universalIdentifier: '16efa36f-d195-42e9-959f-6928164f2395',
+    },
+    targetPerson: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageThreadTarget,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
+      }),
+    },
+    targetCompany: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageThreadTarget,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
+      }),
+    },
+    targetOpportunity: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageThreadTarget,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity,
+      }),
+    },
   },
   message: {
     ...buildStandardObjectSystemFields(
@@ -757,6 +873,26 @@ export const STANDARD_OBJECT_FIELDS = {
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget,
       }),
     },
+    calendarEventTargets: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventTarget,
+      }),
+    },
+    messageThreadTargets: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageThreadTarget,
+      }),
+    },
     attachments: {
       universalIdentifier: getSystemRelationFieldUniversalIdentifier({
         applicationUniversalIdentifier:
@@ -815,6 +951,24 @@ export const STANDARD_OBJECT_FIELDS = {
         objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
         relationTargetObjectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget,
+      }),
+    },
+    calendarEventTargets: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventTarget,
+      }),
+    },
+    messageThreadTargets: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageThreadTarget,
       }),
     },
     attachments: {
@@ -986,6 +1140,12 @@ export const STANDARD_OBJECT_FIELDS = {
     state: { universalIdentifier: '20202020-611f-45f3-9cde-d64927e8ec57' },
     stepLogs: {
       universalIdentifier: '20202020-7c4e-4e1a-8fc1-1e3a55d6c2a1',
+    },
+    coreWorkflowId: {
+      universalIdentifier: 'e07d8ac0-6b6e-4685-81fa-50d82ae7f880',
+    },
+    coreWorkflowVersionId: {
+      universalIdentifier: '58e3f476-425d-4c66-b391-779d0412e107',
     },
     timelineActivities: {
       universalIdentifier: getSystemRelationFieldUniversalIdentifier({

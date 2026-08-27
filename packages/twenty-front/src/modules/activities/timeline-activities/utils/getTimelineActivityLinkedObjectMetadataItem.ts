@@ -1,28 +1,32 @@
 import { type FilterableTimelineActivity } from '@/activities/timeline-activities/types/FilterableTimelineActivity';
-import { type TimelineActivityType } from '@/activities/timeline-activities/types/TimelineActivityType';
+import { type TimelineActivityTypeMaps } from '@/activities/timeline-activities/types/TimelineActivityTypeMaps';
 import { getTimelineActivityType } from '@/activities/timeline-activities/utils/getTimelineActivityType';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getTimelineActivityLinkedObjectMetadataItem = ({
   timelineActivity,
-  timelineActivityTypeById,
+  timelineActivityTypeMaps,
   objectMetadataItems,
 }: {
   timelineActivity: FilterableTimelineActivity;
-  timelineActivityTypeById: Map<string, TimelineActivityType>;
+  timelineActivityTypeMaps: TimelineActivityTypeMaps;
   objectMetadataItems: EnrichedObjectMetadataItem[];
 }): EnrichedObjectMetadataItem | undefined => {
   if (isDefined(timelineActivity.linkedObjectMetadataId)) {
-    return objectMetadataItems.find(
+    const linkedObjectMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
         objectMetadataItem.id === timelineActivity.linkedObjectMetadataId,
     );
+
+    if (isDefined(linkedObjectMetadataItem)) {
+      return linkedObjectMetadataItem;
+    }
   }
 
   const timelineActivityType = getTimelineActivityType(
     timelineActivity,
-    timelineActivityTypeById,
+    timelineActivityTypeMaps,
   );
 
   if (isDefined(timelineActivityType?.objectUniversalIdentifier)) {
@@ -33,16 +37,5 @@ export const getTimelineActivityLinkedObjectMetadataItem = ({
     );
   }
 
-  const legacyObjectName = timelineActivity.name?.startsWith('linked-')
-    ? timelineActivity.name.split('.')[0].replace('linked-', '')
-    : timelineActivity.name?.endsWith('.linked')
-      ? timelineActivity.name.split('.')[0]
-      : undefined;
-
-  return isDefined(legacyObjectName)
-    ? objectMetadataItems.find(
-        (objectMetadataItem) =>
-          objectMetadataItem.nameSingular === legacyObjectName,
-      )
-    : undefined;
+  return undefined;
 };

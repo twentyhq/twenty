@@ -150,8 +150,19 @@ import { AddUninstallLogicFunctionIdToApplicationFastInstanceCommand } from 'src
 import { BackfillUninstallLogicFunctionIdOnApplicationSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-32/2-32-instance-command-slow-1786959731001-backfill-uninstall-logic-function-id-on-application';
 import { AddUninstallHookCompletedForRequestedAtToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-instance-command-fast-1787151824000-add-uninstall-hook-completed-for-requested-at-to-application';
 import { AddTimelineActivityTypeTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-instance-command-fast-1787352088649-add-timeline-activity-type-table';
-import { AddBillingToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787398787000-add-billing-to-application';
-import { AddPricingDescriptionToApplicationRegistrationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787398788000-add-pricing-description-to-application-registration';
+import { RefactorTimelineActivityTypeRenderingFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787471608312-refactor-timeline-activity-type-rendering';
+import { AddTimelineActivityRoutingFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787471608313-add-timeline-activity-routing';
+import { AddTimelineActivityTypeReplacementFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787471608314-add-timeline-activity-type-replacement';
+import { TimelineActivityTypeOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787471608315-timeline-activity-type-overridable-entity';
+import { EnforceTimelineActivityTypeEmitUniquenessFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787471608316-enforce-timeline-activity-type-emit-uniqueness';
+import { AddCommandMenuItemTargetObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-35/2-35-instance-command-fast-1787573269955-add-command-menu-item-target-object-metadata';
+import { DropTimelineActivityTypeRendererFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-35/2-35-instance-command-fast-1787648000001-drop-timeline-activity-type-renderer';
+import { AddLabelToApplicationVariableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-36/2-36-instance-command-fast-1787761629092-add-label-to-application-variable';
+import { AddUsageLimitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-36/2-36-instance-command-fast-1787821567133-add-usage-limit';
+import { MakeUserEmailCaseInsensitiveFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-37/2-37-instance-command-fast-1787836741000-make-user-email-case-insensitive';
+import { BackfillMissingPageLayoutWidgetPositionsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-37/2-37-instance-command-slow-1787838153752-backfill-missing-page-layout-widget-positions';
+import { AddBillingToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-37/2-37-instance-command-fast-1787855453000-add-billing-to-application';
+import { AddPricingDescriptionToApplicationRegistrationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-37/2-37-instance-command-fast-1787855454000-add-pricing-description-to-application-registration';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -304,6 +315,17 @@ export const INSTANCE_COMMANDS = [
   BackfillUninstallLogicFunctionIdOnApplicationSlowInstanceCommand,
   AddUninstallHookCompletedForRequestedAtToApplicationFastInstanceCommand,
   AddTimelineActivityTypeTableFastInstanceCommand,
+  RefactorTimelineActivityTypeRenderingFastInstanceCommand,
+  AddTimelineActivityRoutingFastInstanceCommand,
+  AddTimelineActivityTypeReplacementFastInstanceCommand,
+  TimelineActivityTypeOverridableEntityFastInstanceCommand,
+  EnforceTimelineActivityTypeEmitUniquenessFastInstanceCommand,
+  AddCommandMenuItemTargetObjectMetadataFastInstanceCommand,
+  DropTimelineActivityTypeRendererFastInstanceCommand,
+  AddLabelToApplicationVariableFastInstanceCommand,
+  AddUsageLimitFastInstanceCommand,
+  MakeUserEmailCaseInsensitiveFastInstanceCommand,
+  BackfillMissingPageLayoutWidgetPositionsSlowInstanceCommand,
   AddBillingToApplicationFastInstanceCommand,
   AddPricingDescriptionToApplicationRegistrationFastInstanceCommand,
 ];

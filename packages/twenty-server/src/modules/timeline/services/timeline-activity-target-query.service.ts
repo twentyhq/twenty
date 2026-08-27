@@ -4,21 +4,20 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type ResolvedTimelineActivityTarget } from 'src/modules/timeline/types/resolved-timeline-activity-target.type';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
+import { type TimelineActivityRuleTargetJoinColumn } from 'src/modules/timeline/types/timeline-activity-rule-target-join-column.type';
 
-const readTargetFromJunctionRow = (
-  junctionRow: Record<string, unknown>,
-  rule: TimelineActivityRule,
+const readTargetFromRecord = (
+  record: Record<string, unknown>,
+  targetJoinColumns: TimelineActivityRuleTargetJoinColumn[],
 ): ResolvedTimelineActivityTarget | undefined => {
-  if (rule.targetShape.kind !== 'JUNCTION') {
-    return undefined;
-  }
-
-  for (const { joinColumnName, targetObjectNameSingular } of rule.targetShape
-    .junctionTargetJoinColumns) {
-    const targetRecordId = junctionRow[joinColumnName];
+  for (const {
+    joinColumnName,
+    targetObjectNameSingular,
+  } of targetJoinColumns) {
+    const targetRecordId = record[joinColumnName];
 
     if (isNonEmptyString(targetRecordId)) {
       return { targetObjectNameSingular, targetRecordId };
@@ -30,20 +29,14 @@ const readTargetFromJunctionRow = (
 
 @Injectable()
 export class TimelineActivityTargetQueryService {
-  constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-  ) {}
+  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
-  // Source events: walk the junction in one batched query and return, per source
-  // record, every record whose timeline receives an entry.
   async resolveTargetsBySourceRecordId({
     rule,
     sourceRecordIds,
-    workspaceId,
   }: {
     rule: TimelineActivityRule;
     sourceRecordIds: string[];
-    workspaceId: string;
   }): Promise<Map<string, ResolvedTimelineActivityTarget[]>> {
     const targetsBySourceRecordId = new Map<
       string,
@@ -57,12 +50,10 @@ export class TimelineActivityTargetQueryService {
     const { junctionObjectNameSingular, junctionSourceJoinColumnName } =
       rule.targetShape;
 
-    const junctionRepository =
-      await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        junctionObjectNameSingular,
-        { shouldBypassPermissionChecks: true },
-      );
+    const junctionRepository = this.workspaceOrmManager.getRepository(
+      junctionObjectNameSingular,
+      { shouldBypassPermissionChecks: true },
+    );
 
     const junctionRows = await junctionRepository.find({
       where: { [junctionSourceJoinColumnName]: In(sourceRecordIds) },
@@ -70,7 +61,10 @@ export class TimelineActivityTargetQueryService {
 
     for (const junctionRow of junctionRows) {
       const sourceRecordId = junctionRow[junctionSourceJoinColumnName];
-      const target = readTargetFromJunctionRow(junctionRow, rule);
+      const target = readTargetFromRecord(
+        junctionRow,
+        rule.targetShape.targetJoinColumns,
+      );
 
       if (!isNonEmptyString(sourceRecordId) || !isDefined(target)) {
         continue;
@@ -88,29 +82,26 @@ export class TimelineActivityTargetQueryService {
     return targetsBySourceRecordId;
   }
 
-  // Link events: the junction row is the event payload, no query needed.
-  resolveTargetFromJunctionRecord({
+  resolveTargetFromRecord({
     rule,
-    junctionRecord,
+    record,
   }: {
     rule: TimelineActivityRule;
-    junctionRecord: Record<string, unknown> | undefined;
+    record: Record<string, unknown> | undefined;
   }): ResolvedTimelineActivityTarget | undefined {
-    if (!isDefined(junctionRecord)) {
+    if (!isDefined(record) || rule.targetShape.kind === 'SELF') {
       return undefined;
     }
 
-    return readTargetFromJunctionRow(junctionRecord, rule);
+    return readTargetFromRecord(record, rule.targetShape.targetJoinColumns);
   }
 
   async findSourceRecordsByRecordId({
     rule,
     recordIds,
-    workspaceId,
   }: {
     rule: TimelineActivityRule;
     recordIds: string[];
-    workspaceId: string;
   }): Promise<Map<string, Record<string, unknown>>> {
     const sourceRecordsByRecordId = new Map<string, Record<string, unknown>>();
 
@@ -118,8 +109,7 @@ export class TimelineActivityTargetQueryService {
       return sourceRecordsByRecordId;
     }
 
-    const repository = await this.globalWorkspaceOrmManager.getRepository(
-      workspaceId,
+    const repository = this.workspaceOrmManager.getRepository(
       rule.sourceFlatObjectMetadata.nameSingular,
       { shouldBypassPermissionChecks: true },
     );

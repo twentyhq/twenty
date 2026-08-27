@@ -1030,7 +1030,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'objectMetadataUniversalIdentifier',
     },
     gridPosition: {
-      toCompare: true,
+      toCompare: false,
       toStringify: true,
       universalProperty: undefined,
     },
@@ -1242,6 +1242,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'availabilityObjectMetadataUniversalIdentifier',
       isOverridable: true,
+    },
+    navigationTargetObjectMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'navigationTargetObjectMetadataUniversalIdentifier',
     },
     createdAt: {
       toCompare: false,
@@ -1786,6 +1791,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    label: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     isSecret: {
       toCompare: true,
       toStringify: false,
@@ -1894,14 +1904,20 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     action: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
-    icon: { toCompare: true, toStringify: false, universalProperty: undefined },
-    renderer: {
+    icon: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
+    frontComponentUniversalIdentifier: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
@@ -1909,6 +1925,32 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     objectUniversalIdentifier: {
       toCompare: true,
       toStringify: false,
+      universalProperty: undefined,
+    },
+    targetRelationFieldUniversalIdentifier: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    triggerFieldUniversalIdentifiers: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    replacesTimelineActivityTypeUniversalIdentifier: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isActive: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: false,
+    },
+    overrides: {
+      toCompare: true,
+      toStringify: true,
       universalProperty: undefined,
     },
     createdAt: {

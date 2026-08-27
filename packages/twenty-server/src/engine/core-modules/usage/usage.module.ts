@@ -3,7 +3,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ClickHouseModule } from 'src/database/clickHouse/clickHouse.module';
+import { ClickHouseModule } from 'src/database/clickhouse/clickhouse.module';
 import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UsageEventListener } from 'src/engine/core-modules/usage/listeners/usage-event.listener';

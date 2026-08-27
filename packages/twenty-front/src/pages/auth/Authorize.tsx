@@ -152,6 +152,7 @@ export const Authorize = () => {
   const redirectUrl =
     searchParam.get('redirect_uri') ?? searchParam.get('redirectUrl');
   const state = searchParam.get('state');
+  const issuer = searchParam.get('iss');
 
   const {
     data,
@@ -199,6 +200,7 @@ export const Authorize = () => {
           codeChallenge: codeChallenge ?? undefined,
           redirectUrl,
           state: state ?? undefined,
+          issuer: issuer ?? undefined,
         },
         onCompleted: (responseData) => {
           redirect(appendThemeToUrl(responseData.authorizeApp.redirectUrl));

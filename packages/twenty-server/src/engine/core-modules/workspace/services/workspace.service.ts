@@ -78,7 +78,7 @@ import {
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { WorkspaceSchemaService } from 'src/engine/workspace-datasource/workspace-schema.service';
 import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
 import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-companies.util';
 import { prefillDashboards } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-dashboards.util';
@@ -154,7 +154,7 @@ export class WorkspaceService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly subdomainManagerService: SubdomainManagerService,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly workspaceSchemaService: WorkspaceSchemaService,
     private readonly customDomainManagerService: CustomDomainManagerService,
     private readonly fileCorePictureService: FileCorePictureService,
     private readonly aiModelRegistryService: AiModelRegistryService,
@@ -632,7 +632,7 @@ export class WorkspaceService {
 
           await this.deleteWorkspaceSyncableMetadataEntities(workspace);
 
-          await this.workspaceDataSourceService.deleteWorkspaceDBSchema(
+          await this.workspaceSchemaService.deleteWorkspaceDBSchema(
             workspace.id,
           );
 

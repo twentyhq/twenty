@@ -2,9 +2,11 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { WorkspaceFlatFieldMetadataMapCacheService } from 'src/engine/metadata-modules/flat-field-metadata/services/workspace-flat-field-metadata-map-cache.service';
+import { WorkspaceOrmFlatFieldMetadataMapCacheService } from 'src/engine/metadata-modules/flat-field-metadata/services/workspace-orm-flat-field-metadata-map-cache.service';
 import { WorkspaceFlatFieldPermissionMapCacheService } from 'src/engine/metadata-modules/flat-field-permission/services/workspace-flat-field-permission-map-cache.service';
 import { WorkspaceFlatIndexMapCacheService } from 'src/engine/metadata-modules/flat-index-metadata/services/workspace-flat-index-map-cache.service';
 import { WorkspaceFlatObjectMetadataMapCacheService } from 'src/engine/metadata-modules/flat-object-metadata/services/workspace-flat-object-metadata-map-cache.service';
@@ -80,6 +82,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       FrontComponentEntity,
       SearchFieldMetadataEntity,
       TimelineActivityTypeEntity,
+      CommandMenuItemEntity,
     ]),
   ],
   providers: [
@@ -92,6 +95,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceFlatViewFilterGroupMapCacheService,
     WorkspaceFlatIndexMapCacheService,
     WorkspaceFlatFieldMetadataMapCacheService,
+    WorkspaceOrmFlatFieldMetadataMapCacheService,
     WorkspaceFlatViewGroupMapCacheService,
     WorkspaceFlatObjectPermissionMapCacheService,
     WorkspaceFlatFieldPermissionMapCacheService,
@@ -124,6 +128,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(RowLevelPermissionPredicateEntity),
     provideWorkspaceScopedRepository(RowLevelPermissionPredicateGroupEntity),
     provideWorkspaceScopedRepository(TimelineActivityTypeEntity),
+    provideWorkspaceScopedRepository(CommandMenuItemEntity),
   ],
   exports: [
     WorkspaceManyOrAllFlatEntityMapsCacheService,
@@ -135,6 +140,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceFlatViewFilterGroupMapCacheService,
     WorkspaceFlatIndexMapCacheService,
     WorkspaceFlatFieldMetadataMapCacheService,
+    WorkspaceOrmFlatFieldMetadataMapCacheService,
     WorkspaceFlatViewGroupMapCacheService,
     WorkspaceFlatObjectPermissionMapCacheService,
     WorkspaceFlatFieldPermissionMapCacheService,

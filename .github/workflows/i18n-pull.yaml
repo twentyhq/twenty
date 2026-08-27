@@ -93,6 +93,12 @@ jobs:
         env:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
+      - name: Normalize downloaded catalogs to lingui format
+        run: |
+          npx nx run twenty-server:lingui:extract
+          npx nx run twenty-emails:lingui:extract
+          npx nx run twenty-front:lingui:extract
+
       - name: Compile translations
         id: compile_translations
         run: |

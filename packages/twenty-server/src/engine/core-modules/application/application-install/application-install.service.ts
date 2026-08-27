@@ -373,6 +373,7 @@ export class ApplicationInstallService {
         manifest: resolvedPackage.manifest,
         applicationRegistrationId: appRegistration.id,
         application,
+        forceSdkClientGeneration: true,
       });
 
       await this.runPostInstallHook({

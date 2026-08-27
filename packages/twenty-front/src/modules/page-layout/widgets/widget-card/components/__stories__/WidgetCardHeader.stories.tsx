@@ -31,7 +31,7 @@ const WidgetCardHeaderStory = ({
       <WidgetHeaderCountEffect count={count} />
       <WidgetCardHeader
         widgetId={widgetId}
-        variant="dashboard"
+        variant="framed"
         isInEditMode={isInEditMode}
         title={title}
       />
@@ -100,7 +100,7 @@ const UnmountingContentStory = () => {
         {isContentMounted && <WidgetHeaderCountEffect count={42} />}
         <WidgetCardHeader
           widgetId={`${WIDGET_ID}-unmount`}
-          variant="dashboard"
+          variant="framed"
           isInEditMode={false}
           title="Call recordings"
         />
@@ -138,7 +138,7 @@ export const CountEffectNoOpsOutsideWidget: Story = {
       >
         <WidgetCardHeader
           widgetId={`${WIDGET_ID}-outside`}
-          variant="dashboard"
+          variant="framed"
           isInEditMode={false}
           title="Call recordings"
         />
@@ -150,5 +150,57 @@ export const CountEffectNoOpsOutsideWidget: Story = {
 
     expect(await canvas.findByText('Call recordings')).toBeVisible();
     expect(canvas.queryByText('7')).toBeNull();
+  },
+};
+
+const WidgetHeaderClickStory = () => {
+  const [parentClickCount, setParentClickCount] = useState(0);
+
+  return (
+    <PageLayoutTestWrapper instanceId={PAGE_LAYOUT_TEST_INSTANCE_ID}>
+      <div onClick={() => setParentClickCount((count) => count + 1)}>
+        <WidgetCardHeader
+          widgetId={`${WIDGET_ID}-click`}
+          variant="flush"
+          isInEditMode
+          title="Timeline"
+        />
+      </div>
+      <output aria-label="Parent click count">{parentClickCount}</output>
+    </PageLayoutTestWrapper>
+  );
+};
+
+export const GripClickBehavior: Story = {
+  render: () => <WidgetHeaderClickStory />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const grip = canvasElement.querySelector('.drag-handle');
+
+    if (!(grip instanceof HTMLElement)) {
+      throw new Error('Widget grip not found');
+    }
+
+    await userEvent.click(grip);
+    expect(canvas.getByLabelText('Parent click count')).toHaveTextContent('1');
+
+    await userEvent.pointer([
+      {
+        keys: '[MouseLeft>]',
+        target: grip,
+        coords: { clientX: 10, clientY: 10 },
+      },
+      {
+        target: grip,
+        coords: { clientX: 30, clientY: 10 },
+      },
+      {
+        keys: '[/MouseLeft]',
+        target: grip,
+        coords: { clientX: 30, clientY: 10 },
+      },
+    ]);
+
+    expect(canvas.getByLabelText('Parent click count')).toHaveTextContent('1');
   },
 };

@@ -6,6 +6,8 @@ import { TimelineActivityContext } from '@/activities/timeline-activities/contex
 
 import { EventIconDynamicComponent } from '@/activities/timeline-activities/rows/components/EventIconDynamicComponent';
 import { EventRowDynamicComponent } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
+import { getStandardTimelineActivityRenderer } from '@/activities/timeline-activities/rows/components/StandardTimelineActivityRenderer';
+import { type TimelineActivityRenderer } from '@/activities/timeline-activities/rows/components/TimelineActivityRenderer';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { useTimelineActivityTypes } from '@/activities/timeline-activities/hooks/useTimelineActivityTypes';
 import { getTimelineActivityAction } from '@/activities/timeline-activities/utils/getTimelineActivityAction';
@@ -21,6 +23,8 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
+import { frontComponentsSelector } from '@/front-components/states/frontComponentsSelector';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledTimelineItemContainer = styled.div`
   color: ${themeCssVariables.font.color.primary};
@@ -64,10 +68,6 @@ const StyledVerticalLine = styled.div`
   width: 2px;
 `;
 
-const StyledSummary = styled.summary`
-  width: 100%;
-`;
-
 const StyledItemContainer = styled.div<{ isMarginBottom?: boolean }>`
   align-items: flex-start;
   display: flex;
@@ -86,6 +86,24 @@ type EventRowProps = {
   event: TimelineActivity;
 };
 
+const getTimelineActivityRenderer = ({
+  standardRenderer,
+  frontComponentId,
+}: {
+  standardRenderer: ReturnType<typeof getStandardTimelineActivityRenderer>;
+  frontComponentId: string | null;
+}): TimelineActivityRenderer | null => {
+  if (isDefined(standardRenderer)) {
+    return { type: 'standard', Component: standardRenderer };
+  }
+
+  if (isDefined(frontComponentId)) {
+    return { type: 'frontComponent', frontComponentId };
+  }
+
+  return null;
+};
+
 export const EventRow = ({
   isLastEvent,
   event,
@@ -101,24 +119,41 @@ export const EventRow = ({
 
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
-  const { timelineActivityTypeById } = useTimelineActivityTypes();
+  const { timelineActivityTypeMaps } = useTimelineActivityTypes();
+  const frontComponents = useAtomStateValue(frontComponentsSelector);
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const timelineActivityType = getTimelineActivityType(
     event,
-    timelineActivityTypeById,
+    timelineActivityTypeMaps,
   );
+
+  const rendererUniversalIdentifier =
+    timelineActivityType?.frontComponentUniversalIdentifier;
+  const standardRenderer = getStandardTimelineActivityRenderer(
+    rendererUniversalIdentifier,
+  );
+  const frontComponentId = isDefined(rendererUniversalIdentifier)
+    ? (frontComponents.find(
+        (frontComponent) =>
+          frontComponent.universalIdentifier === rendererUniversalIdentifier,
+      )?.id ?? null)
+    : null;
+  const renderer = getTimelineActivityRenderer({
+    standardRenderer,
+    frontComponentId,
+  });
 
   const timelineActivityAction = getTimelineActivityAction(
     event,
-    timelineActivityTypeById,
+    timelineActivityTypeMaps,
   );
 
   const linkedObjectMetadataItem =
     getTimelineActivityLinkedObjectMetadataItem({
       timelineActivity: event,
-      timelineActivityTypeById,
+      timelineActivityTypeMaps,
       objectMetadataItems,
     }) ?? null;
 
@@ -144,10 +179,6 @@ export const EventRow = ({
     currentWorkspaceMember,
   );
 
-  if (isUndefinedOrNull(mainObjectMetadataItem)) {
-    throw new Error('mainObjectMetadataItem is required');
-  }
-
   return (
     <>
       <StyledTimelineItemContainer>
@@ -165,18 +196,17 @@ export const EventRow = ({
           )}
         </StyledLeftContainer>
         <StyledItemContainer isMarginBottom={!isLastEvent}>
-          <StyledSummary>
-            <EventRowDynamicComponent
-              authorFullName={authorFullName}
-              labelIdentifierValue={labelIdentifier.name}
-              event={event}
-              eventAction={timelineActivityAction}
-              eventRenderer={timelineActivityType?.renderer ?? null}
-              mainObjectMetadataItem={mainObjectMetadataItem}
-              linkedObjectMetadataItem={linkedObjectMetadataItem}
-              createdAt={event.createdAt}
-            />
-          </StyledSummary>
+          <EventRowDynamicComponent
+            authorFullName={authorFullName}
+            labelIdentifierValue={labelIdentifier.name}
+            event={event}
+            eventAction={timelineActivityAction}
+            eventTypeLabel={timelineActivityType?.label}
+            renderer={renderer}
+            mainObjectMetadataItem={mainObjectMetadataItem}
+            linkedObjectMetadataItem={linkedObjectMetadataItem}
+            happensAt={event.happensAt}
+          />
         </StyledItemContainer>
       </StyledTimelineItemContainer>
     </>

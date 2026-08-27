@@ -217,6 +217,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       ... on FrontComponentConfiguration {
         configurationType
         frontComponentId
+        headerCommandMenuItemUniversalIdentifiers
       }
     }
     pageLayoutTabId

@@ -86,6 +86,72 @@ describe('getJunctionConfig', () => {
       });
       expect(result).toBeNull();
     });
+
+    it('should infer a single morph target from the relation graph', () => {
+      const sourceField = createMockField({
+        id: 'source-field-id',
+        relation: createMockRelation('source-object-id', 'sourceObject'),
+      });
+      const morphTargetField = createMockField({
+        id: 'morph-target-field-id',
+        type: FieldMetadataType.MORPH_RELATION,
+      });
+      const labelIdentifierField = createMockField({
+        id: 'label-identifier-field-id',
+        type: FieldMetadataType.UUID,
+      });
+      const junctionObject = createMockObjectMetadata({
+        id: 'junction-id',
+        labelIdentifierFieldMetadataId: 'label-identifier-field-id',
+        fields: [sourceField, morphTargetField, labelIdentifierField],
+      });
+
+      const result = getJunctionConfig({
+        settings: undefined,
+        relationObjectMetadataId: 'junction-id',
+        relationTargetFieldMetadataId: 'source-field-id',
+        sourceObjectMetadataId: 'source-object-id',
+        objectMetadataItems: [junctionObject],
+      });
+
+      expect(result).toMatchObject({
+        sourceField: { id: 'source-field-id' },
+        targetFields: [{ id: 'morph-target-field-id' }],
+        isMorphRelation: true,
+      });
+    });
+
+    it('should not infer an ambiguous morph target', () => {
+      const sourceField = createMockField({
+        id: 'source-field-id',
+        relation: createMockRelation('source-object-id', 'sourceObject'),
+      });
+      const createMorphTargetField = (id: string) =>
+        createMockField({ id, type: FieldMetadataType.MORPH_RELATION });
+      const junctionObject = createMockObjectMetadata({
+        id: 'junction-id',
+        labelIdentifierFieldMetadataId: 'label-identifier-field-id',
+        fields: [
+          sourceField,
+          createMorphTargetField('first-morph-target-id'),
+          createMorphTargetField('second-morph-target-id'),
+          createMockField({
+            id: 'label-identifier-field-id',
+            type: FieldMetadataType.UUID,
+          }),
+        ],
+      });
+
+      expect(
+        getJunctionConfig({
+          settings: undefined,
+          relationObjectMetadataId: 'junction-id',
+          relationTargetFieldMetadataId: 'source-field-id',
+          sourceObjectMetadataId: 'source-object-id',
+          objectMetadataItems: [junctionObject],
+        }),
+      ).toBeNull();
+    });
   });
 
   describe('junctionTargetFieldId configuration', () => {

@@ -1,3 +1,4 @@
+import { WIDGET_POSITION_GQL_FIELDS } from 'test/integration/metadata/suites/page-layout-widget/constants/widget-position-gql-fields.constant';
 import gql from 'graphql-tag';
 import { WIDGET_CONFIGURATION_GQL_FIELDS } from 'test/integration/metadata/suites/page-layout-widget/constants/widget-configuration-gql-fields.constant';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
@@ -14,11 +15,8 @@ const DEFAULT_PAGE_LAYOUT_WIDGET_GQL_FIELDS = `
   type
   pageLayoutTabId
   objectMetadataId
-  gridPosition {
-    row
-    column
-    rowSpan
-    columnSpan
+  position {
+    ${WIDGET_POSITION_GQL_FIELDS}
   }
   configuration {
     ${WIDGET_CONFIGURATION_GQL_FIELDS}
@@ -46,7 +44,6 @@ export const updateOnePageLayoutWidgetQueryFactory = ({
       title: input.title,
       type: input.type,
       objectMetadataId: input.objectMetadataId,
-      gridPosition: input.gridPosition,
       position: input.position,
       configuration: input.configuration,
       conditionalDisplay: input.conditionalDisplay,

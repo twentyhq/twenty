@@ -10,7 +10,7 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -29,7 +29,7 @@ export class ApplicationRecurringChargeService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   async chargeDueRecurringCharges(workspaceId: string): Promise<number> {
@@ -102,11 +102,10 @@ export class ApplicationRecurringChargeService {
   private async countWorkspaceMembers(workspaceId: string): Promise<number> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const workspaceMemberRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
+          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
             'workspaceMember',
             { shouldBypassPermissionChecks: true },
           );

@@ -196,6 +196,26 @@ describe('SidePanelTopBar', () => {
     expect(mockCloseSidePanelMenu).toHaveBeenCalledTimes(1);
   });
 
+  it('handles Escape before the underlying page hotkeys', () => {
+    const underlyingPageEscapeHandler = jest.fn();
+
+    document.addEventListener('keydown', underlyingPageEscapeHandler);
+
+    try {
+      renderSidePanelCommandMenu();
+
+      fireEvent.keyDown(document.body, {
+        key: 'Escape',
+        code: 'Escape',
+      });
+
+      expect(mockCloseSidePanelMenu).toHaveBeenCalledTimes(1);
+      expect(underlyingPageEscapeHandler).not.toHaveBeenCalled();
+    } finally {
+      document.removeEventListener('keydown', underlyingPageEscapeHandler);
+    }
+  });
+
   it('does not navigate with Backspace while search has text', () => {
     const { store } = renderSidePanelCommandMenu(
       createSidePanelTopBarStore({
@@ -275,6 +295,36 @@ describe('SidePanelTopBar', () => {
     fireEvent.keyDown(input, {
       key: 'Backspace',
       code: 'Backspace',
+    });
+
+    expect(store.get(sidePanelNavigationStackState.atom)).toHaveLength(1);
+    expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
+  });
+
+  it('goes back with Escape while the search input is not focused', () => {
+    const { store } = renderSidePanelCommandMenu(
+      createSidePanelTopBarStore({
+        sidePanelPage: SidePanelPages.SearchRecords,
+        sidePanelNavigationStack: [
+          {
+            page: SidePanelPages.CommandMenuDisplay,
+            pageTitle: 'Command Menu',
+            pageIcon: IconDotsVertical,
+            pageId: 'command-menu',
+          },
+          {
+            page: SidePanelPages.SearchRecords,
+            pageTitle: 'Search',
+            pageIcon: IconDotsVertical,
+            pageId: 'search-records',
+          },
+        ],
+      }),
+    );
+
+    fireEvent.keyDown(document.body, {
+      key: 'Escape',
+      code: 'Escape',
     });
 
     expect(store.get(sidePanelNavigationStackState.atom)).toHaveLength(1);

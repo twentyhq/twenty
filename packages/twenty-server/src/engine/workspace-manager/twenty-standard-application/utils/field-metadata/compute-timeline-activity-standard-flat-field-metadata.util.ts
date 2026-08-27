@@ -234,27 +234,6 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  name: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'name',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(
-        msg({ message: `Event name`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({ message: `Event name`, context: 'fieldMetadata.description' }),
-      ),
-      icon: 'IconAbc',
-      isNullable: true,
-      isUIEditable: false,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   timelineActivityTypeId: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -271,6 +250,31 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
         }),
       ),
       icon: 'IconAbc',
+      isSystem: true,
+      isNullable: true,
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  timelineActivityTypeSnapshot: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'timelineActivityTypeSnapshot',
+      type: FieldMetadataType.RAW_JSON,
+      label: i18nLabel(
+        msg({ message: `Event type`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Timeline activity type describing this event`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconArchive',
       isSystem: true,
       isNullable: true,
       isUIEditable: false,

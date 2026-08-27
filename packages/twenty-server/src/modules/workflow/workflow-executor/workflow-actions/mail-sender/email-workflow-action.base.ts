@@ -10,7 +10,7 @@ import { IsNull, type Repository } from 'typeorm';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   WorkflowStepExecutorException,
@@ -31,7 +31,7 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
   protected constructor(
     loggerName: string,
     workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {
@@ -99,43 +99,35 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const workspaceMember = await this.findWorkspaceMemberById(
-          senderId,
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workspaceMember = await this.findWorkspaceMemberById(senderId);
+
+      if (!isDefined(workspaceMember)) {
+        return senderId;
+      }
+
+      const connectedAccountId =
+        await this.findFirstConnectedAccountIdByWorkspaceMember(
+          workspaceMember,
           workspaceId,
         );
 
-        if (!isDefined(workspaceMember)) {
-          return senderId;
-        }
+      if (!isDefined(connectedAccountId)) {
+        throw new WorkflowStepExecutorException(
+          `No connected account found for workspace member '${senderId}'`,
+          WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+        );
+      }
 
-        const connectedAccountId =
-          await this.findFirstConnectedAccountIdByWorkspaceMember(
-            workspaceMember,
-            workspaceId,
-          );
-
-        if (!isDefined(connectedAccountId)) {
-          throw new WorkflowStepExecutorException(
-            `No connected account found for workspace member '${senderId}'`,
-            WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
-          );
-        }
-
-        return connectedAccountId;
-      },
-      authContext,
-    );
+      return connectedAccountId;
+    }, authContext);
   }
 
   private async findWorkspaceMemberById(
     workspaceMemberId: string,
-    workspaceId: string,
   ): Promise<WorkspaceMemberWorkspaceEntity | null> {
     const workspaceMemberRepository =
-      await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-        workspaceId,
+      this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
         'workspaceMember',
         { shouldBypassPermissionChecks: true },
       );

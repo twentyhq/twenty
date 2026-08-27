@@ -62,6 +62,8 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "fieldPermission",
   "view",
   "searchFieldMetadata",
+  "pageLayout",
+  "commandMenuItem",
 ]
 `;
 
