@@ -45,6 +45,15 @@ export class NormalizeCompanyDomainNamesCommand extends ProvisionedWorkspaceComm
     const isDryRun = options.dryRun ?? false;
     const schemaName = getWorkspaceSchemaName(workspaceId);
 
+    const hasCompanyTable = await this.hasCompanyTable({
+      dataSource,
+      schemaName,
+    });
+
+    if (!hasCompanyTable) {
+      return;
+    }
+
     let afterCompanyId = FIRST_COMPANY_ID;
     let updatedCount = 0;
     const skippedCompanyIds: string[] = [];
@@ -104,6 +113,21 @@ export class NormalizeCompanyDomainNamesCommand extends ProvisionedWorkspaceComm
         `Left ${skippedCompanyIds.length} company domain name(s) unnormalized in workspace ${workspaceId} because another company already holds the normalized domain, these need a merge: ${skippedCompanyIds.join(', ')}`,
       );
     }
+  }
+
+  private async hasCompanyTable({
+    dataSource,
+    schemaName,
+  }: {
+    dataSource: WorkspaceDataSource;
+    schemaName: string;
+  }): Promise<boolean> {
+    const [row] = await dataSource.query<{ exists: boolean }[]>(
+      `SELECT to_regclass($1) IS NOT NULL AS "exists"`,
+      [`"${schemaName}"."company"`],
+    );
+
+    return row?.exists === true;
   }
 
   private async findNextCandidates({
