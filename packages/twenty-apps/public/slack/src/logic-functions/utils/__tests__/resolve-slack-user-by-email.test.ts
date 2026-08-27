@@ -26,10 +26,18 @@ describe('resolveSlackUserByEmail', () => {
     lookupByEmailMock.mockResolvedValue({ user: buildSlackUser() });
   });
 
-  it('should return undefined when the Slack lookup fails', async () => {
-    lookupByEmailMock.mockRejectedValue(new Error('users_not_found'));
+  it('should return undefined when the email is not in the workspace', async () => {
+    lookupByEmailMock.mockRejectedValue({ data: { error: 'users_not_found' } });
 
     expect(await resolveSlackUserByEmail(client, EMAIL)).toBeUndefined();
+  });
+
+  it('should rethrow a transient Slack error instead of reporting not found', async () => {
+    lookupByEmailMock.mockRejectedValue({ data: { error: 'ratelimited' } });
+
+    await expect(resolveSlackUserByEmail(client, EMAIL)).rejects.toEqual({
+      data: { error: 'ratelimited' },
+    });
   });
 
   it('should return undefined when the resolved user has no id', async () => {

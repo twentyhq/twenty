@@ -427,6 +427,19 @@ describe('slackSetUserLinkHandler', () => {
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
+  it('should fail with a structured error when the email lookup throws', async () => {
+    resolveSlackUserByEmailMock.mockRejectedValue(new Error('ratelimited'));
+
+    const result = await slackSetUserLinkHandler({
+      email: 'ada@example.com',
+      workspaceMemberId: 'workspace-member-1',
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('ratelimited');
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+  });
+
   it('should prefer the Slack user id over the email when both are given', async () => {
     const result = await slackSetUserLinkHandler({
       ...INPUT,

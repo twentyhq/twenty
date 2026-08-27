@@ -103,6 +103,19 @@ describe('slackResolveUserLinkHandler', () => {
     }
   });
 
+  it('should fail with a structured error when the email lookup throws', async () => {
+    resolveSlackUserByEmailMock.mockRejectedValue(new Error('ratelimited'));
+
+    const result = await slackResolveUserLinkHandler(
+      buildPayload({ email: 'ada@example.com' }),
+    );
+
+    expect(result.success).toBe(false);
+    if (result.success === false) {
+      expect(result.error).toBe('ratelimited');
+    }
+  });
+
   it('should resolve from a Slack user id and flag an out-of-workspace team', async () => {
     fetchSlackUserIdentityMock.mockResolvedValue({
       slackUserId: 'U2',
