@@ -8,7 +8,7 @@ msgstr ""
 "Language: ar\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-26 18:42\n"
+"PO-Revision-Date: 2026-08-27 11:31\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
@@ -3731,8 +3731,8 @@ msgid "Get certified as a Twenty partner: a vetted badge, a directory profile yo
 msgstr "احصل على اعتمادك كشريك لـ Twenty: شارة موثقة، وملف شخصي في الدليل يمكن لعملائك التحقق منه، وموجزات عملاء متوافقة لأفضل الشركاء."
 
 #. js-lingui-id: b+jRGN
+#: src/sections/partner-lead/PartnerDirectoryPanel.tsx
 #: src/sections/partner-hero/PartnerLeadHero.tsx
-#: src/partners-marketplace/MarketplaceMatchCard.tsx
 #: src/client-brief/ClientBriefModal.tsx
 msgid "Get matched"
 msgstr "احصل على مطابقة"
@@ -7180,8 +7180,8 @@ msgid "Subdomain (yourco.twenty.com)"
 msgstr "نطاق فرعي (yourco.twenty.com)"
 
 #. js-lingui-id: 578pU6
-#: src/partners-marketplace/PartnerProfileCtas.tsx
-#: src/partners-marketplace/MarketplaceBriefPrompt.tsx
+#: src/app/[locale]/(site)/partners/page.tsx
+#: src/app/[locale]/(site)/partners/profile/[slug]/page.tsx
 msgid "Submit a brief"
 msgstr "إرسال موجز"
 
