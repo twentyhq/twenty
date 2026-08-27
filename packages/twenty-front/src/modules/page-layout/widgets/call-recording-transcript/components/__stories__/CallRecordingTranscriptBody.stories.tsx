@@ -25,6 +25,7 @@ import {
 } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
+  PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetConfigurationType,
   WidgetType,
@@ -49,8 +50,9 @@ const transcriptWidget: PageLayoutWidget = {
   type: WidgetType.CALL_RECORDING_TRANSCRIPT,
   title: 'Transcript',
   objectMetadataId: null,
-  gridPosition: {
-    __typename: 'GridPosition',
+  position: {
+    layoutMode: PageLayoutTabLayoutMode.GRID,
+    __typename: 'PageLayoutWidgetGridPosition',
     row: 0,
     column: 0,
     rowSpan: 4,

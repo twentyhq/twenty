@@ -322,7 +322,6 @@ const computeRecordPageWidgets = ({
               widgetName,
               title: widget.title,
               type: widget.type,
-              gridPosition: widget.gridPosition,
               position: widget.position ?? null,
               configuration,
               universalConfiguration,

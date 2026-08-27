@@ -36,7 +36,6 @@ const TASK_PAGE_TABS = {
             .widgets.taskRichText.universalIdentifier,
         title: WIDGET_PROPS.taskRichText.title,
         type: WIDGET_PROPS.taskRichText.type,
-        gridPosition: WIDGET_PROPS.taskRichText.gridPosition,
         position: { layoutMode: TAB_PROPS.home.layoutMode, index: 1 },
         conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_MOBILE,
         conditionalAvailabilityExpression:
