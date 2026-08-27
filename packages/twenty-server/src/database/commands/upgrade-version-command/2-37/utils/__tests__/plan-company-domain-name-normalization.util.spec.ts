@@ -1,4 +1,4 @@
-import { planCompanyDomainNameNormalization } from 'src/database/commands/upgrade-version-command/2-36/utils/plan-company-domain-name-normalization.util';
+import { planCompanyDomainNameNormalization } from 'src/database/commands/upgrade-version-command/2-37/utils/plan-company-domain-name-normalization.util';
 
 const company = (
   id: string,

@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type LinksMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { normalizeDomainNameLinks } from 'src/database/commands/upgrade-version-command/2-36/utils/normalize-domain-name-links.util';
+import { normalizeDomainNameLinks } from 'src/database/commands/upgrade-version-command/2-37/utils/normalize-domain-name-links.util';
 
 type CompanyDomainName = { id: string; domainName: LinksMetadata | null };
 

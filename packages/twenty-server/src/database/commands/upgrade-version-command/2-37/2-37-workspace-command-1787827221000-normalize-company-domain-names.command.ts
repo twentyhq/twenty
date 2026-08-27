@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { planCompanyDomainNameNormalization } from 'src/database/commands/upgrade-version-command/2-36/utils/plan-company-domain-name-normalization.util';
+import { planCompanyDomainNameNormalization } from 'src/database/commands/upgrade-version-command/2-37/utils/plan-company-domain-name-normalization.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -13,9 +13,9 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 
-@RegisteredWorkspaceCommand('2.36.0', 1787785121000)
+@RegisteredWorkspaceCommand('2.37.0', 1787827221000)
 @Command({
-  name: 'upgrade:2-36:normalize-company-domain-names',
+  name: 'upgrade:2-37:normalize-company-domain-names',
   description:
     'Rewrite company domain names to the bare canonical domain now written by the domain-typed LINKS field, so contact auto-creation matches them exactly',
 })
