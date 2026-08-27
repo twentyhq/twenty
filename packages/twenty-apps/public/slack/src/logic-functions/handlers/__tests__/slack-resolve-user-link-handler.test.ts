@@ -132,6 +132,23 @@ describe('slackResolveUserLinkHandler', () => {
     }
   });
 
+  it('should fail closed when an id-only identity lookup omits the team', async () => {
+    fetchSlackUserIdentityMock.mockResolvedValue({
+      slackUserId: 'U2',
+      slackTeamId: undefined,
+      displayName: 'Guest',
+    });
+
+    const result = await slackResolveUserLinkHandler(
+      buildPayload({ slackUserId: 'U2' }),
+    );
+
+    expect(result.success).toBe(false);
+    if (result.success === false) {
+      expect(result.error).toContain('team id');
+    }
+  });
+
   it('should resolve from a Slack user id and flag an out-of-workspace team', async () => {
     fetchSlackUserIdentityMock.mockResolvedValue({
       slackUserId: 'U2',

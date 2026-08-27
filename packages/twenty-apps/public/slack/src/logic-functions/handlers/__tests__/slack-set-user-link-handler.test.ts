@@ -235,6 +235,21 @@ describe('slackSetUserLinkHandler', () => {
     expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
   });
 
+  it('should fail closed when the identity lookup omits the team id', async () => {
+    fetchSlackUserIdentityMock.mockResolvedValue({
+      slackUserId: INPUT.slackUserId,
+      slackTeamId: undefined,
+      displayName: 'Ada Lovelace',
+    });
+
+    const result = await slackSetUserLinkHandler(INPUT);
+
+    expect(result.success).toBe(false);
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
   it('should admin-set a cross-workspace user given by id without a team id', async () => {
     fetchSlackUserIdentityMock.mockResolvedValue({
       slackUserId: INPUT.slackUserId,

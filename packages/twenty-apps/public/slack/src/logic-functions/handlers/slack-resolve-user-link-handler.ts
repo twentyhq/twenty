@@ -79,14 +79,18 @@ export const slackResolveUserLinkHandler = async (
       slackUserId: requestedSlackUserId,
     });
 
-    const resolvedTeamId =
-      slackTeamId ?? identity?.slackTeamId ?? installedTeamId;
+    // A directly-supplied id may belong to another workspace, so never assume
+    // the installed team for it: a wrong guess promises a consent DM that the
+    // save step cannot deliver. Only an email-resolved user (below) is in the
+    // installed workspace by definition.
+    const resolvedTeamId = slackTeamId ?? identity?.slackTeamId;
 
     if (!isNonEmptyString(resolvedTeamId)) {
       return {
         success: false,
         message: 'Could not resolve the Slack workspace',
-        error: 'Provide the Slack team id for this user.',
+        error:
+          'Could not determine which Slack workspace this user belongs to. Provide their Slack team id and try again.',
       };
     }
 

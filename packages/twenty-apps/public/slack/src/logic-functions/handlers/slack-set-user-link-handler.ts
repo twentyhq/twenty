@@ -130,11 +130,12 @@ export const slackSetUserLinkHandler = async (
   }
 
   // A Slack user id supplied directly (e.g. from the agent tool) may belong to
-  // another workspace, so resolve their real team before deciding on consent. If
-  // that lookup fails we cannot tell an in-workspace user from a cross-workspace
-  // one, so fail closed rather than assume the installed workspace and send a
-  // consent DM we cannot deliver. An email-resolved user is, by definition, in
-  // the installed workspace, so the installed-team fallback below is safe there.
+  // another workspace, so resolve their real team before deciding on consent.
+  // If that lookup fails, or succeeds without naming a team, we cannot tell an
+  // in-workspace user from a cross-workspace one, so fail closed rather than
+  // assume the installed workspace and send a consent DM we cannot deliver. An
+  // email-resolved user is, by definition, in the installed workspace, so the
+  // installed-team fallback below is safe there.
   if (
     isNonEmptyString(requestedSlackUserId) &&
     !isNonEmptyString(requestedSlackTeamId)
@@ -144,7 +145,7 @@ export const slackSetUserLinkHandler = async (
       slackUserId,
     });
 
-    if (!isDefined(identity)) {
+    if (!isDefined(identity) || !isNonEmptyString(identity.slackTeamId)) {
       return {
         success: false,
         message: 'Could not resolve the Slack workspace',
