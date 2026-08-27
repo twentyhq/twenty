@@ -7,9 +7,14 @@ import { parseArrayOrJsonStringToArray } from 'src/engine/api/graphql/graphql-qu
 const normalizeStoredDomain = (url: string): string =>
   isNonEmptyString(url) ? normalizeDomain(url) : url;
 
+export type DomainNameLinks = Pick<
+  LinksMetadata,
+  'primaryLinkUrl' | 'secondaryLinks'
+>;
+
 export const normalizeDomainNameLinks = (
-  domainName: LinksMetadata,
-): { changed: boolean; value: LinksMetadata } => {
+  domainName: DomainNameLinks,
+): { changed: boolean; value: DomainNameLinks } => {
   const secondaryLinks = parseArrayOrJsonStringToArray<LinkMetadata>(
     domainName.secondaryLinks,
   );

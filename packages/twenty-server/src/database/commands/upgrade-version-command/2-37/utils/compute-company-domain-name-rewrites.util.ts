@@ -1,15 +1,16 @@
-import { type LinksMetadata } from 'twenty-shared/types';
-
-import { normalizeDomainNameLinks } from 'src/database/commands/upgrade-version-command/2-37/utils/normalize-domain-name-links.util';
+import {
+  type DomainNameLinks,
+  normalizeDomainNameLinks,
+} from 'src/database/commands/upgrade-version-command/2-37/utils/normalize-domain-name-links.util';
 
 export type CompanyDomainNameRewrite = {
   id: string;
   currentPrimaryLinkUrl: string;
-  domainName: LinksMetadata;
+  domainName: DomainNameLinks;
 };
 
 export const computeCompanyDomainNameRewrites = (
-  candidates: { id: string; domainName: LinksMetadata }[],
+  candidates: { id: string; domainName: DomainNameLinks }[],
 ): CompanyDomainNameRewrite[] => {
   const rewrites: CompanyDomainNameRewrite[] = [];
 

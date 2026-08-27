@@ -1,12 +1,13 @@
-import { type LinksMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+
+import { type DomainNameLinks } from 'src/database/commands/upgrade-version-command/2-37/utils/normalize-domain-name-links.util';
 
 export const buildCompanyDomainNameUpdateQuery = ({
   schemaName,
   updates,
 }: {
   schemaName: string;
-  updates: { id: string; domainName: LinksMetadata }[];
+  updates: { id: string; domainName: DomainNameLinks }[];
 }): { sql: string; parameters: unknown[] } => ({
   sql: `
 UPDATE "${schemaName}"."company" company

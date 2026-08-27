@@ -1,5 +1,4 @@
 import { Command } from 'nest-commander';
-import { type LinksMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -11,11 +10,12 @@ import {
   type CompanyDomainNameRewrite,
   computeCompanyDomainNameRewrites,
 } from 'src/database/commands/upgrade-version-command/2-37/utils/compute-company-domain-name-rewrites.util';
+import { type DomainNameLinks } from 'src/database/commands/upgrade-version-command/2-37/utils/normalize-domain-name-links.util';
 import { partitionCompanyDomainNameRewrites } from 'src/database/commands/upgrade-version-command/2-37/utils/partition-company-domain-name-rewrites.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
-const BACKFILL_BATCH_SIZE = 2000;
+const BACKFILL_BATCH_SIZE = 20000;
 const FIRST_COMPANY_ID = '00000000-0000-0000-0000-000000000000';
 
 type WorkspaceDataSource = NonNullable<RunOnWorkspaceArgs['dataSource']>;
@@ -138,14 +138,14 @@ export class NormalizeCompanyDomainNamesCommand extends ProvisionedWorkspaceComm
     dataSource: WorkspaceDataSource;
     schemaName: string;
     afterCompanyId: string;
-  }): Promise<{ id: string; domainName: LinksMetadata }[]> {
+  }): Promise<{ id: string; domainName: DomainNameLinks }[]> {
     const { sql, parameters } = buildCompanyDomainNameCandidatesQuery({
       schemaName,
       batchSize: BACKFILL_BATCH_SIZE,
       afterCompanyId,
     });
 
-    const rows = await dataSource.query<({ id: string } & LinksMetadata)[]>(
+    const rows = await dataSource.query<({ id: string } & DomainNameLinks)[]>(
       sql,
       parameters,
     );

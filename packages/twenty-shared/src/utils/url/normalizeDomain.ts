@@ -17,6 +17,14 @@ const stripWwwPrefixesAndTrailingDots = (host: string): string => {
   return labels.join('.');
 };
 
+const toPunycodeHost = (host: string): string => {
+  try {
+    return new URL(`https://${host}`).hostname;
+  } catch {
+    return host;
+  }
+};
+
 export const normalizeDomain = (rawDomain: string): string => {
   const host = stripWwwPrefixesAndTrailingDots(
     rawDomain
@@ -28,9 +36,5 @@ export const normalizeDomain = (rawDomain: string): string => {
       .toLowerCase(),
   );
 
-  try {
-    return new URL(`https://${host}`).hostname;
-  } catch {
-    return host;
-  }
+  return toPunycodeHost(host);
 };

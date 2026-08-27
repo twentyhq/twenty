@@ -7,7 +7,7 @@ const candidate = (
   secondaryLinks: { url: string; label: string }[] | null = null,
 ) => ({
   id,
-  domainName: { primaryLinkLabel: '', primaryLinkUrl, secondaryLinks },
+  domainName: { primaryLinkUrl, secondaryLinks },
 });
 
 const partition = (
@@ -32,7 +32,6 @@ describe('partitionCompanyDomainNameRewrites', () => {
       {
         id: 'acme',
         domainName: {
-          primaryLinkLabel: '',
           primaryLinkUrl: 'acme.com',
           secondaryLinks: [{ url: 'beta.com', label: 'Merged away' }],
         },

@@ -8,7 +8,6 @@ describe('buildCompanyDomainNameUpdateQuery', () => {
         {
           id: 'acme-id',
           domainName: {
-            primaryLinkLabel: '',
             primaryLinkUrl: 'acme.com',
             secondaryLinks: [{ url: 'beta.com', label: '' }],
           },
@@ -16,7 +15,6 @@ describe('buildCompanyDomainNameUpdateQuery', () => {
         {
           id: 'crm-id',
           domainName: {
-            primaryLinkLabel: '',
             primaryLinkUrl: 'crm.dev',
             secondaryLinks: null,
           },
@@ -40,7 +38,6 @@ describe('buildCompanyDomainNameUpdateQuery', () => {
         {
           id: 'crm-id',
           domainName: {
-            primaryLinkLabel: '',
             primaryLinkUrl: 'crm.dev',
             secondaryLinks: null,
           },
