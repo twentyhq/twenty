@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-sdk/utils';
 import { Tag } from 'twenty-ui/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -151,8 +152,8 @@ export const SlackUserLinksList = ({
             </StyledDetails>
             <StyledRight>
               <StyledBadges>
-                {consentState !== undefined &&
-                  CONSENT_LABELS[consentState] !== undefined && (
+                {isDefined(consentState) &&
+                  isDefined(CONSENT_LABELS[consentState]) && (
                     <Tag
                       color={CONSENT_COLORS[consentState] ?? 'gray'}
                       text={CONSENT_LABELS[consentState]}
