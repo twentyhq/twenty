@@ -1,16 +1,5 @@
-const COLORS = {
-  bg: '#ffffff',
-  fg: '#1c1c1c',
-  muted: '#1c1c1c99',
-  subtle: '#1c1c1c66',
-  border: '#1c1c1c1a',
-  accent: '#4a38f5',
-  accentSoft: 'rgba(74, 56, 245, 0.08)',
-  mutedBg: '#f4f4f4',
-} as const;
+import { COLORS, FONT } from 'src/modules/shared/front-components/palette';
 
-const FONT =
-  '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif';
 const MONO = '"Azeret Mono", ui-monospace, monospace';
 
 export const PLAYBOOK_STYLES = {
@@ -105,7 +94,7 @@ export const PLAYBOOK_STYLES = {
   },
   note: {
     marginTop: 8,
-    color: COLORS.subtle,
+    color: COLORS.muted,
     fontSize: 13,
     lineHeight: '20px',
   },
@@ -124,7 +113,7 @@ export const PLAYBOOK_STYLES = {
     textTransform: 'uppercase' as const,
     padding: '4px 8px',
     borderRadius: 2,
-    background: COLORS.mutedBg,
+    background: COLORS.surfaceAlt,
     color: COLORS.muted,
   },
   table: {
@@ -139,7 +128,7 @@ export const PLAYBOOK_STYLES = {
     letterSpacing: 1.2,
     textTransform: 'uppercase' as const,
     textAlign: 'left' as const,
-    color: COLORS.subtle,
+    color: COLORS.muted,
     fontWeight: 500,
     padding: '6px 0',
     borderBottom: `1px solid ${COLORS.border}`,
@@ -150,7 +139,7 @@ export const PLAYBOOK_STYLES = {
     letterSpacing: 1.2,
     textTransform: 'uppercase' as const,
     textAlign: 'right' as const,
-    color: COLORS.subtle,
+    color: COLORS.muted,
     fontWeight: 500,
     padding: '6px 0',
     borderBottom: `1px solid ${COLORS.border}`,
