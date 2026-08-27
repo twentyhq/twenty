@@ -44,7 +44,9 @@ const defaultResponses = (): QueryResponses => ({
   workspaceMembers: { edges: [{ node: { id: WORKSPACE_MEMBER_ID } }] },
   partners: { edges: [{ node: { id: PARTNER_ID, name: PARTNER_NAME } }] },
   opportunities: {
-    edges: [{ node: { id: OPPORTUNITY_ID, name: 'Q3 Renewal', isListed: true } }],
+    edges: [
+      { node: { id: OPPORTUNITY_ID, name: 'Q3 Renewal', isListed: true } },
+    ],
   },
   applications: { edges: [] },
 });
@@ -59,17 +61,24 @@ const respondWith = (overrides: QueryResponses = {}) => {
 
 const pitchOf = (length: number) => 'a'.repeat(length);
 
-const event = (body: unknown, authorization: string | null = AUTHORIZATION) => ({
+const event = (
+  body: unknown,
+  authorization: string | null = AUTHORIZATION,
+) => ({
   body,
   headers: { authorization: authorization ?? undefined },
 });
 
-const validBody = { opportunityId: OPPORTUNITY_ID, pitch: pitchOf(MIN_PITCH_LENGTH) };
+const validBody = {
+  opportunityId: OPPORTUNITY_ID,
+  pitch: pitchOf(MIN_PITCH_LENGTH),
+};
 
 describe('applyToBrief', () => {
   const originalAppToken = process.env.TWENTY_APP_ACCESS_TOKEN;
   afterEach(() => {
-    if (originalAppToken === undefined) delete process.env.TWENTY_APP_ACCESS_TOKEN;
+    if (originalAppToken === undefined)
+      delete process.env.TWENTY_APP_ACCESS_TOKEN;
     else process.env.TWENTY_APP_ACCESS_TOKEN = originalAppToken;
   });
 
@@ -81,7 +90,9 @@ describe('applyToBrief', () => {
     metadataQueryMock.mockResolvedValue({
       currentUser: { id: USER_ID, currentWorkspace: { id: WORKSPACE_ID } },
     });
-    mutationMock.mockResolvedValue({ createApplication: { id: 'application-1' } });
+    mutationMock.mockResolvedValue({
+      createApplication: { id: 'application-1' },
+    });
     respondWith();
   });
 
@@ -115,7 +126,9 @@ describe('applyToBrief', () => {
   it('refuses a brief that is not listed without creating anything', async () => {
     respondWith({
       opportunities: {
-        edges: [{ node: { id: OPPORTUNITY_ID, name: 'Q3 Renewal', isListed: false } }],
+        edges: [
+          { node: { id: OPPORTUNITY_ID, name: 'Q3 Renewal', isListed: false } },
+        ],
       },
     });
 
@@ -135,7 +148,9 @@ describe('applyToBrief', () => {
   });
 
   it('refuses a body without an opportunityId without creating anything', async () => {
-    const result = await applyToBrief(event({ pitch: pitchOf(MIN_PITCH_LENGTH) }));
+    const result = await applyToBrief(
+      event({ pitch: pitchOf(MIN_PITCH_LENGTH) }),
+    );
 
     expect(result).toEqual({ ok: false, reason: 'BAD_REQUEST' });
     expect(mutationMock).not.toHaveBeenCalled();
@@ -144,7 +159,9 @@ describe('applyToBrief', () => {
   it('refuses a pitch one character below the minimum after trim', async () => {
     const pitch = ` ${pitchOf(MIN_PITCH_LENGTH - 1)} `;
 
-    const result = await applyToBrief(event({ opportunityId: OPPORTUNITY_ID, pitch }));
+    const result = await applyToBrief(
+      event({ opportunityId: OPPORTUNITY_ID, pitch }),
+    );
 
     expect(result).toEqual({ ok: false, reason: 'PITCH_TOO_SHORT' });
     expect(mutationMock).not.toHaveBeenCalled();
@@ -154,7 +171,13 @@ describe('applyToBrief', () => {
     respondWith({
       applications: {
         edges: [
-          { node: { id: 'existing-application', pitch: 'a real pitch', state: 'APPLIED' } },
+          {
+            node: {
+              id: 'existing-application',
+              pitch: 'a real pitch',
+              state: 'APPLIED',
+            },
+          },
         ],
       },
     });
@@ -169,7 +192,9 @@ describe('applyToBrief', () => {
     'refuses to fill the pitch of a pitchless row already decided at %s',
     async (state) => {
       respondWith({
-        applications: { edges: [{ node: { id: 'decided-application', pitch: null, state } }] },
+        applications: {
+          edges: [{ node: { id: 'decided-application', pitch: null, state } }],
+        },
       });
 
       const result = await applyToBrief(event(validBody));
@@ -183,7 +208,9 @@ describe('applyToBrief', () => {
     'fills the pitch of a pitchless row still in the running at %s',
     async (state) => {
       respondWith({
-        applications: { edges: [{ node: { id: 'live-application', pitch: null, state } }] },
+        applications: {
+          edges: [{ node: { id: 'live-application', pitch: null, state } }],
+        },
       });
 
       const result = await applyToBrief(event(validBody));
@@ -195,36 +222,49 @@ describe('applyToBrief', () => {
   it.each([
     ['null', null],
     ['whitespace only', '   \n  '],
-  ])('fills the pitch of an existing row whose pitch is %s', async (_label, pitch) => {
-    respondWith({
-      applications: {
-        edges: [{ node: { id: 'invited-application', pitch, state: 'INVITED' } }],
-      },
-    });
-    const submittedPitch = `  ${pitchOf(MIN_PITCH_LENGTH)}  `;
+  ])(
+    'fills the pitch of an existing row whose pitch is %s',
+    async (_label, pitch) => {
+      respondWith({
+        applications: {
+          edges: [
+            { node: { id: 'invited-application', pitch, state: 'INVITED' } },
+          ],
+        },
+      });
+      const submittedPitch = `  ${pitchOf(MIN_PITCH_LENGTH)}  `;
 
-    const result = await applyToBrief(
-      event({ opportunityId: OPPORTUNITY_ID, pitch: submittedPitch }),
-    );
+      const result = await applyToBrief(
+        event({ opportunityId: OPPORTUNITY_ID, pitch: submittedPitch }),
+      );
 
-    expect(result).toEqual({ ok: true, applicationId: 'invited-application' });
-    expect(mutationMock).toHaveBeenCalledTimes(1);
-    expect(mutationMock).toHaveBeenCalledWith({
-      updateApplication: {
-        __args: { id: 'invited-application', data: { pitch: submittedPitch.trim() } },
-        id: true,
-      },
-    });
+      expect(result).toEqual({
+        ok: true,
+        applicationId: 'invited-application',
+      });
+      expect(mutationMock).toHaveBeenCalledTimes(1);
+      expect(mutationMock).toHaveBeenCalledWith({
+        updateApplication: {
+          __args: {
+            id: 'invited-application',
+            data: { pitch: submittedPitch.trim() },
+          },
+          id: true,
+        },
+      });
 
-    const data = mutationMock.mock.calls[0][0].updateApplication.__args.data;
-    expect(Object.keys(data)).toEqual(['pitch']);
-    expect(data).not.toHaveProperty('state');
-  });
+      const data = mutationMock.mock.calls[0][0].updateApplication.__args.data;
+      expect(Object.keys(data)).toEqual(['pitch']);
+      expect(data).not.toHaveProperty('state');
+    },
+  );
 
   it('creates the application once with the five derived fields', async () => {
     const pitch = `  ${pitchOf(MIN_PITCH_LENGTH + 20)}  `;
 
-    const result = await applyToBrief(event({ opportunityId: OPPORTUNITY_ID, pitch }));
+    const result = await applyToBrief(
+      event({ opportunityId: OPPORTUNITY_ID, pitch }),
+    );
 
     expect(result).toEqual({ ok: true, applicationId: 'application-1' });
     expect(mutationMock).toHaveBeenCalledTimes(1);
@@ -246,7 +286,10 @@ describe('applyToBrief', () => {
 
   it('accepts a pitch of exactly the minimum length', async () => {
     const result = await applyToBrief(
-      event({ opportunityId: OPPORTUNITY_ID, pitch: pitchOf(MIN_PITCH_LENGTH) }),
+      event({
+        opportunityId: OPPORTUNITY_ID,
+        pitch: pitchOf(MIN_PITCH_LENGTH),
+      }),
     );
 
     expect(result).toEqual({ ok: true, applicationId: 'application-1' });

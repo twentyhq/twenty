@@ -3,45 +3,41 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 
 import { saveImapSmtpCaldavAccount } from 'test/integration/metadata/suites/connected-account/utils/save-imap-smtp-caldav-account.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
-import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import {
-  type GreenmailServer,
-  startGreenmailContainer,
-} from 'test/integration/utils/start-greenmail-container.util';
+  type DovecotServer,
+  startDovecotContainer,
+} from 'test/integration/utils/start-dovecot-container.util';
+import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
-export type GreenmailImapAccount = {
-  greenmail: GreenmailServer;
+export type DovecotImapAccount = {
+  dovecot: DovecotServer;
   connectedAccountId: string;
   messageChannelId: string;
 };
 
 // The IMAP driver routes through the SSRF guard, which rejects the container's
 // private address before the connection is attempted.
-export const connectGreenmailImapAccount = async ({
+export const connectDovecotImapAccount = async ({
   handle,
   password,
 }: {
   handle: string;
   password: string;
-}): Promise<GreenmailImapAccount> => {
+}): Promise<DovecotImapAccount> => {
   await updateConfigVariable({
     input: { key: 'OUTBOUND_HTTP_SAFE_MODE_ENABLED', value: false },
   });
 
-  const greenmail = await startGreenmailContainer({
-    username: handle,
-    password,
-  });
-  const mailboxLogin = handle.split('@')[0];
+  const dovecot = await startDovecotContainer({ password });
 
   const { data } = await saveImapSmtpCaldavAccount({
     input: {
       handle,
       connectionParameters: {
         IMAP: {
-          host: greenmail.host,
-          port: greenmail.imapPort,
-          username: mailboxLogin,
+          host: dovecot.host,
+          port: dovecot.imapPort,
+          username: handle,
           password,
           connectionSecurity: EmailConnectionSecurity.NONE,
         },
@@ -57,5 +53,5 @@ export const connectGreenmailImapAccount = async ({
     ).findOneByOrFail({ connectedAccountId })
   ).id;
 
-  return { greenmail, connectedAccountId, messageChannelId };
+  return { dovecot, connectedAccountId, messageChannelId };
 };

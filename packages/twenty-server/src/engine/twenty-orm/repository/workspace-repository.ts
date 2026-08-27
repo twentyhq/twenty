@@ -542,6 +542,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   async insert(
     entityOrEntities: Partial<ObjectRecord> | Partial<ObjectRecord>[],
+    options?: { onConflictDoNothing?: boolean },
   ): Promise<InsertResult> {
     const records = Array.isArray(entityOrEntities)
       ? entityOrEntities
@@ -552,6 +553,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       columnsToReturn: this.options.shouldBypassPermissionChecks
         ? Object.keys(this.options.tableShape.columnShapeByColumnName)
         : ['id'],
+      onConflictDoNothing: options?.onConflictDoNothing,
     });
 
     const insertResult = new InsertResult();
@@ -872,9 +874,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   async runInsert({
     records,
     columnsToReturn,
+    onConflictDoNothing,
   }: {
     records: Partial<ObjectRecord>[];
     columnsToReturn: string[];
+    onConflictDoNothing?: boolean;
   }): Promise<{
     identifiers: { id: string }[];
     generatedMaps: ObjectRecord[];
@@ -923,6 +927,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       columnNames,
       rows,
       returningColumns: columnsToReturn,
+      onConflictDoNothing,
     });
 
     const rawRows = await this.executeRaw<ObjectRecord>(sql, parameters);

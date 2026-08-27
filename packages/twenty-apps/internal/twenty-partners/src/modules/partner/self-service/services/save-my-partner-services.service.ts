@@ -56,7 +56,10 @@ export const saveMyPartnerServices = async (
 
   try {
     const client = buildAppClient();
-    const existingIds = await queryExistingServiceIds(client, resolved.partnerId);
+    const existingIds = await queryExistingServiceIds(
+      client,
+      resolved.partnerId,
+    );
 
     const plan = buildReconcilePlan(existingIds, parsed.data.services);
     if (!plan) return errorResponse('FORBIDDEN');
