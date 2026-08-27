@@ -1,19 +1,16 @@
 import { Command } from 'nest-commander';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { buildEditLayoutCommandMenuItemUpdate } from 'src/database/commands/upgrade-version-command/2-37/utils/build-edit-layout-command-menu-item-update.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-
-const LEGACY_EDIT_LAYOUT_AVAILABILITY_EXPRESSION =
-  'pageType == "RECORD_PAGE" and not isLayoutCustomizationModeEnabled and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"';
 
 @RegisteredWorkspaceCommand('2.37.0', 1787837054189)
 @Command({
@@ -39,20 +36,15 @@ export class EnableEditLayoutAcrossAppCommand extends ProvisionedWorkspaceComman
         'flatCommandMenuItemMaps',
       ]);
 
-    const standardCommandMenuItem =
-      STANDARD_COMMAND_MENU_ITEMS.editRecordPageLayout;
-    const existingCommandMenuItem =
-      flatCommandMenuItemMaps.byUniversalIdentifier[
-        standardCommandMenuItem.universalIdentifier
-      ];
+    const commandMenuItemToUpdate = buildEditLayoutCommandMenuItemUpdate({
+      existingCommandMenuItem:
+        flatCommandMenuItemMaps.byUniversalIdentifier[
+          STANDARD_COMMAND_MENU_ITEMS.editRecordPageLayout.universalIdentifier
+        ],
+      now: new Date().toISOString(),
+    });
 
-    if (
-      !isDefined(existingCommandMenuItem) ||
-      existingCommandMenuItem.availabilityType !==
-        CommandMenuItemAvailabilityType.RECORD_SELECTION ||
-      existingCommandMenuItem.conditionalAvailabilityExpression !==
-        LEGACY_EDIT_LAYOUT_AVAILABILITY_EXPRESSION
-    ) {
+    if (!isDefined(commandMenuItemToUpdate)) {
       return;
     }
 
@@ -71,15 +63,7 @@ export class EnableEditLayoutAcrossAppCommand extends ProvisionedWorkspaceComman
             commandMenuItem: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: [
-                {
-                  ...existingCommandMenuItem,
-                  availabilityType: standardCommandMenuItem.availabilityType,
-                  conditionalAvailabilityExpression:
-                    standardCommandMenuItem.conditionalAvailabilityExpression,
-                  updatedAt: new Date().toISOString(),
-                },
-              ],
+              flatEntityToUpdate: [commandMenuItemToUpdate],
             },
           },
           workspaceId,
