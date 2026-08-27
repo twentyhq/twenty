@@ -1,3 +1,4 @@
+import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type PreallocatedIdByUniversalIdentifierByMetadataName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
@@ -6,52 +7,68 @@ import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-
 export const buildPreallocatedIdByUniversalIdentifierFromActions = (
   actions: AllUniversalWorkspaceMigrationAction[],
 ): PreallocatedIdByUniversalIdentifierByMetadataName => {
-  const objectMetadata: Record<string, string> = {};
-  const fieldMetadata: Record<string, string> = {};
+  const preallocatedIdByUniversalIdentifierByMetadataName: PreallocatedIdByUniversalIdentifierByMetadataName =
+    {};
+
+  const registerId = ({
+    metadataName,
+    universalIdentifier,
+    id,
+  }: {
+    metadataName: AllMetadataName;
+    universalIdentifier: string;
+    id: string | undefined;
+  }) => {
+    if (!isDefined(id)) {
+      return;
+    }
+
+    const idByUniversalIdentifier =
+      preallocatedIdByUniversalIdentifierByMetadataName[metadataName] ?? {};
+
+    idByUniversalIdentifier[universalIdentifier] = id;
+    preallocatedIdByUniversalIdentifierByMetadataName[metadataName] =
+      idByUniversalIdentifier;
+  };
 
   for (const action of actions) {
     if (action.type !== 'create') {
       continue;
     }
 
-    if (action.metadataName === 'objectMetadata') {
-      if (isDefined(action.id)) {
-        objectMetadata[action.flatEntity.universalIdentifier] = action.id;
-      }
+    registerId({
+      metadataName: action.metadataName,
+      universalIdentifier: action.flatEntity.universalIdentifier,
+      id: action.id,
+    });
 
+    if (action.metadataName === 'objectMetadata') {
       const fieldIdByUniversalIdentifier =
         action.fieldIdByUniversalIdentifier ?? {};
 
       for (const universalFlatFieldMetadata of action.universalFlatFieldMetadatas) {
-        const fieldId =
-          fieldIdByUniversalIdentifier[
+        registerId({
+          metadataName: 'fieldMetadata',
+          universalIdentifier: universalFlatFieldMetadata.universalIdentifier,
+          id: fieldIdByUniversalIdentifier[
             universalFlatFieldMetadata.universalIdentifier
-          ];
-
-        if (isDefined(fieldId)) {
-          fieldMetadata[universalFlatFieldMetadata.universalIdentifier] =
-            fieldId;
-        }
+          ],
+        });
       }
-
-      continue;
     }
 
-    if (action.metadataName === 'fieldMetadata') {
-      if (isDefined(action.id)) {
-        fieldMetadata[action.flatEntity.universalIdentifier] = action.id;
-      }
-
-      if (
-        isDefined(action.relatedUniversalFlatFieldMetadata) &&
-        isDefined(action.relatedFieldId)
-      ) {
-        fieldMetadata[
-          action.relatedUniversalFlatFieldMetadata.universalIdentifier
-        ] = action.relatedFieldId;
-      }
+    if (
+      action.metadataName === 'fieldMetadata' &&
+      isDefined(action.relatedUniversalFlatFieldMetadata)
+    ) {
+      registerId({
+        metadataName: 'fieldMetadata',
+        universalIdentifier:
+          action.relatedUniversalFlatFieldMetadata.universalIdentifier,
+        id: action.relatedFieldId,
+      });
     }
   }
 
-  return { objectMetadata, fieldMetadata };
+  return preallocatedIdByUniversalIdentifierByMetadataName;
 };
