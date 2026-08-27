@@ -1,6 +1,6 @@
 import { isArray, isObject } from '@sniptt/guards';
 
 export const asRecord = (value: unknown): Record<string, unknown> | undefined =>
-  isObject(value) && !isArray(value)
-    ? (value as Record<string, unknown>)
+  isObject<Record<string, unknown>, unknown>(value) && !isArray(value)
+    ? value
     : undefined;
