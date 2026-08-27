@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
+import { OPERATOR_ONLY_SPENDER_TYPES } from 'src/engine/core-modules/usage-limit/constants/operator-only-spender-types.constant';
 import { type UpsertUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/upsert-usage-limit.input';
 import {
   UsageLimitException,
@@ -37,20 +38,18 @@ export const validateUsageLimitAgainstDefinition = (
     );
   }
 
-  if (isNonEmptyString(input.spenderId)) {
-    if (input.spenderType === 'workspace') {
-      throw new UsageLimitException(
-        'A workspace limit cannot target a spender id, it is already scoped to the workspace',
-        UsageLimitExceptionCode.LIMIT_RULE_INVALID,
-      );
-    }
+  if (OPERATOR_ONLY_SPENDER_TYPES.includes(input.spenderType)) {
+    throw new UsageLimitException(
+      `${input.spenderType} limits are set by the instance operator`,
+      UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+    );
+  }
 
-    if (!isValidUuid(input.spenderId)) {
-      throw new UsageLimitException(
-        `${input.spenderId} is not a valid ${input.spenderType} id`,
-        UsageLimitExceptionCode.LIMIT_RULE_INVALID,
-      );
-    }
+  if (isNonEmptyString(input.spenderId) && !isValidUuid(input.spenderId)) {
+    throw new UsageLimitException(
+      `${input.spenderId} is not a valid ${input.spenderType} id`,
+      UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+    );
   }
 
   if (input.limitKind === 'speed' && input.windowSeconds <= 0) {

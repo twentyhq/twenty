@@ -73,28 +73,18 @@ describe('validateUsageLimitAgainstDefinition', () => {
     );
   });
 
-  it('rejects a workspace rule carrying a spender id, which enforcement could never match', () => {
-    expect(() =>
-      validateUsageLimitAgainstDefinition({
-        ...validSpeedRule,
-        spenderType: 'workspace',
-        spenderId: '20202020-3957-4908-9c36-2929a23f8357',
-      }),
-    ).toThrow(
-      expect.objectContaining({
-        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
-      }),
-    );
-  });
-
-  it('accepts a workspace rule with no spender id', () => {
+  it('rejects a workspace rule, since the instance operator owns that scope', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
         ...validSpeedRule,
         spenderType: 'workspace',
         spenderId: null,
       }),
-    ).not.toThrow();
+    ).toThrow(
+      expect.objectContaining({
+        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+      }),
+    );
   });
 
   it('rejects a spender id that is not a uuid', () => {
