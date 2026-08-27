@@ -79,6 +79,11 @@ jobs:
       - name: Wait for server to be ready
         run: npx wait-on http://localhost:3000/healthz --timeout 120000 --interval 1000
 
+      # Install/uninstall run in background jobs, so the CLI needs a queue
+      # worker to be processing them.
+      - name: Start worker
+        run: nohup npx nx run twenty-server:worker:ci &
+
       - name: Run integration tests
         working-directory: packages/twenty-apps/examples/hello-world
         run: npx vitest run
