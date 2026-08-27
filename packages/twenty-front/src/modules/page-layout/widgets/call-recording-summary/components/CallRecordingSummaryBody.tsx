@@ -2,6 +2,7 @@ import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetEmptyStateDisplay';
 import { CallRecordingWidgetForbiddenDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetForbiddenDisplay';
 import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
+import { getCallRecordingSummaryMarkdown } from '@/page-layout/widgets/call-recording-summary/utils/getCallRecordingSummaryMarkdown';
 import { isCallRecordingSummaryFailed } from '@/page-layout/widgets/call-recording-summary/utils/isCallRecordingSummaryFailed';
 import { isCallRecordingSummaryPending } from '@/page-layout/widgets/call-recording-summary/utils/isCallRecordingSummaryPending';
 import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
@@ -10,14 +11,17 @@ import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSummaryContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: ${themeCssVariables.spacing[2]};
+
+  // The markdown renderer spaces blocks for chat bubbles, pushing the summary below where the transcript starts.
+  & > *:first-child,
+  & > *:first-child > *:first-child {
+    margin-top: 0;
+  }
 `;
 
 type CallRecordingSummaryBodyProps = {
@@ -57,12 +61,12 @@ export const CallRecordingSummaryBody = ({
     );
   }
 
-  const trimmedSummaryMarkdown = callRecording.summary?.markdown?.trim();
+  const summaryMarkdown = getCallRecordingSummaryMarkdown(callRecording);
 
-  if (isNonEmptyString(trimmedSummaryMarkdown)) {
+  if (isDefined(summaryMarkdown)) {
     return (
       <StyledSummaryContainer>
-        <LazyMarkdownRenderer text={trimmedSummaryMarkdown} />
+        <LazyMarkdownRenderer text={summaryMarkdown} />
       </StyledSummaryContainer>
     );
   }
