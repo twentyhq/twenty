@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MESSAGE_CALENDAR_TARGET_BACKFILL_UPGRADE_COMMAND_NAME } from 'src/engine/core-modules/target/constants/message-calendar-target-migration.constants';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
@@ -20,6 +22,7 @@ export class MessageCalendarTargetReadinessService {
   private readonly backfillCompletedWorkspaceIds = new Set<string>();
 
   constructor(
+    private readonly featureFlagService: FeatureFlagService,
     private readonly upgradeMigrationService: UpgradeMigrationService,
     private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -44,6 +47,19 @@ export class MessageCalendarTargetReadinessService {
   }
 
   async isReady(workspaceId: string): Promise<boolean> {
+    // The read cutover is deploy-decoupled: backfilled workspaces keep the
+    // legacy participant reads until the flag is turned on, and turning it
+    // off reverts them instantly. The flag is checked first so flag-off
+    // workspaces never pay the backfill lookup.
+    const isReadEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED,
+      workspaceId,
+    );
+
+    if (!isReadEnabled) {
+      return false;
+    }
+
     const isBackfillCompleted = await this.isBackfillCompleted(workspaceId);
 
     if (!isBackfillCompleted) {
