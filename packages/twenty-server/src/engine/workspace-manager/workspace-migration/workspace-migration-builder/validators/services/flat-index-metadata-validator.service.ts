@@ -2,11 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import {
-  FieldMetadataType,
-  RelationType,
-  compositeTypeDefinitions,
-} from 'twenty-shared/types';
+import { RelationType, compositeTypeDefinitions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FlatEntityMapsExceptionCode } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
@@ -186,15 +182,13 @@ export class FlatIndexValidatorService {
                   (property) => property.isIncludedInUniqueConstraint,
                 );
 
-              // MORPH_RELATION resolves to multiple join columns and can't
-              // satisfy a single-column UNIQUE constraint. RELATION is only
-              // accepted as MANY_TO_ONE: that side owns a single join column
-              // (UUID) which Postgres can uniquely index.
+              // Each MANY_TO_ONE relation, including one concrete member of a
+              // morph group, owns one UUID join column that Postgres can
+              // uniquely index. The inverse side has no join column.
               const isUnindexableRelation =
                 isMorphOrRelationUniversalFlatFieldMetadata(relatedFlatField) &&
-                (relatedFlatField.type === FieldMetadataType.MORPH_RELATION ||
-                  relatedFlatField.universalSettings?.relationType !==
-                    RelationType.MANY_TO_ONE);
+                relatedFlatField.universalSettings?.relationType !==
+                  RelationType.MANY_TO_ONE;
 
               if (
                 isUnindexableRelation ||
