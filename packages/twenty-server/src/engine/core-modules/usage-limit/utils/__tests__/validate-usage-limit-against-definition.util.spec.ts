@@ -8,7 +8,7 @@ const validSpeedRule: UpsertUsageLimitInput = {
   resourceType: UsageResourceType.API,
   operationType: UsageOperationType.API_REQUEST,
   spenderType: 'apiKey',
-  spenderId: 'key-1',
+  spenderId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
   limitKind: 'speed',
   windowSeconds: 60,
   limitValue: 100,
@@ -65,6 +65,43 @@ describe('validateUsageLimitAgainstDefinition', () => {
       validateUsageLimitAgainstDefinition({
         ...validSpeedRule,
         windowSeconds: 0,
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+      }),
+    );
+  });
+
+  it('rejects a workspace rule carrying a spender id, which enforcement could never match', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validSpeedRule,
+        spenderType: 'workspace',
+        spenderId: '20202020-3957-4908-9c36-2929a23f8357',
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+      }),
+    );
+  });
+
+  it('accepts a workspace rule with no spender id', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validSpeedRule,
+        spenderType: 'workspace',
+        spenderId: null,
+      }),
+    ).not.toThrow();
+  });
+
+  it('rejects a spender id that is not a uuid', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validSpeedRule,
+        spenderId: 'key-1',
       }),
     ).toThrow(
       expect.objectContaining({

@@ -1,6 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { UsageLimitResolver } from 'src/engine/core-modules/usage-limit/usage-limit.resolver';
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
 import { UsageLimitRulesCacheService } from 'src/engine/core-modules/usage-limit/services/usage-limit-rules-cache.service';
@@ -11,7 +16,14 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UsageLimitEntity]),
+    TypeOrmModule.forFeature([
+      UsageLimitEntity,
+      ApiKeyEntity,
+      ApplicationEntity,
+      UserWorkspaceEntity,
+      AgentEntity,
+      LogicFunctionEntity,
+    ]),
     WorkspaceCacheModule,
     PermissionsModule,
   ],
@@ -20,6 +32,11 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UsageLimitService,
     UsageLimitResolver,
     provideWorkspaceScopedRepository(UsageLimitEntity),
+    provideWorkspaceScopedRepository(ApiKeyEntity),
+    provideWorkspaceScopedRepository(ApplicationEntity),
+    provideWorkspaceScopedRepository(UserWorkspaceEntity),
+    provideWorkspaceScopedRepository(AgentEntity),
+    provideWorkspaceScopedRepository(LogicFunctionEntity),
   ],
   exports: [UsageLimitRulesCacheService],
 })

@@ -1,4 +1,5 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { type UpsertUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/upsert-usage-limit.input';
 import {
@@ -34,6 +35,22 @@ export const validateUsageLimitAgainstDefinition = (
       `${input.resourceType} ${input.limitKind} limits cannot be scoped to ${input.spenderType}`,
       UsageLimitExceptionCode.LIMIT_RULE_INVALID,
     );
+  }
+
+  if (isNonEmptyString(input.spenderId)) {
+    if (input.spenderType === 'workspace') {
+      throw new UsageLimitException(
+        'A workspace limit cannot target a spender id, it is already scoped to the workspace',
+        UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+      );
+    }
+
+    if (!isValidUuid(input.spenderId)) {
+      throw new UsageLimitException(
+        `${input.spenderId} is not a valid ${input.spenderType} id`,
+        UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+      );
+    }
   }
 
   if (input.limitKind === 'speed' && input.windowSeconds <= 0) {
