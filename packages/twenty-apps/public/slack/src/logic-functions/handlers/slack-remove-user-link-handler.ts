@@ -1,14 +1,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type RoutePayload } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
+import { type SlackRouteBody } from 'src/logic-functions/types/slack-route-body.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { deleteSlackUserLink } from 'src/logic-functions/data/delete-slack-user-link';
 import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/utils/current-user-has-workspace-members-permission';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
-
-type SlackRouteBody = Pick<RoutePayload<unknown>, 'body'>;
 
 const readId = (payload: SlackRouteBody): string | undefined =>
   readOptionalString(asRecord(payload.body)?.id);

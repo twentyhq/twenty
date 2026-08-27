@@ -1,10 +1,8 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
-import {
-  SLACK_USER_LINK_CONSENT_ACTION_ID,
-  SLACK_USER_LINK_CONSENT_DECISION,
-} from 'src/logic-functions/constants/slack-user-link-consent-action-id';
+import { SLACK_USER_LINK_CONSENT_ACTION_ID } from 'src/logic-functions/constants/slack-user-link-consent-action-id';
+import { SLACK_USER_LINK_CONSENT_DECISION } from 'src/logic-functions/constants/slack-user-link-consent-decision';
 import { SLACK_USER_LINK_CONSENT_STATE } from 'src/logic-functions/constants/slack-user-link-consent-state';
 import { findSlackUserLink } from 'src/logic-functions/data/find-slack-user-link';
 import { updateSlackUserLink } from 'src/logic-functions/data/update-slack-user-link';

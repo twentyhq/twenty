@@ -1,6 +1,6 @@
 import { isNonEmptyString, isObject } from '@sniptt/guards';
 
-import { SLACK_USER_LINK_CONSENT_DECISION } from 'src/logic-functions/constants/slack-user-link-consent-action-id';
+import { SLACK_USER_LINK_CONSENT_DECISION } from 'src/logic-functions/constants/slack-user-link-consent-decision';
 import { type SlackUserLinkConsentButtonValue } from 'src/logic-functions/types/slack-user-link-consent-button-value.type';
 
 const isConsentDecision = (

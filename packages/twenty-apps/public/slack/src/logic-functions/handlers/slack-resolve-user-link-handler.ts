@@ -1,8 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type RoutePayload } from 'twenty-sdk/define';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { type SlackResolveUserLinkResult } from 'src/logic-functions/types/slack-resolved-user.type';
+import { type SlackRouteBody } from 'src/logic-functions/types/slack-route-body.type';
 import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/utils/current-user-has-workspace-members-permission';
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
@@ -10,8 +10,6 @@ import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { resolveSlackUserByEmail } from 'src/logic-functions/utils/resolve-slack-user-by-email';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
-
-type SlackRouteBody = Pick<RoutePayload<unknown>, 'body'>;
 
 const readBody = (
   payload: SlackRouteBody,
