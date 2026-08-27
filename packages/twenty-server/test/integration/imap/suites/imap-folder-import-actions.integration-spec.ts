@@ -5,8 +5,8 @@ import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
 
 import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
-import { connectGreenmailImapAccount } from 'test/integration/utils/connect-greenmail-imap-account.util';
-import { deliverMailOverSmtp } from 'test/integration/utils/deliver-mail-over-smtp.util';
+import { appendMessageOverImap } from 'test/integration/utils/append-message-over-imap.util';
+import { connectDovecotImapAccount } from 'test/integration/utils/connect-dovecot-imap-account.util';
 import { findImportedMessageSubjects } from 'test/integration/utils/find-imported-records.util';
 import {
   type MessageFolderDto,
@@ -19,15 +19,15 @@ import {
   runFolderActionsWithoutPendingActions,
 } from 'test/integration/utils/run-folder-actions.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
-import { type GreenmailServer } from 'test/integration/utils/start-greenmail-container.util';
+import { type DovecotServer } from 'test/integration/utils/start-dovecot-container.util';
 
-const PASSWORD = 'greenmail-password';
+const PASSWORD = 'dovecot-password';
 const HANDLE = `imap-folder-actions-${randomUUID()}@acme.test`;
 const DELETED_FOLDER_NAME = 'INBOX';
 const IMPORTED_SUBJECT = `IMAP inbox message ${randomUUID()}`;
 
 describe('IMAP folder actions (integration)', () => {
-  let greenmail: GreenmailServer;
+  let dovecot: DovecotServer;
   let connectedAccountId: string;
   let messageExternalIdsToImport: string[];
   let messageExternalIdsWithoutPendingActions: string[];
@@ -36,17 +36,20 @@ describe('IMAP folder actions (integration)', () => {
   let subjectsAfterFolderDeletion: string[];
 
   beforeAll(async () => {
-    const account = await connectGreenmailImapAccount({
+    const account = await connectDovecotImapAccount({
       handle: HANDLE,
       password: PASSWORD,
     });
 
-    greenmail = account.greenmail;
+    dovecot = account.dovecot;
     connectedAccountId = account.connectedAccountId;
 
-    await deliverMailOverSmtp({
-      host: greenmail.host,
-      port: greenmail.smtpPort,
+    await appendMessageOverImap({
+      host: dovecot.host,
+      port: dovecot.imapPort,
+      username: HANDLE,
+      password: PASSWORD,
+      folder: 'INBOX',
       from: `sender-${randomUUID()}@external.test`,
       to: HANDLE,
       subject: IMPORTED_SUBJECT,
@@ -86,7 +89,7 @@ describe('IMAP folder actions (integration)', () => {
       }).catch(() => undefined);
     }
 
-    await greenmail?.stop().catch(() => undefined);
+    await dovecot?.stop().catch(() => undefined);
   });
 
   it('imports every message id of a folder larger than the spread-argument limit, deduplicated', () => {
