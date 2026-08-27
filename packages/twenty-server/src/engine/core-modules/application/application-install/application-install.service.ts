@@ -485,10 +485,7 @@ export class ApplicationInstallService {
       sourceType: appRegistration.sourceType,
     });
 
-    if (
-      isVersionUpgrade &&
-      application.state !== ApplicationState.UPGRADING
-    ) {
+    if (isVersionUpgrade && application.state !== ApplicationState.UPGRADING) {
       await this.applicationService.update(application.id, {
         state: ApplicationState.UPGRADING,
         workspaceId: params.workspaceId,
