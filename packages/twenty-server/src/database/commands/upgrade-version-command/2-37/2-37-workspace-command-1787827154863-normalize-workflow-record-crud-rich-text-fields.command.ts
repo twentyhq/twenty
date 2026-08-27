@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { normalizeRecordCrudRichTextFieldsInSteps } from 'src/database/commands/upgrade-version-command/2-36/utils/normalize-record-crud-rich-text-fields.util';
+import { normalizeRecordCrudRichTextFieldsInSteps } from 'src/database/commands/upgrade-version-command/2-37/utils/normalize-record-crud-rich-text-fields.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -16,9 +16,9 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { findRichTextFieldNames } from 'src/modules/workflow/workflow-executor/utils/find-rich-text-field-names.util';
 
-@RegisteredWorkspaceCommand('2.36.0', 1787827154863)
+@RegisteredWorkspaceCommand('2.37.0', 1787827154863)
 @Command({
-  name: 'upgrade:2-36:normalize-workflow-record-crud-rich-text-fields',
+  name: 'upgrade:2-37:normalize-workflow-record-crud-rich-text-fields',
   description:
     'Normalize bare-string rich text field values into the { blocknote, markdown } object shape in workflow create/update/upsert record steps, which otherwise throws at runtime',
 })

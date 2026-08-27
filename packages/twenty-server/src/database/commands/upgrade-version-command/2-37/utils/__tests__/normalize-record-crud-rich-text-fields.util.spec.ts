@@ -1,4 +1,4 @@
-import { normalizeRecordCrudRichTextFieldsInSteps } from 'src/database/commands/upgrade-version-command/2-36/utils/normalize-record-crud-rich-text-fields.util';
+import { normalizeRecordCrudRichTextFieldsInSteps } from 'src/database/commands/upgrade-version-command/2-37/utils/normalize-record-crud-rich-text-fields.util';
 
 const richTextFieldNamesByObjectName = { person: ['relationshipSummary'] };
 
