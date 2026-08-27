@@ -39,7 +39,7 @@ describe('getRecordCrudRichTextIssues', () => {
     expect(issues).toHaveLength(1);
     expect(issues[0]).toMatchObject({
       severity: 'error',
-      code: 'INVALID_STEP_PARAMS',
+      code: 'INVALID_RICH_TEXT_FIELD',
       stepId: 'step-1',
     });
     expect(issues[0].message).toContain('body');

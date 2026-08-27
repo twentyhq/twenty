@@ -29,7 +29,7 @@ export const getRecordCrudRichTextIssues = ({
     ) {
       issues.push({
         severity: 'error',
-        code: 'INVALID_STEP_PARAMS',
+        code: 'INVALID_RICH_TEXT_FIELD',
         message: `Rich text field "${fieldName}" in step "${stepLabel}" must be a valid rich text value with { blocknote, markdown }.`,
         stepId,
       });
