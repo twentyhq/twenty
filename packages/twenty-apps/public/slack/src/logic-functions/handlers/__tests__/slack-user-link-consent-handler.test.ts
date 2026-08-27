@@ -95,8 +95,9 @@ describe('slackUserLinkConsentHandler', () => {
     expect(result).toMatchObject({ skipped: true });
     expect(updateSlackMessageViaResponseUrlMock).toHaveBeenCalledTimes(1);
     expect(updateSlackMessageViaResponseUrlMock).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.stringContaining('went wrong'),
+      expect.objectContaining({
+        text: expect.stringContaining('went wrong'),
+      }),
     );
   });
 

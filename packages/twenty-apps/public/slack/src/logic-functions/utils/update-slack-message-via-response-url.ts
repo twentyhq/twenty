@@ -2,10 +2,13 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 // Slack gives every interactivity payload a short-lived response_url that
 // accepts an unauthenticated POST to replace the message the button lived on.
-export const updateSlackMessageViaResponseUrl = async (
-  responseUrl: string | undefined,
-  text: string,
-): Promise<void> => {
+export const updateSlackMessageViaResponseUrl = async ({
+  responseUrl,
+  text,
+}: {
+  responseUrl: string | undefined;
+  text: string;
+}): Promise<void> => {
   if (!isNonEmptyString(responseUrl)) {
     return;
   }

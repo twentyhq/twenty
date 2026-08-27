@@ -101,7 +101,10 @@ export const slackUserLinkConsentHandler = async (
   } catch (error) {
     // The write failed, so the link is still pending; tell the user their click
     // did not stick instead of leaving the message unchanged.
-    await updateSlackMessageViaResponseUrl(payload.response_url, FAILURE_MESSAGE);
+    await updateSlackMessageViaResponseUrl({
+      responseUrl: payload.response_url,
+      text: FAILURE_MESSAGE,
+    });
 
     return {
       skipped: true,
@@ -109,10 +112,10 @@ export const slackUserLinkConsentHandler = async (
     };
   }
 
-  await updateSlackMessageViaResponseUrl(
-    payload.response_url,
-    approved ? APPROVED_MESSAGE : DECLINED_MESSAGE,
-  );
+  await updateSlackMessageViaResponseUrl({
+    responseUrl: payload.response_url,
+    text: approved ? APPROVED_MESSAGE : DECLINED_MESSAGE,
+  });
 
   return { done: true };
 };
