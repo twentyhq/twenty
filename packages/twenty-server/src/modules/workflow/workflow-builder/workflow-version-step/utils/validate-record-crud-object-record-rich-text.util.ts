@@ -1,4 +1,4 @@
-import { isObject } from '@sniptt/guards';
+import { richTextValueSchema } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -22,12 +22,13 @@ export const validateRecordCrudObjectRecordRichTextOrThrow = ({
   for (const fieldName of richTextFieldNames) {
     const fieldValue = objectRecord[fieldName];
 
-    // A rich text value must be the { blocknote, markdown } object shape. A bare
-    // string crashes the workflow executor when resolving variables and is later
-    // rejected by the record write layer, so reject it at the source.
-    if (isDefined(fieldValue) && !isObject(fieldValue)) {
+    if (!isDefined(fieldValue)) {
+      continue;
+    }
+
+    if (!richTextValueSchema.safeParse(fieldValue).success) {
       throw new WorkflowVersionStepException(
-        `Rich text field "${fieldName}" in step "${stepLabel}" must be an object, received ${typeof fieldValue}.`,
+        `Rich text field "${fieldName}" in step "${stepLabel}" must be a valid rich text value with { blocknote, markdown }.`,
         WorkflowVersionStepExceptionCode.INVALID_REQUEST,
       );
     }

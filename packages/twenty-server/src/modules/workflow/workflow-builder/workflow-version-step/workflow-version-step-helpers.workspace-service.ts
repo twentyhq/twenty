@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
+import { getRecordCrudStepObjectRecord } from 'src/modules/workflow/common/utils/get-record-crud-step-object-record.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import { WORKFLOW_RECORD_CRUD_ACTION_TYPES } from 'src/modules/workflow/workflow-builder/workflow-validation/constants/workflow-record-crud-action-types.constant';
 import { validateRecordCrudObjectRecordRichTextOrThrow } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/validate-record-crud-object-record-rich-text.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
@@ -82,38 +82,47 @@ export class WorkflowVersionStepHelpersWorkspaceService {
     workspaceId: string;
     steps: WorkflowAction[];
   }): Promise<void> {
-    for (const step of steps) {
-      if (!WORKFLOW_RECORD_CRUD_ACTION_TYPES.has(step.type)) {
+    const recordCrudSteps = steps
+      .map((step) => ({ step, parsed: getRecordCrudStepObjectRecord(step) }))
+      .filter(
+        (
+          entry,
+        ): entry is {
+          step: WorkflowAction;
+          parsed: NonNullable<typeof entry.parsed>;
+        } => isDefined(entry.parsed),
+      );
+
+    if (recordCrudSteps.length === 0) {
+      return;
+    }
+
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps, objectIdByNameSingular } =
+      await this.workflowCommonWorkspaceService.getFlatEntityMaps(workspaceId);
+
+    for (const { step, parsed } of recordCrudSteps) {
+      const objectId = objectIdByNameSingular[parsed.objectName];
+
+      if (!isDefined(objectId)) {
         continue;
       }
 
-      const input = 'input' in step.settings ? step.settings.input : undefined;
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: objectId,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
 
-      if (!isObject(input)) {
-        continue;
-      }
-
-      const objectName = 'objectName' in input ? input.objectName : undefined;
-      const objectRecord =
-        'objectRecord' in input ? input.objectRecord : undefined;
-
-      if (typeof objectName !== 'string' || !isObject(objectRecord)) {
-        continue;
-      }
-
-      // The object might not exist yet (validated elsewhere); skip when metadata
-      // cannot be resolved rather than masking that error here.
-      const objectMetadataInfo = await this.workflowCommonWorkspaceService
-        .getObjectMetadataInfo(objectName, workspaceId)
-        .catch(() => undefined);
-
-      if (!isDefined(objectMetadataInfo)) {
+      if (!isDefined(flatObjectMetadata)) {
         continue;
       }
 
       validateRecordCrudObjectRecordRichTextOrThrow({
-        objectRecord: objectRecord as Record<string, unknown>,
-        objectMetadataInfo,
+        objectRecord: parsed.objectRecord,
+        objectMetadataInfo: {
+          flatObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        },
         stepLabel: step.name ?? step.id,
       });
     }

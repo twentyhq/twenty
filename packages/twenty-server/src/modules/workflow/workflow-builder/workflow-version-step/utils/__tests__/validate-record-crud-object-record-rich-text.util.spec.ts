@@ -46,9 +46,27 @@ describe('validateRecordCrudObjectRecordRichTextOrThrow', () => {
     ).toThrow('Rich text field "relationshipSummary"');
   });
 
+  it('throws when a rich text field holds an array', () => {
+    expect(() => validate({ relationshipSummary: ['[]'] })).toThrow(
+      'Rich text field "relationshipSummary"',
+    );
+  });
+
+  it('throws when a rich text object has malformed subfields', () => {
+    expect(() =>
+      validate({ relationshipSummary: { blocknote: 123 } }),
+    ).toThrow('Rich text field "relationshipSummary"');
+    expect(() =>
+      validate({ relationshipSummary: { unexpectedKey: 'value' } }),
+    ).toThrow('Rich text field "relationshipSummary"');
+  });
+
   it('accepts the { blocknote, markdown } object shape', () => {
     expect(() =>
       validate({ relationshipSummary: { blocknote: '[]', markdown: null } }),
+    ).not.toThrow();
+    expect(() =>
+      validate({ relationshipSummary: { markdown: 'Latest donation' } }),
     ).not.toThrow();
   });
 

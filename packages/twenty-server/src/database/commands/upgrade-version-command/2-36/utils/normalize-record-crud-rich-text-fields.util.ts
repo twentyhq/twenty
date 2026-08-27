@@ -1,15 +1,5 @@
-import { isObject } from '@sniptt/guards';
-import { WorkflowActionType } from 'twenty-shared/workflow';
+import { getRecordCrudStepObjectRecord } from 'src/modules/workflow/common/utils/get-record-crud-step-object-record.util';
 
-const RECORD_CRUD_ACTION_TYPES_WITH_OBJECT_RECORD = new Set<string>([
-  WorkflowActionType.CREATE_RECORD,
-  WorkflowActionType.UPDATE_RECORD,
-  WorkflowActionType.UPSERT_RECORD,
-]);
-
-// A rich text field value must be the { blocknote, markdown } object shape. Legacy
-// programmatically-authored workflows stored a bare string, which crashes the
-// executor. Wrap it as markdown; the record write layer derives blocknote from it.
 export const normalizeRecordCrudRichTextFieldsInSteps = ({
   steps,
   richTextFieldNamesByObjectName,
@@ -24,38 +14,20 @@ export const normalizeRecordCrudRichTextFieldsInSteps = ({
   let changed = false;
 
   const nextSteps = steps.map((step) => {
-    if (
-      !isObject(step) ||
-      typeof step.type !== 'string' ||
-      !RECORD_CRUD_ACTION_TYPES_WITH_OBJECT_RECORD.has(step.type)
-    ) {
+    const parsed = getRecordCrudStepObjectRecord(step);
+
+    if (parsed === undefined) {
       return step;
     }
 
-    const settings = step.settings;
-    const input =
-      isObject(settings) && 'input' in settings ? settings.input : undefined;
-
-    if (!isObject(input)) {
-      return step;
-    }
-
-    const objectName = 'objectName' in input ? input.objectName : undefined;
-    const objectRecord =
-      'objectRecord' in input ? input.objectRecord : undefined;
-
-    if (typeof objectName !== 'string' || !isObject(objectRecord)) {
-      return step;
-    }
-
-    const richTextFieldNames = richTextFieldNamesByObjectName[objectName];
+    const richTextFieldNames = richTextFieldNamesByObjectName[parsed.objectName];
 
     if (richTextFieldNames === undefined || richTextFieldNames.length === 0) {
       return step;
     }
 
     let stepChanged = false;
-    const nextObjectRecord: Record<string, unknown> = { ...objectRecord };
+    const nextObjectRecord: Record<string, unknown> = { ...parsed.objectRecord };
 
     for (const fieldName of richTextFieldNames) {
       const value = nextObjectRecord[fieldName];
@@ -72,11 +44,13 @@ export const normalizeRecordCrudRichTextFieldsInSteps = ({
 
     changed = true;
 
+    const typedStep = step as { settings: { input: Record<string, unknown> } };
+
     return {
-      ...step,
+      ...typedStep,
       settings: {
-        ...settings,
-        input: { ...input, objectRecord: nextObjectRecord },
+        ...typedStep.settings,
+        input: { ...typedStep.settings.input, objectRecord: nextObjectRecord },
       },
     };
   });
