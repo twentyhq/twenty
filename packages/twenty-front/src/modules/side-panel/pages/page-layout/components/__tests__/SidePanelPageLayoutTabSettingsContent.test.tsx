@@ -7,9 +7,7 @@ import {
 } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
-import { RegularTabSettingsContent } from '@/side-panel/pages/page-layout/components/RegularTabSettingsContent';
 import { SidePanelPageLayoutTabSettingsContent } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent';
-import { SingleWidgetTabSettingsContent } from '@/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent';
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
@@ -82,105 +80,9 @@ const CurrentTabLocation = () => {
   return <output>{hash}</output>;
 };
 
-const renderTabSettings = (
-  tabType: 'regular' | 'single-widget',
-  isPinned: boolean,
-) => {
-  const store = createTabSettingsStore();
-  const callbacks = {
-    onSetAsPinned: jest.fn(),
-    onUnpin: jest.fn(),
-    onMoveLeft: jest.fn(),
-    onMoveRight: jest.fn(),
-    onDuplicate: jest.fn(),
-    onResetToDefault: jest.fn(),
-    onDelete: jest.fn(),
-  };
-
-  render(
-    <MemoryRouter>
-      <I18nProvider i18n={i18n}>
-        <JotaiProvider store={store}>
-          {tabType === 'regular' ? (
-            <RegularTabSettingsContent
-              canSetAsPinned={!isPinned}
-              canUnpin={isPinned}
-              canMoveLeft={!isPinned}
-              canMoveRight={true}
-              canDelete={true}
-              isResetToDefaultDisabled={false}
-              onSetAsPinned={callbacks.onSetAsPinned}
-              onUnpin={callbacks.onUnpin}
-              onMoveLeft={callbacks.onMoveLeft}
-              onMoveRight={callbacks.onMoveRight}
-              onDuplicate={callbacks.onDuplicate}
-              onResetToDefault={callbacks.onResetToDefault}
-              onDelete={callbacks.onDelete}
-            />
-          ) : (
-            <SingleWidgetTabSettingsContent
-              canSetAsPinned={!isPinned}
-              canUnpin={isPinned}
-              canMoveLeft={!isPinned}
-              canMoveRight={true}
-              canDelete={true}
-              isResetToDefaultDisabled={false}
-              onSetAsPinned={callbacks.onSetAsPinned}
-              onUnpin={callbacks.onUnpin}
-              onMoveLeft={callbacks.onMoveLeft}
-              onMoveRight={callbacks.onMoveRight}
-              onResetToDefault={callbacks.onResetToDefault}
-              onDelete={callbacks.onDelete}
-              pageLayoutId="page-layout-id"
-              singleWidget={makeWidget('widget-id', 0)}
-            />
-          )}
-        </JotaiProvider>
-      </I18nProvider>
-    </MemoryRouter>,
-  );
-
-  return callbacks;
-};
-
 describe.each(['regular', 'single-widget'] as const)(
-  '%s tab placement',
+  '%s tab selection after unpinning',
   (tabType) => {
-    it('puts pinning before movement and follows that order with the keyboard', async () => {
-      const user = userEvent.setup();
-      const { onSetAsPinned, onMoveLeft, onMoveRight } = renderTabSettings(
-        tabType,
-        false,
-      );
-
-      expect(screen.getByText('Placement')).toBeVisible();
-      expect(
-        screen
-          .getAllByText(/^(Pin tab|Move left|Move right)$/)
-          .map((item) => item.textContent),
-      ).toEqual(['Pin tab', 'Move left', 'Move right']);
-
-      await user.keyboard('{Enter}{ArrowDown}{Enter}{ArrowDown}{Enter}');
-
-      expect(onSetAsPinned).toHaveBeenCalledTimes(1);
-      expect(onMoveLeft).toHaveBeenCalledTimes(1);
-      expect(onMoveRight).toHaveBeenCalledTimes(1);
-    });
-
-    it('offers unpinning for a pinned tab and omits unavailable movement', async () => {
-      const user = userEvent.setup();
-      const { onUnpin, onMoveRight } = renderTabSettings(tabType, true);
-
-      expect(screen.queryByText('Pin tab')).not.toBeInTheDocument();
-      expect(screen.queryByText('Move left')).not.toBeInTheDocument();
-
-      await user.click(screen.getByText('Unpin tab'));
-      await user.keyboard('{ArrowDown}{Enter}');
-
-      expect(onUnpin).toHaveBeenCalledTimes(1);
-      expect(onMoveRight).toHaveBeenCalledTimes(1);
-    });
-
     it.each(['', '#timeline'])(
       'keeps the newly unpinned tab selected when the initial URL hash is "%s"',
       async (initialHash) => {

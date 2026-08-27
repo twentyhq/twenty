@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WORKSPACE_OWNED_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/workspace-owned-properties-by-metadata-name.constant';
 
 type FlatEntityMapsByUniversalIdentifier = {
-  byUniversalIdentifier: Partial<Record<string, object>>;
+  byUniversalIdentifier: Partial<Record<string, Record<string, unknown>>>;
 };
 
 // An application ships a default for workspace-owned properties, so a
@@ -32,9 +32,8 @@ export const keepWorkspaceOwnedProperties = <
   for (const [universalIdentifier, toFlatEntity] of Object.entries(
     byUniversalIdentifier,
   )) {
-    const fromFlatEntity = fromFlatEntityMaps.byUniversalIdentifier[
-      universalIdentifier
-    ] as Record<string, unknown> | undefined;
+    const fromFlatEntity =
+      fromFlatEntityMaps.byUniversalIdentifier[universalIdentifier];
 
     if (!isDefined(fromFlatEntity) || !isDefined(toFlatEntity)) {
       continue;
