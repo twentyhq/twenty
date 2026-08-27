@@ -51,11 +51,14 @@ export const CallRecordingSummaryBody = ({
     (fieldMetadataItem) => fieldMetadataItem.name === 'summary',
   );
 
-  const isSummaryReadOnly = useIsRecordFieldReadOnly({
+  const isSummaryFieldReadOnly = useIsRecordFieldReadOnly({
     recordId: callRecording?.id ?? '',
     objectMetadataId: callRecordingObjectMetadataItem.id,
     fieldMetadataId: summaryFieldMetadataItem?.id ?? '',
   });
+
+  const isSummaryReadOnly =
+    !isDefined(summaryFieldMetadataItem) || isSummaryFieldReadOnly;
 
   if (isDefined(restriction)) {
     return <CallRecordingWidgetForbiddenDisplay restriction={restriction} />;

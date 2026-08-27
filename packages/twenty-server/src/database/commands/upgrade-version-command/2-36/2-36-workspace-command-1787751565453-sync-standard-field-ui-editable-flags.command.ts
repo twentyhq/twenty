@@ -12,9 +12,9 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
-@RegisteredWorkspaceCommand('2.35.0', 1787686500000)
+@RegisteredWorkspaceCommand('2.36.0', 1787751565453)
 @Command({
-  name: 'upgrade:2-35:sync-standard-field-ui-editable-flags',
+  name: 'upgrade:2-36:sync-standard-field-ui-editable-flags',
   description:
     'Re-sync isUIEditable on standard fields from the standard-application definitions',
 })
