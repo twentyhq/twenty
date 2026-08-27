@@ -238,8 +238,8 @@ RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz \
 RUN apk add --no-cache \
     postgresql18 postgresql18-contrib \
     redis \
-    'libcrypto3>=3.5.7-r0' \
-    'libssl3>=3.5.7-r0' \
+    'libcrypto3>=3.5.8-r0' \
+    'libssl3>=3.5.8-r0' \
     'curl>=8.20.0-r0' jq su-exec
 
 # Workspace root config
