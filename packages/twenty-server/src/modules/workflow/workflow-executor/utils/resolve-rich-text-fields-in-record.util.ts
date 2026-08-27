@@ -1,3 +1,4 @@
+import { isObject } from '@sniptt/guards';
 import { isString } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, resolveRichTextVariables } from 'twenty-shared/utils';
@@ -26,7 +27,7 @@ export const resolveRichTextFieldsInRecord = (
     const fieldValue = resolvedRecord[fieldName];
 
     if (
-      isDefined(fieldValue) &&
+      isObject(fieldValue) &&
       'blocknote' in fieldValue &&
       isString(fieldValue.blocknote)
     ) {
