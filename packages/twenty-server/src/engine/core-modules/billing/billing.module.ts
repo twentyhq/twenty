@@ -33,6 +33,7 @@ import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/
 import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { BillingUsageAllowanceResolver } from 'src/engine/core-modules/billing/services/billing-usage-allowance-resolver.service';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -40,6 +41,7 @@ import { ResourceCreditService } from 'src/engine/core-modules/billing/services/
 import { WorkspaceCurrentBillingSubscriptionCacheService } from 'src/engine/core-modules/billing/services/workspace-current-billing-subscription-cache.service';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
+import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -61,6 +63,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     StripeModule,
     MessageQueueModule,
     PermissionsModule,
+    UsageLimitModule,
     WorkspaceCacheModule,
     WorkspaceDomainsModule,
     TypeOrmModule.forFeature([
@@ -96,6 +99,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingSyncCustomerDataCommand,
     BillingUpdateSubscriptionPriceCommand,
     BillingSyncPlansDataCommand,
+    BillingUsageAllowanceResolver,
     BillingUsageService,
     BillingUsageCacheService,
     BillingPriceService,

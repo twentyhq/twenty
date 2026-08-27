@@ -65,6 +65,7 @@ export class UsageLimitSpeedService {
       {
         exhaustedScope: {
           resourceType,
+          operationType,
           limitKind: 'speed',
           spenderType: outcome.exhausted.spenderType,
           spenderId: outcome.exhausted.spenderId,
@@ -72,6 +73,7 @@ export class UsageLimitSpeedService {
           remaining: 0,
           windowSeconds: Math.ceil(outcome.exhausted.windowMs / 1000),
           retryAfterMs: outcome.retryAfterMs,
+          periodEnd: null,
           isFallback: outcome.exhausted.isFallback,
         },
       },

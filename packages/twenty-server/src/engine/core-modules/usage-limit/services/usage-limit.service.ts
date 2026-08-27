@@ -5,6 +5,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { type UpsertUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/upsert-usage-limit.input';
 import {
   UsageLimitException,
@@ -37,6 +40,8 @@ export class UsageLimitService {
     @InjectWorkspaceScopedRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    @InjectCacheStorage(CacheStorageNamespace.EngineUsageLimit)
+    private readonly cacheStorage: CacheStorageService,
   ) {}
 
   async findAll(workspaceId: string): Promise<UsageLimitEntity[]> {
@@ -83,9 +88,7 @@ export class UsageLimitService {
       { conflictPaths: ['workspaceId', ...Object.keys(scope)] },
     );
 
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'usageLimitRules',
-    ]);
+    await this.invalidateRules(workspaceId);
 
     return this.usageLimitRepository.findOneOrFail(workspaceId, {
       where: scope,
@@ -107,11 +110,20 @@ export class UsageLimitService {
       return false;
     }
 
+    await this.invalidateRules(workspaceId);
+
+    return true;
+  }
+
+  // Quota counters store the remaining budget, so a changed limit would keep
+  // serving the old remaining until the period ends; dropping them forces a
+  // re-warm against the new rules. Speed buckets are untouched.
+  private async invalidateRules(workspaceId: string): Promise<void> {
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'usageLimitRules',
     ]);
 
-    return true;
+    await this.cacheStorage.flushByPattern(`{${workspaceId}}:quota:*`);
   }
 
   private async validateSpenderBelongsToWorkspace({

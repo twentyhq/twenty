@@ -42,7 +42,9 @@ import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/
 import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/get-tool-metric-name.util';
 import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
 import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/output-navigation-tool-names.constant';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
@@ -105,6 +107,7 @@ export class AgentAsyncExecutorService {
     private readonly nativeToolBinder: NativeToolBinderService,
     private readonly aiBillingService: AiBillingService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly metricsService: MetricsService,
     @InjectWorkspaceScopedRepository(RoleTargetEntity)
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
@@ -281,6 +284,13 @@ export class AgentAsyncExecutorService {
 
     await this.billingUsageService.hasAvailableCreditsOrThrow(workspaceId);
 
+    await this.usageLimitQuotaService.assertCanConsume({
+      workspaceId,
+      resourceType: UsageResourceType.AI,
+      operationType,
+      spenders: { userWorkspaceId, agentId: agent?.id },
+    });
+
     let accumulatedUsage: LanguageModelUsage = EMPTY_USAGE;
     let cacheCreationTokens = 0;
     let nativeWebSearchCallCount = 0;
@@ -417,6 +427,8 @@ export class AgentAsyncExecutorService {
                 ),
               },
               workspaceId,
+              operationType,
+              { userWorkspaceId, agentId: agent?.id },
             );
 
           if (stepHasNoMoreAvailableCredits) {
@@ -520,6 +532,8 @@ export class AgentAsyncExecutorService {
                   ),
                 },
                 workspaceId,
+                operationType,
+                { userWorkspaceId, agentId: agent?.id },
               );
 
             if (stepHasNoMoreAvailableCredits) {

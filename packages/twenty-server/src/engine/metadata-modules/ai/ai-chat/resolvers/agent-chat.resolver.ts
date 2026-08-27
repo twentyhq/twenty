@@ -15,6 +15,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -56,6 +59,7 @@ export class AgentChatResolver {
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly systemPromptBuilderService: SystemPromptBuilderService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly redisClientService: RedisClientService,
     @InjectWorkspaceScopedRepository(AgentChatThreadEntity)
@@ -180,6 +184,12 @@ export class AgentChatResolver {
     );
 
     await this.billingUsageService.hasAvailableCreditsOrThrow(workspace.id);
+    await this.usageLimitQuotaService.assertCanConsume({
+      workspaceId: workspace.id,
+      resourceType: UsageResourceType.AI,
+      operationType: UsageOperationType.AI_CHAT_TOKEN,
+      spenders: { userWorkspaceId },
+    });
 
     const thread = await this.threadRepository.findOne(workspace.id, {
       where: { id: threadId, userWorkspaceId },
@@ -291,6 +301,12 @@ export class AgentChatResolver {
     );
 
     await this.billingUsageService.hasAvailableCreditsOrThrow(workspace.id);
+    await this.usageLimitQuotaService.assertCanConsume({
+      workspaceId: workspace.id,
+      resourceType: UsageResourceType.AI,
+      operationType: UsageOperationType.AI_CHAT_TOKEN,
+      spenders: { userWorkspaceId },
+    });
 
     const result = await this.agentChatStreamingService.retryLastFailedTurn({
       threadId,
@@ -344,6 +360,12 @@ export class AgentChatResolver {
     );
 
     await this.billingUsageService.hasAvailableCreditsOrThrow(workspace.id);
+    await this.usageLimitQuotaService.assertCanConsume({
+      workspaceId: workspace.id,
+      resourceType: UsageResourceType.AI,
+      operationType: UsageOperationType.AI_CHAT_TOKEN,
+      spenders: { userWorkspaceId },
+    });
 
     const thread = await this.threadRepository.findOne(workspace.id, {
       where: { id: threadId, userWorkspaceId },

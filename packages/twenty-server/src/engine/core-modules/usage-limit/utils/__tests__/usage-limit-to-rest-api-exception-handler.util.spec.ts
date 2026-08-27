@@ -13,6 +13,7 @@ const buildExhaustedScope = (
   overrides: Partial<ExhaustedScope> = {},
 ): ExhaustedScope => ({
   resourceType: UsageResourceType.API,
+  operationType: null,
   limitKind: 'speed',
   spenderType: 'apiKey',
   spenderId: 'key-1',
@@ -20,6 +21,7 @@ const buildExhaustedScope = (
   remaining: 0,
   windowSeconds: 60,
   retryAfterMs: 11983,
+  periodEnd: null,
   isFallback: true,
   ...overrides,
 });
@@ -99,5 +101,55 @@ describe('usageLimitToRestApiExceptionHandler', () => {
     }
 
     expect(thrown).not.toBeInstanceOf(UsageLimitHttpException);
+  });
+
+  describe('quota exhaustion', () => {
+    const periodEnd = new Date('2026-09-01T00:00:00.000Z');
+
+    const catchQuotaThrown = (): UsageLimitHttpException => {
+      try {
+        usageLimitToRestApiExceptionHandler(
+          new UsageLimitException(
+            'Usage quota exhausted for workspace: 1000000 per period.',
+            UsageLimitExceptionCode.QUOTA_EXHAUSTED,
+            {
+              exhaustedScope: buildExhaustedScope({
+                limitKind: 'quota',
+                spenderType: 'workspace',
+                spenderId: null,
+                limitValue: 1_000_000,
+                windowSeconds: 0,
+                retryAfterMs: 0,
+                periodEnd,
+              }),
+            },
+          ),
+        );
+      } catch (error) {
+        return error as UsageLimitHttpException;
+      }
+
+      throw new Error('the handler was expected to throw');
+    };
+
+    it('answers 402, because retrying sooner cannot help', () => {
+      const error = catchQuotaThrown();
+
+      expect(error.getStatus()).toBe(HttpStatus.PAYMENT_REQUIRED);
+      expect(error.getResponseBody()).toEqual({
+        statusCode: HttpStatus.PAYMENT_REQUIRED,
+        error: 'QUOTA_EXHAUSTED',
+        messages: ['Usage quota exhausted for workspace: 1000000 per period.'],
+        limitKind: 'quota',
+        scope: { spenderType: 'workspace', spenderId: null },
+        limit: 1_000_000,
+        remaining: 0,
+        periodEnd: periodEnd.toISOString(),
+      });
+    });
+
+    it('sends no rate-limit headers', () => {
+      expect(catchQuotaThrown().getResponseHeaders()).toEqual({});
+    });
   });
 });

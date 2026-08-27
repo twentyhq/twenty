@@ -12,6 +12,9 @@ export type UsageLimitRestResponseBody = {
   };
   limit: number;
   remaining: number;
-  windowSeconds: number;
-  retryAfterSeconds: number;
+  // Speed only: when retrying becomes worthwhile.
+  windowSeconds?: number;
+  retryAfterSeconds?: number;
+  // Quota only: when the period resets.
+  periodEnd?: string;
 };

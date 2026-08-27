@@ -28,6 +28,7 @@ import { AgentRunResolver } from './resolvers/agent-run.resolver';
 import { AgentActorContextService } from './services/agent-actor-context.service';
 import { AgentAsyncExecutorService } from './services/agent-async-executor.service';
 import { AgentRunService } from './services/agent-run.service';
+import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { AgentRunService } from './services/agent-run.service';
     AiAgentModule,
     ApplicationModule,
     BillingModule,
+    UsageLimitModule,
     FileUrlModule,
     WorkspaceDomainsModule,
     MetricsModule,

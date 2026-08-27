@@ -240,6 +240,52 @@ export class BillingUsageService {
     return Number(resourceCreditPrice.metadata?.credit_amount ?? 0);
   }
 
+  // The workspace's spendable pool for the current period, before usage:
+  // subscription cap plus rollover grants. Null when nothing bounds usage
+  // (billing disabled, no subscription), which quota enforcement reads as
+  // unlimited.
+  async getUsageAllowanceMicro(workspaceId: string): Promise<number | null> {
+    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+      return null;
+    }
+
+    const { currentBillingSubscription } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'currentBillingSubscription',
+      ]);
+
+    if (currentBillingSubscription === NO_BILLING_SUBSCRIPTION) {
+      return null;
+    }
+
+    const subscription = await this.billingSubscriptionRepository.findOne(
+      workspaceId,
+      {
+        where: {
+          currentPeriodStart: new Date(
+            currentBillingSubscription.currentPeriodStart,
+          ),
+        },
+        relations: [
+          'billingSubscriptionItems',
+          'billingSubscriptionItems.billingProduct',
+          'billingSubscriptionItems.billingProduct.billingPrices',
+        ],
+      },
+    );
+
+    if (!isDefined(subscription)) {
+      return null;
+    }
+
+    const [resourceUsageCap, activeCredits] = await Promise.all([
+      this.getResourceUsageCap(subscription),
+      this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
+    ]);
+
+    return resourceUsageCap + activeCredits;
+  }
+
   async decrementAvailableCreditsInCache({
     workspaceId,
     usedCredits,

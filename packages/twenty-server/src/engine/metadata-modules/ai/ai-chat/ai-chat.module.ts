@@ -41,6 +41,7 @@ import { AgentTitleGenerationService } from './services/agent-title-generation.s
 import { ChatExecutionService } from './services/chat-execution.service';
 import { MessagePruningService } from './services/message-pruning.service';
 import { SystemPromptBuilderService } from './services/system-prompt-builder.service';
+import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     ]),
     AiAgentExecutionModule,
     BillingModule,
+    UsageLimitModule,
     ThrottlerModule,
     FileModule,
     PermissionsModule,

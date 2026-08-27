@@ -182,28 +182,42 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     clientId?: string,
   ): Promise<T[]> {
     try {
-      const client = clientId
-        ? await this.connectToClient(clientId)
-        : this.mainClient;
-
-      if (!client) {
-        return [];
-      }
-
-      const resultSet = await client.query({
-        query,
-        format: 'JSONEachRow',
-        query_params: params,
-      });
-
-      const result = await resultSet.json<T>();
-
-      return Array.isArray(result) ? result : [];
+      return await this.selectOrThrow<T>(query, params, clientId);
     } catch (err) {
       this.logger.error('Error executing select query in ClickHouse', err);
 
       return [];
     }
+  }
+
+  // select() swallows errors and returns [], which callers cannot tell apart
+  // from a legitimately empty result. Callers that hand out budget from what
+  // they read must use this variant instead.
+  public async selectOrThrow<T>(
+    query: string,
+    // oxlint-disable-next-line typescript/no-explicit-any
+    params?: Record<string, any>,
+    clientId?: string,
+  ): Promise<T[]> {
+    const client = clientId
+      ? await this.connectToClient(clientId)
+      : this.mainClient;
+
+    if (!client) {
+      throw new Error(
+        `No ClickHouse client available${clientId ? ` for client ${clientId}` : ''}`,
+      );
+    }
+
+    const resultSet = await client.query({
+      query,
+      format: 'JSONEachRow',
+      query_params: params,
+    });
+
+    const result = await resultSet.json<T>();
+
+    return Array.isArray(result) ? result : [];
   }
 
   public async createDatabase(databaseName: string): Promise<boolean> {

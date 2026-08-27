@@ -15,6 +15,7 @@ const buildExhaustedScope = (
   overrides: Partial<ExhaustedScope> = {},
 ): ExhaustedScope => ({
   resourceType: UsageResourceType.API,
+  operationType: null,
   limitKind: 'speed',
   spenderType: 'apiKey',
   spenderId: 'key-1',
@@ -22,6 +23,7 @@ const buildExhaustedScope = (
   remaining: 0,
   windowSeconds: 60,
   retryAfterMs: 11983,
+  periodEnd: null,
   isFallback: true,
   ...overrides,
 });

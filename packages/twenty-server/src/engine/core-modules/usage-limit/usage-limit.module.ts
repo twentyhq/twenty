@@ -1,11 +1,17 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ClickHouseModule } from 'src/database/clickhouse/clickhouse.module';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { UsageAllowanceResolverRegistry } from 'src/engine/core-modules/usage-limit/services/usage-allowance-resolver-registry.service';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
 import { UsageLimitResolver } from 'src/engine/core-modules/usage-limit/usage-limit.resolver';
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
@@ -25,10 +31,16 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       AgentEntity,
       LogicFunctionEntity,
     ]),
+    CacheLockModule,
+    ClickHouseModule,
+    FeatureFlagModule,
+    UsageModule,
     WorkspaceCacheModule,
     PermissionsModule,
   ],
   providers: [
+    UsageAllowanceResolverRegistry,
+    UsageLimitQuotaService,
     UsageLimitSpeedService,
     UsageLimitRulesCacheService,
     UsageLimitService,
@@ -40,6 +52,11 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(AgentEntity),
     provideWorkspaceScopedRepository(LogicFunctionEntity),
   ],
-  exports: [UsageLimitSpeedService, UsageLimitRulesCacheService],
+  exports: [
+    UsageAllowanceResolverRegistry,
+    UsageLimitQuotaService,
+    UsageLimitSpeedService,
+    UsageLimitRulesCacheService,
+  ],
 })
 export class UsageLimitModule {}
