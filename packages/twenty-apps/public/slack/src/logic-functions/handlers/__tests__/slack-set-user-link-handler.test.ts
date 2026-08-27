@@ -277,6 +277,67 @@ describe('slackSetUserLinkHandler', () => {
     expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
   });
 
+  it('should respect a decline and not re-request consent when re-linking the same member', async () => {
+    findSlackUserLinkMock.mockResolvedValue({
+      id: 'link-1',
+      workspaceMemberId: INPUT.workspaceMemberId,
+      source: 'MANUAL',
+      consentState: 'DECLINED',
+    });
+
+    const result = await slackSetUserLinkHandler({ ...INPUT, name: 'Ada' });
+
+    expect(result.success).toBe(true);
+    expect(updateSlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
+      id: 'link-1',
+      workspaceMemberId: INPUT.workspaceMemberId,
+      name: 'Ada',
+      source: 'MANUAL',
+      consentState: undefined,
+    });
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
+  it('should re-request consent when linking a declined user to a different member', async () => {
+    findSlackUserLinkMock.mockResolvedValue({
+      id: 'link-1',
+      workspaceMemberId: 'someone-else',
+      source: 'MANUAL',
+      consentState: 'DECLINED',
+    });
+
+    const result = await slackSetUserLinkHandler({ ...INPUT, name: 'Ada' });
+
+    expect(result.success).toBe(true);
+    expect(updateSlackUserLinkMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        id: 'link-1',
+        workspaceMemberId: INPUT.workspaceMemberId,
+        consentState: 'PENDING',
+      }),
+    );
+    expect(sendSlackUserLinkConsentDmMock).toHaveBeenCalled();
+  });
+
+  it('should not re-send a consent request when re-saving a still-pending same-member link', async () => {
+    findSlackUserLinkMock.mockResolvedValue({
+      id: 'link-1',
+      workspaceMemberId: INPUT.workspaceMemberId,
+      source: 'MANUAL',
+      consentState: 'PENDING',
+    });
+
+    const result = await slackSetUserLinkHandler({ ...INPUT, name: 'Ada' });
+
+    expect(result.success).toBe(true);
+    expect(updateSlackUserLinkMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ consentState: undefined }),
+    );
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
   it('should read the input from the route payload body', async () => {
     const result = await slackSetUserLinkHandler({
       body: { ...INPUT, name: 'Ada' },

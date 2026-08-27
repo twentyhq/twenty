@@ -16,7 +16,6 @@ import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/ut
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
-import { isConsentedSlackUserLink } from 'src/logic-functions/utils/is-consented-slack-user-link';
 import { resolveSlackUserByEmail } from 'src/logic-functions/utils/resolve-slack-user-by-email';
 import { asRecord, readOptionalString } from 'src/logic-functions/utils/route-body.util';
 import { sendSlackUserLinkConsentDm } from 'src/logic-functions/utils/send-slack-user-link-consent-dm';
@@ -180,15 +179,16 @@ export const slackSetUserLinkHandler = async (
     };
   }
 
-  // Re-linking the same member on an already-consented link must not knock it
-  // back to pending; only a new person, or a not-yet-consented link, needs a
-  // fresh consent request.
-  const keepsExistingConsent =
+  // A same-member re-save changes nothing about the mapping, so it must not
+  // re-open consent: an ACTIVE/ADMIN_SET link stays as is, a pending one is
+  // left for the resend action, and a decline is respected rather than silently
+  // re-requested. Consent is only (re-)asked for a new link or a new member; to
+  // ask a declined user again, remove the link and add it back.
+  const isSameMemberRelink =
     isDefined(existingLink) &&
-    existingLink.workspaceMemberId === workspaceMemberId &&
-    isConsentedSlackUserLink(existingLink.consentState);
+    existingLink.workspaceMemberId === workspaceMemberId;
 
-  const requiresConsent = isInInstalledWorkspace && !keepsExistingConsent;
+  const requiresConsent = isInInstalledWorkspace && !isSameMemberRelink;
 
   const consentStateForWrite = isInInstalledWorkspace
     ? requiresConsent
@@ -231,9 +231,16 @@ export const slackSetUserLinkHandler = async (
   }
 
   if (!requiresConsent) {
+    const stateNote =
+      existingLink?.consentState === SLACK_USER_LINK_CONSENT_STATE.DECLINED
+        ? 'They previously declined, so their choice stands and no new request was sent. Remove the link and add it again to ask them once more.'
+        : existingLink?.consentState === SLACK_USER_LINK_CONSENT_STATE.PENDING
+          ? 'It is still awaiting their approval, so no new request was sent. Use resend to nudge them.'
+          : 'It is already active for that workspace member, so no new consent request was sent.';
+
     return {
       success: true,
-      message: `Updated the link for Slack user ${slackUserId}. It is already active for that workspace member, so no new consent request was sent.`,
+      message: `Updated the link for Slack user ${slackUserId}. ${stateNote}`,
     };
   }
 
