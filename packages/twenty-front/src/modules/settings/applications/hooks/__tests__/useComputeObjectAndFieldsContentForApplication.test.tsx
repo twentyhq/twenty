@@ -1,3 +1,4 @@
+import { ApplicationState } from '~/generated-metadata/graphql';
 import { renderHook } from '@testing-library/react';
 
 import { useComputeObjectAndFieldsContentForApplication } from '@/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication';
@@ -30,6 +31,7 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         name: 'Test App',
         logo: null,
         canBeUninstalled: true,
+        state: ApplicationState.INSTALLED,
         autoUpgrade: false,
         availablePackages: {},
         applicationVariables: [],
@@ -61,6 +63,7 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         name: 'Test App',
         logo: null,
         canBeUninstalled: true,
+        state: ApplicationState.INSTALLED,
         autoUpgrade: false,
         availablePackages: {},
         applicationVariables: [],
@@ -90,6 +93,7 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         name: 'Test App',
         logo: null,
         canBeUninstalled: true,
+        state: ApplicationState.INSTALLED,
         autoUpgrade: false,
         availablePackages: {},
         applicationVariables: [],
@@ -120,6 +124,7 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         name: 'Test App',
         logo: null,
         canBeUninstalled: true,
+        state: ApplicationState.INSTALLED,
         autoUpgrade: false,
         availablePackages: {},
         applicationVariables: [],
@@ -278,6 +283,7 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         name: 'Test App',
         logo: null,
         canBeUninstalled: true,
+        state: ApplicationState.INSTALLED,
         autoUpgrade: false,
         availablePackages: {},
         applicationVariables: [],

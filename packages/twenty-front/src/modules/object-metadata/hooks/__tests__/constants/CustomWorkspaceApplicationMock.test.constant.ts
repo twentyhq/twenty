@@ -1,4 +1,7 @@
-import { type Application } from '~/generated-metadata/graphql';
+import {
+  type Application,
+  ApplicationState,
+} from '~/generated-metadata/graphql';
 
 export const CUSTOM_WORKSPACE_APPLICATION_MOCK = {
   id: 'dc75f982-35a2-4c1b-a63d-bd1131215377',
@@ -8,6 +11,7 @@ export const CUSTOM_WORKSPACE_APPLICATION_MOCK = {
   commandMenuItems: [],
   availablePackages: {},
   canBeUninstalled: false,
+  state: ApplicationState.INSTALLED,
   autoUpgrade: false,
   description: 'workpace custom application',
   name: 'custom',

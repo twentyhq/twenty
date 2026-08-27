@@ -6,6 +6,7 @@ import { type ReactNode } from 'react';
 import {
   type Application,
   FindOneApplicationDocument,
+  ApplicationState,
   UpdateOneApplicationVariableDocument,
 } from '~/generated-metadata/graphql';
 import { useUpdateOneApplicationVariable } from '~/pages/settings/applications/hooks/useUpdateOneApplicationVariable';
@@ -36,6 +37,7 @@ const buildApplication = (variableValue: string): Application => ({
   applicationRegistrationId: null,
   applicationRegistration: null,
   canBeUninstalled: true,
+  state: ApplicationState.INSTALLED,
   autoUpgrade: false,
   defaultRoleId: null,
   settingsCustomTabFrontComponentId: null,
