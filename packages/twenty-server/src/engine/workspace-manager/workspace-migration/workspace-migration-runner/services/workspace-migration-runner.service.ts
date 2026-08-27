@@ -28,9 +28,9 @@ import {
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
-import { buildPreallocatedIdByUniversalIdentifierFromActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-preallocated-id-by-universal-identifier-from-actions.util';
 import { type AfterCommitSideEffect } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/after-commit-side-effect.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
+import { buildPreallocatedIdByUniversalIdentifierFromActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-preallocated-id-by-universal-identifier-from-actions.util';
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
@@ -114,33 +114,14 @@ export class WorkspaceMigrationRunnerService {
       ]),
     ];
 
-    const invalidationResults = await Promise.allSettled([
-      this.workspaceCacheService.invalidateAndRecompute(
-        workspaceId,
-        cacheKeyNamesToInvalidate,
-      ),
-      ...(shouldIncrementMetadataGraphqlSchemaVersion
-        ? [
-            this.workspaceMetadataVersionService.incrementMetadataVersion(
-              workspaceId,
-            ),
-          ]
-        : []),
-    ]);
-
-    const invalidationFailures = invalidationResults.filter(
-      (result) => result.status === 'rejected',
+    await this.workspaceCacheService.invalidateAndRecompute(
+      workspaceId,
+      cacheKeyNamesToInvalidate,
     );
 
-    if (invalidationFailures.length > 0) {
-      invalidationFailures.forEach((err) =>
-        this.logger.error(
-          `Failed to invalidate a cache ${err.reason}`,
-          'Runner',
-        ),
-      );
-      throw new Error(
-        `Failed to invalidate ${invalidationFailures.length} cache operations`,
+    if (shouldIncrementMetadataGraphqlSchemaVersion) {
+      await this.workspaceMetadataVersionService.incrementMetadataVersion(
+        workspaceId,
       );
     }
 
