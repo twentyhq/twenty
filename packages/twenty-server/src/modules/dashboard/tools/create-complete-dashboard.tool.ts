@@ -2,10 +2,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
-import { PageLayoutType, type WidgetType } from 'twenty-shared/types';
+import {
+  PageLayoutType,
+  type PageLayoutWidgetGridPosition,
+  type WidgetType,
+} from 'twenty-shared/types';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
-  gridPositionSchema,
+  widgetPositionSchema,
   widgetConfigurationSchema,
   widgetTypeSchema,
 } from 'src/modules/dashboard/tools/schemas/widget.schema';
@@ -20,7 +24,7 @@ import { resolveWidgetFieldNamesToIds } from 'src/modules/dashboard/tools/utils/
 const widgetSchema = z.object({
   title: z.string().describe('Widget title displayed in the header'),
   type: widgetTypeSchema.describe('Widget type'),
-  gridPosition: gridPositionSchema.describe('Position in 12-column grid'),
+  position: widgetPositionSchema.describe('Position in 12-column grid'),
   objectMetadataId: z
     .uuid()
     .optional()
@@ -113,12 +117,7 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
     widgets?: Array<{
       title: string;
       type: WidgetType;
-      gridPosition: {
-        row: number;
-        column: number;
-        rowSpan: number;
-        columnSpan: number;
-      };
+      position: PageLayoutWidgetGridPosition;
       objectMetadataId?: string;
       objectName?: string;
       configuration?: WidgetConfigurationInput;

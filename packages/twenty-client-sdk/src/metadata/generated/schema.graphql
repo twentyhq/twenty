@@ -957,7 +957,7 @@ type PageLayoutWidget {
   title: String!
   type: WidgetType!
   objectMetadataId: UUID
-  gridPosition: GridPosition! @deprecated(reason: "Use `position` instead. Will be removed in a future release.")
+  gridPosition: GridPosition @deprecated(reason: "Use `position` instead.")
   position: PageLayoutWidgetPosition
   configuration: WidgetConfiguration!
   conditionalDisplay: JSON
@@ -1832,6 +1832,7 @@ enum FeatureFlagKey {
   IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED
   IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED
   IS_API_RATE_LIMIT_V2_ENABLED
+  IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED
 }
 
 type WorkspaceUrls {
@@ -4332,18 +4333,10 @@ input UpdatePageLayoutWidgetWithIdInput {
   title: String!
   type: WidgetType!
   objectMetadataId: UUID
-  gridPosition: GridPositionInput!
   position: JSON
   configuration: JSON
   conditionalDisplay: JSON
   conditionalAvailabilityExpression: String
-}
-
-input GridPositionInput {
-  row: Float!
-  column: Float!
-  rowSpan: Float!
-  columnSpan: Float!
 }
 
 input CreatePageLayoutWidgetInput {
@@ -4351,7 +4344,6 @@ input CreatePageLayoutWidgetInput {
   title: String!
   type: WidgetType!
   objectMetadataId: UUID
-  gridPosition: GridPositionInput!
   position: JSON
   configuration: JSON!
 }
@@ -4361,7 +4353,6 @@ input UpdatePageLayoutWidgetInput {
   title: String
   type: WidgetType
   objectMetadataId: UUID
-  gridPosition: GridPositionInput
   position: JSON
   configuration: JSON
   conditionalDisplay: JSON

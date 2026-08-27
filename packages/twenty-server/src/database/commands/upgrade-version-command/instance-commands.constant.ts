@@ -160,6 +160,7 @@ import { DropTimelineActivityTypeRendererFastInstanceCommand } from 'src/databas
 import { AddLabelToApplicationVariableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-36/2-36-instance-command-fast-1787761629092-add-label-to-application-variable';
 import { AddUsageLimitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-36/2-36-instance-command-fast-1787821567133-add-usage-limit';
 import { MakeUserEmailCaseInsensitiveFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-37/2-37-instance-command-fast-1787836741000-make-user-email-case-insensitive';
+import { BackfillMissingPageLayoutWidgetPositionsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-37/2-37-instance-command-slow-1787838153752-backfill-missing-page-layout-widget-positions';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -322,4 +323,5 @@ export const INSTANCE_COMMANDS = [
   AddLabelToApplicationVariableFastInstanceCommand,
   AddUsageLimitFastInstanceCommand,
   MakeUserEmailCaseInsensitiveFastInstanceCommand,
+  BackfillMissingPageLayoutWidgetPositionsSlowInstanceCommand,
 ];

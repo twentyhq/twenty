@@ -1,15 +1,16 @@
 import { createDefaultFrontComponentWidget } from '@/page-layout/utils/createDefaultFrontComponentWidget';
 import {
-  type GridPosition,
   PageLayoutTabLayoutMode,
+  type PageLayoutWidgetGridPosition,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 
 describe('createDefaultFrontComponentWidget', () => {
   it('should return a FRONT_COMPONENT widget with grid position mapped to position', () => {
-    const gridPosition: GridPosition = {
-      __typename: 'GridPosition',
+    const position: PageLayoutWidgetGridPosition = {
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      __typename: 'PageLayoutWidgetGridPosition',
       row: 2,
       column: 3,
       rowSpan: 4,
@@ -21,7 +22,7 @@ describe('createDefaultFrontComponentWidget', () => {
       'tab-1',
       'My Component',
       'front-comp-1',
-      gridPosition,
+      position,
     );
 
     expect(widget).toMatchObject({
@@ -36,7 +37,6 @@ describe('createDefaultFrontComponentWidget', () => {
         configurationType: WidgetConfigurationType.FRONT_COMPONENT,
         frontComponentId: 'front-comp-1',
       },
-      gridPosition,
       position: {
         __typename: 'PageLayoutWidgetGridPosition',
         layoutMode: PageLayoutTabLayoutMode.GRID,
