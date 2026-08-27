@@ -6,7 +6,7 @@ import { PageLayoutType } from '~/generated-metadata/graphql';
 let mockIsMobile = false;
 let mockIsInSidePanel = false;
 
-const featureFilteredHomeTab: PageLayoutTab = {
+const homeTab: PageLayoutTab = {
   isSystemSideEffect: false,
   universalIdentifier: 'universal-identifier-mock',
   id: 'home-tab-id',
@@ -29,6 +29,7 @@ jest.mock('@/page-layout/hooks/useCurrentPageLayoutOrThrow', () => ({
     currentPageLayout: {
       id: 'page-layout-id',
       type: PageLayoutType.RECORD_PAGE,
+      tabs: [homeTab],
     },
   }),
 }));
@@ -36,15 +37,6 @@ jest.mock('@/page-layout/hooks/useCurrentPageLayoutOrThrow', () => ({
 jest.mock('@/page-layout/hooks/useIsPageLayoutInEditMode', () => ({
   useIsPageLayoutInEditMode: () => false,
 }));
-
-jest.mock(
-  '@/page-layout/hooks/usePageLayoutTabsFilteredByFeatureFlags',
-  () => ({
-    usePageLayoutTabsFilteredByFeatureFlags: () => ({
-      featureFilteredPageLayoutTabs: [featureFilteredHomeTab],
-    }),
-  }),
-);
 
 jest.mock('@/ui/layout/contexts/LayoutRenderingContext', () => ({
   useLayoutRenderingContext: () => ({
@@ -68,16 +60,14 @@ describe('usePageLayoutRenderableTabs', () => {
     { context: 'mobile record page', isMobile: true, isInSidePanel: false },
     { context: 'record side panel', isMobile: false, isInSidePanel: true },
   ])(
-    'uses the feature-filtered tabs on the $context',
+    'uses the page layout tabs on the $context',
     ({ isMobile, isInSidePanel }) => {
       mockIsMobile = isMobile;
       mockIsInSidePanel = isInSidePanel;
 
       const { result } = renderHook(() => usePageLayoutRenderableTabs());
 
-      expect(result.current.tabsToRenderInTabList).toEqual([
-        featureFilteredHomeTab,
-      ]);
+      expect(result.current.tabsToRenderInTabList).toEqual([homeTab]);
     },
   );
 });

@@ -1,3 +1,5 @@
+import { UnavailableFilePreview } from '@/activities/files/components/UnavailableFilePreview';
+import { VideoPreview } from '@/activities/files/components/VideoPreview';
 import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/const/previewable-extensions.const';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import {
@@ -32,6 +34,7 @@ const StyledDocumentViewerContainer = styled.div`
   flex-direction: column;
   height: calc(100vh / var(--t-zoom, 1) - 200px);
   min-height: 500px;
+  position: relative;
   width: 100%;
 
   #react-doc-viewer #header-bar {
@@ -68,21 +71,9 @@ const StyledUnavailablePreviewContainer = styled.div`
   text-align: center;
 `;
 
-const StyledMessage = styled.div`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.lg};
-  max-width: 400px;
-`;
-
 const StyledLightMessage = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
-`;
-
-const StyledTitle = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.xl};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
 const StyledCsvTable = styled.table`
@@ -217,6 +208,7 @@ export const DocumentViewer = ({
   const isMsOfficeFile = MS_OFFICE_EXTENSIONS.includes(fileExtension);
 
   const mimeType = isPreviewable ? MIME_TYPE_MAPPING[fileExtension] : undefined;
+  const isVideo = mimeType?.startsWith('video/') === true;
 
   useEffect(() => {
     if (fileExtension === 'csv') {
@@ -227,12 +219,11 @@ export const DocumentViewer = ({
   if (!isPreviewable) {
     return (
       <StyledDocumentViewerContainer>
-        <StyledUnavailablePreviewContainer>
-          <StyledTitle>
-            <Trans>Preview Not Available</Trans>
-          </StyledTitle>
-          <StyledMessage>
-            {fileCategory === 'ARCHIVE' ? (
+        <UnavailableFilePreview
+          fileName={documentName}
+          fileUrl={documentUrl}
+          message={
+            fileCategory === 'ARCHIVE' ? (
               <Trans>
                 Archive files cannot be previewed. Please download the file to
                 access its contents.
@@ -242,15 +233,21 @@ export const DocumentViewer = ({
                 This file type cannot be previewed. Please download the file to
                 view it.
               </Trans>
-            )}
-          </StyledMessage>
-          <Button
-            Icon={IconDownload}
-            title={t`Download File`}
-            onClick={() => downloadFile(documentUrl, documentName)}
-            variant="secondary"
-          />
-        </StyledUnavailablePreviewContainer>
+            )
+          }
+        />
+      </StyledDocumentViewerContainer>
+    );
+  }
+
+  if (isVideo) {
+    return (
+      <StyledDocumentViewerContainer>
+        <VideoPreview
+          key={documentUrl}
+          videoName={documentName}
+          videoUrl={documentUrl}
+        />
       </StyledDocumentViewerContainer>
     );
   }

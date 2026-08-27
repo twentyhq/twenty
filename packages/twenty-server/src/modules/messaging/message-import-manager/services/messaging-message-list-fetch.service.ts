@@ -14,7 +14,7 @@ import {
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
@@ -43,7 +43,7 @@ export class MessagingMessageListFetchService {
     @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly messagingGetMessageListService: MessagingGetMessageListService,
@@ -62,7 +62,7 @@ export class MessagingMessageListFetchService {
   ) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         try {
           const pendingGroupEmailActionsProcessed =
@@ -148,8 +148,7 @@ export class MessagingMessageListFetchService {
           );
 
           const messageChannelMessageAssociationRepository =
-            await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-              workspaceId,
+            this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
               'messageChannelMessageAssociation',
             );
 
@@ -210,7 +209,6 @@ export class MessagingMessageListFetchService {
             ? await this.computeFullSyncMessageChannelMessageAssociationsToDelete(
                 freshMessageChannel,
                 messageExternalIds,
-                workspaceId,
               )
             : [];
 
@@ -344,11 +342,9 @@ export class MessagingMessageListFetchService {
   private async computeFullSyncMessageChannelMessageAssociationsToDelete(
     messageChannel: Pick<MessageChannelEntity, 'id'>,
     messageExternalIds: string[],
-    workspaceId: string,
   ) {
     const messageChannelMessageAssociationRepository =
-      await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-        workspaceId,
+      this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
         'messageChannelMessageAssociation',
       );
 

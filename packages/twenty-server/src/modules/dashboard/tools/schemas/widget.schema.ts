@@ -2,7 +2,9 @@ import { isNumber } from '@sniptt/guards';
 import {
   AggregateOperations,
   ObjectRecordGroupByDateGranularity,
+  PageLayoutTabLayoutMode,
   ViewFilterOperand,
+  WidgetType,
 } from 'twenty-shared/types';
 import { z } from 'zod';
 
@@ -12,7 +14,6 @@ import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/e
 import { ChartNumberFormat } from 'src/engine/metadata-modules/page-layout-widget/enums/chart-number-format.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 
 // Chart color options (MAIN_COLOR_NAMES plus 'auto').
 // should we export MAIN_COLOR_NAMES from twenty-ui to twenty-shared and use that here?
@@ -270,7 +271,8 @@ const withRangeMinMaxRefinement = <T extends z.ZodType<RangeMinMaxFields>>(
     },
   );
 
-export const gridPositionSchema = z.object({
+export const widgetPositionSchema = z.object({
+  layoutMode: z.literal(PageLayoutTabLayoutMode.GRID),
   row: z.number().min(0).describe('Row position (0-based)'),
   column: z
     .number()

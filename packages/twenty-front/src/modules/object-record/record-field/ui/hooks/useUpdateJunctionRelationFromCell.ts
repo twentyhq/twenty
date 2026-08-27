@@ -45,6 +45,8 @@ export const useUpdateJunctionRelationFromCell = ({
   const junctionConfig = getJunctionConfig({
     settings: fieldMetadataItem.settings,
     relationObjectMetadataId: fieldDefinition.metadata.relationObjectMetadataId,
+    relationTargetFieldMetadataId:
+      fieldMetadataItem.relation?.targetFieldMetadata.id,
     sourceObjectMetadataId: sourceObjectMetadata?.id,
     objectMetadataItems,
   });

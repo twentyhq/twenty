@@ -10,15 +10,16 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdateOneFieldMetadataItem';
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFieldMetadataItemInput';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
+import { getReverseJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getReverseJunctionConfig';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm';
+import { SettingsTranslationsButton } from '@/settings/translations/components/SettingsTranslationsButton';
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
@@ -78,7 +79,7 @@ export const SettingsObjectFieldEdit = () => {
 
   const { objectNamePlural = '', fieldName = '' } = useParams();
 
-  const { findObjectMetadataItemByNamePlural } =
+  const { findObjectMetadataItemByNamePlural, objectMetadataItems } =
     useFilteredObjectMetadataItems();
 
   const objectMetadataItem =
@@ -106,6 +107,15 @@ export const SettingsObjectFieldEdit = () => {
     (fieldMetadataItem) =>
       fieldMetadataItem.name === fieldName ||
       fieldMetadataItem.name === newNameDuringSave,
+  );
+
+  const isReverseJunctionRelation = isDefined(
+    getReverseJunctionConfig({
+      junctionObjectMetadataId:
+        fieldMetadataItem?.relation?.targetObjectMetadata.id,
+      sourceObjectMetadataId: objectMetadataItem?.id,
+      objectMetadataItems,
+    }),
   );
 
   const getRelationMetadata = useGetRelationMetadata();
@@ -355,33 +365,27 @@ export const SettingsObjectFieldEdit = () => {
                 readonly={readonly}
               />
             </Section>
-            {
-              //patch - awaiting refacto on many to many relations - https://github.com/twentyhq/core-team-issues/issues/186
-              fieldMetadataItem.name !== CoreObjectNamePlural.NoteTarget &&
-                fieldMetadataItem.name !== CoreObjectNamePlural.TaskTarget && (
-                  <>
-                    <Section>
-                      {fieldMetadataItem.isUnique ? (
-                        <H2Title
-                          title={t`Values`}
-                          description={t`The values of this field must be unique`}
-                        />
-                      ) : (
-                        <H2Title
-                          title={t`Values`}
-                          description={t`The values of this field`}
-                        />
-                      )}
-                      <SettingsDataModelFieldSettingsFormCard
-                        fieldType={fieldMetadataItem.type}
-                        existingFieldMetadataId={fieldMetadataItem.id}
-                        objectNameSingular={objectMetadataItem.nameSingular}
-                        disabled={readonly}
-                      />
-                    </Section>
-                  </>
-                )
-            }
+            {!isReverseJunctionRelation && (
+              <Section>
+                {fieldMetadataItem.isUnique ? (
+                  <H2Title
+                    title={t`Values`}
+                    description={t`The values of this field must be unique`}
+                  />
+                ) : (
+                  <H2Title
+                    title={t`Values`}
+                    description={t`The values of this field`}
+                  />
+                )}
+                <SettingsDataModelFieldSettingsFormCard
+                  fieldType={fieldMetadataItem.type}
+                  existingFieldMetadataId={fieldMetadataItem.id}
+                  objectNameSingular={objectMetadataItem.nameSingular}
+                  disabled={readonly}
+                />
+              </Section>
+            )}
             <Section>
               <H2Title
                 title={t`Description`}
@@ -390,6 +394,21 @@ export const SettingsObjectFieldEdit = () => {
               <SettingsDataModelFieldDescriptionForm
                 fieldMetadataItem={fieldMetadataItem}
                 disabled={readonly}
+              />
+            </Section>
+
+            <Section>
+              <H2Title
+                title={t`Translations`}
+                description={t`What each language displays for this field's labels`}
+              />
+              <SettingsTranslationsButton
+                target={{
+                  metadataName: 'fieldMetadata',
+                  recordId: fieldMetadataItem.id,
+                  objectMetadataId: objectMetadataItem.id,
+                  label: fieldMetadataItem.label,
+                }}
               />
             </Section>
 

@@ -5,6 +5,7 @@ import {
   IconAppWindow,
   IconChartPie,
   IconFrame,
+  IconLayoutDashboard,
   IconListDetails,
   IconPerspective,
   IconPlus,
@@ -21,6 +22,8 @@ export const getPageLayoutIcon = (page: PageLayoutSidePanelPage) => {
       return IconFrame;
     case SidePanelPages.PageLayoutTabSettings:
       return IconPerspective;
+    case SidePanelPages.PageLayoutWidgetSettings:
+      return IconLayoutDashboard;
     case SidePanelPages.RecordPageFieldsSettings:
       return IconListDetails;
     case SidePanelPages.RecordPageFieldSettings:

@@ -5,11 +5,50 @@ import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { gql } from 'graphql-tag';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
+const FIND_CREATED_TIMELINE_ACTIVITY_TYPE = gql`
+  query FindCreatedTimelineActivityType {
+    timelineActivityTypes {
+      id
+      action
+      objectUniversalIdentifier
+    }
+  }
+`;
+
 describe('people merge resolvers (integration)', () => {
   let createdPersonIdsForCleaning: string[] = [];
+  let createdTimelineActivityTypeId: string;
+
+  beforeAll(async () => {
+    const response = await makeMetadataAPIRequest({
+      query: FIND_CREATED_TIMELINE_ACTIVITY_TYPE,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+
+    const createdTimelineActivityType =
+      response.body.data.timelineActivityTypes.find(
+        ({
+          action,
+          objectUniversalIdentifier,
+        }: {
+          action: string | null;
+          objectUniversalIdentifier: string | null;
+        }) => action === 'created' && !isDefined(objectUniversalIdentifier),
+      );
+
+    if (!isDefined(createdTimelineActivityType)) {
+      throw new Error('Shared created timeline activity type is not installed');
+    }
+
+    createdTimelineActivityTypeId = createdTimelineActivityType.id;
+  });
 
   afterEach(async () => {
     if (createdPersonIdsForCleaning.length > 0) {
@@ -54,6 +93,7 @@ describe('people merge resolvers (integration)', () => {
           gqlFields: 'id targetPersonId',
           data: {
             happensAt: new Date().toISOString(),
+            timelineActivityTypeId: createdTimelineActivityTypeId,
             targetPersonId: duplicatePerson.id,
           },
         }),

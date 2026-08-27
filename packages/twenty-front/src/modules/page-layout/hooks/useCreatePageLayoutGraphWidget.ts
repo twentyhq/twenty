@@ -21,6 +21,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import {
   BarChartLayout,
+  PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
@@ -121,7 +122,8 @@ export const useCreatePageLayoutGraphWidget = ({
         id: widgetId,
         pageLayoutTabId: activeTabId,
         title,
-        gridPosition: {
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.GRID,
           row: position.y,
           column: position.x,
           rowSpan: position.h,

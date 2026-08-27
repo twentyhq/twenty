@@ -1,9 +1,5 @@
 import { msg, t } from '@lingui/core/macro';
-import {
-  FieldMetadataType,
-  ViewCalendarLayout,
-  ViewType,
-} from 'twenty-shared/types';
+import { FieldMetadataType, ViewType } from 'twenty-shared/types';
 import { getViewLayoutFromViewType, isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -15,11 +11,9 @@ import { type FlatEntityValidationError } from 'src/engine/workspace-manager/wor
 export const validateFlatViewCalendarFields = ({
   flatView,
   flatFieldMetadataMaps,
-  isCalendarWeekViewEnabled,
 }: {
   flatView: UniversalFlatView;
   flatFieldMetadataMaps: AllUniversalFlatEntityMaps['flatFieldMetadataMaps'];
-  isCalendarWeekViewEnabled: boolean;
 }): FlatEntityValidationError[] => {
   if (getViewLayoutFromViewType(flatView.type) !== ViewType.CALENDAR) {
     return [];
@@ -32,19 +26,6 @@ export const validateFlatViewCalendarFields = ({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
       message: t`Calendar view must have a calendar layout`,
       userFriendlyMessage: msg`Calendar view must have a calendar layout`,
-    });
-  }
-
-  if (
-    flatView.type === ViewType.CALENDAR_WIDGET &&
-    !isCalendarWeekViewEnabled &&
-    isDefined(flatView.calendarLayout) &&
-    flatView.calendarLayout !== ViewCalendarLayout.MONTH
-  ) {
-    errors.push({
-      code: ViewExceptionCode.INVALID_VIEW_DATA,
-      message: t`Calendar widget views only support the month layout`,
-      userFriendlyMessage: msg`Calendar widget views only support the month layout`,
     });
   }
 

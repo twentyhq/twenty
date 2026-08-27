@@ -6,14 +6,13 @@ import { join } from 'path';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
-import { DataSource } from 'typeorm';
+import { DataSource, type EntityManager } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import {
   ATTACHMENT_DATA_SEED_COLUMNS,
@@ -49,6 +48,10 @@ import {
   MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEED_COLUMNS,
   MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-message-association-data-seeds.constant';
+import {
+  MESSAGE_CAMPAIGN_DATA_SEED_COLUMNS,
+  MESSAGE_CAMPAIGN_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/message-campaign-data-seeds.constant';
 import {
   MESSAGE_DATA_SEED_COLUMNS,
   MESSAGE_DATA_SEEDS,
@@ -198,6 +201,11 @@ const getRecordSeedsBatches = (
       recordSeeds: MESSAGE_THREAD_DATA_SEEDS,
     },
     {
+      tableName: 'messageCampaign',
+      pgColumns: MESSAGE_CAMPAIGN_DATA_SEED_COLUMNS,
+      recordSeeds: MESSAGE_CAMPAIGN_DATA_SEEDS,
+    },
+    {
       tableName: '_employmentHistory',
       pgColumns: EMPLOYMENT_HISTORY_DATA_SEED_COLUMNS,
       recordSeeds: EMPLOYMENT_HISTORY_DATA_SEEDS,
@@ -299,7 +307,7 @@ export class DevSeederDataService {
       generateAttachmentSeedsForWorkspace(workspaceId);
 
     await this.coreDataSource.transaction(
-      async (entityManager: WorkspaceEntityManager) => {
+      async (entityManager: EntityManager) => {
         await this.seedRecordsInBatches({
           entityManager,
           schemaName,
@@ -360,7 +368,7 @@ export class DevSeederDataService {
     objectMetadataItems,
     light = false,
   }: {
-    entityManager: WorkspaceEntityManager;
+    entityManager: EntityManager;
     schemaName: string;
     workspaceId: string;
     attachmentSeeds: RecordSeedConfig['recordSeeds'];
@@ -412,16 +420,14 @@ export class DevSeederDataService {
     pgColumns,
     recordSeeds,
   }: {
-    entityManager: WorkspaceEntityManager;
+    entityManager: EntityManager;
     schemaName: string;
     tableName: string;
     pgColumns: string[];
     recordSeeds: Record<string, unknown>[];
   }) {
     await entityManager
-      .createQueryBuilder(undefined, undefined, undefined, {
-        shouldBypassPermissionChecks: true,
-      })
+      .createQueryBuilder()
       .insert()
       .into(`${schemaName}.${tableName}`, pgColumns)
       .orIgnore()
@@ -431,7 +437,7 @@ export class DevSeederDataService {
 
   private async seedAttachmentFiles(
     workspaceId: string,
-    entityManager: WorkspaceEntityManager,
+    entityManager: EntityManager,
     fileSeedMetadata: AttachmentFileSeedMetadata[],
   ): Promise<void> {
     const IS_BUILT = __dirname.includes('/dist/');

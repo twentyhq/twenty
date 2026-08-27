@@ -1,7 +1,7 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { v5 } from 'uuid';
 
-import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
+import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import {
   buildNavigationConditionalAvailabilityExpression,
@@ -60,6 +60,15 @@ describe('buildNavigationFlatCommandMenuItem', () => {
     const result = buildNavigationFlatCommandMenuItem(baseArgs);
 
     expect(result.payload).toEqual({ objectMetadataItemId: 'obj-id-1' });
+  });
+
+  it('should set the target object metadata foreign key alongside the payload', () => {
+    const result = buildNavigationFlatCommandMenuItem(baseArgs);
+
+    expect(result.navigationTargetObjectMetadataId).toBe('obj-id-1');
+    expect(result.navigationTargetObjectMetadataUniversalIdentifier).toBe(
+      'obj-universal-1',
+    );
   });
 
   it('should include shortcut in hotKeys when shortcut is defined', () => {

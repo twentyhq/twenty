@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { type Readable } from 'stream';
 
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Like, Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -14,10 +15,15 @@ import {
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import {
+  FileException,
+  FileExceptionCode,
+} from 'src/engine/core-modules/file/file.exception';
 import { type FileResponse } from 'src/engine/core-modules/file/types/file-response.type';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
+import { resolveByteRange } from 'src/engine/core-modules/file/utils/resolve-byte-range.utils';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -150,6 +156,7 @@ export class FileService {
     fileId: string;
     workspaceId: string;
     fileFolder: FileFolder;
+    rangeHeader?: string;
   }): Promise<FileResponse | null> {
     const file = await this.fileRepository.findOne(params.workspaceId, {
       where: {
@@ -184,6 +191,8 @@ export class FileService {
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId: params.workspaceId,
       mimeType: file.mimeType,
+      fileSizeInBytes: Number(file.size),
+      rangeHeader: params.rangeHeader,
     });
   }
 
@@ -193,12 +202,16 @@ export class FileService {
     applicationUniversalIdentifier,
     workspaceId,
     mimeType,
+    fileSizeInBytes,
+    rangeHeader,
   }: {
     resourcePath: string;
     fileFolder: FileFolder;
     applicationUniversalIdentifier: string;
     workspaceId: string;
     mimeType: string;
+    fileSizeInBytes?: number;
+    rangeHeader?: string;
   }): Promise<FileResponse | null> {
     const resourceIdentifier = {
       resourcePath,
@@ -218,11 +231,42 @@ export class FileService {
         fileFolderConfigs[fileFolder].cacheControl ?? undefined,
     });
 
-    if (presignedUrl) {
+    if (isDefined(presignedUrl)) {
+      // The storage provider serves presigned downloads directly and handles
+      // Range requests without proxying the file through the server.
       return { type: 'redirect', presignedUrl };
     }
 
     try {
+      if (isDefined(fileSizeInBytes)) {
+        const resolvedByteRange = resolveByteRange({
+          rangeHeader,
+          fileSizeInBytes,
+        });
+
+        if (resolvedByteRange.type === 'unsatisfiable') {
+          throw new FileException(
+            'Requested range not satisfiable',
+            FileExceptionCode.RANGE_NOT_SATISFIABLE,
+            { fileSizeInBytes },
+          );
+        }
+
+        if (resolvedByteRange.type === 'partial') {
+          const stream = await this.fileStorageService.readFile({
+            ...resourceIdentifier,
+            byteRange: resolvedByteRange.byteRange,
+          });
+
+          return {
+            type: 'stream',
+            stream,
+            mimeType,
+            contentRange: { ...resolvedByteRange.byteRange, fileSizeInBytes },
+          };
+        }
+      }
+
       const stream = await this.fileStorageService.readFile(resourceIdentifier);
 
       return { type: 'stream', stream, mimeType };

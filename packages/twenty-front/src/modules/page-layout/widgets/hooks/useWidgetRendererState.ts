@@ -2,28 +2,20 @@ import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutCo
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { useIsSideColumnContext } from '@/page-layout/hooks/useIsSideColumnContext';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { useIsCurrentWidgetLastOfTab } from '@/page-layout/widgets/hooks/useIsCurrentWidgetLastOfTab';
-import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
-import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
 import { WIDGET_TYPES_WITH_ALWAYS_VISIBLE_SOLO_HEADER } from '@/page-layout/widgets/constants/WidgetTypesWithAlwaysVisibleSoloHeader';
+import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
-import { widgetHasHeaderCountComponentFamilySelector } from '@/page-layout/widgets/states/selectors/widgetHasHeaderCountComponentFamilySelector';
 import { getWidgetCardVariant } from '@/page-layout/widgets/utils/getWidgetCardVariant';
 import { useOpenWidgetSettingsInSidePanel } from '@/side-panel/hooks/useOpenWidgetSettingsInSidePanel';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { type MouseEvent } from 'react';
-import {
-  PageLayoutTabLayoutMode,
-  WidgetType,
-} from '~/generated-metadata/graphql';
+import { WidgetType } from '~/generated-metadata/graphql';
 
 export const useWidgetRendererState = (widget: PageLayoutWidget) => {
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
@@ -49,36 +41,27 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
 
   const { hasAccess, restriction } = useWidgetPermissions(widget);
 
-  const { layoutMode, presentation } = usePageLayoutContentContext();
-  const { isInPinnedTab } = useIsInPinnedTab();
-  const { isInSidePanel } = useLayoutRenderingContext();
-  const isMobile = useIsMobile();
+  const { isSideColumnContext } = useIsSideColumnContext();
+
+  const { presentation } = usePageLayoutContentContext();
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
-
-  const isLastWidget = useIsCurrentWidgetLastOfTab(widget.id);
-
-  const hasWidgetHeaderCount = useAtomComponentFamilySelectorValue(
-    widgetHasHeaderCountComponentFamilySelector,
-    widget.id,
-  );
-
-  const hasWidgetHeaderInfo =
-    hasWidgetHeaderCount ||
-    WIDGET_TYPES_WITH_ALWAYS_VISIBLE_SOLO_HEADER.includes(widget.type);
 
   const isHeaderHiddenInViewMode =
     widget.type === WidgetType.STANDALONE_RICH_TEXT ||
     widget.type === WidgetType.EMAIL_THREAD ||
     widget.type === WidgetType.MESSAGE_CAMPAIGN_BODY ||
-    widget.type === WidgetType.MESSAGE_CAMPAIGN_DETAILS;
+    widget.type === WidgetType.MESSAGE_CAMPAIGN_DETAILS ||
+    widget.type === WidgetType.WORKFLOW ||
+    widget.type === WidgetType.WORKFLOW_VERSION ||
+    widget.type === WidgetType.WORKFLOW_RUN;
   const hideHeaderInViewMode =
     isHeaderHiddenInViewMode && !isPageLayoutInEditMode;
 
-  // A solo widget owns its tab, and the tab label already names it: the
-  // header only appears when the widget content set something to show in it.
   const showHeader =
-    presentation === 'solo' ? hasWidgetHeaderInfo : !hideHeaderInViewMode;
+    presentation === 'solo'
+      ? WIDGET_TYPES_WITH_ALWAYS_VISIBLE_SOLO_HEADER.includes(widget.type)
+      : !hideHeaderInViewMode;
 
   const handleClick = () => {
     openWidgetSettingsInSidePanel({
@@ -106,15 +89,9 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
   };
 
   const variant = getWidgetCardVariant({
-    presentation,
-    isInPinnedTab,
+    isSideColumnContext,
     pageLayoutType: currentPageLayout.type,
-    isMobile,
-    isInSidePanel,
   });
-
-  const isInVerticalListTab =
-    layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
 
   return {
     isPageLayoutInEditMode,
@@ -123,12 +100,8 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
     isResizing,
     hasAccess,
     restriction,
-    currentPageLayout,
-    isLastWidget,
     showHeader,
     variant,
-    isMobile,
-    isInVerticalListTab,
     handleClick,
     handleRemove,
     handleMouseEnter,

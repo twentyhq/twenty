@@ -6,8 +6,10 @@ import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/
 import { setupMicrosoftMock } from 'test/integration/microsoft/mocks/setup-microsoft-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
+import { setTestConnectedAccountHandleAliases } from 'test/integration/utils/set-test-connected-account-handle-aliases.util';
 
 const HANDLE = 'microsoft-draft-email-action@apple.dev';
+const ALIAS = 'microsoft-draft-email-action-alias@apple.dev';
 const RECIPIENTS = {
   to: 'to-recipient@example.com',
   cc: 'cc-recipient@example.com',
@@ -23,6 +25,10 @@ describe('DRAFT_EMAIL workflow action on Microsoft (integration)', () => {
     channel = await connectMessagingAccount({
       provider: ConnectedAccountProvider.MICROSOFT,
       handle: HANDLE,
+    });
+    await setTestConnectedAccountHandleAliases({
+      connectedAccountId: channel.connectedAccountId,
+      handleAliases: [ALIAS],
     });
   }, 60000);
 
@@ -79,5 +85,33 @@ describe('DRAFT_EMAIL workflow action on Microsoft (integration)', () => {
         },
       ),
     ).toEqual([]);
+  }, 60000);
+
+  it('drafts from a verified alias configured on the step', async () => {
+    const subject = `Microsoft workflow alias draft ${randomUUID()}`;
+
+    const workflowRun = await runWorkflowActionStep({
+      name: 'Microsoft alias draft email workflow',
+      stepType: 'DRAFT_EMAIL',
+      input: {
+        connectedAccountId: channel.connectedAccountId,
+        fromHandle: ALIAS,
+        recipients: { to: RECIPIENTS.to, cc: '', bcc: '' },
+        subject,
+        body: '<p>Microsoft workflow alias draft body</p>',
+      },
+    });
+
+    expect(workflowRun).toMatchObject({
+      status: 'COMPLETED',
+      stepStatus: 'SUCCESS',
+    });
+    const [lastCreatedMessage] = microsoft.createdMessages.slice(-1);
+
+    expect(lastCreatedMessage).toMatchObject({
+      subject,
+      from: { emailAddress: { address: ALIAS } },
+    });
+    expect(microsoft.sentMessageIds).toEqual([]);
   }, 60000);
 });

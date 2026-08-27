@@ -29,6 +29,7 @@ import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/app
 import { fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-group-manifest-to-universal-flat-row-level-permission-predicate-group.util';
 import { fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-manifest-to-universal-flat-row-level-permission-predicate.util';
 import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/application-manifest/converters/from-skill-manifest-to-universal-flat-skill.util';
+import { fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType } from 'src/engine/core-modules/application/application-manifest/converters/from-timeline-activity-type-manifest-to-universal-flat-timeline-activity-type.util';
 import { fromViewFieldGroupManifestToUniversalFlatViewFieldGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-field-group-manifest-to-universal-flat-view-field-group.util';
 import { fromViewFieldManifestToUniversalFlatViewField } from 'src/engine/core-modules/application/application-manifest/converters/from-view-field-manifest-to-universal-flat-view-field.util';
 import { fromViewFilterGroupManifestToUniversalFlatViewFilterGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-filter-group-manifest-to-universal-flat-view-filter-group.util';
@@ -505,27 +506,32 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
 
       for (const pageLayoutTabManifest of pageLayoutManifest.tabs ?? []) {
+        const pageLayoutTab =
+          fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
+            pageLayoutTabManifest,
+            pageLayoutUniversalIdentifier:
+              pageLayoutManifest.universalIdentifier,
+            pageLayoutType: pageLayoutManifest.type,
+            applicationUniversalIdentifier,
+            now,
+          });
+
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-          universalFlatEntity:
-            fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
-              pageLayoutTabManifest,
-              pageLayoutUniversalIdentifier:
-                pageLayoutManifest.universalIdentifier,
-              pageLayoutType: pageLayoutManifest.type,
-              applicationUniversalIdentifier,
-              now,
-            }),
+          universalFlatEntity: pageLayoutTab,
           universalFlatEntityMapsToMutate:
             allUniversalFlatEntityMaps.flatPageLayoutTabMaps,
         });
 
-        for (const pageLayoutWidgetManifest of pageLayoutTabManifest.widgets ??
-          []) {
+        for (const [widgetIndex, pageLayoutWidgetManifest] of (
+          pageLayoutTabManifest.widgets ?? []
+        ).entries()) {
           addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow(
             {
               universalFlatEntity:
                 fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
                   pageLayoutWidgetManifest,
+                  pageLayoutTabLayoutMode: pageLayoutTab.layoutMode,
+                  widgetIndex,
                   pageLayoutTabUniversalIdentifier:
                     pageLayoutTabManifest.universalIdentifier,
                   applicationUniversalIdentifier,
@@ -552,26 +558,31 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           pageLayoutTabManifest.pageLayoutUniversalIdentifier,
       );
 
+      const pageLayoutTab =
+        fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
+          pageLayoutTabManifest,
+          pageLayoutUniversalIdentifier:
+            pageLayoutTabManifest.pageLayoutUniversalIdentifier,
+          pageLayoutType: referencedPageLayoutManifest?.type,
+          applicationUniversalIdentifier,
+          now,
+        });
+
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-        universalFlatEntity:
-          fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
-            pageLayoutTabManifest,
-            pageLayoutUniversalIdentifier:
-              pageLayoutTabManifest.pageLayoutUniversalIdentifier,
-            pageLayoutType: referencedPageLayoutManifest?.type,
-            applicationUniversalIdentifier,
-            now,
-          }),
+        universalFlatEntity: pageLayoutTab,
         universalFlatEntityMapsToMutate:
           allUniversalFlatEntityMaps.flatPageLayoutTabMaps,
       });
 
-      for (const pageLayoutWidgetManifest of pageLayoutTabManifest.widgets ??
-        []) {
+      for (const [widgetIndex, pageLayoutWidgetManifest] of (
+        pageLayoutTabManifest.widgets ?? []
+      ).entries()) {
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
           universalFlatEntity:
             fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
               pageLayoutWidgetManifest,
+              pageLayoutTabLayoutMode: pageLayoutTab.layoutMode,
+              widgetIndex,
               pageLayoutTabUniversalIdentifier:
                 pageLayoutTabManifest.universalIdentifier,
               applicationUniversalIdentifier,
@@ -610,6 +621,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
               { workspaceId },
             ),
             description: applicationVariableManifest.description,
+            label: applicationVariableManifest.label,
             isSecret,
             isDeprecated: applicationVariableManifest.isDeprecated,
             type,
@@ -640,6 +652,20 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           }),
         universalFlatEntityMapsToMutate:
           allUniversalFlatEntityMaps.flatCommandMenuItemMaps,
+      });
+    }
+
+    for (const timelineActivityTypeManifest of manifest.timelineActivityTypes ??
+      []) {
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity:
+          fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType({
+            timelineActivityTypeManifest,
+            applicationUniversalIdentifier,
+            now,
+          }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatTimelineActivityTypeMaps,
       });
     }
 

@@ -384,7 +384,9 @@ export class ApolloFactory implements ApolloManager {
               case 'BAD_USER_INPUT':
               case 'FORBIDDEN':
               case 'CONFLICT':
-              case 'METADATA_VALIDATION_FAILED': {
+              case 'METADATA_VALIDATION_FAILED':
+              case 'RATE_LIMITED':
+              case 'QUOTA_EXHAUSTED': {
                 return;
               }
               case 'USER_INPUT_ERROR': {

@@ -283,6 +283,28 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 
 L’identifiant est le `universalIdentifier` du résolveur issu de votre manifeste. Enregistrez cette URL auprès du fournisseur.
 
+**Répondre à une vérification GET.** Certains fournisseurs vérifient un point de terminaison avant d'y effectuer une livraison, en envoyant une requête `GET` contenant une vérification à la même URL vers laquelle ils effectueront ensuite des événements `POST` — l'API WhatsApp Cloud de Meta en est un exemple. Une route de serveur répond uniquement à `POST`, sauf indication contraire. Déclarez donc les deux méthodes :
+
+```ts
+serverRouteTriggerSettings: {
+  forwardedRequestHeaders: ['x-hub-signature-256'],
+  httpMethods: ['GET', 'POST'],
+}
+```
+
+La vérification arrive dans `event.queryStringParameters`, et le renvoi d'une `Response` la renvoie au fournisseur dans la même requête. Un corps de chaîne est envoyé en tant que `text/plain`, ce que ces fournisseurs attendent :
+
+```ts
+const handler = async (event: RoutePayload) => {
+  if (event.requestContext.http.method === 'GET') {
+    return new Response(event.queryStringParameters['hub.challenge']);
+  }
+  // …handle the delivered event
+};
+```
+
+`httpMethods` remplace la valeur par défaut au lieu de s'y ajouter, donc `['GET']` seul fait que la route rejette `POST`. Seuls `GET` et `POST` sont pris en charge. Ne le définissez pas, sauf si le fournisseur a besoin du deuxième verbe : une route qui déclare `GET` verra son résolveur exécuté par tout appelant non authentifié, y compris les robots d'exploration et les outils de déploiement des aperçus de liens qui envoient des requêtes `GET` sans y être invités. Toute requête pour laquelle la plateforme ne dispose pas de méthode reçoit une réponse `405` sans que le résolveur ne soit jamais exécuté.
+
 <Note>
 **L’application doit être revendiquée et installée sur son espace de travail propriétaire.** Comme le résolveur s’exécute dans l’**espace de travail propriétaire** (l’espace de travail qui détient l’enregistrement de l’application), un déclencheur de route serveur ne fonctionne que lorsque l’application a été *revendiquée* — c’est‑à‑dire qu’elle possède un espace de travail propriétaire — **et** que cette application est **installée sur l’espace de travail propriétaire**. Tant que ces deux conditions ne sont pas remplies, le résolveur n’a nulle part où s’exécuter, donc la route ne peut pas être envoyée. Une application qui expose une fonction logique `serverRouteTriggerSettings` ne peut donc pas être répertoriée sur la place de marché tant qu’elle n’a pas été revendiquée et installée sur son espace de travail propriétaire.
 </Note>
@@ -425,6 +447,78 @@ const handler = async (event: PersonDestroyedEvent) => {
   };
 };
 ```
+
+#### Contexte d'exécution
+
+Chaque gestionnaire reçoit un deuxième argument décrivant l'exécution elle-même, quel que soit ce qui l'a déclenchée. Alors que la forme du premier argument varie selon le déclencheur, celle-ci ne varie pas :
+
+```ts
+import type { LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
+
+const handler = async (
+  event: DatabaseEventPayload,
+  { workspaceId, workspaceMemberId }: LogicFunctionExecutionContext,
+) => {
+  if (workspaceMemberId === null) {
+    throw new Error('This function must be triggered by a person');
+  }
+
+  return { reviewedBy: workspaceMemberId, workspaceId };
+};
+```
+
+| Champ               | Type             | Description                                                                                                                |
+| ------------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `workspaceId`       | `string`         | L'espace de travail auquel appartient l'exécution.                                                                         |
+| `userWorkspaceId`   | `string \| null` | La personne qui a déclenché l'exécution, en tant que membre de cet espace de travail.                                      |
+| `workspaceMemberId` | `string \| null` | La même personne sous la forme d'un enregistrement de membre de l'espace de travail, auquel vous liez les enregistrements. |
+| `retryCount`        | `number`         | `0` lors de la première tentative. Voir [Tâches en arrière-plan](/l/fr/developers/extend/apps/logic/background-jobs).           |
+| `maxRetries`        | `number`         | Limite supérieure des nouvelles tentatives demandées par l'application.                                                    |
+
+`userWorkspaceId` et `workspaceMemberId` sont `null` lorsque personne n'a déclenché l'exécution : les planifications cron, les hooks d'installation et les webhooks non authentifiés n'ont aucune personne derrière eux. Ils sont également `null` lorsque la personne ne possède aucun enregistrement de membre de l'espace de travail, ou que le sien a été supprimé.
+
+<Note>
+**Le contexte vous indique qui a déclenché l'exécution.** Ce que l'exécution peut *faire* est une déclaration distincte, ci-dessous.
+</Note>
+
+#### Quels accès un appel utilise
+
+Chaque client — `CoreApiClient`, `MetadataApiClient` et `RestApiClient` — agit en tant que personne ayant déclenché l'exécution : son rôle est combiné à celui de votre application, de sorte que l'appel ne peut jamais faire plus que l'un ou l'autre. C'est le comportement par défaut, et cela signifie qu'une personne ne peut jamais utiliser votre application pour dépasser ses propres autorisations.
+
+Lorsque personne n'a déclenché l'exécution, il n'y a aucune personne dont il faut adopter l'identité, le même client utilise donc les propres accès de votre application : les planifications cron, les hooks d'installation et les webhooks non authentifiés ne nécessitent aucun traitement particulier.
+
+Certains appels nécessitent légitimement les propres accès de l'application même lorsqu'une personne *est* à l'origine de l'exécution — pour lire les enregistrements de configuration de votre application, ou effectuer un travail que cette personne ne pourrait pas faire elle-même. Créez un deuxième client pour ceux-ci :
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const asPerson = new CoreApiClient();
+const asApplication = new CoreApiClient({ runAs: 'application' });
+
+const handler = async (event: DatabaseEventPayload) => {
+  // config records only your app may read
+  const { slackUserLinks } = await asApplication.query({ ... });
+
+  // created as the person, so it is attributed and permission-checked
+  await asPerson.mutation({ createNote: { ... } });
+};
+```
+
+Créez les deux une seule fois, à la portée du module, et chaque site d'appel indique alors les accès qu'il utilise par le client qu'il appelle. `RestApiClient` accepte la même option :
+
+```ts
+import { RestApiClient } from 'twenty-client-sdk/rest';
+
+const asApplication = new RestApiClient({ runAs: 'application' });
+```
+
+<Note>
+**Une exécution que personne n'a déclenchée agit en tant que votre application.** Les planifications cron, les hooks d'installation et les webhooks non authentifiés n'ont aucune personne derrière eux, le client par défaut utilise donc les propres accès de votre application et continue de fonctionner. `runAs: 'application'` n'est nécessaire que lorsque vous souhaitez utiliser ces accès dans une exécution qu'une personne *a* déclenchée.
+
+Vérifiez `context.workspaceMemberId` lorsqu'une fonction se comporte différemment selon qu'une personne est derrière elle, par exemple pour attribuer un enregistrement.
+</Note>
+
+Les assistants du SDK qui accèdent aux propres ressources de votre application utilisent toujours ses accès et ignorent `runAs` : le [magasin clé-valeur](/l/fr/developers/extend/apps/logic/key-value-store), les [connexions](/l/fr/developers/extend/apps/logic/connections), `runAgent`, `getPublicAssetUrl` et la facturation de crédits.
 
 #### Exposer une fonction en tant qu'outil d'IA ou en tant qu'action de workflow
 
@@ -620,6 +714,45 @@ const handler = async (params: { parentMessageId?: string }) => {
 **Hooks d'installation** — les gestionnaires de pré-installation, de post-installation et de désinstallation — partagent ce runtime mais sont déclarés avec leurs propres fonctions define et ne prennent pas de paramètres de déclenchement. Voir [hooks d'installation](/l/fr/developers/extend/apps/config/install-hooks) pour `definePreInstallLogicFunction`, `definePostInstallLogicFunction` et `defineUninstallLogicFunction`.
 </Note>
 
+## Créer une activité de chronologie.
+
+Utilisez `createTimelineActivity()` pour publier un événement de domaine explicite depuis une fonction logique. Définissez d'abord l'événement comme un [type d'activité de chronologie](/l/fr/developers/extend/apps/data/timeline-activity-types), puis référencez le type et les objets à l'aide de leurs identifiants universels stables :
+
+```ts
+import { createTimelineActivity } from 'twenty-sdk/logic-function';
+
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  happensAt: new Date().toISOString(),
+  properties: {
+    deliveryProvider: 'postal-service',
+  },
+});
+```
+
+Twenty résout les identifiants universels en identifiants de métadonnées spécifiques à l'installation, valide que le type d'activité de chronologie appartient à l'application appelante et capture un instantané de ses métadonnées de présentation dans la nouvelle activité.
+
+Les entrées requises sont `timelineActivityTypeUniversalIdentifier`, `targetObjectUniversalIdentifier` et `targetRecordId`. Vous pouvez également fournir `happensAt`, `properties` et `workspaceMemberId`. `happensAt` contrôle la position et l'heure affichée de l'événement dans la chronologie ; par défaut, il correspond à l'heure de création.
+
+Pour associer un autre enregistrement à l'événement, fournissez ensemble `linkedRecordId` et `linkedObjectMetadataUniversalIdentifier`. Vous pouvez également fournir `linkedRecordCachedName` comme solution de repli d'affichage historique :
+
+```ts
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  linkedObjectMetadataUniversalIdentifier: RECIPIENT_UNIVERSAL_IDENTIFIER,
+  linkedRecordId: recipientId,
+  linkedRecordCachedName: recipientName,
+});
+```
+
+Le rôle de la fonction logique doit disposer de l'autorisation d'écriture sur l'objet standard `timelineActivity`. Gardez les types d'événements explicites non liés à une `action` ; un type lié à une action reçoit déjà des événements d'audit automatiques et produirait sinon des lignes en double.
+
 ## Clients d'API typés (twenty-client-sdk)
 
 Le package `twenty-client-sdk` fournit deux clients GraphQL typés pour interagir avec l'API Twenty depuis vos fonctions logiques et vos composants frontaux.
@@ -701,7 +834,7 @@ setCompany(result.company);
 </Accordion>
 <Accordion title="MetadataApiClient" description="Configuration de l'espace de travail, applications et téléversements de fichiers">
 
-`MetadataApiClient` est livré prêt à l'emploi avec le SDK (aucune génération requise). Il interroge le point de terminaison `/metadata` pour la configuration de l'espace de travail, les applications et les téléversements de fichiers.
+`MetadataApiClient` est livré prêt à l'emploi avec le SDK (aucune génération requise). Il interroge le point de terminaison `/metadata` pour la configuration de l'espace de travail, les applications et les téléversements de fichiers. Il accepte la même option `runAs` que `CoreApiClient` — voir [Quels accès un appel utilise](#whose-access-a-call-uses).
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -769,7 +902,8 @@ Points clés :
   Lorsque votre code s'exécute sur Twenty (fonctions logiques ou composants frontaux), la plateforme injecte des identifiants sous forme de variables d'environnement :
 
   * `TWENTY_API_URL` — URL de base de l'API Twenty
-  * `TWENTY_APP_ACCESS_TOKEN` — Clé de courte durée limitée au rôle de fonction par défaut de votre application
+  * `TWENTY_APP_ACCESS_TOKEN` — Clé de courte durée pour l'accès par défaut : le rôle d'une personne combiné à celui de votre application lorsqu'une personne est à l'origine de l'exécution, le propre rôle de votre application lorsque personne ne l'est. La personne est celle qui a déclenché l'exécution dans une fonction logique, ou celle qui consulte la page dans un composant frontal.
+  * `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — Clé de courte durée limitée au seul rôle de votre application. Uniquement pour les fonctions logiques, toujours injectée dans celles-ci, et utilisée par `runAs: 'application'`.
 
-  Vous n'avez **pas** besoin de les transmettre aux clients — ils lisent automatiquement depuis `process.env`. Les autorisations de la clé API sont déterminées par le rôle déclaré avec `defineApplicationRole()` (ou référencé via `defaultRoleUniversalIdentifier` dans `application-config.ts`).
+  Vous n'avez **pas** besoin de les transmettre aux clients — ils lisent automatiquement depuis `process.env`, et [Quels accès un appel utilise](#whose-access-a-call-uses) explique comment choisir entre eux. Les propres autorisations de votre application sont déterminées par le rôle déclaré avec `defineApplicationRole()` (ou référencé via `defaultRoleUniversalIdentifier` dans `application-config.ts`) ; une exécution agissant en tant que personne ne peut jamais dépasser ce rôle, ni le sien.
 </Note>

@@ -13,10 +13,9 @@ import {
 } from '@nestjs/common';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { ApiPath } from 'twenty-shared/types';
+import { type APP_LOCALES } from 'twenty-shared/translations';
+import { ApiPath, PageLayoutType } from 'twenty-shared/types';
 
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { parseMetadataRestPagination } from 'src/engine/api/rest/metadata/utils/parse-metadata-rest-pagination.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
@@ -29,11 +28,9 @@ import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-module
 import { CreatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout.input';
 import { UpdatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout.input';
 import { type PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { PageLayoutRestApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/filters/page-layout-rest-api-exception.filter';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
-import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
 
@@ -49,7 +46,6 @@ export class PageLayoutController {
   constructor(
     private readonly pageLayoutService: PageLayoutService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
-    private readonly i18nService: I18nService,
   ) {}
 
   @Get()
@@ -69,11 +65,14 @@ export class PageLayoutController {
     });
 
     return {
-      data: await this.resolvePageLayoutNames({
-        pageLayouts: page.items,
-        workspaceId: workspace.id,
-        locale,
-      }),
+      data: await this.applicationTranslationCatalogService.resolveTranslatablePropertiesForEntities(
+        {
+          metadataName: 'pageLayout',
+          entities: page.items,
+          locale,
+          workspaceId: workspace.id,
+        },
+      ),
       pageInfo: page.pageInfo,
       totalCount: page.totalCount,
     };
@@ -91,11 +90,15 @@ export class PageLayoutController {
       workspaceId: workspace.id,
     });
 
-    const [resolvedPageLayout] = await this.resolvePageLayoutNames({
-      pageLayouts: [pageLayout],
-      workspaceId: workspace.id,
-      locale,
-    });
+    const [resolvedPageLayout] =
+      await this.applicationTranslationCatalogService.resolveTranslatablePropertiesForEntities(
+        {
+          metadataName: 'pageLayout',
+          entities: [pageLayout],
+          locale,
+          workspaceId: workspace.id,
+        },
+      );
 
     return resolvedPageLayout;
   }
@@ -138,48 +141,5 @@ export class PageLayoutController {
       id,
       workspaceId: workspace.id,
     });
-  }
-
-  private async resolvePageLayoutNames({
-    pageLayouts,
-    workspaceId,
-    locale,
-  }: {
-    pageLayouts: PageLayoutDTO[];
-    workspaceId: string;
-    locale: keyof typeof APP_LOCALES | undefined;
-  }): Promise<PageLayoutDTO[]> {
-    const safeLocale = locale ?? SOURCE_LOCALE;
-
-    const i18nInstance = this.i18nService.getI18nInstance(safeLocale);
-
-    const { standardApplicationId, catalogByApplicationId } =
-      await this.applicationTranslationCatalogService.getCatalogs({
-        applicationIds: pageLayouts.map(
-          (pageLayout) => pageLayout.applicationId,
-        ),
-        locale: safeLocale,
-        workspaceId,
-      });
-
-    return pageLayouts.map((pageLayout) => ({
-      ...pageLayout,
-      name: resolveEffectiveEntityProperty({
-        metadataName: 'pageLayout',
-        baseValue: pageLayout.name,
-        // pageLayout is not an overridable entity: a workspace renaming a
-        // layout edits the row itself.
-        overrides: undefined,
-        property: 'name',
-        i18nContext: {
-          locale,
-          i18nInstance,
-          isStandardApp: pageLayout.applicationId === standardApplicationId,
-          applicationCatalog: catalogByApplicationId.get(
-            pageLayout.applicationId,
-          ),
-        },
-      }),
-    }));
   }
 }

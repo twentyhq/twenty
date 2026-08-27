@@ -293,7 +293,6 @@ msgstr "Brak wymaganego pola."
 
 #. js-lingui-id: /ffPWJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "Brakuje wymaganego pola. Podaj wszystkie wymagane wartości i spróbuj ponownie."
 
@@ -339,6 +338,16 @@ msgstr "Wystąpił tymczasowy błąd. Spróbuj ponownie."
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "A temporary network error occurred."
 msgstr "Wystąpił tymczasowy błąd sieci."
+
+#. js-lingui-id: WzDeE/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "A timeline activity type targeting another application's object must declare the timeline activity type it overrides"
+msgstr "Typ aktywności na osi czasu, którego obiektem docelowym jest obiekt innej aplikacji, musi deklarować typ aktywności na osi czasu, który nadpisuje."
+
+#. js-lingui-id: JJamm8
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "A timeline activity type with this name already exists for this application"
+msgstr "Typ aktywności na osi czasu o tej nazwie już istnieje w tej aplikacji"
 
 #. js-lingui-id: WBtp3/
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -420,6 +429,11 @@ msgstr "Wystąpił błąd sortowania widoku."
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "A webhook with this configuration already exists."
 msgstr "Webhook z taką konfiguracją już istnieje."
+
+#. js-lingui-id: I0rHKG
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "A widget header action was not found"
+msgstr "Nie znaleziono działania nagłówka widżetu"
 
 #. js-lingui-id: 3VQj1J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -665,6 +679,11 @@ msgstr "Agent o tej nazwie już istnieje"
 msgid "An agent with this name already exists."
 msgstr "Agent o tej nazwie już istnieje."
 
+#. js-lingui-id: SC8Bk0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "An application timeline activity emitter must target one of its objects"
+msgstr "Emiter aktywności na osi czasu aplikacji musi wskazywać jeden z jej obiektów."
+
 #. js-lingui-id: VID94s
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -787,6 +806,11 @@ msgstr "Roczne przychody"
 msgid "Another application in this workspace has already registered a permission flag with this key."
 msgstr "Inna aplikacja w tym obszarze roboczym zarejestrowała już flagę uprawnień z tym kluczem."
 
+#. js-lingui-id: 8IMyyd
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Another timeline activity type already handles this action, object, and target relation"
+msgstr "Inny typ aktywności na osi czasu już obsługuje tę akcję, obiekt i relację docelową."
+
 #. js-lingui-id: fRWsMD
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "API key is not configured."
@@ -812,6 +836,11 @@ msgstr "Nie znaleziono roli klucza API."
 msgctxt "fieldMetadata.label"
 msgid "Apostrophe and dot"
 msgstr "Apostrof i kropka"
+
+#. js-lingui-id: 1WWVFC
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Application cleanup is still in progress. Please try again."
+msgstr "Czyszczenie aplikacji nadal trwa. Spróbuj ponownie."
 
 #. js-lingui-id: 8O6Zab
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -858,6 +887,11 @@ msgstr "Nie znaleziono rejestracji aplikacji."
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Application registration variable not found."
 msgstr "Nie znaleziono zmiennej rejestracji aplikacji."
+
+#. js-lingui-id: P+wtF/
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Application uninstall logic function failed."
+msgstr "Funkcja logiki odinstalowywania aplikacji zakończyła się niepowodzeniem."
 
 #. js-lingui-id: QtRMs/
 #: src/engine/core-modules/application/application.exception.ts
@@ -974,6 +1008,12 @@ msgstr "Identyfikator powiązanego użytkownika"
 msgid "At least one relation is required"
 msgstr "Wymagane jest przynajmniej jedno powiązanie"
 
+#. js-lingui-id: QAZeXE
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "attached a file"
+msgstr "załączono plik"
+
 #. js-lingui-id: b1LFyn
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
@@ -1064,6 +1104,12 @@ msgstr "Załączniki powiązane z szansą"
 msgctxt "fieldMetadata.description"
 msgid "Attachments linked to the workflow"
 msgstr "Załączniki powiązane z przepływem pracy"
+
+#. js-lingui-id: mGHuob
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "attended a calendar event"
+msgstr "uczestniczył(-a) w wydarzeniu kalendarza"
 
 #. js-lingui-id: 0N8sVQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -1271,6 +1317,11 @@ msgstr "Treść musi być obiektem"
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
 msgid "Body must be an object for widget \"{widgetTitle}\""
 msgstr "Treść musi być obiektem dla widżetu \"{widgetTitle}\""
+
+#. js-lingui-id: rEDXNA
+#: src/utils/__test__/custom-exception.spec.ts
+msgid "Boom"
+msgstr "Boom"
 
 #. js-lingui-id: xGunO9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -1549,12 +1600,6 @@ msgstr "Widok kalendarza musi mieć pole kalendarza"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar view must have a calendar layout"
 msgstr "Widok kalendarza musi mieć układ kalendarza"
-
-#. js-lingui-id: D9pZ2l
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
-msgid "Calendar widget views only support the month layout"
-msgstr "Widoki w widżecie kalendarza obsługują tylko układ miesięczny"
 
 #. js-lingui-id: 0U7DBn
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -1921,6 +1966,21 @@ msgstr "Nie znaleziono wątku na czacie."
 msgid "Chat thread title cannot be empty."
 msgstr "Tytuł wątku czatu nie może być pusty."
 
+#. js-lingui-id: 8kN7d7
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Choose an existing timeline activity type to override"
+msgstr "Wybierz istniejący typ aktywności na osi czasu do nadpisania."
+
+#. js-lingui-id: dRdO/y
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Choose the object that emits this timeline activity type"
+msgstr "Wybierz obiekt emitujący ten typ aktywności na osi czasu."
+
+#. js-lingui-id: PDwfT5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Choose the relation used by this timeline activity type"
+msgstr "Wybierz relację używaną przez ten typ aktywności na osi czasu."
+
 #. js-lingui-id: NGL+Sl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -1969,6 +2029,16 @@ msgstr "Wykonanie kroku kodu nie powiodło się."
 msgctxt "fieldMetadata.label"
 msgid "Color Scheme"
 msgstr "Schemat Kolorów"
+
+#. js-lingui-id: 8nN8qg
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header belongs to another application"
+msgstr "Element menu poleceń {commandMenuItemUniversalIdentifier}, do którego odwołuje się nagłówek widżetu, należy do innej aplikacji"
+
+#. js-lingui-id: fmk0Wo
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Command menu item {commandMenuItemUniversalIdentifier} referenced by widget header was not found"
+msgstr "Nie znaleziono elementu menu poleceń {commandMenuItemUniversalIdentifier}, do którego odwołuje się nagłówek widżetu"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -2321,12 +2391,14 @@ msgid "Contradicting field permissions have been detected on a relation field."
 msgstr "Wykryto sprzeczne uprawnienia w polu powiązań."
 
 #. js-lingui-id: X/ryFh
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow id"
 msgstr "Identyfikator podstawowego przepływu pracy"
 
 #. js-lingui-id: WkctC4
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow version id"
@@ -2598,6 +2670,11 @@ msgstr "Domeny niestandardowe są wyłączone dla tej przestrzeni roboczej."
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Custom object is missing a label identifier field."
 msgstr "W obiekcie niestandardowym brakuje pola identyfikatora etykiety."
+
+#. js-lingui-id: 7VVv8j
+#: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
+msgid "Custom timeline activity type cannot be reset to default."
+msgstr "Niestandardowy typ aktywności na osi czasu nie może zostać przywrócony do wartości domyślnej."
 
 #. js-lingui-id: 34/Ymp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -3419,18 +3496,6 @@ msgctxt "fieldMetadata.label"
 msgid "Event ID"
 msgstr "ID zdarzenia"
 
-#. js-lingui-id: ygoA2u
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Event name"
-msgstr "Nazwa zdarzenia"
-
-#. js-lingui-id: AvDRPM
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Event name"
-msgstr "Nazwa zdarzenia"
-
 #. js-lingui-id: irEsRo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -3458,6 +3523,13 @@ msgstr "Uczestnicy zdarzenia"
 msgctxt "fieldMetadata.description"
 msgid "Event target"
 msgstr "Cel zdarzenia"
+
+#. js-lingui-id: KUIRIR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Event type"
+msgstr "Typ zdarzenia"
 
 #. js-lingui-id: NZy2VR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -3876,6 +3948,11 @@ msgstr "Typ pola TS_VECTOR musi być polem systemowym"
 msgid "Field type TS_VECTOR must be named \"searchVector\""
 msgstr "Typ pola TS_VECTOR musi mieć nazwę \"searchVector\""
 
+#. js-lingui-id: VkSxbb
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
+msgid "Field type TS_VECTOR must have SYSTEM writability"
+msgstr "Typ pola TS_VECTOR musi mieć zapisywalność SYSTEM"
+
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Field type validation error."
@@ -4011,6 +4088,7 @@ msgstr "Nie znaleziono pliku w archiwum klienta SDK."
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/file.exception.ts
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "File not found."
 msgstr "Nie znaleziono pliku."
@@ -5224,6 +5302,11 @@ msgstr "Podano nieprawidłowy docelowy adres URL"
 msgid "Invalid target URL. Please provide a valid HTTP or HTTPS URL."
 msgstr "Nieprawidłowy docelowy adres URL. Podaj prawidłowy adres URL HTTP lub HTTPS."
 
+#. js-lingui-id: G26J1R
+#: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
+msgid "Invalid timeline activity type input."
+msgstr "Nieprawidłowe dane wejściowe typu aktywności na osi czasu."
+
 #. js-lingui-id: sHcAMD
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid trigger type for enabling workflow trigger"
@@ -5787,6 +5870,23 @@ msgstr "Układ jest wymagany dla wykresu słupkowego"
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr "Układ jest wymagany dla widżetu wykresu słupkowego \"{widgetTitle}\""
+
+#. js-lingui-id: sAG9OB
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "linked a related note"
+msgstr "połączył(-a) powiązaną notatkę"
+
+#. js-lingui-id: ecrchg
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "linked a related task"
+msgstr "połączył(-a) powiązane zadanie"
+
+#. js-lingui-id: LXKHX6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Linked and unlinked timeline activity emitters require a target relation"
+msgstr "Powiązane i niepowiązane emitery aktywności na osi czasu wymagają relacji docelowej."
 
 #. js-lingui-id: TUocGa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -6559,6 +6659,16 @@ msgstr "Nie znaleziono pozycji menu nawigacji."
 msgid "Navigation menu item type is required"
 msgstr "Typ pozycji menu nawigacji jest wymagany"
 
+#. js-lingui-id: sq8J4x
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object metadata not found"
+msgstr "Nie znaleziono metadanych obiektu docelowego nawigacji"
+
+#. js-lingui-id: 4/QAvg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Navigation target object not found"
+msgstr "Nie znaleziono obiektu docelowego nawigacji"
+
 #. js-lingui-id: B/prgH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -6693,6 +6803,11 @@ msgstr "Znormalizowana transkrypcja z diaryzacją"
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "Not authorized to access this OAuth provider."
 msgstr "Brak uprawnień do korzystania z tego dostawcy OAuth."
+
+#. js-lingui-id: KPx1UV
+#: src/utils/__test__/custom-exception.spec.ts
+msgid "Not found"
+msgstr "Nie znaleziono"
 
 #. js-lingui-id: WunOam
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -6927,6 +7042,8 @@ msgstr "Etykieta obiektu jest zbyt krótka"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
@@ -8040,12 +8157,14 @@ msgid "Recurring Event ID"
 msgstr "ID cyklicznego wydarzenia"
 
 #. js-lingui-id: zEHtXk
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflow row"
 msgstr "Odniesienie do wiersza podstawowego przepływu pracy"
 
 #. js-lingui-id: avBuTv
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflowVersion row"
@@ -8147,6 +8266,12 @@ msgstr "Usuń z ulubionych"
 msgid "Remove this permission from all roles before deleting it"
 msgstr "Usuń to uprawnienie ze wszystkich ról przed jego usunięciem"
 
+#. js-lingui-id: bf8Nhj
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "removed an attachment"
+msgstr "usunięto załącznik"
+
 #. js-lingui-id: U4APCE
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -8181,6 +8306,11 @@ msgstr "Status żądania"
 msgctxt "fieldMetadata.label"
 msgid "Requested"
 msgstr "Zażądano"
+
+#. js-lingui-id: c1RSQl
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Requested file range cannot be served."
+msgstr "Nie można obsłużyć żądanego zakresu pliku."
 
 #. js-lingui-id: MU8Slt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -8833,6 +8963,12 @@ msgstr "Wysłano o"
 msgctxt "fieldMetadata.label"
 msgid "Sent count"
 msgstr "Liczba wysłanych"
+
+#. js-lingui-id: ttuub1
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "sent or received an email"
+msgstr "wysłał(-a) lub otrzymał(-a) wiadomość e-mail"
 
 #. js-lingui-id: CMPgl1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9706,7 +9842,7 @@ msgid "The file extension doesn't match the file content. Please check that your
 msgstr "Rozszerzenie pliku nie odpowiada zawartości pliku. Sprawdź, czy plik nie jest uszkodzony i ma prawidłowe rozszerzenie."
 
 #. js-lingui-id: H+ZNr6
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "The file has not been uploaded yet. Please upload it before confirming."
 msgstr "Plik nie został jeszcze przesłany. Prześlij go przed potwierdzeniem."
 
@@ -9714,6 +9850,16 @@ msgstr "Plik nie został jeszcze przesłany. Prześlij go przed potwierdzeniem."
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The file is empty or exceeds the maximum allowed size."
 msgstr "Plik jest pusty lub przekracza maksymalny dozwolony rozmiar."
+
+#. js-lingui-id: 2hrpBa
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
+msgid "The file upload has not been completed. Please retry the upload."
+msgstr "Przesyłanie pliku nie zostało ukończone. Spróbuj ponownie przesłać plik."
+
+#. js-lingui-id: 9TYO3w
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The front component used by this timeline activity type is not available"
+msgstr "Komponent front-endu używany przez ten typ aktywności na osi czasu nie jest dostępny."
 
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -9777,6 +9923,11 @@ msgstr "Nie znaleziono obiektu do zaktualizowania, aby uzgodnić jego widok INDE
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service.ts
 msgid "The object to update could not be found to reconcile its record page"
 msgstr "Nie znaleziono obiektu do zaktualizowania, aby uzgodnić jego stronę rekordu"
+
+#. js-lingui-id: QaaKZQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The object used by this timeline activity type is not available"
+msgstr "Obiekt używany przez ten typ aktywności na osi czasu nie jest dostępny."
 
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -9885,6 +10036,21 @@ msgstr "Nazwy jednostkowe i mnogie nie mogą być takie same dla obiektu"
 msgid "The subscription is no longer available on the provider."
 msgstr "Subskrypcja nie jest już dostępna u dostawcy."
 
+#. js-lingui-id: Eq5YMK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The target relation used by this timeline activity type is not available"
+msgstr "Relacja docelowa używana przez ten typ aktywności na osi czasu nie jest dostępna."
+
+#. js-lingui-id: PLlXuR
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The timeline activity type override is not compatible with this event"
+msgstr "Nadpisanie typu aktywności na osi czasu nie jest zgodne z tym zdarzeniem."
+
+#. js-lingui-id: IT44Du
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "The trigger fields used by this timeline activity type are not available"
+msgstr "Pola wyzwalające używane przez ten typ aktywności na osi czasu nie są dostępne."
+
 #. js-lingui-id: J1prza
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -9892,7 +10058,7 @@ msgid "The unsubscribe topic this campaign was sent under"
 msgstr "Temat rezygnacji z subskrypcji, w ramach którego wysłano tę kampanię"
 
 #. js-lingui-id: uYP2Uw
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The uploaded file does not match the declared size. Please retry the upload."
 msgstr "Przesłany plik nie jest zgodny z zadeklarowanym rozmiarem. Spróbuj ponownie przesłać plik."
@@ -10013,11 +10179,6 @@ msgstr "Nie ma wcześniejszego kroku onboardingu, do którego można wrócić."
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Następujące pola nie mogą zostać zaktualizowane, dopóki obszar roboczy nie zostanie aktywowany: {fieldsList}."
-
-#. js-lingui-id: Iy9pZw
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-msgid "This {fieldLabel} value is already in use. Please check your data and try again."
-msgstr "Wartość w polu {fieldLabel} jest już używana. Sprawdź swoje dane i spróbuj ponownie."
 
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -10189,7 +10350,7 @@ msgid "This field references an object that could not be found"
 msgstr "To pole odnosi się do obiektu, którego nie można znaleźć"
 
 #. js-lingui-id: 5F02zD
-#: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
 msgid "This file format is not supported."
 msgstr "Ten format pliku nie jest obsługiwany."
 
@@ -10202,6 +10363,11 @@ msgstr "Ten plik został już przesłany."
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "This file upload has already been finalized."
 msgstr "To przesyłanie pliku zostało już sfinalizowane."
+
+#. js-lingui-id: bHna44
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "This HTTP method is not allowed on this server route."
+msgstr "Ta metoda HTTP nie jest dozwolona w tej trasie serwera."
 
 #. js-lingui-id: cvWDSJ
 #: src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util.ts
@@ -10267,11 +10433,6 @@ msgstr "To uprawnienie obiektu jest już ustawione dla tej roli"
 msgid "This operation is not allowed."
 msgstr "Ta operacja nie jest dozwolona."
 
-#. js-lingui-id: eitC3W
-#: src/engine/workspace-datasource/workspace-datasource.service.ts
-msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
-msgstr "Ta operacja nie jest dozwolona. Wypróbuj inne podejście lub skontaktuj się z pomocą techniczną, jeśli potrzebujesz pomocy."
-
 #. js-lingui-id: bEhTPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "This operation is not supported."
@@ -10279,7 +10440,6 @@ msgstr "Ta operacja nie jest obsługiwana."
 
 #. js-lingui-id: fxy039
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Ta operacja odnosi się do rekordu, który nie istnieje lub nie może zostać zmodyfikowany z powodu istniejących powiązań."
 
@@ -10311,7 +10471,6 @@ msgstr "Ten zapis już istnieje. Sprawdź swoje dane i spróbuj ponownie."
 
 #. js-lingui-id: BQ4MUY
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
-#: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Tego rekordu nie można usunąć, ponieważ inne rekordy wciąż się do niego odwołują."
 
@@ -10375,6 +10534,11 @@ msgstr "Ta subdomena jest już zajęta."
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This suppressed address no longer exists."
 msgstr "Ten zablokowany adres już nie istnieje."
+
+#. js-lingui-id: 0GMgIa
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "This timeline activity action is not supported"
+msgstr "To działanie aktywności na osi czasu nie jest obsługiwane"
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -10547,6 +10711,80 @@ msgctxt "fieldMetadata.description"
 msgid "Timeline activity record position"
 msgstr "Pozycja rekordu aktywności na osi czasu"
 
+#. js-lingui-id: wt+xfK
+#. placeholder {0}: conflictingResolverType?.name ?? timelineActivityType.name
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type conflicts with {0} for the same action, object, and target relation"
+msgstr "Typ aktywności na osi czasu powoduje konflikt z {0} dla tej samej akcji, obiektu i relacji docelowej."
+
+#. js-lingui-id: xFv7OI
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Timeline activity type describing this event"
+msgstr "Typ aktywności na osi czasu opisujący to wydarzenie"
+
+#. js-lingui-id: sqmSqj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type label is required"
+msgstr "Etykieta typu aktywności na osi czasu jest wymagana"
+
+#. js-lingui-id: jxz4n1
+#: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
+msgid "Timeline activity type name already exists."
+msgstr "Nazwa typu aktywności na osi czasu już istnieje."
+
+#. js-lingui-id: 0QdkGz
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type name is required"
+msgstr "Nazwa typu aktywności na osi czasu jest wymagana"
+
+#. js-lingui-id: kNsVJi
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type not found"
+msgstr "Nie znaleziono typu aktywności na osi czasu"
+
+#. js-lingui-id: 1+EKCZ
+#: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
+msgid "Timeline activity type not found."
+msgstr "Nie znaleziono typu aktywności na osi czasu."
+
+#. js-lingui-id: 0VIqW4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type override must reference a compatible type owned by the target object's application"
+msgstr "Nadpisanie typu aktywności na osi czasu musi odwoływać się do zgodnego typu należącego do aplikacji obiektu docelowego."
+
+#. js-lingui-id: kfv1kx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type references a front component that does not belong to its application"
+msgstr "Typ aktywności na osi czasu odwołuje się do komponentu front-endu, który nie należy do jego aplikacji."
+
+#. js-lingui-id: f7+vxa
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type references an object that does not exist"
+msgstr "Typ aktywności na osi czasu odwołuje się do obiektu, który nie istnieje."
+
+#. js-lingui-id: Y9ZQls
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type target relation must be a direct or junction relation on its source object"
+msgstr "Relacja docelowa typu aktywności osi czasu musi być relacją bezpośrednią lub łączącą na obiekcie źródłowym"
+
+#. js-lingui-id: ShcC6H
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type trigger fields must be non-empty fields on the source object of an updated relation event"
+msgstr "Pola wyzwalające typu aktywności na osi czasu muszą być niepustymi polami w obiekcie źródłowym zdarzenia zaktualizowanej relacji."
+
+#. js-lingui-id: 8VTlb5
+#. placeholder {0}: timelineActivityType.name
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Timeline activity type with name {0} already exists for this application"
+msgstr "Typ aktywności na osi czasu o nazwie {0} już istnieje w tej aplikacji"
+
 #. js-lingui-id: o3xAcd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10711,6 +10949,24 @@ msgstr "Nieznana operacja."
 msgid "Unknown permission required."
 msgstr "Wymagane uprawnienie jest nieznane."
 
+#. js-lingui-id: o/bbIF
+#. placeholder {0}: timelineActivityType.action
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
+msgid "Unknown timeline activity action {0}"
+msgstr "Nieznane działanie aktywności na osi czasu {0}"
+
+#. js-lingui-id: spJjXJ
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "unlinked a related note"
+msgstr "odłączył(-a) powiązaną notatkę"
+
+#. js-lingui-id: IYBfg3
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "unlinked a related task"
+msgstr "odłączył(-a) powiązane zadanie"
+
 #. js-lingui-id: deE0XW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10788,6 +11044,24 @@ msgstr "Data i czas aktualizacji"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "Ograniczenia pól aktualizacji dotyczą tylko obiektów, które można aktualizować."
+
+#. js-lingui-id: 7YsDpr
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "updated"
+msgstr "zaktualizowano"
+
+#. js-lingui-id: Hp+aAn
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "updated a related note"
+msgstr "zaktualizował(-a) powiązaną notatkę"
+
+#. js-lingui-id: FoQjXC
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "updated a related task"
+msgstr "zaktualizował(-a) powiązane zadanie"
 
 #. js-lingui-id: U8sfYC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -11412,6 +11686,36 @@ msgstr "ViewId jest wymagany do utworzenia grupy widoku."
 msgid "ViewId is required to create a view sort."
 msgstr "ViewId jest wymagany do utworzenia sortowania widoku."
 
+#. js-lingui-id: vuzFx0
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was created by"
+msgstr "został utworzony przez"
+
+#. js-lingui-id: edc5Bh
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was deleted by"
+msgstr "został usunięty przez"
+
+#. js-lingui-id: SfnmZe
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was linked by"
+msgstr "został połączony przez"
+
+#. js-lingui-id: tKm/LA
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was restored by"
+msgstr "został przywrócony przez"
+
+#. js-lingui-id: 0i3MMx
+#: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
+msgctxt "timelineActivityType.label"
+msgid "was unlinked by"
+msgstr "został odłączony przez"
+
 #. js-lingui-id: xvV2NJ
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
@@ -11516,6 +11820,21 @@ msgstr "Widżet wykracza poza wysokość siatki"
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
 msgid "Widget extends beyond grid width"
 msgstr "Widżet wykracza poza szerokość siatki"
+
+#. js-lingui-id: GE0fWY
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must be unique"
+msgstr "Akcje nagłówka widżetu muszą być unikalne"
+
+#. js-lingui-id: djzz9p
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header actions must belong to the same application as the widget"
+msgstr "Akcje nagłówka widżetu muszą należeć do tej samej aplikacji co widżet"
+
+#. js-lingui-id: pjpuGA
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
+msgid "Widget header command menu item references must be unique"
+msgstr "Odwołania do elementów menu poleceń nagłówka widżetu muszą być unikalne"
 
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
@@ -12109,9 +12428,8 @@ msgid "You can only update one record with files field at once."
 msgstr "Możesz jednocześnie zaktualizować tylko jeden rekord zawierający pole plików."
 
 #. js-lingui-id: 4ysDL0
-#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
-#: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
+#: src/engine/twenty-orm/repository/workspace-repository.ts
+#: src/engine/twenty-orm/repository/workspace-repository.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
 
@@ -12145,6 +12463,11 @@ msgstr "Nie możesz usunąć roli administratora od ostatniego administratora. N
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
 msgid "You cannot revoke admin panel access from the last server administrator."
 msgstr "Nie możesz odebrać dostępu do panelu administracyjnego ostatniemu administratorowi serwera."
+
+#. js-lingui-id: y2sD5W
+#: src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util.ts
+msgid "You cannot send from this address."
+msgstr "Nie możesz wysyłać z tego adresu."
 
 #. js-lingui-id: WUcQVb
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts

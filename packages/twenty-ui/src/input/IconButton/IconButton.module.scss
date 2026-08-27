@@ -201,7 +201,7 @@ $primary-accents: (
 }
 
 .button[data-variant='tertiary'][data-accent='default'] {
-  --icon-button-color: var(--t-font-color-tertiary);
+  --icon-button-color: var(--t-font-color-secondary);
 }
 
 // background follows the raw focus flag (it stays on for disabled+focus).

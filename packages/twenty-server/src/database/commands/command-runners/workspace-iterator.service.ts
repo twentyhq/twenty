@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -8,28 +8,34 @@ import {
   WorkspaceActivationStatus,
 } from 'twenty-shared/workspace';
 import { isDefined } from 'twenty-shared/utils';
-import { MoreThanOrEqual, Repository } from 'typeorm';
+import { DataSource, MoreThanOrEqual, Raw, Repository } from 'typeorm';
 
 import { CommandShutdownService } from 'src/database/commands/command-runners/command-shutdown.service';
 import { activationStatusIn } from 'src/database/commands/command-runners/utils/activation-status-in.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMigrationRunnerException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
+
+export type WorkspaceIteratorShard = {
+  index: number;
+  total: number;
+};
 
 export type WorkspaceIteratorArgs = {
   workspaceIds?: string[];
   activationStatuses?: WorkspaceActivationStatus[];
   startFromWorkspaceId?: string;
   workspaceCountLimit?: number;
+  shard?: WorkspaceIteratorShard;
   dryRun?: boolean;
   callback: (context: WorkspaceIteratorContext) => Promise<void>;
 };
 
 export type WorkspaceIteratorContext = {
   workspaceId: string;
-  dataSource?: GlobalWorkspaceDataSource;
+  databaseSchema?: string;
+  dataSource?: DataSource;
   index: number;
   total: number;
 };
@@ -54,7 +60,9 @@ export class WorkspaceIteratorService {
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly commandShutdownService: CommandShutdownService,
   ) {}
 
@@ -99,35 +107,33 @@ export class WorkspaceIteratorService {
       try {
         const authContext = buildSystemAuthContext(workspaceId);
 
-        await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-          async () => {
-            const workspace = await this.workspaceRepository.findOne({
-              select: ['databaseSchema'],
-              where: { id: workspaceId },
-            });
+        await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+          const workspace = await this.workspaceRepository.findOne({
+            select: ['databaseSchema'],
+            where: { id: workspaceId },
+          });
 
-            const dataSource = isNonEmptyString(workspace?.databaseSchema)
-              ? await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource()
-              : undefined;
+          const dataSource = isNonEmptyString(workspace?.databaseSchema)
+            ? this.coreDataSource
+            : undefined;
 
-            if (!isDefined(dataSource)) {
-              this.logger.warn(
-                `Could not retrieve a workspace data source for workspace ${workspaceId} ` +
-                  `(index ${index + 1}/${workspaceIdsToProcess.length}): ` +
-                  `workspaceRowFound=${isDefined(workspace)}, ` +
-                  `databaseSchema=${JSON.stringify(workspace?.databaseSchema ?? null)}`,
-              );
-            }
+          if (!isDefined(dataSource)) {
+            this.logger.warn(
+              `Could not retrieve a workspace data source for workspace ${workspaceId} ` +
+                `(index ${index + 1}/${workspaceIdsToProcess.length}): ` +
+                `workspaceRowFound=${isDefined(workspace)}, ` +
+                `databaseSchema=${JSON.stringify(workspace?.databaseSchema ?? null)}`,
+            );
+          }
 
-            await callback({
-              workspaceId,
-              dataSource,
-              index,
-              total: workspaceIdsToProcess.length,
-            });
-          },
-          authContext,
-        );
+          await callback({
+            workspaceId,
+            databaseSchema: workspace?.databaseSchema ?? undefined,
+            dataSource,
+            index,
+            total: workspaceIdsToProcess.length,
+          });
+        }, authContext);
 
         report.success.push({ workspaceId });
       } catch (error: unknown) {
@@ -165,11 +171,29 @@ export class WorkspaceIteratorService {
   private async fetchWorkspaceIds(
     options: Pick<
       WorkspaceIteratorArgs,
-      'activationStatuses' | 'startFromWorkspaceId' | 'workspaceCountLimit'
+      | 'activationStatuses'
+      | 'startFromWorkspaceId'
+      | 'workspaceCountLimit'
+      | 'shard'
     >,
   ): Promise<string[]> {
     const activationStatuses =
       options.activationStatuses ?? DEFAULT_ACTIVATION_STATUSES;
+    const shard = options.shard;
+
+    if (isDefined(shard)) {
+      if (isDefined(options.startFromWorkspaceId)) {
+        throw new Error(
+          'Cannot combine shard with startFromWorkspaceId in workspace iterator',
+        );
+      }
+
+      if (shard.index < 0 || shard.index >= shard.total || shard.total > 256) {
+        throw new Error(
+          `Invalid workspace iterator shard ${shard.index}/${shard.total}`,
+        );
+      }
+    }
 
     const workspaces = await this.workspaceRepository.find({
       select: ['id'],
@@ -177,6 +201,15 @@ export class WorkspaceIteratorService {
         activationStatus: activationStatusIn(activationStatuses),
         ...(options.startFromWorkspaceId
           ? { id: MoreThanOrEqual(options.startFromWorkspaceId) }
+          : {}),
+        ...(isDefined(shard)
+          ? {
+              id: Raw(
+                (alias) =>
+                  `mod(get_byte(uuid_send(${alias}), 0), :shardTotal) = :shardIndex`,
+                { shardTotal: shard.total, shardIndex: shard.index },
+              ),
+            }
           : {}),
       },
       order: { id: 'ASC' },
