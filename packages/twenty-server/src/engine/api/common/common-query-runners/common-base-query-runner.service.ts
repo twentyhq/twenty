@@ -61,6 +61,10 @@ import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/serv
 import { type ExhaustedScope } from 'src/engine/core-modules/usage-limit/types/exhausted-scope.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
+import { getApiType } from 'src/engine/core-modules/usage/storage/api-request-context.storage';
+import { buildUsageSpendersFromAuthContext } from 'src/engine/core-modules/usage/utils/build-usage-spenders-from-auth-context.util';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -73,11 +77,11 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RelationNestedQueries } from 'src/engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
-import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -114,6 +118,8 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly usageLimitSpeedService: UsageLimitSpeedService;
   @Inject()
+  protected readonly usageRecorderService: UsageRecorderService;
+  @Inject()
   protected readonly twentyConfigService: TwentyConfigService;
   @Inject()
   protected readonly metricsService: MetricsService;
@@ -136,6 +142,8 @@ export abstract class CommonBaseQueryRunnerService<
     } = queryRunnerContext;
 
     await this.throttleQueryExecution(authContext);
+
+    this.recordApiUsage(authContext);
 
     await this.validate(args, queryRunnerContext);
 
@@ -533,6 +541,23 @@ export abstract class CommonBaseQueryRunnerService<
     return {
       useReplica: this.isReadOnly,
     };
+  }
+
+  private recordApiUsage(authContext: WorkspaceAuthContext) {
+    const apiType = getApiType();
+
+    if (!isDefined(apiType)) {
+      return;
+    }
+
+    this.usageRecorderService.accumulate(authContext.workspace.id, {
+      resourceType: UsageResourceType.API,
+      operationType: UsageOperationType.API_REQUEST,
+      quantity: 1,
+      unit: UsageUnit.REQUEST,
+      resourceContext: apiType,
+      spenders: buildUsageSpendersFromAuthContext(authContext),
+    });
   }
 
   private async throttleQueryExecution(authContext: WorkspaceAuthContext) {

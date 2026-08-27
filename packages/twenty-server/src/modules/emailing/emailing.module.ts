@@ -7,6 +7,7 @@ import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/em
 import { MessageSuppressionEntity } from 'src/engine/core-modules/emailing-domain/message-suppression.entity';
 import { UnsubscribeTopicEntity } from 'src/engine/core-modules/emailing-domain/unsubscribe-topic.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageChannelMetadataModule } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -37,6 +38,7 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     PermissionsModule,
     UserRoleModule,
     BillingModule,
+    UsageModule,
     WorkspaceEventEmitterModule,
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
