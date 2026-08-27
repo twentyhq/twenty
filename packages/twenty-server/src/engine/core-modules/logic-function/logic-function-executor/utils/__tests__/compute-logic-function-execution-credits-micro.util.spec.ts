@@ -7,23 +7,35 @@ describe('computeLogicFunctionExecutionCreditsMicro', () => {
         durationMs: 1_000,
         isBillingExempt: false,
       }),
-    ).toEqual({ invocationCreditsMicro: 100, durationCreditsMicro: 10 });
+    ).toEqual({
+      invocationCreditsMicro: 100,
+      durationCreditsMicro: 10,
+      billedDurationMs: 1_000,
+    });
   });
 
-  it('rounds duration credits up to the next micro credit', () => {
+  it('rounds duration credits down to the previous micro credit', () => {
     expect(
       computeLogicFunctionExecutionCreditsMicro({
-        durationMs: 1,
+        durationMs: 99,
         isBillingExempt: false,
       }),
-    ).toEqual({ invocationCreditsMicro: 100, durationCreditsMicro: 1 });
+    ).toEqual({
+      invocationCreditsMicro: 100,
+      durationCreditsMicro: 0,
+      billedDurationMs: 99,
+    });
 
     expect(
       computeLogicFunctionExecutionCreditsMicro({
-        durationMs: 150,
+        durationMs: 155,
         isBillingExempt: false,
       }),
-    ).toEqual({ invocationCreditsMicro: 100, durationCreditsMicro: 2 });
+    ).toEqual({
+      invocationCreditsMicro: 100,
+      durationCreditsMicro: 1,
+      billedDurationMs: 155,
+    });
   });
 
   it('charges no duration credits for a zero or negative duration', () => {
@@ -32,14 +44,22 @@ describe('computeLogicFunctionExecutionCreditsMicro', () => {
         durationMs: 0,
         isBillingExempt: false,
       }),
-    ).toEqual({ invocationCreditsMicro: 100, durationCreditsMicro: 0 });
+    ).toEqual({
+      invocationCreditsMicro: 100,
+      durationCreditsMicro: 0,
+      billedDurationMs: 0,
+    });
 
     expect(
       computeLogicFunctionExecutionCreditsMicro({
         durationMs: -5,
         isBillingExempt: false,
       }),
-    ).toEqual({ invocationCreditsMicro: 100, durationCreditsMicro: 0 });
+    ).toEqual({
+      invocationCreditsMicro: 100,
+      durationCreditsMicro: 0,
+      billedDurationMs: 0,
+    });
   });
 
   it('bills the full timeout duration of a timed out execution', () => {
@@ -48,7 +68,11 @@ describe('computeLogicFunctionExecutionCreditsMicro', () => {
         durationMs: 900_000,
         isBillingExempt: false,
       }),
-    ).toEqual({ invocationCreditsMicro: 100, durationCreditsMicro: 9_000 });
+    ).toEqual({
+      invocationCreditsMicro: 100,
+      durationCreditsMicro: 9_000,
+      billedDurationMs: 900_000,
+    });
   });
 
   it('charges nothing for billing-exempt applications', () => {
@@ -57,6 +81,10 @@ describe('computeLogicFunctionExecutionCreditsMicro', () => {
         durationMs: 5_000,
         isBillingExempt: true,
       }),
-    ).toEqual({ invocationCreditsMicro: 0, durationCreditsMicro: 0 });
+    ).toEqual({
+      invocationCreditsMicro: 0,
+      durationCreditsMicro: 0,
+      billedDurationMs: 0,
+    });
   });
 });

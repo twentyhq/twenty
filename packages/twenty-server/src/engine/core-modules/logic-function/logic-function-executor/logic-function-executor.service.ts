@@ -602,7 +602,7 @@ export class LogicFunctionExecutorService {
     // workspace's credits for the execution itself. Explicit chargeCredits
     // calls and AI token usage from within the function are billed separately
     // and stay untouched.
-    const { invocationCreditsMicro, durationCreditsMicro } =
+    const { invocationCreditsMicro, durationCreditsMicro, billedDurationMs } =
       computeLogicFunctionExecutionCreditsMicro({
         durationMs: result.duration,
         isBillingExempt: isBillingExemptApplication(
@@ -632,9 +632,6 @@ export class LogicFunctionExecutorService {
       }
     }
 
-    // Mirrors AWS Lambda's pricing shape: a flat per-request charge plus a
-    // separate duration charge, kept as two events so usage reporting can
-    // attribute each component.
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
       USAGE_RECORDED,
       [
@@ -651,7 +648,7 @@ export class LogicFunctionExecutorService {
           resourceType: UsageResourceType.LOGIC_FUNCTION,
           operationType: UsageOperationType.CODE_EXECUTION,
           creditsUsedMicro: durationCreditsMicro,
-          quantity: Math.max(Math.round(result.duration), 0),
+          quantity: billedDurationMs,
           unit: UsageUnit.MILLISECOND,
           resourceId: flatLogicFunction.id,
           periodStart,

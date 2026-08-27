@@ -9,16 +9,26 @@ export const computeLogicFunctionExecutionCreditsMicro = ({
 }: {
   durationMs: number;
   isBillingExempt: boolean;
-}): { invocationCreditsMicro: number; durationCreditsMicro: number } => {
+}): {
+  invocationCreditsMicro: number;
+  durationCreditsMicro: number;
+  billedDurationMs: number;
+} => {
   if (isBillingExempt) {
-    return { invocationCreditsMicro: 0, durationCreditsMicro: 0 };
+    return {
+      invocationCreditsMicro: 0,
+      durationCreditsMicro: 0,
+      billedDurationMs: 0,
+    };
   }
+
+  const billedDurationMs = Math.max(Math.floor(durationMs), 0);
 
   return {
     invocationCreditsMicro: LOGIC_FUNCTION_INVOCATION_CREDITS_MICRO,
-    // Rounded up like AWS bills per started millisecond.
-    durationCreditsMicro: Math.ceil(
-      Math.max(durationMs, 0) * LOGIC_FUNCTION_DURATION_CREDITS_MICRO_PER_MS,
+    durationCreditsMicro: Math.floor(
+      billedDurationMs * LOGIC_FUNCTION_DURATION_CREDITS_MICRO_PER_MS,
     ),
+    billedDurationMs,
   };
 };
