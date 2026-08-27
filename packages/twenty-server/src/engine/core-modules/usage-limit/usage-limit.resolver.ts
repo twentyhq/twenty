@@ -8,6 +8,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UpsertUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/upsert-usage-limit.input';
+import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -16,7 +17,10 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @MetadataResolver(() => UsageLimitEntity)
-@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
+@UseFilters(
+  UsageLimitGraphqlApiExceptionFilter,
+  PreventNestToAutoLogGraphqlErrorsFilter,
+)
 @UsePipes(ResolverValidationPipe)
 @UseGuards(
   WorkspaceAuthGuard,
