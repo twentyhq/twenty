@@ -124,8 +124,6 @@ export class WorkflowRunWorkspaceService {
         workflowVersionId,
         createdBy,
         workflowId: workflow.id,
-        coreWorkflowId: workflow.coreWorkflowId,
-        coreWorkflowVersionId: workflowVersion.coreWorkflowVersionId,
         status,
         position,
         state: initState,
