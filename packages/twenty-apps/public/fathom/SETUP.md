@@ -51,7 +51,10 @@ https://<development-host>/s/webhook/fathom?connectionId=<connected-account-id>
 
 5. Open [http://localhost:2020](http://localhost:2020), log in with the default
    development credentials, and connect Fathom from Settings. The connection
-   hook registers the signed webhook.
+   hook registers the signed webhook and starts a seven-day import.
+
+Authenticated users can request a larger history window through
+`POST /fathom/backfill` with a JSON body such as `{ "days": 30 }`.
 
 ## Verifying your setup
 

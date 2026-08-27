@@ -1,7 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { getConnection, kv } from 'twenty-sdk/logic-function';
+import { enqueueJob, getConnection, kv } from 'twenty-sdk/logic-function';
 
+import { FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER } from 'src/constants/fathom-backfill-worker-universal-identifier';
 import { FATHOM_REGISTER_CONNECTION_UNIVERSAL_IDENTIFIER } from 'src/constants/fathom-register-connection-universal-identifier';
 import { type FathomConnectionHookPayload } from 'src/logic-functions/types/fathom-connection-hook-payload.type';
 import { type FathomWebhookRegistration } from 'src/logic-functions/types/fathom-webhook-registration.type';
@@ -36,6 +37,14 @@ export const fathomRegisterConnectionHandler = async (
   );
 
   if (existingRegistration?.isActive) {
+    if (!existingRegistration.isInitialBackfillEnqueued) {
+      await enqueueInitialBackfill(payload.connectedAccountId);
+      await kv.set(registrationKey, {
+        ...existingRegistration,
+        isInitialBackfillEnqueued: true,
+      });
+    }
+
     return { success: true, webhookId: existingRegistration.webhookId };
   }
 
@@ -65,11 +74,33 @@ export const fathomRegisterConnectionHandler = async (
     webhookId: webhook.id,
     secret: webhook.secret,
     isActive: true,
+    isInitialBackfillEnqueued: false,
   };
 
   await kv.set(registrationKey, registration);
 
+  await enqueueInitialBackfill(payload.connectedAccountId);
+  await kv.set(registrationKey, {
+    ...registration,
+    isInitialBackfillEnqueued: true,
+  });
+
   return { success: true, webhookId: webhook.id };
+};
+
+const enqueueInitialBackfill = async (
+  connectedAccountId: string,
+): Promise<void> => {
+  const enqueueResult = await enqueueJob({
+    logicFunctionUniversalIdentifier:
+      FATHOM_BACKFILL_WORKER_UNIVERSAL_IDENTIFIER,
+    payload: { connectedAccountId, days: 7 },
+    retryLimit: 3,
+  });
+
+  if (!enqueueResult.enqueued) {
+    throw new Error('Failed to enqueue the initial Fathom backfill');
+  }
 };
 
 export default defineLogicFunction({

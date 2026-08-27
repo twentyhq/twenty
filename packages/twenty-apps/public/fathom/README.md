@@ -1,6 +1,6 @@
 # Fathom
 
-**Bring new Fathom meeting recordings, transcripts, and insights into Twenty.**
+**Bring Fathom meeting recordings, transcripts, and insights into Twenty.**
 
 ## What you get
 
@@ -8,6 +8,8 @@
 - Transcripts, summaries, and action items
 - Links to matching calendar events when the match is unambiguous
 - Automatic sync for new recordings
+- A seven-day import when a Fathom account is connected
+- Manual history imports and workflow actions
 
 ## Requirements
 
@@ -22,4 +24,5 @@ emails do not need to match.
 - Disconnect and reconnect Fathom after changing the webhook URL or webhook
   scopes so Fathom receives the new registration.
 
-Development setup lives in [SETUP.md](SETUP.md).
+Development setup lives in [SETUP.md](SETUP.md). Implementation details and
+known platform constraints live in [ARCHITECTURE.md](ARCHITECTURE.md).

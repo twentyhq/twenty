@@ -1,13 +1,16 @@
 {
   "name": "@twentyhq/fathom",
   "version": "0.1.0",
+  "description": "Per-user Fathom OAuth integration for Twenty CRM",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2"
   },
-  "keywords": [],
+  "keywords": [
+    "twenty-app"
+  ],
   "packageManager": "yarn@4.13.0",
   "scripts": {
     "twenty": "twenty",
