@@ -1,6 +1,6 @@
 import { type MarketplacePartner } from './marketplace-partner';
 
-export const GHOST_INTRODUCTION_MAX_LENGTH = 40;
+const GHOST_INTRODUCTION_MAX_LENGTH = 40;
 
 export const isGhost = (p: MarketplacePartner): boolean =>
   p.description.trim().length < GHOST_INTRODUCTION_MAX_LENGTH &&

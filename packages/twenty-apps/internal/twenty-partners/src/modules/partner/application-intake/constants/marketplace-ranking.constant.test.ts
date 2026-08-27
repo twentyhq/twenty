@@ -30,18 +30,18 @@ const GHOST_SOURCE = readFileSync(
 );
 
 describe('MARKETPLACE_RANKING', () => {
-  it('matches the named exports in completeness-score.ts and is-ghost-partner.ts', () => {
+  it('matches the ranking constants in completeness-score.ts and is-ghost-partner.ts', () => {
     const completenessAssignments = [
-      `MIN_DESCRIPTION_LENGTH = ${MARKETPLACE_RANKING.introductionMinLength}`,
-      `MAX_COUNTED_CASE_STUDIES = ${MARKETPLACE_RANKING.maxCountedCaseStudies}`,
-      `POINTS_PER_CASE_STUDY = ${MARKETPLACE_RANKING.pointsPerCaseStudy}`,
-      `POINTS_PER_CASE_STUDY_COVER = ${MARKETPLACE_RANKING.pointsPerCaseStudyCover}`,
-      `POINTS_FOR_INTRODUCTION = ${MARKETPLACE_RANKING.pointsForIntroduction}`,
-      `POINTS_FOR_SERVICE = ${MARKETPLACE_RANKING.pointsForService}`,
-      `POINTS_FOR_PROFILE_PICTURE = ${MARKETPLACE_RANKING.pointsForProfilePicture}`,
-      `POINTS_FOR_CALENDAR_LINK = ${MARKETPLACE_RANKING.pointsForCalendarLink}`,
-      `POINTS_FOR_RATE_OR_BUDGET = ${MARKETPLACE_RANKING.pointsForRateOrBudget}`,
-      `POINTS_FOR_CATEGORY = ${MARKETPLACE_RANKING.pointsForCategory}`,
+      `const MIN_DESCRIPTION_LENGTH = ${MARKETPLACE_RANKING.introductionMinLength}`,
+      `const MAX_COUNTED_CASE_STUDIES = ${MARKETPLACE_RANKING.maxCountedCaseStudies}`,
+      `const POINTS_PER_CASE_STUDY = ${MARKETPLACE_RANKING.pointsPerCaseStudy}`,
+      `const POINTS_PER_CASE_STUDY_COVER = ${MARKETPLACE_RANKING.pointsPerCaseStudyCover}`,
+      `const POINTS_FOR_INTRODUCTION = ${MARKETPLACE_RANKING.pointsForIntroduction}`,
+      `const POINTS_FOR_SERVICE = ${MARKETPLACE_RANKING.pointsForService}`,
+      `const POINTS_FOR_PROFILE_PICTURE = ${MARKETPLACE_RANKING.pointsForProfilePicture}`,
+      `const POINTS_FOR_CALENDAR_LINK = ${MARKETPLACE_RANKING.pointsForCalendarLink}`,
+      `const POINTS_FOR_RATE_OR_BUDGET = ${MARKETPLACE_RANKING.pointsForRateOrBudget}`,
+      `const POINTS_FOR_CATEGORY = ${MARKETPLACE_RANKING.pointsForCategory}`,
     ];
 
     for (const assignment of completenessAssignments) {
@@ -49,7 +49,7 @@ describe('MARKETPLACE_RANKING', () => {
     }
 
     expect(GHOST_SOURCE).toContain(
-      `GHOST_INTRODUCTION_MAX_LENGTH = ${MARKETPLACE_RANKING.ghostIntroductionMaxLength}`,
+      `const GHOST_INTRODUCTION_MAX_LENGTH = ${MARKETPLACE_RANKING.ghostIntroductionMaxLength}`,
     );
   });
 });

@@ -1,17 +1,17 @@
 import { type RankedMarketplacePartner } from './marketplace-partner';
 
-export const MIN_DESCRIPTION_LENGTH = 120;
-export const MAX_COUNTED_CASE_STUDIES = 3;
+const MIN_DESCRIPTION_LENGTH = 120;
+const MAX_COUNTED_CASE_STUDIES = 3;
 // An approved case study has to outweigh picture + calendar + rate combined,
 // otherwise three quick form fields beat evidence of delivered client work.
-export const POINTS_PER_CASE_STUDY = 4;
-export const POINTS_PER_CASE_STUDY_COVER = 1;
-export const POINTS_FOR_INTRODUCTION = 2;
-export const POINTS_FOR_SERVICE = 2;
-export const POINTS_FOR_PROFILE_PICTURE = 1;
-export const POINTS_FOR_CALENDAR_LINK = 1;
-export const POINTS_FOR_RATE_OR_BUDGET = 1;
-export const POINTS_FOR_CATEGORY = 1;
+const POINTS_PER_CASE_STUDY = 4;
+const POINTS_PER_CASE_STUDY_COVER = 1;
+const POINTS_FOR_INTRODUCTION = 2;
+const POINTS_FOR_SERVICE = 2;
+const POINTS_FOR_PROFILE_PICTURE = 1;
+const POINTS_FOR_CALENDAR_LINK = 1;
+const POINTS_FOR_RATE_OR_BUDGET = 1;
+const POINTS_FOR_CATEGORY = 1;
 
 export const completenessScore = (
   partner: RankedMarketplacePartner,
