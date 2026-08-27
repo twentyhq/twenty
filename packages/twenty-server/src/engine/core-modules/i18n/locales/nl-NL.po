@@ -125,7 +125,7 @@ msgstr "Er is een cache-vergrendelingsfout opgetreden."
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "A calendar event target"
-msgstr ""
+msgstr "Een doel voor een agendagebeurtenis"
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -209,7 +209,7 @@ msgstr "Er is al een hogere versie van deze applicatie geïnstalleerd. Downgrade
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "A message thread target"
-msgstr ""
+msgstr "Een doel voor een berichtenthread"
 
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -1193,7 +1193,7 @@ msgstr "Geautomatiseerde triggers"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Automatically assigned"
-msgstr ""
+msgstr "Automatisch toegewezen"
 
 #. js-lingui-id: bhFnpx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -1483,7 +1483,7 @@ msgstr "Kalendereindveld niet gevonden"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Calendar event"
-msgstr ""
+msgstr "Kalenderevenement"
 
 #. js-lingui-id: 8brwDQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1561,25 +1561,25 @@ msgstr "Kalenderevenementrecordpositie"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Calendar Event Target"
-msgstr ""
+msgstr "Kalenderevenementdoel"
 
 #. js-lingui-id: XSZPL4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar event target event"
-msgstr ""
+msgstr "Kalenderevenement van doel"
 
 #. js-lingui-id: lz9OaG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar event targets"
-msgstr ""
+msgstr "Kalenderevenementdoelen"
 
 #. js-lingui-id: Ps7oA0
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Calendar Event Targets"
-msgstr ""
+msgstr "Kalenderevenementdoelen"
 
 #. js-lingui-id: r20w41
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -1587,7 +1587,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Calendar events"
-msgstr ""
+msgstr "Kalenderevenementen"
 
 #. js-lingui-id: KfFFWa
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1605,19 +1605,19 @@ msgstr "Kalenderevenementen"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar events tied to the company"
-msgstr ""
+msgstr "Kalenderevenementen gekoppeld aan het bedrijf"
 
 #. js-lingui-id: E4Wz06
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar events tied to the contact"
-msgstr ""
+msgstr "Kalenderevenementen gekoppeld aan de contactpersoon"
 
 #. js-lingui-id: pyeAzD
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar events tied to the opportunity"
-msgstr ""
+msgstr "Kalenderevenementen gekoppeld aan de kans"
 
 #. js-lingui-id: Sn4xhy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
@@ -6139,7 +6139,7 @@ msgstr "Logische functie met dezelfde universele identifier bestaat al"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Manually assigned"
-msgstr ""
+msgstr "Handmatig toegewezen"
 
 #. js-lingui-id: Mwvtvf
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -6459,7 +6459,7 @@ msgstr "Bericht gesynchroniseerd met een Berichtenkanaal"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Message thread"
-msgstr ""
+msgstr "Berichtthread"
 
 #. js-lingui-id: MLNdvD
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -6497,25 +6497,25 @@ msgstr "Berichtthreadrecordpositie"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Message Thread Target"
-msgstr ""
+msgstr "Berichtthreaddoel"
 
 #. js-lingui-id: 8VG+FR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message thread target thread"
-msgstr ""
+msgstr "Berichtthread van doel"
 
 #. js-lingui-id: VHCKNR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message thread targets"
-msgstr ""
+msgstr "Berichtthreaddoelen"
 
 #. js-lingui-id: q03DOY
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Message Thread Targets"
-msgstr ""
+msgstr "Berichtthreaddoelen"
 
 #. js-lingui-id: icQX0H
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -6527,19 +6527,19 @@ msgstr "Berichtthreads"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message threads tied to the company"
-msgstr ""
+msgstr "Berichtthreads verbonden aan het bedrijf"
 
 #. js-lingui-id: WGjTJT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message threads tied to the contact"
-msgstr ""
+msgstr "Berichtthreads verbonden aan het contact"
 
 #. js-lingui-id: Z+Jdwp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message threads tied to the opportunity"
-msgstr ""
+msgstr "Berichtthreads verbonden aan de kans"
 
 #. js-lingui-id: S6Ztef
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -9580,13 +9580,13 @@ msgstr "Doelobjectmetadata niet gevonden voor {connectFieldName}"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Target record"
-msgstr ""
+msgstr "Doelrecord"
 
 #. js-lingui-id: nTzzR8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Target record position"
-msgstr ""
+msgstr "Positie van doelrecord"
 
 #. js-lingui-id: 1ssKrE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
@@ -10017,7 +10017,7 @@ msgstr "Het bestand is leeg of overschrijdt de maximaal toegestane grootte."
 #. js-lingui-id: 2hrpBa
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "The file upload has not been completed. Please retry the upload."
-msgstr ""
+msgstr "Het uploaden van het bestand is niet voltooid. Probeer de upload opnieuw."
 
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -11970,13 +11970,13 @@ msgstr "Waar records worden geopend voor objecten die de voorkeur van het lid vo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Whether a user explicitly assigned this target"
-msgstr ""
+msgstr "Of een gebruiker dit doel expliciet heeft toegewezen"
 
 #. js-lingui-id: YpNNWn
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Whether current participant rules justify this target"
-msgstr ""
+msgstr "Of de huidige deelnemersregels dit doel rechtvaardigen"
 
 #. js-lingui-id: zSq4aO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts

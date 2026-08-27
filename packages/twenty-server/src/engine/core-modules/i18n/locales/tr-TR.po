@@ -125,7 +125,7 @@ msgstr "Bir önbellek kilidi hatası oluştu."
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "A calendar event target"
-msgstr ""
+msgstr "Takvim etkinliği hedefi"
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -209,7 +209,7 @@ msgstr "Bu uygulamanın daha yeni bir sürümü zaten yüklü. Sürüm düşürm
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "A message thread target"
-msgstr ""
+msgstr "Mesaj dizisi hedefi"
 
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -1193,7 +1193,7 @@ msgstr "Otomatik Tetikleyiciler"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Automatically assigned"
-msgstr ""
+msgstr "Otomatik olarak atandı"
 
 #. js-lingui-id: bhFnpx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -1483,7 +1483,7 @@ msgstr "Takvim bitiş alanı bulunamadı"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Calendar event"
-msgstr ""
+msgstr "Takvim etkinliği"
 
 #. js-lingui-id: 8brwDQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1561,25 +1561,25 @@ msgstr "Takvim etkinliği kaydının konumu"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Calendar Event Target"
-msgstr ""
+msgstr "Takvim Etkinliği Hedefi"
 
 #. js-lingui-id: XSZPL4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar event target event"
-msgstr ""
+msgstr "Takvim etkinliği hedefi etkinliği"
 
 #. js-lingui-id: lz9OaG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar event targets"
-msgstr ""
+msgstr "Takvim etkinliği hedefleri"
 
 #. js-lingui-id: Ps7oA0
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Calendar Event Targets"
-msgstr ""
+msgstr "Takvim Etkinliği Hedefleri"
 
 #. js-lingui-id: r20w41
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -1587,7 +1587,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Calendar events"
-msgstr ""
+msgstr "Takvim etkinlikleri"
 
 #. js-lingui-id: KfFFWa
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1605,19 +1605,19 @@ msgstr "Takvim etkinlikleri"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar events tied to the company"
-msgstr ""
+msgstr "Şirketle ilgili takvim etkinlikleri"
 
 #. js-lingui-id: E4Wz06
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar events tied to the contact"
-msgstr ""
+msgstr "Kişiyle ilgili takvim etkinlikleri"
 
 #. js-lingui-id: pyeAzD
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar events tied to the opportunity"
-msgstr ""
+msgstr "Fırsatla ilgili takvim etkinlikleri"
 
 #. js-lingui-id: Sn4xhy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
@@ -6139,7 +6139,7 @@ msgstr "Aynı evrensel tanımlayıcıya sahip mantık işlevi zaten mevcut"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Manually assigned"
-msgstr ""
+msgstr "Manuel olarak atandı"
 
 #. js-lingui-id: Mwvtvf
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -6459,7 +6459,7 @@ msgstr "Bir Mesaj Kanalı ile Senkronize Edilen Mesaj"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Message thread"
-msgstr ""
+msgstr "Mesaj Dizisi"
 
 #. js-lingui-id: MLNdvD
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -6497,25 +6497,25 @@ msgstr "Mesaj dizisi kaydının konumu"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Message Thread Target"
-msgstr ""
+msgstr "Mesaj Dizisi Hedefi"
 
 #. js-lingui-id: 8VG+FR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message thread target thread"
-msgstr ""
+msgstr "Mesaj dizisi hedefi dizisi"
 
 #. js-lingui-id: VHCKNR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message thread targets"
-msgstr ""
+msgstr "Mesaj dizisi hedefleri"
 
 #. js-lingui-id: q03DOY
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Message Thread Targets"
-msgstr ""
+msgstr "Mesaj Dizisi Hedefleri"
 
 #. js-lingui-id: icQX0H
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -6527,19 +6527,19 @@ msgstr "Mesaj Dizileri"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message threads tied to the company"
-msgstr ""
+msgstr "Şirketle ilgili mesaj dizileri"
 
 #. js-lingui-id: WGjTJT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message threads tied to the contact"
-msgstr ""
+msgstr "Kişiyle ilgili mesaj dizileri"
 
 #. js-lingui-id: Z+Jdwp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message threads tied to the opportunity"
-msgstr ""
+msgstr "Fırsatla ilgili mesaj dizileri"
 
 #. js-lingui-id: S6Ztef
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -9580,13 +9580,13 @@ msgstr "{connectFieldName} için hedef nesne meta verisi bulunamadı."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Target record"
-msgstr ""
+msgstr "Hedef kayıt"
 
 #. js-lingui-id: nTzzR8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Target record position"
-msgstr ""
+msgstr "Hedef kayıt konumu"
 
 #. js-lingui-id: 1ssKrE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
@@ -10017,7 +10017,7 @@ msgstr "Dosya boş veya izin verilen maksimum boyutu aşıyor."
 #. js-lingui-id: 2hrpBa
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "The file upload has not been completed. Please retry the upload."
-msgstr ""
+msgstr "Dosya yükleme tamamlanmadı. Lütfen yüklemeyi yeniden deneyin."
 
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -11970,13 +11970,13 @@ msgstr "Üyenin tercihine uyan nesnelerde kayıtların nerede açılacağı"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Whether a user explicitly assigned this target"
-msgstr ""
+msgstr "Bir kullanıcının bu hedefi açıkça atayıp atamadığı"
 
 #. js-lingui-id: YpNNWn
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Whether current participant rules justify this target"
-msgstr ""
+msgstr "Geçerli katılımcı kurallarının bu hedefi doğrulayıp doğrulamadığı"
 
 #. js-lingui-id: zSq4aO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts

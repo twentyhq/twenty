@@ -125,7 +125,7 @@ msgstr "S'ha produït un error de bloqueig de la memòria cau."
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "A calendar event target"
-msgstr ""
+msgstr "Un objectiu d'esdeveniment de calendari"
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -209,7 +209,7 @@ msgstr "Ja hi ha instal·lada una versió superior d'aquesta aplicació. No es p
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "A message thread target"
-msgstr ""
+msgstr "Un objectiu de fil de missatges"
 
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -1193,7 +1193,7 @@ msgstr "Desencadenants automatitzats"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Automatically assigned"
-msgstr ""
+msgstr "Assignat automàticament"
 
 #. js-lingui-id: bhFnpx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -1483,7 +1483,7 @@ msgstr "No s'ha trobat el camp de finalització del calendari"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Calendar event"
-msgstr ""
+msgstr "Esdeveniment del calendari"
 
 #. js-lingui-id: 8brwDQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1561,25 +1561,25 @@ msgstr "Posició del registre de l'esdeveniment del calendari"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Calendar Event Target"
-msgstr ""
+msgstr "Objectiu d'esdeveniment del calendari"
 
 #. js-lingui-id: XSZPL4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar event target event"
-msgstr ""
+msgstr "Esdeveniment de l'objectiu d'esdeveniment del calendari"
 
 #. js-lingui-id: lz9OaG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar event targets"
-msgstr ""
+msgstr "Objectius d'esdeveniments del calendari"
 
 #. js-lingui-id: Ps7oA0
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Calendar Event Targets"
-msgstr ""
+msgstr "Objectius d'esdeveniments del calendari"
 
 #. js-lingui-id: r20w41
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -1587,7 +1587,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Calendar events"
-msgstr ""
+msgstr "Esdeveniments del calendari"
 
 #. js-lingui-id: KfFFWa
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1605,19 +1605,19 @@ msgstr "Esdeveniments del calendari"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar events tied to the company"
-msgstr ""
+msgstr "Esdeveniments del calendari vinculats a l'empresa"
 
 #. js-lingui-id: E4Wz06
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar events tied to the contact"
-msgstr ""
+msgstr "Esdeveniments del calendari vinculats al contacte"
 
 #. js-lingui-id: pyeAzD
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar events tied to the opportunity"
-msgstr ""
+msgstr "Esdeveniments del calendari vinculats a l'oportunitat"
 
 #. js-lingui-id: Sn4xhy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
@@ -6139,7 +6139,7 @@ msgstr "La funció lògica amb el mateix identificador universal ja existeix"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Manually assigned"
-msgstr ""
+msgstr "Assignat manualment"
 
 #. js-lingui-id: Mwvtvf
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -6459,7 +6459,7 @@ msgstr "Missatge sincronitzat amb un canal de missatges"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Message thread"
-msgstr ""
+msgstr "Fil de missatges"
 
 #. js-lingui-id: MLNdvD
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -6497,25 +6497,25 @@ msgstr "Posició del registre del fil de missatges"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Message Thread Target"
-msgstr ""
+msgstr "Objectiu de fil de missatges"
 
 #. js-lingui-id: 8VG+FR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message thread target thread"
-msgstr ""
+msgstr "Fil de l'objectiu de fil de missatges"
 
 #. js-lingui-id: VHCKNR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message thread targets"
-msgstr ""
+msgstr "Objectius de fils de missatges"
 
 #. js-lingui-id: q03DOY
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Message Thread Targets"
-msgstr ""
+msgstr "Objectius de fils de missatges"
 
 #. js-lingui-id: icQX0H
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -6527,19 +6527,19 @@ msgstr "Fils de missatges"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message threads tied to the company"
-msgstr ""
+msgstr "Fils de missatges vinculats a l'empresa"
 
 #. js-lingui-id: WGjTJT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message threads tied to the contact"
-msgstr ""
+msgstr "Fils de missatges vinculats al contacte"
 
 #. js-lingui-id: Z+Jdwp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message threads tied to the opportunity"
-msgstr ""
+msgstr "Fils de missatges vinculats a l'oportunitat"
 
 #. js-lingui-id: S6Ztef
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -9580,13 +9580,13 @@ msgstr "No s'ha trobat la meta informació de l'objecte de destinació per a {co
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Target record"
-msgstr ""
+msgstr "Registre objectiu"
 
 #. js-lingui-id: nTzzR8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Target record position"
-msgstr ""
+msgstr "Posició del registre objectiu"
 
 #. js-lingui-id: 1ssKrE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
@@ -10017,7 +10017,7 @@ msgstr "El fitxer està buit o supera la mida màxima permesa."
 #. js-lingui-id: 2hrpBa
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "The file upload has not been completed. Please retry the upload."
-msgstr ""
+msgstr "La càrrega del fitxer no s'ha completat. Torneu a provar de carregar-lo."
 
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -11970,13 +11970,13 @@ msgstr "On s’obren els registres per als objectes que segueixen la preferènci
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Whether a user explicitly assigned this target"
-msgstr ""
+msgstr "Si un usuari ha assignat explícitament aquest objectiu"
 
 #. js-lingui-id: YpNNWn
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Whether current participant rules justify this target"
-msgstr ""
+msgstr "Si les regles actuals dels participants justifiquen aquest objectiu"
 
 #. js-lingui-id: zSq4aO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts

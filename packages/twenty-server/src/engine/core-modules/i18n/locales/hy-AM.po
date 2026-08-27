@@ -121,6 +121,12 @@ msgstr "Զանգվածային էլփոստի ուղարկում լսարանի�
 msgid "A cache lock error occurred."
 msgstr "Քեշի արգելափակման սխալ տեղի ունեցավ։"
 
+#. js-lingui-id: BdG91f
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.description"
+msgid "A calendar event target"
+msgstr "Օրացույցի իրադարձության թիրախ"
+
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "A chart filter has no field"
@@ -198,6 +204,12 @@ msgstr "Ծանուցում մինչև ձեր Twenty փորձաշրջանի ավ�
 #: src/engine/core-modules/application/application.exception.ts
 msgid "A higher version of this application is already installed. Downgrading is not allowed."
 msgstr "Այս հավելվածից ավելի բարձր տարբերակ արդեն տեղադրված է։ Նվազեցումը թույլատրված չէ։"
+
+#. js-lingui-id: gnMqGV
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.description"
+msgid "A message thread target"
+msgstr "Հաղորդագրությունների շղթայի թիրախ"
 
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -1177,6 +1189,12 @@ msgctxt "fieldMetadata.label"
 msgid "Automated Triggers"
 msgstr "Ավտոմատացված գործարկիչներ"
 
+#. js-lingui-id: wDnUny
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Automatically assigned"
+msgstr "Ավտոմատ նշանակված"
+
 #. js-lingui-id: bhFnpx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -1461,6 +1479,12 @@ msgstr "Օրացույցի ավարտի դաշտը պետք է պատկանի դ
 msgid "Calendar end field not found"
 msgstr "Օրացույցի ավարտի դաշտը չի գտնվել"
 
+#. js-lingui-id: D3hM1L
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-target-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Calendar event"
+msgstr "Օրացույցի իրադարձություն"
+
 #. js-lingui-id: 8brwDQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
@@ -1533,6 +1557,38 @@ msgctxt "fieldMetadata.description"
 msgid "Calendar event record position"
 msgstr "Օրացույցի իրադարձության գրառման դիրք"
 
+#. js-lingui-id: o5eNjt
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Calendar Event Target"
+msgstr "Օրացույցի իրադարձության թիրախը"
+
+#. js-lingui-id: XSZPL4
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-target-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Calendar event target event"
+msgstr "Օրացույցի իրադարձության թիրախային իրադարձություն"
+
+#. js-lingui-id: lz9OaG
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Calendar event targets"
+msgstr "Օրացույցի իրադարձության թիրախներ"
+
+#. js-lingui-id: Ps7oA0
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
+msgid "Calendar Event Targets"
+msgstr "Օրացույցի իրադարձության թիրախներ"
+
+#. js-lingui-id: r20w41
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Calendar events"
+msgstr "Օրացույցի իրադարձություններ"
+
 #. js-lingui-id: KfFFWa
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -1544,6 +1600,24 @@ msgstr "Օրացույցի իրադարձություններ"
 msgctxt "objectMetadata.labelPlural"
 msgid "Calendar events"
 msgstr "Օրացույցի իրադարձություններ"
+
+#. js-lingui-id: QfPEE0
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Calendar events tied to the company"
+msgstr "Ընկերությանը կապակցված օրացույցի իրադարձություններ"
+
+#. js-lingui-id: E4Wz06
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Calendar events tied to the contact"
+msgstr "Կոնտակտին կապակցված օրացույցի իրադարձություններ"
+
+#. js-lingui-id: pyeAzD
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Calendar events tied to the opportunity"
+msgstr "Հնարավորությանը կապակցված օրացույցի իրադարձություններ"
 
 #. js-lingui-id: Sn4xhy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
@@ -2072,6 +2146,7 @@ msgid "Companies"
 msgstr "Կազմակերպություններ"
 
 #. js-lingui-id: aNUhqB
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -2391,12 +2466,14 @@ msgid "Contradicting field permissions have been detected on a relation field."
 msgstr "Հակասող դաշտային թույլտվություններ են հայտնաբերվել կապի դաշտի վրա։"
 
 #. js-lingui-id: X/ryFh
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow id"
 msgstr "Հիմնական աշխատահոսքի ID"
 
 #. js-lingui-id: WkctC4
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow version id"
@@ -2512,6 +2589,7 @@ msgid "Create View"
 msgstr "Ստեղծել տեսք"
 
 #. js-lingui-id: V+Pnck
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -2549,6 +2627,7 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "Ստեղծված field metadata-ի համար վերադաս object metadata չի գտնվել"
 
 #. js-lingui-id: ezEYQZ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -2583,6 +2662,7 @@ msgid "Creation date"
 msgstr "Ստեղծման ամսաթիվ"
 
 #. js-lingui-id: MZxGED
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -2751,6 +2831,7 @@ msgid "Date format"
 msgstr "Ամսաթվի ձևաչափ"
 
 #. js-lingui-id: bCL+CN
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -3026,6 +3107,7 @@ msgid "Deleted {objectLabelPlural}"
 msgstr "Ջնջվել է {objectLabelPlural}"
 
 #. js-lingui-id: Sf3H2K
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -3369,6 +3451,9 @@ msgid "Emails"
 msgstr "Էլ. նամակներ"
 
 #. js-lingui-id: nWIjgD
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Emails"
@@ -3962,6 +4047,7 @@ msgid "Field used for full-text search"
 msgstr "Դաշտ, որը օգտագործվում է ամբողջական տեքստի որոնման համար"
 
 #. js-lingui-id: pcBMew
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -4086,6 +4172,7 @@ msgstr "Ֆայլը չի գտնվել SDK հաճախորդի արխիվում։"
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/file.exception.ts
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "File not found."
 msgstr "Ֆայլը չի գտնվել։"
@@ -4562,6 +4649,7 @@ msgid "iCal UID"
 msgstr "iCal UID"
 
 #. js-lingui-id: tO7kqE
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -4595,6 +4683,7 @@ msgid "Id"
 msgstr "ID"
 
 #. js-lingui-id: Jq9kVe
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -5793,6 +5882,7 @@ msgid "Last published Version Id"
 msgstr "Վերջին հրապարակված տարբերակի ID"
 
 #. js-lingui-id: OBGY97
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -5826,6 +5916,7 @@ msgid "Last time the record was changed"
 msgstr "Գրառման վերջին փոփոխության ժամանակը"
 
 #. js-lingui-id: hzBM8U
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -6043,6 +6134,12 @@ msgstr "Տրամաբանական ֆունկցիան չի գտնվել։"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Logic function with same universal identifier already exists"
 msgstr "Նույն ունիվերսալ նույնացուցիչով տրամաբանական ֆունկցիա արդեն գոյություն ունի"
+
+#. js-lingui-id: dgxlIJ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Manually assigned"
+msgstr "Ձեռքով նշանակված"
 
 #. js-lingui-id: Mwvtvf
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -6358,6 +6455,12 @@ msgctxt "objectMetadata.description"
 msgid "Message Synced with a Message Channel"
 msgstr "Հաղորդագրություն, որը համաժամեցված է հաղորդագրության ալիքի հետ"
 
+#. js-lingui-id: JZIhQu
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-target-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Message thread"
+msgstr "Հաղորդագրության թեմա"
+
 #. js-lingui-id: MLNdvD
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -6390,11 +6493,53 @@ msgctxt "fieldMetadata.description"
 msgid "Message Thread record position"
 msgstr "Հաղորդագրության թեմայի գրառման դիրք"
 
+#. js-lingui-id: frnvp/
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Message Thread Target"
+msgstr "Հաղորդագրության թեմայի թիրախը"
+
+#. js-lingui-id: 8VG+FR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-target-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Message thread target thread"
+msgstr "Հաղորդագրության թեմայի թիրախային թեմա"
+
+#. js-lingui-id: VHCKNR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Message thread targets"
+msgstr "Հաղորդագրության թեմայի թիրախներ"
+
+#. js-lingui-id: q03DOY
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
+msgid "Message Thread Targets"
+msgstr "Հաղորդագրության թեմայի թիրախներ"
+
 #. js-lingui-id: icQX0H
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Message Threads"
 msgstr "Հաղորդագրության թեմաներ"
+
+#. js-lingui-id: mKjuch
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Message threads tied to the company"
+msgstr "Ընկերությանը կապակցված հաղորդագրության թեմաներ"
+
+#. js-lingui-id: WGjTJT
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Message threads tied to the contact"
+msgstr "Կոնտակտին կապակցված հաղորդագրության թեմաներ"
+
+#. js-lingui-id: Z+Jdwp
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Message threads tied to the opportunity"
+msgstr "Հնարավորությանը կապակցված հաղորդագրության թեմաներ"
 
 #. js-lingui-id: S6Ztef
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -7271,6 +7416,7 @@ msgid "Opportunities owned by the workspace member"
 msgstr "Աշխատանքային տարածքի անդամին պատկանող հնարավորություններ"
 
 #. js-lingui-id: JpA/cO
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
@@ -7762,6 +7908,7 @@ msgid "Person"
 msgstr "Անձ"
 
 #. js-lingui-id: F8wyAu
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-member-standard-flat-field-metadata.util.ts
@@ -7873,6 +8020,7 @@ msgid "Point of Contact"
 msgstr "Հիմնական կապ"
 
 #. js-lingui-id: rLOFsu
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -8154,12 +8302,14 @@ msgid "Recurring Event ID"
 msgstr "Կրկնվող միջոցառման ID"
 
 #. js-lingui-id: zEHtXk
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflow row"
 msgstr "Հղում հիմնական աշխատահոսքի գրառմանը"
 
 #. js-lingui-id: avBuTv
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflowVersion row"
@@ -8225,6 +8375,8 @@ msgid "Relations"
 msgstr "Կապեր"
 
 #. js-lingui-id: 9ur990
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -8759,6 +8911,7 @@ msgid "Search vector"
 msgstr "Որոնման վեկտոր"
 
 #. js-lingui-id: Zuw7oP
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -9421,6 +9574,20 @@ msgstr "Վիջեթը կրկնապատկելու համար ներդիրը չի �
 msgid "Target object metadata not found for {connectFieldName}"
 msgstr "Նպատակային օբյեկտի metadata-ն {connectFieldName}-ի համար չի գտնվել"
 
+#. js-lingui-id: iVwZ6H
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Target record"
+msgstr "Թիրախային գրառում"
+
+#. js-lingui-id: nTzzR8
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Target record position"
+msgstr "Թիրախային գրառման դիրք"
+
 #. js-lingui-id: 1ssKrE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Target relation field does not belong to the expected object"
@@ -9742,6 +9909,7 @@ msgid "The connection-provider manifest is missing required fields."
 msgstr "Միացման մատուցողի manifest-ում պակասում են պարտադիր դաշտեր։"
 
 #. js-lingui-id: WhUgpA
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -9845,6 +10013,11 @@ msgstr "Ֆայլը դեռ վերբեռնված չէ։ Խնդրում ենք այ
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The file is empty or exceeds the maximum allowed size."
 msgstr "Ֆայլը դատարկ է կամ գերազանցում է թույլատրելի առավելագույն չափը։"
+
+#. js-lingui-id: 2hrpBa
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
+msgid "The file upload has not been completed. Please retry the upload."
+msgstr "Ֆայլի վերբեռնումը չի ավարտվել։ Խնդրում ենք կրկին փորձել վերբեռնել։"
 
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -10113,6 +10286,7 @@ msgid "The workflow version status"
 msgstr "Աշխատահոսքի տարբերակի կարգավիճակը"
 
 #. js-lingui-id: AiP86c
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -11054,6 +11228,7 @@ msgid "updated a related task"
 msgstr "թարմացրել է առնչվող առաջադրանքը"
 
 #. js-lingui-id: U8sfYC
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -11790,6 +11965,18 @@ msgstr "Երբ արշավի ուղարկումն ավարտվեց"
 msgctxt "fieldMetadata.description"
 msgid "Where records open for objects that follow the member's preference"
 msgstr "Որտեղ գրառումները բացվում են օբյեկտների համար, որոնք հետևում են անդամի նախընտրությանը"
+
+#. js-lingui-id: x9NQvE
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Whether a user explicitly assigned this target"
+msgstr "Արդյոք օգտատերը բացահայտորեն նշանակել է այս թիրախը"
+
+#. js-lingui-id: YpNNWn
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Whether current participant rules justify this target"
+msgstr "Արդյոք մասնակցի ընթացիկ կանոններն արդարացնում են այս թիրախը"
 
 #. js-lingui-id: zSq4aO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts

@@ -125,7 +125,7 @@ msgstr "Παρουσιάστηκε σφάλμα κλειδώματος cache."
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "A calendar event target"
-msgstr ""
+msgstr "Ένας στόχος συμβάντος ημερολογίου"
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -209,7 +209,7 @@ msgstr "Μια νεότερη έκδοση αυτής της εφαρμογής 
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "A message thread target"
-msgstr ""
+msgstr "Ένας στόχος νήματος μηνυμάτων"
 
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -1193,7 +1193,7 @@ msgstr "Αυτοματοποιημένα εναύσματα"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Automatically assigned"
-msgstr ""
+msgstr "Ανατίθεται αυτόματα"
 
 #. js-lingui-id: bhFnpx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -1483,7 +1483,7 @@ msgstr "Το πεδίο λήξης ημερολογίου δεν βρέθηκε"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Calendar event"
-msgstr ""
+msgstr "Γεγονός Ημερολογίου"
 
 #. js-lingui-id: 8brwDQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1561,25 +1561,25 @@ msgstr "Θέση εγγραφής συμβάντος ημερολογίου"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Calendar Event Target"
-msgstr ""
+msgstr "Στόχος συμβάντος ημερολογίου"
 
 #. js-lingui-id: XSZPL4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar event target event"
-msgstr ""
+msgstr "Συμβάν στόχου συμβάντος ημερολογίου"
 
 #. js-lingui-id: lz9OaG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar event targets"
-msgstr ""
+msgstr "Στόχοι συμβάντος ημερολογίου"
 
 #. js-lingui-id: Ps7oA0
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Calendar Event Targets"
-msgstr ""
+msgstr "Στόχοι συμβάντων ημερολογίου"
 
 #. js-lingui-id: r20w41
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -1587,7 +1587,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Calendar events"
-msgstr ""
+msgstr "Γεγονότα Ημερολογίου"
 
 #. js-lingui-id: KfFFWa
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1605,19 +1605,19 @@ msgstr "Γεγονότα Ημερολογίου"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar events tied to the company"
-msgstr ""
+msgstr "Συμβάντα ημερολογίου που συνδέονται με την εταιρεία"
 
 #. js-lingui-id: E4Wz06
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar events tied to the contact"
-msgstr ""
+msgstr "Συμβάντα ημερολογίου που συνδέονται με την επαφή"
 
 #. js-lingui-id: pyeAzD
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar events tied to the opportunity"
-msgstr ""
+msgstr "Συμβάντα ημερολογίου που συνδέονται με την ευκαιρία"
 
 #. js-lingui-id: Sn4xhy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
@@ -6139,7 +6139,7 @@ msgstr "Η λογική συνάρτηση με το ίδιο καθολικό �
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Manually assigned"
-msgstr ""
+msgstr "Ανατέθηκε χειροκίνητα"
 
 #. js-lingui-id: Mwvtvf
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -6459,7 +6459,7 @@ msgstr "Μήνυμα Συγχρονισμένο με Κανάλι Μηνυμάτ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Message thread"
-msgstr ""
+msgstr "Νήμα Μηνυμάτων"
 
 #. js-lingui-id: MLNdvD
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -6497,25 +6497,25 @@ msgstr "Θέση εγγραφής νήματος μηνύματος"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Message Thread Target"
-msgstr ""
+msgstr "Στόχος νήματος μηνυμάτων"
 
 #. js-lingui-id: 8VG+FR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message thread target thread"
-msgstr ""
+msgstr "Νήμα στόχου νήματος μηνυμάτων"
 
 #. js-lingui-id: VHCKNR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message thread targets"
-msgstr ""
+msgstr "Στόχοι νημάτων μηνυμάτων"
 
 #. js-lingui-id: q03DOY
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Message Thread Targets"
-msgstr ""
+msgstr "Στόχοι νημάτων μηνυμάτων"
 
 #. js-lingui-id: icQX0H
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -6527,19 +6527,19 @@ msgstr "Νήματα Μηνυμάτων"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message threads tied to the company"
-msgstr ""
+msgstr "Νήματα μηνυμάτων που συνδέονται με την εταιρεία"
 
 #. js-lingui-id: WGjTJT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message threads tied to the contact"
-msgstr ""
+msgstr "Νήματα μηνυμάτων που συνδέονται με την επαφή"
 
 #. js-lingui-id: Z+Jdwp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message threads tied to the opportunity"
-msgstr ""
+msgstr "Νήματα μηνυμάτων που συνδέονται με την ευκαιρία"
 
 #. js-lingui-id: S6Ztef
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -9580,13 +9580,13 @@ msgstr "Δεν βρέθηκαν μεταδεδομένα αντικειμένο�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Target record"
-msgstr ""
+msgstr "Εγγραφή στόχου"
 
 #. js-lingui-id: nTzzR8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Target record position"
-msgstr ""
+msgstr "Θέση εγγραφής στόχου"
 
 #. js-lingui-id: 1ssKrE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
@@ -10017,7 +10017,7 @@ msgstr "Το αρχείο είναι κενό ή υπερβαίνει το μέ�
 #. js-lingui-id: 2hrpBa
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "The file upload has not been completed. Please retry the upload."
-msgstr ""
+msgstr "Η μεταφόρτωση του αρχείου δεν έχει ολοκληρωθεί. Παρακαλούμε δοκιμάστε ξανά τη μεταφόρτωση."
 
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -11970,13 +11970,13 @@ msgstr "Πού ανοίγουν οι εγγραφές για αντικείμε�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Whether a user explicitly assigned this target"
-msgstr ""
+msgstr "Εάν ένας χρήστης ανέθεσε ρητά αυτόν τον στόχο"
 
 #. js-lingui-id: YpNNWn
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Whether current participant rules justify this target"
-msgstr ""
+msgstr "Εάν οι τρέχοντες κανόνες συμμετεχόντων δικαιολογούν αυτόν τον στόχο"
 
 #. js-lingui-id: zSq4aO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts

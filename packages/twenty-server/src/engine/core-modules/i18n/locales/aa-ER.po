@@ -121,6 +121,12 @@ msgstr "crwdns138355:0crwdne138355:0"
 msgid "A cache lock error occurred."
 msgstr "crwdns133993:0crwdne133993:0"
 
+#. js-lingui-id: BdG91f
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.description"
+msgid "A calendar event target"
+msgstr "crwdns140909:0crwdne140909:0"
+
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "A chart filter has no field"
@@ -198,6 +204,12 @@ msgstr "crwdns133999:0crwdne133999:0"
 #: src/engine/core-modules/application/application.exception.ts
 msgid "A higher version of this application is already installed. Downgrading is not allowed."
 msgstr "crwdns115726:0crwdne115726:0"
+
+#. js-lingui-id: gnMqGV
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.description"
+msgid "A message thread target"
+msgstr "crwdns140911:0crwdne140911:0"
 
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -1177,6 +1189,12 @@ msgctxt "fieldMetadata.label"
 msgid "Automated Triggers"
 msgstr "crwdns138489:0crwdne138489:0"
 
+#. js-lingui-id: wDnUny
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Automatically assigned"
+msgstr "crwdns140913:0crwdne140913:0"
+
 #. js-lingui-id: bhFnpx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -1461,6 +1479,12 @@ msgstr "crwdns134667:0crwdne134667:0"
 msgid "Calendar end field not found"
 msgstr "crwdns134669:0crwdne134669:0"
 
+#. js-lingui-id: D3hM1L
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-target-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Calendar event"
+msgstr "crwdns140915:0crwdne140915:0"
+
 #. js-lingui-id: 8brwDQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
@@ -1533,6 +1557,38 @@ msgctxt "fieldMetadata.description"
 msgid "Calendar event record position"
 msgstr "crwdns138563:0crwdne138563:0"
 
+#. js-lingui-id: o5eNjt
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Calendar Event Target"
+msgstr "crwdns140917:0crwdne140917:0"
+
+#. js-lingui-id: XSZPL4
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-target-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Calendar event target event"
+msgstr "crwdns140919:0crwdne140919:0"
+
+#. js-lingui-id: lz9OaG
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Calendar event targets"
+msgstr "crwdns140921:0crwdne140921:0"
+
+#. js-lingui-id: Ps7oA0
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
+msgid "Calendar Event Targets"
+msgstr "crwdns140923:0crwdne140923:0"
+
+#. js-lingui-id: r20w41
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Calendar events"
+msgstr "crwdns140925:0crwdne140925:0"
+
 #. js-lingui-id: KfFFWa
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -1544,6 +1600,24 @@ msgstr "crwdns138565:0crwdne138565:0"
 msgctxt "objectMetadata.labelPlural"
 msgid "Calendar events"
 msgstr "crwdns138567:0crwdne138567:0"
+
+#. js-lingui-id: QfPEE0
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Calendar events tied to the company"
+msgstr "crwdns140927:0crwdne140927:0"
+
+#. js-lingui-id: E4Wz06
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Calendar events tied to the contact"
+msgstr "crwdns140929:0crwdne140929:0"
+
+#. js-lingui-id: pyeAzD
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Calendar events tied to the opportunity"
+msgstr "crwdns140931:0crwdne140931:0"
 
 #. js-lingui-id: Sn4xhy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
@@ -2072,6 +2146,7 @@ msgid "Companies"
 msgstr "crwdns138619:0crwdne138619:0"
 
 #. js-lingui-id: aNUhqB
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -2391,12 +2466,14 @@ msgid "Contradicting field permissions have been detected on a relation field."
 msgstr "crwdns113214:0crwdne113214:0"
 
 #. js-lingui-id: X/ryFh
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow id"
 msgstr "crwdns138663:0crwdne138663:0"
 
 #. js-lingui-id: WkctC4
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow version id"
@@ -2512,6 +2589,7 @@ msgid "Create View"
 msgstr "crwdns138673:0crwdne138673:0"
 
 #. js-lingui-id: V+Pnck
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -2549,6 +2627,7 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "crwdns7260:0crwdne7260:0"
 
 #. js-lingui-id: ezEYQZ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -2583,6 +2662,7 @@ msgid "Creation date"
 msgstr "crwdns138677:0crwdne138677:0"
 
 #. js-lingui-id: MZxGED
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -2751,6 +2831,7 @@ msgid "Date format"
 msgstr "crwdns138705:0crwdne138705:0"
 
 #. js-lingui-id: bCL+CN
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -3026,6 +3107,7 @@ msgid "Deleted {objectLabelPlural}"
 msgstr "crwdns138771:0{objectLabelPlural}crwdne138771:0"
 
 #. js-lingui-id: Sf3H2K
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -3369,6 +3451,9 @@ msgid "Emails"
 msgstr "crwdns138831:0crwdne138831:0"
 
 #. js-lingui-id: nWIjgD
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Emails"
@@ -3962,6 +4047,7 @@ msgid "Field used for full-text search"
 msgstr "crwdns1189:0crwdne1189:0"
 
 #. js-lingui-id: pcBMew
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -4086,6 +4172,7 @@ msgstr "crwdns112178:0crwdne112178:0"
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 #: src/engine/core-modules/file/file.exception.ts
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "File not found."
 msgstr "crwdns65332:0crwdne65332:0"
@@ -4562,6 +4649,7 @@ msgid "iCal UID"
 msgstr "crwdns138975:0crwdne138975:0"
 
 #. js-lingui-id: tO7kqE
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -4595,6 +4683,7 @@ msgid "Id"
 msgstr "crwdns138977:0crwdne138977:0"
 
 #. js-lingui-id: Jq9kVe
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -5793,6 +5882,7 @@ msgid "Last published Version Id"
 msgstr "crwdns139025:0crwdne139025:0"
 
 #. js-lingui-id: OBGY97
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -5826,6 +5916,7 @@ msgid "Last time the record was changed"
 msgstr "crwdns139027:0crwdne139027:0"
 
 #. js-lingui-id: hzBM8U
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -6043,6 +6134,12 @@ msgstr "crwdns107690:0crwdne107690:0"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Logic function with same universal identifier already exists"
 msgstr "crwdns108164:0crwdne108164:0"
+
+#. js-lingui-id: dgxlIJ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Manually assigned"
+msgstr "crwdns140933:0crwdne140933:0"
 
 #. js-lingui-id: Mwvtvf
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -6358,6 +6455,12 @@ msgctxt "objectMetadata.description"
 msgid "Message Synced with a Message Channel"
 msgstr "crwdns139153:0crwdne139153:0"
 
+#. js-lingui-id: JZIhQu
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-target-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Message thread"
+msgstr "crwdns140935:0crwdne140935:0"
+
 #. js-lingui-id: MLNdvD
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -6390,11 +6493,53 @@ msgctxt "fieldMetadata.description"
 msgid "Message Thread record position"
 msgstr "crwdns139163:0crwdne139163:0"
 
+#. js-lingui-id: frnvp/
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Message Thread Target"
+msgstr "crwdns140937:0crwdne140937:0"
+
+#. js-lingui-id: 8VG+FR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-target-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Message thread target thread"
+msgstr "crwdns140939:0crwdne140939:0"
+
+#. js-lingui-id: VHCKNR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Message thread targets"
+msgstr "crwdns140941:0crwdne140941:0"
+
+#. js-lingui-id: q03DOY
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
+msgid "Message Thread Targets"
+msgstr "crwdns140943:0crwdne140943:0"
+
 #. js-lingui-id: icQX0H
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Message Threads"
 msgstr "crwdns139165:0crwdne139165:0"
+
+#. js-lingui-id: mKjuch
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Message threads tied to the company"
+msgstr "crwdns140945:0crwdne140945:0"
+
+#. js-lingui-id: WGjTJT
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Message threads tied to the contact"
+msgstr "crwdns140947:0crwdne140947:0"
+
+#. js-lingui-id: Z+Jdwp
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Message threads tied to the opportunity"
+msgstr "crwdns140949:0crwdne140949:0"
 
 #. js-lingui-id: S6Ztef
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -7271,6 +7416,7 @@ msgid "Opportunities owned by the workspace member"
 msgstr "crwdns139271:0crwdne139271:0"
 
 #. js-lingui-id: JpA/cO
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
@@ -7762,6 +7908,7 @@ msgid "Person"
 msgstr "crwdns139321:0crwdne139321:0"
 
 #. js-lingui-id: F8wyAu
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-member-standard-flat-field-metadata.util.ts
@@ -7873,6 +8020,7 @@ msgid "Point of Contact"
 msgstr "crwdns139335:0crwdne139335:0"
 
 #. js-lingui-id: rLOFsu
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -8154,12 +8302,14 @@ msgid "Recurring Event ID"
 msgstr "crwdns139371:0crwdne139371:0"
 
 #. js-lingui-id: zEHtXk
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflow row"
 msgstr "crwdns139373:0crwdne139373:0"
 
 #. js-lingui-id: avBuTv
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflowVersion row"
@@ -8225,6 +8375,8 @@ msgid "Relations"
 msgstr "crwdns112862:0crwdne112862:0"
 
 #. js-lingui-id: 9ur990
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -8759,6 +8911,7 @@ msgid "Search vector"
 msgstr "crwdns1469:0crwdne1469:0"
 
 #. js-lingui-id: Zuw7oP
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -9421,6 +9574,20 @@ msgstr "crwdns65674:0crwdne65674:0"
 msgid "Target object metadata not found for {connectFieldName}"
 msgstr "crwdns6656:0{connectFieldName}crwdne6656:0"
 
+#. js-lingui-id: iVwZ6H
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Target record"
+msgstr "crwdns140951:0crwdne140951:0"
+
+#. js-lingui-id: nTzzR8
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Target record position"
+msgstr "crwdns140953:0crwdne140953:0"
+
 #. js-lingui-id: 1ssKrE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Target relation field does not belong to the expected object"
@@ -9742,6 +9909,7 @@ msgid "The connection-provider manifest is missing required fields."
 msgstr "crwdns119792:0crwdne119792:0"
 
 #. js-lingui-id: WhUgpA
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -9845,6 +10013,11 @@ msgstr "crwdns134277:0crwdne134277:0"
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "The file is empty or exceeds the maximum allowed size."
 msgstr "crwdns134279:0crwdne134279:0"
+
+#. js-lingui-id: 2hrpBa
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
+msgid "The file upload has not been completed. Please retry the upload."
+msgstr "crwdns140907:0crwdne140907:0"
 
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -10113,6 +10286,7 @@ msgid "The workflow version status"
 msgstr "crwdns139651:0crwdne139651:0"
 
 #. js-lingui-id: AiP86c
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -11054,6 +11228,7 @@ msgid "updated a related task"
 msgstr "crwdns140257:0crwdne140257:0"
 
 #. js-lingui-id: U8sfYC
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -11790,6 +11965,18 @@ msgstr "crwdns139757:0crwdne139757:0"
 msgctxt "fieldMetadata.description"
 msgid "Where records open for objects that follow the member's preference"
 msgstr "crwdns139759:0crwdne139759:0"
+
+#. js-lingui-id: x9NQvE
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Whether a user explicitly assigned this target"
+msgstr "crwdns140955:0crwdne140955:0"
+
+#. js-lingui-id: YpNNWn
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Whether current participant rules justify this target"
+msgstr "crwdns140957:0crwdne140957:0"
 
 #. js-lingui-id: zSq4aO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts

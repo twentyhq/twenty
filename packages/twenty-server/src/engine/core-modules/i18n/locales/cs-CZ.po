@@ -125,7 +125,7 @@ msgstr "Došlo k chybě zámku mezipaměti."
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "A calendar event target"
-msgstr ""
+msgstr "Cíl události kalendáře"
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -209,7 +209,7 @@ msgstr "Je už nainstalována novější verze této aplikace. Snížení verze 
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "A message thread target"
-msgstr ""
+msgstr "Cíl vlákna zpráv"
 
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -1193,7 +1193,7 @@ msgstr "Automatizované spouštěče"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Automatically assigned"
-msgstr ""
+msgstr "Automaticky přiřazeno"
 
 #. js-lingui-id: bhFnpx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -1483,7 +1483,7 @@ msgstr "Koncové pole kalendáře nebylo nalezeno"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Calendar event"
-msgstr ""
+msgstr "Událost v kalendáři"
 
 #. js-lingui-id: 8brwDQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1561,25 +1561,25 @@ msgstr "Pozice záznamu události kalendáře"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Calendar Event Target"
-msgstr ""
+msgstr "Cíl události v kalendáři"
 
 #. js-lingui-id: XSZPL4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar event target event"
-msgstr ""
+msgstr "Událost cíle události v kalendáři"
 
 #. js-lingui-id: lz9OaG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar event targets"
-msgstr ""
+msgstr "Cíle událostí v kalendáři"
 
 #. js-lingui-id: Ps7oA0
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Calendar Event Targets"
-msgstr ""
+msgstr "Cíle událostí v kalendáři"
 
 #. js-lingui-id: r20w41
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -1587,7 +1587,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Calendar events"
-msgstr ""
+msgstr "Události v kalendáři"
 
 #. js-lingui-id: KfFFWa
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1605,19 +1605,19 @@ msgstr "Události v kalendáři"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar events tied to the company"
-msgstr ""
+msgstr "Události v kalendáři spojené se společností"
 
 #. js-lingui-id: E4Wz06
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar events tied to the contact"
-msgstr ""
+msgstr "Události v kalendáři spojené s kontaktem"
 
 #. js-lingui-id: pyeAzD
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar events tied to the opportunity"
-msgstr ""
+msgstr "Události v kalendáři spojené s příležitostí"
 
 #. js-lingui-id: Sn4xhy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
@@ -6139,7 +6139,7 @@ msgstr "Logická funkce se stejným univerzálním identifikátorem již existuj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Manually assigned"
-msgstr ""
+msgstr "Ručně přiřazeno"
 
 #. js-lingui-id: Mwvtvf
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -6459,7 +6459,7 @@ msgstr "Zpráva synchronizovaná s kanálem zpráv"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Message thread"
-msgstr ""
+msgstr "Vlákno zpráv"
 
 #. js-lingui-id: MLNdvD
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -6497,25 +6497,25 @@ msgstr "Pozice záznamu vlákna zprávy"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Message Thread Target"
-msgstr ""
+msgstr "Cíl vlákna zpráv"
 
 #. js-lingui-id: 8VG+FR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-target-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message thread target thread"
-msgstr ""
+msgstr "Vlákno cíle vlákna zpráv"
 
 #. js-lingui-id: VHCKNR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message thread targets"
-msgstr ""
+msgstr "Cíle vláken zpráv"
 
 #. js-lingui-id: q03DOY
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Message Thread Targets"
-msgstr ""
+msgstr "Cíle vláken zpráv"
 
 #. js-lingui-id: icQX0H
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -6527,19 +6527,19 @@ msgstr "Vlákna zpráv"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message threads tied to the company"
-msgstr ""
+msgstr "Vlákna zpráv spojená se společností"
 
 #. js-lingui-id: WGjTJT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message threads tied to the contact"
-msgstr ""
+msgstr "Vlákna zpráv spojená s kontaktem"
 
 #. js-lingui-id: Z+Jdwp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message threads tied to the opportunity"
-msgstr ""
+msgstr "Vlákna zpráv spojená s příležitostí"
 
 #. js-lingui-id: S6Ztef
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -9580,13 +9580,13 @@ msgstr "Metadata cílového objektu nebyla nalezena pro {connectFieldName}"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Target record"
-msgstr ""
+msgstr "Cílový záznam"
 
 #. js-lingui-id: nTzzR8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Target record position"
-msgstr ""
+msgstr "Pozice cílového záznamu"
 
 #. js-lingui-id: 1ssKrE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
@@ -10017,7 +10017,7 @@ msgstr "Soubor je prázdný nebo překračuje maximální povolenou velikost."
 #. js-lingui-id: 2hrpBa
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "The file upload has not been completed. Please retry the upload."
-msgstr ""
+msgstr "Nahrávání souboru nebylo dokončeno. Zkuste prosím nahrávání znovu."
 
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -11970,13 +11970,13 @@ msgstr "Kde se záznamy otevírají pro objekty, které se řídí preferencí �
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Whether a user explicitly assigned this target"
-msgstr ""
+msgstr "Zda uživatel tento cíl výslovně přiřadil"
 
 #. js-lingui-id: YpNNWn
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Whether current participant rules justify this target"
-msgstr ""
+msgstr "Zda aktuální pravidla pro účastníky odůvodňují tento cíl"
 
 #. js-lingui-id: zSq4aO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
