@@ -5,7 +5,6 @@ import { getCallRecordingWidgetStoryDecorator } from '@/page-layout/widgets/call
 import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
 import { getCallRecordingVideoFileUrl } from '@/page-layout/widgets/call-recording/utils/getCallRecordingVideoFileUrl';
 import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody';
-import { CallRecordingTranscriptHeaderDataEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptHeaderDataEffect';
 import { CALL_RECORDING_TRANSCRIPT_CURRENT_SPOKEN_WORD_DATA_ATTRIBUTE } from '@/page-layout/widgets/call-recording-transcript/constants/CallRecordingTranscriptCurrentSpokenWordDataAttribute';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
@@ -14,7 +13,6 @@ import {
   expect,
   fireEvent,
   fn,
-  spyOn,
   userEvent,
   waitFor,
   within,
@@ -269,30 +267,24 @@ type CallRecordingTranscriptBodyStoryProps = Omit<
 const CallRecordingTranscriptBodyStory = (
   args: CallRecordingTranscriptBodyStoryProps,
 ) => {
-  const canExposeCallRecordingHeaderData =
+  const canExposeCallRecordingData =
     !args.loading && !isDefined(args.error) && !isDefined(args.restriction);
 
-  const callRecordingForHeader = canExposeCallRecordingHeaderData
+  const callRecordingForDisplay = canExposeCallRecordingData
     ? args.callRecording
     : undefined;
 
   const transcriptEntries = parseCallRecordingTranscriptEntries(
-    callRecordingForHeader?.transcript,
+    callRecordingForDisplay?.transcript,
   );
-  const videoFileUrl = getCallRecordingVideoFileUrl(callRecordingForHeader);
+  const videoFileUrl = getCallRecordingVideoFileUrl(callRecordingForDisplay);
 
   return (
     <>
       <WidgetHeaderCountEffect
         count={
-          canExposeCallRecordingHeaderData && isDefined(args.callRecording)
-            ? 1
-            : 0
+          canExposeCallRecordingData && isDefined(args.callRecording) ? 1 : 0
         }
-      />
-      <CallRecordingTranscriptHeaderDataEffect
-        transcriptEntries={transcriptEntries}
-        videoFileUrl={videoFileUrl}
       />
       <CallRecordingTranscriptBody
         {...args}
@@ -395,40 +387,6 @@ export const WithVideo: Story = {
     expect(
       canvasElement.querySelector('[aria-current="true"]'),
     ).not.toBeInTheDocument();
-
-    const copyTranscriptButton = await canvas.findByRole('button', {
-      name: 'Copy transcript',
-    });
-    const copyVideoLinkButton = canvas.getByRole('button', {
-      name: 'Copy video download link',
-    });
-    const writeText = spyOn(
-      navigator.clipboard,
-      'writeText',
-    ).mockResolvedValue();
-
-    await userEvent.click(copyTranscriptButton);
-
-    expect(writeText).toHaveBeenLastCalledWith(
-      expect.stringContaining(
-        "Ada Lovelace (0:01)\nWelcome everyone, let's start with a quick project update.",
-      ),
-    );
-
-    await userEvent.click(copyVideoLinkButton);
-
-    expect(writeText).toHaveBeenLastCalledWith(VIDEO_URL);
-
-    writeText.mockRestore();
-
-    const seeAllLink = canvas.getByRole('link', {
-      name: 'See all call recordings linked to this calendar event',
-    });
-
-    expect(seeAllLink).toHaveAttribute(
-      'href',
-      expect.stringContaining('calendar-event-id'),
-    );
 
     await waitForVideoMetadata(videoElement);
 

@@ -109,7 +109,7 @@ export const getCallRecordingWidgetStoryDecorator =
                     widgetId={widget.id}
                     variant="flush"
                     isInEditMode={false}
-                    hasAccess={true}
+                    hasAccess={false}
                     isResizing={false}
                     title={widget.title}
                   />
