@@ -924,6 +924,23 @@ export class ApplicationInstallService {
     sourceType: ApplicationRegistrationSourceType;
   }): Promise<ApplicationEntity> {
     if (isDefined(params.existingApplication)) {
+      // A placeholder created at enqueue time carries the registration's
+      // display data; refresh it from the manifest now that it is known.
+      if (
+        params.existingApplication.state === ApplicationState.INSTALLING &&
+        (params.existingApplication.name !== params.name ||
+          params.existingApplication.logo !== params.logo)
+      ) {
+        return await this.applicationService.update(
+          params.existingApplication.id,
+          {
+            name: params.name,
+            logo: params.logo,
+            workspaceId: params.workspaceId,
+          },
+        );
+      }
+
       return params.existingApplication;
     }
 
