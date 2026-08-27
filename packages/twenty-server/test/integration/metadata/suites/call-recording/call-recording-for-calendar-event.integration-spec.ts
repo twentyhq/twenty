@@ -69,7 +69,7 @@ describe('callRecordingIdForCalendarEvent (integration)', () => {
   beforeEach(async () => {
     await global.testDataSource.query(
       `UPDATE "${TEST_SCHEMA_NAME}"."callRecording"
-       SET status = $1
+       SET status = $1, "deletedAt" = NULL
        WHERE id = ANY($2::uuid[])`,
       [CallRecordingStatus.FAILED, callRecordingIds],
     );
@@ -128,6 +128,19 @@ describe('callRecordingIdForCalendarEvent (integration)', () => {
 
     await expect(queryCallRecordingIdForCalendarEvent()).resolves.toBe(
       failedCallRecordingIds[0],
+    );
+  });
+
+  it('skips a soft-deleted recording when selecting', async () => {
+    await global.testDataSource.query(
+      `UPDATE "${TEST_SCHEMA_NAME}"."callRecording"
+       SET "deletedAt" = now()
+       WHERE id = $1`,
+      [completedCallRecordingId],
+    );
+
+    await expect(queryCallRecordingIdForCalendarEvent()).resolves.toBe(
+      processingCallRecordingId,
     );
   });
 });
