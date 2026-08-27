@@ -105,6 +105,7 @@ export const WorkspaceMemberPicker = ({
   disabled,
 }: WorkspaceMemberPickerProps) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
   const { options, isSearching } = useWorkspaceMemberSearch(searchTerm);
 
   if (selectedMember !== null) {
@@ -127,6 +128,7 @@ export const WorkspaceMemberPicker = ({
   }
 
   const hasSearchTerm = isNonEmptyString(searchTerm.trim());
+  const isDropdownOpen = isFocused && hasSearchTerm;
 
   const handleSelect = (member: WorkspaceMemberOption) => {
     setSearchTerm('');
@@ -138,16 +140,21 @@ export const WorkspaceMemberPicker = ({
       <SlackUserLinkTextInput
         value={searchTerm}
         onChange={(event) => setSearchTerm(event.target.value)}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
         placeholder="Search a workspace member by name"
         disabled={disabled}
         aria-label="Search a workspace member by name"
       />
-      {hasSearchTerm && (
+      {isDropdownOpen && (
         <StyledDropdown>
           {options.map((member) => (
             <StyledOption
               key={member.id}
               type="button"
+              // Keep the input focused so the click selects instead of blurring
+              // the dropdown shut before onClick runs.
+              onMouseDown={(event) => event.preventDefault()}
               onClick={() => handleSelect(member)}
             >
               <StyledOptionName>
