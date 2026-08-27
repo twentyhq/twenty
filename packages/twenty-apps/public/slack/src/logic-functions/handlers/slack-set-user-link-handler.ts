@@ -194,8 +194,7 @@ export const slackSetUserLinkHandler = async (
   // We can only ask for consent from someone in the installed workspace; guests
   // and Slack Connect users from another workspace cannot be DMed, so an admin
   // link for them is authoritative on save.
-  const isInInstalledWorkspace =
-    isNonEmptyString(installedTeamId) && slackTeamId === installedTeamId;
+  const isInInstalledWorkspace = slackTeamId === installedTeamId;
 
   const client = new CoreApiClient({ runAs: 'application' });
 
