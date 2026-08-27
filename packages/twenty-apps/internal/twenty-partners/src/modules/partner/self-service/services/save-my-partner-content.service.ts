@@ -67,7 +67,10 @@ export const saveMyPartnerContent = async (
 
   try {
     const client = buildAppClient();
-    const existingIds = await queryExistingContentIds(client, resolved.partnerId);
+    const existingIds = await queryExistingContentIds(
+      client,
+      resolved.partnerId,
+    );
 
     const plan = buildReconcilePlan(existingIds, parsed.data.caseStudies);
     if (!plan) return errorResponse('FORBIDDEN');
@@ -76,7 +79,10 @@ export const saveMyPartnerContent = async (
     // (RLS-scoped) can't see it. Return it optimistically from the input + new id.
     const createdRows: CaseStudyRow[] = [];
     for (const item of plan.toCreate) {
-      const created = await createPartnerContent(client, buildContentCreateData(item));
+      const created = await createPartnerContent(
+        client,
+        buildContentCreateData(item),
+      );
       const newId = created.createPartnerContent?.id;
       if (newId !== undefined) {
         createdRows.push({

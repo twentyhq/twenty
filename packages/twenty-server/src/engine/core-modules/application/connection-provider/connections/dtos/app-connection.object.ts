@@ -22,6 +22,9 @@ export class AppConnectionObjectDto implements AppConnection {
   @Field()
   userWorkspaceId: string;
 
+  @Field(() => String, { nullable: true })
+  workspaceMemberId: string | null;
+
   @Field()
   accessToken: string;
 

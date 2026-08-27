@@ -13,6 +13,7 @@ import { ApplicationVersionCheckCronJob } from 'src/engine/core-modules/applicat
 import { ApplicationVersionCheckCronCommand } from 'src/engine/core-modules/application/application-upgrade/crons/commands/application-version-check.cron.command';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
+import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-version/workspace-version.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
 @Module({
@@ -27,6 +28,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     PermissionsModule,
     TwentyConfigModule,
     WorkspaceIteratorModule,
+    WorkspaceVersionModule,
   ],
   providers: [
     ApplicationUpgradeService,

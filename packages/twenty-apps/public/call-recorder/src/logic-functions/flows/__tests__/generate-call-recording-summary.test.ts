@@ -269,5 +269,4 @@ describe('generateCallRecordingSummary', () => {
 
     expect(mutationMock).not.toHaveBeenCalled();
   });
-
 });
