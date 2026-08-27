@@ -292,20 +292,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     );
   }
 
-  public async prepareRowsBatchLoader(
-    workspaceId: string,
-    cacheKeyNames: WorkspaceCacheKeyName[],
-  ): Promise<WorkspaceCacheRowsBatchLoader> {
-    const rowsBatchLoader = new WorkspaceCacheRowsBatchLoader(
-      this.coreDataSource,
-      workspaceId,
-    );
-
-    await rowsBatchLoader.loadRows(this.collectRowsRequirements(cacheKeyNames));
-
-    return rowsBatchLoader;
-  }
-
   private collectRowsRequirements(cacheKeyNames: WorkspaceCacheKeyName[]) {
     return cacheKeyNames.map(
       (keyName) => this.getProviderOrThrow(keyName).rowsRequirement,
@@ -315,7 +301,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   public async invalidateAndRecompute(
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
-    rowsBatchLoader?: WorkspaceCacheRowsBatchLoader,
   ): Promise<void> {
     return Sentry.startSpan(
       {
@@ -328,14 +313,9 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         await this.memoizer.clearKeys(`${workspaceId}-`);
 
         await this.flush(workspaceId, cacheKeyNames);
-        await this.recomputeDataFromProvider(
-          workspaceId,
-          cacheKeyNames,
-          {
-            strategy: 'mint',
-          },
-          rowsBatchLoader,
-        );
+        await this.recomputeDataFromProvider(workspaceId, cacheKeyNames, {
+          strategy: 'mint',
+        });
 
         // Clear memoizer again after recomputation to evict any stale entries
         // cached by concurrent getOrRecompute calls during the flush window.
@@ -534,7 +514,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
     hashResolution: RecomputeHashResolution,
-    sharedRowsBatchLoader?: WorkspaceCacheRowsBatchLoader,
   ): Promise<CacheEntriesResult> {
     const result: CacheEntriesResult = { data: {}, hashes: {} };
 
@@ -542,9 +521,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       return result;
     }
 
-    const rowsBatchLoader =
-      sharedRowsBatchLoader ??
-      new WorkspaceCacheRowsBatchLoader(this.coreDataSource, workspaceId);
+    const rowsBatchLoader = new WorkspaceCacheRowsBatchLoader(
+      this.coreDataSource,
+      workspaceId,
+    );
 
     await rowsBatchLoader.loadRows(this.collectRowsRequirements(cacheKeyNames));
 

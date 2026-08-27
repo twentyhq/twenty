@@ -17,6 +17,7 @@ import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-e
 import { getMetadataRelatedMetadataNamesForValidation } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names-for-validation.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-serialized-relation-names.util';
+import { withDerivedFieldMetadataMaps } from 'src/engine/metadata-modules/flat-entity/utils/with-derived-field-metadata-maps.util';
 import { createSearchFieldMetadatasByTsVectorFieldIdAccessor } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/create-search-field-metadatas-by-ts-vector-field-id-accessor.util';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -107,39 +108,21 @@ export class WorkspaceMigrationRunnerService {
       this.getLegacyCacheInvalidation(allFlatEntityMapsKeys);
 
     const cacheKeyNamesToInvalidate = [
-      ...new Set([...allFlatEntityMapsKeys, ...legacyCacheKeyNames]),
+      ...new Set([
+        ...withDerivedFieldMetadataMaps(allFlatEntityMapsKeys),
+        ...legacyCacheKeyNames,
+      ]),
     ];
 
-    await this.workspaceCacheService.flush(
-      workspaceId,
-      cacheKeyNamesToInvalidate,
-    );
-
-    const rowsBatchLoader =
-      await this.workspaceCacheService.prepareRowsBatchLoader(
+    const invalidationResults = await Promise.allSettled([
+      this.workspaceCacheService.invalidateAndRecompute(
         workspaceId,
         cacheKeyNamesToInvalidate,
-      );
-
-    const invalidationResults = await Promise.allSettled([
-      this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-        workspaceId,
-        flatMapsKeys: allFlatEntityMapsKeys,
-        rowsBatchLoader,
-      }),
+      ),
       ...(shouldIncrementMetadataGraphqlSchemaVersion
         ? [
             this.workspaceMetadataVersionService.incrementMetadataVersion(
               workspaceId,
-            ),
-          ]
-        : []),
-      ...(legacyCacheKeyNames.length > 0
-        ? [
-            this.workspaceCacheService.invalidateAndRecompute(
-              workspaceId,
-              legacyCacheKeyNames,
-              rowsBatchLoader,
             ),
           ]
         : []),
