@@ -153,10 +153,13 @@ export const WorkspaceMemberPicker = ({
             <StyledOption
               key={member.id}
               type="button"
-              // Keep the input focused so the click selects instead of blurring
-              // the dropdown shut before onClick runs.
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => handleSelect(member)}
+              // Select on mousedown: the input's blur fires before a click would,
+              // closing the dropdown and unmounting this option, so onClick never
+              // runs in the front-component sandbox. preventDefault keeps focus.
+              onMouseDown={(event) => {
+                event.preventDefault();
+                handleSelect(member);
+              }}
             >
               <StyledOptionName>
                 {isNonEmptyString(member.name) ? member.name : member.id}
