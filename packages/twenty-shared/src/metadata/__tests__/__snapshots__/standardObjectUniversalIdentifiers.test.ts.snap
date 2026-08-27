@@ -314,6 +314,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "calendarEventParticipants": {
         "universalIdentifier": "20202020-e07e-4ccb-88f5-6f3d00458eec",
       },
+      "calendarEventTargets": {
+        "universalIdentifier": "2b4a0785-3462-485f-b1a8-79ebb2078eab",
+      },
       "callRecordings": {
         "universalIdentifier": "48d6d151-18e2-4111-b405-d85fb9d860d8",
       },
@@ -593,6 +596,82 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
   },
+  "calendarEventTarget": {
+    "fields": {
+      "calendarEvent": {
+        "universalIdentifier": "a47824b0-0e64-4c1f-bbad-ce45209d119b",
+      },
+      "createdAt": {
+        "universalIdentifier": "10dba306-3735-5e34-a6da-5a2bedd5be64",
+      },
+      "createdBy": {
+        "universalIdentifier": "973208f6-f2c2-5758-84ac-46fa919237d6",
+      },
+      "deletedAt": {
+        "universalIdentifier": "0503a38e-5b07-534b-a650-d455d6e9490a",
+      },
+      "id": {
+        "universalIdentifier": "512cf243-f9eb-51e2-a422-3e62e19916cc",
+      },
+      "isAutomaticallyAssigned": {
+        "universalIdentifier": "b6374fed-9cf2-49ef-b45a-1d6814c16264",
+      },
+      "isManuallyAssigned": {
+        "universalIdentifier": "6afbd5b8-25b5-4c04-82e5-281e6f90f453",
+      },
+      "position": {
+        "universalIdentifier": "852e9d65-da04-5e3e-85b8-52b640031655",
+      },
+      "searchVector": {
+        "universalIdentifier": "03336cfc-bec6-5aeb-81a4-eff824e4fcea",
+      },
+      "targetCompany": {
+        "universalIdentifier": "86d8ec48-6546-5434-a5bc-ba7e4374ecfc",
+      },
+      "targetOpportunity": {
+        "universalIdentifier": "4b111d70-fd44-5e49-88e7-1ce56a320048",
+      },
+      "targetPerson": {
+        "universalIdentifier": "91c5a7dc-c75c-53f3-b1a0-b7d38fd8cf5e",
+      },
+      "updatedAt": {
+        "universalIdentifier": "180d7589-1fda-571a-9ce3-ef02a5d5270e",
+      },
+      "updatedBy": {
+        "universalIdentifier": "13a2bd18-1f0c-55c9-a9e0-04e1dcbdc81d",
+      },
+    },
+    "indexes": {
+      "calendarEventCompanyUniqueIndex": {
+        "universalIdentifier": "3fa22398-6e7d-47a5-95eb-4971f9d62135",
+      },
+      "calendarEventIdIndex": {
+        "universalIdentifier": "ce1c180c-0236-4673-ad1d-359dddf59f93",
+      },
+      "calendarEventOpportunityUniqueIndex": {
+        "universalIdentifier": "c8183b17-5dfe-4e02-8d9d-aef8e54ef07d",
+      },
+      "calendarEventPersonUniqueIndex": {
+        "universalIdentifier": "15b9e394-d451-4186-aaf0-612f6be1ea91",
+      },
+      "companyIdIndex": {
+        "universalIdentifier": "30413277-505d-4f08-be38-a56257460f9f",
+      },
+      "opportunityIdIndex": {
+        "universalIdentifier": "7920092d-281f-473a-8ea4-53c209b36a37",
+      },
+      "personIdIndex": {
+        "universalIdentifier": "f151bc84-ba45-40cb-b064-02ef359ac17b",
+      },
+    },
+    "morphIds": {
+      "targetMorphId": {
+        "morphId": "676e9f68-7b5c-41e6-b46d-2fb9527b7051",
+      },
+    },
+    "universalIdentifier": "6a9b9656-3e23-4234-94a4-b913c5dde668",
+    "views": {},
+  },
   "callRecording": {
     "fields": {
       "applicationId": {
@@ -736,6 +815,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "attachments": {
         "universalIdentifier": "a4399ae3-fe89-59fe-a282-aec77d4e63a8",
       },
+      "calendarEventTargets": {
+        "universalIdentifier": "f818ef0c-b67b-5dc7-b8e1-427902787503",
+      },
       "createdAt": {
         "universalIdentifier": "d206d586-fd61-56e1-80a8-9993beb7be0b",
       },
@@ -753,6 +835,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "linkedinLink": {
         "universalIdentifier": "20202020-ebeb-4beb-b9ad-6848036fb451",
+      },
+      "messageThreadTargets": {
+        "universalIdentifier": "8b050eda-2dd8-5dd8-ac51-791b2304b789",
       },
       "name": {
         "universalIdentifier": "20202020-4d99-4e2e-a84c-4a27837b1ece",
@@ -1658,6 +1743,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "messageChannelMessageAssociations": {
         "universalIdentifier": "20202020-314e-40a4-906d-a5d5d6c285f6",
       },
+      "messageThreadTargets": {
+        "universalIdentifier": "8d7c8b17-b835-4082-96bd-de704c491d49",
+      },
       "messages": {
         "universalIdentifier": "20202020-3115-404f-aade-e1154b28e35a",
       },
@@ -1698,6 +1786,82 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
         },
       },
     },
+  },
+  "messageThreadTarget": {
+    "fields": {
+      "createdAt": {
+        "universalIdentifier": "053b824a-873a-5495-8b15-a7cfeda54f5d",
+      },
+      "createdBy": {
+        "universalIdentifier": "a6466b07-220d-5e58-a785-bebadd52e5a6",
+      },
+      "deletedAt": {
+        "universalIdentifier": "aaf99cfc-bd93-5183-9464-4921b504e975",
+      },
+      "id": {
+        "universalIdentifier": "4a9772e6-c0e5-5989-87dd-a786a1bf500b",
+      },
+      "isAutomaticallyAssigned": {
+        "universalIdentifier": "04403730-e960-415a-8790-f0c0f82f3477",
+      },
+      "isManuallyAssigned": {
+        "universalIdentifier": "16efa36f-d195-42e9-959f-6928164f2395",
+      },
+      "messageThread": {
+        "universalIdentifier": "23ca09e6-149d-452f-bed7-a4aad24d1314",
+      },
+      "position": {
+        "universalIdentifier": "d811300a-58b2-5a26-ab83-471cbf256128",
+      },
+      "searchVector": {
+        "universalIdentifier": "95d8f54c-ebe5-56f9-89f3-e8257f69aae1",
+      },
+      "targetCompany": {
+        "universalIdentifier": "70235b19-5ab1-588d-a25c-45c259190354",
+      },
+      "targetOpportunity": {
+        "universalIdentifier": "238849d7-396a-5ebe-958e-309537794f61",
+      },
+      "targetPerson": {
+        "universalIdentifier": "068c655b-e026-57bc-b218-1cf0bb11eaa8",
+      },
+      "updatedAt": {
+        "universalIdentifier": "4bb3e976-be65-51bc-b4a7-8b5830888c9f",
+      },
+      "updatedBy": {
+        "universalIdentifier": "877138a1-a5c3-55c7-aaab-7ee720fca345",
+      },
+    },
+    "indexes": {
+      "companyIdIndex": {
+        "universalIdentifier": "b98005e4-3811-41b6-82d0-3ccd27757eba",
+      },
+      "messageThreadCompanyUniqueIndex": {
+        "universalIdentifier": "30d4f1af-8b6f-4685-802f-8a7cf29f318b",
+      },
+      "messageThreadIdIndex": {
+        "universalIdentifier": "222fdd8b-0863-4f2a-816a-29745537b6b6",
+      },
+      "messageThreadOpportunityUniqueIndex": {
+        "universalIdentifier": "1dc0e37e-afb1-4e90-90b4-052374126a6a",
+      },
+      "messageThreadPersonUniqueIndex": {
+        "universalIdentifier": "087f97cb-8c3c-4ea1-9556-933acde6c83b",
+      },
+      "opportunityIdIndex": {
+        "universalIdentifier": "7679ee05-cf6c-40a7-9ee6-c3e8053caca5",
+      },
+      "personIdIndex": {
+        "universalIdentifier": "280ee419-ac3c-4599-bd62-3e5cb268342c",
+      },
+    },
+    "morphIds": {
+      "targetMorphId": {
+        "morphId": "e85e853d-c26e-41b3-bec0-7afc4bdbc2f7",
+      },
+    },
+    "universalIdentifier": "378ad1b0-592d-4084-80ee-86fef44725b9",
+    "views": {},
   },
   "note": {
     "fields": {
@@ -1897,6 +2061,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "attachments": {
         "universalIdentifier": "37d15d4b-7441-5bbc-8a5f-228f2d62abf4",
       },
+      "calendarEventTargets": {
+        "universalIdentifier": "73d131ea-d0dc-5509-83aa-9c0c29545ab2",
+      },
       "closeDate": {
         "universalIdentifier": "20202020-527e-44d6-b1ac-c4158d307b97",
       },
@@ -1914,6 +2081,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "id": {
         "universalIdentifier": "2fa92d57-b39d-5ee8-ac9e-b39bc65b9ee9",
+      },
+      "messageThreadTargets": {
+        "universalIdentifier": "1f982757-a05a-54c1-8a74-89d01621c1f8",
       },
       "name": {
         "universalIdentifier": "20202020-8609-4f65-a2d9-44009eb422b5",
@@ -2102,6 +2272,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "calendarEventParticipants": {
         "universalIdentifier": "20202020-52ee-45e9-a702-b64b3753e3a9",
       },
+      "calendarEventTargets": {
+        "universalIdentifier": "1bb24269-e654-598c-ac53-23973fafd1e6",
+      },
       "company": {
         "universalIdentifier": "20202020-e2f3-448e-b34c-2d625f0025fd",
       },
@@ -2131,6 +2304,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "messageParticipants": {
         "universalIdentifier": "20202020-498e-4c61-8158-fa04f0638334",
+      },
+      "messageThreadTargets": {
+        "universalIdentifier": "e20bc778-c675-5dad-af44-48f83a1c7fe5",
       },
       "name": {
         "universalIdentifier": "20202020-3875-44d5-8c33-a6239011cab8",

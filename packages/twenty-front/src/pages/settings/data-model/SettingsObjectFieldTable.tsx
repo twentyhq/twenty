@@ -1,11 +1,5 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
-import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
-import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
-import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
-import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
-import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
-import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
   OBJECT_FIELD_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
@@ -31,12 +25,10 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useEffect, useMemo, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { IconArchive, IconCircleDashed, IconSettings } from 'twenty-ui/icon';
 import { SearchInput } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useDefaultViewFieldsLayout } from '@/settings/data-model/object-details/hooks/useDefaultViewFieldsLayout';
 import { useMostlyEmptyFieldMetadataIds } from '@/settings/data-model/object-details/hooks/useMostlyEmptyFieldMetadataIds';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/settings/data-model/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
 import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
@@ -69,6 +61,10 @@ const SETTINGS_OBJECT_FIELD_TABLE_METADATA: TableMetadata<SettingsObjectDetailTa
         align: 'left',
       },
     ],
+    initialSort: {
+      fieldName: 'label',
+      direction: 'asc',
+    },
   };
 
 export type SettingsObjectFieldTableProps = {
@@ -114,37 +110,28 @@ export const SettingsObjectFieldTable = ({
     setSettingsObjectFields(objectMetadataItem.fields);
   }, [objectMetadataItem, setSettingsObjectFields]);
 
-  const {
-    hasEditableDefaultView,
-    layoutOrderedFields,
-    getEffectiveLayout,
-    toggleFieldVisibility,
-    reorderFieldFromDropResult,
-  } = useDefaultViewFieldsLayout({
-    objectMetadataItem,
-    fieldMetadataItems: settingsObjectFields ?? [],
-  });
-
   const allObjectSettingsDetailItems = useMemo(() => {
     const filteredBySystem = showSystemFields
-      ? layoutOrderedFields
-      : layoutOrderedFields.filter(
+      ? settingsObjectFields
+      : settingsObjectFields?.filter(
           (fieldMetadataItem) => !isHiddenSystemField(fieldMetadataItem),
         );
 
     const fieldsToDisplay = excludeRelations
-      ? filteredBySystem.filter(
+      ? filteredBySystem?.filter(
           (fieldMetadataItem) =>
             fieldMetadataItem.type !== FieldMetadataType.RELATION &&
             fieldMetadataItem.type !== FieldMetadataType.MORPH_RELATION,
         )
       : filteredBySystem;
 
-    return fieldsToDisplay.map(
-      mapFieldMetadataItemToSettingsObjectDetailTableItem,
+    return (
+      fieldsToDisplay?.map(
+        mapFieldMetadataItemToSettingsObjectDetailTableItem,
+      ) ?? []
     );
   }, [
-    layoutOrderedFields,
+    settingsObjectFields,
     mapFieldMetadataItemToSettingsObjectDetailTableItem,
     excludeRelations,
     showSystemFields,
@@ -154,26 +141,6 @@ export const SettingsObjectFieldTable = ({
     allObjectSettingsDetailItems,
     tableMetadata,
   );
-
-  const isDDLLocked = useAtomStateValue(isDDLLockedState);
-
-  const readonly =
-    isObjectMetadataReadOnly({
-      objectMetadataItem,
-    }) || isDDLLocked;
-
-  const sortedFieldByTable = useAtomFamilyStateValue(
-    sortedFieldByTableFamilyState,
-    { tableId: tableMetadata.tableId },
-  );
-  const setSortedFieldByTable = useSetAtomFamilyState(
-    sortedFieldByTableFamilyState,
-    { tableId: tableMetadata.tableId },
-  );
-
-  useEffect(() => {
-    setSortedFieldByTable(null);
-  }, [setSortedFieldByTable]);
 
   const filteredItems = useMemo(() => {
     const searchNormalized = normalizeSearchText(searchTerm);
@@ -199,71 +166,6 @@ export const SettingsObjectFieldTable = ({
     showOnlyMostlyEmpty,
     mostlyEmptyFieldMetadataIds,
   ]);
-
-  const isLayoutEditable =
-    mode === 'view' && !readonly && hasEditableDefaultView;
-
-  const isReorderEnabled =
-    isLayoutEditable && !isDefined(sortedFieldByTable) && searchTerm === '';
-
-  const handleReorderDragEnd = async (result: DraggableListDropResult) => {
-    await reorderFieldFromDropResult({
-      dropResult: result,
-      visibleFieldMetadataItems: filteredItems.map(
-        (tableItem) => tableItem.fieldMetadataItem,
-      ),
-    });
-  };
-
-  const fieldTableRows = filteredItems.map(
-    (objectSettingsDetailItem, index) => {
-      const fieldMetadataId = objectSettingsDetailItem.fieldMetadataItem.id;
-      const isLabelIdentifierField =
-        fieldMetadataId === objectMetadataItem.labelIdentifierFieldMetadataId;
-      const isLayoutManageableField =
-        !isLabelIdentifierField &&
-        (objectSettingsDetailItem.fieldMetadataItem.isActive ?? false) &&
-        !isHiddenSystemField(objectSettingsDetailItem.fieldMetadataItem);
-      const status = objectSettingsDetailItem.fieldMetadataItem.isActive
-        ? 'active'
-        : 'disabled';
-
-      const row = (
-        <SettingsObjectFieldItemTableRow
-          key={fieldMetadataId}
-          settingsObjectDetailTableItem={objectSettingsDetailItem}
-          status={status}
-          mode={mode}
-          isMostlyEmpty={mostlyEmptyFieldMetadataIds.has(fieldMetadataId)}
-          hasDragGripGutter={isReorderEnabled}
-          showDragGrip={isReorderEnabled && isLayoutManageableField}
-          isVisibleInLayout={
-            isLabelIdentifierField ||
-            getEffectiveLayout(fieldMetadataId).isVisible
-          }
-          onToggleVisibility={
-            isLayoutEditable && isLayoutManageableField
-              ? () => toggleFieldVisibility(fieldMetadataId)
-              : undefined
-          }
-        />
-      );
-
-      if (!isReorderEnabled) {
-        return row;
-      }
-
-      return (
-        <DraggableItem
-          key={fieldMetadataId}
-          draggableId={fieldMetadataId}
-          index={index}
-          isDragDisabled={!isLayoutManageableField}
-          itemComponent={row}
-        />
-      );
-    },
-  );
 
   return (
     <>
@@ -335,14 +237,23 @@ export const SettingsObjectFieldTable = ({
         </TableRow>
         <StyledSettingsDataModelTableBodyContainer>
           <TableBody>
-            {isReorderEnabled ? (
-              <DraggableList
-                onDragEnd={handleReorderDragEnd}
-                draggableItems={<>{fieldTableRows}</>}
-              />
-            ) : (
-              fieldTableRows
-            )}
+            {filteredItems.map((objectSettingsDetailItem) => {
+              const status = objectSettingsDetailItem.fieldMetadataItem.isActive
+                ? 'active'
+                : 'disabled';
+
+              return (
+                <SettingsObjectFieldItemTableRow
+                  key={objectSettingsDetailItem.fieldMetadataItem.id}
+                  settingsObjectDetailTableItem={objectSettingsDetailItem}
+                  status={status}
+                  mode={mode}
+                  isMostlyEmpty={mostlyEmptyFieldMetadataIds.has(
+                    objectSettingsDetailItem.fieldMetadataItem.id,
+                  )}
+                />
+              );
+            })}
           </TableBody>
         </StyledSettingsDataModelTableBodyContainer>
       </Table>
