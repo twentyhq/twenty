@@ -337,7 +337,7 @@ jobs:
             if [ -f /tmp/qa-scout/output/report.md ]; then
               cat /tmp/qa-scout/output/report.md
             elif [ -f /tmp/qa-scout/output/verdict.json ]; then
-              jq -r '"**\(.verdict)**: \(.headline)\n\n_Full report missing (agent stopped early); details in the qa-scout-report artifact._"' /tmp/qa-scout/output/verdict.json
+              jq -r '"**\(.verdict)**: \(.headline // "no headline recorded")\n\n_Full report missing (agent stopped early); details in the qa-scout-report artifact._"' /tmp/qa-scout/output/verdict.json
             elif [ "$SCOUT_RUN" = "true" ]; then
               echo "No report produced (agent run failed or timed out); see the qa-scout-report artifact and step logs."
             elif [ "$SCOUT_PREP_OUTCOME" = "failure" ]; then
@@ -438,7 +438,7 @@ jobs:
           # report; a synthesized body beats silence on a FAIL.
           if [ -z "$REPORT_FILE" ]; then
             REPORT_FILE=report-fallback.md
-            jq -r '"**\(.verdict)**: \(.headline)\n\n" + ([.scenarios[]? | "- \(.name): \(.result)"] | join("\n")) + "\n\n_Full report missing (agent stopped early); details in the qa-scout-report artifact._"' \
+            jq -r '"**\(.verdict)**: \(.headline // "no headline recorded")\n\n" + ([.scenarios[]? | "- \(.name): \(.result)"] | join("\n")) + "\n\n_Full report missing (agent stopped early); details in the qa-scout-report artifact._"' \
               "$VERDICT_FILE" > "$REPORT_FILE"
           fi
           VERDICT=$(jq -r '.verdict // empty' "$VERDICT_FILE")
