@@ -264,8 +264,9 @@ export const WithNumberChart: Story = {
       type: WidgetType.GRAPH,
       title: 'Sales Pipeline',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 2,
@@ -355,8 +356,9 @@ export const WithBarChart: Story = {
       type: WidgetType.GRAPH,
       title: 'Monthly Trends',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 5,
@@ -457,8 +459,9 @@ export const SmallWidget: Story = {
       type: WidgetType.GRAPH,
       title: 'Small Widget (2x2 grid)',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 2,
@@ -555,8 +558,9 @@ export const MediumWidget: Story = {
       type: WidgetType.GRAPH,
       title: 'Medium Widget (4x3 grid)',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 3,
@@ -657,8 +661,9 @@ export const LargeWidget: Story = {
       type: WidgetType.GRAPH,
       title: 'Large Widget (6x4 grid)',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 4,
@@ -759,8 +764,9 @@ export const WideWidget: Story = {
       type: WidgetType.GRAPH,
       title: 'Wide Widget (8x2 grid)',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 2,
@@ -857,8 +863,9 @@ export const TallWidget: Story = {
       type: WidgetType.GRAPH,
       title: 'Tall Widget (3x6 grid)',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 6,
@@ -960,8 +967,9 @@ export const WithManyToOneRelationFieldWidget: Story = {
       type: WidgetType.FIELD,
       title: 'Account Owner',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 1,
@@ -1082,8 +1090,9 @@ export const WithOneToManyRelationFieldWidget: Story = {
       type: WidgetType.FIELD,
       title: 'People',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 1,
@@ -1197,8 +1206,9 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
       type: WidgetType.FIELD,
       title: 'People',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 1,
@@ -1335,8 +1345,9 @@ export const OnMobile: Story = {
       type: WidgetType.GRAPH,
       title: 'Mobile Widget',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 2,
@@ -1436,8 +1447,9 @@ export const InSidePanel: Story = {
       type: WidgetType.GRAPH,
       title: 'Side Panel Widget',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 2,
@@ -1599,8 +1611,9 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       type: WidgetType.GRAPH,
       title: 'Widget name',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        __typename: 'PageLayoutWidgetGridPosition',
         row: 0,
         column: 0,
         rowSpan: 2,
