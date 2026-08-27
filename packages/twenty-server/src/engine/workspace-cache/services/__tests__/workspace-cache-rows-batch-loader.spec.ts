@@ -175,6 +175,34 @@ describe('WorkspaceCacheRowsBatchLoader', () => {
     void viewField.rows[0].isVisible;
   });
 
+  it('memoizes grouped maps across readRows calls for the same entity and foreign key', async () => {
+    const { rowsBatchLoader, findMocksByEntity } = setup();
+
+    findMocksByEntity.get(ViewFieldEntity)!.mockResolvedValue([
+      {
+        id: 'view-field-a',
+        fieldMetadataId: 'field-1',
+        workspaceId: WORKSPACE_ID,
+      },
+    ]);
+
+    const rowsRequirement = {
+      viewField: {
+        columns: ['id'],
+        groupBy: ['fieldMetadataId'],
+      },
+    } as const;
+
+    await rowsBatchLoader.loadRows([rowsRequirement]);
+
+    const firstRead = rowsBatchLoader.readRows(rowsRequirement);
+    const secondRead = rowsBatchLoader.readRows(rowsRequirement);
+
+    expect(secondRead.viewField.byFieldMetadataId).toBe(
+      firstRead.viewField.byFieldMetadataId,
+    );
+  });
+
   it('types plain rows as exactly the declared columns', async () => {
     const { rowsBatchLoader } = setup();
 

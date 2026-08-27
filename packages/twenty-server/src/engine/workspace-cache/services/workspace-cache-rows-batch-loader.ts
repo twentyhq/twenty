@@ -8,11 +8,11 @@ import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { ALL_WORKSPACE_CACHE_ENTITY_BY_NAME } from 'src/engine/workspace-cache/constants/all-workspace-cache-entity-by-name.constant';
 import {
-  type WorkspaceCacheRowsRequirement,
-  type WorkspaceCacheRows,
   type CacheFetchableEntityName,
   type GroupedEntityRowsRequirement,
   type WidenedEntityRowsRequirement,
+  type WorkspaceCacheRows,
+  type WorkspaceCacheRowsRequirement,
 } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
 import { groupRowsByForeignKey } from 'src/engine/workspace-cache/utils/group-rows-by-foreign-key.util';
 import { isGroupedEntityRowsRequirement } from 'src/engine/workspace-cache/utils/is-grouped-entity-rows-requirement.util';
@@ -28,6 +28,11 @@ export class WorkspaceCacheRowsBatchLoader {
   private readonly rowsByEntityName = new Map<
     CacheFetchableEntityName,
     ObjectLiteral[]
+  >();
+
+  private readonly groupedRowsByEntityNameAndForeignKey = new Map<
+    string,
+    Map<string, ObjectLiteral[]>
   >();
 
   private hasLoadedRows = false;
@@ -130,16 +135,37 @@ export class WorkspaceCacheRowsBatchLoader {
       const groupedEntry: Record<string, unknown> = { rows };
 
       for (const foreignKey of entityRowsRequirement.groupBy) {
-        groupedEntry[`by${capitalize(foreignKey)}`] = groupRowsByForeignKey({
-          rows,
+        groupedEntry[`by${capitalize(foreignKey)}`] = this.getGroupedRows(
+          entityName,
           foreignKey,
-        });
+          rows,
+        );
       }
 
       rowsByEntityName[entityName] = groupedEntry;
     }
 
     return rowsByEntityName as WorkspaceCacheRows<TRowsRequirement>;
+  }
+
+  private getGroupedRows(
+    entityName: CacheFetchableEntityName,
+    foreignKey: string,
+    rows: ObjectLiteral[],
+  ): Map<string, ObjectLiteral[]> {
+    const memoKey = `${entityName}:${foreignKey}`;
+    const memoizedGroupedRows =
+      this.groupedRowsByEntityNameAndForeignKey.get(memoKey);
+
+    if (isDefined(memoizedGroupedRows)) {
+      return memoizedGroupedRows;
+    }
+
+    const groupedRows = groupRowsByForeignKey({ rows, foreignKey });
+
+    this.groupedRowsByEntityNameAndForeignKey.set(memoKey, groupedRows);
+
+    return groupedRows;
   }
 
   private getRowsForEntityName(
