@@ -1,13 +1,19 @@
 import { Command } from 'nest-commander';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildEditRecordPageLayoutCommandMenuItemsToUpdate } from 'src/database/commands/upgrade-version-command/2-36/utils/build-edit-record-page-layout-command-menu-items-to-update.util';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+
+const LEGACY_EDIT_LAYOUT_AVAILABILITY_EXPRESSION =
+  'pageType == "RECORD_PAGE" and not isLayoutCustomizationModeEnabled and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"';
 
 @RegisteredWorkspaceCommand('2.36.0', 1787816785319)
 @Command({
@@ -18,7 +24,6 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 export class EnableEditLayoutAcrossAppCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
-    private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {
@@ -29,39 +34,35 @@ export class EnableEditLayoutAcrossAppCommand extends ProvisionedWorkspaceComman
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const isDryRun = options.dryRun ?? false;
-
     const { flatCommandMenuItemMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatCommandMenuItemMaps',
       ]);
 
-    const commandMenuItemsToUpdate =
-      buildEditRecordPageLayoutCommandMenuItemsToUpdate({
-        existingFlatCommandMenuItemMaps: flatCommandMenuItemMaps,
-        now: new Date().toISOString(),
-      });
+    const standardCommandMenuItem =
+      STANDARD_COMMAND_MENU_ITEMS.editRecordPageLayout;
+    const existingCommandMenuItem =
+      flatCommandMenuItemMaps.byUniversalIdentifier[
+        standardCommandMenuItem.universalIdentifier
+      ];
 
-    if (commandMenuItemsToUpdate.length === 0) {
+    if (
+      !isDefined(existingCommandMenuItem) ||
+      existingCommandMenuItem.availabilityType !==
+        CommandMenuItemAvailabilityType.RECORD_SELECTION ||
+      existingCommandMenuItem.conditionalAvailabilityExpression !==
+        LEGACY_EDIT_LAYOUT_AVAILABILITY_EXPRESSION
+    ) {
+      return;
+    }
+
+    if (options.dryRun) {
       this.logger.log(
-        `Edit Layout command availability already synced for workspace ${workspaceId}, skipping`,
+        `Would enable Edit Layout across the app for workspace ${workspaceId}`,
       );
 
       return;
     }
-
-    this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Enabling Edit Layout across the app for workspace ${workspaceId}`,
-    );
-
-    if (isDryRun) {
-      return;
-    }
-
-    const { twentyStandardFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -70,28 +71,26 @@ export class EnableEditLayoutAcrossAppCommand extends ProvisionedWorkspaceComman
             commandMenuItem: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: commandMenuItemsToUpdate,
+              flatEntityToUpdate: [
+                {
+                  ...existingCommandMenuItem,
+                  availabilityType: standardCommandMenuItem.availabilityType,
+                  conditionalAvailabilityExpression:
+                    standardCommandMenuItem.conditionalAvailabilityExpression,
+                  updatedAt: new Date().toISOString(),
+                },
+              ],
             },
           },
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
         },
       );
 
     if (validateAndBuildResult.status === 'fail') {
-      this.logger.error(
-        `Failed to enable Edit Layout across the app:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
-      );
-
-      throw new Error(
-        `Failed to enable Edit Layout across the app for workspace ${workspaceId}`,
-      );
+      throw new WorkspaceMigrationBuilderException(validateAndBuildResult);
     }
-
-    this.logger.log(
-      `Successfully enabled Edit Layout across the app for workspace ${workspaceId}`,
-    );
   }
 }
