@@ -9,13 +9,12 @@ import { type FlatIndexMetadataMaps } from 'src/engine/metadata-modules/flat-ind
 import { fromIndexMetadataEntityToFlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/utils/from-index-metadata-entity-to-flat-index-metadata.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
-import { type CacheFetchableEntity } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 const FLAT_INDEX_ROWS_REQUIREMENT = {
   index: true,
-  indexFieldMetadata: true,
+  indexFieldMetadata: { columns: true, groupBy: ['indexMetadataId'] },
   application: ['id', 'universalIdentifier', 'deletedAt'],
   objectMetadata: ['id', 'universalIdentifier'],
   fieldMetadata: ['id', 'universalIdentifier'],
@@ -39,27 +38,6 @@ export class WorkspaceFlatIndexMapCacheService extends MetadataFlatEntityMapsCac
       fieldMetadata: fieldMetadatas,
     } = rows;
 
-    const indexFieldMetadatasByIndexMetadataId = new Map<
-      string,
-      CacheFetchableEntity<'indexFieldMetadata'>[]
-    >();
-
-    for (const indexFieldMetadata of indexFieldMetadatas) {
-      const existingIndexFieldMetadatas =
-        indexFieldMetadatasByIndexMetadataId.get(
-          indexFieldMetadata.indexMetadataId,
-        );
-
-      if (isDefined(existingIndexFieldMetadatas)) {
-        existingIndexFieldMetadatas.push(indexFieldMetadata);
-      } else {
-        indexFieldMetadatasByIndexMetadataId.set(
-          indexFieldMetadata.indexMetadataId,
-          [indexFieldMetadata],
-        );
-      }
-    }
-
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(
         applications.filter((application) => !isDefined(application.deletedAt)),
@@ -76,7 +54,7 @@ export class WorkspaceFlatIndexMapCacheService extends MetadataFlatEntityMapsCac
         entity: {
           ...indexEntity,
           indexFieldMetadatas:
-            indexFieldMetadatasByIndexMetadataId.get(indexEntity.id) ?? [],
+            indexFieldMetadatas.byIndexMetadataId.get(indexEntity.id) ?? [],
         },
         applicationIdToUniversalIdentifierMap,
         objectMetadataIdToUniversalIdentifierMap,
