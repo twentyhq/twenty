@@ -6,7 +6,7 @@ export default defineNavigationMenuItem({
   universalIdentifier: 'f79c4981-c50a-47f7-8577-35eb46434eb7',
   type: NavigationMenuItemType.VIEW,
   icon: 'IconStar',
-  position: 7,
-  folderUniversalIdentifier: '0b2e499a-ae74-45e0-af08-243e19fc56aa',
+  position: 5,
+  folderUniversalIdentifier: '857be3b5-82c6-45f7-b546-e20a8a97be8d',
   viewUniversalIdentifier: SUPER_PARTNERS_VIEW_UNIVERSAL_IDENTIFIER,
 });
