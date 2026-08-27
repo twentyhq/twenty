@@ -113,7 +113,7 @@ export const createGetDashboardTool = (
                   id: w.id,
                   title: w.title,
                   type: w.type,
-                  gridPosition: w.gridPosition,
+                  position: w.position,
                   objectMetadataId: w.objectMetadataId,
                   configuration: w.configuration,
                 };
@@ -183,7 +183,7 @@ export const createGetDashboardTool = (
                 id: w.id,
                 title: w.title,
                 type: w.type,
-                gridPosition: w.gridPosition,
+                position: w.position,
                 objectMetadataId: w.objectMetadataId,
                 configuration: enrichedConfiguration,
               };

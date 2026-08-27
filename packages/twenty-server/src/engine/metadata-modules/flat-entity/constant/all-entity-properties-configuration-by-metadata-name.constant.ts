@@ -1030,7 +1030,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'objectMetadataUniversalIdentifier',
     },
     gridPosition: {
-      toCompare: true,
+      toCompare: false,
       toStringify: true,
       universalProperty: undefined,
     },
