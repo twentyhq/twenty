@@ -114,7 +114,7 @@ export const RecordTableAggregateFooterCell = ({
   const recordTableWidgetContext = useContext(RecordTableWidgetContext);
 
   const isFooterReadOnly = isDefined(recordTableWidgetContext)
-    ? recordTableWidgetContext.isPageLayoutInEditMode
+    ? !recordTableWidgetContext.isPageLayoutInEditMode
     : !isRecordTableColumnResizable;
 
   const recordField = visibleRecordFields.find(

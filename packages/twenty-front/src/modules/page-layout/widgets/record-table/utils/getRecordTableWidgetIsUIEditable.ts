@@ -1,17 +1,24 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isDefined } from 'twenty-shared/utils';
-import { WidgetConfigurationType } from '~/generated-metadata/graphql';
+import {
+  PageLayoutType,
+  WidgetConfigurationType,
+} from '~/generated-metadata/graphql';
 
 export const getRecordTableWidgetIsUIEditable = (
   configuration: PageLayoutWidget['configuration'] | undefined,
+  pageLayoutType: PageLayoutType,
 ): boolean => {
   if (
     !isDefined(configuration) ||
-    configuration.configurationType !== WidgetConfigurationType.RECORD_TABLE ||
-    !('isUIEditable' in configuration)
+    configuration.configurationType !== WidgetConfigurationType.RECORD_TABLE
   ) {
     return false;
   }
 
-  return configuration.isUIEditable ?? false;
+  const defaultIsUIEditable = pageLayoutType === PageLayoutType.RECORD_PAGE;
+
+  return 'isUIEditable' in configuration
+    ? (configuration.isUIEditable ?? defaultIsUIEditable)
+    : defaultIsUIEditable;
 };

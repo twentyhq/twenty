@@ -167,7 +167,12 @@ export const RecordBoardColumnHeader = () => {
     });
 
   const isAggregateDropdownNonInteractive =
-    recordTableWidgetContext?.isPageLayoutInEditMode ?? false;
+    isDefined(recordTableWidgetContext) &&
+    !recordTableWidgetContext.isPageLayoutInEditMode;
+
+  const isColumnResizable = isDefined(recordTableWidgetContext)
+    ? recordTableWidgetContext.isPageLayoutInEditMode
+    : !isRecordBoardViewSettingsReadOnly;
 
   const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
     hasAnySoftDeleteFilterOnViewComponentSelector,
@@ -282,7 +287,7 @@ export const RecordBoardColumnHeader = () => {
           </StyledHeaderContainer>
         </StyledHeader>
       </DragDropItemSortableHandle>
-      {!isRecordBoardViewSettingsReadOnly && <RecordBoardColumnResizeHandler />}
+      {isColumnResizable && <RecordBoardColumnResizeHandler />}
     </StyledColumn>
   );
 };

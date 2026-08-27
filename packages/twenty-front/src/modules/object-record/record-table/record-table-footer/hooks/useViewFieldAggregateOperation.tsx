@@ -4,7 +4,6 @@ import { type ExtendedAggregateOperations } from '@/object-record/record-table/t
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
 import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
-import { useRecordTableWidgetFieldUpdate } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetFieldUpdate';
 import { constructViewFromRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/constructViewFromRecordTableWidgetViewSnapshot';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -36,6 +35,7 @@ export const useViewFieldAggregateOperation = () => {
   const shouldUseRecordTableWidgetDraft =
     isDefined(recordTableWidgetContext) &&
     recordTableWidgetContext.isPageLayoutInEditMode &&
+    isDefined(recordTableWidgetContext.pageLayoutId) &&
     isDefined(draftSnapshot);
 
   const currentViewForAggregateOperation = shouldUseRecordTableWidgetDraft
@@ -47,14 +47,6 @@ export const useViewFieldAggregateOperation = () => {
   );
 
   const { performViewFieldAPIUpdate } = usePerformViewFieldAPIPersist();
-
-  const { handleFieldUpdated: handleRecordTableWidgetFieldUpdated } =
-    useRecordTableWidgetFieldUpdate({
-      pageLayoutId:
-        recordTableWidgetContext?.pageLayoutId ??
-        MISSING_RECORD_TABLE_WIDGET_PAGE_LAYOUT_ID,
-      widgetId: recordTableWidgetContext?.widgetId ?? '',
-    });
 
   const updateViewFieldAggregateOperation = async (
     aggregateOperation: ExtendedAggregateOperations | null,
@@ -71,9 +63,13 @@ export const useViewFieldAggregateOperation = () => {
           );
 
     if (shouldUseRecordTableWidgetDraft) {
-      handleRecordTableWidgetFieldUpdated(currentViewField.id, {
+      recordTableWidgetContext.updateViewDraftField(currentViewField.id, {
         aggregateOperation: aggregateOperationForPersistence,
       });
+      return;
+    }
+
+    if (isDefined(recordTableWidgetContext)) {
       return;
     }
 

@@ -19,9 +19,7 @@ export const useUpdateViewAggregate = () => {
   const { performViewAPIUpdate } = usePerformViewAPIUpdate();
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
 
-  const isInsideRecordTableWidget = isDefined(
-    useContext(RecordTableWidgetContext),
-  );
+  const recordTableWidgetContext = useContext(RecordTableWidgetContext);
 
   const updateViewAggregate = useCallback(
     async ({
@@ -33,10 +31,6 @@ export const useUpdateViewAggregate = () => {
       kanbanAggregateOperation: ExtendedAggregateOperations | null;
       objectMetadataItem: EnrichedObjectMetadataItem;
     }) => {
-      if (!canPersistChanges) {
-        return;
-      }
-
       const convertedKanbanAggregateOperation = isDefined(
         kanbanAggregateOperation,
       )
@@ -44,6 +38,25 @@ export const useUpdateViewAggregate = () => {
             kanbanAggregateOperation,
           )
         : null;
+
+      if (isDefined(recordTableWidgetContext)) {
+        if (
+          !recordTableWidgetContext.isPageLayoutInEditMode ||
+          !isDefined(recordTableWidgetContext.pageLayoutId)
+        ) {
+          return;
+        }
+
+        recordTableWidgetContext.updateViewDraft({
+          kanbanAggregateOperationFieldMetadataId,
+          kanbanAggregateOperation: convertedKanbanAggregateOperation,
+        });
+        return;
+      }
+
+      if (!canPersistChanges) {
+        return;
+      }
 
       if (!isDefined(contextStoreCurrentViewId)) {
         return;
@@ -65,10 +78,6 @@ export const useUpdateViewAggregate = () => {
           return;
         }
 
-        if (isInsideRecordTableWidget) {
-          return;
-        }
-
         loadRecordIndexStates(updatedView, objectMetadataItem);
       }
     },
@@ -77,7 +86,7 @@ export const useUpdateViewAggregate = () => {
       contextStoreCurrentViewId,
       performViewAPIUpdate,
       loadRecordIndexStates,
-      isInsideRecordTableWidget,
+      recordTableWidgetContext,
     ],
   );
 

@@ -3,6 +3,7 @@ import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuIt
 import { CommandMenuItemNumberInput } from '@/command-menu/components/CommandMenuItemNumberInput';
 import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useRecordTableWidgetFieldCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetFieldCallbacks';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
 import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
@@ -68,6 +69,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
   const { t } = useLingui();
 
   const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
 
@@ -91,7 +93,10 @@ export const SidePanelDashboardRecordTableSettings = () => {
       ? (configuration.recordLimit as number)
       : undefined;
 
-  const isUIEditable = getRecordTableWidgetIsUIEditable(configuration);
+  const isUIEditable = getRecordTableWidgetIsUIEditable(
+    configuration,
+    currentPageLayout.type,
+  );
 
   const {
     sourceDescription,

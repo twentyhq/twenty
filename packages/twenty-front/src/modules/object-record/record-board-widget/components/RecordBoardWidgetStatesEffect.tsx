@@ -3,17 +3,15 @@ import { isRecordBoardViewSettingsReadOnlyComponentState } from '@/object-record
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLayoutEffect } from 'react';
 
-type RecordBoardWidgetViewSettingsReadOnlyEffectProps = {
+type RecordBoardWidgetStatesEffectProps = {
   recordBoardId: string;
-  isViewSettingsReadOnly: boolean;
-  isRecordCellsNonEditable: boolean;
+  isUIEditable: boolean;
 };
 
-export const RecordBoardWidgetViewSettingsReadOnlyEffect = ({
+export const RecordBoardWidgetStatesEffect = ({
   recordBoardId,
-  isViewSettingsReadOnly,
-  isRecordCellsNonEditable,
-}: RecordBoardWidgetViewSettingsReadOnlyEffectProps) => {
+  isUIEditable,
+}: RecordBoardWidgetStatesEffectProps) => {
   const setIsRecordBoardViewSettingsReadOnly = useSetAtomComponentState(
     isRecordBoardViewSettingsReadOnlyComponentState,
     recordBoardId,
@@ -27,8 +25,8 @@ export const RecordBoardWidgetViewSettingsReadOnlyEffect = ({
   // Synchronized before paint so read-only widgets never flash (or
   // briefly accept interaction on) their editable controls.
   useLayoutEffect(() => {
-    setIsRecordBoardViewSettingsReadOnly(isViewSettingsReadOnly);
-    setIsRecordBoardCellsNonEditable(isRecordCellsNonEditable);
+    setIsRecordBoardViewSettingsReadOnly(true);
+    setIsRecordBoardCellsNonEditable(!isUIEditable);
 
     // Reset to the default on unmount so the flag cannot outlive the
     // widget and leak into a later board mounted on the same instance id.
@@ -37,8 +35,7 @@ export const RecordBoardWidgetViewSettingsReadOnlyEffect = ({
       setIsRecordBoardCellsNonEditable(false);
     };
   }, [
-    isViewSettingsReadOnly,
-    isRecordCellsNonEditable,
+    isUIEditable,
     setIsRecordBoardViewSettingsReadOnly,
     setIsRecordBoardCellsNonEditable,
   ]);

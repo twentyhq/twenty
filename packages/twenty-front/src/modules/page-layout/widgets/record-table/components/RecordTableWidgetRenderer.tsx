@@ -1,3 +1,4 @@
+import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { StyledWidgetTableOutline } from '@/page-layout/widgets/components/WidgetContentFrame';
@@ -15,6 +16,7 @@ export const RecordTableWidgetRenderer = ({
 }: RecordTableWidgetRendererProps) => {
   const { configuration } = widget;
 
+  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   const isRecordTableConfiguration =
@@ -30,7 +32,10 @@ export const RecordTableWidgetRenderer = ({
       ? (configuration.recordLimit as number | undefined)
       : undefined;
 
-  const isUIEditable = getRecordTableWidgetIsUIEditable(configuration);
+  const isUIEditable = getRecordTableWidgetIsUIEditable(
+    configuration,
+    currentPageLayout.type,
+  );
 
   if (!isDefined(widget.objectMetadataId) || !isDefined(viewId)) {
     return null;

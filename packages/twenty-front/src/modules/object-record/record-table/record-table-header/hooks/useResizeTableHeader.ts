@@ -1,4 +1,5 @@
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
+import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 
 import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthVariableName';
 import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
@@ -25,15 +26,17 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useSaveRecordFields } from '@/views/hooks/useSaveRecordFields';
 import { useStore } from 'jotai';
-import { useCallback, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import {
   findById,
   findByProperty,
+  isDefined,
   throwIfNotDefined,
 } from 'twenty-shared/utils';
 
 export const useResizeTableHeader = () => {
   const { recordTableId, visibleRecordFields } = useRecordTableContextOrThrow();
+  const recordTableWidgetContext = useContext(RecordTableWidgetContext);
 
   const resizeFieldOffset = useAtomComponentStateCallbackState(
     resizeFieldOffsetComponentState,
@@ -189,7 +192,18 @@ export const useResizeTableHeader = () => {
         size: nextWidth,
       });
 
-      saveRecordFields([updatedRecordField]);
+      if (isDefined(recordTableWidgetContext)) {
+        if (
+          recordTableWidgetContext.isPageLayoutInEditMode &&
+          isDefined(recordTableWidgetContext.pageLayoutId)
+        ) {
+          recordTableWidgetContext.updateViewDraftField(updatedRecordField.id, {
+            size: nextWidth,
+          });
+        }
+      } else {
+        saveRecordFields([updatedRecordField]);
+      }
     }
 
     setDragSelectionStartEnabled(true);
@@ -202,6 +216,7 @@ export const useResizeTableHeader = () => {
     updateRecordField,
     setDragSelectionStartEnabled,
     recordField,
+    recordTableWidgetContext,
   ]);
 
   useTrackPointer({

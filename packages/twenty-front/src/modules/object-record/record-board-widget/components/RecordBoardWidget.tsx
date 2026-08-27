@@ -1,5 +1,5 @@
 import { RecordBoardContainer } from '@/object-record/record-board/components/RecordBoardContainer';
-import { RecordBoardWidgetViewSettingsReadOnlyEffect } from '@/object-record/record-board-widget/components/RecordBoardWidgetViewSettingsReadOnlyEffect';
+import { RecordBoardWidgetStatesEffect } from '@/object-record/record-board-widget/components/RecordBoardWidgetStatesEffect';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { styled } from '@linaria/react';
 
@@ -23,10 +23,9 @@ export const RecordBoardWidget = ({
 
   return (
     <>
-      <RecordBoardWidgetViewSettingsReadOnlyEffect
+      <RecordBoardWidgetStatesEffect
         recordBoardId={recordIndexId}
-        isViewSettingsReadOnly={!isUIEditable}
-        isRecordCellsNonEditable={!isUIEditable}
+        isUIEditable={isUIEditable}
       />
       <StyledBoardContainer>
         <RecordBoardContainer

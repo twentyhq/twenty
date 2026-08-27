@@ -1,8 +1,9 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useUpdateViewKanbanColumnWidth = () => {
@@ -11,14 +12,23 @@ export const useUpdateViewKanbanColumnWidth = () => {
     contextStoreCurrentViewIdComponentState,
   );
   const { performViewAPIUpdate } = usePerformViewAPIUpdate();
+  const recordTableWidgetContext = useContext(RecordTableWidgetContext);
 
   const updateViewKanbanColumnWidth = useCallback(
     async (kanbanColumnWidth: number) => {
-      if (!canPersistChanges) {
+      if (isDefined(recordTableWidgetContext)) {
+        if (
+          !recordTableWidgetContext.isPageLayoutInEditMode ||
+          !isDefined(recordTableWidgetContext.pageLayoutId)
+        ) {
+          return;
+        }
+
+        recordTableWidgetContext.updateViewDraft({ kanbanColumnWidth });
         return;
       }
 
-      if (!isDefined(contextStoreCurrentViewId)) {
+      if (!canPersistChanges || !isDefined(contextStoreCurrentViewId)) {
         return;
       }
 
@@ -29,7 +39,12 @@ export const useUpdateViewKanbanColumnWidth = () => {
         },
       });
     },
-    [canPersistChanges, contextStoreCurrentViewId, performViewAPIUpdate],
+    [
+      canPersistChanges,
+      contextStoreCurrentViewId,
+      performViewAPIUpdate,
+      recordTableWidgetContext,
+    ],
   );
 
   return {
