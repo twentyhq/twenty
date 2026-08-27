@@ -286,6 +286,7 @@ jobs:
         timeout-minutes: 15
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          PGPASSWORD: postgres
         run: |
           set -euo pipefail
           npm install -g @anthropic-ai/claude-code@2.1.247
@@ -293,8 +294,10 @@ jobs:
           # keeps per-turn detail and permission denials so allowlist tuning
           # reads real data.
           claude -p "Read .claude/skills/qa-scout/SKILL.md and follow it exactly. This is the CI invocation: every path and credential in the skill's Inputs table applies verbatim." \
-            --max-turns 120 \
+            --max-turns 150 \
             --model opus \
+            --add-dir /tmp/qa-scout \
+            --strict-mcp-config \
             --mcp-config /tmp/qa-scout/mcp.json \
             --allowedTools "Read,Grep,Glob,Write,TodoWrite,Bash(cat *),Bash(tail *),Bash(head *),Bash(wc *),Bash(ls *),Bash(grep *),Bash(jq *),Bash(echo *),Bash(diff *),Bash(sort *),Bash(uniq *),Bash(cut *),Bash(tr *),Bash(mkdir *),Bash(sleep *),Bash(date *),Bash(psql *),mcp__playwright" \
             --output-format stream-json --verbose \
@@ -333,6 +336,8 @@ jobs:
             echo "## QA Scout"
             if [ -f /tmp/qa-scout/output/report.md ]; then
               cat /tmp/qa-scout/output/report.md
+            elif [ -f /tmp/qa-scout/output/verdict.json ]; then
+              jq -r '"**\(.verdict)**: \(.headline)\n\n_Full report missing (agent stopped early); details in the qa-scout-report artifact._"' /tmp/qa-scout/output/verdict.json
             elif [ "$SCOUT_RUN" = "true" ]; then
               echo "No report produced (agent run failed or timed out); see the qa-scout-report artifact and step logs."
             elif [ "$SCOUT_PREP_OUTCOME" = "failure" ]; then
@@ -425,9 +430,16 @@ jobs:
           fi
           VERDICT_FILE=$(find qa-scout-report -name verdict.json | head -1 || true)
           REPORT_FILE=$(find qa-scout-report -name report.md | head -1 || true)
-          if [ -z "$VERDICT_FILE" ] || [ -z "$REPORT_FILE" ]; then
-            echo "No verdict or report in the artifact; nothing to post."
+          if [ -z "$VERDICT_FILE" ]; then
+            echo "No verdict in the artifact; nothing to post."
             exit 0
+          fi
+          # A run killed on turns or time can leave the verdict without the
+          # report; a synthesized body beats silence on a FAIL.
+          if [ -z "$REPORT_FILE" ]; then
+            REPORT_FILE=report-fallback.md
+            jq -r '"**\(.verdict)**: \(.headline)\n\n" + ([.scenarios[]? | "- \(.name): \(.result)"] | join("\n")) + "\n\n_Full report missing (agent stopped early); details in the qa-scout-report artifact._"' \
+              "$VERDICT_FILE" > "$REPORT_FILE"
           fi
           VERDICT=$(jq -r '.verdict // empty' "$VERDICT_FILE")
           case "$VERDICT" in
