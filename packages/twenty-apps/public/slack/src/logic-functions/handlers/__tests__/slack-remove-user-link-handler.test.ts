@@ -63,6 +63,7 @@ describe('slackRemoveUserLinkHandler', () => {
 
     expect(result.success).toBe(true);
     expect(coreApiClientMock).toHaveBeenCalledWith({ runAs: 'application' });
+    expect(deleteSlackUserLinkMock).toHaveBeenCalledTimes(1);
     expect(deleteSlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
       id: 'link-1',
     });

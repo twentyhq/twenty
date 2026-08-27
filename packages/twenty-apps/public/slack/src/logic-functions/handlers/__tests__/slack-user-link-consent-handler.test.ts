@@ -34,7 +34,7 @@ vi.mock('src/logic-functions/utils/update-slack-message-via-response-url', () =>
 
 const buildPayload = (
   decision: 'APPROVE' | 'DECLINE',
-  overrides: { userId?: string; teamId?: string } = {},
+  overrides: { userId?: string; teamId?: string; workspaceMemberId?: string } = {},
 ): SlackInteractivityPayload => ({
   type: 'block_actions',
   team: { id: overrides.teamId ?? 'T1' },
@@ -44,7 +44,12 @@ const buildPayload = (
     {
       action_id: `${SLACK_USER_LINK_CONSENT_ACTION_ID}:${decision.toLowerCase()}`,
       block_id: SLACK_USER_LINK_CONSENT_ACTION_ID,
-      value: JSON.stringify({ decision, slackTeamId: 'T1', slackUserId: 'U1' }),
+      value: JSON.stringify({
+        decision,
+        slackTeamId: 'T1',
+        slackUserId: 'U1',
+        workspaceMemberId: overrides.workspaceMemberId ?? 'member-1',
+      }),
     },
   ],
 });
@@ -68,11 +73,21 @@ describe('slackUserLinkConsentHandler', () => {
     const result = await slackUserLinkConsentHandler(buildPayload('APPROVE'));
 
     expect(result).toEqual({ done: true });
+    expect(updateSlackUserLinkMock).toHaveBeenCalledTimes(1);
     expect(updateSlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
       id: 'link-1',
       consentState: 'ACTIVE',
     });
-    expect(updateSlackMessageViaResponseUrlMock).toHaveBeenCalled();
+    expect(updateSlackMessageViaResponseUrlMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('should ignore a decision that targets a superseded member assignment', async () => {
+    const result = await slackUserLinkConsentHandler(
+      buildPayload('APPROVE', { workspaceMemberId: 'member-old' }),
+    );
+
+    expect(result).toMatchObject({ skipped: true });
+    expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
   it('should decline the link when the invited user declines', async () => {

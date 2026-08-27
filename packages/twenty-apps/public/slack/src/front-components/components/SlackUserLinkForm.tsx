@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -100,6 +100,9 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
   const [resolvedUser, setResolvedUser] = useState<SlackResolvedUser | null>(
     null,
   );
+  // Bumps whenever the Slack identity changes, so a resolve that is already in
+  // flight against an earlier identity does not restore a stale match.
+  const resolveRequestIdRef = useRef(0);
 
   const { resolveSlackUser, isResolving } = useResolveSlackUser();
   const { setSlackUserLink, isSubmitting } = useSetSlackUserLink();
@@ -121,14 +124,19 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
     setResolvedUser(null);
   };
 
-  // Any change to the Slack identity invalidates a previously confirmed match.
+  // Any change to the Slack identity invalidates a previously confirmed match
+  // and any resolve still in flight against the old identity.
   const clearResolvedUser = () => {
+    resolveRequestIdRef.current += 1;
+
     if (resolvedUser !== null) {
       setResolvedUser(null);
     }
   };
 
   const handleResolve = async () => {
+    const requestId = resolveRequestIdRef.current;
+
     const result = await resolveSlackUser({
       email: isNonEmptyString(email.trim()) ? email.trim() : undefined,
       slackUserId: isNonEmptyString(slackUserId.trim())
@@ -138,6 +146,12 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
         ? slackTeamId.trim()
         : undefined,
     });
+
+    // The identity changed while this request was in flight, so its result is
+    // stale; a newer resolve owns the confirmed match now.
+    if (requestId !== resolveRequestIdRef.current) {
+      return;
+    }
 
     if (!result.success) {
       setResolvedUser(null);

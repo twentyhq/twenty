@@ -249,6 +249,7 @@ export const slackSetUserLinkHandler = async (
   const dmResult = await sendSlackUserLinkConsentDm(slackClient, {
     slackTeamId,
     slackUserId,
+    workspaceMemberId,
     memberName,
   });
 

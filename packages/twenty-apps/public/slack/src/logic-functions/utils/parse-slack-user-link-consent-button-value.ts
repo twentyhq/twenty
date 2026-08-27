@@ -28,15 +28,16 @@ export const parseSlackUserLinkConsentButtonValue = (
     return undefined;
   }
 
-  const { decision, slackTeamId, slackUserId } = parsed;
+  const { decision, slackTeamId, slackUserId, workspaceMemberId } = parsed;
 
   if (
     !isConsentDecision(decision) ||
     !isNonEmptyString(slackTeamId) ||
-    !isNonEmptyString(slackUserId)
+    !isNonEmptyString(slackUserId) ||
+    !isNonEmptyString(workspaceMemberId)
   ) {
     return undefined;
   }
 
-  return { decision, slackTeamId, slackUserId };
+  return { decision, slackTeamId, slackUserId, workspaceMemberId };
 };

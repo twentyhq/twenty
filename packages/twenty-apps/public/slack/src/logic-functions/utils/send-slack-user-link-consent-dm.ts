@@ -8,10 +8,12 @@ export const sendSlackUserLinkConsentDm = async (
   {
     slackTeamId,
     slackUserId,
+    workspaceMemberId,
     memberName,
   }: {
     slackTeamId: string;
     slackUserId: string;
+    workspaceMemberId: string;
     memberName: string | undefined;
   },
 ): Promise<{ success: boolean; error?: string }> => {
@@ -36,6 +38,7 @@ export const sendSlackUserLinkConsentDm = async (
         memberName,
         slackTeamId,
         slackUserId,
+        workspaceMemberId,
       }),
     });
 

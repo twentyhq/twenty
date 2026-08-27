@@ -73,6 +73,16 @@ export const slackUserLinkConsentHandler = async (
     };
   }
 
+  // The button carries the member the DM described. If an admin has since
+  // re-pointed the link at a different member, a stale DM must not activate the
+  // new assignment the user never saw.
+  if (link.workspaceMemberId !== buttonValue.workspaceMemberId) {
+    return {
+      skipped: true,
+      reason: 'Consent decision targets a superseded link assignment',
+    };
+  }
+
   const approved =
     buttonValue.decision === SLACK_USER_LINK_CONSENT_DECISION.APPROVE;
 

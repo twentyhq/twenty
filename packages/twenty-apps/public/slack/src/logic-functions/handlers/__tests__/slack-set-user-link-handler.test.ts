@@ -147,6 +147,7 @@ describe('slackSetUserLinkHandler', () => {
     const result = await slackSetUserLinkHandler({ ...INPUT, name: 'Ada' });
 
     expect(result.success).toBe(true);
+    expect(createSlackUserLinkMock).toHaveBeenCalledTimes(1);
     expect(createSlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
       slackTeamId: INSTALLED_TEAM_ID,
       slackUserId: INPUT.slackUserId,
@@ -155,11 +156,13 @@ describe('slackSetUserLinkHandler', () => {
       source: 'MANUAL',
       consentState: 'PENDING',
     });
+    expect(sendSlackUserLinkConsentDmMock).toHaveBeenCalledTimes(1);
     expect(sendSlackUserLinkConsentDmMock).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
         slackUserId: INPUT.slackUserId,
         slackTeamId: INSTALLED_TEAM_ID,
+        workspaceMemberId: INPUT.workspaceMemberId,
         memberName: 'Ada Member',
       }),
     );

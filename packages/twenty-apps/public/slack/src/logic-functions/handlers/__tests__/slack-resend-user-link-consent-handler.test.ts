@@ -118,14 +118,32 @@ describe('slackResendUserLinkConsentHandler', () => {
     );
 
     expect(result.success).toBe(true);
+    expect(sendSlackUserLinkConsentDmMock).toHaveBeenCalledTimes(1);
     expect(sendSlackUserLinkConsentDmMock).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
         slackTeamId: 'T1',
         slackUserId: 'U1',
+        workspaceMemberId: 'member-1',
         memberName: 'Ada Member',
       }),
     );
+  });
+
+  it('should fail when the pending link has no workspace member assigned', async () => {
+    findSlackUserLinkMock.mockResolvedValue({
+      id: 'link-1',
+      workspaceMemberId: '',
+      source: 'MANUAL',
+      consentState: 'PENDING',
+    });
+
+    const result = await slackResendUserLinkConsentHandler(
+      buildPayload(PENDING_BODY),
+    );
+
+    expect(result.success).toBe(false);
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
   });
 
   it('should report a delivery failure', async () => {

@@ -14,10 +14,12 @@ export const buildSlackUserLinkConsentBlocks = ({
   memberName,
   slackTeamId,
   slackUserId,
+  workspaceMemberId,
 }: {
   memberName: string | undefined;
   slackTeamId: string;
   slackUserId: string;
+  workspaceMemberId: string;
 }): KnownBlock[] => {
   const memberClause = isNonEmptyString(memberName)
     ? `*${memberName}*`
@@ -44,6 +46,7 @@ export const buildSlackUserLinkConsentBlocks = ({
             decision: SLACK_USER_LINK_CONSENT_DECISION.APPROVE,
             slackTeamId,
             slackUserId,
+            workspaceMemberId,
           }),
         },
         {
@@ -55,6 +58,7 @@ export const buildSlackUserLinkConsentBlocks = ({
             decision: SLACK_USER_LINK_CONSENT_DECISION.DECLINE,
             slackTeamId,
             slackUserId,
+            workspaceMemberId,
           }),
         },
       ],

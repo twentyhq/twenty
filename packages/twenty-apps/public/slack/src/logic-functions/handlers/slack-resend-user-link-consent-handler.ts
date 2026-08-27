@@ -80,13 +80,23 @@ export const slackResendUserLinkConsentHandler = async (
     };
   }
 
-  const memberName = isNonEmptyString(link.workspaceMemberId)
-    ? await findWorkspaceMemberNameById(client, link.workspaceMemberId)
-    : undefined;
+  if (!isNonEmptyString(link.workspaceMemberId)) {
+    return {
+      success: false,
+      message: 'Nothing to resend',
+      error: 'This link is not assigned to a workspace member.',
+    };
+  }
+
+  const memberName = await findWorkspaceMemberNameById(
+    client,
+    link.workspaceMemberId,
+  );
 
   const dmResult = await sendSlackUserLinkConsentDm(slackClientResult.client, {
     slackTeamId,
     slackUserId,
+    workspaceMemberId: link.workspaceMemberId,
     memberName,
   });
 
