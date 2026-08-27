@@ -76,8 +76,6 @@ const assertRankingContract = (apiPartner: ApiPartner): void => {
 const readPartnerTier = (value: unknown): PartnerTier | null =>
   PARTNER_TIERS.find((tier) => tier === value) ?? null;
 
-const readSuperPartner = (value: unknown): boolean => value === true;
-
 // The live source: normalize the CRM payload into MarketplacePartner. Degrades
 // to [] when the API is unreachable, shapeless, or breaks the ranking contract
 // (matching the old getPartners) so the page renders the empty state rather
@@ -133,7 +131,7 @@ export async function fetchLiveMarketplacePartners(): Promise<
         services: [],
         portfolio: [],
         clients: [],
-        superPartner: readSuperPartner(apiPartner.superPartner),
+        superPartner: apiPartner.superPartner === true,
         partnerTier: readPartnerTier(apiPartner.partnerTier),
         serviceCount: apiPartner.serviceCount,
         approvedCaseStudyCount: apiPartner.approvedCaseStudyCount,

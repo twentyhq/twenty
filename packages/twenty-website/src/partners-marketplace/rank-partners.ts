@@ -19,8 +19,7 @@ export const rankPartners = (
     .slice()
     .sort(
       (left, right) =>
-        Number(Boolean(right.superPartner)) -
-          Number(Boolean(left.superPartner)) ||
+        Number(right.superPartner) - Number(left.superPartner) ||
         completenessScore(right) - completenessScore(left) ||
         partnerTierWeight(right) - partnerTierWeight(left) ||
         left.rotationKey.localeCompare(right.rotationKey),
