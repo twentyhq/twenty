@@ -203,7 +203,7 @@ test('super partner pins above completeness and tier', () => {
   ).toEqual(['thin-super', 'complete-advanced']);
 });
 
-test('super partners keep completeness then tier then rotation among themselves', () => {
+test('super partners keep completeness among themselves', () => {
   const thinSuper = {
     ...base,
     slug: 'thin-super',
@@ -221,6 +221,44 @@ test('super partners keep completeness then tier then rotation among themselves'
   expect(
     rankPartners([thinSuper, completeSuper]).map(({ slug }) => slug),
   ).toEqual(['complete-super', 'thin-super']);
+});
+
+test('super partners keep partner tier when completeness is equal', () => {
+  const newSuper = {
+    ...base,
+    slug: 'new-super',
+    superPartner: true,
+    partnerTier: 'NEW' as const,
+  };
+  const advancedSuper = {
+    ...base,
+    slug: 'advanced-super',
+    superPartner: true,
+    partnerTier: 'ADVANCED' as const,
+  };
+
+  expect(
+    rankPartners([newSuper, advancedSuper]).map(({ slug }) => slug),
+  ).toEqual(['advanced-super', 'new-super']);
+});
+
+test('super partners keep weekly rotation when completeness and tier are equal', () => {
+  const lateSuper = {
+    ...base,
+    slug: 'late-super',
+    superPartner: true,
+    rotationKey: 'z',
+  };
+  const earlySuper = {
+    ...base,
+    slug: 'early-super',
+    superPartner: true,
+    rotationKey: 'a',
+  };
+
+  expect(rankPartners([lateSuper, earlySuper]).map(({ slug }) => slug)).toEqual(
+    ['early-super', 'late-super'],
+  );
 });
 
 test('the description threshold sits at one hundred and twenty characters', () => {

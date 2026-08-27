@@ -1,4 +1,3 @@
-import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
@@ -12,6 +11,7 @@ import {
   spacing,
 } from '@/tokens';
 
+import { MARKETPLACE_COPY } from './marketplace-copy';
 import { type MarketplacePartner } from './marketplace-partner';
 import { ProfileEyebrow } from './ProfileEyebrow';
 import { SuperPartnerMark } from './SuperPartnerMark';
@@ -64,20 +64,17 @@ export function PartnerProfileHeader({
     .filter(Boolean)
     .join(', ');
 
-  if (partner.superPartner) {
-    return (
-      <Wrapper>
-        <SuperPartnerMark label={i18n._(msg`Super partner`)} />
-        <Name id="partner-name">{partner.name}</Name>
-        {locationLine ? <ProfileEyebrow>{locationLine}</ProfileEyebrow> : null}
-      </Wrapper>
-    );
-  }
-
   return (
     <Wrapper>
-      {locationLine ? <ProfileEyebrow>{locationLine}</ProfileEyebrow> : null}
+      {partner.superPartner ? (
+        <SuperPartnerMark label={i18n._(MARKETPLACE_COPY.superPartner)} />
+      ) : locationLine ? (
+        <ProfileEyebrow>{locationLine}</ProfileEyebrow>
+      ) : null}
       <Name id="partner-name">{partner.name}</Name>
+      {partner.superPartner && locationLine ? (
+        <ProfileEyebrow>{locationLine}</ProfileEyebrow>
+      ) : null}
     </Wrapper>
   );
 }

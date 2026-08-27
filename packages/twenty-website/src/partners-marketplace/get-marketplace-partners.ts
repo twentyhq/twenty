@@ -7,7 +7,6 @@ import { rankPartners } from './rank-partners';
 // page content: partnerTier is an internal classification the UI never renders,
 // and rotationKey is next week's tiebreak seed. Neither belongs in View Source
 // of a page that exists to stop partners from gaming their position.
-// Rank uses superPartner to pin, then it stays on the public partner because it is display.
 export const getMarketplacePartners = async (): Promise<
   MarketplacePartner[]
 > => {

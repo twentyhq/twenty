@@ -113,6 +113,37 @@ describe('fetchLivePartnerProfile', () => {
     });
   });
 
+  it('reads superPartner null as false', async () => {
+    mockedFetch.mockResolvedValue({
+      ok: true,
+      partner: {
+        name: 'Acme',
+        slug: 'acme',
+        introduction: 'Hi',
+        languagesSpoken: ['ENGLISH'],
+        partnerScope: ['ADVISORY'],
+        region: ['US'],
+        calendarLink: null,
+        hourlyRate: null,
+        projectBudgetMin: null,
+        linkedin: null,
+        website: null,
+        profilePicture: null,
+        profileLinks: [],
+        skills: null,
+        city: null,
+        country: null,
+        services: [],
+        portfolio: [],
+        superPartner: null,
+      },
+    });
+
+    expect(await fetchLivePartnerProfile('acme')).toMatchObject({
+      superPartner: false,
+    });
+  });
+
   it('returns undefined when the API reports not found', async () => {
     mockedFetch.mockResolvedValue({ ok: false, reason: 'NOT_FOUND' });
     expect(await fetchLivePartnerProfile('missing')).toBeUndefined();

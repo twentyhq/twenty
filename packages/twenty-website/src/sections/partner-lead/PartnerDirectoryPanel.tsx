@@ -42,10 +42,6 @@ export function PartnerDirectoryPanel({
     [partners, criteria],
   );
 
-  const matchCardCta = (
-    <GetMatchedButton label={msg`Get matched`} variant="filled" />
-  );
-
   return (
     <>
       <Filters>
@@ -62,7 +58,9 @@ export function PartnerDirectoryPanel({
       </Filters>
       <Results>
         <MarketplaceGrid
-          matchCardCta={matchCardCta}
+          matchCardCta={
+            <GetMatchedButton label={msg`Get matched`} variant="filled" />
+          }
           partners={filteredPartners}
         />
         {filteredPartners.length === 0 && partners.length > 0 && (
