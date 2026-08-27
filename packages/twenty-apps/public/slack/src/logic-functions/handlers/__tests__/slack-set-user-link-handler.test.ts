@@ -329,9 +329,29 @@ describe('slackSetUserLinkHandler', () => {
       id: 'link-1',
       workspaceMemberId: INPUT.workspaceMemberId,
       name: 'Ada',
-      source: 'MANUAL',
+      source: undefined,
       consentState: undefined,
     });
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
+  it('should not pin an AUTO link to manual when re-saving the same member', async () => {
+    findSlackUserLinkMock.mockResolvedValue({
+      id: 'link-1',
+      workspaceMemberId: INPUT.workspaceMemberId,
+      source: 'AUTO',
+      consentState: 'ACTIVE',
+    });
+
+    const result = await slackSetUserLinkHandler({ ...INPUT, name: 'Ada' });
+
+    expect(result.success).toBe(true);
+    // Rewriting source would trade the AUTO link's live email re-verification
+    // for a static grant the person never consented to.
+    expect(updateSlackUserLinkMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ source: undefined, consentState: undefined }),
+    );
     expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
   });
 
@@ -350,7 +370,7 @@ describe('slackSetUserLinkHandler', () => {
       id: 'link-1',
       workspaceMemberId: INPUT.workspaceMemberId,
       name: 'Ada',
-      source: 'MANUAL',
+      source: undefined,
       consentState: undefined,
     });
     expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
@@ -614,7 +634,7 @@ describe('slackSetUserLinkHandler', () => {
     expect(findWorkspaceMemberEmailByIdMock).not.toHaveBeenCalled();
     expect(updateSlackUserLinkMock).toHaveBeenCalledWith(
       expect.anything(),
-      expect.objectContaining({ source: 'MANUAL', consentState: undefined }),
+      expect.objectContaining({ source: undefined, consentState: undefined }),
     );
     expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
   });

@@ -13,7 +13,7 @@ type SlackUserLinkWriteDecision = {
   isEagerAutoMatch: boolean;
   requiresConsent: boolean;
   consentState: SlackUserLinkConsentState | undefined;
-  source: SlackUserLinkSource;
+  source: SlackUserLinkSource | undefined;
 };
 
 // Linking a Slack account to the member with the same email is the email
@@ -85,9 +85,14 @@ export const decideSlackUserLinkWrite = async ({
         ? SLACK_USER_LINK_CONSENT_STATE.ACTIVE
         : SLACK_USER_LINK_CONSENT_STATE.PENDING;
 
-  const source = isEagerAutoMatch
-    ? SLACK_USER_LINK_SOURCE.AUTO
-    : SLACK_USER_LINK_SOURCE.MANUAL;
+  // A same-member re-save must not rewrite the source: forcing MANUAL would
+  // pin an AUTO link, silently trading its live email re-verification for a
+  // static grant the person may never have consented to.
+  const source = isSameMemberRelink
+    ? undefined
+    : isEagerAutoMatch
+      ? SLACK_USER_LINK_SOURCE.AUTO
+      : SLACK_USER_LINK_SOURCE.MANUAL;
 
   return { isEagerAutoMatch, requiresConsent, consentState, source };
 };
