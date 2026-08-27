@@ -1,0 +1,347 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Vendored genql engine output > renders schema types byte-identically 1`] = `
+"// @ts-nocheck
+export type Scalars = {
+    JSON: Record<string, unknown>,
+    DateTime: string,
+    UUID: string,
+    String: string,
+    Boolean: boolean,
+}
+
+export type CompanyStage = 'LEAD' | 'CUSTOMER'
+
+export type Node = (Person | Company) & { __isUnion?: true }
+
+export type SearchResult = (Person | Company) & { __isUnion?: true }
+
+export interface Person {
+    id: Scalars['UUID']
+    name?: Scalars['String']
+    stage?: CompanyStage
+    settings?: Scalars['JSON']
+    createdAt: Scalars['DateTime']
+    employer?: Company
+    __typename: 'Person'
+}
+
+export interface Company {
+    id: Scalars['UUID']
+    domainName?: Scalars['String']
+    people?: (Person | undefined)[]
+    __typename: 'Company'
+}
+
+export interface Query {
+    node?: Node
+    person?: Person
+    search?: SearchResult
+    __typename: 'Query'
+}
+
+export interface Mutation {
+    createPerson?: Person
+    __typename: 'Mutation'
+}
+
+export interface NodeGenqlSelection{
+    id?: boolean | number
+    on_Person?: PersonGenqlSelection
+    on_Company?: CompanyGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface SearchResultGenqlSelection{
+    on_Person?:PersonGenqlSelection,
+    on_Company?:CompanyGenqlSelection,
+    on_Node?: NodeGenqlSelection,
+    __typename?: boolean | number
+}
+
+export interface PersonGenqlSelection{
+    id?: boolean | number
+    name?: boolean | number
+    stage?: boolean | number
+    settings?: boolean | number
+    createdAt?: boolean | number
+    employer?: CompanyGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface CompanyGenqlSelection{
+    id?: boolean | number
+    domainName?: boolean | number
+    people?: PersonGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface PersonCreateInput {name: Scalars['String'],stage?: (CompanyStage | null),settings?: (Scalars['JSON'] | null)}
+
+export interface QueryGenqlSelection{
+    node?: (NodeGenqlSelection & { __args: {id: Scalars['UUID']} })
+    person?: (PersonGenqlSelection & { __args: {id: Scalars['UUID']} })
+    search?: (SearchResultGenqlSelection & { __args: {term: Scalars['String']} })
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MutationGenqlSelection{
+    createPerson?: (PersonGenqlSelection & { __args: {input: PersonCreateInput} })
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+
+    const Node_possibleTypes: string[] = ['Person','Company']
+    export const isNode = (obj?: { __typename?: any } | null): obj is Node => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isNode"')
+      return Node_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const SearchResult_possibleTypes: string[] = ['Person','Company']
+    export const isSearchResult = (obj?: { __typename?: any } | null): obj is SearchResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSearchResult"')
+      return SearchResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const Person_possibleTypes: string[] = ['Person']
+    export const isPerson = (obj?: { __typename?: any } | null): obj is Person => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPerson"')
+      return Person_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const Company_possibleTypes: string[] = ['Company']
+    export const isCompany = (obj?: { __typename?: any } | null): obj is Company => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCompany"')
+      return Company_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const Query_possibleTypes: string[] = ['Query']
+    export const isQuery = (obj?: { __typename?: any } | null): obj is Query => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isQuery"')
+      return Query_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const Mutation_possibleTypes: string[] = ['Mutation']
+    export const isMutation = (obj?: { __typename?: any } | null): obj is Mutation => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMutation"')
+      return Mutation_possibleTypes.includes(obj.__typename)
+    }
+    
+
+export const enumCompanyStage = {
+   LEAD: 'LEAD' as const,
+   CUSTOMER: 'CUSTOMER' as const
+}
+"
+`;
+
+exports[`Vendored genql engine output > renders the SDL byte-identically 1`] = `
+"scalar JSON
+
+scalar DateTime
+
+scalar UUID
+
+enum CompanyStage {
+  LEAD
+  CUSTOMER
+}
+
+interface Node {
+  id: UUID!
+}
+
+union SearchResult = Person | Company
+
+type Person implements Node {
+  id: UUID!
+  name: String
+  stage: CompanyStage
+  settings: JSON
+  createdAt: DateTime!
+  employer: Company
+}
+
+type Company implements Node {
+  id: UUID!
+  domainName: String
+  people: [Person]
+}
+
+input PersonCreateInput {
+  name: String!
+  stage: CompanyStage
+  settings: JSON
+}
+
+type Query {
+  node(id: UUID!): Node
+  person(id: UUID!): Person
+  search(term: String!): SearchResult
+}
+
+type Mutation {
+  createPerson(input: PersonCreateInput!): Person
+}"
+`;
+
+exports[`Vendored genql engine output > renders the runtime type map byte-identically 1`] = `
+"export default {
+    "scalars": [
+        0,
+        1,
+        2,
+        3,
+        7,
+        12
+    ],
+    "types": {
+        "JSON": {},
+        "DateTime": {},
+        "UUID": {},
+        "CompanyStage": {},
+        "Node": {
+            "id": [
+                2
+            ],
+            "on_Person": [
+                6
+            ],
+            "on_Company": [
+                8
+            ],
+            "__typename": [
+                7
+            ]
+        },
+        "SearchResult": {
+            "on_Person": [
+                6
+            ],
+            "on_Company": [
+                8
+            ],
+            "on_Node": [
+                4
+            ],
+            "__typename": [
+                7
+            ]
+        },
+        "Person": {
+            "id": [
+                2
+            ],
+            "name": [
+                7
+            ],
+            "stage": [
+                3
+            ],
+            "settings": [
+                0
+            ],
+            "createdAt": [
+                1
+            ],
+            "employer": [
+                8
+            ],
+            "__typename": [
+                7
+            ]
+        },
+        "String": {},
+        "Company": {
+            "id": [
+                2
+            ],
+            "domainName": [
+                7
+            ],
+            "people": [
+                6
+            ],
+            "__typename": [
+                7
+            ]
+        },
+        "PersonCreateInput": {
+            "name": [
+                7
+            ],
+            "stage": [
+                3
+            ],
+            "settings": [
+                0
+            ],
+            "__typename": [
+                7
+            ]
+        },
+        "Query": {
+            "node": [
+                4,
+                {
+                    "id": [
+                        2,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "person": [
+                6,
+                {
+                    "id": [
+                        2,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "search": [
+                5,
+                {
+                    "term": [
+                        7,
+                        "String!"
+                    ]
+                }
+            ],
+            "__typename": [
+                7
+            ]
+        },
+        "Mutation": {
+            "createPerson": [
+                6,
+                {
+                    "input": [
+                        9,
+                        "PersonCreateInput!"
+                    ]
+                }
+            ],
+            "__typename": [
+                7
+            ]
+        },
+        "Boolean": {}
+    }
+}"
+`;

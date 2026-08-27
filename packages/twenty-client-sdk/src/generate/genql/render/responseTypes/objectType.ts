@@ -31,17 +31,12 @@ export const objectType = (
         ? [type.name]
         : ctx.schema.getPossibleTypes(type).map((t) => t.name)
 
-    const fieldTypeOverrides = ctx.config?.fieldTypeOverrides?.[type.name]
-
     let fieldStrings = fields
         .map((f) => {
-            const overriddenType = fieldTypeOverrides?.[f.name]
             return `${fieldComment(f)}${f.name}${renderTyping(
                 f.type,
                 true,
                 true,
-                true,
-                overriddenType ? () => overriddenType : undefined,
             )}`
         })
         .concat([
