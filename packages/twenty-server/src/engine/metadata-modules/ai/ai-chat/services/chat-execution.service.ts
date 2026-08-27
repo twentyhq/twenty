@@ -72,6 +72,7 @@ import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/
 import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
 import { hasNoAssistantMessage } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-no-assistant-message.util';
 import { hasSucceededWorkspaceSetupCompletion } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-succeeded-workspace-setup-completion.util';
+import { collectUploadedFileReferences } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-uploaded-file-references.util';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
 import {
@@ -276,6 +277,8 @@ export class ChatExecutionService {
 
     const isCodeInterpreterEnabled = this.codeInterpreterService.isEnabled();
 
+    const uploadedFiles = collectUploadedFileReferences(messages);
+
     let processedMessages: ExtendedUIMessage[] = replaceUnsupportedFileParts(
       messages,
       modelConfig.modalities,
@@ -321,7 +324,10 @@ export class ChatExecutionService {
       toolCatalog,
       skillCatalog,
       preloadedTools: preloadedToolNames,
-      storedFiles,
+      uploadedFilesContext: {
+        uploadedFiles,
+        codeInterpreterFiles: storedFiles,
+      },
       workspaceInstructions: workspace.aiAdditionalInstructions ?? undefined,
       userContext,
       isWorkspaceSetupThread,

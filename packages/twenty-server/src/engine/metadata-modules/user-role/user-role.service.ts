@@ -14,7 +14,7 @@ import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-t
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -28,7 +28,7 @@ export class UserRoleService {
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly roleTargetService: RoleTargetService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly roleValidationService: RoleValidationService,
@@ -223,25 +223,21 @@ export class UserRoleService {
         userWorkspaces.map((userWorkspace) => userWorkspace.userId),
       );
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const workspaceMemberRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
-            'workspaceMember',
-            { shouldBypassPermissionChecks: true },
-          );
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workspaceMemberRepository =
+        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+          'workspaceMember',
+          { shouldBypassPermissionChecks: true },
+        );
 
-        const workspaceMembers = await workspaceMemberRepository.find({
-          where: {
-            userId: In(userIds),
-          },
-        });
+      const workspaceMembers = await workspaceMemberRepository.find({
+        where: {
+          userId: In(userIds),
+        },
+      });
 
-        return workspaceMembers;
-      },
-      authContext,
-    );
+      return workspaceMembers;
+    }, authContext);
   }
 
   private validateNotSelfAssignmentOrThrow({
@@ -274,32 +270,28 @@ export class UserRoleService {
   }): Promise<WorkspaceMemberWorkspaceEntity> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const workspaceMemberRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
-            'workspaceMember',
-            { shouldBypassPermissionChecks: true },
-          );
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workspaceMemberRepository =
+        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+          'workspaceMember',
+          { shouldBypassPermissionChecks: true },
+        );
 
-        const workspaceMember = await workspaceMemberRepository.findOne({
-          where: {
-            id: workspaceMemberId,
-          },
-        });
+      const workspaceMember = await workspaceMemberRepository.findOne({
+        where: {
+          id: workspaceMemberId,
+        },
+      });
 
-        if (!isDefined(workspaceMember)) {
-          throw new PermissionsException(
-            'Workspace member not found',
-            PermissionsExceptionCode.WORKSPACE_MEMBER_NOT_FOUND,
-          );
-        }
+      if (!isDefined(workspaceMember)) {
+        throw new PermissionsException(
+          'Workspace member not found',
+          PermissionsExceptionCode.WORKSPACE_MEMBER_NOT_FOUND,
+        );
+      }
 
-        return workspaceMember;
-      },
-      authContext,
-    );
+      return workspaceMember;
+    }, authContext);
   }
 
   public async getUserWorkspaceIdsAssignedToRole(

@@ -49,13 +49,6 @@ export class TimelineActivityTypeDTO {
   icon: string | null;
 
   @IsOptional()
-  @Field(() => String, {
-    nullable: true,
-    deprecationReason: 'Use frontComponentUniversalIdentifier',
-  })
-  renderer: string | null;
-
-  @IsOptional()
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
   frontComponentUniversalIdentifier: string | null;

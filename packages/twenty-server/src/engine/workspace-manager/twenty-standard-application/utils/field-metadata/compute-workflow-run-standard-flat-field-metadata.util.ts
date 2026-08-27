@@ -428,6 +428,62 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  coreWorkflowId: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'coreWorkflowId',
+      type: FieldMetadataType.UUID,
+      label: i18nLabel(
+        msg({
+          message: `Core workflow id`,
+          context: 'fieldMetadata.label',
+        }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Reference to the core workflow row`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconSettingsAutomation',
+      isSystem: true,
+      isNullable: true,
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  coreWorkflowVersionId: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'coreWorkflowVersionId',
+      type: FieldMetadataType.UUID,
+      label: i18nLabel(
+        msg({
+          message: `Core workflow version id`,
+          context: 'fieldMetadata.label',
+        }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Reference to the core workflowVersion row`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconSettingsAutomation',
+      isSystem: true,
+      isNullable: true,
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   position: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,

@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { useState, type Ref } from 'react';
 import { CircularProgressBar } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -80,11 +80,13 @@ const StyledPlaybackErrorDescription = styled.span`
 `;
 
 type CallRecordingVideoPlayerProps = {
+  ref?: Ref<HTMLVideoElement>;
   src: string;
   onRetry: () => Promise<unknown>;
 };
 
 export const CallRecordingVideoPlayer = ({
+  ref,
   src,
   onRetry,
 }: CallRecordingVideoPlayerProps) => {
@@ -146,6 +148,7 @@ export const CallRecordingVideoPlayer = ({
   return (
     <StyledVideoViewport>
       <StyledVideo
+        ref={ref}
         isFirstFrameReady={loadState === 'ready'}
         controls
         playsInline

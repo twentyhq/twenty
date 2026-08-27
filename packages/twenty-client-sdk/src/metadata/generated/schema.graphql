@@ -42,6 +42,7 @@ type ApplicationVariable {
   key: String!
   value: String!
   description: String!
+  label: String!
   isSecret: Boolean!
   isDeprecated: Boolean!
   type: String!
@@ -1783,7 +1784,6 @@ enum FeatureFlagKey {
   IS_APP_CLAIMING_ENABLED
   IS_UNIQUE_INDEXES_ENABLED
   IS_JSON_FILTER_ENABLED
-  IS_CALENDAR_WEEK_VIEW_ENABLED
   IS_EMAIL_GROUP_ENABLED
   IS_JUNCTION_RELATIONS_ENABLED
   IS_LIST_VIEW_ENABLED
@@ -1792,7 +1792,6 @@ enum FeatureFlagKey {
   IS_WORKFLOW_VERSION_IN_CORE_ENABLED
   IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED
   IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED
-  IS_NATIVE_CALL_RECORDING_TABS_ENABLED
 }
 
 type WorkspaceUrls {
@@ -2611,6 +2610,60 @@ type ApplicationAuthorization {
   createdAt: DateTime!
 }
 
+type File {
+  id: UUID!
+  path: String!
+  size: Float!
+  createdAt: DateTime!
+}
+
+type ApplicationFileCompletionError {
+  fileId: UUID!
+  message: String!
+}
+
+type CompleteApplicationFileUploadsResult {
+  files: [File!]!
+  errors: [ApplicationFileCompletionError!]!
+}
+
+type ApplicationFileUploadTarget {
+  fileId: UUID!
+  fileFolder: FileFolder!
+  filePath: String!
+  uploadUrl: String!
+  contentType: String!
+  expiresAt: DateTime!
+}
+
+enum FileFolder {
+  CorePicture
+  AgentChat
+  BuiltLogicFunction
+  BuiltFrontComponent
+  PublicAsset
+  Source
+  FilesField
+  Dependencies
+  Workflow
+  EmailAttachment
+  EmailImage
+  AppTarball
+  GeneratedSdkClient
+  Dpa
+}
+
+type ApplicationFileUploadError {
+  fileFolder: FileFolder!
+  filePath: String!
+  message: String!
+}
+
+type CreateApplicationFileUploadsResult {
+  targets: [ApplicationFileUploadTarget!]!
+  errors: [ApplicationFileUploadError!]!
+}
+
 type DevelopmentApplication {
   id: String!
   universalIdentifier: String!
@@ -2619,13 +2672,6 @@ type DevelopmentApplication {
 type WorkspaceMigration {
   applicationUniversalIdentifier: String!
   actions: JSON!
-}
-
-type File {
-  id: UUID!
-  path: String!
-  size: Float!
-  createdAt: DateTime!
 }
 
 type PublicDomain {
@@ -3254,7 +3300,6 @@ type TimelineActivityType {
   emit: TimelineActivityTypeEmit
   action: String @deprecated(reason: "Use emit.on")
   icon: String
-  renderer: String @deprecated(reason: "Use frontComponentUniversalIdentifier")
   frontComponentUniversalIdentifier: UUID
   objectUniversalIdentifier: UUID @deprecated(reason: "Use emit.objectUniversalIdentifier")
   replacesTimelineActivityTypeUniversalIdentifier: UUID
@@ -3781,7 +3826,7 @@ type Mutation {
   generateTransientToken: TransientToken!
   getAuthTokensFromLoginToken(loginToken: String!, origin: String!): AuthTokens!
   getAuthTokensFromSSOExchangeToken(ssoExchangeToken: String!): AuthTokens!
-  authorizeApp(clientId: String!, codeChallenge: String, redirectUrl: String!, state: String, scope: String): AuthorizeApp!
+  authorizeApp(clientId: String!, codeChallenge: String, redirectUrl: String!, state: String, scope: String, issuer: String): AuthorizeApp!
   renewToken(appToken: String!): AuthTokens!
   signOut(refreshToken: String): Boolean!
   generateApiKeyToken(apiKeyId: UUID!, expiresAt: String!): ApiKeyToken!
@@ -3817,6 +3862,8 @@ type Mutation {
   createDevelopmentApplication(universalIdentifier: String!, name: String!): DevelopmentApplication!
   syncApplication(manifest: JSON!, dryRun: Boolean): WorkspaceMigration!
   uploadApplicationFile(file: Upload!, applicationUniversalIdentifier: String!, fileFolder: FileFolder!, filePath: String!): File!
+  createApplicationFileUploads(applicationUniversalIdentifier: String!, files: [ApplicationFileUploadRequestInput!]!): CreateApplicationFileUploadsResult!
+  completeApplicationFileUploads(applicationUniversalIdentifier: String!, fileIds: [UUID!]!): CompleteApplicationFileUploadsResult!
   revokeApplicationAuthorization(applicationAuthorizationId: UUID!): Boolean!
   generateApplicationToken(applicationId: UUID!): ApplicationTokenPair!
   renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!
@@ -3865,23 +3912,6 @@ input UpdateNavigationMenuItemInput {
   icon: String
   color: String
   pageLayoutId: UUID
-}
-
-enum FileFolder {
-  CorePicture
-  AgentChat
-  BuiltLogicFunction
-  BuiltFrontComponent
-  PublicAsset
-  Source
-  FilesField
-  Dependencies
-  Workflow
-  EmailAttachment
-  EmailImage
-  AppTarball
-  GeneratedSdkClient
-  Dpa
 }
 
 """The `Upload` scalar type represents a file upload."""
@@ -5093,6 +5123,12 @@ input ConnectionParametersInput {
 input UpdateLabPublicFeatureFlagInput {
   publicFeatureFlag: String!
   value: Boolean!
+}
+
+input ApplicationFileUploadRequestInput {
+  fileFolder: FileFolder!
+  filePath: String!
+  size: Int!
 }
 
 type Subscription {

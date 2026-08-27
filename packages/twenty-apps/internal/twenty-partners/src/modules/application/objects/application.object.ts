@@ -28,8 +28,6 @@ export const APPLICATION_STATE_FIELD_ID =
   'c686db4f-f0e9-41a0-bdb3-3b4024ff59b6';
 export const APPLICATION_PITCH_FIELD_ID =
   '0a6cd9c9-e1e9-4315-8356-b72077443805';
-export const APPLICATION_LAST_ACTIVITY_AT_FIELD_ID =
-  'b184ac02-51b2-4442-9505-2b06f5c94112';
 
 export default defineObject({
   universalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
@@ -128,14 +126,6 @@ export default defineObject({
       name: 'pitch',
       label: 'Pitch',
       icon: 'IconMessage',
-      isNullable: true,
-    },
-    {
-      universalIdentifier: APPLICATION_LAST_ACTIVITY_AT_FIELD_ID,
-      type: FieldType.DATE_TIME,
-      name: 'lastActivityAt',
-      label: 'Last Activity At',
-      icon: 'IconClock',
       isNullable: true,
     },
   ],

@@ -17,7 +17,7 @@ const listDashboardsSchema = z.object({
 });
 
 export const createListDashboardsTool = (
-  deps: Pick<DashboardToolDependencies, 'globalWorkspaceOrmManager'>,
+  deps: Pick<DashboardToolDependencies, 'workspaceOrmManager'>,
   context: DashboardToolContext,
 ) => ({
   name: 'list_dashboards' as const,
@@ -29,18 +29,13 @@ export const createListDashboardsTool = (
       const authContext = buildSystemAuthContext(context.workspaceId);
 
       const dashboards =
-        await deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
-          async () => {
-            const repo = await deps.globalWorkspaceOrmManager.getRepository(
-              context.workspaceId,
-              'dashboard',
-              { shouldBypassPermissionChecks: true },
-            );
+        await deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
+          const repo = deps.workspaceOrmManager.getRepository('dashboard', {
+            shouldBypassPermissionChecks: true,
+          });
 
-            return repo.find({ take: limit, order: { position: 'ASC' } });
-          },
-          authContext,
-        );
+          return repo.find({ take: limit, order: { position: 'ASC' } });
+        }, authContext);
 
       const dashboardList = dashboards.map((d) => ({
         id: d.id,

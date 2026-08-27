@@ -16,8 +16,9 @@ import {
   REFACTOR_TIMELINE_ACTIVITY_TYPE_RENDERING_UPGRADE_COMMAND_NAME,
   TIMELINE_ACTIVITY_TYPE_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
 } from 'src/database/commands/upgrade-version-command/2-34/timeline-activity-type-upgrade-command-name.constants';
+import { DROP_TIMELINE_ACTIVITY_TYPE_RENDERER_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-35/drop-timeline-activity-type-renderer-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
-import { type WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
+import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
 
@@ -62,9 +63,10 @@ export class TimelineActivityTypeEntity
   @Column({ nullable: true, type: 'varchar' })
   icon: string | null;
 
-  // A 2.33 server still selects this column during a rolling deployment. It is
-  // no longer mapped into current metadata. The decorator and physical drop
-  // are both deferred to 2.35; the branded type lets flat builders omit it.
+  @WasRemovedInUpgrade({
+    upgradeCommandName:
+      DROP_TIMELINE_ACTIVITY_TYPE_RENDERER_UPGRADE_COMMAND_NAME,
+  })
   @Column({ nullable: true, type: 'varchar' })
   renderer: WasRemovedInUpgrade<string | null>;
 

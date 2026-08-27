@@ -89,11 +89,12 @@ export const computeOrderedMigrationActions = (
 
     ...aggregatedOrchestratorActionsReport.pageLayout.delete,
     ...aggregatedOrchestratorActionsReport.pageLayout.create,
-    ...aggregatedOrchestratorActionsReport.pageLayout.update,
 
     ...aggregatedOrchestratorActionsReport.pageLayoutTab.delete,
     ...aggregatedOrchestratorActionsReport.pageLayoutTab.create,
     ...aggregatedOrchestratorActionsReport.pageLayoutTab.update,
+
+    ...aggregatedOrchestratorActionsReport.pageLayout.update,
 
     ...aggregatedOrchestratorActionsReport.pageLayoutWidget.delete,
     ...aggregatedOrchestratorActionsReport.pageLayoutWidget.create,

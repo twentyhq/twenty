@@ -1,6 +1,6 @@
 import { type TimelineActivityTypeSnapshot } from 'twenty-shared/timeline';
 
-import { type GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
@@ -39,7 +39,7 @@ describe('TimelineActivityRepository', () => {
       update,
       insert,
     };
-    const globalWorkspaceOrmManager = {
+    const workspaceOrmManager = {
       executeInWorkspaceContext: jest.fn(
         async (callback: () => Promise<void>) => callback(),
       ),
@@ -55,10 +55,8 @@ describe('TimelineActivityRepository', () => {
             executeRawQuery: jest.fn().mockResolvedValue([]),
           }),
       ),
-    } as unknown as GlobalWorkspaceOrmManager;
-    const repository = new TimelineActivityRepository(
-      globalWorkspaceOrmManager,
-    );
+    } as unknown as WorkspaceOrmManager;
+    const repository = new TimelineActivityRepository(workspaceOrmManager);
 
     await repository.upsertTimelineActivities({
       objectSingularName: 'person',
@@ -97,7 +95,7 @@ describe('TimelineActivityRepository', () => {
       update: jest.fn().mockResolvedValue(undefined),
       insert: jest.fn().mockResolvedValue(undefined),
     };
-    const globalWorkspaceOrmManager = {
+    const workspaceOrmManager = {
       executeInWorkspaceContext: jest.fn(
         async (callback: () => Promise<void>) => callback(),
       ),
@@ -113,10 +111,8 @@ describe('TimelineActivityRepository', () => {
             executeRawQuery,
           }),
       ),
-    } as unknown as GlobalWorkspaceOrmManager;
-    const repository = new TimelineActivityRepository(
-      globalWorkspaceOrmManager,
-    );
+    } as unknown as WorkspaceOrmManager;
+    const repository = new TimelineActivityRepository(workspaceOrmManager);
 
     await repository.upsertTimelineActivities({
       objectSingularName: 'person',

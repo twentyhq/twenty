@@ -125,7 +125,6 @@ describe('PageLayoutVerticalList', () => {
       makeWidget('emails', WidgetType.EMAILS),
       makeWidget('email-thread', WidgetType.EMAIL_THREAD),
       makeWidget('files', WidgetType.FILES),
-      makeWidget('message-campaign-body', WidgetType.MESSAGE_CAMPAIGN_BODY),
       makeWidget('notes', WidgetType.NOTES),
       makeWidget('tasks', WidgetType.TASKS),
       makeWidget('workflow', WidgetType.WORKFLOW),
@@ -155,6 +154,26 @@ describe('PageLayoutVerticalList', () => {
         .getByTestId('fields')
         .closest('.page-layout-viewport-filling-widget-slot'),
     ).toBeNull();
+  });
+
+  it('keeps campaign documents fit-content so the tab owns scrolling', () => {
+    render(
+      <PageLayoutVerticalList
+        isInEditMode={false}
+        widgets={[
+          makeWidget('message-campaign-body', WidgetType.MESSAGE_CAMPAIGN_BODY),
+        ]}
+      />,
+    );
+
+    expect(
+      screen
+        .getByTestId('message-campaign-body')
+        .closest('.page-layout-viewport-filling-widget-slot'),
+    ).toBeNull();
+    expect(
+      screen.getByTestId('message-campaign-body-sortable-cell'),
+    ).toHaveAttribute('data-fill', 'false');
   });
 
   it('gives a lone Canvas front component viewport-filling sizing', () => {
