@@ -1,0 +1,33 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
+export type SlackResolveInput = {
+  email: string | undefined;
+  slackUserId: string | undefined;
+  slackTeamId: string | undefined;
+};
+
+// Raw field values become the resolve route's payload: trimmed, with empties
+// dropped so the handler's guards read them as absent.
+export const toSlackResolveInput = ({
+  email,
+  slackUserId,
+  slackTeamId,
+}: {
+  email: string;
+  slackUserId: string;
+  slackTeamId: string;
+}): SlackResolveInput => {
+  const trimmedEmail = email.trim();
+  const trimmedSlackUserId = slackUserId.trim();
+  const trimmedSlackTeamId = slackTeamId.trim();
+
+  return {
+    email: isNonEmptyString(trimmedEmail) ? trimmedEmail : undefined,
+    slackUserId: isNonEmptyString(trimmedSlackUserId)
+      ? trimmedSlackUserId
+      : undefined,
+    slackTeamId: isNonEmptyString(trimmedSlackTeamId)
+      ? trimmedSlackTeamId
+      : undefined,
+  };
+};

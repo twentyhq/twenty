@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -10,9 +10,8 @@ import { H2Title } from 'twenty-ui/typography';
 import { SlackUserLinkConfirmCard } from 'src/front-components/components/SlackUserLinkConfirmCard';
 import { SlackUserLinkTextInput } from 'src/front-components/components/SlackUserLinkTextInput';
 import { WorkspaceMemberPicker } from 'src/front-components/components/WorkspaceMemberPicker';
-import { useResolveSlackUser } from 'src/front-components/hooks/use-resolve-slack-user';
+import { useAutoResolveSlackUser } from 'src/front-components/hooks/use-auto-resolve-slack-user';
 import { useSetSlackUserLink } from 'src/front-components/hooks/use-set-slack-user-link';
-import { type SlackResolvedUser } from 'src/logic-functions/types/slack-resolved-user.type';
 import { type WorkspaceMemberOption } from 'src/front-components/types/workspace-member-option.type';
 
 const StyledForm = styled.form`
@@ -36,6 +35,12 @@ const StyledLabel = styled.label`
 
 const StyledHint = styled.span`
   color: ${() => themeCssVariables.font.color.tertiary};
+  font-family: ${() => themeCssVariables.font.family};
+  font-size: ${() => themeCssVariables.font.size.xs};
+`;
+
+const StyledResolveError = styled.span`
+  color: ${() => themeCssVariables.color.red};
   font-family: ${() => themeCssVariables.font.family};
   font-size: ${() => themeCssVariables.font.size.xs};
 `;
@@ -68,20 +73,17 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
   const [slackUserId, setSlackUserId] = useState('');
   const [slackTeamId, setSlackTeamId] = useState('');
   const [isConnectUser, setIsConnectUser] = useState(false);
-  const [resolvedUser, setResolvedUser] = useState<SlackResolvedUser | null>(
-    null,
-  );
-  // Bumps whenever the Slack identity changes, so a resolve that is already in
-  // flight against an earlier identity does not restore a stale match.
-  const resolveRequestIdRef = useRef(0);
 
-  const { resolveSlackUser, isResolving } = useResolveSlackUser();
+  const {
+    resolvedUser,
+    resolveError,
+    isResolving,
+    onIdentityChange,
+    resolveNow,
+    clearResolution,
+  } = useAutoResolveSlackUser();
   const { setSlackUserLink, isSubmitting } = useSetSlackUserLink();
 
-  const hasSlackIdentity =
-    isNonEmptyString(email.trim()) || isNonEmptyString(slackUserId.trim());
-
-  const canResolve = hasSlackIdentity && !isResolving && !isSubmitting;
   const canSubmit =
     selectedMember !== null && resolvedUser !== null && !isSubmitting;
 
@@ -92,45 +94,7 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
     setSlackUserId('');
     setSlackTeamId('');
     setIsConnectUser(false);
-    setResolvedUser(null);
-  };
-
-  // Any change to the Slack identity invalidates a previously confirmed match
-  // and any resolve still in flight against the old identity.
-  const clearResolvedUser = () => {
-    resolveRequestIdRef.current += 1;
-
-    if (resolvedUser !== null) {
-      setResolvedUser(null);
-    }
-  };
-
-  const handleResolve = async () => {
-    const requestId = resolveRequestIdRef.current;
-
-    const result = await resolveSlackUser({
-      email: isNonEmptyString(email.trim()) ? email.trim() : undefined,
-      slackUserId: isNonEmptyString(slackUserId.trim())
-        ? slackUserId.trim()
-        : undefined,
-      slackTeamId: isNonEmptyString(slackTeamId.trim())
-        ? slackTeamId.trim()
-        : undefined,
-    });
-
-    // The identity changed while this request was in flight, so its result is
-    // stale; a newer resolve owns the confirmed match now.
-    if (requestId !== resolveRequestIdRef.current) {
-      return;
-    }
-
-    if (!result.success) {
-      setResolvedUser(null);
-      enqueueSnackbar({ message: result.error, variant: 'error' });
-      return;
-    }
-
-    setResolvedUser(result.slackUser);
+    clearResolution();
   };
 
   const handleSubmit = async () => {
@@ -160,6 +124,19 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
     }
   };
 
+  // Enter saves once a match is confirmed; before that it skips the debounce
+  // and looks the identity up right away.
+  const handleFormSubmit = () => {
+    if (resolvedUser === null) {
+      resolveNow({ email, slackUserId, slackTeamId });
+      return;
+    }
+
+    if (canSubmit) {
+      handleSubmit();
+    }
+  };
+
   return (
     <Section>
       <H2Title
@@ -169,15 +146,7 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
       <StyledForm
         onSubmit={(event) => {
           event.preventDefault();
-
-          // Enter runs whichever step is showing: resolve first, then save.
-          if (resolvedUser === null) {
-            if (canResolve) {
-              handleResolve();
-            }
-          } else if (canSubmit) {
-            handleSubmit();
-          }
+          handleFormSubmit();
         }}
       >
         <StyledField>
@@ -197,14 +166,17 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
             value={email}
             onChange={(event) => {
               setEmail(event.target.value);
-              clearResolvedUser();
+              onIdentityChange({
+                email: event.target.value,
+                slackUserId,
+                slackTeamId,
+              });
             }}
             placeholder="ada@company.com"
             disabled={isSubmitting}
           />
           <StyledHint>
-            The email on their Slack account. We match it to a Slack user in
-            your workspace.
+            The email on their Slack account. We look them up as you type.
           </StyledHint>
         </StyledField>
         {isConnectUser ? (
@@ -216,7 +188,11 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
                 value={slackUserId}
                 onChange={(event) => {
                   setSlackUserId(event.target.value);
-                  clearResolvedUser();
+                  onIdentityChange({
+                    email,
+                    slackUserId: event.target.value,
+                    slackTeamId,
+                  });
                 }}
                 placeholder="U0123456789"
                 disabled={isSubmitting}
@@ -235,7 +211,11 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
                 value={slackTeamId}
                 onChange={(event) => {
                   setSlackTeamId(event.target.value);
-                  clearResolvedUser();
+                  onIdentityChange({
+                    email,
+                    slackUserId,
+                    slackTeamId: event.target.value,
+                  });
                 }}
                 placeholder="T0123456789"
                 disabled={isSubmitting}
@@ -254,22 +234,16 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
             Guest or Slack Connect user? Link by Slack ID instead
           </StyledDisclosureButton>
         )}
-        {resolvedUser === null ? (
-          <StyledActions>
-            <Button
-              type="button"
-              title={isResolving ? 'Finding…' : 'Find Slack user'}
-              variant="secondary"
-              disabled={!canResolve}
-              onClick={handleResolve}
-            />
-          </StyledActions>
-        ) : (
+        {resolvedUser !== null ? (
           <SlackUserLinkConfirmCard
             resolvedUser={resolvedUser}
             selectedMemberEmail={selectedMember?.userEmail ?? undefined}
           />
-        )}
+        ) : isResolving ? (
+          <StyledHint>Finding the Slack user…</StyledHint>
+        ) : resolveError !== null ? (
+          <StyledResolveError>{resolveError}</StyledResolveError>
+        ) : null}
         <StyledField>
           <StyledLabel htmlFor="slack-display-name">
             Display name (optional)
