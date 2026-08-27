@@ -9860,7 +9860,7 @@ msgstr "Filen är tom eller överskrider den maximalt tillåtna storleken."
 #. js-lingui-id: 2hrpBa
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "The file upload has not been completed. Please retry the upload."
-msgstr ""
+msgstr "Filuppladdningen har inte slutförts. Försök att ladda upp igen."
 
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
