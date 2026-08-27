@@ -118,6 +118,23 @@ of the following, update the playbook in the same change:
 Facts on the page come from the same constants the view and intake use. Do
 not leave stale steps. Do not keep a second copy on twenty.com or in a Note.
 
+## Opportunity process playbooks
+
+How to process (Matching Admin) and How to apply (Partner Workspace) are
+standalone pages under `src/modules/opportunity/how-to-process/`. They must
+stay in lockstep with real operator behaviour. Update the matching page and
+its copy test in the same change when you change any of:
+
+- Intake (marketplace brief already Listed + Discord; TFT unlisted;
+  `/twenty-lead-brief` writes Design Doc URL)
+- Listing (`Listed` flip → Discord; daily digest; Open Briefs membership)
+- Intro (`Intro Sent At` turns Listed off; Invited applications)
+- Win (set Partner → Won / Declined; Backup stays; unassign reopens Won
+  to Applied; Deals stages New → Screening → Meeting → Proposal → Customer)
+- Apply (Open Briefs listed-only; pitch minimum; one pitch; state meaning)
+
+Pages stay operator language. No file names on the pages.
+
 ## Where does new code go?
 
 External API call → `connector/`. Raw query/mutation → `graphql/`. Any logic →
