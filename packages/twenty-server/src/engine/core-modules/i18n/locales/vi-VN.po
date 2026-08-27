@@ -9854,7 +9854,7 @@ msgstr "Tệp trống hoặc vượt quá kích thước tối đa cho phép."
 #. js-lingui-id: 2hrpBa
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "The file upload has not been completed. Please retry the upload."
-msgstr ""
+msgstr "Việc tải tệp lên chưa hoàn tất. Vui lòng thử tải lên lại."
 
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
