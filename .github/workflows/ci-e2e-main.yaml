@@ -255,6 +255,10 @@ jobs:
       # write capability; the PR comment is posted by the qa-scout-comment job
       # from the uploaded verdict, so untrusted page/log content the agent
       # reads can never reach a privileged credential.
+      # The Bash allowlist scopes the agent to its task; it is not the
+      # containment boundary (psql alone is arbitrarily powerful in this
+      # disposable env). Containment is the absence of write credentials in
+      # this step, the scrub step, and Actions secret masking on the token.
       - name: QA Scout / Run
         id: qa-scout-run
         if: ${{ !cancelled() && steps.qa-scout-pr.outputs.run == 'true' }}
@@ -272,7 +276,7 @@ jobs:
             Read .claude/skills/qa-scout/SKILL.md and follow it exactly. This is
             the CI invocation: every path and credential in the skill's Inputs
             table applies verbatim.
-          claude_args: '--max-turns 120 --model opus --mcp-config /tmp/qa-scout/mcp.json --allowedTools "Read,Grep,Glob,Write,Bash(cat *),Bash(tail *),Bash(head *),Bash(wc *),Bash(ls *),Bash(grep *),Bash(mkdir *),Bash(sleep *),Bash(date *),Bash(psql *),Bash(curl http://localhost:3000/*),mcp__playwright"'
+          claude_args: '--max-turns 120 --model opus --mcp-config /tmp/qa-scout/mcp.json --allowedTools "Read,Grep,Glob,Write,Bash(cat *),Bash(tail *),Bash(head *),Bash(wc *),Bash(ls *),Bash(grep *),Bash(mkdir *),Bash(sleep *),Bash(date *),Bash(psql *),mcp__playwright"'
 
       # The agent process necessarily holds the inference credential, and a
       # prompt-injected agent could copy it into any file it can write. The
