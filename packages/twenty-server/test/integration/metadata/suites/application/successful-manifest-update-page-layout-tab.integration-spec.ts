@@ -185,7 +185,7 @@ describe('Manifest update - page layout tabs (standalone)', () => {
         {
           universalIdentifier: TEST_WIDGET_ID,
           title: 'Timeline',
-          type: 'TIMELINE',
+          type: 'TIMELINE' as const,
           configuration: {
             configurationType: 'TIMELINE' as const,
           },

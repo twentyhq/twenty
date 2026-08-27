@@ -3,6 +3,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   AggregateOperations,
   PageLayoutTabLayoutMode,
+  WidgetType,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
@@ -12,7 +13,6 @@ import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/e
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import {
   type CreateStandardPageLayoutWidgetArgs,
   createStandardPageLayoutWidgetFlatMetadata,

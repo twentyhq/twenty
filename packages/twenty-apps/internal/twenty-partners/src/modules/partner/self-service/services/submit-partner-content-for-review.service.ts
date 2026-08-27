@@ -12,7 +12,7 @@ import {
   errorResponse,
   failureResponse,
   resolvePartnerFromRequest,
-} from 'src/modules/partner/self-service/services/resolve-partner-from-request.service';
+} from 'src/modules/shared/http/resolve-partner-from-request.service';
 
 export type SubmitContentForReviewResult =
   | { ok: true; status: 'UNDER_CUSTOMER_PARTNER_REVIEW' }

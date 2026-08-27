@@ -8,7 +8,7 @@ msgstr ""
 "Language: cs\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-25 12:14\n"
+"PO-Revision-Date: 2026-08-26 18:42\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -1760,6 +1760,11 @@ msgstr "Central African Republic 🇨🇫"
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "Certification, plus a directory profile your clients can verify. The best partners also receive client briefs matched to their scope."
 msgstr "Certifikace a profil v adresáři, který si vaši klienti mohou ověřit. Nejlepší partneři také dostávají zadání od klientů odpovídající jejich zaměření."
+
+#. js-lingui-id: 4W4gsr
+#: src/sections/partner-hero/PartnerLeadHero.tsx
+msgid "Certified partners who set up your CRM to match how your company works, from the migration to the custom apps."
+msgstr "Certifikovaní partneři, kteří nastaví vaše CRM tak, aby odpovídalo fungování vaší společnosti, od migrace až po aplikace na míru."
 
 #. js-lingui-id: iI3Dq9
 #: src/partner-application/data/partner-country-options.ts
@@ -3726,8 +3731,8 @@ msgid "Get certified as a Twenty partner: a vetted badge, a directory profile yo
 msgstr "Získejte certifikaci partnera Twenty: ověřený odznak, profil v adresáři, který si vaši klienti mohou ověřit, a odpovídající zadání od klientů pro nejlepší partnery."
 
 #. js-lingui-id: b+jRGN
+#: src/sections/partner-lead/PartnerDirectoryPanel.tsx
 #: src/sections/partner-hero/PartnerLeadHero.tsx
-#: src/partners-marketplace/MarketplaceMatchCard.tsx
 #: src/client-brief/ClientBriefModal.tsx
 msgid "Get matched"
 msgstr "Nechat se spárovat"
@@ -3897,6 +3902,11 @@ msgstr "Skrýt změny"
 #: src/partner-application/data/partner-language-options.ts
 msgid "Hindi"
 msgstr "Hindi"
+
+#. js-lingui-id: 6NGgln
+#: src/sections/partner-hero/PartnerLeadHero.tsx
+msgid "Hire the people who *build on Twenty*"
+msgstr "Najměte lidi, kteří *staví na Twenty*"
 
 #. js-lingui-id: qfSbUb
 #: src/case-studies/case-study-stories.ts
@@ -6924,11 +6934,6 @@ msgstr "Dovednosti"
 msgid "Skip for now"
 msgstr "Přeskočit prozatím"
 
-#. js-lingui-id: BXjtWS
-#: src/sections/partner-hero/PartnerLeadHero.tsx
-msgid "Skip the browsing. Describe your project and we connect you with a certified Twenty partner who fits it."
-msgstr "Přeskočte procházení. Popište svůj projekt a my vás propojíme s certifikovaným partnerem Twenty, který mu vyhovuje."
-
 #. js-lingui-id: t6ComU
 #: src/sections/feature-cards/FeatureCards.tsx
 msgid "Skip the clunky UX that always comes with custom."
@@ -7175,8 +7180,8 @@ msgid "Subdomain (yourco.twenty.com)"
 msgstr "Subdoména (yourco.twenty.com)"
 
 #. js-lingui-id: 578pU6
-#: src/partners-marketplace/PartnerProfileCtas.tsx
-#: src/partners-marketplace/MarketplaceBriefPrompt.tsx
+#: src/app/[locale]/(site)/partners/page.tsx
+#: src/app/[locale]/(site)/partners/profile/[slug]/page.tsx
 msgid "Submit a brief"
 msgstr "Odeslat zadání"
 
@@ -7380,11 +7385,6 @@ msgstr "Řekněte nám, co potřebujete, a do 48 hodin vás propojíme s certifi
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
 msgid "Tell us what you need and we'll match you with a certified Twenty partner."
 msgstr "Řekněte nám, co potřebujete, a my vás spárujeme s certifikovaným partnerem Twenty."
-
-#. js-lingui-id: 7CRTri
-#: src/sections/partner-hero/PartnerLeadHero.tsx
-msgid "Tell us what you need, we match you in *48 hours*"
-msgstr "Řekněte nám, co potřebujete, a do *48 hodin* vás propojíme"
 
 #. js-lingui-id: Hevu8X
 #: src/app-preview/terminal/TerminalToggle.tsx

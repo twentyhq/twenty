@@ -78,20 +78,20 @@ export function PartnerLeadHero() {
         <HeadingPair>
           <HeadingMeasure>
             <Heading as="h1" size="lg" weight="light">
-              {i18n._(msg`Tell us what you need, we match you in *48 hours*`)}
+              {i18n._(msg`Hire the people who *build on Twenty*`)}
             </Heading>
           </HeadingMeasure>
           <BodyMeasure>
             <Body muted size="sm">
               {i18n._(
-                msg`Skip the browsing. Describe your project and we connect you with a certified Twenty partner who fits it.`,
+                msg`Certified partners who set up your CRM to match how your company works, from the migration to the custom apps.`,
               )}
             </Body>
           </BodyMeasure>
         </HeadingPair>
         <CtaRow>
-          <GetMatchedButton label={msg`Get matched`} />
           <BrowseDirectoryButton />
+          <GetMatchedButton label={msg`Get matched`} variant="outlined" />
         </CtaRow>
       </IntroStack>
       <VisualStage>
