@@ -14,8 +14,6 @@ const StyledScrollOverlayButton = styled.button<{
   bottom: ${themeCssVariables.spacing[3]};
   box-shadow: ${themeCssVariables.boxShadow.light};
   color: ${themeCssVariables.font.color.secondary};
-  // The pill radius is never doubled for squircles, so it needs round corners
-  // to read as a capsule rather than a superellipse.
   corner-shape: round;
   cursor: pointer;
   display: flex;
