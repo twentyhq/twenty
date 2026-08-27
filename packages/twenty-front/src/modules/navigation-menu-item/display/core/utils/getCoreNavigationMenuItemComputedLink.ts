@@ -1,12 +1,12 @@
-import { AppPath, NavigationSystemPage } from 'twenty-shared/types';
+import { AppPath, NavigationCorePage } from 'twenty-shared/types';
 
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-export const getSystemNavigationMenuItemComputedLink = (
+export const getCoreNavigationMenuItemComputedLink = (
   item: NavigationMenuItem,
 ): string => {
-  switch (item.systemPage) {
-    case NavigationSystemPage.WORKFLOWS:
+  switch (item.corePage) {
+    case NavigationCorePage.WORKFLOWS:
       return AppPath.WorkflowCoreIndexPage;
     default:
       return '';

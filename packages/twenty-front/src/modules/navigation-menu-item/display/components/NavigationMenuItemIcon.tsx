@@ -75,7 +75,7 @@ export const NavigationMenuItemIcon = ({
 
   if (
     navigationMenuItem.type === NavigationMenuItemType.PAGE_LAYOUT ||
-    navigationMenuItem.type === NavigationMenuItemType.SYSTEM
+    navigationMenuItem.type === NavigationMenuItemType.CORE
   ) {
     const pageLayoutIcon = isDefined(navigationMenuItem.icon)
       ? getIcon(navigationMenuItem.icon)

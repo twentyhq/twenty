@@ -12,7 +12,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 
 import {
   NavigationMenuItemType,
-  NavigationSystemPage,
+  NavigationCorePage,
 } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 
 import { RecordIdentifierDTO } from './record-identifier.dto';
@@ -56,8 +56,8 @@ export class NavigationMenuItemDTO {
   @Field(() => String, { nullable: true })
   link?: string | null;
 
-  @Field(() => NavigationSystemPage, { nullable: true })
-  systemPage?: NavigationSystemPage | null;
+  @Field(() => NavigationCorePage, { nullable: true })
+  corePage?: NavigationCorePage | null;
 
   @IsOptional()
   @Field(() => String, { nullable: true })

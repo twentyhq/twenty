@@ -1,6 +1,6 @@
 import {
   NavigationMenuItemType,
-  NavigationSystemPage,
+  NavigationCorePage,
 } from 'twenty-shared/types';
 
 import { filterAndSortNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterAndSortNavigationMenuItems';
@@ -278,21 +278,21 @@ describe('filterAndSortNavigationMenuItems', () => {
     expect(result).toEqual([]);
   });
 
-  it('should keep SYSTEM items with a systemPage and drop those without', () => {
+  it('should keep CORE items with a corePage and drop those without', () => {
     const result = filterAndSortNavigationMenuItems(
       [
         {
           id: 'sys-1',
-          type: NavigationMenuItemType.SYSTEM,
-          systemPage: NavigationSystemPage.WORKFLOWS,
+          type: NavigationMenuItemType.CORE,
+          corePage: NavigationCorePage.WORKFLOWS,
           position: 0,
           createdAt: '',
           updatedAt: '',
         },
         {
           id: 'sys-2',
-          type: NavigationMenuItemType.SYSTEM,
-          systemPage: null,
+          type: NavigationMenuItemType.CORE,
+          corePage: null,
           position: 1,
           createdAt: '',
           updatedAt: '',

@@ -166,7 +166,7 @@ export const WorkspaceSection = () => {
           pageIcon: getIcon(item.icon),
         });
         break;
-      case NavigationMenuItemType.SYSTEM:
+      case NavigationMenuItemType.CORE:
         openNavigationMenuItemInSidePanel({
           pageTitle: item.name ?? t`Edit item`,
           pageIcon: getIcon(item.icon),

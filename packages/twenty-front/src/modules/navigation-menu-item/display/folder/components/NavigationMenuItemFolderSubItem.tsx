@@ -113,7 +113,7 @@ export const NavigationMenuItemFolderSubItem = ({
         });
 
   const secondaryLabel =
-    navigationMenuItem.type === NavigationMenuItemType.SYSTEM
+    navigationMenuItem.type === NavigationMenuItemType.CORE
       ? t`System`
       : navigationMenuItem.type === NavigationMenuItemType.VIEW
         ? getObjectNavigationMenuItemSecondaryLabel({

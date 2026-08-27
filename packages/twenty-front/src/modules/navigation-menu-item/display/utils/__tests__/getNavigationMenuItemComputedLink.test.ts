@@ -2,7 +2,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type View } from '@/views/types/View';
 import {
   NavigationMenuItemType,
-  NavigationSystemPage,
+  NavigationCorePage,
   ViewKey,
   type NavigationMenuItem,
 } from '~/generated-metadata/graphql';
@@ -28,13 +28,13 @@ const objectItem: NavigationMenuItem = {
 };
 
 describe('getNavigationMenuItemComputedLink', () => {
-  it('should link a SYSTEM item to its system page route', () => {
+  it('should link a CORE item to its system page route', () => {
     expect(
       getNavigationMenuItemComputedLink({
         item: {
           id: 'nav-system',
-          type: NavigationMenuItemType.SYSTEM,
-          systemPage: NavigationSystemPage.WORKFLOWS,
+          type: NavigationMenuItemType.CORE,
+          corePage: NavigationCorePage.WORKFLOWS,
           position: 0,
           createdAt: '',
           updatedAt: '',
@@ -46,13 +46,13 @@ describe('getNavigationMenuItemComputedLink', () => {
     ).toBe('/workflow-core');
   });
 
-  it('should return an empty link for a SYSTEM item with an unknown page', () => {
+  it('should return an empty link for a CORE item with an unknown page', () => {
     expect(
       getNavigationMenuItemComputedLink({
         item: {
           id: 'nav-system-unknown',
-          type: NavigationMenuItemType.SYSTEM,
-          systemPage: 'NOT_A_PAGE' as never,
+          type: NavigationMenuItemType.CORE,
+          corePage: 'NOT_A_PAGE' as never,
           position: 0,
           createdAt: '',
           updatedAt: '',

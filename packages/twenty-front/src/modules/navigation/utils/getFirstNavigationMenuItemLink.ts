@@ -33,9 +33,9 @@ export const getFirstNavigationMenuItemLink = ({
     if (
       item.type === NavigationMenuItemType.FOLDER ||
       item.type === NavigationMenuItemType.LINK ||
-      // SYSTEM pages are permission- and flag-gated per viewer, which this
+      // CORE pages are permission- and flag-gated per viewer, which this
       // util cannot evaluate, so they never become the default home
-      item.type === NavigationMenuItemType.SYSTEM
+      item.type === NavigationMenuItemType.CORE
     ) {
       continue;
     }

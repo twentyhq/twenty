@@ -1563,7 +1563,7 @@ type NavigationMenuItem {
   type: NavigationMenuItemType!
   name: String
   link: String
-  systemPage: NavigationSystemPage
+  corePage: NavigationCorePage
   icon: String
   color: String
   folderId: UUID
@@ -1582,10 +1582,10 @@ enum NavigationMenuItemType {
   OBJECT
   RECORD
   PAGE_LAYOUT
-  SYSTEM
+  CORE
 }
 
-enum NavigationSystemPage {
+enum NavigationCorePage {
   WORKFLOWS
 }
 

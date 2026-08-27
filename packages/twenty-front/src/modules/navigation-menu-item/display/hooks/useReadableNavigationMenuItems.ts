@@ -7,7 +7,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
-import { NavigationSystemPage } from 'twenty-shared/types';
+import { NavigationCorePage } from 'twenty-shared/types';
 import {
   FeatureFlagKey,
   PermissionFlagType,
@@ -34,16 +34,16 @@ export const useReadableNavigationMenuItems = ({
     FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
   );
 
-  const readableSystemPages =
+  const readableCorePages =
     isWorkflowCoreIndexPageEnabled &&
     permissionFlagMap[PermissionFlagType.WORKFLOWS]
-      ? [NavigationSystemPage.WORKFLOWS]
+      ? [NavigationCorePage.WORKFLOWS]
       : [];
 
   const isItemReadable = (item: NavigationMenuItem) =>
     isNavigationMenuItemReadable({
       item,
-      readableSystemPages,
+      readableCorePages,
       objectMetadataItems,
       views,
       objectPermissionsByObjectMetadataId,

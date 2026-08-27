@@ -9,7 +9,7 @@ export type NavigationMenuItemManifest = SyncableEntityOptions & {
   position: number;
   viewUniversalIdentifier?: string;
   link?: string;
-  systemPage?: string;
+  corePage?: string;
   folderUniversalIdentifier?: string;
   targetObjectUniversalIdentifier?: string;
   pageLayoutUniversalIdentifier?: string;

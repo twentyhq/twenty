@@ -1,13 +1,13 @@
 import {
   NavigationMenuItemType,
-  type NavigationSystemPage,
+  type NavigationCorePage,
 } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
-export const createStandardNavigationMenuItemSystemFlatMetadata = ({
+export const createStandardNavigationMenuItemCoreFlatMetadata = ({
   universalIdentifier,
-  systemPage,
+  corePage,
   name,
   icon,
   folderId,
@@ -19,7 +19,7 @@ export const createStandardNavigationMenuItemSystemFlatMetadata = ({
   now,
 }: {
   universalIdentifier: string;
-  systemPage: NavigationSystemPage;
+  corePage: NavigationCorePage;
   name: string;
   icon?: string | null;
   folderId: string | null;
@@ -31,7 +31,7 @@ export const createStandardNavigationMenuItemSystemFlatMetadata = ({
   now: string;
 }): FlatNavigationMenuItem => ({
   id: navigationMenuItemId,
-  type: NavigationMenuItemType.SYSTEM,
+  type: NavigationMenuItemType.CORE,
   universalIdentifier,
   applicationId: twentyStandardApplicationId,
   applicationUniversalIdentifier:
@@ -49,7 +49,7 @@ export const createStandardNavigationMenuItemSystemFlatMetadata = ({
   pageLayoutUniversalIdentifier: null,
   name,
   link: null,
-  systemPage,
+  corePage,
   icon: icon ?? null,
   color: 'gray',
   position,

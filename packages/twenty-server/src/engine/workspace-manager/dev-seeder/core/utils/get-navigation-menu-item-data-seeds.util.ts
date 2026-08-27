@@ -33,7 +33,7 @@ export const getNavigationMenuItemFlatEntitySeeds = ({
       color: 'yellow',
       position: 9999,
       link: null,
-      systemPage: null,
+      corePage: null,
       userWorkspaceId: null,
       targetRecordId: null,
       targetObjectMetadataId: null,

@@ -6,7 +6,7 @@ import { useIcons } from 'twenty-ui/icon';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { getPageLayoutNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/page-layout/utils/getPageLayoutNavigationMenuItemComputedLink';
-import { getSystemNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/system/utils/getSystemNavigationMenuItemComputedLink';
+import { getCoreNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/core/utils/getCoreNavigationMenuItemComputedLink';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -29,11 +29,11 @@ export const NavigationMenuItemPageLayoutDisplay = ({
   const { t } = useLingui();
   const location = useLocation();
 
-  const isSystemItem = item.type === NavigationMenuItemType.SYSTEM;
+  const isCoreItem = item.type === NavigationMenuItemType.CORE;
 
   const label = item.name ?? '';
-  const computedLink = isSystemItem
-    ? getSystemNavigationMenuItemComputedLink(item)
+  const computedLink = isCoreItem
+    ? getCoreNavigationMenuItemComputedLink(item)
     : getPageLayoutNavigationMenuItemComputedLink(item);
   const pageLayoutColor = getNavigationMenuItemColor(item);
 
@@ -43,7 +43,7 @@ export const NavigationMenuItemPageLayoutDisplay = ({
   return (
     <NavigationDrawerItem
       label={label}
-      secondaryLabel={isSystemItem ? t`System` : undefined}
+      secondaryLabel={isCoreItem ? t`System` : undefined}
       to={
         isLayoutCustomizationModeEnabled || isDragging
           ? undefined

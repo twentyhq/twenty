@@ -1,6 +1,6 @@
 import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemComputedLink';
 import { getObjectNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemComputedLink';
-import { getSystemNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/system/utils/getSystemNavigationMenuItemComputedLink';
+import { getCoreNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/core/utils/getCoreNavigationMenuItemComputedLink';
 import { getPageLayoutNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/page-layout/utils/getPageLayoutNavigationMenuItemComputedLink';
 import { getRecordNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/record/utils/getRecordNavigationMenuItemComputedLink';
 import { getViewNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/view/utils/getViewNavigationMenuItemComputedLink';
@@ -46,8 +46,8 @@ export const getNavigationMenuItemComputedLink = ({
       return getRecordNavigationMenuItemComputedLink(item, objectMetadataItems);
     case NavigationMenuItemType.PAGE_LAYOUT:
       return getPageLayoutNavigationMenuItemComputedLink(item);
-    case NavigationMenuItemType.SYSTEM:
-      return getSystemNavigationMenuItemComputedLink(item);
+    case NavigationMenuItemType.CORE:
+      return getCoreNavigationMenuItemComputedLink(item);
     default:
       return '';
   }

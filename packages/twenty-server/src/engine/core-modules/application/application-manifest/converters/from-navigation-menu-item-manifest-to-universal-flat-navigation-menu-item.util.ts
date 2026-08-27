@@ -1,6 +1,6 @@
 import {
   NavigationMenuItemType,
-  NavigationSystemPage,
+  NavigationCorePage,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItemManifest } from 'twenty-shared/application';
@@ -28,13 +28,13 @@ export const fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem =
       viewUniversalIdentifier:
         navigationMenuItemManifest.viewUniversalIdentifier ?? null,
       link: navigationMenuItemManifest.link ?? null,
-      systemPage:
-        navigationMenuItemManifest.type === NavigationMenuItemType.SYSTEM &&
-        isDefined(navigationMenuItemManifest.systemPage) &&
-        Object.values(NavigationSystemPage).includes(
-          navigationMenuItemManifest.systemPage as NavigationSystemPage,
+      corePage:
+        navigationMenuItemManifest.type === NavigationMenuItemType.CORE &&
+        isDefined(navigationMenuItemManifest.corePage) &&
+        Object.values(NavigationCorePage).includes(
+          navigationMenuItemManifest.corePage as NavigationCorePage,
         )
-          ? (navigationMenuItemManifest.systemPage as NavigationSystemPage)
+          ? (navigationMenuItemManifest.corePage as NavigationCorePage)
           : null,
       folderUniversalIdentifier:
         navigationMenuItemManifest.folderUniversalIdentifier ?? null,

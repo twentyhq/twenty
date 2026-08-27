@@ -4,12 +4,12 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.37.0', 1787850000000)
-export class AddSystemNavigationMenuItemTypeFastInstanceCommand
+export class AddCoreNavigationMenuItemTypeFastInstanceCommand
   implements FastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."navigationMenuItem" ADD COLUMN IF NOT EXISTS "systemPage" text',
+      'ALTER TABLE "core"."navigationMenuItem" ADD COLUMN IF NOT EXISTS "corePage" text',
     );
 
     await queryRunner.query(
@@ -21,7 +21,7 @@ export class AddSystemNavigationMenuItemTypeFastInstanceCommand
     );
 
     await queryRunner.query(
-      `CREATE TYPE "core"."navigationMenuItem_type_enum" AS ENUM ('VIEW', 'FOLDER', 'LINK', 'OBJECT', 'RECORD', 'PAGE_LAYOUT', 'SYSTEM')`,
+      `CREATE TYPE "core"."navigationMenuItem_type_enum" AS ENUM ('VIEW', 'FOLDER', 'LINK', 'OBJECT', 'RECORD', 'PAGE_LAYOUT', 'CORE')`,
     );
 
     await queryRunner.query(
@@ -33,13 +33,13 @@ export class AddSystemNavigationMenuItemTypeFastInstanceCommand
     );
 
     await queryRunner.query(
-      `ALTER TABLE "core"."navigationMenuItem" ADD CONSTRAINT "CHK_navigation_menu_item_type_fields" CHECK (("type" = 'FOLDER') OR ("type" = 'OBJECT' AND "targetObjectMetadataId" IS NOT NULL) OR ("type" = 'VIEW' AND "viewId" IS NOT NULL) OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL) OR ("type" = 'LINK' AND "link" IS NOT NULL) OR ("type" = 'PAGE_LAYOUT' AND "pageLayoutId" IS NOT NULL) OR ("type" = 'SYSTEM' AND "systemPage" IS NOT NULL))`,
+      `ALTER TABLE "core"."navigationMenuItem" ADD CONSTRAINT "CHK_navigation_menu_item_type_fields" CHECK (("type" = 'FOLDER') OR ("type" = 'OBJECT' AND "targetObjectMetadataId" IS NOT NULL) OR ("type" = 'VIEW' AND "viewId" IS NOT NULL) OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL) OR ("type" = 'LINK' AND "link" IS NOT NULL) OR ("type" = 'PAGE_LAYOUT' AND "pageLayoutId" IS NOT NULL) OR ("type" = 'CORE' AND "corePage" IS NOT NULL))`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `DELETE FROM "core"."navigationMenuItem" WHERE "type" = 'SYSTEM'`,
+      `DELETE FROM "core"."navigationMenuItem" WHERE "type" = 'CORE'`,
     );
 
     await queryRunner.query(
@@ -67,7 +67,7 @@ export class AddSystemNavigationMenuItemTypeFastInstanceCommand
     );
 
     await queryRunner.query(
-      'ALTER TABLE "core"."navigationMenuItem" DROP COLUMN IF EXISTS "systemPage"',
+      'ALTER TABLE "core"."navigationMenuItem" DROP COLUMN IF EXISTS "corePage"',
     );
   }
 }

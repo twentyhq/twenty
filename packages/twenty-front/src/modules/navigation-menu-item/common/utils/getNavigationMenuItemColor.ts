@@ -30,7 +30,7 @@ export const getNavigationMenuItemColor = (
 
   if (
     navigationMenuItem.type === NavigationMenuItemType.PAGE_LAYOUT ||
-    navigationMenuItem.type === NavigationMenuItemType.SYSTEM
+    navigationMenuItem.type === NavigationMenuItemType.CORE
   ) {
     return isNonEmptyString(navigationMenuItem.color)
       ? (navigationMenuItem.color as ThemeColor)

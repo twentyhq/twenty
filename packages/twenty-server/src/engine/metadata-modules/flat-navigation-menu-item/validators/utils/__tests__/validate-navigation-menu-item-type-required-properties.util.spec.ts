@@ -1,6 +1,6 @@
 import {
   NavigationMenuItemType,
-  NavigationSystemPage,
+  NavigationCorePage,
 } from 'twenty-shared/types';
 
 import { validateNavigationMenuItemTypeRequiredProperties } from 'src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util';
@@ -118,8 +118,8 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
       overrides: { pageLayoutUniversalIdentifier: VALID_UUID },
     },
     {
-      type: NavigationMenuItemType.SYSTEM,
-      overrides: { systemPage: NavigationSystemPage.WORKFLOWS },
+      type: NavigationMenuItemType.CORE,
+      overrides: { corePage: NavigationCorePage.WORKFLOWS },
     },
   ])(
     'should not report any error when $type type properties are valid',
@@ -136,15 +136,15 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
   );
 
   it.each([
-    { label: 'missing', systemPage: null },
-    { label: 'unknown', systemPage: 'NOT_A_PAGE' },
+    { label: 'missing', corePage: null },
+    { label: 'unknown', corePage: 'NOT_A_PAGE' },
   ])(
-    'should return an error when systemPage is $label for SYSTEM type',
-    ({ systemPage }) => {
+    'should return an error when corePage is $label for CORE type',
+    ({ corePage }) => {
       const errors = validateNavigationMenuItemTypeRequiredProperties({
         flatNavigationMenuItem: buildFlatNavigationMenuItem({
-          type: NavigationMenuItemType.SYSTEM,
-          systemPage: systemPage as never,
+          type: NavigationMenuItemType.CORE,
+          corePage: corePage as never,
         }),
       });
 

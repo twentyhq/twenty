@@ -50,7 +50,7 @@ export const NavigationMenuItemDisplay = ({
           readOnly={readOnly}
         />
       );
-    case NavigationMenuItemType.SYSTEM:
+    case NavigationMenuItemType.CORE:
       return (
         <NavigationMenuItemPageLayoutDisplay
           item={item}

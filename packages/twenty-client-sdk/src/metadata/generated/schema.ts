@@ -1239,7 +1239,7 @@ export interface NavigationMenuItem {
     type: NavigationMenuItemType
     name?: Scalars['String']
     link?: Scalars['String']
-    systemPage?: NavigationSystemPage
+    corePage?: NavigationCorePage
     icon?: Scalars['String']
     color?: Scalars['String']
     folderId?: Scalars['UUID']
@@ -1252,9 +1252,9 @@ export interface NavigationMenuItem {
     __typename: 'NavigationMenuItem'
 }
 
-export type NavigationMenuItemType = 'VIEW' | 'FOLDER' | 'LINK' | 'OBJECT' | 'RECORD' | 'PAGE_LAYOUT' | 'SYSTEM'
+export type NavigationMenuItemType = 'VIEW' | 'FOLDER' | 'LINK' | 'OBJECT' | 'RECORD' | 'PAGE_LAYOUT' | 'CORE'
 
-export type NavigationSystemPage = 'WORKFLOWS'
+export type NavigationCorePage = 'WORKFLOWS'
 
 export interface ObjectRecordEventProperties {
     updatedFields?: Scalars['String'][]
@@ -4643,7 +4643,7 @@ export interface NavigationMenuItemGenqlSelection{
     type?: boolean | number
     name?: boolean | number
     link?: boolean | number
-    systemPage?: boolean | number
+    corePage?: boolean | number
     icon?: boolean | number
     color?: boolean | number
     folderId?: boolean | number
@@ -10015,10 +10015,10 @@ export const enumNavigationMenuItemType = {
    OBJECT: 'OBJECT' as const,
    RECORD: 'RECORD' as const,
    PAGE_LAYOUT: 'PAGE_LAYOUT' as const,
-   SYSTEM: 'SYSTEM' as const
+   CORE: 'CORE' as const
 }
 
-export const enumNavigationSystemPage = {
+export const enumNavigationCorePage = {
    WORKFLOWS: 'WORKFLOWS' as const
 }
 

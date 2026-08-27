@@ -10,19 +10,19 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
-import { createStandardNavigationMenuItemSystemFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-system-flat-metadata.util';
+import { createStandardNavigationMenuItemCoreFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-core-flat-metadata.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const SYSTEM_WORKFLOWS_DEFINITION =
-  STANDARD_NAVIGATION_MENU_ITEMS.workflowsFolderSystemWorkflows;
+const CORE_WORKFLOWS_DEFINITION =
+  STANDARD_NAVIGATION_MENU_ITEMS.workflowsFolderCoreWorkflows;
 
 @RegisteredWorkspaceCommand('2.37.0', 1787850001000)
 @Command({
-  name: 'upgrade:2-37:add-system-workflows-navigation-menu-item',
+  name: 'upgrade:2-37:add-core-workflows-navigation-menu-item',
   description:
-    'Add the SYSTEM workflows navigation menu item to existing workspaces, inside the standard Workflows folder when it still exists',
+    'Add the CORE workflows navigation menu item to existing workspaces, inside the standard Workflows folder when it still exists',
 })
-export class AddSystemWorkflowsNavigationMenuItemCommand extends ProvisionedWorkspaceCommandRunner {
+export class AddCoreWorkflowsNavigationMenuItemCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -50,12 +50,12 @@ export class AddSystemWorkflowsNavigationMenuItemCommand extends ProvisionedWork
     const alreadyExists = existingItems.some(
       (item) =>
         item.universalIdentifier ===
-        SYSTEM_WORKFLOWS_DEFINITION.universalIdentifier,
+        CORE_WORKFLOWS_DEFINITION.universalIdentifier,
     );
 
     if (alreadyExists) {
       this.logger.log(
-        `SYSTEM workflows navigation menu item already present for workspace ${workspaceId}, skipping`,
+        `CORE workflows navigation menu item already present for workspace ${workspaceId}, skipping`,
       );
 
       return;
@@ -64,12 +64,12 @@ export class AddSystemWorkflowsNavigationMenuItemCommand extends ProvisionedWork
     const workflowsFolder = existingItems.find(
       (item) =>
         item.universalIdentifier ===
-          SYSTEM_WORKFLOWS_DEFINITION.folderUniversalIdentifier &&
+          CORE_WORKFLOWS_DEFINITION.folderUniversalIdentifier &&
         item.userWorkspaceId === null,
     );
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Adding the SYSTEM workflows navigation menu item for workspace ${workspaceId}${
+      `${isDryRun ? '[DRY RUN] ' : ''}Adding the CORE workflows navigation menu item for workspace ${workspaceId}${
         isDefined(workflowsFolder) ? '' : ' (workflows folder missing, adding at top level)'
       }`,
     );
@@ -84,16 +84,16 @@ export class AddSystemWorkflowsNavigationMenuItemCommand extends ProvisionedWork
       );
 
     const flatNavigationMenuItem =
-      createStandardNavigationMenuItemSystemFlatMetadata({
-        universalIdentifier: SYSTEM_WORKFLOWS_DEFINITION.universalIdentifier,
-        systemPage: SYSTEM_WORKFLOWS_DEFINITION.systemPage,
-        name: SYSTEM_WORKFLOWS_DEFINITION.name,
-        icon: SYSTEM_WORKFLOWS_DEFINITION.icon,
+      createStandardNavigationMenuItemCoreFlatMetadata({
+        universalIdentifier: CORE_WORKFLOWS_DEFINITION.universalIdentifier,
+        corePage: CORE_WORKFLOWS_DEFINITION.corePage,
+        name: CORE_WORKFLOWS_DEFINITION.name,
+        icon: CORE_WORKFLOWS_DEFINITION.icon,
         folderId: workflowsFolder?.id ?? null,
         folderUniversalIdentifier: isDefined(workflowsFolder)
-          ? SYSTEM_WORKFLOWS_DEFINITION.folderUniversalIdentifier
+          ? CORE_WORKFLOWS_DEFINITION.folderUniversalIdentifier
           : null,
-        position: SYSTEM_WORKFLOWS_DEFINITION.position,
+        position: CORE_WORKFLOWS_DEFINITION.position,
         navigationMenuItemId: v4(),
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
@@ -119,11 +119,11 @@ export class AddSystemWorkflowsNavigationMenuItemCommand extends ProvisionedWork
 
     if (validateAndBuildResult.status === 'fail') {
       this.logger.error(
-        `Failed to add the SYSTEM workflows navigation menu item:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
+        `Failed to add the CORE workflows navigation menu item:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
       );
 
       throw new Error(
-        `Failed to add the SYSTEM workflows navigation menu item for workspace ${workspaceId}`,
+        `Failed to add the CORE workflows navigation menu item for workspace ${workspaceId}`,
       );
     }
   }

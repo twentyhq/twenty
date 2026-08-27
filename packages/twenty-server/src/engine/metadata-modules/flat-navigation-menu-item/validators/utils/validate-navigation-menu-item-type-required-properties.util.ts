@@ -3,7 +3,7 @@ import { msg, t } from '@lingui/core/macro';
 import {
   type AssertUnreachable,
   NavigationMenuItemType,
-  NavigationSystemPage,
+  NavigationCorePage,
 } from 'twenty-shared/types';
 import { isDefined, isValidUrl, isValidUuid } from 'twenty-shared/utils';
 
@@ -49,7 +49,7 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
     targetObjectMetadataUniversalIdentifier,
     viewUniversalIdentifier,
     pageLayoutUniversalIdentifier,
-    systemPage,
+    corePage,
   } = flatNavigationMenuItem;
 
   if (!isDefined(type)) {
@@ -110,14 +110,14 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
             ),
           ];
     }
-    case NavigationMenuItemType.SYSTEM: {
-      return isDefined(systemPage) &&
-        Object.values(NavigationSystemPage).includes(systemPage)
+    case NavigationMenuItemType.CORE: {
+      return isDefined(corePage) &&
+        Object.values(NavigationCorePage).includes(corePage)
         ? []
         : [
             buildInvalidInputError(
-              t`A valid systemPage is required for SYSTEM type`,
-              msg`A valid systemPage is required for SYSTEM type`,
+              t`A valid corePage is required for CORE type`,
+              msg`A valid corePage is required for CORE type`,
             ),
           ];
     }

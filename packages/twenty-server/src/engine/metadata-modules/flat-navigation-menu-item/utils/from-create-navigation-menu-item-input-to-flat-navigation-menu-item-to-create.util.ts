@@ -32,9 +32,9 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
     AllFlatEntityMaps,
     'flatObjectMetadataMaps' | 'flatViewMaps' | 'flatPageLayoutMaps'
   >): FlatNavigationMenuItem => {
-    if (createNavigationMenuItemInput.type === NavigationMenuItemType.SYSTEM) {
+    if (createNavigationMenuItemInput.type === NavigationMenuItemType.CORE) {
       throw new NavigationMenuItemException(
-        'SYSTEM navigation menu items cannot be created through the API; they are seeded or shipped by applications',
+        'CORE navigation menu items cannot be created through the API; they are seeded or shipped by applications',
         NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
         {
           userFriendlyMessage: msg`System navigation items cannot be created manually`,
@@ -104,7 +104,7 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       pageLayoutUniversalIdentifier,
       name: createNavigationMenuItemInput.name ?? null,
       link: createNavigationMenuItemInput.link ?? null,
-      systemPage: null,
+      corePage: null,
       icon: createNavigationMenuItemInput.icon ?? null,
       color: createNavigationMenuItemInput.color ?? null,
       position,

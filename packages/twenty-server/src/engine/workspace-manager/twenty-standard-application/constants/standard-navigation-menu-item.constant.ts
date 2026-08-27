@@ -3,7 +3,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import {
   NavigationMenuItemType,
-  NavigationSystemPage,
+  NavigationCorePage,
 } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
@@ -67,10 +67,10 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     icon: 'IconSettingsAutomation',
     position: 6,
   },
-  workflowsFolderSystemWorkflows: {
+  workflowsFolderCoreWorkflows: {
     universalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
-    type: NavigationMenuItemType.SYSTEM,
-    systemPage: NavigationSystemPage.WORKFLOWS,
+    type: NavigationMenuItemType.CORE,
+    corePage: NavigationCorePage.WORKFLOWS,
     name: i18nLabel(
       msg({ message: `Workflows`, context: 'navigationMenuItem.name' }),
     ),
@@ -117,7 +117,7 @@ export const STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS: Partial<
   workflowsFolder: 'orange',
   allMessageCampaigns: 'gray',
   allDashboards: 'gray',
-  workflowsFolderSystemWorkflows: 'gray',
+  workflowsFolderCoreWorkflows: 'gray',
   workflowsFolderAllWorkflows: 'gray',
   workflowsFolderAllWorkflowRuns: 'gray',
   workflowsFolderAllWorkflowVersions: 'gray',
