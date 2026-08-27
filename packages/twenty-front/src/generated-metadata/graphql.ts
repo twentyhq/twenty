@@ -279,6 +279,7 @@ export type AppConnection = {
   scopes: Array<Scalars['String']['output']>;
   userWorkspaceId: Scalars['String']['output'];
   visibility: Scalars['String']['output'];
+  workspaceMemberId?: Maybe<Scalars['String']['output']>;
 };
 
 export type AppKeyValue = {
@@ -1859,6 +1860,7 @@ export type FeatureFlag = {
 };
 
 export enum FeatureFlagKey {
+  IS_API_RATE_LIMIT_V2_ENABLED = 'IS_API_RATE_LIMIT_V2_ENABLED',
   IS_APP_CLAIMING_ENABLED = 'IS_APP_CLAIMING_ENABLED',
   IS_EMAIL_GROUP_ENABLED = 'IS_EMAIL_GROUP_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
