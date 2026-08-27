@@ -1,3 +1,4 @@
+import { CallRecordingPendingStateDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingPendingStateDisplay';
 import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetEmptyStateDisplay';
 import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
 import { isCallRecordingTranscriptFailed } from '@/page-layout/widgets/call-recording/utils/isCallRecordingTranscriptFailed';
@@ -37,10 +38,10 @@ export const CallRecordingTranscriptContent = ({
   if (isCallRecordingTranscriptPending(callRecording)) {
     return (
       <StyledEmptyStateScrollContainer>
-        <CallRecordingWidgetEmptyStateDisplay
-          animatedPlaceholderType="loadingMessages"
-          title={t`Preparing Transcript`}
-          subTitle={t`Transcript is being prepared…`}
+        <CallRecordingPendingStateDisplay
+          callRecording={callRecording}
+          generatingTitle={t`Preparing Transcript`}
+          generatingSubTitle={t`Transcript is being prepared…`}
         />
       </StyledEmptyStateScrollContainer>
     );

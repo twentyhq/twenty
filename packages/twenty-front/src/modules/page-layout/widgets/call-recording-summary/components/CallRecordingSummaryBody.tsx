@@ -1,4 +1,5 @@
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
+import { CallRecordingPendingStateDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingPendingStateDisplay';
 import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetEmptyStateDisplay';
 import { CallRecordingWidgetForbiddenDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetForbiddenDisplay';
 import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
@@ -73,10 +74,10 @@ export const CallRecordingSummaryBody = ({
 
   if (isCallRecordingSummaryPending(callRecording)) {
     return (
-      <CallRecordingWidgetEmptyStateDisplay
-        animatedPlaceholderType="loadingMessages"
-        title={t`Processing Recording`}
-        subTitle={t`The call recording is still being processed…`}
+      <CallRecordingPendingStateDisplay
+        callRecording={callRecording}
+        generatingTitle={t`Generating Summary`}
+        generatingSubTitle={t`The summary is being generated…`}
       />
     );
   }

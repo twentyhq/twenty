@@ -216,7 +216,61 @@ export const Pending: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Processing Recording');
+    await canvas.findByText('Generating Summary');
+  },
+};
+
+export const Scheduled: Story = {
+  args: {
+    callRecording: {
+      ...pendingCallRecording,
+      status: CallRecordingStatus.SCHEDULED,
+      transcript: null,
+    },
+    loading: false,
+    error: undefined,
+    restriction: undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Recording Scheduled');
+  },
+};
+
+export const Joining: Story = {
+  args: {
+    callRecording: {
+      ...pendingCallRecording,
+      status: CallRecordingStatus.JOINING,
+      transcript: null,
+    },
+    loading: false,
+    error: undefined,
+    restriction: undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Recorder Joining');
+  },
+};
+
+export const Recording: Story = {
+  args: {
+    callRecording: {
+      ...pendingCallRecording,
+      status: CallRecordingStatus.RECORDING,
+      transcript: null,
+    },
+    loading: false,
+    error: undefined,
+    restriction: undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Recording');
   },
 };
 
