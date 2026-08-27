@@ -57,10 +57,12 @@ const getSourceColor = (source: string | null): 'blue' | 'green' =>
 
 type SlackUserLinksListProps = {
   slackUserLinks: SlackUserLinkRecord[];
+  hasMore?: boolean;
 };
 
 export const SlackUserLinksList = ({
   slackUserLinks,
+  hasMore = false,
 }: SlackUserLinksListProps) => {
   if (slackUserLinks.length === 0) {
     return <StyledEmptyState>No Slack user links yet.</StyledEmptyState>;
@@ -68,6 +70,12 @@ export const SlackUserLinksList = ({
 
   return (
     <StyledList>
+      {hasMore && (
+        <StyledEmptyState>
+          Showing the first {slackUserLinks.length} links; more exist than can be
+          shown here.
+        </StyledEmptyState>
+      )}
       {slackUserLinks.map((slackUserLink) => (
         <StyledRow key={slackUserLink.id}>
           <StyledDetails>

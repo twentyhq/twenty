@@ -119,6 +119,10 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
       <StyledForm
         onSubmit={(event) => {
           event.preventDefault();
+
+          if (canSubmit) {
+            handleSubmit();
+          }
         }}
       >
         <StyledField>

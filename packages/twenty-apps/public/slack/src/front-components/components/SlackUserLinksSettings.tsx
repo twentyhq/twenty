@@ -1,6 +1,7 @@
 import 'twenty-ui/style.css';
 
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-sdk/utils';
 import { Callout } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -38,6 +39,7 @@ export const SlackUserLinksSettings = () => {
     slackUserLinks,
     isSlackUserLinksLoading,
     errorMessage,
+    hasMoreSlackUserLinks,
     refetchSlackUserLinks,
   } = useSlackUserLinks();
 
@@ -62,10 +64,13 @@ export const SlackUserLinksSettings = () => {
         />
         {isSlackUserLinksLoading ? (
           <StyledCenteredState>Loading links…</StyledCenteredState>
-        ) : errorMessage !== undefined ? (
+        ) : isDefined(errorMessage) ? (
           <StyledCenteredState>{errorMessage}</StyledCenteredState>
         ) : (
-          <SlackUserLinksList slackUserLinks={slackUserLinks} />
+          <SlackUserLinksList
+            slackUserLinks={slackUserLinks}
+            hasMore={hasMoreSlackUserLinks}
+          />
         )}
       </Section>
     </StyledContainer>
