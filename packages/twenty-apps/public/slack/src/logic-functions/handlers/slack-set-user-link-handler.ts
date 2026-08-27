@@ -29,8 +29,11 @@ const readOptionalString = (value: unknown): string | undefined =>
 
 // The HTTP route body is untrusted, so read each field rather than trusting its declared type.
 const toSlackSetUserLinkInput = (source: unknown): SlackSetUserLinkInput => {
-  const body: Record<string, unknown> = isObject(source)
-    ? (source as Record<string, unknown>)
+  const body: Record<string, unknown> = isObject<
+    Record<string, unknown>,
+    unknown
+  >(source)
+    ? source
     : {};
 
   return {
