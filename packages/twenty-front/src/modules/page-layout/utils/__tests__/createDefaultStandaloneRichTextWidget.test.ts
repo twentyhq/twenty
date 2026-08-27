@@ -70,4 +70,32 @@ describe('createDefaultStandaloneRichTextWidget', () => {
     expect(withObjectId.objectMetadataId).toBe('object-1');
     expect(withoutObjectId.objectMetadataId).toBeNull();
   });
+
+  it('should create a Note with a vertical list position for record pages', () => {
+    const widget = createDefaultStandaloneRichTextWidget(
+      'note-widget',
+      'record-tab',
+      { blocknote: '', markdown: null },
+      {
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index: 2,
+      },
+      null,
+      'Note',
+    );
+
+    expect(widget).toMatchObject({
+      title: 'Note',
+      type: WidgetType.STANDALONE_RICH_TEXT,
+      objectMetadataId: null,
+      position: {
+        __typename: 'PageLayoutWidgetVerticalListPosition',
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index: 2,
+      },
+      configuration: {
+        body: { blocknote: '', markdown: null },
+      },
+    });
+  });
 });

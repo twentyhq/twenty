@@ -10,7 +10,9 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultFieldWidget } from '@/page-layout/utils/createDefaultFieldWidget';
 import { createDefaultFieldsWidget } from '@/page-layout/utils/createDefaultFieldsWidget';
+import { createDefaultStandaloneRichTextWidget } from '@/page-layout/utils/createDefaultStandaloneRichTextWidget';
 import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPosition';
+import { moveWidgetWithinTabInDraft } from '@/page-layout/utils/moveWidgetWithinTabInDraft';
 import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
 import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
 import { getFieldWidgetDefaultDisplayMode } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
@@ -31,7 +33,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconApps, IconList } from 'twenty-ui/icon';
+import { IconAlignBoxLeftTop, IconApps, IconList } from 'twenty-ui/icon';
 import { v4 as uuidv4 } from 'uuid';
 import {
   type FrontComponent,
@@ -264,6 +266,47 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     tabId,
   ]);
 
+  const handleCreateNoteWidget = () => {
+    const replacePositionIndex = getExistingWidgetPositionIndex();
+    removeExistingWidgetIfReplacing();
+
+    const updatedPageLayout = store.get(pageLayoutDraftState);
+    const activeTab = updatedPageLayout.tabs.find((tab) => tab.id === tabId);
+    const widgetId = uuidv4();
+
+    const newWidget = createDefaultStandaloneRichTextWidget(
+      widgetId,
+      tabId,
+      { blocknote: '', markdown: null },
+      {
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index: replacePositionIndex ?? activeTab?.widgets.length ?? 0,
+      },
+      null,
+      t`Note`,
+    );
+
+    store.set(pageLayoutDraftState, (previousDraft) => {
+      const draftWithNote = {
+        ...previousDraft,
+        tabs: addWidgetToTab(previousDraft.tabs, tabId, newWidget),
+      };
+
+      return isDefined(replacePositionIndex)
+        ? moveWidgetWithinTabInDraft(draftWithNote, {
+            tabId,
+            fromIndex: activeTab?.widgets.length ?? 0,
+            toIndex: replacePositionIndex,
+          })
+        : draftWithNote;
+    });
+
+    setPageLayoutEditingWidgetId(widgetId);
+    insertCreatedWidgetAtContext(widgetId);
+
+    closeSidePanelMenu();
+  };
+
   const handleCreateFrontComponentWidget = useCallback(
     (frontComponent: FrontComponent) => {
       const replacePositionIndex = getExistingWidgetPositionIndex();
@@ -326,6 +369,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
   const selectableItemIds = [
     'fields',
     'field',
+    'note',
     ...frontComponentsWithSelectItemId.map(({ selectItemId }) => selectItemId),
   ];
 
@@ -346,6 +390,15 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
             label={t`Field`}
             id="field"
             onClick={handleCreateFieldWidget}
+          />
+        </SelectableListItem>
+        <SelectableListItem itemId="note" onEnter={handleCreateNoteWidget}>
+          <CommandMenuItem
+            Icon={IconAlignBoxLeftTop}
+            label={t`Note`}
+            description={t`Static text shared across all record pages`}
+            id="note"
+            onClick={handleCreateNoteWidget}
           />
         </SelectableListItem>
       </SidePanelGroup>

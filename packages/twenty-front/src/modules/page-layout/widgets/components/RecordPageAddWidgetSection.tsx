@@ -1,10 +1,12 @@
 import { useCreateRecordPageFieldWidget } from '@/page-layout/hooks/useCreateRecordPageFieldWidget';
 import { useCreateRecordPageFieldsWidget } from '@/page-layout/hooks/useCreateRecordPageFieldsWidget';
+import { useCreateRecordPageNoteWidget } from '@/page-layout/hooks/useCreateRecordPageNoteWidget';
 import { useNavigateToMoreWidgets } from '@/page-layout/hooks/useNavigateToMoreWidgets';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import {
+  IconAlignBoxLeftTop,
   IconListDetails,
   IconListSearch,
   IconPlus,
@@ -51,6 +53,8 @@ export const RecordPageAddWidgetSection = () => {
 
   const { createRecordPageFieldWidget } = useCreateRecordPageFieldWidget();
 
+  const { createRecordPageNoteWidget } = useCreateRecordPageNoteWidget();
+
   const { navigateToMoreWidgets } = useNavigateToMoreWidgets();
 
   return (
@@ -77,6 +81,13 @@ export const RecordPageAddWidgetSection = () => {
           text={t`Field`}
           contextualText={t`Single field with smart formats`}
           onClick={createRecordPageFieldWidget}
+        />
+        <MenuItem
+          LeftIcon={IconAlignBoxLeftTop}
+          withIconContainer
+          text={t`Note`}
+          contextualText={t`Static text shared across all record pages`}
+          onClick={createRecordPageNoteWidget}
         />
         <MenuItem
           LeftIcon={IconPlus}
