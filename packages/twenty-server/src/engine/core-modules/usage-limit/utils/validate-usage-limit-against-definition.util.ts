@@ -1,7 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
-import { OPERATOR_ONLY_SPENDER_TYPES } from 'src/engine/core-modules/usage-limit/constants/operator-only-spender-types.constant';
 import { type UpsertUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/upsert-usage-limit.input';
 import {
   UsageLimitException,
@@ -34,13 +33,6 @@ export const validateUsageLimitAgainstDefinition = (
   if (!definition.allowedSpenderTypes.includes(input.spenderType)) {
     throw new UsageLimitException(
       `${input.resourceType} ${input.limitKind} limits cannot be scoped to ${input.spenderType}`,
-      UsageLimitExceptionCode.LIMIT_RULE_INVALID,
-    );
-  }
-
-  if (OPERATOR_ONLY_SPENDER_TYPES.includes(input.spenderType)) {
-    throw new UsageLimitException(
-      `${input.spenderType} limits are set by the instance operator`,
       UsageLimitExceptionCode.LIMIT_RULE_INVALID,
     );
   }

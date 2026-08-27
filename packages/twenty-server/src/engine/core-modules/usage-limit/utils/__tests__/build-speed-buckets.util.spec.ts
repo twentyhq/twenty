@@ -1,32 +1,35 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { type DefaultUsageLimitFallback } from 'src/engine/core-modules/usage-limit/types/default-usage-limit-fallback.type';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
-import { type ResolvedUsageLimitFallback } from 'src/engine/core-modules/usage-limit/types/resolved-usage-limit-fallback.type';
 import { buildSpeedBuckets } from 'src/engine/core-modules/usage-limit/utils/build-speed-buckets.util';
 
 const workspace = { id: 'workspace-1' };
 
 // The registry defaults, standing in for API_RATE_LIMITING_* and
 // APPLICATION_API_RATE_LIMITING_*.
-const RESOLVED_FALLBACKS: ResolvedUsageLimitFallback[] = [
+const DEFAULT_USAGE_LIMIT_FALLBACKS: DefaultUsageLimitFallback[] = [
   {
     spenderType: 'apiKey',
     counterScope: 'perWorkspace',
     maxTokens: 100,
     windowMs: 1000,
+    isOverridable: true,
   },
   {
     spenderType: 'apiKey',
     counterScope: 'perWorkspace',
     maxTokens: 100,
     windowMs: 60_000,
+    isOverridable: true,
   },
   {
     spenderType: 'application',
     counterScope: 'crossWorkspace',
     maxTokens: 500,
     windowMs: 60_000,
+    isOverridable: false,
   },
 ];
 
@@ -52,7 +55,7 @@ const buildBuckets = ({
   rules?: FlatUsageLimit[];
 }) =>
   buildSpeedBuckets({
-    resolvedFallbacks: RESOLVED_FALLBACKS,
+    defaultUsageLimitFallbacks: DEFAULT_USAGE_LIMIT_FALLBACKS,
     rules,
     authContext,
     resourceType: UsageResourceType.API,
@@ -156,11 +159,23 @@ describe('buildSpeedBuckets with rules configured', () => {
     expect(buckets.map((bucket) => bucket.key)).toEqual([
       '{workspace-1}:speed:API:API_REQUEST:apiKey:key-1:60',
       '{workspace-1}:speed:API:API_REQUEST:apiKey:-:60',
-      '{workspace-1}:speed:API:API_REQUEST:apiKey:-:1',
     ]);
   });
 
-  it('replaces the default only at the window the rule covers', () => {
+  it('keeps a named api key charged for the defaults', () => {
+    const buckets = buildBuckets({
+      authContext: apiKeyContext,
+      rules: [buildRule({ spenderId: 'key-1', limitValue: 5 })],
+    });
+
+    expect(buckets.map((bucket) => bucket.key)).toEqual([
+      '{workspace-1}:speed:API:API_REQUEST:apiKey:key-1:60',
+      '{workspace-1}:speed:API:API_REQUEST:apiKey:-:1',
+      '{workspace-1}:speed:API:API_REQUEST:apiKey:-:60',
+    ]);
+  });
+
+  it('replaces every default once a rule covers the spender type', () => {
     const buckets = buildBuckets({
       authContext: apiKeyContext,
       rules: [buildRule({ spenderId: '', windowSeconds: 60, limitValue: 10 })],
@@ -168,19 +183,32 @@ describe('buildSpeedBuckets with rules configured', () => {
 
     expect(
       buckets.map((bucket) => [bucket.windowMs, bucket.refillPerWindow]),
-    ).toEqual([
-      [60_000, 10],
-      [1000, 100],
-    ]);
+    ).toEqual([[60_000, 10]]);
   });
 
   it('tells the platform default apart from a configured rule', () => {
     const buckets = buildBuckets({
       authContext: apiKeyContext,
-      rules: [buildRule({ spenderId: '', windowSeconds: 60, limitValue: 10 })],
+      rules: [buildRule({ spenderId: 'key-1', limitValue: 5 })],
     });
 
-    expect(buckets.map((bucket) => bucket.isFallback)).toEqual([false, true]);
+    expect(buckets.map((bucket) => bucket.isFallback)).toEqual([
+      false,
+      true,
+      true,
+    ]);
+  });
+
+  it('keeps an application charged for the ceiling every workspace shares', () => {
+    const buckets = buildBuckets({
+      authContext: applicationContext,
+      rules: [buildRule({ spenderType: 'application', spenderId: '' })],
+    });
+
+    expect(buckets.map((bucket) => bucket.key)).toEqual([
+      '{server}:speed:API:API_REQUEST:application:app-uid:60',
+      '{workspace-1}:speed:API:API_REQUEST:application:-:60',
+    ]);
   });
 
   it('applies a workspace rule to a caller that no other rule covers', () => {

@@ -5,6 +5,7 @@ import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spen
 export type UsageLimitFallback = {
   spenderType: SpenderType;
   counterScope: CounterScope;
-  maxTokensConfigVariable: NumericConfigVariableKey;
+  isOverridable: boolean;
+  limitValueConfigVariable: NumericConfigVariableKey;
   windowMsConfigVariable: NumericConfigVariableKey;
 };

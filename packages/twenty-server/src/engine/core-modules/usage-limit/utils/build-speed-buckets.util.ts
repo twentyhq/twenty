@@ -2,8 +2,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { SPENDER_TYPE_SPECIFICITY } from 'src/engine/core-modules/usage-limit/constants/spender-type-specificity.constant';
+import { type DefaultUsageLimitFallback } from 'src/engine/core-modules/usage-limit/types/default-usage-limit-fallback.type';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
-import { type ResolvedUsageLimitFallback } from 'src/engine/core-modules/usage-limit/types/resolved-usage-limit-fallback.type';
 import { type SpeedBucketRequest } from 'src/engine/core-modules/usage-limit/types/speed-bucket-request.type';
 import { buildFallbackSpeedBucket } from 'src/engine/core-modules/usage-limit/utils/build-fallback-speed-bucket.util';
 import { buildSpeedBucketKey } from 'src/engine/core-modules/usage-limit/utils/build-speed-bucket-key.util';
@@ -12,20 +12,18 @@ import { findRulesForSpender } from 'src/engine/core-modules/usage-limit/utils/f
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
-// Ranks a named spender ahead of the shared counter of the same type, so a
-// denial reports the narrowest exhausted scope.
 const bucketSpecificity = (bucket: SpeedBucketRequest): number =>
   SPENDER_TYPE_SPECIFICITY[bucket.spenderType] * 2 +
   (isDefined(bucket.spenderId) ? 0 : 1);
 
 export const buildSpeedBuckets = ({
-  resolvedFallbacks,
+  defaultUsageLimitFallbacks,
   rules,
   authContext,
   resourceType,
   operationType,
 }: {
-  resolvedFallbacks: ResolvedUsageLimitFallback[];
+  defaultUsageLimitFallbacks: DefaultUsageLimitFallback[];
   rules: FlatUsageLimit[];
   authContext: WorkspaceAuthContext;
   resourceType: UsageResourceType;
@@ -54,15 +52,15 @@ export const buildSpeedBuckets = ({
       isFallback: false,
     }));
 
-    const windowsCoveredByRules = new Set(
-      spenderRules.map((rule) => rule.windowSeconds),
+    const hasRuleForEverySpender = spenderRules.some(
+      (rule) => rule.spenderId === '',
     );
 
-    const fallbackBuckets = resolvedFallbacks
+    const fallbackBuckets = defaultUsageLimitFallbacks
       .filter(
         (fallback) =>
           fallback.spenderType === spender.spenderType &&
-          !windowsCoveredByRules.has(Math.ceil(fallback.windowMs / 1000)),
+          !(fallback.isOverridable && hasRuleForEverySpender),
       )
       .map((fallback) =>
         buildFallbackSpeedBucket({

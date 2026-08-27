@@ -10,28 +10,28 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
   [UsageResourceType.API]: {
     speed: {
       allowedOperationTypes: [UsageOperationType.API_REQUEST],
-      allowedSpenderTypes: ['workspace', 'apiKey', 'application'],
+      allowedSpenderTypes: ['apiKey', 'application'],
       fallbacks: [
-        // Scoped to apiKey, not workspace: the throttler these replace only ever
-        // counted API-key traffic, and a workspace fallback would additionally
-        // meter every front-end and system request against the same budget.
         {
           spenderType: 'apiKey',
           counterScope: 'perWorkspace',
-          maxTokensConfigVariable: 'API_RATE_LIMITING_SHORT_LIMIT',
+          limitValueConfigVariable: 'API_RATE_LIMITING_SHORT_LIMIT',
           windowMsConfigVariable: 'API_RATE_LIMITING_SHORT_TTL_IN_MS',
+          isOverridable: true,
         },
         {
           spenderType: 'apiKey',
           counterScope: 'perWorkspace',
-          maxTokensConfigVariable: 'API_RATE_LIMITING_LONG_LIMIT',
+          limitValueConfigVariable: 'API_RATE_LIMITING_LONG_LIMIT',
           windowMsConfigVariable: 'API_RATE_LIMITING_LONG_TTL_IN_MS',
+          isOverridable: true,
         },
         {
           spenderType: 'application',
           counterScope: 'crossWorkspace',
-          maxTokensConfigVariable: 'APPLICATION_API_RATE_LIMITING_LIMIT',
+          limitValueConfigVariable: 'APPLICATION_API_RATE_LIMITING_LIMIT',
           windowMsConfigVariable: 'APPLICATION_API_RATE_LIMITING_TTL_IN_MS',
+          isOverridable: false,
         },
       ],
     },

@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type ResolvedUsageLimitFallback } from 'src/engine/core-modules/usage-limit/types/resolved-usage-limit-fallback.type';
+import { type DefaultUsageLimitFallback } from 'src/engine/core-modules/usage-limit/types/default-usage-limit-fallback.type';
 import { type SpeedBucketRequest } from 'src/engine/core-modules/usage-limit/types/speed-bucket-request.type';
 import { type Spender } from 'src/engine/core-modules/usage-limit/types/spender.type';
 import { buildSpeedBucketKey } from 'src/engine/core-modules/usage-limit/utils/build-speed-bucket-key.util';
@@ -16,7 +16,7 @@ export const buildFallbackSpeedBucket = ({
   resourceType,
   operationType,
 }: {
-  fallback: ResolvedUsageLimitFallback;
+  fallback: DefaultUsageLimitFallback;
   spender: Spender;
   authContext: WorkspaceAuthContext;
   resourceType: UsageResourceType;
@@ -29,8 +29,6 @@ export const buildFallbackSpeedBucket = ({
     return null;
   }
 
-  // One counter for every spender of the type when scoped to the workspace,
-  // matching the single workspace-wide bucket the throttler this replaces kept.
   const spenderId = isCrossWorkspace ? universalIdentifier : null;
 
   return {
