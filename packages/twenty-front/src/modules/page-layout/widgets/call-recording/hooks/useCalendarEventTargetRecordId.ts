@@ -1,11 +1,9 @@
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { useCallRecordingWidgetTarget } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingWidgetTarget';
 
 export const useCalendarEventTargetRecordId = (): string | undefined => {
-  const { targetRecordIdentifier } = useLayoutRenderingContext();
+  const callRecordingWidgetTarget = useCallRecordingWidgetTarget();
 
-  return targetRecordIdentifier?.targetObjectNameSingular ===
-    CoreObjectNameSingular.CalendarEvent
-    ? targetRecordIdentifier.id
+  return callRecordingWidgetTarget?.targetKind === 'calendarEvent'
+    ? callRecordingWidgetTarget.recordId
     : undefined;
 };

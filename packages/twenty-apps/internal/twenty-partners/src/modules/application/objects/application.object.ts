@@ -28,8 +28,6 @@ export const APPLICATION_STATE_FIELD_ID =
   'c686db4f-f0e9-41a0-bdb3-3b4024ff59b6';
 export const APPLICATION_PITCH_FIELD_ID =
   '0a6cd9c9-e1e9-4315-8356-b72077443805';
-export const APPLICATION_LAST_ACTIVITY_AT_FIELD_ID =
-  'b184ac02-51b2-4442-9505-2b06f5c94112';
 
 export default defineObject({
   universalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
@@ -91,7 +89,8 @@ export default defineObject({
       label: 'Partner User',
       isNullable: true,
       relationTargetObjectMetadataUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember
+          .universalIdentifier,
       relationTargetFieldMetadataUniversalIdentifier:
         APPLICATIONS_AS_PARTNER_USER_FIELD_ID,
       universalSettings: {
@@ -114,12 +113,48 @@ export default defineObject({
       // Admin invites are a manual action that explicitly sets INVITED.
       defaultValue: "'APPLIED'",
       options: [
-        { id: '7f9d5ae7-64be-4269-8fab-3cfeaf352bcb', value: 'APPLIED', label: 'Applied', position: 0, color: 'blue' },
-        { id: '2ce94524-4ac3-4a4a-a87c-5c9841eced7c', value: 'INVITED', label: 'Invited', position: 1, color: 'gray' },
-        { id: 'e4e3d579-17ef-4ef8-b9be-54f7d361ad51', value: 'INTRODUCED', label: 'Introduced', position: 2, color: 'purple' },
-        { id: '66ff342c-577b-4a84-bbdc-4ffbfa0bdd0e', value: 'WON', label: 'Won', position: 3, color: 'green' },
-        { id: '83846e19-5008-4f06-b62d-7a1f0dad23e2', value: 'DECLINED', label: 'Declined', position: 4, color: 'red' },
-        { id: '124f7e81-39b4-47cc-83f7-7dfb81ea751d', value: 'BACKUP', label: 'Backup', position: 5, color: 'orange' },
+        {
+          id: '7f9d5ae7-64be-4269-8fab-3cfeaf352bcb',
+          value: 'APPLIED',
+          label: 'Applied',
+          position: 0,
+          color: 'blue',
+        },
+        {
+          id: '2ce94524-4ac3-4a4a-a87c-5c9841eced7c',
+          value: 'INVITED',
+          label: 'Invited',
+          position: 1,
+          color: 'gray',
+        },
+        {
+          id: 'e4e3d579-17ef-4ef8-b9be-54f7d361ad51',
+          value: 'INTRODUCED',
+          label: 'Introduced',
+          position: 2,
+          color: 'purple',
+        },
+        {
+          id: '66ff342c-577b-4a84-bbdc-4ffbfa0bdd0e',
+          value: 'WON',
+          label: 'Won',
+          position: 3,
+          color: 'green',
+        },
+        {
+          id: '83846e19-5008-4f06-b62d-7a1f0dad23e2',
+          value: 'DECLINED',
+          label: 'Declined',
+          position: 4,
+          color: 'red',
+        },
+        {
+          id: '124f7e81-39b4-47cc-83f7-7dfb81ea751d',
+          value: 'BACKUP',
+          label: 'Backup',
+          position: 5,
+          color: 'orange',
+        },
       ],
     },
     {
@@ -128,14 +163,6 @@ export default defineObject({
       name: 'pitch',
       label: 'Pitch',
       icon: 'IconMessage',
-      isNullable: true,
-    },
-    {
-      universalIdentifier: APPLICATION_LAST_ACTIVITY_AT_FIELD_ID,
-      type: FieldType.DATE_TIME,
-      name: 'lastActivityAt',
-      label: 'Last Activity At',
-      icon: 'IconClock',
       isNullable: true,
     },
   ],
