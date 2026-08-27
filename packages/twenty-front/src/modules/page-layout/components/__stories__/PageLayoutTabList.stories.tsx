@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { type ComponentProps, useEffect, useMemo } from 'react';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
 
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
@@ -11,6 +12,9 @@ import { PageLayoutEditModeProviderContext } from '@/page-layout/contexts/PageLa
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PageLayoutType } from '~/generated-metadata/graphql';
@@ -182,12 +186,23 @@ const meta: Meta<typeof PageLayoutTabListPlayground> = {
   },
   decorators: [
     ComponentWithRouterDecorator,
-    (Story) => (
+    (Story, { args }) => (
       <PageLayoutEditModeProviderContext value={{ isInEditMode: false }}>
         <PageLayoutComponentInstanceContext.Provider
           value={{ instanceId: 'instance-id' }}
         >
-          <Story />
+          <LayoutRenderingProvider
+            value={{
+              isInSidePanel: false,
+              layoutType:
+                args.presentation === 'identifier-bar'
+                  ? PageLayoutType.RECORD_PAGE
+                  : PageLayoutType.DASHBOARD,
+              targetRecordIdentifier: undefined,
+            }}
+          >
+            <Story />
+          </LayoutRenderingProvider>
         </PageLayoutComponentInstanceContext.Provider>
       </PageLayoutEditModeProviderContext>
     ),
@@ -202,6 +217,30 @@ export const Default: Story = {
   args: {
     isReorderEnabled: true,
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByRole('button', { name: 'Overview' }),
+    ).toBeVisible();
+    expect(canvas.getByRole('button', { name: 'Forecasts' })).toBeVisible();
+
+    await userEvent.click(
+      within(canvas.getByRole('button', { name: 'Revenue' })).getByText(
+        'Revenue',
+      ),
+    );
+
+    await waitFor(() =>
+      expect(
+        jotaiStore.get(
+          activeTabIdComponentState.atomFamily({
+            instanceId: 'page-layout-tab-list-story',
+          }),
+        ),
+      ).toBe('revenue'),
+    );
+  },
 };
 
 export const IdentifierBar: Story = {
@@ -209,6 +248,7 @@ export const IdentifierBar: Story = {
     presentation: 'identifier-bar',
     isReorderEnabled: false,
   },
+  play: Default.play,
 };
 
 export const IdentifierBarCentered: Story = {
@@ -216,12 +256,35 @@ export const IdentifierBarCentered: Story = {
     ...IdentifierBar.args,
     centerTabs: true,
   },
+  play: Default.play,
 };
 
 export const IdentifierBarNarrow: Story = {
   args: {
     presentation: 'identifier-bar',
     containerWidth: 240,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    const [moreButton] = await canvas.findAllByRole('button', { name: /More/ });
+
+    await userEvent.click(moreButton);
+    await userEvent.click(await body.findByRole('option', { name: 'Revenue' }));
+    await userEvent.click(moreButton);
+
+    expect(
+      await body.findByRole('option', { name: 'Revenue' }),
+    ).toHaveAttribute('aria-selected', 'true');
+
+    await userEvent.click(body.getByRole('option', { name: 'Revenue' }));
+    await userEvent.click(canvas.getByRole('button', { name: 'New Tab' }));
+    await userEvent.click(moreButton);
+
+    expect(
+      await body.findByRole('option', { name: 'New Tab 3' }),
+    ).toBeVisible();
   },
 };
 
@@ -230,4 +293,5 @@ export const IdentifierBarCenteredNarrow: Story = {
     ...IdentifierBarNarrow.args,
     centerTabs: true,
   },
+  play: IdentifierBarNarrow.play,
 };

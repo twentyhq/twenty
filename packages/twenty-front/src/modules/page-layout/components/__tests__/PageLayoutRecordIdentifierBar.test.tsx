@@ -105,6 +105,7 @@ describe('PageLayoutRecordIdentifierBar', () => {
       screen.getByRole('button', { name: 'Edit pinned tab: Tasks' }),
     );
 
+    expect(mockOpenTabSettings).toHaveBeenCalledTimes(1);
     expect(mockOpenTabSettings).toHaveBeenCalledWith('pinned-tab-id');
 
     rerender(
