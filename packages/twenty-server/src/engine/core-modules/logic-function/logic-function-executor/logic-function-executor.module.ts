@@ -29,6 +29,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceCacheModule,
     BillingModule,
     FeatureFlagModule,
+    UsageModule,
     WorkspaceDomainsModule,
     ApplicationModule,
     ApplicationVariableEntityModule,
