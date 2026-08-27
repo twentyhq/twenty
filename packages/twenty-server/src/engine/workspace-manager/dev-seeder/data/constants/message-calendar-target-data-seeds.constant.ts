@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type CalendarEventParticipantDataSeed } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-participant-data-seeds.constant';
 import { MESSAGE_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-data-seeds.constant';
 import { type MessageParticipantDataSeed } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-participant-data-seeds.constant';
@@ -92,7 +94,7 @@ const BUILD_TARGET_COLUMN_SETS = (
 
     const COMPANY_ID = COMPANY_ID_BY_PERSON_ID.get(PERSON_ID);
 
-    if (COMPANY_ID) {
+    if (isDefined(COMPANY_ID)) {
       COMPANY_IDS.add(COMPANY_ID);
     }
 
@@ -121,6 +123,61 @@ const BUILD_TARGET_COLUMN_SETS = (
   return TARGET_COLUMN_SETS;
 };
 
+const GROUP_PERSON_IDS_BY_PARENT_ID = <Participant>({
+  participants,
+  getParentId,
+  getPersonId,
+}: {
+  participants: Participant[];
+  getParentId: (participant: Participant) => string | undefined;
+  getPersonId: (participant: Participant) => string | null;
+}): Map<string, Set<string>> => {
+  const PERSON_IDS_BY_PARENT_ID = new Map<string, Set<string>>();
+
+  for (const PARTICIPANT of participants) {
+    const PARENT_ID = getParentId(PARTICIPANT);
+    const PERSON_ID = getPersonId(PARTICIPANT);
+
+    if (!isDefined(PARENT_ID) || !isDefined(PERSON_ID)) {
+      continue;
+    }
+
+    const PERSON_IDS = PERSON_IDS_BY_PARENT_ID.get(PARENT_ID) ?? new Set();
+
+    PERSON_IDS.add(PERSON_ID);
+    PERSON_IDS_BY_PARENT_ID.set(PARENT_ID, PERSON_IDS);
+  }
+
+  return PERSON_IDS_BY_PARENT_ID;
+};
+
+const BUILD_TARGET_SEEDS = <TargetSeed>(
+  personIdsByParentId: Map<string, Set<string>>,
+  createTargetSeed: (args: {
+    index: number;
+    parentId: string;
+    targetColumns: TargetColumnsDataSeed;
+  }) => TargetSeed,
+): TargetSeed[] => {
+  const TARGET_SEEDS: TargetSeed[] = [];
+  let TARGET_INDEX = 1;
+
+  for (const [PARENT_ID, PERSON_IDS] of personIdsByParentId) {
+    for (const TARGET_COLUMNS of BUILD_TARGET_COLUMN_SETS(PERSON_IDS)) {
+      TARGET_SEEDS.push(
+        createTargetSeed({
+          index: TARGET_INDEX,
+          parentId: PARENT_ID,
+          targetColumns: TARGET_COLUMNS,
+        }),
+      );
+      TARGET_INDEX++;
+    }
+  }
+
+  return TARGET_SEEDS;
+};
+
 const BUILD_TARGET_SEED_ID = (index: number, nodeSuffix: string): string => {
   const HEX_INDEX = index.toString(16).padStart(4, '0');
 
@@ -133,75 +190,37 @@ const MESSAGE_THREAD_ID_BY_MESSAGE_ID = new Map(
 
 export const getMessageThreadTargetDataSeeds = (
   messageParticipantSeeds: MessageParticipantDataSeed[],
-): MessageThreadTargetDataSeed[] => {
-  const PERSON_IDS_BY_THREAD_ID = new Map<string, Set<string>>();
-
-  for (const PARTICIPANT of messageParticipantSeeds) {
-    const THREAD_ID = MESSAGE_THREAD_ID_BY_MESSAGE_ID.get(
-      PARTICIPANT.messageId,
-    );
-
-    if (!THREAD_ID || !PARTICIPANT.personId) {
-      continue;
-    }
-
-    const PERSON_IDS = PERSON_IDS_BY_THREAD_ID.get(THREAD_ID) ?? new Set();
-
-    PERSON_IDS.add(PARTICIPANT.personId);
-    PERSON_IDS_BY_THREAD_ID.set(THREAD_ID, PERSON_IDS);
-  }
-
-  const TARGET_SEEDS: MessageThreadTargetDataSeed[] = [];
-  let TARGET_INDEX = 1;
-
-  for (const [THREAD_ID, PERSON_IDS] of PERSON_IDS_BY_THREAD_ID) {
-    for (const TARGET_COLUMNS of BUILD_TARGET_COLUMN_SETS(PERSON_IDS)) {
-      TARGET_SEEDS.push({
-        id: BUILD_TARGET_SEED_ID(TARGET_INDEX, 'cafe56789abc'),
-        messageThreadId: THREAD_ID,
-        ...TARGET_COLUMNS,
-        isAutomaticallyAssigned: true,
-        isManuallyAssigned: false,
-      });
-      TARGET_INDEX++;
-    }
-  }
-
-  return TARGET_SEEDS;
-};
+): MessageThreadTargetDataSeed[] =>
+  BUILD_TARGET_SEEDS(
+    GROUP_PERSON_IDS_BY_PARENT_ID({
+      participants: messageParticipantSeeds,
+      getParentId: (participant) =>
+        MESSAGE_THREAD_ID_BY_MESSAGE_ID.get(participant.messageId),
+      getPersonId: (participant) => participant.personId,
+    }),
+    ({ index, parentId, targetColumns }) => ({
+      id: BUILD_TARGET_SEED_ID(index, 'cafe56789abc'),
+      messageThreadId: parentId,
+      ...targetColumns,
+      isAutomaticallyAssigned: true,
+      isManuallyAssigned: false,
+    }),
+  );
 
 export const getCalendarEventTargetDataSeeds = (
   calendarEventParticipantSeeds: CalendarEventParticipantDataSeed[],
-): CalendarEventTargetDataSeed[] => {
-  const PERSON_IDS_BY_EVENT_ID = new Map<string, Set<string>>();
-
-  for (const PARTICIPANT of calendarEventParticipantSeeds) {
-    if (!PARTICIPANT.personId) {
-      continue;
-    }
-
-    const PERSON_IDS =
-      PERSON_IDS_BY_EVENT_ID.get(PARTICIPANT.calendarEventId) ?? new Set();
-
-    PERSON_IDS.add(PARTICIPANT.personId);
-    PERSON_IDS_BY_EVENT_ID.set(PARTICIPANT.calendarEventId, PERSON_IDS);
-  }
-
-  const TARGET_SEEDS: CalendarEventTargetDataSeed[] = [];
-  let TARGET_INDEX = 1;
-
-  for (const [CALENDAR_EVENT_ID, PERSON_IDS] of PERSON_IDS_BY_EVENT_ID) {
-    for (const TARGET_COLUMNS of BUILD_TARGET_COLUMN_SETS(PERSON_IDS)) {
-      TARGET_SEEDS.push({
-        id: BUILD_TARGET_SEED_ID(TARGET_INDEX, 'face56789abc'),
-        calendarEventId: CALENDAR_EVENT_ID,
-        ...TARGET_COLUMNS,
-        isAutomaticallyAssigned: true,
-        isManuallyAssigned: false,
-      });
-      TARGET_INDEX++;
-    }
-  }
-
-  return TARGET_SEEDS;
-};
+): CalendarEventTargetDataSeed[] =>
+  BUILD_TARGET_SEEDS(
+    GROUP_PERSON_IDS_BY_PARENT_ID({
+      participants: calendarEventParticipantSeeds,
+      getParentId: (participant) => participant.calendarEventId,
+      getPersonId: (participant) => participant.personId,
+    }),
+    ({ index, parentId, targetColumns }) => ({
+      id: BUILD_TARGET_SEED_ID(index, 'face56789abc'),
+      calendarEventId: parentId,
+      ...targetColumns,
+      isAutomaticallyAssigned: true,
+      isManuallyAssigned: false,
+    }),
+  );
