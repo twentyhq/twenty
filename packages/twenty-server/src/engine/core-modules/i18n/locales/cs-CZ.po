@@ -9854,7 +9854,7 @@ msgstr "Soubor je prázdný nebo překračuje maximální povolenou velikost."
 #. js-lingui-id: 2hrpBa
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "The file upload has not been completed. Please retry the upload."
-msgstr ""
+msgstr "Nahrávání souboru nebylo dokončeno. Zkuste prosím nahrávání znovu."
 
 #. js-lingui-id: 9TYO3w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
