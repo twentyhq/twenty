@@ -315,3 +315,26 @@ describe('filterAndSortNavigationMenuItems', () => {
     expect(result[0].id).toBe('obj-1');
   });
 });
+  it('should filter out duplicate page layout navigation menu items', () => {
+    const result = filterAndSortNavigationMenuItems(
+      [
+        {
+          id: 'layout-1',
+          type: NavigationMenuItemType.PAGE_LAYOUT,
+          pageLayoutId: 'layout-id',
+          position: 1,
+        } as NavigationMenuItem,
+        {
+          id: 'layout-2-duplicate',
+          type: NavigationMenuItemType.PAGE_LAYOUT,
+          pageLayoutId: 'layout-id',
+          position: 2,
+        } as NavigationMenuItem,
+      ],
+      [],
+      [],
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe('layout-1');
+  });
