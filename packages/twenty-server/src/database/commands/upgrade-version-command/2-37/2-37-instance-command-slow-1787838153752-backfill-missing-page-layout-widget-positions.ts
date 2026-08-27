@@ -3,7 +3,7 @@ import { DataSource, QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
-@RegisteredInstanceCommand('2.37.0', 1787831342648, { type: 'slow' })
+@RegisteredInstanceCommand('2.37.0', 1787838153752, { type: 'slow' })
 export class BackfillMissingPageLayoutWidgetPositionsSlowInstanceCommand implements SlowInstanceCommand {
   async runDataMigration(dataSource: DataSource): Promise<void> {
     await dataSource.query(`
