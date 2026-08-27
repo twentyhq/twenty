@@ -35,8 +35,9 @@ export const Default: Story = {
     });
     const lastName = await canvas.findByRole('textbox', { name: 'Last Name' });
 
-    expect(lastName.getBoundingClientRect().left).toBeGreaterThan(
-      firstName.getBoundingClientRect().right,
-    );
+    expect(
+      lastName.getBoundingClientRect().left -
+        firstName.getBoundingClientRect().right,
+    ).toBe(16);
   },
 };
