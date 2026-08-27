@@ -575,9 +575,6 @@ export abstract class CommonBaseQueryRunnerService<
     }
   }
 
-  // Only built-in ceilings are metered, matching the throttler this replaces: a
-  // denial from a workspace-configured rule is that workspace's own policy, not
-  // the platform limit these counters watch.
   private async incrementApiSpeedCeilingMetrics({
     authContext,
     exhaustedScope,
