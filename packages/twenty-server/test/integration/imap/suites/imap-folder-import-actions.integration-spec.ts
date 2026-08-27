@@ -104,6 +104,8 @@ describe('IMAP folder actions (integration)', () => {
         folders.map((folder) => [folder.name, folder.pendingSyncAction]),
       ),
     ).toEqual({
+      Sent: MessageFolderPendingSyncAction.NONE,
+      Drafts: MessageFolderPendingSyncAction.NONE,
       [FOLDER_ACTION_NAMES.imported]: MessageFolderPendingSyncAction.NONE,
       [FOLDER_ACTION_NAMES.failing]:
         MessageFolderPendingSyncAction.FOLDER_IMPORT,
