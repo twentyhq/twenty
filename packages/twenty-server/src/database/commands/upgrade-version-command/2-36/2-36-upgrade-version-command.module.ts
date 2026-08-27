@@ -5,7 +5,7 @@ import { AddWorkflowRunCoreIdFieldsCommand } from 'src/database/commands/upgrade
 import { BackfillWorkflowRunCoreIdsCommand } from 'src/database/commands/upgrade-version-command/2-36/2-36-workspace-command-1787748136001-backfill-workflow-run-core-ids.command';
 import { RewriteIsNotNullWorkflowFilterOperandsCommand } from 'src/database/commands/upgrade-version-command/2-36/2-36-workspace-command-1787700000000-rewrite-is-not-null-workflow-filter-operands.command';
 import { AddCallRecordingSummaryAndTranscriptTabsCommand } from 'src/database/commands/upgrade-version-command/2-36/2-36-workspace-command-1787746350922-add-call-recording-summary-and-transcript-tabs.command';
-import { EnableEditLayoutOnIndexPagesCommand } from 'src/database/commands/upgrade-version-command/2-36/2-36-workspace-command-1787812230587-enable-edit-layout-on-index-pages.command';
+import { EnableEditLayoutAcrossAppCommand } from 'src/database/commands/upgrade-version-command/2-36/2-36-workspace-command-1787816785319-enable-edit-layout-across-app.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -22,7 +22,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AddCallRecordingSummaryAndTranscriptTabsCommand,
     AddWorkflowRunCoreIdFieldsCommand,
     BackfillWorkflowRunCoreIdsCommand,
-    EnableEditLayoutOnIndexPagesCommand,
+    EnableEditLayoutAcrossAppCommand,
   ],
 })
 export class V2_36_UpgradeVersionCommandModule {}

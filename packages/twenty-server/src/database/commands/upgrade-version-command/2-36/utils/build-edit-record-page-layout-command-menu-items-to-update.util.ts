@@ -8,6 +8,9 @@ import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty
 const LEGACY_EDIT_RECORD_PAGE_LAYOUT_AVAILABILITY_EXPRESSION =
   'pageType == "RECORD_PAGE" and not isLayoutCustomizationModeEnabled and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"';
 
+const INDEX_PAGE_EDIT_RECORD_PAGE_LAYOUT_AVAILABILITY_EXPRESSION =
+  '(pageType == "INDEX_PAGE" or (pageType == "RECORD_PAGE" and noneDefined(selectedRecords, "deletedAt"))) and not isLayoutCustomizationModeEnabled and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"';
+
 const EDIT_RECORD_PAGE_LAYOUT_COMMAND_MENU_ITEM =
   STANDARD_COMMAND_MENU_ITEMS.editRecordPageLayout;
 
@@ -31,10 +34,14 @@ export const buildEditRecordPageLayoutCommandMenuItemsToUpdate = ({
     existingCommandMenuItem.availabilityType ===
       CommandMenuItemAvailabilityType.RECORD_SELECTION ||
     existingCommandMenuItem.availabilityType ===
+      CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT ||
+    existingCommandMenuItem.availabilityType ===
       EDIT_RECORD_PAGE_LAYOUT_COMMAND_MENU_ITEM.availabilityType;
   const hasSyncableAvailabilityExpression =
     existingCommandMenuItem.conditionalAvailabilityExpression ===
       LEGACY_EDIT_RECORD_PAGE_LAYOUT_AVAILABILITY_EXPRESSION ||
+    existingCommandMenuItem.conditionalAvailabilityExpression ===
+      INDEX_PAGE_EDIT_RECORD_PAGE_LAYOUT_AVAILABILITY_EXPRESSION ||
     existingCommandMenuItem.conditionalAvailabilityExpression ===
       EDIT_RECORD_PAGE_LAYOUT_COMMAND_MENU_ITEM.conditionalAvailabilityExpression;
   const isAlreadySynced =

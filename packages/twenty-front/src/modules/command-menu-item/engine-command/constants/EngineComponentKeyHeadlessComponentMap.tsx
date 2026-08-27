@@ -8,9 +8,9 @@ import { SendMessageCampaignSingleRecordCommand } from '@/command-menu-item/engi
 import { SendMessageCampaignTestSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/message-campaign/components/SendMessageCampaignTestSingleRecordCommand';
 import { OpenEmailBlockSettingsSingleRecordCommand } from '@/command-menu-item/engine-command/record/components/OpenEmailBlockSettingsSingleRecordCommand';
 import { ComposeEmailCommand } from '@/command-menu-item/engine-command/global/components/ComposeEmailCommand';
+import { EditLayoutCommand } from '@/command-menu-item/engine-command/global/components/EditLayoutCommand';
 import { DeleteRecordsCommand } from '@/command-menu-item/engine-command/record/components/DeleteRecordsCommand';
 import { DestroyRecordsCommand } from '@/command-menu-item/engine-command/record/components/DestroyRecordsCommand';
-import { EditRecordPageLayoutCommand } from '@/command-menu-item/engine-command/record/components/EditRecordPageLayoutCommand';
 import { ExportRecordsCommand } from '@/command-menu-item/engine-command/record/components/ExportRecordsCommand';
 import { RestoreRecordsCommand } from '@/command-menu-item/engine-command/record/components/RestoreRecordsCommand';
 import { TriggerWorkflowVersionEngineCommand } from '@/command-menu-item/engine-command/record/components/TriggerWorkflowVersionEngineCommand';
@@ -123,7 +123,7 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.HIDE_DELETED_RECORDS]: (
     <HideDeletedRecordsNoSelectionRecordCommand />
   ),
-  [EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT]: <EditRecordPageLayoutCommand />,
+  [EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT]: <EditLayoutCommand />,
   [EngineComponentKey.EDIT_DASHBOARD_LAYOUT]: (
     <EditDashboardSingleRecordCommand />
   ),

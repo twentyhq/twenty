@@ -9,13 +9,13 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.36.0', 1787812230587)
+@RegisteredWorkspaceCommand('2.36.0', 1787816785319)
 @Command({
-  name: 'upgrade:2-36:enable-edit-layout-on-index-pages',
+  name: 'upgrade:2-36:enable-edit-layout-across-app',
   description:
-    'Make the Edit Layout command available without a record selection on object index pages',
+    'Make the Edit Layout command available across the app outside Settings',
 })
-export class EnableEditLayoutOnIndexPagesCommand extends ProvisionedWorkspaceCommandRunner {
+export class EnableEditLayoutAcrossAppCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -51,7 +51,7 @@ export class EnableEditLayoutOnIndexPagesCommand extends ProvisionedWorkspaceCom
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Enabling Edit Layout on index pages for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Enabling Edit Layout across the app for workspace ${workspaceId}`,
     );
 
     if (isDryRun) {
@@ -82,16 +82,16 @@ export class EnableEditLayoutOnIndexPagesCommand extends ProvisionedWorkspaceCom
 
     if (validateAndBuildResult.status === 'fail') {
       this.logger.error(
-        `Failed to enable Edit Layout on index pages:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
+        `Failed to enable Edit Layout across the app:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
       );
 
       throw new Error(
-        `Failed to enable Edit Layout on index pages for workspace ${workspaceId}`,
+        `Failed to enable Edit Layout across the app for workspace ${workspaceId}`,
       );
     }
 
     this.logger.log(
-      `Successfully enabled Edit Layout on index pages for workspace ${workspaceId}`,
+      `Successfully enabled Edit Layout across the app for workspace ${workspaceId}`,
     );
   }
 }
