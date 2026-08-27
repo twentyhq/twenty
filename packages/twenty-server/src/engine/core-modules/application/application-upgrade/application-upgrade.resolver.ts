@@ -27,7 +27,7 @@ export class ApplicationUpgradeResolver {
     @Args('targetVersion') targetVersion: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
-    return this.applicationUpgradeService.upgradeApplication({
+    return this.applicationUpgradeService.enqueueApplicationUpgrade({
       appRegistrationId,
       targetVersion,
       workspaceId: workspace.id,

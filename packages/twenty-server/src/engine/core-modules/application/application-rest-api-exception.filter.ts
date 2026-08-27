@@ -37,6 +37,7 @@ const applicationExceptionCodeToHttpStatus = (
     case ApplicationExceptionCode.WORKSPACE_VERSION_INCOMPATIBLE:
     case ApplicationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT:
     case ApplicationExceptionCode.INVALID_WORKSPACE_VERSION:
+    case ApplicationExceptionCode.APPLICATION_OPERATION_IN_PROGRESS:
       return 400;
     case ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED:
     case ApplicationExceptionCode.POST_INSTALL_ERROR:

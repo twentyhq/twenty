@@ -951,6 +951,7 @@ export class ApplicationRegistrationService {
       displayName: application.workspace.displayName ?? null,
       logo: application.workspace.logo ?? null,
       version: application.version ?? null,
+      state: application.state,
     }));
 
     return {

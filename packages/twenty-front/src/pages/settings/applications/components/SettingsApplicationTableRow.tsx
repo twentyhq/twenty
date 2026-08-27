@@ -5,6 +5,7 @@ import { useResolvedApplicationDescription } from '@/applications/hooks/useResol
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -21,6 +22,7 @@ export type SettingsApplicationTableRowProps = {
   hasUpdate?: boolean;
   link?: string;
   sourceType?: ApplicationRegistrationSourceType;
+  transitionalStateLabel?: string;
 };
 
 export const APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
@@ -39,6 +41,7 @@ export const SettingsApplicationTableRow = ({
   hasUpdate,
   link,
   sourceType,
+  transitionalStateLabel,
 }: SettingsApplicationTableRowProps) => {
   const resolvedDescription = useResolvedApplicationDescription(application);
   const descriptionSummary =
@@ -58,8 +61,12 @@ export const SettingsApplicationTableRow = ({
       </TableCell>
       <TableCell gap={themeCssVariables.spacing[2]} minWidth="0">
         <OverflowingTextWithTooltip text={descriptionSummary} />
-        {hasUpdate === true && (
-          <Tag color="blue" text={t`Update`} weight="medium" />
+        {isDefined(transitionalStateLabel) ? (
+          <Tag color="orange" text={transitionalStateLabel} weight="medium" />
+        ) : (
+          hasUpdate === true && (
+            <Tag color="blue" text={t`Update`} weight="medium" />
+          )
         )}
       </TableCell>
       <TableCell

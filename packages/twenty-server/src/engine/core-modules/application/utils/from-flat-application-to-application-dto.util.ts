@@ -16,10 +16,12 @@ export const fromFlatApplicationToApplicationDto = ({
   universalIdentifier,
   version,
   settingsCustomTabFrontComponentId,
+  state,
 }: FlatApplication): ApplicationDTO => {
   return {
     canBeUninstalled,
     autoUpgrade,
+    state,
     description: description ?? undefined,
     id,
     logo: logo ?? undefined,

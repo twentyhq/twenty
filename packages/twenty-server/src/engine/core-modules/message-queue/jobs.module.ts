@@ -16,6 +16,10 @@ import { ApplicationInstallModule } from 'src/engine/core-modules/application/ap
 import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
+import { InstallApplicationJob } from 'src/engine/core-modules/application/jobs/install-application.job';
+import { UninstallApplicationJob } from 'src/engine/core-modules/application/jobs/uninstall-application.job';
+import { UpgradeApplicationJob } from 'src/engine/core-modules/application/jobs/upgrade-application.job';
 import { UpgradeApplicationsJob } from 'src/engine/core-modules/application/jobs/upgrade-applications.job';
 import { InstallPreInstalledAppsJob } from 'src/engine/core-modules/application/pre-installed-apps/jobs/install-pre-installed-apps.job';
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
@@ -100,6 +104,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     ApplicationManifestModule,
     ApplicationRegistrationModule,
     ApplicationUpgradeModule,
+    MetricsModule,
     PreInstalledAppsModule,
     OnboardingModule,
     BillingReminderModule,
@@ -119,6 +124,9 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     UpdateWorkspaceMemberEmailJob,
     GenerateSdkClientJob,
     UpgradeApplicationsJob,
+    InstallApplicationJob,
+    UninstallApplicationJob,
+    UpgradeApplicationJob,
     InstallOnboardingAppsJob,
     InstallPreInstalledAppsJob,
   ],

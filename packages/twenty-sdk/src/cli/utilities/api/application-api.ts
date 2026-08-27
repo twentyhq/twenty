@@ -430,4 +430,66 @@ export class ApplicationApi {
       throw error;
     }
   }
+
+  // Install/upgrade/uninstall run in background jobs server-side: the CLI
+  // polls this to report the real outcome instead of just the enqueue.
+  async findApplicationInstallState(
+    universalIdentifier: string,
+  ): Promise<ApiResponse<{ id: string; state: string } | null>> {
+    try {
+      const query = `
+        query FindOneApplicationState($universalIdentifier: UUID!) {
+          findOneApplication(universalIdentifier: $universalIdentifier) {
+            id
+            state
+          }
+        }
+      `;
+
+      const response = await this.client.post(
+        '/metadata',
+        {
+          query,
+          variables: { universalIdentifier },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        const isNotFound = response.data.errors.some(
+          (error: { extensions?: { code?: string } }) =>
+            error.extensions?.code === 'NOT_FOUND',
+        );
+
+        if (isNotFound) {
+          return { success: true, data: null };
+        }
+
+        return {
+          success: false,
+          error:
+            response.data.errors[0]?.message ||
+            'Failed to fetch application state',
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.findOneApplication,
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return {
+          success: false,
+          error: error.response.data?.errors?.[0]?.message || error.message,
+        };
+      }
+      throw error;
+    }
+  }
 }

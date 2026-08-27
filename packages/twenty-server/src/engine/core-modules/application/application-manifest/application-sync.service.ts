@@ -22,6 +22,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
@@ -172,6 +173,7 @@ export class ApplicationSyncService {
       uninstallLogicFunctionId: null,
       uninstallHookCompletedForRequestedAt: null,
       canBeUninstalled: true,
+      state: ApplicationState.INSTALLED,
       autoUpgrade: false,
       isSdkLayerStale: false,
       sdkClientCoreChecksum: null,
@@ -349,68 +351,112 @@ export class ApplicationSyncService {
       );
     }
 
-    if (shouldRunUninstallHook) {
-      await this.applicationUninstallService.runUninstallHookBestEffort({
-        application,
+    if (application.state !== ApplicationState.UNINSTALLING) {
+      await this.applicationService.update(application.id, {
+        state: ApplicationState.UNINSTALLING,
         workspaceId,
       });
     }
 
-    const flatEntityMapsCacheKeys = Object.values(ALL_METADATA_NAME).map(
-      getMetadataFlatEntityMapsKey,
-    );
-
-    const cacheResult = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      [...flatEntityMapsCacheKeys, 'featureFlagsMap'],
-    );
-
-    const { featureFlagsMap, ...fromAllFlatEntityMaps } = cacheResult;
-
-    const applicationFromAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps(
-      {
-        applicationIds: [application.id],
-        fromAllFlatEntityMaps,
-      },
-    );
-
-    const fromToAllFlatEntityMaps = buildFromToAllUniversalFlatEntityMaps({
-      fromAllFlatEntityMaps: applicationFromAllFlatEntityMaps,
-      toAllUniversalFlatEntityMaps: createEmptyAllFlatEntityMaps(),
-    });
-
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
-        {
-          buildOptions: {
-            isSystemBuild: true,
-            inferDeletionFromMissingEntities: true,
-            applicationUniversalIdentifier,
-          },
-          fromToAllFlatEntityMaps,
+    try {
+      if (shouldRunUninstallHook) {
+        await this.applicationUninstallService.runUninstallHookBestEffort({
+          application,
           workspaceId,
-          additionalCacheDataMaps: { featureFlagsMap },
-        },
+        });
+      }
+
+      const flatEntityMapsCacheKeys = Object.values(ALL_METADATA_NAME).map(
+        getMetadataFlatEntityMapsKey,
       );
 
-    if (validateAndBuildResult.status === 'fail') {
-      throw new WorkspaceMigrationBuilderException(
-        validateAndBuildResult,
-        'Validation errors occurred while uninstalling application',
+      const cacheResult = await this.workspaceCacheService.getOrRecompute(
+        workspaceId,
+        [...flatEntityMapsCacheKeys, 'featureFlagsMap'],
+      );
+
+      const { featureFlagsMap, ...fromAllFlatEntityMaps } = cacheResult;
+
+      const applicationFromAllFlatEntityMaps =
+        getApplicationSubAllFlatEntityMaps({
+          applicationIds: [application.id],
+          fromAllFlatEntityMaps,
+        });
+
+      const fromToAllFlatEntityMaps = buildFromToAllUniversalFlatEntityMaps({
+        fromAllFlatEntityMaps: applicationFromAllFlatEntityMaps,
+        toAllUniversalFlatEntityMaps: createEmptyAllFlatEntityMaps(),
+      });
+
+      const validateAndBuildResult =
+        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
+          {
+            buildOptions: {
+              isSystemBuild: true,
+              inferDeletionFromMissingEntities: true,
+              applicationUniversalIdentifier,
+            },
+            fromToAllFlatEntityMaps,
+            workspaceId,
+            additionalCacheDataMaps: { featureFlagsMap },
+          },
+        );
+
+      if (validateAndBuildResult.status === 'fail') {
+        throw new WorkspaceMigrationBuilderException(
+          validateAndBuildResult,
+          'Validation errors occurred while uninstalling application',
+        );
+      }
+
+      await this.applicationService.delete(
+        applicationUniversalIdentifier,
+        workspaceId,
+      );
+
+      await this.cleanupApplicationRuntimeResources({
+        workspaceId,
+        applicationUniversalIdentifier,
+      });
+
+      return validateAndBuildResult.workspaceMigration;
+    } catch (error) {
+      // Restore the pre-uninstall state so a failed rollback of a fresh
+      // install (INSTALLING) does not surface as INSTALLED; a row that was
+      // already UNINSTALLING on entry has no other state to go back to.
+      await this.revertApplicationStateBestEffort({
+        applicationId: application.id,
+        state:
+          application.state === ApplicationState.UNINSTALLING
+            ? ApplicationState.INSTALLED
+            : application.state,
+        workspaceId,
+      });
+
+      throw error;
+    }
+  }
+
+  private async revertApplicationStateBestEffort({
+    applicationId,
+    state,
+    workspaceId,
+  }: {
+    applicationId: string;
+    state: ApplicationState;
+    workspaceId: string;
+  }): Promise<void> {
+    try {
+      await this.applicationService.update(applicationId, {
+        state,
+        workspaceId,
+      });
+    } catch (revertError) {
+      this.logger.warn(
+        `Failed to revert application ${applicationId} state after a failed uninstall in workspace ${workspaceId}`,
+        revertError,
       );
     }
-
-    await this.applicationService.delete(
-      applicationUniversalIdentifier,
-      workspaceId,
-    );
-
-    await this.cleanupApplicationRuntimeResources({
-      workspaceId,
-      applicationUniversalIdentifier,
-    });
-
-    return validateAndBuildResult.workspaceMigration;
   }
 
   private async cleanupApplicationRuntimeResources({

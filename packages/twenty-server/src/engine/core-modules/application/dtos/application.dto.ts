@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import {
   IsBoolean,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -12,6 +13,7 @@ import GraphQLJSON from 'graphql-type-json';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationRegistrationSummaryDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-summary.dto';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
 import { CommandMenuItemDTO } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item.dto';
 import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
@@ -86,6 +88,10 @@ export class ApplicationDTO {
   @Field(() => Boolean)
   @IsBoolean()
   canBeUninstalled: boolean;
+
+  @Field(() => ApplicationState)
+  @IsEnum(ApplicationState)
+  state: ApplicationState;
 
   @Field(() => Boolean)
   @IsBoolean()

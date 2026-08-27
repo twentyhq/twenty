@@ -7,6 +7,7 @@ export const INSTALL_APPLICATION = gql`
       name
       universalIdentifier
       logoUrl
+      state
     }
   }
 `;

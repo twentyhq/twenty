@@ -31,6 +31,7 @@ export enum ApplicationExceptionCode {
   INVALID_WORKSPACE_VERSION = 'INVALID_WORKSPACE_VERSION',
   APPLICATION_INSTALLATION_FAILED = 'APPLICATION_INSTALLATION_FAILED',
   KEY_VALUE_PERSISTENCE_FAILED = 'KEY_VALUE_PERSISTENCE_FAILED',
+  APPLICATION_OPERATION_IN_PROGRESS = 'APPLICATION_OPERATION_IN_PROGRESS',
 }
 
 const getApplicationExceptionUserFriendlyMessage = (
@@ -87,6 +88,8 @@ const getApplicationExceptionUserFriendlyMessage = (
       return msg`We couldn't install this application because some of its metadata could not be applied to your workspace.`;
     case ApplicationExceptionCode.KEY_VALUE_PERSISTENCE_FAILED:
       return msg`The application key-value entry could not be saved. Please try again.`;
+    case ApplicationExceptionCode.APPLICATION_OPERATION_IN_PROGRESS:
+      return msg`Another operation is already in progress for this application. Please wait for it to complete.`;
     default:
       assertUnreachable(code);
   }

@@ -1,10 +1,8 @@
-import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { createAppTarball } from 'test/integration/metadata/suites/application/utils/create-app-tarball.util';
 import { installApplication } from 'test/integration/metadata/suites/application/utils/install-application.util';
 import { uploadAppTarball } from 'test/integration/metadata/suites/application/utils/upload-app-tarball.util';
-import { scrubSemverVersions } from 'test/utils/scrub-semver-versions.util';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -122,6 +120,26 @@ describe('Install application is gated by the workspace completed upgrade versio
     jest.useFakeTimers();
   });
 
+  // The gate is checked in the background install job, so the mutation
+  // (which only enqueues) succeeds and the failure surfaces as the
+  // installation being rolled back.
+  const expectInstallationRolledBack = async (
+    universalIdentifier: string,
+  ): Promise<void> => {
+    const { errors } = await installApplication({
+      input: { universalIdentifier },
+    });
+
+    expect(errors).toBeUndefined();
+
+    const applicationRows = await global.testDataSource.query(
+      `SELECT id FROM core."application" WHERE "universalIdentifier" = $1`,
+      [universalIdentifier],
+    );
+
+    expect(applicationRows).toHaveLength(0);
+  };
+
   it('rejects installation when the workspace has not completed the required upgrade version', async () => {
     const universalIdentifier = uuidv4();
     const roleId = uuidv4();
@@ -138,15 +156,7 @@ describe('Install application is gated by the workspace completed upgrade versio
     // segment, so its last completed version is the previous one.
     await injectWorkspaceCursor(currentVersionCommandName, 'failed');
 
-    const { errors } = await installApplication({
-      input: { universalIdentifier },
-      expectToFail: true,
-    });
-
-    expectOneNotInternalServerErrorSnapshot({
-      errors,
-      normalizeMessage: scrubSemverVersions,
-    });
+    await expectInstallationRolledBack(universalIdentifier);
   });
 
   it('rejects installation when the workspace upgrade cursor cannot be interpreted', async () => {
@@ -168,14 +178,6 @@ describe('Install application is gated by the workspace completed upgrade versio
       'completed',
     );
 
-    const { errors } = await installApplication({
-      input: { universalIdentifier },
-      expectToFail: true,
-    });
-
-    expectOneNotInternalServerErrorSnapshot({
-      errors,
-      normalizeMessage: scrubSemverVersions,
-    });
+    await expectInstallationRolledBack(universalIdentifier);
   });
 });

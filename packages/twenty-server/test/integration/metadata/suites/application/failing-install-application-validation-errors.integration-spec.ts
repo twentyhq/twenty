@@ -115,7 +115,7 @@ describe('Install application should return structured validation errors', () =>
     jest.useFakeTimers();
   });
 
-  it('should return METADATA_VALIDATION_FAILED with structured errors when installing an app whose manifest has validation errors', async () => {
+  it('should roll back the installation when the app manifest has validation errors', async () => {
     const universalIdentifier = crypto.randomUUID();
     const roleUniversalIdentifier = crypto.randomUUID();
     const duplicatedUniversalIdentifier = crypto.randomUUID();
@@ -143,22 +143,22 @@ describe('Install application should return structured validation errors', () =>
 
     createdApplicationUniversalIdentifiers.push(universalIdentifier);
 
+    // Validation happens in the background install job: the mutation (which
+    // only enqueues) succeeds and the failure surfaces as the installation
+    // being rolled back.
     const { errors } = await installApplication({
       input: {
         universalIdentifier,
       },
-      expectToFail: true,
     });
 
-    expect(errors).toBeDefined();
-    expect(errors.length).toBe(1);
+    expect(errors).toBeUndefined();
 
-    const [error] = errors;
+    const applicationRows = await global.testDataSource.query(
+      `SELECT id FROM core."application" WHERE "universalIdentifier" = $1`,
+      [universalIdentifier],
+    );
 
-    expect(error.extensions.code).toBe('METADATA_VALIDATION_FAILED');
-    expect(error.extensions.errors).toBeDefined();
-    expect(error.extensions.summary).toBeDefined();
-    expect(error.extensions.summary.totalErrors).toBeGreaterThan(0);
-    expect(error.extensions.message).toMatch(/Validation failed for/);
+    expect(applicationRows).toHaveLength(0);
   }, 120000);
 });

@@ -23,7 +23,7 @@ export const useUpgradeApplication = () => {
 
       if (isDefined(result.data)) {
         enqueueSuccessSnackBar({
-          message: t`Application upgraded successfully.`,
+          message: t`Application upgrade started.`,
         });
 
         return true;

@@ -45,7 +45,7 @@ export const useInstallMarketplaceApp = () => {
         );
 
         enqueueSuccessSnackBar({
-          message: t`Application installed successfully.`,
+          message: t`Application installation started.`,
         });
 
         return result.data;

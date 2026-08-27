@@ -101,6 +101,12 @@ export class ApiService {
     return this.applicationApi.uninstallApplication(universalIdentifier);
   }
 
+  findApplicationInstallState(
+    ...args: Parameters<ApplicationApi['findApplicationInstallState']>
+  ) {
+    return this.applicationApi.findApplicationInstallState(...args);
+  }
+
   syncMarketplaceCatalog(): Promise<ApiResponse<boolean>> {
     return this.applicationApi.syncMarketplaceCatalog();
   }

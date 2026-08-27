@@ -6,6 +6,7 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import {
@@ -38,6 +39,7 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   uninstallLogicFunctionId: null,
   uninstallHookCompletedForRequestedAt: null,
   canBeUninstalled: false,
+  state: ApplicationState.INSTALLED,
   autoUpgrade: false,
   applicationRegistrationId: null,
   primaryPublicDomainId: null,

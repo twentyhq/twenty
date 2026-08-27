@@ -19,6 +19,15 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
+import {
+  UPGRADE_APPLICATION_JOB_NAME,
+  type UpgradeApplicationJobData,
+} from 'src/engine/core-modules/application/jobs/upgrade-application.job-constants';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
@@ -36,7 +45,10 @@ export class ApplicationUpgradeService {
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly applicationInstallService: ApplicationInstallService,
+    private readonly applicationService: ApplicationService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly workspaceQueueService: MessageQueueService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceVersionService: WorkspaceVersionService,
@@ -243,6 +255,129 @@ export class ApplicationUpgradeService {
       targetVersion,
       applications: applicationsToUpgrade,
     });
+  }
+
+  // Flags the application row as UPGRADING synchronously so clients see the
+  // operation immediately, then defers the actual upgrade to a background job.
+  async enqueueApplicationUpgrade(params: {
+    appRegistrationId: string;
+    targetVersion: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const appRegistration = await this.appRegistrationRepository.findOneOrFail({
+      where: { id: params.appRegistrationId },
+    });
+
+    if (
+      appRegistration.sourceType === ApplicationRegistrationSourceType.LOCAL ||
+      appRegistration.sourceType ===
+        ApplicationRegistrationSourceType.OAUTH_ONLY
+    ) {
+      throw new ApplicationException(
+        'Cannot upgrade an app installed from a local source or OAuth-only registration',
+        ApplicationExceptionCode.UPGRADE_FAILED,
+      );
+    }
+
+    const application = await this.applicationService.findByUniversalIdentifier(
+      {
+        universalIdentifier: appRegistration.universalIdentifier,
+        workspaceId: params.workspaceId,
+      },
+    );
+
+    if (!isDefined(application)) {
+      throw new ApplicationException(
+        `Application ${appRegistration.universalIdentifier} is not installed in workspace ${params.workspaceId}`,
+        ApplicationExceptionCode.APP_NOT_INSTALLED,
+      );
+    }
+
+    if (application.state !== ApplicationState.INSTALLED) {
+      throw new ApplicationException(
+        `An operation is already in progress for application ${appRegistration.universalIdentifier}`,
+        ApplicationExceptionCode.APPLICATION_OPERATION_IN_PROGRESS,
+      );
+    }
+
+    await this.applicationService.update(application.id, {
+      state: ApplicationState.UPGRADING,
+      workspaceId: params.workspaceId,
+    });
+
+    try {
+      await this.workspaceQueueService.add<UpgradeApplicationJobData>(
+        UPGRADE_APPLICATION_JOB_NAME,
+        {
+          appRegistrationId: params.appRegistrationId,
+          targetVersion: params.targetVersion,
+          workspaceId: params.workspaceId,
+        },
+      );
+    } catch (error) {
+      await this.revertUpgradeStateBestEffort({
+        appRegistrationId: params.appRegistrationId,
+        workspaceId: params.workspaceId,
+      });
+
+      throw error;
+    }
+
+    return true;
+  }
+
+  async runEnqueuedUpgrade(params: {
+    appRegistrationId: string;
+    targetVersion: string;
+    workspaceId: string;
+  }): Promise<void> {
+    try {
+      await this.upgradeApplication(params);
+    } catch (error) {
+      // Failures happening before the install pipeline's own revert would
+      // otherwise leave the row stuck in UPGRADING.
+      await this.revertUpgradeStateBestEffort(params);
+
+      throw error;
+    }
+  }
+
+  private async revertUpgradeStateBestEffort(params: {
+    appRegistrationId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    try {
+      const appRegistration = await this.appRegistrationRepository.findOne({
+        where: { id: params.appRegistrationId },
+      });
+
+      if (!isDefined(appRegistration)) {
+        return;
+      }
+
+      const application =
+        await this.applicationService.findByUniversalIdentifier({
+          universalIdentifier: appRegistration.universalIdentifier,
+          workspaceId: params.workspaceId,
+        });
+
+      if (
+        !isDefined(application) ||
+        application.state !== ApplicationState.UPGRADING
+      ) {
+        return;
+      }
+
+      await this.applicationService.update(application.id, {
+        state: ApplicationState.INSTALLED,
+        workspaceId: params.workspaceId,
+      });
+    } catch (revertError) {
+      this.logger.warn(
+        `Failed to revert upgrade state for registration ${params.appRegistrationId} in workspace ${params.workspaceId}`,
+        revertError,
+      );
+    }
   }
 
   async upgradeApplication(params: {

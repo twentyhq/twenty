@@ -9,6 +9,7 @@ export const FIND_MANY_APPLICATIONS = gql`
       logoUrl
       version
       universalIdentifier
+      state
       applicationRegistrationId
       applicationRegistration {
         id

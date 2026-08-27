@@ -4,7 +4,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar, Tag } from 'twenty-ui/data-display';
 import { IconChevronDown, IconDotsVertical } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -22,6 +22,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 import { FindAdminApplicationRegistrationInstalledWorkspacesDocument } from '~/generated-admin/graphql';
+import { getApplicationTransitionalStateLabel } from '~/pages/settings/applications/utils/getApplicationTransitionalStateLabel';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { SettingsPath } from 'twenty-shared/types';
 
@@ -179,7 +180,20 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
                 <TableCell
                   align="right"
                   color={themeCssVariables.font.color.tertiary}
+                  gap={themeCssVariables.spacing[2]}
                 >
+                  {isDefined(
+                    getApplicationTransitionalStateLabel(workspace.state),
+                  ) && (
+                    <Tag
+                      color="orange"
+                      text={
+                        getApplicationTransitionalStateLabel(workspace.state) ??
+                        ''
+                      }
+                      weight="medium"
+                    />
+                  )}
                   {workspace.version ?? '—'}
                 </TableCell>
               </TableRow>

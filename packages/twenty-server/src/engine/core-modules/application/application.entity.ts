@@ -16,6 +16,7 @@ import {
 } from 'typeorm';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
@@ -132,6 +133,13 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
 
   @Column({ nullable: false, type: 'boolean', default: true })
   canBeUninstalled: boolean;
+
+  @Column({ type: 'text', default: ApplicationState.INSTALLED })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.37.0_AddStateToApplicationFastInstanceCommand_1787844152763',
+  })
+  state: ApplicationState;
 
   @Column({ nullable: false, type: 'boolean', default: false })
   @WasIntroducedInUpgrade({

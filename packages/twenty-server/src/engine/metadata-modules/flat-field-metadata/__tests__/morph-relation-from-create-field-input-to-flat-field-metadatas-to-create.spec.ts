@@ -3,6 +3,7 @@ import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util
 import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -43,6 +44,7 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   uninstallLogicFunctionId: null,
   uninstallHookCompletedForRequestedAt: null,
   canBeUninstalled: false,
+  state: ApplicationState.INSTALLED,
   autoUpgrade: false,
   applicationRegistrationId: null,
   primaryPublicDomainId: null,

@@ -1,5 +1,6 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { AppChip } from '@/applications/components/AppChip';
+import { useListenToApplicationEvents } from '@/applications/hooks/useListenToApplicationEvents';
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
@@ -32,6 +33,7 @@ import {
 } from 'twenty-ui/icon';
 import {
   ApplicationRegistrationSourceType,
+  ApplicationState,
   FindMarketplaceAppDetailDocument,
   FindMarketplaceAppManifestDocument,
   FindOneApplicationByUniversalIdentifierDocument,
@@ -79,6 +81,8 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const application = applicationData?.findOneApplication;
 
+  useListenToApplicationEvents();
+
   const detail = detailData?.findMarketplaceAppDetail;
   const manifest = manifestData?.findMarketplaceAppDetail?.manifest as
     | Manifest
@@ -99,7 +103,9 @@ export const SettingsAvailableApplicationDetails = () => {
       : undefined;
 
   const isUnlisted = isDefined(detail) && !detail.isListed;
-  const isAlreadyInstalled = isDefined(application);
+  const isApplicationInstalling =
+    application?.state === ApplicationState.INSTALLING;
+  const isAlreadyInstalled = isDefined(application) && !isApplicationInstalling;
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
 
@@ -242,10 +248,12 @@ export const SettingsAvailableApplicationDetails = () => {
             isInstalled={isAlreadyInstalled}
             canInstallMarketplaceApps={canInstallMarketplaceApps}
             onInstall={requestInstall}
-            isInstalling={isInstalling}
+            isInstalling={isInstalling || isApplicationInstalling}
             hasUpdate={hasUpdate}
             onUpgrade={handleUpgrade}
-            isUpgrading={isUpgrading}
+            isUpgrading={
+              isUpgrading || application?.state === ApplicationState.UPGRADING
+            }
           />
         );
       case 'content':

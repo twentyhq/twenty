@@ -6,6 +6,8 @@ import {
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import { isDefined } from 'twenty-shared/utils';
 
 export const installApplication = async ({
   input,
@@ -21,6 +23,12 @@ export const installApplication = async ({
   const graphqlOperation = installApplicationQueryFactory({ input });
 
   const response = await makeMetadataAPIRequest(graphqlOperation, token);
+
+  // The mutation only enqueues the install; drain the queue so callers
+  // observe the completed (or rolled back) installation.
+  if (!isDefined(response.body.errors)) {
+    await waitForAllJobsToFinish();
+  }
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

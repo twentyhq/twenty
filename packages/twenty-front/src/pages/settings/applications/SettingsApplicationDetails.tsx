@@ -1,5 +1,6 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { AppChip } from '@/applications/components/AppChip';
+import { useListenToApplicationEvents } from '@/applications/hooks/useListenToApplicationEvents';
 import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
@@ -35,6 +36,7 @@ import {
   IconSettings,
 } from 'twenty-ui/icon';
 import {
+  ApplicationState,
   FindMarketplaceAppDetailDocument,
   FindMarketplaceAppManifestDocument,
   FindOneApplicationDocument,
@@ -72,6 +74,8 @@ export const SettingsApplicationDetails = () => {
   });
 
   const application = data?.findOneApplication;
+
+  useListenToApplicationEvents();
 
   const { connectionProviders } =
     useFindApplicationConnectionProviders(applicationId);
@@ -171,7 +175,7 @@ export const SettingsApplicationDetails = () => {
         variables: { universalIdentifier: application.universalIdentifier },
       });
       enqueueSuccessSnackBar({
-        message: t`Application successfully uninstalled.`,
+        message: t`Application uninstall started.`,
       });
       navigate(SettingsPath.Applications);
     } catch {
@@ -306,14 +310,20 @@ export const SettingsApplicationDetails = () => {
                   }
                 : undefined
             }
-            isInstalled={true}
+            isInstalled={application.state !== ApplicationState.INSTALLING}
             canInstallMarketplaceApps={canInstallMarketplaceApps}
+            isInstalling={application.state === ApplicationState.INSTALLING}
             hasUpdate={hasUpdate}
             onUpgrade={handleUpgrade}
-            isUpgrading={isUpgrading}
+            isUpgrading={
+              isUpgrading || application.state === ApplicationState.UPGRADING
+            }
             canBeUninstalled={application.canBeUninstalled}
             onUninstall={handleUninstall}
-            isUninstalling={isUninstalling}
+            isUninstalling={
+              isUninstalling ||
+              application.state === ApplicationState.UNINSTALLING
+            }
           />
         );
       case 'content':

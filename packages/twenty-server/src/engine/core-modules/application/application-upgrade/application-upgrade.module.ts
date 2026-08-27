@@ -6,6 +6,7 @@ import { ApplicationInstallModule } from 'src/engine/core-modules/application/ap
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationUpgradeResolver } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.resolver';
 import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
 import { UpgradeApplicationCommand } from 'src/engine/core-modules/application/application-upgrade/commands/upgrade-application.command';
@@ -23,6 +24,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
       ApplicationRegistrationEntity,
     ]),
     ApplicationInstallModule,
+    ApplicationModule,
     ApplicationRegistrationModule,
     FeatureFlagModule,
     PermissionsModule,

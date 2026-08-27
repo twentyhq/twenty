@@ -13,10 +13,20 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
-import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { UninstallApplicationInput } from 'src/engine/core-modules/application/application-manifest/dtos/uninstall-application.input';
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
-import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
+import {
+  UNINSTALL_APPLICATION_JOB_NAME,
+  type UninstallApplicationJobData,
+} from 'src/engine/core-modules/application/jobs/uninstall-application.job-constants';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
@@ -44,9 +54,10 @@ export class ApplicationInstallResolver {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly applicationInstallService: ApplicationInstallService,
-    private readonly applicationSyncService: ApplicationSyncService,
     private readonly marketplaceQueryService: MarketplaceQueryService,
     private readonly metricsService: MetricsService,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly workspaceQueueService: MessageQueueService,
   ) {}
 
   @Query(() => [ApplicationDTO])
@@ -102,29 +113,32 @@ export class ApplicationInstallResolver {
     version: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    await this.installRegisteredApplication({
+    const application = await this.installRegisteredApplication({
       universalIdentifier,
       version,
       workspaceId: workspace.id,
     });
 
-    return this.applicationService.findOneApplicationOrThrow({
-      universalIdentifier,
-      workspaceId: workspace.id,
-    });
+    return (
+      application ??
+      this.applicationService.findOneApplicationOrThrow({
+        universalIdentifier,
+        workspaceId: workspace.id,
+      })
+    );
   }
 
   private async installRegisteredApplication(params: {
     universalIdentifier: string;
     version: string | undefined;
     workspaceId: string;
-  }): Promise<void> {
+  }) {
     const registration =
       await this.marketplaceQueryService.findRegistrationByUniversalIdentifier(
         params.universalIdentifier,
       );
 
-    await this.applicationInstallService.installApplication({
+    return this.applicationInstallService.enqueueApplicationInstall({
       appRegistrationId: registration.id,
       version: params.version,
       workspaceId: params.workspaceId,
@@ -164,19 +178,56 @@ export class ApplicationInstallResolver {
       },
     );
 
+    if (!isDefined(application)) {
+      throw new ApplicationException(
+        `Application with universalIdentifier ${universalIdentifier} not found`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    // Fail fast on conditions the background job could only report through
+    // its own failure.
+    if (!application.canBeUninstalled) {
+      throw new ApplicationException(
+        'This application cannot be uninstalled.',
+        ApplicationExceptionCode.FORBIDDEN,
+      );
+    }
+
+    if (application.state !== ApplicationState.INSTALLED) {
+      throw new ApplicationException(
+        `An operation is already in progress for application ${universalIdentifier}`,
+        ApplicationExceptionCode.APPLICATION_OPERATION_IN_PROGRESS,
+      );
+    }
+
     const attributes = {
       universal_identifier: universalIdentifier,
-      app_name: application?.name ?? 'unknown',
-      source_type: application?.sourceType ?? 'unknown',
-      version: application?.version ?? 'unknown',
+      app_name: application.name,
+      source_type: application.sourceType,
+      version: application.version ?? 'unknown',
     };
 
+    await this.applicationService.update(application.id, {
+      state: ApplicationState.UNINSTALLING,
+      workspaceId,
+    });
+
     try {
-      await this.applicationSyncService.uninstallApplication({
-        applicationUniversalIdentifier: universalIdentifier,
+      await this.workspaceQueueService.add<UninstallApplicationJobData>(
+        UNINSTALL_APPLICATION_JOB_NAME,
+        {
+          applicationUniversalIdentifier: universalIdentifier,
+          workspaceId,
+          metricsAttributes: attributes,
+        },
+      );
+    } catch (error) {
+      await this.applicationService.update(application.id, {
+        state: ApplicationState.INSTALLED,
         workspaceId,
       });
-    } catch (error) {
+
       this.metricsService.incrementCounterBy({
         key: MetricsKeys.AppUninstallFailed,
         amount: 1,
@@ -189,12 +240,6 @@ export class ApplicationInstallResolver {
 
       throw error;
     }
-
-    this.metricsService.incrementCounterBy({
-      key: MetricsKeys.AppUninstallSucceeded,
-      amount: 1,
-      attributes,
-    });
 
     return true;
   }

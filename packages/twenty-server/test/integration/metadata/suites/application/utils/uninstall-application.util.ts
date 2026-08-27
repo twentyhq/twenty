@@ -3,6 +3,8 @@ import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/m
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import { isDefined } from 'twenty-shared/utils';
 
 export const uninstallApplication = async ({
   universalIdentifier,
@@ -20,6 +22,12 @@ export const uninstallApplication = async ({
   });
 
   const response = await makeMetadataAPIRequest(graphqlOperation, token);
+
+  // The mutation only enqueues the uninstall; drain the queue so callers
+  // observe the completed removal.
+  if (!isDefined(response.body.errors)) {
+    await waitForAllJobsToFinish();
+  }
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

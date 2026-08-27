@@ -30,7 +30,12 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import {
+  INSTALL_APPLICATION_JOB_NAME,
+  type InstallApplicationJobData,
+} from 'src/engine/core-modules/application/jobs/install-application.job-constants';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
@@ -62,9 +67,181 @@ export class ApplicationInstallService {
     private readonly cacheLockService: CacheLockService,
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly workspaceQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly metricsService: MetricsService,
   ) {}
+
+  // Reserves the application row synchronously (INSTALLING placeholder or
+  // UPGRADING transition) so clients see the operation immediately, then
+  // defers the actual install to a background job.
+  async enqueueApplicationInstall(params: {
+    appRegistrationId: string;
+    version?: string;
+    workspaceId: string;
+  }): Promise<ApplicationEntity | null> {
+    const appRegistration = await this.appRegistrationRepository.findOne({
+      where: { id: params.appRegistrationId },
+    });
+
+    if (!appRegistration) {
+      throw new ApplicationException(
+        `Application registration with id ${params.appRegistrationId} not found`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    const existingApplication =
+      await this.applicationService.findByUniversalIdentifier({
+        universalIdentifier: appRegistration.universalIdentifier,
+        workspaceId: params.workspaceId,
+      });
+
+    // Mirrors installApplication: LOCAL apps are synced by the CLI watcher
+    // and OAUTH_ONLY registrations have no code artifacts to install.
+    if (
+      appRegistration.sourceType === ApplicationRegistrationSourceType.LOCAL ||
+      appRegistration.sourceType ===
+        ApplicationRegistrationSourceType.OAUTH_ONLY
+    ) {
+      return existingApplication;
+    }
+
+    if (
+      isDefined(existingApplication) &&
+      existingApplication.state !== ApplicationState.INSTALLED
+    ) {
+      throw new ApplicationException(
+        `An operation is already in progress for application ${appRegistration.universalIdentifier}`,
+        ApplicationExceptionCode.APPLICATION_OPERATION_IN_PROGRESS,
+      );
+    }
+
+    // Fail fast on version progression before enqueueing: the job re-checks
+    // against the resolved package, but surfacing the obvious case
+    // synchronously spares a job round-trip and keeps the error visible to
+    // the caller.
+    const targetVersion =
+      params.version ?? appRegistration.latestAvailableVersion ?? undefined;
+
+    if (
+      isDefined(existingApplication) &&
+      isDefined(existingApplication.version) &&
+      isDefined(targetVersion)
+    ) {
+      const progression =
+        this.applicationVersionValidationService.validateVersionProgression({
+          incomingVersion: targetVersion,
+          currentVersion: existingApplication.version,
+          universalIdentifier: appRegistration.universalIdentifier,
+          action: 'install',
+        });
+
+      if (!progression.allowed) {
+        throw new ApplicationException(
+          progression.message,
+          VERSION_PROGRESSION_REASON_TO_INSTALL_EXCEPTION_CODE[
+            progression.reason
+          ],
+        );
+      }
+    }
+
+    const application = isDefined(existingApplication)
+      ? await this.applicationService.update(existingApplication.id, {
+          state: ApplicationState.UPGRADING,
+          workspaceId: params.workspaceId,
+        })
+      : await this.applicationService.create({
+          universalIdentifier: appRegistration.universalIdentifier,
+          name: appRegistration.name,
+          description: appRegistration.description,
+          logo: appRegistration.logo,
+          sourcePath: appRegistration.universalIdentifier,
+          sourceType: appRegistration.sourceType,
+          applicationRegistrationId: appRegistration.id,
+          state: ApplicationState.INSTALLING,
+          workspaceId: params.workspaceId,
+        });
+
+    try {
+      await this.workspaceQueueService.add<InstallApplicationJobData>(
+        INSTALL_APPLICATION_JOB_NAME,
+        {
+          appRegistrationId: params.appRegistrationId,
+          version: params.version,
+          workspaceId: params.workspaceId,
+        },
+      );
+    } catch (error) {
+      await this.cleanupEnqueuedInstallBestEffort(params);
+
+      throw error;
+    }
+
+    return application;
+  }
+
+  async runEnqueuedInstall(params: {
+    appRegistrationId: string;
+    version?: string;
+    workspaceId: string;
+  }): Promise<void> {
+    try {
+      await this.installApplication(params);
+    } catch (error) {
+      // Failures happening before runInstall's own rollback (package
+      // resolution, authorization) would otherwise leave the reserved row
+      // stuck in a transitional state.
+      await this.cleanupEnqueuedInstallBestEffort(params);
+
+      throw error;
+    }
+  }
+
+  private async cleanupEnqueuedInstallBestEffort(params: {
+    appRegistrationId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    try {
+      const appRegistration = await this.appRegistrationRepository.findOne({
+        where: { id: params.appRegistrationId },
+      });
+
+      if (!isDefined(appRegistration)) {
+        return;
+      }
+
+      const application =
+        await this.applicationService.findByUniversalIdentifier({
+          universalIdentifier: appRegistration.universalIdentifier,
+          workspaceId: params.workspaceId,
+        });
+
+      if (!isDefined(application)) {
+        return;
+      }
+
+      if (application.state === ApplicationState.INSTALLING) {
+        // The placeholder row never became an installation.
+        await this.applicationService.delete(
+          application.universalIdentifier,
+          params.workspaceId,
+        );
+      } else if (application.state === ApplicationState.UPGRADING) {
+        await this.applicationService.update(application.id, {
+          state: ApplicationState.INSTALLED,
+          workspaceId: params.workspaceId,
+        });
+      }
+    } catch (cleanupError) {
+      this.logger.warn(
+        `Failed to clean up enqueued install state for registration ${params.appRegistrationId} in workspace ${params.workspaceId}`,
+        cleanupError,
+      );
+    }
+  }
 
   async installApplication(params: {
     appRegistrationId: string;
@@ -200,7 +377,7 @@ export class ApplicationInstallService {
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
   }): Promise<boolean> {
-    const isVersionUpgrade = isDefined(existingApplication);
+    const isVersionUpgrade = this.isInstalledApplication(existingApplication);
 
     const attributes = {
       universal_identifier: appRegistration.universalIdentifier,
@@ -260,6 +437,8 @@ export class ApplicationInstallService {
   }): Promise<boolean> {
     const universalIdentifier = appRegistration.universalIdentifier;
 
+    const isVersionUpgrade = this.isInstalledApplication(existingApplication);
+
     if (params.skipWorkspaceCompatibilityCheck !== true) {
       const requiredServerVersion =
         resolvedPackage.packageJson.engines?.['twenty'];
@@ -281,8 +460,6 @@ export class ApplicationInstallService {
         );
       }
     }
-
-    const isVersionUpgrade = isDefined(existingApplication);
 
     const previousVersion = existingApplication?.version ?? undefined;
 
@@ -307,6 +484,16 @@ export class ApplicationInstallService {
       applicationRegistrationId: appRegistration.id,
       sourceType: appRegistration.sourceType,
     });
+
+    if (
+      isVersionUpgrade &&
+      application.state !== ApplicationState.UPGRADING
+    ) {
+      await this.applicationService.update(application.id, {
+        state: ApplicationState.UPGRADING,
+        workspaceId: params.workspaceId,
+      });
+    }
 
     const incomingVersion = resolvedPackage.packageJson.version;
 
@@ -394,6 +581,11 @@ export class ApplicationInstallService {
         },
       );
 
+      await this.applicationService.update(application.id, {
+        state: ApplicationState.INSTALLED,
+        workspaceId: params.workspaceId,
+      });
+
       this.logger.log(
         `Successfully installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
       );
@@ -411,6 +603,11 @@ export class ApplicationInstallService {
           applicationUniversalIdentifier: universalIdentifier,
           workspaceId: params.workspaceId,
           shouldRunUninstallHook: false,
+        });
+      } else {
+        await this.revertApplicationStateToInstalledBestEffort({
+          applicationId: application.id,
+          workspaceId: params.workspaceId,
         });
       }
 
@@ -741,6 +938,38 @@ export class ApplicationInstallService {
       sourceType: params.sourceType,
       applicationRegistrationId: params.applicationRegistrationId,
       workspaceId: params.workspaceId,
+      state: ApplicationState.INSTALLING,
     });
+  }
+
+  // A row in INSTALLING state is a placeholder created when the install was
+  // enqueued, not a completed installation to upgrade from.
+  private isInstalledApplication(
+    existingApplication: ApplicationEntity | null,
+  ): boolean {
+    return (
+      isDefined(existingApplication) &&
+      existingApplication.state !== ApplicationState.INSTALLING
+    );
+  }
+
+  private async revertApplicationStateToInstalledBestEffort({
+    applicationId,
+    workspaceId,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    try {
+      await this.applicationService.update(applicationId, {
+        state: ApplicationState.INSTALLED,
+        workspaceId,
+      });
+    } catch (revertError) {
+      this.logger.warn(
+        `Failed to revert application ${applicationId} state to INSTALLED in workspace ${workspaceId}`,
+        revertError,
+      );
+    }
   }
 }

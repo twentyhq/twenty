@@ -3,6 +3,7 @@ import { readManifestFromFile } from '@/cli/utilities/build/manifest/manifest-re
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
 import { runSafe } from '@/cli/utilities/run-safe';
+import { waitForApplicationInstallCompletion } from '@/cli/utilities/wait-for-application-operation';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
 
 export type AppInstallOptions = {
@@ -46,6 +47,22 @@ const innerAppInstall = async (
       error: {
         code: APP_ERROR_CODES.INSTALL_FAILED,
         message,
+      },
+    };
+  }
+
+  // The mutation only enqueues the install; wait for the background job.
+  const installOutcome = await waitForApplicationInstallCompletion({
+    apiService,
+    universalIdentifier: manifest.application.universalIdentifier,
+  });
+
+  if (installOutcome.outcome === 'failure') {
+    return {
+      success: false,
+      error: {
+        code: APP_ERROR_CODES.INSTALL_FAILED,
+        message: installOutcome.message,
       },
     };
   }

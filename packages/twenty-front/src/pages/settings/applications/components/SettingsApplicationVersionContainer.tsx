@@ -7,7 +7,10 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCircleDot, IconStatusChange, IconUpload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
-import { type Application } from '~/generated-metadata/graphql';
+import {
+  type Application,
+  ApplicationState,
+} from '~/generated-metadata/graphql';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 
@@ -47,7 +50,12 @@ export const SettingsApplicationVersionContainer = ({
     isDefined(currentVersion) &&
     isNewerSemver(latestAvailableVersion, currentVersion);
 
-  const { upgrade, isUpgrading } = useUpgradeApplication();
+  const { upgrade, isUpgrading: isUpgradeRequestPending } =
+    useUpgradeApplication();
+
+  const isUpgrading =
+    isUpgradeRequestPending ||
+    application?.state === ApplicationState.UPGRADING;
 
   const handleUpgrade = async () => {
     if (!isDefined(appRegistrationId) || !isDefined(latestAvailableVersion)) {

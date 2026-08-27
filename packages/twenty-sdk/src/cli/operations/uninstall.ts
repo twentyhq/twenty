@@ -2,6 +2,7 @@ import { ApiService } from '@/cli/utilities/api/api-service';
 import { readManifestFromFile } from '@/cli/utilities/build/manifest/manifest-reader';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { runSafe } from '@/cli/utilities/run-safe';
+import { waitForApplicationUninstallCompletion } from '@/cli/utilities/wait-for-application-operation';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
 
 export type AppUninstallOptions = {
@@ -45,6 +46,22 @@ const innerAppUninstall = async (
       error: {
         code: APP_ERROR_CODES.UNINSTALL_FAILED,
         message: errorMessage,
+      },
+    };
+  }
+
+  // The mutation only enqueues the uninstall; wait for the background job.
+  const uninstallOutcome = await waitForApplicationUninstallCompletion({
+    apiService,
+    universalIdentifier: manifest.application.universalIdentifier,
+  });
+
+  if (uninstallOutcome.outcome === 'failure') {
+    return {
+      success: false,
+      error: {
+        code: APP_ERROR_CODES.UNINSTALL_FAILED,
+        message: uninstallOutcome.message,
       },
     };
   }

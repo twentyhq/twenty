@@ -27,6 +27,7 @@ import { FrontComponentEntity } from 'src/engine/metadata-modules/front-componen
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -59,7 +60,44 @@ export class ApplicationService {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(ApplicationVariableEntity)
     private readonly applicationVariableRepository: Repository<ApplicationVariableEntity>,
+    private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
   ) {}
+
+  // Best-effort: realtime updates must never fail the write they describe.
+  private async broadcastApplicationEvent({
+    workspaceId,
+    type,
+    recordId,
+    properties,
+  }: {
+    workspaceId: string;
+    type: 'created' | 'updated' | 'deleted';
+    recordId: string;
+    properties: {
+      updatedFields?: string[];
+      before?: Record<string, unknown>;
+      after?: Record<string, unknown>;
+    };
+  }): Promise<void> {
+    try {
+      await this.workspaceEventBroadcaster.broadcast({
+        workspaceId,
+        events: [
+          {
+            type,
+            entityName: 'application',
+            recordId,
+            properties,
+          },
+        ],
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to broadcast application ${type} event for ${recordId} in workspace ${workspaceId}`,
+        error,
+      );
+    }
+  }
 
   async findApplicationRoleId(
     applicationId: string,
@@ -596,6 +634,13 @@ export class ApplicationService {
       'flatApplicationMaps',
     ]);
 
+    await this.broadcastApplicationEvent({
+      workspaceId: data.workspaceId,
+      type: 'created',
+      recordId: savedApplication.id,
+      properties: { after: { ...savedApplication } },
+    });
+
     return savedApplication;
   }
 
@@ -619,6 +664,18 @@ export class ApplicationService {
         ApplicationExceptionCode.APPLICATION_NOT_FOUND,
       );
     }
+
+    const { workspaceId, ...updatedData } = data;
+
+    await this.broadcastApplicationEvent({
+      workspaceId,
+      type: 'updated',
+      recordId: id,
+      properties: {
+        updatedFields: Object.keys(updatedData),
+        after: { ...updatedApplication },
+      },
+    });
 
     return updatedApplication;
   }
@@ -689,5 +746,14 @@ export class ApplicationService {
       workspaceId,
       ALL_FLAT_ENTITY_MAPS_PROPERTIES,
     );
+
+    await this.broadcastApplicationEvent({
+      workspaceId,
+      type: 'deleted',
+      recordId: application.id,
+      properties: {
+        before: { id: application.id, universalIdentifier },
+      },
+    });
   }
 }

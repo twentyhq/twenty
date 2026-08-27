@@ -13,6 +13,7 @@ import {
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
 import { useContext, useState } from 'react';
 import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
+import { getApplicationTransitionalStateLabel } from '~/pages/settings/applications/utils/getApplicationTransitionalStateLabel';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 import { Section } from 'twenty-ui/layout';
 import { SearchInput } from 'twenty-ui/input';
@@ -103,6 +104,9 @@ export const SettingsApplicationsTable = ({
                 key={application.id}
                 application={application}
                 hasUpdate={hasUpdate}
+                transitionalStateLabel={getApplicationTransitionalStateLabel(
+                  application.state,
+                )}
                 sourceType={application.applicationRegistration?.sourceType}
                 action={
                   <IconChevronRight
