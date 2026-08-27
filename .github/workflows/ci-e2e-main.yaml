@@ -276,7 +276,16 @@ jobs:
             Read .claude/skills/qa-scout/SKILL.md and follow it exactly. This is
             the CI invocation: every path and credential in the skill's Inputs
             table applies verbatim.
-          claude_args: '--max-turns 120 --model opus --mcp-config /tmp/qa-scout/mcp.json --allowedTools "Read,Grep,Glob,Write,Bash(cat *),Bash(tail *),Bash(head *),Bash(wc *),Bash(ls *),Bash(grep *),Bash(mkdir *),Bash(sleep *),Bash(date *),Bash(psql *),mcp__playwright"'
+          claude_args: '--max-turns 120 --model opus --mcp-config /tmp/qa-scout/mcp.json --allowedTools "Read,Grep,Glob,Write,TodoWrite,Bash(cat *),Bash(tail *),Bash(head *),Bash(wc *),Bash(ls *),Bash(grep *),Bash(jq *),Bash(echo *),Bash(find *),Bash(diff *),Bash(sort *),Bash(uniq *),Bash(cut *),Bash(tr *),Bash(awk *),Bash(mkdir *),Bash(sleep *),Bash(date *),Bash(psql *),mcp__playwright"'
+
+      # The action's condensed output carries only a denial count, so
+      # allowlist tuning has been guesswork. Keep the execution log
+      # (transcript, per-denial detail) in the artifact tree, ahead of the
+      # scrub so it rides the same redaction.
+      - name: QA Scout / Capture execution log
+        if: ${{ !cancelled() && steps.qa-scout-pr.outputs.run == 'true' }}
+        continue-on-error: true
+        run: cp "${RUNNER_TEMP}/claude-execution-output.json" /tmp/qa-scout/execution.json 2>/dev/null || true
 
       # The agent process necessarily holds the inference credential, and a
       # prompt-injected agent could copy it into any file it can write. The
@@ -332,6 +341,7 @@ jobs:
             /tmp/qa-scout/browser/
             /tmp/qa-scout/server.log
             /tmp/qa-scout/worker.log
+            /tmp/qa-scout/execution.json
           if-no-files-found: ignore
           retention-days: 14
 
