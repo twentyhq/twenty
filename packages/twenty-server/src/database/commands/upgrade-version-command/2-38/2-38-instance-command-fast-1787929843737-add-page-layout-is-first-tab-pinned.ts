@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.37.0', 1787844200609)
+@RegisteredInstanceCommand('2.38.0', 1787929843737)
 export class AddPageLayoutIsFirstTabPinnedFastInstanceCommand
   implements FastInstanceCommand
 {
