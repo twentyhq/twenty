@@ -1,5 +1,5 @@
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
-import { TAB_LIST_LEFT_PADDING } from '@/ui/layout/tab-list/constants/TabListPadding';
+import { TAB_LIST_HORIZONTAL_PADDING } from '@/ui/layout/tab-list/constants/TabListPadding';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { type TabWidthsById } from '@/ui/layout/tab-list/types/TabWidthsById';
 import { isDefined } from 'twenty-shared/utils';
@@ -10,6 +10,7 @@ type CalculateVisibleTabCountParams = {
   containerWidth: number;
   moreButtonWidth: number;
   addButtonWidth?: number;
+  rightPadding?: number;
 };
 
 export const calculateVisibleTabCount = ({
@@ -18,6 +19,7 @@ export const calculateVisibleTabCount = ({
   containerWidth,
   moreButtonWidth,
   addButtonWidth = 0,
+  rightPadding = 0,
 }: CalculateVisibleTabCountParams): number => {
   if (Object.keys(tabWidthsById).length === 0 || containerWidth === 0) {
     return visibleTabs.length;
@@ -25,7 +27,8 @@ export const calculateVisibleTabCount = ({
 
   const availableWidth =
     containerWidth -
-    TAB_LIST_LEFT_PADDING -
+    TAB_LIST_HORIZONTAL_PADDING -
+    rightPadding -
     (addButtonWidth > 0 ? addButtonWidth + TAB_LIST_GAP : 0);
 
   let totalWidth = 0;
