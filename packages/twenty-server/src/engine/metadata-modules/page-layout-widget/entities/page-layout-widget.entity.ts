@@ -1,10 +1,11 @@
 import { ObjectType } from '@nestjs/graphql';
 
 import {
+  type GridPosition,
   PageLayoutWidgetConditionalDisplay,
   PageLayoutWidgetPosition,
-  type GridPosition,
   type SerializedRelation,
+  WidgetType,
 } from 'twenty-shared/types';
 import {
   Column,
@@ -24,7 +25,6 @@ import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorato
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutWidgetConfigurationTypeSettings } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configuration.type';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';

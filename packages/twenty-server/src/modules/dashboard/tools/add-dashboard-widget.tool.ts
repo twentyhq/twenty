@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
-import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { type WidgetType } from 'twenty-shared/types';
 import {
   gridPositionSchema,
   widgetConfigurationSchema,

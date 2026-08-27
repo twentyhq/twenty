@@ -26,11 +26,11 @@ import {
   ViewFilterOperand,
   ViewSortDirection,
   ViewType,
+  WidgetType,
 } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 
 type ViewWidgetTestSetup = {
   pageLayoutId: string;

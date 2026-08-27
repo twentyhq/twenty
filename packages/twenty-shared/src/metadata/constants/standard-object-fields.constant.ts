@@ -989,6 +989,12 @@ export const STANDARD_OBJECT_FIELDS = {
     stepLogs: {
       universalIdentifier: '20202020-7c4e-4e1a-8fc1-1e3a55d6c2a1',
     },
+    coreWorkflowId: {
+      universalIdentifier: 'e07d8ac0-6b6e-4685-81fa-50d82ae7f880',
+    },
+    coreWorkflowVersionId: {
+      universalIdentifier: '58e3f476-425d-4c66-b391-779d0412e107',
+    },
     timelineActivities: {
       universalIdentifier: getSystemRelationFieldUniversalIdentifier({
         applicationUniversalIdentifier:
