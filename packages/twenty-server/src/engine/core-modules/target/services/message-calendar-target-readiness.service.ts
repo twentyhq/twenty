@@ -36,11 +36,6 @@ export class MessageCalendarTargetReadinessService {
     return { fieldName, recordId };
   }
 
-  // The cutover is an operational decision: the flag is enabled once the
-  // backfill has been verified for a workspace, and disabling it reverts to
-  // the legacy participant reads instantly. Self-hosters keep legacy reads
-  // until the flagless cutover in a later version, whose sequenced upgrade
-  // guarantees the backfill has run.
   async isReady(workspaceId: string): Promise<boolean> {
     const isReadEnabled = await this.featureFlagService.isFeatureEnabled(
       FeatureFlagKey.IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED,
