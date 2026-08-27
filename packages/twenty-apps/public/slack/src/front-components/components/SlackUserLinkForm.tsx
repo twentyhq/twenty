@@ -164,7 +164,7 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
     <Section>
       <H2Title
         title="Link a Slack user"
-        description="Pick a workspace member and the Slack account whose messages should act with that member's permissions. In-workspace links ask the Slack user to approve first; manual links win over email matching."
+        description="Pick a workspace member and the Slack account whose messages should act with that member's permissions. A link whose Slack email matches the member activates immediately; other in-workspace links ask the Slack user to approve first."
       />
       <StyledForm
         onSubmit={(event) => {
@@ -267,7 +267,10 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
           </StyledDisclosureButton>
         )}
         {resolvedUser !== null && (
-          <SlackUserLinkConfirmCard resolvedUser={resolvedUser} />
+          <SlackUserLinkConfirmCard
+            resolvedUser={resolvedUser}
+            selectedMemberEmail={selectedMember?.userEmail ?? undefined}
+          />
         )}
         <StyledActions>
           {resolvedUser === null ? (

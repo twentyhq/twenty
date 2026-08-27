@@ -2,6 +2,7 @@ export type SlackResolvedUser = {
   slackUserId: string;
   slackTeamId: string;
   displayName: string | undefined;
+  email: string | undefined;
   isInInstalledWorkspace: boolean;
 };
 

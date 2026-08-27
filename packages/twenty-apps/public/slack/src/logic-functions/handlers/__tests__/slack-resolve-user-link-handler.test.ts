@@ -85,6 +85,7 @@ describe('slackResolveUserLinkHandler', () => {
         slackUserId: 'U1',
         slackTeamId: INSTALLED_TEAM_ID,
         displayName: 'Ada Lovelace',
+        email: 'ada@twenty.com',
         isInInstalledWorkspace: true,
       },
     });

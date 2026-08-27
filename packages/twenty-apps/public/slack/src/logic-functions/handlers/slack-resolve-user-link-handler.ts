@@ -100,6 +100,9 @@ export const slackResolveUserLinkHandler = async (
         slackUserId: requestedSlackUserId,
         slackTeamId: resolvedTeamId,
         displayName: identity?.displayName,
+        // Mirror the set handler: only a regular account's profile email can
+        // certify an email match.
+        email: identity?.isRegularUserAccount === true ? identity.email : undefined,
         isInInstalledWorkspace: resolvedTeamId === installedTeamId,
       },
     };
@@ -134,6 +137,9 @@ export const slackResolveUserLinkHandler = async (
       slackUserId: resolvedUser.slackUserId,
       slackTeamId: resolvedTeamId,
       displayName: resolvedUser.displayName,
+      // users.lookupByEmail matches on the profile email, so a hit certifies
+      // this is the account's Slack email.
+      email,
       isInInstalledWorkspace: resolvedTeamId === installedTeamId,
     },
   };

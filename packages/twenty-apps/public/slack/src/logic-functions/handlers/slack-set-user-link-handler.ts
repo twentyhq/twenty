@@ -7,6 +7,7 @@ import { SLACK_USER_LINK_CONSENT_STATE } from 'src/logic-functions/constants/sla
 import { SLACK_USER_LINK_SOURCE } from 'src/logic-functions/constants/slack-user-link-source';
 import { createSlackUserLink } from 'src/logic-functions/data/create-slack-user-link';
 import { findSlackUserLink } from 'src/logic-functions/data/find-slack-user-link';
+import { findWorkspaceMemberEmailById } from 'src/logic-functions/data/find-workspace-member-email-by-id';
 import { findWorkspaceMemberNameById } from 'src/logic-functions/data/find-workspace-member-name-by-id';
 import { updateSlackUserLink } from 'src/logic-functions/data/update-slack-user-link';
 import { type SlackSetUserLinkInput } from 'src/logic-functions/types/slack-set-user-link-input.type';
@@ -101,6 +102,9 @@ export const slackSetUserLinkHandler = async (
   let slackUserId = requestedSlackUserId;
   let slackTeamId = requestedSlackTeamId;
   let resolvedName = name;
+  // The Slack account's verified profile email, when a lookup confirmed it;
+  // feeds the email-match rule that skips consent below.
+  let slackUserEmail: string | undefined;
 
   if (!isNonEmptyString(slackUserId) && isNonEmptyString(email)) {
     let resolvedUser;
@@ -127,6 +131,9 @@ export const slackSetUserLinkHandler = async (
     slackUserId = resolvedUser.slackUserId;
     slackTeamId = slackTeamId ?? resolvedUser.slackTeamId;
     resolvedName = resolvedName ?? resolvedUser.displayName;
+    // users.lookupByEmail matches on the profile email, so a hit certifies
+    // this is the account's Slack email.
+    slackUserEmail = email;
   }
 
   // A Slack user id supplied directly (e.g. from the agent tool) may belong to
@@ -156,6 +163,9 @@ export const slackSetUserLinkHandler = async (
 
     slackTeamId = identity.slackTeamId;
     resolvedName = resolvedName ?? identity.displayName;
+    // Mirror the lazy auto-match, which only trusts the profile email of a
+    // regular account (not bots, deleted, or restricted users).
+    slackUserEmail = identity.isRegularUserAccount ? identity.email : undefined;
   }
 
   const installedTeamId = await getInstalledSlackTeamId(slackClient);
@@ -222,13 +232,39 @@ export const slackSetUserLinkHandler = async (
     isDefined(existingLink) &&
     existingLink.workspaceMemberId === workspaceMemberId;
 
-  const requiresConsent = isInInstalledWorkspace && !isSameMemberRelink;
+  // Linking a Slack account to the member with the same email is the email
+  // auto-match created eagerly, before the person's first message, so it needs
+  // no consent handshake. Storing it as an AUTO link keeps it exactly as safe
+  // as a lazily matched one: the run-as resolver never trusts a stored AUTO
+  // link and re-verifies the live Slack email on every request. The relink
+  // guard keeps an explicit decline from being overwritten into an AUTO link
+  // the resolver would bypass.
+  const memberEmail =
+    isInInstalledWorkspace &&
+    !isSameMemberRelink &&
+    isNonEmptyString(slackUserEmail)
+      ? await findWorkspaceMemberEmailById(client, workspaceMemberId)
+      : undefined;
 
-  const consentStateForWrite = isInInstalledWorkspace
-    ? requiresConsent
-      ? SLACK_USER_LINK_CONSENT_STATE.PENDING
-      : undefined
-    : SLACK_USER_LINK_CONSENT_STATE.ADMIN_SET;
+  const isEagerAutoMatch =
+    isNonEmptyString(slackUserEmail) &&
+    isNonEmptyString(memberEmail) &&
+    slackUserEmail.toLowerCase() === memberEmail.toLowerCase();
+
+  const requiresConsent =
+    isInInstalledWorkspace && !isSameMemberRelink && !isEagerAutoMatch;
+
+  const consentStateForWrite = !isInInstalledWorkspace
+    ? SLACK_USER_LINK_CONSENT_STATE.ADMIN_SET
+    : isSameMemberRelink
+      ? undefined
+      : isEagerAutoMatch
+        ? SLACK_USER_LINK_CONSENT_STATE.ACTIVE
+        : SLACK_USER_LINK_CONSENT_STATE.PENDING;
+
+  const sourceForWrite = isEagerAutoMatch
+    ? SLACK_USER_LINK_SOURCE.AUTO
+    : SLACK_USER_LINK_SOURCE.MANUAL;
 
   let slackUserLinkId: string;
 
@@ -238,7 +274,7 @@ export const slackSetUserLinkHandler = async (
         id: existingLink.id,
         workspaceMemberId,
         name: resolvedName,
-        source: SLACK_USER_LINK_SOURCE.MANUAL,
+        source: sourceForWrite,
         consentState: consentStateForWrite,
       });
       slackUserLinkId = existingLink.id;
@@ -248,7 +284,7 @@ export const slackSetUserLinkHandler = async (
         slackUserId,
         workspaceMemberId,
         name: isNonEmptyString(resolvedName) ? resolvedName : slackUserId,
-        source: SLACK_USER_LINK_SOURCE.MANUAL,
+        source: sourceForWrite,
         consentState: consentStateForWrite,
       });
     }
@@ -264,6 +300,13 @@ export const slackSetUserLinkHandler = async (
     return {
       success: true,
       message: `Linked Slack user ${slackUserId} to workspace member ${workspaceMemberId}. This account is outside the installed workspace, so it is admin-set without a consent request.`,
+    };
+  }
+
+  if (isEagerAutoMatch) {
+    return {
+      success: true,
+      message: `Linked Slack user ${slackUserId} to workspace member ${workspaceMemberId}. Their Slack email matches this member, so the link is active immediately with no approval step.`,
     };
   }
 

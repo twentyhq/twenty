@@ -36,10 +36,30 @@ const StyledConfirmNote = styled.span`
 
 type SlackUserLinkConfirmCardProps = {
   resolvedUser: SlackResolvedUser;
+  selectedMemberEmail: string | undefined;
+};
+
+const getConfirmNote = (
+  resolvedUser: SlackResolvedUser,
+  selectedMemberEmail: string | undefined,
+): string => {
+  if (!resolvedUser.isInInstalledWorkspace) {
+    return 'This account is outside your Slack workspace, so the link is admin-set and active right away.';
+  }
+
+  const matchesSelectedMember =
+    isNonEmptyString(resolvedUser.email) &&
+    isNonEmptyString(selectedMemberEmail) &&
+    resolvedUser.email.toLowerCase() === selectedMemberEmail.toLowerCase();
+
+  return matchesSelectedMember
+    ? 'Their Slack email matches this workspace member, so the link activates immediately with no approval step.'
+    : 'We will ask this person to approve in Slack. The link activates once they approve.';
 };
 
 export const SlackUserLinkConfirmCard = ({
   resolvedUser,
+  selectedMemberEmail,
 }: SlackUserLinkConfirmCardProps) => (
   <StyledConfirmCard>
     <StyledConfirmName>
@@ -52,9 +72,7 @@ export const SlackUserLinkConfirmCard = ({
         : ''}
     </StyledConfirmMeta>
     <StyledConfirmNote>
-      {resolvedUser.isInInstalledWorkspace
-        ? 'We will ask this person to approve in Slack. The link activates once they approve.'
-        : 'This account is outside your Slack workspace, so the link is admin-set and active right away.'}
+      {getConfirmNote(resolvedUser, selectedMemberEmail)}
     </StyledConfirmNote>
   </StyledConfirmCard>
 );

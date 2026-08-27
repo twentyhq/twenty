@@ -53,6 +53,7 @@ const parseResult = (value: unknown): ResolveSlackUserResult => {
       displayName: isNonEmptyString(slackUser.displayName)
         ? slackUser.displayName
         : undefined,
+      email: isNonEmptyString(slackUser.email) ? slackUser.email : undefined,
       isInInstalledWorkspace: slackUser.isInInstalledWorkspace === true,
     },
   };
