@@ -13,6 +13,7 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
       allowedSpenderTypes: ['apiKey', 'application'],
       fallbacks: [
         {
+          source: 'configVariable',
           spenderType: 'apiKey',
           counterScope: 'perWorkspace',
           limitValueConfigVariable: 'API_RATE_LIMITING_SHORT_LIMIT',
@@ -20,6 +21,7 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
           isOverridable: true,
         },
         {
+          source: 'configVariable',
           spenderType: 'apiKey',
           counterScope: 'perWorkspace',
           limitValueConfigVariable: 'API_RATE_LIMITING_LONG_LIMIT',
@@ -27,6 +29,7 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
           isOverridable: true,
         },
         {
+          source: 'configVariable',
           spenderType: 'application',
           counterScope: 'crossWorkspace',
           limitValueConfigVariable: 'APPLICATION_API_RATE_LIMITING_LIMIT',
@@ -34,9 +37,21 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
           isOverridable: false,
         },
       ],
+      meters: 'quantity',
     },
   },
-  [UsageResourceType.AI]: {},
+  [UsageResourceType.AI]: {
+    quota: {
+      allowedOperationTypes: [
+        UsageOperationType.AI_CHAT_TOKEN,
+        UsageOperationType.AI_WORKFLOW_TOKEN,
+        UsageOperationType.WEB_SEARCH,
+      ],
+      allowedSpenderTypes: ['workspace', 'userWorkspace'],
+      fallbacks: [{ source: 'allowance', spenderType: 'workspace' }],
+      meters: 'creditsUsedMicro',
+    },
+  },
   [UsageResourceType.WORKFLOW]: {},
   [UsageResourceType.APP]: {},
   [UsageResourceType.STORAGE]: {},

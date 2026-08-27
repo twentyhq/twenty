@@ -7,7 +7,10 @@ import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spen
 export type FlatUsageLimit = {
   id: string;
   resourceType: UsageResourceType;
-  operationType: UsageOperationType;
+  // '' targets every operation of the resource, mirroring the spenderId
+  // convention; a nullable column would defeat UQ_USAGE_LIMIT_SCOPE since
+  // Postgres treats NULLs as distinct.
+  operationType: UsageOperationType | '';
   spenderType: SpenderType;
   spenderId: string;
   limitKind: LimitKind;

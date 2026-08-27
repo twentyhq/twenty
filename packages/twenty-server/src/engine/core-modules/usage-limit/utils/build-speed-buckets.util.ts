@@ -32,7 +32,12 @@ export const buildSpeedBuckets = ({
   const spenders = buildSpendersFromAuthContext(authContext);
 
   const buckets = spenders.flatMap((spender) => {
-    const spenderRules = findRulesForSpender({ rules, spender, operationType });
+    const spenderRules = findRulesForSpender({
+      rules,
+      spender,
+      operationType,
+      limitKind: 'speed',
+    });
 
     const ruleBuckets = spenderRules.map((rule) => ({
       key: buildSpeedBucketKey({

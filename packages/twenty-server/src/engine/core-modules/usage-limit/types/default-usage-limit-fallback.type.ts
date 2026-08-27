@@ -1,9 +1,11 @@
-import { type UsageLimitFallback } from 'src/engine/core-modules/usage-limit/types/usage-limit-fallback.type';
+import { type CounterScope } from 'src/engine/core-modules/usage-limit/types/counter-scope.type';
+import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 
-export type DefaultUsageLimitFallback = Pick<
-  UsageLimitFallback,
-  'spenderType' | 'counterScope' | 'isOverridable'
-> & {
+// A configVariable fallback with its config variables already resolved.
+export type DefaultUsageLimitFallback = {
+  spenderType: SpenderType;
+  counterScope: CounterScope;
+  isOverridable: boolean;
   maxTokens: number;
   windowMs: number;
 };
