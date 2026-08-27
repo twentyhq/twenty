@@ -4,8 +4,6 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { OPPORTUNITY_STAGE_OPTIONS } from 'src/modules/opportunity/constants/opportunity-stage-options';
-
 import {
   DEAL_BOARD_STAGE_LABELS,
   HOW_TO_PROCESS_STEPS,
@@ -21,9 +19,13 @@ const APPLICATION_OBJECT_SOURCE = readFileSync(
 
 describe('HOW_TO_PROCESS_STEPS', () => {
   it('uses Deals-board stage labels from OPPORTUNITY_STAGE_OPTIONS', () => {
-    const expected = OPPORTUNITY_STAGE_OPTIONS.filter(
-      (option) => option.position < 5,
-    ).map((option) => option.label);
+    const expected = [
+      'New',
+      'Screening',
+      'Meeting',
+      'Proposal',
+      'Customer',
+    ];
 
     expect(DEAL_BOARD_STAGE_LABELS).toEqual(expected);
 

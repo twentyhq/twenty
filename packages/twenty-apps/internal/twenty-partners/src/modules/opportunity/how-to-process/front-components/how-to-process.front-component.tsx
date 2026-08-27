@@ -18,13 +18,7 @@ const HowToProcess = () => (
       {HOW_TO_PROCESS_STEPS.map((step) => (
         <section
           key={step.num}
-          style={
-            step.variant === 'lastStep'
-              ? styles.lastStep
-              : step.variant === 'trust'
-                ? styles.trust
-                : styles.step
-          }
+          style={step.variant === 'lastStep' ? styles.lastStep : styles.step}
         >
           <div style={styles.num}>{step.num}</div>
           <div>

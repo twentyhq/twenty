@@ -1,14 +1,5 @@
 import { OPPORTUNITY_STAGE_OPTIONS } from 'src/modules/opportunity/constants/opportunity-stage-options';
-
-export type PlaybookStep = {
-  num: string;
-  heading: string;
-  body: string;
-  bullets?: string[];
-  pills?: string[];
-  note?: string;
-  variant: 'step' | 'lastStep' | 'trust';
-};
+import { type PlaybookStep } from 'src/modules/opportunity/how-to-process/types/playbook-step.type';
 
 export const HOW_TO_PROCESS_KICKER = 'Playbook';
 export const HOW_TO_PROCESS_TITLE = 'How to process';
@@ -16,7 +7,7 @@ export const HOW_TO_PROCESS_LEDE =
   'This is the path from a new deal to a winner. Each step says what you do, then what the app does.';
 
 export const DEAL_BOARD_STAGE_LABELS = OPPORTUNITY_STAGE_OPTIONS.filter(
-  (option) => option.position < 5,
+  (option) => option.value !== 'DONE' && option.value !== 'DEAD',
 ).map((option) => option.label);
 
 const DEAL_STAGE_PATH = DEAL_BOARD_STAGE_LABELS.join(' → ');

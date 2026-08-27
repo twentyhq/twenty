@@ -1,6 +1,5 @@
 import { MIN_PITCH_LENGTH } from 'src/modules/application/apply/constants/apply-to-brief.constants';
-
-import { type PlaybookStep } from './admin-copy';
+import { type PlaybookStep } from 'src/modules/opportunity/how-to-process/types/playbook-step.type';
 
 export const HOW_TO_APPLY_KICKER = 'Playbook';
 export const HOW_TO_APPLY_TITLE = 'How to apply';
