@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { IsNull, Not } from 'typeorm';
+
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
@@ -9,7 +11,10 @@ import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/t
 import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
 
 const API_KEY_ROLE_ROWS_REQUIREMENT = {
-  roleTarget: ['apiKeyId', 'roleId'],
+  roleTarget: {
+    columns: ['apiKeyId', 'roleId'],
+    where: { apiKeyId: Not(IsNull()) },
+  },
 } as const satisfies WorkspaceCacheRowsRequirement;
 
 @Injectable()
@@ -26,14 +31,10 @@ export class WorkspaceApiKeyRoleMapCacheService extends WorkspaceCacheProvider<
   >): Record<string, string> {
     const { roleTarget: roleTargets } = rows;
 
-    const roleTargetsMap = roleTargets.filter((roleTarget) =>
-      isDefined(roleTarget.apiKeyId),
-    );
-
-    return roleTargetsMap.reduce(
-      (acc, roleTarget) => {
-        if (roleTarget.apiKeyId) {
-          acc[roleTarget.apiKeyId] = roleTarget.roleId;
+    return roleTargets.reduce(
+      (acc, { apiKeyId, roleId }) => {
+        if (isDefined(apiKeyId)) {
+          acc[apiKeyId] = roleId;
         }
 
         return acc;

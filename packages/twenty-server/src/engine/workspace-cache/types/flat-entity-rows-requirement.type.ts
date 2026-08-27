@@ -1,10 +1,13 @@
+import { type FindOptionsWhere } from 'typeorm';
+
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import { type ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-relations.constant';
 import { type ALL_ONE_TO_MANY_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-one-to-many-metadata-relations.constant';
 import {
-  type EntityRowsRequirement,
+  type CacheFetchableEntity,
   type CacheFetchableEntityName,
+  type EntityRowsRequirement,
   type GroupByColumns,
 } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
 
@@ -34,7 +37,8 @@ type OwnEntityRowsRequirement<TName extends CacheFetchableEntityName> =
   | true
   | {
       columns: true;
-      groupBy: GroupByColumns<TName>;
+      groupBy?: GroupByColumns<TName>;
+      where?: FindOptionsWhere<CacheFetchableEntity<TName>>;
     };
 
 export type FlatEntityRowsRequirement<TMetadataName extends AllMetadataName> = {

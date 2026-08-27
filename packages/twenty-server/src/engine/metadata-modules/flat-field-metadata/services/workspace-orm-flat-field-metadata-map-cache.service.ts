@@ -14,7 +14,10 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 
 const ORM_FLAT_FIELD_METADATA_ROWS_REQUIREMENT = {
   fieldMetadata: true,
-  index: ['id', 'isUnique', 'isSystemSideEffect'],
+  index: {
+    columns: ['id', 'isUnique', 'isSystemSideEffect'],
+    where: { isUnique: true },
+  },
   indexFieldMetadata: {
     columns: ['id', 'fieldMetadataId', 'subFieldName'],
     groupBy: ['indexMetadataId'],

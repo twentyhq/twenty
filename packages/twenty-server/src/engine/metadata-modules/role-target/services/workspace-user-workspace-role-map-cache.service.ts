@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { IsNull, Not } from 'typeorm';
+
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
@@ -10,7 +12,10 @@ import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/t
 import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
 
 const USER_WORKSPACE_ROLE_ROWS_REQUIREMENT = {
-  roleTarget: ['userWorkspaceId', 'roleId'],
+  roleTarget: {
+    columns: ['userWorkspaceId', 'roleId'],
+    where: { userWorkspaceId: Not(IsNull()) },
+  },
 } as const satisfies WorkspaceCacheRowsRequirement;
 
 @Injectable()

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { IsNull } from 'typeorm';
+
 import {
   PermissionFlagType,
   SystemPermissionFlag,
@@ -34,8 +36,16 @@ const ROLES_PERMISSIONS_ROWS_REQUIREMENT = {
   rolePermissionFlag: { columns: true, groupBy: ['roleId'] },
   permissionFlag: true,
   fieldPermission: { columns: true, groupBy: ['roleId'] },
-  rowLevelPermissionPredicate: { columns: true, groupBy: ['roleId'] },
-  rowLevelPermissionPredicateGroup: { columns: true, groupBy: ['roleId'] },
+  rowLevelPermissionPredicate: {
+    columns: true,
+    groupBy: ['roleId'],
+    where: { deletedAt: IsNull() },
+  },
+  rowLevelPermissionPredicateGroup: {
+    columns: true,
+    groupBy: ['roleId'],
+    where: { deletedAt: IsNull() },
+  },
   objectMetadata: [
     'id',
     'isSystem',
@@ -90,18 +100,10 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       );
       const roleFieldPermissions = fieldPermissions.byRoleId.get(role.id) ?? [];
 
-      const roleRowLevelPermissionPredicates = (
-        rowLevelPermissionPredicates.byRoleId.get(role.id) ?? []
-      ).filter(
-        (rowLevelPermissionPredicate) =>
-          !isDefined(rowLevelPermissionPredicate.deletedAt),
-      );
-      const roleRowLevelPermissionPredicateGroups = (
-        rowLevelPermissionPredicateGroups.byRoleId.get(role.id) ?? []
-      ).filter(
-        (rowLevelPermissionPredicateGroup) =>
-          !isDefined(rowLevelPermissionPredicateGroup.deletedAt),
-      );
+      const roleRowLevelPermissionPredicates =
+        rowLevelPermissionPredicates.byRoleId.get(role.id) ?? [];
+      const roleRowLevelPermissionPredicateGroups =
+        rowLevelPermissionPredicateGroups.byRoleId.get(role.id) ?? [];
 
       const objectRecordsPermissions: ObjectsPermissions = {};
 

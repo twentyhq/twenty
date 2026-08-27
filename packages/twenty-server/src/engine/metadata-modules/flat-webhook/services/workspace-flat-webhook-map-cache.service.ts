@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { IsNull } from 'typeorm';
+
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
@@ -13,7 +15,7 @@ import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/uti
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 const FLAT_WEBHOOK_ROWS_REQUIREMENT = {
-  webhook: true,
+  webhook: { columns: true, where: { deletedAt: IsNull() } },
   application: ['id', 'universalIdentifier', 'deletedAt'],
 } as const;
 
@@ -27,11 +29,7 @@ export class WorkspaceFlatWebhookMapCacheService extends MetadataFlatEntityMapsC
   }: WorkspaceCacheProviderContext<
     typeof FLAT_WEBHOOK_ROWS_REQUIREMENT
   >): FlatWebhookMaps {
-    const { webhook: allWebhooks, application: applications } = rows;
-
-    const webhooks = allWebhooks.filter(
-      (webhook) => !isDefined(webhook.deletedAt),
-    );
+    const { webhook: webhooks, application: applications } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(
