@@ -2,6 +2,7 @@ import gql from 'graphql-tag';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { OPPORTUNITY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/opportunity-data-seeds.constant';
@@ -170,7 +171,7 @@ describe('seeded record timelines read from target junctions (integration)', () 
     const personTarget =
       targetsResponse.body.data.calendarEventTargets.edges.find(
         (edge: { node: { targetPersonId: string | null } }) =>
-          edge.node.targetPersonId !== null,
+          isDefined(edge.node.targetPersonId),
       );
 
     expect(personTarget).toBeDefined();
