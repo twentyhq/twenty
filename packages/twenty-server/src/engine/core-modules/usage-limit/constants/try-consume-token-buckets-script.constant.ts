@@ -15,6 +15,8 @@ end
 local now = redis.call('TIME')
 local nowMs = tonumber(now[1]) * 1000 + math.floor(tonumber(now[2]) / 1000)
 local available = {}
+local exhaustedIndex = 0
+local retryAfterMs = 0
 
 for i = 1, #KEYS do
   local bucket = buckets[i]
@@ -35,12 +37,22 @@ for i = 1, #KEYS do
   available[i] = refilled
 
   if refilled < cost then
-    return {
-      0,
-      i,
-      math.ceil((cost - refilled) * bucket.windowMs / bucket.refill),
-    }
+    local bucketRetryAfterMs = math.ceil((cost - refilled) * bucket.windowMs / bucket.refill)
+
+    -- Buckets arrive narrowest first, so the first exhausted one names the
+    -- scope, while the caller has to wait for the slowest of them to refill.
+    if exhaustedIndex == 0 then
+      exhaustedIndex = i
+    end
+
+    if bucketRetryAfterMs > retryAfterMs then
+      retryAfterMs = bucketRetryAfterMs
+    end
   end
+end
+
+if exhaustedIndex > 0 then
+  return { 0, exhaustedIndex, retryAfterMs }
 end
 
 for i = 1, #KEYS do

@@ -13,12 +13,15 @@ import {
   UsageLimitException,
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { type SpeedBucketOutcome } from 'src/engine/core-modules/usage-limit/types/speed-bucket-outcome.type';
 import { type SpeedBucketRequest } from 'src/engine/core-modules/usage-limit/types/speed-bucket-request.type';
+import { type UsageLimitRules } from 'src/engine/core-modules/usage-limit/types/usage-limit-rules.type';
 import { buildSpeedBuckets } from 'src/engine/core-modules/usage-limit/utils/build-speed-buckets.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { WorkspaceCacheException } from 'src/engine/workspace-cache/exceptions/workspace-cache.exception';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const ADMITTED: SpeedBucketOutcome = { admitted: true };
@@ -75,11 +78,6 @@ export class UsageLimitSpeedService {
     );
   }
 
-  // Fails open on cache storage alone: a rate limiter that has lost its counter
-  // must not take the API down with it. Resolving the rules stays outside the
-  // guard, because the feature flag read that got us here already went through
-  // the same workspace cache, and anything else thrown here is a bug that has
-  // to surface rather than silently disable enforcement.
   private async consumeAdmittingOnFailure({
     resourceType,
     authContext,
@@ -169,10 +167,14 @@ export class UsageLimitSpeedService {
       return [];
     }
 
-    const { usageLimitRules } = await this.workspaceCacheService.getOrRecompute(
-      authContext.workspace.id,
-      ['usageLimitRules'],
-    );
+    const rules = await this.findRulesAdmittingOnFailure({
+      workspaceId: authContext.workspace.id,
+      resourceType,
+    });
+
+    if (!isDefined(rules)) {
+      return [];
+    }
 
     return buildSpeedBuckets({
       defaultUsageLimitFallbacks: definition.fallbacks.map((fallback) => ({
@@ -184,10 +186,40 @@ export class UsageLimitSpeedService {
         ),
         windowMs: this.twentyConfigService.get(fallback.windowMsConfigVariable),
       })),
-      rules: usageLimitRules.byResourceType[resourceType] ?? [],
+      rules,
       authContext,
       resourceType,
       operationType,
     });
+  }
+
+  private async findRulesAdmittingOnFailure({
+    workspaceId,
+    resourceType,
+  }: {
+    workspaceId: string;
+    resourceType: UsageResourceType;
+  }): Promise<FlatUsageLimit[] | null> {
+    let usageLimitRules: UsageLimitRules;
+
+    try {
+      ({ usageLimitRules } = await this.workspaceCacheService.getOrRecompute(
+        workspaceId,
+        ['usageLimitRules'],
+      ));
+    } catch (error) {
+      if (error instanceof WorkspaceCacheException) {
+        throw error;
+      }
+
+      this.logger.error(
+        'Usage limit rules unavailable, enforcement degraded',
+        error,
+      );
+
+      return null;
+    }
+
+    return usageLimitRules.byResourceType[resourceType] ?? [];
   }
 }
