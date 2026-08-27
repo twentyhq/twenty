@@ -9,17 +9,13 @@ import { useLazyFindOneRecord } from '@/object-record/hooks/useLazyFindOneRecord
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { GET_WORKFLOW_VERSION_CONTENT } from '@/workflow/workflow-version/graphql/queries/getWorkflowVersionContent';
 import { type WorkflowVersionContent } from '@/workflow/workflow-version/hooks/useWorkflowVersionContent';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type CommandMenuItemAvailabilityType,
-  FeatureFlagKey,
-} from '~/generated-metadata/graphql';
+import { type CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 type WorkflowVersionRecord = Pick<
   WorkflowVersion,
-  'id' | 'workflowId' | 'trigger' | '__typename'
+  'id' | 'workflowId' | '__typename'
 >;
 
 type EnrichParams = {
@@ -32,14 +28,10 @@ type EnrichParams = {
 export const useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation =
   () => {
     const apolloCoreClient = useApolloCoreClient();
-    const isWorkflowVersionInCoreEnabled = useIsFeatureEnabled(
-      FeatureFlagKey.IS_WORKFLOW_VERSION_IN_CORE_ENABLED,
-    );
-
     const { findOneRecord: findOneWorkflowVersion } =
       useLazyFindOneRecord<WorkflowVersionRecord>({
         objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-        recordGqlFields: { id: true, workflowId: true, trigger: true },
+        recordGqlFields: { id: true, workflowId: true },
       });
 
     const fetchTriggerFromCore = useCallback(
@@ -86,9 +78,7 @@ export const useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInforma
             return undefined;
           }
 
-          const trigger = isWorkflowVersionInCoreEnabled
-            ? await fetchTriggerFromCore(workflowVersionId)
-            : workflowVersion.trigger;
+          const trigger = await fetchTriggerFromCore(workflowVersionId);
 
           return {
             ...headlessEngineCommandContextApi,
@@ -99,11 +89,7 @@ export const useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInforma
             availabilityObjectMetadataId,
           };
         },
-        [
-          fetchWorkflowVersion,
-          fetchTriggerFromCore,
-          isWorkflowVersionInCoreEnabled,
-        ],
+        [fetchWorkflowVersion, fetchTriggerFromCore],
       );
 
     return {

@@ -2602,9 +2602,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "linkedRecordId": {
         "universalIdentifier": "20202020-2e0e-48c0-b445-ee6c1e61687d",
       },
-      "name": {
-        "universalIdentifier": "20202020-7207-46e8-9dab-849505ae8497",
-      },
       "position": {
         "universalIdentifier": "02c2a94c-f393-5de2-9fe9-71ff4f76980d",
       },
@@ -2917,6 +2914,12 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
   },
   "workflowRun": {
     "fields": {
+      "coreWorkflowId": {
+        "universalIdentifier": "e07d8ac0-6b6e-4685-81fa-50d82ae7f880",
+      },
+      "coreWorkflowVersionId": {
+        "universalIdentifier": "58e3f476-425d-4c66-b391-779d0412e107",
+      },
       "createdAt": {
         "universalIdentifier": "e9e377ae-2539-5783-aeaa-b7579e211a29",
       },

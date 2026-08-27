@@ -6,7 +6,7 @@ import { DataSource } from 'typeorm';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -22,7 +22,7 @@ export class WorkflowCleanWorkflowRunsJob {
   private readonly logger = new Logger(WorkflowCleanWorkflowRunsJob.name);
 
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}
@@ -38,7 +38,7 @@ export class WorkflowCleanWorkflowRunsJob {
       `[WorkflowCleanWorkflowRunsJob] Starting job for workspace ${workspaceId}`,
     );
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const BATCH_SIZE = 200;
       let totalDeleted = 0;
 

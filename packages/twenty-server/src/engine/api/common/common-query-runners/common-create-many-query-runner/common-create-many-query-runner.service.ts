@@ -46,7 +46,7 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 @Injectable()
@@ -215,7 +215,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     workspaceId,
     queryRunnerContext,
   }: {
-    repository: WorkspaceRepositoryV2<ObjectLiteral>;
+    repository: WorkspaceRepository<ObjectLiteral>;
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
@@ -238,7 +238,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       const writeRepository = this.getWriteRepository(queryRunnerContext);
 
       return writeRepository.runInsert({
-        records: await this.resolveNestedRelationsForOrmV2({
+        records: await this.resolveNestedRelations({
           records: args.data,
           queryRunnerContext,
           writeRepository,
@@ -271,7 +271,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     workspaceId,
     queryRunnerContext,
   }: {
-    repository: WorkspaceRepositoryV2<ObjectLiteral>;
+    repository: WorkspaceRepository<ObjectLiteral>;
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
@@ -381,7 +381,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     args,
     conflictingFieldGroups,
   }: {
-    repository: WorkspaceRepositoryV2<ObjectLiteral>;
+    repository: WorkspaceRepository<ObjectLiteral>;
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     args: CreateManyQueryArgs;
@@ -461,7 +461,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       }));
 
     const writeRepository = this.getWriteRepository(queryRunnerContext);
-    const resolvedData = await this.resolveNestedRelationsForOrmV2({
+    const resolvedData = await this.resolveNestedRelations({
       records: updateInputs.map((input) => input.data),
       queryRunnerContext,
       writeRepository,
@@ -501,7 +501,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const writeRepository = this.getWriteRepository(queryRunnerContext);
 
     const insertResult = await writeRepository.runInsert({
-      records: await this.resolveNestedRelationsForOrmV2({
+      records: await this.resolveNestedRelations({
         records: recordsToInsert,
         queryRunnerContext,
         writeRepository,
@@ -526,7 +526,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    repository: WorkspaceRepositoryV2<ObjectLiteral>;
+    repository: WorkspaceRepository<ObjectLiteral>;
     selectedFieldsResult: CommonSelectedFieldsResult;
   }): Promise<ObjectRecord[]> {
     const queryBuilder = repository.createQueryBuilder(

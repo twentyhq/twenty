@@ -5,9 +5,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThan, type ObjectLiteral } from 'typeorm';
 
 import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/utils/object-record-diff-merge';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/global-workspace-datasource/types/workspace-transaction-scope.type';
-import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
 import {
@@ -30,9 +30,7 @@ const ACQUIRE_TIMELINE_ACTIVITY_MERGE_LOCK = `SELECT pg_advisory_xact_lock(hasht
 
 @Injectable()
 export class TimelineActivityRepository {
-  constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-  ) {}
+  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
   async upsertTimelineActivities({
     objectSingularName,
@@ -41,8 +39,8 @@ export class TimelineActivityRepository {
   }: TimelineActivityPayloadWorkspaceIdAndObjectSingularName) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      await this.workspaceOrmManager.runInWorkspaceTransaction(
         async (transactionScope) => {
           await this.acquireMergeLocks({
             transactionScope,
@@ -194,7 +192,7 @@ export class TimelineActivityRepository {
     objectSingularName,
     payloads,
   }: {
-    timelineActivityRepository: WorkspaceRepositoryV2<ObjectLiteral>;
+    timelineActivityRepository: WorkspaceRepository<ObjectLiteral>;
     objectSingularName: string;
     payloads: TimelineActivityPayloadWorkspaceIdAndObjectSingularName['payloads'];
   }) {
@@ -232,7 +230,7 @@ export class TimelineActivityRepository {
     objectSingularName,
     payloads,
   }: {
-    timelineActivityRepository: WorkspaceRepositoryV2<ObjectLiteral>;
+    timelineActivityRepository: WorkspaceRepository<ObjectLiteral>;
     objectSingularName: string;
     payloads: TimelineActivityPayloadWorkspaceIdAndObjectSingularName['payloads'];
   }) {
@@ -262,7 +260,7 @@ export class TimelineActivityRepository {
     timelineActivityRepository,
     merges,
   }: {
-    timelineActivityRepository: WorkspaceRepositoryV2<ObjectLiteral>;
+    timelineActivityRepository: WorkspaceRepository<ObjectLiteral>;
     merges: {
       id: string;
       properties: Partial<ObjectRecord>;

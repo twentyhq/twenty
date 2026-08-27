@@ -5,11 +5,12 @@ import {
   type PageLayoutType,
   type PageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetUniversalConfiguration,
+  type WidgetType,
 } from '@/types';
 
 export type PageLayoutWidgetManifest = SyncableEntityOptions & {
   title: string;
-  type: string;
+  type: `${WidgetType}`;
   objectUniversalIdentifier?: string;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay;
   gridPosition?: GridPosition;

@@ -1,7 +1,6 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
-import { usePageLayoutTabsFilteredByFeatureFlags } from '@/page-layout/hooks/usePageLayoutTabsFilteredByFeatureFlags';
 import { useWidgetVisibilityContext } from '@/page-layout/hooks/useWidgetVisibilityContext';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { getTabsRenderableForTargetObject } from '@/page-layout/utils/getTabsRenderableForTargetObject';
@@ -16,8 +15,6 @@ export const usePageLayoutRenderableTabs = () => {
   const isMobile = useIsMobile();
   const { isInSidePanel, targetRecordIdentifier } = useLayoutRenderingContext();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
-  const { featureFilteredPageLayoutTabs } =
-    usePageLayoutTabsFilteredByFeatureFlags();
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const { objectMetadataItems } = useObjectMetadataItems();
   const widgetVisibilityContext = useWidgetVisibilityContext();
@@ -30,7 +27,7 @@ export const usePageLayoutRenderableTabs = () => {
     : undefined;
 
   const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
-    tabs: featureFilteredPageLayoutTabs,
+    tabs: currentPageLayout.tabs,
     isEditMode: isPageLayoutInEditMode,
     context: widgetVisibilityContext,
   });

@@ -15,7 +15,7 @@ import {
   errorResponse,
   failureResponse,
   resolvePartnerFromRequest,
-} from 'src/modules/partner/self-service/services/resolve-partner-from-request.service';
+} from 'src/modules/shared/http/resolve-partner-from-request.service';
 import { buildReconcilePlan } from 'src/modules/partner/self-service/utils/reconcile-children';
 
 export type SaveLinksResult = { ok: true; links: LinkRow[] } | { ok: false; reason: string };

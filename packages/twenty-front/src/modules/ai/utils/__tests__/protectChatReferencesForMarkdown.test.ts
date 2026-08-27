@@ -101,6 +101,34 @@ describe('protectChatReferencesForMarkdown', () => {
     ).toBe('Created [[object:opportunity:Opportunities]]].');
   });
 
+  it('should leave a proposed field reference unchanged', () => {
+    expect(
+      protectChatReferencesForMarkdown(
+        'add [[field:person:role:Role]] and [[field:person:leadSource:Lead source]]',
+      ),
+    ).toBe(
+      'add [[field:person:role:Role]] and [[field:person:leadSource:Lead source]]',
+    );
+  });
+
+  it('should keep only the display name when the text is a single malformed marker', () => {
+    expect(
+      protectChatReferencesForMarkdown(
+        '[[field:person:lead source:Lead source]]',
+      ),
+    ).toBe('Lead source');
+  });
+
+  it('should keep only the display name of a marker matching no reference form', () => {
+    expect(
+      protectChatReferencesForMarkdown(
+        '[[object:person:People]] gets [[field:person:lead source:Lead source]] and [[field:33333333-3333-3333-3333-333333333333:Stage]]',
+      ),
+    ).toBe(
+      '[[object:person:People]] gets Lead source and [[field:33333333-3333-3333-3333-333333333333:Stage]]',
+    );
+  });
+
   it('should rewrite every kind in a mixed string', () => {
     expect(
       protectChatReferencesForMarkdown(

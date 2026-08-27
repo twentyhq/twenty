@@ -5,7 +5,8 @@ import { generateCallRecordingSummary } from 'src/logic-functions/flows/generate
 
 const runAgentMock = vi.hoisted(() => vi.fn());
 
-vi.mock('twenty-sdk/logic-function', () => ({
+vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
   runAgent: runAgentMock,
 }));
 
@@ -96,6 +97,24 @@ describe('generateCallRecordingSummary', () => {
     expect(runAgentMock).not.toHaveBeenCalled();
   });
 
+  it('regenerates an existing summary when explicitly requested', async () => {
+    seedCallRecording({
+      id: 'call-recording-1',
+      title: null,
+      transcript: TRANSCRIPT,
+      summary: { markdown: '## Overview\nOld summary.' },
+    });
+
+    const result = await generateCallRecordingSummary(CLIENT, {
+      callRecordingId: 'call-recording-1',
+      shouldRegenerateExistingSummary: true,
+    });
+
+    expect(result).toEqual({ outcome: 'generated' });
+    expect(runAgentMock).toHaveBeenCalledTimes(1);
+    expect(mutationMock).toHaveBeenCalledTimes(1);
+  });
+
   it('skips recordings another actor created when the app-created gate is on', async () => {
     seedCallRecording({
       id: 'call-recording-1',
@@ -123,6 +142,17 @@ describe('generateCallRecordingSummary', () => {
     expect(result).toEqual({ outcome: 'generated' });
     expect(runAgentMock).toHaveBeenCalledTimes(1);
     expect(mutationMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('reports a save error without rethrowing when the summary write fails', async () => {
+    mutationMock.mockRejectedValue(new Error('Write timed out'));
+
+    const result = await generateCallRecordingSummary(CLIENT, {
+      callRecordingId: 'call-recording-1',
+    });
+
+    expect(result).toEqual({ outcome: 'save-error' });
+    expect(runAgentMock).toHaveBeenCalledTimes(1);
   });
 
   it('generates for recordings another actor created when explicitly requested', async () => {
@@ -181,24 +211,31 @@ describe('generateCallRecordingSummary', () => {
     );
   });
 
-  it('stores the no-summary verdict verbatim so the run is terminal', async () => {
+  it('stores a grounded unavailable placeholder so the run is terminal', async () => {
     runAgentMock.mockResolvedValue({
       success: true,
       error: null,
-      result: { response: 'No summary available.' },
+      result: {
+        response:
+          'SUMMARY_UNAVAILABLE: The transcript contains only greetings and audio checks.',
+      },
     });
 
     const result = await generateCallRecordingSummary(CLIENT, {
       callRecordingId: 'call-recording-1',
     });
 
-    expect(result).toEqual({ outcome: 'generated' });
+    expect(result).toEqual({ outcome: 'not-summarizable' });
     expect(mutationMock).toHaveBeenCalledWith({
       updateCallRecording: {
         __args: {
           id: 'call-recording-1',
           data: {
-            summary: { blocknote: null, markdown: 'No summary available.' },
+            summary: {
+              blocknote: null,
+              markdown:
+                '## Summary unavailable\n\nThe transcript contains only greetings and audio checks.',
+            },
           },
         },
         id: true,
@@ -233,15 +270,4 @@ describe('generateCallRecordingSummary', () => {
     expect(mutationMock).not.toHaveBeenCalled();
   });
 
-  it('propagates summary write errors', async () => {
-    mutationMock.mockRejectedValue(new Error('Summary write failed'));
-
-    await expect(
-      generateCallRecordingSummary(CLIENT, {
-        callRecordingId: 'call-recording-1',
-      }),
-    ).rejects.toThrow('Summary write failed');
-
-    expect(mutationMock).toHaveBeenCalledTimes(1);
-  });
 });

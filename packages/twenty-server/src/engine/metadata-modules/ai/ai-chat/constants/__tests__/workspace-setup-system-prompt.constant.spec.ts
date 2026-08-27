@@ -251,7 +251,9 @@ describe('WORKSPACE_SETUP_SYSTEM_PROMPT', () => {
   it('should require a title per reply and chips for objects', () => {
     expect(prompt).toContain('Open each reply with a short plain title');
     expect(prompt).toContain('title each new step');
-    expect(prompt).toContain('Write objects as chips');
+    expect(prompt).toContain('Write objects and fields as chips');
+    expect(prompt).toContain('including the ones you have not created yet');
+    expect(prompt).toContain('each written as a chip');
   });
 
   it('should carry the ask_questions shape rules the base prompt no longer provides', () => {

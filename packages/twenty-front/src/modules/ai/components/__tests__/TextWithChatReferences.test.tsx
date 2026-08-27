@@ -34,13 +34,32 @@ jest.mock('@/ai/components/ObjectMetadataLink', () => ({
 
 jest.mock('@/ai/components/FieldMetadataLink', () => ({
   FieldMetadataLink: ({
+    objectNameSingular,
+    fieldName,
     displayName,
-    fieldMetadataItemId,
   }: {
+    objectNameSingular: string;
+    fieldName: string;
     displayName: string;
-    fieldMetadataItemId: string;
   }) => (
-    <a data-testid="field-link" href={`/fields/${fieldMetadataItemId}`}>
+    <a
+      data-testid="field-link"
+      href={`/fields/${objectNameSingular}/${fieldName}`}
+    >
+      {displayName}
+    </a>
+  ),
+}));
+
+jest.mock('@/ai/components/DeprecatedFieldMetadataLinkById', () => ({
+  DeprecatedFieldMetadataLinkById: ({
+    fieldMetadataItemId,
+    displayName,
+  }: {
+    fieldMetadataItemId: string;
+    displayName: string;
+  }) => (
+    <a data-testid="legacy-field-link" href={`/fields/${fieldMetadataItemId}`}>
       {displayName}
     </a>
   ),
@@ -117,6 +136,18 @@ describe('TextWithChatReferences', () => {
     );
   });
 
+  it('should route a name-addressed field reference to the field chip', () => {
+    render(
+      <TextWithChatReferences text="Add [[field:person:role:Role]] to People" />,
+    );
+
+    expect(screen.getByTestId('field-link')).toHaveAttribute(
+      'href',
+      '/fields/person/role',
+    );
+    expect(screen.queryByTestId('legacy-field-link')).not.toBeInTheDocument();
+  });
+
   it('should route each reference kind to its own chip', () => {
     render(
       <TextWithChatReferences text="The [[view:44444444-4444-4444-4444-444444444444:Pipeline]] view of [[object:partner:Partners]] groups [[record:person:11111111-1111-1111-1111-111111111111:Alice]] by [[field:33333333-3333-3333-3333-333333333333:Stage]]" />,
@@ -131,7 +162,7 @@ describe('TextWithChatReferences', () => {
       '/objects/partner',
     );
     expect(screen.getByTestId('record-link')).toHaveTextContent('Alice');
-    expect(screen.getByTestId('field-link')).toHaveAttribute(
+    expect(screen.getByTestId('legacy-field-link')).toHaveAttribute(
       'href',
       '/fields/33333333-3333-3333-3333-333333333333',
     );

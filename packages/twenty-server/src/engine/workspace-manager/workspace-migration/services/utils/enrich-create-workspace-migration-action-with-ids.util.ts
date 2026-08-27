@@ -1,10 +1,9 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type UniversalCreateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
 import { type UniversalCreateObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
-import { type UniversalCreatePageLayoutAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout/types/workspace-migration-page-layout-action.type';
 import { type WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 
 export type IdByUniversalIdentifierByMetadataName = {
@@ -39,25 +38,6 @@ const buildFieldIdByUniversalIdentifierForObjectAction = ({
   }
 
   return fieldIdByUniversalIdentifier;
-};
-
-const buildTabIdByUniversalIdentifier = ({
-  action,
-  pageLayoutTabIdByUniversalIdentifier,
-}: {
-  action: UniversalCreatePageLayoutAction;
-  pageLayoutTabIdByUniversalIdentifier: Record<string, string>;
-}): Record<string, string> | undefined => {
-  const tabIdByUniversalIdentifier = {
-    ...action.tabIdByUniversalIdentifier,
-    ...pageLayoutTabIdByUniversalIdentifier,
-  };
-
-  if (Object.keys(tabIdByUniversalIdentifier).length === 0) {
-    return undefined;
-  }
-
-  return tabIdByUniversalIdentifier;
 };
 
 const buildFieldIdByUniversalIdentifierForFieldActions = ({
@@ -179,8 +159,6 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
 }): WorkspaceMigration => {
   const fieldMetadataIdByUniversalIdentifier =
     idByUniversalIdentifierByMetadataName.fieldMetadata;
-  const pageLayoutTabIdByUniversalIdentifier =
-    idByUniversalIdentifierByMetadataName.pageLayoutTab;
 
   const fieldIdByUniversalIdentifier =
     buildFieldIdByUniversalIdentifierForFieldActions({
@@ -194,27 +172,13 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
       return action;
     }
 
-    const idByUniversalIdentifier =
-      idByUniversalIdentifierByMetadataName[action.metadataName];
-
-    if (
-      action.metadataName !== 'fieldMetadata' &&
-      action.metadataName !== 'objectMetadata' &&
-      !isDefined(idByUniversalIdentifier) &&
-      !isDefined(fieldMetadataIdByUniversalIdentifier) &&
-      !isDefined(pageLayoutTabIdByUniversalIdentifier)
-    ) {
-      return action;
-    }
+    const providedId =
+      idByUniversalIdentifierByMetadataName[action.metadataName]?.[
+        action.flatEntity.universalIdentifier
+      ];
 
     switch (action.metadataName) {
       case 'objectMetadata': {
-        const id =
-          (isDefined(idByUniversalIdentifier)
-            ? idByUniversalIdentifier[action.flatEntity.universalIdentifier]
-            : undefined) ??
-          action.id ??
-          v4();
         const objectFieldIdByUniversalIdentifier =
           buildFieldIdByUniversalIdentifierForObjectAction({
             action,
@@ -224,7 +188,7 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
 
         return {
           ...action,
-          id,
+          id: providedId ?? action.id ?? v4(),
           fieldIdByUniversalIdentifier: objectFieldIdByUniversalIdentifier,
         };
       }
@@ -260,65 +224,11 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
           }),
         };
       }
-      case 'pageLayout': {
-        const id = isDefined(idByUniversalIdentifier)
-          ? idByUniversalIdentifier[action.flatEntity.universalIdentifier]
-          : undefined;
-        const tabIdByUniversalIdentifier = isDefined(
-          pageLayoutTabIdByUniversalIdentifier,
-        )
-          ? buildTabIdByUniversalIdentifier({
-              action,
-              pageLayoutTabIdByUniversalIdentifier,
-            })
-          : undefined;
-
-        return {
-          ...action,
-          id,
-          tabIdByUniversalIdentifier,
-        };
-      }
-      case 'view':
-      case 'viewField':
-      case 'viewGroup':
-      case 'viewFieldGroup':
-      case 'rowLevelPermissionPredicate':
-      case 'rowLevelPermissionPredicateGroup':
-      case 'viewFilterGroup':
-      case 'index':
-      case 'logicFunction':
-      case 'viewFilter':
-      case 'role':
-      case 'roleTarget':
-      case 'agent':
-      case 'skill':
-      case 'pageLayoutWidget':
-      case 'pageLayoutTab':
-      case 'commandMenuItem':
-      case 'navigationMenuItem':
-      case 'frontComponent':
-      case 'viewSort':
-      case 'rolePermissionFlag':
-      case 'permissionFlag':
-      case 'objectPermission':
-      case 'fieldPermission':
-      case 'webhook':
-      case 'applicationVariable':
-      case 'connectionProvider':
-      case 'timelineActivityType':
-      case 'searchFieldMetadata': {
-        if (!isDefined(idByUniversalIdentifier)) {
-          return action;
-        }
-
-        return {
-          ...action,
-          id: idByUniversalIdentifier[action.flatEntity.universalIdentifier],
-        };
-      }
       default: {
-        assertUnreachable(action);
+        return {
+          ...action,
+          id: providedId ?? action.id ?? v4(),
+        };
       }
     }
   });

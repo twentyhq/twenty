@@ -611,6 +611,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
               { workspaceId },
             ),
             description: applicationVariableManifest.description,
+            label: applicationVariableManifest.label,
             isSecret,
             isDeprecated: applicationVariableManifest.isDeprecated,
             type,
