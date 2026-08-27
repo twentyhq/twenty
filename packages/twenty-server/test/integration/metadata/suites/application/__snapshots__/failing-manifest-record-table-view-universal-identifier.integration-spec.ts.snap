@@ -32,6 +32,7 @@ exports[`Failing manifest sync - RECORD_TABLE widget with unknown view universal
         "universalOverrides": null,
         "updatedAt": Any<String>,
       },
+      "id": Any<String>,
       "metadataName": "pageLayoutWidget",
       "type": "create",
     },

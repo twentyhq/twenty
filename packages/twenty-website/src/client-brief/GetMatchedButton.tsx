@@ -9,9 +9,11 @@ import { useClientBriefModal } from './use-client-brief-modal';
 
 export function GetMatchedButton({
   label,
+  partnerSlug,
   variant,
 }: {
   label: MessageDescriptor;
+  partnerSlug?: string;
   variant?: ButtonVariant;
 }) {
   const { i18n } = useLingui();
@@ -20,7 +22,7 @@ export function GetMatchedButton({
   return (
     <Button
       label={i18n._(label)}
-      onClick={openClientBriefModal}
+      onClick={() => openClientBriefModal(partnerSlug)}
       variant={variant}
     />
   );
