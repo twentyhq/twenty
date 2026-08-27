@@ -604,7 +604,7 @@ export class LogicFunctionExecutorService {
     // and stay untouched.
     const { invocationCreditsMicro, durationCreditsMicro, billedDurationMs } =
       computeLogicFunctionExecutionCreditsMicro({
-        durationMs: result.billedDurationMs ?? result.duration,
+        durationMs: result.billedDurationMs,
         isBillingExempt: isBillingExemptApplication(
           flatApplication.universalIdentifier,
         ),

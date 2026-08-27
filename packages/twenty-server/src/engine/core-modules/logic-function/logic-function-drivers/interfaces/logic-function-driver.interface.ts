@@ -14,9 +14,7 @@ export type LogicFunctionExecuteError = {
 export type LogicFunctionExecuteResult = {
   data: object | null;
   duration: number;
-  // AWS-billed duration from the lambda execution report; absent for drivers
-  // that have no billing report, in which case duration is the fallback.
-  billedDurationMs?: number;
+  billedDurationMs: number;
   logs: string;
   status: LogicFunctionExecutionStatus;
   error?: LogicFunctionExecuteError;

@@ -221,7 +221,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       const duration = Date.now() - invokeFlowStart;
       const parsedBilledDurationMs = isNonEmptyString(billedDurationMs)
         ? Number(billedDurationMs)
-        : undefined;
+        : duration;
 
       this.logger.log(
         `[lambda-timing] fnId=${flatLogicFunction.id} executionMode=${executionMode} totalMs=${Date.now() - buildStart} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${Buffer.byteLength(payloadString, 'utf8')} invokeSendMs=${invokeSendMs} reportDurationMs=${reportDurationMs ?? 'n/a'} billedMs=${billedDurationMs ?? 'n/a'} initDurationMs=${initDurationMs ?? 'n/a'} coldStart=${coldStart}`,
