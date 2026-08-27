@@ -1,5 +1,7 @@
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
+import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import {
   EASING,
   FONT_WEIGHT,
@@ -12,6 +14,7 @@ import {
 
 import { type MarketplacePartner } from './marketplace-partner';
 import { ProfileEyebrow } from './ProfileEyebrow';
+import { SuperPartnerMark } from './SuperPartnerMark';
 import { titleCaseFallback } from './title-case-fallback';
 
 const Wrapper = styled.div`
@@ -53,16 +56,27 @@ export function PartnerProfileHeader({
 }: {
   partner: MarketplacePartner;
 }) {
-  const eyebrow = [
+  const i18n = getServerI18n();
+  const locationLine = [
     partner.city,
     partner.country ? titleCaseFallback(partner.country) : '',
   ]
     .filter(Boolean)
     .join(', ');
 
+  if (partner.superPartner) {
+    return (
+      <Wrapper>
+        <SuperPartnerMark label={i18n._(msg`Super partner`)} />
+        <Name id="partner-name">{partner.name}</Name>
+        {locationLine ? <ProfileEyebrow>{locationLine}</ProfileEyebrow> : null}
+      </Wrapper>
+    );
+  }
+
   return (
     <Wrapper>
-      {eyebrow && <ProfileEyebrow>{eyebrow}</ProfileEyebrow>}
+      {locationLine ? <ProfileEyebrow>{locationLine}</ProfileEyebrow> : null}
       <Name id="partner-name">{partner.name}</Name>
     </Wrapper>
   );

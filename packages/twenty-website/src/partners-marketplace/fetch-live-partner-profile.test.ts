@@ -78,6 +78,38 @@ describe('fetchLivePartnerProfile', () => {
         },
       ],
       clients: [],
+      superPartner: false,
+    });
+  });
+
+  it('reads superPartner true from the profile API', async () => {
+    mockedFetch.mockResolvedValue({
+      ok: true,
+      partner: {
+        name: 'Acme',
+        slug: 'acme',
+        introduction: 'Hi',
+        languagesSpoken: ['ENGLISH'],
+        partnerScope: ['ADVISORY'],
+        region: ['US'],
+        calendarLink: null,
+        hourlyRate: null,
+        projectBudgetMin: null,
+        linkedin: null,
+        website: null,
+        profilePicture: null,
+        profileLinks: [],
+        skills: null,
+        city: null,
+        country: null,
+        services: [],
+        portfolio: [],
+        superPartner: true,
+      },
+    });
+
+    expect(await fetchLivePartnerProfile('acme')).toMatchObject({
+      superPartner: true,
     });
   });
 
