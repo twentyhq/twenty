@@ -2,19 +2,20 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { computeFieldMetadataLayoutPositionUpdates } from '@/settings/data-model/object-details/utils/computeFieldMetadataLayoutPositionUpdates';
 import { sortFieldMetadataItemsByViewLayout } from '@/settings/data-model/object-details/utils/sortFieldMetadataItemsByViewLayout';
+import {
+  settingsObjectFieldsPendingLayoutFamilyState,
+  type PendingViewFieldLayout,
+} from '@/settings/data-model/object-details/states/settingsObjectFieldsPendingLayoutFamilyState';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
 import { useViewOrDefaultView } from '@/views/hooks/useViewOrDefaultView';
-import { useMemo, useState } from 'react';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useStore } from 'jotai';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 const DEFAULT_CREATED_VIEW_FIELD_SIZE = 100;
-
-type PendingViewFieldLayout = {
-  position?: number;
-  isVisible?: boolean;
-};
 
 type ViewFieldLayoutUpdate = {
   fieldMetadataId: string;
@@ -35,8 +36,43 @@ export const useDefaultViewFieldsLayout = ({
   const { performViewFieldAPICreate, performViewFieldAPIUpdate } =
     usePerformViewFieldAPIPersist();
 
-  const [pendingLayoutByFieldMetadataId, setPendingLayoutByFieldMetadataId] =
-    useState<Map<string, PendingViewFieldLayout>>(new Map());
+  const store = useStore();
+  const pendingLayoutFamilyKey = {
+    objectMetadataItemId: objectMetadataItem.id,
+  };
+  const pendingLayoutAtom =
+    settingsObjectFieldsPendingLayoutFamilyState.atomFamily(
+      pendingLayoutFamilyKey,
+    );
+  const settingsObjectFieldsPendingLayout = useAtomFamilyStateValue(
+    settingsObjectFieldsPendingLayoutFamilyState,
+    pendingLayoutFamilyKey,
+  );
+
+  const applyPendingLayoutUpdates = (
+    layoutUpdates: ViewFieldLayoutUpdate[],
+  ) => {
+    const newPending = new Map(store.get(pendingLayoutAtom));
+
+    for (const { fieldMetadataId, layout } of layoutUpdates) {
+      newPending.set(fieldMetadataId, {
+        ...newPending.get(fieldMetadataId),
+        ...layout,
+      });
+    }
+
+    store.set(pendingLayoutAtom, newPending);
+  };
+
+  const clearPendingLayoutUpdates = (fieldMetadataIds: string[]) => {
+    const newPending = new Map(store.get(pendingLayoutAtom));
+
+    for (const fieldMetadataId of fieldMetadataIds) {
+      newPending.delete(fieldMetadataId);
+    }
+
+    store.set(pendingLayoutAtom, newPending);
+  };
 
   const viewFieldByFieldMetadataId = useMemo(
     () =>
@@ -52,7 +88,7 @@ export const useDefaultViewFieldsLayout = ({
   const getEffectiveLayout = (
     fieldMetadataId: string,
   ): { position: number | null; isVisible: boolean } => {
-    const pending = pendingLayoutByFieldMetadataId.get(fieldMetadataId);
+    const pending = settingsObjectFieldsPendingLayout.get(fieldMetadataId);
     const viewField = viewFieldByFieldMetadataId.get(fieldMetadataId);
 
     return {
@@ -65,7 +101,7 @@ export const useDefaultViewFieldsLayout = ({
     const positions = new Map<string, number>();
 
     for (const field of fieldMetadataItems) {
-      const pending = pendingLayoutByFieldMetadataId.get(field.id);
+      const pending = settingsObjectFieldsPendingLayout.get(field.id);
       const viewField = viewFieldByFieldMetadataId.get(field.id);
       const position = pending?.position ?? viewField?.position;
 
@@ -77,7 +113,7 @@ export const useDefaultViewFieldsLayout = ({
     return positions;
   }, [
     fieldMetadataItems,
-    pendingLayoutByFieldMetadataId,
+    settingsObjectFieldsPendingLayout,
     viewFieldByFieldMetadataId,
   ]);
 
@@ -97,18 +133,12 @@ export const useDefaultViewFieldsLayout = ({
       return;
     }
 
-    setPendingLayoutByFieldMetadataId((previousPending) => {
-      const newPending = new Map(previousPending);
+    applyPendingLayoutUpdates(layoutUpdates);
 
-      for (const { fieldMetadataId, layout } of layoutUpdates) {
-        newPending.set(fieldMetadataId, {
-          ...newPending.get(fieldMetadataId),
-          ...layout,
-        });
-      }
-
-      return newPending;
-    });
+    const lastPosition = Math.max(
+      -1,
+      ...Array.from(positionByFieldMetadataId.values()),
+    );
 
     const viewFieldsToCreate = [];
     const viewFieldsToUpdate = [];
@@ -131,11 +161,6 @@ export const useDefaultViewFieldsLayout = ({
           },
         });
       } else {
-        const lastPosition = Math.max(
-          -1,
-          ...Array.from(positionByFieldMetadataId.values()),
-        );
-
         viewFieldsToCreate.push({
           id: v4(),
           viewId: defaultView.id,
@@ -155,23 +180,20 @@ export const useDefaultViewFieldsLayout = ({
         await performViewFieldAPIUpdate(viewFieldsToUpdate);
       }
     } finally {
-      setPendingLayoutByFieldMetadataId((previousPending) => {
-        const newPending = new Map(previousPending);
-
-        for (const { fieldMetadataId } of layoutUpdates) {
-          newPending.delete(fieldMetadataId);
-        }
-
-        return newPending;
-      });
+      clearPendingLayoutUpdates(
+        layoutUpdates.map(({ fieldMetadataId }) => fieldMetadataId),
+      );
     }
   };
 
   const toggleFieldVisibility = async (fieldMetadataId: string) => {
-    const { isVisible } = getEffectiveLayout(fieldMetadataId);
+    const currentIsVisible =
+      store.get(pendingLayoutAtom).get(fieldMetadataId)?.isVisible ??
+      viewFieldByFieldMetadataId.get(fieldMetadataId)?.isVisible ??
+      false;
 
     await persistLayoutUpdates([
-      { fieldMetadataId, layout: { isVisible: !isVisible } },
+      { fieldMetadataId, layout: { isVisible: !currentIsVisible } },
     ]);
   };
 
