@@ -5,7 +5,7 @@ import {
   WELCOME_EMAIL_WORKFLOW_URL,
 } from 'src/modules/partner/application-intake/constants/how-to-review.constants';
 import { MARKETPLACE_RANKING } from 'src/modules/partner/application-intake/constants/marketplace-ranking.constant';
-import { PLAYBOOK_STYLES as styles } from 'src/modules/partner/application-intake/front-components/how-to-review/playbook-styles';
+import { PLAYBOOK_STYLES as styles } from 'src/modules/shared/front-components/playbook-styles';
 import {
   CASE_STUDY_BEATS_QUICK_FIELDS,
   RANK_ROWS,
