@@ -58,6 +58,11 @@ type GroupByField = (typeof ALLOWED_GROUP_BY_FIELDS)[number];
 
 const BREAKDOWN_QUERY_LIMIT = 50;
 
+// Scopes a declared operation name to the application that declared it. Both
+// halves of the comparison are built here so the SQL and the array it is
+// matched against cannot spell the pair differently.
+const DECLARED_OPERATION_KEY_SEPARATOR = ':';
+
 @Injectable()
 export class UsageAnalyticsService {
   constructor(private readonly clickHouseService: ClickHouseService) {}
@@ -143,18 +148,33 @@ export class UsageAnalyticsService {
     periodEnd,
     operationTypes,
     userWorkspaceId,
-    declaredOperations,
+    declaredOperationsByApplicationId,
   }: PeriodParams & {
     userWorkspaceId?: string;
-    declaredOperations: string[];
+    declaredOperationsByApplicationId: Record<string, string[]>;
   }): Promise<UsageApplicationBreakdownItem[]> {
     const hasOperationTypes = isNonEmptyArray(operationTypes);
+    const declaredOperationKeys = Object.entries(
+      declaredOperationsByApplicationId,
+    ).flatMap(([applicationId, operations]) =>
+      operations.map(
+        (operation) =>
+          `${applicationId}${DECLARED_OPERATION_KEY_SEPARATOR}${operation}`,
+      ),
+    );
 
     const query = `
       SELECT
         resourceId,
         if(
-          has({declaredOperations:Array(String)}, resourceContext),
+          has(
+            {declaredOperationKeys:Array(String)},
+            concat(
+              resourceId,
+              {declaredOperationKeySeparator:String},
+              resourceContext
+            )
+          ),
           resourceContext,
           ''
         ) AS operation,
@@ -179,7 +199,8 @@ export class UsageAnalyticsService {
       periodStart: formatDateTimeForClickHouse(periodStart),
       periodEnd: formatDateTimeForClickHouse(periodEnd),
       appResourceType: UsageResourceType.APP,
-      declaredOperations,
+      declaredOperationKeys,
+      declaredOperationKeySeparator: DECLARED_OPERATION_KEY_SEPARATOR,
       ...(hasOperationTypes ? { operationTypes } : {}),
       ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
     });

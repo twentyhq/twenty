@@ -66,14 +66,19 @@ export class UsageResolver {
         'flatApplicationMaps',
       ]);
 
-    const declaredOperations = [
-      ...new Set(
-        Object.values(flatApplicationMaps.byId).flatMap((application) => [
-          ...Object.keys(application?.billing?.recurring ?? {}),
-          ...Object.keys(application?.billing?.operations ?? {}),
-        ]),
+    // Per application, not workspace-wide: two apps may use the same operation
+    // name, and only the one that declared it should keep it as its own slice.
+    const declaredOperationsByApplicationId = Object.fromEntries(
+      Object.entries(flatApplicationMaps.byId).map(
+        ([applicationId, application]) => [
+          applicationId,
+          [
+            ...Object.keys(application?.billing?.recurring ?? {}),
+            ...Object.keys(application?.billing?.operations ?? {}),
+          ],
+        ],
       ),
-    ];
+    );
 
     const [
       usageByUser,
@@ -90,7 +95,7 @@ export class UsageResolver {
       this.usageAnalyticsService.getUsageByApplication({
         ...periodParams,
         userWorkspaceId: input?.userWorkspaceId ?? undefined,
-        declaredOperations,
+        declaredOperationsByApplicationId,
       }),
       this.usageAnalyticsService.getUsageByModel(periodParams),
       this.usageAnalyticsService.getUsageTimeSeries(periodParams),
