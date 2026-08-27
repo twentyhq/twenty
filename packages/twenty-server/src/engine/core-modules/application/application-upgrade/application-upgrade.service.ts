@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import axios from 'axios';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { PROVISIONED_WORKSPACE_ACTIVATION_STATUSES } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 import { z } from 'zod';
 
@@ -10,6 +11,7 @@ import {
   WorkspaceIteratorService,
   type WorkspaceIteratorReport,
 } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { activationStatusIn } from 'src/database/commands/command-runners/utils/activation-status-in.util';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -20,6 +22,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const npmPackageMetadataSchema = z.object({
   version: z.string(),
@@ -34,6 +37,8 @@ export class ApplicationUpgradeService {
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly applicationInstallService: ApplicationInstallService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -128,6 +133,7 @@ export class ApplicationUpgradeService {
     appRegistration: ApplicationRegistrationEntity;
     targetVersion: string | null;
     applicationsToUpgrade: ApplicationEntity[];
+    skippedNonProvisionedWorkspaceIds: string[];
   }> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: applicationRegistrationId },
@@ -140,6 +146,7 @@ export class ApplicationUpgradeService {
         appRegistration,
         targetVersion: null,
         applicationsToUpgrade: [],
+        skippedNonProvisionedWorkspaceIds: [],
       };
     }
 
@@ -153,9 +160,22 @@ export class ApplicationUpgradeService {
       },
     });
 
-    let applicationsToUpgrade = applications.filter(
+    const outdatedApplications = applications.filter(
       (application) => application.version !== targetVersion,
     );
+
+    const provisionedWorkspaceIds =
+      await this.findProvisionedWorkspaceIds(outdatedApplications);
+
+    let applicationsToUpgrade = outdatedApplications.filter((application) =>
+      provisionedWorkspaceIds.has(application.workspaceId),
+    );
+
+    const skippedNonProvisionedWorkspaceIds = outdatedApplications
+      .filter(
+        (application) => !provisionedWorkspaceIds.has(application.workspaceId),
+      )
+      .map((application) => application.workspaceId);
 
     if (isDefined(workspaceCountLimit)) {
       applicationsToUpgrade = applicationsToUpgrade.slice(
@@ -164,7 +184,35 @@ export class ApplicationUpgradeService {
       );
     }
 
-    return { appRegistration, targetVersion, applicationsToUpgrade };
+    return {
+      appRegistration,
+      targetVersion,
+      applicationsToUpgrade,
+      skippedNonProvisionedWorkspaceIds,
+    };
+  }
+
+  // Workspaces outside of the provisioned statuses are skipped by the version
+  // upgrade pipeline, so they sit on an outdated workspace version and would
+  // fail the app compatibility check.
+  private async findProvisionedWorkspaceIds(
+    applications: ApplicationEntity[],
+  ): Promise<Set<string>> {
+    if (!isNonEmptyArray(applications)) {
+      return new Set();
+    }
+
+    const workspaces = await this.workspaceRepository.find({
+      select: ['id'],
+      where: {
+        id: In(applications.map((application) => application.workspaceId)),
+        activationStatus: activationStatusIn(
+          PROVISIONED_WORKSPACE_ACTIVATION_STATUSES,
+        ),
+      },
+    });
+
+    return new Set(workspaces.map((workspace) => workspace.id));
   }
 
   async upgradeApplications({
