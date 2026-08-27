@@ -1,6 +1,7 @@
+import { msg } from '@lingui/core/macro';
 import { Suspense } from 'react';
 
-import { ClientBriefModalRoot } from '@/client-brief';
+import { ClientBriefModalRoot, GetMatchedButton } from '@/client-brief';
 import { PartnerApplicationModalRoot } from '@/partner-application';
 import { MarketplaceBriefPrompt } from '@/partners-marketplace/MarketplaceBriefPrompt';
 import { getMarketplacePartners } from '@/partners-marketplace/marketplace-partners-source';
@@ -71,7 +72,9 @@ export default async function PartnersPage({
             </Suspense>
           </PartnerDirectory>
           <PartnerServicesExplainer />
-          <MarketplaceBriefPrompt />
+          <MarketplaceBriefPrompt
+            cta={<GetMatchedButton label={msg`Submit a brief`} />}
+          />
           <PartnerFaq />
           <PartnerBecomeStrip />
         </main>
