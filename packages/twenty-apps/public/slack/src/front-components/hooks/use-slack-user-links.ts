@@ -5,7 +5,9 @@ import { RestApiClient } from 'twenty-client-sdk/rest';
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
 import { formatWorkspaceMemberName } from 'src/front-components/utils/format-workspace-member-name.util';
 
-// The REST list endpoint caps a single page at 200; manual links stay well under it.
+// The list shows manual and email-matched links, so cap what we render and tell
+// the reader when more exist rather than silently dropping them. One extra
+// record is fetched only to detect that overflow.
 const SLACK_USER_LINKS_PAGE_SIZE = 200;
 
 const SLACK_USER_LINKS_ERROR_MESSAGE =
@@ -33,6 +35,7 @@ type SlackUserLinksState = {
   slackUserLinks: SlackUserLinkRecord[];
   isSlackUserLinksLoading: boolean;
   errorMessage: string | undefined;
+  hasMoreSlackUserLinks: boolean;
   refetchSlackUserLinks: () => Promise<void>;
 };
 
@@ -44,6 +47,7 @@ export const useSlackUserLinks = (): SlackUserLinksState => {
   const [errorMessage, setErrorMessage] = useState<string | undefined>(
     undefined,
   );
+  const [hasMoreSlackUserLinks, setHasMoreSlackUserLinks] = useState(false);
 
   const fetchSlackUserLinks = useCallback(async () => {
     setIsSlackUserLinksLoading(true);
@@ -52,7 +56,12 @@ export const useSlackUserLinks = (): SlackUserLinksState => {
     try {
       const response = await new RestApiClient().get<SlackUserLinksResponse>(
         '/rest/slackUserLinks',
-        { query: { depth: '1', limit: String(SLACK_USER_LINKS_PAGE_SIZE) } },
+        {
+          query: {
+            depth: '1',
+            limit: String(SLACK_USER_LINKS_PAGE_SIZE + 1),
+          },
+        },
       );
 
       const records: SlackUserLinkRecord[] = [];
@@ -82,7 +91,8 @@ export const useSlackUserLinks = (): SlackUserLinksState => {
         ),
       );
 
-      setSlackUserLinks(records);
+      setHasMoreSlackUserLinks(records.length > SLACK_USER_LINKS_PAGE_SIZE);
+      setSlackUserLinks(records.slice(0, SLACK_USER_LINKS_PAGE_SIZE));
     } catch {
       setErrorMessage(SLACK_USER_LINKS_ERROR_MESSAGE);
     } finally {
@@ -98,6 +108,7 @@ export const useSlackUserLinks = (): SlackUserLinksState => {
     slackUserLinks,
     isSlackUserLinksLoading,
     errorMessage,
+    hasMoreSlackUserLinks,
     refetchSlackUserLinks: fetchSlackUserLinks,
   };
 };

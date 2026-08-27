@@ -109,6 +109,7 @@ const CONSENT_COLORS: Record<string, TagColor> = {
 type SlackUserLinksListProps = {
   slackUserLinks: SlackUserLinkRecord[];
   canManage: boolean;
+  hasMore?: boolean;
   onRemove: (slackUserLink: SlackUserLinkRecord) => void;
   onResend: (slackUserLink: SlackUserLinkRecord) => void;
   removingLinkId: string | undefined;
@@ -118,6 +119,7 @@ type SlackUserLinksListProps = {
 export const SlackUserLinksList = ({
   slackUserLinks,
   canManage,
+  hasMore = false,
   onRemove,
   onResend,
   removingLinkId,
@@ -129,6 +131,12 @@ export const SlackUserLinksList = ({
 
   return (
     <StyledList>
+      {hasMore && (
+        <StyledEmptyState>
+          Showing the first {slackUserLinks.length} links; more exist than can be
+          shown here.
+        </StyledEmptyState>
+      )}
       {slackUserLinks.map((slackUserLink) => {
         const consentState = slackUserLink.consentState ?? undefined;
         const isPending =

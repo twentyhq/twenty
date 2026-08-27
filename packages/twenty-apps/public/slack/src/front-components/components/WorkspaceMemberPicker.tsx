@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 import { useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -108,7 +109,7 @@ export const WorkspaceMemberPicker = ({
   const [isFocused, setIsFocused] = useState(false);
   const { options, isSearching } = useWorkspaceMemberSearch(searchTerm);
 
-  if (selectedMember !== null) {
+  if (isDefined(selectedMember)) {
     return (
       <StyledSelectedMember>
         <StyledSelectedMemberLabel>
@@ -160,7 +161,7 @@ export const WorkspaceMemberPicker = ({
               <StyledOptionName>
                 {isNonEmptyString(member.name) ? member.name : member.id}
               </StyledOptionName>
-              {member.userEmail !== null && (
+              {isNonEmptyString(member.userEmail) && (
                 <StyledOptionEmail>{member.userEmail}</StyledOptionEmail>
               )}
             </StyledOption>

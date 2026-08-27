@@ -3,6 +3,7 @@ import 'twenty-ui/style.css';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
+import { isDefined } from 'twenty-sdk/utils';
 import { Callout } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -43,6 +44,7 @@ export const SlackUserLinksSettings = () => {
     slackUserLinks,
     isSlackUserLinksLoading,
     errorMessage,
+    hasMoreSlackUserLinks,
     refetchSlackUserLinks,
   } = useSlackUserLinks();
   const { removeSlackUserLink, removingLinkId } = useRemoveSlackUserLink();
@@ -106,12 +108,13 @@ export const SlackUserLinksSettings = () => {
         />
         {isSlackUserLinksLoading ? (
           <StyledCenteredState>Loading links…</StyledCenteredState>
-        ) : errorMessage !== undefined ? (
+        ) : isDefined(errorMessage) ? (
           <StyledCenteredState>{errorMessage}</StyledCenteredState>
         ) : (
           <SlackUserLinksList
             slackUserLinks={slackUserLinks}
             canManage={canManage}
+            hasMore={hasMoreSlackUserLinks}
             onRemove={handleRemove}
             onResend={handleResend}
             removingLinkId={removingLinkId}

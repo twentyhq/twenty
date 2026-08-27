@@ -169,6 +169,15 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
       <StyledForm
         onSubmit={(event) => {
           event.preventDefault();
+
+          // Enter runs whichever step is showing: resolve first, then save.
+          if (resolvedUser === null) {
+            if (canResolve) {
+              handleResolve();
+            }
+          } else if (canSubmit) {
+            handleSubmit();
+          }
         }}
       >
         <StyledField>
