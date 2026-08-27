@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import axios from 'axios';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { PROVISIONED_WORKSPACE_ACTIVATION_STATUSES } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 import { z } from 'zod';
 
@@ -11,18 +10,17 @@ import {
   WorkspaceIteratorService,
   type WorkspaceIteratorReport,
 } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { activationStatusIn } from 'src/database/commands/command-runners/utils/activation-status-in.util';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 const npmPackageMetadataSchema = z.object({
   version: z.string(),
@@ -37,12 +35,11 @@ export class ApplicationUpgradeService {
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly applicationInstallService: ApplicationInstallService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly workspaceVersionService: WorkspaceVersionService,
   ) {}
 
   async checkForUpdates(
@@ -164,8 +161,9 @@ export class ApplicationUpgradeService {
       (application) => application.version !== targetVersion,
     );
 
-    const provisionedWorkspaceIds =
-      await this.findProvisionedWorkspaceIds(outdatedApplications);
+    const provisionedWorkspaceIds = new Set(
+      await this.workspaceVersionService.getProvisionedWorkspaceIds(),
+    );
 
     let applicationsToUpgrade = outdatedApplications.filter((application) =>
       provisionedWorkspaceIds.has(application.workspaceId),
@@ -190,29 +188,6 @@ export class ApplicationUpgradeService {
       applicationsToUpgrade,
       skippedNonProvisionedWorkspaceIds,
     };
-  }
-
-  // Workspaces outside of the provisioned statuses are skipped by the version
-  // upgrade pipeline, so they sit on an outdated workspace version and would
-  // fail the app compatibility check.
-  private async findProvisionedWorkspaceIds(
-    applications: ApplicationEntity[],
-  ): Promise<Set<string>> {
-    if (!isNonEmptyArray(applications)) {
-      return new Set();
-    }
-
-    const workspaces = await this.workspaceRepository.find({
-      select: ['id'],
-      where: {
-        id: In(applications.map((application) => application.workspaceId)),
-        activationStatus: activationStatusIn(
-          PROVISIONED_WORKSPACE_ACTIVATION_STATUSES,
-        ),
-      },
-    });
-
-    return new Set(workspaces.map((workspace) => workspace.id));
   }
 
   async upgradeApplications({

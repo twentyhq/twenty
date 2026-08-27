@@ -7,8 +7,8 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 const APPLICATION_REGISTRATION_ID = '20202020-0000-0000-0000-000000000001';
 const PROVISIONED_WORKSPACE_ID = '20202020-0000-0000-0000-000000000002';
@@ -19,7 +19,7 @@ describe('ApplicationUpgradeService', () => {
 
   const appRegistrationRepository = { findOneOrFail: jest.fn() };
   const applicationRepository = { find: jest.fn() };
-  const workspaceRepository = { find: jest.fn() };
+  const workspaceVersionService = { getProvisionedWorkspaceIds: jest.fn() };
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -35,14 +35,14 @@ describe('ApplicationUpgradeService', () => {
           provide: getRepositoryToken(ApplicationEntity),
           useValue: applicationRepository,
         },
-        {
-          provide: getRepositoryToken(WorkspaceEntity),
-          useValue: workspaceRepository,
-        },
         { provide: ApplicationInstallService, useValue: {} },
         { provide: ApplicationRegistrationService, useValue: {} },
         { provide: TwentyConfigService, useValue: { get: jest.fn() } },
         { provide: WorkspaceIteratorService, useValue: { iterate: jest.fn() } },
+        {
+          provide: WorkspaceVersionService,
+          useValue: workspaceVersionService,
+        },
       ],
     }).compile();
 
@@ -67,8 +67,8 @@ describe('ApplicationUpgradeService', () => {
           version: '1.0.0',
         },
       ]);
-      workspaceRepository.find.mockResolvedValue([
-        { id: PROVISIONED_WORKSPACE_ID },
+      workspaceVersionService.getProvisionedWorkspaceIds.mockResolvedValue([
+        PROVISIONED_WORKSPACE_ID,
       ]);
     });
 
@@ -106,7 +106,7 @@ describe('ApplicationUpgradeService', () => {
       expect(applicationsToUpgrade.map(({ id }) => id)).toEqual(['app-1']);
     });
 
-    it('does not query workspaces when every installation is up to date', async () => {
+    it('upgrades nothing when every installation is already up to date', async () => {
       applicationRepository.find.mockResolvedValue([
         {
           id: 'app-1',
@@ -122,7 +122,6 @@ describe('ApplicationUpgradeService', () => {
       );
 
       expect(applicationsToUpgrade).toEqual([]);
-      expect(workspaceRepository.find).not.toHaveBeenCalled();
     });
   });
 });
