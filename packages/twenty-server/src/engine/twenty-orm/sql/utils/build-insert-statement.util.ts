@@ -14,6 +14,7 @@ export type InsertStatementState = {
   columnNames: string[];
   rows: InsertRowValue[][];
   returningColumns: string[];
+  onConflictDoNothing?: boolean;
 };
 
 const buildReturningClause = (returningColumns: string[]): string => {
@@ -56,6 +57,7 @@ export const buildInsertStatement = (state: InsertStatementState): string => {
       state.tableShape.tableName,
     )} (${columnList})`,
     `VALUES ${valuesList}`,
+    state.onConflictDoNothing ? 'ON CONFLICT DO NOTHING' : '',
     buildReturningClause(state.returningColumns),
   ]
     .filter((part) => part.length > 0)

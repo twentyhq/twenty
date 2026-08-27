@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   DateDisplayFormat,
   FieldMetadataType,
@@ -309,6 +310,36 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  messageThreadTargets: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'messageThreadTargets',
+      label: i18nLabel(
+        msg({ message: `Relations`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Message thread targets`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconArrowUpRight',
+      isNullable: true,
+      targetObjectName: 'messageThreadTarget',
+      targetFieldName: 'messageThread',
+      settings: { relationType: RelationType.ONE_TO_MANY },
+      junctionTargetFieldUniversalIdentifier:
+        STANDARD_OBJECTS.messageThreadTarget.fields.targetPerson
+          .universalIdentifier,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
