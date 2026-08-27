@@ -1,19 +1,5 @@
-const nonCanonicalDomain = (expression: string) => `(
-  ${expression} <> lower(${expression})
-  OR ${expression} ~ '[:/?#@]|\\s|[^[:ascii:]]'
-  OR ${expression} LIKE 'www.%'
-  OR ${expression} LIKE '%.'
-)`;
-
-const NON_CANONICAL_SECONDARY_LINKS = `(
-  company."domainNameSecondaryLinks" IS NOT NULL
-  AND jsonb_typeof(company."domainNameSecondaryLinks") = 'array'
-  AND EXISTS (
-    SELECT 1
-    FROM jsonb_array_elements(company."domainNameSecondaryLinks") AS link
-    WHERE link->>'url' IS NOT NULL AND ${nonCanonicalDomain(`link->>'url'`)}
-  )
-)`;
+import { buildNonCanonicalDomainNameCondition } from 'src/database/commands/upgrade-version-command/2-37/utils/build-non-canonical-domain-name-condition.util';
+import { COMPANY_DOMAIN_NAME_COLUMNS } from 'src/database/commands/upgrade-version-command/2-37/utils/company-domain-name-columns.constant';
 
 export const buildCompanyDomainNameCandidatesQuery = ({
   schemaName,
@@ -27,14 +13,11 @@ export const buildCompanyDomainNameCandidatesQuery = ({
   sql: `
 SELECT
   company."id" AS "id",
-  company."domainNamePrimaryLinkUrl" AS "primaryLinkUrl",
-  company."domainNameSecondaryLinks" AS "secondaryLinks"
+  company."${COMPANY_DOMAIN_NAME_COLUMNS.primaryLinkUrl}" AS "primaryLinkUrl",
+  company."${COMPANY_DOMAIN_NAME_COLUMNS.secondaryLinks}" AS "secondaryLinks"
 FROM "${schemaName}"."company" company
 WHERE company."id" > $1
-  AND (
-    ${nonCanonicalDomain(`company."domainNamePrimaryLinkUrl"`)}
-    OR ${NON_CANONICAL_SECONDARY_LINKS}
-  )
+  AND ${buildNonCanonicalDomainNameCondition('company')}
 ORDER BY company."id"
 LIMIT $2
 `,

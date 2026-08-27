@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { COMPANY_DOMAIN_NAME_COLUMNS } from 'src/database/commands/upgrade-version-command/2-37/utils/company-domain-name-columns.constant';
 import { type DomainNameLinks } from 'src/database/commands/upgrade-version-command/2-37/utils/normalize-domain-name-links.util';
 
 export const buildCompanyDomainNameUpdateQuery = ({
@@ -12,8 +13,8 @@ export const buildCompanyDomainNameUpdateQuery = ({
   sql: `
 UPDATE "${schemaName}"."company" company
 SET
-  "domainNamePrimaryLinkUrl" = source."primaryLinkUrl",
-  "domainNameSecondaryLinks" = source."secondaryLinks"
+  "${COMPANY_DOMAIN_NAME_COLUMNS.primaryLinkUrl}" = source."primaryLinkUrl",
+  "${COMPANY_DOMAIN_NAME_COLUMNS.secondaryLinks}" = source."secondaryLinks"
 FROM unnest($1::uuid[], $2::text[], $3::jsonb[])
   AS source("id", "primaryLinkUrl", "secondaryLinks")
 WHERE company."id" = source."id"
