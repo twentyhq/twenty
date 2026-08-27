@@ -7,6 +7,7 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { normalizeRecordCrudRichTextFieldsInSteps } from 'src/database/commands/upgrade-version-command/2-37/utils/normalize-record-crud-rich-text-fields.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -27,6 +28,7 @@ export class NormalizeWorkflowRecordCrudRichTextFieldsCommand extends Provisione
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
   ) {
     super(workspaceIteratorService);
   }
@@ -72,7 +74,7 @@ export class NormalizeWorkflowRecordCrudRichTextFieldsCommand extends Provisione
 
     const allVersions = await workflowVersionRepository.find();
 
-    let updatedCount = 0;
+    const normalizedVersions: WorkflowVersionWorkspaceEntity[] = [];
 
     for (const version of allVersions) {
       const { value, changed } = normalizeRecordCrudRichTextFieldsInSteps({
@@ -84,22 +86,33 @@ export class NormalizeWorkflowRecordCrudRichTextFieldsCommand extends Provisione
         continue;
       }
 
-      updatedCount++;
+      const normalizedSteps = value as WorkflowVersionWorkspaceEntity['steps'];
+
+      normalizedVersions.push({ ...version, steps: normalizedSteps });
 
       if (isDryRun) {
         continue;
       }
 
       await workflowVersionRepository.update(version.id, {
-        steps: value as WorkflowVersionWorkspaceEntity['steps'],
+        steps: normalizedSteps,
       });
     }
 
-    if (updatedCount > 0) {
-      this.logger.log(
-        `${isDryRun ? '[DRY RUN] ' : ''}Normalized rich text record fields in ${updatedCount} workflow version(s) for workspace ${workspaceId}`,
+    if (normalizedVersions.length === 0) {
+      return;
+    }
+
+    if (!isDryRun) {
+      await this.workflowVersionCoreSyncService.upsertToCore(
+        workspaceId,
+        normalizedVersions,
       );
     }
+
+    this.logger.log(
+      `${isDryRun ? '[DRY RUN] ' : ''}Normalized rich text record fields in ${normalizedVersions.length} workflow version(s) for workspace ${workspaceId}`,
+    );
   }
 
   private buildRichTextFieldNamesByObjectName({
