@@ -96,6 +96,7 @@ describe('list-available-partners handler', () => {
     expect(['ADVANCED', 'INTERMEDIATE', 'NEW', null]).toContain(
       partner.partnerTier,
     );
+    expect(typeof partner.superPartner).toBe('boolean');
     expect(partner.serviceCount).toBeGreaterThanOrEqual(0);
     expect(partner.approvedCaseStudyCount).toBeGreaterThanOrEqual(0);
     expect(partner.approvedCaseStudyWithCoverCount).toBeLessThanOrEqual(
@@ -131,6 +132,7 @@ describe('get-partner-by-slug handler', () => {
     const { partner } = result;
     expect(partner.slug).toBe(KNOWN_SLUG);
     expect(partner.introduction.length).toBeGreaterThan(0);
+    expect(typeof partner.superPartner).toBe('boolean');
     expect('projectBudgetTypical' in partner).toBe(true);
     expect(Array.isArray(partner.profileLinks)).toBe(true);
     expect(Array.isArray(partner.services)).toBe(true);

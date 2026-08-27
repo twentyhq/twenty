@@ -32,6 +32,7 @@ type ApiPartner = {
   approvedCaseStudyCount: number;
   approvedCaseStudyWithCoverCount: number;
   rotationKey: string;
+  superPartner?: boolean | null;
 };
 
 type ApiResponse = {
@@ -74,6 +75,8 @@ const assertRankingContract = (apiPartner: ApiPartner): void => {
 // comparison.
 const readPartnerTier = (value: unknown): PartnerTier | null =>
   PARTNER_TIERS.find((tier) => tier === value) ?? null;
+
+const readSuperPartner = (value: unknown): boolean => value === true;
 
 // The live source: normalize the CRM payload into MarketplacePartner. Degrades
 // to [] when the API is unreachable, shapeless, or breaks the ranking contract
@@ -130,6 +133,7 @@ export async function fetchLiveMarketplacePartners(): Promise<
         services: [],
         portfolio: [],
         clients: [],
+        superPartner: readSuperPartner(apiPartner.superPartner),
         partnerTier: readPartnerTier(apiPartner.partnerTier),
         serviceCount: apiPartner.serviceCount,
         approvedCaseStudyCount: apiPartner.approvedCaseStudyCount,

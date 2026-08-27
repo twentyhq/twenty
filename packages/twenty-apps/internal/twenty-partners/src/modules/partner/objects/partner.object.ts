@@ -53,6 +53,16 @@ export default defineObject({
       isNullable: true,
     },
     {
+      universalIdentifier: '44cc91d2-5da1-4442-aa92-726124351029',
+      type: FieldType.BOOLEAN,
+      name: 'superPartner',
+      label: 'Super partner',
+      description:
+        'Admin-only trust flag. Pins the partner at the top of the public marketplace. Partners cannot set this.',
+      icon: 'IconStar',
+      defaultValue: false,
+    },
+    {
       universalIdentifier: 'd4fa6461-37b6-49ee-9181-dd482e74a70b',
       type: FieldType.SELECT,
       name: 'partnerTier',
