@@ -33,8 +33,15 @@ const makeToken = (payload: Record<string, unknown>): string => {
 
 describe('decodeJwtClaims', () => {
   it('decodes userId and userWorkspaceId from a base64url payload', () => {
-    const token = makeToken({ userId: 'u-1', userWorkspaceId: 'uw-1', extra: 'x' });
-    expect(decodeJwtClaims(token)).toMatchObject({ userId: 'u-1', userWorkspaceId: 'uw-1' });
+    const token = makeToken({
+      userId: 'u-1',
+      userWorkspaceId: 'uw-1',
+      extra: 'x',
+    });
+    expect(decodeJwtClaims(token)).toMatchObject({
+      userId: 'u-1',
+      userWorkspaceId: 'uw-1',
+    });
   });
 
   it('returns {} for a garbage string', () => {
@@ -63,7 +70,9 @@ describe('resolvePartnerFromRequest guards (no network)', () => {
   });
 
   it('returns UNAUTHENTICATED when userWorkspaceId is absent', async () => {
-    expect(await resolvePartnerFromRequest({})).toEqual({ error: 'UNAUTHENTICATED' });
+    expect(await resolvePartnerFromRequest({})).toEqual({
+      error: 'UNAUTHENTICATED',
+    });
     expect(await resolvePartnerFromRequest({ userWorkspaceId: null })).toEqual({
       error: 'UNAUTHENTICATED',
     });
@@ -71,7 +80,9 @@ describe('resolvePartnerFromRequest guards (no network)', () => {
 
   it('returns UNAUTHENTICATED when no app token is present to decode', async () => {
     delete process.env.TWENTY_APP_ACCESS_TOKEN;
-    expect(await resolvePartnerFromRequest({ userWorkspaceId: 'uw-1' })).toEqual({
+    expect(
+      await resolvePartnerFromRequest({ userWorkspaceId: 'uw-1' }),
+    ).toEqual({
       error: 'UNAUTHENTICATED',
     });
   });
@@ -81,7 +92,9 @@ describe('resolvePartnerFromRequest guards (no network)', () => {
       userId: 'u-1',
       userWorkspaceId: 'uw-other',
     });
-    expect(await resolvePartnerFromRequest({ userWorkspaceId: 'uw-1' })).toEqual({
+    expect(
+      await resolvePartnerFromRequest({ userWorkspaceId: 'uw-1' }),
+    ).toEqual({
       error: 'UNAUTHENTICATED',
     });
   });
@@ -89,7 +102,10 @@ describe('resolvePartnerFromRequest guards (no network)', () => {
 
 describe('errorResponse', () => {
   it('wraps a reason in a failure envelope', () => {
-    expect(errorResponse('NO_PARTNER')).toEqual({ ok: false, reason: 'NO_PARTNER' });
+    expect(errorResponse('NO_PARTNER')).toEqual({
+      ok: false,
+      reason: 'NO_PARTNER',
+    });
   });
 });
 
@@ -103,14 +119,17 @@ describe('resolvePartnerFromForwardedToken', () => {
 
   const originalAppToken = process.env.TWENTY_APP_ACCESS_TOKEN;
   afterEach(() => {
-    if (originalAppToken === undefined) delete process.env.TWENTY_APP_ACCESS_TOKEN;
+    if (originalAppToken === undefined)
+      delete process.env.TWENTY_APP_ACCESS_TOKEN;
     else process.env.TWENTY_APP_ACCESS_TOKEN = originalAppToken;
   });
 
   beforeEach(() => {
     coreQueryMock.mockReset();
     metadataQueryMock.mockReset();
-    process.env.TWENTY_APP_ACCESS_TOKEN = makeToken({ workspaceId: WORKSPACE_ID });
+    process.env.TWENTY_APP_ACCESS_TOKEN = makeToken({
+      workspaceId: WORKSPACE_ID,
+    });
     metadataQueryMock.mockResolvedValue({
       currentUser: { id: USER_ID, currentWorkspace: { id: WORKSPACE_ID } },
     });
@@ -128,7 +147,9 @@ describe('resolvePartnerFromForwardedToken', () => {
   });
 
   it('returns UNAUTHENTICATED when there is no authorization header', async () => {
-    expect(await resolvePartnerFromForwardedToken({})).toEqual({ error: 'UNAUTHENTICATED' });
+    expect(await resolvePartnerFromForwardedToken({})).toEqual({
+      error: 'UNAUTHENTICATED',
+    });
     expect(await resolvePartnerFromForwardedToken({ headers: {} })).toEqual({
       error: 'UNAUTHENTICATED',
     });
@@ -137,7 +158,9 @@ describe('resolvePartnerFromForwardedToken', () => {
 
   it('returns UNAUTHENTICATED when the header has no Bearer prefix', async () => {
     expect(
-      await resolvePartnerFromForwardedToken({ headers: { authorization: 'forwarded-token' } }),
+      await resolvePartnerFromForwardedToken({
+        headers: { authorization: 'forwarded-token' },
+      }),
     ).toEqual({ error: 'UNAUTHENTICATED' });
     expect(metadataQueryMock).not.toHaveBeenCalled();
   });
@@ -146,7 +169,9 @@ describe('resolvePartnerFromForwardedToken', () => {
     metadataQueryMock.mockRejectedValue(new Error('Unauthorized'));
 
     expect(
-      await resolvePartnerFromForwardedToken({ headers: { authorization: AUTHORIZATION } }),
+      await resolvePartnerFromForwardedToken({
+        headers: { authorization: AUTHORIZATION },
+      }),
     ).toEqual({ error: 'UNAUTHENTICATED' });
     expect(coreQueryMock).not.toHaveBeenCalled();
   });
@@ -155,7 +180,9 @@ describe('resolvePartnerFromForwardedToken', () => {
     metadataQueryMock.mockResolvedValue({ currentUser: null });
 
     expect(
-      await resolvePartnerFromForwardedToken({ headers: { authorization: AUTHORIZATION } }),
+      await resolvePartnerFromForwardedToken({
+        headers: { authorization: AUTHORIZATION },
+      }),
     ).toEqual({ error: 'UNAUTHENTICATED' });
     expect(coreQueryMock).not.toHaveBeenCalled();
   });
@@ -166,7 +193,9 @@ describe('resolvePartnerFromForwardedToken', () => {
     });
 
     expect(
-      await resolvePartnerFromForwardedToken({ headers: { authorization: AUTHORIZATION } }),
+      await resolvePartnerFromForwardedToken({
+        headers: { authorization: AUTHORIZATION },
+      }),
     ).toEqual({ error: 'UNAUTHENTICATED' });
     expect(coreQueryMock).not.toHaveBeenCalled();
   });
@@ -175,7 +204,9 @@ describe('resolvePartnerFromForwardedToken', () => {
     delete process.env.TWENTY_APP_ACCESS_TOKEN;
 
     expect(
-      await resolvePartnerFromForwardedToken({ headers: { authorization: AUTHORIZATION } }),
+      await resolvePartnerFromForwardedToken({
+        headers: { authorization: AUTHORIZATION },
+      }),
     ).toEqual({ error: 'UNAUTHENTICATED' });
     expect(coreQueryMock).not.toHaveBeenCalled();
   });

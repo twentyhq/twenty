@@ -11,7 +11,9 @@ import { notifyListedBrief } from 'src/modules/opportunity/matching/services/not
 // The public form is NOT this function's job: form briefs are born listed and never
 // flip, so the in-route ping covers them. This covers hand-listing and imports.
 export const handler = async (
-  payload: DatabaseEventPayload<ObjectRecordUpdateEvent<CoreSchema.Opportunity>>,
+  payload: DatabaseEventPayload<
+    ObjectRecordUpdateEvent<CoreSchema.Opportunity>
+  >,
 ): Promise<Record<string, unknown>> => {
   const { before, after, updatedFields } = payload.properties;
   if (!updatedFields?.includes('isListed') || !after?.id) return {};

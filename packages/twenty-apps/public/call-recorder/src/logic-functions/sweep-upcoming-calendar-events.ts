@@ -51,10 +51,7 @@ export const sweepUpcomingCalendarEventsHandler =
         batchCount: calendarEventIdBatches.length,
       };
     } catch (error) {
-      throw buildRetryableStepFailure(
-        'upcoming calendar events sweep',
-        error,
-      );
+      throw buildRetryableStepFailure('upcoming calendar events sweep', error);
     }
   };
 

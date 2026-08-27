@@ -20,9 +20,29 @@ export default defineView({
   objectUniversalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
   type: ViewType.FIELDS_WIDGET,
   fields: [
-    { universalIdentifier: '44793f47-5d06-43fa-9d33-23ec7602ecfc', fieldMetadataUniversalIdentifier: APPLICATION_OPPORTUNITY_FIELD_ID, position: 0, isVisible: true },
-    { universalIdentifier: '7d7ef49a-6d30-44de-b4eb-bb77d93b8982', fieldMetadataUniversalIdentifier: APPLICATION_PARTNER_FIELD_ID, position: 1, isVisible: true },
-    { universalIdentifier: 'd0278990-928c-4660-ac27-3abca0e52a5e', fieldMetadataUniversalIdentifier: APPLICATION_STATE_FIELD_ID, position: 2, isVisible: true },
-    { universalIdentifier: '28e0642b-76eb-4d41-83de-b84f07b3aad9', fieldMetadataUniversalIdentifier: APPLICATION_PITCH_FIELD_ID, position: 3, isVisible: true },
+    {
+      universalIdentifier: '44793f47-5d06-43fa-9d33-23ec7602ecfc',
+      fieldMetadataUniversalIdentifier: APPLICATION_OPPORTUNITY_FIELD_ID,
+      position: 0,
+      isVisible: true,
+    },
+    {
+      universalIdentifier: '7d7ef49a-6d30-44de-b4eb-bb77d93b8982',
+      fieldMetadataUniversalIdentifier: APPLICATION_PARTNER_FIELD_ID,
+      position: 1,
+      isVisible: true,
+    },
+    {
+      universalIdentifier: 'd0278990-928c-4660-ac27-3abca0e52a5e',
+      fieldMetadataUniversalIdentifier: APPLICATION_STATE_FIELD_ID,
+      position: 2,
+      isVisible: true,
+    },
+    {
+      universalIdentifier: '28e0642b-76eb-4d41-83de-b84f07b3aad9',
+      fieldMetadataUniversalIdentifier: APPLICATION_PITCH_FIELD_ID,
+      position: 3,
+      isVisible: true,
+    },
   ],
 });

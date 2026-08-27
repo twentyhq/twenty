@@ -17,16 +17,24 @@ import { isNonEmptyString } from 'src/modules/shared/utils/is-non-empty-string.u
 const NEED_MAX = 600;
 const REQUIREMENTS_MAX = 300;
 
-export async function notifyListedBrief(opportunityId: string): Promise<boolean> {
+export async function notifyListedBrief(
+  opportunityId: string,
+): Promise<boolean> {
   const webhookUrl = process.env[DISCORD_WEBHOOK_ENV_VAR];
   if (!isNonEmptyString(webhookUrl)) return false;
 
   try {
-    const result = await getListedBriefDetails(new CoreApiClient(), opportunityId);
+    const result = await getListedBriefDetails(
+      new CoreApiClient(),
+      opportunityId,
+    );
     const brief = result.opportunities?.edges?.[0]?.node;
     if (!brief) return false;
 
-    const contact = [brief.pointOfContact?.name?.firstName, brief.pointOfContact?.name?.lastName]
+    const contact = [
+      brief.pointOfContact?.name?.firstName,
+      brief.pointOfContact?.name?.lastName,
+    ]
       .filter(isNonEmptyString)
       .join(' ');
     const fields: DiscordField[] = [
@@ -35,12 +43,17 @@ export async function notifyListedBrief(opportunityId: string): Promise<boolean>
       ...inlineField('Referred by', brief.referredByPartner?.name),
     ];
     if (isNonEmptyString(brief.requirements)) {
-      fields.push({ name: 'Requirements', value: truncate(brief.requirements.trim(), REQUIREMENTS_MAX) });
+      fields.push({
+        name: 'Requirements',
+        value: truncate(brief.requirements.trim(), REQUIREMENTS_MAX),
+      });
     }
 
     const embed: Record<string, unknown> = {
       title: 'Brief listed on the marketplace',
-      description: isNonEmptyString(brief.need) ? truncate(brief.need.trim(), NEED_MAX) : brief.name,
+      description: isNonEmptyString(brief.need)
+        ? truncate(brief.need.trim(), NEED_MAX)
+        : brief.name,
       color: TWENTY_BLUE,
       timestamp: new Date().toISOString(),
       fields,
@@ -50,7 +63,11 @@ export async function notifyListedBrief(opportunityId: string): Promise<boolean>
       embed.url = `${trimTrailingSlash(frontendUrl)}/object/opportunity/${brief.id}`;
     }
 
-    return await postWebhook(webhookUrl, { embeds: [embed] }, 'notify-listed-brief');
+    return await postWebhook(
+      webhookUrl,
+      { embeds: [embed] },
+      'notify-listed-brief',
+    );
   } catch {
     // Best-effort: a read or Discord failure must never fail the trigger.
     return false;
