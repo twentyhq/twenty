@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
-const WORKSPACE_MEMBERS_PERMISSION_FLAG = 'WORKSPACE_MEMBERS';
+import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/utils/current-user-has-workspace-members-permission';
 
 type CanManageSlackUserLinksState = {
   canManage: boolean;
@@ -23,26 +22,10 @@ export const useCanManageSlackUserLinks = (): CanManageSlackUserLinksState => {
     setState(LOADING_STATE);
 
     const fetchPermission = async () => {
-      try {
-        const { currentUser } = await new MetadataApiClient().query({
-          currentUser: {
-            currentUserWorkspace: {
-              permissionFlags: true,
-            },
-          },
-        });
+      const canManage = await currentUserHasWorkspaceMembersPermission();
 
-        const canManage = (
-          currentUser.currentUserWorkspace?.permissionFlags ?? []
-        ).includes(WORKSPACE_MEMBERS_PERMISSION_FLAG);
-
-        if (!cancelled) {
-          setState({ canManage, isPermissionLoading: false });
-        }
-      } catch {
-        if (!cancelled) {
-          setState({ canManage: false, isPermissionLoading: false });
-        }
+      if (!cancelled) {
+        setState({ canManage, isPermissionLoading: false });
       }
     };
 
