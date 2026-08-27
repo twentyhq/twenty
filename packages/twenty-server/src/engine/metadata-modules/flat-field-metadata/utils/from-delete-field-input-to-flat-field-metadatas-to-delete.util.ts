@@ -18,6 +18,7 @@ import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-m
 import { isSystemUniqueFlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/utils/is-system-unique-flat-index-metadata.util';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
+import { isDeletableDefaultRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-deletable-default-relation-flat-field-metadata.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 
@@ -66,7 +67,10 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
     );
   }
 
-  if (flatFieldMetadataToDelete.isSystemSideEffect === true) {
+  if (
+    flatFieldMetadataToDelete.isSystemSideEffect === true &&
+    !isDeletableDefaultRelationFlatFieldMetadata(flatFieldMetadataToDelete)
+  ) {
     throw new FieldMetadataException(
       `Cannot delete system-managed field "${flatFieldMetadataToDelete.name}"`,
       FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,

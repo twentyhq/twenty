@@ -14,6 +14,7 @@ import { FlatFieldMetadataRelationPropertiesToCompare } from 'src/engine/metadat
 import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-name-synced-with-label.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
+import { isDeletableDefaultRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-deletable-default-relation-flat-field-metadata.util';
 import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util';
 import { UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
@@ -285,6 +286,19 @@ export class FlatFieldMetadataValidatorService {
         code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
         message: 'System fields cannot be deleted',
         userFriendlyMessage: msg`System fields cannot be deleted`,
+      });
+    }
+
+    if (
+      !buildOptions.isSystemBuild &&
+      flatFieldMetadataToDelete.isSystemSideEffect === true &&
+      !isDeletableDefaultRelationFlatFieldMetadata(flatFieldMetadataToDelete) &&
+      !parentObjectMetadataHasBeenDeleted
+    ) {
+      validationResult.errors.push({
+        code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+        message: 'System-managed fields cannot be deleted',
+        userFriendlyMessage: msg`System-managed fields cannot be deleted`,
       });
     }
 

@@ -1,5 +1,7 @@
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
+
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -153,6 +155,169 @@ describe('fromDeleteFieldInputToFlatFieldMetadatasToDelete', () => {
       fromDeleteFieldInputToFlatFieldMetadatasToDelete({
         deleteOneFieldInput: { id: standardAppField.id },
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps([standardAppField]),
+        flatObjectMetadataMaps: buildFlatObjectMetadataMaps(objectId),
+        flatIndexMaps: createEmptyFlatEntityMaps(),
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+      }),
+    );
+  });
+
+  it('should allow deletion of attachment default relation field', () => {
+    const objectId = 'obj-1';
+    const companionMorphFieldId = '00000000-0000-0000-0000-000000000001';
+    const attachmentRelationField = getFlatFieldMetadataMock({
+      universalIdentifier: 'attachment-relation-uid',
+      objectMetadataId: objectId,
+      type: FieldMetadataType.RELATION,
+      name: 'attachments',
+      isSystemSideEffect: true,
+      relationTargetFieldMetadataId: companionMorphFieldId,
+      relationTargetObjectMetadataUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
+    });
+    const companionMorphField = getFlatFieldMetadataMock({
+      id: companionMorphFieldId,
+      universalIdentifier: 'companion-morph-attachment-uid',
+      objectMetadataId: objectId,
+      type: FieldMetadataType.MORPH_RELATION,
+      name: 'attachmentTargets',
+      isSystemSideEffect: true,
+    });
+
+    const result = fromDeleteFieldInputToFlatFieldMetadatasToDelete({
+      deleteOneFieldInput: { id: attachmentRelationField.id },
+      flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
+        attachmentRelationField,
+        companionMorphField,
+      ]),
+      flatObjectMetadataMaps: buildFlatObjectMetadataMaps(objectId),
+      flatIndexMaps: createEmptyFlatEntityMaps(),
+    });
+
+    expect(result.flatFieldMetadatasToDelete).toContainEqual(
+      expect.objectContaining({ id: attachmentRelationField.id }),
+    );
+  });
+
+  it('should allow deletion of noteTarget default relation field', () => {
+    const objectId = 'obj-1';
+    const companionMorphFieldId = '00000000-0000-0000-0000-000000000002';
+    const noteTargetRelationField = getFlatFieldMetadataMock({
+      universalIdentifier: 'note-target-relation-uid',
+      objectMetadataId: objectId,
+      type: FieldMetadataType.RELATION,
+      name: 'noteTargets',
+      isSystemSideEffect: true,
+      relationTargetFieldMetadataId: companionMorphFieldId,
+      relationTargetObjectMetadataUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget,
+    });
+    const companionMorphField = getFlatFieldMetadataMock({
+      id: companionMorphFieldId,
+      universalIdentifier: 'companion-morph-note-target-uid',
+      objectMetadataId: objectId,
+      type: FieldMetadataType.MORPH_RELATION,
+      name: 'noteTargetMorphs',
+      isSystemSideEffect: true,
+    });
+
+    const result = fromDeleteFieldInputToFlatFieldMetadatasToDelete({
+      deleteOneFieldInput: { id: noteTargetRelationField.id },
+      flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
+        noteTargetRelationField,
+        companionMorphField,
+      ]),
+      flatObjectMetadataMaps: buildFlatObjectMetadataMaps(objectId),
+      flatIndexMaps: createEmptyFlatEntityMaps(),
+    });
+
+    expect(result.flatFieldMetadatasToDelete).toContainEqual(
+      expect.objectContaining({ id: noteTargetRelationField.id }),
+    );
+  });
+
+  it('should allow deletion of taskTarget default relation field', () => {
+    const objectId = 'obj-1';
+    const companionMorphFieldId = '00000000-0000-0000-0000-000000000003';
+    const taskTargetRelationField = getFlatFieldMetadataMock({
+      universalIdentifier: 'task-target-relation-uid',
+      objectMetadataId: objectId,
+      type: FieldMetadataType.RELATION,
+      name: 'taskTargets',
+      isSystemSideEffect: true,
+      relationTargetFieldMetadataId: companionMorphFieldId,
+      relationTargetObjectMetadataUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.taskTarget,
+    });
+    const companionMorphField = getFlatFieldMetadataMock({
+      id: companionMorphFieldId,
+      universalIdentifier: 'companion-morph-task-target-uid',
+      objectMetadataId: objectId,
+      type: FieldMetadataType.MORPH_RELATION,
+      name: 'taskTargetMorphs',
+      isSystemSideEffect: true,
+    });
+
+    const result = fromDeleteFieldInputToFlatFieldMetadatasToDelete({
+      deleteOneFieldInput: { id: taskTargetRelationField.id },
+      flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
+        taskTargetRelationField,
+        companionMorphField,
+      ]),
+      flatObjectMetadataMaps: buildFlatObjectMetadataMaps(objectId),
+      flatIndexMaps: createEmptyFlatEntityMaps(),
+    });
+
+    expect(result.flatFieldMetadatasToDelete).toContainEqual(
+      expect.objectContaining({ id: taskTargetRelationField.id }),
+    );
+  });
+
+  it('should throw FIELD_MUTATION_NOT_ALLOWED when deleting timelineActivity relation', () => {
+    const objectId = 'obj-1';
+    const timelineActivityRelationField = getFlatFieldMetadataMock({
+      universalIdentifier: 'timeline-activity-relation-uid',
+      objectMetadataId: objectId,
+      type: FieldMetadataType.RELATION,
+      name: 'timelineActivities',
+      isSystemSideEffect: true,
+      relationTargetObjectMetadataUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
+    });
+
+    expect(() =>
+      fromDeleteFieldInputToFlatFieldMetadatasToDelete({
+        deleteOneFieldInput: { id: timelineActivityRelationField.id },
+        flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
+          timelineActivityRelationField,
+        ]),
+        flatObjectMetadataMaps: buildFlatObjectMetadataMaps(objectId),
+        flatIndexMaps: createEmptyFlatEntityMaps(),
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+      }),
+    );
+  });
+
+  it('should throw FIELD_MUTATION_NOT_ALLOWED when deleting system-managed non-relation field', () => {
+    const objectId = 'obj-1';
+    const systemTextField = getFlatFieldMetadataMock({
+      universalIdentifier: 'system-text-uid',
+      objectMetadataId: objectId,
+      type: FieldMetadataType.TEXT,
+      name: 'systemManagedField',
+      isSystemSideEffect: true,
+    });
+
+    expect(() =>
+      fromDeleteFieldInputToFlatFieldMetadatasToDelete({
+        deleteOneFieldInput: { id: systemTextField.id },
+        flatFieldMetadataMaps: buildFlatFieldMetadataMaps([systemTextField]),
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps(objectId),
         flatIndexMaps: createEmptyFlatEntityMaps(),
       }),

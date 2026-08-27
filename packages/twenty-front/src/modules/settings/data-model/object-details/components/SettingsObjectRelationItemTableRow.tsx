@@ -17,7 +17,11 @@ import { styled } from '@linaria/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent, useContext, useMemo } from 'react';
-import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  FieldMetadataType,
+  SettingsPath,
+} from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   IconChevronRight,
@@ -35,6 +39,13 @@ type SettingsObjectRelationItemTableRowProps = {
 
 export const OBJECT_RELATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
   'minmax(0, 1fr) 148px 148px 36px';
+
+const DELETABLE_DEFAULT_RELATION_TARGET_NAMES: readonly CoreObjectNameSingular[] =
+  [
+    CoreObjectNameSingular.Attachment,
+    CoreObjectNameSingular.NoteTarget,
+    CoreObjectNameSingular.TaskTarget,
+  ];
 
 const StyledNameContainer = styled.div`
   align-items: center;
@@ -146,6 +157,15 @@ export const SettingsObjectRelationItemTableRow = ({
   const shouldDisplayFieldLabelAsSubtitle =
     isMorphRelation || isDefined(relationObjectMetadataItem);
 
+  const isObjectCustom = getIsMetadataItemCustom(objectMetadataItem);
+
+  const isDeletableDefaultRelation =
+    isObjectCustom &&
+    isDefined(fieldMetadataItem.relation?.targetObjectMetadata?.nameSingular) &&
+    (DELETABLE_DEFAULT_RELATION_TARGET_NAMES as readonly string[]).includes(
+      fieldMetadataItem.relation.targetObjectMetadata.nameSingular,
+    );
+
   return (
     <TableRow
       gridTemplateColumns={OBJECT_RELATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
@@ -243,6 +263,8 @@ export const SettingsObjectRelationItemTableRow = ({
         ) : (
           <SettingsObjectFieldInactiveActionDropdown
             isCustomField={getIsMetadataItemCustom(fieldMetadataItem)}
+            isSystemField={fieldMetadataItem.isSystem === true}
+            isDeletableSystemRelation={isDeletableDefaultRelation}
             readonly={readonly}
             fieldMetadataItemId={fieldMetadataItem.id}
             onEdit={navigateToFieldEdit}
