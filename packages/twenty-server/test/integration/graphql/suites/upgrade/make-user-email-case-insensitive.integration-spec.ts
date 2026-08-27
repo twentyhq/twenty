@@ -1,6 +1,6 @@
 import { type QueryRunner } from 'typeorm';
 
-import { MakeUserEmailCaseInsensitiveFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-36/2-36-instance-command-fast-1787779799387-make-user-email-case-insensitive';
+import { MakeUserEmailCaseInsensitiveFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-37/2-37-instance-command-fast-1787836741000-make-user-email-case-insensitive';
 
 const PROBE_PREFIX = 'upgrade-probe';
 
