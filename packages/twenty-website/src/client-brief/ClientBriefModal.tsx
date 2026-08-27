@@ -40,16 +40,18 @@ const WizardScope = styled.div`
 export function ClientBriefModal({
   onClose,
   open,
+  partnerSlug,
 }: {
   onClose: () => void;
   open: boolean;
+  partnerSlug?: string;
 }) {
   const { i18n } = useLingui();
 
   return (
     <Modal ariaLabel={i18n._(msg`Get matched`)} onClose={onClose} open={open}>
       <WizardScope data-scheme="dark">
-        <ClientBriefWizard onSuccess={onClose} />
+        <ClientBriefWizard onSuccess={onClose} partnerSlug={partnerSlug} />
       </WizardScope>
     </Modal>
   );

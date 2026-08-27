@@ -8,6 +8,8 @@ import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/
 import { ApplyMessagesVisibilityRestrictionsService } from 'src/modules/messaging/common/query-hooks/message/apply-messages-visibility-restrictions.service';
 import { MessageFindManyPostQueryHook } from 'src/modules/messaging/common/query-hooks/message/message-find-many.post-query.hook';
 import { MessageFindOnePostQueryHook } from 'src/modules/messaging/common/query-hooks/message/message-find-one.post-query.hook';
+import { MessageThreadTargetCreateManyPreQueryHook } from 'src/modules/messaging/common/query-hooks/message-thread-target/message-thread-target-create-many.pre-query-hook';
+import { MessageThreadTargetCreateOnePreQueryHook } from 'src/modules/messaging/common/query-hooks/message-thread-target/message-thread-target-create-one.pre-query-hook';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 
 @Module({
@@ -24,6 +26,8 @@ import { MessagingImportManagerModule } from 'src/modules/messaging/message-impo
     ApplyMessagesVisibilityRestrictionsService,
     MessageFindOnePostQueryHook,
     MessageFindManyPostQueryHook,
+    MessageThreadTargetCreateOnePreQueryHook,
+    MessageThreadTargetCreateManyPreQueryHook,
   ],
 })
 export class MessagingQueryHookModule {}
