@@ -21,8 +21,6 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
-import { WorkspaceCacheMetricsService } from 'src/engine/workspace-cache/services/workspace-cache-metrics.service';
-import { WorkspaceCacheRowsBatchLoader } from 'src/engine/workspace-cache/services/workspace-cache-rows-batch-loader';
 import {
   WORKSPACE_CACHE_KEY,
   WORKSPACE_CACHE_OPTIONS,
@@ -32,6 +30,8 @@ import {
   WorkspaceCacheException,
   WorkspaceCacheExceptionCode,
 } from 'src/engine/workspace-cache/exceptions/workspace-cache.exception';
+import { WorkspaceCacheMetricsService } from 'src/engine/workspace-cache/services/workspace-cache-metrics.service';
+import { WorkspaceCacheRowsBatchLoader } from 'src/engine/workspace-cache/services/workspace-cache-rows-batch-loader';
 import {
   WorkspaceCacheKeyName,
   type WorkspaceCacheDataMap,
@@ -572,7 +572,28 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       }
     });
 
-    const computed = await Promise.all(computePromises);
+    const settledComputes = await Promise.allSettled(computePromises);
+    const { computed, computeFailures } = settledComputes.reduce(
+      (acc, settled, index) => {
+        if (settled.status === 'fulfilled') {
+          acc.computed.push(settled.value);
+        } else {
+          acc.computeFailures.push({
+            keyName: cacheKeyNames[index],
+            reason: settled.reason,
+          });
+        }
+
+        return acc;
+      },
+      {
+        computed: [] as Awaited<(typeof computePromises)[number]>[],
+        computeFailures: [] as {
+          keyName: WorkspaceCacheKeyName;
+          reason: unknown;
+        }[],
+      },
+    );
 
     const redisEntries: Array<{
       key: string;
@@ -626,6 +647,15 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           this.cacheStorage.setIfAbsent(key, value, bootstrapHashTtlMs),
         ),
       );
+    }
+
+    if (computeFailures.length > 0) {
+      computeFailures.forEach(({ keyName, reason }) =>
+        this.logger.error(
+          `Failed to compute cache key '${keyName}': ${reason}`,
+        ),
+      );
+      throw computeFailures[0].reason;
     }
 
     return result;
