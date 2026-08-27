@@ -1734,6 +1734,45 @@ type SendInvitations {
   result: [WorkspaceInvitation!]!
 }
 
+type PublicConnectionParametersOutput {
+  host: String!
+  port: Float!
+  username: String
+  connectionSecurity: EmailConnectionSecurity
+}
+
+enum EmailConnectionSecurity {
+  NONE
+  STARTTLS
+  SSL_TLS
+}
+
+type PublicImapSmtpCaldavConnectionParameters {
+  IMAP: PublicConnectionParametersOutput
+  SMTP: PublicConnectionParametersOutput
+  CALDAV: PublicConnectionParametersOutput
+}
+
+type ConnectedAccountPublicDTO {
+  id: UUID!
+  handle: String!
+  provider: String!
+  lastCredentialsRefreshedAt: DateTime
+  authFailedAt: DateTime
+  archivedAt: DateTime
+  handleAliases: [String!]
+  scopes: [String!]
+  lastSignedInAt: DateTime
+  userWorkspaceId: UUID!
+  connectionProviderId: UUID
+  applicationId: UUID
+  name: String
+  visibility: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  connectionParameters: PublicImapSmtpCaldavConnectionParameters
+}
+
 type UsageLimit {
   id: UUID!
   resourceType: UsageResourceType!
@@ -2046,6 +2085,7 @@ type AppConnection {
   handle: String!
   visibility: String!
   userWorkspaceId: String!
+  workspaceMemberId: String
   accessToken: String!
   scopes: [String!]!
   authFailedAt: String
@@ -2427,45 +2467,6 @@ type UpsertRowLevelPermissionPredicatesResult {
 type LogicFunctionLogs {
   """Execution Logs"""
   logs: String!
-}
-
-type PublicConnectionParametersOutput {
-  host: String!
-  port: Float!
-  username: String
-  connectionSecurity: EmailConnectionSecurity
-}
-
-enum EmailConnectionSecurity {
-  NONE
-  STARTTLS
-  SSL_TLS
-}
-
-type PublicImapSmtpCaldavConnectionParameters {
-  IMAP: PublicConnectionParametersOutput
-  SMTP: PublicConnectionParametersOutput
-  CALDAV: PublicConnectionParametersOutput
-}
-
-type ConnectedAccountPublicDTO {
-  id: UUID!
-  handle: String!
-  provider: String!
-  lastCredentialsRefreshedAt: DateTime
-  authFailedAt: DateTime
-  archivedAt: DateTime
-  handleAliases: [String!]
-  scopes: [String!]
-  lastSignedInAt: DateTime
-  userWorkspaceId: UUID!
-  connectionProviderId: UUID
-  applicationId: UUID
-  name: String
-  visibility: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  connectionParameters: PublicImapSmtpCaldavConnectionParameters
 }
 
 type DeleteTwoFactorAuthenticationMethod {
@@ -3401,8 +3402,9 @@ type Query {
   getApiKeyRoles: [Role!]!
   apiKey(input: GetApiKeyInput!): ApiKey
   currentUserSessions: [UserSession!]!
-  getInviteSuggestions: [InviteSuggestion!]!
+  myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
+  getInviteSuggestions: [InviteSuggestion!]!
   billingPortalSession(returnUrlPath: String, forPaymentMethodUpdate: Boolean): BillingSession!
   listPlans: [BillingPlan!]!
   getResourceCreditUsage: [BillingResourceCreditUsage!]!
@@ -3474,7 +3476,6 @@ type Query {
   unsubscribeTopics: [UnsubscribeTopic!]!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
   getEmailingDomains: [EmailingDomain!]!
-  myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   getToolIndex: [ToolIndexEntry!]!
   getToolInputSchema(toolName: String!): JSON
   webhooks: [Webhook!]!
@@ -3676,11 +3677,12 @@ type Mutation {
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
   revokeUserSession(userSessionId: UUID!): Boolean!
   revokeAllOtherUserSessions: Int!
+  deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
+  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   goBackToPreviousOnboardingStep: OnboardingStepNavigation!
-  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!
   createBillingPaymentMethodSetupIntent: BillingPaymentIntent!
@@ -3782,7 +3784,6 @@ type Mutation {
   createEmailingDomain(input: CreateEmailingDomainInput!): EmailingDomain!
   deleteEmailingDomain(id: String!): Boolean!
   verifyEmailingDomain(id: String!): EmailingDomain!
-  deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   runAgent(input: RunAgentInput!): RunAgentResult!
   createWebhook(input: CreateWebhookInput!): Webhook!
   updateWebhook(input: UpdateWebhookInput!): Webhook!

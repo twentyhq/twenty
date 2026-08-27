@@ -279,6 +279,7 @@ export type AppConnection = {
   scopes: Array<Scalars['String']['output']>;
   userWorkspaceId: Scalars['String']['output'];
   visibility: Scalars['String']['output'];
+  workspaceMemberId?: Maybe<Scalars['String']['output']>;
 };
 
 export type AppKeyValue = {
