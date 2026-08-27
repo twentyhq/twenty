@@ -110,7 +110,7 @@ export class NavigationMenuItemEntity
   @Column({ nullable: true, type: 'text' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.35.0_AddSystemNavigationMenuItemTypeFastInstanceCommand_1787664271000',
+      '2.37.0_AddSystemNavigationMenuItemTypeFastInstanceCommand_1787850000000',
   })
   systemPage: NavigationSystemPage | null;
 

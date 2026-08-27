@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.35.0', 1787664271000)
+@RegisteredInstanceCommand('2.37.0', 1787850000000)
 export class AddSystemNavigationMenuItemTypeFastInstanceCommand
   implements FastInstanceCommand
 {

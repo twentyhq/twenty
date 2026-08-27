@@ -16,9 +16,9 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const SYSTEM_WORKFLOWS_DEFINITION =
   STANDARD_NAVIGATION_MENU_ITEMS.workflowsFolderSystemWorkflows;
 
-@RegisteredWorkspaceCommand('2.35.0', 1787664272000)
+@RegisteredWorkspaceCommand('2.37.0', 1787850001000)
 @Command({
-  name: 'upgrade:2-35:add-system-workflows-navigation-menu-item',
+  name: 'upgrade:2-37:add-system-workflows-navigation-menu-item',
   description:
     'Add the SYSTEM workflows navigation menu item to existing workspaces, inside the standard Workflows folder when it still exists',
 })

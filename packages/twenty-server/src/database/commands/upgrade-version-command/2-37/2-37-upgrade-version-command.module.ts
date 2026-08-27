@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { AddSystemWorkflowsNavigationMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-37/2-37-workspace-command-1787850001000-add-system-workflows-navigation-menu-item.command';
 import { BackfillMessageCalendarTargetsCommand } from 'src/database/commands/upgrade-version-command/2-37/2-37-workspace-command-1787832413051-backfill-message-calendar-targets.command';
 import { SyncMessageCalendarTargetMetadataCommand } from 'src/database/commands/upgrade-version-command/2-37/2-37-workspace-command-1787832412051-sync-message-calendar-target-metadata.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -17,6 +18,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   providers: [
     SyncMessageCalendarTargetMetadataCommand,
     BackfillMessageCalendarTargetsCommand,
+    AddSystemWorkflowsNavigationMenuItemCommand,
   ],
 })
 export class V2_37_UpgradeVersionCommandModule {}
