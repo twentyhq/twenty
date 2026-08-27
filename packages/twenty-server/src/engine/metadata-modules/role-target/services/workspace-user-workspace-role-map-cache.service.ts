@@ -10,7 +10,7 @@ import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/t
 import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
 
 const USER_WORKSPACE_ROLE_ROWS_REQUIREMENT = {
-  roleTarget: true,
+  roleTarget: ['userWorkspaceId', 'roleId'],
 } as const satisfies WorkspaceCacheRowsRequirement;
 
 @Injectable()
