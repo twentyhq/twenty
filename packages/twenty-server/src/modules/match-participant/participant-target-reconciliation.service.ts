@@ -258,13 +258,14 @@ export class ParticipantTargetReconciliationService {
       operations.targetsToCreate,
       QUERY_MAX_RECORDS,
     )) {
-      await targetRepository.insertOrIgnore(
+      await targetRepository.insert(
         targetsToCreateChunk.map(({ parentId, ...target }) => ({
           ...target,
           [parentFieldName]: parentId,
           isAutomaticallyAssigned: true,
           isManuallyAssigned: false,
         })),
+        { onConflictDoNothing: true },
       );
     }
 
