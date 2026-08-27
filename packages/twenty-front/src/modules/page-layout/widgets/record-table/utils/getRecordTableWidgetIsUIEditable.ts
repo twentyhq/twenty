@@ -18,6 +18,8 @@ export const getRecordTableWidgetIsUIEditable = (
 
   const defaultIsUIEditable = pageLayoutType === PageLayoutType.RECORD_PAGE;
 
+  // 'in' narrows the configuration union: the generated types don't
+  // discriminate on configurationType (it is typed as the full enum)
   return 'isUIEditable' in configuration
     ? (configuration.isUIEditable ?? defaultIsUIEditable)
     : defaultIsUIEditable;

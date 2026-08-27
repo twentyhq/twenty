@@ -82,6 +82,28 @@ A `FIELD` widget renders one field of the record. For relation fields it can als
 - `isUIEditable` is optional and defaults to `true`. Set it to `false` to make inline editing unavailable in the widget.
 - `nestedRelationFieldMetadataId` is optional and takes the universal identifier of a one-to-many relation field on the relation target object, to list records two relation hops away (e.g. a Company page listing the opportunities of the company's people, or a Person page listing the opportunities of the person's company). The first hop can be a one-to-many or a many-to-one relation field, the second must be one-to-many (junction relations are not supported), and it requires `fieldDisplayMode: 'TABLE'` — combining it with any other display mode is a validation error, since a nested widget always renders as an embedded view.
 
+### Record table widgets
+
+A `RECORD_TABLE` widget embeds a view of an object as a table:
+
+```ts
+{
+  universalIdentifier: 'd1d2d3d4-d5d6-4000-8000-000000000004',
+  title: 'Open opportunities',
+  type: 'RECORD_TABLE',
+  configuration: {
+    configurationType: 'RECORD_TABLE',
+    viewId: OPPORTUNITIES_VIEW_UNIVERSAL_IDENTIFIER,
+    recordLimit: 8,
+    isUIEditable: false,
+  },
+}
+```
+
+- `viewId` takes the universal identifier of the view whose records, fields, filters and sorts the widget renders.
+- `recordLimit` is optional and caps how many records the widget displays.
+- `isUIEditable` is optional and controls inline record editing in the widget. When omitted, it defaults to `true` on `RECORD_PAGE` layouts and `false` everywhere else. It only gates record data: the widget's view configuration (visible fields, filters, sorts, aggregates, column widths) is always edited through the page layout editor, never inline on the rendered widget.
+
 ## definePageLayoutTab
 
 Use this when you only want to **add** a tab to an existing layout — for example, an analytics tab on the standard Company page, or an AI summary tab attached to your own object's layout.

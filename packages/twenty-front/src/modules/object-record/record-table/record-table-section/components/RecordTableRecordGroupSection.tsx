@@ -144,8 +144,11 @@ export const RecordTableRecordGroupSection = () => {
     currentRecordGroupId,
   );
 
+  const recordTableWidgetContext = useContext(RecordTableWidgetContext);
+
   const isAggregateDropdownNonInteractive =
-    useContext(RecordTableWidgetContext)?.isPageLayoutInEditMode ?? false;
+    isDefined(recordTableWidgetContext) &&
+    !recordTableWidgetContext.isPageLayoutInEditMode;
 
   const visibleRecordFieldsWithoutLabelIdentifier = visibleRecordFields.filter(
     filterOutByProperty(
