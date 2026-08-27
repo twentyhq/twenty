@@ -40,9 +40,9 @@ const StyledTextContainer = styled.div`
   min-width: 0;
 `;
 
-const StyledTitle = styled.h3<{ fontSize: 'md' | 'lg' }>`
+const StyledTitle = styled.h3`
   color: ${themeCssVariables.font.color.primary};
-  font-size: ${({ fontSize }) => themeCssVariables.font.size[fontSize]};
+  font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.semiBold};
   margin: 0;
   min-width: 0;
@@ -56,7 +56,6 @@ type HeaderIdentifierProps = {
   >;
   icon?: ReactNode;
   iconColor?: string;
-  fontSize?: 'md' | 'lg';
   title: ReactNode;
   label?: ReactNode;
 };
@@ -65,7 +64,6 @@ export const HeaderIdentifier = ({
   avatar,
   icon,
   iconColor,
-  fontSize = 'md',
   title,
   label,
 }: HeaderIdentifierProps) => {
@@ -76,24 +74,19 @@ export const HeaderIdentifier = ({
       placeholder={avatar.placeholder}
       placeholderColorSeed={avatar.placeholderColorSeed}
       type={avatar.type}
-      size={fontSize}
+      size="md"
     />
   ) : (
     icon
   );
 
-  const shouldRenderInTile = !isDefined(avatar) || fontSize === 'md';
-
   return (
     <StyledContainer>
-      {isDefined(identifierIcon) &&
-        (shouldRenderInTile ? (
-          <StyledIcon iconColor={iconColor}>{identifierIcon}</StyledIcon>
-        ) : (
-          identifierIcon
-        ))}
+      {isDefined(identifierIcon) && (
+        <StyledIcon iconColor={iconColor}>{identifierIcon}</StyledIcon>
+      )}
       <StyledTextContainer>
-        <StyledTitle fontSize={fontSize}>
+        <StyledTitle>
           {typeof title === 'string' ? (
             <OverflowingTextWithTooltip text={title} />
           ) : (

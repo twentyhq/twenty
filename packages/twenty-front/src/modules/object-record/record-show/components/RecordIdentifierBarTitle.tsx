@@ -51,7 +51,6 @@ export const RecordIdentifierBarTitle = ({
   return (
     <>
       <HeaderIdentifier
-        fontSize="md"
         avatar={{
           avatarUrl: getAbsoluteImageUrl(recordIdentifier?.avatarUrl ?? ''),
           onClick: isAvatarEditable

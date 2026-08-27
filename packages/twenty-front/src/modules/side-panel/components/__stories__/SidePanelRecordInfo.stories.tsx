@@ -1,4 +1,5 @@
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { SidePanelRecordInfo } from '@/side-panel/components/SidePanelRecordInfo';
 import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
@@ -7,7 +8,6 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { RecordStoreDecorator } from '~/testing/decorators/RecordStoreDecorator';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { beautifyExactDateTime } from '~/utils/date-utils';
 
@@ -25,28 +25,23 @@ const meta: Meta<typeof SidePanelRecordInfo> = {
   args: { sidePanelPageInstanceId: SIDE_PANEL_PAGE_INSTANCE_ID },
   parameters: {
     mockingDate: new Date('2026-08-27T12:00:00.000Z'),
-    records: [COMPANY],
   },
-  decorators: [
-    (Story) => {
-      jotaiStore.set(
-        viewableRecordIdComponentState.atomFamily({
-          instanceId: SIDE_PANEL_PAGE_INSTANCE_ID,
-        }),
-        COMPANY.id,
-      );
-      jotaiStore.set(
-        viewableRecordNameSingularComponentState.atomFamily({
-          instanceId: SIDE_PANEL_PAGE_INSTANCE_ID,
-        }),
-        'company',
-      );
-      return <Story />;
-    },
-    RecordStoreDecorator,
-    ObjectMetadataItemsDecorator,
-    ComponentWithRouterDecorator,
-  ],
+  beforeEach: () => {
+    jotaiStore.set(recordStoreFamilyState.atomFamily(COMPANY.id), COMPANY);
+    jotaiStore.set(
+      viewableRecordIdComponentState.atomFamily({
+        instanceId: SIDE_PANEL_PAGE_INSTANCE_ID,
+      }),
+      COMPANY.id,
+    );
+    jotaiStore.set(
+      viewableRecordNameSingularComponentState.atomFamily({
+        instanceId: SIDE_PANEL_PAGE_INSTANCE_ID,
+      }),
+      'company',
+    );
+  },
+  decorators: [ObjectMetadataItemsDecorator, ComponentWithRouterDecorator],
 };
 
 export default meta;
@@ -86,7 +81,12 @@ export const ReadOnly: Story = {
 };
 
 export const WithoutCreationDate: Story = {
-  parameters: { records: [{ ...COMPANY, createdAt: null }] },
+  beforeEach: () => {
+    jotaiStore.set(recordStoreFamilyState.atomFamily(COMPANY.id), {
+      ...COMPANY,
+      createdAt: null,
+    });
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
