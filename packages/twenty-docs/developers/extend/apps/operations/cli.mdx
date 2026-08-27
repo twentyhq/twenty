@@ -101,6 +101,12 @@ yarn twenty app:uninstall
 yarn twenty app:uninstall --yes
 ```
 
+<Note>
+The uninstall runs in a background job on the server. The command waits for it
+to complete (polling every 2 seconds, up to 10 minutes) and exits non-zero if
+the uninstall fails — in that case the app stays installed.
+</Note>
+
 ## Managing remotes
 
 A **remote** is a Twenty server that your app connects to. During setup, the scaffolder creates one for you automatically. You can add more remotes or switch between them at any time.
