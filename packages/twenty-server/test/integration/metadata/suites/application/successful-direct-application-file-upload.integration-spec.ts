@@ -210,8 +210,7 @@ describe('Direct application file upload', () => {
       ],
     });
 
-    const fileId =
-      createData!.createApplicationFileUploads.targets[0].fileId;
+    const fileId = createData!.createApplicationFileUploads.targets[0].fileId;
 
     const { data: completeData } = await completeApplicationFileUploads({
       applicationUniversalIdentifier: TEST_APP_UID,

@@ -17,7 +17,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { findRichTextFieldNames } from 'src/modules/workflow/workflow-executor/utils/find-rich-text-field-names.util';
 
-@RegisteredWorkspaceCommand('2.37.0', 1787827154863)
+@RegisteredWorkspaceCommand('2.37.0', 1787840070507)
 @Command({
   name: 'upgrade:2-37:normalize-workflow-record-crud-rich-text-fields',
   description:

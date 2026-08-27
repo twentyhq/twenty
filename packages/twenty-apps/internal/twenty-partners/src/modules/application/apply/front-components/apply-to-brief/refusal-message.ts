@@ -1,6 +1,7 @@
 import { type ApplyRefusalReason } from 'src/modules/application/apply/types/apply-to-brief.types';
 
-export const GENERIC_APPLY_FAILURE_MESSAGE = 'Could not send your application. Try again.';
+export const GENERIC_APPLY_FAILURE_MESSAGE =
+  'Could not send your application. Try again.';
 
 const REFUSAL_MESSAGES: Record<ApplyRefusalReason, string> = {
   UNAUTHENTICATED: 'Sign in again to apply.',
@@ -16,4 +17,6 @@ const isApplyRefusalReason = (reason: string): reason is ApplyRefusalReason =>
 
 // The route may add a reason the front component does not know yet, so never index blindly.
 export const getRefusalMessage = (reason: string): string =>
-  isApplyRefusalReason(reason) ? REFUSAL_MESSAGES[reason] : GENERIC_APPLY_FAILURE_MESSAGE;
+  isApplyRefusalReason(reason)
+    ? REFUSAL_MESSAGES[reason]
+    : GENERIC_APPLY_FAILURE_MESSAGE;

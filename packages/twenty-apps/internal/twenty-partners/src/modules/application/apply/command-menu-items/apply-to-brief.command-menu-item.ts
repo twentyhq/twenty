@@ -1,4 +1,7 @@
-import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS, defineCommandMenuItem } from 'twenty-sdk/define';
+import {
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  defineCommandMenuItem,
+} from 'twenty-sdk/define';
 
 import {
   APPLY_TO_BRIEF_COMMAND_MENU_ITEM_ID,

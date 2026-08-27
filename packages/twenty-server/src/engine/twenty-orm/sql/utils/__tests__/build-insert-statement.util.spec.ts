@@ -86,6 +86,21 @@ describe('buildInsertStatement', () => {
     );
   });
 
+  it('should support conflict-safe inserts', () => {
+    expect(
+      buildInsertStatement({
+        tableShape: personTableShape,
+        columnNames: ['id'],
+        rows: [[{ kind: 'parameter', parameterName: 'ormInsert_0' }]],
+        returningColumns: ['id'],
+        onConflictDoNothing: true,
+      }),
+    ).toBe(
+      `INSERT INTO "${SCHEMA_NAME}"."person" ("id") ` +
+        'VALUES (:ormInsert_0) ON CONFLICT DO NOTHING RETURNING "id"',
+    );
+  });
+
   it('should reject an insert with no rows', () => {
     expect(() =>
       buildInsertStatement({

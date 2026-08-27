@@ -24,16 +24,23 @@ describe('on-opportunity-intro-sent', () => {
 
   it('sets isListed to false when introSentAt goes from empty to a date', async () => {
     const result = await handler(
-      event({ id: OPP, introSentAt: '2026-08-19T00:00:00.000Z' }, ['introSentAt']),
+      event({ id: OPP, introSentAt: '2026-08-19T00:00:00.000Z' }, [
+        'introSentAt',
+      ]),
     );
     expect(mutationMock).toHaveBeenCalledWith({
-      updateOpportunity: { __args: { id: OPP, data: { isListed: false } }, id: true },
+      updateOpportunity: {
+        __args: { id: OPP, data: { isListed: false } },
+        id: true,
+      },
     });
     expect(result).toEqual({ unlisted: true, opportunityId: OPP });
   });
 
   it('writes nothing when introSentAt is cleared', async () => {
-    const result = await handler(event({ id: OPP, introSentAt: null }, ['introSentAt']));
+    const result = await handler(
+      event({ id: OPP, introSentAt: null }, ['introSentAt']),
+    );
     expect(mutationMock).not.toHaveBeenCalled();
     expect(result).toEqual({ skipped: true, reason: 'intro_sent_at_cleared' });
   });
