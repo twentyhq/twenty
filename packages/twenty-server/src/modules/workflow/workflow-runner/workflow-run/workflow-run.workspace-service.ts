@@ -17,6 +17,7 @@ import {
   type WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
@@ -68,12 +69,13 @@ export class WorkflowRunWorkspaceService {
           workflowVersionId,
         });
 
-      const workflowRepository = this.workspaceOrmManager.getRepository(
-        'workflow',
-        {
-          shouldBypassPermissionChecks: true,
-        },
-      );
+      const workflowRepository =
+        this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+          'workflow',
+          {
+            shouldBypassPermissionChecks: true,
+          },
+        );
 
       const workflow = await workflowRepository.findOne({
         where: {
@@ -122,6 +124,8 @@ export class WorkflowRunWorkspaceService {
         workflowVersionId,
         createdBy,
         workflowId: workflow.id,
+        coreWorkflowId: workflow.coreWorkflowId,
+        coreWorkflowVersionId: workflowVersion.coreWorkflowVersionId,
         status,
         position,
         state: initState,
