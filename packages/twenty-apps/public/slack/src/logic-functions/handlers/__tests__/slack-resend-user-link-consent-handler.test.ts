@@ -46,7 +46,7 @@ vi.mock('src/logic-functions/utils/send-slack-user-link-consent-dm', () => ({
   sendSlackUserLinkConsentDm: sendSlackUserLinkConsentDmMock,
 }));
 
-const buildPayload = (body: unknown) => ({ body }) as never;
+const buildPayload = (body: unknown) => ({ body });
 
 const PENDING_BODY = { slackTeamId: 'T1', slackUserId: 'U1' };
 

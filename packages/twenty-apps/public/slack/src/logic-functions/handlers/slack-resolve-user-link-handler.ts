@@ -8,12 +8,15 @@ import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-us
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { resolveSlackUserByEmail } from 'src/logic-functions/utils/resolve-slack-user-by-email';
-import { asRecord, readOptionalString } from 'src/logic-functions/utils/route-body.util';
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
+import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
+
+type SlackRouteBody = Pick<RoutePayload<unknown>, 'body'>;
 
 const readBody = (
-  payload: RoutePayload<unknown>,
+  payload: SlackRouteBody,
 ): { email?: string; slackUserId?: string; slackTeamId?: string } => {
-  const body = asRecord(payload.body);
+  const body = asRecord(payload.body) ?? {};
 
   return {
     email: readOptionalString(body.email),
@@ -23,7 +26,7 @@ const readBody = (
 };
 
 export const slackResolveUserLinkHandler = async (
-  payload: RoutePayload<unknown>,
+  payload: SlackRouteBody,
 ): Promise<SlackResolveUserLinkResult> => {
   const { email, slackUserId: requestedSlackUserId, slackTeamId } =
     readBody(payload);

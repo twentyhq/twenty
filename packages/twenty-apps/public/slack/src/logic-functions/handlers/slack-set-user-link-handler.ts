@@ -16,8 +16,9 @@ import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/ut
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
+import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
 import { resolveSlackUserByEmail } from 'src/logic-functions/utils/resolve-slack-user-by-email';
-import { asRecord, readOptionalString } from 'src/logic-functions/utils/route-body.util';
 import { sendSlackUserLinkConsentDm } from 'src/logic-functions/utils/send-slack-user-link-consent-dm';
 
 // The agent tool passes the input directly, the HTTP route wraps it in a RoutePayload body.
@@ -31,7 +32,7 @@ const isRoutePayload = (
 
 // The HTTP route body is untrusted, so read each field rather than trusting its declared type.
 const toSlackSetUserLinkInput = (source: unknown): SlackSetUserLinkInput => {
-  const body = asRecord(source);
+  const body = asRecord(source) ?? {};
 
   return {
     workspaceMemberId: readOptionalString(body.workspaceMemberId) ?? '',

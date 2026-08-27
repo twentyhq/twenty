@@ -38,7 +38,7 @@ vi.mock('src/logic-functions/utils/fetch-slack-user-identity', () => ({
 
 const INSTALLED_TEAM_ID = 'T0INSTALLED';
 
-const buildPayload = (body: unknown) => ({ body }) as never;
+const buildPayload = (body: unknown) => ({ body });
 
 describe('slackResolveUserLinkHandler', () => {
   beforeEach(() => {

@@ -9,13 +9,16 @@ import { findWorkspaceMemberNameById } from 'src/logic-functions/data/find-works
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/utils/current-user-has-workspace-members-permission';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
-import { asRecord, readOptionalString } from 'src/logic-functions/utils/route-body.util';
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
+import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
 import { sendSlackUserLinkConsentDm } from 'src/logic-functions/utils/send-slack-user-link-consent-dm';
 
+type SlackRouteBody = Pick<RoutePayload<unknown>, 'body'>;
+
 const readBody = (
-  payload: RoutePayload<unknown>,
+  payload: SlackRouteBody,
 ): { slackTeamId?: string; slackUserId?: string } => {
-  const body = asRecord(payload.body);
+  const body = asRecord(payload.body) ?? {};
 
   return {
     slackTeamId: readOptionalString(body.slackTeamId),
@@ -24,7 +27,7 @@ const readBody = (
 };
 
 export const slackResendUserLinkConsentHandler = async (
-  payload: RoutePayload<unknown>,
+  payload: SlackRouteBody,
 ): Promise<SlackToolResult> => {
   const { slackTeamId, slackUserId } = readBody(payload);
 

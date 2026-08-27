@@ -5,13 +5,16 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { deleteSlackUserLink } from 'src/logic-functions/data/delete-slack-user-link';
 import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/utils/current-user-has-workspace-members-permission';
-import { asRecord, readOptionalString } from 'src/logic-functions/utils/route-body.util';
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
+import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
 
-const readId = (payload: RoutePayload<unknown>): string | undefined =>
-  readOptionalString(asRecord(payload.body).id);
+type SlackRouteBody = Pick<RoutePayload<unknown>, 'body'>;
+
+const readId = (payload: SlackRouteBody): string | undefined =>
+  readOptionalString(asRecord(payload.body)?.id);
 
 export const slackRemoveUserLinkHandler = async (
-  payload: RoutePayload<unknown>,
+  payload: SlackRouteBody,
 ): Promise<SlackToolResult> => {
   const id = readId(payload);
 

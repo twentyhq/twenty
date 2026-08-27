@@ -28,7 +28,7 @@ vi.mock('src/logic-functions/data/delete-slack-user-link', () => ({
   deleteSlackUserLink: deleteSlackUserLinkMock,
 }));
 
-const buildPayload = (body: unknown) => ({ body }) as never;
+const buildPayload = (body: unknown) => ({ body });
 
 describe('slackRemoveUserLinkHandler', () => {
   beforeEach(() => {
