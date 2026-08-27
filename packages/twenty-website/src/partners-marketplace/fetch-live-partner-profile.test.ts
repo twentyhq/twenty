@@ -7,6 +7,27 @@ const mockedFetch = partnersApiFetch as jest.MockedFunction<
   typeof partnersApiFetch
 >;
 
+const profilePayload = {
+  name: 'Acme',
+  slug: 'acme',
+  introduction: 'Hi',
+  languagesSpoken: ['ENGLISH'],
+  partnerScope: ['ADVISORY'],
+  region: ['US'],
+  calendarLink: null,
+  hourlyRate: null,
+  projectBudgetMin: null,
+  linkedin: null,
+  website: null,
+  profilePicture: null,
+  profileLinks: [],
+  skills: null,
+  city: null,
+  country: null,
+  services: [],
+  portfolio: [],
+};
+
 describe('fetchLivePartnerProfile', () => {
   afterEach(() => jest.clearAllMocks());
 
@@ -85,27 +106,7 @@ describe('fetchLivePartnerProfile', () => {
   it('reads superPartner true from the profile API', async () => {
     mockedFetch.mockResolvedValue({
       ok: true,
-      partner: {
-        name: 'Acme',
-        slug: 'acme',
-        introduction: 'Hi',
-        languagesSpoken: ['ENGLISH'],
-        partnerScope: ['ADVISORY'],
-        region: ['US'],
-        calendarLink: null,
-        hourlyRate: null,
-        projectBudgetMin: null,
-        linkedin: null,
-        website: null,
-        profilePicture: null,
-        profileLinks: [],
-        skills: null,
-        city: null,
-        country: null,
-        services: [],
-        portfolio: [],
-        superPartner: true,
-      },
+      partner: { ...profilePayload, superPartner: true },
     });
 
     expect(await fetchLivePartnerProfile('acme')).toMatchObject({
@@ -116,27 +117,7 @@ describe('fetchLivePartnerProfile', () => {
   it('reads superPartner null as false', async () => {
     mockedFetch.mockResolvedValue({
       ok: true,
-      partner: {
-        name: 'Acme',
-        slug: 'acme',
-        introduction: 'Hi',
-        languagesSpoken: ['ENGLISH'],
-        partnerScope: ['ADVISORY'],
-        region: ['US'],
-        calendarLink: null,
-        hourlyRate: null,
-        projectBudgetMin: null,
-        linkedin: null,
-        website: null,
-        profilePicture: null,
-        profileLinks: [],
-        skills: null,
-        city: null,
-        country: null,
-        services: [],
-        portfolio: [],
-        superPartner: null,
-      },
+      partner: { ...profilePayload, superPartner: null },
     });
 
     expect(await fetchLivePartnerProfile('acme')).toMatchObject({
