@@ -14,9 +14,11 @@ import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { RegularTabSettingsContent } from '@/side-panel/pages/page-layout/components/RegularTabSettingsContent';
 import { SingleWidgetTabSettingsContent } from '@/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -47,6 +49,11 @@ export const SidePanelPageLayoutTabSettingsContent = ({
     layoutType: pageLayoutDraft.type,
     targetRecordIdentifier: { id: recordId, targetObjectNameSingular: '' },
   });
+
+  const setActiveTabId = useSetAtomComponentState(
+    activeTabIdComponentState,
+    tabListInstanceId,
+  );
 
   const [pageLayoutTabSettingsOpenTabId, setPageLayoutTabSettingsOpenTabId] =
     useAtomComponentState(
@@ -109,6 +116,12 @@ export const SidePanelPageLayoutTabSettingsContent = ({
     resetPageLayoutTabToDefault(tab.id);
   };
 
+  const handleUnpin = () => {
+    unpinTab();
+    setActiveTabId(tab.id);
+    navigate(`#${tab.id}`);
+  };
+
   const activeWidgets = tab.widgets.filter((widget) => widget.isActive);
 
   const isSingleWidgetTab = getIsSingleWidgetTab({ tab });
@@ -127,7 +140,7 @@ export const SidePanelPageLayoutTabSettingsContent = ({
         onMoveLeft={() => moveLeft(tab.id)}
         onMoveRight={() => moveRight(tab.id)}
         onSetAsPinned={() => setAsPinnedTab(tab.id)}
-        onUnpin={unpinTab}
+        onUnpin={handleUnpin}
         onResetToDefault={handleResetToDefault}
         onDelete={handleDelete}
       />
@@ -145,7 +158,7 @@ export const SidePanelPageLayoutTabSettingsContent = ({
       onMoveLeft={() => moveLeft(tab.id)}
       onMoveRight={() => moveRight(tab.id)}
       onSetAsPinned={() => setAsPinnedTab(tab.id)}
-      onUnpin={unpinTab}
+      onUnpin={handleUnpin}
       onDuplicate={() => {
         const newTabId = duplicateTab(tab.id);
         navigate(`#${newTabId}`);
