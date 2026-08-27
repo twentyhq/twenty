@@ -1,8 +1,8 @@
-import { CALL_RECORDING_ID_FOR_CALENDAR_EVENT } from '@/page-layout/widgets/call-recording/graphql/queries/callRecordingIdForCalendarEvent';
 import { useCallRecordingWidgetTarget } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingWidgetTarget';
 import { useQuery } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { CallRecordingIdForCalendarEventDocument } from '~/generated-metadata/graphql';
 
 export const useCallRecordingIdForWidget = ({
   skip,
@@ -24,14 +24,10 @@ export const useCallRecordingIdForWidget = ({
     loading,
     error,
     refetch: refetchCallRecordingIdForCalendarEvent,
-  } = useQuery<{ callRecordingIdForCalendarEvent: string | null }>(
-    CALL_RECORDING_ID_FOR_CALENDAR_EVENT,
-    {
-      variables: { calendarEventId: targetRecordId ?? '' },
-      skip:
-        skip || !isDefined(targetRecordId) || targetKind !== 'calendarEvent',
-    },
-  );
+  } = useQuery(CallRecordingIdForCalendarEventDocument, {
+    variables: { calendarEventId: targetRecordId ?? '' },
+    skip: skip || !isDefined(targetRecordId) || targetKind !== 'calendarEvent',
+  });
 
   const callRecordingId =
     targetKind === 'callRecording'
