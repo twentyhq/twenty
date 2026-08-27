@@ -1,17 +1,13 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { useId } from 'react';
-import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useDebouncedCallback } from 'use-debounce';
 
 import { ApplicationVariableInput } from 'src/front-components/components/ApplicationVariableInput';
 import { ApplicationVariableLabelRow } from 'src/front-components/components/ApplicationVariableLabelRow';
-import { useUpdateApplicationVariable } from 'src/front-components/hooks/use-update-application-variable';
+import { useDebouncedSaveApplicationVariable } from 'src/front-components/hooks/use-debounced-save-application-variable';
 import { type CallRecorderApplicationVariable } from 'src/front-components/types/call-recorder-application-variable.type';
 import { getNormalizedNumberValue } from 'src/front-components/utils/get-normalized-number-value.util';
-
-const APPLICATION_VARIABLE_SAVE_DEBOUNCE_MILLISECONDS = 250;
 
 const StyledRow = styled.div`
   display: flex;
@@ -47,8 +43,10 @@ export const ApplicationVariableRow = ({
 }: ApplicationVariableRowProps) => {
   const inputId = useId();
 
-  const { updateApplicationVariable } =
-    useUpdateApplicationVariable(applicationId);
+  const { saveDebounced } = useDebouncedSaveApplicationVariable({
+    applicationId,
+    variableKey: variable.key,
+  });
 
   const isSecretStored = variable.isSecret && isNonEmptyString(variable.value);
   const draftValue = value ?? (isSecretStored ? '' : variable.value);
@@ -57,20 +55,6 @@ export const ApplicationVariableRow = ({
     variable.type === 'NUMBER' || variable.type === 'NUMERIC';
   const hasInvalidNumber =
     isNumberVariable && isUndefined(getNormalizedNumberValue(draftValue));
-
-  const saveDebounced = useDebouncedCallback(async (newValue: string) => {
-    const isUpdated = await updateApplicationVariable({
-      variableKey: variable.key,
-      value: newValue,
-    });
-
-    if (!isUpdated) {
-      enqueueSnackbar({
-        message: `Could not save ${variable.key}.`,
-        variant: 'error',
-      });
-    }
-  }, APPLICATION_VARIABLE_SAVE_DEBOUNCE_MILLISECONDS);
 
   const handleChange = (newValue: string) => {
     onValueChange({ variableKey: variable.key, value: newValue });

@@ -3,9 +3,8 @@ import { StyledSettingsTextArea } from 'src/front-components/components/StyledSe
 import { StyledSettingsTextInput } from 'src/front-components/components/StyledSettingsTextInput';
 import { type CallRecorderApplicationVariable } from 'src/front-components/types/call-recorder-application-variable.type';
 import { serializeRichTextMarkdown } from 'src/front-components/utils/serialize-rich-text-markdown.util';
+import { EMPTY_OPTION_LABEL } from 'src/front-components/constants/empty-option-label.constant';
 import { extractRichTextMarkdown } from 'src/logic-functions/utils/extract-rich-text-markdown.util';
-
-const EMPTY_OPTION_LABEL = 'Select a value';
 
 type ApplicationVariableInputProps = {
   inputId: string;

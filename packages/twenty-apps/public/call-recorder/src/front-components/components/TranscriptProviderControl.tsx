@@ -3,11 +3,10 @@ import { MenuItemSelect } from 'twenty-ui/navigation';
 import { DropdownMenuItemsContainer } from 'src/front-components/components/DropdownMenuItemsContainer';
 import { FloatingMenu } from 'src/front-components/components/FloatingMenu';
 import { SettingsSelectControl } from 'src/front-components/components/SettingsSelectControl';
+import { EMPTY_OPTION_LABEL } from 'src/front-components/constants/empty-option-label.constant';
 import { FLOATING_MENU_DEFAULT_WIDTH_PIXELS } from 'src/front-components/constants/floating-menu.constant';
 import { useAnchoredMenu } from 'src/front-components/hooks/use-anchored-menu';
 import { type CallRecorderApplicationVariableOption } from 'src/front-components/types/call-recorder-application-variable.type';
-
-const EMPTY_OPTION_LABEL = 'Select a value';
 
 type TranscriptProviderControlProps = {
   value: string;
