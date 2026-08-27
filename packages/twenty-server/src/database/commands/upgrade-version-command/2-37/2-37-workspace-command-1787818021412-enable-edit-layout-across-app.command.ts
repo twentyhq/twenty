@@ -15,9 +15,9 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const LEGACY_EDIT_LAYOUT_AVAILABILITY_EXPRESSION =
   'pageType == "RECORD_PAGE" and not isLayoutCustomizationModeEnabled and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"';
 
-@RegisteredWorkspaceCommand('2.36.0', 1787816785319)
+@RegisteredWorkspaceCommand('2.37.0', 1787818021412)
 @Command({
-  name: 'upgrade:2-36:enable-edit-layout-across-app',
+  name: 'upgrade:2-37:enable-edit-layout-across-app',
   description:
     'Make the Edit Layout command available across the app outside Settings',
 })
