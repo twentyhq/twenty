@@ -104,10 +104,20 @@ export const slackSetUserLinkHandler = async (
     }
 
     if (!isNonEmptyString(slackUserId) && isNonEmptyString(email)) {
-      const resolvedUser = await resolveSlackUserByEmail(
-        slackClientResult.client,
-        email,
-      );
+      let resolvedUser;
+
+      try {
+        resolvedUser = await resolveSlackUserByEmail(
+          slackClientResult.client,
+          email,
+        );
+      } catch (error) {
+        return {
+          success: false,
+          message: 'Could not look up that Slack email',
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
 
       if (!isDefined(resolvedUser)) {
         return {
