@@ -47,7 +47,13 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
         UsageOperationType.AI_WORKFLOW_TOKEN,
         UsageOperationType.WEB_SEARCH,
       ],
-      allowedSpenderTypes: ['workspace', 'userWorkspace'],
+      allowedSpenderTypes: [
+        'workspace',
+        'userWorkspace',
+        'apiKey',
+        'application',
+        'agent',
+      ],
       fallbacks: [{ source: 'allowance', spenderType: 'workspace' }],
       meters: 'creditsUsedMicro',
     },
@@ -55,7 +61,7 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
   [UsageResourceType.WORKFLOW]: {
     quota: {
       allowedOperationTypes: [UsageOperationType.WORKFLOW_EXECUTION],
-      allowedSpenderTypes: ['workspace', 'userWorkspace'],
+      allowedSpenderTypes: ['workspace', 'userWorkspace', 'workflow'],
       fallbacks: [{ source: 'allowance', spenderType: 'workspace' }],
       meters: 'creditsUsedMicro',
     },
@@ -65,7 +71,12 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
   [UsageResourceType.LOGIC_FUNCTION]: {
     quota: {
       allowedOperationTypes: [UsageOperationType.CODE_EXECUTION],
-      allowedSpenderTypes: ['workspace', 'userWorkspace'],
+      allowedSpenderTypes: [
+        'workspace',
+        'userWorkspace',
+        'logicFunction',
+        'application',
+      ],
       fallbacks: [{ source: 'allowance', spenderType: 'workspace' }],
       meters: 'creditsUsedMicro',
     },

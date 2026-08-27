@@ -1,27 +1,39 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type QuotaCounterRequest } from 'src/engine/core-modules/usage-limit/types/quota-counter-request.type';
+import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { type UsageCell } from 'src/engine/core-modules/usage-limit/types/usage-cell.type';
 
+const cellSpenderId = (
+  cell: UsageCell,
+  spenderType: Exclude<SpenderType, 'workspace'>,
+): string => {
+  switch (spenderType) {
+    case 'userWorkspace':
+      return cell.userWorkspaceId;
+    case 'apiKey':
+      return cell.apiKeyId;
+    case 'application':
+      return cell.applicationId;
+    case 'agent':
+      return cell.agentId;
+    case 'workflow':
+      return cell.workflowId;
+    case 'logicFunction':
+      return cell.logicFunctionId;
+  }
+};
+
 // Projects one aggregate query onto every counter of the resource: each
-// counter takes the cells its scope covers. Returns null for a scope the
-// cells cannot express, so the caller leaves that counter cold instead of
-// installing a budget computed from the wrong slice.
+// counter takes the cells its scope covers.
 export const sumUsageForQuotaCounter = ({
   counter,
   cells,
 }: {
   counter: QuotaCounterRequest;
   cells: UsageCell[];
-}): number | null => {
-  if (
-    counter.spenderType !== 'workspace' &&
-    counter.spenderType !== 'userWorkspace'
-  ) {
-    return null;
-  }
-
-  return cells
+}): number =>
+  cells
     .filter(
       (cell) =>
         counter.operationType === '' ||
@@ -32,11 +44,12 @@ export const sumUsageForQuotaCounter = ({
         return true;
       }
 
-      // A pooled userWorkspace counter covers usage attributed to any user,
-      // not usage the workspace consumed with no user attached.
+      const spenderId = cellSpenderId(cell, counter.spenderType);
+
+      // A pooled counter covers usage attributed to any spender of the type,
+      // not usage consumed with no such spender attached.
       return isDefined(counter.spenderId)
-        ? cell.userWorkspaceId === counter.spenderId
-        : cell.userWorkspaceId !== '';
+        ? spenderId === counter.spenderId
+        : spenderId !== '';
     })
     .reduce((sum, cell) => sum + cell.total, 0);
-};

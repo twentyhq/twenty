@@ -42,6 +42,11 @@ type QuotaConsumptionRequest = {
 type UsageSumRow = {
   operationType: string;
   userWorkspaceId: string;
+  apiKeyId: string;
+  applicationId: string;
+  agentId: string;
+  workflowId: string;
+  logicFunctionId: string;
   total: string | number | null;
 };
 
@@ -369,13 +374,6 @@ export class UsageLimitQuotaService {
 
       const used = sumUsageForQuotaCounter({ counter, cells });
 
-      if (!isDefined(used)) {
-        this.logger.warn(
-          `Quota counter for ${counter.spenderType} cannot be warmed yet, leaving it cold`,
-        );
-        continue;
-      }
-
       const remaining = counter.limitValue - used;
 
       await this.cacheStorage.set(counter.key, remaining, ttlMs);
@@ -415,12 +413,12 @@ export class UsageLimitQuotaService {
       Array.from(scopes.entries()).map(async ([scopeKey, scope]) => {
         try {
           const rows = await this.clickHouseService.selectOrThrow<UsageSumRow>(
-            `SELECT operationType, userWorkspaceId, sum(${scope.meter}) AS total
+            `SELECT operationType, userWorkspaceId, apiKeyId, applicationId, agentId, workflowId, logicFunctionId, sum(${scope.meter}) AS total
              FROM usageEvent
              WHERE workspaceId = {workspaceId:String}
                ${scope.resourceType === '' ? '' : 'AND resourceType = {resourceType:String}'}
                AND periodStart = {periodStart:DateTime64(3)}
-             GROUP BY operationType, userWorkspaceId`,
+             GROUP BY operationType, userWorkspaceId, apiKeyId, applicationId, agentId, workflowId, logicFunctionId`,
             {
               workspaceId,
               resourceType: scope.resourceType,
@@ -433,6 +431,11 @@ export class UsageLimitQuotaService {
             rows.map((row) => ({
               operationType: row.operationType,
               userWorkspaceId: row.userWorkspaceId,
+              apiKeyId: row.apiKeyId,
+              applicationId: row.applicationId,
+              agentId: row.agentId,
+              workflowId: row.workflowId,
+              logicFunctionId: row.logicFunctionId,
               total: toFiniteNumber(row.total),
             })),
           );

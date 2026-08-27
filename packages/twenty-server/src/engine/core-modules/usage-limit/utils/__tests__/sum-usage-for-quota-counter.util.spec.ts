@@ -4,24 +4,35 @@ import { type QuotaCounterRequest } from 'src/engine/core-modules/usage-limit/ty
 import { type UsageCell } from 'src/engine/core-modules/usage-limit/types/usage-cell.type';
 import { sumUsageForQuotaCounter } from 'src/engine/core-modules/usage-limit/utils/sum-usage-for-quota-counter.util';
 
+const buildCell = (overrides: Partial<UsageCell>): UsageCell => ({
+  operationType: UsageOperationType.AI_CHAT_TOKEN,
+  userWorkspaceId: '',
+  apiKeyId: '',
+  applicationId: '',
+  agentId: '',
+  workflowId: '',
+  logicFunctionId: '',
+  total: 0,
+  ...overrides,
+});
+
 // One warm query for the whole workspace, projected onto counters of
 // different scopes.
 const cells: UsageCell[] = [
-  {
-    operationType: UsageOperationType.AI_CHAT_TOKEN,
+  buildCell({
     userWorkspaceId: 'user-1',
+    agentId: 'agent-1',
     total: 100,
-  },
-  {
-    operationType: UsageOperationType.AI_CHAT_TOKEN,
+  }),
+  buildCell({
     userWorkspaceId: 'user-2',
     total: 30,
-  },
-  {
+  }),
+  buildCell({
     operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
-    userWorkspaceId: '',
+    agentId: 'agent-1',
     total: 7,
-  },
+  }),
 ];
 
 const buildCounter = (
@@ -86,12 +97,21 @@ describe('sumUsageForQuotaCounter', () => {
     ).toBe(0);
   });
 
-  it('declines to warm a scope the cells cannot express', () => {
+  it('sums one agent across operations for an agent-scoped counter', () => {
     expect(
       sumUsageForQuotaCounter({
         counter: buildCounter({ spenderType: 'agent', spenderId: 'agent-1' }),
         cells,
       }),
-    ).toBeNull();
+    ).toBe(107);
+  });
+
+  it('excludes agentless usage from a pooled agent counter', () => {
+    expect(
+      sumUsageForQuotaCounter({
+        counter: buildCounter({ spenderType: 'agent', spenderId: null }),
+        cells,
+      }),
+    ).toBe(107);
   });
 });
