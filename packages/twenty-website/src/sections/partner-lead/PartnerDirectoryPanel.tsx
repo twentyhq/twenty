@@ -1,8 +1,10 @@
 'use client';
 
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useMemo } from 'react';
 
+import { GetMatchedButton } from '@/client-brief';
 import { MarketplaceEmptyState } from '@/partners-marketplace/EmptyState';
 import { filterPartners } from '@/partners-marketplace/filter-partners';
 import { FilterBar } from '@/partners-marketplace/FilterBar';
@@ -55,7 +57,12 @@ export function PartnerDirectoryPanel({
         />
       </Filters>
       <Results>
-        <MarketplaceGrid partners={filteredPartners} />
+        <MarketplaceGrid
+          matchCardCta={
+            <GetMatchedButton label={msg`Get matched`} variant="filled" />
+          }
+          partners={filteredPartners}
+        />
         {filteredPartners.length === 0 && partners.length > 0 && (
           <MarketplaceEmptyState onClearFilters={clearAll} />
         )}
