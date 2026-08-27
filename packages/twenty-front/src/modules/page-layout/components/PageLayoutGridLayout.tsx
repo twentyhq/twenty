@@ -261,12 +261,10 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
             }
           }}
           onDrag={(_layout, _oldItem, _newItem, _placeholder, event) => {
-            if (event instanceof MouseEvent) {
-              handleGridDrag(event);
-            }
+            handleGridDrag(event);
           }}
           onDragStop={(_layout, _oldItem, newItem, _placeholder, event) => {
-            if (isDefined(newItem) && event instanceof MouseEvent) {
+            if (isDefined(newItem)) {
               handleGridDragStop(newItem.i, event);
             }
             setPageLayoutDraggingWidgetId(null);
