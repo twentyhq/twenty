@@ -291,4 +291,27 @@ describe('filterAndSortNavigationMenuItems', () => {
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('folder-1');
   });
+   it('should filter out duplicate object navigation menu items', () => {
+    const result = filterAndSortNavigationMenuItems(
+      [
+        {
+          id: 'obj-1',
+          type: NavigationMenuItemType.OBJECT,
+          targetObjectMetadataId: 'metadata-id',
+          position: 1,
+        } as NavigationMenuItem,
+        {
+          id: 'obj-2-duplicate',
+          type: NavigationMenuItemType.OBJECT,
+          targetObjectMetadataId: 'metadata-id',
+          position: 2,
+        } as NavigationMenuItem,
+      ],
+      [],
+      [mockObjectMetadataItem],
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe('obj-1');
+  });
 });
