@@ -5,6 +5,7 @@ import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/s
 import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { act } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -58,7 +59,11 @@ export const Editable: Story = {
       canvas.queryByRole('link', { name: 'Acme' }),
     ).not.toBeInTheDocument();
 
-    await userEvent.hover(await canvas.findByText('Created 2 days ago'));
+    // The tooltip attaches its native hover listeners in effects after mount.
+    await act(async () => {
+      await canvas.findByText('Created 2 days ago');
+    });
+    await userEvent.hover(canvas.getByText('Created 2 days ago'));
     expect(
       await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
     ).toHaveTextContent(beautifyExactDateTime(CREATED_AT));
