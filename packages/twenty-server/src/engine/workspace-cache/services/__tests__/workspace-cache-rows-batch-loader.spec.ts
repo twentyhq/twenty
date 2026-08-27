@@ -1,9 +1,12 @@
-import { IsNull, Not, type DataSource, type EntityTarget } from 'typeorm';
+import { IsNull, Not, type EntityTarget } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
-import { WorkspaceCacheRowsBatchLoader } from 'src/engine/workspace-cache/services/workspace-cache-rows-batch-loader';
+import {
+  WorkspaceCacheRowsBatchLoader,
+  type WorkspaceCacheRowsSource,
+} from 'src/engine/workspace-cache/services/workspace-cache-rows-batch-loader';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000000';
 
@@ -35,11 +38,11 @@ describe('WorkspaceCacheRowsBatchLoader', () => {
       ],
     ]);
 
-    const dataSource = {
+    const dataSource: WorkspaceCacheRowsSource = {
       getRepository: jest.fn((entityTarget: EntityTarget<object>) => ({
-        find: findMocksByEntity.get(entityTarget),
+        find: findMocksByEntity.get(entityTarget)!,
       })),
-    } as unknown as DataSource;
+    };
 
     return {
       rowsBatchLoader: new WorkspaceCacheRowsBatchLoader(

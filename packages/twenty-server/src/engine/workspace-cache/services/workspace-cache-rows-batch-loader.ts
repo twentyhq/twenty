@@ -1,13 +1,18 @@
 import {
-  type DataSource,
+  type EntityTarget,
   type FindManyOptions,
   type FindOptionsWhere,
   type ObjectLiteral,
+  type Repository,
 } from 'typeorm';
 
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { ALL_WORKSPACE_CACHE_ENTITY_BY_NAME } from 'src/engine/workspace-cache/constants/all-workspace-cache-entity-by-name.constant';
+import {
+  WorkspaceCacheException,
+  WorkspaceCacheExceptionCode,
+} from 'src/engine/workspace-cache/exceptions/workspace-cache.exception';
 import {
   type CacheFetchableEntityName,
   type WidenedEntityRowsRequirement,
@@ -19,6 +24,12 @@ import { isObjectEntityRowsRequirement } from 'src/engine/workspace-cache/utils/
 import { serializeWhereClause } from 'src/engine/workspace-cache/utils/serialize-where-clause.util';
 
 type WhereClause = FindOptionsWhere<ObjectLiteral>;
+
+export type WorkspaceCacheRowsSource = {
+  getRepository: (
+    entityTarget: EntityTarget<ObjectLiteral>,
+  ) => Pick<Repository<ObjectLiteral>, 'find'>;
+};
 
 type NormalizedEntityRowsRequirement = {
   columns: readonly string[] | true;
@@ -62,7 +73,7 @@ export class WorkspaceCacheRowsBatchLoader {
   private hasLoadedRows = false;
 
   constructor(
-    private readonly coreDataSource: DataSource,
+    private readonly coreDataSource: WorkspaceCacheRowsSource,
     readonly workspaceId: string,
   ) {}
 
@@ -70,8 +81,9 @@ export class WorkspaceCacheRowsBatchLoader {
     rowsRequirements: WorkspaceCacheRowsRequirement[],
   ): Promise<void> {
     if (this.hasLoadedRows) {
-      throw new Error(
+      throw new WorkspaceCacheException(
         'Rows were already loaded for this batch loader: merge all requirements into a single loadRows call',
+        WorkspaceCacheExceptionCode.INVALID_PARAMETERS,
       );
     }
     this.hasLoadedRows = true;
@@ -209,8 +221,9 @@ export class WorkspaceCacheRowsBatchLoader {
     const rows = this.rowsByFetchKey.get(fetchKey);
 
     if (!isDefined(rows)) {
-      throw new Error(
+      throw new WorkspaceCacheException(
         `Rows for entity "${entityName}" (fetch key "${fetchKey}") were not resolved in this recompute batch: declare it in the provider's rowsRequirement`,
+        WorkspaceCacheExceptionCode.INVALID_PARAMETERS,
       );
     }
 
@@ -235,9 +248,7 @@ export class WorkspaceCacheRowsBatchLoader {
     }
 
     return this.coreDataSource
-      .getRepository<ObjectLiteral>(
-        ALL_WORKSPACE_CACHE_ENTITY_BY_NAME[entityName],
-      )
+      .getRepository(ALL_WORKSPACE_CACHE_ENTITY_BY_NAME[entityName])
       .find(findOptions);
   }
 }

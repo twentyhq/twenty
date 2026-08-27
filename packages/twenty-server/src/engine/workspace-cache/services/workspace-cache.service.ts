@@ -573,7 +573,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     });
 
     const settledComputes = await Promise.allSettled(computePromises);
-    const { computed, computeFailures } = settledComputes.reduce(
+    const { computed, computeFailures } = settledComputes.reduce<{
+      computed: Awaited<(typeof computePromises)[number]>[];
+      computeFailures: { keyName: WorkspaceCacheKeyName; reason: unknown }[];
+    }>(
       (acc, settled, index) => {
         if (settled.status === 'fulfilled') {
           acc.computed.push(settled.value);
@@ -586,13 +589,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
         return acc;
       },
-      {
-        computed: [] as Awaited<(typeof computePromises)[number]>[],
-        computeFailures: [] as {
-          keyName: WorkspaceCacheKeyName;
-          reason: unknown;
-        }[],
-      },
+      { computed: [], computeFailures: [] },
     );
 
     const redisEntries: Array<{

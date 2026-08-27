@@ -4,11 +4,17 @@ import {
   type ObjectLiteral,
 } from 'typeorm';
 
+import {
+  WorkspaceCacheException,
+  WorkspaceCacheExceptionCode,
+} from 'src/engine/workspace-cache/exceptions/workspace-cache.exception';
+
 const serializeWhereValue = (value: unknown): string => {
   if (value instanceof FindOperator) {
     if (value.type === 'raw') {
-      throw new Error(
+      throw new WorkspaceCacheException(
         'Cannot serialize a raw operator inside a rows requirement where clause: Raw() and computed predicates are not supported',
+        WorkspaceCacheExceptionCode.INVALID_PARAMETERS,
       );
     }
 
@@ -24,8 +30,9 @@ const serializeWhereValue = (value: unknown): string => {
   }
 
   if (typeof value === 'function') {
-    throw new Error(
+    throw new WorkspaceCacheException(
       'Cannot serialize a function inside a rows requirement where clause: Raw() and computed predicates are not supported',
+      WorkspaceCacheExceptionCode.INVALID_PARAMETERS,
     );
   }
 
