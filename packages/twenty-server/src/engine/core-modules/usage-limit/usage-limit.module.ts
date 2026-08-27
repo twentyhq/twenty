@@ -10,7 +10,7 @@ import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { UsageAllowanceResolverRegistry } from 'src/engine/core-modules/usage-limit/services/usage-allowance-resolver-registry.service';
+import { UsageAllowanceProviderRegistry } from 'src/engine/core-modules/usage-limit/services/usage-allowance-provider-registry.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
 import { UsageLimitResolver } from 'src/engine/core-modules/usage-limit/usage-limit.resolver';
@@ -39,7 +39,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     PermissionsModule,
   ],
   providers: [
-    UsageAllowanceResolverRegistry,
+    UsageAllowanceProviderRegistry,
     UsageLimitQuotaService,
     UsageLimitSpeedService,
     UsageLimitRulesCacheService,
@@ -53,7 +53,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(LogicFunctionEntity),
   ],
   exports: [
-    UsageAllowanceResolverRegistry,
+    UsageAllowanceProviderRegistry,
     UsageLimitQuotaService,
     UsageLimitSpeedService,
     UsageLimitRulesCacheService,

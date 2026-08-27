@@ -6,8 +6,8 @@ const BASIS_POINTS_DENOMINATOR = 10_000;
 
 // Percent rules are expressed in basis points of the workspace allowance.
 // Without an allowance to take a share of, a percent rule cannot bind, so it
-// resolves to null and the caller drops the counter.
-export const resolveQuotaLimitValue = ({
+// yields null and the caller drops the counter.
+export const computeQuotaLimitValue = ({
   rule,
   allowance,
 }: {

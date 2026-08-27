@@ -12,7 +12,7 @@ import {
   UsageLimitException,
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
-import { UsageAllowanceResolverRegistry } from 'src/engine/core-modules/usage-limit/services/usage-allowance-resolver-registry.service';
+import { UsageAllowanceProviderRegistry } from 'src/engine/core-modules/usage-limit/services/usage-allowance-provider-registry.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -60,8 +60,8 @@ describe('UsageLimitQuotaService', () => {
     getCurrentPeriod: jest.fn().mockResolvedValue(PERIOD),
   };
 
-  const usageAllowanceResolverRegistry = {
-    resolveUsageAllowance: jest.fn().mockResolvedValue(null),
+  const usageAllowanceProviderRegistry = {
+    getUsageAllowance: jest.fn().mockResolvedValue(null),
   };
 
   const cacheLockService = {
@@ -102,9 +102,7 @@ describe('UsageLimitQuotaService', () => {
 
     featureFlagService.isFeatureEnabled.mockResolvedValue(true);
     usagePeriodService.getCurrentPeriod.mockResolvedValue(PERIOD);
-    usageAllowanceResolverRegistry.resolveUsageAllowance.mockResolvedValue(
-      null,
-    );
+    usageAllowanceProviderRegistry.getUsageAllowance.mockResolvedValue(null);
     cacheLockService.withLock.mockImplementation((fn: () => Promise<unknown>) =>
       fn(),
     );
@@ -122,8 +120,8 @@ describe('UsageLimitQuotaService', () => {
         { provide: FeatureFlagService, useValue: featureFlagService },
         { provide: UsagePeriodService, useValue: usagePeriodService },
         {
-          provide: UsageAllowanceResolverRegistry,
-          useValue: usageAllowanceResolverRegistry,
+          provide: UsageAllowanceProviderRegistry,
+          useValue: usageAllowanceProviderRegistry,
         },
         { provide: CacheLockService, useValue: cacheLockService },
         { provide: ClickHouseService, useValue: clickHouseService },
@@ -251,9 +249,7 @@ describe('UsageLimitQuotaService', () => {
     });
 
     it('sizes the fallback counter from the allowance', async () => {
-      usageAllowanceResolverRegistry.resolveUsageAllowance.mockResolvedValue(
-        500,
-      );
+      usageAllowanceProviderRegistry.getUsageAllowance.mockResolvedValue(500);
       cacheStorage.mget.mockResolvedValue([undefined]);
       clickHouseService.selectOrThrow.mockResolvedValue([
         { operationType: 'CODE_EXECUTION', userWorkspaceId: '', total: 600 },

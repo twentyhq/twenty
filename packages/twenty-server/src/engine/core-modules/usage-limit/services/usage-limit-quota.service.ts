@@ -16,7 +16,7 @@ import {
   UsageLimitException,
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
-import { UsageAllowanceResolverRegistry } from 'src/engine/core-modules/usage-limit/services/usage-allowance-resolver-registry.service';
+import { UsageAllowanceProviderRegistry } from 'src/engine/core-modules/usage-limit/services/usage-allowance-provider-registry.service';
 import { type ExhaustedScope } from 'src/engine/core-modules/usage-limit/types/exhausted-scope.type';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { type QuotaCounterRequest } from 'src/engine/core-modules/usage-limit/types/quota-counter-request.type';
@@ -72,7 +72,7 @@ export class UsageLimitQuotaService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly usagePeriodService: UsagePeriodService,
-    private readonly usageAllowanceResolverRegistry: UsageAllowanceResolverRegistry,
+    private readonly usageAllowanceProviderRegistry: UsageAllowanceProviderRegistry,
     private readonly cacheLockService: CacheLockService,
     private readonly clickHouseService: ClickHouseService,
   ) {}
@@ -205,7 +205,7 @@ export class UsageLimitQuotaService {
 
     const [period, allowance] = await Promise.all([
       this.usagePeriodService.getCurrentPeriod(workspaceId),
-      this.usageAllowanceResolverRegistry.resolveUsageAllowance(workspaceId),
+      this.usageAllowanceProviderRegistry.getUsageAllowance(workspaceId),
     ]);
 
     const counters = buildQuotaCounters({

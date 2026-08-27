@@ -8,7 +8,7 @@ import { type UsageSpenders } from 'src/engine/core-modules/usage-limit/types/us
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
 import { buildSpendersFromUsageSpenders } from 'src/engine/core-modules/usage-limit/utils/build-spenders-from-usage-spenders.util';
 import { findRulesForSpender } from 'src/engine/core-modules/usage-limit/utils/find-rules-for-spender.util';
-import { resolveQuotaLimitValue } from 'src/engine/core-modules/usage-limit/utils/resolve-quota-limit-value.util';
+import { computeQuotaLimitValue } from 'src/engine/core-modules/usage-limit/utils/compute-quota-limit-value.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
@@ -45,7 +45,7 @@ export const buildQuotaCounters = ({
   const ruleCounters = allowedSpenders.flatMap((spender) =>
     findRulesForSpender({ rules, spender, operationType, limitKind: 'quota' })
       .map((rule) => {
-        const limitValue = resolveQuotaLimitValue({ rule, allowance });
+        const limitValue = computeQuotaLimitValue({ rule, allowance });
 
         if (!isDefined(limitValue)) {
           return null;
