@@ -34,9 +34,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 
-const StyledHeader = styled.div`
+const StyledHeader = styled.div<{ isReadOnly: boolean }>`
   align-items: center;
-  cursor: pointer;
+  cursor: ${({ isReadOnly }) => (isReadOnly ? 'default' : 'pointer')};
   display: flex;
   flex-direction: row;
   height: 100%;
@@ -211,8 +211,12 @@ export const RecordBoardColumnHeader = () => {
 
   return (
     <StyledColumn data-has-left-border={columnIndex > 0 ? 'true' : undefined}>
-      <DragDropItemSortableHandle fill>
+      <DragDropItemSortableHandle
+        fill
+        disabled={isRecordBoardViewSettingsReadOnly}
+      >
         <StyledHeader
+          isReadOnly={isRecordBoardViewSettingsReadOnly}
           onPointerCancel={handlePointerCancel}
           onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}
