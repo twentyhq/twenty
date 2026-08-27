@@ -147,6 +147,17 @@ export const slackSetUserLinkHandler = async (
 
   const installedTeamId = await getInstalledSlackTeamId(slackClient);
 
+  // The consent decision hinges on whether the user is in the installed
+  // workspace, so a failed team lookup must fail closed rather than silently
+  // admin-set an in-workspace user without ever asking them.
+  if (!isNonEmptyString(installedTeamId)) {
+    return {
+      success: false,
+      message: 'Could not verify the installed Slack workspace',
+      error: 'Slack did not confirm the installed workspace. Please try again.',
+    };
+  }
+
   if (!isNonEmptyString(slackTeamId)) {
     slackTeamId = installedTeamId;
   }
@@ -207,6 +218,8 @@ export const slackSetUserLinkHandler = async (
       : undefined
     : SLACK_USER_LINK_CONSENT_STATE.ADMIN_SET;
 
+  let slackUserLinkId: string;
+
   try {
     if (isDefined(existingLink)) {
       await updateSlackUserLink(client, {
@@ -216,8 +229,9 @@ export const slackSetUserLinkHandler = async (
         source: SLACK_USER_LINK_SOURCE.MANUAL,
         consentState: consentStateForWrite,
       });
+      slackUserLinkId = existingLink.id;
     } else {
-      await createSlackUserLink(client, {
+      slackUserLinkId = await createSlackUserLink(client, {
         slackTeamId,
         slackUserId,
         workspaceMemberId,
@@ -261,6 +275,7 @@ export const slackSetUserLinkHandler = async (
     slackTeamId,
     slackUserId,
     workspaceMemberId,
+    slackUserLinkId,
     memberName,
   });
 

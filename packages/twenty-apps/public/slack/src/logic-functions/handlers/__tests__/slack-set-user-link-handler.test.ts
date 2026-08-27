@@ -90,6 +90,7 @@ describe('slackSetUserLinkHandler', () => {
     });
     authTestMock.mockResolvedValue({ team_id: INSTALLED_TEAM_ID });
     findSlackUserLinkMock.mockResolvedValue(undefined);
+    createSlackUserLinkMock.mockResolvedValue('link-new');
     fetchSlackUserIdentityMock.mockResolvedValue(undefined);
     findWorkspaceMemberNameByIdMock.mockResolvedValue('Ada Member');
     sendSlackUserLinkConsentDmMock.mockResolvedValue({ success: true });
@@ -163,6 +164,7 @@ describe('slackSetUserLinkHandler', () => {
         slackUserId: INPUT.slackUserId,
         slackTeamId: INSTALLED_TEAM_ID,
         workspaceMemberId: INPUT.workspaceMemberId,
+        slackUserLinkId: 'link-new',
         memberName: 'Ada Member',
       }),
     );
@@ -199,6 +201,20 @@ describe('slackSetUserLinkHandler', () => {
         consentState: 'ADMIN_SET',
       }),
     );
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
+  it('should fail closed when the installed workspace cannot be verified', async () => {
+    authTestMock.mockResolvedValue({});
+
+    const result = await slackSetUserLinkHandler({
+      ...INPUT,
+      slackTeamId: 'T9876543210',
+    });
+
+    expect(result.success).toBe(false);
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
     expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
   });
 

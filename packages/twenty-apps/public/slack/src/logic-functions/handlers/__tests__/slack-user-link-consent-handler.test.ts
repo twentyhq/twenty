@@ -34,7 +34,12 @@ vi.mock('src/logic-functions/utils/update-slack-message-via-response-url', () =>
 
 const buildPayload = (
   decision: 'APPROVE' | 'DECLINE',
-  overrides: { userId?: string; teamId?: string; workspaceMemberId?: string } = {},
+  overrides: {
+    userId?: string;
+    teamId?: string;
+    workspaceMemberId?: string;
+    slackUserLinkId?: string;
+  } = {},
 ): SlackInteractivityPayload => ({
   type: 'block_actions',
   team: { id: overrides.teamId ?? 'T1' },
@@ -49,6 +54,7 @@ const buildPayload = (
         slackTeamId: 'T1',
         slackUserId: 'U1',
         workspaceMemberId: overrides.workspaceMemberId ?? 'member-1',
+        slackUserLinkId: overrides.slackUserLinkId ?? 'link-1',
       }),
     },
   ],
@@ -97,6 +103,15 @@ describe('slackUserLinkConsentHandler', () => {
   it('should ignore a decision that targets a superseded member assignment', async () => {
     const result = await slackUserLinkConsentHandler(
       buildPayload('APPROVE', { workspaceMemberId: 'member-old' }),
+    );
+
+    expect(result).toMatchObject({ skipped: true });
+    expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
+  });
+
+  it('should ignore a decision whose link was deleted and recreated with a new id', async () => {
+    const result = await slackUserLinkConsentHandler(
+      buildPayload('APPROVE', { slackUserLinkId: 'link-old' }),
     );
 
     expect(result).toMatchObject({ skipped: true });

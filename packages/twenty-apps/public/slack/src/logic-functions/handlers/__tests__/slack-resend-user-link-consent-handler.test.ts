@@ -125,9 +125,22 @@ describe('slackResendUserLinkConsentHandler', () => {
         slackTeamId: 'T1',
         slackUserId: 'U1',
         workspaceMemberId: 'member-1',
+        slackUserLinkId: 'link-1',
         memberName: 'Ada Member',
       }),
     );
+  });
+
+  it('should fail with a structured error when the link lookup throws', async () => {
+    findSlackUserLinkMock.mockRejectedValue(new Error('GraphQL error'));
+
+    const result = await slackResendUserLinkConsentHandler(
+      buildPayload(PENDING_BODY),
+    );
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('GraphQL error');
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
   });
 
   it('should fail when the pending link has no workspace member assigned', async () => {

@@ -5,4 +5,5 @@ export type SlackUserLinkConsentButtonValue = {
   slackTeamId: string;
   slackUserId: string;
   workspaceMemberId: string;
+  slackUserLinkId: string;
 };

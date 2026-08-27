@@ -74,13 +74,17 @@ export const slackUserLinkConsentHandler = async (
     };
   }
 
-  // The button carries the member the DM described. If an admin has since
-  // re-pointed the link at a different member, a stale DM must not activate the
-  // new assignment the user never saw.
-  if (link.workspaceMemberId !== buttonValue.workspaceMemberId) {
+  // The button carries the exact record and member the DM described. A link is
+  // keyed only by (team, user), so a delete-and-recreate reuses that tuple with
+  // a new id, and an in-place re-point keeps the id but changes the member;
+  // either way a stale DM must not activate a record the user never saw.
+  if (
+    link.id !== buttonValue.slackUserLinkId ||
+    link.workspaceMemberId !== buttonValue.workspaceMemberId
+  ) {
     return {
       skipped: true,
-      reason: 'Consent decision targets a superseded link assignment',
+      reason: 'Consent decision targets a superseded link',
     };
   }
 

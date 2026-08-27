@@ -11,6 +11,7 @@ describe('parseSlackUserLinkConsentButtonValue', () => {
           slackTeamId: 'T1',
           slackUserId: 'U1',
           workspaceMemberId: 'member-1',
+          slackUserLinkId: 'link-1',
         }),
       ),
     ).toEqual({
@@ -18,6 +19,7 @@ describe('parseSlackUserLinkConsentButtonValue', () => {
       slackTeamId: 'T1',
       slackUserId: 'U1',
       workspaceMemberId: 'member-1',
+      slackUserLinkId: 'link-1',
     });
   });
 
@@ -28,6 +30,20 @@ describe('parseSlackUserLinkConsentButtonValue', () => {
           decision: 'APPROVE',
           slackTeamId: 'T1',
           slackUserId: 'U1',
+          slackUserLinkId: 'link-1',
+        }),
+      ),
+    ).toBeUndefined();
+  });
+
+  it('should return undefined when the link id is missing', () => {
+    expect(
+      parseSlackUserLinkConsentButtonValue(
+        JSON.stringify({
+          decision: 'APPROVE',
+          slackTeamId: 'T1',
+          slackUserId: 'U1',
+          workspaceMemberId: 'member-1',
         }),
       ),
     ).toBeUndefined();

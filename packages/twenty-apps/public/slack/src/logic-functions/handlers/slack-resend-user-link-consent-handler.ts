@@ -50,10 +50,17 @@ export const slackResendUserLinkConsentHandler = async (
 
   const client = new CoreApiClient({ runAs: 'application' });
 
-  const link = await findSlackUserLink(client, {
-    slackTeamId,
-    slackUserId,
-  }).catch(() => undefined);
+  let link;
+
+  try {
+    link = await findSlackUserLink(client, { slackTeamId, slackUserId });
+  } catch (error) {
+    return {
+      success: false,
+      message: 'Could not look up the link',
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
 
   if (!isDefined(link)) {
     return {
@@ -98,6 +105,7 @@ export const slackResendUserLinkConsentHandler = async (
     slackTeamId,
     slackUserId,
     workspaceMemberId: link.workspaceMemberId,
+    slackUserLinkId: link.id,
     memberName,
   });
 
