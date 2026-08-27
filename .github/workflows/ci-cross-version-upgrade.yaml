@@ -51,8 +51,6 @@ jobs:
 
   cross-version-upgrade:
     if: format('{0}', inputs.skip) != 'true'
-    # 60 so the deterministic phases plus the QA Scout's 15-minute step cap
-    # fit without the job ceiling killing a step mid-flight.
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
@@ -253,8 +251,6 @@ jobs:
           exit 1
 
       - name: Server / Start worker
-        # Async side effects (timeline writes among them) only exist with a
-        # worker running; the 2.35 searchVector incident lived exactly there.
         run: |
           npx nx run twenty-server:worker > upgrade-logs/twenty-worker.log 2>&1 &
           echo "Worker started"
@@ -292,9 +288,6 @@ jobs:
             || { echo "FAIL: Some workspaces are behind or failed"; exit 1; }
 
       - name: Smoke / Upgrade idempotency re-run
-        # UPGRADE_COMMANDS.md mandates idempotent commands but nothing tested
-        # it until now; the moment a command ever executes twice for real, this
-        # property is load-bearing. A second run must succeed and stay clean.
         run: |
           npx nx run twenty-server:command-no-deps -- upgrade --verbose
           RAW=$(FORCE_COLOR=0 NO_COLOR=1 npx nx run twenty-server:command-no-deps -- upgrade:status 2>&1)
@@ -350,15 +343,6 @@ jobs:
       # ================================================================
       # Phase 3.5 — QA Scout (upgrade mode)
       # ================================================================
-      # Agent QA of the PR's upgrade command against the v1.22-upgraded
-      # database (.claude/skills/qa-scout/SKILL.md, upgrade mode): schema
-      # attested over psql against the entity sources, write flows over
-      # GraphQL, worker log window diffed. No browser here: this is a blocking
-      # pre-merge gate and the bug class is backend; browser coverage lives in
-      # the post-merge e2e habitat. Shadow-safe: continue-on-error everywhere,
-      # so only the deterministic phases above can redden this check. Runs
-      # after the phases succeeded (a red gate is already the signal).
-
       - name: QA Scout / Prepare upgrade context
         id: qa-scout-prep
         if: >-
@@ -368,8 +352,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          # secrets are unavailable to fork runs and to callers that do not
-          # inherit them; the Scout skips loudly instead of failing the action.
           HAS_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
         run: |
           mkdir -p /tmp/qa-scout/context /tmp/qa-scout/output /tmp/qa-scout/bin
@@ -391,9 +373,6 @@ jobs:
           fi
           rm -f /tmp/qa-scout/context/pr.diff.full
           echo "upgrade" > /tmp/qa-scout/context/mode
-          # Disposable app credential (minted by the smoke phase, dead with the
-          # run); handed to the agent through the gql wrapper, deleted before
-          # any artifact upload.
           printf '%s' "$API_KEY" > /tmp/qa-scout/context/api_token
           chmod 600 /tmp/qa-scout/context/api_token
           cat > /tmp/qa-scout/bin/gql <<'SCRIPT'
@@ -415,12 +394,6 @@ jobs:
           ln -sf "$GITHUB_WORKSPACE/upgrade-logs/twenty-worker.log" /tmp/qa-scout/worker.log
           echo "run=true" >> "$GITHUB_OUTPUT"
 
-      # Same privilege model as the e2e Scout: read-only GitHub token, no
-      # write capability anywhere. The allowlist scopes rather than contains
-      # (psql is deliberately full power against the disposable database);
-      # gql is the prepare-authored wrapper pinned to the local GraphQL
-      # endpoints, so the agent has a write path into the app without an
-      # open curl.
       - name: QA Scout / Run
         id: qa-scout-run
         if: ${{ steps.qa-scout-prep.outputs.run == 'true' }}
@@ -429,9 +402,6 @@ jobs:
         uses: anthropics/claude-code-action@ac7e24bf2938964b8ab203e417a2773802392ddd # v1.0.146
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          # The action needs a GitHub token to bootstrap; the workflow token
-          # is contents:read only, so the agent still holds no write
-          # capability.
           github_token: ${{ github.token }}
           prompt: |
             Read .claude/skills/qa-scout/SKILL.md and follow it exactly, in
@@ -439,9 +409,6 @@ jobs:
             in the skill's Upgrade mode section apply verbatim.
           claude_args: '--max-turns 80 --model opus --allowedTools "Read,Grep,Glob,Write,Bash(cat *),Bash(tail *),Bash(head *),Bash(wc *),Bash(ls *),Bash(grep *),Bash(jq *),Bash(mkdir *),Bash(sleep *),Bash(date *),Bash(psql *),Bash(/tmp/qa-scout/bin/gql *)"'
 
-      # The agent process necessarily holds the inference credential; redact
-      # its token shape from everything both artifacts ship, in the trusted
-      # lane, and drop the app credential entirely.
       - name: QA Scout / Scrub outputs
         if: ${{ steps.qa-scout-prep.outputs.run == 'true' }}
         continue-on-error: true
