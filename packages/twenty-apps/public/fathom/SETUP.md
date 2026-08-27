@@ -8,6 +8,21 @@ Follow these steps to get your app running locally.
 - Yarn 4
 - Docker (to run the local Twenty server)
 - A Fathom OAuth client
+- A public HTTPS URL forwarding to the local Twenty server
+
+Register this OAuth callback in Fathom:
+
+```text
+https://<development-host>/auth/apps/callback
+```
+
+Configure Twenty's `TWENTY_FUNCTIONS_URL` with the public functions base URL,
+including its path when present, for example `https://<development-host>/s`.
+The connection hook registers this destination automatically:
+
+```text
+https://<development-host>/s/webhook/fathom?connectionId=<connected-account-id>
+```
 
 ## Steps
 
@@ -35,7 +50,8 @@ Follow these steps to get your app running locally.
    ```
 
 5. Open [http://localhost:2020](http://localhost:2020), log in with the default
-   development credentials, and connect Fathom from Settings.
+   development credentials, and connect Fathom from Settings. The connection
+   hook registers the signed webhook.
 
 ## Verifying your setup
 
