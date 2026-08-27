@@ -207,18 +207,6 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
             your workspace.
           </StyledHint>
         </StyledField>
-        <StyledField>
-          <StyledLabel htmlFor="slack-display-name">
-            Display name (optional)
-          </StyledLabel>
-          <SlackUserLinkTextInput
-            id="slack-display-name"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder="Ada Lovelace"
-            disabled={isSubmitting}
-          />
-        </StyledField>
         {isConnectUser ? (
           <>
             <StyledField>
@@ -266,14 +254,8 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
             Guest or Slack Connect user? Link by Slack ID instead
           </StyledDisclosureButton>
         )}
-        {resolvedUser !== null && (
-          <SlackUserLinkConfirmCard
-            resolvedUser={resolvedUser}
-            selectedMemberEmail={selectedMember?.userEmail ?? undefined}
-          />
-        )}
-        <StyledActions>
-          {resolvedUser === null ? (
+        {resolvedUser === null ? (
+          <StyledActions>
             <Button
               type="button"
               title={isResolving ? 'Finding…' : 'Find Slack user'}
@@ -281,16 +263,34 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
               disabled={!canResolve}
               onClick={handleResolve}
             />
-          ) : (
-            <Button
-              type="button"
-              title={isSubmitting ? 'Saving…' : 'Save link'}
-              variant="primary"
-              accent="blue"
-              disabled={!canSubmit}
-              onClick={handleSubmit}
-            />
-          )}
+          </StyledActions>
+        ) : (
+          <SlackUserLinkConfirmCard
+            resolvedUser={resolvedUser}
+            selectedMemberEmail={selectedMember?.userEmail ?? undefined}
+          />
+        )}
+        <StyledField>
+          <StyledLabel htmlFor="slack-display-name">
+            Display name (optional)
+          </StyledLabel>
+          <SlackUserLinkTextInput
+            id="slack-display-name"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            placeholder={resolvedUser?.displayName ?? 'Ada Lovelace'}
+            disabled={isSubmitting}
+          />
+        </StyledField>
+        <StyledActions>
+          <Button
+            type="button"
+            title={isSubmitting ? 'Saving…' : 'Save link'}
+            variant="primary"
+            accent="blue"
+            disabled={!canSubmit}
+            onClick={handleSubmit}
+          />
         </StyledActions>
       </StyledForm>
     </Section>
