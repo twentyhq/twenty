@@ -27,9 +27,9 @@ export const RecordIdentifierBarCreatedAt = ({
   const recordCreatedAt = useAtomFamilySelectorValue(
     recordStoreFamilySelector,
     { recordId: objectRecordId, fieldName: 'createdAt' },
-  ) as string | null;
+  );
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
-  const instanceId = useId();
+  const instanceId = useId().replace(/:/g, '');
 
   if (!isNonEmptyString(recordCreatedAt)) {
     return null;

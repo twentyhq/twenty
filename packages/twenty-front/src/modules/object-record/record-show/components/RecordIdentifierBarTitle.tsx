@@ -17,13 +17,11 @@ const StyledFileInput = styled.input`
 type RecordIdentifierBarTitleProps = {
   objectNameSingular: string;
   objectRecordId: string;
-  variant?: 'record-page' | 'side-panel';
 };
 
 export const RecordIdentifierBarTitle = ({
   objectNameSingular,
   objectRecordId,
-  variant = 'record-page',
 }: RecordIdentifierBarTitleProps) => {
   const { recordIdentifier, onUploadPicture, titleFieldContextValue } =
     useRecordIdentifierTitle({
@@ -40,17 +38,12 @@ export const RecordIdentifierBarTitle = ({
   };
 
   const isAvatarEditable = isDefined(onUploadPicture);
-  const isInSidePanel = variant === 'side-panel';
 
   const title = (
     <FieldContext.Provider value={titleFieldContextValue}>
       <RecordTitleCell
         sizeVariant="sm"
-        containerType={
-          isInSidePanel
-            ? RecordTitleCellContainerType.PageHeader
-            : RecordTitleCellContainerType.ShowPage
-        }
+        containerType={RecordTitleCellContainerType.PageHeader}
       />
     </FieldContext.Provider>
   );
@@ -58,7 +51,7 @@ export const RecordIdentifierBarTitle = ({
   return (
     <>
       <HeaderIdentifier
-        fontSize={isInSidePanel ? 'md' : 'lg'}
+        fontSize="md"
         avatar={{
           avatarUrl: getAbsoluteImageUrl(recordIdentifier?.avatarUrl ?? ''),
           onClick: isAvatarEditable
@@ -71,7 +64,7 @@ export const RecordIdentifierBarTitle = ({
         title={
           // A writable title has to stay click-to-edit, so only a read-only one
           // can double as a link to the record page.
-          isInSidePanel && titleFieldContextValue.isRecordFieldReadOnly ? (
+          titleFieldContextValue.isRecordFieldReadOnly ? (
             <UndecoratedLink
               to={getAppPath(AppPath.RecordShowPage, {
                 objectNameSingular,
