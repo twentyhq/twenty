@@ -12,7 +12,7 @@ import {
   toSaveBody,
   type CaseStudyRow,
 } from './my-case-studies/case-study-rows';
-import { COLORS, FONT } from './my-profile/form-fields';
+import { COLORS, FONT } from 'src/modules/shared/front-components/palette';
 import type { MyProfilePayload, SaveContentResult } from './my-profile/types';
 
 type LoadResult = { ok: true; profile: MyProfilePayload } | { ok: false; reason: string };

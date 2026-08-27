@@ -1,10 +1,8 @@
-import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { useGetIsMetadataItemFromStandardApplication } from '@/object-metadata/hooks/useGetIsMetadataItemFromStandardApplication';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
-import { isActivityTargetField } from '@/object-record/record-field-list/utils/categorizeRelationFields';
 import {
   FieldContext,
   type RecordUpdateHook,
@@ -14,16 +12,12 @@ import { isJunctionRelationForbidden } from '@/object-record/record-field/ui/uti
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
-import {
-  type CoreObjectNameSingular,
-  type ObjectPermissions,
-} from 'twenty-shared/types';
+import { type ObjectPermissions } from 'twenty-shared/types';
 
 type FieldsWidgetFieldItemProps = {
   fieldMetadataItem: FieldMetadataItem;
   globalIndex: number;
   recordId: string;
-  targetObjectNameSingular: string;
   objectMetadataItem: EnrichedObjectMetadataItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
   objectPermissionsByObjectMetadataId: Record<
@@ -41,7 +35,6 @@ export const FieldsWidgetFieldItem = ({
   fieldMetadataItem,
   globalIndex,
   recordId,
-  targetObjectNameSingular,
   objectMetadataItem,
   objectMetadataItems,
   objectPermissionsByObjectMetadataId,
@@ -53,11 +46,6 @@ export const FieldsWidgetFieldItem = ({
 }: FieldsWidgetFieldItemProps) => {
   const getIsMetadataItemFromStandardApplication =
     useGetIsMetadataItemFromStandardApplication();
-
-  const isActivityTarget = isActivityTargetField(
-    fieldMetadataItem.name,
-    targetObjectNameSingular,
-  );
 
   const fieldDefinition = formatFieldMetadataItemAsColumnDefinition({
     field: fieldMetadataItem,
@@ -107,35 +95,17 @@ export const FieldsWidgetFieldItem = ({
         }),
       }}
     >
-      {isActivityTarget ? (
-        <ActivityTargetsInlineCell
-          componentInstanceId={getRecordFieldInputInstanceId({
+      <RecordFieldComponentInstanceContext.Provider
+        value={{
+          instanceId: getRecordFieldInputInstanceId({
             recordId,
             fieldName: fieldMetadataItem.name,
             prefix: instanceId,
-          })}
-          activityObjectNameSingular={
-            targetObjectNameSingular as
-              | CoreObjectNameSingular.Note
-              | CoreObjectNameSingular.Task
-          }
-          activityRecordId={recordId}
-          showLabel={true}
-          maxWidth={200}
-        />
-      ) : (
-        <RecordFieldComponentInstanceContext.Provider
-          value={{
-            instanceId: getRecordFieldInputInstanceId({
-              recordId,
-              fieldName: fieldMetadataItem.name,
-              prefix: instanceId,
-            }),
-          }}
-        >
-          <RecordInlineCell loading={recordLoading} />
-        </RecordFieldComponentInstanceContext.Provider>
-      )}
+          }),
+        }}
+      >
+        <RecordInlineCell loading={recordLoading} />
+      </RecordFieldComponentInstanceContext.Provider>
     </FieldContext.Provider>
   );
 };

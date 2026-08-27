@@ -22,11 +22,13 @@ const StyledLabel = styled.span`
 
 export const SettingsApplicationVariableLabelRow = ({
   variableKey,
+  label,
   isDeprecated,
   description,
   tooltipId,
 }: {
   variableKey: string;
+  label?: string;
   isDeprecated: boolean;
   description: string;
   tooltipId: string;
@@ -36,7 +38,7 @@ export const SettingsApplicationVariableLabelRow = ({
 
   return (
     <StyledLabelRow>
-      <StyledLabel>{variableKey}</StyledLabel>
+      <StyledLabel>{isNonEmptyString(label) ? label : variableKey}</StyledLabel>
       {isDeprecated && <Pill label={t`Deprecated`} />}
       {isNonEmptyString(description) && (
         <>

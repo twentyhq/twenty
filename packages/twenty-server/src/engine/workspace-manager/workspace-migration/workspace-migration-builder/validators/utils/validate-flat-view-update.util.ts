@@ -1,6 +1,6 @@
 import { msg, t } from '@lingui/core/macro';
 import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { FeatureFlagKey, ViewType } from 'twenty-shared/types';
+import { ViewType } from 'twenty-shared/types';
 import { getViewLayoutFromViewType, isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -19,7 +19,6 @@ export const validateFlatViewUpdate = ({
     flatViewMaps: optimisticFlatViewMaps,
     flatFieldMetadataMaps,
   },
-  additionalCacheDataMaps: { featureFlagsMap },
 }: FlatEntityUpdateValidationArgs<
   typeof ALL_METADATA_NAME.view
 >): FailedFlatEntityValidation<'view', 'update'> => {
@@ -151,8 +150,6 @@ export const validateFlatViewUpdate = ({
     ...validateFlatViewCalendarFields({
       flatView: updatedFlatView,
       flatFieldMetadataMaps,
-      isCalendarWeekViewEnabled:
-        featureFlagsMap[FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED],
     }),
   );
 

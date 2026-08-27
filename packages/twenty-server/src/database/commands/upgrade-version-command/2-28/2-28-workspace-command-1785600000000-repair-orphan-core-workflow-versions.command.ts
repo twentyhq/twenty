@@ -6,7 +6,7 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -28,7 +28,7 @@ export class RepairOrphanCoreWorkflowVersionsCommand extends ProvisionedWorkspac
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {
     super(workspaceIteratorService);
   }
@@ -47,10 +47,10 @@ export class RepairOrphanCoreWorkflowVersionsCommand extends ProvisionedWorkspac
       // means it was never provisioned, so there is nothing to repair and the
       // orphan query below would fail to resolve its schema table. Skip cleanly
       // like the sibling backfill commands rather than aborting the upgrade.
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      await this.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const workflowVersionRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion',
+            this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion',
               { shouldBypassPermissionChecks: true },
             );
 

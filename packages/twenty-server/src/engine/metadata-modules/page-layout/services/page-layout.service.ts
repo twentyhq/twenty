@@ -24,7 +24,7 @@ import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata
 import { CreatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout.input';
 import { UpdatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout.input';
 import { type PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { PageLayoutType } from 'twenty-shared/types';
 import {
   PageLayoutException,
   PageLayoutExceptionCode,
@@ -36,7 +36,7 @@ import { fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto } from 'src/engine/
 import { type MetadataCursorPage } from 'src/engine/metadata-modules/pagination/types/metadata-cursor-page.type';
 import { type MetadataCursorPagination } from 'src/engine/metadata-modules/pagination/types/metadata-cursor-pagination.type';
 import { paginateMetadataOrderedItems } from 'src/engine/metadata-modules/pagination/utils/paginate-metadata-ordered-items.util';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -45,7 +45,7 @@ import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashbo
 @Injectable()
 export class PageLayoutService {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
@@ -561,11 +561,13 @@ export class PageLayoutService {
   }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const dashboardRepository =
-        await this.globalWorkspaceOrmManager.getRepository('dashboard', {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const dashboardRepository = this.workspaceOrmManager.getRepository(
+        'dashboard',
+        {
           shouldBypassPermissionChecks: true,
-        });
+        },
+      );
 
       const dashboards = await dashboardRepository.find({
         where: {

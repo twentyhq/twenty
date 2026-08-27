@@ -14,7 +14,7 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { fetchImageWithTypeFromUrl } from 'src/utils/image';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -35,7 +35,7 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ProvisionedWorksp
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly filesFieldService: FilesFieldService,
     private readonly secureHttpClientService: SecureHttpClientService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {
     super(workspaceIteratorService);
   }
@@ -91,7 +91,7 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ProvisionedWorksp
     }
 
     const personRepository =
-      await this.globalWorkspaceOrmManager.getRepository<PersonWorkspaceEntity>('person',
+      this.workspaceOrmManager.getRepository<PersonWorkspaceEntity>('person',
         { shouldBypassPermissionChecks: true },
       );
 

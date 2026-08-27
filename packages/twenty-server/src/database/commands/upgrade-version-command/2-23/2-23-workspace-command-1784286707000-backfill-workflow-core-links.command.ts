@@ -7,7 +7,7 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
@@ -26,7 +26,7 @@ import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standa
 export class BackfillWorkflowCoreLinksCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {
     super(workspaceIteratorService);
   }
@@ -48,10 +48,10 @@ export class BackfillWorkflowCoreLinksCommand extends ProvisionedWorkspaceComman
 
     try {
       workspaceWorkflows =
-        await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        await this.workspaceOrmManager.executeInWorkspaceContext(
           async () => {
             const workflowRepository =
-              await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>('workflow',
+              this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>('workflow',
                 { shouldBypassPermissionChecks: true },
               );
 

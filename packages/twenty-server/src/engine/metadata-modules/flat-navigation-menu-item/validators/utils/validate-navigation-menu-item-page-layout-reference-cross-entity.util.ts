@@ -1,10 +1,9 @@
 import { msg, t } from '@lingui/core/macro';
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import { NavigationMenuItemType, PageLayoutType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
   type OrchestratorActionsReport,
   type OrchestratorFailureReport,
