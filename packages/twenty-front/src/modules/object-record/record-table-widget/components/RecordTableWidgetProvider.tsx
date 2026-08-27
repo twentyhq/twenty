@@ -8,6 +8,7 @@ import { RecordIndexContextProvider } from '@/object-record/record-index/context
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { RecordTableWidgetContextStoreInitEffect } from '@/object-record/record-table-widget/components/RecordTableWidgetContextStoreInitEffect';
 import { RecordTableWidgetViewLoadEffect } from '@/object-record/record-table-widget/components/RecordTableWidgetViewLoadEffect';
+import { MISSING_RECORD_TABLE_WIDGET_PAGE_LAYOUT_ID } from '@/object-record/record-table-widget/constants/MissingRecordTableWidgetPageLayoutId';
 import {
   RecordTableWidgetContext,
   type RecordTableWidgetNestedRelationCreateThrough,
@@ -33,9 +34,6 @@ type RecordTableWidgetProviderProps = PropsWithChildren<{
   contextStoreViewType?: ContextStoreViewType;
   nestedRelationCreateThrough?: RecordTableWidgetNestedRelationCreateThrough;
 }>;
-
-const MISSING_RECORD_TABLE_WIDGET_PAGE_LAYOUT_ID =
-  '__missing_record_table_widget_page_layout__';
 
 export const RecordTableWidgetProvider = ({
   objectNameSingular,

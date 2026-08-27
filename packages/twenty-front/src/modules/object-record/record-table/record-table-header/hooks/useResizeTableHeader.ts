@@ -192,17 +192,15 @@ export const useResizeTableHeader = () => {
         size: nextWidth,
       });
 
-      if (isDefined(recordTableWidgetContext)) {
-        if (
-          recordTableWidgetContext.isPageLayoutInEditMode &&
-          isDefined(recordTableWidgetContext.pageLayoutId)
-        ) {
-          recordTableWidgetContext.updateViewDraftField(updatedRecordField.id, {
-            size: nextWidth,
-          });
-        }
-      } else {
+      if (!isDefined(recordTableWidgetContext)) {
         saveRecordFields([updatedRecordField]);
+      } else if (
+        recordTableWidgetContext.isPageLayoutInEditMode &&
+        isDefined(recordTableWidgetContext.pageLayoutId)
+      ) {
+        recordTableWidgetContext.updateViewDraftField(updatedRecordField.id, {
+          size: nextWidth,
+        });
       }
     }
 

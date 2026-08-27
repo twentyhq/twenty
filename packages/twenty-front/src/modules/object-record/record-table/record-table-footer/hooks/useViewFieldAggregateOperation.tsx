@@ -2,6 +2,7 @@ import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
+import { MISSING_RECORD_TABLE_WIDGET_PAGE_LAYOUT_ID } from '@/object-record/record-table-widget/constants/MissingRecordTableWidgetPageLayoutId';
 import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { constructViewFromRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/constructViewFromRecordTableWidgetViewSnapshot';
@@ -11,9 +12,6 @@ import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerform
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-
-const MISSING_RECORD_TABLE_WIDGET_PAGE_LAYOUT_ID =
-  '__missing_record_table_widget_page_layout__';
 
 export const useViewFieldAggregateOperation = () => {
   const { fieldMetadataId } = useContext(

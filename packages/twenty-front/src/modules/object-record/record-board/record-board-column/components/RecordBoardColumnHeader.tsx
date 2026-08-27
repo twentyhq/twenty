@@ -19,6 +19,7 @@ import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
+import { useIsRecordTableWidgetAggregateNonInteractive } from '@/object-record/record-table-widget/hooks/useIsRecordTableWidgetAggregateNonInteractive';
 import { isRecordBoardCellsNonEditableComponentState } from '@/object-record/record-board/states/isRecordBoardCellsNonEditableComponentState';
 import { isRecordBoardViewSettingsReadOnlyComponentState } from '@/object-record/record-board/states/isRecordBoardViewSettingsReadOnlyComponentState';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
@@ -167,8 +168,7 @@ export const RecordBoardColumnHeader = () => {
     });
 
   const isAggregateDropdownNonInteractive =
-    isDefined(recordTableWidgetContext) &&
-    !recordTableWidgetContext.isPageLayoutInEditMode;
+    useIsRecordTableWidgetAggregateNonInteractive() ?? false;
 
   const isColumnResizable = isDefined(recordTableWidgetContext)
     ? recordTableWidgetContext.isPageLayoutInEditMode
