@@ -129,20 +129,32 @@ export const slackSetUserLinkHandler = async (
     resolvedName = resolvedName ?? resolvedUser.displayName;
   }
 
-  // A Slack user id given without a team id (e.g. straight from the agent tool)
-  // may belong to another workspace. Resolve their real team so a cross-workspace
-  // user is not misread as in-workspace and pushed into a consent DM we cannot
-  // deliver, instead of being admin-set.
-  if (isNonEmptyString(slackUserId) && !isNonEmptyString(slackTeamId)) {
+  // A Slack user id supplied directly (e.g. from the agent tool) may belong to
+  // another workspace, so resolve their real team before deciding on consent. If
+  // that lookup fails we cannot tell an in-workspace user from a cross-workspace
+  // one, so fail closed rather than assume the installed workspace and send a
+  // consent DM we cannot deliver. An email-resolved user is, by definition, in
+  // the installed workspace, so the installed-team fallback below is safe there.
+  if (
+    isNonEmptyString(requestedSlackUserId) &&
+    !isNonEmptyString(requestedSlackTeamId)
+  ) {
     const identity = await fetchSlackUserIdentity({
       client: slackClient,
       slackUserId,
     });
 
-    if (isDefined(identity)) {
-      slackTeamId = identity.slackTeamId;
-      resolvedName = resolvedName ?? identity.displayName;
+    if (!isDefined(identity)) {
+      return {
+        success: false,
+        message: 'Could not resolve the Slack workspace',
+        error:
+          'Could not determine which Slack workspace this user belongs to. Provide their Slack team id and try again.',
+      };
     }
+
+    slackTeamId = identity.slackTeamId;
+    resolvedName = resolvedName ?? identity.displayName;
   }
 
   const installedTeamId = await getInstalledSlackTeamId(slackClient);

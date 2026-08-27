@@ -91,7 +91,13 @@ describe('slackSetUserLinkHandler', () => {
     authTestMock.mockResolvedValue({ team_id: INSTALLED_TEAM_ID });
     findSlackUserLinkMock.mockResolvedValue(undefined);
     createSlackUserLinkMock.mockResolvedValue('link-new');
-    fetchSlackUserIdentityMock.mockResolvedValue(undefined);
+    // A directly-supplied id resolves to the installed team by default (a normal
+    // in-workspace user); tests override this for cross-workspace or failure.
+    fetchSlackUserIdentityMock.mockResolvedValue({
+      slackUserId: INPUT.slackUserId,
+      slackTeamId: INSTALLED_TEAM_ID,
+      displayName: undefined,
+    });
     findWorkspaceMemberNameByIdMock.mockResolvedValue('Ada Member');
     sendSlackUserLinkConsentDmMock.mockResolvedValue({ success: true });
   });
@@ -211,6 +217,17 @@ describe('slackSetUserLinkHandler', () => {
       ...INPUT,
       slackTeamId: 'T9876543210',
     });
+
+    expect(result.success).toBe(false);
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
+  it('should fail closed when an id-only user cannot be resolved to a workspace', async () => {
+    fetchSlackUserIdentityMock.mockResolvedValue(undefined);
+
+    const result = await slackSetUserLinkHandler(INPUT);
 
     expect(result.success).toBe(false);
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
