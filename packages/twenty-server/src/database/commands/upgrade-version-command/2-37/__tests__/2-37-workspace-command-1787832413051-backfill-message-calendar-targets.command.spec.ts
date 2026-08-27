@@ -1,5 +1,5 @@
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { BackfillMessageCalendarTargetsCommand } from 'src/database/commands/upgrade-version-command/2-36/2-36-workspace-command-1787822579321-backfill-message-calendar-targets.command';
+import { BackfillMessageCalendarTargetsCommand } from 'src/database/commands/upgrade-version-command/2-37/2-37-workspace-command-1787832413051-backfill-message-calendar-targets.command';
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
 
