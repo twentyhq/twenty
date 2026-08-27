@@ -10,11 +10,9 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
-import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
 import { CALENDAR_EVENT_IMPORT_BATCH_SIZE } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-event-import-batch-size';
 import {
@@ -38,8 +36,7 @@ export class CalendarEventsImportService {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.ModuleCalendar)
     private readonly cacheStorage: CacheStorageService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly blocklistRepository: BlocklistRepository,
     private readonly calendarEventCleanerService: CalendarEventCleanerService,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
@@ -63,7 +60,7 @@ export class CalendarEventsImportService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         try {
           const eventIdsToFetch: string[] = await this.cacheStorage.setPop(
@@ -94,8 +91,7 @@ export class CalendarEventsImportService {
           });
 
           const workspaceMemberRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              workspaceId,
+            this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
               'workspaceMember',
               { shouldBypassPermissionChecks: true },
             );
@@ -155,8 +151,7 @@ export class CalendarEventsImportService {
             );
           }
           const calendarChannelEventAssociationRepository =
-            await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
-              workspaceId,
+            this.workspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
               'calendarChannelEventAssociation',
             );
 

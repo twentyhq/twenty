@@ -333,6 +333,8 @@ export default defineLogicFunction({
 
 To call app HTTP routes or read and write Twenty records from a front component, use `RestApiClient` from `twenty-client-sdk/rest`. It sends `/s/...` paths to your workspace's functions base URL and every other path, including `/rest/...`, to `TWENTY_API_URL`.
 
+It always acts as the person looking at the page. `runAs: 'application'` is a logic-function option only: a component never receives your application's own token, so asking for it here throws. Put work that needs the app's own access behind a logic function and call that instead.
+
 | Method | Description |
 |--------|-------------|
 | `get(path, options?)` | Sends a `GET` request |
@@ -413,6 +415,7 @@ Available hooks:
 | `useSelectedRecordIds()` | `string[]` | All selected record IDs (empty array if none selected) |
 | `useRecordId()` | `string` or `null` | **Deprecated.** Use `useSelectedRecordIds()` instead |
 | `useFrontComponentId()` | `string` | This component instance's ID |
+| `useTimelineActivityId()` | `string` or `null` | The current timeline activity ID when rendering a custom timeline row |
 | `useColorScheme()` | `'light'` or `'dark'` | The host UI's active color scheme (`System` is already resolved) |
 | `useFrontComponentExecutionContext(selector)` | varies | Access the full execution context with a selector function |
 
@@ -448,7 +451,7 @@ The following system variables are always available via `process.env`:
 | Variable | Description |
 |----------|-------------|
 | `TWENTY_API_URL` | Base URL of the Twenty core API |
-| `TWENTY_APP_ACCESS_TOKEN` | Short-lived token scoped to your app's role |
+| `TWENTY_APP_ACCESS_TOKEN` | Short-lived token scoped to the signed-in person's role intersected with your app's, so a component can never do more than the person looking at it |
 
 ### `TWENTY_FUNCTIONS_URL`
 

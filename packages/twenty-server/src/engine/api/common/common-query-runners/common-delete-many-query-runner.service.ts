@@ -41,7 +41,6 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const {
       authContext,
       rolePermissionConfig,
-      workspaceDataSource,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatObjectMetadata,
@@ -74,10 +73,9 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
         >,
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext,
-        workspaceDataSource,
         rolePermissionConfig,
         selectedFields: args.selectedFieldsResult.select,
-        ...this.getNestedRelationsReadPathOptions(queryRunnerContext),
+        ...this.getNestedRelationsReadPathOptions(),
       });
     }
 

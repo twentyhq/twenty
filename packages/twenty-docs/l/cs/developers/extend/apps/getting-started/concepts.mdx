@@ -54,9 +54,9 @@ your-app/
 
 ## Izolace (sandboxing)
 
-* **Logické funkce** běží v izolovaných procesech Node.js na serveru. K datům přistupují pouze prostřednictvím typovaného klienta API, a to v rozsahu oprávnění role aplikace.
+* **Logické funkce** běží v izolovaných procesech Node.js na serveru. K datům přistupují pouze prostřednictvím typovaného klienta API, který vystupuje buď jako osoba, jež spuštění vyvolala, nebo jako samotná aplikace. Viz [čí přístup volání používá](/l/cs/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 * **Frontendové komponenty** běží ve Web Workerech s využitím Remote DOM — jsou oddělené od hlavní stránky, ale vykreslují nativní prvky DOM (nikoli iframy). Komunikují s Twenty prostřednictvím hostitelského API pro předávání zpráv.
-* **Oprávnění** jsou vynucována na úrovni API. Běhový token (`TWENTY_APP_ACCESS_TOKEN`) je odvozen z role definované v `defineApplication()`.
+* **Oprávnění** jsou vynucována na úrovni API. Vkládají se dva tokeny běhového prostředí, oba odvozené z role deklarované pomocí `defineApplicationRole()`; výchozí token je dále omezen na to, co může provést osoba, která spuštění vyvolala, kdykoli za spuštěním stojí nějaká osoba.
 
 ## Životní cyklus aplikace
 

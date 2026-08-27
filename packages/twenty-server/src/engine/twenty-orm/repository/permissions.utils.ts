@@ -6,13 +6,11 @@ import {
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type QueryExpressionMap } from 'typeorm/query-builder/QueryExpressionMap';
 
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { extractColumnNamesFromAggregateExpression } from 'src/utils/extract-column-names-from-aggregate-expression.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   PermissionsException,
@@ -25,43 +23,6 @@ import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/g
 
 const WORKSPACE_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.workspaceMember.universalIdentifier;
-
-const getTargetEntityAndOperationType = (
-  expressionMap: QueryExpressionMap,
-):
-  | {
-      isSubQuery: true;
-      mainEntity?: undefined;
-      operationType?: undefined;
-    }
-  | {
-      isSubQuery?: undefined;
-      mainEntity: string;
-      operationType:
-        | 'select'
-        | 'insert'
-        | 'update'
-        | 'delete'
-        | 'restore'
-        | 'soft-delete'
-        | 'relation';
-    } => {
-  const isSubQuery = expressionMap.aliases[0].subQuery;
-
-  if (isSubQuery) {
-    return {
-      isSubQuery: true, // will bypass permission checks because subQuery permissions will be evaluated when it is executed. This is valid for groupBy with records usecase. If your usecase is different, make sure permission checks are run.
-    };
-  }
-
-  const mainEntity = expressionMap.aliases[0].metadata.name;
-  const operationType = expressionMap.queryType;
-
-  return {
-    mainEntity,
-    operationType,
-  };
-};
 
 export type OperationType =
   | 'select'
@@ -76,7 +37,7 @@ type ValidateOperationIsPermittedOrThrowArgs = {
   operationType: OperationType;
   objectsPermissions: ObjectsPermissions;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   objectIdByNameSingular: Record<string, string>;
   selectedColumns: string[] | '*';
   allFieldsSelected: boolean;
@@ -271,227 +232,6 @@ export const validateOperationIsPermittedOrThrow = ({
   }
 };
 
-type ValidateQueryIsPermittedOrThrowArgs = {
-  expressionMap: QueryExpressionMap;
-  objectsPermissions: ObjectsPermissions;
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  objectIdByNameSingular: Record<string, string>;
-  shouldBypassPermissionChecks: boolean;
-  authContext?: WorkspaceAuthContext;
-};
-
-export const validateQueryIsPermittedOrThrow = ({
-  expressionMap,
-  objectsPermissions,
-  flatObjectMetadataMaps,
-  flatFieldMetadataMaps,
-  objectIdByNameSingular,
-  shouldBypassPermissionChecks,
-  authContext,
-}: ValidateQueryIsPermittedOrThrowArgs) => {
-  if (shouldBypassPermissionChecks) {
-    return;
-  }
-
-  const { mainEntity, operationType, isSubQuery } =
-    getTargetEntityAndOperationType(expressionMap);
-
-  if (isSubQuery) {
-    return;
-  }
-
-  let expressionMapSelectsOnMainEntity = expressionMap.selects;
-
-  if (!isEmpty(expressionMap.joinAttributes)) {
-    const { selectsWithoutJoinedAliases } =
-      validatePermissionsForJoinsAndReturnSelectsWithoutJoins({
-        expressionMap,
-        objectsPermissions,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        objectIdByNameSingular,
-      });
-
-    expressionMapSelectsOnMainEntity = selectsWithoutJoinedAliases;
-
-    validateJoinedOrderByColumnsArePermittedOrThrow({
-      expressionMap,
-      objectsPermissions,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      objectIdByNameSingular,
-    });
-  }
-
-  const allFieldsSelected = expressionMapSelectsOnMainEntity.some(
-    (select) => select.selection === mainEntity,
-  );
-
-  let selectedColumns: string[] | '*' = [];
-  let updatedColumns: string[] = [];
-
-  selectedColumns = getSelectedColumnsFromExpressionMap({
-    operationType,
-    expressionMapReturning: expressionMap.returning,
-    expressionMapSelects: expressionMapSelectsOnMainEntity,
-    allFieldsSelected,
-  });
-
-  if (operationType !== 'select') {
-    const valuesSet = expressionMap.valuesSet;
-
-    if (Array.isArray(valuesSet)) {
-      updatedColumns = valuesSet.reduce((acc, value) => {
-        const keys = Object.keys(value);
-
-        keys.forEach((key) => {
-          if (!acc.includes(key)) {
-            acc.push(key);
-          }
-        });
-
-        return acc;
-      }, []);
-    } else {
-      updatedColumns = Object.keys(valuesSet ?? {});
-    }
-  }
-
-  validateOperationIsPermittedOrThrow({
-    entityName: mainEntity,
-    operationType: operationType as OperationType,
-    objectsPermissions,
-    flatObjectMetadataMaps,
-    flatFieldMetadataMaps,
-    objectIdByNameSingular,
-    selectedColumns,
-    allFieldsSelected,
-    updatedColumns,
-    authContext,
-  });
-};
-
-const validatePermissionsForJoinsAndReturnSelectsWithoutJoins = ({
-  expressionMap,
-  objectsPermissions,
-  flatObjectMetadataMaps,
-  flatFieldMetadataMaps,
-  objectIdByNameSingular,
-}: {
-  expressionMap: QueryExpressionMap;
-  objectsPermissions: ObjectsPermissions;
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  objectIdByNameSingular: Record<string, string>;
-}) => {
-  const joinAttributesAliases = new Set(
-    expressionMap.joinAttributes.map((join) => join.alias.name),
-  );
-
-  const indexesOfSelectsForJoinedAlias: number[] = [];
-
-  for (const [_index, joinedAlias] of joinAttributesAliases.entries()) {
-    const entity = expressionMap.aliases.find(
-      (alias) => alias.type === 'join' && alias.name === joinedAlias,
-    )?.metadata;
-
-    if (isDefined(entity)) {
-      for (const [index, select] of expressionMap.selects.entries()) {
-        const regex = /"(\w+)"\."(\w+)"/;
-        const extractedAlias = select.selection.match(regex)?.[1]; // "person"."name" -> "person"
-
-        if (isDefined(extractedAlias) && extractedAlias === joinedAlias) {
-          indexesOfSelectsForJoinedAlias.push(index);
-
-          const selectedColumns = getSelectedColumnsFromExpressionMap({
-            operationType: 'select',
-            expressionMapSelects: expressionMap.selects.filter(
-              (_select, indexOfSelect) => indexOfSelect === index,
-            ),
-            allFieldsSelected: false,
-          });
-
-          validateOperationIsPermittedOrThrow({
-            entityName: entity.name,
-            operationType: 'select' as OperationType,
-            objectsPermissions,
-            flatObjectMetadataMaps,
-            flatFieldMetadataMaps,
-            objectIdByNameSingular,
-            selectedColumns,
-            allFieldsSelected: false,
-            updatedColumns: [],
-          });
-        }
-      }
-    }
-  }
-
-  const selectsWithoutJoinedAliases = expressionMap.selects.filter(
-    (_select, index) => !indexesOfSelectsForJoinedAlias.includes(index),
-  );
-
-  return { selectsWithoutJoinedAliases };
-};
-
-const validateJoinedOrderByColumnsArePermittedOrThrow = ({
-  expressionMap,
-  objectsPermissions,
-  flatObjectMetadataMaps,
-  flatFieldMetadataMaps,
-  objectIdByNameSingular,
-}: {
-  expressionMap: QueryExpressionMap;
-  objectsPermissions: ObjectsPermissions;
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  objectIdByNameSingular: Record<string, string>;
-}) => {
-  const columnsByJoinedAlias = new Map<string, Set<string>>();
-  const columnReferenceRegex = /"(\w+)"\."(\w+)"/g;
-
-  for (const orderByExpression of Object.keys(expressionMap.orderBys)) {
-    for (const [, alias, column] of orderByExpression.matchAll(
-      columnReferenceRegex,
-    )) {
-      const columnsForAlias = columnsByJoinedAlias.get(alias) ?? new Set();
-
-      columnsForAlias.add(column);
-      columnsByJoinedAlias.set(alias, columnsForAlias);
-    }
-  }
-
-  for (const joinAttribute of expressionMap.joinAttributes) {
-    const joinedAlias = joinAttribute.alias.name;
-    const referencedColumns = columnsByJoinedAlias.get(joinedAlias);
-
-    if (!isDefined(referencedColumns)) {
-      continue;
-    }
-
-    const entity = expressionMap.aliases.find(
-      (alias) => alias.type === 'join' && alias.name === joinedAlias,
-    )?.metadata;
-
-    if (!isDefined(entity)) {
-      continue;
-    }
-
-    validateOperationIsPermittedOrThrow({
-      entityName: entity.name,
-      operationType: 'select',
-      objectsPermissions,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      objectIdByNameSingular,
-      selectedColumns: [...referencedColumns],
-      allFieldsSelected: false,
-      updatedColumns: [],
-    });
-  }
-};
-
 const buildFieldPermissionDeniedMessage = ({
   action,
   column,
@@ -503,7 +243,7 @@ const buildFieldPermissionDeniedMessage = ({
   column: string;
   fieldMetadataId: string;
   entityName: string;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): string => {
   const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: fieldMetadataId,
@@ -526,7 +266,7 @@ const validateReadFieldPermissionOrThrow = ({
   selectedColumns: string[] | '*';
   columnNameToFieldMetadataIdMap: Record<string, string>;
   entityName: string;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   allFieldsSelected?: boolean;
 }) => {
   const noReadRestrictions =
@@ -579,7 +319,7 @@ const validateUpdateFieldPermissionOrThrow = ({
   updatedColumns: string[];
   columnNameToFieldMetadataIdMap: Record<string, string>;
   entityName: string;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }) => {
   if (isEmpty(restrictedFields)) {
     return;
@@ -607,56 +347,4 @@ const validateUpdateFieldPermissionOrThrow = ({
       );
     }
   }
-};
-
-const getSelectedColumnsFromExpressionMap = ({
-  operationType,
-  expressionMapReturning,
-  expressionMapSelects,
-  allFieldsSelected,
-}: {
-  operationType: string;
-  expressionMapSelects: { selection: string }[];
-  allFieldsSelected: boolean;
-  expressionMapReturning?: string | string[];
-}) => {
-  let selectedColumns: string[] | '*' = [];
-
-  if (
-    ['update', 'insert', 'delete', 'soft-delete', 'restore'].includes(
-      operationType,
-    )
-  ) {
-    if (!isDefined(expressionMapReturning)) {
-      throw new InternalServerError(
-        'Returning columns are not set for update query',
-      );
-    }
-    selectedColumns =
-      expressionMapReturning === '*' ? '*' : [expressionMapReturning].flat();
-  } else if (!allFieldsSelected) {
-    selectedColumns =
-      getSelectedColumnsFromExpressionMapSelects(expressionMapSelects);
-  }
-
-  return selectedColumns;
-};
-
-const getSelectedColumnsFromExpressionMapSelects = (
-  selects: { selection: string }[],
-) => {
-  return selects
-    ?.map((select) => {
-      const columnsFromAggregateExpression =
-        extractColumnNamesFromAggregateExpression(select.selection);
-
-      if (columnsFromAggregateExpression) {
-        return columnsFromAggregateExpression;
-      }
-
-      const parts = select.selection.split('.');
-
-      return parts[parts.length - 1];
-    })
-    .flat();
 };

@@ -14,7 +14,7 @@ import { RelatedPersonIdsService } from 'src/engine/core-modules/related-person-
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { type CallRecordingStatus } from 'src/modules/call-recording/common/enums/call-recording-status.enum';
@@ -24,7 +24,7 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 @Injectable()
 export class TimelineCalendarEventService {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     @InjectRepository(ConnectedAccountEntity)
@@ -50,282 +50,280 @@ export class TimelineCalendarEventService {
   }): Promise<TimelineCalendarEventsWithTotalDTO> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const offset = (page - 1) * pageSize;
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const offset = (page - 1) * pageSize;
 
-        const calendarEventRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
-            workspaceId,
-            'calendarEvent',
-          );
-
-        const totalNumberOfCalendarEvents = await calendarEventRepository.count(
-          {
-            where: {
-              calendarEventParticipants: {
-                personId: Any(personIds),
-              },
-            },
-          },
+      // Runs under a system auth context, which resolves no role, so without
+      // this the participant relations (person, workspaceMember) are read with
+      // empty permissions and denied for everyone. Channel-level redaction of
+      // title and description below is what gates the caller's access.
+      // TODO run under the caller's role via resolveRolePermissionConfig instead
+      // of bypassing, once roles that cannot read person degrade to a redacted
+      // timeline rather than a denied one
+      // https://github.com/twentyhq/core-team-issues/issues/2777
+      const calendarEventRepository =
+        this.workspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
+          'calendarEvent',
+          { shouldBypassPermissionChecks: true },
         );
 
-        const calendarEventIds = await calendarEventRepository.find({
-          where: {
-            calendarEventParticipants: {
-              personId: Any(personIds),
-            },
+      const totalNumberOfCalendarEvents = await calendarEventRepository.count({
+        where: {
+          calendarEventParticipants: {
+            personId: Any(personIds),
           },
-          select: {
-            id: true,
-            startsAt: true,
-          },
-          skip: offset,
-          take: pageSize,
-          order: {
-            startsAt: 'DESC',
-          },
-        });
+        },
+      });
 
-        const ids = calendarEventIds.map(({ id }) => id);
+      const calendarEventIds = await calendarEventRepository.find({
+        where: {
+          calendarEventParticipants: {
+            personId: Any(personIds),
+          },
+        },
+        select: {
+          id: true,
+          startsAt: true,
+        },
+        skip: offset,
+        take: pageSize,
+        order: {
+          startsAt: 'DESC',
+        },
+      });
 
-        if (ids.length <= 0) {
-          return {
-            totalNumberOfCalendarEvents,
-            timelineCalendarEvents: [],
-            relatedPersonIds: personIds,
-          };
+      const ids = calendarEventIds.map(({ id }) => id);
+
+      if (ids.length <= 0) {
+        return {
+          totalNumberOfCalendarEvents,
+          timelineCalendarEvents: [],
+          relatedPersonIds: personIds,
+        };
+      }
+
+      const [events] = await calendarEventRepository.findAndCount({
+        where: {
+          id: Any(ids),
+        },
+        relations: {
+          calendarEventParticipants: {
+            person: true,
+            workspaceMember: true,
+          },
+          calendarChannelEventAssociations: true,
+        },
+      });
+
+      const callRecordingRepository =
+        this.workspaceOrmManager.getRepository<CallRecordingWorkspaceEntity>(
+          'callRecording',
+        );
+
+      const callRecordings = await callRecordingRepository.find({
+        where: {
+          calendarEventId: Any(ids),
+        },
+        select: {
+          id: true,
+          status: true,
+          applicationId: true,
+          calendarEventId: true,
+        },
+      });
+
+      const callRecordingsByCalendarEventId = callRecordings.reduce<
+        Map<
+          string,
+          {
+            id: string;
+            status: CallRecordingStatus;
+            applicationId: string | null;
+          }[]
+        >
+      >((acc, callRecording) => {
+        if (!isDefined(callRecording.calendarEventId)) {
+          return acc;
         }
 
-        const [events] = await calendarEventRepository.findAndCount({
-          where: {
-            id: Any(ids),
-          },
-          relations: {
-            calendarEventParticipants: {
-              person: true,
-              workspaceMember: true,
-            },
-            calendarChannelEventAssociations: true,
-          },
+        const existing = acc.get(callRecording.calendarEventId) ?? [];
+
+        existing.push({
+          id: callRecording.id,
+          status: callRecording.status,
+          applicationId: callRecording.applicationId ?? null,
         });
+        acc.set(callRecording.calendarEventId, existing);
 
-        const callRecordingRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CallRecordingWorkspaceEntity>(
-            workspaceId,
-            'callRecording',
-          );
+        return acc;
+      }, new Map());
 
-        const callRecordings = await callRecordingRepository.find({
-          where: {
-            calendarEventId: Any(ids),
-          },
-          select: {
-            id: true,
-            status: true,
-            applicationId: true,
-            calendarEventId: true,
-          },
-        });
-
-        const callRecordingsByCalendarEventId = callRecordings.reduce<
-          Map<
-            string,
-            {
-              id: string;
-              status: CallRecordingStatus;
-              applicationId: string | null;
-            }[]
-          >
-        >((acc, callRecording) => {
-          if (!isDefined(callRecording.calendarEventId)) {
-            return acc;
-          }
-
-          const existing = acc.get(callRecording.calendarEventId) ?? [];
-
-          existing.push({
-            id: callRecording.id,
-            status: callRecording.status,
-            applicationId: callRecording.applicationId ?? null,
-          });
-          acc.set(callRecording.calendarEventId, existing);
-
-          return acc;
-        }, new Map());
-
-        const allCalendarChannelIds = [
-          ...new Set(
-            events.flatMap((event) =>
-              event.calendarChannelEventAssociations.map(
-                (association) => association.calendarChannelId,
-              ),
+      const allCalendarChannelIds = [
+        ...new Set(
+          events.flatMap((event) =>
+            event.calendarChannelEventAssociations.map(
+              (association) => association.calendarChannelId,
             ),
           ),
-        ];
+        ),
+      ];
 
-        const calendarChannels =
-          allCalendarChannelIds.length > 0
-            ? await this.calendarChannelRepository.find({
-                where: { id: In(allCalendarChannelIds), workspaceId },
-              })
-            : [];
+      const calendarChannels =
+        allCalendarChannelIds.length > 0
+          ? await this.calendarChannelRepository.find({
+              where: { id: In(allCalendarChannelIds), workspaceId },
+            })
+          : [];
 
-        // Resolve current user's userWorkspaceId (workspaceMember → userId → userWorkspace)
-        const workspaceMemberRepo =
-          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
-            'workspaceMember',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        const currentMember = await workspaceMemberRepo.findOne({
-          where: { id: currentWorkspaceMemberId },
-          select: { userId: true },
-        });
-
-        const currentUserWorkspaceId = currentMember
-          ? ((
-              await this.userWorkspaceRepository.findOne({
-                where: { userId: currentMember.userId, workspaceId },
-                select: { id: true },
-              })
-            )?.id ?? null)
-          : null;
-
-        const connectedAccountIds = [
-          ...new Set(
-            calendarChannels.map((channel) => channel.connectedAccountId),
-          ),
-        ];
-
-        const ownedAccountIds =
-          connectedAccountIds.length > 0 && currentUserWorkspaceId
-            ? new Set(
-                (
-                  await this.connectedAccountRepository.find({
-                    where: {
-                      id: In(connectedAccountIds),
-                      userWorkspaceId: currentUserWorkspaceId,
-                    },
-                    select: { id: true },
-                  })
-                ).map((a) => a.id),
-              )
-            : new Set<string>();
-
-        const calendarChannelMap = new Map(
-          calendarChannels.map((channel) => [
-            channel.id,
-            {
-              visibility: channel.visibility,
-              isOwnedByCurrentUser: ownedAccountIds.has(
-                channel.connectedAccountId,
-              ),
-            },
-          ]),
+      // Resolve current user's userWorkspaceId (workspaceMember → userId → userWorkspace)
+      const workspaceMemberRepo =
+        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+          'workspaceMember',
+          { shouldBypassPermissionChecks: true },
         );
 
-        const orderedEvents = events.sort(
-          (a, b) => ids.indexOf(a.id) - ids.indexOf(b.id),
-        );
+      const currentMember = await workspaceMemberRepo.findOne({
+        where: { id: currentWorkspaceMemberId },
+        select: { userId: true },
+      });
 
-        const timelineCalendarEventPromises = orderedEvents.map(
-          async (event) => {
-            const participantPromises = event.calendarEventParticipants.map(
-              async (participant) => {
-                const personAvatarFileUrl =
-                  await this.fileUrlService.signFirstFilesFieldFileUrl({
-                    filesFieldValue: participant.person?.avatarFile,
-                    workspaceId,
-                  });
+      const currentUserWorkspaceId = currentMember
+        ? ((
+            await this.userWorkspaceRepository.findOne({
+              where: { userId: currentMember.userId, workspaceId },
+              select: { id: true },
+            })
+          )?.id ?? null)
+        : null;
 
-                return {
-                  calendarEventId: event.id,
-                  personId: participant.personId ?? null,
-                  workspaceMemberId: participant.workspaceMemberId ?? null,
-                  firstName:
-                    participant.person?.name?.firstName ||
-                    participant.workspaceMember?.name.firstName ||
-                    '',
-                  lastName:
-                    participant.person?.name?.lastName ||
-                    participant.workspaceMember?.name.lastName ||
-                    '',
-                  displayName:
-                    participant.person?.name?.firstName ||
-                    participant.person?.name?.lastName ||
-                    participant.workspaceMember?.name.firstName ||
-                    participant.workspaceMember?.name.lastName ||
-                    participant.displayName ||
-                    participant.handle ||
-                    '',
-                  avatarUrl:
-                    personAvatarFileUrl ||
-                    participant.person?.avatarUrl ||
-                    participant.workspaceMember?.avatarUrl ||
-                    '',
-                  handle: participant.handle ?? '',
-                };
-              },
-            );
+      const connectedAccountIds = [
+        ...new Set(
+          calendarChannels.map((channel) => channel.connectedAccountId),
+        ),
+      ];
 
-            const participants = await Promise.all(participantPromises);
+      const ownedAccountIds =
+        connectedAccountIds.length > 0 && currentUserWorkspaceId
+          ? new Set(
+              (
+                await this.connectedAccountRepository.find({
+                  where: {
+                    id: In(connectedAccountIds),
+                    userWorkspaceId: currentUserWorkspaceId,
+                  },
+                  select: { id: true },
+                })
+              ).map((a) => a.id),
+            )
+          : new Set<string>();
 
-            const hasFullAccess = event.calendarChannelEventAssociations.some(
-              (association) => {
-                const channel = calendarChannelMap.get(
-                  association.calendarChannelId,
-                );
+      const calendarChannelMap = new Map(
+        calendarChannels.map((channel) => [
+          channel.id,
+          {
+            visibility: channel.visibility,
+            isOwnedByCurrentUser: ownedAccountIds.has(
+              channel.connectedAccountId,
+            ),
+          },
+        ]),
+      );
 
-                return (
-                  channel?.visibility === 'SHARE_EVERYTHING' ||
-                  channel?.isOwnedByCurrentUser
-                );
-              },
-            );
+      const orderedEvents = events.sort(
+        (a, b) => ids.indexOf(a.id) - ids.indexOf(b.id),
+      );
 
-            const visibility = hasFullAccess
-              ? CalendarChannelVisibility.SHARE_EVERYTHING
-              : CalendarChannelVisibility.METADATA;
+      const timelineCalendarEventPromises = orderedEvents.map(async (event) => {
+        const participantPromises = event.calendarEventParticipants.map(
+          async (participant) => {
+            const personAvatarFileUrl =
+              await this.fileUrlService.signFirstFilesFieldFileUrl({
+                filesFieldValue: participant.person?.avatarFile,
+                workspaceId,
+              });
 
             return {
-              ...omit(event, [
-                'calendarEventParticipants',
-                'calendarChannelEventAssociations',
-              ]),
-              title:
-                visibility === CalendarChannelVisibility.METADATA
-                  ? FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED
-                  : (event.title ?? ''),
-              description:
-                visibility === CalendarChannelVisibility.METADATA
-                  ? FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED
-                  : (event.description ?? ''),
-              startsAt: event.startsAt as unknown as Date,
-              endsAt: event.endsAt as unknown as Date,
-              participants,
-              callRecordings:
-                callRecordingsByCalendarEventId.get(event.id) ?? [],
-              visibility,
-              location: event.location ?? '',
-              conferenceSolution: event.conferenceSolution ?? '',
+              calendarEventId: event.id,
+              personId: participant.personId ?? null,
+              workspaceMemberId: participant.workspaceMemberId ?? null,
+              firstName:
+                participant.person?.name?.firstName ||
+                participant.workspaceMember?.name.firstName ||
+                '',
+              lastName:
+                participant.person?.name?.lastName ||
+                participant.workspaceMember?.name.lastName ||
+                '',
+              displayName:
+                participant.person?.name?.firstName ||
+                participant.person?.name?.lastName ||
+                participant.workspaceMember?.name.firstName ||
+                participant.workspaceMember?.name.lastName ||
+                participant.displayName ||
+                participant.handle ||
+                '',
+              avatarUrl:
+                personAvatarFileUrl ||
+                participant.person?.avatarUrl ||
+                participant.workspaceMember?.avatarUrl ||
+                '',
+              handle: participant.handle ?? '',
             };
           },
         );
 
-        const timelineCalendarEvents = await Promise.all(
-          timelineCalendarEventPromises,
+        const participants = await Promise.all(participantPromises);
+
+        const hasFullAccess = event.calendarChannelEventAssociations.some(
+          (association) => {
+            const channel = calendarChannelMap.get(
+              association.calendarChannelId,
+            );
+
+            return (
+              channel?.visibility === 'SHARE_EVERYTHING' ||
+              channel?.isOwnedByCurrentUser
+            );
+          },
         );
 
+        const visibility = hasFullAccess
+          ? CalendarChannelVisibility.SHARE_EVERYTHING
+          : CalendarChannelVisibility.METADATA;
+
         return {
-          totalNumberOfCalendarEvents,
-          timelineCalendarEvents,
-          relatedPersonIds: personIds,
+          ...omit(event, [
+            'calendarEventParticipants',
+            'calendarChannelEventAssociations',
+          ]),
+          title:
+            visibility === CalendarChannelVisibility.METADATA
+              ? FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED
+              : (event.title ?? ''),
+          description:
+            visibility === CalendarChannelVisibility.METADATA
+              ? FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED
+              : (event.description ?? ''),
+          startsAt: event.startsAt as unknown as Date,
+          endsAt: event.endsAt as unknown as Date,
+          participants,
+          callRecordings: callRecordingsByCalendarEventId.get(event.id) ?? [],
+          visibility,
+          location: event.location ?? '',
+          conferenceSolution: event.conferenceSolution ?? '',
         };
-      },
-      authContext,
-    );
+      });
+
+      const timelineCalendarEvents = await Promise.all(
+        timelineCalendarEventPromises,
+      );
+
+      return {
+        totalNumberOfCalendarEvents,
+        timelineCalendarEvents,
+        relatedPersonIds: personIds,
+      };
+    }, authContext);
   }
 
   async getCalendarEventsFromObjectRecord({

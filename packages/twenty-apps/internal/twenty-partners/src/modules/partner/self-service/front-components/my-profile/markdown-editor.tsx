@@ -2,7 +2,7 @@ import { type ReactNode } from 'react';
 
 import { copyToClipboard } from 'twenty-sdk/front-component';
 
-import { COLORS, FONT } from './form-fields';
+import { COLORS, FONT } from 'src/modules/shared/front-components/palette';
 import { MarkdownContent } from './markdown-render';
 
 // The sandboxed worker exposes no cursor/selection API (DOM refs are method-less proxies,

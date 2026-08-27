@@ -84,7 +84,7 @@ export const ExistingMetadata: Story = {
       objectNameSingular: 'company',
       displayName: 'Companies',
     })} object is sorted by ${formatChatReference({
-      kind: 'field',
+      kind: 'legacyFieldById',
       fieldMetadataItemId: employeesFieldMetadataItem.id,
       displayName: 'Employees',
     })} in the ${formatChatReference({
@@ -109,6 +109,41 @@ export const ExistingMetadata: Story = {
     ).toHaveAttribute(
       'href',
       `/objects/${companyObjectMetadataItem.namePlural}?viewId=${allCompaniesView.id}`,
+    );
+  },
+};
+
+export const ProposedField: Story = {
+  args: {
+    text: `For pipeline reporting I suggest adding ${formatChatReference({
+      kind: 'field',
+      objectNameSingular: 'company',
+      fieldName: 'annualContractValue',
+      displayName: 'Annual contract value',
+    })} to ${formatChatReference({
+      kind: 'object',
+      objectNameSingular: 'company',
+      displayName: 'Companies',
+    })}, alongside the ${formatChatReference({
+      kind: 'field',
+      objectNameSingular: 'company',
+      fieldName: employeesFieldMetadataItem.name,
+      displayName: 'Employees',
+    })} field you already have.`,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const fieldByNameChipLabel = await canvas.findByText(
+      'Annual contract value',
+    );
+
+    expect(fieldByNameChipLabel).toBeVisible();
+    expect(fieldByNameChipLabel.closest('a')).toBeNull();
+
+    expect((await canvas.findByText('Employees')).closest('a')).toHaveAttribute(
+      'href',
+      `/settings/objects/${companyObjectMetadataItem.namePlural}/${employeesFieldMetadataItem.name}`,
     );
   },
 };

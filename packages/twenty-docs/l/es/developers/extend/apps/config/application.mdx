@@ -97,7 +97,7 @@ Lo mismo se aplica a los componentes de interfaz que leen valores mediante `getA
 
 El rol declarado con [`defineApplicationRole()`](/l/es/developers/extend/apps/config/roles) controla a qué pueden acceder las funciones de lógica y los componentes de interfaz de la aplicación:
 
-* El token en tiempo de ejecución inyectado como `TWENTY_APP_ACCESS_TOKEN` se deriva de este rol.
+* Los tokens en tiempo de ejecución inyectados en tus funciones de lógica se derivan de este rol. Una llamada que actúa como una persona se limita aún más a lo que esa persona puede hacer, por lo que nunca puede superar ninguno de los dos. Consulta [Qué acceso usa una llamada](/l/es/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 * El cliente de API tipado está restringido a los permisos otorgados a ese rol.
 * Sigue el principio de mínimo privilegio: declara solo los permisos que necesitan tus funciones.
 

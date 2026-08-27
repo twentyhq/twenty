@@ -7,9 +7,7 @@ import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pa
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { generateDuplicatedTimestamps } from '@/page-layout/utils/generateDuplicatedTimestamps';
-import { getScrollWrapperInstanceIdFromPageLayoutId } from '@/page-layout/utils/getScrollWrapperInstanceIdFromPageLayoutId';
 import { getUpdatedTabLayouts } from '@/page-layout/utils/getUpdatedTabLayouts';
-import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -39,10 +37,6 @@ export const useDuplicatePageLayoutWidget = (
   const setPageLayoutEditingWidgetId = useSetAtomComponentState(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutId,
-  );
-
-  const { getScrollWrapperElement } = useScrollWrapperHTMLElement(
-    getScrollWrapperInstanceIdFromPageLayoutId(pageLayoutId),
   );
 
   const store = useStore();
@@ -140,22 +134,18 @@ export const useDuplicatePageLayoutWidget = (
 
       setPageLayoutEditingWidgetId(newWidgetId);
 
-      const { scrollWrapperElement } = getScrollWrapperElement();
-
-      if (isDefined(scrollWrapperElement)) {
-        requestAnimationFrame(() => {
-          const widgetElement = scrollWrapperElement.querySelector(
-            `[data-widget-id="${newWidgetId}"]`,
-          );
-
-          if (isDefined(widgetElement)) {
+      requestAnimationFrame(() => {
+        // The same page layout can be mounted in the main view and a side panel
+        // at once, so every render of the new widget is brought into view.
+        document
+          .querySelectorAll(`[data-widget-id="${newWidgetId}"]`)
+          .forEach((widgetElement) => {
             widgetElement.scrollIntoView({
               behavior: 'smooth',
               block: 'nearest',
             });
-          }
-        });
-      }
+          });
+      });
 
       return newWidgetId;
     },
@@ -165,7 +155,6 @@ export const useDuplicatePageLayoutWidget = (
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
       setPageLayoutEditingWidgetId,
-      getScrollWrapperElement,
       store,
     ],
   );

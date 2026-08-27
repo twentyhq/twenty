@@ -1,8 +1,8 @@
 import { PAGE_LAYOUT_TEST_INSTANCE_ID } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { getCallRecordingWidgetStoryDecorator } from '@/page-layout/widgets/calendar-event-call-recording/testing/getCallRecordingWidgetStoryDecorator';
-import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
+import { getCallRecordingWidgetStoryDecorator } from '@/page-layout/widgets/call-recording/testing/getCallRecordingWidgetStoryDecorator';
+import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
 import { CallRecordingSummaryBody } from '@/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, waitFor, within } from 'storybook/test';
@@ -88,27 +88,28 @@ const summaryMarkdown = [
   '2. Schedule a follow-up with the procurement contact.',
 ].join('\n');
 
-const summarizedCallRecording: CalendarEventCallRecordingCandidate = {
+const summarizedCallRecording: WidgetCallRecordingCandidate = {
   __typename: 'CallRecording',
   id: 'call-recording-id',
   status: CallRecordingStatus.COMPLETED,
   transcript: [],
   summary: { markdown: summaryMarkdown },
+  video: null,
   createdAt: '2026-01-01T00:00:00Z',
 };
 
-const unsummarizedCallRecording: CalendarEventCallRecordingCandidate = {
+const unsummarizedCallRecording: WidgetCallRecordingCandidate = {
   ...summarizedCallRecording,
   summary: null,
 };
 
-const pendingCallRecording: CalendarEventCallRecordingCandidate = {
+const pendingCallRecording: WidgetCallRecordingCandidate = {
   ...unsummarizedCallRecording,
   status: CallRecordingStatus.PROCESSING,
   transcript: { status: 'PENDING' },
 };
 
-const failedCallRecording: CalendarEventCallRecordingCandidate = {
+const failedCallRecording: WidgetCallRecordingCandidate = {
   ...unsummarizedCallRecording,
   status: CallRecordingStatus.FAILED,
   transcript: null,

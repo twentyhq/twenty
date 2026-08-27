@@ -1,13 +1,12 @@
 import { isDefined } from 'class-validator';
 import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
-import {
-  type EntityTarget,
-  type ObjectLiteral,
-  type SelectQueryBuilder,
-} from 'typeorm';
+import { type EntityTarget, type ObjectLiteral } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
 import { type QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import { type RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
@@ -16,29 +15,29 @@ import {
   type RelationDisconnectQueryFieldsByEntityIndex,
 } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
 import {
-  TwentyORMException,
-  TwentyORMExceptionCode,
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { formatConnectRecordNotFoundErrorMessage } from 'src/engine/twenty-orm/field-operations/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util';
-import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { computeRelationConnectQueryConfigs } from 'src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util';
 import { createSqlWhereTupleInClause } from 'src/engine/twenty-orm/utils/create-sql-where-tuple-in-clause.utils';
 import { extractNestedRelationFieldsByEntityIndex } from 'src/engine/twenty-orm/utils/extract-nested-relation-fields-by-entity-index.util';
 import { getAssociatedRelationFieldName } from 'src/engine/twenty-orm/utils/get-associated-relation-field-name.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
-import { getRecordToConnectFields } from 'src/engine/twenty-orm/utils/get-record-to-connect-fields.util';
-
-export type ConnectQueryRunner = (args: {
-  connectQueryConfig: RelationConnectQueryConfig;
-  clause: string;
-  parameters: Record<string, unknown>;
-}) => Promise<Record<string, unknown>[]>;
 
 export class RelationNestedQueries {
   private readonly internalContext: WorkspaceInternalContext;
+  private readonly workspaceOrmManager: WorkspaceOrmManager;
+  private readonly rolePermissionConfig?: RolePermissionConfig;
 
-  constructor(internalContext: WorkspaceInternalContext) {
+  constructor(
+    internalContext: WorkspaceInternalContext,
+    workspaceOrmManager: WorkspaceOrmManager,
+    rolePermissionConfig?: RolePermissionConfig,
+  ) {
     this.internalContext = internalContext;
+    this.workspaceOrmManager = workspaceOrmManager;
+    this.rolePermissionConfig = rolePermissionConfig;
   }
 
   prepareNestedRelationQueries<Entity extends ObjectLiteral>(
@@ -93,8 +92,6 @@ export class RelationNestedQueries {
   async processRelationNestedQueries<Entity extends ObjectLiteral>({
     entities,
     relationNestedConfig,
-    queryBuilder,
-    connectQueryRunner,
   }: {
     entities:
       | QueryDeepPartialEntityWithNestedRelationFields<Entity>[]
@@ -103,10 +100,6 @@ export class RelationNestedQueries {
       RelationConnectQueryConfig[],
       RelationDisconnectQueryFieldsByEntityIndex,
     ];
-    queryBuilder?:
-      | WorkspaceSelectQueryBuilder<Entity>
-      | SelectQueryBuilder<Entity>;
-    connectQueryRunner?: ConnectQueryRunner;
   }): Promise<QueryDeepPartialEntity<Entity>[]> {
     const entitiesArray = Array.isArray(entities) ? entities : [entities];
 
@@ -123,8 +116,6 @@ export class RelationNestedQueries {
     const updatedEntitiesWithConnect = await this.processRelationConnect({
       entities: updatedEntitiesWithDisconnect,
       relationConnectQueryConfigs,
-      queryBuilder,
-      connectQueryRunner,
     });
 
     return updatedEntitiesWithConnect;
@@ -133,22 +124,14 @@ export class RelationNestedQueries {
   private async processRelationConnect<Entity extends ObjectLiteral>({
     entities,
     relationConnectQueryConfigs,
-    queryBuilder,
-    connectQueryRunner,
   }: {
     entities: QueryDeepPartialEntityWithNestedRelationFields<Entity>[];
     relationConnectQueryConfigs: RelationConnectQueryConfig[];
-    queryBuilder?:
-      | WorkspaceSelectQueryBuilder<Entity>
-      | SelectQueryBuilder<Entity>;
-    connectQueryRunner?: ConnectQueryRunner;
   }): Promise<QueryDeepPartialEntity<Entity>[]> {
     if (relationConnectQueryConfigs.length === 0) return entities;
 
     const recordsToConnectWithConfig = await this.executeConnectQueries(
       relationConnectQueryConfigs,
-      queryBuilder,
-      connectQueryRunner,
     );
 
     const updatedEntities = this.updateEntitiesWithRecordToConnectId<Entity>(
@@ -159,13 +142,8 @@ export class RelationNestedQueries {
     return updatedEntities;
   }
 
-  private async executeConnectQueries<Entity extends ObjectLiteral>(
+  private async executeConnectQueries(
     relationConnectQueryConfigs: RelationConnectQueryConfig[],
-    queryBuilder:
-      | WorkspaceSelectQueryBuilder<Entity>
-      | SelectQueryBuilder<Entity>
-      | undefined,
-    connectQueryRunner?: ConnectQueryRunner,
   ): Promise<[RelationConnectQueryConfig, Record<string, unknown>[]][]> {
     const allRecordsToConnectWithConfig: [
       RelationConnectQueryConfig,
@@ -178,32 +156,11 @@ export class RelationNestedQueries {
         connectQueryConfig.targetObjectName,
       );
 
-      let recordsToConnect: Record<string, unknown>[];
-
-      if (connectQueryRunner) {
-        recordsToConnect = await connectQueryRunner({
-          connectQueryConfig,
-          clause,
-          parameters,
-        });
-      } else if (queryBuilder) {
-        queryBuilder.expressionMap.aliases = [];
-        queryBuilder.expressionMap.mainAlias = undefined;
-
-        recordsToConnect = await queryBuilder
-          .select(getRecordToConnectFields(connectQueryConfig))
-          .where(clause, parameters)
-          .from(
-            connectQueryConfig.targetObjectName,
-            connectQueryConfig.targetObjectName,
-          )
-          .getRawMany();
-      } else {
-        throw new TwentyORMException(
-          'A query builder or a connect query runner is required to resolve connect queries',
-          TwentyORMExceptionCode.INVALID_INPUT,
-        );
-      }
+      const recordsToConnect = await this.fetchRecordsToConnect({
+        connectQueryConfig,
+        clause,
+        parameters,
+      });
 
       allRecordsToConnectWithConfig.push([
         connectQueryConfig,
@@ -212,6 +169,30 @@ export class RelationNestedQueries {
     }
 
     return allRecordsToConnectWithConfig;
+  }
+
+  private async fetchRecordsToConnect({
+    connectQueryConfig,
+    clause,
+    parameters,
+  }: {
+    connectQueryConfig: RelationConnectQueryConfig;
+    clause: string;
+    parameters: Record<string, unknown>;
+  }): Promise<Record<string, unknown>[]> {
+    const targetObjectName = connectQueryConfig.targetObjectName;
+    const targetQueryBuilder = this.workspaceOrmManager
+      .getRepository(targetObjectName, this.rolePermissionConfig)
+      .createQueryBuilder(targetObjectName);
+
+    targetQueryBuilder.select([]);
+    targetQueryBuilder.addSelect(`"${targetObjectName}"."id"`, 'id');
+
+    for (const [field] of connectQueryConfig.recordToConnectConditions[0]) {
+      targetQueryBuilder.addSelect(`"${targetObjectName}"."${field}"`, field);
+    }
+
+    return targetQueryBuilder.where(clause, parameters).getRawMany();
   }
 
   private updateEntitiesWithRecordToConnectId<Entity extends ObjectLiteral>(
@@ -245,9 +226,9 @@ export class RelationNestedQueries {
                 connectQueryConfig.recordToConnectConditionByEntityIndex[index],
               );
 
-            throw new TwentyORMException(
+            throw new TwentyOrmException(
               errorMessage,
-              TwentyORMExceptionCode.CONNECT_RECORD_NOT_FOUND,
+              TwentyOrmExceptionCode.CONNECT_RECORD_NOT_FOUND,
               {
                 userFriendlyMessage,
               },

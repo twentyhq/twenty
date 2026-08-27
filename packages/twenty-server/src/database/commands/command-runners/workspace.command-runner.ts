@@ -1,10 +1,10 @@
 import chalk from 'chalk';
 import { CommandRunner, Option } from 'nest-commander';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { type DataSource } from 'typeorm';
 
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { CommandLogger } from 'src/database/commands/logger';
-import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 
 export type WorkspaceCommandOptions = {
   workspaceId?: Set<string>;
@@ -17,7 +17,7 @@ export type WorkspaceCommandOptions = {
 export type RunOnWorkspaceArgs = {
   options: WorkspaceCommandOptions;
   workspaceId: string;
-  dataSource?: GlobalWorkspaceDataSource;
+  dataSource?: DataSource;
   index: number;
   total: number;
 };

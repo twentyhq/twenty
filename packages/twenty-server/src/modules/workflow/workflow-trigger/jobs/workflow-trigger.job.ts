@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
@@ -27,7 +27,7 @@ const DEFAULT_WORKFLOW_NAME = 'Workflow';
 export class WorkflowTriggerJob {
   private readonly logger = new Logger(WorkflowTriggerJob.name);
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
   ) {}
@@ -36,10 +36,9 @@ export class WorkflowTriggerJob {
   async handle(data: WorkflowTriggerJobData): Promise<void> {
     const authContext = buildSystemAuthContext(data.workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-          data.workspaceId,
+        this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
           'workflow',
           { shouldBypassPermissionChecks: true },
         );

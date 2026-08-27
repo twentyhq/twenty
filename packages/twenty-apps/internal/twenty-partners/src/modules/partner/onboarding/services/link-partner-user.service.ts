@@ -1,6 +1,6 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { getCompanyPartnerUser } from 'src/modules/partner/onboarding/graphql/queries/get-company-partner-user';
+import { getCompanyPartnerUser } from 'src/modules/shared/graphql/queries/get-company-partner-user';
 import { getPartnerCascadeFields } from 'src/modules/partner/onboarding/graphql/queries/get-partner-cascade-fields';
 import { getPartnerOwner } from 'src/modules/shared/graphql/queries/get-partner-owner';
 import { updateApplicationPartnerUser } from 'src/modules/shared/graphql/mutations/update-application-partner-user';
@@ -24,8 +24,9 @@ export async function linkPartnerUser(
 ): Promise<LinkPartnerUserResult> {
   const { partnerId, memberId } = input;
   const detail = await getPartnerCascadeFields(client, partnerId);
+  const partner = detail.partners?.edges?.[0]?.node;
 
-  const existing = detail.partner?.partnerUserId;
+  const existing = partner?.partnerUserId;
   if (existing) {
     return existing === memberId
       ? { linked: false, reason: 'already_linked_same' }
@@ -34,7 +35,7 @@ export async function linkPartnerUser(
 
   // Only stamp persons not already linked. The other cascade collections are filtered
   // server-side (partnerUserId IS NULL); persons come nested off the partner, so filter here.
-  const personIds = (detail.partner?.persons?.edges ?? [])
+  const personIds = (partner?.persons?.edges ?? [])
     .filter((e) => !e?.node?.partnerUserId)
     .map((e) => e?.node?.id)
     .filter((id): id is string => Boolean(id));
@@ -47,10 +48,11 @@ export async function linkPartnerUser(
   // partnerUser column models one owner per company, so overwriting would revoke that
   // partner's access to the company and its contacts. Mirrors propagatePartnerUser's
   // companyShared guard. Leave the company alone in that case; stamp only the rest.
-  const companyId = detail.partner?.companyId;
+  const companyId = partner?.companyId;
   const companyWrites: Promise<unknown>[] = [];
   if (companyId) {
-    const companyOwner = (await getCompanyPartnerUser(client, companyId)).company?.partnerUserId;
+    const companyOwner = (await getCompanyPartnerUser(client, companyId)).companies?.edges?.[0]
+      ?.node?.partnerUserId;
     if (!companyOwner || companyOwner === memberId) {
       companyWrites.push(updateCompanyPartnerUser(client, companyId, memberId));
     }
@@ -74,7 +76,8 @@ export async function linkPartnerUser(
   // race (two members whose emails resolve to the same partner, created at once). This is NOT
   // atomic — the API has no conditional update — so a simultaneous claim can still interleave;
   // it only shrinks the window. Known limitation, consistent with the rest of the app.
-  const claimant = (await getPartnerOwner(client, partnerId)).partner?.partnerUserId;
+  const claimant = (await getPartnerOwner(client, partnerId)).partners?.edges?.[0]?.node
+    ?.partnerUserId;
   if (claimant && claimant !== memberId) {
     return { linked: false, reason: 'partner_already_linked_other' };
   }

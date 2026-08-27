@@ -20,7 +20,9 @@ import { LogicFunctionLayerModule } from 'src/engine/metadata-modules/logic-func
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { MessageChannelMetadataModule } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.module';
 import { MessageFolderMetadataModule } from 'src/engine/metadata-modules/message-folder/message-folder-metadata.module';
+import { MetadataTranslationModule } from 'src/engine/metadata-modules/metadata-translation/metadata-translation.module';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
+import { TimelineActivityTypeModule } from 'src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionFlagModule } from 'src/engine/metadata-modules/permission-flag/permission-flag.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -44,7 +46,9 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     LogicFunctionLayerModule,
     SkillModule,
     CommandMenuItemModule,
+    MetadataTranslationModule,
     NavigationMenuItemModule,
+    TimelineActivityTypeModule,
     AiAgentModule,
     AiAgentMonitorModule,
     AiChatModule,
@@ -86,6 +90,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     SkillModule,
     CommandMenuItemModule,
     NavigationMenuItemModule,
+    TimelineActivityTypeModule,
     AiAgentModule,
     AiChatModule,
     MinimalMetadataModule,

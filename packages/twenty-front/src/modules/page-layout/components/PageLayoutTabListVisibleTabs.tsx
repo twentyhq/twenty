@@ -8,6 +8,7 @@ import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PageLayoutTabListReorderableTab } from '@/page-layout/components/PageLayoutTabListReorderableTab';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 
 type PageLayoutTabListVisibleTabsProps = {
@@ -19,7 +20,7 @@ type PageLayoutTabListVisibleTabsProps = {
   onChangeTab?: (tabId: string) => void;
   onSelectTab: (tabId: string) => void;
   canReorder: boolean;
-  widgetDropTargetTabIds: Set<string>;
+  widgetDropTargetWidgetsByTabId: Map<string, PageLayoutWidget[]>;
   firstHiddenTabId: string | null;
   isScrollable: boolean;
 };
@@ -55,7 +56,7 @@ export const PageLayoutTabListVisibleTabs = ({
   onChangeTab,
   onSelectTab,
   canReorder,
-  widgetDropTargetTabIds,
+  widgetDropTargetWidgetsByTabId,
   firstHiddenTabId,
   isScrollable,
 }: PageLayoutTabListVisibleTabsProps) => {
@@ -86,7 +87,9 @@ export const PageLayoutTabListVisibleTabs = ({
               nextTabId={shownTabs[index + 1]?.id ?? firstHiddenTabId}
               isActive={tab.id === activeTabId}
               disabled={tab.disabled ?? loading}
-              isWidgetDropTarget={widgetDropTargetTabIds.has(tab.id)}
+              widgetDropTargetWidgets={widgetDropTargetWidgetsByTabId.get(
+                tab.id,
+              )}
               onSelect={() => onSelectTab(tab.id)}
             />
           </StyledTabSlot>

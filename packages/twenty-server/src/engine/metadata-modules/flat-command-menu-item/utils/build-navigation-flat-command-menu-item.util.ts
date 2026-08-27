@@ -1,11 +1,13 @@
 import { msg } from '@lingui/core/macro';
 import { getMetadataLabelPlaceholder } from 'twenty-shared/i18n';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import {
+  CommandMenuItemAvailabilityType,
+  FeatureFlagKey,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v5 } from 'uuid';
 
-import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
@@ -103,6 +105,9 @@ export const buildNavigationFlatCommandMenuItem = ({
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATION,
     payload: { objectMetadataItemId: objectMetadata.id },
+    navigationTargetObjectMetadataId: objectMetadata.id,
+    navigationTargetObjectMetadataUniversalIdentifier:
+      objectMetadata.universalIdentifier,
     hotKeys: isDefined(objectMetadata.shortcut)
       ? ['G', objectMetadata.shortcut]
       : null,

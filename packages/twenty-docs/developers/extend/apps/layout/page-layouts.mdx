@@ -1,14 +1,14 @@
 ---
 title: Page Layouts
 description: Customize record detail pages — tabs, widgets, and where front components render — using definePageLayout and definePageLayoutTab.
-icon: "table-columns"
+icon: 'table-columns'
 ---
 
 A **page layout** controls how a record's detail page is arranged: which tabs appear and what widgets they contain. Use `definePageLayout()` to declare a layout for an object you own, or `definePageLayoutTab()` to add a single tab to a layout that already exists (yours or a standard Twenty one).
 
-| Use case | Entity |
-|----------|--------|
-| Define the entire layout for a record page on an object you own | `definePageLayout` |
+| Use case                                                               | Entity                |
+| ---------------------------------------------------------------------- | --------------------- |
+| Define the entire layout for a record page on an object you own        | `definePageLayout`    |
 | Add one tab to an existing layout (your own object, or a standard one) | `definePageLayoutTab` |
 
 ## definePageLayout
@@ -53,9 +53,10 @@ export default definePageLayout({
 
 - `type` is one of `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` or `'STANDALONE_PAGE'`. Use `'RECORD_PAGE'` to customize the detail view of a specific object.
 - `objectUniversalIdentifier` specifies which object this layout applies to.
-- Each `tab` defines a section of the page with a `title`, `position`, and `layoutMode`: `VERTICAL_LIST` for record pages and standalone pages, `GRID` for dashboards. In a `VERTICAL_LIST` tab, a single widget renders full-bleed and owns the whole tab; with several widgets they stack as cards. A `GRID` tab always lays its widgets out as cards on a 12-column grid, whatever their number, so pick `VERTICAL_LIST` when you want one widget to fill the page.
+- Each `tab` defines a section of the page with a `title`, `position`, and `layoutMode`: `VERTICAL_LIST` for record pages and standalone pages, `GRID` for dashboards, and `CANVAS` for a single widget that should fill the tab viewport. A `VERTICAL_LIST` tab stacks widgets vertically. Built-in widgets that manage their own scrolling, such as timelines, files, notes, tasks, and workflows, fill one viewport; fields, front components, graphs, and other fit-content widgets render at their content or configured height. A `GRID` tab always lays its widgets out as cards on a 12-column grid. A `CANVAS` widget has no explicit position; if a canvas tab contains multiple widgets, they render at their content height instead of filling the viewport.
 - Set `layoutMode` explicitly. Omitting it gives you `VERTICAL_LIST` on a `STANDALONE_PAGE` and `GRID` everywhere else, which is rarely what you want on a record page.
 - Each `widget` inside a tab can render a [front component](/developers/extend/apps/layout/front-components), a relation list, or other built-in widget types.
+- A `FRONT_COMPONENT` widget can set `headerCommandMenuItemUniversalIdentifiers` to an ordered array of command menu item universal identifiers from the same app. These actions appear as icon buttons in the widget card header and keep their command-level availability and permission checks. Identifiers must be unique and must resolve when the app is installed.
 - `position` on tabs controls their order. Use higher values (e.g., 50) to place custom tabs after built-in ones.
 
 ### Field widgets
@@ -135,8 +136,10 @@ export default definePageLayoutTab({
   Each layout entry also exposes its `tabs` and their `widgets`, so you can reference any level:
 
   ```ts
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.universalIdentifier
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets.fields.universalIdentifier
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home
+    .universalIdentifier;
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets
+    .fields.universalIdentifier;
   ```
 
   A short alias `STANDARD_PAGE_LAYOUT` is also available:

@@ -3,6 +3,7 @@ import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext'
 import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents';
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
+import { StyledWidgetScrollContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -20,14 +21,8 @@ import { H3Title } from 'twenty-ui/typography';
 import { type TimelineCalendarEvent } from '~/generated/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
-const StyledContainer = styled.div`
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
+const StyledContainer = styled(StyledWidgetScrollContainer)`
   gap: ${themeCssVariables.spacing[8]};
-  overflow: scroll;
-  padding: ${themeCssVariables.spacing[6]};
-  width: 100%;
 `;
 
 const StyledYear = styled.span`
@@ -35,7 +30,13 @@ const StyledYear = styled.span`
 `;
 
 const StyledTitleContainer = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[4]};
+  margin-bottom: ${themeCssVariables.spacing[2]};
+
+  h3 {
+    color: ${themeCssVariables.font.color.secondary};
+    font-size: ${themeCssVariables.font.size.md};
+    font-weight: ${themeCssVariables.font.weight.regular};
+  }
 `;
 
 type CalendarEventsCardContentProps = {
