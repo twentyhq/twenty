@@ -1,6 +1,6 @@
 ---
 name: qa-scout
-description: Browser QA of a PR against a running Twenty app, post-merge on main or pre-merge via the qa-scout label. Derives user-visible scenarios from the PR diff, executes them with the Playwright MCP browser, attests database effects over SQL, watches server and worker logs for swallowed errors, and writes a structured verdict plus a report. Invoked by ci-e2e-main.yaml after the deterministic e2e suite; also runnable locally against a dev stack.
+description: Browser QA of a PR against a running Twenty app, post-merge on main or pre-merge via the qa-scout label. Derives user-visible scenarios from the PR diff, executes them with the Playwright MCP browser, attests database effects over SQL, watches server and worker logs for swallowed errors, and writes a structured verdict plus a report. Invoked by ci-e2e-main.yaml after the deterministic e2e suite; also runs in upgrade mode inside ci-cross-version-upgrade.yaml, attesting upgrade-command effects over SQL and GraphQL with no browser; also runnable locally against a dev stack.
 ---
 
 # QA Scout
@@ -26,7 +26,7 @@ The invoking prompt gives you concrete paths. In CI they are:
 | Credentials | `tim@apple.dev` / `tim@apple.dev`, workspace `Apple` |
 | Server log (live) | `/tmp/qa-scout/server.log` |
 | Worker log (live) | `/tmp/qa-scout/worker.log` |
-| Run mode | `/tmp/qa-scout/context/mode`: `post-merge` (the change is on main) or `pre-merge` (label-triggered validation of the PR head before merge) |
+| Run mode | `/tmp/qa-scout/context/mode`: `post-merge` (the change is on main), `pre-merge` (label-triggered validation of the PR head before merge), or `upgrade` (see Upgrade mode below) |
 | Database (disposable, full access) | `postgres://postgres:postgres@localhost:5432/default` via `psql` |
 
 This environment is ephemeral, so unlike a shared instance you have full
@@ -78,6 +78,53 @@ own browser observations unreliable.
 6. **Collect evidence.** Take a screenshot at each scenario's end state and at
    every failure, with descriptive filenames (`03-note-timeline-missing.png`).
 
+## Upgrade mode
+
+`mode` = `upgrade` means you are inside ci-cross-version-upgrade.yaml: the PR
+changes an upgrade command, and the app you are probing was seeded on the
+oldest supported release and upgraded to the PR head by running `upgrade` for
+real, so the database carries the full upgrade history. There is no browser
+and no frontend here; the deterministic steps before you already asserted
+that `upgrade` ran twice cleanly. Your question narrows to: did this PR's
+upgrade command leave the database and the app in the state the current code
+expects?
+
+Input deltas from the table above:
+
+| What | Path |
+|---|---|
+| GraphQL (core / metadata), authenticated | `/tmp/qa-scout/bin/gql core < query.json` (Write the query JSON to a file first; `cat query.json \| /tmp/qa-scout/bin/gql metadata` also works) |
+| Database | same URL via `psql`; workspace tables live in `workspace_*` schemas |
+| Server log (live) | `/tmp/qa-scout/server.log` |
+| Worker log (live) | `/tmp/qa-scout/worker.log` |
+
+The procedure replaces browser scenarios with:
+
+1. Mark both log offsets first, as always.
+2. Read the upgrade command(s) this PR adds or changes under
+   `packages/twenty-server/src/database/commands/upgrade-version-command/`.
+   List every table and column they touch, directly or through builders.
+3. **Schema attestation.** For each touched table, compare the physical
+   schema (`information_schema.columns` in a `workspace_*` schema) against
+   the entity definition in the source tree
+   (`packages/twenty-server/src/modules/**`). The source is what the running
+   code expects; an entity-declared column missing from the database is a
+   FAIL even when every query you ran looked fine. Give special attention to
+   generated columns (search vectors) and to columns the command never named:
+   a CASCADE drop takes dependents silently, and `pg_depend` tells you what
+   depended on what.
+4. **Write path.** Create a record of an affected object over `gql`, wait a
+   few seconds for the worker, then confirm over `psql` that the timeline
+   activity row (and any other side-effect row the diff implies) landed.
+5. Read both log windows after each step. A new exception in the worker log
+   is a FAIL exactly as in browser mode; the incident this mode exists for
+   threw only there.
+
+The verdict contract below is unchanged. On FAIL or INVESTIGATE the stakes
+line is: this upgrade command, run against a database carrying the full
+upgrade history, left drift behind, and merging ships that drift to every
+instance at the next release.
+
 ## Verdict contract
 
 Always write both files to the output directory, whatever happens:
@@ -102,7 +149,8 @@ Always write both files to the output directory, whatever happens:
 - **PASS**: scenarios green and no new errors attributable to them. Never PASS
   with unexplained new exceptions in your log window.
 
-`report.md` (GitHub-flavored, posted verbatim as a PR comment on non-PASS):
+`report.md` (GitHub-flavored; in browser modes posted verbatim as a PR
+comment on non-PASS, in upgrade mode surfaced in the job summary):
 
 - On FAIL or INVESTIGATE, open with a `> [!CAUTION]` admonition of 3 to 6
   lines: the user action that breaks, one quoted log line, the suspect files,
