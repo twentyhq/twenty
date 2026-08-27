@@ -74,8 +74,7 @@ export const slackSetUserLinkHandler = async (
   let slackUserId = requestedSlackUserId;
   let slackTeamId = requestedSlackTeamId;
   let resolvedName = name;
-  // The Slack account's verified profile email, when a lookup confirmed it;
-  // feeds the email-match rule that skips consent below.
+  // Slack-verified profile email, feeding the consent-skipping match below.
   let slackUserEmail: string | undefined;
 
   if (!isNonEmptyString(slackUserId) && isNonEmptyString(email)) {
@@ -211,6 +210,8 @@ export const slackSetUserLinkHandler = async (
     source: sourceForWrite,
   } = await decideSlackUserLinkWrite({
     client,
+    slackClient,
+    slackUserId,
     workspaceMemberId,
     slackUserEmail,
     isInInstalledWorkspace,

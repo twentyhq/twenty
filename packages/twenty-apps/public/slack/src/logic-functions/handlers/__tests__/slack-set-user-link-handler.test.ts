@@ -544,6 +544,31 @@ describe('slackSetUserLinkHandler', () => {
     expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
   });
 
+  it('should activate immediately when the form submits a resolved id and team that match', async () => {
+    // The settings form sends the resolved id + team, never the email it
+    // started from, so the match must come from Slack's own profile email.
+    fetchSlackUserIdentityMock.mockResolvedValue({
+      slackUserId: INPUT.slackUserId,
+      slackTeamId: INSTALLED_TEAM_ID,
+      displayName: 'Ada Lovelace',
+      email: 'ada@example.com',
+      isRegularUserAccount: true,
+    });
+    findWorkspaceMemberEmailByIdMock.mockResolvedValue('ada@example.com');
+
+    const result = await slackSetUserLinkHandler({
+      ...INPUT,
+      slackTeamId: INSTALLED_TEAM_ID,
+    });
+
+    expect(result.success).toBe(true);
+    expect(createSlackUserLinkMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ source: 'AUTO', consentState: 'ACTIVE' }),
+    );
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
   it('should still ask for consent when a matching email belongs to a non-regular account', async () => {
     fetchSlackUserIdentityMock.mockResolvedValue({
       slackUserId: INPUT.slackUserId,
