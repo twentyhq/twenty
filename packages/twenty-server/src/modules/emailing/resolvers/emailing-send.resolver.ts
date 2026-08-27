@@ -84,6 +84,7 @@ export class EmailingSendResolver {
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
     await this.emailBillingService.validateEmailCreditsOrThrow(
       currentWorkspace.id,
+      userWorkspaceId,
     );
 
     return this.messageCampaignService.send({

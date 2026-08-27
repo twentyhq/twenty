@@ -6,7 +6,10 @@ import { ApiPath } from 'twenty-shared/types';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { UsageLimitRestApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-rest-api-exception.filter';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -30,6 +33,7 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/p
 @UseFilters(
   PermissionsRestApiExceptionFilter,
   AiRestApiExceptionFilter,
+  UsageLimitRestApiExceptionFilter,
   RestApiExceptionFilter,
 )
 export class AiGenerateTextController {
@@ -37,6 +41,7 @@ export class AiGenerateTextController {
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly aiBillingService: AiBillingService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
   @Post('generate-text')
@@ -54,6 +59,12 @@ export class AiGenerateTextController {
     }
 
     await this.billingUsageService.hasAvailableCreditsOrThrow(workspace.id);
+    await this.usageLimitQuotaService.assertCanConsume({
+      workspaceId: workspace.id,
+      resourceType: UsageResourceType.AI,
+      operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+      spenders: { userWorkspaceId },
+    });
 
     const resolvedModelId = body.modelId ?? workspace.fastModel;
 

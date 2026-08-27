@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -19,14 +20,24 @@ export class EmailBillingService {
     private readonly billingService: BillingService,
     private readonly billingUsageService: BillingUsageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
   async hasEmailCredits(workspaceId: string): Promise<boolean> {
     return this.billingUsageService.hasAvailableCredits(workspaceId);
   }
 
-  async validateEmailCreditsOrThrow(workspaceId: string): Promise<void> {
+  async validateEmailCreditsOrThrow(
+    workspaceId: string,
+    userWorkspaceId?: string | null,
+  ): Promise<void> {
     await this.billingUsageService.hasAvailableCreditsOrThrow(workspaceId);
+    await this.usageLimitQuotaService.assertCanConsume({
+      workspaceId,
+      resourceType: UsageResourceType.EMAIL,
+      operationType: UsageOperationType.EMAIL_SEND,
+      spenders: { userWorkspaceId },
+    });
   }
 
   async billSentEmails({
@@ -62,6 +73,14 @@ export class EmailBillingService {
         });
       }
     }
+
+    await this.usageLimitQuotaService.settle({
+      workspaceId,
+      resourceType: UsageResourceType.EMAIL,
+      operationType: UsageOperationType.EMAIL_SEND,
+      spenders: { userWorkspaceId },
+      cost: creditsUsedMicro,
+    });
 
     await this.usageRecorderService.record(workspaceId, {
       resourceType: UsageResourceType.EMAIL,

@@ -8,7 +8,9 @@ import {
 } from 'ai';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
@@ -22,6 +24,7 @@ export class AgentTitleGenerationService {
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly aiBillingService: AiBillingService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
   async generateThreadTitle(
@@ -30,6 +33,12 @@ export class AgentTitleGenerationService {
     userWorkspaceId: string | null,
   ): Promise<string> {
     await this.billingUsageService.hasAvailableCreditsOrThrow(workspaceId);
+    await this.usageLimitQuotaService.assertCanConsume({
+      workspaceId,
+      resourceType: UsageResourceType.AI,
+      operationType: UsageOperationType.AI_CHAT_TOKEN,
+      spenders: { userWorkspaceId },
+    });
 
     const defaultModel = this.aiModelRegistryService.getDefaultSpeedModel();
 

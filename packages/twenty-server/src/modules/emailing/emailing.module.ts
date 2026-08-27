@@ -29,6 +29,7 @@ import { MessageCampaignService } from 'src/modules/emailing/services/message-ca
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
 import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool';
+import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     UserRoleModule,
     BillingModule,
     UsageModule,
+    UsageLimitModule,
     WorkspaceEventEmitterModule,
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,

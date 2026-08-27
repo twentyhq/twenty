@@ -52,9 +52,30 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
       meters: 'creditsUsedMicro',
     },
   },
-  [UsageResourceType.WORKFLOW]: {},
+  [UsageResourceType.WORKFLOW]: {
+    quota: {
+      allowedOperationTypes: [UsageOperationType.WORKFLOW_EXECUTION],
+      allowedSpenderTypes: ['workspace', 'userWorkspace'],
+      fallbacks: [{ source: 'allowance', spenderType: 'workspace' }],
+      meters: 'creditsUsedMicro',
+    },
+  },
   [UsageResourceType.APP]: {},
   [UsageResourceType.STORAGE]: {},
-  [UsageResourceType.LOGIC_FUNCTION]: {},
-  [UsageResourceType.EMAIL]: {},
+  [UsageResourceType.LOGIC_FUNCTION]: {
+    quota: {
+      allowedOperationTypes: [UsageOperationType.CODE_EXECUTION],
+      allowedSpenderTypes: ['workspace', 'userWorkspace'],
+      fallbacks: [{ source: 'allowance', spenderType: 'workspace' }],
+      meters: 'creditsUsedMicro',
+    },
+  },
+  [UsageResourceType.EMAIL]: {
+    quota: {
+      allowedOperationTypes: [UsageOperationType.EMAIL_SEND],
+      allowedSpenderTypes: ['workspace', 'userWorkspace'],
+      fallbacks: [{ source: 'allowance', spenderType: 'workspace' }],
+      meters: 'creditsUsedMicro',
+    },
+  },
 };

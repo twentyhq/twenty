@@ -17,6 +17,7 @@ import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingModule,
     FeatureFlagModule,
     UsageModule,
+    UsageLimitModule,
     WorkspaceDomainsModule,
     ApplicationModule,
     ApplicationVariableEntityModule,
