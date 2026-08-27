@@ -89,6 +89,10 @@ jobs:
         run: nohup npx nx start:ci twenty-server > /tmp/twenty-server.log 2>&1 &
       - name: Wait for server to be ready
         run: npx wait-on http://localhost:3000/healthz --timeout 120000 --interval 1000
+      # Install/uninstall run in background jobs, so the CLI needs a queue
+      # worker to be processing them.
+      - name: Start worker
+        run: nohup npx nx run twenty-server:worker:ci > /tmp/twenty-worker.log 2>&1 &
       - name: SDK / Run e2e Tests
         run: NODE_ENV=test npx vitest run --config ./vitest.e2e.config.ts
         working-directory: packages/twenty-sdk
