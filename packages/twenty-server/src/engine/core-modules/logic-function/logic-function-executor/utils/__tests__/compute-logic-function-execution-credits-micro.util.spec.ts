@@ -9,7 +9,7 @@ describe('computeLogicFunctionExecutionCreditsMicro', () => {
       }),
     ).toEqual({
       invocationCreditsMicro: 100,
-      durationCreditsMicro: 10,
+      durationCreditsMicro: 100,
       billedDurationMs: 1_000,
     });
   });
@@ -17,13 +17,13 @@ describe('computeLogicFunctionExecutionCreditsMicro', () => {
   it('rounds duration credits down to the previous micro credit', () => {
     expect(
       computeLogicFunctionExecutionCreditsMicro({
-        durationMs: 99,
+        durationMs: 9,
         isBillingExempt: false,
       }),
     ).toEqual({
       invocationCreditsMicro: 100,
       durationCreditsMicro: 0,
-      billedDurationMs: 99,
+      billedDurationMs: 9,
     });
 
     expect(
@@ -33,7 +33,7 @@ describe('computeLogicFunctionExecutionCreditsMicro', () => {
       }),
     ).toEqual({
       invocationCreditsMicro: 100,
-      durationCreditsMicro: 1,
+      durationCreditsMicro: 15,
       billedDurationMs: 155,
     });
   });
@@ -70,7 +70,7 @@ describe('computeLogicFunctionExecutionCreditsMicro', () => {
       }),
     ).toEqual({
       invocationCreditsMicro: 100,
-      durationCreditsMicro: 9_000,
+      durationCreditsMicro: 90_000,
       billedDurationMs: 900_000,
     });
   });
