@@ -6,6 +6,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
 import { UsageLimitResolver } from 'src/engine/core-modules/usage-limit/usage-limit.resolver';
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
 import { UsageLimitRulesCacheService } from 'src/engine/core-modules/usage-limit/services/usage-limit-rules-cache.service';
@@ -28,6 +29,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     PermissionsModule,
   ],
   providers: [
+    UsageLimitSpeedService,
     UsageLimitRulesCacheService,
     UsageLimitService,
     UsageLimitResolver,
@@ -38,6 +40,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(AgentEntity),
     provideWorkspaceScopedRepository(LogicFunctionEntity),
   ],
-  exports: [UsageLimitRulesCacheService],
+  exports: [UsageLimitSpeedService, UsageLimitRulesCacheService],
 })
 export class UsageLimitModule {}
