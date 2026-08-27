@@ -1,12 +1,8 @@
-import { useCallRecordingsSeeAllHref } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingsSeeAllHref';
+import { WidgetActionCallRecordingSeeAll } from '@/page-layout/widgets/call-recording/components/WidgetActionCallRecordingSeeAll';
 import { useCallRecordingForTranscript } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingForTranscript';
 import { getCallRecordingVideoFileUrl } from '@/page-layout/widgets/call-recording/utils/getCallRecordingVideoFileUrl';
-import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { buildCallRecordingTranscriptPlainText } from '@/page-layout/widgets/call-recording-transcript/utils/buildCallRecordingTranscriptPlainText';
-import { widgetHeaderCountComponentFamilyState } from '@/page-layout/widgets/states/widgetHeaderCountComponentFamilyState';
 import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
-import { WidgetCardHeaderActionLink } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionLink';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import {
@@ -14,18 +10,12 @@ import {
   isNonEmptyArray,
   parseCallRecordingTranscriptEntries,
 } from 'twenty-shared/utils';
-import { IconArrowUpRight, IconCopy, IconLink } from 'twenty-ui/icon';
+import { IconCopy, IconLink } from 'twenty-ui/icon';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const WidgetActionCallRecordingTranscript = () => {
-  const widget = useCurrentWidget();
   const { callRecording, loading, error, restriction } =
     useCallRecordingForTranscript();
-  const widgetHeaderCount = useAtomComponentFamilyStateValue(
-    widgetHeaderCountComponentFamilyState,
-    widget.id,
-  );
-  const callRecordingsSeeAllHref = useCallRecordingsSeeAllHref();
   const { copyToClipboard } = useCopyToClipboard();
 
   const canExposeCallRecording =
@@ -70,15 +60,7 @@ export const WidgetActionCallRecordingTranscript = () => {
           }
         />
       )}
-      {isDefined(callRecordingsSeeAllHref) &&
-        isDefined(widgetHeaderCount) &&
-        widgetHeaderCount > 0 && (
-          <WidgetCardHeaderActionLink
-            Icon={IconArrowUpRight}
-            label={t`See all call recordings linked to this calendar event`}
-            to={callRecordingsSeeAllHref}
-          />
-        )}
+      <WidgetActionCallRecordingSeeAll />
     </>
   );
 };
