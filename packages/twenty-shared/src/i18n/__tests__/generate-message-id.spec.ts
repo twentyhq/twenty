@@ -10,8 +10,31 @@ describe('generateMessageId', () => {
     ['A company', 'kZR6+h'],
     ['12HRS', '0eYXBl'],
     ['{fieldType} fields cannot be unique.', 'ZkHTHm'],
+    ['This week', 'yByRxz'],
   ])('matches the Lingui-generated id for %p', (message, expectedId) => {
     expect(generateMessageId(message)).toBe(expectedId);
+  });
+
+  it('does not depend on a Buffer global provided by the worker host', () => {
+    const originalBuffer = globalThis.Buffer;
+
+    Object.defineProperty(globalThis, 'Buffer', {
+      configurable: true,
+      value: {
+        from: () => ({ toString: () => 'wrong-message-id' }),
+      },
+    });
+
+    try {
+      expect(generateMessageId('Front component host Buffer isolation')).toBe(
+        't1LltP',
+      );
+    } finally {
+      Object.defineProperty(globalThis, 'Buffer', {
+        configurable: true,
+        value: originalBuffer,
+      });
+    }
   });
 
   it('returns a six-character id', () => {
