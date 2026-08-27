@@ -7,6 +7,7 @@ Follow these steps to get your app running locally.
 - Node.js (version specified in `.nvmrc`)
 - Yarn 4
 - Docker (to run the local Twenty server)
+- A Fathom OAuth client
 
 ## Steps
 
@@ -24,13 +25,17 @@ Follow these steps to get your app running locally.
 
    Check the server status at any time with `yarn twenty docker:status`.
 
-3. Start the development server and sync your app:
+3. Configure `FATHOM_CLIENT_ID` and `FATHOM_CLIENT_SECRET` as application
+   variables in Twenty.
+
+4. Start the development server and sync your app:
 
    ```bash
    yarn twenty dev
    ```
 
-4. Open [http://localhost:2020](http://localhost:2020) and log in with the default development credentials: `tim@apple.dev` / `tim@apple.dev`.
+5. Open [http://localhost:2020](http://localhost:2020), log in with the default
+   development credentials, and connect Fathom from Settings.
 
 ## Verifying your setup
 
