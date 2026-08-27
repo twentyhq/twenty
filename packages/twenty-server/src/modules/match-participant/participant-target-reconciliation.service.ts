@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, type ObjectLiteral } from 'typeorm';
 
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { getWorkspaceRepositoryWithOptionalTransaction } from 'src/engine/twenty-orm/utils/get-workspace-repository-with-optional-transaction.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -212,6 +213,16 @@ export class ParticipantTargetReconciliationService {
     transactionScope?: WorkspaceTransactionScope;
   }): Promise<void> {
     if (parentIds.length === 0) {
+      return;
+    }
+
+    // Existing workspaces only gain the target junction objects once the
+    // upgrade metadata sync has run; until then reconciliation must no-op so
+    // message and calendar imports keep succeeding. The backfill that follows
+    // the sync covers rows imported during that window.
+    if (
+      !isDefined(getWorkspaceContext().objectIdByNameSingular[targetObjectName])
+    ) {
       return;
     }
 

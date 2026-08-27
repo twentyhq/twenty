@@ -8,7 +8,7 @@ msgstr ""
 "Language: cs\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-26 18:42\n"
+"PO-Revision-Date: 2026-08-27 11:31\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -3731,8 +3731,8 @@ msgid "Get certified as a Twenty partner: a vetted badge, a directory profile yo
 msgstr "Získejte certifikaci partnera Twenty: ověřený odznak, profil v adresáři, který si vaši klienti mohou ověřit, a odpovídající zadání od klientů pro nejlepší partnery."
 
 #. js-lingui-id: b+jRGN
+#: src/sections/partner-lead/PartnerDirectoryPanel.tsx
 #: src/sections/partner-hero/PartnerLeadHero.tsx
-#: src/partners-marketplace/MarketplaceMatchCard.tsx
 #: src/client-brief/ClientBriefModal.tsx
 msgid "Get matched"
 msgstr "Nechat se spárovat"
@@ -7180,8 +7180,8 @@ msgid "Subdomain (yourco.twenty.com)"
 msgstr "Subdoména (yourco.twenty.com)"
 
 #. js-lingui-id: 578pU6
-#: src/partners-marketplace/PartnerProfileCtas.tsx
-#: src/partners-marketplace/MarketplaceBriefPrompt.tsx
+#: src/app/[locale]/(site)/partners/page.tsx
+#: src/app/[locale]/(site)/partners/profile/[slug]/page.tsx
 msgid "Submit a brief"
 msgstr "Odeslat zadání"
 

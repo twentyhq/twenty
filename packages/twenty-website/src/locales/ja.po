@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-26 18:42\n"
+"PO-Revision-Date: 2026-08-27 11:31\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -3731,8 +3731,8 @@ msgid "Get certified as a Twenty partner: a vetted badge, a directory profile yo
 msgstr "Twentyパートナーとして認定を受けましょう。審査済みバッジ、クライアントが確認できるディレクトリプロフィール、優れたパートナー向けの適合するクライアント概要を提供します。"
 
 #. js-lingui-id: b+jRGN
+#: src/sections/partner-lead/PartnerDirectoryPanel.tsx
 #: src/sections/partner-hero/PartnerLeadHero.tsx
-#: src/partners-marketplace/MarketplaceMatchCard.tsx
 #: src/client-brief/ClientBriefModal.tsx
 msgid "Get matched"
 msgstr "マッチングを受ける"
@@ -7180,8 +7180,8 @@ msgid "Subdomain (yourco.twenty.com)"
 msgstr "サブドメイン（yourco.twenty.com）"
 
 #. js-lingui-id: 578pU6
-#: src/partners-marketplace/PartnerProfileCtas.tsx
-#: src/partners-marketplace/MarketplaceBriefPrompt.tsx
+#: src/app/[locale]/(site)/partners/page.tsx
+#: src/app/[locale]/(site)/partners/profile/[slug]/page.tsx
 msgid "Submit a brief"
 msgstr "案件概要を送信"
 
