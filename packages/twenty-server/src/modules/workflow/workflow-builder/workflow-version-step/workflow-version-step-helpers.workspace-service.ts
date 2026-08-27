@@ -97,7 +97,11 @@ export class WorkflowVersionStepHelpersWorkspaceService {
       return;
     }
 
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps, objectIdByNameSingular } =
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectIdByNameSingular,
+    } =
       await this.workflowCommonWorkspaceService.getFlatEntityMaps(workspaceId);
 
     for (const { step, parsed } of recordCrudSteps) {

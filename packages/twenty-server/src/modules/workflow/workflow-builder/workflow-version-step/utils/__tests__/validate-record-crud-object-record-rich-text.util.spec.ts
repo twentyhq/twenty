@@ -53,9 +53,9 @@ describe('validateRecordCrudObjectRecordRichTextOrThrow', () => {
   });
 
   it('throws when a rich text object has malformed subfields', () => {
-    expect(() =>
-      validate({ relationshipSummary: { blocknote: 123 } }),
-    ).toThrow('Rich text field "relationshipSummary"');
+    expect(() => validate({ relationshipSummary: { blocknote: 123 } })).toThrow(
+      'Rich text field "relationshipSummary"',
+    );
     expect(() =>
       validate({ relationshipSummary: { unexpectedKey: 'value' } }),
     ).toThrow('Rich text field "relationshipSummary"');
