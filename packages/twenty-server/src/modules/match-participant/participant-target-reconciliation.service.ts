@@ -20,8 +20,6 @@ import {
 import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
-const RECONCILIATION_CHUNK_SIZE = 200;
-
 type TargetParentFieldName = 'calendarEventId' | 'messageThreadId';
 
 type TargetWorkspaceEntity = Omit<ExistingTarget, 'parentId' | 'deletedAt'> & {
@@ -67,7 +65,7 @@ export class ParticipantTargetReconciliationService {
   }): Promise<void> {
     for (const calendarEventIdChunk of chunk(
       [...new Set(calendarEventIds)],
-      RECONCILIATION_CHUNK_SIZE,
+      QUERY_MAX_RECORDS,
     )) {
       const participantRepository =
         await this.getRepository<CalendarEventParticipantWorkspaceEntity>(
@@ -115,7 +113,7 @@ export class ParticipantTargetReconciliationService {
 
     for (const messageIdChunk of chunk(
       [...new Set(messageIds)],
-      RECONCILIATION_CHUNK_SIZE,
+      QUERY_MAX_RECORDS,
     )) {
       changedMessages.push(
         ...(await messageRepository.find({
@@ -152,7 +150,7 @@ export class ParticipantTargetReconciliationService {
 
     for (const messageThreadIdChunk of chunk(
       [...new Set(messageThreadIds)],
-      RECONCILIATION_CHUNK_SIZE,
+      QUERY_MAX_RECORDS,
     )) {
       const threadMessages = await messageRepository.find({
         where: { messageThreadId: In(messageThreadIdChunk) },
@@ -177,10 +175,7 @@ export class ParticipantTargetReconciliationService {
         'messageId' | 'personId'
       >[] = [];
 
-      for (const messageIdChunk of chunk(
-        messageIds,
-        RECONCILIATION_CHUNK_SIZE,
-      )) {
+      for (const messageIdChunk of chunk(messageIds, QUERY_MAX_RECORDS)) {
         participants.push(
           ...(await participantRepository.find({
             where: { messageId: In(messageIdChunk) },
