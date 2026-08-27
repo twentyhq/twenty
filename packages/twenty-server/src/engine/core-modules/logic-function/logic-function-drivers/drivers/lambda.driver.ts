@@ -6,8 +6,6 @@ import {
 } from '@aws-sdk/client-lambda';
 import { Logger } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
-
 import {
   type LogicFunctionDriver,
   type LogicFunctionExecuteParams,
@@ -204,7 +202,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       const result = await lambdaClient.send(command, {
         abortSignal: AbortSignal.timeout(timeoutMs),
       });
-      const invokeSendMs = Date.now() - invokeStart;
+      const invokeDurationMs = Date.now() - invokeStart;
 
       const parsedResult = result.Payload
         ? JSON.parse(result.Payload.transformToString())
@@ -219,19 +217,16 @@ export class LambdaDriver implements LogicFunctionDriver {
       } = parseLambdaLogResult(result.LogResult);
 
       const duration = Date.now() - invokeFlowStart;
-      const parsedBilledDurationMs = isNonEmptyString(billedDurationMs)
-        ? Number(billedDurationMs)
-        : duration;
 
       this.logger.log(
-        `[lambda-timing] fnId=${flatLogicFunction.id} executionMode=${executionMode} totalMs=${Date.now() - buildStart} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${Buffer.byteLength(payloadString, 'utf8')} invokeSendMs=${invokeSendMs} reportDurationMs=${reportDurationMs ?? 'n/a'} billedMs=${billedDurationMs ?? 'n/a'} initDurationMs=${initDurationMs ?? 'n/a'} coldStart=${coldStart}`,
+        `[lambda-timing] fnId=${flatLogicFunction.id} executionMode=${executionMode} totalMs=${Date.now() - buildStart} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${Buffer.byteLength(payloadString, 'utf8')} invokeDurationMs=${invokeDurationMs} reportDurationMs=${reportDurationMs ?? 'n/a'} billedMs=${billedDurationMs ?? 'n/a'} initDurationMs=${initDurationMs ?? 'n/a'} coldStart=${coldStart}`,
       );
 
       if (result.FunctionError) {
         return {
           data: null,
           duration,
-          billedDurationMs: parsedBilledDurationMs,
+          billedDurationMs: invokeDurationMs,
           status: LogicFunctionExecutionStatus.ERROR,
           error: parsedResult,
           logs,
@@ -242,7 +237,7 @@ export class LambdaDriver implements LogicFunctionDriver {
         data: parsedResult,
         logs,
         duration,
-        billedDurationMs: parsedBilledDurationMs,
+        billedDurationMs: invokeDurationMs,
         status: LogicFunctionExecutionStatus.SUCCESS,
       };
     } catch (error) {
