@@ -1,53 +1,25 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type RoutePayload } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_USER_LINK_CONSENT_STATE } from 'src/logic-functions/constants/slack-user-link-consent-state';
-import { SLACK_USER_LINK_SOURCE } from 'src/logic-functions/constants/slack-user-link-source';
 import { createSlackUserLink } from 'src/logic-functions/data/create-slack-user-link';
 import { findSlackUserLink } from 'src/logic-functions/data/find-slack-user-link';
-import { findWorkspaceMemberEmailById } from 'src/logic-functions/data/find-workspace-member-email-by-id';
 import { findWorkspaceMemberNameById } from 'src/logic-functions/data/find-workspace-member-name-by-id';
 import { updateSlackUserLink } from 'src/logic-functions/data/update-slack-user-link';
-import { type SlackSetUserLinkInput } from 'src/logic-functions/types/slack-set-user-link-input.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { type SlackUserLink } from 'src/logic-functions/types/slack-user-link.type';
 import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/utils/current-user-has-workspace-members-permission';
+import { decideSlackUserLinkWrite } from 'src/logic-functions/utils/decide-slack-user-link-write';
+import {
+  extractSlackSetUserLinkInput,
+  type SlackSetUserLinkPayload,
+} from 'src/logic-functions/utils/extract-slack-set-user-link-input';
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
-import { asRecord } from 'src/logic-functions/utils/as-record.util';
-import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
 import { resolveSlackUserByEmail } from 'src/logic-functions/utils/resolve-slack-user-by-email';
 import { sendSlackUserLinkConsentDm } from 'src/logic-functions/utils/send-slack-user-link-consent-dm';
-
-// The agent tool passes the input directly, the HTTP route wraps it in a RoutePayload body.
-type SlackSetUserLinkPayload =
-  | SlackSetUserLinkInput
-  | RoutePayload<SlackSetUserLinkInput>;
-
-const isRoutePayload = (
-  payload: SlackSetUserLinkPayload,
-): payload is RoutePayload<SlackSetUserLinkInput> => 'body' in payload;
-
-// The HTTP route body is untrusted, so read each field rather than trusting its declared type.
-const toSlackSetUserLinkInput = (source: unknown): SlackSetUserLinkInput => {
-  const body = asRecord(source) ?? {};
-
-  return {
-    workspaceMemberId: readOptionalString(body.workspaceMemberId) ?? '',
-    slackUserId: readOptionalString(body.slackUserId),
-    email: readOptionalString(body.email),
-    slackTeamId: readOptionalString(body.slackTeamId),
-    name: readOptionalString(body.name),
-  };
-};
-
-const extractSlackSetUserLinkInput = (
-  payload: SlackSetUserLinkPayload,
-): SlackSetUserLinkInput =>
-  toSlackSetUserLinkInput(isRoutePayload(payload) ? payload.body : payload);
 
 export const slackSetUserLinkHandler = async (
   payload: SlackSetUserLinkPayload,
@@ -232,39 +204,18 @@ export const slackSetUserLinkHandler = async (
     isDefined(existingLink) &&
     existingLink.workspaceMemberId === workspaceMemberId;
 
-  // Linking a Slack account to the member with the same email is the email
-  // auto-match created eagerly, before the person's first message, so it needs
-  // no consent handshake. Storing it as an AUTO link keeps it exactly as safe
-  // as a lazily matched one: the run-as resolver never trusts a stored AUTO
-  // link and re-verifies the live Slack email on every request. The relink
-  // guard keeps an explicit decline from being overwritten into an AUTO link
-  // the resolver would bypass.
-  const memberEmail =
-    isInInstalledWorkspace &&
-    !isSameMemberRelink &&
-    isNonEmptyString(slackUserEmail)
-      ? await findWorkspaceMemberEmailById(client, workspaceMemberId)
-      : undefined;
-
-  const isEagerAutoMatch =
-    isNonEmptyString(slackUserEmail) &&
-    isNonEmptyString(memberEmail) &&
-    slackUserEmail.toLowerCase() === memberEmail.toLowerCase();
-
-  const requiresConsent =
-    isInInstalledWorkspace && !isSameMemberRelink && !isEagerAutoMatch;
-
-  const consentStateForWrite = !isInInstalledWorkspace
-    ? SLACK_USER_LINK_CONSENT_STATE.ADMIN_SET
-    : isSameMemberRelink
-      ? undefined
-      : isEagerAutoMatch
-        ? SLACK_USER_LINK_CONSENT_STATE.ACTIVE
-        : SLACK_USER_LINK_CONSENT_STATE.PENDING;
-
-  const sourceForWrite = isEagerAutoMatch
-    ? SLACK_USER_LINK_SOURCE.AUTO
-    : SLACK_USER_LINK_SOURCE.MANUAL;
+  const {
+    isEagerAutoMatch,
+    requiresConsent,
+    consentState: consentStateForWrite,
+    source: sourceForWrite,
+  } = await decideSlackUserLinkWrite({
+    client,
+    workspaceMemberId,
+    slackUserEmail,
+    isInInstalledWorkspace,
+    isSameMemberRelink,
+  });
 
   let slackUserLinkId: string;
 
