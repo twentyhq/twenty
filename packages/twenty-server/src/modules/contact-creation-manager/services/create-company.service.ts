@@ -89,11 +89,13 @@ export class CreateCompanyService {
         withDeleted: true,
       });
 
-      const domainNamesWithoutCompany = domainNames.filter(
+      const domainNamesWithoutLiveCompany = domainNames.filter(
         (domainName) =>
           !isDefined(
             this.findExistingCompanyByDomainName({
-              existingCompanies: companiesMatchedOnPrimaryLink,
+              existingCompanies: companiesMatchedOnPrimaryLink.filter(
+                (company) => !isDefined(company.deletedAt),
+              ),
               domainName,
             }),
           ),
@@ -101,18 +103,23 @@ export class CreateCompanyService {
 
       const companiesMatchedOnSecondaryLinks =
         await this.findCompaniesBySecondaryDomainNames({
-          domainNames: domainNamesWithoutCompany,
+          domainNames: domainNamesWithoutLiveCompany,
         });
 
       const companyIdsMatchedOnPrimaryLink = new Set(
         companiesMatchedOnPrimaryLink.map((company) => company.id),
       );
 
-      const existingCompanies = [
+      const matchedCompanies = [
         ...companiesMatchedOnPrimaryLink,
         ...companiesMatchedOnSecondaryLinks.filter(
           (company) => !companyIdsMatchedOnPrimaryLink.has(company.id),
         ),
+      ];
+
+      const existingCompanies = [
+        ...matchedCompanies.filter((company) => !isDefined(company.deletedAt)),
+        ...matchedCompanies.filter((company) => isDefined(company.deletedAt)),
       ];
 
       const existingCompanyIdsMap = this.createCompanyMap(existingCompanies);
@@ -299,7 +306,9 @@ export class CreateCompanyService {
         }
 
         for (const domainName of getDomainNamesFromLinks(company.domainName)) {
-          acc[domainName] = company.id;
+          if (!isDefined(acc[domainName])) {
+            acc[domainName] = company.id;
+          }
         }
 
         return acc;

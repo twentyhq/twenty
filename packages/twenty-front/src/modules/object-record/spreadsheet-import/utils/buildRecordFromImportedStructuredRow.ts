@@ -13,7 +13,7 @@ import {
   assertUnreachable,
   isDefined,
   isEmptyObject,
-  normalizeDomain,
+  getLinkUrlNormalizer,
   normalizeUrlOrigin,
 } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -246,8 +246,7 @@ export const buildRecordFromImportedStructuredRow = ({
           importedStructuredRow,
           {
             ...COMPOSITE_FIELD_TRANSFORM_CONFIGS[FieldMetadataType.LINKS],
-            primaryLinkUrl:
-              linksVariant === 'domain' ? normalizeDomain : normalizeUrlOrigin,
+            primaryLinkUrl: getLinkUrlNormalizer(linksVariant),
           },
         );
         if (isDefined(compositeData)) {

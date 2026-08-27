@@ -17,8 +17,7 @@ import {
 import {
   getUniqueConstraintsFields,
   isDefined,
-  normalizeDomain,
-  normalizeUrlOrigin,
+  getLinkUrlNormalizer,
 } from 'twenty-shared/utils';
 
 type Column = {
@@ -121,9 +120,7 @@ const getUniqueValues = (
       ) {
         const rawPrimaryLinkUrl = row?.[columnName]?.toString().trim() || '';
 
-        return linksVariant === 'domain'
-          ? normalizeDomain(rawPrimaryLinkUrl)
-          : normalizeUrlOrigin(rawPrimaryLinkUrl);
+        return getLinkUrlNormalizer(linksVariant)(rawPrimaryLinkUrl);
       }
 
       return row?.[columnName]?.toString().trim().toLowerCase();

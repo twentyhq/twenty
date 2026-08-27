@@ -7,8 +7,7 @@ import {
 } from 'twenty-shared/types';
 import {
   isDefined,
-  normalizeDomain,
-  normalizeUrlOrigin,
+  getLinkUrlNormalizer,
   parseJson,
 } from 'twenty-shared/utils';
 
@@ -35,8 +34,7 @@ export const transformLinksValue = ({
     return input;
   }
 
-  const normalizeLinkUrl =
-    settings?.type === 'domain' ? normalizeDomain : normalizeUrlOrigin;
+  const normalizeLinkUrl = getLinkUrlNormalizer(settings?.type);
 
   const primaryLinkUrlRaw = input.primaryLinkUrl as string | null;
   const primaryLinkLabelRaw = input.primaryLinkLabel as string | null;

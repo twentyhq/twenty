@@ -12,8 +12,10 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { gmailMessage } from 'test/integration/google/mocks/gmail-message.util';
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
+import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
+import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
@@ -161,6 +163,38 @@ describe('Gmail contact auto-creation company domain matching (integration)', ()
     expect(await syncMessageFrom(`sender@${mergedAwayDomainName}`)).toBe(
       mergedCompany.id,
     );
+  }, 120000);
+
+  it('prefers the live company holding the domain as a secondary link over a deleted one holding it as its primary', async () => {
+    const domainName = `contested-${randomUUID()}.com`;
+
+    const deletedCompany = await createCompany(domainName);
+
+    await makeGraphqlAPIRequest(
+      deleteOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: 'id',
+        recordId: deletedCompany.id,
+      }),
+    );
+
+    const liveCompany = await createCompany(`live-${randomUUID()}.com`);
+
+    await makeGraphqlAPIRequest(
+      updateOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: 'id domainName { secondaryLinks }',
+        recordId: liveCompany.id,
+        data: {
+          domainName: {
+            primaryLinkUrl: liveCompany.domainName.primaryLinkUrl,
+            secondaryLinks: [{ url: domainName, label: '' }],
+          },
+        },
+      }),
+    );
+
+    expect(await syncMessageFrom(`sender@${domainName}`)).toBe(liveCompany.id);
   }, 120000);
 
   it('attaches a contact to the surviving company on its primary domain', async () => {

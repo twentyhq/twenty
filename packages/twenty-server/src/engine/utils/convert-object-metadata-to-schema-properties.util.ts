@@ -6,6 +6,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -168,8 +169,12 @@ export const convertObjectMetadataToSchemaProperties = ({
         };
         break;
       case FieldMetadataType.LINKS: {
-        const linksSettings =
-          field.settings as FieldMetadataSettings<FieldMetadataType.LINKS>;
+        const linksSettings = isFieldMetadataSettingsOfType(
+          field.settings,
+          FieldMetadataType.LINKS,
+        )
+          ? field.settings
+          : null;
 
         const secondaryLinkUrlProperty: SchemaObject =
           linksSettings?.type === 'domain'

@@ -2,19 +2,31 @@ const SCHEME_PREFIX_REGEX = /^[a-z][a-z0-9+.-]*:\/\//i;
 const PATH_SEPARATOR_REGEX = /[/?#]/;
 const USER_INFO_PREFIX_REGEX = /^.*@/;
 const PORT_SUFFIX_REGEX = /:\d+$/;
-const TRAILING_DOT_REGEX = /\.+$/;
-const WWW_PREFIX_REGEX = /^(www\.)+/;
+
+const stripWwwPrefixesAndTrailingDots = (host: string): string => {
+  const labels = host.split('.');
+
+  while (labels.length > 0 && labels[labels.length - 1] === '') {
+    labels.pop();
+  }
+
+  while (labels[0] === 'www') {
+    labels.shift();
+  }
+
+  return labels.join('.');
+};
 
 export const normalizeDomain = (rawDomain: string): string => {
-  const host = rawDomain
-    .trim()
-    .replace(SCHEME_PREFIX_REGEX, '')
-    .split(PATH_SEPARATOR_REGEX)[0]
-    .replace(USER_INFO_PREFIX_REGEX, '')
-    .replace(PORT_SUFFIX_REGEX, '')
-    .replace(TRAILING_DOT_REGEX, '')
-    .toLowerCase()
-    .replace(WWW_PREFIX_REGEX, '');
+  const host = stripWwwPrefixesAndTrailingDots(
+    rawDomain
+      .trim()
+      .replace(SCHEME_PREFIX_REGEX, '')
+      .split(PATH_SEPARATOR_REGEX)[0]
+      .replace(USER_INFO_PREFIX_REGEX, '')
+      .replace(PORT_SUFFIX_REGEX, '')
+      .toLowerCase(),
+  );
 
   try {
     return new URL(`https://${host}`).hostname;
