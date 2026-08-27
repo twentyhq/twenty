@@ -251,41 +251,39 @@ jobs:
           echo "run=true" >> "$GITHUB_OUTPUT"
           echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
 
-      # The agent step runs under the workflow's read-only token and gets no
-      # write capability; the PR comment is posted by the qa-scout-comment job
-      # from the uploaded verdict, so untrusted page/log content the agent
-      # reads can never reach a privileged credential.
+      # The Scout invokes the Claude Code CLI directly rather than through
+      # claude-code-action: the action rejects push events outright
+      # ("Unsupported event type: push", still true at its latest version),
+      # which silently killed the post-merge mode this Scout exists for, and
+      # its GitHub bootstrap was the only reason a GitHub token entered this
+      # step at all. Direct invocation runs on every trigger and leaves the
+      # agent holding no GitHub credential whatsoever; the PR comment is
+      # posted by the qa-scout-comment job from the uploaded verdict, so
+      # untrusted page/log content can never reach a privileged credential.
       # The Bash allowlist scopes the agent to its task; it is not the
       # containment boundary (psql alone is arbitrarily powerful in this
-      # disposable env). Containment is the absence of write credentials in
-      # this step, the scrub step, and Actions secret masking on the token.
+      # disposable env). Containment is the absence of credentials beyond
+      # inference, the scrub step, and Actions secret masking on the token.
       - name: QA Scout / Run
         id: qa-scout-run
         if: ${{ !cancelled() && steps.qa-scout-pr.outputs.run == 'true' }}
         continue-on-error: true
         timeout-minutes: 15
-        uses: anthropics/claude-code-action@ac7e24bf2938964b8ab203e417a2773802392ddd # v1.0.146
-        with:
-          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          # The action needs a GitHub token to bootstrap; without one it tries
-          # an OIDC exchange, which this workflow's permissions rightly refuse.
-          # The workflow token is contents:read only, so the agent still holds
-          # no write capability.
-          github_token: ${{ github.token }}
-          prompt: |
-            Read .claude/skills/qa-scout/SKILL.md and follow it exactly. This is
-            the CI invocation: every path and credential in the skill's Inputs
-            table applies verbatim.
-          claude_args: '--max-turns 120 --model opus --mcp-config /tmp/qa-scout/mcp.json --allowedTools "Read,Grep,Glob,Write,TodoWrite,Bash(cat *),Bash(tail *),Bash(head *),Bash(wc *),Bash(ls *),Bash(grep *),Bash(jq *),Bash(echo *),Bash(diff *),Bash(sort *),Bash(uniq *),Bash(cut *),Bash(tr *),Bash(mkdir *),Bash(sleep *),Bash(date *),Bash(psql *),mcp__playwright"'
-
-      # The action's condensed output carries only a denial count, so
-      # allowlist tuning has been guesswork. Keep the execution log
-      # (transcript, per-denial detail) in the artifact tree, ahead of the
-      # scrub so it rides the same redaction.
-      - name: QA Scout / Capture execution log
-        if: ${{ !cancelled() && steps.qa-scout-pr.outputs.run == 'true' }}
-        continue-on-error: true
-        run: cp "${RUNNER_TEMP}/claude-execution-output.json" /tmp/qa-scout/execution.json 2>/dev/null || true
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: |
+          set -euo pipefail
+          npm install -g @anthropic-ai/claude-code@2.1.247
+          # stream-json teed into the artifact tree, ahead of the scrub,
+          # keeps per-turn detail and permission denials so allowlist tuning
+          # reads real data.
+          claude -p "Read .claude/skills/qa-scout/SKILL.md and follow it exactly. This is the CI invocation: every path and credential in the skill's Inputs table applies verbatim." \
+            --max-turns 120 \
+            --model opus \
+            --mcp-config /tmp/qa-scout/mcp.json \
+            --allowedTools "Read,Grep,Glob,Write,TodoWrite,Bash(cat *),Bash(tail *),Bash(head *),Bash(wc *),Bash(ls *),Bash(grep *),Bash(jq *),Bash(echo *),Bash(diff *),Bash(sort *),Bash(uniq *),Bash(cut *),Bash(tr *),Bash(mkdir *),Bash(sleep *),Bash(date *),Bash(psql *),mcp__playwright" \
+            --output-format stream-json --verbose \
+            | tee /tmp/qa-scout/execution.json
 
       # The agent process necessarily holds the inference credential, and a
       # prompt-injected agent could copy it into any file it can write. The
