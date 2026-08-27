@@ -199,7 +199,7 @@ export class ApplicationRegistrationEntity {
   @Column({ nullable: true, type: 'text' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.37.0_AddPricingDescriptionToApplicationRegistrationFastInstanceCommand_1787855454000',
+      '2.38.0_AddPricingDescriptionToApplicationRegistrationFastInstanceCommand_1787857074000',
   })
   pricingDescription: string | null;
 
