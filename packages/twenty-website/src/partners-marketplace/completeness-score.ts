@@ -32,13 +32,21 @@ export const completenessScore = (
   if (partner.description.trim().length >= MIN_DESCRIPTION_LENGTH) {
     score += POINTS_FOR_INTRODUCTION;
   }
-  if (partner.serviceCount >= 1) score += POINTS_FOR_SERVICE;
-  if (partner.profilePictureUrl) score += POINTS_FOR_PROFILE_PICTURE;
-  if (partner.calendarLink) score += POINTS_FOR_CALENDAR_LINK;
+  if (partner.serviceCount >= 1) {
+    score += POINTS_FOR_SERVICE;
+  }
+  if (partner.profilePictureUrl) {
+    score += POINTS_FOR_PROFILE_PICTURE;
+  }
+  if (partner.calendarLink) {
+    score += POINTS_FOR_CALENDAR_LINK;
+  }
   if (partner.hourlyRateUsd !== null || partner.projectBudgetMinUsd !== null) {
     score += POINTS_FOR_RATE_OR_BUDGET;
   }
-  if (partner.partnerScope.length >= 1) score += POINTS_FOR_CATEGORY;
+  if (partner.partnerScope.length >= 1) {
+    score += POINTS_FOR_CATEGORY;
+  }
 
   return score;
 };
