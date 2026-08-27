@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -19,7 +18,6 @@ import { PartialObjectRecordWithId } from 'src/engine/api/common/common-query-ru
 import { buildWhereConditions } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/build-where-conditions.util';
 import { categorizeRecords } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/categorize-records.util';
 import { getConflictingFields } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-conflicting-fields.util';
-import { prepareRecordForUpsertUpdate } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/prepare-record-for-upsert-update.util';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -50,11 +48,6 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-
-const TARGET_JUNCTION_OBJECT_UNIVERSAL_IDENTIFIERS: string[] = [
-  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventTarget,
-  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageThreadTarget,
-];
 
 @Injectable()
 export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -454,14 +447,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     columnsToReturn: string[];
     queryRunnerContext: CommonExtendedQueryRunnerContext;
   }): Promise<void> {
-    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-      flatFieldMetadataMaps,
-      flatObjectMetadata,
-    );
-    const shouldMarkManuallyAssigned =
-      TARGET_JUNCTION_OBJECT_UNIVERSAL_IDENTIFIERS.includes(
-        flatObjectMetadata.universalIdentifier,
-      ) && isDefined(fieldIdByName.isManuallyAssigned);
     const updateInputs = partialRecordsToUpdate
       .map((record) =>
         this.getRecordWithoutCreatedBy(
@@ -472,10 +457,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       )
       .map((record) => ({
         id: record.id,
-        data: prepareRecordForUpsertUpdate({
-          record,
-          shouldMarkManuallyAssigned,
-        }),
+        data: { ...record, deletedAt: null },
       }));
 
     const writeRepository = this.getWriteRepository(queryRunnerContext);
