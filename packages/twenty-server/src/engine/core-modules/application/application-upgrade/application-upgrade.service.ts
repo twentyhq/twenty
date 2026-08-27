@@ -165,7 +165,7 @@ export class ApplicationUpgradeService {
       await this.workspaceVersionService.getProvisionedWorkspaceIds(),
     );
 
-    let applicationsToUpgrade = outdatedApplications.filter((application) =>
+    const provisionedApplications = outdatedApplications.filter((application) =>
       provisionedWorkspaceIds.has(application.workspaceId),
     );
 
@@ -175,12 +175,9 @@ export class ApplicationUpgradeService {
       )
       .map((application) => application.workspaceId);
 
-    if (isDefined(workspaceCountLimit)) {
-      applicationsToUpgrade = applicationsToUpgrade.slice(
-        0,
-        workspaceCountLimit,
-      );
-    }
+    const applicationsToUpgrade = isDefined(workspaceCountLimit)
+      ? provisionedApplications.slice(0, workspaceCountLimit)
+      : provisionedApplications;
 
     return {
       appRegistration,
