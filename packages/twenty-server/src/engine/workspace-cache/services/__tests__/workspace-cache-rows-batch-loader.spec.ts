@@ -1,4 +1,4 @@
-import { type DataSource, type EntityTarget } from 'typeorm';
+import { IsNull, Not, type DataSource, type EntityTarget } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -225,5 +225,87 @@ describe('WorkspaceCacheRowsBatchLoader', () => {
     expect(() => rowsBatchLoader.readRows({ application: ['id'] })).toThrow(
       /application.*rowsRequirement/,
     );
+  });
+
+  it('returns plain picked rows for an object requirement without groupBy', async () => {
+    const { rowsBatchLoader } = setup();
+
+    await rowsBatchLoader.loadRows([{ objectMetadata: { columns: ['id'] } }]);
+
+    const { objectMetadata } = rowsBatchLoader.readRows({
+      objectMetadata: { columns: ['id'] },
+    } as const);
+
+    expect(objectMetadata[0].id).toBe('object-row');
+    // @ts-expect-error an undeclared column is a compile error, not undefined
+    void objectMetadata[0].nameSingular;
+  });
+
+  it('runs a separate query for a predicated requirement, merging the predicate into the where clause', async () => {
+    const { rowsBatchLoader, findMocksByEntity } = setup();
+    const findMock = findMocksByEntity.get(ViewFieldEntity)!;
+    const allRows = [{ id: 'view-field-all', workspaceId: WORKSPACE_ID }];
+    const visibleRows = [
+      { id: 'view-field-visible', workspaceId: WORKSPACE_ID },
+    ];
+
+    findMock.mockResolvedValueOnce(allRows).mockResolvedValueOnce(visibleRows);
+
+    await rowsBatchLoader.loadRows([
+      { viewField: ['id'] },
+      { viewField: { columns: ['id'], where: { isVisible: true } } },
+    ]);
+
+    expect(findMock).toHaveBeenCalledTimes(2);
+    expect(findMock.mock.calls[1][0].where).toEqual({
+      isVisible: true,
+      workspaceId: WORKSPACE_ID,
+    });
+
+    expect(rowsBatchLoader.readRows({ viewField: ['id'] }).viewField).toBe(
+      allRows,
+    );
+    expect(
+      rowsBatchLoader.readRows({
+        viewField: { columns: ['id'], where: { isVisible: true } },
+      }).viewField,
+    ).toBe(visibleRows);
+  });
+
+  it('shares one query across structurally equal where clauses, whatever the instances', async () => {
+    const { rowsBatchLoader, findMocksByEntity } = setup();
+    const findMock = findMocksByEntity.get(ViewFieldEntity)!;
+
+    await rowsBatchLoader.loadRows([
+      {
+        viewField: {
+          columns: ['id'],
+          where: { isVisible: true, fieldMetadataId: Not(IsNull()) },
+        },
+      },
+      {
+        viewField: {
+          columns: ['fieldMetadataId'],
+          where: { fieldMetadataId: Not(IsNull()), isVisible: true },
+        },
+      },
+    ]);
+
+    expect(findMock).toHaveBeenCalledTimes(1);
+    expect(findMock.mock.calls[0][0].select).toEqual(
+      expect.arrayContaining(['id', 'fieldMetadataId']),
+    );
+  });
+
+  it('runs separate queries for structurally different where clauses', async () => {
+    const { rowsBatchLoader, findMocksByEntity } = setup();
+    const findMock = findMocksByEntity.get(ViewFieldEntity)!;
+
+    await rowsBatchLoader.loadRows([
+      { viewField: { columns: ['id'], where: { isVisible: true } } },
+      { viewField: { columns: ['id'], where: { isVisible: false } } },
+    ]);
+
+    expect(findMock).toHaveBeenCalledTimes(2);
   });
 });

@@ -1,9 +1,9 @@
 import {
-  type GroupedEntityRowsRequirement,
+  type ObjectEntityRowsRequirement,
   type WidenedEntityRowsRequirement,
 } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
 
-export const isGroupedEntityRowsRequirement = (
+export const isObjectEntityRowsRequirement = (
   entityRowsRequirement: WidenedEntityRowsRequirement,
-): entityRowsRequirement is GroupedEntityRowsRequirement =>
+): entityRowsRequirement is ObjectEntityRowsRequirement =>
   entityRowsRequirement !== true && !Array.isArray(entityRowsRequirement);

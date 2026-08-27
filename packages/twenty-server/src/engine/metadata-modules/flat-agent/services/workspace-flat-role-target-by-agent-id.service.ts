@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { IsNull, Not } from 'typeorm';
+
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
 import { FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
@@ -10,7 +12,11 @@ import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/t
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 
 const FLAT_ROLE_TARGET_BY_AGENT_ID_ROWS_REQUIREMENT = {
-  roleTarget: { columns: true, groupBy: ['agentId'] },
+  roleTarget: {
+    columns: true,
+    groupBy: ['agentId'],
+    where: { agentId: Not(IsNull()) },
+  },
   application: ['id', 'universalIdentifier'],
   role: ['id', 'universalIdentifier'],
   agent: ['id', 'universalIdentifier'],

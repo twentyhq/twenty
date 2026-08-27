@@ -1,3 +1,5 @@
+import { type FindOptionsWhere, type ObjectLiteral } from 'typeorm';
+
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
@@ -22,22 +24,24 @@ export type EntityRowsRequirement<TName extends CacheFetchableEntityName> =
   | true
   | {
       columns: EntityColumns<TName> | true;
-      groupBy: GroupByColumns<TName>;
+      groupBy?: GroupByColumns<TName>;
+      where?: FindOptionsWhere<CacheFetchableEntity<TName>>;
     };
 
 export type WorkspaceCacheRowsRequirement = {
   [TName in CacheFetchableEntityName]?: EntityRowsRequirement<TName>;
 };
 
-export type GroupedEntityRowsRequirement = {
+export type ObjectEntityRowsRequirement = {
   columns: readonly string[] | true;
-  groupBy: readonly string[];
+  groupBy?: readonly string[];
+  where?: FindOptionsWhere<ObjectLiteral>;
 };
 
 export type WidenedEntityRowsRequirement =
   | true
   | readonly string[]
-  | GroupedEntityRowsRequirement;
+  | ObjectEntityRowsRequirement;
 
 type PickedRow<
   TName extends CacheFetchableEntityName,
@@ -74,7 +78,11 @@ export type WorkspaceCacheRows<
           GroupedRow<TName, TColumns, TGroupBy>[]
         >;
       }
-    : TRowsRequirement[TName] extends readonly string[]
-      ? PickedRow<TName, TRowsRequirement[TName]>[]
-      : CacheFetchableEntity<TName>[];
+    : TRowsRequirement[TName] extends {
+          columns: infer TColumns extends readonly string[] | true;
+        }
+      ? PickedRow<TName, TColumns>[]
+      : TRowsRequirement[TName] extends readonly string[]
+        ? PickedRow<TName, TRowsRequirement[TName]>[]
+        : CacheFetchableEntity<TName>[];
 };

@@ -1,6 +1,7 @@
 import {
   type DataSource,
   type FindManyOptions,
+  type FindOptionsWhere,
   type ObjectLiteral,
 } from 'typeorm';
 
@@ -9,28 +10,51 @@ import { capitalize, isDefined } from 'twenty-shared/utils';
 import { ALL_WORKSPACE_CACHE_ENTITY_BY_NAME } from 'src/engine/workspace-cache/constants/all-workspace-cache-entity-by-name.constant';
 import {
   type CacheFetchableEntityName,
-  type GroupedEntityRowsRequirement,
   type WidenedEntityRowsRequirement,
   type WorkspaceCacheRows,
   type WorkspaceCacheRowsRequirement,
 } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
 import { groupRowsByForeignKey } from 'src/engine/workspace-cache/utils/group-rows-by-foreign-key.util';
-import { isGroupedEntityRowsRequirement } from 'src/engine/workspace-cache/utils/is-grouped-entity-rows-requirement.util';
+import { isObjectEntityRowsRequirement } from 'src/engine/workspace-cache/utils/is-object-entity-rows-requirement.util';
+import { serializeWhereClause } from 'src/engine/workspace-cache/utils/serialize-where-clause.util';
+
+type WhereClause = FindOptionsWhere<ObjectLiteral>;
+
+type NormalizedEntityRowsRequirement = {
+  columns: readonly string[] | true;
+  groupBy: readonly string[];
+  where?: WhereClause;
+};
 
 const normalizeEntityRowsRequirement = (
   entityRowsRequirement: WidenedEntityRowsRequirement,
-): GroupedEntityRowsRequirement =>
-  isGroupedEntityRowsRequirement(entityRowsRequirement)
-    ? entityRowsRequirement
+): NormalizedEntityRowsRequirement =>
+  isObjectEntityRowsRequirement(entityRowsRequirement)
+    ? {
+        columns: entityRowsRequirement.columns,
+        groupBy: entityRowsRequirement.groupBy ?? [],
+        where: entityRowsRequirement.where,
+      }
     : { columns: entityRowsRequirement, groupBy: [] };
 
-export class WorkspaceCacheRowsBatchLoader {
-  private readonly rowsByEntityName = new Map<
-    CacheFetchableEntityName,
-    ObjectLiteral[]
-  >();
+const buildFetchKey = (
+  entityName: CacheFetchableEntityName,
+  where: WhereClause | undefined,
+): string =>
+  isDefined(where)
+    ? `${entityName}:${serializeWhereClause(where)}`
+    : entityName;
 
-  private readonly groupedRowsByEntityNameAndForeignKey = new Map<
+type PlannedFetch = {
+  entityName: CacheFetchableEntityName;
+  where?: WhereClause;
+  columns: Set<string> | null;
+};
+
+export class WorkspaceCacheRowsBatchLoader {
+  private readonly rowsByFetchKey = new Map<string, ObjectLiteral[]>();
+
+  private readonly groupedRowsByFetchKeyAndForeignKey = new Map<
     string,
     Map<string, ObjectLiteral[]>
   >();
@@ -52,10 +76,7 @@ export class WorkspaceCacheRowsBatchLoader {
     }
     this.hasLoadedRows = true;
 
-    const plannedColumnsByEntityName = new Map<
-      CacheFetchableEntityName,
-      Set<string> | null
-    >();
+    const plannedFetchByFetchKey = new Map<string, PlannedFetch>();
 
     for (const rowsRequirement of rowsRequirements) {
       for (const [entityName, entityRowsRequirement] of Object.entries(
@@ -68,44 +89,48 @@ export class WorkspaceCacheRowsBatchLoader {
           continue;
         }
 
-        const { columns, groupBy } = normalizeEntityRowsRequirement(
+        const { columns, groupBy, where } = normalizeEntityRowsRequirement(
           entityRowsRequirement,
         );
-        const planned = plannedColumnsByEntityName.get(entityName);
+        const fetchKey = buildFetchKey(entityName, where);
+        const plannedFetch = plannedFetchByFetchKey.get(fetchKey);
 
         if (columns === true) {
-          plannedColumnsByEntityName.set(entityName, null);
-          continue;
-        }
-
-        if (planned === null) {
+          plannedFetchByFetchKey.set(fetchKey, {
+            entityName,
+            where,
+            columns: null,
+          });
           continue;
         }
 
         const columnsWithGroupByKeys = [...columns, ...groupBy];
 
-        if (!isDefined(planned)) {
-          plannedColumnsByEntityName.set(
+        if (!isDefined(plannedFetch)) {
+          plannedFetchByFetchKey.set(fetchKey, {
             entityName,
-            new Set(columnsWithGroupByKeys),
-          );
+            where,
+            columns: new Set(columnsWithGroupByKeys),
+          });
+          continue;
+        }
+
+        if (plannedFetch.columns === null) {
           continue;
         }
 
         for (const column of columnsWithGroupByKeys) {
-          planned.add(column);
+          plannedFetch.columns.add(column);
         }
       }
     }
 
     await Promise.all(
-      [...plannedColumnsByEntityName].map(
-        async ([entityName, plannedColumns]) => {
-          const rows = await this.runFetch(entityName, plannedColumns);
+      [...plannedFetchByFetchKey].map(async ([fetchKey, plannedFetch]) => {
+        const rows = await this.runFetch(plannedFetch);
 
-          this.rowsByEntityName.set(entityName, rows);
-        },
-      ),
+        this.rowsByFetchKey.set(fetchKey, rows);
+      }),
     );
   }
 
@@ -125,9 +150,18 @@ export class WorkspaceCacheRowsBatchLoader {
         continue;
       }
 
-      const rows = this.getRowsForEntityName(entityName);
+      if (!isObjectEntityRowsRequirement(entityRowsRequirement)) {
+        rowsByEntityName[entityName] = this.getRowsForFetchKey(
+          entityName,
+          buildFetchKey(entityName, undefined),
+        );
+        continue;
+      }
 
-      if (!isGroupedEntityRowsRequirement(entityRowsRequirement)) {
+      const fetchKey = buildFetchKey(entityName, entityRowsRequirement.where);
+      const rows = this.getRowsForFetchKey(entityName, fetchKey);
+
+      if (!isDefined(entityRowsRequirement.groupBy)) {
         rowsByEntityName[entityName] = rows;
         continue;
       }
@@ -136,7 +170,7 @@ export class WorkspaceCacheRowsBatchLoader {
 
       for (const foreignKey of entityRowsRequirement.groupBy) {
         groupedEntry[`by${capitalize(foreignKey)}`] = this.getGroupedRows(
-          entityName,
+          fetchKey,
           foreignKey,
           rows,
         );
@@ -149,13 +183,13 @@ export class WorkspaceCacheRowsBatchLoader {
   }
 
   private getGroupedRows(
-    entityName: CacheFetchableEntityName,
+    fetchKey: string,
     foreignKey: string,
     rows: ObjectLiteral[],
   ): Map<string, ObjectLiteral[]> {
-    const memoKey = `${entityName}:${foreignKey}`;
+    const memoKey = `${fetchKey}:${foreignKey}`;
     const memoizedGroupedRows =
-      this.groupedRowsByEntityNameAndForeignKey.get(memoKey);
+      this.groupedRowsByFetchKeyAndForeignKey.get(memoKey);
 
     if (isDefined(memoizedGroupedRows)) {
       return memoizedGroupedRows;
@@ -163,31 +197,34 @@ export class WorkspaceCacheRowsBatchLoader {
 
     const groupedRows = groupRowsByForeignKey({ rows, foreignKey });
 
-    this.groupedRowsByEntityNameAndForeignKey.set(memoKey, groupedRows);
+    this.groupedRowsByFetchKeyAndForeignKey.set(memoKey, groupedRows);
 
     return groupedRows;
   }
 
-  private getRowsForEntityName(
+  private getRowsForFetchKey(
     entityName: CacheFetchableEntityName,
+    fetchKey: string,
   ): ObjectLiteral[] {
-    const rows = this.rowsByEntityName.get(entityName);
+    const rows = this.rowsByFetchKey.get(fetchKey);
 
     if (!isDefined(rows)) {
       throw new Error(
-        `Rows for entity "${entityName}" were not resolved in this recompute batch: declare it in the provider's rowsRequirement`,
+        `Rows for entity "${entityName}" (fetch key "${fetchKey}") were not resolved in this recompute batch: declare it in the provider's rowsRequirement`,
       );
     }
 
     return rows;
   }
 
-  private runFetch(
-    entityName: CacheFetchableEntityName,
-    columns: ReadonlySet<string> | null,
-  ): Promise<ObjectLiteral[]> {
+  private runFetch({
+    entityName,
+    where,
+    columns,
+  }: PlannedFetch): Promise<ObjectLiteral[]> {
     const findOptions: FindManyOptions<ObjectLiteral> = {
       where: {
+        ...where,
         workspaceId: this.workspaceId,
       },
       withDeleted: true,
