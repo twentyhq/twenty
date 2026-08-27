@@ -151,14 +151,17 @@ const GROUP_PERSON_IDS_BY_PARENT_ID = <Participant>({
   return PERSON_IDS_BY_PARENT_ID;
 };
 
-const BUILD_TARGET_SEEDS = <TargetSeed>(
-  personIdsByParentId: Map<string, Set<string>>,
+const BUILD_TARGET_SEEDS = <TargetSeed>({
+  personIdsByParentId,
+  createTargetSeed,
+}: {
+  personIdsByParentId: Map<string, Set<string>>;
   createTargetSeed: (args: {
     index: number;
     parentId: string;
     targetColumns: TargetColumnsDataSeed;
-  }) => TargetSeed,
-): TargetSeed[] => {
+  }) => TargetSeed;
+}): TargetSeed[] => {
   const TARGET_SEEDS: TargetSeed[] = [];
   let TARGET_INDEX = 1;
 
@@ -178,7 +181,13 @@ const BUILD_TARGET_SEEDS = <TargetSeed>(
   return TARGET_SEEDS;
 };
 
-const BUILD_TARGET_SEED_ID = (index: number, nodeSuffix: string): string => {
+const BUILD_TARGET_SEED_ID = ({
+  index,
+  nodeSuffix,
+}: {
+  index: number;
+  nodeSuffix: string;
+}): string => {
   const HEX_INDEX = index.toString(16).padStart(4, '0');
 
   return `20202020-${HEX_INDEX}-4e7c-8001-${nodeSuffix}`;
@@ -191,36 +200,36 @@ const MESSAGE_THREAD_ID_BY_MESSAGE_ID = new Map(
 export const getMessageThreadTargetDataSeeds = (
   messageParticipantSeeds: MessageParticipantDataSeed[],
 ): MessageThreadTargetDataSeed[] =>
-  BUILD_TARGET_SEEDS(
-    GROUP_PERSON_IDS_BY_PARENT_ID({
+  BUILD_TARGET_SEEDS({
+    personIdsByParentId: GROUP_PERSON_IDS_BY_PARENT_ID({
       participants: messageParticipantSeeds,
       getParentId: (participant) =>
         MESSAGE_THREAD_ID_BY_MESSAGE_ID.get(participant.messageId),
       getPersonId: (participant) => participant.personId,
     }),
-    ({ index, parentId, targetColumns }) => ({
-      id: BUILD_TARGET_SEED_ID(index, 'cafe56789abc'),
+    createTargetSeed: ({ index, parentId, targetColumns }) => ({
+      id: BUILD_TARGET_SEED_ID({ index, nodeSuffix: 'cafe56789abc' }),
       messageThreadId: parentId,
       ...targetColumns,
       isAutomaticallyAssigned: true,
       isManuallyAssigned: false,
     }),
-  );
+  });
 
 export const getCalendarEventTargetDataSeeds = (
   calendarEventParticipantSeeds: CalendarEventParticipantDataSeed[],
 ): CalendarEventTargetDataSeed[] =>
-  BUILD_TARGET_SEEDS(
-    GROUP_PERSON_IDS_BY_PARENT_ID({
+  BUILD_TARGET_SEEDS({
+    personIdsByParentId: GROUP_PERSON_IDS_BY_PARENT_ID({
       participants: calendarEventParticipantSeeds,
       getParentId: (participant) => participant.calendarEventId,
       getPersonId: (participant) => participant.personId,
     }),
-    ({ index, parentId, targetColumns }) => ({
-      id: BUILD_TARGET_SEED_ID(index, 'face56789abc'),
+    createTargetSeed: ({ index, parentId, targetColumns }) => ({
+      id: BUILD_TARGET_SEED_ID({ index, nodeSuffix: 'face56789abc' }),
       calendarEventId: parentId,
       ...targetColumns,
       isAutomaticallyAssigned: true,
       isManuallyAssigned: false,
     }),
-  );
+  });
