@@ -90,6 +90,22 @@ describe('slackResolveUserLinkHandler', () => {
     });
   });
 
+  it('should fail closed when the installed workspace cannot be confirmed', async () => {
+    authTestMock.mockRejectedValue(new Error('network'));
+    resolveSlackUserByEmailMock.mockResolvedValue({
+      slackUserId: 'U1',
+      slackTeamId: INSTALLED_TEAM_ID,
+      displayName: 'Ada Lovelace',
+    });
+
+    const result = await slackResolveUserLinkHandler(
+      buildPayload({ email: 'ada@twenty.com' }),
+    );
+
+    expect(result.success).toBe(false);
+    expect(resolveSlackUserByEmailMock).not.toHaveBeenCalled();
+  });
+
   it('should fail with a helpful error when the email is not in the workspace', async () => {
     resolveSlackUserByEmailMock.mockResolvedValue(undefined);
 

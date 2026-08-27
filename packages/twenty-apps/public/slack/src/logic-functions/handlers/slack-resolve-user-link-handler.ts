@@ -61,6 +61,18 @@ export const slackResolveUserLinkHandler = async (
   const slackClient = slackClientResult.client;
   const installedTeamId = await getInstalledSlackTeamId(slackClient);
 
+  // isInInstalledWorkspace drives whether the confirm card offers a consent
+  // request or an admin-set link, so a failed installed-team lookup must fail
+  // closed rather than mislabel an in-workspace user as external. Mirrors the
+  // set handler.
+  if (!isNonEmptyString(installedTeamId)) {
+    return {
+      success: false,
+      message: 'Could not verify the installed Slack workspace',
+      error: 'Slack did not confirm the installed workspace. Please try again.',
+    };
+  }
+
   if (isNonEmptyString(requestedSlackUserId)) {
     const identity = await fetchSlackUserIdentity({
       client: slackClient,
@@ -84,9 +96,7 @@ export const slackResolveUserLinkHandler = async (
         slackUserId: requestedSlackUserId,
         slackTeamId: resolvedTeamId,
         displayName: identity?.displayName,
-        isInInstalledWorkspace:
-          isNonEmptyString(installedTeamId) &&
-          resolvedTeamId === installedTeamId,
+        isInInstalledWorkspace: resolvedTeamId === installedTeamId,
       },
     };
   }
@@ -118,10 +128,9 @@ export const slackResolveUserLinkHandler = async (
     success: true,
     slackUser: {
       slackUserId: resolvedUser.slackUserId,
-      slackTeamId: resolvedTeamId ?? '',
+      slackTeamId: resolvedTeamId,
       displayName: resolvedUser.displayName,
-      isInInstalledWorkspace:
-        isNonEmptyString(installedTeamId) && resolvedTeamId === installedTeamId,
+      isInInstalledWorkspace: resolvedTeamId === installedTeamId,
     },
   };
 };
