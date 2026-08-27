@@ -99,86 +99,14 @@ describe('WorkspaceCacheRowsBatchLoader', () => {
     expect(findMock.mock.calls[0][0].select).toBeUndefined();
   });
 
-  it('treats an already-covered later resolution as a no-op', async () => {
-    const { rowsBatchLoader, findMocksByEntity } = setup();
-
-    await rowsBatchLoader.loadRows([
-      { objectMetadata: ['id', 'nameSingular'] },
-    ]);
-    const firstRows = rowsBatchLoader.readRows({
-      objectMetadata: ['id'],
-    }).objectMetadata;
+  it('throws when loadRows is called more than once', async () => {
+    const { rowsBatchLoader } = setup();
 
     await rowsBatchLoader.loadRows([{ objectMetadata: ['id'] }]);
 
-    expect(findMocksByEntity.get(ObjectMetadataEntity)).toHaveBeenCalledTimes(
-      1,
-    );
-    expect(
-      rowsBatchLoader.readRows({ objectMetadata: ['id'] }).objectMetadata,
-    ).toBe(firstRows);
-  });
-
-  it('refetches with the widened union when a later resolution is not covered', async () => {
-    const { rowsBatchLoader, findMocksByEntity } = setup();
-
-    await rowsBatchLoader.loadRows([{ objectMetadata: ['id'] }]);
-    await rowsBatchLoader.loadRows([{ objectMetadata: ['nameSingular'] }]);
-
-    const findMock = findMocksByEntity.get(ObjectMetadataEntity)!;
-
-    expect(findMock).toHaveBeenCalledTimes(2);
-    expect(findMock.mock.calls[1][0].select).toHaveLength(2);
-    expect(findMock.mock.calls[1][0].select).toEqual(
-      expect.arrayContaining(['id', 'nameSingular']),
-    );
-  });
-
-  it('shares one query across concurrent resolutions of the same entity', async () => {
-    const { rowsBatchLoader, findMocksByEntity } = setup();
-
-    await Promise.all([
-      rowsBatchLoader.loadRows([{ objectMetadata: ['id'] }]),
-      rowsBatchLoader.loadRows([{ objectMetadata: ['id'] }]),
-    ]);
-
-    expect(findMocksByEntity.get(ObjectMetadataEntity)).toHaveBeenCalledTimes(
-      1,
-    );
-  });
-
-  it('keeps previously resolved rows readable while a widening refetch is in flight', async () => {
-    const { rowsBatchLoader, findMocksByEntity } = setup();
-    const findMock = findMocksByEntity.get(ObjectMetadataEntity)!;
-    const initialRows = [{ id: 'first-generation', workspaceId: WORKSPACE_ID }];
-    const widenedRows = [
-      {
-        id: 'first-generation',
-        nameSingular: 'widened',
-        workspaceId: WORKSPACE_ID,
-      },
-    ];
-
-    findMock
-      .mockResolvedValueOnce(initialRows)
-      .mockResolvedValueOnce(widenedRows);
-
-    await rowsBatchLoader.loadRows([{ objectMetadata: ['id'] }]);
-
-    const wideningPromise = rowsBatchLoader.loadRows([
-      { objectMetadata: ['id', 'nameSingular'] },
-    ]);
-
-    expect(
-      rowsBatchLoader.readRows({ objectMetadata: ['id'] }).objectMetadata,
-    ).toBe(initialRows);
-
-    await wideningPromise;
-
-    expect(findMock).toHaveBeenCalledTimes(2);
-    expect(
-      rowsBatchLoader.readRows({ objectMetadata: ['id'] }).objectMetadata,
-    ).toBe(widenedRows);
+    await expect(
+      rowsBatchLoader.loadRows([{ objectMetadata: ['nameSingular'] }]),
+    ).rejects.toThrow(/single loadRows call/);
   });
 
   it('widens the fetched columns with the declared groupBy keys', async () => {

@@ -24,23 +24,13 @@ const normalizeEntityRowsRequirement = (
     ? entityRowsRequirement
     : { columns: entityRowsRequirement, groupBy: [] };
 
-type EntityFetchGeneration = {
-  id: number;
-  columns: ReadonlySet<string> | null;
-  rowsPromise: Promise<ObjectLiteral[]>;
-};
-
-type EntityFetchState = {
-  latestGeneration: EntityFetchGeneration;
-  settledGenerationId: number;
-  settledRows?: ObjectLiteral[];
-};
-
 export class WorkspaceCacheRowsBatchLoader {
-  private readonly fetchStateByEntityName = new Map<
+  private readonly rowsByEntityName = new Map<
     CacheFetchableEntityName,
-    EntityFetchState
+    ObjectLiteral[]
   >();
+
+  private hasLoadedRows = false;
 
   constructor(
     private readonly coreDataSource: DataSource,
@@ -50,6 +40,13 @@ export class WorkspaceCacheRowsBatchLoader {
   async loadRows(
     rowsRequirements: WorkspaceCacheRowsRequirement[],
   ): Promise<void> {
+    if (this.hasLoadedRows) {
+      throw new Error(
+        'Rows were already loaded for this batch loader: merge all requirements into a single loadRows call',
+      );
+    }
+    this.hasLoadedRows = true;
+
     const plannedColumnsByEntityName = new Map<
       CacheFetchableEntityName,
       Set<string> | null
@@ -96,68 +93,14 @@ export class WorkspaceCacheRowsBatchLoader {
       }
     }
 
-    const generationsToAwait: {
-      fetchState: EntityFetchState;
-      generation: EntityFetchGeneration;
-    }[] = [];
-
-    for (const [entityName, plannedColumns] of plannedColumnsByEntityName) {
-      const fetchState = this.fetchStateByEntityName.get(entityName);
-      const latestColumns = fetchState?.latestGeneration.columns;
-
-      const isCoveredByLatestGeneration =
-        isDefined(fetchState) &&
-        (latestColumns === null ||
-          (plannedColumns !== null &&
-            [...plannedColumns].every((column) => latestColumns!.has(column))));
-
-      if (isCoveredByLatestGeneration) {
-        generationsToAwait.push({
-          fetchState,
-          generation: fetchState.latestGeneration,
-        });
-        continue;
-      }
-
-      let mergedColumns: Set<string> | null;
-
-      if (!isDefined(fetchState)) {
-        mergedColumns = plannedColumns;
-      } else if (plannedColumns === null || latestColumns === null) {
-        mergedColumns = null;
-      } else {
-        mergedColumns = new Set([...latestColumns!, ...plannedColumns]);
-      }
-
-      const generation: EntityFetchGeneration = {
-        id: isDefined(fetchState) ? fetchState.latestGeneration.id + 1 : 1,
-        columns: mergedColumns,
-        rowsPromise: this.runFetch(entityName, mergedColumns),
-      };
-
-      if (isDefined(fetchState)) {
-        fetchState.latestGeneration = generation;
-        generationsToAwait.push({ fetchState, generation });
-      } else {
-        const newFetchState: EntityFetchState = {
-          latestGeneration: generation,
-          settledGenerationId: 0,
-        };
-
-        this.fetchStateByEntityName.set(entityName, newFetchState);
-        generationsToAwait.push({ fetchState: newFetchState, generation });
-      }
-    }
-
     await Promise.all(
-      generationsToAwait.map(async ({ fetchState, generation }) => {
-        const rows = await generation.rowsPromise;
+      [...plannedColumnsByEntityName].map(
+        async ([entityName, plannedColumns]) => {
+          const rows = await this.runFetch(entityName, plannedColumns);
 
-        if (generation.id > fetchState.settledGenerationId) {
-          fetchState.settledGenerationId = generation.id;
-          fetchState.settledRows = rows;
-        }
-      }),
+          this.rowsByEntityName.set(entityName, rows);
+        },
+      ),
     );
   }
 
@@ -202,15 +145,15 @@ export class WorkspaceCacheRowsBatchLoader {
   private getRowsForEntityName(
     entityName: CacheFetchableEntityName,
   ): ObjectLiteral[] {
-    const fetchState = this.fetchStateByEntityName.get(entityName);
+    const rows = this.rowsByEntityName.get(entityName);
 
-    if (!isDefined(fetchState) || !isDefined(fetchState.settledRows)) {
+    if (!isDefined(rows)) {
       throw new Error(
         `Rows for entity "${entityName}" were not resolved in this recompute batch: declare it in the provider's rowsRequirement`,
       );
     }
 
-    return fetchState.settledRows;
+    return rows;
   }
 
   private runFetch(
