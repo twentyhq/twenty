@@ -20,6 +20,9 @@ const APPROVED_MESSAGE =
 const DECLINED_MESSAGE =
   'No problem, you declined the link. The Twenty assistant will keep answering with its own access.';
 
+const FAILURE_MESSAGE =
+  'Something went wrong saving your choice. Please try the button again in a moment.';
+
 export const slackUserLinkConsentHandler = async (
   payload: SlackInteractivityPayload,
 ): Promise<SlackUserLinkConsentResult> => {
@@ -86,12 +89,23 @@ export const slackUserLinkConsentHandler = async (
   const approved =
     buttonValue.decision === SLACK_USER_LINK_CONSENT_DECISION.APPROVE;
 
-  await updateSlackUserLink(client, {
-    id: link.id,
-    consentState: approved
-      ? SLACK_USER_LINK_CONSENT_STATE.ACTIVE
-      : SLACK_USER_LINK_CONSENT_STATE.DECLINED,
-  });
+  try {
+    await updateSlackUserLink(client, {
+      id: link.id,
+      consentState: approved
+        ? SLACK_USER_LINK_CONSENT_STATE.ACTIVE
+        : SLACK_USER_LINK_CONSENT_STATE.DECLINED,
+    });
+  } catch (error) {
+    // The write failed, so the link is still pending; tell the user their click
+    // did not stick instead of leaving the message unchanged.
+    await updateSlackMessageViaResponseUrl(payload.response_url, FAILURE_MESSAGE);
+
+    return {
+      skipped: true,
+      reason: error instanceof Error ? error.message : String(error),
+    };
+  }
 
   await updateSlackMessageViaResponseUrl(
     payload.response_url,

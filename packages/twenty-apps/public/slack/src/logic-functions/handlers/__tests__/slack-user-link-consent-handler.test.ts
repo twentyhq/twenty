@@ -81,6 +81,19 @@ describe('slackUserLinkConsentHandler', () => {
     expect(updateSlackMessageViaResponseUrlMock).toHaveBeenCalledTimes(1);
   });
 
+  it('should report a failure to the user when the write fails', async () => {
+    updateSlackUserLinkMock.mockRejectedValue(new Error('write refused'));
+
+    const result = await slackUserLinkConsentHandler(buildPayload('APPROVE'));
+
+    expect(result).toMatchObject({ skipped: true });
+    expect(updateSlackMessageViaResponseUrlMock).toHaveBeenCalledTimes(1);
+    expect(updateSlackMessageViaResponseUrlMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.stringContaining('went wrong'),
+    );
+  });
+
   it('should ignore a decision that targets a superseded member assignment', async () => {
     const result = await slackUserLinkConsentHandler(
       buildPayload('APPROVE', { workspaceMemberId: 'member-old' }),
