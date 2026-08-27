@@ -11,7 +11,19 @@ const validSpeedRule: UpsertUsageLimitInput = {
   spenderId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
   limitKind: 'speed',
   windowSeconds: 60,
+  limitValueType: 'absolute',
   limitValue: 100,
+};
+
+const validQuotaRule: UpsertUsageLimitInput = {
+  resourceType: UsageResourceType.AI,
+  operationType: UsageOperationType.AI_CHAT_TOKEN,
+  spenderType: 'userWorkspace',
+  spenderId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+  limitKind: 'quota',
+  windowSeconds: 0,
+  limitValueType: 'absolute',
+  limitValue: 1_000_000,
 };
 
 describe('validateUsageLimitAgainstDefinition', () => {
@@ -107,5 +119,91 @@ describe('validateUsageLimitAgainstDefinition', () => {
         spenderId: null,
       }),
     ).not.toThrow();
+  });
+
+  it('accepts a quota scoped to an operation the resource meters', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validQuotaRule,
+        operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+      }),
+    ).not.toThrow();
+  });
+
+  it('rejects a quota targeting an operation the resource does not meter', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validQuotaRule,
+        operationType: UsageOperationType.API_REQUEST,
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+      }),
+    );
+  });
+
+  it('rejects a quota carrying a window', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validQuotaRule,
+        windowSeconds: 3600,
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+      }),
+    );
+  });
+
+  it('rejects a quota carrying a burst value', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validQuotaRule,
+        burstValue: 100,
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+      }),
+    );
+  });
+
+  it('accepts a percent quota expressed in basis points', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validQuotaRule,
+        limitValueType: 'percent',
+        limitValue: 2500,
+      }),
+    ).not.toThrow();
+  });
+
+  it('rejects a percent value above 10000 basis points', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validQuotaRule,
+        limitValueType: 'percent',
+        limitValue: 10001,
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+      }),
+    );
+  });
+
+  it('rejects a percent speed limit', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validSpeedRule,
+        limitValueType: 'percent',
+        limitValue: 5000,
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+      }),
+    );
   });
 });

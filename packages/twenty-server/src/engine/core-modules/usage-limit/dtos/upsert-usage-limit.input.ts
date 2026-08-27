@@ -12,8 +12,10 @@ import {
 } from 'class-validator';
 
 import { LIMIT_KINDS } from 'src/engine/core-modules/usage-limit/constants/limit-kinds.constant';
+import { LIMIT_VALUE_TYPES } from 'src/engine/core-modules/usage-limit/constants/limit-value-types.constant';
 import { SPENDER_TYPES } from 'src/engine/core-modules/usage-limit/constants/spender-types.constant';
 import { type LimitKind } from 'src/engine/core-modules/usage-limit/types/limit-kind.type';
+import { type LimitValueType } from 'src/engine/core-modules/usage-limit/types/limit-value-type.type';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -45,6 +47,10 @@ export class UpsertUsageLimitInput {
   @IsInt()
   @Min(0)
   windowSeconds: number;
+
+  @Field(() => String, { defaultValue: 'absolute' })
+  @IsIn(LIMIT_VALUE_TYPES)
+  limitValueType: LimitValueType;
 
   @Field(() => GraphQLBigInt)
   @IsInt()

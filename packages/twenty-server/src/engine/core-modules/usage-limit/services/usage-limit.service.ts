@@ -73,7 +73,7 @@ export class UsageLimitService {
       {
         workspaceId,
         ...scope,
-        limitValueType: 'absolute',
+        limitValueType: input.limitValueType,
         limitValue: input.limitValue,
         burstValue: input.burstValue ?? null,
       },

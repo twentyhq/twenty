@@ -44,9 +44,44 @@ export const validateUsageLimitAgainstDefinition = (
     );
   }
 
-  if (input.limitKind === 'speed' && input.windowSeconds <= 0) {
+  if (input.limitKind === 'speed') {
+    if (input.windowSeconds <= 0) {
+      throw new UsageLimitException(
+        'A speed limit needs a window longer than zero seconds',
+        UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+      );
+    }
+
+    if (input.limitValueType === 'percent') {
+      throw new UsageLimitException(
+        'A speed limit cannot be expressed as a percentage',
+        UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+      );
+    }
+  }
+
+  if (input.limitKind === 'quota') {
+    if (input.windowSeconds !== 0) {
+      throw new UsageLimitException(
+        'A quota covers the whole usage period and cannot carry a window',
+        UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+      );
+    }
+
+    if (isDefined(input.burstValue)) {
+      throw new UsageLimitException(
+        'A quota cannot carry a burst value',
+        UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+      );
+    }
+  }
+
+  if (
+    input.limitValueType === 'percent' &&
+    (input.limitValue < 1 || input.limitValue > 10000)
+  ) {
     throw new UsageLimitException(
-      'A speed limit needs a window longer than zero seconds',
+      'A percent limit is expressed in basis points, from 1 to 10000',
       UsageLimitExceptionCode.LIMIT_RULE_INVALID,
     );
   }
