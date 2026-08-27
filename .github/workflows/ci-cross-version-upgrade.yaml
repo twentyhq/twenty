@@ -13,6 +13,10 @@ on:
         type: string
         required: false
         description: 'Old Twenty version to upgrade from (defaults to oldest supported: v1.22)'
+    secrets:
+      CLAUDE_CODE_OAUTH_TOKEN:
+        required: false
+        description: 'Inference credential for the QA Scout step; absent on fork runs, in which case the Scout skips'
   workflow_dispatch:
     inputs:
       from_version:

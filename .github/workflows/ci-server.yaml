@@ -354,8 +354,10 @@ jobs:
   cross-version-upgrade:
     needs: [upgrade-changed-files-check, server-build]
     uses: ./.github/workflows/ci-cross-version-upgrade.yaml
-    # For the QA Scout step; fork runs inherit nothing and the Scout skips.
-    secrets: inherit
+    # Only the Scout's credential crosses into the reusable workflow; fork
+    # runs pass nothing and the Scout skips.
+    secrets:
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
     with:
       skip: ${{ needs.upgrade-changed-files-check.outputs.any_changed != 'true' }}
 
