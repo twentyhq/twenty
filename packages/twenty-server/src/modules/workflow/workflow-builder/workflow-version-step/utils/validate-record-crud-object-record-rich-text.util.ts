@@ -1,12 +1,9 @@
-import { richTextValueSchema } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import { findRichTextFieldNames } from 'src/modules/workflow/workflow-executor/utils/find-rich-text-field-names.util';
+import { getRecordCrudRichTextIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-record-crud-rich-text-issues.util';
 
 export const validateRecordCrudObjectRecordRichTextOrThrow = ({
   objectRecord,
@@ -17,20 +14,16 @@ export const validateRecordCrudObjectRecordRichTextOrThrow = ({
   objectMetadataInfo: ObjectMetadataInfo;
   stepLabel: string;
 }): void => {
-  const richTextFieldNames = findRichTextFieldNames(objectMetadataInfo);
+  const issues = getRecordCrudRichTextIssues({
+    objectRecord,
+    objectMetadataInfo,
+    stepLabel,
+  });
 
-  for (const fieldName of richTextFieldNames) {
-    const fieldValue = objectRecord[fieldName];
-
-    if (!isDefined(fieldValue)) {
-      continue;
-    }
-
-    if (!richTextValueSchema.safeParse(fieldValue).success) {
-      throw new WorkflowVersionStepException(
-        `Rich text field "${fieldName}" in step "${stepLabel}" must be a valid rich text value with { blocknote, markdown }.`,
-        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
-      );
-    }
+  if (issues.length > 0) {
+    throw new WorkflowVersionStepException(
+      issues[0].message,
+      WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+    );
   }
 };

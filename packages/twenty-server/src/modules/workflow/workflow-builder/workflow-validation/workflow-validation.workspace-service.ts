@@ -10,13 +10,21 @@ import { inputSchemaToOutputSchema } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type BaseOutputSchemaV2,
+  validateWorkflowStepParams,
   validateWorkflowStructure,
   WorkflowActionType,
   type WorkflowValidationIssue,
   type WorkflowValidationResult,
 } from 'twenty-shared/workflow';
 
+import {
+  WorkflowQueryValidationException,
+  WorkflowQueryValidationExceptionCode,
+} from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
+import { getRecordCrudStepObjectRecord } from 'src/modules/workflow/common/utils/get-record-crud-step-object-record.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { getRecordCrudRichTextIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-record-crud-rich-text-issues.util';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { getPickRecordLoadBalanceConfigError } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-pick-record-load-balance-config-error.util';
 import {
@@ -109,12 +117,109 @@ export class WorkflowValidationWorkspaceService {
       enrichedSteps ?? [],
     );
 
+    const richTextIssues = await this.getRecordCrudRichTextIssuesForSteps({
+      workspaceId,
+      steps: enrichedSteps ?? [],
+    });
+
     return mergeValidationResults(staticResult, [
       ...triggerIssues,
       ...semanticIssues,
       ...metadataIssues,
       ...variableReferenceIssues,
+      ...richTextIssues,
     ]);
+  }
+
+  async assertWorkflowVersionStructureIsValidOrThrow({
+    workspaceId,
+    trigger,
+    steps,
+  }: {
+    workspaceId: string;
+    trigger: WorkflowTrigger | null | undefined;
+    steps: WorkflowAction[] | null | undefined;
+  }): Promise<void> {
+    const blockingErrors = [
+      ...validateWorkflowStepParams({ trigger, steps }),
+      ...(await this.getRecordCrudRichTextIssuesForSteps({
+        workspaceId,
+        steps: steps ?? [],
+      })),
+    ].filter((issue) => issue.severity === 'error');
+
+    if (blockingErrors.length > 0) {
+      throw new WorkflowQueryValidationException(
+        `Workflow version is invalid: ${blockingErrors
+          .map((issue) => issue.message)
+          .join('; ')}`,
+        WorkflowQueryValidationExceptionCode.INVALID_WORKFLOW_VERSION,
+      );
+    }
+  }
+
+  private async getRecordCrudRichTextIssuesForSteps({
+    workspaceId,
+    steps,
+  }: {
+    workspaceId: string;
+    steps: WorkflowAction[];
+  }): Promise<WorkflowValidationIssue[]> {
+    const parsedSteps = steps
+      .map((step) => ({ step, parsed: getRecordCrudStepObjectRecord(step) }))
+      .filter(
+        (
+          entry,
+        ): entry is {
+          step: WorkflowAction;
+          parsed: NonNullable<typeof entry.parsed>;
+        } => isDefined(entry.parsed),
+      );
+
+    if (parsedSteps.length === 0) {
+      return [];
+    }
+
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectIdByNameSingular,
+    } =
+      await this.workflowCommonWorkspaceService.getFlatEntityMaps(workspaceId);
+
+    const issues: WorkflowValidationIssue[] = [];
+
+    for (const { step, parsed } of parsedSteps) {
+      const objectId = objectIdByNameSingular[parsed.objectName];
+
+      if (!isDefined(objectId)) {
+        continue;
+      }
+
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: objectId,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
+
+      if (!isDefined(flatObjectMetadata)) {
+        continue;
+      }
+
+      issues.push(
+        ...getRecordCrudRichTextIssues({
+          objectRecord: parsed.objectRecord,
+          objectMetadataInfo: {
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          },
+          stepLabel: step.name ?? step.id,
+          stepId: step.id,
+        }),
+      );
+    }
+
+    return issues;
   }
 
   private async enrichOutputSchemas({

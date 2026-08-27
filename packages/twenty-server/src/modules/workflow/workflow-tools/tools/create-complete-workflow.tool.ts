@@ -79,6 +79,7 @@ CRITICAL SCHEMA REQUIREMENTS:
 - Each step MUST include: id (must be a valid UUID), name, type, valid, settings
 - CREATE_RECORD actions MUST have objectName and objectRecord in settings.input
 - objectRecord must contain actual field values, not just field names
+- RICH_TEXT fields (e.g. a note/task "body") MUST be an object, not a string: { "markdown": "your text, may contain {{variables}}" }. A bare string is rejected.
 - Use "trigger" as the id for the trigger step in edges
 - Step positions are computed automatically; do not provide coordinates
 
@@ -87,6 +88,7 @@ Common mistakes to avoid:
 - Missing the "name" and "valid" fields in steps
 - Missing the "objectRecord" field in CREATE_RECORD actions
 - Using "fieldsToUpdate" instead of "objectRecord" in CREATE_RECORD actions
+- Setting a RICH_TEXT field to a plain string instead of { "markdown": "..." }
 - Including CODE steps in this tool — this tool does NOT create the underlying logic function needed by CODE steps. Instead, create the workflow without CODE steps first, then add CODE steps individually using create_workflow_version_step (which properly creates the logic function), then call update_logic_function_source to define the code.
 - Including AI_AGENT steps in this tool — this tool does NOT create the underlying agent needed by AI_AGENT steps. Instead, create the workflow without AI_AGENT steps first, then add AI_AGENT steps individually using create_workflow_version_step (which properly creates the agent), then call update_agent to configure the agent.
 
@@ -136,6 +138,14 @@ The response includes a compact validation summary. For the full validation repo
         context,
         name: parameters.name,
       });
+
+      await deps.workflowValidationService.assertWorkflowVersionStructureIsValidOrThrow(
+        {
+          workspaceId: context.workspaceId,
+          trigger: parameters.trigger,
+          steps: parameters.steps,
+        },
+      );
 
       const workflowVersionId = await createWorkflowVersion({
         deps,
