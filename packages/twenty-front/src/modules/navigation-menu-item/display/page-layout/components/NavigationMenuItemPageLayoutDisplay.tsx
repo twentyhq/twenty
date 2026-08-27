@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
@@ -25,13 +26,15 @@ export const NavigationMenuItemPageLayoutDisplay = ({
   );
 
   const { getIcon } = useIcons();
+  const { t } = useLingui();
   const location = useLocation();
 
+  const isSystemItem = item.type === NavigationMenuItemType.SYSTEM;
+
   const label = item.name ?? '';
-  const computedLink =
-    item.type === NavigationMenuItemType.SYSTEM
-      ? getSystemNavigationMenuItemComputedLink(item)
-      : getPageLayoutNavigationMenuItemComputedLink(item);
+  const computedLink = isSystemItem
+    ? getSystemNavigationMenuItemComputedLink(item)
+    : getPageLayoutNavigationMenuItemComputedLink(item);
   const pageLayoutColor = getNavigationMenuItemColor(item);
 
   const Icon = isDefined(item.icon) ? getIcon(item.icon) : undefined;
@@ -40,6 +43,7 @@ export const NavigationMenuItemPageLayoutDisplay = ({
   return (
     <NavigationDrawerItem
       label={label}
+      secondaryLabel={isSystemItem ? t`System` : undefined}
       to={
         isLayoutCustomizationModeEnabled || isDragging
           ? undefined
