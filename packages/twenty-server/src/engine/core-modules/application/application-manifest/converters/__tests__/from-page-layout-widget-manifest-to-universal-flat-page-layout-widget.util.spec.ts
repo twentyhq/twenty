@@ -1,5 +1,10 @@
+import { type PageLayoutWidgetManifest } from 'twenty-shared/application';
 import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
-import { PageLayoutTabLayoutMode, WidgetType } from 'twenty-shared/types';
+import {
+  type GridPosition,
+  PageLayoutTabLayoutMode,
+  WidgetType,
+} from 'twenty-shared/types';
 
 import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-widget-manifest-to-universal-flat-page-layout-widget.util';
 
@@ -92,6 +97,34 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
         },
         configuration: { configurationType: 'VIEW' },
       },
+      pageLayoutTabUniversalIdentifier,
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      row: 2,
+      column: 6,
+      rowSpan: 4,
+      columnSpan: 6,
+    });
+  });
+
+  it('should use legacy manifest grid position when provided', () => {
+    const result = fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+      pageLayoutWidgetManifest: {
+        universalIdentifier: 'widget-uuid-legacy',
+        title: 'Legacy Positioned Widget',
+        type: WidgetType.GRAPH,
+        gridPosition: {
+          row: 2,
+          column: 6,
+          rowSpan: 4,
+          columnSpan: 6,
+        },
+        configuration: { configurationType: 'VIEW' },
+      } as PageLayoutWidgetManifest & { gridPosition: GridPosition },
       pageLayoutTabUniversalIdentifier,
       applicationUniversalIdentifier,
       now,
