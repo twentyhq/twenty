@@ -3,6 +3,7 @@ import { type RoutePayload } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { SLACK_USER_LINK_CONSENT_STATE } from 'src/logic-functions/constants/slack-user-link-consent-state';
 import { SLACK_USER_LINK_SOURCE } from 'src/logic-functions/constants/slack-user-link-source';
 import { createSlackUserLink } from 'src/logic-functions/data/create-slack-user-link';
 import { findSlackUserLink } from 'src/logic-functions/data/find-slack-user-link';
@@ -204,6 +205,7 @@ export const slackSetUserLinkHandler = async (
         workspaceMemberId,
         name: isNonEmptyString(resolvedName) ? resolvedName : slackUserId,
         source: SLACK_USER_LINK_SOURCE.MANUAL,
+        consentState: SLACK_USER_LINK_CONSENT_STATE.ACTIVE,
       });
     }
   } catch (error) {

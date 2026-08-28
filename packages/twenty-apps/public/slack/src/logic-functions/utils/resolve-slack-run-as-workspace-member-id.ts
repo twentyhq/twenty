@@ -101,11 +101,15 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
   const applicationClient = new CoreApiClient({ runAs: 'application' });
 
   if (!isDefined(existingLink)) {
+    // The live email match is the person acting as themselves, so the link
+    // is auto-sourced and consented from the start.
     await createSlackUserLink(applicationClient, {
       slackTeamId,
       slackUserId,
       workspaceMemberId,
       name: identity.displayName ?? slackUserId,
+      source: SLACK_USER_LINK_SOURCE.AUTO,
+      consentState: SLACK_USER_LINK_CONSENT_STATE.ACTIVE,
     }).catch(() => undefined);
 
     return workspaceMemberId;

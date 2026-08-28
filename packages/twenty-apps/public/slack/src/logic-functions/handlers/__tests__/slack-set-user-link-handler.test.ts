@@ -161,6 +161,7 @@ describe('slackSetUserLinkHandler', () => {
       workspaceMemberId: INPUT.workspaceMemberId,
       name: 'Ada',
       source: 'MANUAL',
+      consentState: 'ACTIVE',
     });
     expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
   });
@@ -253,6 +254,7 @@ describe('slackSetUserLinkHandler', () => {
       workspaceMemberId: 'workspace-member-1',
       name: 'Ada Lovelace',
       source: 'MANUAL',
+      consentState: 'ACTIVE',
     });
   });
 
