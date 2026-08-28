@@ -23,7 +23,6 @@ export default definePageLayout({
           universalIdentifier: HOW_TO_PROCESS_PAGE_WIDGET_ID,
           title: 'How to process',
           type: 'FRONT_COMPONENT',
-          gridPosition: { row: 0, column: 0, rowSpan: 14, columnSpan: 12 },
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier: HOW_TO_PROCESS_FRONT_COMPONENT_ID,
