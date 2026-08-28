@@ -1,6 +1,5 @@
 import { expect, test } from '../lib/fixtures/screenshot';
-import { backendGraphQLUrl } from '../lib/requests/backend';
-import { getAccessAuthToken } from '../lib/utils/getAccessAuthToken';
+import { postBackendGraphQL } from '../lib/requests/postBackendGraphQL';
 
 const query = `query FindOnePerson($objectRecordId: UUID!) {
   person(
@@ -119,11 +118,8 @@ test('Create and update record', async ({ page }) => {
     const newPersonId = page.url().match(/\/object\/person\/([a-f0-9-]+)/)?.[1];
 
     // Check data was saved
-    const { authToken } = await getAccessAuthToken(page);
-    const findOnePersonResponse = await page.request.post(backendGraphQLUrl, {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
+    const findOnePersonResponse = await postBackendGraphQL({
+      page,
       data: {
         operationName: 'FindOnePerson',
         query,
