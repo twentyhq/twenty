@@ -5,24 +5,34 @@ import {
   type StoryObj,
 } from '@storybook/react-vite';
 import { Provider as JotaiProvider } from 'jotai';
+import { graphql, HttpResponse } from 'msw';
 import { Context as ResponsiveContext } from 'react-responsive';
 import { MemoryRouter } from 'react-router-dom';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
 import { commandMenuPinnedInlineLayoutFamilyState } from '@/command-menu-item/display/states/commandMenuPinnedInlineLayoutFamilyState';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
+import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
+import { BaseThemeProvider } from '@/ui/theme/components/BaseThemeProvider';
+import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 import {
   CommandMenuItemAvailabilityType,
   EngineComponentKey,
@@ -91,6 +101,7 @@ type CreateDecoratorParams = {
   isInPreviewMode?: boolean;
   pathname?: string;
   viewportWidth?: number;
+  colorScheme?: ColorScheme;
 };
 
 const createDecorator =
@@ -102,10 +113,29 @@ const createDecorator =
     isInPreviewMode = false,
     pathname = '/objects/companies',
     viewportWidth = 1280,
+    colorScheme = 'System',
   }: CreateDecoratorParams): Decorator =>
   (Story) => {
     jotaiStore.set(sidePanelSearchState.atom, sidePanelSearch);
     jotaiStore.set(isSidePanelOpenedState.atom, true);
+    jotaiStore.set(currentWorkspaceMemberState.atom, {
+      ...mockedWorkspaceMemberData,
+      colorScheme,
+    });
+    jotaiStore.set(persistedColorSchemeState.atom, colorScheme);
+    jotaiStore.set(focusStackState.atom, [
+      {
+        focusId: SIDE_PANEL_FOCUS_ID,
+        componentInstance: {
+          componentType: FocusComponentType.SIDE_PANEL,
+          componentInstanceId: SIDE_PANEL_FOCUS_ID,
+        },
+        globalHotkeysConfig: {
+          enableGlobalHotkeysWithModifiers: true,
+          enableGlobalHotkeysConflictingWithKeyboard: true,
+        },
+      },
+    ]);
     jotaiStore.set(
       isNavigationDrawerExpandedState.atom,
       isNavigationDrawerExpanded,
@@ -140,7 +170,11 @@ const createDecorator =
                   isInPreviewMode,
                 }}
               >
-                <Story />
+                <BaseThemeProvider>
+                  <SnackBarProvider>
+                    <Story />
+                  </SnackBarProvider>
+                </BaseThemeProvider>
               </CommandMenuContext.Provider>
             </CommandMenuComponentInstanceContext.Provider>
           </MemoryRouter>
@@ -371,4 +405,139 @@ export const HiddenInLayoutPreview: Story = {
     }),
   ],
   play: HiddenOnMobile.play,
+};
+
+export const CopyLinkToPage: Story = {
+  decorators: [
+    createDecorator({
+      commandMenuItems: [FALLBACK_ITEM],
+      sidePanelSearch: ' COPY LINK ',
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const writeText = spyOn(
+      navigator.clipboard,
+      'writeText',
+    ).mockResolvedValue();
+
+    try {
+      expect(canvas.queryByText('Search records')).not.toBeInTheDocument();
+      await userEvent.click(await canvas.findByText('Copy link to page'));
+
+      expect(writeText).toHaveBeenCalledWith(window.location.href);
+      expect(await canvas.findByText('Link copied to clipboard')).toBeVisible();
+      expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
+    } finally {
+      writeText.mockRestore();
+    }
+  },
+};
+
+export const CopyLinkToPageWithKeyboard: Story = {
+  decorators: CopyLinkToPage.decorators,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const writeText = spyOn(
+      navigator.clipboard,
+      'writeText',
+    ).mockResolvedValue();
+
+    try {
+      expect(await canvas.findByText('Copy link to page')).toBeVisible();
+      await userEvent.keyboard('{Enter}');
+
+      expect(writeText).toHaveBeenCalledWith(window.location.href);
+      expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
+    } finally {
+      writeText.mockRestore();
+    }
+  },
+};
+
+const createThemeStory = (colorScheme: ColorScheme, label: string): Story => {
+  const updateWorkspaceMemberSettings = fn();
+
+  return {
+    decorators: [
+      createDecorator({
+        commandMenuItems: [FALLBACK_ITEM],
+        sidePanelSearch: ' THEME ',
+        colorScheme: colorScheme === 'System' ? 'Dark' : 'System',
+      }),
+    ],
+    parameters: {
+      msw: {
+        handlers: [
+          graphql.mutation('UpdateWorkspaceMemberSettings', ({ variables }) => {
+            updateWorkspaceMemberSettings(variables.input);
+
+            return HttpResponse.json({
+              data: { updateWorkspaceMemberSettings: true },
+            });
+          }),
+        ],
+      },
+    },
+    beforeEach: () => {
+      updateWorkspaceMemberSettings.mockClear();
+    },
+    play: async ({ canvasElement }) => {
+      const canvas = within(canvasElement);
+
+      expect(canvas.queryByText('Search records')).not.toBeInTheDocument();
+      await userEvent.click(await canvas.findByText(label));
+
+      await waitFor(() => {
+        expect(updateWorkspaceMemberSettings).toHaveBeenCalledWith({
+          workspaceMemberId: mockedWorkspaceMemberData.id,
+          update: { colorScheme },
+        });
+      });
+      expect(
+        jotaiStore.get(currentWorkspaceMemberState.atom)?.colorScheme,
+      ).toBe(colorScheme);
+      expect(jotaiStore.get(persistedColorSchemeState.atom)).toBe(colorScheme);
+      const isDarkTheme =
+        colorScheme === 'Dark' ||
+        (colorScheme === 'System' &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+      expect(canvasElement.ownerDocument.documentElement).toHaveClass(
+        isDarkTheme ? 'dark' : 'light',
+      );
+      expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
+      expect(canvas.queryByText(label)).not.toBeInTheDocument();
+    },
+  };
+};
+
+export const ChangeThemeToLight = createThemeStory(
+  'Light',
+  'Change theme to light',
+);
+export const ChangeThemeToDark = createThemeStory(
+  'Dark',
+  'Change theme to dark',
+);
+export const ChangeThemeToSystem = createThemeStory(
+  'System',
+  'Change theme to system',
+);
+
+export const UtilitiesHiddenInLayoutPreview: Story = {
+  decorators: [
+    createDecorator({
+      commandMenuItems: [],
+      sidePanelSearch: '',
+      isInPreviewMode: true,
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(canvas.queryByText('Copy link to page')).not.toBeInTheDocument();
+    expect(canvas.queryByText(/Change theme to/)).not.toBeInTheDocument();
+    expect(canvas.queryByText('Collapse sidebar')).not.toBeInTheDocument();
+  },
 };
