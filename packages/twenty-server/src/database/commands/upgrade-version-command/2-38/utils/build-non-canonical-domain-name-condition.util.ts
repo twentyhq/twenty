@@ -1,4 +1,4 @@
-import { COMPANY_DOMAIN_NAME_COLUMNS } from 'src/database/commands/upgrade-version-command/2-37/utils/company-domain-name-columns.constant';
+import { COMPANY_DOMAIN_NAME_COLUMNS } from 'src/database/commands/upgrade-version-command/2-38/utils/company-domain-name-columns.constant';
 
 const nonCanonicalDomain = (expression: string) => `(
     ${expression} <> lower(${expression})

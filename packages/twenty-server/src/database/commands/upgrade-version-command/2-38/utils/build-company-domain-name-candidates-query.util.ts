@@ -1,5 +1,5 @@
-import { buildNonCanonicalDomainNameCondition } from 'src/database/commands/upgrade-version-command/2-37/utils/build-non-canonical-domain-name-condition.util';
-import { COMPANY_DOMAIN_NAME_COLUMNS } from 'src/database/commands/upgrade-version-command/2-37/utils/company-domain-name-columns.constant';
+import { buildNonCanonicalDomainNameCondition } from 'src/database/commands/upgrade-version-command/2-38/utils/build-non-canonical-domain-name-condition.util';
+import { COMPANY_DOMAIN_NAME_COLUMNS } from 'src/database/commands/upgrade-version-command/2-38/utils/company-domain-name-columns.constant';
 
 export const buildCompanyDomainNameCandidatesQuery = ({
   schemaName,

@@ -1,4 +1,4 @@
-import { buildCompanyDomainNameUpdateQuery } from 'src/database/commands/upgrade-version-command/2-37/utils/build-company-domain-name-update-query.util';
+import { buildCompanyDomainNameUpdateQuery } from 'src/database/commands/upgrade-version-command/2-38/utils/build-company-domain-name-update-query.util';
 
 describe('buildCompanyDomainNameUpdateQuery', () => {
   it('should send one statement carrying every row', () => {

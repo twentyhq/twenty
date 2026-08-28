@@ -1,7 +1,7 @@
 import {
   type DomainNameLinks,
   normalizeDomainNameLinks,
-} from 'src/database/commands/upgrade-version-command/2-37/utils/normalize-domain-name-links.util';
+} from 'src/database/commands/upgrade-version-command/2-38/utils/normalize-domain-name-links.util';
 
 export type CompanyDomainNameRewrite = {
   id: string;

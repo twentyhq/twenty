@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { COMPANY_DOMAIN_NAME_COLUMNS } from 'src/database/commands/upgrade-version-command/2-37/utils/company-domain-name-columns.constant';
-import { type DomainNameLinks } from 'src/database/commands/upgrade-version-command/2-37/utils/normalize-domain-name-links.util';
+import { COMPANY_DOMAIN_NAME_COLUMNS } from 'src/database/commands/upgrade-version-command/2-38/utils/company-domain-name-columns.constant';
+import { type DomainNameLinks } from 'src/database/commands/upgrade-version-command/2-38/utils/normalize-domain-name-links.util';
 
 export const buildCompanyDomainNameUpdateQuery = ({
   schemaName,

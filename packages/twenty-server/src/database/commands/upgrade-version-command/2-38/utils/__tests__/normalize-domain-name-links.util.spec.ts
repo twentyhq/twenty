@@ -1,4 +1,4 @@
-import { normalizeDomainNameLinks } from 'src/database/commands/upgrade-version-command/2-37/utils/normalize-domain-name-links.util';
+import { normalizeDomainNameLinks } from 'src/database/commands/upgrade-version-command/2-38/utils/normalize-domain-name-links.util';
 
 describe('normalizeDomainNameLinks', () => {
   it('should rewrite a url-shaped primary link to its bare domain', () => {

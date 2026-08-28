@@ -1,5 +1,5 @@
-import { computeCompanyDomainNameRewrites } from 'src/database/commands/upgrade-version-command/2-37/utils/compute-company-domain-name-rewrites.util';
-import { partitionCompanyDomainNameRewrites } from 'src/database/commands/upgrade-version-command/2-37/utils/partition-company-domain-name-rewrites.util';
+import { computeCompanyDomainNameRewrites } from 'src/database/commands/upgrade-version-command/2-38/utils/compute-company-domain-name-rewrites.util';
+import { partitionCompanyDomainNameRewrites } from 'src/database/commands/upgrade-version-command/2-38/utils/partition-company-domain-name-rewrites.util';
 
 const candidate = (
   id: string,

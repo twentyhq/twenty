@@ -4,15 +4,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildCompanyDomainNameCandidatesQuery } from 'src/database/commands/upgrade-version-command/2-37/utils/build-company-domain-name-candidates-query.util';
-import { buildCompanyDomainNameUpdateQuery } from 'src/database/commands/upgrade-version-command/2-37/utils/build-company-domain-name-update-query.util';
-import { buildDomainNameSettingsPatchQuery } from 'src/database/commands/upgrade-version-command/2-37/utils/build-domain-name-settings-patch-query.util';
+import { buildCompanyDomainNameCandidatesQuery } from 'src/database/commands/upgrade-version-command/2-38/utils/build-company-domain-name-candidates-query.util';
+import { buildCompanyDomainNameUpdateQuery } from 'src/database/commands/upgrade-version-command/2-38/utils/build-company-domain-name-update-query.util';
+import { buildDomainNameSettingsPatchQuery } from 'src/database/commands/upgrade-version-command/2-38/utils/build-domain-name-settings-patch-query.util';
 import {
   type CompanyDomainNameRewrite,
   computeCompanyDomainNameRewrites,
-} from 'src/database/commands/upgrade-version-command/2-37/utils/compute-company-domain-name-rewrites.util';
-import { type DomainNameLinks } from 'src/database/commands/upgrade-version-command/2-37/utils/normalize-domain-name-links.util';
-import { partitionCompanyDomainNameRewrites } from 'src/database/commands/upgrade-version-command/2-37/utils/partition-company-domain-name-rewrites.util';
+} from 'src/database/commands/upgrade-version-command/2-38/utils/compute-company-domain-name-rewrites.util';
+import { type DomainNameLinks } from 'src/database/commands/upgrade-version-command/2-38/utils/normalize-domain-name-links.util';
+import { partitionCompanyDomainNameRewrites } from 'src/database/commands/upgrade-version-command/2-38/utils/partition-company-domain-name-rewrites.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -22,9 +22,9 @@ const FIRST_COMPANY_ID = '00000000-0000-0000-0000-000000000000';
 
 type WorkspaceDataSource = NonNullable<RunOnWorkspaceArgs['dataSource']>;
 
-@RegisteredWorkspaceCommand('2.37.0', 1787827221000)
+@RegisteredWorkspaceCommand('2.38.0', 1787935130000)
 @Command({
-  name: 'upgrade:2-37:normalize-company-domain-names',
+  name: 'upgrade:2-38:normalize-company-domain-names',
   description:
     'Rewrite company domain names to the bare canonical domain now written by the domain-typed LINKS field, so contact auto-creation matches them exactly',
 })
