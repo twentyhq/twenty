@@ -12,6 +12,7 @@ import {
   PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
   PARTNER_SERVICE_OBJECT_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { PARTNER_SUPER_PARTNER_FIELD_UNIVERSAL_IDENTIFIER } from 'src/modules/partner/constants/partner-field-universal-identifiers';
 import {
   APPLICATION_NAME_FIELD_ID,
   APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
@@ -271,7 +272,7 @@ export default defineRole({
       fieldUniversalIdentifier: OPPORTUNITY_DESIGN_DOC_STATUS_FIELD_ID,
       canUpdateFieldValue: false,
     },
-  // Marketplace brief fields — read-only for partners (listed briefs visible via RLS OR predicate).
+    // Marketplace brief fields — read-only for partners (listed briefs visible via RLS OR predicate).
     {
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
@@ -307,6 +308,13 @@ export default defineRole({
       objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
       fieldUniversalIdentifier: '2ca9856f-f54a-4326-9ff3-668fd7da0b50',
       canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+    {
+      // Super partner — listed on the record page; partners can see it, cannot set it.
+      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier:
+        PARTNER_SUPER_PARTNER_FIELD_UNIVERSAL_IDENTIFIER,
       canUpdateFieldValue: false,
     },
     {
@@ -505,7 +513,8 @@ export default defineRole({
       // owner/createdBy). An RLS predicate scopes this to the partner's own member record
       // (see scripts/configure-partner-rls.ts) so the internal roster stays hidden.
       objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember
+          .universalIdentifier,
       canReadObjectRecords: true,
       canUpdateObjectRecords: false,
       canSoftDeleteObjectRecords: false,

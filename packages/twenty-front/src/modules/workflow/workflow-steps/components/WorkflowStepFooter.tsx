@@ -17,7 +17,7 @@ import { useId } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { IconRobot, IconTrash, IconUsers } from 'twenty-ui/icon';
+import { IconLego, IconTrash, IconUsers } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -123,7 +123,7 @@ export const WorkflowStepFooter = ({
               focused={selectedItemId === 'view-agent'}
               onClick={handleViewAgent}
               text={t`View Agent`}
-              LeftIcon={IconRobot}
+              LeftIcon={IconLego}
             />
           </SelectableListItem>
         ) : null}

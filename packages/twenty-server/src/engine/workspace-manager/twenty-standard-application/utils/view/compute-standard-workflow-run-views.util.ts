@@ -34,7 +34,7 @@ export const computeStandardWorkflowRunViews = (
         type: ViewType.FIELDS_WIDGET,
         key: null,
         position: 0,
-        icon: 'IconList',
+        icon: 'IconListDetails',
       },
     }),
   };

@@ -63,6 +63,7 @@ export type PartnerMarketplaceQueryNode = {
   skills: string[] | null;
   city: string | null;
   country: string | null;
+  superPartner?: boolean | null;
   partnerLinks?: { edges: ReadonlyArray<PartnerLinkEdge> } | null;
   partnerServices?: { edges: ReadonlyArray<PartnerServiceEdge> } | null;
   partnerContents?: { edges: ReadonlyArray<PartnerContentEdge> } | null;
@@ -85,6 +86,7 @@ export type MarketplaceListPartner = {
   skills: string[] | null;
   city: string | null;
   country: string | null;
+  superPartner: boolean;
 };
 
 export type MarketplaceProfilePartner = MarketplaceListPartner & {
@@ -144,7 +146,9 @@ const sortBySortOrderAscNullsLast = <
     return leftOrder - rightOrder;
   });
 
-const sortByPositionAscNullsLast = <T extends { node: { position: number | null } }>(
+const sortByPositionAscNullsLast = <
+  T extends { node: { position: number | null } },
+>(
   edges: ReadonlyArray<T>,
 ): T[] =>
   [...edges].sort((left, right) => {
@@ -180,8 +184,9 @@ const dedupeUrls = (urls: ReadonlyArray<string | null>): string[] => {
 };
 
 const mapProfileLinks = (node: PartnerMarketplaceQueryNode): PrimaryLink[] => {
-  const partnerLinkUrls = sortBySortOrderAscNullsLast(node.partnerLinks?.edges ?? [])
-    .map((edge) => edge.node.url?.primaryLinkUrl ?? null);
+  const partnerLinkUrls = sortBySortOrderAscNullsLast(
+    node.partnerLinks?.edges ?? [],
+  ).map((edge) => edge.node.url?.primaryLinkUrl ?? null);
 
   const legacyUrls = [
     node.website?.primaryLinkUrl ?? null,
@@ -240,6 +245,7 @@ const mapBasePartner = (
   skills: node.skills,
   city: node.city,
   country: node.country,
+  superPartner: node.superPartner === true,
 });
 
 export function mapPartnerForMarketplace(

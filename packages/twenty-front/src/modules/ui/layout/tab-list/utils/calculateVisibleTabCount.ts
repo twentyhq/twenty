@@ -1,5 +1,5 @@
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
-import { TAB_LIST_LEFT_PADDING } from '@/ui/layout/tab-list/constants/TabListPadding';
+import { TAB_LIST_HORIZONTAL_PADDING } from '@/ui/layout/tab-list/constants/TabListPadding';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { type TabWidthsById } from '@/ui/layout/tab-list/types/TabWidthsById';
 import { isDefined } from 'twenty-shared/utils';
@@ -10,6 +10,7 @@ type CalculateVisibleTabCountParams = {
   containerWidth: number;
   moreButtonWidth: number;
   addButtonWidth?: number;
+  rightPadding?: number;
 };
 
 export const calculateVisibleTabCount = ({
@@ -18,34 +19,43 @@ export const calculateVisibleTabCount = ({
   containerWidth,
   moreButtonWidth,
   addButtonWidth = 0,
+  rightPadding = 0,
 }: CalculateVisibleTabCountParams): number => {
-  if (Object.keys(tabWidthsById).length === 0 || containerWidth === 0) {
+  const measuredTabWidths = visibleTabs
+    .map((tab) => tabWidthsById[tab.id])
+    .filter(isDefined);
+
+  if (measuredTabWidths.length === 0 || containerWidth === 0) {
     return visibleTabs.length;
   }
 
+  // A tab added in this render is measured one commit later; standing in the
+  // widest known tab keeps the row from overflowing until its width arrives.
+  const unmeasuredTabWidth = Math.max(...measuredTabWidths);
+
   const availableWidth =
     containerWidth -
-    TAB_LIST_LEFT_PADDING -
+    TAB_LIST_HORIZONTAL_PADDING -
+    rightPadding -
     (addButtonWidth > 0 ? addButtonWidth + TAB_LIST_GAP : 0);
 
   let totalWidth = 0;
+
   for (let i = 0; i < visibleTabs.length; i++) {
-    const tab = visibleTabs[i];
-    const tabWidth = tabWidthsById[tab.id];
+    const tabWidth = tabWidthsById[visibleTabs[i].id] ?? unmeasuredTabWidth;
 
-    if (!isDefined(tabWidth)) {
-      return visibleTabs.length;
-    }
+    totalWidth += i > 0 ? TAB_LIST_GAP + tabWidth : tabWidth;
 
-    const gapsWidth = i > 0 ? TAB_LIST_GAP : 0;
-    const potentialMoreButtonWidth =
-      i < visibleTabs.length - 1 ? moreButtonWidth + TAB_LIST_GAP : 0;
+    const overflowButtonWidth =
+      i < visibleTabs.length - 1 ? TAB_LIST_GAP + moreButtonWidth : 0;
 
-    totalWidth += tabWidth + gapsWidth;
-
-    if (totalWidth + potentialMoreButtonWidth > availableWidth) {
-      return Math.max(1, i);
+    if (totalWidth + overflowButtonWidth > availableWidth) {
+      // Keeping a tab that does not fit next to the overflow button would clip
+      // it against the row and leave it out of the menu, so it goes to overflow
+      // together with everything after it, even when nothing is left on the row.
+      return i;
     }
   }
+
   return visibleTabs.length;
 };
