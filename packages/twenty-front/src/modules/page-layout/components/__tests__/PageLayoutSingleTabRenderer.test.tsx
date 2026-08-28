@@ -1,3 +1,4 @@
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { PageLayoutSingleTabRenderer } from '@/page-layout/components/PageLayoutSingleTabRenderer';
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { pageLayoutIsInitializedComponentState } from '@/page-layout/states/pageLayoutIsInitializedComponentState';
@@ -5,6 +6,8 @@ import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayo
 import { makeTab } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -61,8 +64,28 @@ jest.mock('@/page-layout/components/PageLayoutContent', () => ({
 }));
 
 describe('PageLayoutSingleTabRenderer', () => {
-  it('updates the identifier title when switching from a source record to the merge preview', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date('2026-08-27T12:00:00.000Z'));
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('updates the identifier title and creation date when switching between merge records', () => {
     const store = createStore();
+
+    store.set(recordStoreFamilyState.atomFamily('source-record'), {
+      __typename: 'Company',
+      id: 'source-record',
+      createdAt: '2026-08-25T12:00:00.000Z',
+    });
+    store.set(recordStoreFamilyState.atomFamily('merge-preview'), {
+      __typename: 'Company',
+      id: 'merge-preview',
+      createdAt: '2026-08-26T12:00:00.000Z',
+    });
 
     store.set(
       pageLayoutPersistedComponentState.atomFamily({
@@ -94,7 +117,9 @@ describe('PageLayoutSingleTabRenderer', () => {
             isInSidePanel: true,
           }}
         >
-          <PageLayoutSingleTabRenderer pageLayoutId={PAGE_LAYOUT_ID} />
+          <I18nProvider i18n={i18n}>
+            <PageLayoutSingleTabRenderer pageLayoutId={PAGE_LAYOUT_ID} />
+          </I18nProvider>
         </LayoutRenderingProvider>
       </JotaiProvider>
     );
@@ -102,6 +127,7 @@ describe('PageLayoutSingleTabRenderer', () => {
     const { rerender } = render(renderForRecord('source-record'));
 
     expect(screen.getByText('company: source-record')).toBeVisible();
+    expect(screen.getByText('Created 2 days ago')).toBeVisible();
     expect(screen.getByText('Rendered tab: fields-tab')).toBeVisible();
 
     rerender(renderForRecord('merge-preview'));
@@ -110,6 +136,16 @@ describe('PageLayoutSingleTabRenderer', () => {
       screen.queryByText('company: source-record'),
     ).not.toBeInTheDocument();
     expect(screen.getByText('company: merge-preview')).toBeVisible();
+    expect(screen.getByText('Created 1 day ago')).toBeVisible();
+    expect(screen.queryByText('Created 2 days ago')).not.toBeInTheDocument();
+    expect(screen.getByText('Rendered tab: fields-tab')).toBeVisible();
+
+    rerender(renderForRecord('preview-without-created-at'));
+
+    expect(
+      screen.getByText('company: preview-without-created-at'),
+    ).toBeVisible();
+    expect(screen.queryByText(/^Created /)).not.toBeInTheDocument();
     expect(screen.getByText('Rendered tab: fields-tab')).toBeVisible();
   });
 });

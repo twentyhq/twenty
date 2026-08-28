@@ -1,3 +1,4 @@
+import { RecordIdentifierBarCreatedAt } from '@/object-record/record-show/components/RecordIdentifierBarCreatedAt';
 import { RecordIdentifierBarTitle } from '@/object-record/record-show/components/RecordIdentifierBarTitle';
 import { PageLayoutWidgetDndProvider } from '@/page-layout/components/dnd/PageLayoutWidgetDndProvider';
 import { PageLayoutContent } from '@/page-layout/components/PageLayoutContent';
@@ -30,7 +31,9 @@ const StyledRecordIdentifierBar = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
   box-sizing: border-box;
   display: flex;
+  gap: ${themeCssVariables.spacing[2]};
   height: ${PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_HEIGHT}px;
+  justify-content: space-between;
   min-width: 0;
   padding: 0 ${themeCssVariables.spacing[3]};
 `;
@@ -65,6 +68,9 @@ const PageLayoutSingleTabRendererInner = () => {
       <StyledRecordIdentifierBar>
         <RecordIdentifierBarTitle
           objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
+          objectRecordId={targetRecordIdentifier.id}
+        />
+        <RecordIdentifierBarCreatedAt
           objectRecordId={targetRecordIdentifier.id}
         />
       </StyledRecordIdentifierBar>
