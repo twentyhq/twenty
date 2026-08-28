@@ -7,12 +7,13 @@ import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
-import { SlackUserLinkConfirmCard } from 'src/front-components/components/SlackUserLinkConfirmCard';
+import { ResolvedSlackUserField } from 'src/front-components/components/ResolvedSlackUserField';
 import { SlackUserLinkTextInput } from 'src/front-components/components/SlackUserLinkTextInput';
 import { WorkspaceMemberPicker } from 'src/front-components/components/WorkspaceMemberPicker';
 import { useAutoResolveSlackUser } from 'src/front-components/hooks/use-auto-resolve-slack-user';
 import { useSetSlackUserLink } from 'src/front-components/hooks/use-set-slack-user-link';
 import { type WorkspaceMemberOption } from 'src/front-components/types/workspace-member-option.type';
+import { buildSlackUserLinkSaveNote } from 'src/front-components/utils/build-slack-user-link-save-note.util';
 
 const StyledForm = styled.form`
   display: flex;
@@ -158,92 +159,103 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
             disabled={isSubmitting}
           />
         </StyledField>
-        <StyledField>
-          <StyledLabel htmlFor="slack-email">Slack email</StyledLabel>
-          <SlackUserLinkTextInput
-            id="slack-email"
-            type="email"
-            value={email}
-            onChange={(event) => {
-              setEmail(event.target.value);
-              onIdentityChange({
-                email: event.target.value,
-                slackUserId,
-                slackTeamId,
-              });
-            }}
-            placeholder="ada@company.com"
-            disabled={isSubmitting}
-          />
-          <StyledHint>
-            The email on their Slack account. We look them up as you type.
-          </StyledHint>
-        </StyledField>
-        {isConnectUser ? (
+        {resolvedUser !== null ? (
+          <StyledField>
+            <StyledLabel>Slack user</StyledLabel>
+            <ResolvedSlackUserField
+              resolvedUser={resolvedUser}
+              onChangeRequest={clearResolution}
+              disabled={isSubmitting}
+            />
+          </StyledField>
+        ) : (
           <>
             <StyledField>
-              <StyledLabel htmlFor="slack-user-id">Slack user ID</StyledLabel>
+              <StyledLabel htmlFor="slack-email">Slack email</StyledLabel>
               <SlackUserLinkTextInput
-                id="slack-user-id"
-                value={slackUserId}
+                id="slack-email"
+                type="email"
+                value={email}
                 onChange={(event) => {
-                  setSlackUserId(event.target.value);
+                  setEmail(event.target.value);
                   onIdentityChange({
-                    email,
-                    slackUserId: event.target.value,
+                    email: event.target.value,
+                    slackUserId,
                     slackTeamId,
                   });
                 }}
-                placeholder="U0123456789"
+                placeholder="ada@company.com"
                 disabled={isSubmitting}
               />
               <StyledHint>
-                Use this for guests or Slack Connect users whose email is not in
-                your workspace. Takes precedence over the email above.
+                The email on their Slack account. We look them up as you type.
               </StyledHint>
             </StyledField>
-            <StyledField>
-              <StyledLabel htmlFor="slack-team-id">
-                Slack team ID (optional)
-              </StyledLabel>
-              <SlackUserLinkTextInput
-                id="slack-team-id"
-                value={slackTeamId}
-                onChange={(event) => {
-                  setSlackTeamId(event.target.value);
-                  onIdentityChange({
-                    email,
-                    slackUserId,
-                    slackTeamId: event.target.value,
-                  });
-                }}
-                placeholder="T0123456789"
-                disabled={isSubmitting}
-              />
-              <StyledHint>
-                Defaults to the installed Slack workspace. Set it for a Slack
-                Connect user, using the team ID their messages carry.
-              </StyledHint>
-            </StyledField>
+            {isConnectUser ? (
+              <>
+                <StyledField>
+                  <StyledLabel htmlFor="slack-user-id">
+                    Slack user ID
+                  </StyledLabel>
+                  <SlackUserLinkTextInput
+                    id="slack-user-id"
+                    value={slackUserId}
+                    onChange={(event) => {
+                      setSlackUserId(event.target.value);
+                      onIdentityChange({
+                        email,
+                        slackUserId: event.target.value,
+                        slackTeamId,
+                      });
+                    }}
+                    placeholder="U0123456789"
+                    disabled={isSubmitting}
+                  />
+                  <StyledHint>
+                    Use this for guests or Slack Connect users whose email is
+                    not in your workspace. Takes precedence over the email
+                    above.
+                  </StyledHint>
+                </StyledField>
+                <StyledField>
+                  <StyledLabel htmlFor="slack-team-id">
+                    Slack team ID (optional)
+                  </StyledLabel>
+                  <SlackUserLinkTextInput
+                    id="slack-team-id"
+                    value={slackTeamId}
+                    onChange={(event) => {
+                      setSlackTeamId(event.target.value);
+                      onIdentityChange({
+                        email,
+                        slackUserId,
+                        slackTeamId: event.target.value,
+                      });
+                    }}
+                    placeholder="T0123456789"
+                    disabled={isSubmitting}
+                  />
+                  <StyledHint>
+                    Defaults to the installed Slack workspace. Set it for a
+                    Slack Connect user, using the team ID their messages carry.
+                  </StyledHint>
+                </StyledField>
+              </>
+            ) : (
+              <StyledDisclosureButton
+                type="button"
+                onClick={() => setIsConnectUser(true)}
+              >
+                Guest or Slack Connect user? Link by Slack ID instead
+              </StyledDisclosureButton>
+            )}
+            {isResolving ? (
+              <StyledHint>Finding the Slack user…</StyledHint>
+            ) : resolveError !== null ? (
+              <StyledResolveError>{resolveError}</StyledResolveError>
+            ) : null}
           </>
-        ) : (
-          <StyledDisclosureButton
-            type="button"
-            onClick={() => setIsConnectUser(true)}
-          >
-            Guest or Slack Connect user? Link by Slack ID instead
-          </StyledDisclosureButton>
         )}
-        {resolvedUser !== null ? (
-          <SlackUserLinkConfirmCard
-            resolvedUser={resolvedUser}
-            selectedMemberEmail={selectedMember?.userEmail ?? undefined}
-          />
-        ) : isResolving ? (
-          <StyledHint>Finding the Slack user…</StyledHint>
-        ) : resolveError !== null ? (
-          <StyledResolveError>{resolveError}</StyledResolveError>
-        ) : null}
         <StyledField>
           <StyledLabel htmlFor="slack-display-name">
             Display name (optional)
@@ -256,6 +268,11 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
             disabled={isSubmitting}
           />
         </StyledField>
+        {resolvedUser !== null && (
+          <StyledHint>
+            {buildSlackUserLinkSaveNote({ resolvedUser, selectedMember })}
+          </StyledHint>
+        )}
         <StyledActions>
           <Button
             type="button"
