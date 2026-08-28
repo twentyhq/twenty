@@ -6,10 +6,6 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { generateCoreClientFromSchema } from '../generate-core-client';
 
-// The workspace schema exposes RAW_JSON composite sub-fields as the JSON
-// scalar; the generated client must still type them with their real shape
-// (see ../composite-field-type-overrides.ts) while leaving other JSON fields
-// on the scalar mapping.
 const SCHEMA = `
 scalar JSON
 

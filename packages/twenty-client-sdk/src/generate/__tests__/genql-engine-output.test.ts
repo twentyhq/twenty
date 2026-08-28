@@ -6,15 +6,6 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { generate } from '../genql';
 
-// Pins the vendored genql engine's output byte-for-byte. The engine was
-// vendored without upstream's own tests, so this snapshot is the regression
-// net for any change inside src/generate/genql/: an edit that alters what the
-// renderers emit fails here and has to be reviewed against the committed
-// snapshot. Twenty-specific typing tweaks are applied OUTSIDE the engine
-// (composite-field-type-overrides.ts), so this fixture snapshots the pure,
-// untouched engine output. index.ts is excluded on purpose: it is formatted
-// with the monorepo's prettier, so its byte layout can move on a prettier
-// bump without any engine change.
 const FIXTURE_SCHEMA = `
 scalar JSON
 scalar DateTime
