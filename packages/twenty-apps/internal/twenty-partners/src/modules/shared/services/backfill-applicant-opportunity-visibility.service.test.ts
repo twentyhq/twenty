@@ -234,7 +234,6 @@ describe('backfillApplicantOpportunityVisibility', () => {
       backfillApplicantOpportunityVisibility(client),
     ).rejects.toThrow(/failed for 1 of 2 opportunities/);
 
-    // The healthy opportunity is still granted before the throw, so a re-run has less to do.
     expect(mutation).toHaveBeenCalledWith({
       updateOpportunity: {
         __args: {

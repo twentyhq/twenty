@@ -14,14 +14,14 @@
 // predicate has no row filter at all, so partners would read the whole workspace until
 // the manifest predicates were restored.
 //
-// 3. Verifies (does NOT set) the Opportunity field permissions from `partner.role.ts`.
-//    upsertFieldPermissions rejects out-of-band changes to app-owned roles
-//    (ROLE_BELONGS_TO_ANOTHER_APPLICATION), so those must come from the manifest; if any
-//    expected lock is missing, the script exits non-zero and tells you to re-sync.
+// Verifies (does NOT set) the Opportunity field permissions from `partner.role.ts`.
+// upsertFieldPermissions rejects out-of-band changes to app-owned roles
+// (ROLE_BELONGS_TO_ANOTHER_APPLICATION), so those must come from the manifest; if any
+// expected lock is missing, the script exits non-zero and tells you to re-sync.
 //
-// 4. Verifies Application field permissions the same way. The Partner role cannot write
-//    Application at all (canUpdateObjectRecords: false); the field locks are kept as
-//    intent on top of that object-level block, not as the mechanism.
+// Verifies Application field permissions the same way. The Partner role cannot write
+// Application at all (canUpdateObjectRecords: false); the field locks are kept as
+// intent on top of that object-level block, not as the mechanism.
 //
 // Usage:
 //   yarn rls:configure          # against .env.local

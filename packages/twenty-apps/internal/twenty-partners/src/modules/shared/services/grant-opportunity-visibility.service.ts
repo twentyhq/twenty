@@ -4,7 +4,6 @@ import { updateOpportunityApplicantPartnerUserIds } from 'src/modules/shared/gra
 import { getOpportunityApplicantPartnerUserIds } from 'src/modules/shared/graphql/queries/get-opportunity-applicant-partner-user-ids';
 import { isNonEmptyString } from 'src/modules/shared/utils/is-non-empty-string.util';
 
-// Callers pass ids already filtered by isNonEmptyString.
 const mergeApplicantPartnerUserIds = (
   current: readonly string[] | null | undefined,
   incoming: readonly string[],
