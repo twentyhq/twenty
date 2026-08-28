@@ -5,6 +5,8 @@ import {
   type StoryObj,
 } from '@storybook/react-vite';
 import { Provider as JotaiProvider } from 'jotai';
+import { Context as ResponsiveContext } from 'react-responsive';
+import { MemoryRouter } from 'react-router-dom';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
@@ -12,12 +14,12 @@ import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/Em
 import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
 import { commandMenuPinnedInlineLayoutFamilyState } from '@/command-menu-item/display/states/commandMenuPinnedInlineLayoutFamilyState';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { RouterDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -86,6 +88,9 @@ type CreateDecoratorParams = {
   sidePanelSearch: string;
   pinnedItemsContainerWidth: number;
   isNavigationDrawerExpanded?: boolean;
+  isInPreviewMode?: boolean;
+  pathname?: string;
+  viewportWidth?: number;
 };
 
 const createDecorator =
@@ -94,9 +99,13 @@ const createDecorator =
     sidePanelSearch,
     pinnedItemsContainerWidth,
     isNavigationDrawerExpanded = true,
+    isInPreviewMode = false,
+    pathname = '/objects/companies',
+    viewportWidth = 1280,
   }: CreateDecoratorParams): Decorator =>
   (Story) => {
     jotaiStore.set(sidePanelSearchState.atom, sidePanelSearch);
+    jotaiStore.set(isSidePanelOpenedState.atom, true);
     jotaiStore.set(
       isNavigationDrawerExpandedState.atom,
       isNavigationDrawerExpanded,
@@ -117,21 +126,25 @@ const createDecorator =
 
     return (
       <JotaiProvider store={jotaiStore}>
-        <CommandMenuComponentInstanceContext.Provider
-          value={{ instanceId: 'story-command-menu' }}
-        >
-          <CommandMenuContext.Provider
-            value={{
-              displayType: 'listItem',
-              containerType: CommandMenuItemContainerType.CommandMenuList,
-              commandMenuItems,
-              commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
-              isInPreviewMode: false,
-            }}
-          >
-            <Story />
-          </CommandMenuContext.Provider>
-        </CommandMenuComponentInstanceContext.Provider>
+        <ResponsiveContext.Provider value={{ width: viewportWidth }}>
+          <MemoryRouter initialEntries={[pathname]}>
+            <CommandMenuComponentInstanceContext.Provider
+              value={{ instanceId: 'story-command-menu' }}
+            >
+              <CommandMenuContext.Provider
+                value={{
+                  displayType: 'listItem',
+                  containerType: CommandMenuItemContainerType.CommandMenuList,
+                  commandMenuItems,
+                  commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
+                  isInPreviewMode,
+                }}
+              >
+                <Story />
+              </CommandMenuContext.Provider>
+            </CommandMenuComponentInstanceContext.Provider>
+          </MemoryRouter>
+        </ResponsiveContext.Provider>
       </JotaiProvider>
     );
   };
@@ -143,7 +156,6 @@ const meta: Meta<typeof SidePanelCommandMenuItemDisplayPage> = {
     ContextStoreDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
-    RouterDecorator,
   ],
 };
 
@@ -239,6 +251,8 @@ export const SearchWithoutMatchingItemsAndWithoutFallback: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('No results found')).toBeVisible();
+    expect(canvas.queryByText('Collapse sidebar')).not.toBeInTheDocument();
+    expect(canvas.queryByText('Expand sidebar')).not.toBeInTheDocument();
   },
 };
 
@@ -271,12 +285,14 @@ export const CollapseSidebar: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    expect(canvas.queryByText('Search records')).not.toBeInTheDocument();
     await userEvent.click(await canvas.findByText('Collapse sidebar'));
 
     expect(jotaiStore.get(isNavigationDrawerExpandedState.atom)).toBe(false);
     expect(jotaiStore.get(navigationDrawerActiveTabState.atom)).toBe(
       NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
     );
+    expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
   },
 };
 
@@ -292,8 +308,80 @@ export const ExpandSidebar: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    expect(canvas.queryByText('Collapse sidebar')).not.toBeInTheDocument();
     await userEvent.click(await canvas.findByText('Expand sidebar'));
 
     expect(jotaiStore.get(isNavigationDrawerExpandedState.atom)).toBe(true);
+    expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
   },
+};
+
+export const SearchSidebar: Story = {
+  decorators: [
+    createDecorator({
+      commandMenuItems: [OTHER_ITEM, FALLBACK_ITEM],
+      sidePanelSearch: 'sidebar',
+      pinnedItemsContainerWidth: 1000,
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Collapse sidebar')).toBeVisible();
+    expect(canvas.queryByText('Search records')).not.toBeInTheDocument();
+    expect(canvas.queryByText('No results found')).not.toBeInTheDocument();
+  },
+};
+
+export const SearchSidebarWithCaseAndWhitespace: Story = {
+  decorators: [
+    createDecorator({
+      commandMenuItems: [OTHER_ITEM, FALLBACK_ITEM],
+      sidePanelSearch: ' SIDEBAR ',
+      pinnedItemsContainerWidth: 1000,
+    }),
+  ],
+  play: SearchSidebar.play,
+};
+
+export const HiddenOnMobile: Story = {
+  decorators: [
+    createDecorator({
+      commandMenuItems: [OTHER_ITEM],
+      sidePanelSearch: 'sidebar',
+      pinnedItemsContainerWidth: 1000,
+      viewportWidth: 375,
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('No results found')).toBeVisible();
+    expect(canvas.queryByText('Collapse sidebar')).not.toBeInTheDocument();
+    expect(canvas.queryByText('Expand sidebar')).not.toBeInTheDocument();
+  },
+};
+
+export const HiddenInSettings: Story = {
+  decorators: [
+    createDecorator({
+      commandMenuItems: [OTHER_ITEM],
+      sidePanelSearch: 'sidebar',
+      pinnedItemsContainerWidth: 1000,
+      pathname: '/settings/profile',
+    }),
+  ],
+  play: HiddenOnMobile.play,
+};
+
+export const HiddenInLayoutPreview: Story = {
+  decorators: [
+    createDecorator({
+      commandMenuItems: [OTHER_ITEM],
+      sidePanelSearch: 'sidebar',
+      pinnedItemsContainerWidth: 1000,
+      isInPreviewMode: true,
+    }),
+  ],
+  play: HiddenOnMobile.play,
 };

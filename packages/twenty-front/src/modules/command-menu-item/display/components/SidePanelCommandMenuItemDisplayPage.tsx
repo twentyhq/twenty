@@ -6,6 +6,7 @@ import { getVisibleCommandMenuItemCountForContainerWidth } from '@/command-menu-
 import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
+import { useNavigationDrawerTogglePresentation } from '@/navigation/hooks/useNavigationDrawerTogglePresentation';
 import { useToggleNavigationDrawer } from '@/navigation/hooks/useToggleNavigationDrawer';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -19,10 +20,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { useContext, useMemo } from 'react';
-import {
-  IconLayoutSidebarLeftCollapse,
-  IconLayoutSidebarRightCollapse,
-} from 'twenty-ui/icon';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -40,9 +37,8 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const { commandMenuItems, commandMenuContextApi, isInPreviewMode } =
     useContext(CommandMenuContext);
 
-  const navigationDrawerCommandLabel = isNavigationDrawerExpanded
-    ? t`Collapse sidebar`
-    : t`Expand sidebar`;
+  const { label: navigationDrawerCommandLabel, Icon: NavigationDrawerIcon } =
+    useNavigationDrawerTogglePresentation(isNavigationDrawerExpanded);
   const shouldDisplayNavigationDrawerCommand =
     !isMobile &&
     !isSettingsDrawer &&
@@ -176,11 +172,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
               <CommandMenuItem
                 id={TOGGLE_NAVIGATION_DRAWER_COMMAND_ID}
                 label={navigationDrawerCommandLabel}
-                Icon={
-                  isNavigationDrawerExpanded
-                    ? IconLayoutSidebarLeftCollapse
-                    : IconLayoutSidebarRightCollapse
-                }
+                Icon={NavigationDrawerIcon}
                 onClick={handleToggleNavigationDrawer}
               />
             </SelectableListItem>
