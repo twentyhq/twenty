@@ -20,6 +20,7 @@ import { UpdateWorkflowVersionTriggerInput } from 'src/engine/core-modules/workf
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-action.dto';
 import { WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
 import { WorkflowVersionTriggerDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-trigger.dto';
+import { WorkflowQueryValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-query-validation-graphql-api-exception.filter';
 import { WorkflowVersionStepGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-step-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -44,6 +45,7 @@ import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-ru
   PermissionsGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
   WorkflowVersionStepGraphqlApiExceptionFilter,
+  WorkflowQueryValidationGraphqlApiExceptionFilter,
 )
 export class WorkflowVersionStepResolver {
   constructor(
