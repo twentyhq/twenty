@@ -10,7 +10,6 @@ import { findDuplicateApplication } from 'src/modules/application/graphql/querie
 import { findPartnerByMember } from 'src/modules/shared/graphql/queries/find-partner-by-member';
 import { getPartnerOwner } from 'src/modules/shared/graphql/queries/get-partner-owner';
 import { grantOpportunityVisibility } from 'src/modules/shared/services/grant-opportunity-visibility.service';
-import { isNonEmptyString } from 'src/modules/shared/utils/is-non-empty-string.util';
 
 type ApplicationCreatedProperties = DatabaseEventPayload<
   ObjectRecordCreateEvent<CoreSchema.Application>
@@ -29,15 +28,14 @@ export async function resolveCandidacy(
   const applicationId = after?.id;
   if (!applicationId) return {};
 
-  const grantVisibility = async (partnerUserId: string) => {
-    if (!isNonEmptyString(after.opportunityId)) return;
-    await grantOpportunityVisibility(client, after.opportunityId, partnerUserId);
-  };
+  const opportunityId = after.opportunityId ?? '';
 
   // Admin path (invite/import): without partnerUser, RLS hides the row from its own partner.
   if (after.partnerId) {
     if (after.partnerUserId) {
-      await grantVisibility(after.partnerUserId);
+      await grantOpportunityVisibility(client, opportunityId, [
+        after.partnerUserId,
+      ]);
       return {};
     }
 
@@ -46,7 +44,7 @@ export async function resolveCandidacy(
     if (!partnerUserId) return { skipped: true, reason: 'partner_has_no_user' };
 
     await updateApplication(client, applicationId, { partnerUserId });
-    await grantVisibility(partnerUserId);
+    await grantOpportunityVisibility(client, opportunityId, [partnerUserId]);
     return { stamped: partnerUserId };
   }
 
@@ -57,7 +55,6 @@ export async function resolveCandidacy(
   const partnerId = partnerRes.partners?.edges?.[0]?.node?.id;
   if (!partnerId) return {}; // creator isn't a partner (e.g. admin) — leave it
 
-  const opportunityId = after.opportunityId;
   if (opportunityId) {
     const existingRes = await findDuplicateApplication(client, opportunityId, partnerId);
     const existingId = existingRes.applications?.edges?.find(
@@ -74,7 +71,7 @@ export async function resolveCandidacy(
     partnerUserId: memberId,
     state: 'APPLIED',
   });
-  await grantVisibility(memberId);
+  await grantOpportunityVisibility(client, opportunityId, [memberId]);
   // ponytail: dedupe by (opportunity, partner) above; two near-simultaneous creates could still both pass before either stamps — acceptable.
   return { applied: true, partnerId };
 }

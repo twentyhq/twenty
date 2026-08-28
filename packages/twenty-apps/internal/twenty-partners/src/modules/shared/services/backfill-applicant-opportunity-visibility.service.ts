@@ -1,11 +1,9 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { updateOpportunityApplicantPartnerUserIds } from 'src/modules/shared/graphql/mutations/update-opportunity-applicant-partner-user-ids';
-import { getOpportunityApplicantPartnerUserIds } from 'src/modules/shared/graphql/queries/get-opportunity-applicant-partner-user-ids';
 import { listApplicationsWithOpportunityPartnerUser } from 'src/modules/shared/graphql/queries/list-applications-with-opportunity-partner-user';
-import { mergeApplicantPartnerUserIds } from 'src/modules/shared/services/grant-opportunity-visibility.service';
-import { collectAll } from 'src/modules/shared/utils/paginate.util';
+import { grantOpportunityVisibility } from 'src/modules/shared/services/grant-opportunity-visibility.service';
 import { isNonEmptyString } from 'src/modules/shared/utils/is-non-empty-string.util';
+import { collectAll } from 'src/modules/shared/utils/paginate.util';
 
 type ApplicationRow = {
   opportunityId?: string | null;
@@ -33,41 +31,24 @@ export async function backfillApplicantOpportunityVisibility(
 
     const current = idsByOpportunity.get(opportunityId) ?? [];
 
-    idsByOpportunity.set(
-      opportunityId,
-      mergeApplicantPartnerUserIds(current, [partnerUserId]),
-    );
+    if (!current.includes(partnerUserId)) {
+      current.push(partnerUserId);
+      idsByOpportunity.set(opportunityId, current);
+    }
   }
 
   let updated = 0;
 
   for (const [opportunityId, applicantIds] of idsByOpportunity) {
-    const result = await getOpportunityApplicantPartnerUserIds(
+    const result = await grantOpportunityVisibility(
       client,
       opportunityId,
+      applicantIds,
     );
-    const opportunity = result.opportunities?.edges?.[0]?.node;
 
-    if (!opportunity?.id) {
-      continue;
+    if (result.granted) {
+      updated += 1;
     }
-
-    const current = opportunity.applicantPartnerUserIds ?? [];
-    const merged = mergeApplicantPartnerUserIds(current, applicantIds);
-
-    if (
-      merged.length === current.length &&
-      merged.every((id) => current.includes(id))
-    ) {
-      continue;
-    }
-
-    await updateOpportunityApplicantPartnerUserIds(
-      client,
-      opportunityId,
-      merged,
-    );
-    updated += 1;
   }
 
   return updated;

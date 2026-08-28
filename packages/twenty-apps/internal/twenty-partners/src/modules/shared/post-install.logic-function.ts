@@ -3,39 +3,28 @@ import { type InstallPayload, definePostInstallLogicFunction } from 'twenty-sdk/
 
 import { backfillApplicantOpportunityVisibility } from 'src/modules/shared/services/backfill-applicant-opportunity-visibility.service';
 import { backfillPartnerUserOnChildren } from 'src/modules/shared/services/backfill-partner-user-on-children.service';
+import { planPostInstall } from 'src/modules/shared/utils/plan-post-install.util';
 
-// The release that narrowed the Application RLS predicate to `partnerUser IS me`.
-const STRICT_APPLICATION_RLS_VERSION = [1, 6, 1];
-// The release that grants opportunity read access to applicants after unlist.
-const APPLICANT_OPPORTUNITY_VISIBILITY_VERSION = [1, 8, 1];
+type PostInstallResult =
+  | { skipped: true }
+  | { stamped?: number; granted?: number };
 
-const isBefore = (version: string, target: number[]): boolean => {
-  const parts = version.split('.').map((part) => Number.parseInt(part, 10) || 0);
-
-  for (let index = 0; index < target.length; index++) {
-    const part = parts[index] ?? 0;
-    if (part !== target[index]) return part < target[index];
-  }
-
-  return false;
-};
-
-const handler = async ({ previousVersion }: InstallPayload) => {
+const handler = async ({
+  previousVersion,
+}: InstallPayload): Promise<PostInstallResult> => {
   const client = new CoreApiClient();
-  const result: Record<string, unknown> = {};
+  const plan = planPostInstall(previousVersion);
+  const result: { stamped?: number; granted?: number } = {};
 
-  if (!previousVersion || isBefore(previousVersion, STRICT_APPLICATION_RLS_VERSION)) {
+  if (plan.stampPartnerUser) {
     result.stamped = await backfillPartnerUserOnChildren(client);
   }
 
-  if (
-    !previousVersion ||
-    isBefore(previousVersion, APPLICANT_OPPORTUNITY_VISIBILITY_VERSION)
-  ) {
+  if (plan.grantApplicantVisibility) {
     result.granted = await backfillApplicantOpportunityVisibility(client);
   }
 
-  if (Object.keys(result).length === 0) {
+  if (result.stamped === undefined && result.granted === undefined) {
     return { skipped: true };
   }
 

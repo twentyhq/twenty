@@ -20,6 +20,11 @@ describe('backfillApplicantOpportunityVisibility', () => {
   });
 
   it('writes one merged list per opportunity and skips ids that are already present', async () => {
+    const applicantIdsByOpportunity = new Map<string, string[]>([
+      [OPPORTUNITY_A, [MEMBER_1]],
+      [OPPORTUNITY_B, [MEMBER_1]],
+    ]);
+
     query.mockImplementation((selection: Record<string, unknown>) => {
       if (selection.applications) {
         return Promise.resolve({
@@ -59,28 +64,37 @@ describe('backfillApplicantOpportunityVisibility', () => {
         }
       )?.__args?.filter?.id?.eq;
 
-      if (filter === OPPORTUNITY_A) {
-        return Promise.resolve({
-          opportunities: {
-            edges: [
-              {
-                node: {
-                  id: OPPORTUNITY_A,
-                  applicantPartnerUserIds: [MEMBER_1],
-                },
-              },
-            ],
-          },
-        });
+      if (!filter) {
+        return Promise.resolve({ opportunities: { edges: [] } });
       }
 
       return Promise.resolve({
         opportunities: {
           edges: [
-            { node: { id: OPPORTUNITY_B, applicantPartnerUserIds: [MEMBER_1] } },
+            {
+              node: {
+                id: filter,
+                applicantPartnerUserIds:
+                  applicantIdsByOpportunity.get(filter) ?? [],
+              },
+            },
           ],
         },
       });
+    });
+
+    mutation.mockImplementation((selection: Record<string, unknown>) => {
+      const args = (
+        selection.updateOpportunity as {
+          __args?: { id?: string; data?: { applicantPartnerUserIds?: string[] } };
+        }
+      )?.__args;
+
+      if (args?.id && args.data?.applicantPartnerUserIds) {
+        applicantIdsByOpportunity.set(args.id, args.data.applicantPartnerUserIds);
+      }
+
+      return Promise.resolve({});
     });
 
     const updated = await backfillApplicantOpportunityVisibility(client);
