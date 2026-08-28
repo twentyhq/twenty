@@ -65,6 +65,7 @@ export async function resolveCandidacy(
       return { duplicate: true, keptExisting: existingId };
     }
   }
+  // ponytail: dedupe by (opportunity, partner) above; two near-simultaneous creates could still both pass before either stamps — acceptable.
 
   await updateApplication(client, applicationId, {
     partnerId,
@@ -72,6 +73,6 @@ export async function resolveCandidacy(
     state: 'APPLIED',
   });
   await grantOpportunityVisibility(client, opportunityId, [memberId]);
-  // ponytail: dedupe by (opportunity, partner) above; two near-simultaneous creates could still both pass before either stamps — acceptable.
+
   return { applied: true, partnerId };
 }

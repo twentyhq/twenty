@@ -282,7 +282,11 @@ export default defineRole({
       canUpdateFieldValue: false,
     },
     {
-      // RLS allowlist of applicant member ids — partners must not read or write it.
+      // RLS allowlist of applicant member ids — partners must not read or write it, or one
+      // applicant would see the others. Hiding it costs realtime only: the server strips
+      // restricted fields before matching an event against the RLS predicate, so live
+      // updates for a brief matched solely by this field never reach the partner. The
+      // initial query still returns the row, so it appears on reload.
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
       fieldUniversalIdentifier: OPPORTUNITY_APPLICANT_PARTNER_USER_IDS_FIELD_ID,
