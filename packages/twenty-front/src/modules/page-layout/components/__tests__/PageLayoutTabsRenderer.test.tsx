@@ -44,9 +44,7 @@ const frontComponentTab = {
   position: 2,
   icon: 'IconApps',
   layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-  widgets: [
-    { id: 'front-component-widget', type: WidgetType.FRONT_COMPONENT },
-  ],
+  widgets: [{ id: 'front-component-widget', type: WidgetType.FRONT_COMPONENT }],
 };
 
 jest.mock('@/page-layout/components/dnd/PageLayoutWidgetDndProvider', () => ({
