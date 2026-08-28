@@ -247,7 +247,7 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
 
   return (
     <SidePanelList selectableItemIds={selectableItemIds}>
-      <SidePanelGroup heading={t`Standard widgets`}>
+      <SidePanelGroup heading={t`Widget type`}>
         <SelectableListItem
           itemId="chart"
           onEnter={handleNavigateToGraphTypeSelect}

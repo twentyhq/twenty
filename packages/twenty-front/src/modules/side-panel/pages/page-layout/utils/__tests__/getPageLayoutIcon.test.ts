@@ -6,7 +6,6 @@ import {
   IconFrame,
   IconLayoutDashboard,
   IconListDetails,
-  IconListSearch,
   IconPerspective,
   IconPlus,
   IconTable,
@@ -20,7 +19,7 @@ describe('getPageLayoutIcon', () => {
     [SidePanelPages.PageLayoutTabSettings, IconPerspective],
     [SidePanelPages.PageLayoutWidgetSettings, IconLayoutDashboard],
     [SidePanelPages.RecordPageFieldsSettings, IconListDetails],
-    [SidePanelPages.RecordPageFieldSettings, IconListSearch],
+    [SidePanelPages.RecordPageFieldSettings, IconListDetails],
     [SidePanelPages.DashboardRecordTableSettings, IconTable],
     [SidePanelPages.PageLayoutRecordPageWidgetTypeSelect, IconPlus],
   ] as const)('returns the expected icon for %s', (page, expectedIcon) => {

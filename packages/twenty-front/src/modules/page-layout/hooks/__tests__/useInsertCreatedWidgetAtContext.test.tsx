@@ -204,63 +204,6 @@ describe('useInsertCreatedWidgetAtContext', () => {
     expect(draft).toBe(initialDraft);
   });
 
-  it('uses an explicit top insertion point instead of a stale picker context', () => {
-    const store = createStore();
-    store.set(
-      getDraftAtom(),
-      makeDraft([
-        makeTab('tab-1', [
-          makeWidget('first', 0),
-          makeWidget('second', 1),
-          makeWidget('new-widget', 2),
-        ]),
-      ]),
-    );
-    store.set(getInsertionContextAtom(), {
-      targetWidgetId: 'second',
-      direction: 'below',
-    });
-
-    const { result } = renderHook(() => useInsertCreatedWidgetAtContext(), {
-      wrapper: getWrapper(store),
-    });
-
-    act(() => {
-      result.current.insertCreatedWidgetAtContext('new-widget', {
-        targetWidgetId: 'first',
-        direction: 'above',
-      });
-    });
-
-    expect(
-      store.get(getDraftAtom()).tabs[0].widgets.map(({ id }) => id),
-    ).toEqual(['new-widget', 'first', 'second']);
-    expect(store.get(getInsertionContextAtom())).toBeNull();
-  });
-
-  it('keeps a bottom insertion appended and clears a stale picker context', () => {
-    const store = createStore();
-    const initialDraft = makeDraft([
-      makeTab('tab-1', [makeWidget('first', 0), makeWidget('new-widget', 1)]),
-    ]);
-    store.set(getDraftAtom(), initialDraft);
-    store.set(getInsertionContextAtom(), {
-      targetWidgetId: 'first',
-      direction: 'above',
-    });
-
-    const { result } = renderHook(() => useInsertCreatedWidgetAtContext(), {
-      wrapper: getWrapper(store),
-    });
-
-    act(() => {
-      result.current.insertCreatedWidgetAtContext('new-widget', null);
-    });
-
-    expect(store.get(getDraftAtom())).toBe(initialDraft);
-    expect(store.get(getInsertionContextAtom())).toBeNull();
-  });
-
   it('should no-op when target widget is not found', () => {
     const store = createStore();
     const wrapper = getWrapper(store);

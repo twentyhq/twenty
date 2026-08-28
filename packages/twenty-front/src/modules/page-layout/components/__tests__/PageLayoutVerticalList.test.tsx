@@ -13,17 +13,6 @@ let mockLayoutMode = PageLayoutTabLayoutMode.VERTICAL_LIST;
 let mockIsSideColumnContext = false;
 let mockIsInPinnedTab = false;
 
-jest.mock('@/page-layout/hooks/useNavigateToMoreWidgets', () => ({
-  useNavigateToMoreWidgets: () => ({ navigateToMoreWidgets: jest.fn() }),
-}));
-
-jest.mock(
-  '@/page-layout/widgets/components/RecordPageAddWidgetSection',
-  () => ({
-    RecordPageAddWidgetSection: () => <div>Add widget</div>,
-  }),
-);
-
 jest.mock('@/page-layout/contexts/PageLayoutContentContext', () => ({
   usePageLayoutContentContext: () => ({
     layoutMode: mockLayoutMode,

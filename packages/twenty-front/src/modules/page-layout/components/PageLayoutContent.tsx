@@ -5,6 +5,7 @@ import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageL
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
 import { StandaloneWidgetPlaceholder } from '@/page-layout/widgets/components/StandaloneWidgetPlaceholder';
+import { RecordPageAddWidgetSection } from '@/page-layout/widgets/components/RecordPageAddWidgetSection';
 import { styled } from '@linaria/react';
 import {
   PageLayoutTabLayoutMode,
@@ -46,10 +47,15 @@ export const PageLayoutContent = () => {
     return <PageLayoutGridLayout tabId={tabId} />;
   }
 
+  const isVerticalListInEditMode = isPageLayoutInEditMode && isRecordPageLayout;
+
   return (
     <PageLayoutVerticalList
-      isInEditMode={isPageLayoutInEditMode && isRecordPageLayout}
+      isInEditMode={isVerticalListInEditMode}
       widgets={activeTab.widgets}
+      trailingElement={
+        isVerticalListInEditMode ? <RecordPageAddWidgetSection /> : undefined
+      }
     />
   );
 };

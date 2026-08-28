@@ -34,7 +34,6 @@ type NotePlacementTestCase = {
 jest.mock('twenty-ui/icon', () => ({
   ...jest.requireActual<typeof TwentyIcons>('twenty-ui/icon'),
   IconListDetails: () => <svg role="img" aria-label="Fields group icon" />,
-  IconListSearch: () => <svg role="img" aria-label="Field icon" />,
   IconNotes: () => <svg role="img" aria-label="Note icon" />,
 }));
 
@@ -121,7 +120,7 @@ jest.mock('@/command-menu/components/CommandMenuItem', () => ({
 describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it('labels standard widgets and distinguishes a fields group from a single field', () => {
+  it('exposes Note alongside existing record widgets', () => {
     const store = createStore();
     store.set(
       pageLayoutDraftComponentState.atomFamily({
@@ -143,17 +142,10 @@ describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
     );
 
     expect(
-      screen.getByRole('heading', { name: 'Standard widgets' }),
+      screen.getByRole('heading', { name: 'Widget type' }),
     ).toBeInTheDocument();
-    expect(screen.queryByText('Widget type')).not.toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: 'Fields group' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Fields' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Field' })).toBeInTheDocument();
-    expect(
-      screen.getByRole('img', { name: 'Fields group icon' }),
-    ).toBeInTheDocument();
-    expect(screen.getByRole('img', { name: 'Field icon' })).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'Note icon' })).toBeInTheDocument();
   });
 

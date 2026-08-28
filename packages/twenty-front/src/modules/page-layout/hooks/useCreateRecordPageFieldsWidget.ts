@@ -64,8 +64,6 @@ export const useCreateRecordPageFieldsWidget = () => {
       focusTitleInput: true,
       resetNavigationStack: true,
     });
-
-    return newWidget;
   }, [
     currentPageLayout.tabs,
     navigatePageLayoutSidePanel,

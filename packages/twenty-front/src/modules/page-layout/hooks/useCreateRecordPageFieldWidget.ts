@@ -99,8 +99,6 @@ export const useCreateRecordPageFieldWidget = () => {
       focusTitleInput: true,
       resetNavigationStack: true,
     });
-
-    return newWidget;
   }, [
     allFieldWidgetFields,
     currentPageLayout.tabs,

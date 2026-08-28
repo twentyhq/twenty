@@ -1,9 +1,6 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import {
-  type WidgetInsertionContext,
-  widgetInsertionContextComponentState,
-} from '@/page-layout/states/widgetInsertionContextComponentState';
+import { widgetInsertionContextComponentState } from '@/page-layout/states/widgetInsertionContextComponentState';
 import { reindexWidgetsToVerticalListPositions } from '@/page-layout/utils/reindexWidgetsToVerticalListPositions';
 import { sortWidgetsByVerticalListPosition } from '@/page-layout/utils/sortWidgetsByVerticalListPosition';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -32,13 +29,8 @@ export const useInsertCreatedWidgetAtContext = (
   const store = useStore();
 
   const insertCreatedWidgetAtContext = useCallback(
-    (
-      newWidgetId: string,
-      insertionContext: WidgetInsertionContext = store.get(
-        widgetInsertionContextState,
-      ),
-    ) => {
-      store.set(widgetInsertionContextState, null);
+    (newWidgetId: string) => {
+      const insertionContext = store.get(widgetInsertionContextState);
 
       if (insertionContext === null) {
         return;
@@ -100,6 +92,8 @@ export const useInsertCreatedWidgetAtContext = (
           }),
         };
       });
+
+      store.set(widgetInsertionContextState, null);
     },
     [pageLayoutDraftState, store, widgetInsertionContextState],
   );

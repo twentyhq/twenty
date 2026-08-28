@@ -16,12 +16,11 @@ export const useOpenPageLayoutTabSettings = (
 
   const openTabSettings = useCallback(
     (tabId: string) => {
-      // Opening during the close animation clears the previous tab selection.
+      setPageLayoutTabSettingsOpenTabId(tabId);
       navigatePageLayoutSidePanel({
         sidePanelPage: SidePanelPages.PageLayoutTabSettings,
         resetNavigationStack: true,
       });
-      setPageLayoutTabSettingsOpenTabId(tabId);
     },
     [setPageLayoutTabSettingsOpenTabId, navigatePageLayoutSidePanel],
   );
