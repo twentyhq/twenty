@@ -4,38 +4,19 @@ import {
   Injectable,
 } from '@nestjs/common';
 
-import { type GqlContextType } from '@nestjs/graphql';
-
-import { msg } from '@lingui/core/macro';
 import { type Observable } from 'rxjs';
 
-import { AuthExceptionCode } from 'src/engine/core-modules/auth/auth.exception';
-import { AuthenticationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { hasAuthenticatedPrincipal } from 'src/engine/utils/has-authenticated-principal.util';
-import { getRequest } from 'src/utils/extract-request';
+import { getRequestOrThrowWhenUnauthenticated } from 'src/engine/guards/utils/get-request-or-throw-when-unauthenticated.util';
 
 @Injectable()
 export class WorkspaceAuthGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const request = getRequest(context);
+    const request = getRequestOrThrowWhenUnauthenticated(context);
 
     if (!request) {
       return false;
-    }
-
-    // Returning false here would report FORBIDDEN, which clients read as a
-    // permission problem and never recover from. GraphQL only: the catch-all
-    // filter turns a GraphQL error thrown on the REST path into a 500.
-    if (
-      !hasAuthenticatedPrincipal(request) &&
-      context.getType<GqlContextType>() === 'graphql'
-    ) {
-      throw new AuthenticationError('Missing authentication token', {
-        subCode: AuthExceptionCode.UNAUTHENTICATED,
-        userFriendlyMessage: msg`You must be authenticated to perform this action.`,
-      });
     }
 
     // Workspace-agnostic token: a genuine refusal, renewing returns the same one.
