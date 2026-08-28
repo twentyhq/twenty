@@ -1,67 +1,40 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
 
-import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
-
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatViewFilterMaps } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter-maps.type';
 import { fromViewFilterEntityToFlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/utils/from-view-filter-entity-to-flat-view-filter.util';
-import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
-import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
-import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
+const FLAT_VIEW_FILTER_ROWS_REQUIREMENT = {
+  viewFilter: true,
+  application: ['id', 'universalIdentifier'],
+  fieldMetadata: ['id', 'universalIdentifier'],
+  viewFilterGroup: ['id', 'universalIdentifier'],
+  view: ['id', 'universalIdentifier'],
+} as const;
+
 @Injectable()
 @WorkspaceCache('flatViewFilterMaps', { packingPonderation: 1 })
-export class WorkspaceFlatViewFilterMapCacheService extends WorkspaceCacheProvider<FlatViewFilterMaps> {
-  constructor(
-    @InjectWorkspaceScopedRepository(ViewFilterEntity)
-    private readonly viewFilterRepository: WorkspaceScopedRepository<ViewFilterEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectWorkspaceScopedRepository(ViewFilterGroupEntity)
-    private readonly viewFilterGroupRepository: WorkspaceScopedRepository<ViewFilterGroupEntity>,
-    @InjectWorkspaceScopedRepository(ViewEntity)
-    private readonly viewRepository: WorkspaceScopedRepository<ViewEntity>,
-  ) {
-    super();
-  }
+export class WorkspaceFlatViewFilterMapCacheService extends MetadataFlatEntityMapsCacheProvider<'viewFilter'> {
+  override readonly rowsRequirement = FLAT_VIEW_FILTER_ROWS_REQUIREMENT;
 
-  async computeForCache(workspaceId: string): Promise<FlatViewFilterMaps> {
-    const [viewFilters, applications, fieldMetadatas, viewFilterGroups, views] =
-      await Promise.all([
-        this.viewFilterRepository.find(workspaceId, {
-          withDeleted: true,
-        }),
-        this.applicationRepository.find({
-          where: { workspaceId },
-          select: ['id', 'universalIdentifier'],
-          withDeleted: true,
-        }),
-        this.fieldMetadataRepository.find({
-          where: { workspaceId },
-          select: ['id', 'universalIdentifier'],
-          withDeleted: true,
-        }),
-        this.viewFilterGroupRepository.find(workspaceId, {
-          select: ['id', 'universalIdentifier'],
-          withDeleted: true,
-        }),
-        this.viewRepository.find(workspaceId, {
-          select: ['id', 'universalIdentifier'],
-          withDeleted: true,
-        }),
-      ]);
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_VIEW_FILTER_ROWS_REQUIREMENT
+  >): FlatViewFilterMaps {
+    const {
+      viewFilter: viewFilters,
+      application: applications,
+      fieldMetadata: fieldMetadatas,
+      viewFilterGroup: viewFilterGroups,
+      view: views,
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
