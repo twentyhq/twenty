@@ -38,6 +38,13 @@ export const getNavigationMenuItemColor = (
     navigationMenuItem.type === NavigationMenuItemType.OBJECT ||
     navigationMenuItem.type === NavigationMenuItemType.VIEW
   ) {
+    if (
+      navigationMenuItem.type === NavigationMenuItemType.VIEW &&
+      isNonEmptyString(navigationMenuItem.color)
+    ) {
+      return navigationMenuItem.color as ThemeColor;
+    }
+
     if (objectMetadataItem) {
       return getObjectColorWithFallback(objectMetadataItem);
     }
