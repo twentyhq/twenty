@@ -9,15 +9,19 @@ import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutIn
 import { usePageLayoutAddTabStrategy } from '@/page-layout/hooks/usePageLayoutAddTabStrategy';
 import { usePageLayoutRenderableTabs } from '@/page-layout/hooks/usePageLayoutRenderableTabs';
 import { PageLayoutMainContent } from '@/page-layout/PageLayoutMainContent';
+import { pageLayoutPrerenderedTabIdsComponentState } from '@/page-layout/states/pageLayoutPrerenderedTabIdsComponentState';
 import { getScrollWrapperInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getScrollWrapperInstanceIdFromPageLayoutAndRecord';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
+import { shouldPrerenderPageLayoutTab } from '@/page-layout/utils/shouldPrerenderPageLayoutTab';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
+import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -66,6 +70,14 @@ const StyledTabsAndDashboardContainer = styled.div`
       display: none;
     }
   }
+`;
+
+// Hidden prerendered tabs use display: none rather than <Activity mode="hidden">:
+// Apollo starts useQuery fetches from effects, which hidden activities do not
+// mount, so nothing would preload (see pageLayoutTabPrerenderContract.test).
+// display: contents keeps the active tab's layout identical to an unwrapped mount.
+const StyledTabContentDisplay = styled.div<{ isActiveTab: boolean }>`
+  display: ${({ isActiveTab }) => (isActiveTab ? 'contents' : 'none')};
 `;
 
 const StyledScrollWrapperContainer = styled.div`
@@ -139,6 +151,32 @@ export const PageLayoutTabsRenderer = () => {
     (tab) => tab.id === activeTabId,
   );
 
+  const pageLayoutPrerenderedTabIds = useAtomComponentStateValue(
+    pageLayoutPrerenderedTabIdsComponentState,
+  );
+
+  const setPageLayoutPrerenderedTabIds = useSetAtomComponentState(
+    pageLayoutPrerenderedTabIdsComponentState,
+  );
+
+  // Prerendering is a within-visit optimization: without the reset, reopening
+  // a record would mount every tab hovered during the previous visit at once.
+  useEffect(
+    () => () => setPageLayoutPrerenderedTabIds([]),
+    [setPageLayoutPrerenderedTabIds],
+  );
+
+  const tabsToMount = sortedTabs.filter(
+    (tab) =>
+      tab.id === activeTabId ||
+      (!isPageLayoutInEditMode &&
+        pageLayoutPrerenderedTabIds.includes(tab.id) &&
+        shouldPrerenderPageLayoutTab({
+          tab,
+          pageLayoutType: currentPageLayout.type,
+        })),
+  );
+
   return (
     <PageLayoutWidgetDndProvider>
       <PageLayoutScrollResetEffect
@@ -182,9 +220,16 @@ export const PageLayoutTabsRenderer = () => {
               componentInstanceId={scrollWrapperInstanceId}
               defaultEnableXScroll={false}
             >
-              {isDefined(activeTabId) && activeTabExistsInRenderableTabs && (
-                <PageLayoutMainContent tabId={activeTabId} />
-              )}
+              {isDefined(activeTabId) &&
+                activeTabExistsInRenderableTabs &&
+                tabsToMount.map((tab) => (
+                  <StyledTabContentDisplay
+                    key={tab.id}
+                    isActiveTab={tab.id === activeTabId}
+                  >
+                    <PageLayoutMainContent tabId={tab.id} />
+                  </StyledTabContentDisplay>
+                ))}
             </ScrollWrapper>
           </StyledScrollWrapperContainer>
         </StyledTabsAndDashboardContainer>
