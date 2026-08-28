@@ -48,6 +48,15 @@ export const persistSlackUserLink = async (
     return existingLink.id;
   }
 
+  // Only a same-member re-save may leave the states untouched; a new record
+  // is a permission grant and must never fall back to an implicit state.
+  // Checked before the delete so a bad call cannot destroy the old link.
+  if (!isDefined(source) || !isDefined(consentState)) {
+    throw new Error(
+      'A new Slack user link needs an explicit source and consent state',
+    );
+  }
+
   // Delete-then-create is forced: the (team, user) unique tuple blocks
   // creating first, and the API has no transaction. The failure window fails
   // safe: if the create throws after the delete, the caller surfaces the

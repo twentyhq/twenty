@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useState } from 'react';
 import { isDefined } from 'twenty-sdk/utils';
 import { Tag } from 'twenty-ui/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -127,6 +128,10 @@ export const SlackUserLinksList = ({
   removingLinkId,
   resendingLinkId,
 }: SlackUserLinksListProps) => {
+  const [removalArmedLinkId, setRemovalArmedLinkId] = useState<string | null>(
+    null,
+  );
+
   // One operation at a time: each hook tracks a single in-flight id, so a
   // second row's action would clobber the first row's marker mid-flight.
   const isActionInFlight =
@@ -140,8 +145,8 @@ export const SlackUserLinksList = ({
     <StyledList>
       {hasMore && (
         <StyledEmptyState>
-          Showing the first {slackUserLinks.length} links; more exist than can
-          be shown here.
+          Showing {slackUserLinks.length} links; more exist than can be shown
+          here.
         </StyledEmptyState>
       )}
       {slackUserLinks.map((slackUserLink) => {
@@ -194,12 +199,25 @@ export const SlackUserLinksList = ({
                   )}
                   <StyledActionButton
                     type="button"
-                    onClick={() => onRemove(slackUserLink)}
+                    // Removing discards the recorded consent, so a lone
+                    // misclick must not be enough; the second click confirms.
+                    onClick={() => {
+                      if (removalArmedLinkId !== slackUserLink.id) {
+                        setRemovalArmedLinkId(slackUserLink.id);
+                        return;
+                      }
+
+                      setRemovalArmedLinkId(null);
+                      onRemove(slackUserLink);
+                    }}
+                    onBlur={() => setRemovalArmedLinkId(null)}
                     disabled={isActionInFlight}
                   >
                     {removingLinkId === slackUserLink.id
                       ? 'Removing…'
-                      : 'Remove'}
+                      : removalArmedLinkId === slackUserLink.id
+                        ? 'Confirm removal'
+                        : 'Remove'}
                   </StyledActionButton>
                 </StyledActions>
               )}

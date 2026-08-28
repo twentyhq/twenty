@@ -17,13 +17,16 @@ const SLACKBOT_USER_ID = 'USLACKBOT';
 const MAX_RESULTS = 10;
 const PAGE_SIZE = 200;
 // users.list is Tier 2 rate limited, so cap how deep one search walks the
-// roster; larger workspaces still find anyone via a more specific query.
+// roster. Anyone past the cap is still linkable by their email or Slack id.
 const MAX_PAGES = 3;
 
 type SlackRosterMember = {
   id?: string;
   is_bot?: boolean;
   deleted?: boolean;
+  is_restricted?: boolean;
+  is_ultra_restricted?: boolean;
+  is_email_confirmed?: boolean;
   real_name?: string;
   profile?: { display_name?: string; email?: string };
 };
@@ -46,6 +49,16 @@ const matchesQuery = (member: SlackRosterMember, query: string): boolean =>
     (value) => isNonEmptyString(value) && value.toLowerCase().includes(query),
   );
 
+// Only a regular, confirmed account's profile email certifies its owner, so
+// anything else stays out of the option: the save-outcome note keys on this
+// email to promise instant activation, and the backend refuses the match for
+// guests and unconfirmed accounts. The row itself still matches an email
+// search either way.
+const isEmailVouchedForOwner = (member: SlackRosterMember): boolean =>
+  member.is_restricted !== true &&
+  member.is_ultra_restricted !== true &&
+  member.is_email_confirmed === true;
+
 const toSearchOption = (
   member: SlackRosterMember,
   slackTeamId: string,
@@ -55,9 +68,10 @@ const toSearchOption = (
   displayName: [member.profile?.display_name, member.real_name].find(
     isNonEmptyString,
   ),
-  email: isNonEmptyString(member.profile?.email)
-    ? member.profile.email
-    : undefined,
+  email:
+    isEmailVouchedForOwner(member) && isNonEmptyString(member.profile?.email)
+      ? member.profile.email
+      : undefined,
 });
 
 const collectMatches = async (

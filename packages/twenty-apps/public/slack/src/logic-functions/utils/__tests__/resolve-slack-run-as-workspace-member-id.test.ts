@@ -292,6 +292,8 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
       slackUserId: 'U0123456789',
       workspaceMemberId: 'member-1',
       name: 'ada',
+      source: 'AUTO',
+      consentState: 'ACTIVE',
     });
   });
 

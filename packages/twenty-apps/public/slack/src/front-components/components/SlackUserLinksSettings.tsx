@@ -68,6 +68,12 @@ export const SlackUserLinksSettings = () => {
       !isNonEmptyString(slackUserLink.slackTeamId) ||
       !isNonEmptyString(slackUserLink.slackUserId)
     ) {
+      enqueueSnackbar({
+        message:
+          'This link is missing its Slack ids, so the request cannot be resent.',
+        variant: 'error',
+      });
+
       return;
     }
 
@@ -100,7 +106,12 @@ export const SlackUserLinksSettings = () => {
           description="Only members with the workspace members permission can create or change Slack user links. You can review the existing links below."
         />
       )}
-      {canManage && <SlackUserLinkForm onLinkSaved={refetchSlackUserLinks} />}
+      {canManage && (
+        <SlackUserLinkForm
+          existingLinks={slackUserLinks}
+          onLinkSaved={refetchSlackUserLinks}
+        />
+      )}
       <Section>
         <H2Title
           title="Slack user links"

@@ -9,7 +9,7 @@ export default defineLogicFunction({
   universalIdentifier: SLACK_SET_USER_LINK_UNIVERSAL_IDENTIFIER,
   name: 'slack-set-user-link',
   description:
-    'Link a Slack user to a workspace member so the assistant acts with that member permissions. Restricted to members with the workspace members permission; the link is stored with source MANUAL and wins over email matching.',
+    'Link a Slack user to a workspace member so the assistant acts with that member permissions. Restricted to members with the workspace members permission. A link whose emails match activates immediately as an AUTO link; any other in-workspace link asks the Slack user for consent first, and accounts outside the installed workspace are admin-set.',
   timeoutSeconds: 30,
   toolTriggerSettings: {
     inputSchema: slackSetUserLinkInputSchema,

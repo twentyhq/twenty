@@ -29,7 +29,6 @@ export const decideSlackUserLinkWrite = async ({
   slackClient,
   slackUserId,
   workspaceMemberId,
-  slackUserEmail,
   fetchedIdentity,
   isInInstalledWorkspace,
   isSameMemberRelink,
@@ -38,26 +37,20 @@ export const decideSlackUserLinkWrite = async ({
   slackClient: WebClient;
   slackUserId: string;
   workspaceMemberId: string;
-  slackUserEmail: string | undefined;
   fetchedIdentity: SlackUserIdentity | undefined;
   isInInstalledWorkspace: boolean;
   isSameMemberRelink: boolean;
 }): Promise<SlackUserLinkWriteDecision> => {
   const shouldCheckEmailMatch = isInInstalledWorkspace && !isSameMemberRelink;
 
-  // The settings form submits the resolved Slack id and team rather than the
-  // email it started from, so no verified email reaches the handler on that
-  // path; only Slack's own profile email for the id can certify a match that
-  // skips consent, so ask Slack when the caller has neither an email nor an
-  // already-fetched identity. Mirroring the lazy auto-match, only a regular
-  // account's profile email counts (not bots, deleted, or restricted users).
+  // Only the profile email of the account itself, fetched from Slack, can
+  // certify a match that skips consent. Mirroring the lazy auto-match, only a
+  // regular account's email counts (not bots, deleted, guest, or
+  // unconfirmed-email users) -- an email-submitted save passes the same gate
+  // as an id-submitted one, so a guest resolved by email still gets asked.
   const resolveVerifiedEmail = async (): Promise<string | undefined> => {
     if (!shouldCheckEmailMatch) {
       return undefined;
-    }
-
-    if (isNonEmptyString(slackUserEmail)) {
-      return slackUserEmail;
     }
 
     const identity =

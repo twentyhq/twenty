@@ -16,7 +16,8 @@ export const SlackUserPicker = ({
   autoFocus,
 }: SlackUserPickerProps) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const { options, isSearching } = useSlackUserSearch(searchTerm);
+  const { options, isSearching, searchErrorMessage } =
+    useSlackUserSearch(searchTerm);
 
   return (
     <SearchDropdownPicker
@@ -31,7 +32,10 @@ export const SlackUserPicker = ({
       }
       getOptionMeta={(slackUser) => slackUser.email}
       searchLabel="Search Slack by name or email"
-      emptyText="No Slack users found. For a guest or Slack Connect user, link by Slack ID below."
+      emptyText={
+        searchErrorMessage ??
+        'No Slack users found. For a guest or Slack Connect user, link by Slack ID below.'
+      }
       disabled={disabled}
       autoFocus={autoFocus}
     />

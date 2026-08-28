@@ -13,6 +13,7 @@ import { SlackUserPicker } from 'src/front-components/components/SlackUserPicker
 import { WorkspaceMemberPicker } from 'src/front-components/components/WorkspaceMemberPicker';
 import { useAutoResolveSlackUser } from 'src/front-components/hooks/use-auto-resolve-slack-user';
 import { useSetSlackUserLink } from 'src/front-components/hooks/use-set-slack-user-link';
+import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
 import { type WorkspaceMemberOption } from 'src/front-components/types/workspace-member-option.type';
 import { buildSlackUserLinkSaveNote } from 'src/front-components/utils/build-slack-user-link-save-note.util';
 
@@ -64,10 +65,14 @@ const StyledActions = styled.div`
 `;
 
 type SlackUserLinkFormProps = {
+  existingLinks: SlackUserLinkRecord[];
   onLinkSaved: () => void;
 };
 
-export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
+export const SlackUserLinkForm = ({
+  existingLinks,
+  onLinkSaved,
+}: SlackUserLinkFormProps) => {
   const [selectedMember, setSelectedMember] =
     useState<WorkspaceMemberOption | null>(null);
   const [name, setName] = useState('');
@@ -91,6 +96,18 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
 
   const canSubmit =
     selectedMember !== null && resolvedUser !== null && !isSubmitting;
+
+  // A team-less side only rules the link out when both sides know their team.
+  const existingLink =
+    resolvedUser === null
+      ? undefined
+      : existingLinks.find(
+          (link) =>
+            link.slackUserId === resolvedUser.slackUserId &&
+            (!isNonEmptyString(link.slackTeamId) ||
+              !isNonEmptyString(resolvedUser.slackTeamId) ||
+              link.slackTeamId === resolvedUser.slackTeamId),
+        );
 
   const resetForm = () => {
     setSelectedMember(null);
@@ -168,6 +185,9 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
               resolvedUser={resolvedUser}
               onChangeRequest={() => {
                 setIsSlackSearchReopening(true);
+                // The typed display name belonged to this pick; a different
+                // person must not silently inherit it.
+                setName('');
                 clearResolution();
               }}
               disabled={isSubmitting}
@@ -261,7 +281,11 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
         </StyledField>
         {resolvedUser !== null && (
           <StyledHint>
-            {buildSlackUserLinkSaveNote({ resolvedUser, selectedMember })}
+            {buildSlackUserLinkSaveNote({
+              resolvedUser,
+              selectedMember,
+              existingLink,
+            })}
           </StyledHint>
         )}
         <StyledActions>

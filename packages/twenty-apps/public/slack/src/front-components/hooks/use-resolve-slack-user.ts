@@ -65,12 +65,14 @@ type ResolveSlackUserState = {
 };
 
 export const useResolveSlackUser = (): ResolveSlackUserState => {
-  const [isResolving, setIsResolving] = useState(false);
+  // Counted, not boolean: an invalidated lookup may still be settling when
+  // the next one starts, and its completion must not clear the flag early.
+  const [inFlightResolveCount, setInFlightResolveCount] = useState(0);
 
   const resolveSlackUser = async (
     input: ResolveInput,
   ): Promise<ResolveSlackUserResult> => {
-    setIsResolving(true);
+    setInFlightResolveCount((count) => count + 1);
 
     try {
       const result = await new RestApiClient().post(
@@ -82,9 +84,9 @@ export const useResolveSlackUser = (): ResolveSlackUserState => {
     } catch {
       return GENERIC_ERROR;
     } finally {
-      setIsResolving(false);
+      setInFlightResolveCount((count) => count - 1);
     }
   };
 
-  return { resolveSlackUser, isResolving };
+  return { resolveSlackUser, isResolving: inFlightResolveCount > 0 };
 };
