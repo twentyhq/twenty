@@ -2,8 +2,8 @@ const baseProject = {
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/test/setup-jest-dom.ts'],
   transformIgnorePatterns: [
-    '/node_modules/(?!(twenty-ui|twenty-shared)/.*)',
-    '../../node_modules/(?!(twenty-ui|twenty-shared)/.*)',
+    '/node_modules/(?!(twenty-ui|twenty-shared|@lingui|@messageformat)/.*)',
+    '../../node_modules/(?!(twenty-ui|twenty-shared|@lingui|@messageformat)/.*)',
   ],
   transform: {
     '^.+\\.(ts|js|tsx|jsx|mjs)$': [

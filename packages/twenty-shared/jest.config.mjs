@@ -4,9 +4,11 @@ const jestConfig = {
   preset: '../../jest.preset.js',
   testEnvironment: 'jsdom',
   setupFiles: ['<rootDir>/jest.setup.ts'],
-  transformIgnorePatterns: ['../../node_modules/'],
+  // @lingui v6 (and its @messageformat/date-skeleton dep) is ESM-only, so jest's
+  // CJS runtime needs swc to transform it instead of skipping all of node_modules.
+  transformIgnorePatterns: ['../../node_modules/(?!(@lingui|@messageformat)/.*)'],
   transform: {
-    '^.+\\.[tj]sx?$': [
+    '^.+\\.m?[tj]sx?$': [
       '@swc/jest',
       {
         jsc: {

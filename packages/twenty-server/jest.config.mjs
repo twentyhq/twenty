@@ -19,9 +19,9 @@ const jestConfig = {
   transformIgnorePatterns: [
     // jsdom 29 pulls ESM-only transitive deps (parse5, entities, tough-cookie,
     // @exodus/bytes via html-encoding-sniffer, @csstools/@asamuzakjp css engine),
-    // and e2b/@e2b pull ESM-only chalk.
+    // e2b/@e2b pull ESM-only chalk, and @lingui v6 (with its @messageformat/date-skeleton dep) is ESM-only.
     // jest's CJS runtime can't load their `export` syntax, so let swc transform them.
-    '/node_modules/(?!(file-type|@file-type|strtok3|token-types|@borewit|@tokenizer|uint8array-extras|read-next-line|digest-fetch|md5|js-sha256|js-sha512|base-64|charenc|crypt|email-reply-parser|jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp|graphql-upload|fs-capacitor|e2b|@e2b|chalk)/)',
+    '/node_modules/(?!(file-type|@file-type|strtok3|token-types|@borewit|@tokenizer|uint8array-extras|read-next-line|digest-fetch|md5|js-sha256|js-sha512|base-64|charenc|crypt|email-reply-parser|jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp|graphql-upload|fs-capacitor|e2b|@e2b|chalk|@lingui|@messageformat)/)',
   ],
   testRegex: '.*\\.spec\\.ts$',
   transform: {
