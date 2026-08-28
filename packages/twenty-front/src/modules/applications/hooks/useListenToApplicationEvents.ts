@@ -7,8 +7,10 @@ import { useApolloClient } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  ApplicationState,
   FindManyApplicationsDocument,
   FindOneApplicationByUniversalIdentifierDocument,
+  FindOneApplicationDocument,
   FindOneApplicationSummaryDocument,
 } from '~/generated-metadata/graphql';
 
@@ -23,12 +25,30 @@ export const useListenToApplicationEvents = ({
   const apolloClient = useApolloClient();
   const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
 
+  // Broadcast events only carry the application row, never its relations
+  // (roles, objects, logic functions, agents, variables), and lookups by
+  // universalIdentifier error while the application is absent, so the cache
+  // cannot be patched into a correct state on its own.
+  const refetchApplicationQueries = useCallback(() => {
+    void apolloClient
+      .refetchQueries({
+        include: [
+          FindOneApplicationDocument,
+          FindOneApplicationByUniversalIdentifierDocument,
+          FindOneApplicationSummaryDocument,
+        ],
+      })
+      .catch(() => {
+        // NOT_FOUND after an uninstall is a valid outcome.
+      });
+  }, [apolloClient]);
+
   const applyApplicationEventToApolloCache = useCallback(
     (
       detail: MetadataOperationBrowserEventDetail<ApplicationBroadcastRecord>,
     ) => {
       if (detail.operation.type === 'update') {
-        const { updatedRecord } = detail.operation;
+        const { updatedRecord, updatedFields } = detail.operation;
 
         const cacheId = apolloClient.cache.identify({
           __typename: 'Application',
@@ -50,6 +70,17 @@ export const useListenToApplicationEvents = ({
             name: (existingName) => updatedRecord.name ?? existingName,
           },
         });
+
+        // An install or upgrade attaches its metadata to the application as it
+        // runs, so the relations are only complete once it leaves a
+        // transitional state.
+        if (
+          !isDefined(updatedFields) ||
+          (updatedFields.includes('state') &&
+            updatedRecord.state === ApplicationState.INSTALLED)
+        ) {
+          refetchApplicationQueries();
+        }
 
         return;
       }
@@ -87,20 +118,9 @@ export const useListenToApplicationEvents = ({
         fetchPolicy: 'network-only',
       });
 
-      // Lookups by universalIdentifier error while the application is absent,
-      // so cache normalization alone cannot revive them after a create.
-      void apolloClient
-        .refetchQueries({
-          include: [
-            FindOneApplicationByUniversalIdentifierDocument,
-            FindOneApplicationSummaryDocument,
-          ],
-        })
-        .catch(() => {
-          // NOT_FOUND after an uninstall is a valid outcome.
-        });
+      refetchApplicationQueries();
     },
-    [apolloClient, setCurrentWorkspace],
+    [apolloClient, refetchApplicationQueries, setCurrentWorkspace],
   );
 
   useListenToMetadataOperationBrowserEvent<ApplicationBroadcastRecord>({
