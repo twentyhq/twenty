@@ -5,9 +5,12 @@ import { generateCallRecordingSummariesForIds } from 'src/logic-functions/flows/
 
 const generateCallRecordingSummaryMock = vi.hoisted(() => vi.fn());
 
-vi.mock('src/logic-functions/flows/generate-call-recording-summary.util', () => ({
-  generateCallRecordingSummary: generateCallRecordingSummaryMock,
-}));
+vi.mock(
+  'src/logic-functions/flows/generate-call-recording-summary.util',
+  () => ({
+    generateCallRecordingSummary: generateCallRecordingSummaryMock,
+  }),
+);
 
 const client = {} as CoreApiClient;
 

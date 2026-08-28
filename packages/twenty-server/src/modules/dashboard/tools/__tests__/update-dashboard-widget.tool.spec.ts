@@ -1,5 +1,6 @@
 import {
   AggregateOperations,
+  PageLayoutTabLayoutMode,
   ViewFilterOperand,
   WidgetType,
 } from 'twenty-shared/types';
@@ -54,7 +55,13 @@ const buildDeps = () => ({
       id: WIDGET_ID,
       title: 'Widget',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 0,
+        column: 0,
+        rowSpan: 4,
+        columnSpan: 4,
+      },
       configuration: updateData.configuration,
     })),
   },

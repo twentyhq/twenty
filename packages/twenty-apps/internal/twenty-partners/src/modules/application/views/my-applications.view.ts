@@ -20,8 +20,26 @@ export default defineView({
   type: ViewType.TABLE,
   position: 0,
   fields: [
-    { universalIdentifier: 'fe004e19-5aee-4716-aa6f-3d27cdc52ae2', fieldMetadataUniversalIdentifier: APPLICATION_OPPORTUNITY_FIELD_ID, position: 0, isVisible: true, size: 200 },
-    { universalIdentifier: '9cf77b15-fdd6-4123-bdbf-a50e422417c2', fieldMetadataUniversalIdentifier: APPLICATION_STATE_FIELD_ID, position: 1, isVisible: true, size: 140 },
-    { universalIdentifier: '321a7f6c-0207-47c2-860f-706eaa5c2fa9', fieldMetadataUniversalIdentifier: APPLICATION_PITCH_FIELD_ID, position: 2, isVisible: true, size: 280 },
+    {
+      universalIdentifier: 'fe004e19-5aee-4716-aa6f-3d27cdc52ae2',
+      fieldMetadataUniversalIdentifier: APPLICATION_OPPORTUNITY_FIELD_ID,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+    {
+      universalIdentifier: '9cf77b15-fdd6-4123-bdbf-a50e422417c2',
+      fieldMetadataUniversalIdentifier: APPLICATION_STATE_FIELD_ID,
+      position: 1,
+      isVisible: true,
+      size: 140,
+    },
+    {
+      universalIdentifier: '321a7f6c-0207-47c2-860f-706eaa5c2fa9',
+      fieldMetadataUniversalIdentifier: APPLICATION_PITCH_FIELD_ID,
+      position: 2,
+      isVisible: true,
+      size: 280,
+    },
   ],
 });

@@ -22,10 +22,10 @@ import { fromCreatePageLayoutInputToFlatPageLayoutToCreate } from 'src/engine/me
 import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
 import { type PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
 import {
+  generatePageLayoutExceptionMessage,
   PageLayoutException,
   PageLayoutExceptionCode,
   PageLayoutExceptionMessageKey,
-  generatePageLayoutExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 import { fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-with-tabs-and-widgets-to-page-layout-dto.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -324,7 +324,6 @@ export class PageLayoutDuplicationService {
         fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate({
           createPageLayoutWidgetInput: {
             title: originalWidget.title,
-            gridPosition: originalWidget.gridPosition,
             position: originalWidget.position ?? undefined,
             type: originalWidget.type,
             objectMetadataId: originalWidget.objectMetadataId,

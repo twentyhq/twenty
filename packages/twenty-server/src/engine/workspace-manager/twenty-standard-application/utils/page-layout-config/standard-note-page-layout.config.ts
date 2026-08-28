@@ -36,7 +36,6 @@ const NOTE_PAGE_TABS = {
             .widgets.noteRichText.universalIdentifier,
         title: WIDGET_PROPS.noteRichText.title,
         type: WIDGET_PROPS.noteRichText.type,
-        gridPosition: WIDGET_PROPS.noteRichText.gridPosition,
         position: { layoutMode: TAB_PROPS.home.layoutMode, index: 1 },
         conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_MOBILE,
         conditionalAvailabilityExpression:

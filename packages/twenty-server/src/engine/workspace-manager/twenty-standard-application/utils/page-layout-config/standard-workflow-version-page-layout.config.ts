@@ -5,7 +5,6 @@ import {
 
 import { PageLayoutType, WidgetType } from 'twenty-shared/types';
 import {
-  GRID_POSITIONS,
   TAB_PROPS,
   VERTICAL_LIST_LAYOUT_POSITIONS,
   WIDGET_PROPS,
@@ -34,7 +33,6 @@ const WORKFLOW_VERSION_PAGE_TABS = {
             .tabs.home.widgets.workflow.universalIdentifier,
         title: 'Workflow',
         type: WidgetType.FIELD,
-        gridPosition: GRID_POSITIONS.FULL_WIDTH,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
         fieldUniversalIdentifier:
           STANDARD_OBJECTS.workflowVersion.fields.workflow.universalIdentifier,

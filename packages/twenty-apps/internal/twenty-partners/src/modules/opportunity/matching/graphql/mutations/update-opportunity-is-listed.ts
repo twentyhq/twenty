@@ -6,6 +6,9 @@ export function updateOpportunityIsListed(
   isListed: boolean,
 ) {
   return client.mutation({
-    updateOpportunity: { __args: { id: opportunityId, data: { isListed } }, id: true },
+    updateOpportunity: {
+      __args: { id: opportunityId, data: { isListed } },
+      id: true,
+    },
   });
 }

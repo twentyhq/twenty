@@ -35,7 +35,7 @@ describe('UsageLimitGraphqlApiExceptionFilter', () => {
     );
   });
 
-  it('surfaces an exhausted quota as forbidden', () => {
+  it('surfaces an exhausted quota through the shared enforcement mapping', () => {
     const graphqlError = catchAsGraphQLError(
       new UsageLimitException(
         'Quota exhausted',
@@ -43,6 +43,6 @@ describe('UsageLimitGraphqlApiExceptionFilter', () => {
       ),
     );
 
-    expect(graphqlError.extensions.code).toBe(ErrorCode.FORBIDDEN);
+    expect(graphqlError.extensions.code).toBe(ErrorCode.QUOTA_EXHAUSTED);
   });
 });
