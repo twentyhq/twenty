@@ -14,25 +14,24 @@ const buildTimelineActivityType = ({
   name: string;
   on: string;
   relationFieldUniversalIdentifier: string | null;
-}): TimelineActivityType =>
-  ({
-    id: `20202020-0000-0000-0000-00000000000${name.length}`,
-    name,
-    label: name,
-    icon: null,
-    isActive: true,
-    applicationId: '20202020-0000-0000-0000-0000000000aa',
-    universalIdentifier: `20202020-0000-0000-0000-0000000000${name.length}f`,
-    frontComponentUniversalIdentifier: null,
-    emit: {
-      on,
-      objectUniversalIdentifier: null,
-      through:
-        relationFieldUniversalIdentifier === null
-          ? null
-          : { relationFieldUniversalIdentifier },
-    },
-  }) as TimelineActivityType;
+}): TimelineActivityType => ({
+  id: `20202020-0000-0000-0000-00000000000${name.length}`,
+  name,
+  label: name,
+  icon: null,
+  isActive: true,
+  applicationId: '20202020-0000-0000-0000-0000000000aa',
+  universalIdentifier: `20202020-0000-0000-0000-0000000000${name.length}f`,
+  frontComponentUniversalIdentifier: null,
+  emit: {
+    on,
+    objectUniversalIdentifier: null,
+    through:
+      relationFieldUniversalIdentifier === null
+        ? null
+        : { relationFieldUniversalIdentifier },
+  },
+});
 
 // Mirrors the standard recordLinked type, which emits on every linked record
 // and so routes through no relation.
