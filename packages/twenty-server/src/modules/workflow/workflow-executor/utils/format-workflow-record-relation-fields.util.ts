@@ -54,6 +54,24 @@ const extractLegacyRelationId = (value: unknown): string | undefined => {
   return record.id;
 };
 
+const isEmptyRelationValue = (value: unknown): boolean => {
+  if (value === null) {
+    return true;
+  }
+
+  if (!isObject(value)) {
+    return false;
+  }
+
+  const record = value as Record<string, unknown>;
+
+  if (Object.keys(record).length !== 1 || !('id' in record)) {
+    return false;
+  }
+
+  return !isDefined(record.id) || record.id === '';
+};
+
 const formatWorkflowRecordMorphRelationFields = (
   record: Record<string, unknown>,
   objectMetadataInfo: ObjectMetadataInfo,
@@ -191,16 +209,23 @@ const formatWorkflowRecordSimpleRelationFields = (
       continue;
     }
 
+    const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+      name: key,
+    });
+
+    if (isEmptyRelationValue(value)) {
+      if (!isDefined(record[joinColumnName])) {
+        formattedRecord[joinColumnName] = null;
+      }
+      continue;
+    }
+
     const legacyId = extractLegacyRelationId(value);
 
     if (!isDefined(legacyId)) {
       formattedRecord[key] = value;
       continue;
     }
-
-    const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
-      name: key,
-    });
 
     if (!isDefined(record[joinColumnName])) {
       formattedRecord[joinColumnName] = legacyId;
