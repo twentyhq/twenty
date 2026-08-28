@@ -67,6 +67,7 @@ export class BlocklistValidationService {
           existingRecord,
         });
       } else {
+        this.validateScopeTarget({ item, context });
         await this.blocklistAccessService.canUserCreateBlocklistEntry({
           item,
           context,
@@ -190,6 +191,40 @@ export class BlocklistValidationService {
           { userFriendlyMessage: msg`Invalid email or domain.` },
         );
       }
+    }
+  }
+
+  private validateScopeTarget({
+    item,
+    context,
+  }: {
+    item: Partial<Pick<BlocklistItem, 'scope' | 'workspaceMemberId'>>;
+    context: BlocklistMutationContext;
+  }): void {
+    const scope = item.scope ?? BlocklistScope.WORKSPACE_MEMBER;
+
+    if (scope === BlocklistScope.WORKSPACE) {
+      if (isDefined(item.workspaceMemberId)) {
+        throw new CommonQueryRunnerException(
+          'A workspace-scoped blocklist entry cannot target a workspace member',
+          CommonQueryRunnerExceptionCode.BAD_REQUEST,
+          {
+            userFriendlyMessage: msg`A workspace-wide blocklist entry cannot target a workspace member.`,
+          },
+        );
+      }
+
+      return;
+    }
+
+    if (item.workspaceMemberId !== context.workspaceMemberId) {
+      throw new CommonQueryRunnerException(
+        'A workspace-member-scoped blocklist entry must target its own workspace member',
+        CommonQueryRunnerExceptionCode.BAD_REQUEST,
+        {
+          userFriendlyMessage: msg`Cannot manage a blocklist entry of another workspace member.`,
+        },
+      );
     }
   }
 

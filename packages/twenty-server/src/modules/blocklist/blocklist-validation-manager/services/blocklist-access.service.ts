@@ -3,12 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { BlocklistScope } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
-import {
-  CommonQueryRunnerException,
-  CommonQueryRunnerExceptionCode,
-} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -27,21 +22,13 @@ export class BlocklistAccessService {
     item,
     context,
   }: {
-    item: Partial<Pick<BlocklistItem, 'scope' | 'workspaceMemberId'>>;
+    item: Partial<Pick<BlocklistItem, 'scope'>>;
     context: BlocklistMutationContext;
   }): Promise<boolean> {
     const scope = item.scope ?? BlocklistScope.WORKSPACE_MEMBER;
 
     if (scope === BlocklistScope.WORKSPACE_MEMBER) {
-      if (item.workspaceMemberId !== context.workspaceMemberId) {
-        this.throwForeignOwnerDenied();
-      }
-
       return true;
-    }
-
-    if (isDefined(item.workspaceMemberId)) {
-      this.throwWorkspaceEntryCannotTargetMember();
     }
 
     if (await this.hasWorkspaceBlocklistPermission(context)) {
@@ -89,26 +76,6 @@ export class BlocklistAccessService {
       PermissionsExceptionCode.PERMISSION_DENIED,
       {
         userFriendlyMessage: msg`You do not have permission to manage the workspace blocklist.`,
-      },
-    );
-  }
-
-  private throwForeignOwnerDenied(): never {
-    throw new CommonQueryRunnerException(
-      'A workspace-member-scoped blocklist entry must target its own workspace member',
-      CommonQueryRunnerExceptionCode.BAD_REQUEST,
-      {
-        userFriendlyMessage: msg`Cannot manage a blocklist entry of another workspace member.`,
-      },
-    );
-  }
-
-  private throwWorkspaceEntryCannotTargetMember(): never {
-    throw new CommonQueryRunnerException(
-      'A workspace-scoped blocklist entry cannot target a workspace member',
-      CommonQueryRunnerExceptionCode.BAD_REQUEST,
-      {
-        userFriendlyMessage: msg`A workspace-wide blocklist entry cannot target a workspace member.`,
       },
     );
   }
