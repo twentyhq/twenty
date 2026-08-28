@@ -9,6 +9,7 @@ import { H2Title } from 'twenty-ui/typography';
 
 import { ResolvedSlackUserField } from 'src/front-components/components/ResolvedSlackUserField';
 import { SlackUserLinkTextInput } from 'src/front-components/components/SlackUserLinkTextInput';
+import { SlackUserPicker } from 'src/front-components/components/SlackUserPicker';
 import { WorkspaceMemberPicker } from 'src/front-components/components/WorkspaceMemberPicker';
 import { useAutoResolveSlackUser } from 'src/front-components/hooks/use-auto-resolve-slack-user';
 import { useSetSlackUserLink } from 'src/front-components/hooks/use-set-slack-user-link';
@@ -69,7 +70,6 @@ type SlackUserLinkFormProps = {
 export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
   const [selectedMember, setSelectedMember] =
     useState<WorkspaceMemberOption | null>(null);
-  const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [slackUserId, setSlackUserId] = useState('');
   const [slackTeamId, setSlackTeamId] = useState('');
@@ -81,6 +81,7 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
     isResolving,
     onIdentityChange,
     resolveNow,
+    selectResolvedUser,
     clearResolution,
   } = useAutoResolveSlackUser();
   const { setSlackUserLink, isSubmitting } = useSetSlackUserLink();
@@ -90,7 +91,6 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
 
   const resetForm = () => {
     setSelectedMember(null);
-    setEmail('');
     setName('');
     setSlackUserId('');
     setSlackTeamId('');
@@ -129,7 +129,7 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
   // and looks the identity up right away.
   const handleFormSubmit = () => {
     if (resolvedUser === null) {
-      resolveNow({ email, slackUserId, slackTeamId });
+      resolveNow({ email: '', slackUserId, slackTeamId });
       return;
     }
 
@@ -171,25 +171,11 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
         ) : (
           <>
             <StyledField>
-              <StyledLabel htmlFor="slack-email">Slack email</StyledLabel>
-              <SlackUserLinkTextInput
-                id="slack-email"
-                type="email"
-                value={email}
-                onChange={(event) => {
-                  setEmail(event.target.value);
-                  onIdentityChange({
-                    email: event.target.value,
-                    slackUserId,
-                    slackTeamId,
-                  });
-                }}
-                placeholder="ada@company.com"
+              <StyledLabel>Slack user</StyledLabel>
+              <SlackUserPicker
+                onSelect={selectResolvedUser}
                 disabled={isSubmitting}
               />
-              <StyledHint>
-                The email on their Slack account. We look them up as you type.
-              </StyledHint>
             </StyledField>
             {isConnectUser ? (
               <>
@@ -203,7 +189,7 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
                     onChange={(event) => {
                       setSlackUserId(event.target.value);
                       onIdentityChange({
-                        email,
+                        email: '',
                         slackUserId: event.target.value,
                         slackTeamId,
                       });
@@ -212,9 +198,8 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
                     disabled={isSubmitting}
                   />
                   <StyledHint>
-                    Use this for guests or Slack Connect users whose email is
-                    not in your workspace. Takes precedence over the email
-                    above.
+                    Use this for a Slack Connect user from another workspace,
+                    who will not appear in the search above.
                   </StyledHint>
                 </StyledField>
                 <StyledField>
@@ -227,7 +212,7 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
                     onChange={(event) => {
                       setSlackTeamId(event.target.value);
                       onIdentityChange({
-                        email,
+                        email: '',
                         slackUserId,
                         slackTeamId: event.target.value,
                       });
