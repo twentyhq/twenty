@@ -52,11 +52,9 @@ const toSearchOption = (
 ): SlackUserSearchOption => ({
   slackUserId: member.id ?? '',
   slackTeamId,
-  displayName: isNonEmptyString(member.profile?.display_name)
-    ? member.profile.display_name
-    : isNonEmptyString(member.real_name)
-      ? member.real_name
-      : undefined,
+  displayName: [member.profile?.display_name, member.real_name].find(
+    isNonEmptyString,
+  ),
   email: isNonEmptyString(member.profile?.email)
     ? member.profile.email
     : undefined,

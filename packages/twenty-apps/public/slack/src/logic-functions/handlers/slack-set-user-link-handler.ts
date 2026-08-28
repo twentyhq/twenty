@@ -18,7 +18,10 @@ import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-us
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { persistSlackUserLink } from 'src/logic-functions/utils/persist-slack-user-link';
-import { resolveSlackUserByEmail } from 'src/logic-functions/utils/resolve-slack-user-by-email';
+import {
+  type ResolvedSlackUser,
+  resolveSlackUserByEmail,
+} from 'src/logic-functions/utils/resolve-slack-user-by-email';
 import { sendSlackUserLinkConsentDm } from 'src/logic-functions/utils/send-slack-user-link-consent-dm';
 
 export const slackSetUserLinkHandler = async (
@@ -79,7 +82,7 @@ export const slackSetUserLinkHandler = async (
   let fetchedIdentity: SlackUserIdentity | undefined;
 
   if (!isNonEmptyString(slackUserId) && isNonEmptyString(email)) {
-    let resolvedUser;
+    let resolvedUser: ResolvedSlackUser | undefined;
 
     try {
       resolvedUser = await resolveSlackUserByEmail(slackClient, email);

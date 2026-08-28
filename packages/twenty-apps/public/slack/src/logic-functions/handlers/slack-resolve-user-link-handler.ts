@@ -7,7 +7,10 @@ import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/ut
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
-import { resolveSlackUserByEmail } from 'src/logic-functions/utils/resolve-slack-user-by-email';
+import {
+  type ResolvedSlackUser,
+  resolveSlackUserByEmail,
+} from 'src/logic-functions/utils/resolve-slack-user-by-email';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
 
@@ -124,7 +127,7 @@ export const slackResolveUserLinkHandler = async (
     };
   }
 
-  let resolvedUser;
+  let resolvedUser: ResolvedSlackUser | undefined;
 
   try {
     resolvedUser = await resolveSlackUserByEmail(slackClient, email ?? '');

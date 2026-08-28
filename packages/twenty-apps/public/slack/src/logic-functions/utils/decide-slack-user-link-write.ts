@@ -82,23 +82,27 @@ export const decideSlackUserLinkWrite = async ({
     isInInstalledWorkspace && !isSameMemberRelink && !isEagerAutoMatch;
 
   // A same-member re-save rewrites neither consent state nor source: it
-  // changes nothing about the mapping, so the stored state stands.
-  const consentState = isSameMemberRelink
-    ? undefined
-    : !isInInstalledWorkspace
-      ? SLACK_USER_LINK_CONSENT_STATE.ADMIN_SET
-      : isEagerAutoMatch
-        ? SLACK_USER_LINK_CONSENT_STATE.ACTIVE
-        : SLACK_USER_LINK_CONSENT_STATE.PENDING;
+  // changes nothing about the mapping, so the stored state stands. Forcing
+  // MANUAL on it would also pin an AUTO link, silently trading its live email
+  // re-verification for a static grant the person may never have consented to.
+  if (isSameMemberRelink) {
+    return {
+      isEagerAutoMatch,
+      requiresConsent,
+      consentState: undefined,
+      source: undefined,
+    };
+  }
 
-  // A same-member re-save must not rewrite the source: forcing MANUAL would
-  // pin an AUTO link, silently trading its live email re-verification for a
-  // static grant the person may never have consented to.
-  const source = isSameMemberRelink
-    ? undefined
+  const consentState = !isInInstalledWorkspace
+    ? SLACK_USER_LINK_CONSENT_STATE.ADMIN_SET
     : isEagerAutoMatch
-      ? SLACK_USER_LINK_SOURCE.AUTO
-      : SLACK_USER_LINK_SOURCE.MANUAL;
+      ? SLACK_USER_LINK_CONSENT_STATE.ACTIVE
+      : SLACK_USER_LINK_CONSENT_STATE.PENDING;
+
+  const source = isEagerAutoMatch
+    ? SLACK_USER_LINK_SOURCE.AUTO
+    : SLACK_USER_LINK_SOURCE.MANUAL;
 
   return { isEagerAutoMatch, requiresConsent, consentState, source };
 };
