@@ -9,7 +9,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { IconLink } from 'twenty-ui/icon';
+import { IconCopy } from 'twenty-ui/icon';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -43,7 +43,7 @@ export const useCommandMenuUtilityItems = () => {
     {
       id: 'copy-page-link',
       label: t`Copy link to page`,
-      Icon: IconLink,
+      Icon: IconCopy,
       onClick: () =>
         copyToClipboard(window.location.href, t`Link copied to clipboard`),
       isAvailable: true,

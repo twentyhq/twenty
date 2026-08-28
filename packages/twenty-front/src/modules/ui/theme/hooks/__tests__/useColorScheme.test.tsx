@@ -5,13 +5,19 @@ import {
   type CurrentWorkspaceMember,
 } from '@/auth/states/currentWorkspaceMemberState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
+import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
 import { resetJotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const mockUpdateWorkspaceMemberSettings = jest.fn();
+const mockEnqueueErrorSnackBar = jest.fn();
 
-jest.mock('@/settings/profile/hooks/useUpdateWorkspaceMemberSettings', () => ({
-  useUpdateWorkspaceMemberSettings: () => ({
-    updateWorkspaceMemberSettings: mockUpdateWorkspaceMemberSettings,
+jest.mock('@apollo/client/react', () => ({
+  useMutation: () => [mockUpdateWorkspaceMemberSettings],
+}));
+
+jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
+  useSnackBar: () => ({
+    enqueueErrorSnackBar: mockEnqueueErrorSnackBar,
   }),
 }));
 
@@ -26,31 +32,92 @@ const workspaceMember: CurrentWorkspaceMember = {
   userEmail: 'userEmail',
 };
 
+const renderColorSchemeHook = () => {
+  const store = resetJotaiStore();
+  store.set(currentWorkspaceMemberState.atom, workspaceMember);
+  store.set(persistedColorSchemeState.atom, 'System');
+
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
+    <JotaiProvider store={store}>{children}</JotaiProvider>
+  );
+
+  return { store, ...renderHook(useColorScheme, { wrapper: Wrapper }) };
+};
+
 describe('useColorScheme', () => {
-  it('should update color scheme', async () => {
-    const store = resetJotaiStore();
-    store.set(currentWorkspaceMemberState.atom, workspaceMember);
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockUpdateWorkspaceMemberSettings.mockResolvedValue({
+      data: { updateWorkspaceMemberSettings: true },
+    });
+  });
 
-    const Wrapper = ({ children }: { children: React.ReactNode }) => (
-      <JotaiProvider store={store}>{children}</JotaiProvider>
-    );
+  it('should update both color scheme preferences only after saving', async () => {
+    const { result, store } = renderColorSchemeHook();
 
-    const { result } = renderHook(
-      () => {
-        const colorScheme = useColorScheme();
-        return colorScheme;
+    await act(async () => {
+      const update = result.current.setColorScheme('Dark');
+
+      expect(store.get(currentWorkspaceMemberState.atom)?.colorScheme).toBe(
+        'System',
+      );
+      expect(store.get(persistedColorSchemeState.atom)).toBe('System');
+
+      await update;
+    });
+
+    expect(result.current.colorScheme).toBe('Dark');
+    expect(store.get(persistedColorSchemeState.atom)).toBe('Dark');
+    expect(mockUpdateWorkspaceMemberSettings).toHaveBeenCalledWith({
+      variables: {
+        input: {
+          workspaceMemberId: workspaceMember.id,
+          update: { colorScheme: 'Dark' },
+        },
       },
-      {
-        wrapper: Wrapper,
-      },
-    );
+    });
+    expect(mockEnqueueErrorSnackBar).not.toHaveBeenCalled();
+  });
 
-    expect(result.current.colorScheme).toBe('System');
+  it.each([false, true])(
+    'should keep the saved theme and report a failure (unmounted: %s)',
+    async (shouldUnmount) => {
+      mockUpdateWorkspaceMemberSettings.mockRejectedValueOnce(
+        new Error('Profile update failed'),
+      );
+      const { result, store, unmount } = renderColorSchemeHook();
 
+      await act(async () => {
+        const update = result.current.setColorScheme('Dark');
+
+        if (shouldUnmount) {
+          unmount();
+        }
+
+        await expect(update).resolves.toBeUndefined();
+      });
+
+      expect(store.get(currentWorkspaceMemberState.atom)?.colorScheme).toBe(
+        'System',
+      );
+      expect(store.get(persistedColorSchemeState.atom)).toBe('System');
+      expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
+        message: 'Failed to update theme',
+      });
+    },
+  );
+
+  it('should not save a theme without a workspace member', async () => {
+    const { result, store } = renderColorSchemeHook();
+
+    act(() => {
+      store.set(currentWorkspaceMemberState.atom, null);
+    });
     await act(async () => {
       await result.current.setColorScheme('Dark');
     });
 
-    expect(result.current.colorScheme).toEqual('Dark');
+    expect(mockUpdateWorkspaceMemberSettings).not.toHaveBeenCalled();
+    expect(store.get(persistedColorSchemeState.atom)).toBe('System');
   });
 });

@@ -479,9 +479,6 @@ const createThemeStory = (colorScheme: ColorScheme, label: string): Story => {
         ],
       },
     },
-    beforeEach: () => {
-      updateWorkspaceMemberSettings.mockClear();
-    },
     play: async ({ canvasElement }) => {
       const canvas = within(canvasElement);
 
@@ -489,10 +486,11 @@ const createThemeStory = (colorScheme: ColorScheme, label: string): Story => {
       await userEvent.click(await canvas.findByText(label));
 
       await waitFor(() => {
-        expect(updateWorkspaceMemberSettings).toHaveBeenCalledWith({
-          workspaceMemberId: mockedWorkspaceMemberData.id,
-          update: { colorScheme },
-        });
+        expect(canvas.queryByText(label)).not.toBeInTheDocument();
+      });
+      expect(updateWorkspaceMemberSettings).toHaveBeenCalledWith({
+        workspaceMemberId: mockedWorkspaceMemberData.id,
+        update: { colorScheme },
       });
       expect(
         jotaiStore.get(currentWorkspaceMemberState.atom)?.colorScheme,
@@ -507,7 +505,6 @@ const createThemeStory = (colorScheme: ColorScheme, label: string): Story => {
         isDarkTheme ? 'dark' : 'light',
       );
       expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
-      expect(canvas.queryByText(label)).not.toBeInTheDocument();
     },
   };
 };
@@ -524,6 +521,31 @@ export const ChangeThemeToSystem = createThemeStory(
   'System',
   'Change theme to system',
 );
+
+export const ChangeThemeFailure: Story = {
+  decorators: ChangeThemeToDark.decorators,
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.mutation('UpdateWorkspaceMemberSettings', () =>
+          HttpResponse.json({ errors: [{ message: 'Profile update failed' }] }),
+        ),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(await canvas.findByText('Change theme to dark'));
+
+    expect(await canvas.findByText('Failed to update theme')).toBeVisible();
+    expect(jotaiStore.get(currentWorkspaceMemberState.atom)?.colorScheme).toBe(
+      'System',
+    );
+    expect(jotaiStore.get(persistedColorSchemeState.atom)).toBe('System');
+    expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
+  },
+};
 
 export const UtilitiesHiddenInLayoutPreview: Story = {
   decorators: [
