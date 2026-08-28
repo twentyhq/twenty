@@ -32,6 +32,18 @@ const mockRichTextExpandTarget: SidePanelExpandTarget = {
   expand: jest.fn(),
 };
 
+const mockSettingsObjectMetadataExpandTarget: SidePanelExpandTarget = {
+  label: 'Expand to settings',
+  hasExpandShortcut: true,
+  expand: jest.fn(),
+};
+
+const mockSettingsFieldMetadataExpandTarget: SidePanelExpandTarget = {
+  label: 'Expand to settings',
+  hasExpandShortcut: true,
+  expand: jest.fn(),
+};
+
 let mockHasSidePanelSubPages = false;
 let mockIsMobile = false;
 
@@ -65,6 +77,22 @@ jest.mock(
   '@/side-panel/pages/rich-text-page/hooks/useExpandRichTextSidePanelPage',
   () => ({
     useExpandRichTextSidePanelPage: () => mockRichTextExpandTarget,
+  }),
+);
+
+jest.mock(
+  '@/side-panel/pages/settings-metadata/hooks/useExpandSettingsObjectMetadataSidePanelPage',
+  () => ({
+    useExpandSettingsObjectMetadataSidePanelPage: () =>
+      mockSettingsObjectMetadataExpandTarget,
+  }),
+);
+
+jest.mock(
+  '@/side-panel/pages/settings-metadata/hooks/useExpandSettingsFieldMetadataSidePanelPage',
+  () => ({
+    useExpandSettingsFieldMetadataSidePanelPage: () =>
+      mockSettingsFieldMetadataExpandTarget,
   }),
 );
 
@@ -107,6 +135,20 @@ describe('useSidePanelExpandTarget', () => {
     const { result } = renderExpandTarget(SidePanelPages.ViewRecords);
 
     expect(result.current).toBe(mockRecordsExpandTarget);
+  });
+
+  it('should return the object settings target when an object data model page is open', () => {
+    const { result } = renderExpandTarget(
+      SidePanelPages.SettingsObjectMetadata,
+    );
+
+    expect(result.current).toBe(mockSettingsObjectMetadataExpandTarget);
+  });
+
+  it('should return the field settings target when a field page is open', () => {
+    const { result } = renderExpandTarget(SidePanelPages.SettingsFieldMetadata);
+
+    expect(result.current).toBe(mockSettingsFieldMetadataExpandTarget);
   });
 
   it('should return the rich text target when a rich text page is open', () => {

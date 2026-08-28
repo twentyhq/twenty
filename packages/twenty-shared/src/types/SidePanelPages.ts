@@ -33,4 +33,6 @@ export enum SidePanelPages {
   SendCampaignTest = 'send-campaign-test',
   EmailBlockSettings = 'email-block-settings',
   SettingsMetadataTranslations = 'settings-metadata-translations',
+  SettingsObjectMetadata = 'settings-object-metadata',
+  SettingsFieldMetadata = 'settings-field-metadata',
 }

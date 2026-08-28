@@ -1,4 +1,5 @@
 import { FieldMetadataChip } from '@/ai/components/FieldMetadataChip';
+import { useChatReferenceTarget } from '@/ai/hooks/useChatReferenceTarget';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
@@ -21,6 +22,12 @@ export const FieldMetadataLink = ({
     },
   );
 
+  const target = useChatReferenceTarget({
+    kind: 'field',
+    objectNameSingular,
+    fieldName,
+  });
+
   const fieldMetadataItem = objectMetadataItem?.fields.find(
     (field) => field.name === fieldName,
   );
@@ -28,7 +35,7 @@ export const FieldMetadataLink = ({
   return (
     <FieldMetadataChip
       displayName={displayName}
-      objectMetadataItem={objectMetadataItem}
+      target={target}
       fieldMetadataItem={fieldMetadataItem}
     />
   );

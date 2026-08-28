@@ -1,4 +1,5 @@
 import { FieldMetadataChip } from '@/ai/components/FieldMetadataChip';
+import { useChatReferenceTarget } from '@/ai/hooks/useChatReferenceTarget';
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,6 +26,11 @@ export const DeprecatedFieldMetadataLinkById = ({
       fieldMetadataItemId,
     });
 
+  const target = useChatReferenceTarget({
+    kind: 'legacyFieldById',
+    fieldMetadataItemId,
+  });
+
   if (
     !isDefined(foundFieldMetadataItem) ||
     !isDefined(foundObjectMetadataItem)
@@ -35,7 +41,7 @@ export const DeprecatedFieldMetadataLinkById = ({
   return (
     <FieldMetadataChip
       displayName={displayName}
-      objectMetadataItem={foundObjectMetadataItem}
+      target={target}
       fieldMetadataItem={foundFieldMetadataItem}
     />
   );

@@ -1,5 +1,6 @@
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { SidePanelObjectFilterDropdown } from '@/side-panel/components/SidePanelObjectFilterDropdown';
+import { SidePanelRecordsDataModelButton } from '@/side-panel/pages/records-page/components/SidePanelRecordsDataModelButton';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -31,6 +32,16 @@ export const SidePanelTopBarRightCornerIcon = () => {
         selectedObjectNameSingular={sidePanelSearchObjectFilter}
         onSelectObject={setSidePanelSearchObjectFilter}
       />
+    );
+  }
+
+  const isOnRecordsPage = sidePanelPage === SidePanelPages.ViewRecords;
+
+  if (isOnRecordsPage && !isMobile) {
+    return (
+      <StyledIconButtonContainer>
+        <SidePanelRecordsDataModelButton />
+      </StyledIconButtonContainer>
     );
   }
 

@@ -6,6 +6,8 @@ import { useExpandAskAiSidePanelPage } from '@/side-panel/pages/ask-ai/hooks/use
 import { useExpandRecordSidePanelPage } from '@/side-panel/pages/record-page/hooks/useExpandRecordSidePanelPage';
 import { useExpandRecordsSidePanelPage } from '@/side-panel/pages/records-page/hooks/useExpandRecordsSidePanelPage';
 import { useExpandRichTextSidePanelPage } from '@/side-panel/pages/rich-text-page/hooks/useExpandRichTextSidePanelPage';
+import { useExpandSettingsFieldMetadataSidePanelPage } from '@/side-panel/pages/settings-metadata/hooks/useExpandSettingsFieldMetadataSidePanelPage';
+import { useExpandSettingsObjectMetadataSidePanelPage } from '@/side-panel/pages/settings-metadata/hooks/useExpandSettingsObjectMetadataSidePanelPage';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { type SidePanelExpandTarget } from '@/side-panel/types/SidePanelExpandTarget';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -19,6 +21,10 @@ export const useSidePanelExpandTarget = (): SidePanelExpandTarget | null => {
   const recordExpandTarget = useExpandRecordSidePanelPage();
   const recordsExpandTarget = useExpandRecordsSidePanelPage();
   const richTextExpandTarget = useExpandRichTextSidePanelPage();
+  const settingsObjectMetadataExpandTarget =
+    useExpandSettingsObjectMetadataSidePanelPage();
+  const settingsFieldMetadataExpandTarget =
+    useExpandSettingsFieldMetadataSidePanelPage();
 
   // On mobile the panel already fills the viewport, so there is nothing to
   // expand into. A sub page has taken over the panel content, so expanding the
@@ -36,6 +42,10 @@ export const useSidePanelExpandTarget = (): SidePanelExpandTarget | null => {
       return recordsExpandTarget;
     case SidePanelPages.EditRichText:
       return richTextExpandTarget;
+    case SidePanelPages.SettingsObjectMetadata:
+      return settingsObjectMetadataExpandTarget;
+    case SidePanelPages.SettingsFieldMetadata:
+      return settingsFieldMetadataExpandTarget;
     default:
       return null;
   }
