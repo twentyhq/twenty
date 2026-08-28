@@ -3,8 +3,14 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type * as TwentyIcons from 'twenty-ui/icon';
 
-const mockCreateRecordPageNoteWidget = jest.fn();
+const mockCreateRecordPageNoteWidget = jest.fn(() => ({ id: 'new-note' }));
 const mockNavigateToMoreWidgets = jest.fn();
+
+jest.mock('@/page-layout/hooks/useInsertCreatedWidgetAtContext', () => ({
+  useInsertCreatedWidgetAtContext: () => ({
+    insertCreatedWidgetAtContext: jest.fn(),
+  }),
+}));
 
 jest.mock('twenty-ui/icon', () => ({
   ...jest.requireActual<typeof TwentyIcons>('twenty-ui/icon'),
