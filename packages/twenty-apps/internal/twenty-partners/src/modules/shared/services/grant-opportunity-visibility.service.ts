@@ -59,6 +59,11 @@ export async function grantOpportunityVisibility(
     mergeApplicantPartnerUserIds(current, incoming),
   );
 
+  // Best-effort recovery from a concurrent grant, not a lock. updateOpportunity replaces
+  // the array, so two applies to one brief can each merge from the same stale read. This
+  // re-read catches the case where the other write landed first and dropped our id. It does
+  // not catch the reverse order — the other write landing after we verified — which needs an
+  // atomic append the core API does not offer. A lost id stays lost until the next backfill.
   const afterWrite = await readApplicantIds(client, opportunityId);
 
   if (afterWrite === null) {
