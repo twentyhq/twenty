@@ -1,4 +1,5 @@
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
+import { styled } from '@linaria/react';
 import {
   type Decorator,
   type Meta,
@@ -40,6 +41,13 @@ import {
 } from '~/generated-metadata/graphql';
 
 const PINNED_ITEM_WIDTH = 100;
+
+// CI zeroes animation durations, which would immediately dismiss snackbars.
+const StyledStoryContainer = styled.div`
+  [role='status'] * {
+    animation: none !important;
+  }
+`;
 
 const createCommandMenuItem = (
   overrides: Partial<CommandMenuItemFieldsFragment> &
@@ -171,9 +179,11 @@ const createDecorator =
                 }}
               >
                 <BaseThemeProvider>
-                  <SnackBarProvider>
-                    <Story />
-                  </SnackBarProvider>
+                  <StyledStoryContainer>
+                    <SnackBarProvider>
+                      <Story />
+                    </SnackBarProvider>
+                  </StyledStoryContainer>
                 </BaseThemeProvider>
               </CommandMenuContext.Provider>
             </CommandMenuComponentInstanceContext.Provider>
