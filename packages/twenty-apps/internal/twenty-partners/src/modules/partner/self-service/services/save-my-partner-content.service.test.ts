@@ -23,36 +23,14 @@ const APP_TOKEN = `header.${Buffer.from(
   JSON.stringify({ userId: USER_ID, userWorkspaceId: USER_WORKSPACE_ID }),
 ).toString('base64url')}.sig`;
 
-type QueryResponses = {
-  workspaceMembers?: unknown;
-  partners?: unknown;
-  partnerContents?: unknown;
-};
-
-const defaultResponses = (): QueryResponses => ({
+const QUERY_RESPONSES: Record<string, unknown> = {
   workspaceMembers: { edges: [{ node: { id: WORKSPACE_MEMBER_ID } }] },
   partners: { edges: [{ node: { id: PARTNER_ID, name: 'Atlas' } }] },
   partnerContents: { edges: [] },
-});
-
-const respondWith = (overrides: QueryResponses = {}) => {
-  const responses = { ...defaultResponses(), ...overrides };
-  queryMock.mockImplementation((selection: Record<string, unknown>) => {
-    const key = Object.keys(selection)[0] as keyof QueryResponses;
-    return Promise.resolve({ [key as string]: responses[key] });
-  });
 };
 
 const routeEvent = (body: unknown): RoutePayload<unknown> =>
-  ({
-    headers: {},
-    queryStringParameters: {},
-    pathParameters: {},
-    body,
-    isBase64Encoded: false,
-    requestContext: { http: { method: 'POST', path: '/save-my-partner-content' } },
-    userWorkspaceId: USER_WORKSPACE_ID,
-  }) as RoutePayload<unknown>;
+  ({ body, userWorkspaceId: USER_WORKSPACE_ID }) as RoutePayload<unknown>;
 
 describe('saveMyPartnerContent', () => {
   const originalToken = process.env.TWENTY_APP_ACCESS_TOKEN;
@@ -69,7 +47,10 @@ describe('saveMyPartnerContent', () => {
     mutationMock.mockResolvedValue({
       createPartnerContent: { id: 'content-1' },
     });
-    respondWith();
+    queryMock.mockImplementation((selection: Record<string, unknown>) => {
+      const key = Object.keys(selection)[0] as string;
+      return Promise.resolve({ [key]: QUERY_RESPONSES[key] });
+    });
   });
 
   it('creates with the authenticated partnerUserId so RLS accepts the insert', async () => {
@@ -80,7 +61,7 @@ describe('saveMyPartnerContent', () => {
             name: 'Atlas rollout',
             clientName: 'Acme',
             headline: 'A migration',
-            bodyMarkdown: 'Used ₹ pricing — “done”.',
+            bodyMarkdown: 'How Acme migrated.',
             caseStudyLink: 'https://example.com/atlas',
             coverImageUrl: 'https://cdn.example.com/cover.png',
             published: false,
