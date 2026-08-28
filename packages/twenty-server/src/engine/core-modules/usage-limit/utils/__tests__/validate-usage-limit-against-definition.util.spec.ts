@@ -73,7 +73,7 @@ describe('validateUsageLimitAgainstDefinition', () => {
     );
   });
 
-  it('rejects a workspace rule, since the instance operator owns that scope', () => {
+  it('rejects a workspace rule, because the definition does not allow that scope', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
         ...validSpeedRule,

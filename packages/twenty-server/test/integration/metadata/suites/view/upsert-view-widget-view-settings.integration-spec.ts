@@ -14,6 +14,7 @@ import { destroyOneView } from 'test/integration/metadata/suites/view/utils/dest
 import { upsertViewWidget } from 'test/integration/metadata/suites/view/utils/upsert-view-widget.util';
 import {
   FieldMetadataType,
+  PageLayoutTabLayoutMode,
   ViewCalendarLayout,
   ViewType,
   WidgetType,
@@ -136,7 +137,13 @@ describe('upsertViewWidget view settings', () => {
         type: WidgetType.RECORD_TABLE,
         pageLayoutTabId,
         objectMetadataId,
-        gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.GRID,
+          row: 0,
+          column: 0,
+          rowSpan: 1,
+          columnSpan: 1,
+        },
         configuration: {
           configurationType: WidgetConfigurationType.RECORD_TABLE,
           viewId,
@@ -401,7 +408,13 @@ describe('upsertViewWidget view settings', () => {
           type: WidgetType.FIELD,
           pageLayoutTabId,
           objectMetadataId,
-          gridPosition: { row: 1, column: 0, rowSpan: 1, columnSpan: 1 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 1,
+            column: 0,
+            rowSpan: 1,
+            columnSpan: 1,
+          },
           configuration: {
             configurationType: WidgetConfigurationType.FIELD,
             fieldMetadataId: selectFieldMetadataId,

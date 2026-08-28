@@ -1216,7 +1216,8 @@ export const computeMetadataSchemaComponents = (
         case 'pageLayoutWidget': {
           schemas['GridPosition'] = {
             type: 'object',
-            description: 'Grid position for widget placement',
+            description: 'Legacy grid position for widget placement',
+            deprecated: true,
             properties: {
               row: { type: 'number', minimum: 0 },
               column: { type: 'number', minimum: 0 },
@@ -1224,6 +1225,43 @@ export const computeMetadataSchemaComponents = (
               columnSpan: { type: 'number', minimum: 1 },
             },
             required: ['row', 'column', 'rowSpan', 'columnSpan'],
+          };
+
+          schemas['PageLayoutWidgetPosition'] = {
+            oneOf: [
+              {
+                type: 'object',
+                properties: {
+                  layoutMode: { type: 'string', enum: ['GRID'] },
+                  row: { type: 'integer', minimum: 0 },
+                  column: { type: 'integer', minimum: 0 },
+                  rowSpan: { type: 'integer', minimum: 1 },
+                  columnSpan: { type: 'integer', minimum: 1 },
+                },
+                required: [
+                  'layoutMode',
+                  'row',
+                  'column',
+                  'rowSpan',
+                  'columnSpan',
+                ],
+              },
+              {
+                type: 'object',
+                properties: {
+                  layoutMode: { type: 'string', enum: ['VERTICAL_LIST'] },
+                  index: { type: 'integer', minimum: 0 },
+                },
+                required: ['layoutMode', 'index'],
+              },
+              {
+                type: 'object',
+                properties: {
+                  layoutMode: { type: 'string', enum: ['CANVAS'] },
+                },
+                required: ['layoutMode'],
+              },
+            ],
           };
 
           schemas[`${capitalize(item.nameSingular)}`] = {
@@ -1249,15 +1287,15 @@ export const computeMetadataSchemaComponents = (
                 default: 'VIEW',
               },
               objectMetadataId: { type: 'string', format: 'uuid' },
-              gridPosition: {
-                $ref: '#/components/schemas/GridPosition',
+              position: {
+                $ref: '#/components/schemas/PageLayoutWidgetPosition',
               },
               configuration: {
                 type: 'object',
                 description: 'Widget-specific configuration',
               },
             },
-            required: ['pageLayoutTabId', 'title', 'gridPosition'],
+            required: ['pageLayoutTabId', 'title'],
           };
           schemas[`${capitalize(item.namePlural)}`] = {
             type: 'array',
@@ -1276,8 +1314,8 @@ export const computeMetadataSchemaComponents = (
                 enum: ['VIEW', 'IFRAME', 'FIELDS', 'GRAPH'],
               },
               objectMetadataId: { type: 'string', format: 'uuid' },
-              gridPosition: {
-                $ref: '#/components/schemas/GridPosition',
+              position: {
+                $ref: '#/components/schemas/PageLayoutWidgetPosition',
               },
               configuration: {
                 type: 'object',
@@ -1298,7 +1336,14 @@ export const computeMetadataSchemaComponents = (
               },
               objectMetadataId: { type: 'string', format: 'uuid' },
               gridPosition: {
-                $ref: '#/components/schemas/GridPosition',
+                oneOf: [
+                  { $ref: '#/components/schemas/GridPosition' },
+                  { type: 'null' },
+                ],
+                deprecated: true,
+              },
+              position: {
+                $ref: '#/components/schemas/PageLayoutWidgetPosition',
               },
               configuration: {
                 type: 'object',

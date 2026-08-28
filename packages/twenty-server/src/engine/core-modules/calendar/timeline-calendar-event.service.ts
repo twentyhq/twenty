@@ -11,6 +11,8 @@ import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modu
 import { type TimelineCalendarEventsWithTotalDTO } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-events-with-total.dto';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { RelatedPersonIdsService } from 'src/engine/core-modules/related-person-ids/services/related-person-ids.service';
+import { type TargetFilter } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
+import { MessageCalendarTargetReadinessService } from 'src/engine/core-modules/target/services/message-calendar-target-readiness.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -33,6 +35,7 @@ export class TimelineCalendarEventService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly relatedPersonIdsService: RelatedPersonIdsService,
     private readonly fileUrlService: FileUrlService,
+    private readonly messageCalendarTargetReadinessService: MessageCalendarTargetReadinessService,
   ) {}
 
   async getCalendarEventsFromPersonIds({
@@ -41,12 +44,14 @@ export class TimelineCalendarEventService {
     workspaceId,
     page = 1,
     pageSize = TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
+    targetFilter,
   }: {
     currentWorkspaceMemberId: string;
     personIds: string[];
     workspaceId: string;
     page: number;
     pageSize: number;
+    targetFilter?: TargetFilter;
   }): Promise<TimelineCalendarEventsWithTotalDTO> {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -67,20 +72,24 @@ export class TimelineCalendarEventService {
           { shouldBypassPermissionChecks: true },
         );
 
+      const where = isDefined(targetFilter)
+        ? {
+            calendarEventTargets: {
+              [targetFilter.fieldName]: targetFilter.recordId,
+            },
+          }
+        : {
+            calendarEventParticipants: {
+              personId: Any(personIds),
+            },
+          };
+
       const totalNumberOfCalendarEvents = await calendarEventRepository.count({
-        where: {
-          calendarEventParticipants: {
-            personId: Any(personIds),
-          },
-        },
+        where,
       });
 
       const calendarEventIds = await calendarEventRepository.find({
-        where: {
-          calendarEventParticipants: {
-            personId: Any(personIds),
-          },
-        },
+        where,
         select: {
           id: true,
           startsAt: true,
@@ -346,8 +355,14 @@ export class TimelineCalendarEventService {
       objectNameSingular,
       recordId,
     });
+    const targetFilter =
+      await this.messageCalendarTargetReadinessService.resolveTargetFilter({
+        objectNameSingular,
+        recordId,
+        workspaceId,
+      });
 
-    if (personIds.length === 0) {
+    if (!isDefined(targetFilter) && personIds.length === 0) {
       return {
         totalNumberOfCalendarEvents: 0,
         timelineCalendarEvents: [],
@@ -361,6 +376,7 @@ export class TimelineCalendarEventService {
       workspaceId,
       page,
       pageSize,
+      ...(isDefined(targetFilter) && { targetFilter }),
     });
   }
 }
