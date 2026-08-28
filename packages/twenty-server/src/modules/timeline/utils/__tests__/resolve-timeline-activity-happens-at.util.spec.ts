@@ -3,7 +3,6 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   resolveLinkedTimelineActivityHappensAt,
   resolveTimelineActivityHappensAt,
@@ -58,11 +57,11 @@ describe('resolveLinkedTimelineActivityHappensAt', () => {
 
   const messageFlatObjectMetadata = {
     universalIdentifier: STANDARD_OBJECTS.message.universalIdentifier,
-  } as FlatObjectMetadata;
+  };
 
   const calendarEventFlatObjectMetadata = {
     universalIdentifier: STANDARD_OBJECTS.calendarEvent.universalIdentifier,
-  } as FlatObjectMetadata;
+  };
 
   const flatFieldMetadataMaps = buildFlatFieldMetadataMaps([
     {
@@ -120,7 +119,7 @@ describe('resolveLinkedTimelineActivityHappensAt', () => {
         ruleAction: 'linked',
         sourceFlatObjectMetadata: {
           universalIdentifier: STANDARD_OBJECTS.note.universalIdentifier,
-        } as FlatObjectMetadata,
+        },
         sourceRecord: { receivedAt: SOURCE_TIME.toISOString() },
         flatFieldMetadataMaps,
       }),
