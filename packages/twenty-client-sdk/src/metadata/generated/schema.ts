@@ -7271,7 +7271,7 @@ export interface CreateSkillInput {id?: (Scalars['UUID'] | null),name: Scalars['
 
 export interface UpdateSkillInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null)}
 
-export interface CreateTimelineActivityTypeInput {label: Scalars['String'],icon?: (Scalars['String'] | null),action?: (Scalars['String'] | null),targetRelationFieldMetadataId: Scalars['UUID']}
+export interface CreateTimelineActivityTypeInput {label: Scalars['String'],icon?: (Scalars['String'] | null),targetRelationFieldMetadataId: Scalars['UUID']}
 
 export interface UpdateTimelineActivityTypeInput {id: Scalars['UUID'],label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),translations?: (MetadataTranslationOverrideInput[] | null)}
 

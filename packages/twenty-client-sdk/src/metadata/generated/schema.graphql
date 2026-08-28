@@ -5017,7 +5017,6 @@ input UpdateSkillInput {
 input CreateTimelineActivityTypeInput {
   label: String!
   icon: String
-  action: String
   targetRelationFieldMetadataId: UUID!
 }
 

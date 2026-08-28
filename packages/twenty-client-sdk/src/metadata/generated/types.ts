@@ -12791,9 +12791,6 @@ export default {
             "icon": [
                 1
             ],
-            "action": [
-                1
-            ],
             "targetRelationFieldMetadataId": [
                 3
             ],

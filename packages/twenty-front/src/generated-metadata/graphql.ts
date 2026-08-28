@@ -1368,7 +1368,6 @@ export type CreateSkillInput = {
 };
 
 export type CreateTimelineActivityTypeInput = {
-  action?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   label: Scalars['String']['input'];
   targetRelationFieldMetadataId: Scalars['UUID']['input'];
