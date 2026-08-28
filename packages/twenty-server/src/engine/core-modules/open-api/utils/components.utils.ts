@@ -1214,19 +1214,6 @@ export const computeMetadataSchemaComponents = (
           return schemas;
         }
         case 'pageLayoutWidget': {
-          schemas['GridPosition'] = {
-            type: 'object',
-            description: 'Legacy grid position for widget placement',
-            deprecated: true,
-            properties: {
-              row: { type: 'number', minimum: 0 },
-              column: { type: 'number', minimum: 0 },
-              rowSpan: { type: 'number', minimum: 1 },
-              columnSpan: { type: 'number', minimum: 1 },
-            },
-            required: ['row', 'column', 'rowSpan', 'columnSpan'],
-          };
-
           schemas['PageLayoutWidgetPosition'] = {
             oneOf: [
               {
