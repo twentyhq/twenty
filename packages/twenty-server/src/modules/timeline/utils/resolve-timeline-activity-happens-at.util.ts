@@ -58,7 +58,7 @@ export const resolveLinkedTimelineActivityHappensAtFieldName = ({
   sourceFlatObjectMetadata,
   flatFieldMetadataMaps,
 }: {
-  sourceFlatObjectMetadata: FlatObjectMetadata;
+  sourceFlatObjectMetadata: Pick<FlatObjectMetadata, 'universalIdentifier'>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): string | undefined => {
   const happensAtFieldUniversalIdentifier =

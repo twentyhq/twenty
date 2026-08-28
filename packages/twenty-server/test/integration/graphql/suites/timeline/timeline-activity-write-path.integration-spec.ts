@@ -752,6 +752,27 @@ describe('timeline activity write path (integration)', () => {
       expect(
         new Date(activitiesAfterReschedule[0].happensAt).toISOString(),
       ).toBe(ROUTED_CALENDAR_EVENT_RESCHEDULED_STARTS_AT);
+
+      await updateRecord({
+        objectMetadataSingularName: 'calendarEvent',
+        recordId: ROUTED_CALENDAR_EVENT_ID,
+        data: { startsAt: null },
+      });
+
+      const activitiesAfterClearing = await findTimelineActivities({
+        targetPersonId: { eq: ROUTED_PERSON_ID },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow(
+            'linked',
+            CALENDAR_EVENT_UNIVERSAL_IDENTIFIER,
+          ),
+        },
+      });
+
+      expect(activitiesAfterClearing).toHaveLength(1);
+      expect(new Date(activitiesAfterClearing[0].happensAt).toISOString()).toBe(
+        ROUTED_CALENDAR_EVENT_RESCHEDULED_STARTS_AT,
+      );
     });
   });
 
