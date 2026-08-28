@@ -1,6 +1,11 @@
+import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  FeatureFlagKey,
+  NavigationMenuItemType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -15,6 +20,7 @@ import { getObjectNavigationMenuItemSecondaryLabel } from '@/navigation-menu-ite
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import type { EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
@@ -47,8 +53,12 @@ export const NavigationMenuItemFolderSubItem = ({
   onClick,
   onNavigationMenuItemClick,
 }: NavigationMenuItemFolderSubItemProps) => {
+  const { t } = useLingui();
   const isEditHighlightedInNavigationMenu =
     useIsNavigationMenuItemEditHighlighted(navigationMenuItem);
+  const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
+  );
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
@@ -110,16 +120,23 @@ export const NavigationMenuItemFolderSubItem = ({
           navigate(computedLink);
         });
 
+  const isCoreWorkflowsIndexItem =
+    navigationMenuItem.type === NavigationMenuItemType.OBJECT &&
+    objectNameSingular === CoreObjectNameSingular.Workflow &&
+    isWorkflowCoreIndexPageEnabled;
+
+  const secondaryLabel = isCoreWorkflowsIndexItem
+    ? t`System`
+    : navigationMenuItem.type === NavigationMenuItemType.VIEW
+      ? getObjectNavigationMenuItemSecondaryLabel({
+          objectMetadataItems,
+          navigationMenuItemObjectNameSingular: objectNameSingular ?? '',
+        })
+      : undefined;
+
   return (
     <NavigationDrawerSubItem
-      secondaryLabel={
-        navigationMenuItem.type !== NavigationMenuItemType.VIEW
-          ? undefined
-          : getObjectNavigationMenuItemSecondaryLabel({
-              objectMetadataItems,
-              navigationMenuItemObjectNameSingular: objectNameSingular ?? '',
-            })
-      }
+      secondaryLabel={secondaryLabel}
       label={label}
       Icon={() => (
         <NavigationMenuItemIcon navigationMenuItem={navigationMenuItem} />
