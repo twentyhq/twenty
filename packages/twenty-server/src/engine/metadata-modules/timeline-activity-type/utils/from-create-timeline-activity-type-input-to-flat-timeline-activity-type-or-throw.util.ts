@@ -120,6 +120,7 @@ export const fromCreateTimelineActivityTypeInputToFlatTimelineActivityTypeOrThro
       targetRelationFieldUniversalIdentifier:
         targetRelationFlatFieldMetadata.universalIdentifier,
       triggerFieldUniversalIdentifiers: null,
+      happensAtFieldUniversalIdentifier: null,
       replacesTimelineActivityTypeUniversalIdentifier: null,
       isActive: true,
       overrides: null,
