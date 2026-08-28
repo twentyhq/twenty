@@ -102,6 +102,7 @@ describe('submit-partner-application handler — upsert', () => {
         name: true,
         slug: true,
         validationStage: true,
+        superPartner: true,
         partnerTier: true,
         company: { id: true, name: true },
         persons: { edges: { node: { id: true, name: { firstName: true, lastName: true }, emails: { primaryEmail: true } } } },
@@ -111,6 +112,7 @@ describe('submit-partner-application handler — upsert', () => {
     expect(node?.name).toBe('YC Agency');
     expect(node?.slug).toBe('yc-agency');
     expect(node?.validationStage).toBe('APPLICATION');
+    expect(node?.superPartner).toBe(false);
     expect(node?.partnerTier).toBe('NEW');
     expect(node?.company?.name).toBe('YC Agency');
     expect(node?.persons?.edges).toHaveLength(1);
@@ -205,7 +207,7 @@ describe('submit-partner-application handler — upsert', () => {
     expect(node?.hourlyRate).toEqual({ amountMicros: 175_000_000, currencyCode: 'USD' });
   });
 
-  it('preserves staff-owned columns (validationStage) on resubmission', async () => {
+  it('preserves staff-owned columns (validationStage, superPartner) on resubmission', async () => {
     const first = await handler(authedEvent(baseInput({ email: 'staff.preserve@example.com' })));
     await trackCreated(first);
     expect(first.ok).toBe(true);
@@ -215,7 +217,7 @@ describe('submit-partner-application handler — upsert', () => {
       updatePartner: {
         __args: {
           id: first.partnerId,
-          data: { validationStage: 'VALIDATED' },
+          data: { validationStage: 'VALIDATED', superPartner: true },
         },
         id: true,
       },
@@ -229,11 +231,13 @@ describe('submit-partner-application handler — upsert', () => {
       partner: {
         __args: { filter: { id: { eq: second.partnerId } } },
         validationStage: true,
+        superPartner: true,
         city: true,
       },
     });
     const node = partner.partner;
     expect(node?.validationStage).toBe('VALIDATED');
+    expect(node?.superPartner).toBe(true);
     expect(node?.city).toBe('Berlin');
   });
 

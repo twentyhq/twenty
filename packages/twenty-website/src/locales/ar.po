@@ -7221,6 +7221,11 @@ msgstr "زيادة خطة النجاح"
 msgid "Sudan 🇸🇩"
 msgstr "السودان 🇸🇩"
 
+#. js-lingui-id: 388eZi
+#: src/partners-marketplace/marketplace-copy.ts
+msgid "Super partner"
+msgstr ""
+
 #. js-lingui-id: XYLcNv
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/compare/compare-data.ts

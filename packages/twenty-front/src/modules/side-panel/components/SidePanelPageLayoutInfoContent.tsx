@@ -21,7 +21,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { ThemeContext } from 'twenty-ui/theme-constants';
-import { SidePanelPageInfoLayout } from './SidePanelPageInfoLayout';
+import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 
 const StyledClickableIconWrapper = styled.div`
   cursor: pointer;
@@ -161,7 +161,7 @@ export const SidePanelPageLayoutInfoContent = ({
     );
 
   return (
-    <SidePanelPageInfoLayout
+    <HeaderIdentifier
       icon={iconElement}
       iconColor={headerIconColor}
       title={
