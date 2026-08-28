@@ -1,4 +1,4 @@
-import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
+import { SettingsPath } from 'twenty-shared/types';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -12,20 +12,19 @@ import {
   type NavigationDrawerItemModifier,
 } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
-  IconAppWindow,
   IconApps,
   IconAt,
   IconCalendarEvent,
   IconColorSwatch,
   type IconComponent,
-  IconCreditCard,
+  IconCurrencyDollar,
   IconDoorEnter,
   IconHelpCircle,
-  IconHierarchy,
+  IconHierarchy2,
+  IconLayout,
   IconMail,
   IconMessage,
   IconMessageCircle,
@@ -73,9 +72,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
     isNonEmptyString(supportChat.supportFrontChatId);
 
   const permissionMap = usePermissionFlagMap();
-  const isEmailGroupFeatureEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
-  );
   return [
     {
       label: t`User`,
@@ -126,13 +122,13 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
         {
           label: t`Data model`,
           path: SettingsPath.Objects,
-          Icon: IconHierarchy,
+          Icon: IconHierarchy2,
           isHidden: !permissionMap[PermissionFlagType.DATA_MODEL],
         },
         {
           label: t`Layout`,
           path: SettingsPath.Layout,
-          Icon: IconAppWindow,
+          Icon: IconLayout,
           isHidden: !permissionMap[PermissionFlagType.LAYOUTS],
         },
         {
@@ -144,7 +140,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
         {
           label: t`Billing`,
           path: SettingsPath.Billing,
-          Icon: IconCreditCard,
+          Icon: IconCurrencyDollar,
           isHidden:
             !isBillingEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
         },
@@ -177,9 +173,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Communication`,
           path: SettingsPath.WorkspaceCommunications,
           Icon: IconMessageCircle,
-          isHidden:
-            !isEmailGroupFeatureEnabled ||
-            !permissionMap[PermissionFlagType.WORKSPACE],
+          isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
         },
       ],
     },
