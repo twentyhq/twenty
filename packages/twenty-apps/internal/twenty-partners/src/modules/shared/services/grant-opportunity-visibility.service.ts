@@ -45,10 +45,13 @@ export async function grantOpportunityVisibility(
   }
 
   // updateOpportunity replaces the array, so two applies can each merge from the same
-  // stale read. Re-read after every write. Throw if the id is still missing so the
+  // stale read. Re-read after every write. Throw if the member id is still missing so the
   // create trigger retries and the upgrade backfill fails loud. The core API has no
   // atomic append; a lost id after this loop is a failed grant, not a silent success.
-  for (let attempt = 1; attempt <= GRANT_READ_ATTEMPTS; attempt++) {
+  let attempt = 0;
+
+  while (true) {
+    attempt += 1;
     const current = await readApplicantIds(client, opportunityId);
 
     if (current === null) {
@@ -79,8 +82,4 @@ export async function grantOpportunityVisibility(
       mergeApplicantPartnerUserIds(current, incoming),
     );
   }
-
-  throw new Error(
-    `Could not grant opportunity visibility for ${opportunityId}.`,
-  );
 }

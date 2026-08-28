@@ -24,6 +24,8 @@ const handler = async ({
   const client = new CoreApiClient();
   const result: PostInstallCounts = {};
 
+  // Grant reads partnerUserId on Application. Stamp first so an upgrade from
+  // before 1.6.1 does not skip those applicants.
   if (plan.stampPartnerUser) {
     result.stamped = await backfillPartnerUserOnChildren(client);
   }

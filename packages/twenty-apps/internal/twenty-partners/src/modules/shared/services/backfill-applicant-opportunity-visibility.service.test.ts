@@ -8,6 +8,51 @@ const OPPORTUNITY_B = 'opportunity-b';
 const MEMBER_1 = 'member-1';
 const MEMBER_2 = 'member-2';
 
+type GraphQlSelection = Record<string, unknown>;
+
+const opportunityIdFromSelection = (selection: GraphQlSelection) =>
+  (
+    selection.opportunities as {
+      __args?: { filter?: { id?: { eq?: string } } };
+    }
+  )?.__args?.filter?.id?.eq;
+
+const createApplicantIdStore = (initial?: Iterable<[string, string[]]>) => {
+  const applicantIdsByOpportunity = new Map<string, string[]>(initial);
+
+  const readOpportunity = (opportunityId: string | undefined) => ({
+    opportunities: {
+      edges: opportunityId
+        ? [
+            {
+              node: {
+                id: opportunityId,
+                applicantPartnerUserIds:
+                  applicantIdsByOpportunity.get(opportunityId) ?? [],
+              },
+            },
+          ]
+        : [],
+    },
+  });
+
+  const writeOpportunity = (selection: GraphQlSelection) => {
+    const args = (
+      selection.updateOpportunity as {
+        __args?: { id?: string; data?: { applicantPartnerUserIds?: string[] } };
+      }
+    )?.__args;
+
+    if (args?.id && args.data?.applicantPartnerUserIds) {
+      applicantIdsByOpportunity.set(args.id, args.data.applicantPartnerUserIds);
+    }
+
+    return {};
+  };
+
+  return { readOpportunity, writeOpportunity };
+};
+
 describe('backfillApplicantOpportunityVisibility', () => {
   const query = vi.fn();
   const mutation = vi.fn();
@@ -20,12 +65,12 @@ describe('backfillApplicantOpportunityVisibility', () => {
   });
 
   it('writes one merged list per opportunity and skips ids that are already present', async () => {
-    const applicantIdsByOpportunity = new Map<string, string[]>([
+    const { readOpportunity, writeOpportunity } = createApplicantIdStore([
       [OPPORTUNITY_A, [MEMBER_1]],
       [OPPORTUNITY_B, [MEMBER_1]],
     ]);
 
-    query.mockImplementation((selection: Record<string, unknown>) => {
+    query.mockImplementation((selection: GraphQlSelection) => {
       if (selection.applications) {
         return Promise.resolve({
           applications: {
@@ -51,51 +96,27 @@ describe('backfillApplicantOpportunityVisibility', () => {
                   partnerUserId: MEMBER_1,
                 },
               },
-              { node: { id: 'app-4', opportunityId: null, partnerUserId: MEMBER_1 } },
+              {
+                node: {
+                  id: 'app-4',
+                  opportunityId: null,
+                  partnerUserId: MEMBER_1,
+                },
+              },
             ],
             pageInfo: { hasNextPage: false },
           },
         });
       }
 
-      const filter = (
-        selection.opportunities as {
-          __args?: { filter?: { id?: { eq?: string } } };
-        }
-      )?.__args?.filter?.id?.eq;
-
-      if (!filter) {
-        return Promise.resolve({ opportunities: { edges: [] } });
-      }
-
-      return Promise.resolve({
-        opportunities: {
-          edges: [
-            {
-              node: {
-                id: filter,
-                applicantPartnerUserIds:
-                  applicantIdsByOpportunity.get(filter) ?? [],
-              },
-            },
-          ],
-        },
-      });
+      return Promise.resolve(
+        readOpportunity(opportunityIdFromSelection(selection)),
+      );
     });
 
-    mutation.mockImplementation((selection: Record<string, unknown>) => {
-      const args = (
-        selection.updateOpportunity as {
-          __args?: { id?: string; data?: { applicantPartnerUserIds?: string[] } };
-        }
-      )?.__args;
-
-      if (args?.id && args.data?.applicantPartnerUserIds) {
-        applicantIdsByOpportunity.set(args.id, args.data.applicantPartnerUserIds);
-      }
-
-      return Promise.resolve({});
-    });
+    mutation.mockImplementation((selection: GraphQlSelection) =>
+      Promise.resolve(writeOpportunity(selection)),
+    );
 
     const updated = await backfillApplicantOpportunityVisibility(client);
 
@@ -147,9 +168,9 @@ describe('backfillApplicantOpportunityVisibility', () => {
       },
     };
     const seenCursors: (string | undefined)[] = [];
-    const applicantIdsByOpportunity = new Map<string, string[]>();
+    const { readOpportunity, writeOpportunity } = createApplicantIdStore();
 
-    query.mockImplementation((selection: Record<string, unknown>) => {
+    query.mockImplementation((selection: GraphQlSelection) => {
       if (selection.applications) {
         const after = (
           selection.applications as { __args?: { after?: string } }
@@ -164,40 +185,14 @@ describe('backfillApplicantOpportunityVisibility', () => {
         );
       }
 
-      const requestedId = (
-        selection.opportunities as {
-          __args?: { filter?: { id?: { eq?: string } } };
-        }
-      )?.__args?.filter?.id?.eq;
-
-      return Promise.resolve({
-        opportunities: {
-          edges: [
-            {
-              node: {
-                id: requestedId,
-                applicantPartnerUserIds:
-                  applicantIdsByOpportunity.get(requestedId ?? '') ?? [],
-              },
-            },
-          ],
-        },
-      });
+      return Promise.resolve(
+        readOpportunity(opportunityIdFromSelection(selection)),
+      );
     });
 
-    mutation.mockImplementation((selection: Record<string, unknown>) => {
-      const args = (
-        selection.updateOpportunity as {
-          __args?: { id?: string; data?: { applicantPartnerUserIds?: string[] } };
-        }
-      )?.__args;
-
-      if (args?.id && args.data?.applicantPartnerUserIds) {
-        applicantIdsByOpportunity.set(args.id, args.data.applicantPartnerUserIds);
-      }
-
-      return Promise.resolve({});
-    });
+    mutation.mockImplementation((selection: GraphQlSelection) =>
+      Promise.resolve(writeOpportunity(selection)),
+    );
 
     const updated = await backfillApplicantOpportunityVisibility(client);
 
@@ -215,9 +210,9 @@ describe('backfillApplicantOpportunityVisibility', () => {
   });
 
   it('grants the healthy opportunities, then fails loudly so the upgrade can be re-run', async () => {
-    const applicantIdsByOpportunity = new Map<string, string[]>();
+    const { readOpportunity, writeOpportunity } = createApplicantIdStore();
 
-    query.mockImplementation((selection: Record<string, unknown>) => {
+    query.mockImplementation((selection: GraphQlSelection) => {
       if (selection.applications) {
         return Promise.resolve({
           applications: {
@@ -242,44 +237,18 @@ describe('backfillApplicantOpportunityVisibility', () => {
         });
       }
 
-      const requestedId = (
-        selection.opportunities as {
-          __args?: { filter?: { id?: { eq?: string } } };
-        }
-      )?.__args?.filter?.id?.eq;
+      const requestedId = opportunityIdFromSelection(selection);
 
       if (requestedId === OPPORTUNITY_A) {
         return Promise.reject(new Error('boom'));
       }
 
-      return Promise.resolve({
-        opportunities: {
-          edges: [
-            {
-              node: {
-                id: requestedId,
-                applicantPartnerUserIds:
-                  applicantIdsByOpportunity.get(requestedId ?? '') ?? [],
-              },
-            },
-          ],
-        },
-      });
+      return Promise.resolve(readOpportunity(requestedId));
     });
 
-    mutation.mockImplementation((selection: Record<string, unknown>) => {
-      const args = (
-        selection.updateOpportunity as {
-          __args?: { id?: string; data?: { applicantPartnerUserIds?: string[] } };
-        }
-      )?.__args;
-
-      if (args?.id && args.data?.applicantPartnerUserIds) {
-        applicantIdsByOpportunity.set(args.id, args.data.applicantPartnerUserIds);
-      }
-
-      return Promise.resolve({});
-    });
+    mutation.mockImplementation((selection: GraphQlSelection) =>
+      Promise.resolve(writeOpportunity(selection)),
+    );
 
     await expect(
       backfillApplicantOpportunityVisibility(client),
