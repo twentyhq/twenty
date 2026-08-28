@@ -1,12 +1,7 @@
 import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type TimelineActivityRuleAction } from 'src/modules/timeline/types/timeline-activity-rule-action.type';
 
 const parseTimestamp = (value: unknown): Date | undefined => {
@@ -42,68 +37,29 @@ export const resolveTimelineActivityHappensAt = (
   return isDefined(recordTimestamp) ? recordTimestamp : new Date();
 };
 
-// Synced records carry their own moment in time: an email happened when it was
-// received and a calendar event when it starts, not when a sync or a late
-// participant match wrote the row.
-const LINKED_HAPPENS_AT_FIELD_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER: Partial<
-  Record<string, string>
-> = {
-  [STANDARD_OBJECTS.message.universalIdentifier]:
-    STANDARD_OBJECTS.message.fields.receivedAt.universalIdentifier,
-  [STANDARD_OBJECTS.calendarEvent.universalIdentifier]:
-    STANDARD_OBJECTS.calendarEvent.fields.startsAt.universalIdentifier,
-};
-
-export const resolveLinkedTimelineActivityHappensAtFieldName = ({
-  sourceFlatObjectMetadata,
-  flatFieldMetadataMaps,
-}: {
-  sourceFlatObjectMetadata: FlatObjectMetadata;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-}): string | undefined => {
-  const happensAtFieldUniversalIdentifier =
-    LINKED_HAPPENS_AT_FIELD_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER[
-      sourceFlatObjectMetadata.universalIdentifier
-    ];
-
-  if (!isDefined(happensAtFieldUniversalIdentifier)) {
-    return undefined;
-  }
-
-  return findFlatEntityByUniversalIdentifier({
-    flatEntityMaps: flatFieldMetadataMaps,
-    universalIdentifier: happensAtFieldUniversalIdentifier,
-  })?.name;
-};
-
 export const parseLinkedTimelineActivityHappensAt = (
   value: unknown,
 ): Date | undefined => parseTimestamp(value);
 
+// Synced records carry their own moment in time: an email happened when it was
+// received and a calendar event when it starts, not when a sync or a late
+// participant match wrote the row. The timeline activity type declares which
+// source field holds that moment; the rule resolves it to a field name.
 export const resolveLinkedTimelineActivityHappensAt = ({
   event,
   ruleAction,
-  sourceFlatObjectMetadata,
+  happensAtFieldName,
   sourceRecord,
-  flatFieldMetadataMaps,
 }: {
   event: ObjectRecordBaseEvent;
   ruleAction: TimelineActivityRuleAction;
-  sourceFlatObjectMetadata: FlatObjectMetadata;
+  happensAtFieldName: string | null;
   sourceRecord: Record<string, unknown> | undefined;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): Date => {
-  const happensAtFieldName =
-    ruleAction === 'linked'
-      ? resolveLinkedTimelineActivityHappensAtFieldName({
-          sourceFlatObjectMetadata,
-          flatFieldMetadataMaps,
-        })
+  const sourceRecordHappensAt =
+    ruleAction === 'linked' && isDefined(happensAtFieldName)
+      ? parseTimestamp(sourceRecord?.[happensAtFieldName])
       : undefined;
-
-  const sourceRecordHappensAt = isDefined(happensAtFieldName)
-    ? parseTimestamp(sourceRecord?.[happensAtFieldName])
-    : undefined;
 
   return sourceRecordHappensAt ?? resolveTimelineActivityHappensAt(event);
 };

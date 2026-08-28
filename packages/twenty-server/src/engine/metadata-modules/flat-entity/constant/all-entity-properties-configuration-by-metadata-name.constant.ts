@@ -1937,6 +1937,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    happensAtFieldUniversalIdentifier: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     replacesTimelineActivityTypeUniversalIdentifier: {
       toCompare: true,
       toStringify: false,

@@ -1,26 +1,12 @@
 import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { buildLinkedTimelineActivityHappensAtSyncUpdates } from 'src/modules/timeline/utils/build-linked-timeline-activity-happens-at-sync-updates.util';
 
 const NEW_STARTS_AT = '2026-09-12T10:00:00.000Z';
 const CALENDAR_EVENT_ID = 'calendar-event-id';
 const LINKED_TYPE_ID = 'calendar-event-linked-type-id';
-
-const flatFieldMetadataMaps = {
-  byUniversalIdentifier: {
-    [STANDARD_OBJECTS.calendarEvent.fields.startsAt.universalIdentifier]: {
-      universalIdentifier:
-        STANDARD_OBJECTS.calendarEvent.fields.startsAt.universalIdentifier,
-      name: 'startsAt',
-    },
-  },
-  universalIdentifierById: {},
-  universalIdentifiersByApplicationId: {},
-} as unknown as FlatEntityMaps<FlatFieldMetadata>;
 
 const buildCalendarEventRule = (
   overrides: Partial<TimelineActivityRule> = {},
@@ -35,8 +21,9 @@ const buildCalendarEventRule = (
       applicationId: 'application-id',
       snapshot: {},
     },
-    targetShape: { kind: 'JUNCTION' },
     triggerFieldNames: null,
+    happensAtFieldName: 'startsAt',
+    targetShape: { kind: 'JUNCTION' },
     ...overrides,
   }) as TimelineActivityRule;
 
@@ -61,7 +48,6 @@ describe('buildLinkedTimelineActivityHappensAtSyncUpdates', () => {
       buildLinkedTimelineActivityHappensAtSyncUpdates({
         rules: [buildCalendarEventRule()],
         events: [buildStartsAtUpdatedEvent(NEW_STARTS_AT)],
-        flatFieldMetadataMaps,
         resolveTimelineActivityType: resolveTimelineActivityTypeToNothing,
       }),
     ).toEqual([
@@ -86,7 +72,6 @@ describe('buildLinkedTimelineActivityHappensAtSyncUpdates', () => {
       buildLinkedTimelineActivityHappensAtSyncUpdates({
         rules: [buildCalendarEventRule()],
         events: [titleOnlyEvent],
-        flatFieldMetadataMaps,
         resolveTimelineActivityType: resolveTimelineActivityTypeToNothing,
       }),
     ).toEqual([]);
@@ -97,24 +82,16 @@ describe('buildLinkedTimelineActivityHappensAtSyncUpdates', () => {
       buildLinkedTimelineActivityHappensAtSyncUpdates({
         rules: [buildCalendarEventRule()],
         events: [buildStartsAtUpdatedEvent(null)],
-        flatFieldMetadataMaps,
         resolveTimelineActivityType: resolveTimelineActivityTypeToNothing,
       }),
     ).toEqual([]);
   });
 
-  it('ignores source objects without a semantic timestamp', () => {
+  it('ignores rules without a semantic timestamp field', () => {
     expect(
       buildLinkedTimelineActivityHappensAtSyncUpdates({
-        rules: [
-          buildCalendarEventRule({
-            sourceFlatObjectMetadata: {
-              universalIdentifier: STANDARD_OBJECTS.note.universalIdentifier,
-            } as TimelineActivityRule['sourceFlatObjectMetadata'],
-          }),
-        ],
+        rules: [buildCalendarEventRule({ happensAtFieldName: null })],
         events: [buildStartsAtUpdatedEvent(NEW_STARTS_AT)],
-        flatFieldMetadataMaps,
         resolveTimelineActivityType: resolveTimelineActivityTypeToNothing,
       }),
     ).toEqual([]);
@@ -132,7 +109,6 @@ describe('buildLinkedTimelineActivityHappensAtSyncUpdates', () => {
           buildCalendarEventRule({ actions: ['unlinked'] }),
         ],
         events: [buildStartsAtUpdatedEvent(NEW_STARTS_AT)],
-        flatFieldMetadataMaps,
         resolveTimelineActivityType: resolveTimelineActivityTypeToNothing,
       }),
     ).toEqual([]);
@@ -143,7 +119,6 @@ describe('buildLinkedTimelineActivityHappensAtSyncUpdates', () => {
       buildLinkedTimelineActivityHappensAtSyncUpdates({
         rules: [buildCalendarEventRule({ timelineActivityType: undefined })],
         events: [buildStartsAtUpdatedEvent(NEW_STARTS_AT)],
-        flatFieldMetadataMaps,
         resolveTimelineActivityType: () => ({
           id: 'resolved-type-id',
           applicationId: 'application-id',

@@ -8,5 +8,8 @@ export type TimelineActivityRule = {
   actions: TimelineActivityRuleAction[];
   timelineActivityType?: ResolvedTimelineActivityType;
   triggerFieldNames: string[] | null;
+  // Source object field anchoring linked activities in time, resolved from the
+  // timeline activity type's happensAtFieldUniversalIdentifier.
+  happensAtFieldName: string | null;
   targetShape: TimelineActivityRuleTargetShape;
 };

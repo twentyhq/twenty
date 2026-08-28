@@ -1,9 +1,5 @@
 import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   resolveLinkedTimelineActivityHappensAt,
   resolveTimelineActivityHappensAt,
@@ -45,58 +41,24 @@ describe('resolveLinkedTimelineActivityHappensAt', () => {
     properties: { after: { updatedAt: EVENT_TIME.toISOString() } },
   } as ObjectRecordBaseEvent;
 
-  const buildFlatFieldMetadataMaps = (
-    fields: { universalIdentifier: string; name: string }[],
-  ): FlatEntityMaps<FlatFieldMetadata> =>
-    ({
-      byUniversalIdentifier: Object.fromEntries(
-        fields.map((field) => [field.universalIdentifier, field]),
-      ),
-      universalIdentifierById: {},
-      universalIdentifiersByApplicationId: {},
-    }) as unknown as FlatEntityMaps<FlatFieldMetadata>;
-
-  const messageFlatObjectMetadata = {
-    universalIdentifier: STANDARD_OBJECTS.message.universalIdentifier,
-  } as FlatObjectMetadata;
-
-  const calendarEventFlatObjectMetadata = {
-    universalIdentifier: STANDARD_OBJECTS.calendarEvent.universalIdentifier,
-  } as FlatObjectMetadata;
-
-  const flatFieldMetadataMaps = buildFlatFieldMetadataMaps([
-    {
-      universalIdentifier:
-        STANDARD_OBJECTS.message.fields.receivedAt.universalIdentifier,
-      name: 'receivedAt',
-    },
-    {
-      universalIdentifier:
-        STANDARD_OBJECTS.calendarEvent.fields.startsAt.universalIdentifier,
-      name: 'startsAt',
-    },
-  ]);
-
-  it('anchors a linked message at its receivedAt instead of the sync time', () => {
+  it('anchors a linked activity at the source record semantic timestamp', () => {
     expect(
       resolveLinkedTimelineActivityHappensAt({
         event,
         ruleAction: 'linked',
-        sourceFlatObjectMetadata: messageFlatObjectMetadata,
+        happensAtFieldName: 'receivedAt',
         sourceRecord: { receivedAt: SOURCE_TIME.toISOString() },
-        flatFieldMetadataMaps,
       }),
     ).toEqual(SOURCE_TIME);
   });
 
-  it('anchors a linked calendar event at its startsAt instead of the sync time', () => {
+  it('parses a semantic timestamp carried as a Date instance', () => {
     expect(
       resolveLinkedTimelineActivityHappensAt({
         event,
         ruleAction: 'linked',
-        sourceFlatObjectMetadata: calendarEventFlatObjectMetadata,
-        sourceRecord: { startsAt: SOURCE_TIME.toISOString() },
-        flatFieldMetadataMaps,
+        happensAtFieldName: 'startsAt',
+        sourceRecord: { startsAt: SOURCE_TIME },
       }),
     ).toEqual(SOURCE_TIME);
   });
@@ -106,23 +68,19 @@ describe('resolveLinkedTimelineActivityHappensAt', () => {
       resolveLinkedTimelineActivityHappensAt({
         event,
         ruleAction: 'unlinked',
-        sourceFlatObjectMetadata: messageFlatObjectMetadata,
+        happensAtFieldName: 'receivedAt',
         sourceRecord: { receivedAt: SOURCE_TIME.toISOString() },
-        flatFieldMetadataMaps,
       }),
     ).toEqual(EVENT_TIME);
   });
 
-  it('keeps the event timestamp for objects without a semantic timestamp', () => {
+  it('keeps the event timestamp when the rule declares no semantic field', () => {
     expect(
       resolveLinkedTimelineActivityHappensAt({
         event,
         ruleAction: 'linked',
-        sourceFlatObjectMetadata: {
-          universalIdentifier: STANDARD_OBJECTS.note.universalIdentifier,
-        } as FlatObjectMetadata,
+        happensAtFieldName: null,
         sourceRecord: { receivedAt: SOURCE_TIME.toISOString() },
-        flatFieldMetadataMaps,
       }),
     ).toEqual(EVENT_TIME);
   });
@@ -132,9 +90,8 @@ describe('resolveLinkedTimelineActivityHappensAt', () => {
       resolveLinkedTimelineActivityHappensAt({
         event,
         ruleAction: 'linked',
-        sourceFlatObjectMetadata: messageFlatObjectMetadata,
+        happensAtFieldName: 'receivedAt',
         sourceRecord: undefined,
-        flatFieldMetadataMaps,
       }),
     ).toEqual(EVENT_TIME);
   });
@@ -144,9 +101,8 @@ describe('resolveLinkedTimelineActivityHappensAt', () => {
       resolveLinkedTimelineActivityHappensAt({
         event,
         ruleAction: 'linked',
-        sourceFlatObjectMetadata: messageFlatObjectMetadata,
+        happensAtFieldName: 'receivedAt',
         sourceRecord: { receivedAt: null },
-        flatFieldMetadataMaps,
       }),
     ).toEqual(EVENT_TIME);
   });
