@@ -1,6 +1,11 @@
 import { ApolloClient, ApolloLink, gql, InMemoryCache } from '@apollo/client';
-import { ApolloProvider, useQuery } from '@apollo/client/react';
+import {
+  ApolloProvider,
+  useQuery,
+  useSuspenseQuery,
+} from '@apollo/client/react';
 import { render, screen, waitFor } from '@testing-library/react';
+import { Activity, Suspense, useEffect } from 'react';
 import { of } from 'rxjs';
 
 // Tab prerendering mounts hovered tab content inside a display: none wrapper
@@ -54,6 +59,89 @@ const ProbeTab = ({
     </div>
   </ApolloProvider>
 );
+
+const SuspenseProbeWidget = ({
+  onEffectsMounted,
+}: {
+  onEffectsMounted: () => void;
+}) => {
+  const { data } = useSuspenseQuery<{ probe: string }>(PRERENDER_PROBE_QUERY);
+
+  useEffect(() => {
+    onEffectsMounted();
+  }, [onEffectsMounted]);
+
+  return <div>{data?.probe}</div>;
+};
+
+const SuspenseProbeTab = ({
+  client,
+  isActiveTab,
+  onEffectsMounted,
+}: {
+  client: ApolloClient;
+  isActiveTab: boolean;
+  onEffectsMounted: () => void;
+}) => (
+  <ApolloProvider client={client}>
+    <Activity mode={isActiveTab ? 'visible' : 'hidden'}>
+      <Suspense fallback={<div>probe-skeleton</div>}>
+        <SuspenseProbeWidget onEffectsMounted={onEffectsMounted} />
+      </Suspense>
+    </Activity>
+  </ApolloProvider>
+);
+
+describe('page layout tab prerender contract with Activity and useSuspenseQuery', () => {
+  it('starts the query while hidden without mounting effects', async () => {
+    const { client, operationCounts } = createOperationTrackingClient();
+    const onEffectsMounted = jest.fn();
+
+    render(
+      <SuspenseProbeTab
+        client={client}
+        isActiveTab={false}
+        onEffectsMounted={onEffectsMounted}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(operationCounts.PrerenderProbe).toBe(1);
+    });
+
+    expect(onEffectsMounted).not.toHaveBeenCalled();
+  });
+
+  it('reveals prerendered content without refetch, then mounts effects', async () => {
+    const { client, operationCounts } = createOperationTrackingClient();
+    const onEffectsMounted = jest.fn();
+
+    const { rerender } = render(
+      <SuspenseProbeTab
+        client={client}
+        isActiveTab={false}
+        onEffectsMounted={onEffectsMounted}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(operationCounts.PrerenderProbe).toBe(1);
+    });
+
+    rerender(
+      <SuspenseProbeTab
+        client={client}
+        isActiveTab={true}
+        onEffectsMounted={onEffectsMounted}
+      />,
+    );
+
+    expect(screen.getByText('probe-loaded')).toBeVisible();
+    expect(screen.queryByText('probe-skeleton')).not.toBeInTheDocument();
+    expect(operationCounts.PrerenderProbe).toBe(1);
+    expect(onEffectsMounted).toHaveBeenCalledTimes(1);
+  });
+});
 
 describe('page layout tab prerender contract', () => {
   it('starts the query while the tab content is hidden', async () => {
