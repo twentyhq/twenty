@@ -12,7 +12,10 @@ export const getRecordCrudRichTextIssues = ({
   stepId,
 }: {
   objectRecord: Record<string, unknown>;
-  objectMetadataInfo: ObjectMetadataInfo;
+  objectMetadataInfo: Pick<
+    ObjectMetadataInfo,
+    'flatObjectMetadata' | 'flatFieldMetadataMaps'
+  >;
   stepLabel: string;
   stepId?: string;
 }): WorkflowValidationIssue[] => {
@@ -30,7 +33,7 @@ export const getRecordCrudRichTextIssues = ({
       issues.push({
         severity: 'error',
         code: 'INVALID_RICH_TEXT_FIELD',
-        message: `Rich text field "${fieldName}" in step "${stepLabel}" must be a valid rich text value with { blocknote, markdown }.`,
+        message: `Rich text field "${fieldName}" in step "${stepLabel}" must be a rich text object (e.g. { "markdown": "..." }), not a plain value.`,
         stepId,
       });
     }

@@ -5,7 +5,10 @@ import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modu
 import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 
 export const findRichTextFieldNames = (
-  objectMetadataInfo: ObjectMetadataInfo,
+  objectMetadataInfo: Pick<
+    ObjectMetadataInfo,
+    'flatObjectMetadata' | 'flatFieldMetadataMaps'
+  >,
 ): string[] => {
   const { flatObjectMetadata, flatFieldMetadataMaps } = objectMetadataInfo;
 
