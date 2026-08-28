@@ -429,9 +429,11 @@ export default defineRole({
     },
     // Partner Content object — the self-service save route runs with the caller's own
     // permissions, so partners self-publish their own case studies: only status is writable
-    // (the route sets it to APPROVED/WIP; RLS scopes to their own rows). Ownership (partner,
-    // partnerUser) and contentType stay locked and are stamped server-side by the
-    // on-partner-content-created trigger, so a partner cannot repoint content to another partner.
+    // (the route sets it to APPROVED/WIP; RLS scopes to their own rows). partner and contentType
+    // stay locked and are stamped server-side by the on-partner-content-created trigger, so a
+    // partner cannot repoint content to another partner. partnerUser is listed as locked but
+    // stays writable at insert — the server exempts RLS predicate fields there
+    // (permissions.utils.ts, insert case only), which is how the save route stamps ownership.
     {
       objectUniversalIdentifier: PARTNER_CONTENT_OBJECT_UNIVERSAL_IDENTIFIER,
       fieldUniversalIdentifier: PARTNER_CONTENT_TYPE_FIELD_ID,
