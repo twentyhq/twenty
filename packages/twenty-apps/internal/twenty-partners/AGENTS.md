@@ -97,6 +97,27 @@ lives in `src/__tests__/helpers/`.
   domain, or hoist the shared ID into `shared/`.
 - One domain per commit when migrating (`git mv` only, imports fixed in the same commit).
 
+## Application review playbook
+
+The Matching Admin Workspace playbook is a standalone page in
+`src/modules/partner/application-intake/` (front-component + page layout +
+nav item). It must stay in lockstep with real behaviour. When you change any
+of the following, update the playbook in the same change:
+
+- Website form fields that land on Partner
+- The Partner Applications view (filter, columns, sort)
+- `validationStage` values used as the review decision
+- Intake side effects the reviewer needs to know (Discord on create;
+  welcome email on `VALIDATED`, linked from
+  `WELCOME_EMAIL_WORKFLOW_URL`)
+- Marketplace ranking bonuses in
+  `packages/twenty-website/src/partners-marketplace/completeness-score.ts`
+  (case study, cover, introduction, service, picture, calendar, rate,
+  category, ghost rule)
+
+Facts on the page come from the same constants the view and intake use. Do
+not leave stale steps. Do not keep a second copy on twenty.com or in a Note.
+
 ## Where does new code go?
 
 External API call → `connector/`. Raw query/mutation → `graphql/`. Any logic →
