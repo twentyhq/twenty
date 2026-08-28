@@ -35,9 +35,9 @@ import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  IconAlignBoxLeftTop,
   IconApps,
   IconListDetails,
+  IconNotes,
   IconStack2,
 } from 'twenty-ui/icon';
 import { v4 as uuidv4 } from 'uuid';
@@ -385,7 +385,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
         </SelectableListItem>
         <SelectableListItem itemId="note" onEnter={handleCreateNoteWidget}>
           <CommandMenuItem
-            Icon={IconAlignBoxLeftTop}
+            Icon={IconNotes}
             label={t`Note`}
             description={t`Static text shared across all record pages`}
             id="note"

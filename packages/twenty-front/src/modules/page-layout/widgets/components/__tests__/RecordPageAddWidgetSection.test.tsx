@@ -10,6 +10,7 @@ jest.mock('twenty-ui/icon', () => ({
   ...jest.requireActual<typeof TwentyIcons>('twenty-ui/icon'),
   IconStack2: () => <svg role="img" aria-label="Fields group icon" />,
   IconListDetails: () => <svg role="img" aria-label="Field icon" />,
+  IconNotes: () => <svg role="img" aria-label="Note icon" />,
 }));
 
 jest.mock('@/page-layout/contexts/PageLayoutContentContext', () => ({
@@ -56,6 +57,7 @@ describe('RecordPageAddWidgetSection', () => {
       screen.getByRole('img', { name: 'Fields group icon' }),
     ).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'Field icon' })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Note icon' })).toBeInTheDocument();
   });
 
   it('creates a Note in the current tab through the shared creator', async () => {

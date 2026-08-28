@@ -7,8 +7,8 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import {
-  IconAlignBoxLeftTop,
   IconListDetails,
+  IconNotes,
   IconPlus,
   IconSquarePlus,
   IconStack2,
@@ -85,7 +85,7 @@ export const RecordPageAddWidgetSection = () => {
           onClick={createRecordPageFieldWidget}
         />
         <MenuItem
-          LeftIcon={IconAlignBoxLeftTop}
+          LeftIcon={IconNotes}
           withIconContainer
           text={t`Note`}
           contextualText={t`Static text shared across all record pages`}
