@@ -4,7 +4,6 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { buildLinkedTimelineActivityHappensAtSyncUpdates } from 'src/modules/timeline/utils/build-linked-timeline-activity-happens-at-sync-updates.util';
 
-const NEW_STARTS_AT = '2026-09-12T10:00:00.000Z';
 const CALENDAR_EVENT_ID = 'calendar-event-id';
 const LINKED_TYPE_ID = 'calendar-event-linked-type-id';
 
@@ -14,6 +13,7 @@ const buildCalendarEventRule = (
   ({
     sourceFlatObjectMetadata: {
       universalIdentifier: STANDARD_OBJECTS.calendarEvent.universalIdentifier,
+      nameSingular: 'calendarEvent',
     },
     actions: ['linked'],
     timelineActivityType: {
@@ -28,33 +28,39 @@ const buildCalendarEventRule = (
   }) as TimelineActivityRule;
 
 const buildStartsAtUpdatedEvent = (
-  startsAt: string | null,
+  recordId = CALENDAR_EVENT_ID,
 ): ObjectRecordBaseEvent =>
   ({
-    recordId: CALENDAR_EVENT_ID,
+    recordId,
     properties: {
       diff: {
-        startsAt: { before: '2026-09-01T10:00:00.000Z', after: startsAt },
+        startsAt: {
+          before: '2026-09-01T10:00:00.000Z',
+          after: '2026-09-12T10:00:00.000Z',
+        },
       },
-      after: { id: CALENDAR_EVENT_ID, startsAt },
     },
   }) as unknown as ObjectRecordBaseEvent;
 
 const resolveTimelineActivityTypeToNothing = () => undefined;
 
 describe('buildLinkedTimelineActivityHappensAtSyncUpdates', () => {
-  it('moves linked activities when the semantic timestamp changes', () => {
+  it('collects the changed records when the semantic timestamp changes', () => {
     expect(
       buildLinkedTimelineActivityHappensAtSyncUpdates({
         rules: [buildCalendarEventRule()],
-        events: [buildStartsAtUpdatedEvent(NEW_STARTS_AT)],
+        events: [
+          buildStartsAtUpdatedEvent(),
+          buildStartsAtUpdatedEvent('other-calendar-event-id'),
+        ],
         resolveTimelineActivityType: resolveTimelineActivityTypeToNothing,
       }),
     ).toEqual([
       {
-        linkedRecordId: CALENDAR_EVENT_ID,
+        sourceObjectNameSingular: 'calendarEvent',
+        happensAtFieldName: 'startsAt',
         timelineActivityTypeIds: [LINKED_TYPE_ID],
-        happensAt: new Date(NEW_STARTS_AT),
+        linkedRecordIds: [CALENDAR_EVENT_ID, 'other-calendar-event-id'],
       },
     ]);
   });
@@ -64,7 +70,6 @@ describe('buildLinkedTimelineActivityHappensAtSyncUpdates', () => {
       recordId: CALENDAR_EVENT_ID,
       properties: {
         diff: { title: { before: 'Old', after: 'New' } },
-        after: { id: CALENDAR_EVENT_ID, startsAt: NEW_STARTS_AT },
       },
     } as unknown as ObjectRecordBaseEvent;
 
@@ -77,21 +82,11 @@ describe('buildLinkedTimelineActivityHappensAtSyncUpdates', () => {
     ).toEqual([]);
   });
 
-  it('keeps the previous happensAt when the timestamp is cleared', () => {
-    expect(
-      buildLinkedTimelineActivityHappensAtSyncUpdates({
-        rules: [buildCalendarEventRule()],
-        events: [buildStartsAtUpdatedEvent(null)],
-        resolveTimelineActivityType: resolveTimelineActivityTypeToNothing,
-      }),
-    ).toEqual([]);
-  });
-
   it('ignores rules without a semantic timestamp field', () => {
     expect(
       buildLinkedTimelineActivityHappensAtSyncUpdates({
         rules: [buildCalendarEventRule({ happensAtFieldName: null })],
-        events: [buildStartsAtUpdatedEvent(NEW_STARTS_AT)],
+        events: [buildStartsAtUpdatedEvent()],
         resolveTimelineActivityType: resolveTimelineActivityTypeToNothing,
       }),
     ).toEqual([]);
@@ -108,7 +103,7 @@ describe('buildLinkedTimelineActivityHappensAtSyncUpdates', () => {
           }),
           buildCalendarEventRule({ actions: ['unlinked'] }),
         ],
-        events: [buildStartsAtUpdatedEvent(NEW_STARTS_AT)],
+        events: [buildStartsAtUpdatedEvent()],
         resolveTimelineActivityType: resolveTimelineActivityTypeToNothing,
       }),
     ).toEqual([]);
@@ -118,7 +113,7 @@ describe('buildLinkedTimelineActivityHappensAtSyncUpdates', () => {
     expect(
       buildLinkedTimelineActivityHappensAtSyncUpdates({
         rules: [buildCalendarEventRule({ timelineActivityType: undefined })],
-        events: [buildStartsAtUpdatedEvent(NEW_STARTS_AT)],
+        events: [buildStartsAtUpdatedEvent()],
         resolveTimelineActivityType: () => ({
           id: 'resolved-type-id',
           applicationId: 'application-id',
@@ -127,9 +122,10 @@ describe('buildLinkedTimelineActivityHappensAtSyncUpdates', () => {
       }),
     ).toEqual([
       {
-        linkedRecordId: CALENDAR_EVENT_ID,
+        sourceObjectNameSingular: 'calendarEvent',
+        happensAtFieldName: 'startsAt',
         timelineActivityTypeIds: ['resolved-type-id'],
-        happensAt: new Date(NEW_STARTS_AT),
+        linkedRecordIds: [CALENDAR_EVENT_ID],
       },
     ]);
   });

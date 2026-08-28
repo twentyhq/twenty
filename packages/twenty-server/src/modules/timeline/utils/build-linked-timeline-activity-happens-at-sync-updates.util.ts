@@ -3,18 +3,20 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { doesObjectRecordEventChangeFields } from 'src/modules/timeline/utils/does-object-record-event-change-fields.util';
-import { parseLinkedTimelineActivityHappensAt } from 'src/modules/timeline/utils/resolve-timeline-activity-happens-at.util';
 import { type TimelineActivityTypeResolver } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
 
 export type LinkedTimelineActivityHappensAtSyncUpdate = {
-  linkedRecordId: string;
+  sourceObjectNameSingular: string;
+  happensAtFieldName: string;
   timelineActivityTypeIds: string[];
-  happensAt: Date;
+  linkedRecordIds: string[];
 };
 
 // A linked activity is anchored at its source record's own moment (an email's
 // receivedAt, a calendar event's startsAt), so when that moment moves, e.g. a
-// meeting gets rescheduled, the already written activities must follow.
+// meeting gets rescheduled, the already written activities must follow. Only
+// the changed record ids are collected here: the new value is read from the
+// source row at write time, not from the event snapshot.
 export const buildLinkedTimelineActivityHappensAtSyncUpdates = ({
   rules,
   events,
@@ -33,10 +35,7 @@ export const buildLinkedTimelineActivityHappensAtSyncUpdates = ({
     return [];
   }
 
-  const updateByLinkedRecordId = new Map<
-    string,
-    { timelineActivityTypeIds: Set<string>; happensAt: Date }
-  >();
+  const updates: LinkedTimelineActivityHappensAtSyncUpdate[] = [];
 
   for (const rule of linkedRules) {
     const happensAtFieldName = rule.happensAtFieldName;
@@ -54,45 +53,30 @@ export const buildLinkedTimelineActivityHappensAtSyncUpdates = ({
       continue;
     }
 
-    for (const event of events) {
-      if (
-        !doesObjectRecordEventChangeFields({
-          event,
-          fieldNames: [happensAtFieldName],
-        })
-      ) {
-        continue;
-      }
+    const linkedRecordIds = [
+      ...new Set(
+        events
+          .filter((event) =>
+            doesObjectRecordEventChangeFields({
+              event,
+              fieldNames: [happensAtFieldName],
+            }),
+          )
+          .map((event) => event.recordId),
+      ),
+    ];
 
-      const happensAt = parseLinkedTimelineActivityHappensAt(
-        (event.properties.after as Record<string, unknown> | undefined)?.[
-          happensAtFieldName
-        ],
-      );
-
-      if (!isDefined(happensAt)) {
-        continue;
-      }
-
-      const update = updateByLinkedRecordId.get(event.recordId);
-
-      if (isDefined(update)) {
-        update.timelineActivityTypeIds.add(timelineActivityTypeId);
-        update.happensAt = happensAt;
-      } else {
-        updateByLinkedRecordId.set(event.recordId, {
-          timelineActivityTypeIds: new Set([timelineActivityTypeId]),
-          happensAt,
-        });
-      }
+    if (linkedRecordIds.length === 0) {
+      continue;
     }
+
+    updates.push({
+      sourceObjectNameSingular: rule.sourceFlatObjectMetadata.nameSingular,
+      happensAtFieldName,
+      timelineActivityTypeIds: [timelineActivityTypeId],
+      linkedRecordIds,
+    });
   }
 
-  return [...updateByLinkedRecordId.entries()].map(
-    ([linkedRecordId, { timelineActivityTypeIds, happensAt }]) => ({
-      linkedRecordId,
-      timelineActivityTypeIds: [...timelineActivityTypeIds],
-      happensAt,
-    }),
-  );
+  return updates;
 };
