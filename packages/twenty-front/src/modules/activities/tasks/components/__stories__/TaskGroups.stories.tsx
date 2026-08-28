@@ -8,6 +8,7 @@ import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWith
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SidePanelDecorator } from '~/testing/decorators/SidePanelDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { SuspenseDecorator } from '~/testing/decorators/SuspenseDecorator';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
@@ -16,6 +17,7 @@ const meta: Meta<typeof TaskGroups> = {
   title: 'Modules/Activity/TaskGroups',
   component: TaskGroups,
   decorators: [
+    SuspenseDecorator,
     (Story) => (
       <TabListComponentInstanceContext.Provider
         value={{ instanceId: 'entity-tasks-filter-instance' }}

@@ -3,8 +3,8 @@ import {
   type OperationVariables,
   type TypedDocumentNode,
 } from '@apollo/client';
-import { useQuery } from '@apollo/client/react';
-import { useState } from 'react';
+import { useSuspenseQuery } from '@apollo/client/react';
+import { useCallback, useState, useTransition } from 'react';
 
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
@@ -18,7 +18,11 @@ type CustomResolverQueryResult<
   [queryName: string]: T;
 };
 
-export const useCustomResolver = <
+// Suspense counterpart of the removed useCustomResolver: it starts fetching
+// during render, so content inside a hidden <Activity> preloads, and it runs
+// fetchMore/refetch in transitions so an already rendered list never falls
+// back to its Suspense skeleton.
+export const useSuspenseCustomResolver = <
   T extends {
     [key: string]: any;
   },
@@ -32,10 +36,9 @@ export const useCustomResolver = <
   pageSize: number,
 ): {
   data: CustomResolverQueryResult<T> | undefined;
-  firstQueryLoading: boolean;
   isFetchingMore: boolean;
   fetchMoreRecords: () => Promise<void>;
-  refetch: () => Promise<unknown>;
+  refetch: () => Promise<void>;
 } => {
   const apolloCoreClient = useApolloCoreClient();
 
@@ -44,7 +47,7 @@ export const useCustomResolver = <
     hasNextPage: true,
   });
 
-  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [isFetchingMore, startFetchMoreTransition] = useTransition();
 
   const queryVariables = {
     objectNameSingular: activityTargetableObject.targetObjectNameSingular,
@@ -53,21 +56,22 @@ export const useCustomResolver = <
     pageSize,
   };
 
-  const { data, loading, fetchMore, refetch, error } = useQuery<
+  const { data, error, fetchMore, refetch } = useSuspenseQuery<
     CustomResolverQueryResult<T>
   >(query, {
     client: apolloCoreClient,
     variables: queryVariables,
+    errorPolicy: 'all',
   });
-
-  const firstQueryLoading = loading && !data;
 
   useSnackBarOnQueryError(error);
 
   const fetchMoreRecords = async () => {
-    if (page.hasNextPage && !isFetchingMore && !firstQueryLoading) {
-      setIsFetchingMore(true);
+    if (!page.hasNextPage || isFetchingMore) {
+      return;
+    }
 
+    startFetchMoreTransition(async () => {
       await fetchMore({
         variables: {
           ...queryVariables,
@@ -104,16 +108,30 @@ export const useCustomResolver = <
         ...page,
         pageNumber: page.pageNumber + 1,
       }));
-
-      setIsFetchingMore(false);
-    }
+    });
   };
+
+  const [, startRefetchTransition] = useTransition();
+
+  const refetchInTransition = useCallback(
+    () =>
+      new Promise<void>((resolve, reject) => {
+        startRefetchTransition(async () => {
+          try {
+            await refetch();
+            resolve();
+          } catch (refetchError) {
+            reject(refetchError);
+          }
+        });
+      }),
+    [refetch, startRefetchTransition],
+  );
 
   return {
     data,
-    firstQueryLoading,
     isFetchingMore,
     fetchMoreRecords,
-    refetch,
+    refetch: refetchInTransition,
   };
 };

@@ -1,6 +1,5 @@
 import { ActivityList } from '@/activities/components/ActivityList';
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
-import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
 import { EmptyInboxPlaceholder } from '@/activities/emails/components/EmptyInboxPlaceholder';
 import { StyledWidgetContentContainer } from '@/ui/layout/components/WidgetContentContainer';
@@ -21,22 +20,16 @@ const StyledSection = styled(Section)`
 `;
 
 type EmailsCardContentProps = {
-  firstQueryLoading: boolean;
   isFetchingMore: boolean;
   onLastRowVisible: () => Promise<void>;
   timelineThreads: TimelineThread[] | undefined;
 };
 
 export const EmailsCardContent = ({
-  firstQueryLoading,
   isFetchingMore,
   onLastRowVisible,
   timelineThreads,
 }: EmailsCardContentProps) => {
-  if (firstQueryLoading) {
-    return <SkeletonLoader />;
-  }
-
   if (!timelineThreads?.length) {
     return (
       <StyledContainer>

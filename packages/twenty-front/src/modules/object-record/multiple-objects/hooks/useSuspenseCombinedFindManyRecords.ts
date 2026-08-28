@@ -1,15 +1,16 @@
-import { useQuery } from '@apollo/client/react';
+import { skipToken, useSuspenseQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
-import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
-import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
 import { type CombinedFindManyRecordsQueryResult } from '@/object-record/multiple-objects/types/CombinedFindManyRecordsQueryResult';
 import { generateCombinedFindManyRecordsQueryVariables } from '@/object-record/multiple-objects/utils/generateCombinedFindManyRecordsQueryVariables';
+import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
+import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 
-export const useCombinedFindManyRecords = ({
+export const useSuspenseCombinedFindManyRecords = ({
   operationSignatures,
   skip = false,
 }: {
@@ -30,13 +31,15 @@ export const useCombinedFindManyRecords = ({
     [operationSignatures],
   );
 
-  const { data, loading } = useQuery<CombinedFindManyRecordsQueryResult>(
+  const { data } = useSuspenseQuery<CombinedFindManyRecordsQueryResult>(
     findManyQuery ?? EMPTY_QUERY,
-    {
-      skip,
-      variables: queryVariables,
-      client: apolloCoreClient,
-    },
+    skip || !isDefined(findManyQuery)
+      ? skipToken
+      : {
+          variables: queryVariables,
+          errorPolicy: 'all',
+          client: apolloCoreClient,
+        },
   );
 
   const resultWithoutConnection = useMemo(
@@ -56,6 +59,5 @@ export const useCombinedFindManyRecords = ({
 
   return {
     result: resultWithoutConnection,
-    loading,
   };
 };

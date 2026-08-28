@@ -10,6 +10,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { SuspenseDecorator } from '~/testing/decorators/SuspenseDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedTimelineCalendarEvents } from '~/testing/mock-data/timeline-calendar-events';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -18,6 +19,7 @@ const meta: Meta<typeof CalendarEventsCard> = {
   title: 'Modules/Activities/Calendar/CalendarEventsCard',
   component: CalendarEventsCard,
   decorators: [
+    SuspenseDecorator,
     MemoryRouterDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,

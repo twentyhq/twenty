@@ -21,6 +21,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
+import { Activity } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -69,14 +70,6 @@ const StyledTabsAndDashboardContainer = styled.div`
       display: none;
     }
   }
-`;
-
-// Hidden prerendered tabs use display: none rather than <Activity mode="hidden">:
-// Apollo starts useQuery fetches from effects, which hidden activities do not
-// mount, so nothing would preload (see pageLayoutTabPrerenderContract.test).
-// display: contents keeps the active tab's layout identical to an unwrapped mount.
-const StyledTabContentDisplay = styled.div<{ isActiveTab: boolean }>`
-  display: ${({ isActiveTab }) => (isActiveTab ? 'contents' : 'none')};
 `;
 
 const StyledScrollWrapperContainer = styled.div`
@@ -212,12 +205,17 @@ export const PageLayoutTabsRenderer = () => {
               {isDefined(activeTabId) &&
                 activeTabExistsInRenderableTabs &&
                 tabsToMount.map((tab) => (
-                  <StyledTabContentDisplay
+                  // Prerendering relies on the widgets fetching through
+                  // suspense hooks, which start their queries during render:
+                  // hidden activities do not mount effects, so effect-started
+                  // fetches would never preload (see
+                  // pageLayoutTabPrerenderContract.test).
+                  <Activity
                     key={tab.id}
-                    isActiveTab={tab.id === activeTabId}
+                    mode={tab.id === activeTabId ? 'visible' : 'hidden'}
                   >
                     <PageLayoutMainContent tabId={tab.id} />
-                  </StyledTabContentDisplay>
+                  </Activity>
                 ))}
             </ScrollWrapper>
           </StyledScrollWrapperContainer>

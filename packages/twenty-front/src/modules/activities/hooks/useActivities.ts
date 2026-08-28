@@ -9,7 +9,6 @@ import {
   type CoreObjectNameSingular,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
-import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -47,9 +46,9 @@ export const useActivities = ({
 
   const {
     activityTargets,
-    loadingActivityTargets,
     totalCountActivityTargets,
     fetchMoreActivityTargets,
+    isFetchingMoreActivityTargets,
     hasNextPage,
     activityRelationFieldName,
   } = useActivityTargetsForTargetableObjects({
@@ -70,34 +69,18 @@ export const useActivities = ({
     })
     .filter(isDefined);
 
+  // The onCompleted handler re-runs when fetchMore merges new pages into the
+  // query data, so the record store picks up the appended activities without
+  // a manual write here.
   const fetchMoreActivities = async () => {
-    const result = await fetchMoreActivityTargets();
-
-    if (!isDefined(result?.data)) {
-      return [];
-    }
-
-    const activityTargets = getRecordsFromRecordConnection<ActivityTarget>({
-      recordConnection: result.data,
-    });
-
-    updateActivitiesInStore(activityTargets, activityRelationFieldName);
-
-    return activityTargets
-      .map((activityTarget) => {
-        return getRelatedRecordFromJunction({
-          junctionRecord: activityTarget,
-          relationFieldName: activityRelationFieldName,
-        });
-      })
-      .filter(isDefined);
+    await fetchMoreActivityTargets();
   };
 
   return {
     activities,
-    loading: loadingActivityTargets,
     totalCountActivities: totalCountActivityTargets,
     fetchMoreActivities,
+    isFetchingMoreActivities: isFetchingMoreActivityTargets,
     hasNextPage,
   };
 };

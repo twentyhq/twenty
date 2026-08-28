@@ -8,12 +8,13 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { Activity, Suspense, useEffect } from 'react';
 import { of } from 'rxjs';
 
-// Tab prerendering mounts hovered tab content inside a display: none wrapper
-// (not <Activity mode="hidden">: Apollo starts useQuery fetches from effects,
-// which hidden activities do not mount, so nothing would preload). This test
-// guards the two platform behaviors the feature relies on: queries fire while
-// the tree is hidden, and revealing the tree does not remount it, so no
-// second fetch and no loading state occur.
+// Tab prerendering mounts hovered tab content inside <Activity mode="hidden">
+// and relies on the widgets fetching through Apollo suspense hooks, which
+// start their queries during render. This test guards the platform behaviors
+// the feature is built on: suspense queries fire while hidden without
+// mounting effects, revealing neither refetches nor flashes a fallback, and
+// classic useQuery (which fetches from effects) would preload nothing, which
+// is why the tab widgets must not regress to it.
 const PRERENDER_PROBE_QUERY = gql`
   query PrerenderProbe {
     probe
@@ -46,19 +47,10 @@ const ProbeWidget = () => {
   return <div>{data?.probe}</div>;
 };
 
-const ProbeTab = ({
-  client,
-  isActiveTab,
-}: {
-  client: ApolloClient;
-  isActiveTab: boolean;
-}) => (
-  <ApolloProvider client={client}>
-    <div style={{ display: isActiveTab ? 'contents' : 'none' }}>
-      <ProbeWidget />
-    </div>
-  </ApolloProvider>
-);
+const flushMicrotasks = () =>
+  new Promise((resolve) => {
+    setTimeout(resolve, 50);
+  });
 
 const SuspenseProbeWidget = ({
   onEffectsMounted,
@@ -143,32 +135,20 @@ describe('page layout tab prerender contract with Activity and useSuspenseQuery'
   });
 });
 
-describe('page layout tab prerender contract', () => {
-  it('starts the query while the tab content is hidden', async () => {
+describe('page layout tab prerender contract with classic useQuery', () => {
+  it('does not start the query while hidden, so widgets must not regress to it', async () => {
     const { client, operationCounts } = createOperationTrackingClient();
 
-    render(<ProbeTab client={client} isActiveTab={false} />);
-
-    await waitFor(() => {
-      expect(operationCounts.PrerenderProbe).toBe(1);
-    });
-  });
-
-  it('reveals prerendered content without a second fetch or loading state', async () => {
-    const { client, operationCounts } = createOperationTrackingClient();
-
-    const { rerender } = render(
-      <ProbeTab client={client} isActiveTab={false} />,
+    render(
+      <ApolloProvider client={client}>
+        <Activity mode="hidden">
+          <ProbeWidget />
+        </Activity>
+      </ApolloProvider>,
     );
 
-    await waitFor(() => {
-      expect(operationCounts.PrerenderProbe).toBe(1);
-    });
+    await flushMicrotasks();
 
-    rerender(<ProbeTab client={client} isActiveTab={true} />);
-
-    expect(screen.getByText('probe-loaded')).toBeVisible();
-    expect(screen.queryByText('probe-skeleton')).not.toBeInTheDocument();
-    expect(operationCounts.PrerenderProbe).toBe(1);
+    expect(operationCounts.PrerenderProbe).toBeUndefined();
   });
 });

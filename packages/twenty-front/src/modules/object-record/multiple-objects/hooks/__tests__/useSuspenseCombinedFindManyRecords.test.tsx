@@ -1,10 +1,11 @@
 import { gql } from '@apollo/client';
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
+import { Suspense } from 'react';
 
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { type RecordGqlOperationSignature } from 'twenty-shared/types';
-import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords';
+import { useSuspenseCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useSuspenseCombinedFindManyRecords';
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -90,7 +91,7 @@ const mockQuery = gql`
   }
 `;
 
-type RenderUseCombinedFindManyRecordsHookParams = {
+type RenderUseSuspenseCombinedFindManyRecordsHookParams = {
   operationSignatures: RecordGqlOperationSignature[];
   mockVariables?: Record<string, any>;
   mockResponseData?: Record<string, any>;
@@ -99,14 +100,14 @@ type RenderUseCombinedFindManyRecordsHookParams = {
   mockQueryResult?: any;
 };
 
-const renderUseCombinedFindManyRecordsHook = async ({
+const renderUseSuspenseCombinedFindManyRecordsHook = async ({
   operationSignatures,
   mockVariables = {},
   mockResponseData,
   skip = false,
   expectedResult = {},
   mockQueryResult = mockQuery,
-}: RenderUseCombinedFindManyRecordsHookParams) => {
+}: RenderUseSuspenseCombinedFindManyRecordsHookParams) => {
   (useGenerateCombinedFindManyRecordsQuery as jest.Mock).mockReturnValue(
     mockQueryResult,
   );
@@ -128,22 +129,29 @@ const renderUseCombinedFindManyRecordsHook = async ({
     getTestEnrichedObjectMetadataItemsMock(),
   );
 
-  const { result } = renderHook(
-    () =>
-      useCombinedFindManyRecords({
-        operationSignatures,
-        skip,
-      }),
-    {
-      wrapper: getJestMetadataAndApolloMocksWrapper({ apolloMocks: mocks }),
-    },
+  const MetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
+    apolloMocks: mocks,
+  });
+
+  const { result } = await act(async () =>
+    renderHook(
+      () =>
+        useSuspenseCombinedFindManyRecords({
+          operationSignatures,
+          skip,
+        }),
+      {
+        wrapper: ({ children }) => (
+          <MetadataAndApolloMocksWrapper>
+            <Suspense fallback={null}>{children}</Suspense>
+          </MetadataAndApolloMocksWrapper>
+        ),
+      },
+    ),
   );
 
-  expect(result.current.loading).toBe(!skip);
-  expect(result.current.result).toEqual({});
-
   await waitFor(() => {
-    expect(result.current.loading).toBe(false);
+    expect(result.current).not.toBeNull();
   });
 
   expect(result.current.result).toEqual(expectedResult);
@@ -151,7 +159,7 @@ const renderUseCombinedFindManyRecordsHook = async ({
   return result;
 };
 
-describe('useCombinedFindManyRecords', () => {
+describe('useSuspenseCombinedFindManyRecords', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -201,7 +209,7 @@ describe('useCombinedFindManyRecords', () => {
       },
     };
 
-    await renderUseCombinedFindManyRecordsHook({
+    await renderUseSuspenseCombinedFindManyRecordsHook({
       operationSignatures: [
         {
           objectNameSingular: 'person',
@@ -272,7 +280,7 @@ describe('useCombinedFindManyRecords', () => {
       },
     };
 
-    await renderUseCombinedFindManyRecordsHook({
+    await renderUseSuspenseCombinedFindManyRecordsHook({
       operationSignatures: [
         {
           objectNameSingular: 'person',
@@ -338,7 +346,7 @@ describe('useCombinedFindManyRecords', () => {
       },
     };
 
-    await renderUseCombinedFindManyRecordsHook({
+    await renderUseSuspenseCombinedFindManyRecordsHook({
       operationSignatures: [
         {
           objectNameSingular: 'person',
@@ -404,7 +412,7 @@ describe('useCombinedFindManyRecords', () => {
       },
     };
 
-    await renderUseCombinedFindManyRecordsHook({
+    await renderUseSuspenseCombinedFindManyRecordsHook({
       operationSignatures: [
         {
           objectNameSingular: 'person',
@@ -484,7 +492,7 @@ describe('useCombinedFindManyRecords', () => {
       },
     };
 
-    await renderUseCombinedFindManyRecordsHook({
+    await renderUseSuspenseCombinedFindManyRecordsHook({
       operationSignatures: [
         {
           objectNameSingular: 'person',
@@ -543,7 +551,7 @@ describe('useCombinedFindManyRecords', () => {
   });
 
   it('should handle empty operation signatures', async () => {
-    await renderUseCombinedFindManyRecordsHook({
+    await renderUseSuspenseCombinedFindManyRecordsHook({
       operationSignatures: [],
       mockResponseData: {},
       expectedResult: {},
@@ -551,7 +559,7 @@ describe('useCombinedFindManyRecords', () => {
   });
 
   it('should handle skip flag', async () => {
-    await renderUseCombinedFindManyRecordsHook({
+    await renderUseSuspenseCombinedFindManyRecordsHook({
       operationSignatures: [
         {
           objectNameSingular: 'person',

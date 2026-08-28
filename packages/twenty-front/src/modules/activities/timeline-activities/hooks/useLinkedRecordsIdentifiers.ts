@@ -4,7 +4,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords';
+import { useSuspenseCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useSuspenseCombinedFindManyRecords';
 
 export const useLinkedRecordsIdentifiers = ({
   timelineActivities,
@@ -84,7 +84,7 @@ export const useLinkedRecordsIdentifiers = ({
       .filter(isDefined);
   }, [objectMetadataItems, timelineActivities]);
 
-  return useCombinedFindManyRecords({
+  return useSuspenseCombinedFindManyRecords({
     operationSignatures,
     skip: !isNonEmptyArray(operationSignatures),
   });

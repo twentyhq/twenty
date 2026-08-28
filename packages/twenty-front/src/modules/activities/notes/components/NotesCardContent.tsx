@@ -1,5 +1,4 @@
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
-import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { NoteList } from '@/activities/notes/components/NoteList';
 import { type Note } from '@/activities/types/Note';
 import { styled } from '@linaria/react';
@@ -24,23 +23,19 @@ const StyledNotesContainer = styled.div`
 `;
 
 type NotesCardContentProps = {
-  loading: boolean;
+  isFetchingMore: boolean;
   notes: Note[];
   onCreateNote: (() => void) | undefined;
   onLastRowVisible: () => Promise<void>;
 };
 
 export const NotesCardContent = ({
-  loading,
+  isFetchingMore,
   notes,
   onCreateNote,
   onLastRowVisible,
 }: NotesCardContentProps) => {
   const isNotesEmpty = notes.length === 0;
-
-  if (loading && isNotesEmpty) {
-    return <SkeletonLoader />;
-  }
 
   if (isNotesEmpty) {
     return (
@@ -70,7 +65,7 @@ export const NotesCardContent = ({
     <StyledNotesContainer>
       <NoteList notes={notes} />
       <CustomResolverFetchMoreLoader
-        loading={loading}
+        loading={isFetchingMore}
         onLastRowVisible={onLastRowVisible}
       />
     </StyledNotesContainer>
