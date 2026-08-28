@@ -80,13 +80,11 @@ export const useAutoResolveSlackUser = () => {
     setResolvedUser(slackUser);
   };
 
-  // Skips the debounce, for Enter while no match is confirmed yet.
+  // Skips the debounce, for Enter while no match is confirmed yet. Firing
+  // while an earlier lookup is still in flight is safe: clearing bumps the
+  // request id, so only this lookup's result can land.
   const resolveNow = (rawIdentity: RawSlackIdentity) => {
     const input = toSlackResolveInput(rawIdentity);
-
-    if (isResolving) {
-      return;
-    }
 
     // Enter with nothing resolvable must not look unresponsive; the guidance
     // clears as soon as any identity field changes.

@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useState } from 'react';
 import { isDefined } from 'twenty-sdk/utils';
 import { Tag } from 'twenty-ui/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -125,6 +126,10 @@ export const SlackUserLinksList = ({
   removingLinkId,
   resendingLinkId,
 }: SlackUserLinksListProps) => {
+  const [removalArmedLinkId, setRemovalArmedLinkId] = useState<string | null>(
+    null,
+  );
+
   if (slackUserLinks.length === 0) {
     return <StyledEmptyState>No Slack user links yet.</StyledEmptyState>;
   }
@@ -187,12 +192,25 @@ export const SlackUserLinksList = ({
                   )}
                   <StyledActionButton
                     type="button"
-                    onClick={() => onRemove(slackUserLink)}
+                    // Removing discards the recorded consent, so a lone
+                    // misclick must not be enough; the second click confirms.
+                    onClick={() => {
+                      if (removalArmedLinkId !== slackUserLink.id) {
+                        setRemovalArmedLinkId(slackUserLink.id);
+                        return;
+                      }
+
+                      setRemovalArmedLinkId(null);
+                      onRemove(slackUserLink);
+                    }}
+                    onBlur={() => setRemovalArmedLinkId(null)}
                     disabled={removingLinkId === slackUserLink.id}
                   >
                     {removingLinkId === slackUserLink.id
                       ? 'Removing…'
-                      : 'Remove'}
+                      : removalArmedLinkId === slackUserLink.id
+                        ? 'Confirm removal'
+                        : 'Remove'}
                   </StyledActionButton>
                 </StyledActions>
               )}
