@@ -21,6 +21,8 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.d.ts",
+    "design-tokens/**/*.ts",
+    "scripts/generateThemeTokens.ts",
     ".storybook/*.ts",
     ".storybook/*.tsx",
     "jest.config.mjs",

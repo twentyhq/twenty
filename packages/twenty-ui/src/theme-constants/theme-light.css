@@ -1,5 +1,5 @@
-/* Theme CSS variables, mirrored token-for-token from twenty-ui.
-   Kept in sync by the theme parity test (src/theme-constants/__tests__). */
+/* Generated from design-tokens by scripts/generateThemeTokens.ts.
+   Do not edit manually. Regenerate with: npx nx generateTokens twenty-ui. */
 
 .light {
   --t-icon-size-sm: 14;
@@ -136,13 +136,13 @@
   --t-border-radius-xs: 2px;
   --t-border-radius-sm: 4px;
   --t-border-radius-md: 8px;
+  --t-border-radius-sm-round: 4px;
+  --t-border-radius-md-round: 8px;
   --t-border-radius-lg: 16px;
   --t-border-radius-xl: 20px;
   --t-border-radius-xxl: 40px;
   --t-border-radius-pill: 999px;
   --t-border-radius-rounded: 100%;
-  --t-border-radius-sm-round: 4px;
-  --t-border-radius-md-round: 8px;
   --t-box-shadow-color: color(display-p3 0 0 0 / 0.039);
   --t-box-shadow-light:
     0px 2px 4px 0px color(display-p3 0 0 0 / 0.039),
@@ -250,10 +250,10 @@
   --t-code-text-orange: color(display-p3 0.877 0.597 0.379);
   --t-code-text-green: color(display-p3 0.585 0.707 0.378);
   --t-code-font-family: DM Mono;
-  --t--illustration-icon-color-blue: color(display-p3 0.569 0.639 0.916);
-  --t--illustration-icon-color-gray: color(display-p3 0.6 0.6 0.6);
-  --t--illustration-icon-fill-blue: color(display-p3 0.831 0.87 1);
-  --t--illustration-icon-fill-gray: color(display-p3 0.922 0.922 0.922);
+  --t-illustration-icon-color-blue: color(display-p3 0.569 0.639 0.916);
+  --t-illustration-icon-color-gray: color(display-p3 0.6 0.6 0.6);
+  --t-illustration-icon-fill-blue: color(display-p3 0.831 0.87 1);
+  --t-illustration-icon-fill-gray: color(display-p3 0.922 0.922 0.922);
   --t-gray-scale-gray1: color(display-p3 1 1 1);
   --t-gray-scale-gray2: color(display-p3 0.988 0.988 0.988);
   --t-gray-scale-gray3: color(display-p3 0.976 0.976 0.976);

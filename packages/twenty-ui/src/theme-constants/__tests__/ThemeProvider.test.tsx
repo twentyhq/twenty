@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react';
 
-import { ThemeProvider, type ThemeType } from '../ThemeProvider';
+import { ThemeProvider } from '../ThemeProvider';
+import { type ThemeType } from '../themeTypes';
 import { themeCssVariables } from '../themeCssVariables';
 import { useTheme } from '../useTheme';
 
