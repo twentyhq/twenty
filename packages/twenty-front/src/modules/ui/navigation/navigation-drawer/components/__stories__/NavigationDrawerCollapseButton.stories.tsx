@@ -8,44 +8,28 @@ const meta: Meta<typeof NavigationDrawerCollapseButton> = {
   title: 'UI/Navigation/NavigationDrawer/NavigationDrawerCollapseButton',
   decorators: [ComponentDecorator, RouterDecorator],
   component: NavigationDrawerCollapseButton,
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const label =
+      args.direction === 'right' ? 'Expand sidebar' : 'Collapse sidebar';
+
+    await userEvent.hover(canvas.getByRole('button', { name: label }));
+
+    const tooltip = await within(canvasElement.ownerDocument.body).findByRole(
+      'tooltip',
+      { name: label },
+      { timeout: 2000 },
+    );
+
+    await waitFor(() => expect(tooltip).toBeVisible());
+  },
 };
 
 export default meta;
 type Story = StoryObj<typeof NavigationDrawerCollapseButton>;
 
-export const Default: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await userEvent.hover(
-      canvas.getByRole('button', { name: 'Collapse sidebar' }),
-    );
-
-    const tooltip = await within(canvasElement.ownerDocument.body).findByRole(
-      'tooltip',
-      { name: 'Collapse sidebar' },
-      { timeout: 2000 },
-    );
-
-    await waitFor(() => expect(tooltip).toBeVisible());
-  },
-};
+export const Default: Story = {};
 
 export const Expand: Story = {
   args: { direction: 'right' },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await userEvent.hover(
-      canvas.getByRole('button', { name: 'Expand sidebar' }),
-    );
-
-    const tooltip = await within(canvasElement.ownerDocument.body).findByRole(
-      'tooltip',
-      { name: 'Expand sidebar' },
-      { timeout: 2000 },
-    );
-
-    await waitFor(() => expect(tooltip).toBeVisible());
-  },
 };
