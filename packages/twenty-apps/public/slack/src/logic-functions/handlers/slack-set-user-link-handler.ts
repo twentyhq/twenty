@@ -8,6 +8,7 @@ import { findSlackUserLink } from 'src/logic-functions/data/find-slack-user-link
 import { findWorkspaceMemberNameById } from 'src/logic-functions/data/find-workspace-member-name-by-id';
 import { updateSlackUserLink } from 'src/logic-functions/data/update-slack-user-link';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
+import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
 import { type SlackUserLink } from 'src/logic-functions/types/slack-user-link.type';
 import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/utils/current-user-has-workspace-members-permission';
 import { decideSlackUserLinkWrite } from 'src/logic-functions/utils/decide-slack-user-link-write';
@@ -76,6 +77,7 @@ export const slackSetUserLinkHandler = async (
   let resolvedName = name;
   // Slack-verified profile email, feeding the consent-skipping match below.
   let slackUserEmail: string | undefined;
+  let fetchedIdentity: SlackUserIdentity | undefined;
 
   if (!isNonEmptyString(slackUserId) && isNonEmptyString(email)) {
     let resolvedUser;
@@ -102,8 +104,7 @@ export const slackSetUserLinkHandler = async (
     slackUserId = resolvedUser.slackUserId;
     slackTeamId = slackTeamId ?? resolvedUser.slackTeamId;
     resolvedName = resolvedName ?? resolvedUser.displayName;
-    // users.lookupByEmail matches on the profile email, so a hit certifies
-    // this is the account's Slack email.
+    // A users.lookupByEmail hit certifies this is the account's Slack email.
     slackUserEmail = email;
   }
 
@@ -134,9 +135,7 @@ export const slackSetUserLinkHandler = async (
 
     slackTeamId = identity.slackTeamId;
     resolvedName = resolvedName ?? identity.displayName;
-    // Mirror the lazy auto-match, which only trusts the profile email of a
-    // regular account (not bots, deleted, or restricted users).
-    slackUserEmail = identity.isRegularUserAccount ? identity.email : undefined;
+    fetchedIdentity = identity;
   }
 
   const installedTeamId = await getInstalledSlackTeamId(slackClient);
@@ -214,6 +213,7 @@ export const slackSetUserLinkHandler = async (
     slackUserId,
     workspaceMemberId,
     slackUserEmail,
+    fetchedIdentity,
     isInInstalledWorkspace,
     isSameMemberRelink,
   });

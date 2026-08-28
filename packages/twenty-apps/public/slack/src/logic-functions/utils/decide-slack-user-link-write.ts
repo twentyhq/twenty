@@ -5,6 +5,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { SLACK_USER_LINK_CONSENT_STATE } from 'src/logic-functions/constants/slack-user-link-consent-state';
 import { SLACK_USER_LINK_SOURCE } from 'src/logic-functions/constants/slack-user-link-source';
 import { findWorkspaceMemberEmailById } from 'src/logic-functions/data/find-workspace-member-email-by-id';
+import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
 import { type SlackUserLinkConsentState } from 'src/logic-functions/types/slack-user-link-consent-state.type';
 import { type SlackUserLinkSource } from 'src/logic-functions/types/slack-user-link-source.type';
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
@@ -29,6 +30,7 @@ export const decideSlackUserLinkWrite = async ({
   slackUserId,
   workspaceMemberId,
   slackUserEmail,
+  fetchedIdentity,
   isInInstalledWorkspace,
   isSameMemberRelink,
 }: {
@@ -37,6 +39,7 @@ export const decideSlackUserLinkWrite = async ({
   slackUserId: string;
   workspaceMemberId: string;
   slackUserEmail: string | undefined;
+  fetchedIdentity: SlackUserIdentity | undefined;
   isInInstalledWorkspace: boolean;
   isSameMemberRelink: boolean;
 }): Promise<SlackUserLinkWriteDecision> => {
@@ -45,7 +48,9 @@ export const decideSlackUserLinkWrite = async ({
   // The settings form submits the resolved Slack id and team rather than the
   // email it started from, so no verified email reaches the handler on that
   // path; only Slack's own profile email for the id can certify a match that
-  // skips consent, so ask Slack when the caller could not.
+  // skips consent, so ask Slack when the caller has neither an email nor an
+  // already-fetched identity. Mirroring the lazy auto-match, only a regular
+  // account's profile email counts (not bots, deleted, or restricted users).
   const resolveVerifiedEmail = async (): Promise<string | undefined> => {
     if (!shouldCheckEmailMatch) {
       return undefined;
@@ -55,10 +60,9 @@ export const decideSlackUserLinkWrite = async ({
       return slackUserEmail;
     }
 
-    const identity = await fetchSlackUserIdentity({
-      client: slackClient,
-      slackUserId,
-    });
+    const identity =
+      fetchedIdentity ??
+      (await fetchSlackUserIdentity({ client: slackClient, slackUserId }));
 
     return identity?.isRegularUserAccount ? identity.email : undefined;
   };
