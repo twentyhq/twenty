@@ -80,7 +80,7 @@ export class TimelineActivityTypeResolver {
   }
 
   @Mutation(() => TimelineActivityTypeDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   async createTimelineActivityType(
     @Args('input') input: CreateTimelineActivityTypeInput,
     @AuthWorkspace() workspace: WorkspaceEntity,

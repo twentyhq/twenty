@@ -1,18 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
-import {
-  IsIn,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator';
-import {
-  TIMELINE_ACTIVITY_ACTIONS,
-  type TimelineActivityAction,
-} from 'twenty-shared/timeline';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
+// The emitted action is not part of the contract yet: the relation field
+// settings only offer logging on link, and a wider input would let clients
+// create emitters no surface can manage.
 @InputType()
 export class CreateTimelineActivityTypeInput {
   @IsString()
@@ -24,11 +17,6 @@ export class CreateTimelineActivityTypeInput {
   @IsOptional()
   @Field(() => String, { nullable: true })
   icon?: string | null;
-
-  @IsIn(TIMELINE_ACTIVITY_ACTIONS)
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  action?: TimelineActivityAction;
 
   @IsUUID()
   @IsNotEmpty()

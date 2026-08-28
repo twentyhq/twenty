@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { type TimelineActivityAction } from 'twenty-shared/timeline';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -11,6 +12,8 @@ import { type FlatTimelineActivityType } from 'src/engine/metadata-modules/flat-
 import { type CreateTimelineActivityTypeInput } from 'src/engine/metadata-modules/timeline-activity-type/dtos/create-timeline-activity-type.input';
 import { TimelineActivityTypeExceptionCode } from 'src/engine/metadata-modules/timeline-activity-type/enums/timeline-activity-type-exception-code.enum';
 import { TimelineActivityTypeException } from 'src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception';
+
+const RELATION_TIMELINE_ACTIVITY_TYPE_ACTION: TimelineActivityAction = 'linked';
 
 export const fromCreateTimelineActivityTypeInputToFlatTimelineActivityTypeOrThrow =
   ({
@@ -33,12 +36,9 @@ export const fromCreateTimelineActivityTypeInputToFlatTimelineActivityTypeOrThro
     workspaceId: string;
     now?: string;
   }): FlatTimelineActivityType => {
-    const {
-      label,
-      icon = null,
-      action = 'linked',
-      targetRelationFieldMetadataId,
-    } = createTimelineActivityTypeInput;
+    const { label, icon = null, targetRelationFieldMetadataId } =
+      createTimelineActivityTypeInput;
+    const action = RELATION_TIMELINE_ACTIVITY_TYPE_ACTION;
 
     const targetRelationFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: targetRelationFieldMetadataId,

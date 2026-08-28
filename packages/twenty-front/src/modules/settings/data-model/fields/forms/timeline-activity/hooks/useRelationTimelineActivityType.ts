@@ -64,11 +64,10 @@ export const useRelationTimelineActivityType = ({
   const isTimelineLoggingEnabled =
     relationTimelineActivityType?.isActive ?? false;
 
-  // Toggling an existing type goes through updateTimelineActivityType, which
-  // requires the APPLICATIONS permission; creation only needs DATA_MODEL.
-  const canToggleTimelineLogging = isDefined(relationTimelineActivityType)
-    ? permissionFlagMap[PermissionFlagType.APPLICATIONS]
-    : permissionFlagMap[PermissionFlagType.DATA_MODEL];
+  // Creating and toggling both go through APPLICATIONS-guarded mutations, so
+  // enabling logging can never leave a user unable to turn it back off.
+  const canToggleTimelineLogging =
+    permissionFlagMap[PermissionFlagType.APPLICATIONS];
 
   const setTimelineLoggingEnabled = async (enabled: boolean) => {
     try {
@@ -100,7 +99,6 @@ export const useRelationTimelineActivityType = ({
       await createTimelineActivityType({
         variables: {
           input: {
-            action: RELATION_TIMELINE_ACTIVITY_TYPE_ACTION,
             label: t`linked a related ${objectLabel}`,
             icon: objectMetadataItem.icon ?? 'IconTimelineEvent',
             targetRelationFieldMetadataId: fieldMetadataItem.id,
