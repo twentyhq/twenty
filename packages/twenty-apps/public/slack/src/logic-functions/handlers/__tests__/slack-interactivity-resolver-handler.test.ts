@@ -26,7 +26,19 @@ vi.mock('src/logic-functions/utils/resolve-target-workspace-id', () => ({
   resolveTargetWorkspaceId: resolveTargetWorkspaceIdMock,
 }));
 
-const routePayload = { body: {} } as never;
+// The webhook verification reading the headers is mocked, so the fixture
+// carries an empty but correctly shaped route payload.
+const routePayload = {
+  body: {},
+  headers: {},
+  queryStringParameters: {},
+  pathParameters: {},
+  isBase64Encoded: false,
+  requestContext: {
+    http: { method: 'POST', path: '/s/slack-interactivity' },
+  },
+  userWorkspaceId: 'workspace-1',
+};
 
 const run = async (payload: SlackInteractivityPayload) => {
   parsePayloadMock.mockReturnValue(payload);

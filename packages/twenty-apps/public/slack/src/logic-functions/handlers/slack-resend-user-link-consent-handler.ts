@@ -6,6 +6,7 @@ import { SLACK_USER_LINK_CONSENT_STATE } from 'src/logic-functions/constants/sla
 import { findSlackUserLink } from 'src/logic-functions/data/find-slack-user-link';
 import { findWorkspaceMemberNameById } from 'src/logic-functions/data/find-workspace-member-name-by-id';
 import { type SlackRouteBody } from 'src/logic-functions/types/slack-route-body.type';
+import { type SlackUserLink } from 'src/logic-functions/types/slack-user-link.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/utils/current-user-has-workspace-members-permission';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
@@ -50,7 +51,7 @@ export const slackResendUserLinkConsentHandler = async (
 
   const client = new CoreApiClient({ runAs: 'application' });
 
-  let link;
+  let link: SlackUserLink | undefined;
 
   try {
     link = await findSlackUserLink(client, { slackTeamId, slackUserId });
