@@ -81,7 +81,10 @@ export const fromCreateTimelineActivityTypeInputToFlatTimelineActivityTypeOrThro
       );
     }
 
-    const name = `${targetRelationFlatFieldMetadata.name}${capitalize(action)}`;
+    // Names are unique per application and every custom object shares the
+    // workspace custom application, so the source object has to be part of the
+    // name: two objects can each hold a relation field of the same name.
+    const name = `${sourceFlatObjectMetadata.nameSingular}${capitalize(targetRelationFlatFieldMetadata.name)}${capitalize(action)}`;
 
     const conflictingFlatTimelineActivityType = Object.values(
       flatTimelineActivityTypeMaps.byUniversalIdentifier,

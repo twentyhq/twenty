@@ -24,6 +24,22 @@ const RELATION_FIELD = {
 const CUSTOM_OBJECT = {
   id: '20202020-0000-0000-0000-000000000020',
   universalIdentifier: '20202020-0000-0000-0000-000000000021',
+  nameSingular: 'partner',
+  applicationUniversalIdentifier: CUSTOM_APPLICATION.universalIdentifier,
+};
+
+// Same relation field name on another custom object of the same application.
+const OTHER_RELATION_FIELD = {
+  id: '20202020-0000-0000-0000-000000000012',
+  universalIdentifier: '20202020-0000-0000-0000-000000000013',
+  name: 'activityTargets',
+  objectMetadataId: '20202020-0000-0000-0000-000000000022',
+};
+
+const OTHER_CUSTOM_OBJECT = {
+  id: '20202020-0000-0000-0000-000000000022',
+  universalIdentifier: '20202020-0000-0000-0000-000000000023',
+  nameSingular: 'vendor',
   applicationUniversalIdentifier: CUSTOM_APPLICATION.universalIdentifier,
 };
 
@@ -59,7 +75,7 @@ const buildArgs = ({
   }[],
 } = {}) => ({
   flatFieldMetadataMaps: buildFlatEntityMaps<FlatEntityMaps<FlatFieldMetadata>>(
-    [RELATION_FIELD],
+    [RELATION_FIELD, OTHER_RELATION_FIELD],
   ),
   flatObjectMetadataMaps: buildFlatEntityMaps<
     FlatEntityMaps<FlatObjectMetadata>
@@ -68,6 +84,7 @@ const buildArgs = ({
       ...CUSTOM_OBJECT,
       applicationUniversalIdentifier: objectApplicationUniversalIdentifier,
     },
+    OTHER_CUSTOM_OBJECT,
   ]),
   flatTimelineActivityTypeMaps:
     buildFlatEntityMaps<FlatTimelineActivityTypeMaps>(
@@ -91,7 +108,7 @@ describe('fromCreateTimelineActivityTypeInputToFlatTimelineActivityTypeOrThrow',
       });
 
     expect(flatTimelineActivityType).toMatchObject({
-      name: 'activityTargetsLinked',
+      name: 'partnerActivityTargetsLinked',
       label: 'added an activity',
       action: 'linked',
       icon: 'IconActivity',
@@ -107,6 +124,22 @@ describe('fromCreateTimelineActivityTypeInputToFlatTimelineActivityTypeOrThrow',
       replacesTimelineActivityTypeUniversalIdentifier: null,
       createdAt: '2026-01-01T00:00:00.000Z',
     });
+  });
+
+  it('names emitters per object so two objects can share a relation field name', () => {
+    const buildName = (targetRelationFieldMetadataId: string) =>
+      fromCreateTimelineActivityTypeInputToFlatTimelineActivityTypeOrThrow({
+        createTimelineActivityTypeInput: {
+          label: 'added an activity',
+          targetRelationFieldMetadataId,
+        },
+        ...buildArgs(),
+      }).name;
+
+    expect(buildName(RELATION_FIELD.id)).toBe('partnerActivityTargetsLinked');
+    expect(buildName(OTHER_RELATION_FIELD.id)).toBe(
+      'vendorActivityTargetsLinked',
+    );
   });
 
   it('throws when the relation field does not exist', () => {

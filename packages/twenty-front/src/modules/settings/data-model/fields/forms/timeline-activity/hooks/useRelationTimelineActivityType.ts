@@ -15,6 +15,8 @@ import {
   UpdateTimelineActivityTypeIsActiveDocument,
 } from '~/generated-metadata/graphql';
 
+const RELATION_TIMELINE_ACTIVITY_TYPE_ACTION = 'linked';
+
 type UseRelationTimelineActivityTypeArgs = {
   fieldMetadataItem: FieldMetadataItem;
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -40,10 +42,13 @@ export const useRelationTimelineActivityType = ({
   const [updateTimelineActivityTypeIsActive, { loading: isUpdating }] =
     useMutation(UpdateTimelineActivityTypeIsActiveDocument);
 
+  // Emit slots are per action, so a relation can carry several types; this
+  // toggle owns the one this section creates.
   const relationTimelineActivityType = (data?.timelineActivityTypes ?? []).find(
     (timelineActivityType) =>
       timelineActivityType.emit?.through?.relationFieldUniversalIdentifier ===
-      fieldMetadataItem.universalIdentifier,
+        fieldMetadataItem.universalIdentifier &&
+      timelineActivityType.emit?.on === RELATION_TIMELINE_ACTIVITY_TYPE_ACTION,
   );
 
   // Other relation shapes have no target record to write on.
@@ -95,6 +100,7 @@ export const useRelationTimelineActivityType = ({
       await createTimelineActivityType({
         variables: {
           input: {
+            action: RELATION_TIMELINE_ACTIVITY_TYPE_ACTION,
             label: t`linked a related ${objectLabel}`,
             icon: objectMetadataItem.icon ?? 'IconTimelineEvent',
             targetRelationFieldMetadataId: fieldMetadataItem.id,
