@@ -123,6 +123,70 @@ describe('backfillApplicantOpportunityVisibility', () => {
     expect(mutation).not.toHaveBeenCalled();
   });
 
+  it('follows the cursor across pages and merges rows from every page', async () => {
+    const applicationPages: Record<string, unknown> = {
+      first: {
+        applications: {
+          edges: [
+            {
+              node: { opportunityId: OPPORTUNITY_A, partnerUserId: MEMBER_1 },
+            },
+          ],
+          pageInfo: { hasNextPage: true, endCursor: 'cursor-1' },
+        },
+      },
+      second: {
+        applications: {
+          edges: [
+            {
+              node: { opportunityId: OPPORTUNITY_A, partnerUserId: MEMBER_2 },
+            },
+          ],
+          pageInfo: { hasNextPage: false, endCursor: null },
+        },
+      },
+    };
+    const seenCursors: (string | undefined)[] = [];
+
+    query.mockImplementation((selection: Record<string, unknown>) => {
+      if (selection.applications) {
+        const after = (
+          selection.applications as { __args?: { after?: string } }
+        )?.__args?.after;
+
+        seenCursors.push(after);
+
+        return Promise.resolve(
+          after === 'cursor-1'
+            ? applicationPages.second
+            : applicationPages.first,
+        );
+      }
+
+      return Promise.resolve({
+        opportunities: {
+          edges: [
+            { node: { id: OPPORTUNITY_A, applicantPartnerUserIds: [] } },
+          ],
+        },
+      });
+    });
+
+    const result = await backfillApplicantOpportunityVisibility(client);
+
+    expect(seenCursors).toEqual([undefined, 'cursor-1']);
+    expect(result).toEqual({ updated: 1, failed: 0 });
+    expect(mutation).toHaveBeenCalledWith({
+      updateOpportunity: {
+        __args: {
+          id: OPPORTUNITY_A,
+          data: { applicantPartnerUserIds: [MEMBER_1, MEMBER_2] },
+        },
+        id: true,
+      },
+    });
+  });
+
   it('counts a failed opportunity and still grants the remaining ones', async () => {
     query.mockImplementation((selection: Record<string, unknown>) => {
       if (selection.applications) {

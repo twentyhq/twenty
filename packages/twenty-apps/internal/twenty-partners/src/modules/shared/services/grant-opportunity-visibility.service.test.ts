@@ -113,4 +113,17 @@ describe('grantOpportunityVisibility', () => {
       updateCall([OTHER_MEMBER_ID, MEMBER_ID]),
     );
   });
+
+  it('does not claim a grant when the opportunity disappears after the write', async () => {
+    query
+      .mockResolvedValueOnce(oneOpportunity(null))
+      .mockResolvedValueOnce({ opportunities: { edges: [] } });
+
+    const result = await grantOpportunityVisibility(client, OPPORTUNITY_ID, [
+      MEMBER_ID,
+    ]);
+
+    expect(result).toEqual({ granted: false, reason: 'opportunity_missing' });
+    expect(mutation).toHaveBeenCalledTimes(1);
+  });
 });

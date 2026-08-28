@@ -61,6 +61,8 @@ export async function resolveCandidacy(
       (edge) => edge.node?.id && edge.node.id !== applicationId,
     )?.node?.id;
     if (existingId) {
+      // No grant here on purpose: the kept row's own member holds it. A second member of
+      // the same partner never sees the first member's application either (partnerUser IS me).
       await deleteApplication(client, applicationId);
       return { duplicate: true, keptExisting: existingId };
     }

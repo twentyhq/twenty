@@ -9,6 +9,8 @@ export const OPPORTUNITY_APPLICANT_PARTNER_USER_IDS_FIELD_ID =
 
 // RLS cannot join Opportunity → Application, so applicant member ids live on the
 // opportunity. After unlist, (partnerUser IS me) OR (isListed) is not enough.
+// The list is append-only and stamped from the Application create event: deleting an
+// application does not revoke, and an opportunity linked after creation is not granted.
 export default defineField({
   universalIdentifier: OPPORTUNITY_APPLICANT_PARTNER_USER_IDS_FIELD_ID,
   objectUniversalIdentifier:

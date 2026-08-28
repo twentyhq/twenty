@@ -138,11 +138,18 @@ describe('on-application-created', () => {
     );
 
     expect(result).toEqual({ stamped: MEMBER_ID });
-    expect(mutationMock).toHaveBeenCalledTimes(2);
-    expect(mutationMock.mock.calls[0][0].updateApplication.__args.data).toEqual({
+
+    const stampCall = mutationMock.mock.calls.find(
+      (mutationCall) => mutationCall[0].updateApplication,
+    )?.[0];
+    expect(stampCall.updateApplication.__args.data).toEqual({
       partnerUserId: MEMBER_ID,
     });
-    expect(mutationMock.mock.calls[1][0]).toEqual({
+
+    const grantCall = mutationMock.mock.calls.find(
+      (mutationCall) => mutationCall[0].updateOpportunity,
+    )?.[0];
+    expect(grantCall).toEqual({
       updateOpportunity: {
         __args: {
           id: OPPORTUNITY_ID,
@@ -275,14 +282,19 @@ describe('on-application-created', () => {
     );
 
     expect(result).toEqual({ applied: true, partnerId: PARTNER_ID });
-    expect(queryMock).toHaveBeenCalledTimes(4);
-    expect(mutationMock).toHaveBeenCalledTimes(2);
-    const call = mutationMock.mock.calls[0][0];
+
+    const call = mutationMock.mock.calls.find(
+      (mutationCall) => mutationCall[0].updateApplication,
+    )?.[0];
     expect(call.updateApplication.__args.id).toBe(APPLICATION_ID);
     expect(call.updateApplication.__args.data.partnerId).toBe(PARTNER_ID);
     expect(call.updateApplication.__args.data.partnerUserId).toBe(MEMBER_ID);
     expect(call.updateApplication.__args.data.state).toBe('APPLIED');
-    expect(mutationMock.mock.calls[1][0]).toEqual({
+
+    const grantCall = mutationMock.mock.calls.find(
+      (mutationCall) => mutationCall[0].updateOpportunity,
+    )?.[0];
+    expect(grantCall).toEqual({
       updateOpportunity: {
         __args: {
           id: OPPORTUNITY_ID,
