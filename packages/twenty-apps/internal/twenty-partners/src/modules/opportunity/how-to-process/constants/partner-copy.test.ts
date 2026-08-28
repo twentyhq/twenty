@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import { MIN_PITCH_LENGTH } from 'src/modules/application/apply/constants/apply-to-brief.constants';
 
-import { HOW_TO_APPLY_STEPS } from './partner-copy';
+import {
+  HOW_TO_APPLY_HEADER_LINKS,
+  HOW_TO_APPLY_STEPS,
+} from './partner-copy';
 
 describe('HOW_TO_APPLY_STEPS', () => {
   it('uses MIN_PITCH_LENGTH for the pitch rule', () => {
@@ -20,5 +23,16 @@ describe('HOW_TO_APPLY_STEPS', () => {
     expect(text).toMatch(/Won/);
     expect(text).toMatch(/Declined/);
     expect(text).toMatch(/do not set those/i);
+  });
+
+  it('links Open Briefs, My Applications, and Apply at the top', () => {
+    expect(HOW_TO_APPLY_HEADER_LINKS).toEqual([
+      { label: 'Apply', action: 'apply' },
+      { label: 'Open Briefs', action: 'openBriefs' },
+      { label: 'My Applications', action: 'myApplications' },
+    ]);
+
+    const applyStep = HOW_TO_APPLY_STEPS.find((step) => step.num === '02');
+    expect(applyStep?.body).toMatch(/Apply at the top/i);
   });
 });

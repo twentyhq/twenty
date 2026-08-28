@@ -125,15 +125,21 @@ standalone pages under `src/modules/opportunity/how-to-process/`. They must
 stay in lockstep with real operator behaviour. Update the matching page and
 its copy test in the same change when you change any of:
 
-- Intake (marketplace brief already Listed + Discord; TFT unlisted;
-  `/twenty-lead-brief` writes Design Doc URL)
+- Intake (marketplace brief already Listed + Discord; Twenty Internal
+  unlisted; `/twenty-lead-brief` writes Design Doc URL)
 - Listing (`Listed` flip → Discord; daily digest; Open Briefs membership)
 - Intro (`Intro Sent At` turns Listed off; Invited applications)
 - Win (set Partner → Won / Declined; Backup stays; unassign reopens Won
   to Applied; Deals stages New → Screening → Meeting → Proposal → Customer)
 - Apply (Open Briefs listed-only; pitch minimum; one pitch; state meaning)
+- Bundled skills (`twenty-lead-brief`, `twenty-partner-shortlist`,
+  `twenty-partner-intro`): local run, expected output, GitHub URL of
+  `SKILL.md`
+- Match via MCP: the operator can ask the agent to write CRM changes
 
-Pages stay operator language. No file names on the pages.
+Pages stay operator language. Skill names, slash triggers, and GitHub URLs
+of those bundled skills are allowed on How to process. Open Briefs,
+My Applications, and Apply links are required on How to apply.
 
 ## Where does new code go?
 

@@ -10,7 +10,7 @@ export default defineNavigationMenuItem({
   name: 'How to process',
   type: NavigationMenuItemType.PAGE_LAYOUT,
   icon: 'IconListCheck',
-  position: 2,
+  position: 10,
   folderUniversalIdentifier: '0b2e499a-ae74-45e0-af08-243e19fc56aa',
   pageLayoutUniversalIdentifier: HOW_TO_PROCESS_PAGE_LAYOUT_ID,
 });

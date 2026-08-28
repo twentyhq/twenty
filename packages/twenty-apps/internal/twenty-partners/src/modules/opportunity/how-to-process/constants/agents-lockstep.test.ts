@@ -15,6 +15,11 @@ describe('AGENTS.md opportunity playbooks', () => {
     expect(AGENTS_MD).toContain('How to apply');
     expect(AGENTS_MD).toContain('lockstep');
     expect(AGENTS_MD).toContain('Open Briefs');
+    expect(AGENTS_MD).toContain('My Applications');
     expect(AGENTS_MD).toMatch(/operator language/i);
+    expect(AGENTS_MD).toContain('twenty-lead-brief');
+    expect(AGENTS_MD).toContain('GitHub');
+    expect(AGENTS_MD).toContain('Twenty Internal');
+    expect(AGENTS_MD).toContain('MCP');
   });
 });

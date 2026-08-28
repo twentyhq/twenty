@@ -1,23 +1,36 @@
 import { MIN_PITCH_LENGTH } from 'src/modules/application/apply/constants/apply-to-brief.constants';
 import { type PlaybookStep } from 'src/modules/opportunity/how-to-process/types/playbook-step.type';
+import { type PlaybookLink } from 'src/modules/opportunity/how-to-process/utils/split-playbook-marks';
 
 export const HOW_TO_APPLY_KICKER = 'Playbook';
 export const HOW_TO_APPLY_TITLE = 'How to apply';
 export const HOW_TO_APPLY_LEDE =
-  'Open Briefs is the live marketplace. Apply here. Twenty picks the winner.';
+  'Open Briefs is the live marketplace. Apply is pinned at the top of each brief. Twenty picks the winner.';
+
+export const HOW_TO_APPLY_HEADER_LINKS: readonly PlaybookLink[] = [
+  { label: 'Apply', action: 'apply' },
+  { label: 'Open Briefs', action: 'openBriefs' },
+  { label: 'My Applications', action: 'myApplications' },
+];
+
+export const HOW_TO_APPLY_BODY_LINKS: readonly PlaybookLink[] = [
+  { label: 'Open Briefs', action: 'openBriefs' },
+  { label: 'My Applications', action: 'myApplications' },
+  { label: 'Apply', action: 'apply' },
+];
 
 export const HOW_TO_APPLY_STEPS: PlaybookStep[] = [
   {
     num: '01',
     heading: 'Open Briefs',
     variant: 'step',
-    body: 'This list is the live marketplace. A row is here only when Twenty has listed the brief. If it is gone, the brief is closed or already in intro.',
+    body: 'Open Briefs is the live marketplace. A row is here only when Twenty has listed the brief. If it is gone, the brief is closed or already in intro.',
   },
   {
     num: '02',
     heading: 'Apply',
     variant: 'step',
-    body: `Open the brief. Use Apply. Write a pitch of at least ${MIN_PITCH_LENGTH} characters. The pitch is set once. You cannot edit it later. One application per brief. A second apply is rejected.`,
+    body: `Open the brief. Use Apply at the top of the record. Write a pitch of at least ${MIN_PITCH_LENGTH} characters. The pitch is set once. You cannot edit it later. One application per brief. A second apply is rejected.`,
     note: 'If Twenty already invited you, Apply fills the pitch on that row. The state stays Invited or Backup. Introduced, Won, and Declined cannot take a pitch.',
   },
   {

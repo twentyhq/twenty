@@ -1,3 +1,5 @@
+import { type PlaybookSkill } from 'src/modules/opportunity/how-to-process/constants/playbook-skills';
+
 export type PlaybookStep = {
   num: string;
   heading: string;
@@ -5,5 +7,6 @@ export type PlaybookStep = {
   bullets?: string[];
   pills?: string[];
   note?: string;
+  skills?: readonly PlaybookSkill[];
   variant: 'step' | 'lastStep';
 };
