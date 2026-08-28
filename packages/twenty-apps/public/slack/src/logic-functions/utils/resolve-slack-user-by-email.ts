@@ -7,6 +7,7 @@ export type ResolvedSlackUser = {
   slackUserId: string;
   slackTeamId: string | undefined;
   displayName: string | undefined;
+  isRegularUserAccount: boolean;
 };
 
 const USERS_NOT_FOUND_ERROR_CODE = 'users_not_found';
@@ -53,5 +54,9 @@ export const resolveSlackUserByEmail = async (
     displayName: [user.profile?.display_name, user.real_name].find(
       isNonEmptyString,
     ),
+    // Guests resolve for manual linking, but only a regular account's email
+    // certifies its owner: consumers key instant activation on it, and the
+    // write decision refuses the match for restricted accounts.
+    isRegularUserAccount: !user.is_restricted && !user.is_ultra_restricted,
   };
 };

@@ -76,7 +76,19 @@ describe('resolveSlackUserByEmail', () => {
       slackUserId: SLACK_USER_ID,
       slackTeamId: INSTALLED_TEAM_ID,
       displayName: 'Ada Lovelace',
+      isRegularUserAccount: true,
     });
+  });
+
+  it('should resolve a guest but not vouch for their email', async () => {
+    lookupByEmailMock.mockResolvedValue({
+      user: buildSlackUser({ is_restricted: true }),
+    });
+
+    const resolved = await resolveSlackUserByEmail(client, EMAIL);
+
+    expect(resolved?.slackUserId).toBe(SLACK_USER_ID);
+    expect(resolved?.isRegularUserAccount).toBe(false);
   });
 
   it('should prefer the profile display name over the real name', async () => {
