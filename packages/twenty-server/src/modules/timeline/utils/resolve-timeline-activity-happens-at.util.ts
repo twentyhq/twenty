@@ -54,6 +54,32 @@ const LINKED_HAPPENS_AT_FIELD_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIE
     STANDARD_OBJECTS.calendarEvent.fields.startsAt.universalIdentifier,
 };
 
+export const resolveLinkedTimelineActivityHappensAtFieldName = ({
+  sourceFlatObjectMetadata,
+  flatFieldMetadataMaps,
+}: {
+  sourceFlatObjectMetadata: FlatObjectMetadata;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+}): string | undefined => {
+  const happensAtFieldUniversalIdentifier =
+    LINKED_HAPPENS_AT_FIELD_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER[
+      sourceFlatObjectMetadata.universalIdentifier
+    ];
+
+  if (!isDefined(happensAtFieldUniversalIdentifier)) {
+    return undefined;
+  }
+
+  return findFlatEntityByUniversalIdentifier({
+    flatEntityMaps: flatFieldMetadataMaps,
+    universalIdentifier: happensAtFieldUniversalIdentifier,
+  })?.name;
+};
+
+export const parseLinkedTimelineActivityHappensAt = (
+  value: unknown,
+): Date | undefined => parseTimestamp(value);
+
 export const resolveLinkedTimelineActivityHappensAt = ({
   event,
   ruleAction,
@@ -67,21 +93,13 @@ export const resolveLinkedTimelineActivityHappensAt = ({
   sourceRecord: Record<string, unknown> | undefined;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): Date => {
-  const happensAtFieldUniversalIdentifier =
+  const happensAtFieldName =
     ruleAction === 'linked'
-      ? LINKED_HAPPENS_AT_FIELD_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER[
-          sourceFlatObjectMetadata.universalIdentifier
-        ]
+      ? resolveLinkedTimelineActivityHappensAtFieldName({
+          sourceFlatObjectMetadata,
+          flatFieldMetadataMaps,
+        })
       : undefined;
-
-  if (!isDefined(happensAtFieldUniversalIdentifier)) {
-    return resolveTimelineActivityHappensAt(event);
-  }
-
-  const happensAtFieldName = findFlatEntityByUniversalIdentifier({
-    flatEntityMaps: flatFieldMetadataMaps,
-    universalIdentifier: happensAtFieldUniversalIdentifier,
-  })?.name;
 
   const sourceRecordHappensAt = isDefined(happensAtFieldName)
     ? parseTimestamp(sourceRecord?.[happensAtFieldName])

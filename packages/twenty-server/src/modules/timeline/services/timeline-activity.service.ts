@@ -26,13 +26,14 @@ import { type ResolvedTimelineActivityTarget } from 'src/modules/timeline/types/
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
 import { type TimelineActivityRuleAction } from 'src/modules/timeline/types/timeline-activity-rule-action.type';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
+import { buildLinkedTimelineActivityHappensAtSyncUpdates } from 'src/modules/timeline/utils/build-linked-timeline-activity-happens-at-sync-updates.util';
 import { resolveLinkedRecordCachedName } from 'src/modules/timeline/utils/resolve-linked-record-cached-name.util';
 import {
   resolveLinkedTimelineActivityHappensAt,
   resolveTimelineActivityHappensAt,
 } from 'src/modules/timeline/utils/resolve-timeline-activity-happens-at.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { doesTimelineActivityLinkChange } from 'src/modules/timeline/utils/does-timeline-activity-link-change.util';
+import { doesObjectRecordEventChangeFields } from 'src/modules/timeline/utils/does-object-record-event-change-fields.util';
 import { resolveTimelineActivityRuleAction } from 'src/modules/timeline/utils/resolve-timeline-activity-rule-action.util';
 
 type BuildPayloadsForRuleArgs = {
@@ -171,6 +172,20 @@ export class TimelineActivityService {
       }, buildSystemAuthContext(workspaceId))
     ).flat();
 
+    if (action === 'updated') {
+      await this.timelineActivityRepository.updateLinkedTimelineActivitiesHappensAt(
+        {
+          workspaceId,
+          updates: buildLinkedTimelineActivityHappensAtSyncUpdates({
+            rules: sourceRules,
+            events: eventsWithoutPositionDiff,
+            flatFieldMetadataMaps,
+            resolveTimelineActivityType,
+          }),
+        },
+      );
+    }
+
     if (payloads.length === 0) {
       return;
     }
@@ -270,9 +285,9 @@ export class TimelineActivityService {
           rule.targetShape.kind !== 'DIRECT_RELATION' ||
           action !== 'updated' ||
           ruleAction === 'updated' ||
-          doesTimelineActivityLinkChange({
+          doesObjectRecordEventChangeFields({
             event,
-            joinColumnNames: rule.targetShape.targetJoinColumns.map(
+            fieldNames: rule.targetShape.targetJoinColumns.map(
               ({ joinColumnName }) => joinColumnName,
             ),
           }),
@@ -420,9 +435,9 @@ export class TimelineActivityService {
       .filter(
         (event) =>
           action !== 'updated' ||
-          doesTimelineActivityLinkChange({
+          doesObjectRecordEventChangeFields({
             event,
-            joinColumnNames: [
+            fieldNames: [
               targetShape.junctionSourceJoinColumnName,
               ...targetShape.targetJoinColumns.map(
                 ({ joinColumnName }) => joinColumnName,

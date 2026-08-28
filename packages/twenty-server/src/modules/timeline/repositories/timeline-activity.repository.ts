@@ -11,6 +11,7 @@ import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/work
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
+import { type LinkedTimelineActivityHappensAtSyncUpdate } from 'src/modules/timeline/utils/build-linked-timeline-activity-happens-at-sync-updates.util';
 import {
   buildTimelineActivityMergeKey,
   buildTimelineActivityMergeKeyCandidates,
@@ -55,6 +56,40 @@ export class TimelineActivityRepository {
         shouldFilterMissingTargets: true,
       });
     }
+  }
+
+  async updateLinkedTimelineActivitiesHappensAt({
+    workspaceId,
+    updates,
+  }: {
+    workspaceId: string;
+    updates: LinkedTimelineActivityHappensAtSyncUpdate[];
+  }) {
+    if (updates.length === 0) {
+      return;
+    }
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const timelineActivityRepository =
+        this.workspaceOrmManager.getRepository<ObjectLiteral>(
+          'timelineActivity',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      await Promise.all(
+        updates.map(({ linkedRecordId, timelineActivityTypeIds, happensAt }) =>
+          timelineActivityRepository.update(
+            {
+              linkedRecordId,
+              timelineActivityTypeId: In(timelineActivityTypeIds),
+            },
+            { happensAt },
+          ),
+        ),
+      );
+    }, authContext);
   }
 
   private async upsertTimelineActivitiesOnce({
