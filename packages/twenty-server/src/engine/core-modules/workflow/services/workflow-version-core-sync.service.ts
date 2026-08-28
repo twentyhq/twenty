@@ -20,6 +20,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { WorkflowVersionValidationGateService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation-gate.service';
 
 @Injectable()
 export class WorkflowVersionCoreSyncService {
@@ -32,6 +33,7 @@ export class WorkflowVersionCoreSyncService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workflowVersionValidationGateService: WorkflowVersionValidationGateService,
   ) {}
 
   async upsertToCore(
@@ -299,6 +301,14 @@ export class WorkflowVersionCoreSyncService {
           });
 
           if (isDefined(workflowVersion)) {
+            await this.workflowVersionValidationGateService.assertWorkflowVersionIsValidOrThrow(
+              {
+                workspaceId,
+                trigger: workflowVersion.trigger,
+                steps: workflowVersion.steps,
+              },
+            );
+
             await this.mirrorWorkflowVersionWrite({
               workspaceId,
               transactionScope,

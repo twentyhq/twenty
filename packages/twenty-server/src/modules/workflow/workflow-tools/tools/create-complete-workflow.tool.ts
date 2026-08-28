@@ -19,7 +19,6 @@ import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
-import { summarizeValidation } from 'src/modules/workflow/workflow-tools/utils/summarize-validation.util';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 const createCompleteWorkflowSchema = z.object({
@@ -58,7 +57,6 @@ type CreateCompleteWorkflowToolDeps = Pick<
   | 'workflowTriggerService'
   | 'workspaceOrmManager'
   | 'recordPositionService'
-  | 'workflowValidationService'
   | 'workflowVersionCoreSyncService'
 >;
 
@@ -79,6 +77,7 @@ CRITICAL SCHEMA REQUIREMENTS:
 - Each step MUST include: id (must be a valid UUID), name, type, valid, settings
 - CREATE_RECORD actions MUST have objectName and objectRecord in settings.input
 - objectRecord must contain actual field values, not just field names
+- RICH_TEXT fields (e.g. a note/task "body") MUST be an object, not a string: { "markdown": "your text, may contain {{variables}}" }. A bare string is rejected.
 - Use "trigger" as the id for the trigger step in edges
 - Step positions are computed automatically; do not provide coordinates
 
@@ -99,7 +98,7 @@ IMPORTANT: The tool schema provides comprehensive field descriptions, examples, 
 
 This is the most efficient way for AI to create workflows as it handles all the complexity in one call.
 
-The response includes a compact validation summary. For the full validation report with available variable paths, call validate_workflow once after your edits — not after every change.`,
+For a validation report with available variable paths, call validate_workflow after creation.`,
   inputSchema: createCompleteWorkflowSchema,
   execute: async (parameters: {
     name: string;
@@ -175,13 +174,6 @@ The response includes a compact validation summary. For the full validation repo
         });
       }
 
-      const validation =
-        await deps.workflowValidationService.validateWorkflowDefinition({
-          workspaceId: context.workspaceId,
-          trigger: parameters.trigger,
-          steps: parameters.steps,
-        });
-
       return {
         success: true,
         message: `Workflow "${parameters.name}" created successfully with ${parameters.steps.length} steps`,
@@ -190,7 +182,6 @@ The response includes a compact validation summary. For the full validation repo
           workflowVersionId,
           name: parameters.name,
           stepIds: parameters.steps.map((step) => step.id),
-          validation: summarizeValidation(validation),
         },
         recordReferences: [
           {
