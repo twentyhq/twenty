@@ -59,6 +59,7 @@ describe('RecordPageAddWidgetSection', () => {
 
   it('shows the expanded chooser', () => {
     render(<RecordPageAddWidgetSection />);
+    expect(screen.getByText('Add widget')).toBeInTheDocument();
     expect(screen.getByText('Fields group')).toBeInTheDocument();
     expect(screen.getByText('Field')).toBeInTheDocument();
     expect(screen.getByText('Note')).toBeInTheDocument();
@@ -68,6 +69,36 @@ describe('RecordPageAddWidgetSection', () => {
     ).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'Field icon' })).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'Note icon' })).toBeInTheDocument();
+  });
+
+  it('shows only Add widget without a separate title in compact mode', () => {
+    render(<RecordPageAddWidgetSection isCompact />);
+
+    expect(screen.getAllByText('Add widget')).toHaveLength(1);
+    expect(screen.queryByText('Fields group')).not.toBeInTheDocument();
+    expect(screen.queryByText('Field')).not.toBeInTheDocument();
+    expect(screen.queryByText('Note')).not.toBeInTheDocument();
+    expect(screen.queryByText('More widgets')).not.toBeInTheDocument();
+  });
+
+  it('opens the picker at the first widget from compact mode', async () => {
+    const insertionContext = {
+      targetWidgetId: 'first-widget',
+      direction: 'above',
+    } as const;
+    render(
+      <RecordPageAddWidgetSection
+        isCompact
+        insertionContext={insertionContext}
+      />,
+    );
+
+    await userEvent.setup().click(screen.getByText('Add widget'));
+
+    expect(mockNavigateToMoreWidgets).toHaveBeenCalledWith(insertionContext);
+    expect(mockCreateRecordPageFieldsWidget).not.toHaveBeenCalled();
+    expect(mockCreateRecordPageFieldWidget).not.toHaveBeenCalled();
+    expect(mockCreateRecordPageNoteWidget).not.toHaveBeenCalled();
   });
 
   it('creates a Note in the current tab through the shared creator', async () => {
@@ -87,7 +118,7 @@ describe('RecordPageAddWidgetSection', () => {
     ['Field', 'new-field'],
     ['Note', 'new-note'],
   ])(
-    'inserts %s before the first widget from the top chooser',
+    'inserts %s at the expanded chooser insertion point',
     async (label, widgetId) => {
       const insertionContext = {
         targetWidgetId: 'first-widget',
@@ -106,7 +137,7 @@ describe('RecordPageAddWidgetSection', () => {
     },
   );
 
-  it('preserves the top insertion point when opening More widgets', async () => {
+  it('preserves the insertion point when opening More widgets', async () => {
     const insertionContext = {
       targetWidgetId: 'first-widget',
       direction: 'above',

@@ -116,13 +116,15 @@ jest.mock(
   () => ({
     RecordPageAddWidgetSection: ({
       insertionContext = null,
+      isCompact = false,
     }: {
       insertionContext?: WidgetInsertionContext;
+      isCompact?: boolean;
     }) => (
       <div>
-        <span>Add widget</span>
+        {!isCompact && <span>Add widget</span>}
         <button onClick={() => mockNavigateToMoreWidgets(insertionContext)}>
-          More widgets
+          {isCompact ? 'Add widget' : 'More widgets'}
         </button>
       </div>
     ),
@@ -179,7 +181,7 @@ describe('PageLayoutContent', () => {
     expect(screen.getAllByText('Add widget')).toHaveLength(2);
   });
 
-  it('shows expanded choosers before and after fit-content widgets without a top plus', () => {
+  it('shows a compact top picker and an expanded bottom chooser without a top plus', () => {
     mockIsInEditMode = true;
     render(<PageLayoutContent />);
     const [topChooser, bottomChooser] = screen.getAllByText('Add widget');
@@ -201,7 +203,8 @@ describe('PageLayoutContent', () => {
     mockIsInEditMode = true;
     render(<PageLayoutContent />);
     const user = userEvent.setup();
-    const [topPicker, bottomPicker] = screen.getAllByRole('button', {
+    const topPicker = screen.getByRole('button', { name: 'Add widget' });
+    const bottomPicker = screen.getByRole('button', {
       name: 'More widgets',
     });
 
@@ -225,7 +228,7 @@ describe('PageLayoutContent', () => {
     WidgetType.WORKFLOW,
     WidgetType.CALL_RECORDING_SUMMARY,
   ])(
-    'keeps only the top expanded chooser when a %s widget fills the tab',
+    'keeps only the compact top picker when a %s widget fills the tab',
     (type) => {
       mockIsInEditMode = true;
       mockTab.widgets.push({
@@ -286,7 +289,7 @@ describe('PageLayoutContent', () => {
     });
   });
 
-  it('replaces the top plus with an expanded chooser above a lone full-height widget', async () => {
+  it('shows a compact picker above a lone full-height widget', async () => {
     mockIsInEditMode = true;
     mockTab.widgets = [
       { ...mockWidget, id: 'tasks', title: 'Tasks', type: WidgetType.TASKS },
@@ -306,7 +309,7 @@ describe('PageLayoutContent', () => {
 
     await userEvent
       .setup()
-      .click(screen.getByRole('button', { name: 'More widgets' }));
+      .click(screen.getByRole('button', { name: 'Add widget' }));
     expect(mockNavigateToMoreWidgets).toHaveBeenCalledWith({
       targetWidgetId: 'tasks',
       direction: 'above',
@@ -324,7 +327,7 @@ describe('PageLayoutContent', () => {
     render(<PageLayoutContent />);
     const user = userEvent.setup();
     await user.tab();
-    expect(screen.getByRole('button', { name: 'More widgets' })).toHaveFocus();
+    expect(screen.getByRole('button', { name: 'Add widget' })).toHaveFocus();
     await user.tab();
     await user.tab();
     expect(

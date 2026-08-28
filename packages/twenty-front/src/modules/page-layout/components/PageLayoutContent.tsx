@@ -58,6 +58,7 @@ export const PageLayoutContent = () => {
       header={
         isVerticalListInEditMode && isDefined(firstWidget) ? (
           <RecordPageAddWidgetSection
+            isCompact
             insertionContext={{
               targetWidgetId: firstWidget.id,
               direction: 'above',
