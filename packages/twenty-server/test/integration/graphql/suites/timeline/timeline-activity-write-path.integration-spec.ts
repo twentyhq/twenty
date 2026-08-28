@@ -179,6 +179,7 @@ const ROUTED_CALENDAR_EVENT_PARTICIPANT_ID =
   '20202020-7171-4000-8000-000000000015';
 const ROUTED_MESSAGE_RECEIVED_AT = '2024-03-15T09:30:00.000Z';
 const ROUTED_CALENDAR_EVENT_STARTS_AT = '2024-04-02T14:00:00.000Z';
+const ROUTED_CALENDAR_EVENT_RESCHEDULED_STARTS_AT = '2024-04-09T16:00:00.000Z';
 const ATTACHMENT_ID = '20202020-7171-4000-8000-000000000016';
 const ORM_V2_COMPOSITE_COMPANY_ID = '20202020-7171-4000-8000-000000000017';
 const BATCH_COMPANY_IDS = [
@@ -706,6 +707,71 @@ describe('timeline activity write path (integration)', () => {
       });
       expect(new Date(calendarActivities[0].happensAt).toISOString()).toBe(
         ROUTED_CALENDAR_EVENT_STARTS_AT,
+      );
+    });
+
+    it('should move linked activities when a calendar event is rescheduled', async () => {
+      await updateRecord({
+        objectMetadataSingularName: 'calendarEvent',
+        recordId: ROUTED_CALENDAR_EVENT_ID,
+        data: { title: 'Generic calendar routing renamed' },
+      });
+
+      const activitiesAfterRename = await findTimelineActivities({
+        targetPersonId: { eq: ROUTED_PERSON_ID },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow(
+            'linked',
+            CALENDAR_EVENT_UNIVERSAL_IDENTIFIER,
+          ),
+        },
+      });
+
+      expect(activitiesAfterRename).toHaveLength(1);
+      expect(new Date(activitiesAfterRename[0].happensAt).toISOString()).toBe(
+        ROUTED_CALENDAR_EVENT_STARTS_AT,
+      );
+
+      await updateRecord({
+        objectMetadataSingularName: 'calendarEvent',
+        recordId: ROUTED_CALENDAR_EVENT_ID,
+        data: { startsAt: ROUTED_CALENDAR_EVENT_RESCHEDULED_STARTS_AT },
+      });
+
+      const activitiesAfterReschedule = await findTimelineActivities({
+        targetPersonId: { eq: ROUTED_PERSON_ID },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow(
+            'linked',
+            CALENDAR_EVENT_UNIVERSAL_IDENTIFIER,
+          ),
+        },
+      });
+
+      expect(activitiesAfterReschedule).toHaveLength(1);
+      expect(
+        new Date(activitiesAfterReschedule[0].happensAt).toISOString(),
+      ).toBe(ROUTED_CALENDAR_EVENT_RESCHEDULED_STARTS_AT);
+
+      await updateRecord({
+        objectMetadataSingularName: 'calendarEvent',
+        recordId: ROUTED_CALENDAR_EVENT_ID,
+        data: { startsAt: null },
+      });
+
+      const activitiesAfterClearing = await findTimelineActivities({
+        targetPersonId: { eq: ROUTED_PERSON_ID },
+        timelineActivityTypeId: {
+          eq: timelineActivityTypeIdForOrThrow(
+            'linked',
+            CALENDAR_EVENT_UNIVERSAL_IDENTIFIER,
+          ),
+        },
+      });
+
+      expect(activitiesAfterClearing).toHaveLength(1);
+      expect(new Date(activitiesAfterClearing[0].happensAt).toISOString()).toBe(
+        ROUTED_CALENDAR_EVENT_RESCHEDULED_STARTS_AT,
       );
     });
   });
