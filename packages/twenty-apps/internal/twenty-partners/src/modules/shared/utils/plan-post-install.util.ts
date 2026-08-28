@@ -1,7 +1,7 @@
 // The release that narrowed the Application RLS predicate to `partnerUser IS me`.
-export const STRICT_APPLICATION_RLS_VERSION = [1, 6, 1] as const;
+const STRICT_APPLICATION_RLS_VERSION = [1, 6, 1] as const;
 // The release that grants opportunity read access to applicants after unlist.
-export const APPLICANT_OPPORTUNITY_VISIBILITY_VERSION = [1, 8, 1] as const;
+const APPLICANT_OPPORTUNITY_VISIBILITY_VERSION = [1, 8, 1] as const;
 
 const isBeforeAppVersion = (
   version: string,

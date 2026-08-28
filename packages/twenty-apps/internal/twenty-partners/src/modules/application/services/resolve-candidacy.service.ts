@@ -4,12 +4,12 @@ import type {
   ObjectRecordCreateEvent,
 } from 'twenty-sdk/define';
 
-import { deleteApplication } from 'src/modules/application/graphql/mutations/delete-application';
-import { updateApplication } from 'src/modules/application/graphql/mutations/update-application';
-import { findDuplicateApplication } from 'src/modules/application/graphql/queries/find-duplicate-application';
 import { findPartnerByMember } from 'src/modules/shared/graphql/queries/find-partner-by-member';
 import { getPartnerOwner } from 'src/modules/shared/graphql/queries/get-partner-owner';
 import { grantOpportunityVisibility } from 'src/modules/shared/services/grant-opportunity-visibility.service';
+import { findDuplicateApplication } from 'src/modules/application/graphql/queries/find-duplicate-application';
+import { deleteApplication } from 'src/modules/application/graphql/mutations/delete-application';
+import { updateApplication } from 'src/modules/application/graphql/mutations/update-application';
 
 type ApplicationCreatedProperties = DatabaseEventPayload<
   ObjectRecordCreateEvent<CoreSchema.Application>
