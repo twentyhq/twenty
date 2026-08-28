@@ -36,8 +36,11 @@ export const fromCreateTimelineActivityTypeInputToFlatTimelineActivityTypeOrThro
     workspaceId: string;
     now?: string;
   }): FlatTimelineActivityType => {
-    const { label, icon = null, targetRelationFieldMetadataId } =
-      createTimelineActivityTypeInput;
+    const {
+      label,
+      icon = null,
+      targetRelationFieldMetadataId,
+    } = createTimelineActivityTypeInput;
     const action = RELATION_TIMELINE_ACTIVITY_TYPE_ACTION;
 
     const targetRelationFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
