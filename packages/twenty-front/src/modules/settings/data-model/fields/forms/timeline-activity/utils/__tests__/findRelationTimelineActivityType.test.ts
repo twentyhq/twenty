@@ -58,7 +58,11 @@ describe('findRelationTimelineActivityType', () => {
   it('finds the type emitting on the action through this relation', () => {
     expect(
       findRelationTimelineActivityType({
-        timelineActivityTypes: [RECORD_LINKED, RELATION_UNLINKED, RELATION_LINKED],
+        timelineActivityTypes: [
+          RECORD_LINKED,
+          RELATION_UNLINKED,
+          RELATION_LINKED,
+        ],
         relationFieldUniversalIdentifier: RELATION_FIELD_UNIVERSAL_IDENTIFIER,
         action: 'linked',
       }),

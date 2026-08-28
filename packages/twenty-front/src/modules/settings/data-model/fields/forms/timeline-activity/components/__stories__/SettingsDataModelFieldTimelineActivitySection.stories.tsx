@@ -4,7 +4,6 @@ import { HttpResponse, graphql } from 'msw';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelFieldTimelineActivitySection } from '@/settings/data-model/fields/forms/timeline-activity/components/SettingsDataModelFieldTimelineActivitySection';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -59,26 +58,6 @@ const buildFindManyTimelineActivityTypesHandler = (
       },
     });
   });
-
-// Mirrors the standard recordLinked type: it emits on every linked record, so
-// it carries no relation to route through.
-const RECORD_LINKED_TIMELINE_ACTIVITY_TYPE: MockedTimelineActivityType = {
-  __typename: 'TimelineActivityType',
-  id: '20202020-0000-0000-0000-000000000003',
-  applicationId: CUSTOM_WORKSPACE_APPLICATION_MOCK.id,
-  universalIdentifier: '20202020-0000-0000-0000-000000000004',
-  name: 'recordLinked',
-  label: 'linked a record',
-  icon: 'IconLink',
-  emit: {
-    __typename: 'TimelineActivityTypeEmit',
-    on: 'linked',
-    objectUniversalIdentifier: null,
-    through: null,
-  },
-  frontComponentUniversalIdentifier: null,
-  isActive: true,
-};
 
 const meta: Meta<typeof SettingsDataModelFieldTimelineActivitySection> = {
   title:
@@ -144,30 +123,6 @@ export const WithExistingEmitter: Story = {
             frontComponentUniversalIdentifier: null,
             isActive: true,
           },
-        ]),
-      ],
-    },
-  },
-};
-
-// A relation field created in this session is in the store without its
-// universal identifier until the metadata is refetched.
-export const WithFieldCreatedInThisSession: Story = {
-  args: {
-    // The generated type declares universalIdentifier as always present, which
-    // is why the cast is needed to reproduce the state the store actually holds.
-    fieldMetadataItem: relationFieldMetadataItem
-      ? ({
-          ...relationFieldMetadataItem,
-          universalIdentifier: undefined,
-        } as unknown as FieldMetadataItem)
-      : undefined,
-  },
-  parameters: {
-    msw: {
-      handlers: [
-        buildFindManyTimelineActivityTypesHandler([
-          RECORD_LINKED_TIMELINE_ACTIVITY_TYPE,
         ]),
       ],
     },
