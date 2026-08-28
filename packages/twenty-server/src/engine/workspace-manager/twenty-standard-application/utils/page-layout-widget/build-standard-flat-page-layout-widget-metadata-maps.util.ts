@@ -90,7 +90,6 @@ const RECORD_PAGE_FIELDS_VIEW_NAME_BY_OBJECT: Partial<
   messageChannelMessageAssociationMessageFolder:
     'messageChannelMessageAssociationMessageFolderRecordPageFields',
   messageParticipant: 'messageParticipantRecordPageFields',
-  messageThread: 'messageThreadRecordPageFields',
   note: 'noteRecordPageFields',
   opportunity: 'opportunityRecordPageFields',
   person: 'personRecordPageFields',

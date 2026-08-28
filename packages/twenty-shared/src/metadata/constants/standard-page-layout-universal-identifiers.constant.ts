@@ -349,6 +349,7 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
           fields: 'Fields',
           participants: 'Participants',
           callRecordings: 'Call Recordings',
+          relations: 'Relations',
         },
       },
       timeline: {
@@ -500,7 +501,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
       home: {
         title: 'Home',
         widgets: {
-          fields: 'Fields',
           emailThread: 'Thread',
         },
       },

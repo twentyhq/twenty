@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { AddBlocklistScopeFieldCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1787933689056-add-blocklist-scope-field.command';
+import { AddCalendarEventRelationsWidgetCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1787936377021-add-calendar-event-relations-widget.command';
 import { EnableEditLayoutAcrossAppCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1787906715270-enable-edit-layout-across-app.command';
 import { BackfillLinkedTimelineActivityHappensAtCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1787914663665-backfill-linked-timeline-activity-happens-at.command';
 import { ConfigureTimelineActivityHappensAtCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1787918663365-configure-timeline-activity-happens-at.command';
-import { SurfaceTargetRelationsOnRecordPagesCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1787936377021-surface-target-relations-on-record-pages.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -23,10 +23,10 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   ],
   providers: [
     AddBlocklistScopeFieldCommand,
+    AddCalendarEventRelationsWidgetCommand,
     EnableEditLayoutAcrossAppCommand,
     BackfillLinkedTimelineActivityHappensAtCommand,
     ConfigureTimelineActivityHappensAtCommand,
-    SurfaceTargetRelationsOnRecordPagesCommand,
   ],
 })
 export class V2_38_UpgradeVersionCommandModule {}

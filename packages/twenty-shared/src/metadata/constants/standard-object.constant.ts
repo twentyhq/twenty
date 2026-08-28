@@ -227,7 +227,6 @@ export const STANDARD_OBJECTS = {
           'conferenceLink',
           'location',
           'description',
-          'calendarEventTargets',
           'externalCreatedAt',
           'externalUpdatedAt',
           'iCalUid',
@@ -631,15 +630,6 @@ export const STANDARD_OBJECTS = {
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageThread,
         fields: STANDARD_OBJECT_FIELDS.messageThread,
         viewFieldNames: ['subject', 'messages', 'updatedAt', 'createdAt'],
-      }),
-      messageThreadRecordPageFields: buildStandardObjectRecordPageFieldsView({
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageThread,
-        fields: STANDARD_OBJECT_FIELDS.messageThread,
-        viewFieldNames: ['messageThreadTargets'],
-        viewFieldGroupNames: {
-          general: 'General',
-        },
       }),
     },
   },

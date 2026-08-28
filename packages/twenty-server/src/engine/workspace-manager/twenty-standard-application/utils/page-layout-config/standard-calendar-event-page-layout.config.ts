@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import {
   STANDARD_OBJECTS,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
@@ -17,6 +18,7 @@ import {
   type StandardPageLayoutConfig,
   type StandardPageLayoutTabConfig,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-page-layout-config.type';
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 const CALENDAR_EVENT_PAGE_TABS = {
   home: {
@@ -51,6 +53,21 @@ const CALENDAR_EVENT_PAGE_TABS = {
         position: VERTICAL_LIST_LAYOUT_POSITIONS.THIRD,
         fieldUniversalIdentifier:
           STANDARD_OBJECTS.calendarEvent.fields.callRecordings
+            .universalIdentifier,
+      },
+      relations: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
+            .tabs.home.widgets.relations.universalIdentifier,
+        // Authored through i18nLabel because the compiled catalog only gains
+        // this title once the i18n pipeline reruns.
+        title: i18nLabel(
+          msg({ message: `Relations`, context: 'pageLayoutWidget.title' }),
+        ),
+        type: WidgetType.FIELD,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.FOURTH,
+        fieldUniversalIdentifier:
+          STANDARD_OBJECTS.calendarEvent.fields.calendarEventTargets
             .universalIdentifier,
       },
     },

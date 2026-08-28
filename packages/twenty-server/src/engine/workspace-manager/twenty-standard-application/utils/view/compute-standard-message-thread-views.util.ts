@@ -23,17 +23,5 @@ export const computeStandardMessageThreadViews = (
         icon: 'IconTable',
       },
     }),
-    messageThreadRecordPageFields: createStandardViewFlatMetadata({
-      ...args,
-      objectName: 'messageThread',
-      context: {
-        viewName: 'messageThreadRecordPageFields',
-        name: 'Message Thread Record Page Fields',
-        type: ViewType.FIELDS_WIDGET,
-        key: null,
-        position: 0,
-        icon: 'IconList',
-      },
-    }),
   };
 };

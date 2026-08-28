@@ -56,19 +56,5 @@ export const computeStandardMessageThreadViewFields = (
         size: 150,
       },
     }),
-    messageThreadRecordPageFieldsMessageThreadTargets:
-      createStandardViewFieldFlatMetadata({
-        ...args,
-        objectName: 'messageThread',
-        context: {
-          viewName: 'messageThreadRecordPageFields',
-          viewFieldName: 'messageThreadTargets',
-          fieldName: 'messageThreadTargets',
-          position: 0,
-          isVisible: true,
-          size: 150,
-          viewFieldGroupName: 'general',
-        },
-      }),
   };
 };

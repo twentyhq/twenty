@@ -15,6 +15,7 @@ import {
 } from '@/ui/layout/components/WidgetContentContainer';
 import { EmailThreadComposer } from '@/page-layout/widgets/email-thread/components/EmailThreadComposer';
 import { EmailThreadIntermediaryMessages } from '@/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages';
+import { WidgetRelationsHeader } from '@/page-layout/widgets/components/WidgetRelationsHeader';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { t } from '@lingui/core/macro';
@@ -93,6 +94,7 @@ export const EmailThreadWidget = ({
   if (threadLoading || !thread || !messages.length) {
     return (
       <StyledWidgetContentContainer>
+        <WidgetRelationsHeader />
         <StyledWidgetScrollContainer>
           <EmailLoader loadingText={t`Loading thread`} />
         </StyledWidgetScrollContainer>
@@ -102,6 +104,7 @@ export const EmailThreadWidget = ({
 
   return (
     <StyledWidgetContentContainer>
+      <WidgetRelationsHeader />
       <StyledWidgetScrollContainer>
         {firstMessages.map((message) => (
           <EmailThreadMessage

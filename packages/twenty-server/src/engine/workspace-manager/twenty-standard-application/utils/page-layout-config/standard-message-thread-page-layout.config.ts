@@ -20,12 +20,6 @@ const MESSAGE_THREAD_PAGE_TABS = {
         .home.universalIdentifier,
     ...TAB_PROPS.home,
     widgets: {
-      fields: {
-        universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageThreadRecordPage
-            .tabs.home.widgets.fields.universalIdentifier,
-        ...WIDGET_PROPS.fields,
-      },
       emailThread: {
         universalIdentifier:
           STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageThreadRecordPage
