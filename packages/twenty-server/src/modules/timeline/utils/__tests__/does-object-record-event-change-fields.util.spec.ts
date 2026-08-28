@@ -1,8 +1,8 @@
 import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
 
-import { doesTimelineActivityLinkChange } from 'src/modules/timeline/utils/does-timeline-activity-link-change.util';
+import { doesObjectRecordEventChangeFields } from 'src/modules/timeline/utils/does-object-record-event-change-fields.util';
 
-const JOIN_COLUMN_NAMES = ['messageId', 'personId', 'workspaceMemberId'];
+const FIELD_NAMES = ['messageId', 'personId', 'workspaceMemberId'];
 
 const buildEvent = ({
   updatedFields,
@@ -16,41 +16,41 @@ const buildEvent = ({
     properties: { updatedFields, diff },
   }) as ObjectRecordBaseEvent<Record<string, unknown>>;
 
-describe('doesTimelineActivityLinkChange', () => {
-  it('detects a join column in the ORM updated fields', () => {
+describe('doesObjectRecordEventChangeFields', () => {
+  it('detects a watched field in the ORM updated fields', () => {
     expect(
-      doesTimelineActivityLinkChange({
+      doesObjectRecordEventChangeFields({
         event: buildEvent({ updatedFields: ['message', 'messageId'] }),
-        joinColumnNames: JOIN_COLUMN_NAMES,
+        fieldNames: FIELD_NAMES,
       }),
     ).toBe(true);
   });
 
   it('supports events carrying only a diff', () => {
     expect(
-      doesTimelineActivityLinkChange({
+      doesObjectRecordEventChangeFields({
         event: buildEvent({
           diff: { personId: { before: null, after: 'id' } },
         }),
-        joinColumnNames: JOIN_COLUMN_NAMES,
+        fieldNames: FIELD_NAMES,
       }),
     ).toBe(true);
   });
 
   it('ignores unrelated field changes', () => {
     expect(
-      doesTimelineActivityLinkChange({
+      doesObjectRecordEventChangeFields({
         event: buildEvent({ updatedFields: ['handle'] }),
-        joinColumnNames: JOIN_COLUMN_NAMES,
+        fieldNames: FIELD_NAMES,
       }),
     ).toBe(false);
   });
 
   it('returns false when change metadata is absent', () => {
     expect(
-      doesTimelineActivityLinkChange({
+      doesObjectRecordEventChangeFields({
         event: buildEvent({}),
-        joinColumnNames: JOIN_COLUMN_NAMES,
+        fieldNames: FIELD_NAMES,
       }),
     ).toBe(false);
   });

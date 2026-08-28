@@ -8,7 +8,7 @@ msgstr ""
 "Language: ro\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-27 11:31\n"
+"PO-Revision-Date: 2026-08-28 12:00\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
@@ -1487,6 +1487,11 @@ msgstr "Benjamin Reynolds"
 #: src/sections/testimonials/partner-testimonials.data.ts
 msgid "Bertrams"
 msgstr "Bertrams"
+
+#. js-lingui-id: CrZWSz
+#: src/partner-application/partner-application-copy.ts
+msgid "Best proof first: a live Twenty instance URL, a public repo, or a YouTube link. Loom, Drive and file links are accepted but slower to review."
+msgstr "Cea mai bună dovadă mai întâi: un URL activ al unei instanțe Twenty, un repo public sau un link YouTube. Linkurile Loom, Drive și către fișiere sunt acceptate, dar sunt revizuite mai lent."
 
 #. js-lingui-id: BSmDFu
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4698,11 +4703,6 @@ msgstr "Ca pentru orice obiect obișnuit, adaugă câmpuri personalizate la sarc
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Link field"
 msgstr "Câmp Link"
-
-#. js-lingui-id: YOe6r4
-#: src/partner-application/partner-application-copy.ts
-msgid "Link that shows the work (Loom, GitHub, Notion, Drive, public write-up…). No public workspace? Share a short Loom."
-msgstr "Link care arată munca (Loom, GitHub, Notion, Drive, articol public etc.). Nu ai un spațiu de lucru public? Trimite un Loom scurt."
 
 #. js-lingui-id: gggTBm
 #: src/sections/footer/footer.data.ts

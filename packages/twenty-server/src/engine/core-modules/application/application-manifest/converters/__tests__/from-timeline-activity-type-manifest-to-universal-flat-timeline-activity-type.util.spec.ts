@@ -7,6 +7,7 @@ const RELATION_UNIVERSAL_IDENTIFIER = '44444444-4444-4444-8444-444444444444';
 const TRIGGER_UNIVERSAL_IDENTIFIER = '55555555-5555-4555-8555-555555555555';
 const REPLACED_TYPE_UNIVERSAL_IDENTIFIER =
   '66666666-6666-4666-8666-666666666666';
+const HAPPENS_AT_UNIVERSAL_IDENTIFIER = '77777777-7777-4777-8777-777777777777';
 const NOW = '2026-08-22T00:00:00.000Z';
 
 describe('fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType', () => {
@@ -34,6 +35,34 @@ describe('fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType', 
       objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
       targetRelationFieldUniversalIdentifier: RELATION_UNIVERSAL_IDENTIFIER,
       triggerFieldUniversalIdentifiers: [TRIGGER_UNIVERSAL_IDENTIFIER],
+      happensAtFieldUniversalIdentifier: null,
+    });
+  });
+
+  it('maps the through happensAt field into flat metadata', () => {
+    expect(
+      fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType({
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        now: NOW,
+        timelineActivityTypeManifest: {
+          universalIdentifier: TYPE_UNIVERSAL_IDENTIFIER,
+          name: 'deploymentLinked',
+          label: 'linked a deployment',
+          emit: {
+            on: 'linked',
+            objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+            through: {
+              relationFieldUniversalIdentifier: RELATION_UNIVERSAL_IDENTIFIER,
+              happensAtFieldUniversalIdentifier:
+                HAPPENS_AT_UNIVERSAL_IDENTIFIER,
+            },
+          },
+        },
+      }),
+    ).toMatchObject({
+      action: 'linked',
+      targetRelationFieldUniversalIdentifier: RELATION_UNIVERSAL_IDENTIFIER,
+      happensAtFieldUniversalIdentifier: HAPPENS_AT_UNIVERSAL_IDENTIFIER,
     });
   });
 

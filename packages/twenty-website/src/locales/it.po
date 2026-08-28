@@ -8,7 +8,7 @@ msgstr ""
 "Language: it\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-27 11:31\n"
+"PO-Revision-Date: 2026-08-28 12:00\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1487,6 +1487,11 @@ msgstr "Benjamin Reynolds"
 #: src/sections/testimonials/partner-testimonials.data.ts
 msgid "Bertrams"
 msgstr "Bertrams"
+
+#. js-lingui-id: CrZWSz
+#: src/partner-application/partner-application-copy.ts
+msgid "Best proof first: a live Twenty instance URL, a public repo, or a YouTube link. Loom, Drive and file links are accepted but slower to review."
+msgstr "Prima le migliori prove: un URL di un'istanza Twenty attiva, un repository pubblico o un link YouTube. I link a Loom, Drive e ai file sono accettati, ma richiedono più tempo per essere esaminati."
 
 #. js-lingui-id: BSmDFu
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4696,11 +4701,6 @@ msgstr "Come per qualsiasi oggetto standard, aggiungi campi personalizzati alle 
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Link field"
 msgstr "Campo Link"
-
-#. js-lingui-id: YOe6r4
-#: src/partner-application/partner-application-copy.ts
-msgid "Link that shows the work (Loom, GitHub, Notion, Drive, public write-up…). No public workspace? Share a short Loom."
-msgstr "Link che mostri il lavoro (Loom, GitHub, Notion, Drive, articolo pubblico…). Nessun workspace pubblico? Condividi un breve Loom."
 
 #. js-lingui-id: gggTBm
 #: src/sections/footer/footer.data.ts
