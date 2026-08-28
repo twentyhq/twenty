@@ -67,10 +67,13 @@ export const useChatReferenceTarget = (
       reference.kind === 'legacyFieldById' ? reference.fieldMetadataItemId : '',
   });
 
-  const buildFieldTarget = (
-    fieldMetadataItem: { id: string; name: string } | undefined,
-    objectMetadataItem: { namePlural: string } | undefined,
-  ): ChatReferenceTarget => {
+  const buildFieldTarget = ({
+    fieldMetadataItem,
+    objectMetadataItem,
+  }: {
+    fieldMetadataItem: { id: string; name: string } | undefined;
+    objectMetadataItem: { namePlural: string } | undefined;
+  }): ChatReferenceTarget => {
     if (
       !isDefined(fieldMetadataItem) ||
       !isDefined(objectMetadataItem) ||
@@ -151,18 +154,18 @@ export const useChatReferenceTarget = (
     case 'field': {
       const { fieldName } = reference;
 
-      return buildFieldTarget(
-        referencedObjectMetadataItem?.fields.find(
+      return buildFieldTarget({
+        fieldMetadataItem: referencedObjectMetadataItem?.fields.find(
           (fieldMetadataItem) => fieldMetadataItem.name === fieldName,
         ),
-        referencedObjectMetadataItem ?? undefined,
-      );
+        objectMetadataItem: referencedObjectMetadataItem ?? undefined,
+      });
     }
     case 'legacyFieldById': {
-      return buildFieldTarget(
-        legacyFieldMetadataItem,
-        legacyFieldObjectMetadataItem,
-      );
+      return buildFieldTarget({
+        fieldMetadataItem: legacyFieldMetadataItem,
+        objectMetadataItem: legacyFieldObjectMetadataItem,
+      });
     }
     default:
       return assertUnreachable(reference);

@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconList, useIcons } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -43,29 +42,25 @@ export const SidePanelSettingsObjectMetadataPage = () => {
     ? objectMetadataItemsByIdMap.get(viewableObjectMetadataId)
     : undefined;
 
-  const settingsFields = useMemo(
-    () =>
-      (objectMetadataItem?.fields ?? [])
-        .filter(
-          (fieldMetadataItem) =>
-            fieldMetadataItem.isActive && !fieldMetadataItem.isSystem,
-        )
-        .flatMap((fieldMetadataItem) =>
-          isFieldTypeSupportedInSettings(fieldMetadataItem.type)
-            ? [{ fieldMetadataItem, fieldType: fieldMetadataItem.type }]
-            : [],
-        )
-        .sort((firstField, secondField) =>
-          firstField.fieldMetadataItem.label.localeCompare(
-            secondField.fieldMetadataItem.label,
-          ),
-        ),
-    [objectMetadataItem],
-  );
-
   if (!isDefined(objectMetadataItem)) {
     return null;
   }
+
+  const settingsFields = objectMetadataItem.fields
+    .filter(
+      (fieldMetadataItem) =>
+        fieldMetadataItem.isActive && !fieldMetadataItem.isSystem,
+    )
+    .flatMap((fieldMetadataItem) =>
+      isFieldTypeSupportedInSettings(fieldMetadataItem.type)
+        ? [{ fieldMetadataItem, fieldType: fieldMetadataItem.type }]
+        : [],
+    )
+    .sort((firstField, secondField) =>
+      firstField.fieldMetadataItem.label.localeCompare(
+        secondField.fieldMetadataItem.label,
+      ),
+    );
 
   const ObjectIcon = getIcon(objectMetadataItem.icon, PROPOSED_OBJECT_ICON);
 
