@@ -1,2 +1,0 @@
-export const DROP_GRID_POSITION_FROM_PAGE_LAYOUT_WIDGET_UPGRADE_COMMAND_NAME =
-  '2.38.0_DropGridPositionFromPageLayoutWidgetFastInstanceCommand_1787921462345';
