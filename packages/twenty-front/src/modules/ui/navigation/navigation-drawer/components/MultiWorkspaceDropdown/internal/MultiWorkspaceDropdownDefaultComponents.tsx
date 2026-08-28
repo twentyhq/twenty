@@ -3,7 +3,10 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import { useAuth } from '@/auth/hooks/useAuth';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
+import {
+  countAvailableWorkspaces,
+  getAvailableWorkspacePathAndSearchParams,
+} from '@/auth/utils/availableWorkspacesUtils';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
@@ -85,8 +88,13 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   };
 
   const handleChange = async (availableWorkspace: AvailableWorkspace) => {
-    redirectToWorkspaceDomain(
+    const { pathname, searchParams } =
+      getAvailableWorkspacePathAndSearchParams(availableWorkspace);
+
+    await redirectToWorkspaceDomain(
       getWorkspaceUrl(availableWorkspace.workspaceUrls),
+      pathname,
+      searchParams,
     );
   };
 
@@ -154,31 +162,38 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             ]
               .filter(({ id }) => id !== currentWorkspace?.id)
               .slice(0, 3)
-              .map((availableWorkspace) => (
-                <UndecoratedLink
-                  key={availableWorkspace.id}
-                  to={buildWorkspaceUrl(
-                    getWorkspaceUrl(availableWorkspace.workspaceUrls),
-                  )}
-                  onClick={(event) => {
-                    event?.preventDefault();
-                    handleChange(availableWorkspace);
-                  }}
-                >
-                  <MenuItemSelectAvatar
-                    text={availableWorkspace.displayName ?? t`(No name)`}
-                    avatar={
-                      <Avatar
-                        placeholder={availableWorkspace.displayName || ''}
-                        avatarUrl={getAbsoluteImageUrl(
-                          availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
-                        )}
-                      />
-                    }
-                    selected={false}
-                  />
-                </UndecoratedLink>
-              ))}
+              .map((availableWorkspace) => {
+                const { pathname, searchParams } =
+                  getAvailableWorkspacePathAndSearchParams(availableWorkspace);
+
+                return (
+                  <UndecoratedLink
+                    key={availableWorkspace.id}
+                    to={buildWorkspaceUrl(
+                      getWorkspaceUrl(availableWorkspace.workspaceUrls),
+                      pathname,
+                      searchParams,
+                    )}
+                    onClick={(event) => {
+                      event?.preventDefault();
+                      handleChange(availableWorkspace);
+                    }}
+                  >
+                    <MenuItemSelectAvatar
+                      text={availableWorkspace.displayName ?? t`(No name)`}
+                      avatar={
+                        <Avatar
+                          placeholder={availableWorkspace.displayName || ''}
+                          avatarUrl={getAbsoluteImageUrl(
+                            availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
+                          )}
+                        />
+                      }
+                      selected={false}
+                    />
+                  </UndecoratedLink>
+                );
+              })}
             {availableWorkspacesCount > 4 && (
               <MenuItem
                 LeftIcon={IconSwitchHorizontal}

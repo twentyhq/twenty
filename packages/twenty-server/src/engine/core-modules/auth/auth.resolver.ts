@@ -45,6 +45,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
@@ -137,9 +138,12 @@ export class AuthResolver {
     private readonly throttlerService: ThrottlerService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
+    private readonly twentyConfigService: TwentyConfigService,
     private authService: AuthService,
     private renewTokenService: RenewTokenService,
     private userService: UserService,
@@ -788,6 +792,27 @@ export class AuthResolver {
     origin: string,
     tokenWorkspaceId: string,
   ): Promise<WorkspaceEntity> {
+    const isMultiWorkspaceSubdomainEnabled = this.twentyConfigService.get(
+      'IS_MULTIWORKSPACE_SUBDOMAIN_ENABLED',
+    );
+
+    if (!isMultiWorkspaceSubdomainEnabled) {
+      const workspace = await this.workspaceRepository.findOne({
+        where: { id: tokenWorkspaceId },
+        relations: ['workspaceSSOIdentityProviders'],
+      });
+
+      assertIsDefinedOrThrow(
+        workspace,
+        new AuthException(
+          'Workspace not found',
+          AuthExceptionCode.WORKSPACE_NOT_FOUND,
+        ),
+      );
+
+      return workspace;
+    }
+
     const workspace =
       await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,

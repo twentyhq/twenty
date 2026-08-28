@@ -1,6 +1,8 @@
 import { useLingui } from '@lingui/react/macro';
 
+import { isCloudflareIntegrationEnabledState } from '@/client-config/states/isCloudflareIntegrationEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { isMultiWorkspaceSubdomainEnabledState } from '@/client-config/states/isMultiWorkspaceSubdomainEnabledState';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
@@ -29,6 +31,12 @@ export const SettingsGeneral = () => {
 
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
+  );
+  const isMultiWorkspaceSubdomainEnabled = useAtomStateValue(
+    isMultiWorkspaceSubdomainEnabledState,
+  );
+  const isCloudflareIntegrationEnabled = useAtomStateValue(
+    isCloudflareIntegrationEnabledState,
   );
 
   const hasSecurityPermission = useHasPermissionFlag(
@@ -65,15 +73,21 @@ export const SettingsGeneral = () => {
           <H2Title title={t`Name`} description={t`Name of your workspace`} />
           <NameField />
         </Section>
-        {isMultiWorkspaceEnabled && (
-          <Section>
-            <H2Title
-              title={t`Workspace domain`}
-              description={t`Edit your subdomain name or set a custom domain.`}
-            />
-            <SettingsWorkspaceDomainCard />
-          </Section>
-        )}
+        {isMultiWorkspaceEnabled &&
+          (isMultiWorkspaceSubdomainEnabled ||
+            isCloudflareIntegrationEnabled) && (
+            <Section>
+              <H2Title
+                title={t`Workspace domain`}
+                description={
+                  isMultiWorkspaceSubdomainEnabled
+                    ? t`Edit your subdomain name or set a custom domain.`
+                    : t`Set a custom domain for your workspace.`
+                }
+              />
+              <SettingsWorkspaceDomainCard />
+            </Section>
+          )}
         <Section>
           <DeleteWorkspace />
         </Section>

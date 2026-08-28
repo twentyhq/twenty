@@ -59,6 +59,10 @@ describe('AuthResolver', () => {
           useValue: {},
         },
         {
+          provide: getRepositoryToken(WorkspaceEntity),
+          useValue: {},
+        },
+        {
           provide: getRepositoryToken(UserEntity),
           useValue: {},
         },

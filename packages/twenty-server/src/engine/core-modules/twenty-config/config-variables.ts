@@ -1898,6 +1898,15 @@ export class ConfigVariables {
   IS_MULTIWORKSPACE_ENABLED = false;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Enable or disable subdomain-based routing for multi-workspace. When disabled, multi-workspace operates on a single root domain.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_MULTIWORKSPACE_SUBDOMAIN_ENABLED = true;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
       'Number of inactive days before sending a deletion warning for workspaces. Used in the workspace deletion cron job to determine when to send warning emails.',

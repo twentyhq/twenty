@@ -5,7 +5,11 @@ import { useDebouncedCallback } from 'use-debounce';
 
 export const useRedirect = () => {
   const redirect = useDebouncedCallback((url: string, target?: string) => {
-    window.open(url, target ?? '_self');
+    if (!target || target === '_self') {
+      window.location.assign(url);
+    } else {
+      window.open(url, target);
+    }
   }, 1);
 
   return {

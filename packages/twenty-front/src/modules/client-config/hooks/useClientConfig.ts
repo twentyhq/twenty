@@ -26,6 +26,7 @@ import { maintenanceModeState } from '@/client-config/states/maintenanceModeStat
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { isMultiWorkspaceSubdomainEnabledState } from '@/client-config/states/isMultiWorkspaceSubdomainEnabledState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
@@ -59,6 +60,9 @@ export const useClientConfig = (): UseClientConfigResult => {
   );
   const setIsMultiWorkspaceEnabled = useSetAtomState(
     isMultiWorkspaceEnabledState,
+  );
+  const setIsMultiWorkspaceSubdomainEnabled = useSetAtomState(
+    isMultiWorkspaceSubdomainEnabledState,
   );
   const setIsEmailVerificationRequired = useSetAtomState(
     isEmailVerificationRequiredState,
@@ -182,6 +186,9 @@ export const useClientConfig = (): UseClientConfigResult => {
       setIsAnalyticsEnabled(clientConfig.analyticsEnabled);
       setIsDeveloperDefaultSignInPrefilled(clientConfig.signInPrefilled);
       setIsMultiWorkspaceEnabled(clientConfig.isMultiWorkspaceEnabled);
+      setIsMultiWorkspaceSubdomainEnabled(
+        clientConfig.isMultiWorkspaceSubdomainEnabled ?? true,
+      );
       setIsEmailVerificationRequired(clientConfig.isEmailVerificationRequired);
       setBilling(clientConfig.billing);
       setSupportChat(clientConfig.support);
@@ -279,6 +286,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsEmailVerificationRequired,
     setIsImapSmtpCaldavEnabled,
     setIsMultiWorkspaceEnabled,
+    setIsMultiWorkspaceSubdomainEnabled,
     setIsEmailingDomainInDemoMode,
     setIsClickHouseConfigured,
     setIsCloudflareIntegrationEnabled,

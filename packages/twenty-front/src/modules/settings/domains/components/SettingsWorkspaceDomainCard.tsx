@@ -1,6 +1,7 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCloudflareIntegrationEnabledState } from '@/client-config/states/isCloudflareIntegrationEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { isMultiWorkspaceSubdomainEnabledState } from '@/client-config/states/isMultiWorkspaceSubdomainEnabledState';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -27,20 +28,28 @@ export const SettingsWorkspaceDomainCard = () => {
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
+  const isMultiWorkspaceSubdomainEnabled = useAtomStateValue(
+    isMultiWorkspaceSubdomainEnabledState,
+  );
   const isCloudflareIntegrationEnabled = useAtomStateValue(
     isCloudflareIntegrationEnabledState,
   );
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  if (!isMultiWorkspaceEnabled) {
+  if (
+    !isMultiWorkspaceEnabled ||
+    (!isMultiWorkspaceSubdomainEnabled && !isCloudflareIntegrationEnabled)
+  ) {
     return null;
   }
 
   return (
     <StyledContainer>
-      <UndecoratedLink to={getSettingsPath(SettingsPath.Subdomain)} fullWidth>
-        <SettingsCard title={t`Subdomain`} Icon={<IconWorldWww />} />
-      </UndecoratedLink>
+      {isMultiWorkspaceSubdomainEnabled && (
+        <UndecoratedLink to={getSettingsPath(SettingsPath.Subdomain)} fullWidth>
+          <SettingsCard title={t`Subdomain`} Icon={<IconWorldWww />} />
+        </UndecoratedLink>
+      )}
       {isCloudflareIntegrationEnabled && (
         <UndecoratedLink
           to={getSettingsPath(SettingsPath.CustomDomain)}

@@ -25,6 +25,7 @@ export class DomainServerConfigService {
 
     if (
       this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') &&
+      this.twentyConfigService.get('IS_MULTIWORKSPACE_SUBDOMAIN_ENABLED') &&
       this.twentyConfigService.get('DEFAULT_SUBDOMAIN')
     ) {
       baseUrl.hostname = `${this.twentyConfigService.get('DEFAULT_SUBDOMAIN')}.${baseUrl.hostname}`;
@@ -64,6 +65,14 @@ export class DomainServerConfigService {
     const { hostname: originHostname } = new URL(url);
 
     const frontDomain = this.getFrontUrl().hostname;
+
+    if (originHostname === frontDomain) {
+      return {
+        subdomain: undefined,
+        domain: null,
+        isPublicDomainOrigin: false,
+      };
+    }
 
     const isFrontdomain = originHostname.endsWith(`.${frontDomain}`);
 

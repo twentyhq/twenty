@@ -1,6 +1,7 @@
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -135,6 +136,7 @@ export const SignInUpGlobalScopeForm = () => {
 
   const { form } = useSignInUpForm();
   const { handleResetPassword } = useHandleResetPassword();
+  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const returnToPath = useAtomStateValue(returnToPathState);
 
   useQuery(GetWorkspaceCreationDefaultsDocument, {
@@ -148,6 +150,24 @@ export const SignInUpGlobalScopeForm = () => {
     );
 
     return buildWorkspaceUrl(
+      getWorkspaceUrl(availableWorkspace.workspaceUrls),
+      pathname,
+      {
+        ...searchParams,
+        ...(isNonEmptyString(returnToPath) ? { returnToPath } : {}),
+      },
+    );
+  };
+
+  const handleSelectAvailableWorkspace = async (
+    availableWorkspace: AvailableWorkspace,
+  ) => {
+    const { pathname, searchParams } = getAvailableWorkspacePathAndSearchParams(
+      availableWorkspace,
+      { email: form.getValues('email') },
+    );
+
+    await redirectToWorkspaceDomain(
       getWorkspaceUrl(availableWorkspace.workspaceUrls),
       pathname,
       {
@@ -174,6 +194,10 @@ export const SignInUpGlobalScopeForm = () => {
               >
                 <UndecoratedLink
                   to={getAvailableWorkspaceUrl(availableWorkspace)}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    handleSelectAvailableWorkspace(availableWorkspace);
+                  }}
                 >
                   <StyledWorkspaceItem>
                     <StyledWorkspaceContent>

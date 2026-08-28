@@ -5,6 +5,7 @@ import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/Onboardin
 import { useWorkspaceSubdomainField } from '@/auth/sign-in-up/hooks/useWorkspaceSubdomainField';
 import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { isMultiWorkspaceSubdomainEnabledState } from '@/client-config/states/isMultiWorkspaceSubdomainEnabledState';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -142,6 +143,9 @@ export const SignInUpWorkspaceCreationForm = () => {
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
+  const isMultiWorkspaceSubdomainEnabled = useAtomStateValue(
+    isMultiWorkspaceSubdomainEnabledState,
+  );
 
   const isCreatingWorkspace = useAtomStateValue(isCreatingWorkspaceState);
   const setIsCreatingWorkspace = useSetAtomState(isCreatingWorkspaceState);
@@ -150,6 +154,9 @@ export const SignInUpWorkspaceCreationForm = () => {
     undefined,
   );
   const hiddenFileInputRef = useRef<HTMLInputElement>(null);
+
+  const isSubdomainInputEnabled =
+    isMultiWorkspaceEnabled && isMultiWorkspaceSubdomainEnabled;
 
   const {
     workspaceName,
@@ -162,13 +169,13 @@ export const SignInUpWorkspaceCreationForm = () => {
     handleSubdomainChange,
     applySuggestionValue,
   } = useWorkspaceSubdomainField({
-    isSubdomainEnabled: isMultiWorkspaceEnabled,
+    isSubdomainEnabled: isSubdomainInputEnabled,
   });
 
   const isContinueDisabled =
     workspaceName.trim() === '' ||
     isCreatingWorkspace ||
-    (isMultiWorkspaceEnabled && !isAvailable);
+    (isSubdomainInputEnabled && !isAvailable);
 
   const openFilePicker = () => {
     hiddenFileInputRef.current?.click();
@@ -300,7 +307,7 @@ export const SignInUpWorkspaceCreationForm = () => {
             fullWidth
           />
         </OnboardingStepAnimatedItem>
-        {isMultiWorkspaceEnabled && (
+        {isSubdomainInputEnabled && (
           <OnboardingStepAnimatedItem index={4}>
             <StyledSubdomainSection>
               <TextInput

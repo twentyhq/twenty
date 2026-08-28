@@ -240,9 +240,11 @@ export class WorkspaceDomainsService {
   private getTwentyWorkspaceUrl(subdomain: string) {
     const url = this.domainServerConfigService.getFrontUrl();
 
-    url.hostname = this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')
-      ? `${subdomain}.${url.hostname}`
-      : url.hostname;
+    url.hostname =
+      this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') &&
+      this.twentyConfigService.get('IS_MULTIWORKSPACE_SUBDOMAIN_ENABLED')
+        ? `${subdomain}.${url.hostname}`
+        : url.hostname;
 
     return url.toString();
   }
