@@ -167,6 +167,37 @@ mutation ResetTimelineActivityType($id: UUID!) {
 }
 ```
 
+## Creating a type from a relation field
+
+Workspaces can also define a type without shipping an application. On a relation field of a custom object, enable "Log to timeline" in the field's advanced settings: linking a record through that relation then writes a typed entry on the related record's timeline.
+
+The same thing is available on the metadata API through `createTimelineActivityType`, guarded by the `APPLICATIONS` settings permission:
+
+```graphql
+mutation CreateTimelineActivityType(
+  $label: String!
+  $icon: String
+  $targetRelationFieldMetadataId: UUID!
+) {
+  createTimelineActivityType(
+    input: {
+      label: $label
+      icon: $icon
+      targetRelationFieldMetadataId: $targetRelationFieldMetadataId
+    }
+  ) {
+    id
+    name
+    label
+    icon
+  }
+}
+```
+
+The emitted action is always `linked`, and `targetRelationFieldMetadataId` supplies the `emit.through` relation, so the type follows the same fan-out rules as an application-declared emitter. The name derives from the source object, the field and the action.
+
+Creation is limited to relations on workspace custom objects, since every custom object shares the workspace custom application. Emitting on a standard or application object still goes through the type replacement flow. Emitters that already exist on those objects remain visible and mutable from their relation field.
+
 ## Configuration fields
 
 | Field                                             | Required  | Description                                                      |
