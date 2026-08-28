@@ -63,7 +63,7 @@ export const SettingsDataModelFieldTimelineActivitySection = ({
             title={t`Log to timeline`}
             description={toggleDescription}
             checked={isTimelineLoggingEnabled}
-            disabled={disabled || isMutating || !canToggleTimelineLogging}
+            disabled={disabled || isMutating}
             advancedMode
             onChange={setTimelineLoggingEnabled}
           />
