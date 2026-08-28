@@ -4,7 +4,7 @@ import {
 } from 'twenty-shared/metadata';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { SurfaceTargetRelationsOnRecordPagesCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1787909425119-surface-target-relations-on-record-pages.command';
+import { SurfaceTargetRelationsOnRecordPagesCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1787926797984-surface-target-relations-on-record-pages.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';

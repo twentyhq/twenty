@@ -34,7 +34,7 @@ const MESSAGE_THREAD_FIELDS_WIDGET_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageThreadRecordPage.tabs.home
     .widgets.fields.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.38.0', 1787909425119)
+@RegisteredWorkspaceCommand('2.38.0', 1787926797984)
 @Command({
   name: 'upgrade:2-38:surface-target-relations-on-record-pages',
   description:
