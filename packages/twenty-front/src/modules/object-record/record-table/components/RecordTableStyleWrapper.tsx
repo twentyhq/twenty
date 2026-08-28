@@ -210,8 +210,8 @@ const StyledTable = styled.div<{
     // the anchor below would stick to it instead of the table. The margin keeps
     // the scroll shadow, which paints outside the box.
     div.header-cell.${getRecordTableColumnFieldWidthClassName(0)},
-    div.table-cell.${getRecordTableColumnFieldWidthClassName(0)},
-    div.table-cell-0-0 {
+      div.table-cell.${getRecordTableColumnFieldWidthClassName(0)},
+      div.table-cell-0-0 {
       overflow: clip;
       overflow-clip-margin: 4px;
     }
@@ -241,9 +241,9 @@ const StyledTable = styled.div<{
       position: absolute;
       top: 0;
       width: calc(
-        var(${getRecordTableColumnFieldWidthCSSVariableName(0)}) -
-          var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) -
-          var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})
+        var(${getRecordTableColumnFieldWidthCSSVariableName(0)}) - var(
+            ${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}
+          ) - var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})
       );
     }
 
