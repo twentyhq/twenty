@@ -73,6 +73,7 @@ describe('slackResolveUserLinkHandler', () => {
       slackUserId: 'U1',
       slackTeamId: INSTALLED_TEAM_ID,
       displayName: 'Ada Lovelace',
+      isRegularUserAccount: true,
     });
 
     const result = await slackResolveUserLinkHandler(
@@ -91,12 +92,32 @@ describe('slackResolveUserLinkHandler', () => {
     });
   });
 
+  it('should not carry a guest email into the preview', async () => {
+    resolveSlackUserByEmailMock.mockResolvedValue({
+      slackUserId: 'U1',
+      slackTeamId: INSTALLED_TEAM_ID,
+      displayName: 'Guest',
+      isRegularUserAccount: false,
+    });
+
+    const result = await slackResolveUserLinkHandler(
+      buildPayload({ email: 'guest@twenty.com' }),
+    );
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.slackUser.email).toBeUndefined();
+    }
+  });
+
   it('should fail closed when the installed workspace cannot be confirmed', async () => {
     authTestMock.mockRejectedValue(new Error('network'));
     resolveSlackUserByEmailMock.mockResolvedValue({
       slackUserId: 'U1',
       slackTeamId: INSTALLED_TEAM_ID,
       displayName: 'Ada Lovelace',
+      isRegularUserAccount: true,
     });
 
     const result = await slackResolveUserLinkHandler(

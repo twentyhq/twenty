@@ -138,9 +138,10 @@ export const slackResolveUserLinkHandler = async (
       slackUserId: resolvedUser.slackUserId,
       slackTeamId: resolvedTeamId,
       displayName: resolvedUser.displayName,
-      // users.lookupByEmail matches on the profile email, so a hit certifies
-      // this is the account's Slack email.
-      email,
+      // Mirror the id path and the search route: a hit certifies the address,
+      // but only a regular account's email vouches for its owner, so a guest
+      // must not preview the instant activation the save will refuse.
+      email: resolvedUser.isRegularUserAccount ? email : undefined,
       isInInstalledWorkspace: resolvedTeamId === installedTeamId,
     },
   };
