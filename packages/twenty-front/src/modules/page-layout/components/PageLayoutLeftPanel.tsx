@@ -1,4 +1,3 @@
-import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
 import { PageLayoutContent } from '@/page-layout/components/PageLayoutContent';
 import { PageLayoutScrollResetEffect } from '@/page-layout/components/PageLayoutScrollResetEffect';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
@@ -19,11 +18,10 @@ const StyledContainer = styled.div`
   background: var(--record-card-background-color);
   border-bottom-left-radius: 8px;
   border-right: 1px solid ${themeCssVariables.border.color.medium};
-  border-top-left-radius: 8px;
   box-sizing: border-box;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto 1fr;
+  grid-template-rows: minmax(0, 1fr);
   height: 100%;
 
   .page-layout-scroll-wrapper {
@@ -71,12 +69,9 @@ export const PageLayoutLeftPanel = ({
         scrollWrapperInstanceId={scrollWrapperInstanceId}
         targetRecordId={targetRecordIdentifier.id}
       />
-      <SummaryCard
-        objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
-        objectRecordId={targetRecordIdentifier.id}
-        isInSidePanel={isInSidePanel}
-      />
 
+      {/* The pinned left panel is always a column of cards, even with a single
+          widget: solo presentation is a main-tab-area concept. */}
       <PageLayoutContentProvider
         value={{
           tabId: pinnedLeftTabId,

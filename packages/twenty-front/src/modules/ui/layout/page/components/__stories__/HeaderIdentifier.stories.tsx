@@ -51,6 +51,14 @@ export const Record: Story = {
   },
 };
 
+export const RecordPage: Story = {
+  args: {
+    ...Record.args,
+    fontSize: 'lg',
+  },
+  play: Record.play,
+};
+
 export const Chart: Story = {
   args: {
     icon: <IconChartBar size={16} />,

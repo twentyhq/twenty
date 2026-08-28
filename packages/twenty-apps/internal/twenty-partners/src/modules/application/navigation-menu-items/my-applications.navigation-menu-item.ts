@@ -1,4 +1,7 @@
-import { NavigationMenuItemType, defineNavigationMenuItem } from 'twenty-sdk/define';
+import {
+  NavigationMenuItemType,
+  defineNavigationMenuItem,
+} from 'twenty-sdk/define';
 
 import { MY_APPLICATIONS_VIEW_UNIVERSAL_IDENTIFIER } from 'src/modules/application/views/my-applications.view';
 

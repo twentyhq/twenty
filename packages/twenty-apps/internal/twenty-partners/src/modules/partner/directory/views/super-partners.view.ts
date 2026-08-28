@@ -52,14 +52,16 @@ export default defineView({
     },
     {
       universalIdentifier: '83e5d3e6-38c3-4f56-adeb-2265ec61201f',
-      fieldMetadataUniversalIdentifier: PARTNER_SCOPE_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        PARTNER_SCOPE_FIELD_UNIVERSAL_IDENTIFIER,
       position: 4,
       isVisible: true,
       size: 200,
     },
     {
       universalIdentifier: '98de8562-2d00-4965-8963-872d4e5cdff9',
-      fieldMetadataUniversalIdentifier: PARTNER_REGION_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        PARTNER_REGION_FIELD_UNIVERSAL_IDENTIFIER,
       position: 5,
       isVisible: true,
       size: 200,

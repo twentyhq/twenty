@@ -27,16 +27,10 @@ import {
   PARTNER_WEBSITE_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/modules/partner/constants/partner-field-universal-identifiers';
 import { PARTNER_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import {
-  PARTNER_CONTENTS_ON_PARTNER_FIELD_ID,
-} from 'src/modules/partner/fields/partner-content-partner.field';
+import { PARTNER_CONTENTS_ON_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-content-partner.field';
 import { PARTNER_COMPANY_FIELD_ID } from 'src/modules/partner/fields/partner-company.field';
-import {
-  PARTNER_LINKS_ON_PARTNER_FIELD_ID,
-} from 'src/modules/partner/fields/partner-link-partner.field';
-import {
-  PARTNER_SERVICES_ON_PARTNER_FIELD_ID,
-} from 'src/modules/partner/fields/partner-service-partner.field';
+import { PARTNER_LINKS_ON_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-link-partner.field';
+import { PARTNER_SERVICES_ON_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-service-partner.field';
 import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-user-on-partner.field';
 
 export const PARTNER_RECORD_PAGE_FIELDS_VIEW_ID =
@@ -91,7 +85,8 @@ export default defineView({
     },
     {
       universalIdentifier: '2304f4b9-4faf-4813-8ef7-fb7697d64a92',
-      fieldMetadataUniversalIdentifier: PARTNER_SCOPE_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        PARTNER_SCOPE_FIELD_UNIVERSAL_IDENTIFIER,
       position: 5,
       isVisible: true,
     },
@@ -118,7 +113,8 @@ export default defineView({
     },
     {
       universalIdentifier: 'a0c47e12-6435-458a-b608-621bcee57474',
-      fieldMetadataUniversalIdentifier: PARTNER_SKILLS_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        PARTNER_SKILLS_FIELD_UNIVERSAL_IDENTIFIER,
       position: 9,
       isVisible: true,
     },
@@ -145,13 +141,15 @@ export default defineView({
     },
     {
       universalIdentifier: 'a85dc9bc-a5f5-446e-a36c-492f1b6c0035',
-      fieldMetadataUniversalIdentifier: PARTNER_REGION_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        PARTNER_REGION_FIELD_UNIVERSAL_IDENTIFIER,
       position: 13,
       isVisible: true,
     },
     {
       universalIdentifier: '90d11276-1666-4c36-9055-00c4680c3168',
-      fieldMetadataUniversalIdentifier: PARTNER_COUNTRY_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        PARTNER_COUNTRY_FIELD_UNIVERSAL_IDENTIFIER,
       position: 14,
       isVisible: true,
     },
@@ -177,13 +175,15 @@ export default defineView({
     },
     {
       universalIdentifier: '5c8727a3-6e4b-41c7-adf9-530ab6599bf9',
-      fieldMetadataUniversalIdentifier: PARTNER_LINKEDIN_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        PARTNER_LINKEDIN_FIELD_UNIVERSAL_IDENTIFIER,
       position: 18,
       isVisible: true,
     },
     {
       universalIdentifier: 'a6ef3c3b-103b-41b7-ba85-9d93a9af3296',
-      fieldMetadataUniversalIdentifier: PARTNER_WEBSITE_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        PARTNER_WEBSITE_FIELD_UNIVERSAL_IDENTIFIER,
       position: 19,
       isVisible: true,
     },

@@ -1,4 +1,7 @@
-import { NavigationMenuItemType, defineNavigationMenuItem } from 'twenty-sdk/define';
+import {
+  NavigationMenuItemType,
+  defineNavigationMenuItem,
+} from 'twenty-sdk/define';
 
 import {
   HOW_TO_PROCESS_NAV_ITEM_ID,
