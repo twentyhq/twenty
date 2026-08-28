@@ -102,7 +102,7 @@ export const useChatTargetNavigation = () => {
       : undefined;
 
     if (!isDefined(fieldMetadataItem) || !isDefined(objectMetadataItem)) {
-      throw new Error(`Field metadata ${fieldMetadataId} not found.`);
+      return;
     }
 
     navigateSettings(SettingsPath.ObjectFieldEdit, {

@@ -20,10 +20,10 @@ export const useOpenSettingsFieldMetadataInSidePanel = () => {
         .get(fieldMetadataItemByIdMapSelector.atom)
         .get(fieldMetadataId);
 
+      // A chat message or an open panel can outlive the field it names, and
+      // this runs from a click handler, where throwing would reach no one.
       if (!isDefined(fieldMetadataItem)) {
-        throw new Error(
-          `Field metadata ${fieldMetadataId} not found, cannot open it in the side panel.`,
-        );
+        return;
       }
 
       const pageComponentInstanceId = v4();

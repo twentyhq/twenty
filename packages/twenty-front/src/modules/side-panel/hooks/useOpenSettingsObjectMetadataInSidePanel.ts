@@ -21,10 +21,10 @@ export const useOpenSettingsObjectMetadataInSidePanel = () => {
         .get(objectMetadataItemsByIdMapSelector.atom)
         .get(objectMetadataId);
 
+      // A chat message or an open panel can outlive the object it names, and
+      // this runs from a click handler, where throwing would reach no one.
       if (!isDefined(objectMetadataItem)) {
-        throw new Error(
-          `Object metadata ${objectMetadataId} not found, cannot open its data model in the side panel.`,
-        );
+        return;
       }
 
       const pageComponentInstanceId = v4();
