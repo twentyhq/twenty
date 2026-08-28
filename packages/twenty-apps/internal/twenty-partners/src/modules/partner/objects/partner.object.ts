@@ -45,14 +45,6 @@ export default defineObject({
       ],
     },
     {
-      universalIdentifier: '5af4e57e-7fa7-4c4f-b40f-37549361459a',
-      type: FieldType.BOOLEAN,
-      name: 'reviewed',
-      label: 'Reviewed',
-      icon: 'IconChecks',
-      isNullable: true,
-    },
-    {
       universalIdentifier: 'd4fa6461-37b6-49ee-9181-dd482e74a70b',
       type: FieldType.SELECT,
       name: 'partnerTier',
