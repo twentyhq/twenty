@@ -103,6 +103,21 @@ export const slackSetUserLinkHandler = async (
       };
     }
 
+    // The lookup certifies which workspace the account lives in, so a
+    // supplied team id must agree with it, mirroring the id path: otherwise
+    // the link would be stored under a team the account does not belong to.
+    if (
+      isNonEmptyString(slackTeamId) &&
+      isNonEmptyString(resolvedUser.slackTeamId) &&
+      slackTeamId !== resolvedUser.slackTeamId
+    ) {
+      return {
+        success: false,
+        message: 'Slack team id does not match the user',
+        error: `The Slack user with that email belongs to workspace ${resolvedUser.slackTeamId}, not ${slackTeamId}. Check the team id and try again.`,
+      };
+    }
+
     slackUserId = resolvedUser.slackUserId;
     slackTeamId = slackTeamId ?? resolvedUser.slackTeamId;
     resolvedName = resolvedName ?? resolvedUser.displayName;
