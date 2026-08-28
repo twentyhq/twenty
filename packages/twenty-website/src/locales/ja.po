@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-27 11:31\n"
+"PO-Revision-Date: 2026-08-28 12:00\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -1491,7 +1491,7 @@ msgstr "Bertrams"
 #. js-lingui-id: CrZWSz
 #: src/partner-application/partner-application-copy.ts
 msgid "Best proof first: a live Twenty instance URL, a public repo, or a YouTube link. Loom, Drive and file links are accepted but slower to review."
-msgstr ""
+msgstr "まず最良の証拠をご提示ください: 稼働中のTwentyインスタンスのURL、公開リポジトリ、またはYouTubeリンク。Loom、Drive、ファイルリンクも受け付けますが、レビューに時間がかかります。"
 
 #. js-lingui-id: BSmDFu
 #: src/platform/releases/ReleaseNotes.tsx

@@ -27,7 +27,10 @@ import { type TimelineActivityPayload } from 'src/modules/timeline/types/timelin
 import { type TimelineActivityRuleAction } from 'src/modules/timeline/types/timeline-activity-rule-action.type';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { resolveLinkedRecordCachedName } from 'src/modules/timeline/utils/resolve-linked-record-cached-name.util';
-import { resolveTimelineActivityHappensAt } from 'src/modules/timeline/utils/resolve-timeline-activity-happens-at.util';
+import {
+  resolveLinkedTimelineActivityHappensAt,
+  resolveTimelineActivityHappensAt,
+} from 'src/modules/timeline/utils/resolve-timeline-activity-happens-at.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { doesTimelineActivityLinkChange } from 'src/modules/timeline/utils/does-timeline-activity-link-change.util';
 import { resolveTimelineActivityRuleAction } from 'src/modules/timeline/utils/resolve-timeline-activity-rule-action.util';
@@ -335,7 +338,13 @@ export class TimelineActivityService {
               record,
               flatFieldMetadataMaps,
             }),
-            happensAt: resolveTimelineActivityHappensAt(event),
+            happensAt: resolveLinkedTimelineActivityHappensAt({
+              event,
+              ruleAction,
+              sourceFlatObjectMetadata: rule.sourceFlatObjectMetadata,
+              sourceRecord: record,
+              flatFieldMetadataMaps,
+            }),
             properties: event.properties,
           }),
         ];
@@ -363,7 +372,13 @@ export class TimelineActivityService {
             record: event.properties.after as ObjectRecord | undefined,
             flatFieldMetadataMaps,
           }),
-          happensAt: resolveTimelineActivityHappensAt(event),
+          happensAt: resolveLinkedTimelineActivityHappensAt({
+            event,
+            ruleAction,
+            sourceFlatObjectMetadata: rule.sourceFlatObjectMetadata,
+            sourceRecord: event.properties.after as ObjectRecord | undefined,
+            flatFieldMetadataMaps,
+          }),
           properties: event.properties,
         }),
       ),
@@ -455,8 +470,10 @@ export class TimelineActivityService {
 
     // The junction event is the semantic fact; this enrichment read can race
     // the transaction that created the linked record.
-    return eventsWithJunctionRecord.map(({ event, target, sourceRecordId }) =>
-      buildLinkedPayload({
+    return eventsWithJunctionRecord.map(({ event, target, sourceRecordId }) => {
+      const sourceRecord = sourceRecordsByRecordId.get(sourceRecordId);
+
+      return buildLinkedPayload({
         rule,
         timelineActivityType,
         target,
@@ -464,13 +481,19 @@ export class TimelineActivityService {
         linkedRecordId: sourceRecordId,
         linkedRecordCachedName: resolveLinkedRecordCachedName({
           rule,
-          record: sourceRecordsByRecordId.get(sourceRecordId),
+          record: sourceRecord,
           flatFieldMetadataMaps,
         }),
-        happensAt: resolveTimelineActivityHappensAt(event),
+        happensAt: resolveLinkedTimelineActivityHappensAt({
+          event,
+          ruleAction,
+          sourceFlatObjectMetadata: rule.sourceFlatObjectMetadata,
+          sourceRecord,
+          flatFieldMetadataMaps,
+        }),
         properties: {},
-      }),
-    );
+      });
+    });
   }
 
   private async enrichEventsWithWorkspaceMemberId({
