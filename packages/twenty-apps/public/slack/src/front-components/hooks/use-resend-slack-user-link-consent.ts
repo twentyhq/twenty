@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { RestApiClient } from 'twenty-client-sdk/rest';
 
 import { SLACK_USER_LINKS_RESEND_CONSENT_ROUTE_PATH } from 'src/constants/slack-user-links-route-path.constant';
@@ -23,12 +23,25 @@ export const useResendSlackUserLinkConsent =
     const [resendingLinkId, setResendingLinkId] = useState<string | undefined>(
       undefined,
     );
+    // Ref, not state: a same-tick second click sees pre-rerender state, so a
+    // state guard would let it start a second request and clear the first
+    // one's marker mid-flight.
+    const isResendingRef = useRef(false);
 
     const resendConsent = async ({
       id,
       slackTeamId,
       slackUserId,
     }: ResendConsentInput): Promise<SlackToolResult> => {
+      if (isResendingRef.current) {
+        return {
+          success: false,
+          message: FALLBACK_MESSAGE,
+          error: 'Another consent request is still being sent. Please wait.',
+        };
+      }
+
+      isResendingRef.current = true;
       setResendingLinkId(id);
 
       try {
@@ -45,6 +58,7 @@ export const useResendSlackUserLinkConsent =
           error: 'The request failed. Please try again.',
         };
       } finally {
+        isResendingRef.current = false;
         setResendingLinkId(undefined);
       }
     };

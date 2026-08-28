@@ -125,6 +125,11 @@ export const SlackUserLinksList = ({
   removingLinkId,
   resendingLinkId,
 }: SlackUserLinksListProps) => {
+  // One operation at a time: each hook tracks a single in-flight id, so a
+  // second row's action would clobber the first row's marker mid-flight.
+  const isActionInFlight =
+    isDefined(removingLinkId) || isDefined(resendingLinkId);
+
   if (slackUserLinks.length === 0) {
     return <StyledEmptyState>No Slack user links yet.</StyledEmptyState>;
   }
@@ -178,7 +183,7 @@ export const SlackUserLinksList = ({
                     <StyledActionButton
                       type="button"
                       onClick={() => onResend(slackUserLink)}
-                      disabled={resendingLinkId === slackUserLink.id}
+                      disabled={isActionInFlight}
                     >
                       {resendingLinkId === slackUserLink.id
                         ? 'Resending…'
@@ -188,7 +193,7 @@ export const SlackUserLinksList = ({
                   <StyledActionButton
                     type="button"
                     onClick={() => onRemove(slackUserLink)}
-                    disabled={removingLinkId === slackUserLink.id}
+                    disabled={isActionInFlight}
                   >
                     {removingLinkId === slackUserLink.id
                       ? 'Removing…'
