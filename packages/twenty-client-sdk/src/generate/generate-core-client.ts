@@ -1,10 +1,11 @@
-import { appendFile, copyFile, writeFile } from 'node:fs/promises';
+import { appendFile, copyFile, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import { build } from 'esbuild';
 import { DEFAULT_API_URL_NAME } from 'twenty-shared/application';
 
 import { buildClientWrapperSource } from './client-wrapper';
+import { applyCompositeFieldTypeOverrides } from './composite-field-type-overrides';
 import { emptyDir, ensureDir, move, remove } from './fs-utils';
 import { generate } from './genql';
 import twentyClientTemplateSource from './twenty-client-template.ts?raw';
@@ -41,6 +42,14 @@ export const generateCoreClientFromSchema = async ({
       output: tempPath,
       scalarTypes: COMMON_SCALAR_TYPES,
     });
+
+    const schemaTypesPath = join(tempPath, 'schema.ts');
+    const schemaTypesSource = await readFile(schemaTypesPath, 'utf-8');
+
+    await writeFile(
+      schemaTypesPath,
+      applyCompositeFieldTypeOverrides(schemaTypesSource),
+    );
 
     const clientContent = buildClientWrapperSource(templateSource, {
       apiClientName: 'CoreApiClient',

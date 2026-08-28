@@ -1,4 +1,7 @@
-import { NavigationMenuItemType, defineNavigationMenuItem } from 'twenty-sdk/define';
+import {
+  NavigationMenuItemType,
+  defineNavigationMenuItem,
+} from 'twenty-sdk/define';
 
 import { MY_DEALS_VIEW_UNIVERSAL_IDENTIFIER } from 'src/modules/opportunity/views/my-deals.view';
 

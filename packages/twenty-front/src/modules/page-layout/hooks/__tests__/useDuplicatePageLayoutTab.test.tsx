@@ -98,6 +98,7 @@ const makeDraftPageLayout = (tabs: PageLayoutTab[]): DraftPageLayout => ({
   id: PAGE_LAYOUT_TEST_INSTANCE_ID,
   name: 'Test Layout',
   type: PageLayoutType.DASHBOARD,
+  isFirstTabPinned: true,
   objectMetadataId: null,
   tabs,
 });
