@@ -166,26 +166,11 @@ export const listCreditGrants = async (
     [workspaceId],
   );
 
-export const getMirroredCreditBalance = async (
-  workspaceId: string,
-): Promise<number> => {
-  const [row] = await query<{ creditBalanceMicro: string }>(
-    `SELECT "creditBalanceMicro" FROM core."billingCustomer" WHERE "workspaceId" = $1`,
-    [workspaceId],
-  );
-
-  return Number(row?.creditBalanceMicro ?? 0);
-};
-
 export const resetBillingCreditState = async (
   workspaceId: string,
 ): Promise<void> => {
   await query(
     `DELETE FROM core."billingCreditGrant" WHERE "workspaceId" = $1`,
-    [workspaceId],
-  );
-  await query(
-    `UPDATE core."billingCustomer" SET "creditBalanceMicro" = 0 WHERE "workspaceId" = $1`,
     [workspaceId],
   );
   const cache = getBillingUsageCacheService();

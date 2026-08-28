@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-27 11:31\n"
+"PO-Revision-Date: 2026-08-28 12:00\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1487,6 +1487,11 @@ msgstr "Benjamin Reynolds"
 #: src/sections/testimonials/partner-testimonials.data.ts
 msgid "Bertrams"
 msgstr "Bertrams"
+
+#. js-lingui-id: CrZWSz
+#: src/partner-application/partner-application-copy.ts
+msgid "Best proof first: a live Twenty instance URL, a public repo, or a YouTube link. Loom, Drive and file links are accepted but slower to review."
+msgstr "Önce en iyi kanıt: canlı bir Twenty örneği URL'si, herkese açık bir repo veya bir YouTube bağlantısı. Loom, Drive ve dosya bağlantıları kabul edilir ancak incelenmeleri daha uzun sürer."
 
 #. js-lingui-id: BSmDFu
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4698,11 +4703,6 @@ msgstr "Herhangi bir normal nesnede olduğu gibi, görevlerinize ve şirketlerin
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Link field"
 msgstr "Bağlantı alanı"
-
-#. js-lingui-id: YOe6r4
-#: src/partner-application/partner-application-copy.ts
-msgid "Link that shows the work (Loom, GitHub, Notion, Drive, public write-up…). No public workspace? Share a short Loom."
-msgstr "Çalışmanızı gösteren bağlantı (Loom, GitHub, Notion, Drive, herkese açık yazı vb.). Herkese açık bir çalışma alanınız yok mu? Kısa bir Loom paylaşın."
 
 #. js-lingui-id: gggTBm
 #: src/sections/footer/footer.data.ts
