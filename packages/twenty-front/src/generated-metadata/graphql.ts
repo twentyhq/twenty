@@ -5704,6 +5704,7 @@ export type TimelineActivityTypeEmit = {
 
 export type TimelineActivityTypeEmitThrough = {
   __typename?: 'TimelineActivityTypeEmitThrough';
+  happensAtFieldUniversalIdentifier?: Maybe<Scalars['UUID']['output']>;
   relationFieldUniversalIdentifier: Scalars['UUID']['output'];
   triggerFieldUniversalIdentifiers?: Maybe<Array<Scalars['UUID']['output']>>;
 };

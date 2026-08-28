@@ -7216,6 +7216,11 @@ msgstr "Success plan uplift"
 msgid "Sudan 🇸🇩"
 msgstr "Sudan 🇸🇩"
 
+#. js-lingui-id: 388eZi
+#: src/partners-marketplace/marketplace-copy.ts
+msgid "Super partner"
+msgstr "Super partner"
+
 #. js-lingui-id: XYLcNv
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/compare/compare-data.ts

@@ -79,6 +79,36 @@ Meridian Craft is an **APAC implementation studio** for fintech and logistics op
 
 Our senior engineers have shipped regulated workloads across Singapore, Hong Kong, and Kuala Lumpur — we know where CRM projects break at scale.`;
 
+const W3VILLA_DESCRIPTION_MARKDOWN = `## About W3Villa Technologies
+
+W3Villa runs **large self-hosted Twenty deployments** for regulated industries across APAC and the Gulf. The team owns Kubernetes hardening, custom integrations, and 24/7 support contracts.
+
+### What we typically deliver
+
+- Hardened self-host installs with backup, observability, and upgrade runbooks
+- Custom integrations against finance, identity, and internal APIs
+- Follow-the-sun support for production workspaces
+
+### Why clients pick us
+
+We treat Twenty as infrastructure, not a weekend project. Clients stay on a version they can patch, with a team that answers when the cluster pages.`;
+
+const NETZERO_DESCRIPTION_MARKDOWN = `## About NetZero Systems
+
+NetZero is the **LATAM go-to-market partner** for climate-tech and renewable-energy companies. We build bilingual sales pipelines, ESG reporting, and grant-management workflows on Twenty.
+
+### Typical engagement
+
+1. **GTM map** — bilingual objects, stages, and handoffs for US + LATAM teams
+2. **Reporting layer** — ESG and grant evidence without a second spreadsheet stack
+3. **Handoff** — playbooks your local operators keep after go-live
+
+### Focus areas
+
+- Climate tech and renewable energy
+- Spanish / Portuguese / English workspaces
+- Grant and compliance tracking next to the pipeline`;
+
 type DemoPartnerService = {
   title: string;
   description: string;
@@ -180,6 +210,200 @@ const PRIMARY_DEMO_PARTNER_LINKS: DemoPartnerLink[] = [
   },
 ];
 
+type MarketplaceProfile = {
+  introduction: string;
+  services: DemoPartnerService[];
+  caseStudies: DemoPartnerContent[];
+  links: DemoPartnerLink[];
+};
+
+const MARKETPLACE_PROFILES: Record<string, MarketplaceProfile> = {
+  'nine-dots-ventures': {
+    introduction: PRIMARY_DEMO_DESCRIPTION_MARKDOWN,
+    services: PRIMARY_DEMO_PARTNER_SERVICES,
+    caseStudies: PRIMARY_DEMO_PARTNER_CASE_STUDIES,
+    links: PRIMARY_DEMO_PARTNER_LINKS,
+  },
+  'elevate-consulting': {
+    introduction: ELEVATE_DESCRIPTION_MARKDOWN,
+    services: [
+      {
+        title: 'Revenue operations audit',
+        description:
+          'Maps objects, stages, and reporting gaps across sales, CS, and finance before any migration starts.',
+        position: 0,
+      },
+      {
+        title: 'CRM migration sprint',
+        description:
+          'Four-week Salesforce or HubSpot cutover with dedupe rules and activity history preserved.',
+        position: 1,
+      },
+      {
+        title: 'Forecast and reporting handoff',
+        description:
+          'Manager dashboards, forecast cadences, and playbooks the GTM team owns after go-live.',
+        position: 2,
+      },
+    ],
+    caseStudies: [
+      {
+        name: 'Elevate - Acme RE rollout',
+        status: 'APPROVED',
+        clientName: 'Acme Real Estate',
+        headline: 'Salesforce to Twenty in four weeks, reps still selling',
+        bodyMarkdown:
+          'Rebuilt the pipeline and cut over 30 seats without a freeze weekend. Forecast lag dropped from days to same-day.',
+        caseStudyUrl: 'https://elevate-consulting.example/case-studies/acme',
+        position: 0,
+      },
+      {
+        name: 'Elevate - Helix pipeline',
+        status: 'APPROVED',
+        clientName: 'Helix Bio',
+        headline: 'One lifecycle from inbound to renewal',
+        bodyMarkdown:
+          'Collapsed three HubSpot pipelines into a single Twenty opportunity flow with CS handoff SLAs.',
+        caseStudyUrl: 'https://elevate-consulting.example/case-studies/helix',
+        position: 1,
+      },
+    ],
+    links: [
+      {
+        name: 'Company website',
+        url: 'https://elevate-consulting.example',
+        position: 0,
+      },
+    ],
+  },
+  'meridian-craft': {
+    introduction: MERIDIAN_DESCRIPTION_MARKDOWN,
+    services: [
+      {
+        title: 'High-throughput data models',
+        description:
+          'Multi-entity models with strict permission boundaries for fintech and logistics operators.',
+        position: 0,
+      },
+      {
+        title: 'Banking and carrier integrations',
+        description:
+          'Custom apps against KYC, banking, and carrier APIs on cloud or self-hosted Twenty.',
+        position: 1,
+      },
+      {
+        title: 'Self-host performance tuning',
+        description:
+          'Throughput baselines, runbooks, and on-call handoff for regulated APAC workloads.',
+        position: 2,
+      },
+    ],
+    caseStudies: [
+      {
+        name: 'Meridian - Sunrise APAC fleet',
+        status: 'APPROVED',
+        clientName: 'Sunrise Logistics',
+        headline: 'Fleet CRM that keeps regional handoffs in one timeline',
+        bodyMarkdown:
+          'Rebuilt qualification and renewal so APAC and LATAM teams share one opportunity record at volume.',
+        caseStudyUrl: 'https://meridian-craft.example/case-studies/sunrise',
+        position: 0,
+      },
+    ],
+    links: [
+      {
+        name: 'Company website',
+        url: 'https://meridian-craft.example',
+        position: 0,
+      },
+    ],
+  },
+  'w3villa-technologies': {
+    introduction: W3VILLA_DESCRIPTION_MARKDOWN,
+    services: [
+      {
+        title: 'Kubernetes self-host',
+        description:
+          'Hardened Twenty installs with backup, observability, and upgrade runbooks.',
+        position: 0,
+      },
+      {
+        title: 'Custom integrations',
+        description:
+          'Finance, identity, and internal API connectors built for regulated tenants.',
+        position: 1,
+      },
+      {
+        title: 'Enterprise support',
+        description:
+          '24/7 follow-the-sun coverage for production workspaces in APAC and the Gulf.',
+        position: 2,
+      },
+    ],
+    caseStudies: [
+      {
+        name: 'W3Villa - Acme annual review',
+        status: 'APPROVED',
+        clientName: 'Acme Real Estate',
+        headline: 'Self-host cutover with zero lost history',
+        bodyMarkdown:
+          'Moved a production workspace onto hardened Kubernetes and kept activity history intact through the upgrade.',
+        caseStudyUrl: 'https://w3villa-technologies.example/case-studies/acme',
+        position: 0,
+      },
+    ],
+    links: [
+      {
+        name: 'Company website',
+        url: 'https://w3villa-technologies.example',
+        position: 0,
+      },
+    ],
+  },
+  'netzero-systems': {
+    introduction: NETZERO_DESCRIPTION_MARKDOWN,
+    services: [
+      {
+        title: 'Bilingual GTM pipelines',
+        description:
+          'Spanish, Portuguese, and English objects and stages for US + LATAM teams.',
+        position: 0,
+      },
+      {
+        title: 'ESG reporting',
+        description:
+          'Grant and compliance evidence next to the pipeline, without a second spreadsheet stack.',
+        position: 1,
+      },
+      {
+        title: 'Climate-tech go-to-market',
+        description:
+          'Playbooks for renewable-energy and climate operators from first lead to grant close.',
+        position: 2,
+      },
+    ],
+    caseStudies: [
+      {
+        name: 'NetZero - Helix clinical',
+        status: 'APPROVED',
+        clientName: 'Helix Bio',
+        headline: 'Bilingual pipeline with grant evidence in one workspace',
+        bodyMarkdown:
+          'US and LATAM teams now share one opportunity timeline, with ESG fields the board can export.',
+        caseStudyUrl: 'https://netzero-systems.example/case-studies/helix',
+        position: 0,
+      },
+    ],
+    links: [
+      {
+        name: 'Company website',
+        url: 'https://netzero-systems.example',
+        position: 0,
+      },
+    ],
+  },
+};
+
 const usd = (dollars: number) => ({
   amountMicros: dollars * 1_000_000,
   currencyCode: 'USD',
@@ -205,15 +429,16 @@ type Partner = {
   hourlyRateUsd: number | null;
   projectBudgetMinUsd: number | null;
   skills: string[];
+  superPartner?: boolean;
 };
 
 const PARTNERS: Partner[] = [
-  { slug: 'nine-dots-ventures', name: 'Nine Dots Ventures', validationStage: 'VALIDATED', availability: 'AVAILABLE', introduction: 'Boutique CRM implementer for real-estate workflows and WhatsApp automation. Nine Dots runs end-to-end Twenty rollouts for property managers and brokerages across Europe and MENA, with deep multi-language data models and AI-assisted lead intake.', calendarLink: CAL, deploymentExpertise: ['CLOUD', 'SELF_HOST'], region: ['EUROPE', 'MENA'], languagesSpoken: ['ENGLISH', 'FRENCH', 'ARABIC'], partnerTier: 'ADVANCED', partnerScope: ['SOLUTIONING', 'DEVELOPMENT'], typeOfTeam: 'AGENCY', country: 'FRANCE', city: 'Paris', hourlyRateUsd: 250, projectBudgetMinUsd: 15000, skills: ['Real estate', 'WhatsApp', 'Multi-language', 'Workflows', 'Integrations', 'AI'] },
+  { slug: 'nine-dots-ventures', name: 'Nine Dots Ventures', validationStage: 'VALIDATED', availability: 'AVAILABLE', introduction: 'Boutique CRM implementer for real-estate workflows and WhatsApp automation. Nine Dots runs end-to-end Twenty rollouts for property managers and brokerages across Europe and MENA, with deep multi-language data models and AI-assisted lead intake.', calendarLink: CAL, deploymentExpertise: ['CLOUD', 'SELF_HOST'], region: ['EUROPE', 'MENA'], languagesSpoken: ['ENGLISH', 'FRENCH', 'ARABIC'], partnerTier: 'ADVANCED', partnerScope: ['SOLUTIONING', 'DEVELOPMENT'], typeOfTeam: 'AGENCY', country: 'FRANCE', city: 'Paris', hourlyRateUsd: 250, projectBudgetMinUsd: 15000, skills: ['Real estate', 'WhatsApp', 'Multi-language', 'Workflows', 'Integrations', 'AI'], superPartner: true },
   { slug: 'elevate-consulting', name: 'Elevate Consulting', validationStage: 'VALIDATED', availability: 'AVAILABLE', introduction: 'Revenue-operations partner for B2B SaaS teams scaling seed to Series C. Elevate moves teams off legacy CRMs onto Twenty with a four-week migration playbook, pipeline rebuilds, and analytics handoff.', calendarLink: CAL, deploymentExpertise: ['CLOUD'], region: ['US', 'LATAM'], languagesSpoken: ['ENGLISH', 'SPANISH'], partnerTier: 'INTERMEDIATE', partnerScope: ['SOLUTIONING'], typeOfTeam: 'AGENCY', country: 'UNITED_STATES', city: 'Austin', hourlyRateUsd: 200, projectBudgetMinUsd: 20000, skills: ['RevOps', 'B2B SaaS', 'Data migration', 'Pipelines', 'Salesforce migration', 'HubSpot migration'] },
   { slug: 'w3villa-technologies', name: 'W3Villa Technologies', validationStage: 'VALIDATED', availability: 'AVAILABLE', introduction: 'Engineering-heavy partner running large self-hosted Twenty deployments. Specializes in hardened Kubernetes hosting, custom integrations, and 24/7 support contracts for regulated industries across APAC and the Gulf.', calendarLink: CAL, deploymentExpertise: ['CLOUD', 'SELF_HOST'], region: ['APAC', 'MENA'], languagesSpoken: ['ENGLISH', 'HINDI'], partnerTier: 'ADVANCED', partnerScope: ['HOSTING', 'DEVELOPMENT', 'SOLUTIONING'], typeOfTeam: 'AGENCY', country: 'INDIA', city: 'Bangalore', hourlyRateUsd: 120, projectBudgetMinUsd: 10000, skills: ['Self-hosting', 'Kubernetes', 'DevOps', 'Integrations', 'Workflows', 'Enterprise support'] },
   { slug: 'act-education', name: 'Act Education', validationStage: 'VALIDATED', availability: 'UNAVAILABLE', introduction: 'CRM partner for European education providers; compliance-first self-hosting on EU infrastructure with full GDPR data residency and student-record workflows.', calendarLink: CAL, deploymentExpertise: ['SELF_HOST'], region: ['EUROPE'], languagesSpoken: ['ENGLISH', 'GERMAN'], partnerTier: 'NEW', partnerScope: ['HOSTING', 'SOLUTIONING'], typeOfTeam: 'SOLO', country: 'GERMANY', city: 'Berlin', hourlyRateUsd: 180, projectBudgetMinUsd: 8000, skills: ['Education', 'Compliance', 'Self-hosting', 'GDPR', 'Data privacy'] },
   { slug: 'netzero-systems', name: 'NetZero Systems', validationStage: 'VALIDATED', availability: 'AVAILABLE', introduction: 'LATAM go-to-market partner for climate-tech and renewable-energy companies. Builds bilingual sales pipelines, ESG reporting, and grant-management workflows on top of Twenty.', calendarLink: CAL, deploymentExpertise: ['CLOUD'], region: ['LATAM', 'US'], languagesSpoken: ['ENGLISH', 'SPANISH', 'PORTUGUESE'], partnerTier: 'INTERMEDIATE', partnerScope: ['SOLUTIONING'], typeOfTeam: 'AGENCY', country: 'BRAZIL', city: 'São Paulo', hourlyRateUsd: 150, projectBudgetMinUsd: 12000, skills: ['Climate tech', 'Renewable energy', 'ESG reporting', 'Bilingual pipelines', 'LATAM go-to-market'] },
-  { slug: 'meridian-craft', name: 'Meridian Craft', validationStage: 'VALIDATED', availability: 'AVAILABLE', introduction: 'APAC implementation studio for fintech and logistics. Senior team of ex-bank engineers building high-throughput Twenty deployments across Singapore, Hong Kong, and Kuala Lumpur.', calendarLink: CAL, deploymentExpertise: ['CLOUD', 'SELF_HOST'], region: ['APAC', 'AFRICA'], languagesSpoken: ['ENGLISH', 'CHINESE', 'MALAY'], partnerTier: 'ADVANCED', partnerScope: ['DEVELOPMENT', 'SOLUTIONING'], typeOfTeam: 'AGENCY', country: 'SINGAPORE', city: 'Singapore', hourlyRateUsd: 300, projectBudgetMinUsd: 25000, skills: ['Fintech', 'Logistics', 'APAC', 'High throughput', 'Custom apps', 'Performance tuning'] },
+  { slug: 'meridian-craft', name: 'Meridian Craft', validationStage: 'VALIDATED', availability: 'AVAILABLE', introduction: 'APAC implementation studio for fintech and logistics. Senior team of ex-bank engineers building high-throughput Twenty deployments across Singapore, Hong Kong, and Kuala Lumpur.', calendarLink: CAL, deploymentExpertise: ['CLOUD', 'SELF_HOST'], region: ['APAC', 'AFRICA'], languagesSpoken: ['ENGLISH', 'CHINESE', 'MALAY'], partnerTier: 'ADVANCED', partnerScope: ['DEVELOPMENT', 'SOLUTIONING'], typeOfTeam: 'AGENCY', country: 'SINGAPORE', city: 'Singapore', hourlyRateUsd: 300, projectBudgetMinUsd: 25000, skills: ['Fintech', 'Logistics', 'APAC', 'High throughput', 'Custom apps', 'Performance tuning'], superPartner: true },
   { slug: 'applicant-studio', name: 'Applicant Studio', validationStage: 'APPLICATION', availability: 'UNAVAILABLE', introduction: 'New applicant; awaiting first review.', calendarLink: CAL, deploymentExpertise: ['CLOUD'], region: ['EUROPE'], languagesSpoken: ['ENGLISH', 'FRENCH'], partnerTier: 'NEW', partnerScope: ['SOLUTIONING'], typeOfTeam: 'SOLO', country: 'FRANCE', city: 'Lyon', hourlyRateUsd: null, projectBudgetMinUsd: null, skills: ['Boutique', 'Design'] },
   { slug: 'rising-crm', name: 'Rising CRM', validationStage: 'POTENTIAL', availability: 'AVAILABLE', introduction: 'Promising applicant in evaluation.', calendarLink: CAL, deploymentExpertise: ['CLOUD', 'SELF_HOST'], region: ['US'], languagesSpoken: ['ENGLISH'], partnerTier: 'NEW', partnerScope: ['SOLUTIONING', 'DEVELOPMENT'], typeOfTeam: 'AGENCY', country: 'UNITED_STATES', city: 'New York', hourlyRateUsd: null, projectBudgetMinUsd: null, skills: ['SMB', 'Quick setup'] },
   { slug: 'legacy-partners', name: 'Legacy Partners', validationStage: 'FORMER', availability: 'UNAVAILABLE', introduction: 'Former partner; no longer active in the program.', calendarLink: CAL, deploymentExpertise: ['SELF_HOST'], region: ['EUROPE'], languagesSpoken: ['ENGLISH', 'GERMAN'], partnerTier: 'INTERMEDIATE', partnerScope: ['HOSTING'], typeOfTeam: 'AGENCY', country: 'UNITED_KINGDOM', city: 'London', hourlyRateUsd: null, projectBudgetMinUsd: null, skills: ['Enterprise', 'Self-hosting'] },
@@ -303,6 +528,162 @@ async function upsertCompanyByName(
   return r.createCompany.id;
 }
 
+async function upsertMarketplaceProfile(
+  client: CoreApiClient,
+  partnerId: string,
+  partnerUserId: string | null,
+  profile: MarketplaceProfile,
+): Promise<void> {
+  await client.mutation({
+    updatePartner: {
+      __args: {
+        id: partnerId,
+        data: { introduction: profile.introduction },
+      },
+      id: true,
+    },
+  });
+
+  for (const service of profile.services) {
+    const existing = nodes(
+      await client.query({
+        partnerServices: {
+          __args: {
+            filter: {
+              title: { eq: service.title },
+              partnerId: { eq: partnerId },
+            },
+            first: 1,
+          },
+          edges: { node: { id: true } },
+        },
+      }),
+      'partnerServices',
+    );
+
+    const data = withPartnerUserId(
+      {
+        title: service.title,
+        description: service.description,
+        sortOrder: service.position,
+        position: service.position,
+        partnerId,
+      },
+      partnerUserId,
+    );
+
+    if (existing[0]?.id) {
+      await client.mutation({
+        updatePartnerService: {
+          __args: { id: existing[0].id, data },
+          id: true,
+        },
+      });
+    } else {
+      await client.mutation({
+        createPartnerService: {
+          __args: { data },
+          id: true,
+        },
+      });
+    }
+  }
+
+  for (const content of profile.caseStudies) {
+    const existing = nodes(
+      await client.query({
+        partnerContents: {
+          __args: {
+            filter: {
+              name: { eq: content.name },
+              partnerId: { eq: partnerId },
+            },
+            first: 1,
+          },
+          edges: { node: { id: true } },
+        },
+      }),
+      'partnerContents',
+    );
+
+    const data = withPartnerUserId(
+      {
+        name: content.name,
+        contentType: ['CASE_STUDY'],
+        status: content.status,
+        clientName: content.clientName,
+        headline: content.headline,
+        body: { markdown: content.bodyMarkdown },
+        caseStudyLink: { primaryLinkUrl: content.caseStudyUrl },
+        position: content.position,
+        partnerId,
+      },
+      partnerUserId,
+    );
+
+    if (existing[0]?.id) {
+      await client.mutation({
+        updatePartnerContent: {
+          __args: { id: existing[0].id, data },
+          id: true,
+        },
+      });
+    } else {
+      await client.mutation({
+        createPartnerContent: {
+          __args: { data },
+          id: true,
+        },
+      });
+    }
+  }
+
+  for (const link of profile.links) {
+    const existing = nodes(
+      await client.query({
+        partnerLinks: {
+          __args: {
+            filter: {
+              name: { eq: link.name },
+              partnerId: { eq: partnerId },
+            },
+            first: 1,
+          },
+          edges: { node: { id: true } },
+        },
+      }),
+      'partnerLinks',
+    );
+
+    const data = withPartnerUserId(
+      {
+        name: link.name,
+        url: { primaryLinkUrl: link.url },
+        sortOrder: link.position,
+        position: link.position,
+        partnerId,
+      },
+      partnerUserId,
+    );
+
+    if (existing[0]?.id) {
+      await client.mutation({
+        updatePartnerLink: {
+          __args: { id: existing[0].id, data },
+          id: true,
+        },
+      });
+    } else {
+      await client.mutation({
+        createPartnerLink: {
+          __args: { data },
+          id: true,
+        },
+      });
+    }
+  }
+}
+
 async function main() {
   const client = new CoreApiClient({
     url: `${requireEnv('TWENTY_PARTNERS_API_URL').replace(/\/$/, '')}/graphql`,
@@ -328,6 +709,11 @@ async function main() {
       country: p.country, city: p.city,
       skills: p.skills, companyId,
       linkedin: { primaryLinkUrl: linkedin(p.slug) },
+      website: { primaryLinkUrl: partnerDomain(p.slug) },
+      profilePicture: {
+        primaryLinkUrl: `https://picsum.photos/seed/${p.slug}-team/600/600`,
+      },
+      superPartner: p.superPartner === true,
       ...(p.hourlyRateUsd != null ? { hourlyRate: usd(p.hourlyRateUsd) } : {}),
       ...(p.projectBudgetMinUsd != null ? { projectBudgetMin: usd(p.projectBudgetMinUsd) } : {}),
     };
@@ -403,221 +789,63 @@ async function main() {
   }
   console.log(`[seed] opportunities: ${oppIdByName.size}`);
 
-  // -- Primary demo partner marketplace-rich profile --
-  const primaryDemoPartner = await client.query({
-    partners: {
-      __args: {
-        filter: { slug: { eq: PRIMARY_DEMO_PARTNER_SLUG } },
-        first: 1,
-      },
-      edges: {
-        node: {
-          id: true,
-          partnerUserId: true,
-          projectBudgetMin: { amountMicros: true },
-        },
-      },
-    },
-  });
-  const primaryDemoPartnerNode = nodes(primaryDemoPartner, 'partners')[0] as {
-    id?: string;
-    partnerUserId?: string | null;
-    projectBudgetMin?: { amountMicros?: number | null } | null;
-  };
-
-  if (primaryDemoPartnerNode?.id) {
-    const primaryDemoPartnerId = primaryDemoPartnerNode.id;
-    const primaryDemoPartnerUserId = primaryDemoPartnerNode.partnerUserId ?? null;
-
-    const primaryDemoPartnerData: Record<string, unknown> = {
-      introduction: PRIMARY_DEMO_DESCRIPTION_MARKDOWN,
-    };
-
-    const hasProjectBudgetMin =
-      (primaryDemoPartnerNode.projectBudgetMin?.amountMicros ?? 0) > 0;
-
-    if (!hasProjectBudgetMin) {
-      primaryDemoPartnerData.projectBudgetMin = usd(PRIMARY_DEMO_BUDGET_USD);
-    }
-
-    await client.mutation({
-      updatePartner: {
+  // -- Marketplace-rich profiles for every list-visible partner --
+  const marketplacePartnerRows = nodes(
+    await client.query({
+      partners: {
         __args: {
-          id: primaryDemoPartnerId,
-          data: primaryDemoPartnerData,
+          filter: { slug: { in: Object.keys(MARKETPLACE_PROFILES) } },
+          first: 50,
         },
-        id: true,
+        edges: {
+          node: {
+            id: true,
+            slug: true,
+            partnerUserId: true,
+            projectBudgetMin: { amountMicros: true },
+          },
+        },
       },
-    });
+    }),
+    'partners',
+  ) as Array<{
+    id: string;
+    slug: string;
+    partnerUserId: string | null;
+    projectBudgetMin?: { amountMicros?: number | null } | null;
+  }>;
 
-    for (const service of PRIMARY_DEMO_PARTNER_SERVICES) {
-      const existing = nodes(
-        await client.query({
-          partnerServices: {
-            __args: {
-              filter: {
-                title: { eq: service.title },
-                partnerId: { eq: primaryDemoPartnerId },
-              },
-              first: 1,
-            },
-            edges: { node: { id: true } },
-          },
-        }),
-        'partnerServices',
-      );
-
-      const data = withPartnerUserId(
-        {
-          title: service.title,
-          description: service.description,
-          sortOrder: service.position,
-          position: service.position,
-          partnerId: primaryDemoPartnerId,
-        },
-        primaryDemoPartnerUserId,
-      );
-
-      if (existing[0]?.id) {
-        await client.mutation({
-          updatePartnerService: {
-            __args: { id: existing[0].id, data },
-            id: true,
-          },
-        });
-      } else {
-        await client.mutation({
-          createPartnerService: {
-            __args: {
-              data,
-            },
-            id: true,
-          },
-        });
-      }
-    }
-
-    for (const content of PRIMARY_DEMO_PARTNER_CASE_STUDIES) {
-      const existing = nodes(
-        await client.query({
-          partnerContents: {
-            __args: {
-              filter: {
-                name: { eq: content.name },
-                partnerId: { eq: primaryDemoPartnerId },
-              },
-              first: 1,
-            },
-            edges: { node: { id: true } },
-          },
-        }),
-        'partnerContents',
-      );
-
-      const data = withPartnerUserId(
-        {
-          name: content.name,
-          contentType: ['CASE_STUDY'],
-          status: content.status,
-          clientName: content.clientName,
-          headline: content.headline,
-          body: { markdown: content.bodyMarkdown },
-          caseStudyLink: { primaryLinkUrl: content.caseStudyUrl },
-          position: content.position,
-          partnerId: primaryDemoPartnerId,
-        },
-        primaryDemoPartnerUserId,
-      );
-
-      if (existing[0]?.id) {
-        await client.mutation({
-          updatePartnerContent: {
-            __args: { id: existing[0].id, data },
-            id: true,
-          },
-        });
-      } else {
-        await client.mutation({
-          createPartnerContent: {
-            __args: {
-              data,
-            },
-            id: true,
-          },
-        });
-      }
-    }
-
-    for (const link of PRIMARY_DEMO_PARTNER_LINKS) {
-      const existing = nodes(
-        await client.query({
-          partnerLinks: {
-            __args: {
-              filter: {
-                name: { eq: link.name },
-                partnerId: { eq: primaryDemoPartnerId },
-              },
-              first: 1,
-            },
-            edges: { node: { id: true } },
-          },
-        }),
-        'partnerLinks',
-      );
-
-      const data = withPartnerUserId(
-        {
-          name: link.name,
-          url: { primaryLinkUrl: link.url },
-          sortOrder: link.position,
-          position: link.position,
-          partnerId: primaryDemoPartnerId,
-        },
-        primaryDemoPartnerUserId,
-      );
-
-      if (existing[0]?.id) {
-        await client.mutation({
-          updatePartnerLink: {
-            __args: { id: existing[0].id, data },
-            id: true,
-          },
-        });
-      } else {
-        await client.mutation({
-          createPartnerLink: {
-            __args: {
-              data,
-            },
-            id: true,
-          },
-        });
-      }
-    }
-  }
-
-  // -- Marketplace profile copy (rich markdown on a few list-visible partners) --
-  const marketplaceDescriptions: Record<string, string> = {
-    'elevate-consulting': ELEVATE_DESCRIPTION_MARKDOWN,
-    'meridian-craft': MERIDIAN_DESCRIPTION_MARKDOWN,
-  };
-
-  for (const [slug, markdown] of Object.entries(marketplaceDescriptions)) {
-    const partnerId = partnerIdBySlug.get(slug);
-    if (!partnerId) {
+  for (const partnerRow of marketplacePartnerRows) {
+    const profile = MARKETPLACE_PROFILES[partnerRow.slug];
+    if (!profile) {
       continue;
     }
 
-    await client.mutation({
-      updatePartner: {
-        __args: {
-          id: partnerId,
-          data: { introduction: markdown },
+    if (
+      partnerRow.slug === PRIMARY_DEMO_PARTNER_SLUG &&
+      (partnerRow.projectBudgetMin?.amountMicros ?? 0) <= 0
+    ) {
+      await client.mutation({
+        updatePartner: {
+          __args: {
+            id: partnerRow.id,
+            data: { projectBudgetMin: usd(PRIMARY_DEMO_BUDGET_USD) },
+          },
+          id: true,
         },
-        id: true,
-      },
-    });
+      });
+    }
+
+    await upsertMarketplaceProfile(
+      client,
+      partnerRow.id,
+      partnerRow.partnerUserId ?? null,
+      profile,
+    );
   }
+  console.log(
+    `[seed] marketplace profiles: ${marketplacePartnerRows.length}`,
+  );
 
   // -- Partner quotes (upsert by name) --
   const partnerUserIdBySlug = new Map<string, string>(

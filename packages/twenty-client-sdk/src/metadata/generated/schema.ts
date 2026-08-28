@@ -2894,6 +2894,7 @@ export type MetadataTranslationProvenance = 'WORKSPACE' | 'SHIPPED' | 'INHERITED
 export interface TimelineActivityTypeEmitThrough {
     relationFieldUniversalIdentifier: Scalars['UUID']
     triggerFieldUniversalIdentifiers?: Scalars['UUID'][]
+    happensAtFieldUniversalIdentifier?: Scalars['UUID']
     __typename: 'TimelineActivityTypeEmitThrough'
 }
 
@@ -6371,6 +6372,7 @@ export interface MetadataTranslationGenqlSelection{
 export interface TimelineActivityTypeEmitThroughGenqlSelection{
     relationFieldUniversalIdentifier?: boolean | number
     triggerFieldUniversalIdentifiers?: boolean | number
+    happensAtFieldUniversalIdentifier?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

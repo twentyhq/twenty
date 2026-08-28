@@ -17,6 +17,7 @@ import {
   PARTNER_REGION_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_SCOPE_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_SKILLS_FIELD_UNIVERSAL_IDENTIFIER,
+  PARTNER_SUPER_PARTNER_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_TIER_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_TWENTY_EXPERIENCE_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_TWENTY_EXPERIENCE_NOTES_FIELD_UNIVERSAL_IDENTIFIER,
@@ -46,6 +47,7 @@ export const PARTNER_RECORD_PAGE_FIELDS_VIEW_ID =
 // in the fields widget when an explicit view marks them visible — this is that view.
 // Validation Stage and Partner Tier stay listed for admins but are read-locked for
 // the Partner role (see partner.role.ts), so partners don't see them on My Profile.
+// Super partner stays listed and is update-locked only: partners can see it, cannot set it.
 // Introduction is omitted here (marketplace bio lives on My Profile / public site);
 // Twenty experience fields are first-class for triage.
 export default defineView({
@@ -224,15 +226,22 @@ export default defineView({
       isVisible: true,
     },
     {
+      universalIdentifier: '70a176f0-c1ff-40c2-ab88-95ad8f964d67',
+      fieldMetadataUniversalIdentifier:
+        PARTNER_SUPER_PARTNER_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 26,
+      isVisible: true,
+    },
+    {
       universalIdentifier: 'ec1148d4-01ff-4128-9863-0ac42ea8eb47',
       fieldMetadataUniversalIdentifier: PARTNER_USER_ON_PARTNER_FIELD_ID,
-      position: 26,
+      position: 27,
       isVisible: true,
     },
     {
       universalIdentifier: '3ec293a1-da90-4104-a22e-771c0059e9b5',
       fieldMetadataUniversalIdentifier: PARTNER_COMPANY_FIELD_ID,
-      position: 27,
+      position: 28,
       isVisible: true,
     },
   ],

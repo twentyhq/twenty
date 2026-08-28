@@ -3279,6 +3279,7 @@ enum MetadataTranslationProvenance {
 type TimelineActivityTypeEmitThrough {
   relationFieldUniversalIdentifier: UUID!
   triggerFieldUniversalIdentifiers: [UUID!]
+  happensAtFieldUniversalIdentifier: UUID
 }
 
 type TimelineActivityTypeEmit {
