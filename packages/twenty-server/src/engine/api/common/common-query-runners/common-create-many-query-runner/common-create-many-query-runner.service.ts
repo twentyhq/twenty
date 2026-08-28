@@ -41,7 +41,7 @@ import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspa
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -140,7 +140,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     records: ObjectRecord[];
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     authContext: WorkspaceAuthContext;
     rolePermissionConfig?: RolePermissionConfig;
     nestedRelationsReadPathOptions: NestedRelationsReadPathOptions;
@@ -218,7 +218,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     repository: WorkspaceRepository<ObjectLiteral>;
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
     args: CommonExtendedInput<CreateManyQueryArgs>;
     workspaceId: string;
@@ -274,7 +274,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     repository: WorkspaceRepository<ObjectLiteral>;
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
     args: CreateManyQueryArgs;
     selectedFieldsResult: CommonSelectedFieldsResult;
@@ -350,7 +350,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   }: {
     recordsToInsert: Partial<ObjectRecord>[];
     flatObjectMetadata: FlatObjectMetadata;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     workspaceId: string;
   }): Promise<Partial<ObjectRecord>[]> {
     if (recordsToInsert.length === 0) {
@@ -383,7 +383,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   }: {
     repository: WorkspaceRepository<ObjectLiteral>;
     flatObjectMetadata: FlatObjectMetadata;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     args: CreateManyQueryArgs;
     conflictingFieldGroups: ConflictingFieldGroup[];
   }): Promise<PartialObjectRecordWithId[]> {
@@ -442,7 +442,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   }: {
     partialRecordsToUpdate: PartialObjectRecordWithId[];
     flatObjectMetadata: FlatObjectMetadata;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     result: InsertResult;
     columnsToReturn: string[];
     queryRunnerContext: CommonExtendedQueryRunnerContext;
@@ -525,7 +525,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     objectRecords: InsertResult;
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     repository: WorkspaceRepository<ObjectLiteral>;
     selectedFieldsResult: CommonSelectedFieldsResult;
   }): Promise<ObjectRecord[]> {
@@ -567,7 +567,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     queryResult: ObjectRecord[],
     flatObjectMetadata: FlatObjectMetadata,
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     authContext: WorkspaceAuthContext,
   ): Promise<ObjectRecord[]> {
     return await this.commonResultGettersService.processRecordArray(
@@ -582,7 +582,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   private getRecordWithoutCreatedBy(
     record: PartialObjectRecordWithId,
     flatObjectMetadata: FlatObjectMetadata,
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
   ): Omit<PartialObjectRecordWithId, 'createdBy'> {
     let recordWithoutCreatedByUpdate = record;
 
