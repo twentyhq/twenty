@@ -87,7 +87,9 @@ const StyledEmptyState = styled.div`
 type TagColor = 'blue' | 'green' | 'orange' | 'red' | 'gray';
 
 const getSourceLabel = (source: string | null): string =>
-  source === SLACK_USER_LINK_SOURCE.MANUAL ? 'Set manually' : 'Matched on email';
+  source === SLACK_USER_LINK_SOURCE.MANUAL
+    ? 'Set manually'
+    : 'Matched on email';
 
 const getSourceColor = (source: string | null): TagColor =>
   source === SLACK_USER_LINK_SOURCE.MANUAL ? 'blue' : 'green';
@@ -138,8 +140,8 @@ export const SlackUserLinksList = ({
     <StyledList>
       {hasMore && (
         <StyledEmptyState>
-          Showing the first {slackUserLinks.length} links; more exist than can be
-          shown here.
+          Showing the first {slackUserLinks.length} links; more exist than can
+          be shown here.
         </StyledEmptyState>
       )}
       {slackUserLinks.map((slackUserLink) => {
