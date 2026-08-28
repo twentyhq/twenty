@@ -10,7 +10,7 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { STANDARD_TIMELINE_ACTIVITY_HAPPENS_AT_2_38 } from 'src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-happens-at-2-38.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-@RegisteredWorkspaceCommand('2.38.0', 1787908170463)
+@RegisteredWorkspaceCommand('2.38.0', 1787918663365)
 @Command({
   name: 'upgrade:2-38:configure-timeline-activity-happens-at',
   description:
