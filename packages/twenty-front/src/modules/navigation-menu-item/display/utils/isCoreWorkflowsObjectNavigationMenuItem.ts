@@ -1,7 +1,6 @@
-import {
-  CoreObjectNameSingular,
-  NavigationMenuItemType,
-} from 'twenty-shared/types';
+import { NavigationMenuItemType } from 'twenty-shared/types';
+
+import { isCoreWorkflowsIndexEnabled } from '@/object-core/workflows/utils/isCoreWorkflowsIndexEnabled';
 
 export const isCoreWorkflowsObjectNavigationMenuItem = ({
   navigationMenuItemType,
@@ -12,6 +11,8 @@ export const isCoreWorkflowsObjectNavigationMenuItem = ({
   objectNameSingular?: string | null;
   isWorkflowCoreIndexPageEnabled: boolean;
 }) =>
-  isWorkflowCoreIndexPageEnabled &&
   navigationMenuItemType === NavigationMenuItemType.OBJECT &&
-  objectNameSingular === CoreObjectNameSingular.Workflow;
+  isCoreWorkflowsIndexEnabled({
+    objectNameSingular,
+    isWorkflowCoreIndexPageEnabled,
+  });
