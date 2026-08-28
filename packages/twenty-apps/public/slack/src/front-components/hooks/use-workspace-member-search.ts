@@ -3,14 +3,11 @@ import { useEffect, useState } from 'react';
 import { RestApiClient } from 'twenty-client-sdk/rest';
 
 import { type WorkspaceMemberOption } from 'src/front-components/types/workspace-member-option.type';
+import { buildWorkspaceMemberSearchFilter } from 'src/front-components/utils/build-workspace-member-search-filter.util';
 import { formatWorkspaceMemberName } from 'src/front-components/utils/format-workspace-member-name.util';
 
 const WORKSPACE_MEMBER_SEARCH_DEBOUNCE_MS = 250;
 const WORKSPACE_MEMBER_SEARCH_PAGE_SIZE = 20;
-
-// Strip characters that would break the REST filter DSL or act as ilike wildcards.
-const sanitizeSearchTerm = (value: string): string =>
-  value.replace(/[(),[\]:%\\_]/g, ' ').trim();
 
 type WorkspaceMemberRestRecord = {
   id?: string | null;
@@ -34,10 +31,13 @@ export const useWorkspaceMemberSearch = (
   const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
-    const sanitizedSearchTerm = sanitizeSearchTerm(searchTerm);
+    const filter = buildWorkspaceMemberSearchFilter(searchTerm);
 
-    if (!isNonEmptyString(sanitizedSearchTerm)) {
-      setOptions([]);
+    // Results for a previous term must never survive the term changing:
+    // the picker treats the top option as the best match for what is typed.
+    setOptions([]);
+
+    if (!isNonEmptyString(filter)) {
       setIsSearching(false);
 
       return;
@@ -49,7 +49,6 @@ export const useWorkspaceMemberSearch = (
 
     const timeoutId = setTimeout(async () => {
       try {
-        const filter = `or(name.firstName[ilike]:%${sanitizedSearchTerm}%,name.lastName[ilike]:%${sanitizedSearchTerm}%)`;
         const response = await new RestApiClient().get<WorkspaceMembersResponse>(
           '/rest/workspaceMembers',
           {
