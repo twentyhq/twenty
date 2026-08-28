@@ -39,9 +39,9 @@ export type CaseStudyRow = {
 };
 
 // Partner self-controls visibility: published → APPROVED (public), draft → WIP (hidden).
-// Ownership (partnerId/partnerUser) and contentType are stamped server-side by the
-// on-partner-content-created trigger, never written by the caller — so a partner cannot
-// repoint a case study onto another partner's public marketplace profile.
+// partnerId and contentType stay out of this mapper (locked fields, trigger-stamped).
+// partnerUserId is set on create by the save service from the authenticated member,
+// not from the request body, so a partner cannot repoint a case study.
 // Create and update share every field mapping; they diverge only on how status is
 // derived, so keep the common fields here and let each add its own status handling.
 const buildContentBaseData = (item: CaseStudyItem) => ({

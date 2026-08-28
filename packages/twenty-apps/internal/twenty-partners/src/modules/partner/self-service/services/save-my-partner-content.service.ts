@@ -79,10 +79,13 @@ export const saveMyPartnerContent = async (
     // (RLS-scoped) can't see it. Return it optimistically from the input + new id.
     const createdRows: CaseStudyRow[] = [];
     for (const item of plan.toCreate) {
-      const created = await createPartnerContent(
-        client,
-        buildContentCreateData(item),
-      );
+      // RLS on PartnerContent is "partnerUser IS the current member" and checks the
+      // row as submitted. partnerId/contentType stay locked (trigger-stamped);
+      // partnerUser is the RLS field, so insert is allowed to write it.
+      const created = await createPartnerContent(client, {
+        ...buildContentCreateData(item),
+        partnerUserId: resolved.workspaceMemberId,
+      });
       const newId = created.createPartnerContent?.id;
       if (newId !== undefined) {
         createdRows.push({
