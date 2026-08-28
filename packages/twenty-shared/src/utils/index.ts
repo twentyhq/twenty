@@ -204,10 +204,6 @@ export { isFieldValueRestricted } from './isFieldValueRestricted';
 export { fastDeepEqual } from './json/fast-deep-equal';
 export { getAppPath } from './navigation/getAppPath';
 export { getSettingsPath } from './navigation/getSettingsPath';
-export {
-  SUPPORTED_PAGE_LAYOUT_TYPES_BY_WIDGET_TYPE,
-  isWidgetTypeSupportedInPageLayoutType,
-} from './pageLayout/isWidgetTypeSupportedInPageLayoutType';
 export { parseJson } from './parseJson';
 export { removePropertiesFromRecord } from './removePropertiesFromRecord';
 export { removeUndefinedFields } from './removeUndefinedFields';

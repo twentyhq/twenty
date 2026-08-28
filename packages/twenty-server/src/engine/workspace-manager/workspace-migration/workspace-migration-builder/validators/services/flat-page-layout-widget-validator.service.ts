@@ -6,10 +6,7 @@ import {
   PageLayoutTabLayoutMode,
   PageLayoutWidgetPosition,
 } from 'twenty-shared/types';
-import {
-  isDefined,
-  isWidgetTypeSupportedInPageLayoutType,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { FlatPageLayoutWidgetTypeValidatorService } from 'src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service';
@@ -17,7 +14,6 @@ import { PageLayoutTabExceptionCode } from 'src/engine/metadata-modules/page-lay
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { validatePageLayoutWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util';
 import { validatePageLayoutWidgetVerticalListPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util';
-import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 import {
@@ -97,15 +93,6 @@ export class FlatPageLayoutWidgetValidatorService {
         userFriendlyMessage: msg`Page layout tab not found`,
       });
     }
-
-    validationResult.errors.push(
-      ...this.validateWidgetTypeIsSupportedInPageLayout({
-        flatPageLayoutWidget: updatedFlatPageLayoutWidget,
-        pageLayoutTab: referencedPageLayoutTab,
-        flatPageLayoutMaps:
-          optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutMaps,
-      }),
-    );
 
     const positionErrors = this.validatePosition({
       position: updatedFlatPageLayoutWidget.position,
@@ -228,15 +215,6 @@ export class FlatPageLayoutWidgetValidatorService {
 
     validationResult.errors.push(...positionErrors);
 
-    validationResult.errors.push(
-      ...this.validateWidgetTypeIsSupportedInPageLayout({
-        flatPageLayoutWidget: flatPageLayoutWidgetToValidate,
-        pageLayoutTab: referencedPageLayoutTab,
-        flatPageLayoutMaps:
-          optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutMaps,
-      }),
-    );
-
     const typeSpecificityErrors =
       this.flatPageLayoutWidgetTypeValidatorService.validateFlatPageLayoutWidgetTypeSpecificitiesForCreation(
         {
@@ -252,49 +230,6 @@ export class FlatPageLayoutWidgetValidatorService {
     validationResult.errors.push(...typeSpecificityErrors);
 
     return validationResult;
-  }
-
-  private validateWidgetTypeIsSupportedInPageLayout({
-    flatPageLayoutWidget,
-    pageLayoutTab,
-    flatPageLayoutMaps,
-  }: {
-    flatPageLayoutWidget: UniversalFlatPageLayoutWidget;
-    pageLayoutTab: UniversalFlatPageLayoutTab | undefined;
-    flatPageLayoutMaps: MetadataUniversalFlatEntityMaps<'pageLayout'>;
-  }): FlatEntityValidationError[] {
-    if (!isDefined(pageLayoutTab)) {
-      return [];
-    }
-
-    const pageLayout = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: pageLayoutTab.pageLayoutUniversalIdentifier,
-      flatEntityMaps: flatPageLayoutMaps,
-    });
-
-    if (!isDefined(pageLayout)) {
-      return [];
-    }
-
-    if (
-      isWidgetTypeSupportedInPageLayoutType({
-        widgetType: flatPageLayoutWidget.type,
-        pageLayoutType: pageLayout.type,
-      })
-    ) {
-      return [];
-    }
-
-    const widgetType = flatPageLayoutWidget.type;
-    const pageLayoutType = pageLayout.type;
-
-    return [
-      {
-        code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-        message: t`Widget type ${widgetType} is not supported in a ${pageLayoutType} page layout`,
-        userFriendlyMessage: msg`This widget type cannot be used in this page layout`,
-      },
-    ];
   }
 
   private getEffectivePageLayoutTabUniversalIdentifier(
