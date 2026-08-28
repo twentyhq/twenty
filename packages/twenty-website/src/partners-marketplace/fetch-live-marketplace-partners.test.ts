@@ -64,6 +64,7 @@ describe('fetchLiveMarketplacePartners', () => {
         services: [],
         portfolio: [],
         clients: [],
+        superPartner: false,
         partnerTier: 'ADVANCED',
         serviceCount: 2,
         approvedCaseStudyCount: 3,
@@ -95,6 +96,39 @@ describe('fetchLiveMarketplacePartners', () => {
     approvedCaseStudyWithCoverCount: 2,
     rotationKey: 'weekly-key',
   };
+
+  it('reads a missing superPartner as false so an old API still ranks', async () => {
+    mockedFetch.mockResolvedValue({
+      ok: true,
+      partners: [rankablePartner],
+    });
+
+    const [partner] = await fetchLiveMarketplacePartners();
+
+    expect(partner.superPartner).toBe(false);
+  });
+
+  it('reads superPartner true from the API', async () => {
+    mockedFetch.mockResolvedValue({
+      ok: true,
+      partners: [{ ...rankablePartner, superPartner: true }],
+    });
+
+    const [partner] = await fetchLiveMarketplacePartners();
+
+    expect(partner.superPartner).toBe(true);
+  });
+
+  it('reads superPartner null as false', async () => {
+    mockedFetch.mockResolvedValue({
+      ok: true,
+      partners: [{ ...rankablePartner, superPartner: null }],
+    });
+
+    const [partner] = await fetchLiveMarketplacePartners();
+
+    expect(partner.superPartner).toBe(false);
+  });
 
   it.each([
     ['rotationKey', { rotationKey: '' }],

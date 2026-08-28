@@ -42,6 +42,7 @@ import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/event-logs
 import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
+import { computeLogicFunctionExecutionCreditsMicro } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/compute-logic-function-execution-credits-micro.util';
 import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/resolve-workspace-member-id-for-user.util';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
@@ -596,14 +597,18 @@ export class LogicFunctionExecutorService {
 
     // Billing-exempt apps (first-party maintenance apps whose per-record
     // triggers fire during mailbox/calendar import) do not consume the
-    // workspace's credits for the invocation itself. Explicit chargeCredits
+    // workspace's credits for the execution itself. Explicit chargeCredits
     // calls and AI token usage from within the function are billed separately
     // and stay untouched.
-    const creditsUsedMicro = isBillingExemptApplication(
-      flatApplication.universalIdentifier,
-    )
-      ? 0
-      : 100;
+    const { invocationCreditsMicro, durationCreditsMicro, billedDurationMs } =
+      computeLogicFunctionExecutionCreditsMicro({
+        durationMs: result.billedDurationMs,
+        isBillingExempt: isBillingExemptApplication(
+          flatApplication.universalIdentifier,
+        ),
+      });
+
+    const totalCreditsMicro = invocationCreditsMicro + durationCreditsMicro;
 
     if (this.billingService.isBillingEnabled()) {
       const { currentBillingSubscription } =
@@ -613,26 +618,38 @@ export class LogicFunctionExecutorService {
 
       if (
         currentBillingSubscription !== NO_BILLING_SUBSCRIPTION &&
-        creditsUsedMicro > 0
+        totalCreditsMicro > 0
       ) {
         await this.billingUsageService.decrementAvailableCreditsInCache({
           workspaceId,
-          usedCredits: creditsUsedMicro,
+          usedCredits: totalCreditsMicro,
         });
       }
     }
 
+    const spenders = {
+      logicFunctionId: flatLogicFunction.id,
+      applicationId: flatApplication.id,
+    };
+
     await this.usageRecorderService.record(workspaceId, {
       resourceType: UsageResourceType.LOGIC_FUNCTION,
       operationType: UsageOperationType.CODE_EXECUTION,
-      creditsUsedMicro,
+      creditsUsedMicro: invocationCreditsMicro,
       quantity: 1,
       unit: UsageUnit.INVOCATION,
       resourceId: flatLogicFunction.id,
-      spenders: {
-        logicFunctionId: flatLogicFunction.id,
-        applicationId: flatApplication.id,
-      },
+      spenders,
+    });
+
+    await this.usageRecorderService.record(workspaceId, {
+      resourceType: UsageResourceType.LOGIC_FUNCTION,
+      operationType: UsageOperationType.CODE_EXECUTION,
+      creditsUsedMicro: durationCreditsMicro,
+      quantity: billedDurationMs,
+      unit: UsageUnit.MILLISECOND,
+      resourceId: flatLogicFunction.id,
+      spenders,
     });
   }
 }

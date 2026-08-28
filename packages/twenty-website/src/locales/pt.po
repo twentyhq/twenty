@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-27 11:31\n"
+"PO-Revision-Date: 2026-08-28 12:00\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1491,7 +1491,7 @@ msgstr "Bertrams"
 #. js-lingui-id: CrZWSz
 #: src/partner-application/partner-application-copy.ts
 msgid "Best proof first: a live Twenty instance URL, a public repo, or a YouTube link. Loom, Drive and file links are accepted but slower to review."
-msgstr ""
+msgstr "Melhor comprovante primeiro: uma URL de instância ativa do Twenty, um repositório público ou um link do YouTube. Links do Loom, Drive e de arquivos são aceitos, mas demoram mais para serem analisados."
 
 #. js-lingui-id: BSmDFu
 #: src/platform/releases/ReleaseNotes.tsx
@@ -7220,6 +7220,11 @@ msgstr "Acréscimo de plano de sucesso"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Sudan 🇸🇩"
 msgstr "Sudão 🇸🇩"
+
+#. js-lingui-id: 388eZi
+#: src/partners-marketplace/marketplace-copy.ts
+msgid "Super partner"
+msgstr ""
 
 #. js-lingui-id: XYLcNv
 #: src/sections/pricing-plan-table/plan-table-data.ts

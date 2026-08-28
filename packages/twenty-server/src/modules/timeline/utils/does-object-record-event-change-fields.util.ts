@@ -1,25 +1,23 @@
 import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
 import { isDefined } from 'twenty-shared/utils';
 
-export const doesTimelineActivityLinkChange = ({
+export const doesObjectRecordEventChangeFields = ({
   event,
-  joinColumnNames,
+  fieldNames,
 }: {
   event: ObjectRecordBaseEvent;
-  joinColumnNames: string[];
+  fieldNames: string[];
 }): boolean => {
   const { updatedFields, diff } = event.properties;
 
   if (isDefined(updatedFields)) {
-    return joinColumnNames.some((joinColumnName) =>
-      updatedFields.includes(joinColumnName),
-    );
+    return fieldNames.some((fieldName) => updatedFields.includes(fieldName));
   }
 
   return (
     isDefined(diff) &&
-    joinColumnNames.some((joinColumnName) =>
-      Object.prototype.hasOwnProperty.call(diff, joinColumnName),
+    fieldNames.some((fieldName) =>
+      Object.prototype.hasOwnProperty.call(diff, fieldName),
     )
   );
 };

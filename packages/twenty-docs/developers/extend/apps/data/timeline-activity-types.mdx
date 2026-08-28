@@ -74,6 +74,8 @@ export default defineTimelineActivityType({
 
 An `updated` through event is emitted for every source update by default. Set `emit.through.triggerFieldUniversalIdentifiers` when only changes to selected source fields should appear on the target timelines.
 
+A `linked` event is timestamped at the moment it is written. When the source record carries its own moment in time, set `emit.through.happensAtFieldUniversalIdentifier` to a `DATE_TIME` or `DATE` field on the source object: the timeline anchors the event at that field's value instead, and follows it when the value changes. Twenty's standard email and calendar events use this to anchor at `receivedAt` and `startsAt`.
+
 Omit `emit` for an explicit domain event that your logic function creates itself. This avoids producing both an automatic audit row and an explicit row for the same operation.
 
 ```ts filename="src/timeline-activity-types/post-card-sent.ts"
@@ -178,6 +180,7 @@ mutation ResetTimelineActivityType($id: UUID!) {
 | `emit.objectUniversalIdentifier`                  | With emit | Object whose records emit this type                              |
 | `emit.through.relationFieldUniversalIdentifier`   | No        | Direct or junction relation used to fan out to related timelines |
 | `emit.through.triggerFieldUniversalIdentifiers`   | No        | Source fields that can trigger an `updated` through event        |
+| `emit.through.happensAtFieldUniversalIdentifier`  | No        | Source date field used as the event's `happensAt` timestamp for `linked` events, instead of the write time |
 | `frontComponentUniversalIdentifier`               | No        | App-owned front component mounted when the row is expanded       |
 | `replacesTimelineActivityTypeUniversalIdentifier` | No        | Existing emit type replaced; requires `emit`                     |
 

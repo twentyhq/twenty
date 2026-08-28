@@ -63,6 +63,7 @@ export type PartnerMarketplaceQueryNode = {
   skills: string[] | null;
   city: string | null;
   country: string | null;
+  superPartner?: boolean | null;
   partnerLinks?: { edges: ReadonlyArray<PartnerLinkEdge> } | null;
   partnerServices?: { edges: ReadonlyArray<PartnerServiceEdge> } | null;
   partnerContents?: { edges: ReadonlyArray<PartnerContentEdge> } | null;
@@ -85,6 +86,7 @@ export type MarketplaceListPartner = {
   skills: string[] | null;
   city: string | null;
   country: string | null;
+  superPartner: boolean;
 };
 
 export type MarketplaceProfilePartner = MarketplaceListPartner & {
@@ -240,6 +242,7 @@ const mapBasePartner = (
   skills: node.skills,
   city: node.city,
   country: node.country,
+  superPartner: node.superPartner === true,
 });
 
 export function mapPartnerForMarketplace(
