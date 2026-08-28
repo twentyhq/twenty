@@ -10,7 +10,7 @@ import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-i
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
 import { useNavigationMenuItemTitleEdit } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemTitleEdit';
-import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
+import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { sidePanelShouldFocusTitleInputComponentState } from '@/side-panel/states/sidePanelShouldFocusTitleInputComponentState';
 import { IconPicker } from '@/ui/input/components/IconPicker';
@@ -65,7 +65,7 @@ export const SidePanelFolderInfo = () => {
   const FolderIconComponent = getIcon(selectedIconKey);
 
   return (
-    <SidePanelPageInfoLayout
+    <HeaderIdentifier
       icon={
         <IconPicker
           dropdownId="side-panel-folder-icon-picker"

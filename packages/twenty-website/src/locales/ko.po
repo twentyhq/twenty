@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-27 11:31\n"
+"PO-Revision-Date: 2026-08-28 16:20\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -1485,6 +1485,11 @@ msgstr "Benjamin Reynolds"
 #: src/sections/testimonials/partner-testimonials.data.ts
 msgid "Bertrams"
 msgstr "Bertrams"
+
+#. js-lingui-id: CrZWSz
+#: src/partner-application/partner-application-copy.ts
+msgid "Best proof first: a live Twenty instance URL, a public repo, or a YouTube link. Loom, Drive and file links are accepted but slower to review."
+msgstr "가장 좋은 증빙 자료 우선: 실제 운영 중인 Twenty 인스턴스 URL, 공개 리포지토리 또는 YouTube 링크를 제출해 주세요. Loom, Drive 및 파일 링크도 허용되지만 검토에 더 오래 걸립니다."
 
 #. js-lingui-id: BSmDFu
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4697,11 +4702,6 @@ msgstr "일반 객체와 마찬가지로, 작업과 회사에 사용자 지정 �
 msgid "Link field"
 msgstr "Link 필드"
 
-#. js-lingui-id: YOe6r4
-#: src/partner-application/partner-application-copy.ts
-msgid "Link that shows the work (Loom, GitHub, Notion, Drive, public write-up…). No public workspace? Share a short Loom."
-msgstr "작업물을 확인할 수 있는 링크를 입력해 주세요 (Loom, GitHub, Notion, Drive, 공개 문서 등). 공개 워크스페이스가 없나요? 짧은 Loom 영상을 공유해 주세요."
-
 #. js-lingui-id: gggTBm
 #: src/sections/footer/footer.data.ts
 msgid "LinkedIn"
@@ -7218,6 +7218,11 @@ msgstr "Success 플랜 할증"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Sudan 🇸🇩"
 msgstr "Sudan 🇸🇩"
+
+#. js-lingui-id: 388eZi
+#: src/partners-marketplace/marketplace-copy.ts
+msgid "Super partner"
+msgstr "슈퍼 파트너"
 
 #. js-lingui-id: XYLcNv
 #: src/sections/pricing-plan-table/plan-table-data.ts

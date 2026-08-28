@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-27 11:31\n"
+"PO-Revision-Date: 2026-08-28 16:20\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1487,6 +1487,11 @@ msgstr "Benjamin Reynolds"
 #: src/sections/testimonials/partner-testimonials.data.ts
 msgid "Bertrams"
 msgstr "Bertrams"
+
+#. js-lingui-id: CrZWSz
+#: src/partner-application/partner-application-copy.ts
+msgid "Best proof first: a live Twenty instance URL, a public repo, or a YouTube link. Loom, Drive and file links are accepted but slower to review."
+msgstr "Am besten zuerst einen Nachweis vorlegen: eine URL einer aktiven Twenty-Instanz, ein öffentliches Repository oder einen YouTube-Link. Links zu Loom, Drive und Dateien werden akzeptiert, aber langsamer geprüft."
 
 #. js-lingui-id: BSmDFu
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4699,11 +4704,6 @@ msgstr "Fügen Sie wie bei jedem regulären Objekt benutzerdefinierte Felder zu 
 msgid "Link field"
 msgstr "Linkfeld"
 
-#. js-lingui-id: YOe6r4
-#: src/partner-application/partner-application-copy.ts
-msgid "Link that shows the work (Loom, GitHub, Notion, Drive, public write-up…). No public workspace? Share a short Loom."
-msgstr "Link, der die Arbeit zeigt (Loom, GitHub, Notion, Drive, öffentliche Ausarbeitung …). Kein öffentlicher Arbeitsbereich? Teile ein kurzes Loom."
-
 #. js-lingui-id: gggTBm
 #: src/sections/footer/footer.data.ts
 msgid "LinkedIn"
@@ -7220,6 +7220,11 @@ msgstr "Aufschlag für Success-Plan"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Sudan 🇸🇩"
 msgstr "Sudan 🇸🇩"
+
+#. js-lingui-id: 388eZi
+#: src/partners-marketplace/marketplace-copy.ts
+msgid "Super partner"
+msgstr "Super-Partner"
 
 #. js-lingui-id: XYLcNv
 #: src/sections/pricing-plan-table/plan-table-data.ts

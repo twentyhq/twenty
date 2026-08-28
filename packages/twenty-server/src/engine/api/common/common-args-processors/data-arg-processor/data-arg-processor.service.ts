@@ -61,7 +61,7 @@ import { transformRichTextValue } from 'src/engine/core-modules/record-transform
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -80,7 +80,7 @@ export class DataArgProcessorService {
     partialRecordInputs: Partial<ObjectRecord>[] | undefined;
     authContext: WorkspaceAuthContext;
     flatObjectMetadata: FlatObjectMetadata;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     shouldBackfillPositionIfUndefined?: boolean;
   }): Promise<Partial<ObjectRecord>[]> {
@@ -128,7 +128,7 @@ export class DataArgProcessorService {
         }
 
         const fieldMetadata =
-          findFlatEntityByIdInFlatEntityMaps<FlatFieldMetadata>({
+          findFlatEntityByIdInFlatEntityMaps<OrmFlatFieldMetadata>({
             flatEntityId: fieldMetadataId,
             flatEntityMaps: flatFieldMetadataMaps,
           });
@@ -172,10 +172,10 @@ export class DataArgProcessorService {
   }
 
   private async processField(
-    fieldMetadata: FlatFieldMetadata,
+    fieldMetadata: OrmFlatFieldMetadata,
     key: string,
     value: unknown,
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
   ): Promise<unknown> {
     switch (fieldMetadata.type) {
@@ -364,8 +364,8 @@ export class DataArgProcessorService {
 
   private async processConnectWhere(
     connectWhere: Record<string, unknown>,
-    relationFieldMetadata: FlatFieldMetadata,
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    relationFieldMetadata: OrmFlatFieldMetadata,
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
   ): Promise<Record<string, unknown>> {
     if (!isDefined(relationFieldMetadata.relationTargetObjectMetadataId)) {
@@ -406,7 +406,7 @@ export class DataArgProcessorService {
       }
 
       const whereFieldMetadata =
-        findFlatEntityByIdInFlatEntityMaps<FlatFieldMetadata>({
+        findFlatEntityByIdInFlatEntityMaps<OrmFlatFieldMetadata>({
           flatEntityId: fieldId,
           flatEntityMaps: flatFieldMetadataMaps,
         });
