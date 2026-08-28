@@ -4,9 +4,9 @@ import { isDefined } from 'twenty-sdk/utils';
 import { type SlackResolveUserLinkResult } from 'src/logic-functions/types/slack-resolved-user.type';
 import { type SlackRouteBody } from 'src/logic-functions/types/slack-route-body.type';
 import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/utils/current-user-has-workspace-members-permission';
-import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
+import { resolveLinkTargetById } from 'src/logic-functions/utils/resolve-link-target-by-id';
 import {
   type ResolvedSlackUser,
   resolveSlackUserByEmail,
@@ -29,8 +29,11 @@ const readBody = (
 export const slackResolveUserLinkHandler = async (
   payload: SlackRouteBody,
 ): Promise<SlackResolveUserLinkResult> => {
-  const { email, slackUserId: requestedSlackUserId, slackTeamId } =
-    readBody(payload);
+  const {
+    email,
+    slackUserId: requestedSlackUserId,
+    slackTeamId,
+  } = readBody(payload);
 
   if (!isNonEmptyString(email) && !isNonEmptyString(requestedSlackUserId)) {
     return {
@@ -76,53 +79,32 @@ export const slackResolveUserLinkHandler = async (
     };
   }
 
+  // Shared with the set handler, so the preview enforces the same trust rule
+  // the save does: a supplied team must agree with the account's real
+  // workspace, and a directly-supplied id never assumes the installed team.
   if (isNonEmptyString(requestedSlackUserId)) {
-    const identity = await fetchSlackUserIdentity({
-      client: slackClient,
+    const idTarget = await resolveLinkTargetById({
+      slackClient,
       slackUserId: requestedSlackUserId,
+      requestedSlackTeamId: slackTeamId,
     });
 
-    // Mirror the set handler: a supplied team must agree with the account's
-    // real workspace when Slack can see it, so the preview cannot promise an
-    // admin-set link for an in-workspace user given a bogus external team.
-    if (
-      isNonEmptyString(slackTeamId) &&
-      isDefined(identity) &&
-      isNonEmptyString(identity.slackTeamId) &&
-      identity.slackTeamId !== slackTeamId
-    ) {
-      return {
-        success: false,
-        message: 'Slack team id does not match the user',
-        error: `That Slack user belongs to workspace ${identity.slackTeamId}, not ${slackTeamId}. Check the team id and try again.`,
-      };
-    }
-
-    // A directly-supplied id may belong to another workspace, so never assume
-    // the installed team for it: a wrong guess promises a consent DM that the
-    // save step cannot deliver. Only an email-resolved user (below) is in the
-    // installed workspace by definition.
-    const resolvedTeamId = slackTeamId ?? identity?.slackTeamId;
-
-    if (!isNonEmptyString(resolvedTeamId)) {
-      return {
-        success: false,
-        message: 'Could not resolve the Slack workspace',
-        error:
-          'Could not determine which Slack workspace this user belongs to. Provide their Slack team id and try again.',
-      };
+    if (!idTarget.success) {
+      return idTarget;
     }
 
     return {
       success: true,
       slackUser: {
         slackUserId: requestedSlackUserId,
-        slackTeamId: resolvedTeamId,
-        displayName: identity?.displayName,
+        slackTeamId: idTarget.slackTeamId,
+        displayName: idTarget.identity?.displayName,
         // Mirror the set handler: only a regular account's profile email can
         // certify an email match.
-        email: identity?.isRegularUserAccount ? identity.email : undefined,
-        isInInstalledWorkspace: resolvedTeamId === installedTeamId,
+        email: idTarget.identity?.isRegularUserAccount
+          ? idTarget.identity.email
+          : undefined,
+        isInInstalledWorkspace: idTarget.slackTeamId === installedTeamId,
       },
     };
   }
