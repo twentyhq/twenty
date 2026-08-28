@@ -1,5 +1,6 @@
 import { PageLayoutWidgetDndProvider } from '@/page-layout/components/dnd/PageLayoutWidgetDndProvider';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
+import { PageLayoutPrerenderedTabIdsResetEffect } from '@/page-layout/components/PageLayoutPrerenderedTabIdsResetEffect';
 import { PageLayoutScrollResetEffect } from '@/page-layout/components/PageLayoutScrollResetEffect';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
@@ -19,9 +20,7 @@ import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingC
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
-import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -155,17 +154,6 @@ export const PageLayoutTabsRenderer = () => {
     pageLayoutPrerenderedTabIdsComponentState,
   );
 
-  const setPageLayoutPrerenderedTabIds = useSetAtomComponentState(
-    pageLayoutPrerenderedTabIdsComponentState,
-  );
-
-  // Prerendering is a within-visit optimization: without the reset, reopening
-  // a record would mount every tab hovered during the previous visit at once.
-  useEffect(
-    () => () => setPageLayoutPrerenderedTabIds([]),
-    [setPageLayoutPrerenderedTabIds],
-  );
-
   const tabsToMount = sortedTabs.filter(
     (tab) =>
       tab.id === activeTabId ||
@@ -184,6 +172,7 @@ export const PageLayoutTabsRenderer = () => {
         scrollWrapperInstanceId={scrollWrapperInstanceId}
         targetRecordId={targetRecordIdentifier?.id}
       />
+      <PageLayoutPrerenderedTabIdsResetEffect />
       <StyledContainer hasPinnedTab={isDefined(pinnedLeftTab)}>
         {isDefined(pinnedLeftTab) && (
           <PageLayoutLeftPanel
