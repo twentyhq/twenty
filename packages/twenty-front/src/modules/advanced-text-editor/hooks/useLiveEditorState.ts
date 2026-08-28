@@ -6,6 +6,7 @@ import { useEditorState } from '@tiptap/react';
 // `useEditor` recreated the editor on a dependency change, and that instance is
 // destroyed, so it has dropped its extension and command managers. Selecting
 // from the instance the caller holds keeps the selection on the live editor.
+// Drop this hook once https://github.com/ueberdosis/tiptap/issues/7346 ships.
 export const useLiveEditorState = <TSelectorResult>(
   editor: Editor,
   select: (editor: Editor) => TSelectorResult,
