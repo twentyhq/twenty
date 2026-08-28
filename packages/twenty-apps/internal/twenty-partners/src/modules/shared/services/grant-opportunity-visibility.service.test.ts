@@ -99,7 +99,10 @@ describe('grantOpportunityVisibility', () => {
   it('writes a second time when a concurrent grant dropped the member id', async () => {
     query
       .mockResolvedValueOnce(oneOpportunity(null))
-      .mockResolvedValueOnce(oneOpportunity([OTHER_MEMBER_ID]));
+      .mockResolvedValueOnce(oneOpportunity([OTHER_MEMBER_ID]))
+      .mockResolvedValueOnce(
+        oneOpportunity([OTHER_MEMBER_ID, MEMBER_ID]),
+      );
 
     const result = await grantOpportunityVisibility(client, OPPORTUNITY_ID, [
       MEMBER_ID,
@@ -112,6 +115,16 @@ describe('grantOpportunityVisibility', () => {
       2,
       updateCall([OTHER_MEMBER_ID, MEMBER_ID]),
     );
+  });
+
+  it('throws when the member id is still missing after concurrent writes', async () => {
+    query.mockResolvedValue(oneOpportunity([OTHER_MEMBER_ID]));
+
+    await expect(
+      grantOpportunityVisibility(client, OPPORTUNITY_ID, [MEMBER_ID]),
+    ).rejects.toThrow(/still missing member-1/);
+
+    expect(mutation).toHaveBeenCalledTimes(2);
   });
 
   it('does not claim a grant when the opportunity disappears after the write', async () => {

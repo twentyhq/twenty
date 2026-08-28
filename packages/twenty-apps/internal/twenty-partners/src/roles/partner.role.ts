@@ -60,7 +60,8 @@ import { REFERRED_BY_PARTNER_ON_OPPORTUNITY_FIELD_ID } from 'src/modules/opportu
 // Shared with configure-partner-rls.ts, which locates the role by this label.
 export const PARTNER_ROLE_LABEL = 'Partner';
 
-const OPPORTUNITY_RLS_OR_GROUP_ID = '7a7fd85d-62c6-4cac-876f-3a67951e7b10';
+export const OPPORTUNITY_RLS_OR_GROUP_ID =
+  '7a7fd85d-62c6-4cac-876f-3a67951e7b10';
 
 const RLS_PREDICATE_IDS = {
   partner: '501a50b0-9e57-4a5a-99c3-88c44dc46d4a',

@@ -15,7 +15,7 @@ import { APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/modules/application
 import { OPPORTUNITY_APPLICANT_PARTNER_USER_IDS_FIELD_ID } from 'src/modules/opportunity/fields/opportunity-applicant-partner-user-ids.field';
 import { OPPORTUNITY_IS_LISTED_FIELD_ID } from 'src/modules/opportunity/fields/opportunity-is-listed.field';
 
-import partnerRole from './partner.role';
+import partnerRole, { OPPORTUNITY_RLS_OR_GROUP_ID } from './partner.role';
 
 const WORKSPACE_MEMBER_ID_FIELD =
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
@@ -78,6 +78,10 @@ describe('partner.role row-level predicates', () => {
 
   it('ORs the three opportunity predicates in one group', () => {
     expect(groups).toHaveLength(1);
+    expect(groups[0].universalIdentifier).toBe(OPPORTUNITY_RLS_OR_GROUP_ID);
+    expect(OPPORTUNITY_RLS_OR_GROUP_ID).toBe(
+      '7a7fd85d-62c6-4cac-876f-3a67951e7b10',
+    );
     expect(groups[0].logicalOperator).toBe(
       RowLevelPermissionPredicateGroupLogicalOperator.OR,
     );
@@ -118,6 +122,17 @@ describe('partner.role row-level predicates', () => {
     expect(applicant?.workspaceMemberFieldUniversalIdentifier).toBe(
       WORKSPACE_MEMBER_ID_FIELD,
     );
+  });
+
+  it('hides applicantPartnerUserIds so one applicant cannot read the others', () => {
+    const fieldPermission = partnerRole.config.fieldPermissions?.find(
+      (permission) =>
+        permission.fieldUniversalIdentifier ===
+        OPPORTUNITY_APPLICANT_PARTNER_USER_IDS_FIELD_ID,
+    );
+
+    expect(fieldPermission?.canReadFieldValue).toBe(false);
+    expect(fieldPermission?.canUpdateFieldValue).toBe(false);
   });
 
   it('keeps predicate identifiers unique and stable so sync updates in place', () => {

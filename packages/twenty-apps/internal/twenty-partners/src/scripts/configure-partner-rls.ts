@@ -5,23 +5,21 @@
 // Legacy predicates on an already-installed workspace: earlier versions created them
 // through upsertRowLevelPermissionPredicates, which stamps them with the workspace's
 // custom application rather than twenty-partners. The manifest sync diffs by application,
-// so it cannot see those rows and will never remove them. They are harmless while they
-// agree with the manifest — the ungrouped ones AND to the same condition, and the two
-// parentless opportunity OR groups express the same OR — but they will drift apart the
-// first time the manifest changes. Remove them deliberately, with database access, while
-// the manifest predicates are in place. Do NOT clear them through the upsert mutation:
-// it deletes every predicate for a (role, object) pair, and a Partner role with no
-// predicate has no row filter at all, so partners would read the whole workspace until
-// the manifest predicates were restored.
+// so it cannot see those rows and will never remove them.
 //
-// Verifies (does NOT set) the Opportunity field permissions from `partner.role.ts`.
+// Ungrouped leftovers AND to the same ownership check and are redundant. Two parentless
+// Opportunity OR groups are not. The RLS compiler keeps only the first parentless group,
+// so leftover (partnerUser IS me) OR (isListed) can drop applicantPartnerUserIds CONTAINS.
+// This script fails when it finds more than one. Remove leftover groups with database
+// access while the manifest predicates stay in place. Do NOT clear them through the
+// upsert mutation: it deletes every predicate for a (role, object) pair, and a Partner
+// role with no predicate has no row filter at all, so partners would read the whole
+// workspace until the manifest predicates were restored.
+//
+// Also verifies Opportunity and Application field permissions from `partner.role.ts`.
 // upsertFieldPermissions rejects out-of-band changes to app-owned roles
 // (ROLE_BELONGS_TO_ANOTHER_APPLICATION), so those must come from the manifest; if any
 // expected lock is missing, the script exits non-zero and tells you to re-sync.
-//
-// Verifies Application field permissions the same way. The Partner role cannot write
-// Application at all (canUpdateObjectRecords: false); the field locks are kept as
-// intent on top of that object-level block, not as the mechanism.
 //
 // Usage:
 //   yarn rls:configure          # against .env.local
@@ -32,6 +30,7 @@ config({ path: process.env.ENV_FILE ?? '.env.local' });
 
 import { PARTNER_ROLE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { PARTNER_ROLE_LABEL } from 'src/roles/partner.role';
+import { findParentlessOpportunityRlsGroups } from 'src/scripts/find-parentless-opportunity-rls-groups.util';
 
 const requireEnv = (name: string): string => {
   const value = process.env[name];
@@ -48,7 +47,7 @@ const SIMPLE_TARGET_OBJECTS = [
   'partnerContent',
   'application',
 ] as const;
-// opportunity uses an OR group (handled separately), but still needs an existence check.
+// Opportunity is in this list so leftover parentless OR groups can be resolved by id.
 const ALL_TARGET_OBJECTS = [...SIMPLE_TARGET_OBJECTS, 'opportunity'] as const;
 
 // Opportunity fields that must NOT be locked: system columns and updatedBy/position
@@ -186,6 +185,12 @@ type FieldPermissionResult = {
   canUpdateFieldValue: boolean | null;
 };
 
+type PredicateGroupResult = {
+  id: string;
+  objectMetadataId: string;
+  parentRowLevelPermissionPredicateGroupId?: string | null;
+};
+
 async function main() {
   const baseUrl = requireEnv('TWENTY_PARTNERS_API_URL').replace(/\/$/, '');
   const apiKey = requireEnv('TWENTY_PARTNERS_API_KEY');
@@ -204,7 +209,10 @@ async function main() {
   );
 
   const objectIdByName = new Map<string, string>(
-    objectsData.objects.edges.map((e) => [e.node.nameSingular, e.node.id]),
+    objectsData.objects.edges.map((edge) => [
+      edge.node.nameSingular,
+      edge.node.id,
+    ]),
   );
 
   for (const name of ALL_TARGET_OBJECTS) {
@@ -222,30 +230,29 @@ async function main() {
 
   const opportunityObjectId = objectIdByName.get('opportunity') as string;
 
-
-  // ── 2. Resolve Partner role id and fetch field permissions in one request ──────
+  // ── 2. Resolve Partner role, field permissions, and predicate groups ────────
   //
   // getRoles returns a flat array (not a connection) and does NOT expose
   // universalIdentifier, so we match on the role label via the shared PARTNER_ROLE_LABEL
   // constant (exported from partner.role.ts) — a rename there can't desync this script.
-  // Fetching fieldPermissions here avoids a second getRoles call later in step 5.
   const rolesData = await metadataFetch<{
     getRoles: {
       id: string;
       label: string;
       fieldPermissions: FieldPermissionResult[];
+      rowLevelPermissionPredicateGroups: PredicateGroupResult[];
     }[];
   }>(
     metadataUrl,
     apiKey,
-    `{ getRoles { id label fieldPermissions { id fieldMetadataId objectMetadataId canUpdateFieldValue canReadFieldValue } } }`,
+    `{ getRoles { id label fieldPermissions { id fieldMetadataId objectMetadataId canUpdateFieldValue canReadFieldValue } rowLevelPermissionPredicateGroups { id objectMetadataId parentRowLevelPermissionPredicateGroupId } } }`,
   );
 
   const roles = rolesData.getRoles;
-  const partnerRole = roles.find((r) => r.label === PARTNER_ROLE_LABEL);
+  const partnerRole = roles.find((role) => role.label === PARTNER_ROLE_LABEL);
 
   if (!partnerRole) {
-    const labels = roles.map((r) => r.label).join(', ');
+    const labels = roles.map((role) => role.label).join(', ');
     throw new Error(
       `Partner role not found. Available roles: ${labels}. ` +
         `Ensure the app is installed (universalIdentifier=${PARTNER_ROLE_UNIVERSAL_IDENTIFIER}).`,
@@ -257,33 +264,86 @@ async function main() {
       `(universalIdentifier in manifest: ${PARTNER_ROLE_UNIVERSAL_IDENTIFIER})`,
   );
 
+  const parentlessOpportunityGroups = findParentlessOpportunityRlsGroups(
+    partnerRole.rowLevelPermissionPredicateGroups ?? [],
+    opportunityObjectId,
+  );
+
+  if (parentlessOpportunityGroups.length > 1) {
+    const leftoverGroupIds = parentlessOpportunityGroups
+      .map((group) => group.id)
+      .join(', ');
+
+    console.error(
+      `\n[rls:configure] DRIFT DETECTED: Partner role has ` +
+        `${parentlessOpportunityGroups.length} parentless Opportunity RLS groups ` +
+        `(${leftoverGroupIds}).\n` +
+        `The filter compiler keeps only the first parentless group, so leftover\n` +
+        `(partnerUser IS me) OR (isListed) can drop applicantPartnerUserIds CONTAINS.\n\n` +
+        `Keep the twenty-partners manifest group. Soft-delete the leftover custom-\n` +
+        `application group (and its predicates) in core.rowLevelPermissionPredicateGroup\n` +
+        `/ core.rowLevelPermissionPredicate. Inspect applicationId first:\n\n` +
+        `  SELECT id, "universalIdentifier", "applicationId"\n` +
+        `  FROM core."rowLevelPermissionPredicateGroup"\n` +
+        `  WHERE id IN (${parentlessOpportunityGroups.map((group) => `'${group.id}'`).join(', ')});\n\n` +
+        `Do NOT call upsertRowLevelPermissionPredicates for (Partner, opportunity):\n` +
+        `it wipes every predicate for that pair and leaves partners unfiltered.\n`,
+    );
+    process.exitCode = 1;
+    return;
+  }
+
   // ── 3. Verify Opportunity field permissions (set via manifest, not here — see header) ─
 
   const oppObjectId = opportunityObjectId;
 
   const allOppFields = await collectAllFields(metadataUrl, apiKey, oppObjectId);
   const oppFieldIdToName = new Map<string, string>(
-    allOppFields.map((f) => [f.id, f.name]),
+    allOppFields.map((field) => [field.id, field.name]),
   );
+
+  const applicantPartnerUserIdsField = allOppFields.find(
+    (field) => field.name === 'applicantPartnerUserIds',
+  );
+  const applicantPartnerUserIdsPermission =
+    applicantPartnerUserIdsField &&
+    partnerRole.fieldPermissions.find(
+      (fieldPermission) =>
+        fieldPermission.fieldMetadataId === applicantPartnerUserIdsField.id,
+    );
+
+  if (
+    !applicantPartnerUserIdsField ||
+    applicantPartnerUserIdsPermission?.canReadFieldValue !== false
+  ) {
+    console.error(
+      `\n[rls:configure] DRIFT DETECTED: applicantPartnerUserIds must be ` +
+        `read-locked on the Partner role (canReadFieldValue: false).\n` +
+        `Without that lock one applicant can read the other applicants' member ids.\n` +
+        `Deploy partner.role.ts via yarn twenty apply -r <remote>.\n`,
+    );
+    process.exitCode = 1;
+    return;
+  }
 
   // Build the expected lock set: every non-system Opportunity field (incl. stage + amount).
   const expectedLockedNames = new Set<string>(
     allOppFields
-      .filter((f) => !OPPORTUNITY_FIELD_LOCK_SKIP.has(f.name))
-      .map((f) => f.name),
+      .filter((field) => !OPPORTUNITY_FIELD_LOCK_SKIP.has(field.name))
+      .map((field) => field.name),
   );
 
-  // Filter to Opportunity field permissions that lock update access.
-  // partnerRole was fetched with fieldPermissions in step 3 — no second getRoles needed.
   const oppLockedFps = partnerRole.fieldPermissions.filter(
-    (fp) =>
-      fp.objectMetadataId === oppObjectId && fp.canUpdateFieldValue === false,
+    (fieldPermission) =>
+      fieldPermission.objectMetadataId === oppObjectId &&
+      fieldPermission.canUpdateFieldValue === false,
   );
 
   const missingLocks = [...expectedLockedNames].filter(
     (name) =>
       !oppLockedFps.some(
-        (fp) => oppFieldIdToName.get(fp.fieldMetadataId) === name,
+        (fieldPermission) =>
+          oppFieldIdToName.get(fieldPermission.fieldMetadataId) === name,
       ),
   );
 

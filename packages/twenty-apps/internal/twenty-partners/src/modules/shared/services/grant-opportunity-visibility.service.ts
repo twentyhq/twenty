@@ -9,6 +9,8 @@ const mergeApplicantPartnerUserIds = (
   incoming: readonly string[],
 ): string[] => [...new Set([...(current ?? []), ...incoming])];
 
+const GRANT_READ_ATTEMPTS = 3;
+
 type GrantOpportunityVisibilityResult =
   | { granted: false; reason: 'missing_ids' | 'opportunity_missing' }
   | { granted: false; already: true }
@@ -42,42 +44,43 @@ export async function grantOpportunityVisibility(
     return { granted: false, reason: 'missing_ids' };
   }
 
-  const current = await readApplicantIds(client, opportunityId);
+  // updateOpportunity replaces the array, so two applies can each merge from the same
+  // stale read. Re-read after every write. Throw if the id is still missing so the
+  // create trigger retries and the upgrade backfill fails loud. The core API has no
+  // atomic append; a lost id after this loop is a failed grant, not a silent success.
+  for (let attempt = 1; attempt <= GRANT_READ_ATTEMPTS; attempt++) {
+    const current = await readApplicantIds(client, opportunityId);
 
-  if (current === null) {
-    return { granted: false, reason: 'opportunity_missing' };
+    if (current === null) {
+      return { granted: false, reason: 'opportunity_missing' };
+    }
+
+    if (incoming.every((partnerUserId) => current.includes(partnerUserId))) {
+      return attempt === 1
+        ? { granted: false, already: true }
+        : { granted: true };
+    }
+
+    if (attempt === GRANT_READ_ATTEMPTS) {
+      const missingPartnerUserIds = incoming.filter(
+        (partnerUserId) => !current.includes(partnerUserId),
+      );
+
+      throw new Error(
+        `Could not grant opportunity visibility for ${opportunityId}: ` +
+          `applicantPartnerUserIds still missing ${missingPartnerUserIds.join(', ')} ` +
+          `after concurrent writes.`,
+      );
+    }
+
+    await updateOpportunityApplicantPartnerUserIds(
+      client,
+      opportunityId,
+      mergeApplicantPartnerUserIds(current, incoming),
+    );
   }
 
-  if (incoming.every((id) => current.includes(id))) {
-    return { granted: false, already: true };
-  }
-
-  await updateOpportunityApplicantPartnerUserIds(
-    client,
-    opportunityId,
-    mergeApplicantPartnerUserIds(current, incoming),
+  throw new Error(
+    `Could not grant opportunity visibility for ${opportunityId}.`,
   );
-
-  // Best-effort recovery from a concurrent grant, not a lock. updateOpportunity replaces
-  // the array, so two applies to one brief can each merge from the same stale read. This
-  // re-read catches the case where the other write landed first and dropped our id. It does
-  // not catch the reverse order — the other write landing after we verified — which needs an
-  // atomic append the core API does not offer. A lost id stays lost until the next backfill.
-  const afterWrite = await readApplicantIds(client, opportunityId);
-
-  if (afterWrite === null) {
-    return { granted: false, reason: 'opportunity_missing' };
-  }
-
-  if (incoming.every((id) => afterWrite.includes(id))) {
-    return { granted: true };
-  }
-
-  await updateOpportunityApplicantPartnerUserIds(
-    client,
-    opportunityId,
-    mergeApplicantPartnerUserIds(afterWrite, incoming),
-  );
-
-  return { granted: true };
 }

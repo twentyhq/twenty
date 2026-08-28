@@ -147,6 +147,7 @@ describe('backfillApplicantOpportunityVisibility', () => {
       },
     };
     const seenCursors: (string | undefined)[] = [];
+    const applicantIdsByOpportunity = new Map<string, string[]>();
 
     query.mockImplementation((selection: Record<string, unknown>) => {
       if (selection.applications) {
@@ -163,13 +164,39 @@ describe('backfillApplicantOpportunityVisibility', () => {
         );
       }
 
+      const requestedId = (
+        selection.opportunities as {
+          __args?: { filter?: { id?: { eq?: string } } };
+        }
+      )?.__args?.filter?.id?.eq;
+
       return Promise.resolve({
         opportunities: {
           edges: [
-            { node: { id: OPPORTUNITY_A, applicantPartnerUserIds: [] } },
+            {
+              node: {
+                id: requestedId,
+                applicantPartnerUserIds:
+                  applicantIdsByOpportunity.get(requestedId ?? '') ?? [],
+              },
+            },
           ],
         },
       });
+    });
+
+    mutation.mockImplementation((selection: Record<string, unknown>) => {
+      const args = (
+        selection.updateOpportunity as {
+          __args?: { id?: string; data?: { applicantPartnerUserIds?: string[] } };
+        }
+      )?.__args;
+
+      if (args?.id && args.data?.applicantPartnerUserIds) {
+        applicantIdsByOpportunity.set(args.id, args.data.applicantPartnerUserIds);
+      }
+
+      return Promise.resolve({});
     });
 
     const updated = await backfillApplicantOpportunityVisibility(client);
@@ -188,6 +215,8 @@ describe('backfillApplicantOpportunityVisibility', () => {
   });
 
   it('grants the healthy opportunities, then fails loudly so the upgrade can be re-run', async () => {
+    const applicantIdsByOpportunity = new Map<string, string[]>();
+
     query.mockImplementation((selection: Record<string, unknown>) => {
       if (selection.applications) {
         return Promise.resolve({
@@ -225,9 +254,31 @@ describe('backfillApplicantOpportunityVisibility', () => {
 
       return Promise.resolve({
         opportunities: {
-          edges: [{ node: { id: requestedId, applicantPartnerUserIds: [] } }],
+          edges: [
+            {
+              node: {
+                id: requestedId,
+                applicantPartnerUserIds:
+                  applicantIdsByOpportunity.get(requestedId ?? '') ?? [],
+              },
+            },
+          ],
         },
       });
+    });
+
+    mutation.mockImplementation((selection: Record<string, unknown>) => {
+      const args = (
+        selection.updateOpportunity as {
+          __args?: { id?: string; data?: { applicantPartnerUserIds?: string[] } };
+        }
+      )?.__args;
+
+      if (args?.id && args.data?.applicantPartnerUserIds) {
+        applicantIdsByOpportunity.set(args.id, args.data.applicantPartnerUserIds);
+      }
+
+      return Promise.resolve({});
     });
 
     await expect(
