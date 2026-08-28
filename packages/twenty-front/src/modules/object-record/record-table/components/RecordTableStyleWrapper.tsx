@@ -221,6 +221,8 @@ const StyledTable = styled.div<{
     // The anchor has to stay zero-width or sticky's containing-block constraint
     // drags it along with the cell once the cell is narrower than the name.
     div.table-cell.${getRecordTableColumnFieldWidthClassName(0)}
+      > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME},
+      div.table-cell-0-0
       > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME} {
       left: calc(
         var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) +
@@ -234,6 +236,9 @@ const StyledTable = styled.div<{
     // Absolute so it gives the chip its full layout width without adding any
     // width back to the anchor.
     div.table-cell.${getRecordTableColumnFieldWidthClassName(0)}
+      > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
+      > .${RECORD_TABLE_CELL_DISPLAY_CLASS_NAME},
+      div.table-cell-0-0
       > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
       > .${RECORD_TABLE_CELL_DISPLAY_CLASS_NAME} {
       height: 100%;
