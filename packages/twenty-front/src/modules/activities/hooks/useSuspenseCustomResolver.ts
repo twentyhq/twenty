@@ -4,7 +4,7 @@ import {
   type TypedDocumentNode,
 } from '@apollo/client';
 import { useSuspenseQuery } from '@apollo/client/react';
-import { useCallback, useState, useTransition } from 'react';
+import { useCallback, useState } from 'react';
 
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
@@ -48,7 +48,10 @@ export const useSuspenseCustomResolver = <
     hasNextPage: true,
   });
 
-  const [isFetchingMore, startFetchMoreTransition] = useTransition();
+  const {
+    isPending: isFetchingMore,
+    startPromiseTransition: startFetchMorePromiseTransition,
+  } = usePromiseTransition();
 
   const queryVariables = {
     objectNameSingular: activityTargetableObject.targetObjectNameSingular,
@@ -72,7 +75,7 @@ export const useSuspenseCustomResolver = <
       return;
     }
 
-    startFetchMoreTransition(async () => {
+    await startFetchMorePromiseTransition(async () => {
       await fetchMore({
         variables: {
           ...queryVariables,
