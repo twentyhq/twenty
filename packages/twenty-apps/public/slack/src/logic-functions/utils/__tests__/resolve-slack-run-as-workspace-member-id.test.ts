@@ -132,6 +132,22 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
+  it('should keep honoring a legacy manual link that predates the consent field', async () => {
+    findSlackUserLinkMock.mockResolvedValue({
+      ...MANUAL_LINK,
+      consentState: undefined,
+    });
+
+    expect(
+      await resolveSlackRunAsWorkspaceMemberId({
+        client,
+        slackClient,
+        identity: IDENTITY,
+      }),
+    ).toBe('member-1');
+    expect(findWorkspaceMemberIdByEmailMock).not.toHaveBeenCalled();
+  });
+
   it('should treat an admin-set manual link as consented', async () => {
     findSlackUserLinkMock.mockResolvedValue({
       ...MANUAL_LINK,

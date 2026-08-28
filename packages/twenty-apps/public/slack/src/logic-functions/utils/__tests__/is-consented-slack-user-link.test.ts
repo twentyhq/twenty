@@ -19,7 +19,7 @@ describe('isConsentedSlackUserLink', () => {
     expect(isConsentedSlackUserLink('DECLINED')).toBe(false);
   });
 
-  it('should not treat an undefined state as consented', () => {
-    expect(isConsentedSlackUserLink(undefined)).toBe(false);
+  it('should treat a legacy link without a consent state as consented', () => {
+    expect(isConsentedSlackUserLink(undefined)).toBe(true);
   });
 });
