@@ -39,7 +39,9 @@ export class WorkflowMetadataReadService {
         },
       );
 
-    const { idByNameSingular } = buildObjectIdByNameMaps(flatObjectMetadataMaps);
+    const { idByNameSingular } = buildObjectIdByNameMaps(
+      flatObjectMetadataMaps,
+    );
 
     return {
       flatObjectMetadataMaps,

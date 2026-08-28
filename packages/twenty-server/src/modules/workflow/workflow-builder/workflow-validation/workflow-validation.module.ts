@@ -7,7 +7,11 @@ import { WorkflowSchemaModule } from 'src/modules/workflow/workflow-builder/work
 import { WorkflowValidationWorkspaceService } from './workflow-validation.workspace-service';
 
 @Module({
-  imports: [WorkflowCommonModule, WorkflowMetadataReadModule, WorkflowSchemaModule],
+  imports: [
+    WorkflowCommonModule,
+    WorkflowMetadataReadModule,
+    WorkflowSchemaModule,
+  ],
   providers: [WorkflowValidationWorkspaceService],
   exports: [WorkflowValidationWorkspaceService],
 })
