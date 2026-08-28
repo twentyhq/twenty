@@ -63,11 +63,7 @@ export const PageLayoutContent = () => {
       widgets={activeTab.widgets}
       insertionIndex={widgetInsertionIndex}
       insertionElement={
-        isVerticalListInEditMode ? (
-          <RecordPageAddWidgetSection
-            isCompact={activeTab.widgets.length > 0}
-          />
-        ) : undefined
+        isVerticalListInEditMode ? <RecordPageAddWidgetSection /> : undefined
       }
     />
   );

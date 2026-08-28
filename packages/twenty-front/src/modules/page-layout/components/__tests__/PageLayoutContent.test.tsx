@@ -105,9 +105,7 @@ jest.mock('@/page-layout/widgets/components/WidgetRenderer', () => {
 jest.mock(
   '@/page-layout/widgets/components/RecordPageAddWidgetSection',
   () => ({
-    RecordPageAddWidgetSection: ({ isCompact }: { isCompact: boolean }) => (
-      <div>{isCompact ? 'Add widget' : 'Expanded widget chooser'}</div>
-    ),
+    RecordPageAddWidgetSection: () => <div>Add widget</div>,
   }),
 );
 
@@ -187,9 +185,6 @@ describe('PageLayoutContent', () => {
           ) & Node.DOCUMENT_POSITION_FOLLOWING,
         ).toBeTruthy();
       }
-      expect(
-        screen.queryByText('Expanded widget chooser'),
-      ).not.toBeInTheDocument();
     },
   );
 
@@ -197,7 +192,7 @@ describe('PageLayoutContent', () => {
     mockIsInEditMode = true;
     mockTab.widgets = [];
     render(<PageLayoutContent />);
-    expect(screen.getByText('Expanded widget chooser')).toBeInTheDocument();
+    expect(screen.getByText('Add widget')).toBeInTheDocument();
   });
 
   it('hides the insertion row outside edit mode', () => {

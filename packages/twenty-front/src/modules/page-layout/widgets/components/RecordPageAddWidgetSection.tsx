@@ -1,3 +1,4 @@
+import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCreateRecordPageFieldWidget } from '@/page-layout/hooks/useCreateRecordPageFieldWidget';
 import { useCreateRecordPageFieldsWidget } from '@/page-layout/hooks/useCreateRecordPageFieldsWidget';
 import { useCreateRecordPageNoteWidget } from '@/page-layout/hooks/useCreateRecordPageNoteWidget';
@@ -45,13 +46,7 @@ const StyledMenuItemList = styled.div`
   padding: ${themeCssVariables.spacing[2]};
 `;
 
-type RecordPageAddWidgetSectionProps = {
-  isCompact?: boolean;
-};
-
-export const RecordPageAddWidgetSection = ({
-  isCompact = false,
-}: RecordPageAddWidgetSectionProps) => {
+export const RecordPageAddWidgetSection = () => {
   const { theme } = useContext(ThemeContext);
   const { tabId } = usePageLayoutContentContext();
 
@@ -62,18 +57,6 @@ export const RecordPageAddWidgetSection = ({
   const { createRecordPageNoteWidget } = useCreateRecordPageNoteWidget();
 
   const { navigateToMoreWidgets } = useNavigateToMoreWidgets();
-
-  if (isCompact) {
-    return (
-      <StyledContainer>
-        <MenuItem
-          LeftIcon={IconPlus}
-          text={t`Add widget`}
-          onClick={navigateToMoreWidgets}
-        />
-      </StyledContainer>
-    );
-  }
 
   return (
     <StyledContainer>
@@ -118,4 +101,3 @@ export const RecordPageAddWidgetSection = ({
     </StyledContainer>
   );
 };
-import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';

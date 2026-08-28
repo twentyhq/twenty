@@ -32,15 +32,13 @@ jest.mock('@/page-layout/hooks/useCreateRecordPageNoteWidget', () => ({
 describe('RecordPageAddWidgetSection', () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it('opens the existing picker from the compact row', async () => {
-    render(<RecordPageAddWidgetSection isCompact />);
-    await userEvent.setup().click(screen.getByText('Add widget'));
+  it('opens the existing picker from More widgets', async () => {
+    render(<RecordPageAddWidgetSection />);
+    await userEvent.setup().click(screen.getByText('More widgets'));
     expect(mockNavigateToMoreWidgets).toHaveBeenCalledTimes(1);
-    expect(screen.queryByText('Fields group')).not.toBeInTheDocument();
-    expect(screen.queryByText('Note')).not.toBeInTheDocument();
   });
 
-  it('retains the expanded chooser for empty tabs', () => {
+  it('shows the expanded chooser', () => {
     render(<RecordPageAddWidgetSection />);
     expect(screen.getByText('Fields group')).toBeInTheDocument();
     expect(screen.getByText('Field')).toBeInTheDocument();
