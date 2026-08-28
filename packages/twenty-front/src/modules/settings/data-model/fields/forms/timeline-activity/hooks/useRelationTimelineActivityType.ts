@@ -80,10 +80,14 @@ export const useRelationTimelineActivityType = ({
         return;
       }
 
+      // The stored label snapshots the creating admin's locale; the t macro
+      // keeps that snapshot localized instead of hardcoding English.
+      const objectLabel = objectMetadataItem.labelSingular.toLowerCase();
+
       await createTimelineActivityType({
         variables: {
           input: {
-            label: `linked a related ${objectMetadataItem.labelSingular.toLowerCase()}`,
+            label: t`linked a related ${objectLabel}`,
             icon: objectMetadataItem.icon ?? 'IconTimelineEvent',
             targetRelationFieldMetadataId: fieldMetadataItem.id,
           },
