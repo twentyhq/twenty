@@ -4,7 +4,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
 import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
-import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE } from '@/object-record/record-table/constants/RecordTableLabelIdentifierColumnWidthOnMobile';
+import { useRecordTableFirstColumnWidthOverride } from '@/object-record/record-table/hooks/useRecordTableFirstColumnWidthOverride';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableDragAndDropPlaceholderCell } from '@/object-record/record-table/record-table-cell/components/RecordTableDragAndDropPlaceholderCell';
@@ -18,7 +18,6 @@ import {
 } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledFieldPlaceholderCell = styled.div<{ widthOfFields: number }>`
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
@@ -113,15 +112,16 @@ export const RecordTableActionRow = ({
     ),
   );
 
-  const isMobile = useIsMobile();
+  const firstColumnWidthOverride = useRecordTableFirstColumnWidthOverride();
 
   const labelIdentifierRecordField = visibleRecordFields.find(
     findByProperty('fieldMetadataItemId', labelIdentifierFieldMetadataItem?.id),
   );
 
-  const firstColumnWidth = isMobile
-    ? RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE
-    : (labelIdentifierRecordField?.size ?? RECORD_TABLE_COLUMN_MIN_WIDTH);
+  const firstColumnWidth =
+    firstColumnWidthOverride ??
+    labelIdentifierRecordField?.size ??
+    RECORD_TABLE_COLUMN_MIN_WIDTH;
 
   const sumOfWidthOfVisibleRecordFieldsAfterLabelIdentifierField =
     visibleRecordFieldsWithoutLabelIdentifier.reduce(sumByProperty('size'), 0);

@@ -6,7 +6,7 @@ import {
   RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR,
   RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR,
 } from '@/object-record/record-table/components/RecordTableStyleWrapper';
-import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE } from '@/object-record/record-table/constants/RecordTableLabelIdentifierColumnWidthOnMobile';
+import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -20,6 +20,8 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
 import { findByProperty, isDefined } from 'twenty-shared/utils';
+
+const FIRST_COLUMN_WIDTH_CSS_VAR = `var(${getRecordTableColumnFieldWidthCSSVariableName(0)})`;
 
 const StyledColumnFooterCell = styled.div<{
   columnWidth: number;
@@ -68,17 +70,11 @@ const StyledColumnFooterCell = styled.div<{
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     max-width: ${({ isFirstCell }) =>
-      isFirstCell
-        ? `${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px`
-        : 'none'};
+      isFirstCell ? FIRST_COLUMN_WIDTH_CSS_VAR : 'none'};
     min-width: ${({ isFirstCell }) =>
-      isFirstCell
-        ? `${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px`
-        : '0'};
+      isFirstCell ? FIRST_COLUMN_WIDTH_CSS_VAR : '0'};
     width: ${({ isFirstCell }) =>
-      isFirstCell
-        ? `${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px`
-        : 'auto'};
+      isFirstCell ? FIRST_COLUMN_WIDTH_CSS_VAR : 'auto'};
   }
 `;
 
