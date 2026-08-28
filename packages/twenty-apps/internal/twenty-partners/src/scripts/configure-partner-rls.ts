@@ -1,21 +1,25 @@
-// One-time migration, then a drift check. `partner.role.ts` declares every row-level
-// predicate, so an install or upgrade configures them — this script no longer creates any.
+// Read-only drift check. `partner.role.ts` declares every row-level predicate and the
+// server ingests them from the manifest, so an install or upgrade configures them. This
+// script no longer creates, updates or deletes any predicate.
 //
-// 1. Purges the legacy predicates on the Partner role. Earlier versions created them through
-//    upsertRowLevelPermissionPredicates, which stamps them with the workspace's custom
-//    application, not twenty-partners. The manifest sync diffs by application, so it cannot
-//    see those rows and will never remove them. On opportunity that is harmful: the old OR
-//    group and the manifest one are both parentless on the same (role, object), and only the
-//    first is compiled, in an order that is not stable. Run this ONCE per already-installed
-//    workspace, then `yarn twenty apply -r <remote>` to land the manifest predicates. A fresh
-//    install needs neither step. Safe to re-run: it is a no-op once nothing is left.
+// Legacy predicates on an already-installed workspace: earlier versions created them
+// through upsertRowLevelPermissionPredicates, which stamps them with the workspace's
+// custom application rather than twenty-partners. The manifest sync diffs by application,
+// so it cannot see those rows and will never remove them. They are harmless while they
+// agree with the manifest — the ungrouped ones AND to the same condition, and the two
+// parentless opportunity OR groups express the same OR — but they will drift apart the
+// first time the manifest changes. Remove them deliberately, with database access, while
+// the manifest predicates are in place. Do NOT clear them through the upsert mutation:
+// it deletes every predicate for a (role, object) pair, and a Partner role with no
+// predicate has no row filter at all, so partners would read the whole workspace until
+// the manifest predicates were restored.
 //
-// 2. Verifies (does NOT set) the Opportunity field permissions from `partner.role.ts`.
+// 3. Verifies (does NOT set) the Opportunity field permissions from `partner.role.ts`.
 //    upsertFieldPermissions rejects out-of-band changes to app-owned roles
 //    (ROLE_BELONGS_TO_ANOTHER_APPLICATION), so those must come from the manifest; if any
 //    expected lock is missing, the script exits non-zero and tells you to re-sync.
 //
-// 3. Verifies Application field permissions the same way. The Partner role cannot write
+// 4. Verifies Application field permissions the same way. The Partner role cannot write
 //    Application at all (canUpdateObjectRecords: false); the field locks are kept as
 //    intent on top of that object-level block, not as the mechanism.
 //
@@ -83,12 +87,6 @@ const APPLICATION_FIELD_LOCK_SKIP = new Set([
   'pitch',
   'opportunity',
 ]);
-
-const APPLY_WORKFLOW_WARNING =
-  `[rls:configure] The apply path ships in the app manifest: a command menu item\n` +
-  `  opens a front component that calls POST /apply-to-brief. No workflow needs\n` +
-  `  building for it. That app route creates the Application under the\n` +
-  `  application role.\n`;
 
 type FieldEdge = {
   node: {
@@ -188,36 +186,6 @@ type FieldPermissionResult = {
   canUpdateFieldValue: boolean | null;
 };
 
-type PredicateResult = {
-  id: string;
-  fieldMetadataId: string;
-  objectMetadataId: string;
-  operand: string;
-  workspaceMemberFieldMetadataId: string | null;
-  roleId: string;
-  rowLevelPermissionPredicateGroupId: string | null;
-  positionInRowLevelPermissionPredicateGroup: number | null;
-};
-
-type UpsertPredicatesInput = {
-  roleId: string;
-  objectMetadataId: string;
-  predicates: {
-    fieldMetadataId: string;
-    operand: string;
-    workspaceMemberFieldMetadataId?: string | null;
-    value?: boolean | null;
-    rowLevelPermissionPredicateGroupId?: string | null;
-    positionInRowLevelPermissionPredicateGroup?: number | null;
-  }[];
-  predicateGroups: {
-    id?: string;
-    objectMetadataId: string;
-    logicalOperator: string;
-    parentRowLevelPermissionPredicateGroupId?: string | null;
-  }[];
-};
-
 async function main() {
   const baseUrl = requireEnv('TWENTY_PARTNERS_API_URL').replace(/\/$/, '');
   const apiKey = requireEnv('TWENTY_PARTNERS_API_KEY');
@@ -225,7 +193,7 @@ async function main() {
 
   console.log(`[rls:configure] target: ${metadataUrl}`);
 
-  // ── 1. Resolve all object metadata IDs and their partnerUser field IDs ──────
+  // ── 1. Resolve the object metadata IDs ──────────────────────────────────────
 
   const objectsData = await metadataFetch<{
     objects: { edges: { node: { id: string; nameSingular: string } }[] };
@@ -252,12 +220,10 @@ async function main() {
     throw new Error('workspaceMember object not found in workspace metadata.');
   }
 
-  const workspaceMemberId = objectIdByName.get('workspaceMember') as string;
-
   const opportunityObjectId = objectIdByName.get('opportunity') as string;
 
 
-  // ── 3. Resolve Partner role id and fetch field permissions in one request ──────
+  // ── 2. Resolve Partner role id and fetch field permissions in one request ──────
   //
   // getRoles returns a flat array (not a connection) and does NOT expose
   // universalIdentifier, so we match on the role label via the shared PARTNER_ROLE_LABEL
@@ -291,80 +257,7 @@ async function main() {
       `(universalIdentifier in manifest: ${PARTNER_ROLE_UNIVERSAL_IDENTIFIER})`,
   );
 
-  // ── 4. Purge the legacy out-of-band predicates ───────────────────────────────
-  //
-  // partner.role.ts now declares every predicate, so the manifest owns them. The rows this
-  // script used to create are owned by the workspace's custom application, not by
-  // twenty-partners, so the manifest sync cannot see them: it never updates or deletes them.
-  // Left in place on the opportunity they are actively harmful — two parentless groups on
-  // one (role, object), and compilation honours only the first, chosen in an order that is
-  // not stable. Removing them leaves the manifest as the single source.
-  //
-  // Sending empty arrays deletes whatever exists for the (role, object) pair:
-  // groupsToDelete/predicatesToDelete are computed as "existing minus input".
-
-  const MUTATION = `
-    mutation UpsertRLSPredicates($input: UpsertRowLevelPermissionPredicatesInput!) {
-      upsertRowLevelPermissionPredicates(input: $input) {
-        predicates {
-          id
-          fieldMetadataId
-          objectMetadataId
-          operand
-          workspaceMemberFieldMetadataId
-          roleId
-          rowLevelPermissionPredicateGroupId
-          positionInRowLevelPermissionPredicateGroup
-        }
-      }
-    }
-  `;
-
-  console.log(`\n${APPLY_WORKFLOW_WARNING}`);
-
-  const purgeTargets: { name: string; objectMetadataId: string }[] = [
-    ...ALL_TARGET_OBJECTS.map((name) => ({
-      name,
-      objectMetadataId: objectIdByName.get(name) as string,
-    })),
-    { name: 'workspaceMember', objectMetadataId: workspaceMemberId },
-  ];
-
-  let purged = 0;
-
-  for (const target of purgeTargets) {
-    const data = await metadataFetch<{
-      upsertRowLevelPermissionPredicates: { predicates: PredicateResult[] };
-    }>(metadataUrl, apiKey, MUTATION, {
-      input: {
-        roleId: partnerRole.id,
-        objectMetadataId: target.objectMetadataId,
-        predicates: [],
-        predicateGroups: [],
-      } satisfies UpsertPredicatesInput,
-    });
-
-    const remaining =
-      data.upsertRowLevelPermissionPredicates.predicates.length;
-
-    if (remaining > 0) {
-      throw new Error(
-        `Expected no predicates left on "${target.name}" after the purge, got ${remaining}. ` +
-          `Re-run \`yarn twenty apply\` afterwards so the manifest predicates are re-created.`,
-      );
-    }
-
-    purged += 1;
-    console.log(`[rls:configure] ✓ ${target.name}: legacy predicates cleared`);
-  }
-
-  console.log(
-    `\n[rls:configure] Purged legacy predicates on ${purged} objects. ` +
-      `partner.role.ts is now the only definition — run \`yarn twenty apply -r <remote>\` ` +
-      `so the manifest predicates land.`,
-  );
-
-  // ── 5. Verify Opportunity field permissions (set via manifest, not here — see header) ─
+  // ── 3. Verify Opportunity field permissions (set via manifest, not here — see header) ─
 
   const oppObjectId = opportunityObjectId;
 
@@ -413,7 +306,7 @@ async function main() {
     `[rls:configure] ✓ ${oppLockedFps.length} Opportunity fields locked (Partner role cannot write Opportunity at all; locks kept as intent) — field permissions verified`,
   );
 
-  // ── 6. Verify Application field permissions (set via manifest, not here — see header) ─
+  // ── 4. Verify Application field permissions (set via manifest, not here — see header) ─
 
   const applicationObjectId = objectIdByName.get('application') as string;
 

@@ -10,14 +10,9 @@ type ApplicationRow = {
   partnerUserId?: string | null;
 };
 
-export type ApplicantVisibilityBackfillResult = {
-  updated: number;
-  failed: number;
-};
-
 export async function backfillApplicantOpportunityVisibility(
   client: CoreApiClient,
-): Promise<ApplicantVisibilityBackfillResult> {
+): Promise<number> {
   const applications = await collectAll<ApplicationRow>(async (after) => {
     const page = await listApplicationsWithOpportunityPartnerUser(client, after);
 
@@ -43,11 +38,12 @@ export async function backfillApplicantOpportunityVisibility(
   }
 
   let updated = 0;
-  let failed = 0;
+  const failedOpportunityIds: string[] = [];
 
   for (const [opportunityId, applicantIds] of idsByOpportunity) {
-    // The version gate runs this backfill once per upgrade, so one failing opportunity
-    // must not abort the rest — they would never get a second pass.
+    // Collect failures rather than aborting on the first, so one bad opportunity cannot
+    // strand the rest — then throw below. The version gate runs this once per upgrade, so
+    // reporting a partial run as success would leave those applicants locked out for good.
     try {
       const result = await grantOpportunityVisibility(
         client,
@@ -59,7 +55,7 @@ export async function backfillApplicantOpportunityVisibility(
         updated += 1;
       }
     } catch (error) {
-      failed += 1;
+      failedOpportunityIds.push(opportunityId);
       console.error(
         `[backfill] applicant visibility failed for opportunity ${opportunityId}`,
         error,
@@ -67,5 +63,13 @@ export async function backfillApplicantOpportunityVisibility(
     }
   }
 
-  return { updated, failed };
+  if (failedOpportunityIds.length > 0) {
+    throw new Error(
+      `Applicant visibility backfill failed for ${failedOpportunityIds.length} of ` +
+        `${idsByOpportunity.size} opportunities (${failedOpportunityIds.join(', ')}). ` +
+        'Re-run the upgrade — granting is idempotent, so the ones already done are skipped.',
+    );
+  }
+
+  return updated;
 }

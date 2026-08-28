@@ -97,9 +97,9 @@ describe('backfillApplicantOpportunityVisibility', () => {
       return Promise.resolve({});
     });
 
-    const result = await backfillApplicantOpportunityVisibility(client);
+    const updated = await backfillApplicantOpportunityVisibility(client);
 
-    expect(result).toEqual({ updated: 1, failed: 0 });
+    expect(updated).toBe(1);
     expect(mutation).toHaveBeenCalledTimes(1);
     expect(mutation).toHaveBeenCalledWith({
       updateOpportunity: {
@@ -117,9 +117,9 @@ describe('backfillApplicantOpportunityVisibility', () => {
       applications: { edges: [], pageInfo: { hasNextPage: false } },
     });
 
-    const result = await backfillApplicantOpportunityVisibility(client);
+    const updated = await backfillApplicantOpportunityVisibility(client);
 
-    expect(result).toEqual({ updated: 0, failed: 0 });
+    expect(updated).toBe(0);
     expect(mutation).not.toHaveBeenCalled();
   });
 
@@ -172,10 +172,10 @@ describe('backfillApplicantOpportunityVisibility', () => {
       });
     });
 
-    const result = await backfillApplicantOpportunityVisibility(client);
+    const updated = await backfillApplicantOpportunityVisibility(client);
 
     expect(seenCursors).toEqual([undefined, 'cursor-1']);
-    expect(result).toEqual({ updated: 1, failed: 0 });
+    expect(updated).toBe(1);
     expect(mutation).toHaveBeenCalledWith({
       updateOpportunity: {
         __args: {
@@ -187,7 +187,7 @@ describe('backfillApplicantOpportunityVisibility', () => {
     });
   });
 
-  it('counts a failed opportunity and still grants the remaining ones', async () => {
+  it('grants the healthy opportunities, then fails loudly so the upgrade can be re-run', async () => {
     query.mockImplementation((selection: Record<string, unknown>) => {
       if (selection.applications) {
         return Promise.resolve({
@@ -230,9 +230,11 @@ describe('backfillApplicantOpportunityVisibility', () => {
       });
     });
 
-    const result = await backfillApplicantOpportunityVisibility(client);
+    await expect(
+      backfillApplicantOpportunityVisibility(client),
+    ).rejects.toThrow(/failed for 1 of 2 opportunities/);
 
-    expect(result).toEqual({ updated: 1, failed: 1 });
+    // The healthy opportunity is still granted before the throw, so a re-run has less to do.
     expect(mutation).toHaveBeenCalledWith({
       updateOpportunity: {
         __args: {

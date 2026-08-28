@@ -8,7 +8,6 @@ import { planPostInstall } from 'src/modules/shared/utils/plan-post-install.util
 type PostInstallCounts = {
   stamped?: number;
   granted?: number;
-  grantFailed?: number;
 };
 
 type PostInstallResult = { skipped: true } | PostInstallCounts;
@@ -30,11 +29,7 @@ const handler = async ({
   }
 
   if (plan.grantApplicantVisibility) {
-    const { updated, failed } =
-      await backfillApplicantOpportunityVisibility(client);
-
-    result.granted = updated;
-    result.grantFailed = failed;
+    result.granted = await backfillApplicantOpportunityVisibility(client);
   }
 
   return result;
