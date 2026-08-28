@@ -88,7 +88,9 @@ export const useAutoResolveSlackUser = () => {
       return;
     }
 
-    clearTimeout(autoResolveTimerRef.current);
+    // Clearing bumps the request id, so a debounced lookup already in flight
+    // can never land on top of this one's result.
+    clearResolution();
     resolveIdentity(input);
   };
 
