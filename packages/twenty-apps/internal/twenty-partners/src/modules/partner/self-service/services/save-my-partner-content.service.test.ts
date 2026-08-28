@@ -74,6 +74,7 @@ describe('saveMyPartnerContent', () => {
       ok: true,
       caseStudies: [{ id: 'content-1', name: 'Atlas rollout', status: 'WIP' }],
     });
+    expect(mutationMock).toHaveBeenCalledTimes(1);
     expect(mutationMock).toHaveBeenCalledWith({
       createPartnerContent: {
         __args: {
@@ -105,6 +106,8 @@ describe('saveMyPartnerContent', () => {
         ],
       }),
     );
+
+    expect(mutationMock).toHaveBeenCalledTimes(1);
 
     const createData =
       mutationMock.mock.calls[0][0].createPartnerContent.__args.data;
