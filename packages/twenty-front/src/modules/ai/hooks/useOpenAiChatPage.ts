@@ -1,4 +1,3 @@
-import { useLocation } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
@@ -8,7 +7,6 @@ import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 export const useOpenAiChatPage = () => {
   const navigate = useNavigateApp();
-  const location = useLocation();
   const { closeSidePanelMenu } = useSidePanelMenu();
 
   const openAiChatPage = ({
@@ -31,7 +29,10 @@ export const useOpenAiChatPage = () => {
       undefined,
       {
         state: {
-          returnLocation: `${location.pathname}${location.search}${location.hash}`,
+          // Read from the window rather than useLocation so that opening a new
+          // chat does not require a router context from every caller of
+          // useSwitchToNewAiChat, front components included.
+          returnLocation: `${window.location.pathname}${window.location.search}${window.location.hash}`,
         },
       },
     );
