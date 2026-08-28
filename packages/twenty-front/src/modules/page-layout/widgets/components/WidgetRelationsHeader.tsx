@@ -1,8 +1,10 @@
 import { RecordTargetsInlineCell } from '@/object-record/record-field/ui/components/RecordTargetsInlineCell';
+import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -17,6 +19,14 @@ const StyledContainer = styled.div`
 export const WidgetRelationsHeader = () => {
   const targetRecord = useTargetRecord();
   const { isInSidePanel } = useLayoutRenderingContext();
+
+  const junctionConfig = useObjectMorphJunctionConfig({
+    objectNameSingular: targetRecord.targetObjectNameSingular,
+  });
+
+  if (!isDefined(junctionConfig)) {
+    return null;
+  }
 
   return (
     <SidePanelProvider value={{ isInSidePanel }}>
