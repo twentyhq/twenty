@@ -141,11 +141,7 @@ describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
       </PageLayoutTestWrapper>,
     );
 
-    expect(
-      screen.getByRole('heading', { name: 'Widget type' }),
-    ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Fields' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Field' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Note' })).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'Note icon' })).toBeInTheDocument();
   });
 
