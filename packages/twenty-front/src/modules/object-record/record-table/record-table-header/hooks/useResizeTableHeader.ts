@@ -1,5 +1,6 @@
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
 import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
+import { getViewPersistTarget } from '@/object-record/record-table-widget/utils/getViewPersistTarget';
 
 import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthVariableName';
 import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
@@ -30,7 +31,6 @@ import { useCallback, useContext, useState } from 'react';
 import {
   findById,
   findByProperty,
-  isDefined,
   throwIfNotDefined,
 } from 'twenty-shared/utils';
 
@@ -192,15 +192,17 @@ export const useResizeTableHeader = () => {
         size: nextWidth,
       });
 
-      if (!isDefined(recordTableWidgetContext)) {
+      const persistTarget = getViewPersistTarget(recordTableWidgetContext);
+
+      if (persistTarget.target === 'api') {
         saveRecordFields([updatedRecordField]);
-      } else if (
-        recordTableWidgetContext.isPageLayoutInEditMode &&
-        isDefined(recordTableWidgetContext.pageLayoutId)
-      ) {
-        recordTableWidgetContext.updateViewDraftField(updatedRecordField.id, {
-          size: nextWidth,
-        });
+      } else if (persistTarget.target === 'pageLayoutDraft') {
+        persistTarget.widgetContext.updateViewDraftField(
+          updatedRecordField.id,
+          {
+            size: nextWidth,
+          },
+        );
       }
     }
 

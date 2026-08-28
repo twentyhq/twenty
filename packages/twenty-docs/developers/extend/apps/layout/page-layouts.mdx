@@ -61,7 +61,7 @@ export default definePageLayout({
 
 ### Field widgets
 
-A `FIELD` widget renders one field of the record. For relation fields it can also embed a list of related records:
+A `FIELD` widget renders one field of the **current record**. For relation fields it can also embed a list of related records — the rows are always scoped to the record whose page you are on (e.g. this company's people). To embed an arbitrary view of an object, unscoped to the current record, use a [record table widget](#record-table-widgets) instead.
 
 ```ts
 {
@@ -84,7 +84,9 @@ A `FIELD` widget renders one field of the record. For relation fields it can als
 
 ### Record table widgets
 
-A `RECORD_TABLE` widget embeds a view of an object as a table:
+A `RECORD_TABLE` widget embeds a view of any object, on any layout surface — dashboards, record pages, and standalone pages. Despite the name, it renders the view in the view's own layout: a table view renders as a table, a kanban view as a board, and list and calendar views as their respective layouts.
+
+The difference with a field widget in `TABLE` display mode: a field widget lists records **related to the current record** through a relation field, while a record table widget renders **a view**, independent of any record — which is why it is the widget you use on dashboards.
 
 ```ts
 {
@@ -100,9 +102,9 @@ A `RECORD_TABLE` widget embeds a view of an object as a table:
 }
 ```
 
-- `viewId` takes the universal identifier of the view whose records, fields, filters and sorts the widget renders.
+- `viewId` takes the universal identifier of the view whose records, fields, filters, sorts and layout the widget renders.
 - `recordLimit` is optional and caps how many records the widget displays.
-- `isUIEditable` is optional and controls inline record editing in the widget. When omitted, it defaults to `true` on `RECORD_PAGE` layouts and `false` everywhere else. It only gates record data: the widget's view configuration (visible fields, filters, sorts, aggregates, column widths) is always edited through the page layout editor, never inline on the rendered widget.
+- `isUIEditable` is optional and controls inline record editing in the widget: cell editing on tables, and card editing, dragging between columns and per-column record creation on kanban boards. When omitted, it defaults to `true` on `RECORD_PAGE` layouts and `false` everywhere else. It only gates record data: the widget's view configuration (visible fields, filters, sorts, aggregates, column widths) is always edited through the page layout editor, never inline on the rendered widget.
 
 ## definePageLayoutTab
 
