@@ -8,7 +8,7 @@ export default defineNavigationMenuItem({
   universalIdentifier: '783d4920-6bf6-4dbf-b705-228ffcc9a7d7',
   type: NavigationMenuItemType.VIEW,
   icon: 'IconHandshake',
-  position: 2,
+  position: 3,
   folderUniversalIdentifier: PARTNER_WORKSPACE_FOLDER_UNIVERSAL_IDENTIFIER,
   viewUniversalIdentifier: MY_DEALS_VIEW_UNIVERSAL_IDENTIFIER,
 });

@@ -137,7 +137,7 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'text', default: ApplicationState.INSTALLED })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.37.0_AddStateToApplicationFastInstanceCommand_1787844152763',
+      '2.38.0_AddStateToApplicationFastInstanceCommand_1787920033811',
   })
   state: ApplicationState;
 
