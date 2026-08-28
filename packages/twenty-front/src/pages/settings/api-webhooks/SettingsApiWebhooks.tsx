@@ -16,7 +16,13 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconPlug, IconPlus, IconSparkle2, IconWebhook } from 'twenty-ui/icon';
+import {
+  IconApi,
+  IconPlus,
+  IconSparkle2,
+  IconSparkles,
+  IconWebhook,
+} from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -59,12 +65,12 @@ export const SettingsApiWebhooks = () => {
     {
       id: SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.MCP,
       title: t`MCP`,
-      Icon: IconSparkle2,
+      Icon: IconSparkles,
     },
     {
       id: SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
       title: t`API`,
-      Icon: IconPlug,
+      Icon: IconApi,
     },
     {
       id: SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
