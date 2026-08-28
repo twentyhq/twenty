@@ -7,6 +7,11 @@ type ApplicationOperationOutcome =
   | { outcome: 'success' }
   | { outcome: 'failure'; message: string };
 
+type ApplicationSnapshot = {
+  state: string | null;
+  version: string | null;
+};
+
 const sleep = (durationMs: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, durationMs));
 
@@ -19,7 +24,7 @@ const pollApplicationState = async ({
   apiService: ApiService;
   universalIdentifier: string;
   resolveOutcome: (
-    state: string | null,
+    snapshot: ApplicationSnapshot,
   ) => ApplicationOperationOutcome | undefined;
   timeoutMs?: number;
 }): Promise<ApplicationOperationOutcome> => {
@@ -36,7 +41,10 @@ const pollApplicationState = async ({
       };
     }
 
-    const resolvedOutcome = resolveOutcome(result.data?.state ?? null);
+    const resolvedOutcome = resolveOutcome({
+      state: result.data?.state ?? null,
+      version: result.data?.version ?? null,
+    });
 
     if (resolvedOutcome) {
       return resolvedOutcome;
@@ -54,15 +62,28 @@ const pollApplicationState = async ({
 export const waitForApplicationInstallCompletion = ({
   apiService,
   universalIdentifier,
+  expectedVersion,
 }: {
   apiService: ApiService;
   universalIdentifier: string;
+  expectedVersion?: string;
 }): Promise<ApplicationOperationOutcome> =>
   pollApplicationState({
     apiService,
     universalIdentifier,
-    resolveOutcome: (state) => {
+    resolveOutcome: ({ state, version }) => {
       if (state === 'INSTALLED') {
+        // A failed upgrade reverts the row to INSTALLED on its previous
+        // version, so the state alone cannot tell success from rollback.
+        // Installing the version already installed is rejected upfront, so a
+        // mismatch here always means the operation did not go through.
+        if (expectedVersion !== undefined && version !== expectedVersion) {
+          return {
+            outcome: 'failure',
+            message: `Install failed server-side: the application is still on version ${version ?? 'unknown'} instead of ${expectedVersion}. Check the server logs for details.`,
+          };
+        }
+
         return { outcome: 'success' };
       }
 
@@ -89,7 +110,7 @@ export const waitForApplicationUninstallCompletion = ({
   pollApplicationState({
     apiService,
     universalIdentifier,
-    resolveOutcome: (state) => {
+    resolveOutcome: ({ state }) => {
       if (state === null) {
         return { outcome: 'success' };
       }

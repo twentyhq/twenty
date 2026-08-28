@@ -435,13 +435,16 @@ export class ApplicationApi {
   // polls this to report the real outcome instead of just the enqueue.
   async findApplicationInstallState(
     universalIdentifier: string,
-  ): Promise<ApiResponse<{ id: string; state: string } | null>> {
+  ): Promise<
+    ApiResponse<{ id: string; state: string; version: string | null } | null>
+  > {
     try {
       const query = `
         query FindOneApplicationState($universalIdentifier: UUID!) {
           findOneApplication(universalIdentifier: $universalIdentifier) {
             id
             state
+            version
           }
         }
       `;

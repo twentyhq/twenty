@@ -73,6 +73,29 @@ export class ApplicationInstallService {
     private readonly metricsService: MetricsService,
   ) {}
 
+  // Tarball registrations that are neither listed nor pre-installed are
+  // only installable by their owner workspace.
+  private assertRegistrationIsInstallableByWorkspace({
+    appRegistration,
+    workspaceId,
+  }: {
+    appRegistration: ApplicationRegistrationEntity;
+    workspaceId: string;
+  }): void {
+    if (
+      appRegistration.sourceType ===
+        ApplicationRegistrationSourceType.TARBALL &&
+      !appRegistration.isListed &&
+      !appRegistration.isPreInstalled &&
+      appRegistration.ownerWorkspaceId !== workspaceId
+    ) {
+      throw new ApplicationException(
+        `Application registration ${appRegistration.universalIdentifier} is not available for this workspace`,
+        ApplicationExceptionCode.FORBIDDEN,
+      );
+    }
+  }
+
   async enqueueApplicationInstall(params: {
     appRegistrationId: string;
     version?: string;
@@ -88,6 +111,11 @@ export class ApplicationInstallService {
         ApplicationExceptionCode.APPLICATION_NOT_FOUND,
       );
     }
+
+    this.assertRegistrationIsInstallableByWorkspace({
+      appRegistration,
+      workspaceId: params.workspaceId,
+    });
 
     const existingApplication =
       await this.applicationService.findByUniversalIdentifier({
@@ -304,20 +332,10 @@ export class ApplicationInstallService {
       );
     }
 
-    // Tarball registrations that are neither listed nor pre-installed are
-    // only installable by their owner workspace.
-    if (
-      appRegistration.sourceType ===
-        ApplicationRegistrationSourceType.TARBALL &&
-      !appRegistration.isListed &&
-      !appRegistration.isPreInstalled &&
-      appRegistration.ownerWorkspaceId !== params.workspaceId
-    ) {
-      throw new ApplicationException(
-        `Application registration ${appRegistration.universalIdentifier} is not available for this workspace`,
-        ApplicationExceptionCode.FORBIDDEN,
-      );
-    }
+    this.assertRegistrationIsInstallableByWorkspace({
+      appRegistration,
+      workspaceId: params.workspaceId,
+    });
 
     const resolvedPackage =
       await this.applicationPackageFetcherService.resolvePackage(

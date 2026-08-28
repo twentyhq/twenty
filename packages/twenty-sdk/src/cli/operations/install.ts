@@ -1,3 +1,6 @@
+import { readFile } from 'node:fs/promises';
+import { join } from 'path';
+
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { readManifestFromFile } from '@/cli/utilities/build/manifest/manifest-reader';
 import { ConfigService } from '@/cli/utilities/config/config-service';
@@ -9,6 +12,16 @@ import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
 export type AppInstallOptions = {
   appPath: string;
   remote?: string;
+};
+
+const readAppVersion = async (appPath: string): Promise<string | undefined> => {
+  try {
+    const content = await readFile(join(appPath, 'package.json'), 'utf-8');
+
+    return (JSON.parse(content) as { version?: string }).version;
+  } catch {
+    return undefined;
+  }
 };
 
 const innerAppInstall = async (
@@ -55,6 +68,7 @@ const innerAppInstall = async (
   const installOutcome = await waitForApplicationInstallCompletion({
     apiService,
     universalIdentifier: manifest.application.universalIdentifier,
+    expectedVersion: await readAppVersion(options.appPath),
   });
 
   if (installOutcome.outcome === 'failure') {
