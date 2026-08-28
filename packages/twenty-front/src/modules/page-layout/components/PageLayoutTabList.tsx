@@ -40,6 +40,7 @@ import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type PageLayoutWidgetDndData } from '@/page-layout/types/PageLayoutWidgetDndData';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { TabListDropdown } from '@/ui/layout/tab-list/components/TabListDropdown';
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
@@ -272,6 +273,7 @@ export const PageLayoutTabList = ({
     pageLayoutId,
   );
   const { openTabSettings } = useOpenPageLayoutTabSettings(pageLayoutId);
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const isTabSettingsOpen = isDefined(pageLayoutTabSettingsOpenTabId);
 
@@ -306,7 +308,11 @@ export const PageLayoutTabList = ({
       }
 
       if (shouldOpenSettings && isTabSettingsOpen) {
-        openTabSettings(tabId);
+        if (pageLayoutType === PageLayoutType.RECORD_PAGE) {
+          closeSidePanelMenu();
+        } else {
+          openTabSettings(tabId);
+        }
       }
 
       selectTab(tabId);
@@ -316,6 +322,7 @@ export const PageLayoutTabList = ({
       pageLayoutType,
       activeTabId,
       isTabSettingsOpen,
+      closeSidePanelMenu,
       openTabSettings,
       selectTab,
     ],
@@ -334,7 +341,11 @@ export const PageLayoutTabList = ({
       }
 
       if (shouldOpenSettings && isTabSettingsOpen) {
-        openTabSettings(tabId);
+        if (pageLayoutType === PageLayoutType.RECORD_PAGE) {
+          closeSidePanelMenu();
+        } else {
+          openTabSettings(tabId);
+        }
       }
 
       selectTabFromDropdown(tabId);
@@ -344,6 +355,7 @@ export const PageLayoutTabList = ({
       pageLayoutType,
       activeTabId,
       isTabSettingsOpen,
+      closeSidePanelMenu,
       openTabSettings,
       closeOverflowDropdown,
       selectTabFromDropdown,
