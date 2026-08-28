@@ -70,7 +70,10 @@ describe('saveMyPartnerContent', () => {
       }),
     );
 
-    expect(result).toMatchObject({ ok: true });
+    expect(result).toMatchObject({
+      ok: true,
+      caseStudies: [{ id: 'content-1', name: 'Atlas rollout', status: 'WIP' }],
+    });
     expect(mutationMock).toHaveBeenCalledWith({
       createPartnerContent: {
         __args: {
@@ -93,9 +96,13 @@ describe('saveMyPartnerContent', () => {
   it('never reads partnerUserId from the request body', async () => {
     await saveMyPartnerContent(
       routeEvent({
-        caseStudies: [{ name: 'Atlas rollout' }],
-        partnerUserId: 'spoofed-member',
-        partnerId: 'spoofed-partner',
+        caseStudies: [
+          {
+            name: 'Atlas rollout',
+            partnerUserId: 'spoofed-member',
+            partnerId: 'spoofed-partner',
+          },
+        ],
       }),
     );
 
