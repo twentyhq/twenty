@@ -63,7 +63,7 @@ export const useCreatePageLayoutTab = ({
         pageLayoutId: pageLayoutId,
         icon:
           pageLayoutDraft.type === PageLayoutType.RECORD_PAGE
-            ? 'IconAppWindow'
+            ? 'IconPerspective'
             : null,
         layoutMode: getDefaultTabLayoutMode(pageLayoutDraft.type),
         widgets: [],

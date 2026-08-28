@@ -40,6 +40,7 @@ export const SidePanelRecordInfo = ({
       <RecordIdentifierBarTitle
         objectNameSingular={objectNameSingular}
         objectRecordId={objectRecordId}
+        variant="side-panel"
       />
       <RecordIdentifierBarCreatedAt objectRecordId={objectRecordId} />
     </StyledRecordInfo>
