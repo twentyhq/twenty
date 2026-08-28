@@ -169,9 +169,6 @@ const renderTabList = ({
   mockOpenTabSettings.mockImplementation((tabId: string) => {
     store.set(settingsTabAtom, tabId);
   });
-  mockCloseSidePanelMenu.mockImplementation(() => {
-    store.set(settingsTabAtom, null);
-  });
 
   render(
     <Provider store={store}>
@@ -191,6 +188,8 @@ const renderTabList = ({
       </I18nProvider>
     </Provider>,
   );
+
+  return { store, settingsTabAtom };
 };
 
 describe('PageLayoutTabList selection', () => {
@@ -225,7 +224,9 @@ describe('PageLayoutTabList selection', () => {
   it.each(['Notes', 'Files'])(
     'closes previous tab settings when navigating to %s',
     async (title) => {
-      renderTabList({ settingsTabId: 'Tasks' });
+      const { store, settingsTabAtom } = renderTabList({
+        settingsTabId: 'Tasks',
+      });
       const user = userEvent.setup();
 
       await user.click(screen.getByRole('button', { name: title }));
@@ -236,10 +237,12 @@ describe('PageLayoutTabList selection', () => {
       );
       expect(mockOpenTabSettings).not.toHaveBeenCalled();
       expect(mockCloseSidePanelMenu).toHaveBeenCalledTimes(1);
+      expect(store.get(settingsTabAtom)).toBeNull();
 
       await user.click(screen.getByRole('button', { name: title }));
 
       expect(mockOpenTabSettings).toHaveBeenCalledWith(title);
+      expect(store.get(settingsTabAtom)).toBe(title);
     },
   );
 
@@ -253,6 +256,37 @@ describe('PageLayoutTabList selection', () => {
     expect(mockOpenTabSettings).toHaveBeenCalledWith('Tasks');
     expect(mockNavigate).not.toHaveBeenCalled();
     expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
+  });
+
+  it('opens settings once when double-clicking another tab', async () => {
+    const { store, settingsTabAtom } = renderTabList();
+
+    await userEvent
+      .setup()
+      .dblClick(screen.getByRole('button', { name: 'Notes' }));
+
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith('#Notes');
+    expect(mockOpenTabSettings).toHaveBeenCalledTimes(1);
+    expect(store.get(settingsTabAtom)).toBe('Notes');
+  });
+
+  it('clears the previous settings selection without waiting for the panel to close', async () => {
+    const { store, settingsTabAtom } = renderTabList({
+      settingsTabId: 'Tasks',
+    });
+    const user = userEvent.setup();
+
+    await user.click(screen.getByRole('button', { name: 'Notes' }));
+    await user.click(screen.getByRole('button', { name: 'Files' }));
+
+    expect(mockCloseSidePanelMenu).toHaveBeenCalledTimes(1);
+    expect(mockOpenTabSettings).not.toHaveBeenCalled();
+    expect(store.get(settingsTabAtom)).toBeNull();
+    expect(screen.getByRole('button', { name: 'Files' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
   });
 
   it.each([PageLayoutType.DASHBOARD, PageLayoutType.STANDALONE_PAGE])(

@@ -46,7 +46,6 @@ import { TabListDropdown } from '@/ui/layout/tab-list/components/TabListDropdown
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -268,10 +267,11 @@ export const PageLayoutTabList = ({
   });
 
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
-  const pageLayoutTabSettingsOpenTabId = useAtomComponentStateValue(
-    pageLayoutTabSettingsOpenTabIdComponentState,
-    pageLayoutId,
-  );
+  const [pageLayoutTabSettingsOpenTabId, setPageLayoutTabSettingsOpenTabId] =
+    useAtomComponentState(
+      pageLayoutTabSettingsOpenTabIdComponentState,
+      pageLayoutId,
+    );
   const { openTabSettings } = useOpenPageLayoutTabSettings(pageLayoutId);
   const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -310,6 +310,7 @@ export const PageLayoutTabList = ({
       if (shouldOpenSettings && isTabSettingsOpen) {
         if (pageLayoutType === PageLayoutType.RECORD_PAGE) {
           closeSidePanelMenu();
+          setPageLayoutTabSettingsOpenTabId(null);
         } else {
           openTabSettings(tabId);
         }
@@ -323,6 +324,7 @@ export const PageLayoutTabList = ({
       activeTabId,
       isTabSettingsOpen,
       closeSidePanelMenu,
+      setPageLayoutTabSettingsOpenTabId,
       openTabSettings,
       selectTab,
     ],
