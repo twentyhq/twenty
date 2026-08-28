@@ -45,6 +45,9 @@ export const useWorkspaceMemberSearch = (
 
     let cancelled = false;
 
+    // Enter selects the top option, so stale results must never survive a
+    // changed term: an admin could otherwise pick the previous search's match.
+    setOptions([]);
     setIsSearching(true);
 
     const timeoutId = setTimeout(async () => {
