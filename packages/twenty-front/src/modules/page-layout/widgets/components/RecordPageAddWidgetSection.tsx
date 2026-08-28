@@ -11,6 +11,7 @@ import {
   IconListDetails,
   IconPlus,
   IconSquarePlus,
+  IconStack2,
 } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -70,7 +71,7 @@ export const RecordPageAddWidgetSection = () => {
       </StyledHeader>
       <StyledMenuItemList>
         <MenuItem
-          LeftIcon={IconListDetails}
+          LeftIcon={IconStack2}
           withIconContainer
           text={t`Fields group`}
           contextualText={t`Group multiple fields from this record`}

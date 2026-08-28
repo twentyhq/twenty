@@ -34,7 +34,12 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconAlignBoxLeftTop, IconApps, IconListDetails } from 'twenty-ui/icon';
+import {
+  IconAlignBoxLeftTop,
+  IconApps,
+  IconListDetails,
+  IconStack2,
+} from 'twenty-ui/icon';
 import { v4 as uuidv4 } from 'uuid';
 import {
   type FrontComponent,
@@ -361,11 +366,11 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
 
   return (
     <SidePanelList selectableItemIds={selectableItemIds}>
-      <SidePanelGroup heading={t`Widget type`}>
+      <SidePanelGroup heading={t`Standard widgets`}>
         <SelectableListItem itemId="fields" onEnter={handleCreateFieldsWidget}>
           <CommandMenuItem
-            Icon={IconListDetails}
-            label={t`Fields`}
+            Icon={IconStack2}
+            label={t`Fields group`}
             id="fields"
             onClick={handleCreateFieldsWidget}
           />

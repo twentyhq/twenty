@@ -17,9 +17,17 @@ import userEvent from '@testing-library/user-event';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
+import { type IconComponent } from 'twenty-ui/icon';
+import type * as TwentyIcons from 'twenty-ui/icon';
 import { WidgetType } from '~/generated-metadata/graphql';
 
 const mockNavigatePageLayoutSidePanel = jest.fn();
+
+jest.mock('twenty-ui/icon', () => ({
+  ...jest.requireActual<typeof TwentyIcons>('twenty-ui/icon'),
+  IconStack2: () => <svg role="img" aria-label="Fields group icon" />,
+  IconListDetails: () => <svg role="img" aria-label="Field icon" />,
+}));
 
 jest.mock('@apollo/client/react', () => ({
   useQuery: () => ({ data: { frontComponents: [] } }),
@@ -64,7 +72,18 @@ jest.mock('@/side-panel/components/SidePanelList', () => ({
 }));
 
 jest.mock('@/side-panel/components/SidePanelGroup', () => ({
-  SidePanelGroup: ({ children }: { children: ReactNode }) => <>{children}</>,
+  SidePanelGroup: ({
+    heading,
+    children,
+  }: {
+    heading: string;
+    children: ReactNode;
+  }) => (
+    <section>
+      <h2>{heading}</h2>
+      {children}
+    </section>
+  ),
 }));
 
 jest.mock('@/ui/layout/selectable-list/components/SelectableListItem', () => ({
@@ -77,14 +96,57 @@ jest.mock('@/command-menu/components/CommandMenuItem', () => ({
   CommandMenuItem: ({
     label,
     onClick,
+    Icon,
   }: {
     label: string;
     onClick: () => void;
-  }) => <button onClick={onClick}>{label}</button>,
+    Icon: IconComponent;
+  }) => (
+    <button aria-label={label} onClick={onClick}>
+      <Icon />
+      {label}
+    </button>
+  ),
 }));
 
 describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
   beforeEach(() => jest.clearAllMocks());
+
+  it('labels standard widgets and distinguishes a fields group from a single field', () => {
+    const store = createStore();
+    store.set(
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      makeDraft([makeTab('tab-1', [])]),
+    );
+    store.set(
+      widgetCreationTargetTabIdComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      'tab-1',
+    );
+
+    render(
+      <PageLayoutTestWrapper store={store}>
+        <SidePanelPageLayoutRecordPageWidgetTypeSelect />
+      </PageLayoutTestWrapper>,
+    );
+
+    expect(
+      screen.getByRole('heading', { name: 'Standard widgets' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('Widget type')).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Fields group' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Field' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('img', { name: 'Fields group icon' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Field icon' })).toBeInTheDocument();
+  });
+
   it.each([
     { mode: 'append', expectedTitles: ['first', 'second', 'third', 'Note'] },
     {
