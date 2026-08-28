@@ -1,7 +1,8 @@
 // The release that narrowed the Application RLS predicate to `partnerUser IS me`.
 const STRICT_APPLICATION_RLS_VERSION = [1, 6, 1] as const;
-// The release that grants opportunity read access to applicants after unlist.
-const APPLICANT_OPPORTUNITY_VISIBILITY_VERSION = [1, 8, 1] as const;
+// The release that grants opportunity read access to applicants after unlist. 1.8.1 went
+// to an unrelated case-study fix, so a workspace on 1.8.1 still needs this backfill.
+const APPLICANT_OPPORTUNITY_VISIBILITY_VERSION = [1, 8, 2] as const;
 
 const isBeforeAppVersion = (
   version: string,

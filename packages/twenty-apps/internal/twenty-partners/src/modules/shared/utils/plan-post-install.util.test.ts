@@ -17,8 +17,15 @@ describe('planPostInstall', () => {
     });
   });
 
-  it('skips both backfills when already on 1.8.1 or later', () => {
+  it('runs only the applicant grant when upgrading from 1.8.1', () => {
     expect(planPostInstall('1.8.1')).toEqual({
+      stampPartnerUser: false,
+      grantApplicantVisibility: true,
+    });
+  });
+
+  it('skips both backfills when already on 1.8.2 or later', () => {
+    expect(planPostInstall('1.8.2')).toEqual({
       stampPartnerUser: false,
       grantApplicantVisibility: false,
     });
