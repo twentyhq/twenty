@@ -4,6 +4,7 @@ import {
 } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import {
   makeDraft,
   makeTab,
@@ -222,6 +223,50 @@ describe('useOpenWidgetSettingsInSidePanel', () => {
 
     expect(store.get(getEditingWidgetIdAtom())).toBe(widget.id);
   });
+
+  it.each([
+    {
+      widgetType: WidgetType.TIMELINE,
+      sidePanelPage: SidePanelPages.PageLayoutWidgetSettings,
+    },
+    {
+      widgetType: WidgetType.FRONT_COMPONENT,
+      sidePanelPage: SidePanelPages.PageLayoutTabSettings,
+    },
+  ])(
+    'keeps $widgetType settings selected when interrupting a closing panel',
+    ({ widgetType, sidePanelPage }) => {
+      const store = createStore();
+      const settingsTabAtom =
+        pageLayoutTabSettingsOpenTabIdComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        });
+      const widget = { ...makeWidget('widget', 0), type: widgetType };
+      store.set(getDraftAtom(), makeDraft([makeTab('tab-1', [widget])]));
+      mockNavigatePageLayoutSidePanel.mockImplementationOnce(() => {
+        store.set(getEditingWidgetIdAtom(), null);
+        store.set(settingsTabAtom, null);
+      });
+
+      const { result } = renderOpenWidgetSettingsHook(store);
+      act(() =>
+        result.current.openWidgetSettingsInSidePanel({
+          widgetId: widget.id,
+          widgetType,
+        }),
+      );
+
+      expect(mockNavigatePageLayoutSidePanel).toHaveBeenCalledWith({
+        sidePanelPage,
+        resetNavigationStack: true,
+      });
+      if (sidePanelPage === SidePanelPages.PageLayoutTabSettings) {
+        expect(store.get(settingsTabAtom)).toBe('tab-1');
+      } else {
+        expect(store.get(getEditingWidgetIdAtom())).toBe(widget.id);
+      }
+    },
+  );
 
   it.each([WidgetType.IFRAME, WidgetType.GRAPH, WidgetType.RECORD_TABLE])(
     'opens generic widget settings for a %s widget on a record page',

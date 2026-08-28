@@ -141,19 +141,19 @@ export const useOpenWidgetSettingsInSidePanel = (
         isContainingTabSingleWidget &&
         !isViewportFillingWidgetInVerticalList
       ) {
-        setPageLayoutTabSettingsOpenTabId(containingTab.id);
         navigatePageLayoutSidePanel({
           sidePanelPage: SidePanelPages.PageLayoutTabSettings,
           resetNavigationStack: true,
         });
+        setPageLayoutTabSettingsOpenTabId(containingTab.id);
         return;
       }
 
-      setPageLayoutEditingWidgetId(widgetId);
       navigatePageLayoutSidePanel({
         sidePanelPage: SidePanelPages.PageLayoutWidgetSettings,
         resetNavigationStack: true,
       });
+      setPageLayoutEditingWidgetId(widgetId);
     },
     [
       isDashboardPageLayout,
