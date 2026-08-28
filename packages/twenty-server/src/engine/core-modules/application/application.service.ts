@@ -693,6 +693,29 @@ export class ApplicationService {
     });
   }
 
+  // Failure-recovery callers must never mask the original error, so the
+  // transition is attempted once and its failure only logged.
+  async transitionStateBestEffort({
+    id,
+    workspaceId,
+    fromState,
+    toState,
+  }: {
+    id: string;
+    workspaceId: string;
+    fromState: ApplicationState;
+    toState: ApplicationState;
+  }): Promise<void> {
+    try {
+      await this.transitionState({ id, workspaceId, fromState, toState });
+    } catch (transitionError) {
+      this.logger.warn(
+        `Failed to transition application ${id} from ${fromState} to ${toState} in workspace ${workspaceId}`,
+        transitionError,
+      );
+    }
+  }
+
   private async publishApplicationUpdate({
     id,
     workspaceId,

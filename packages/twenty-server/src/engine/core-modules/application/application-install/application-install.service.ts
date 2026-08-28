@@ -618,9 +618,11 @@ export class ApplicationInstallService {
           shouldRunUninstallHook: false,
         });
       } else {
-        await this.revertApplicationStateToInstalledBestEffort({
-          applicationId: application.id,
+        await this.applicationService.transitionStateBestEffort({
+          id: application.id,
           workspaceId: params.workspaceId,
+          fromState: ApplicationState.UPGRADING,
+          toState: ApplicationState.INSTALLED,
         });
       }
 
@@ -977,27 +979,5 @@ export class ApplicationInstallService {
       isDefined(existingApplication) &&
       existingApplication.state !== ApplicationState.INSTALLING
     );
-  }
-
-  private async revertApplicationStateToInstalledBestEffort({
-    applicationId,
-    workspaceId,
-  }: {
-    applicationId: string;
-    workspaceId: string;
-  }): Promise<void> {
-    try {
-      await this.applicationService.transitionState({
-        id: applicationId,
-        workspaceId,
-        fromState: ApplicationState.UPGRADING,
-        toState: ApplicationState.INSTALLED,
-      });
-    } catch (revertError) {
-      this.logger.warn(
-        `Failed to revert application ${applicationId} state to INSTALLED in workspace ${workspaceId}`,
-        revertError,
-      );
-    }
   }
 }

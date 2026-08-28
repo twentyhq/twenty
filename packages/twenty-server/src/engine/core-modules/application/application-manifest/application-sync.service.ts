@@ -421,34 +421,14 @@ export class ApplicationSyncService {
 
       return validateAndBuildResult.workspaceMigration;
     } catch (error) {
-      await this.revertApplicationStateBestEffort({
-        applicationId: application.id,
-        workspaceId,
-      });
-
-      throw error;
-    }
-  }
-
-  private async revertApplicationStateBestEffort({
-    applicationId,
-    workspaceId,
-  }: {
-    applicationId: string;
-    workspaceId: string;
-  }): Promise<void> {
-    try {
-      await this.applicationService.transitionState({
-        id: applicationId,
+      await this.applicationService.transitionStateBestEffort({
+        id: application.id,
         workspaceId,
         fromState: ApplicationState.UNINSTALLING,
         toState: ApplicationState.INSTALLED,
       });
-    } catch (revertError) {
-      this.logger.warn(
-        `Failed to revert application ${applicationId} state after a failed uninstall in workspace ${workspaceId}`,
-        revertError,
-      );
+
+      throw error;
     }
   }
 

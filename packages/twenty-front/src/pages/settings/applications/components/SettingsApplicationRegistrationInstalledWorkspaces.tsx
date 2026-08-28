@@ -154,50 +154,54 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
             <TableHeader align="right">{t`Version installed`}</TableHeader>
           </TableRow>
           <TableBody>
-            {visibleWorkspaces.map((workspace) => (
-              <TableRow
-                key={workspace.id}
-                gridTemplateColumns={INSTALLED_WORKSPACES_GRID_TEMPLATE_COLUMNS}
-                to={getSettingsPath(SettingsPath.AdminPanelWorkspaceDetail, {
-                  workspaceId: workspace.id,
-                })}
-              >
-                <TableCell
-                  color={themeCssVariables.font.color.primary}
-                  gap={themeCssVariables.spacing[2]}
-                  overflow="hidden"
+            {visibleWorkspaces.map((workspace) => {
+              const transitionalStateLabel =
+                getApplicationTransitionalStateLabel(workspace.state);
+
+              return (
+                <TableRow
+                  key={workspace.id}
+                  gridTemplateColumns={
+                    INSTALLED_WORKSPACES_GRID_TEMPLATE_COLUMNS
+                  }
+                  to={getSettingsPath(SettingsPath.AdminPanelWorkspaceDetail, {
+                    workspaceId: workspace.id,
+                  })}
                 >
-                  <Avatar
-                    avatarUrl={getAbsoluteImageUrl(workspace.logo ?? undefined)}
-                    placeholder={workspace.displayName ?? '—'}
-                    placeholderColorSeed={workspace.id}
-                    size="md"
-                  />
-                  <OverflowingTextWithTooltip
-                    text={workspace.displayName ?? '—'}
-                  />
-                </TableCell>
-                <TableCell
-                  align="right"
-                  color={themeCssVariables.font.color.tertiary}
-                  gap={themeCssVariables.spacing[2]}
-                >
-                  {isDefined(
-                    getApplicationTransitionalStateLabel(workspace.state),
-                  ) && (
-                    <Tag
-                      color="orange"
-                      text={
-                        getApplicationTransitionalStateLabel(workspace.state) ??
-                        ''
-                      }
-                      weight="medium"
+                  <TableCell
+                    color={themeCssVariables.font.color.primary}
+                    gap={themeCssVariables.spacing[2]}
+                    overflow="hidden"
+                  >
+                    <Avatar
+                      avatarUrl={getAbsoluteImageUrl(
+                        workspace.logo ?? undefined,
+                      )}
+                      placeholder={workspace.displayName ?? '—'}
+                      placeholderColorSeed={workspace.id}
+                      size="md"
                     />
-                  )}
-                  {workspace.version ?? '—'}
-                </TableCell>
-              </TableRow>
-            ))}
+                    <OverflowingTextWithTooltip
+                      text={workspace.displayName ?? '—'}
+                    />
+                  </TableCell>
+                  <TableCell
+                    align="right"
+                    color={themeCssVariables.font.color.tertiary}
+                    gap={themeCssVariables.spacing[2]}
+                  >
+                    {isDefined(transitionalStateLabel) && (
+                      <Tag
+                        color="orange"
+                        text={transitionalStateLabel}
+                        weight="medium"
+                      />
+                    )}
+                    {workspace.version ?? '—'}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       )}

@@ -6,7 +6,7 @@ export default defineConfig({
   },
   test: {
     testTimeout: 120_000,
-    hookTimeout: 120_000,
+    hookTimeout: 600_000,
     include: ['src/**/*.integration-test.ts'],
     setupFiles: ['src/__tests__/setup-test.ts'],
     env: {

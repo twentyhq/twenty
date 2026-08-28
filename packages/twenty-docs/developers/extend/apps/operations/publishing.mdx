@@ -295,5 +295,6 @@ To install a newer version, deploy or publish it first, then re-run `yarn twenty
 <Note>
 The install runs in a background job on the server. The command waits for it to
 complete (polling every 2 seconds, up to 10 minutes) and exits non-zero if the
-install fails — a failed fresh install is rolled back server-side.
+install fails — a failed fresh install is rolled back server-side, and a failed
+upgrade leaves the app installed at its previous version.
 </Note>

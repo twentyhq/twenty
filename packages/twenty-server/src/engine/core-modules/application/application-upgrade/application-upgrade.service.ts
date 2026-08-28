@@ -370,7 +370,7 @@ export class ApplicationUpgradeService {
         return;
       }
 
-      await this.applicationService.transitionState({
+      await this.applicationService.transitionStateBestEffort({
         id: application.id,
         workspaceId: params.workspaceId,
         fromState: ApplicationState.UPGRADING,
@@ -378,7 +378,7 @@ export class ApplicationUpgradeService {
       });
     } catch (revertError) {
       this.logger.warn(
-        `Failed to revert upgrade state for registration ${params.appRegistrationId} in workspace ${params.workspaceId}`,
+        `Failed to look up application for registration ${params.appRegistrationId} in workspace ${params.workspaceId}`,
         revertError,
       );
     }
