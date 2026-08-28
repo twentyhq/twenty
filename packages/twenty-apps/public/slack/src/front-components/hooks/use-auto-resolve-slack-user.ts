@@ -84,7 +84,17 @@ export const useAutoResolveSlackUser = () => {
   const resolveNow = (rawIdentity: RawSlackIdentity) => {
     const input = toSlackResolveInput(rawIdentity);
 
-    if (!isResolvableSlackIdentity(input) || isResolving) {
+    if (isResolving) {
+      return;
+    }
+
+    // Enter with nothing resolvable must not look unresponsive; the guidance
+    // clears as soon as any identity field changes.
+    if (!isResolvableSlackIdentity(input)) {
+      setResolveError(
+        'Search for the Slack user by name or email, or enter their full Slack user id.',
+      );
+
       return;
     }
 
