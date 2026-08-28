@@ -426,7 +426,9 @@ export const CopyLinkToPage: Story = {
       await userEvent.click(await canvas.findByText('Copy link to page'));
 
       expect(writeText).toHaveBeenCalledWith(window.location.href);
-      expect(await canvas.findByText('Link copied to clipboard')).toBeVisible();
+      await waitFor(() => {
+        expect(canvas.getByText('Link copied to clipboard')).toBeVisible();
+      });
       expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
     } finally {
       writeText.mockRestore();
@@ -538,7 +540,9 @@ export const ChangeThemeFailure: Story = {
 
     await userEvent.click(await canvas.findByText('Change theme to dark'));
 
-    expect(await canvas.findByText('Failed to update theme')).toBeVisible();
+    await waitFor(() => {
+      expect(canvas.getByText('Failed to update theme')).toBeVisible();
+    });
     expect(jotaiStore.get(currentWorkspaceMemberState.atom)?.colorScheme).toBe(
       'System',
     );
