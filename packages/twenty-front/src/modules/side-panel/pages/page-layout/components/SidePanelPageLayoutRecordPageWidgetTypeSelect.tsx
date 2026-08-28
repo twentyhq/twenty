@@ -304,7 +304,11 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     setPageLayoutEditingWidgetId(widgetId);
     insertCreatedWidgetAtContext(widgetId);
 
-    closeSidePanelMenu();
+    navigatePageLayoutSidePanel({
+      sidePanelPage: SidePanelPages.PageLayoutWidgetSettings,
+      pageTitle: t`Note`,
+      resetNavigationStack: true,
+    });
   };
 
   const handleCreateFrontComponentWidget = useCallback(

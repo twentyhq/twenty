@@ -14,17 +14,23 @@ import {
 import { act, renderHook } from '@testing-library/react';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
+import { SidePanelPages } from 'twenty-shared/types';
 import {
   PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 
-const mockCloseSidePanelMenu = jest.fn();
+const mockNavigatePageLayoutSidePanel = jest.fn();
 
-jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
-  useSidePanelMenu: () => ({ closeSidePanelMenu: mockCloseSidePanelMenu }),
-}));
+jest.mock(
+  '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel',
+  () => ({
+    useNavigatePageLayoutSidePanel: () => ({
+      navigatePageLayoutSidePanel: mockNavigatePageLayoutSidePanel,
+    }),
+  }),
+);
 
 describe('useCreateRecordPageNoteWidget', () => {
   it('should append a shared Note to the target tab and start editing it', () => {
@@ -85,6 +91,10 @@ describe('useCreateRecordPageNoteWidget', () => {
         }),
       ),
     ).toBe(note.id);
-    expect(mockCloseSidePanelMenu).toHaveBeenCalledTimes(1);
+    expect(mockNavigatePageLayoutSidePanel).toHaveBeenCalledWith({
+      sidePanelPage: SidePanelPages.PageLayoutWidgetSettings,
+      pageTitle: 'Note',
+      resetNavigationStack: true,
+    });
   });
 });

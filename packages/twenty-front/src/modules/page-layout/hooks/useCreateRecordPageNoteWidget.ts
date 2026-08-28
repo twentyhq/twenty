@@ -3,16 +3,17 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultStandaloneRichTextWidget } from '@/page-layout/utils/createDefaultStandaloneRichTextWidget';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
+import { SidePanelPages } from 'twenty-shared/types';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 import { v4 as uuidv4 } from 'uuid';
 
 export const useCreateRecordPageNoteWidget = () => {
   const { tabId } = usePageLayoutContentContext();
-  const { closeSidePanelMenu } = useSidePanelMenu();
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const pageLayoutDraftState = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,
@@ -47,7 +48,11 @@ export const useCreateRecordPageNoteWidget = () => {
     }));
 
     store.set(pageLayoutEditingWidgetIdState, widgetId);
-    closeSidePanelMenu();
+    navigatePageLayoutSidePanel({
+      sidePanelPage: SidePanelPages.PageLayoutWidgetSettings,
+      pageTitle: t`Note`,
+      resetNavigationStack: true,
+    });
   };
 
   return { createRecordPageNoteWidget };

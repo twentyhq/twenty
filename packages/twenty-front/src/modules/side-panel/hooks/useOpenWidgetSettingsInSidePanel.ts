@@ -112,7 +112,15 @@ export const useOpenWidgetSettingsInSidePanel = (
 
       if (widgetType === WidgetType.STANDALONE_RICH_TEXT) {
         setPageLayoutEditingWidgetId(widgetId);
-        closeSidePanelMenu();
+        if (isDashboardPageLayout) {
+          closeSidePanelMenu();
+        } else {
+          navigatePageLayoutSidePanel({
+            sidePanelPage: SidePanelPages.PageLayoutWidgetSettings,
+            pageTitle: t`Note`,
+            resetNavigationStack: true,
+          });
+        }
         return;
       }
 

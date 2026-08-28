@@ -16,7 +16,10 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
+import { SidePanelPages } from 'twenty-shared/types';
 import { WidgetType } from '~/generated-metadata/graphql';
+
+const mockNavigatePageLayoutSidePanel = jest.fn();
 
 jest.mock('@apollo/client/react', () => ({
   useQuery: () => ({ data: { frontComponents: [] } }),
@@ -41,7 +44,7 @@ jest.mock(
   '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel',
   () => ({
     useNavigatePageLayoutSidePanel: () => ({
-      navigatePageLayoutSidePanel: jest.fn(),
+      navigatePageLayoutSidePanel: mockNavigatePageLayoutSidePanel,
     }),
   }),
 );
@@ -81,6 +84,7 @@ jest.mock('@/command-menu/components/CommandMenuItem', () => ({
 }));
 
 describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
+  beforeEach(() => jest.clearAllMocks());
   it.each([
     { mode: 'append', expectedTitles: ['first', 'second', 'third', 'Note'] },
     { mode: 'replace', expectedTitles: ['first', 'Note', 'third'] },
@@ -136,11 +140,14 @@ describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
       );
 
       const user = userEvent.setup();
-      await user.click(
-      screen.getByRole('button', { name: 'Note' }),
-      );
+      await user.click(screen.getByRole('button', { name: 'Note' }));
 
       const draft = store.get(draftAtom);
+      expect(mockNavigatePageLayoutSidePanel).toHaveBeenCalledWith({
+        sidePanelPage: SidePanelPages.PageLayoutWidgetSettings,
+        pageTitle: 'Note',
+        resetNavigationStack: true,
+      });
       expect(draft.tabs[0].widgets).toEqual([]);
       expect(draft.tabs[1].widgets.map(({ title }) => title)).toEqual(
         expectedTitles,
