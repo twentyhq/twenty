@@ -164,6 +164,18 @@ describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
       mode: 'insert above',
       expectedTitles: ['first', 'Note', 'second', 'third'],
     },
+    {
+      mode: 'insert above with Tasks',
+      expectedTitles: ['first', 'Note', 'second', 'third', 'Tasks'],
+    },
+    {
+      mode: 'insert before Tasks with Tasks',
+      expectedTitles: ['first', 'second', 'third', 'Note', 'Tasks'],
+    },
+    {
+      mode: 'insert first with Tasks',
+      expectedTitles: ['Note', 'first', 'second', 'third', 'Tasks'],
+    },
   ])(
     'should $mode a Note in the requested position',
     async ({ mode, expectedTitles }) => {
@@ -204,11 +216,15 @@ describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
         store.set(editingWidgetIdAtom, 'second');
       }
 
-      if (mode === 'insert above') {
+      if (mode.startsWith('insert')) {
         store.set(
           widgetInsertionContextComponentState.atomFamily({ instanceId }),
           {
-            targetWidgetId: 'second',
+            targetWidgetId: mode.startsWith('insert before Tasks')
+              ? 'tasks'
+              : mode.startsWith('insert first')
+                ? 'first'
+                : 'second',
             direction: 'above',
           },
         );

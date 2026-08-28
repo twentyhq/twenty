@@ -85,7 +85,7 @@ export const RecordPageAddWidgetSection = () => {
           withIconContainer
           text={t`More widgets`}
           hasSubMenu
-          onClick={navigateToMoreWidgets}
+          onClick={() => navigateToMoreWidgets()}
         />
       </StyledMenuItemList>
     </StyledContainer>
