@@ -1,5 +1,6 @@
 import { QueryRunner } from 'typeorm';
 
+import { isCoreTablePresent } from 'src/database/commands/upgrade-version-command/2-38/utils/is-core-table-present.util';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
@@ -11,7 +12,7 @@ export class DropHasReachedCurrentPeriodCapFastInstanceCommand
   implements FastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    if (!(await isBillingSubscriptionItemTablePresent(queryRunner))) {
+    if (!(await isCoreTablePresent(queryRunner, 'billingSubscriptionItem'))) {
       return;
     }
 
@@ -21,7 +22,7 @@ export class DropHasReachedCurrentPeriodCapFastInstanceCommand
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    if (!(await isBillingSubscriptionItemTablePresent(queryRunner))) {
+    if (!(await isCoreTablePresent(queryRunner, 'billingSubscriptionItem'))) {
       return;
     }
 
@@ -30,15 +31,3 @@ export class DropHasReachedCurrentPeriodCapFastInstanceCommand
     );
   }
 }
-
-// An instance without billing never grew the table, and DROP COLUMN IF EXISTS
-// still fails when the table itself is missing.
-const isBillingSubscriptionItemTablePresent = async (
-  queryRunner: QueryRunner,
-): Promise<boolean> => {
-  const rows = await queryRunner.query(
-    `SELECT 1 FROM pg_tables WHERE schemaname = 'core' AND tablename = 'billingSubscriptionItem'`,
-  );
-
-  return rows.length > 0;
-};

@@ -1,5 +1,6 @@
 import { QueryRunner } from 'typeorm';
 
+import { isCoreTablePresent } from 'src/database/commands/upgrade-version-command/2-38/utils/is-core-table-present.util';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
@@ -12,7 +13,7 @@ export class DropBillingCustomerCreditBalanceMicroFastInstanceCommand
   implements FastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    if (!(await isBillingCustomerTablePresent(queryRunner))) {
+    if (!(await isCoreTablePresent(queryRunner, 'billingCustomer'))) {
       return;
     }
 
@@ -22,7 +23,7 @@ export class DropBillingCustomerCreditBalanceMicroFastInstanceCommand
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    if (!(await isBillingCustomerTablePresent(queryRunner))) {
+    if (!(await isCoreTablePresent(queryRunner, 'billingCustomer'))) {
       return;
     }
 
@@ -31,15 +32,3 @@ export class DropBillingCustomerCreditBalanceMicroFastInstanceCommand
     );
   }
 }
-
-// An instance without billing never grew the table, and DROP COLUMN IF EXISTS
-// still fails when the table itself is missing.
-const isBillingCustomerTablePresent = async (
-  queryRunner: QueryRunner,
-): Promise<boolean> => {
-  const rows = await queryRunner.query(
-    `SELECT 1 FROM pg_tables WHERE schemaname = 'core' AND tablename = 'billingCustomer'`,
-  );
-
-  return rows.length > 0;
-};
