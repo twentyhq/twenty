@@ -27,6 +27,13 @@ describe('normalizeDomain', () => {
     expect(normalizeDomain('xn--mnchen-3ya.de')).toBe('xn--mnchen-3ya.de');
   });
 
+  it('should read a backslash as a path separator, like a browser does', () => {
+    expect(normalizeDomain('twenty.com\\@evil.com')).toBe('twenty.com');
+    expect(normalizeDomain('https://twenty.com\\evil.com/x')).toBe(
+      'twenty.com',
+    );
+  });
+
   it('should drop every user info segment', () => {
     expect(normalizeDomain('https://a@b@twenty.com')).toBe('twenty.com');
   });

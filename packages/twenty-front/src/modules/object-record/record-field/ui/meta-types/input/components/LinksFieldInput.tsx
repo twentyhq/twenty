@@ -1,3 +1,4 @@
+import { getLinksVariant } from '@/object-record/spreadsheet-import/utils/getLinksVariant';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useLinksField } from '@/object-record/record-field/ui/meta-types/hooks/useLinksField';
 import { LinksFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldMenuItem';
@@ -9,7 +10,12 @@ import { linksFieldValueSchema } from '@/object-record/record-field/ui/validatio
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useContext, useMemo } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
-import { absoluteUrlSchema, isDefined } from 'twenty-shared/utils';
+import {
+  absoluteUrlSchema,
+  isDefined,
+  isValidHostname,
+  normalizeDomain,
+} from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
@@ -91,6 +97,20 @@ export const LinksFieldInput = () => {
     fieldDefinition.metadata.settings?.maxNumberOfValues ??
     MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
 
+  const isDomainField =
+    getLinksVariant({
+      type: FieldMetadataType.LINKS,
+      settings: fieldDefinition.metadata.settings,
+    }) === 'domain';
+
+  const validateInput = (input: string) =>
+    isDomainField
+      ? isValidHostname(normalizeDomain(input), {
+          allowLocalhost: false,
+          allowIp: false,
+        })
+      : absoluteUrlSchema.safeParse(input).success;
+
   return (
     <MultiItemFieldInput
       items={links}
@@ -99,10 +119,10 @@ export const LinksFieldInput = () => {
       onEnter={handleEnter}
       onSubmit={handleSubmit}
       onClickOutside={handleClickOutside}
-      placeholder="URL"
+      placeholder={isDomainField ? 'Domain' : 'URL'}
       fieldMetadataType={FieldMetadataType.LINKS}
       validateInput={(input) => ({
-        isValid: absoluteUrlSchema.safeParse(input).success,
+        isValid: validateInput(input),
         errorMessage: '',
       })}
       onError={handleError}

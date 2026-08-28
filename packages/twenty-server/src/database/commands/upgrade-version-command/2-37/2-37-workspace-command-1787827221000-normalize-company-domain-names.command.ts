@@ -6,6 +6,7 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { buildCompanyDomainNameCandidatesQuery } from 'src/database/commands/upgrade-version-command/2-37/utils/build-company-domain-name-candidates-query.util';
 import { buildCompanyDomainNameUpdateQuery } from 'src/database/commands/upgrade-version-command/2-37/utils/build-company-domain-name-update-query.util';
+import { buildDomainNameSettingsPatchQuery } from 'src/database/commands/upgrade-version-command/2-37/utils/build-domain-name-settings-patch-query.util';
 import {
   type CompanyDomainNameRewrite,
   computeCompanyDomainNameRewrites,
@@ -13,6 +14,7 @@ import {
 import { type DomainNameLinks } from 'src/database/commands/upgrade-version-command/2-37/utils/normalize-domain-name-links.util';
 import { partitionCompanyDomainNameRewrites } from 'src/database/commands/upgrade-version-command/2-37/utils/partition-company-domain-name-rewrites.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 const BACKFILL_BATCH_SIZE = 20000;
@@ -29,6 +31,7 @@ type WorkspaceDataSource = NonNullable<RunOnWorkspaceArgs['dataSource']>;
 export class NormalizeCompanyDomainNamesCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {
     super(workspaceIteratorService);
   }
@@ -53,6 +56,12 @@ export class NormalizeCompanyDomainNamesCommand extends ProvisionedWorkspaceComm
     if (!hasCompanyTable) {
       return;
     }
+
+    await this.markDomainNameFieldAsDomainTyped({
+      dataSource,
+      workspaceId,
+      isDryRun,
+    });
 
     let afterCompanyId = FIRST_COMPANY_ID;
     let updatedCount = 0;
@@ -113,6 +122,34 @@ export class NormalizeCompanyDomainNamesCommand extends ProvisionedWorkspaceComm
         `Left ${skippedCompanyIds.length} company domain name(s) unnormalized in workspace ${workspaceId} because another company already holds the normalized domain, these need a merge: ${skippedCompanyIds.join(', ')}`,
       );
     }
+  }
+
+  private async markDomainNameFieldAsDomainTyped({
+    dataSource,
+    workspaceId,
+    isDryRun,
+  }: {
+    dataSource: WorkspaceDataSource;
+    workspaceId: string;
+    isDryRun: boolean;
+  }): Promise<void> {
+    if (isDryRun) {
+      return;
+    }
+
+    const { sql, parameters } = buildDomainNameSettingsPatchQuery(workspaceId);
+    const [, patchedFieldCount] = await dataSource.query<[unknown[], number]>(
+      sql,
+      parameters,
+    );
+
+    if (patchedFieldCount === 0) {
+      return;
+    }
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatFieldMetadataMaps',
+    ]);
   }
 
   private async hasCompanyTable({

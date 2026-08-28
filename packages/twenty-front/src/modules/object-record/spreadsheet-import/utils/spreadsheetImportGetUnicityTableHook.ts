@@ -1,3 +1,4 @@
+import { getLinksVariant } from '@/object-record/spreadsheet-import/utils/getLinksVariant';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
@@ -9,11 +10,7 @@ import {
   type SpreadsheetImportTableHook,
 } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  type FieldLinksVariant,
-  type FieldMetadataSettings,
-  FieldMetadataType,
-} from 'twenty-shared/types';
+import { type FieldLinksVariant, FieldMetadataType } from 'twenty-shared/types';
 import {
   getUniqueConstraintsFields,
   isDefined,
@@ -48,9 +45,7 @@ export const spreadsheetImportGetUnicityTableHook = (
           return uniqueSubFields.map((subField) => ({
             columnName: getCompositeSubFieldKey(field, subField.subFieldName),
             fieldType: field.type,
-            linksVariant: (
-              field.settings as FieldMetadataSettings<FieldMetadataType.LINKS>
-            )?.type,
+            linksVariant: getLinksVariant(field),
           }));
         }
 

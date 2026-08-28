@@ -1,5 +1,5 @@
 const SCHEME_PREFIX_REGEX = /^[a-z][a-z0-9+.-]*:\/\//i;
-const PATH_SEPARATOR_REGEX = /[/?#]/;
+const PATH_SEPARATOR_REGEX = /[/\\?#]/;
 const USER_INFO_PREFIX_REGEX = /^.*@/;
 const PORT_SUFFIX_REGEX = /:\d+$/;
 
