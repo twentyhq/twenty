@@ -6,6 +6,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { doesObjectRecordEventChangeFields } from 'src/modules/timeline/utils/does-object-record-event-change-fields.util';
 import { resolveLinkedTimelineActivityHappensAtFieldName } from 'src/modules/timeline/utils/resolve-timeline-activity-happens-at.util';
+import { resolveTimelineActivityTypeForRule } from 'src/modules/timeline/utils/resolve-timeline-activity-type-for-rule.util';
 import { type TimelineActivityTypeResolver } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
 
 export type LinkedTimelineActivityHappensAtSyncUpdate = {
@@ -48,14 +49,11 @@ export const buildLinkedTimelineActivityHappensAtSyncUpdates = ({
       flatFieldMetadataMaps,
     });
 
-    const timelineActivityTypeId = (
-      rule.timelineActivityType ??
-      resolveTimelineActivityType({
-        action: 'linked',
-        objectUniversalIdentifier:
-          rule.sourceFlatObjectMetadata.universalIdentifier,
-      })
-    )?.id;
+    const timelineActivityTypeId = resolveTimelineActivityTypeForRule({
+      rule,
+      ruleAction: 'linked',
+      resolveTimelineActivityType,
+    })?.id;
 
     if (!isDefined(happensAtFieldName) || !isDefined(timelineActivityTypeId)) {
       continue;

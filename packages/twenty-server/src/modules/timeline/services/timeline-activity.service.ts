@@ -35,6 +35,7 @@ import {
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { doesObjectRecordEventChangeFields } from 'src/modules/timeline/utils/does-object-record-event-change-fields.util';
 import { resolveTimelineActivityRuleAction } from 'src/modules/timeline/utils/resolve-timeline-activity-rule-action.util';
+import { resolveTimelineActivityTypeForRule } from 'src/modules/timeline/utils/resolve-timeline-activity-type-for-rule.util';
 
 type BuildPayloadsForRuleArgs = {
   rule: TimelineActivityRule;
@@ -232,25 +233,6 @@ export class TimelineActivityService {
     );
   }
 
-  private resolveTimelineActivityTypeForRule({
-    rule,
-    ruleAction,
-    resolveTimelineActivityType,
-  }: {
-    rule: TimelineActivityRule;
-    ruleAction: TimelineActivityRuleAction;
-    resolveTimelineActivityType: TimelineActivityTypeResolver;
-  }): ResolvedTimelineActivityType | undefined {
-    return (
-      rule.timelineActivityType ??
-      resolveTimelineActivityType({
-        action: ruleAction,
-        objectUniversalIdentifier:
-          rule.sourceFlatObjectMetadata.universalIdentifier,
-      })
-    );
-  }
-
   private async buildPayloadsForSourceRule({
     rule,
     events,
@@ -269,7 +251,7 @@ export class TimelineActivityService {
       return [];
     }
 
-    const timelineActivityType = this.resolveTimelineActivityTypeForRule({
+    const timelineActivityType = resolveTimelineActivityTypeForRule({
       rule,
       ruleAction,
       resolveTimelineActivityType,
@@ -418,7 +400,7 @@ export class TimelineActivityService {
       return [];
     }
 
-    const timelineActivityType = this.resolveTimelineActivityTypeForRule({
+    const timelineActivityType = resolveTimelineActivityTypeForRule({
       rule,
       ruleAction,
       resolveTimelineActivityType,
