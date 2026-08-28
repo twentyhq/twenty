@@ -11,7 +11,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const useInstallMarketplaceApp = () => {
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const [isInstalling, setIsInstalling] = useState(false);
   const [installApplicationMutation] = useMutation(InstallApplicationDocument);
   const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
@@ -43,10 +43,6 @@ export const useInstallMarketplaceApp = () => {
               }
             : currentWorkspace,
         );
-
-        enqueueSuccessSnackBar({
-          message: t`Application installation started.`,
-        });
 
         return result.data;
       }

@@ -163,7 +163,7 @@ export const SettingsApplicationDetails = () => {
 
   const [uninstallApplication] = useMutation(UninstallApplicationDocument);
   const [isUninstalling, setIsUninstalling] = useState(false);
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const navigate = useNavigateSettings();
 
   const handleUninstall = async () => {
@@ -173,9 +173,6 @@ export const SettingsApplicationDetails = () => {
     try {
       await uninstallApplication({
         variables: { universalIdentifier: application.universalIdentifier },
-      });
-      enqueueSuccessSnackBar({
-        message: t`Application uninstall started.`,
       });
       navigate(SettingsPath.Applications);
     } catch {

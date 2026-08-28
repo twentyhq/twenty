@@ -6,7 +6,7 @@ import { useMutation } from '@apollo/client/react';
 import { UpgradeApplicationDocument } from '~/generated-metadata/graphql';
 
 export const useUpgradeApplication = () => {
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const [upgradeApplicationMutation] = useMutation(UpgradeApplicationDocument);
   const [isUpgrading, setIsUpgrading] = useState(false);
 
@@ -22,10 +22,6 @@ export const useUpgradeApplication = () => {
       });
 
       if (isDefined(result.data)) {
-        enqueueSuccessSnackBar({
-          message: t`Application upgrade started.`,
-        });
-
         return true;
       }
 
