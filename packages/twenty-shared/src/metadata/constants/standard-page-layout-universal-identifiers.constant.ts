@@ -500,6 +500,7 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
       home: {
         title: 'Home',
         widgets: {
+          fields: 'Fields',
           emailThread: 'Thread',
         },
       },

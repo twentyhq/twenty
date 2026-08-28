@@ -424,6 +424,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
         },
         "viewFields": {
+          "calendarEventTargets": {
+            "universalIdentifier": "ccfb6671-0211-56d6-a5bc-d91c1f0cb5bc",
+          },
           "conferenceLink": {
             "universalIdentifier": "a4520a9a-427d-5fca-af4b-9b7fc83be97a",
           },
@@ -1782,6 +1785,19 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "updatedAt": {
             "universalIdentifier": "cd336056-36de-525b-af30-c5c6c38b917b",
+          },
+        },
+      },
+      "messageThreadRecordPageFields": {
+        "universalIdentifier": "e19b7273-e469-5057-98e6-5f047df915ec",
+        "viewFieldGroups": {
+          "general": {
+            "universalIdentifier": "0369f068-08c8-5de8-87f4-7df39d973d6c",
+          },
+        },
+        "viewFields": {
+          "messageThreadTargets": {
+            "universalIdentifier": "a06bc6a2-9759-5749-a5a4-e7d9a3e4e248",
           },
         },
       },

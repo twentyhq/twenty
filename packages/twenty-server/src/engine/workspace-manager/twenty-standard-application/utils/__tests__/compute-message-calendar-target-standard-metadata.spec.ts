@@ -1,5 +1,9 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  STANDARD_OBJECTS,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-shared/metadata';
 
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { validateAndReturnIndexWhereClause } from 'src/engine/workspace-manager/workspace-migration/utils/validate-index-where-clause.util';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
@@ -177,4 +181,53 @@ describe('Message and calendar target standard metadata build', () => {
       });
     },
   );
+
+  it('surfaces relations through a fields widget on the message thread record page', () => {
+    const fieldsWidget =
+      allFlatEntityMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier[
+        STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageThreadRecordPage.tabs
+          .home.widgets.fields.universalIdentifier
+      ];
+
+    expect(fieldsWidget?.universalConfiguration).toMatchObject({
+      configurationType: WidgetConfigurationType.FIELDS,
+      viewUniversalIdentifier:
+        STANDARD_OBJECTS.messageThread.views.messageThreadRecordPageFields
+          .universalIdentifier,
+    });
+
+    const targetsViewField =
+      allFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.messageThread.views.messageThreadRecordPageFields
+          .viewFields.messageThreadTargets.universalIdentifier
+      ];
+
+    expect(targetsViewField).toMatchObject({
+      isVisible: true,
+      fieldMetadataUniversalIdentifier:
+        STANDARD_OBJECTS.messageThread.fields.messageThreadTargets
+          .universalIdentifier,
+      viewFieldGroupUniversalIdentifier:
+        STANDARD_OBJECTS.messageThread.views.messageThreadRecordPageFields
+          .viewFieldGroups.general.universalIdentifier,
+    });
+  });
+
+  it('surfaces relations as a visible calendar event record page field', () => {
+    const targetsViewField =
+      allFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.calendarEvent.views.calendarEventRecordPageFields
+          .viewFields.calendarEventTargets.universalIdentifier
+      ];
+
+    expect(targetsViewField).toMatchObject({
+      isVisible: true,
+      fieldMetadataUniversalIdentifier:
+        STANDARD_OBJECTS.calendarEvent.fields.calendarEventTargets
+          .universalIdentifier,
+      viewFieldGroupUniversalIdentifier:
+        STANDARD_OBJECTS.calendarEvent.views.calendarEventRecordPageFields
+          .viewFieldGroups.general.universalIdentifier,
+    });
+  });
 });
