@@ -36,7 +36,7 @@ export class ConfigureTimelineActivityHappensAtCommand extends ProvisionedWorksp
       return;
     }
 
-    if (options.dryRun ?? false) {
+    if (options.dryRun) {
       this.logger.log(
         `[DRY RUN] Would configure timeline activity happensAt fields for workspace ${workspaceId}`,
       );
