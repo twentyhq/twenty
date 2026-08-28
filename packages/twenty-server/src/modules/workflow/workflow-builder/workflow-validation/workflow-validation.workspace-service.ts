@@ -19,7 +19,9 @@ import {
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { getPickRecordLoadBalanceConfigError } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-pick-record-load-balance-config-error.util';
+import { getRecordCrudRichTextIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-record-crud-rich-text-issues.util';
 import {
   type WorkflowAction,
   type WorkflowLogicFunctionAction,
@@ -326,8 +328,11 @@ export class WorkflowValidationWorkspaceService {
       return [];
     }
 
-    const { objectIdByNameSingular, flatFieldMetadataMaps } =
-      await this.workflowMetadataReadService.getFlatEntityMaps(workspaceId);
+    const {
+      objectIdByNameSingular,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = await this.workflowMetadataReadService.getFlatEntityMaps(workspaceId);
 
     const issues: WorkflowValidationIssue[] = [];
 
@@ -347,7 +352,9 @@ export class WorkflowValidationWorkspaceService {
         continue;
       }
 
-      if (!isDefined(objectIdByNameSingular[objectName])) {
+      const objectId = objectIdByNameSingular[objectName];
+
+      if (!isDefined(objectId)) {
         issues.push({
           severity: 'error',
           code: 'INVALID_STEP_PARAMS',
@@ -373,6 +380,31 @@ export class WorkflowValidationWorkspaceService {
             stepId: step.id,
           });
         }
+      }
+
+      const objectRecord =
+        isObject(input) && 'objectRecord' in input
+          ? input.objectRecord
+          : undefined;
+
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: objectId,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
+
+      if (isObject(objectRecord) && isDefined(flatObjectMetadata)) {
+        issues.push(
+          ...getRecordCrudRichTextIssues({
+            objectRecord: objectRecord as Record<string, unknown>,
+            objectMetadataInfo: {
+              flatObjectMetadata,
+              flatObjectMetadataMaps,
+              flatFieldMetadataMaps,
+            },
+            stepLabel: step.name ?? step.id,
+            stepId: step.id,
+          }),
+        );
       }
     }
 

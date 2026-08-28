@@ -8,27 +8,17 @@ const mockStep = {
   settings: { input: {} },
 };
 
-const buildTool = ({
-  validationResult = { valid: true, errors: [], warnings: [] },
-}: {
-  validationResult?: object;
-} = {}) => {
+const buildTool = () => {
   const workflowVersionStepService = {
     updateWorkflowVersionStep: jest.fn().mockResolvedValue(mockStep),
   };
-  const workflowValidationService = {
-    validateWorkflowVersion: jest.fn().mockResolvedValue(validationResult),
-  };
 
   const tool = createUpdateWorkflowVersionStepTool(
-    {
-      workflowVersionStepService,
-      workflowValidationService,
-    } as never,
+    { workflowVersionStepService } as never,
     { workspaceId: 'workspace-id' },
   );
 
-  return { tool, workflowVersionStepService, workflowValidationService };
+  return { tool, workflowVersionStepService };
 };
 
 const baseInput = {
@@ -43,63 +33,25 @@ describe('createUpdateWorkflowVersionStepTool', () => {
     jest.clearAllMocks();
   });
 
-  it('should validate by default and return a compact summary', async () => {
-    const { tool, workflowValidationService } = buildTool({
-      validationResult: {
-        valid: false,
-        errors: [
-          {
-            severity: 'error',
-            code: 'DANGLING_REFERENCE',
-            message: 'Unknown variable',
-            availablePaths: ['{{trigger.x}}'],
-          },
-        ],
-        warnings: [{ severity: 'warning', code: 'NO_STEPS', message: 'w' }],
-      },
-    });
+  it('updates the step and returns the result', async () => {
+    const { tool, workflowVersionStepService } = buildTool();
 
-    const result = (await tool.execute(baseInput)) as Record<string, unknown>;
+    const result = await tool.execute(baseInput);
 
-    expect(
-      workflowValidationService.validateWorkflowVersion,
-    ).toHaveBeenCalled();
-
-    const validation = result.validation as Record<string, unknown>;
-
-    expect(validation.valid).toBe(false);
-    expect(validation.errorCount).toBe(1);
-    expect(validation.warningCount).toBe(1);
-    expect(validation).not.toHaveProperty('warnings');
-    expect((validation.errors as object[])[0]).not.toHaveProperty(
-      'availablePaths',
-    );
+    expect(workflowVersionStepService.updateWorkflowVersionStep).toHaveBeenCalled();
+    expect(result).toEqual(mockStep);
   });
 
-  it('should skip validation entirely when validate is false', async () => {
-    const { tool, workflowValidationService } = buildTool();
+  it('returns a failure when the update throws', async () => {
+    const { tool, workflowVersionStepService } = buildTool();
 
-    const result = (await tool.execute({
-      ...baseInput,
-      validate: false,
-    })) as Record<string, unknown>;
-
-    expect(
-      workflowValidationService.validateWorkflowVersion,
-    ).not.toHaveBeenCalled();
-    expect(result).not.toHaveProperty('validation');
-  });
-
-  it('should still return the step result when validation throws', async () => {
-    const { tool, workflowValidationService } = buildTool();
-
-    workflowValidationService.validateWorkflowVersion.mockRejectedValue(
+    workflowVersionStepService.updateWorkflowVersionStep.mockRejectedValue(
       new Error('boom'),
     );
 
     const result = (await tool.execute(baseInput)) as Record<string, unknown>;
 
-    expect(result.validationError).toBe('boom');
-    expect(result).not.toHaveProperty('validation');
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('boom');
   });
 });

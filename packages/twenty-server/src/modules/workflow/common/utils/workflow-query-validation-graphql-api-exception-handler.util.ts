@@ -1,6 +1,9 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  ForbiddenError,
+  UserInputError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   type WorkflowQueryValidationException,
   WorkflowQueryValidationExceptionCode,
@@ -12,6 +15,8 @@ export const workflowQueryValidationGraphqlApiExceptionHandler = (
   switch (exception.code) {
     case WorkflowQueryValidationExceptionCode.FORBIDDEN:
       throw new ForbiddenError(exception);
+    case WorkflowQueryValidationExceptionCode.INVALID_WORKFLOW_VERSION:
+      throw new UserInputError(exception);
     default: {
       assertUnreachable(exception.code);
     }
