@@ -53,6 +53,7 @@ export const RecordPageAddWidgetSection = ({
   isCompact = false,
 }: RecordPageAddWidgetSectionProps) => {
   const { theme } = useContext(ThemeContext);
+  const { tabId } = usePageLayoutContentContext();
 
   const { createRecordPageFieldsWidget } = useCreateRecordPageFieldsWidget();
 
@@ -104,7 +105,7 @@ export const RecordPageAddWidgetSection = ({
           withIconContainer
           text={t`Note`}
           contextualText={t`Static text shared across all record pages`}
-          onClick={createRecordPageNoteWidget}
+          onClick={() => createRecordPageNoteWidget({ tabId })}
         />
         <MenuItem
           LeftIcon={IconPlus}
@@ -117,3 +118,4 @@ export const RecordPageAddWidgetSection = ({
     </StyledContainer>
   );
 };
+import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';

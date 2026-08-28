@@ -63,7 +63,9 @@ describe('useCreateRecordPageNoteWidget', () => {
       wrapper,
     });
 
-    act(() => result.current.createRecordPageNoteWidget());
+    act(() => {
+      result.current.createRecordPageNoteWidget({ tabId: 'tab-1' });
+    });
 
     const draft = store.get(draftAtom);
     const note = draft.tabs[0].widgets[1];

@@ -97,14 +97,16 @@ describe('StandaloneRichTextEditorContent', () => {
       const draftAtom = pageLayoutDraftComponentState.atomFamily({
         instanceId,
       });
-      const widget = createDefaultStandaloneRichTextWidget(
-        'note-widget',
-        'tab-1',
-        { blocknote: '', markdown: null },
-        { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 0 },
-        null,
-        'Note',
-      );
+      const widget = createDefaultStandaloneRichTextWidget({
+        id: 'note-widget',
+        pageLayoutTabId: 'tab-1',
+        body: { blocknote: '', markdown: null },
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+          index: 0,
+        },
+        title: 'Note',
+      });
 
       store.set(draftAtom, makeDraft([makeTab('tab-1', [widget])]));
       store.set(isLayoutCustomizationModeEnabledState.atom, customization);

@@ -8,14 +8,23 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 
-export const createDefaultStandaloneRichTextWidget = (
-  id: string,
-  pageLayoutTabId: string,
-  body: RichTextBody,
-  position: PageLayoutWidgetGridPosition | PageLayoutWidgetVerticalListPosition,
-  objectMetadataId?: string | null,
+type CreateDefaultStandaloneRichTextWidgetParams = {
+  id: string;
+  pageLayoutTabId: string;
+  body: RichTextBody;
+  position: PageLayoutWidgetGridPosition | PageLayoutWidgetVerticalListPosition;
+  objectMetadataId?: string | null;
+  title?: string;
+};
+
+export const createDefaultStandaloneRichTextWidget = ({
+  id,
+  pageLayoutTabId,
+  body,
+  position,
+  objectMetadataId,
   title = 'Untitled Rich Text',
-): PageLayoutWidget => {
+}: CreateDefaultStandaloneRichTextWidgetParams): PageLayoutWidget => {
   return {
     __typename: 'PageLayoutWidget',
     id,

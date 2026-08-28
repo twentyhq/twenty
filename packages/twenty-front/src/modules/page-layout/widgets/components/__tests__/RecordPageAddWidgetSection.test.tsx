@@ -3,6 +3,10 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 const mockNavigateToMoreWidgets = jest.fn();
+const mockCreateRecordPageNoteWidget = jest.fn();
+jest.mock('@/page-layout/contexts/PageLayoutContentContext', () => ({
+  usePageLayoutContentContext: () => ({ tabId: 'tab-1' }),
+}));
 
 jest.mock('@/page-layout/hooks/useNavigateToMoreWidgets', () => ({
   useNavigateToMoreWidgets: () => ({
@@ -21,7 +25,7 @@ jest.mock('@/page-layout/hooks/useCreateRecordPageFieldsWidget', () => ({
 }));
 jest.mock('@/page-layout/hooks/useCreateRecordPageNoteWidget', () => ({
   useCreateRecordPageNoteWidget: () => ({
-    createRecordPageNoteWidget: jest.fn(),
+    createRecordPageNoteWidget: mockCreateRecordPageNoteWidget,
   }),
 }));
 
@@ -42,5 +46,13 @@ describe('RecordPageAddWidgetSection', () => {
     expect(screen.getByText('Field')).toBeInTheDocument();
     expect(screen.getByText('Note')).toBeInTheDocument();
     expect(screen.getByText('More widgets')).toBeInTheDocument();
+  });
+
+  it('creates a Note in the current tab through the shared creator', async () => {
+    render(<RecordPageAddWidgetSection />);
+    await userEvent.setup().click(screen.getByText('Note'));
+    expect(mockCreateRecordPageNoteWidget).toHaveBeenCalledWith({
+      tabId: 'tab-1',
+    });
   });
 });

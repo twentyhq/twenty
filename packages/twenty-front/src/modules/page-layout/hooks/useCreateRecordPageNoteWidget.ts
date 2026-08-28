@@ -1,4 +1,3 @@
-import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
@@ -11,36 +10,36 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 import { v4 as uuidv4 } from 'uuid';
 
-export const useCreateRecordPageNoteWidget = () => {
-  const { tabId } = usePageLayoutContentContext();
+export const useCreateRecordPageNoteWidget = (pageLayoutId?: string) => {
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const pageLayoutDraftState = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,
+    pageLayoutId,
   );
 
   const pageLayoutEditingWidgetIdState = useAtomComponentStateCallbackState(
     pageLayoutEditingWidgetIdComponentState,
+    pageLayoutId,
   );
 
   const store = useStore();
 
-  const createRecordPageNoteWidget = () => {
+  const createRecordPageNoteWidget = ({ tabId }: { tabId: string }) => {
     const pageLayoutDraft = store.get(pageLayoutDraftState);
     const activeTab = pageLayoutDraft.tabs.find((tab) => tab.id === tabId);
     const widgetId = uuidv4();
 
-    const newWidget = createDefaultStandaloneRichTextWidget(
-      widgetId,
-      tabId,
-      { blocknote: '', markdown: null },
-      {
+    const newWidget = createDefaultStandaloneRichTextWidget({
+      id: widgetId,
+      pageLayoutTabId: tabId,
+      body: { blocknote: '', markdown: null },
+      position: {
         layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
         index: activeTab?.widgets.length ?? 0,
       },
-      null,
-      t`Note`,
-    );
+      title: t`Note`,
+    });
 
     store.set(pageLayoutDraftState, (previousDraft) => ({
       ...previousDraft,
@@ -53,6 +52,7 @@ export const useCreateRecordPageNoteWidget = () => {
       pageTitle: t`Note`,
       resetNavigationStack: true,
     });
+    return newWidget;
   };
 
   return { createRecordPageNoteWidget };

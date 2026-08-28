@@ -2,6 +2,7 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { FIND_MANY_FRONT_COMPONENTS } from '@/front-components/graphql/queries/findManyFrontComponents';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useInsertCreatedWidgetAtContext } from '@/page-layout/hooks/useInsertCreatedWidgetAtContext';
+import { useCreateRecordPageNoteWidget } from '@/page-layout/hooks/useCreateRecordPageNoteWidget';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { widgetCreationTargetTabIdComponentState } from '@/page-layout/states/widgetCreationTargetTabIdComponentState';
@@ -10,7 +11,6 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultFieldWidget } from '@/page-layout/utils/createDefaultFieldWidget';
 import { createDefaultFieldsWidget } from '@/page-layout/utils/createDefaultFieldsWidget';
-import { createDefaultStandaloneRichTextWidget } from '@/page-layout/utils/createDefaultStandaloneRichTextWidget';
 import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPosition';
 import { moveWidgetWithinTabInDraft } from '@/page-layout/utils/moveWidgetWithinTabInDraft';
 import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
@@ -48,6 +48,8 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     usePageLayoutIdFromContextStore();
 
   const { closeSidePanelMenu } = useSidePanelMenu();
+  const { createRecordPageNoteWidget } =
+    useCreateRecordPageNoteWidget(pageLayoutId);
 
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
@@ -271,49 +273,24 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     const replacePositionIndex = getExistingWidgetPositionIndex();
     removeExistingWidgetIfReplacing();
 
-    const updatedPageLayout = store.get(pageLayoutDraftState);
-    const activeTab = updatedPageLayout.tabs.find((tab) => tab.id === tabId);
-    const widgetId = uuidv4();
-
-    const newWidget = createDefaultStandaloneRichTextWidget(
-      widgetId,
-      tabId,
-      { blocknote: '', markdown: null },
-      {
-        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-        index: replacePositionIndex ?? activeTab?.widgets.length ?? 0,
-      },
-      null,
-      t`Note`,
-    );
+    const newWidget = createRecordPageNoteWidget({ tabId });
 
     store.set(pageLayoutDraftState, (previousDraft) => {
-      const draftWithNote = {
-        ...previousDraft,
-        tabs: addWidgetToTab(previousDraft.tabs, tabId, newWidget),
-      };
-      const updatedTab = draftWithNote.tabs.find((tab) => tab.id === tabId);
+      const updatedTab = previousDraft.tabs.find((tab) => tab.id === tabId);
       const noteIndex = sortWidgetsByVerticalListPosition(
         updatedTab?.widgets ?? [],
-      ).findIndex((widget) => widget.id === widgetId);
+      ).findIndex((widget) => widget.id === newWidget.id);
 
       return isDefined(replacePositionIndex) && noteIndex >= 0
-        ? moveWidgetWithinTabInDraft(draftWithNote, {
+        ? moveWidgetWithinTabInDraft(previousDraft, {
             tabId,
             fromIndex: noteIndex,
             toIndex: replacePositionIndex,
           })
-        : draftWithNote;
+        : previousDraft;
     });
 
-    setPageLayoutEditingWidgetId(widgetId);
-    insertCreatedWidgetAtContext(widgetId);
-
-    navigatePageLayoutSidePanel({
-      sidePanelPage: SidePanelPages.PageLayoutWidgetSettings,
-      pageTitle: t`Note`,
-      resetNavigationStack: true,
-    });
+    insertCreatedWidgetAtContext(newWidget.id);
   };
 
   const handleCreateFrontComponentWidget = useCallback(
