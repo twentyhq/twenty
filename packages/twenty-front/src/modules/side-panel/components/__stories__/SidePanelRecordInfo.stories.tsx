@@ -10,7 +10,10 @@ import { expect, userEvent, within } from 'storybook/test';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
-import { beautifyExactDateTime } from '~/utils/date-utils';
+import {
+  beautifyExactDateTime,
+  beautifyPastDateRelativeToNow,
+} from '~/utils/date-utils';
 
 const SIDE_PANEL_PAGE_INSTANCE_ID = 'side-panel-record-info';
 const CREATED_AT = '2026-08-25T12:00:00.000Z';
@@ -51,6 +54,7 @@ type Story = StoryObj<typeof SidePanelRecordInfo>;
 export const Editable: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const createdAtLabel = `Created ${beautifyPastDateRelativeToNow(CREATED_AT)}`;
 
     expect(
       await canvas.findByRole('heading', { level: 3, name: 'Acme' }),
@@ -61,13 +65,13 @@ export const Editable: Story = {
 
     // The tooltip attaches its native hover listeners in effects after mount.
     await act(async () => {
-      await canvas.findByText('Created 2 days ago');
+      await canvas.findByText(createdAtLabel);
     });
-    await userEvent.hover(canvas.getByText('Created 2 days ago'));
+    await userEvent.hover(canvas.getByText(createdAtLabel));
     expect(
       await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
     ).toHaveTextContent(beautifyExactDateTime(CREATED_AT));
-    await userEvent.unhover(canvas.getByText('Created 2 days ago'));
+    await userEvent.unhover(canvas.getByText(createdAtLabel));
   },
 };
 
