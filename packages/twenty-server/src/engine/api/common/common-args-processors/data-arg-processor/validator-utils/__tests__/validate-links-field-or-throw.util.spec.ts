@@ -4,7 +4,10 @@ import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-r
 describe('validateLinksFieldOrThrow', () => {
   describe('valid inputs', () => {
     it('should return null when value is null', () => {
-      const result = validateLinksFieldOrThrow(null, 'testField');
+      const result = validateLinksFieldOrThrow({
+        value: null,
+        fieldName: 'testField',
+      });
 
       expect(result).toBeNull();
     });
@@ -15,7 +18,10 @@ describe('validateLinksFieldOrThrow', () => {
         primaryLinkLabel: 'Example Website',
         secondaryLinks: [{ url: 'https://secondary.com', label: 'Secondary' }],
       };
-      const result = validateLinksFieldOrThrow(linksValue, 'testField');
+      const result = validateLinksFieldOrThrow({
+        value: linksValue,
+        fieldName: 'testField',
+      });
 
       expect(result).toEqual(linksValue);
     });
@@ -24,7 +30,10 @@ describe('validateLinksFieldOrThrow', () => {
       const linksValue = {
         primaryLinkUrl: 'https://example.com',
       };
-      const result = validateLinksFieldOrThrow(linksValue, 'testField');
+      const result = validateLinksFieldOrThrow({
+        value: linksValue,
+        fieldName: 'testField',
+      });
 
       expect(result).toEqual(linksValue);
     });
@@ -33,14 +42,17 @@ describe('validateLinksFieldOrThrow', () => {
   describe('invalid inputs', () => {
     it('should throw when value is not an object', () => {
       expect(() =>
-        validateLinksFieldOrThrow('not an object', 'testField'),
+        validateLinksFieldOrThrow({
+          value: 'not an object',
+          fieldName: 'testField',
+        }),
       ).toThrow(CommonQueryRunnerException);
     });
 
     it('should throw when value is undefined', () => {
-      expect(() => validateLinksFieldOrThrow(undefined, 'testField')).toThrow(
-        CommonQueryRunnerException,
-      );
+      expect(() =>
+        validateLinksFieldOrThrow({ value: undefined, fieldName: 'testField' }),
+      ).toThrow(CommonQueryRunnerException);
     });
 
     it('should throw when primaryLinkUrl is not a string', () => {
@@ -48,9 +60,12 @@ describe('validateLinksFieldOrThrow', () => {
         primaryLinkUrl: 12345,
       };
 
-      expect(() => validateLinksFieldOrThrow(linksValue, 'testField')).toThrow(
-        CommonQueryRunnerException,
-      );
+      expect(() =>
+        validateLinksFieldOrThrow({
+          value: linksValue,
+          fieldName: 'testField',
+        }),
+      ).toThrow(CommonQueryRunnerException);
     });
 
     it('should throw when primaryLinkLabel is not a string', () => {
@@ -58,9 +73,12 @@ describe('validateLinksFieldOrThrow', () => {
         primaryLinkLabel: ['not', 'a', 'string'],
       };
 
-      expect(() => validateLinksFieldOrThrow(linksValue, 'testField')).toThrow(
-        CommonQueryRunnerException,
-      );
+      expect(() =>
+        validateLinksFieldOrThrow({
+          value: linksValue,
+          fieldName: 'testField',
+        }),
+      ).toThrow(CommonQueryRunnerException);
     });
 
     it('should throw when secondaryLinks is not an object or null', () => {
@@ -68,9 +86,12 @@ describe('validateLinksFieldOrThrow', () => {
         secondaryLinks: 'not an object',
       };
 
-      expect(() => validateLinksFieldOrThrow(linksValue, 'testField')).toThrow(
-        CommonQueryRunnerException,
-      );
+      expect(() =>
+        validateLinksFieldOrThrow({
+          value: linksValue,
+          fieldName: 'testField',
+        }),
+      ).toThrow(CommonQueryRunnerException);
     });
 
     it('should throw when invalid subfields are present', () => {
@@ -80,9 +101,66 @@ describe('validateLinksFieldOrThrow', () => {
         invalidField2: 'invalid',
       };
 
-      expect(() => validateLinksFieldOrThrow(linksValue, 'testField')).toThrow(
+      expect(() =>
+        validateLinksFieldOrThrow({
+          value: linksValue,
+          fieldName: 'testField',
+        }),
+      ).toThrow(CommonQueryRunnerException);
+    });
+  });
+
+  describe('domain-typed field', () => {
+    const validateDomain = (value: unknown) =>
+      validateLinksFieldOrThrow({
+        value,
+        fieldName: 'domainName',
+        linksVariant: 'domain',
+      });
+
+    it.each([
+      'twenty.com',
+      'https://www.twenty.com/careers?x=1',
+      'münchen.de',
+      'blog.twenty.com',
+    ])('should accept %s, which names a real host', (primaryLinkUrl) => {
+      expect(() => validateDomain({ primaryLinkUrl })).not.toThrow();
+    });
+
+    it.each([
+      'not a domain',
+      'javascript:alert(1)',
+      'twenty',
+      '<script>',
+      'localhost',
+      '192.168.1.1',
+    ])('should reject %s, which is not a domain', (primaryLinkUrl) => {
+      expect(() => validateDomain({ primaryLinkUrl })).toThrow(
         CommonQueryRunnerException,
       );
+    });
+
+    it('should reject a secondary link that is not a domain', () => {
+      expect(() =>
+        validateDomain({
+          primaryLinkUrl: 'twenty.com',
+          secondaryLinks: [{ url: 'not a domain', label: '' }],
+        }),
+      ).toThrow(CommonQueryRunnerException);
+    });
+
+    it('should let an empty domain through, so clearing the field still works', () => {
+      expect(() => validateDomain({ primaryLinkUrl: '' })).not.toThrow();
+    });
+
+    it('should leave a url-typed field free to hold any url', () => {
+      expect(() =>
+        validateLinksFieldOrThrow({
+          value: { primaryLinkUrl: 'https://twenty.com/a/b?c=d' },
+          fieldName: 'website',
+          linksVariant: 'url',
+        }),
+      ).not.toThrow();
     });
   });
 });

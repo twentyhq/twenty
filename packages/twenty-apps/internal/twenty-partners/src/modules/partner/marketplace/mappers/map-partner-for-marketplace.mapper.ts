@@ -146,7 +146,9 @@ const sortBySortOrderAscNullsLast = <
     return leftOrder - rightOrder;
   });
 
-const sortByPositionAscNullsLast = <T extends { node: { position: number | null } }>(
+const sortByPositionAscNullsLast = <
+  T extends { node: { position: number | null } },
+>(
   edges: ReadonlyArray<T>,
 ): T[] =>
   [...edges].sort((left, right) => {
@@ -182,8 +184,9 @@ const dedupeUrls = (urls: ReadonlyArray<string | null>): string[] => {
 };
 
 const mapProfileLinks = (node: PartnerMarketplaceQueryNode): PrimaryLink[] => {
-  const partnerLinkUrls = sortBySortOrderAscNullsLast(node.partnerLinks?.edges ?? [])
-    .map((edge) => edge.node.url?.primaryLinkUrl ?? null);
+  const partnerLinkUrls = sortBySortOrderAscNullsLast(
+    node.partnerLinks?.edges ?? [],
+  ).map((edge) => edge.node.url?.primaryLinkUrl ?? null);
 
   const legacyUrls = [
     node.website?.primaryLinkUrl ?? null,

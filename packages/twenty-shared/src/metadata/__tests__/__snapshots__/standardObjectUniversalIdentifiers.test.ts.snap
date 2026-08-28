@@ -152,6 +152,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "position": {
         "universalIdentifier": "f127537d-097c-5d45-ae9c-0ad7c5de8c2b",
       },
+      "scope": {
+        "universalIdentifier": "20202020-1a5f-4c9e-9b3e-7d2a6f4c8e11",
+      },
       "searchVector": {
         "universalIdentifier": "94cc4e59-9c2a-5710-8ce1-41a38d9561ce",
       },
