@@ -30,6 +30,8 @@ type TabButtonProps = {
   contentSize?: 'sm' | 'md';
   disableTestId?: boolean;
   tooltipContent?: string;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 };
 
 export const TabButton = ({
@@ -47,6 +49,8 @@ export const TabButton = ({
   contentSize = 'sm',
   disableTestId = false,
   tooltipContent,
+  onMouseEnter,
+  onMouseLeave,
 }: TabButtonProps) => {
   const tabElementId = `tab-${id}`;
 
@@ -59,6 +63,8 @@ export const TabButton = ({
         to={to}
         className={className}
         onClick={onClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
       >
         <TabContent
           id={id}
