@@ -84,6 +84,7 @@ const emailThreadPageLayout = {
   id: PAGE_LAYOUT_ID,
   name: 'Message Thread',
   type: PageLayoutType.RECORD_PAGE,
+  isFirstTabPinned: true,
   objectMetadataId: messageThreadObjectMetadataItem.id,
   isSystemSideEffect: false,
   applicationId: '',
