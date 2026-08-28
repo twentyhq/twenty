@@ -165,6 +165,7 @@ import { AddRecordFormPageLayoutAndFormFieldWidgetFastInstanceCommand } from 'sr
 import { DropBillingCustomerCreditBalanceMicroFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787906740818-drop-billing-customer-credit-balance-micro';
 import { DropHasReachedCurrentPeriodCapFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787906740819-drop-has-reached-current-period-cap';
 import { AddTimelineActivityHappensAtFieldFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787918663364-add-timeline-activity-happens-at-field';
+import { AddPageLayoutIsFirstTabPinnedFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787929843737-add-page-layout-is-first-tab-pinned';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -332,4 +333,5 @@ export const INSTANCE_COMMANDS = [
   DropBillingCustomerCreditBalanceMicroFastInstanceCommand,
   DropHasReachedCurrentPeriodCapFastInstanceCommand,
   AddTimelineActivityHappensAtFieldFastInstanceCommand,
+  AddPageLayoutIsFirstTabPinnedFastInstanceCommand,
 ];

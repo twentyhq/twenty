@@ -151,6 +151,7 @@ export const computeSystemRecordPageLayoutToCreate = ({
       (tab) => tab.universalIdentifier,
     ),
     isSystemSideEffect: true,
+    isFirstTabPinned: true,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

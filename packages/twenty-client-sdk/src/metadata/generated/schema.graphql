@@ -1390,6 +1390,7 @@ type PageLayout {
   universalIdentifier: UUID!
   applicationId: UUID!
   isSystemSideEffect: Boolean!
+  isFirstTabPinned: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
@@ -4324,6 +4325,7 @@ input UpdatePageLayoutWithTabsInput {
   name: String!
   type: PageLayoutType!
   objectMetadataId: UUID
+  isFirstTabPinned: Boolean
   tabs: [UpdatePageLayoutTabWithWidgetsInput!]!
 }
 
