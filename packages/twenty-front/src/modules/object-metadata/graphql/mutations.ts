@@ -99,6 +99,7 @@ export const CREATE_ONE_FIELD_METADATA_ITEM = gql`
   mutation CreateOneFieldMetadataItem($input: CreateOneFieldMetadataInput!) {
     createOneField(input: $input) {
       id
+      universalIdentifier
       type
       name
       label

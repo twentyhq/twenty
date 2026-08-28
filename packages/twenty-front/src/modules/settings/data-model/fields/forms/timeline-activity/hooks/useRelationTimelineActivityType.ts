@@ -1,6 +1,7 @@
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { findRelationTimelineActivityType } from '@/settings/data-model/fields/forms/timeline-activity/utils/findRelationTimelineActivityType';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -44,12 +45,11 @@ export const useRelationTimelineActivityType = ({
 
   // Emit slots are per action, so a relation can carry several types; this
   // toggle owns the one this section creates.
-  const relationTimelineActivityType = (data?.timelineActivityTypes ?? []).find(
-    (timelineActivityType) =>
-      timelineActivityType.emit?.through?.relationFieldUniversalIdentifier ===
-        fieldMetadataItem.universalIdentifier &&
-      timelineActivityType.emit?.on === RELATION_TIMELINE_ACTIVITY_TYPE_ACTION,
-  );
+  const relationTimelineActivityType = findRelationTimelineActivityType({
+    timelineActivityTypes: data?.timelineActivityTypes ?? [],
+    relationFieldUniversalIdentifier: fieldMetadataItem.universalIdentifier,
+    action: RELATION_TIMELINE_ACTIVITY_TYPE_ACTION,
+  });
 
   // Other relation shapes have no target record to write on.
   const hasEmitCapableRelationShape =
