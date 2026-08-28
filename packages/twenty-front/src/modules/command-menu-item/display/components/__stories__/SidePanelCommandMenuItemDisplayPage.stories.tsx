@@ -86,7 +86,7 @@ const FALLBACK_ITEM = createCommandMenuItem({
 type CreateDecoratorParams = {
   commandMenuItems: CommandMenuItemFieldsFragment[];
   sidePanelSearch: string;
-  pinnedItemsContainerWidth: number;
+  pinnedItemsContainerWidth?: number;
   isNavigationDrawerExpanded?: boolean;
   isInPreviewMode?: boolean;
   pathname?: string;
@@ -97,7 +97,7 @@ const createDecorator =
   ({
     commandMenuItems,
     sidePanelSearch,
-    pinnedItemsContainerWidth,
+    pinnedItemsContainerWidth = 1000,
     isNavigationDrawerExpanded = true,
     isInPreviewMode = false,
     pathname = '/objects/companies',
@@ -279,7 +279,6 @@ export const CollapseSidebar: Story = {
     createDecorator({
       commandMenuItems: [OTHER_ITEM, FALLBACK_ITEM],
       sidePanelSearch: 'COLLAPSE',
-      pinnedItemsContainerWidth: 1000,
     }),
   ],
   play: async ({ canvasElement }) => {
@@ -301,7 +300,6 @@ export const ExpandSidebar: Story = {
     createDecorator({
       commandMenuItems: [OTHER_ITEM, FALLBACK_ITEM],
       sidePanelSearch: 'expand',
-      pinnedItemsContainerWidth: 1000,
       isNavigationDrawerExpanded: false,
     }),
   ],
@@ -321,7 +319,6 @@ export const SearchSidebar: Story = {
     createDecorator({
       commandMenuItems: [OTHER_ITEM, FALLBACK_ITEM],
       sidePanelSearch: 'sidebar',
-      pinnedItemsContainerWidth: 1000,
     }),
   ],
   play: async ({ canvasElement }) => {
@@ -338,7 +335,6 @@ export const SearchSidebarWithCaseAndWhitespace: Story = {
     createDecorator({
       commandMenuItems: [OTHER_ITEM, FALLBACK_ITEM],
       sidePanelSearch: ' SIDEBAR ',
-      pinnedItemsContainerWidth: 1000,
     }),
   ],
   play: SearchSidebar.play,
@@ -349,17 +345,10 @@ export const HiddenOnMobile: Story = {
     createDecorator({
       commandMenuItems: [OTHER_ITEM],
       sidePanelSearch: 'sidebar',
-      pinnedItemsContainerWidth: 1000,
       viewportWidth: 375,
     }),
   ],
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    expect(await canvas.findByText('No results found')).toBeVisible();
-    expect(canvas.queryByText('Collapse sidebar')).not.toBeInTheDocument();
-    expect(canvas.queryByText('Expand sidebar')).not.toBeInTheDocument();
-  },
+  play: SearchWithoutMatchingItemsAndWithoutFallback.play,
 };
 
 export const HiddenInSettings: Story = {
@@ -367,7 +356,6 @@ export const HiddenInSettings: Story = {
     createDecorator({
       commandMenuItems: [OTHER_ITEM],
       sidePanelSearch: 'sidebar',
-      pinnedItemsContainerWidth: 1000,
       pathname: '/settings/profile',
     }),
   ],
@@ -379,7 +367,6 @@ export const HiddenInLayoutPreview: Story = {
     createDecorator({
       commandMenuItems: [OTHER_ITEM],
       sidePanelSearch: 'sidebar',
-      pinnedItemsContainerWidth: 1000,
       isInPreviewMode: true,
     }),
   ],
