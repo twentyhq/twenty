@@ -7,14 +7,14 @@ import {
 } from 'twenty-shared/types';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
-import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
 
 import { gmailMessage } from 'test/integration/google/mocks/gmail-message.util';
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
+import { raiseSqlState } from 'test/integration/utils/raise-sql-state.util';
+import { readBackendState } from 'test/integration/utils/read-backend-state.util';
 import { queryMessageChannel } from 'test/integration/utils/query-messaging.util';
 import { resetMessageChannelSyncState } from 'test/integration/utils/reset-channel-sync-state.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
@@ -23,27 +23,11 @@ const HANDLE = 'messaging-transient-database-error@apple.dev';
 
 // The error has to be raised by Postgres itself: an Error built in the jest
 // realm is not an `instanceof Error` for the application realm the app runs in.
-const raiseSqlState = (sqlState: string): string =>
-  `DO $$ BEGIN RAISE EXCEPTION 'simulated database failure' USING ERRCODE = '${sqlState}'; END $$;`;
-
 // The mock inbox is fixed at setup time, so every test needs its own message
 // served out of it rather than a freshly built one.
 const INBOX_MESSAGES = Array.from({ length: 2 }, () =>
   gmailMessage({ from: `sender-${randomUUID()}@acme.com`, to: HANDLE }),
 );
-
-const readBackendState = async (
-  backendPid: number,
-): Promise<string | undefined> => {
-  const activities: { state: string }[] =
-    await getCoreRepository<MessageChannelEntity>(
-      MessageChannelEntity,
-    ).manager.query('SELECT state FROM pg_stat_activity WHERE pid = $1', [
-      backendPid,
-    ]);
-
-  return activities[0]?.state;
-};
 
 describe('Messaging import transient database errors (integration)', () => {
   const google = setupGoogleMock({ handle: HANDLE, inbox: INBOX_MESSAGES });

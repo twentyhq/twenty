@@ -5,13 +5,11 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { raiseSqlState } from 'test/integration/utils/raise-sql-state.util';
 
 const TRANSIENT_DATABASE_ERROR = 'TRANSIENT_DATABASE_ERROR';
 
 const authContext = buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID);
-
-const raiseSqlState = (sqlState: string): string =>
-  `DO $$ BEGIN RAISE EXCEPTION 'simulated database failure' USING ERRCODE = '${sqlState}'; END $$;`;
 
 const runInTransaction = (
   work: (transactionScope: WorkspaceTransactionScope) => Promise<unknown>,
