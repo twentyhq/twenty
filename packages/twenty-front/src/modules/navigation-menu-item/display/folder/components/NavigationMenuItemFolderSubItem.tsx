@@ -117,20 +117,22 @@ export const NavigationMenuItemFolderSubItem = ({
           navigate(computedLink);
         });
 
-  const isCoreWorkflowsIndexItem =
-    isCoreWorkflowsObjectNavigationMenuItem({
-      navigationMenuItemType: navigationMenuItem.type,
-      objectNameSingular,
-    }) && isWorkflowCoreIndexPageEnabled;
+  const isCoreWorkflowsIndexItem = isCoreWorkflowsObjectNavigationMenuItem({
+    navigationMenuItemType: navigationMenuItem.type,
+    objectNameSingular,
+    isWorkflowCoreIndexPageEnabled,
+  });
 
-  const secondaryLabel = isCoreWorkflowsIndexItem
-    ? t`System`
-    : navigationMenuItem.type === NavigationMenuItemType.VIEW
-      ? getObjectNavigationMenuItemSecondaryLabel({
-          objectMetadataItems,
-          navigationMenuItemObjectNameSingular: objectNameSingular ?? '',
-        })
-      : undefined;
+  let secondaryLabel: string | undefined = undefined;
+
+  if (isCoreWorkflowsIndexItem) {
+    secondaryLabel = t`System`;
+  } else if (navigationMenuItem.type === NavigationMenuItemType.VIEW) {
+    secondaryLabel = getObjectNavigationMenuItemSecondaryLabel({
+      objectMetadataItems,
+      navigationMenuItemObjectNameSingular: objectNameSingular ?? '',
+    });
+  }
 
   return (
     <NavigationDrawerSubItem

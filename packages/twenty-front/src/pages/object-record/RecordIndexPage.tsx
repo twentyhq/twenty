@@ -8,8 +8,14 @@ import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isUndefined } from '@sniptt/guards';
+import { lazy, Suspense } from 'react';
 import { CoreObjectNameSingular, FeatureFlagKey } from 'twenty-shared/types';
-import { WorkflowCoreIndexPage } from '~/pages/object-core/WorkflowCoreIndexPage';
+
+const WorkflowCoreIndexPage = lazy(() =>
+  import('~/pages/object-core/WorkflowCoreIndexPage').then((module) => ({
+    default: module.WorkflowCoreIndexPage,
+  })),
+);
 
 export const RecordIndexPage = () => {
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
@@ -40,7 +46,11 @@ export const RecordIndexPage = () => {
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Workflow &&
     isWorkflowCoreIndexPageEnabled
   ) {
-    return <WorkflowCoreIndexPage />;
+    return (
+      <Suspense fallback={<RecordIndexSkeletonLoader />}>
+        <WorkflowCoreIndexPage />
+      </Suspense>
+    );
   }
 
   return (

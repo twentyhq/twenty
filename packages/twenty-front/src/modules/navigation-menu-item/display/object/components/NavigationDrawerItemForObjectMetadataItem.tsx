@@ -175,17 +175,19 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
   );
 
-  const isCoreWorkflowsIndexItem =
-    isCoreWorkflowsObjectNavigationMenuItem({
-      navigationMenuItemType: navigationMenuItem?.type,
-      objectNameSingular: objectMetadataItem.nameSingular,
-    }) && isWorkflowCoreIndexPageEnabled;
+  const isCoreWorkflowsIndexItem = isCoreWorkflowsObjectNavigationMenuItem({
+    navigationMenuItemType: navigationMenuItem?.type,
+    objectNameSingular: objectMetadataItem.nameSingular,
+    isWorkflowCoreIndexPageEnabled,
+  });
 
-  const secondaryLabel = isCoreWorkflowsIndexItem
-    ? t`System`
-    : isRecord || isViewWithResolvedView
-      ? objectMetadataItem.labelSingular
-      : undefined;
+  let secondaryLabel: string | undefined = undefined;
+
+  if (isCoreWorkflowsIndexItem) {
+    secondaryLabel = t`System`;
+  } else if (isRecord || isViewWithResolvedView) {
+    secondaryLabel = objectMetadataItem.labelSingular;
+  }
 
   const showInaccessibleLock =
     isLayoutCustomizationModeEnabled && !canReadObjectRecords;
