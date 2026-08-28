@@ -88,7 +88,9 @@ const StyledEmptyState = styled.div`
 type TagColor = 'blue' | 'green' | 'orange' | 'red' | 'gray';
 
 const getSourceLabel = (source: string | null): string =>
-  source === SLACK_USER_LINK_SOURCE.MANUAL ? 'Set manually' : 'Matched on email';
+  source === SLACK_USER_LINK_SOURCE.MANUAL
+    ? 'Set manually'
+    : 'Matched on email';
 
 const getSourceColor = (source: string | null): TagColor =>
   source === SLACK_USER_LINK_SOURCE.MANUAL ? 'blue' : 'green';
@@ -129,6 +131,11 @@ export const SlackUserLinksList = ({
   const [removalArmedLinkId, setRemovalArmedLinkId] = useState<string | null>(
     null,
   );
+
+  // One operation at a time: each hook tracks a single in-flight id, so a
+  // second row's action would clobber the first row's marker mid-flight.
+  const isActionInFlight =
+    isDefined(removingLinkId) || isDefined(resendingLinkId);
 
   if (slackUserLinks.length === 0) {
     return <StyledEmptyState>No Slack user links yet.</StyledEmptyState>;
@@ -183,7 +190,7 @@ export const SlackUserLinksList = ({
                     <StyledActionButton
                       type="button"
                       onClick={() => onResend(slackUserLink)}
-                      disabled={resendingLinkId === slackUserLink.id}
+                      disabled={isActionInFlight}
                     >
                       {resendingLinkId === slackUserLink.id
                         ? 'Resending…'
@@ -204,7 +211,7 @@ export const SlackUserLinksList = ({
                       onRemove(slackUserLink);
                     }}
                     onBlur={() => setRemovalArmedLinkId(null)}
-                    disabled={removingLinkId === slackUserLink.id}
+                    disabled={isActionInFlight}
                   >
                     {removingLinkId === slackUserLink.id
                       ? 'Removing…'

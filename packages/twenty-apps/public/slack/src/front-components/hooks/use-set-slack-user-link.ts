@@ -33,7 +33,10 @@ export const useSetSlackUserLink = (): SetSlackUserLinkState => {
         input,
       );
 
-      return parseSlackToolResult(result, FALLBACK_MESSAGE);
+      return parseSlackToolResult({
+        value: result,
+        fallbackMessage: FALLBACK_MESSAGE,
+      });
     } catch {
       return GENERIC_ERROR_RESULT;
     } finally {

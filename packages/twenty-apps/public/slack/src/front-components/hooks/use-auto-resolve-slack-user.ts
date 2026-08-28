@@ -73,8 +73,6 @@ export const useAutoResolveSlackUser = () => {
     }, AUTO_RESOLVE_DEBOUNCE_MS);
   };
 
-  // For the roster picker: the option already carries the full identity, so
-  // it becomes the confirmed match directly, invalidating any lookup in flight.
   const selectResolvedUser = (slackUser: SlackResolvedUser) => {
     clearResolution();
     setResolvedUser(slackUser);

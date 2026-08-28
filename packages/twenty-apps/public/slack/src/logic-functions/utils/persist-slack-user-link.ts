@@ -57,6 +57,11 @@ export const persistSlackUserLink = async (
     );
   }
 
+  // Delete-then-create is forced: the (team, user) unique tuple blocks
+  // creating first, and the API has no transaction. The failure window fails
+  // safe: if the create throws after the delete, the caller surfaces the
+  // error, no access is granted, a stale consent DM now targets a missing id
+  // and is refused, and the admin's retry simply recreates the link.
   if (isDefined(existingLink)) {
     await deleteSlackUserLink(client, { id: existingLink.id });
   }
