@@ -1,6 +1,7 @@
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -9,6 +10,7 @@ import {
   CreateTimelineActivityTypeDocument,
   FieldMetadataType,
   FindManyTimelineActivityTypesDocument,
+  PermissionFlagType,
   RelationType,
   UpdateTimelineActivityTypeIsActiveDocument,
 } from '~/generated-metadata/graphql';
@@ -24,6 +26,7 @@ export const useRelationTimelineActivityType = ({
 }: UseRelationTimelineActivityTypeArgs) => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
+  const permissionFlagMap = usePermissionFlagMap();
 
   const { data } = useQuery(FindManyTimelineActivityTypesDocument);
 
@@ -55,6 +58,12 @@ export const useRelationTimelineActivityType = ({
 
   const isTimelineLoggingEnabled =
     relationTimelineActivityType?.isActive ?? false;
+
+  // Toggling an existing type goes through updateTimelineActivityType, which
+  // requires the APPLICATIONS permission; creation only needs DATA_MODEL.
+  const canToggleTimelineLogging = isDefined(relationTimelineActivityType)
+    ? permissionFlagMap[PermissionFlagType.APPLICATIONS]
+    : permissionFlagMap[PermissionFlagType.DATA_MODEL];
 
   const setTimelineLoggingEnabled = async (enabled: boolean) => {
     try {
@@ -101,6 +110,7 @@ export const useRelationTimelineActivityType = ({
 
   return {
     canCreateTimelineActivityType,
+    canToggleTimelineLogging,
     hasEmitCapableRelationShape,
     isMutating: isCreating || isUpdating,
     isTimelineLoggingEnabled,
