@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-25 12:14\n"
+"PO-Revision-Date: 2026-08-28 12:00\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1488,6 +1488,11 @@ msgstr "Benjamin Reynolds"
 msgid "Bertrams"
 msgstr "Bertrams"
 
+#. js-lingui-id: CrZWSz
+#: src/partner-application/partner-application-copy.ts
+msgid "Best proof first: a live Twenty instance URL, a public repo, or a YouTube link. Loom, Drive and file links are accepted but slower to review."
+msgstr "Önce en iyi kanıt: canlı bir Twenty örneği URL'si, herkese açık bir repo veya bir YouTube bağlantısı. Loom, Drive ve dosya bağlantıları kabul edilir ancak incelenmeleri daha uzun sürer."
+
 #. js-lingui-id: BSmDFu
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Better sorted kanban boards"
@@ -1760,6 +1765,11 @@ msgstr "Orta Afrika Cumhuriyeti 🇨🇫"
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "Certification, plus a directory profile your clients can verify. The best partners also receive client briefs matched to their scope."
 msgstr "Sertifikasyonun yanı sıra müşterilerinizin doğrulayabileceği bir dizin profili. En iyi iş ortakları ayrıca kapsamlarıyla eşleşen müşteri özetleri alır."
+
+#. js-lingui-id: 4W4gsr
+#: src/sections/partner-hero/PartnerLeadHero.tsx
+msgid "Certified partners who set up your CRM to match how your company works, from the migration to the custom apps."
+msgstr "Geçişten özel uygulamalara kadar CRM'nizi şirketinizin çalışma biçimine uygun şekilde kuran sertifikalı iş ortakları."
 
 #. js-lingui-id: iI3Dq9
 #: src/partner-application/data/partner-country-options.ts
@@ -3726,8 +3736,8 @@ msgid "Get certified as a Twenty partner: a vetted badge, a directory profile yo
 msgstr "Twenty iş ortağı olarak sertifika alın: incelenmiş bir rozet, müşterilerinizin kontrol edebileceği bir dizin profili ve en iyi iş ortakları için eşleşen müşteri özetleri."
 
 #. js-lingui-id: b+jRGN
+#: src/sections/partner-lead/PartnerDirectoryPanel.tsx
 #: src/sections/partner-hero/PartnerLeadHero.tsx
-#: src/partners-marketplace/MarketplaceMatchCard.tsx
 #: src/client-brief/ClientBriefModal.tsx
 msgid "Get matched"
 msgstr "Eşleşme al"
@@ -3897,6 +3907,11 @@ msgstr "Değişiklikleri gizle"
 #: src/partner-application/data/partner-language-options.ts
 msgid "Hindi"
 msgstr "Hintçe"
+
+#. js-lingui-id: 6NGgln
+#: src/sections/partner-hero/PartnerLeadHero.tsx
+msgid "Hire the people who *build on Twenty*"
+msgstr "*Twenty üzerinde geliştirme yapan* kişileri işe alın"
 
 #. js-lingui-id: qfSbUb
 #: src/case-studies/case-study-stories.ts
@@ -4688,11 +4703,6 @@ msgstr "Herhangi bir normal nesnede olduğu gibi, görevlerinize ve şirketlerin
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Link field"
 msgstr "Bağlantı alanı"
-
-#. js-lingui-id: YOe6r4
-#: src/partner-application/partner-application-copy.ts
-msgid "Link that shows the work (Loom, GitHub, Notion, Drive, public write-up…). No public workspace? Share a short Loom."
-msgstr "Çalışmanızı gösteren bağlantı (Loom, GitHub, Notion, Drive, herkese açık yazı vb.). Herkese açık bir çalışma alanınız yok mu? Kısa bir Loom paylaşın."
 
 #. js-lingui-id: gggTBm
 #: src/sections/footer/footer.data.ts
@@ -6924,11 +6934,6 @@ msgstr "Beceriler"
 msgid "Skip for now"
 msgstr "Şimdilik atla"
 
-#. js-lingui-id: BXjtWS
-#: src/sections/partner-hero/PartnerLeadHero.tsx
-msgid "Skip the browsing. Describe your project and we connect you with a certified Twenty partner who fits it."
-msgstr "Göz atmayı atlayın. Projenizi açıklayın, sizi ona uygun sertifikalı bir Twenty iş ortağıyla buluşturalım."
-
 #. js-lingui-id: t6ComU
 #: src/sections/feature-cards/FeatureCards.tsx
 msgid "Skip the clunky UX that always comes with custom."
@@ -7175,8 +7180,8 @@ msgid "Subdomain (yourco.twenty.com)"
 msgstr "Alt alan (yourco.twenty.com)"
 
 #. js-lingui-id: 578pU6
-#: src/partners-marketplace/PartnerProfileCtas.tsx
-#: src/partners-marketplace/MarketplaceBriefPrompt.tsx
+#: src/app/[locale]/(site)/partners/page.tsx
+#: src/app/[locale]/(site)/partners/profile/[slug]/page.tsx
 msgid "Submit a brief"
 msgstr "Kısa bir özet gönder"
 
@@ -7215,6 +7220,11 @@ msgstr "Başarı planı ek ücreti"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Sudan 🇸🇩"
 msgstr "Sudan 🇸🇩"
+
+#. js-lingui-id: 388eZi
+#: src/partners-marketplace/marketplace-copy.ts
+msgid "Super partner"
+msgstr ""
 
 #. js-lingui-id: XYLcNv
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -7380,11 +7390,6 @@ msgstr "Neye ihtiyacınız olduğunu bize söyleyin; 48 saat içinde sertifikal�
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
 msgid "Tell us what you need and we'll match you with a certified Twenty partner."
 msgstr "İhtiyacınızı bize söyleyin, sizi sertifikalı bir Twenty iş ortağıyla eşleştirelim."
-
-#. js-lingui-id: 7CRTri
-#: src/sections/partner-hero/PartnerLeadHero.tsx
-msgid "Tell us what you need, we match you in *48 hours*"
-msgstr "Neye ihtiyacınız olduğunu söyleyin, sizi *48 saat* içinde eşleştirelim"
 
 #. js-lingui-id: Hevu8X
 #: src/app-preview/terminal/TerminalToggle.tsx

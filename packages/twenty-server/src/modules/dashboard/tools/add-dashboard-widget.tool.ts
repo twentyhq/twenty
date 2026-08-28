@@ -1,9 +1,12 @@
 import { z } from 'zod';
 
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
-import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import {
-  gridPositionSchema,
+  type PageLayoutWidgetGridPosition,
+  type WidgetType,
+} from 'twenty-shared/types';
+import {
+  widgetPositionSchema,
   widgetConfigurationSchema,
   widgetTypeSchema,
 } from 'src/modules/dashboard/tools/schemas/widget.schema';
@@ -19,7 +22,7 @@ const addDashboardWidgetSchema = z.object({
   pageLayoutTabId: z.string().uuid().describe('Tab UUID from get_dashboard'),
   title: z.string().describe('Widget title'),
   type: widgetTypeSchema.describe('Widget type'),
-  gridPosition: gridPositionSchema.describe('Position in 12-column grid'),
+  position: widgetPositionSchema.describe('Position in 12-column grid'),
   objectMetadataId: z
     .uuid()
     .optional()
@@ -58,12 +61,7 @@ See create_complete_dashboard for full configuration examples.`,
     pageLayoutTabId: string;
     title: string;
     type: WidgetType;
-    gridPosition: {
-      row: number;
-      column: number;
-      rowSpan: number;
-      columnSpan: number;
-    };
+    position: PageLayoutWidgetGridPosition;
     objectMetadataId?: string;
     objectName?: string;
     configuration?: WidgetConfigurationInput;
@@ -93,7 +91,7 @@ See create_complete_dashboard for full configuration examples.`,
           widgetId: widget.id,
           title: widget.title,
           type: widget.type,
-          gridPosition: widget.gridPosition,
+          position: widget.position,
           pageLayoutTabId: parameters.pageLayoutTabId,
         },
       };

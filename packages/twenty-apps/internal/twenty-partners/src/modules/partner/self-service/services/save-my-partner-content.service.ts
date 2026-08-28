@@ -17,7 +17,7 @@ import {
   errorResponse,
   failureResponse,
   resolvePartnerFromRequest,
-} from 'src/modules/partner/self-service/services/resolve-partner-from-request.service';
+} from 'src/modules/shared/http/resolve-partner-from-request.service';
 import { buildReconcilePlan } from 'src/modules/partner/self-service/utils/reconcile-children';
 import { isCaseStudy } from 'src/modules/partner/utils/content-type';
 
@@ -67,7 +67,10 @@ export const saveMyPartnerContent = async (
 
   try {
     const client = buildAppClient();
-    const existingIds = await queryExistingContentIds(client, resolved.partnerId);
+    const existingIds = await queryExistingContentIds(
+      client,
+      resolved.partnerId,
+    );
 
     const plan = buildReconcilePlan(existingIds, parsed.data.caseStudies);
     if (!plan) return errorResponse('FORBIDDEN');
@@ -76,7 +79,10 @@ export const saveMyPartnerContent = async (
     // (RLS-scoped) can't see it. Return it optimistically from the input + new id.
     const createdRows: CaseStudyRow[] = [];
     for (const item of plan.toCreate) {
-      const created = await createPartnerContent(client, buildContentCreateData(item));
+      const created = await createPartnerContent(
+        client,
+        buildContentCreateData(item),
+      );
       const newId = created.createPartnerContent?.id;
       if (newId !== undefined) {
         createdRows.push({

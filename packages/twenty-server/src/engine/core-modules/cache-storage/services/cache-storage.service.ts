@@ -4,6 +4,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { type Milliseconds } from 'cache-manager';
 import { type RedisCache } from 'cache-manager-redis-yet';
 
+import {
+  CacheStorageException,
+  CacheStorageExceptionCode,
+} from 'src/engine/core-modules/cache-storage/exceptions/cache-storage.exception';
+import { type CacheScript } from 'src/engine/core-modules/cache-storage/types/cache-script.type';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 
 @Injectable()
@@ -381,6 +386,35 @@ end`;
       keys: [this.getKey(key)],
       arguments: [field, value],
     }) as Promise<number>;
+  }
+
+  async runScript<TResult>({
+    script,
+    keys,
+    args,
+  }: {
+    script: CacheScript;
+    keys: string[];
+    args: string[];
+  }): Promise<TResult> {
+    if (!this.isRedisCache(this.cache)) {
+      throw new CacheStorageException(
+        'runScript is only supported with Redis cache',
+        CacheStorageExceptionCode.REDIS_CACHE_REQUIRED,
+      );
+    }
+
+    try {
+      return (await this.cache.store.client.eval(script.source, {
+        keys: keys.map((key) => this.getKey(key)),
+        arguments: args,
+      })) as TResult;
+    } catch (error) {
+      throw new CacheStorageException(
+        `Cache script "${script.name}" failed: ${error instanceof Error ? error.message : 'unknown error'}`,
+        CacheStorageExceptionCode.SCRIPT_EXECUTION_FAILED,
+      );
+    }
   }
 
   async hashSetWithExpire({

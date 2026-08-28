@@ -20,6 +20,7 @@ const makeNode = () => ({
   skills: ['Salesforce', 'HubSpot'],
   city: 'Paris',
   country: 'France',
+  superPartner: false,
   partnerLinks: {
     edges: [] as Array<{
       node: {
@@ -286,5 +287,20 @@ describe('mapPartnerForMarketplace', () => {
         description: 'Weekly operating cadence support.',
       },
     ]);
+  });
+
+  it('copies superPartner onto list and profile payloads', () => {
+    const node = makeNode();
+    node.superPartner = true;
+
+    expect(mapPartnerForMarketplace(node, 'list').superPartner).toBe(true);
+    expect(mapPartnerForMarketplace(node, 'profile').superPartner).toBe(true);
+  });
+
+  it('coerces a missing superPartner to false', () => {
+    const node = makeNode();
+    delete (node as { superPartner?: boolean }).superPartner;
+
+    expect(mapPartnerForMarketplace(node, 'list').superPartner).toBe(false);
   });
 });

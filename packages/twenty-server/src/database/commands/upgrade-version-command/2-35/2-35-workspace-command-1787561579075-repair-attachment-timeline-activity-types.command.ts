@@ -156,6 +156,7 @@ export class RepairAttachmentTimelineActivityTypesCommand extends ProvisionedWor
         targetRelationFieldUniversalIdentifier:
           attachmentTargetRelationFieldMetadata.universalIdentifier,
         triggerFieldUniversalIdentifiers: null,
+        happensAtFieldUniversalIdentifier: null,
         replacesTimelineActivityTypeUniversalIdentifier: null,
         isActive: true,
         overrides: null,

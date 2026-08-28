@@ -3,6 +3,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   AggregateOperations,
   PageLayoutTabLayoutMode,
+  WidgetType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -10,7 +11,6 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PAGE_LAYOUT_TAB_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-tab-seeds.constant';
 import { PAGE_LAYOUT_WIDGET_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-widget-seeds.constant';
 import { type SeederFlatPageLayoutWidget } from 'src/engine/workspace-manager/dev-seeder/core/types/seeder-flat-page-layout-widget.type';
@@ -73,7 +73,6 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           ),
           title: 'Revenue Forecast',
           type: WidgetType.GRAPH,
-          gridPosition: { row: 0, column: 7, rowSpan: 8, columnSpan: 5 },
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 0,
@@ -109,7 +108,6 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           ),
           title: 'New Customers Over Time',
           type: WidgetType.GRAPH,
-          gridPosition: { row: 0, column: 3, rowSpan: 6, columnSpan: 5 },
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 0,
@@ -145,7 +143,6 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           ),
           title: 'Revenue Distribution',
           type: WidgetType.GRAPH,
-          gridPosition: { row: 0, column: 4, rowSpan: 2, columnSpan: 3 },
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 0,
@@ -180,7 +177,6 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           ),
           title: 'Companies by LinkedIn (Field Permission Test)',
           type: WidgetType.GRAPH,
-          gridPosition: { row: 6, column: 0, rowSpan: 4, columnSpan: 6 },
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 6,
@@ -216,7 +212,6 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           ),
           title: 'Contact Roles',
           type: WidgetType.GRAPH,
-          gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 6 },
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 0,

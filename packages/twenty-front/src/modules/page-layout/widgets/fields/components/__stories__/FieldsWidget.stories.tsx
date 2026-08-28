@@ -25,10 +25,10 @@ import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
-  ViewType,
-  ViewVisibility,
   PageLayoutTabLayoutMode,
   PageLayoutType,
+  ViewType,
+  ViewVisibility,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
@@ -173,8 +173,9 @@ const createFieldsWidget = (viewId: string | null): PageLayoutWidget => ({
   type: WidgetType.FIELDS,
   title: 'Fields',
   objectMetadataId: companyObjectMetadataItem.id,
-  gridPosition: {
-    __typename: 'GridPosition',
+  position: {
+    layoutMode: PageLayoutTabLayoutMode.GRID,
+    __typename: 'PageLayoutWidgetGridPosition',
     row: 0,
     column: 0,
     rowSpan: 4,
@@ -197,7 +198,7 @@ const createView = (
   name: 'Company Fields',
   objectMetadataId: companyObjectMetadataItem.id,
   type: ViewType.FIELDS_WIDGET,
-  icon: 'IconList',
+  icon: 'IconListDetails',
   key: null,
   shouldHideEmptyGroups: false,
   position: 0,

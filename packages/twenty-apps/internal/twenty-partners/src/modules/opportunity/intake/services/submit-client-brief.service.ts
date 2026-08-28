@@ -40,19 +40,25 @@ export async function submitClientBrief(
     const name = `${input.companyName.trim()} — marketplace brief`;
     const requirements = buildRequirementsText(input);
 
-    const companyId = await findOrCreateCompanyByName(client, input.companyName);
+    const companyId = await findOrCreateCompanyByName(
+      client,
+      input.companyName,
+    );
     const pointOfContactId = await findOrCreatePersonByEmail(client, {
       email: input.email,
       firstName: input.firstName,
       lastName: input.lastName,
       companyId,
     });
-    const referringPartner = await resolveReferringPartner(client, input.partnerSlug);
+    const referringPartner = await resolveReferringPartner(
+      client,
+      input.partnerSlug,
+    );
 
     const opportunityData: CoreSchema.OpportunityCreateInput = {
       name,
       need: input.need,
-      isListed: false,
+      isListed: true,
       stage: 'NEW',
       companyId,
       pointOfContactId,
@@ -74,6 +80,9 @@ export async function submitClientBrief(
 
     return { ok: true, opportunityId };
   } catch (err) {
-    return { ok: false, reason: err instanceof Error ? err.message : String(err) };
+    return {
+      ok: false,
+      reason: err instanceof Error ? err.message : String(err),
+    };
   }
 }

@@ -79,6 +79,10 @@ yarn twenty dev:function:logs
 ```
 </Note>
 
+<Note>
+On the cloud, each run consumes workspace credits: a flat charge per invocation plus a per-millisecond charge for the time the function runs, so keeping `timeoutSeconds` tight and code fast keeps costs down. See [Credits](/user-guide/billing/capabilities/credits) for the rates.
+</Note>
+
 #### Route trigger payload
 
 When a route trigger invokes your logic function, it receives a `RoutePayload` object that follows the

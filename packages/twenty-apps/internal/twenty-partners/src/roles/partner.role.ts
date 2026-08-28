@@ -12,6 +12,7 @@ import {
   PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
   PARTNER_SERVICE_OBJECT_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { PARTNER_SUPER_PARTNER_FIELD_UNIVERSAL_IDENTIFIER } from 'src/modules/partner/constants/partner-field-universal-identifiers';
 import {
   APPLICATION_NAME_FIELD_ID,
   APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
@@ -310,8 +311,9 @@ export default defineRole({
       canUpdateFieldValue: false,
     },
     {
+      // Super partner — listed on the record page; partners can see it, cannot set it.
       objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
-      fieldUniversalIdentifier: '5af4e57e-7fa7-4c4f-b40f-37549361459a',
+      fieldUniversalIdentifier: PARTNER_SUPER_PARTNER_FIELD_UNIVERSAL_IDENTIFIER,
       canUpdateFieldValue: false,
     },
     {

@@ -1,12 +1,10 @@
 import {
   PageLayoutTabLayoutMode,
-  type GridPosition,
   type PageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetGridPosition,
   type PageLayoutWidgetVerticalListPosition,
+  WidgetType,
 } from 'twenty-shared/types';
-
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 
 export const CONDITIONAL_DISPLAY_DEVICE_MOBILE = {
   and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
@@ -21,27 +19,6 @@ export const CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE =
 
 export const CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP =
   'device == "DESKTOP"';
-
-export const GRID_POSITIONS = {
-  FULL_WIDTH: {
-    row: 0,
-    column: 0,
-    rowSpan: 12,
-    columnSpan: 12,
-  },
-  HALF_HEIGHT: {
-    row: 0,
-    column: 0,
-    rowSpan: 6,
-    columnSpan: 12,
-  },
-  RICH_TEXT: {
-    row: 12,
-    column: 0,
-    rowSpan: 6,
-    columnSpan: 12,
-  },
-} as const satisfies Record<string, GridPosition>;
 
 export const GRID_LAYOUT_POSITIONS = {
   FULL_WIDTH: {
@@ -118,7 +95,7 @@ export const TAB_PROPS = {
   files: {
     title: 'Files',
     position: 50,
-    icon: 'IconPaperclip',
+    icon: 'IconFiles',
     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   },
   emails: {
@@ -163,85 +140,71 @@ export const WIDGET_PROPS = {
   fields: {
     title: 'Fields',
     type: WidgetType.FIELDS,
-    gridPosition: GRID_POSITIONS.FULL_WIDTH,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   timeline: {
     title: 'Timeline',
     type: WidgetType.TIMELINE,
-    gridPosition: GRID_POSITIONS.HALF_HEIGHT,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   tasks: {
     title: 'Tasks',
     type: WidgetType.TASKS,
-    gridPosition: GRID_POSITIONS.HALF_HEIGHT,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   notes: {
     title: 'Notes',
     type: WidgetType.NOTES,
-    gridPosition: GRID_POSITIONS.HALF_HEIGHT,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   files: {
     title: 'Files',
     type: WidgetType.FILES,
-    gridPosition: GRID_POSITIONS.HALF_HEIGHT,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   emails: {
     title: 'Emails',
     type: WidgetType.EMAILS,
-    gridPosition: GRID_POSITIONS.HALF_HEIGHT,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   calendar: {
     title: 'Calendar',
     type: WidgetType.CALENDAR,
-    gridPosition: GRID_POSITIONS.HALF_HEIGHT,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   noteRichText: {
     title: 'Note',
     type: WidgetType.FIELD_RICH_TEXT,
-    gridPosition: GRID_POSITIONS.RICH_TEXT,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   taskRichText: {
     title: 'Task',
     type: WidgetType.FIELD_RICH_TEXT,
-    gridPosition: GRID_POSITIONS.RICH_TEXT,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   workflow: {
     title: 'Flow',
     type: WidgetType.WORKFLOW,
-    gridPosition: GRID_POSITIONS.FULL_WIDTH,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   messageCampaign: {
     title: 'Email',
     type: WidgetType.MESSAGE_CAMPAIGN_BODY,
-    gridPosition: GRID_POSITIONS.RICH_TEXT,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   workflowVersion: {
     title: 'Flow',
     type: WidgetType.WORKFLOW_VERSION,
-    gridPosition: GRID_POSITIONS.FULL_WIDTH,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   workflowRun: {
     title: 'Flow',
     type: WidgetType.WORKFLOW_RUN,
-    gridPosition: GRID_POSITIONS.FULL_WIDTH,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   emailThread: {
     title: 'Thread',
     type: WidgetType.EMAIL_THREAD,
-    gridPosition: GRID_POSITIONS.FULL_WIDTH,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
   },
 } as const;

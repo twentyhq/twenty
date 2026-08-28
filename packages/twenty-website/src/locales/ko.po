@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-25 12:14\n"
+"PO-Revision-Date: 2026-08-28 12:00\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -1486,6 +1486,11 @@ msgstr "Benjamin Reynolds"
 msgid "Bertrams"
 msgstr "Bertrams"
 
+#. js-lingui-id: CrZWSz
+#: src/partner-application/partner-application-copy.ts
+msgid "Best proof first: a live Twenty instance URL, a public repo, or a YouTube link. Loom, Drive and file links are accepted but slower to review."
+msgstr "가장 좋은 증빙 자료 우선: 실제 운영 중인 Twenty 인스턴스 URL, 공개 리포지토리 또는 YouTube 링크를 제출해 주세요. Loom, Drive 및 파일 링크도 허용되지만 검토에 더 오래 걸립니다."
+
 #. js-lingui-id: BSmDFu
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Better sorted kanban boards"
@@ -1758,6 +1763,11 @@ msgstr "Central African Republic 🇨🇫"
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "Certification, plus a directory profile your clients can verify. The best partners also receive client briefs matched to their scope."
 msgstr "인증과 함께 고객이 확인할 수 있는 디렉터리 프로필을 제공합니다. 우수 파트너에게는 서비스 범위에 맞는 고객 프로젝트 개요도 제공됩니다."
+
+#. js-lingui-id: 4W4gsr
+#: src/sections/partner-hero/PartnerLeadHero.tsx
+msgid "Certified partners who set up your CRM to match how your company works, from the migration to the custom apps."
+msgstr "마이그레이션부터 맞춤형 앱까지, 회사의 업무 방식에 맞게 CRM을 설정해 주는 인증된 파트너"
 
 #. js-lingui-id: iI3Dq9
 #: src/partner-application/data/partner-country-options.ts
@@ -3724,8 +3734,8 @@ msgid "Get certified as a Twenty partner: a vetted badge, a directory profile yo
 msgstr "Twenty 파트너로 인증받으세요. 검증된 배지, 고객이 확인할 수 있는 디렉터리 프로필, 그리고 우수 파트너를 위한 매칭 고객 프로젝트 개요를 제공합니다."
 
 #. js-lingui-id: b+jRGN
+#: src/sections/partner-lead/PartnerDirectoryPanel.tsx
 #: src/sections/partner-hero/PartnerLeadHero.tsx
-#: src/partners-marketplace/MarketplaceMatchCard.tsx
 #: src/client-brief/ClientBriefModal.tsx
 msgid "Get matched"
 msgstr "매칭 받기"
@@ -3895,6 +3905,11 @@ msgstr "변경 사항 숨기기"
 #: src/partner-application/data/partner-language-options.ts
 msgid "Hindi"
 msgstr "힌디어"
+
+#. js-lingui-id: 6NGgln
+#: src/sections/partner-hero/PartnerLeadHero.tsx
+msgid "Hire the people who *build on Twenty*"
+msgstr "*Twenty를 구축하는* 사람들을 채용하세요"
 
 #. js-lingui-id: qfSbUb
 #: src/case-studies/case-study-stories.ts
@@ -4686,11 +4701,6 @@ msgstr "일반 객체와 마찬가지로, 작업과 회사에 사용자 지정 �
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Link field"
 msgstr "Link 필드"
-
-#. js-lingui-id: YOe6r4
-#: src/partner-application/partner-application-copy.ts
-msgid "Link that shows the work (Loom, GitHub, Notion, Drive, public write-up…). No public workspace? Share a short Loom."
-msgstr "작업물을 확인할 수 있는 링크를 입력해 주세요 (Loom, GitHub, Notion, Drive, 공개 문서 등). 공개 워크스페이스가 없나요? 짧은 Loom 영상을 공유해 주세요."
 
 #. js-lingui-id: gggTBm
 #: src/sections/footer/footer.data.ts
@@ -6922,11 +6932,6 @@ msgstr "보유 기술"
 msgid "Skip for now"
 msgstr "지금은 건너뛰기"
 
-#. js-lingui-id: BXjtWS
-#: src/sections/partner-hero/PartnerLeadHero.tsx
-msgid "Skip the browsing. Describe your project and we connect you with a certified Twenty partner who fits it."
-msgstr "둘러볼 필요가 없습니다. 프로젝트를 설명해 주시면 적합한 공인 Twenty 파트너와 연결해 드립니다."
-
 #. js-lingui-id: t6ComU
 #: src/sections/feature-cards/FeatureCards.tsx
 msgid "Skip the clunky UX that always comes with custom."
@@ -7173,8 +7178,8 @@ msgid "Subdomain (yourco.twenty.com)"
 msgstr "서브도메인(yourco.twenty.com)"
 
 #. js-lingui-id: 578pU6
-#: src/partners-marketplace/PartnerProfileCtas.tsx
-#: src/partners-marketplace/MarketplaceBriefPrompt.tsx
+#: src/app/[locale]/(site)/partners/page.tsx
+#: src/app/[locale]/(site)/partners/profile/[slug]/page.tsx
 msgid "Submit a brief"
 msgstr "요청서 제출"
 
@@ -7213,6 +7218,11 @@ msgstr "Success 플랜 할증"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Sudan 🇸🇩"
 msgstr "Sudan 🇸🇩"
+
+#. js-lingui-id: 388eZi
+#: src/partners-marketplace/marketplace-copy.ts
+msgid "Super partner"
+msgstr ""
 
 #. js-lingui-id: XYLcNv
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -7378,11 +7388,6 @@ msgstr "필요한 사항을 알려주시면 48시간 이내에 공인 Twenty 파
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
 msgid "Tell us what you need and we'll match you with a certified Twenty partner."
 msgstr "필요한 내용을 알려 주시면, 공인 Twenty 파트너와 매칭해 드립니다."
-
-#. js-lingui-id: 7CRTri
-#: src/sections/partner-hero/PartnerLeadHero.tsx
-msgid "Tell us what you need, we match you in *48 hours*"
-msgstr "필요한 사항을 알려주세요. *48시간* 이내에 매칭해 드립니다."
 
 #. js-lingui-id: Hevu8X
 #: src/app-preview/terminal/TerminalToggle.tsx

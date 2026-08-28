@@ -113,7 +113,7 @@ export default definePageLayout({
           universalIdentifier: '18ce05bb-ee3c-4332-80a7-f8fb84f7f70a',
           title: 'Mission Control',
           type: 'FRONT_COMPONENT',
-          gridPosition: { row: 0, column: 0, rowSpan: 12, columnSpan: 12 },
+          position: { layoutMode: PageLayoutTabLayoutMode.CANVAS },
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:
@@ -198,7 +198,7 @@ This section only calls out the fields that matter for standalone pages. Use `la
 - Use `type: 'STANDALONE_PAGE'`.
 - Do not set `objectUniversalIdentifier`; standalone pages are not record scoped.
 - Define at least one tab. Use one tab unless the page needs real top-level modes.
-- Use `PageLayoutTabLayoutMode.CANVAS`; put the `FRONT_COMPONENT` first and keep a 12 x 12 `gridPosition` as fallback/editing intent.
+- Use `PageLayoutTabLayoutMode.CANVAS`; put the `FRONT_COMPONENT` first and set its `position.layoutMode` to `PageLayoutTabLayoutMode.CANVAS`.
 - Use a `FRONT_COMPONENT` widget with `configurationType: 'FRONT_COMPONENT'` and `frontComponentUniversalIdentifier`.
 
 `defineFrontComponent` owns the actual page experience:
@@ -368,7 +368,7 @@ For a black screen, check the simplest causes first:
 - Token or fetch failure: log the caught error, confirm `CoreApiClient` generation, and show an error state.
 - Public asset failure: verify `getPublicAssetUrl(...)` output in the network tab and render without the asset.
 - CSS layer covering content: remove absolute overlays, `zIndex`, and full-screen backgrounds until text is visible.
-- Zero-height container: add visible borders and confirm `height: '100%'`, `minHeight: '100%'`, `minHeight: 0`, and the 12 x 12 widget grid position.
+- Zero-height container: add visible borders and confirm `height: '100%'`, `minHeight: '100%'`, `minHeight: 0`, and the widget canvas position.
 - Unsupported browser or Remote DOM behavior: remove unusual DOM APIs, portals, global document access, and third-party components until the minimal UI renders.
 - Stale deployed app version: confirm the installed app version is the one you just synced or deployed.
 
