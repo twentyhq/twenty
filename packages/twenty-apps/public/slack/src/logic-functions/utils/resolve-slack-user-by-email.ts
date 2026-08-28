@@ -39,9 +39,23 @@ export const resolveSlackUserByEmail = async (
     return undefined;
   }
 
+  // Guests may be linked manually, but a bot, a deactivated account, or an
+  // unconfirmed profile email must not resolve: anyone can type another
+  // person's address into their profile, and only Slack's confirmation ties
+  // the mailbox owner to this account.
+  if (
+    user.is_bot === true ||
+    user.deleted === true ||
+    user.is_email_confirmed !== true
+  ) {
+    return undefined;
+  }
+
   return {
     slackUserId: user.id,
     slackTeamId: isNonEmptyString(user.team_id) ? user.team_id : undefined,
-    displayName: isNonEmptyString(user.real_name) ? user.real_name : undefined,
+    displayName: [user.profile?.display_name, user.real_name].find(
+      isNonEmptyString,
+    ),
   };
 };
