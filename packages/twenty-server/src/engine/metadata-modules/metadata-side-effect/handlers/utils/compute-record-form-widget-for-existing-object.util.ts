@@ -1,0 +1,84 @@
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { buildSystemFormFieldPageLayoutWidget } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-record-form-page-layout-to-create.util';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
+
+export const computeRecordFormWidgetForExistingObject = ({
+  sourceFlatFieldMetadata,
+  recordFormPageLayoutTabUniversalIdentifier,
+  flatPageLayoutTabMaps,
+  flatPageLayoutWidgetMaps,
+}: {
+  sourceFlatFieldMetadata: UniversalFlatFieldMetadata;
+  recordFormPageLayoutTabUniversalIdentifier: string;
+} & Pick<
+  AllFlatEntityMaps,
+  'flatPageLayoutTabMaps' | 'flatPageLayoutWidgetMaps'
+>): UniversalFlatPageLayoutWidget | undefined => {
+  const recordFormFlatPageLayoutTab =
+    flatPageLayoutTabMaps.byUniversalIdentifier[
+      recordFormPageLayoutTabUniversalIdentifier
+    ];
+
+  if (
+    !isDefined(recordFormFlatPageLayoutTab) ||
+    recordFormFlatPageLayoutTab.isSystemSideEffect !== true ||
+    isDefined(recordFormFlatPageLayoutTab.deletedAt)
+  ) {
+    return undefined;
+  }
+
+  const existingFlatPageLayoutWidgets =
+    recordFormFlatPageLayoutTab.widgetUniversalIdentifiers
+      .map(
+        (widgetUniversalIdentifier) =>
+          flatPageLayoutWidgetMaps.byUniversalIdentifier[
+            widgetUniversalIdentifier
+          ],
+      )
+      .filter(isDefined)
+      .filter((flatPageLayoutWidget) => {
+        return (
+          !isDefined(flatPageLayoutWidget.deletedAt) &&
+          flatPageLayoutWidget.universalConfiguration?.configurationType ===
+            WidgetConfigurationType.FORM_FIELD
+        );
+      });
+
+  const pairAlreadySynced = existingFlatPageLayoutWidgets.some(
+    (flatPageLayoutWidget) =>
+      flatPageLayoutWidget.universalConfiguration.configurationType ===
+        WidgetConfigurationType.FORM_FIELD &&
+      flatPageLayoutWidget.universalConfiguration.fieldMetadataId ===
+        sourceFlatFieldMetadata.universalIdentifier,
+  );
+
+  if (pairAlreadySynced) {
+    return undefined;
+  }
+
+  const index =
+    existingFlatPageLayoutWidgets.reduce(
+      (maxIndex, flatPageLayoutWidget) =>
+        flatPageLayoutWidget.position?.layoutMode ===
+        PageLayoutTabLayoutMode.VERTICAL_LIST
+          ? Math.max(maxIndex, flatPageLayoutWidget.position.index)
+          : maxIndex,
+      -1,
+    ) + 1;
+
+  return buildSystemFormFieldPageLayoutWidget({
+    applicationUniversalIdentifier:
+      sourceFlatFieldMetadata.applicationUniversalIdentifier,
+    pageLayoutTabUniversalIdentifier:
+      recordFormPageLayoutTabUniversalIdentifier,
+    objectMetadataUniversalIdentifier:
+      sourceFlatFieldMetadata.objectMetadataUniversalIdentifier,
+    flatFieldMetadata: sourceFlatFieldMetadata,
+    index,
+  });
+};
