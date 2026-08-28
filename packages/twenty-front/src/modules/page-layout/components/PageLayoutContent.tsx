@@ -6,6 +6,7 @@ import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutIn
 import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
 import { StandaloneWidgetPlaceholder } from '@/page-layout/widgets/components/StandaloneWidgetPlaceholder';
 import { RecordPageAddWidgetSection } from '@/page-layout/widgets/components/RecordPageAddWidgetSection';
+import { isViewportFillingWidgetType } from '@/page-layout/widgets/utils/isViewportFillingWidgetType';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -56,9 +57,10 @@ export const PageLayoutContent = () => {
       isInEditMode={isVerticalListInEditMode}
       widgets={activeTab.widgets}
       header={
-        isVerticalListInEditMode && isDefined(firstWidget) ? (
+        isVerticalListInEditMode &&
+        isDefined(firstWidget) &&
+        isViewportFillingWidgetType(firstWidget.type) ? (
           <RecordPageAddWidgetSection
-            isCompact
             insertionContext={{
               targetWidgetId: firstWidget.id,
               direction: 'above',

@@ -42,22 +42,17 @@ const StyledMenuItemList = styled.div`
   background-color: ${themeCssVariables.background.secondary};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
+  margin-top: ${themeCssVariables.spacing[2]};
   overflow: hidden;
   padding: ${themeCssVariables.spacing[2]};
-
-  &:not(:first-child) {
-    margin-top: ${themeCssVariables.spacing[2]};
-  }
 `;
 
 type RecordPageAddWidgetSectionProps = {
   insertionContext?: WidgetInsertionContext;
-  isCompact?: boolean;
 };
 
 export const RecordPageAddWidgetSection = ({
   insertionContext = null,
-  isCompact = false,
 }: RecordPageAddWidgetSectionProps) => {
   const { tabId } = usePageLayoutContentContext();
 
@@ -78,39 +73,35 @@ export const RecordPageAddWidgetSection = ({
 
   return (
     <StyledContainer>
-      {!isCompact && <StyledHeader>{t`Add widget`}</StyledHeader>}
+      <StyledHeader>{t`Add widget`}</StyledHeader>
       <StyledMenuItemList>
-        {!isCompact && (
-          <>
-            <MenuItem
-              LeftIcon={IconListDetails}
-              withIconContainer
-              text={t`Fields group`}
-              contextualText={t`Group multiple fields from this record`}
-              onClick={() => handleCreateWidget(createRecordPageFieldsWidget)}
-            />
-            <MenuItem
-              LeftIcon={IconListSearch}
-              withIconContainer
-              text={t`Field`}
-              contextualText={t`Single field with smart formats`}
-              onClick={() => handleCreateWidget(createRecordPageFieldWidget)}
-            />
-            <MenuItem
-              LeftIcon={IconNotes}
-              withIconContainer
-              text={t`Note`}
-              contextualText={t`Static text shared across all record pages`}
-              onClick={() =>
-                handleCreateWidget(() => createRecordPageNoteWidget({ tabId }))
-              }
-            />
-          </>
-        )}
+        <MenuItem
+          LeftIcon={IconListDetails}
+          withIconContainer
+          text={t`Fields group`}
+          contextualText={t`Group multiple fields from this record`}
+          onClick={() => handleCreateWidget(createRecordPageFieldsWidget)}
+        />
+        <MenuItem
+          LeftIcon={IconListSearch}
+          withIconContainer
+          text={t`Field`}
+          contextualText={t`Single field with smart formats`}
+          onClick={() => handleCreateWidget(createRecordPageFieldWidget)}
+        />
+        <MenuItem
+          LeftIcon={IconNotes}
+          withIconContainer
+          text={t`Note`}
+          contextualText={t`Static text shared across all record pages`}
+          onClick={() =>
+            handleCreateWidget(() => createRecordPageNoteWidget({ tabId }))
+          }
+        />
         <MenuItem
           LeftIcon={IconPlus}
           withIconContainer
-          text={isCompact ? t`Add widget` : t`More widgets`}
+          text={t`More widgets`}
           hasSubMenu
           onClick={() => navigateToMoreWidgets(insertionContext)}
         />

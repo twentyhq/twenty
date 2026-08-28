@@ -71,36 +71,6 @@ describe('RecordPageAddWidgetSection', () => {
     expect(screen.getByRole('img', { name: 'Note icon' })).toBeInTheDocument();
   });
 
-  it('shows only Add widget without a separate title in compact mode', () => {
-    render(<RecordPageAddWidgetSection isCompact />);
-
-    expect(screen.getAllByText('Add widget')).toHaveLength(1);
-    expect(screen.queryByText('Fields group')).not.toBeInTheDocument();
-    expect(screen.queryByText('Field')).not.toBeInTheDocument();
-    expect(screen.queryByText('Note')).not.toBeInTheDocument();
-    expect(screen.queryByText('More widgets')).not.toBeInTheDocument();
-  });
-
-  it('opens the picker at the first widget from compact mode', async () => {
-    const insertionContext = {
-      targetWidgetId: 'first-widget',
-      direction: 'above',
-    } as const;
-    render(
-      <RecordPageAddWidgetSection
-        isCompact
-        insertionContext={insertionContext}
-      />,
-    );
-
-    await userEvent.setup().click(screen.getByText('Add widget'));
-
-    expect(mockNavigateToMoreWidgets).toHaveBeenCalledWith(insertionContext);
-    expect(mockCreateRecordPageFieldsWidget).not.toHaveBeenCalled();
-    expect(mockCreateRecordPageFieldWidget).not.toHaveBeenCalled();
-    expect(mockCreateRecordPageNoteWidget).not.toHaveBeenCalled();
-  });
-
   it('creates a Note in the current tab through the shared creator', async () => {
     render(<RecordPageAddWidgetSection />);
     await userEvent.setup().click(screen.getByText('Note'));
