@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR } from '@/object-record/record-table/components/RecordTableStyleWrapper';
+import { RECORD_TABLE_CELL_CONTENT_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableCellContentClassName';
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
@@ -123,7 +124,9 @@ export const RecordTableAggregateFooterCell = ({
         getRecordTableColumnFieldWidthClassName(columnIndex),
       )}
     >
-      <StyledColumnFootContainer>
+      <StyledColumnFootContainer
+        className={RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
+      >
         {isFooterReadOnly ? (
           hasAggregateOperationForViewField ? (
             <RecordTableColumnAggregateFooterValue

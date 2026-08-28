@@ -211,6 +211,7 @@ const StyledTable = styled.div<{
     // the scroll shadow, which paints outside the box.
     div.header-cell.${getRecordTableColumnFieldWidthClassName(0)},
       div.table-cell.${getRecordTableColumnFieldWidthClassName(0)},
+      div.footer-cell.${getRecordTableColumnFieldWidthClassName(0)},
       div.table-cell-0-0 {
       overflow: clip;
       overflow-clip-margin: 4px;
@@ -252,10 +253,12 @@ const StyledTable = styled.div<{
       );
     }
 
-    // Shrink-wrapped so the label's own box stays narrower than the pinned
-    // remnant; at full column width sticky's containing-block constraint would
-    // drag the label off with the cell instead of holding it.
+    // Shrink-wrapped so the label's and the aggregate's own boxes stay narrower
+    // than the pinned remnant; at full column width sticky's containing-block
+    // constraint would drag them off with the cell instead of holding them.
     div.header-cell.${getRecordTableColumnFieldWidthClassName(0)}
+      .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME},
+      div.footer-cell.${getRecordTableColumnFieldWidthClassName(0)}
       .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME} {
       left: calc(
         var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) +
