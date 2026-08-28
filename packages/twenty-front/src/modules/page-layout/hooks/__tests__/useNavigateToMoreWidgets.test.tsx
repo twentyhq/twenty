@@ -94,4 +94,22 @@ describe('useNavigateToMoreWidgets', () => {
     expect(store.get(editingWidgetAtom)).toBeNull();
     expect(store.get(targetTabAtom)).toBe('main-tab');
   });
+
+  it('preserves the insertion point when reopening a closing panel', () => {
+    const { store, result } = setup();
+    const insertionContext = {
+      targetWidgetId: 'next-widget',
+      direction: 'above',
+    } as const;
+    mockNavigatePageLayoutSidePanel.mockImplementationOnce(() => {
+      store.set(editingWidgetAtom, null);
+      store.set(insertionContextAtom, null);
+    });
+
+    act(() => result.current.navigateToMoreWidgets(insertionContext));
+
+    expect(store.get(insertionContextAtom)).toEqual(insertionContext);
+    expect(store.get(editingWidgetAtom)).toBeNull();
+    expect(store.get(targetTabAtom)).toBe('main-tab');
+  });
 });

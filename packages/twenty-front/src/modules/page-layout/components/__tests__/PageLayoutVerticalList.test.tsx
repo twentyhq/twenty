@@ -17,6 +17,13 @@ jest.mock('@/page-layout/hooks/useNavigateToMoreWidgets', () => ({
   useNavigateToMoreWidgets: () => ({ navigateToMoreWidgets: jest.fn() }),
 }));
 
+jest.mock(
+  '@/page-layout/widgets/components/RecordPageAddWidgetSection',
+  () => ({
+    RecordPageAddWidgetSection: () => <div>Add widget</div>,
+  }),
+);
+
 jest.mock('@/page-layout/contexts/PageLayoutContentContext', () => ({
   usePageLayoutContentContext: () => ({
     layoutMode: mockLayoutMode,

@@ -149,10 +149,12 @@ const renderTabList = ({
   pageLayoutType = PageLayoutType.RECORD_PAGE,
   settingsTabId = null,
   isInSidePanel = false,
+  behaveAsLinks = false,
 }: {
   pageLayoutType?: PageLayoutType;
   settingsTabId?: string | null;
   isInSidePanel?: boolean;
+  behaveAsLinks?: boolean;
 } = {}) => {
   const store = createStore();
   const settingsTabAtom =
@@ -181,7 +183,7 @@ const renderTabList = ({
             tabs={TABS}
             componentInstanceId={TAB_LIST_ID}
             pageLayoutType={pageLayoutType}
-            behaveAsLinks={false}
+            behaveAsLinks={behaveAsLinks}
             isReorderEnabled
             isInSidePanel={isInSidePanel}
           />
@@ -296,5 +298,24 @@ describe('PageLayoutTabList selection', () => {
 
     await user.click(screen.getByRole('button', { name: 'Notes' }));
     expect(mockOpenTabSettings).toHaveBeenCalledWith('Notes');
+  });
+
+  it('preserves URL-driven navigation for overflow tabs in read mode', async () => {
+    mockIsInEditMode = false;
+    renderTabList({ behaveAsLinks: true });
+
+    await userEvent
+      .setup()
+      .click(screen.getByRole('button', { name: 'Files' }));
+
+    expect(mockNavigate).toHaveBeenCalledWith('#Files');
+    expect(screen.getByRole('button', { name: 'Tasks' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    expect(mockOpenTabSettings).not.toHaveBeenCalled();
+    expect(mockCloseDropdown).toHaveBeenCalledWith(
+      `tab-overflow-${TAB_LIST_ID}`,
+    );
   });
 });

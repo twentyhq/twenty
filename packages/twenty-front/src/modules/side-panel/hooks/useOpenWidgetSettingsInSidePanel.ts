@@ -111,7 +111,6 @@ export const useOpenWidgetSettingsInSidePanel = (
       }
 
       if (widgetType === WidgetType.STANDALONE_RICH_TEXT) {
-        setPageLayoutEditingWidgetId(widgetId);
         if (isDashboardPageLayout) {
           closeSidePanelMenu();
         } else {
@@ -121,6 +120,7 @@ export const useOpenWidgetSettingsInSidePanel = (
             resetNavigationStack: true,
           });
         }
+        setPageLayoutEditingWidgetId(widgetId);
         return;
       }
 

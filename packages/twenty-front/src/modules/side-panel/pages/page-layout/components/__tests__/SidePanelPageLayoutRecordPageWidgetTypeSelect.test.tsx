@@ -23,6 +23,14 @@ import { WidgetType } from '~/generated-metadata/graphql';
 
 const mockNavigatePageLayoutSidePanel = jest.fn();
 
+type NotePlacementTestCase = {
+  mode: string;
+  hasTasks?: boolean;
+  widgetIdToReplace?: string;
+  insertAboveWidgetId?: string;
+  expectedTitles: string[];
+};
+
 jest.mock('twenty-ui/icon', () => ({
   ...jest.requireActual<typeof TwentyIcons>('twenty-ui/icon'),
   IconListDetails: () => <svg role="img" aria-label="Fields group icon" />,
@@ -149,36 +157,71 @@ describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
     expect(screen.getByRole('img', { name: 'Note icon' })).toBeInTheDocument();
   });
 
-  it.each([
+  it.each<NotePlacementTestCase>([
     { mode: 'append', expectedTitles: ['first', 'second', 'third', 'Note'] },
     {
       mode: 'append with Tasks',
+      hasTasks: true,
       expectedTitles: ['first', 'second', 'third', 'Note', 'Tasks'],
     },
-    { mode: 'replace', expectedTitles: ['first', 'Note', 'third'] },
+    {
+      mode: 'replace first',
+      widgetIdToReplace: 'first',
+      expectedTitles: ['Note', 'second', 'third'],
+    },
+    {
+      mode: 'replace middle',
+      widgetIdToReplace: 'second',
+      expectedTitles: ['first', 'Note', 'third'],
+    },
+    {
+      mode: 'replace last',
+      widgetIdToReplace: 'third',
+      expectedTitles: ['first', 'second', 'Note'],
+    },
     {
       mode: 'replace with Tasks',
+      hasTasks: true,
+      widgetIdToReplace: 'second',
       expectedTitles: ['first', 'Note', 'third', 'Tasks'],
     },
     {
+      mode: 'replace Tasks',
+      hasTasks: true,
+      widgetIdToReplace: 'tasks',
+      expectedTitles: ['first', 'second', 'third', 'Note'],
+    },
+    {
       mode: 'insert above',
+      insertAboveWidgetId: 'second',
       expectedTitles: ['first', 'Note', 'second', 'third'],
     },
     {
       mode: 'insert above with Tasks',
+      hasTasks: true,
+      insertAboveWidgetId: 'second',
       expectedTitles: ['first', 'Note', 'second', 'third', 'Tasks'],
     },
     {
-      mode: 'insert before Tasks with Tasks',
+      mode: 'insert before Tasks',
+      hasTasks: true,
+      insertAboveWidgetId: 'tasks',
       expectedTitles: ['first', 'second', 'third', 'Note', 'Tasks'],
     },
     {
       mode: 'insert first with Tasks',
+      hasTasks: true,
+      insertAboveWidgetId: 'first',
       expectedTitles: ['Note', 'first', 'second', 'third', 'Tasks'],
     },
   ])(
     'should $mode a Note in the requested position',
-    async ({ mode, expectedTitles }) => {
+    async ({
+      hasTasks,
+      widgetIdToReplace,
+      insertAboveWidgetId,
+      expectedTitles,
+    }) => {
       const store = createStore();
       const instanceId = PAGE_LAYOUT_TEST_INSTANCE_ID;
       const draftAtom = pageLayoutDraftComponentState.atomFamily({
@@ -195,7 +238,7 @@ describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
             makeWidget('first', 0),
             makeWidget('second', 1),
             makeWidget('third', 2),
-            ...(mode.endsWith('with Tasks')
+            ...(hasTasks
               ? [
                   {
                     ...makeWidget('tasks', 3),
@@ -212,19 +255,13 @@ describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
         'tab-1',
       );
 
-      if (mode.startsWith('replace')) {
-        store.set(editingWidgetIdAtom, 'second');
-      }
+      store.set(editingWidgetIdAtom, widgetIdToReplace ?? null);
 
-      if (mode.startsWith('insert')) {
+      if (insertAboveWidgetId !== undefined) {
         store.set(
           widgetInsertionContextComponentState.atomFamily({ instanceId }),
           {
-            targetWidgetId: mode.startsWith('insert before Tasks')
-              ? 'tasks'
-              : mode.startsWith('insert first')
-                ? 'first'
-                : 'second',
+            targetWidgetId: insertAboveWidgetId,
             direction: 'above',
           },
         );

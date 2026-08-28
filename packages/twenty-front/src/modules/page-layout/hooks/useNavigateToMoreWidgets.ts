@@ -32,13 +32,12 @@ export const useNavigateToMoreWidgets = () => {
 
   const navigateToMoreWidgets = useCallback(
     (insertionContext: WidgetInsertionContext = null) => {
-      store.set(pageLayoutEditingWidgetIdState, null);
-      store.set(widgetInsertionContextState, insertionContext);
-      store.set(widgetCreationTargetTabIdState, tabId);
-
       navigatePageLayoutSidePanel({
         sidePanelPage: SidePanelPages.PageLayoutRecordPageWidgetTypeSelect,
       });
+      store.set(pageLayoutEditingWidgetIdState, null);
+      store.set(widgetInsertionContextState, insertionContext);
+      store.set(widgetCreationTargetTabIdState, tabId);
     },
     [
       navigatePageLayoutSidePanel,

@@ -12,9 +12,7 @@ import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultFieldWidget } from '@/page-layout/utils/createDefaultFieldWidget';
 import { createDefaultFieldsWidget } from '@/page-layout/utils/createDefaultFieldsWidget';
 import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPosition';
-import { moveWidgetWithinTabInDraft } from '@/page-layout/utils/moveWidgetWithinTabInDraft';
 import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
-import { sortWidgetsByVerticalListPosition } from '@/page-layout/utils/sortWidgetsByVerticalListPosition';
 import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
 import { getFieldWidgetDefaultDisplayMode } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
@@ -275,24 +273,9 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
   ]);
 
   const handleCreateNoteWidget = () => {
-    const replacePositionIndex = getExistingWidgetPositionIndex();
-    removeExistingWidgetIfReplacing();
-
-    const newWidget = createRecordPageNoteWidget({ tabId });
-
-    store.set(pageLayoutDraftState, (previousDraft) => {
-      const updatedTab = previousDraft.tabs.find((tab) => tab.id === tabId);
-      const noteIndex = sortWidgetsByVerticalListPosition(
-        updatedTab?.widgets ?? [],
-      ).findIndex((widget) => widget.id === newWidget.id);
-
-      return isDefined(replacePositionIndex) && noteIndex >= 0
-        ? moveWidgetWithinTabInDraft(previousDraft, {
-            tabId,
-            fromIndex: noteIndex,
-            toIndex: replacePositionIndex,
-          })
-        : previousDraft;
+    const newWidget = createRecordPageNoteWidget({
+      tabId,
+      widgetToReplace: existingWidget,
     });
 
     insertCreatedWidgetAtContext(newWidget.id);

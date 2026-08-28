@@ -1,4 +1,3 @@
-import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
@@ -33,6 +32,8 @@ jest.mock(
 );
 
 describe('useCreateRecordPageNoteWidget', () => {
+  beforeEach(() => jest.resetAllMocks());
+
   it('should append a shared Note to the target tab and start editing it', () => {
     const store = createStore();
     const draftAtom = pageLayoutDraftComponentState.atomFamily({
@@ -46,17 +47,7 @@ describe('useCreateRecordPageNoteWidget', () => {
     );
 
     const wrapper = ({ children }: { children: ReactNode }) => (
-      <PageLayoutTestWrapper store={store}>
-        <PageLayoutContentProvider
-          value={{
-            tabId: 'tab-1',
-            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-            presentation: 'stack',
-          }}
-        >
-          {children}
-        </PageLayoutContentProvider>
-      </PageLayoutTestWrapper>
+      <PageLayoutTestWrapper store={store}>{children}</PageLayoutTestWrapper>
     );
 
     const { result } = renderHook(() => useCreateRecordPageNoteWidget(), {
@@ -98,5 +89,32 @@ describe('useCreateRecordPageNoteWidget', () => {
       pageTitle: 'Note',
       resetNavigationStack: true,
     });
+  });
+
+  it('keeps the new Note selected when opening it interrupts a closing panel', () => {
+    const store = createStore();
+    const draftAtom = pageLayoutDraftComponentState.atomFamily({
+      instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+    });
+    const editingWidgetAtom =
+      pageLayoutEditingWidgetIdComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      });
+    store.set(draftAtom, makeDraft([makeTab('tab-1', [])]));
+    mockNavigatePageLayoutSidePanel.mockImplementationOnce(() => {
+      store.set(editingWidgetAtom, null);
+    });
+
+    const { result } = renderHook(() => useCreateRecordPageNoteWidget(), {
+      wrapper: ({ children }: { children: ReactNode }) => (
+        <PageLayoutTestWrapper store={store}>{children}</PageLayoutTestWrapper>
+      ),
+    });
+
+    act(() => result.current.createRecordPageNoteWidget({ tabId: 'tab-1' }));
+
+    expect(store.get(editingWidgetAtom)).toBe(
+      store.get(draftAtom).tabs[0].widgets[0].id,
+    );
   });
 });

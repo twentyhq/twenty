@@ -201,6 +201,28 @@ describe('useOpenWidgetSettingsInSidePanel', () => {
     },
   );
 
+  it('keeps Note settings selected when interrupting a closing panel', () => {
+    const store = createStore();
+    const widget = {
+      ...makeWidget('note', 0),
+      type: WidgetType.STANDALONE_RICH_TEXT,
+    };
+    store.set(getDraftAtom(), makeDraft([makeTab('tab-1', [widget])]));
+    mockNavigatePageLayoutSidePanel.mockImplementationOnce(() => {
+      store.set(getEditingWidgetIdAtom(), null);
+    });
+
+    const { result } = renderOpenWidgetSettingsHook(store);
+    act(() =>
+      result.current.openWidgetSettingsInSidePanel({
+        widgetId: widget.id,
+        widgetType: widget.type,
+      }),
+    );
+
+    expect(store.get(getEditingWidgetIdAtom())).toBe(widget.id);
+  });
+
   it.each([WidgetType.IFRAME, WidgetType.GRAPH, WidgetType.RECORD_TABLE])(
     'opens generic widget settings for a %s widget on a record page',
     (widgetType) => {

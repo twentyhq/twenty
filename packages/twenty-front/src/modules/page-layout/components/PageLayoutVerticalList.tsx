@@ -5,6 +5,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type PageLayoutWidgetListDropData } from '@/page-layout/types/PageLayoutWidgetListDropData';
 import { canVerticalListAcceptWidgetDrag } from '@/page-layout/utils/canVerticalListAcceptWidgetDrag';
 import { getIsSingleWidgetTab } from '@/page-layout/utils/getIsSingleWidgetTab';
+import { RecordPageAddWidgetSection } from '@/page-layout/widgets/components/RecordPageAddWidgetSection';
 import { RecordPageWidgetInsertionSeparator } from '@/page-layout/widgets/components/RecordPageWidgetInsertionSeparator';
 import { isViewportFillingWidgetType } from '@/page-layout/widgets/utils/isViewportFillingWidgetType';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
@@ -13,8 +14,7 @@ import { type Draggable } from '@dnd-kit/abstract';
 import { pointerIntersection } from '@dnd-kit/collision';
 import { useDroppable } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
-import { Fragment, type ReactNode, useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { Fragment, useCallback } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
@@ -79,15 +79,11 @@ const StyledDropTarget = styled.div`
 type PageLayoutVerticalListProps = {
   isInEditMode: boolean;
   widgets: PageLayoutWidget[];
-  header?: ReactNode;
-  footer?: ReactNode;
 };
 
 export const PageLayoutVerticalList = ({
   isInEditMode,
   widgets,
-  header,
-  footer,
 }: PageLayoutVerticalListProps) => {
   const { layoutMode, tabId } = usePageLayoutContentContext();
 
@@ -146,8 +142,15 @@ export const PageLayoutVerticalList = ({
       shouldUseWhiteBackground={!isInPinnedTab || isMobile}
     >
       <WorkflowDiagramAllowPageScrollContext.Provider value={hasPageScroll}>
-        {isInEditMode && isDefined(header) && (
-          <StyledHeader>{header}</StyledHeader>
+        {isInEditMode && firstViewportFillingWidgetIndex === 0 && (
+          <StyledHeader>
+            <RecordPageAddWidgetSection
+              insertionContext={{
+                targetWidgetId: widgets[0].id,
+                direction: 'above',
+              }}
+            />
+          </StyledHeader>
         )}
         {widgets.map((widget, index) => (
           <Fragment key={widget.id}>
@@ -177,7 +180,7 @@ export const PageLayoutVerticalList = ({
               orientation="horizontal"
               compact
             />
-            {footer}
+            <RecordPageAddWidgetSection />
           </StyledDropTarget>
         )}
       </WorkflowDiagramAllowPageScrollContext.Provider>

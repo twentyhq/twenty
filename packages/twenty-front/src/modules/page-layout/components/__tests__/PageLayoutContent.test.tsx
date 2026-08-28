@@ -121,9 +121,6 @@ jest.mock(
     }) => (
       <div>
         <span>Add widget</span>
-        <span>Fields group</span>
-        <span>Field</span>
-        <span>Note</span>
         <button onClick={() => mockNavigateToMoreWidgets(insertionContext)}>
           More widgets
         </button>
@@ -305,9 +302,6 @@ describe('PageLayoutContent', () => {
             screen.getByRole('button', { name: 'Full-height widget' }),
           ) & Node.DOCUMENT_POSITION_FOLLOWING,
       ).toBeTruthy();
-      expect(screen.getByText('Fields group')).toBeInTheDocument();
-      expect(screen.getByText('Field')).toBeInTheDocument();
-      expect(screen.getByText('Note')).toBeInTheDocument();
       expect(screen.getByText('More widgets')).toBeInTheDocument();
       expect(
         screen.queryByRole('button', { name: /^Add widget above / }),

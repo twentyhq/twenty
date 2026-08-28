@@ -297,7 +297,7 @@ export const PageLayoutTabList = ({
   );
 
   const handleSelectTab = useCallback(
-    (tabId: string) => {
+    (tabId: string, select = selectTab) => {
       const shouldOpenSettings =
         isPageLayoutInEditMode &&
         shouldEnableTabEditingFeatures(pageLayoutType);
@@ -315,7 +315,7 @@ export const PageLayoutTabList = ({
         }
       }
 
-      selectTab(tabId);
+      select(tabId);
     },
     [
       isPageLayoutInEditMode,
@@ -330,36 +330,10 @@ export const PageLayoutTabList = ({
 
   const handleSelectTabFromDropdown = useCallback(
     (tabId: string) => {
-      const shouldOpenSettings =
-        isPageLayoutInEditMode &&
-        shouldEnableTabEditingFeatures(pageLayoutType);
-
-      if (shouldOpenSettings && activeTabId === tabId) {
-        openTabSettings(tabId);
-        closeOverflowDropdown();
-        return;
-      }
-
-      if (shouldOpenSettings && isTabSettingsOpen) {
-        if (pageLayoutType === PageLayoutType.RECORD_PAGE) {
-          closeSidePanelMenu();
-        } else {
-          openTabSettings(tabId);
-        }
-      }
-
-      selectTabFromDropdown(tabId);
+      handleSelectTab(tabId, selectTabFromDropdown);
+      closeOverflowDropdown();
     },
-    [
-      isPageLayoutInEditMode,
-      pageLayoutType,
-      activeTabId,
-      isTabSettingsOpen,
-      closeSidePanelMenu,
-      openTabSettings,
-      closeOverflowDropdown,
-      selectTabFromDropdown,
-    ],
+    [handleSelectTab, closeOverflowDropdown, selectTabFromDropdown],
   );
 
   if (tabsWithIcons.length === 0) {
