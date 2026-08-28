@@ -6,8 +6,7 @@ import { parsePhoneNumberWithError } from 'libphonenumber-js';
 import { RATING_VALUES } from 'twenty-shared/constants';
 import {
   absoluteUrlSchema,
-  isValidHostname,
-  normalizeDomain,
+  isValidDomain,
   emailSchema,
   getCountryCodesForCallingCode,
   isDefined,
@@ -48,10 +47,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
 ): SpreadsheetImportFieldValidationDefinition[] => {
   const isValidLinkUrl = (url: string) =>
     linksVariant === 'domain'
-      ? isValidHostname(normalizeDomain(url), {
-          allowLocalhost: false,
-          allowIp: false,
-        })
+      ? isValidDomain(url)
       : absoluteUrlSchema.safeParse(url).success;
 
   switch (type) {

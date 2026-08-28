@@ -4,7 +4,7 @@ import {
   type FieldLinksVariant,
   type LinkMetadataNullable,
 } from 'twenty-shared/types';
-import { isValidHostname, normalizeDomain } from 'twenty-shared/utils';
+import { isValidDomain } from 'twenty-shared/utils';
 
 import { parseArrayOrJsonStringToArray } from 'src/engine/api/graphql/graphql-query-runner/utils/parse-additional-items.util';
 import { validateRawJsonFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util';
@@ -20,12 +20,7 @@ const assertDomainOrThrow = (value: unknown, fieldName: string) => {
     return;
   }
 
-  const isValidDomain = isValidHostname(normalizeDomain(value), {
-    allowLocalhost: false,
-    allowIp: false,
-  });
-
-  if (!isValidDomain) {
+  if (!isValidDomain(value)) {
     throw new CommonQueryRunnerException(
       `"${value}" is not a domain name, for domain-typed links field "${fieldName}"`,
       CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,

@@ -13,8 +13,7 @@ import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import {
   absoluteUrlSchema,
   isDefined,
-  isValidHostname,
-  normalizeDomain,
+  isValidDomain,
 } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
@@ -105,10 +104,7 @@ export const LinksFieldInput = () => {
 
   const validateInput = (input: string) =>
     isDomainField
-      ? isValidHostname(normalizeDomain(input), {
-          allowLocalhost: false,
-          allowIp: false,
-        })
+      ? isValidDomain(input)
       : absoluteUrlSchema.safeParse(input).success;
 
   return (

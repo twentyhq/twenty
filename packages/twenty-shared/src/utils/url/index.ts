@@ -5,6 +5,7 @@ export * from './ensureAbsoluteUrl';
 export * from './getAbsoluteUrlOrThrow';
 export * from './getUrlHostnameOrThrow';
 export * from './isAbsoluteUrl';
+export * from './isValidDomain';
 export * from './isValidHostname';
 export * from './isValidUrl';
 export * from './getLinkUrlNormalizer';

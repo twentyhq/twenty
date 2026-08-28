@@ -288,6 +288,7 @@ export { getSafeUrl } from './url/getSafeUrl';
 export { getUrlHostnameOrThrow } from './url/getUrlHostnameOrThrow';
 export { isAbsoluteUrl } from './url/isAbsoluteUrl';
 export { isSafeUrl } from './url/isSafeUrl';
+export { isValidDomain } from './url/isValidDomain';
 export { isValidHostname } from './url/isValidHostname';
 export { isValidUrl } from './url/isValidUrl';
 export { normalizeDomain } from './url/normalizeDomain';
