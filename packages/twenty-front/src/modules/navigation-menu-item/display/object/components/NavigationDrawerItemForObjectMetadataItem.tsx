@@ -8,6 +8,7 @@ import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item
 import { useIdentifyActiveNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useIdentifyActiveNavigationMenuItems';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
+import { isCoreWorkflowsObjectNavigationMenuItem } from '@/navigation-menu-item/display/utils/isCoreWorkflowsObjectNavigationMenuItem';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
@@ -175,10 +176,10 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   );
 
   const isCoreWorkflowsIndexItem =
-    !isRecord &&
-    !isViewWithResolvedView &&
-    objectMetadataItem.nameSingular === CoreObjectNameSingular.Workflow &&
-    isWorkflowCoreIndexPageEnabled;
+    isCoreWorkflowsObjectNavigationMenuItem({
+      navigationMenuItemType: navigationMenuItem?.type,
+      objectNameSingular: objectMetadataItem.nameSingular,
+    }) && isWorkflowCoreIndexPageEnabled;
 
   const secondaryLabel = isCoreWorkflowsIndexItem
     ? t`System`

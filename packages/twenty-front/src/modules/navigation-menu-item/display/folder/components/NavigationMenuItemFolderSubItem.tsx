@@ -1,11 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  CoreObjectNameSingular,
-  FeatureFlagKey,
-  NavigationMenuItemType,
-} from 'twenty-shared/types';
+import { FeatureFlagKey, NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -18,6 +14,7 @@ import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { getObjectNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemSecondaryLabel';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
+import { isCoreWorkflowsObjectNavigationMenuItem } from '@/navigation-menu-item/display/utils/isCoreWorkflowsObjectNavigationMenuItem';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -121,9 +118,10 @@ export const NavigationMenuItemFolderSubItem = ({
         });
 
   const isCoreWorkflowsIndexItem =
-    navigationMenuItem.type === NavigationMenuItemType.OBJECT &&
-    objectNameSingular === CoreObjectNameSingular.Workflow &&
-    isWorkflowCoreIndexPageEnabled;
+    isCoreWorkflowsObjectNavigationMenuItem({
+      navigationMenuItemType: navigationMenuItem.type,
+      objectNameSingular,
+    }) && isWorkflowCoreIndexPageEnabled;
 
   const secondaryLabel = isCoreWorkflowsIndexItem
     ? t`System`

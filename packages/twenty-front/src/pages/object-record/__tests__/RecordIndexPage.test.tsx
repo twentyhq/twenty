@@ -7,7 +7,8 @@ const mockUseAtomComponentStateValue = jest.fn();
 const mockUseObjectMetadataItems = jest.fn();
 
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: () => mockUseIsFeatureEnabled(),
+  useIsFeatureEnabled: (featureFlagKey: string) =>
+    mockUseIsFeatureEnabled(featureFlagKey),
 }));
 
 jest.mock(
@@ -48,7 +49,10 @@ describe('RecordIndexPage', () => {
 
   it('should render the core workflows index for the workflow object when the flag is on', () => {
     mockUseAtomComponentStateValue.mockReturnValue(WORKFLOW_OBJECT_METADATA_ID);
-    mockUseIsFeatureEnabled.mockReturnValue(true);
+    mockUseIsFeatureEnabled.mockImplementation(
+      (featureFlagKey: string) =>
+        featureFlagKey === 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED',
+    );
 
     render(<RecordIndexPage />);
 
