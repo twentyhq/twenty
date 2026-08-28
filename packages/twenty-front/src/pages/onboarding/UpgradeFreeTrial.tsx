@@ -321,9 +321,6 @@ export const UpgradeFreeTrial = ({
             mode: 'subscription',
             amount: baseProductPrice.unitAmount,
             currency: 'usd',
-            // Listing paymentMethodTypes overrides the Dashboard's dynamic payment
-            // methods, and 'card' only implies the Apple Pay / Google Pay wallets:
-            // Link has to be named explicitly or it never renders.
             paymentMethodTypes: ['card', 'link'],
             appearance,
           }}
