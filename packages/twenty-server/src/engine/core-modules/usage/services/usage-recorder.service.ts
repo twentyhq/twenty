@@ -42,9 +42,7 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
       this.twentyConfigService.get('USAGE_ROLLUP_FLUSH_INTERVAL_MS'),
     );
 
-    if (isDefined(this.flushTimer.unref)) {
-      this.flushTimer.unref();
-    }
+    this.flushTimer.unref();
   }
 
   async onModuleDestroy() {
