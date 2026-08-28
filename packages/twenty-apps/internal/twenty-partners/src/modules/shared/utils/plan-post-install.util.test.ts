@@ -17,19 +17,17 @@ describe('planPostInstall', () => {
     });
   });
 
-  // 1.8.1 shipped other work, so a workspace on it still needs the grant.
-  it('runs only the applicant grant when upgrading from a release below 1.8.2', () => {
-    expect(planPostInstall('1.8.1')).toEqual({
-      stampPartnerUser: false,
-      grantApplicantVisibility: true,
-    });
+  // 1.8.1 is another PR; 1.8.2 never shipped on main. Both still need the grant.
+  it('runs only the applicant grant when upgrading from a release below 1.8.3', () => {
+    for (const previousVersion of ['1.8.1', '1.8.2']) {
+      expect(planPostInstall(previousVersion)).toEqual({
+        stampPartnerUser: false,
+        grantApplicantVisibility: true,
+      });
+    }
   });
 
-  it('skips both backfills when already on 1.8.2 or later', () => {
-    expect(planPostInstall('1.8.2')).toEqual({
-      stampPartnerUser: false,
-      grantApplicantVisibility: false,
-    });
+  it('skips both backfills when already on 1.8.3 or later', () => {
     expect(planPostInstall('1.8.3')).toEqual({
       stampPartnerUser: false,
       grantApplicantVisibility: false,
