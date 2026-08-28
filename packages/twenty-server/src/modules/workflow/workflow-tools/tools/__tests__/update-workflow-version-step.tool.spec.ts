@@ -38,7 +38,9 @@ describe('createUpdateWorkflowVersionStepTool', () => {
 
     const result = await tool.execute(baseInput);
 
-    expect(workflowVersionStepService.updateWorkflowVersionStep).toHaveBeenCalled();
+    expect(
+      workflowVersionStepService.updateWorkflowVersionStep,
+    ).toHaveBeenCalled();
     expect(result).toEqual(mockStep);
   });
 

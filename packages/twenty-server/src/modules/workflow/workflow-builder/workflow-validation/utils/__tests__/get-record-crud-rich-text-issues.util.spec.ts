@@ -51,7 +51,9 @@ describe('getRecordCrudRichTextIssues', () => {
   });
 
   it('accepts valid rich text values and ignores non-rich-text fields', () => {
-    expect(getIssues({ body: { blocknote: '[]', markdown: null } })).toEqual([]);
+    expect(getIssues({ body: { blocknote: '[]', markdown: null } })).toEqual(
+      [],
+    );
     expect(getIssues({ body: { markdown: 'text' } })).toEqual([]);
     expect(getIssues({ body: null })).toEqual([]);
     expect(getIssues({ title: 'a plain string' })).toEqual([]);
