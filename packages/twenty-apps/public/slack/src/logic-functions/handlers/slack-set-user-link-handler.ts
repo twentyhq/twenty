@@ -18,10 +18,7 @@ import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-us
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { persistSlackUserLink } from 'src/logic-functions/utils/persist-slack-user-link';
-import {
-  type ResolvedSlackUser,
-  resolveSlackUserByEmail,
-} from 'src/logic-functions/utils/resolve-slack-user-by-email';
+import { resolveLinkTargetByEmail } from 'src/logic-functions/utils/resolve-link-target-by-email';
 import { sendSlackUserLinkConsentDm } from 'src/logic-functions/utils/send-slack-user-link-consent-dm';
 
 export const slackSetUserLinkHandler = async (
@@ -82,30 +79,19 @@ export const slackSetUserLinkHandler = async (
   let fetchedIdentity: SlackUserIdentity | undefined;
 
   if (!isNonEmptyString(slackUserId) && isNonEmptyString(email)) {
-    let resolvedUser: ResolvedSlackUser | undefined;
+    const emailTarget = await resolveLinkTargetByEmail({
+      slackClient,
+      email,
+      requestedSlackTeamId,
+    });
 
-    try {
-      resolvedUser = await resolveSlackUserByEmail(slackClient, email);
-    } catch (error) {
-      return {
-        success: false,
-        message: 'Could not look up that Slack email',
-        error: error instanceof Error ? error.message : String(error),
-      };
+    if (!emailTarget.success) {
+      return emailTarget;
     }
 
-    if (!isDefined(resolvedUser)) {
-      return {
-        success: false,
-        message: 'No Slack user with that email',
-        error:
-          'No Slack user with that email in the installed workspace. For a guest or Slack Connect user from another workspace, enter their Slack user id instead.',
-      };
-    }
-
-    slackUserId = resolvedUser.slackUserId;
-    slackTeamId = slackTeamId ?? resolvedUser.slackTeamId;
-    resolvedName = resolvedName ?? resolvedUser.displayName;
+    slackUserId = emailTarget.slackUserId;
+    slackTeamId = emailTarget.slackTeamId;
+    resolvedName = resolvedName ?? emailTarget.displayName;
     // A users.lookupByEmail hit certifies this is the account's Slack email.
     slackUserEmail = email;
   }
@@ -279,7 +265,10 @@ export const slackSetUserLinkHandler = async (
     };
   }
 
-  const memberName = await findWorkspaceMemberNameById(client, workspaceMemberId);
+  const memberName = await findWorkspaceMemberNameById(
+    client,
+    workspaceMemberId,
+  );
 
   const dmResult = await sendSlackUserLinkConsentDm(slackClient, {
     slackTeamId,
