@@ -526,6 +526,25 @@ describe('slackSetUserLinkHandler', () => {
     });
   });
 
+  it('should refuse a team id that disagrees with the workspace the email resolved to', async () => {
+    resolveSlackUserByEmailMock.mockResolvedValue({
+      slackUserId: 'U9999999999',
+      slackTeamId: INSTALLED_TEAM_ID,
+      displayName: 'Ada Lovelace',
+    });
+
+    const result = await slackSetUserLinkHandler({
+      email: 'ada@example.com',
+      slackTeamId: 'T_ELSEWHERE',
+      workspaceMemberId: 'workspace-member-1',
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain(INSTALLED_TEAM_ID);
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
+  });
+
   it('should fail with a helpful error when the email is not in the workspace', async () => {
     resolveSlackUserByEmailMock.mockResolvedValue(undefined);
 
@@ -558,6 +577,15 @@ describe('slackSetUserLinkHandler', () => {
       slackTeamId: INSTALLED_TEAM_ID,
       displayName: 'Ada Lovelace',
     });
+    // The match only counts once users.info certifies the account's own
+    // profile email, exactly like an id submission.
+    fetchSlackUserIdentityMock.mockResolvedValue({
+      slackUserId: 'U9999999999',
+      slackTeamId: INSTALLED_TEAM_ID,
+      displayName: 'Ada Lovelace',
+      email: 'ada@example.com',
+      isRegularUserAccount: true,
+    });
     findWorkspaceMemberEmailByIdMock.mockResolvedValue('Ada@Example.com');
 
     const result = await slackSetUserLinkHandler({
@@ -579,6 +607,34 @@ describe('slackSetUserLinkHandler', () => {
       consentState: 'ACTIVE',
     });
     expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
+  it('should still ask for consent when an email-submitted account is not a regular user', async () => {
+    resolveSlackUserByEmailMock.mockResolvedValue({
+      slackUserId: 'U9999999999',
+      slackTeamId: INSTALLED_TEAM_ID,
+      displayName: 'Guest',
+    });
+    fetchSlackUserIdentityMock.mockResolvedValue({
+      slackUserId: 'U9999999999',
+      slackTeamId: INSTALLED_TEAM_ID,
+      displayName: 'Guest',
+      email: 'ada@example.com',
+      isRegularUserAccount: false,
+    });
+    findWorkspaceMemberEmailByIdMock.mockResolvedValue('ada@example.com');
+
+    const result = await slackSetUserLinkHandler({
+      email: 'ada@example.com',
+      workspaceMemberId: 'workspace-member-1',
+    });
+
+    expect(result.success).toBe(true);
+    expect(createSlackUserLinkMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ source: 'MANUAL', consentState: 'PENDING' }),
+    );
+    expect(sendSlackUserLinkConsentDmMock).toHaveBeenCalled();
   });
 
   it('should activate immediately when a regular account given by id matches the member email', async () => {

@@ -17,6 +17,7 @@ const buildSlackUser = (overrides: Record<string, unknown> = {}) => ({
   id: SLACK_USER_ID,
   team_id: INSTALLED_TEAM_ID,
   real_name: 'Ada Lovelace',
+  is_email_confirmed: true,
   ...overrides,
 });
 
@@ -46,12 +47,46 @@ describe('resolveSlackUserByEmail', () => {
     expect(await resolveSlackUserByEmail(client, EMAIL)).toBeUndefined();
   });
 
+  it('should refuse an account whose profile email Slack has not confirmed', async () => {
+    lookupByEmailMock.mockResolvedValue({
+      user: buildSlackUser({ is_email_confirmed: false }),
+    });
+
+    expect(await resolveSlackUserByEmail(client, EMAIL)).toBeUndefined();
+  });
+
+  it('should refuse a bot account', async () => {
+    lookupByEmailMock.mockResolvedValue({
+      user: buildSlackUser({ is_bot: true }),
+    });
+
+    expect(await resolveSlackUserByEmail(client, EMAIL)).toBeUndefined();
+  });
+
+  it('should refuse a deactivated account', async () => {
+    lookupByEmailMock.mockResolvedValue({
+      user: buildSlackUser({ deleted: true }),
+    });
+
+    expect(await resolveSlackUserByEmail(client, EMAIL)).toBeUndefined();
+  });
+
   it('should resolve the Slack user id, team id and display name', async () => {
     expect(await resolveSlackUserByEmail(client, EMAIL)).toEqual({
       slackUserId: SLACK_USER_ID,
       slackTeamId: INSTALLED_TEAM_ID,
       displayName: 'Ada Lovelace',
     });
+  });
+
+  it('should prefer the profile display name over the real name', async () => {
+    lookupByEmailMock.mockResolvedValue({
+      user: buildSlackUser({ profile: { display_name: 'ada' } }),
+    });
+
+    const resolved = await resolveSlackUserByEmail(client, EMAIL);
+
+    expect(resolved?.displayName).toBe('ada');
   });
 
   it('should leave the team id undefined when Slack omits it', async () => {

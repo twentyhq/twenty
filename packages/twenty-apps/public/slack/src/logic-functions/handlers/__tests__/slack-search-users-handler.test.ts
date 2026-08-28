@@ -31,12 +31,14 @@ const INSTALLED_TEAM_ID = 'T0INSTALLED';
 const ADA = {
   id: 'U0ADA',
   real_name: 'Ada Lovelace',
+  is_email_confirmed: true,
   profile: { display_name: 'ada', email: 'ada@twenty.com' },
 };
 
 const BOB = {
   id: 'U0BOB',
   real_name: 'Bob Builder',
+  is_email_confirmed: true,
   profile: { display_name: 'bob', email: 'bob@twenty.com' },
 };
 
@@ -87,6 +89,39 @@ describe('slackSearchUsersHandler', () => {
         },
       ],
     });
+  });
+
+  it('should list a guest but leave their email out of the option', async () => {
+    usersListMock.mockResolvedValue({
+      members: [{ ...ADA, is_restricted: true }],
+    });
+
+    const result = await slackSearchUsersHandler(buildPayload('ada'));
+
+    expect(result).toEqual({
+      success: true,
+      slackUsers: [
+        {
+          slackUserId: 'U0ADA',
+          slackTeamId: INSTALLED_TEAM_ID,
+          displayName: 'ada',
+          email: undefined,
+        },
+      ],
+    });
+  });
+
+  it('should leave an unconfirmed profile email out of the option', async () => {
+    usersListMock.mockResolvedValue({
+      members: [{ ...ADA, is_email_confirmed: false }],
+    });
+
+    const result = await slackSearchUsersHandler(buildPayload('ada'));
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.slackUsers[0]?.email).toBeUndefined();
+    }
   });
 
   it('should skip bots and deleted accounts', async () => {

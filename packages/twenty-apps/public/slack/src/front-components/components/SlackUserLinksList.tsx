@@ -133,8 +133,8 @@ export const SlackUserLinksList = ({
     <StyledList>
       {hasMore && (
         <StyledEmptyState>
-          Showing the first {slackUserLinks.length} links; more exist than can be
-          shown here.
+          Showing {slackUserLinks.length} links; more exist than can be shown
+          here.
         </StyledEmptyState>
       )}
       {slackUserLinks.map((slackUserLink) => {
