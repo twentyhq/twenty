@@ -10,9 +10,12 @@ jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
   useIsFeatureEnabled: () => mockUseIsFeatureEnabled(),
 }));
 
-jest.mock('@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue', () => ({
-  useAtomComponentStateValue: () => mockUseAtomComponentStateValue(),
-}));
+jest.mock(
+  '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue',
+  () => ({
+    useAtomComponentStateValue: () => mockUseAtomComponentStateValue(),
+  }),
+);
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   useObjectMetadataItems: () => mockUseObjectMetadataItems(),
