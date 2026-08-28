@@ -242,18 +242,18 @@ index 7fb2438d75794a0bb258fbfd99325f0646499723..db768e86d7bfb2b4427d0d5f50dca368
          const inputTypeMetadata = metadata ?? type_metadata_storage_1.TypeMetadataStorage.getInputTypesMetadata();
          const inputTypeDefs = inputTypeMetadata.map((item) => this.inputTypeDefinitionFactory.create(item, options));
 diff --git a/dist/services/resolvers-explorer.service.js b/dist/services/resolvers-explorer.service.js
-index f07850b78739e2ea14a297e1b44650de39a2de66..b881ca6ca231eb2031b92270125a832f34393b3a 100644
+index 492edff6ae007b5639decf0c62d86d8a05f4b57c..8cfdf4b26cbbe14a603889618ecd70d2fa45c786 100644
 --- a/dist/services/resolvers-explorer.service.js
 +++ b/dist/services/resolvers-explorer.service.js
-@@ -26,6 +26,7 @@ const ROOT_RESOLVER_TYPES = new Set([
+@@ -27,6 +27,7 @@ const ROOT_RESOLVER_TYPES = new Set([
      resolver_enum_1.Resolver.QUERY,
      resolver_enum_1.Resolver.SUBSCRIPTION,
  ]);
 +const RESOLVER_SCHEMA_SCOPE_KEY = 'RESOLVER_SCHEMA_SCOPE';
  let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplorerService extends base_explorer_service_1.BaseExplorerService {
-     constructor(modulesContainer, metadataScanner, externalContextCreator, gqlOptions, moduleRef, serializedGraph) {
+     constructor(modulesContainer, metadataScanner, externalContextCreator, gqlOptions, moduleRef, serializedGraph, resolverDecoratorHost) {
          super();
-@@ -52,6 +53,14 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
+@@ -54,6 +55,14 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
          if (!instance) {
              return undefined;
          }
@@ -268,7 +268,7 @@ index f07850b78739e2ea14a297e1b44650de39a2de66..b881ca6ca231eb2031b92270125a832f
          const prototype = Object.getPrototypeOf(instance);
          const predicate = (resolverType, isReferenceResolver, isPropertyResolver) => (0, shared_utils_1.isUndefined)(resolverType) ||
              (!isReferenceResolver &&
-@@ -160,6 +169,14 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
+@@ -162,6 +171,14 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
      getAllCtors() {
          const modules = this.getModules(this.modulesContainer, this.gqlOptions.include || []);
          const resolvers = this.flatMap(modules, this.mapToCtor).filter(Boolean);

@@ -5,16 +5,16 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildEditLayoutCommandMenuItemUpdate } from 'src/database/commands/upgrade-version-command/2-37/utils/build-edit-layout-command-menu-item-update.util';
+import { buildEditLayoutCommandMenuItemUpdate } from 'src/database/commands/upgrade-version-command/2-38/utils/build-edit-layout-command-menu-item-update.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.37.0', 1787837054189)
+@RegisteredWorkspaceCommand('2.38.0', 1787906715270)
 @Command({
-  name: 'upgrade:2-37:enable-edit-layout-across-app',
+  name: 'upgrade:2-38:enable-edit-layout-across-app',
   description:
     'Make the Edit Layout command available across the app outside Settings',
 })

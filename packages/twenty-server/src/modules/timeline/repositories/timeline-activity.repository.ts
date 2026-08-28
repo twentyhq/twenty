@@ -4,6 +4,7 @@ import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThan, type ObjectLiteral } from 'typeorm';
 
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/utils/object-record-diff-merge';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
@@ -28,15 +29,42 @@ const ACQUIRE_TIMELINE_ACTIVITY_MERGE_LOCK = `SELECT pg_advisory_xact_lock(hasht
    FROM unnest($1::text[]) WITH ORDINALITY AS "locks"("lockName", "ordinality")
    ORDER BY "ordinality"`;
 
+const isForeignKeyViolation = (error: unknown): boolean =>
+  (error as Error & { cause?: { code?: unknown } }).cause?.code ===
+  POSTGRESQL_ERROR_CODES.FOREIGN_KEY_VIOLATION;
+
 @Injectable()
 export class TimelineActivityRepository {
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
-  async upsertTimelineActivities({
+  async upsertTimelineActivities(
+    args: TimelineActivityPayloadWorkspaceIdAndObjectSingularName,
+  ) {
+    try {
+      await this.upsertTimelineActivitiesOnce({
+        ...args,
+        shouldFilterMissingTargets: false,
+      });
+    } catch (error) {
+      if (!isForeignKeyViolation(error)) {
+        throw error;
+      }
+
+      await this.upsertTimelineActivitiesOnce({
+        ...args,
+        shouldFilterMissingTargets: true,
+      });
+    }
+  }
+
+  private async upsertTimelineActivitiesOnce({
     objectSingularName,
     workspaceId,
     payloads,
-  }: TimelineActivityPayloadWorkspaceIdAndObjectSingularName) {
+    shouldFilterMissingTargets,
+  }: TimelineActivityPayloadWorkspaceIdAndObjectSingularName & {
+    shouldFilterMissingTargets: boolean;
+  }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
@@ -139,6 +167,14 @@ export class TimelineActivityRepository {
             }
           }
 
+          const insertablePayloads = shouldFilterMissingTargets
+            ? await this.filterPayloadsWithExistingTarget({
+                transactionScope,
+                objectSingularName,
+                payloads: payloadsToInsert,
+              })
+            : payloadsToInsert;
+
           await Promise.all([
             this.updateTimelineActivities({
               timelineActivityRepository,
@@ -147,12 +183,45 @@ export class TimelineActivityRepository {
             this.insertTimelineActivities({
               timelineActivityRepository,
               objectSingularName,
-              payloads: payloadsToInsert,
+              payloads: insertablePayloads,
             }),
           ]);
         },
       );
     }, authContext);
+  }
+
+  private async filterPayloadsWithExistingTarget({
+    transactionScope,
+    objectSingularName,
+    payloads,
+  }: {
+    transactionScope: WorkspaceTransactionScope;
+    objectSingularName: string;
+    payloads: TimelineActivityPayloadWorkspaceIdAndObjectSingularName['payloads'];
+  }) {
+    if (payloads.length === 0) {
+      return payloads;
+    }
+
+    const targetRepository = transactionScope.getRepository<ObjectLiteral>(
+      objectSingularName,
+      { shouldBypassPermissionChecks: true },
+    );
+
+    const existingRecords = await targetRepository.find({
+      select: ['id'],
+      where: { id: In(payloads.map((payload) => payload.recordId)) },
+      withDeleted: true,
+    });
+
+    const existingRecordIds = new Set(
+      existingRecords.map((record) => record.id),
+    );
+
+    return payloads.filter((payload) =>
+      existingRecordIds.has(payload.recordId),
+    );
   }
 
   private async acquireMergeLocks({

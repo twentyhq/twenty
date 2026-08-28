@@ -13,6 +13,7 @@ import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/app
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -27,7 +28,11 @@ const APP_TOKEN_RATE_LIMIT_WINDOW_MS = 30_000;
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
-@UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
+@UseFilters(
+  ApplicationExceptionFilter,
+  AuthGraphqlApiExceptionFilter,
+  ThrottlerGraphqlApiExceptionFilter,
+)
 @UseGuards(WorkspaceAuthGuard)
 export class ApplicationOAuthResolver {
   constructor(

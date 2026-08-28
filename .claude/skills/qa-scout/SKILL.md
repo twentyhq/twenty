@@ -27,7 +27,7 @@ The invoking prompt gives you concrete paths. In CI they are:
 | Server log (live) | `/tmp/qa-scout/server.log` |
 | Worker log (live) | `/tmp/qa-scout/worker.log` |
 | Run mode | `/tmp/qa-scout/context/mode`: `post-merge` (the change is on main) or `pre-merge` (label-triggered validation of the PR head before merge) |
-| Database (disposable, full access) | `postgres://postgres:postgres@localhost:5432/default` via `psql` |
+| Database (disposable, full access) | `psql -h localhost -U postgres -d default` (PGPASSWORD is set; the URI `postgres://postgres:postgres@localhost:5432/default` also works) |
 
 This environment is ephemeral, so unlike a shared instance you have full
 power here: use `psql` to attest what the UI cannot show. After a write flow,
@@ -80,7 +80,11 @@ own browser observations unreliable.
 
 ## Verdict contract
 
-Always write both files to the output directory, whatever happens:
+Always write both files to the output directory, whatever happens. Write
+first versions right after scoping, before the first scenario (verdict
+INVESTIGATE, headline "run still in progress", scenarios listed as pending),
+then update both after each scenario and finalize at the end: a run that dies
+on turns or time then leaves your last known state instead of silence.
 
 `verdict.json`:
 

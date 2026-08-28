@@ -41,7 +41,10 @@ export const submitPartnerContentForReview = async (
 
   try {
     const client = buildAppClient();
-    const content = await queryContentOwnerAndStatus(client, parsed.data.recordId);
+    const content = await queryContentOwnerAndStatus(
+      client,
+      parsed.data.recordId,
+    );
 
     if (!content || content.partnerId !== resolved.partnerId) {
       return errorResponse('FORBIDDEN');

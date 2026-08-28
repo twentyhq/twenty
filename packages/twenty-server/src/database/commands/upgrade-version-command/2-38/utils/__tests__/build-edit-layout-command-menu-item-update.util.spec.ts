@@ -1,6 +1,6 @@
 import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 
-import { buildEditLayoutCommandMenuItemUpdate } from 'src/database/commands/upgrade-version-command/2-37/utils/build-edit-layout-command-menu-item-update.util';
+import { buildEditLayoutCommandMenuItemUpdate } from 'src/database/commands/upgrade-version-command/2-38/utils/build-edit-layout-command-menu-item-update.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { createStandardCommandMenuItemFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/command-menu-item/create-standard-command-menu-item-flat-metadata.util';
