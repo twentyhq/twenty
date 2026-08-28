@@ -4,7 +4,10 @@ import userEvent from '@testing-library/user-event';
 import type * as TwentyIcons from 'twenty-ui/icon';
 
 const mockNavigateToMoreWidgets = jest.fn();
-const mockCreateRecordPageNoteWidget = jest.fn();
+const mockCreateRecordPageNoteWidget = jest.fn(() => ({ id: 'new-note' }));
+const mockCreateRecordPageFieldWidget = jest.fn(() => ({ id: 'new-field' }));
+const mockCreateRecordPageFieldsWidget = jest.fn(() => ({ id: 'new-fields' }));
+const mockInsertCreatedWidgetAtContext = jest.fn();
 
 jest.mock('twenty-ui/icon', () => ({
   ...jest.requireActual<typeof TwentyIcons>('twenty-ui/icon'),
@@ -24,12 +27,18 @@ jest.mock('@/page-layout/hooks/useNavigateToMoreWidgets', () => ({
 }));
 jest.mock('@/page-layout/hooks/useCreateRecordPageFieldWidget', () => ({
   useCreateRecordPageFieldWidget: () => ({
-    createRecordPageFieldWidget: jest.fn(),
+    createRecordPageFieldWidget: mockCreateRecordPageFieldWidget,
   }),
 }));
 jest.mock('@/page-layout/hooks/useCreateRecordPageFieldsWidget', () => ({
   useCreateRecordPageFieldsWidget: () => ({
-    createRecordPageFieldsWidget: jest.fn(),
+    createRecordPageFieldsWidget: mockCreateRecordPageFieldsWidget,
+  }),
+}));
+
+jest.mock('@/page-layout/hooks/useInsertCreatedWidgetAtContext', () => ({
+  useInsertCreatedWidgetAtContext: () => ({
+    insertCreatedWidgetAtContext: mockInsertCreatedWidgetAtContext,
   }),
 }));
 jest.mock('@/page-layout/hooks/useCreateRecordPageNoteWidget', () => ({
@@ -45,6 +54,7 @@ describe('RecordPageAddWidgetSection', () => {
     render(<RecordPageAddWidgetSection />);
     await userEvent.setup().click(screen.getByText('More widgets'));
     expect(mockNavigateToMoreWidgets).toHaveBeenCalledTimes(1);
+    expect(mockNavigateToMoreWidgets).toHaveBeenCalledWith(null);
   });
 
   it('shows the expanded chooser', () => {
@@ -66,5 +76,45 @@ describe('RecordPageAddWidgetSection', () => {
     expect(mockCreateRecordPageNoteWidget).toHaveBeenCalledWith({
       tabId: 'tab-1',
     });
+    expect(mockInsertCreatedWidgetAtContext).toHaveBeenCalledWith(
+      'new-note',
+      null,
+    );
+  });
+
+  it.each([
+    ['Fields group', 'new-fields'],
+    ['Field', 'new-field'],
+    ['Note', 'new-note'],
+  ])(
+    'inserts %s before the first widget from the top chooser',
+    async (label, widgetId) => {
+      const insertionContext = {
+        targetWidgetId: 'first-widget',
+        direction: 'above',
+      } as const;
+      render(
+        <RecordPageAddWidgetSection insertionContext={insertionContext} />,
+      );
+
+      await userEvent.setup().click(screen.getByText(label, { exact: true }));
+
+      expect(mockInsertCreatedWidgetAtContext).toHaveBeenCalledWith(
+        widgetId,
+        insertionContext,
+      );
+    },
+  );
+
+  it('preserves the top insertion point when opening More widgets', async () => {
+    const insertionContext = {
+      targetWidgetId: 'first-widget',
+      direction: 'above',
+    } as const;
+    render(<RecordPageAddWidgetSection insertionContext={insertionContext} />);
+
+    await userEvent.setup().click(screen.getByText('More widgets'));
+
+    expect(mockNavigateToMoreWidgets).toHaveBeenCalledWith(insertionContext);
   });
 });

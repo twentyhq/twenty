@@ -1,4 +1,5 @@
 import { PageLayoutContent } from '@/page-layout/components/PageLayoutContent';
+import { type WidgetInsertionContext } from '@/page-layout/states/widgetInsertionContextComponentState';
 import { makeTab } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { render, screen } from '@testing-library/react';
@@ -113,7 +114,18 @@ jest.mock('@/page-layout/widgets/components/WidgetRenderer', () => {
 jest.mock(
   '@/page-layout/widgets/components/RecordPageAddWidgetSection',
   () => ({
-    RecordPageAddWidgetSection: () => <div>Add widget</div>,
+    RecordPageAddWidgetSection: ({
+      insertionContext = null,
+    }: {
+      insertionContext?: WidgetInsertionContext;
+    }) => (
+      <div>
+        <span>Add widget</span>
+        <button onClick={() => mockNavigateToMoreWidgets(insertionContext)}>
+          More widgets
+        </button>
+      </div>
+    ),
   }),
 );
 
@@ -164,18 +176,43 @@ describe('PageLayoutContent', () => {
       'aria-expanded',
       'true',
     );
-    expect(screen.getByText('Add widget')).toBeInTheDocument();
+    expect(screen.getAllByText('Add widget')).toHaveLength(2);
   });
 
-  it('keeps the expanded chooser after the last fit-content widget', () => {
+  it('shows expanded choosers before and after fit-content widgets without a top plus', () => {
     mockIsInEditMode = true;
     render(<PageLayoutContent />);
-    const addWidget = screen.getByText('Add widget');
+    const [topChooser, bottomChooser] = screen.getAllByText('Add widget');
+    const widget = screen.getByRole('button', { name: 'Fields' });
     expect(
-      screen
-        .getByRole('button', { name: 'Fields' })
-        .compareDocumentPosition(addWidget) & Node.DOCUMENT_POSITION_FOLLOWING,
+      topChooser.compareDocumentPosition(widget) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
+    expect(
+      widget.compareDocumentPosition(bottomChooser) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      screen.queryByRole('button', { name: 'Add widget above Fields' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('opens the top chooser before the first widget and keeps the bottom chooser appending', async () => {
+    mockIsInEditMode = true;
+    render(<PageLayoutContent />);
+    const user = userEvent.setup();
+    const [topPicker, bottomPicker] = screen.getAllByRole('button', {
+      name: 'More widgets',
+    });
+
+    await user.click(topPicker);
+    expect(mockNavigateToMoreWidgets).toHaveBeenLastCalledWith({
+      targetWidgetId: 'widget-id',
+      direction: 'above',
+    });
+
+    await user.click(bottomPicker);
+    expect(mockNavigateToMoreWidgets).toHaveBeenLastCalledWith(null);
   });
 
   it.each([
@@ -187,27 +224,35 @@ describe('PageLayoutContent', () => {
     WidgetType.CALENDAR,
     WidgetType.WORKFLOW,
     WidgetType.CALL_RECORDING_SUMMARY,
-  ])('hides the expanded chooser when a %s widget fills the tab', (type) => {
-    mockIsInEditMode = true;
-    mockTab.widgets.push({
-      ...mockWidget,
-      id: 'full-height',
-      title: 'Full-height widget',
-      type,
-    });
+  ])(
+    'keeps only the top expanded chooser when a %s widget fills the tab',
+    (type) => {
+      mockIsInEditMode = true;
+      mockTab.widgets.push({
+        ...mockWidget,
+        id: 'full-height',
+        title: 'Full-height widget',
+        type,
+      });
 
-    render(<PageLayoutContent />);
+      render(<PageLayoutContent />);
 
-    expect(screen.queryByText('Add widget')).not.toBeInTheDocument();
-    expect(
-      screen.getByRole('button', {
-        name: 'Add widget above Full-height widget',
-      }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getAllByRole('button', { name: /^Add widget above / }),
-    ).toHaveLength(2);
-  });
+      const topChooser = screen.getByText('Add widget');
+      expect(
+        topChooser.compareDocumentPosition(
+          screen.getByRole('button', { name: 'Fields' }),
+        ) & Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy();
+      expect(
+        screen.getByRole('button', {
+          name: 'Add widget above Full-height widget',
+        }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getAllByRole('button', { name: /^Add widget above / }),
+      ).toHaveLength(1);
+    },
+  );
 
   it('opens the picker at the gap before a full-height widget', async () => {
     mockIsInEditMode = true;
@@ -241,7 +286,7 @@ describe('PageLayoutContent', () => {
     });
   });
 
-  it('keeps an insertion point above a lone full-height widget', () => {
+  it('replaces the top plus with an expanded chooser above a lone full-height widget', async () => {
     mockIsInEditMode = true;
     mockTab.widgets = [
       { ...mockWidget, id: 'tasks', title: 'Tasks', type: WidgetType.TASKS },
@@ -249,37 +294,67 @@ describe('PageLayoutContent', () => {
 
     render(<PageLayoutContent />);
     expect(
-      screen.getByRole('button', { name: 'Add widget above Tasks' }),
-    ).toBeInTheDocument();
-    expect(screen.queryByText('Add widget')).not.toBeInTheDocument();
+      screen
+        .getByText('Add widget')
+        .compareDocumentPosition(
+          screen.getByRole('button', { name: 'Tasks' }),
+        ) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      screen.queryByRole('button', { name: /^Add widget above / }),
+    ).not.toBeInTheDocument();
+
+    await userEvent
+      .setup()
+      .click(screen.getByRole('button', { name: 'More widgets' }));
+    expect(mockNavigateToMoreWidgets).toHaveBeenCalledWith({
+      targetWidgetId: 'tasks',
+      direction: 'above',
+    });
   });
 
-  it('opens an insertion point with the keyboard', async () => {
+  it('keeps the top chooser and between-widget insertion point keyboard accessible', async () => {
     mockIsInEditMode = true;
+    mockTab.widgets.push({
+      ...mockWidget,
+      id: 'tasks',
+      title: 'Tasks',
+      type: WidgetType.TASKS,
+    });
     render(<PageLayoutContent />);
     const user = userEvent.setup();
     await user.tab();
+    expect(screen.getByRole('button', { name: 'More widgets' })).toHaveFocus();
+    await user.tab();
+    await user.tab();
     expect(
-      screen.getByRole('button', { name: 'Add widget above Fields' }),
+      screen.getByRole('button', { name: 'Add widget above Tasks' }),
     ).toHaveFocus();
     await user.keyboard('{Enter}');
     expect(mockNavigateToMoreWidgets).toHaveBeenCalledWith({
-      targetWidgetId: 'widget-id',
+      targetWidgetId: 'tasks',
       direction: 'above',
     });
   });
 
   it('removes insertion controls when leaving edit mode', () => {
     mockIsInEditMode = true;
+    mockTab.widgets.push({
+      ...mockWidget,
+      id: 'tasks',
+      title: 'Tasks',
+      type: WidgetType.TASKS,
+    });
     const { rerender } = render(<PageLayoutContent />);
     expect(
-      screen.getByRole('button', { name: 'Add widget above Fields' }),
+      screen.getByRole('button', { name: 'Add widget above Tasks' }),
     ).toBeInTheDocument();
     mockIsInEditMode = false;
     rerender(<PageLayoutContent />);
     expect(
       screen.queryByRole('button', { name: /^Add widget above / }),
     ).not.toBeInTheDocument();
+    expect(screen.queryByText('Add widget')).not.toBeInTheDocument();
   });
 
   it('keeps the expanded chooser on empty tabs', () => {

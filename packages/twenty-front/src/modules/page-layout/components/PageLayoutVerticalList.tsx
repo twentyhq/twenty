@@ -14,6 +14,7 @@ import { pointerIntersection } from '@dnd-kit/collision';
 import { useDroppable } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { Fragment, type ReactNode, useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
@@ -58,6 +59,11 @@ const StyledVerticalListContainer = styled.div<{
       : '0'};
 `;
 
+const StyledHeader = styled.div`
+  flex-shrink: 0;
+  margin-bottom: ${themeCssVariables.spacing[4]};
+`;
+
 const StyledDropTarget = styled.div`
   display: flex;
   flex: 1;
@@ -73,12 +79,14 @@ const StyledDropTarget = styled.div`
 type PageLayoutVerticalListProps = {
   isInEditMode: boolean;
   widgets: PageLayoutWidget[];
+  header?: ReactNode;
   footer?: ReactNode;
 };
 
 export const PageLayoutVerticalList = ({
   isInEditMode,
   widgets,
+  header,
   footer,
 }: PageLayoutVerticalListProps) => {
   const { layoutMode, tabId } = usePageLayoutContentContext();
@@ -138,9 +146,13 @@ export const PageLayoutVerticalList = ({
       shouldUseWhiteBackground={!isInPinnedTab || isMobile}
     >
       <WorkflowDiagramAllowPageScrollContext.Provider value={hasPageScroll}>
+        {isInEditMode && isDefined(header) && (
+          <StyledHeader>{header}</StyledHeader>
+        )}
         {widgets.map((widget, index) => (
           <Fragment key={widget.id}>
             {isInEditMode &&
+              index > 0 &&
               (!hasViewportFillingWidget ||
                 index <= firstViewportFillingWidgetIndex) && (
                 <RecordPageWidgetInsertionSeparator widget={widget} />

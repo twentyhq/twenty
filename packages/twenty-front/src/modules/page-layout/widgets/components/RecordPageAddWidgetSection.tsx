@@ -2,7 +2,10 @@ import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutCo
 import { useCreateRecordPageFieldWidget } from '@/page-layout/hooks/useCreateRecordPageFieldWidget';
 import { useCreateRecordPageFieldsWidget } from '@/page-layout/hooks/useCreateRecordPageFieldsWidget';
 import { useCreateRecordPageNoteWidget } from '@/page-layout/hooks/useCreateRecordPageNoteWidget';
+import { useInsertCreatedWidgetAtContext } from '@/page-layout/hooks/useInsertCreatedWidgetAtContext';
 import { useNavigateToMoreWidgets } from '@/page-layout/hooks/useNavigateToMoreWidgets';
+import { type WidgetInsertionContext } from '@/page-layout/states/widgetInsertionContextComponentState';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
@@ -44,7 +47,13 @@ const StyledMenuItemList = styled.div`
   padding: ${themeCssVariables.spacing[2]};
 `;
 
-export const RecordPageAddWidgetSection = () => {
+type RecordPageAddWidgetSectionProps = {
+  insertionContext?: WidgetInsertionContext;
+};
+
+export const RecordPageAddWidgetSection = ({
+  insertionContext = null,
+}: RecordPageAddWidgetSectionProps) => {
   const { tabId } = usePageLayoutContentContext();
 
   const { createRecordPageFieldsWidget } = useCreateRecordPageFieldsWidget();
@@ -55,6 +64,13 @@ export const RecordPageAddWidgetSection = () => {
 
   const { navigateToMoreWidgets } = useNavigateToMoreWidgets();
 
+  const { insertCreatedWidgetAtContext } = useInsertCreatedWidgetAtContext();
+
+  const handleCreateWidget = (createWidget: () => PageLayoutWidget) => {
+    const widget = createWidget();
+    insertCreatedWidgetAtContext(widget.id, insertionContext);
+  };
+
   return (
     <StyledContainer>
       <StyledHeader>{t`Add widget`}</StyledHeader>
@@ -64,28 +80,30 @@ export const RecordPageAddWidgetSection = () => {
           withIconContainer
           text={t`Fields group`}
           contextualText={t`Group multiple fields from this record`}
-          onClick={createRecordPageFieldsWidget}
+          onClick={() => handleCreateWidget(createRecordPageFieldsWidget)}
         />
         <MenuItem
           LeftIcon={IconListSearch}
           withIconContainer
           text={t`Field`}
           contextualText={t`Single field with smart formats`}
-          onClick={createRecordPageFieldWidget}
+          onClick={() => handleCreateWidget(createRecordPageFieldWidget)}
         />
         <MenuItem
           LeftIcon={IconNotes}
           withIconContainer
           text={t`Note`}
           contextualText={t`Static text shared across all record pages`}
-          onClick={() => createRecordPageNoteWidget({ tabId })}
+          onClick={() =>
+            handleCreateWidget(() => createRecordPageNoteWidget({ tabId }))
+          }
         />
         <MenuItem
           LeftIcon={IconPlus}
           withIconContainer
           text={t`More widgets`}
           hasSubMenu
-          onClick={() => navigateToMoreWidgets()}
+          onClick={() => navigateToMoreWidgets(insertionContext)}
         />
       </StyledMenuItemList>
     </StyledContainer>
