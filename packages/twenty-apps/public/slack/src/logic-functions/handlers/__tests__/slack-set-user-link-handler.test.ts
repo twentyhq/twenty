@@ -11,6 +11,10 @@ const {
   createSlackUserLinkMock,
   updateSlackUserLinkMock,
   resolveSlackUserByEmailMock,
+  fetchSlackUserIdentityMock,
+  findWorkspaceMemberEmailByIdMock,
+  findWorkspaceMemberNameByIdMock,
+  sendSlackUserLinkConsentDmMock,
 } = vi.hoisted(() => ({
   currentUserHasWorkspaceMembersPermissionMock: vi.fn(),
   coreApiClientMock: vi.fn(),
@@ -20,6 +24,10 @@ const {
   createSlackUserLinkMock: vi.fn(),
   updateSlackUserLinkMock: vi.fn(),
   resolveSlackUserByEmailMock: vi.fn(),
+  fetchSlackUserIdentityMock: vi.fn(),
+  findWorkspaceMemberEmailByIdMock: vi.fn(),
+  findWorkspaceMemberNameByIdMock: vi.fn(),
+  sendSlackUserLinkConsentDmMock: vi.fn(),
 }));
 
 vi.mock(
@@ -42,6 +50,10 @@ vi.mock('src/logic-functions/utils/resolve-slack-user-by-email', () => ({
   resolveSlackUserByEmail: resolveSlackUserByEmailMock,
 }));
 
+vi.mock('src/logic-functions/utils/fetch-slack-user-identity', () => ({
+  fetchSlackUserIdentity: fetchSlackUserIdentityMock,
+}));
+
 vi.mock('src/logic-functions/data/find-slack-user-link', () => ({
   findSlackUserLink: findSlackUserLinkMock,
 }));
@@ -54,6 +66,21 @@ vi.mock('src/logic-functions/data/update-slack-user-link', () => ({
   updateSlackUserLink: updateSlackUserLinkMock,
 }));
 
+vi.mock('src/logic-functions/data/find-workspace-member-email-by-id', () => ({
+  findWorkspaceMemberEmailById: findWorkspaceMemberEmailByIdMock,
+}));
+
+vi.mock('src/logic-functions/data/find-workspace-member-name-by-id', () => ({
+  findWorkspaceMemberNameById: findWorkspaceMemberNameByIdMock,
+}));
+
+vi.mock('src/logic-functions/utils/send-slack-user-link-consent-dm', () => ({
+  sendSlackUserLinkConsentDm: sendSlackUserLinkConsentDmMock,
+}));
+
+const INSTALLED_TEAM_ID = 'T0123456789';
+
+// A Slack user in the installed workspace: linking asks them to consent first.
 const INPUT = {
   slackUserId: 'U0123456789',
   workspaceMemberId: 'workspace-member-1',
@@ -67,8 +94,19 @@ describe('slackSetUserLinkHandler', () => {
       success: true,
       client: { auth: { test: authTestMock } },
     });
-    authTestMock.mockResolvedValue({ team_id: 'T0123456789' });
+    authTestMock.mockResolvedValue({ team_id: INSTALLED_TEAM_ID });
     findSlackUserLinkMock.mockResolvedValue(undefined);
+    createSlackUserLinkMock.mockResolvedValue('link-new');
+    // A directly-supplied id resolves to the installed team by default (a normal
+    // in-workspace user); tests override this for cross-workspace or failure.
+    fetchSlackUserIdentityMock.mockResolvedValue({
+      slackUserId: INPUT.slackUserId,
+      slackTeamId: INSTALLED_TEAM_ID,
+      displayName: undefined,
+    });
+    findWorkspaceMemberEmailByIdMock.mockResolvedValue(undefined);
+    findWorkspaceMemberNameByIdMock.mockResolvedValue('Ada Member');
+    sendSlackUserLinkConsentDmMock.mockResolvedValue({ success: true });
   });
 
   it('should refuse when the triggering person lacks the workspace members permission', async () => {
@@ -119,7 +157,127 @@ describe('slackSetUserLinkHandler', () => {
     expect(result.error).toBe('write refused');
   });
 
-  it('should not require a Slack connection when a team id is provided', async () => {
+  it('should create a pending link and send a consent request for an in-workspace user', async () => {
+    const result = await slackSetUserLinkHandler({ ...INPUT, name: 'Ada' });
+
+    expect(result.success).toBe(true);
+    expect(createSlackUserLinkMock).toHaveBeenCalledTimes(1);
+    expect(createSlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
+      slackTeamId: INSTALLED_TEAM_ID,
+      slackUserId: INPUT.slackUserId,
+      workspaceMemberId: INPUT.workspaceMemberId,
+      name: 'Ada',
+      source: 'MANUAL',
+      consentState: 'PENDING',
+    });
+    expect(sendSlackUserLinkConsentDmMock).toHaveBeenCalledTimes(1);
+    expect(sendSlackUserLinkConsentDmMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        slackUserId: INPUT.slackUserId,
+        slackTeamId: INSTALLED_TEAM_ID,
+        workspaceMemberId: INPUT.workspaceMemberId,
+        slackUserLinkId: 'link-new',
+        memberName: 'Ada Member',
+      }),
+    );
+    expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
+  });
+
+  it('should still succeed as pending when the consent request cannot be delivered', async () => {
+    sendSlackUserLinkConsentDmMock.mockResolvedValue({
+      success: false,
+      error: 'channel_not_found',
+    });
+
+    const result = await slackSetUserLinkHandler(INPUT);
+
+    expect(result.success).toBe(true);
+    expect(result.message).toContain('Resend');
+    expect(createSlackUserLinkMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ consentState: 'PENDING' }),
+    );
+  });
+
+  it('should admin-set the link without consent for a Slack Connect user from another workspace', async () => {
+    const result = await slackSetUserLinkHandler({
+      ...INPUT,
+      slackTeamId: 'T9876543210',
+    });
+
+    expect(result.success).toBe(true);
+    expect(createSlackUserLinkMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        slackTeamId: 'T9876543210',
+        consentState: 'ADMIN_SET',
+      }),
+    );
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
+  it('should fail closed when the installed workspace cannot be verified', async () => {
+    authTestMock.mockResolvedValue({});
+
+    const result = await slackSetUserLinkHandler({
+      ...INPUT,
+      slackTeamId: 'T9876543210',
+    });
+
+    expect(result.success).toBe(false);
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
+  it('should fail closed when an id-only user cannot be resolved to a workspace', async () => {
+    fetchSlackUserIdentityMock.mockResolvedValue(undefined);
+
+    const result = await slackSetUserLinkHandler(INPUT);
+
+    expect(result.success).toBe(false);
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
+  it('should fail closed when the identity lookup omits the team id', async () => {
+    fetchSlackUserIdentityMock.mockResolvedValue({
+      slackUserId: INPUT.slackUserId,
+      slackTeamId: undefined,
+      displayName: 'Ada Lovelace',
+    });
+
+    const result = await slackSetUserLinkHandler(INPUT);
+
+    expect(result.success).toBe(false);
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
+  it('should admin-set a cross-workspace user given by id without a team id', async () => {
+    fetchSlackUserIdentityMock.mockResolvedValue({
+      slackUserId: INPUT.slackUserId,
+      slackTeamId: 'T-EXTERNAL',
+      displayName: 'Guest',
+    });
+
+    const result = await slackSetUserLinkHandler(INPUT);
+
+    expect(result.success).toBe(true);
+    expect(createSlackUserLinkMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        slackTeamId: 'T-EXTERNAL',
+        consentState: 'ADMIN_SET',
+      }),
+    );
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
+  it('should require a Slack connection even when a team id is provided', async () => {
     getSlackClientMock.mockResolvedValue({
       success: false,
       error: 'Slack is not connected.',
@@ -130,46 +288,17 @@ describe('slackSetUserLinkHandler', () => {
       slackTeamId: 'T9876543210',
     });
 
-    expect(result.success).toBe(true);
-    expect(getSlackClientMock).not.toHaveBeenCalled();
-    expect(createSlackUserLinkMock).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.objectContaining({ slackTeamId: 'T9876543210' }),
-    );
+    expect(result.success).toBe(false);
+    expect(getSlackClientMock).toHaveBeenCalled();
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
-  it('should store the link under the requested team for Slack Connect users', async () => {
-    const result = await slackSetUserLinkHandler({
-      ...INPUT,
-      slackTeamId: 'T9876543210',
-    });
-
-    expect(result.success).toBe(true);
-    expect(createSlackUserLinkMock).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.objectContaining({ slackTeamId: 'T9876543210' }),
-    );
-  });
-
-  it('should create a manual link when none exists', async () => {
-    const result = await slackSetUserLinkHandler({ ...INPUT, name: 'Ada' });
-
-    expect(result.success).toBe(true);
-    expect(createSlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
-      slackTeamId: 'T0123456789',
-      slackUserId: INPUT.slackUserId,
-      workspaceMemberId: INPUT.workspaceMemberId,
-      name: 'Ada',
-      source: 'MANUAL',
-    });
-    expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
-  });
-
-  it('should update the existing link and mark it manual', async () => {
+  it('should update the existing link, mark it manual and reset it to pending', async () => {
     findSlackUserLinkMock.mockResolvedValue({
       id: 'link-1',
       workspaceMemberId: 'someone-else',
       source: 'AUTO',
+      consentState: 'ACTIVE',
     });
 
     const result = await slackSetUserLinkHandler({ ...INPUT, name: 'Ada' });
@@ -180,8 +309,111 @@ describe('slackSetUserLinkHandler', () => {
       workspaceMemberId: INPUT.workspaceMemberId,
       name: 'Ada',
       source: 'MANUAL',
+      consentState: 'PENDING',
     });
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+  });
+
+  it('should keep an already-active link active when re-linking the same member', async () => {
+    findSlackUserLinkMock.mockResolvedValue({
+      id: 'link-1',
+      workspaceMemberId: INPUT.workspaceMemberId,
+      source: 'MANUAL',
+      consentState: 'ACTIVE',
+    });
+
+    const result = await slackSetUserLinkHandler({ ...INPUT, name: 'Ada' });
+
+    expect(result.success).toBe(true);
+    expect(updateSlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
+      id: 'link-1',
+      workspaceMemberId: INPUT.workspaceMemberId,
+      name: 'Ada',
+      source: undefined,
+      consentState: undefined,
+    });
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
+  it('should not pin an AUTO link to manual when re-saving the same member', async () => {
+    findSlackUserLinkMock.mockResolvedValue({
+      id: 'link-1',
+      workspaceMemberId: INPUT.workspaceMemberId,
+      source: 'AUTO',
+      consentState: 'ACTIVE',
+    });
+
+    const result = await slackSetUserLinkHandler({ ...INPUT, name: 'Ada' });
+
+    expect(result.success).toBe(true);
+    // Rewriting source would trade the AUTO link's live email re-verification
+    // for a static grant the person never consented to.
+    expect(updateSlackUserLinkMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ source: undefined, consentState: undefined }),
+    );
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
+  it('should respect a decline and not re-request consent when re-linking the same member', async () => {
+    findSlackUserLinkMock.mockResolvedValue({
+      id: 'link-1',
+      workspaceMemberId: INPUT.workspaceMemberId,
+      source: 'MANUAL',
+      consentState: 'DECLINED',
+    });
+
+    const result = await slackSetUserLinkHandler({ ...INPUT, name: 'Ada' });
+
+    expect(result.success).toBe(true);
+    expect(updateSlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
+      id: 'link-1',
+      workspaceMemberId: INPUT.workspaceMemberId,
+      name: 'Ada',
+      source: undefined,
+      consentState: undefined,
+    });
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
+  it('should re-request consent when linking a declined user to a different member', async () => {
+    findSlackUserLinkMock.mockResolvedValue({
+      id: 'link-1',
+      workspaceMemberId: 'someone-else',
+      source: 'MANUAL',
+      consentState: 'DECLINED',
+    });
+
+    const result = await slackSetUserLinkHandler({ ...INPUT, name: 'Ada' });
+
+    expect(result.success).toBe(true);
+    expect(updateSlackUserLinkMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        id: 'link-1',
+        workspaceMemberId: INPUT.workspaceMemberId,
+        consentState: 'PENDING',
+      }),
+    );
+    expect(sendSlackUserLinkConsentDmMock).toHaveBeenCalled();
+  });
+
+  it('should not re-send a consent request when re-saving a still-pending same-member link', async () => {
+    findSlackUserLinkMock.mockResolvedValue({
+      id: 'link-1',
+      workspaceMemberId: INPUT.workspaceMemberId,
+      source: 'MANUAL',
+      consentState: 'PENDING',
+    });
+
+    const result = await slackSetUserLinkHandler({ ...INPUT, name: 'Ada' });
+
+    expect(result.success).toBe(true);
+    expect(updateSlackUserLinkMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ consentState: undefined }),
+    );
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
   });
 
   it('should read the input from the route payload body', async () => {
@@ -233,7 +465,7 @@ describe('slackSetUserLinkHandler', () => {
   it('should resolve the Slack user by email when no user id is given', async () => {
     resolveSlackUserByEmailMock.mockResolvedValue({
       slackUserId: 'U9999999999',
-      slackTeamId: 'T0123456789',
+      slackTeamId: INSTALLED_TEAM_ID,
       displayName: 'Ada Lovelace',
     });
 
@@ -248,11 +480,12 @@ describe('slackSetUserLinkHandler', () => {
       'ada@example.com',
     );
     expect(createSlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
-      slackTeamId: 'T0123456789',
+      slackTeamId: INSTALLED_TEAM_ID,
       slackUserId: 'U9999999999',
       workspaceMemberId: 'workspace-member-1',
       name: 'Ada Lovelace',
       source: 'MANUAL',
+      consentState: 'PENDING',
     });
   });
 
@@ -280,6 +513,130 @@ describe('slackSetUserLinkHandler', () => {
     expect(result.success).toBe(false);
     expect(result.error).toBe('ratelimited');
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+  });
+
+  it('should activate immediately as an AUTO link when the email matches the member', async () => {
+    resolveSlackUserByEmailMock.mockResolvedValue({
+      slackUserId: 'U9999999999',
+      slackTeamId: INSTALLED_TEAM_ID,
+      displayName: 'Ada Lovelace',
+    });
+    findWorkspaceMemberEmailByIdMock.mockResolvedValue('Ada@Example.com');
+
+    const result = await slackSetUserLinkHandler({
+      email: 'ada@example.com',
+      workspaceMemberId: 'workspace-member-1',
+    });
+
+    expect(result.success).toBe(true);
+    expect(findWorkspaceMemberEmailByIdMock).toHaveBeenCalledWith(
+      expect.anything(),
+      'workspace-member-1',
+    );
+    expect(createSlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
+      slackTeamId: INSTALLED_TEAM_ID,
+      slackUserId: 'U9999999999',
+      workspaceMemberId: 'workspace-member-1',
+      name: 'Ada Lovelace',
+      source: 'AUTO',
+      consentState: 'ACTIVE',
+    });
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
+  it('should activate immediately when a regular account given by id matches the member email', async () => {
+    fetchSlackUserIdentityMock.mockResolvedValue({
+      slackUserId: INPUT.slackUserId,
+      slackTeamId: INSTALLED_TEAM_ID,
+      displayName: 'Ada Lovelace',
+      email: 'ada@example.com',
+      isRegularUserAccount: true,
+    });
+    findWorkspaceMemberEmailByIdMock.mockResolvedValue('ada@example.com');
+
+    const result = await slackSetUserLinkHandler(INPUT);
+
+    expect(result.success).toBe(true);
+    expect(createSlackUserLinkMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ source: 'AUTO', consentState: 'ACTIVE' }),
+    );
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
+  it('should activate immediately when the form submits a resolved id and team that match', async () => {
+    // The settings form sends the resolved id + team, never the email it
+    // started from, so the match must come from Slack's own profile email.
+    fetchSlackUserIdentityMock.mockResolvedValue({
+      slackUserId: INPUT.slackUserId,
+      slackTeamId: INSTALLED_TEAM_ID,
+      displayName: 'Ada Lovelace',
+      email: 'ada@example.com',
+      isRegularUserAccount: true,
+    });
+    findWorkspaceMemberEmailByIdMock.mockResolvedValue('ada@example.com');
+
+    const result = await slackSetUserLinkHandler({
+      ...INPUT,
+      slackTeamId: INSTALLED_TEAM_ID,
+    });
+
+    expect(result.success).toBe(true);
+    expect(createSlackUserLinkMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ source: 'AUTO', consentState: 'ACTIVE' }),
+    );
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
+  it('should still ask for consent when a matching email belongs to a non-regular account', async () => {
+    fetchSlackUserIdentityMock.mockResolvedValue({
+      slackUserId: INPUT.slackUserId,
+      slackTeamId: INSTALLED_TEAM_ID,
+      displayName: 'Bot Account',
+      email: 'ada@example.com',
+      isRegularUserAccount: false,
+    });
+    findWorkspaceMemberEmailByIdMock.mockResolvedValue('ada@example.com');
+
+    const result = await slackSetUserLinkHandler(INPUT);
+
+    expect(result.success).toBe(true);
+    expect(createSlackUserLinkMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ source: 'MANUAL', consentState: 'PENDING' }),
+    );
+    expect(sendSlackUserLinkConsentDmMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('should keep a same-member decline declined even when the emails match', async () => {
+    resolveSlackUserByEmailMock.mockResolvedValue({
+      slackUserId: 'U9999999999',
+      slackTeamId: INSTALLED_TEAM_ID,
+      displayName: 'Ada Lovelace',
+    });
+    findWorkspaceMemberEmailByIdMock.mockResolvedValue('ada@example.com');
+    findSlackUserLinkMock.mockResolvedValue({
+      id: 'link-1',
+      workspaceMemberId: 'workspace-member-1',
+      source: 'MANUAL',
+      consentState: 'DECLINED',
+    });
+
+    const result = await slackSetUserLinkHandler({
+      email: 'ada@example.com',
+      workspaceMemberId: 'workspace-member-1',
+    });
+
+    expect(result.success).toBe(true);
+    // The relink guard must keep the decline out of the match rule entirely,
+    // or the AUTO source would let the resolver bypass the refusal.
+    expect(findWorkspaceMemberEmailByIdMock).not.toHaveBeenCalled();
+    expect(updateSlackUserLinkMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ source: undefined, consentState: undefined }),
+    );
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
   });
 
   it('should prefer the Slack user id over the email when both are given', async () => {

@@ -25,6 +25,8 @@ export default defineConnectionProvider({
       'channels:read',
       'chat:write',
       'chat:write.public',
+      // Proactively DM a Slack user to ask them to consent to a manual link.
+      'im:write',
       'groups:read',
       'reactions:write',
       // Only used by the conversational assistant
