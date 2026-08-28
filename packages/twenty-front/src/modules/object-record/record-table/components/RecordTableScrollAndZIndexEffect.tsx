@@ -156,6 +156,11 @@ export const RecordTableScrollAndZIndexEffect = () => {
         setShouldCompactRecordTableFirstColumn(nextShouldCompact);
       });
 
+      // Only collapsing keeps the data columns pixel-stationary. Expanding
+      // fires when the user has scrolled back to the left edge, so the goal
+      // there is to arrive at the start: compensating would leave them short
+      // of it, with the next column tucked under the frozen one they were
+      // scrolling back to escape.
       const nextScrollLeft = nextShouldCompact
         ? Math.max(0, scrollLeft - widthDelta)
         : 0;
