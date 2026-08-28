@@ -8,6 +8,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { RECORD_FORM_TAB_PROPS } from 'src/engine/metadata-modules/metadata-side-effect/constants/record-form-tab-props.constant';
+import { resolveParentFlatObjectMetadataAfterStateForFieldSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/resolve-parent-flat-object-metadata-after-state-for-field-side-effect.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -22,28 +23,40 @@ export class FieldRecordFormWidgetOnDeleteSideEffectHandlerService extends Metad
     metadataName: 'fieldMetadata',
     name: 'fieldRecordFormWidgetOnDelete',
     description:
-      'When a field is deleted, cascade-delete the engine-owned FORM_FIELD widget displaying it, counterpart of fieldRecordFormWidgetOnCreate. A widget references its field through its configuration jsonb, not a foreign key, so nothing else would ever remove it: neither the database cascade nor manifest deletion inference, which excludes isSystemSideEffect entities. The widget is resolved by its derived universal identifier rather than by scanning, and caller-authored widgets displaying the same field are NOT touched: they are deleted through normal deletion inference.',
+      'When a field is deleted, cascade-delete the engine-owned FORM_FIELD widget displaying it, counterpart of fieldRecordFormWidgetOnCreate. A widget references its field through its configuration jsonb, not a foreign key, so nothing else would ever remove it: neither the database cascade nor manifest deletion inference, which excludes isSystemSideEffect entities. The widget is resolved by its derived universal identifier rather than by scanning, which means the layout and tab identifiers must be derived from the application owning the OBJECT, exactly as fieldRecordFormWidgetOnCreate derives them; the application owning the FIELD differs whenever an app contributes a field to a foreign object, and deriving from it would miss the widget and orphan it. Noop when the object is already gone, since the object delete cascade takes the whole stack. Caller-authored widgets displaying the same field are NOT touched: they are deleted through normal deletion inference.',
   },
 ) {
   buildSideEffects({
     flatEntity: flatFieldMetadata,
+    allFlatEntityOperationRecordByMetadataName,
     relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'fieldMetadata'>): MetadataSideEffectResult {
     const sourceFlatFieldMetadata =
       flatFieldMetadata as UniversalFlatFieldMetadata;
-    const {
-      applicationUniversalIdentifier,
-      objectMetadataUniversalIdentifier,
-    } = sourceFlatFieldMetadata;
+    const { objectMetadataUniversalIdentifier } = sourceFlatFieldMetadata;
+
+    const parentFlatObjectMetadata =
+      resolveParentFlatObjectMetadataAfterStateForFieldSideEffect({
+        objectMetadataUniversalIdentifier,
+        allFlatEntityOperationRecordByMetadataName,
+        relatedFlatEntityMaps,
+      });
+
+    if (!isDefined(parentFlatObjectMetadata)) {
+      return { status: 'noop' };
+    }
+
+    const objectApplicationUniversalIdentifier =
+      parentFlatObjectMetadata.applicationUniversalIdentifier;
 
     const recordFormPageLayoutTabUniversalIdentifier =
       getSystemPageLayoutTabUniversalIdentifier({
         objectMetadataApplicationUniversalIdentifier:
-          applicationUniversalIdentifier,
+          objectApplicationUniversalIdentifier,
         pageLayoutUniversalIdentifier:
           getSystemRecordFormPageLayoutUniversalIdentifier({
             objectMetadataApplicationUniversalIdentifier:
-              applicationUniversalIdentifier,
+              objectApplicationUniversalIdentifier,
             objectUniversalIdentifier: objectMetadataUniversalIdentifier,
           }),
         title: RECORD_FORM_TAB_PROPS.title,
@@ -53,7 +66,7 @@ export class FieldRecordFormWidgetOnDeleteSideEffectHandlerService extends Metad
       relatedFlatEntityMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier[
         getSystemFormFieldPageLayoutWidgetUniversalIdentifier({
           fieldMetadataApplicationUniversalIdentifier:
-            applicationUniversalIdentifier,
+            sourceFlatFieldMetadata.applicationUniversalIdentifier,
           pageLayoutTabUniversalIdentifier:
             recordFormPageLayoutTabUniversalIdentifier,
           fieldMetadataUniversalIdentifier:

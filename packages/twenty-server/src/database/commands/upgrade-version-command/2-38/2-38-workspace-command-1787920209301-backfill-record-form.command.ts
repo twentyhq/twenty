@@ -29,7 +29,7 @@ type BackfillOperationsByApplication = Map<string, BackfillOperations>;
 @Command({
   name: 'upgrade:2-38:backfill-record-form',
   description:
-    'Backfill the RECORD_FORM page layout stack for every object missing it, converging upgraded installs with the stack objectRecordFormOnCreate and fieldRecordFormWidgetOnCreate now emit at creation time. Each object gets one layout, one "Fields" tab and one FORM_FIELD widget per creatable field, label identifier first, in record-page field order. Fields the form cannot render (system, non UI editable, id, TS_VECTOR / POSITION / ACTOR / RATING, and relations other than MANY_TO_ONE) are skipped. Every entity is isSystemSideEffect with the same derived universal identifiers the engine uses, so the backfill is idempotent: objects whose derived layout already exists are skipped entirely, and on a layout that exists with missing widgets only the missing ones are topped up, which also makes a retry after a partial failure safe. Widgets land in the migration bucket of the application owning their displayed field, matching the engine emission for app-contributed fields on foreign objects.',
+    'Backfill the RECORD_FORM page layout stack for every object missing it, converging upgraded installs with the stack objectRecordFormOnCreate and fieldRecordFormWidgetOnCreate now emit at creation time. Each object gets one layout, one "Fields" tab and one FORM_FIELD widget per creatable field, label identifier first, in record-page field order. Fields the form cannot render (system, non UI editable, id, and any type the form has no input for, which today means ACTOR, FILES, NUMERIC, POSITION, RATING, TS_VECTOR and relations other than MANY_TO_ONE) are skipped. Every entity is isSystemSideEffect with the same derived universal identifiers the engine uses, so the backfill is idempotent: objects whose derived layout already exists are skipped entirely, and on a layout that exists with missing widgets only the missing ones are topped up, which also makes a retry after a partial failure safe. Widgets land in the migration bucket of the application owning their displayed field, matching the engine emission for app-contributed fields on foreign objects.',
 })
 export class BackfillRecordFormCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -188,7 +188,10 @@ export class BackfillRecordFormCommand extends ProvisionedWorkspaceCommandRunner
                   fieldUniversalIdentifier
                 ],
             )
-            .filter(isDefined),
+            .filter(isDefined)
+            .filter(
+              (flatFieldMetadata) => !flatFieldMetadata.isSystemSideEffect,
+            ),
           labelIdentifierFieldMetadataUniversalIdentifier:
             flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
         },
@@ -231,9 +234,6 @@ export class BackfillRecordFormCommand extends ProvisionedWorkspaceCommandRunner
     workspaceId: string;
     backfillOperationsByApplication: BackfillOperationsByApplication;
   }): Promise<void> {
-    // Layouts and tabs commit before widgets across applications: a widget
-    // belongs to the application owning its displayed field, which can differ
-    // from the application owning the object carrying the form.
     for (const [
       applicationUniversalIdentifier,
       { pageLayoutsToCreate, pageLayoutTabsToCreate },

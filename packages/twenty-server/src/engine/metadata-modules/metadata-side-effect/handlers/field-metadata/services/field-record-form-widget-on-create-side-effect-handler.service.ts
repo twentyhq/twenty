@@ -31,7 +31,7 @@ export class FieldRecordFormWidgetOnCreateSideEffectHandlerService extends Metad
     metadataName: 'fieldMetadata',
     name: 'fieldRecordFormWidgetOnCreate',
     description:
-      'When a caller-provided field is created, provision its engine-owned FORM_FIELD widget on the engine-owned RECORD_FORM "Fields" tab, resolved strictly by its derived universal identifier. Widgets are the form equivalent of the record page view fields, except there is no view: the widget itself carries the field, so this handler owns every widget on the form, including the ones for fields created in the same batch as their object. On same-batch creation no tab exists in the maps yet, so the index is derived statelessly from the ordered caller field list, exactly as objectRecordFormOnCreate would have ordered it. On an existing object the widget appends after the last FORM_FIELD widget of the tab. Noop when the field is not creatable (system, non UI editable, id, TS_VECTOR / POSITION / ACTOR / RATING, and relations other than MANY_TO_ONE), when the object has no engine record form tab, or when the (tab, field) pair is already synced. Unlike the record page, the label identifier gets a widget: a creation form must let the user fill it.',
+      'When a caller-provided field is created, provision its engine-owned FORM_FIELD widget on the engine-owned RECORD_FORM "Fields" tab, resolved strictly by its derived universal identifier. Widgets are the form equivalent of the record page view fields, except there is no view: the widget itself carries the field, so this handler owns every widget on the form, including the ones for fields created in the same batch as their object. On same-batch creation no tab exists in the maps yet, so the index is derived statelessly from the ordered caller field list, exactly as objectRecordFormOnCreate would have ordered it. On an existing object the widget appends after the last FORM_FIELD widget of the tab. Noop when the field is not creatable (system, non UI editable, id, and any type the form has no input for, which today means ACTOR, FILES, NUMERIC, POSITION, RATING, TS_VECTOR and relations other than MANY_TO_ONE), when the object has no engine record form tab, or when the (tab, field) pair is already synced. Unlike the record page, the label identifier gets a widget: a creation form must let the user fill it.',
   },
 ) {
   buildSideEffects({
@@ -62,16 +62,17 @@ export class FieldRecordFormWidgetOnCreateSideEffectHandlerService extends Metad
       });
     }
 
-    const { applicationUniversalIdentifier } = parentFlatObjectMetadata;
+    const objectApplicationUniversalIdentifier =
+      parentFlatObjectMetadata.applicationUniversalIdentifier;
 
     const recordFormPageLayoutTabUniversalIdentifier =
       getSystemPageLayoutTabUniversalIdentifier({
         objectMetadataApplicationUniversalIdentifier:
-          applicationUniversalIdentifier,
+          objectApplicationUniversalIdentifier,
         pageLayoutUniversalIdentifier:
           getSystemRecordFormPageLayoutUniversalIdentifier({
             objectMetadataApplicationUniversalIdentifier:
-              applicationUniversalIdentifier,
+              objectApplicationUniversalIdentifier,
             objectUniversalIdentifier: objectMetadataUniversalIdentifier,
           }),
         title: RECORD_FORM_TAB_PROPS.title,

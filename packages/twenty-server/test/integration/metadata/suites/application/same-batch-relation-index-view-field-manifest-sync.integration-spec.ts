@@ -87,8 +87,7 @@ const buildManifest = ({
           labelPlural: 'Tickets',
           description: 'A support ticket',
           icon: 'IconTicket',
-          labelIdentifierFieldMetadataUniversalIdentifier:
-            TICKET_NAME_FIELD_ID,
+          labelIdentifierFieldMetadataUniversalIdentifier: TICKET_NAME_FIELD_ID,
           additionalFields: [
             TICKET_NAME_FIELD,
             ...(includeRelationFields ? [TICKET_PROJECT_RELATION_FIELD] : []),
@@ -175,12 +174,10 @@ const expectRelationIndexViewFields = async () => {
   const projectObject = await findObjectWithFields(PROJECT_OBJECT_ID);
 
   const ticketProjectField = ticketObject.fieldsList?.find(
-    (field) =>
-      field.universalIdentifier === TICKET_PROJECT_RELATION_FIELD_ID,
+    (field) => field.universalIdentifier === TICKET_PROJECT_RELATION_FIELD_ID,
   );
   const projectTicketsField = projectObject.fieldsList?.find(
-    (field) =>
-      field.universalIdentifier === PROJECT_TICKETS_RELATION_FIELD_ID,
+    (field) => field.universalIdentifier === PROJECT_TICKETS_RELATION_FIELD_ID,
   );
 
   expect(ticketProjectField).toBeDefined();
