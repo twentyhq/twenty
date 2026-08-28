@@ -8,12 +8,9 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 const navigateMock = jest.fn();
 const closeSidePanelMenuMock = jest.fn();
 
-let location = { pathname: '/objects/people', search: '', hash: '' };
-
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => navigateMock,
-  useLocation: () => location,
 }));
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
@@ -27,7 +24,6 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 describe('useOpenAiChatPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    location = { pathname: '/objects/people', search: '', hash: '' };
     window.history.pushState({}, '', '/objects/people');
   });
 
@@ -47,7 +43,7 @@ describe('useOpenAiChatPage', () => {
   });
 
   it('should keep the current view and query in the return location', () => {
-    location = { pathname: '/objects/people', search: '?viewId=42', hash: '' };
+    window.history.pushState({}, '', '/objects/people?viewId=42');
 
     const { result } = renderHook(() => useOpenAiChatPage(), {
       wrapper: Wrapper,
