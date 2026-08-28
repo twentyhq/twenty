@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
@@ -18,16 +18,16 @@ export const Default: Story = {
     const canvas = within(canvasElement);
 
     await userEvent.hover(
-      canvas.getByRole('button', { name: 'Collapse navigation drawer' }),
+      canvas.getByRole('button', { name: 'Collapse sidebar' }),
     );
 
-    expect(
-      await within(canvasElement.ownerDocument.body).findByRole(
-        'tooltip',
-        { name: 'Collapse navigation drawer' },
-        { timeout: 2000 },
-      ),
-    ).toBeVisible();
+    const tooltip = await within(canvasElement.ownerDocument.body).findByRole(
+      'tooltip',
+      { name: 'Collapse sidebar' },
+      { timeout: 2000 },
+    );
+
+    await waitFor(() => expect(tooltip).toBeVisible());
   },
 };
 
@@ -37,15 +37,15 @@ export const Expand: Story = {
     const canvas = within(canvasElement);
 
     await userEvent.hover(
-      canvas.getByRole('button', { name: 'Expand navigation drawer' }),
+      canvas.getByRole('button', { name: 'Expand sidebar' }),
     );
 
-    expect(
-      await within(canvasElement.ownerDocument.body).findByRole(
-        'tooltip',
-        { name: 'Expand navigation drawer' },
-        { timeout: 2000 },
-      ),
-    ).toBeVisible();
+    const tooltip = await within(canvasElement.ownerDocument.body).findByRole(
+      'tooltip',
+      { name: 'Expand sidebar' },
+      { timeout: 2000 },
+    );
+
+    await waitFor(() => expect(tooltip).toBeVisible());
   },
 };

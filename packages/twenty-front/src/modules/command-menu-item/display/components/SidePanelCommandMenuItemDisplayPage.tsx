@@ -41,8 +41,8 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     useContext(CommandMenuContext);
 
   const navigationDrawerCommandLabel = isNavigationDrawerExpanded
-    ? t`Collapse navigation drawer`
-    : t`Expand navigation drawer`;
+    ? t`Collapse sidebar`
+    : t`Expand sidebar`;
   const shouldDisplayNavigationDrawerCommand =
     !isMobile &&
     !isSettingsDrawer &&

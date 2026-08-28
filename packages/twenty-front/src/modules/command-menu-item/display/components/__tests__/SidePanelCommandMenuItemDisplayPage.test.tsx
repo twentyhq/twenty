@@ -67,18 +67,18 @@ const renderCommandMenu = ({
   return { store };
 };
 
-describe('navigation drawer command', () => {
+describe('sidebar command', () => {
   beforeEach(() => {
     localStorage.clear();
     jest.clearAllMocks();
     mockIsMobile = false;
   });
 
-  it('collapses the drawer, restores navigation, and closes the command menu', async () => {
+  it('collapses the sidebar, restores navigation, and closes the command menu', async () => {
     const user = userEvent.setup();
     const { store } = renderCommandMenu();
 
-    await user.click(screen.getByText('Collapse navigation drawer'));
+    await user.click(screen.getByText('Collapse sidebar'));
 
     expect(store.get(isNavigationDrawerExpandedState.atom)).toBe(false);
     expect(store.get(navigationDrawerActiveTabState.atom)).toBe(
@@ -87,24 +87,24 @@ describe('navigation drawer command', () => {
     expect(mockCloseSidePanelMenu).toHaveBeenCalledTimes(1);
   });
 
-  it('offers the expand command when the drawer is collapsed', async () => {
+  it('offers the expand command when the sidebar is collapsed', async () => {
     const user = userEvent.setup();
     const { store } = renderCommandMenu({ isExpanded: false });
 
-    expect(screen.queryByText('Collapse navigation drawer')).toBeNull();
+    expect(screen.queryByText('Collapse sidebar')).toBeNull();
 
-    await user.click(screen.getByText('Expand navigation drawer'));
+    await user.click(screen.getByText('Expand sidebar'));
 
     expect(store.get(isNavigationDrawerExpandedState.atom)).toBe(true);
     expect(mockCloseSidePanelMenu).toHaveBeenCalledTimes(1);
   });
 
-  it.each(['COLLAPSE', 'navigation', ' drawer '])(
+  it.each(['COLLAPSE', 'sidebar', ' SIDEBAR '])(
     'finds the command when searching for %s',
     (search) => {
       renderCommandMenu({ search });
 
-      expect(screen.getByText('Collapse navigation drawer')).toBeVisible();
+      expect(screen.getByText('Collapse sidebar')).toBeVisible();
       expect(screen.queryByText('No results found')).toBeNull();
     },
   );
@@ -112,26 +112,26 @@ describe('navigation drawer command', () => {
   it('does not show the command for an unrelated search', () => {
     renderCommandMenu({ search: 'unrelated search' });
 
-    expect(screen.queryByText('Collapse navigation drawer')).toBeNull();
+    expect(screen.queryByText('Collapse sidebar')).toBeNull();
     expect(screen.getByText('No results found')).toBeVisible();
   });
 
-  it('does not show a drawer command on mobile', () => {
+  it('does not show a sidebar command on mobile', () => {
     mockIsMobile = true;
     renderCommandMenu();
 
-    expect(screen.queryByText('Collapse navigation drawer')).toBeNull();
+    expect(screen.queryByText('Collapse sidebar')).toBeNull();
   });
 
-  it('does not show a drawer command in settings', () => {
+  it('does not show a sidebar command in settings', () => {
     renderCommandMenu({ pathname: '/settings/profile' });
 
-    expect(screen.queryByText('Collapse navigation drawer')).toBeNull();
+    expect(screen.queryByText('Collapse sidebar')).toBeNull();
   });
 
-  it('does not show a drawer command in layout preview', () => {
+  it('does not show a sidebar command in layout preview', () => {
     renderCommandMenu({ isInPreviewMode: true });
 
-    expect(screen.queryByText('Collapse navigation drawer')).toBeNull();
+    expect(screen.queryByText('Collapse sidebar')).toBeNull();
   });
 });

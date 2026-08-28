@@ -162,7 +162,7 @@ export const EmptySearchWithAllPinnedItemsInHeader: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Collapse navigation drawer')).toBeVisible();
+    expect(await canvas.findByText('Collapse sidebar')).toBeVisible();
     await waitFor(() => {
       expect(canvas.queryByText('No results found')).not.toBeInTheDocument();
     });
@@ -181,7 +181,7 @@ export const WhitespaceOnlySearchWithAllPinnedItemsInHeader: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Collapse navigation drawer')).toBeVisible();
+    expect(await canvas.findByText('Collapse sidebar')).toBeVisible();
     await waitFor(() => {
       expect(canvas.queryByText('No results found')).not.toBeInTheDocument();
     });
@@ -260,7 +260,7 @@ export const SearchWithoutMatchingItemsAndWithFallback: Story = {
   },
 };
 
-export const CollapseNavigationDrawer: Story = {
+export const CollapseSidebar: Story = {
   decorators: [
     createDecorator({
       commandMenuItems: [OTHER_ITEM, FALLBACK_ITEM],
@@ -271,9 +271,7 @@ export const CollapseNavigationDrawer: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(
-      await canvas.findByText('Collapse navigation drawer'),
-    );
+    await userEvent.click(await canvas.findByText('Collapse sidebar'));
 
     expect(jotaiStore.get(isNavigationDrawerExpandedState.atom)).toBe(false);
     expect(jotaiStore.get(navigationDrawerActiveTabState.atom)).toBe(
@@ -282,7 +280,7 @@ export const CollapseNavigationDrawer: Story = {
   },
 };
 
-export const ExpandNavigationDrawer: Story = {
+export const ExpandSidebar: Story = {
   decorators: [
     createDecorator({
       commandMenuItems: [OTHER_ITEM, FALLBACK_ITEM],
@@ -294,7 +292,7 @@ export const ExpandNavigationDrawer: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(await canvas.findByText('Expand navigation drawer'));
+    await userEvent.click(await canvas.findByText('Expand sidebar'));
 
     expect(jotaiStore.get(isNavigationDrawerExpandedState.atom)).toBe(true);
   },

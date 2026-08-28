@@ -35,10 +35,7 @@ export const NavigationDrawerCollapseButton = ({
   const isSettingsDrawer = useIsSettingsDrawer();
   const { toggleNavigationDrawer } = useToggleNavigationDrawer();
   const tooltipId = useId();
-  const label =
-    direction === 'left'
-      ? t`Collapse navigation drawer`
-      : t`Expand navigation drawer`;
+  const label = direction === 'left' ? t`Collapse sidebar` : t`Expand sidebar`;
 
   // The main navigation is a page on mobile, so there is no drawer to toggle.
   if (isMobile && !isSettingsDrawer) {
