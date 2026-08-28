@@ -37,8 +37,8 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   IconApps,
   IconListDetails,
+  IconListSearch,
   IconNotes,
-  IconStack2,
 } from 'twenty-ui/icon';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -369,7 +369,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
       <SidePanelGroup heading={t`Standard widgets`}>
         <SelectableListItem itemId="fields" onEnter={handleCreateFieldsWidget}>
           <CommandMenuItem
-            Icon={IconStack2}
+            Icon={IconListDetails}
             label={t`Fields group`}
             id="fields"
             onClick={handleCreateFieldsWidget}
@@ -377,7 +377,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
         </SelectableListItem>
         <SelectableListItem itemId="field" onEnter={handleCreateFieldWidget}>
           <CommandMenuItem
-            Icon={IconListDetails}
+            Icon={IconListSearch}
             label={t`Field`}
             id="field"
             onClick={handleCreateFieldWidget}

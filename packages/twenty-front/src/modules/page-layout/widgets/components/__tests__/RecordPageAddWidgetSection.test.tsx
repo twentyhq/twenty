@@ -8,8 +8,8 @@ const mockCreateRecordPageNoteWidget = jest.fn();
 
 jest.mock('twenty-ui/icon', () => ({
   ...jest.requireActual<typeof TwentyIcons>('twenty-ui/icon'),
-  IconStack2: () => <svg role="img" aria-label="Fields group icon" />,
-  IconListDetails: () => <svg role="img" aria-label="Field icon" />,
+  IconListDetails: () => <svg role="img" aria-label="Fields group icon" />,
+  IconListSearch: () => <svg role="img" aria-label="Field icon" />,
   IconNotes: () => <svg role="img" aria-label="Note icon" />,
 }));
 

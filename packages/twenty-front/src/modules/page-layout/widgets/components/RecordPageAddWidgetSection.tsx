@@ -7,9 +7,9 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
   IconListDetails,
+  IconListSearch,
   IconNotes,
   IconPlus,
-  IconStack2,
 } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -60,14 +60,14 @@ export const RecordPageAddWidgetSection = () => {
       <StyledHeader>{t`Add widget`}</StyledHeader>
       <StyledMenuItemList>
         <MenuItem
-          LeftIcon={IconStack2}
+          LeftIcon={IconListDetails}
           withIconContainer
           text={t`Fields group`}
           contextualText={t`Group multiple fields from this record`}
           onClick={createRecordPageFieldsWidget}
         />
         <MenuItem
-          LeftIcon={IconListDetails}
+          LeftIcon={IconListSearch}
           withIconContainer
           text={t`Field`}
           contextualText={t`Single field with smart formats`}

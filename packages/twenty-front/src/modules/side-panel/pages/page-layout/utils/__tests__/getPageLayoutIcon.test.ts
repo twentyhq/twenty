@@ -6,9 +6,9 @@ import {
   IconFrame,
   IconLayoutDashboard,
   IconListDetails,
+  IconListSearch,
   IconPerspective,
   IconPlus,
-  IconStack2,
   IconTable,
 } from 'twenty-ui/icon';
 
@@ -19,8 +19,8 @@ describe('getPageLayoutIcon', () => {
     [SidePanelPages.DashboardIframeSettings, IconFrame],
     [SidePanelPages.PageLayoutTabSettings, IconPerspective],
     [SidePanelPages.PageLayoutWidgetSettings, IconLayoutDashboard],
-    [SidePanelPages.RecordPageFieldsSettings, IconStack2],
-    [SidePanelPages.RecordPageFieldSettings, IconListDetails],
+    [SidePanelPages.RecordPageFieldsSettings, IconListDetails],
+    [SidePanelPages.RecordPageFieldSettings, IconListSearch],
     [SidePanelPages.DashboardRecordTableSettings, IconTable],
     [SidePanelPages.PageLayoutRecordPageWidgetTypeSelect, IconPlus],
   ] as const)('returns the expected icon for %s', (page, expectedIcon) => {
