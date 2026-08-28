@@ -77,10 +77,12 @@ export const decideSlackUserLinkWrite = async ({
   const requiresConsent =
     isInInstalledWorkspace && !isSameMemberRelink && !isEagerAutoMatch;
 
-  const consentState = !isInInstalledWorkspace
-    ? SLACK_USER_LINK_CONSENT_STATE.ADMIN_SET
-    : isSameMemberRelink
-      ? undefined
+  // A same-member re-save rewrites neither consent state nor source: it
+  // changes nothing about the mapping, so the stored state stands.
+  const consentState = isSameMemberRelink
+    ? undefined
+    : !isInInstalledWorkspace
+      ? SLACK_USER_LINK_CONSENT_STATE.ADMIN_SET
       : isEagerAutoMatch
         ? SLACK_USER_LINK_CONSENT_STATE.ACTIVE
         : SLACK_USER_LINK_CONSENT_STATE.PENDING;
