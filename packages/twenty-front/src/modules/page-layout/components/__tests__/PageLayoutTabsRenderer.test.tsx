@@ -4,6 +4,7 @@ import { type ReactNode } from 'react';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
+  WidgetType,
 } from '~/generated-metadata/graphql';
 
 let mockActiveTabId = 'hidden-transcript-tab-id';
@@ -34,6 +35,18 @@ const timelineTab = {
   position: 1,
   icon: 'IconTimeline',
   layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+};
+
+const frontComponentTab = {
+  ...homeTab,
+  id: 'front-component-tab-id',
+  title: 'App',
+  position: 2,
+  icon: 'IconApps',
+  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+  widgets: [
+    { id: 'front-component-widget', type: WidgetType.FRONT_COMPONENT },
+  ],
 };
 
 jest.mock('@/page-layout/components/dnd/PageLayoutWidgetDndProvider', () => ({
@@ -71,7 +84,7 @@ jest.mock('@/page-layout/hooks/usePageLayoutAddTabStrategy', () => ({
 
 jest.mock('@/page-layout/hooks/usePageLayoutRenderableTabs', () => ({
   usePageLayoutRenderableTabs: () => ({
-    tabsToRenderInTabList: [homeTab, timelineTab],
+    tabsToRenderInTabList: [homeTab, timelineTab, frontComponentTab],
     pinnedLeftTab: undefined,
   }),
 }));
@@ -167,6 +180,20 @@ describe('PageLayoutTabsRenderer', () => {
     expect(screen.getByText('Rendered tab: home-tab-id')).toBeInTheDocument();
     expect(
       screen.getByText('Rendered tab: timeline-tab-id'),
+    ).toBeInTheDocument();
+  });
+
+  it('mounts prerendered application widget tabs offscreen alongside the active tab', () => {
+    mockActiveTabId = 'timeline-tab-id';
+    mockPrerenderedTabIds = ['front-component-tab-id'];
+
+    render(<PageLayoutTabsRenderer />);
+
+    expect(
+      screen.getByText('Rendered tab: timeline-tab-id'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('Rendered tab: front-component-tab-id'),
     ).toBeInTheDocument();
   });
 

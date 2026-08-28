@@ -8,13 +8,15 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { Activity, Suspense, useEffect } from 'react';
 import { of } from 'rxjs';
 
-// Tab prerendering mounts hovered tab content inside <Activity mode="hidden">
-// and relies on the widgets fetching through Apollo suspense hooks, which
-// start their queries during render. This test guards the platform behaviors
-// the feature is built on: suspense queries fire while hidden without
-// mounting effects, revealing neither refetches nor flashes a fallback, and
-// classic useQuery (which fetches from effects) would preload nothing, which
-// is why the tab widgets must not regress to it.
+// Tab prerendering has two mechanisms, chosen per tab content
+// (getPageLayoutTabPrerenderMode). Suspense-backed data tabs mount inside
+// <Activity mode="hidden">: queries fire during render while effects stay
+// unmounted. Application widget tabs mount CSS-hidden with effects live so
+// their sandbox fully boots. This test guards the platform behaviors both
+// mechanisms are built on: what fetches while hidden under each, that
+// revealing neither refetches nor flashes a fallback, and that classic
+// useQuery preloads nothing under a hidden Activity, which is why the data
+// cards must not regress to it.
 const PRERENDER_PROBE_QUERY = gql`
   query PrerenderProbe {
     probe
@@ -135,7 +137,51 @@ describe('page layout tab prerender contract with Activity and useSuspenseQuery'
   });
 });
 
-describe('page layout tab prerender contract with classic useQuery', () => {
+const OffscreenProbeTab = ({
+  client,
+  isActiveTab,
+}: {
+  client: ApolloClient;
+  isActiveTab: boolean;
+}) => (
+  <ApolloProvider client={client}>
+    <div style={{ display: isActiveTab ? 'contents' : 'none' }}>
+      <ProbeWidget />
+    </div>
+  </ApolloProvider>
+);
+
+describe('page layout tab prerender contract with offscreen-mounted classic useQuery', () => {
+  it('starts the query while the tab content is hidden', async () => {
+    const { client, operationCounts } = createOperationTrackingClient();
+
+    render(<OffscreenProbeTab client={client} isActiveTab={false} />);
+
+    await waitFor(() => {
+      expect(operationCounts.PrerenderProbe).toBe(1);
+    });
+  });
+
+  it('reveals offscreen content without a second fetch or loading state', async () => {
+    const { client, operationCounts } = createOperationTrackingClient();
+
+    const { rerender } = render(
+      <OffscreenProbeTab client={client} isActiveTab={false} />,
+    );
+
+    await waitFor(() => {
+      expect(operationCounts.PrerenderProbe).toBe(1);
+    });
+
+    rerender(<OffscreenProbeTab client={client} isActiveTab={true} />);
+
+    expect(screen.getByText('probe-loaded')).toBeVisible();
+    expect(screen.queryByText('probe-skeleton')).not.toBeInTheDocument();
+    expect(operationCounts.PrerenderProbe).toBe(1);
+  });
+});
+
+describe('page layout tab prerender contract with classic useQuery inside Activity', () => {
   it('does not start the query while hidden, so widgets must not regress to it', async () => {
     const { client, operationCounts } = createOperationTrackingClient();
 
