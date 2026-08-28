@@ -8,8 +8,13 @@ export class AddStateToApplicationFastInstanceCommand
   implements FastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    // Pre-existing rows are completed installations, so they are backfilled
+    // as INSTALLED before the default switches to INSTALLING for new rows.
     await queryRunner.query(
       `ALTER TABLE "core"."application" ADD COLUMN IF NOT EXISTS "state" text NOT NULL DEFAULT 'INSTALLED'`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."application" ALTER COLUMN "state" SET DEFAULT 'INSTALLING'`,
     );
   }
 

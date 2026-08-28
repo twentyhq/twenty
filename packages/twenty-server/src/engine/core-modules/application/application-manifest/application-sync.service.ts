@@ -421,9 +421,6 @@ export class ApplicationSyncService {
 
       return validateAndBuildResult.workspaceMigration;
     } catch (error) {
-      // Restore the pre-uninstall state so a failed rollback of a fresh
-      // install (INSTALLING) does not surface as INSTALLED; a row that was
-      // already UNINSTALLING on entry has no other state to go back to.
       await this.revertApplicationStateBestEffort({
         applicationId: application.id,
         state:

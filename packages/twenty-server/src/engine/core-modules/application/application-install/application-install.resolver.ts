@@ -185,8 +185,6 @@ export class ApplicationInstallResolver {
       );
     }
 
-    // Fail fast on conditions the background job could only report through
-    // its own failure.
     if (!application.canBeUninstalled) {
       throw new ApplicationException(
         'This application cannot be uninstalled.',

@@ -257,8 +257,6 @@ export class ApplicationUpgradeService {
     });
   }
 
-  // Flags the application row as UPGRADING synchronously so clients see the
-  // operation immediately, then defers the actual upgrade to a background job.
   async enqueueApplicationUpgrade(params: {
     appRegistrationId: string;
     targetVersion: string;
@@ -334,8 +332,6 @@ export class ApplicationUpgradeService {
     try {
       await this.upgradeApplication(params);
     } catch (error) {
-      // Failures happening before the install pipeline's own revert would
-      // otherwise leave the row stuck in UPGRADING.
       await this.revertUpgradeStateBestEffort(params);
 
       throw error;

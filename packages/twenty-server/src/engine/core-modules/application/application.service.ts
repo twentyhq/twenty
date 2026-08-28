@@ -17,6 +17,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -63,7 +64,6 @@ export class ApplicationService {
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
   ) {}
 
-  // Best-effort: realtime updates must never fail the write they describe.
   private async broadcastApplicationEvent({
     workspaceId,
     type,
@@ -446,6 +446,7 @@ export class ApplicationService {
         logicFunctionLayerId: null,
         workspaceId,
         canBeUninstalled: false,
+        state: ApplicationState.INSTALLED,
         packageJsonChecksum: defaultPackageFields.packageJsonChecksum,
         packageJsonFileId: null,
         yarnLockChecksum: defaultPackageFields.yarnLockChecksum,
@@ -502,6 +503,7 @@ export class ApplicationService {
         applicationRegistrationId: applicationRegistration.id,
         logicFunctionLayerId: null,
         canBeUninstalled: false,
+        state: ApplicationState.INSTALLED,
         packageJsonChecksum: defaultPackageFields.packageJsonChecksum,
         packageJsonFileId: null,
         yarnLockChecksum: defaultPackageFields.yarnLockChecksum,

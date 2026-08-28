@@ -11,6 +11,7 @@ import {
   AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -776,6 +777,7 @@ export class OAuthService {
       sourcePath: 'oauth-install',
       applicationRegistrationId: applicationRegistration.id,
       workspaceId,
+      state: ApplicationState.INSTALLED,
     });
   }
 

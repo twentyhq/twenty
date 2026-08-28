@@ -18,6 +18,7 @@ import { VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE } from 'src/engine/core-mo
 import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -81,6 +82,7 @@ export class ApplicationDevelopmentService {
       sourceType: ApplicationRegistrationSourceType.LOCAL,
       applicationRegistrationId,
       workspaceId,
+      state: ApplicationState.INSTALLED,
     });
 
     return {

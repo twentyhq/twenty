@@ -134,7 +134,7 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: false, type: 'boolean', default: true })
   canBeUninstalled: boolean;
 
-  @Column({ type: 'text', default: ApplicationState.INSTALLED })
+  @Column({ type: 'text', default: ApplicationState.INSTALLING })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
       '2.38.0_AddStateToApplicationFastInstanceCommand_1787920033811',

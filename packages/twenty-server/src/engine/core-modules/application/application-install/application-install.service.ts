@@ -73,9 +73,6 @@ export class ApplicationInstallService {
     private readonly metricsService: MetricsService,
   ) {}
 
-  // Reserves the application row synchronously (INSTALLING placeholder or
-  // UPGRADING transition) so clients see the operation immediately, then
-  // defers the actual install to a background job.
   async enqueueApplicationInstall(params: {
     appRegistrationId: string;
     version?: string;
@@ -98,8 +95,6 @@ export class ApplicationInstallService {
         workspaceId: params.workspaceId,
       });
 
-    // Mirrors installApplication: LOCAL apps are synced by the CLI watcher
-    // and OAUTH_ONLY registrations have no code artifacts to install.
     if (
       appRegistration.sourceType === ApplicationRegistrationSourceType.LOCAL ||
       appRegistration.sourceType ===
@@ -118,10 +113,6 @@ export class ApplicationInstallService {
       );
     }
 
-    // Fail fast on version progression before enqueueing: the job re-checks
-    // against the resolved package, but surfacing the obvious case
-    // synchronously spares a job round-trip and keeps the error visible to
-    // the caller.
     const targetVersion =
       params.version ?? appRegistration.latestAvailableVersion ?? undefined;
 
@@ -191,9 +182,6 @@ export class ApplicationInstallService {
     try {
       await this.installApplication(params);
     } catch (error) {
-      // Failures happening before runInstall's own rollback (package
-      // resolution, authorization) would otherwise leave the reserved row
-      // stuck in a transitional state.
       await this.cleanupEnqueuedInstallBestEffort(params);
 
       throw error;
@@ -224,7 +212,6 @@ export class ApplicationInstallService {
       }
 
       if (application.state === ApplicationState.INSTALLING) {
-        // The placeholder row never became an installation.
         await this.applicationService.delete(
           application.universalIdentifier,
           params.workspaceId,
@@ -924,8 +911,6 @@ export class ApplicationInstallService {
     sourceType: ApplicationRegistrationSourceType;
   }): Promise<ApplicationEntity> {
     if (isDefined(params.existingApplication)) {
-      // A placeholder created at enqueue time carries the registration's
-      // display data; refresh it from the manifest now that it is known.
       if (
         params.existingApplication.state === ApplicationState.INSTALLING &&
         (params.existingApplication.name !== params.name ||
@@ -956,8 +941,6 @@ export class ApplicationInstallService {
     });
   }
 
-  // A row in INSTALLING state is a placeholder created when the install was
-  // enqueued, not a completed installation to upgrade from.
   private isInstalledApplication(
     existingApplication: ApplicationEntity | null,
   ): boolean {
