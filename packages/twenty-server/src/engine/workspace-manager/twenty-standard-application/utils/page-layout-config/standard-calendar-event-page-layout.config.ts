@@ -59,8 +59,6 @@ const CALENDAR_EVENT_PAGE_TABS = {
         universalIdentifier:
           STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
             .tabs.home.widgets.relations.universalIdentifier,
-        // Authored through i18nLabel because the compiled catalog only gains
-        // this title once the i18n pipeline reruns.
         title: i18nLabel(
           msg({ message: `Relations`, context: 'pageLayoutWidget.title' }),
         ),
