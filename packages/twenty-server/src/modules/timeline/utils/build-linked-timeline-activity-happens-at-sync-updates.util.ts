@@ -1,11 +1,8 @@
 import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { doesObjectRecordEventChangeFields } from 'src/modules/timeline/utils/does-object-record-event-change-fields.util';
-import { resolveLinkedTimelineActivityHappensAtFieldName } from 'src/modules/timeline/utils/resolve-timeline-activity-happens-at.util';
 import { resolveTimelineActivityTypeForRule } from 'src/modules/timeline/utils/resolve-timeline-activity-type-for-rule.util';
 import { type TimelineActivityTypeResolver } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
 
@@ -24,12 +21,10 @@ export type LinkedTimelineActivityHappensAtSyncUpdate = {
 export const buildLinkedTimelineActivityHappensAtSyncUpdates = ({
   rules,
   events,
-  flatFieldMetadataMaps,
   resolveTimelineActivityType,
 }: {
   rules: TimelineActivityRule[];
   events: ObjectRecordBaseEvent[];
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   resolveTimelineActivityType: TimelineActivityTypeResolver;
 }): LinkedTimelineActivityHappensAtSyncUpdate[] => {
   const linkedRules = rules.filter(
@@ -44,10 +39,7 @@ export const buildLinkedTimelineActivityHappensAtSyncUpdates = ({
   const updates: LinkedTimelineActivityHappensAtSyncUpdate[] = [];
 
   for (const rule of linkedRules) {
-    const happensAtFieldName = resolveLinkedTimelineActivityHappensAtFieldName({
-      sourceFlatObjectMetadata: rule.sourceFlatObjectMetadata,
-      flatFieldMetadataMaps,
-    });
+    const happensAtFieldName = rule.happensAtFieldName;
 
     const timelineActivityTypeId = resolveTimelineActivityTypeForRule({
       rule,

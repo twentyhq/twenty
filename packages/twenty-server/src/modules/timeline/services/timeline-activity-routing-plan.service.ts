@@ -193,6 +193,15 @@ export class TimelineActivityRoutingPlanService {
           return undefined;
         }
 
+        const happensAtFlatFieldMetadata = isDefined(
+          routing.happensAtFieldUniversalIdentifier,
+        )
+          ? findFlatEntityByUniversalIdentifier({
+              flatEntityMaps: flatFieldMetadataMaps,
+              universalIdentifier: routing.happensAtFieldUniversalIdentifier,
+            })
+          : undefined;
+
         return {
           sourceFlatObjectMetadata,
           actions: [timelineActivityType.action],
@@ -208,6 +217,14 @@ export class TimelineActivityRoutingPlanService {
                   })?.name,
               )
               .filter(isDefined) ?? null,
+          // A field from another object would make the write path read a value
+          // that is not the source record's own moment, so it is dropped here.
+          happensAtFieldName:
+            isDefined(happensAtFlatFieldMetadata) &&
+            happensAtFlatFieldMetadata.objectMetadataId ===
+              sourceFlatObjectMetadata.id
+              ? happensAtFlatFieldMetadata.name
+              : null,
           targetShape,
         };
       })

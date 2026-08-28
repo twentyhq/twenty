@@ -180,7 +180,6 @@ export class TimelineActivityService {
           updates: buildLinkedTimelineActivityHappensAtSyncUpdates({
             rules: sourceRules,
             events: eventsWithoutPositionDiff,
-            flatFieldMetadataMaps,
             resolveTimelineActivityType,
           }),
         },
@@ -338,9 +337,8 @@ export class TimelineActivityService {
             happensAt: resolveLinkedTimelineActivityHappensAt({
               event,
               ruleAction,
-              sourceFlatObjectMetadata: rule.sourceFlatObjectMetadata,
+              happensAtFieldName: rule.happensAtFieldName,
               sourceRecord: record,
-              flatFieldMetadataMaps,
             }),
             properties: event.properties,
           }),
@@ -372,9 +370,8 @@ export class TimelineActivityService {
           happensAt: resolveLinkedTimelineActivityHappensAt({
             event,
             ruleAction,
-            sourceFlatObjectMetadata: rule.sourceFlatObjectMetadata,
+            happensAtFieldName: rule.happensAtFieldName,
             sourceRecord: event.properties.after as ObjectRecord | undefined,
-            flatFieldMetadataMaps,
           }),
           properties: event.properties,
         }),
@@ -484,9 +481,8 @@ export class TimelineActivityService {
         happensAt: resolveLinkedTimelineActivityHappensAt({
           event,
           ruleAction,
-          sourceFlatObjectMetadata: rule.sourceFlatObjectMetadata,
+          happensAtFieldName: rule.happensAtFieldName,
           sourceRecord,
-          flatFieldMetadataMaps,
         }),
         properties: {},
       });
