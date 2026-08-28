@@ -74,5 +74,6 @@ describe('DragDropItemSortableCell', () => {
       expect(getSortableRoot()).toHaveAttribute('role', 'button');
     });
     expect(getSortableRoot()).toHaveAttribute('tabindex', '0');
+    expect(getSortableRoot()).toHaveAttribute('aria-disabled', 'false');
   });
 });
