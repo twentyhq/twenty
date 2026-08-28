@@ -1488,6 +1488,11 @@ msgstr "Benjamin Reynolds"
 msgid "Bertrams"
 msgstr "Bertrams"
 
+#. js-lingui-id: CrZWSz
+#: src/partner-application/partner-application-copy.ts
+msgid "Best proof first: a live Twenty instance URL, a public repo, or a YouTube link. Loom, Drive and file links are accepted but slower to review."
+msgstr ""
+
 #. js-lingui-id: BSmDFu
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Better sorted kanban boards"
@@ -4698,11 +4703,6 @@ msgstr "与任何常规对象一样，给你的任务和公司添加一些自定
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Link field"
 msgstr "链接字段"
-
-#. js-lingui-id: YOe6r4
-#: src/partner-application/partner-application-copy.ts
-msgid "Link that shows the work (Loom, GitHub, Notion, Drive, public write-up…). No public workspace? Share a short Loom."
-msgstr "展示该工作的链接（Loom、GitHub、Notion、Drive、公开文档等）。没有公共工作区？请分享一个简短的 Loom。"
 
 #. js-lingui-id: gggTBm
 #: src/sections/footer/footer.data.ts
