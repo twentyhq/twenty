@@ -3,8 +3,6 @@ import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_MAX_WIDTH_ON_MOBILE } from '@/obje
 import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_MIN_WIDTH_ON_MOBILE } from '@/object-record/record-table/constants/RecordTableLabelIdentifierColumnMinWidthOnMobile';
 import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_RATIO_ON_MOBILE } from '@/object-record/record-table/constants/RecordTableLabelIdentifierColumnWidthRatioOnMobile';
 
-// The width the user dragged this column to on desktop is meaningless on a
-// phone, so the mobile width is derived from the viewport instead.
 export const computeRecordTableLabelIdentifierColumnWidthOnMobile = ({
   tableWidth,
   isCollapsed,
