@@ -98,6 +98,15 @@ export class FlatPageLayoutWidgetValidatorService {
       });
     }
 
+    validationResult.errors.push(
+      ...this.validateWidgetTypeIsSupportedInPageLayout({
+        flatPageLayoutWidget: updatedFlatPageLayoutWidget,
+        pageLayoutTab: referencedPageLayoutTab,
+        flatPageLayoutMaps:
+          optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutMaps,
+      }),
+    );
+
     const positionErrors = this.validatePosition({
       position: updatedFlatPageLayoutWidget.position,
       pageLayoutTab: referencedPageLayoutTab,
