@@ -207,6 +207,7 @@ export type {
   ViewConfiguration,
   RecordTableConfiguration,
   FieldConfiguration,
+  FormFieldConfiguration,
   FieldsConfiguration,
   FieldRichTextConfiguration,
   StandaloneRichTextConfiguration,

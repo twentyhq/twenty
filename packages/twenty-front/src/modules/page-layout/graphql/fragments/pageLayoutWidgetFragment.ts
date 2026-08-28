@@ -180,6 +180,10 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         newFieldDefaultVisibility
         shouldAllowUserToSeeHiddenFields
       }
+      ... on FormFieldConfiguration {
+        configurationType
+        fieldMetadataId
+      }
       ... on FilesConfiguration {
         configurationType
       }

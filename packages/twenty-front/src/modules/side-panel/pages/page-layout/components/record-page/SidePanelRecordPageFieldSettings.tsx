@@ -31,11 +31,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconLayoutSidebarRight,
-  IconList,
-  IconListDetails,
-} from 'twenty-ui/icon';
+import { IconLayoutSidebarRight, IconListDetails } from 'twenty-ui/icon';
 import { FieldDisplayMode, ViewType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
@@ -240,7 +236,7 @@ export const SidePanelRecordPageFieldSettings = () => {
                 <CommandMenuItem
                   id="fields"
                   label={t`Fields`}
-                  Icon={IconList}
+                  Icon={IconListDetails}
                   hasSubMenu
                   onClick={handleNavigateToFields}
                   description={t`${visibleFieldsCount} visible fields`}
