@@ -33,6 +33,7 @@
         "im:history",
         "im:read",
         "links:read",
+        "links:write",
         "users:read",
         "users:read.email",
         "assistant:write"
