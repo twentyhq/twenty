@@ -1,5 +1,5 @@
 import { type Page } from '@playwright/test';
-import { postBackendGraphQL } from './postBackendGraphQL';
+import { postBackendGraphQL } from './post-backend-graphql';
 
 export const createWorkflow = async ({
   page,

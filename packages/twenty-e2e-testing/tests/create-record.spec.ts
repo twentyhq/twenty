@@ -1,5 +1,5 @@
 import { expect, test } from '../lib/fixtures/screenshot';
-import { postBackendGraphQL } from '../lib/requests/postBackendGraphQL';
+import { postBackendGraphQL } from '../lib/requests/post-backend-graphql';
 
 const query = `query FindOnePerson($objectRecordId: UUID!) {
   person(
