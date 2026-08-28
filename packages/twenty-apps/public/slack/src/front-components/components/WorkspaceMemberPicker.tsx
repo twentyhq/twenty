@@ -147,6 +147,19 @@ export const WorkspaceMemberPicker = ({
         onChange={(event) => setSearchTerm(event.target.value)}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
+        // Enter picks the top match instead of submitting the form the search
+        // sits in, which would silently do nothing for a partial name.
+        onKeyDown={(event) => {
+          if (event.key !== 'Enter') {
+            return;
+          }
+
+          event.preventDefault();
+
+          if (options.length > 0) {
+            handleSelect(options[0]);
+          }
+        }}
         placeholder="Search a workspace member by name"
         disabled={disabled}
         autoFocus={isReopening}
