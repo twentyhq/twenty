@@ -79,8 +79,6 @@ describe('DropBillingCustomerCreditBalanceMicroFastInstanceCommand', () => {
     expect(rebuild).toContain('COALESCE(');
   });
 
-  // Restoring the column is still right without a ledger to rebuild from; only
-  // the backfill has to be skipped.
   it('restores the column without rebuilding when the ledger is absent', async () => {
     presentTables('billingCustomer');
 
