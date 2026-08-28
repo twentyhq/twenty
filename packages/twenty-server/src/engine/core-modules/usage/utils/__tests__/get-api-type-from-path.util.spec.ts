@@ -5,7 +5,7 @@ describe('getApiTypeFromPath', () => {
     ['/graphql', 'CORE_GQL'],
     ['/rest/people', 'CORE_REST'],
     ['/rest/batch/people', 'CORE_REST'],
-    ['/mcp', 'MCP'],
+    ['/mcp', 'CORE_MCP'],
   ])('reads the api type of %s', (path, expected) => {
     expect(getApiTypeFromPath(path)).toBe(expected);
   });

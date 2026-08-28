@@ -104,9 +104,7 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
 
     const results = await Promise.allSettled(
       entries.map(([workspaceId, usageEvents]) =>
-        this.eventLogEmitterService.dispatch(
-          buildUsageEventEnvelopes(workspaceId, usageEvents),
-        ),
+        this.dispatchRollups(workspaceId, usageEvents),
       ),
     );
 
@@ -134,6 +132,23 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
 
     this.logger.warn(
       `Failed to flush usage rollups for ${failedEntries.length}/${entries.length} workspace(s); re-buffered for next flush`,
+    );
+  }
+
+  private async dispatchRollups(
+    workspaceId: string,
+    usageEvents: UsageEvent[],
+  ): Promise<void> {
+    const periodStart = await this.resolvePeriodStart(workspaceId);
+
+    return this.eventLogEmitterService.dispatch(
+      buildUsageEventEnvelopes(
+        workspaceId,
+        usageEvents.map((usageEvent) => ({
+          ...usageEvent,
+          periodStart: usageEvent.periodStart ?? periodStart,
+        })),
+      ),
     );
   }
 

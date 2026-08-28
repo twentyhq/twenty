@@ -550,13 +550,21 @@ export abstract class CommonBaseQueryRunnerService<
       return;
     }
 
+    const spenders = buildUsageSpendersFromAuthContext(authContext);
+
+    // A plain user request is the product UI, not API usage; an api key or an
+    // application means the caller is programmatic even when a user is attached
+    if (!isDefined(spenders.apiKeyId) && !isDefined(spenders.applicationId)) {
+      return;
+    }
+
     this.usageRecorderService.accumulate(authContext.workspace.id, {
       resourceType: UsageResourceType.API,
       operationType: UsageOperationType.API_REQUEST,
       quantity: 1,
       unit: UsageUnit.REQUEST,
       resourceContext: apiType,
-      spenders: buildUsageSpendersFromAuthContext(authContext),
+      spenders,
     });
   }
 
