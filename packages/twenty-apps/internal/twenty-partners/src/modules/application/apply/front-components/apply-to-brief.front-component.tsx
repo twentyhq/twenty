@@ -30,7 +30,11 @@ const pageStyle: CSSProperties = {
   gap: 12,
 };
 const titleStyle: CSSProperties = { fontSize: 16, fontWeight: 700, margin: 0 };
-const labelStyle: CSSProperties = { fontSize: 12.5, color: COLORS.muted, lineHeight: 1.5 };
+const labelStyle: CSSProperties = {
+  fontSize: 12.5,
+  color: COLORS.muted,
+  lineHeight: 1.5,
+};
 const textareaStyle: CSSProperties = {
   width: '100%',
   boxSizing: 'border-box',
@@ -48,7 +52,10 @@ const textareaStyle: CSSProperties = {
 };
 const counterStyle: CSSProperties = { fontSize: 12, color: COLORS.muted };
 const errorStyle: CSSProperties = { fontSize: 13, color: COLORS.danger };
-const footerStyle: CSSProperties = { display: 'flex', justifyContent: 'flex-end' };
+const footerStyle: CSSProperties = {
+  display: 'flex',
+  justifyContent: 'flex-end',
+};
 const buttonStyle: CSSProperties = {
   height: 36,
   padding: '0 18px',
@@ -68,8 +75,9 @@ const disabledButtonStyle: CSSProperties = {
 };
 
 // `recordId` is deprecated and only covers a renderer that sends no selection.
-const selectBriefId = (context: FrontComponentExecutionContext): string | null =>
-  context.selectedRecordIds[0] ?? context.recordId;
+const selectBriefId = (
+  context: FrontComponentExecutionContext,
+): string | null => context.selectedRecordIds[0] ?? context.recordId;
 
 const ApplyToBrief = () => {
   const briefId = useFrontComponentExecutionContext(selectBriefId);
@@ -91,7 +99,10 @@ const ApplyToBrief = () => {
       })) as ApplyToBriefResult;
 
       if (result.ok) {
-        await enqueueSnackbar({ message: 'Application sent', variant: 'success' });
+        await enqueueSnackbar({
+          message: 'Application sent',
+          variant: 'success',
+        });
         await openSidePanelPage({
           page: SidePanelPages.ViewRecord,
           recordId: result.applicationId,
@@ -117,8 +128,9 @@ const ApplyToBrief = () => {
       <h1 style={titleStyle}>Apply to this brief</h1>
 
       <label htmlFor="apply-pitch" style={labelStyle}>
-        Tell the client why your team fits this brief. Twenty introduces up to 2 partners
-        per brief, so an application is not a guarantee of an introduction.
+        Tell the client why your team fits this brief. Twenty introduces up to 2
+        partners per brief, so an application is not a guarantee of an
+        introduction.
       </label>
 
       <textarea
@@ -142,7 +154,11 @@ const ApplyToBrief = () => {
 
       <div style={footerStyle}>
         <button
-          style={isPitchLongEnough && !isSubmitting ? buttonStyle : disabledButtonStyle}
+          style={
+            isPitchLongEnough && !isSubmitting
+              ? buttonStyle
+              : disabledButtonStyle
+          }
           onClick={() => void apply()}
           disabled={!isPitchLongEnough || isSubmitting}
         >

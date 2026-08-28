@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { interpolateCommandMenuItemPlaceholders } from 'twenty-shared/i18n';
+import { interpolateMessagePlaceholders } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CommandMenuItemDTO } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item.dto';
@@ -41,7 +41,7 @@ export const interpolateNavigationCommandMenuItemField = ({
     return resolvedValue;
   }
 
-  return interpolateCommandMenuItemPlaceholders(
+  return interpolateMessagePlaceholders(
     resolvedValue,
     buildNavigationPlaceholderValues({
       objectMetadata,

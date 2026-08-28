@@ -13,6 +13,7 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  BigInt: { input: any; output: any; }
   ConnectionCursor: { input: any; output: any; }
   DateTime: { input: string; output: string; }
   JSON: { input: any; output: any; }
@@ -278,6 +279,7 @@ export type AppConnection = {
   scopes: Array<Scalars['String']['output']>;
   userWorkspaceId: Scalars['String']['output'];
   visibility: Scalars['String']['output'];
+  workspaceMemberId?: Maybe<Scalars['String']['output']>;
 };
 
 export type AppKeyValue = {
@@ -1333,7 +1335,6 @@ export type CreatePageLayoutTabInput = {
 
 export type CreatePageLayoutWidgetInput = {
   configuration: Scalars['JSON']['input'];
-  gridPosition: GridPositionInput;
   objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   pageLayoutTabId: Scalars['UUID']['input'];
   position?: InputMaybe<Scalars['JSON']['input']>;
@@ -1858,12 +1859,14 @@ export type FeatureFlag = {
 };
 
 export enum FeatureFlagKey {
+  IS_API_RATE_LIMIT_V2_ENABLED = 'IS_API_RATE_LIMIT_V2_ENABLED',
   IS_APP_CLAIMING_ENABLED = 'IS_APP_CLAIMING_ENABLED',
   IS_EMAIL_GROUP_ENABLED = 'IS_EMAIL_GROUP_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_JUNCTION_RELATIONS_ENABLED = 'IS_JUNCTION_RELATIONS_ENABLED',
   IS_LIST_VIEW_ENABLED = 'IS_LIST_VIEW_ENABLED',
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED = 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED',
+  IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED = 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
   IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED = 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED',
@@ -2141,13 +2144,6 @@ export type GridPosition = {
   columnSpan: Scalars['Float']['output'];
   row: Scalars['Float']['output'];
   rowSpan: Scalars['Float']['output'];
-};
-
-export type GridPositionInput = {
-  column: Scalars['Float']['input'];
-  columnSpan: Scalars['Float']['input'];
-  row: Scalars['Float']['input'];
-  rowSpan: Scalars['Float']['input'];
 };
 
 export enum IdentityProviderType {
@@ -2775,6 +2771,7 @@ export type Mutation = {
   deleteSkill: Skill;
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethod;
   deleteUnsubscribeTopic: Scalars['Boolean']['output'];
+  deleteUsageLimit: Scalars['Boolean']['output'];
   deleteUser: User;
   deleteUserFromWorkspace: UserWorkspace;
   deleteView: Scalars['Boolean']['output'];
@@ -2930,6 +2927,7 @@ export type Mutation = {
   upsertObjectPermissions: Array<ObjectPermission>;
   upsertPermissionFlags: Array<RolePermissionFlag>;
   upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult;
+  upsertUsageLimit: UsageLimit;
   upsertViewWidget: View;
   validateApprovedAccessDomain: ApprovedAccessDomain;
   verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken;
@@ -3367,6 +3365,11 @@ export type MutationDeleteTwoFactorAuthenticationMethodArgs = {
 
 export type MutationDeleteUnsubscribeTopicArgs = {
   id: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteUsageLimitArgs = {
+  usageLimitId: Scalars['UUID']['input'];
 };
 
 
@@ -4135,6 +4138,11 @@ export type MutationUpsertRowLevelPermissionPredicatesArgs = {
 };
 
 
+export type MutationUpsertUsageLimitArgs = {
+  input: UpsertUsageLimitInput;
+};
+
+
 export type MutationUpsertViewWidgetArgs = {
   input: UpsertViewWidgetInput;
 };
@@ -4478,8 +4486,8 @@ export type PageLayoutWidget = {
   configuration: WidgetConfiguration;
   createdAt: Scalars['DateTime']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
-  /** @deprecated Use `position` instead. Will be removed in a future release. */
-  gridPosition: GridPosition;
+  /** @deprecated Use `position` instead. */
+  gridPosition?: Maybe<GridPosition>;
   id: Scalars['UUID']['output'];
   isActive: Scalars['Boolean']['output'];
   /** @deprecated isOverridden is deprecated */
@@ -4790,6 +4798,7 @@ export type Query = {
   skills: Array<Skill>;
   timelineActivityTypes: Array<TimelineActivityType>;
   unsubscribeTopics: Array<UnsubscribeTopic>;
+  usageLimits: Array<UsageLimit>;
   validatePasswordResetToken: ValidatePasswordResetToken;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
@@ -6012,7 +6021,6 @@ export type UpdatePageLayoutWidgetInput = {
   conditionalAvailabilityExpression?: InputMaybe<Scalars['String']['input']>;
   conditionalDisplay?: InputMaybe<Scalars['JSON']['input']>;
   configuration?: InputMaybe<Scalars['JSON']['input']>;
-  gridPosition?: InputMaybe<GridPositionInput>;
   objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   pageLayoutTabId?: InputMaybe<Scalars['UUID']['input']>;
   position?: InputMaybe<Scalars['JSON']['input']>;
@@ -6024,7 +6032,6 @@ export type UpdatePageLayoutWidgetWithIdInput = {
   conditionalAvailabilityExpression?: InputMaybe<Scalars['String']['input']>;
   conditionalDisplay?: InputMaybe<Scalars['JSON']['input']>;
   configuration?: InputMaybe<Scalars['JSON']['input']>;
-  gridPosition: GridPositionInput;
   id: Scalars['UUID']['input'];
   objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   pageLayoutTabId: Scalars['UUID']['input'];
@@ -6288,6 +6295,17 @@ export type UpsertRowLevelPermissionPredicatesResult = {
   predicates: Array<RowLevelPermissionPredicate>;
 };
 
+export type UpsertUsageLimitInput = {
+  burstValue?: InputMaybe<Scalars['BigInt']['input']>;
+  limitKind: Scalars['String']['input'];
+  limitValue: Scalars['BigInt']['input'];
+  operationType: UsageOperationType;
+  resourceType: UsageResourceType;
+  spenderId?: InputMaybe<Scalars['String']['input']>;
+  spenderType: Scalars['String']['input'];
+  windowSeconds?: Scalars['Int']['input'];
+};
+
 export type UpsertViewWidgetInput = {
   /** View-level settings (layout type, group by, kanban and calendar settings) to apply to the widget view. */
   view?: InputMaybe<UpsertViewWidgetViewSettingsInput>;
@@ -6378,14 +6396,41 @@ export type UsageBreakdownItem = {
   label?: Maybe<Scalars['String']['output']>;
 };
 
+export type UsageLimit = {
+  __typename?: 'UsageLimit';
+  burstValue?: Maybe<Scalars['BigInt']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['UUID']['output'];
+  limitKind: Scalars['String']['output'];
+  limitValue: Scalars['BigInt']['output'];
+  limitValueType: Scalars['String']['output'];
+  operationType: UsageOperationType;
+  resourceType: UsageResourceType;
+  spenderId: Scalars['String']['output'];
+  spenderType: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+  windowSeconds: Scalars['Int']['output'];
+};
+
 export enum UsageOperationType {
   AI_CHAT_TOKEN = 'AI_CHAT_TOKEN',
   AI_WORKFLOW_TOKEN = 'AI_WORKFLOW_TOKEN',
+  API_REQUEST = 'API_REQUEST',
   CALL_RECORDING = 'CALL_RECORDING',
   CODE_EXECUTION = 'CODE_EXECUTION',
   EMAIL_SEND = 'EMAIL_SEND',
   WEB_SEARCH = 'WEB_SEARCH',
   WORKFLOW_EXECUTION = 'WORKFLOW_EXECUTION'
+}
+
+export enum UsageResourceType {
+  AI = 'AI',
+  API = 'API',
+  APP = 'APP',
+  EMAIL = 'EMAIL',
+  LOGIC_FUNCTION = 'LOGIC_FUNCTION',
+  STORAGE = 'STORAGE',
+  WORKFLOW = 'WORKFLOW'
 }
 
 export type UsageTimeSeries = {
@@ -7627,7 +7672,7 @@ export type FindManyCommandMenuItemsQuery = { __typename?: 'Query', commandMenuI
       | { __typename?: 'PathCommandMenuItemPayload', path: string }
      | null }> };
 
-export type PageLayoutFragmentFragment = { __typename?: 'PageLayout', id: string, applicationId: string, name: string, objectMetadataId?: string | null, type: PageLayoutType, universalIdentifier: string, isSystemSideEffect: boolean, defaultTabToFocusOnMobileAndSidePanelId?: string | null, createdAt: string, updatedAt: string, tabs?: Array<{ __typename?: 'PageLayoutTab', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: string, isActive: boolean, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?:
+export type PageLayoutFragmentFragment = { __typename?: 'PageLayout', id: string, applicationId: string, name: string, objectMetadataId?: string | null, type: PageLayoutType, universalIdentifier: string, isSystemSideEffect: boolean, defaultTabToFocusOnMobileAndSidePanelId?: string | null, createdAt: string, updatedAt: string, tabs?: Array<{ __typename?: 'PageLayoutTab', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: string, isActive: boolean, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition?: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number } | null, position?:
         | { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode }
         | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number }
         | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number }
@@ -7660,7 +7705,7 @@ export type PageLayoutFragmentFragment = { __typename?: 'PageLayout', id: string
         | { __typename?: 'WorkflowVersionConfiguration', configurationType: WidgetConfigurationType }
        }> | null }> | null };
 
-export type PageLayoutTabFragmentFragment = { __typename?: 'PageLayoutTab', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: string, isActive: boolean, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?:
+export type PageLayoutTabFragmentFragment = { __typename?: 'PageLayoutTab', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: string, isActive: boolean, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition?: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number } | null, position?:
       | { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode }
       | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number }
       | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number }
@@ -7705,7 +7750,7 @@ export type FindOnePageLayoutQueryVariables = Exact<{
 }>;
 
 
-export type FindOnePageLayoutQuery = { __typename?: 'Query', getPageLayout?: { __typename?: 'PageLayout', id: string, applicationId: string, name: string, objectMetadataId?: string | null, type: PageLayoutType, universalIdentifier: string, isSystemSideEffect: boolean, defaultTabToFocusOnMobileAndSidePanelId?: string | null, createdAt: string, updatedAt: string, tabs?: Array<{ __typename?: 'PageLayoutTab', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: string, isActive: boolean, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?:
+export type FindOnePageLayoutQuery = { __typename?: 'Query', getPageLayout?: { __typename?: 'PageLayout', id: string, applicationId: string, name: string, objectMetadataId?: string | null, type: PageLayoutType, universalIdentifier: string, isSystemSideEffect: boolean, defaultTabToFocusOnMobileAndSidePanelId?: string | null, createdAt: string, updatedAt: string, tabs?: Array<{ __typename?: 'PageLayoutTab', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: string, isActive: boolean, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition?: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number } | null, position?:
           | { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode }
           | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number }
           | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number }
@@ -8094,7 +8139,7 @@ export type GetInviteSuggestionsQueryVariables = Exact<{ [key: string]: never; }
 
 export type GetInviteSuggestionsQuery = { __typename?: 'Query', getInviteSuggestions: Array<{ __typename?: 'InviteSuggestion', email: string, displayName?: string | null }> };
 
-export type PageLayoutWidgetFragmentFragment = { __typename?: 'PageLayoutWidget', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?:
+export type PageLayoutWidgetFragmentFragment = { __typename?: 'PageLayoutWidget', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition?: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number } | null, position?:
     | { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode }
     | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number }
     | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number }
@@ -8132,7 +8177,7 @@ export type ResetPageLayoutTabToDefaultMutationVariables = Exact<{
 }>;
 
 
-export type ResetPageLayoutTabToDefaultMutation = { __typename?: 'Mutation', resetPageLayoutTabToDefault: { __typename?: 'PageLayoutTab', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: string, isActive: boolean, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?:
+export type ResetPageLayoutTabToDefaultMutation = { __typename?: 'Mutation', resetPageLayoutTabToDefault: { __typename?: 'PageLayoutTab', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: string, isActive: boolean, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition?: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number } | null, position?:
         | { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode }
         | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number }
         | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number }
@@ -8170,7 +8215,7 @@ export type ResetPageLayoutToDefaultMutationVariables = Exact<{
 }>;
 
 
-export type ResetPageLayoutToDefaultMutation = { __typename?: 'Mutation', resetPageLayoutToDefault: { __typename?: 'PageLayout', id: string, applicationId: string, name: string, objectMetadataId?: string | null, type: PageLayoutType, universalIdentifier: string, isSystemSideEffect: boolean, defaultTabToFocusOnMobileAndSidePanelId?: string | null, createdAt: string, updatedAt: string, tabs?: Array<{ __typename?: 'PageLayoutTab', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: string, isActive: boolean, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?:
+export type ResetPageLayoutToDefaultMutation = { __typename?: 'Mutation', resetPageLayoutToDefault: { __typename?: 'PageLayout', id: string, applicationId: string, name: string, objectMetadataId?: string | null, type: PageLayoutType, universalIdentifier: string, isSystemSideEffect: boolean, defaultTabToFocusOnMobileAndSidePanelId?: string | null, createdAt: string, updatedAt: string, tabs?: Array<{ __typename?: 'PageLayoutTab', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: string, isActive: boolean, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition?: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number } | null, position?:
           | { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode }
           | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number }
           | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number }
@@ -8208,7 +8253,7 @@ export type ResetPageLayoutWidgetToDefaultMutationVariables = Exact<{
 }>;
 
 
-export type ResetPageLayoutWidgetToDefaultMutation = { __typename?: 'Mutation', resetPageLayoutWidgetToDefault: { __typename?: 'PageLayoutWidget', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?:
+export type ResetPageLayoutWidgetToDefaultMutation = { __typename?: 'Mutation', resetPageLayoutWidgetToDefault: { __typename?: 'PageLayoutWidget', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition?: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number } | null, position?:
       | { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode }
       | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number }
       | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number }
@@ -8247,7 +8292,7 @@ export type UpdatePageLayoutWithTabsAndWidgetsMutationVariables = Exact<{
 }>;
 
 
-export type UpdatePageLayoutWithTabsAndWidgetsMutation = { __typename?: 'Mutation', updatePageLayoutWithTabsAndWidgets: { __typename?: 'PageLayout', id: string, applicationId: string, name: string, type: PageLayoutType, objectMetadataId?: string | null, universalIdentifier: string, isSystemSideEffect: boolean, defaultTabToFocusOnMobileAndSidePanelId?: string | null, createdAt: string, updatedAt: string, deletedAt?: string | null, tabs?: Array<{ __typename?: 'PageLayoutTab', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: string, isActive: boolean, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?:
+export type UpdatePageLayoutWithTabsAndWidgetsMutation = { __typename?: 'Mutation', updatePageLayoutWithTabsAndWidgets: { __typename?: 'PageLayout', id: string, applicationId: string, name: string, type: PageLayoutType, objectMetadataId?: string | null, universalIdentifier: string, isSystemSideEffect: boolean, defaultTabToFocusOnMobileAndSidePanelId?: string | null, createdAt: string, updatedAt: string, deletedAt?: string | null, tabs?: Array<{ __typename?: 'PageLayoutTab', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: string, isActive: boolean, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition?: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number } | null, position?:
           | { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode }
           | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number }
           | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number }
@@ -8297,7 +8342,7 @@ export type UpsertViewWidgetMutation = { __typename?: 'Mutation', upsertViewWidg
 export type FindAllPageLayoutsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindAllPageLayoutsQuery = { __typename?: 'Query', getPageLayouts: Array<{ __typename?: 'PageLayout', id: string, applicationId: string, name: string, objectMetadataId?: string | null, type: PageLayoutType, universalIdentifier: string, isSystemSideEffect: boolean, defaultTabToFocusOnMobileAndSidePanelId?: string | null, createdAt: string, updatedAt: string, tabs?: Array<{ __typename?: 'PageLayoutTab', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: string, isActive: boolean, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?:
+export type FindAllPageLayoutsQuery = { __typename?: 'Query', getPageLayouts: Array<{ __typename?: 'PageLayout', id: string, applicationId: string, name: string, objectMetadataId?: string | null, type: PageLayoutType, universalIdentifier: string, isSystemSideEffect: boolean, defaultTabToFocusOnMobileAndSidePanelId?: string | null, createdAt: string, updatedAt: string, tabs?: Array<{ __typename?: 'PageLayoutTab', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: string, isActive: boolean, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition?: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number } | null, position?:
           | { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode }
           | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number }
           | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number }
@@ -8333,7 +8378,7 @@ export type FindAllPageLayoutsQuery = { __typename?: 'Query', getPageLayouts: Ar
 export type FindAllRecordPageLayoutsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindAllRecordPageLayoutsQuery = { __typename?: 'Query', getPageLayouts: Array<{ __typename?: 'PageLayout', id: string, applicationId: string, name: string, objectMetadataId?: string | null, type: PageLayoutType, universalIdentifier: string, isSystemSideEffect: boolean, defaultTabToFocusOnMobileAndSidePanelId?: string | null, createdAt: string, updatedAt: string, tabs?: Array<{ __typename?: 'PageLayoutTab', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: string, isActive: boolean, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?:
+export type FindAllRecordPageLayoutsQuery = { __typename?: 'Query', getPageLayouts: Array<{ __typename?: 'PageLayout', id: string, applicationId: string, name: string, objectMetadataId?: string | null, type: PageLayoutType, universalIdentifier: string, isSystemSideEffect: boolean, defaultTabToFocusOnMobileAndSidePanelId?: string | null, createdAt: string, updatedAt: string, tabs?: Array<{ __typename?: 'PageLayoutTab', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: string, isActive: boolean, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: string, applicationId: string, universalIdentifier: string, isSystemSideEffect: boolean, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition?: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number } | null, position?:
           | { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode }
           | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number }
           | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number }

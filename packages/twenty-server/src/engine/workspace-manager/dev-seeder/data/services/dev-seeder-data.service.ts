@@ -53,6 +53,12 @@ import {
   MESSAGE_CAMPAIGN_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-campaign-data-seeds.constant';
 import {
+  CALENDAR_EVENT_TARGET_DATA_SEED_COLUMNS,
+  getCalendarEventTargetDataSeeds,
+  getMessageThreadTargetDataSeeds,
+  MESSAGE_THREAD_TARGET_DATA_SEED_COLUMNS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/message-calendar-target-data-seeds.constant';
+import {
   MESSAGE_DATA_SEED_COLUMNS,
   MESSAGE_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-data-seeds.constant';
@@ -126,6 +132,12 @@ const getRecordSeedsBatches = (
   attachmentSeeds: RecordSeedConfig['recordSeeds'],
   _featureFlags?: Record<FeatureFlagKey, boolean>,
 ): RecordSeedConfig[][] => {
+  // Participants are generated randomly, so they are built once and the
+  // derived target junction seeds are computed from the same arrays.
+  const messageParticipantSeeds = getMessageParticipantDataSeeds(workspaceId);
+  const calendarEventParticipantSeeds =
+    getCalendarEventParticipantDataSeeds(workspaceId);
+
   // Batch 1: No dependencies
   const batch1: RecordSeedConfig[] = [
     {
@@ -237,7 +249,7 @@ const getRecordSeedsBatches = (
     {
       tableName: 'calendarEventParticipant',
       pgColumns: CALENDAR_EVENT_PARTICIPANT_DATA_SEED_COLUMNS,
-      recordSeeds: getCalendarEventParticipantDataSeeds(workspaceId),
+      recordSeeds: calendarEventParticipantSeeds,
     },
     {
       tableName: 'message',
@@ -256,7 +268,19 @@ const getRecordSeedsBatches = (
     {
       tableName: 'messageParticipant',
       pgColumns: MESSAGE_PARTICIPANT_DATA_SEED_COLUMNS,
-      recordSeeds: getMessageParticipantDataSeeds(workspaceId),
+      recordSeeds: messageParticipantSeeds,
+    },
+    {
+      tableName: 'messageThreadTarget',
+      pgColumns: MESSAGE_THREAD_TARGET_DATA_SEED_COLUMNS,
+      recordSeeds: getMessageThreadTargetDataSeeds(messageParticipantSeeds),
+    },
+    {
+      tableName: 'calendarEventTarget',
+      pgColumns: CALENDAR_EVENT_TARGET_DATA_SEED_COLUMNS,
+      recordSeeds: getCalendarEventTargetDataSeeds(
+        calendarEventParticipantSeeds,
+      ),
     },
     {
       tableName: 'attachment',

@@ -3,6 +3,7 @@ import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { getTabsRenderableForTargetObject } from '@/page-layout/utils/getTabsRenderableForTargetObject';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
+  PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
@@ -22,8 +23,9 @@ describe('getTabsRenderableForTargetObject', () => {
     title: `Widget ${id}`,
     type,
     objectMetadataId: null,
-    gridPosition: {
-      __typename: 'GridPosition',
+    position: {
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      __typename: 'PageLayoutWidgetGridPosition',
       row: 0,
       column: 0,
       rowSpan: 1,
