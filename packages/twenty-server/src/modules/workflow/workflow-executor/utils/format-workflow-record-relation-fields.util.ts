@@ -54,7 +54,7 @@ const extractLegacyRelationId = (value: unknown): string | undefined => {
   return record.id;
 };
 
-const isEmptyRelationValue = (value: unknown): boolean => {
+const isNullRelationValue = (value: unknown): boolean => {
   if (value === null) {
     return true;
   }
@@ -65,11 +65,7 @@ const isEmptyRelationValue = (value: unknown): boolean => {
 
   const record = value as Record<string, unknown>;
 
-  if (Object.keys(record).length !== 1 || !('id' in record)) {
-    return false;
-  }
-
-  return !isDefined(record.id) || record.id === '';
+  return Object.keys(record).length === 1 && record.id === null;
 };
 
 const formatWorkflowRecordMorphRelationFields = (
@@ -213,7 +209,7 @@ const formatWorkflowRecordSimpleRelationFields = (
       name: key,
     });
 
-    if (isEmptyRelationValue(value)) {
+    if (isNullRelationValue(value)) {
       if (!isDefined(record[joinColumnName])) {
         formattedRecord[joinColumnName] = null;
       }
