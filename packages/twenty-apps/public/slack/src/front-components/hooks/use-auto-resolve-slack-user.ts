@@ -49,6 +49,7 @@ export const useAutoResolveSlackUser = () => {
     }
 
     setResolvedUser(result.slackUser);
+    setResolveError(null);
   };
 
   const clearResolution = () => {
