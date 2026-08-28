@@ -84,7 +84,6 @@ export function buildPartnerCreateData(
     ...partnerFields,
     slug: slugify(input.companyName),
     validationStage: 'APPLICATION',
-    reviewed: false,
     partnerTier: 'NEW',
     companyId,
     deploymentExpertise: deriveDeploymentExpertise(input.partnerScope) as CoreSchema.PartnerDeploymentExpertiseEnum[],

@@ -10,7 +10,7 @@ export default defineNavigationMenuItem({
   name: 'My Case Studies',
   type: NavigationMenuItemType.PAGE_LAYOUT,
   icon: 'IconBriefcase',
-  position: 4,
+  position: 5,
   folderUniversalIdentifier: PARTNER_WORKSPACE_FOLDER_UNIVERSAL_IDENTIFIER,
   pageLayoutUniversalIdentifier: MY_CASE_STUDIES_PAGE_LAYOUT_ID,
 });
