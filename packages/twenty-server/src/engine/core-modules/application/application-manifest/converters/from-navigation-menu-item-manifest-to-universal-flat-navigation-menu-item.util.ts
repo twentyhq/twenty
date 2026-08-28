@@ -1,8 +1,3 @@
-import {
-  NavigationMenuItemType,
-  NavigationCorePage,
-} from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItemManifest } from 'twenty-shared/application';
 
 import { type UniversalFlatNavigationMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-navigation-menu-item.type';
@@ -28,14 +23,6 @@ export const fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem =
       viewUniversalIdentifier:
         navigationMenuItemManifest.viewUniversalIdentifier ?? null,
       link: navigationMenuItemManifest.link ?? null,
-      corePage:
-        navigationMenuItemManifest.type === NavigationMenuItemType.CORE &&
-        isDefined(navigationMenuItemManifest.corePage) &&
-        Object.values(NavigationCorePage).includes(
-          navigationMenuItemManifest.corePage as NavigationCorePage,
-        )
-          ? (navigationMenuItemManifest.corePage as NavigationCorePage)
-          : null,
       folderUniversalIdentifier:
         navigationMenuItemManifest.folderUniversalIdentifier ?? null,
       targetObjectMetadataUniversalIdentifier:

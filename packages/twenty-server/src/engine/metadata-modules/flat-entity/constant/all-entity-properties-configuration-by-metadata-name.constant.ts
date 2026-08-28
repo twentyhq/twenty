@@ -1325,11 +1325,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     link: { toCompare: true, toStringify: false, universalProperty: undefined },
-    corePage: {
-      toCompare: true,
-      toStringify: false,
-      universalProperty: undefined,
-    },
     icon: { toCompare: true, toStringify: false, universalProperty: undefined },
     color: {
       toCompare: true,
@@ -1938,6 +1933,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     triggerFieldUniversalIdentifiers: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    happensAtFieldUniversalIdentifier: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,

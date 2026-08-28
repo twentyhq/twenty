@@ -147,7 +147,6 @@ import { AddIsDeprecatedToApplicationVariablesFastInstanceCommand } from 'src/da
 import { EncryptEmptyApplicationVariablesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-slow-1786533438000-encrypt-empty-application-variables';
 import { AddWritabilityToMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-32/2-32-instance-command-fast-1786713600000-add-writability-to-metadata';
 import { AddUninstallLogicFunctionIdToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-32/2-32-instance-command-fast-1786959731000-add-uninstall-logic-function-id-to-application';
-import { AddCoreNavigationMenuItemTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-37/2-37-instance-command-fast-1787850000000-add-core-navigation-menu-item-type';
 import { BackfillUninstallLogicFunctionIdOnApplicationSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-32/2-32-instance-command-slow-1786959731001-backfill-uninstall-logic-function-id-on-application';
 import { AddUninstallHookCompletedForRequestedAtToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-instance-command-fast-1787151824000-add-uninstall-hook-completed-for-requested-at-to-application';
 import { AddTimelineActivityTypeTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-33/2-33-instance-command-fast-1787352088649-add-timeline-activity-type-table';
@@ -162,6 +161,9 @@ import { AddLabelToApplicationVariableFastInstanceCommand } from 'src/database/c
 import { AddUsageLimitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-36/2-36-instance-command-fast-1787821567133-add-usage-limit';
 import { MakeUserEmailCaseInsensitiveFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-37/2-37-instance-command-fast-1787836741000-make-user-email-case-insensitive';
 import { BackfillMissingPageLayoutWidgetPositionsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-37/2-37-instance-command-slow-1787838153752-backfill-missing-page-layout-widget-positions';
+import { DropBillingCustomerCreditBalanceMicroFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787906740818-drop-billing-customer-credit-balance-micro';
+import { DropHasReachedCurrentPeriodCapFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787906740819-drop-has-reached-current-period-cap';
+import { AddTimelineActivityHappensAtFieldFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787918663364-add-timeline-activity-happens-at-field';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -325,5 +327,7 @@ export const INSTANCE_COMMANDS = [
   AddUsageLimitFastInstanceCommand,
   MakeUserEmailCaseInsensitiveFastInstanceCommand,
   BackfillMissingPageLayoutWidgetPositionsSlowInstanceCommand,
-  AddCoreNavigationMenuItemTypeFastInstanceCommand,
+  DropBillingCustomerCreditBalanceMicroFastInstanceCommand,
+  DropHasReachedCurrentPeriodCapFastInstanceCommand,
+  AddTimelineActivityHappensAtFieldFastInstanceCommand,
 ];

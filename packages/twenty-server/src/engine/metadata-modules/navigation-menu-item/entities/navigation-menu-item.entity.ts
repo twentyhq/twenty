@@ -15,11 +15,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import {
-  NavigationMenuItemType,
-  NavigationCorePage,
-} from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
-import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'navigationMenuItem', schema: 'core' })
@@ -51,8 +47,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   OR ("type" = 'VIEW' AND "viewId" IS NOT NULL)
   OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL)
   OR ("type" = 'LINK' AND "link" IS NOT NULL)
-  OR ("type" = 'PAGE_LAYOUT' AND "pageLayoutId" IS NOT NULL)
-  OR ("type" = 'CORE' AND "corePage" IS NOT NULL)`,
+  OR ("type" = 'PAGE_LAYOUT' AND "pageLayoutId" IS NOT NULL)`,
 )
 export class NavigationMenuItemEntity
   extends SyncableEntity
@@ -106,13 +101,6 @@ export class NavigationMenuItemEntity
 
   @Column({ nullable: true, type: 'text' })
   link: string | null;
-
-  @Column({ nullable: true, type: 'text' })
-  @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      '2.37.0_AddCoreNavigationMenuItemTypeFastInstanceCommand_1787850000000',
-  })
-  corePage: NavigationCorePage | null;
 
   @Column({ nullable: true, type: 'text' })
   icon: string | null;

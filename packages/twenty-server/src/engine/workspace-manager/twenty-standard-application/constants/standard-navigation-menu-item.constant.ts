@@ -1,10 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import {
-  NavigationMenuItemType,
-  NavigationCorePage,
-} from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
+import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 export const STANDARD_NAVIGATION_MENU_ITEMS = {
@@ -67,18 +64,6 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     icon: 'IconSettingsAutomation',
     position: 6,
   },
-  workflowsFolderCoreWorkflows: {
-    universalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
-    type: NavigationMenuItemType.CORE,
-    corePage: NavigationCorePage.WORKFLOWS,
-    name: i18nLabel(
-      msg({ message: `Workflows`, context: 'navigationMenuItem.name' }),
-    ),
-    icon: 'IconSettingsAutomation',
-    folderUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
-    // -1 keeps it first without renumbering the existing folder items
-    position: -1,
-  },
   workflowsFolderAllWorkflows: {
     universalIdentifier: '20202020-b008-4b08-8b08-c0aba11c0008',
     type: NavigationMenuItemType.OBJECT,
@@ -117,7 +102,6 @@ export const STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS: Partial<
   workflowsFolder: 'orange',
   allMessageCampaigns: 'gray',
   allDashboards: 'gray',
-  workflowsFolderCoreWorkflows: 'gray',
   workflowsFolderAllWorkflows: 'gray',
   workflowsFolderAllWorkflowRuns: 'gray',
   workflowsFolderAllWorkflowVersions: 'gray',

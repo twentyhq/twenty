@@ -2,7 +2,6 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type View } from '@/views/types/View';
 import {
   NavigationMenuItemType,
-  NavigationCorePage,
   ViewKey,
   type NavigationMenuItem,
 } from '~/generated-metadata/graphql';
@@ -28,42 +27,6 @@ const objectItem: NavigationMenuItem = {
 };
 
 describe('getNavigationMenuItemComputedLink', () => {
-  it('should link a CORE item to its system page route', () => {
-    expect(
-      getNavigationMenuItemComputedLink({
-        item: {
-          id: 'nav-system',
-          type: NavigationMenuItemType.CORE,
-          corePage: NavigationCorePage.WORKFLOWS,
-          position: 0,
-          createdAt: '',
-          updatedAt: '',
-        },
-        objectMetadataItems,
-        views,
-        lastVisitedViewPerObjectMetadataItem: {},
-      }),
-    ).toBe('/workflow-core');
-  });
-
-  it('should return an empty link for a CORE item with an unknown page', () => {
-    expect(
-      getNavigationMenuItemComputedLink({
-        item: {
-          id: 'nav-system-unknown',
-          type: NavigationMenuItemType.CORE,
-          corePage: 'NOT_A_PAGE' as never,
-          position: 0,
-          createdAt: '',
-          updatedAt: '',
-        },
-        objectMetadataItems,
-        views,
-        lastVisitedViewPerObjectMetadataItem: {},
-      }),
-    ).toBe('');
-  });
-
   it('should link an object item to its last visited view when one is recorded', () => {
     const link = getNavigationMenuItemComputedLink({
       item: objectItem,

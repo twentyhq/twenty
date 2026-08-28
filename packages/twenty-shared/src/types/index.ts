@@ -169,7 +169,6 @@ export type { MetadataGqlOperationSignature } from './MetadataGqlOperationSignat
 export { MetadataWritability } from './MetadataWritability';
 export type { ModifiedProperties } from './ModifiedProperties';
 export type { NavigateOptions } from './NavigateOptions';
-export { NavigationCorePage } from './NavigationCorePage';
 export { NavigationMenuItemType } from './NavigationMenuItemType';
 export type { NonNullableRequired } from './NonNullableRequired';
 export type { Nullable } from './Nullable';

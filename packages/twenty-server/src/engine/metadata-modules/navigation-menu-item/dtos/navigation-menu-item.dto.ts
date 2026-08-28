@@ -10,10 +10,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
-import {
-  NavigationMenuItemType,
-  NavigationCorePage,
-} from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
+import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 
 import { RecordIdentifierDTO } from './record-identifier.dto';
 
@@ -55,9 +52,6 @@ export class NavigationMenuItemDTO {
   @IsOptional()
   @Field(() => String, { nullable: true })
   link?: string | null;
-
-  @Field(() => NavigationCorePage, { nullable: true })
-  corePage?: NavigationCorePage | null;
 
   @IsOptional()
   @Field(() => String, { nullable: true })

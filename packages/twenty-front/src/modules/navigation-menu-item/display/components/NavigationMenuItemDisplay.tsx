@@ -50,21 +50,6 @@ export const NavigationMenuItemDisplay = ({
           readOnly={readOnly}
         />
       );
-    case NavigationMenuItemType.CORE:
-      return (
-        <NavigationMenuItemPageLayoutDisplay
-          item={item}
-          isEditInPlace={isEditInPlace}
-          editModeProps={editModeProps}
-          isDragging={isDragging}
-          folderChildrenById={folderChildrenById}
-          folderCount={folderCount}
-          rightOptions={rightOptions}
-          onNavigationMenuItemClick={onNavigationMenuItemClick}
-          onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-          readOnly={readOnly}
-        />
-      );
     case NavigationMenuItemType.PAGE_LAYOUT:
       return (
         <NavigationMenuItemPageLayoutDisplay

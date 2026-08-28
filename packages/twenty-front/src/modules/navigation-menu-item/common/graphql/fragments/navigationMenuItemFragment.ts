@@ -11,7 +11,6 @@ export const NAVIGATION_MENU_ITEM_FRAGMENT = gql`
     folderId
     name
     link
-    corePage
     icon
     color
     pageLayoutId

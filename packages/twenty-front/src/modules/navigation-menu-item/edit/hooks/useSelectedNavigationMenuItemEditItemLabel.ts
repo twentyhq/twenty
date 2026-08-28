@@ -21,8 +21,6 @@ const getLabelForItem = (
       return item.name ?? 'Link';
     case NavigationMenuItemType.PAGE_LAYOUT:
       return item.name ?? 'Page';
-    case NavigationMenuItemType.CORE:
-      return item.name ?? 'System';
     case NavigationMenuItemType.OBJECT:
     case NavigationMenuItemType.VIEW:
       return (

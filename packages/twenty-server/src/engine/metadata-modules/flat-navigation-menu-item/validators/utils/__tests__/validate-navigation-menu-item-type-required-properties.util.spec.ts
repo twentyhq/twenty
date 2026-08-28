@@ -1,7 +1,4 @@
-import {
-  NavigationMenuItemType,
-  NavigationCorePage,
-} from 'twenty-shared/types';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { validateNavigationMenuItemTypeRequiredProperties } from 'src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util';
 import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
@@ -117,10 +114,6 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
       type: NavigationMenuItemType.PAGE_LAYOUT,
       overrides: { pageLayoutUniversalIdentifier: VALID_UUID },
     },
-    {
-      type: NavigationMenuItemType.CORE,
-      overrides: { corePage: NavigationCorePage.WORKFLOWS },
-    },
   ])(
     'should not report any error when $type type properties are valid',
     ({ type, overrides }) => {
@@ -132,23 +125,6 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
       });
 
       expect(errors).toEqual([]);
-    },
-  );
-
-  it.each([
-    { label: 'missing', corePage: null },
-    { label: 'unknown', corePage: 'NOT_A_PAGE' },
-  ])(
-    'should return an error when corePage is $label for CORE type',
-    ({ corePage }) => {
-      const errors = validateNavigationMenuItemTypeRequiredProperties({
-        flatNavigationMenuItem: buildFlatNavigationMenuItem({
-          type: NavigationMenuItemType.CORE,
-          corePage: corePage as never,
-        }),
-      });
-
-      expect(errors).toHaveLength(1);
     },
   );
 

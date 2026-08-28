@@ -32,10 +32,7 @@ export const getFirstNavigationMenuItemLink = ({
   for (const item of navigationMenuItemsInDisplayOrder) {
     if (
       item.type === NavigationMenuItemType.FOLDER ||
-      item.type === NavigationMenuItemType.LINK ||
-      // CORE pages are permission- and flag-gated per viewer, which this
-      // util cannot evaluate, so they never become the default home
-      item.type === NavigationMenuItemType.CORE
+      item.type === NavigationMenuItemType.LINK
     ) {
       continue;
     }

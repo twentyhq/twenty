@@ -3,7 +3,6 @@ import { msg, t } from '@lingui/core/macro';
 import {
   type AssertUnreachable,
   NavigationMenuItemType,
-  NavigationCorePage,
 } from 'twenty-shared/types';
 import { isDefined, isValidUrl, isValidUuid } from 'twenty-shared/utils';
 
@@ -49,7 +48,6 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
     targetObjectMetadataUniversalIdentifier,
     viewUniversalIdentifier,
     pageLayoutUniversalIdentifier,
-    corePage,
   } = flatNavigationMenuItem;
 
   if (!isDefined(type)) {
@@ -107,17 +105,6 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
             buildInvalidInputError(
               t`A valid link is required for LINK type`,
               msg`A valid link is required for LINK type`,
-            ),
-          ];
-    }
-    case NavigationMenuItemType.CORE: {
-      return isDefined(corePage) &&
-        Object.values(NavigationCorePage).includes(corePage)
-        ? []
-        : [
-            buildInvalidInputError(
-              t`A valid corePage is required for CORE type`,
-              msg`A valid corePage is required for CORE type`,
             ),
           ];
     }

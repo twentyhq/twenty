@@ -1,4 +1,3 @@
-import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { NavigationMenuItemType } from 'twenty-shared/types';
@@ -48,7 +47,6 @@ export const NavigationMenuItemFolderSubItem = ({
   onClick,
   onNavigationMenuItemClick,
 }: NavigationMenuItemFolderSubItemProps) => {
-  const { t } = useLingui();
   const isEditHighlightedInNavigationMenu =
     useIsNavigationMenuItemEditHighlighted(navigationMenuItem);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
@@ -112,19 +110,16 @@ export const NavigationMenuItemFolderSubItem = ({
           navigate(computedLink);
         });
 
-  const secondaryLabel =
-    navigationMenuItem.type === NavigationMenuItemType.CORE
-      ? t`System`
-      : navigationMenuItem.type === NavigationMenuItemType.VIEW
-        ? getObjectNavigationMenuItemSecondaryLabel({
-            objectMetadataItems,
-            navigationMenuItemObjectNameSingular: objectNameSingular ?? '',
-          })
-        : undefined;
-
   return (
     <NavigationDrawerSubItem
-      secondaryLabel={secondaryLabel}
+      secondaryLabel={
+        navigationMenuItem.type !== NavigationMenuItemType.VIEW
+          ? undefined
+          : getObjectNavigationMenuItemSecondaryLabel({
+              objectMetadataItems,
+              navigationMenuItemObjectNameSingular: objectNameSingular ?? '',
+            })
+      }
       label={label}
       Icon={() => (
         <NavigationMenuItemIcon navigationMenuItem={navigationMenuItem} />

@@ -618,7 +618,6 @@ export class ObjectMetadataService {
       pageLayoutUniversalIdentifier: null,
       name: null,
       link: null,
-      corePage: null,
       icon: null,
       color: null,
       position: nextPosition,

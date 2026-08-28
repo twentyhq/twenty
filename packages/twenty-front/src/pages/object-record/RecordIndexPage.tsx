@@ -6,7 +6,10 @@ import { RecordIndexContainerGater } from '@/object-record/record-index/componen
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isUndefined } from '@sniptt/guards';
+import { CoreObjectNameSingular, FeatureFlagKey } from 'twenty-shared/types';
+import { WorkflowCoreIndexPage } from '~/pages/object-core/WorkflowCoreIndexPage';
 
 export const RecordIndexPage = () => {
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
@@ -15,6 +18,10 @@ export const RecordIndexPage = () => {
   );
 
   const { objectMetadataItems } = useObjectMetadataItems();
+
+  const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
+  );
 
   if (isUndefined(contextStoreCurrentObjectMetadataItemId)) {
     return <RecordIndexSkeletonLoader />;
@@ -27,6 +34,13 @@ export const RecordIndexPage = () => {
 
   if (isUndefined(objectMetadataItem)) {
     return <RecordIndexSkeletonLoader />;
+  }
+
+  if (
+    objectMetadataItem.nameSingular === CoreObjectNameSingular.Workflow &&
+    isWorkflowCoreIndexPageEnabled
+  ) {
+    return <WorkflowCoreIndexPage />;
   }
 
   return (

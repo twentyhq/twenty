@@ -11,7 +11,6 @@ import {
   createStandardNavigationMenuItemFolderFlatMetadata,
   createStandardNavigationMenuItemFolderItemFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-folder-flat-metadata.util';
-import { createStandardNavigationMenuItemCoreFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-core-flat-metadata.util';
 
 const FLAT_NAVIGATION_MENU_ITEM_NAMES = [
   'allCompanies',
@@ -88,27 +87,6 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
 
   addFlatNavigationMenuItemToMapsAndUpdateIndex({
     flatNavigationMenuItem: workflowsFolder,
-    flatNavigationMenuItemMaps,
-  });
-
-  const coreWorkflowsDefinition =
-    STANDARD_NAVIGATION_MENU_ITEMS.workflowsFolderCoreWorkflows;
-
-  addFlatNavigationMenuItemToMapsAndUpdateIndex({
-    flatNavigationMenuItem: createStandardNavigationMenuItemCoreFlatMetadata({
-      universalIdentifier: coreWorkflowsDefinition.universalIdentifier,
-      corePage: coreWorkflowsDefinition.corePage,
-      name: coreWorkflowsDefinition.name,
-      icon: coreWorkflowsDefinition.icon,
-      folderId: workflowsFolderId,
-      folderUniversalIdentifier:
-        coreWorkflowsDefinition.folderUniversalIdentifier,
-      position: coreWorkflowsDefinition.position,
-      navigationMenuItemId: v4(),
-      workspaceId,
-      twentyStandardApplicationId,
-      now,
-    }),
     flatNavigationMenuItemMaps,
   });
 
