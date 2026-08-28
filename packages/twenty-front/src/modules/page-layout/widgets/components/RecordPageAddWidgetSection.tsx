@@ -5,16 +5,14 @@ import { useCreateRecordPageNoteWidget } from '@/page-layout/hooks/useCreateReco
 import { useNavigateToMoreWidgets } from '@/page-layout/hooks/useNavigateToMoreWidgets';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
 import {
   IconListDetails,
   IconNotes,
   IconPlus,
-  IconSquarePlus,
   IconStack2,
 } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   border: 1px solid transparent;
@@ -33,7 +31,6 @@ const StyledHeader = styled.div`
   flex-shrink: 0;
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[6]};
   padding-inline: ${themeCssVariables.spacing[1]};
 `;
@@ -48,7 +45,6 @@ const StyledMenuItemList = styled.div`
 `;
 
 export const RecordPageAddWidgetSection = () => {
-  const { theme } = useContext(ThemeContext);
   const { tabId } = usePageLayoutContentContext();
 
   const { createRecordPageFieldsWidget } = useCreateRecordPageFieldsWidget();
@@ -61,14 +57,7 @@ export const RecordPageAddWidgetSection = () => {
 
   return (
     <StyledContainer>
-      <StyledHeader>
-        <IconSquarePlus
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.md}
-          color={theme.font.color.extraLight}
-        />
-        {t`Add widget`}
-      </StyledHeader>
+      <StyledHeader>{t`Add widget`}</StyledHeader>
       <StyledMenuItemList>
         <MenuItem
           LeftIcon={IconStack2}
