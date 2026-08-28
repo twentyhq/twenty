@@ -30,5 +30,25 @@ export class DropBillingCustomerCreditBalanceMicroFastInstanceCommand
     await queryRunner.query(
       `ALTER TABLE "core"."billingCustomer" ADD COLUMN IF NOT EXISTS "creditBalanceMicro" bigint NOT NULL DEFAULT 0`,
     );
+
+    if (!(await isCoreTablePresent(queryRunner, 'billingCreditGrant'))) {
+      return;
+    }
+
+    // Recreating the column at its default would hand every workspace a zero
+    // balance, and a rollback that continues past 2.31 reaches code that reads
+    // this column as the authority rather than the ledger. Rebuild it from the
+    // grants that are spendable now, matching getActiveCreditsMicro.
+    await queryRunner.query(
+      `UPDATE "core"."billingCustomer"
+       SET "creditBalanceMicro" = COALESCE((
+         SELECT SUM("billingCreditGrant"."amountMicro")
+         FROM "core"."billingCreditGrant"
+         WHERE "billingCreditGrant"."workspaceId" = "billingCustomer"."workspaceId"
+           AND "billingCreditGrant"."revokedAt" IS NULL
+           AND "billingCreditGrant"."effectiveAt" <= now()
+           AND "billingCreditGrant"."expiresAt" > now()
+       ), 0)`,
+    );
   }
 }
