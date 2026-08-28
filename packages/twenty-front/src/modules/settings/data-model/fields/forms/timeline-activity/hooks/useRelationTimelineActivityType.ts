@@ -115,7 +115,6 @@ export const useRelationTimelineActivityType = ({
   return {
     canCreateTimelineActivityType,
     canToggleTimelineLogging,
-    hasEmitCapableRelationShape,
     isMutating: isCreating || isUpdating,
     isTimelineLoggingEnabled,
     relationTimelineActivityType,

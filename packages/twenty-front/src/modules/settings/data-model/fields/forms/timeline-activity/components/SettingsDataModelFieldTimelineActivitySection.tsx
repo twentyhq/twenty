@@ -37,7 +37,12 @@ export const SettingsDataModelFieldTimelineActivitySection = ({
 
   const hasTimelineActivityType = isDefined(relationTimelineActivityType);
 
-  if (!hasTimelineActivityType && !canCreateTimelineActivityType) {
+  // A section whose only control can never be operated is noise, so it stays
+  // hidden rather than rendering a permanently disabled toggle.
+  if (
+    !canToggleTimelineLogging ||
+    (!hasTimelineActivityType && !canCreateTimelineActivityType)
+  ) {
     return null;
   }
 

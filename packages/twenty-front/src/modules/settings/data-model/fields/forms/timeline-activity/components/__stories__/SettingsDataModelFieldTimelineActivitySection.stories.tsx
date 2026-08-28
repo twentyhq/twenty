@@ -7,6 +7,7 @@ import { SettingsDataModelFieldTimelineActivitySection } from '@/settings/data-m
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { type FindManyTimelineActivityTypesQuery } from '~/generated-metadata/graphql';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
@@ -27,8 +28,13 @@ const customObjectMetadataItem = personObjectMetadataItem
     }
   : undefined;
 
+type MockedTimelineActivityType =
+  FindManyTimelineActivityTypesQuery['timelineActivityTypes'][number] & {
+    __typename: 'TimelineActivityType';
+  };
+
 const buildFindManyTimelineActivityTypesHandler = (
-  timelineActivityTypes: unknown[],
+  timelineActivityTypes: MockedTimelineActivityType[],
 ) =>
   graphql.query('FindManyTimelineActivityTypes', () => {
     return HttpResponse.json({
@@ -89,7 +95,7 @@ export const WithExistingEmitter: Story = {
               through: {
                 __typename: 'TimelineActivityTypeEmitThrough',
                 relationFieldUniversalIdentifier:
-                  companyRelationFieldMetadataItem?.universalIdentifier,
+                  companyRelationFieldMetadataItem?.universalIdentifier ?? '',
               },
             },
             frontComponentUniversalIdentifier: null,
