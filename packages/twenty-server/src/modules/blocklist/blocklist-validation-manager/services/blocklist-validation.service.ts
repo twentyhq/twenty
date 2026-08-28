@@ -58,7 +58,7 @@ export class BlocklistValidationService {
         : null;
 
       if (isDefined(existingRecord)) {
-        await this.blocklistAccessService.canUserModifyBlocklistEntry({
+        await this.blocklistAccessService.assertCanModifyBlocklistEntryOrThrow({
           entry: existingRecord,
           context,
         });
@@ -68,7 +68,7 @@ export class BlocklistValidationService {
         });
       } else {
         this.validateScopeTarget({ item, context });
-        await this.blocklistAccessService.canUserCreateBlocklistEntry({
+        await this.blocklistAccessService.assertCanCreateBlocklistEntryOrThrow({
           item,
           context,
         });
@@ -92,7 +92,7 @@ export class BlocklistValidationService {
       context,
     });
 
-    await this.blocklistAccessService.canUserModifyBlocklistEntry({
+    await this.blocklistAccessService.assertCanModifyBlocklistEntryOrThrow({
       entry: existingRecord,
       context,
     });
@@ -135,7 +135,7 @@ export class BlocklistValidationService {
   }): Promise<void> {
     const existingRecord = await this.getExistingRecordOrThrow({ id, context });
 
-    await this.blocklistAccessService.canUserModifyBlocklistEntry({
+    await this.blocklistAccessService.assertCanModifyBlocklistEntryOrThrow({
       entry: existingRecord,
       context,
     });
@@ -150,7 +150,7 @@ export class BlocklistValidationService {
   }): Promise<void> {
     const existingRecord = await this.getExistingRecordOrThrow({ id, context });
 
-    await this.blocklistAccessService.canUserModifyBlocklistEntry({
+    await this.blocklistAccessService.assertCanModifyBlocklistEntryOrThrow({
       entry: existingRecord,
       context,
     });

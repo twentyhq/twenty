@@ -18,43 +18,43 @@ import { type BlocklistMutationContext } from 'src/modules/blocklist/types/block
 export class BlocklistAccessService {
   constructor(private readonly permissionsService: PermissionsService) {}
 
-  async canUserCreateBlocklistEntry({
+  async assertCanCreateBlocklistEntryOrThrow({
     item,
     context,
   }: {
     item: Partial<Pick<BlocklistItem, 'scope'>>;
     context: BlocklistMutationContext;
-  }): Promise<boolean> {
+  }): Promise<void> {
     const scope = item.scope ?? BlocklistScope.WORKSPACE_MEMBER;
 
     if (scope === BlocklistScope.WORKSPACE_MEMBER) {
-      return true;
+      return;
     }
 
     if (await this.hasWorkspaceBlocklistPermission(context)) {
-      return true;
+      return;
     }
 
     this.throwWorkspacePermissionDenied();
   }
 
-  async canUserModifyBlocklistEntry({
+  async assertCanModifyBlocklistEntryOrThrow({
     entry,
     context,
   }: {
     entry: Pick<BlocklistWorkspaceEntity, 'scope' | 'workspaceMemberId'>;
     context: BlocklistMutationContext;
-  }): Promise<boolean> {
+  }): Promise<void> {
     const isOwnMemberScopedEntry =
       entry.scope === BlocklistScope.WORKSPACE_MEMBER &&
       entry.workspaceMemberId === context.workspaceMemberId;
 
     if (isOwnMemberScopedEntry) {
-      return true;
+      return;
     }
 
     if (await this.hasWorkspaceBlocklistPermission(context)) {
-      return true;
+      return;
     }
 
     this.throwWorkspacePermissionDenied();
