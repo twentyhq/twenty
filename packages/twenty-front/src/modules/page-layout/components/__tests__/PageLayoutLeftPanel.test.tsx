@@ -9,10 +9,6 @@ let mockTargetRecordIdentifier = {
 };
 let mockIsInSidePanel = false;
 
-jest.mock('@/object-record/record-show/components/SummaryCard', () => ({
-  SummaryCard: () => null,
-}));
-
 jest.mock('@/page-layout/components/PageLayoutContent', () => ({
   PageLayoutContent: () => <div>Page layout content</div>,
 }));
