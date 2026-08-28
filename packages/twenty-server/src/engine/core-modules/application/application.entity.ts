@@ -111,7 +111,7 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'jsonb', nullable: false, default: {} })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.38.0_AddBillingToApplicationFastInstanceCommand_1787857073000',
+      '2.38.0_AddBillingToApplicationFastInstanceCommand_1787911033000',
   })
   billing: ApplicationBilling;
 
