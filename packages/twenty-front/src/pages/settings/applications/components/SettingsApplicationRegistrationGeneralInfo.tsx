@@ -15,6 +15,7 @@ import {
   type ApplicationRegistration,
   ApplicationRegistrationSourceType,
   ApplicationRegistrationTarballUrlDocument,
+  ApplicationState,
   FindOneApplicationSummaryDocument,
   GetPublicWorkspaceDataByIdDocument,
 } from '~/generated-metadata/graphql';
@@ -81,9 +82,11 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
     },
   );
 
-  const isApplicationInstalled = isDefined(
-    applicationSummaryData?.findOneApplication,
-  );
+  const applicationSummary = applicationSummaryData?.findOneApplication;
+  const isApplicationInstalling =
+    applicationSummary?.state === ApplicationState.INSTALLING;
+  const isApplicationInstalled =
+    isDefined(applicationSummary) && !isApplicationInstalling;
 
   const { data: ownerWorkspaceData } = useQuery(
     GetPublicWorkspaceDataByIdDocument,
@@ -207,6 +210,7 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
         <SettingsApplicationRegistrationShareLinkButtons
           shareLink={shareLink}
           isInstalled={isApplicationInstalled}
+          isApplicationInstalling={isApplicationInstalling}
           universalIdentifier={registration.universalIdentifier}
           isNpmSource={
             registration.sourceType === ApplicationRegistrationSourceType.NPM

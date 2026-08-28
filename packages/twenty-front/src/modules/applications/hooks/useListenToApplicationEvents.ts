@@ -6,7 +6,11 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useApolloClient } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { FindManyApplicationsDocument } from '~/generated-metadata/graphql';
+import {
+  FindManyApplicationsDocument,
+  FindOneApplicationByUniversalIdentifierDocument,
+  FindOneApplicationSummaryDocument,
+} from '~/generated-metadata/graphql';
 
 // Keeps the applications Apollo cache and the workspace installedApplications
 // list in sync with SSE broadcast events so install/upgrade/uninstall state
@@ -82,6 +86,19 @@ export const useListenToApplicationEvents = ({
         query: FindManyApplicationsDocument,
         fetchPolicy: 'network-only',
       });
+
+      // Lookups by universalIdentifier error while the application is absent,
+      // so cache normalization alone cannot revive them after a create.
+      void apolloClient
+        .refetchQueries({
+          include: [
+            FindOneApplicationByUniversalIdentifierDocument,
+            FindOneApplicationSummaryDocument,
+          ],
+        })
+        .catch(() => {
+          // NOT_FOUND after an uninstall is a valid outcome.
+        });
     },
     [apolloClient, setCurrentWorkspace],
   );

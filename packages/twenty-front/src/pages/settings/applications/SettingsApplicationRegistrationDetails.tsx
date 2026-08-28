@@ -1,3 +1,4 @@
+import { useListenToApplicationEvents } from '@/applications/hooks/useListenToApplicationEvents';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useQuery } from '@apollo/client/react';
 import { useParams } from 'react-router-dom';
@@ -41,6 +42,8 @@ export const SettingsApplicationRegistrationDetails = () => {
     variables: { id: applicationRegistrationId },
     skip: !applicationRegistrationId,
   });
+
+  useListenToApplicationEvents();
 
   const registration = data?.findOneApplicationRegistration;
 

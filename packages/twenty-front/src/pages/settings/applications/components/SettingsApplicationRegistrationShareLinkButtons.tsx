@@ -24,12 +24,14 @@ const StyledButtonGroup = styled.div`
 export const SettingsApplicationRegistrationShareLinkButtons = ({
   shareLink,
   isInstalled,
+  isApplicationInstalling = false,
   universalIdentifier,
   isNpmSource = false,
   withCopyButton = false,
 }: {
   shareLink: string;
   isInstalled?: boolean;
+  isApplicationInstalling?: boolean;
   universalIdentifier?: string;
   isNpmSource?: boolean;
   withCopyButton?: boolean;
@@ -66,10 +68,14 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
         <>
           <Button
             Icon={IconDownload}
-            title={isInstalling ? t`Installing...` : t`Install`}
+            title={
+              isInstalling || isApplicationInstalling
+                ? t`Installing...`
+                : t`Install`
+            }
             variant={'secondary'}
             onClick={requestInstall}
-            disabled={isInstalling}
+            disabled={isInstalling || isApplicationInstalling}
           />
           <SettingsApplicationInstallPermissionValidationModal
             modalInstanceId={modalInstanceId}
