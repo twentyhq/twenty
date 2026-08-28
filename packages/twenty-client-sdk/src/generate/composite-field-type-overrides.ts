@@ -6,20 +6,12 @@ import type {
   LinkMetadata,
 } from 'twenty-shared/types';
 
-// Composite sub-fields stored as RAW_JSON reach the workspace GraphQL schema
-// as the untyped JSON scalar, so codegen alone would type them
-// Record<string, unknown>. Their runtime shape is fixed by the composite
-// definitions in twenty-shared; these literals inline that shape into the
-// generated client, which must stay free of imports.
 const ADDITIONAL_EMAILS_TYPE_TEXT = 'string[]';
 const ADDITIONAL_PHONES_TYPE_TEXT =
   'Array<{ number: string; callingCode: string; countryCode: string }>';
 const SECONDARY_LINKS_TYPE_TEXT = 'Array<{ label: string; url: string }>';
 const ACTOR_CONTEXT_TYPE_TEXT = '{ provider?: string }';
 
-// Fails this package's typecheck when a composite metadata type in
-// twenty-shared drifts from the literals above. Branded string values
-// (enums, CountryCode) are deliberately widened to string in the client.
 type WidenStringValues<TObject> = {
   [TKey in keyof TObject]: TObject[TKey] extends string | undefined
     ? string
@@ -40,10 +32,6 @@ export type CompositeFieldTypeOverrideDriftGuards = [
   >,
 ];
 
-// Keyed by the type names the workspace schema builder emits for composite
-// fields: the plain object type plus its Create/Update input variants. These
-// names are workspace-independent, so one static map covers every schema.
-// Filter/OrderBy/GroupBy inputs never expose the raw JSON value.
 export const COMPOSITE_FIELD_TYPE_OVERRIDES: {
   [typeName: string]: { [fieldName: string]: string };
 } = {
@@ -81,13 +69,6 @@ const findMatchingBrace = (source: string, openBraceIndex: number): number => {
   throw new Error('Unbalanced braces in generated schema types');
 };
 
-// Rewrites the generated schema.ts so composite RAW_JSON sub-fields carry
-// their real shape. Runs as a post-processing pass so the vendored genql
-// engine stays verbatim; nullability/optionality wrapping emitted by the
-// engine is preserved because only the Scalars['JSON'] reference is swapped.
-// A composite type absent from the schema (minimal test schemas, metadata)
-// is skipped; a present type whose field no longer renders as the JSON
-// scalar fails loudly, so engine-output drift surfaces at generation time.
 export const applyCompositeFieldTypeOverrides = (
   schemaTypesSource: string,
 ): string => {
