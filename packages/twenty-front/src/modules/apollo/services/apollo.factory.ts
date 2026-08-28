@@ -193,6 +193,7 @@ export class ApolloFactory implements ApolloManager {
 
       const attemptTokenRenewal = async (): Promise<void> => {
         const graphqlUri = `${REACT_APP_SERVER_BASE_URL}/metadata`;
+        const refreshTokenSnapshot = getTokenPair()?.refreshToken?.token;
 
         const tokens = await retryWithBackoff(
           () => renewToken(graphqlUri, getTokenPair()),
@@ -204,7 +205,15 @@ export class ApolloFactory implements ApolloManager {
           },
         );
 
-        if (isDefined(tokens)) {
+        // Same snapshot guard as ensureTokenRenewed. CookieSessionBootEffect
+        // can clear the pair while this is in flight, and publishing anyway
+        // would put a fresh refresh token back in localStorage for good: the
+        // boot effect only probes while cookie auth is inactive, so it never
+        // clears it again.
+        if (
+          isDefined(tokens) &&
+          getTokenPair()?.refreshToken?.token === refreshTokenSnapshot
+        ) {
           onTokenPairChange?.(tokens);
         }
       };

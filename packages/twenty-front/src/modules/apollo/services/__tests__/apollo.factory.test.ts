@@ -438,6 +438,24 @@ describe('ApolloFactory', () => {
       expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
     });
 
+    // CookieSessionBootEffect can switch to cookie auth while a renewal is in
+    // flight. Publishing that renewal would put the refresh token back for
+    // good, since the boot effect only probes while cookie auth is inactive.
+    it('should not restore the token pair when it is cleared mid-renewal', async () => {
+      jest.mocked(renewToken).mockImplementation(async () => {
+        storedTokenPair = undefined;
+        setCookieAuthActive();
+
+        return RENEWED_TOKEN_PAIR;
+      });
+      fetchMock.mockResponse(UNAUTHENTICATED_RESPONSE);
+
+      await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+      expect(renewToken).toHaveBeenCalled();
+      expect(mockOnTokenPairChange).not.toHaveBeenCalled();
+    });
+
     it('should sign out on an unauthenticated response, with no pair to fall back to', async () => {
       setCookieAuthActive();
       storedTokenPair = undefined;
