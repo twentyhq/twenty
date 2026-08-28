@@ -1,4 +1,4 @@
-import { isObject } from '@sniptt/guards';
+import { isObject, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
   WorkflowActionType,
@@ -51,7 +51,7 @@ export const getRecordCrudRichTextIssuesForSteps = ({
         ? (input.objectRecord as Record<string, unknown>)
         : undefined;
 
-    if (typeof objectName !== 'string' || objectRecord === undefined) {
+    if (!isString(objectName) || !isDefined(objectRecord)) {
       continue;
     }
 
