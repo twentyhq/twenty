@@ -1,6 +1,7 @@
 import { type ApplicationBroadcastRecord } from '@/applications/types/ApplicationBroadcastRecord';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
+import { FIND_APPLICATION_CONNECTION_PROVIDERS } from '@/settings/applications/graphql/queries/findApplicationConnectionProviders';
 import { type MetadataOperationBrowserEventDetail } from '@/browser-event/types/MetadataOperationBrowserEventDetail';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useApolloClient } from '@apollo/client/react';
@@ -26,9 +27,10 @@ export const useListenToApplicationEvents = ({
   const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
 
   // Broadcast events only carry the application row, never its relations
-  // (roles, objects, logic functions, agents, variables), and lookups by
-  // universalIdentifier error while the application is absent, so the cache
-  // cannot be patched into a correct state on its own.
+  // (roles, objects, logic functions, agents, variables, connection
+  // providers), and lookups by universalIdentifier error while the
+  // application is absent, so the cache cannot be patched into a correct
+  // state on its own.
   const refetchApplicationQueries = useCallback(() => {
     void apolloClient
       .refetchQueries({
@@ -36,6 +38,7 @@ export const useListenToApplicationEvents = ({
           FindOneApplicationDocument,
           FindOneApplicationByUniversalIdentifierDocument,
           FindOneApplicationSummaryDocument,
+          FIND_APPLICATION_CONNECTION_PROVIDERS,
         ],
       })
       .catch(() => {
