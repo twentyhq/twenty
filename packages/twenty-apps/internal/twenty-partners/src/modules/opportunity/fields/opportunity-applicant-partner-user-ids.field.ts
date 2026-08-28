@@ -17,7 +17,11 @@ export default defineField({
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
   type: FieldType.ARRAY,
   name: 'applicantPartnerUserIds',
-  label: 'Applicant Members',
-  icon: 'IconUsers',
+  // Named as ids because that is what it renders. Applications is the readable list.
+  label: 'Applicant Member IDs',
+  description:
+    'Internal RLS allowlist of workspace member ids. Read Applications for the applicants themselves. The app maintains this list — editing it by hand grants or removes partner access to the brief.',
+  icon: 'IconLock',
   isNullable: true,
+  isUIEditable: false,
 });

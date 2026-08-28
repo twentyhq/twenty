@@ -1,15 +1,14 @@
-// Idempotent. Re-run after every install/reinstall — the app manifest can't ship RLS
-// predicates. Does three things:
+// One-time migration, then a drift check. `partner.role.ts` declares every row-level
+// predicate, so an install or upgrade configures them — this script no longer creates any.
 //
-// 1. Upserts row-level-permission predicates on the Partner role:
-//    - "partnerUser IS the current member" on partner/person/company/partnerLink/partnerService/
-//      partnerContent/application. RLS validates an insert against the row as submitted, so a
-//      row created without partnerUser is rejected — which is why the apply route sets
-//      partnerUser when it creates the Application.
-//    - "(partnerUser IS me) OR (isListed = true) OR (applicantPartnerUserIds CONTAINS me)"
-//      on opportunity (listed briefs for everyone; applied/invited briefs stay readable
-//      after unlist)
-//    - "id IS the current member" on workspaceMember (self-scope; internal roster hidden)
+// 1. Purges the legacy predicates on the Partner role. Earlier versions created them through
+//    upsertRowLevelPermissionPredicates, which stamps them with the workspace's custom
+//    application, not twenty-partners. The manifest sync diffs by application, so it cannot
+//    see those rows and will never remove them. On opportunity that is harmful: the old OR
+//    group and the manifest one are both parentless on the same (role, object), and only the
+//    first is compiled, in an order that is not stable. Run this ONCE per already-installed
+//    workspace, then `yarn twenty apply -r <remote>` to land the manifest predicates. A fresh
+//    install needs neither step. Safe to re-run: it is a no-op once nothing is left.
 //
 // 2. Verifies (does NOT set) the Opportunity field permissions from `partner.role.ts`.
 //    upsertFieldPermissions rejects out-of-band changes to app-owned roles
@@ -23,8 +22,6 @@
 // Usage:
 //   yarn rls:configure          # against .env.local
 //   yarn rls:configure:prod     # against .env.prod
-
-import { createHash } from 'node:crypto';
 
 import { config } from 'dotenv';
 config({ path: process.env.ENV_FILE ?? '.env.local' });
@@ -47,25 +44,6 @@ const SIMPLE_TARGET_OBJECTS = [
   'partnerContent',
   'application',
 ] as const;
-type SimpleTargetObject = (typeof SIMPLE_TARGET_OBJECTS)[number];
-
-// A UUIDv5-shaped id derived from a seed: stable across re-runs, distinct per workspace.
-const deriveUuid = (seed: string): string => {
-  const hex = createHash('sha1').update(seed).digest('hex');
-  const version = `5${hex.slice(13, 16)}`;
-  const variant = ((parseInt(hex.slice(16, 18), 16) & 0x3f) | 0x80)
-    .toString(16)
-    .padStart(2, '0');
-
-  return [
-    hex.slice(0, 8),
-    hex.slice(8, 12),
-    version,
-    variant + hex.slice(18, 20),
-    hex.slice(20, 32),
-  ].join('-');
-};
-
 // opportunity uses an OR group (handled separately), but still needs an existence check.
 const ALL_TARGET_OBJECTS = [...SIMPLE_TARGET_OBJECTS, 'opportunity'] as const;
 
@@ -111,11 +89,6 @@ const APPLY_WORKFLOW_WARNING =
   `  opens a front component that calls POST /apply-to-brief. No workflow needs\n` +
   `  building for it. That app route creates the Application under the\n` +
   `  application role.\n`;
-
-type ObjectInfo = {
-  objectMetadataId: string;
-  partnerUserFieldMetadataId: string;
-};
 
 type FieldEdge = {
   node: {
@@ -166,65 +139,6 @@ async function metadataFetch<T>(
   return json.data;
 }
 
-// Pages through an object's fields until it finds a field with the given name.
-// Uses cursor-based pagination to avoid truncation on large objects (company/opportunity
-// have >200 fields, so a single 200-cap request may miss partnerUser).
-async function findFieldByName(
-  metadataUrl: string,
-  apiKey: string,
-  objectId: string,
-  objectName: string,
-  fieldName: string,
-): Promise<string> {
-  let after: string | null = null;
-  let page = 0;
-
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    page++;
-    const pagingArg = after
-      ? `paging:{first:200, after:"${after}"}`
-      : `paging:{first:200}`;
-
-    const query = `{
-      object(id: "${objectId}") {
-        fields(${pagingArg}) {
-          edges { node { id name type } }
-          pageInfo { hasNextPage endCursor }
-        }
-      }
-    }`;
-
-    const data = await metadataFetch<{
-      object: { fields: FieldsPage };
-    }>(metadataUrl, apiKey, query);
-
-    const match = data.object.fields.edges.find(
-      (e) => e.node.name === fieldName,
-    );
-
-    if (match) {
-      console.log(
-        `  [rls:configure] ${objectName}.${fieldName} found on page ${page} ` +
-          `(type=${match.node.type}, id=${match.node.id})`,
-      );
-      return match.node.id;
-    }
-
-    if (!data.object.fields.pageInfo.hasNextPage) {
-      // Print available fields to help diagnose a schema mismatch.
-      const names = data.object.fields.edges
-        .map((e) => e.node.name)
-        .join(', ');
-      throw new Error(
-        `Field "${fieldName}" not found on object "${objectName}" after ${page} page(s). ` +
-          `Last-page fields: ${names}`,
-      );
-    }
-
-    after = data.object.fields.pageInfo.endCursor;
-  }
-}
 
 // Collects every field on an object across all cursor pages.
 // Required for Opportunity which can grow; always paginate fully.
@@ -340,61 +254,8 @@ async function main() {
 
   const workspaceMemberId = objectIdByName.get('workspaceMember') as string;
 
-  const objectInfoByName = new Map<SimpleTargetObject, ObjectInfo>();
-
-  for (const name of SIMPLE_TARGET_OBJECTS) {
-    const objectId = objectIdByName.get(name) as string;
-    const partnerUserFieldMetadataId = await findFieldByName(
-      metadataUrl,
-      apiKey,
-      objectId,
-      name,
-      'partnerUser',
-    );
-    objectInfoByName.set(name, {
-      objectMetadataId: objectId,
-      partnerUserFieldMetadataId,
-    });
-  }
-
   const opportunityObjectId = objectIdByName.get('opportunity') as string;
-  const opportunityPartnerUserFieldId = await findFieldByName(
-    metadataUrl,
-    apiKey,
-    opportunityObjectId,
-    'opportunity',
-    'partnerUser',
-  );
-  const opportunityIsListedFieldId = await findFieldByName(
-    metadataUrl,
-    apiKey,
-    opportunityObjectId,
-    'opportunity',
-    'isListed',
-  );
-  const opportunityApplicantPartnerUserIdsFieldId = await findFieldByName(
-    metadataUrl,
-    apiKey,
-    opportunityObjectId,
-    'opportunity',
-    'applicantPartnerUserIds',
-  );
 
-  // ── 2. Resolve workspaceMember.id field metadata id ──────────────────────────
-
-  const workspaceMemberIdFieldId = await findFieldByName(
-    metadataUrl,
-    apiKey,
-    workspaceMemberId,
-    'workspaceMember',
-    'id',
-  );
-
-  const workspaceData = await metadataFetch<{
-    currentWorkspace: { id: string };
-  }>(metadataUrl, apiKey, `{ currentWorkspace { id } }`);
-
-  const workspaceId = workspaceData.currentWorkspace.id;
 
   // ── 3. Resolve Partner role id and fetch field permissions in one request ──────
   //
@@ -430,12 +291,17 @@ async function main() {
       `(universalIdentifier in manifest: ${PARTNER_ROLE_UNIVERSAL_IDENTIFIER})`,
   );
 
-  // ── 4. Upsert one predicate per object ───────────────────────────────────────
+  // ── 4. Purge the legacy out-of-band predicates ───────────────────────────────
   //
-  // "the record's partnerUser relation IS the current workspace member". Operand must be IS,
-  // not CONTAINS: the upsert accepts CONTAINS but the RELATION query filter only allows
-  // IS / IS_NOT and throws "Unknown operand CONTAINS for RELATION filter" at query time.
-  // value stays null; workspaceMemberFieldMetadataId injects the current member at query time.
+  // partner.role.ts now declares every predicate, so the manifest owns them. The rows this
+  // script used to create are owned by the workspace's custom application, not by
+  // twenty-partners, so the manifest sync cannot see them: it never updates or deletes them.
+  // Left in place on the opportunity they are actively harmful — two parentless groups on
+  // one (role, object), and compilation honours only the first, chosen in an order that is
+  // not stable. Removing them leaves the manifest as the single source.
+  //
+  // Sending empty arrays deletes whatever exists for the (role, object) pair:
+  // groupsToDelete/predicatesToDelete are computed as "existing minus input".
 
   const MUTATION = `
     mutation UpsertRLSPredicates($input: UpsertRowLevelPermissionPredicatesInput!) {
@@ -454,189 +320,49 @@ async function main() {
     }
   `;
 
-  const upsertPredicates = async (
-    input: UpsertPredicatesInput,
-    label: string,
-  ): Promise<PredicateResult[]> => {
-    try {
-      const data = await metadataFetch<{
-        upsertRowLevelPermissionPredicates: { predicates: PredicateResult[] };
-      }>(metadataUrl, apiKey, MUTATION, { input });
-
-      return data.upsertRowLevelPermissionPredicates.predicates;
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      const canRetryWithoutGroups =
-        input.predicateGroups.length > 0 &&
-        message.includes('rowLevelPermissionPredicateGroup');
-
-      if (!canRetryWithoutGroups) {
-        throw error;
-      }
-
-      console.log(
-        `[rls:configure] ${label}: predicate group upsert failed; ` +
-          'retrying with predicates only (group already exists)',
-      );
-
-      const data = await metadataFetch<{
-        upsertRowLevelPermissionPredicates: { predicates: PredicateResult[] };
-      }>(metadataUrl, apiKey, MUTATION, {
-        input: { ...input, predicateGroups: [] },
-      });
-
-      return data.upsertRowLevelPermissionPredicates.predicates;
-    }
-  };
-
   console.log(`\n${APPLY_WORKFLOW_WARNING}`);
 
-  const results: PredicateResult[] = [];
+  const purgeTargets: { name: string; objectMetadataId: string }[] = [
+    ...ALL_TARGET_OBJECTS.map((name) => ({
+      name,
+      objectMetadataId: objectIdByName.get(name) as string,
+    })),
+    { name: 'workspaceMember', objectMetadataId: workspaceMemberId },
+  ];
 
-  for (const name of SIMPLE_TARGET_OBJECTS) {
-    const info = objectInfoByName.get(name) as ObjectInfo;
+  let purged = 0;
 
+  for (const target of purgeTargets) {
     const data = await metadataFetch<{
-      upsertRowLevelPermissionPredicates: {
-        predicates: PredicateResult[];
-      };
-    }>(metadataUrl, apiKey, MUTATION, {
-      input: {
-        roleId: partnerRole.id,
-        objectMetadataId: info.objectMetadataId,
-        predicates: [
-          {
-            fieldMetadataId: info.partnerUserFieldMetadataId,
-            operand: 'IS',
-            workspaceMemberFieldMetadataId: workspaceMemberIdFieldId,
-          },
-        ],
-        predicateGroups: [],
-      } satisfies UpsertPredicatesInput,
-    });
-
-    const predicate =
-      data.upsertRowLevelPermissionPredicates.predicates[0];
-
-    if (!predicate) {
-      throw new Error(
-        `upsertRowLevelPermissionPredicates returned no predicates for object "${name}"`,
-      );
-    }
-
-    results.push(predicate);
-    console.log(
-      `[rls:configure] ✓ ${name}: predicate id=${predicate.id} ` +
-        `(fieldMetadataId=${predicate.fieldMetadataId}, operand=${predicate.operand})`,
-    );
-  }
-
-  // Opportunity: (partnerUser IS me) OR (isListed = true) OR (applicantPartnerUserIds
-  // CONTAINS me) — listed briefs stay visible to all partners; applicants keep read access
-  // after intro unlists the brief.
-  {
-    // Predicate-group ids are unique across the whole metadata schema, not per workspace,
-    // so a hardcoded id collides on a server that hosts more than one workspace.
-    const opportunityGroupId = deriveUuid(
-      `${workspaceId}:opportunity-rls-or-group`,
-    );
-
-    const oppPredicates = await upsertPredicates(
-      {
-        roleId: partnerRole.id,
-        objectMetadataId: opportunityObjectId,
-        predicateGroups: [
-          {
-            id: opportunityGroupId,
-            objectMetadataId: opportunityObjectId,
-            logicalOperator: 'OR',
-            parentRowLevelPermissionPredicateGroupId: null,
-          },
-        ],
-        predicates: [
-          {
-            fieldMetadataId: opportunityPartnerUserFieldId,
-            operand: 'IS',
-            workspaceMemberFieldMetadataId: workspaceMemberIdFieldId,
-            rowLevelPermissionPredicateGroupId: opportunityGroupId,
-            positionInRowLevelPermissionPredicateGroup: 0,
-          },
-          {
-            fieldMetadataId: opportunityIsListedFieldId,
-            operand: 'IS',
-            value: true,
-            rowLevelPermissionPredicateGroupId: opportunityGroupId,
-            positionInRowLevelPermissionPredicateGroup: 1,
-          },
-          {
-            fieldMetadataId: opportunityApplicantPartnerUserIdsFieldId,
-            operand: 'CONTAINS',
-            workspaceMemberFieldMetadataId: workspaceMemberIdFieldId,
-            rowLevelPermissionPredicateGroupId: opportunityGroupId,
-            positionInRowLevelPermissionPredicateGroup: 2,
-          },
-        ],
-      } satisfies UpsertPredicatesInput,
-      'opportunity',
-    );
-
-    if (oppPredicates.length !== 3) {
-      throw new Error(
-        `upsertRowLevelPermissionPredicates returned ${oppPredicates.length} predicates for the opportunity OR group, expected exactly 3`,
-      );
-    }
-
-    for (const predicate of oppPredicates) {
-      results.push(predicate);
-    }
-
-    console.log(
-      `[rls:configure] ✓ opportunity: OR group id=${opportunityGroupId} ` +
-        `(${oppPredicates.length} predicates: partnerUser IS me OR isListed = true OR applicantPartnerUserIds CONTAINS me)`,
-    );
-  }
-
-  // workspaceMember predicate: "id IS the current member", scoping the role's read to the
-  // partner's own record. Other members (e.g. an opportunity's internal owner) resolve to null.
-  {
-    const wmData = await metadataFetch<{
       upsertRowLevelPermissionPredicates: { predicates: PredicateResult[] };
     }>(metadataUrl, apiKey, MUTATION, {
       input: {
         roleId: partnerRole.id,
-        objectMetadataId: workspaceMemberId,
-        predicates: [
-          {
-            fieldMetadataId: workspaceMemberIdFieldId,
-            operand: 'IS',
-            workspaceMemberFieldMetadataId: workspaceMemberIdFieldId,
-          },
-        ],
+        objectMetadataId: target.objectMetadataId,
+        predicates: [],
         predicateGroups: [],
       } satisfies UpsertPredicatesInput,
     });
 
-    const wmPredicate =
-      wmData.upsertRowLevelPermissionPredicates.predicates[0];
+    const remaining =
+      data.upsertRowLevelPermissionPredicates.predicates.length;
 
-    if (!wmPredicate) {
+    if (remaining > 0) {
       throw new Error(
-        'upsertRowLevelPermissionPredicates returned no predicate for workspaceMember',
+        `Expected no predicates left on "${target.name}" after the purge, got ${remaining}. ` +
+          `Re-run \`yarn twenty apply\` afterwards so the manifest predicates are re-created.`,
       );
     }
 
-    results.push(wmPredicate);
-    console.log(
-      `[rls:configure] ✓ workspaceMember: predicate id=${wmPredicate.id} ` +
-        `(fieldMetadataId=${wmPredicate.fieldMetadataId}, operand=${wmPredicate.operand})`,
-    );
+    purged += 1;
+    console.log(`[rls:configure] ✓ ${target.name}: legacy predicates cleared`);
   }
 
   console.log(
-    `\n[rls:configure] Done — ${results.length} predicates upserted on Partner role ` +
-      `(${SIMPLE_TARGET_OBJECTS.length} simple objects + opportunity OR group + workspaceMember self-scope)`,
+    `\n[rls:configure] Purged legacy predicates on ${purged} objects. ` +
+      `partner.role.ts is now the only definition — run \`yarn twenty apply -r <remote>\` ` +
+      `so the manifest predicates land.`,
   );
-  console.log(`\n${APPLY_WORKFLOW_WARNING}`);
 
   // ── 5. Verify Opportunity field permissions (set via manifest, not here — see header) ─
 
