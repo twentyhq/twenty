@@ -311,11 +311,6 @@ export default defineRole({
       canUpdateFieldValue: false,
     },
     {
-      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
-      fieldUniversalIdentifier: '5af4e57e-7fa7-4c4f-b40f-37549361459a',
-      canUpdateFieldValue: false,
-    },
-    {
       // Super partner — listed on the record page; partners can see it, cannot set it.
       objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
       fieldUniversalIdentifier: PARTNER_SUPER_PARTNER_FIELD_UNIVERSAL_IDENTIFIER,

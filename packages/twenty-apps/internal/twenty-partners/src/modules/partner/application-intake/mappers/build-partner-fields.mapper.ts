@@ -84,7 +84,6 @@ export function buildPartnerCreateData(
     ...partnerFields,
     slug: slugify(input.companyName),
     validationStage: 'APPLICATION',
-    reviewed: false,
     superPartner: false,
     partnerTier: 'NEW',
     companyId,

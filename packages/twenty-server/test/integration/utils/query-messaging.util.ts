@@ -31,7 +31,7 @@ export const getDataOrThrow = (response: MetadataAPIResponse) => {
 
 export type MessageFolderDto = Pick<
   MessageFolderDTO,
-  'id' | 'name' | 'isSynced' | 'isSentFolder'
+  'id' | 'name' | 'isSynced' | 'isSentFolder' | 'pendingSyncAction'
 >;
 
 export type MessageChannelDto = Pick<
@@ -148,6 +148,7 @@ export const queryMessageFolders = async (
           name
           isSynced
           isSentFolder
+          pendingSyncAction
         }
       }
     `,

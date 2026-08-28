@@ -24,7 +24,7 @@ import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-b
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import {
   buildFieldMapsFromFlatObjectMetadata,
   type FieldMapsForObject,
@@ -42,7 +42,7 @@ const NESTED_RELATION_QUERY_MAX_CONCURRENCY = 4;
 
 type ProcessNestedRelationsArgs<T extends ObjectRecord = ObjectRecord> = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   parentObjectMetadataItem: FlatObjectMetadata;
   parentObjectRecords: T[];
   // oxlint-disable-next-line typescript/no-explicit-any
@@ -132,7 +132,7 @@ export class ProcessNestedRelationsHelper {
     selectedFields,
   }: {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     parentObjectMetadataItem: FlatObjectMetadata;
     parentObjectRecords: T[];
     // oxlint-disable-next-line typescript/no-explicit-any
@@ -320,7 +320,7 @@ export class ProcessNestedRelationsHelper {
     fieldMaps,
   }: {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     parentObjectMetadataItem: FlatObjectMetadata;
     sourceFieldName: string;
     fieldMaps: FieldMapsForObject;

@@ -2,6 +2,7 @@ import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataI
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
+import { useTheme } from 'twenty-ui/theme-constants';
 
 export const EventIconDynamicComponent = ({
   eventIcon,
@@ -11,6 +12,7 @@ export const EventIconDynamicComponent = ({
   linkedObjectMetadataItem: EnrichedObjectMetadataItem | null;
 }) => {
   const { getIcon } = useIcons();
+  const theme = useTheme();
 
   if (!isDefined(eventIcon)) {
     return <ObjectMetadataIcon objectMetadataItem={linkedObjectMetadataItem} />;
@@ -18,5 +20,5 @@ export const EventIconDynamicComponent = ({
 
   const EventIcon = getIcon(eventIcon);
 
-  return <EventIcon />;
+  return <EventIcon size={theme.icon.size.md} />;
 };
