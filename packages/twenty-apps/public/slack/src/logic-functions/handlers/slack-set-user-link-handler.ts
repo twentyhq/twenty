@@ -77,8 +77,6 @@ export const slackSetUserLinkHandler = async (
   let slackUserId = requestedSlackUserId;
   let slackTeamId = requestedSlackTeamId;
   let resolvedName = name;
-  // Slack-verified profile email, feeding the consent-skipping match below.
-  let slackUserEmail: string | undefined;
   let fetchedIdentity: SlackUserIdentity | undefined;
 
   if (!isNonEmptyString(slackUserId) && isNonEmptyString(email)) {
@@ -121,8 +119,6 @@ export const slackSetUserLinkHandler = async (
     slackUserId = resolvedUser.slackUserId;
     slackTeamId = slackTeamId ?? resolvedUser.slackTeamId;
     resolvedName = resolvedName ?? resolvedUser.displayName;
-    // A users.lookupByEmail hit certifies this is the account's Slack email.
-    slackUserEmail = email;
   }
 
   // A directly-supplied id may belong to another workspace, so resolve the
@@ -239,7 +235,6 @@ export const slackSetUserLinkHandler = async (
     slackClient,
     slackUserId,
     workspaceMemberId,
-    slackUserEmail,
     fetchedIdentity,
     isInInstalledWorkspace,
     isSameMemberRelink,
