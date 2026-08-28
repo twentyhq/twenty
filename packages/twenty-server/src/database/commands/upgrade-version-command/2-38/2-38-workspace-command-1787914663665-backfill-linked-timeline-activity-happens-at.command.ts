@@ -11,7 +11,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 const BACKFILL_BATCH_SIZE = 5_000;
 
-@RegisteredWorkspaceCommand('2.38.0', 1787899239365)
+@RegisteredWorkspaceCommand('2.38.0', 1787914663665)
 @Command({
   name: 'upgrade:2-38:backfill-linked-timeline-activity-happens-at',
   description:

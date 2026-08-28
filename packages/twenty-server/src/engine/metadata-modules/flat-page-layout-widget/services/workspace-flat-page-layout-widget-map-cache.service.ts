@@ -1,92 +1,44 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
 
-import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
-
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { fromPageLayoutWidgetEntityToFlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-entity-to-flat-page-layout-widget.util';
-import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
-import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
-import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
+const FLAT_PAGE_LAYOUT_WIDGET_ROWS_REQUIREMENT = {
+  pageLayoutWidget: true,
+  application: ['id', 'universalIdentifier'],
+  pageLayoutTab: ['id', 'universalIdentifier'],
+  objectMetadata: ['id', 'universalIdentifier'],
+  fieldMetadata: ['id', 'universalIdentifier'],
+  frontComponent: ['id', 'universalIdentifier'],
+  view: ['id', 'universalIdentifier'],
+} as const;
+
 @Injectable()
 @WorkspaceCache('flatPageLayoutWidgetMaps', { packingPonderation: 5 })
-export class WorkspaceFlatPageLayoutWidgetMapCacheService extends WorkspaceCacheProvider<FlatPageLayoutWidgetMaps> {
-  constructor(
-    @InjectWorkspaceScopedRepository(PageLayoutWidgetEntity)
-    private readonly pageLayoutWidgetRepository: WorkspaceScopedRepository<PageLayoutWidgetEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectWorkspaceScopedRepository(PageLayoutTabEntity)
-    private readonly pageLayoutTabRepository: WorkspaceScopedRepository<PageLayoutTabEntity>,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(FieldMetadataEntity)
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectRepository(FrontComponentEntity)
-    private readonly frontComponentRepository: Repository<FrontComponentEntity>,
-    @InjectWorkspaceScopedRepository(ViewEntity)
-    private readonly viewRepository: WorkspaceScopedRepository<ViewEntity>,
-  ) {
-    super();
-  }
+export class WorkspaceFlatPageLayoutWidgetMapCacheService extends MetadataFlatEntityMapsCacheProvider<'pageLayoutWidget'> {
+  override readonly rowsRequirement = FLAT_PAGE_LAYOUT_WIDGET_ROWS_REQUIREMENT;
 
-  async computeForCache(
-    workspaceId: string,
-  ): Promise<FlatPageLayoutWidgetMaps> {
-    const [
-      existingPageLayoutWidgets,
-      applications,
-      pageLayoutTabs,
-      objectMetadatas,
-      fieldMetadatas,
-      frontComponents,
-      views,
-    ] = await Promise.all([
-      this.pageLayoutWidgetRepository.find(workspaceId, {
-        withDeleted: true,
-      }),
-      this.applicationRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.pageLayoutTabRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.objectMetadataRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.fieldMetadataRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.frontComponentRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.viewRepository.find(workspaceId, {
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-    ]);
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_PAGE_LAYOUT_WIDGET_ROWS_REQUIREMENT
+  >): FlatPageLayoutWidgetMaps {
+    const {
+      pageLayoutWidget: existingPageLayoutWidgets,
+      application: applications,
+      pageLayoutTab: pageLayoutTabs,
+      objectMetadata: objectMetadatas,
+      fieldMetadata: fieldMetadatas,
+      frontComponent: frontComponents,
+      view: views,
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
