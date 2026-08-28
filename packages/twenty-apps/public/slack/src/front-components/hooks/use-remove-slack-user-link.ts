@@ -15,7 +15,7 @@ export const useRemoveSlackUserLink = (): RemoveSlackUserLinkState => {
   });
 
   return {
-    removeSlackUserLink: (id) => postSlackTool(id, { id }),
+    removeSlackUserLink: (id) => postSlackTool({ linkId: id, payload: { id } }),
     removingLinkId: inFlightLinkId,
   };
 };

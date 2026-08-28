@@ -5,10 +5,10 @@ import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-resul
 import { parseSlackToolResult } from 'src/front-components/utils/parse-slack-tool-result.util';
 
 type SlackToolPostState = {
-  postSlackTool: (
-    linkId: string,
-    payload: Record<string, unknown>,
-  ) => Promise<SlackToolResult>;
+  postSlackTool: (input: {
+    linkId: string;
+    payload: Record<string, unknown>;
+  }) => Promise<SlackToolResult>;
   inFlightLinkId: string | undefined;
 };
 
@@ -29,10 +29,13 @@ export const useSlackToolPost = ({
   // one's marker mid-flight.
   const isPostingRef = useRef(false);
 
-  const postSlackTool = async (
-    linkId: string,
-    payload: Record<string, unknown>,
-  ): Promise<SlackToolResult> => {
+  const postSlackTool = async ({
+    linkId,
+    payload,
+  }: {
+    linkId: string;
+    payload: Record<string, unknown>;
+  }): Promise<SlackToolResult> => {
     if (isPostingRef.current) {
       return {
         success: false,

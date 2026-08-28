@@ -23,7 +23,7 @@ export const useResendSlackUserLinkConsent =
 
     return {
       resendConsent: ({ id, slackTeamId, slackUserId }) =>
-        postSlackTool(id, { slackTeamId, slackUserId }),
+        postSlackTool({ linkId: id, payload: { slackTeamId, slackUserId } }),
       resendingLinkId: inFlightLinkId,
     };
   };

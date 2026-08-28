@@ -51,9 +51,6 @@ type ResolvedSlackUserFieldProps = {
   disabled?: boolean;
 };
 
-// The confirmed Slack account, shown the way the member picker shows its
-// selection, so both sides of the link read as picked people; clicking it
-// reopens the search.
 export const ResolvedSlackUserField = ({
   resolvedUser,
   onChangeRequest,
