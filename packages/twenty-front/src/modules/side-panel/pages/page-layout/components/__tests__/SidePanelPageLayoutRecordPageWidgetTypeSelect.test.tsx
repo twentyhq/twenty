@@ -87,7 +87,15 @@ describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
   beforeEach(() => jest.clearAllMocks());
   it.each([
     { mode: 'append', expectedTitles: ['first', 'second', 'third', 'Note'] },
+    {
+      mode: 'append with Tasks',
+      expectedTitles: ['first', 'second', 'third', 'Note', 'Tasks'],
+    },
     { mode: 'replace', expectedTitles: ['first', 'Note', 'third'] },
+    {
+      mode: 'replace with Tasks',
+      expectedTitles: ['first', 'Note', 'third', 'Tasks'],
+    },
     {
       mode: 'insert above',
       expectedTitles: ['first', 'Note', 'second', 'third'],
@@ -111,6 +119,15 @@ describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
             makeWidget('first', 0),
             makeWidget('second', 1),
             makeWidget('third', 2),
+            ...(mode.endsWith('with Tasks')
+              ? [
+                  {
+                    ...makeWidget('tasks', 3),
+                    title: 'Tasks',
+                    type: WidgetType.TASKS,
+                  },
+                ]
+              : []),
           ]),
         ]),
       );
@@ -119,7 +136,7 @@ describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
         'tab-1',
       );
 
-      if (mode === 'replace') {
+      if (mode.startsWith('replace')) {
         store.set(editingWidgetIdAtom, 'second');
       }
 
@@ -151,6 +168,9 @@ describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
       expect(draft.tabs[0].widgets).toEqual([]);
       expect(draft.tabs[1].widgets.map(({ title }) => title)).toEqual(
         expectedTitles,
+      );
+      expect(draft.tabs[1].widgets.map(({ position }) => position)).toEqual(
+        expectedTitles.map((_, index) => expect.objectContaining({ index })),
       );
       expect(
         draft.tabs[1].widgets.find(

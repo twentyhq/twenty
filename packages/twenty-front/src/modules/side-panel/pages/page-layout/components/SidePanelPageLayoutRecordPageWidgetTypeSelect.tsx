@@ -14,6 +14,7 @@ import { createDefaultStandaloneRichTextWidget } from '@/page-layout/utils/creat
 import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPosition';
 import { moveWidgetWithinTabInDraft } from '@/page-layout/utils/moveWidgetWithinTabInDraft';
 import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
+import { sortWidgetsByVerticalListPosition } from '@/page-layout/utils/sortWidgetsByVerticalListPosition';
 import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
 import { getFieldWidgetDefaultDisplayMode } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
@@ -291,11 +292,15 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
         ...previousDraft,
         tabs: addWidgetToTab(previousDraft.tabs, tabId, newWidget),
       };
+      const updatedTab = draftWithNote.tabs.find((tab) => tab.id === tabId);
+      const noteIndex = sortWidgetsByVerticalListPosition(
+        updatedTab?.widgets ?? [],
+      ).findIndex((widget) => widget.id === widgetId);
 
-      return isDefined(replacePositionIndex)
+      return isDefined(replacePositionIndex) && noteIndex >= 0
         ? moveWidgetWithinTabInDraft(draftWithNote, {
             tabId,
-            fromIndex: activeTab?.widgets.length ?? 0,
+            fromIndex: noteIndex,
             toIndex: replacePositionIndex,
           })
         : draftWithNote;

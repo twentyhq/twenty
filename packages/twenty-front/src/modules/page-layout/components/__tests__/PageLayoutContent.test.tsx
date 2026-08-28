@@ -85,13 +85,14 @@ jest.mock('@/page-layout/widgets/components/WidgetRenderer', () => {
   const { useState } = jest.requireActual('react') as typeof React;
 
   return {
-    WidgetRenderer: () => {
+    WidgetRenderer: ({ widget }: { widget: PageLayoutWidget }) => {
       const [isExpanded, setIsExpanded] = useState(false);
 
       return (
         <button
           type="button"
           aria-expanded={isExpanded}
+          aria-label={widget.title}
           onClick={() => setIsExpanded((current: boolean) => !current)}
         >
           Toggle widget expansion
@@ -104,7 +105,9 @@ jest.mock('@/page-layout/widgets/components/WidgetRenderer', () => {
 jest.mock(
   '@/page-layout/widgets/components/RecordPageAddWidgetSection',
   () => ({
-    RecordPageAddWidgetSection: () => <div>Add widget</div>,
+    RecordPageAddWidgetSection: ({ isCompact }: { isCompact: boolean }) => (
+      <div>{isCompact ? 'Add widget' : 'Expanded widget chooser'}</div>
+    ),
   }),
 );
 
@@ -134,12 +137,13 @@ jest.mock('twenty-ui/utilities', () => ({
 describe('PageLayoutContent', () => {
   beforeEach(() => {
     mockIsInEditMode = false;
+    mockTab.widgets = [mockWidget];
   });
 
   it('keeps widget-local state when edit mode changes', () => {
     const { rerender } = render(<PageLayoutContent />);
     const expansionButton = screen.getByRole('button', {
-      name: 'Toggle widget expansion',
+      name: 'Fields',
     });
 
     fireEvent.click(expansionButton);
@@ -149,9 +153,55 @@ describe('PageLayoutContent', () => {
     mockIsInEditMode = true;
     rerender(<PageLayoutContent />);
 
-    expect(
-      screen.getByRole('button', { name: 'Toggle widget expansion' }),
-    ).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByRole('button', { name: 'Fields' })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
     expect(screen.getByText('Add widget')).toBeInTheDocument();
+  });
+
+  it.each([false, true])(
+    'marks the insertion point in a populated tab (Tasks: %s)',
+    (withTasks) => {
+      mockIsInEditMode = true;
+      if (withTasks) {
+        mockTab.widgets.push({
+          ...mockWidget,
+          id: 'tasks',
+          title: 'Tasks',
+          type: WidgetType.TASKS,
+        });
+      }
+      render(<PageLayoutContent />);
+      const addWidget = screen.getByText('Add widget');
+      expect(
+        screen
+          .getByRole('button', { name: 'Fields' })
+          .compareDocumentPosition(addWidget) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy();
+      if (withTasks) {
+        expect(
+          addWidget.compareDocumentPosition(
+            screen.getByRole('button', { name: 'Tasks' }),
+          ) & Node.DOCUMENT_POSITION_FOLLOWING,
+        ).toBeTruthy();
+      }
+      expect(
+        screen.queryByText('Expanded widget chooser'),
+      ).not.toBeInTheDocument();
+    },
+  );
+
+  it('keeps the expanded chooser on empty tabs', () => {
+    mockIsInEditMode = true;
+    mockTab.widgets = [];
+    render(<PageLayoutContent />);
+    expect(screen.getByText('Expanded widget chooser')).toBeInTheDocument();
+  });
+
+  it('hides the insertion row outside edit mode', () => {
+    render(<PageLayoutContent />);
+    expect(screen.queryByText('Add widget')).not.toBeInTheDocument();
   });
 });

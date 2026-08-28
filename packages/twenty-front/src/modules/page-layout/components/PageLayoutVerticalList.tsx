@@ -11,7 +11,7 @@ import { type Draggable } from '@dnd-kit/abstract';
 import { pointerIntersection } from '@dnd-kit/collision';
 import { useDroppable } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
-import { type ReactNode, useCallback } from 'react';
+import { Fragment, type ReactNode, useCallback } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
@@ -63,13 +63,15 @@ const StyledDropTarget = styled.div`
 type PageLayoutVerticalListProps = {
   isInEditMode: boolean;
   widgets: PageLayoutWidget[];
-  trailingElement?: ReactNode;
+  insertionElement?: ReactNode;
+  insertionIndex?: number;
 };
 
 export const PageLayoutVerticalList = ({
   isInEditMode,
   widgets,
-  trailingElement,
+  insertionElement,
+  insertionIndex = widgets.length,
 }: PageLayoutVerticalListProps) => {
   const { layoutMode, tabId } = usePageLayoutContentContext();
 
@@ -123,17 +125,19 @@ export const PageLayoutVerticalList = ({
     >
       <WorkflowDiagramAllowPageScrollContext.Provider value={hasPageScroll}>
         {widgets.map((widget, index) => (
-          <PageLayoutVerticalListWidgetSlot
-            canAcceptWidgetDrag={canAcceptWidgetDrag}
-            index={index}
-            isInEditMode={isInEditMode}
-            isSoloCanvasPresentation={shouldUseSoloCanvasPresentation}
-            key={widget.id}
-            layoutMode={layoutMode}
-            shouldShowDivider={isSideColumnContext}
-            tabId={tabId}
-            widget={widget}
-          />
+          <Fragment key={widget.id}>
+            {isInEditMode && insertionIndex === index && insertionElement}
+            <PageLayoutVerticalListWidgetSlot
+              canAcceptWidgetDrag={canAcceptWidgetDrag}
+              index={index}
+              isInEditMode={isInEditMode}
+              isSoloCanvasPresentation={shouldUseSoloCanvasPresentation}
+              layoutMode={layoutMode}
+              shouldShowDivider={isSideColumnContext}
+              tabId={tabId}
+              widget={widget}
+            />
+          </Fragment>
         ))}
         {isInEditMode && (
           <StyledDropTarget ref={endDropZoneRef}>
@@ -143,7 +147,7 @@ export const PageLayoutVerticalList = ({
               orientation="horizontal"
               compact
             />
-            {trailingElement}
+            {insertionIndex === widgets.length && insertionElement}
           </StyledDropTarget>
         )}
       </WorkflowDiagramAllowPageScrollContext.Provider>

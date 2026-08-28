@@ -46,7 +46,13 @@ const StyledMenuItemList = styled.div`
   padding: ${themeCssVariables.spacing[2]};
 `;
 
-export const RecordPageAddWidgetSection = () => {
+type RecordPageAddWidgetSectionProps = {
+  isCompact?: boolean;
+};
+
+export const RecordPageAddWidgetSection = ({
+  isCompact = false,
+}: RecordPageAddWidgetSectionProps) => {
   const { theme } = useContext(ThemeContext);
 
   const { createRecordPageFieldsWidget } = useCreateRecordPageFieldsWidget();
@@ -56,6 +62,18 @@ export const RecordPageAddWidgetSection = () => {
   const { createRecordPageNoteWidget } = useCreateRecordPageNoteWidget();
 
   const { navigateToMoreWidgets } = useNavigateToMoreWidgets();
+
+  if (isCompact) {
+    return (
+      <StyledContainer>
+        <MenuItem
+          LeftIcon={IconPlus}
+          text={t`Add widget`}
+          onClick={navigateToMoreWidgets}
+        />
+      </StyledContainer>
+    );
+  }
 
   return (
     <StyledContainer>
