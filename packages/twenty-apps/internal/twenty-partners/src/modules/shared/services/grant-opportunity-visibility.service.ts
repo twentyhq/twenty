@@ -43,7 +43,7 @@ const readApplicantIds = async (
 
 export async function grantOpportunityVisibility(
   client: CoreApiClient,
-  opportunityId: string,
+  opportunityId: string | null | undefined,
   partnerUserIds: readonly string[],
 ): Promise<GrantOpportunityVisibilityResult> {
   const incoming = partnerUserIds.filter(isNonEmptyString);
@@ -70,7 +70,11 @@ export async function grantOpportunityVisibility(
 
   const afterWrite = await readApplicantIds(client, opportunityId);
 
-  if (afterWrite === null || incoming.every((id) => afterWrite.includes(id))) {
+  if (afterWrite === null) {
+    return { granted: false, reason: 'opportunity_missing' };
+  }
+
+  if (incoming.every((id) => afterWrite.includes(id))) {
     return { granted: true };
   }
 

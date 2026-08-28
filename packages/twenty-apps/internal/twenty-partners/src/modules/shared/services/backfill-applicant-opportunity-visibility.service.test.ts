@@ -97,9 +97,9 @@ describe('backfillApplicantOpportunityVisibility', () => {
       return Promise.resolve({});
     });
 
-    const updated = await backfillApplicantOpportunityVisibility(client);
+    const result = await backfillApplicantOpportunityVisibility(client);
 
-    expect(updated).toBe(1);
+    expect(result).toEqual({ updated: 1, failed: 0 });
     expect(mutation).toHaveBeenCalledTimes(1);
     expect(mutation).toHaveBeenCalledWith({
       updateOpportunity: {
@@ -117,9 +117,66 @@ describe('backfillApplicantOpportunityVisibility', () => {
       applications: { edges: [], pageInfo: { hasNextPage: false } },
     });
 
-    const updated = await backfillApplicantOpportunityVisibility(client);
+    const result = await backfillApplicantOpportunityVisibility(client);
 
-    expect(updated).toBe(0);
+    expect(result).toEqual({ updated: 0, failed: 0 });
     expect(mutation).not.toHaveBeenCalled();
+  });
+
+  it('counts a failed opportunity and still grants the remaining ones', async () => {
+    query.mockImplementation((selection: Record<string, unknown>) => {
+      if (selection.applications) {
+        return Promise.resolve({
+          applications: {
+            edges: [
+              {
+                node: {
+                  id: 'app-1',
+                  opportunityId: OPPORTUNITY_A,
+                  partnerUserId: MEMBER_1,
+                },
+              },
+              {
+                node: {
+                  id: 'app-2',
+                  opportunityId: OPPORTUNITY_B,
+                  partnerUserId: MEMBER_2,
+                },
+              },
+            ],
+            pageInfo: { hasNextPage: false },
+          },
+        });
+      }
+
+      const requestedId = (
+        selection.opportunities as {
+          __args?: { filter?: { id?: { eq?: string } } };
+        }
+      )?.__args?.filter?.id?.eq;
+
+      if (requestedId === OPPORTUNITY_A) {
+        return Promise.reject(new Error('boom'));
+      }
+
+      return Promise.resolve({
+        opportunities: {
+          edges: [{ node: { id: requestedId, applicantPartnerUserIds: [] } }],
+        },
+      });
+    });
+
+    const result = await backfillApplicantOpportunityVisibility(client);
+
+    expect(result).toEqual({ updated: 1, failed: 1 });
+    expect(mutation).toHaveBeenCalledWith({
+      updateOpportunity: {
+        __args: {
+          id: OPPORTUNITY_B,
+          data: { applicantPartnerUserIds: [MEMBER_2] },
+        },
+        id: true,
+      },
+    });
   });
 });

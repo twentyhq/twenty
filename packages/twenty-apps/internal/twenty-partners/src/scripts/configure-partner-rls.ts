@@ -580,9 +580,9 @@ async function main() {
       'opportunity',
     );
 
-    if (oppPredicates.length < 3) {
+    if (oppPredicates.length !== 3) {
       throw new Error(
-        'upsertRowLevelPermissionPredicates returned fewer than 3 predicates for opportunity OR group',
+        `upsertRowLevelPermissionPredicates returned ${oppPredicates.length} predicates for the opportunity OR group, expected exactly 3`,
       );
     }
 

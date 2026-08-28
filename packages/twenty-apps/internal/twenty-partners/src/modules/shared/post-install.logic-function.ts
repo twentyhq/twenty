@@ -5,27 +5,36 @@ import { backfillApplicantOpportunityVisibility } from 'src/modules/shared/servi
 import { backfillPartnerUserOnChildren } from 'src/modules/shared/services/backfill-partner-user-on-children.service';
 import { planPostInstall } from 'src/modules/shared/utils/plan-post-install.util';
 
-type PostInstallResult =
-  | { skipped: true }
-  | { stamped?: number; granted?: number };
+type PostInstallCounts = {
+  stamped?: number;
+  granted?: number;
+  grantFailed?: number;
+};
+
+type PostInstallResult = { skipped: true } | PostInstallCounts;
 
 const handler = async ({
   previousVersion,
 }: InstallPayload): Promise<PostInstallResult> => {
-  const client = new CoreApiClient();
   const plan = planPostInstall(previousVersion);
-  const result: { stamped?: number; granted?: number } = {};
+
+  if (!plan.stampPartnerUser && !plan.grantApplicantVisibility) {
+    return { skipped: true };
+  }
+
+  const client = new CoreApiClient();
+  const result: PostInstallCounts = {};
 
   if (plan.stampPartnerUser) {
     result.stamped = await backfillPartnerUserOnChildren(client);
   }
 
   if (plan.grantApplicantVisibility) {
-    result.granted = await backfillApplicantOpportunityVisibility(client);
-  }
+    const { updated, failed } =
+      await backfillApplicantOpportunityVisibility(client);
 
-  if (result.stamped === undefined && result.granted === undefined) {
-    return { skipped: true };
+    result.granted = updated;
+    result.grantFailed = failed;
   }
 
   return result;

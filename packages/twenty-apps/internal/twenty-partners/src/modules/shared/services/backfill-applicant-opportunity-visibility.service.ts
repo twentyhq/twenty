@@ -10,9 +10,14 @@ type ApplicationRow = {
   partnerUserId?: string | null;
 };
 
+export type ApplicantVisibilityBackfillResult = {
+  updated: number;
+  failed: number;
+};
+
 export async function backfillApplicantOpportunityVisibility(
   client: CoreApiClient,
-): Promise<number> {
+): Promise<ApplicantVisibilityBackfillResult> {
   const applications = await collectAll<ApplicationRow>(async (after) => {
     const page = await listApplicationsWithOpportunityPartnerUser(client, after);
 
@@ -38,18 +43,29 @@ export async function backfillApplicantOpportunityVisibility(
   }
 
   let updated = 0;
+  let failed = 0;
 
   for (const [opportunityId, applicantIds] of idsByOpportunity) {
-    const result = await grantOpportunityVisibility(
-      client,
-      opportunityId,
-      applicantIds,
-    );
+    // The version gate runs this backfill once per upgrade, so one failing opportunity
+    // must not abort the rest — they would never get a second pass.
+    try {
+      const result = await grantOpportunityVisibility(
+        client,
+        opportunityId,
+        applicantIds,
+      );
 
-    if (result.granted) {
-      updated += 1;
+      if (result.granted) {
+        updated += 1;
+      }
+    } catch (error) {
+      failed += 1;
+      console.error(
+        `[backfill] applicant visibility failed for opportunity ${opportunityId}`,
+        error,
+      );
     }
   }
 
-  return updated;
+  return { updated, failed };
 }

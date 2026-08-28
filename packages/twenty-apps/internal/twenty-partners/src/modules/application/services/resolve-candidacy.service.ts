@@ -28,7 +28,7 @@ export async function resolveCandidacy(
   const applicationId = after?.id;
   if (!applicationId) return {};
 
-  const opportunityId = after.opportunityId ?? '';
+  const opportunityId = after.opportunityId;
 
   // Admin path (invite/import): without partnerUser, RLS hides the row from its own partner.
   if (after.partnerId) {
