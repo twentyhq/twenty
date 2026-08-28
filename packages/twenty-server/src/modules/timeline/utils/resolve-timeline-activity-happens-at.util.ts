@@ -63,7 +63,7 @@ export const resolveLinkedTimelineActivityHappensAt = ({
 }: {
   event: ObjectRecordBaseEvent;
   ruleAction: TimelineActivityRuleAction;
-  sourceFlatObjectMetadata: FlatObjectMetadata;
+  sourceFlatObjectMetadata: Pick<FlatObjectMetadata, 'universalIdentifier'>;
   sourceRecord: Record<string, unknown> | undefined;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): Date => {
