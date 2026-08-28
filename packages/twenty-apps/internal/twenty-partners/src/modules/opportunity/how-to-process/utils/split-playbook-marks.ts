@@ -1,26 +1,27 @@
-import { PLAYBOOK_SKILLS } from 'src/modules/opportunity/how-to-process/constants/playbook-skills';
-import { type PlaybookNavAction } from 'src/modules/opportunity/how-to-process/utils/playbook-nav';
-
-export type PlaybookLink = {
-  label: string;
-  href?: string;
-  action?: PlaybookNavAction;
-};
+import { type PlaybookSkill } from 'src/modules/opportunity/how-to-process/constants/playbook-skills';
+import { type PlaybookLink } from 'src/modules/opportunity/how-to-process/utils/playbook-nav';
 
 export type PlaybookMark =
   | { kind: 'text'; value: string }
   | { kind: 'skill'; value: string; githubUrl: string }
   | { kind: 'link'; value: string; link: PlaybookLink };
 
+type SplitPlaybookMarksOptions = {
+  links?: ReadonlyArray<PlaybookLink>;
+  skills?: ReadonlyArray<PlaybookSkill>;
+};
+
 const escapeRegExp = (value: string): string =>
   value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 export const splitPlaybookMarks = (
   text: string,
-  links: ReadonlyArray<PlaybookLink> = [],
+  options: SplitPlaybookMarksOptions = {},
 ): PlaybookMark[] => {
+  const links = options.links ?? [];
+  const skills = options.skills ?? [];
   const terms = [
-    ...PLAYBOOK_SKILLS.flatMap((skill) => [
+    ...skills.flatMap((skill) => [
       {
         kind: 'skill' as const,
         value: skill.trigger,

@@ -21,5 +21,6 @@ describe('AGENTS.md opportunity playbooks', () => {
     expect(AGENTS_MD).toContain('GitHub');
     expect(AGENTS_MD).toContain('Twenty Internal');
     expect(AGENTS_MD).toContain('MCP');
+    expect(AGENTS_MD).toMatch(/Do not open Apply/);
   });
 });

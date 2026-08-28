@@ -1,21 +1,22 @@
+import { type PlaybookSkill } from 'src/modules/opportunity/how-to-process/constants/playbook-skills';
 import { PlaybookNavLink } from 'src/modules/opportunity/how-to-process/front-components/playbook-nav-link';
-import {
-  type PlaybookLink,
-  splitPlaybookMarks,
-} from 'src/modules/opportunity/how-to-process/utils/split-playbook-marks';
+import { type PlaybookLink } from 'src/modules/opportunity/how-to-process/utils/playbook-nav';
+import { splitPlaybookMarks } from 'src/modules/opportunity/how-to-process/utils/split-playbook-marks';
 import { PLAYBOOK_STYLES as styles } from 'src/modules/shared/front-components/playbook-styles';
 
 type PlaybookMarkedTextProps = {
   text: string;
   links?: ReadonlyArray<PlaybookLink>;
+  skills?: ReadonlyArray<PlaybookSkill>;
 };
 
 export const PlaybookMarkedText = ({
   text,
   links = [],
+  skills = [],
 }: PlaybookMarkedTextProps) => (
   <>
-    {splitPlaybookMarks(text, links).map((mark, index) => {
+    {splitPlaybookMarks(text, { links, skills }).map((mark, index) => {
       if (mark.kind === 'skill') {
         return (
           <a

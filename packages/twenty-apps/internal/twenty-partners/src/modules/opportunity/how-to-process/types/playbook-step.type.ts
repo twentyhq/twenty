@@ -8,5 +8,4 @@ export type PlaybookStep = {
   pills?: string[];
   note?: string;
   skills?: readonly PlaybookSkill[];
-  variant: 'step' | 'lastStep';
 };

@@ -1,5 +1,7 @@
-import { runPlaybookNav } from 'src/modules/opportunity/how-to-process/utils/playbook-nav';
-import { type PlaybookLink } from 'src/modules/opportunity/how-to-process/utils/split-playbook-marks';
+import {
+  type PlaybookLink,
+  runPlaybookNav,
+} from 'src/modules/opportunity/how-to-process/utils/playbook-nav';
 import { PLAYBOOK_STYLES as styles } from 'src/modules/shared/front-components/playbook-styles';
 
 type PlaybookNavLinkProps = {
@@ -8,15 +10,13 @@ type PlaybookNavLinkProps = {
 };
 
 export const PlaybookNavLink = ({ link, children }: PlaybookNavLinkProps) => {
-  if (link.action !== undefined) {
-    const action = link.action;
-
+  if ('action' in link) {
     return (
       <button
         type="button"
         style={styles.linkButton}
         onClick={() => {
-          void runPlaybookNav(action);
+          void runPlaybookNav(link.action);
         }}
       >
         {children}
@@ -24,18 +24,14 @@ export const PlaybookNavLink = ({ link, children }: PlaybookNavLinkProps) => {
     );
   }
 
-  if (link.href !== undefined) {
-    return (
-      <a
-        href={link.href}
-        target="_blank"
-        rel="noreferrer"
-        style={styles.link}
-      >
-        {children}
-      </a>
-    );
-  }
-
-  return <span>{children}</span>;
+  return (
+    <a
+      href={link.href}
+      target="_blank"
+      rel="noreferrer"
+      style={styles.link}
+    >
+      {children}
+    </a>
+  );
 };

@@ -138,8 +138,9 @@ its copy test in the same change when you change any of:
 - Match via MCP: the operator can ask the agent to write CRM changes
 
 Pages stay operator language. Skill names, slash triggers, and GitHub URLs
-of those bundled skills are allowed on How to process. Open Briefs,
-My Applications, and Apply links are required on How to apply.
+of those bundled skills are allowed on How to process. Open Briefs and
+My Applications links are required on How to apply. Do not open Apply
+from the standalone page — Apply is pinned on the brief record.
 
 ## Where does new code go?
 

@@ -1,8 +1,9 @@
+import { type PlaybookSkill } from 'src/modules/opportunity/how-to-process/constants/playbook-skills';
 import { PlaybookMarkedText } from 'src/modules/opportunity/how-to-process/front-components/playbook-marked-text';
 import { PlaybookNavLink } from 'src/modules/opportunity/how-to-process/front-components/playbook-nav-link';
 import { PlaybookSkillBlock } from 'src/modules/opportunity/how-to-process/front-components/playbook-skill-block';
 import { type PlaybookStep } from 'src/modules/opportunity/how-to-process/types/playbook-step.type';
-import { type PlaybookLink } from 'src/modules/opportunity/how-to-process/utils/split-playbook-marks';
+import { type PlaybookLink } from 'src/modules/opportunity/how-to-process/utils/playbook-nav';
 import { PLAYBOOK_STYLES as styles } from 'src/modules/shared/front-components/playbook-styles';
 
 type PlaybookArticleProps = {
@@ -12,6 +13,7 @@ type PlaybookArticleProps = {
   steps: PlaybookStep[];
   headerLinks?: ReadonlyArray<PlaybookLink>;
   bodyLinks?: ReadonlyArray<PlaybookLink>;
+  skills?: ReadonlyArray<PlaybookSkill>;
 };
 
 export const PlaybookArticle = ({
@@ -21,6 +23,7 @@ export const PlaybookArticle = ({
   steps,
   headerLinks,
   bodyLinks = [],
+  skills = [],
 }: PlaybookArticleProps) => (
   <div style={styles.root}>
     <article style={styles.article}>
@@ -31,7 +34,7 @@ export const PlaybookArticle = ({
           headerLinks !== undefined ? styles.ledeWithLinks : styles.lede
         }
       >
-        <PlaybookMarkedText text={lede} links={bodyLinks} />
+        <PlaybookMarkedText text={lede} links={bodyLinks} skills={skills} />
       </p>
       {headerLinks !== undefined ? (
         <nav style={styles.headerLinkRow}>
@@ -42,16 +45,20 @@ export const PlaybookArticle = ({
           ))}
         </nav>
       ) : null}
-      {steps.map((step) => (
+      {steps.map((step, index) => (
         <section
           key={step.num}
-          style={step.variant === 'lastStep' ? styles.lastStep : styles.step}
+          style={index === steps.length - 1 ? styles.lastStep : styles.step}
         >
           <div style={styles.num}>{step.num}</div>
           <div>
             <h2 style={styles.heading}>{step.heading}</h2>
             <p style={styles.body}>
-              <PlaybookMarkedText text={step.body} links={bodyLinks} />
+              <PlaybookMarkedText
+                text={step.body}
+                links={bodyLinks}
+                skills={skills}
+              />
             </p>
             {step.pills !== undefined ? (
               <div style={styles.pillRow}>
@@ -66,7 +73,11 @@ export const PlaybookArticle = ({
               <ul style={styles.list}>
                 {step.bullets.map((bullet) => (
                   <li key={bullet}>
-                    <PlaybookMarkedText text={bullet} links={bodyLinks} />
+                    <PlaybookMarkedText
+                      text={bullet}
+                      links={bodyLinks}
+                      skills={skills}
+                    />
                   </li>
                 ))}
               </ul>
@@ -78,7 +89,11 @@ export const PlaybookArticle = ({
               : null}
             {step.note !== undefined ? (
               <p style={styles.note}>
-                <PlaybookMarkedText text={step.note} links={bodyLinks} />
+                <PlaybookMarkedText
+                  text={step.note}
+                  links={bodyLinks}
+                  skills={skills}
+                />
               </p>
             ) : null}
           </div>

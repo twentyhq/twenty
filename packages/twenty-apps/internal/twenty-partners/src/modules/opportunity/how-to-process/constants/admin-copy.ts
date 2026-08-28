@@ -5,7 +5,7 @@ import {
   PLAYBOOK_SKILL_SHORTLIST,
 } from 'src/modules/opportunity/how-to-process/constants/playbook-skills';
 import { type PlaybookStep } from 'src/modules/opportunity/how-to-process/types/playbook-step.type';
-import { type PlaybookLink } from 'src/modules/opportunity/how-to-process/utils/split-playbook-marks';
+import { type PlaybookLink } from 'src/modules/opportunity/how-to-process/utils/playbook-nav';
 
 export const DISCORD_CHAT_URL =
   'https://discord.com/channels/1130383047699738754/1513506376595538032';
@@ -29,7 +29,6 @@ export const HOW_TO_PROCESS_STEPS: PlaybookStep[] = [
   {
     num: '01',
     heading: 'Where the deal comes from',
-    variant: 'step',
     body: 'Three intakes. Treat each one differently.',
     bullets: [
       'Marketplace brief — already Listed. Discord gets a ping on submit. Do not list it again.',
@@ -40,21 +39,18 @@ export const HOW_TO_PROCESS_STEPS: PlaybookStep[] = [
   {
     num: '02',
     heading: 'Prepare the brief',
-    variant: 'step',
     body: 'Fill Need, Requirements, and Design Doc URL from the skill output. Do not intro without the doc. Partner mail carries that link.',
     skills: [PLAYBOOK_SKILL_LEAD_BRIEF],
   },
   {
     num: '03',
     heading: 'List, or do not',
-    variant: 'step',
     body: 'Turn Listed on when partners may see the brief. Open Briefs then shows the row. Discord pings on that flip. A daily digest mails validated partners. Do not also mail the whole directory.',
     note: 'A marketplace brief is already Listed. Do not list twice.',
   },
   {
     num: '04',
     heading: 'Match',
-    variant: 'step',
     body: 'Briefs to Match is the queue with no Partner yet. You can do all of this through MCP. Ask the agent to make the changes in the CRM. Skills are also available: /twenty-partner-shortlist, or wait for applications. /twenty-lead-brief is available if the brief is still thin. /twenty-partner-intro is available once you name the partners.',
     pills: [
       'Applied — the partner came in',
@@ -65,7 +61,6 @@ export const HOW_TO_PROCESS_STEPS: PlaybookStep[] = [
   {
     num: '05',
     heading: 'Intro',
-    variant: 'step',
     body: 'After you name the partners, /twenty-partner-intro creates Invited rows and sets Intro Sent At. The app then turns Listed off.',
     note: 'Do not send a second wave unless you mean to.',
     skills: [PLAYBOOK_SKILL_INTRO],
@@ -73,7 +68,6 @@ export const HOW_TO_PROCESS_STEPS: PlaybookStep[] = [
   {
     num: '06',
     heading: 'Pick the winner',
-    variant: 'lastStep',
     body: `Set Partner on the Opportunity. The winner Application goes to Won. The others go to Declined. Backup stays. Clear Partner and only Won returns to Applied. Move the deal on Deals: ${DEAL_STAGE_PATH}.`,
   },
 ];

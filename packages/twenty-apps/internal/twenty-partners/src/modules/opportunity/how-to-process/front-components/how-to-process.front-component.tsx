@@ -8,6 +8,7 @@ import {
   HOW_TO_PROCESS_TITLE,
 } from 'src/modules/opportunity/how-to-process/constants/admin-copy';
 import { HOW_TO_PROCESS_FRONT_COMPONENT_ID } from 'src/modules/opportunity/how-to-process/constants/how-to-process.constants';
+import { PLAYBOOK_SKILLS } from 'src/modules/opportunity/how-to-process/constants/playbook-skills';
 import { PlaybookArticle } from 'src/modules/opportunity/how-to-process/front-components/playbook-article';
 
 const HowToProcess = () => (
@@ -17,6 +18,7 @@ const HowToProcess = () => (
     lede={HOW_TO_PROCESS_LEDE}
     steps={HOW_TO_PROCESS_STEPS}
     bodyLinks={HOW_TO_PROCESS_BODY_LINKS}
+    skills={PLAYBOOK_SKILLS}
   />
 );
 
