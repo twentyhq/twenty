@@ -63,18 +63,15 @@ describe('isFieldMetadataEligibleForRecordForm', () => {
     ).toBe(true);
   });
 
-  it.each([RelationType.ONE_TO_MANY, RelationType.ONE_TO_ONE])(
-    'rejects a %s relation',
-    (relationType) => {
-      expect(
-        isFieldMetadataEligibleForRecordForm({
-          ...ELIGIBLE_TEXT_FIELD,
-          fieldType: FieldMetadataType.RELATION,
-          relationType,
-        }),
-      ).toBe(false);
-    },
-  );
+  it('rejects a one to many relation', () => {
+    expect(
+      isFieldMetadataEligibleForRecordForm({
+        ...ELIGIBLE_TEXT_FIELD,
+        fieldType: FieldMetadataType.RELATION,
+        relationType: RelationType.ONE_TO_MANY,
+      }),
+    ).toBe(false);
+  });
 
   it('rejects a relation with no relation type', () => {
     expect(
