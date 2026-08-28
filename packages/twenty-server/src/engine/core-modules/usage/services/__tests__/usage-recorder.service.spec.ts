@@ -116,10 +116,14 @@ describe('UsageRecorderService', () => {
     expect(getOrRecompute).toHaveBeenCalledTimes(1);
     expect(dispatch.mock.calls[0][0]).toEqual([
       expect.objectContaining({
-        row: expect.objectContaining({ periodStart: '2026-08-01 00:00:00.000' }),
+        row: expect.objectContaining({
+          periodStart: '2026-08-01 00:00:00.000',
+        }),
       }),
       expect.objectContaining({
-        row: expect.objectContaining({ periodStart: '2026-08-01 00:00:00.000' }),
+        row: expect.objectContaining({
+          periodStart: '2026-08-01 00:00:00.000',
+        }),
       }),
     ]);
   });

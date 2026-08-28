@@ -28,7 +28,6 @@ import { type ToolExecutionRef } from 'src/engine/core-modules/tool-provider/typ
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { buildRequiredToolAuthContext } from 'src/engine/core-modules/tool-provider/utils/build-required-tool-auth-context.util';
 import { withResolvedToolAuthContext } from 'src/engine/core-modules/tool-provider/utils/with-resolved-tool-auth-context.util';
-import { withToolCategoryApiRequestContext } from 'src/engine/core-modules/usage/utils/with-tool-category-api-request-context.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -66,17 +65,15 @@ export class ToolExecutorService {
   ): Promise<ToolOutput> {
     const safeArgs = args ?? {};
 
-    return withToolCategoryApiRequestContext(descriptor.category, () =>
-      withResolvedToolAuthContext(
-        {
-          context,
-          userRepository: this.userRepository,
-          userWorkspaceRepository: this.userWorkspaceRepository,
-          workspaceCacheService: this.workspaceCacheService,
-        },
-        (contextWithAuth) =>
-          this.dispatchByExecutionRef(descriptor, safeArgs, contextWithAuth),
-      ),
+    return withResolvedToolAuthContext(
+      {
+        context,
+        userRepository: this.userRepository,
+        userWorkspaceRepository: this.userWorkspaceRepository,
+        workspaceCacheService: this.workspaceCacheService,
+      },
+      (contextWithAuth) =>
+        this.dispatchByExecutionRef(descriptor, safeArgs, contextWithAuth),
     );
   }
 
