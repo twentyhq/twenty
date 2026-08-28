@@ -62,6 +62,68 @@ export class CalendarEventCleanerService {
     );
   }
 
+  public async deleteOrphanedCalendarEvents({
+    calendarEventIds,
+    workspaceId,
+  }: {
+    calendarEventIds: string[];
+    workspaceId: string;
+  }) {
+    if (calendarEventIds.length === 0) {
+      return;
+    }
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        await this.workspaceOrmManager.runInWorkspaceTransaction(
+          async (transactionScope) => {
+            const calendarEventRepository =
+              transactionScope.getRepository<CalendarEventWorkspaceEntity>(
+                'calendarEvent',
+              );
+            const calendarChannelEventAssociationRepository =
+              transactionScope.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+                'calendarChannelEventAssociation',
+              );
+
+            for (
+              let index = 0;
+              index < calendarEventIds.length;
+              index += CALENDAR_CLEANUP_PAGE_SIZE
+            ) {
+              const pageIds = calendarEventIds.slice(
+                index,
+                index + CALENDAR_CLEANUP_PAGE_SIZE,
+              );
+
+              const associations =
+                await calendarChannelEventAssociationRepository.find({
+                  where: { calendarEventId: In(pageIds) },
+                  select: { calendarEventId: true },
+                });
+
+              const referencedEventIds = new Set(
+                associations.map(({ calendarEventId }) => calendarEventId),
+              );
+
+              const orphanEventIds = pageIds.filter(
+                (eventId) => !referencedEventIds.has(eventId),
+              );
+
+              if (orphanEventIds.length > 0) {
+                await calendarEventRepository.delete(orphanEventIds);
+              }
+            }
+          },
+        );
+      },
+      authContext,
+      { lite: true },
+    );
+  }
+
   public async cleanWorkspaceCalendarEvents(workspaceId: string) {
     const authContext = buildSystemAuthContext(workspaceId);
 
