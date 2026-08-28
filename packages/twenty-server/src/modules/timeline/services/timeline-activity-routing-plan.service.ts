@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatTimelineActivityTypeMaps } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type-maps.type';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
@@ -23,7 +23,7 @@ import {
 type TimelineActivityRulesForEventBatch = {
   sourceRules: TimelineActivityRule[];
   junctionRules: TimelineActivityRule[];
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   resolveTimelineActivityType: TimelineActivityTypeResolver;
 };
 
@@ -31,7 +31,7 @@ type TimelineActivityRoutingPlan = {
   activeTimelineActivityTypes: ResolvableTimelineActivityType[];
   throughRules: TimelineActivityRule[];
   eligibleNonAuditedObjectMetadataIds: Set<string>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   resolveTimelineActivityType: TimelineActivityTypeResolver;
 };
 
@@ -103,14 +103,14 @@ export class TimelineActivityRoutingPlanService {
           workspaceId,
           flatMapsKeys: [
             'flatObjectMetadataMaps',
-            'flatFieldMetadataMaps',
+            'flatFieldMetadataMapsOrm',
             'flatTimelineActivityTypeMaps',
           ],
         },
       );
     const cacheKey = [
       hashes.flatObjectMetadataMaps,
-      hashes.flatFieldMetadataMaps,
+      hashes.flatFieldMetadataMapsOrm,
       hashes.flatTimelineActivityTypeMaps,
     ].join('|');
     const cachedRoutingPlan = this.routingPlanByWorkspaceId.get(workspaceId);
@@ -131,11 +131,11 @@ export class TimelineActivityRoutingPlanService {
 
   private buildRoutingPlan({
     flatObjectMetadataMaps,
-    flatFieldMetadataMaps,
+    flatFieldMetadataMapsOrm: flatFieldMetadataMaps,
     flatTimelineActivityTypeMaps,
   }: {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMapsOrm: FlatEntityMaps<OrmFlatFieldMetadata>;
     flatTimelineActivityTypeMaps: FlatTimelineActivityTypeMaps;
   }): TimelineActivityRoutingPlan {
     const { effectiveTimelineActivityTypes, resolveTimelineActivityType } =
