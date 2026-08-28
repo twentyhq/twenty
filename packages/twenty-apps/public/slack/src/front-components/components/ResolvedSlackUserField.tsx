@@ -4,16 +4,26 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type SlackResolvedUser } from 'src/logic-functions/types/slack-resolved-user.type';
 
-const StyledResolvedUser = styled.div`
+const StyledResolvedUser = styled.button`
   align-items: center;
   background: ${() => themeCssVariables.background.secondary};
   border: 1px solid ${() => themeCssVariables.border.color.medium};
   border-radius: ${() => themeCssVariables.border.radius.sm};
   box-sizing: border-box;
+  cursor: pointer;
   display: flex;
   gap: ${() => themeCssVariables.spacing[2]};
-  justify-content: space-between;
   padding: ${() => themeCssVariables.spacing[2]};
+  text-align: left;
+  width: 100%;
+
+  &:hover:enabled {
+    border-color: ${() => themeCssVariables.color.blue};
+  }
+
+  &:disabled {
+    cursor: default;
+  }
 `;
 
 const StyledDetails = styled.div`
@@ -35,16 +45,6 @@ const StyledMeta = styled.span`
   font-size: ${() => themeCssVariables.font.size.xs};
 `;
 
-const StyledChangeButton = styled.button`
-  background: transparent;
-  border: none;
-  color: ${() => themeCssVariables.font.color.secondary};
-  cursor: pointer;
-  font-family: ${() => themeCssVariables.font.family};
-  font-size: ${() => themeCssVariables.font.size.sm};
-  padding: 0;
-`;
-
 type ResolvedSlackUserFieldProps = {
   resolvedUser: SlackResolvedUser;
   onChangeRequest: () => void;
@@ -52,13 +52,19 @@ type ResolvedSlackUserFieldProps = {
 };
 
 // The confirmed Slack account, shown the way the member picker shows its
-// selection, so both sides of the link read as picked people.
+// selection, so both sides of the link read as picked people; clicking it
+// reopens the search.
 export const ResolvedSlackUserField = ({
   resolvedUser,
   onChangeRequest,
   disabled,
 }: ResolvedSlackUserFieldProps) => (
-  <StyledResolvedUser>
+  <StyledResolvedUser
+    type="button"
+    onClick={onChangeRequest}
+    disabled={disabled}
+    aria-label="Change the Slack user"
+  >
     <StyledDetails>
       <StyledName>
         {resolvedUser.displayName ?? resolvedUser.slackUserId}
@@ -69,12 +75,5 @@ export const ResolvedSlackUserField = ({
           : `Slack user ${resolvedUser.slackUserId} · Team ${resolvedUser.slackTeamId}`}
       </StyledMeta>
     </StyledDetails>
-    <StyledChangeButton
-      type="button"
-      onClick={onChangeRequest}
-      disabled={disabled}
-    >
-      Change
-    </StyledChangeButton>
   </StyledResolvedUser>
 );

@@ -74,6 +74,9 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
   const [slackUserId, setSlackUserId] = useState('');
   const [slackTeamId, setSlackTeamId] = useState('');
   const [isConnectUser, setIsConnectUser] = useState(false);
+  // True after the picked Slack user is clicked open, so the returning search
+  // input takes focus; never on first render.
+  const [isSlackSearchReopening, setIsSlackSearchReopening] = useState(false);
 
   const {
     resolvedUser,
@@ -95,6 +98,7 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
     setSlackUserId('');
     setSlackTeamId('');
     setIsConnectUser(false);
+    setIsSlackSearchReopening(false);
     clearResolution();
   };
 
@@ -164,7 +168,10 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
             <StyledLabel>Slack user</StyledLabel>
             <ResolvedSlackUserField
               resolvedUser={resolvedUser}
-              onChangeRequest={clearResolution}
+              onChangeRequest={() => {
+                setIsSlackSearchReopening(true);
+                clearResolution();
+              }}
               disabled={isSubmitting}
             />
           </StyledField>
@@ -175,6 +182,7 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
               <SlackUserPicker
                 onSelect={selectResolvedUser}
                 disabled={isSubmitting}
+                autoFocus={isSlackSearchReopening}
               />
             </StyledField>
             {isConnectUser ? (

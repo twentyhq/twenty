@@ -66,11 +66,13 @@ const StyledEmptyState = styled.div`
 type SlackUserPickerProps = {
   onSelect: (slackUser: SlackResolvedUser) => void;
   disabled?: boolean;
+  autoFocus?: boolean;
 };
 
 export const SlackUserPicker = ({
   onSelect,
   disabled,
+  autoFocus,
 }: SlackUserPickerProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isFocused, setIsFocused] = useState(false);
@@ -93,6 +95,7 @@ export const SlackUserPicker = ({
         onBlur={() => setIsFocused(false)}
         placeholder="Search Slack by name or email"
         disabled={disabled}
+        autoFocus={autoFocus}
         aria-label="Search Slack by name or email"
       />
       {isDropdownOpen && (

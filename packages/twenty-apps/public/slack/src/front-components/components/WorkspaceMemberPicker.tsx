@@ -13,32 +13,32 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledSelectedMember = styled.div`
+const StyledSelectedMember = styled.button`
   align-items: center;
   background: ${() => themeCssVariables.background.secondary};
   border: 1px solid ${() => themeCssVariables.border.color.medium};
   border-radius: ${() => themeCssVariables.border.radius.sm};
   box-sizing: border-box;
+  cursor: pointer;
   display: flex;
   gap: ${() => themeCssVariables.spacing[2]};
-  justify-content: space-between;
   padding: ${() => themeCssVariables.spacing[2]};
+  text-align: left;
+  width: 100%;
+
+  &:hover:enabled {
+    border-color: ${() => themeCssVariables.color.blue};
+  }
+
+  &:disabled {
+    cursor: default;
+  }
 `;
 
 const StyledSelectedMemberLabel = styled.span`
   color: ${() => themeCssVariables.font.color.primary};
   font-family: ${() => themeCssVariables.font.family};
   font-size: ${() => themeCssVariables.font.size.sm};
-`;
-
-const StyledClearButton = styled.button`
-  background: transparent;
-  border: none;
-  color: ${() => themeCssVariables.font.color.secondary};
-  cursor: pointer;
-  font-family: ${() => themeCssVariables.font.family};
-  font-size: ${() => themeCssVariables.font.size.sm};
-  padding: 0;
 `;
 
 const StyledDropdown = styled.div`
@@ -107,23 +107,27 @@ export const WorkspaceMemberPicker = ({
 }: WorkspaceMemberPickerProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  // True after the selection is clicked open, so the returning search input
+  // takes focus; never on first render, which would steal the page focus.
+  const [isReopening, setIsReopening] = useState(false);
   const { options, isSearching } = useWorkspaceMemberSearch(searchTerm);
 
   if (isDefined(selectedMember)) {
     return (
-      <StyledSelectedMember>
+      <StyledSelectedMember
+        type="button"
+        onClick={() => {
+          setIsReopening(true);
+          onClear();
+        }}
+        disabled={disabled}
+        aria-label="Change the workspace member"
+      >
         <StyledSelectedMemberLabel>
           {isNonEmptyString(selectedMember.name)
             ? selectedMember.name
-            : selectedMember.userEmail ?? selectedMember.id}
+            : (selectedMember.userEmail ?? selectedMember.id)}
         </StyledSelectedMemberLabel>
-        <StyledClearButton
-          type="button"
-          onClick={onClear}
-          disabled={disabled}
-        >
-          Change
-        </StyledClearButton>
       </StyledSelectedMember>
     );
   }
@@ -145,6 +149,7 @@ export const WorkspaceMemberPicker = ({
         onBlur={() => setIsFocused(false)}
         placeholder="Search a workspace member by name"
         disabled={disabled}
+        autoFocus={isReopening}
         aria-label="Search a workspace member by name"
       />
       {isDropdownOpen && (
