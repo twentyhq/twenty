@@ -14,6 +14,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -139,13 +140,7 @@ export class AddCalendarEventRelationsWidgetCommand extends ProvisionedWorkspace
       );
 
     if (validateAndBuildResult.status === 'fail') {
-      throw new Error(
-        `Failed to add the CalendarEvent Relations widget for workspace ${workspaceId}: ${JSON.stringify(
-          validateAndBuildResult,
-          null,
-          2,
-        )}`,
-      );
+      throw new WorkspaceMigrationBuilderException(validateAndBuildResult);
     }
 
     this.logger.log(
