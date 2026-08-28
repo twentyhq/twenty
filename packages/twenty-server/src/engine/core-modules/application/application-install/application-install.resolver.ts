@@ -192,13 +192,6 @@ export class ApplicationInstallResolver {
       );
     }
 
-    if (application.state !== ApplicationState.INSTALLED) {
-      throw new ApplicationException(
-        `An operation is already in progress for application ${universalIdentifier}`,
-        ApplicationExceptionCode.APPLICATION_OPERATION_IN_PROGRESS,
-      );
-    }
-
     const attributes = {
       universal_identifier: universalIdentifier,
       app_name: application.name,
@@ -206,10 +199,19 @@ export class ApplicationInstallResolver {
       version: application.version ?? 'unknown',
     };
 
-    await this.applicationService.update(application.id, {
-      state: ApplicationState.UNINSTALLING,
+    const reservedApplication = await this.applicationService.transitionState({
+      id: application.id,
       workspaceId,
+      fromState: ApplicationState.INSTALLED,
+      toState: ApplicationState.UNINSTALLING,
     });
+
+    if (!isDefined(reservedApplication)) {
+      throw new ApplicationException(
+        `An operation is already in progress for application ${universalIdentifier}`,
+        ApplicationExceptionCode.APPLICATION_OPERATION_IN_PROGRESS,
+      );
+    }
 
     try {
       await this.workspaceQueueService.add<UninstallApplicationJobData>(
@@ -221,9 +223,11 @@ export class ApplicationInstallResolver {
         },
       );
     } catch (error) {
-      await this.applicationService.update(application.id, {
-        state: ApplicationState.INSTALLED,
+      await this.applicationService.transitionState({
+        id: application.id,
         workspaceId,
+        fromState: ApplicationState.UNINSTALLING,
+        toState: ApplicationState.INSTALLED,
       });
 
       this.metricsService.incrementCounterBy({

@@ -168,9 +168,11 @@ export class ApplicationInstallService {
     }
 
     const application = isDefined(existingApplication)
-      ? await this.applicationService.update(existingApplication.id, {
-          state: ApplicationState.UPGRADING,
+      ? await this.applicationService.transitionState({
+          id: existingApplication.id,
           workspaceId: params.workspaceId,
+          fromState: ApplicationState.INSTALLED,
+          toState: ApplicationState.UPGRADING,
         })
       : await this.applicationService.create({
           universalIdentifier: appRegistration.universalIdentifier,
@@ -183,6 +185,13 @@ export class ApplicationInstallService {
           state: ApplicationState.INSTALLING,
           workspaceId: params.workspaceId,
         });
+
+    if (!isDefined(application)) {
+      throw new ApplicationException(
+        `An operation is already in progress for application ${appRegistration.universalIdentifier}`,
+        ApplicationExceptionCode.APPLICATION_OPERATION_IN_PROGRESS,
+      );
+    }
 
     try {
       await this.workspaceQueueService.add<InstallApplicationJobData>(
@@ -244,10 +253,12 @@ export class ApplicationInstallService {
           application.universalIdentifier,
           params.workspaceId,
         );
-      } else if (application.state === ApplicationState.UPGRADING) {
-        await this.applicationService.update(application.id, {
-          state: ApplicationState.INSTALLED,
+      } else {
+        await this.applicationService.transitionState({
+          id: application.id,
           workspaceId: params.workspaceId,
+          fromState: ApplicationState.UPGRADING,
+          toState: ApplicationState.INSTALLED,
         });
       }
     } catch (cleanupError) {
@@ -976,9 +987,11 @@ export class ApplicationInstallService {
     workspaceId: string;
   }): Promise<void> {
     try {
-      await this.applicationService.update(applicationId, {
-        state: ApplicationState.INSTALLED,
+      await this.applicationService.transitionState({
+        id: applicationId,
         workspaceId,
+        fromState: ApplicationState.UPGRADING,
+        toState: ApplicationState.INSTALLED,
       });
     } catch (revertError) {
       this.logger.warn(

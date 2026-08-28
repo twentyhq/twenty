@@ -115,11 +115,51 @@ export const useListenToApplicationEvents = ({
         );
       }
 
+      const createdRecordId =
+        detail.operation.type === 'create'
+          ? detail.operation.createdRecord.id
+          : undefined;
+
       // Creations and deletions change the list membership.
-      void apolloClient.query({
-        query: FindManyApplicationsDocument,
-        fetchPolicy: 'network-only',
-      });
+      void apolloClient
+        .query({
+          query: FindManyApplicationsDocument,
+          fetchPolicy: 'network-only',
+        })
+        .then(({ data }) => {
+          if (!isDefined(createdRecordId)) {
+            return;
+          }
+
+          const createdApplication = data?.findManyApplications.find(
+            (application) => application.id === createdRecordId,
+          );
+
+          if (!isDefined(createdApplication)) {
+            return;
+          }
+
+          // App chips resolve their logo from the workspace, so an install
+          // triggered elsewhere (another tab, the CLI, a background path)
+          // has to land there too.
+          setCurrentWorkspace((currentWorkspace) =>
+            isDefined(currentWorkspace)
+              ? {
+                  ...currentWorkspace,
+                  installedApplications: [
+                    ...currentWorkspace.installedApplications.filter(
+                      (installedApplication) =>
+                        installedApplication.id !== createdApplication.id,
+                    ),
+                    createdApplication,
+                  ],
+                }
+              : currentWorkspace,
+          );
+        })
+        .catch(() => {
+          // The list refresh is best-effort; queries keep their cached value.
+        });
 
       refetchApplicationQueries();
     },

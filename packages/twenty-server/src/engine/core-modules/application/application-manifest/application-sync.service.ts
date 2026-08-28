@@ -423,10 +423,6 @@ export class ApplicationSyncService {
     } catch (error) {
       await this.revertApplicationStateBestEffort({
         applicationId: application.id,
-        state:
-          application.state === ApplicationState.UNINSTALLING
-            ? ApplicationState.INSTALLED
-            : application.state,
         workspaceId,
       });
 
@@ -436,17 +432,17 @@ export class ApplicationSyncService {
 
   private async revertApplicationStateBestEffort({
     applicationId,
-    state,
     workspaceId,
   }: {
     applicationId: string;
-    state: ApplicationState;
     workspaceId: string;
   }): Promise<void> {
     try {
-      await this.applicationService.update(applicationId, {
-        state,
+      await this.applicationService.transitionState({
+        id: applicationId,
         workspaceId,
+        fromState: ApplicationState.UNINSTALLING,
+        toState: ApplicationState.INSTALLED,
       });
     } catch (revertError) {
       this.logger.warn(

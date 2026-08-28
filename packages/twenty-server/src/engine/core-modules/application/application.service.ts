@@ -654,7 +654,55 @@ export class ApplicationService {
   ): Promise<ApplicationEntity> {
     await this.applicationRepository.update({ id }, data);
 
-    await this.workspaceCacheService.invalidateAndRecompute(data.workspaceId, [
+    const { workspaceId, ...updatedData } = data;
+
+    return this.publishApplicationUpdate({
+      id,
+      workspaceId,
+      updatedFields: Object.keys(updatedData),
+    });
+  }
+
+  // Concurrent lifecycle requests would otherwise both read INSTALLED before
+  // either write lands; gating the write on the expected state lets the
+  // database arbitrate, so only one caller owns the operation.
+  async transitionState({
+    id,
+    workspaceId,
+    fromState,
+    toState,
+  }: {
+    id: string;
+    workspaceId: string;
+    fromState: ApplicationState;
+    toState: ApplicationState;
+  }): Promise<ApplicationEntity | null> {
+    const result = await this.applicationRepository.update(
+      { id, state: fromState },
+      { state: toState },
+    );
+
+    if (result.affected === 0) {
+      return null;
+    }
+
+    return this.publishApplicationUpdate({
+      id,
+      workspaceId,
+      updatedFields: ['state'],
+    });
+  }
+
+  private async publishApplicationUpdate({
+    id,
+    workspaceId,
+    updatedFields,
+  }: {
+    id: string;
+    workspaceId: string;
+    updatedFields: string[];
+  }): Promise<ApplicationEntity> {
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'flatApplicationMaps',
     ]);
 
@@ -667,14 +715,12 @@ export class ApplicationService {
       );
     }
 
-    const { workspaceId, ...updatedData } = data;
-
     await this.broadcastApplicationEvent({
       workspaceId,
       type: 'updated',
       recordId: id,
       properties: {
-        updatedFields: Object.keys(updatedData),
+        updatedFields,
         after: { ...updatedApplication },
       },
     });

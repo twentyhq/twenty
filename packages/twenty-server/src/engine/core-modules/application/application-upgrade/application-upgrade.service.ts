@@ -298,10 +298,19 @@ export class ApplicationUpgradeService {
       );
     }
 
-    await this.applicationService.update(application.id, {
-      state: ApplicationState.UPGRADING,
+    const reservedApplication = await this.applicationService.transitionState({
+      id: application.id,
       workspaceId: params.workspaceId,
+      fromState: ApplicationState.INSTALLED,
+      toState: ApplicationState.UPGRADING,
     });
+
+    if (!isDefined(reservedApplication)) {
+      throw new ApplicationException(
+        `An operation is already in progress for application ${appRegistration.universalIdentifier}`,
+        ApplicationExceptionCode.APPLICATION_OPERATION_IN_PROGRESS,
+      );
+    }
 
     try {
       await this.workspaceQueueService.add<UpgradeApplicationJobData>(
@@ -357,16 +366,15 @@ export class ApplicationUpgradeService {
           workspaceId: params.workspaceId,
         });
 
-      if (
-        !isDefined(application) ||
-        application.state !== ApplicationState.UPGRADING
-      ) {
+      if (!isDefined(application)) {
         return;
       }
 
-      await this.applicationService.update(application.id, {
-        state: ApplicationState.INSTALLED,
+      await this.applicationService.transitionState({
+        id: application.id,
         workspaceId: params.workspaceId,
+        fromState: ApplicationState.UPGRADING,
+        toState: ApplicationState.INSTALLED,
       });
     } catch (revertError) {
       this.logger.warn(
