@@ -17,7 +17,7 @@ import { RECORD_TABLE_VIRTUALIZATION_BODY_PLACEHOLDER_WIDTH_CSS_VARIABLE_NAME } 
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-import { useLayoutEffect } from 'react';
+import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableColumnWidthEffect = () => {
@@ -40,10 +40,7 @@ export const RecordTableColumnWidthEffect = () => {
   const isRecordTableCheckboxColumnHidden =
     useIsRecordTableCheckboxColumnHidden();
 
-  // Layout effect rather than passive: the scroll-end collapse commits this
-  // width with flushSync and then compensates the scroll offset, which only
-  // lands correctly if the new column widths are already applied.
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (isDefined(resizedFieldMetadataId)) {
       return;
     }

@@ -5,6 +5,7 @@ import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR,
   RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR,
+  RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR,
 } from '@/object-record/record-table/components/RecordTableStyleWrapper';
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
@@ -39,9 +40,7 @@ const StyledColumnFooterCell = styled.div<{
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
   left: ${({ isFirstCell }) =>
-    isFirstCell
-      ? `calc(var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) + var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR}))`
-      : 'auto'};
+    isFirstCell ? `var(${RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR})` : 'auto'};
 
   @media (hover: hover) {
     &:hover {
