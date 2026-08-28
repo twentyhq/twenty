@@ -76,7 +76,8 @@ export const SlackUserPicker = ({
 }: SlackUserPickerProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isFocused, setIsFocused] = useState(false);
-  const { options, isSearching } = useSlackUserSearch(searchTerm);
+  const { options, isSearching, searchErrorMessage } =
+    useSlackUserSearch(searchTerm);
 
   const hasSearchTerm = isNonEmptyString(searchTerm.trim());
   const isDropdownOpen = isFocused && hasSearchTerm;
@@ -138,7 +139,8 @@ export const SlackUserPicker = ({
             <StyledEmptyState>
               {isSearching
                 ? 'Searching…'
-                : 'No Slack users found. For a guest or Slack Connect user, link by Slack ID below.'}
+                : searchErrorMessage ??
+                  'No Slack users found. For a guest or Slack Connect user, link by Slack ID below.'}
             </StyledEmptyState>
           )}
         </StyledDropdown>
