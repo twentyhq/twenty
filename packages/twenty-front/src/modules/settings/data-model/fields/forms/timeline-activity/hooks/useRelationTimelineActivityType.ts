@@ -43,8 +43,7 @@ export const useRelationTimelineActivityType = ({
       fieldMetadataItem.universalIdentifier,
   );
 
-  // The emit pipeline routes direct many-to-one relations and one-to-many
-  // junction relations; other shapes have no target to write on.
+  // Other relation shapes have no target record to write on.
   const hasEmitCapableRelationShape =
     fieldMetadataItem.type === FieldMetadataType.RELATION &&
     (fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE ||
@@ -55,7 +54,7 @@ export const useRelationTimelineActivityType = ({
     hasEmitCapableRelationShape && getIsMetadataItemCustom(objectMetadataItem);
 
   const isTimelineLoggingEnabled =
-    relationTimelineActivityType?.isActive === true;
+    relationTimelineActivityType?.isActive ?? false;
 
   const setTimelineLoggingEnabled = async (enabled: boolean) => {
     try {
