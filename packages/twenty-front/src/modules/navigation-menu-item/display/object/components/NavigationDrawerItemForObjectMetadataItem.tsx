@@ -181,13 +181,14 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     isWorkflowCoreIndexPageEnabled,
   });
 
-  let secondaryLabel: string | undefined = undefined;
+  const objectSecondaryLabel =
+    isRecord || isViewWithResolvedView
+      ? objectMetadataItem.labelSingular
+      : undefined;
 
-  if (isCoreWorkflowsIndexItem) {
-    secondaryLabel = t`System`;
-  } else if (isRecord || isViewWithResolvedView) {
-    secondaryLabel = objectMetadataItem.labelSingular;
-  }
+  const secondaryLabel = isCoreWorkflowsIndexItem
+    ? t`System`
+    : objectSecondaryLabel;
 
   const showInaccessibleLock =
     isLayoutCustomizationModeEnabled && !canReadObjectRecords;

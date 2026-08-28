@@ -123,16 +123,17 @@ export const NavigationMenuItemFolderSubItem = ({
     isWorkflowCoreIndexPageEnabled,
   });
 
-  let secondaryLabel: string | undefined = undefined;
+  const viewSecondaryLabel =
+    navigationMenuItem.type === NavigationMenuItemType.VIEW
+      ? getObjectNavigationMenuItemSecondaryLabel({
+          objectMetadataItems,
+          navigationMenuItemObjectNameSingular: objectNameSingular ?? '',
+        })
+      : undefined;
 
-  if (isCoreWorkflowsIndexItem) {
-    secondaryLabel = t`System`;
-  } else if (navigationMenuItem.type === NavigationMenuItemType.VIEW) {
-    secondaryLabel = getObjectNavigationMenuItemSecondaryLabel({
-      objectMetadataItems,
-      navigationMenuItemObjectNameSingular: objectNameSingular ?? '',
-    });
-  }
+  const secondaryLabel = isCoreWorkflowsIndexItem
+    ? t`System`
+    : viewSecondaryLabel;
 
   return (
     <NavigationDrawerSubItem
