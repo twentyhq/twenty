@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatTimelineActivityTypeMaps } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type-maps.type';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
@@ -23,7 +23,7 @@ import {
 type TimelineActivityRulesForEventBatch = {
   sourceRules: TimelineActivityRule[];
   junctionRules: TimelineActivityRule[];
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   resolveTimelineActivityType: TimelineActivityTypeResolver;
 };
 
@@ -31,7 +31,7 @@ type TimelineActivityRoutingPlan = {
   activeTimelineActivityTypes: ResolvableTimelineActivityType[];
   throughRules: TimelineActivityRule[];
   eligibleNonAuditedObjectMetadataIds: Set<string>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   resolveTimelineActivityType: TimelineActivityTypeResolver;
 };
 
@@ -103,14 +103,14 @@ export class TimelineActivityRoutingPlanService {
           workspaceId,
           flatMapsKeys: [
             'flatObjectMetadataMaps',
-            'flatFieldMetadataMaps',
+            'flatFieldMetadataMapsOrm',
             'flatTimelineActivityTypeMaps',
           ],
         },
       );
     const cacheKey = [
       hashes.flatObjectMetadataMaps,
-      hashes.flatFieldMetadataMaps,
+      hashes.flatFieldMetadataMapsOrm,
       hashes.flatTimelineActivityTypeMaps,
     ].join('|');
     const cachedRoutingPlan = this.routingPlanByWorkspaceId.get(workspaceId);
@@ -131,11 +131,11 @@ export class TimelineActivityRoutingPlanService {
 
   private buildRoutingPlan({
     flatObjectMetadataMaps,
-    flatFieldMetadataMaps,
+    flatFieldMetadataMapsOrm: flatFieldMetadataMaps,
     flatTimelineActivityTypeMaps,
   }: {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMapsOrm: FlatEntityMaps<OrmFlatFieldMetadata>;
     flatTimelineActivityTypeMaps: FlatTimelineActivityTypeMaps;
   }): TimelineActivityRoutingPlan {
     const { effectiveTimelineActivityTypes, resolveTimelineActivityType } =
@@ -193,6 +193,15 @@ export class TimelineActivityRoutingPlanService {
           return undefined;
         }
 
+        const happensAtFlatFieldMetadata = isDefined(
+          routing.happensAtFieldUniversalIdentifier,
+        )
+          ? findFlatEntityByUniversalIdentifier({
+              flatEntityMaps: flatFieldMetadataMaps,
+              universalIdentifier: routing.happensAtFieldUniversalIdentifier,
+            })
+          : undefined;
+
         return {
           sourceFlatObjectMetadata,
           actions: [timelineActivityType.action],
@@ -208,6 +217,14 @@ export class TimelineActivityRoutingPlanService {
                   })?.name,
               )
               .filter(isDefined) ?? null,
+          // A field from another object would make the write path read a value
+          // that is not the source record's own moment, so it is dropped here.
+          happensAtFieldName:
+            isDefined(happensAtFlatFieldMetadata) &&
+            happensAtFlatFieldMetadata.objectMetadataId ===
+              sourceFlatObjectMetadata.id
+              ? happensAtFlatFieldMetadata.name
+              : null,
           targetShape,
         };
       })

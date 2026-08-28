@@ -28,7 +28,7 @@ export class CalendarSaveEventsService {
   ): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    const savedParticipantIds =
+    const { savedParticipantIds, calendarEventIds } =
       await this.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const calendarChannelEventAssociationRepository =
@@ -119,9 +119,19 @@ export class CalendarSaveEventsService {
             },
           );
 
-          return participantOperations.participantsToInsert.map(
-            (participant) => participant.id,
-          );
+          return {
+            savedParticipantIds: participantOperations.participantsToInsert.map(
+              (participant) => participant.id,
+            ),
+            calendarEventIds: [
+              ...saveOperations.associationsToInsert.map(
+                ({ calendarEventId }) => calendarEventId,
+              ),
+              ...saveOperations.calendarEventsToUpdate.map(
+                ({ criteria }) => criteria,
+              ),
+            ],
+          };
         },
         authContext,
         { lite: true },
@@ -130,6 +140,7 @@ export class CalendarSaveEventsService {
     await this.calendarEventParticipantService.matchParticipantsAndEnqueueContactCreationJob(
       {
         savedParticipantIds,
+        calendarEventIds,
         calendarChannel,
         connectedAccount,
         workspaceId,

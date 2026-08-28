@@ -1,5 +1,5 @@
 import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetEmptyStateDisplay';
-import { type CallRecordingWidgetUnavailableReason } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingWidgetUnavailableReason';
+import { type CallRecordingWidgetUnavailableReason } from '@/page-layout/widgets/call-recording/types/CallRecordingWidgetUnavailableReason';
 import { t } from '@lingui/core/macro';
 
 type CallRecordingWidgetUnavailableDisplayProps = {

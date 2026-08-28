@@ -43,11 +43,10 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { ConnectedAccountOwnershipTransferService } from 'src/engine/metadata-modules/connected-account/services/connected-account-ownership-transfer.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 // oxlint-disable-next-line twenty/inject-workspace-repository
@@ -55,9 +54,7 @@ export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
+    private readonly connectedAccountOwnershipTransferService: ConnectedAccountOwnershipTransferService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly emailVerificationService: EmailVerificationService,
     private readonly workspaceService: WorkspaceService,
@@ -378,19 +375,12 @@ export class UserService {
 
     assert(workspaceMember, 'WorkspaceMember not found');
 
-    const custodianUserWorkspaceId =
-      await this.resolveConnectedAccountsCustodianUserWorkspaceId({
+    await this.connectedAccountOwnershipTransferService.transferConnectedAccountsOwnershipToCustodian(
+      {
         removedUserWorkspace: userWorkspace,
         actingUserWorkspaceId,
-      });
-
-    if (isDefined(custodianUserWorkspaceId)) {
-      await this.connectedAccountMetadataService.transferOwnership({
-        fromUserWorkspaceId: userWorkspaceId,
-        toUserWorkspaceId: custodianUserWorkspaceId,
-        workspaceId,
-      });
-    }
+      },
+    );
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceMemberRepository =
@@ -408,55 +398,6 @@ export class UserService {
       userWorkspaceId,
       workspaceId,
     });
-  }
-
-  private async resolveConnectedAccountsCustodianUserWorkspaceId({
-    removedUserWorkspace,
-    actingUserWorkspaceId,
-  }: {
-    removedUserWorkspace: UserWorkspaceEntity;
-    actingUserWorkspaceId?: string;
-  }): Promise<string | undefined> {
-    const otherUserWorkspaces = await this.userWorkspaceRepository.find({
-      where: {
-        workspaceId: removedUserWorkspace.workspaceId,
-        id: Not(removedUserWorkspace.id),
-      },
-      order: { createdAt: 'ASC' },
-    });
-
-    if (otherUserWorkspaces.length === 0) {
-      return undefined;
-    }
-
-    const actingUserWorkspace = otherUserWorkspaces.find(
-      (otherUserWorkspace) => otherUserWorkspace.id === actingUserWorkspaceId,
-    );
-
-    if (isDefined(actingUserWorkspace)) {
-      return actingUserWorkspace.id;
-    }
-
-    const rolesByUserWorkspaceId =
-      await this.userRoleService.getRolesByUserWorkspaces({
-        userWorkspaceIds: otherUserWorkspaces.map(
-          (otherUserWorkspace) => otherUserWorkspace.id,
-        ),
-        workspaceId: removedUserWorkspace.workspaceId,
-      });
-
-    const oldestAdminUserWorkspace = otherUserWorkspaces.find(
-      (otherUserWorkspace) =>
-        rolesByUserWorkspaceId
-          .get(otherUserWorkspace.id)
-          ?.some(
-            (role) =>
-              role.universalIdentifier ===
-              STANDARD_ROLE.admin.universalIdentifier,
-          ),
-    );
-
-    return (oldestAdminUserWorkspace ?? otherUserWorkspaces[0]).id;
   }
 
   async hasUserAccessToWorkspaceOrThrow(userId: string, workspaceId: string) {

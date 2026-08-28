@@ -1,7 +1,6 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, IndexType } from 'twenty-shared/types';
 
 import { fromIndexManifestToUniversalFlatIndex } from 'src/engine/core-modules/application/application-manifest/converters/from-index-manifest-to-universal-flat-index.util';
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 

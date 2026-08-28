@@ -63,10 +63,10 @@ export const SSEClientEffect = () => {
         url: `${REACT_APP_SERVER_BASE_URL}/metadata`,
         credentials: 'include',
         headers: (): Record<string, string> => {
-          // Same rule as the Apollo auth link: the retained token pair is a
-          // dormant fallback once cookie auth is active and must not be sent.
-          // The server prefers Bearer over the session cookie, so attaching a
-          // token nothing refreshes any more authenticates the stream with a
+          // Same rule as the Apollo auth link: a pair can still be present
+          // while cookie auth is active, and must not be sent. The server
+          // prefers Bearer over the session cookie, so attaching a token
+          // nothing refreshes any more authenticates the stream with a
           // credential that expires and never recovers.
           if (store.get(isCookieAuthActiveState.atom)) {
             return {};

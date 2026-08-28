@@ -1,6 +1,10 @@
 import { SYSTEM_VIEW_KEYS } from 'twenty-shared/application';
 import { Command } from 'nest-commander';
-import { type FeatureFlagKey, ViewType } from 'twenty-shared/types';
+import {
+  type FeatureFlagKey,
+  PageLayoutType,
+  ViewType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -18,7 +22,6 @@ import { computeSystemRecordPageLayoutToCreate } from 'src/engine/metadata-modul
 import { computeSystemViewToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-view-to-create.util';
 import { computeSystemViewFieldsToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-view-fields-to-create.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';

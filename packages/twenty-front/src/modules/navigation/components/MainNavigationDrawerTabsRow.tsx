@@ -115,6 +115,7 @@ const StyledNewChatButton = styled.div`
   align-items: center;
   border-radius: inherit;
   color: ${themeCssVariables.font.color.secondary};
+  corner-shape: round;
   cursor: pointer;
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};

@@ -82,11 +82,13 @@ export class CalendarEventParticipantService {
     calendarChannel,
     connectedAccount,
     workspaceId,
+    calendarEventIds,
   }: {
     savedParticipantIds: string[];
     calendarChannel: CalendarChannelEntity;
     connectedAccount: ConnectedAccountEntity;
     workspaceId: string;
+    calendarEventIds: string[];
   }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -129,6 +131,7 @@ export class CalendarEventParticipantService {
 
         await this.matchParticipantService.matchParticipants({
           participants: savedParticipants,
+          sourceRecordIds: calendarEventIds,
           objectMetadataName: 'calendarEventParticipant',
           matchWith: 'workspaceMemberAndPerson',
         });

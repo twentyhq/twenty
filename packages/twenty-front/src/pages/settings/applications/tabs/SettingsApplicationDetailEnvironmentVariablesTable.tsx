@@ -44,6 +44,7 @@ export const SettingsApplicationDetailEnvironmentVariablesTable = ({
             <div key={editedEnvVariable.key}>
               <SettingsApplicationVariableLabelRow
                 variableKey={editedEnvVariable.key}
+                label={editedEnvVariable.label}
                 isDeprecated={editedEnvVariable.isDeprecated}
                 description={editedEnvVariable.description}
                 tooltipId={`env-var-desc-${editedEnvVariable.key}`}
