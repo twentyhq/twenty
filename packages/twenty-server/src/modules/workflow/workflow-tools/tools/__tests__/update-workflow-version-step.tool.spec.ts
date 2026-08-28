@@ -40,7 +40,11 @@ describe('createUpdateWorkflowVersionStepTool', () => {
 
     expect(
       workflowVersionStepService.updateWorkflowVersionStep,
-    ).toHaveBeenCalled();
+    ).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      workflowVersionId: baseInput.workflowVersionId,
+      step: mockStep,
+    });
     expect(result).toEqual(mockStep);
   });
 

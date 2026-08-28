@@ -19,9 +19,8 @@ import {
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { getRecordCrudRichTextIssuesForSteps } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-record-crud-rich-text-issues-for-steps.util';
 import { getPickRecordLoadBalanceConfigError } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-pick-record-load-balance-config-error.util';
-import { getRecordCrudRichTextIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-record-crud-rich-text-issues.util';
 import {
   type WorkflowAction,
   type WorkflowLogicFunctionAction,
@@ -381,32 +380,16 @@ export class WorkflowValidationWorkspaceService {
           });
         }
       }
-
-      const objectRecord =
-        isObject(input) && 'objectRecord' in input
-          ? input.objectRecord
-          : undefined;
-
-      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: objectId,
-        flatEntityMaps: flatObjectMetadataMaps,
-      });
-
-      if (isObject(objectRecord) && isDefined(flatObjectMetadata)) {
-        issues.push(
-          ...getRecordCrudRichTextIssues({
-            objectRecord: objectRecord as Record<string, unknown>,
-            objectMetadataInfo: {
-              flatObjectMetadata,
-              flatObjectMetadataMaps,
-              flatFieldMetadataMaps,
-            },
-            stepLabel: step.name ?? step.id,
-            stepId: step.id,
-          }),
-        );
-      }
     }
+
+    issues.push(
+      ...getRecordCrudRichTextIssuesForSteps({
+        steps: recordSteps,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        objectIdByNameSingular,
+      }),
+    );
 
     return issues;
   }
