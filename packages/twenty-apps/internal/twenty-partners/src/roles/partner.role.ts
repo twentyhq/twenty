@@ -272,7 +272,7 @@ export default defineRole({
       fieldUniversalIdentifier: OPPORTUNITY_DESIGN_DOC_STATUS_FIELD_ID,
       canUpdateFieldValue: false,
     },
-  // Marketplace brief fields — read-only for partners (listed briefs visible via RLS OR predicate).
+    // Marketplace brief fields — read-only for partners (listed briefs visible via RLS OR predicate).
     {
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
@@ -313,7 +313,8 @@ export default defineRole({
     {
       // Super partner — listed on the record page; partners can see it, cannot set it.
       objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
-      fieldUniversalIdentifier: PARTNER_SUPER_PARTNER_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier:
+        PARTNER_SUPER_PARTNER_FIELD_UNIVERSAL_IDENTIFIER,
       canUpdateFieldValue: false,
     },
     {
@@ -512,7 +513,8 @@ export default defineRole({
       // owner/createdBy). An RLS predicate scopes this to the partner's own member record
       // (see scripts/configure-partner-rls.ts) so the internal roster stays hidden.
       objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember
+          .universalIdentifier,
       canReadObjectRecords: true,
       canUpdateObjectRecords: false,
       canSoftDeleteObjectRecords: false,

@@ -15,6 +15,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { transformActorField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-actor-field.util';
 import { transformAddressField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-address-field.util';
@@ -332,9 +333,20 @@ export class DataArgProcessorService {
         return await transformRichTextValue(validatedValue);
       }
       case FieldMetadataType.LINKS: {
-        const validatedValue = validateLinksFieldOrThrow(value, key);
+        const settings = isFieldMetadataSettingsOfType(
+          fieldMetadata.settings,
+          FieldMetadataType.LINKS,
+        )
+          ? fieldMetadata.settings
+          : null;
 
-        return transformLinksValue(validatedValue);
+        const validatedValue = validateLinksFieldOrThrow({
+          value,
+          fieldName: key,
+          linksVariant: settings?.type,
+        });
+
+        return transformLinksValue({ input: validatedValue, settings });
       }
       case FieldMetadataType.TS_VECTOR:
         throw new CommonQueryRunnerException(

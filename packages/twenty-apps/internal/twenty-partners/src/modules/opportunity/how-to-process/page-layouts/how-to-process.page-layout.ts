@@ -25,7 +25,8 @@ export default definePageLayout({
           type: 'FRONT_COMPONENT',
           configuration: {
             configurationType: 'FRONT_COMPONENT',
-            frontComponentUniversalIdentifier: HOW_TO_PROCESS_FRONT_COMPONENT_ID,
+            frontComponentUniversalIdentifier:
+              HOW_TO_PROCESS_FRONT_COMPONENT_ID,
           },
         },
       ],

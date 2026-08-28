@@ -1,4 +1,7 @@
-import { NavigationMenuItemType, defineNavigationMenuItem } from 'twenty-sdk/define';
+import {
+  NavigationMenuItemType,
+  defineNavigationMenuItem,
+} from 'twenty-sdk/define';
 
 import { SUPER_PARTNERS_VIEW_UNIVERSAL_IDENTIFIER } from 'src/modules/partner/directory/views/super-partners.view';
 
