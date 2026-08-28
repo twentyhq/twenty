@@ -13,7 +13,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { BlocklistAuthorizationService } from 'src/modules/blocklist/blocklist-validation-manager/services/blocklist-authorization.service';
+import { BlocklistAccessService } from 'src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service';
 import { groupBlocklistEntriesForUniqueness } from 'src/modules/blocklist/utils/group-blocklist-entries-for-uniqueness.util';
 import { BLOCKLIST_HANDLE_SCHEMA } from 'src/modules/blocklist/constants/blocklist-handle-schema.constant';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
@@ -30,7 +30,7 @@ type BlocklistCreateEntry = {
 export class BlocklistValidationService {
   constructor(
     private readonly blocklistRepository: BlocklistRepository,
-    private readonly blocklistAuthorizationService: BlocklistAuthorizationService,
+    private readonly blocklistAccessService: BlocklistAccessService,
   ) {}
 
   public async validateBlocklistForCreateMany({
@@ -58,16 +58,16 @@ export class BlocklistValidationService {
         : null;
 
       if (isDefined(existingRecord)) {
-        await this.blocklistAuthorizationService.assertCanManageExistingRecord({
-          existingRecord,
+        await this.blocklistAccessService.canUserModifyBlocklistEntry({
+          entry: existingRecord,
           context,
         });
-        this.blocklistAuthorizationService.assertScopeAndOwnerAreUnchanged({
+        this.validateScopeAndOwnerAreUnchanged({
           data: item,
           existingRecord,
         });
       } else {
-        await this.blocklistAuthorizationService.assertCallerCanCreateEntry({
+        await this.blocklistAccessService.canUserCreateBlocklistEntry({
           item,
           context,
         });
@@ -91,11 +91,11 @@ export class BlocklistValidationService {
       context,
     });
 
-    await this.blocklistAuthorizationService.assertCanManageExistingRecord({
-      existingRecord,
+    await this.blocklistAccessService.canUserModifyBlocklistEntry({
+      entry: existingRecord,
       context,
     });
-    this.blocklistAuthorizationService.assertScopeAndOwnerAreUnchanged({
+    this.validateScopeAndOwnerAreUnchanged({
       data: payload.data,
       existingRecord,
     });
@@ -117,7 +117,7 @@ export class BlocklistValidationService {
       context,
     });
 
-    this.assertHandlesAreNew({
+    this.validateHandlesAreNew({
       handles: [payload.data.handle],
       existingHandles: siblingHandles.filter(
         (handle) => handle !== existingRecord.handle,
@@ -134,8 +134,8 @@ export class BlocklistValidationService {
   }): Promise<void> {
     const existingRecord = await this.getExistingRecordOrThrow({ id, context });
 
-    await this.blocklistAuthorizationService.assertCanManageExistingRecord({
-      existingRecord,
+    await this.blocklistAccessService.canUserModifyBlocklistEntry({
+      entry: existingRecord,
       context,
     });
   }
@@ -149,8 +149,8 @@ export class BlocklistValidationService {
   }): Promise<void> {
     const existingRecord = await this.getExistingRecordOrThrow({ id, context });
 
-    await this.blocklistAuthorizationService.assertCanManageExistingRecord({
-      existingRecord,
+    await this.blocklistAccessService.canUserModifyBlocklistEntry({
+      entry: existingRecord,
       context,
     });
 
@@ -165,7 +165,7 @@ export class BlocklistValidationService {
       context,
     });
 
-    this.assertHandlesAreNew({
+    this.validateHandlesAreNew({
       handles: [existingRecord.handle],
       existingHandles: liveHandles,
     });
@@ -190,6 +190,36 @@ export class BlocklistValidationService {
           { userFriendlyMessage: msg`Invalid email or domain.` },
         );
       }
+    }
+  }
+
+  private validateScopeAndOwnerAreUnchanged({
+    data,
+    existingRecord,
+  }: {
+    data: Partial<BlocklistItem>;
+    existingRecord: Pick<
+      BlocklistWorkspaceEntity,
+      'scope' | 'workspaceMemberId'
+    >;
+  }): void {
+    if ('scope' in data && data.scope !== existingRecord.scope) {
+      throw new CommonQueryRunnerException(
+        'Blocklist scope cannot be updated',
+        CommonQueryRunnerExceptionCode.BAD_REQUEST,
+        { userFriendlyMessage: msg`Blocklist scope cannot be updated.` },
+      );
+    }
+
+    if (
+      'workspaceMemberId' in data &&
+      data.workspaceMemberId !== existingRecord.workspaceMemberId
+    ) {
+      throw new CommonQueryRunnerException(
+        'Workspace member cannot be updated',
+        CommonQueryRunnerExceptionCode.BAD_REQUEST,
+        { userFriendlyMessage: msg`Workspace member cannot be updated.` },
+      );
     }
   }
 
@@ -222,7 +252,7 @@ export class BlocklistValidationService {
         context,
       });
 
-      this.assertHandlesAreNew({
+      this.validateHandlesAreNew({
         handles,
         existingHandles: existingHandles.filter(
           (handle) => !retainedHandles.includes(handle),
@@ -262,7 +292,7 @@ export class BlocklistValidationService {
       .filter(isDefined);
   }
 
-  private assertHandlesAreNew({
+  private validateHandlesAreNew({
     handles,
     existingHandles,
   }: {
