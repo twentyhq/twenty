@@ -29,9 +29,9 @@ const BLOCKLIST_OBJECT_NAME_SINGULAR = 'blocklist';
 const WORKSPACE_MEMBER_TABLE_NAME = 'workspaceMember';
 const WORKSPACE_MEMBER_COLUMN_NAME = 'workspaceMemberId';
 
-@RegisteredWorkspaceCommand('2.36.0', 1787755314016)
+@RegisteredWorkspaceCommand('2.38.0', 1787933689056)
 @Command({
-  name: 'upgrade:2-36:add-blocklist-scope-field',
+  name: 'upgrade:2-38:add-blocklist-scope-field',
   description:
     'Add the blocklist.scope field, make blocklist.workspaceMember nullable so a handle can be blocked workspace-wide, and switch that relation from SET_NULL to CASCADE so a destroyed workspace member takes their entries with them',
 })
