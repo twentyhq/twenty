@@ -48,12 +48,6 @@ describe('convertPageLayoutToTabLayouts', () => {
                 aggregateFieldMetadataId: 'id',
                 displayDataLabel: false,
               },
-              gridPosition: {
-                row: 9,
-                column: 9,
-                rowSpan: 9,
-                columnSpan: 9,
-              },
               position: {
                 __typename: 'PageLayoutWidgetGridPosition' as const,
                 layoutMode: PageLayoutTabLayoutMode.GRID,
@@ -85,13 +79,14 @@ describe('convertPageLayoutToTabLayouts', () => {
                 orderBy: GraphOrderBy.VALUE_DESC,
                 displayDataLabel: false,
               },
-              gridPosition: {
+              position: {
+                __typename: 'PageLayoutWidgetGridPosition' as const,
+                layoutMode: PageLayoutTabLayoutMode.GRID,
                 row: 2,
                 column: 0,
                 rowSpan: 2,
                 columnSpan: 2,
               },
-              position: null,
               objectMetadataId: 'object-metadata-1',
               createdAt: '2025-01-01T00:00:00.000Z',
               updatedAt: '2025-01-01T00:00:00.000Z',

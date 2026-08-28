@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  type GridPosition,
-  PageLayoutTabLayoutMode,
-} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -21,13 +17,6 @@ import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
-
-const DEFAULT_LEGACY_GRID_POSITION: GridPosition = {
-  row: 0,
-  column: 0,
-  rowSpan: 1,
-  columnSpan: 12,
-};
 
 @Injectable()
 export class CreatePageLayoutWidgetActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -93,20 +82,10 @@ export class CreatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
   ): Promise<void> {
     const { flatAction, queryRunner } = context;
     const { flatEntity } = flatAction;
-    const gridPosition =
-      flatEntity.gridPosition ??
-      (flatEntity.position?.layoutMode === PageLayoutTabLayoutMode.GRID
-        ? {
-            row: flatEntity.position.row,
-            column: flatEntity.position.column,
-            rowSpan: flatEntity.position.rowSpan,
-            columnSpan: flatEntity.position.columnSpan,
-          }
-        : DEFAULT_LEGACY_GRID_POSITION);
 
     await this.insertFlatEntitiesInRepository({
       queryRunner,
-      flatEntities: [{ ...flatEntity, gridPosition }],
+      flatEntities: [flatEntity],
     });
   }
 

@@ -261,25 +261,6 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     });
   });
 
-  it('should fall back to legacy grid coordinates when position is null', () => {
-    const widget = makeWidget({
-      id: 'w1',
-      position: null,
-      gridPosition: { row: 1, column: 2, rowSpan: 3, columnSpan: 4 },
-    });
-    const draft = makeDraft([makeTab('tab-1', [widget])]);
-
-    const result = convertPageLayoutDraftToUpdateInput(draft);
-
-    expect(result.tabs[0].widgets[0].position).toEqual({
-      layoutMode: PageLayoutTabLayoutMode.GRID,
-      row: 1,
-      column: 2,
-      rowSpan: 3,
-      columnSpan: 4,
-    });
-  });
-
   it('should produce GRID position when tab layoutMode is explicitly GRID', () => {
     const widget = makeWidget({
       id: 'w1',

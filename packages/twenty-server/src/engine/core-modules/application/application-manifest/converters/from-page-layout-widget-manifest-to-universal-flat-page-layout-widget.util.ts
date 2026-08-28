@@ -1,43 +1,21 @@
 import { type PageLayoutWidgetManifest } from 'twenty-shared/application';
 import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
 import {
-  type GridPosition,
   PageLayoutTabLayoutMode,
   type PageLayoutWidgetPosition,
   type WidgetType,
 } from 'twenty-shared/types';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 
-type PageLayoutWidgetManifestWithLegacyGridPosition =
-  PageLayoutWidgetManifest & {
-    gridPosition?: GridPosition;
-  };
-
-const getPageLayoutWidgetPosition = ({
-  pageLayoutWidgetManifest,
+const getDefaultPageLayoutWidgetPosition = ({
   pageLayoutTabLayoutMode,
   widgetIndex,
 }: {
-  pageLayoutWidgetManifest: PageLayoutWidgetManifest;
   pageLayoutTabLayoutMode: PageLayoutTabLayoutMode;
   widgetIndex: number;
 }): PageLayoutWidgetPosition => {
-  if (isDefined(pageLayoutWidgetManifest.position)) {
-    return pageLayoutWidgetManifest.position;
-  }
-
-  const { gridPosition } =
-    pageLayoutWidgetManifest as PageLayoutWidgetManifestWithLegacyGridPosition;
-
-  if (isDefined(gridPosition)) {
-    return {
-      layoutMode: PageLayoutTabLayoutMode.GRID,
-      ...gridPosition,
-    };
-  }
-
   switch (pageLayoutTabLayoutMode) {
     case PageLayoutTabLayoutMode.GRID:
       return {
@@ -85,11 +63,12 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
     objectMetadataUniversalIdentifier:
       pageLayoutWidgetManifest.objectUniversalIdentifier ?? null,
     conditionalDisplay: pageLayoutWidgetManifest.conditionalDisplay ?? null,
-    position: getPageLayoutWidgetPosition({
-      pageLayoutWidgetManifest,
-      pageLayoutTabLayoutMode,
-      widgetIndex,
-    }),
+    position:
+      pageLayoutWidgetManifest.position ??
+      getDefaultPageLayoutWidgetPosition({
+        pageLayoutTabLayoutMode,
+        widgetIndex,
+      }),
     universalConfiguration:
       pageLayoutWidgetManifest.configuration as UniversalFlatPageLayoutWidget['universalConfiguration'],
     createdAt: now,

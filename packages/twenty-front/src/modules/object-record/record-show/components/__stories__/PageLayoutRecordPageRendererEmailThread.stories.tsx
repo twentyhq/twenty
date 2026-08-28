@@ -120,8 +120,9 @@ const emailThreadPageLayoutWidget = {
   isSystemSideEffect: false,
   applicationId: '',
   universalIdentifier: 'email-thread-widget',
-  gridPosition: {
-    __typename: 'GridPosition' as const,
+  position: {
+    __typename: 'PageLayoutWidgetGridPosition' as const,
+    layoutMode: PageLayoutTabLayoutMode.GRID,
     row: 0,
     column: 0,
     rowSpan: 12,

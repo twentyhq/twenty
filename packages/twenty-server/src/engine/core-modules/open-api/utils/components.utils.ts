@@ -1335,13 +1335,6 @@ export const computeMetadataSchemaComponents = (
                 enum: ['VIEW', 'IFRAME', 'FIELDS', 'GRAPH'],
               },
               objectMetadataId: { type: 'string', format: 'uuid' },
-              gridPosition: {
-                oneOf: [
-                  { $ref: '#/components/schemas/GridPosition' },
-                  { type: 'null' },
-                ],
-                deprecated: true,
-              },
               position: {
                 $ref: '#/components/schemas/PageLayoutWidgetPosition',
               },
