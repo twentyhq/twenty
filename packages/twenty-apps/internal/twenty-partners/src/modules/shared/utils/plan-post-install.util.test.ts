@@ -30,6 +30,10 @@ describe('planPostInstall', () => {
       stampPartnerUser: false,
       grantApplicantVisibility: false,
     });
+    expect(planPostInstall('1.8.3')).toEqual({
+      stampPartnerUser: false,
+      grantApplicantVisibility: false,
+    });
     expect(planPostInstall('1.9.0')).toEqual({
       stampPartnerUser: false,
       grantApplicantVisibility: false,

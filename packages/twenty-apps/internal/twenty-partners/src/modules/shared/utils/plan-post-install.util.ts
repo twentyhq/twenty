@@ -1,9 +1,8 @@
 // The release that narrowed the Application RLS predicate to `partnerUser IS me`.
 const STRICT_APPLICATION_RLS_VERSION = [1, 6, 1] as const;
-// The release that grants opportunity read access to applicants after unlist. Keep this in
-// step with the version in package.json whenever this feature's release number moves: every
-// workspace below it still needs the backfill, and a gate left behind skips the workspaces
-// that need it most. 1.8.1 went elsewhere, so it still needs it.
+// First release that grants opportunity read access to applicants after unlist.
+// Later bumps of the same PR (1.8.3 table scoping) must not move this gate, or a
+// workspace already on 1.8.2 would re-run the backfill. 1.8.1 still needs it.
 const APPLICANT_OPPORTUNITY_VISIBILITY_VERSION = [1, 8, 2] as const;
 
 const isBeforeAppVersion = (
