@@ -14,14 +14,11 @@ import {
   extractSlackSetUserLinkInput,
   type SlackSetUserLinkPayload,
 } from 'src/logic-functions/utils/extract-slack-set-user-link-input';
-import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { persistSlackUserLink } from 'src/logic-functions/utils/persist-slack-user-link';
-import {
-  type ResolvedSlackUser,
-  resolveSlackUserByEmail,
-} from 'src/logic-functions/utils/resolve-slack-user-by-email';
+import { resolveLinkTargetByEmail } from 'src/logic-functions/utils/resolve-link-target-by-email';
+import { resolveLinkTargetById } from 'src/logic-functions/utils/resolve-link-target-by-id';
 import { sendSlackUserLinkConsentDm } from 'src/logic-functions/utils/send-slack-user-link-consent-dm';
 
 export const slackSetUserLinkHandler = async (
@@ -80,85 +77,35 @@ export const slackSetUserLinkHandler = async (
   let fetchedIdentity: SlackUserIdentity | undefined;
 
   if (!isNonEmptyString(slackUserId) && isNonEmptyString(email)) {
-    let resolvedUser: ResolvedSlackUser | undefined;
-
-    try {
-      resolvedUser = await resolveSlackUserByEmail(slackClient, email);
-    } catch (error) {
-      return {
-        success: false,
-        message: 'Could not look up that Slack email',
-        error: error instanceof Error ? error.message : String(error),
-      };
-    }
-
-    if (!isDefined(resolvedUser)) {
-      return {
-        success: false,
-        message: 'No Slack user with that email',
-        error:
-          'No Slack user with that email in the installed workspace. For a guest or Slack Connect user from another workspace, enter their Slack user id instead.',
-      };
-    }
-
-    // The lookup certifies which workspace the account lives in, so a
-    // supplied team id must agree with it, mirroring the id path: otherwise
-    // the link would be stored under a team the account does not belong to.
-    if (
-      isNonEmptyString(slackTeamId) &&
-      isNonEmptyString(resolvedUser.slackTeamId) &&
-      slackTeamId !== resolvedUser.slackTeamId
-    ) {
-      return {
-        success: false,
-        message: 'Slack team id does not match the user',
-        error: `The Slack user with that email belongs to workspace ${resolvedUser.slackTeamId}, not ${slackTeamId}. Check the team id and try again.`,
-      };
-    }
-
-    slackUserId = resolvedUser.slackUserId;
-    slackTeamId = slackTeamId ?? resolvedUser.slackTeamId;
-    resolvedName = resolvedName ?? resolvedUser.displayName;
-  }
-
-  // A directly-supplied id may belong to another workspace, so resolve the
-  // account's real team before deciding on consent. With no team supplied, a
-  // failed lookup fails closed rather than assume the installed workspace and
-  // send a consent DM we cannot deliver. With one, the resolved team must
-  // agree, or an admin could hand an in-workspace user a bogus external team
-  // and skip the consent ask. A Slack Connect user typically cannot be
-  // resolved here and keeps the supplied team.
-  if (isNonEmptyString(requestedSlackUserId)) {
-    const identity = await fetchSlackUserIdentity({
-      client: slackClient,
-      slackUserId,
+    const emailTarget = await resolveLinkTargetByEmail({
+      slackClient,
+      email,
+      requestedSlackTeamId,
     });
 
-    if (!isNonEmptyString(requestedSlackTeamId)) {
-      if (!isDefined(identity) || !isNonEmptyString(identity.slackTeamId)) {
-        return {
-          success: false,
-          message: 'Could not resolve the Slack workspace',
-          error:
-            'Could not determine which Slack workspace this user belongs to. Provide their Slack team id and try again.',
-        };
-      }
-
-      slackTeamId = identity.slackTeamId;
-    } else if (
-      isDefined(identity) &&
-      isNonEmptyString(identity.slackTeamId) &&
-      identity.slackTeamId !== requestedSlackTeamId
-    ) {
-      return {
-        success: false,
-        message: 'Slack team id does not match the user',
-        error: `That Slack user belongs to workspace ${identity.slackTeamId}, not ${requestedSlackTeamId}. Check the team id and try again.`,
-      };
+    if (!emailTarget.success) {
+      return emailTarget;
     }
 
-    fetchedIdentity = identity;
-    resolvedName = resolvedName ?? identity?.displayName;
+    slackUserId = emailTarget.slackUserId;
+    slackTeamId = emailTarget.slackTeamId;
+    resolvedName = resolvedName ?? emailTarget.displayName;
+  }
+
+  if (isNonEmptyString(requestedSlackUserId)) {
+    const idTarget = await resolveLinkTargetById({
+      slackClient,
+      slackUserId: requestedSlackUserId,
+      requestedSlackTeamId,
+    });
+
+    if (!idTarget.success) {
+      return idTarget;
+    }
+
+    slackTeamId = idTarget.slackTeamId;
+    fetchedIdentity = idTarget.identity;
+    resolvedName = resolvedName ?? idTarget.identity?.displayName;
   }
 
   const installedTeamId = await getInstalledSlackTeamId(slackClient);
@@ -289,7 +236,10 @@ export const slackSetUserLinkHandler = async (
     };
   }
 
-  const memberName = await findWorkspaceMemberNameById(client, workspaceMemberId);
+  const memberName = await findWorkspaceMemberNameById(
+    client,
+    workspaceMemberId,
+  );
 
   const dmResult = await sendSlackUserLinkConsentDm(slackClient, {
     slackTeamId,
