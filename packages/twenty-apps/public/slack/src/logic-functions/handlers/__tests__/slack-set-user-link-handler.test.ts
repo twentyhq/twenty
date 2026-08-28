@@ -552,6 +552,26 @@ describe('slackSetUserLinkHandler', () => {
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
+  it('should refuse a supplied team id that disagrees with the email lookup', async () => {
+    resolveSlackUserByEmailMock.mockResolvedValue({
+      slackUserId: 'U9999999999',
+      slackTeamId: INSTALLED_TEAM_ID,
+      displayName: 'Ada Lovelace',
+    });
+
+    const result = await slackSetUserLinkHandler({
+      email: 'ada@example.com',
+      slackTeamId: 'T9876543210',
+      workspaceMemberId: 'workspace-member-1',
+    });
+
+    expect(result.success).toBe(false);
+    if (result.success === false) {
+      expect(result.error).toContain('belongs to workspace');
+    }
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+  });
+
   it('should activate immediately as an AUTO link when the email matches the member', async () => {
     resolveSlackUserByEmailMock.mockResolvedValue({
       slackUserId: 'U9999999999',
