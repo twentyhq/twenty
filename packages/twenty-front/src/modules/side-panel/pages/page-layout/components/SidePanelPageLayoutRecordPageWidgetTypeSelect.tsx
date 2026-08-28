@@ -181,7 +181,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     }));
 
     setPageLayoutEditingWidgetId(widgetId);
-    insertCreatedWidgetAtContext(widgetId);
+    insertCreatedWidgetAtContext({ newWidgetId: widgetId });
 
     navigatePageLayoutSidePanel({
       sidePanelPage: SidePanelPages.RecordPageFieldsSettings,
@@ -252,7 +252,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     }));
 
     setPageLayoutEditingWidgetId(widgetId);
-    insertCreatedWidgetAtContext(widgetId);
+    insertCreatedWidgetAtContext({ newWidgetId: widgetId });
 
     navigatePageLayoutSidePanel({
       sidePanelPage: SidePanelPages.RecordPageFieldSettings,
@@ -278,7 +278,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
       widgetToReplace: existingWidget,
     });
 
-    insertCreatedWidgetAtContext(newWidget.id);
+    insertCreatedWidgetAtContext({ newWidgetId: newWidget.id });
   };
 
   const handleCreateFrontComponentWidget = useCallback(
@@ -324,7 +324,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
       }));
 
       setPageLayoutEditingWidgetId(widgetId);
-      insertCreatedWidgetAtContext(widgetId);
+      insertCreatedWidgetAtContext({ newWidgetId: widgetId });
 
       closeSidePanelMenu();
     },

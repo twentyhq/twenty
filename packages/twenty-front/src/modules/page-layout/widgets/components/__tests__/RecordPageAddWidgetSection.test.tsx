@@ -77,10 +77,10 @@ describe('RecordPageAddWidgetSection', () => {
     expect(mockCreateRecordPageNoteWidget).toHaveBeenCalledWith({
       tabId: 'tab-1',
     });
-    expect(mockInsertCreatedWidgetAtContext).toHaveBeenCalledWith(
-      'new-note',
-      null,
-    );
+    expect(mockInsertCreatedWidgetAtContext).toHaveBeenCalledWith({
+      newWidgetId: 'new-note',
+      insertionContext: null,
+    });
   });
 
   it.each([
@@ -100,10 +100,10 @@ describe('RecordPageAddWidgetSection', () => {
 
       await userEvent.setup().click(screen.getByText(label, { exact: true }));
 
-      expect(mockInsertCreatedWidgetAtContext).toHaveBeenCalledWith(
-        widgetId,
+      expect(mockInsertCreatedWidgetAtContext).toHaveBeenCalledWith({
+        newWidgetId: widgetId,
         insertionContext,
-      );
+      });
     },
   );
 

@@ -68,7 +68,7 @@ export const RecordPageAddWidgetSection = ({
 
   const handleCreateWidget = (createWidget: () => PageLayoutWidget) => {
     const widget = createWidget();
-    insertCreatedWidgetAtContext(widget.id, insertionContext);
+    insertCreatedWidgetAtContext({ newWidgetId: widget.id, insertionContext });
   };
 
   return (

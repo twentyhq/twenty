@@ -63,7 +63,7 @@ describe('useInsertCreatedWidgetAtContext', () => {
     );
 
     act(() => {
-      result.current.insertCreatedWidgetAtContext('widget-c');
+      result.current.insertCreatedWidgetAtContext({ newWidgetId: 'widget-c' });
     });
 
     const draft = store.get(getDraftAtom());
@@ -95,7 +95,7 @@ describe('useInsertCreatedWidgetAtContext', () => {
     );
 
     act(() => {
-      result.current.insertCreatedWidgetAtContext('widget-c');
+      result.current.insertCreatedWidgetAtContext({ newWidgetId: 'widget-c' });
     });
 
     const draft = store.get(getDraftAtom());
@@ -130,7 +130,9 @@ describe('useInsertCreatedWidgetAtContext', () => {
     );
 
     act(() => {
-      result.current.insertCreatedWidgetAtContext('new-widget');
+      result.current.insertCreatedWidgetAtContext({
+        newWidgetId: 'new-widget',
+      });
     });
 
     const draft = store.get(getDraftAtom());
@@ -165,7 +167,7 @@ describe('useInsertCreatedWidgetAtContext', () => {
     );
 
     act(() => {
-      result.current.insertCreatedWidgetAtContext('widget-c');
+      result.current.insertCreatedWidgetAtContext({ newWidgetId: 'widget-c' });
     });
 
     const draft = store.get(getDraftAtom());
@@ -196,7 +198,7 @@ describe('useInsertCreatedWidgetAtContext', () => {
     );
 
     act(() => {
-      result.current.insertCreatedWidgetAtContext('widget-b');
+      result.current.insertCreatedWidgetAtContext({ newWidgetId: 'widget-b' });
     });
 
     const draft = store.get(getDraftAtom());
@@ -226,9 +228,12 @@ describe('useInsertCreatedWidgetAtContext', () => {
     });
 
     act(() => {
-      result.current.insertCreatedWidgetAtContext('new-widget', {
-        targetWidgetId: 'first',
-        direction: 'above',
+      result.current.insertCreatedWidgetAtContext({
+        newWidgetId: 'new-widget',
+        insertionContext: {
+          targetWidgetId: 'first',
+          direction: 'above',
+        },
       });
     });
 
@@ -254,7 +259,10 @@ describe('useInsertCreatedWidgetAtContext', () => {
     });
 
     act(() => {
-      result.current.insertCreatedWidgetAtContext('new-widget', null);
+      result.current.insertCreatedWidgetAtContext({
+        newWidgetId: 'new-widget',
+        insertionContext: null,
+      });
     });
 
     expect(store.get(getDraftAtom())).toBe(initialDraft);
@@ -281,7 +289,7 @@ describe('useInsertCreatedWidgetAtContext', () => {
     );
 
     act(() => {
-      result.current.insertCreatedWidgetAtContext('widget-b');
+      result.current.insertCreatedWidgetAtContext({ newWidgetId: 'widget-b' });
     });
 
     const draft = store.get(getDraftAtom());
@@ -309,7 +317,9 @@ describe('useInsertCreatedWidgetAtContext', () => {
     );
 
     act(() => {
-      result.current.insertCreatedWidgetAtContext('non-existent-widget');
+      result.current.insertCreatedWidgetAtContext({
+        newWidgetId: 'non-existent-widget',
+      });
     });
 
     const draft = store.get(getDraftAtom());
@@ -340,7 +350,7 @@ describe('useInsertCreatedWidgetAtContext', () => {
     );
 
     act(() => {
-      result.current.insertCreatedWidgetAtContext('widget-b');
+      result.current.insertCreatedWidgetAtContext({ newWidgetId: 'widget-b' });
     });
 
     const insertionContext = store.get(getInsertionContextAtom());
@@ -377,7 +387,7 @@ describe('useInsertCreatedWidgetAtContext', () => {
     );
 
     act(() => {
-      result.current.insertCreatedWidgetAtContext('widget-c');
+      result.current.insertCreatedWidgetAtContext({ newWidgetId: 'widget-c' });
     });
 
     const draft = store.get(getDraftAtom());

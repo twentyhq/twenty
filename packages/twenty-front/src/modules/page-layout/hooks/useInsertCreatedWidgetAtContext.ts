@@ -32,12 +32,13 @@ export const useInsertCreatedWidgetAtContext = (
   const store = useStore();
 
   const insertCreatedWidgetAtContext = useCallback(
-    (
-      newWidgetId: string,
-      insertionContext: WidgetInsertionContext = store.get(
-        widgetInsertionContextState,
-      ),
-    ) => {
+    ({
+      newWidgetId,
+      insertionContext = store.get(widgetInsertionContextState),
+    }: {
+      newWidgetId: string;
+      insertionContext?: WidgetInsertionContext;
+    }) => {
       store.set(widgetInsertionContextState, null);
 
       if (insertionContext === null) {

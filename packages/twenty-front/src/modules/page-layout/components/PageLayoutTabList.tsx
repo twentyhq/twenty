@@ -297,7 +297,13 @@ export const PageLayoutTabList = ({
   );
 
   const handleSelectTab = useCallback(
-    (tabId: string, select = selectTab) => {
+    ({
+      tabId,
+      select = selectTab,
+    }: {
+      tabId: string;
+      select?: (tabId: string) => void;
+    }) => {
       const shouldOpenSettings =
         isPageLayoutInEditMode &&
         shouldEnableTabEditingFeatures(pageLayoutType);
@@ -332,7 +338,7 @@ export const PageLayoutTabList = ({
 
   const handleSelectTabFromDropdown = useCallback(
     (tabId: string) => {
-      handleSelectTab(tabId, selectTabFromDropdown);
+      handleSelectTab({ tabId, select: selectTabFromDropdown });
       closeOverflowDropdown();
     },
     [handleSelectTab, closeOverflowDropdown, selectTabFromDropdown],
@@ -423,7 +429,7 @@ export const PageLayoutTabList = ({
             behaveAsLinks={behaveAsLinks}
             loading={loading}
             onChangeTab={onChangeTab}
-            onSelectTab={handleSelectTab}
+            onSelectTab={(tabId) => handleSelectTab({ tabId })}
             canReorder={canReorderTabs}
             widgetDropTargetWidgetsByTabId={widgetDropTargetWidgetsByTabId}
             firstHiddenTabId={
