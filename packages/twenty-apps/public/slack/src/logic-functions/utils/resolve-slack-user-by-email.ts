@@ -43,11 +43,7 @@ export const resolveSlackUserByEmail = async (
   // unconfirmed profile email must not resolve: anyone can type another
   // person's address into their profile, and only Slack's confirmation ties
   // the mailbox owner to this account.
-  if (
-    user.is_bot === true ||
-    user.deleted === true ||
-    user.is_email_confirmed !== true
-  ) {
+  if (user.is_bot || user.deleted || !user.is_email_confirmed) {
     return undefined;
   }
 
