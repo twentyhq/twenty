@@ -29,6 +29,7 @@ import {
   PARTNER_CONTENT_TYPE_FIELD_ID,
 } from 'src/modules/partner/objects/partner-content.object';
 import { PARTNER_CONTENT_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-content-partner.field';
+import { OPPORTUNITY_APPLICANT_PARTNER_USER_IDS_FIELD_ID } from 'src/modules/opportunity/fields/opportunity-applicant-partner-user-ids.field';
 import { OPPORTUNITY_DESIGN_DOC_STATUS_FIELD_ID } from 'src/modules/opportunity/fields/opportunity-design-doc-status.field';
 import { OPPORTUNITY_DESIGN_DOC_URL_FIELD_ID } from 'src/modules/opportunity/fields/opportunity-design-doc-url.field';
 import { OPPORTUNITY_HOSTING_TYPE_FIELD_ID } from 'src/modules/opportunity/fields/opportunity-hosting-type.field';
@@ -59,6 +60,7 @@ export const PARTNER_ROLE_LABEL = 'Partner';
 // own Partner profile. Company, Person, Opportunity and Application are read-only — the
 // pitch is set once by the apply route (application role) at creation and is never editable
 // by the partner afterwards. Application rows are scoped to own partnerUser (RLS).
+// Opportunity rows: listed briefs, assigned partnerUser, or applicantPartnerUserIds.
 // Row-level predicates can't ship in the manifest, so run `yarn rls:configure` after install.
 //
 // The Opportunity and Application field locks below are moot now that neither object is
@@ -75,7 +77,7 @@ export default defineRole({
   universalIdentifier: PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
   label: PARTNER_ROLE_LABEL,
   description:
-    'External partner self-service role. Sees only its own Partner/Person/Company/PartnerLink/PartnerService/PartnerContent/Opportunity/Application records (row-level). Can edit its own Partner profile; Application is read-only (the pitch is set once at apply time and cannot be edited afterwards); Opportunity stage/amount are read-only. Configure predicates with `yarn rls:configure` after install.',
+    'External partner self-service role. Sees only its own Partner/Person/Company/PartnerLink/PartnerService/PartnerContent/Opportunity/Application records (row-level). Can edit its own Partner profile; Application is read-only (the pitch is set once at apply time and cannot be edited afterwards); Opportunity stage/amount are read-only. Listed briefs are visible to all partners; after unlist, a partner still sees briefs it applied to or was invited to. Configure predicates with `yarn rls:configure` after install.',
   icon: 'IconBuildingStore',
   canBeAssignedToUsers: true,
   canUpdateAllSettings: false,
@@ -277,6 +279,14 @@ export default defineRole({
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
       fieldUniversalIdentifier: OPPORTUNITY_IS_LISTED_FIELD_ID,
+      canUpdateFieldValue: false,
+    },
+    {
+      // RLS allowlist of applicant member ids — partners must not read or write it.
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+      fieldUniversalIdentifier: OPPORTUNITY_APPLICANT_PARTNER_USER_IDS_FIELD_ID,
+      canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
     {

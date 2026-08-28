@@ -4,22 +4,24 @@ import type {
   ObjectRecordCreateEvent,
 } from 'twenty-sdk/define';
 
-import { findPartnerByMember } from 'src/modules/shared/graphql/queries/find-partner-by-member';
-import { getPartnerOwner } from 'src/modules/shared/graphql/queries/get-partner-owner';
-import { findDuplicateApplication } from 'src/modules/application/graphql/queries/find-duplicate-application';
 import { deleteApplication } from 'src/modules/application/graphql/mutations/delete-application';
 import { updateApplication } from 'src/modules/application/graphql/mutations/update-application';
+import { findDuplicateApplication } from 'src/modules/application/graphql/queries/find-duplicate-application';
+import { findPartnerByMember } from 'src/modules/shared/graphql/queries/find-partner-by-member';
+import { getPartnerOwner } from 'src/modules/shared/graphql/queries/get-partner-owner';
+import { grantOpportunityVisibility } from 'src/modules/shared/services/grant-opportunity-visibility.service';
+import { isNonEmptyString } from 'src/modules/shared/utils/is-non-empty-string.util';
 
 type ApplicationCreatedProperties = DatabaseEventPayload<
   ObjectRecordCreateEvent<CoreSchema.Application>
 >['properties'];
 
 // The app route POST /apply-to-brief creates the Application with partnerId and
-// partnerUserId already set, so this service returns at its first branch and does nothing.
-// It still serves the admin path: an invite or an import sets partnerId but no
-// partnerUserId, and this service stamps the partner's user so RLS doesn't hide the row
-// from its own partner. The createdBy-based self-apply branch below is a fallback for rows
-// created by a member without a partner set.
+// partnerUserId already set, so this service skips the candidacy stamp and only grants
+// opportunity read access. It still serves the admin path: an invite or an import sets
+// partnerId but no partnerUserId, and this service stamps the partner's user so RLS
+// doesn't hide the row from its own partner. The createdBy-based self-apply branch below
+// is a fallback for rows created by a member without a partner set.
 export async function resolveCandidacy(
   client: CoreApiClient,
   after: ApplicationCreatedProperties['after'],
@@ -27,15 +29,24 @@ export async function resolveCandidacy(
   const applicationId = after?.id;
   if (!applicationId) return {};
 
+  const grantVisibility = async (partnerUserId: string) => {
+    if (!isNonEmptyString(after.opportunityId)) return;
+    await grantOpportunityVisibility(client, after.opportunityId, partnerUserId);
+  };
+
   // Admin path (invite/import): without partnerUser, RLS hides the row from its own partner.
   if (after.partnerId) {
-    if (after.partnerUserId) return {};
+    if (after.partnerUserId) {
+      await grantVisibility(after.partnerUserId);
+      return {};
+    }
 
     const ownerRes = await getPartnerOwner(client, after.partnerId);
     const partnerUserId = ownerRes.partners?.edges?.[0]?.node?.partnerUserId;
     if (!partnerUserId) return { skipped: true, reason: 'partner_has_no_user' };
 
     await updateApplication(client, applicationId, { partnerUserId });
+    await grantVisibility(partnerUserId);
     return { stamped: partnerUserId };
   }
 
@@ -63,6 +74,7 @@ export async function resolveCandidacy(
     partnerUserId: memberId,
     state: 'APPLIED',
   });
+  await grantVisibility(memberId);
   // ponytail: dedupe by (opportunity, partner) above; two near-simultaneous creates could still both pass before either stamps — acceptable.
   return { applied: true, partnerId };
 }

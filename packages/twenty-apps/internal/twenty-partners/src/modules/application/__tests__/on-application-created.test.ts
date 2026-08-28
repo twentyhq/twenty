@@ -42,6 +42,37 @@ describe('on-application-created', () => {
     expect(mutationMock).not.toHaveBeenCalled();
   });
 
+  it('grants opportunity visibility on an apply row that already has partnerUser', async () => {
+    queryMock.mockResolvedValue({
+      opportunities: {
+        edges: [
+          { node: { id: OPPORTUNITY_ID, applicantPartnerUserIds: null } },
+        ],
+      },
+    });
+
+    const result = await handler(
+      event({
+        id: APPLICATION_ID,
+        partnerId: PARTNER_ID,
+        partnerUserId: MEMBER_ID,
+        opportunityId: OPPORTUNITY_ID,
+      }),
+    );
+
+    expect(result).toEqual({});
+    expect(mutationMock).toHaveBeenCalledTimes(1);
+    expect(mutationMock).toHaveBeenCalledWith({
+      updateOpportunity: {
+        __args: {
+          id: OPPORTUNITY_ID,
+          data: { applicantPartnerUserIds: [MEMBER_ID] },
+        },
+        id: true,
+      },
+    });
+  });
+
   it('stamps partnerUser from the partner on an admin-created row', async () => {
     queryMock.mockResolvedValue({
       partners: { edges: [{ node: { id: PARTNER_ID, partnerUserId: MEMBER_ID } }] },
@@ -150,7 +181,14 @@ describe('on-application-created', () => {
       .mockResolvedValueOnce({
         partners: { edges: [{ node: { id: PARTNER_ID } }] },
       })
-      .mockResolvedValueOnce({ applications: { edges: [] } });
+      .mockResolvedValueOnce({ applications: { edges: [] } })
+      .mockResolvedValueOnce({
+        opportunities: {
+          edges: [
+            { node: { id: OPPORTUNITY_ID, applicantPartnerUserIds: null } },
+          ],
+        },
+      });
 
     const result = await handler(
       event({
@@ -161,13 +199,22 @@ describe('on-application-created', () => {
     );
 
     expect(result).toEqual({ applied: true, partnerId: PARTNER_ID });
-    expect(queryMock).toHaveBeenCalledTimes(2);
-    expect(mutationMock).toHaveBeenCalledTimes(1);
+    expect(queryMock).toHaveBeenCalledTimes(3);
+    expect(mutationMock).toHaveBeenCalledTimes(2);
     const call = mutationMock.mock.calls[0][0];
     expect(call.updateApplication.__args.id).toBe(APPLICATION_ID);
     expect(call.updateApplication.__args.data.partnerId).toBe(PARTNER_ID);
     expect(call.updateApplication.__args.data.partnerUserId).toBe(MEMBER_ID);
     expect(call.updateApplication.__args.data.state).toBe('APPLIED');
+    expect(mutationMock.mock.calls[1][0]).toEqual({
+      updateOpportunity: {
+        __args: {
+          id: OPPORTUNITY_ID,
+          data: { applicantPartnerUserIds: [MEMBER_ID] },
+        },
+        id: true,
+      },
+    });
   });
 
   it('soft-deletes a duplicate application and keeps the existing one', async () => {

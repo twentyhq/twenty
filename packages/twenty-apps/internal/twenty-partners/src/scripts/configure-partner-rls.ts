@@ -6,7 +6,9 @@
 //      partnerContent/application. RLS validates an insert against the row as submitted, so a
 //      row created without partnerUser is rejected — which is why the apply route sets
 //      partnerUser when it creates the Application.
-//    - "(partnerUser IS me) OR (isListed = true)" on opportunity (marketplace briefs)
+//    - "(partnerUser IS me) OR (isListed = true) OR (applicantPartnerUserIds CONTAINS me)"
+//      on opportunity (listed briefs for everyone; applied/invited briefs stay readable
+//      after unlist)
 //    - "id IS the current member" on workspaceMember (self-scope; internal roster hidden)
 //
 // 2. Verifies (does NOT set) the Opportunity field permissions from `partner.role.ts`.
@@ -370,6 +372,13 @@ async function main() {
     'opportunity',
     'isListed',
   );
+  const opportunityApplicantPartnerUserIdsFieldId = await findFieldByName(
+    metadataUrl,
+    apiKey,
+    opportunityObjectId,
+    'opportunity',
+    'applicantPartnerUserIds',
+  );
 
   // ── 2. Resolve workspaceMember.id field metadata id ──────────────────────────
 
@@ -522,7 +531,9 @@ async function main() {
     );
   }
 
-  // Opportunity: (partnerUser IS me) OR (isListed = true) — listed briefs visible to all partners.
+  // Opportunity: (partnerUser IS me) OR (isListed = true) OR (applicantPartnerUserIds
+  // CONTAINS me) — listed briefs stay visible to all partners; applicants keep read access
+  // after intro unlists the brief.
   {
     // Predicate-group ids are unique across the whole metadata schema, not per workspace,
     // so a hardcoded id collides on a server that hosts more than one workspace.
@@ -557,14 +568,21 @@ async function main() {
             rowLevelPermissionPredicateGroupId: opportunityGroupId,
             positionInRowLevelPermissionPredicateGroup: 1,
           },
+          {
+            fieldMetadataId: opportunityApplicantPartnerUserIdsFieldId,
+            operand: 'CONTAINS',
+            workspaceMemberFieldMetadataId: workspaceMemberIdFieldId,
+            rowLevelPermissionPredicateGroupId: opportunityGroupId,
+            positionInRowLevelPermissionPredicateGroup: 2,
+          },
         ],
       } satisfies UpsertPredicatesInput,
       'opportunity',
     );
 
-    if (oppPredicates.length < 2) {
+    if (oppPredicates.length < 3) {
       throw new Error(
-        'upsertRowLevelPermissionPredicates returned fewer than 2 predicates for opportunity OR group',
+        'upsertRowLevelPermissionPredicates returned fewer than 3 predicates for opportunity OR group',
       );
     }
 
@@ -574,7 +592,7 @@ async function main() {
 
     console.log(
       `[rls:configure] ✓ opportunity: OR group id=${opportunityGroupId} ` +
-        `(${oppPredicates.length} predicates: partnerUser IS me OR isListed = true)`,
+        `(${oppPredicates.length} predicates: partnerUser IS me OR isListed = true OR applicantPartnerUserIds CONTAINS me)`,
     );
   }
 
