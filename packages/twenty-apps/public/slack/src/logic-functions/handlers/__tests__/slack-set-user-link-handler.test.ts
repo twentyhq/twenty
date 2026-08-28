@@ -10,6 +10,7 @@ const {
   findSlackUserLinkMock,
   createSlackUserLinkMock,
   updateSlackUserLinkMock,
+  deleteSlackUserLinkMock,
   resolveSlackUserByEmailMock,
   fetchSlackUserIdentityMock,
   findWorkspaceMemberEmailByIdMock,
@@ -23,6 +24,7 @@ const {
   findSlackUserLinkMock: vi.fn(),
   createSlackUserLinkMock: vi.fn(),
   updateSlackUserLinkMock: vi.fn(),
+  deleteSlackUserLinkMock: vi.fn(),
   resolveSlackUserByEmailMock: vi.fn(),
   fetchSlackUserIdentityMock: vi.fn(),
   findWorkspaceMemberEmailByIdMock: vi.fn(),
@@ -64,6 +66,10 @@ vi.mock('src/logic-functions/data/create-slack-user-link', () => ({
 
 vi.mock('src/logic-functions/data/update-slack-user-link', () => ({
   updateSlackUserLink: updateSlackUserLinkMock,
+}));
+
+vi.mock('src/logic-functions/data/delete-slack-user-link', () => ({
+  deleteSlackUserLink: deleteSlackUserLinkMock,
 }));
 
 vi.mock('src/logic-functions/data/find-workspace-member-email-by-id', () => ({
@@ -200,7 +206,25 @@ describe('slackSetUserLinkHandler', () => {
     );
   });
 
+  it('should refuse a supplied team id that does not match the Slack user', async () => {
+    const result = await slackSetUserLinkHandler({
+      ...INPUT,
+      slackTeamId: 'T9876543210',
+    });
+
+    expect(result.success).toBe(false);
+    if (result.success === false) {
+      expect(result.error).toContain('belongs to workspace');
+    }
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
   it('should admin-set the link without consent for a Slack Connect user from another workspace', async () => {
+    // A Slack Connect user from another workspace is typically not visible to
+    // users.info, so the supplied team stands.
+    fetchSlackUserIdentityMock.mockResolvedValue(undefined);
+
     const result = await slackSetUserLinkHandler({
       ...INPUT,
       slackTeamId: 'T9876543210',
@@ -293,7 +317,7 @@ describe('slackSetUserLinkHandler', () => {
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
-  it('should update the existing link, mark it manual and reset it to pending', async () => {
+  it('should mint a fresh record when re-pointing the link to another member', async () => {
     findSlackUserLinkMock.mockResolvedValue({
       id: 'link-1',
       workspaceMemberId: 'someone-else',
@@ -304,14 +328,25 @@ describe('slackSetUserLinkHandler', () => {
     const result = await slackSetUserLinkHandler({ ...INPUT, name: 'Ada' });
 
     expect(result.success).toBe(true);
-    expect(updateSlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
+    // A fresh id keeps a consent DM for the old assignment from ever
+    // activating the new one, even when the approval races the re-point.
+    expect(deleteSlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
       id: 'link-1',
-      workspaceMemberId: INPUT.workspaceMemberId,
-      name: 'Ada',
-      source: 'MANUAL',
-      consentState: 'PENDING',
     });
-    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(createSlackUserLinkMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        workspaceMemberId: INPUT.workspaceMemberId,
+        name: 'Ada',
+        source: 'MANUAL',
+        consentState: 'PENDING',
+      }),
+    );
+    expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(sendSlackUserLinkConsentDmMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ slackUserLinkId: 'link-new' }),
+    );
   });
 
   it('should keep an already-active link active when re-linking the same member', async () => {
@@ -387,10 +422,12 @@ describe('slackSetUserLinkHandler', () => {
     const result = await slackSetUserLinkHandler({ ...INPUT, name: 'Ada' });
 
     expect(result.success).toBe(true);
-    expect(updateSlackUserLinkMock).toHaveBeenCalledWith(
+    expect(deleteSlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
+      id: 'link-1',
+    });
+    expect(createSlackUserLinkMock).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
-        id: 'link-1',
         workspaceMemberId: INPUT.workspaceMemberId,
         consentState: 'PENDING',
       }),
