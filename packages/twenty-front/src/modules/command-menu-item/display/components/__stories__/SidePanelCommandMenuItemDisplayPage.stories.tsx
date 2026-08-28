@@ -5,7 +5,7 @@ import {
   type StoryObj,
 } from '@storybook/react-vite';
 import { Provider as JotaiProvider } from 'jotai';
-import { expect, waitFor, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
@@ -13,6 +13,9 @@ import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display
 import { commandMenuPinnedInlineLayoutFamilyState } from '@/command-menu-item/display/states/commandMenuPinnedInlineLayoutFamilyState';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
+import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { RouterDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
@@ -82,6 +85,7 @@ type CreateDecoratorParams = {
   commandMenuItems: CommandMenuItemFieldsFragment[];
   sidePanelSearch: string;
   pinnedItemsContainerWidth: number;
+  isNavigationDrawerExpanded?: boolean;
 };
 
 const createDecorator =
@@ -89,9 +93,18 @@ const createDecorator =
     commandMenuItems,
     sidePanelSearch,
     pinnedItemsContainerWidth,
+    isNavigationDrawerExpanded = true,
   }: CreateDecoratorParams): Decorator =>
   (Story) => {
     jotaiStore.set(sidePanelSearchState.atom, sidePanelSearch);
+    jotaiStore.set(
+      isNavigationDrawerExpandedState.atom,
+      isNavigationDrawerExpanded,
+    );
+    jotaiStore.set(
+      navigationDrawerActiveTabState.atom,
+      NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+    );
     jotaiStore.set(
       commandMenuPinnedInlineLayoutFamilyState.atomFamily('page-header'),
       {
@@ -149,7 +162,7 @@ export const EmptySearchWithAllPinnedItemsInHeader: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Search records')).toBeVisible();
+    expect(await canvas.findByText('Collapse navigation drawer')).toBeVisible();
     await waitFor(() => {
       expect(canvas.queryByText('No results found')).not.toBeInTheDocument();
     });
@@ -168,7 +181,7 @@ export const WhitespaceOnlySearchWithAllPinnedItemsInHeader: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Search records')).toBeVisible();
+    expect(await canvas.findByText('Collapse navigation drawer')).toBeVisible();
     await waitFor(() => {
       expect(canvas.queryByText('No results found')).not.toBeInTheDocument();
     });
@@ -244,5 +257,45 @@ export const SearchWithoutMatchingItemsAndWithFallback: Story = {
     await waitFor(() => {
       expect(canvas.queryByText('No results found')).not.toBeInTheDocument();
     });
+  },
+};
+
+export const CollapseNavigationDrawer: Story = {
+  decorators: [
+    createDecorator({
+      commandMenuItems: [OTHER_ITEM, FALLBACK_ITEM],
+      sidePanelSearch: 'COLLAPSE',
+      pinnedItemsContainerWidth: 1000,
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByText('Collapse navigation drawer'),
+    );
+
+    expect(jotaiStore.get(isNavigationDrawerExpandedState.atom)).toBe(false);
+    expect(jotaiStore.get(navigationDrawerActiveTabState.atom)).toBe(
+      NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
+    );
+  },
+};
+
+export const ExpandNavigationDrawer: Story = {
+  decorators: [
+    createDecorator({
+      commandMenuItems: [OTHER_ITEM, FALLBACK_ITEM],
+      sidePanelSearch: 'expand',
+      pinnedItemsContainerWidth: 1000,
+      isNavigationDrawerExpanded: false,
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(await canvas.findByText('Expand navigation drawer'));
+
+    expect(jotaiStore.get(isNavigationDrawerExpandedState.atom)).toBe(true);
   },
 };
