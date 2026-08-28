@@ -6012,7 +6012,6 @@ export type UpdateOneObjectInput = {
 };
 
 export type UpdatePageLayoutInput = {
-  isFirstTabPinned?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   type?: InputMaybe<PageLayoutType>;
@@ -6058,6 +6057,7 @@ export type UpdatePageLayoutWidgetWithIdInput = {
 };
 
 export type UpdatePageLayoutWithTabsInput = {
+  isFirstTabPinned?: InputMaybe<Scalars['Boolean']['input']>;
   name: Scalars['String']['input'];
   objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   tabs: Array<UpdatePageLayoutTabWithWidgetsInput>;
