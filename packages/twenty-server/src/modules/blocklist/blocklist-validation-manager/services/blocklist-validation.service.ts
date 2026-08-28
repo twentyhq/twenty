@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { BlocklistScope } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -14,12 +13,8 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { BlocklistAuthorizationService } from 'src/modules/blocklist/blocklist-validation-manager/services/blocklist-authorization.service';
+import { groupBlocklistEntriesForUniqueness } from 'src/modules/blocklist/utils/group-blocklist-entries-for-uniqueness.util';
 import { BLOCKLIST_HANDLE_SCHEMA } from 'src/modules/blocklist/constants/blocklist-handle-schema.constant';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
@@ -35,7 +30,7 @@ type BlocklistCreateEntry = {
 export class BlocklistValidationService {
   constructor(
     private readonly blocklistRepository: BlocklistRepository,
-    private readonly permissionsService: PermissionsService,
+    private readonly blocklistAuthorizationService: BlocklistAuthorizationService,
   ) {}
 
   public async validateBlocklistForCreateMany({
@@ -58,10 +53,19 @@ export class BlocklistValidationService {
         : null;
 
       if (isDefined(existingRecord)) {
-        await this.assertCanManageExistingRecord({ existingRecord, context });
-        this.assertScopeAndOwnerAreUnchanged({ data: item, existingRecord });
+        await this.blocklistAuthorizationService.assertCanManageExistingRecord({
+          existingRecord,
+          context,
+        });
+        this.blocklistAuthorizationService.assertScopeAndOwnerAreUnchanged({
+          data: item,
+          existingRecord,
+        });
       } else {
-        await this.assertCallerCanCreateEntry({ item, context });
+        await this.blocklistAuthorizationService.assertCallerCanCreateEntry({
+          item,
+          context,
+        });
       }
 
       entries.push({ item, existingRecord });
@@ -82,8 +86,11 @@ export class BlocklistValidationService {
       context,
     });
 
-    await this.assertCanManageExistingRecord({ existingRecord, context });
-    this.assertScopeAndOwnerAreUnchanged({
+    await this.blocklistAuthorizationService.assertCanManageExistingRecord({
+      existingRecord,
+      context,
+    });
+    this.blocklistAuthorizationService.assertScopeAndOwnerAreUnchanged({
       data: payload.data,
       existingRecord,
     });
@@ -122,7 +129,10 @@ export class BlocklistValidationService {
   }): Promise<void> {
     const existingRecord = await this.getExistingRecordOrThrow({ id, context });
 
-    await this.assertCanManageExistingRecord({ existingRecord, context });
+    await this.blocklistAuthorizationService.assertCanManageExistingRecord({
+      existingRecord,
+      context,
+    });
   }
 
   public async validateBlocklistForRestoreOne({
@@ -134,7 +144,10 @@ export class BlocklistValidationService {
   }): Promise<void> {
     const existingRecord = await this.getExistingRecordOrThrow({ id, context });
 
-    await this.assertCanManageExistingRecord({ existingRecord, context });
+    await this.blocklistAuthorizationService.assertCanManageExistingRecord({
+      existingRecord,
+      context,
+    });
 
     if (!isDefined(existingRecord.handle)) {
       return;
@@ -175,108 +188,6 @@ export class BlocklistValidationService {
     }
   }
 
-  private async assertCallerCanCreateEntry({
-    item,
-    context,
-  }: {
-    item: Partial<Pick<BlocklistItem, 'scope' | 'workspaceMemberId'>>;
-    context: BlocklistMutationContext;
-  }): Promise<void> {
-    if (
-      (item.scope ?? BlocklistScope.WORKSPACE_MEMBER) ===
-      BlocklistScope.WORKSPACE
-    ) {
-      if (isDefined(item.workspaceMemberId)) {
-        throw new CommonQueryRunnerException(
-          'A workspace-scoped blocklist entry cannot target a workspace member',
-          CommonQueryRunnerExceptionCode.BAD_REQUEST,
-          {
-            userFriendlyMessage: msg`A workspace-wide blocklist entry cannot target a workspace member.`,
-          },
-        );
-      }
-
-      await this.assertHasWorkspaceBlocklistPermission(context);
-
-      return;
-    }
-
-    if (item.workspaceMemberId !== context.workspaceMemberId) {
-      throw new CommonQueryRunnerException(
-        'A workspace-member-scoped blocklist entry must target its own workspace member',
-        CommonQueryRunnerExceptionCode.BAD_REQUEST,
-        {
-          userFriendlyMessage: msg`Cannot manage a blocklist entry of another workspace member.`,
-        },
-      );
-    }
-  }
-
-  private async assertCanManageExistingRecord({
-    existingRecord,
-    context,
-  }: {
-    existingRecord: BlocklistWorkspaceEntity;
-    context: BlocklistMutationContext;
-  }): Promise<void> {
-    if (
-      existingRecord.scope === BlocklistScope.WORKSPACE_MEMBER &&
-      existingRecord.workspaceMemberId === context.workspaceMemberId
-    ) {
-      return;
-    }
-
-    await this.assertHasWorkspaceBlocklistPermission(context);
-  }
-
-  private async assertHasWorkspaceBlocklistPermission(
-    context: BlocklistMutationContext,
-  ): Promise<void> {
-    const hasPermission =
-      await this.permissionsService.userHasWorkspaceSettingPermission({
-        userWorkspaceId: context.userWorkspaceId,
-        setting: PermissionFlagType.WORKSPACE,
-        workspaceId: context.workspaceId,
-      });
-
-    if (!hasPermission) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-        {
-          userFriendlyMessage: msg`You do not have permission to manage the workspace blocklist.`,
-        },
-      );
-    }
-  }
-
-  private assertScopeAndOwnerAreUnchanged({
-    data,
-    existingRecord,
-  }: {
-    data: Partial<BlocklistItem>;
-    existingRecord: BlocklistWorkspaceEntity;
-  }): void {
-    if ('scope' in data && data.scope !== existingRecord.scope) {
-      throw new CommonQueryRunnerException(
-        'Blocklist scope cannot be updated',
-        CommonQueryRunnerExceptionCode.BAD_REQUEST,
-        { userFriendlyMessage: msg`Blocklist scope cannot be updated.` },
-      );
-    }
-
-    if (
-      'workspaceMemberId' in data &&
-      data.workspaceMemberId !== existingRecord.workspaceMemberId
-    ) {
-      throw new CommonQueryRunnerException(
-        'Workspace member cannot be updated',
-        CommonQueryRunnerExceptionCode.BAD_REQUEST,
-        { userFriendlyMessage: msg`Workspace member cannot be updated.` },
-      );
-    }
-  }
-
   private async validateUniquenessForCreateMany({
     entries,
     context,
@@ -284,53 +195,14 @@ export class BlocklistValidationService {
     entries: BlocklistCreateEntry[];
     context: BlocklistMutationContext;
   }): Promise<void> {
-    const groups = new Map<
-      string,
-      {
-        scope: BlocklistScope;
-        workspaceMemberId: string;
-        handles: string[];
-        retainedHandles: string[];
-      }
-    >();
-
-    for (const { item, existingRecord } of entries) {
-      if (!isDefined(item.handle)) {
-        continue;
-      }
-
-      if (existingRecord?.handle === item.handle) {
-        continue;
-      }
-
-      const scope =
-        existingRecord?.scope ?? item.scope ?? BlocklistScope.WORKSPACE_MEMBER;
-      const workspaceMemberId =
-        existingRecord?.workspaceMemberId ?? context.workspaceMemberId;
-
-      const groupKey = `${scope}:${workspaceMemberId}`;
-      const group = groups.get(groupKey) ?? {
-        scope,
-        workspaceMemberId,
-        handles: [],
-        retainedHandles: [],
-      };
-
-      group.handles.push(item.handle);
-
-      if (isDefined(existingRecord?.handle)) {
-        group.retainedHandles.push(existingRecord.handle);
-      }
-
-      groups.set(groupKey, group);
-    }
+    const groups = groupBlocklistEntriesForUniqueness({ entries, context });
 
     for (const {
       scope,
       workspaceMemberId,
       handles,
       retainedHandles,
-    } of groups.values()) {
+    } of groups) {
       if (new Set(handles).size !== handles.length) {
         throw new CommonQueryRunnerException(
           'Blocklist handle is duplicated in the payload',

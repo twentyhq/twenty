@@ -15,16 +15,16 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
+  IconAppWindow,
   IconApps,
   IconAt,
   IconCalendarEvent,
   IconColorSwatch,
   type IconComponent,
-  IconCurrencyDollar,
+  IconCreditCard,
   IconDoorEnter,
   IconHelpCircle,
-  IconHierarchy2,
-  IconLayout,
+  IconHierarchy,
   IconMail,
   IconMessage,
   IconMessageCircle,
@@ -122,13 +122,13 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
         {
           label: t`Data model`,
           path: SettingsPath.Objects,
-          Icon: IconHierarchy2,
+          Icon: IconHierarchy,
           isHidden: !permissionMap[PermissionFlagType.DATA_MODEL],
         },
         {
           label: t`Layout`,
           path: SettingsPath.Layout,
-          Icon: IconLayout,
+          Icon: IconAppWindow,
           isHidden: !permissionMap[PermissionFlagType.LAYOUTS],
         },
         {
@@ -140,7 +140,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
         {
           label: t`Billing`,
           path: SettingsPath.Billing,
-          Icon: IconCurrencyDollar,
+          Icon: IconCreditCard,
           isHidden:
             !isBillingEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
         },
