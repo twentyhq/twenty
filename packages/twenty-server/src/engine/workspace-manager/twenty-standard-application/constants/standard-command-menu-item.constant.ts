@@ -376,9 +376,9 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: i18nLabel(
       msg({ message: `Edit Layout`, context: 'commandMenuItem.shortLabel' }),
     ),
-    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression:
-      'pageType == "RECORD_PAGE" and not isLayoutCustomizationModeEnabled and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"',
+      'pageType != "SETTINGS_PAGE" and not isLayoutCustomizationModeEnabled and permissionFlags.LAYOUTS',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT,
@@ -1181,7 +1181,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
         context: 'commandMenuItem.label',
       }),
     ),
-    icon: 'IconHierarchy2',
+    icon: 'IconHierarchy',
     isPinned: false,
     position: 53,
     shortLabel: i18nLabel(
@@ -1269,7 +1269,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
         context: 'commandMenuItem.label',
       }),
     ),
-    icon: 'IconCurrencyDollar',
+    icon: 'IconCreditCard',
     isPinned: false,
     position: 57,
     shortLabel: i18nLabel(

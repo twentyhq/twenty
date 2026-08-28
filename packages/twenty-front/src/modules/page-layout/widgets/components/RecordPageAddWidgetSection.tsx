@@ -8,7 +8,6 @@ import { useContext } from 'react';
 import {
   IconAlignBoxLeftTop,
   IconListDetails,
-  IconListSearch,
   IconPlus,
   IconSquarePlus,
 } from 'twenty-ui/icon';
@@ -94,7 +93,7 @@ export const RecordPageAddWidgetSection = ({
           onClick={createRecordPageFieldsWidget}
         />
         <MenuItem
-          LeftIcon={IconListSearch}
+          LeftIcon={IconListDetails}
           withIconContainer
           text={t`Field`}
           contextualText={t`Single field with smart formats`}

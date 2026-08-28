@@ -49,7 +49,7 @@ export class MessagingProcessFolderActionsService {
       `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Processing ${foldersWithPendingActions.length} folders with pending actions`,
     );
 
-    const messageExternalIdsToImport: string[] = [];
+    const messageExternalIdsToImport = new Set<string>();
     const folderIdsToDelete: string[] = [];
     const processedFolderIds: string[] = [];
     const failedFolderIds: Array<{ folderId: string; error: Error }> = [];
@@ -82,9 +82,9 @@ export class MessagingProcessFolderActionsService {
                 folder,
               );
 
-            messageExternalIdsToImport.push(
-              ...folderMessageExternalIdsToImport,
-            );
+            for (const messageExternalId of folderMessageExternalIdsToImport) {
+              messageExternalIdsToImport.add(messageExternalId);
+            }
 
             this.logger.debug(
               `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id}, FolderId: ${folder.id} - Completed FOLDER_IMPORT action`,
@@ -142,7 +142,7 @@ export class MessagingProcessFolderActionsService {
     }
 
     return {
-      messageExternalIdsToImport: [...new Set(messageExternalIdsToImport)],
+      messageExternalIdsToImport: [...messageExternalIdsToImport],
     };
   }
 }

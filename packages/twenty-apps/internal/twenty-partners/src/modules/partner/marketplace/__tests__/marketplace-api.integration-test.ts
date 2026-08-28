@@ -16,6 +16,7 @@ async function ensureMarketplacePartnerExists(): Promise<void> {
           id: true,
           validationStage: true,
           availability: true,
+          superPartner: true,
         },
       },
     },
@@ -26,7 +27,8 @@ async function ensureMarketplacePartnerExists(): Promise<void> {
   if (node) {
     if (
       node.validationStage === 'VALIDATED' &&
-      node.availability === 'AVAILABLE'
+      node.availability === 'AVAILABLE' &&
+      node.superPartner === true
     ) {
       return;
     }
@@ -38,6 +40,7 @@ async function ensureMarketplacePartnerExists(): Promise<void> {
           data: {
             validationStage: 'VALIDATED',
             availability: 'AVAILABLE',
+            superPartner: true,
           },
         },
         id: true,
@@ -58,6 +61,7 @@ async function ensureMarketplacePartnerExists(): Promise<void> {
           calendarLink: { primaryLinkUrl: 'https://calendly.com/placeholder' },
           validationStage: 'VALIDATED',
           availability: 'AVAILABLE',
+          superPartner: true,
         },
       },
       id: true,
@@ -96,6 +100,7 @@ describe('list-available-partners handler', () => {
     expect(['ADVANCED', 'INTERMEDIATE', 'NEW', null]).toContain(
       partner.partnerTier,
     );
+    expect(partner.superPartner).toBe(true);
     expect(partner.serviceCount).toBeGreaterThanOrEqual(0);
     expect(partner.approvedCaseStudyCount).toBeGreaterThanOrEqual(0);
     expect(partner.approvedCaseStudyWithCoverCount).toBeLessThanOrEqual(
@@ -131,6 +136,7 @@ describe('get-partner-by-slug handler', () => {
     const { partner } = result;
     expect(partner.slug).toBe(KNOWN_SLUG);
     expect(partner.introduction.length).toBeGreaterThan(0);
+    expect(partner.superPartner).toBe(true);
     expect('projectBudgetTypical' in partner).toBe(true);
     expect(Array.isArray(partner.profileLinks)).toBe(true);
     expect(Array.isArray(partner.services)).toBe(true);

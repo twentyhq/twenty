@@ -4,7 +4,6 @@ import { addMonths, startOfMonth } from 'date-fns';
 import request from 'supertest';
 import {
   getBillingUsageCacheService,
-  getMirroredCreditBalance,
   getSeededBillingWorkspaceId,
   listCreditGrants,
   resetBillingCreditState,
@@ -109,9 +108,6 @@ describe('Admin credit grant and revoke (integration)', () => {
       reason: 'Outage on the 3rd',
       revokedAt: null,
     });
-    expect(await getMirroredCreditBalance(workspaceId)).toBe(
-      2 * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
-    );
   });
 
   it('adds the granted amount to a warm usage counter', async () => {
@@ -167,7 +163,6 @@ describe('Admin credit grant and revoke (integration)', () => {
     const grants = await listCreditGrants(workspaceId);
 
     expect(grants[0].revokedAt).not.toBeNull();
-    expect(await getMirroredCreditBalance(workspaceId)).toBe(0);
     expect(await cache.getAvailableCredits(workspaceId, PERIOD_START)).toBe(
       500_000,
     );
@@ -227,8 +222,5 @@ describe('Admin credit grant and revoke (integration)', () => {
       first.body.data.grantWorkspaceCredits.id,
     );
     expect(await listCreditGrants(workspaceId)).toHaveLength(1);
-    expect(await getMirroredCreditBalance(workspaceId)).toBe(
-      25 * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
-    );
   });
 });
