@@ -9,6 +9,7 @@ import { useCallback, useState, useTransition } from 'react';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { usePromiseTransition } from '@/ui/utilities/react-transition/hooks/usePromiseTransition';
 
 type CustomResolverQueryResult<
   T extends {
@@ -111,22 +112,12 @@ export const useSuspenseCustomResolver = <
     });
   };
 
-  const [, startRefetchTransition] = useTransition();
+  const { startPromiseTransition: startRefetchPromiseTransition } =
+    usePromiseTransition();
 
-  const refetchInTransition = useCallback(
-    () =>
-      new Promise<void>((resolve, reject) => {
-        startRefetchTransition(async () => {
-          try {
-            await refetch();
-            resolve();
-          } catch (refetchError) {
-            reject(refetchError);
-          }
-        });
-      }),
-    [refetch, startRefetchTransition],
-  );
+  const refetchInTransition = useCallback(async () => {
+    await startRefetchPromiseTransition(refetch);
+  }, [refetch, startRefetchPromiseTransition]);
 
   return {
     data,

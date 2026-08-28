@@ -1,19 +1,13 @@
 import { skipToken, useSuspenseQuery } from '@apollo/client/react';
-import { useCallback, useEffect, useTransition } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { useCallback } from 'react';
 
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
 import { useFetchMoreRecordsWithPagination } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
 import { type UseFindManyRecordsParams } from '@/object-record/hooks/useFindManyRecords';
-import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
-import { useHandleFindManyRecordsCompleted } from '@/object-record/hooks/useHandleFindManyRecordsCompleted';
-import { useHandleFindManyRecordsError } from '@/object-record/hooks/useHandleFindManyRecordsError';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { useFindManyRecordsPrelude } from '@/object-record/hooks/useFindManyRecordsPrelude';
+import { useFindManyRecordsResultEffects } from '@/object-record/hooks/useFindManyRecordsResultEffects';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
-import { type RecordGqlOperationFilter } from 'twenty-shared/types';
+import { usePromiseTransition } from '@/ui/utilities/react-transition/hooks/usePromiseTransition';
 
 import { QUERY_DEFAULT_LIMIT_RECORDS } from 'twenty-shared/constants';
 
@@ -28,11 +22,11 @@ export type UseSuspenseFindManyRecordsParams<T> = Omit<
     | 'cache-and-network';
 };
 
-// Suspense sibling of useFindManyRecords: same query document, variables and
-// pagination state, so both hooks share cache entries. It starts fetching
-// during render, which lets content inside a hidden <Activity> preload, and
-// wraps fetchMore/refetch in transitions so they never re-trigger the
-// Suspense fallback of an already rendered list.
+// Suspense sibling of useFindManyRecords: the shared prelude guarantees both
+// hooks build the same query and cache entries. It starts fetching during
+// render, which lets content inside a hidden <Activity> preload, and wraps
+// fetchMore/refetch in transitions so they never re-trigger the Suspense
+// fallback of an already rendered list.
 export const useSuspenseFindManyRecords = <
   T extends ObjectRecord = ObjectRecord,
 >({
@@ -48,52 +42,27 @@ export const useSuspenseFindManyRecords = <
   limit = QUERY_DEFAULT_LIMIT_RECORDS,
   withSoftDeleted = false,
 }: UseSuspenseFindManyRecordsParams<T>) => {
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
-  const apolloCoreClient = useApolloCoreClient();
-  const { findManyRecordsQuery } = useFindManyRecordsQuery({
-    objectNameSingular,
-    recordGqlFields,
-    cursorDirection: cursorFilter?.cursorDirection,
-  });
-
-  const { handleFindManyRecordsError } = useHandleFindManyRecordsError({
+  const {
     objectMetadataItem,
-    handleError: onError,
-  });
-
-  const softDeleteFilter: RecordGqlOperationFilter = {
-    or: [{ deletedAt: { is: 'NULL' } }, { deletedAt: { is: 'NOT_NULL' } }],
-  };
-
-  const withSoftDeleteFilter = withSoftDeleted
-    ? {
-        and: [...(filter ? [filter] : []), softDeleteFilter],
-      }
-    : filter;
-
-  const queryIdentifier = getQueryIdentifier({
-    objectNameSingular,
-    filter: withSoftDeleteFilter,
-    orderBy,
-    limit,
-  });
-
-  const { handleFindManyRecordsCompleted } = useHandleFindManyRecordsCompleted({
-    objectMetadataItem,
+    apolloCoreClient,
+    findManyRecordsQuery,
+    withSoftDeleteFilter,
     queryIdentifier,
+    shouldSkip,
+    handleFindManyRecordsCompleted,
+    handleFindManyRecordsError,
+  } = useFindManyRecordsPrelude<T>({
+    objectNameSingular,
+    filter,
+    orderBy,
+    skip,
+    recordGqlFields,
+    onError,
     onCompleted,
+    cursorFilter,
+    limit,
+    withSoftDeleted,
   });
-
-  const objectPermissions = useObjectPermissionsForObject(
-    objectMetadataItem.id,
-  );
-
-  const hasReadPermission = objectPermissions.canReadObjectRecords;
-
-  const shouldSkip =
-    skip || !isDefined(objectMetadataItem) || !hasReadPermission;
 
   const { data, error, fetchMore, refetch } =
     useSuspenseQuery<RecordGqlOperationFindManyResult>(
@@ -113,19 +82,17 @@ export const useSuspenseFindManyRecords = <
           },
     );
 
-  useEffect(() => {
-    if (isDefined(data)) {
-      handleFindManyRecordsCompleted(data);
-    }
-  }, [data, handleFindManyRecordsCompleted]);
+  useFindManyRecordsResultEffects({
+    data,
+    error,
+    handleFindManyRecordsCompleted,
+    handleFindManyRecordsError,
+  });
 
-  useEffect(() => {
-    if (isDefined(error)) {
-      handleFindManyRecordsError(error);
-    }
-  }, [error, handleFindManyRecordsError]);
-
-  const [isFetchingMoreRecords, startFetchMoreTransition] = useTransition();
+  const {
+    isPending: isFetchingMoreRecords,
+    startPromiseTransition: startFetchMorePromiseTransition,
+  } = usePromiseTransition();
 
   const { fetchMoreRecords, records, hasNextPage } =
     useFetchMoreRecordsWithPagination<T>({
@@ -139,37 +106,18 @@ export const useSuspenseFindManyRecords = <
       objectMetadataItem,
     });
 
-  const fetchMoreRecordsInTransition = useCallback(
-    () =>
-      new Promise<void>((resolve, reject) => {
-        startFetchMoreTransition(async () => {
-          try {
-            await fetchMoreRecords();
-            resolve();
-          } catch (fetchMoreError) {
-            reject(fetchMoreError);
-          }
-        });
-      }),
-    [fetchMoreRecords, startFetchMoreTransition],
-  );
+  const fetchMoreRecordsInTransition = useCallback(async () => {
+    await startFetchMorePromiseTransition(fetchMoreRecords);
+  }, [fetchMoreRecords, startFetchMorePromiseTransition]);
 
-  const [isRefetching, startRefetchTransition] = useTransition();
+  const {
+    isPending: isRefetching,
+    startPromiseTransition: startRefetchPromiseTransition,
+  } = usePromiseTransition();
 
-  const refetchInTransition = useCallback(
-    () =>
-      new Promise<void>((resolve, reject) => {
-        startRefetchTransition(async () => {
-          try {
-            await refetch();
-            resolve();
-          } catch (refetchError) {
-            reject(refetchError);
-          }
-        });
-      }),
-    [refetch, startRefetchTransition],
-  );
+  const refetchInTransition = useCallback(async () => {
+    await startRefetchPromiseTransition(refetch);
+  }, [refetch, startRefetchPromiseTransition]);
 
   const pageInfo = data?.[objectMetadataItem.namePlural]?.pageInfo;
 
