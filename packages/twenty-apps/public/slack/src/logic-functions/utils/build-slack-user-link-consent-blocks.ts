@@ -30,7 +30,7 @@ export const buildSlackUserLinkConsentBlocks = ({
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: `An admin wants to let the Twenty assistant answer you using ${memberClause}'s access in this workspace. It will never do more than your own permissions or the assistant role allow. Approve to turn this on, or decline to keep it off.`,
+        text: `An admin wants to let the Twenty assistant answer you using ${memberClause}'s access in this workspace. If you approve, the assistant's replies to you can see and do whatever that member's permissions allow. Approve to turn this on, or decline to keep it off.`,
       },
     },
     {
