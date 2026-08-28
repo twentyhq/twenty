@@ -10,7 +10,7 @@ import { type ActivityTarget } from '@/activities/types/ActivityTarget';
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { useSuspenseFindManyRecords } from '@/object-record/hooks/useSuspenseFindManyRecords';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useActivityTargetsForTargetableObjects = ({
@@ -60,11 +60,11 @@ export const useActivityTargetsForTargetableObjects = ({
   //   See also if we need to update useTimelineActivities
   const {
     records: activityTargets,
+    loading: loadingActivityTargets,
     totalCount: totalCountActivityTargets,
     fetchMoreRecords: fetchMoreActivityTargets,
-    isFetchingMoreRecords,
     hasNextPage,
-  } = useSuspenseFindManyRecords<ActivityTarget>({
+  } = useFindManyRecords<ActivityTarget>({
     skip,
     objectNameSingular:
       FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.objectNameSingular,
@@ -77,9 +77,9 @@ export const useActivityTargetsForTargetableObjects = ({
 
   return {
     activityTargets,
+    loadingActivityTargets,
     totalCountActivityTargets: totalCountActivityTargets ?? 0,
     fetchMoreActivityTargets,
-    isFetchingMoreActivityTargets: isFetchingMoreRecords,
     hasNextPage,
     activityRelationFieldName: sourceField.name,
   };

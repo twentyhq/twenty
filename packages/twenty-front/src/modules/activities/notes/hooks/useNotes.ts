@@ -24,9 +24,9 @@ export const useNotes = (targetableObject: ActivityTargetableObject) => {
 
   const {
     activities,
+    loading,
     totalCountActivities,
-    fetchMoreActivities: fetchMoreNotes,
-    isFetchingMoreActivities: isFetchingMoreNotes,
+    fetchMoreActivities,
     hasNextPage,
   } = useActivities({
     objectNameSingular: CoreObjectNameSingular.Note,
@@ -38,6 +38,11 @@ export const useNotes = (targetableObject: ActivityTargetableObject) => {
   const notes = activities.filter(
     (activity): activity is Note => activity.__typename === 'Note',
   );
+
+  const fetchMoreNotes = async () =>
+    (await fetchMoreActivities()).filter(
+      (activity): activity is Note => activity.__typename === 'Note',
+    );
 
   const [currentNotesQueryVariables, setCurrentNotesQueryVariables] =
     useAtomState(currentNotesQueryVariablesState);
@@ -55,9 +60,9 @@ export const useNotes = (targetableObject: ActivityTargetableObject) => {
 
   return {
     notes,
+    loading,
     totalCountNotes: totalCountActivities,
     fetchMoreNotes,
-    isFetchingMoreNotes,
     hasNextPage,
   };
 };

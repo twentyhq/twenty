@@ -1,3 +1,4 @@
+import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { TaskList } from '@/activities/tasks/components/TaskList';
 import { type Task } from '@/activities/types/Task';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -23,11 +24,13 @@ const StyledContainer = styled.div`
 `;
 
 type TaskGroupsContentProps = {
+  isLoading: boolean;
   onCreateTask: (() => void) | undefined;
   tasks: Task[];
 };
 
 export const TaskGroupsContent = ({
+  isLoading,
   onCreateTask,
   tasks,
 }: TaskGroupsContentProps) => {
@@ -40,6 +43,10 @@ export const TaskGroupsContent = ({
   )?.options;
 
   const isTasksEmpty = tasks.length === 0;
+
+  if (isLoading && isTasksEmpty) {
+    return <SkeletonLoader />;
+  }
 
   if (isTasksEmpty) {
     return (

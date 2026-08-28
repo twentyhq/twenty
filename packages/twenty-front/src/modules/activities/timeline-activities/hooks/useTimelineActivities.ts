@@ -8,9 +8,8 @@ import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/ho
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useSuspenseFindManyRecords } from '@/object-record/hooks/useSuspenseFindManyRecords';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
-import { useOnActivityReveal } from '@/ui/utilities/react-activity/hooks/useOnActivityReveal';
 import {
   CoreObjectNameSingular,
   type RecordGqlOperationFilter,
@@ -61,10 +60,10 @@ export const useTimelineActivities = (
 
   const {
     records: timelineActivities,
+    loading: loadingTimelineActivities,
     fetchMoreRecords,
-    isFetchingMoreRecords,
     refetch,
-  } = useSuspenseFindManyRecords<TimelineActivity>({
+  } = useFindManyRecords<TimelineActivity>({
     skip: !hasTimelineActivityField,
     objectNameSingular: CoreObjectNameSingular.TimelineActivity,
     filter,
@@ -76,10 +75,6 @@ export const useTimelineActivities = (
     recordGqlFields,
     fetchPolicy: 'cache-and-network',
   });
-
-  // Timeline rows are created server-side, so no optimistic cache write covers
-  // changes made while this tab was hidden; revalidate whenever it is revealed.
-  useOnActivityReveal(refetch);
 
   const operationSignature = useMemo(
     () => ({
@@ -113,9 +108,16 @@ export const useTimelineActivities = (
   const { result: linkedRecordsByObjectNamePlural } =
     useLinkedRecordsIdentifiers({ timelineActivities, objectMetadataItems });
 
+  const firstQueryLoading =
+    loadingTimelineActivities && timelineActivities.length === 0;
+
+  const loadingMore =
+    loadingTimelineActivities && timelineActivities.length > 0;
+
   return {
     timelineActivities,
-    isFetchingMore: isFetchingMoreRecords,
+    firstQueryLoading,
+    loadingMore,
     fetchMoreRecords,
     linkedRecords: Object.values(linkedRecordsByObjectNamePlural).flat(),
   };

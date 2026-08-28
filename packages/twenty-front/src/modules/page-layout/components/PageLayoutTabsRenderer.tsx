@@ -14,14 +14,13 @@ import { pageLayoutPrerenderedTabIdsComponentState } from '@/page-layout/states/
 import { getScrollWrapperInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getScrollWrapperInstanceIdFromPageLayoutAndRecord';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
-import { getPageLayoutTabPrerenderMode } from '@/page-layout/utils/getPageLayoutTabPrerenderMode';
+import { shouldPrerenderPageLayoutTab } from '@/page-layout/utils/shouldPrerenderPageLayoutTab';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
-import { Activity } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -72,12 +71,11 @@ const StyledTabsAndDashboardContainer = styled.div`
   }
 `;
 
-// Tabs holding workspace-installed application widgets prerender CSS-hidden
-// rather than inside a hidden <Activity>: their effects must run while hidden
-// so the front-component sandbox worker boots and iframes load on hover.
-// display: contents keeps the active tab's layout identical to an unwrapped
-// mount, and the wrapper type stays stable per tab so revealing never remounts.
-const StyledOffscreenMountedTabContent = styled.div<{ isActiveTab: boolean }>`
+// Hidden prerendered tabs use display: none rather than <Activity mode="hidden">:
+// Apollo starts useQuery fetches from effects, which hidden activities do not
+// mount, so nothing would preload (see pageLayoutTabPrerenderContract.test).
+// display: contents keeps the active tab's layout identical to an unwrapped mount.
+const StyledTabContentDisplay = styled.div<{ isActiveTab: boolean }>`
   display: ${({ isActiveTab }) => (isActiveTab ? 'contents' : 'none')};
 `;
 
@@ -156,21 +154,16 @@ export const PageLayoutTabsRenderer = () => {
     pageLayoutPrerenderedTabIdsComponentState,
   );
 
-  const tabsToMount = sortedTabs
-    .map((tab) => ({
-      tab,
-      prerenderMode: getPageLayoutTabPrerenderMode({
-        tab,
-        pageLayoutType: currentPageLayout.type,
-      }),
-    }))
-    .filter(
-      ({ tab, prerenderMode }) =>
-        tab.id === activeTabId ||
-        (!isPageLayoutInEditMode &&
-          pageLayoutPrerenderedTabIds.includes(tab.id) &&
-          prerenderMode !== 'not-prerenderable'),
-    );
+  const tabsToMount = sortedTabs.filter(
+    (tab) =>
+      tab.id === activeTabId ||
+      (!isPageLayoutInEditMode &&
+        pageLayoutPrerenderedTabIds.includes(tab.id) &&
+        shouldPrerenderPageLayoutTab({
+          tab,
+          pageLayoutType: currentPageLayout.type,
+        })),
+  );
 
   return (
     <PageLayoutWidgetDndProvider>
@@ -218,28 +211,14 @@ export const PageLayoutTabsRenderer = () => {
             >
               {isDefined(activeTabId) &&
                 activeTabExistsInRenderableTabs &&
-                tabsToMount.map(({ tab, prerenderMode }) =>
-                  prerenderMode === 'offscreen-mounted' ? (
-                    <StyledOffscreenMountedTabContent
-                      key={tab.id}
-                      isActiveTab={tab.id === activeTabId}
-                    >
-                      <PageLayoutMainContent tabId={tab.id} />
-                    </StyledOffscreenMountedTabContent>
-                  ) : (
-                    // Suspense-backed tabs prerender inside a hidden Activity:
-                    // their queries start during render while effects stay
-                    // unmounted, so no SSE runs for hidden tabs. Classic
-                    // useQuery would preload nothing here (see
-                    // pageLayoutTabPrerenderContract.test).
-                    <Activity
-                      key={tab.id}
-                      mode={tab.id === activeTabId ? 'visible' : 'hidden'}
-                    >
-                      <PageLayoutMainContent tabId={tab.id} />
-                    </Activity>
-                  ),
-                )}
+                tabsToMount.map((tab) => (
+                  <StyledTabContentDisplay
+                    key={tab.id}
+                    isActiveTab={tab.id === activeTabId}
+                  >
+                    <PageLayoutMainContent tabId={tab.id} />
+                  </StyledTabContentDisplay>
+                ))}
             </ScrollWrapper>
           </StyledScrollWrapperContainer>
         </StyledTabsAndDashboardContainer>

@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
+import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { EventList } from '@/activities/timeline-activities/components/EventList';
 import { useTimelineActivities } from '@/activities/timeline-activities/hooks/useTimelineActivities';
 import { RecordListUpsertRecordsInStoreEffect } from '@/object-record/record-list/components/RecordListUpsertRecordsInStoreEffect';
@@ -40,12 +41,17 @@ export const TimelineCard = () => {
   const { isInSidePanel } = useLayoutRenderingContext();
   const {
     timelineActivities,
-    isFetchingMore,
+    firstQueryLoading,
+    loadingMore,
     fetchMoreRecords,
     linkedRecords,
   } = useTimelineActivities(targetRecord);
 
   const isTimelineActivitiesEmpty = timelineActivities.length === 0;
+
+  if (firstQueryLoading === true) {
+    return <SkeletonLoader withSubSections />;
+  }
 
   if (isTimelineActivitiesEmpty) {
     const placeholderContent = (
@@ -81,7 +87,7 @@ export const TimelineCard = () => {
           events={timelineActivities ?? []}
         />
         <CustomResolverFetchMoreLoader
-          loading={isFetchingMore}
+          loading={loadingMore}
           onLastRowVisible={fetchMoreRecords}
         />
       </StyledMainContainer>

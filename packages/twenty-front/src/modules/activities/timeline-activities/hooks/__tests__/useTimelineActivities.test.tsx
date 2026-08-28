@@ -3,8 +3,8 @@ import { renderHook } from '@testing-library/react';
 import { useTimelineActivities } from '@/activities/timeline-activities/hooks/useTimelineActivities';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
-jest.mock('@/object-record/hooks/useSuspenseFindManyRecords', () => ({
-  useSuspenseFindManyRecords: jest.fn(),
+jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
+  useFindManyRecords: jest.fn(),
 }));
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
@@ -52,14 +52,11 @@ describe('useTimelineActivities', () => {
     };
 
     const useFindManyRecordsMock = jest.requireMock(
-      '@/object-record/hooks/useSuspenseFindManyRecords',
+      '@/object-record/hooks/useFindManyRecords',
     );
 
-    useFindManyRecordsMock.useSuspenseFindManyRecords.mockReturnValue({
+    useFindManyRecordsMock.useFindManyRecords.mockReturnValue({
       records: mockedTimelineActivities,
-      fetchMoreRecords: jest.fn(),
-      isFetchingMoreRecords: false,
-      refetch: jest.fn(),
     });
 
     const { result } = renderHook(
@@ -80,9 +77,7 @@ describe('useTimelineActivities', () => {
     expect(result.current.timelineActivities).not.toEqual(
       wrongMockedTimelineActivities,
     );
-    expect(
-      useFindManyRecordsMock.useSuspenseFindManyRecords,
-    ).toHaveBeenCalledWith(
+    expect(useFindManyRecordsMock.useFindManyRecords).toHaveBeenCalledWith(
       expect.objectContaining({
         orderBy: [{ happensAt: 'DescNullsFirst' }],
       }),

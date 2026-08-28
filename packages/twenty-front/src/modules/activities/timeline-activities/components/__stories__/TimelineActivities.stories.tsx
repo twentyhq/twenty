@@ -9,7 +9,6 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { SuspenseDecorator } from '~/testing/decorators/SuspenseDecorator';
 import { mockedTimelineActivityRecords } from '~/testing/mock-data/generated/data/timelineActivities/mock-timelineActivities-data';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
@@ -17,7 +16,6 @@ const meta: Meta<typeof TimelineCard> = {
   title: 'Modules/TimelineActivities/TimelineCard',
   component: TimelineCard,
   decorators: [
-    SuspenseDecorator,
     MemoryRouterDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,

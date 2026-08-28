@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { withDerivedFieldMetadataMaps } from 'src/engine/metadata-modules/flat-entity/utils/with-derived-field-metadata-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
   type WorkspaceCacheDataMap,
@@ -59,7 +60,7 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
   }): Promise<void> {
     await this.workspaceCacheService.invalidateAndRecompute(
       workspaceId,
-      this.withDerivedFieldMetadataMaps(
+      withDerivedFieldMetadataMaps(
         (flatMapsKeys ??
           ALL_FLAT_ENTITY_MAPS_PROPERTIES) as (keyof WorkspaceCacheDataMap)[],
       ),
@@ -77,20 +78,10 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
   }): Promise<void> {
     await this.workspaceCacheService.flush(
       workspaceId,
-      this.withDerivedFieldMetadataMaps(
+      withDerivedFieldMetadataMaps(
         (flatMapsKeys ??
           ALL_FLAT_ENTITY_MAPS_PROPERTIES) as (keyof WorkspaceCacheDataMap)[],
       ),
     );
-  }
-
-  // flatFieldMetadataMapsOrm is a projection of flatFieldMetadataMaps, so it has
-  // to be recomputed whenever the field metadata maps are.
-  private withDerivedFieldMetadataMaps(
-    keys: (keyof WorkspaceCacheDataMap)[],
-  ): (keyof WorkspaceCacheDataMap)[] {
-    return keys.includes('flatFieldMetadataMaps')
-      ? [...keys, 'flatFieldMetadataMapsOrm']
-      : keys;
   }
 }

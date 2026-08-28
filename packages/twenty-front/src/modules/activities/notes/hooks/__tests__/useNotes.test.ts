@@ -6,9 +6,8 @@ import { type ActivityTargetableObject } from '@/activities/types/ActivityTarget
 jest.mock('@/activities/hooks/useActivities', () => ({
   useActivities: jest.fn(() => ({
     activities: [{ id: '1', content: 'Example Note', __typename: 'Note' }],
+    loading: false,
     fetchMoreActivities: jest.fn(),
-    isFetchingMoreActivities: false,
-    hasNextPage: false,
   })),
 }));
 
@@ -23,7 +22,7 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useAtomState', () => ({
 }));
 
 describe('useNotes', () => {
-  it('should return notes filtered by typename', () => {
+  it('should return notes, and loading as expected', () => {
     const mockTargetableObject: ActivityTargetableObject = {
       id: '1',
       targetObjectNameSingular: 'Example Target',
@@ -33,6 +32,6 @@ describe('useNotes', () => {
     expect(result.current.notes).toEqual([
       { id: '1', content: 'Example Note', __typename: 'Note' },
     ]);
-    expect(result.current.isFetchingMoreNotes).toBe(false);
+    expect(result.current.loading).toBe(false);
   });
 });

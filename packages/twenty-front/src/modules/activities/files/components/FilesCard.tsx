@@ -7,7 +7,8 @@ import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 
 export const FilesCard = () => {
   const targetRecord = useTargetRecord();
-  const { attachments, totalCountAttachments } = useAttachments(targetRecord);
+  const { attachments, loading, totalCountAttachments } =
+    useAttachments(targetRecord);
   const { uploadAttachmentFiles } = useUploadAttachmentFiles();
   const { canUploadFiles } = useCanUploadAttachmentFiles(targetRecord);
 
@@ -20,6 +21,7 @@ export const FilesCard = () => {
       <FilesCardContent
         attachments={attachments}
         canUploadFiles={canUploadFiles}
+        loading={loading}
         onUploadFiles={handleUploadFiles}
         targetRecord={targetRecord}
       />

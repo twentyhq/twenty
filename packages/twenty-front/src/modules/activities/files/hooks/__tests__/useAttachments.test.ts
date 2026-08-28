@@ -2,8 +2,8 @@ import { renderHook } from '@testing-library/react';
 
 import { useAttachments } from '@/activities/files/hooks/useAttachments';
 
-jest.mock('@/object-record/hooks/useSuspenseFindManyRecords', () => ({
-  useSuspenseFindManyRecords: jest.fn(),
+jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
+  useFindManyRecords: jest.fn(),
 }));
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
   useIsFeatureEnabled: jest.fn(),
@@ -25,12 +25,12 @@ describe('useAttachments', () => {
     };
 
     const useFindManyRecordsMock = jest.requireMock(
-      '@/object-record/hooks/useSuspenseFindManyRecords',
+      '@/object-record/hooks/useFindManyRecords',
     );
     const useIsFeatureEnabledMock = jest.requireMock(
       '@/workspace/hooks/useIsFeatureEnabled',
     );
-    useFindManyRecordsMock.useSuspenseFindManyRecords.mockReturnValue({
+    useFindManyRecordsMock.useFindManyRecords.mockReturnValue({
       records: mockAttachments,
     });
     useIsFeatureEnabledMock.useIsFeatureEnabled.mockReturnValue(false);
@@ -47,14 +47,12 @@ describe('useAttachments', () => {
     };
 
     const useFindManyRecordsMock = jest.requireMock(
-      '@/object-record/hooks/useSuspenseFindManyRecords',
+      '@/object-record/hooks/useFindManyRecords',
     );
     const useIsFeatureEnabledMock = jest.requireMock(
       '@/workspace/hooks/useIsFeatureEnabled',
     );
-    useFindManyRecordsMock.useSuspenseFindManyRecords.mockReturnValue({
-      records: [],
-    });
+    useFindManyRecordsMock.useFindManyRecords.mockReturnValue({ records: [] });
     useIsFeatureEnabledMock.useIsFeatureEnabled.mockReturnValue(false);
 
     const { result } = renderHook(() => useAttachments(mockTargetableObject));

@@ -1,9 +1,6 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/factories/factories';
 import { type WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { getResolverName } from 'src/engine/utils/get-resolver-name.util';
 
 export type ResolverNameMapEntry = {
@@ -13,7 +10,10 @@ export type ResolverNameMapEntry = {
 };
 
 export const buildResolverNameMap = (
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+  objectMetadatas: Pick<
+    ObjectMetadataEntity,
+    'universalIdentifier' | 'nameSingular' | 'namePlural'
+  >[],
 ): Record<string, ResolverNameMapEntry> => {
   const map: Record<string, ResolverNameMapEntry> = {};
 
@@ -28,15 +28,12 @@ export const buildResolverNameMap = (
     })),
   ];
 
-  for (const flatObjectMetadata of Object.values(
-    flatObjectMetadataMaps.byUniversalIdentifier,
-  ).filter(isDefined)) {
+  for (const objectMetadata of objectMetadatas) {
     for (const { method, operationType } of allMethods) {
-      const resolverName = getResolverName(flatObjectMetadata, method);
+      const resolverName = getResolverName(objectMetadata, method);
 
       map[resolverName] = {
-        objectMetadataUniversalIdentifier:
-          flatObjectMetadata.universalIdentifier,
+        objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
         method,
         operationType,
       };

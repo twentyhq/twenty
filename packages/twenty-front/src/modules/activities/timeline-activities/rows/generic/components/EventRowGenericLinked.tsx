@@ -8,6 +8,7 @@ import { type EventRowNativeComponentProps } from '@/activities/timeline-activit
 import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
 import { getAuthorizedLinkedRecordName } from '@/activities/timeline-activities/rows/generic/utils/getAuthorizedLinkedRecordName';
 import {
+  StyledEventRow,
   StyledEventRowContainer,
   StyledEventRowContent,
   StyledEventRowLinkedRecord,
@@ -20,17 +21,8 @@ import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowReq
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventRowGenericLinkedProps = EventRowNativeComponentProps;
-
-const StyledGenericLinkedContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-  width: 100%;
-`;
 
 export const EventRowGenericLinked = ({
   event,
@@ -94,7 +86,7 @@ export const EventRowGenericLinked = ({
   };
 
   return (
-    <StyledGenericLinkedContainer>
+    <StyledEventRow>
       <StyledEventRowContainer>
         <StyledEventRowContent>
           <EventRowItem>{authorFullName}</EventRowItem>
@@ -126,6 +118,6 @@ export const EventRowGenericLinked = ({
           />
         </EventCard>
       )}
-    </StyledGenericLinkedContainer>
+    </StyledEventRow>
   );
 };

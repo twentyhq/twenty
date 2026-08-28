@@ -9,9 +9,10 @@ const linkedRecordsResult = {
 };
 
 jest.mock(
-  '@/object-record/multiple-objects/hooks/useSuspenseCombinedFindManyRecords',
+  '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords',
   () => ({
-    useSuspenseCombinedFindManyRecords: () => ({
+    useCombinedFindManyRecords: () => ({
+      loading: false,
       result: linkedRecordsResult,
     }),
   }),

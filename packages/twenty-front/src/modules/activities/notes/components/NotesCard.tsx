@@ -7,13 +7,8 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 export const NotesCard = () => {
   const targetRecord = useTargetRecord();
-  const {
-    notes,
-    totalCountNotes,
-    fetchMoreNotes,
-    isFetchingMoreNotes,
-    hasNextPage,
-  } = useNotes(targetRecord);
+  const { notes, loading, totalCountNotes, fetchMoreNotes, hasNextPage } =
+    useNotes(targetRecord);
 
   const handleLastRowVisible = async () => {
     if (hasNextPage) {
@@ -31,7 +26,7 @@ export const NotesCard = () => {
     <>
       <WidgetHeaderCountEffect count={totalCountNotes} />
       <NotesCardContent
-        isFetchingMore={isFetchingMoreNotes}
+        loading={loading}
         notes={notes}
         onCreateNote={canCreateActivity ? createActivity : undefined}
         onLastRowVisible={handleLastRowVisible}

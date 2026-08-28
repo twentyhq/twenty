@@ -11,7 +11,7 @@ type TaskGroupsProps = {
 };
 
 export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
-  const { tasks, totalCountTasks } = useTasks({
+  const { tasks, tasksLoading, totalCountTasks } = useTasks({
     targetableObjects: [targetableObject],
   });
 
@@ -25,6 +25,7 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
     <>
       <WidgetHeaderCountEffect count={totalCountTasks} />
       <TaskGroupsContent
+        isLoading={tasksLoading}
         onCreateTask={canCreateActivity ? createActivity : undefined}
         tasks={tasks}
       />

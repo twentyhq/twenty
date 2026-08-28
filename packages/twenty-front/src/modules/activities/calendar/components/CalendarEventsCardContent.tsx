@@ -2,6 +2,7 @@ import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMont
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
 import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents';
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
+import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { StyledWidgetScrollContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -39,6 +40,7 @@ const StyledTitleContainer = styled.div`
 `;
 
 type CalendarEventsCardContentProps = {
+  firstQueryLoading: boolean;
   isFetchingMore: boolean;
   objectName: string;
   onLastRowVisible: () => Promise<void>;
@@ -46,6 +48,7 @@ type CalendarEventsCardContentProps = {
 };
 
 export const CalendarEventsCardContent = ({
+  firstQueryLoading,
   isFetchingMore,
   objectName,
   onLastRowVisible,
@@ -60,6 +63,10 @@ export const CalendarEventsCardContent = ({
     monthTimes,
     monthTimesByYear,
   } = useCalendarEvents(timelineCalendarEvents ?? []);
+
+  if (firstQueryLoading) {
+    return <SkeletonLoader />;
+  }
 
   if (!timelineCalendarEvents?.length) {
     // TODO: change animated placeholder

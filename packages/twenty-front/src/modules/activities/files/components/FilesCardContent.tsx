@@ -1,3 +1,4 @@
+import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AttachmentList } from '@/activities/files/components/AttachmentList';
 import { AttachmentUploadTrigger } from '@/activities/files/components/AttachmentUploadTrigger';
 import { DropZone } from '@/activities/files/components/DropZone';
@@ -31,6 +32,7 @@ const StyledDropZoneContainer = styled.div`
 type FilesCardContentProps = {
   attachments: Attachment[];
   canUploadFiles: boolean;
+  loading: boolean;
   onUploadFiles: (files: File[]) => Promise<void>;
   targetRecord: ActivityTargetableObject;
 };
@@ -38,6 +40,7 @@ type FilesCardContentProps = {
 export const FilesCardContent = ({
   attachments,
   canUploadFiles,
+  loading,
   onUploadFiles,
   targetRecord,
 }: FilesCardContentProps) => {
@@ -45,6 +48,10 @@ export const FilesCardContent = ({
   const { t } = useLingui();
 
   const isAttachmentsEmpty = attachments.length === 0;
+
+  if (loading && isAttachmentsEmpty) {
+    return <SkeletonLoader />;
+  }
 
   if (isAttachmentsEmpty) {
     return (

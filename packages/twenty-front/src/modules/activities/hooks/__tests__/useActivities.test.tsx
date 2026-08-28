@@ -48,8 +48,7 @@ describe('useActivities', () => {
     useActivityTargetsForTargetableObjectsMock.useActivityTargetsForTargetableObjects.mockReturnValue(
       {
         activityTargets: [{ ...mockActivityTarget, task: mockActivity }],
-        fetchMoreActivityTargets: jest.fn(),
-        isFetchingMoreActivityTargets: false,
+        loadingActivityTargets: false,
         activityRelationFieldName: 'task',
       },
     );

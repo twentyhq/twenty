@@ -1,5 +1,7 @@
 import {
+  type ApolloClient,
   type ErrorLike,
+  type ObservableQuery,
   type OperationVariables,
   type WatchQueryFetchPolicy,
 } from '@apollo/client';
@@ -42,30 +44,26 @@ export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
     fetchPolicy?: WatchQueryFetchPolicy;
   };
 
-// Structural signature covering the concrete call this hook makes, satisfied
-// by both useQuery's and useSuspenseQuery's fetchMore so the pagination logic
-// is shared across the classic and suspense find-many hooks.
-type FindManyRecordsFetchMore = (fetchMoreOptions: {
-  variables?: OperationVariables;
-  updateQuery: (
-    previousQueryResult: RecordGqlOperationFindManyResult,
-    options: {
-      fetchMoreResult?: RecordGqlOperationFindManyResult;
-      variables?: OperationVariables;
-    },
-  ) => RecordGqlOperationFindManyResult;
-}) => Promise<{
-  data: RecordGqlOperationFindManyResult | undefined;
-  error?: ErrorLike;
-}>;
-
-type UseFindManyRecordsStateParams<T> = Omit<
+type UseFindManyRecordsStateParams<
+  T,
+  TData = RecordGqlOperationFindManyResult,
+> = Omit<
   UseFindManyRecordsParams<T>,
   'skip' | 'recordGqlFields' | 'fetchPolicy'
 > & {
   data: RecordGqlOperationFindManyResult | undefined;
   error: ErrorLike | undefined;
-  fetchMore: FindManyRecordsFetchMore;
+  fetchMore<
+    TFetchData = TData,
+    TFetchVars extends OperationVariables = OperationVariables,
+  >(
+    fetchMoreOptions: ObservableQuery.FetchMoreOptions<
+      TData,
+      OperationVariables,
+      TFetchData,
+      TFetchVars
+    >,
+  ): Promise<ApolloClient.QueryResult<TFetchData>>;
   objectMetadataItem: EnrichedObjectMetadataItem;
 };
 

@@ -1,7 +1,7 @@
 import { CalendarEventsCardContent } from '@/activities/calendar/components/CalendarEventsCardContent';
 import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from '@/activities/calendar/constants/Calendar';
 import { getTimelineCalendarEventsFromObjectRecord } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromObjectRecord';
-import { useSuspenseCustomResolver } from '@/activities/hooks/useSuspenseCustomResolver';
+import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { useSubscribeTimelineToParticipantChanges } from '@/activities/hooks/useSubscribeTimelineToParticipantChanges';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
@@ -10,8 +10,8 @@ import { type TimelineCalendarEventsWithTotal } from '~/generated/graphql';
 export const CalendarEventsCard = () => {
   const targetRecord = useTargetRecord();
 
-  const { data, isFetchingMore, fetchMoreRecords, refetch } =
-    useSuspenseCustomResolver<TimelineCalendarEventsWithTotal>(
+  const { data, firstQueryLoading, isFetchingMore, fetchMoreRecords, refetch } =
+    useCustomResolver<TimelineCalendarEventsWithTotal>(
       getTimelineCalendarEventsFromObjectRecord,
       'getTimelineCalendarEventsFromObjectRecord',
       'timelineCalendarEvents',
@@ -45,6 +45,7 @@ export const CalendarEventsCard = () => {
     <>
       <WidgetHeaderCountEffect count={totalNumberOfCalendarEvents} />
       <CalendarEventsCardContent
+        firstQueryLoading={firstQueryLoading}
         isFetchingMore={isFetchingMore}
         objectName={targetRecord.targetObjectNameSingular}
         onLastRowVisible={handleLastRowVisible}

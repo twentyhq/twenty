@@ -11,6 +11,7 @@ type UseTasksProps = {
 export const useTasks = ({ targetableObjects }: UseTasksProps) => {
   const {
     activities: tasks,
+    loading: tasksLoading,
     fetchMoreActivities: fetchMoreTasks,
     hasNextPage,
     totalCountActivities,
@@ -25,9 +26,15 @@ export const useTasks = ({ targetableObjects }: UseTasksProps) => {
     (activity): activity is Task => activity.__typename === 'Task',
   );
 
+  const fetchMoreFilteredTasks = async () =>
+    (await fetchMoreTasks()).filter(
+      (activity): activity is Task => activity.__typename === 'Task',
+    );
+
   return {
     tasks: filteredTasks,
-    fetchMoreTasks,
+    tasksLoading,
+    fetchMoreTasks: fetchMoreFilteredTasks,
     hasNextPage,
     totalCountTasks: totalCountActivities,
   };
