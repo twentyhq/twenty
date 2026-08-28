@@ -150,6 +150,23 @@ describe('slackResolveUserLinkHandler', () => {
     }
   });
 
+  it('should refuse a supplied team id that does not match the Slack user', async () => {
+    fetchSlackUserIdentityMock.mockResolvedValue({
+      slackUserId: 'U2',
+      slackTeamId: INSTALLED_TEAM_ID,
+      displayName: 'Ada Lovelace',
+    });
+
+    const result = await slackResolveUserLinkHandler(
+      buildPayload({ slackUserId: 'U2', slackTeamId: 'T-EXTERNAL' }),
+    );
+
+    expect(result.success).toBe(false);
+    if (result.success === false) {
+      expect(result.error).toContain('belongs to workspace');
+    }
+  });
+
   it('should resolve from a Slack user id and flag an out-of-workspace team', async () => {
     fetchSlackUserIdentityMock.mockResolvedValue({
       slackUserId: 'U2',

@@ -79,6 +79,22 @@ export const slackResolveUserLinkHandler = async (
       slackUserId: requestedSlackUserId,
     });
 
+    // Mirror the set handler: a supplied team must agree with the account's
+    // real workspace when Slack can see it, so the preview cannot promise an
+    // admin-set link for an in-workspace user given a bogus external team.
+    if (
+      isNonEmptyString(slackTeamId) &&
+      isDefined(identity) &&
+      isNonEmptyString(identity.slackTeamId) &&
+      identity.slackTeamId !== slackTeamId
+    ) {
+      return {
+        success: false,
+        message: 'Slack team id does not match the user',
+        error: `That Slack user belongs to workspace ${identity.slackTeamId}, not ${slackTeamId}. Check the team id and try again.`,
+      };
+    }
+
     // A directly-supplied id may belong to another workspace, so never assume
     // the installed team for it: a wrong guess promises a consent DM that the
     // save step cannot deliver. Only an email-resolved user (below) is in the
