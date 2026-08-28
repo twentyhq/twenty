@@ -1,0 +1,65 @@
+import { SLACK_UNFURL_OBJECT_NAMES } from 'src/logic-functions/constants/slack-unfurl-object-names';
+import { type SlackRecordLink } from 'src/logic-functions/types/slack-record-link.type';
+
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+const isSupportedObjectName = (
+  value: string,
+): value is SlackRecordLink['objectNameSingular'] =>
+  (SLACK_UNFURL_OBJECT_NAMES as readonly string[]).includes(value);
+
+const parseRecordLink = (
+  workspaceBaseUrl: string,
+  url: string,
+): SlackRecordLink | undefined => {
+  // Slack HTML-escapes ampersands in shared URLs; record paths carry none,
+  // but normalizing keeps the base-URL prefix comparison exact.
+  const normalizedUrl = url.replace(/&amp;/g, '&');
+
+  if (!normalizedUrl.startsWith(`${workspaceBaseUrl}/`)) {
+    return undefined;
+  }
+
+  const path = normalizedUrl.slice(workspaceBaseUrl.length);
+  const match = path.match(/^\/object\/([^/]+)\/([^/?#]+)\/?(?:[?#]|$)/);
+
+  if (!match) {
+    return undefined;
+  }
+
+  const [, objectNameSingular, recordId] = match;
+
+  if (!isSupportedObjectName(objectNameSingular) || !UUID_PATTERN.test(recordId)) {
+    return undefined;
+  }
+
+  return { url, objectNameSingular, recordId };
+};
+
+export const parseTwentyRecordLinks = ({
+  workspaceBaseUrl,
+  urls,
+}: {
+  workspaceBaseUrl: string;
+  urls: string[];
+}): SlackRecordLink[] => {
+  const seenUrls = new Set<string>();
+  const recordLinks: SlackRecordLink[] = [];
+
+  for (const url of urls) {
+    if (seenUrls.has(url)) {
+      continue;
+    }
+
+    seenUrls.add(url);
+
+    const recordLink = parseRecordLink(workspaceBaseUrl, url);
+
+    if (recordLink) {
+      recordLinks.push(recordLink);
+    }
+  }
+
+  return recordLinks;
+};
