@@ -22,6 +22,7 @@ import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fie
 import { SettingsTranslationsButton } from '@/settings/translations/components/SettingsTranslationsButton';
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
+import { SettingsDataModelFieldTimelineActivitySection } from '@/settings/data-model/fields/forms/timeline-activity/components/SettingsDataModelFieldTimelineActivitySection';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -396,6 +397,12 @@ export const SettingsObjectFieldEdit = () => {
                 disabled={readonly}
               />
             </Section>
+
+            <SettingsDataModelFieldTimelineActivitySection
+              fieldMetadataItem={fieldMetadataItem}
+              objectMetadataItem={objectMetadataItem}
+              disabled={readonly}
+            />
 
             <Section>
               <H2Title

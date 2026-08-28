@@ -1,10 +1,11 @@
 import { gql } from '@apollo/client';
 
-export const FIND_MANY_TIMELINE_ACTIVITY_TYPES = gql`
-  query FindManyTimelineActivityTypes {
-    timelineActivityTypes {
+export const CREATE_TIMELINE_ACTIVITY_TYPE = gql`
+  mutation CreateTimelineActivityType(
+    $input: CreateTimelineActivityTypeInput!
+  ) {
+    createTimelineActivityType(input: $input) {
       id
-      applicationId
       universalIdentifier
       name
       label
@@ -16,7 +17,6 @@ export const FIND_MANY_TIMELINE_ACTIVITY_TYPES = gql`
           relationFieldUniversalIdentifier
         }
       }
-      frontComponentUniversalIdentifier
       isActive
     }
   }

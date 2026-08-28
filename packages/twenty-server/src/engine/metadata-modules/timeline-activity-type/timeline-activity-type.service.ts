@@ -7,10 +7,12 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { type FlatTimelineActivityType } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { type CreateTimelineActivityTypeInput } from 'src/engine/metadata-modules/timeline-activity-type/dtos/create-timeline-activity-type.input';
 import { type TimelineActivityTypeDTO } from 'src/engine/metadata-modules/timeline-activity-type/dtos/timeline-activity-type.dto';
 import { type UpdateTimelineActivityTypeInput } from 'src/engine/metadata-modules/timeline-activity-type/dtos/update-timeline-activity-type.input';
 import { TimelineActivityTypeExceptionCode } from 'src/engine/metadata-modules/timeline-activity-type/enums/timeline-activity-type-exception-code.enum';
 import { TimelineActivityTypeException } from 'src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception';
+import { fromCreateTimelineActivityTypeInputToFlatTimelineActivityTypeOrThrow } from 'src/engine/metadata-modules/timeline-activity-type/utils/from-create-timeline-activity-type-input-to-flat-timeline-activity-type-or-throw.util';
 import { fromFlatTimelineActivityTypeToTimelineActivityTypeDto } from 'src/engine/metadata-modules/timeline-activity-type/utils/from-flat-timeline-activity-type-to-timeline-activity-type-dto.util';
 import { fromUpdateTimelineActivityTypeInputToFlatTimelineActivityTypeToUpdateOrThrow } from 'src/engine/metadata-modules/timeline-activity-type/utils/from-update-timeline-activity-type-input-to-flat-timeline-activity-type-to-update-or-throw.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -38,6 +40,81 @@ export class TimelineActivityTypeService {
       .filter(isDefined)
       .sort((a, b) => a.name.localeCompare(b.name))
       .map(fromFlatTimelineActivityTypeToTimelineActivityTypeDto);
+  }
+
+  async create({
+    input,
+    workspaceId,
+  }: {
+    input: CreateTimelineActivityTypeInput;
+    workspaceId: string;
+  }): Promise<TimelineActivityTypeDTO> {
+    const [applicationContext, metadataMaps] = await Promise.all([
+      this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      ),
+      this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: [
+            'flatTimelineActivityTypeMaps',
+            'flatFieldMetadataMaps',
+            'flatObjectMetadataMaps',
+          ],
+        },
+      ),
+    ]);
+    const { workspaceCustomFlatApplication } = applicationContext;
+
+    const flatTimelineActivityTypeToCreate =
+      fromCreateTimelineActivityTypeInputToFlatTimelineActivityTypeOrThrow({
+        createTimelineActivityTypeInput: input,
+        flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+        flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
+        flatTimelineActivityTypeMaps: metadataMaps.flatTimelineActivityTypeMaps,
+        workspaceCustomFlatApplication: {
+          id: workspaceCustomFlatApplication.id,
+          universalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+        },
+        workspaceId,
+      });
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            timelineActivityType: {
+              flatEntityToCreate: [flatTimelineActivityTypeToCreate],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+        },
+      );
+
+    if (validateAndBuildResult.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while creating timeline activity type',
+      );
+    }
+
+    const { flatTimelineActivityTypeMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: ['flatTimelineActivityTypeMaps'] },
+      );
+
+    return fromFlatTimelineActivityTypeToTimelineActivityTypeDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: flatTimelineActivityTypeToCreate.id,
+        flatEntityMaps: flatTimelineActivityTypeMaps,
+      }),
+    );
   }
 
   async update({

@@ -22,6 +22,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { CreateTimelineActivityTypeInput } from 'src/engine/metadata-modules/timeline-activity-type/dtos/create-timeline-activity-type.input';
 import { TimelineActivityTypeDTO } from 'src/engine/metadata-modules/timeline-activity-type/dtos/timeline-activity-type.dto';
 import { UpdateTimelineActivityTypeInput } from 'src/engine/metadata-modules/timeline-activity-type/dtos/update-timeline-activity-type.input';
 import { TimelineActivityTypeGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/timeline-activity-type/interceptors/timeline-activity-type-graphql-api-exception.interceptor';
@@ -74,6 +75,18 @@ export class TimelineActivityTypeResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<TimelineActivityTypeDTO[]> {
     return await this.timelineActivityTypeService.findAll({
+      workspaceId: workspace.id,
+    });
+  }
+
+  @Mutation(() => TimelineActivityTypeDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
+  async createTimelineActivityType(
+    @Args('input') input: CreateTimelineActivityTypeInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<TimelineActivityTypeDTO> {
+    return this.timelineActivityTypeService.create({
+      input,
       workspaceId: workspace.id,
     });
   }
