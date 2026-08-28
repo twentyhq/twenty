@@ -94,7 +94,7 @@ export default {
         385,
         398,
         511,
-        535
+        536
     ],
     "types": {
         "BillingProductDTO": {
@@ -9530,11 +9530,20 @@ export default {
                     ]
                 }
             ],
-            "updateTimelineActivityType": [
+            "createTimelineActivityType": [
                 369,
                 {
                     "input": [
                         527,
+                        "CreateTimelineActivityTypeInput!"
+                    ]
+                }
+            ],
+            "updateTimelineActivityType": [
+                369,
+                {
+                    "input": [
+                        528,
                         "UpdateTimelineActivityTypeInput!"
                     ]
                 }
@@ -9552,7 +9561,7 @@ export default {
                 262,
                 {
                     "input": [
-                        528,
+                        529,
                         "GetAuthorizationUrlForSSOInput!"
                     ]
                 }
@@ -9718,7 +9727,7 @@ export default {
                 265,
                 {
                     "input": [
-                        529
+                        530
                     ]
                 }
             ],
@@ -9896,7 +9905,7 @@ export default {
                 8,
                 {
                     "input": [
-                        530,
+                        531,
                         "UpdateWorkspaceMemberSettingsInput!"
                     ]
                 }
@@ -9930,7 +9939,7 @@ export default {
                 219,
                 {
                     "input": [
-                        531,
+                        532,
                         "SetupOIDCSsoInput!"
                     ]
                 }
@@ -9939,7 +9948,7 @@ export default {
                 219,
                 {
                     "input": [
-                        532,
+                        533,
                         "SetupSAMLSsoInput!"
                     ]
                 }
@@ -9948,7 +9957,7 @@ export default {
                 215,
                 {
                     "input": [
-                        533,
+                        534,
                         "DeleteSsoInput!"
                     ]
                 }
@@ -9957,7 +9966,7 @@ export default {
                 216,
                 {
                     "input": [
-                        534,
+                        535,
                         "EditSsoInput!"
                     ]
                 }
@@ -9986,7 +9995,7 @@ export default {
                 336,
                 {
                     "type": [
-                        535,
+                        536,
                         "AnalyticsType!"
                     ],
                     "name": [
@@ -10029,7 +10038,7 @@ export default {
                 326,
                 {
                     "input": [
-                        536,
+                        537,
                         "CreateCalendarEventInput!"
                     ]
                 }
@@ -10038,7 +10047,7 @@ export default {
                 335,
                 {
                     "input": [
-                        537,
+                        538,
                         "SendEmailInput!"
                     ]
                 }
@@ -10060,7 +10069,7 @@ export default {
                         "String!"
                     ],
                     "connectionParameters": [
-                        539,
+                        540,
                         "EmailAccountConnectionParameters!"
                     ],
                     "id": [
@@ -10072,7 +10081,7 @@ export default {
                 179,
                 {
                     "input": [
-                        541,
+                        542,
                         "UpdateLabPublicFeatureFlagInput!"
                     ]
                 }
@@ -10162,7 +10171,7 @@ export default {
                         "String!"
                     ],
                     "files": [
-                        542,
+                        543,
                         "[ApplicationFileUploadRequestInput!]!"
                     ]
                 }
@@ -12775,6 +12784,23 @@ export default {
                 1
             ]
         },
+        "CreateTimelineActivityTypeInput": {
+            "label": [
+                1
+            ],
+            "icon": [
+                1
+            ],
+            "action": [
+                1
+            ],
+            "targetRelationFieldMetadataId": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "UpdateTimelineActivityTypeInput": {
             "id": [
                 3
@@ -12955,7 +12981,7 @@ export default {
                 1
             ],
             "files": [
-                538
+                539
             ],
             "__typename": [
                 1
@@ -12977,13 +13003,13 @@ export default {
                 1
             ],
             "IMAP": [
-                540
+                541
             ],
             "SMTP": [
-                540
+                541
             ],
             "CALDAV": [
-                540
+                541
             ],
             "__typename": [
                 1
@@ -13048,7 +13074,7 @@ export default {
                 254,
                 {
                     "input": [
-                        544,
+                        545,
                         "LogicFunctionLogsInput!"
                     ]
                 }

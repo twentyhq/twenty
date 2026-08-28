@@ -3814,6 +3814,7 @@ type Mutation {
   deactivateSkill(id: UUID!): Skill!
   evaluateAgentTurn(turnId: UUID!): AgentTurnEvaluation!
   runEvaluationInput(agentId: UUID!, input: String!): AgentTurn!
+  createTimelineActivityType(input: CreateTimelineActivityTypeInput!): TimelineActivityType!
   updateTimelineActivityType(input: UpdateTimelineActivityTypeInput!): TimelineActivityType!
   resetTimelineActivityType(id: UUID!): TimelineActivityType!
   getAuthorizationUrlForSSO(input: GetAuthorizationUrlForSSOInput!): GetAuthorizationUrlForSSO!
@@ -5011,6 +5012,13 @@ input UpdateSkillInput {
   description: String
   content: String
   isActive: Boolean
+}
+
+input CreateTimelineActivityTypeInput {
+  label: String!
+  icon: String
+  action: String
+  targetRelationFieldMetadataId: UUID!
 }
 
 input UpdateTimelineActivityTypeInput {
