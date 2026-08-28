@@ -129,8 +129,6 @@ export const SlackUserLinkForm = ({ onLinkSaved }: SlackUserLinkFormProps) => {
     }
   };
 
-  // Enter saves once a match is confirmed; before that it skips the debounce
-  // and looks the identity up right away.
   const handleFormSubmit = () => {
     if (resolvedUser === null) {
       resolveNow({ email: '', slackUserId, slackTeamId });
