@@ -4,7 +4,6 @@ import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { BlocklistScope } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { z } from 'zod';
 
 import {
   type CreateManyResolverArgs,
@@ -21,7 +20,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { isDomain } from 'src/engine/utils/is-domain';
+import { BLOCKLIST_HANDLE_SCHEMA } from 'src/modules/blocklist/constants/blocklist-handle-schema.constant';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { type BlocklistItem } from 'src/modules/blocklist/types/blocklist-item.type';
@@ -31,27 +30,6 @@ type BlocklistCreateEntry = {
   item: Partial<BlocklistItem>;
   existingRecord: BlocklistWorkspaceEntity | null;
 };
-
-const resolveUniquenessOwner = ({
-  existingRecord,
-  context,
-}: {
-  existingRecord: Pick<BlocklistWorkspaceEntity, 'workspaceMemberId'> | null;
-  context: BlocklistMutationContext;
-}): string => existingRecord?.workspaceMemberId ?? context.workspaceMemberId;
-
-const emailOrDomainSchema = z
-  .string()
-  .trim()
-  .pipe(z.email({ error: 'Invalid email or domain' }))
-  .or(
-    z
-      .string()
-      .refine(
-        (value) => value.startsWith('@') && isDomain(value.slice(1)),
-        'Invalid email or domain',
-      ),
-  );
 
 @Injectable()
 export class BlocklistValidationService {
@@ -122,7 +100,8 @@ export class BlocklistValidationService {
 
     const siblingHandles = await this.getExistingHandlesForOwner({
       scope: existingRecord.scope,
-      workspaceMemberId: resolveUniquenessOwner({ existingRecord, context }),
+      workspaceMemberId:
+        existingRecord.workspaceMemberId ?? context.workspaceMemberId,
       context,
     });
 
@@ -163,7 +142,8 @@ export class BlocklistValidationService {
 
     const liveHandles = await this.getExistingHandlesForOwner({
       scope: existingRecord.scope,
-      workspaceMemberId: resolveUniquenessOwner({ existingRecord, context }),
+      workspaceMemberId:
+        existingRecord.workspaceMemberId ?? context.workspaceMemberId,
       context,
     });
 
@@ -183,7 +163,7 @@ export class BlocklistValidationService {
         );
       }
 
-      const result = emailOrDomainSchema.safeParse(handle);
+      const result = BLOCKLIST_HANDLE_SCHEMA.safeParse(handle);
 
       if (!result.success) {
         throw new CommonQueryRunnerException(
@@ -325,10 +305,8 @@ export class BlocklistValidationService {
 
       const scope =
         existingRecord?.scope ?? item.scope ?? BlocklistScope.WORKSPACE_MEMBER;
-      const workspaceMemberId = resolveUniquenessOwner({
-        existingRecord,
-        context,
-      });
+      const workspaceMemberId =
+        existingRecord?.workspaceMemberId ?? context.workspaceMemberId;
 
       const groupKey = `${scope}:${workspaceMemberId}`;
       const group = groups.get(groupKey) ?? {
