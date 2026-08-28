@@ -39,7 +39,10 @@ export const collectDueRecurringCharges = ({
       ([chargeKey, charge]) =>
         isDefined(charge) &&
         !alreadyChargedKeys.has(
-          buildRecurringChargeKey(application.id, chargeKey),
+          buildRecurringChargeKey({
+            applicationId: application.id,
+            chargeKey,
+          }),
         )
           ? [{ applicationId: application.id, chargeKey, charge }]
           : [],

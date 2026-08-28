@@ -244,7 +244,10 @@ export class UsageAnalyticsService {
 
     return new Set(
       rows.map((row) =>
-        buildRecurringChargeKey(row.resourceId, row.resourceContext),
+        buildRecurringChargeKey({
+          applicationId: row.resourceId,
+          chargeKey: row.resourceContext,
+        }),
       ),
     );
   }

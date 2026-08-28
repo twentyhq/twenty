@@ -61,10 +61,10 @@ export class AppBillingService {
       await Promise.all([
         this.resolveOperationType({ workspaceId, applicationId, charge }),
         userWorkspaceId ??
-          this.findWorkspaceScopedUserWorkspaceId(
+          this.findWorkspaceScopedUserWorkspaceId({
             workspaceId,
-            charge.userWorkspaceId,
-          ),
+            userWorkspaceId: charge.userWorkspaceId,
+          }),
         this.resolveBillingPeriodStart(workspaceId),
       ]);
 
@@ -157,10 +157,13 @@ export class AppBillingService {
 
   // Scoped to the token's workspace, so an app cannot attribute its spend to
   // someone outside the workspace its token was issued for.
-  private async findWorkspaceScopedUserWorkspaceId(
-    workspaceId: string,
-    userWorkspaceId?: string,
-  ): Promise<string | null> {
+  private async findWorkspaceScopedUserWorkspaceId({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId?: string;
+  }): Promise<string | null> {
     if (!isDefined(userWorkspaceId)) {
       return null;
     }

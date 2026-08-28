@@ -61,7 +61,10 @@ describe('collectDueRecurringCharges', () => {
         },
       ]),
       alreadyChargedKeys: new Set([
-        buildRecurringChargeKey(APPLICATION_ID, 'platformFee'),
+        buildRecurringChargeKey({
+          applicationId: APPLICATION_ID,
+          chargeKey: 'platformFee',
+        }),
       ]),
     });
 
@@ -79,7 +82,10 @@ describe('collectDueRecurringCharges', () => {
         { id: otherApplicationId, billing: { recurring: { seat: SEAT_FEE } } },
       ]),
       alreadyChargedKeys: new Set([
-        buildRecurringChargeKey(APPLICATION_ID, 'seat'),
+        buildRecurringChargeKey({
+          applicationId: APPLICATION_ID,
+          chargeKey: 'seat',
+        }),
       ]),
     });
 
