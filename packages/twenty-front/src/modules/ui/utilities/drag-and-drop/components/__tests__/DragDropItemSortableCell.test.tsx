@@ -49,4 +49,30 @@ describe('DragDropItemSortableCell', () => {
       expect(getSortableRoot()).toHaveAttribute('role', 'button');
     });
   });
+
+  it('restores the drag affordances when dragging is enabled again', async () => {
+    const { rerender } = renderSortableCell({ disabled: true });
+
+    await waitFor(() => {
+      expect(getSortableRoot()).toHaveAttribute('aria-disabled', 'true');
+    });
+
+    rerender(
+      <DragDropProvider>
+        <DragDropItemSortableCell
+          id="widget-id"
+          index={0}
+          group="tab-id"
+          disabled={false}
+        >
+          <div data-testid="widget-content">Emails</div>
+        </DragDropItemSortableCell>
+      </DragDropProvider>,
+    );
+
+    await waitFor(() => {
+      expect(getSortableRoot()).toHaveAttribute('role', 'button');
+    });
+    expect(getSortableRoot()).toHaveAttribute('tabindex', '0');
+  });
 });
