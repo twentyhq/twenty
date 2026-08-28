@@ -17,8 +17,11 @@ export const groupBlocklistEntriesForUniqueness = ({
   context,
 }: {
   entries: {
-    item: Partial<BlocklistItem>;
-    existingRecord: BlocklistWorkspaceEntity | null;
+    item: Partial<Pick<BlocklistItem, 'handle' | 'scope'>>;
+    existingRecord: Pick<
+      BlocklistWorkspaceEntity,
+      'handle' | 'scope' | 'workspaceMemberId'
+    > | null;
   }[];
   context: BlocklistMutationContext;
 }): BlocklistUniquenessGroup[] => {

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { BlocklistScope } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type FindOptionsWhere } from 'typeorm';
+import { type FindOptionsWhere, In } from 'typeorm';
 
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -31,6 +31,34 @@ export class BlocklistRepository {
 
       return blockListRepository.findOne({
         where: { id },
+        withDeleted: true,
+      });
+    }, authContext);
+  }
+
+  public async getByIds({
+    ids,
+    workspaceId,
+  }: {
+    ids: string[];
+    workspaceId: string;
+  }): Promise<BlocklistWorkspaceEntity[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const blockListRepository = this.workspaceOrmManager.getRepository(
+        BlocklistWorkspaceEntity,
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
+
+      return blockListRepository.find({
+        where: { id: In(ids) },
         withDeleted: true,
       });
     }, authContext);

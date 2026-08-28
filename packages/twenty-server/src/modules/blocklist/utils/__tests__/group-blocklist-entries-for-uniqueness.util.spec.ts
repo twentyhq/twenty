@@ -10,14 +10,19 @@ const context: BlocklistMutationContext = {
   userWorkspaceId: 'user-workspace-id',
 };
 
+type ExistingRecord = Pick<
+  BlocklistWorkspaceEntity,
+  'handle' | 'scope' | 'workspaceMemberId'
+>;
+
 const existingRecord = (
-  overrides: Partial<BlocklistWorkspaceEntity>,
-): BlocklistWorkspaceEntity =>
-  ({
-    scope: BlocklistScope.WORKSPACE_MEMBER,
-    workspaceMemberId: 'caller-member-id',
-    ...overrides,
-  }) as BlocklistWorkspaceEntity;
+  overrides: Partial<ExistingRecord>,
+): ExistingRecord => ({
+  handle: null,
+  scope: BlocklistScope.WORKSPACE_MEMBER,
+  workspaceMemberId: 'caller-member-id',
+  ...overrides,
+});
 
 describe('groupBlocklistEntriesForUniqueness', () => {
   it('groups new member-scoped handles under the caller', () => {

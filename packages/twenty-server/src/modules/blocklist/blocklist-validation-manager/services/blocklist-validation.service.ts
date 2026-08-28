@@ -42,14 +42,19 @@ export class BlocklistValidationService {
   }): Promise<void> {
     this.validateHandleFormat(payload.data);
 
+    const existingRecords = await this.blocklistRepository.getByIds({
+      ids: payload.data.map((item) => item.id).filter(isDefined),
+      workspaceId: context.workspaceId,
+    });
+    const existingRecordById = new Map(
+      existingRecords.map((record) => [record.id, record]),
+    );
+
     const entries: BlocklistCreateEntry[] = [];
 
     for (const item of payload.data) {
       const existingRecord = isDefined(item.id)
-        ? await this.blocklistRepository.getById({
-            id: item.id,
-            workspaceId: context.workspaceId,
-          })
+        ? (existingRecordById.get(item.id) ?? null)
         : null;
 
       if (isDefined(existingRecord)) {
