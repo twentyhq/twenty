@@ -411,7 +411,7 @@ export class WorkflowVersionCoreSyncService {
           });
 
           if (isDefined(workflowVersion)) {
-            await this.workflowVersionValidationGateService.assertWorkflowVersionIsValidOrThrow(
+            await this.workflowVersionValidationGateService.assertWorkflowVersionIsWellFormedOrThrow(
               {
                 workspaceId,
                 trigger: workflowVersion.trigger,

@@ -1,11 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  isNonEmptyArray,
-  isNonEmptyString,
-  isObject,
-  isString,
-} from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString, isObject } from '@sniptt/guards';
 import { inputSchemaToOutputSchema } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -19,8 +14,7 @@ import {
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
-import { getRecordCrudRichTextIssuesForSteps } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-record-crud-rich-text-issues-for-steps.util';
-import { getPickRecordLoadBalanceConfigError } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-pick-record-load-balance-config-error.util';
+import { getWorkflowRecordStepMetadataIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-workflow-record-step-metadata-issues.util';
 import {
   type WorkflowAction,
   type WorkflowLogicFunctionAction,
@@ -34,12 +28,7 @@ import { validateWorkflowStepsHaveVariableReferences } from 'src/modules/workflo
 import { validateWorkflowIteratorStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-iterator-step.util';
 import { validateWorkflowAiAgentStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-ai-agent-step.util';
 import { validateWorkflowLogicFunctionOutputSchemaMismatch } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-logic-function-output-schema-mismatch.util';
-import { WORKFLOW_RECORD_CRUD_ACTION_TYPES } from 'src/modules/workflow/workflow-builder/workflow-validation/constants/workflow-record-crud-action-types.constant';
-
-const OBJECT_TARGETING_ACTION_TYPES = new Set<WorkflowActionType>([
-  ...WORKFLOW_RECORD_CRUD_ACTION_TYPES,
-  WorkflowActionType.PICK_RECORD,
-]);
+import { OBJECT_TARGETING_ACTION_TYPES } from 'src/modules/workflow/workflow-builder/workflow-validation/constants/object-targeting-action-types.constant';
 
 @Injectable()
 export class WorkflowValidationWorkspaceService {
@@ -319,11 +308,11 @@ export class WorkflowValidationWorkspaceService {
     workspaceId: string;
     steps: WorkflowAction[];
   }): Promise<WorkflowValidationIssue[]> {
-    const recordSteps = steps.filter((step) =>
+    const hasRecordStep = steps.some((step) =>
       OBJECT_TARGETING_ACTION_TYPES.has(step.type),
     );
 
-    if (recordSteps.length === 0) {
+    if (!hasRecordStep) {
       return [];
     }
 
@@ -333,65 +322,12 @@ export class WorkflowValidationWorkspaceService {
       flatFieldMetadataMaps,
     } = await this.workflowMetadataReadService.getFlatEntityMaps(workspaceId);
 
-    const issues: WorkflowValidationIssue[] = [];
-
-    for (const step of recordSteps) {
-      const input = step.settings.input;
-      const objectName =
-        isObject(input) && 'objectName' in input ? input.objectName : undefined;
-
-      if (!isString(objectName)) {
-        issues.push({
-          severity: 'error',
-          code: 'INVALID_STEP_PARAMS',
-          message: `Step "${step.name ?? step.id}" has an invalid object name.`,
-          stepId: step.id,
-        });
-
-        continue;
-      }
-
-      const objectId = objectIdByNameSingular[objectName];
-
-      if (!isDefined(objectId)) {
-        issues.push({
-          severity: 'error',
-          code: 'INVALID_STEP_PARAMS',
-          message: `Step "${step.name ?? step.id}" targets object "${objectName}" which does not exist in this workspace.`,
-          stepId: step.id,
-        });
-
-        continue;
-      }
-
-      if (step.type === WorkflowActionType.PICK_RECORD) {
-        const loadBalanceError = getPickRecordLoadBalanceConfigError({
-          step,
-          objectIdByNameSingular,
-          flatFieldMetadataMaps,
-        });
-
-        if (isDefined(loadBalanceError)) {
-          issues.push({
-            severity: 'error',
-            code: 'INVALID_STEP_PARAMS',
-            message: loadBalanceError,
-            stepId: step.id,
-          });
-        }
-      }
-    }
-
-    issues.push(
-      ...getRecordCrudRichTextIssuesForSteps({
-        steps: recordSteps,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        objectIdByNameSingular,
-      }),
-    );
-
-    return issues;
+    return getWorkflowRecordStepMetadataIssues({
+      steps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectIdByNameSingular,
+    });
   }
 }
 
