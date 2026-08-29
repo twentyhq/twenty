@@ -31,3 +31,15 @@ export const classifyAgentChatTurnOutcome = ({
     failurePhase: outOfCredits ? 'credits_exhausted' : 'no_text',
   };
 };
+
+// Losing the stream claim says the turn's result may never have reached the
+// user, which is worth recording over "completed". It says nothing about a
+// failure that already happened, so those keep their own phase — otherwise a
+// turn that ran out of credits during a claim handover is filed as a plain
+// cancellation and the billing signal disappears.
+export const resolveSupersededTurnOutcome = (
+  outcome: AgentChatTurnOutcome,
+): AgentChatTurnOutcome =>
+  outcome.kind === 'failed'
+    ? outcome
+    : { kind: 'cancelled', reason: 'superseded' };

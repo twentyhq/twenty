@@ -1,4 +1,7 @@
-import { classifyAgentChatTurnOutcome } from 'src/engine/metadata-modules/ai/ai-chat/utils/classify-agent-chat-turn-outcome.util';
+import {
+  classifyAgentChatTurnOutcome,
+  resolveSupersededTurnOutcome,
+} from 'src/engine/metadata-modules/ai/ai-chat/utils/classify-agent-chat-turn-outcome.util';
 
 const baseTurn = {
   hasText: true,
@@ -65,5 +68,46 @@ describe('classifyAgentChatTurnOutcome', () => {
     expect(
       classifyAgentChatTurnOutcome({ ...baseTurn, outOfCredits: true }),
     ).toEqual({ kind: 'completed', outcome: 'answered' });
+  });
+});
+
+describe('resolveSupersededTurnOutcome', () => {
+  it('keeps a credits failure rather than filing it as a cancellation', () => {
+    expect(
+      resolveSupersededTurnOutcome({
+        kind: 'failed',
+        failurePhase: 'credits_exhausted',
+      }),
+    ).toEqual({ kind: 'failed', failurePhase: 'credits_exhausted' });
+  });
+
+  it('keeps a no_text failure', () => {
+    expect(
+      resolveSupersededTurnOutcome({ kind: 'failed', failurePhase: 'no_text' }),
+    ).toEqual({ kind: 'failed', failurePhase: 'no_text' });
+  });
+
+  it('supersedes a completed turn, whose answer may never have landed', () => {
+    expect(
+      resolveSupersededTurnOutcome({ kind: 'completed', outcome: 'answered' }),
+    ).toEqual({ kind: 'cancelled', reason: 'superseded' });
+  });
+
+  it('supersedes a turn that was awaiting a user answer', () => {
+    expect(
+      resolveSupersededTurnOutcome({
+        kind: 'completed',
+        outcome: 'awaiting_user',
+      }),
+    ).toEqual({ kind: 'cancelled', reason: 'superseded' });
+  });
+
+  it('supersedes a user cancellation', () => {
+    expect(
+      resolveSupersededTurnOutcome({
+        kind: 'cancelled',
+        reason: 'user_cancelled',
+      }),
+    ).toEqual({ kind: 'cancelled', reason: 'superseded' });
   });
 });

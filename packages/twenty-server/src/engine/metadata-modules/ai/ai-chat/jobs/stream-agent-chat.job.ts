@@ -37,7 +37,10 @@ import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-cha
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
 import { type AgentChatTurnOutcome } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-turn-outcome.type';
-import { classifyAgentChatTurnOutcome } from 'src/engine/metadata-modules/ai/ai-chat/utils/classify-agent-chat-turn-outcome.util';
+import {
+  classifyAgentChatTurnOutcome,
+  resolveSupersededTurnOutcome,
+} from 'src/engine/metadata-modules/ai/ai-chat/utils/classify-agent-chat-turn-outcome.util';
 import { findPendingQuestionPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-pending-question-part.util';
 import { AGENT_CHAT_CHECKPOINT_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-checkpoint-interval-ms.constant';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
@@ -838,7 +841,7 @@ export class StreamAgentChatJob {
     });
 
     if (!threadStatus || threadStatus.deletedAt) {
-      return { kind: 'cancelled', reason: 'superseded' };
+      return resolveSupersededTurnOutcome(outcome);
     }
 
     const userMessage = await userMessagePromise;
@@ -886,7 +889,7 @@ export class StreamAgentChatJob {
     );
 
     if (!totalsUpdate.affected) {
-      return { kind: 'cancelled', reason: 'superseded' };
+      return resolveSupersededTurnOutcome(outcome);
     }
 
     await this.agentChatService.notifyThreadUsageUpdated({
