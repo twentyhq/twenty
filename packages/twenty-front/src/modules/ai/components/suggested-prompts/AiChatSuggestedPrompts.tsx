@@ -5,11 +5,18 @@ import { type Editor } from '@tiptap/react';
 import { Button, LightButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
+import { getAiChatSuggestedPrompts } from '@/ai/components/suggested-prompts/getAiChatSuggestedPrompts';
+import { useAiChatSuggestedPromptsContext } from '@/ai/hooks/useAiChatSuggestedPromptsContext';
 import {
-  DEFAULT_SUGGESTED_PROMPTS,
-  type SuggestedPrompt,
-} from '@/ai/components/suggested-prompts/default-suggested-prompts';
+  AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
+  agentChatDraftsByThreadIdState,
+} from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { type SuggestedPrompt } from '@/ai/types/SuggestedPrompt';
+import { dispatchAgentChatSendMessageEvent } from '@/ai/utils/dispatchAgentChatSendMessageEvent';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const StyledContainer = styled.div<{ isCentered: boolean }>`
@@ -62,10 +69,32 @@ export const AiChatSuggestedPrompts = ({
 }: AiChatSuggestedPromptsProps) => {
   const { t: resolveMessage } = useLingui();
   const setAgentChatInput = useSetAtomState(agentChatInputState);
+  const setAgentChatDraftsByThreadId = useSetAtomState(
+    agentChatDraftsByThreadIdState,
+  );
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const aiChatSuggestedPromptsContext = useAiChatSuggestedPromptsContext();
 
-  const handleClick = (prompt: SuggestedPrompt) => {
-    const picked = pickRandom(prompt.prefillPrompts);
-    const text = resolveMessage(picked);
+  const suggestedPrompts = getAiChatSuggestedPrompts(
+    aiChatSuggestedPromptsContext,
+  );
+
+  const handleClick = (suggestedPrompt: SuggestedPrompt) => {
+    const text = resolveMessage(pickRandom(suggestedPrompt.prompts));
+
+    if (suggestedPrompt.mode === 'SEND') {
+      // Sending reads the draft rather than the editor, so it has to be written
+      // before the event is dispatched.
+      setAgentChatDraftsByThreadId((previousDrafts) => ({
+        ...previousDrafts,
+        [currentAiChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY]:
+          serializePlainTextAsAdvancedTextEditorDocument(text),
+      }));
+      dispatchAgentChatSendMessageEvent();
+      editor?.commands.clearContent();
+
+      return;
+    }
 
     setAgentChatInput(text);
     editor?.commands.setContent({
@@ -81,22 +110,22 @@ export const AiChatSuggestedPrompts = ({
         {t`What can I help you with?`}
       </StyledTitle>
       <StyledPromptList isCentered={isCentered}>
-        {DEFAULT_SUGGESTED_PROMPTS.map((prompt) =>
+        {suggestedPrompts.map((suggestedPrompt) =>
           isCentered ? (
             <Button
-              key={prompt.id}
-              Icon={prompt.Icon}
-              title={resolveMessage(prompt.label)}
+              key={suggestedPrompt.id}
+              Icon={suggestedPrompt.Icon}
+              title={resolveMessage(suggestedPrompt.label)}
               variant="secondary"
-              onClick={() => handleClick(prompt)}
+              onClick={() => handleClick(suggestedPrompt)}
             />
           ) : (
             <LightButton
-              key={prompt.id}
-              Icon={prompt.Icon}
-              title={resolveMessage(prompt.label)}
+              key={suggestedPrompt.id}
+              Icon={suggestedPrompt.Icon}
+              title={resolveMessage(suggestedPrompt.label)}
               accent="secondary"
-              onClick={() => handleClick(prompt)}
+              onClick={() => handleClick(suggestedPrompt)}
             />
           ),
         )}
