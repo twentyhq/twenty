@@ -1,0 +1,1 @@
+export function normalizeSearch(query: string): string[] { return query.toLowerCase().replace(/[^\w\s]/g, '').trim().split(/\s+/).filter(Boolean); }
