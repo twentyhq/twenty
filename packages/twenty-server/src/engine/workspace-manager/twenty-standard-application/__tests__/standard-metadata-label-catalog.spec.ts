@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { generateMessageId } from '@lingui/message-utils/generateMessageId';
 import {
-  generateMessageId,
   getMetadataLabelContext,
   TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
   type TranslatableMetadataName,
@@ -13,6 +13,10 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 import { AUTHORED_STANDARD_METADATA_MESSAGE_IDS } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { STANDARD_TIMELINE_ACTIVITY_TYPE_DEFINITIONS } from 'src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant';
 
+// The standard catalog is written by `lingui compile`, so it is keyed in
+// Lingui's id space -- hence Lingui's own generateMessageId here, not the
+// frozen application one, which keys a different catalog entirely.
+//
 // The read path resolves every standard metadata label through
 // generateMessageId(value, `${metadataName}.${property}`), while authoring
 // repeats that context as a literal on each msg site -- lingui extraction

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { generateMessageId } from 'twenty-shared/i18n';
+import { generateApplicationMessageId } from 'twenty-shared/i18n';
 
 import { compileCatalogToMessageIds } from '@/cli/utilities/translations/compile-catalog-to-message-ids';
 
@@ -14,8 +14,8 @@ describe('compileCatalogToMessageIds', () => {
     });
 
     expect(compiled).toEqual({
-      [generateMessageId('Export')]: 'Exporter',
-      [generateMessageId('Export', 'view.name')]: 'Export de vue',
+      [generateApplicationMessageId('Export')]: 'Exporter',
+      [generateApplicationMessageId('Export', 'view.name')]: 'Export de vue',
     });
   });
 
@@ -29,7 +29,9 @@ describe('compileCatalogToMessageIds', () => {
       },
     });
 
-    expect(compiled).toEqual({ [generateMessageId('Delete')]: 'Supprimer' });
+    expect(compiled).toEqual({
+      [generateApplicationMessageId('Delete')]: 'Supprimer',
+    });
   });
 
   it('reports a collision and keeps the later entry', () => {
@@ -46,10 +48,12 @@ describe('compileCatalogToMessageIds', () => {
     });
 
     expect(onCollision).toHaveBeenCalledWith({
-      messageId: generateMessageId('Export'),
+      messageId: generateApplicationMessageId('Export'),
       keptKey: ' Export',
       droppedKey: 'Export',
     });
-    expect(compiled).toEqual({ [generateMessageId('Export')]: 'second' });
+    expect(compiled).toEqual({
+      [generateApplicationMessageId('Export')]: 'second',
+    });
   });
 });

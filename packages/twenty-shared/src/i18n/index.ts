@@ -9,7 +9,7 @@
 
 export type { LocaleMessagesMap } from './create-i18n-instance-factory';
 export { createI18nInstanceFactory } from './create-i18n-instance-factory';
-export { generateMessageId } from './generate-message-id';
+export { generateApplicationMessageId } from './generate-application-message-id';
 export { getMetadataLabelContext } from './get-metadata-label-context';
 export { interpolateMessagePlaceholders } from './interpolate-message-placeholders';
 export type {

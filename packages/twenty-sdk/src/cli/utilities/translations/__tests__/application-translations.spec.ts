@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 
 import { collectTranslatableStrings } from '@/cli/utilities/translations/collect-translatable-strings';
 import { compileApplicationTranslations } from '@/cli/utilities/translations/compile-application-translations';
-import { generateMessageId } from 'twenty-shared/i18n';
+import { generateApplicationMessageId } from 'twenty-shared/i18n';
 import { type Manifest } from 'twenty-shared/application';
 
 const buildManifest = (overrides: Record<string, unknown>): Manifest =>
@@ -21,18 +21,20 @@ const buildManifest = (overrides: Record<string, unknown>): Manifest =>
     ...overrides,
   }) as unknown as Manifest;
 
-describe('generateMessageId', () => {
+describe('generateApplicationMessageId', () => {
   it('is deterministic and six characters long', () => {
-    expect(generateMessageId('Company')).toHaveLength(6);
-    expect(generateMessageId('Company')).toBe(generateMessageId('Company'));
+    expect(generateApplicationMessageId('Company')).toHaveLength(6);
+    expect(generateApplicationMessageId('Company')).toBe(
+      generateApplicationMessageId('Company'),
+    );
   });
 
   it('differs for different sources and contexts', () => {
-    expect(generateMessageId('Company')).not.toBe(
-      generateMessageId('Companies'),
+    expect(generateApplicationMessageId('Company')).not.toBe(
+      generateApplicationMessageId('Companies'),
     );
-    expect(generateMessageId('Cancel', 'subscription')).not.toBe(
-      generateMessageId('Cancel'),
+    expect(generateApplicationMessageId('Cancel', 'subscription')).not.toBe(
+      generateApplicationMessageId('Cancel'),
     );
   });
 });
@@ -134,7 +136,7 @@ describe('compileApplicationTranslations', () => {
     const result = await compileApplicationTranslations(appPath);
 
     expect(result).toEqual({
-      'fr-FR': { [generateMessageId('Company')]: 'Entreprise' },
+      'fr-FR': { [generateApplicationMessageId('Company')]: 'Entreprise' },
     });
   });
 
@@ -155,7 +157,7 @@ describe('compileApplicationTranslations', () => {
     const result = await compileApplicationTranslations(appPath);
 
     expect(result).toEqual({
-      'fr-FR': { [generateMessageId('Open', 'door')]: 'Ouvrir' },
+      'fr-FR': { [generateApplicationMessageId('Open', 'door')]: 'Ouvrir' },
     });
   });
 
