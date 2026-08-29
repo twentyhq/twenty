@@ -60,10 +60,10 @@ export class AdminPanelAiProviderResolver {
     @Args('providerConfig', { type: () => GraphQLJSON })
     providerConfig: unknown,
   ): Promise<boolean> {
-    return this.adminPanelAiProviderService.addProvider(
+    return this.adminPanelAiProviderService.addProvider({
       providerName,
       providerConfig,
-    );
+    });
   }
 
   @UseGuards(AdminPanelGuard)
@@ -96,10 +96,10 @@ export class AdminPanelAiProviderResolver {
     @Args('modelConfig', { type: () => GraphQLJSON })
     modelConfig: unknown,
   ): Promise<boolean> {
-    return this.adminPanelAiProviderService.addModelToProvider(
+    return this.adminPanelAiProviderService.addModelToProvider({
       providerName,
       modelConfig,
-    );
+    });
   }
 
   @UseGuards(AdminPanelGuard)
@@ -108,9 +108,9 @@ export class AdminPanelAiProviderResolver {
     @Args('providerName', { type: () => String }) providerName: string,
     @Args('modelName', { type: () => String }) modelName: string,
   ): Promise<boolean> {
-    return this.adminPanelAiProviderService.removeModelFromProvider(
+    return this.adminPanelAiProviderService.removeModelFromProvider({
       providerName,
       modelName,
-    );
+    });
   }
 }

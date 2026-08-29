@@ -41,9 +41,12 @@ describe('AdminPanelAiProviderService', () => {
   };
 
   const addProvider = () =>
-    service.addProvider('my-gateway', {
-      npm: '@ai-sdk/openai-compatible',
-      baseUrl: 'https://gateway.internal',
+    service.addProvider({
+      providerName: 'my-gateway',
+      providerConfig: {
+        npm: '@ai-sdk/openai-compatible',
+        baseUrl: 'https://gateway.internal',
+      },
     });
 
   beforeEach(async () => {
@@ -102,7 +105,10 @@ describe('AdminPanelAiProviderService', () => {
       givenInstance({ seatCount: 1 });
 
       await expect(
-        service.addProvider('my-gateway', { npm: 'not-an-ai-sdk-package' }),
+        service.addProvider({
+          providerName: 'my-gateway',
+          providerConfig: { npm: 'not-an-ai-sdk-package' },
+        }),
       ).rejects.toThrow('Invalid provider configuration');
       expect(twentyConfigService.set).not.toHaveBeenCalled();
     });
@@ -111,9 +117,12 @@ describe('AdminPanelAiProviderService', () => {
       givenInstance({ seatCount: 1 });
 
       await expect(
-        service.addProvider('not a slug', {
-          npm: '@ai-sdk/openai-compatible',
-          baseUrl: 'https://gateway.internal',
+        service.addProvider({
+          providerName: 'not a slug',
+          providerConfig: {
+            npm: '@ai-sdk/openai-compatible',
+            baseUrl: 'https://gateway.internal',
+          },
         }),
       ).rejects.toThrow('Invalid provider name');
     });
@@ -124,9 +133,9 @@ describe('AdminPanelAiProviderService', () => {
       givenInstance({ seatCount: MAX_SEATS_WITHOUT_ENTERPRISE_KEY + 1 });
 
       await expect(
-        service.addModelToProvider('my-gateway', {
-          name: 'gpt-4o',
-          label: 'GPT-4o',
+        service.addModelToProvider({
+          providerName: 'my-gateway',
+          modelConfig: { name: 'gpt-4o', label: 'GPT-4o' },
         }),
       ).rejects.toMatchObject({
         code: EnterpriseExceptionCode.ENTERPRISE_SEAT_THRESHOLD_EXCEEDED,

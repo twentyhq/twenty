@@ -98,10 +98,13 @@ export class AdminPanelAiProviderService {
 
   // Both configs arrive as untyped JSON from the GraphQL layer, so they are
   // taken as unknown and given their shape by the schemas below.
-  async addProvider(
-    providerName: string,
-    providerConfig: unknown,
-  ): Promise<boolean> {
+  async addProvider({
+    providerName,
+    providerConfig,
+  }: {
+    providerName: string;
+    providerConfig: unknown;
+  }): Promise<boolean> {
     await this.assertCustomAiProviderAccess();
 
     if (!PROVIDER_NAME_PATTERN.test(providerName)) {
@@ -145,10 +148,13 @@ export class AdminPanelAiProviderService {
     return true;
   }
 
-  async addModelToProvider(
-    providerName: string,
-    modelConfig: unknown,
-  ): Promise<boolean> {
+  async addModelToProvider({
+    providerName,
+    modelConfig,
+  }: {
+    providerName: string;
+    modelConfig: unknown;
+  }): Promise<boolean> {
     await this.assertCustomAiProviderAccess();
 
     const validatedModelConfig =
@@ -199,10 +205,13 @@ export class AdminPanelAiProviderService {
     return true;
   }
 
-  async removeModelFromProvider(
-    providerName: string,
-    modelName: string,
-  ): Promise<boolean> {
+  async removeModelFromProvider({
+    providerName,
+    modelName,
+  }: {
+    providerName: string;
+    modelName: string;
+  }): Promise<boolean> {
     const customProviders = {
       ...this.twentyConfigService.get('AI_PROVIDERS'),
     };
