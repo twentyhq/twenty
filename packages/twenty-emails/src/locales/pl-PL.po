@@ -275,7 +275,6 @@ msgstr "Przewodnik użytkownika"
 
 #. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
-#: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
 msgstr "Sprawdź domenę"
 

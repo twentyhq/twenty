@@ -275,7 +275,6 @@ msgstr "사용자 안내서"
 
 #. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
-#: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
 msgstr "도메인 검증"
 
