@@ -41,9 +41,9 @@ describe('createHtmlToTextConverter', () => {
     expect(result).toContain('Hello');
   });
 
-  describe('with shouldSkipReplyQuotationExtraction', () => {
+  describe('with shouldSkipHtmlReplyQuotationExtraction', () => {
     const convertSkippingPlaner = createHtmlToTextConverter({
-      shouldSkipReplyQuotationExtraction: true,
+      shouldSkipHtmlReplyQuotationExtraction: true,
     });
 
     it('should still convert and sanitize HTML', () => {

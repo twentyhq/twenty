@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { messagingHtmlConversionContextStorage } from 'src/modules/messaging/message-import-manager/storage/messaging-html-conversion-context.storage';
+import { getMessagingHtmlConversionContext } from 'src/modules/messaging/message-import-manager/storage/messaging-html-conversion-context.storage';
 import { createHtmlToTextConverter } from 'src/modules/messaging/message-import-manager/utils/create-html-to-text-converter.util';
 import { extractTextWithoutReplyQuotations } from 'src/modules/messaging/message-import-manager/utils/extract-text-without-reply-quotations.util';
 import { normalizeMessageText } from 'src/modules/messaging/message-import-manager/utils/normalize-message-text.util';
@@ -13,10 +13,10 @@ import { sanitizeString } from 'src/modules/messaging/message-import-manager/uti
 const htmlToTextConverters = new Map<boolean, (html: string) => string>();
 
 const getHtmlToTextConverter = (
-  shouldSkipReplyQuotationExtraction: boolean,
+  shouldSkipHtmlReplyQuotationExtraction: boolean,
 ): ((html: string) => string) => {
   const existingConverter = htmlToTextConverters.get(
-    shouldSkipReplyQuotationExtraction,
+    shouldSkipHtmlReplyQuotationExtraction,
   );
 
   if (existingConverter !== undefined) {
@@ -24,10 +24,10 @@ const getHtmlToTextConverter = (
   }
 
   const converter = createHtmlToTextConverter({
-    shouldSkipReplyQuotationExtraction,
+    shouldSkipHtmlReplyQuotationExtraction,
   });
 
-  htmlToTextConverters.set(shouldSkipReplyQuotationExtraction, converter);
+  htmlToTextConverters.set(shouldSkipHtmlReplyQuotationExtraction, converter);
 
   return converter;
 };
@@ -39,14 +39,14 @@ export const extractMessageBodyText = ({
   text?: string | null;
   html?: string | null;
 }): string => {
-  const shouldSkipReplyQuotationExtraction =
-    messagingHtmlConversionContextStorage.getStore()
+  const shouldSkipHtmlReplyQuotationExtraction =
+    getMessagingHtmlConversionContext()
       ?.shouldSkipHtmlReplyQuotationExtraction ?? false;
 
   const candidate = isNonEmptyString(text)
     ? text
     : isNonEmptyString(html)
-      ? getHtmlToTextConverter(shouldSkipReplyQuotationExtraction)(html)
+      ? getHtmlToTextConverter(shouldSkipHtmlReplyQuotationExtraction)(html)
       : '';
 
   const textWithoutReplyQuotations =

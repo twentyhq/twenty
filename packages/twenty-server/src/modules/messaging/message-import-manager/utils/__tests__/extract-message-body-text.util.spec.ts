@@ -1,5 +1,6 @@
 import { type Email as ParsedMail } from 'postal-mime';
 
+import { withMessagingHtmlConversionContext } from 'src/modules/messaging/message-import-manager/storage/messaging-html-conversion-context.storage';
 import { extractMessageBodyText } from 'src/modules/messaging/message-import-manager/utils/extract-message-body-text.util';
 
 describe('extractMessageBodyText', () => {
@@ -347,5 +348,33 @@ Developer Support`);
     expect(result).toBe(
       'See https://example.com/path%2Fto%2Ffile and a 100%20 budget cut',
     );
+  });
+
+  describe('lightweight html conversion (planer skipped)', () => {
+    const quotedReplyHtml =
+      '<div>Thanks, that works for me. See you Tuesday.</div>' +
+      '<div class="gmail_quote">On Mon, Aug 28, 2026 at 3:00 PM John Doe ' +
+      '&lt;john@example.com&gt; wrote:<blockquote>Are you available Tuesday ' +
+      'for the sync?</blockquote></div>';
+
+    it('still strips the quoted reply at the text level when planer is skipped', () => {
+      const result = withMessagingHtmlConversionContext(
+        { shouldSkipHtmlReplyQuotationExtraction: true },
+        () => extractMessageBodyText({ html: quotedReplyHtml }),
+      );
+
+      expect(result).toContain('Thanks, that works for me. See you Tuesday.');
+      expect(result).not.toContain('Are you available Tuesday');
+    });
+
+    it('produces the same result as the default path for a quoted reply', () => {
+      const withPlaner = extractMessageBodyText({ html: quotedReplyHtml });
+      const withoutPlaner = withMessagingHtmlConversionContext(
+        { shouldSkipHtmlReplyQuotationExtraction: true },
+        () => extractMessageBodyText({ html: quotedReplyHtml }),
+      );
+
+      expect(withoutPlaner).toBe(withPlaner);
+    });
   });
 });

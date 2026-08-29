@@ -23,7 +23,7 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
-import { messagingHtmlConversionContextStorage } from 'src/modules/messaging/message-import-manager/storage/messaging-html-conversion-context.storage';
+import { withMessagingHtmlConversionContext } from 'src/modules/messaging/message-import-manager/storage/messaging-html-conversion-context.storage';
 import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
@@ -126,16 +126,15 @@ export class MessagingMessagesImportService {
               workspaceId,
             );
 
-          const allMessages =
-            await messagingHtmlConversionContextStorage.run(
-              { shouldSkipHtmlReplyQuotationExtraction },
-              () =>
-                this.messagingGetMessagesService.getMessages(
-                  messageIdsToFetch,
-                  connectedAccount,
-                  messageChannel,
-                ),
-            );
+          const allMessages = await withMessagingHtmlConversionContext(
+            { shouldSkipHtmlReplyQuotationExtraction },
+            () =>
+              this.messagingGetMessagesService.getMessages(
+                messageIdsToFetch,
+                connectedAccount,
+                messageChannel,
+              ),
+          );
 
           const messageFolders = messageChannel.messageFolders ?? [];
           const foldersWithExternalId = messageFolders.filter(
