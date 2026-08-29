@@ -1,0 +1,1 @@
+export function buildAuditDiff(oldObj: any, newObj: any): Record<string, { from: any; to: any }> { const diff: Record<string, any> = {}; for (const k of new Set([...Object.keys(oldObj || {}), ...Object.keys(newObj || {})])) { if (oldObj?.[k] !== newObj?.[k]) diff[k] = { from: oldObj?.[k], to: newObj?.[k] }; } return diff; }
