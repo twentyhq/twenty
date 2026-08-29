@@ -37,6 +37,13 @@
         "config": "{projectRoot}/vitest.config.ts"
       }
     },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-client-sdk",
+        "command": "npx vitest run --config vitest.config.ts"
+      }
+    },
     "set-local-version": {},
     "typecheck": {},
     "lint": {}
