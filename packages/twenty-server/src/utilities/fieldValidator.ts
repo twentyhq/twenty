@@ -1,0 +1,1 @@
+export function validatePattern(value: string, pattern: string): boolean { try { return new RegExp(pattern).test(value); } catch { return false; } }
