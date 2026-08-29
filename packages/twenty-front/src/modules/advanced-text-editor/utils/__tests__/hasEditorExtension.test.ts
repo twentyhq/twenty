@@ -23,4 +23,11 @@ describe('hasEditorExtension', () => {
     expect(hasEditorExtension(editor, 'italic')).toBe(false);
     expect(hasEditorExtension(editor, 'heading')).toBe(false);
   });
+
+  it('should return false safely when editor or extensionManager is null or undefined', () => {
+    expect(hasEditorExtension(null, 'heading')).toBe(false);
+    expect(hasEditorExtension(undefined, 'heading')).toBe(false);
+    expect(hasEditorExtension({ extensionManager: null } as any, 'heading')).toBe(false);
+    expect(hasEditorExtension({ extensionManager: { extensions: null } } as any, 'heading')).toBe(false);
+  });
 });
