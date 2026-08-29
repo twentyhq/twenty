@@ -3,22 +3,17 @@ import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuIt
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { TabSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/TabSettingsPlacementSection';
 import { SingleWidgetTabVisibilityDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/SingleWidgetTabVisibilityDropdownContent';
 import { TAB_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/TabSettingsSelectableItemIds';
 import { useTranslatedVisibilityLabel } from '@/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel';
+import { getTabSettingsPlacementItems } from '@/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useLingui } from '@lingui/react/macro';
-import {
-  IconChevronLeft,
-  IconChevronRight,
-  IconEyeX,
-  IconPinned,
-  IconRefreshDot,
-  IconTrash,
-} from 'twenty-ui/icon';
+import { IconEyeX, IconRefreshDot, IconTrash } from 'twenty-ui/icon';
 import { AppTooltip } from 'twenty-ui/surfaces';
 
 const RESET_TAB_TO_DEFAULT_MODAL_ID =
@@ -30,6 +25,7 @@ type SingleWidgetTabSettingsContentProps = {
   pageLayoutId: string;
   singleWidget: PageLayoutWidget;
   canSetAsPinned: boolean;
+  canUnpin: boolean;
   canMoveLeft: boolean;
   canMoveRight: boolean;
   isResetToDefaultDisabled: boolean;
@@ -37,6 +33,7 @@ type SingleWidgetTabSettingsContentProps = {
   onMoveLeft: () => void;
   onMoveRight: () => void;
   onSetAsPinned: () => void;
+  onUnpin: () => void;
   onResetToDefault: () => void;
   onDelete: () => void;
 };
@@ -45,6 +42,7 @@ export const SingleWidgetTabSettingsContent = ({
   pageLayoutId,
   singleWidget,
   canSetAsPinned,
+  canUnpin,
   canMoveLeft,
   canMoveRight,
   isResetToDefaultDisabled,
@@ -52,6 +50,7 @@ export const SingleWidgetTabSettingsContent = ({
   onMoveLeft,
   onMoveRight,
   onSetAsPinned,
+  onUnpin,
   onResetToDefault,
   onDelete,
 }: SingleWidgetTabSettingsContentProps) => {
@@ -69,10 +68,19 @@ export const SingleWidgetTabSettingsContent = ({
     openModal(RESET_TAB_TO_DEFAULT_MODAL_ID);
   };
 
+  const placementItems = getTabSettingsPlacementItems({
+    canSetAsPinned,
+    canUnpin,
+    canMoveLeft,
+    canMoveRight,
+    onSetAsPinned,
+    onUnpin,
+    onMoveLeft,
+    onMoveRight,
+  });
+
   const selectableItemIds = [
-    ...(canSetAsPinned ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.SET_AS_PINNED] : []),
-    ...(canMoveLeft ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_LEFT] : []),
-    ...(canMoveRight ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_RIGHT] : []),
+    ...placementItems.map((item) => item.id),
     TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
     TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT,
     ...(canDelete ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.DELETE] : []),
@@ -81,47 +89,7 @@ export const SingleWidgetTabSettingsContent = ({
   return (
     <>
       <SidePanelList selectableItemIds={selectableItemIds}>
-        <SidePanelGroup heading={t`Placement`}>
-          {canSetAsPinned && (
-            <SelectableListItem
-              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.SET_AS_PINNED}
-              onEnter={onSetAsPinned}
-            >
-              <CommandMenuItem
-                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.SET_AS_PINNED}
-                Icon={IconPinned}
-                label={t`Pin tab`}
-                onClick={onSetAsPinned}
-              />
-            </SelectableListItem>
-          )}
-          {canMoveLeft && (
-            <SelectableListItem
-              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_LEFT}
-              onEnter={onMoveLeft}
-            >
-              <CommandMenuItem
-                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_LEFT}
-                Icon={IconChevronLeft}
-                label={t`Move left`}
-                onClick={onMoveLeft}
-              />
-            </SelectableListItem>
-          )}
-          {canMoveRight && (
-            <SelectableListItem
-              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_RIGHT}
-              onEnter={onMoveRight}
-            >
-              <CommandMenuItem
-                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_RIGHT}
-                Icon={IconChevronRight}
-                label={t`Move right`}
-                onClick={onMoveRight}
-              />
-            </SelectableListItem>
-          )}
-        </SidePanelGroup>
+        <TabSettingsPlacementSection items={placementItems} />
         <SidePanelGroup heading={t`Manage`}>
           <SelectableListItem
             itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}

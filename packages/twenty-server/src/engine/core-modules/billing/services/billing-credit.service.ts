@@ -5,7 +5,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { addDays } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 
-import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { type BillingCreditGrantEntity } from 'src/engine/core-modules/billing/entities/billing-credit-grant.entity';
 import { type BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { type BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
@@ -16,8 +15,6 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 // Used when a workspace has no subscription yet, which happens for rewards
@@ -48,8 +45,6 @@ export class BillingCreditService {
     private readonly billingUsageCacheService: BillingUsageCacheService,
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    @InjectWorkspaceScopedRepository(BillingCustomerEntity)
-    private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
   ) {}
 
   async grantCredits(
@@ -91,12 +86,6 @@ export class BillingCreditService {
       params,
       subscription,
     );
-
-    await this.billingCreditGrantService.materializeLegacyBalance({
-      workspaceId,
-      effectiveAt,
-      expiresAt,
-    });
 
     const grant = await this.billingCreditGrantService.createGrant({
       ...params,
@@ -215,51 +204,12 @@ export class BillingCreditService {
     return grant;
   }
 
-  // The mirror column only exists once a workspace has a billingCustomer row,
-  // so a grant written before that (an onboarding reward at signup) mirrors
-  // onto nothing. Called when the row appears, so rolling this release back
-  // does not lose those credits. Remove along with creditBalanceMicro.
-  async reconcileMirroredBalance(workspaceId: string): Promise<void> {
-    if (!this.billingService.isBillingEnabled()) {
-      return;
-    }
-
-    await this.cacheLockService.withLock(
-      () => this.syncMirrorBalance(workspaceId),
-      buildBillingCreditStateLockKey(workspaceId),
-    );
-  }
-
-  private async syncMirrorBalance(workspaceId: string): Promise<number> {
-    const activeCreditsMicro =
-      await this.billingCreditGrantService.getActiveCreditsMicro(workspaceId);
-
-    // Until the backfill reaches a workspace the column is still the only copy
-    // of its balance, and an empty ledger sums to zero. Callers materialize the
-    // legacy balance before writing, but the guard belongs here too rather than
-    // resting on an ordering contract between services.
-    if (
-      activeCreditsMicro === 0 &&
-      !(await this.billingCreditGrantService.hasAnyGrant(workspaceId))
-    ) {
-      return 0;
-    }
-
-    await this.billingCustomerRepository.update(
-      workspaceId,
-      {},
-      { creditBalanceMicro: activeCreditsMicro },
-    );
-
-    return activeCreditsMicro;
-  }
-
   // Keeps everything that reads a credit balance consistent with the ledger:
-  // the mirror column, the Redis counter that gates usage, and the cached
-  // subscription the front reads. Public so a caller writing several grants at
-  // once pays for this once; such a caller must hold
-  // buildBillingCreditStateLockKey for its own ledger writes and this refresh
-  // together, which is why this does not take the lock itself.
+  // the Redis counter that gates usage and the cached subscription the front
+  // reads. Public so a caller writing several grants at once pays for this
+  // once; such a caller must hold buildBillingCreditStateLockKey for its own
+  // ledger writes and this refresh together, which is why this does not take
+  // the lock itself.
   async refreshWorkspaceCreditState({
     workspaceId,
     availableDeltaMicro,
@@ -277,8 +227,6 @@ export class BillingCreditService {
     // Saves a re-read for a caller that already has it in hand.
     subscription?: BillingSubscriptionEntity;
   }): Promise<void> {
-    await this.syncMirrorBalance(workspaceId);
-
     const subscription =
       knownSubscription ??
       (await this.billingSubscriptionService.getCurrentBillingSubscription({

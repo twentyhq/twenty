@@ -58,6 +58,21 @@ jobs:
         ports:
           - 6379:6379
     steps:
+      # Audit only: records every outbound endpoint this job touches in the
+      # StepSecurity insights, blocks nothing, changes no behavior. This is
+      # the observation phase for the QA Scout containment follow-up: the
+      # agent step's allowlist scopes what it does, not where the runner can
+      # reach, so once the job's endpoint set is known and stable from a few
+      # weeks of audit data, egress-policy block with that allowlist makes
+      # real-time exfiltration impossible rather than merely unscoped.
+      - name: Harden runner (egress audit)
+        # Fail-open while auditing: an observer must never redden the status
+        # check. The eventual block-mode flip drops this so it fails closed.
+        continue-on-error: true
+        uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
+        with:
+          egress-policy: audit
+
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
@@ -251,32 +266,42 @@ jobs:
           echo "run=true" >> "$GITHUB_OUTPUT"
           echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
 
-      # The agent step runs under the workflow's read-only token and gets no
-      # write capability; the PR comment is posted by the qa-scout-comment job
-      # from the uploaded verdict, so untrusted page/log content the agent
-      # reads can never reach a privileged credential.
+      # The Scout invokes the Claude Code CLI directly rather than through
+      # claude-code-action: the action rejects push events outright
+      # ("Unsupported event type: push", still true at its latest version),
+      # which silently killed the post-merge mode this Scout exists for, and
+      # its GitHub bootstrap was the only reason a GitHub token entered this
+      # step at all. Direct invocation runs on every trigger and leaves the
+      # agent holding no GitHub credential whatsoever; the PR comment is
+      # posted by the qa-scout-comment job from the uploaded verdict, so
+      # untrusted page/log content can never reach a privileged credential.
       # The Bash allowlist scopes the agent to its task; it is not the
       # containment boundary (psql alone is arbitrarily powerful in this
-      # disposable env). Containment is the absence of write credentials in
-      # this step, the scrub step, and Actions secret masking on the token.
+      # disposable env). Containment is the absence of credentials beyond
+      # inference, the scrub step, and Actions secret masking on the token.
       - name: QA Scout / Run
         id: qa-scout-run
         if: ${{ !cancelled() && steps.qa-scout-pr.outputs.run == 'true' }}
         continue-on-error: true
         timeout-minutes: 15
-        uses: anthropics/claude-code-action@ac7e24bf2938964b8ab203e417a2773802392ddd # v1.0.146
-        with:
-          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          # The action needs a GitHub token to bootstrap; without one it tries
-          # an OIDC exchange, which this workflow's permissions rightly refuse.
-          # The workflow token is contents:read only, so the agent still holds
-          # no write capability.
-          github_token: ${{ github.token }}
-          prompt: |
-            Read .claude/skills/qa-scout/SKILL.md and follow it exactly. This is
-            the CI invocation: every path and credential in the skill's Inputs
-            table applies verbatim.
-          claude_args: '--max-turns 120 --model opus --mcp-config /tmp/qa-scout/mcp.json --allowedTools "Read,Grep,Glob,Write,Bash(cat *),Bash(tail *),Bash(head *),Bash(wc *),Bash(ls *),Bash(grep *),Bash(mkdir *),Bash(sleep *),Bash(date *),Bash(psql *),mcp__playwright"'
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          PGPASSWORD: postgres
+        run: |
+          set -euo pipefail
+          npm install -g @anthropic-ai/claude-code@2.1.247
+          # stream-json teed into the artifact tree, ahead of the scrub,
+          # keeps per-turn detail and permission denials so allowlist tuning
+          # reads real data.
+          claude -p "Read .claude/skills/qa-scout/SKILL.md and follow it exactly. This is the CI invocation: every path and credential in the skill's Inputs table applies verbatim." \
+            --max-turns 150 \
+            --model opus \
+            --add-dir /tmp/qa-scout \
+            --strict-mcp-config \
+            --mcp-config /tmp/qa-scout/mcp.json \
+            --allowedTools "Read,Grep,Glob,Write,TodoWrite,Bash(cat *),Bash(tail *),Bash(head *),Bash(wc *),Bash(ls *),Bash(grep *),Bash(jq *),Bash(echo *),Bash(diff *),Bash(sort *),Bash(uniq *),Bash(cut *),Bash(tr *),Bash(mkdir *),Bash(sleep *),Bash(date *),Bash(psql *),mcp__playwright" \
+            --output-format stream-json --verbose \
+            | tee /tmp/qa-scout/execution.json
 
       # The agent process necessarily holds the inference credential, and a
       # prompt-injected agent could copy it into any file it can write. The
@@ -311,6 +336,8 @@ jobs:
             echo "## QA Scout"
             if [ -f /tmp/qa-scout/output/report.md ]; then
               cat /tmp/qa-scout/output/report.md
+            elif [ -f /tmp/qa-scout/output/verdict.json ]; then
+              jq -r '"**\(.verdict)**: \(.headline // "no headline recorded")\n\n_Full report missing (agent stopped early); details in the qa-scout-report artifact._"' /tmp/qa-scout/output/verdict.json
             elif [ "$SCOUT_RUN" = "true" ]; then
               echo "No report produced (agent run failed or timed out); see the qa-scout-report artifact and step logs."
             elif [ "$SCOUT_PREP_OUTCOME" = "failure" ]; then
@@ -332,6 +359,7 @@ jobs:
             /tmp/qa-scout/browser/
             /tmp/qa-scout/server.log
             /tmp/qa-scout/worker.log
+            /tmp/qa-scout/execution.json
           if-no-files-found: ignore
           retention-days: 14
 
@@ -402,9 +430,16 @@ jobs:
           fi
           VERDICT_FILE=$(find qa-scout-report -name verdict.json | head -1 || true)
           REPORT_FILE=$(find qa-scout-report -name report.md | head -1 || true)
-          if [ -z "$VERDICT_FILE" ] || [ -z "$REPORT_FILE" ]; then
-            echo "No verdict or report in the artifact; nothing to post."
+          if [ -z "$VERDICT_FILE" ]; then
+            echo "No verdict in the artifact; nothing to post."
             exit 0
+          fi
+          # A run killed on turns or time can leave the verdict without the
+          # report; a synthesized body beats silence on a FAIL.
+          if [ -z "$REPORT_FILE" ]; then
+            REPORT_FILE=report-fallback.md
+            jq -r '"**\(.verdict)**: \(.headline // "no headline recorded")\n\n" + ([.scenarios[]? | "- \(.name): \(.result)"] | join("\n")) + "\n\n_Full report missing (agent stopped early); details in the qa-scout-report artifact._"' \
+              "$VERDICT_FILE" > "$REPORT_FILE"
           fi
           VERDICT=$(jq -r '.verdict // empty' "$VERDICT_FILE")
           case "$VERDICT" in

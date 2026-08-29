@@ -84,7 +84,10 @@ export class WorkspaceInvitationService {
         throw new Error('Invalid invitation token');
       }
 
-      if (!appToken.context?.email || appToken.context?.email !== email) {
+      if (
+        !appToken.context?.email ||
+        appToken.context.email.toLowerCase() !== email.toLowerCase()
+      ) {
         throw new Error('Email does not match the invitation');
       }
 
@@ -108,7 +111,9 @@ export class WorkspaceInvitationService {
       .where('"appToken".type IN (:...types)', {
         types: INVITATION_APP_TOKEN_TYPES,
       })
-      .andWhere('"appToken".context->>\'email\' = :email', { email })
+      .andWhere('lower("appToken".context->>\'email\') = lower(:email)', {
+        email,
+      })
       .andWhere('appToken.deletedAt IS NULL')
       .andWhere('appToken.expiresAt > :now', {
         now: new Date(),
@@ -123,7 +128,9 @@ export class WorkspaceInvitationService {
         type: In(INVITATION_APP_TOKEN_TYPES),
         deletedAt: IsNull(),
         expiresAt: MoreThan(new Date()),
-        context: Raw((alias) => `${alias} ->> 'email' = :email`, { email }),
+        context: Raw((alias) => `lower(${alias} ->> 'email') = lower(:email)`, {
+          email,
+        }),
       },
     });
   }
@@ -170,7 +177,7 @@ export class WorkspaceInvitationService {
   ) {
     const maybeWorkspaceInvitation = await this.getOneWorkspaceInvitation(
       workspace.id,
-      email.toLowerCase(),
+      email,
     );
 
     if (maybeWorkspaceInvitation) {
@@ -203,8 +210,8 @@ export class WorkspaceInvitationService {
       workspaceId: workspace.id,
       type: In(INVITATION_APP_TOKEN_TYPES),
       expiresAt: LessThanOrEqual(new Date()),
-      context: Raw((alias) => `${alias} ->> 'email' = :email`, {
-        email: email.toLowerCase(),
+      context: Raw((alias) => `lower(${alias} ->> 'email') = lower(:email)`, {
+        email,
       }),
     });
 

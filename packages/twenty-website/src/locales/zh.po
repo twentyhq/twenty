@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-26 18:42\n"
+"PO-Revision-Date: 2026-08-28 16:20\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -1487,6 +1487,11 @@ msgstr "Benjamin Reynolds"
 #: src/sections/testimonials/partner-testimonials.data.ts
 msgid "Bertrams"
 msgstr "Bertrams"
+
+#. js-lingui-id: CrZWSz
+#: src/partner-application/partner-application-copy.ts
+msgid "Best proof first: a live Twenty instance URL, a public repo, or a YouTube link. Loom, Drive and file links are accepted but slower to review."
+msgstr "请优先提供最有力的证明：可访问的 Twenty 实例 URL、公开代码仓库或 YouTube 链接。也接受 Loom、Drive 和文件链接，但审核速度会更慢。"
 
 #. js-lingui-id: BSmDFu
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4699,11 +4704,6 @@ msgstr "与任何常规对象一样，给你的任务和公司添加一些自定
 msgid "Link field"
 msgstr "链接字段"
 
-#. js-lingui-id: YOe6r4
-#: src/partner-application/partner-application-copy.ts
-msgid "Link that shows the work (Loom, GitHub, Notion, Drive, public write-up…). No public workspace? Share a short Loom."
-msgstr "展示该工作的链接（Loom、GitHub、Notion、Drive、公开文档等）。没有公共工作区？请分享一个简短的 Loom。"
-
 #. js-lingui-id: gggTBm
 #: src/sections/footer/footer.data.ts
 msgid "LinkedIn"
@@ -7220,6 +7220,11 @@ msgstr "成功计划加价"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Sudan 🇸🇩"
 msgstr "苏丹 🇸🇩"
+
+#. js-lingui-id: 388eZi
+#: src/partners-marketplace/marketplace-copy.ts
+msgid "Super partner"
+msgstr "超级合作伙伴"
 
 #. js-lingui-id: XYLcNv
 #: src/sections/pricing-plan-table/plan-table-data.ts

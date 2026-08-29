@@ -40,15 +40,22 @@ export const applyToBrief = async (
 
     const briefs = await findOpportunityForApply(client, opportunityId);
     const brief = briefs.opportunities?.edges?.[0]?.node;
-    if (!brief || brief.isListed !== true) return errorResponse('BRIEF_NOT_OPEN');
+    if (!brief || brief.isListed !== true)
+      return errorResponse('BRIEF_NOT_OPEN');
 
     const trimmedPitch = pitch.trim();
-    if (trimmedPitch.length < MIN_PITCH_LENGTH) return errorResponse('PITCH_TOO_SHORT');
+    if (trimmedPitch.length < MIN_PITCH_LENGTH)
+      return errorResponse('PITCH_TOO_SHORT');
 
-    const duplicates = await findDuplicateApplication(client, opportunityId, resolved.partnerId);
+    const duplicates = await findDuplicateApplication(
+      client,
+      opportunityId,
+      resolved.partnerId,
+    );
     const existing = duplicates.applications?.edges?.[0]?.node;
     if (existing?.id) {
-      if (isNonEmptyString(existing.pitch)) return errorResponse('ALREADY_APPLIED');
+      if (isNonEmptyString(existing.pitch))
+        return errorResponse('ALREADY_APPLIED');
 
       // Fill the pitch in place and leave the state alone — an INVITED row records that
       // Twenty pushed this brief at the partner. Guard on the state rather than on the
@@ -74,7 +81,10 @@ export const applyToBrief = async (
 
     const applicationId = created.createApplication?.id;
     if (!isNonEmptyString(applicationId)) {
-      return failureResponse('apply-to-brief', new Error('createApplication returned no id'));
+      return failureResponse(
+        'apply-to-brief',
+        new Error('createApplication returned no id'),
+      );
     }
 
     return { ok: true, applicationId };

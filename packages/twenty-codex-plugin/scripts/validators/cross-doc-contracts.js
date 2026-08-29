@@ -106,7 +106,7 @@ const assertFrontComponentGuidance = (fail) => {
     "type: 'STANDALONE_PAGE'",
     'NavigationMenuItemType.PAGE_LAYOUT',
     'PageLayoutTabLayoutMode.CANVAS',
-    'gridPosition: { row: 0, column: 0, rowSpan: 12, columnSpan: 12 }',
+    'position: { layoutMode: PageLayoutTabLayoutMode.CANVAS }',
     '12 x 12 fill pattern',
     'Full-Page Layout Guidance',
     'black screen',

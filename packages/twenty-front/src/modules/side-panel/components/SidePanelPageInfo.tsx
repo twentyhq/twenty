@@ -1,7 +1,5 @@
-import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconColumnInsertRight } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
@@ -10,7 +8,7 @@ import { SidePanelFolderInfo } from '@/side-panel/components/SidePanelFolderInfo
 import { SidePanelLinkInfo } from '@/side-panel/components/SidePanelLinkInfo';
 import { SidePanelMultipleRecordsInfo } from '@/side-panel/components/SidePanelMultipleRecordsInfo';
 import { SidePanelObjectViewRecordInfo } from '@/side-panel/components/SidePanelObjectViewRecordInfo';
-import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
+import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { SidePanelPageLayoutInfo } from '@/side-panel/components/SidePanelPageLayoutInfo';
 import { SidePanelRecordInfo } from '@/side-panel/components/SidePanelRecordInfo';
 import { SidePanelWorkflowStepInfo } from '@/side-panel/components/SidePanelWorkflowStepInfo';
@@ -20,12 +18,7 @@ import { NavigationMenuItemType, SidePanelPages } from 'twenty-shared/types';
 
 import { type SidePanelContextChipProps } from '@/side-panel/components/SidePanelContextChip';
 import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-const StyledPageTitle = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-`;
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type SidePanelPageInfoProps = {
   pageChip: SidePanelContextChipProps | undefined;
@@ -120,21 +113,17 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
 
   if (pageChip.page?.page === SidePanelPages.NavigationMenuAddItem) {
     return (
-      <SidePanelPageInfoLayout
+      <HeaderIdentifier
         icon={
           <IconColumnInsertRight
             size={theme.icon.size.md}
             color={theme.font.color.tertiary}
           />
         }
-        title={<OverflowingTextWithTooltip text={pageChip.text ?? ''} />}
+        title={pageChip.text ?? ''}
       />
     );
   }
 
-  return (
-    <StyledPageTitle>
-      <OverflowingTextWithTooltip text={pageChip.text ?? ''} />
-    </StyledPageTitle>
-  );
+  return <HeaderIdentifier title={pageChip.text ?? ''} />;
 };

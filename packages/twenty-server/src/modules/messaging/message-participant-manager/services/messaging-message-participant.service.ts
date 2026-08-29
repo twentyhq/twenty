@@ -71,6 +71,9 @@ export class MessagingMessageParticipantService {
 
         await this.matchParticipantService.matchParticipants({
           participants: createdParticipants,
+          sourceRecordIds: [
+            ...new Set(participants.map(({ messageId }) => messageId)),
+          ],
           objectMetadataName: 'messageParticipant',
           matchWith: 'workspaceMemberAndPerson',
           transactionScope,

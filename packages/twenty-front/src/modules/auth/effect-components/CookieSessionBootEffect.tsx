@@ -21,10 +21,10 @@ type CookieSessionProbeResult =
   | 'unauthenticated'
   | 'unreachable';
 
-// A request with no credential at all is refused as FORBIDDEN, while an
-// invalid one is UNAUTHENTICATED, and guards that throw before the code is
-// attached surface a bare "Unauthorized". The probe deliberately sends no
-// credential, so it has to recognise all three or the migration never starts.
+// The probe deliberately sends no credential, so it has to recognise every
+// shape that refusal takes. A credential-less request is UNAUTHENTICATED on a
+// current server but FORBIDDEN on one predating the guard change, and guards
+// that throw before the code is attached surface a bare "Unauthorized".
 const AUTH_REFUSAL_CODES = new Set(['UNAUTHENTICATED', 'FORBIDDEN']);
 
 const isAuthRefusal = (error: unknown): boolean =>
@@ -45,7 +45,7 @@ export const CookieSessionBootEffect = () => {
   const [isCookieAuthActive, setIsCookieAuthActive] = useAtomState(
     isCookieAuthActiveState,
   );
-  const tokenPair = useAtomStateValue(tokenPairState);
+  const [tokenPair, setTokenPair] = useAtomState(tokenPairState);
   // oxlint-disable-next-line twenty/no-state-useref
   const hasProbeRunRef = useRef(false);
 
@@ -66,15 +66,9 @@ export const CookieSessionBootEffect = () => {
       }
     };
 
-    // The token pair is deliberately retained rather than cleared. A server
-    // that predates cookie sessions ignores the session cookie, so a
-    // cookie-only client is unauthenticated against it — which is every request
-    // routed to a not-yet-rolled pod during a deploy, and every request after a
-    // rollback. Keeping the pair lets those fall back instead of signing the
-    // user out. It stops being sent while cookie auth is active, so the cookie
-    // is still the credential in use.
     const switchToCookieAuth = () => {
       setIsCookieAuthActive(true);
+      setTokenPair(null);
     };
 
     const attemptCookieSessionBoot = async (): Promise<boolean> => {
@@ -140,6 +134,7 @@ export const CookieSessionBootEffect = () => {
     isCookieAuthActive,
     isLoadedOnce,
     setIsCookieAuthActive,
+    setTokenPair,
     store,
     tokenPair,
   ]);
