@@ -1,0 +1,1 @@
+export class RecordSnapshotter<T> { private snap = new Map<string, T>(); take(id: string, record: T) { this.snap.set(id, JSON.parse(JSON.stringify(record))); } restore(id: string): T | undefined { return this.snap.get(id); } }
