@@ -17,12 +17,12 @@ export const useNavigateApp = () => {
   ) => {
     const path = getAppPath(to, params, queryParams);
 
-    // A target the panel cannot host belongs on the main outlet, so it keeps
-    // whatever the main surface would have done with it.
     if (isDefined(sidePanelRoutedSurface) && isSidePanelHostablePath(path)) {
       return sidePanelRoutedSurface.navigateFromSidePanel(path);
     }
 
+    // A target the panel cannot host belongs on the main outlet, so it keeps
+    // whatever the main surface would have done with it.
     return navigate(path, options);
   };
 };

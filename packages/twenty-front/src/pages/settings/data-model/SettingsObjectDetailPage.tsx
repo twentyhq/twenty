@@ -91,8 +91,9 @@ export const SettingsObjectDetailPage = () => {
       !isDeleting &&
       !isDefined(objectMetadataItem) &&
       !isInSidePanelRoutedSurface
-    )
+    ) {
       navigateApp(AppPath.NotFound);
+    }
   }, [
     objectMetadataItem,
     navigateApp,
