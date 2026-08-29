@@ -171,6 +171,19 @@ describe('slackResolveUserLinkHandler', () => {
     }
   });
 
+  it('should refuse an unresolvable id that claims the installed workspace', async () => {
+    fetchSlackUserIdentityMock.mockResolvedValue(undefined);
+
+    const result = await slackResolveUserLinkHandler(
+      buildPayload({ slackUserId: 'U2', slackTeamId: INSTALLED_TEAM_ID }),
+    );
+
+    expect(result.success).toBe(false);
+    if (result.success === false) {
+      expect(result.error).toContain('could not find that user id');
+    }
+  });
+
   it('should refuse a supplied team id that does not match the Slack user', async () => {
     fetchSlackUserIdentityMock.mockResolvedValue({
       slackUserId: 'U2',

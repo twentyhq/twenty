@@ -24,10 +24,12 @@ export const resolveLinkTargetById = async ({
   slackClient,
   slackUserId,
   requestedSlackTeamId,
+  installedSlackTeamId,
 }: {
   slackClient: WebClient;
   slackUserId: string;
   requestedSlackTeamId: string | undefined;
+  installedSlackTeamId: string;
 }): Promise<IdLinkTarget> => {
   const identity = await fetchSlackUserIdentity({
     client: slackClient,
@@ -57,6 +59,19 @@ export const resolveLinkTargetById = async ({
       message: 'Could not resolve the Slack workspace',
       error:
         'Could not determine which Slack workspace this user belongs to. Provide their Slack team id and try again.',
+    };
+  }
+
+  // An id Slack cannot see may not claim the installed workspace: any
+  // in-workspace id resolves via users.info, so the claim is contradictory,
+  // and accepting it would save a pending link whose consent DM can never be
+  // delivered.
+  if (!isDefined(identity) && slackTeamId === installedSlackTeamId) {
+    return {
+      success: false,
+      message: 'Could not verify the Slack user in your workspace',
+      error:
+        'Slack could not find that user id in the installed workspace. Check the id, or for a guest or Slack Connect user enter their own Slack team id.',
     };
   }
 
