@@ -194,9 +194,9 @@ describe('mapPartnerForMarketplace', () => {
       },
     ];
 
-    expect(mapPartnerForMarketplace(node, 'profile').portfolio[0].imageUrl).toBe(
-      'https://file.example.com/cover.png',
-    );
+    expect(
+      mapPartnerForMarketplace(node, 'profile').portfolio[0].imageUrl,
+    ).toBe('https://file.example.com/cover.png');
   });
 
   it('prefers the pasted coverImageUrl over the uploaded coverImage file in portfolio', () => {
@@ -217,9 +217,9 @@ describe('mapPartnerForMarketplace', () => {
       },
     ];
 
-    expect(mapPartnerForMarketplace(node, 'profile').portfolio[0].imageUrl).toBe(
-      'https://paste.example.com/cover.png',
-    );
+    expect(
+      mapPartnerForMarketplace(node, 'profile').portfolio[0].imageUrl,
+    ).toBe('https://paste.example.com/cover.png');
   });
 
   it('falls back to the coverImage file url when coverImageUrl is absent', () => {
@@ -240,9 +240,9 @@ describe('mapPartnerForMarketplace', () => {
       },
     ];
 
-    expect(mapPartnerForMarketplace(node, 'profile').portfolio[0].imageUrl).toBe(
-      'https://file.example.com/cover.png',
-    );
+    expect(
+      mapPartnerForMarketplace(node, 'profile').portfolio[0].imageUrl,
+    ).toBe('https://file.example.com/cover.png');
   });
 
   it('sorts services by sortOrder ascending with nulls last', () => {
