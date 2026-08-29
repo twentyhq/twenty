@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -22,6 +23,7 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
+import { messagingHtmlConversionContextStorage } from 'src/modules/messaging/message-import-manager/storage/messaging-html-conversion-context.storage';
 import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
@@ -30,7 +32,7 @@ import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modul
 import { filterEmails } from 'src/modules/messaging/message-import-manager/utils/filter-emails.util';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { MessageChannelSyncStage } from 'twenty-shared/types';
+import { FeatureFlagKey, MessageChannelSyncStage } from 'twenty-shared/types';
 
 @Injectable()
 export class MessagingMessagesImportService {
@@ -54,6 +56,7 @@ export class MessagingMessagesImportService {
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async processMessageBatchImport(
@@ -117,11 +120,21 @@ export class MessagingMessagesImportService {
             );
           }
 
+          const shouldSkipHtmlReplyQuotationExtraction =
+            await this.featureFlagService.isFeatureEnabled(
+              FeatureFlagKey.IS_MESSAGE_IMPORT_LIGHTWEIGHT_HTML_ENABLED,
+              workspaceId,
+            );
+
           const allMessages =
-            await this.messagingGetMessagesService.getMessages(
-              messageIdsToFetch,
-              connectedAccount,
-              messageChannel,
+            await messagingHtmlConversionContextStorage.run(
+              { shouldSkipHtmlReplyQuotationExtraction },
+              () =>
+                this.messagingGetMessagesService.getMessages(
+                  messageIdsToFetch,
+                  connectedAccount,
+                  messageChannel,
+                ),
             );
 
           const messageFolders = messageChannel.messageFolders ?? [];

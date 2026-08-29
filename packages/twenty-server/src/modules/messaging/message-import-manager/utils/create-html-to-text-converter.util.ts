@@ -11,12 +11,23 @@ const CONVERT_OPTIONS = {
   preserveNewlines: true,
 } satisfies HtmlToTextOptions;
 
-export const createHtmlToTextConverter = (): ((html: string) => string) => {
+export const createHtmlToTextConverter = ({
+  shouldSkipReplyQuotationExtraction = false,
+}: {
+  shouldSkipReplyQuotationExtraction?: boolean;
+} = {}): ((html: string) => string) => {
   const jsdom = new JSDOM('');
   const purify = createDOMPurify(jsdom.window);
 
   return (html: string): string => {
     const sanitizedHtml = purify.sanitize(html);
+
+    // planer.extractFromHtml rebuilds a DOM per message and dominates import
+    // CPU (hundreds of ms on large emails). When skipped, reply quotations are
+    // still stripped downstream at the text level by extractTextWithoutReplyQuotations.
+    if (shouldSkipReplyQuotationExtraction) {
+      return normalizeMessageText(convert(sanitizedHtml, CONVERT_OPTIONS));
+    }
 
     const cleanedHtml = planer.extractFromHtml(
       sanitizedHtml,

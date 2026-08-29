@@ -40,4 +40,28 @@ describe('createHtmlToTextConverter', () => {
     expect(result).not.toContain('alert');
     expect(result).toContain('Hello');
   });
+
+  describe('with shouldSkipReplyQuotationExtraction', () => {
+    const convertSkippingPlaner = createHtmlToTextConverter({
+      shouldSkipReplyQuotationExtraction: true,
+    });
+
+    it('should still convert and sanitize HTML', () => {
+      const result = convertSkippingPlaner(
+        '<p>Hello</p><script>alert("xss")</script>',
+      );
+
+      expect(result).toContain('Hello');
+      expect(result).not.toContain('script');
+    });
+
+    it('should keep quoted content instead of stripping it at the html level', () => {
+      const result = convertSkippingPlaner(
+        '<div>Reply body</div><div class="gmail_quote"><p>Quoted content</p></div>',
+      );
+
+      expect(result).toContain('Reply body');
+      expect(result).toContain('Quoted content');
+    });
+  });
 });
