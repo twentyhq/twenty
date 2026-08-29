@@ -9,11 +9,14 @@ import { ON_OPPORTUNITY_INTRO_SENT_FN_UNIVERSAL_IDENTIFIER } from 'src/constants
 import { updateOpportunityIsListed } from 'src/modules/opportunity/matching/graphql/mutations/update-opportunity-is-listed';
 
 export const handler = async (
-  payload: DatabaseEventPayload<ObjectRecordUpdateEvent<CoreSchema.Opportunity>>,
+  payload: DatabaseEventPayload<
+    ObjectRecordUpdateEvent<CoreSchema.Opportunity>
+  >,
 ): Promise<Record<string, unknown>> => {
   const { after, updatedFields } = payload.properties;
   if (!updatedFields?.includes('introSentAt') || !after?.id) return {};
-  if (!after.introSentAt) return { skipped: true, reason: 'intro_sent_at_cleared' };
+  if (!after.introSentAt)
+    return { skipped: true, reason: 'intro_sent_at_cleared' };
 
   await updateOpportunityIsListed(new CoreApiClient(), after.id, false);
   return { unlisted: true, opportunityId: after.id };

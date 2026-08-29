@@ -6,13 +6,20 @@ import { deriveRegion } from 'src/modules/partner/application-intake/utils/deriv
 import { type SubmitPartnerApplicationInput } from 'src/modules/partner/application-intake/services/submit-partner-application-input.schema';
 import { slugify } from 'src/scripts/slugify';
 
-function toMicros(usd: number | undefined): { amountMicros: number; currencyCode: 'USD' } | undefined {
-  if (typeof usd !== 'number' || !Number.isFinite(usd) || usd < 0) return undefined;
+function toMicros(
+  usd: number | undefined,
+): { amountMicros: number; currencyCode: 'USD' } | undefined {
+  if (typeof usd !== 'number' || !Number.isFinite(usd) || usd < 0)
+    return undefined;
   return { amountMicros: Math.round(usd * 1_000_000), currencyCode: 'USD' };
 }
 
-function buildApplicationNotes(input: SubmitPartnerApplicationInput): string | null {
-  return isNonEmptyString(input.applicationNotes) ? input.applicationNotes.trim() : null;
+function buildApplicationNotes(
+  input: SubmitPartnerApplicationInput,
+): string | null {
+  return isNonEmptyString(input.applicationNotes)
+    ? input.applicationNotes.trim()
+    : null;
 }
 
 // Mirrors the subset of Partner{Create,Update}Input this handler writes. The
@@ -36,30 +43,43 @@ export type PartnerFieldsForUpsert = {
   twentyExperienceProofLink?: { primaryLinkUrl: string };
 };
 
-export function buildPartnerFields(input: SubmitPartnerApplicationInput): PartnerFieldsForUpsert {
+export function buildPartnerFields(
+  input: SubmitPartnerApplicationInput,
+): PartnerFieldsForUpsert {
   const fields: PartnerFieldsForUpsert = {
     name: input.companyName.trim(),
   };
-  if (isNonEmptyString(input.linkedin)) fields.linkedin = { primaryLinkUrl: input.linkedin.trim() };
-  if (isNonEmptyString(input.domainName)) fields.website = { primaryLinkUrl: input.domainName.trim() };
+  if (isNonEmptyString(input.linkedin))
+    fields.linkedin = { primaryLinkUrl: input.linkedin.trim() };
+  if (isNonEmptyString(input.domainName))
+    fields.website = { primaryLinkUrl: input.domainName.trim() };
   if (isNonEmptyString(input.city)) fields.city = input.city.trim();
   // validate() has already checked these against the allowed value sets, so
   // narrowing the validated strings to their enum types here is sound.
-  if (input.country !== undefined) fields.country = input.country as CoreSchema.PartnerCountryEnum;
+  if (input.country !== undefined)
+    fields.country = input.country as CoreSchema.PartnerCountryEnum;
   if (input.languages !== undefined && input.languages.length > 0)
-    fields.languagesSpoken = input.languages as CoreSchema.PartnerLanguagesSpokenEnum[];
-  if (input.typeOfTeam !== undefined) fields.typeOfTeam = input.typeOfTeam as CoreSchema.PartnerTypeOfTeamEnum;
+    fields.languagesSpoken =
+      input.languages as CoreSchema.PartnerLanguagesSpokenEnum[];
+  if (input.typeOfTeam !== undefined)
+    fields.typeOfTeam = input.typeOfTeam as CoreSchema.PartnerTypeOfTeamEnum;
   if (input.partnerScope !== undefined && input.partnerScope.length > 0)
-    fields.partnerScope = input.partnerScope as CoreSchema.PartnerPartnerScopeEnum[];
-  if (input.skills !== undefined && input.skills.length > 0) fields.skills = input.skills.filter(isNonEmptyString);
+    fields.partnerScope =
+      input.partnerScope as CoreSchema.PartnerPartnerScopeEnum[];
+  if (input.skills !== undefined && input.skills.length > 0)
+    fields.skills = input.skills.filter(isNonEmptyString);
   const hourly = toMicros(input.hourlyRate);
   if (hourly) fields.hourlyRate = hourly;
   const min = toMicros(input.projectBudgetMin);
   if (min) fields.projectBudgetMin = min;
-  if (isNonEmptyString(input.calendarLink)) fields.calendarLink = { primaryLinkUrl: input.calendarLink.trim() };
+  if (isNonEmptyString(input.calendarLink))
+    fields.calendarLink = { primaryLinkUrl: input.calendarLink.trim() };
   const notes = buildApplicationNotes(input);
   if (notes !== null) fields.applicationNotes = notes;
-  if (input.twentyExperience !== undefined && input.twentyExperience.length > 0) {
+  if (
+    input.twentyExperience !== undefined &&
+    input.twentyExperience.length > 0
+  ) {
     fields.twentyExperience =
       input.twentyExperience as CoreSchema.PartnerTwentyExperienceEnum[];
   }
@@ -84,10 +104,12 @@ export function buildPartnerCreateData(
     ...partnerFields,
     slug: slugify(input.companyName),
     validationStage: 'APPLICATION',
-    reviewed: false,
+    superPartner: false,
     partnerTier: 'NEW',
     companyId,
-    deploymentExpertise: deriveDeploymentExpertise(input.partnerScope) as CoreSchema.PartnerDeploymentExpertiseEnum[],
+    deploymentExpertise: deriveDeploymentExpertise(
+      input.partnerScope,
+    ) as CoreSchema.PartnerDeploymentExpertiseEnum[],
     ...(region ? { region: [region] as CoreSchema.PartnerRegionEnum[] } : {}),
   };
 }

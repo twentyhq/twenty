@@ -27,6 +27,7 @@ const jestConfig = {
     ],
   },
   moduleNameMapper: {
+    '^@assets/(.*)\\.svg\\?react$': '<rootDir>/__mocks__/imageMockUi.js',
     '\\.(jpg|jpeg|png|gif|webp|svg|svg)$': '<rootDir>/__mocks__/imageMockUi.js',
     '\\.(scss|css)$': '<rootDir>/__mocks__/styleMock.js',
     ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths, {

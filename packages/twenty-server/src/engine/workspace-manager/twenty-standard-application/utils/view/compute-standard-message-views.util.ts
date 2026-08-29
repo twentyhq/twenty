@@ -20,7 +20,7 @@ export const computeStandardMessageViews = (
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,
-        icon: 'IconList',
+        icon: 'IconTable',
       },
     }),
   };

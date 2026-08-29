@@ -17,6 +17,7 @@ import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 const StyledVerticalListContainer = styled.div<{
   isInEditMode: boolean;
+  isInPinnedTab: boolean;
   isSideColumnContext: boolean;
   shouldUseWhiteBackground: boolean;
 }>`
@@ -43,11 +44,17 @@ const StyledVerticalListContainer = styled.div<{
   gap: ${({ isInEditMode }) =>
     isInEditMode ? themeCssVariables.spacing[4] : '0'};
   min-height: ${({ isInEditMode }) => (isInEditMode ? '0' : '100%')};
-  padding: ${({ isInEditMode, isSideColumnContext }) =>
+  // The pinned tab sits next to the main tab area, so while editing it takes
+  // that area's vertical padding to line their widgets up, and keeps the
+  // tighter side-column one horizontally where the narrow column needs the
+  // room.
+  padding: ${({ isInEditMode, isInPinnedTab, isSideColumnContext }) =>
     isInEditMode
-      ? isSideColumnContext
-        ? themeCssVariables.spacing[1]
-        : themeCssVariables.spacing[2]
+      ? isInPinnedTab
+        ? `${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[1]}`
+        : isSideColumnContext
+          ? themeCssVariables.spacing[1]
+          : themeCssVariables.spacing[2]
       : '0'};
 `;
 
@@ -118,6 +125,7 @@ export const PageLayoutVerticalList = ({
   return (
     <StyledVerticalListContainer
       isInEditMode={isInEditMode}
+      isInPinnedTab={isInPinnedTab}
       isSideColumnContext={isSideColumnContext}
       shouldUseWhiteBackground={!isInPinnedTab || isMobile}
     >
