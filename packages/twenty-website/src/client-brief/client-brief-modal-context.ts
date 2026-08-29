@@ -3,7 +3,7 @@
 import { createContext } from 'react';
 
 export type ClientBriefModalContextValue = {
-  openClientBriefModal: () => void;
+  openClientBriefModal: (partnerSlug?: string) => void;
 };
 
 export const ClientBriefModalContext =

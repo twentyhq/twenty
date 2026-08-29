@@ -23,7 +23,7 @@ import { getGroupableSubFieldsForCompositeType } from 'src/engine/metadata-modul
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -37,8 +37,8 @@ const getFieldMetadataForGroupByOrThrow = ({
   fieldName: string;
   fieldIdByName: Record<string, string>;
   fieldIdByJoinColumnName: Record<string, string>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-}): FlatFieldMetadata => {
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+}): OrmFlatFieldMetadata => {
   const fieldMetadataId =
     fieldIdByName[fieldName] || fieldIdByJoinColumnName[fieldName];
   const fieldMetadata = fieldMetadataId
@@ -66,7 +66,7 @@ const validateAndTransformCompositeGroupByDefinitionOrThrow = ({
   groupByFields,
 }: {
   fieldName: string;
-  fieldMetadata: FlatFieldMetadata;
+  fieldMetadata: OrmFlatFieldMetadata;
   fieldGroupByDefinition: Record<string, unknown>;
   groupByFields: GroupByField[];
 }) => {
@@ -129,7 +129,7 @@ const validateAndTransformSingleGroupByFieldOrThrow = ({
   fieldIdByName: Record<string, string>;
   fieldIdByJoinColumnName: Record<string, string>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   groupByFields: GroupByField[];
 }) => {
   const fieldMetadata = getFieldMetadataForGroupByOrThrow({
@@ -251,7 +251,7 @@ export const validateAndTransformGroupByFieldsOrThrow = ({
   >;
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): GroupByField[] => {
   const groupByFields: GroupByField[] = [];
 

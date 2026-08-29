@@ -18,11 +18,16 @@ export async function syncApplicationOutcomes(
   const { opportunityId, newPartnerId } = params;
 
   const applications = await collectAll(async (after) => {
-    const page = await listApplicationsByOpportunity(client, opportunityId, after);
+    const page = await listApplicationsByOpportunity(
+      client,
+      opportunityId,
+      after,
+    );
     return page.applications;
   });
 
-  const setState = (id: string, state: string) => updateApplicationState(client, id, state);
+  const setState = (id: string, state: string) =>
+    updateApplicationState(client, id, state);
 
   if (newPartnerId) {
     for (const node of applications) {

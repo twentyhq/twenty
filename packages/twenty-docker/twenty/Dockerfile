@@ -2,7 +2,7 @@
 # Dependency stages
 # ===========================================================================
 
-FROM node:24.18.0-alpine3.23@sha256:595398b0081eacda8e1c4c5b97b76cd1020e4d58a8ebcb4843b9bca1e79e7436 AS front-deps
+FROM node:24.19.0-alpine3.23@sha256:244cc2b53f46f9e876304391d17682b0ddae9ac33491f4857e25e35a36ba7995 AS front-deps
 
 WORKDIR /app
 
@@ -20,7 +20,7 @@ COPY ./packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 RUN yarn workspaces focus twenty twenty-front twenty-front-component-renderer twenty-ui twenty-shared twenty-sdk twenty-client-sdk && yarn cache clean && npx nx reset
 
 
-FROM node:24.18.0-alpine3.23@sha256:595398b0081eacda8e1c4c5b97b76cd1020e4d58a8ebcb4843b9bca1e79e7436 AS server-deps
+FROM node:24.19.0-alpine3.23@sha256:244cc2b53f46f9e876304391d17682b0ddae9ac33491f4857e25e35a36ba7995 AS server-deps
 
 WORKDIR /app
 
@@ -84,16 +84,17 @@ RUN if [ -d /app/packages/twenty-front/build ]; then \
 #   docker build --target twenty-server -f packages/twenty-docker/twenty/Dockerfile .
 # ===========================================================================
 
-FROM node:24.18.0-alpine3.23@sha256:595398b0081eacda8e1c4c5b97b76cd1020e4d58a8ebcb4843b9bca1e79e7436 AS twenty-server
+FROM node:24.19.0-alpine3.23@sha256:244cc2b53f46f9e876304391d17682b0ddae9ac33491f4857e25e35a36ba7995 AS twenty-server
 
-# Force the patched Alpine OpenSSL libs (base bakes 3.5.6-r0; repo ships
-# 3.5.7-r0). Node bundles its own OpenSSL, but psql/curl link these system
-# libs, so the upgrade hardens runtime TLS and clears the scanner.
+# Force the patched Alpine OpenSSL libs to the fixed release (3.5.8-r0 clears
+# CVE-2026-14456/14457/18798/54874/63072/63075/63076). Node bundles its own
+# OpenSSL, but psql/curl link these system libs, so the upgrade hardens
+# runtime TLS and clears the scanner.
 RUN apk add --no-cache \
     'curl>=8.20.0-r0' \
     'nghttp2-libs>=1.69.0-r0' \
-    'libcrypto3>=3.5.7-r0' \
-    'libssl3>=3.5.7-r0' \
+    'libcrypto3>=3.5.8-r0' \
+    'libssl3>=3.5.8-r0' \
     'postgresql18-client>=18.5-r0' \
     jq
 
@@ -142,10 +143,11 @@ LABEL org.opencontainers.image.description="Twenty server image (no frontend)."
 #  - the Node dev headers: only node-gyp needs them and native addons are
 #    compiled in the build stages; their vendored openssl/opensslv.h is what
 #    scanners fingerprint whenever OpenSSL patches ahead of Node releases.
-# The pinned node:24.18.0-alpine base carries every 24.17.0 security fix
-# (OpenSSL 3.5.7, CVE-2026-48930) plus the fix for the http.Agent keep-alive
-# regression (nodejs/node#64004) that flooded prod with false "Premature close"
-# fetch failures on 24.17.0 (see #22671/#22673). Do not pin 24.17.0 again.
+# The pinned node:24.19.0-alpine base carries the July 2026 security fixes
+# (CVE-2026-56846/56848/58043, all fixed in 24.18.1) plus the 24.18.0 fix for
+# the http.Agent keep-alive regression (nodejs/node#64004) that flooded prod
+# with false "Premature close" fetch failures on 24.17.0 (see #22671/#22673).
+# Do not pin below 24.18.0 again.
 # Keep the base current when Node ships 24.x security releases — the scanner
 # flags the statically-linked node binary itself.
 RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx \
@@ -222,7 +224,7 @@ RUN S6_ARCH=$(cat /tmp/s6arch) && \
     echo "$NOARCH_SUM  s6-overlay-noarch.tar.xz" | sha256sum -c - && \
     echo "$ARCH_SUM  s6-overlay-arch.tar.xz" | sha256sum -c -
 
-FROM node:24.18.0-alpine3.23@sha256:595398b0081eacda8e1c4c5b97b76cd1020e4d58a8ebcb4843b9bca1e79e7436 AS twenty-app-dev
+FROM node:24.19.0-alpine3.23@sha256:244cc2b53f46f9e876304391d17682b0ddae9ac33491f4857e25e35a36ba7995 AS twenty-app-dev
 
 # s6-overlay
 COPY --from=s6-fetch /tmp/s6-overlay-noarch.tar.xz /tmp/
@@ -236,8 +238,8 @@ RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz \
 RUN apk add --no-cache \
     postgresql18 postgresql18-contrib \
     redis \
-    'libcrypto3>=3.5.7-r0' \
-    'libssl3>=3.5.7-r0' \
+    'libcrypto3>=3.5.8-r0' \
+    'libssl3>=3.5.8-r0' \
     'curl>=8.20.0-r0' jq su-exec
 
 # Workspace root config

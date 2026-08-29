@@ -1,10 +1,10 @@
 # Manual workflows runbook
 
-The Twenty Partners app relies on two workflows built in the Twenty workspace UI: one
-**manual-trigger workflow** and one **cron workflow**. The SDK has no `defineWorkflow`, so
-these are documented setup steps — not shipped in the app manifest.
+The Twenty Partners app relies on one workflow built in the Twenty workspace UI: a
+**cron workflow**. The SDK has no `defineWorkflow`, so this is a documented setup
+step — not shipped in the app manifest.
 
-**Rebuild both workflows in every workspace** where the app is installed (local
+**Rebuild this workflow in every workspace** where the app is installed (local
 bundles, staging, prod). After `yarn twenty install`, prod is empty until an admin follows
 this runbook.
 
@@ -12,37 +12,20 @@ this runbook.
 
 - Twenty Partners app installed and synced (`yarn twenty apply`).
 - The **WORKFLOWS** permission flag is no longer needed for apply: the apply path now
-  ships in the app manifest as a command menu item. Admins run **Mark as Winner** with
-  their own role (no special flag beyond workflow access).
+  ships in the app manifest as a command menu item.
 
 ---
 
-## 1. Mark as Winner
+## Winner assignment (no workflow needed)
 
-Admin assigns the winning partner on the linked **Opportunity**. Fires
-`on-opportunity-partner-won`, which cascades Application states to **WON** / **DECLINED**.
-
-### Build (Settings → Workflows)
-
-1. **+ New workflow** → name **Mark as Winner**.
-2. Open the trigger (**Manual trigger**).
-3. Set **Availability** to **Single record**.
-4. Choose object **Application**.
-5. Add an action: **Update Record**.
-6. Configure the action:
-   - **Object** → **Opportunity**
-   - **Record ID** → `{{trigger.record.opportunity.id}}`
-   - **Fields to update** → select **Partner**
-   - **Partner** value → `{{trigger.record.partner.id}}`
-7. **Publish** the workflow version.
-
-### Expected UI (admin)
-
-On an **Application** record, command menu → **Run workflow → Mark as Winner**.
+An admin sets the **Partner** field on the linked **Opportunity** record directly.
+The app's logic function `on-opportunity-partner-won` fires on that change and
+cascades the Application states to **WON** / **DECLINED** automatically. No
+workflow to build or rebuild for this step.
 
 ---
 
-## 2. Daily digest
+## 1. Daily digest
 
 Nudges validated partners once a day when new briefs appear: count + link, no brief
 details. Zero new briefs → no email. Hand-built per workspace — workflows are workspace
@@ -82,12 +65,10 @@ system mailer, not this — leave them alone.
 
 ## Per-workspace checklist
 
-| Step | Mark as Winner | Daily Digest |
-| --- | --- | --- |
-| Trigger | Manual, single **Application** | Cron, daily |
-| Action | Update linked **Opportunity** | Send Email per partner via person lookup |
-| Published label | **Mark as Winner** (on application) | **Daily Digest** |
-| Who runs it | Admin | Application role |
+- Trigger: cron, daily.
+- Action: send email per validated partner via person lookup.
+- Published label: **Daily Digest**.
+- Who runs it: application role.
 
 Repeat for each workspace after install. Workflows are workspace metadata — they do not
 travel with `deploy` / `install`.

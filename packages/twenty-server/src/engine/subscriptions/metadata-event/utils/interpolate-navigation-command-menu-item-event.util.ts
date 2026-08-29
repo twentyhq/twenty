@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { interpolateCommandMenuItemPlaceholders } from 'twenty-shared/i18n';
+import { interpolateMessagePlaceholders } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
@@ -66,7 +66,7 @@ export const interpolateNavigationCommandMenuItemEvent = ({
       continue;
     }
 
-    interpolated[field] = interpolateCommandMenuItemPlaceholders(
+    interpolated[field] = interpolateMessagePlaceholders(
       value,
       placeholderValues,
     );

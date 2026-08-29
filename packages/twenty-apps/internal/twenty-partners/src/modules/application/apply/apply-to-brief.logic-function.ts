@@ -11,7 +11,8 @@ export const handler = (
 export default defineLogicFunction({
   universalIdentifier: APPLY_TO_BRIEF_FUNCTION_ID,
   name: 'apply-to-brief',
-  description: 'Creates an Application for the calling partner on a listed brief.',
+  description:
+    'Creates an Application for the calling partner on a listed brief.',
   // Six sequential round trips behind a cold isolate start: a first invocation measured
   // 47s wall on a local dev server, so 20s killed it before the first query returned.
   timeoutSeconds: 60,

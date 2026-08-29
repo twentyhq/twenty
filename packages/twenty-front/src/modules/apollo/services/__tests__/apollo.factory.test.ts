@@ -55,13 +55,6 @@ const UNAUTHENTICATED_RESPONSE = JSON.stringify({
   errors: [{ extensions: { code: 'UNAUTHENTICATED' } }],
 });
 
-const FORBIDDEN_RESOURCE_RESPONSE = JSON.stringify({
-  data: { trackAnalytics: null },
-  errors: [
-    { message: 'Forbidden resource', extensions: { code: 'FORBIDDEN' } },
-  ],
-});
-
 const PERMISSION_DENIED_RESPONSE = JSON.stringify({
   data: { trackAnalytics: null },
   errors: [
@@ -399,7 +392,7 @@ describe('ApolloFactory', () => {
     expect(renewToken).not.toHaveBeenCalled();
     expect(mockOnUnauthenticatedError).toHaveBeenCalledTimes(1);
   });
-  describe('cookie auth fallback during a mixed-version rollout', () => {
+  describe('cookie auth', () => {
     const setCookieAuthActive = () =>
       jotaiStore.set(isCookieAuthActiveState.atom, true);
 
@@ -413,6 +406,9 @@ describe('ApolloFactory', () => {
         ([key]) => key.toLowerCase() === name.toLowerCase(),
       )?.[1];
 
+    // A pair still exists between sign-in and the boot effect's switch, and
+    // across the impersonation exchange. Sending it would take precedence over
+    // the session cookie server-side and bypass the CSRF origin check.
     it('should not attach the Bearer header while cookie auth is active', async () => {
       setCookieAuthActive();
       fetchMock.mockResponse(() =>
@@ -431,94 +427,6 @@ describe('ApolloFactory', () => {
       expect(readHeader(headers, 'X-App-Version')).toBe('1.0.0');
     });
 
-    it('should fall back to the token pair instead of signing out when a server ignores the session cookie', async () => {
-      setCookieAuthActive();
-      fetchMock
-        .mockResponseOnce(UNAUTHENTICATED_RESPONSE)
-        .mockResponseOnce(JSON.stringify({ data: { trackAnalytics: null } }));
-
-      await makeRequest();
-
-      expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
-      expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(false);
-
-      const retryHeaders = fetchMock.mock.calls[1]?.[1]?.headers as Record<
-        string,
-        string
-      >;
-
-      expect(readHeader(retryHeaders, 'authorization')).toBe(
-        `Bearer ${RENEWED_TOKEN_PAIR.accessOrWorkspaceAgnosticToken.token}`,
-      );
-    });
-
-    it('should only attempt the cookie fallback once, then go through renewal', async () => {
-      setCookieAuthActive();
-      fetchMock.mockResponse(UNAUTHENTICATED_RESPONSE);
-
-      try {
-        await makeRequest();
-      } catch {}
-
-      expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(false);
-      expect(renewToken).toHaveBeenCalled();
-    });
-
-    // A server that never read the session cookie -- an old pod mid-rollout, or
-    // a cookie the browser no longer holds -- leaves the request with no
-    // credential at all, which the guards refuse as FORBIDDEN.
-    it('should renew the retained token pair and replay when a credential-less request is refused', async () => {
-      setCookieAuthActive();
-      fetchMock
-        .mockResponseOnce(FORBIDDEN_RESOURCE_RESPONSE)
-        .mockResponseOnce(JSON.stringify({ data: { trackAnalytics: null } }));
-
-      await makeRequest();
-
-      expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(false);
-      expect(renewToken).toHaveBeenCalledTimes(1);
-      expect(mockOnTokenPairChange).toHaveBeenCalledWith(RENEWED_TOKEN_PAIR);
-      expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
-
-      const retryHeaders = fetchMock.mock.calls[1]?.[1]?.headers as Record<
-        string,
-        string
-      >;
-
-      expect(readHeader(retryHeaders, 'authorization')).toBe(
-        `Bearer ${RENEWED_TOKEN_PAIR.accessOrWorkspaceAgnosticToken.token}`,
-      );
-    });
-
-    it('should attempt the credential-less fallback only once per operation', async () => {
-      setCookieAuthActive();
-      fetchMock.mockResponse(FORBIDDEN_RESOURCE_RESPONSE);
-
-      await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
-
-      expect(fetchMock).toHaveBeenCalledTimes(2);
-      expect(renewToken).toHaveBeenCalledTimes(1);
-      expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
-    });
-
-    it('should sign out when the refresh token is rejected during the fallback', async () => {
-      setCookieAuthActive();
-      jest.mocked(renewToken).mockRejectedValue(
-        new CombinedGraphQLErrors(
-          {
-            data: null,
-            errors: [{ message: 'x', extensions: { code: 'UNAUTHENTICATED' } }],
-          },
-          [{ message: 'x', extensions: { code: 'UNAUTHENTICATED' } }],
-        ),
-      );
-      fetchMock.mockResponse(FORBIDDEN_RESOURCE_RESPONSE);
-
-      await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
-
-      expect(mockOnUnauthenticatedError).toHaveBeenCalled();
-    });
-
     it('should leave a permission denial alone', async () => {
       setCookieAuthActive();
       fetchMock.mockResponse(PERMISSION_DENIED_RESPONSE);
@@ -530,24 +438,33 @@ describe('ApolloFactory', () => {
       expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
     });
 
-    it('should not fall back on a credential-less refusal while authenticating by token', async () => {
-      fetchMock.mockResponse(FORBIDDEN_RESOURCE_RESPONSE);
+    // CookieSessionBootEffect can switch to cookie auth while a renewal is in
+    // flight. Publishing that renewal would put the refresh token back for
+    // good, since the boot effect only probes while cookie auth is inactive.
+    it('should not restore the token pair when it is cleared mid-renewal', async () => {
+      jest.mocked(renewToken).mockImplementation(async () => {
+        storedTokenPair = undefined;
+        setCookieAuthActive();
+
+        return RENEWED_TOKEN_PAIR;
+      });
+      fetchMock.mockResponse(UNAUTHENTICATED_RESPONSE);
 
       await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
 
-      expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
+      expect(renewToken).toHaveBeenCalled();
+      expect(mockOnTokenPairChange).not.toHaveBeenCalled();
     });
 
-    it('should not fall back on a credential-less refusal for the cookie session probe', async () => {
+    it('should sign out on an unauthenticated response, with no pair to fall back to', async () => {
       setCookieAuthActive();
-      fetchMock.mockResponse(FORBIDDEN_RESOURCE_RESPONSE);
+      storedTokenPair = undefined;
+      fetchMock.mockResponse(UNAUTHENTICATED_RESPONSE);
 
-      await expect(
-        makeRequestWithContext({ skipAuthToken: true }),
-      ).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+      await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
 
-      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(renewToken).not.toHaveBeenCalled();
+      expect(mockOnUnauthenticatedError).toHaveBeenCalledTimes(1);
       expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(true);
     });
   });

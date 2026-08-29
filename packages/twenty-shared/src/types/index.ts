@@ -17,6 +17,7 @@ export { AppPath } from './AppPath';
 export type { Arrayable } from './Arrayable';
 export type { ArraySortDirection } from './ArraySortDirection';
 export type { AssertUnreachable } from './AssertUnreachable.type';
+export { BlocklistScope } from './BlocklistScope';
 export { CalendarChannelContactAutoCreationPolicy } from './CalendarChannelContactAutoCreationPolicy';
 export { CalendarChannelSyncStage } from './CalendarChannelSyncStage';
 export { CalendarChannelSyncStatus } from './CalendarChannelSyncStatus';
@@ -121,11 +122,16 @@ export {
 export type {
   FieldNumberVariant,
   FieldCurrencyFormat,
+  FieldLinksVariant,
   FieldMetadataSettingsMapping,
   AllFieldMetadataSettings,
   FieldMetadataSettings,
 } from './FieldMetadataSettings';
-export { NumberDataType, DateDisplayFormat } from './FieldMetadataSettings';
+export {
+  NumberDataType,
+  DateDisplayFormat,
+  FIELD_LINKS_VARIANTS,
+} from './FieldMetadataSettings';
 export { FieldMetadataType } from './FieldMetadataType';
 export type { FieldMetadataUniversalSettings } from './FieldMetadataUniversalSettings';
 export type { FieldRatingValue } from './FieldRatingValue';
@@ -207,6 +213,7 @@ export type {
   ViewConfiguration,
   RecordTableConfiguration,
   FieldConfiguration,
+  FormFieldConfiguration,
   FieldsConfiguration,
   FieldRichTextConfiguration,
   StandaloneRichTextConfiguration,

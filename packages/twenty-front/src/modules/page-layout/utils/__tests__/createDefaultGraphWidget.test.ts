@@ -13,7 +13,14 @@ describe('createDefaultGraphWidget', () => {
     id: 'widget-1',
     pageLayoutTabId: 'tab-1',
     title: 'Test Widget',
-    gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 2 },
+    position: {
+      __typename: 'PageLayoutWidgetGridPosition' as const,
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      row: 0,
+      column: 0,
+      rowSpan: 2,
+      columnSpan: 2,
+    },
     objectMetadataId: 'object-1',
   };
 
@@ -67,7 +74,7 @@ describe('createDefaultGraphWidget', () => {
       expect(widget.id).toBe('widget-1');
       expect(widget.pageLayoutTabId).toBe('tab-1');
       expect(widget.title).toBe('Test Widget');
-      expect(widget.gridPosition).toEqual(baseParams.gridPosition);
+      expect(widget.position).toEqual(baseParams.position);
       expect(widget.position).toEqual({
         __typename: 'PageLayoutWidgetGridPosition',
         layoutMode: PageLayoutTabLayoutMode.GRID,

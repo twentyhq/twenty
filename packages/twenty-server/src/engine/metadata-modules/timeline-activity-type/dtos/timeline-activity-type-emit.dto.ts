@@ -15,6 +15,11 @@ export class TimelineActivityTypeEmitThroughDTO {
   @IsOptional()
   @Field(() => [UUIDScalarType], { nullable: true })
   triggerFieldUniversalIdentifiers: string[] | null;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  happensAtFieldUniversalIdentifier: string | null;
 }
 
 @ObjectType('TimelineActivityTypeEmit')

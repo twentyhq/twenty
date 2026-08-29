@@ -9,7 +9,7 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelector';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FieldWidgetShowMoreButton } from '@/page-layout/widgets/field/components/FieldWidgetShowMoreButton';
-import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
+import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { SIDE_PANEL_SEARCH_RECORD_PREVIEW_MAX_COLLAPSED_FIELDS } from '@/side-panel/pages/search/constants/SidePanelSearchRecordPreviewMaxCollapsedFields';
 import { SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH } from '@/side-panel/pages/search/constants/SidePanelSearchRecordPreviewWidth';
 import { useSidePanelSearchRecordPreviewFields } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecordPreviewFields';
@@ -22,7 +22,6 @@ import { Trans } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useState } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { Avatar } from 'twenty-ui/data-display';
 import { useIcons } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -231,16 +230,13 @@ export const SidePanelSearchRecordPreviewCard = ({
     >
       <StyledCard>
         <StyledHeader>
-          <SidePanelPageInfoLayout
-            icon={
-              <Avatar
-                avatarUrl={getAbsoluteImageUrl(recordIdentifier?.avatarUrl)}
-                placeholder={recordIdentifier?.name ?? label}
-                placeholderColorSeed={recordId}
-                size="md"
-                type={recordIdentifier?.avatarType ?? 'rounded'}
-              />
-            }
+          <HeaderIdentifier
+            avatar={{
+              avatarUrl: getAbsoluteImageUrl(recordIdentifier?.avatarUrl),
+              placeholder: recordIdentifier?.name ?? label,
+              placeholderColorSeed: recordId,
+              type: recordIdentifier?.avatarType ?? 'rounded',
+            }}
             title={
               <StyledTitleText>
                 {recordIdentifier?.name ?? label}
