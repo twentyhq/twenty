@@ -1,0 +1,1 @@
+import crypto from 'crypto'; export function hashKey(k: string): string { return crypto.createHash('sha256').update(k).digest('hex'); }
