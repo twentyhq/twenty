@@ -149,7 +149,10 @@ export class AiModelRegistryService {
       modelFamily:
         modelDef.modelFamily ??
         inferModelFamily(providerConfig.name ?? '', modelDef.name),
-      dataResidency: providerConfig.dataResidency,
+      // One credential can front routes with different residency: an Amazon
+      // Bedrock entry pinned to eu-west-3 serves both `eu.*` inference
+      // profiles, which stay in the EU, and `global.*` ones, which do not.
+      dataResidency: modelDef.dataResidency ?? providerConfig.dataResidency,
       inputCostPerMillionTokens: modelDef.inputCostPerMillionTokens ?? 0,
       outputCostPerMillionTokens: modelDef.outputCostPerMillionTokens ?? 0,
       cachedInputCostPerMillionTokens: modelDef.cachedInputCostPerMillionTokens,

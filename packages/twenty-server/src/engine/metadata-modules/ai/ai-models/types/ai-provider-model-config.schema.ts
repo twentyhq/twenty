@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { DATA_RESIDENCY_KEYS } from 'twenty-shared/ai';
+
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { longContextCostSchema } from 'src/engine/metadata-modules/ai/ai-models/types/long-context-cost.schema';
 
@@ -8,6 +10,7 @@ export const aiProviderModelConfigSchema = z.object({
   label: z.string(),
   description: z.string().optional(),
   modelFamily: z.nativeEnum(ModelFamily).optional(),
+  dataResidency: z.enum(DATA_RESIDENCY_KEYS).optional(),
   inputCostPerMillionTokens: z.number().optional(),
   outputCostPerMillionTokens: z.number().optional(),
   cachedInputCostPerMillionTokens: z.number().optional(),
