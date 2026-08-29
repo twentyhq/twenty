@@ -272,7 +272,7 @@ export default defineRole({
       fieldUniversalIdentifier: OPPORTUNITY_DESIGN_DOC_STATUS_FIELD_ID,
       canUpdateFieldValue: false,
     },
-  // Marketplace brief fields — read-only for partners (listed briefs visible via RLS OR predicate).
+    // Marketplace brief fields — read-only for partners (listed briefs visible via RLS OR predicate).
     {
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
@@ -313,7 +313,8 @@ export default defineRole({
     {
       // Super partner — listed on the record page; partners can see it, cannot set it.
       objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
-      fieldUniversalIdentifier: PARTNER_SUPER_PARTNER_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier:
+        PARTNER_SUPER_PARTNER_FIELD_UNIVERSAL_IDENTIFIER,
       canUpdateFieldValue: false,
     },
     {
@@ -373,9 +374,11 @@ export default defineRole({
     },
     // Partner Content object — the self-service save route runs with the caller's own
     // permissions, so partners self-publish their own case studies: only status is writable
-    // (the route sets it to APPROVED/WIP; RLS scopes to their own rows). Ownership (partner,
-    // partnerUser) and contentType stay locked and are stamped server-side by the
-    // on-partner-content-created trigger, so a partner cannot repoint content to another partner.
+    // (the route sets it to APPROVED/WIP; RLS scopes to their own rows). partner and contentType
+    // stay locked and are stamped server-side by the on-partner-content-created trigger, so a
+    // partner cannot repoint content to another partner. partnerUser is listed as locked but
+    // stays writable at insert — the server exempts RLS predicate fields there
+    // (permissions.utils.ts, insert case only), which is how the save route stamps ownership.
     {
       objectUniversalIdentifier: PARTNER_CONTENT_OBJECT_UNIVERSAL_IDENTIFIER,
       fieldUniversalIdentifier: PARTNER_CONTENT_TYPE_FIELD_ID,
@@ -512,7 +515,8 @@ export default defineRole({
       // owner/createdBy). An RLS predicate scopes this to the partner's own member record
       // (see scripts/configure-partner-rls.ts) so the internal roster stays hidden.
       objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember
+          .universalIdentifier,
       canReadObjectRecords: true,
       canUpdateObjectRecords: false,
       canSoftDeleteObjectRecords: false,

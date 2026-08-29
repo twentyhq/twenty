@@ -1,4 +1,7 @@
-import { NavigationMenuItemType, defineNavigationMenuItem } from 'twenty-sdk/define';
+import {
+  NavigationMenuItemType,
+  defineNavigationMenuItem,
+} from 'twenty-sdk/define';
 
 import { OPEN_BRIEFS_VIEW_UNIVERSAL_IDENTIFIER } from 'src/modules/opportunity/views/open-briefs.view';
 

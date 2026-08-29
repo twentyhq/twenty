@@ -2,11 +2,9 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import {
-  RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR,
-  RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR,
-} from '@/object-record/record-table/components/RecordTableStyleWrapper';
-import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE } from '@/object-record/record-table/constants/RecordTableLabelIdentifierColumnWidthOnMobile';
+import { RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR } from '@/object-record/record-table/components/RecordTableStyleWrapper';
+import { RECORD_TABLE_CELL_CONTENT_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableCellContentClassName';
+import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -20,6 +18,8 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
 import { findByProperty, isDefined } from 'twenty-shared/utils';
+
+const FIRST_COLUMN_WIDTH_CSS_VAR = `var(${getRecordTableColumnFieldWidthCSSVariableName(0)})`;
 
 const StyledColumnFooterCell = styled.div<{
   columnWidth: number;
@@ -37,9 +37,7 @@ const StyledColumnFooterCell = styled.div<{
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
   left: ${({ isFirstCell }) =>
-    isFirstCell
-      ? `calc(var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) + var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR}))`
-      : 'auto'};
+    isFirstCell ? `var(${RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR})` : 'auto'};
 
   @media (hover: hover) {
     &:hover {
@@ -68,17 +66,11 @@ const StyledColumnFooterCell = styled.div<{
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     max-width: ${({ isFirstCell }) =>
-      isFirstCell
-        ? `${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px`
-        : 'none'};
+      isFirstCell ? FIRST_COLUMN_WIDTH_CSS_VAR : 'none'};
     min-width: ${({ isFirstCell }) =>
-      isFirstCell
-        ? `${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px`
-        : '0'};
+      isFirstCell ? FIRST_COLUMN_WIDTH_CSS_VAR : '0'};
     width: ${({ isFirstCell }) =>
-      isFirstCell
-        ? `${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px`
-        : 'auto'};
+      isFirstCell ? FIRST_COLUMN_WIDTH_CSS_VAR : 'auto'};
   }
 `;
 
@@ -132,7 +124,9 @@ export const RecordTableAggregateFooterCell = ({
         getRecordTableColumnFieldWidthClassName(columnIndex),
       )}
     >
-      <StyledColumnFootContainer>
+      <StyledColumnFootContainer
+        className={RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
+      >
         {isFooterReadOnly ? (
           hasAggregateOperationForViewField ? (
             <RecordTableColumnAggregateFooterValue

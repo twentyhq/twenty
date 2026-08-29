@@ -18,6 +18,7 @@ import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoa
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
+import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
@@ -96,6 +97,28 @@ const StyledEditorWrapper = styled.div<{ isMobile: boolean }>`
   }
 `;
 
+// Collapsing this spacer is what slides the composer from the middle of an
+// empty page down to the bottom once the conversation starts.
+const StyledComposerBottomSpacer = styled.div`
+  flex-basis: 0;
+  flex-grow: 0;
+  flex-shrink: 0;
+  transition-duration: calc(${themeCssVariables.animation.duration.fast} * 1s);
+  transition-property: flex-grow;
+  transition-timing-function: ease-out;
+
+  // Only the collapse is animated: the composer becomes centered again on a
+  // thread switch, where sliding it back up would trail the content change.
+  &.is-centered {
+    flex-grow: 1;
+    transition-property: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: none;
+  }
+`;
+
 const StyledButtonsContainer = styled.div`
   align-items: center;
   display: flex;
@@ -118,6 +141,7 @@ const StyledRightButtonsContainer = styled.div`
 export const AiChatEditorSection = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
+  const isComposerCentered = useIsAiChatComposerCentered();
   const hasReachedAiChatCreditsCap = useHasReachedAiChatCreditsCap();
   const { enabledModels } = useWorkspaceAiModelAvailability();
   const hasNoEnabledModels = enabledModels.length === 0;
@@ -147,7 +171,7 @@ export const AiChatEditorSection = () => {
   return (
     <>
       <AiChatEditorFocusEffect editor={editor} />
-      <AiChatEmptyState editor={editor} />
+      <AiChatEmptyState isCentered={isComposerCentered} />
       <AiChatStandaloneError />
       <AiChatSkeletonLoader />
 
@@ -194,6 +218,9 @@ export const AiChatEditorSection = () => {
           </StyledInputBox>
         )}
       </StyledInputArea>
+      <StyledComposerBottomSpacer
+        className={isComposerCentered ? 'is-centered' : undefined}
+      />
     </>
   );
 };

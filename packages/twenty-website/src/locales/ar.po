@@ -8,7 +8,7 @@ msgstr ""
 "Language: ar\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-28 12:00\n"
+"PO-Revision-Date: 2026-08-28 16:20\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
@@ -7070,7 +7070,7 @@ msgstr "السودان 🇸🇩"
 #. js-lingui-id: 388eZi
 #: src/partners-marketplace/marketplace-copy.ts
 msgid "Super partner"
-msgstr ""
+msgstr "شريك متميز"
 
 #. js-lingui-id: XYLcNv
 #: src/sections/compare/compare-data.ts

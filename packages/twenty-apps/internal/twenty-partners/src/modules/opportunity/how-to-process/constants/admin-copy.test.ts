@@ -21,13 +21,7 @@ const APPLICATION_OBJECT_SOURCE = readFileSync(
 
 describe('HOW_TO_PROCESS_STEPS', () => {
   it('uses Deals-board stage labels from OPPORTUNITY_STAGE_OPTIONS', () => {
-    const expected = [
-      'New',
-      'Screening',
-      'Meeting',
-      'Proposal',
-      'Customer',
-    ];
+    const expected = ['New', 'Screening', 'Meeting', 'Proposal', 'Customer'];
 
     expect(DEAL_BOARD_STAGE_LABELS).toEqual(expected);
 

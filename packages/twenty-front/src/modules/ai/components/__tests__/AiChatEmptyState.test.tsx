@@ -39,7 +39,7 @@ describe('AiChatEmptyState', () => {
   });
 
   it('should render the suggested prompts when there is no message, no error and nothing loading', () => {
-    const { getByTestId } = render(<AiChatEmptyState editor={null} />, {
+    const { getByTestId } = render(<AiChatEmptyState />, {
       wrapper: Wrapper,
     });
 
@@ -55,7 +55,7 @@ describe('AiChatEmptyState', () => {
       true,
     );
 
-    const { container } = render(<AiChatEmptyState editor={null} />, {
+    const { container } = render(<AiChatEmptyState />, {
       wrapper: Wrapper,
     });
 
@@ -71,7 +71,7 @@ describe('AiChatEmptyState', () => {
       true,
     );
 
-    const { container } = render(<AiChatEmptyState editor={null} />, {
+    const { container } = render(<AiChatEmptyState />, {
       wrapper: Wrapper,
     });
 

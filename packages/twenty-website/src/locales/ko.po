@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-28 12:00\n"
+"PO-Revision-Date: 2026-08-28 16:20\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -7069,7 +7069,7 @@ msgstr "Sudan 🇸🇩"
 #. js-lingui-id: 388eZi
 #: src/partners-marketplace/marketplace-copy.ts
 msgid "Super partner"
-msgstr ""
+msgstr "슈퍼 파트너"
 
 #. js-lingui-id: XYLcNv
 #: src/sections/compare/compare-data.ts
