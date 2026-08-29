@@ -1,0 +1,1 @@
+export function sortTimeline<T extends { createdAt: string }>(events: T[]): T[] { return [...events].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); }
