@@ -92,22 +92,6 @@ export const slackSetUserLinkHandler = async (
     resolvedName = resolvedName ?? emailTarget.displayName;
   }
 
-  if (isNonEmptyString(requestedSlackUserId)) {
-    const idTarget = await resolveLinkTargetById({
-      slackClient,
-      slackUserId: requestedSlackUserId,
-      requestedSlackTeamId,
-    });
-
-    if (!idTarget.success) {
-      return idTarget;
-    }
-
-    slackTeamId = idTarget.slackTeamId;
-    fetchedIdentity = idTarget.identity;
-    resolvedName = resolvedName ?? idTarget.identity?.displayName;
-  }
-
   const installedTeamId = await getInstalledSlackTeamId(slackClient);
 
   // The consent decision hinges on whether the user is in the installed
@@ -119,6 +103,23 @@ export const slackSetUserLinkHandler = async (
       message: 'Could not verify the installed Slack workspace',
       error: 'Slack did not confirm the installed workspace. Please try again.',
     };
+  }
+
+  if (isNonEmptyString(requestedSlackUserId)) {
+    const idTarget = await resolveLinkTargetById({
+      slackClient,
+      slackUserId: requestedSlackUserId,
+      requestedSlackTeamId,
+      installedSlackTeamId: installedTeamId,
+    });
+
+    if (!idTarget.success) {
+      return idTarget;
+    }
+
+    slackTeamId = idTarget.slackTeamId;
+    fetchedIdentity = idTarget.identity;
+    resolvedName = resolvedName ?? idTarget.identity?.displayName;
   }
 
   if (!isNonEmptyString(slackTeamId)) {

@@ -87,6 +87,7 @@ export const slackResolveUserLinkHandler = async (
       slackClient,
       slackUserId: requestedSlackUserId,
       requestedSlackTeamId: slackTeamId,
+      installedSlackTeamId: installedTeamId,
     });
 
     if (!idTarget.success) {

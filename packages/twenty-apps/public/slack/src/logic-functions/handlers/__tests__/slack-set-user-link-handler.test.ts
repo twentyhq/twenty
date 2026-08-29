@@ -241,6 +241,22 @@ describe('slackSetUserLinkHandler', () => {
     expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
   });
 
+  it('should refuse an unresolvable id that claims the installed workspace', async () => {
+    // An in-workspace id resolves via users.info, so an unresolvable one
+    // claiming the installed team is contradictory input; saving it would
+    // leave a pending link whose consent DM can never be delivered.
+    fetchSlackUserIdentityMock.mockResolvedValue(undefined);
+
+    const result = await slackSetUserLinkHandler({
+      ...INPUT,
+      slackTeamId: INSTALLED_TEAM_ID,
+    });
+
+    expect(result.success).toBe(false);
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
   it('should fail closed when the installed workspace cannot be verified', async () => {
     authTestMock.mockResolvedValue({});
 
