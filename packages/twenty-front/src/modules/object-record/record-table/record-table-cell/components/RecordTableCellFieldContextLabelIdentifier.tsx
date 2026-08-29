@@ -3,7 +3,6 @@ import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObject
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { shouldCompactRecordIndexLabelIdentifierComponentState } from '@/object-record/record-index/states/shouldCompactRecordIndexLabelIdentifierComponentState';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
@@ -39,10 +38,6 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
     objectMetadataItem.id,
   );
 
-  const shouldCompactRecordIndexLabelIdentifier = useAtomComponentStateValue(
-    shouldCompactRecordIndexLabelIdentifierComponentState,
-  );
-
   const hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
 
   const updateRecord = useContext(RecordTableUpdateContext);
@@ -63,7 +58,6 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
         fieldDefinition,
         useUpdateRecord: updateRecord ? () => [updateRecord, {}] : undefined,
         isLabelIdentifier: true,
-        isLabelIdentifierCompact: shouldCompactRecordIndexLabelIdentifier,
         displayedMaxRows: 1,
         isRecordFieldReadOnly:
           isRecordTableCellsNonEditable ||
