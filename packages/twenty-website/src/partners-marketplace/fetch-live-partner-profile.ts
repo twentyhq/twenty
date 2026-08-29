@@ -78,7 +78,6 @@ export async function fetchLivePartnerProfile(
   try {
     const data = (await partnersApiFetch(
       `/s/partner-by-slug?slug=${encodeURIComponent(slug)}`,
-      { cache: 'no-store' },
     )) as ApiProfileResponse;
 
     if (!data.ok || !('partner' in data)) {
