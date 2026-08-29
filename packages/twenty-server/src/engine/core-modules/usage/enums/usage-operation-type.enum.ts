@@ -10,6 +10,7 @@ export enum UsageOperationType {
   WEB_SEARCH = 'WEB_SEARCH',
   CALL_RECORDING = 'CALL_RECORDING',
   EMAIL_SEND = 'EMAIL_SEND',
+  API_REQUEST = 'API_REQUEST',
 }
 
 registerEnumType(UsageOperationType, {

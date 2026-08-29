@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
 import { Any } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
@@ -286,6 +287,14 @@ export class CalendarSaveEventsService {
                   );
                 });
 
+            const calendarEventIds =
+              fetchedCalendarEventsWithDBEventsEnrichedWithSavedEvents
+                .map(
+                  ({ newlyCreatedCalendarEvent, existingCalendarEvent }) =>
+                    newlyCreatedCalendarEvent?.id ?? existingCalendarEvent?.id,
+                )
+                .filter(isDefined);
+
             await this.calendarEventParticipantService.upsertAndDeleteCalendarEventParticipants(
               {
                 participantsToCreate,
@@ -294,6 +303,7 @@ export class CalendarSaveEventsService {
                 calendarChannel,
                 connectedAccount,
                 workspaceId,
+                calendarEventIds,
               },
             );
           },

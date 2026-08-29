@@ -1,15 +1,19 @@
 import { PageLayoutTabsRenderer } from '@/page-layout/components/PageLayoutTabsRenderer';
 import { render, screen } from '@testing-library/react';
 import { type ReactNode } from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
+  WidgetType,
 } from '~/generated-metadata/graphql';
 
 let mockActiveTabId = 'hidden-transcript-tab-id';
+let mockPrerenderedTabIds: string[] = [];
 let mockTargetRecordId = 'calendar-event-id';
 let mockIsInSidePanel = false;
 const mockSetActiveTabId = jest.fn();
+const mockSetPrerenderedTabIds = jest.fn();
 
 const homeTab = {
   __typename: 'PageLayoutTab' as const,
@@ -25,6 +29,25 @@ const homeTab = {
   deletedAt: null,
 };
 
+const timelineTab = {
+  ...homeTab,
+  id: 'timeline-tab-id',
+  title: 'Timeline',
+  position: 1,
+  icon: 'IconTimeline',
+  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+};
+
+const frontComponentTab = {
+  ...homeTab,
+  id: 'front-component-tab-id',
+  title: 'App',
+  position: 2,
+  icon: 'IconApps',
+  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+  widgets: [{ id: 'front-component-widget', type: WidgetType.FRONT_COMPONENT }],
+};
+
 jest.mock('@/page-layout/components/dnd/PageLayoutWidgetDndProvider', () => ({
   PageLayoutWidgetDndProvider: ({ children }: { children: ReactNode }) => (
     <>{children}</>
@@ -33,6 +56,10 @@ jest.mock('@/page-layout/components/dnd/PageLayoutWidgetDndProvider', () => ({
 
 jest.mock('@/page-layout/components/PageLayoutLeftPanel', () => ({
   PageLayoutLeftPanel: () => null,
+}));
+
+jest.mock('@/page-layout/components/PageLayoutRecordIdentifierBar', () => ({
+  PageLayoutRecordIdentifierBar: () => null,
 }));
 
 jest.mock('@/page-layout/components/PageLayoutTabList', () => ({
@@ -60,7 +87,7 @@ jest.mock('@/page-layout/hooks/usePageLayoutAddTabStrategy', () => ({
 
 jest.mock('@/page-layout/hooks/usePageLayoutRenderableTabs', () => ({
   usePageLayoutRenderableTabs: () => ({
-    tabsToRenderInTabList: [homeTab],
+    tabsToRenderInTabList: [homeTab, timelineTab, frontComponentTab],
     pinnedLeftTab: undefined,
   }),
 }));
@@ -85,9 +112,16 @@ jest.mock('@/ui/layout/contexts/LayoutRenderingContext', () => ({
 jest.mock(
   '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue',
   () => ({
-    useAtomComponentStateValue: () => mockActiveTabId,
+    useAtomComponentStateValue: (componentState: { key: string }) =>
+      componentState.key === 'pageLayoutPrerenderedTabIdsComponentState'
+        ? mockPrerenderedTabIds
+        : mockActiveTabId,
   }),
 );
+
+jest.mock('@/ui/utilities/state/jotai/hooks/useSetAtomComponentState', () => ({
+  useSetAtomComponentState: () => mockSetPrerenderedTabIds,
+}));
 
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomComponentState', () => ({
   useAtomComponentState: () => [mockActiveTabId, mockSetActiveTabId],
@@ -116,15 +150,17 @@ jest.mock('@/ui/utilities/scroll/components/ScrollWrapper', () => ({
 
 describe('PageLayoutTabsRenderer', () => {
   beforeEach(() => {
+    mockPrerenderedTabIds = [];
     mockTargetRecordId = 'calendar-event-id';
     mockIsInSidePanel = false;
     mockSetActiveTabId.mockClear();
+    mockSetPrerenderedTabIds.mockClear();
   });
 
   it('does not render content for an active tab filtered out of the tab list', () => {
     mockActiveTabId = 'hidden-transcript-tab-id';
 
-    render(<PageLayoutTabsRenderer />);
+    render(<PageLayoutTabsRenderer />, { wrapper: MemoryRouter });
 
     expect(screen.queryByText(/Rendered tab:/)).not.toBeInTheDocument();
     expect(mockSetActiveTabId).toHaveBeenCalledWith('home-tab-id');
@@ -133,15 +169,57 @@ describe('PageLayoutTabsRenderer', () => {
   it('renders content when the active tab remains renderable', () => {
     mockActiveTabId = 'home-tab-id';
 
-    render(<PageLayoutTabsRenderer />);
+    render(<PageLayoutTabsRenderer />, { wrapper: MemoryRouter });
 
     expect(screen.getByText('Rendered tab: home-tab-id')).toBeVisible();
+  });
+
+  it('mounts prerendered vertical-list tabs alongside the active tab', () => {
+    mockActiveTabId = 'home-tab-id';
+    mockPrerenderedTabIds = ['timeline-tab-id'];
+
+    render(<PageLayoutTabsRenderer />, { wrapper: MemoryRouter });
+
+    expect(screen.getByText('Rendered tab: home-tab-id')).toBeInTheDocument();
+    expect(
+      screen.getByText('Rendered tab: timeline-tab-id'),
+    ).toBeInTheDocument();
+  });
+
+  it('mounts prerendered application widget tabs offscreen alongside the active tab', () => {
+    mockActiveTabId = 'timeline-tab-id';
+    mockPrerenderedTabIds = ['front-component-tab-id'];
+
+    render(<PageLayoutTabsRenderer />, { wrapper: MemoryRouter });
+
+    expect(
+      screen.getByText('Rendered tab: timeline-tab-id'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('Rendered tab: front-component-tab-id'),
+    ).toBeInTheDocument();
+  });
+
+  it('does not mount prerendered tabs that are not prerenderable', () => {
+    mockActiveTabId = 'timeline-tab-id';
+    mockPrerenderedTabIds = ['home-tab-id'];
+
+    render(<PageLayoutTabsRenderer />, { wrapper: MemoryRouter });
+
+    expect(
+      screen.getByText('Rendered tab: timeline-tab-id'),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText('Rendered tab: home-tab-id'),
+    ).not.toBeInTheDocument();
   });
 
   it('resets the scroll position when the target record changes', () => {
     mockActiveTabId = 'home-tab-id';
 
-    const { rerender } = render(<PageLayoutTabsRenderer />);
+    const { rerender } = render(<PageLayoutTabsRenderer />, {
+      wrapper: MemoryRouter,
+    });
 
     const scrollWrapper = screen.getByTestId('scroll-wrapper');
 
@@ -156,14 +234,16 @@ describe('PageLayoutTabsRenderer', () => {
   it('resets the scroll wrapper owned by the current rendering context', () => {
     mockActiveTabId = 'home-tab-id';
 
-    render(<PageLayoutTabsRenderer />);
+    render(<PageLayoutTabsRenderer />, { wrapper: MemoryRouter });
 
     const mainViewScrollWrapper = screen.getByTestId('scroll-wrapper');
     mainViewScrollWrapper.scrollTop = 200;
 
     mockIsInSidePanel = true;
 
-    const { rerender } = render(<PageLayoutTabsRenderer />);
+    const { rerender } = render(<PageLayoutTabsRenderer />, {
+      wrapper: MemoryRouter,
+    });
     const sidePanelScrollWrapper = screen.getAllByTestId('scroll-wrapper')[1];
 
     expect(sidePanelScrollWrapper.id).not.toBe(mainViewScrollWrapper.id);

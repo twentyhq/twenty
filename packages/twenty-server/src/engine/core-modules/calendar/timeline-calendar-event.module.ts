@@ -9,12 +9,14 @@ import { RelatedPersonIdsModule } from 'src/engine/core-modules/related-person-i
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
+import { TargetModule } from 'src/engine/core-modules/target/target.module';
 
 @Module({
   imports: [
     FileUrlModule,
     UserModule,
     RelatedPersonIdsModule,
+    TargetModule,
     TypeOrmModule.forFeature([
       CalendarChannelEntity,
       ConnectedAccountEntity,

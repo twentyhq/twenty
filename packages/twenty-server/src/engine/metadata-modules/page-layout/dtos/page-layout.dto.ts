@@ -38,6 +38,9 @@ export class PageLayoutDTO {
   @Field({ nullable: false })
   isSystemSideEffect: boolean;
 
+  @Field({ nullable: false, defaultValue: true })
+  isFirstTabPinned: boolean;
+
   @Field()
   createdAt: Date;
 

@@ -3,9 +3,9 @@ import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import {
   AggregateOperations,
   PageLayoutTabLayoutMode,
+  type PageLayoutWidget,
   WidgetConfigurationType,
   WidgetType,
-  type PageLayoutWidget,
 } from '~/generated-metadata/graphql';
 
 describe('addWidgetToTab', () => {
@@ -25,7 +25,14 @@ describe('addWidgetToTab', () => {
       aggregateFieldMetadataId: 'id',
       displayDataLabel: false,
     },
-    gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 2 },
+    position: {
+      __typename: 'PageLayoutWidgetGridPosition' as const,
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      row: 0,
+      column: 0,
+      rowSpan: 2,
+      columnSpan: 2,
+    },
     objectMetadataId: null,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',

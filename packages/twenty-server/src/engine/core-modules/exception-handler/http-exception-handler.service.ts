@@ -18,6 +18,7 @@ import { CustomError } from 'twenty-shared/utils';
 
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { hasRestResponse } from 'src/engine/core-modules/exception-handler/utils/has-rest-response.util';
 import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { isTwentyOrmUserInputError } from 'src/engine/twenty-orm/utils/is-twenty-orm-user-input-error.util';
 import { handleException } from 'src/engine/utils/global-exception-handler.util';
@@ -115,6 +116,10 @@ export class HttpExceptionHandlerService {
       statusCode,
       shouldBeCapturedBySentry,
     });
+
+    if (hasRestResponse(exception)) {
+      return response.status(statusCode).send(exception.getResponseBody());
+    }
 
     return response.status(statusCode).send({
       statusCode,
