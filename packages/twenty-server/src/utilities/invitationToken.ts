@@ -1,0 +1,1 @@
+export function isTokenValid(expiresAt: number): boolean { return Date.now() < expiresAt; }
