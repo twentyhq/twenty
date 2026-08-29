@@ -1,0 +1,1 @@
+export class PresenceTracker { private users = new Map<string, number>(); ping(uid: string) { this.users.set(uid, Date.now()); } getActive(timeoutMs = 30000): string[] { const now = Date.now(); return Array.from(this.users.entries()).filter(([_, t]) => now - t < timeoutMs).map(([u]) => u); } }
