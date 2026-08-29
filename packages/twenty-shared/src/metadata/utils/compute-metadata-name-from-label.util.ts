@@ -11,19 +11,23 @@ export const computeMetadataNameFromLabel = ({
 }): string => {
   if (!label) return '';
 
-  const prefixedLabel = /^\d/.test(label) ? `n${label}` : label;
-
-  if (prefixedLabel === '') return '';
-
-  const formattedString = slugify(prefixedLabel, {
+  const slugifiedLabel = slugify(label, {
     trim: true,
     separator: '_',
     allowedChars: 'a-zA-Z0-9',
   });
 
-  if (formattedString === '') {
+  if (slugifiedLabel === '') {
     throw new Error(`Invalid label: "${label}"`);
   }
+
+  // Prefix the digit guard AFTER slugify: slugify strips leading
+  // non-alphanumerics, so a label like " 5 things" or "$5 fee" is not
+  // digit-leading itself but slugifies to "5_things"/"5_fee". Checking the raw
+  // label let those through and produced an invalid digit-leading name.
+  const formattedString = /^\d/.test(slugifiedLabel)
+    ? `n_${slugifiedLabel}`
+    : slugifiedLabel;
 
   const computedName = camelCase(formattedString);
 

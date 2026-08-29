@@ -23,6 +23,15 @@ describe('computeMetadataNameFromLabel', () => {
     );
   });
 
+  it('should prefix labels that only become digit-leading after slugify', () => {
+    // slugify strips the leading space / symbol, so these are not digit-leading
+    // as written but slugify to "5_..."; the name must still not start with a digit.
+    expect(computeMetadataNameFromLabel({ label: ' 5 things' })).toBe(
+      'n5Things',
+    );
+    expect(computeMetadataNameFromLabel({ label: '$5 fee' })).toBe('n5Fee');
+  });
+
   it('should add Custom suffix for reserved words', () => {
     const result = computeMetadataNameFromLabel({ label: 'Name' });
 
