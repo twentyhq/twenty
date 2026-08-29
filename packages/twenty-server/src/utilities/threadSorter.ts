@@ -1,0 +1,1 @@
+export function sortThread<T extends { sentAt: string }>(emails: T[]): T[] { return [...emails].sort((a, b) => new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime()); }
