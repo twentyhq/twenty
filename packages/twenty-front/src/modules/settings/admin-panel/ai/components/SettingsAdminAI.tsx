@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { IconBolt, IconMessage, IconRobot } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
@@ -71,7 +71,7 @@ export const SettingsAdminAI = () => {
     currentWorkspace?.hasValidEnterpriseValidityToken === true;
   const {
     hasAccess: hasCustomAiProviderAccess,
-    seatThreshold: customAiProviderSeatThreshold,
+    gateDescription: customAiProviderGateDescription,
     tooltipContent: customAiProviderTooltipContent,
   } = useCustomAiProviderAccess();
   const [usagePeriod, setUsagePeriod] = useState<PeriodPreset>('30d');
@@ -219,14 +219,13 @@ export const SettingsAdminAI = () => {
           showAddButton={hasCustomAiProviderAccess}
         />
 
-        {!hasCustomAiProviderAccess &&
-          isDefined(customAiProviderSeatThreshold) && (
-            <SettingsEnterpriseFeatureGateCard
-              title={t`Organization feature`}
-              description={t`Custom providers are complimentary below ${customAiProviderSeatThreshold} seats. Upgrade to add more.`}
-              buttonTitle={t`Activate`}
-            />
-          )}
+        {!hasCustomAiProviderAccess && (
+          <SettingsEnterpriseFeatureGateCard
+            title={t`Organization feature`}
+            description={customAiProviderGateDescription}
+            buttonTitle={t`Activate`}
+          />
+        )}
       </Section>
 
       {availableModelOptions.length > 0 && (

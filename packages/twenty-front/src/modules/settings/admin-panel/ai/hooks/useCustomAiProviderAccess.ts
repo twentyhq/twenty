@@ -17,9 +17,10 @@ export const useCustomAiProviderAccess = () => {
 
   const access = data?.getCustomAiProviderAccess;
 
-  // Assume access while the query is in flight so the section never flashes
-  // its locked state for instances that are entitled to it.
-  const hasAccess = access?.hasAccess ?? true;
+  // Only assume access while the query is in flight, so the section never
+  // flashes its locked state; once it settles without an answer the creation
+  // paths stay closed rather than failing at the mutation.
+  const hasAccess = access?.hasAccess ?? loading;
 
   const tooltipContent = !isDefined(access)
     ? undefined
@@ -27,11 +28,16 @@ export const useCustomAiProviderAccess = () => {
       ? t`Custom providers are complimentary for organizations under ${access.seatThreshold} seats. Above that, an Organization plan is required.`
       : t`Custom providers are complimentary for organizations under ${access.seatThreshold} seats. This instance has ${access.seatCount} seats, so an Organization plan is required.`;
 
+  const gateDescription = isDefined(access)
+    ? t`Custom providers are complimentary below ${access.seatThreshold} seats. This instance has ${access.seatCount}. Upgrade to add more.`
+    : t`This instance's plan could not be verified. Reload the page to try again.`;
+
   return {
     hasAccess,
     isLoadingAccess: loading,
     seatCount: access?.seatCount,
     seatThreshold: access?.seatThreshold,
     tooltipContent,
+    gateDescription,
   };
 };

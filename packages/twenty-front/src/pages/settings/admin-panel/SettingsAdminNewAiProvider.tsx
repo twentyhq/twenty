@@ -56,6 +56,7 @@ export const SettingsAdminNewAiProvider = () => {
   const [isCustomMode, setIsCustomMode] = useState(false);
   const {
     hasAccess: hasCustomAiProviderAccess,
+    gateDescription: customAiProviderGateDescription,
     tooltipContent: customAiProviderTooltipContent,
   } = useCustomAiProviderAccess();
 
@@ -257,10 +258,10 @@ export const SettingsAdminNewAiProvider = () => {
         }
       >
         <SettingsPageContainer>
-          {!hasCustomAiProviderAccess && customAiProviderTooltipContent && (
+          {!hasCustomAiProviderAccess && (
             <Info
               accent="danger"
-              text={customAiProviderTooltipContent}
+              text={customAiProviderGateDescription}
               buttonTitle={t`Activate`}
               to={getSettingsPath(SettingsPath.AdminPanelEnterprise)}
             />
