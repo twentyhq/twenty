@@ -30,7 +30,7 @@ const CALENDAR_EVENT_TARGETS_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.calendarEvent.fields.calendarEventTargets
     .universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.38.0', 1787936377021)
+@RegisteredWorkspaceCommand('2.38.0', 1787982276903)
 @Command({
   name: 'upgrade:2-38:add-calendar-event-relations-widget',
   description:

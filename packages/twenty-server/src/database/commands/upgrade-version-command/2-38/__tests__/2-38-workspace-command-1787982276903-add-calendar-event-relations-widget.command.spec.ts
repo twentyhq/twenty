@@ -4,7 +4,7 @@ import {
 } from 'twenty-shared/metadata';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { AddCalendarEventRelationsWidgetCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1787936377021-add-calendar-event-relations-widget.command';
+import { AddCalendarEventRelationsWidgetCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1787982276903-add-calendar-event-relations-widget.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
