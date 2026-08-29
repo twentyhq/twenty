@@ -1,0 +1,1 @@
+export function mapHeader(header: string, fields: string[]): string | null { const h = header.toLowerCase().replace(/[^a-z]/g, ''); return fields.find(f => f.toLowerCase().includes(h)) || null; }
