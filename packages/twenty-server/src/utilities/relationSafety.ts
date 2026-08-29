@@ -1,0 +1,1 @@
+export function canCascadeDelete(hasDependents: boolean, force = false): boolean { return !hasDependents || force; }
