@@ -8,6 +8,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
+  PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetConfigurationType,
   WidgetType,
@@ -28,8 +29,9 @@ const summaryWidget: PageLayoutWidget = {
   type: WidgetType.CALL_RECORDING_SUMMARY,
   title: 'Summary',
   objectMetadataId: null,
-  gridPosition: {
-    __typename: 'GridPosition',
+  position: {
+    layoutMode: PageLayoutTabLayoutMode.GRID,
+    __typename: 'PageLayoutWidgetGridPosition',
     row: 0,
     column: 0,
     rowSpan: 4,
@@ -48,6 +50,7 @@ const pageLayoutWithSummaryWidget: PageLayout = {
   id: PAGE_LAYOUT_TEST_INSTANCE_ID,
   name: 'Calendar Event Layout',
   type: PageLayoutType.RECORD_PAGE,
+  isFirstTabPinned: true,
   applicationId: '',
   isSystemSideEffect: false,
   objectMetadataId: null,

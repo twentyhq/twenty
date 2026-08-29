@@ -5,9 +5,10 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
+import { type ReactNode } from 'react';
 
 import { BREAKPOINT_PX, color, mediaUp, spacing } from '@/tokens';
-import { Body, Button, Eyebrow, Heading } from '@/ui';
+import { Body, Eyebrow, Heading } from '@/ui';
 
 import { CardFrame, type PartnerCardIndexStyle } from './MarketplaceCardFrame';
 
@@ -83,7 +84,13 @@ const CtaWrapper = styled.div`
   margin-top: auto;
 `;
 
-export function MarketplaceMatchCard({ index = 0 }: { index?: number }) {
+export function MarketplaceMatchCard({
+  cta,
+  index = 0,
+}: {
+  cta: ReactNode;
+  index?: number;
+}) {
   const { i18n } = useLingui();
   const style: PartnerCardIndexStyle = { '--partner-card-index': index };
 
@@ -112,13 +119,7 @@ export function MarketplaceMatchCard({ index = 0 }: { index?: number }) {
             )}
           </Body>
         </Copy>
-        <CtaWrapper>
-          <Button
-            href="/partners/brief"
-            label={i18n._(msg`Get matched`)}
-            variant="filled"
-          />
-        </CtaWrapper>
+        <CtaWrapper>{cta}</CtaWrapper>
       </Content>
     </CardArticle>
   );

@@ -1,5 +1,6 @@
 import { RecordPageSidePanelCommandMenu } from '@/command-menu-item/components/RecordPageSidePanelCommandMenu';
 import { RecordPageSidePanelPinnedCommandMenuItems } from '@/command-menu-item/components/RecordPageSidePanelPinnedCommandMenuItems';
+import { RecordPageSidePanelWidgetCommandMenuItems } from '@/command-menu-item/components/RecordPageSidePanelWidgetCommandMenuItems';
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
 import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
 import { RecordShowEffect } from '@/object-record/record-show/components/RecordShowEffect';
@@ -9,13 +10,10 @@ import { usePageLayoutIdForRecord } from '@/page-layout/hooks/usePageLayoutIdFor
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
-import { sidePanelWidgetFooterCommandMenuItemsState } from '@/ui/layout/side-panel/states/sidePanelWidgetFooterCommandMenuItemsState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
@@ -57,20 +55,6 @@ export const PageLayoutRecordPageRenderer = ({
     id: targetRecordIdentifier.id,
     targetObjectNameSingular: targetRecordIdentifier.targetObjectNameSingular,
   });
-
-  const sidePanelWidgetFooterCommandMenuItems = useAtomStateValue(
-    sidePanelWidgetFooterCommandMenuItemsState,
-  );
-
-  const pinnedWidgetCommandMenuItems =
-    sidePanelWidgetFooterCommandMenuItems.filter(
-      (commandMenuItem) => commandMenuItem.isPinned !== false,
-    );
-
-  // A widget that contributes footer actions, such as the email composer,
-  // supersedes the record's own actions rather than doubling up with them.
-  const hasPinnedWidgetCommandMenuItems =
-    pinnedWidgetCommandMenuItems.length > 0;
 
   return (
     <>
@@ -119,21 +103,8 @@ export const PageLayoutRecordPageRenderer = ({
           <SidePanelFooter
             actions={[
               <RecordPageSidePanelCommandMenu key="options" />,
-              ...(hasPinnedWidgetCommandMenuItems
-                ? pinnedWidgetCommandMenuItems.map((commandMenuItem) => (
-                    <Button
-                      key={commandMenuItem.id}
-                      size="small"
-                      variant="primary"
-                      accent={commandMenuItem.isPrimaryCTA ? 'blue' : 'default'}
-                      title={commandMenuItem.label}
-                      Icon={commandMenuItem.Icon}
-                      hotkeys={commandMenuItem.hotkeys}
-                      onClick={commandMenuItem.onClick}
-                      disabled={commandMenuItem.disabled}
-                    />
-                  ))
-                : [<RecordPageSidePanelPinnedCommandMenuItems key="pinned" />]),
+              <RecordPageSidePanelWidgetCommandMenuItems key="widget" />,
+              <RecordPageSidePanelPinnedCommandMenuItems key="pinned" />,
             ]}
           />
         )}

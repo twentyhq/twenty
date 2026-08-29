@@ -40,7 +40,9 @@ const buildReferredBy = (
 ): string => {
   if (partner === null) return NO_PARTNER_LABEL;
   const name = truncate(partner.name, PARTNER_NAME_MAX);
-  return baseUrl === null ? name : `[${name}](${baseUrl}/object/partner/${partner.id})`;
+  return baseUrl === null
+    ? name
+    : `[${name}](${baseUrl}/object/partner/${partner.id})`;
 };
 
 export function buildBriefEmbed(
@@ -48,19 +50,30 @@ export function buildBriefEmbed(
   frontendUrl: string | undefined,
 ): Record<string, unknown> {
   const { input, referringPartner } = brief;
-  const baseUrl = isNonEmptyString(frontendUrl) ? trimTrailingSlash(frontendUrl) : null;
+  const baseUrl = isNonEmptyString(frontendUrl)
+    ? trimTrailingSlash(frontendUrl)
+    : null;
   const fields: DiscordField[] = [];
 
-  fields.push({ name: 'Referred by', value: buildReferredBy(referringPartner, baseUrl) });
+  fields.push({
+    name: 'Referred by',
+    value: buildReferredBy(referringPartner, baseUrl),
+  });
 
-  const contact = [input.firstName, input.lastName].filter(isNonEmptyString).join(' ').trim();
+  const contact = [input.firstName, input.lastName]
+    .filter(isNonEmptyString)
+    .join(' ')
+    .trim();
   pushInlineRow(fields, [
     ...inlineField('Contact', contact),
     ...inlineField('Company', input.companyName),
   ]);
 
   pushInlineRow(fields, [
-    ...inlineField('Hosting', input.hostingType && HOSTING_LABEL[input.hostingType]),
+    ...inlineField(
+      'Hosting',
+      input.hostingType && HOSTING_LABEL[input.hostingType],
+    ),
     ...inlineField('Seats', input.seatCount),
     ...inlineField('Country', input.country),
   ]);

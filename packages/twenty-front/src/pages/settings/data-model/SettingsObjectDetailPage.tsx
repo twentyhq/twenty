@@ -26,7 +26,7 @@ import { useLingui } from '@lingui/react/macro';
 import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   IconArrowUpRight,
-  IconLayout,
+  IconAppWindow,
   IconListDetails,
   IconPlus,
   IconSettings,
@@ -107,7 +107,7 @@ export const SettingsObjectDetailPage = () => {
     {
       id: SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.LAYOUT,
       title: t`Layout`,
-      Icon: IconLayout,
+      Icon: IconAppWindow,
       hide:
         objectMetadataItem.isRemote ||
         objectMetadataItem.nameSingular === CoreObjectNameSingular.Dashboard,

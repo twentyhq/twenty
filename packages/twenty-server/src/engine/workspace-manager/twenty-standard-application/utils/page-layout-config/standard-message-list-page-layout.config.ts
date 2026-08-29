@@ -5,7 +5,6 @@ import {
 
 import { PageLayoutType, WidgetType } from 'twenty-shared/types';
 import {
-  GRID_POSITIONS,
   TAB_PROPS,
   VERTICAL_LIST_LAYOUT_POSITIONS,
   WIDGET_PROPS,
@@ -34,7 +33,6 @@ const MESSAGE_LIST_PAGE_TABS = {
             .home.widgets.members.universalIdentifier,
         title: 'Members',
         type: WidgetType.FIELD,
-        gridPosition: GRID_POSITIONS.FULL_WIDTH,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
         fieldUniversalIdentifier:
           STANDARD_OBJECTS.messageList.fields.members.universalIdentifier,

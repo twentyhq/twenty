@@ -19,8 +19,9 @@ const P_OTHER = 'bbbbbbbb-0000-0000-0000-000000000002';
 const event = (after: Record<string, unknown>, updatedFields: string[]) =>
   ({ properties: { after, updatedFields } }) as never;
 
-const apps = (...nodes: Array<Record<string, unknown>>) =>
-  ({ applications: { edges: nodes.map((node) => ({ node })) } });
+const apps = (...nodes: Array<Record<string, unknown>>) => ({
+  applications: { edges: nodes.map((node) => ({ node })) },
+});
 
 const stateUpdates = () =>
   mutationMock.mock.calls.map((c) => {
@@ -36,7 +37,9 @@ describe('on-opportunity-partner-won cascade', () => {
   });
 
   it('ignores updates that do not touch partnerId', async () => {
-    const result = await handler(event({ id: OPP, partnerId: P_WIN }, ['stage']));
+    const result = await handler(
+      event({ id: OPP, partnerId: P_WIN }, ['stage']),
+    );
     expect(result).toEqual({});
     expect(queryMock).not.toHaveBeenCalled();
   });
@@ -86,7 +89,10 @@ describe('on-opportunity-partner-won cascade', () => {
     );
     await handler(event({ id: OPP, partnerId: P_WIN }, ['partnerId']));
     const updates = stateUpdates();
-    expect(updates).toContainEqual({ id: 'app-win-was-declined', state: 'WON' });
+    expect(updates).toContainEqual({
+      id: 'app-win-was-declined',
+      state: 'WON',
+    });
   });
 
   it('on unassign: only WON -> APPLIED; DECLINED and BACKUP untouched', async () => {

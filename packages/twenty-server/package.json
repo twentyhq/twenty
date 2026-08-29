@@ -57,7 +57,7 @@
     "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.2.1",
     "@nestjs/event-emitter": "2.1.0",
-    "@nestjs/graphql": "patch:@nestjs/graphql@npm%3A13.4.2#~/.yarn/patches/@nestjs-graphql-npm-13.4.2-a41c900c19.patch",
+    "@nestjs/graphql": "patch:@nestjs/graphql@npm%3A13.4.5#~/.yarn/patches/@nestjs-graphql-npm-13.4.5-2bf8ea7c63.patch",
     "@nestjs/jwt": "11.0.1",
     "@nestjs/passport": "11.0.5",
     "@nestjs/platform-express": "11.2.1",

@@ -17,18 +17,20 @@ import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-e
 import { getMetadataRelatedMetadataNamesForValidation } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names-for-validation.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-serialized-relation-names.util';
+import { withDerivedFieldMetadataMaps } from 'src/engine/metadata-modules/flat-entity/utils/with-derived-field-metadata-maps.util';
 import { createSearchFieldMetadatasByTsVectorFieldIdAccessor } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/create-search-field-metadatas-by-ts-vector-field-id-accessor.util';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
-import { buildPreallocatedIdByUniversalIdentifierFromActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-preallocated-id-by-universal-identifier-from-actions.util';
 import { type AfterCommitSideEffect } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/after-commit-side-effect.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
+import { buildPreallocatedIdByUniversalIdentifierFromActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-preallocated-id-by-universal-identifier-from-actions.util';
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
@@ -44,26 +46,21 @@ export class WorkspaceMigrationRunnerService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  private getLegacyCacheInvalidationPromises({
-    allFlatEntityMapsKeys,
-    workspaceId,
-  }: {
-    allFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[];
-    workspaceId: string;
-  }): Promise<void>[] {
-    const asyncOperations: Promise<void>[] = [];
+  private getLegacyCacheInvalidation(
+    allFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[],
+  ): {
+    shouldIncrementMetadataGraphqlSchemaVersion: boolean;
+    legacyCacheKeyNames: WorkspaceCacheKeyName[];
+  } {
     const flatMapsKeysSet = new Set(allFlatEntityMapsKeys);
+    const legacyCacheKeyNames: WorkspaceCacheKeyName[] = [];
 
     const shouldIncrementMetadataGraphqlSchemaVersion =
       flatMapsKeysSet.has('flatObjectMetadataMaps') ||
       flatMapsKeysSet.has('flatFieldMetadataMaps');
 
     if (shouldIncrementMetadataGraphqlSchemaVersion) {
-      asyncOperations.push(
-        this.workspaceMetadataVersionService.incrementMetadataVersion(
-          workspaceId,
-        ),
-      );
+      legacyCacheKeyNames.push('ORMEntityMetadatas', 'graphQLResolverNameMap');
     }
 
     const shouldInvalidateRoleMapCache =
@@ -75,36 +72,24 @@ export class WorkspaceMigrationRunnerService {
       flatMapsKeysSet.has('flatFieldPermissionMaps') ||
       flatMapsKeysSet.has('flatRolePermissionFlagMaps');
 
-    if (shouldIncrementMetadataGraphqlSchemaVersion) {
-      asyncOperations.push(
-        this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-          'ORMEntityMetadatas',
-          'graphQLResolverNameMap',
-        ]),
-      );
-    }
-
     if (shouldInvalidateRoleMapCache || shouldInvalidateRolesPermissionsCache) {
-      asyncOperations.push(
-        this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-          'rolesPermissions',
-          'userWorkspaceRoleMap',
-          'flatRoleTargetMaps',
-          'apiKeyRoleMap',
-          'flatRoleTargetByAgentIdMaps',
-        ]),
+      legacyCacheKeyNames.push(
+        'rolesPermissions',
+        'userWorkspaceRoleMap',
+        'flatRoleTargetMaps',
+        'apiKeyRoleMap',
+        'flatRoleTargetByAgentIdMaps',
       );
     }
 
     if (flatMapsKeysSet.has('flatApplicationVariableMaps')) {
-      asyncOperations.push(
-        this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-          'applicationVariableMaps',
-        ]),
-      );
+      legacyCacheKeyNames.push('applicationVariableMaps');
     }
 
-    return asyncOperations;
+    return {
+      shouldIncrementMetadataGraphqlSchemaVersion,
+      legacyCacheKeyNames,
+    };
   }
 
   async invalidateCache({
@@ -119,31 +104,24 @@ export class WorkspaceMigrationRunnerService {
       `Cache invalidation ${allFlatEntityMapsKeys.join()}`,
     );
 
-    await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+    const { shouldIncrementMetadataGraphqlSchemaVersion, legacyCacheKeyNames } =
+      this.getLegacyCacheInvalidation(allFlatEntityMapsKeys);
+
+    const cacheKeyNamesToInvalidate = [
+      ...new Set([
+        ...withDerivedFieldMetadataMaps(allFlatEntityMapsKeys),
+        ...legacyCacheKeyNames,
+      ]),
+    ];
+
+    await this.workspaceCacheService.invalidateAndRecompute(
       workspaceId,
-      flatMapsKeys: allFlatEntityMapsKeys,
-    });
+      cacheKeyNamesToInvalidate,
+    );
 
-    const invalidationResults = await Promise.allSettled(
-      this.getLegacyCacheInvalidationPromises({
-        allFlatEntityMapsKeys,
+    if (shouldIncrementMetadataGraphqlSchemaVersion) {
+      await this.workspaceMetadataVersionService.incrementMetadataVersion(
         workspaceId,
-      }),
-    );
-
-    const invalidationFailures = invalidationResults.filter(
-      (result) => result.status === 'rejected',
-    );
-
-    if (invalidationFailures.length > 0) {
-      invalidationFailures.forEach((err) =>
-        this.logger.error(
-          `Failed to invalidate a legacy cache ${err.reason}`,
-          'Runner',
-        ),
-      );
-      throw new Error(
-        `Failed to invalidate ${invalidationFailures.length} cache operations`,
       );
     }
 

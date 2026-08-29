@@ -8,6 +8,7 @@ const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
   [FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED]: false,
   [FeatureFlagKey.IS_EMAIL_GROUP_ENABLED]: true,
   [FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED]: true,
+  [FeatureFlagKey.IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED]: true,
 };
 
 type SeedFeatureFlagsArgs = {

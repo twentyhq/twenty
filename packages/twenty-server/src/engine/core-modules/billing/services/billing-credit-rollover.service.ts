@@ -88,12 +88,6 @@ export class BillingCreditRolloverService {
     nextAllowanceMicro,
     usageMicro,
   }: ProcessRolloverParams & { usageMicro: number }): Promise<void> {
-    await this.billingCreditGrantService.materializeLegacyBalance({
-      workspaceId,
-      effectiveAt: closingPeriodStart,
-      expiresAt: closingPeriodEnd,
-    });
-
     const closingGrants =
       await this.billingCreditGrantService.findGrantsLiveDuringPeriod({
         workspaceId,
