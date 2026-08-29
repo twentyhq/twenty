@@ -1,0 +1,1 @@
+export function formatAddress(lines: string[], country: string): string { return [...lines.filter(Boolean), country].join(', '); }
