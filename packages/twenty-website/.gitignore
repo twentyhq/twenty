@@ -16,3 +16,5 @@ next-env.d.ts
 .wrangler/
 .dev.vars
 cloudflare-env.d.ts
+/dist/
+.vinext/
