@@ -1,0 +1,1 @@
+export function chunkIds(ids: string[], size = 200): string[][] { const r: string[][] = []; for (let i = 0; i < ids.length; i += size) r.push(ids.slice(i, i + size)); return r; }
