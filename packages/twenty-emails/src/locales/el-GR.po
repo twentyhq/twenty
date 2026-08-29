@@ -275,7 +275,6 @@ msgstr "Οδηγός Χρήστη"
 
 #. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
-#: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
 msgstr "Επικύρωση τομέα"
 

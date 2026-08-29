@@ -275,7 +275,6 @@ msgstr "用户指南"
 
 #. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
-#: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
 msgstr "验证域名"
 

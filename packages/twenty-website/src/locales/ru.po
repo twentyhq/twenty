@@ -57,12 +57,12 @@ msgstr "{0} скриншот"
 msgid "{count} Case Studies"
 msgstr "{count} кейс-стади"
 
-#. js-lingui-id: NSO/FI
+#. js-lingui-id: NSO_FI
 #: src/partners-marketplace/PartnerRatesPanel.tsx
 msgid "{hourly}/hr"
 msgstr "{hourly}/час"
 
-#. js-lingui-id: rAP+km
+#. js-lingui-id: rAP-km
 #: src/partners-marketplace/FilterDropdown.tsx
 msgid "{labelText} filter"
 msgstr "Фильтр {labelText}"
@@ -95,13 +95,6 @@ msgstr "/место/месяц — оплата раз в год"
 
 #. js-lingui-id: XUqxHW
 #: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
 msgid "/user/month"
 msgstr "/пользователь/месяц"
 
@@ -115,13 +108,13 @@ msgstr "/год"
 msgid "© {year} – Twenty"
 msgstr "© {year} – Twenty"
 
-#. js-lingui-id: 2ygf/L
-#: src/partner-application/partner-application-copy.ts
+#. js-lingui-id: 2ygf_L
 #: src/client-brief/client-brief-copy.ts
+#: src/partner-application/partner-application-copy.ts
 msgid "← Back"
 msgstr "← Назад"
 
-#. js-lingui-id: 9j/bUt
+#. js-lingui-id: 9j_bUt
 #: src/partners-marketplace/BackToMarketplaceLink.tsx
 msgid "← Twenty partners"
 msgstr "← Партнёры Twenty"
@@ -141,7 +134,7 @@ msgstr "+$35/пользователь в месяц"
 msgid "+$5/user per month"
 msgstr "+$5/пользователь в месяц"
 
-#. js-lingui-id: QO+kOi
+#. js-lingui-id: QO-kOi
 #: src/sections/compare/compare-data.ts
 msgid "+$7,200/yr"
 msgstr "+7 200 $/год"
@@ -153,33 +146,26 @@ msgstr "+$7000/организация в месяц"
 
 #. js-lingui-id: yVr18d
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-#: src/sections/pricing-salesfarce/salesfarce-data.ts
-#: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"+$75/user per month\n"
+msgid "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr ""
-"+$75/пользователь в месяц\n"
+msgstr "+$75/пользователь в месяц\n"
 "Перейдите на enterprise-тариф!"
 
-#. js-lingui-id: iK+ikF
+#. js-lingui-id: iK-ikF
 #: src/sections/trusted-by/TrustedBy.tsx
 msgid "+10k others"
 msgstr "+10 тыс. других"
 
 #. js-lingui-id: nRtVCK
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"+20% of net spend\n"
+msgid "+20% of net spend\n"
 "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr ""
-"+20% от чистых расходов\n"
+msgstr "+20% от чистых расходов\n"
 "+$75/пользователь в месяц\n"
 "Перейдите на enterprise-тариф!"
 
 #. js-lingui-id: iXucfi
-#: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "+30% of spend"
 msgstr "+30% от расходов"
@@ -245,9 +231,8 @@ msgid "≈ 8× less"
 msgstr "≈ в 8 раз меньше"
 
 #. js-lingui-id: be30i9
+#: src/sections/compare/compare-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
 msgid "$0"
 msgstr "$0"
 
@@ -258,17 +243,14 @@ msgstr "от 1 500 $ до 3 500 $"
 
 #. js-lingui-id: 6inRXo
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"$1/orchestration run/org\n"
+msgid "$1/orchestration run/org\n"
 "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr ""
-"$1/запуск оркестрации/организация\n"
+msgstr "$1/запуск оркестрации/организация\n"
 "+$75/пользователь в месяц\n"
 "Перейдите на enterprise-тариф!"
 
 #. js-lingui-id: p0vJMR
-#: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$100/seat/mo"
 msgstr "100 $/место/мес"
@@ -298,9 +280,7 @@ msgstr "12 600 $/год"
 msgid "$134/user/mo"
 msgstr "134 $/польз./мес"
 
-#. js-lingui-id: +v2oYY
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
+#. js-lingui-id: -v2oYY
 #: src/sections/compare/compare-data.ts
 msgid "$150/seat/mo"
 msgstr "150 $/место/мес"
@@ -320,13 +300,12 @@ msgstr "от 15 000 $ до 100 000 $+"
 msgid "$175/user/mo"
 msgstr "175 $/польз./мес"
 
-#. js-lingui-id: F/xoOk
+#. js-lingui-id: F_xoOk
 #: src/sections/compare/compare-data.ts
 msgid "$18,960"
 msgstr "18 960 $"
 
 #. js-lingui-id: EkIZkY
-#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$19"
 msgstr "$19"
@@ -337,9 +316,6 @@ msgid "$19 per user per month, SSO included"
 msgstr "19 $ на пользователя в месяц, SSO включено"
 
 #. js-lingui-id: nEeXt3
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$19 per user per month, that's it"
 msgstr "19 $ на пользователя в месяц — и всё"
@@ -386,18 +362,10 @@ msgstr "39 500 $"
 
 #. js-lingui-id: BkOdiw
 #: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
 msgid "$4,560"
 msgstr "4 560 $"
 
 #. js-lingui-id: godgke
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$4,560/yr"
 msgstr "4 560 $/год"
@@ -427,7 +395,7 @@ msgstr "от 40 000 $ до 150 000 $+"
 msgid "$42,000/yr"
 msgstr "42 000 $/год"
 
-#. js-lingui-id: lg3QC/
+#. js-lingui-id: lg3QC_
 #: src/sections/compare/compare-data.ts
 msgid "$49/user/mo"
 msgstr "49 $/польз./мес"
@@ -447,7 +415,7 @@ msgstr "54 600 $"
 msgid "$72,160+"
 msgstr "72 160 $+"
 
-#. js-lingui-id: 53v+LE
+#. js-lingui-id: 53v-LE
 #: src/sections/compare/compare-data.ts
 msgid "$79 per user per month with SSO"
 msgstr "79 $ на пользователя в месяц с SSO"
@@ -462,9 +430,7 @@ msgstr "79 $/польз./мес"
 msgid "$9"
 msgstr "$9"
 
-#. js-lingui-id: OCkNt+
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
+#. js-lingui-id: OCkNt-
 #: src/sections/compare/compare-data.ts
 msgid "$9 to $19/user, everything included"
 msgstr "от 9 до 19 $/пользователя, всё включено"
@@ -491,11 +457,9 @@ msgstr "100 в минуту"
 
 #. js-lingui-id: uuKUqZ
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"11 permissions\n"
+msgid "11 permissions\n"
 "groups"
-msgstr ""
-"11 групп\n"
+msgstr "11 групп\n"
 "разрешений"
 
 #. js-lingui-id: 2szX5S
@@ -518,11 +482,7 @@ msgstr "контракт на 2 года"
 msgid "2,000+"
 msgstr "2 000+"
 
-#. js-lingui-id: gONZ+/
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
+#. js-lingui-id: gONZ-_
 #: src/sections/compare/compare-data.ts
 msgid "20 × Organization ($19)"
 msgstr "20 × Organization (19 $)"
@@ -552,10 +512,7 @@ msgstr "20 × Sales Enterprise (105 $)"
 msgid "20 × Sales Hub Enterprise ($150)"
 msgstr "20 × Sales Hub Enterprise (150 $)"
 
-#. js-lingui-id: FKcV/y
-#: src/case-studies/case-study-catalog.ts
-#: src/case-studies/case-study-catalog.ts
-#: src/case-studies/case-study-catalog.ts
+#. js-lingui-id: FKcV_y
 #: src/case-studies/case-study-catalog.ts
 msgid "2025"
 msgstr "2025"
@@ -567,14 +524,12 @@ msgstr "3"
 
 #. js-lingui-id: BL47wE
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"3 2 years contract\n"
+msgid "3 2 years contract\n"
 "-33% off"
-msgstr ""
-"3 2-летний контракт\n"
+msgstr "3 2-летний контракт\n"
 "-33% скидка"
 
-#. js-lingui-id: /jgC+9
+#. js-lingui-id: _jgC-9
 #: src/case-studies/case-study-catalog.ts
 msgid "3 product lines"
 msgstr "3 товарные линейки"
@@ -585,7 +540,6 @@ msgid "30 minutes, no commitment"
 msgstr "30 минут, без обязательств"
 
 #. js-lingui-id: 7SJhyh
-#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "30+"
 msgstr "30+"
@@ -627,10 +581,6 @@ msgstr "90%+"
 
 #. js-lingui-id: MXu58Y
 #: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
 msgid "A 20-person sales team, billed annually"
 msgstr "Команда продаж из 20 человек, ежегодная оплата"
 
@@ -651,11 +601,9 @@ msgstr "CRM для команд, которые *двигаются быстро
 
 #. js-lingui-id: MXRINg
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"A CRM that\n"
+msgid "A CRM that\n"
 "*grows* with you"
-msgstr ""
-"CRM, который\n"
+msgstr "CRM, который\n"
 "*растет* вместе с вами"
 
 #. js-lingui-id: diWAWP
@@ -670,11 +618,9 @@ msgstr "CRM, который растет вместе с вами | NetZero и T
 
 #. js-lingui-id: N3qsQD
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"A CRM they\n"
+msgid "A CRM they\n"
 "*actually own*"
-msgstr ""
-"CRM, который\n"
+msgstr "CRM, который\n"
 "*действительно им принадлежит*"
 
 #. js-lingui-id: muZzEA
@@ -689,23 +635,19 @@ msgstr "Пользовательский CRM дает вашей организ�
 
 #. js-lingui-id: 4lAzBW
 #: src/sections/compare/compare-data.ts
-msgid ""
-"A feature-by-feature price check, with sources.\n"
+msgid "A feature-by-feature price check, with sources.\n"
 "Most of what HubSpot gates behind tiers is simply included in Twenty."
-msgstr ""
-"Помесячная проверка цен по функциям с указанием источников.\n"
+msgstr "Помесячная проверка цен по функциям с указанием источников.\n"
 "Большинство возможностей, которые HubSpot закрывает за уровнями тарифов, в Twenty просто включены."
 
 #. js-lingui-id: eZ3I1t
 #: src/sections/compare/compare-data.ts
-msgid ""
-"A friendly price on the front page.\n"
+msgid "A friendly price on the front page.\n"
 "The caps show up after you sign."
-msgstr ""
-"Привлекательная цена на главной странице.\n"
+msgstr "Привлекательная цена на главной странице.\n"
 "Ограничения всплывают уже после подписания контракта."
 
-#. js-lingui-id: uNIo/j
+#. js-lingui-id: uNIo_j
 #: src/sections/three-cards/ProductThreeCards.tsx
 msgid "A modern CRM with *an intuitive interface*"
 msgstr "Современный CRM с *интуитивно понятным интерфейсом*"
@@ -720,7 +662,7 @@ msgstr "Новая навигация \"хлебные крошки\" по вс�
 msgid "A new maintenance mode helps admins pause workspace changes during sensitive operations."
 msgstr "Новый режим обслуживания помогает администраторам приостанавливать изменения в рабочем пространстве во время чувствительных операций."
 
-#. js-lingui-id: iIggw/
+#. js-lingui-id: iIggw_
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A new onboarding experience"
 msgstr "Новый опыт онбординга"
@@ -737,11 +679,9 @@ msgstr "Платформа, готовая к росту"
 
 #. js-lingui-id: vbJW8I
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"A real estate agency on WhatsApp built a\n"
+msgid "A real estate agency on WhatsApp built a\n"
 "*CRM* around it"
-msgstr ""
-"Агентство недвижимости в WhatsApp построило\n"
+msgstr "Агентство недвижимости в WhatsApp построило\n"
 "вокруг него *CRM*"
 
 #. js-lingui-id: hwoGni
@@ -785,8 +725,8 @@ msgid "AC&T and Flycoder moved from a dead vendor export to self-hosted Twenty, 
 msgstr "AC&T и Flycoder перешли с выгрузки от недействующего поставщика на саморазмещаемую Twenty, снизив стоимость CRM более чем на 90% и получив полный контроль."
 
 #. js-lingui-id: TuJiQF
-#: src/sections/three-cards/three-cards.data.ts
 #: src/case-studies/case-study-stories.ts
+#: src/sections/three-cards/three-cards.data.ts
 msgid "AC&T Education Migration"
 msgstr "AC&T Education Migration"
 
@@ -800,23 +740,18 @@ msgstr "AC&T Education Migration (actimmi.com) — это образовател
 msgid "AC&T moved to a self-hosted Twenty instance with no vendor risk, no forced migration, and CRM costs reduced by more than 90%."
 msgstr "AC&T перешли на саморазмещаемый инстанс Twenty без рисков, связанных с поставщиком, без принудительной миграции и со снижением затрат на CRM более чем на 90%."
 
-#. js-lingui-id: J+A83M
+#. js-lingui-id: J-A83M
 #: src/sections/helped/helped.data.ts
 msgid "AC&T replaced a shuttered vendor CRM with self-hosted Twenty and cut CRM costs by more than 90%."
 msgstr "AC&T заменили закрытую CRM поставщика на саморазмещаемую Twenty и сократили расходы на CRM более чем на 90%."
 
 #. js-lingui-id: pd81Qb
-#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 msgid "Account Owner"
 msgstr "Владелец аккаунта"
 
 #. js-lingui-id: bwRvnp
-#: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
-#: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
-#: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
-#: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
-#: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
 msgid "Action"
 msgstr "Действие"
@@ -826,12 +761,12 @@ msgstr "Действие"
 msgid "Activate your Twenty enterprise license after checkout and copy your key into your self-hosted instance."
 msgstr "Активируйте вашу корпоративную лицензию Twenty после оформления заказа и скопируйте ключ в ваш self-hosted экземпляр."
 
-#. js-lingui-id: muhZ+X
+#. js-lingui-id: muhZ-X
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Activating your enterprise license…"
 msgstr "Активация вашей корпоративной лицензии…"
 
-#. js-lingui-id: +cggij
+#. js-lingui-id: -cggij
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Activation failed. Please try again."
 msgstr "Не удалось выполнить активацию. Повторите попытку."
@@ -841,23 +776,22 @@ msgstr "Не удалось выполнить активацию. Повтор�
 msgid "Activation response was incomplete."
 msgstr "Ответ активации был неполным."
 
-#. js-lingui-id: y2DpQ/
+#. js-lingui-id: y2DpQ_
 #: src/sections/compare/compare-data.ts
 msgid "Active automations"
 msgstr "Активные автоматизации"
 
-#. js-lingui-id: Yyn/dP
+#. js-lingui-id: Yyn_dP
 #: src/partners-marketplace/ActiveFilterPills.tsx
 msgid "Active filters"
 msgstr "Активные фильтры"
 
-#. js-lingui-id: r8W+9y
-#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
+#. js-lingui-id: r8W-9y
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 msgid "Add a Section"
 msgstr "Добавить секцию"
 
-#. js-lingui-id: iNSn2+
+#. js-lingui-id: iNSn2-
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Add files directly to records so documents, screenshots, and other assets stay attached to the right work."
 msgstr "Добавляйте файлы напрямую к записям, чтобы документы, скриншоты и другие ресурсы оставались прикрепленными к нужной работе."
@@ -867,7 +801,7 @@ msgstr "Добавляйте файлы напрямую к записям, чт
 msgid "Add filters between workflow steps with conditions and only let data continue if it meets the criteria you define."
 msgstr "Добавляйте фильтры между шагами рабочего процесса с условиями и пропускайте данные дальше только в том случае, если они соответствуют определенным вами критериям."
 
-#. js-lingui-id: woOp+c
+#. js-lingui-id: woOp-c
 #: src/sections/product-stepper/data/product-stepper-data.ts
 msgid "Add objects and fields"
 msgstr "Добавляйте объекты и поля"
@@ -887,12 +821,12 @@ msgstr "Добавляйте получателей с автозаполнен�
 msgid "Add records to filtered views"
 msgstr "Добавление записей в отфильтрованные представления"
 
-#. js-lingui-id: l3+wiC
+#. js-lingui-id: l3-wiC
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Add rich text directly inside layouts with the new dedicated field widget."
 msgstr "Добавляйте форматированный текст прямо в макеты с помощью нового отдельного виджета поля."
 
-#. js-lingui-id: ced+/c
+#. js-lingui-id: ced-_c
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Add Several emails for one contact"
 msgstr "Добавьте несколько email-адресов для одного контакта"
@@ -923,9 +857,8 @@ msgid "Additional"
 msgstr "Дополнительно"
 
 #. js-lingui-id: Du6bPw
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
-#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
-#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 msgid "Address"
 msgstr "Адрес"
 
@@ -949,7 +882,7 @@ msgstr "Внедрение"
 msgid "Advanced Email and Calendar Settings"
 msgstr "Расширенные настройки Email и календаря"
 
-#. js-lingui-id: dePx/O
+#. js-lingui-id: dePx_O
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Advanced filter enables precise database content filtering through nested conditional operators (AND/OR), multiple field filters, and customizable filter groups for complex query construction."
 msgstr "Расширенный фильтр обеспечивает точную фильтрацию содержимого базы данных с помощью вложенных условных операторов (AND/OR), нескольких фильтров по полям и настраиваемых групп фильтров для построения сложных запросов."
@@ -965,8 +898,8 @@ msgid "Advanced Settings"
 msgstr "Расширенные настройки"
 
 #. js-lingui-id: 2050Pj
-#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
+#: src/partners-marketplace/data/partner-scope-options.ts
 msgid "Advisory & Discovery"
 msgstr "Консалтинг и обследование"
 
@@ -980,7 +913,7 @@ msgstr "Афганистан 🇦🇫"
 msgid "Africa"
 msgstr "Африка"
 
-#. js-lingui-id: 7X/+39
+#. js-lingui-id: 7X_-39
 #: src/sections/faq/partner-faq.data.ts
 msgid "Agencies and freelancers apply through the Twenty partner program page, which lists the requirements and carries the application form."
 msgstr "Агентства и фрилансеры подают заявки через страницу партнерской программы Twenty, где указаны требования и размещена форма заявки."
@@ -1030,7 +963,7 @@ msgstr "Агрегаты"
 msgid "Agribusiness"
 msgstr "Агробизнес"
 
-#. js-lingui-id: jiGK6+
+#. js-lingui-id: jiGK6-
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "AI (Einstein)"
 msgstr "AI (Einstein)"
@@ -1055,19 +988,17 @@ msgstr "AI-агенты"
 msgid "AI agents are starting to draft outreach, score leads, research accounts, write follow-ups, update deal stages. Every one of these actions reads from and writes to the CRM. The scoreboard became the playbook. The database became the brain."
 msgstr "AI-агенты уже начинают готовить первичные обращения, оценивать лидов, исследовать аккаунты, писать фоллоу-апы, обновлять стадии сделок. Каждое из этих действий читает и записывает данные в CRM. Табло с показателями превратилось в плейбук. База данных стала мозгом."
 
-#. js-lingui-id: +oUTJx
-#: src/sections/compare/compare-data.ts
+#. js-lingui-id: -oUTJx
 #: src/sections/compare/compare-data.ts
 msgid "AI agents included, usage credits"
 msgstr "Включены AI-агенты, кредиты на использование"
 
 #. js-lingui-id: Rsxdfy
 #: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
 msgid "AI Agents with custom skills"
 msgstr "AI-агенты с настраиваемыми навыками"
 
-#. js-lingui-id: JHi+LN
+#. js-lingui-id: JHi-LN
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "AI agents, chats, and MCP"
 msgstr "AI-агенты, чаты и MCP"
@@ -1082,12 +1013,12 @@ msgstr "AI-чат"
 msgid "AI Chat is easier to use with a cleaner experience and clearer model choices."
 msgstr "AI Chat стал проще в использовании благодаря более чистому интерфейсу и более понятному выбору моделей."
 
-#. js-lingui-id: TfV/y9
+#. js-lingui-id: TfV_y9
 #: src/sections/three-cards/product-three-cards-data.ts
 msgid "AI chat, settings, and records in a side panels for fast, single-screen access."
 msgstr "AI-чат, настройки и записи в боковых панелях для быстрого доступа на одном экране."
 
-#. js-lingui-id: R+bwFB
+#. js-lingui-id: R-bwFB
 #: src/sections/three-cards/three-cards.data.ts
 msgid "AI for rapid iterations"
 msgstr "AI для быстрых итераций"
@@ -1102,14 +1033,14 @@ msgstr "AI в *процессе миграции*"
 msgid "AI in the migration workflow"
 msgstr "AI в процессе миграции"
 
-#. js-lingui-id: t97j+F
+#. js-lingui-id: t97j-F
 #: src/case-studies/case-study-catalog.ts
 msgid "AI-assisted"
 msgstr "С поддержкой AI"
 
 #. js-lingui-id: Vqzy1F
-#: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plans/plans-data.ts
 msgid "Air-gapped deployment"
 msgstr "Air-gapped-развёртывание"
 
@@ -1123,14 +1054,14 @@ msgstr "Албания 🇦🇱"
 msgid "Algeria 🇩🇿"
 msgstr "Алжир 🇩🇿"
 
-#. js-lingui-id: N40H+G
+#. js-lingui-id: N40H-G
 #: src/apps-marketplace/AppsMarketplaceClient.tsx
 msgid "All"
 msgstr "Все"
 
 #. js-lingui-id: LIGwFL
-#: src/sections/three-cards/three-cards.data.ts
 #: src/case-studies/case-study-stories.ts
+#: src/sections/three-cards/three-cards.data.ts
 msgid "Alternative Partners"
 msgstr "Alternative Partners"
 
@@ -1149,7 +1080,7 @@ msgstr "Alternative Partners заменили Salesforce на саморазме
 msgid "Alternative Partners used agentic AI to compress what would typically be weeks of Salesforce migration work into something a single person could oversee."
 msgstr "Alternative Partners использовали агентный AI, чтобы сжать типичный объём недель работы по миграции с Salesforce до задачи, которую может контролировать один человек."
 
-#. js-lingui-id: +BHPrF
+#. js-lingui-id: -BHPrF
 #: src/sections/pricing-plan-table/plan-table-visible-rows.test.ts
 msgid "always"
 msgstr "всегда"
@@ -1185,14 +1116,14 @@ msgid "Any Questions?"
 msgstr "Есть вопросы?"
 
 #. js-lingui-id: pkMjbA
-#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
+#: src/partners-marketplace/data/partner-scope-options.ts
 msgid "Anything that needs a developer."
 msgstr "Всё, что требует разработчика."
 
 #. js-lingui-id: dYZUP3
-#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
+#: src/partners-marketplace/data/partner-scope-options.ts
 msgid "Anything that needs devops skills."
 msgstr "Всё, что требует навыков devops."
 
@@ -1201,7 +1132,7 @@ msgstr "Всё, что требует навыков devops."
 msgid "APAC"
 msgstr "APAC"
 
-#. js-lingui-id: /AMVjF
+#. js-lingui-id: _AMVjF
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "APEX tutorials"
 msgstr "Учебные материалы по APEX"
@@ -1231,18 +1162,16 @@ msgstr "API оплачиваются отдельно. У простоты ес�
 msgid "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data."
 msgstr "API, SDK и вебхуки для расширения Twenty и создания приложений поверх ваших CRM-данных."
 
-#. js-lingui-id: L/34fX
+#. js-lingui-id: L_34fX
 #: src/app/[locale]/(site)/apps/[slug]/page.tsx
 msgid "App not found — Twenty"
 msgstr "Приложение не найдено — Twenty"
 
-#. js-lingui-id: k8I7/G
+#. js-lingui-id: k8I7_G
 #: src/partner-application/partner-application-copy.ts
-msgid ""
-"Apply to build\n"
+msgid "Apply to build\n"
 "*the future of CRM*"
-msgstr ""
-"Подайте заявку, чтобы создавать\n"
+msgstr "Подайте заявку, чтобы создавать\n"
 "*будущее CRM*"
 
 #. js-lingui-id: LJCDxT
@@ -1255,7 +1184,7 @@ msgstr "Подайте заявку на участие в партнерско�
 msgid "Apps"
 msgstr "Приложения"
 
-#. js-lingui-id: lAg+Wy
+#. js-lingui-id: lAg-Wy
 #: src/apps-marketplace/AppsMarketplaceHeader.tsx
 msgid "Apps for *Twenty*"
 msgstr "Приложения для *Twenty*"
@@ -1266,13 +1195,12 @@ msgid "Apr"
 msgstr "Апр"
 
 #. js-lingui-id: 8HV3WN
-#: src/partners-marketplace/spoken-language-labels.ts
 #: src/partner-application/data/partner-language-options.ts
+#: src/partners-marketplace/spoken-language-labels.ts
 msgid "Arabic"
 msgstr "Арабский"
 
 #. js-lingui-id: uicv6Z
-#: src/case-studies/case-study-stories.ts
 #: src/case-studies/case-study-stories.ts
 msgid "Architecture"
 msgstr "Архитектура"
@@ -1292,7 +1220,7 @@ msgstr "Армения 🇦🇲"
 msgid "Ask AI to build or reconfigure dashboards and views from your workspace data."
 msgstr "Попросите ИИ создавать или перенастраивать дашборды и представления на основе данных вашего рабочего пространства."
 
-#. js-lingui-id: S+Q+1d
+#. js-lingui-id: S-Q-1d
 #: src/sections/product-hero/ProductHero.tsx
 msgid "Ask questions, automate tasks, and get insights with AI that understands your data and helps you move faster every day, end to end across teams."
 msgstr "Задавайте вопросы, автоматизируйте задачи и получайте инсайты с помощью ИИ, который понимает ваши данные и помогает вам двигаться быстрее каждый день, сквозь все команды от начала до конца."
@@ -1312,12 +1240,12 @@ msgstr "Назначайте ответственных и сроки"
 msgid "At least one shipped Twenty implementation — customer or internal — with a link that shows the work. Solo freelancers and agencies both qualify."
 msgstr "Хотя бы один реализованный проект внедрения Twenty — для клиента или внутренний — со ссылкой, демонстрирующей выполненную работу. Подходят как независимые фрилансеры, так и агентства."
 
-#. js-lingui-id: awzjg/
+#. js-lingui-id: awzjg_
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Attachment Visualizer"
 msgstr "Визуализатор вложений"
 
-#. js-lingui-id: fxL/Km
+#. js-lingui-id: fxL_Km
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Attachments without the chaos."
 msgstr "Вложения без хаоса."
@@ -1327,12 +1255,12 @@ msgstr "Вложения без хаоса."
 msgid "Audit logs"
 msgstr "Журналы аудита"
 
-#. js-lingui-id: tw0/s1
+#. js-lingui-id: tw0_s1
 #: src/partner-application/data/partner-country-options.ts
 msgid "Australia 🇦🇺"
 msgstr "Австралия 🇦🇺"
 
-#. js-lingui-id: 4cf5s+
+#. js-lingui-id: 4cf5s-
 #: src/partner-application/data/partner-country-options.ts
 msgid "Austria 🇦🇹"
 msgstr "Австрия 🇦🇹"
@@ -1357,7 +1285,7 @@ msgstr "Доступно на YouTube!"
 msgid "Avg deal size"
 msgstr "Средний размер сделки"
 
-#. js-lingui-id: 8d+jRc
+#. js-lingui-id: 8d-jRc
 #: src/partner-application/data/partner-country-options.ts
 msgid "Azerbaijan 🇦🇿"
 msgstr "Азербайджан 🇦🇿"
@@ -1402,23 +1330,21 @@ msgstr "Поскольку всё построено на открытой ос�
 msgid "Because the foundation is solid, W3Grads is architected for what comes next, including a payment layer for future paid interview plans and nationwide scale without structural rewrites."
 msgstr "Поскольку фундамент надёжен, W3Grads спроектирован с учётом будущего: с платёжным слоем для будущих платных программ интервью и возможностью масштабирования по всей стране без структурных переработок."
 
-#. js-lingui-id: JGM+JO
+#. js-lingui-id: JGM-JO
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Because true orchestration means putting a dollar sign on every dramatic entrance."
 msgstr "Потому что настоящая оркестрация — это когда на каждый эффектный выход вешают ценник."
 
-#. js-lingui-id: Z7U/Og
+#. js-lingui-id: Z7U_Og
 #: src/case-studies/case-study-stories.ts
 msgid "Because Twenty's API is fully open, I could connect it to every other tool in our stack. When a proposal is won, what used to take four people manually setting things up across four different tools now happens in a single click. That is the kind of time saving that only becomes possible when everything is connected."
 msgstr "Поскольку API Twenty полностью открыт, я смог подключить его ко всем остальным инструментам в нашем стеке. Когда предложение принимается, то, что раньше требовало участия четырех человек, вручную настраивающих все в четырех разных инструментах, теперь происходит одним щелчком. Такой выигрыш во времени становится возможен только тогда, когда всё связано между собой."
 
 #. js-lingui-id: kWm0dC
 #: src/sections/partner-hero/PartnerHero.tsx
-msgid ""
-"Become\n"
+msgid "Become\n"
 "*our partner*"
-msgstr ""
-"Станьте\n"
+msgstr "Станьте\n"
 "*нашим партнером*"
 
 #. js-lingui-id: PKMHNe
@@ -1427,18 +1353,18 @@ msgid "become a genius!"
 msgstr "станьте гением!"
 
 #. js-lingui-id: 6ZCRfT
-#: src/sections/partner-signoff/PartnerSignoff.tsx
-#: src/sections/partner-lead/PartnerBecomeStrip.tsx
 #: src/sections/partner-hero/PartnerHero.tsx
+#: src/sections/partner-lead/PartnerBecomeStrip.tsx
+#: src/sections/partner-signoff/PartnerSignoff.tsx
 msgid "Become a partner"
 msgstr "Стать партнёром"
 
-#. js-lingui-id: j+1dcz
+#. js-lingui-id: j-1dcz
 #: src/platform/routing/static-website-routes.ts
 msgid "Become a Twenty Partner — Apply"
 msgstr "Станьте партнером Twenty — Подать заявку"
 
-#. js-lingui-id: 8x+SS7
+#. js-lingui-id: 8x-SS7
 #: src/platform/routing/static-website-routes.ts
 msgid "Become a Twenty Partner — Join the Open Source CRM Ecosystem"
 msgstr "Станьте партнёром Twenty — присоединяйтесь к экосистеме CRM с открытым исходным кодом Twenty."
@@ -1513,12 +1439,12 @@ msgstr "За пределами *внутреннего развёртывани
 msgid "Beyond deals and contacts"
 msgstr "Не только сделки и контакты"
 
-#. js-lingui-id: y37rt+
+#. js-lingui-id: y37rt-
 #: src/sections/compare/compare-data.ts
 msgid "Beyond the pooled entitlement"
 msgstr "Сверх общего лимита прав"
 
-#. js-lingui-id: OPnz/X
+#. js-lingui-id: OPnz_X
 #: src/partner-application/data/partner-country-options.ts
 msgid "Bhutan 🇧🇹"
 msgstr "Бутан 🇧🇹"
@@ -1563,18 +1489,18 @@ msgstr "Ботсвана 🇧🇼"
 msgid "Brazil 🇧🇷"
 msgstr "Бразилия 🇧🇷"
 
-#. js-lingui-id: hKAV/O
-#: src/sections/pricing-engagement-band/PricingEngagementBand.tsx
+#. js-lingui-id: hKAV_O
 #: src/sections/partner-hero/BrowseDirectoryButton.tsx
+#: src/sections/pricing-engagement-band/PricingEngagementBand.tsx
 msgid "Browse partners"
 msgstr "Просмотреть партнёров"
 
-#. js-lingui-id: jkVxe+
+#. js-lingui-id: jkVxe-
 #: src/sections/partner-lead/PartnerDirectory.tsx
 msgid "Browse the *certified partners*"
 msgstr "Посмотрите *сертифицированных партнёров*"
 
-#. js-lingui-id: VX4eI/
+#. js-lingui-id: VX4eI_
 #: src/partner-application/data/partner-country-options.ts
 msgid "Brunei 🇧🇳"
 msgstr "Бруней 🇧🇳"
@@ -1589,7 +1515,7 @@ msgstr "Диапазон бюджета"
 msgid "Build a CRM your competitors *can't buy.*"
 msgstr "Постройте CRM, который ваши конкуренты *не смогут купить.*"
 
-#. js-lingui-id: sbr0X/
+#. js-lingui-id: sbr0X_
 #: src/sections/product-hero/ai-hero-tabs.ts
 msgid "Build a dashboard of pipeline by stage"
 msgstr "Построить дашборд конвейера по стадиям"
@@ -1599,7 +1525,7 @@ msgstr "Построить дашборд конвейера по стадиям
 msgid "Build a pipeline board grouped by stage"
 msgstr "Построить доску конвейера, сгруппированную по стадиям"
 
-#. js-lingui-id: 3+uH0v
+#. js-lingui-id: 3-uH0v
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Build an app"
 msgstr "Создать приложение"
@@ -1619,7 +1545,7 @@ msgstr "Создавайте дашборды с помощью ИИ."
 msgid "Build it in an afternoon. *AI made the gap that small.*"
 msgstr "Создайте это за один день. *AI сократил разрыв до такого масштаба.*"
 
-#. js-lingui-id: e1u+Zh
+#. js-lingui-id: e1u-Zh
 #: src/sections/menu/data/menu.ts
 msgid "Build on an open platform"
 msgstr "Создавайте на открытой платформе"
@@ -1674,7 +1600,7 @@ msgstr "Заказчики отправляют бриф проекта с об�
 msgid "Calendar / booking link"
 msgstr "Ссылка на календарь / запись"
 
-#. js-lingui-id: 6DqzR/
+#. js-lingui-id: 6DqzR_
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Calendar View for Objects"
 msgstr "Календарное представление для объектов"
@@ -1721,13 +1647,12 @@ msgstr "Кабо-Верде 🇨🇻"
 
 #. js-lingui-id: 6R5ASm
 #: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
 msgid "Capped per tier"
 msgstr "Ограничено на каждый уровень тарифа"
 
 #. js-lingui-id: qLBo3s
-#: src/sections/testimonials/TestimonialsCarousel.tsx
 #: src/sections/testimonials/PartnerTestimonialsCarousel.tsx
+#: src/sections/testimonials/TestimonialsCarousel.tsx
 msgid "carousel"
 msgstr "карусель"
 
@@ -1776,7 +1701,7 @@ msgstr "Сертифицированные партнеры, которые на
 msgid "Chad 🇹🇩"
 msgstr "Чад 🇹🇩"
 
-#. js-lingui-id: +DEogc
+#. js-lingui-id: -DEogc
 #: src/sections/footer/LocaleSwitcher.tsx
 msgid "Change language"
 msgstr "Изменить язык"
@@ -1797,8 +1722,8 @@ msgid "China 🇨🇳"
 msgstr "Китай 🇨🇳"
 
 #. js-lingui-id: h1IXFK
-#: src/partners-marketplace/spoken-language-labels.ts
 #: src/partner-application/data/partner-language-options.ts
+#: src/partners-marketplace/spoken-language-labels.ts
 msgid "Chinese"
 msgstr "Китайский"
 
@@ -1843,8 +1768,8 @@ msgid "Classic never dies. It just gets extended one more time."
 msgstr "Классика не умирает. Её просто расширяют ещё один раз."
 
 #. js-lingui-id: u8JHrO
-#: src/partners-marketplace/FilterBar.tsx
 #: src/partners-marketplace/EmptyState.tsx
+#: src/partners-marketplace/FilterBar.tsx
 msgid "Clear filters"
 msgstr "Сбросить фильтры"
 
@@ -1853,14 +1778,14 @@ msgstr "Сбросить фильтры"
 msgid "Clearer dashboard numbers"
 msgstr "Более понятные числа на дашбордах"
 
-#. js-lingui-id: +W4YRD
+#. js-lingui-id: -W4YRD
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "Click Become a partner and complete the short application: who you are, what you cover, and one real Twenty project with proof. We review every application against real, shipped work — acceptance is selective."
 msgstr "Нажмите «Стать партнёром» и заполните короткую заявку: расскажите, кто вы, какие услуги оказываете, и приложите один реальный проект Twenty с подтверждением. Мы проверяем каждую заявку на основе реально выполненных проектов — отбор строгий."
 
 #. js-lingui-id: yz7wBu
-#: src/partners-marketplace/CaseStudyModal.tsx
 #: src/app-preview/stage/TrafficLights.tsx
+#: src/partners-marketplace/CaseStudyModal.tsx
 msgid "Close"
 msgstr "Закрыть"
 
@@ -1889,12 +1814,12 @@ msgstr "облако"
 msgid "Cloud (Twenty-hosted)"
 msgstr "Облачный (развёрнутый Twenty)"
 
-#. js-lingui-id: N/+h4B
+#. js-lingui-id: N_-h4B
 #: src/client-brief/client-brief-copy.ts
 msgid "Cloud or self-hosted?"
 msgstr "Облачный или self-hosted?"
 
-#. js-lingui-id: L/LPQZ
+#. js-lingui-id: L_LPQZ
 #: src/sections/faq/faq.data.ts
 msgid "Cloud Pro is $9/user/month (yearly). Organization is $19/user/month and unlocks SSO and row-level permissions for teams that need finer access control."
 msgstr "Cloud Pro — $9/пользователь/месяц (при оплате за год). Тариф Organization — $19/пользователь/месяц и открывает доступ к SSO и построчным разрешениям для команд, которым нужен более точный контроль доступа."
@@ -1910,7 +1835,6 @@ msgid "Co-founder at NetZero"
 msgstr "Сооснователь NetZero"
 
 #. js-lingui-id: 4QGkvo
-#: src/case-studies/case-study-stories.ts
 #: src/case-studies/case-study-stories.ts
 msgid "co-founder of NetZero"
 msgstr "сооснователь NetZero"
@@ -1932,7 +1856,6 @@ msgstr "Сопоставление столбцов и полей (включа�
 
 #. js-lingui-id: ofoEsM
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-#: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Coming soon!"
 msgstr "Скоро!"
 
@@ -1947,8 +1870,8 @@ msgid "Commercials"
 msgstr "Условия сотрудничества"
 
 #. js-lingui-id: chL5IG
-#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/menu/components/MenuSocial.tsx
+#: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Community"
 msgstr "Сообщество"
 
@@ -1963,17 +1886,14 @@ msgid "Comoros 🇰🇲"
 msgstr "Коморы 🇰🇲"
 
 #. js-lingui-id: s2QZS6
-#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 #: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 msgid "Companies"
 msgstr "Компании"
 
 #. js-lingui-id: 7i8j3G
-#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
-#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
-#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
-#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
 #: src/sections/product-feature/ImportVisual/data/import-mappings.ts
+#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
 msgid "Company"
 msgstr "Компания"
 
@@ -2002,7 +1922,7 @@ msgstr "Сравните *реальную стоимость*"
 msgid "Compose"
 msgstr "Написать"
 
-#. js-lingui-id: Fkb+LW
+#. js-lingui-id: Fkb-LW
 #: src/sections/three-cards/ThreeCards.tsx
 msgid "Compose your CRM and internal apps with a single extensibility toolkit."
 msgstr "Соберите свой CRM и внутренние приложения с помощью единого набора инструментов расширяемости."
@@ -2012,7 +1932,7 @@ msgstr "Соберите свой CRM и внутренние приложени
 msgid "Compose your CRM and internal apps with a single extensibility toolkit. Data model, layout, and automation."
 msgstr "Соберите свой CRM и внутренние приложения с помощью единого набора инструментов расширяемости. Модель данных, интерфейс и автоматизация."
 
-#. js-lingui-id: 2DQw7/
+#. js-lingui-id: 2DQw7_
 #: src/partner-application/data/partner-country-options.ts
 msgid "Congo 🇨🇬"
 msgstr "Конго 🇨🇬"
@@ -2042,7 +1962,7 @@ msgstr "Подключите ваш аккаунт Gmail, чтобы автом�
 msgid "Connected via API"
 msgstr "Подключено через API"
 
-#. js-lingui-id: j/G3/h
+#. js-lingui-id: j_G3_h
 #: src/sections/compare/compare-data.ts
 msgid "Connecting the rest of your stack"
 msgstr "Интеграция с остальной частью вашего стека"
@@ -2052,7 +1972,7 @@ msgstr "Интеграция с остальной частью вашего с�
 msgid "Consulting"
 msgstr "Консалтинг"
 
-#. js-lingui-id: jfC/xh
+#. js-lingui-id: jfC_xh
 #: src/partners-marketplace/PartnerProfileCtas.tsx
 msgid "Contact"
 msgstr "Контакты"
@@ -2067,12 +1987,12 @@ msgstr "Контакты и компании"
 msgid "Context lives with the record."
 msgstr "Контекст живёт вместе с записью."
 
-#. js-lingui-id: xjHB3/
+#. js-lingui-id: xjHB3_
 #: src/client-brief/client-brief-copy.ts
 msgid "Continue →"
 msgstr "Продолжить →"
 
-#. js-lingui-id: mXovG/
+#. js-lingui-id: mXovG_
 #: src/sections/home-stepper/data/stepper.data.ts
 msgid "Continue iteration *without friction*"
 msgstr "Продолжайте итерации *без трения*"
@@ -2087,12 +2007,12 @@ msgstr "Условия контракта"
 msgid "Contributors now have their very own hall of fame."
 msgstr "У контрибьюторов теперь есть собственный зал славы."
 
-#. js-lingui-id: qVH+kL
+#. js-lingui-id: qVH-kL
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Contributors page"
 msgstr "Страница контрибьюторов"
 
-#. js-lingui-id: +Uepfb
+#. js-lingui-id: -Uepfb
 #: src/case-studies/case-study-stories.ts
 msgid "Control"
 msgstr "Контроль"
@@ -2117,7 +2037,7 @@ msgstr "Контроль без трения"
 msgid "Control without the overhead"
 msgstr "Контроль без накладных расходов"
 
-#. js-lingui-id: na8oL/
+#. js-lingui-id: na8oL_
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
 msgid "Coordinated with the IT team."
 msgstr "Скоординировано с IT-командой."
@@ -2152,7 +2072,7 @@ msgstr "Скопируйте этот ключ и вставьте его в н�
 msgid "Core Features"
 msgstr "Основные возможности"
 
-#. js-lingui-id: Al/blj
+#. js-lingui-id: Al_blj
 #: src/partner-application/data/partner-country-options.ts
 msgid "Costa Rica 🇨🇷"
 msgstr "Коста-Рика 🇨🇷"
@@ -2162,17 +2082,17 @@ msgstr "Коста-Рика 🇨🇷"
 msgid "Costs down more than *90%*"
 msgstr "Снижение затрат более чем на *90%*"
 
-#. js-lingui-id: cRA2/z
+#. js-lingui-id: cRA2_z
 #: src/partner-application/partner-application-copy.ts
 msgid "Country *"
 msgstr "Страна *"
 
-#. js-lingui-id: vk+Og8
+#. js-lingui-id: vk-Og8
 #: src/client-brief/client-brief-copy.ts
 msgid "Country / region"
 msgstr "Страна / регион"
 
-#. js-lingui-id: kCu+Rq
+#. js-lingui-id: kCu-Rq
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Create a Kanban view on any object and streamline processes like recruitment or onboarding."
 msgstr "Создавайте представление Kanban для любого объекта и оптимизируйте процессы, такие как найм или онбординг."
@@ -2182,7 +2102,7 @@ msgstr "Создавайте представление Kanban для любог
 msgid "Create a workflow"
 msgstr "Создать рабочий процесс"
 
-#. js-lingui-id: +kFrvb
+#. js-lingui-id: -kFrvb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Create and manage custom roles. Grant or revoke access for each object to Read/Create/Edit/Delete records. Give granular access to settings like the ability to manage users, data models or APIs."
 msgstr "Создавайте и управляйте пользовательскими ролями. Предоставляйте или отзывайте доступ для каждого объекта к операциям чтения/создания/редактирования/удаления записей. Давайте детализированный доступ к настройкам, таким как управление пользователями, моделями данных или API."
@@ -2198,8 +2118,6 @@ msgid "Create apps on Twenty"
 msgstr "Создавайте приложения на Twenty"
 
 #. js-lingui-id: yAL7FY
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Create custom apps"
 msgstr "Создавайте пользовательские приложения"
@@ -2244,12 +2162,12 @@ msgstr "Создание синхронизированных событий к�
 msgid "Create tasks from records"
 msgstr "Создавайте задачи из записей"
 
-#. js-lingui-id: D3S5+x
+#. js-lingui-id: D3S5-x
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Create tasks, assign owners, and attach rich notes directly from any record. No tab-switching, no lost context."
 msgstr "Создавайте задачи, назначайте ответственных и прикрепляйте подробные заметки прямо из любой записи. Без переключения вкладок и потери контекста."
 
-#. js-lingui-id: egTba/
+#. js-lingui-id: egTba_
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Created By"
 msgstr "Создано"
@@ -2270,8 +2188,8 @@ msgid "Credit-based, no per-chat fee"
 msgstr "Кредитная модель, без платы за каждый чат"
 
 #. js-lingui-id: NLgmM4
-#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
+#: src/partners-marketplace/data/partner-scope-options.ts
 msgid "CRM audit · Requirements · Process mapping · ROI · RevOps · Vendor selection"
 msgstr "Аудит CRM · Требования · Картирование процессов · ROI · RevOps · Выбор вендора"
 
@@ -2286,8 +2204,8 @@ msgid "CRM Engineer"
 msgstr "Инженер CRM"
 
 #. js-lingui-id: DqkzNV
-#: src/case-studies/case-study-stories.ts
 #: src/case-studies/case-study-catalog.ts
+#: src/case-studies/case-study-stories.ts
 msgid "CRM Engineer, AC&T Education Migration"
 msgstr "Инженер CRM, AC&T Education Migration"
 
@@ -2316,7 +2234,7 @@ msgstr "Экспорт CSV в любое время"
 msgid "CSV import & export"
 msgstr "Импорт и экспорт CSV"
 
-#. js-lingui-id: s+QiQi
+#. js-lingui-id: s-QiQi
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "CSV import flow"
 msgstr "Процесс импорта CSV"
@@ -2336,31 +2254,31 @@ msgstr "Куба 🇨🇺"
 msgid "Currency"
 msgstr "Валюта"
 
-#. js-lingui-id: auudI+
+#. js-lingui-id: auudI-
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Currency Field"
 msgstr "Поле Currency"
 
-#. js-lingui-id: 8Tg/JR
+#. js-lingui-id: 8Tg_JR
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Custom"
 msgstr "Индивидуально"
 
 #. js-lingui-id: lh6aPn
-#: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plans/plans-data.ts
 msgid "Custom AI models"
 msgstr "Пользовательские модели ИИ"
 
 #. js-lingui-id: OaTurC
-#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/partner-application/data/partner-twenty-experience-options.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Custom apps"
 msgstr "Пользовательские приложения"
 
 #. js-lingui-id: TcUCTv
-#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
+#: src/partners-marketplace/data/partner-scope-options.ts
 msgid "Custom Apps · Scripts · AI/agent integrations"
 msgstr "Пользовательские приложения · Скрипты · Интеграции с ИИ/агентами"
 
@@ -2374,14 +2292,14 @@ msgstr "Пользовательские форматы дат"
 msgid "Custom deal stages for your process"
 msgstr "Пользовательские этапы сделок под ваш процесс"
 
-#. js-lingui-id: L+b7SB
+#. js-lingui-id: L-b7SB
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Custom deal stages, drag-and-drop boards, and real-time tracking so your pipeline reflects reality."
 msgstr "Пользовательские стадии сделок, доски с перетаскиванием и отслеживание в реальном времени, чтобы ваш конвейер отражал реальность."
 
 #. js-lingui-id: DUnke3
-#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
+#: src/partners-marketplace/data/partner-scope-options.ts
 msgid "Custom Development"
 msgstr "Пользовательская разработка"
 
@@ -2396,12 +2314,12 @@ msgid "Custom domain (crm.yourco.com)"
 msgstr "Пользовательский домен (crm.yourco.com)"
 
 #. js-lingui-id: oPwQt4
-#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/compare/compare-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Custom fields"
 msgstr "Пользовательские поля"
 
-#. js-lingui-id: U1RB/7
+#. js-lingui-id: U1RB_7
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Custom fields and relationships"
 msgstr "Пользовательские поля и связи"
@@ -2422,9 +2340,8 @@ msgid "Custom layouts"
 msgstr "Пользовательские макеты"
 
 #. js-lingui-id: 8skTDV
+#: src/sections/compare/compare-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
 msgid "Custom objects"
 msgstr "Пользовательские объекты"
 
@@ -2454,8 +2371,8 @@ msgid "Customer Feedback"
 msgstr "Отзывы клиентов"
 
 #. js-lingui-id: 5xK1jE
-#: src/sections/helped/HelpedScene.tsx
 #: src/sections/case-study-catalog/CaseStudyCatalogGrid.tsx
+#: src/sections/helped/HelpedScene.tsx
 msgid "Customer stories"
 msgstr "Истории клиентов"
 
@@ -2480,14 +2397,14 @@ msgid "Customer story not found — Twenty"
 msgstr "История клиента не найдена — Twenty"
 
 #. js-lingui-id: NihQNk
-#: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "Customers"
 msgstr "Клиенты"
 
-#. js-lingui-id: qqLY+j
-#: src/sections/product-stepper/components/ProductStepperContent.tsx
+#. js-lingui-id: qqLY-j
 #: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/product-stepper/components/ProductStepperContent.tsx
 msgid "Customization"
 msgstr "Кастомизация"
 
@@ -2537,8 +2454,8 @@ msgid "Danish"
 msgstr "Датский"
 
 #. js-lingui-id: w6iIMm
-#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 #: src/sections/product-feature/DashboardVisual/DashboardVisual.tsx
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 msgid "Dashboards"
 msgstr "Дашборды"
 
@@ -2563,8 +2480,8 @@ msgid "Data Model Diagram"
 msgstr "Диаграмма модели данных"
 
 #. js-lingui-id: iq2WTm
-#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
+#: src/partners-marketplace/data/partner-scope-options.ts
 msgid "Data modeling · Migrations · No-code workflows · Dashboards · SSO/SCIM · Integrations"
 msgstr "Моделирование данных · Миграции · No-code рабочие процессы · Дашборды · SSO/SCIM · Интеграции"
 
@@ -2603,7 +2520,7 @@ msgstr "Сделки по месяцам"
 msgid "Deals by stage"
 msgstr "Сделки по этапам"
 
-#. js-lingui-id: /TlpVf
+#. js-lingui-id: _TlpVf
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Deals that move themselves."
 msgstr "Сделки, которые движутся сами."
@@ -2619,9 +2536,8 @@ msgid "Dear Team, I am pleased to submit our proposal for your consideration. We
 msgstr "Дорогая команда, с радостью отправляю наше предложение на ваше рассмотрение. Мы внимательно изучили ваши требования."
 
 #. js-lingui-id: 4UlR5Y
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plans/plans-data.ts
 msgid "Dedicated support & SLA"
 msgstr "Выделенная поддержка и SLA"
 
@@ -2665,10 +2581,10 @@ msgstr "Команды разработчиков двигают *изменен
 msgid "Developer"
 msgstr "Разработчик"
 
-#. js-lingui-id: n+SX4g
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/menu/data/menu.ts
+#. js-lingui-id: n-SX4g
 #: src/sections/footer/footer.data.ts
+#: src/sections/menu/data/menu.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Developers"
 msgstr "Разработчики"
 
@@ -2693,11 +2609,9 @@ msgid "Differentiation now *lives in the code you own.*"
 msgstr "Дифференциация теперь *заложена в коде, который вы контролируете.*"
 
 #. js-lingui-id: Wuqvfz
+#: src/case-studies/case-study-catalog.ts
+#: src/case-studies/case-study-stories.ts
 #: src/sections/testimonials/testimonials.data.ts
-#: src/case-studies/case-study-stories.ts
-#: src/case-studies/case-study-stories.ts
-#: src/case-studies/case-study-catalog.ts
-#: src/case-studies/case-study-catalog.ts
 msgid "Director of Digital and Information, Elevate Consulting"
 msgstr "Директор по цифровым технологиям и информации, Elevate Consulting"
 
@@ -2712,9 +2626,9 @@ msgid "Directory"
 msgstr "Каталог"
 
 #. js-lingui-id: 30qcNY
-#: src/sections/menu/data/menu.ts
-#: src/sections/footer/footer.data.ts
 #: src/sections/case-study-detail/CaseStudyArticleNav.tsx
+#: src/sections/footer/footer.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "Discord (opens in new tab)"
 msgstr "Discord (откроется в новой вкладке)"
 
@@ -2723,12 +2637,12 @@ msgstr "Discord (откроется в новой вкладке)"
 msgid "Discover the newest features and improvements in Twenty, the #1 Open Source CRM."
 msgstr "Узнайте о новых функциях и улучшениях в Twenty, CRM №1 с открытым исходным кодом."
 
-#. js-lingui-id: W+b/DF
+#. js-lingui-id: W-b_DF
 #: src/sections/menu/data/menu.ts
 msgid "Discover what's new"
 msgstr "Узнайте, что нового"
 
-#. js-lingui-id: /Gu7LB
+#. js-lingui-id: _Gu7LB
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Display related records as a full table directly inside a record page layout."
 msgstr "Отображайте связанные записи в виде полной таблицы прямо в макете страницы записи."
@@ -2748,7 +2662,7 @@ msgstr "Джибути 🇩🇯"
 msgid "Do I need a developer to customize Twenty?"
 msgstr "Нужен ли мне разработчик, чтобы кастомизировать Twenty?"
 
-#. js-lingui-id: ISZL/U
+#. js-lingui-id: ISZL_U
 #: src/sections/faq/partner-faq.data.ts
 msgid "Do partners support self-hosting?"
 msgstr "Поддерживают ли партнёры самостоятельный хостинг?"
@@ -2779,9 +2693,9 @@ msgid "Don't get locked into someone else's ecosystem. Twenty's developer experi
 msgstr "Не запирайтесь в чужой экосистеме. Опыт разработчика в Twenty выглядит как обычная разработка ПО: локальная среда, реальные данные, живое тестирование и отсутствие проприетарных инструментов."
 
 #. js-lingui-id: DPfwMq
-#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
-#: src/partner-application/partner-application-copy.ts
 #: src/client-brief/client-brief-copy.ts
+#: src/partner-application/partner-application-copy.ts
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 msgid "Done"
 msgstr "Готово"
 
@@ -2815,7 +2729,7 @@ msgstr "Перетаскивайте виджеты, чтобы создават
 msgid "Drag kanban column headers into the order that works best for your team."
 msgstr "Перетаскивайте заголовки канбан-столбцов, чтобы расположить их в наиболее удобном для вашей команды порядке."
 
-#. js-lingui-id: cfThV+
+#. js-lingui-id: cfThV-
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Drag widgets between tabs"
 msgstr "Перетаскивание виджетов между вкладками"
@@ -2826,8 +2740,8 @@ msgid "Drag-and-drop deals between stages"
 msgstr "Перетаскивайте сделки между этапами"
 
 #. js-lingui-id: KIjvtr
-#: src/partners-marketplace/spoken-language-labels.ts
 #: src/partner-application/data/partner-language-options.ts
+#: src/partners-marketplace/spoken-language-labels.ts
 msgid "Dutch"
 msgstr "Нидерландский"
 
@@ -2861,7 +2775,7 @@ msgstr "например, до Q4, Q1 2027…"
 msgid "e.g. France, DACH, North America…"
 msgstr "например, Франция, DACH, Северная Америка…"
 
-#. js-lingui-id: N+DZwY
+#. js-lingui-id: N-DZwY
 #: src/client-brief/client-brief-copy.ts
 msgid "e.g. French, English (comma-separated)"
 msgstr "например, французский, английский (через запятую)"
@@ -2871,7 +2785,7 @@ msgstr "например, французский, английский (чере
 msgid "e.g. Migrate from HubSpot, set up pipelines, custom integrations…"
 msgstr "например, миграция с HubSpot, настройка воронок, пользовательские интеграции…"
 
-#. js-lingui-id: FJ+YsO
+#. js-lingui-id: FJ-YsO
 #: src/partner-application/partner-application-copy.ts
 msgid "e.g. n8n, Shopify, Real estate…"
 msgstr "например, n8n, Shopify, Real estate…"
@@ -2886,7 +2800,7 @@ msgstr "Каждое рабочее пространство теперь пол
 msgid "Easier favorites"
 msgstr "Более удобное избранное"
 
-#. js-lingui-id: s+5p5k
+#. js-lingui-id: s-5p5k
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Easier field editing"
 msgstr "Упрощённое редактирование полей"
@@ -2906,12 +2820,12 @@ msgstr "Эквадор 🇪🇨"
 msgid "Edit actions"
 msgstr "Редактировать действия"
 
-#. js-lingui-id: 0cnnX+
+#. js-lingui-id: 0cnnX-
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Edit long-form text directly inside record page widgets with automatic saving."
 msgstr "Редактируйте длинный текст прямо в виджетах страницы записи с автоматическим сохранением."
 
-#. js-lingui-id: G/FRR4
+#. js-lingui-id: G_FRR4
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Editable text widgets"
 msgstr "Редактируемые текстовые виджеты"
@@ -2931,7 +2845,7 @@ msgstr "Образование"
 msgid "Egypt 🇪🇬"
 msgstr "Египет 🇪🇬"
 
-#. js-lingui-id: 2xK+An
+#. js-lingui-id: 2xK-An
 #: src/partner-application/data/partner-country-options.ts
 msgid "El Salvador 🇸🇻"
 msgstr "Сальвадор 🇸🇻"
@@ -3001,7 +2915,7 @@ msgstr "Электронные письма"
 msgid "Emails & Calendar"
 msgstr "Письма и календарь"
 
-#. js-lingui-id: o4/9l1
+#. js-lingui-id: o4_9l1
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Emails and events linked to CRM records"
 msgstr "Письма и события, связанные с записями CRM"
@@ -3031,7 +2945,7 @@ msgstr "Включайте бета-функции с помощью новой 
 msgid "Enabled two-factor authentication with authenticator apps like 1Password, Authy, or Microsoft Authenticator to add an extra layer of security at sign-in."
 msgstr "Включена двухфакторная аутентификация с приложениями-аутентификаторами, такими как 1Password, Authy или Microsoft Authenticator, чтобы добавить дополнительный уровень безопасности при входе."
 
-#. js-lingui-id: Qpn/bX
+#. js-lingui-id: Qpn_bX
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Encrypt your data"
 msgstr "Зашифруйте свои данные"
@@ -3042,8 +2956,8 @@ msgid "Encryption key rotation"
 msgstr "Ротация ключей шифрования"
 
 #. js-lingui-id: lYGfRP
-#: src/partners-marketplace/spoken-language-labels.ts
 #: src/partner-application/data/partner-language-options.ts
+#: src/partners-marketplace/spoken-language-labels.ts
 msgid "English"
 msgstr "Английский"
 
@@ -3052,7 +2966,7 @@ msgstr "Английский"
 msgid "Enhance your contact management by adding many email addresses for a single contact. All emails sent to these addresses will be automatically synced with the contact, ensuring you never miss an important communication."
 msgstr "Усовершенствуйте управление контактами, добавляя множество email-адресов для одного контакта. Все письма, отправленные на эти адреса, будут автоматически синхронизироваться с контактом, чтобы вы не пропустили ни одной важной коммуникации."
 
-#. js-lingui-id: kZ17+i
+#. js-lingui-id: kZ17-i
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Enhance your data handling capabilities with the addition of four new field types:"
 msgstr "Расширьте возможности работы с данными за счет добавления четырех новых типов полей:"
@@ -3072,7 +2986,7 @@ msgstr "Улучшенное редактирование связей один-
 msgid "Enhanced Timeline"
 msgstr "Улучшенная шкала времени"
 
-#. js-lingui-id: Ijh+h+
+#. js-lingui-id: Ijh-h-
 #: src/sections/home-stepper/data/stepper.data.ts
 msgid "Enjoy unlimited customization using the AI coding tools you already love. Adapt your CRM to fit the way your business grows and wins."
 msgstr "Наслаждайтесь неограниченной кастомизацией с помощью уже знакомых вам инструментов ИИ-программирования. Адаптируйте свой CRM под то, как ваш бизнес растёт и побеждает."
@@ -3087,23 +3001,20 @@ msgstr "Обогатить"
 msgid "Enter a valid amount using numbers only."
 msgstr "Введите корректную сумму, используя только цифры."
 
-#. js-lingui-id: xoqD/n
-#: src/partner-application/partner-application-copy.ts
+#. js-lingui-id: xoqD_n
 #: src/client-brief/client-brief-copy.ts
+#: src/partner-application/partner-application-copy.ts
 msgid "Enter a valid email address."
 msgstr "Введите корректный адрес электронной почты."
 
-#. js-lingui-id: /OVUD6
+#. js-lingui-id: _OVUD6
 #: src/partner-application/partner-application-copy.ts
 msgid "Enter a valid URL (starting with http:// or https://)."
 msgstr "Введите корректный URL (начинающийся с http:// или https://)."
 
 #. js-lingui-id: GpB8YV
+#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Enterprise"
 msgstr "Enterprise"
 
@@ -3124,11 +3035,10 @@ msgstr "Версия Enterprise"
 
 #. js-lingui-id: YKwRCb
 #: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
 msgid "Enterprise only"
 msgstr "Только Enterprise"
 
-#. js-lingui-id: /BbcE4
+#. js-lingui-id: _BbcE4
 #: src/sections/compare/compare-data.ts
 msgid "Enterprise rate cards are rarely published"
 msgstr "Прайсовые карты Enterprise редко публикуются"
@@ -3183,7 +3093,7 @@ msgstr "Даже обучающие материалы здесь — повод
 msgid "Every new release of Twenty, the #1 Open Source CRM, with changelogs, demos, and the highlights teams care about most."
 msgstr "Каждый новый релиз Twenty, CRM №1 с открытым исходным кодом, с журналами изменений, демо и самыми важными для команд нововведениями."
 
-#. js-lingui-id: xt/iek
+#. js-lingui-id: xt_iek
 #: src/sections/faq/partner-faq.data.ts
 msgid "Every partner is certified by Twenty and reviewed on delivered projects, technical depth, and customer feedback before joining the directory."
 msgstr "Каждый партнёр проходит сертификацию Twenty и проверку реализованных проектов, технической экспертизы и отзывов клиентов перед добавлением в каталог."
@@ -3195,12 +3105,10 @@ msgstr "Каждая переписка — в нужной записи."
 
 #. js-lingui-id: WvNwM2
 #: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
 msgid "Everything in Organization"
 msgstr "Всё из Organization"
 
-#. js-lingui-id: kz/8m8
-#: src/sections/pricing-plans/plans-data.ts
+#. js-lingui-id: kz_8m8
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Everything in Pro"
 msgstr "Всё из Pro"
@@ -3210,17 +3118,17 @@ msgstr "Всё из Pro"
 msgid "Everything updates in real time, with AI chat always ready to help you move faster."
 msgstr "Всё обновляется в режиме реального времени, а чат с ИИ всегда готов помочь вам работать быстрее."
 
-#. js-lingui-id: /g9UKY
+#. js-lingui-id: _g9UKY
 #: src/sections/product-feature/ProductFeature.tsx
 msgid "Everything you need, *out of the box*"
 msgstr "Всё, что вам нужно, *из коробки*"
 
-#. js-lingui-id: YL/KFo
+#. js-lingui-id: YL_KFo
 #: src/sections/product-feature/ImportVisual/components/MappingRow.tsx
 msgid "ex: {example}"
 msgstr "пример: {example}"
 
-#. js-lingui-id: Dcm8+x
+#. js-lingui-id: Dcm8-x
 #. placeholder {0}: i18n._(scope.examples)
 #: src/partners-marketplace/PartnerCoverageSection.tsx
 msgid "ex. {0}"
@@ -3281,7 +3189,7 @@ msgstr "Расширяйте свою CRM с помощью приложений
 msgid "Extended run!"
 msgstr "Продлённый показ!"
 
-#. js-lingui-id: D5e0U+
+#. js-lingui-id: D5e0U-
 #: src/sections/compare/compare-data.ts
 msgid "Extra Dataverse storage (10 GB)"
 msgstr "Дополнительное хранилище Dataverse (10 ГБ)"
@@ -3291,7 +3199,7 @@ msgstr "Дополнительное хранилище Dataverse (10 ГБ)"
 msgid "Failed to activate enterprise key. Please try again."
 msgstr "Не удалось активировать корпоративный ключ. Повторите попытку."
 
-#. js-lingui-id: byb/Zh
+#. js-lingui-id: byb_Zh
 #: src/sections/compare/CompareReceipt.tsx
 msgid "Fair play"
 msgstr "Честная игра"
@@ -3311,7 +3219,7 @@ msgstr "Фарси"
 msgid "Fast path to action"
 msgstr "Быстрый путь к действию"
 
-#. js-lingui-id: /irOkZ
+#. js-lingui-id: _irOkZ
 #: src/sections/compare/compare-data.ts
 msgid "Faster answers when it matters"
 msgstr "Более быстрые ответы, когда это важно"
@@ -3331,7 +3239,7 @@ msgstr "Избранное теперь находится в меню нави�
 msgid "Favorites Views and Favorites Folders"
 msgstr "Избранные представления и папки избранного"
 
-#. js-lingui-id: +LREeu
+#. js-lingui-id: -LREeu
 #: src/sections/pricing-plan-table/plan-table-visible-rows.test.ts
 msgid "feature"
 msgstr "функция"
@@ -3361,12 +3269,12 @@ msgstr "Фев"
 msgid "Field Level Permission"
 msgstr "Права доступа на уровне поля"
 
-#. js-lingui-id: 3Y3//3
+#. js-lingui-id: 3Y3__3
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field widgets"
 msgstr "Виджеты полей"
 
-#. js-lingui-id: QDxnW/
+#. js-lingui-id: QDxnW_
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field widgets are easier to configure directly from the page where you use them."
 msgstr "Виджеты полей стало проще настраивать непосредственно на странице, где вы их используете."
@@ -3391,12 +3299,12 @@ msgstr "поля"
 msgid "Fields"
 msgstr "Поля"
 
-#. js-lingui-id: z+q1Th
+#. js-lingui-id: z-q1Th
 #: src/partner-application/data/partner-country-options.ts
 msgid "Fiji 🇫🇯"
 msgstr "Фиджи 🇫🇯"
 
-#. js-lingui-id: sER+bs
+#. js-lingui-id: sER-bs
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Files"
 msgstr "Файлы"
@@ -3441,7 +3349,7 @@ msgstr "Фильтруйте записи с помощью полей связ�
 msgid "Filter the content a webhook is returning so it only pings your URL when a specific action occurs, such as on creating a company."
 msgstr "Фильтруйте содержимое, которое возвращает webhook, чтобы он обращался к вашему URL только при определенных действиях, например при создании компании."
 
-#. js-lingui-id: +UmKPb
+#. js-lingui-id: -UmKPb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Filter through relationships"
 msgstr "Фильтрация по связям"
@@ -3486,7 +3394,7 @@ msgstr "Финляндия 🇫🇮"
 msgid "Finnish"
 msgstr "Финский"
 
-#. js-lingui-id: GxR+Ds
+#. js-lingui-id: GxR-Ds
 #: src/client-brief/client-brief-copy.ts
 msgid "First name *"
 msgstr "Имя *"
@@ -3503,11 +3411,9 @@ msgstr "Гибкие связи"
 
 #. js-lingui-id: HBJ0P5
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"Flow\n"
+msgid "Flow\n"
 "orchestration"
-msgstr ""
-"Оркестрация\n"
+msgstr "Оркестрация\n"
 "потоков"
 
 #. js-lingui-id: obrJBN
@@ -3525,7 +3431,7 @@ msgstr "Партнёр по полноцикловой разработке Flyc
 msgid "Focus on the use case, not the *plumbing*"
 msgstr "Сфокусируйтесь на прикладном кейсе, а не на *«подводке»*"
 
-#. js-lingui-id: P5E+kT
+#. js-lingui-id: P5E-kT
 #: src/case-studies/case-study-stories.ts
 msgid "Focus on the use case, not the plumbing"
 msgstr "Сфокусируйтесь на прикладном кейсе, а не на «подводке»"
@@ -3566,10 +3472,9 @@ msgid "Forward shared inboxes such as support@yourcompany.com into Twenty withou
 msgstr "Пересылайте общие почтовые ящики, например support@yourcompany.com, в Twenty без подключения полного почтового ящика."
 
 #. js-lingui-id: UCoxP5
-#: src/sections/testimonials/partner-testimonials.data.ts
+#: src/case-studies/case-study-catalog.ts
 #: src/case-studies/case-study-stories.ts
-#: src/case-studies/case-study-catalog.ts
-#: src/case-studies/case-study-catalog.ts
+#: src/sections/testimonials/partner-testimonials.data.ts
 msgid "Founder, Nine Dots Ventures"
 msgstr "Основатель, Nine Dots Ventures"
 
@@ -3594,13 +3499,12 @@ msgid "Free for you!"
 msgstr "Для вас бесплатно!"
 
 #. js-lingui-id: nLC6tu
-#: src/partners-marketplace/spoken-language-labels.ts
 #: src/partner-application/data/partner-language-options.ts
+#: src/partners-marketplace/spoken-language-labels.ts
 msgid "French"
 msgstr "Французский"
 
 #. js-lingui-id: bwdcPM
-#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "From $50k/year"
 msgstr "От 50 000 $/год"
@@ -3622,19 +3526,17 @@ msgstr "От документов к открытым API"
 
 #. js-lingui-id: 2CtZ6T
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"From Salesforce to\n"
+msgid "From Salesforce to\n"
 "*self-hosted Twenty*"
-msgstr ""
-"От Salesforce к\n"
+msgstr "От Salesforce к\n"
 "*self-hosted Twenty*"
 
-#. js-lingui-id: kl+hEJ
+#. js-lingui-id: kl-hEJ
 #: src/case-studies/case-study-catalog.ts
 msgid "From Salesforce to self-hosted Twenty"
 msgstr "От Salesforce к self-hosted Twenty"
 
-#. js-lingui-id: syU/BD
+#. js-lingui-id: syU_BD
 #: src/case-studies/case-study-stories.ts
 msgid "From Salesforce to self-hosted Twenty, powered by AI | Alternative Partners"
 msgstr "От Salesforce к self-hosted Twenty на базе ИИ | Alternative Partners"
@@ -3661,8 +3563,6 @@ msgstr "Вся история коммуникаций в одном месте"
 
 #. js-lingui-id: wXgKOm
 #: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
 msgid "Full customization"
 msgstr "Полная кастомизация"
 
@@ -3688,11 +3588,10 @@ msgstr "Полная автоматизация рабочих процессо�
 
 #. js-lingui-id: hdxwWi
 #: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Fully customizable"
 msgstr "Полностью настраиваемый"
 
-#. js-lingui-id: //hrfs
+#. js-lingui-id: __hrfs
 #: src/partner-application/data/partner-country-options.ts
 msgid "Gabon 🇬🇦"
 msgstr "Габон 🇬🇦"
@@ -3703,9 +3602,8 @@ msgid "Gambia 🇬🇲"
 msgstr "Гамбия 🇬🇲"
 
 #. js-lingui-id: Weq9zb
-#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
-#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 msgid "General"
 msgstr "Общие"
 
@@ -3720,8 +3618,8 @@ msgid "Georgia 🇬🇪"
 msgstr "Грузия 🇬🇪"
 
 #. js-lingui-id: DDcvSo
-#: src/partners-marketplace/spoken-language-labels.ts
 #: src/partner-application/data/partner-language-options.ts
+#: src/partners-marketplace/spoken-language-labels.ts
 msgid "German"
 msgstr "Немецкий"
 
@@ -3735,25 +3633,24 @@ msgstr "Германия 🇩🇪"
 msgid "Get certified as a Twenty partner: a vetted badge, a directory profile your clients can check, and matched client briefs for the best partners."
 msgstr "Получите сертификацию партнёра Twenty: проверенный знак, профиль в каталоге, который могут проверить ваши клиенты, и подходящие брифы клиентов для лучших партнёров."
 
-#. js-lingui-id: b+jRGN
-#: src/sections/partner-lead/PartnerDirectoryPanel.tsx
-#: src/sections/partner-hero/PartnerLeadHero.tsx
+#. js-lingui-id: b-jRGN
 #: src/client-brief/ClientBriefModal.tsx
+#: src/sections/partner-hero/PartnerLeadHero.tsx
+#: src/sections/partner-lead/PartnerDirectoryPanel.tsx
 msgid "Get matched"
 msgstr "Подобрать партнёра"
 
 #. js-lingui-id: ZDIydz
-#: src/sections/why-twenty-signoff/WhyTwentySignoff.tsx
-#: src/sections/product-signoff/ProductSignoff.tsx
-#: src/sections/product-hero/ProductHero.tsx
-#: src/sections/menu/Menu.tsx
-#: src/sections/menu/Menu.tsx
-#: src/sections/home-hero/HomeHero.tsx
-#: src/sections/footer/footer.data.ts
-#: src/sections/faq/Faq.tsx
-#: src/sections/customers-catalog-signoff/CustomersCatalogSignoff.tsx
-#: src/sections/compare/ComparePage.tsx
 #: src/sections/case-study-detail/CustomersCaseStudySignoff.tsx
+#: src/sections/compare/ComparePage.tsx
+#: src/sections/customers-catalog-signoff/CustomersCatalogSignoff.tsx
+#: src/sections/faq/Faq.tsx
+#: src/sections/footer/footer.data.ts
+#: src/sections/home-hero/HomeHero.tsx
+#: src/sections/menu/Menu.tsx
+#: src/sections/product-hero/ProductHero.tsx
+#: src/sections/product-signoff/ProductSignoff.tsx
+#: src/sections/why-twenty-signoff/WhyTwentySignoff.tsx
 msgid "Get started"
 msgstr "Начать"
 
@@ -3764,8 +3661,6 @@ msgstr "Начало работы"
 
 #. js-lingui-id: kyX250
 #: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
 msgid "Getting to a working CRM"
 msgstr "Путь к рабочей CRM"
 
@@ -3775,9 +3670,9 @@ msgid "Ghana 🇬🇭"
 msgstr "Гана 🇬🇭"
 
 #. js-lingui-id: 3QRTgQ
-#: src/sections/menu/data/menu.ts
-#: src/sections/footer/footer.data.ts
 #: src/sections/case-study-detail/CaseStudyArticleNav.tsx
+#: src/sections/footer/footer.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "GitHub (opens in new tab)"
 msgstr "GitHub (откроется в новой вкладке)"
 
@@ -3791,7 +3686,7 @@ msgstr "Интеграция Gmail"
 msgid "Go the extra mile *with no-code*"
 msgstr "Сделайте на шаг больше *без кода*"
 
-#. js-lingui-id: Ay/vbT
+#. js-lingui-id: Ay_vbT
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Good choice!"
 msgstr "Хороший выбор!"
@@ -3806,7 +3701,7 @@ msgstr "Интеграция Google Calendar"
 msgid "Granular Email Folder Sync"
 msgstr "Гранулярная синхронизация папок Email"
 
-#. js-lingui-id: +tDN2S
+#. js-lingui-id: -tDN2S
 #: src/partner-application/data/partner-country-options.ts
 msgid "Greece 🇬🇷"
 msgstr "Греция 🇬🇷"
@@ -3826,7 +3721,7 @@ msgstr "Гренада 🇬🇩"
 msgid "Group records by relationships"
 msgstr "Группировка записей по связям"
 
-#. js-lingui-id: lAlV+Q
+#. js-lingui-id: lAlV-Q
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Group table and kanban views by a related record, such as an account owner or company."
 msgstr "Группируйте представления в виде таблицы и канбан-доски по связанной записи, например владельцу учётной записи или компании."
@@ -3836,7 +3731,7 @@ msgstr "Группируйте представления в виде табли
 msgid "Grow with a flexible foundation"
 msgstr "Растите на гибком фундаменте"
 
-#. js-lingui-id: M/8CC1
+#. js-lingui-id: M_8CC1
 #: src/partner-application/data/partner-country-options.ts
 msgid "Guatemala 🇬🇹"
 msgstr "Гватемала 🇬🇹"
@@ -3877,8 +3772,8 @@ msgid "Hello, I wanted to share some positive feedback from our recent customer 
 msgstr "Здравствуйте, я хотел поделиться положительной обратной связью по итогам нашего недавнего опроса удовлетворенности клиентов."
 
 #. js-lingui-id: c3XJ18
-#: src/sections/pricing-salesfarce/SalesfarceWindow.tsx
 #: src/sections/footer/footer.data.ts
+#: src/sections/pricing-salesfarce/SalesfarceWindow.tsx
 msgid "Help"
 msgstr "Помощь"
 
@@ -3903,8 +3798,8 @@ msgid "Hide changes"
 msgstr "Скрыть изменения"
 
 #. js-lingui-id: tGjibo
-#: src/partners-marketplace/spoken-language-labels.ts
 #: src/partner-application/data/partner-language-options.ts
+#: src/partners-marketplace/spoken-language-labels.ts
 msgid "Hindi"
 msgstr "Хинди"
 
@@ -3919,8 +3814,8 @@ msgid "His approach was unconventional. Instead of mapping fields manually, scri
 msgstr "Его подход был нестандартным. Вместо того чтобы вручную сопоставлять поля, писать скрипты преобразования и пошагово проверять данные, он передал задачу агентным ИИ-инструментам, дав им краткое ТЗ: где лежат данные, GitHub-репозиторий целевой платформы и деплой на Railway. Запустить и возвращаться только если что‑то ломается сильнее, чем ИИ уверен хотя бы на 70 %, что сможет починить."
 
 #. js-lingui-id: i0qMbr
-#: src/sections/menu/Menu.tsx
 #: src/sections/footer/footer.data.ts
+#: src/sections/menu/Menu.tsx
 msgid "Home"
 msgstr "Главная"
 
@@ -3950,8 +3845,8 @@ msgid "Honduras 🇭🇳"
 msgstr "Гондурас 🇭🇳"
 
 #. js-lingui-id: mqX9AX
-#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
+#: src/partners-marketplace/data/partner-scope-options.ts
 msgid "Hosting & Infrastructure"
 msgstr "Хостинг и инфраструктура"
 
@@ -3965,7 +3860,7 @@ msgstr "Предпочтения по хостингу"
 msgid "Hourly"
 msgstr "Почасовая оплата"
 
-#. js-lingui-id: +puxRS
+#. js-lingui-id: -puxRS
 #: src/partner-application/partner-application-copy.ts
 msgid "Hourly rate *"
 msgstr "Почасовая ставка *"
@@ -4005,7 +3900,7 @@ msgstr "Как стать партнёром?"
 msgid "How does matching work?"
 msgstr "Как работает подбор?"
 
-#. js-lingui-id: +MLOVo
+#. js-lingui-id: -MLOVo
 #: src/case-studies/case-study-stories.ts
 msgid "How Elevate Consulting moved off documents and spreadsheets to Twenty as the API-connected CRM at the center of their stack."
 msgstr "Как Elevate Consulting ушла от документов и таблиц к Twenty как CRM с открытым API в центре их стека."
@@ -4032,11 +3927,9 @@ msgstr "Как Nine Dots Ventures перестроила сингапурско�
 
 #. js-lingui-id: 5sWcC0
 #: src/sections/case-study-promo/CaseStudyPromo.tsx
-msgid ""
-"How teams\n"
+msgid "How teams\n"
 "*built with Twenty*"
-msgstr ""
-"Как команды\n"
+msgstr "Как команды\n"
 "*строят с Twenty*"
 
 #. js-lingui-id: Z3Cabh
@@ -4075,8 +3968,8 @@ msgid "Iceland 🇮🇸"
 msgstr "Исландия 🇮🇸"
 
 #. js-lingui-id: CiyiKN
-#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 msgid "ICP"
 msgstr "ICP"
 
@@ -4085,7 +3978,7 @@ msgstr "ICP"
 msgid "Identity"
 msgstr "Идентификация"
 
-#. js-lingui-id: 6M+L8e
+#. js-lingui-id: 6M-L8e
 #: src/sections/compare/compare-data.ts
 msgid "If your business already runs on S/4HANA, Sales Cloud speaks its language natively and handles global-enterprise compliance at serious scale."
 msgstr "Если ваш бизнес уже работает на S/4HANA, Sales Cloud \"говорит на его языке\" нативно и обеспечивает соответствие требованиям глобального предприятия в действительно крупном масштабе."
@@ -4111,11 +4004,8 @@ msgid "Impersonate users"
 msgstr "Имитировать пользователей"
 
 #. js-lingui-id: N4OVNn
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
 #: src/case-studies/case-study-stories.ts
+#: src/sections/compare/compare-data.ts
 msgid "Implementation"
 msgstr "Внедрение"
 
@@ -4134,7 +4024,7 @@ msgstr "Проект по внедрению (первый год, типичн�
 msgid "Implemented skeleton loading to improve user experience by displaying placeholder content while data is being fetched."
 msgstr "Реализована \"skeleton\"-загрузка для улучшения пользовательского опыта за счет отображения заполнительного контента, пока данные загружаются."
 
-#. js-lingui-id: F+7508
+#. js-lingui-id: F-7508
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Import larger CSV and spreadsheet files through AI chat with more reliable relation matching and bulk updates."
 msgstr "Импортируйте более крупные файлы CSV и электронных таблиц через чат с ИИ с более надёжным сопоставлением связей и массовыми обновлениями."
@@ -4179,7 +4069,7 @@ msgstr "Импортируйте свои данные и увидьте соб�
 msgid "Import your data with field mapping, including relations. Export anytime — your data is always yours."
 msgstr "Импортируйте данные с сопоставлением полей, включая связи. Экспортируйте в любой момент — ваши данные всегда остаются вашими."
 
-#. js-lingui-id: wsKZ+v
+#. js-lingui-id: wsKZ-v
 #: src/sections/product-feature/ImportVisual/ImportVisual.tsx
 msgid "Imported data"
 msgstr "Импортированные данные"
@@ -4206,13 +4096,10 @@ msgstr "В продакшене."
 
 #. js-lingui-id: FdUv19
 #: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
 msgid "in year one"
 msgstr "в первый год"
 
-#. js-lingui-id: Sqb+jp
+#. js-lingui-id: Sqb-jp
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "In-app preview for supported file types (when enabled)"
 msgstr "Просмотр в приложении для поддерживаемых типов файлов (если включено)"
@@ -4224,14 +4111,10 @@ msgstr "Входящие"
 
 #. js-lingui-id: C4qYgu
 #: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
 msgid "Included"
 msgstr "Включено"
 
 #. js-lingui-id: Le6Tov
-#: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Included from Pro"
 msgstr "Включено, начиная с Pro"
@@ -4243,12 +4126,10 @@ msgstr "Включено, начиная с Pro, 9 $/пользователь"
 
 #. js-lingui-id: 3XP8Lk
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-#: src/sections/pricing-salesfarce/salesfarce-data.ts
-#: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Included!"
 msgstr "Включено!"
 
-#. js-lingui-id: /c4yUr
+#. js-lingui-id: _c4yUr
 #: src/partner-application/data/partner-country-options.ts
 msgid "India 🇮🇳"
 msgstr "Индия 🇮🇳"
@@ -4273,24 +4154,24 @@ msgstr "Индустрия"
 msgid "Infinite scroll"
 msgstr "Бесконечная прокрутка"
 
-#. js-lingui-id: +mOisw
+#. js-lingui-id: -mOisw
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Infinite scroll is still coming soon, unlike the invoice."
 msgstr "Бесконечная прокрутка всё ещё «скоро будет» — в отличие от счёта."
 
-#. js-lingui-id: w8vi/L
+#. js-lingui-id: w8vi_L
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Inline image previews"
 msgstr "Предварительный просмотр изображений в строке"
 
-#. js-lingui-id: /eL+82
+#. js-lingui-id: _eL-82
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Inspect AI calls, code output, HTTP requests, and emails for every step of a workflow run."
 msgstr "Проверяйте вызовы ИИ, вывод кода, HTTP-запросы и электронные письма на каждом шаге запуска рабочего процесса."
 
-#. js-lingui-id: TKQ7K+
-#: src/apps-marketplace/AppDetail.tsx
+#. js-lingui-id: TKQ7K-
 #: src/apps-marketplace/AppCard.tsx
+#: src/apps-marketplace/AppDetail.tsx
 msgid "Install"
 msgstr "Установить"
 
@@ -4310,8 +4191,8 @@ msgid "Install shared tarball app"
 msgstr "Установка общего tarball-приложения"
 
 #. js-lingui-id: AHWM9N
-#: src/sections/compare/compare-data.ts
 #: src/case-studies/case-study-stories.ts
+#: src/sections/compare/compare-data.ts
 msgid "Integration"
 msgstr "Интеграция"
 
@@ -4330,7 +4211,7 @@ msgstr "Внутренняя конфиденциальность Email"
 msgid "Internal team emails won't sync, protecting privacy by preventing access to internal discussions."
 msgstr "Внутренние командные письма не будут синхронизироваться, что защищает конфиденциальность, предотвращая доступ к внутренним обсуждениям."
 
-#. js-lingui-id: a+PGuG
+#. js-lingui-id: a-PGuG
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Internet accounts per user"
 msgstr "Интернет-аккаунты на пользователя"
@@ -4365,9 +4246,9 @@ msgstr "Мы представляем workflows — мощный способ а
 msgid "Invite roles"
 msgstr "Роли приглашения"
 
-#. js-lingui-id: GJOKz/
-#: src/sections/pricing-plans/plans-data.ts
+#. js-lingui-id: GJOKz_
 #: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plans/plans-data.ts
 msgid "IP allow-listing"
 msgstr "IP allow-listing"
 
@@ -4386,7 +4267,7 @@ msgstr "Ирак 🇮🇶"
 msgid "Ireland 🇮🇪"
 msgstr "Ирландия 🇮🇪"
 
-#. js-lingui-id: /yQIKP
+#. js-lingui-id: _yQIKP
 #: src/sections/faq/faq.data.ts
 msgid "Is Twenty really open-source?"
 msgstr "Twenty действительно является продуктом с открытым исходным кодом?"
@@ -4402,8 +4283,8 @@ msgid "It is just such a nicer experience than dealing with a Salesforce or a Hu
 msgstr "Работать с Salesforce или HubSpot — совсем другой опыт, менее приятный. Моя задача была в том, чтобы каждый инструмент стал доступен через API, чтобы всё могло взаимодействовать."
 
 #. js-lingui-id: FJ51pP
-#: src/sections/testimonials/testimonials.data.ts
 #: src/case-studies/case-study-stories.ts
+#: src/sections/testimonials/testimonials.data.ts
 msgid "It is just such a nicer experience than dealing with a Salesforce or a HubSpot. My mission has been to get every tool API-accessible, so everything talks to each other. Twenty made that possible in a way older CRM platforms simply do not."
 msgstr "Работать с Twenty — просто гораздо приятнее, чем с Salesforce или HubSpot. Моя задача была в том, чтобы каждый инструмент стал доступен через API, чтобы всё могло взаимодействовать. Twenty сделала это возможным так, как старые CRM-платформы просто не умеют."
 
@@ -4418,8 +4299,8 @@ msgid "It's fragile. V1 ships quickly, but maintaining and making changes is a l
 msgstr "Это хрупкая система. Версия V1 выходит быстро, но сопровождение и внесение изменений превращаются в долгосренное бремя."
 
 #. js-lingui-id: Lj7sBL
-#: src/partners-marketplace/spoken-language-labels.ts
 #: src/partner-application/data/partner-language-options.ts
+#: src/partners-marketplace/spoken-language-labels.ts
 msgid "Italian"
 msgstr "Итальянский"
 
@@ -4449,17 +4330,17 @@ msgid "Japan 🇯🇵"
 msgstr "Япония 🇯🇵"
 
 #. js-lingui-id: dFtidv
-#: src/partners-marketplace/spoken-language-labels.ts
 #: src/partner-application/data/partner-language-options.ts
+#: src/partners-marketplace/spoken-language-labels.ts
 msgid "Japanese"
 msgstr "Японский"
 
-#. js-lingui-id: 27z+FV
+#. js-lingui-id: 27z-FV
 #: src/sections/product-feature/ImportVisual/data/import-mappings.ts
 msgid "Job Title"
 msgstr "Должность"
 
-#. js-lingui-id: Lsf2+K
+#. js-lingui-id: Lsf2-K
 #: src/partner-application/partner-application-copy.ts
 msgid "Join our ecosystem and help businesses take control of their customer data with open-source primitives."
 msgstr "Присоединяйтесь к нашей экосистеме и помогайте бизнесу взять под контроль свои клиентские данные с помощью открытых примитивов."
@@ -4469,9 +4350,9 @@ msgstr "Присоединяйтесь к нашей экосистеме и п�
 msgid "Join our growing partner ecosystem"
 msgstr "Присоединяйтесь к нашей растущей партнёрской экосистеме"
 
-#. js-lingui-id: m/pXki
-#: src/sections/customers-catalog-signoff/CustomersCatalogSignoff.tsx
+#. js-lingui-id: m_pXki
 #: src/sections/case-study-detail/CustomersCaseStudySignoff.tsx
+#: src/sections/customers-catalog-signoff/CustomersCatalogSignoff.tsx
 msgid "Join the teams that chose to own their CRM. Start building with Twenty today."
 msgstr "Присоединяйтесь к командам, которые решили владеть своим CRM. Начните строить с Twenty уже сегодня."
 
@@ -4560,7 +4441,7 @@ msgstr "Корейский"
 msgid "Kosovo 🇽🇰"
 msgstr "Косово 🇽🇰"
 
-#. js-lingui-id: 3+TwF3
+#. js-lingui-id: 3-TwF3
 #: src/partner-application/data/partner-country-options.ts
 msgid "Kuwait 🇰🇼"
 msgstr "Кувейт 🇰🇼"
@@ -4576,9 +4457,9 @@ msgid "Labs"
 msgstr "Labs"
 
 #. js-lingui-id: GAmD3h
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/partners-marketplace/PartnerReachFacts.tsx
 #: src/partners-marketplace/FilterBar.tsx
+#: src/partners-marketplace/PartnerReachFacts.tsx
+#: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Languages"
 msgstr "Языки"
 
@@ -4588,8 +4469,8 @@ msgid "Languages needed"
 msgstr "Необходимые языки"
 
 #. js-lingui-id: u6jooT
-#: src/partners-marketplace/PartnerReachFacts.tsx
 #: src/partner-application/partner-application-copy.ts
+#: src/partners-marketplace/PartnerReachFacts.tsx
 msgid "Languages spoken"
 msgstr "Языки общения"
 
@@ -4610,11 +4491,9 @@ msgstr "LATAM"
 
 #. js-lingui-id: WvrtRi
 #: src/sections/releases-hero/ReleasesHero.tsx
-msgid ""
-"Latest\n"
+msgid "Latest\n"
 "*Releases*"
-msgstr ""
-"Последние\n"
+msgstr "Последние\n"
 "*релизы*"
 
 #. js-lingui-id: 7OHfcc
@@ -4628,7 +4507,7 @@ msgstr "Латвия 🇱🇻"
 msgid "Layout"
 msgstr "Интерфейс (layout)"
 
-#. js-lingui-id: +Ss/og
+#. js-lingui-id: -Ss_og
 #: src/sections/menu/data/menu.ts
 msgid "Learn how to use Twenty"
 msgstr "Научиться работать с Twenty"
@@ -4638,7 +4517,7 @@ msgstr "Научиться работать с Twenty"
 msgid "Learn more"
 msgstr "Подробнее"
 
-#. js-lingui-id: Pd/m1Q
+#. js-lingui-id: Pd_m1Q
 #. placeholder {0}: app.name
 #: src/apps-marketplace/AppCard.tsx
 msgid "Learn more about {0}"
@@ -4710,9 +4589,9 @@ msgid "LinkedIn"
 msgstr "LinkedIn"
 
 #. js-lingui-id: 3hSKC5
-#: src/sections/menu/data/menu.ts
-#: src/sections/footer/footer.data.ts
 #: src/sections/case-study-detail/CaseStudyArticleNav.tsx
+#: src/sections/footer/footer.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "LinkedIn (opens in new tab)"
 msgstr "LinkedIn (откроется в новой вкладке)"
 
@@ -4726,12 +4605,12 @@ msgstr "URL LinkedIn"
 msgid "Links"
 msgstr "Ссылки"
 
-#. js-lingui-id: 0S9+C5
+#. js-lingui-id: 0S9-C5
 #: src/sections/compare/compare-data.ts
 msgid "List prices from HubSpot's public pricing page, billed annually, checked on July 30, 2026."
 msgstr "Прайсовые цены с публичной страницы тарифов HubSpot, ежегодная оплата, проверено 30 июля 2026 года."
 
-#. js-lingui-id: qyZA//
+#. js-lingui-id: qyZA__
 #: src/sections/compare/compare-data.ts
 msgid "List prices from Microsoft's public Dynamics 365 pricing page, billed annually, checked on July 30, 2026."
 msgstr "Прайсовые цены с публичной страницы тарифов Microsoft Dynamics 365, ежегодная оплата, проверено 30 июля 2026 года."
@@ -4756,14 +4635,14 @@ msgstr "Литва 🇱🇹"
 msgid "Live data and AI built"
 msgstr "Живые данные и ИИ встроены"
 
-#. js-lingui-id: WxYx+e
+#. js-lingui-id: WxYx-e
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Live email and calendar tabs"
 msgstr "Актуальные вкладки электронной почты и календаря"
 
 #. js-lingui-id: GObQuL
-#: src/sections/pricing-salesfarce/salesfarce-data.ts
 #: src/platform/releases/ReleaseNotes.tsx
+#: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Live updates"
 msgstr "Живые обновления"
 
@@ -4783,19 +4662,17 @@ msgid "Loading form…"
 msgstr "Загрузка формы…"
 
 #. js-lingui-id: Pwqkdw
-#: src/partner-application/PartnerApplicationModal.tsx
 #: src/client-brief/ClientBriefModal.tsx
+#: src/partner-application/PartnerApplicationModal.tsx
 msgid "Loading…"
 msgstr "Загрузка…"
 
 #. js-lingui-id: Mz5SEk
 #: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
 msgid "Local environment included"
 msgstr "Локальное окружение включено"
 
 #. js-lingui-id: 7VBQ2j
-#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Local, Production"
 msgstr "Local, Production"
@@ -4806,8 +4683,8 @@ msgid "Lock-in"
 msgstr "Привязка"
 
 #. js-lingui-id: sQia9P
-#: src/sections/menu/Menu.tsx
 #: src/sections/menu/components/MenuDrawer.tsx
+#: src/sections/menu/Menu.tsx
 msgid "Log in"
 msgstr "Войти"
 
@@ -4827,8 +4704,8 @@ msgid "Lower CRM cost"
 msgstr "Снижение стоимости CRM"
 
 #. js-lingui-id: kpIevo
-#: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plans/plans-data.ts
 msgid "LTS releases"
 msgstr "LTS-релизы"
 
@@ -4842,7 +4719,7 @@ msgstr "Люксембург 🇱🇺"
 msgid "Madagascar 🇲🇬"
 msgstr "Мадагаскар 🇲🇬"
 
-#. js-lingui-id: /hmUGb
+#. js-lingui-id: _hmUGb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Maintenance mode"
 msgstr "Режим обслуживания"
@@ -4867,12 +4744,12 @@ msgstr "Малайский"
 msgid "Malaysia 🇲🇾"
 msgstr "Малайзия 🇲🇾"
 
-#. js-lingui-id: 62/ScF
+#. js-lingui-id: 62_ScF
 #: src/partner-application/data/partner-country-options.ts
 msgid "Maldives 🇲🇻"
 msgstr "Мальдивы 🇲🇻"
 
-#. js-lingui-id: wc5E/3
+#. js-lingui-id: wc5E_3
 #: src/partner-application/data/partner-country-options.ts
 msgid "Mali 🇲🇱"
 msgstr "Мали 🇲🇱"
@@ -4927,12 +4804,12 @@ msgstr "Маршалловы Острова 🇲🇭"
 msgid "Master every corner of Twenty"
 msgstr "Освойте каждый уголок Twenty"
 
-#. js-lingui-id: HG/EUg
+#. js-lingui-id: HG_EUg
 #: src/partner-application/data/partner-country-options.ts
 msgid "Mauritania 🇲🇷"
 msgstr "Мавритания 🇲🇷"
 
-#. js-lingui-id: YDiaY/
+#. js-lingui-id: YDiaY_
 #: src/partner-application/data/partner-country-options.ts
 msgid "Mauritius 🇲🇺"
 msgstr "Маврикий 🇲🇺"
@@ -4942,7 +4819,7 @@ msgstr "Маврикий 🇲🇺"
 msgid "May"
 msgstr "Май"
 
-#. js-lingui-id: Zw+Zv+
+#. js-lingui-id: Zw-Zv-
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "MCP server"
 msgstr "MCP‑сервер"
@@ -4952,7 +4829,7 @@ msgstr "MCP‑сервер"
 msgid "Meet the certified agencies and consultants implementing Twenty for teams worldwide."
 msgstr "Познакомьтесь с сертифицированными агентствами и консультантами, которые внедряют Twenty для команд по всему миру."
 
-#. js-lingui-id: ujYZ+f
+#. js-lingui-id: ujYZ-f
 #: src/sections/case-study-promo/CaseStudyPromo.tsx
 msgid "Meet the teams who shaped Twenty into their own CRM with self-hosted deployments, AI-assisted workflows, and API-first product stacks."
 msgstr "Познакомьтесь с командами, которые превратили Twenty в собственный CRM с self-hosted‑развёртыванием, workflow на базе ИИ и продуктовым стеком с приоритетом API."
@@ -4967,7 +4844,7 @@ msgstr "Встреча"
 msgid "MENA"
 msgstr "MENA"
 
-#. js-lingui-id: +9RIKB
+#. js-lingui-id: -9RIKB
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Merge Records"
 msgstr "Объединение записей"
@@ -5047,7 +4924,7 @@ msgstr "Молдова 🇲🇩"
 msgid "Monaco 🇲🇨"
 msgstr "Монако 🇲🇨"
 
-#. js-lingui-id: G+EV+A
+#. js-lingui-id: G-EV-A
 #: src/partner-application/data/partner-country-options.ts
 msgid "Mongolia 🇲🇳"
 msgstr "Монголия 🇲🇳"
@@ -5057,7 +4934,7 @@ msgstr "Монголия 🇲🇳"
 msgid "Montenegro 🇲🇪"
 msgstr "Черногория 🇲🇪"
 
-#. js-lingui-id: +8Nek/
+#. js-lingui-id: -8Nek_
 #: src/sections/pricing-plans/BillingToggle.tsx
 msgid "Monthly"
 msgstr "Ежемесячно"
@@ -5097,7 +4974,7 @@ msgstr "Более наглядные представления дашборд�
 msgid "Morocco 🇲🇦"
 msgstr "Марокко 🇲🇦"
 
-#. js-lingui-id: E4h9+U
+#. js-lingui-id: E4h9-U
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Morph Many Relationships"
 msgstr "Связи Morph Many"
@@ -5137,7 +5014,7 @@ msgstr "Загрузка нескольких файлов в записях"
 msgid "Multi-Record Workflow Triggers"
 msgstr "Триггеры Workflow для нескольких записей"
 
-#. js-lingui-id: S5w2Q/
+#. js-lingui-id: S5w2Q_
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Multi-Select Field"
 msgstr "Поле Multi-Select"
@@ -5147,7 +5024,7 @@ msgstr "Поле Multi-Select"
 msgid "Multi-Workspace"
 msgstr "Мульти-Workspace"
 
-#. js-lingui-id: NZn+Fh
+#. js-lingui-id: NZn-Fh
 #: src/client-brief/client-brief-copy.ts
 msgid "Must-haves, integrations, compliance, languages…"
 msgstr "Обязательные требования, интеграции, соответствие требованиям, языки…"
@@ -5158,8 +5035,8 @@ msgid "Myanmar 🇲🇲"
 msgstr "Мьянма 🇲🇲"
 
 #. js-lingui-id: 6YtxFj
-#: src/sections/product-feature/ImportVisual/data/import-mappings.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/product-feature/ImportVisual/data/import-mappings.ts
 msgid "Name"
 msgstr "Имя"
 
@@ -5173,7 +5050,7 @@ msgstr "Намибия 🇳🇦"
 msgid "Nauru 🇳🇷"
 msgstr "Науру 🇳🇷"
 
-#. js-lingui-id: Akl9+2
+#. js-lingui-id: Akl9-2
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Navigate more quickly with our revamped record page navbar: Navigate directly from one record page to another. View the total number of records within a view. Easily return to the corresponding index view with a new \"Close\" button."
 msgstr "Навигируйте быстрее с обновлённой панелью навигации страницы записи: переходите напрямую с одной страницы записи на другую; смотрите общее количество записей в представлении; легко возвращайтесь к соответствующему индексному представлению с помощью новой кнопки \"Close\"."
@@ -5213,7 +5090,7 @@ msgstr "NetZero"
 msgid "NetZero runs a modular Twenty setup across carbon credits, ag products, and industrial systems."
 msgstr "NetZero использует модульную настройку Twenty для углеродных кредитов, агропродуктов и промышленных систем."
 
-#. js-lingui-id: 7HVBV+
+#. js-lingui-id: 7HVBV-
 #: src/case-studies/case-study-catalog.ts
 msgid "NetZero uses Twenty as a modular CRM across product lines and countries, with a roadmap into AI-assisted workflows."
 msgstr "NetZero использует Twenty как модульный CRM для разных продуктовых линий и стран, с дорожной картой в сторону workflow на базе ИИ."
@@ -5233,7 +5110,7 @@ msgstr "Новый"
 msgid "New Array field type"
 msgstr "Новый тип поля Array"
 
-#. js-lingui-id: gy5v+A
+#. js-lingui-id: gy5v-A
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "New emails and calendar events now appear on record pages without a manual refresh."
 msgstr "Новые электронные письма и события календаря теперь отображаются на страницах записей без ручного обновления."
@@ -5253,7 +5130,7 @@ msgstr "Новые объекты теперь создаются с макет�
 msgid "New record"
 msgstr "Новая запись"
 
-#. js-lingui-id: cU1+gU
+#. js-lingui-id: cU1-gU
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "New record page"
 msgstr "Новая страница записи"
@@ -5268,7 +5145,7 @@ msgstr "Новый макет Settings"
 msgid "New Side Panel"
 msgstr "Новая боковая панель"
 
-#. js-lingui-id: /DTtCF
+#. js-lingui-id: _DTtCF
 #: src/partner-application/data/partner-country-options.ts
 msgid "New Zealand 🇳🇿"
 msgstr "Новая Зеландия 🇳🇿"
@@ -5289,8 +5166,8 @@ msgid "Next steps"
 msgstr "Следующие шаги"
 
 #. js-lingui-id: awYrJD
-#: src/sections/testimonials/TestimonialsCarousel.tsx
 #: src/sections/testimonials/PartnerTestimonialsCarousel.tsx
+#: src/sections/testimonials/TestimonialsCarousel.tsx
 msgid "Next testimonial"
 msgstr "Следующий отзыв"
 
@@ -5304,12 +5181,12 @@ msgstr "Никарагуа 🇳🇮"
 msgid "Niger 🇳🇪"
 msgstr "Нигер 🇳🇪"
 
-#. js-lingui-id: +2NLII
+#. js-lingui-id: -2NLII
 #: src/partner-application/data/partner-country-options.ts
 msgid "Nigeria 🇳🇬"
 msgstr "Нигерия 🇳🇬"
 
-#. js-lingui-id: qZ+egR
+#. js-lingui-id: qZ-egR
 #: src/case-studies/case-study-catalog.ts
 msgid "Nine Dots put Twenty at the center of Homeseller's stack with APIs, automation, and AI on top of WhatsApp-heavy operations."
 msgstr "Nine Dots поставили Twenty в центр стека Homeseller с API, автоматизацией и ИИ поверх операций, сильно завязанных на WhatsApp."
@@ -5374,18 +5251,16 @@ msgstr "No-code"
 msgid "No. Applying and being listed are free. You set your own rates and keep what you bill."
 msgstr "Нет. Подача заявки и размещение в каталоге бесплатны. Вы сами устанавливаете расценки и сохраняете всю выставленную сумму."
 
-#. js-lingui-id: SiZ/7E
+#. js-lingui-id: SiZ_7E
 #: src/sections/faq/faq.data.ts
 msgid "No. Build custom objects, fields, views, and no-code workflows straight from Settings. Unlimited, no extra charge."
 msgstr "Нет. Стройте пользовательские объекты, поля, представления и no-code‑workflow прямо из Settings. Неограниченно, без доплат."
 
 #. js-lingui-id: 4yg7QV
 #: src/sections/compare/compare-data.ts
-msgid ""
-"Nobody buys Dynamics, they license it.\n"
+msgid "Nobody buys Dynamics, they license it.\n"
 "Here is what it costs once storage and add-ons land."
-msgstr ""
-"Dynamics не покупают, его лицензируют.\n"
+msgstr "Dynamics не покупают, его лицензируют.\n"
 "Вот сколько он стоит, когда добавляются хранилище и дополнения."
 
 #. js-lingui-id: EVSOLf
@@ -5453,7 +5328,7 @@ msgstr "Количество дашбордов"
 msgid "Olivier recognizes that NetZero's current use of Twenty is still relatively simple: workflows and integrations are not yet as deep as he eventually wants, because he prioritized getting foundations right first."
 msgstr "Оливье признаёт, что текущая работа NetZero в Twenty пока относительно проста: workflow и интеграции ещё не настолько глубоки, как он хотел бы в итоге, потому что в первую очередь он расставил правильные основы."
 
-#. js-lingui-id: l/1LQc
+#. js-lingui-id: l_1LQc
 #: src/sections/testimonials/testimonials.data.ts
 msgid "Olivier Reinaud"
 msgstr "Olivier Reinaud"
@@ -5463,7 +5338,7 @@ msgstr "Olivier Reinaud"
 msgid "Oman 🇴🇲"
 msgstr "Оман 🇴🇲"
 
-#. js-lingui-id: D2b+1q
+#. js-lingui-id: D2b-1q
 #: src/case-studies/case-study-catalog.ts
 msgid "On a single CRM"
 msgstr "На одном CRM"
@@ -5488,12 +5363,12 @@ msgstr "На Pipedrive"
 msgid "On record pages, you can now expand relation cards to view their fields without navigating to their individual record pages. For example, on a Company record page, you can expand an employee card to view their job title. This feature applies to all types of objects, including custom ones."
 msgstr "На страницах записей вы теперь можете разворачивать карточки связей, чтобы просматривать их поля, не переходя на отдельные страницы записей. Например, на странице записи Company вы можете развернуть карточку сотрудника, чтобы увидеть его должность. Эта функция применима ко всем типам объектов, включая пользовательские."
 
-#. js-lingui-id: Mkx+rq
+#. js-lingui-id: Mkx-rq
 #: src/sections/compare/compare-data.ts
 msgid "On Salesforce"
 msgstr "На Salesforce"
 
-#. js-lingui-id: 8/DhTc
+#. js-lingui-id: 8_DhTc
 #: src/sections/compare/compare-data.ts
 msgid "On SAP"
 msgstr "На SAP"
@@ -5519,8 +5394,8 @@ msgid "Onboarding"
 msgstr "Онбординг"
 
 #. js-lingui-id: jxC7HY
-#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
+#: src/partners-marketplace/data/partner-scope-options.ts
 msgid "Onboarding · Documentation · Change management · L1/L2 support · Managed services"
 msgstr "Онбординг · Документация · Управление изменениями · Поддержка L1/L2 · Управляемые сервисы"
 
@@ -5560,7 +5435,7 @@ msgstr "Открыть кейс: {0}"
 msgid "Open menu"
 msgstr "Открыть меню"
 
-#. js-lingui-id: pkXQA+
+#. js-lingui-id: pkXQA-
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Open your Twenty self-hosted instance Settings → Enterprise."
 msgstr "Откройте Settings → Enterprise в вашей self-hosted‑инстанции Twenty."
@@ -5576,28 +5451,23 @@ msgid "Open-source, AI-ready, and yours to shape."
 msgstr "Open-source, готов к ИИ и полностью в ваших руках."
 
 #. js-lingui-id: 4MyDFl
+#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
-#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
-#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
-#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
 msgid "Opportunities"
 msgstr "Сделки"
 
-#. js-lingui-id: SV/iis
+#. js-lingui-id: SV_iis
 #: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
 msgid "Opportunity"
 msgstr "Сделка"
 
 #. js-lingui-id: ucgZ0o
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plans/plans-data.ts
 msgid "Organization"
 msgstr "Организация"
 
 #. js-lingui-id: 6BoFxZ
-#: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Organization, $19/user"
 msgstr "Organization, 19 $/пользователь"
@@ -5607,7 +5477,7 @@ msgstr "Organization, 19 $/пользователь"
 msgid "Organized AI chats"
 msgstr "Упорядоченные чаты с ИИ"
 
-#. js-lingui-id: /IX/7x
+#. js-lingui-id: _IX_7x
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 msgid "Other"
 msgstr "Другое"
@@ -5622,7 +5492,7 @@ msgstr "Другие улучшения"
 msgid "Our onboarding process has been streamlined to let you import your calendar and emails seamlessly. You can now also configure your privacy settings directly during onboarding, allowing you to choose between sharing content with your team or keeping it hidden."
 msgstr "Наш процесс онбординга был упрощен, чтобы вы могли бесшовно импортировать календарь и электронную почту. Теперь вы также можете настроить параметры конфиденциальности прямо во время онбординга, выбрав, делиться ли содержимым с командой или скрывать его."
 
-#. js-lingui-id: V+7KMm
+#. js-lingui-id: V-7KMm
 #: src/partner-application/partner-application-copy.ts
 msgid "Our team reviews every application and will reach out if there's a fit."
 msgstr "Наша команда внимательно рассматривает каждую заявку и свяжется с вами, если будет подходящее совпадение."
@@ -5634,11 +5504,10 @@ msgstr "Наша команда рассмотрит ваш проект и св
 
 #. js-lingui-id: dKGg8T
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-#: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Out of stock"
 msgstr "Нет в наличии"
 
-#. js-lingui-id: PASC/7
+#. js-lingui-id: PASC_7
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Outlived every redesign since 2004."
 msgstr "Пережил каждый редизайн с 2004 года."
@@ -5653,7 +5522,7 @@ msgstr "Полностью владейте своим CRM от начала д�
 msgid "Ownership"
 msgstr "Владение"
 
-#. js-lingui-id: NmF/Vo
+#. js-lingui-id: NmF_Vo
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Owning your stack remains mysteriously out of stock."
 msgstr "Владение своим стеком почему‑то всё ещё «нет в наличии»."
@@ -5663,12 +5532,12 @@ msgstr "Владение своим стеком почему‑то всё ещ
 msgid "Package"
 msgstr "Пакет"
 
-#. js-lingui-id: h/oMMb
+#. js-lingui-id: h_oMMb
 #: src/platform/routing/static-website-routes.ts
 msgid "Packaged CRMs make every company look the same. Twenty is the open source CRM teams shape around their workflow, with a modern UI and a developer-first platform."
 msgstr "Готовые CRM делают все компании одинаковыми. Twenty — это CRM с открытым исходным кодом, который команды подстраивают под свои процессы, с современным UI и платформой с приоритетом разработчика."
 
-#. js-lingui-id: +AiiMt
+#. js-lingui-id: -AiiMt
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Pagination builds character."
 msgstr "Пагинация закаляет характер."
@@ -5729,12 +5598,12 @@ msgid "Partner testimonials"
 msgstr "Отзывы партнёров"
 
 #. js-lingui-id: mPkInZ
-#: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "Partners"
 msgstr "Партнёры"
 
-#. js-lingui-id: /Zw40D
+#. js-lingui-id: _Zw40D
 #: src/sections/product-feature/EmailsVisual/data/threads.ts
 msgid "Partnerships - Q4 Strategy"
 msgstr "Партнёрства — стратегия на Q4"
@@ -5745,17 +5614,12 @@ msgid "Paste the key and click Activate."
 msgstr "Вставьте ключ и нажмите Activate."
 
 #. js-lingui-id: 1wdjme
+#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
-#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
-#: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
 msgid "People"
 msgstr "Люди"
 
 #. js-lingui-id: cSBVtF
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "per year"
 msgstr "в год"
@@ -5770,7 +5634,7 @@ msgstr "в год с SSO"
 msgid "Percentage in number fields"
 msgstr "Процент в числовых полях"
 
-#. js-lingui-id: v1i9+n
+#. js-lingui-id: v1i9-n
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Performance Improvements"
 msgstr "Улучшения производительности"
@@ -5780,7 +5644,7 @@ msgstr "Улучшения производительности"
 msgid "Permissions V1"
 msgstr "Права доступа V1"
 
-#. js-lingui-id: kJQ+gL
+#. js-lingui-id: kJQ-gL
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Permissions V2"
 msgstr "Права доступа V2"
@@ -5836,8 +5700,8 @@ msgid "Pipelines, custom objects, AI assistants, and a native API on top of Post
 msgstr "Воронки, пользовательские объекты, ИИ‑ассистенты и нативный API поверх Postgres. Twenty — это CRM с открытым исходным кодом и современным UX, которым команды действительно хотят пользоваться."
 
 #. js-lingui-id: z7gnI9
-#: src/partner-application/partner-application-copy.ts
 #: src/client-brief/client-brief-copy.ts
+#: src/partner-application/partner-application-copy.ts
 msgid "Please complete all required fields before continuing."
 msgstr "Пожалуйста, заполните все обязательные поля перед продолжением."
 
@@ -5861,7 +5725,7 @@ msgstr "Польша 🇵🇱"
 msgid "Polish"
 msgstr "Польский"
 
-#. js-lingui-id: /LAeug
+#. js-lingui-id: _LAeug
 #: src/sections/testimonials/PartnerTestimonialsCarousel.tsx
 msgid "Portrait of {authorName}"
 msgstr "Портрет {authorName}"
@@ -5872,8 +5736,8 @@ msgid "Portugal 🇵🇹"
 msgstr "Португалия 🇵🇹"
 
 #. js-lingui-id: MOERNx
-#: src/partners-marketplace/spoken-language-labels.ts
 #: src/partner-application/data/partner-language-options.ts
+#: src/partners-marketplace/spoken-language-labels.ts
 msgid "Portuguese"
 msgstr "Португальский"
 
@@ -5908,8 +5772,8 @@ msgid "Previous"
 msgstr "Назад"
 
 #. js-lingui-id: LZoO8F
-#: src/sections/testimonials/TestimonialsCarousel.tsx
 #: src/sections/testimonials/PartnerTestimonialsCarousel.tsx
+#: src/sections/testimonials/TestimonialsCarousel.tsx
 msgid "Previous testimonial"
 msgstr "Предыдущий отзыв"
 
@@ -5924,14 +5788,14 @@ msgid "Price transparency"
 msgstr "Прозрачность цен"
 
 #. js-lingui-id: aHCEmh
-#: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "Pricing"
 msgstr "Цены"
 
-#. js-lingui-id: T/R+Qz
-#: src/sections/menu/components/MenuNav.tsx
+#. js-lingui-id: T_R-Qz
 #: src/sections/menu/components/MenuDrawer.tsx
+#: src/sections/menu/components/MenuNav.tsx
 msgid "Primary"
 msgstr "Основной"
 
@@ -5941,14 +5805,14 @@ msgid "Principal and Founder"
 msgstr "Руководитель и основатель"
 
 #. js-lingui-id: kXBQYM
-#: src/sections/testimonials/partner-testimonials.data.ts
 #: src/case-studies/case-study-catalog.ts
+#: src/sections/testimonials/partner-testimonials.data.ts
 msgid "Principal and Founder, Alternative Partners"
 msgstr "Руководитель и основатель, Alternative Partners"
 
-#. js-lingui-id: k62X/2
-#: src/sections/pricing-plans/plans-data.ts
+#. js-lingui-id: k62X_2
 #: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plans/plans-data.ts
 msgid "Priority support"
 msgstr "Приоритетная поддержка"
 
@@ -5958,8 +5822,8 @@ msgid "Priority support on Organization"
 msgstr "Приоритетная поддержка в плане Organization"
 
 #. js-lingui-id: LcET2C
-#: src/sections/footer/footer.data.ts
 #: src/app/[locale]/(site)/privacy-policy/page.tsx
+#: src/sections/footer/footer.data.ts
 msgid "Privacy Policy"
 msgstr "Политика конфиденциальности"
 
@@ -5969,16 +5833,14 @@ msgid "Privacy Policy | Twenty"
 msgstr "Privacy Policy | Twenty"
 
 #. js-lingui-id: 3fPjUY
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plans/plans-data.ts
 msgid "Pro"
 msgstr "Pro"
 
 #. js-lingui-id: K47k8R
-#: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "Product"
 msgstr "Продукт"
 
@@ -5988,7 +5850,6 @@ msgid "Production grade quality"
 msgstr "Промышленного уровня качество"
 
 #. js-lingui-id: YYUY3Z
-#: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Professional tier and up"
 msgstr "Начиная с уровня Professional и выше"
@@ -6028,7 +5889,7 @@ msgstr "Предложение"
 msgid "Proposal automation"
 msgstr "Автоматизация подготовки предложений"
 
-#. js-lingui-id: EFk+4q
+#. js-lingui-id: EFk-4q
 #: src/sections/product-feature/EmailsVisual/data/threads.ts
 msgid "Proposal Submission"
 msgstr "Отправка предложения"
@@ -6038,12 +5899,12 @@ msgstr "Отправка предложения"
 msgid "Proprietary languages, slow deployment cycles, and \"black box\" logic."
 msgstr "Проприетарные языки, медленные циклы деплоя и «чёрный ящик» логики."
 
-#. js-lingui-id: PWlva/
+#. js-lingui-id: PWlva_
 #: src/sections/compare/compare-data.ts
 msgid "Public pricing, this page included"
 msgstr "Публичные цены, включая эту страницу"
 
-#. js-lingui-id: u9RZ7+
+#. js-lingui-id: u9RZ7-
 #: src/partners-marketplace/spoken-language-labels.ts
 msgid "Punjabi"
 msgstr "Панджаби"
@@ -6053,14 +5914,14 @@ msgstr "Панджаби"
 msgid "Q1 2026"
 msgstr "Q1 2026"
 
-#. js-lingui-id: tFx+ES
+#. js-lingui-id: tFx-ES
 #: src/partner-application/data/partner-country-options.ts
 msgid "Qatar 🇶🇦"
 msgstr "Катар 🇶🇦"
 
 #. js-lingui-id: enzGAL
-#: src/sections/faq/PartnerFaq.tsx
 #: src/sections/faq/BecomePartnerFaq.tsx
+#: src/sections/faq/PartnerFaq.tsx
 msgid "Questions"
 msgstr "Вопросы"
 
@@ -6115,8 +5976,8 @@ msgid "Ready to build *your own story?*"
 msgstr "Готовы создать *свою собственную историю?*"
 
 #. js-lingui-id: UF2KDj
-#: src/sections/partner-signoff/PartnerSignoff.tsx
 #: src/sections/case-study-detail/CustomersCaseStudySignoff.tsx
+#: src/sections/partner-signoff/PartnerSignoff.tsx
 msgid "Ready to grow *with Twenty?*"
 msgstr "Готовы расти *вместе с Twenty?*"
 
@@ -6135,7 +5996,7 @@ msgstr "Реальные истории клиентов, чьи команды 
 msgid "Real Estate"
 msgstr "Недвижимость"
 
-#. js-lingui-id: CH+Ona
+#. js-lingui-id: CH-Ona
 #: src/sections/customers-hero/CustomersHero.tsx
 msgid "Real stories from real teams about how they shaped Twenty to fit their workflow and accelerated their growth."
 msgstr "Реальные истории от реальных команд о том, как они подстроили Twenty под свой workflow и ускорили рост."
@@ -6146,8 +6007,8 @@ msgid "Real-time changes? That will be a premium surprise."
 msgstr "Изменения в реальном времени? Это будет премиальным сюрпризом."
 
 #. js-lingui-id: 4hc7hc
-#: src/sections/three-cards/product-three-cards-data.ts
 #: src/sections/product-feature/data/feature-tiles.ts
+#: src/sections/three-cards/product-three-cards-data.ts
 msgid "Real-time data"
 msgstr "Данные в реальном времени"
 
@@ -6187,12 +6048,12 @@ msgid "Recurring Google Calendar events"
 msgstr "Повторяющиеся события Google Календаря"
 
 #. js-lingui-id: q45OlW
-#: src/partners-marketplace/PartnerReachFacts.tsx
 #: src/partners-marketplace/FilterBar.tsx
+#: src/partners-marketplace/PartnerReachFacts.tsx
 msgid "Regions"
 msgstr "Регионы"
 
-#. js-lingui-id: Mjbud+
+#. js-lingui-id: Mjbud-
 #: src/partners-marketplace/PartnerReachFacts.tsx
 msgid "Regions served"
 msgstr "Охваченные регионы"
@@ -6223,8 +6084,8 @@ msgid "Release Notes"
 msgstr "Заметки о релизах"
 
 #. js-lingui-id: 5icoS1
-#: src/sections/releases-feed/ReleasesFeed.tsx
 #: src/sections/menu/data/menu.ts
+#: src/sections/releases-feed/ReleasesFeed.tsx
 msgid "Releases"
 msgstr "Релизы"
 
@@ -6233,7 +6094,7 @@ msgstr "Релизы"
 msgid "Reliable AI data imports"
 msgstr "Надёжный импорт данных с помощью ИИ"
 
-#. js-lingui-id: BkBq/5
+#. js-lingui-id: BkBq_5
 #. placeholder {0}: pill.text
 #: src/partners-marketplace/ActiveFilterPills.tsx
 msgid "Remove {0} filter"
@@ -6244,7 +6105,7 @@ msgstr "Убрать фильтр {0}"
 msgid "Remove {skill}"
 msgstr "Удалить {skill}"
 
-#. js-lingui-id: a/aGHe
+#. js-lingui-id: a_aGHe
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Rename, download, and delete attachments"
 msgstr "Переименование, скачивание и удаление вложений"
@@ -6259,12 +6120,12 @@ msgstr "Изменение порядка канбан-столбцов"
 msgid "Reports"
 msgstr "Отчёты"
 
-#. js-lingui-id: SY/an2
+#. js-lingui-id: SY_an2
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Reports & Dashboards"
 msgstr "Отчёты и дашборды"
 
-#. js-lingui-id: 0NRPk+
+#. js-lingui-id: 0NRPk-
 #: src/sections/compare/compare-data.ts
 msgid "Required onboarding on paid tiers"
 msgstr "Обязательный онбординг на платных тарифах"
@@ -6294,7 +6155,7 @@ msgstr "Канбан-столбцы с изменяемым размером"
 msgid "Resize navbar and side panel"
 msgstr "Изменение размера панели навигации и боковой панели"
 
-#. js-lingui-id: s+MGs7
+#. js-lingui-id: s-MGs7
 #: src/sections/menu/data/menu.ts
 msgid "Resources"
 msgstr "Ресурсы"
@@ -6304,7 +6165,7 @@ msgstr "Ресурсы"
 msgid "REST & GraphQL API"
 msgstr "REST и GraphQL API"
 
-#. js-lingui-id: 7B+bTC
+#. js-lingui-id: 7B-bTC
 #: src/sections/compare/compare-data.ts
 msgid "REST & GraphQL APIs included"
 msgstr "REST и GraphQL API включены"
@@ -6314,7 +6175,7 @@ msgstr "REST и GraphQL API включены"
 msgid "Restart a failed workflow run from the step that failed instead of running everything again."
 msgstr "Перезапускайте неудачный запуск рабочего процесса с шага, на котором произошла ошибка, вместо повторного выполнения всего процесса."
 
-#. js-lingui-id: kx0s+n
+#. js-lingui-id: kx0s-n
 #: src/case-studies/case-study-stories.ts
 msgid "Results"
 msgstr "Результаты"
@@ -6329,12 +6190,12 @@ msgstr "Ретро 2015"
 msgid "Retry failed workflows"
 msgstr "Повторный запуск неудачных рабочих процессов"
 
-#. js-lingui-id: H0dEn+
+#. js-lingui-id: H0dEn-
 #: src/app-preview/stage/FlyingTrafficLights.tsx
 msgid "Return traffic light"
 msgstr "Вернуть индикатор окна"
 
-#. js-lingui-id: k2x4+M
+#. js-lingui-id: k2x4-M
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Revamp View Options Menu"
 msgstr "Обновлённое меню View Options"
@@ -6350,12 +6211,12 @@ msgid "Revamped Side Panel"
 msgstr "Обновлённая боковая панель"
 
 #. js-lingui-id: 8YBH95
-#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 msgid "Revenue"
 msgstr "Выручка"
 
-#. js-lingui-id: akW+oq
+#. js-lingui-id: akW-oq
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
 msgid "Revenue (YTD)"
 msgstr "Выручка (с начала года)"
@@ -6375,7 +6236,7 @@ msgstr "Макеты с форматированным текстом"
 msgid "Richer relation layouts"
 msgstr "Более насыщенные макеты связей"
 
-#. js-lingui-id: /gaSVU
+#. js-lingui-id: _gaSVU
 #: src/case-studies/case-study-stories.ts
 msgid "Roadmap"
 msgstr "Дорожная карта"
@@ -6396,9 +6257,8 @@ msgid "Romanian"
 msgstr "Румынский"
 
 #. js-lingui-id: Wdh41P
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plans/plans-data.ts
 msgid "Row-level permissions"
 msgstr "Права доступа на уровне строк"
 
@@ -6417,9 +6277,9 @@ msgstr "Запуск программ имитационных интервью 
 msgid "Russia 🇷🇺"
 msgstr "Россия 🇷🇺"
 
-#. js-lingui-id: nji0/X
-#: src/partners-marketplace/spoken-language-labels.ts
+#. js-lingui-id: nji0_X
 #: src/partner-application/data/partner-language-options.ts
+#: src/partners-marketplace/spoken-language-labels.ts
 msgid "Russian"
 msgstr "Русский"
 
@@ -6433,12 +6293,12 @@ msgstr "Руанда 🇷🇼"
 msgid "Saint Kitts & Nevis 🇰🇳"
 msgstr "Сент-Китс и Невис 🇰🇳"
 
-#. js-lingui-id: zCHzF/
+#. js-lingui-id: zCHzF_
 #: src/partner-application/data/partner-country-options.ts
 msgid "Saint Lucia 🇱🇨"
 msgstr "Сент-Люсия 🇱🇨"
 
-#. js-lingui-id: Md/8iQ
+#. js-lingui-id: Md_8iQ
 #: src/partner-application/data/partner-country-options.ts
 msgid "Saint Vincent 🇻🇨"
 msgstr "Сент-Винсент 🇻🇨"
@@ -6478,7 +6338,7 @@ msgstr "Эффективность продаж"
 msgid "Sales Premium with AI insights"
 msgstr "Sales Premium с AI‑аналитикой"
 
-#. js-lingui-id: Burn4/
+#. js-lingui-id: Burn4_
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Salesfarce Add-on Center"
 msgstr "Центр дополнений Salesfarce"
@@ -6488,17 +6348,17 @@ msgstr "Центр дополнений Salesfarce"
 msgid "Salesfarce Pro"
 msgstr "Salesfarce Pro"
 
-#. js-lingui-id: /UolBB
+#. js-lingui-id: _UolBB
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Salesforce Classic"
 msgstr "Salesforce Classic"
 
-#. js-lingui-id: l69E+u
+#. js-lingui-id: l69E-u
 #: src/case-studies/case-study-catalog.ts
 msgid "Salesforce migration"
 msgstr "Миграция с Salesforce"
 
-#. js-lingui-id: wYxlN+
+#. js-lingui-id: wYxlN-
 #: src/sections/compare/compare-data.ts
 msgid "Salesforce remains the deepest enterprise platform, with an ecosystem for almost everything. At a thousand seats with a dedicated admin team, it is a different conversation."
 msgstr "Salesforce остаётся самой глубокой enterprise‑платформой с экосистемой почти для всего. При тысяче мест и выделенной команде админов это уже совсем другой разговор."
@@ -6508,7 +6368,7 @@ msgstr "Salesforce остаётся самой глубокой enterprise‑п�
 msgid "Same CRM"
 msgstr "Та же CRM"
 
-#. js-lingui-id: 60i6S+
+#. js-lingui-id: 60i6S-
 #: src/sections/why-twenty-marquee/WhyTwentyMarquee.tsx
 msgid "Same output"
 msgstr "Тот же результат"
@@ -6529,7 +6389,6 @@ msgid "SAML SSO & security rules"
 msgstr "SAML SSO и правила безопасности"
 
 #. js-lingui-id: w9QWxz
-#: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
 msgid "SAML/OIDC SSO"
 msgstr "SAML/OIDC SSO"
@@ -6559,12 +6418,12 @@ msgstr "Сан-Томе и Принсипи 🇸🇹"
 msgid "SAP Sales Cloud lists at $134/user/month before a year-one implementation project that often exceeds the licenses. Compare with Twenty, from $9 per user."
 msgstr "SAP Sales Cloud стоит 134 $/польз./месяц ещё до годового проекта по внедрению, который часто обходится дороже самих лицензий. Сравните с Twenty, от 9 $ за пользователя."
 
-#. js-lingui-id: jv/Hsj
+#. js-lingui-id: jv_Hsj
 #: src/sections/compare/compare-data.ts
 msgid "SAP Store list price"
 msgstr "Прайсовая цена в SAP Store"
 
-#. js-lingui-id: /BK0Nl
+#. js-lingui-id: _BK0Nl
 #: src/partner-application/data/partner-country-options.ts
 msgid "Saudi Arabia 🇸🇦"
 msgstr "Саудовская Аравия 🇸🇦"
@@ -6584,7 +6443,7 @@ msgstr "Генерируйте компоненты, workflows и навыки �
 msgid "Scale"
 msgstr "Масштабирование"
 
-#. js-lingui-id: aI/fdL
+#. js-lingui-id: aI_fdL
 #: src/case-studies/case-study-stories.ts
 msgid "Scale without *breaking operations*"
 msgstr "Масштабируйтесь, *не ломая операции*"
@@ -6600,13 +6459,12 @@ msgid "Schedule security review"
 msgstr "Назначить проверку безопасности"
 
 #. js-lingui-id: NFixwq
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plans/plans-data.ts
 msgid "SCIM provisioning"
 msgstr "SCIM‑провижининг"
 
-#. js-lingui-id: cOh+MI
+#. js-lingui-id: cOh-MI
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
 msgid "Screening"
 msgstr "Отбор"
@@ -6616,7 +6474,7 @@ msgstr "Отбор"
 msgid "Search a country…"
 msgstr "Найдите страну…"
 
-#. js-lingui-id: +yNkue
+#. js-lingui-id: -yNkue
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Search in field pickers and add-column menus makes table and layout customization faster."
 msgstr "Поиск в селекторах полей и меню добавления колонок ускоряет настройку таблиц и макетов."
@@ -6641,16 +6499,14 @@ msgstr "Безопасность"
 msgid "Security review & DPA"
 msgstr "Аудит безопасности и DPA"
 
-#. js-lingui-id: nmVU/t
+#. js-lingui-id: nmVU_t
 #: src/sections/customers-hero/CustomersHero.tsx
-msgid ""
-"See how teams\n"
+msgid "See how teams\n"
 "build *on Twenty*"
-msgstr ""
-"Смотрите, как команды\n"
+msgstr "Смотрите, как команды\n"
 "строят *на Twenty*"
 
-#. js-lingui-id: aB+XpI
+#. js-lingui-id: aB-XpI
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "See more features"
 msgstr "Смотреть больше возможностей"
@@ -6682,29 +6538,29 @@ msgstr "Выбрать {0}"
 msgid "Select all"
 msgstr "Выбрать всё"
 
-#. js-lingui-id: /a1JwJ
+#. js-lingui-id: _a1JwJ
 #: src/partner-application/partner-application-copy.ts
 msgid "Select every area you used in a real project — not what you offer, what you actually did."
 msgstr "Выберите все области, которые вы использовали в реальном проекте — не то, что вы предлагаете, а то, что вы действительно делали."
 
-#. js-lingui-id: 6p/m5q
+#. js-lingui-id: 6p_m5q
 #: src/partner-application/partner-application-copy.ts
 msgid "Select your country"
 msgstr "Выберите вашу страну"
 
-#. js-lingui-id: sXYD/i
+#. js-lingui-id: sXYD_i
 #: src/sections/pricing-plan-table/plan-table-visible-rows.test.ts
 msgid "self"
 msgstr "self"
 
-#. js-lingui-id: 6JhL+3
+#. js-lingui-id: 6JhL-3
 #: src/case-studies/case-study-catalog.ts
 msgid "Self-hosted"
 msgstr "Самостоятельный хостинг"
 
-#. js-lingui-id: QFK/45
-#: src/partners-marketplace/data/partner-scope-options.ts
+#. js-lingui-id: QFK_45
 #: src/partner-application/data/partner-scope-options.ts
+#: src/partners-marketplace/data/partner-scope-options.ts
 msgid "Self-hosted (Docker/K8s) · Cloud architecture · Scaling · Security · Monitoring"
 msgstr "Самостоятельный хостинг (Docker/K8s) · Облачная архитектура · Масштабирование · Безопасность · Мониторинг"
 
@@ -6738,11 +6594,11 @@ msgstr "Эксплуатация самостоятельного хостинг
 msgid "Self-hosted workspaces can now track usage more cleanly with usage-based billing support."
 msgstr "Self-hosted рабочие пространства теперь могут более прозрачно отслеживать использование благодаря поддержке биллинга на основе потребления."
 
-#. js-lingui-id: GrBvv/
-#: src/sections/pricing-salesfarce/salesfarce-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
+#. js-lingui-id: GrBvv_
 #: src/client-brief/client-brief-copy.ts
+#: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Self-hosting"
 msgstr "Самостоятельный хостинг"
 
@@ -6758,8 +6614,6 @@ msgstr "Самостоятельная активация"
 
 #. js-lingui-id: wF0e4y
 #: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
 msgid "Self-serve, partners optional"
 msgstr "Самостоятельный запуск, партнёры необязательны"
 
@@ -6768,7 +6622,7 @@ msgstr "Самостоятельный запуск, партнёры необя
 msgid "Selfhosting"
 msgstr "Самостоятельный хостинг"
 
-#. js-lingui-id: i/TzEU
+#. js-lingui-id: i_TzEU
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
 msgid "Send Email"
 msgstr "Отправить email"
@@ -6804,8 +6658,8 @@ msgid "Serbia 🇷🇸"
 msgstr "Сербия 🇷🇸"
 
 #. js-lingui-id: MILoeL
-#: src/sections/partner-lead/PartnerServicesExplainer.tsx
 #: src/partners-marketplace/PartnerServices.tsx
+#: src/sections/partner-lead/PartnerServicesExplainer.tsx
 msgid "Services"
 msgstr "Услуги"
 
@@ -6814,7 +6668,7 @@ msgstr "Услуги"
 msgid "Seychelles 🇸🇨"
 msgstr "Сейшельские Острова 🇸🇨"
 
-#. js-lingui-id: G8/iGo
+#. js-lingui-id: G8_iGo
 #: src/sections/compare/compare-data.ts
 msgid "Shape records to your business"
 msgstr "Настройте записи под ваш бизнес"
@@ -6834,7 +6688,7 @@ msgstr "Делитесь аналитикой звонков"
 msgid "Share your CRM project brief and our team will match you with a certified Twenty partner."
 msgstr "Поделитесь кратким описанием CRM‑проекта, и наша команда подберёт вам сертифицированного партнёра Twenty."
 
-#. js-lingui-id: /beeoq
+#. js-lingui-id: _beeoq
 #: src/partners-marketplace/MarketplaceMatchCard.tsx
 msgid "Share your project in a few minutes. We pair you with a certified partner who fits."
 msgstr "Опишите свой проект за несколько минут. Мы подберём вам сертифицированного партнёра, который вам подойдёт."
@@ -6886,14 +6740,12 @@ msgstr "Зарегистрируйтесь в Cloud меньше чем за м�
 
 #. js-lingui-id: qTFDyz
 #: src/sections/pricing-plans/PricingIntro.tsx
-msgid ""
-"Simple\n"
+msgid "Simple\n"
 "*Pricing*"
-msgstr ""
-"Простое\n"
+msgstr "Простое\n"
 "*ценообразование*"
 
-#. js-lingui-id: 0eG5g+
+#. js-lingui-id: 0eG5g-
 #: src/partner-application/data/partner-country-options.ts
 msgid "Singapore 🇸🇬"
 msgstr "Сингапур 🇸🇬"
@@ -6908,9 +6760,9 @@ msgstr "Единый вход (SSO) для вашей команды"
 msgid "Single sign-on, access policies"
 msgstr "Единый вход (SSO), политики доступа"
 
-#. js-lingui-id: +L2uYJ
-#: src/sections/pricing-plans/plans-data.ts
+#. js-lingui-id: -L2uYJ
 #: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plans/plans-data.ts
 msgid "Single-tenant isolation"
 msgstr "Изоляция в однопользовательском (single‑tenant) окружении"
 
@@ -6919,7 +6771,7 @@ msgstr "Изоляция в однопользовательском (single‑t
 msgid "Sitemap"
 msgstr "Карта сайта"
 
-#. js-lingui-id: c+cRP3
+#. js-lingui-id: c-cRP3
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Skeleton Loading"
 msgstr "Скелетон-загрузка"
@@ -6949,7 +6801,7 @@ msgstr "Словакия 🇸🇰"
 msgid "Slovenia 🇸🇮"
 msgstr "Словения 🇸🇮"
 
-#. js-lingui-id: 1v/aHN
+#. js-lingui-id: 1v_aHN
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Smart ⌘K"
 msgstr "Умная ⌘K"
@@ -6959,12 +6811,12 @@ msgstr "Умная ⌘K"
 msgid "Smart patterns, shortcuts, and layouts make everyday tasks faster and easier to execute."
 msgstr "Умные шаблоны, сокращения и макеты делают повседневные задачи быстрее и проще в выполнении."
 
-#. js-lingui-id: yp+1TH
+#. js-lingui-id: yp-1TH
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Smarter email recipients"
 msgstr "Более умные получатели электронной почты"
 
-#. js-lingui-id: E/7H9X
+#. js-lingui-id: E_7H9X
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Smarter record assignment"
 msgstr "Более умное назначение записей"
@@ -6974,7 +6826,7 @@ msgstr "Более умное назначение записей"
 msgid "Social media"
 msgstr "Социальные сети"
 
-#. js-lingui-id: b+F/Ih
+#. js-lingui-id: b-F_Ih
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Soft Delete"
 msgstr "Мягкое удаление"
@@ -7000,8 +6852,8 @@ msgid "Solomon Islands 🇸🇧"
 msgstr "Соломоновы Острова 🇸🇧"
 
 #. js-lingui-id: TvdMI3
-#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
+#: src/partners-marketplace/data/partner-scope-options.ts
 msgid "Solutioning"
 msgstr "Проектирование решений"
 
@@ -7010,7 +6862,7 @@ msgstr "Проектирование решений"
 msgid "Somalia 🇸🇴"
 msgstr "Сомали 🇸🇴"
 
-#. js-lingui-id: Lllsp+
+#. js-lingui-id: Lllsp-
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Some teammate changes now appear right away, so collaboration feels faster and more up to date."
 msgstr "Некоторые изменения от коллег теперь отображаются сразу, так что совместная работа ощущается быстрее и актуальнее."
@@ -7025,12 +6877,12 @@ msgstr "Сортировка составных полей"
 msgid "source"
 msgstr "источник"
 
-#. js-lingui-id: B/mYo/
+#. js-lingui-id: B_mYo_
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Source code access"
 msgstr "Доступ к исходному коду"
 
-#. js-lingui-id: zHJB/O
+#. js-lingui-id: zHJB_O
 #: src/partner-application/data/partner-country-options.ts
 msgid "South Africa 🇿🇦"
 msgstr "Южно-Африканская Республика 🇿🇦"
@@ -7040,7 +6892,7 @@ msgstr "Южно-Африканская Республика 🇿🇦"
 msgid "South Korea 🇰🇷"
 msgstr "Южная Корея 🇰🇷"
 
-#. js-lingui-id: a4jo+V
+#. js-lingui-id: a4jo-V
 #: src/partner-application/data/partner-country-options.ts
 msgid "South Sudan 🇸🇸"
 msgstr "Южный Судан 🇸🇸"
@@ -7051,8 +6903,8 @@ msgid "Spain 🇪🇸"
 msgstr "Испания 🇪🇸"
 
 #. js-lingui-id: 65A04M
-#: src/partners-marketplace/spoken-language-labels.ts
 #: src/partner-application/data/partner-language-options.ts
+#: src/partners-marketplace/spoken-language-labels.ts
 msgid "Spanish"
 msgstr "Испанский"
 
@@ -7067,8 +6919,8 @@ msgid "Sri Lanka 🇱🇰"
 msgstr "Шри-Ланка 🇱🇰"
 
 #. js-lingui-id: vnS6Rf
-#: src/sections/pricing-salesfarce/salesfarce-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "SSO"
 msgstr "SSO"
 
@@ -7084,7 +6936,6 @@ msgstr "SSO и правила безопасности: переход на Ulti
 
 #. js-lingui-id: uQl22y
 #: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
 msgid "Standard support"
 msgstr "Стандартная поддержка"
 
@@ -7094,12 +6945,9 @@ msgid "Start automating at huge scale!"
 msgstr "Начните автоматизацию в гигантском масштабе!"
 
 #. js-lingui-id: XO628f
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
-#: src/sections/compare/CompareReceipt.tsx
 #: src/sections/compare/ComparePage.tsx
+#: src/sections/compare/CompareReceipt.tsx
+#: src/sections/pricing-plans/plans-data.ts
 msgid "Start for free"
 msgstr "Начать бесплатно"
 
@@ -7110,11 +6958,9 @@ msgstr "Начните двигаться *быстрее уже сегодня.
 
 #. js-lingui-id: sBOFB0
 #: src/sections/pricing-plans/PricingIntro.tsx
-msgid ""
-"Start your free trial today\n"
+msgid "Start your free trial today\n"
 "without credit card."
-msgstr ""
-"Начните свой бесплатный пробный период уже сегодня\n"
+msgstr "Начните свой бесплатный пробный период уже сегодня\n"
 "без кредитной карты."
 
 #. js-lingui-id: ThcPyu
@@ -7128,8 +6974,8 @@ msgid "Stay in Flow"
 msgstr "Оставайтесь в Flow"
 
 #. js-lingui-id: GdGiNi
-#: src/partner-application/partner-application-copy.ts
 #: src/client-brief/client-brief-copy.ts
+#: src/partner-application/partner-application-copy.ts
 msgid "Step {current} of {total}"
 msgstr "Шаг {current} из {total}"
 
@@ -7149,8 +6995,8 @@ msgid "Stop fighting custom. *Start building, with Twenty*"
 msgstr "Перестаньте бороться с кастомизацией. *Начните строить с Twenty*"
 
 #. js-lingui-id: UCLArd
-#: src/sections/three-cards/ThreeCards.tsx
 #: src/sections/three-cards/ProductThreeCards.tsx
+#: src/sections/three-cards/ThreeCards.tsx
 msgid "Stop settling for trade-offs."
 msgstr "Хватит мириться с компромиссами."
 
@@ -7195,19 +7041,19 @@ msgstr "Отправить клиентский бриф — Twenty Partners"
 msgid "Submit a project brief and get matched with a certified Twenty partner for migration, customisation, and CRM implementation."
 msgstr "Отправьте бриф по проекту и получите подбор сертифицированного партнёра Twenty для миграции, кастомизации и внедрения CRM."
 
-#. js-lingui-id: H5/rZQ
+#. js-lingui-id: H5_rZQ
 #: src/partner-application/partner-application-copy.ts
 msgid "Submit application"
 msgstr "Отправить заявку"
 
-#. js-lingui-id: 7mJ+Cm
+#. js-lingui-id: 7mJ-Cm
 #: src/client-brief/client-brief-copy.ts
 msgid "Submit brief"
 msgstr "Отправить бриф"
 
 #. js-lingui-id: MDqQmP
-#: src/partner-application/partner-application-copy.ts
 #: src/client-brief/client-brief-copy.ts
+#: src/partner-application/partner-application-copy.ts
 msgid "Submitting…"
 msgstr "Отправка…"
 
@@ -7227,8 +7073,8 @@ msgid "Super partner"
 msgstr "Суперпартнёр"
 
 #. js-lingui-id: XYLcNv
-#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/compare/compare-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Support"
 msgstr "Поддержка"
 
@@ -7237,7 +7083,7 @@ msgstr "Поддержка"
 msgid "Suriname 🇸🇷"
 msgstr "Суринам 🇸🇷"
 
-#. js-lingui-id: Yz+oFV
+#. js-lingui-id: Yz-oFV
 #: src/partners-marketplace/spoken-language-labels.ts
 msgid "Swahili"
 msgstr "Суахили"
@@ -7247,7 +7093,7 @@ msgstr "Суахили"
 msgid "swap"
 msgstr "swap"
 
-#. js-lingui-id: b2//Ip
+#. js-lingui-id: b2__Ip
 #: src/partner-application/data/partner-country-options.ts
 msgid "Sweden 🇸🇪"
 msgstr "Швеция 🇸🇪"
@@ -7267,13 +7113,12 @@ msgstr "Швейцария 🇨🇭"
 msgid "Syria 🇸🇾"
 msgstr "Сирия 🇸🇾"
 
-#. js-lingui-id: 3w+Aox
-#: src/sections/pricing-plan-table/plan-table-data.ts
+#. js-lingui-id: 3w-Aox
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Table, Kanban, Calendar"
 msgstr "Таблица, Kanban, календарь"
 
-#. js-lingui-id: ISVD3+
+#. js-lingui-id: ISVD3-
 #: src/partners-marketplace/spoken-language-labels.ts
 msgid "Tagalog"
 msgstr "Тагальский"
@@ -7300,19 +7145,18 @@ msgstr "Возьмите под контроль запущенные workflows 
 
 #. js-lingui-id: MT3V1w
 #: src/sections/pricing-plans/plans-data.ts
-#: src/sections/pricing-plans/plans-data.ts
 msgid "Talk to sales"
 msgstr "Связаться с отделом продаж"
 
 #. js-lingui-id: JAKtcG
-#: src/sections/product-signoff/ProductSignoff.tsx
-#: src/sections/product-hero/ProductHero.tsx
-#: src/sections/home-hero/HomeHero.tsx
-#: src/sections/footer/footer.data.ts
-#: src/sections/faq/Faq.tsx
-#: src/sections/customers-catalog-signoff/CustomersCatalogSignoff.tsx
-#: src/sections/case-study-detail/CustomersCaseStudySignoff.tsx
 #: src/contact-cal/ContactCalModal.tsx
+#: src/sections/case-study-detail/CustomersCaseStudySignoff.tsx
+#: src/sections/customers-catalog-signoff/CustomersCatalogSignoff.tsx
+#: src/sections/faq/Faq.tsx
+#: src/sections/footer/footer.data.ts
+#: src/sections/home-hero/HomeHero.tsx
+#: src/sections/product-hero/ProductHero.tsx
+#: src/sections/product-signoff/ProductSignoff.tsx
 msgid "Talk to us"
 msgstr "Связаться с нами"
 
@@ -7326,7 +7170,7 @@ msgstr "Тамильский"
 msgid "Tanzania 🇹🇿"
 msgstr "Танзания 🇹🇿"
 
-#. js-lingui-id: GtycJ/
+#. js-lingui-id: GtycJ_
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 msgid "Tasks"
 msgstr "Задачи"
@@ -7356,9 +7200,9 @@ msgstr "Команды и наборы прав"
 msgid "Technical notes"
 msgstr "Технические заметки"
 
-#. js-lingui-id: y+bLyB
-#: src/partners-marketplace/PartnerCoverageSection.tsx
+#. js-lingui-id: y-bLyB
 #: src/partner-application/partner-application-copy.ts
+#: src/partners-marketplace/PartnerCoverageSection.tsx
 msgid "Technical skills"
 msgstr "Технические навыки"
 
@@ -7374,11 +7218,9 @@ msgstr "Расскажите нам больше"
 
 #. js-lingui-id: YXuDx1
 #: src/client-brief/client-brief-copy.ts
-msgid ""
-"Tell us what you need\n"
+msgid "Tell us what you need\n"
 "*We'll find the right partner*"
-msgstr ""
-"Расскажите, что вам нужно\n"
+msgstr "Расскажите, что вам нужно\n"
 "*Мы найдём подходящего партнёра*"
 
 #. js-lingui-id: cgFMCg
@@ -7396,7 +7238,7 @@ msgstr "Расскажите, что вам нужно, и мы подберём
 msgid "Terminal mode"
 msgstr "Режим терминала"
 
-#. js-lingui-id: mvP/25
+#. js-lingui-id: mvP_25
 #: src/sections/footer/footer.data.ts
 msgid "Terms and Conditions"
 msgstr "Условия и положения"
@@ -7431,7 +7273,7 @@ msgstr "Тайский"
 msgid "Thailand 🇹🇭"
 msgstr "Таиланд 🇹🇭"
 
-#. js-lingui-id: hXU+R1
+#. js-lingui-id: hXU-R1
 #: src/client-brief/client-brief-copy.ts
 msgid "Thanks — we received your brief."
 msgstr "Спасибо — мы получили ваш бриф."
@@ -7468,7 +7310,6 @@ msgstr "<0>Поле Multi-Select</0> позволяет помечать зап�
 
 #. js-lingui-id: ZwRe2L
 #: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
 msgid "The AI edition"
 msgstr "AI‑версия"
 
@@ -7499,11 +7340,10 @@ msgstr "Генеральный директор годами сопротивл�
 
 #. js-lingui-id: 93BQde
 #: src/sections/compare/compare-data.ts
-#: src/sections/compare/compare-data.ts
 msgid "The CRM"
 msgstr "CRM"
 
-#. js-lingui-id: EYi+kT
+#. js-lingui-id: EYi-kT
 #: src/case-studies/case-study-stories.ts
 msgid "The CRM as a *control hub*"
 msgstr "CRM как *центр управления*"
@@ -7514,7 +7354,6 @@ msgid "The CRM as a control hub"
 msgstr "CRM как центр управления"
 
 #. js-lingui-id: VKGMXJ
-#: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "The CRM itself"
 msgstr "Сама CRM"
@@ -7530,8 +7369,8 @@ msgid "The flexibility is just amazing. Literally, there's nothing you cannot do
 msgstr "Гибкость просто потрясающая. Буквально нет ничего, чего вы не могли бы сделать. Можно создавать объекты, получать доступ ко всему через API, забирать заметки и отправлять их в портал. Попробуйте сделать это в HubSpot. Нереально. Это настоящая возможность построить именно то, что действительно нужно."
 
 #. js-lingui-id: MaHqAc
-#: src/sections/testimonials/testimonials.data.ts
 #: src/case-studies/case-study-stories.ts
+#: src/sections/testimonials/testimonials.data.ts
 msgid "The flexibility is really what made the difference. Our needs evolve very fast. I discover a new need and in two clicks I can address it. That is a real advantage when you are moving quickly."
 msgstr "Именно гибкость стала решающим фактором. Наши потребности очень быстро меняются. Я замечаю новую потребность и в два клика могу её закрыть. Это настоящий плюс, когда вы быстро двигаетесь."
 
@@ -7567,11 +7406,9 @@ msgstr "Ключевым решением было не строить всё с
 
 #. js-lingui-id: aa8o1y
 #: src/sections/compare/compare-data.ts
-msgid ""
-"The license is the cheap part.\n"
+msgid "The license is the cheap part.\n"
 "Here is what SAP Sales Cloud costs by the time it goes live."
-msgstr ""
-"Лицензия — дешевая часть.\n"
+msgstr "Лицензия — дешевая часть.\n"
 "Вот сколько стоит SAP Sales Cloud к моменту запуска в продакшене."
 
 #. js-lingui-id: gav9Hl
@@ -7586,11 +7423,9 @@ msgstr "Строки счёта накапливаются"
 
 #. js-lingui-id: DIMXNH
 #: src/sections/compare/compare-data.ts
-msgid ""
-"The list price is only the beginning.\n"
+msgid "The list price is only the beginning.\n"
 "Here is what the invoice looks like once a real team is on it."
-msgstr ""
-"Прайсовая цена — только начало.\n"
+msgstr "Прайсовая цена — только начало.\n"
 "Вот как выглядит счёт, когда на платформе работает реальная команда."
 
 #. js-lingui-id: nf1NnD
@@ -7623,12 +7458,7 @@ msgstr "Проблема."
 msgid "The record page now features a clearer layout with increased space for content"
 msgstr "Страница записи теперь имеет более понятный макет и больше места для содержимого"
 
-#. js-lingui-id: 3/wAFg
-#: src/case-studies/case-study-stories.ts
-#: src/case-studies/case-study-stories.ts
-#: src/case-studies/case-study-stories.ts
-#: src/case-studies/case-study-stories.ts
-#: src/case-studies/case-study-stories.ts
+#. js-lingui-id: 3_wAFg
 #: src/case-studies/case-study-stories.ts
 msgid "The result"
 msgstr "Результат"
@@ -7648,7 +7478,7 @@ msgstr "Правильный *фундамент*"
 msgid "The right foundation"
 msgstr "Правильный фундамент"
 
-#. js-lingui-id: g8h2v+
+#. js-lingui-id: g8h2v-
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "The search feature now includes ranking scores. This helps you find the most relevant results faster."
 msgstr "Функция поиска теперь включает ранжирование результатов. Это помогает быстрее находить наиболее релевантные результаты."
@@ -7718,12 +7548,12 @@ msgstr "Они не хотели осваивать чужую систему. �
 msgid "They evaluated Salesforce, Zoho, Pipedrive, and SuiteCRM. Each came with the same tradeoffs: too expensive, too rigid, or too generic, and none fixed the underlying problem. They were still renting a structure they did not control."
 msgstr "Они оценивали Salesforce, Zoho, Pipedrive и SuiteCRM. У всех были одинаковые компромиссы: слишком дорого, слишком жёстко или слишком общо — и ни один не решал исходную проблему. Они всё так же арендовали структуру, которой не управляли."
 
-#. js-lingui-id: AUV+TY
+#. js-lingui-id: AUV-TY
 #: src/app-preview/terminal/ThinkingIndicator.tsx
 msgid "Thinking"
 msgstr "Обработка"
 
-#. js-lingui-id: 8gek0+
+#. js-lingui-id: 8gek0-
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "This feature gives you the ability to merge two records into one. This combines their information and keeps linked data, helping you remove duplicates and keep records accurate."
 msgstr "Эта функция позволяет объединить две записи в одну. Это объединяет их информацию и сохраняет связанные данные, помогая удалять дубликаты и поддерживать точность записей."
@@ -7783,7 +7613,7 @@ msgstr "Итого"
 msgid "total per month with fixed cost"
 msgstr "итого в месяц при фиксированной стоимости"
 
-#. js-lingui-id: hmu++i
+#. js-lingui-id: hmu--i
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Track amount and close date"
 msgstr "Отслеживайте сумму и дату закрытия"
@@ -7804,8 +7634,8 @@ msgid "Training & RevOps"
 msgstr "Обучение и RevOps"
 
 #. js-lingui-id: MtCqjl
-#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
+#: src/partners-marketplace/data/partner-scope-options.ts
 msgid "Training, Adoption & Support"
 msgstr "Обучение, внедрение и поддержка"
 
@@ -7824,7 +7654,7 @@ msgstr "Триггер"
 msgid "Trigger actions on record changes"
 msgstr "Запускайте действия при изменении записей"
 
-#. js-lingui-id: /ga9kq
+#. js-lingui-id: _ga9kq
 #: src/partner-application/data/partner-country-options.ts
 msgid "Trinidad & Tobago 🇹🇹"
 msgstr "Тринидад и Тобаго 🇹🇹"
@@ -7864,7 +7694,7 @@ msgstr "Тунис 🇹🇳"
 msgid "Turkey 🇹🇷"
 msgstr "Турция 🇹🇷"
 
-#. js-lingui-id: Kz91g/
+#. js-lingui-id: Kz91g_
 #: src/partners-marketplace/spoken-language-labels.ts
 msgid "Turkish"
 msgstr "Турецкий"
@@ -7874,7 +7704,7 @@ msgstr "Турецкий"
 msgid "Turkmenistan 🇹🇲"
 msgstr "Туркмения 🇹🇲"
 
-#. js-lingui-id: tSc/a3
+#. js-lingui-id: tSc_a3
 #: src/partner-application/data/partner-country-options.ts
 msgid "Tuvalu 🇹🇻"
 msgstr "Тувалу 🇹🇻"
@@ -7901,19 +7731,17 @@ msgstr "Twenty Apps открывает возможность строить п�
 
 #. js-lingui-id: fZsVj6
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"Twenty as the\n"
+msgid "Twenty as the\n"
 "*API backbone* of a go-to-market stack"
-msgstr ""
-"Twenty как\n"
+msgstr "Twenty как\n"
 "*API-основа* go-to-market-стека"
 
-#. js-lingui-id: +w9xZW
+#. js-lingui-id: -w9xZW
 #: src/case-studies/case-study-catalog.ts
 msgid "Twenty as the API backbone of a go-to-market stack"
 msgstr "Twenty как API-основа go-to-market-стека"
 
-#. js-lingui-id: zj0CA+
+#. js-lingui-id: zj0CA-
 #: src/case-studies/case-study-stories.ts
 msgid "Twenty as the API backbone of a go-to-market stack | Elevate Consulting"
 msgstr "Twenty как API-основа go-to-market-стека | Elevate Consulting"
@@ -7933,7 +7761,7 @@ msgstr "Цены Twenty CRM — тарифы от $9 за пользовател
 msgid "Twenty Customers — How Modern Teams Run Their CRM"
 msgstr "Клиенты Twenty — как современные команды работают со своим CRM"
 
-#. js-lingui-id: MYHdd/
+#. js-lingui-id: MYHdd_
 #: src/case-studies/case-study-stories.ts
 msgid "Twenty delivers on what CRMs should have always been: fairly priced software with a fully modular and customizable model, a clean and modern UI, granular permissions, automations, enterprise features. A compelling solution with high potential to rightfully disrupt the CRM market."
 msgstr "Twenty реализует то, чем CRM всегда должны были быть: ПО по справедливой цене с полностью модульной и настраиваемой моделью, чистым и современным интерфейсом, детальными правами доступа, автоматизациями, корпоративными функциями. Убедительное решение с большим потенциалом для честного переворота на рынке CRM."
@@ -7943,7 +7771,7 @@ msgstr "Twenty реализует то, чем CRM всегда должны б�
 msgid "Twenty fields"
 msgstr "Поля Twenty"
 
-#. js-lingui-id: fwep/o
+#. js-lingui-id: fwep_o
 #: src/case-studies/case-study-stories.ts
 msgid "Twenty gave us the flexibility to model the entire interview lifecycle as custom objects and workflows. We could build something genuinely complex without fighting the platform to do it."
 msgstr "Twenty дало нам гибкость смоделировать весь жизненный цикл интервью как пользовательские объекты и workflows. Мы смогли построить по-настоящему сложное решение, не борясь с платформой."
@@ -7958,7 +7786,7 @@ msgstr "Twenty даёт техническим командам строител
 msgid "Twenty gives you the kind of flexibility that actually changes what you can offer your clients. The dev experience is clean, the APIs are open, and when something needs to be customized, you can just do it. There's no fighting the platform."
 msgstr "Twenty даёт вам такую гибкость, которая реально меняет то, что вы можете предложить клиентам. Опыт разработки чистый, API открыты, и когда что‑то нужно кастомизировать, вы просто делаете это. Никакой борьбы с платформой."
 
-#. js-lingui-id: x/I85y
+#. js-lingui-id: x_I85y
 #: src/case-studies/case-study-stories.ts
 msgid "Twenty is not only where CRM data lives. It is the API backbone that makes the rest of the stack possible."
 msgstr "Twenty — это не только место, где живут данные CRM. Это API-основа, которая делает возможным весь остальной стек."
@@ -7968,13 +7796,13 @@ msgstr "Twenty — это не только место, где живут дан
 msgid "Twenty is the heart of the system. Everything branches from it."
 msgstr "Twenty — это сердце системы. Всё разветвляется от него."
 
-#. js-lingui-id: K+zzSQ
-#: src/case-studies/case-study-stories.ts
+#. js-lingui-id: K-zzSQ
 #: src/case-studies/case-study-catalog.ts
+#: src/case-studies/case-study-stories.ts
 msgid "Twenty lets us build a CRM around the business and not the business around the CRM."
 msgstr "Twenty позволяет нам строить CRM вокруг бизнеса, а не бизнес вокруг CRM."
 
-#. js-lingui-id: AxT+g4
+#. js-lingui-id: AxT-g4
 #: src/sections/feature-cards/feature-cards.data.ts
 msgid "Twenty makes it simple. It's clean, intuitive, and built to feel like Notion."
 msgstr "С Twenty всё просто. Интерфейс чистый, интуитивный и создавался с ощущением Notion."
@@ -8007,8 +7835,8 @@ msgid "Twenty user guide preview"
 msgstr "Превью руководства пользователя Twenty"
 
 #. js-lingui-id: mMNI6u
-#: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 #: src/sections/compare/compare-data.ts
+#: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 msgid "Twenty vs HubSpot"
 msgstr "Twenty против HubSpot"
 
@@ -8018,8 +7846,8 @@ msgid "Twenty vs HubSpot Pricing — The Real Cost Compared"
 msgstr "Twenty против HubSpot по ценам — сравнение реальной стоимости"
 
 #. js-lingui-id: PU2vgp
-#: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 #: src/sections/compare/compare-data.ts
+#: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 msgid "Twenty vs Microsoft Dynamics"
 msgstr "Twenty против Microsoft Dynamics"
 
@@ -8029,19 +7857,19 @@ msgid "Twenty vs Microsoft Dynamics Pricing — The Real Cost Compared"
 msgstr "Twenty против Microsoft Dynamics по ценам — сравнение реальной стоимости"
 
 #. js-lingui-id: jqVcCJ
-#: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 #: src/sections/compare/compare-data.ts
+#: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 msgid "Twenty vs Pipedrive"
 msgstr "Twenty против Pipedrive"
 
-#. js-lingui-id: Ure+SU
+#. js-lingui-id: Ure-SU
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty vs Pipedrive Pricing — The Real Cost Compared"
 msgstr "Twenty против Pipedrive по ценам — сравнение реальной стоимости"
 
 #. js-lingui-id: BpUVzg
-#: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 #: src/sections/compare/compare-data.ts
+#: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 msgid "Twenty vs Salesforce"
 msgstr "Twenty против Salesforce"
 
@@ -8051,8 +7879,8 @@ msgid "Twenty vs Salesforce Pricing — The Real Cost Compared"
 msgstr "Twenty против Salesforce по ценам — сравнение реальной стоимости"
 
 #. js-lingui-id: AKwcOh
-#: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 #: src/sections/compare/compare-data.ts
+#: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 msgid "Twenty vs SAP Sales Cloud"
 msgstr "Twenty против SAP Sales Cloud"
 
@@ -8071,13 +7899,12 @@ msgstr "Двухфакторная аутентификация"
 msgid "Two-factor authentication"
 msgstr "Двухфакторная аутентификация"
 
-#. js-lingui-id: O+vc/1
+#. js-lingui-id: O-vc_1
 #: src/partner-application/partner-application-copy.ts
 msgid "Type of team *"
 msgstr "Тип команды *"
 
 #. js-lingui-id: FW6SHJ
-#: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Typical partner project"
 msgstr "Типичный партнёрский проект"
@@ -8092,7 +7919,7 @@ msgstr "Типичный партнёрский проект, первый го�
 msgid "UAE 🇦🇪"
 msgstr "ОАЭ 🇦🇪"
 
-#. js-lingui-id: +WNTxL
+#. js-lingui-id: -WNTxL
 #: src/partner-application/data/partner-country-options.ts
 msgid "Uganda 🇺🇬"
 msgstr "Уганда 🇺🇬"
@@ -8112,7 +7939,7 @@ msgstr "Великобритания 🇬🇧"
 msgid "Ukraine 🇺🇦"
 msgstr "Украина 🇺🇦"
 
-#. js-lingui-id: V9+2pH
+#. js-lingui-id: V9-2pH
 #: src/partners-marketplace/spoken-language-labels.ts
 msgid "Ukrainian"
 msgstr "Украинский"
@@ -8124,40 +7951,15 @@ msgstr "Только план Ultimate"
 
 #. js-lingui-id: jqzUyM
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-#: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Unavailable"
 msgstr "Недоступно"
 
-#. js-lingui-id: Hix/m6
+#. js-lingui-id: Hix_m6
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Unified timeline (emails, events, tasks, notes, files)"
 msgstr "Единая лента событий (письма, события, задачи, заметки, файлы)"
 
 #. js-lingui-id: NIuIk1
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Unlimited"
 msgstr "Без ограничений"
@@ -8172,7 +7974,7 @@ msgstr "Неограниченно, начиная с Pro"
 msgid "Unlimited on top tiers only"
 msgstr "Неограниченно только на верхних тарифах"
 
-#. js-lingui-id: voJ+Nz
+#. js-lingui-id: voJ-Nz
 #: src/sections/compare/compare-data.ts
 msgid "Unlimited workflows"
 msgstr "Неограниченные рабочие процессы"
@@ -8203,8 +8005,8 @@ msgid "Updated by"
 msgstr "Обновлено"
 
 #. js-lingui-id: SPdRRU
-#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
+#: src/partners-marketplace/data/partner-scope-options.ts
 msgid "Upfront consulting, scoping, strategy."
 msgstr "Первичный консалтинг, оценка объёма, стратегия."
 
@@ -8224,8 +8026,8 @@ msgid "Urdu"
 msgstr "Урду"
 
 #. js-lingui-id: IagCbF
-#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 msgid "URL"
 msgstr "URL"
 
@@ -8250,8 +8052,8 @@ msgid "Use the Q3 template."
 msgstr "Используйте шаблон Q3."
 
 #. js-lingui-id: Roaswv
-#: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "User Guide"
 msgstr "Руководство пользователя"
 
@@ -8265,9 +8067,9 @@ msgstr "Имперсонация пользователя"
 msgid "User roles"
 msgstr "Роли пользователей"
 
-#. js-lingui-id: UCUX2+
-#: src/partners-marketplace/data/partner-scope-options.ts
+#. js-lingui-id: UCUX2-
 #: src/partner-application/data/partner-scope-options.ts
+#: src/partners-marketplace/data/partner-scope-options.ts
 msgid "User-side rollout & ongoing support."
 msgstr "Развёртывание на стороне пользователей и постоянная поддержка."
 
@@ -8321,7 +8123,7 @@ msgstr "Вьетнамский"
 msgid "View case study"
 msgstr "Просмотреть кейс"
 
-#. js-lingui-id: V4nZs/
+#. js-lingui-id: V4nZs_
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "View Groups"
 msgstr "Группы представлений"
@@ -8352,8 +8154,8 @@ msgid "VP of Engineering at W3villa Technologies"
 msgstr "Вице-президент по инженерным разработкам в W3villa Technologies"
 
 #. js-lingui-id: w2INie
-#: src/case-studies/case-study-stories.ts
 #: src/case-studies/case-study-catalog.ts
+#: src/case-studies/case-study-stories.ts
 msgid "VP of Engineering, W3villa Technologies"
 msgstr "Вице-президент по инженерным разработкам, W3villa Technologies"
 
@@ -8392,7 +8194,7 @@ msgstr "W3villa Technologies решила решить проблему как �
 msgid "W3villa used Twenty as a production-grade framework for the data model, permissions, authentication, and workflow engine they would otherwise have rebuilt themselves."
 msgstr "W3villa использовала Twenty как промышленного уровня фреймворк для модели данных, разрешений, аутентификации и движка рабочих процессов, которые иначе им пришлось бы разрабатывать самостоятельно."
 
-#. js-lingui-id: +uJeMJ
+#. js-lingui-id: -uJeMJ
 #: src/sections/partner-lead/PartnerBecomeStrip.tsx
 msgid "Want to *offer* Twenty services?"
 msgstr "Хотите *предлагать* услуги Twenty?"
@@ -8412,7 +8214,7 @@ msgstr "Мы сертифицируем только тех, кто действ
 msgid "We could not submit your application. Please try again in a moment."
 msgstr "Мы не смогли отправить вашу заявку. Пожалуйста, попробуйте ещё раз через некоторое время."
 
-#. js-lingui-id: To/mhY
+#. js-lingui-id: To_mhY
 #: src/client-brief/client-brief-copy.ts
 msgid "We could not submit your brief. Please try again in a moment."
 msgstr "Мы не смогли отправить ваш бриф. Пожалуйста, попробуйте ещё раз через некоторое время."
@@ -8468,12 +8270,12 @@ msgid "We've introduced advanced settings for email and calendar management: <0>
 msgstr "Мы ввели расширенные настройки для управления электронной почтой и календарём: <0>Параметры Auto-Create Contact:</0> выберите, когда взаимодействие по email должно автоматически создавать контакт. Варианты включают: People I've sent emails to and received emails from People I've sent emails to Don't auto create contact <1>Исключения Email:</1> возможность исключать непрофессиональные адреса (например, Gmail, Outlook) и командные адреса (например, support@, team@) из синхронизации с CRM. <2>События календаря:</2> параметры авто-создания контактов теперь доступны и для событий календаря."
 
 #. js-lingui-id: v1kQyJ
-#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/platform/releases/ReleaseNotes.tsx
+#: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Webhooks"
 msgstr "Вебхуки"
 
-#. js-lingui-id: ZhnM/K
+#. js-lingui-id: ZhnM_K
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Webhooks (Change Data Capture)"
 msgstr "Вебхуки (Change Data Capture)"
@@ -8504,8 +8306,8 @@ msgid "What a Twenty partner does"
 msgstr "Чем занимается партнёр Twenty"
 
 #. js-lingui-id: Lx0cVD
-#: src/partners-marketplace/data/partner-scope-options.ts
 #: src/partner-application/data/partner-scope-options.ts
+#: src/partners-marketplace/data/partner-scope-options.ts
 msgid "What an admin can do without writing code."
 msgstr "То, что админ может сделать без написания кода."
 
@@ -8541,47 +8343,37 @@ msgstr "По каким вопросам вам нужна помощь? *"
 
 #. js-lingui-id: Gln6w3
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*Dynamics 365* really cost?"
-msgstr ""
-"Сколько на самом деле стоит\n"
+msgstr "Сколько на самом деле стоит\n"
 "*Dynamics 365*?"
 
 #. js-lingui-id: ndwi6c
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*HubSpot* really cost?"
-msgstr ""
-"Сколько на самом деле стоит\n"
+msgstr "Сколько на самом деле стоит\n"
 "*HubSpot*?"
 
 #. js-lingui-id: QSAZlS
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*Pipedrive* really cost?"
-msgstr ""
-"Сколько на самом деле стоит\n"
+msgstr "Сколько на самом деле стоит\n"
 "*Pipedrive*?"
 
 #. js-lingui-id: rv6SWP
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*Salesforce* really cost?"
-msgstr ""
-"Сколько на самом деле стоит\n"
+msgstr "Сколько на самом деле стоит\n"
 "*Salesforce*?"
 
 #. js-lingui-id: mdVDDM
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*SAP Sales Cloud* really cost?"
-msgstr ""
-"Сколько на самом деле стоит\n"
+msgstr "Сколько на самом деле стоит\n"
 "*SAP Sales Cloud*?"
 
 #. js-lingui-id: MIVJ8U
@@ -8600,7 +8392,6 @@ msgid "What is coming in April 2026 is what he has been waiting for: AI-assisted
 msgstr "То, что появится в апреле 2026 года, — именно то, чего он ждал: создание рабочих процессов с помощью ИИ, когда он описывает, что ему нужно, и дальше просто итеративно дорабатывает, вместо того чтобы строить сложную логику с нуля. Для основателя, который сам управляет CRM, это меняет представление о том, что вообще реально возможно."
 
 #. js-lingui-id: iOAq7n
-#: src/case-studies/case-study-stories.ts
 #: src/case-studies/case-study-stories.ts
 msgid "What is next"
 msgstr "Что дальше"
@@ -8655,7 +8446,7 @@ msgstr "При импорте записей вы теперь можете им
 msgid "When the channel is *the business*"
 msgstr "Когда канал *и есть бизнес*"
 
-#. js-lingui-id: JglRo/
+#. js-lingui-id: JglRo_
 #: src/case-studies/case-study-stories.ts
 msgid "When the channel is the business"
 msgstr "Когда канал и есть бизнес"
@@ -8672,11 +8463,9 @@ msgstr "Когда поставщик выдёрнул вилку из розе�
 
 #. js-lingui-id: 8SbakK
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"When your CRM is\n"
+msgid "When your CRM is\n"
 "*the product*"
-msgstr ""
-"Когда ваш CRM —\n"
+msgstr "Когда ваш CRM —\n"
 "*это продукт*"
 
 #. js-lingui-id: OQ41z8
@@ -8694,7 +8483,7 @@ msgstr "Когда ваша CRM — это продукт: W3Grads на Twenty |
 msgid "Where the caps and gates are"
 msgstr "Где находятся ограничения и \"ворота\""
 
-#. js-lingui-id: bGN8u+
+#. js-lingui-id: bGN8u-
 #: src/case-studies/case-study-stories.ts
 msgid "While NetZero still runs a second CRM in parallel for WhatsApp-heavy operations with farmers in Brazil, they expect to migrate all of it to Twenty as features and the ecosystem grow. Already, their structured, multinational pipeline is powered by Twenty."
 msgstr "Хотя NetZero по-прежнему использует вторую CRM параллельно для операций с активным использованием WhatsApp с фермерами в Бразилии, они рассчитывают перенести всё это в Twenty по мере развития функциональности и экосистемы. Уже сейчас их структурированный, многонациональный конвейер работает на Twenty."
@@ -8714,7 +8503,7 @@ msgstr "Почему"
 msgid "Why teams choose Twenty"
 msgstr "Почему команды выбирают Twenty"
 
-#. js-lingui-id: 4sOVu+
+#. js-lingui-id: 4sOVu-
 #: src/sections/footer/footer.data.ts
 msgid "Why Twenty"
 msgstr "Почему Twenty"
@@ -8739,7 +8528,7 @@ msgstr "Коэффициент побед"
 msgid "Window controls"
 msgstr "Элементы управления окном"
 
-#. js-lingui-id: V+BOYT
+#. js-lingui-id: V-BOYT
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "With Google Calendar integration, you can track all your team's events with a company or person in your CRM. Choose the information level visible to your teammates for better control."
 msgstr "С интеграцией Google Calendar вы можете отслеживать все события вашей команды с компанией или человеком в вашем CRM. Выберите уровень информации, видимый коллегам, чтобы лучше контролировать доступ."
@@ -8755,8 +8544,8 @@ msgid "With Twenty, when a new need appears, he can address it himself: no devel
 msgstr "С Twenty, когда появляется новая потребность, он может закрыть её сам: без разработчика, без обращения в поддержку."
 
 #. js-lingui-id: OX5bbs
-#: src/partner-application/partner-application-copy.ts
 #: src/client-brief/client-brief-copy.ts
+#: src/partner-application/partner-application-copy.ts
 msgid "Work email *"
 msgstr "Рабочий email *"
 
@@ -8765,12 +8554,12 @@ msgstr "Рабочий email *"
 msgid "Workflow branches"
 msgstr "Ветвления Workflow"
 
-#. js-lingui-id: 9MLcn+
+#. js-lingui-id: 9MLcn-
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Workflow branches allow workflows to split paths, enabling conditional logic and multiple outcome flows in automation."
 msgstr "Ветвления Workflow позволяют разделять пути, включая условную логику и несколько сценариев выполнения в автоматизации."
 
-#. js-lingui-id: XYIks/
+#. js-lingui-id: XYIks_
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Workflow Bulk Select"
 msgstr "Массовый выбор в рабочих процессах"
@@ -8790,12 +8579,12 @@ msgstr "Улучшения Workflow"
 msgid "Workflow Iterator Node"
 msgstr "Узел Workflow Iterator"
 
-#. js-lingui-id: u6DF/V
+#. js-lingui-id: u6DF_V
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 msgid "Workflow Runs"
 msgstr "Запуски рабочих процессов"
 
-#. js-lingui-id: jN2u/p
+#. js-lingui-id: jN2u_p
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Workflow Search Node Limit"
 msgstr "Ограничение узла поиска Workflow"
@@ -8806,11 +8595,10 @@ msgid "Workflow Versions"
 msgstr "Версии рабочих процессов"
 
 #. js-lingui-id: woYYQq
-#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
-#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/platform/releases/ReleaseNotes.tsx
 #: src/partner-application/data/partner-twenty-experience-options.ts
+#: src/platform/releases/ReleaseNotes.tsx
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 msgid "Workflows"
 msgstr "Рабочие процессы"
 
@@ -8835,15 +8623,15 @@ msgid "Working with *a Twenty partner*"
 msgstr "Работа с *партнёром Twenty*"
 
 #. js-lingui-id: pmUArF
-#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 #: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 msgid "Workspace"
 msgstr "Рабочее пространство"
 
 #. js-lingui-id: p3ZD6C
-#: src/sections/menu/data/menu.ts
-#: src/sections/footer/footer.data.ts
 #: src/sections/case-study-detail/CaseStudyArticleNav.tsx
+#: src/sections/footer/footer.data.ts
+#: src/sections/menu/data/menu.ts
 msgid "X (opens in new tab)"
 msgstr "X (откроется в новой вкладке)"
 
@@ -8858,53 +8646,6 @@ msgid "Yemen 🇾🇪"
 msgstr "Йемен 🇾🇪"
 
 #. js-lingui-id: l75CjT
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/PlanTableContent.tsx
 msgid "Yes"
@@ -8950,12 +8691,12 @@ msgstr "Вы"
 msgid "You can now add your views to favorites for quick access and organize your favorites into folders for better management."
 msgstr "Теперь вы можете добавлять представления в избранное для быстрого доступа и организовывать избранное по папкам для удобного управления."
 
-#. js-lingui-id: wvm+7M
+#. js-lingui-id: wvm-7M
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now control which fields a role can view or edit. This adds more granular access control on top of existing object-level permissions."
 msgstr "Теперь вы можете контролировать, какие поля роль может просматривать или редактировать. Это добавляет более детализированное управление доступом поверх существующих прав на уровне объектов."
 
-#. js-lingui-id: Wg/o59
+#. js-lingui-id: Wg_o59
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now create number fields that display a percentage instead of a regular number."
 msgstr "Теперь вы можете создавать числовые поля, отображающие процент вместо обычного числа."
@@ -8980,7 +8721,7 @@ msgstr "Теперь вы можете редактировать связи о�
 msgid "You can now filter an object (People, Companies, Opportunities, etc.) using any multiselect field."
 msgstr "Теперь вы можете фильтровать объект (People, Companies, Opportunities, и т. д.) по любому полю multiselect."
 
-#. js-lingui-id: /eqpqH
+#. js-lingui-id: _eqpqH
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now filter multiple actions simultaneously with a single webhook. For example, you can create a webhook that triggers only when a person or company is updated or created."
 msgstr "Теперь вы можете фильтровать несколько действий одновременно с помощью одного webhook. Например, вы можете создать webhook, который срабатывает только при обновлении или создании person или company."
@@ -9025,7 +8766,7 @@ msgstr "Теперь вы можете изменять размер боков�
 msgid "You can now run workflows on many records at once. Previously, manual workflows could only be triggered one record at a time. This change improves productivity for bulk operations. With the ability to trigger workflows on many records, you can now: Send bulk emails to selected contacts Update many records with the same workflow logic Process batches of data more efficiently"
 msgstr "Теперь вы можете запускать workflows сразу на многих записях. Ранее ручные workflows можно было запускать только для одной записи за раз. Это изменение повышает продуктивность массовых операций. С возможностью запускать workflows на множестве записей вы можете: отправлять массовые письма выбранным контактам обновлять множество записей с одинаковой логикой workflow обрабатывать большие партии данных более эффективно"
 
-#. js-lingui-id: px+QAM
+#. js-lingui-id: px-QAM
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "You can now see who last updated a record"
 msgstr "Теперь вы можете увидеть, кто последним обновил запись"
@@ -9070,7 +8811,7 @@ msgstr "Оплата завершена. Следуйте инструкциям
 msgid "Your enterprise key"
 msgstr "Ваш enterprise-ключ"
 
-#. js-lingui-id: +dxjCu
+#. js-lingui-id: -dxjCu
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Your enterprise license has been activated successfully."
 msgstr "Ваша enterprise-лицензия была успешно активирована."
