@@ -6,7 +6,9 @@ const jestConfig = {
   setupFiles: ['<rootDir>/jest.setup.ts'],
   // @lingui v6 (and its @messageformat/date-skeleton dep) is ESM-only, so jest's
   // CJS runtime needs swc to transform it instead of skipping all of node_modules.
-  transformIgnorePatterns: ['../../node_modules/(?!(@lingui|@messageformat)/.*)'],
+  transformIgnorePatterns: [
+    '../../node_modules/(?!(@lingui|@messageformat)/.*)',
+  ],
   transform: {
     '^.+\\.m?[tj]sx?$': [
       '@swc/jest',
