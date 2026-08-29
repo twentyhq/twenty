@@ -62,6 +62,11 @@ const ASSISTANT_MESSAGE_ID_NAMESPACE = '0b9c2a3d-4e5f-4a1b-8c2d-3e4f5a6b7c8d';
 export class StreamAgentChatJob {
   private readonly logger = new Logger(StreamAgentChatJob.name);
 
+  // The processor is REQUEST-scoped, so this is per job. A publish failure
+  // after the stream already classified its outcome reaches the catch in
+  // handle(), which would otherwise count the same turn a second time.
+  private hasRecordedTurnOutcome = false;
+
   constructor(
     @InjectWorkspaceScopedRepository(AgentChatThreadEntity)
     private readonly threadRepository: WorkspaceScopedRepository<AgentChatThreadEntity>,
@@ -160,15 +165,14 @@ export class StreamAgentChatJob {
       );
       const streamError = mapErrorToStreamError(error);
 
-      this.metricsService.incrementCounterBy({
-        key: MetricsKeys.AiChatTurnFailed,
-        amount: 1,
-        attributes: {
-          model: turnModelId,
-          failure_phase: 'execution',
-          error_code: streamError.code,
+      this.recordTurnOutcome(
+        {
+          kind: 'failed',
+          failurePhase: 'execution',
+          errorCode: streamError.code,
         },
-      });
+        turnModelId,
+      );
 
       await this.threadRepository
         .update(
@@ -262,6 +266,12 @@ export class StreamAgentChatJob {
     outcome: AgentChatTurnOutcome,
     turnModelId: string,
   ): void {
+    if (this.hasRecordedTurnOutcome) {
+      return;
+    }
+
+    this.hasRecordedTurnOutcome = true;
+
     switch (outcome.kind) {
       case 'completed':
         this.metricsService.incrementCounterBy({
@@ -286,6 +296,9 @@ export class StreamAgentChatJob {
           attributes: {
             model: turnModelId,
             failure_phase: outcome.failurePhase,
+            ...(isDefined(outcome.errorCode) && {
+              error_code: outcome.errorCode,
+            }),
           },
         });
 

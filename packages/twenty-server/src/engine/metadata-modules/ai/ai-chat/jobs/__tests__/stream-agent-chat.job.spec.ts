@@ -1,4 +1,5 @@
 import { type UIMessageChunk } from 'ai';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { StreamAgentChatJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat.job';
@@ -110,6 +111,7 @@ describe('StreamAgentChatJob', () => {
     addMessageRejection,
     assistantPersistRejection,
     totalsUpdateAffected = 1,
+    finalPublishRejection,
   }: {
     workspaceFound?: boolean;
     chatStream?: ReturnType<typeof createFakeChatStream>;
@@ -117,6 +119,7 @@ describe('StreamAgentChatJob', () => {
     addMessageRejection?: Error;
     assistantPersistRejection?: Error;
     totalsUpdateAffected?: number;
+    finalPublishRejection?: Error;
   } = {}) => {
     const publishedEvents: PublishedEvent[] = [];
 
@@ -162,6 +165,13 @@ describe('StreamAgentChatJob', () => {
       publish: jest
         .fn()
         .mockImplementation(({ event }: { event: PublishedEvent }) => {
+          if (
+            isDefined(finalPublishRejection) &&
+            event.type === 'message-persisted'
+          ) {
+            return Promise.reject(finalPublishRejection);
+          }
+
           publishedEvents.push(event);
 
           return Promise.resolve();
@@ -721,5 +731,20 @@ describe('StreamAgentChatJob', () => {
 
       expect({ started, terminal }).toEqual({ started: 1, terminal: 1 });
     }
+  });
+  it('does not count a turn twice when the final publish fails after the outcome was recorded', async () => {
+    const { job, turnCounts } = buildJob({
+      finalPublishRejection: new Error('redis is down'),
+    });
+
+    await job.handle(jobData).catch(() => {});
+
+    expect(turnCounts('ai-chat/turn-completed')).toEqual([
+      expect.objectContaining({
+        attributes: { model: 'openai/gpt-5.6-luna', outcome: 'answered' },
+      }),
+    ]);
+    expect(turnCounts('ai-chat/turn-failed')).toEqual([]);
+    expect(turnCounts('ai-chat/turn-started')).toHaveLength(1);
   });
 });
