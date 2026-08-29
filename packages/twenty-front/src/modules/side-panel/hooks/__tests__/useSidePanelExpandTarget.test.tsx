@@ -32,14 +32,8 @@ const mockRichTextExpandTarget: SidePanelExpandTarget = {
   expand: jest.fn(),
 };
 
-const mockSettingsObjectMetadataExpandTarget: SidePanelExpandTarget = {
-  label: 'Expand to settings',
-  hasExpandShortcut: true,
-  expand: jest.fn(),
-};
-
-const mockSettingsFieldMetadataExpandTarget: SidePanelExpandTarget = {
-  label: 'Expand to settings',
+const mockRoutedExpandTarget: SidePanelExpandTarget = {
+  label: 'Open in full page',
   hasExpandShortcut: true,
   expand: jest.fn(),
 };
@@ -80,21 +74,9 @@ jest.mock(
   }),
 );
 
-jest.mock(
-  '@/side-panel/pages/settings-metadata/hooks/useExpandSettingsObjectMetadataSidePanelPage',
-  () => ({
-    useExpandSettingsObjectMetadataSidePanelPage: () =>
-      mockSettingsObjectMetadataExpandTarget,
-  }),
-);
-
-jest.mock(
-  '@/side-panel/pages/settings-metadata/hooks/useExpandSettingsFieldMetadataSidePanelPage',
-  () => ({
-    useExpandSettingsFieldMetadataSidePanelPage: () =>
-      mockSettingsFieldMetadataExpandTarget,
-  }),
-);
+jest.mock('@/side-panel/routing/hooks/useExpandRoutedSidePanelPage', () => ({
+  useExpandRoutedSidePanelPage: () => mockRoutedExpandTarget,
+}));
 
 jest.mock('@/side-panel/hooks/useSidePanelSubPageHistory', () => ({
   useSidePanelSubPageHistory: () => ({
@@ -137,18 +119,10 @@ describe('useSidePanelExpandTarget', () => {
     expect(result.current).toBe(mockRecordsExpandTarget);
   });
 
-  it('should return the object settings target when an object data model page is open', () => {
-    const { result } = renderExpandTarget(
-      SidePanelPages.SettingsObjectMetadata,
-    );
+  it('should return the routed target when a hosted route is open', () => {
+    const { result } = renderExpandTarget(SidePanelPages.RoutedPage);
 
-    expect(result.current).toBe(mockSettingsObjectMetadataExpandTarget);
-  });
-
-  it('should return the field settings target when a field page is open', () => {
-    const { result } = renderExpandTarget(SidePanelPages.SettingsFieldMetadata);
-
-    expect(result.current).toBe(mockSettingsFieldMetadataExpandTarget);
+    expect(result.current).toBe(mockRoutedExpandTarget);
   });
 
   it('should return the rich text target when a rich text page is open', () => {

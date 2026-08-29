@@ -1,6 +1,7 @@
 import { CommandMenuForMobile } from '@/command-menu/components/CommandMenuForMobile';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop';
+import { SidePanelPathUrlSyncEffect } from '@/side-panel/routing/components/SidePanelPathUrlSyncEffect';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -133,6 +134,7 @@ export const MainAppLayoutWithSidePanel = () => {
 
   return (
     <StyledRow>
+      <SidePanelPathUrlSyncEffect />
       <StyledContent>
         <MainAppLayoutOutlet />
       </StyledContent>

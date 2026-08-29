@@ -28,6 +28,8 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SidePanelRoutedPageUnavailable } from '@/side-panel/routing/components/SidePanelRoutedPageUnavailable';
+import { useIsInSidePanelRoutedSurface } from '@/side-panel/routing/hooks/useIsInSidePanelRoutedSurface';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { shouldNavigateBackToMemorizedUrlOnSaveState } from '@/ui/navigation/states/shouldNavigateBackToMemorizedUrlOnSaveState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -78,6 +80,8 @@ export const SettingsObjectFieldEdit = () => {
   ] = useAtomState(shouldNavigateBackToMemorizedUrlOnSaveState);
 
   const { objectNamePlural = '', fieldName = '' } = useParams();
+
+  const isInSidePanelRoutedSurface = useIsInSidePanelRoutedSurface();
 
   const { findObjectMetadataItemByNamePlural, objectMetadataItems } =
     useFilteredObjectMetadataItems();
@@ -140,17 +144,29 @@ export const SettingsObjectFieldEdit = () => {
   });
 
   useEffect(() => {
-    if (!isDeleting && (!objectMetadataItem || !fieldMetadataItem)) {
+    // In the panel a missing field renders an empty state, since navigating
+    // would take the main outlet with it.
+    if (
+      !isDeleting &&
+      (!objectMetadataItem || !fieldMetadataItem) &&
+      !isInSidePanelRoutedSurface
+    ) {
       navigateApp(AppPath.NotFound);
     }
-  }, [navigateApp, objectMetadataItem, fieldMetadataItem, isDeleting]);
+  }, [
+    navigateApp,
+    objectMetadataItem,
+    fieldMetadataItem,
+    isDeleting,
+    isInSidePanelRoutedSurface,
+  ]);
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
 
   const canSave = isDirty && isValid && !isSubmitting;
 
   if (!isDefined(objectMetadataItem) || !isDefined(fieldMetadataItem)) {
-    return null;
+    return isInSidePanelRoutedSurface ? <SidePanelRoutedPageUnavailable /> : null;
   }
 
   const isCustomField = getIsMetadataItemCustom(fieldMetadataItem);

@@ -20,6 +20,9 @@ import {
 
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
+import { SidePanelRoutedPageUnavailable } from '@/side-panel/routing/components/SidePanelRoutedPageUnavailable';
+import { useIsInSidePanelRoutedSurface } from '@/side-panel/routing/hooks/useIsInSidePanelRoutedSurface';
+import { useSurfaceScopedComponentInstanceId } from '@/side-panel/routing/hooks/useSurfaceScopedComponentInstanceId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
@@ -65,10 +68,16 @@ export const SettingsObjectDetailPage = () => {
       objectMetadataItem,
     }) || isDDLLocked;
 
+  const isInSidePanelRoutedSurface = useIsInSidePanelRoutedSurface();
+
+  const tabsComponentInstanceId = useSurfaceScopedComponentInstanceId(
+    SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
+  );
+
   const activeTabId =
     useAtomComponentStateValue(
       activeTabIdComponentState,
-      SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
+      tabsComponentInstanceId,
     ) ?? SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS;
 
   const [isDeleting, setIsDeleting] = useState(false);
@@ -76,7 +85,13 @@ export const SettingsObjectDetailPage = () => {
   useEffect(() => {
     if (objectNamePlural === updatedObjectNamePlural)
       setUpdatedObjectNamePlural('');
-    if (!isDeleting && !isDefined(objectMetadataItem))
+    // In the panel a missing object renders an empty state, since navigating
+    // would take the main outlet with it.
+    if (
+      !isDeleting &&
+      !isDefined(objectMetadataItem) &&
+      !isInSidePanelRoutedSurface
+    )
       navigateApp(AppPath.NotFound);
   }, [
     objectMetadataItem,
@@ -85,10 +100,13 @@ export const SettingsObjectDetailPage = () => {
     updatedObjectNamePlural,
     setUpdatedObjectNamePlural,
     isDeleting,
+    isInSidePanelRoutedSurface,
   ]);
 
   if (!isDefined(objectMetadataItem)) {
-    return null;
+    return isInSidePanelRoutedSurface ? (
+      <SidePanelRoutedPageUnavailable />
+    ) : null;
   }
 
   const tabs = [
@@ -178,9 +196,7 @@ export const SettingsObjectDetailPage = () => {
       secondaryBar={
         <SettingsTabBar
           tabs={tabs}
-          componentInstanceId={
-            SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID
-          }
+          componentInstanceId={tabsComponentInstanceId}
         />
       }
     >

@@ -2,8 +2,7 @@ import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display
 import { SidePanelCommandMenuItemEditPage } from '@/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage';
 import { SidePanelNavigationMenuItemEditPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage';
 import { SidePanelSettingsMetadataTranslationsPage } from '@/settings/translations/components/SidePanelSettingsMetadataTranslationsPage';
-import { SidePanelSettingsFieldMetadataPage } from '@/side-panel/pages/settings-metadata/components/SidePanelSettingsFieldMetadataPage';
-import { SidePanelSettingsObjectMetadataPage } from '@/side-panel/pages/settings-metadata/components/SidePanelSettingsObjectMetadataPage';
+import { SidePanelRoutedPage } from '@/side-panel/routing/components/SidePanelRoutedPage';
 import { SidePanelNewSidebarItemPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemPage';
 import { SidePanelEmailBlockSettingsPage } from '@/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage';
 import { SidePanelAskAiPage } from '@/side-panel/pages/ask-ai/components/SidePanelAskAiPage';
@@ -109,13 +108,6 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<SidePanelPages, React.ReactNode>(
       SidePanelPages.SettingsMetadataTranslations,
       <SidePanelSettingsMetadataTranslationsPage />,
     ],
-    [
-      SidePanelPages.SettingsObjectMetadata,
-      <SidePanelSettingsObjectMetadataPage />,
-    ],
-    [
-      SidePanelPages.SettingsFieldMetadata,
-      <SidePanelSettingsFieldMetadataPage />,
-    ],
+    [SidePanelPages.RoutedPage, <SidePanelRoutedPage />],
   ],
 );

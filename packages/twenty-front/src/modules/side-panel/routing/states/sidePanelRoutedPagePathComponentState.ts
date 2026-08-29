@@ -1,10 +1,10 @@
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const viewableObjectMetadataIdComponentState = createAtomComponentState<
+export const sidePanelRoutedPagePathComponentState = createAtomComponentState<
   string | null
 >({
-  key: 'side-panel/viewable-object-metadata-id',
+  key: 'side-panel/routed-page-path',
   defaultValue: null,
   componentInstanceContext: SidePanelPageComponentInstanceContext,
 });

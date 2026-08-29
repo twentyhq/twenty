@@ -1,5 +1,6 @@
 import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTitle';
 import { SettingsSecondaryBar } from '@/settings/components/layout/SettingsSecondaryBar';
+import { useIsInSidePanelRoutedSurface } from '@/side-panel/routing/hooks/useIsInSidePanelRoutedSurface';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
@@ -28,6 +29,7 @@ export const SettingsPageLayout = ({
   titleColor,
 }: SettingsPageLayoutProps) => {
   const titleInstanceId = useId();
+  const isInSidePanelRoutedSurface = useIsInSidePanelRoutedSurface();
 
   const formattedTitle =
     typeof title === 'string' ? (
@@ -44,6 +46,9 @@ export const SettingsPageLayout = ({
   return (
     <PageCardLayout
       header={
+        // The panel top bar already names the page it is hosting, so a second
+        // title and its breadcrumbs would only repeat it at half the width.
+        isInSidePanelRoutedSurface ? null : (
         <PageCardHeader
           links={links}
           title={formattedTitle}
@@ -53,6 +58,7 @@ export const SettingsPageLayout = ({
           centerTitle
           titleColor={titleColor}
         />
+        )
       }
       secondaryBar={
         isDefined(secondaryBar) ? (
