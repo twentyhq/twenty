@@ -13,6 +13,7 @@ import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
 import { sendSlackUserLinkConsentDm } from 'src/logic-functions/utils/send-slack-user-link-consent-dm';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 const readBody = (
   payload: SlackRouteBody,
@@ -59,7 +60,7 @@ export const slackResendUserLinkConsentHandler = async (
     return {
       success: false,
       message: 'Could not look up the link',
-      error: error instanceof Error ? error.message : String(error),
+      error: toErrorMessage(error),
     };
   }
 

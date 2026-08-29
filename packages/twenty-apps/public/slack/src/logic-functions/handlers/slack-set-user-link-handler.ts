@@ -20,6 +20,14 @@ import { persistSlackUserLink } from 'src/logic-functions/utils/persist-slack-us
 import { resolveLinkTargetByEmail } from 'src/logic-functions/utils/resolve-link-target-by-email';
 import { resolveLinkTargetById } from 'src/logic-functions/utils/resolve-link-target-by-id';
 import { sendSlackUserLinkConsentDm } from 'src/logic-functions/utils/send-slack-user-link-consent-dm';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
+
+const RELINK_STATE_NOTES: Record<string, string> = {
+  [SLACK_USER_LINK_CONSENT_STATE.DECLINED]:
+    'They previously declined, so their choice stands and no new request was sent. Remove the link and add it again to ask them once more.',
+  [SLACK_USER_LINK_CONSENT_STATE.PENDING]:
+    'It is still awaiting their approval, so no new request was sent. Use resend to nudge them.',
+};
 
 export const slackSetUserLinkHandler = async (
   payload: SlackSetUserLinkPayload,
@@ -160,7 +168,7 @@ export const slackSetUserLinkHandler = async (
     return {
       success: false,
       message: 'Could not look up the existing link',
-      error: error instanceof Error ? error.message : String(error),
+      error: toErrorMessage(error),
     };
   }
 
@@ -205,7 +213,7 @@ export const slackSetUserLinkHandler = async (
     return {
       success: false,
       message: 'Could not save the link',
-      error: error instanceof Error ? error.message : String(error),
+      error: toErrorMessage(error),
     };
   }
 
@@ -225,11 +233,8 @@ export const slackSetUserLinkHandler = async (
 
   if (!requiresConsent) {
     const stateNote =
-      existingLink?.consentState === SLACK_USER_LINK_CONSENT_STATE.DECLINED
-        ? 'They previously declined, so their choice stands and no new request was sent. Remove the link and add it again to ask them once more.'
-        : existingLink?.consentState === SLACK_USER_LINK_CONSENT_STATE.PENDING
-          ? 'It is still awaiting their approval, so no new request was sent. Use resend to nudge them.'
-          : 'It is already active for that workspace member, so no new consent request was sent.';
+      RELINK_STATE_NOTES[existingLink?.consentState ?? ''] ??
+      'It is already active for that workspace member, so no new consent request was sent.';
 
     return {
       success: true,

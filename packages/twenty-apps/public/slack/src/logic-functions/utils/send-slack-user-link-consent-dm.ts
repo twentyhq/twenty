@@ -2,6 +2,7 @@ import { type WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { buildSlackUserLinkConsentBlocks } from 'src/logic-functions/utils/build-slack-user-link-consent-blocks';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 export const sendSlackUserLinkConsentDm = async (
   slackClient: WebClient,
@@ -49,7 +50,7 @@ export const sendSlackUserLinkConsentDm = async (
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : String(error),
+      error: toErrorMessage(error),
     };
   }
 };
