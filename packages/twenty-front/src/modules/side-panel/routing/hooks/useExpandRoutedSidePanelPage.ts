@@ -8,22 +8,23 @@ import { type SidePanelExpandTarget } from '@/side-panel/types/SidePanelExpandTa
 
 // A routed page expands by handing its own path to the main outlet, so every
 // hostable route gets expansion without a hook of its own.
-export const useExpandRoutedSidePanelPage = (): SidePanelExpandTarget | null => {
-  const { t } = useLingui();
-  const navigate = useNavigate();
-  const { closeSidePanelMenu } = useSidePanelMenu();
-  const currentRoutedPath = useCurrentSidePanelRoutedPath();
+export const useExpandRoutedSidePanelPage =
+  (): SidePanelExpandTarget | null => {
+    const { t } = useLingui();
+    const navigate = useNavigate();
+    const { closeSidePanelMenu } = useSidePanelMenu();
+    const currentRoutedPath = useCurrentSidePanelRoutedPath();
 
-  if (!isDefined(currentRoutedPath)) {
-    return null;
-  }
+    if (!isDefined(currentRoutedPath)) {
+      return null;
+    }
 
-  return {
-    label: t`Open in full page`,
-    expand: () => {
-      void closeSidePanelMenu();
-      navigate(currentRoutedPath);
-    },
-    hasExpandShortcut: true,
+    return {
+      label: t`Open in full page`,
+      expand: () => {
+        void closeSidePanelMenu();
+        navigate(currentRoutedPath);
+      },
+      hasExpandShortcut: true,
+    };
   };
-};

@@ -15,5 +15,7 @@ const StyledContainer = styled.div`
 export const SidePanelRoutedPageUnavailable = () => {
   const { t } = useLingui();
 
-  return <StyledContainer>{t`This page is no longer available.`}</StyledContainer>;
+  return (
+    <StyledContainer>{t`This page is no longer available.`}</StyledContainer>
+  );
 };

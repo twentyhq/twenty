@@ -8,26 +8,22 @@ import { SidePanelRoutedPage } from '@/side-panel/routing/components/SidePanelRo
 import { sidePanelRoutedPagePathComponentState } from '@/side-panel/routing/states/sidePanelRoutedPagePathComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const PAGE_INSTANCE_ID = 'side-panel-page-instance-id';
 
-let mockHasPermission = true;
+const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
+const nameFieldMetadataItem = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: companyObjectMetadataItem,
+  fieldName: 'name',
+});
 
 jest.mock('@/settings/roles/hooks/useHasPermissionFlag', () => ({
-  useHasPermissionFlag: () => mockHasPermission,
+  useHasPermissionFlag: () => true,
 }));
 
-jest.mock('@/side-panel/routing/constants/SidePanelHostableRoutes', () => ({
-  SIDE_PANEL_HOSTABLE_ROUTES: [
-    {
-      path: '/settings/objects/:objectNamePlural',
-      element: <div>hosted object page</div>,
-      settingsPermission: 'DATA_MODEL',
-    },
-  ],
-}));
-
-const renderRoutedPage = (path: string | null) => {
+const renderHostedSettingsPage = (path: string) => {
   const BaseWrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: [],
     onInitializeJotaiStore: (store) => {
@@ -57,41 +53,27 @@ const renderRoutedPage = (path: string | null) => {
   return render(<SidePanelRoutedPage />, { wrapper });
 };
 
-describe('SidePanelRoutedPage', () => {
-  beforeEach(() => {
-    mockHasPermission = true;
-    jest.clearAllMocks();
-  });
+// The point of hosting routes is that the panel shows the real settings page
+// rather than a second implementation of it, so this renders the actual one.
+describe('a settings page hosted in the side panel', () => {
+  it('should render the real object settings page', async () => {
+    renderHostedSettingsPage(
+      `/settings/objects/${companyObjectMetadataItem.namePlural}`,
+    );
 
-  it('should render the hosted route for the path it was opened with', () => {
-    renderRoutedPage('/settings/objects/companies');
-
-    expect(screen.getByText('hosted object page')).toBeInTheDocument();
-  });
-
-  it('should not render a hosted route the viewer lacks permission for', () => {
-    mockHasPermission = false;
-
-    renderRoutedPage('/settings/objects/companies');
-
-    expect(screen.queryByText('hosted object page')).not.toBeInTheDocument();
     expect(
-      screen.getByText('This page is no longer available.'),
-    ).toBeInTheDocument();
+      await screen.findAllByText(nameFieldMetadataItem.label),
+    ).not.toHaveLength(0);
   });
 
-  it('should render nothing hosted for a path outside the hostable set', () => {
-    renderRoutedPage('/settings/billing');
+  it('should leave the full page header to the panel top bar', async () => {
+    renderHostedSettingsPage(
+      `/settings/objects/${companyObjectMetadataItem.namePlural}`,
+    );
 
-    expect(screen.queryByText('hosted object page')).not.toBeInTheDocument();
-    expect(
-      screen.getByText('This page is no longer available.'),
-    ).toBeInTheDocument();
-  });
+    await screen.findAllByText(nameFieldMetadataItem.label);
 
-  it('should render nothing hosted without a path', () => {
-    renderRoutedPage(null);
-
-    expect(screen.queryByText('hosted object page')).not.toBeInTheDocument();
+    expect(screen.queryByText('Workspace')).not.toBeInTheDocument();
+    expect(screen.queryByText('See records')).not.toBeInTheDocument();
   });
 });

@@ -166,7 +166,9 @@ export const SettingsObjectFieldEdit = () => {
   const canSave = isDirty && isValid && !isSubmitting;
 
   if (!isDefined(objectMetadataItem) || !isDefined(fieldMetadataItem)) {
-    return isInSidePanelRoutedSurface ? <SidePanelRoutedPageUnavailable /> : null;
+    return isInSidePanelRoutedSurface ? (
+      <SidePanelRoutedPageUnavailable />
+    ) : null;
   }
 
   const isCustomField = getIsMetadataItemCustom(fieldMetadataItem);

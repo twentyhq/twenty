@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -14,24 +14,25 @@ export const SidePanelPathUrlSyncEffect = () => {
   const currentRoutedPath = useCurrentSidePanelRoutedPath();
   const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
 
-  const hasRestoredRef = useRef(false);
+  const [hasRestored, setHasRestored] = useState(false);
 
   useEffect(() => {
-    if (hasRestoredRef.current) {
+    if (hasRestored) {
       return;
     }
 
-    hasRestoredRef.current = true;
+    setHasRestored(true);
 
     const pathToRestore = searchParams.get(SIDE_PANEL_PATH_SEARCH_PARAM);
 
     if (isDefined(pathToRestore) && isSidePanelHostablePath(pathToRestore)) {
       openRoutedPageInSidePanel({ path: pathToRestore });
     }
-  }, [searchParams, openRoutedPageInSidePanel]);
+  }, [hasRestored, searchParams, openRoutedPageInSidePanel]);
 
   useEffect(() => {
-    if (!hasRestoredRef.current) {
+    // Writing before the restore has run would clear the very param it reads.
+    if (!hasRestored) {
       return;
     }
 
@@ -50,7 +51,7 @@ export const SidePanelPathUrlSyncEffect = () => {
     }
 
     setSearchParams(nextSearchParams, { replace: true });
-  }, [currentRoutedPath, searchParams, setSearchParams]);
+  }, [hasRestored, currentRoutedPath, searchParams, setSearchParams]);
 
   return null;
 };

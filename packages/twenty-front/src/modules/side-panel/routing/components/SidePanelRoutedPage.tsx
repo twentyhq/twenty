@@ -17,7 +17,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 // against a location it owns, so a hosted page reads its params from the path
 // it was opened with rather than from the browser URL.
 export const SidePanelRoutedPage = () => {
-  const path = useAtomComponentStateValue(
+  const sidePanelRoutedPagePath = useAtomComponentStateValue(
     sidePanelRoutedPagePathComponentState,
   );
   const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
@@ -41,8 +41,11 @@ export const SidePanelRoutedPage = () => {
   );
 
   const location = useMemo(
-    () => (isDefined(path) ? toSidePanelLocation(path) : null),
-    [path],
+    () =>
+      isDefined(sidePanelRoutedPagePath)
+        ? toSidePanelLocation(sidePanelRoutedPagePath)
+        : null,
+    [sidePanelRoutedPagePath],
   );
 
   if (!isDefined(location)) {
@@ -53,19 +56,19 @@ export const SidePanelRoutedPage = () => {
     <SidePanelRoutedSurfaceContext.Provider value={surfaceValue}>
       <Suspense fallback={<SettingsSkeletonLoader />}>
         <Routes location={location}>
-        {SIDE_PANEL_HOSTABLE_ROUTES.map((hostableRoute) => (
-          <Route
-            key={hostableRoute.path}
-            path={hostableRoute.path}
-            element={
-              <SidePanelRoutedPagePermissionGuard
-                settingsPermission={hostableRoute.settingsPermission}
-              >
-                {hostableRoute.element}
-              </SidePanelRoutedPagePermissionGuard>
-            }
-          />
-        ))}
+          {SIDE_PANEL_HOSTABLE_ROUTES.map((hostableRoute) => (
+            <Route
+              key={hostableRoute.path}
+              path={hostableRoute.path}
+              element={
+                <SidePanelRoutedPagePermissionGuard
+                  settingsPermission={hostableRoute.settingsPermission}
+                >
+                  {hostableRoute.element}
+                </SidePanelRoutedPagePermissionGuard>
+              }
+            />
+          ))}
           <Route path="*" element={<SidePanelRoutedPageUnavailable />} />
         </Routes>
       </Suspense>

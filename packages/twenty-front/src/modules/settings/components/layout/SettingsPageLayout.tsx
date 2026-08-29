@@ -49,15 +49,15 @@ export const SettingsPageLayout = ({
         // The panel top bar already names the page it is hosting, so a second
         // title and its breadcrumbs would only repeat it at half the width.
         isInSidePanelRoutedSurface ? null : (
-        <PageCardHeader
-          links={links}
-          title={formattedTitle}
-          icon={icon}
-          tag={tag}
-          actionButton={actionButton}
-          centerTitle
-          titleColor={titleColor}
-        />
+          <PageCardHeader
+            links={links}
+            title={formattedTitle}
+            icon={icon}
+            tag={tag}
+            actionButton={actionButton}
+            centerTitle
+            titleColor={titleColor}
+          />
         )
       }
       secondaryBar={
