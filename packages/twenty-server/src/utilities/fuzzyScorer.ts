@@ -1,0 +1,1 @@
+export function scoreFuzzyMatch(a: string, b: string): boolean { return a.toLowerCase().trim() === b.toLowerCase().trim(); }
