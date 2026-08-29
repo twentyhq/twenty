@@ -35,6 +35,13 @@ in abandoned and vulnerable transitive packages (`undici`, `native-fetch`,
   generated client still defaults its url/fetch to `undefined` (Twenty's wrapper
   supplies them) and the output is unchanged.
 
+Twenty-specific typing tweaks live OUTSIDE this tree so the vendored engine
+stays verbatim: composite RAW_JSON sub-fields (e.g. `Emails.additionalEmails`)
+get their real TypeScript shape via a post-processing pass over the generated
+`schema.ts` (`../composite-field-type-overrides.ts`), never via renderer edits.
+The engine's own output is pinned byte-for-byte by the snapshot test in
+`../__tests__/genql-engine-output.test.ts`.
+
 The renderers are vendored verbatim from `@genql/cli@3.0.5`. Formatting now runs
 on `prettier@^3` (the version the monorepo resolves): it needs the explicit
 `prettier/plugins/estree` printer and an awaited, async `format()`. The runtime

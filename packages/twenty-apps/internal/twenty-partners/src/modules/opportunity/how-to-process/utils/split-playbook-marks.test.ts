@@ -59,10 +59,9 @@ describe('splitPlaybookMarks', () => {
       action: 'myApplications' as const,
     };
 
-    const marks = splitPlaybookMarks(
-      'See Open Briefs and My Applications.',
-      { links: [openBriefs, myApplications] },
-    );
+    const marks = splitPlaybookMarks('See Open Briefs and My Applications.', {
+      links: [openBriefs, myApplications],
+    });
 
     expect(marks).toEqual([
       { kind: 'text', value: 'See ' },
@@ -79,7 +78,9 @@ describe('splitPlaybookMarks', () => {
       href: 'https://discord.com/channels/1130383047699738754/1513506376595538032',
     };
 
-    expect(splitPlaybookMarks('Ping Discord after list.', { links: [discord] })).toEqual([
+    expect(
+      splitPlaybookMarks('Ping Discord after list.', { links: [discord] }),
+    ).toEqual([
       { kind: 'text', value: 'Ping ' },
       { kind: 'link', value: 'Discord', link: discord },
       { kind: 'text', value: ' after list.' },

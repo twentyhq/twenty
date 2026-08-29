@@ -25,12 +25,7 @@ export const PlaybookNavLink = ({ link, children }: PlaybookNavLinkProps) => {
   }
 
   return (
-    <a
-      href={link.href}
-      target="_blank"
-      rel="noreferrer"
-      style={styles.link}
-    >
+    <a href={link.href} target="_blank" rel="noreferrer" style={styles.link}>
       {children}
     </a>
   );
