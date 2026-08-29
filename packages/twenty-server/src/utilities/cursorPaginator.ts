@@ -1,0 +1,1 @@
+export function getCursorSlice<T>(items: T[], limit = 100): { slice: T[]; hasMore: boolean } { return { slice: items.slice(0, limit), hasMore: items.length > limit }; }
