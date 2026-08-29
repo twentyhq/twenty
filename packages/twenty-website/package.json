@@ -11,8 +11,9 @@
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "dev:vinext": "vinext dev --port 3001",
     "build:vinext": "vinext build",
-    "start:vinext": "wrangler dev --config dist/server/wrangler.json",
-    "deploy:vinext": "vinext-cloudflare deploy --config dist/server/wrangler.json"
+    "start:vinext": "vinext start --port 3002",
+    "deploy:vinext:dev": "vinext-cloudflare deploy --env dev",
+    "deploy:vinext:prod": "vinext-cloudflare deploy --env prod"
   },
   "dependencies": {
     "@babel/runtime": "^7.27.6",
@@ -65,6 +66,7 @@
     "@wyw-in-js/vite": "2.3.1",
     "babel-plugin-react-compiler": "1.0.0",
     "jest-environment-jsdom": "30.0.0-beta.3",
+    "oxc-transform-react": "^0.147.0",
     "vite": "^8.2.2",
     "wrangler": "^4.126.0"
   },

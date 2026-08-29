@@ -52,35 +52,68 @@ const linguiMacro = (): Plugin => ({
   },
 });
 
+// babelOptions is deliberately not passed: wyw-in-js.config.cjs already supplies
+// them and anything set here replaces that file wholesale, dropping
+// @wyw-in-js/babel-preset and silently extracting no CSS.
+//
+// importOverrides: Linaria computes CSS by executing the module graph and
+// resolves next/link in the RSC environment regardless of the importer's
+// 'use client' directive, reaching the React Server runtime, which throws
+// without the `react-server` condition. Link contributes no styles, so
+// evaluation gets a stub.
+const linaria = (): Plugin =>
+  wyw({
+    importOverrides: Object.fromEntries(
+      [
+        'next/link',
+        '@vitejs/plugin-rsc/react/rsc',
+        '@vitejs/plugin-rsc/react/rsc/server',
+      ].map((source) => [source, { mock: RSC_EVAL_STUB }]),
+    ),
+  }) as Plugin;
+
+// wyw returns the original source minus the styled templates, so its output is
+// still TS/JSX, and it runs at enforce: 'post' — after Vite has already done its
+// TS/JSX transform. The rsc and client environments tolerate that; the ssr one
+// parses with both disabled and throws. Re-normalizing wyw's output keeps every
+// environment fed plain JS. Running wyw 'pre' instead is not an option: it then
+// evaluates an unresolved graph and its eval runner times out.
+const normalizeAfterLinaria = (): Plugin => ({
+  name: 'normalize-after-linaria',
+  enforce: 'post',
+  async transform(code, id) {
+    const [path] = id.split('?');
+
+    if (!/\.tsx?$/.test(path) || path.includes('/node_modules/')) {
+      return null;
+    }
+
+    const result = await transformAsync(code, {
+      filename: path,
+      babelrc: false,
+      configFile: false,
+      sourceMaps: true,
+      presets: [
+        ['@babel/preset-typescript', { isTSX: path.endsWith('x'), allExtensions: true }],
+        ['@babel/preset-react', { runtime: 'automatic' }],
+      ],
+    });
+
+    return result?.code ? { code: result.code, map: result.map } : null;
+  },
+});
+
 // next.config.ts drove these through webpack (next-with-linaria) and SWC
 // (@lingui/swc-plugin). Neither pipeline exists under Vite, so the same
 // transforms are re-declared here as Babel/Vite plugins.
 export default defineConfig({
   plugins: [
     linguiMacro(),
-    react({
-      babel: {
-        plugins: ['babel-plugin-react-compiler'],
-      },
-    }),
+    // Mirrors reactCompiler: true in next.config.ts.
+    react({ compiler: true }),
     lingui(),
-    wyw({
-      // babelOptions is deliberately not set here: wyw-in-js.config.cjs already
-      // supplies them, and anything passed here replaces that file wholesale,
-      // dropping @wyw-in-js/babel-preset and silently extracting no CSS.
-      // Linaria computes CSS by executing the module graph, and it resolves
-      // `next/link` in the RSC environment regardless of the importer's
-      // 'use client' directive. That reaches the React Server runtime, which
-      // throws unless the `react-server` export condition is set. Link
-      // contributes no styles, so evaluation gets a stub.
-      importOverrides: Object.fromEntries(
-        [
-          'next/link',
-          '@vitejs/plugin-rsc/react/rsc',
-          '@vitejs/plugin-rsc/react/rsc/server',
-        ].map((source) => [source, { mock: RSC_EVAL_STUB }]),
-      ),
-    }),
+    linaria(),
+    normalizeAfterLinaria(),
     vinext({
       // react() is registered above so the React Compiler Babel plugin can be
       // attached; vinext would otherwise add its own copy.
