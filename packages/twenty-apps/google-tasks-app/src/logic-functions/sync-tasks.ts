@@ -6,33 +6,9 @@ import { findTask } from "src/logic-functions/data/find-task.util";
 import { createTask } from "src/logic-functions/data/create-task.util";
 import { deleteTask } from "src/logic-functions/data/delete-task.util";
 import { updateTask } from "src/logic-functions/data/update-task.util";
-import { findUser } from "src/logic-functions/data/find-user.util";
+import { taskListsResponse, tasksResponse } from "src/logic-functions/types";
 
 const BASE_API_URL = 'https://tasks.googleapis.com';
-
-type taskListsResponse = {
-  items: taskList[];
-};
-
-type taskList = {
-  id: string;
-  title: string;
-  selfLink: string;
-};
-
-type tasksResponse = {
-  items: task[];
-};
-
-type task = {
-  id: string;
-  title: string;
-  updated: string;
-  deleted: boolean;
-  completed?: string;
-  notes?: string;
-  due?: string;
-};
 
 const handler = async () => {
   const connections = await listConnections({ providerName: 'google-tasks' });
@@ -45,7 +21,13 @@ const handler = async () => {
     };
   }
   const client = new CoreApiClient();
-  const workspaceMemberId = <string>(await findUser(client, connection.handle)).workspaceMembers?.edges[0].node.id;
+  const workspaceMemberId = connection.workspaceMemberId;
+  if (workspaceMemberId === null) {
+    return {
+      success: false,
+      error: 'Missing workspaceMemberId',
+    }
+  }
   const axiosInstance = axios.create({
     baseURL: BASE_API_URL,
     timeout: 10000,
@@ -54,7 +36,8 @@ const handler = async () => {
     },
   });
 
-  const listsResponse = await axiosInstance.get('/tasks/v1/users/@me/lists');
+  const listsResponse = await axiosInstance.get<taskListsResponse>('/tasks/v1/users/@me/lists');
+
   if (!listsResponse || listsResponse.data === null) {
     return {
       success: false,
@@ -62,9 +45,9 @@ const handler = async () => {
     };
   }
 
-  const taskLists = listsResponse.data as unknown as taskListsResponse;
+  const taskLists = listsResponse.data;
   for (const list of taskLists.items) {
-    const googleTasksResponse = await axiosInstance.get(
+    const googleTasksResponse = await axiosInstance.get<tasksResponse>(
       `/tasks/v1/lists/${list.id}/tasks`,
     );
 
@@ -72,11 +55,11 @@ const handler = async () => {
       continue;
     }
 
-    const tasks = googleTasksResponse.data as unknown as tasksResponse;
+    const tasks = googleTasksResponse.data;
     for (const task of tasks.items) {
       const checkTask = await findTask(client, task.id);
-
-      if (checkTask.tasks?.edges.length === 0 && !task.deleted) {
+      console.log(task);
+      if (checkTask.tasks?.edges.length === 0 && task.deleted === undefined) {
         await createTask(client, workspaceMemberId, task.id, task.title, task.notes, task.due, task.completed);
       } else {
         if (task.deleted) {
@@ -105,7 +88,7 @@ export default defineLogicFunction({
   universalIdentifier: 'e35d95c3-655b-46e6-ab58-f985ea429717',
   name: 'sync-tasks',
   description: 'Syncs tasks from Google',
-  timeoutSeconds: 600,
+  timeoutSeconds: 900,
   handler,
   cronTriggerSettings: {
     pattern: '*/15 * * * *',

@@ -17,16 +17,16 @@
     "test:watch": "vitest"
   },
   "devDependencies": {
-    "@types/node": "^24.7.2",
-    "@types/react": "^19.0.0",
-    "axios": "^1.18.1",
-    "oxlint": "^0.16.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "twenty-client-sdk": "^2.22.0",
-    "twenty-sdk": "^2.22.0",
+    "@types/node": "^24.3.1",
+    "@types/react": "^19.2.18",
+    "axios": "^1.20.0",
+    "oxlint": "^1.80.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "twenty-client-sdk": "^2.37.0",
+    "twenty-sdk": "^2.37.0",
     "typescript": "^5.9.3",
-    "vite-tsconfig-paths": "^4.2.1",
-    "vitest": "^3.1.1"
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.10"
   }
 }
