@@ -1,0 +1,1 @@
+export function evalCondition(val: any, op: 'eq' | 'gt' | 'lt', target: any): boolean { if (op === 'eq') return val === target; if (op === 'gt') return val > target; if (op === 'lt') return val < target; return false; }
