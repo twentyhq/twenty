@@ -1,3 +1,6 @@
+// TODO: derive default model preferences dynamically from the catalog
+// instead of hardcoding model IDs that become stale as models evolve
+//
 // These lists are resolved by taking the first model that is actually
 // available, meaning the one whose provider the instance holds a key for. They
 // are therefore a preference chain across providers, not a shortlist: every
