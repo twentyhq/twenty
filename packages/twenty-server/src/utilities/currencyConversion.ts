@@ -1,0 +1,1 @@
+export function convertCurrency(val: number, rate: number): number { return Math.round(val * rate * 100) / 100; }
