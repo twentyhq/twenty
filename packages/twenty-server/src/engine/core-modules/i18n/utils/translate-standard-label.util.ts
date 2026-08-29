@@ -1,8 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { generateMessageId } from '@lingui/message-utils/generateMessageId';
+
 import {
-  generateMessageId,
+  generateApplicationMessageId,
   METADATA_LABEL_PLACEHOLDER_PASS_THROUGH,
 } from 'twenty-shared/i18n';
 
@@ -29,13 +31,18 @@ export const translateStandardLabel = ({
     return sourceValue;
   }
 
-  const messageId = generateMessageId(sourceValue, context);
-
+  // The two catalogs are two key spaces. An application catalog was keyed by
+  // the SDK at publish time with our frozen wire format; the standard catalog
+  // was keyed by `lingui compile`, so it has to be asked in Lingui's own ids.
   if (isDefined(applicationCatalog)) {
-    return applicationCatalog[messageId] ?? sourceValue;
+    return (
+      applicationCatalog[generateApplicationMessageId(sourceValue, context)] ??
+      sourceValue
+    );
   }
 
   if (isStandardApp) {
+    const messageId = generateMessageId(sourceValue, context);
     const translatedMessage = i18nInstance._(
       messageId,
       METADATA_LABEL_PLACEHOLDER_PASS_THROUGH,

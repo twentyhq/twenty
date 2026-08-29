@@ -1,4 +1,4 @@
-import { generateMessageId } from 'twenty-shared/i18n';
+import { generateApplicationMessageId } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 
 import { flattenLocaleCatalog } from '@/cli/utilities/translations/locale-catalog-format';
@@ -29,7 +29,7 @@ export const compileCatalogToMessageIds = ({
     }
 
     const key = isDefined(context) ? `${context} ${message}` : message;
-    const messageId = generateMessageId(message, context);
+    const messageId = generateApplicationMessageId(message, context);
     const collidingKey = keyByMessageId.get(messageId);
 
     if (isDefined(collidingKey) && collidingKey !== key) {

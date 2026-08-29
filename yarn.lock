@@ -49560,6 +49560,7 @@ __metadata:
     "@lingui/conf": "npm:6.6.0"
     "@lingui/core": "npm:^6.6.0"
     "@lingui/format-po": "npm:6.6.0"
+    "@lingui/message-utils": "npm:6.6.0"
     "@microsoft/microsoft-graph-client": "npm:3.0.7"
     "@microsoft/microsoft-graph-types": "npm:^2.40.0"
     "@nestjs/axios": "npm:3.1.2"

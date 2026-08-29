@@ -49,6 +49,7 @@
     "@lingui/conf": "6.6.0",
     "@lingui/core": "^6.6.0",
     "@lingui/format-po": "6.6.0",
+    "@lingui/message-utils": "6.6.0",
     "@microsoft/microsoft-graph-client": "3.0.7",
     "@microsoft/microsoft-graph-types": "^2.40.0",
     "@nestjs/axios": "3.1.2",

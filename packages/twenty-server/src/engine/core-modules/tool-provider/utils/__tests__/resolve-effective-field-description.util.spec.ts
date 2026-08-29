@@ -1,4 +1,4 @@
-import { generateMessageId } from 'twenty-shared/i18n';
+import { generateMessageId } from '@lingui/message-utils/generateMessageId';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FieldMetadataType } from 'twenty-shared/types';
 
