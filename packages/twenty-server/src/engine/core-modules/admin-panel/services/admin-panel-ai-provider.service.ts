@@ -40,8 +40,7 @@ export class AdminPanelAiProviderService {
 
     return {
       hasAccess: hasCustomAiProviderAccess({
-        isBillingEnabled:
-          this.twentyConfigService.get('IS_BILLING_ENABLED') === true,
+        isBillingEnabled: this.twentyConfigService.get('IS_BILLING_ENABLED'),
         hasValidEnterprisePlan: this.enterprisePlanService.isValid(),
         seatCount,
       }),
