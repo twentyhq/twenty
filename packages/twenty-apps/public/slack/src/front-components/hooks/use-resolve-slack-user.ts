@@ -1,16 +1,13 @@
-import { isBoolean, isNonEmptyString, isString } from '@sniptt/guards';
+import { isBoolean, isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { RestApiClient } from 'twenty-client-sdk/rest';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_USER_LINKS_RESOLVE_ROUTE_PATH } from 'src/constants/slack-user-links-route-path.constant';
 import { asRecord } from 'src/front-components/utils/as-record.util';
+import { type SlackResolveInput } from 'src/front-components/utils/to-slack-resolve-input.util';
+import { toSlackResolvedUser } from 'src/front-components/utils/to-slack-resolved-user.util';
 import { type SlackResolvedUser } from 'src/logic-functions/types/slack-resolved-user.type';
-
-type ResolveInput = {
-  email?: string;
-  slackUserId?: string;
-  slackTeamId?: string;
-};
 
 export type ResolveSlackUserResult =
   | { success: true; slackUser: SlackResolvedUser }
@@ -39,28 +36,28 @@ const parseResult = (value: unknown): ResolveSlackUserResult => {
     };
   }
 
-  const slackUser = asRecord(record.slackUser);
+  const slackUserRecord = asRecord(record.slackUser);
 
-  if (slackUser === undefined || !isNonEmptyString(slackUser.slackUserId)) {
+  const resolvedUser =
+    slackUserRecord === undefined
+      ? undefined
+      : toSlackResolvedUser({
+          record: slackUserRecord,
+          isInInstalledWorkspace:
+            slackUserRecord.isInInstalledWorkspace === true,
+        });
+
+  if (!isDefined(resolvedUser)) {
     return GENERIC_ERROR;
   }
 
-  return {
-    success: true,
-    slackUser: {
-      slackUserId: slackUser.slackUserId,
-      slackTeamId: isString(slackUser.slackTeamId) ? slackUser.slackTeamId : '',
-      displayName: isNonEmptyString(slackUser.displayName)
-        ? slackUser.displayName
-        : undefined,
-      email: isNonEmptyString(slackUser.email) ? slackUser.email : undefined,
-      isInInstalledWorkspace: slackUser.isInInstalledWorkspace === true,
-    },
-  };
+  return { success: true, slackUser: resolvedUser };
 };
 
 type ResolveSlackUserState = {
-  resolveSlackUser: (input: ResolveInput) => Promise<ResolveSlackUserResult>;
+  resolveSlackUser: (
+    input: SlackResolveInput,
+  ) => Promise<ResolveSlackUserResult>;
   isResolving: boolean;
 };
 
@@ -70,7 +67,7 @@ export const useResolveSlackUser = (): ResolveSlackUserState => {
   const [inFlightResolveCount, setInFlightResolveCount] = useState(0);
 
   const resolveSlackUser = async (
-    input: ResolveInput,
+    input: SlackResolveInput,
   ): Promise<ResolveSlackUserResult> => {
     setInFlightResolveCount((count) => count + 1);
 

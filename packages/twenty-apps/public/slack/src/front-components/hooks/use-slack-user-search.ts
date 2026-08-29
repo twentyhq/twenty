@@ -1,9 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { RestApiClient } from 'twenty-client-sdk/rest';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_USER_LINKS_SEARCH_ROUTE_PATH } from 'src/constants/slack-user-links-route-path.constant';
 import { asRecord } from 'src/front-components/utils/as-record.util';
+import { toSlackResolvedUser } from 'src/front-components/utils/to-slack-resolved-user.util';
 import { type SlackResolvedUser } from 'src/logic-functions/types/slack-resolved-user.type';
 
 const SLACK_USER_SEARCH_DEBOUNCE_MS = 400;
@@ -38,25 +40,22 @@ const parseSearchResponse = (value: unknown): SlackUserSearchResponse => {
   const options: SlackResolvedUser[] = [];
 
   for (const entry of slackUsers) {
-    const slackUser = asRecord(entry);
+    const slackUserRecord = asRecord(entry);
 
-    if (
-      slackUser === undefined ||
-      !isNonEmptyString(slackUser.slackUserId) ||
-      !isNonEmptyString(slackUser.slackTeamId)
-    ) {
+    const option =
+      slackUserRecord === undefined
+        ? undefined
+        : toSlackResolvedUser({
+            record: slackUserRecord,
+            // The roster is the installed workspace by definition.
+            isInInstalledWorkspace: true,
+          });
+
+    if (!isDefined(option) || !isNonEmptyString(option.slackTeamId)) {
       continue;
     }
 
-    options.push({
-      slackUserId: slackUser.slackUserId,
-      slackTeamId: slackUser.slackTeamId,
-      displayName: isNonEmptyString(slackUser.displayName)
-        ? slackUser.displayName
-        : undefined,
-      email: isNonEmptyString(slackUser.email) ? slackUser.email : undefined,
-      isInInstalledWorkspace: true,
-    });
+    options.push(option);
   }
 
   return { options, errorMessage: undefined };
