@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconBolt, IconMessage, IconRobot } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
@@ -18,6 +18,7 @@ import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminAiProviderListCard } from '@/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard';
+import { useCustomAiProviderAccess } from '@/settings/admin-panel/ai/hooks/useCustomAiProviderAccess';
 import { AI_PROVIDER_SOURCE } from '@/settings/admin-panel/ai/constants/AiProviderSource';
 import { SET_ADMIN_AI_MODEL_RECOMMENDED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelRecommended';
 import { SET_ADMIN_AI_MODELS_RECOMMENDED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelsRecommended';
@@ -68,6 +69,11 @@ export const SettingsAdminAI = () => {
   const hasEnterpriseAccess =
     isBillingEnabled ||
     currentWorkspace?.hasValidEnterpriseValidityToken === true;
+  const {
+    hasAccess: hasCustomAiProviderAccess,
+    seatThreshold: customAiProviderSeatThreshold,
+    tooltipContent: customAiProviderTooltipContent,
+  } = useCustomAiProviderAccess();
   const [usagePeriod, setUsagePeriod] = useState<PeriodPreset>('30d');
   const periodOptions = getPeriodOptions();
   const usageDates = getPeriodDates(usagePeriod);
@@ -201,13 +207,26 @@ export const SettingsAdminAI = () => {
         <H2Title
           title={t`Custom Providers`}
           description={t`Add custom endpoints, private gateways, or additional regions.`}
-          adornment={<OrganizationAdornment />}
+          adornment={
+            <OrganizationAdornment
+              tooltipContent={customAiProviderTooltipContent}
+            />
+          }
         />
 
         <SettingsAdminAiProviderListCard
           providers={customProviders}
-          showAddButton
+          showAddButton={hasCustomAiProviderAccess}
         />
+
+        {!hasCustomAiProviderAccess &&
+          isDefined(customAiProviderSeatThreshold) && (
+            <SettingsEnterpriseFeatureGateCard
+              title={t`Organization feature`}
+              description={t`Custom providers are complimentary below ${customAiProviderSeatThreshold} seats. Upgrade to add more.`}
+              buttonTitle={t`Activate`}
+            />
+          )}
       </Section>
 
       {availableModelOptions.length > 0 && (

@@ -1,0 +1,226 @@
+/* @license Enterprise */
+
+import { Injectable } from '@nestjs/common';
+
+import { MAX_SEATS_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-seats-without-enterprise-key.constant';
+import {
+  EnterpriseException,
+  EnterpriseExceptionCode,
+} from 'src/engine/core-modules/enterprise/enterprise.exception';
+import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
+import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { DefaultAiCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/default-ai-catalog.service';
+import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
+import { aiProviderModelConfigSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.schema';
+import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
+import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
+
+const PROVIDER_NAME_PATTERN = /^[a-zA-Z0-9_-]+$/;
+
+export type CustomAiProviderAccess = {
+  hasAccess: boolean;
+  seatCount: number;
+  seatThreshold: number;
+};
+
+@Injectable()
+export class AdminPanelAiProviderService {
+  constructor(
+    private readonly twentyConfigService: TwentyConfigService,
+    private readonly enterprisePlanService: EnterprisePlanService,
+    private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly defaultAiCatalogService: DefaultAiCatalogService,
+  ) {}
+
+  async getCustomAiProviderAccess(): Promise<CustomAiProviderAccess> {
+    const seatCount = await this.enterprisePlanService.getBillableSeatCount();
+
+    return {
+      hasAccess:
+        this.isExemptFromSeatThreshold() ||
+        seatCount <= MAX_SEATS_WITHOUT_ENTERPRISE_KEY,
+      seatCount,
+      seatThreshold: MAX_SEATS_WITHOUT_ENTERPRISE_KEY,
+    };
+  }
+
+  // Cloud runs a single instance whose seat count spans every customer, so the
+  // threshold would always trip; there the plan is enforced per workspace by
+  // billing entitlements instead.
+  private isExemptFromSeatThreshold(): boolean {
+    return (
+      this.twentyConfigService.get('IS_BILLING_ENABLED') === true ||
+      this.enterprisePlanService.isValid()
+    );
+  }
+
+  private async assertCustomAiProviderAccess(): Promise<void> {
+    if (this.isExemptFromSeatThreshold()) {
+      return;
+    }
+
+    const seatCount = await this.enterprisePlanService.getBillableSeatCount();
+
+    if (seatCount <= MAX_SEATS_WITHOUT_ENTERPRISE_KEY) {
+      return;
+    }
+
+    throw new EnterpriseException(
+      `Custom AI providers require a valid enterprise key above ${MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats (this instance has ${seatCount})`,
+      EnterpriseExceptionCode.ENTERPRISE_SEAT_THRESHOLD_EXCEEDED,
+    );
+  }
+
+  getMaskedProviders(): Record<string, unknown> {
+    const providers =
+      this.aiModelRegistryService.getResolvedProvidersForAdmin();
+    const catalogNames = this.aiModelRegistryService.getCatalogProviderNames();
+    const rawCatalog = this.defaultAiCatalogService.getDefaultAiCatalog();
+    const masked: Record<string, Record<string, unknown>> = {};
+
+    for (const [key, config] of Object.entries(providers)) {
+      const isCatalog = catalogNames.has(key);
+      const rawConfig = isCatalog ? rawCatalog[key] : undefined;
+      const apiKeyConfigVariable = rawConfig
+        ? extractConfigVariableName(rawConfig.apiKey)
+        : undefined;
+
+      masked[key] = {
+        npm: config.npm,
+        label: config.label ?? key,
+        source: isCatalog ? 'catalog' : 'custom',
+        ...(config.authType && { authType: config.authType }),
+        ...(config.name && { name: config.name }),
+        ...(config.baseUrl && { baseUrl: config.baseUrl }),
+        ...(config.region && { region: config.region }),
+        ...(config.dataResidency && { dataResidency: config.dataResidency }),
+        ...(config.apiKey && {
+          apiKey: `${config.apiKey.substring(0, 8)}...`,
+        }),
+        ...(apiKeyConfigVariable && { apiKeyConfigVariable }),
+        hasAccessKey: !!(config.accessKeyId && config.secretAccessKey),
+      };
+    }
+
+    return masked;
+  }
+
+  async addProvider(
+    providerName: string,
+    providerConfig: AiProviderConfig,
+  ): Promise<boolean> {
+    await this.assertCustomAiProviderAccess();
+
+    if (!PROVIDER_NAME_PATTERN.test(providerName)) {
+      throw new UserInputError('Invalid provider name');
+    }
+
+    const customProviders = {
+      ...this.twentyConfigService.get('AI_PROVIDERS'),
+    };
+
+    customProviders[providerName] = providerConfig;
+    await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
+
+    return true;
+  }
+
+  // Removal stays open so an instance that grows past the threshold can still
+  // clean up the providers it configured while it was under it.
+  async removeProvider(providerName: string): Promise<boolean> {
+    const customProviders = {
+      ...this.twentyConfigService.get('AI_PROVIDERS'),
+    };
+
+    delete customProviders[providerName];
+    await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
+
+    return true;
+  }
+
+  async addModelToProvider(
+    providerName: string,
+    modelConfig: AiProviderModelConfig,
+  ): Promise<boolean> {
+    await this.assertCustomAiProviderAccess();
+
+    const validatedModelConfig =
+      aiProviderModelConfigSchema.safeParse(modelConfig);
+
+    if (!validatedModelConfig.success) {
+      throw new UserInputError(
+        `Invalid model configuration: ${validatedModelConfig.error.issues
+          .map((issue) => `${issue.path.join('.')} ${issue.message}`)
+          .join(', ')}`,
+      );
+    }
+
+    const customProviders = {
+      ...this.twentyConfigService.get('AI_PROVIDERS'),
+    };
+
+    const existing = customProviders[providerName];
+
+    if (!existing) {
+      throw new UserInputError(
+        `Provider "${providerName}" not found in custom providers`,
+      );
+    }
+
+    const existingModels = existing.models ?? [];
+    const alreadyExists = existingModels.some(
+      (model: AiProviderModelConfig) =>
+        model.name === validatedModelConfig.data.name,
+    );
+
+    if (alreadyExists) {
+      throw new UserInputError(
+        `Model "${validatedModelConfig.data.name}" already exists on provider "${providerName}"`,
+      );
+    }
+
+    customProviders[providerName] = {
+      ...existing,
+      models: [
+        ...existingModels,
+        { ...validatedModelConfig.data, source: 'manual' },
+      ],
+    };
+
+    await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
+
+    return true;
+  }
+
+  async removeModelFromProvider(
+    providerName: string,
+    modelName: string,
+  ): Promise<boolean> {
+    const customProviders = {
+      ...this.twentyConfigService.get('AI_PROVIDERS'),
+    };
+
+    const existing = customProviders[providerName];
+
+    if (!existing) {
+      throw new UserInputError(
+        `Provider "${providerName}" not found in custom providers`,
+      );
+    }
+
+    const existingModels = existing.models ?? [];
+
+    customProviders[providerName] = {
+      ...existing,
+      models: existingModels.filter(
+        (model: AiProviderModelConfig) => model.name !== modelName,
+      ),
+    };
+
+    await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
+
+    return true;
+  }
+}
