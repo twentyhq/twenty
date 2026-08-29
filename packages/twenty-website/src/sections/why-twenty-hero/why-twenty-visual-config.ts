@@ -11,7 +11,7 @@ export const WHY_TWENTY_HERO: Pick<
   HalftoneModelProps,
   'modelUrl' | 'settings' | 'initialPose'
 > = {
-  modelUrl: '/models/why-twenty-hero.glb',
+  modelUrl: '/models/why-twenty-hero.geo',
   settings: {
     previewDistance: 6,
     halftone: {

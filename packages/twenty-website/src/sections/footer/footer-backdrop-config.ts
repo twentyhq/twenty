@@ -8,7 +8,7 @@ export const FOOTER_BACKDROP: Pick<
   HalftoneModelProps,
   'modelUrl' | 'settings' | 'initialPose'
 > = {
-  modelUrl: '/models/footer.glb',
+  modelUrl: '/models/footer.geo',
   settings: {
     previewDistance: 4,
     lighting: {

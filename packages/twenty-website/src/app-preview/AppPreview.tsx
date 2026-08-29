@@ -2,7 +2,8 @@
 
 import { useEffect } from 'react';
 
-import { scheduleIdleTask } from '@/platform/motion';
+import { scheduleIdleTask, useMediaQuery } from '@/platform/motion';
+import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
 
 import { APP_PREVIEW_CONFIG } from './data/sidebar-config';
 import { PreviewAppLayout } from './shell/PreviewAppLayout';
@@ -27,6 +28,13 @@ export function AppPreview({
         void import('./pages/dashboard/DashboardPage');
       }),
     [],
+  );
+  // Terminal.tsx is display:none until terminalRoomQuery matches, so below that
+  // width its ~590 elements are rendered, styled and hydrated only to stay
+  // invisible. Rendering it on the same condition its CSS uses keeps narrow
+  // viewports from paying for it at all.
+  const hasTerminalRoom = useMediaQuery(
+    APP_PREVIEW_STAGE.terminalRoomQuery.replace('@media ', ''),
   );
   const experience = useAppPreviewExperience(APP_PREVIEW_CONFIG);
   const {
@@ -63,11 +71,13 @@ export function AppPreview({
   return (
     <WindowOrderProvider>
       <AppWindow>{appShell}</AppWindow>
-      <Terminal
-        onChatReset={handleChatReset}
-        onJumpToConversationEnd={handleJumpToConversationEnd}
-        onObjectCreated={handleObjectCreated}
-      />
+      {hasTerminalRoom ? (
+        <Terminal
+          onChatReset={handleChatReset}
+          onJumpToConversationEnd={handleJumpToConversationEnd}
+          onObjectCreated={handleObjectCreated}
+        />
+      ) : null}
     </WindowOrderProvider>
   );
 }

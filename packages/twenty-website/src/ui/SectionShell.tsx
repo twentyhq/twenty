@@ -20,6 +20,18 @@ const sectionShellClassName = css`
   position: relative;
   width: 100%;
 
+  /* The home route server-renders ~4,000 elements, over half of them below the
+     fold, and styling and laying all of them out before first paint costs about
+     a second. Offscreen sections keep their markup for crawlers but skip that
+     work until they approach the viewport. The hero is excluded: it holds the
+     LCP element and is on screen immediately. contain-intrinsic-size supplies a
+     placeholder height so skipped sections do not collapse the scrollbar; auto
+     remembers the real height once measured. */
+  &:not([data-rhythm='hero']) {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 600px;
+  }
+
   &[data-rhythm='section'] {
     padding-block: ${spacing(RHYTHM.section.top.base)}
       ${spacing(RHYTHM.section.bottom.base)};

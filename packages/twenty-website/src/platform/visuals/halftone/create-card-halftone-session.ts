@@ -1,9 +1,12 @@
-import * as THREE from 'three';
+import { Vec2 } from 'ogl';
 
 import { observeElementSize } from '@/platform/motion';
 
 import { createVisualFrameLoop } from '../engine/create-visual-frame-loop';
-import { createVisualRenderer } from '../three-runtime/create-visual-renderer';
+import { createFullscreenPass } from '../gl-runtime/create-fullscreen-pass';
+import { createImageTexture } from '../gl-runtime/create-image-texture';
+import { createVisualRenderer } from '../gl-runtime/create-visual-renderer';
+import { linearColorFromHex } from '../gl-runtime/linear-color-from-hex';
 
 // The feature cards' per-card dash backdrop, ported verbatim from the
 // old scene hook. This is deliberately a SECOND, simpler pipeline beside
@@ -27,11 +30,14 @@ export type CardHalftoneConfig = {
 };
 
 const PASS_THROUGH_VERTEX_SHADER = /* glsl */ `
+  attribute vec2 position;
+  attribute vec2 uv;
+
   varying vec2 vUv;
 
   void main() {
     vUv = uv;
-    gl_Position = vec4(position, 1.0);
+    gl_Position = vec4(position, 0.0, 1.0);
   }
 `;
 
@@ -186,6 +192,10 @@ function createInteractionState(): InteractionState {
   };
 }
 
+function clamp01(value: number) {
+  return Math.min(Math.max(value, 0), 1);
+}
+
 function getImagePreviewZoom(previewDistance: number) {
   return REFERENCE_PREVIEW_DISTANCE / Math.max(previewDistance, 0.001);
 }
@@ -222,18 +232,15 @@ export function createCardHalftoneSession({
   const renderer = createVisualRenderer({
     alpha: true,
     antialias: false,
-    premultipliedAlpha: false,
   });
 
   if (renderer === null) {
     return null;
   }
 
-  renderer.setClearColor(0x000000, 0);
+  const { gl, canvas } = renderer;
   const pixelRatio = getDevicePixelRatio();
-  renderer.setPixelRatio(pixelRatio);
 
-  const canvas = renderer.domElement;
   canvas.style.cursor = 'default';
   canvas.style.display = 'block';
   canvas.style.height = '100%';
@@ -243,44 +250,33 @@ export function createCardHalftoneSession({
 
   const trackingElement = pointerTarget ?? canvas;
 
-  const imageTexture = new THREE.Texture(image);
-  imageTexture.colorSpace = THREE.SRGBColorSpace;
-  imageTexture.minFilter = THREE.LinearFilter;
-  imageTexture.magFilter = THREE.LinearFilter;
-  imageTexture.generateMipmaps = false;
-  imageTexture.needsUpdate = true;
+  const imageTexture = createImageTexture(gl, image);
 
-  const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
-  const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-
-  const halftoneMaterial = new THREE.ShaderMaterial({
-    fragmentShader: CARD_HALFTONE_FRAGMENT_SHADER,
+  const halftonePass = createFullscreenPass({
+    gl,
     transparent: true,
+    vertex: PASS_THROUGH_VERTEX_SHADER,
+    fragment: CARD_HALFTONE_FRAGMENT_SHADER,
     uniforms: {
-      dashColor: { value: new THREE.Color(config.dashColor) },
+      dashColor: { value: linearColorFromHex(config.dashColor) },
       halftoneCellPx: {
         value: Math.max(config.halftoneScalePx * pixelRatio, 1),
       },
       halftonePower: { value: config.halftonePower },
       halftoneWidth: { value: config.halftoneWidth },
-      hoverDashColor: { value: new THREE.Color(config.hoverDashColor) },
+      hoverDashColor: { value: linearColorFromHex(config.hoverDashColor) },
       hoverLightRadius: { value: config.hoverLightRadius },
       hoverLightStrength: { value: 0 },
       imageContrast: { value: config.imageContrast },
       imageFlipY: { value: config.flipImageY ? 1 : 0 },
-      imageSize: { value: new THREE.Vector2(image.width, image.height) },
+      imageSize: { value: new Vec2(image.width, image.height) },
       imageZoom: { value: getImagePreviewZoom(config.previewDistance) },
-      interactionUv: { value: new THREE.Vector2(0.5, 0.5) },
-      interactionVelocity: { value: new THREE.Vector2(0, 0) },
-      logicalResolution: { value: new THREE.Vector2(1, 1) },
+      interactionUv: { value: new Vec2(0.5, 0.5) },
+      interactionVelocity: { value: new Vec2(0, 0) },
+      logicalResolution: { value: new Vec2(1, 1) },
       tImage: { value: imageTexture },
     },
-    vertexShader: PASS_THROUGH_VERTEX_SHADER,
   });
-
-  const fullScreenMesh = new THREE.Mesh(fullScreenGeometry, halftoneMaterial);
-  const scene = new THREE.Scene();
-  scene.add(fullScreenMesh);
 
   const interaction = createInteractionState();
   let hasRenderedFirstFrame = false;
@@ -348,24 +344,24 @@ export function createCardHalftoneSession({
       interaction.pointerVelocityY = 0;
     }
 
-    const logicalRes = halftoneMaterial.uniforms.logicalResolution.value;
-    halftoneMaterial.uniforms.interactionUv.value.set(
+    const logicalRes = halftonePass.uniforms.logicalResolution.value;
+    halftonePass.uniforms.interactionUv.value.set(
       interaction.smoothedMouseX,
       1 - interaction.smoothedMouseY,
     );
-    halftoneMaterial.uniforms.interactionVelocity.value.set(
+    halftonePass.uniforms.interactionVelocity.value.set(
       interaction.pointerVelocityX * logicalRes.x,
       -interaction.pointerVelocityY * logicalRes.y,
     );
-    halftoneMaterial.uniforms.hoverLightStrength.value =
+    halftonePass.uniforms.hoverLightStrength.value =
       config.hoverLightIntensity * interaction.hoverStrength;
-    halftoneMaterial.uniforms.hoverLightRadius.value =
+    halftonePass.uniforms.hoverLightRadius.value =
       config.hoverHalftoneRadius + config.hoverLightRadius * 0.5;
-    halftoneMaterial.uniforms.imageZoom.value = getImagePreviewZoom(
+    halftonePass.uniforms.imageZoom.value = getImagePreviewZoom(
       config.previewDistance,
     );
 
-    renderer.render(scene, orthographicCamera);
+    renderer.render({ scene: halftonePass.mesh, target: null });
 
     if (!hasRenderedFirstFrame) {
       hasRenderedFirstFrame = true;
@@ -396,12 +392,12 @@ export function createCardHalftoneSession({
     const cssWidth = Math.max(container.clientWidth, 1);
     const cssHeight = Math.max(container.clientHeight, 1);
 
-    renderer.setSize(cssWidth, cssHeight, false);
-    halftoneMaterial.uniforms.logicalResolution.value.set(
+    renderer.setSize(cssWidth * pixelRatio, cssHeight * pixelRatio);
+    halftonePass.uniforms.logicalResolution.value.set(
       cssWidth * pixelRatio,
       cssHeight * pixelRatio,
     );
-    halftoneMaterial.uniforms.halftoneCellPx.value = Math.max(
+    halftonePass.uniforms.halftoneCellPx.value = Math.max(
       config.halftoneScalePx * pixelRatio,
       1,
     );
@@ -421,16 +417,8 @@ export function createCardHalftoneSession({
     const rect = trackingElement.getBoundingClientRect();
     const width = Math.max(rect.width, 1);
     const height = Math.max(rect.height, 1);
-    const nextMouseX = THREE.MathUtils.clamp(
-      (event.clientX - rect.left) / width,
-      0,
-      1,
-    );
-    const nextMouseY = THREE.MathUtils.clamp(
-      (event.clientY - rect.top) / height,
-      0,
-      1,
-    );
+    const nextMouseX = clamp01((event.clientX - rect.left) / width);
+    const nextMouseY = clamp01((event.clientY - rect.top) / height);
     const deltaX = nextMouseX - interaction.mouseX;
     const deltaY = nextMouseY - interaction.mouseY;
 
@@ -484,9 +472,8 @@ export function createCardHalftoneSession({
       trackingElement.removeEventListener('pointermove', handlePointerMove);
       trackingElement.removeEventListener('pointerleave', handlePointerLeave);
 
-      halftoneMaterial.dispose();
-      imageTexture.dispose();
-      fullScreenGeometry.dispose();
+      halftonePass.dispose();
+      gl.deleteTexture(imageTexture.texture);
       renderer.dispose();
 
       if (canvas.parentNode === container) {

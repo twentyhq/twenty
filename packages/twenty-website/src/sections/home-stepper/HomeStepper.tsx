@@ -11,7 +11,7 @@ import {
 import { BREAKPOINT_PX, mediaUp, spacing } from '@/tokens';
 import { SectionShell } from '@/ui';
 
-import { HomeStepperLottie } from './components/HomeStepperLottie';
+import { HomeStepperLottieSlot } from './components/HomeStepperLottieSlot';
 import { HomeStepperSteps } from './components/HomeStepperSteps';
 import { HomeStepperVisualFrame } from './components/HomeStepperVisualFrame';
 import { STEPPER_STEPS } from './data/stepper.data';
@@ -95,7 +95,7 @@ export function HomeStepper() {
         <VisualColumn>
           <VisualMeasure>
             <HomeStepperVisualFrame>
-              <HomeStepperLottie scrollProgress={visualScrollProgress} />
+              <HomeStepperLottieSlot scrollProgress={visualScrollProgress} />
             </HomeStepperVisualFrame>
           </VisualMeasure>
         </VisualColumn>

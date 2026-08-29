@@ -1,19 +1,26 @@
-import * as THREE from 'three';
+import { Camera, Geometry, Mesh, Vec2, Vec3 } from 'ogl';
 
 import {
   createVisualFrameLoop,
   type VisualFrame,
 } from '../engine/create-visual-frame-loop';
-import { createVisualRenderer } from '../three-runtime/create-visual-renderer';
-import { createRenderTarget } from './create-render-target';
+import { createDfgLutTexture } from '../gl-runtime/create-dfg-lut-texture';
+import { createFullscreenPass } from '../gl-runtime/create-fullscreen-pass';
+import { createRenderTarget } from '../gl-runtime/create-render-target';
+import { createVisualRenderer } from '../gl-runtime/create-visual-renderer';
+import { disposeRenderTarget } from '../gl-runtime/dispose-render-target';
+import { linearColorFromHex } from '../gl-runtime/linear-color-from-hex';
+import { loadEnvironmentTexture } from '../gl-runtime/load-environment-texture';
+import { loadGlassEnvironment } from '../gl-runtime/load-glass-environment';
+import { type ModelGeometryData } from '../gl-runtime/load-model-geometry';
+import { BLUR_PASS_SHADERS } from './blur-pass-shaders';
+import { createModelMaterialProgram } from './create-model-material-program';
 import { HALFTONE_CONSTANTS } from './halftone-constants';
 import { createVirtualSize } from './virtual-size';
-import { BLUR_PASS_SHADERS } from './blur-pass-shaders';
 import {
   halftoneInteraction,
   type HalftoneInitialPose,
 } from './halftone-interaction-state';
-import { halftoneMaterials } from './halftone-materials';
 import { HALFTONE_PASS_SHADER } from './halftone-pass-shader';
 import { type HalftoneSceneSettings } from './halftone-settings';
 
@@ -23,7 +30,7 @@ export type BandSession = {
 
 type CreateBandSessionOptions = {
   container: HTMLElement;
-  geometry: THREE.BufferGeometry;
+  geometry: ModelGeometryData;
   settings: HalftoneSceneSettings;
   initialPose?: HalftoneInitialPose & { timeElapsed?: number };
   reducedMotion?: boolean;
@@ -33,13 +40,13 @@ type CreateBandSessionOptions = {
 const REFERENCE_PREVIEW_DISTANCE = HALFTONE_CONSTANTS.referencePreviewDistance;
 const MIN_FOOTPRINT_SCALE = HALFTONE_CONSTANTS.minFootprintScale;
 
-function setPrimaryLightPosition(
-  light: THREE.DirectionalLight,
-  angleDegrees: number,
-  height: number,
-) {
+function clamp01(value: number) {
+  return Math.min(Math.max(value, 0), 1);
+}
+
+function getPrimaryLightPosition(angleDegrees: number, height: number) {
   const angle = (angleDegrees * Math.PI) / 180;
-  light.position.set(Math.cos(angle) * 5, height, Math.sin(angle) * 5);
+  return new Vec3(Math.cos(angle) * 5, height, Math.sin(angle) * 5);
 }
 
 // Mesh footprint: how much screen area the model covers relative to the
@@ -69,34 +76,34 @@ function getRectArea(rect: ViewportRect | null) {
   return Math.max(rect.width, 0) * Math.max(rect.height, 0);
 }
 
-function createBox3Corners(bounds: THREE.Box3) {
+function getBoundsCorners(bounds: { min: number[]; max: number[] }) {
   const { min, max } = bounds;
   return [
-    new THREE.Vector3(min.x, min.y, min.z),
-    new THREE.Vector3(min.x, min.y, max.z),
-    new THREE.Vector3(min.x, max.y, min.z),
-    new THREE.Vector3(min.x, max.y, max.z),
-    new THREE.Vector3(max.x, min.y, min.z),
-    new THREE.Vector3(max.x, min.y, max.z),
-    new THREE.Vector3(max.x, max.y, min.z),
-    new THREE.Vector3(max.x, max.y, max.z),
+    new Vec3(min[0], min[1], min[2]),
+    new Vec3(min[0], min[1], max[2]),
+    new Vec3(min[0], max[1], min[2]),
+    new Vec3(min[0], max[1], max[2]),
+    new Vec3(max[0], min[1], min[2]),
+    new Vec3(max[0], min[1], max[2]),
+    new Vec3(max[0], max[1], min[2]),
+    new Vec3(max[0], max[1], max[2]),
   ];
 }
 
-function projectBox3ToViewport({
+function projectBoundsToViewport({
   camera,
-  localBounds,
-  meshMatrixWorld,
+  bounds,
+  meshWorldMatrix,
   viewportWidth,
   viewportHeight,
 }: {
-  camera: THREE.Camera;
-  localBounds: THREE.Box3;
-  meshMatrixWorld: THREE.Matrix4;
+  camera: Camera;
+  bounds: { min: number[]; max: number[] };
+  meshWorldMatrix: Mesh['worldMatrix'];
   viewportWidth: number;
   viewportHeight: number;
 }): ViewportRect | null {
-  if (localBounds.isEmpty() || viewportWidth <= 0 || viewportHeight <= 0) {
+  if (viewportWidth <= 0 || viewportHeight <= 0) {
     return null;
   }
 
@@ -106,8 +113,9 @@ function projectBox3ToViewport({
   let maxY = Number.NEGATIVE_INFINITY;
   let hasProjectedCorner = false;
 
-  for (const corner of createBox3Corners(localBounds)) {
-    corner.applyMatrix4(meshMatrixWorld).project(camera);
+  for (const corner of getBoundsCorners(bounds)) {
+    corner.applyMatrix4(meshWorldMatrix);
+    corner.applyMatrix4(camera.projectionViewMatrix);
     if (
       !Number.isFinite(corner.x) ||
       !Number.isFinite(corner.y) ||
@@ -135,60 +143,10 @@ function projectBox3ToViewport({
   );
 }
 
-function getMeshFootprintScale({
-  camera,
-  localBounds,
-  lookAtTarget,
-  meshMatrixWorld,
-  viewportWidth,
-  viewportHeight,
-}: {
-  camera: THREE.PerspectiveCamera;
-  localBounds: THREE.Box3;
-  lookAtTarget: THREE.Vector3;
-  meshMatrixWorld: THREE.Matrix4;
-  viewportWidth: number;
-  viewportHeight: number;
-}) {
-  const currentRect = projectBox3ToViewport({
-    camera,
-    localBounds,
-    meshMatrixWorld,
-    viewportWidth,
-    viewportHeight,
-  });
-
-  const referenceCamera = camera.clone();
-  const currentOffset = referenceCamera.position.clone().sub(lookAtTarget);
-  const referenceOffset =
-    currentOffset.lengthSq() > 0
-      ? currentOffset.setLength(REFERENCE_PREVIEW_DISTANCE)
-      : new THREE.Vector3(0, 0, REFERENCE_PREVIEW_DISTANCE);
-  referenceCamera.position.copy(lookAtTarget).add(referenceOffset);
-  referenceCamera.lookAt(lookAtTarget);
-  referenceCamera.updateProjectionMatrix();
-  referenceCamera.updateMatrixWorld(true);
-
-  const referenceRect = projectBox3ToViewport({
-    camera: referenceCamera,
-    localBounds,
-    meshMatrixWorld,
-    viewportWidth,
-    viewportHeight,
-  });
-
-  const currentArea = getRectArea(currentRect);
-  const referenceArea = getRectArea(referenceRect);
-  if (currentArea <= 0 || referenceArea <= 0) {
-    return 1;
-  }
-  return Math.max(Math.sqrt(currentArea / referenceArea), MIN_FOOTPRINT_SCALE);
-}
-
 // The band-variant model scene: transmission material (solid or glass),
 // breathe/float/rotate-preset/spring/parallax animation, per-frame mesh
-// footprint, blur chain, band dash composite. Ported from the old
-// HalftoneCanvas shape mode.
+// footprint, band dash composite. Ported from the old HalftoneCanvas shape
+// mode.
 export async function createBandSession({
   container,
   geometry,
@@ -202,6 +160,7 @@ export async function createBandSession({
   }
   const halftoneSettings = settings.halftone;
   const animation = settings.animation;
+  const isGlass = settings.material.surface === 'glass';
 
   const { getWidth, getHeight, getVirtualWidth, getVirtualHeight } =
     createVirtualSize(container);
@@ -211,12 +170,9 @@ export async function createBandSession({
     return null;
   }
 
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.setPixelRatio(1);
-  renderer.setClearColor(0x000000, 0);
-  renderer.setSize(getVirtualWidth(), getVirtualHeight(), false);
+  const { gl, canvas } = renderer;
+  renderer.setSize(getVirtualWidth(), getVirtualHeight());
 
-  const canvas = renderer.domElement;
   canvas.style.cursor = reducedMotion ? 'default' : 'grab';
   canvas.style.display = 'block';
   canvas.style.height = '100%';
@@ -224,71 +180,72 @@ export async function createBandSession({
   canvas.style.width = '100%';
   container.appendChild(canvas);
 
-  const materialAssets = await halftoneMaterials.createAssets(renderer);
+  // Glass reflects and refracts the same authored backdrop; solid keeps the
+  // baked room the rows sessions use.
+  const glassEnvironment = isGlass ? await loadGlassEnvironment(gl) : null;
+  const environment = glassEnvironment ?? (await loadEnvironmentTexture(gl));
+  const dfgLut = createDfgLutTexture(gl);
 
-  const scene3d = new THREE.Scene();
-  scene3d.background = null;
-
-  const camera = new THREE.PerspectiveCamera(
-    45,
-    getWidth() / getHeight(),
-    0.1,
-    100,
-  );
+  const camera = new Camera(gl, {
+    fov: 45,
+    aspect: getWidth() / getHeight(),
+    near: 0.1,
+    far: 100,
+  });
   camera.position.z = settings.previewDistance;
 
-  const primaryLight = new THREE.DirectionalLight(
-    0xffffff,
-    settings.lighting.intensity,
-  );
-  setPrimaryLightPosition(
-    primaryLight,
-    settings.lighting.angleDegrees,
-    settings.lighting.height,
-  );
-  scene3d.add(primaryLight);
+  const primaryLightDirection = new Vec3();
+  const fillLightDirection = new Vec3();
+  const fillLightPosition = new Vec3(-3, -1, 1);
 
-  const fillLight = new THREE.DirectionalLight(
-    0xffffff,
-    settings.lighting.fillIntensity,
-  );
-  fillLight.position.set(-3, -1, 1);
-  scene3d.add(fillLight);
+  const materialProgram = createModelMaterialProgram({
+    gl,
+    material: settings.material,
+    lighting: settings.lighting,
+    environmentTexture: environment.texture,
+    environmentMaxLod: environment.mipCount - 1,
+    refractionEnvironmentTexture: glassEnvironment?.texture,
+    dfgLut,
+    primaryLightDirection,
+    fillLightDirection,
+  });
 
-  scene3d.add(
-    new THREE.AmbientLight(0xffffff, settings.lighting.ambientIntensity),
-  );
+  const meshGeometry = new Geometry(gl, {
+    position: { size: 3, data: geometry.positions },
+    normal: { size: 3, data: geometry.normals },
+    index: { data: geometry.indices },
+  });
 
-  const material = halftoneMaterials.create();
-  halftoneMaterials.applySettings(material, settings.material, materialAssets);
+  const mesh = new Mesh(gl, {
+    geometry: meshGeometry,
+    program: materialProgram,
+  });
+  // ogl's Euler defaults to YXZ, three's Object3D.rotation to XYZ. Every
+  // authored pose in these configs was baked against XYZ, so leaving the
+  // default tilts the model.
+  mesh.rotation.order = 'XYZ';
 
-  const mesh = new THREE.Mesh(geometry, material);
-  scene3d.add(mesh);
-
-  const sceneTarget = createRenderTarget(getVirtualWidth(), getVirtualHeight());
-  const transmissionBacksideTarget = createRenderTarget(
+  const sceneTarget = createRenderTarget(
+    gl,
     getVirtualWidth(),
     getVirtualHeight(),
   );
-  const transmissionTarget = createRenderTarget(
-    getVirtualWidth(),
-    getVirtualHeight(),
-  );
-  const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
-  const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
-  const halftoneMaterial = new THREE.ShaderMaterial({
+  const halftonePass = createFullscreenPass({
+    gl,
     transparent: true,
+    vertex: BLUR_PASS_SHADERS.vertex,
+    fragment: HALFTONE_PASS_SHADER.fragment,
     uniforms: {
       tScene: { value: sceneTarget.texture },
       // Never sampled by the band composite — bound only so the sampler
       // slot is valid.
       tGlow: { value: sceneTarget.texture },
       effectResolution: {
-        value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
+        value: new Vec2(getVirtualWidth(), getVirtualHeight()),
       },
       logicalResolution: {
-        value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
+        value: new Vec2(getVirtualWidth(), getVirtualHeight()),
       },
       tile: { value: halftoneSettings.scale },
       s_3: { value: halftoneSettings.power },
@@ -296,17 +253,17 @@ export async function createBandSession({
       applyToDarkAreas: {
         value: halftoneSettings.toneTarget === 'dark' ? 1 : 0,
       },
-      dashColor: { value: new THREE.Color(halftoneSettings.dashColor) },
+      dashColor: { value: linearColorFromHex(halftoneSettings.dashColor) },
       hoverDashColor: {
-        value: new THREE.Color(halftoneSettings.hoverDashColor),
+        value: linearColorFromHex(halftoneSettings.hoverDashColor),
       },
       time: { value: 0 },
       waveAmount: { value: 0 },
       waveSpeed: { value: 1 },
       footprintScale: { value: 1.0 },
-      interactionUv: { value: new THREE.Vector2(0.5, 0.5) },
-      interactionVelocity: { value: new THREE.Vector2(0, 0) },
-      dragOffset: { value: new THREE.Vector2(0, 0) },
+      interactionUv: { value: new Vec2(0.5, 0.5) },
+      interactionVelocity: { value: new Vec2(0, 0) },
+      dragOffset: { value: new Vec2(0, 0) },
       hoverHalftoneActive: { value: 0 },
       hoverHalftonePowerShift: { value: 0 },
       hoverHalftoneRadius: { value: 0.2 },
@@ -317,13 +274,11 @@ export async function createBandSession({
       hoverFlowRadius: { value: 0.18 },
       dragFlowStrength: { value: 0 },
       cropToBounds: { value: 0 },
+      minimumTone: { value: 0 },
+      contrast: { value: 1 },
+      hoverLightVerticalFade: { value: 0 },
     },
-    vertexShader: BLUR_PASS_SHADERS.vertex,
-    fragmentShader: HALFTONE_PASS_SHADER.fragment,
   });
-
-  const postScene = new THREE.Scene();
-  postScene.add(new THREE.Mesh(fullScreenGeometry, halftoneMaterial));
 
   const interaction = halftoneInteraction.create(initialPose);
 
@@ -331,55 +286,77 @@ export async function createBandSession({
     const virtualWidth = getVirtualWidth();
     const virtualHeight = getVirtualHeight();
 
-    renderer.setSize(virtualWidth, virtualHeight, false);
-    camera.aspect = getWidth() / getHeight();
-    camera.updateProjectionMatrix();
+    renderer.setSize(virtualWidth, virtualHeight);
+    camera.perspective({ aspect: getWidth() / getHeight() });
     sceneTarget.setSize(virtualWidth, virtualHeight);
-    transmissionBacksideTarget.setSize(virtualWidth, virtualHeight);
-    transmissionTarget.setSize(virtualWidth, virtualHeight);
-    halftoneMaterial.uniforms.effectResolution.value.set(
+    halftonePass.uniforms.effectResolution.value.set(
       virtualWidth,
       virtualHeight,
     );
-    halftoneMaterial.uniforms.logicalResolution.value.set(
+    halftonePass.uniforms.logicalResolution.value.set(
       virtualWidth,
       virtualHeight,
     );
   };
 
-  const getMeshHalftoneScale = (lookAtTarget: THREE.Vector3) => {
-    if (!mesh.geometry.boundingBox) {
-      mesh.geometry.computeBoundingBox();
-    }
-    const localBounds = mesh.geometry.boundingBox;
-    if (!localBounds) {
-      return 1;
-    }
+  const referenceCamera = new Camera(gl, {
+    fov: 45,
+    aspect: getWidth() / getHeight(),
+    near: 0.1,
+    far: 100,
+  });
+
+  const getMeshHalftoneScale = (lookAtTarget: Vec3) => {
     mesh.updateMatrixWorld();
     camera.updateMatrixWorld();
-    return getMeshFootprintScale({
+
+    const currentRect = projectBoundsToViewport({
       camera,
-      localBounds,
-      lookAtTarget,
-      meshMatrixWorld: mesh.matrixWorld,
+      bounds: geometry.bounds,
+      meshWorldMatrix: mesh.worldMatrix,
       viewportWidth: getVirtualWidth(),
       viewportHeight: getVirtualHeight(),
     });
+
+    const offset = new Vec3().copy(camera.position).sub(lookAtTarget);
+    if (offset.squaredLen() > 0) {
+      offset.normalize().multiply(REFERENCE_PREVIEW_DISTANCE);
+    } else {
+      offset.set(0, 0, REFERENCE_PREVIEW_DISTANCE);
+    }
+    referenceCamera.perspective({ aspect: getWidth() / getHeight() });
+    referenceCamera.position.copy(lookAtTarget).add(offset);
+    referenceCamera.lookAt(lookAtTarget);
+    referenceCamera.updateMatrixWorld();
+
+    const referenceRect = projectBoundsToViewport({
+      camera: referenceCamera,
+      bounds: geometry.bounds,
+      meshWorldMatrix: mesh.worldMatrix,
+      viewportWidth: getVirtualWidth(),
+      viewportHeight: getVirtualHeight(),
+    });
+
+    const currentArea = getRectArea(currentRect);
+    const referenceArea = getRectArea(referenceRect);
+    if (currentArea <= 0 || referenceArea <= 0) {
+      return 1;
+    }
+    return Math.max(
+      Math.sqrt(currentArea / referenceArea),
+      MIN_FOOTPRINT_SCALE,
+    );
   };
 
   // Pointer handlers are canvas-scoped (the old shape mode's binding), so
   // overlapping cards never fight over one drag.
   const updatePointerPosition = (event: PointerEvent) => {
     const rect = canvas.getBoundingClientRect();
-    interaction.mouseX = THREE.MathUtils.clamp(
+    interaction.mouseX = clamp01(
       (event.clientX - rect.left) / Math.max(rect.width, 1),
-      0,
-      1,
     );
-    interaction.mouseY = THREE.MathUtils.clamp(
+    interaction.mouseY = clamp01(
       (event.clientY - rect.top) / Math.max(rect.height, 1),
-      0,
-      1,
     );
   };
 
@@ -439,15 +416,16 @@ export async function createBandSession({
   }
 
   let firstFrameNotified = false;
+  const lookAtTarget = new Vec3();
 
   const renderFrame = ({ deltaSeconds, elapsedSeconds }: VisualFrame) => {
     const elapsedTime = (initialPose?.timeElapsed ?? 0) + elapsedSeconds;
 
-    halftoneMaterial.uniforms.time.value = elapsedTime;
-    halftoneMaterial.uniforms.waveAmount.value = animation.waveEnabled
+    halftonePass.uniforms.time.value = elapsedTime;
+    halftonePass.uniforms.waveAmount.value = animation.waveEnabled
       ? animation.waveAmount
       : 0;
-    halftoneMaterial.uniforms.waveSpeed.value = animation.waveSpeed;
+    halftonePass.uniforms.waveSpeed.value = animation.waveSpeed;
 
     let baseRotationX = initialPose?.rotationX ?? 0;
     let baseRotationY = initialPose?.rotationY ?? 0;
@@ -605,7 +583,7 @@ export async function createBandSession({
       interaction.rotationZ,
     );
     mesh.position.y = meshOffsetY;
-    mesh.scale.setScalar(meshScale);
+    mesh.scale.set(meshScale, meshScale, meshScale);
 
     if (animation.cameraParallaxEnabled) {
       const cameraRange = animation.cameraParallaxAmount;
@@ -632,44 +610,33 @@ export async function createBandSession({
         (settings.previewDistance - camera.position.z) * 0.12;
     }
 
-    const lookAtTarget = new THREE.Vector3(0, meshOffsetY * 0.2, 0);
+    lookAtTarget.set(0, meshOffsetY * 0.2, 0);
     camera.lookAt(lookAtTarget);
-    setPrimaryLightPosition(primaryLight, lightAngle, lightHeight);
-    halftoneMaterial.uniforms.footprintScale.value =
+    camera.updateMatrixWorld();
+
+    const primaryLightPosition = getPrimaryLightPosition(
+      lightAngle,
+      lightHeight,
+    );
+    primaryLightDirection
+      .copy(primaryLightPosition)
+      .normalize()
+      .transformDirection(camera.viewMatrix);
+    fillLightDirection
+      .copy(fillLightPosition)
+      .normalize()
+      .transformDirection(camera.viewMatrix);
+
+    halftonePass.uniforms.footprintScale.value =
       getMeshHalftoneScale(lookAtTarget);
 
     if (!halftoneSettings.enabled) {
-      halftoneMaterials.renderScene({
-        camera,
-        elapsedTime,
-        material,
-        mesh,
-        outputTarget: null,
-        renderer,
-        scene: scene3d,
-        transmissionBacksideTarget,
-        transmissionTarget,
-        transmissionScene: materialAssets.glassTransmissionScene,
-      });
+      renderer.render({ scene: mesh, camera, target: null });
       return;
     }
 
-    halftoneMaterials.renderScene({
-      camera,
-      elapsedTime,
-      material,
-      mesh,
-      outputTarget: sceneTarget,
-      renderer,
-      scene: scene3d,
-      transmissionBacksideTarget,
-      transmissionTarget,
-      transmissionScene: materialAssets.glassTransmissionScene,
-    });
-
-    renderer.setRenderTarget(null);
-    renderer.clear();
-    renderer.render(postScene, orthographicCamera);
+    renderer.render({ scene: mesh, camera, target: sceneTarget });
+    renderer.render({ scene: halftonePass.mesh, target: null });
 
     if (!firstFrameNotified) {
       firstFrameNotified = true;
@@ -682,13 +649,12 @@ export async function createBandSession({
   sizeObserver?.observe(container);
 
   function disposeResources() {
-    halftoneMaterial.dispose();
-    fullScreenGeometry.dispose();
-    material.dispose();
-    sceneTarget.dispose();
-    transmissionBacksideTarget.dispose();
-    transmissionTarget.dispose();
-    halftoneMaterials.disposeAssets(materialAssets);
+    halftonePass.dispose();
+    materialProgram.remove();
+    meshGeometry.remove();
+    disposeRenderTarget(gl, sceneTarget);
+    gl.deleteTexture(environment.texture.texture);
+    gl.deleteTexture(dfgLut.texture);
     renderer?.dispose();
     if (canvas.parentNode === container) {
       container.removeChild(canvas);

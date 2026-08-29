@@ -46,7 +46,7 @@ export const HELPED_MODEL_CONFIGS: Record<
   Pick<HalftoneModelProps, 'modelUrl' | 'settings' | 'initialPose'>
 > = {
   target: {
-    modelUrl: '/models/target.glb',
+    modelUrl: '/models/target.geo',
     settings: {
       ...HELPED_BASE,
       halftone: {
@@ -61,7 +61,7 @@ export const HELPED_MODEL_CONFIGS: Record<
     initialPose: { autoElapsed: 0.05, timeElapsed: 94.3691 },
   },
   spaceship: {
-    modelUrl: '/models/spaceship.glb',
+    modelUrl: '/models/spaceship.geo',
     settings: {
       ...HELPED_BASE,
       previewDistance: 3.5,
@@ -77,7 +77,7 @@ export const HELPED_MODEL_CONFIGS: Record<
     initialPose: { autoElapsed: 0.05, timeElapsed: 99.2016 },
   },
   money: {
-    modelUrl: '/models/money.glb',
+    modelUrl: '/models/money.geo',
     settings: {
       ...HELPED_BASE,
       previewDistance: 5,

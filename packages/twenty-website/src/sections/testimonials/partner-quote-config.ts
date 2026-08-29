@@ -8,7 +8,7 @@ export const PARTNER_QUOTE_VISUAL: Pick<
   HalftoneModelProps,
   'modelUrl' | 'settings' | 'initialPose'
 > = {
-  modelUrl: '/models/quote.glb',
+  modelUrl: '/models/quote.geo',
   settings: {
     previewDistance: 6,
     halftone: { variant: 'band' },

@@ -9,7 +9,7 @@ import { Fragment, useState } from 'react';
 
 import { formatCompactCount } from '@/platform/community/format-compact-count';
 import { type CommunityStats } from '@/platform/community';
-import { useLocale } from '@/platform/i18n';
+import { useLocale } from '@/platform/i18n/use-locale';
 import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import {
   buildSchemeDeclarations,

@@ -1,9 +1,12 @@
+import { SRGB_OUTPUT_SHADER_CHUNK } from './srgb-output-shader-chunk';
+
 // The legacy row-based halftone composite (the hourglass's authored look):
 // horizontal dash rows with elliptical caps, wave drift, glow halo. Ported
 // verbatim from the old hourglass pipeline.
 export const HALFTONE_ROW_SHADER = {
   fragment: /* glsl */ `
   precision highp float;
+${SRGB_OUTPUT_SHADER_CHUNK}
 
   uniform sampler2D tScene;
   uniform sampler2D tGlow;
@@ -114,10 +117,7 @@ export const HALFTONE_ROW_SHADER = {
     float sharp = smoothstep(0.3, 0.5, inDash + halo);
     vec3 color = dashColor * sharp;
 
-    gl_FragColor = vec4(color, sharp);
-
-    #include <tonemapping_fragment>
-    #include <colorspace_fragment>
+    gl_FragColor = sRGBTransferOETF(vec4(color, sharp));
   }
 `,
 };

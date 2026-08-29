@@ -64,7 +64,7 @@ export const CARD_MODEL_CONFIGS: Record<
   >
 > = {
   diamond: {
-    modelUrl: '/models/diamond.glb',
+    modelUrl: '/models/diamond.geo',
     settings: {
       ...CARD_BASE,
       halftone: {
@@ -77,7 +77,7 @@ export const CARD_MODEL_CONFIGS: Record<
     initialPose: { autoElapsed: 0, timeElapsed: 0 },
   },
   eye: {
-    modelUrl: '/models/eye.glb',
+    modelUrl: '/models/eye.geo',
     settings: {
       ...CARD_BASE,
       halftone: {
@@ -89,7 +89,7 @@ export const CARD_MODEL_CONFIGS: Record<
     initialPose: BASE_POSE,
   },
   flash: {
-    modelUrl: '/models/flash.glb',
+    modelUrl: '/models/flash.geo',
     settings: {
       ...CARD_BASE,
       halftone: {
@@ -101,7 +101,7 @@ export const CARD_MODEL_CONFIGS: Record<
     initialPose: BASE_POSE,
   },
   lock: {
-    modelUrl: '/models/lock.glb',
+    modelUrl: '/models/lock.geo',
     settings: {
       ...CARD_BASE,
       halftone: {
@@ -113,7 +113,7 @@ export const CARD_MODEL_CONFIGS: Record<
     initialPose: BASE_POSE,
   },
   singleScreen: {
-    modelUrl: '/models/single-screen.glb',
+    modelUrl: '/models/single-screen.geo',
     settings: {
       ...CARD_BASE,
       halftone: {
@@ -125,7 +125,7 @@ export const CARD_MODEL_CONFIGS: Record<
     initialPose: BASE_POSE,
   },
   speed: {
-    modelUrl: '/models/speed.glb',
+    modelUrl: '/models/speed.geo',
     settings: {
       ...CARD_BASE,
       halftone: {

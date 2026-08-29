@@ -4,10 +4,15 @@ import { WEBGL_CONTEXT_LOST_EVENT } from '../engine/webgl-context-lost-event';
 
 type VisualRendererParameters = THREE.WebGLRendererParameters;
 
-// The only place a WebGL context is created. Returns null instead of
-// throwing (creation fails on exhausted GPUs); dispose is idempotent and
-// survives an already-torn-down context; context loss dispatches the
-// bubbling event VisualMount remounts on.
+// The halftone studio's WebGL context. The production visuals moved to ogl
+// (gl-runtime/create-visual-renderer); the studio stays on three because it
+// needs FBXLoader, DRACOLoader and three's primitive geometries, none of
+// which ogl provides. It is an internal tool on /halftone, dynamically
+// imported, so three never reaches a marketing route.
+//
+// Returns null instead of throwing (creation fails on exhausted GPUs);
+// dispose is idempotent and survives an already-torn-down context; context
+// loss dispatches the bubbling event VisualMount remounts on.
 export function createVisualRenderer(
   parameters?: VisualRendererParameters,
 ): THREE.WebGLRenderer | null {

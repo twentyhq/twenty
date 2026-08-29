@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 
 import { formatCompactCount } from '@/platform/community/format-compact-count';
 import { type CommunityStats } from '@/platform/community';
-import { useLocale } from '@/platform/i18n';
+import { useLocale } from '@/platform/i18n/use-locale';
 import {
   color,
   FONT_WEIGHT,

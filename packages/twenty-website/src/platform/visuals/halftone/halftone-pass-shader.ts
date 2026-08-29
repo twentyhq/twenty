@@ -1,9 +1,12 @@
+import { SRGB_OUTPUT_SHADER_CHUNK } from './srgb-output-shader-chunk';
+
 // The band halftone composite (the studio-era shader the model and image
 // visuals use): tiled dash bands with hover light/flow/power-shift and drag
 // flow displacement. Ported verbatim.
 export const HALFTONE_PASS_SHADER = {
   fragment: /* glsl */ `
   precision highp float;
+${SRGB_OUTPUT_SHADER_CHUNK}
 
   uniform sampler2D tScene;
   uniform sampler2D tGlow;
@@ -157,10 +160,7 @@ export const HALFTONE_PASS_SHADER = {
 
     vec3 activeDashColor = mix(dashColor, hoverDashColor, hoverHalftoneMask);
     vec3 color = activeDashColor * alpha;
-    gl_FragColor = vec4(color, alpha);
-
-    #include <tonemapping_fragment>
-    #include <colorspace_fragment>
+    gl_FragColor = sRGBTransferOETF(vec4(color, alpha));
   }
 `,
 };

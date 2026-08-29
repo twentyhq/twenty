@@ -9,7 +9,7 @@ export const HOURGLASS_VISUAL: Pick<
   HalftoneModelProps,
   'modelUrl' | 'settings' | 'initialPose'
 > = {
-  modelUrl: '/models/hourglass.glb',
+  modelUrl: '/models/hourglass.geo',
   settings: {
     previewDistance: 4,
     lighting: {

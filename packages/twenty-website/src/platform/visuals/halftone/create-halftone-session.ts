@@ -1,14 +1,19 @@
-import * as THREE from 'three';
+import { Camera, Geometry, Mesh, Vec2, Vec3 } from 'ogl';
 
 import {
   createVisualFrameLoop,
   type VisualFrame,
 } from '../engine/create-visual-frame-loop';
-import { createVisualRenderer } from '../three-runtime/create-visual-renderer';
+import { createDfgLutTexture } from '../gl-runtime/create-dfg-lut-texture';
+import { createFullscreenPass } from '../gl-runtime/create-fullscreen-pass';
+import { createRenderTarget } from '../gl-runtime/create-render-target';
+import { createVisualRenderer } from '../gl-runtime/create-visual-renderer';
+import { disposeRenderTarget } from '../gl-runtime/dispose-render-target';
+import { linearColorFromHex } from '../gl-runtime/linear-color-from-hex';
+import { loadEnvironmentTexture } from '../gl-runtime/load-environment-texture';
+import { type ModelGeometryData } from '../gl-runtime/load-model-geometry';
 import { BLUR_PASS_SHADERS } from './blur-pass-shaders';
 import { createBlurPipeline } from './blur-pipeline';
-import { createEnvironmentTexture } from './create-environment-texture';
-import { createRenderTarget } from './create-render-target';
 import { HALFTONE_CONSTANTS } from './halftone-constants';
 import { createVirtualSize } from './virtual-size';
 import {
@@ -17,6 +22,7 @@ import {
 } from './halftone-interaction-state';
 import { HALFTONE_ROW_SHADER } from './halftone-row-shader';
 import { type HalftoneSceneSettings } from './halftone-settings';
+import { createModelMaterialProgram } from './create-model-material-program';
 
 export type HalftoneSession = {
   dispose: () => void;
@@ -24,7 +30,7 @@ export type HalftoneSession = {
 
 type CreateHalftoneSessionOptions = {
   container: HTMLElement;
-  geometry: THREE.BufferGeometry;
+  geometry: ModelGeometryData;
   settings: HalftoneSceneSettings;
   initialPose?: HalftoneInitialPose & { timeElapsed?: number };
   // True renders exactly one settled frame: no loop, no pointer physics.
@@ -37,27 +43,26 @@ const POINTER_EASING_AUTOROTATE_DRAG =
   HALFTONE_CONSTANTS.pointerEasingAutorotateDrag;
 const AUTOROTATE_VELOCITY_DECAY = HALFTONE_CONSTANTS.autorotateVelocityDecay;
 
-function setPrimaryLightPosition(
-  light: THREE.DirectionalLight,
-  angleDegrees: number,
-  height: number,
-) {
+function clamp01(value: number) {
+  return Math.min(Math.max(value, 0), 1);
+}
+
+function getPrimaryLightPosition(angleDegrees: number, height: number) {
   const angle = (angleDegrees * Math.PI) / 180;
-  light.position.set(Math.cos(angle) * 5, height, Math.sin(angle) * 5);
+  return new Vec3(Math.cos(angle) * 5, height, Math.sin(angle) * 5);
 }
 
 // The complete rows-variant halftone scene: standard-material mesh, double
 // gaussian blur chain, row composite — ported from the authored hourglass
-// pipeline. (The band variant with the transmission material arrives with
-// its consumers.)
-export function createHalftoneSession({
+// pipeline.
+export async function createHalftoneSession({
   container,
   geometry,
   settings,
   initialPose,
   reducedMotion = false,
   onFirstFrame,
-}: CreateHalftoneSessionOptions): HalftoneSession | null {
+}: CreateHalftoneSessionOptions): Promise<HalftoneSession | null> {
   if (settings.halftone.variant !== 'rows') {
     throw new Error('createHalftoneSession: only the rows variant is ported.');
   }
@@ -75,12 +80,9 @@ export function createHalftoneSession({
     return null;
   }
 
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.setPixelRatio(1);
-  renderer.setClearColor(0x000000, 0);
-  renderer.setSize(getVirtualWidth(), getVirtualHeight(), false);
+  const { gl, canvas } = renderer;
+  renderer.setSize(getVirtualWidth(), getVirtualHeight());
 
-  const canvas = renderer.domElement;
   canvas.style.cursor = !reducedMotion && wantsPointer ? 'grab' : 'default';
   canvas.style.display = 'block';
   canvas.style.height = '100%';
@@ -88,74 +90,75 @@ export function createHalftoneSession({
   canvas.style.width = '100%';
   container.appendChild(canvas);
 
-  const environmentTexture = createEnvironmentTexture(renderer);
+  const environment = await loadEnvironmentTexture(gl);
+  const dfgLut = createDfgLutTexture(gl);
 
-  const scene3d = new THREE.Scene();
-  scene3d.background = null;
-
-  const camera = new THREE.PerspectiveCamera(
-    45,
-    getWidth() / getHeight(),
-    0.1,
-    100,
-  );
+  const camera = new Camera(gl, {
+    fov: 45,
+    aspect: getWidth() / getHeight(),
+    near: 0.1,
+    far: 100,
+  });
   camera.position.z = settings.previewDistance;
+  camera.lookAt(new Vec3(0, settings.modelOffsetY * 0.2, 0));
 
-  const primaryLight = new THREE.DirectionalLight(
-    0xffffff,
-    settings.lighting.intensity,
-  );
-  setPrimaryLightPosition(
-    primaryLight,
+  const primaryLightPosition = getPrimaryLightPosition(
     settings.lighting.angleDegrees,
     settings.lighting.height,
   );
-  scene3d.add(primaryLight);
+  const fillLightPosition = new Vec3(-3, -1, 1);
+  const primaryLightDirection = new Vec3();
+  const fillLightDirection = new Vec3();
 
-  const fillLight = new THREE.DirectionalLight(
-    0xffffff,
-    settings.lighting.fillIntensity,
-  );
-  fillLight.position.set(-3, -1, 1);
-  scene3d.add(fillLight);
-
-  scene3d.add(
-    new THREE.AmbientLight(0xffffff, settings.lighting.ambientIntensity),
-  );
-
-  const material = new THREE.MeshPhysicalMaterial({
-    clearcoat: 0,
-    clearcoatRoughness: 0.08,
-    color: settings.material.color,
-    envMap: environmentTexture,
-    envMapIntensity: 0.25,
-    metalness: settings.material.metalness,
-    reflectivity: 0.5,
-    roughness: settings.material.roughness,
-    transmission: 0,
+  const materialProgram = createModelMaterialProgram({
+    gl,
+    material: settings.material,
+    lighting: settings.lighting,
+    environmentTexture: environment.texture,
+    environmentMaxLod: environment.mipCount - 1,
+    dfgLut,
+    primaryLightDirection,
+    fillLightDirection,
   });
 
-  const mesh = new THREE.Mesh(geometry, material);
-  mesh.position.y = settings.modelOffsetY;
-  scene3d.add(mesh);
-  camera.lookAt(0, settings.modelOffsetY * 0.2, 0);
+  const meshGeometry = new Geometry(gl, {
+    position: { size: 3, data: geometry.positions },
+    normal: { size: 3, data: geometry.normals },
+    index: { data: geometry.indices },
+  });
 
-  const sceneTarget = createRenderTarget(getVirtualWidth(), getVirtualHeight());
-  const blurPipeline = createBlurPipeline(
+  const mesh = new Mesh(gl, {
+    geometry: meshGeometry,
+    program: materialProgram,
+  });
+  // ogl's Euler defaults to YXZ, three's Object3D.rotation to XYZ. Every
+  // authored pose in these configs was baked against XYZ, so leaving the
+  // default tilts the model.
+  mesh.rotation.order = 'XYZ';
+  mesh.position.y = settings.modelOffsetY;
+
+  const sceneTarget = createRenderTarget(
+    gl,
     getVirtualWidth(),
     getVirtualHeight(),
   );
-  const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
-  const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  const blurPipeline = createBlurPipeline(
+    gl,
+    getVirtualWidth(),
+    getVirtualHeight(),
+  );
 
-  const halftoneMaterial = new THREE.ShaderMaterial({
+  const halftonePass = createFullscreenPass({
+    gl,
     transparent: true,
+    vertex: BLUR_PASS_SHADERS.vertex,
+    fragment: HALFTONE_ROW_SHADER.fragment,
     uniforms: {
       baseInk: { value: halftoneSettings.baseInk },
       cellRatio: { value: halftoneSettings.cellRatio },
       contrast: { value: halftoneSettings.contrast },
       cutoff: { value: halftoneSettings.cutoff },
-      dashColor: { value: new THREE.Color(halftoneSettings.dashColor) },
+      dashColor: { value: linearColorFromHex(halftoneSettings.dashColor) },
       distanceScale: {
         value:
           settings.previewDistance /
@@ -167,13 +170,13 @@ export function createHalftoneSession({
       numRows: { value: halftoneSettings.numRows },
       power: { value: halftoneSettings.power },
       resolution: {
-        value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
+        value: new Vec2(getVirtualWidth(), getVirtualHeight()),
       },
       rowMerge: { value: halftoneSettings.rowMerge },
       shading: { value: halftoneSettings.shading },
       shadowCrush: { value: halftoneSettings.shadowCrush },
       shadowGrouping: { value: halftoneSettings.shadowGrouping },
-      tGlow: { value: blurPipeline.targetB.texture },
+      tGlow: { value: blurPipeline.getGlowTexture() },
       tScene: { value: sceneTarget.texture },
       time: { value: 0 },
       waveAmount: {
@@ -183,12 +186,7 @@ export function createHalftoneSession({
       },
       waveSpeed: { value: settings.animation.waveSpeed },
     },
-    vertexShader: BLUR_PASS_SHADERS.vertex,
-    fragmentShader: HALFTONE_ROW_SHADER.fragment,
   });
-
-  const postScene = new THREE.Scene();
-  postScene.add(new THREE.Mesh(fullScreenGeometry, halftoneMaterial));
 
   const interaction = halftoneInteraction.create(initialPose);
 
@@ -198,12 +196,11 @@ export function createHalftoneSession({
     const virtualWidth = getVirtualWidth();
     const virtualHeight = getVirtualHeight();
 
-    renderer.setSize(virtualWidth, virtualHeight, false);
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
+    renderer.setSize(virtualWidth, virtualHeight);
+    camera.perspective({ aspect: width / height });
     sceneTarget.setSize(virtualWidth, virtualHeight);
     blurPipeline.setSize(virtualWidth, virtualHeight);
-    halftoneMaterial.uniforms.resolution.value.set(virtualWidth, virtualHeight);
+    halftonePass.uniforms.resolution.value.set(virtualWidth, virtualHeight);
   };
 
   const sizeObserver =
@@ -212,15 +209,11 @@ export function createHalftoneSession({
 
   const updatePointerPosition = (event: PointerEvent) => {
     const rect = canvas.getBoundingClientRect();
-    interaction.mouseX = THREE.MathUtils.clamp(
+    interaction.mouseX = clamp01(
       (event.clientX - rect.left) / Math.max(rect.width, 1),
-      0,
-      1,
     );
-    interaction.mouseY = THREE.MathUtils.clamp(
+    interaction.mouseY = clamp01(
       (event.clientY - rect.top) / Math.max(rect.height, 1),
-      0,
-      1,
     );
   };
 
@@ -268,9 +261,23 @@ export function createHalftoneSession({
 
   let firstFrameNotified = false;
 
+  // three resolved directional light directions into view space before the
+  // shader saw them; the material is written against that same convention.
+  const syncLightDirections = () => {
+    camera.updateMatrixWorld();
+    primaryLightDirection
+      .copy(primaryLightPosition)
+      .normalize()
+      .transformDirection(camera.viewMatrix);
+    fillLightDirection
+      .copy(fillLightPosition)
+      .normalize()
+      .transformDirection(camera.viewMatrix);
+  };
+
   const renderFrame = ({ deltaSeconds, elapsedSeconds }: VisualFrame) => {
     const elapsedTime = (initialPose?.timeElapsed ?? 0) + elapsedSeconds;
-    halftoneMaterial.uniforms.time.value = elapsedTime;
+    halftonePass.uniforms.time.value = elapsedTime;
 
     let baseRotationX = 0;
     let baseRotationY = 0;
@@ -387,25 +394,22 @@ export function createHalftoneSession({
       interaction.rotationY,
       interaction.rotationZ,
     );
-    mesh.scale.setScalar(meshScale);
+    mesh.scale.set(meshScale, meshScale, meshScale);
+
+    syncLightDirections();
 
     if (!halftoneSettings.enabled) {
-      renderer.setRenderTarget(null);
-      renderer.clear();
-      renderer.render(scene3d, camera);
+      renderer.render({ scene: mesh, camera, target: null });
       return;
     }
 
-    renderer.setRenderTarget(sceneTarget);
-    renderer.render(scene3d, camera);
+    renderer.render({ scene: mesh, camera, target: sceneTarget });
 
     // Two full blur rounds: the glow buffer feeds both cell averaging and
     // the halo term, and the authored look depends on the wider spread.
-    blurPipeline.render(renderer, sceneTarget.texture, orthographicCamera);
+    blurPipeline.render(renderer, sceneTarget.texture);
 
-    renderer.setRenderTarget(null);
-    renderer.clear();
-    renderer.render(postScene, orthographicCamera);
+    renderer.render({ scene: halftonePass.mesh, target: null });
 
     if (!firstFrameNotified) {
       firstFrameNotified = true;
@@ -413,7 +417,19 @@ export function createHalftoneSession({
     }
   };
 
-  let frameLoop: ReturnType<typeof createVisualFrameLoop> | null = null;
+  function disposeResources() {
+    blurPipeline.dispose();
+    halftonePass.dispose();
+    materialProgram.remove();
+    meshGeometry.remove();
+    disposeRenderTarget(gl, sceneTarget);
+    gl.deleteTexture(environment.texture.texture);
+    gl.deleteTexture(dfgLut.texture);
+    renderer?.dispose();
+    if (canvas.parentNode === container) {
+      container.removeChild(canvas);
+    }
+  }
 
   if (reducedMotion) {
     // One settled frame; resizes re-render so the still stays crisp.
@@ -436,29 +452,16 @@ export function createHalftoneSession({
     };
   }
 
-  frameLoop = createVisualFrameLoop({
+  const frameLoop = createVisualFrameLoop({
     renderFrame,
     target: container,
     targetVisibilityOptions: { rootMargin: '100px' },
   });
   frameLoop.start();
 
-  function disposeResources() {
-    blurPipeline.dispose();
-    halftoneMaterial.dispose();
-    fullScreenGeometry.dispose();
-    material.dispose();
-    sceneTarget.dispose();
-    environmentTexture.dispose();
-    renderer?.dispose();
-    if (canvas.parentNode === container) {
-      container.removeChild(canvas);
-    }
-  }
-
   return {
     dispose() {
-      frameLoop?.dispose();
+      frameLoop.dispose();
       sizeObserver?.disconnect();
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerup', handlePointerUp);

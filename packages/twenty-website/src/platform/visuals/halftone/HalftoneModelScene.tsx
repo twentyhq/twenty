@@ -6,9 +6,9 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useAsyncResource } from '../engine/use-async-resource';
 import { useVisualRuntime } from '../engine/use-visual-runtime';
 import {
-  loadGlbGeometry,
-  type LoadGlbGeometryOptions,
-} from '../three-runtime/load-glb-geometry';
+  loadModelGeometry,
+  type LoadModelGeometryOptions,
+} from '../gl-runtime/load-model-geometry';
 import { createBandSession } from './create-band-session';
 import { createHalftoneSession } from './create-halftone-session';
 import { type HalftoneInitialPose } from './halftone-interaction-state';
@@ -26,7 +26,7 @@ export type HalftoneModelSceneProps = {
   modelUrl: string;
   settings: HalftoneSceneSettingsOverrides;
   initialPose?: HalftoneInitialPose & { timeElapsed?: number };
-  geometryOptions?: LoadGlbGeometryOptions;
+  geometryOptions?: LoadModelGeometryOptions;
 };
 
 export function HalftoneModelScene({
@@ -39,7 +39,7 @@ export function HalftoneModelScene({
   const { reducedMotion } = useVisualRuntime();
 
   const loader = useCallback(
-    () => loadGlbGeometry(modelUrl, geometryOptions),
+    () => loadModelGeometry(modelUrl, geometryOptions),
     // geometryOptions is a config record with stable identity per mount.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [modelUrl],

@@ -1,12 +1,16 @@
-import * as THREE from 'three';
+import { Vec2 } from 'ogl';
 
 import {
   createVisualFrameLoop,
   type VisualFrame,
 } from '../engine/create-visual-frame-loop';
-import { createVisualRenderer } from '../three-runtime/create-visual-renderer';
+import { createFullscreenPass } from '../gl-runtime/create-fullscreen-pass';
+import { createImageTexture } from '../gl-runtime/create-image-texture';
+import { createRenderTarget } from '../gl-runtime/create-render-target';
+import { createVisualRenderer } from '../gl-runtime/create-visual-renderer';
+import { disposeRenderTarget } from '../gl-runtime/dispose-render-target';
+import { linearColorFromHex } from '../gl-runtime/linear-color-from-hex';
 import { BLUR_PASS_SHADERS } from './blur-pass-shaders';
-import { createRenderTarget } from './create-render-target';
 import { HALFTONE_CONSTANTS } from './halftone-constants';
 import { createVirtualSize } from './virtual-size';
 import { HALFTONE_PASS_SHADER } from './halftone-pass-shader';
@@ -92,6 +96,10 @@ type CreateImageSessionOptions = {
 
 const REFERENCE_PREVIEW_DISTANCE = HALFTONE_CONSTANTS.referencePreviewDistance;
 const MIN_FOOTPRINT_SCALE = HALFTONE_CONSTANTS.minFootprintScale;
+
+function clamp01(value: number) {
+  return Math.min(Math.max(value, 0), 1);
+}
 
 // Image footprint: dash density holds the authored relationship to the
 // image's fitted rect at the reference zoom.
@@ -261,41 +269,37 @@ export function createImageSession({
     return null;
   }
 
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.setPixelRatio(1);
-  renderer.setClearColor(0x000000, 0);
-  renderer.setSize(getVirtualWidth(), getVirtualHeight(), false);
+  const { gl, canvas } = renderer;
+  renderer.setSize(getVirtualWidth(), getVirtualHeight());
 
-  const canvas = renderer.domElement;
   canvas.style.display = 'block';
   canvas.style.height = '100%';
   canvas.style.width = '100%';
   container.appendChild(canvas);
 
-  const imageTexture = new THREE.Texture(image);
-  imageTexture.wrapS = THREE.ClampToEdgeWrapping;
-  imageTexture.wrapT = THREE.ClampToEdgeWrapping;
-  imageTexture.generateMipmaps = false;
-  imageTexture.minFilter = THREE.LinearFilter;
-  imageTexture.magFilter = THREE.LinearFilter;
-  imageTexture.colorSpace = THREE.SRGBColorSpace;
-  imageTexture.needsUpdate = true;
+  const imageTexture = createImageTexture(gl, image);
 
   const zoom =
     REFERENCE_PREVIEW_DISTANCE / Math.max(settings.previewDistance, 0.001);
 
-  const sceneTarget = createRenderTarget(getVirtualWidth(), getVirtualHeight());
-  const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
-  const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  const sceneTarget = createRenderTarget(
+    gl,
+    getVirtualWidth(),
+    getVirtualHeight(),
+    { depth: false },
+  );
 
-  const imageMaterial = new THREE.ShaderMaterial({
+  const imagePass = createFullscreenPass({
+    gl,
+    vertex: BLUR_PASS_SHADERS.vertex,
+    fragment: IMAGE_PASS_SHADER.fragment,
     uniforms: {
       tImage: { value: imageTexture },
       imageSize: {
-        value: new THREE.Vector2(image.naturalWidth, image.naturalHeight),
+        value: new Vec2(image.naturalWidth, image.naturalHeight),
       },
       viewportSize: {
-        value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
+        value: new Vec2(getVirtualWidth(), getVirtualHeight()),
       },
       zoom: { value: zoom },
       contrast: { value: settings.contrast },
@@ -311,20 +315,21 @@ export function createImageSession({
       verticalPixelOffset: { value: 0 },
       horizontalPixelOffset: { value: 0 },
     },
-    vertexShader: BLUR_PASS_SHADERS.vertex,
-    fragmentShader: IMAGE_PASS_SHADER.fragment,
   });
 
-  const halftoneMaterial = new THREE.ShaderMaterial({
+  const halftonePass = createFullscreenPass({
+    gl,
     transparent: true,
+    vertex: BLUR_PASS_SHADERS.vertex,
+    fragment: HALFTONE_PASS_SHADER.fragment,
     uniforms: {
       tScene: { value: sceneTarget.texture },
       tGlow: { value: sceneTarget.texture },
       effectResolution: {
-        value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
+        value: new Vec2(getVirtualWidth(), getVirtualHeight()),
       },
       logicalResolution: {
-        value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
+        value: new Vec2(getVirtualWidth(), getVirtualHeight()),
       },
       tile: { value: settings.halftone.scale },
       s_3: { value: settings.halftone.power },
@@ -334,17 +339,17 @@ export function createImageSession({
         value: settings.hover.lightVerticalFade ?? 0,
       },
       minimumTone: { value: settings.halftone.minimumTone },
-      dashColor: { value: new THREE.Color(settings.halftone.dashColor) },
+      dashColor: { value: linearColorFromHex(settings.halftone.dashColor) },
       hoverDashColor: {
-        value: new THREE.Color(settings.halftone.hoverDashColor),
+        value: linearColorFromHex(settings.halftone.hoverDashColor),
       },
       time: { value: 0 },
       waveAmount: { value: settings.wave.enabled ? settings.wave.amount : 0 },
       waveSpeed: { value: settings.wave.speed },
       footprintScale: { value: 1 },
-      interactionUv: { value: new THREE.Vector2(0.5, 0.5) },
-      interactionVelocity: { value: new THREE.Vector2(0, 0) },
-      dragOffset: { value: new THREE.Vector2(0, 0) },
+      interactionUv: { value: new Vec2(0.5, 0.5) },
+      interactionVelocity: { value: new Vec2(0, 0) },
+      dragOffset: { value: new Vec2(0, 0) },
       hoverHalftoneActive: { value: 0 },
       hoverHalftonePowerShift: { value: 0 },
       hoverHalftoneRadius: { value: settings.hover.halftoneRadius },
@@ -356,14 +361,7 @@ export function createImageSession({
       dragFlowStrength: { value: 0 },
       cropToBounds: { value: 1 },
     },
-    vertexShader: BLUR_PASS_SHADERS.vertex,
-    fragmentShader: HALFTONE_PASS_SHADER.fragment,
   });
-
-  const imageScene = new THREE.Scene();
-  imageScene.add(new THREE.Mesh(fullScreenGeometry, imageMaterial));
-  const postScene = new THREE.Scene();
-  postScene.add(new THREE.Mesh(fullScreenGeometry, halftoneMaterial));
 
   // Pointer state for the hover light: normalized position smoothed by the
   // follow factor; strength fades with the authored exp easing.
@@ -382,7 +380,7 @@ export function createImageSession({
     // The old pipeline computes the footprint from the CONTAIN rect even
     // when the shader cover-crops — dash density follows the contained
     // image, not the crop (read from the full monolith mount).
-    halftoneMaterial.uniforms.footprintScale.value = getImageFootprintScale({
+    halftonePass.uniforms.footprintScale.value = getImageFootprintScale({
       imageFit: 'contain',
       imageWidth: image.naturalWidth,
       imageHeight: image.naturalHeight,
@@ -395,14 +393,14 @@ export function createImageSession({
   const syncSize = () => {
     const virtualWidth = getVirtualWidth();
     const virtualHeight = getVirtualHeight();
-    renderer.setSize(virtualWidth, virtualHeight, false);
+    renderer.setSize(virtualWidth, virtualHeight);
     sceneTarget.setSize(virtualWidth, virtualHeight);
-    imageMaterial.uniforms.viewportSize.value.set(virtualWidth, virtualHeight);
-    halftoneMaterial.uniforms.effectResolution.value.set(
+    imagePass.uniforms.viewportSize.value.set(virtualWidth, virtualHeight);
+    halftonePass.uniforms.effectResolution.value.set(
       virtualWidth,
       virtualHeight,
     );
-    halftoneMaterial.uniforms.logicalResolution.value.set(
+    halftonePass.uniforms.logicalResolution.value.set(
       virtualWidth,
       virtualHeight,
     );
@@ -411,9 +409,8 @@ export function createImageSession({
   syncFootprint();
 
   const pointerRoot: HTMLElement =
-    (pointerRootSelector
-      ? (container.closest(pointerRootSelector) as HTMLElement | null)
-      : null) ?? (container as HTMLElement);
+    (pointerRootSelector ? container.closest(pointerRootSelector) : null) ??
+    container;
 
   const handlePointerMove = (event: PointerEvent) => {
     if (
@@ -426,15 +423,11 @@ export function createImageSession({
     }
     const rect = pointerRoot.getBoundingClientRect();
     const enteredJustNow = !pointer.inside;
-    const nextMouseX = THREE.MathUtils.clamp(
+    const nextMouseX = clamp01(
       (event.clientX - rect.left) / Math.max(rect.width, 1),
-      0,
-      1,
     );
-    const nextMouseY = THREE.MathUtils.clamp(
+    const nextMouseY = clamp01(
       (event.clientY - rect.top) / Math.max(rect.height, 1),
-      0,
-      1,
     );
     const deltaX = nextMouseX - pointer.mouseX;
     const deltaY = nextMouseY - pointer.mouseY;
@@ -474,7 +467,7 @@ export function createImageSession({
   let firstFrameNotified = false;
 
   const renderFrame = ({ deltaSeconds, elapsedSeconds }: VisualFrame) => {
-    halftoneMaterial.uniforms.time.value = elapsedSeconds;
+    halftonePass.uniforms.time.value = elapsedSeconds;
 
     const hoverEasing =
       1 -
@@ -493,28 +486,27 @@ export function createImageSession({
 
     const virtualWidth = getVirtualWidth();
     const virtualHeight = getVirtualHeight();
-    halftoneMaterial.uniforms.interactionUv.value.set(
+    halftonePass.uniforms.interactionUv.value.set(
       pointer.smoothedX,
       1 - pointer.smoothedY,
     );
-    halftoneMaterial.uniforms.interactionVelocity.value.set(
+    halftonePass.uniforms.interactionVelocity.value.set(
       pointer.velocityX * virtualWidth,
       -pointer.velocityY * virtualHeight,
     );
-    halftoneMaterial.uniforms.hoverHalftoneActive.value = settings.hover
+    halftonePass.uniforms.hoverHalftoneActive.value = settings.hover
       .halftoneEnabled
       ? pointer.hoverStrength
       : 0;
-    halftoneMaterial.uniforms.hoverHalftonePowerShift.value = settings.hover
+    halftonePass.uniforms.hoverHalftonePowerShift.value = settings.hover
       .halftoneEnabled
       ? settings.hover.halftonePowerShift
       : 0;
-    halftoneMaterial.uniforms.hoverHalftoneWidthShift.value = settings.hover
+    halftonePass.uniforms.hoverHalftoneWidthShift.value = settings.hover
       .halftoneEnabled
       ? settings.hover.halftoneWidthShift
       : 0;
-    halftoneMaterial.uniforms.hoverLightStrength.value = settings.hover
-      .lightEnabled
+    halftonePass.uniforms.hoverLightStrength.value = settings.hover.lightEnabled
       ? settings.hover.lightIntensity * pointer.hoverStrength
       : 0;
 
@@ -527,21 +519,20 @@ export function createImageSession({
         previewDistance: settings.previewDistance,
         referencePreviewDistance: settings.hover.radiusReferenceDistance,
       });
-      halftoneMaterial.uniforms.hoverHalftoneRadius.value =
+      halftonePass.uniforms.hoverHalftoneRadius.value =
         settings.hover.halftoneRadius * radiusScale;
-      halftoneMaterial.uniforms.hoverLightRadius.value =
+      halftonePass.uniforms.hoverLightRadius.value =
         settings.hover.lightRadius * radiusScale;
     }
 
     if (settings.responsiveFrame) {
       const frame = settings.responsiveFrame();
-      imageMaterial.uniforms.zoom.value =
+      imagePass.uniforms.zoom.value =
         REFERENCE_PREVIEW_DISTANCE / Math.max(frame.previewDistance, 0.001);
-      imageMaterial.uniforms.verticalAnchor.value = frame.verticalAnchor;
-      imageMaterial.uniforms.verticalPixelOffset.value = frame.verticalOffsetPx;
-      imageMaterial.uniforms.horizontalPixelOffset.value =
-        frame.horizontalOffsetPx;
-      halftoneMaterial.uniforms.footprintScale.value = getImageFootprintScale({
+      imagePass.uniforms.verticalAnchor.value = frame.verticalAnchor;
+      imagePass.uniforms.verticalPixelOffset.value = frame.verticalOffsetPx;
+      imagePass.uniforms.horizontalPixelOffset.value = frame.horizontalOffsetPx;
+      halftonePass.uniforms.footprintScale.value = getImageFootprintScale({
         imageFit: 'contain',
         imageHeight: image.naturalHeight,
         imageWidth: image.naturalWidth,
@@ -551,12 +542,8 @@ export function createImageSession({
       });
     }
 
-    renderer.setRenderTarget(sceneTarget);
-    renderer.render(imageScene, orthographicCamera);
-
-    renderer.setRenderTarget(null);
-    renderer.clear();
-    renderer.render(postScene, orthographicCamera);
+    renderer.render({ scene: imagePass.mesh, target: sceneTarget });
+    renderer.render({ scene: halftonePass.mesh, target: null });
 
     if (!firstFrameNotified) {
       firstFrameNotified = true;
@@ -569,11 +556,10 @@ export function createImageSession({
   sizeObserver?.observe(container);
 
   function disposeResources() {
-    imageMaterial.dispose();
-    halftoneMaterial.dispose();
-    fullScreenGeometry.dispose();
-    imageTexture.dispose();
-    sceneTarget.dispose();
+    imagePass.dispose();
+    halftonePass.dispose();
+    gl.deleteTexture(imageTexture.texture);
+    disposeRenderTarget(gl, sceneTarget);
     renderer?.dispose();
     if (canvas.parentNode === container) {
       container.removeChild(canvas);

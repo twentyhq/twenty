@@ -8,7 +8,7 @@ export const FAQ_BACKDROP: Pick<
   HalftoneModelProps,
   'modelUrl' | 'settings' | 'initialPose'
 > = {
-  modelUrl: '/models/faq.glb',
+  modelUrl: '/models/faq.geo',
   settings: {
     previewDistance: 4,
     modelOffsetY: 0.52,
