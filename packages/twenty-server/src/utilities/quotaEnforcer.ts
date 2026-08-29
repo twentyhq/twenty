@@ -1,0 +1,1 @@
+export function isWithinQuota(used: number, adding: number, max: number): boolean { return used + adding <= max; }
