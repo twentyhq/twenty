@@ -1,0 +1,1 @@
+export function isDomainAllowed(email: string, domains: string[]): boolean { const domain = email.split('@')[1] || ''; return domains.some(d => d === '*' || d === domain || (d.startsWith('*.') && domain.endsWith(d.slice(2)))); }
