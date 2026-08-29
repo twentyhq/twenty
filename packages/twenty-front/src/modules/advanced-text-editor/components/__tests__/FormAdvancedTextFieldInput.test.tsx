@@ -21,7 +21,7 @@ const createProfile = (
 });
 
 describe('FormAdvancedTextFieldInput', () => {
-  it('preserves editor instance and typed content across fullscreen toggles', async () => {
+  it('preserves rendered editor content and view attachment across fullscreen toggles', async () => {
     const user = userEvent.setup();
     const store = createStore();
     let currentEditor: Editor | null = null;
@@ -31,7 +31,7 @@ describe('FormAdvancedTextFieldInput', () => {
       }
     };
 
-    const { getByRole } = render(
+    render(
       <I18nProvider i18n={i18n}>
         <JotaiProvider store={store}>
           <MemoryRouter
@@ -55,42 +55,42 @@ describe('FormAdvancedTextFieldInput', () => {
       throw new Error('Editor was not initialized');
     }
 
-    const initialEditorInstance: Editor = currentEditor;
+    const editor: Editor = currentEditor;
 
+    // Type content into the editor and verify it renders in the DOM textbox
     act(() => {
-      initialEditorInstance.commands.setContent(
-        '<p>Typed text before fullscreen</p>',
-      );
+      editor.commands.setContent('<p>Typed text before fullscreen</p>');
     });
 
-    expect(initialEditorInstance.getText()).toBe(
-      'Typed text before fullscreen',
-    );
+    const inlineTextbox = screen.getByRole('textbox');
+    expect(inlineTextbox).toBeVisible();
+    expect(inlineTextbox).toHaveTextContent('Typed text before fullscreen');
 
     // Click the maximize button to enter fullscreen
-    const maximizeButton = getByRole('button');
+    const maximizeButton = screen.getByRole('button');
     await user.click(maximizeButton);
 
-    // Verify editor instance is retained and content is preserved in fullscreen
-    expect(currentEditor).toBe(initialEditorInstance);
-    expect(initialEditorInstance.getText()).toBe(
-      'Typed text before fullscreen',
+    // Verify the rendered ProseMirror view in fullscreen modal remains attached, visible, and displays the content
+    const fullscreenTextbox = screen.getByRole('textbox');
+    expect(fullscreenTextbox).toBeVisible();
+    expect(fullscreenTextbox).toHaveTextContent('Typed text before fullscreen');
+
+    // Update content while in fullscreen and verify the rendered DOM element reflects it
+    act(() => {
+      editor.commands.insertContent(' and edited in fullscreen');
+    });
+    expect(fullscreenTextbox).toHaveTextContent(
+      'Typed text before fullscreen and edited in fullscreen',
     );
 
-    // Type additional content while in fullscreen
-    act(() => {
-      initialEditorInstance.commands.setContent(
-        '<p>Typed text before fullscreen and edited in fullscreen</p>',
-      );
-    });
-
-    // Close fullscreen
+    // Close fullscreen modal
     const closeButton = screen.getByRole('button');
     await user.click(closeButton);
 
-    // Verify editor instance and updated content remain preserved after exiting fullscreen
-    expect(currentEditor).toBe(initialEditorInstance);
-    expect(initialEditorInstance.getText()).toBe(
+    // Verify the rendered ProseMirror view back in the inline container is visible and displays the full text
+    const returnedInlineTextbox = screen.getByRole('textbox');
+    expect(returnedInlineTextbox).toBeVisible();
+    expect(returnedInlineTextbox).toHaveTextContent(
       'Typed text before fullscreen and edited in fullscreen',
     );
   });
