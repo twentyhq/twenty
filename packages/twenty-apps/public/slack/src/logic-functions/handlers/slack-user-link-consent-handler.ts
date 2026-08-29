@@ -11,6 +11,7 @@ import { type SlackUserLink } from 'src/logic-functions/types/slack-user-link.ty
 import { type SlackUserLinkConsentResult } from 'src/logic-functions/types/slack-user-link-consent-result.type';
 import { parseSlackUserLinkConsentButtonValue } from 'src/logic-functions/utils/parse-slack-user-link-consent-button-value';
 import { updateSlackMessageViaResponseUrl } from 'src/logic-functions/utils/update-slack-message-via-response-url';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 const APPROVED_MESSAGE =
   'Thanks, you approved the link. The Twenty assistant can now act with that member access when you message it.';
@@ -108,7 +109,7 @@ export const slackUserLinkConsentHandler = async (
 
     return {
       skipped: true,
-      reason: error instanceof Error ? error.message : String(error),
+      reason: toErrorMessage(error),
     };
   }
 

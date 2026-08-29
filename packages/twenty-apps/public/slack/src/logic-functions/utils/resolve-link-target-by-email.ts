@@ -6,6 +6,7 @@ import {
   type ResolvedSlackUser,
   resolveSlackUserByEmail,
 } from 'src/logic-functions/utils/resolve-slack-user-by-email';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 type EmailLinkTarget =
   | {
@@ -36,7 +37,7 @@ export const resolveLinkTargetByEmail = async ({
     return {
       success: false,
       message: 'Could not look up that Slack email',
-      error: error instanceof Error ? error.message : String(error),
+      error: toErrorMessage(error),
     };
   }
 

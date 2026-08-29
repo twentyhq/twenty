@@ -12,6 +12,7 @@ import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/ut
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 const SLACKBOT_USER_ID = 'USLACKBOT';
 const MAX_RESULTS = 10;
@@ -162,7 +163,7 @@ export const slackSearchUsersHandler = async (
     return {
       success: false,
       message: 'Could not search Slack users',
-      error: error instanceof Error ? error.message : String(error),
+      error: toErrorMessage(error),
     };
   }
 };

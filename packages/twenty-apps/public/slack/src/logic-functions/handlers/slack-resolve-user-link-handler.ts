@@ -13,6 +13,7 @@ import {
 } from 'src/logic-functions/utils/resolve-slack-user-by-email';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 const readBody = (
   payload: SlackRouteBody,
@@ -118,7 +119,7 @@ export const slackResolveUserLinkHandler = async (
     return {
       success: false,
       message: 'Could not look up that Slack email',
-      error: error instanceof Error ? error.message : String(error),
+      error: toErrorMessage(error),
     };
   }
 

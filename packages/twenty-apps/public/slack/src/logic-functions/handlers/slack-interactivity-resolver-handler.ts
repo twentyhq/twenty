@@ -43,11 +43,16 @@ export const slackInteractivityResolverHandler = async (
     action.action_id?.startsWith(SLACK_USER_LINK_CONSENT_ACTION_ID),
   );
 
-  const targetLogicFunctionUniversalIdentifier = hasAssistantFeedbackAction
-    ? SLACK_ASSISTANT_FEEDBACK_UNIVERSAL_IDENTIFIER
-    : hasUserLinkConsentAction
-      ? SLACK_USER_LINK_CONSENT_UNIVERSAL_IDENTIFIER
-      : undefined;
+  const targetLogicFunctionUniversalIdentifier = [
+    {
+      isMatched: hasAssistantFeedbackAction,
+      identifier: SLACK_ASSISTANT_FEEDBACK_UNIVERSAL_IDENTIFIER,
+    },
+    {
+      isMatched: hasUserLinkConsentAction,
+      identifier: SLACK_USER_LINK_CONSENT_UNIVERSAL_IDENTIFIER,
+    },
+  ].find(({ isMatched }) => isMatched)?.identifier;
 
   if (!isDefined(targetLogicFunctionUniversalIdentifier)) {
     return new Response({ ok: true });

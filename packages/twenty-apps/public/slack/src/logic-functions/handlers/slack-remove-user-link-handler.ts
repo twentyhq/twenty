@@ -7,6 +7,7 @@ import { deleteSlackUserLink } from 'src/logic-functions/data/delete-slack-user-
 import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/utils/current-user-has-workspace-members-permission';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 const readId = (payload: SlackRouteBody): string | undefined =>
   readOptionalString(asRecord(payload.body)?.id);
@@ -43,7 +44,7 @@ export const slackRemoveUserLinkHandler = async (
     return {
       success: false,
       message: 'Could not remove the link',
-      error: error instanceof Error ? error.message : String(error),
+      error: toErrorMessage(error),
     };
   }
 
