@@ -62,7 +62,12 @@ describe('a settings page hosted in the side panel', () => {
     );
 
     expect(
-      await screen.findAllByText(nameFieldMetadataItem.label),
+      await screen.findAllByText(
+        nameFieldMetadataItem.label,
+        {},
+        // The hosted route is loaded lazily, as the main route tree loads it.
+        { timeout: 10000 },
+      ),
     ).not.toHaveLength(0);
   });
 
@@ -71,7 +76,11 @@ describe('a settings page hosted in the side panel', () => {
       `/settings/objects/${companyObjectMetadataItem.namePlural}`,
     );
 
-    await screen.findAllByText(nameFieldMetadataItem.label);
+    await screen.findAllByText(
+      nameFieldMetadataItem.label,
+      {},
+      { timeout: 10000 },
+    );
 
     expect(screen.queryByText('Workspace')).not.toBeInTheDocument();
     expect(screen.queryByText('See records')).not.toBeInTheDocument();
