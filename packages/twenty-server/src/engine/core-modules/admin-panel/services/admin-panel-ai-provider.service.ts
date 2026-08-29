@@ -8,6 +8,7 @@ import {
   EnterpriseExceptionCode,
 } from 'src/engine/core-modules/enterprise/enterprise.exception';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
+import { hasCustomAiProviderAccess } from 'src/engine/core-modules/enterprise/utils/has-custom-ai-provider-access.util';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -38,32 +39,21 @@ export class AdminPanelAiProviderService {
     const seatCount = await this.enterprisePlanService.getBillableSeatCount();
 
     return {
-      hasAccess:
-        this.isExemptFromSeatThreshold() ||
-        seatCount <= MAX_SEATS_WITHOUT_ENTERPRISE_KEY,
+      hasAccess: hasCustomAiProviderAccess({
+        isBillingEnabled:
+          this.twentyConfigService.get('IS_BILLING_ENABLED') === true,
+        hasValidEnterprisePlan: this.enterprisePlanService.isValid(),
+        seatCount,
+      }),
       seatCount,
       seatThreshold: MAX_SEATS_WITHOUT_ENTERPRISE_KEY,
     };
   }
 
-  // Cloud runs a single instance whose seat count spans every customer, so the
-  // threshold would always trip; there the plan is enforced per workspace by
-  // billing entitlements instead.
-  private isExemptFromSeatThreshold(): boolean {
-    return (
-      this.twentyConfigService.get('IS_BILLING_ENABLED') === true ||
-      this.enterprisePlanService.isValid()
-    );
-  }
-
   private async assertCustomAiProviderAccess(): Promise<void> {
-    if (this.isExemptFromSeatThreshold()) {
-      return;
-    }
+    const { hasAccess, seatCount } = await this.getCustomAiProviderAccess();
 
-    const seatCount = await this.enterprisePlanService.getBillableSeatCount();
-
-    if (seatCount <= MAX_SEATS_WITHOUT_ENTERPRISE_KEY) {
+    if (hasAccess) {
       return;
     }
 
