@@ -98,6 +98,15 @@ describe('AdminPanelAiProviderService', () => {
       expect(providers).toHaveProperty('my-gateway');
     });
 
+    it('rejects a config whose npm package is not a supported SDK', async () => {
+      givenInstance({ seatCount: 1 });
+
+      await expect(
+        service.addProvider('my-gateway', { npm: 'not-an-ai-sdk-package' }),
+      ).rejects.toThrow('Invalid provider configuration');
+      expect(twentyConfigService.set).not.toHaveBeenCalled();
+    });
+
     it('rejects a provider name that is not slug-safe', async () => {
       givenInstance({ seatCount: 1 });
 

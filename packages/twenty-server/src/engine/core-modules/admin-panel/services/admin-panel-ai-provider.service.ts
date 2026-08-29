@@ -13,7 +13,7 @@ import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-er
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { DefaultAiCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/default-ai-catalog.service';
-import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
+import { aiProviderConfigSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.schema';
 import { aiProviderModelConfigSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.schema';
 import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
@@ -96,9 +96,11 @@ export class AdminPanelAiProviderService {
     return masked;
   }
 
+  // Both configs arrive as untyped JSON from the GraphQL layer, so they are
+  // taken as unknown and given their shape by the schemas below.
   async addProvider(
     providerName: string,
-    providerConfig: AiProviderConfig,
+    providerConfig: unknown,
   ): Promise<boolean> {
     await this.assertCustomAiProviderAccess();
 
@@ -106,11 +108,25 @@ export class AdminPanelAiProviderService {
       throw new UserInputError('Invalid provider name');
     }
 
+    // The GraphQL arg is untyped JSON, so an unsupported npm package would only
+    // surface later when the registry builds the provider, taking down model
+    // resolution for every provider on the instance.
+    const validatedProviderConfig =
+      aiProviderConfigSchema.safeParse(providerConfig);
+
+    if (!validatedProviderConfig.success) {
+      throw new UserInputError(
+        `Invalid provider configuration: ${validatedProviderConfig.error.issues
+          .map((issue) => `${issue.path.join('.')} ${issue.message}`)
+          .join(', ')}`,
+      );
+    }
+
     const customProviders = {
       ...this.twentyConfigService.get('AI_PROVIDERS'),
     };
 
-    customProviders[providerName] = providerConfig;
+    customProviders[providerName] = validatedProviderConfig.data;
     await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
 
     return true;
@@ -131,7 +147,7 @@ export class AdminPanelAiProviderService {
 
   async addModelToProvider(
     providerName: string,
-    modelConfig: AiProviderModelConfig,
+    modelConfig: unknown,
   ): Promise<boolean> {
     await this.assertCustomAiProviderAccess();
 

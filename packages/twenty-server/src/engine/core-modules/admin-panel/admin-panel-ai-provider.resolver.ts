@@ -21,8 +21,6 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ModelsDevModelSuggestionDTO } from 'src/engine/core-modules/admin-panel/dtos/models-dev-model-suggestion.dto';
 import { ModelsDevProviderSuggestionDTO } from 'src/engine/core-modules/admin-panel/dtos/models-dev-provider-suggestion.dto';
 import { ModelsDevCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/models-dev-catalog.service';
-import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
-import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 
 @UsePipes(ResolverValidationPipe)
 @AdminResolver()
@@ -60,7 +58,7 @@ export class AdminPanelAiProviderResolver {
   async addAiProvider(
     @Args('providerName', { type: () => String }) providerName: string,
     @Args('providerConfig', { type: () => GraphQLJSON })
-    providerConfig: AiProviderConfig,
+    providerConfig: unknown,
   ): Promise<boolean> {
     return this.adminPanelAiProviderService.addProvider(
       providerName,
@@ -96,7 +94,7 @@ export class AdminPanelAiProviderResolver {
   async addModelToProvider(
     @Args('providerName', { type: () => String }) providerName: string,
     @Args('modelConfig', { type: () => GraphQLJSON })
-    modelConfig: AiProviderModelConfig,
+    modelConfig: unknown,
   ): Promise<boolean> {
     return this.adminPanelAiProviderService.addModelToProvider(
       providerName,
