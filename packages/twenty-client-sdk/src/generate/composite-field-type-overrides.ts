@@ -49,7 +49,10 @@ export const COMPOSITE_FIELD_TYPE_OVERRIDES: {
   ActorUpdateInput: { context: ACTOR_CONTEXT_TYPE_TEXT },
 };
 
-const findMatchingBrace = (source: string, openBraceIndex: number): number => {
+const findMatchingBraceOrThrow = (
+  source: string,
+  openBraceIndex: number,
+): number => {
   let depth = 0;
 
   for (let index = openBraceIndex; index < source.length; index++) {
@@ -85,7 +88,7 @@ export const applyCompositeFieldTypeOverrides = (
     }
 
     const blockStart = headerIndex + interfaceHeader.length - 1;
-    const blockEnd = findMatchingBrace(source, blockStart);
+    const blockEnd = findMatchingBraceOrThrow(source, blockStart);
     let block = source.slice(blockStart, blockEnd + 1);
 
     for (const [fieldName, overriddenType] of Object.entries(fieldOverrides)) {
