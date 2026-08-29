@@ -1,0 +1,1 @@
+export function isBulkDeletePermitted(count: number, maxAllowed = 1000): boolean { return count <= maxAllowed; }
