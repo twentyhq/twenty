@@ -1,0 +1,1 @@
+export function resolveSlug(name: string, existing: string[]): string { const base = name.toLowerCase().replace(/[^a-z0-9]/g, '-'); if (!existing.includes(base)) return base; let c = 1; while (existing.includes(`${base}-${c}`)) c++; return `${base}-${c}`; }
