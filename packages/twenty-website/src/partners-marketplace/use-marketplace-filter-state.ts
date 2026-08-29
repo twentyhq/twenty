@@ -36,8 +36,8 @@ export const useMarketplaceFilterState = (): MarketplaceFilterState => {
 
   const writeCriteria = useCallback(
     (next: FilterCriteria) => {
-      const query = buildFilterQuery(next);
-      router.replace(query ? `${pathname}?${query}` : pathname, {
+      const nextQuery = buildFilterQuery(next);
+      router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, {
         scroll: false,
       });
     },

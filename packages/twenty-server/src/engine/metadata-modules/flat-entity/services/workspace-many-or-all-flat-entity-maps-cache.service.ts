@@ -11,7 +11,8 @@ import {
 
 export type FlatEntityMapsCacheKeyName =
   | keyof AllFlatEntityMaps
-  | 'flatApplicationMaps';
+  | 'flatApplicationMaps'
+  | 'flatFieldMetadataMapsOrm';
 
 @Injectable()
 export class WorkspaceManyOrAllFlatEntityMapsCacheService {

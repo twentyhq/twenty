@@ -87,9 +87,7 @@ describe('CookieSessionBootEffect', () => {
       expect(store.get(isCookieAuthActiveState.atom)).toBe(true);
     });
 
-    // Retained as a fallback for servers that predate cookie sessions, which
-    // would otherwise sign the user out mid-rollout.
-    expect(store.get(tokenPairState.atom)).not.toBeNull();
+    expect(store.get(tokenPairState.atom)).toBeNull();
   });
 
   it('should stay retryable when the probe fails for an unrelated reason', async () => {
@@ -138,6 +136,7 @@ describe('CookieSessionBootEffect', () => {
       expect(store.get(isCookieAuthActiveState.atom)).toBe(true);
     });
 
+    expect(store.get(tokenPairState.atom)).toBeNull();
     expect(mockEnsureTokenRenewed).not.toHaveBeenCalled();
   });
 });

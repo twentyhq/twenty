@@ -187,7 +187,7 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
           context: 'fieldMetadata.description',
         }),
       ),
-      icon: 'IconLayout',
+      icon: 'IconAppWindow',
       isNullable: true,
       isUIEditable: false,
     },

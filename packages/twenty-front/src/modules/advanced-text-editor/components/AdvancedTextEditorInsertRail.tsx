@@ -33,6 +33,7 @@ const StyledRail = styled.div`
   box-shadow:
     0px 2px 4px 0px ${themeCssVariables.background.transparent.light},
     0px 0px 4px 0px ${themeCssVariables.background.transparent.medium};
+  corner-shape: round;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};

@@ -8,6 +8,7 @@ const APPLICATION_UNIVERSAL_IDENTIFIER = '11111111-1111-4111-8111-111111111111';
 const TYPE_UNIVERSAL_IDENTIFIER = '22222222-2222-4222-8222-222222222222';
 const OBJECT_UNIVERSAL_IDENTIFIER = '33333333-3333-4333-8333-333333333333';
 const RELATION_UNIVERSAL_IDENTIFIER = '44444444-4444-4444-8444-444444444444';
+const HAPPENS_AT_UNIVERSAL_IDENTIFIER = '55555555-5555-4555-8555-555555555555';
 
 const emptyMaps = () => ({ byUniversalIdentifier: {} });
 
@@ -18,6 +19,7 @@ const buildCreationArgs = (
     objectUniversalIdentifier: string | null;
     frontComponentUniversalIdentifier: string | null;
     targetRelationFieldUniversalIdentifier: string | null;
+    happensAtFieldUniversalIdentifier: string | null;
   }> = {},
 ) =>
   ({
@@ -32,6 +34,7 @@ const buildCreationArgs = (
       objectUniversalIdentifier: null,
       targetRelationFieldUniversalIdentifier: null,
       triggerFieldUniversalIdentifiers: null,
+      happensAtFieldUniversalIdentifier: null,
       replacesTimelineActivityTypeUniversalIdentifier: null,
       isActive: true,
       overrides: null,
@@ -132,6 +135,111 @@ describe('FlatTimelineActivityTypeValidatorService', () => {
       service.validateFlatTimelineActivityTypeCreation(creationArgs);
 
     expect(result.errors).toEqual([]);
+  });
+
+  it('accepts a date field on the source object as happensAt field', () => {
+    const creationArgs = buildCreationArgs(APPLICATION_UNIVERSAL_IDENTIFIER, {
+      action: 'linked',
+      objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      targetRelationFieldUniversalIdentifier: RELATION_UNIVERSAL_IDENTIFIER,
+      happensAtFieldUniversalIdentifier: HAPPENS_AT_UNIVERSAL_IDENTIFIER,
+    });
+    const validationMaps =
+      creationArgs.optimisticFlatEntityMapsAndRelatedFlatEntityMaps;
+
+    validationMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+      OBJECT_UNIVERSAL_IDENTIFIER
+    ] = {
+      universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    } as never;
+    validationMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+      RELATION_UNIVERSAL_IDENTIFIER
+    ] = {
+      universalIdentifier: RELATION_UNIVERSAL_IDENTIFIER,
+      objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      type: FieldMetadataType.MORPH_RELATION,
+      universalSettings: { relationType: RelationType.MANY_TO_ONE },
+    } as never;
+    validationMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+      HAPPENS_AT_UNIVERSAL_IDENTIFIER
+    ] = {
+      universalIdentifier: HAPPENS_AT_UNIVERSAL_IDENTIFIER,
+      objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      type: FieldMetadataType.DATE_TIME,
+    } as never;
+
+    const result =
+      service.validateFlatTimelineActivityTypeCreation(creationArgs);
+
+    expect(result.errors).toEqual([]);
+  });
+
+  it('rejects a happensAt field that is not a date field on the source object', () => {
+    const creationArgs = buildCreationArgs(APPLICATION_UNIVERSAL_IDENTIFIER, {
+      action: 'linked',
+      objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      targetRelationFieldUniversalIdentifier: RELATION_UNIVERSAL_IDENTIFIER,
+      happensAtFieldUniversalIdentifier: HAPPENS_AT_UNIVERSAL_IDENTIFIER,
+    });
+    const validationMaps =
+      creationArgs.optimisticFlatEntityMapsAndRelatedFlatEntityMaps;
+
+    validationMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+      OBJECT_UNIVERSAL_IDENTIFIER
+    ] = {
+      universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    } as never;
+    validationMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+      RELATION_UNIVERSAL_IDENTIFIER
+    ] = {
+      universalIdentifier: RELATION_UNIVERSAL_IDENTIFIER,
+      objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      type: FieldMetadataType.MORPH_RELATION,
+      universalSettings: { relationType: RelationType.MANY_TO_ONE },
+    } as never;
+    validationMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+      HAPPENS_AT_UNIVERSAL_IDENTIFIER
+    ] = {
+      universalIdentifier: HAPPENS_AT_UNIVERSAL_IDENTIFIER,
+      objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      type: FieldMetadataType.TEXT,
+    } as never;
+
+    const result =
+      service.validateFlatTimelineActivityTypeCreation(creationArgs);
+
+    expect(result.errors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          message:
+            'Timeline activity type happensAt field must be a date field on the source object of a linked relation event',
+        }),
+      ]),
+    );
+  });
+
+  it('rejects a happensAt field on an emitter without a linked action', () => {
+    const creationArgs = buildCreationArgs(
+      TWENTY_STANDARD_APPLICATION.universalIdentifier,
+      {
+        action: 'created',
+        happensAtFieldUniversalIdentifier: HAPPENS_AT_UNIVERSAL_IDENTIFIER,
+      },
+    );
+
+    const result =
+      service.validateFlatTimelineActivityTypeCreation(creationArgs);
+
+    expect(result.errors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          message:
+            'Timeline activity type happensAt field must be a date field on the source object of a linked relation event',
+        }),
+      ]),
+    );
   });
 
   it('does not expose standard renderers to installed applications', () => {

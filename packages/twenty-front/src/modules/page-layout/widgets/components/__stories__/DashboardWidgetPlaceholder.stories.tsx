@@ -23,6 +23,7 @@ const mockPageLayout: PageLayout = {
   id: 'page-layout-1',
   name: 'Test Layout',
   type: PageLayoutType.DASHBOARD,
+  isFirstTabPinned: true,
   isSystemSideEffect: false,
   objectMetadataId: null,
   universalIdentifier: '20202020-0000-0000-0000-000000000001',

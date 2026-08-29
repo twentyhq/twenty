@@ -1181,7 +1181,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
         context: 'commandMenuItem.label',
       }),
     ),
-    icon: 'IconHierarchy2',
+    icon: 'IconHierarchy',
     isPinned: false,
     position: 53,
     shortLabel: i18nLabel(
@@ -1269,7 +1269,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
         context: 'commandMenuItem.label',
       }),
     ),
-    icon: 'IconCurrencyDollar',
+    icon: 'IconCreditCard',
     isPinned: false,
     position: 57,
     shortLabel: i18nLabel(

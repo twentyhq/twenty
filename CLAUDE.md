@@ -15,6 +15,8 @@ Where this repo differs from your defaults:
 - No abbreviations in names (`fieldMetadata`, not `fm`); constants in SCREAMING_SNAKE_CASE; component props types suffixed `Props`.
 - Use `twenty-shared/utils` guards (`isDefined`, `isNonEmptyString`, …) and other existing helpers before writing your own — reimplementing an existing util is the most common AI-authored defect here.
 - Lingui for user-facing strings; Linaria (zero-runtime, styled-components pattern) for twenty-front styling.
+- For Twenty product concepts, consult `packages/twenty-ui/src/icon/icon-dictionary.md` and use the canonical icon.
+- Import icons from `twenty-ui/icon`, never directly from `@tabler/icons-react`; action and status concepts should use their action or status icons.
 - Test behavior, not implementation: query by user-visible text/roles, `@testing-library/user-event` for interactions.
 
 Longer-form guides remain in `.cursor/rules/` (from the Cursor era).

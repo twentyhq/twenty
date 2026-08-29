@@ -24,6 +24,8 @@ export const fromFlatTimelineActivityTypeToTimelineActivityTypeDto = (
                 flatTimelineActivityType.targetRelationFieldUniversalIdentifier,
               triggerFieldUniversalIdentifiers:
                 flatTimelineActivityType.triggerFieldUniversalIdentifiers,
+              happensAtFieldUniversalIdentifier:
+                flatTimelineActivityType.happensAtFieldUniversalIdentifier,
             }
           : null,
       }

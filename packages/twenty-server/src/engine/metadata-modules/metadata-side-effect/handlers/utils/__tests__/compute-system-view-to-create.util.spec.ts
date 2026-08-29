@@ -43,6 +43,7 @@ describe('computeSystemViewToCreate', () => {
 
     expect(result.key).toBe(ViewKey.INDEX);
     expect(result.type).toBe(ViewType.TABLE);
+    expect(result.icon).toBe('IconTable');
     expect(result.name).toBe('All {objectLabelPlural}');
     expect(result.isSystemSideEffect).toBe(true);
     expect(result.objectMetadataUniversalIdentifier).toBe(
@@ -63,6 +64,7 @@ describe('computeSystemViewToCreate', () => {
     // The record-page view key is derivation-only, never persisted.
     expect(result.key).toBeNull();
     expect(result.type).toBe(ViewType.FIELDS_WIDGET);
+    expect(result.icon).toBe('IconList');
     expect(result.name).toBe('Ticket Record Page Fields');
     expect(result.isSystemSideEffect).toBe(true);
   });

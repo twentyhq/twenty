@@ -28,9 +28,11 @@ import { SettingsDataModelFieldSelectSettingsFormCard } from '@/settings/data-mo
 import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
 
 import { Separator } from '@/settings/components/Separator';
+import { SettingsDataModelFieldLinksVariantForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm';
 import { SettingsDataModelFieldOnClickActionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm';
 import { SettingsDataModelFieldRelationFormCard } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationFormCard';
 import { mergeSettingsSchemas } from '@/settings/data-model/fields/forms/utils/mergeSettingsSchema';
+import { settingsDataModelFieldLinksVariantSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldLinksVariantSchema';
 import { settingsDataModelFieldMaxValuesSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldMaxValuesSchema';
 import { settingsDataModelFieldOnClickActionSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldOnClickActionSchema';
 import { useFormContext } from 'react-hook-form';
@@ -114,6 +116,7 @@ const linksFieldFormSchema = z
     mergeSettingsSchemas(
       settingsDataModelFieldMaxValuesSchema,
       settingsDataModelFieldOnClickActionSchema,
+      settingsDataModelFieldLinksVariantSchema,
     ),
   )
   .extend(isUniqueFieldFormSchema.shape);
@@ -347,6 +350,15 @@ export const SettingsDataModelFieldSettingsFormCard = ({
               <SettingsDataModelFieldMaxValuesForm
                 existingFieldMetadataId={existingFieldMetadataId}
                 fieldType={fieldType}
+                disabled={disabled}
+              />
+              <Separator />
+            </>
+          )}
+          {fieldType === FieldMetadataType.LINKS && (
+            <>
+              <SettingsDataModelFieldLinksVariantForm
+                existingFieldMetadataId={existingFieldMetadataId}
                 disabled={disabled}
               />
               <Separator />

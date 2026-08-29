@@ -101,7 +101,7 @@ export const useWorkflowAiAgentPermissionActions = ({
           id: generatedRoleId,
           label: roleName,
           description: t`Auto-generated role for ${agentDisplayName}`,
-          icon: 'IconRobot',
+          icon: 'IconLego',
           canAccessAllTools: false,
           canUpdateAllSettings: false,
           canReadAllObjectRecords: false,
