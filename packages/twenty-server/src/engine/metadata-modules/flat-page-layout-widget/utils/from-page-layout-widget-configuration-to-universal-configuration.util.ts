@@ -340,6 +340,22 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       };
     }
 
+    case WidgetConfigurationType.FORM_FIELD: {
+      const { fieldMetadataId, configurationType } = configuration;
+
+      const fieldMetadataUniversalIdentifier =
+        getFieldMetadataUniversalIdentifier({
+          fieldMetadataId,
+          fieldMetadataUniversalIdentifierById,
+          shouldThrowOnMissingIdentifier,
+        });
+
+      return {
+        configurationType,
+        fieldMetadataId: fieldMetadataUniversalIdentifier ?? fieldMetadataId,
+      };
+    }
+
     case WidgetConfigurationType.FIELD: {
       const {
         fieldMetadataId,

@@ -74,6 +74,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
         id: 'test-layout',
         name: 'Test Layout',
         type: PageLayoutType.DASHBOARD,
+        isFirstTabPinned: true,
         objectMetadataId: null,
         tabs: [
           {
@@ -160,6 +161,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
         id: 'test-layout',
         name: 'Test Layout',
         type: PageLayoutType.DASHBOARD,
+        isFirstTabPinned: true,
         objectMetadataId: null,
         tabs: [
           {

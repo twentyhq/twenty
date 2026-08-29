@@ -115,6 +115,7 @@ const StyledNewChatButton = styled.div`
   align-items: center;
   border-radius: inherit;
   color: ${themeCssVariables.font.color.secondary};
+  corner-shape: round;
   cursor: pointer;
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
@@ -148,7 +149,9 @@ export const MainNavigationDrawerTabsRow = ({
   const { theme } = useContext(ThemeContext);
   const [navigationDrawerActiveTab, setNavigationDrawerActiveTab] =
     useAtomState(navigationDrawerActiveTabState);
-  const { switchToNewChat } = useSwitchToNewAiChat();
+  const { switchToNewChat } = useSwitchToNewAiChat({
+    shouldOpenInFullPage: true,
+  });
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
   const isExpanded = useIsNavigationDrawerContentExpanded();
@@ -170,6 +173,7 @@ export const MainNavigationDrawerTabsRow = ({
     };
 
   const handleNewChatClick = () => {
+    setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
     switchToNewChat();
   };
 

@@ -1,7 +1,4 @@
-import {
-  AppPath,
-  navigate,
-} from 'twenty-sdk/front-component';
+import { AppPath, navigate } from 'twenty-sdk/front-component';
 
 import { MY_APPLICATIONS_VIEW_UNIVERSAL_IDENTIFIER } from 'src/modules/application/views/my-applications.view';
 import { OPEN_BRIEFS_VIEW_UNIVERSAL_IDENTIFIER } from 'src/modules/opportunity/views/open-briefs.view';

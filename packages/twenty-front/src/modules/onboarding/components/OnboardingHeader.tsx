@@ -80,6 +80,7 @@ const StyledCreditsTag = styled.div`
   border-top: 1px solid ${themeCssVariables.border.color.light};
   border-top-left-radius: ${themeCssVariables.border.radius.pill};
   box-sizing: border-box;
+  corner-shape: round;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[6]};
@@ -103,6 +104,7 @@ const StyledInfoTag = styled.div`
   border-bottom-right-radius: ${themeCssVariables.border.radius.rounded};
   border-top-right-radius: ${themeCssVariables.border.radius.rounded};
   box-sizing: border-box;
+  corner-shape: round;
   display: flex;
   height: ${themeCssVariables.spacing[6]};
   justify-content: center;

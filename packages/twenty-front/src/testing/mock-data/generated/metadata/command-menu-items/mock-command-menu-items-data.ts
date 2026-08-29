@@ -901,7 +901,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponentId": null,
     "engineComponentKey": "ASK_AI",
     "position": 43,
-    "isPinned": false,
+    "isPinned": true,
     "payload": null,
     "hotKeys": [
       "@"
@@ -914,7 +914,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "frontComponent": null,
     "label": "Ask AI",
     "icon": "IconSparkles",
-    "shortLabel": "Ask AI"
+    "shortLabel": null
   },
   {
     "__typename": "CommandMenuItem",
