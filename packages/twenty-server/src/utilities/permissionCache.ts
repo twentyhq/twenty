@@ -1,0 +1,1 @@
+export class PermissionCache { private cache = new Map<string, boolean>(); getKey(role: string, res: string, act: string) { return `${role}:${res}:${act}`; } get(k: string) { return this.cache.get(k); } set(k: string, v: boolean) { this.cache.set(k, v); } }
