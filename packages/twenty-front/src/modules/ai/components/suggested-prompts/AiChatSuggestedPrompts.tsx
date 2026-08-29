@@ -1,23 +1,16 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { type Editor } from '@tiptap/react';
 import { Button, LightButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { getAiChatSuggestedPrompts } from '@/ai/components/suggested-prompts/getAiChatSuggestedPrompts';
 import { useAiChatSuggestedPromptsContext } from '@/ai/hooks/useAiChatSuggestedPromptsContext';
-import {
-  AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
-  agentChatDraftsByThreadIdState,
-} from '@/ai/states/agentChatDraftsByThreadIdState';
-import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { useStageAiChatPreprompt } from '@/ai/hooks/useStageAiChatPreprompt';
+import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type SuggestedPrompt } from '@/ai/types/SuggestedPrompt';
-import { dispatchAgentChatSendMessageEvent } from '@/ai/utils/dispatchAgentChatSendMessageEvent';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const StyledContainer = styled.div<{ isCentered: boolean }>`
   align-items: ${({ isCentered }) => (isCentered ? 'center' : 'stretch')};
@@ -59,19 +52,14 @@ const pickRandom = <T,>(items: T[]): T =>
   items[Math.floor(Math.random() * items.length)];
 
 type AiChatSuggestedPromptsProps = {
-  editor: Editor | null;
   isCentered?: boolean;
 };
 
 export const AiChatSuggestedPrompts = ({
-  editor,
   isCentered = false,
 }: AiChatSuggestedPromptsProps) => {
   const { t: resolveMessage } = useLingui();
-  const setAgentChatInput = useSetAtomState(agentChatInputState);
-  const setAgentChatDraftsByThreadId = useSetAtomState(
-    agentChatDraftsByThreadIdState,
-  );
+  const { stageAiChatPreprompt } = useStageAiChatPreprompt();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const aiChatSuggestedPromptsContext = useAiChatSuggestedPromptsContext();
 
@@ -80,28 +68,11 @@ export const AiChatSuggestedPrompts = ({
   );
 
   const handleClick = (suggestedPrompt: SuggestedPrompt) => {
-    const text = resolveMessage(pickRandom(suggestedPrompt.prompts));
-
-    if (suggestedPrompt.mode === 'SEND') {
-      // Sending reads the draft rather than the editor, so it has to be written
-      // before the event is dispatched.
-      setAgentChatDraftsByThreadId((previousDrafts) => ({
-        ...previousDrafts,
-        [currentAiChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY]:
-          serializePlainTextAsAdvancedTextEditorDocument(text),
-      }));
-      dispatchAgentChatSendMessageEvent();
-      editor?.commands.clearContent();
-
-      return;
-    }
-
-    setAgentChatInput(text);
-    editor?.commands.setContent({
-      type: 'doc',
-      content: [{ type: 'paragraph', content: [{ type: 'text', text }] }],
+    stageAiChatPreprompt({
+      text: resolveMessage(pickRandom(suggestedPrompt.prompts)),
+      mode: suggestedPrompt.mode ?? 'PREFILL',
+      draftKey: currentAiChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
     });
-    editor?.commands.focus('end');
   };
 
   return (

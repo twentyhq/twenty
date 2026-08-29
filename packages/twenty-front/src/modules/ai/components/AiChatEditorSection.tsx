@@ -171,7 +171,7 @@ export const AiChatEditorSection = () => {
   return (
     <>
       <AiChatEditorFocusEffect editor={editor} />
-      <AiChatEmptyState editor={editor} isCentered={isComposerCentered} />
+      <AiChatEmptyState isCentered={isComposerCentered} />
       <AiChatStandaloneError />
       <AiChatSkeletonLoader />
 
