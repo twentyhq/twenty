@@ -213,28 +213,37 @@ export class MessageChannelMetadataService {
 
   async createEmailGroupChannel({
     handle,
+    displayName,
     userWorkspaceId,
     workspaceId,
   }: {
     handle: string;
+    displayName?: string;
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<CreateEmailGroupChannelOutput> {
     const inboundEmailDomain = this.twentyConfigService.get(
       'INBOUND_EMAIL_DOMAIN',
     );
-    const storageType = this.twentyConfigService.get('STORAGE_TYPE');
+    const emailingDomainDriver = this.twentyConfigService.get(
+      'EMAILING_DOMAIN_DRIVER',
+    );
     const isEmailingDomainInDemoMode =
-      this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
-      EmailingDomainDriver.LOG;
+      emailingDomainDriver === EmailingDomainDriver.LOG;
+
+    const isInboundMessageStoreConfigured =
+      emailingDomainDriver === EmailingDomainDriver.RESEND
+        ? isNonEmptyString(this.twentyConfigService.get('RESEND_API_KEY'))
+        : this.twentyConfigService.get('STORAGE_TYPE') ===
+          StorageDriverType.S_3;
 
     if (
       !isEmailingDomainInDemoMode &&
       (!isNonEmptyString(inboundEmailDomain) ||
-        storageType !== StorageDriverType.S_3)
+        !isInboundMessageStoreConfigured)
     ) {
       throw new MessageChannelException(
-        'Email handles are not configured: INBOUND_EMAIL_DOMAIN must be set and STORAGE_TYPE must be S3',
+        'Email handles are not configured: INBOUND_EMAIL_DOMAIN must be set, plus S3 storage for the AWS_SES driver or RESEND_API_KEY for the RESEND driver',
         MessageChannelExceptionCode.EMAIL_GROUP_NOT_CONFIGURED,
       );
     }
@@ -268,9 +277,14 @@ export class MessageChannelMetadataService {
       visibility: 'workspace',
     });
 
+    const trimmedDisplayName = displayName?.trim();
+
     const messageChannel = await this.create({
       workspaceId,
       handle: forwardingAddress,
+      displayName: isNonEmptyString(trimmedDisplayName)
+        ? trimmedDisplayName
+        : null,
       connectedAccountId: connectedAccount.id,
       type: MessageChannelType.EMAIL_GROUP,
       visibility: MessageChannelVisibility.SHARE_EVERYTHING,
@@ -338,6 +352,48 @@ export class MessageChannelMetadataService {
     );
 
     return messageChannel;
+  }
+
+  async updateEmailGroupChannel({
+    id,
+    displayName,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    id: string;
+    displayName?: string | null;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<MessageChannelDTO> {
+    const messageChannel = await this.verifyOwnership({
+      id,
+      userWorkspaceId,
+      workspaceId,
+    });
+
+    if (messageChannel.type !== MessageChannelType.EMAIL_GROUP) {
+      throw new MessageChannelException(
+        `Message channel ${id} is not an email group`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
+    // An omitted displayName leaves the current one untouched; an explicit null clears it
+    if (displayName === undefined) {
+      return messageChannel;
+    }
+
+    const trimmedDisplayName = displayName?.trim();
+
+    return this.update({
+      id,
+      workspaceId,
+      data: {
+        displayName: isNonEmptyString(trimmedDisplayName)
+          ? trimmedDisplayName
+          : null,
+      },
+    });
   }
 
   async deleteEmailGroupChannel({

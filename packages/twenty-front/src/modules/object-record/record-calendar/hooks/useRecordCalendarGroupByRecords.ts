@@ -1,16 +1,15 @@
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { useGroupByRecordsQuery } from '@/object-record/hooks/useGroupByRecordsQuery';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
-import { useRecordCalendarQueryDateRangeFilter } from '@/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter';
+import { useRecordCalendarQueryDateRangeFilter } from '@/object-record/record-calendar/hooks/useRecordCalendarQueryDateRangeFilter';
 import { useRelevantRecordsGqlFields } from '@/object-record/record-field/hooks/useRelevantRecordsGqlFields';
-import { recordIndexCalendarEndFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdState';
-import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
+import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
 import { type Temporal } from 'temporal-polyfill';
@@ -27,19 +26,13 @@ export const useRecordCalendarGroupByRecords = (
 
   const { userTimezone } = useUserTimezone();
 
-  const recordIndexCalendarFieldMetadataId = useAtomStateValue(
-    recordIndexCalendarFieldMetadataIdState,
-  );
-  const recordIndexCalendarEndFieldMetadataId = useAtomStateValue(
-    recordIndexCalendarEndFieldMetadataIdState,
+  const recordIndexCalendarFieldMetadataId = useAtomComponentStateValue(
+    recordIndexCalendarFieldMetadataIdComponentState,
   );
 
   const recordGqlFields = useRelevantRecordsGqlFields({
     objectMetadataItem,
-    additionalFieldMetadataIds: [
-      recordIndexCalendarFieldMetadataId,
-      recordIndexCalendarEndFieldMetadataId,
-    ],
+    additionalFieldMetadataIds: [recordIndexCalendarFieldMetadataId],
   });
 
   const { dateRangeFilter } =

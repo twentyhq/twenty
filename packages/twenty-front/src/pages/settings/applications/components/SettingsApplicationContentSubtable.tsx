@@ -33,7 +33,7 @@ export const SettingsApplicationContentSubtable = ({
   rows: ApplicationContentRow[];
   applicationId?: string;
   fallbackApplicationData?: {
-    logo?: string | null;
+    logoUrl?: string | null;
     name?: string | null;
   };
 }) => {

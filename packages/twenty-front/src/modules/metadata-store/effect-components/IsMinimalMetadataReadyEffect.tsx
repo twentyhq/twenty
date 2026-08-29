@@ -1,4 +1,4 @@
-import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
@@ -11,7 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { isWorkspaceProvisioned } from 'twenty-shared/workspace';
 
 export const IsMinimalMetadataReadyEffect = () => {
-  const hasAccessTokenPair = useHasAccessTokenPair();
+  const isLogged = useIsLogged();
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const metadataStoreObjectMetadataItems = useAtomFamilyStateValue(
@@ -35,7 +35,7 @@ export const IsMinimalMetadataReadyEffect = () => {
   );
 
   useEffect(() => {
-    if (!hasAccessTokenPair) {
+    if (!isLogged) {
       setIsMinimalMetadataReady(true);
       return;
     }
@@ -61,7 +61,7 @@ export const IsMinimalMetadataReadyEffect = () => {
       setIsMinimalMetadataReady(true);
     }
   }, [
-    hasAccessTokenPair,
+    isLogged,
     currentUser,
     currentWorkspace,
     metadataStoreObjectMetadataItems.status,

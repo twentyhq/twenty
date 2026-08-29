@@ -13,7 +13,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   WorkflowRunStatus,
@@ -36,7 +36,7 @@ export class WorkflowHandleStaledRunsWorkspaceService {
     WorkflowHandleStaledRunsWorkspaceService.name,
   );
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
@@ -49,13 +49,11 @@ export class WorkflowHandleStaledRunsWorkspaceService {
   async handleStaledRunsForWorkspace(workspaceId: string) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowRunRepository =
-        await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          WorkflowRunWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowRunRepository = this.workspaceOrmManager.getRepository(
+        WorkflowRunWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
 
       const staledRunsCount = await workflowRunRepository.count({
         where: getStaledRunsFindOptions(),
@@ -280,33 +278,28 @@ export class WorkflowHandleStaledRunsWorkspaceService {
   }): Promise<string[]> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const workflowRunRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            WorkflowRunWorkspaceEntity,
-            { shouldBypassPermissionChecks: true },
-          );
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowRunRepository = this.workspaceOrmManager.getRepository(
+        WorkflowRunWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
 
-        const runIds: string[] = [];
-        let page: WorkflowRunWorkspaceEntity[];
+      const runIds: string[] = [];
+      let page: WorkflowRunWorkspaceEntity[];
 
-        do {
-          page = await workflowRunRepository.find({
-            where: findOptions,
-            select: { id: true },
-            order: { createdAt: 'ASC', id: 'ASC' },
-            take: QUERY_MAX_RECORDS,
-            skip: runIds.length,
-          });
+      do {
+        page = await workflowRunRepository.find({
+          where: findOptions,
+          select: { id: true },
+          order: { createdAt: 'ASC', id: 'ASC' },
+          take: QUERY_MAX_RECORDS,
+          skip: runIds.length,
+        });
 
-          runIds.push(...page.map((workflowRun) => workflowRun.id));
-        } while (page.length === QUERY_MAX_RECORDS);
+        runIds.push(...page.map((workflowRun) => workflowRun.id));
+      } while (page.length === QUERY_MAX_RECORDS);
 
-        return runIds;
-      },
-      authContext,
-    );
+      return runIds;
+    }, authContext);
   }
 }

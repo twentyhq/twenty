@@ -1,0 +1,3 @@
+/** PartnerPage-style featured-work screenshot (contain on white), for local dummy data. */
+export const CASE_STUDY_PARTNERPAGE_SAMPLE =
+  'https://content.partnerpage.io/eyJidWNrZXQiOiJwYXJ0bmVycGFnZS5wcm9kIiwia2V5IjoibWVkaWEvZmVhdHVyZWRfd29yay9mYzA5MzYzYi0yOWE5LTQ1M2EtYWEyNy1jMDUxNzI2MjE0ZTEvMTc5YWM3MzAtY2NiNy00MzcxLTkzZGQtNzljMWVkMTg2NTRjLnBuZyIsImVkaXRzIjp7InRvRm9ybWF0Ijoid2VicCIsInJlc2l6ZSI6eyJmaXQiOiJjb250YWluIiwiYmFja2dyb3VuZCI6eyJyIjoyNTUsImciOjI1NSwiYiI6MjU1LCJhbHphaCI6MH19fX0=';

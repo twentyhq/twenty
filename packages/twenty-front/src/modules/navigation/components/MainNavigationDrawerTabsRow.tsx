@@ -8,22 +8,19 @@ import {
 } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { useIsMobile } from 'twenty-ui/utilities';
 
 import { useContext } from 'react';
 
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import {
   type NavigationDrawerActiveTab,
   NAVIGATION_DRAWER_TABS,
 } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const StyledRow = styled.div<{ isExpanded: boolean }>`
@@ -102,19 +99,23 @@ const StyledNewChatButtonWrapper = styled.div<{ isExpanded: boolean }>`
   height: ${({ isExpanded }) =>
     isExpanded ? themeCssVariables.spacing[7] : themeCssVariables.spacing[6]};
   justify-content: center;
+  max-width: 100%;
+  min-width: ${({ isExpanded }) =>
+    isExpanded ? themeCssVariables.spacing[7] : themeCssVariables.spacing[6]};
   padding: ${({ isExpanded }) =>
     isExpanded ? '3px' : themeCssVariables.spacing[0.5]};
   transition:
     height calc(${themeCssVariables.animation.duration.normal} * 1s) ease,
     padding calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
   width: ${({ isExpanded }) =>
-    isExpanded ? '103px' : themeCssVariables.spacing[6]};
+    isExpanded ? 'max-content' : themeCssVariables.spacing[6]};
 `;
 
 const StyledNewChatButton = styled.div`
   align-items: center;
   border-radius: inherit;
   color: ${themeCssVariables.font.color.secondary};
+  corner-shape: round;
   cursor: pointer;
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
@@ -146,19 +147,14 @@ export const MainNavigationDrawerTabsRow = ({
   navigationMenuTabLabel = t`Home`,
 }: MainNavigationDrawerTabsRowProps) => {
   const { theme } = useContext(ThemeContext);
-  const isMobile = useIsMobile();
-  const isNavigationDrawerExpanded = useAtomStateValue(
-    isNavigationDrawerExpandedState,
-  );
   const [navigationDrawerActiveTab, setNavigationDrawerActiveTab] =
     useAtomState(navigationDrawerActiveTabState);
-  const { switchToNewChat } = useSwitchToNewAiChat();
-  const setIsNavigationDrawerExpanded = useSetAtomState(
-    isNavigationDrawerExpandedState,
-  );
+  const { switchToNewChat } = useSwitchToNewAiChat({
+    shouldOpenInFullPage: true,
+  });
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
-  const isExpanded = isNavigationDrawerExpanded || isMobile;
+  const isExpanded = useIsNavigationDrawerContentExpanded();
 
   if (!hasAiPermission) {
     return null;
@@ -177,9 +173,7 @@ export const MainNavigationDrawerTabsRow = ({
     };
 
   const handleNewChatClick = () => {
-    if (isMobile) {
-      setIsNavigationDrawerExpanded(false);
-    }
+    setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
     switchToNewChat();
   };
 
@@ -193,37 +187,28 @@ export const MainNavigationDrawerTabsRow = ({
   const getTabIconColor = (isActive: boolean) =>
     isActive ? theme.font.color.primary : theme.font.color.tertiary;
 
+  // The mobile home page adds a settings tab this two-tab pill does not have, so
+  // anything that is not the chat tab belongs to the menu tab here.
+  const isNavigationMenuTabActive =
+    navigationDrawerActiveTab !== NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY;
+
   return (
     <StyledRow isExpanded={isExpanded}>
       <NavigationDrawerAnimatedCollapseWrapper>
         <StyledTabsPill role="tablist" aria-label={t`Navigation tabs`}>
           <StyledTabWrapper
-            isActive={
-              navigationDrawerActiveTab ===
-              NAVIGATION_DRAWER_TABS.NAVIGATION_MENU
-            }
+            isActive={isNavigationMenuTabActive}
             role="tab"
-            aria-selected={
-              navigationDrawerActiveTab ===
-              NAVIGATION_DRAWER_TABS.NAVIGATION_MENU
-            }
+            aria-selected={isNavigationMenuTabActive}
             aria-label={navigationMenuTabLabel}
-            tabIndex={
-              navigationDrawerActiveTab ===
-              NAVIGATION_DRAWER_TABS.NAVIGATION_MENU
-                ? 0
-                : -1
-            }
+            tabIndex={isNavigationMenuTabActive ? 0 : -1}
             onClick={handleTabClick(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU)}
             onKeyDown={handleTabKeyDown(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU)}
           >
             <StyledTabIcon>
               <NavigationMenuTabIcon
                 size={theme.icon.size.md}
-                color={getTabIconColor(
-                  navigationDrawerActiveTab ===
-                    NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
-                )}
+                color={getTabIconColor(isNavigationMenuTabActive)}
               />
             </StyledTabIcon>
           </StyledTabWrapper>

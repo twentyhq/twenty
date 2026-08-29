@@ -27,6 +27,7 @@ my-twenty-app/
   .github/workflows/
     ci.yml                                  # Lint, typecheck, unit + integration tests
     cd.yml                                  # Deploy + install on push to main
+    publish.yml                             # Publish to npm on version tags (with provenance)
   public/
     logo.svg                                # Static assets
   vitest.config.ts                          # Integration test runner config
@@ -75,4 +76,4 @@ Twenty の両方の SDK パッケージは、`dependencies` ではなく `devDep
 
 どちらかのパッケージを `dependencies` の下に置いたままだと、インストールされたアプリのランタイムバンドルに取り込まれてしまい、不要な重荷になります。 いずれかがまだ `dependencies` の下にリストされている場合、`twenty dev:build` は警告を出力します。
 
-アプリ独自のランタイム依存関係（ロジック関数が実際にランタイムでインポートするライブラリ）は、通常どおり `dependencies` の下に追加してください。
+アプリ独自のランタイム依存関係（ロジック関数が実際にランタイムでインポートするライブラリ）は、通常どおり `dependencies` の下に追加してください。 ツリーを軽量に保ちましょう。`dependencies` は、展開後の上限が 250MB のランタイムレイヤーにインストールされます。それを超えると同期またはインストールは失敗し、`dependencies` のサイズエラーになります。UI ライブラリや開発ツールは `devDependencies` に含めてください。

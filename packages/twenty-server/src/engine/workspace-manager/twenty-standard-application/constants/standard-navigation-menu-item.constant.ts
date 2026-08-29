@@ -1,6 +1,8 @@
+import { msg } from '@lingui/core/macro';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 export const STANDARD_NAVIGATION_MENU_ITEMS = {
   allCompanies: {
@@ -45,10 +47,20 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
       STANDARD_OBJECTS.dashboard.views.allDashboards.universalIdentifier,
     position: 5,
   },
+  allMessageCampaigns: {
+    universalIdentifier: '20202020-b00b-4b0b-8b0b-c0aba11c000b',
+    type: NavigationMenuItemType.OBJECT,
+    viewUniversalIdentifier:
+      STANDARD_OBJECTS.messageCampaign.views.allMessageCampaigns
+        .universalIdentifier,
+    position: 7,
+  },
   workflowsFolder: {
     universalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
     type: NavigationMenuItemType.FOLDER,
-    name: 'Workflows',
+    name: i18nLabel(
+      msg({ message: `Workflows`, context: 'navigationMenuItem.name' }),
+    ),
     icon: 'IconSettingsAutomation',
     position: 6,
   },
@@ -88,6 +100,7 @@ export const STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS: Partial<
   allNotes: 'turquoise',
   allOpportunities: 'red',
   workflowsFolder: 'orange',
+  allMessageCampaigns: 'gray',
   allDashboards: 'gray',
   workflowsFolderAllWorkflows: 'gray',
   workflowsFolderAllWorkflowRuns: 'gray',

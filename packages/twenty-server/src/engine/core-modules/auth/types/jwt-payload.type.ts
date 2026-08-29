@@ -3,6 +3,7 @@ import { type ApiKeyTokenJwtPayload } from 'src/engine/core-modules/auth/types/a
 import { type ApplicationAccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/application-access-token-jwt-payload.type';
 import { type ApplicationRefreshTokenJwtPayload } from 'src/engine/core-modules/auth/types/application-refresh-token-jwt-payload.type';
 import { type AppOAuthStateJwtPayload } from 'src/engine/core-modules/auth/types/app-oauth-state-jwt-payload.type';
+import { type ApplicationRegistrationGithubClaimStateJwtPayload } from 'src/engine/core-modules/auth/types/application-registration-github-claim-state-jwt-payload.type';
 import { type ApprovedAccessDomainJwtPayload } from 'src/engine/core-modules/auth/types/approved-access-domain-jwt-payload.type';
 import { type FileTokenJwtPayload } from 'src/engine/core-modules/auth/types/file-token-jwt-payload.type';
 import { type FileUploadTokenJwtPayload } from 'src/engine/core-modules/auth/types/file-upload-token-jwt-payload.type';
@@ -26,5 +27,6 @@ export type JwtPayload =
   | FileTokenJwtPayloadLegacy
   | FileUploadTokenJwtPayload
   | AppOAuthStateJwtPayload
+  | ApplicationRegistrationGithubClaimStateJwtPayload
   | ApprovedAccessDomainJwtPayload
   | PlaygroundTokenJwtPayload;

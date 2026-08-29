@@ -1,7 +1,7 @@
 import { InformationBannerWrapper } from '@/information-banner/components/InformationBannerWrapper';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type PageCardLayoutProps = {
   header: ReactNode;
@@ -33,6 +33,11 @@ const StyledMainCardWrapper = styled.div`
   padding-left: 4px;
   width: 0;
 
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    margin-left: 0;
+    padding-left: 0;
+  }
+
   @media print {
     display: block;
     margin-left: 0;
@@ -61,6 +66,15 @@ const StyledCard = styled.div`
     box-shadow:
       -4px 0 4px 0 rgba(0, 0, 0, 0.03),
       0 0 0 1px ${themeCssVariables.border.color.medium};
+  }
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    border-radius: 0;
+    box-shadow: none;
+
+    .dark & {
+      box-shadow: none;
+    }
   }
 
   @media print {

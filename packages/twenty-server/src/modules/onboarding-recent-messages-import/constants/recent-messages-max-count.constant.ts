@@ -1,0 +1,1 @@
+export const RECENT_MESSAGES_MAX_COUNT = 100;

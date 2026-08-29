@@ -1,13 +1,13 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Row Level Permission Predicate upsert should fail when fieldMetadataId in predicate does not exist 1`] = `
 {
   "extensions": {
     "code": "NOT_FOUND",
-    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
-    "userFriendlyMessage": "An error occurred.",
+    "subCode": "FIELD_METADATA_NOT_FOUND",
+    "userFriendlyMessage": "Field metadata not found.",
   },
-  "message": "Could not find fieldMetadata for given fieldMetadataId",
+  "message": "Field metadata not found",
   "name": "NotFoundError",
 }
 `;
@@ -99,11 +99,11 @@ exports[`Row Level Permission Predicate upsert should fail when roleId is not a 
 exports[`Row Level Permission Predicate upsert should fail when rowLevelPermissionPredicateGroupId in predicate does not exist 1`] = `
 {
   "extensions": {
-    "code": "NOT_FOUND",
-    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
-    "userFriendlyMessage": "An error occurred.",
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
+    "userFriendlyMessage": "Invalid row level permission predicate data.",
   },
-  "message": "Could not find rowLevelPermissionPredicateGroup for given rowLevelPermissionPredicateGroupId",
-  "name": "NotFoundError",
+  "message": "Referenced predicate group is not a group of this role and object. Reference a group declared in predicateGroups or an existing group of this role and object.",
+  "name": "UserInputError",
 }
 `;

@@ -8,13 +8,16 @@ import {
   ResolveField,
 } from '@nestjs/graphql';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -27,7 +30,9 @@ import { RecordIdentifierDTO } from 'src/engine/metadata-modules/navigation-menu
 import { UpdateOneNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
 import { NavigationMenuItemGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/navigation-menu-item/interceptors/navigation-menu-item-graphql-api-exception.interceptor';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
+import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
 @UseGuards(WorkspaceAuthGuard)
 @UseInterceptors(
@@ -38,7 +43,38 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
 export class NavigationMenuItemResolver {
   constructor(
     private readonly navigationMenuItemService: NavigationMenuItemService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
+
+  @ResolveField(() => String, { nullable: true })
+  async name(
+    @Parent() navigationMenuItem: NavigationMenuItemDTO,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<string | null> {
+    if (!isNonEmptyString(navigationMenuItem.name)) {
+      return navigationMenuItem.name ?? null;
+    }
+
+    return resolveEffectiveEntityProperty({
+      metadataName: 'navigationMenuItem',
+      baseValue: navigationMenuItem.name,
+      // navigationMenuItem is not an overridable entity: a workspace renaming a
+      // folder edits the row itself, so there is no standard value left to
+      // translate and no override to arbitrate against.
+      overrides: undefined,
+      property: 'name',
+      i18nContext:
+        await this.applicationTranslationCatalogService.buildEffectiveEntityI18nContext(
+          {
+            applicationId: navigationMenuItem.applicationId,
+            loaders: context.loaders,
+            locale: context.req.locale,
+            workspaceId: workspace.id,
+          },
+        ),
+    });
+  }
 
   @Query(() => [NavigationMenuItemDTO])
   @UseGuards(NoPermissionGuard)

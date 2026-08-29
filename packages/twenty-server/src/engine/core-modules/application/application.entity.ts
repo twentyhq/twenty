@@ -113,19 +113,56 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Field(() => RoleDTO, { nullable: true })
   defaultRole: RoleDTO | null;
 
-  /**
-   * @deprecated Custom settings tabs are no longer supported. The column is
-   * kept (not dropped) so existing installations upgrade cleanly, but the
-   * value is no longer read or synced from manifests.
-   */
   @Column({ nullable: true, type: 'uuid' })
   settingsCustomTabFrontComponentId: string | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.32.0_AddUninstallLogicFunctionIdToApplicationFastInstanceCommand_1786959731000',
+  })
+  uninstallLogicFunctionId: string | null;
+
+  @Column({ nullable: true, type: 'timestamptz' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.33.0_AddUninstallHookCompletedForRequestedAtToApplicationFastInstanceCommand_1787151824000',
+  })
+  uninstallHookCompletedForRequestedAt: Date | null;
 
   @Column({ nullable: false, type: 'boolean', default: true })
   canBeUninstalled: boolean;
 
   @Column({ nullable: false, type: 'boolean', default: false })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.23.0_AddAutoUpgradeToApplicationFastInstanceCommand_1784297307235',
+  })
+  autoUpgrade: boolean;
+
+  @Column({ nullable: false, type: 'boolean', default: false })
   isSdkLayerStale: boolean;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.23.0_AddSdkClientCoreChecksumToApplicationFastInstanceCommand_1784625638000',
+  })
+  sdkClientCoreChecksum: string | null;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.31.0_AddFrontComponentSharedDependenciesToApplicationFastInstanceCommand_1786529082690',
+  })
+  frontComponentSharedDependenciesChecksum: string | null;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.31.0_AddFrontComponentSharedDependenciesToApplicationFastInstanceCommand_1786529082690',
+  })
+  frontComponentSharedDependenciesBuiltPath: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
   applicationRegistrationId: string | null;

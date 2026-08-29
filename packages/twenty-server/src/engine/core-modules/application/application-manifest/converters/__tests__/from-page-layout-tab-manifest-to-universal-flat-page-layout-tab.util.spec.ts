@@ -1,4 +1,4 @@
-import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
+import { PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-shared/types';
 
 import { fromPageLayoutTabManifestToUniversalFlatPageLayoutTab } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-tab-manifest-to-universal-flat-page-layout-tab.util';
 
@@ -15,6 +15,7 @@ describe('fromPageLayoutTabManifestToUniversalFlatPageLayoutTab', () => {
         position: 0,
       },
       pageLayoutUniversalIdentifier,
+      pageLayoutType: undefined,
       applicationUniversalIdentifier,
       now,
     });
@@ -43,6 +44,7 @@ describe('fromPageLayoutTabManifestToUniversalFlatPageLayoutTab', () => {
         layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       },
       pageLayoutUniversalIdentifier,
+      pageLayoutType: undefined,
       applicationUniversalIdentifier,
       now,
     });
@@ -51,5 +53,54 @@ describe('fromPageLayoutTabManifestToUniversalFlatPageLayoutTab', () => {
     expect(result.position).toBe(1);
     expect(result.icon).toBe('IconLayout');
     expect(result.layoutMode).toBe(PageLayoutTabLayoutMode.VERTICAL_LIST);
+  });
+
+  it('should default a standalone page tab to VERTICAL_LIST', () => {
+    const result = fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
+      pageLayoutTabManifest: {
+        universalIdentifier: 'tab-uuid-3',
+        title: 'Overview',
+        position: 0,
+      },
+      pageLayoutUniversalIdentifier,
+      pageLayoutType: PageLayoutType.STANDALONE_PAGE,
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.layoutMode).toBe(PageLayoutTabLayoutMode.VERTICAL_LIST);
+  });
+
+  it('should default a dashboard tab to GRID', () => {
+    const result = fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
+      pageLayoutTabManifest: {
+        universalIdentifier: 'tab-uuid-4',
+        title: 'Overview',
+        position: 0,
+      },
+      pageLayoutUniversalIdentifier,
+      pageLayoutType: PageLayoutType.DASHBOARD,
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.layoutMode).toBe(PageLayoutTabLayoutMode.GRID);
+  });
+
+  it('should keep an explicit layoutMode on a standalone page tab', () => {
+    const result = fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
+      pageLayoutTabManifest: {
+        universalIdentifier: 'tab-uuid-5',
+        title: 'Overview',
+        position: 0,
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+      },
+      pageLayoutUniversalIdentifier,
+      pageLayoutType: PageLayoutType.STANDALONE_PAGE,
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.layoutMode).toBe(PageLayoutTabLayoutMode.GRID);
   });
 });

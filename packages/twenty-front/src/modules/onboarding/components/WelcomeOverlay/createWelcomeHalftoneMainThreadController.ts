@@ -7,7 +7,6 @@ import { createWelcomeHalftoneRenderer } from '@/onboarding/components/WelcomeOv
 type CreateWelcomeHalftoneMainThreadControllerOptions = {
   canvas: HTMLCanvasElement;
   dotColor: string;
-  dotHighlightColor: string;
   prefersReducedMotion: boolean;
   initialCanvasWidth: number;
   initialCanvasHeight: number;
@@ -17,7 +16,6 @@ type CreateWelcomeHalftoneMainThreadControllerOptions = {
 export const createWelcomeHalftoneMainThreadController = ({
   canvas,
   dotColor,
-  dotHighlightColor,
   prefersReducedMotion,
   initialCanvasWidth,
   initialCanvasHeight,
@@ -54,7 +52,6 @@ export const createWelcomeHalftoneMainThreadController = ({
     height: initialCanvasHeight,
     devicePixelRatio,
     color: dotColor,
-    highlightColor: dotHighlightColor,
     reducedMotion: prefersReducedMotion,
   });
 

@@ -7,6 +7,7 @@ import { useGraphLineChartWidgetData } from '@/page-layout/widgets/graph/graph-w
 import { assertLineChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertLineChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
 import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
+import { getChartValueFormatOptions } from '@/page-layout/widgets/graph/utils/getChartValueFormatOptions';
 import { isFilteredViewRedirectionSupported } from '@/page-layout/widgets/graph/utils/isFilteredViewRedirectionSupported';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
@@ -58,6 +59,13 @@ export const GraphWidgetLineChartRenderer = () => {
   const navigate = useNavigate();
   const configuration = widget.configuration;
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+
+  const chartValueFormatOptions = getChartValueFormatOptions({
+    aggregateOperation: configuration.aggregateOperation,
+    aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
+    fieldMetadataItems: objectMetadataItem.fields,
+    numberFormat: configuration.numberFormat,
+  });
 
   const hasGroupByOnSecondaryAxis = isDefined(
     configuration.secondaryAxisGroupByFieldMetadataId,
@@ -151,7 +159,10 @@ export const GraphWidgetLineChartRenderer = () => {
         omitNullValues={configuration.omitNullValues ?? false}
         groupMode={groupMode}
         colorMode={colorMode}
-        displayType="shortNumber"
+        decimals={chartValueFormatOptions.decimals}
+        displayType={chartValueFormatOptions.displayType}
+        axisDisplayType="shortNumber"
+        tooltipDisplayType="number"
         onSliceClick={
           isPageLayoutInEditMode || !canRedirectToFilteredView
             ? undefined

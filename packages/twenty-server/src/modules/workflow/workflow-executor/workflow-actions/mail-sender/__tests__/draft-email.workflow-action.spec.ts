@@ -5,18 +5,11 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { DraftEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/draft-email.workflow-action';
 import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
-
-jest.mock(
-  'src/engine/core-modules/tool/tools/email-tool/utils/render-rich-text-to-html.util',
-  () => ({
-    renderRichTextToHtml: jest.fn().mockResolvedValue('<p>rendered html</p>'),
-  }),
-);
 
 const baseSettings: WorkflowActionSettings = {
   outputSchema: {},
@@ -71,12 +64,10 @@ describe('DraftEmailWorkflowAction', () => {
           useValue: { setStepLog: mockSetStepLog },
         },
         {
-          provide: GlobalWorkspaceOrmManager,
+          provide: WorkspaceOrmManager,
           useValue: {
             executeInWorkspaceContext: jest.fn((callback) => callback()),
-            getRepository: jest
-              .fn()
-              .mockResolvedValue(workspaceMemberRepository),
+            getRepository: jest.fn().mockReturnValue(workspaceMemberRepository),
           },
         },
         {

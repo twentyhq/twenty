@@ -6,17 +6,23 @@ icon: window-maximize
 
 Ön uç bileşenler, Twenty'nin UI'si içinde doğrudan görüntülenen React bileşenleridir. Remote DOM kullanan **izole bir Web Worker** içinde çalışırlar — kodunuz, korumalı (sandbox) ve opak kökenli bir iframe içinde yürütülür; ancak UI, o iframe ile sınırlanmak yerine sayfada yerel olarak işlenir.
 
+<Warning>
+Front bileşenleri hâlâ aktif geliştirme aşamasındadır. Kodunuz gerçek bir tarayıcı sayfası yerine kısmi bir DOM üzerinde çalışır, bu nedenle ileri düzey kullanımlar çoğu zaman sessizce başarısız olabilir. [Mevcut sınırlamalara](#current-limitations) bakın.
+</Warning>
+
 ## Ön uç bileşenlerinin kullanılabileceği yerler
 
-Ön uç bileşenler, Twenty içinde iki konumda işlenebilir:
+Ön uç bileşenler, Twenty içinde üç konumda işlenebilir:
 
 * **Yan panel** — Headless olmayan ön uç bileşenler, sağ taraftaki yan panelde açılır. Bir ön uç bileşeni komut menüsünden tetiklendiğinde varsayılan davranış budur.
 * **Widget'lar (panolar ve kayıt sayfaları)** — Ön uç bileşenler, [sayfa düzenleri](/l/tr/developers/extend/apps/layout/page-layouts) içinde widget olarak gömülebilir. Bir pano veya kayıt sayfası düzeni yapılandırılırken kullanıcılar bir ön uç bileşen widget'ı ekleyebilir.
+* **Uygulama ayarları** — [`defineSettingsFrontComponent()`](#custom-settings-component) ile tanımlandığında, ön uç bileşeni, varsayılan değişken yapılandırma kullanıcı arayüzü yerine uygulamanın **Settings** sekmesi içinde bir bölüm olarak görüntülenir.
 
-Tek başına bir ön uç bileşenine kullanıcı arayüzünden erişilemez — onu görünür hâle getirmeniz gerekir. Bunu yapmanın iki yolu vardır:
+Tek başına bir ön uç bileşenine kullanıcı arayüzünden erişilemez — onu görünür hâle getirmeniz gerekir. Bunu yapmanın üç yolu vardır:
 
 * **Onu bir [komut menüsü öğesi](/l/tr/developers/extend/apps/layout/command-menu-items) ile eşleştirin** — komut menüsüne (Cmd+K) ve isteğe bağlı olarak sabitlenmiş hızlı işlem olarak kaydeder.
 * **Onu bir [sayfa düzeni](/l/tr/developers/extend/apps/layout/page-layouts) içinde widget olarak gömün** — bir kaydın ayrıntı sayfasına veya panosuna yerleştirir.
+* **Bunu [`defineSettingsFrontComponent()`](#custom-settings-component) ile tanımlayın** — varsayılan değişken yapılandırma kullanıcı arayüzü yerine uygulamanın **Settings** sekmesi içinde bir bölüm olarak görüntülenir.
 
 ## Basit örnek
 
@@ -76,6 +82,34 @@ Bileşeni satır içi işlemek için üzerine tıklayın.
 ## Bir ön uç bileşenini bir sayfaya yerleştirme
 
 Komutların ötesinde, bir ön uç bileşenini bir **sayfa düzeninde** widget olarak ekleyerek doğrudan bir kayıt sayfasına gömebilirsiniz. Ayrıntılar için [Sayfa Düzenleri](/l/tr/developers/extend/apps/layout/page-layouts) bölümüne bakın.
+
+## Özel ayarlar bileşeni
+
+Uygulamanızın **Settings** sekmesindeki otomatik oluşturulan değişken yapılandırma kullanıcı arayüzünü kendi bileşeninizle değiştirmek için, `defineFrontComponent` yerine `defineSettingsFrontComponent` ile tanımlayın. Ayarlar bileşeni her zaman görünür bir kullanıcı arayüzü oluşturduğundan, kabul edilmeyen `isHeadless` dışında, aynı [yapılandırma alanlarını](#configuration-fields) alır ve ek olarak bileşeni uygulamanın ayarlar arayüzü olarak işaretler.
+
+Bileşen, tüm sekmenin yerine geçmek yerine, Settings sekmesi içinde bir bölüm olarak görüntülenir. Twenty'nin sistem tarafından yönetilen bölümleri — otomatik yükseltme, App URL ve bağlantılar — her zaman bunun üstünde görüntülenir ve uygulama tarafından geçersiz kılınamaz.
+
+```tsx src/front-components/app-settings.tsx
+import { defineSettingsFrontComponent } from 'twenty-sdk/define';
+
+const AppSettings = () => {
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>My app settings</h2>
+      {/* render your own configuration UI here */}
+    </div>
+  );
+};
+
+export default defineSettingsFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'app-settings',
+  description: "Custom UI for the app's Settings tab",
+  component: AppSettings,
+});
+```
+
+Uygulama başına yalnızca bir ayarlar ön uç bileşenine izin verilir; birden fazla tanımlanması derlemenin başarısız olmasına neden olur. Mevcut olduğunda, uygulamanın **Settings** sekmesi, varsayılan değişken yapılandırma kullanıcı arayüzü yerine bu bileşeni görüntüler.
 
 ## Headless ve headless olmayan
 
@@ -299,6 +333,8 @@ export default defineLogicFunction({
 
 Uygulama HTTP rotalarını çağırmak veya bir front bileşeninden Twenty kayıtlarını okumak ve yazmak için `twenty-client-sdk/rest` paketinden `RestApiClient` kullanın. `/s/...` yollarını çalışma alanınızdaki işlevlerin temel URL'sine, `/rest/...` dahil diğer tüm yolları ise `TWENTY_API_URL`'ye gönderir.
 
+Her zaman sayfayı görüntüleyen kişi olarak hareket eder. `runAs: 'application'` yalnızca bir mantık işlevi seçeneğidir: bir bileşen uygulamanızın kendi token'ını asla almaz; dolayısıyla burada bunu istemek hata verir. Uygulamanın kendi erişimini gerektiren işleri bir mantık işlevinin arkasına yerleştirin ve bunun yerine onu çağırın.
+
 | Yöntem                            | Açıklama                                                                 |
 | --------------------------------- | ------------------------------------------------------------------------ |
 | `get(path, options?)`             | Bir `GET` isteği gönderir                                                |
@@ -373,14 +409,15 @@ export default defineFrontComponent({
 
 Kullanılabilir hook'lar:
 
-| Hook                                          | Döndürür                | Açıklama                                                                          |
-| --------------------------------------------- | ----------------------- | --------------------------------------------------------------------------------- |
-| `useUserId()`                                 | `string` veya `null`    | Geçerli kullanıcının ID'si                                                        |
-| `useSelectedRecordIds()`                      | `string[]`              | Tüm seçili kayıt kimlikleri (hiçbiri seçilmediyse boş dizi)                       |
-| `useRecordId()`                               | `string` veya `null`    | **Kullanımdan kaldırıldı.** Bunun yerine `useSelectedRecordIds()` kullanın        |
-| `useFrontComponentId()`                       | `string`                | Bu bileşen örneğinin ID'si                                                        |
-| `useColorScheme()`                            | `'light'` veya `'dark'` | Ana makine kullanıcı arayüzünün etkin renk şeması (`System` zaten çözümlenmiştir) |
-| `useFrontComponentExecutionContext(selector)` | değişir                 | Bir seçici işlevle tam yürütme bağlamına erişin                                   |
+| Hook                                          | Döndürür                | Açıklama                                                                                |
+| --------------------------------------------- | ----------------------- | --------------------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` veya `null`    | Geçerli kullanıcının ID'si                                                              |
+| `useSelectedRecordIds()`                      | `string[]`              | Tüm seçili kayıt kimlikleri (hiçbiri seçilmediyse boş dizi)                             |
+| `useRecordId()`                               | `string` veya `null`    | **Kullanımdan kaldırıldı.** Bunun yerine `useSelectedRecordIds()` kullanın              |
+| `useFrontComponentId()`                       | `string`                | Bu bileşen örneğinin ID'si                                                              |
+| `useTimelineActivityId()`                     | `string` veya `null`    | Özel bir zaman çizelgesi satırı oluşturulurken geçerli zaman çizelgesi etkinlik kimliği |
+| `useColorScheme()`                            | `'light'` veya `'dark'` | Ana makine kullanıcı arayüzünün etkin renk şeması (`System` zaten çözümlenmiştir)       |
+| `useFrontComponentExecutionContext(selector)` | değişir                 | Bir seçici işlevle tam yürütme bağlamına erişin                                         |
 
 ## Uygulama değişkenleri
 
@@ -411,10 +448,10 @@ Gizli değişkenler (`isSecret: true`) ön uç bileşenlere açıklanmaz. Bunlar
 
 Aşağıdaki sistem değişkenleri her zaman `process.env` aracılığıyla kullanılabilir:
 
-| Değişken                  | Açıklama                                                  |
-| ------------------------- | --------------------------------------------------------- |
-| `TWENTY_API_URL`          | Twenty çekirdek API'sinin temel URL'si                    |
-| `TWENTY_APP_ACCESS_TOKEN` | Uygulamanızın rolüyle sınırlanan kısa ömürlü bir belirteç |
+| Değişken                  | Açıklama                                                                                                                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `TWENTY_API_URL`          | Twenty çekirdek API'sinin temel URL'si                                                                                                                                         |
+| `TWENTY_APP_ACCESS_TOKEN` | Oturum açmış kişinin roluyla uygulamanızın rolunun kesişimiyle kapsamı belirlenen kısa ömürlü token; böylece bir bileşen, onu görüntüleyen kişiden asla daha fazlasını yapamaz |
 
 ### `TWENTY_FUNCTIONS_URL`
 
@@ -432,15 +469,16 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 Ön uç bileşenleri, `twenty-sdk`'deki işlevleri kullanarak gezinmeyi, modalları ve bildirimleri tetikleyebilir:
 
-| Fonksiyon                                       | Açıklama                           |
-| ----------------------------------------------- | ---------------------------------- |
-| `navigate(to, params?, queryParams?, options?)` | Uygulamada bir sayfaya git         |
-| `openSidePanelPage(params)`                     | Bir yan panel aç                   |
-| `closeSidePanel()`                              | Yan paneli kapat                   |
-| `openCommandConfirmationModal(params)`          | Bir onay iletişim kutusu göster    |
-| `enqueueSnackbar(params)`                       | Bir toast bildirimi göster         |
-| `unmountFrontComponent()`                       | Bileşeni kaldır (unmount)          |
-| `updateProgress(progress)`                      | Bir ilerleme göstergesini güncelle |
+| Fonksiyon                                          | Açıklama                                                                                                                                                                                                     |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `navigate(to, params?, queryParams?, options?)`    | Uygulamada bir sayfaya git                                                                                                                                                                                   |
+| `openSidePanelPage(params)`                        | Bir yan panel aç                                                                                                                                                                                             |
+| `closeSidePanel()`                                 | Yan paneli kapat                                                                                                                                                                                             |
+| `openCommandConfirmationModal(params)`             | Bir onay iletişim kutusu göster                                                                                                                                                                              |
+| `enqueueSnackbar(params)`                          | Bir toast bildirimi göster                                                                                                                                                                                   |
+| `unmountFrontComponent()`                          | Bileşeni kaldır (unmount)                                                                                                                                                                                    |
+| `updateProgress(progress)`                         | Bir ilerleme göstergesini güncelle                                                                                                                                                                           |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | Bir `Blob` dosyasını FILES alanına yükler; `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` veya `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` sonucunu döndürür. |
 
 Bir eylem tamamlandıktan sonra bir snackbar göstermek ve yan paneli kapatmak için host API'sini kullanan bir örnek:
 
@@ -485,6 +523,39 @@ export default defineFrontComponent({
   component: ArchiveRecord,
 });
 ```
+
+### Depolama
+
+`localStorage` ve `sessionStorage` normal bir sayfada olduğu gibi, standart senkron API ile çalışır. Anahtarlarınız, uygulama kurulumunuza ve oturum açmış kullanıcıya göre kapsamlandırılır: başka hiçbir uygulama bunları okuyamaz ve aynı tarayıcıda oturum açan başka bir kullanıcı, boş bir depoyla başlar. `localStorage`'a yazılan değerler, yeniden yüklemeler arasında cihazda kalır; `sessionStorage` ise tarayıcı oturumu süresince geçerlidir.
+
+```tsx src/front-components/note-draft.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const NoteDraft = () => {
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '');
+
+  const handleChange = (nextDraft: string) => {
+    setDraft(nextDraft);
+    localStorage.setItem('draft', nextDraft);
+  };
+
+  return (
+    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-def0-890123456789',
+  name: 'note-draft',
+  description: 'Keeps an unsaved note on this device',
+  component: NoteDraft,
+});
+```
+
+Twenty, değerleri uygulamanız adına depolar, böylece bir yazma işlemi yerelde anında uygulanır ve arka planda kaydedilir. Okumalar hiçbir zaman ana makine üzerinde beklemez. Hiçbir şey eşitlenmez: değerler kullanıcıyı başka bir tarayıcıya veya makineye takip etmez, bu yüzden cihaz değişikliğinden sonra da korunması gereken her şey için bir mantık fonksiyonunun [anahtar-değer deposunu](/l/tr/developers/extend/apps/logic/key-value-store) kullanın.
+
+Yazma işlemleri sınırlandırılmıştır ve her sınır bayt yerine karakterleri sayar: anahtarlar en fazla 512 karakter, tek bir değer en fazla 262.144 karakter ve her depolama alanı uygulama ve kullanıcı başına en fazla 1.048.576 karakter olabilir. Bir sınırı aşan yazma, tarayıcı API’sinde olduğu gibi bir `QuotaExceededError` fırlatır.
 
 ### Birden çok kayıtla çalışma
 
@@ -566,6 +637,43 @@ export default defineFrontComponent({
 ```
 
 Ayrıntılar için [genel varlıklar bölümüne](/l/tr/developers/extend/apps/config/public-assets) bakın.
+
+## Ön uç bileşenleri arasında bağımlılıkları paylaşma
+
+Varsayılan olarak, her ön uç bileşeni içe aktardığı her bir kitaplığın kendi kopyasını paketler; bu nedenle beş bileşenli bir uygulama React'i beş kez paketler. Bu kitaplıkları tek seferde derlemek ve uygulamanın her bileşeninin onları tek bir önbelleğe alınmış dosyadan yüklemesini sağlamak için, paylaşılan bağımlılıkları uygulamanızın `package.json` dosyasında belirtin:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+Her bileşen daha sonra bağımlılıklarını önceden olduğu gibi içe aktarır — bileşen kodunuzda hiçbir şey değişmez:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+Bilmeniz gereken birkaç nokta:
+
+* **Uygulama başına tek bir paylaşılan bağımlılık paketi.** Paket, uygulamanızın kendi bağımlılıklarından oluşturulur; böylece dağıttığınız sürümler üzerinde tam denetim sizde olur.
+* **İçe aktardığınız tam belirteçleri listeleyin.** `twenty-ui/input` ve `twenty-ui/display` iki ayrı girdidir; yalnızca bir paket adı alt yollarını kapsamaz. `react`i listelemek, otomatik olarak `react/jsx-runtime`ı da kapsar.
+* **`react` ile birlikte `react-dom/client`ı paylaşın.** Her bileşen `createRoot` üzerinden oluşturulur; bu yüzden bunu dışarıda bırakmak, her bileşenin yine de React DOM'u paketlemesi anlamına gelir.
+* **Paket önbelleğe alınır.** İçerik karma değerine sahip bir URL altında, uzun ömürlü, değişmez bir önbellekle sunulur; bu nedenle bir kez indirilir ve bağımlılıklarından biri değişene kadar uygulamanın tüm bileşenleri arasında yeniden kullanılır.
+* **Paylaşılan paketlerden hiçbirini içe aktarmayan bileşenler onu asla indirmez.**
 
 ## Stil
 
@@ -666,3 +774,76 @@ const Card = () => {
 `useTheme()` bir kanca olduğundan, belirteçleri bileşen gövdesinin içinde okursunuz; böylece değerler her zaman etkin temayı yansıtır. Aynı belirteç haritası, `themeCssVariables` sabiti olarak da dışa aktarılır; ancak ön uç bileşenlerinde `useTheme()` kullanmayı tercih edin — `themeCssVariables` öğesini dolaylı olarak kullanan modül düzeyinde bir sabit, uygulama manifesti çıkarılırken tanımsız olabilir.
 
 Etkin şemaya açıkça dallanmak için, `twenty-sdk/front-component` içindeki `useColorScheme()` ile okuyun; bu kanca `'light'` veya `'dark'` döndürür.
+
+## Mevcut sınırlamalar
+
+Front bileşenleri aktif geliştirme aşamasındadır. Oluşturma, stillendirme, olayları işleme, öğeleri ölçme ve tarayıcı depolaması iyi çalışır. Bu sınırların *ötesine* geçen her şey (bir ref üzerinde bir DOM yöntemi çağırmak, öğe yeniden boyutlandırmalarını gözlemlemek, ağacınızın dışına portal oluşturmak) bugün eksik ya da tamamlanmamış durumda ve çoğu sessizce başarısız oluyor: ne bir istisna fırlatılıyor ne de TypeScript hatası görülüyor; çünkü iskeletin türleri tam tarayıcı DOM’una göre tanımlanmıştır.
+
+Bunlardan biri sizi engelliyorsa, önceliklendirilmesi için [bir issue açın](https://github.com/twentyhq/twenty/issues/new/choose).
+
+### Yerleşim ve ölçüm
+
+Öğeler kendilerini ölçebilir: ana bilgisayar geometriyi sandbox’a yansıtır; bu nedenle okumalar yerel olarak yanıtlanır ancak bir kareye kadar eski olabilir ve hiç ölçülmemiş bir öğenin ilk okunması sıfırlar döndürür. Yazdıktan sonra, `requestAnimationFrame` geri çağrısında veya bir effect içinde yeniden okuyun.
+
+| API                                                                                      | Ne olur                                                                                                                                   |
+| ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Ayna üzerinden çalışır; `scrollTop` / `scrollLeft` atamak etkisizdir                                                                      |
+| `getClientRects()`, `window.matchMedia()`                                                | Fırlatır                                                                                                                                  |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | Çalışır ve **tarayıcı görünüm alanını** raporlar; bileşeninizin kendi boyutları `document.body.clientWidth` / `clientHeight` değerleridir |
+| `window.getComputedStyle()`                                                              | Yalnızca öğenin satır içi stillerini döndürür, hiçbir zaman ana bilgisayar tarafından hesaplanan kaskadı döndürmez                        |
+| `ResizeObserver`, `IntersectionObserver`                                                 | `ReferenceError` (`typeof` kontrolleri çalışır)                                                                                           |
+| `MutationObserver`                                                                       | Çalışır, `subtree`, `attributeFilter`, eski değerler ve `takeRecords()` dahil                                                             |
+
+`getBoundingClientRect` ile konumlandırma artık çalışıyor, ancak boyut değişikliklerini `ResizeObserver` aracılığıyla izleyen her şey (recharts `ResponsiveContainer`, Floating UI'nin `autoUpdate`) hâlâ çalışmıyor. Yerleşim için yine de CSS'i tercih edin: stil sayfanız gerçek sayfaya erişir, bu nedenle flexbox, grid, `aspect-ratio`, `clamp()` ve `@container` gecikme olmadan normal şekilde davranır.
+
+<Note>
+`requestAnimationFrame`, `fetch`, `setTimeout` ve `queueMicrotask` `window.` öneki olmadan çalışır. Yalnızca `window.requestAnimationFrame(...)` ve benzerleri fırlatır.
+</Note>
+
+### DOM erişimi
+
+Bir `ref` size bir `HTMLElement` değil, bir sandbox öğesi verir.
+
+| Ne yazarsınız                                                                                               | Ne olur                                                          | Bunun yerine şunu kullanın                                                                                                                                                            |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Fırlatır                                                         | Kontrollü bileşenler; değerleri `event.target` üzerinden okuyun                                                                                                                       |
+| `element.classList.add(...)`                                                                                | Fırlatır (`classList` `undefined` durumundadır)                  | `className` dizgisini kendiniz oluşturun                                                                                                                                              |
+| `document.createTreeWalker()`                                                                               | Fırlatır                                                         | `querySelector()` / `querySelectorAll()` ve `getElementById()` çalışır; `getElementsByClassName()` de çalışır, ancak canlı bir `HTMLCollection` yerine statik bir koleksiyon döndürür |
+| `document.activeElement`                                                                                    | Her zaman `undefined`                                            | Odağı `onFocus` / `onBlur` ile takip edin                                                                                                                                             |
+| `canvas`                                                                                                    | Hiçbir şey render etmez, hata yoktur                             | SVG veya ekranda olmayan bir alanda çizim yapıp sonucu bir `img` öğesinde gösterin                                                                                                    |
+| `createPortal(node, document.body)`                                                                         | `isConnected` başarı bildirmesine rağmen hiçbir şey render etmez | `position: absolute` ile satır içi yerleştirilmiş bindirmeler veya kitaplığa kendi konteyner öğenizi iletin                                                                           |
+
+Portal boşluğu, Radix, Headless UI, MUI ve react-select popover’larının varsayılan olarak hiçbir şey render etmemesinin nedenidir. Çoğu bir container prop kabul eder; onu render ettiğiniz bir öğeye yönlendirin.
+
+### Etkinlikler
+
+Mouse, pointer, touch, sürükleme, klavye, odak, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` ve `animationend`/`transitionend` host’a iletilir, ayrıca öğe başına birkaç tane daha vardır: `img` üzerinde `load`/`error`, `input`/`textarea` üzerinde pano ve bileşim olayları, `video`/`audio` üzerinde medya, `details`/`dialog` üzerinde `toggle`. Bunun dışındaki her şey (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, pointer capture, `img` üzerinde `onLoad`) uyarı verilmeden kaldırılır.
+
+`document.addEventListener()` ve `window.addEventListener()` hatasız olarak kaydolur ancak asla tetiklenmez; bu yüzden bir sürükleme, işaretçi başladığı öğeden ayrılır ayrılmaz durur. `event.preventDefault()` da geçmez; form gönderimi, `dragover`/`drop` ve bağlantı tıklamaları zaten sizin için korunmuştur.
+
+### Öznitelikler ve stillendirme
+
+Her öğe, kendi özelliklerini host DOM’a iletir (`a` üzerinde `href`, `img` üzerinde `src`/`alt`, `input` üzerinde `value`/`placeholder`/`disabled` vb.), ayrıca her öğede ortak bir küme vardır: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` ve tireli olan tüm `aria-*` / `data-*` öznitelikleri (bu yüzden `ariaLabel` düşürülür). Bunun dışındaki her şey sessizce atılır, bu yüzden özel durumu `data-*` olarak ifade edin.
+
+Bileşen CSS’i, ister `import './styles.css'` ile, ister CSS-in-JS ile ya da bir `style` öğesinden gelsin, host sayfanın `head` kısmına **scope’suz** olarak enjekte edilir. Bu nedenle sınıf adları Twenty’nin kendi sınıf adlarıyla çakışır (onlara önek ekleyin ve asla çıplak `div { ... }` seçicileri yazmayın) ve `@media`, sizin bileşeniniz yerine tarayıcı penceresini hedefler (kendi `container-type` değerinizle `@container` kullanın). Satır içi `style` prop’ları etkilenmez.
+
+### Depolama ve ağ
+
+`localStorage` ve `sessionStorage` tarayıcı yerine Twenty tarafından sağlanır: bileşen, opak bir origin’de bir worker içinde çalışır, bu nedenle ana makine değerleri uygulamanız adına depolar. Kapsamları ve sınırları için [storage](#storage) bölümüne bakın. IndexedDB, çerezler, Cache API ve `BroadcastChannel` hâlâ kullanılamaz. Durumu cihazlar arasında kalıcı hale getirmek için bir [mantık fonksiyonu](/l/tr/developers/extend/apps/logic/logic-functions) çağırın ve onun [anahtar-değer deposunu](/l/tr/developers/extend/apps/logic/key-value-store) kullanın.
+
+`fetch` çalışır, bazı sınırlamalarla:
+
+* Twenty API’sine ve uygulamanızın rotalarına yapılan çağrılar host tarafından proxy’lenir, bu yüzden [`RestApiClient`](#calling-the-twenty-rest-api) kullanmayı tercih edin. Proxy’lenen çağrılarda `AbortSignal` ve diğer `RequestInit` seçenekleri kaldırılır ve yalnızca `string` ve `URLSearchParams` gövdeleri desteklenir.
+* Diğer origin’ler sandbox’tan `Origin: null` ile çıkar, bu yüzden üçüncü taraf bir API yalnızca `Access-Control-Allow-Origin: *` gönderirse yanıt verir. Bunun yerine onu bir mantık fonksiyonundan çağırın.
+* `fetch('/rest/people')` hiçbir zaman Twenty API’siyle eşleştirilmez, çünkü sandbox’un göreli yolu çözecek bir sayfa URL’si yoktur.
+
+### Ortam yakalama
+
+`navigator.mediaDevices.getUserMedia()` ve `MediaRecorder`, sandbox polyfill’leri aracılığıyla front bileşenleri içinde çalışır; böylece standart kayıt kodu değişmeden çalışır ve `MediaRecorder.isTypeSupported`, yaygın kapsayıcı/kodek kombinasyonları için yanıt verir. Ayrıntılı `getUserMedia` kısıtlama nesneleri kabul edilir ancak iletilmez — ana makine, istenen türler için varsayılanlarıyla yakalama yapar — ve uygulamalar genelinde aynı anda yalnızca bir yakalama etkin olabilir. Kaydedilmiş bir `Blob`’u `uploadFile` host fonksiyonu ile saklayın.
+
+### Diğer eksikler
+
+* **Dosya içerikleri.** `file` türünde bir `input`, handler’ınıza yalnızca dosya meta verilerini verir, baytları vermez, bu yüzden `FileReader` kullanılamaz. Kodunuzun zaten elinde bulunan bir `Blob`’u — örneğin `MediaRecorder` tarafından üretilen bir tane — yüklemek için `uploadFile` host fonksiyonunu kullanın.
+* **Sürükle-bırak yükleri.** Sürükleme olayları tetiklenir, ancak `event.dataTransfer` `undefined` durumundadır.
+* **Node yerleşikleri.** `fs`, `path` ve `node:crypto` build aşamasında başarısız olur; bu nedenle bu işi bir [mantık fonksiyonuna](/l/tr/developers/extend/apps/logic/logic-functions) taşıyın. Web Crypto, `fetch`, `TextEncoder` ve `URL` kullanılabilir durumdadır.
+* **`iframe`** her zaman `allow-same-origin` olmadan yeniden sandbox’a alınır, bu nedenle kendi oturumuna güvenen bir yerleştirme, oturum kapalı olarak işlenir. `onLoad`’u da yoktur.

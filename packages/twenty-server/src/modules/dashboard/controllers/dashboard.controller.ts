@@ -1,5 +1,7 @@
 import { Controller, Param, Post, UseFilters, UseGuards } from '@nestjs/common';
 
+import { ApiPath } from 'twenty-shared/types';
+
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -8,7 +10,7 @@ import { DuplicatedDashboardDTO } from 'src/modules/dashboard/dtos/duplicated-da
 import { DashboardRestApiExceptionFilter } from 'src/modules/dashboard/filters/dashboard-rest-api-exception.filter';
 import { DashboardDuplicationService } from 'src/modules/dashboard/services/dashboard-duplication.service';
 
-@Controller('rest/dashboards')
+@Controller(`${ApiPath.Rest}/dashboards`)
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
 @UseFilters(DashboardRestApiExceptionFilter)
 export class DashboardController {

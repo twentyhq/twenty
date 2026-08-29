@@ -32,7 +32,7 @@ import {
   CreateApiKeyDocument,
   GenerateApiKeyTokenDocument,
   GetApiKeyDocument,
-  GetRolesDocument,
+  GetApiKeyRolesDocument,
   RevokeApiKeyDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -100,9 +100,11 @@ export const SettingsDevelopersApiKeyDetail = () => {
     }
   }, [apiKeyData]);
 
-  const { data: rolesData, loading: rolesLoading } = useQuery(GetRolesDocument);
+  const { data: rolesData, loading: rolesLoading } = useQuery(
+    GetApiKeyRolesDocument,
+  );
 
-  const roles = rolesData?.getRoles ?? [];
+  const roles = rolesData?.getApiKeyRoles ?? [];
 
   const apiKey = apiKeyData?.apiKey;
   const [apiKeyName, setApiKeyName] = useState('');

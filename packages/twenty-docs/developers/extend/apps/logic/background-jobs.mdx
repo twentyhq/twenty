@@ -1,0 +1,197 @@
+---
+title: Background Jobs
+description: Hand long or rate-limited work to the Twenty workers by enqueuing another logic function run instead of doing everything inline.
+icon: "layer-group"
+---
+
+A logic function run is capped by its `timeoutSeconds` (900 seconds maximum). Anything that can't finish in that window — a full re-sync, a per-record fan-out, a third-party API that rate-limits you — has to be split into smaller runs.
+
+`enqueueJobs` does exactly that: it asks the Twenty workers to run one of your app's logic functions later, once per payload, each run in its own process with its own timeout budget. The caller returns immediately.
+
+```text
+  ┌─────────────────┐  enqueueJobs(...)  ┌──────────────┐   ┌────────────────────┐
+  │ Logic function  │ ─────────────────▶ │ Job queue    │──▶│ Logic function     │
+  │ (returns now)   │                    │ (workers)    │   │ (fresh run/timeout)│
+  └─────────────────┘                    └──────────────┘   └────────────────────┘
+```
+
+## Enqueue runs
+
+Import `enqueueJobs` from `twenty-sdk/logic-function`, point it at the `universalIdentifier` of the logic function to run, and pass one payload per run to enqueue.
+
+```ts src/logic-functions/sync-all-contacts.ts
+import { enqueueJobs } from 'twenty-sdk/logic-function';
+
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payloads: [{ page: 1 }],
+});
+```
+
+Each run receives its payload as the handler argument, exactly like any other trigger. The target must belong to the **same application** as the caller — enqueuing another app's function is rejected with `Logic function not found` and nothing is enqueued. A single call accepts up to `200` payloads.
+
+<Note>
+`enqueueJobs` returns as soon as the jobs are accepted, not when they have run. It does not return the targets' results — have each target write what it produces to the [key-value store](/developers/extend/apps/logic/key-value-store) or to a workspace record if you need to read it back.
+</Note>
+
+<Note>
+The older `enqueueJob` helper, which enqueues a single job per call, is deprecated. Use `enqueueJobs` with a one-element `payloads` list instead.
+</Note>
+
+## Job options
+
+Options apply to every run in the batch.
+
+| Option | Default | Range | What it does |
+|--------|---------|-------|--------------|
+| `retryLimit` | `0` | `0`–`10` | Overall extra queue attempts. Application-requested retries are capped at `3`. Only raise this for handlers that are safe to run twice. |
+| `delayMs` | `0` | `0`–`604800000` (7 days) | Wait this long before the runs become eligible. |
+
+```ts
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payloads: [{ page: 1 }],
+  retryLimit: 3,
+  delayMs: 60_000,
+});
+```
+
+<Note>
+**Priority is not configurable yet.** Enqueued jobs always run at the lowest priority, so platform work is never delayed behind application jobs. Control over priority is coming soon.
+</Note>
+
+The queued run inherits the acting user of the function that enqueued it, so it acts with the same permissions.
+
+## Retry a transient failure
+
+Twenty does not retry every exception from application code. An ordinary thrown error is treated as a permanent failure. For a transient failure, a queued logic function can request up to three retries by throwing `RetryableLogicFunctionError`.
+
+```ts
+import {
+  type LogicFunctionExecutionContext,
+  RetryableLogicFunctionError,
+} from 'twenty-sdk/logic-function';
+
+export const handler = async (
+  _payload: unknown,
+  { retryCount, maxRetries }: LogicFunctionExecutionContext,
+) => {
+  const response = await fetch('https://api.example.com/contacts');
+
+  if (response.status === 429 || response.status >= 500) {
+    throw new RetryableLogicFunctionError(
+      `The contacts API is temporarily unavailable (${response.status}); retry ${retryCount} of ${maxRetries}`,
+    );
+  }
+};
+```
+
+Throw `RetryableLogicFunctionError` directly when possible. If you extend it, do not replace its `name`: Twenty recognizes the serialized name `RetryableLogicFunctionError` across execution runtimes.
+
+`retryCount` is `0` for the initial execution and increases only when application code requests a retry. `maxRetries` is at most `3` and can be lower when the queued job has a smaller overall retry limit. Platform failures do not increase `retryCount`, although they still consume the queue's overall safety budget.
+
+The queue delays retry attempts with exponential backoff and jitter. The exact delay is intentionally not guaranteed, so application code should not depend on a retry happening at a precise time. Once `maxRetries` is reached, another `RetryableLogicFunctionError` is recorded as the final application failure without another execution.
+
+<Warning>
+Retries re-run the whole handler and may happen after some side effects succeeded. Make the handler idempotent before requesting retries.
+</Warning>
+
+## Use it: page through a long sync
+
+The classic shape is a function that enqueues *itself* with the next cursor. Each run does one page of work well inside its own timeout, and the chain stops when there is nothing left.
+
+```ts src/logic-functions/sync-contacts-page.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJobs } from 'twenty-sdk/logic-function';
+
+const SYNC_CONTACTS_PAGE = '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33';
+
+const handler = async (params: { cursor?: string }) => {
+  const { contacts, nextCursor } = await fetchContactsPage(params.cursor);
+
+  await importContacts(contacts);
+
+  if (nextCursor) {
+    await enqueueJobs({
+      logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
+      payloads: [{ cursor: nextCursor }],
+      delayMs: 2_000,
+    });
+  }
+
+  return { imported: contacts.length, done: !nextCursor };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: SYNC_CONTACTS_PAGE,
+  name: 'sync-contacts-page',
+  timeoutSeconds: 120,
+  handler,
+});
+```
+
+## Fan out per record
+
+When the work is naturally per-item, enqueue one job per item in a single call and let the workers process them in parallel instead of looping inline.
+
+```ts
+const companies = await listCompaniesToEnrich();
+
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+  payloads: companies.map((company) => ({ companyId: company.id })),
+  retryLimit: 2,
+});
+```
+
+## Good practice for long-running work
+
+Two rules cover almost every long job: **recurse instead of looping**, and **process a bounded chunk per run**.
+
+A run that tries to do everything is the failure mode — it hits the timeout, and with a retry it starts the whole thing again from zero. Instead, size one chunk so it comfortably finishes inside `timeoutSeconds`, persist your position, and enqueue the next run.
+
+```ts src/logic-functions/enrich-companies-batch.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJobs, kv } from 'twenty-sdk/logic-function';
+
+const ENRICH_COMPANIES_BATCH = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
+const CHUNK_SIZE = 50;
+
+const handler = async (params: { offset?: number }) => {
+  const offset = params.offset ?? 0;
+  const companies = await listCompaniesToEnrich({
+    offset,
+    limit: CHUNK_SIZE,
+  });
+
+  for (const company of companies) {
+    await enrichCompany(company);
+  }
+
+  await kv.set('enrich:progress', { offset: offset + companies.length });
+
+  if (companies.length === CHUNK_SIZE) {
+    await enqueueJobs({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
+      payloads: [{ offset: offset + CHUNK_SIZE }],
+    });
+  }
+
+  return { processed: companies.length, done: companies.length < CHUNK_SIZE };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: ENRICH_COMPANIES_BATCH,
+  name: 'enrich-companies-batch',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+What makes this hold up:
+
+- **Size the chunk from the slowest item, not the average.** `CHUNK_SIZE × worst-case item time` has to fit in `timeoutSeconds` with room to spare, or the tail of a chunk is lost when the run is cut off.
+- **Make the terminating condition explicit.** Recurse only while a full chunk came back. A chain that stops on "no results" alone will keep going forever if the source ever returns a short page mid-way.
+- **Persist progress before enqueuing the next run,** so a failed link restarts from the last completed chunk instead of the beginning.
+- **Keep each chunk idempotent.** Reprocessing one chunk after a retry must not double-write — key writes on the record or external id you are processing.
+- **Prefer a chunked chain over one giant fan-out** when the work hits a rate-limited third party: a chain with `delayMs` paces itself, whereas thousands of jobs enqueued at once all become eligible immediately.

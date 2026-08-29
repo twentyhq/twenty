@@ -3,7 +3,8 @@ import { styled } from '@linaria/react';
 import { useParams } from 'react-router-dom';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
+import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
+import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/ai/constants/AiInstructionsEditorProfile';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTitle';
@@ -116,7 +117,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
     label: '',
     description: '',
     content: '',
-    icon: 'IconSparkles',
+    icon: 'IconBook',
     isLabelSyncedWithName: true,
   });
 
@@ -148,7 +149,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
           label: skill.label,
           description: skill.description ?? '',
           content: skill.content,
-          icon: skill.icon ?? 'IconSparkles',
+          icon: skill.icon ?? 'IconBook',
           isLabelSyncedWithName,
         };
         setFormValues(initialValues);
@@ -382,7 +383,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       label: '',
       description: '',
       content: '',
-      icon: 'IconSparkles',
+      icon: 'IconBook',
       isLabelSyncedWithName: true,
     });
     navigate(SettingsPath.AI);
@@ -415,7 +416,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
     />
   );
 
-  const SkillIcon = getIcon(formValues.icon || 'IconSparkles');
+  const SkillIcon = getIcon(formValues.icon || 'IconBook');
 
   return (
     <SettingsPageLayout
@@ -456,7 +457,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
               <StyledFormContainer>
                 <StyledIconNameRow>
                   <IconPicker
-                    selectedIconKey={formValues.icon || 'IconSparkles'}
+                    selectedIconKey={formValues.icon || 'IconBook'}
                     onChange={({ iconKey }) =>
                       handleFieldChange('icon', iconKey)
                     }
@@ -491,7 +492,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
                   label={t`Instructions`}
                   readonly={isReadonlyMode}
                   defaultValue={formValues.content}
-                  contentType="markdown"
+                  profile={AI_INSTRUCTIONS_EDITOR_PROFILE}
                   onChange={(content: string) =>
                     handleFieldChange('content', content)
                   }
@@ -506,7 +507,6 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
                     },
                   ]}
                   minHeight={300}
-                  maxWidth={700}
                 />
 
                 <AdvancedSettingsWrapper hideDot>

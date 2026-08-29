@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 
 import { Response } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 
 import { AuthOAuthExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-oauth-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
@@ -19,7 +20,7 @@ import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/worksp
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
-@Controller('auth/google')
+@Controller(`${ApiPath.Auth}/google`)
 @UseFilters(AuthRestApiExceptionFilter)
 export class GoogleAuthController {
   constructor(private readonly authService: AuthService) {}

@@ -82,4 +82,36 @@ describe('defineConnectionProvider', () => {
 
     expect(result.success).toBe(false);
   });
+
+  const lifecycleHookKeys = [
+    'onConnectLogicFunction',
+    'onDisconnectLogicFunction',
+  ] as const;
+
+  it.each(lifecycleHookKeys)('accepts a valid %s', (lifecycleHookKey) => {
+    const result = defineConnectionProvider({
+      ...baseValidConfig,
+      [lifecycleHookKey]: {
+        universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
+      },
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it.each(lifecycleHookKeys)(
+    'rejects a non-UUID %s universalIdentifier',
+    (lifecycleHookKey) => {
+      const result = defineConnectionProvider({
+        ...baseValidConfig,
+        [lifecycleHookKey]: { universalIdentifier: 'not-a-uuid' },
+      });
+
+      expect(result.success).toBe(false);
+      expect(
+        result.errors.some((error) => error.includes(lifecycleHookKey)),
+      ).toBe(true);
+    },
+  );
 });

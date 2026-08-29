@@ -1,24 +1,29 @@
-import { useContext } from 'react';
-
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconLayoutDashboard, IconReload } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
+import { IconAddressBook, IconPencil, IconReload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title } from 'twenty-ui/typography';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useResetPageLayoutToDefault } from '@/page-layout/hooks/useResetPageLayoutToDefault';
 import { recordPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutByObjectMetadataIdFamilySelector';
-import { SettingsCard } from '@/settings/components/SettingsCard';
+import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
+import { SettingsDiscoveryHeroCardFooter } from '@/settings/components/SettingsDiscoveryHeroCardFooter';
+import recordPageLayoutCoverDark from '@/settings/data-model/object-details/assets/record-page-layout-cover-dark.png';
+import recordPageLayoutCoverLight from '@/settings/data-model/object-details/assets/record-page-layout-cover-light.png';
+import { ObjectOpenRecordInPicker } from '@/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const StyledContentContainer = styled.div`
@@ -28,16 +33,17 @@ const StyledContentContainer = styled.div`
 `;
 
 const RESET_PAGE_LAYOUT_MODAL_ID = 'reset-page-layout-to-default-modal';
+const RECORD_PAGE_LAYOUT_HERO_INSTANCE_ID_PREFIX = 'record-page-layout-hero';
 
 type ObjectLayoutProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
 };
 
 export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
-  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const navigateApp = useNavigateApp();
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
+  const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
   const { openModal } = useModal();
   const { resetPageLayoutToDefault } = useResetPageLayoutToDefault();
 
@@ -55,7 +61,7 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
   const firstRecord = records[0];
 
   const handleCustomizeRecordPage = () => {
-    if (!isDefined(firstRecord)) {
+    if (!hasLayoutsPermission || !isDefined(firstRecord)) {
       return;
     }
 
@@ -74,7 +80,7 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
   };
 
   const handleConfirmReset = async () => {
-    if (!isDefined(pageLayout)) {
+    if (!hasLayoutsPermission || !isDefined(pageLayout)) {
       return;
     }
 
@@ -87,15 +93,41 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
     <StyledContentContainer>
       <Section>
         <H2Title
-          title={t`Customize`}
-          description={t`Customize the layout for this role`}
+          title={t`Record page`}
+          description={t`Customize the workspace record page`}
         />
-        <SettingsCard
-          title={t`Customize record page`}
-          Icon={<IconLayoutDashboard size={theme.icon.size.md} />}
-          onClick={handleCustomizeRecordPage}
-          disabled={!isDefined(firstRecord)}
+        <SettingsDiscoveryHeroCard
+          lightSrc={recordPageLayoutCoverLight}
+          darkSrc={recordPageLayoutCoverDark}
+          coverHeight={153}
+          instanceIdPrefix={RECORD_PAGE_LAYOUT_HERO_INSTANCE_ID_PREFIX}
+          tabs={[]}
+          footer={
+            <SettingsDiscoveryHeroCardFooter
+              Icon={IconAddressBook}
+              title={t`Customize record page`}
+              description={t`Customize how your record page looks.`}
+              action={
+                <Button
+                  title={t`Customize`}
+                  variant="primary"
+                  accent="blue"
+                  size="small"
+                  Icon={IconPencil}
+                  onClick={handleCustomizeRecordPage}
+                  disabled={!hasLayoutsPermission || !isDefined(firstRecord)}
+                />
+              }
+            />
+          }
         />
+      </Section>
+      <Section>
+        <H2Title
+          title={t`Navigation`}
+          description={t`Where records of this object open`}
+        />
+        <ObjectOpenRecordInPicker objectMetadataItem={objectMetadataItem} />
       </Section>
       <Section>
         <H2Title
@@ -108,7 +140,7 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
           size="small"
           Icon={IconReload}
           onClick={handleResetPageLayout}
-          disabled={!isDefined(pageLayout)}
+          disabled={!hasLayoutsPermission || !isDefined(pageLayout)}
         />
       </Section>
       <ConfirmationModal

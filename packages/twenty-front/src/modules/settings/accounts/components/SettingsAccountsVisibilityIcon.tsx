@@ -15,20 +15,21 @@ const StyledCardMedia = styled.div`
   align-items: stretch;
   border: 2px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
   color: ${themeCssVariables.font.color.light};
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing['0.5']};
-  height: ${themeCssVariables.spacing[8]};
+  height: 40px;
   justify-content: center;
   padding: ${themeCssVariables.spacing['0.5']};
-  width: ${themeCssVariables.spacing[6]};
+  width: 32px;
 `;
 
 const StyledSubjectSkeleton = styled.div<{ isActive?: boolean }>`
   background-color: ${({ isActive }) =>
     isActive
-      ? themeCssVariables.accent.accent4060
+      ? themeCssVariables.accent.accent7
       : themeCssVariables.background.quaternary};
   border-radius: 1px;
   height: 3px;
@@ -37,7 +38,7 @@ const StyledSubjectSkeleton = styled.div<{ isActive?: boolean }>`
 const StyledMetadataSkeleton = styled.div<{ isActive?: boolean }>`
   background-color: ${({ isActive }) =>
     isActive
-      ? themeCssVariables.accent.accent4060
+      ? themeCssVariables.accent.accent7
       : themeCssVariables.background.quaternary};
   border-radius: 1px;
   height: 3px;
@@ -47,7 +48,7 @@ const StyledMetadataSkeleton = styled.div<{ isActive?: boolean }>`
 const StyledBodySkeleton = styled.div<{ isActive?: boolean }>`
   background-color: ${({ isActive }) =>
     isActive
-      ? themeCssVariables.accent.accent4060
+      ? themeCssVariables.accent.accent7
       : themeCssVariables.background.quaternary};
   border-radius: ${themeCssVariables.border.radius.xs};
   flex: 1 0 auto;

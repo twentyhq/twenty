@@ -1,68 +1,18 @@
 import { useMovePageLayoutWidgetDown } from '@/page-layout/hooks/useMovePageLayoutWidgetDown';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
-import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import {
+  makeDraft,
+  makeTab,
+  makeWidget,
+} from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { act, renderHook } from '@testing-library/react';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
-import {
-  PageLayoutTabLayoutMode,
-  PageLayoutType,
-  WidgetType,
-} from '~/generated-metadata/graphql';
+import { WidgetType } from '~/generated-metadata/graphql';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
-
-const makeWidget = (
-  id: string,
-  index: number,
-  tabId: string = 'tab-1',
-): PageLayoutWidget =>
-  ({
-    id,
-    pageLayoutTabId: tabId,
-    title: id,
-    isActive: true,
-    type: WidgetType.FIELDS,
-    gridPosition: { column: 0, columnSpan: 1, row: 0, rowSpan: 1 },
-    configuration: { __typename: 'FieldsConfiguration' as const },
-    position: {
-      __typename: 'PageLayoutWidgetVerticalListPosition' as const,
-      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-      index,
-    },
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    deletedAt: null,
-  }) as unknown as PageLayoutWidget;
-
-const makeTab = (
-  id: string,
-  widgets: PageLayoutWidget[],
-  position: number = 0,
-) => ({
-  id,
-  applicationId: '',
-  title: id,
-  isActive: true,
-  position,
-  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-  pageLayoutId: '',
-  widgets,
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-  deletedAt: null,
-});
-
-const makeDraft = (tabs: ReturnType<typeof makeTab>[]): DraftPageLayout => ({
-  id: 'test-layout',
-  name: 'Test Layout',
-  type: PageLayoutType.RECORD_PAGE,
-  objectMetadataId: null,
-  tabs,
-});
 
 describe('useMovePageLayoutWidgetDown', () => {
   const getWrapper =
@@ -111,6 +61,75 @@ describe('useMovePageLayoutWidgetDown', () => {
 
     expect(widgetAPosition).toEqual(expect.objectContaining({ index: 1 }));
     expect(widgetBPosition).toEqual(expect.objectContaining({ index: 0 }));
+  });
+
+  it('should move relative to the fit-content widget below and canonicalize the list', () => {
+    const store = createStore();
+    const wrapper = getWrapper(store);
+
+    const widgetA = makeWidget('widget-a', 0);
+    const timelineWidget = {
+      ...makeWidget('timeline-widget', 1),
+      type: WidgetType.TIMELINE,
+    };
+    const widgetB = makeWidget('widget-b', 2);
+
+    store.set(
+      getDraftAtom(),
+      makeDraft([makeTab('tab-1', [widgetA, timelineWidget, widgetB])]),
+    );
+
+    const { result } = renderHook(
+      () => useMovePageLayoutWidgetDown(PAGE_LAYOUT_TEST_INSTANCE_ID),
+      { wrapper },
+    );
+
+    act(() => {
+      result.current.movePageLayoutWidgetDown('widget-a');
+    });
+
+    const draft = store.get(getDraftAtom());
+
+    expect(draft.tabs[0].widgets.map((widget) => widget.id)).toEqual([
+      'widget-b',
+      'widget-a',
+      'timeline-widget',
+    ]);
+    expect(
+      draft.tabs[0].widgets.map((widget) =>
+        widget.position && 'index' in widget.position
+          ? widget.position.index
+          : undefined,
+      ),
+    ).toEqual([0, 1, 2]);
+  });
+
+  it('should not move a viewport-filling widget', () => {
+    const store = createStore();
+    const wrapper = getWrapper(store);
+
+    const widgetA = makeWidget('widget-a', 0);
+    const timelineWidget = {
+      ...makeWidget('timeline-widget', 1),
+      type: WidgetType.TIMELINE,
+    };
+    const widgetB = makeWidget('widget-b', 2);
+    const initialDraft = makeDraft([
+      makeTab('tab-1', [widgetA, timelineWidget, widgetB]),
+    ]);
+
+    store.set(getDraftAtom(), initialDraft);
+
+    const { result } = renderHook(
+      () => useMovePageLayoutWidgetDown(PAGE_LAYOUT_TEST_INSTANCE_ID),
+      { wrapper },
+    );
+
+    act(() => {
+      result.current.movePageLayoutWidgetDown('timeline-widget');
+    });
+
+    expect(store.get(getDraftAtom())).toBe(initialDraft);
   });
 
   it('should not change draft when widget is at the bottom', () => {

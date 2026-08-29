@@ -34,11 +34,16 @@ export class BackfillSearchFieldMetadataCommand extends ProvisionedWorkspaceComm
     const isDryRun = options.dryRun ?? false;
 
     // The migration runner only invalidates the flat-maps keys a migration touched,
-    // so during a cross-version upgrade earlier commands can leave this map stale.
-    // A stale map breaks the existing-rows dedupe below and re-inserts rows,
-    // tripping IDX_SEARCH_FIELD_METADATA_OBJECT_FIELD_UNIQUE. Recompute from the
-    // database before deriving the create-set.
+    // so during a cross-version upgrade earlier commands can leave these maps stale.
+    // The existing-rows dedupe below compares (objectMetadataId, fieldMetadataId)
+    // pairs across maps: candidate ids resolved from a stale object/field map won't
+    // match the fresh search map's ids, so already-created rows are re-emitted and
+    // the runner (which re-resolves universal identifiers against fresh maps) trips
+    // IDX_SEARCH_FIELD_METADATA_OBJECT_FIELD_UNIQUE. Recompute every map the dedupe
+    // depends on from the database before deriving the create-set.
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
       'flatSearchFieldMetadataMaps',
     ]);
 

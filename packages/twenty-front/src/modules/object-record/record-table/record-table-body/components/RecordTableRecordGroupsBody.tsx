@@ -4,9 +4,9 @@ import { RecordIndexGroupAggregatesDataLoader } from '@/object-record/record-ind
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableRecordGroupBodyContextProvider } from '@/object-record/record-table/components/RecordTableRecordGroupBodyContextProvider';
 import { RecordTableRecordGroupRows } from '@/object-record/record-table/components/RecordTableRecordGroupRows';
+import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
 import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
 import { RecordTableBodyRecordGroupDragDropContextProvider } from '@/object-record/record-table/record-table-body/components/RecordTableBodyRecordGroupDragDropContextProvider';
-import { RecordTableBodyRecordGroupDroppable } from '@/object-record/record-table/record-table-body/components/RecordTableBodyRecordGroupDroppable';
 import { RecordTableCellPortals } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortals';
 import { RecordTableRecordGroupAddNewGroup } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupAddNewGroup';
 import { RecordTableRecordGroupSection } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSection';
@@ -38,18 +38,13 @@ export const RecordTableRecordGroupsBody = () => {
     <>
       <RecordTableBodyRecordGroupDragDropContextProvider>
         {visibleRecordGroupIds.map((recordGroupId, index) => (
-          <RecordTableRecordGroupBodyContextProvider
-            key={recordGroupId}
-            recordGroupId={recordGroupId}
-          >
+          <RecordTableRecordGroupBodyContextProvider key={recordGroupId}>
             <RecordGroupContext.Provider value={{ recordGroupId }}>
-              <RecordTableBodyRecordGroupDroppable
-                recordGroupId={recordGroupId}
-              >
+              <RecordTableBody data-replay-ignore-mutations="true">
                 <RecordTableRecordGroupSection />
                 <RecordTableRecordGroupRows />
                 {index === 0 && <RecordTableCellPortals />}
-              </RecordTableBodyRecordGroupDroppable>
+              </RecordTableBody>
             </RecordGroupContext.Provider>
           </RecordTableRecordGroupBodyContextProvider>
         ))}

@@ -8,6 +8,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 
 import { type SelectValue } from '@/ui/input/components/internal/select/types';
 import { SelectControl } from '@/ui/input/components/SelectControl';
+import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -55,6 +56,8 @@ export type SelectProps<Value extends SelectValue> = {
   dropdownOffset?: DropdownOffset;
   hasRightElement?: boolean;
   showContextualTextInControl?: boolean;
+  isDropdownInModal?: boolean;
+  variant?: FormFieldInputVariant;
 };
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
@@ -96,6 +99,8 @@ export const Select = <Value extends SelectValue>({
   dropdownOffset,
   hasRightElement,
   showContextualTextInControl = true,
+  isDropdownInModal = false,
+  variant = 'default',
 }: SelectProps<Value>) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
@@ -201,12 +206,14 @@ export const Select = <Value extends SelectValue>({
           isDisabled={isDisabled}
           selectSizeVariant={selectSizeVariant}
           hasRightElement={hasRightElement}
+          variant={variant}
         />
       ) : (
         <Dropdown
           dropdownId={dropdownId}
           dropdownPlacement="bottom-start"
           dropdownOffset={dropdownOffset}
+          isDropdownInModal={isDropdownInModal}
           onOpen={handleDropdownOpen}
           clickableComponent={
             <SelectControl
@@ -214,6 +221,7 @@ export const Select = <Value extends SelectValue>({
               isDisabled={isDisabled}
               selectSizeVariant={selectSizeVariant}
               hasRightElement={hasRightElement}
+              variant={variant}
             />
           }
           dropdownComponents={

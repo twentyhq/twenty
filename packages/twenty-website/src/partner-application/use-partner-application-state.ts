@@ -4,6 +4,7 @@ import { useCallback, useReducer } from 'react';
 
 import { type PartnerLanguageValue } from './data/partner-language-options';
 import { type PartnerScopeValue } from './data/partner-scope-options';
+import { type PartnerTwentyExperienceValue } from './data/partner-twenty-experience-options';
 import { partnerApplicationReducer } from './partner-application-reducer';
 import {
   INITIAL_PARTNER_APPLICATION_STATE,
@@ -32,6 +33,11 @@ export function usePartnerApplicationState() {
       dispatch({ type: 'TOGGLE_LANGUAGE', value }),
     [],
   );
+  const toggleExperience = useCallback(
+    (value: PartnerTwentyExperienceValue) =>
+      dispatch({ type: 'TOGGLE_EXPERIENCE', value }),
+    [],
+  );
   const setSkills = useCallback(
     (value: string[]) => dispatch({ type: 'SET_SKILLS', value }),
     [],
@@ -57,6 +63,7 @@ export function usePartnerApplicationState() {
     setField,
     toggleScope,
     toggleLanguage,
+    toggleExperience,
     setSkills,
     goNext,
     goBack,

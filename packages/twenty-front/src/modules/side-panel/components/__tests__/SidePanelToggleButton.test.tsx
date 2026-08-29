@@ -4,6 +4,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
 
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
@@ -15,9 +16,10 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/icon';
 
 const mockAppTooltip = jest.fn();
+let mockIsMobile = false;
 
 jest.mock('twenty-ui/utilities', () => ({
-  useIsMobile: () => false,
+  useIsMobile: () => mockIsMobile,
   getOsControlSymbol: () => '⌘',
 }));
 
@@ -36,6 +38,7 @@ const renderSidePanelToggleButton = ({
   sidePanelNavigationStack = [],
   sidePanelSearch = '',
   sidePanelSearchObjectFilter = null,
+  isLayoutCustomizationModeEnabled = false,
 }: {
   isSidePanelOpened?: boolean;
   sidePanelPage?: SidePanelPages;
@@ -47,6 +50,7 @@ const renderSidePanelToggleButton = ({
   }>;
   sidePanelSearch?: string;
   sidePanelSearchObjectFilter?: string | null;
+  isLayoutCustomizationModeEnabled?: boolean;
 } = {}) => {
   const store = createStore();
 
@@ -55,6 +59,10 @@ const renderSidePanelToggleButton = ({
   store.set(sidePanelNavigationStackState.atom, sidePanelNavigationStack);
   store.set(sidePanelSearchState.atom, sidePanelSearch);
   store.set(sidePanelSearchObjectFilterState.atom, sidePanelSearchObjectFilter);
+  store.set(
+    isLayoutCustomizationModeEnabledState.atom,
+    isLayoutCustomizationModeEnabled,
+  );
 
   render(
     <I18nProvider i18n={i18n}>
@@ -77,6 +85,7 @@ const renderSidePanelToggleButton = ({
 describe('SidePanelToggleButton', () => {
   beforeEach(() => {
     mockAppTooltip.mockClear();
+    mockIsMobile = false;
   });
 
   it('opens the command menu when the side panel is closed', () => {
@@ -151,6 +160,64 @@ describe('SidePanelToggleButton', () => {
           pageTitle: 'Create step',
           pageIcon: IconDotsVertical,
           pageId: 'workflow-step-create',
+        },
+      ],
+    });
+
+    expect(screen.getByTestId('page-header-side-panel-button')).toBeVisible();
+  });
+
+  it('hides the navbar command menu button on mobile while the side panel is open', () => {
+    mockIsMobile = true;
+
+    renderSidePanelToggleButton({
+      isSidePanelOpened: true,
+      sidePanelPage: SidePanelPages.AskAI,
+      sidePanelNavigationStack: [
+        {
+          page: SidePanelPages.AskAI,
+          pageTitle: 'Ask AI',
+          pageIcon: IconDotsVertical,
+          pageId: 'ask-ai',
+        },
+      ],
+    });
+
+    expect(
+      screen.queryByTestId('page-header-side-panel-button'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('keeps the navbar command menu button on mobile in layout customization mode', () => {
+    mockIsMobile = true;
+
+    renderSidePanelToggleButton({
+      isSidePanelOpened: true,
+      sidePanelPage: SidePanelPages.AskAI,
+      isLayoutCustomizationModeEnabled: true,
+      sidePanelNavigationStack: [
+        {
+          page: SidePanelPages.AskAI,
+          pageTitle: 'Ask AI',
+          pageIcon: IconDotsVertical,
+          pageId: 'ask-ai',
+        },
+      ],
+    });
+
+    expect(screen.getByTestId('page-header-side-panel-button')).toBeVisible();
+  });
+
+  it('keeps the navbar command menu button on desktop while the AI chat is open', () => {
+    renderSidePanelToggleButton({
+      isSidePanelOpened: true,
+      sidePanelPage: SidePanelPages.AskAI,
+      sidePanelNavigationStack: [
+        {
+          page: SidePanelPages.AskAI,
+          pageTitle: 'Ask AI',
+          pageIcon: IconDotsVertical,
+          pageId: 'ask-ai',
         },
       ],
     });

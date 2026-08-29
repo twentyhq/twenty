@@ -23,9 +23,10 @@ export { upsertIntoArrayOfObjectsComparingId } from './array/upsertIntoArrayOfOb
 export { upsertPropertiesOfItemIntoArrayOfObjectsComparingId } from './array/upsertPropertiesOfItemIntoArrayOfObjectsComparingId';
 export { assertUnreachable } from './assertUnreachable';
 export { base64UrlEncode } from './base64UrlEncode';
+export { isCallRecordingTranscriptStatusMarker } from './callRecording/isCallRecordingTranscriptStatusMarker';
+export { parseCallRecordingTranscriptEntries } from './callRecording/parseCallRecordingTranscriptEntries';
 export { conditionalAvailabilityParser } from './command-menu-items/conditionalAvailabilityParser';
 export { evaluateConditionalAvailabilityExpression } from './command-menu-items/evaluateConditionalAvailabilityExpression';
-export { interpolateCommandMenuItemTemplate } from './command-menu-items/interpolateCommandMenuItemTemplate';
 export { resolveObjectMetadataLabel } from './command-menu-items/resolveObjectMetadataLabel';
 export { safeGetNestedProperty } from './command-menu-items/safeGetNestedProperty';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
@@ -50,6 +51,7 @@ export { turnPlainDateIntoUserTimeZoneInstantString } from './date/turnPlainDate
 export { turnPlainDateToShiftedDateInSystemTimeZone } from './date/turnPlainDateToShiftedDateInSystemTimeZone';
 export { deepMerge } from './deepMerge';
 export { formatEmailAddress } from './email/formatEmailAddress';
+export { getSendableEmailHandles } from './email/getSendableEmailHandles';
 export type { ParsedEmailAddress } from './email/parseEmailAddressList';
 export { parseEmailAddressList } from './email/parseEmailAddressList';
 export { CustomError } from './errors/CustomError';
@@ -123,6 +125,7 @@ export { turnRecordFilterGroupsIntoGqlOperationFilter } from './filter/turnRecor
 export type { FieldShared } from './filter/turnRecordFilterIntoGqlOperationFilter';
 export { turnRecordFilterIntoRecordGqlOperationFilter } from './filter/turnRecordFilterIntoGqlOperationFilter';
 export { combineFilters } from './filter/utils/combineFilters';
+export { compareSelectOptionValues } from './filter/utils/compareSelectOptionValues';
 export { COMPOSITE_FIELD_FILTER_OPERANDS_MAP } from './filter/utils/compositeFieldFilterOperandsMap';
 export { convertViewFilterOperandToCoreOperand } from './filter/utils/convert-view-filter-operand-to-core-operand.util';
 export { convertViewFilterValueToString } from './filter/utils/convertViewFilterValueToString';
@@ -154,7 +157,27 @@ export { isMatchingStringFilter } from './filter/utils/isMatchingStringFilter';
 export { isMatchingTSVectorFilter } from './filter/utils/isMatchingTSVectorFilter';
 export { isMatchingUUIDFilter } from './filter/utils/isMatchingUUIDFilter';
 export { arrayOfStringsOrVariablesSchema } from './filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
-export { arrayOfUuidOrVariableSchema } from './filter/utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
+export {
+  strictArrayOfUuidOrVariableSchema,
+  arrayOfUuidOrVariableSchema,
+} from './filter/utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
+export {
+  nonEmptyStringFilterValueSchema,
+  numericFilterValueSchema,
+  plainDateFilterValueSchema,
+  instantFilterValueSchema,
+  plainDateOrInstantFilterValueSchema,
+  booleanFilterValueSchema,
+  actorSourceFilterValueSchema,
+} from './filter/utils/validation-schemas/filterValueScalarSchemas';
+export {
+  FILTER_VALUE_SCHEMAS_MAP,
+  COMPOSITE_SUB_FIELD_VALUE_SCHEMAS,
+  FILTER_VALUE_FORMAT_HINTS,
+} from './filter/utils/validation-schemas/filterValueSchemasMap';
+export { getFilterValueSchema } from './filter/utils/validation-schemas/getFilterValueSchema';
+export type { FilterValueValidationIssue } from './filter/utils/validation-schemas/getFilterValueValidationIssue';
+export { getFilterValueValidationIssue } from './filter/utils/validation-schemas/getFilterValueValidationIssue';
 export {
   relationFilterValueSchemaObject,
   jsonRelationFilterValueSchema,
@@ -177,6 +200,7 @@ export {
 } from './image/getLogoUrlFromDomainName';
 export { getUniqueConstraintsFields } from './indexMetadata/getUniqueConstraintsFields';
 export { isAutoSelectModelId } from './isAutoSelectModelId';
+export { isFieldValueRestricted } from './isFieldValueRestricted';
 export { fastDeepEqual } from './json/fast-deep-equal';
 export { getAppPath } from './navigation/getAppPath';
 export { getSettingsPath } from './navigation/getSettingsPath';
@@ -197,17 +221,55 @@ export { pascalToKebab } from './strings/pascalToKebab';
 export { stringifySafely } from './strings/stringifySafely';
 export { uncapitalize } from './strings/uncapitalize';
 export { getSubdomainSlugFromDisplayName } from './subdomain/getSubdomainSlugFromDisplayName';
+export type { CanvasTheme } from './tiptap/canvas-theme';
+export { CANVAS_THEME_DEFAULTS } from './tiptap/canvas-theme';
+export type { EmailDocumentMarkType } from './tiptap/email-document-mark-catalog';
+export {
+  EMAIL_DOCUMENT_MARK_CATALOG,
+  isEmailDocumentMarkType,
+} from './tiptap/email-document-mark-catalog';
+export type {
+  EmailDocumentNodeType,
+  RenderedEmailDocumentNodeType,
+} from './tiptap/email-document-node-catalog';
+export {
+  EMAIL_DOCUMENT_NODE_CATALOG,
+  isEmailDocumentNodeType,
+  isRenderedEmailDocumentNodeType,
+} from './tiptap/email-document-node-catalog';
+export type { EmailDocumentNode } from './tiptap/email-document-node';
+export { EMAIL_DOCUMENT_SCHEMA_VERSION } from './tiptap/email-document-schema-version';
+export type { EmailDocument } from './tiptap/email-document-schema';
+export { emailDocumentSchema } from './tiptap/email-document-schema';
+export type { EmailDocumentStringContext } from './tiptap/email-document-string-context';
+export { isCanvasTheme } from './tiptap/is-canvas-theme';
+export { isEmailDocumentShape } from './tiptap/is-email-document-shape';
+export type { CampaignVariableDefinition } from './tiptap/list-campaign-variables-for-fields';
+export { listCampaignVariablesForFields } from './tiptap/list-campaign-variables-for-fields';
+export {
+  parseEmailDocument,
+  parseCanonicalEmailDocument,
+} from './tiptap/parse-email-document';
+export {
+  isTipTapNode,
+  parseTipTapJsonDocument,
+  parseCanonicalTipTapJsonDocument,
+} from './tiptap/parse-tiptap-json-document';
+export { resolveCanvasTheme } from './tiptap/resolve-canvas-theme';
+export { TIPTAP_DOCUMENT_SCHEMA_VERSION } from './tiptap/tiptap-document-schema-version';
+export { tipTapDocumentToMarkdown } from './tiptap/tiptap-document-to-markdown';
+export type { TipTapDocument } from './tiptap/tiptap-document';
 export type {
   TipTapMarkType,
-  TipTapNodeType,
   LinkMarkAttributes,
   TipTapMark,
-} from './tiptap/tiptap-marks';
-export {
-  TIPTAP_MARK_TYPES,
-  TIPTAP_NODE_TYPES,
-  TIPTAP_MARKS_RENDER_ORDER,
-} from './tiptap/tiptap-marks';
+} from './tiptap/tiptap-mark-types';
+export { TIPTAP_MARK_TYPES } from './tiptap/tiptap-mark-types';
+export { TIPTAP_MARKS_RENDER_ORDER } from './tiptap/tiptap-marks-render-order';
+export type { TipTapNodeType } from './tiptap/tiptap-node-types';
+export { TIPTAP_NODE_TYPES } from './tiptap/tiptap-node-types';
+export type { TipTapNode } from './tiptap/tiptap-node';
+export { transformEmailDocumentStrings } from './tiptap/transform-email-document-strings';
 export type { StringPropertyKeys } from './trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 export { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from './trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 export { trimAndRemoveDuplicatedWhitespacesFromString } from './trim-and-remove-duplicated-whitespaces-from-string';
@@ -221,12 +283,15 @@ export { absoluteUrlSchema } from './url/absoluteUrlSchema';
 export { buildSignedPath } from './url/buildSignedPath';
 export { ensureAbsoluteUrl } from './url/ensureAbsoluteUrl';
 export { getAbsoluteUrlOrThrow } from './url/getAbsoluteUrlOrThrow';
+export { getLinkUrlNormalizer } from './url/getLinkUrlNormalizer';
 export { getSafeUrl } from './url/getSafeUrl';
 export { getUrlHostnameOrThrow } from './url/getUrlHostnameOrThrow';
 export { isAbsoluteUrl } from './url/isAbsoluteUrl';
 export { isSafeUrl } from './url/isSafeUrl';
+export { isValidDomain } from './url/isValidDomain';
 export { isValidHostname } from './url/isValidHostname';
 export { isValidUrl } from './url/isValidUrl';
+export { normalizeDomain } from './url/normalizeDomain';
 export { normalizeUrl } from './url/normalizeUrl';
 export { normalizeUrlOrigin } from './url/normalizeUrlOrigin';
 export { safeDecodeURIComponent } from './url/safeDecodeURIComponent';
@@ -247,4 +312,6 @@ export { isValidVariable } from './validation/isValidVariable';
 export { normalizeLocale } from './validation/normalizeLocale';
 export { getCountryCodesForCallingCode } from './validation/phones-value/getCountryCodesForCallingCode';
 export { isValidCountryCode } from './validation/phones-value/isValidCountryCode';
-export { resolveInput } from './variable-resolver';
+export { isVariableReference, resolveInput } from './variable-resolver';
+export { getViewLayoutFromViewType } from './views/getViewLayoutFromViewType';
+export { isWidgetViewType } from './views/isWidgetViewType';

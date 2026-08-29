@@ -1,0 +1,197 @@
+---
+title: Úlohy na pozadí
+description: Předejte dlouhotrvající nebo rychlostně omezenou práci Twenty workerům tak, že místo provádění všeho přímo vkládáte do fronty další spuštění logické funkce.
+icon: layer-group
+---
+
+Běh logické funkce je omezen svým `timeoutSeconds` (maximálně 900 sekund). Cokoli, co se nedokáže dokončit v tomto časovém okně — úplná resynchronizace, fan-out pro jednotlivé záznamy, služba třetí strany, která vás omezuje rychlostí — musí být rozděleno do menších běhů.
+
+`enqueueJobs` dělá přesně to: požádá Twenty workery, aby později spustili jednu z logických funkcí vaší aplikace, jednou pro každý payload, přičemž každé spuštění proběhne ve vlastním procesu s vlastním časovým limitem. Volající se vrátí okamžitě.
+
+```text
+  ┌─────────────────┐  enqueueJobs(...)  ┌──────────────┐   ┌────────────────────┐
+  │ Logic function  │ ─────────────────▶ │ Job queue    │──▶│ Logic function     │
+  │ (returns now)   │                    │ (workers)    │   │ (fresh run/timeout)│
+  └─────────────────┘                    └──────────────┘   └────────────────────┘
+```
+
+## Zařazování spuštění do fronty
+
+Importujte `enqueueJobs` z `twenty-sdk/logic-function`, nasměrujte ho na `universalIdentifier` logické funkce, kterou chcete spustit, a předejte do fronty jeden payload pro každé spuštění.
+
+```ts src/logic-functions/sync-all-contacts.ts
+import { enqueueJobs } from 'twenty-sdk/logic-function';
+
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payloads: [{ page: 1 }],
+});
+```
+
+Každé spuštění přijímá svůj payload jako argument handleru, úplně stejně jako jakýkoli jiný spouštěč. Cíl musí patřit do **stejné aplikace** jako volající – zařazení funkce jiné aplikace do fronty je odmítnuto s chybou `Logic function not found` a nic se nezařadí do fronty. Jedno volání přijímá až `200` payloadů.
+
+<Note>
+`enqueueJobs` se vrátí, jakmile jsou úlohy přijaty, nikoli až po jejich spuštění. Nevrací výsledky cílů — nechte každý cíl zapsat, co vytváří, do [úložiště klíč–hodnota](/l/cs/developers/extend/apps/logic/key-value-store) nebo do záznamu v pracovním prostoru, pokud je potřebujete znovu přečíst.
+</Note>
+
+<Note>
+Starší pomocná funkce `enqueueJob`, která zařazuje do fronty jednu úlohu na volání, je zastaralá. Místo toho použijte `enqueueJobs` se seznamem `payloads` s jedním prvkem.
+</Note>
+
+## Možnosti úlohy
+
+Možnosti se vztahují na každé spuštění v dávce.
+
+| Možnost      | Výchozí | Rozsah                  | K čemu slouží                                                                                                                                                          |
+| ------------ | ------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `retryLimit` | `0`     | `0`–`10`                | Celkový počet dalších pokusů ve frontě. Počet opakování vyžádaných aplikací je omezen na `3`. Zvyšujte tuto hodnotu jen u handlerů, které je bezpečné spustit dvakrát. |
+| `delayMs`    | `0`     | `0`–`604800000` (7 dní) | Po tuto dobu se čeká, než se spuštění stanou způsobilými.                                                                                                              |
+
+```ts
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payloads: [{ page: 1 }],
+  retryLimit: 3,
+  delayMs: 60_000,
+});
+```
+
+<Note>
+**Prioritu zatím nelze konfigurovat.** Zařazené úlohy jsou vždy spuštěny s nejnižší prioritou, takže práce platformy není nikdy zdržována úlohami aplikací. Možnost řízení priority brzy přibude.
+</Note>
+
+Zařazené spuštění dědí jednajícího uživatele funkce, která ho zařadila, takže pracuje se stejnými oprávněními.
+
+## Opakování při přechodném selhání.
+
+Twenty neopakuje každou výjimku z kódu aplikace. Běžně vyvolaná chyba se považuje za trvalé selhání. Při přechodném selhání může logická funkce zařazená do fronty požádat až o tři opakování vyvoláním `RetryableLogicFunctionError`.
+
+```ts
+import {
+  type LogicFunctionExecutionContext,
+  RetryableLogicFunctionError,
+} from 'twenty-sdk/logic-function';
+
+export const handler = async (
+  _payload: unknown,
+  { retryCount, maxRetries }: LogicFunctionExecutionContext,
+) => {
+  const response = await fetch('https://api.example.com/contacts');
+
+  if (response.status === 429 || response.status >= 500) {
+    throw new RetryableLogicFunctionError(
+      `The contacts API is temporarily unavailable (${response.status}); retry ${retryCount} of ${maxRetries}`,
+    );
+  }
+};
+```
+
+Pokud je to možné, vyvolejte `RetryableLogicFunctionError` přímo. Pokud ji rozšiřujete, nenahrazujte její `name`: Twenty rozpozná serializovaný název `RetryableLogicFunctionError` napříč běhovými prostředími.
+
+`retryCount` má při počátečním spuštění hodnotu `0` a zvyšuje se pouze tehdy, když kód aplikace požádá o opakování. `maxRetries` je nejvýše `3` a může být nižší, pokud má úloha ve frontě nižší celkový limit opakování. Selhání platformy nezvyšují `retryCount`, přesto však spotřebovávají celkový bezpečnostní rozpočet fronty.
+
+Fronta zpožďuje pokusy o opakování exponenciálním backoffem a jitterem. Přesná prodleva záměrně není zaručena, takže kód aplikace by neměl záviset na tom, že k opakování dojde v přesný čas. Jakmile je dosaženo `maxRetries`, další `RetryableLogicFunctionError` se zaznamená jako konečné selhání aplikace bez dalšího spuštění.
+
+<Warning>
+Opakování znovu spustí celou obslužnou funkci a může k nim dojít poté, co některé vedlejší účinky již úspěšně proběhly. Před požádáním o opakování zajistěte, aby byla obslužná funkce idempotentní.
+</Warning>
+
+## Použití: stránkování dlouhé synchronizace
+
+Klasický tvar je funkce, která do fronty zařazuje *samu sebe* s dalším kurzorem. Každé spuštění zpracuje jednu stránku práce s velkou rezervou vůči svému vlastnímu časovému limitu a řetězec se zastaví, když už nic nezbývá.
+
+```ts src/logic-functions/sync-contacts-page.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJobs } from 'twenty-sdk/logic-function';
+
+const SYNC_CONTACTS_PAGE = '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33';
+
+const handler = async (params: { cursor?: string }) => {
+  const { contacts, nextCursor } = await fetchContactsPage(params.cursor);
+
+  await importContacts(contacts);
+
+  if (nextCursor) {
+    await enqueueJobs({
+      logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
+      payloads: [{ cursor: nextCursor }],
+      delayMs: 2_000,
+    });
+  }
+
+  return { imported: contacts.length, done: !nextCursor };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: SYNC_CONTACTS_PAGE,
+  name: 'sync-contacts-page',
+  timeoutSeconds: 120,
+  handler,
+});
+```
+
+## Rozvětvení po záznamech
+
+Když je práce přirozeně po položkách, zařaďte do fronty jednu úlohu na položku v jednom volání a nechte workery zpracovávat je paralelně místo smyčky inline.
+
+```ts
+const companies = await listCompaniesToEnrich();
+
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+  payloads: companies.map((company) => ({ companyId: company.id })),
+  retryLimit: 2,
+});
+```
+
+## Doporučené postupy pro dlouhotrvající práci
+
+Dvě pravidla pokryjí téměř každou dlouhou úlohu: **rekurze místo smyčky** a **zpracování omezeného bloku na jedno spuštění**.
+
+Spuštění, které se snaží udělat všechno, je způsob selhání – narazí na časový limit a při opakování začne celé znovu od nuly. Místo toho nastavte velikost jednoho bloku tak, aby se pohodlně vešel do `timeoutSeconds`, uložte si svou pozici a zařaďte do fronty další spuštění.
+
+```ts src/logic-functions/enrich-companies-batch.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJobs, kv } from 'twenty-sdk/logic-function';
+
+const ENRICH_COMPANIES_BATCH = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
+const CHUNK_SIZE = 50;
+
+const handler = async (params: { offset?: number }) => {
+  const offset = params.offset ?? 0;
+  const companies = await listCompaniesToEnrich({
+    offset,
+    limit: CHUNK_SIZE,
+  });
+
+  for (const company of companies) {
+    await enrichCompany(company);
+  }
+
+  await kv.set('enrich:progress', { offset: offset + companies.length });
+
+  if (companies.length === CHUNK_SIZE) {
+    await enqueueJobs({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
+      payloads: [{ offset: offset + CHUNK_SIZE }],
+    });
+  }
+
+  return { processed: companies.length, done: companies.length < CHUNK_SIZE };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: ENRICH_COMPANIES_BATCH,
+  name: 'enrich-companies-batch',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Co to drží pohromadě:
+
+* **Velikost bloku určete podle nejpomalejší položky, ne podle průměru.** `CHUNK_SIZE × worst-case item time` se musí vejít do `timeoutSeconds` s rezervou, jinak se konec bloku ztratí, když je spuštění utnuto.
+* **Udělejte ukončovací podmínku explicitní.** Rekurzi provádějte jen tehdy, když se vrátil plný blok. Řetězec, který se zastavuje jen na základě „žádné výsledky“, poběží donekonečna, pokud zdroj někdy uprostřed vrátí krátkou stránku.
+* **Uložte průběh před zařazením dalšího spuštění,** takže se neúspěšný článek řetězu znovu spustí od posledního dokončeného bloku místo od začátku.
+* **Udržujte každý blok idempotentní.** Znovuzpracování jednoho bloku po opakování nesmí vést k dvojím zápisům – své zápisy važte na záznam nebo externí ID, které zpracováváte.
+* **Preferujte řetězec po blocích před jedním obřím rozvětvením**, když práce zasahuje třetí stranu s omezením rychlosti: řetězec s `delayMs` sám sebe dávkuje, zatímco tisíce úloh zařazených najednou se stanou způsobilými okamžitě.

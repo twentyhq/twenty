@@ -1,89 +1,74 @@
 # Manual workflows runbook
 
-The Twenty Partners app relies on two **manual-trigger workflows** built in the Twenty
-workspace UI. The SDK has no `defineWorkflow`, so these are documented setup steps — not
-shipped in the app manifest.
+The Twenty Partners app relies on one workflow built in the Twenty workspace UI: a
+**cron workflow**. The SDK has no `defineWorkflow`, so this is a documented setup
+step — not shipped in the app manifest.
 
-**Rebuild both workflows in every workspace** where the app is installed (local bundles,
-staging, prod). After `yarn twenty install`, prod is empty until an admin follows this
-runbook.
+**Rebuild this workflow in every workspace** where the app is installed (local
+bundles, staging, prod). After `yarn twenty install`, prod is empty until an admin follows
+this runbook.
 
 ## Prerequisites
 
-- Twenty Partners app installed and synced (`yarn twenty dev --once` or `install`).
-- **Partner role** already grants the **WORKFLOWS** permission flag (shipped in the app).
-  Partners need this to see **Run workflow → Apply** on a brief. Admins run **Mark as
-  Winner** with their own role (no special flag beyond workflow access).
+- Twenty Partners app installed and synced (`yarn twenty apply`).
+- The **WORKFLOWS** permission flag is no longer needed for apply: the apply path now
+  ships in the app manifest as a command menu item.
 
 ---
 
-## 1. Apply to Brief
+## Winner assignment (no workflow needed)
 
-Partner self-apply on an **Opportunity** (brief). Creates an **Application** and lets
-`on-application-created` resolve the Partner from the clicking member.
-
-### Build (Settings → Workflows)
-
-1. Open **Workflows** (sidebar or Settings) and click **+ New workflow**.
-2. Name it **Apply to Brief** (the published label can be shortened to **Apply**).
-3. Open the trigger node (**Manual trigger**).
-4. Set **Availability** to **Single record**.
-5. Choose object **Opportunity**.
-6. Add an action: **Create Record**.
-7. Set **Object** to **Application**.
-8. Map fields:
-   - **Opportunity** → `{{trigger.record.id}}`
-   - **State** → `APPLIED`
-   - **Partner User** → `{{trigger.workspaceMember}}` *(see note below)*
-9. **Publish** (activate) the workflow version.
-
-**Partner User note:** `on-application-created` resolves the Partner from
-`createdBy.workspaceMemberId` on the new Application. Manual workflows run as the
-clicking user, so **Create Record** sets `createdBy` to that member automatically. At
-build time, confirm whether **Partner User** is still required — if `createdBy` is
-populated on the new record, you can omit **Partner User** and rely on the logic
-function alone.
-
-### Expected UI (partner)
-
-On an **Opportunity** record (e.g. from **Open Briefs**), command menu → **Run workflow
-→ Apply**.
+An admin sets the **Partner** field on the linked **Opportunity** record directly.
+The app's logic function `on-opportunity-partner-won` fires on that change and
+cascades the Application states to **WON** / **DECLINED** automatically. No
+workflow to build or rebuild for this step.
 
 ---
 
-## 2. Mark as Winner
+## 1. Daily digest
 
-Admin assigns the winning partner on the linked **Opportunity**. Fires
-`on-opportunity-partner-won`, which cascades Application states to **WON** / **BACKUP**.
+Nudges validated partners once a day when new briefs appear: count + link, no brief
+details. Zero new briefs → no email. Hand-built per workspace — workflows are workspace
+metadata and do not travel with the app.
 
-### Build (Settings → Workflows)
+Validated structure (local, 2026-08-25):
 
-1. **+ New workflow** → name **Mark as Winner**.
-2. Open the trigger (**Manual trigger**).
-3. Set **Availability** to **Single record**.
-4. Choose object **Application**.
-5. Add an action: **Update Record**.
-6. Configure the action:
-   - **Object** → **Opportunity**
-   - **Record ID** → `{{trigger.record.opportunity.id}}`
-   - **Fields to update** → select **Partner**
-   - **Partner** value → `{{trigger.record.partner.id}}`
-7. **Publish** the workflow version.
+1. Trigger — **Cron, daily 07:00**. (A test build may use a manual trigger; switch to
+   cron before relying on it.)
+2. **Find Records** `Search new opp` — Opportunity, `Creation date` is relative
+   `PAST_1_DAY` and `isListed` is true. Raise the record limit well above the editor
+   default of 1.
+3. **Find Records** `Search Partners` — Partner, `Validation Stage` is `VALIDATED`.
+   Raise the record limit as well.
+4. **Iterator** over the partners from step 3. Inside the loop:
+   - **Find Records** `Search people partner` — Person whose `Partner → Id` is
+     `{{currentItem.id}}`. The workflow engine loads no relations, so this extra search
+     is what resolves the partner's contact email.
+   - **If/Else** — continue only when the person search returned an email.
+   - **Send Email** — from the workspace's connected mailbox, to the found person email.
+     Subject and body carry the count from step 2 and the prod marketplace link.
+5. Publish and confirm the version shows ACTIVE.
 
-### Expected UI (admin)
+Prod prerequisites: a connected mailbox (Settings → Accounts) and the app installed.
 
-On an **Application** record, command menu → **Run workflow → Mark as Winner**.
+### Local email testing (never prod)
+
+Run smtp4dev:
+`docker run --rm -d --name smtp4dev -p 8090:80 -p 2525:25 -p 1143:143 rnwood/smtp4dev`.
+Set `OUTBOUND_HTTP_SAFE_MODE_ENABLED` to false (Settings → Admin Panel → Config
+Variables) — safe mode blocks private hosts for IMAP/SMTP on purpose. Connect an
+IMAP/SMTP account with host `host.docker.internal` (SMTP 2525, IMAP 1143, no TLS, any
+credentials). Mails land at http://localhost:8090. `EMAIL_DRIVER` env vars are the
+system mailer, not this — leave them alone.
 
 ---
 
 ## Per-workspace checklist
 
-| Step | Apply to Brief | Mark as Winner |
-| --- | --- | --- |
-| Trigger | Manual, single **Opportunity** | Manual, single **Application** |
-| Action | Create **Application** | Update linked **Opportunity** |
-| Published label | **Apply** (on brief) | **Mark as Winner** (on application) |
-| Who runs it | Partner (WORKFLOWS flag) | Admin / Partner Ops |
+- Trigger: cron, daily.
+- Action: send email per validated partner via person lookup.
+- Published label: **Daily Digest**.
+- Who runs it: application role.
 
 Repeat for each workspace after install. Workflows are workspace metadata — they do not
 travel with `deploy` / `install`.

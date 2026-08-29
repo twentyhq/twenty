@@ -12,6 +12,8 @@ describe('fetchLiveMarketplacePartners', () => {
 
   it('normalizes the CRM payload (micros -> USD, links -> URLs, nulls)', async () => {
     mockedFetch.mockResolvedValue({
+      ok: true,
+      count: 1,
       partners: [
         {
           name: 'Acme',
@@ -23,12 +25,17 @@ describe('fetchLiveMarketplacePartners', () => {
           calendarLink: { primaryLinkUrl: 'cal.com/acme' },
           hourlyRate: { amountMicros: 150_000_000, currencyCode: 'USD' },
           projectBudgetMin: null,
-          projectBudgetTypical: null,
           linkedin: { primaryLinkUrl: 'https://linkedin.com/acme' },
+          website: { primaryLinkUrl: 'https://agency-twenty.com' },
           profilePicture: null,
           skills: null,
           city: null,
           country: null,
+          partnerTier: 'ADVANCED',
+          serviceCount: 2,
+          approvedCaseStudyCount: 3,
+          approvedCaseStudyWithCoverCount: 2,
+          rotationKey: 'weekly-key',
         },
       ],
     });
@@ -37,21 +44,131 @@ describe('fetchLiveMarketplacePartners', () => {
       {
         slug: 'acme',
         name: 'Acme',
-        introduction: 'Hi',
+        description: 'Hi',
         languagesSpoken: ['ENGLISH'],
         partnerScope: ['ADVISORY'],
         region: ['US'],
         calendarLink: 'https://cal.com/acme',
         hourlyRateUsd: 150,
         projectBudgetMinUsd: null,
-        projectBudgetTypicalUsd: null,
-        linkedinUrl: 'https://linkedin.com/acme',
+        links: {
+          website: 'https://agency-twenty.com',
+          linkedin: 'https://linkedin.com/acme',
+          x: null,
+          github: null,
+        },
         profilePictureUrl: '',
         skills: [],
         city: '',
         country: '',
+        services: [],
+        portfolio: [],
+        clients: [],
+        superPartner: false,
+        partnerTier: 'ADVANCED',
+        serviceCount: 2,
+        approvedCaseStudyCount: 3,
+        approvedCaseStudyWithCoverCount: 2,
+        rotationKey: 'weekly-key',
       },
     ]);
+  });
+
+  const rankablePartner = {
+    name: 'Acme',
+    slug: 'acme',
+    introduction: 'Hi',
+    languagesSpoken: ['ENGLISH'],
+    partnerScope: ['ADVISORY'],
+    region: ['US'],
+    calendarLink: null,
+    hourlyRate: null,
+    projectBudgetMin: null,
+    linkedin: null,
+    website: null,
+    profilePicture: null,
+    skills: null,
+    city: null,
+    country: null,
+    partnerTier: 'ADVANCED',
+    serviceCount: 2,
+    approvedCaseStudyCount: 3,
+    approvedCaseStudyWithCoverCount: 2,
+    rotationKey: 'weekly-key',
+  };
+
+  it('reads a missing superPartner as false so an old API still ranks', async () => {
+    mockedFetch.mockResolvedValue({
+      ok: true,
+      partners: [rankablePartner],
+    });
+
+    const [partner] = await fetchLiveMarketplacePartners();
+
+    expect(partner.superPartner).toBe(false);
+  });
+
+  it('reads superPartner true from the API', async () => {
+    mockedFetch.mockResolvedValue({
+      ok: true,
+      partners: [{ ...rankablePartner, superPartner: true }],
+    });
+
+    const [partner] = await fetchLiveMarketplacePartners();
+
+    expect(partner.superPartner).toBe(true);
+  });
+
+  it('reads superPartner null as false', async () => {
+    mockedFetch.mockResolvedValue({
+      ok: true,
+      partners: [{ ...rankablePartner, superPartner: null }],
+    });
+
+    const [partner] = await fetchLiveMarketplacePartners();
+
+    expect(partner.superPartner).toBe(false);
+  });
+
+  it.each([
+    ['rotationKey', { rotationKey: '' }],
+    ['serviceCount', { serviceCount: undefined }],
+    ['approvedCaseStudyCount', { approvedCaseStudyCount: null }],
+    [
+      'approvedCaseStudyWithCoverCount',
+      { approvedCaseStudyWithCoverCount: -1 },
+    ],
+  ])(
+    'degrades to [] and names the offending partner when the payload breaks the ranking contract on %s',
+    async (field, override) => {
+      const errorSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => undefined);
+      mockedFetch.mockResolvedValue({
+        ok: true,
+        partners: [{ ...rankablePartner, ...override }],
+      });
+
+      expect(await fetchLiveMarketplacePartners()).toEqual([]);
+      expect(errorSpy).toHaveBeenCalledWith(
+        '[partners-marketplace] ranking contract broken:',
+        expect.objectContaining({
+          message: expect.stringMatching(new RegExp(`${field}.*acme`)),
+        }),
+      );
+      errorSpy.mockRestore();
+    },
+  );
+
+  it('reads an unknown partner tier as unranked', async () => {
+    mockedFetch.mockResolvedValue({
+      ok: true,
+      partners: [{ ...rankablePartner, partnerTier: 'EXPERT' }],
+    });
+
+    const [partner] = await fetchLiveMarketplacePartners();
+
+    expect(partner.partnerTier).toBeNull();
   });
 
   it('degrades to [] when the fetch throws', async () => {

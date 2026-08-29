@@ -1,10 +1,10 @@
+import { MetadataWritability } from 'twenty-shared/types';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
@@ -14,13 +14,15 @@ import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/wo
 
 type GetDefaultFlatFieldMetadataArgs = {
   createFieldInput: Omit<CreateFieldInput, 'workspaceId' | 'objectMetadataId'>;
-  flatApplication: FlatApplication;
+  applicationUniversalIdentifier: string;
   objectMetadataUniversalIdentifier: string;
+  isSystemSideEffect?: boolean;
 };
 export const getDefaultFlatFieldMetadata = ({
   createFieldInput,
-  flatApplication,
+  applicationUniversalIdentifier,
   objectMetadataUniversalIdentifier,
+  isSystemSideEffect = false,
 }: GetDefaultFlatFieldMetadataArgs) => {
   const { defaultValue, settings } = extractAndSanitizeObjectStringFields(
     createFieldInput,
@@ -41,7 +43,7 @@ export const getDefaultFlatFieldMetadata = ({
       createFieldInput.isRemoteCreation,
     ),
     isSystem: createFieldInput.isSystem ?? false,
-    isSystemSideEffect: false,
+    isSystemSideEffect,
     isUnique: createFieldInput.isUnique ?? false,
     label: createFieldInput.label,
     name: createFieldInput.name,
@@ -64,8 +66,9 @@ export const getDefaultFlatFieldMetadata = ({
       (isDefined(createFieldInput.isUIReadOnly)
         ? !createFieldInput.isUIReadOnly
         : true),
+    writability: MetadataWritability.OPEN,
     morphId: null,
-    applicationUniversalIdentifier: flatApplication.universalIdentifier,
+    applicationUniversalIdentifier,
     objectMetadataUniversalIdentifier,
     relationTargetObjectMetadataUniversalIdentifier: null,
     relationTargetFieldMetadataUniversalIdentifier: null,

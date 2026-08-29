@@ -1,12 +1,12 @@
 ---
 title: Hooks de instalação
-description: Execute lógica antes ou depois da instalação — para popular dados, fazer backup de registros, validar a atualização.
+description: Execute lógica durante o ciclo de vida de instalação, atualização ou desinstalação — popule dados iniciais, faça backup de registros, valide a atualização, limpe recursos externos.
 icon: wrench
 ---
 
-Hooks de instalação são funções de lógica especiais que são executadas durante o ciclo de vida de instalação ou atualização. Elas compartilham o mesmo runtime de handler que as [logic functions](/l/pt/developers/extend/apps/logic/logic-functions) normais e recebem um `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` é `undefined` em uma instalação nova), mas são declaradas com suas próprias funções de definição e ficam fora do modelo de gatilhos normal (HTTP, cron, eventos de banco de dados).
+Hooks de instalação são funções de lógica especiais que são executadas durante o ciclo de vida de instalação, atualização ou desinstalação. Elas compartilham o mesmo runtime de handler que as [logic functions](/l/pt/developers/extend/apps/logic/logic-functions) normais, mas são declaradas com suas próprias funções de definição e ficam fora do modelo de gatilhos normal (HTTP, cron, eventos de banco de dados). Hooks de instalação recebem um `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` é `undefined` em uma instalação nova); o hook de desinstalação recebe um `UninstallPayload` (`{ version?: string }` — a versão que está sendo removida).
 
-Cada aplicativo pode definir no máximo uma função de pré-instalação e no máximo uma função de pós-instalação. A geração do manifesto apresentará erro se mais de uma de cada for detectada.
+Cada app pode definir **no máximo um** de cada hook (pre-instalação, pós-instalação, desinstalação). A geração do manifesto apresentará erro se mais de um de qualquer tipo for detectado.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -142,3 +142,47 @@ export default definePreInstallLogicFunction({
 
 </Accordion>
 </AccordionGroup>
+
+## Hook de desinstalação
+
+`defineUninstallLogicFunction` declara um hook que é executado quando um usuário desinstala seu app. Ele é executado **antes** que os metadados, dados e código do app sejam removidos — depois que a migration de exclusão é executada, não sobra nada para executar — portanto, seu handler ainda pode consultar os objetos e registros do app. Use-o para limpar recursos externos: desprovisionar recursos de API, excluir bots remanescentes, revogar webhooks.
+
+Notas:
+
+* O hook é de melhor esforço: ele é executado de forma síncrona, mas uma falha é registrada em log e **nunca bloqueia a desinstalação** — a limpeza não deve tornar impossível remover um app.
+* Ele recebe `UninstallPayload` (`{ version?: string }` — a versão que está sendo removida).
+* Ele **não** é executado quando uma instalação nova com falha é revertida — o app nunca chegou a ser totalmente instalado.
+* O hook não pode ser executado depois que o app foi removido, então a limpeza externa que depende de dados do app (por exemplo, IDs de bots armazenados em registros) deve ser feita aqui, não em um job externo agendado.
+* Assim como os hooks de instalação, ele **não é executado no modo de desenvolvimento** — em vez disso, acione-o manualmente:
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec --uninstall
+```
+
+```ts src/logic-functions/uninstall.ts
+import { defineUninstallLogicFunction, type UninstallPayload } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (_payload: UninstallPayload): Promise<void> => {
+  const client = new CoreApiClient();
+  const { meetingBots } = await client.query({
+    meetingBots: { edges: { node: { id: true, externalBotId: true } } },
+  });
+
+  // Delete the provider-side bots so nothing keeps recording after uninstall.
+  for (const { node } of meetingBots.edges) {
+    await fetch(`https://api.recorder.example/bots/${node.externalBotId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${process.env.RECORDER_API_KEY}` },
+    });
+  }
+};
+
+export default defineUninstallLogicFunction({
+  universalIdentifier: 'b2c3d4e5-6789-01bc-def0-234567890abc',
+  name: 'uninstall',
+  description: 'Deletes remaining recorder bots when the app is uninstalled.',
+  timeoutSeconds: 300,
+  handler,
+});
+```

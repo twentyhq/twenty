@@ -21,6 +21,7 @@ import { MinimalMetadataLoadEffect } from '@/metadata-store/effect-components/Mi
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
 import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvider';
 import { WelcomeOverlay } from '@/onboarding/components/WelcomeOverlay/WelcomeOverlay';
+import { CompanyEnrichmentOnboardingEffect } from '@/onboarding/effect-components/CompanyEnrichmentOnboardingEffect';
 import { ApolloAdminProvider } from '@/settings/admin-panel/apollo/components/ApolloAdminProvider';
 import { EndTrialAfterPaymentMethodGater } from '@/settings/billing/components/EndTrialAfterPaymentMethodGater';
 import { SSEProvider } from '@/sse-db-event/components/SSEProvider';
@@ -30,6 +31,7 @@ import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/con
 import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
 import { GlobalFilePreviewModal } from '@/ui/field/display/components/GlobalFilePreviewModal';
 import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProviderEffect';
+import { UserUiScaleProviderEffect } from '@/ui/theme/components/UserUiScaleProviderEffect';
 import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { UserContextProvider } from '@/users/components/UserContextProvider';
@@ -53,6 +55,7 @@ export const WorkspaceAppProviders = () => {
               <ApolloAdminProvider>
                 <SSEProvider>
                   <UserThemeProviderEffect />
+                  <UserUiScaleProviderEffect />
                   <SnackBarProvider>
                     <ErrorMessageEffect />
                     <AgentChatProvider>
@@ -82,6 +85,7 @@ export const WorkspaceAppProviders = () => {
                   <RequestFreshCaptchaTokenEffect />
                   <PageChangeEffect />
                   <WelcomeOverlay />
+                  <CompanyEnrichmentOnboardingEffect />
                   <SignOutOnOtherTabSignOutEffect />
                 </SSEProvider>
               </ApolloAdminProvider>

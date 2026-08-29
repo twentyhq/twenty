@@ -22,26 +22,40 @@ const StyledContainer = styled.div`
   }
 `;
 
-const StyledContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing['0.5']};
-  min-width: 0;
-`;
-
 const StyledMessage = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
-const StyledAnswerLine = styled.span`
+const StyledAnswersCard = styled.div`
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[3]};
+`;
+
+const StyledAnswerBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing['0.5']};
+  min-width: 0;
+`;
+
+const StyledAnswerQuestion = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
+  overflow-wrap: anywhere;
 `;
 
 const StyledAnswerValue = styled.span`
   color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
+  overflow-wrap: anywhere;
 `;
 
 export const AiChatQuestionStatusRenderer = ({
@@ -79,34 +93,32 @@ export const AiChatQuestionStatusRenderer = ({
   const answers = result?.answers ?? [];
 
   return (
-    <StyledContainer>
-      <IconHelpCircle size={theme.icon.size.sm} />
-      <StyledContent>
-        <StyledMessage>{t`Questions answered`}</StyledMessage>
-        {questions.map((question, index) => {
-          const answer = answers.find(
-            (candidate) => candidate.questionIndex === index,
-          );
-          const selectedLabels = (answer?.selectedOptionIndices ?? [])
-            .map((optionIndex) => question.options[optionIndex]?.label)
-            .filter(isNonEmptyString);
-          const freeTextAnswer = answer?.freeText ?? '';
-          const value =
-            freeTextAnswer.length > 0
-              ? freeTextAnswer
-              : selectedLabels.join(', ');
+    <StyledAnswersCard>
+      <StyledMessage>{t`Answers`}</StyledMessage>
+      {questions.map((question, index) => {
+        const answer = answers.find(
+          (candidate) => candidate.questionIndex === index,
+        );
+        const selectedLabels = (answer?.selectedOptionIndices ?? [])
+          .map((optionIndex) => question.options[optionIndex]?.label)
+          .filter(isNonEmptyString);
+        const freeTextAnswer = answer?.freeText ?? '';
+        const value =
+          freeTextAnswer.length > 0
+            ? freeTextAnswer
+            : selectedLabels.join(', ');
 
-          if (value.length === 0) {
-            return null;
-          }
+        if (value.length === 0) {
+          return null;
+        }
 
-          return (
-            <StyledAnswerLine key={index}>
-              {question.header}: <StyledAnswerValue>{value}</StyledAnswerValue>
-            </StyledAnswerLine>
-          );
-        })}
-      </StyledContent>
-    </StyledContainer>
+        return (
+          <StyledAnswerBlock key={index}>
+            <StyledAnswerQuestion>{question.question}</StyledAnswerQuestion>
+            <StyledAnswerValue>{value}</StyledAnswerValue>
+          </StyledAnswerBlock>
+        );
+      })}
+    </StyledAnswersCard>
   );
 };

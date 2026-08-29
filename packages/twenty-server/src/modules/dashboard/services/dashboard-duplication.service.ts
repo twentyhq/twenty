@@ -5,8 +5,8 @@ import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { PageLayoutDuplicationService } from 'src/engine/metadata-modules/page-layout/services/page-layout-duplication.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { DuplicatedDashboardDTO } from 'src/modules/dashboard/dtos/duplicated-dashboard.dto';
 import {
   DashboardException,
@@ -22,7 +22,7 @@ export class DashboardDuplicationService {
 
   constructor(
     private readonly pageLayoutDuplicationService: PageLayoutDuplicationService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly actorFromAuthContextService: ActorFromAuthContextService,
   ) {}
 
@@ -33,72 +33,69 @@ export class DashboardDuplicationService {
     const workspace = authContext.workspace;
     const workspaceId = workspace.id;
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const dashboardRepository =
-          await this.globalWorkspaceOrmManager.getRepository<DashboardWorkspaceEntity>(
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const dashboardRepository =
+        this.workspaceOrmManager.getRepository<DashboardWorkspaceEntity>(
+          'dashboard',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const originalDashboard = await dashboardRepository.findOne({
+        where: { id: dashboardId },
+      });
+
+      if (!isDefined(originalDashboard)) {
+        throw new DashboardException(
+          generateDashboardExceptionMessage(
+            DashboardExceptionMessageKey.DASHBOARD_NOT_FOUND,
+            dashboardId,
+          ),
+          DashboardExceptionCode.DASHBOARD_NOT_FOUND,
+        );
+      }
+
+      if (!isDefined(originalDashboard.pageLayoutId)) {
+        throw new DashboardException(
+          generateDashboardExceptionMessage(
+            DashboardExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
+            dashboardId,
+          ),
+          DashboardExceptionCode.PAGE_LAYOUT_NOT_FOUND,
+        );
+      }
+
+      try {
+        const newPageLayout = await this.pageLayoutDuplicationService.duplicate(
+          {
+            pageLayoutId: originalDashboard.pageLayoutId,
             workspaceId,
-            'dashboard',
-            { shouldBypassPermissionChecks: true },
-          );
+          },
+        );
 
-        const originalDashboard = await dashboardRepository.findOne({
-          where: { id: dashboardId },
-        });
+        const newDashboard = await this.createDuplicatedDashboard(
+          originalDashboard,
+          newPageLayout.id,
+          dashboardRepository,
+          authContext,
+        );
 
-        if (!isDefined(originalDashboard)) {
-          throw new DashboardException(
-            generateDashboardExceptionMessage(
-              DashboardExceptionMessageKey.DASHBOARD_NOT_FOUND,
-              dashboardId,
-            ),
-            DashboardExceptionCode.DASHBOARD_NOT_FOUND,
-          );
-        }
+        return {
+          id: newDashboard.id,
+          title: newDashboard.title,
+          pageLayoutId: newDashboard.pageLayoutId,
+          position: newDashboard.position,
+          createdAt: newDashboard.createdAt,
+          updatedAt: newDashboard.updatedAt,
+        };
+      } catch (error) {
+        this.logger.error(
+          `Failed to duplicate dashboard ${dashboardId}: ${error.message}`,
+          error.stack,
+        );
 
-        if (!isDefined(originalDashboard.pageLayoutId)) {
-          throw new DashboardException(
-            generateDashboardExceptionMessage(
-              DashboardExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
-              dashboardId,
-            ),
-            DashboardExceptionCode.PAGE_LAYOUT_NOT_FOUND,
-          );
-        }
-
-        try {
-          const newPageLayout =
-            await this.pageLayoutDuplicationService.duplicate({
-              pageLayoutId: originalDashboard.pageLayoutId,
-              workspaceId,
-            });
-
-          const newDashboard = await this.createDuplicatedDashboard(
-            originalDashboard,
-            newPageLayout.id,
-            dashboardRepository,
-            authContext,
-          );
-
-          return {
-            id: newDashboard.id,
-            title: newDashboard.title,
-            pageLayoutId: newDashboard.pageLayoutId,
-            position: newDashboard.position,
-            createdAt: newDashboard.createdAt,
-            updatedAt: newDashboard.updatedAt,
-          };
-        } catch (error) {
-          this.logger.error(
-            `Failed to duplicate dashboard ${dashboardId}: ${error.message}`,
-            error.stack,
-          );
-
-          throw error;
-        }
-      },
-      authContext,
-    );
+        throw error;
+      }
+    }, authContext);
   }
 
   private async createDuplicatedDashboard(

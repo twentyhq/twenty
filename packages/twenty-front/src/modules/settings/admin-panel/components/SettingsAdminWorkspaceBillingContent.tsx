@@ -23,6 +23,9 @@ import { type ThemeColor } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { SettingsAdminWorkspaceCreditGrantModal } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal';
+import { SettingsAdminWorkspaceCreditGrantsTable } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { PlansTags } from '@/settings/billing/components/internal/PlansTags';
@@ -40,6 +43,7 @@ const STRIPE_DASHBOARD_BASE_URL = 'https://dashboard.stripe.com';
 const BASE_PRODUCT_KEY = 'BASE_PRODUCT';
 const RESOURCE_CREDIT_KEY = 'RESOURCE_CREDIT';
 const EM_DASH = '\u2014';
+const GRANT_CREDITS_MODAL_ID = 'settings-admin-grant-workspace-credits';
 
 type SettingsAdminWorkspaceBillingContentProps = {
   workspaceId: string;
@@ -138,6 +142,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
 }: SettingsAdminWorkspaceBillingContentProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
+  const { openModal } = useModal();
   const apolloAdminClient = useApolloAdminClient();
 
   const { data, loading } = useQuery<WorkspaceBillingAdminPanelQuery>(
@@ -172,7 +177,8 @@ export const SettingsAdminWorkspaceBillingContent = ({
     );
   }
 
-  const { stripeCustomerId, creditBalance, subscription, usage } = billing;
+  const { stripeCustomerId, creditBalance, creditGrants, subscription, usage } =
+    billing;
 
   const formatCredits = (credits: number): string =>
     formatNumber(credits, { abbreviate: true, decimals: 2 });
@@ -231,7 +237,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
           ? [
               {
                 Icon: IconCoins,
-                label: t`Rollover credits`,
+                label: t`Granted credits`,
                 value: formatCredits(usage.rolloverCredits),
               },
             ]
@@ -421,6 +427,17 @@ export const SettingsAdminWorkspaceBillingContent = ({
           />
         )}
       </Section>
+
+      <SettingsAdminWorkspaceCreditGrantsTable
+        workspaceId={workspaceId}
+        creditGrants={creditGrants}
+        onGrantCreditsClick={() => openModal(GRANT_CREDITS_MODAL_ID)}
+      />
+
+      <SettingsAdminWorkspaceCreditGrantModal
+        modalInstanceId={GRANT_CREDITS_MODAL_ID}
+        workspaceId={workspaceId}
+      />
     </StyledContainer>
   );
 };

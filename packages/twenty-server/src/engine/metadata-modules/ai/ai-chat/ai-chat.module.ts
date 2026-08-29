@@ -20,7 +20,6 @@ import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-bi
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
-import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -31,6 +30,8 @@ import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
 import { StreamAgentChatJob } from './jobs/stream-agent-chat.job';
 import { AgentChatResolver } from './resolvers/agent-chat.resolver';
 import { AgentChatSubscriptionResolver } from './resolvers/agent-chat-subscription.resolver';
+import { WorkspaceSetupChatResolver } from './resolvers/workspace-setup-chat.resolver';
+import { WorkspaceSetupChatService } from './services/workspace-setup-chat.service';
 import { AgentChatCancelSubscriberService } from './services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from './services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from './services/agent-chat-stream-heartbeat.service';
@@ -58,7 +59,6 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     WorkspaceCacheStorageModule,
     WorkspaceCacheModule,
     WorkspaceDomainsModule,
-    TwentyORMModule,
     TokenModule,
     UserWorkspaceModule,
     AiBillingModule,
@@ -73,8 +73,10 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AgentChatStreamHeartbeatService,
     AgentChatResolver,
     AgentChatSubscriptionResolver,
+    WorkspaceSetupChatResolver,
     AgentChatService,
     AgentChatStreamingService,
+    WorkspaceSetupChatService,
     AgentTitleGenerationService,
     ChatExecutionService,
     MessagePruningService,

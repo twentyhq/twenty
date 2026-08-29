@@ -19,7 +19,7 @@ Le azioni definiscono cosa accade dopo l'attivazione di un trigger. Puoi concate
 
 <img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
 
-### Crea un Record
+### Crea Record
 
 Aggiunge un nuovo record a un oggetto selezionato.
 
@@ -112,12 +112,12 @@ Crea un nuovo record o aggiorna uno esistente in base ai criteri di corrisponden
 
 **Configurazione**:
 
-* Seleziona l'array di record da un passaggio precedente (ad es., risultati da Search Records, da un trigger Manual con disponibilità Bulk, da un nodo di codice). Quando un passaggio di tipo Code o Logic Function restituisce un array di primo livello, seleziona l'opzione **Whole list** per eseguire il loop su tutto l'output.
+* Selezionare l'array di record da un passo precedente (ad esempio, risultati da record di ricerca, da un trigger manuale con disponibilità di massa, da un nodo Codice). Quando un passaggio di tipo Code o Logic Function restituisce un array di primo livello, seleziona l'opzione **Whole list** per eseguire il loop su tutto l'output.
 * Definisci le azioni da eseguire su ciascun record nel ciclo.
 
 <Note>
-- Puoi aggiungere diverse azioni all'interno di un iteratore.
-- Quando utilizzi diramazioni all'interno di un iteratore, assicurati che l'ultimo passaggio di ciascuna diramazione si ricolleghi all'iteratore per chiudere il ciclo.
+- È possibile aggiungere diverse azioni all'interno di un Iterator.
+- Quando si utilizzano rami all'interno di un Iterator, assicurarsi che l'ultimo passo di ogni ramo si connetta all'Iteratore per chiudere il ciclo.
 </Note>
 
 * Accedi ai campi di `Current Item`: per utilizzare i campi del record attualmente in elaborazione, fai clic sul passaggio **Iterator**, quindi seleziona **Current item**. Verrà visualizzato l'elenco dei campi disponibili di quel record e potrai selezionarli per l'uso nelle azioni successive. Puoi anche selezionare **Use the whole item** per passare l'intero elemento corrente a un passaggio a valle.
@@ -181,7 +181,7 @@ La data programmata non può essere nel passato. Se viene utilizzato un campo da
 ### Invia email
 
 Invia un'email dal tuo flusso di lavoro. Ottimo per email di gruppo basate su modelli. Le email avranno l'aspetto di quelle inviate dalla tua casella di posta.
-Non adatto a newsletter (che richiedono una formattazione più ricca) o a sequenze di email automatizzate.
+Non è adatto per le newsletter (che richiedono una formattazione più ricca) o le sequenze automatiche di posta elettronica.
 
 **Prerequisiti**: Aggiungi un account email in Impostazioni → Account
 
@@ -202,7 +202,7 @@ Al momento è possibile un solo destinatario.
 </Note>
 
 * Imposta l'oggetto della email.
-* Componi il corpo del messaggio. Puoi formattare i link, creare elenchi numerati, elenchi puntati, aggiungere allegati.
+* Componi il corpo del messaggio. È possibile formattare i collegamenti, creare liste numerate, elenchi punti puntati e aggiungere allegati.
 
 <Note>
 Al momento non è possibile aggiungere firme HTML.
@@ -213,24 +213,24 @@ Al momento non è possibile aggiungere firme HTML.
 Visualizza un modulo durante l'esecuzione del flusso di lavoro per raccogliere l'input dell'utente. Le risposte possono quindi essere utilizzate nei passaggi successivi per creare record, inviare email o eseguire qualsiasi altra azione basata sull'input.
 
 <Warning>
-**I moduli sono progettati solo per i trigger manuali**. Per i flussi di lavoro con altri trigger (Record Creato, Aggiornato, ecc.), i moduli sono accessibili solo tramite l'interfaccia di esecuzione del flusso di lavoro, il che non è l'esperienza utente prevista. Un centro notifiche sarà rilasciato nel 2026 per supportare correttamente i moduli nei flussi di lavoro automatizzati.
+**I moduli sono progettati solo per i trigger manuali**. Per i flussi di lavoro con altri trigger (Record Creato, Aggiornato, ecc.), i moduli sono accessibili solo tramite l'interfaccia di esecuzione del flusso di lavoro, il che non è l'esperienza utente prevista. Un centro di notifica sarà rilasciato nel 2026 per supportare adeguatamente i moduli nei flussi di lavoro automatizzati.
 </Warning>
 
 **Configurazione**:
 
 * Configura i campi che verranno chiesti agli utenti di compilare. Per ogni campo, scegli
-  * un tipo tra testo, numero, data, un determinato record, un campo di selezione. I campi di selezione di tutti gli oggetti sono disponibili.
+  * un tipo tra testo, numero, data, un determinato record, un campo di selezione. I campi di tutti gli oggetti sono disponibili per la selezione.
   * un'etichetta
   * un valore predefinito sotto `Placeholder` (opzionale)
 * Modifica il titolo del modulo
 
 **Output**: Le risposte ai moduli sono disponibili per l'uso in passaggi successivi.
 
-**Esempio**: Il flusso di lavoro "Quick Lead" è disponibile per impostazione predefinita in tutti gli spazi di lavoro, disponibile ovunque nel Menu Comandi `Cmd + K`.
+**Esempio**: Il flusso di lavoro "Quick Lead" è disponibile per impostazione predefinita in tutti gli spazi di lavoro, disponibile ovunque nel menu dei comandi `Cmd+K`.
 
 **Come compilare il modulo**:
 
-* Attiva il tuo flusso di lavoro manuale dal menu comandi `Cmd K`
+* Attiva il tuo flusso di lavoro manuale dal menu dei comandi `Cmd+K`
 * Compila il modulo visualizzato nel pannello laterale e fai clic su `Submit`.
 
 <Note>
@@ -249,7 +249,7 @@ In background, ogni azione Code è supportata dalla propria **logic function**, 
 
 **Configurazione**:
 
-* Accedi alle variabili dai passaggi precedenti. Puoi modificare dinamicamente i nomi delle variabili.
+* Accedi alle variabili dai passaggi precedenti. È possibile modificare i nomi delle variabili dinamicamente.
 
 <VimeoEmbed videoId="1147281795" title="Dimostrazione video" />
 

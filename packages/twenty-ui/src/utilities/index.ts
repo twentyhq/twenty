@@ -22,6 +22,7 @@ export { useResetLocationHash } from './navigation/hooks/useResetLocationHash';
 export { isNavigationModifierPressed } from './navigation/isNavigationModifierPressed';
 export type { TriggerEventType } from './navigation/types/trigger-event.type';
 export { useIsMobile } from './responsive/hooks/useIsMobile';
+export { useIsTouchDevice } from './responsive/hooks/useIsTouchDevice';
 export { useScreenSize } from './screen-size/hooks/useScreenSize';
 export type { ClickOutsideAttributes } from './types/ClickOutsideAttributes';
 export type { Nullable } from './types/Nullable';

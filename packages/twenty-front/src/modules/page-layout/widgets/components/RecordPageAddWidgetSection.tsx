@@ -4,12 +4,7 @@ import { useNavigateToMoreWidgets } from '@/page-layout/hooks/useNavigateToMoreW
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import {
-  IconListDetails,
-  IconListSearch,
-  IconPlus,
-  IconSquarePlus,
-} from 'twenty-ui/icon';
+import { IconListDetails, IconPlus, IconSquarePlus } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -72,7 +67,7 @@ export const RecordPageAddWidgetSection = () => {
           onClick={createRecordPageFieldsWidget}
         />
         <MenuItem
-          LeftIcon={IconListSearch}
+          LeftIcon={IconListDetails}
           withIconContainer
           text={t`Field`}
           contextualText={t`Single field with smart formats`}

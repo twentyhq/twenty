@@ -32,9 +32,9 @@ Pode importar dados para qualquer objeto utilizando ficheiros CSV, XLSX ou XLS. 
 6. Revise os erros (realçados a amarelo) e corrija-os, editando diretamente na interface
 7. Confirme a importação
 
-### Importar relações entre objetos
+### Importar Relações Entre Objetos
 
-Pode importar relações entre objetos utilizando a função de importação de CSV. Tem de referenciar o objeto relacionado utilizando um campo único desse objeto: o `id`, o `email` para Pessoas e Membros do espaço de trabalho, o `domain` para empresas, ou qualquer outro campo definido como único no modelo de dados para qualquer outro objeto.
+Você pode importar relações entre objetos usando a função de importação CSV. Tem de referenciar o objeto relacionado utilizando um campo único desse objeto: o `id`, o `email` para Pessoas e Membros do espaço de trabalho, o `domain` para empresas, ou qualquer outro campo definido como único no modelo de dados para qualquer outro objeto.
 
 <Note>**Os registos eliminados contam para a unicidade.** Os registos eliminados logicamente (visíveis no Menu de Comandos → Ver registos eliminados) são incluídos nas verificações de unicidade. Se importar um registo com o mesmo valor único que um registo eliminado, o registo eliminado será restaurado.</Note>
 
@@ -43,8 +43,8 @@ Pode importar relações entre objetos utilizando a função de importação de 
 
 Ao importar objetos relacionados, carregue os ficheiros por esta ordem:
 1. **Empresas** primeiro (o lado "um" das relações)
-2. **Pessoas** em segundo (ligadas às empresas via companyId)
-3. **Oportunidades** em terceiro (ligadas a empresas/pessoas)
+2. **Pessoas** em segundo (ligadas a Empresas via companyId)
+3. **Oportunidades** em terceiro (ligadas a Empresas/Pessoas)
 4. **Objetos personalizados** com relações por último
 
 Porquê? O lado "um" de uma relação um-para-muitos tem de existir antes de o poder referenciar. Por exemplo, o registo da Empresa tem de existir antes de importar uma Pessoa com o ID dessa empresa.

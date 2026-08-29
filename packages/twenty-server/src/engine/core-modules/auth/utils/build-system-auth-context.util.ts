@@ -3,7 +3,6 @@ import { type SystemWorkspaceAuthContext } from 'src/engine/core-modules/auth/ty
 
 type SystemAuthContextInput = {
   workspace: NonNullable<RawAuthContext['workspace']>;
-  workspaceMetadataVersion?: string;
 };
 
 export const buildSystemAuthContext = (
@@ -12,6 +11,5 @@ export const buildSystemAuthContext = (
   return {
     type: 'system',
     workspace: input.workspace,
-    workspaceMetadataVersion: input.workspaceMetadataVersion,
   };
 };

@@ -1,153 +1,57 @@
 ---
 title: Úložiště typu klíč–hodnota
-description: Ukládejte průběžné výsledky, kešujte data a sdílejte stav mezi spuštěními logických funkcí pomocí jednoduchého objektu typu klíč–hodnota.
+description: Ukládejte průběžné výsledky, kešujte data a sdílejte stav mezi spuštěními logických funkcí pomocí vestavěného aplikačního úložiště typu klíč–hodnota.
 icon: database
 ---
 
-Logické funkce běží v izolovaných, krátce žijících procesech Node.js — jakmile běh skončí, nic, co bylo v paměti, nepřežije. Když potřebujete **něco zapamatovat mezi běhy** (kešovat nákladnou odpověď z API, uložit kurzor pro inkrementální synchronizace, odložit práci nebo předat stav z jedné funkce do druhé), uložte to do databáze pracovního prostoru.
+Logické funkce běží v izolovaných, krátce žijících procesech Node.js — jakmile běh skončí, nic, co bylo v paměti, nepřežije. Když potřebujete **něco zapamatovat mezi běhy** (kešovat nákladnou odpověď z API, uložit kurzor pro inkrementální synchronizace, odložit práci nebo předat stav z jedné funkce do druhé), uložte to do vestavěného úložiště typu klíč–hodnota.
 
-Na to nepotřebujete speciální úložiště: malý **technický objekt** s polem `key` a polem `value` vám poskytne trvalé key-value úložiště, omezené na pracovní prostor, které lze dotazovat přes stejný [typovaný klient API](/l/cs/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk), který už používáte pro záznamy.
+Každá aplikace má svůj vlastní izolovaný jmenný prostor: položky jsou svázané s ověřenou aplikací, takže vaše klíče nikdy nemohou kolidovat s klíči jiné aplikace ani je jiná aplikace nemůže číst.
 
 ```text
-  ┌─────────────────┐   set(key, value)    ┌──────────────────────────┐
-  │ Logic function  │ ───────────────────▶ │ "KV Store" object        │
-  │ (your handler)  │ ◀─────────────────── │  key (unique)  │  value  │
-  └─────────────────┘   get(key)           └──────────────────────────┘
+  ┌─────────────────┐   kv.set(key, value)   ┌──────────────────────────┐
+  │ Logic function  │ ─────────────────────▶ │ Application KV store     │
+  │ (your handler)  │ ◀───────────────────── │  key (unique)  │  value  │
+  └─────────────────┘   kv.get(key)          └──────────────────────────┘
 ```
 
-## Definujte objekt úložiště
+## Get, set, delete
 
-Deklarujte vlastní objekt se dvěma poli — `key` (jedinečný `TEXT`) a `value` (`RAW_JSON`, takže můžete ukládat libovolná JSON-serializovatelná data). Úplnou referenci `defineObject` najdete v [Objects](/l/cs/developers/extend/apps/data/objects).
+Importujte `kv` z `twenty-sdk/logic-function`. Hodnoty mohou být libovolná JSON-serializovatelná data.
 
-```ts src/objects/kv-store.object.ts
-import { defineObject, FieldType } from 'twenty-sdk/define';
+```ts src/logic-functions/sync-linear-issues.ts
+import { kv } from 'twenty-sdk/logic-function';
 
-export const KV_STORE_UNIVERSAL_IDENTIFIER =
-  '2f1c8a90-3b6d-4e2a-9c47-7d0e5a1b9f33';
-export const KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER =
-  '4a7e2d11-9c83-4f60-b5a2-1e6c8d0f4b21';
-export const KV_STORE_VALUE_FIELD_UNIVERSAL_IDENTIFIER =
-  '8b3f6c02-5d19-47ae-9f31-2c4a7e0b6d58';
+// Read a value. Returns null when the key is missing.
+const cursor = await kv.get<string>('sync-cursor:linear');
 
-export default defineObject({
-  universalIdentifier: KV_STORE_UNIVERSAL_IDENTIFIER,
-  nameSingular: 'kvStore',
-  namePlural: 'kvStores',
-  labelSingular: 'KV Store',
-  labelPlural: 'KV Store',
-  description: 'Key-value storage for logic functions',
-  icon: 'IconDatabase',
-  fields: [
-    {
-      universalIdentifier: KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-      name: 'key',
-      type: FieldType.TEXT,
-      label: 'Key',
-      description: 'Unique lookup key',
-      icon: 'IconKey',
-    },
-    {
-      universalIdentifier: KV_STORE_VALUE_FIELD_UNIVERSAL_IDENTIFIER,
-      name: 'value',
-      type: FieldType.RAW_JSON,
-      label: 'Value',
-      description: 'Stored JSON payload',
-      icon: 'IconJson',
-    },
-  ],
+// Write a value. Creates the entry on first write, updates it afterwards.
+await kv.set('sync-cursor:linear', newCursor);
+
+// Delete an entry. Returns true when an entry was removed.
+await kv.delete('sync-cursor:linear');
+```
+
+## Rozsahy
+
+Každá položka má rozsah, který se předává jako volba při každém volání. Výchozí hodnota je `WORKSPACE`.
+
+* **`WORKSPACE`** (výchozí) — položka je soukromá pro aktuální instalaci vaší aplikace v pracovním prostoru. Každý pracovní prostor, který aplikaci nainstaluje, získá vlastní nezávislou sadu klíčů. To je to, co chcete pro keše, kurzory a stav na úrovni pracovního prostoru.
+* **`SERVER`** — položka je sdílena napříč **všemi instalacemi** vaší aplikace na serveru. Serverové položky se chovají jako **nároky (claims)**: uloženou hodnotou je vždy workspaceId, které klíč nárokuje (vynechte `value` při `set`, abyste klíč nárokovali pro aktuální pracovní prostor) a pouze tento pracovní prostor ji může přepsat nebo smazat. Každá instalace může položku číst.
+
+Serverové nároky existují pro směrování napříč pracovními prostory. [Server-route resolver](/l/cs/developers/extend/apps/logic/logic-functions#server-route-trigger) běží v pracovním prostoru vlastníka registrace aplikace, ale příchozí webhook obvykle nese pouze externí id účtu — nikoli Twenty workspaceId. Nechte každý pracovní prostor, aby si při připojení nárokoval své externí id, a poté ho v routě rozřešte:
+
+```ts
+// In the connected workspace, when the external account is linked:
+await kv.set(`slack:team:${teamId}`, undefined, { scope: 'SERVER' });
+
+// In the server-route resolver (owner workspace), on each webhook:
+const workspaceId = await kv.get<string>(`slack:team:${teamId}`, {
+  scope: 'SERVER',
 });
 ```
 
-### Vynucení jedinečnosti klíče
-
-Přidejte na `key` **jedinečný index**, aby stejný klíč nikdy nemohl mít dva řádky. Toto je doporučené primitivum pro jedinečnost — viz [Data → Unique indexes](/l/cs/developers/extend/apps/data/overview#unique-indexes).
-
-```ts src/indexes/kv-store-key.index.ts
-import { defineIndex } from 'twenty-sdk/define';
-import {
-  KV_STORE_UNIVERSAL_IDENTIFIER,
-  KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-} from '../objects/kv-store.object';
-
-export default defineIndex({
-  universalIdentifier: 'c0d4e8f2-6a1b-4c93-8e57-3f9a2d0b7e14',
-  objectUniversalIdentifier: KV_STORE_UNIVERSAL_IDENTIFIER,
-  isUnique: true,
-  fields: [
-    {
-      universalIdentifier: 'c0d4e8f2-6a1b-4c93-8e57-3f9a2d0b7e15',
-      fieldUniversalIdentifier: KV_STORE_KEY_FIELD_UNIVERSAL_IDENTIFIER,
-    },
-  ],
-});
-```
-
-## Čtení a zápis z logické funkce
-
-Zabalte objekt do několika malých helperů, aby zbytek vašeho kódu vypadal jako key-value API — `get`, `set` a `del`. Používají [`CoreApiClient`](/l/cs/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk), který je generovaný ze schématu vašeho pracovního prostoru a je plně typovaný proti objektu `kvStore`.
-
-```ts src/logic-functions/handlers/kv-store.ts
-import { CoreApiClient } from 'twenty-client-sdk/core';
-import { isDefined } from 'twenty-sdk/utils';
-
-const client = new CoreApiClient();
-
-// Look up a single row by its key.
-const findByKey = async (key: string) => {
-  const { kvStores } = await client.query({
-    kvStores: {
-      __args: { filter: { key: { eq: key } }, first: 1 },
-      edges: { node: { id: true, value: true } },
-    },
-  });
-
-  return kvStores.edges[0]?.node;
-};
-
-// Read a value. Returns undefined when the key is missing.
-export const get = async <TValue>(key: string): Promise<TValue | undefined> => {
-  const row = await findByKey(key);
-
-  return isDefined(row) ? (row.value as TValue) : undefined;
-};
-
-// Write a value. Creates the row on first write, updates it afterwards (upsert).
-export const set = async (key: string, value: unknown): Promise<void> => {
-  const existing = await findByKey(key);
-
-  if (isDefined(existing)) {
-    await client.mutation({
-      updateKvStore: {
-        __args: { id: existing.id, data: { value } },
-        id: true,
-      },
-    });
-    return;
-  }
-
-  await client.mutation({
-    createKvStore: {
-      __args: { data: { key, value } },
-      id: true,
-    },
-  });
-};
-
-// Delete a value. No-op when the key is missing.
-export const del = async (key: string): Promise<void> => {
-  const existing = await findByKey(key);
-
-  if (isDefined(existing)) {
-    await client.mutation({
-      deleteKvStore: { __args: { id: existing.id }, id: true },
-    });
-  }
-};
-```
-
-<Note>
-Jedinečný index chrání před duplikáty, ale dva běhy, které ve stejný okamžik zapisují **stejný nový klíč**, se stále mohou předhánět mezi vyhledáním a vytvořením. Považujte vytvoření, které selže na omezení jedinečnosti, za „někdo jiný vyhrál“ — zachyťte ho a znovu přečtěte, nebo to zkuste znovu jako aktualizaci.
-</Note>
+Protože serverový klíč může být nárokován pouze pro vlastní pracovní prostor volajícího a nikdy nemůže být přepsán jiným, pracovní prostor nemůže převzít mapování, které patří někomu jinému. `kv.set` vyvolá výjimku, když je klíč už nárokován jiným pracovním prostorem.
 
 ## Použití: kešujte nákladné volání
 
@@ -155,15 +59,15 @@ Typickým použitím je kešování pomalé nebo omezované (rate-limited) odpov
 
 ```ts src/logic-functions/getExchangeRate.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { get, set } from './handlers/kv-store';
+import { kv } from 'twenty-sdk/logic-function';
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
 
 type CachedRate = { rate: number; fetchedAt: number };
 
 const handler = async (params: { from: string; to: string }) => {
-  const cacheKey = `exchange-rate:${params.from}:${params.to}`;
-  const cached = await get<CachedRate>(cacheKey);
+  const cacheKey = `cache:exchange-rate:${params.from}:${params.to}`;
+  const cached = await kv.get<CachedRate>(cacheKey);
 
   if (cached && Date.now() - cached.fetchedAt < ONE_HOUR_MS) {
     return { rate: cached.rate, cached: true };
@@ -174,7 +78,7 @@ const handler = async (params: { from: string; to: string }) => {
   );
   const { rate } = (await response.json()) as { rate: number };
 
-  await set(cacheKey, { rate, fetchedAt: Date.now() });
+  await kv.set(cacheKey, { rate, fetchedAt: Date.now() });
 
   return { rate, cached: false };
 };
@@ -189,12 +93,18 @@ export default defineLogicFunction({
 
 ## Vzorové postupy a tipy
 
-* **Jmenné prostory.** Přidávejte prefixy ke klíčům, abyste oddělili různé oblasti a usnadnili hromadná vyhledávání — `sync-cursor:linear`, `cache:exchange-rate:USD:EUR`, `lock:nightly-report`. Filtrováním `key: { like: 'cache:%' }` můžete vypsat nebo vyčistit celý jmenný prostor.
-* **Expirace (TTL).** Úložiště nemá vestavěnou expiraci. Uložte časové razítko dovnitř `value` (jako v příkladu s keší) a při čtení ho kontrolujte, nebo přidejte pole `DATE_TIME` a pravidelně čistěte zastaralé řádky z [funkce spouštěné cronem](/l/cs/developers/extend/apps/logic/logic-functions).
-* **Co ukládat.** `RAW_JSON` obsahuje libovolnou JSON-serializovatelnou hodnotu — čísla, řetězce, pole, objekty. Držte záznamy malé; toto je určeno pro koordinaci a kešování, ne pro velké objekty blob nebo soubory. Pro soubory použijte pole `FILES` a [`uploadFile`](/l/cs/developers/extend/apps/logic/logic-functions#uploading-files).
+* **Jmenné prostory.** Přidávejte prefixy ke klíčům, abyste oddělili různé oblasti — `sync-cursor:linear`, `cache:exchange-rate:USD:EUR`, `lock:nightly-report`.
+* **Expirace (TTL).** Úložiště nemá vestavěnou expiraci. Uložte časové razítko dovnitř hodnoty (jako v příkladu s keší) a při čtení ho kontrolujte, nebo čistěte zastaralé klíče z [funkce spouštěné cronem](/l/cs/developers/extend/apps/logic/logic-functions).
+* **Co ukládat.** Jakákoli JSON-serializovatelná hodnota — čísla, řetězce, pole, objekty. Držte záznamy malé; toto je určeno pro koordinaci a kešování, ne pro velké objekty blob nebo soubory. Pro soubory použijte pole `FILES` a [`uploadFile`](/l/cs/developers/extend/apps/logic/logic-functions#uploading-files).
+* **Viditelnost.** Položky žijí v databázi instance, ne jako záznamy pracovního prostoru — nikdy se neobjevují v uživatelském rozhraní pracovního prostoru, nejsou součástí datového modelu vaší aplikace a nevyžadují žádná oprávnění k rolím ani objektům.
+
+## Alternativa: dotazovatelný objekt úložiště
+
+Vestavěné úložiště je záměrně neprůhledné: položky nejsou záznamy, takže je nemůžete procházet v UI, propojovat s jinými objekty nebo filtrovat pomocí dotazů na záznamy. Kdykoli něco z toho potřebujete — například viditelný log synchronizace nebo stav na úrovni záznamu — definujte místo toho malý **technický objekt** s jedinečným polem `key` a polem `value` typu `RAW_JSON` a dotazujte ho přes [typovaný API klient](/l/cs/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk). Viz [Objects](/l/cs/developers/extend/apps/data/objects) pro referenci k `defineObject` a [Data → Unique indexes](/l/cs/developers/extend/apps/data/overview#unique-indexes) pro vynucení jedinečnosti klíče.
+
+* **Omezení na záznam.** Přidejte [relaci](/l/cs/developers/extend/apps/data/relations) z objektu úložiště na cílový objekt namísto zakódování id do klíče.
 * **Viditelnost a oprávnění.** Řádky žijí v databázi pracovního prostoru jako jakýkoli jiný záznam, takže je lze dotazovat přes API a respektují [role](/l/cs/developers/extend/apps/config/roles) vaší aplikace. Aby se úložiště neobjevovalo v hlavním rozhraní, neuvádějte ho v [navigačním menu](/l/cs/developers/extend/apps/layout/navigation-menu-items).
-* **Vazba na záznam.** Potřebujete stav na úrovni jednotlivých záznamů místo globálních klíčů? Přidejte [relaci](/l/cs/developers/extend/apps/data/relations) z objektu úložiště na cílový objekt namísto zakódování id do klíče.
 
 <Note>
-Jde o konvenci, ne o samostatnou funkci — „KV Store“ je pouze běžný vlastní objekt, který definujete a dotazujete přes standardní API. To znamená, že těží ze stejné synchronizace, oprávnění a nástrojů jako ostatní data vaší aplikace.
+Na rozdíl od vestavěného úložiště je vlastní objekt vždy omezený na jeden pracovní prostor — nemůže sdílet položky napříč instalacemi tak, jako to dělají klíče `SERVER`.
 </Note>

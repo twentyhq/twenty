@@ -41,11 +41,13 @@ const StyledColumnFooterCell = styled.div<{
       ? `calc(var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) + var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR}))`
       : 'auto'};
 
-  &:hover {
-    background: ${({ isReadOnly }) =>
-      isReadOnly
-        ? themeCssVariables.background.primary
-        : themeCssVariables.background.secondary};
+  @media (hover: hover) {
+    &:hover {
+      background: ${({ isReadOnly }) =>
+        isReadOnly
+          ? themeCssVariables.background.primary
+          : themeCssVariables.background.secondary};
+    }
   }
 
   min-width: ${({ columnWidth }) => columnWidth}px;

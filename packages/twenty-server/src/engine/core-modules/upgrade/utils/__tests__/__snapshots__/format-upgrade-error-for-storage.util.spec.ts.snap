@@ -31,7 +31,7 @@ Report: {
 `;
 
 exports[`formatUpgradeErrorForStorage should format a WorkspaceMigrationRunnerException with EXECUTION_FAILED 1`] = `
-"[WorkspaceMigrationRunnerException] Migration action 'create' for 'objectMetadata' (universalIdentifier: test-object-uid) failed
+"[WorkspaceMigrationRunnerException] Migration action 'create' for 'objectMetadata' (universalIdentifier: test-object-uid) failed: [metadata] column "label" cannot be null; [workspaceSchema] table already exists
 Code: EXECUTION_FAILED
 Action: create on objectMetadata
 Metadata error:
@@ -54,7 +54,7 @@ exports[`formatUpgradeErrorForStorage should format a string value 1`] = `"raw s
 exports[`formatUpgradeErrorForStorage should format an undefined value 1`] = `"undefined"`;
 
 exports[`formatUpgradeErrorForStorage should surface driver details of a QueryFailedError nested in an EXECUTION_FAILED 1`] = `
-"[WorkspaceMigrationRunnerException] Migration action 'create' for 'pageLayoutWidget' (universalIdentifier: f473b435-e2d4-4928-8d90-1db0094389f7) failed
+"[WorkspaceMigrationRunnerException] Migration action 'create' for 'pageLayoutWidget' (universalIdentifier: f473b435-e2d4-4928-8d90-1db0094389f7) failed: [metadata] duplicate key value violates unique constraint "IDX_PAGE_LAYOUT_WIDGET_UNIVERSAL_ID" (pg code: 23505, detail: Key (universalIdentifier)=(f473b435-e2d4-4928-8d90-1db0094389f7) already exists.)
 Code: EXECUTION_FAILED
 Action: create on pageLayoutWidget
 Metadata error:

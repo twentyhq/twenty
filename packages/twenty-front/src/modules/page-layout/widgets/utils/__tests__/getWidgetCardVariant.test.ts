@@ -1,82 +1,40 @@
 import { getWidgetCardVariant } from '@/page-layout/widgets/utils/getWidgetCardVariant';
-import {
-  PageLayoutTabLayoutMode,
-  PageLayoutType,
-} from '~/generated-metadata/graphql';
-
-const baseParams = {
-  isInPinnedTab: false,
-  isMobile: false,
-  isInSidePanel: false,
-};
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 describe('getWidgetCardVariant', () => {
-  describe('when layoutMode is CANVAS', () => {
+  describe('page layout variants', () => {
     it.each([
-      PageLayoutType.RECORD_PAGE,
-      PageLayoutType.STANDALONE_PAGE,
-      PageLayoutType.DASHBOARD,
-      PageLayoutType.RECORD_INDEX,
-    ])(
-      "returns 'canvas' regardless of pageLayoutType (%s)",
-      (pageLayoutType) => {
-        expect(
-          getWidgetCardVariant({
-            ...baseParams,
-            layoutMode: PageLayoutTabLayoutMode.CANVAS,
-            pageLayoutType,
-          }),
-        ).toBe('canvas');
-      },
-    );
-  });
-
-  describe('when layoutMode is GRID', () => {
-    it("returns 'dashboard' for DASHBOARD page", () => {
+      ['DASHBOARD', PageLayoutType.DASHBOARD],
+      ['STANDALONE_PAGE', PageLayoutType.STANDALONE_PAGE],
+    ])("returns 'framed' for %s", (_label, pageLayoutType) => {
       expect(
         getWidgetCardVariant({
-          ...baseParams,
-          layoutMode: PageLayoutTabLayoutMode.GRID,
-          pageLayoutType: PageLayoutType.DASHBOARD,
+          isSideColumnContext: false,
+          pageLayoutType,
         }),
-      ).toBe('dashboard');
+      ).toBe('framed');
     });
 
-    it("returns 'standalone' for STANDALONE_PAGE", () => {
+    it.each([
+      ['RECORD_PAGE', PageLayoutType.RECORD_PAGE],
+      ['RECORD_INDEX', PageLayoutType.RECORD_INDEX],
+      ['no page layout type', null],
+    ])("returns 'flush' for %s", (_label, pageLayoutType) => {
       expect(
         getWidgetCardVariant({
-          ...baseParams,
-          layoutMode: PageLayoutTabLayoutMode.GRID,
-          pageLayoutType: PageLayoutType.STANDALONE_PAGE,
+          isSideColumnContext: false,
+          pageLayoutType,
         }),
-      ).toBe('standalone');
-    });
-
-    it("returns 'record-page' for RECORD_PAGE by default", () => {
-      expect(
-        getWidgetCardVariant({
-          ...baseParams,
-          layoutMode: PageLayoutTabLayoutMode.GRID,
-          pageLayoutType: PageLayoutType.RECORD_PAGE,
-        }),
-      ).toBe('record-page');
+      ).toBe('flush');
     });
   });
 
-  describe('side-column context for record pages', () => {
-    it.each([
-      ['isInPinnedTab', { isInPinnedTab: true }],
-      ['isMobile', { isMobile: true }],
-      ['isInSidePanel', { isInSidePanel: true }],
-    ])("returns 'side-column' when %s is true", (_label, override) => {
-      expect(
-        getWidgetCardVariant({
-          ...baseParams,
-          ...override,
-          layoutMode: PageLayoutTabLayoutMode.GRID,
-          pageLayoutType: PageLayoutType.RECORD_PAGE,
-        }),
-      ).toBe('side-column');
-    });
+  it("returns 'flush' in a side column context, even on a framed page", () => {
+    expect(
+      getWidgetCardVariant({
+        isSideColumnContext: true,
+        pageLayoutType: PageLayoutType.DASHBOARD,
+      }),
+    ).toBe('flush');
   });
 });

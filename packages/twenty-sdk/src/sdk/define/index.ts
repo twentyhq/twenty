@@ -23,7 +23,10 @@ export type {
 } from '@/sdk/define/fields/composite-fields';
 export { defineField } from '@/sdk/define/fields/define-field';
 export { FieldType } from '@/sdk/define/fields/field-type';
-export { getFieldUniversalIdentifier } from 'twenty-shared/application';
+export {
+  getFieldUniversalIdentifier,
+  getSystemRelationFieldUniversalIdentifier,
+} from 'twenty-shared/application';
 export { OnDeleteAction } from '@/sdk/define/fields/on-delete-action';
 export { RelationType } from '@/sdk/define/fields/relation-type';
 export { validateFields } from '@/sdk/define/fields/validate-fields';
@@ -32,45 +35,51 @@ export { defineCommandMenuItem } from '@/sdk/define/command-menu-items/define-co
 export type { CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
 export type { CommandMenuItemManifest } from 'twenty-shared/application';
 
+export { defineTimelineActivityType } from '@/sdk/define/timeline-activity-types/define-timeline-activity-type';
+export type { TimelineActivityTypeConfig } from '@/sdk/define/timeline-activity-types/timeline-activity-type-config';
+export type { TimelineActivityTypeManifest } from 'twenty-shared/application';
+
 export {
-  pageType,
-  isInSidePanel,
-  isDashboardPageLayoutInEditMode,
-  isLayoutCustomizationModeEnabled,
-  favoriteRecordIds,
-  isSelectAll,
-  hasAnySoftDeleteFilterOnView,
-  numberOfSelectedRecords,
-  objectPermissions,
-  selectedRecords,
-  featureFlags,
-  targetObjectReadPermissions,
-  targetObjectWritePermissions,
-  canImpersonate,
   canAccessFullAdminPanel,
-  isDefined,
-  isNonEmptyString,
-  includes,
+  canImpersonate,
   every,
   everyDefined,
   everyEquals,
-  some,
-  someDefined,
-  someEquals,
+  favoriteRecordIds,
+  featureFlags,
+  hasAnySoftDeleteFilterOnView,
+  includes,
+  includesEvery,
+  isDashboardPageLayoutInEditMode,
+  isDefined,
+  isInSidePanel,
+  isLayoutCustomizationModeEnabled,
+  isNonEmptyString,
+  isSelectAll,
   none,
   noneDefined,
   noneEquals,
-  someNonEmptyString,
-  includesEvery,
+  numberOfSelectedRecords,
   objectMetadataItem,
   objectMetadataLabel,
+  objectPermissions,
+  pageType,
+  selectedRecords,
+  some,
+  someDefined,
+  someEquals,
+  someNonEmptyString,
+  targetObjectReadPermissions,
+  targetObjectWritePermissions,
 } from '@/sdk/define/conditional-availability/conditional-availability-variables';
 
 export { defineFrontComponent } from '@/sdk/define/front-component/define-front-component';
+export { defineSettingsFrontComponent } from '@/sdk/define/front-component/define-settings-front-component';
 export type {
   FrontComponentConfig,
   FrontComponentType,
 } from '@/sdk/define/front-component/front-component-config';
+export type { SettingsFrontComponentConfig } from '@/sdk/define/front-component/settings-front-component-config';
 
 export { defineIndex } from '@/sdk/define/indexes/define-index';
 export type { IndexConfig } from '@/sdk/define/indexes/index-config';
@@ -82,14 +91,21 @@ export type {
 export { defineLogicFunction } from '@/sdk/define/logic-functions/define-logic-function';
 export { definePostInstallLogicFunction } from '@/sdk/define/logic-functions/define-post-install-logic-function';
 export { definePreInstallLogicFunction } from '@/sdk/define/logic-functions/define-pre-install-logic-function';
+export { defineUninstallLogicFunction } from '@/sdk/define/logic-functions/define-uninstall-logic-function';
 export type {
   InstallHandler,
   InstallPayload,
 } from '@/sdk/define/logic-functions/install-payload-type';
 export type {
+  UninstallHandler,
+  UninstallPayload,
+} from '@/sdk/define/logic-functions/uninstall-payload-type';
+export type {
   LogicFunctionConfig,
   LogicFunctionHandler,
+  ServerRouteResolverResult,
 } from '@/sdk/define/logic-functions/logic-function-config';
+export type { ServerRouteDispatchResult } from 'twenty-shared/application';
 export type { CronPayload } from '@/sdk/define/logic-functions/triggers/cron-payload-type';
 export type {
   DatabaseEventPayload,
@@ -153,6 +169,12 @@ export { defineSkill } from '@/sdk/define/skills/define-skill';
 
 export { defineView } from '@/sdk/define/views/define-view';
 export { defineViewField } from '@/sdk/define/view-fields/define-view-field';
+export {
+  getSystemViewFieldUniversalIdentifier,
+  getSystemViewUniversalIdentifier,
+  SYSTEM_VIEW_KEYS,
+  type SystemViewKey,
+} from 'twenty-shared/application';
 export type { ViewConfig } from '@/sdk/define/views/view-config';
 export { ViewKey } from '@/sdk/define/views/view-key';
 export type {
@@ -168,11 +190,15 @@ export type {
 
 export {
   AggregateOperations,
+  CommandMenuItemAvailabilityType,
   DateDisplayFormat,
   FieldMetadataSettingsOnClickAction,
   HTTPMethod,
+  IndexType,
+  MetadataWritability,
   NavigationMenuItemType,
   NumberDataType,
+  ObjectOpenRecordIn,
   ObjectRecordGroupByDateGranularity,
   PageLayoutTabLayoutMode,
   PageLayoutType,
@@ -183,9 +209,13 @@ export {
   ViewSortDirection,
   ViewType,
   ViewVisibility,
+  WidgetType,
 } from 'twenty-shared/types';
 export type {
-  GridPosition,
+  PageLayoutWidgetCanvasPosition,
   PageLayoutWidgetConditionalDisplay,
+  PageLayoutWidgetGridPosition,
+  PageLayoutWidgetPosition,
   PageLayoutWidgetUniversalConfiguration,
+  PageLayoutWidgetVerticalListPosition,
 } from 'twenty-shared/types';

@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import React from 'react';
 
 import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
+import { getEmailParticipantAvatarColorSeed } from '@/activities/emails/utils/getEmailParticipantAvatarColorSeed';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -73,6 +74,9 @@ export const ParticipantChip = ({
               avatarUrl={getAbsoluteImageUrl(avatarUrl)}
               type="rounded"
               placeholder={displayName}
+              placeholderColorSeed={getEmailParticipantAvatarColorSeed(
+                participant,
+              )}
               size="sm"
             />
           </StyledAvatarContainer>

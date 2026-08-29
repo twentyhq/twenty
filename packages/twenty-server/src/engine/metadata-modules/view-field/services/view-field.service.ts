@@ -354,7 +354,7 @@ export class ViewFieldService {
       .filter(isDefined)
       .filter((field) => !isDefined(field.deletedAt))
       .map(fromFlatViewFieldToViewFieldDto)
-      .sort((a, b) => a.position - b.position);
+      .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
   }
 
   async findByViewId(
@@ -373,7 +373,7 @@ export class ViewFieldService {
       .filter(isDefined)
       .filter((field) => field.viewId === viewId && !isDefined(field.deletedAt))
       .map(fromFlatViewFieldToViewFieldDto)
-      .sort((a, b) => a.position - b.position);
+      .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
   }
 
   async findById(

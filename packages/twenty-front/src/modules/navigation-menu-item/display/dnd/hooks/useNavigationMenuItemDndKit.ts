@@ -1,7 +1,6 @@
-import { type DragDropProvider } from '@dnd-kit/react';
 import { isSortable } from '@dnd-kit/react/sortable';
 import { useStore } from 'jotai';
-import { type ComponentProps, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/common/constants/AddToNavSourceDroppableId';
@@ -23,22 +22,13 @@ import { resolveDropTarget } from '@/navigation-menu-item/display/dnd/utils/navi
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemsDraftState';
+import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
+import { type DragDropProviderDragOverEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragOverEvent';
+import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
 
-type DragStartPayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DraggableData>>['onDragStart']
-  >
->[0];
-type DragOverPayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DraggableData>>['onDragOver']
-  >
->[0];
-type DragEndPayload = Parameters<
-  NonNullable<
-    ComponentProps<typeof DragDropProvider<DraggableData>>['onDragEnd']
-  >
->[0];
+type DragStartPayload = DragDropProviderDragStartEvent<DraggableData>;
+type DragOverPayload = DragDropProviderDragOverEvent<DraggableData>;
+type DragEndPayload = DragDropProviderDragEndEvent<DraggableData>;
 
 export type NavigationMenuItemDndKitContextValues = {
   dragSource: { sourceDroppableId: string | null };
@@ -213,7 +203,6 @@ export const useNavigationMenuItemDndKit = (
       const sourceIsSortable = source !== null && isSortable(source);
       const resolved = resolveDropTarget(target, getNavItemById, sectionType);
 
-      // Branch 1: sortable-to-sortable
       if (
         resolved !== null &&
         source !== null &&
@@ -230,7 +219,6 @@ export const useNavigationMenuItemDndKit = (
         return;
       }
 
-      // Branch 2: sortable-to-droppable-slot (includes insert-before zones)
       if (resolved !== null && sourceIsSortable) {
         setActiveDropTargetId(resolved.effectiveDropTargetId);
         setAddToNavigationFallbackDestination(resolved.destination);
@@ -244,7 +232,6 @@ export const useNavigationMenuItemDndKit = (
         return;
       }
 
-      // Branch 3: add-to-nav drag over droppable
       if (resolved !== null) {
         setAddToNavigationFallbackDestination(resolved.destination);
         setActiveDropTargetId(resolved.effectiveDropTargetId);
@@ -290,7 +277,6 @@ export const useNavigationMenuItemDndKit = (
     const targetIsSortable = target !== null && isSortable(target);
     const resolved = resolveDropTarget(target, getNavItemById, sectionType);
 
-    // Workspace fast path: sortable-to-sortable within workspace
     if (
       isWorkspaceSection &&
       sourceIsSortable &&

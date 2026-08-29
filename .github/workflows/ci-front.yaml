@@ -2,6 +2,7 @@ name: CI Front
 
 on:
   pull_request:
+  merge_group:
   push:
     branches: [main]
 

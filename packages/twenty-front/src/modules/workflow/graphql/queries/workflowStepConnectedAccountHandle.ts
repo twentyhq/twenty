@@ -8,6 +8,7 @@ export const WORKFLOW_STEP_CONNECTED_ACCOUNT_HANDLE = gql`
       id
       handle
       provider
+      handleAliases
     }
   }
 `;

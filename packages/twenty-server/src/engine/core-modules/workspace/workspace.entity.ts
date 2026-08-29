@@ -74,7 +74,6 @@ registerEnumType(WorkspaceDiscoverability, {
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType('Workspace')
 export class WorkspaceEntity {
-  // Fields
   @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -144,7 +143,6 @@ export class WorkspaceEntity {
   @Column({ type: 'integer', default: 90 })
   eventLogRetentionDays: number;
 
-  // Relations
   @OneToMany(() => AppTokenEntity, (appToken) => appToken.workspace, {
     cascade: true,
   })
@@ -246,7 +244,10 @@ export class WorkspaceEntity {
   @OneToMany(() => ViewSortEntity, (viewSort) => viewSort.workspace)
   viewSorts: Relation<ViewSortEntity[]>;
 
-  @Field()
+  @Field({
+    deprecationReason:
+      'No longer used for metadata cache invalidation, will be removed',
+  })
   @Column({ default: 1 })
   metadataVersion: number;
 

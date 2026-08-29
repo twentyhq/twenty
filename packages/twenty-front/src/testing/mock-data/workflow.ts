@@ -1150,7 +1150,7 @@ export const workflowQueryResult = {
                                   updatedAt: '2025-01-30T09:40:10.256Z',
                                   isNullable: true,
                                   standardId:
-                                    '20202020-cb17-4a61-8f8f-3be6730480de',
+                                    '9d7b0087-7037-55dc-bb59-456064455694',
                                   description: 'Tasks tied to the company',
                                   workspaceId:
                                     '3b8e6458-5fc1-4e63-8563-008ccddaa6db',
@@ -1177,7 +1177,7 @@ export const workflowQueryResult = {
                                   updatedAt: '2025-01-30T09:40:10.256Z',
                                   isNullable: true,
                                   standardId:
-                                    '20202020-bae0-4556-a74a-a9c686f77a88',
+                                    '0b28db77-8099-5ce3-a11f-86a5778d7740',
                                   description: 'Notes tied to the company',
                                   workspaceId:
                                     '3b8e6458-5fc1-4e63-8563-008ccddaa6db',
@@ -1260,7 +1260,7 @@ export const workflowQueryResult = {
                                   updatedAt: '2025-01-30T09:40:10.256Z',
                                   isNullable: true,
                                   standardId:
-                                    '20202020-c1b5-4120-b0f0-987ca401ed53',
+                                    'a4399ae3-fe89-59fe-a282-aec77d4e63a8',
                                   description:
                                     'Attachments linked to the company',
                                   workspaceId:
@@ -1288,7 +1288,7 @@ export const workflowQueryResult = {
                                   updatedAt: '2025-01-30T09:40:10.256Z',
                                   isNullable: true,
                                   standardId:
-                                    '20202020-0414-4daf-9c0d-64fe7b27f89f',
+                                    '28ec0f8f-ad23-5317-b2d9-1a487bcefee2',
                                   description:
                                     'Timeline Activities linked to the company',
                                   workspaceId:

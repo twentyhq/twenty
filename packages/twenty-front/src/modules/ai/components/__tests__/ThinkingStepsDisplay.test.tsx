@@ -64,28 +64,32 @@ const createReasoningPart = ({
 const createToolPart = ({
   input = { query: 'crm software' },
   output = { result: { ok: true } },
+  state = 'output-available',
   type = 'tool-web_search',
 }: {
   type?: `tool-${string}`;
   input?: Record<string, unknown>;
   output?: unknown;
+  state?: string;
 } = {}): ThinkingStepPart =>
   ({
     type,
     toolCallId: `${type}-call-id`,
     input,
     output,
-    state: 'output-available',
+    state,
   }) as ThinkingStepPart;
 
 const renderThinkingStepsDisplay = ({
   hasAssistantTextResponseStarted = false,
   isLastMessageStreaming,
   parts,
+  isTrailingWhileStreaming = false,
 }: {
   parts: ThinkingStepPart[];
   isLastMessageStreaming: boolean;
   hasAssistantTextResponseStarted?: boolean;
+  isTrailingWhileStreaming?: boolean;
 }) => {
   return render(
     <ThemeProvider colorScheme="light">
@@ -93,6 +97,7 @@ const renderThinkingStepsDisplay = ({
         parts={parts}
         isLastMessageStreaming={isLastMessageStreaming}
         hasAssistantTextResponseStarted={hasAssistantTextResponseStarted}
+        isTrailingWhileStreaming={isTrailingWhileStreaming}
       />
     </ThemeProvider>,
   );
@@ -118,6 +123,49 @@ describe('ThinkingStepsDisplay', () => {
       screen.getByText('Searched the web for crm software'),
     ).toBeInTheDocument();
     expect(document.querySelector('svg[viewBox="0 0 14 14"]')).not.toBeNull();
+  });
+
+  it('should render the loading label for a tool step awaiting its output while streaming', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      parts: [createToolPart({ output: null, state: 'input-available' })],
+    });
+
+    expect(
+      screen.getByText('Searching the web for crm software'),
+    ).toBeInTheDocument();
+  });
+
+  it('should append the pending thinking row after completed steps when requested', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      isTrailingWhileStreaming: true,
+      parts: [createToolPart()],
+    });
+
+    expect(screen.getByText('Thinking')).toBeInTheDocument();
+  });
+
+  it('should not render a thinking row for completed steps by default', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      parts: [createToolPart()],
+    });
+
+    expect(screen.queryByText('Thinking')).toBeNull();
+  });
+
+  it('should not append the pending thinking row while a tool step is still running', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      isTrailingWhileStreaming: true,
+      parts: [createToolPart({ output: null, state: 'input-available' })],
+    });
+
+    expect(screen.queryByText('Thinking')).toBeNull();
+    expect(
+      screen.getByText('Searching the web for crm software'),
+    ).toBeInTheDocument();
   });
 
   it('should render done state collapsed by default', () => {

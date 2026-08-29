@@ -11,7 +11,6 @@
   "dependencies": {
     "@lingui/core": "^5.9.5",
     "@lingui/react": "^5.9.5",
-    "@react-email/components": "^0.5.3",
     "twenty-shared": "workspace:*"
   },
   "peerDependencies": {
@@ -22,13 +21,13 @@
     "@lingui/cli": "^5.9.5",
     "@lingui/swc-plugin": "^5.11.0",
     "@lingui/vite-plugin": "^5.9.5",
-    "@react-email/ui": "6.5.0",
+    "@react-email/ui": "^6.9.0",
     "@tiptap/core": "^3.4.2",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "@vitejs/plugin-react-swc": "^4.3.1",
-    "react-email": "6.5.0",
+    "react-email": "^6.9.0",
     "tsc-alias": "^1.8.16",
     "vite-plugin-dts": "^4.5.4"
   },

@@ -3,6 +3,7 @@
 /.idea
 .claude/*
 !.claude/settings.json
+!.claude/skills/
 .cursor/debug-*.log
 **/**/node_modules/
 .cache
@@ -60,3 +61,13 @@ output/playwright/
 screenshots/
 !**/public/screenshots/
 !**/assets/screenshots/
+
+# local graphify knowledge-graph output (never commit)
+**/graphify-out/
+
+# Local scratch scripts
+/.verify*.mjs
+/.shot*.mjs
+/.diag*.mjs
+/.compare*.mjs
+/.narrow*.mjs

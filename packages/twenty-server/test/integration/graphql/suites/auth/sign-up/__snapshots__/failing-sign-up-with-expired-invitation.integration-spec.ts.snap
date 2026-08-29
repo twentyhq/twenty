@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`signUpInWorkspace with an expired personal invitation (integration) denies access when the personal invitation is expired 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "User does not have access to this workspace",
+  },
+  "message": "User does not have access to this workspace",
+  "name": "ForbiddenError",
+}
+`;

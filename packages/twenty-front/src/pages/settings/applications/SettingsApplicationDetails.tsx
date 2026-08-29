@@ -22,9 +22,11 @@ import { useParams } from 'react-router-dom';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { InlineBanner } from 'twenty-ui/feedback';
 import {
+  IconAlertTriangle,
   IconBox,
-  IconCommand,
+  IconBrandTypescript,
   IconGraph,
   IconInfoCircle,
   IconLego,
@@ -36,6 +38,7 @@ import {
   FindMarketplaceAppDetailDocument,
   FindMarketplaceAppManifestDocument,
   FindOneApplicationDocument,
+  IsApplicationStoppedDocument,
   PermissionFlagType,
   UninstallApplicationDocument,
 } from '~/generated-metadata/graphql';
@@ -50,6 +53,7 @@ import { SettingsApplicationDetailContentTab } from '~/pages/settings/applicatio
 import { SettingsApplicationDetailSettingsTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab';
 import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications/tabs/SettingsApplicationPermissionsTab';
 import { applicationHasHttpTriggeredFunctions } from '~/pages/settings/applications/utils/applicationHasHttpTriggeredFunctions';
+import { getDisplayedApplicationVariables } from '~/pages/settings/applications/utils/getDisplayedApplicationVariables';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 
 const APPLICATION_DETAIL_ID = 'application-detail-id';
@@ -81,6 +85,21 @@ export const SettingsApplicationDetails = () => {
     variables: { universalIdentifier: application?.universalIdentifier ?? '' },
     skip: !application?.universalIdentifier,
   });
+
+  const { data: isApplicationStoppedData } = useQuery(
+    IsApplicationStoppedDocument,
+    {
+      variables: {
+        applicationUniversalIdentifier: application?.universalIdentifier ?? '',
+      },
+      skip: !application?.universalIdentifier,
+      // The kill switch is toggled server-side, a cached value would hide it.
+      fetchPolicy: 'network-only',
+    },
+  );
+
+  const isApplicationStopped =
+    isApplicationStoppedData?.isApplicationStopped === true;
 
   const detail = detailData?.findMarketplaceAppDetail;
   const manifest = manifestData?.findMarketplaceAppDetail?.manifest as
@@ -197,7 +216,7 @@ export const SettingsApplicationDetails = () => {
       many: t`fields`,
     },
     {
-      icon: IconCommand,
+      icon: IconBrandTypescript,
       count: (application?.logicFunctions ?? []).length,
       one: t`logic function`,
       many: t`logic functions`,
@@ -229,13 +248,23 @@ export const SettingsApplicationDetails = () => {
       disabled: !isDefined(application?.defaultRoleId),
     },
     (() => {
-      const hasVariables = (application?.applicationVariables ?? []).length > 0;
+      const hasVariables =
+        getDisplayedApplicationVariables(
+          application?.applicationVariables ?? [],
+        ).length > 0;
       const hasConnectionProviders = connectionProviders.length > 0;
       const hasHttpTriggeredFunctions =
         applicationHasHttpTriggeredFunctions(application);
       const canShowFunctionDomain = hasHttpTriggeredFunctions;
+      const hasSettingsFrontComponent = isDefined(
+        application?.settingsCustomTabFrontComponentId,
+      );
       const hasNothingToConfigure =
-        !hasVariables && !hasConnectionProviders && !canShowFunctionDomain;
+        !hasVariables &&
+        !hasConnectionProviders &&
+        !canShowFunctionDomain &&
+        !hasSettingsFrontComponent &&
+        !isUpgradableApplicationSourceType(sourceType);
 
       return {
         id: 'settings',
@@ -296,7 +325,7 @@ export const SettingsApplicationDetails = () => {
             applicationInfo={{
               id: application.id,
               name: displayName,
-              logo: application.logo,
+              logoUrl: application.logoUrl,
               universalIdentifier: application.universalIdentifier,
             }}
           />
@@ -324,8 +353,8 @@ export const SettingsApplicationDetails = () => {
           isDefined(application) ? (
             <AppChip
               applicationId={application.id}
+              logoUrl={application.logoUrl}
               fallbackApplicationData={{
-                logo: application.logo,
                 name: displayName,
               }}
               size="md"
@@ -346,6 +375,13 @@ export const SettingsApplicationDetails = () => {
         ]}
       >
         <SettingsPageContainer>
+          {isApplicationStopped && (
+            <InlineBanner
+              color="danger"
+              LeftIcon={IconAlertTriangle}
+              message={t`We are currently encountering issues with this app, its behavior may be degraded while we work on a fix.`}
+            />
+          )}
           <TabList tabs={tabs} componentInstanceId={APPLICATION_DETAIL_ID} />
           {renderActiveTabContent()}
         </SettingsPageContainer>

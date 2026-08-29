@@ -6,6 +6,7 @@ import { CustomException } from 'src/utils/custom-exception';
 
 export enum RouteTriggerExceptionCode {
   WORKSPACE_NOT_FOUND = 'WORKSPACE_NOT_FOUND',
+  WORKSPACE_SUSPENDED = 'WORKSPACE_SUSPENDED',
   ROUTE_NOT_FOUND = 'ROUTE_NOT_FOUND',
   TRIGGER_NOT_FOUND = 'TRIGGER_NOT_FOUND',
   LOGIC_FUNCTION_NOT_FOUND = 'LOGIC_FUNCTION_NOT_FOUND',
@@ -16,6 +17,7 @@ export enum RouteTriggerExceptionCode {
   ROUTE_TRIGGER_PLATFORM_ERROR = 'ROUTE_TRIGGER_PLATFORM_ERROR',
   RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
   LEGACY_ROUTE_DEPRECATED = 'LEGACY_ROUTE_DEPRECATED',
+  LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED = 'LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED',
 }
 
 const getRouteTriggerExceptionUserFriendlyMessage = (
@@ -24,6 +26,8 @@ const getRouteTriggerExceptionUserFriendlyMessage = (
   switch (code) {
     case RouteTriggerExceptionCode.WORKSPACE_NOT_FOUND:
       return msg`Workspace not found.`;
+    case RouteTriggerExceptionCode.WORKSPACE_SUSPENDED:
+      return msg`Workspace is suspended.`;
     case RouteTriggerExceptionCode.ROUTE_NOT_FOUND:
       return msg`Route not found.`;
     case RouteTriggerExceptionCode.TRIGGER_NOT_FOUND:
@@ -44,6 +48,8 @@ const getRouteTriggerExceptionUserFriendlyMessage = (
       return msg`Too many requests. Please try again later.`;
     case RouteTriggerExceptionCode.LEGACY_ROUTE_DEPRECATED:
       return msg`This endpoint is no longer available on /s/. Use the dedicated public domain URL instead.`;
+    case RouteTriggerExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED:
+      return msg`The application's production dependencies are too large to install. Move packages that are not imported by its logic functions (UI libraries, dev tooling) out of "dependencies".`;
     default:
       assertUnreachable(code);
   }

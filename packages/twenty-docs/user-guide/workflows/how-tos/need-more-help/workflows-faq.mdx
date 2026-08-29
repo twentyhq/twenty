@@ -30,7 +30,7 @@ description: Frequently asked questions about workflows in Twenty.
     |------|------------------|---------------|
     | **Global** | None | Once, no record input |
     | **Single** | One or more selected | Once per selected record |
-    | **Bulk** | One or more selected | Once, with all records as array |
+    | **Bulk** | One or more selected | Once, with all records as an array |
 
     - **Global**: Use when the workflow doesn't need any record context (e.g., generate a report)
     - **Single**: Use when you want to process each selected record independently (e.g., send individual emails)
@@ -155,11 +155,9 @@ description: Frequently asked questions about workflows in Twenty.
   </Accordion>
 
   <Accordion title="Why don't I see my workflow runs?">
-    Workflow runs might be failing immediately due to rate limits.
+    Workflow runs might be failing immediately due to rate limits. Twenty enforces a hard limit of 5,000 runs per hour per workspace.
 
-    **Hard limit: 5,000 runs per hour per workspace.**
-
-    If you exceed this limit, workflows are immediately marked as failed and won't appear in your runs list as expected.
+    If you exceed this limit, workflows are immediately marked as failed and won't appear in your runs list.
 
     **Common scenarios that hit this limit**:
     - Selecting more than 5,000 records with a Single manual trigger

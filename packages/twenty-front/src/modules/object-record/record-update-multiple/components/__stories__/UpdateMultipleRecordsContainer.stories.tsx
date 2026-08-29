@@ -1,5 +1,6 @@
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
@@ -19,6 +20,7 @@ import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorato
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const UPDATE_MANY_COMPANIES_MUTATION = gql`
   mutation UpdateManyCompanies(
@@ -72,12 +74,13 @@ const meta: Meta<typeof UpdateMultipleRecordsContainer> = {
     'Modules/ObjectRecord/RecordUpdateMultiple/Components/UpdateMultipleRecordsContainer',
   component: UpdateMultipleRecordsContainer,
   decorators: [
+    MemoryRouterDecorator,
     (Story) => (
       <ApolloCoreClientContext.Provider value={mockApolloCoreClient}>
         <CommandMenuContext.Provider
           value={{
             commandMenuItems: [],
-            containerType: 'index-page-dropdown',
+            containerType: CommandMenuItemContainerType.IndexPageDropdown,
             displayType: 'dropdownItem',
             commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
             isInPreviewMode: false,

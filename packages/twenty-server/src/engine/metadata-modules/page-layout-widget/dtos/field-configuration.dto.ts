@@ -35,4 +35,9 @@ export class FieldConfigurationDTO implements FieldConfiguration {
   @IsOptional()
   @IsUUID()
   viewId?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsUUID()
+  nestedRelationFieldMetadataId?: string | null;
 }

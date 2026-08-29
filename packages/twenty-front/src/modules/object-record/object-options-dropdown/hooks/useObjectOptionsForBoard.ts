@@ -1,4 +1,4 @@
-import { type OnDragEndResponder } from '@hello-pangea/dnd';
+import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { useCallback, useMemo } from 'react';
 
 import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
@@ -92,8 +92,8 @@ export const useObjectOptionsForBoard = ({
     [availableColumnDefinitions, recordIndexFieldDefinitionsByKey],
   );
 
-  const handleReorderBoardFields: OnDragEndResponder = useCallback(
-    (result) => {
+  const handleReorderBoardFields = useCallback(
+    (result: DraggableListDropResult) => {
       if (!result.destination) {
         return;
       }

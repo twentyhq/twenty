@@ -50,9 +50,51 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
         tokenRequestContentType: 'json',
         usePkce: true,
       },
+      onConnectLogicFunctionUniversalIdentifier: null,
+      onDisconnectLogicFunctionUniversalIdentifier: null,
       createdAt: NOW,
       updatedAt: NOW,
     });
+  });
+
+  it('resolves the onConnectLogicFunction universalIdentifier into the flat field when provided', () => {
+    const onConnectLogicFunctionUniversalIdentifier =
+      'c1c1c1c1-c1c1-4c1c-c1c1-c1c1c1c1c1c1';
+
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
+        connectionProviderManifest: buildManifest({
+          onConnectLogicFunction: {
+            universalIdentifier: onConnectLogicFunctionUniversalIdentifier,
+          },
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+    expect(result.onConnectLogicFunctionUniversalIdentifier).toBe(
+      onConnectLogicFunctionUniversalIdentifier,
+    );
+  });
+
+  it('resolves the onDisconnectLogicFunction universalIdentifier into the flat field when provided', () => {
+    const onDisconnectLogicFunctionUniversalIdentifier =
+      'd2d2d2d2-d2d2-4d2d-d2d2-d2d2d2d2d2d2';
+
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
+        connectionProviderManifest: buildManifest({
+          onDisconnectLogicFunction: {
+            universalIdentifier: onDisconnectLogicFunctionUniversalIdentifier,
+          },
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+    expect(result.onDisconnectLogicFunctionUniversalIdentifier).toBe(
+      onDisconnectLogicFunctionUniversalIdentifier,
+    );
   });
 
   it('passes through optional oauth config when provided', () => {

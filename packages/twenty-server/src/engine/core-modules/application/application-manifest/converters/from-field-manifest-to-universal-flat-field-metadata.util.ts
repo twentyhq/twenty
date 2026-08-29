@@ -1,6 +1,7 @@
 import { type FieldManifest } from 'twenty-shared/application';
 import {
   FieldMetadataType,
+  MetadataWritability,
   type RelationAndMorphRelationFieldMetadataType,
 } from 'twenty-shared/types';
 
@@ -12,7 +13,6 @@ import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/fie
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
-import { PARTIAL_SYSTEM_FLAT_FIELD_METADATAS } from 'src/engine/metadata-modules/object-metadata/constants/partial-system-flat-field-metadatas.constant';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
@@ -68,9 +68,6 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     relationTargetObjectMetadataUniversalIdentifier,
   } = getRelationTargetUniversalIdentifiers(fieldManifest);
 
-  // TODO: generate system fields server-side from the object manifest
-  // so the converter doesn't need to re-normalize composite defaults
-  // that the SDK couldn't have known the canonical shape of.
   const rawDefaultValue =
     fieldManifest.defaultValue ?? generateDefaultValue(fieldManifest.type);
   const defaultValue = isCompositeFieldMetadataType(fieldManifest.type)
@@ -93,10 +90,10 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     defaultValue,
     universalSettings: fieldManifest.universalSettings ?? null,
     isActive: true,
-    isSystem: fieldManifest.name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS,
-    isSystemSideEffect:
-      fieldManifest.name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS,
+    isSystem: false,
+    isSystemSideEffect: false,
     isUIEditable: fieldManifest.isUIEditable ?? true,
+    writability: fieldManifest.writability ?? MetadataWritability.OPEN,
     isNullable: fieldManifest.isNullable ?? true,
     isUnique: fieldManifest.isUnique ?? false,
     isLabelSyncedWithName: false,

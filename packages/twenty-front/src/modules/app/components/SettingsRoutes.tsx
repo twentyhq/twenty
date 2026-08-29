@@ -214,6 +214,14 @@ const SettingsWorkspaceUnsubscribeTopicDetail = lazy(() =>
   ),
 );
 
+const SettingsWorkspaceUnsubscribe = lazy(() =>
+  import('~/pages/settings/communications/SettingsWorkspaceUnsubscribe').then(
+    (module) => ({
+      default: module.SettingsWorkspaceUnsubscribe,
+    }),
+  ),
+);
+
 const SettingsSubdomainPage = lazy(() =>
   import('~/pages/settings/domains/SettingsSubdomainPage').then((module) => ({
     default: module.SettingsSubdomainPage,
@@ -290,6 +298,14 @@ const SettingsApplicationCommandMenuItemDetail = lazy(() =>
   import('~/pages/settings/applications/SettingsApplicationCommandMenuItemDetail').then(
     (module) => ({
       default: module.SettingsApplicationCommandMenuItemDetail,
+    }),
+  ),
+);
+
+const SettingsApplicationTimelineActivityTypeDetail = lazy(() =>
+  import('~/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail').then(
+    (module) => ({
+      default: module.SettingsApplicationTimelineActivityTypeDetail,
     }),
   ),
 );
@@ -613,6 +629,12 @@ const SettingsAdminWorkspaceChatThread = lazy(() =>
   ),
 );
 
+const SettingsAdminChats = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminChats').then((module) => ({
+    default: module.SettingsAdminChats,
+  })),
+);
+
 const SettingsCommunity = lazy(() =>
   import('~/pages/settings/community/SettingsCommunity').then((module) => ({
     default: module.SettingsCommunity,
@@ -723,6 +745,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.UnsubscribeTopicDetail}
           element={<SettingsWorkspaceUnsubscribeTopicDetail />}
+        />
+        <Route
+          path={SettingsPath.Unsubscribe}
+          element={<SettingsWorkspaceUnsubscribe />}
         />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
         <Route
@@ -984,6 +1010,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsApplicationCommandMenuItemDetail />}
         />
         <Route
+          path={SettingsPath.ApplicationTimelineActivityTypeDetail}
+          element={<SettingsApplicationTimelineActivityTypeDetail />}
+        />
+        <Route
           path={SettingsPath.ApplicationViewDetail}
           element={<SettingsLayoutViewDetail />}
         />
@@ -1081,6 +1111,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           <Route
             path={SettingsPath.AdminPanelWorkspaceChatThread}
             element={<SettingsAdminWorkspaceChatThread />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelChats}
+            element={<SettingsAdminChats />}
           />
         </>
       )}

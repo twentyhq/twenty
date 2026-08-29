@@ -17,6 +17,7 @@ import {
   BarChartLayout,
   FindOnePageLayoutDocument,
   GraphOrderBy,
+  PageLayoutTabLayoutMode,
   PageLayoutType,
   type PageLayoutWidget,
   WidgetConfigurationType,
@@ -75,14 +76,17 @@ const mixedGraphsPageLayoutMocks = {
         {
           __typename: 'PageLayoutWidget',
           applicationId: '',
+          universalIdentifier: 'universal-identifier-mock',
+          isSystemSideEffect: false,
           isActive: true,
           id: 'number-widget',
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
           title: 'Revenue',
           objectMetadataId: mockPersonObjectMetadataItem.id,
-          gridPosition: {
-            __typename: 'GridPosition',
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            __typename: 'PageLayoutWidgetGridPosition',
             row: 0,
             column: 0,
             rowSpan: 2,
@@ -99,6 +103,8 @@ const mixedGraphsPageLayoutMocks = {
           deletedAt: null,
         } satisfies PageLayoutWidget,
         {
+          isSystemSideEffect: false,
+          universalIdentifier: 'universal-identifier-mock',
           __typename: 'PageLayoutWidget',
           applicationId: '',
           isActive: true,
@@ -107,8 +113,9 @@ const mixedGraphsPageLayoutMocks = {
           type: WidgetType.GRAPH,
           title: 'Revenue Sources',
           objectMetadataId: mockPersonObjectMetadataItem.id,
-          gridPosition: {
-            __typename: 'GridPosition',
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            __typename: 'PageLayoutWidgetGridPosition',
             row: 0,
             column: 6,
             rowSpan: 4,
@@ -127,6 +134,8 @@ const mixedGraphsPageLayoutMocks = {
           deletedAt: null,
         } satisfies PageLayoutWidget,
         {
+          isSystemSideEffect: false,
+          universalIdentifier: 'universal-identifier-mock',
           __typename: 'PageLayoutWidget',
           applicationId: '',
           isActive: true,
@@ -135,8 +144,9 @@ const mixedGraphsPageLayoutMocks = {
           type: WidgetType.GRAPH,
           title: 'Quarterly Comparison',
           objectMetadataId: mockPersonObjectMetadataItem.id,
-          gridPosition: {
-            __typename: 'GridPosition',
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            __typename: 'PageLayoutWidgetGridPosition',
             row: 2,
             column: 0,
             rowSpan: 4,

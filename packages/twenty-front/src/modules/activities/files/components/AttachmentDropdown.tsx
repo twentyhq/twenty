@@ -52,7 +52,11 @@ export const AttachmentDropdown = ({
     <Dropdown
       dropdownId={dropdownId}
       clickableComponent={
-        <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
+        <LightIconButton
+          Icon={IconDotsVertical}
+          accent="tertiary"
+          aria-label={t`More options`}
+        />
       }
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>

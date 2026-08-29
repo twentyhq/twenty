@@ -24,6 +24,11 @@ Bir Twenty uygulamasının **config katmanı**, uygulamayı *platforma tanımlar
        ┌──────────────────────────────────┐
        │ Post-install hook                │  after metadata migration
        └──────────────────────────────────┘
+                          │
+                          ▼  (at uninstall time)
+       ┌──────────────────────────────────┐
+       │ Uninstall hook                   │  before app removal
+       └──────────────────────────────────┘
 ```
 
 ## Bu bölümde
@@ -36,7 +41,7 @@ Bir Twenty uygulamasının **config katmanı**, uygulamayı *platforma tanımlar
     `defineRole` — uygulamanızın mantık fonksiyonlarının neleri okuyup yazabildiğini tanımlayın.
   </Card>
   <Card title="Kurulum Kancaları" icon="wrench" href="/l/tr/developers/extend/apps/config/install-hooks">
-    `definePreInstallLogicFunction` ve `definePostInstallLogicFunction` — verileri yedekleyin, varsayılanları tohumlayın, yükseltmeleri doğrulayın.
+    `definePreInstallLogicFunction`, `definePostInstallLogicFunction` ve `defineUninstallLogicFunction` — verileri yedekleyin, varsayılanları tohumlayın, yükseltmeleri doğrulayın, kaldırma sırasında temizleyin.
   </Card>
 </CardGroup>
 
@@ -44,7 +49,7 @@ Bir Twenty uygulamasının **config katmanı**, uygulamayı *platforma tanımlar
 
 * **Application** giriş noktasıdır. Her uygulamada tam olarak bir `defineApplication()` çağrısı vardır ve bu çağrı varsayılan olarak bir **Rol**e işaret eder.
 * **Rol**, uygulamanın mantık fonksiyonlarının ve ön bileşenlerinin neleri okuyup yazabildiğini kontrol eder. En az ayrıcalık ilkesini izleyin: kodunuzun gerçekten ihtiyaç duyduğu izinleri verin.
-* **Install Hooks**, kurulum veya yükseltme sırasında çalışır — ön kurulum, metadata migrasyonundan önce (böylece riskli bir yükseltmeyi reddedebilir), son kurulum migrasyondan sonra (böylece yeni şemaya karşı varsayılan verileri tohumlayabilir).
+* **Install Hooks**, kurulum veya yükseltme sırasında çalışır — ön kurulum, metadata migrasyonundan önce (böylece riskli bir yükseltmeyi reddedebilir), son kurulum migrasyondan sonra (böylece yeni şemaya karşı varsayılan verileri tohumlayabilir). Kaldırma kancası, uygulama kaldırılmadan hemen önce çalışır, böylece uygulamanın verileri hâlâ okunabilirken harici kaynakları temizleyebilir.
 
 <Note>
 Kurulum kancaları, [mantık fonksiyonu](/l/tr/developers/extend/apps/logic/logic-functions) çalışma zamanını paylaşır — aynı handler imzası, aynı ortam değişkenleri, aynı türlendirilmiş API istemcisi — ancak kendi define fonksiyonlarıyla deklare edilir ve normal tetikleyici modelinin (HTTP, cron, veritabanı olayları) dışında yaşarlar.

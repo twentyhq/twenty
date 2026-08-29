@@ -29,11 +29,7 @@ const computeUpdatedNextStepIds = ({
     : [];
 
   return [
-    ...new Set([
-      ...filteredNextStepIds,
-      // We automatically link parent and child steps together
-      ...(stepToDeleteChildrenIds || []),
-    ]),
+    ...new Set([...filteredNextStepIds, ...(stepToDeleteChildrenIds || [])]),
   ];
 };
 

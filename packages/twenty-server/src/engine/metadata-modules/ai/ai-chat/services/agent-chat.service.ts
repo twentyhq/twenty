@@ -7,7 +7,7 @@ import {
   type AskQuestionsToolResult,
   ExtendedUIMessage,
 } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, IsNull, Not } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -80,13 +80,22 @@ export class AgentChatService {
   async createThread({
     userWorkspaceId,
     workspaceId,
+    id,
+    title,
   }: {
     userWorkspaceId: string;
     workspaceId: string;
+    id?: string;
+    title?: string;
   }) {
-    const savedThread = await this.threadRepository.save(workspaceId, {
-      userWorkspaceId,
-    });
+    const savedThread = await this.threadRepository.insertAndReturnOne(
+      workspaceId,
+      {
+        ...(isDefined(id) ? { id } : {}),
+        ...(isDefined(title) ? { title } : {}),
+        userWorkspaceId,
+      },
+    );
 
     await this.workspaceEventBroadcaster.broadcast({
       workspaceId,
@@ -106,6 +115,23 @@ export class AgentChatService {
     return savedThread;
   }
 
+  async findThreadById({
+    threadId,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    threadId: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }) {
+    return this.threadRepository.findOne(workspaceId, {
+      where: {
+        id: threadId,
+        userWorkspaceId,
+      },
+    });
+  }
+
   async getThreadById({
     threadId,
     userWorkspaceId,
@@ -115,11 +141,10 @@ export class AgentChatService {
     userWorkspaceId: string;
     workspaceId: string;
   }) {
-    const thread = await this.threadRepository.findOne(workspaceId, {
-      where: {
-        id: threadId,
-        userWorkspaceId,
-      },
+    const thread = await this.findThreadById({
+      threadId,
+      userWorkspaceId,
+      workspaceId,
     });
 
     if (!thread) {
@@ -139,13 +164,11 @@ export class AgentChatService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<(AgentChatThreadEntity & { lastMessageAt: Date | null })[]> {
-    // Query builder uses the scoped wrapper's escape hatch; we add the
-    // workspaceId predicate manually below.
     const rankedThreads = await this.threadRepository
       .createQueryBuilder('thread')
       .select('thread.id', 'id')
       .addSelect('MAX(message.createdAt)', 'last_message_at')
-      .leftJoin('thread.messages', 'message')
+      .leftJoin('thread.messages', 'message', 'message.isHidden = false')
       .where(
         'thread.userWorkspaceId = :userWorkspaceId AND thread.workspaceId = :workspaceId',
         { userWorkspaceId, workspaceId },
@@ -189,7 +212,7 @@ export class AgentChatService {
       .createQueryBuilder('message')
       .select('MAX(message.createdAt)', 'last_message_at')
       .where(
-        'message.threadId = :threadId AND message.workspaceId = :workspaceId',
+        'message.threadId = :threadId AND message.workspaceId = :workspaceId AND message.isHidden = false',
         { threadId, workspaceId },
       )
       .getRawOne<{ last_message_at: Date | null }>();
@@ -204,6 +227,8 @@ export class AgentChatService {
     turnId,
     id,
     workspaceId,
+    isHidden,
+    processedAt,
   }: {
     threadId: string;
     uiMessage: Omit<ExtendedUIMessage, 'id'>;
@@ -212,6 +237,8 @@ export class AgentChatService {
     turnId?: string;
     id?: string;
     workspaceId: string;
+    isHidden?: boolean;
+    processedAt?: Date;
   }) {
     let actualTurnId = turnId;
 
@@ -230,7 +257,8 @@ export class AgentChatService {
       turnId: actualTurnId,
       role: uiMessage.role as AgentMessageRole,
       agentId: agentId ?? null,
-      processedAt: new Date(),
+      processedAt: processedAt ?? new Date(),
+      ...(isDefined(isHidden) ? { isHidden } : {}),
     };
 
     const insertResult = await this.messageRepository.insert(
@@ -261,7 +289,7 @@ export class AgentChatService {
       turnId: actualTurnId,
       role: uiMessage.role as AgentMessageRole,
       agentId: agentId ?? null,
-      processedAt: new Date(),
+      processedAt: messageValues.processedAt,
       workspaceId,
     } as AgentMessageEntity;
   }
@@ -320,9 +348,28 @@ export class AgentChatService {
         role: AgentMessageRole.USER,
         status: AgentMessageStatus.SENT,
       },
-      order: { createdAt: 'DESC', id: 'DESC' },
+      order: {
+        processedAt: { direction: 'DESC', nulls: 'LAST' },
+        createdAt: 'DESC',
+        id: 'DESC',
+      },
       select: ['id', 'turnId'],
     });
+  }
+
+  async hasConversationMessages({
+    threadId,
+    workspaceId,
+  }: {
+    threadId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const visibleMessage = await this.messageRepository.findOne(workspaceId, {
+      where: { threadId, isHidden: false },
+      select: ['id'],
+    });
+
+    return isDefined(visibleMessage);
   }
 
   async deleteAssistantMessagesForTurn({
@@ -357,20 +404,81 @@ export class AgentChatService {
     threadId,
     userWorkspaceId,
     workspaceId,
+    includeHidden = false,
   }: {
     threadId: string;
     userWorkspaceId: string;
     workspaceId: string;
+    includeHidden?: boolean;
   }) {
     // getThreadById enforces ownership; messages then scoped by both
     // threadId and workspaceId.
     await this.getThreadById({ threadId, userWorkspaceId, workspaceId });
 
     return this.messageRepository.find(workspaceId, {
-      where: { threadId },
+      where: { threadId, ...(includeHidden ? {} : { isHidden: false }) },
       order: { processedAt: { direction: 'ASC', nulls: 'LAST' } },
       relations: ['parts', 'parts.file'],
     });
+  }
+
+  async ensureHiddenKickoffMessage({
+    threadId,
+    workspaceId,
+    text,
+  }: {
+    threadId: string;
+    workspaceId: string;
+    text: string;
+  }): Promise<{ id: string; turnId: string }> {
+    const existingKickoffMessage = await this.messageRepository.findOne(
+      workspaceId,
+      {
+        where: { threadId, isHidden: true },
+        relations: ['parts'],
+      },
+    );
+
+    if (isDefined(existingKickoffMessage)) {
+      if (
+        isDefined(existingKickoffMessage.turnId) &&
+        isNonEmptyArray(existingKickoffMessage.parts)
+      ) {
+        return {
+          id: existingKickoffMessage.id,
+          turnId: existingKickoffMessage.turnId,
+        };
+      }
+
+      await this.messageRepository.delete(workspaceId, {
+        id: existingKickoffMessage.id,
+      });
+
+      if (isDefined(existingKickoffMessage.turnId)) {
+        await this.turnRepository.delete(workspaceId, {
+          id: existingKickoffMessage.turnId,
+        });
+      }
+    }
+
+    const savedMessage = await this.addMessage({
+      threadId,
+      workspaceId,
+      uiMessage: {
+        role: AgentMessageRole.USER,
+        parts: [{ type: 'text' as const, text }],
+      },
+      isHidden: true,
+    });
+
+    if (!isDefined(savedMessage.turnId)) {
+      throw new AiException(
+        'Workspace setup kickoff message was persisted without a turn',
+        AiExceptionCode.MESSAGE_NOT_FOUND,
+      );
+    }
+
+    return { id: savedMessage.id, turnId: savedMessage.turnId };
   }
 
   async queueMessage({
@@ -504,6 +612,16 @@ export class AgentChatService {
     });
 
     return (result.affected ?? 0) > 0;
+  }
+
+  async deleteMessage({
+    messageId,
+    workspaceId,
+  }: {
+    messageId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.messageRepository.delete(workspaceId, { id: messageId });
   }
 
   async promoteQueuedMessage({

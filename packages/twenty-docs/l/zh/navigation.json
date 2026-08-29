@@ -145,6 +145,14 @@
               "label": "操作指南"
             }
           }
+        },
+        "legal": {
+          "label": "法律",
+          "groups": {
+            "legalHowTos": {
+              "label": "操作指南"
+            }
+          }
         }
       }
     },

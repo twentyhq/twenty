@@ -74,9 +74,12 @@ describe('useCreatePageLayoutGraphWidget', () => {
         id: 'test-layout',
         name: 'Test Layout',
         type: PageLayoutType.DASHBOARD,
+        isFirstTabPinned: true,
         objectMetadataId: null,
         tabs: [
           {
+            isSystemSideEffect: false,
+            universalIdentifier: 'universal-identifier-mock',
             id: 'tab-1',
             applicationId: '',
             title: 'Tab 1',
@@ -158,9 +161,12 @@ describe('useCreatePageLayoutGraphWidget', () => {
         id: 'test-layout',
         name: 'Test Layout',
         type: PageLayoutType.DASHBOARD,
+        isFirstTabPinned: true,
         objectMetadataId: null,
         tabs: [
           {
+            isSystemSideEffect: false,
+            universalIdentifier: 'universal-identifier-mock',
             id: 'tab-1',
             applicationId: '',
             title: 'Tab 1',

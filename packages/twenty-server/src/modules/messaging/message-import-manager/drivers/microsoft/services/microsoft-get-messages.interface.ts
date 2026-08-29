@@ -19,6 +19,7 @@ export interface MicrosoftGraphBatchResponse {
       sentDateTime?: string;
       hasAttachments?: boolean;
       internetMessageId?: string;
+      internetMessageHeaders?: { name: string; value: string }[];
       subject?: string;
       bodyPreview?: string;
       importance?: string;

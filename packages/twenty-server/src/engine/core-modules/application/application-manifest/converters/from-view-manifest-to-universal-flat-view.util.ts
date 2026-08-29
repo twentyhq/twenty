@@ -28,7 +28,7 @@ export const fromViewManifestToUniversalFlatView = ({
     isCustom: true,
     visibility: viewManifest.visibility ?? ViewVisibility.WORKSPACE,
     openRecordIn: viewManifest.openRecordIn ?? ViewOpenRecordIn.SIDE_PANEL,
-    key: viewManifest.key ?? null,
+    key: null,
     kanbanAggregateOperation: viewManifest.kanbanAggregateOperation ?? null,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier:
       viewManifest.kanbanAggregateOperationFieldMetadataUniversalIdentifier ??

@@ -18,7 +18,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { WorkspaceSchemaService } from 'src/engine/workspace-datasource/workspace-schema.service';
 import { seedBillingCustomers } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-customers.util';
 import { seedBillingSubscriptions } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-subscriptions.util';
 import {
@@ -30,10 +30,12 @@ import { seedAgents } from 'src/engine/workspace-manager/dev-seeder/core/utils/s
 import { seedApiKeys } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-api-keys.util';
 import { seedEmailingDomains } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-emailing-domains.util';
 import { seedFeatureFlags } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-feature-flags.util';
+import { seedMessageSuppressions } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-message-suppressions.util';
 import { seedMetadataEntities } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-metadata-entities.util';
 import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
 import { seedServerId } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-server-id.util';
 import { seedTwoFactorAuthenticationMethods } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-two-factor-authentication-methods.util';
+import { seedUnsubscribeTopics } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-unsubscribe-topics.util';
 import { seedUserWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { createWorkspace } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
@@ -51,7 +53,7 @@ export class DevSeederService {
   constructor(
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly workspaceSchemaService: WorkspaceSchemaService,
     private readonly twentyStandardApplicationService: TwentyStandardApplicationService,
     private readonly devSeederMetadataService: DevSeederMetadataService,
     private readonly devSeederPermissionsService: DevSeederPermissionsService,
@@ -97,9 +99,7 @@ export class DevSeederService {
     await this.applicationRegistrationService.createCliRegistrationIfNotExists();
 
     const schemaName =
-      await this.workspaceDataSourceService.createWorkspaceDBSchema(
-        workspaceId,
-      );
+      await this.workspaceSchemaService.createWorkspaceDBSchema(workspaceId);
 
     const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
@@ -128,6 +128,7 @@ export class DevSeederService {
       applicationId: twentyStandardFlatApplication.id,
       applicationUniversalIdentifier:
         twentyStandardFlatApplication.universalIdentifier,
+      trigger: 'dev-seeder',
     });
 
     await this.devSeederMetadataService.seed({
@@ -140,6 +141,7 @@ export class DevSeederService {
       applicationId: workspaceCustomFlatApplication.id,
       applicationUniversalIdentifier:
         workspaceCustomFlatApplication.universalIdentifier,
+      trigger: 'dev-seeder',
     });
 
     await this.devSeederMetadataService.seedRelations({
@@ -189,7 +191,7 @@ export class DevSeederService {
       light,
     });
 
-    await this.workspaceCacheStorageService.flush(workspaceId, undefined);
+    await this.workspaceCacheStorageService.flush(workspaceId);
   }
 
   private async seedCoreSchema({
@@ -260,6 +262,8 @@ export class DevSeederService {
       ) {
         await seedEmailingDomains({ queryRunner, schemaName, workspaceId });
       }
+      await seedUnsubscribeTopics({ queryRunner, schemaName, workspaceId });
+      await seedMessageSuppressions({ queryRunner, schemaName, workspaceId });
       await seedFeatureFlags({ queryRunner, schemaName, workspaceId });
 
       if (seedBilling) {

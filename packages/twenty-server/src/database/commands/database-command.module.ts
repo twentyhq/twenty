@@ -17,6 +17,7 @@ import { WorkspaceExportModule } from 'src/database/commands/workspace-export/wo
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { GenerateApiKeyCommand } from 'src/engine/core-modules/api-key/commands/generate-api-key.command';
+import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { StaleRegistrationCleanupModule } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/stale-registration-cleanup.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
@@ -31,6 +32,7 @@ import { RotateSigningKeysCronCommand } from 'src/engine/core-modules/jwt/crons/
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
+import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
 import { UpgradeStatusCommand } from 'src/engine/core-modules/upgrade/commands/upgrade-status.command';
 import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -53,21 +55,21 @@ import { CalendarEventImportManagerModule } from 'src/modules/calendar/calendar-
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { WorkflowRunQueueModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-run-queue.module';
 import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
+import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-core-consistency/workflow-core-consistency.module';
 
 @Module({
   imports: [
     UpgradeVersionCommandModule,
     TypeOrmModule.forFeature([WorkspaceEntity, RoleEntity]),
     WorkspaceExportModule,
-    // Cron command dependencies
     MessagingImportManagerModule,
     CalendarEventImportManagerModule,
     WebhookSubscriptionModule,
     AutomatedTriggerModule,
+    WorkflowCoreConsistencyModule,
     FileModule,
     WorkspaceModule,
     WorkflowRunQueueModule,
-    // Data seeding dependencies
     TypeORMModule,
     FieldMetadataModule,
     ObjectMetadataModule,
@@ -86,6 +88,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     EnterpriseModule,
     TwentyConfigModule,
     MarketplaceModule,
+    ApplicationInstallModule,
     ApplicationUpgradeModule,
     StaleRegistrationCleanupModule,
     PreInstalledAppsModule,
@@ -95,6 +98,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     WorkspaceVersionModule,
     UpgradeModule,
     SecretEncryptionRotationModule,
+    UserSessionModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,

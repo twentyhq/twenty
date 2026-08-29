@@ -155,11 +155,9 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
   </Accordion>
 
   <Accordion title="Perché non vedo le esecuzioni dei miei flussi di lavoro?">
-    Le esecuzioni dei flussi di lavoro potrebbero non riuscire immediatamente a causa dei limiti di frequenza.
+    Le esecuzioni dei flussi di lavoro potrebbero non riuscire immediatamente a causa dei limiti di frequenza. Twenty impone un limite rigido di 5.000 esecuzioni all'ora per spazio di lavoro.
 
-    **Limite hard: 5.000 esecuzioni all'ora per spazio di lavoro.**
-
-    Se superi questo limite, i flussi di lavoro vengono contrassegnati immediatamente come non riusciti e non appariranno nell'elenco delle esecuzioni come previsto.
+    Se superi questo limite, i flussi di lavoro vengono immediatamente contrassegnati come non riusciti e non appariranno nell'elenco delle esecuzioni.
 
     **Scenari comuni che raggiungono questo limite**:
     * Selezionare più di 5.000 record con un trigger manuale Single

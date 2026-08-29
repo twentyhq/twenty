@@ -74,8 +74,7 @@ export class AiBillingService {
 
     const totalTokens =
       (billingInput.usage.inputTokens ?? 0) +
-      (billingInput.usage.outputTokens ?? 0) +
-      (billingInput.cacheCreationTokens ?? 0);
+      (billingInput.usage.outputTokens ?? 0);
 
     if (this.billingService.isBillingEnabled()) {
       await this.billingUsageService.decrementAvailableCreditsInCache({

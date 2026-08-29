@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { type RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
+import { type RelationLabelResolution } from 'src/modules/dashboard/chart-data/types/relation-label-resolution.type';
 import { formatDimensionValue } from 'src/modules/dashboard/chart-data/utils/format-dimension-value.util';
 
 export type ProcessedTwoDimensionalDataPoint = {
@@ -33,6 +34,8 @@ type ProcessTwoDimensionalResultsParams = {
   secondarySubFieldName?: string | null;
   userTimezone: string;
   firstDayOfTheWeek: FirstDayOfTheWeek;
+  primaryRelationLabelResolution: RelationLabelResolution | undefined;
+  secondaryRelationLabelResolution: RelationLabelResolution | undefined;
 };
 
 export const processTwoDimensionalResults = ({
@@ -45,6 +48,8 @@ export const processTwoDimensionalResults = ({
   secondarySubFieldName,
   userTimezone,
   firstDayOfTheWeek,
+  primaryRelationLabelResolution,
+  secondaryRelationLabelResolution,
 }: ProcessTwoDimensionalResultsParams): ProcessTwoDimensionalResultsOutput => {
   const formattedToRawLookup = new Map<string, RawDimensionValue>();
   const secondaryFormattedToRawLookup = new Map<string, RawDimensionValue>();
@@ -67,6 +72,7 @@ export const processTwoDimensionalResults = ({
       subFieldName: primarySubFieldName ?? undefined,
       userTimezone,
       firstDayOfTheWeek,
+      relationLabelByRecordId: primaryRelationLabelResolution?.labelByRecordId,
     });
 
     const yFormatted = formatDimensionValue({
@@ -76,6 +82,8 @@ export const processTwoDimensionalResults = ({
       subFieldName: secondarySubFieldName ?? undefined,
       userTimezone,
       firstDayOfTheWeek,
+      relationLabelByRecordId:
+        secondaryRelationLabelResolution?.labelByRecordId,
     });
 
     if (isDefined(rawXValue)) {

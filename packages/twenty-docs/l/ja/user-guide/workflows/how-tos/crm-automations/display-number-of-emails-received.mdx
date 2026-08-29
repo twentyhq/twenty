@@ -56,11 +56,6 @@ Search Records アクションは、返せるレコードが最大 200 件に制
 ### ステップ 4: Create or Update Record アクションで Person レコードを更新
 
 1. 「**Create or Update Record**」アクションを追加します
-
-<Warning>
-ここでは **Update Record** の代わりに **Upsert Record** を使用します。 これにより、前のステップからレコード ID を取得する必要はなく、メールアドレス（`handle` フィールド）で人物を特定できます。
-</Warning>
-
 2. オブジェクトとして **People** を選択します
 3. Message Participant の `handle` とメールアドレスを照合して該当の人物を特定します
 4. カスタムの「受信メール数」フィールドを `{{searchRecords.totalCount}}` に設定します

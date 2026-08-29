@@ -22,7 +22,6 @@ export const ApplicationDisplay = ({
       applicationId={application?.id}
       logoUrl={application?.logoUrl}
       fallbackApplicationData={{
-        logo: application?.logo,
         name: application?.name,
       }}
     />

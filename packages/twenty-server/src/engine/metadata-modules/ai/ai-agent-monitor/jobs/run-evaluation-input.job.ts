@@ -6,6 +6,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
+import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -55,7 +56,8 @@ export class RunEvaluationInputJob {
 
     const executionResult = await this.aiAgentExecutorService.executeAgent({
       agent,
-      userPrompt: data.input,
+      messages: [{ role: 'user', content: data.input }],
+      baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
       workspaceId: data.workspaceId,
       userWorkspaceId: null,
     });

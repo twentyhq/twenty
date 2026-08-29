@@ -22,14 +22,14 @@ type SettingsDataModelFieldPreviewWidgetProps = {
 };
 
 const StyledCardContainer = styled.div`
-  > * {
+  > div {
     border-radius: ${themeCssVariables.border.radius.md};
     color: ${themeCssVariables.font.color.primary};
   }
 `;
 
 const StyledCardContentContainer = styled.div`
-  > * {
+  > div {
     padding: ${themeCssVariables.spacing[2]};
   }
 `;

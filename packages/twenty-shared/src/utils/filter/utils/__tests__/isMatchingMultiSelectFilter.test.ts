@@ -2,7 +2,7 @@ import { isMatchingMultiSelectFilter } from '@/utils/filter/utils/isMatchingMult
 
 describe('isMatchingMultiSelectFilter', () => {
   describe('containsAny', () => {
-    it('should return true when value contains all filter items', () => {
+    it('should return true when value contains every filter item', () => {
       expect(
         isMatchingMultiSelectFilter({
           multiSelectFilter: { containsAny: ['A', 'B'] },
@@ -11,11 +11,38 @@ describe('isMatchingMultiSelectFilter', () => {
       ).toBe(true);
     });
 
-    it('should return false when value does not contain all filter items', () => {
+    it('should return true when value contains only some of the filter items', () => {
       expect(
         isMatchingMultiSelectFilter({
           multiSelectFilter: { containsAny: ['A', 'D'] },
           value: ['A', 'B', 'C'],
+        }),
+      ).toBe(true);
+    });
+
+    it('should return true when value shares a single option with the filter', () => {
+      expect(
+        isMatchingMultiSelectFilter({
+          multiSelectFilter: { containsAny: ['B'] },
+          value: ['A', 'B', 'C'],
+        }),
+      ).toBe(true);
+    });
+
+    it('should return false when value shares no option with the filter', () => {
+      expect(
+        isMatchingMultiSelectFilter({
+          multiSelectFilter: { containsAny: ['X', 'Y'] },
+          value: ['A', 'B', 'C'],
+        }),
+      ).toBe(false);
+    });
+
+    it('should return false for an empty value array', () => {
+      expect(
+        isMatchingMultiSelectFilter({
+          multiSelectFilter: { containsAny: ['A'] },
+          value: [],
         }),
       ).toBe(false);
     });

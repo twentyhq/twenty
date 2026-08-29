@@ -13,4 +13,5 @@ export type WelcomeHalftoneParticle = {
   positionAtLeaveStartX: number;
   positionAtLeaveStartY: number;
   opacityAtLeaveStart: number;
+  capsuleLengthAtLeaveStart: number;
 };

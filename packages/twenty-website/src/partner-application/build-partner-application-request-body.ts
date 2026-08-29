@@ -12,6 +12,9 @@ export function buildPartnerApplicationRequestBody(
     city: state.city.trim(),
     hourlyRate: Number.parseFloat(state.hourlyRate),
     projectBudgetMin: Number.parseFloat(state.projectBudgetMin),
+    twentyExperience: state.twentyExperience,
+    twentyExperienceNotes: state.twentyExperienceNotes.trim(),
+    twentyExperienceProofLink: state.twentyExperienceProofLink.trim(),
   };
 
   if (state.linkedin.trim()) body.linkedin = state.linkedin.trim();
@@ -20,8 +23,6 @@ export function buildPartnerApplicationRequestBody(
   if (state.typeOfTeam !== '') body.typeOfTeam = state.typeOfTeam;
   if (state.partnerScope.length > 0) body.partnerScope = state.partnerScope;
   if (state.skills.length > 0) body.skills = state.skills;
-  if (state.applicationNotes.trim())
-    body.applicationNotes = state.applicationNotes.trim();
   if (state.calendarLink.trim()) body.calendarLink = state.calendarLink.trim();
 
   return body;

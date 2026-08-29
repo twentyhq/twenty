@@ -1,10 +1,10 @@
 import {
   AggregateOperations,
   ViewCalendarLayout,
+  ViewKey,
   ViewOpenRecordIn,
   ViewType,
   ViewVisibility,
-  ViewKey,
 } from 'twenty-shared/types';
 
 import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/application/application-manifest/converters/from-view-manifest-to-universal-flat-view.util';
@@ -39,7 +39,7 @@ describe('fromViewManifestToUniversalFlatView', () => {
     expect(result.isCustom).toBe(true);
     expect(result.visibility).toBe(ViewVisibility.WORKSPACE);
     expect(result.openRecordIn).toBe(ViewOpenRecordIn.SIDE_PANEL);
-    expect(result.key).toBe(ViewKey.INDEX);
+    expect(result.key).toBeNull();
     expect(result.createdAt).toBe(now);
     expect(result.updatedAt).toBe(now);
   });

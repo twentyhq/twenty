@@ -21,8 +21,8 @@ import { Section } from 'twenty-ui/layout';
 import {
   CreateApiKeyDocument,
   GenerateApiKeyTokenDocument,
+  GetApiKeyRolesDocument,
   GetApiKeysDocument,
-  GetRolesDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
@@ -31,8 +31,10 @@ export const SettingsDevelopersApiKeysNew = () => {
   const { t } = useLingui();
   const [generateOneApiKeyToken] = useMutation(GenerateApiKeyTokenDocument);
   const navigateSettings = useNavigateSettings();
-  const { data: rolesData, loading: rolesLoading } = useQuery(GetRolesDocument);
-  const roles = rolesData?.getRoles ?? [];
+  const { data: rolesData, loading: rolesLoading } = useQuery(
+    GetApiKeyRolesDocument,
+  );
+  const roles = rolesData?.getApiKeyRoles ?? [];
 
   const [formValues, setFormValues] = useState<{
     name: string;
@@ -45,8 +47,8 @@ export const SettingsDevelopersApiKeysNew = () => {
   });
 
   useEffect(() => {
-    if (isDefined(rolesData?.getRoles)) {
-      const apiKeyAssignableRoles = rolesData.getRoles.filter(
+    if (isDefined(rolesData?.getApiKeyRoles)) {
+      const apiKeyAssignableRoles = rolesData.getApiKeyRoles.filter(
         (role) => role.canBeAssignedToApiKeys,
       );
       if (apiKeyAssignableRoles.length > 0) {

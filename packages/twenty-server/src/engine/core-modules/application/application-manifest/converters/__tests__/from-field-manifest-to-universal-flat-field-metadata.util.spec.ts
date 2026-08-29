@@ -2,6 +2,7 @@ import { type FieldManifest } from 'twenty-shared/application';
 import {
   type FieldMetadataDefaultActor,
   FieldMetadataType,
+  MetadataWritability,
 } from 'twenty-shared/types';
 
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
@@ -106,6 +107,23 @@ describe('fromFieldManifestToUniversalFlatFieldMetadata', () => {
     });
   });
 
+  describe('system flags', () => {
+    it('never derives isSystem or isSystemSideEffect, even for reserved system field names', () => {
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({
+          type: FieldMetadataType.DATE_TIME,
+          name: 'createdAt',
+          label: 'Creation date',
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.isSystem).toBe(false);
+      expect(result.isSystemSideEffect).toBe(false);
+    });
+  });
+
   describe('isUIEditable', () => {
     it('defaults to true when omitted from the manifest', () => {
       const result = fromFieldManifestToUniversalFlatFieldMetadata({
@@ -135,6 +153,30 @@ describe('fromFieldManifestToUniversalFlatFieldMetadata', () => {
       });
 
       expect(result.isUIEditable).toBe(true);
+    });
+  });
+
+  describe('writability', () => {
+    it('defaults to OPEN when omitted from the manifest', () => {
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({}),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.writability).toBe(MetadataWritability.OPEN);
+    });
+
+    it('carries the manifest value through', () => {
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({
+          writability: MetadataWritability.APPLICATION,
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.writability).toBe(MetadataWritability.APPLICATION);
     });
   });
 });

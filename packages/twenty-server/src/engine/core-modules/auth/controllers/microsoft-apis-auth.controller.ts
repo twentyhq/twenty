@@ -9,7 +9,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Response } from 'express';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { ApiPath, AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -23,6 +23,7 @@ import { MicrosoftAPIsOauthRequestCodeGuard } from 'src/engine/core-modules/auth
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { APIsOAuthRequest } from 'src/engine/core-modules/auth/types/apis-oauth-request.type';
+import { parseRelativeUrl } from 'src/engine/core-modules/domain/domain-server-config/utils/parse-relative-url.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -31,7 +32,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
-@Controller('auth/microsoft-apis')
+@Controller(`${ApiPath.Auth}/microsoft-apis`)
 @UseFilters(AuthRestApiExceptionFilter)
 export class MicrosoftAPIsAuthController {
   constructor(
@@ -132,15 +133,18 @@ export class MicrosoftAPIsAuthController {
         );
       }
 
-      const pathname =
+      const { pathname, searchParams, hash } = parseRelativeUrl(
         redirectLocation ||
-        getSettingsPath(SettingsPath.AccountsConfiguration, {
-          connectedAccountId,
-        });
+          getSettingsPath(SettingsPath.AccountsConfiguration, {
+            connectedAccountId,
+          }),
+      );
 
       const url = this.workspaceDomainsService.buildWorkspaceURL({
         workspace,
         pathname,
+        searchParams,
+        hash,
       });
 
       return res.redirect(url.toString());

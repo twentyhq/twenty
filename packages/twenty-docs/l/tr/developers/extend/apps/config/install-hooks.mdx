@@ -1,12 +1,12 @@
 ---
 title: Kurulum Kancaları
-description: Kurulumdan önce veya sonra mantığı çalıştırın — veri tohumlayın, kayıtları yedekleyin, yükseltmeyi doğrulayın.
+description: Kurulum, yükseltme veya kaldırma yaşam döngüsü sırasında mantık çalıştırın — başlangıç verilerini yükleyin, kayıtları yedekleyin, yükseltmeyi doğrulayın, harici kaynakları temizleyin.
 icon: wrench
 ---
 
-Kurulum kancaları, kurulum veya yükseltme yaşam döngüsü sırasında çalışan özel mantık işlevleridir. Bunlar, normal [mantık işlevleri](/l/tr/developers/extend/apps/logic/logic-functions) ile aynı işleyici çalışma zamanını paylaşır ve bir `InstallPayload` alırlar (`{ previousVersion?: string; newVersion: string }` — yeni bir kurulumda `previousVersion` `undefined` olur), ancak kendi tanımlama işlevleriyle bildirilirler ve normal tetikleyici modelinin (HTTP, cron, veritabanı olayları) dışında yer alırlar.
+Kurulum kancaları, kurulum, yükseltme veya kaldırma yaşam döngüsü sırasında çalışan özel mantık işlevleridir. Bunlar, normal [mantık işlevleri](/l/tr/developers/extend/apps/logic/logic-functions) ile aynı işleyici çalışma zamanını paylaşır, ancak kendi tanımlama işlevleriyle bildirilirler ve normal tetikleyici modelinin (HTTP, cron, veritabanı olayları) dışında yaşarlar. Kurulum kancaları bir `InstallPayload` alır (`{ previousVersion?: string; newVersion: string }` — yeni bir kurulumda `previousVersion`, `undefined` olur); kaldırma kancası ise bir `UninstallPayload` alır (`{ version?: string }` — kaldırılan sürüm).
 
-Her uygulama **en fazla bir kurulum öncesi** ve **en fazla bir kurulum sonrası** işlev tanımlayabilir. Her ikisinden de birden fazla tespit edilirse manifest oluşturma hataya düşer.
+Her uygulama, her bir kanca türünden (kurulum öncesi, kurulum sonrası, kaldırma) **en fazla bir tane** tanımlayabilir. Her türden birden fazla tespit edilirse manifest derlemesi hata verir.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -142,3 +142,47 @@ export default definePreInstallLogicFunction({
 
 </Accordion>
 </AccordionGroup>
+
+## Kaldırma kancası
+
+`defineUninstallLogicFunction`, bir kullanıcı uygulamanızı kaldırdığında çalışan bir kancayı bildirir. Bu kanca, uygulamanın üst verileri, verileri ve kodu kaldırılmadan **önce** çalışır — silme geçişi (migration) çalıştıktan sonra çalıştırılacak hiçbir şey kalmaz — bu nedenle işleyiciniz uygulamanın nesnelerini ve kayıtlarını hâlâ sorgulayabilir. Bunu harici kaynakların temizliği için kullanın: API kaynaklarının tahsisini geri alın, kalan botları silin, web kancalarını (webhook) iptal edin.
+
+Notlar:
+
+* Kanca, en iyi gayret esasına göre çalışır: senkron olarak çalışır, ancak bir hata günlüğe kaydedilir ve **kaldırmayı asla engellemez** — temizleme, bir uygulamanın kaldırılamaz hale gelmesine neden olmamalıdır.
+* Kaldırma kancası, `UninstallPayload` alır (`{ version?: string }` — kaldırılan sürüm).
+* Başarısız olan yeni bir kurulum geri alındığında çalışmaz — uygulama kurulumunu hiçbir zaman tamamlamamıştır.
+* Kanca, uygulama kaldırıldıktan sonra çalışamaz; bu nedenle, uygulama verilerine bağlı olan harici temizlik (örneğin kayıtlarda saklanan bot kimlikleri) harici zamanlanmış bir işte değil, burada yapılmalıdır.
+* Kurulum kancalarında olduğu gibi, bu kanca da **geliştirme modunda çalıştırılmaz** — bunun yerine manuel olarak tetikleyin:
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec --uninstall
+```
+
+```ts src/logic-functions/uninstall.ts
+import { defineUninstallLogicFunction, type UninstallPayload } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (_payload: UninstallPayload): Promise<void> => {
+  const client = new CoreApiClient();
+  const { meetingBots } = await client.query({
+    meetingBots: { edges: { node: { id: true, externalBotId: true } } },
+  });
+
+  // Delete the provider-side bots so nothing keeps recording after uninstall.
+  for (const { node } of meetingBots.edges) {
+    await fetch(`https://api.recorder.example/bots/${node.externalBotId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${process.env.RECORDER_API_KEY}` },
+    });
+  }
+};
+
+export default defineUninstallLogicFunction({
+  universalIdentifier: 'b2c3d4e5-6789-01bc-def0-234567890abc',
+  name: 'uninstall',
+  description: 'Deletes remaining recorder bots when the app is uninstalled.',
+  timeoutSeconds: 300,
+  handler,
+});
+```

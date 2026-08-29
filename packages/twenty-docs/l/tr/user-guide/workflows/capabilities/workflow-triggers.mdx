@@ -26,7 +26,7 @@ Seçilen bir nesneye (Kişiler, Şirketler, Fırsatlar veya herhangi bir özel n
 **Yapılandırma**: Yeni kayıtları izlemek için nesne türünü seçin.
 
 <Note>
-* Bu tetikleyici, csv, posta kutusu ve takvim eşzamanlaması ile API tarafından oluşturulan kayıtlar için harikadır.
+* Bu tetikleyici, CSV, posta kutusu ve takvim eşzamanlaması veya API tarafından oluşturulan kayıtlar için harikadır.
 * **El ile oluşturulan kayıtlar için önerilmez**: bu tetikleyici ile kayıt oluşturulur oluşturulmaz iş akışları başlar. Twenty UI anında otomatik kaydetme sunduğundan (kayıtları kaydetmek için bir düzenleme modu ve ardından doğrulama yoktur), kullanıcı tüm alanları girmeden önce iş akışı tetiklenecektir.
   Bu iş akışını el ile oluşturulan kayıtlarda tetiklemek için bunun yerine `Record is created or updated` tetikleyicisini kullanmanız önerilir.
 </Note>
@@ -70,15 +70,17 @@ Bir kullanıcı eylemi tarafından tetiklendiğinde iş akışını başlatır. 
 **Kullanılabilirlik Yapılandırması**:
 İş akışının kayıt seçimini nasıl ele alacağını seçin:
 
-* **Global**: Bu iş akışını tetiklemek için bir kayda gerek yoktur. İş akışı, komut menüsü `Cmd + K` üzerinden herhangi bir yerden (herhangi bir nesneden) tetiklenir ve girdi olarak kayıt(lar) kullanmaz.
+* **Global**: Bu iş akışını tetiklemek için bir kayda gerek yoktur. İş akışı, komut menüsü `Cmd+K` üzerinden herhangi bir yerden (herhangi bir nesneden) tetiklenir ve girdi olarak kayıt(lar) kullanmaz.
 
-* **Tekil**: Seçilen kayıt(lar) iş akışınıza iletilecektir. Bu, belirli bir nesne için yapılandırılmıştır. İş akışını başlatmadan önce birkaç kayıt seçilebilir. İş akışı, başlangıçtan sona kadar, seçilen kayıt sayısı kadar çalışacaktır.
+**Tekil** ve **Toplu** kullanılabilirlik için, seçilen kayıt(lar) iş akışınıza iletilecektir. Bu, belirli bir nesne için yapılandırılır ve iş akışını tetiklemeden önce birden fazla kayıt seçilebilir.
+
+* **Tekil**: İş akışı, başlangıçtan sona kadar, seçilen kayıt sayısı kadar çalışacaktır.
 
   <Note>
     **Yumuşak sınır: dakikada 100 çalıştırma**. Bunun ötesinde, iş akışları "Not Started" durumunda kalır ve kademeli olarak işlenir—arka plan görevi tarafından ya da başka bir iş akışı kuyruğa girdiğinde. Bu, Tekil tetikleyici ile 100'den fazla kayıt seçebileceğiniz anlamına gelir; yalnızca yürütme daha yavaş olacaktır.
   </Note>
 
-* **Toplu**: Seçilen kayıt(lar) iş akışınıza iletilecektir. Bu, belirli bir nesne için yapılandırılmıştır. İş akışını başlatmadan önce birkaç kayıt seçilebilir. İş akışı bir kere çalışacak, tüm kayıt listesini girdi olarak sağlayacak. Bu, iş akışının bir [Yineleyici eylemi](/l/tr/user-guide/workflows/capabilities/workflow-actions#iterator) içermesi gerektiği anlamına gelir.
+* **Toplu**: İş akışı bir kere çalışacak ve tüm kayıt listesini girdi olarak sağlayacaktır. Bu, iş akışının bir [Yineleyici eylemi](/l/tr/user-guide/workflows/capabilities/workflow-actions#iterator) içermesi gerektiği anlamına gelir.
 
 <Note>
 Bu daha gelişmiştir ve iş akışı çalıştırmalarının sayısını optimize etmek isteyenler için en uygunudur.

@@ -3,10 +3,6 @@ title: MCP Server
 description: Připojte asistenty AI ke svému pracovnímu prostoru Twenty pomocí protokolu Model Context Protocol.
 ---
 
-<Warning>
-MCP je v současnosti ve fázi **alpha** a je dostupný pouze v některých pracovních prostorech. MCP nemusí být ve vašem pracovním prostoru ještě povolen.
-</Warning>
-
 Twenty zpřístupňuje server [MCP](https://modelcontextprotocol.io/), aby AI asistenti — Claude Desktop, Claude Code, Cursor, ChatGPT a další — mohli číst a zapisovat data vašeho CRM pomocí přirozeného jazyka.
 
 Použijte svou **adresu URL pracovní oblasti** (adresu URL, kterou používáte k přístupu k Twenty) jako koncový bod MCP. V Twenty Cloud může vaše adresa URL pracovní oblasti být `https://{mycompany}.twenty.com` nebo vlastní doména. Server je dostupný na:
@@ -72,20 +68,20 @@ Pokud váš klient MCP nepodporuje OAuth, nebo dáváte přednost statickým př
 Váš klíč API poskytuje přístup k datům pracovní oblasti. Nenechávejte jej ve verzovacím systému ani ve sdílených dotfiles.
 </Warning>
 
-Chcete-li vytvořit klíč API, přejděte do **Settings > APIs & Webhooks > + Create key**. Podrobnosti viz [Rozhraní API](/l/cs/developers/extend/api#create-an-api-key).
+Chcete-li vytvořit klíč API, přejděte do **Settings → MCP & APIs → API → + Create key**. Podrobnosti viz [Rozhraní API](/l/cs/developers/extend/api#create-an-api-key).
 
 ## Rychlý start
 
 ### 1. Zkopírujte konfiguraci
 
-V Twenty přejděte do **Settings > AI > More > MCP Server**. Vyberte metodu ověření (OAuth nebo klíč API), zkopírujte úryvek JSON (už bude používat adresu URL vaší pracovní oblasti) a vložte jej do konfiguračního souboru klienta MCP.
+V Twenty přejděte do **Settings → MCP & APIs → MCP**. Vyberte metodu ověření (OAuth nebo klíč API), zkopírujte úryvek JSON (už bude používat adresu URL vaší pracovní oblasti) a vložte jej do konfiguračního souboru klienta MCP.
 
-| Klient             | Umístění konfiguračního souboru                                                                                                                                  |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) nebo `%APPDATA%\Claude\claude_desktop_config.json` (Windows)                           |
-| **Claude Code**    | `~/.claude.json` (uživatel) nebo `.mcp.json` (projekt)                                                                                                           |
-| **Cursor**         | `.cursor/mcp.json` ve vašem projektu nebo `~/.cursor/mcp.json` globálně                                                                                          |
-| **ChatGPT**        | Zapněte Developer Mode v **Settings > Apps & Connectors > Advanced settings**, poté použijte **Create** v **Settings > Apps & Connectors** k přidání serveru MCP |
+| Klient             | Umístění konfiguračního souboru                                                                                                                                   |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) nebo `%APPDATA%\Claude\claude_desktop_config.json` (Windows)                            |
+| **Claude Code**    | `~/.claude.json` (uživatel) nebo `.mcp.json` (projekt)                                                                                                            |
+| **Cursor**         | `.cursor/mcp.json` ve vašem projektu nebo `~/.cursor/mcp.json` globálně                                                                                           |
+| **ChatGPT**        | Zapněte Developer Mode v **Settings → Apps & Connectors → Advanced settings**, poté použijte **Create** v **Settings → Apps & Connectors** k přidání serveru MCP. |
 
 ### 2. Připojení
 
@@ -113,7 +109,7 @@ Není potřeba si pamatovat názvy nástrojů. Zeptejte se svého AI asistenta, 
 Připojení MCP dědí oprávnění ověřeného uživatele (OAuth) nebo roli přiřazenou ke klíči API. Chcete-li omezit, co může server MCP provádět:
 
 * **OAuth**: Platí role uživatele v pracovní oblasti.
-* **Klíč API**: Přiřaďte klíči API roli v **Settings > Roles**. Viz [Oprávnění](/l/cs/user-guide/permissions-access/capabilities/permissions).
+* **Klíč API**: Přiřaďte klíči API roli v **Settings → Members → Roles**. Viz [Oprávnění](/l/cs/user-guide/permissions-access/capabilities/permissions).
 
 ## Konfigurace pro self-hosting
 

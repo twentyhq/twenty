@@ -16,4 +16,5 @@ export type ToolProviderContext = {
   threadId?: string;
   locale?: keyof typeof APP_LOCALES;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
+  requireExplicitObjectGrants?: boolean;
 };

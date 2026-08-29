@@ -4,6 +4,8 @@ import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
 import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
+import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { renewToken } from '@/auth/services/AuthService';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import {
@@ -44,15 +46,31 @@ const RENEWED_TOKEN_PAIR: AuthTokenPair = {
   refreshToken: { token: 'newRefreshToken', expiresAt: '' },
 };
 
+// Mirrors persistence: a replay re-reads the pair renewal just stored, so the
+// mock must move with it or an assertion on the replay header proves nothing.
+let storedTokenPair: AuthTokenPair | undefined = CURRENT_TOKEN_PAIR;
+
 const UNAUTHENTICATED_RESPONSE = JSON.stringify({
   data: {},
   errors: [{ extensions: { code: 'UNAUTHENTICATED' } }],
 });
 
+const PERMISSION_DENIED_RESPONSE = JSON.stringify({
+  data: { trackAnalytics: null },
+  errors: [
+    {
+      message: 'Entity performing the request does not have permission',
+      extensions: { code: 'FORBIDDEN' },
+    },
+  ],
+});
+
 const mockOnError = jest.fn();
 const mockOnNetworkError = jest.fn();
 const mockOnPayloadTooLarge = jest.fn();
-const mockOnTokenPairChange = jest.fn();
+const mockOnTokenPairChange = jest.fn((tokenPair: AuthTokenPair) => {
+  storedTokenPair = tokenPair;
+});
 const mockOnUnauthenticatedError = jest.fn();
 
 const mockWorkspaceMember = {
@@ -121,13 +139,14 @@ const createMockOptions = (): Options => ({
   appVersion: '1.0.0',
 });
 
-const makeRequest = async () => {
+const makeRequestWithContext = async (context?: Record<string, unknown>) => {
   const options = createMockOptions();
   const apolloFactory = new ApolloFactory(options);
 
   const client = apolloFactory.getClient();
 
   await client.mutate({
+    context,
     mutation: gql`
       mutation TrackAnalytics(
         $type: AnalyticsType!
@@ -148,12 +167,19 @@ const makeRequest = async () => {
   });
 };
 
+const makeRequest = async () => makeRequestWithContext();
+
 describe('ApolloFactory', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     fetchMock.resetMocks();
     jest.mocked(renewToken).mockReset().mockResolvedValue(RENEWED_TOKEN_PAIR);
-    jest.mocked(getTokenPair).mockReset().mockReturnValue(CURRENT_TOKEN_PAIR);
+    storedTokenPair = CURRENT_TOKEN_PAIR;
+    jest
+      .mocked(getTokenPair)
+      .mockReset()
+      .mockImplementation(() => storedTokenPair);
+    jotaiStore.set(isCookieAuthActiveState.atom, false);
   });
 
   it('should create an instance of ApolloFactory', () => {
@@ -365,5 +391,81 @@ describe('ApolloFactory', () => {
 
     expect(renewToken).not.toHaveBeenCalled();
     expect(mockOnUnauthenticatedError).toHaveBeenCalledTimes(1);
+  });
+  describe('cookie auth', () => {
+    const setCookieAuthActive = () =>
+      jotaiStore.set(isCookieAuthActiveState.atom, true);
+
+    // fetch normalises header names, so assert case-insensitively rather than
+    // depending on the casing the mock happens to expose.
+    const readHeader = (
+      headers: Record<string, string>,
+      name: string,
+    ): string | undefined =>
+      Object.entries(headers).find(
+        ([key]) => key.toLowerCase() === name.toLowerCase(),
+      )?.[1];
+
+    // A pair still exists between sign-in and the boot effect's switch, and
+    // across the impersonation exchange. Sending it would take precedence over
+    // the session cookie server-side and bypass the CSRF origin check.
+    it('should not attach the Bearer header while cookie auth is active', async () => {
+      setCookieAuthActive();
+      fetchMock.mockResponse(() =>
+        Promise.resolve({ body: JSON.stringify({ data: {} }) }),
+      );
+
+      await makeRequest();
+
+      const headers = fetchMock.mock.calls[0]?.[1]?.headers as Record<
+        string,
+        string
+      >;
+
+      expect(readHeader(headers, 'authorization')).toBeUndefined();
+      // Version-mismatch detection must keep working in cookie-auth mode.
+      expect(readHeader(headers, 'X-App-Version')).toBe('1.0.0');
+    });
+
+    it('should leave a permission denial alone', async () => {
+      setCookieAuthActive();
+      fetchMock.mockResponse(PERMISSION_DENIED_RESPONSE);
+
+      await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(true);
+      expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
+    });
+
+    // CookieSessionBootEffect can switch to cookie auth while a renewal is in
+    // flight. Publishing that renewal would put the refresh token back for
+    // good, since the boot effect only probes while cookie auth is inactive.
+    it('should not restore the token pair when it is cleared mid-renewal', async () => {
+      jest.mocked(renewToken).mockImplementation(async () => {
+        storedTokenPair = undefined;
+        setCookieAuthActive();
+
+        return RENEWED_TOKEN_PAIR;
+      });
+      fetchMock.mockResponse(UNAUTHENTICATED_RESPONSE);
+
+      await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+      expect(renewToken).toHaveBeenCalled();
+      expect(mockOnTokenPairChange).not.toHaveBeenCalled();
+    });
+
+    it('should sign out on an unauthenticated response, with no pair to fall back to', async () => {
+      setCookieAuthActive();
+      storedTokenPair = undefined;
+      fetchMock.mockResponse(UNAUTHENTICATED_RESPONSE);
+
+      await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+      expect(renewToken).not.toHaveBeenCalled();
+      expect(mockOnUnauthenticatedError).toHaveBeenCalledTimes(1);
+      expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(true);
+    });
   });
 });

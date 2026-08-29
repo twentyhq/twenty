@@ -1,7 +1,15 @@
 import { randomUUID } from 'crypto';
 
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
 
 import { cancelCallRecordingRequest } from 'src/logic-functions/flows/cancel-call-recording-request.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
@@ -30,8 +38,6 @@ import { processRecallWebhookHandler } from 'src/logic-functions/process-recall-
 
 const WORKSPACE_API_KEY_ENV = 'TWENTY_API_KEY';
 const RECALL_BASE_URL = 'https://us-west-2.recall.ai/api/v1';
-const FUNCTIONS_URL = 'https://call-recorder-functions.test';
-const ARTIFACT_IMPORT_ROUTE = '/call-recorder/import-call-recording-artifacts';
 const RESTRICTED_TITLE_PLACEHOLDER =
   'FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED';
 
@@ -103,14 +109,15 @@ const discoverShareEverythingChannelId = async (): Promise<string> => {
 };
 
 const inOneHour = () => new Date(Date.now() + 60 * 60 * 1000).toISOString();
-const inTwoHours = () => new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
+const inTwoHours = () =>
+  new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
 const hoursAgo = (hours: number) =>
   new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
 
 // ---------------------------------------------------------------------------
-// Recall API fake, installed as a fetch interceptor. Twenty API traffic is
-// never intercepted: the shared client is built before the interceptor and
-// unknown URLs fall through to the real fetch.
+// Recall API fake, installed as a fetch interceptor. Twenty API traffic falls
+// through to the real fetch, except the metadata enqueueJobs mutation, which is
+// captured here so fanned-out jobs do not run inside the test.
 // ---------------------------------------------------------------------------
 
 type FakeRecallBot = {
@@ -140,10 +147,29 @@ class FakeRecallApi {
   handle(requestUrl: string, requestInit?: any): Response | undefined {
     const method: string = requestInit?.method ?? 'GET';
 
-    if (requestUrl.startsWith(`${FUNCTIONS_URL}${ARTIFACT_IMPORT_ROUTE}`)) {
-      this.artifactImportRequests.push(JSON.parse(requestInit?.body ?? '{}'));
+    // Capture the artifact-import enqueue instead of letting the job run.
+    if (
+      requestUrl === `${process.env.TWENTY_API_URL}/metadata` &&
+      String(requestInit?.body ?? '').includes('enqueueJobs')
+    ) {
+      const sentBody = JSON.parse(requestInit?.body ?? '{}');
+      const [input] = Object.values(sentBody.variables ?? {}) as {
+        logicFunctionUniversalIdentifier: string;
+        payloads: object[];
+      }[];
 
-      return jsonResponse(200, {});
+      this.artifactImportRequests.push(...(input?.payloads ?? []));
+
+      return jsonResponse(200, {
+        data: {
+          enqueueJobs: {
+            enqueued: true,
+            logicFunctionUniversalIdentifier:
+              input?.logicFunctionUniversalIdentifier ?? '',
+            enqueuedJobsCount: input?.payloads?.length ?? 0,
+          },
+        },
+      });
     }
 
     if (!requestUrl.startsWith(RECALL_BASE_URL)) {
@@ -230,11 +256,13 @@ const buildBotStatusChangeWebhook = ({
   botId,
   metadata,
   statusCode,
+  statusSubCode,
   statusTimestamp,
 }: {
   botId: string;
   metadata: Record<string, string>;
   statusCode: string;
+  statusSubCode?: string;
   statusTimestamp?: string;
 }) => ({
   event: 'bot.status_change',
@@ -242,6 +270,7 @@ const buildBotStatusChangeWebhook = ({
     bot_id: botId,
     status: {
       code: statusCode,
+      ...(statusSubCode === undefined ? {} : { sub_code: statusSubCode }),
       created_at: statusTimestamp ?? new Date().toISOString(),
     },
     bot: { id: botId, metadata },
@@ -336,7 +365,6 @@ describe('call recorder app lifecycle (integration)', () => {
     vi.stubEnv('RECALL_API_KEY', 'recall-api-key');
     vi.stubEnv('RECALL_REGION', 'us-west-2');
     vi.stubEnv('CALL_RECORDER_USE_WORKSPACE_LOGO', 'false');
-    vi.stubEnv('TWENTY_FUNCTIONS_URL', FUNCTIONS_URL);
     // Logic functions normally run with an app access token; the workspace
     // API key is a token with the same workspaceId claim.
     vi.stubEnv(
@@ -447,7 +475,9 @@ describe('call recorder app lifecycle (integration)', () => {
   const createPendingCallRecording = async ({
     calendarEventId,
     ...overrides
-  }: Record<string, unknown> & { calendarEventId: string }): Promise<string> => {
+  }: Record<string, unknown> & {
+    calendarEventId: string;
+  }): Promise<string> => {
     const callRecordingId = randomUUID();
 
     await client.mutation({
@@ -494,9 +524,7 @@ describe('call recorder app lifecycle (integration)', () => {
       },
     });
 
-    return (result.callRecordings?.edges ?? []).map(
-      (edge: any) => edge.node,
-    );
+    return (result.callRecordings?.edges ?? []).map((edge: any) => edge.node);
   };
 
   const fetchCallRecording = async (
@@ -580,7 +608,9 @@ describe('call recorder app lifecycle (integration)', () => {
       });
 
       expect(
-        await findCallRecordings({ calendarEventId: { in: [calendarEventId] } }),
+        await findCallRecordings({
+          calendarEventId: { in: [calendarEventId] },
+        }),
       ).toEqual([]);
     });
   });
@@ -633,8 +663,8 @@ describe('call recorder app lifecycle (integration)', () => {
         'recall-recording-1',
       );
       expect(processedCallRecording.endedAt).toBeTruthy();
-      // recording.done hands media and transcript work to the artifact
-      // import route.
+      // recording.done hands media and transcript work to the enqueued
+      // artifact import job.
       expect(recall.artifactImportRequests).toHaveLength(1);
       expect(recall.artifactImportRequests[0]).toMatchObject({
         callRecordingId,
@@ -702,6 +732,40 @@ describe('call recorder app lifecycle (integration)', () => {
 
       expect(callRecording.status).toBe('FAILED');
       expect(callRecording.callRecorderFailureReason).toBe('fatal');
+    });
+
+    it('marks the recording NOT_RECORDED when nobody joined the meeting', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      await deliverRecallWebhook(
+        buildBotStatusChangeWebhook({
+          botId,
+          metadata,
+          statusCode: 'call_ended',
+          statusSubCode: 'timeout_exceeded_noone_joined',
+        }),
+      );
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('NOT_RECORDED');
+      expect(callRecording.callRecorderFailureReason).toBe(
+        'timeout_exceeded_noone_joined',
+      );
+
+      const lateDoneResult = await deliverRecallWebhook(
+        buildBotStatusChangeWebhook({
+          botId,
+          metadata,
+          statusCode: 'done',
+        }),
+      );
+
+      expect(lateDoneResult.status).toBe('skipped');
+      expect((await fetchCallRecording(callRecordingId)).status).toBe(
+        'NOT_RECORDED',
+      );
     });
 
     it('ignores webhooks that match no known recording', async () => {

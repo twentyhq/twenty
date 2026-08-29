@@ -1,4 +1,7 @@
-import { type Manifest } from 'twenty-shared/application';
+import {
+  getRoleTargetUniversalIdentifier,
+  type Manifest,
+} from 'twenty-shared/application';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -79,6 +82,14 @@ const MANIFEST_ENTITY_REGISTRY: Record<
       toCandidates(
         manifest.connectionProviders,
         (connectionProvider) => connectionProvider.displayName,
+      ),
+  },
+  timelineActivityType: {
+    entityKind: 'timeline activity type',
+    getCandidates: (manifest) =>
+      toCandidates(
+        manifest.timelineActivityTypes,
+        (timelineActivityType) => timelineActivityType.label,
       ),
   },
   view: {
@@ -227,7 +238,17 @@ const MANIFEST_ENTITY_REGISTRY: Record<
   },
   roleTarget: {
     entityKind: 'role target',
-    getCandidates: () => NO_MANIFEST_CANDIDATES,
+    getCandidates: (manifest) =>
+      (manifest.agents ?? [])
+        .filter((agent) => isDefined(agent.roleUniversalIdentifier))
+        .map((agent) => ({
+          universalIdentifier: getRoleTargetUniversalIdentifier({
+            applicationUniversalIdentifier:
+              manifest.application.universalIdentifier,
+            agentUniversalIdentifier: agent.universalIdentifier,
+          }),
+          label: agent.label,
+        })),
   },
   rolePermissionFlag: {
     entityKind: 'role permission flag',

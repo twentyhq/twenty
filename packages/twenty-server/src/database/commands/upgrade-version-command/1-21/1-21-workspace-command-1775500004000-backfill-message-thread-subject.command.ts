@@ -71,8 +71,6 @@ export class BackfillMessageThreadSubjectCommand extends ProvisionedWorkspaceCom
        WHERE mt.id = sub."messageThreadId"
          AND mt."subject" IS NULL`,
       undefined,
-      undefined,
-      { shouldBypassPermissionChecks: true },
     );
 
     this.logger.log(
@@ -221,7 +219,8 @@ export class BackfillMessageThreadSubjectCommand extends ProvisionedWorkspaceCom
           universalIdentifier:
             STANDARD_OBJECTS.messageThread.fields.subject.universalIdentifier,
         },
-        flatApplication: twentyStandardFlatApplication,
+        applicationUniversalIdentifier:
+          twentyStandardFlatApplication.universalIdentifier,
         objectMetadataUniversalIdentifier:
           messageThreadObjectMetadata.universalIdentifier,
       }),

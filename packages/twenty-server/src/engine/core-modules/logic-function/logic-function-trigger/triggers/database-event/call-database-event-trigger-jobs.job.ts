@@ -1,13 +1,18 @@
-import chunk from 'lodash.chunk';
+import { Logger } from '@nestjs/common';
+
 import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
+import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
+import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
 import { transformEventBatchToEventPayloads } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/transform-event-batch-to-event-payloads';
 import {
   LogicFunctionTriggerJob,
@@ -16,22 +21,23 @@ import {
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
-const DATABASE_EVENT_JOBS_CHUNK_SIZE = 20;
-
 @Processor(MessageQueue.triggerQueue)
 export class CallDatabaseEventTriggerJobsJob {
+  private readonly logger = new Logger(CallDatabaseEventTriggerJobsJob.name);
+
   constructor(
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
   ) {}
 
   @Process(CallDatabaseEventTriggerJobsJob.name)
   async handle(workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>) {
-    const { flatLogicFunctionMaps } =
+    const { flatLogicFunctionMaps, flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(
         workspaceEventBatch.workspaceId,
-        ['flatLogicFunctionMaps'],
+        ['flatLogicFunctionMaps', 'flatApplicationMaps'],
       );
 
     const logicFunctionsWithDatabaseEventTrigger = Object.values(
@@ -54,25 +60,70 @@ export class CallDatabaseEventTriggerJobsJob {
         }),
       );
 
-    const logicFunctionPayloads = transformEventBatchToEventPayloads({
-      logicFunctions: logicFunctionsToTrigger,
-      workspaceEventBatch,
-    });
+    const logicFunctionsByApplicationId = new Map<
+      string,
+      typeof logicFunctionsToTrigger
+    >();
 
-    if (logicFunctionPayloads.length === 0) {
-      return;
+    for (const logicFunction of logicFunctionsToTrigger) {
+      const applicationLogicFunctions =
+        logicFunctionsByApplicationId.get(logicFunction.applicationId) ?? [];
+
+      applicationLogicFunctions.push(logicFunction);
+      logicFunctionsByApplicationId.set(
+        logicFunction.applicationId,
+        applicationLogicFunctions,
+      );
     }
 
-    const logicFunctionPayloadsChunks = chunk(
-      logicFunctionPayloads,
-      DATABASE_EVENT_JOBS_CHUNK_SIZE,
-    );
+    for (const [
+      applicationId,
+      logicFunctions,
+    ] of logicFunctionsByApplicationId) {
+      const application = findActiveFlatApplicationById(
+        flatApplicationMaps,
+        applicationId,
+      );
+      const applicationRegistrationId = application?.applicationRegistrationId;
 
-    for (const logicFunctionPayloadsChunk of logicFunctionPayloadsChunks) {
-      await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+      if (!isDefined(applicationRegistrationId)) {
+        continue;
+      }
+
+      const logicFunctionPayloads = transformEventBatchToEventPayloads({
+        logicFunctions,
+        workspaceEventBatch,
+      });
+
+      if (logicFunctionPayloads.length === 0) {
+        continue;
+      }
+
+      try {
+        await this.applicationJobEnqueueThrottlerService.throttleOrThrow({
+          applicationId,
+          applicationRegistrationId,
+          jobCount: logicFunctionPayloads.length,
+        });
+      } catch (error) {
+        if (error instanceof ThrottlerException) {
+          this.logger.warn(
+            `Enqueue throttled for application ${applicationId} (registration ${applicationRegistrationId}) in workspace ${workspaceEventBatch.workspaceId}: skipping ${logicFunctionPayloads.length} logic function trigger(s)`,
+          );
+
+          continue;
+        }
+
+        throw error;
+      }
+
+      await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
-        logicFunctionPayloadsChunk,
-        { retryLimit: 3 },
+        logicFunctionPayloads,
+        {
+          retryLimit: 3,
+          backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+        },
       );
     }
   }

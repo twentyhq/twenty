@@ -68,6 +68,12 @@ export type ViewManifest = SyncableEntityOptions & {
   name: string;
   objectUniversalIdentifier: string;
   type?: ViewType;
+  /**
+   * @deprecated View keys (INDEX, FIELDS_WIDGET) are reserved for the
+   * engine-owned default views, which the server provisions automatically for
+   * every object. This field is ignored: manifest views are always created as
+   * additional views.
+   */
   key?: ViewKey;
   icon?: string;
   position?: number;

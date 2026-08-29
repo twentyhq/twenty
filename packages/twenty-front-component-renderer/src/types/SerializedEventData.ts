@@ -33,6 +33,9 @@ export type SerializedEventData = {
   key?: string;
   code?: string;
   repeat?: boolean;
+  inputType?: string;
+  data?: string;
+  clipboardText?: string;
   value?: string;
   checked?: boolean;
   scrollTop?: number;

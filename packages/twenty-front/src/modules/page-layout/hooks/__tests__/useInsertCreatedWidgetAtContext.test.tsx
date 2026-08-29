@@ -1,68 +1,22 @@
 import { useInsertCreatedWidgetAtContext } from '@/page-layout/hooks/useInsertCreatedWidgetAtContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { widgetInsertionContextComponentState } from '@/page-layout/states/widgetInsertionContextComponentState';
-import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
-import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import {
+  makeDraft,
+  makeTab,
+  makeWidget,
+} from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { act, renderHook } from '@testing-library/react';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
 import {
   PageLayoutTabLayoutMode,
-  PageLayoutType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
-
-const makeWidget = (
-  id: string,
-  index: number,
-  tabId: string = 'tab-1',
-): PageLayoutWidget =>
-  ({
-    id,
-    pageLayoutTabId: tabId,
-    title: id,
-    isActive: true,
-    type: WidgetType.FIELDS,
-    gridPosition: { column: 0, columnSpan: 1, row: 0, rowSpan: 1 },
-    configuration: { __typename: 'FieldsConfiguration' as const },
-    position: {
-      __typename: 'PageLayoutWidgetVerticalListPosition' as const,
-      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-      index,
-    },
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    deletedAt: null,
-  }) as unknown as PageLayoutWidget;
-
-const makeTab = (
-  id: string,
-  widgets: PageLayoutWidget[],
-  position: number = 0,
-) => ({
-  id,
-  applicationId: '',
-  title: id,
-  isActive: true,
-  position,
-  pageLayoutId: '',
-  widgets,
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-  deletedAt: null,
-});
-
-const makeDraft = (tabs: ReturnType<typeof makeTab>[]): DraftPageLayout => ({
-  id: 'test-layout',
-  name: 'Test Layout',
-  type: PageLayoutType.RECORD_PAGE,
-  objectMetadataId: null,
-  tabs,
-});
 
 describe('useInsertCreatedWidgetAtContext', () => {
   const getWrapper =
@@ -148,6 +102,44 @@ describe('useInsertCreatedWidgetAtContext', () => {
     const widgetIds = draft.tabs[0].widgets.map((w) => w.id);
 
     expect(widgetIds).toEqual(['widget-a', 'widget-c', 'widget-b']);
+  });
+
+  it('should normalize a newly inserted widget before the viewport-filling widget', () => {
+    const store = createStore();
+    const wrapper = getWrapper(store);
+
+    const widgetA = makeWidget('widget-a', 0);
+    const timelineWidget = {
+      ...makeWidget('timeline-widget', 1),
+      type: WidgetType.TIMELINE,
+    };
+    const newWidget = makeWidget('new-widget', 2);
+
+    store.set(
+      getDraftAtom(),
+      makeDraft([makeTab('tab-1', [widgetA, timelineWidget, newWidget])]),
+    );
+    store.set(getInsertionContextAtom(), {
+      targetWidgetId: 'timeline-widget',
+      direction: 'below',
+    });
+
+    const { result } = renderHook(
+      () => useInsertCreatedWidgetAtContext(PAGE_LAYOUT_TEST_INSTANCE_ID),
+      { wrapper },
+    );
+
+    act(() => {
+      result.current.insertCreatedWidgetAtContext('new-widget');
+    });
+
+    const draft = store.get(getDraftAtom());
+
+    expect(draft.tabs[0].widgets.map(({ id }) => id)).toEqual([
+      'widget-a',
+      'new-widget',
+      'timeline-widget',
+    ]);
   });
 
   it('should reindex all widgets with sequential positions', () => {

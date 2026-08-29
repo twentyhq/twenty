@@ -1,17 +1,21 @@
 {
   "name": "postcard",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2",
-    "twenty": ">=2.19.0"
+    "twenty": ">=2.23.0"
   },
   "keywords": [
     "twenty-app"
   ],
   "packageManager": "yarn@4.13.0",
+  "frontComponentSharedDependencies": [
+    "react",
+    "react-dom/client"
+  ],
   "scripts": {
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",
@@ -29,8 +33,8 @@
     "playwright": "^1.60.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "twenty-client-sdk": "2.19.0-alpha.1",
-    "twenty-sdk": "2.19.0-alpha.1",
+    "twenty-client-sdk": "2.31.0",
+    "twenty-sdk": "2.31.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.0"
   }

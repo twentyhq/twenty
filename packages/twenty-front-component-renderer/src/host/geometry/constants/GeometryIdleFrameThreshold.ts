@@ -1,0 +1,1 @@
+export const GEOMETRY_IDLE_FRAME_THRESHOLD = 20;

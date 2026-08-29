@@ -4,7 +4,6 @@ import { type ApiKeyWorkspaceAuthContext } from 'src/engine/core-modules/auth/ty
 type ApiKeyAuthContextInput = {
   workspace: NonNullable<RawAuthContext['workspace']>;
   apiKey: NonNullable<RawAuthContext['apiKey']>;
-  workspaceMetadataVersion?: string;
 };
 
 export const buildApiKeyAuthContext = (
@@ -14,6 +13,5 @@ export const buildApiKeyAuthContext = (
     type: 'apiKey',
     workspace: input.workspace,
     apiKey: input.apiKey,
-    workspaceMetadataVersion: input.workspaceMetadataVersion,
   };
 };

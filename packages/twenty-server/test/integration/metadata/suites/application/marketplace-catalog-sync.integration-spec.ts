@@ -21,7 +21,7 @@ const MARKETPLACE_QUERY = `
       author
       sourcePackage
       category
-      logo
+      logoUrl
       isVetted
     }
   }

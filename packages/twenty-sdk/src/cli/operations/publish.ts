@@ -40,8 +40,22 @@ const innerAppPublish = async (
     };
   }
 
+  // Provenance can only be generated from a CI with OIDC; forcing it locally
+  // makes npm publish fail. ACTIONS_ID_TOKEN_REQUEST_URL is only set when the
+  // GitHub Actions workflow grants id-token: write.
+  // npm rejects provenance when the workflow runs from a private source repo
+  // (E422 "Unsupported GitHub Actions source repository visibility: private").
+  // Set TWENTY_APP_PUBLISH_DISABLE_PROVENANCE=true to opt out in that case.
+  const provenanceDisabled =
+    process.env.TWENTY_APP_PUBLISH_DISABLE_PROVENANCE === 'true';
+  const supportsProvenance =
+    process.env.ACTIONS_ID_TOKEN_REQUEST_URL != null && !provenanceDisabled;
+
   const publishArgs = [
     'publish',
+    '--access',
+    'public',
+    ...(supportsProvenance ? ['--provenance'] : []),
     ...(options.npmTag ? ['--tag', options.npmTag] : []),
   ];
 

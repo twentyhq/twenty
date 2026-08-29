@@ -1,16 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { CalendarStartDay } from 'twenty-shared/constants';
-import { FirstDayOfTheWeek } from 'twenty-shared/types';
-import {
-  convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { PieChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.dto';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS } from 'src/modules/dashboard/chart-data/constants/extra-item-to-detect-too-many-groups.constant';
@@ -22,11 +18,12 @@ import {
   generateChartDataExceptionMessage,
 } from 'src/modules/dashboard/chart-data/exceptions/chart-data.exception';
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
+import { ChartRelationLabelService } from 'src/modules/dashboard/chart-data/services/chart-relation-label.service';
+import { filterOutEmptyChartBuckets } from 'src/modules/dashboard/chart-data/utils/filter-out-empty-chart-buckets.util';
+import { filterOutUnresolvedRelationBuckets } from 'src/modules/dashboard/chart-data/utils/filter-out-unresolved-relation-buckets.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
-import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
-import { processOneDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-one-dimensional-results.util';
-import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data-if-needed.util';
 import { wrapChartDataQueryError } from 'src/modules/dashboard/chart-data/utils/wrap-chart-data-query-error.util';
+import { transformToPieChartData } from 'src/modules/dashboard/chart-data/utils/transform-to-pie-chart-data.util';
 
 type GetPieChartDataParams = {
   workspaceId: string;
@@ -40,6 +37,7 @@ export class PieChartDataService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly chartDataQueryService: ChartDataQueryService,
+    private readonly chartRelationLabelService: ChartRelationLabelService,
   ) {}
 
   async getPieChartData({
@@ -103,15 +101,8 @@ export class PieChartDataService {
         PIE_CHART_MAXIMUM_NUMBER_OF_SLICES +
         EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS;
 
-      const objectIdByNameSingular: Record<string, string> = {};
-
-      for (const objMetadata of Object.values(
-        flatObjectMetadataMaps.byUniversalIdentifier,
-      )) {
-        if (isDefined(objMetadata)) {
-          objectIdByNameSingular[objMetadata.nameSingular] = objMetadata.id;
-        }
-      }
+      const { idByNameSingular: objectIdByNameSingular } =
+        buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
       const rawResults = await this.chartDataQueryService.executeGroupByQuery({
         flatObjectMetadata,
@@ -134,103 +125,41 @@ export class PieChartDataService {
         splitMultiValueFields: configuration.splitMultiValueFields,
       });
 
-      return this.transformToPieChartData({
+      const filteredResults = filterOutEmptyChartBuckets({
         rawResults,
+        shouldOmitEmptyBuckets: configuration.hideEmptyCategory ?? false,
+      });
+
+      const relationLabelResolutions =
+        await this.chartRelationLabelService.resolveRelationLabels({
+          rawResults: filteredResults,
+          primaryAxis: {
+            groupByField,
+            subFieldName: configuration.groupBySubFieldName,
+          },
+          authContext,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        });
+
+      const resolvedResults = filterOutUnresolvedRelationBuckets({
+        rawResults: filteredResults,
+        primaryRelationLabelResolution: relationLabelResolutions.primary,
+        secondaryRelationLabelResolution: undefined,
+      });
+
+      return transformToPieChartData({
+        filteredRawResults: resolvedResults,
         groupByField,
         configuration,
         userTimezone: configuration.timezone ?? 'UTC',
         firstDayOfTheWeek:
           (configuration.firstDayOfTheWeek as CalendarStartDay | undefined) ??
           CalendarStartDay.MONDAY,
+        relationLabelResolution: relationLabelResolutions.primary,
       });
     } catch (error) {
       throw wrapChartDataQueryError(error, 'Pie chart data retrieval failed');
     }
-  }
-
-  private transformToPieChartData({
-    rawResults,
-    groupByField,
-    configuration,
-    userTimezone,
-    firstDayOfTheWeek,
-  }: {
-    rawResults: Array<{
-      groupByDimensionValues: unknown[];
-      aggregateValue: number;
-    }>;
-    groupByField: FlatFieldMetadata;
-    configuration: PieChartConfigurationDTO;
-    userTimezone: string;
-    firstDayOfTheWeek: CalendarStartDay;
-  }): PieChartDataDTO {
-    const filteredResults = configuration.hideEmptyCategory
-      ? rawResults.filter(
-          (result) =>
-            isDefined(result.groupByDimensionValues?.[0]) &&
-            result.aggregateValue !== 0,
-        )
-      : rawResults;
-
-    const selectOptions = getSelectOptions(groupByField);
-
-    const convertedFirstDayOfTheWeek =
-      convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek(
-        firstDayOfTheWeek,
-        FirstDayOfTheWeek.SUNDAY,
-      );
-
-    const limitedResults = filteredResults.slice(
-      0,
-      PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
-    );
-
-    const {
-      processedDataPoints: rawProcessedDataPoints,
-      formattedToRawLookup,
-    } = processOneDimensionalResults({
-      rawResults: limitedResults,
-      primaryAxisGroupByField: groupByField,
-      dateGranularity: configuration.dateGranularity,
-      subFieldName: configuration.groupBySubFieldName,
-      userTimezone,
-      firstDayOfTheWeek: convertedFirstDayOfTheWeek,
-    });
-
-    const processedDataPoints = rawProcessedDataPoints.map((point) => {
-      const rawValueString = isDefined(point.rawValue)
-        ? String(point.rawValue)
-        : null;
-
-      return {
-        key: point.formattedValue,
-        value: point.aggregateValue,
-        rawValue: rawValueString,
-      };
-    });
-
-    const sortedData = sortChartDataIfNeeded({
-      data: processedDataPoints,
-      orderBy: configuration.orderBy,
-      manualSortOrder: configuration.manualSortOrder,
-      formattedToRawLookup,
-      getFieldValue: (item) => item.key,
-      getNumericValue: (item) => item.value,
-      selectFieldOptions: selectOptions,
-      fieldType: groupByField.type,
-      dateGranularity: configuration.dateGranularity,
-    });
-
-    const data = sortedData.map(({ rawValue: _rawValue, ...item }) => item);
-
-    return {
-      data,
-      showLegend: configuration.displayLegend ?? true,
-      showDataLabels: configuration.displayDataLabel ?? false,
-      showCenterMetric: configuration.showCenterMetric ?? true,
-      hasTooManyGroups:
-        filteredResults.length > PIE_CHART_MAXIMUM_NUMBER_OF_SLICES,
-      formattedToRawLookup: Object.fromEntries(formattedToRawLookup),
-    };
   }
 }

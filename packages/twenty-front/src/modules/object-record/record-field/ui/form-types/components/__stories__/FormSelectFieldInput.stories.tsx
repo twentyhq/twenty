@@ -126,6 +126,37 @@ export const NonNullable: Story = {
   },
 };
 
+export const NoOptionsWithCallToAction: Story = {
+  args: {
+    label: 'Work Policy',
+    defaultValue: undefined,
+    options: [],
+    onChange: fn(),
+    callToActionButton: {
+      text: 'Add work policy',
+      onClick: fn(),
+    },
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const selectControl = await canvas.findByText('No Work Policy');
+    expect(selectControl).toBeVisible();
+
+    await userEvent.click(selectControl);
+
+    const dropdown = within(canvasElement.ownerDocument.body);
+
+    await waitFor(() => {
+      expect(dropdown.getByText('Add work policy')).toBeVisible();
+    });
+
+    await userEvent.click(dropdown.getByText('Add work policy'));
+
+    expect(args.callToActionButton?.onClick).toHaveBeenCalled();
+  },
+};
+
 export const WithVariablePicker: Story = {
   args: {
     label: 'Work Policy',

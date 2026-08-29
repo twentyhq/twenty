@@ -1,4 +1,5 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { MetadataWritability, ObjectOpenRecordIn } from 'twenty-shared/types';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -19,6 +20,7 @@ export type CreateStandardObjectContext<O extends AllStandardObjectName> = {
   isAuditLogged?: boolean;
   isUIEditable?: boolean;
   isUICreatable?: boolean;
+  openRecordIn?: ObjectOpenRecordIn;
   shortcut?: string | null;
   duplicateCriteria?: string[][] | null;
   labelIdentifierFieldMetadataName: AllStandardObjectFieldName<O>;
@@ -48,6 +50,7 @@ export const createStandardObjectFlatMetadata = <
     isAuditLogged = true,
     isUIEditable = true,
     isUICreatable = true,
+    openRecordIn = ObjectOpenRecordIn.USER_CHOICE,
     shortcut = null,
     duplicateCriteria = null,
     labelIdentifierFieldMetadataName,
@@ -90,6 +93,8 @@ export const createStandardObjectFlatMetadata = <
     isAuditLogged,
     isUIEditable,
     isUICreatable,
+    writability: MetadataWritability.OPEN,
+    openRecordIn,
     isLabelSyncedWithName: false,
     overrides: null,
     duplicateCriteria,
@@ -107,9 +112,11 @@ export const createStandardObjectFlatMetadata = <
     fieldIds: [],
     indexMetadataIds: [],
     searchFieldMetadataIds: [],
+    commandMenuItemIds: [],
     objectPermissionIds: [],
     fieldPermissionIds: [],
     viewIds: [],
+    pageLayoutIds: [],
     createdAt: now,
     updatedAt: now,
     id: standardObjectMetadataRelatedEntityIds[nameSingular].id,
@@ -121,6 +128,8 @@ export const createStandardObjectFlatMetadata = <
     viewUniversalIdentifiers: [],
     indexMetadataUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
+    pageLayoutUniversalIdentifiers: [],
+    commandMenuItemUniversalIdentifiers: [],
     labelIdentifierFieldMetadataUniversalIdentifier,
     imageIdentifierFieldMetadataUniversalIdentifier,
   };

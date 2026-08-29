@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 
@@ -7,7 +9,8 @@ type UserAuthContextInput = {
   user: NonNullable<RawAuthContext['user']>;
   workspaceMemberId: NonNullable<RawAuthContext['workspaceMemberId']>;
   workspaceMember: NonNullable<RawAuthContext['workspaceMember']>;
-  workspaceMetadataVersion?: string;
+  application?: RawAuthContext['application'];
+  viaApplication?: RawAuthContext['application'];
 };
 
 export const buildUserAuthContext = (
@@ -20,6 +23,9 @@ export const buildUserAuthContext = (
     user: input.user,
     workspaceMemberId: input.workspaceMemberId,
     workspaceMember: input.workspaceMember,
-    workspaceMetadataVersion: input.workspaceMetadataVersion,
+    ...(isDefined(input.application) ? { application: input.application } : {}),
+    ...(isDefined(input.viaApplication)
+      ? { viaApplication: input.viaApplication }
+      : {}),
   };
 };

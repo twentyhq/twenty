@@ -6,10 +6,13 @@ import { AiChatSuggestedPrompts } from '@/ai/components/suggested-prompts/AiChat
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
+import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
+import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
 import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
 import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -18,7 +21,6 @@ const StyledEmptyState = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  height: 100%;
   justify-content: flex-end;
 `;
 
@@ -30,6 +32,14 @@ export const AiChatEmptyState = ({ editor }: AiChatEmptyStateProps) => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const agentChatError = useAtomComponentFamilyStateValue(
     agentChatErrorComponentFamilyState,
+    { threadId: currentAiChatThread },
+  );
+  const agentChatIsAwaitingFirstChunk = useAtomComponentFamilyStateValue(
+    agentChatIsAwaitingFirstChunkComponentFamilyState,
+    { threadId: currentAiChatThread },
+  );
+  const agentChatIsStreaming = useAtomComponentFamilyStateValue(
+    agentChatIsStreamingComponentFamilyState,
     { threadId: currentAiChatThread },
   );
   const agentChatThreadsLoading = useAtomStateValue(
@@ -46,13 +56,20 @@ export const AiChatEmptyState = ({ editor }: AiChatEmptyStateProps) => {
     agentChatHasMessageComponentSelector,
   );
 
+  const isMobile = useIsMobile();
+
   const isOnNewChatSlot =
     currentAiChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
   const skeletonShowing =
     (agentChatThreadsLoading && isOnNewChatSlot) ||
     (agentChatMessagesLoading && !skipMessagesSkeletonUntilLoaded);
   const shouldRender =
-    !hasMessages && !isDefined(agentChatError) && !skeletonShowing;
+    !isMobile &&
+    !hasMessages &&
+    !isDefined(agentChatError) &&
+    !skeletonShowing &&
+    !agentChatIsAwaitingFirstChunk &&
+    !agentChatIsStreaming;
 
   if (!shouldRender) {
     return null;

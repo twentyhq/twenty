@@ -9,6 +9,7 @@ import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
 import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
+import { extractFrontComponentSharedDependencies } from '@/cli/utilities/build/manifest/utils/extract-front-component-shared-dependencies';
 import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/manifest/utils/validate-conditional-availability-usage';
 import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
@@ -22,6 +23,7 @@ import { type ObjectConfig } from '@/sdk/define/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
+import { type TimelineActivityTypeConfig } from '@/sdk/define/timeline-activity-types/timeline-activity-type-config';
 import { type ViewConfig } from '@/sdk/define/views/view-config';
 import { readFile } from 'node:fs/promises';
 import { basename, extname, join, relative } from 'path';
@@ -45,16 +47,18 @@ import {
   type PermissionFlagManifest,
   type PostInstallLogicFunctionApplicationManifest,
   type PreInstallLogicFunctionApplicationManifest,
+  type UninstallLogicFunctionApplicationManifest,
   type RoleManifest,
   type SkillManifest,
   type StandaloneViewFieldManifest,
+  type TimelineActivityTypeManifest,
   type ViewManifest,
 } from 'twenty-shared/application';
 import {
   getInputSchemaFromSourceCode,
   jsonSchemaToInputSchema,
 } from 'twenty-shared/logic-function';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -115,10 +119,14 @@ export const buildManifest = async (
   const pageLayouts: PageLayoutManifest[] = [];
   const pageLayoutTabs: PageLayoutTabManifest[] = [];
   const commandMenuItems: CommandMenuItemManifest[] = [];
+  const timelineActivityTypes: TimelineActivityTypeManifest[] = [];
   const postInstallLogicFunctions: PostInstallLogicFunctionApplicationManifest[] =
     [];
   const preInstallLogicFunctions: PreInstallLogicFunctionApplicationManifest[] =
     [];
+  const uninstallLogicFunctions: UninstallLogicFunctionApplicationManifest[] =
+    [];
+  const settingsFrontComponentUniversalIdentifiers: string[] = [];
   const applicationRoleUniversalIdentifiers: string[] = [];
   const applicationFilePaths: string[] = [];
   const objectsFilePaths: string[] = [];
@@ -138,6 +146,7 @@ export const buildManifest = async (
   const pageLayoutsFilePaths: string[] = [];
   const pageLayoutTabsFilePaths: string[] = [];
   const commandMenuItemsFilePaths: string[] = [];
+  const timelineActivityTypesFilePaths: string[] = [];
 
   for (const filePath of filePaths) {
     const fileContent = await readFile(filePath, 'utf-8');
@@ -339,6 +348,14 @@ export const buildManifest = async (
           });
         }
 
+        if (
+          targetFunctionName === TargetFunction.DefineUninstallLogicFunction
+        ) {
+          uninstallLogicFunctions.push({
+            universalIdentifier: extract.config.universalIdentifier,
+          });
+        }
+
         break;
       }
       case ManifestEntityKey.FrontComponents: {
@@ -365,6 +382,14 @@ export const buildManifest = async (
 
         frontComponents.push(config);
         frontComponentsFilePaths.push(relativePath);
+
+        if (
+          targetFunctionName === TargetFunction.DefineSettingsFrontComponent
+        ) {
+          settingsFrontComponentUniversalIdentifiers.push(
+            extract.config.universalIdentifier,
+          );
+        }
 
         break;
       }
@@ -471,6 +496,19 @@ export const buildManifest = async (
         commandMenuItemsFilePaths.push(relativePath);
         break;
       }
+      case ManifestEntityKey.TimelineActivityTypes: {
+        const extract =
+          await extractManifestFromFile<TimelineActivityTypeConfig>({
+            appPath,
+            filePath,
+          });
+
+        timelineActivityTypes.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        timelineActivityTypesFilePaths.push(relativePath);
+        break;
+      }
       case ManifestEntityKey.PublicAssets: {
         // Public assets are handled below
         break;
@@ -502,13 +540,11 @@ export const buildManifest = async (
 
   if (applicationConfig) {
     for (const objectConfig of objectConfigs) {
-      const {
-        objectFields: objectFieldsWithDefaults,
-        fields: reverseRelationFields,
-      } = getDefaultFieldsInObjectFields({
-        objectConfig,
-        applicationUniversalIdentifier: applicationConfig.universalIdentifier,
-      });
+      const { objectFields: objectFieldsWithDefaults } =
+        getDefaultFieldsInObjectFields({
+          objectConfig,
+          applicationUniversalIdentifier: applicationConfig.universalIdentifier,
+        });
 
       const labelIdentifierFieldMetadataUniversalIdentifier =
         objectConfig.labelIdentifierFieldMetadataUniversalIdentifier ??
@@ -529,7 +565,6 @@ export const buildManifest = async (
       };
 
       objects.push(objectManifest);
-      fields.push(...reverseRelationFields);
     }
   }
 
@@ -545,9 +580,22 @@ export const buildManifest = async (
     );
   }
 
+  if (uninstallLogicFunctions.length > 1) {
+    errors.push('Only one uninstall logic function is allowed per application');
+  }
+
+  if (settingsFrontComponentUniversalIdentifiers.length > 1) {
+    errors.push('Only one settings front component is allowed per application');
+  }
+
   if (applicationRoleUniversalIdentifiers.length > 1) {
     errors.push('Only one defineApplicationRole is allowed per application');
   }
+
+  const { sharedDependencies, errors: sharedDependenciesErrors } =
+    await extractFrontComponentSharedDependencies(appPath);
+
+  errors.push(...sharedDependenciesErrors);
 
   const resolvedDefaultRoleUniversalIdentifier =
     applicationConfig?.defaultRoleUniversalIdentifier ??
@@ -594,6 +642,20 @@ export const buildManifest = async (
             ...(preInstallLogicFunctions.length >= 1
               ? { preInstallLogicFunction: preInstallLogicFunctions[0] }
               : {}),
+            ...(uninstallLogicFunctions.length >= 1
+              ? { uninstallLogicFunction: uninstallLogicFunctions[0] }
+              : {}),
+            ...(settingsFrontComponentUniversalIdentifiers.length >= 1
+              ? {
+                  settingsFrontComponent: {
+                    universalIdentifier:
+                      settingsFrontComponentUniversalIdentifiers[0],
+                  },
+                }
+              : {}),
+            ...(isDefined(sharedDependencies)
+              ? { frontComponentSharedDependencies: sharedDependencies }
+              : {}),
           };
         })()
       : undefined;
@@ -625,6 +687,7 @@ export const buildManifest = async (
         pageLayouts: pageLayouts.sort(byId),
         pageLayoutTabs: pageLayoutTabs.sort(byId),
         commandMenuItems: commandMenuItems.sort(byId),
+        timelineActivityTypes: timelineActivityTypes.sort(byId),
       };
 
   const entityFilePaths: EntityFilePaths = {
@@ -646,6 +709,7 @@ export const buildManifest = async (
     pageLayouts: pageLayoutsFilePaths,
     pageLayoutTabs: pageLayoutTabsFilePaths,
     commandMenuItems: commandMenuItemsFilePaths,
+    timelineActivityTypes: timelineActivityTypesFilePaths,
   };
 
   return { manifest, filePaths: entityFilePaths, errors, warnings };

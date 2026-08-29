@@ -4,6 +4,8 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
   fragment PageLayoutWidgetFragment on PageLayoutWidget {
     id
     applicationId
+    universalIdentifier
+    isSystemSideEffect
     title
     type
     objectMetadataId
@@ -54,6 +56,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         axisNameDisplay
         displayDataLabel
         displayLegend
+        numberFormat
         rangeMin
         rangeMax
         color
@@ -84,6 +87,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         axisNameDisplay
         displayDataLabel
         displayLegend
+        numberFormat
         rangeMin
         rangeMax
         color
@@ -107,6 +111,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         displayDataLabel
         showCenterMetric
         displayLegend
+        numberFormat
         hideEmptyCategory
         splitMultiValueFields
         color
@@ -153,11 +158,24 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       ... on EmailThreadConfiguration {
         configurationType
       }
+      ... on CallRecordingSummaryConfiguration {
+        configurationType
+      }
+      ... on CallRecordingTranscriptConfiguration {
+        configurationType
+      }
+      ... on MessageCampaignBodyConfiguration {
+        configurationType
+      }
+      ... on MessageCampaignDetailsConfiguration {
+        configurationType
+      }
       ... on FieldConfiguration {
         configurationType
         fieldDisplayMode
         fieldMetadataId
         viewId
+        nestedRelationFieldMetadataId
       }
       ... on FieldRichTextConfiguration {
         configurationType
@@ -167,6 +185,10 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         viewId
         newFieldDefaultVisibility
         shouldAllowUserToSeeHiddenFields
+      }
+      ... on FormFieldConfiguration {
+        configurationType
+        fieldMetadataId
       }
       ... on FilesConfiguration {
         configurationType
@@ -199,6 +221,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       ... on FrontComponentConfiguration {
         configurationType
         frontComponentId
+        headerCommandMenuItemUniversalIdentifiers
       }
     }
     pageLayoutTabId

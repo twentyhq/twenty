@@ -7,6 +7,7 @@ const VIEWBOX_CENTER_Y = 119.5;
 const ASSEMBLE_STAGGER_SECONDS = 0.18;
 const ASSEMBLE_JITTER_SECONDS = 0.12;
 const MINIMUM_STROKE_WIDTH = 0.6;
+const HALFTONE_DASH_LENGTH_TO_STROKE_WIDTH_RATIO = 1.452;
 
 const pseudoRandomFromSeed = (seed: number) => {
   const noise = Math.sin(seed) * 43758.5453;
@@ -44,26 +45,27 @@ export const buildWelcomeHalftoneParticles = (
       );
       const scatterAngle = pseudoRandomFromSeed(dashIndex * 1.3) * TAU;
       const scatterRadius =
-        halftoneSize * (0.35 + 0.5 * pseudoRandomFromSeed(dashIndex * 2.1));
+        halftoneSize * (0.1 + 0.1 * pseudoRandomFromSeed(dashIndex * 2.1));
+      const scaledStrokeWidth = dashStrokeWidth * viewboxToCanvasScale;
+      const burstDirectionX =
+        distanceToCenter > 0 ? (targetX - canvasCenterX) / distanceToCenter : 0;
+      const burstDirectionY =
+        distanceToCenter > 0
+          ? (targetY - canvasCenterY) / distanceToCenter
+          : -1;
 
       return {
         targetX,
         targetY,
         scatterStartX: canvasCenterX + Math.cos(scatterAngle) * scatterRadius,
         scatterStartY: canvasCenterY + Math.sin(scatterAngle) * scatterRadius,
-        dashLength: Math.max(dashEndX - dashStartX, 0) * viewboxToCanvasScale,
-        strokeWidth: Math.max(
-          dashStrokeWidth * viewboxToCanvasScale,
-          MINIMUM_STROKE_WIDTH,
+        dashLength: Math.max(
+          (dashEndX - dashStartX) * viewboxToCanvasScale,
+          scaledStrokeWidth * HALFTONE_DASH_LENGTH_TO_STROKE_WIDTH_RATIO,
         ),
-        burstDirectionX:
-          distanceToCenter > 0
-            ? (targetX - canvasCenterX) / distanceToCenter
-            : 0,
-        burstDirectionY:
-          distanceToCenter > 0
-            ? (targetY - canvasCenterY) / distanceToCenter
-            : -1,
+        strokeWidth: Math.max(scaledStrokeWidth, MINIMUM_STROKE_WIDTH),
+        burstDirectionX,
+        burstDirectionY,
         distanceToCenter,
         assembleDelaySeconds:
           ASSEMBLE_STAGGER_SECONDS * (distanceToCenter / maxDistanceToCenter) +
@@ -72,6 +74,7 @@ export const buildWelcomeHalftoneParticles = (
         positionAtLeaveStartX: 0,
         positionAtLeaveStartY: 0,
         opacityAtLeaveStart: 0,
+        capsuleLengthAtLeaveStart: 0,
       };
     },
   );

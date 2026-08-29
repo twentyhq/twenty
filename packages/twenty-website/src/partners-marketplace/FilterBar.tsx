@@ -1,6 +1,6 @@
 'use client';
 
-import { msg } from '@lingui/core/macro';
+import { msg, plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
@@ -10,6 +10,7 @@ import { Button } from '@/ui';
 import { ActiveFilterPills, type ActivePill } from './ActiveFilterPills';
 import { type FilterCriteria } from './filter-criteria';
 import { FilterDropdown } from './FilterDropdown';
+import { MARKETPLACE_COPY } from './marketplace-copy';
 import { PARTNER_SCOPE_LABELS } from './partner-scope-labels';
 import { PARTNER_SCOPES, type PartnerScope } from './partner-scopes';
 import { SERVED_GEO_LABELS } from './served-geo-labels';
@@ -61,6 +62,25 @@ const ResultCount = styled.p`
   line-height: ${fontSize(4)};
 `;
 
+const resultCountMessage = ({
+  hasAnyFilter,
+  totalCount,
+  visibleCount,
+}: Pick<FilterBarProps, 'hasAnyFilter' | 'totalCount' | 'visibleCount'>) => {
+  if (hasAnyFilter) {
+    return msg`Showing ${visibleCount} of ${totalCount} partners`;
+  }
+
+  if (totalCount === 0) {
+    return msg`No partners to show right now`;
+  }
+
+  return msg`${plural(totalCount, {
+    one: '# certified partner ready to take on your project',
+    other: '# certified partners ready to take on your project',
+  })}`;
+};
+
 export function FilterBar({
   criteria,
   hasAnyFilter,
@@ -91,6 +111,12 @@ export function FilterBar({
     })),
   ];
 
+  const resultCountLabel = resultCountMessage({
+    hasAnyFilter,
+    totalCount,
+    visibleCount,
+  });
+
   return (
     <BarRoot aria-label={i18n._(msg`Filter partners`)} role="search">
       <DropdownRow>
@@ -109,7 +135,7 @@ export function FilterBar({
           selected={criteria.languages}
         />
         <FilterDropdown
-          label={msg`Categories`}
+          label={MARKETPLACE_COPY.partnerScopeHeading}
           onToggle={onToggleCategory}
           optionLabels={PARTNER_SCOPE_LABELS}
           options={PARTNER_SCOPES}
@@ -118,11 +144,7 @@ export function FilterBar({
       </DropdownRow>
       {hasAnyFilter && <ActiveFilterPills pills={pills} />}
       <Footer>
-        <ResultCount aria-live="polite">
-          {hasAnyFilter
-            ? i18n._(msg`Showing ${visibleCount} of ${totalCount} partners`)
-            : i18n._(msg`Showing all ${totalCount} partners`)}
-        </ResultCount>
+        <ResultCount aria-live="polite">{i18n._(resultCountLabel)}</ResultCount>
         {hasAnyFilter && (
           <Button
             label={i18n._(msg`Clear filters`)}

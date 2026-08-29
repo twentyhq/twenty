@@ -24,6 +24,7 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import {
@@ -36,6 +37,8 @@ import {
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
 import { MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/auth/constants/max-workspaces-without-enterprise-key.constants';
+import { getSignUpWithoutWorkspaceDecision } from 'src/engine/core-modules/auth/utils/get-sign-up-without-workspace-decision.util';
+import { hasProvisionedSignUpDestination } from 'src/engine/core-modules/auth/utils/has-provisioned-sign-up-destination.util';
 import { DEFAULT_DPA_REGION } from 'src/engine/core-modules/dpa/config/dpa-region-config.constant';
 import { DpaAgreementEntity } from 'src/engine/core-modules/dpa/entities/dpa-agreement.entity';
 import { DpaAgreementType } from 'src/engine/core-modules/dpa/enums/dpa-agreement-type.enum';
@@ -245,11 +248,14 @@ export class SignInUpService {
       params.userData.type === 'newUserWithPicture'
     ) {
       try {
-        await this.billingCreditService.creditWorkspaceBalance({
+        await this.billingCreditService.grantCredits({
           workspaceId: invitationValidation.workspace.id,
           amountMicro: this.twentyConfigService.get(
             'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
           ),
+          type: BillingCreditGrantType.ONBOARDING_REWARD,
+          reason: 'Onboarding reward: invited teammate signed up',
+          idempotencyKey: `onboarding-invite-team:${invitationValidation.workspace.id}:${updatedUser.id}`,
         });
       } catch (error) {
         this.logger.error(
@@ -331,7 +337,7 @@ export class SignInUpService {
       await this.activateOnboardingForUser({
         user,
         workspace: params.workspace,
-        shouldShowConnectAccountStep: false,
+        shouldShowConnectAccountStep: true,
         shouldShowInstallAppsStep: false,
       });
 
@@ -476,6 +482,55 @@ export class SignInUpService {
         AuthExceptionCode.SIGNUP_DISABLED,
       );
     }
+  }
+
+  // Enforced here rather than at workspace creation so a restricted instance
+  // stops accumulating verified users that can never reach a workspace.
+  private async assertSignUpWithoutWorkspaceAllowed(
+    email: string,
+  ): Promise<void> {
+    const decision = getSignUpWithoutWorkspaceDecision({
+      isMultiWorkspaceEnabled: this.twentyConfigService.get(
+        'IS_MULTIWORKSPACE_ENABLED',
+      ),
+      isWorkspaceCreationLimitedToServerAdmins: this.twentyConfigService.get(
+        'IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS',
+      ),
+      workspaceCount: await this.workspaceRepository.count(),
+    });
+
+    if (decision === 'allowed') {
+      return;
+    }
+
+    if (
+      decision === 'requiresDestination' &&
+      (await this.hasProvisionedDestination(email))
+    ) {
+      return;
+    }
+
+    throw new AuthException(
+      'New workspace setup is disabled',
+      AuthExceptionCode.SIGNUP_DISABLED,
+    );
+  }
+
+  private async hasProvisionedDestination(email: string): Promise<boolean> {
+    // Invitations are read directly instead of through the sign-in picker,
+    // which hides HIDDEN workspaces: that is a listing rule, not a statement
+    // that the invitee has nowhere to land.
+    const invitations =
+      await this.workspaceInvitationService.findInvitationsByEmail(email);
+
+    if (hasProvisionedSignUpDestination(invitations)) {
+      return true;
+    }
+
+    const { availableWorkspacesForSignUp } =
+      await this.userWorkspaceService.findAvailableWorkspacesByEmail(email);
+
+    return hasProvisionedSignUpDestination(availableWorkspacesForSignUp);
   }
 
   private async hasServerAdmin(): Promise<boolean> {
@@ -767,7 +822,7 @@ export class SignInUpService {
       );
     }
 
-    await this.assertSignUpEnabled();
+    await this.assertSignUpWithoutWorkspaceAllowed(newUserParams.email);
 
     const shouldGrantServerAdmin = !(await this.hasServerAdmin());
 

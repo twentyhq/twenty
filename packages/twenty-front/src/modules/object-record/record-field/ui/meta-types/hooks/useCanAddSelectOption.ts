@@ -1,10 +1,11 @@
+import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useParams } from 'react-router-dom';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-export const useCanAddSelectOption = (fieldName: string) => {
-  const { objectNamePlural } = useParams();
+export const useCanAddSelectOption = (fieldMetadataId: string) => {
+  const { fieldMetadataItem, objectMetadataItem } =
+    useFieldMetadataItemById(fieldMetadataId);
 
   const userHasPermissionToEditDataModel = useHasPermissionFlag(
     PermissionFlagType.DATA_MODEL,
@@ -12,8 +13,8 @@ export const useCanAddSelectOption = (fieldName: string) => {
 
   const canAddSelectOption =
     userHasPermissionToEditDataModel &&
-    isNonEmptyString(fieldName) &&
-    isNonEmptyString(objectNamePlural);
+    isNonEmptyString(fieldMetadataItem?.name) &&
+    isNonEmptyString(objectMetadataItem?.namePlural);
 
   return { canAddSelectOption };
 };

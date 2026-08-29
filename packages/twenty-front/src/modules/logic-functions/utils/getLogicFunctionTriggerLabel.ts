@@ -15,6 +15,7 @@ export const getLogicFunctionTriggerLabel = (
   options: {
     postInstallUniversalIdentifier?: string;
     preInstallUniversalIdentifier?: string;
+    uninstallUniversalIdentifier?: string;
   } = {},
 ): string => {
   if (
@@ -28,6 +29,12 @@ export const getLogicFunctionTriggerLabel = (
     lf.universalIdentifier === options.preInstallUniversalIdentifier
   ) {
     return t`Pre-install`;
+  }
+  if (
+    isDefined(lf.universalIdentifier) &&
+    lf.universalIdentifier === options.uninstallUniversalIdentifier
+  ) {
+    return t`Uninstall`;
   }
   if (isDefined(lf.toolTriggerSettings)) return t`AI tool`;
   if (isDefined(lf.workflowActionTriggerSettings)) return t`Workflow action`;

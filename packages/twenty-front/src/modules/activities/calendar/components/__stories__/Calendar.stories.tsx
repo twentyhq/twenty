@@ -12,11 +12,13 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedTimelineCalendarEvents } from '~/testing/mock-data/timeline-calendar-events';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const meta: Meta<typeof CalendarEventsCard> = {
   title: 'Modules/Activities/Calendar/CalendarEventsCard',
   component: CalendarEventsCard,
   decorators: [
+    MemoryRouterDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,

@@ -1,0 +1,168 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Sync application should reject hijacking the searchVector system field should reject a manifest field declared under the reserved searchVector name 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_MUTATION_NOT_ALLOWED",
+              "message": "System fields only allow updating: universalSettings, isActive. Forbidden properties: description, icon, isUIEditable, writability",
+              "userFriendlyMessage": "System fields cannot be updated",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Field type TS_VECTOR must have SYSTEM writability",
+              "userFriendlyMessage": "Field type TS_VECTOR must have SYSTEM writability",
+              "value": "OPEN",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "searchVector",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "System fields cannot be updated",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should reject hijacking the searchVector system field should reject a manifest field reusing the searchVector name under a foreign universal identifier 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "searchVector" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "searchVector" is not available as it is already used by another field",
+              "value": "searchVector",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "searchVector",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata, 2 viewFields",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 3,
+      "viewField": 2,
+    },
+    "userFriendlyMessage": "Many validation errors",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should reject hijacking the searchVector system field should reject a manifest field squatting the searchVector deterministic universal identifier 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_MUTATION_NOT_ALLOWED",
+              "message": "System fields only allow updating: universalSettings, isActive. Forbidden properties: description, icon, label, name, isUIEditable, writability",
+              "userFriendlyMessage": "System fields cannot be updated",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Field type TS_VECTOR must be named "searchVector", got "stolenSearchVector"",
+              "userFriendlyMessage": "Field type TS_VECTOR must be named "searchVector"",
+              "value": "stolenSearchVector",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Field type TS_VECTOR must have SYSTEM writability",
+              "userFriendlyMessage": "Field type TS_VECTOR must have SYSTEM writability",
+              "value": "OPEN",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "stolenSearchVector",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "System fields cannot be updated",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;

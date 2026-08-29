@@ -38,9 +38,10 @@ yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 # Pass a JSON payload
 yarn twenty dev:function:exec -n create-new-post-card -p '{"name": "Hello"}'
 
-# Execute the install hooks
+# Execute the install and uninstall hooks
 yarn twenty dev:function:exec --postInstall
 yarn twenty dev:function:exec --preInstall
+yarn twenty dev:function:exec --uninstall
 ```
 
 ## Vizualizarea jurnalelor funcțiilor (`yarn twenty dev:function:logs`)

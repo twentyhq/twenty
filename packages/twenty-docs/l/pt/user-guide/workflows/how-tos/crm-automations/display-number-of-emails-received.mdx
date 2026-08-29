@@ -56,11 +56,6 @@ A ação Pesquisar Registros é limitada a retornar no máximo 200 registros. No
 ### Etapa 4: Atualizar o registro de Pessoa com uma ação Criar ou Atualizar Registro
 
 1. Adicione a ação **Criar ou Atualizar Registro**
-
-<Warning>
-Use **Upsert Record** em vez de **Update Record** aqui. Isso permite identificar a pessoa pelo endereço de e-mail dela (o campo `handle`), em vez de exigir um ID de registro de uma etapa anterior.
-</Warning>
-
 2. Selecione **Pessoas** como o objeto
 3. Encontre a pessoa cujo e-mail corresponde ao `handle` do Participante da Mensagem
 4. Defina seu campo personalizado "Número de e-mails recebidos" como `{{searchRecords.totalCount}}`

@@ -28,9 +28,9 @@ description: Foire aux questions sur les flux de travail dans Twenty.
   <Accordion title="Quelle est la différence entre les déclencheurs manuels Single, Global et Bulk ?">
     | Type | Enregistrements requis | Exécutions de workflows |
     | ---- | ---------------------- | ----------------------- |
-    \| **Global** | Aucun | Une fois, sans saisie d'enregistrement |
+    \| **Global** | Aucun | Une fois, aucun enregistrement |
     \| **Single** | Un ou plusieurs sélectionnés | Une fois par enregistrement sélectionné |
-    \| **Bulk** | Un ou plusieurs sélectionnés | Une fois, avec tous les enregistrements sous forme de tableau |
+    \| **En bloc** | Un ou plusieurs sélectionnés | Une fois, avec tous les enregistrements en tant que tableau |
 
     * **Global** : À utiliser lorsque le flux de travail n'a besoin d'aucun contexte d'enregistrement (p. ex., générer un rapport)
     * **Single** : À utiliser lorsque vous souhaitez traiter chaque enregistrement sélectionné indépendamment (p. ex., envoyer des e-mails individuels)
@@ -155,11 +155,9 @@ description: Foire aux questions sur les flux de travail dans Twenty.
   </Accordion>
 
   <Accordion title="Pourquoi ne vois-je pas mes exécutions de flux de travail ?">
-    Les exécutions de flux de travail peuvent échouer immédiatement en raison des limites de débit.
+    Les exécutions de flux de travail peuvent échouer immédiatement en raison des limites de débit. Vingt impose une limite dure de 5 000 courses par heure par espace de travail.
 
-    **Limite stricte : 5 000 exécutions par heure et par espace de travail.**
-
-    Si vous dépassez cette limite, les flux de travail sont immédiatement marqués comme ayant échoué et n'apparaîtront pas dans votre liste d'exécutions comme prévu.
+    Si vous dépassez cette limite, les workflows sont immédiatement marqués comme échoués et n'apparaîtront pas dans votre liste d'exécutions.
 
     **Scénarios courants qui atteignent cette limite** :
     * Sélection de plus de 5 000 enregistrements avec un déclencheur manuel Single

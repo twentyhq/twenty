@@ -42,6 +42,12 @@ export default defineConnectionProvider({
     // Optional: provider's RFC 7009 token revocation endpoint, called on disconnect.
     // revokeEndpoint: 'https://example.com/oauth/revoke',
   },
+  // Optional: a logic function in this app to run right after a connection is
+  // established. See "Run a logic function on connect".
+  // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
+  // Optional: a logic function in this app to run right after a connection is
+  // removed. See "Run a logic function on disconnect".
+  // onDisconnectLogicFunction: { universalIdentifier: '4d5e6f70-...-...' },
 });
 ```
 
@@ -84,6 +90,76 @@ URL-ul de callback OAuth pe care furnizorul tău trebuie să îl includă pe lis
 ```
 https://<your-twenty-server>/auth/apps/callback
 ```
+
+</Accordion>
+
+<Accordion title="Rulează o funcție logică la conectare" description="Reacționează în momentul în care o conexiune este stabilită">
+
+Unii furnizori îți furnizează date în momentul conectării, pe care trebuie să le stochezi înainte ca conexiunea să poată fi utilizată — exemplul clasic este Slack, unde răspunsul OAuth identifică `team_id` al spațiului de lucru după care vor fi indexate evenimentele primite. Setează `onConnectLogicFunction` pentru a face referire la o funcție logică din aceeași aplicație (prin `universalIdentifier`), iar aceasta rulează imediat după ce `ConnectedAccount` este creat.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs claimSlackTeam after every successful Slack connection.
+  onConnectLogicFunction: {
+    universalIdentifier: '3a2b1c0d-1111-4222-8333-444455556666',
+  },
+});
+```
+
+Hook-ul rulează **asincron în spațiul de lucru care se conectează** (este pus în coadă, nu este așteptat), astfel încât un hook lent sau care eșuează nu blochează și nu întrerupe niciodată callback-ul OAuth — fă-l idempotent și lasă-l să își gestioneze singur reîncercările. Handlerul primește:
+
+```ts
+type OnConnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+De acolo folosește `getConnection(connectedAccountId)` pentru a citi tokenul de acces proaspăt și a apela API-ul furnizorului (de ex. Slack `auth.test`) sau pentru a stoca o mapare în [magazinul cheie–valoare](/l/ro/developers/extend/apps/logic/key-value-store).
+
+</Accordion>
+
+<Accordion title="Rulează o funcție logică la deconectare" description="Curăță resursele atunci când o conexiune este eliminată">
+
+Orice revendică o aplicație la momentul conectării trebuie eliberat atunci când conexiunea este eliminată. O integrare Slack care revendică un `team_id` la conectare, de exemplu, trebuie să elibereze acea revendicare astfel încât un alt spațiu de lucru să poată conecta aceeași echipă Slack. Setează `onDisconnectLogicFunction` pentru a face referire la o funcție logică din aceeași aplicație, iar aceasta rulează imediat după ce `ConnectedAccount` este șters.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs releaseSlackTeam after every Slack disconnection.
+  onDisconnectLogicFunction: {
+    universalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
+  },
+});
+```
+
+La fel ca hook-ul on-connect, acesta rulează **asincron în spațiul de lucru care se deconectează** și nu blochează niciodată deconectarea. Handler-ul primește aceeași structură de payload:
+
+```ts
+type OnDisconnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+`ConnectedAccount` nu mai există atunci când rulează hook-ul, astfel încât `getConnection(connectedAccountId)` nu se mai rezolvă. Tot ceea ce îi este necesar procesului de curățare (un `team_id`, un ID extern de abonament) trebuie să fi fost scris în [key-value store](/l/ro/developers/extend/apps/logic/key-value-store) la momentul conectării, indexat după `connectedAccountId`.
+
+Hook-ul este declanșat atunci când o conexiune este eliminată în mod direct. Dezinstalarea aplicației elimină conexiunile acesteia printr-un mecanism în cascadă în baza de date, astfel încât hook-ul nu rulează în acest caz. Declară un `uninstallLogicFunction` pe `defineApplication` pentru acel flux: acesta rulează înainte ca metadatele aplicației să fie șterse, astfel încât poate apela în continuare `listConnections` și poate curăța tot ce a mai rămas.
 
 </Accordion>
 
@@ -136,15 +212,16 @@ export const createLinearIssueHandler = async (input: {
 
 Fiecare conexiune are:
 
-| Câmp              | Descriere                                                                                                                                |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`              | ID unic al înregistrării; pasează-l la `getConnection(id)` pentru a reobține acea înregistrare                                           |
-| `visibility`      | `'user'` (privată pentru un membru al spațiului de lucru) sau `'workspace'` (partajată cu toți membrii)                                  |
-| `scopes`          | Permisiunile OAuth acordate de furnizorul upstream (distincte de `visibility` — nu au legătură)                                          |
-| `userWorkspaceId` | ID-ul userWorkspace al deținătorului — util pentru a alege "conexiunea utilizatorului care face cererea" în declanșatoarele de rută HTTP |
-| `accessToken`     | Token de acces OAuth proaspăt (reîmprospătat automat dacă a expirat)                                                                     |
-| `name` / `handle` | Numele afișat al conexiunii (derivat automat la callback-ul OAuth, poate fi redenumit de utilizator)                                     |
-| `authFailedAt`    | Setat când cea mai recentă reîmprospătare a eșuat; utilizatorul trebuie să se reconecteze                                                |
+| Câmp              | Descriere                                                                                                                                                                                                                                    |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`              | ID unic al înregistrării; pasează-l la `getConnection(id)` pentru a reobține acea înregistrare                                                                                                                                               |
+| `visibility`      | `'user'` (privată pentru un membru al spațiului de lucru) sau `'workspace'` (partajată cu toți membrii)                                                                                                                                      |
+| `scopes`          | Permisiunile OAuth acordate de furnizorul upstream (distincte de `visibility` — nu au legătură)                                                                                                                                              |
+| `userWorkspaceId` | ID-ul userWorkspace al deținătorului — util pentru a alege "conexiunea utilizatorului care face cererea" în declanșatoarele de rută HTTP                                                                                                     |
+| `accessToken`     | Token de acces OAuth proaspăt (reîmprospătat automat dacă a expirat)                                                                                                                                                                         |
+| `name`            | Numele afișat al conexiunii (derivat automat la callback-ul OAuth, poate fi redenumit de utilizator)                                                                                                                                         |
+| `handle`          | Emailul contului din amonte conectat, actualizat la fiecare reconectare; rezolvat din `id_token` OIDC a revenit la schimbul tokenului, revenind la e-mailul de conectare a douăzeci de utilizatori atunci când furnizorul nu returnează unul |
+| `authFailedAt`    | Setat când cea mai recentă reîmprospătare a eșuat; utilizatorul trebuie să se reconecteze                                                                                                                                                    |
 
 Puncte cheie:
 

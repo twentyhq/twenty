@@ -6,14 +6,19 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { ApiPath } from 'twenty-shared/types';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
+import { isMetadataRestRequest } from 'src/engine/api/rest/metadata/utils/is-metadata-rest-request.util';
+import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/paginate-metadata-rest-items.util';
+import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { CreateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/create-api-key.input';
 import { UpdateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/update-api-key.input';
@@ -30,7 +35,7 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/p
  * rest/apiKeys is deprecated, use rest/metadata/apiKeys instead
  * rest/apiKeys will be removed in the future
  */
-@Controller(['rest/apiKeys', 'rest/metadata/apiKeys'])
+@Controller([`${ApiPath.Rest}/apiKeys`, `${ApiPath.Rest}/metadata/apiKeys`])
 @UseGuards(
   JwtAuthGuard,
   WorkspaceAuthGuard,
@@ -42,9 +47,16 @@ export class ApiKeyController {
 
   @Get()
   async findAll(
+    @Req() request: AuthenticatedRequest,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<ApiKeyEntity[]> {
-    return this.apiKeyService.findActiveByWorkspaceId(workspace.id);
+  ) {
+    const apiKeys = await this.apiKeyService.findActiveByWorkspaceId(
+      workspace.id,
+    );
+
+    return isMetadataRestRequest(request)
+      ? paginateMetadataRestItems({ items: apiKeys, request })
+      : apiKeys;
   }
 
   @Get(':id')

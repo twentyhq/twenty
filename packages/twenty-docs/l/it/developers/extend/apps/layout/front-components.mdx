@@ -6,17 +6,23 @@ icon: window-maximize
 
 I componenti front-end sono componenti React che vengono renderizzati direttamente all'interno della UI di Twenty. Vengono eseguiti in un **Web Worker isolato** utilizzando Remote DOM — il tuo codice viene eseguito all'interno di un iframe con origine opaca e in sandbox, ma la sua interfaccia utente continua a essere renderizzata in modo nativo nella pagina invece di essere confinata in quell'iframe.
 
+<Warning>
+I componenti Front sono ancora in fase di sviluppo attivo. Il tuo codice viene eseguito su un DOM parziale, non su una vera pagina del browser, quindi gli utilizzi avanzati possono fallire, spesso in modo silenzioso. Vedi [Limitazioni attuali](#current-limitations).
+</Warning>
+
 ## Dove possono essere utilizzati i componenti front-end
 
-I componenti front-end possono essere renderizzati in due posizioni all'interno di Twenty:
+I componenti front-end possono essere renderizzati in tre posizioni all'interno di Twenty:
 
 * **Pannello laterale** — I componenti front-end non headless si aprono nel pannello laterale destro. Questo è il comportamento predefinito quando un componente front-end viene avviato dal menu comandi.
 * **Widget (dashboard e pagine dei record)** — I componenti front possono essere incorporati come widget all'interno dei [layout di pagina](/l/it/developers/extend/apps/layout/page-layouts). Quando si configura una dashboard o il layout di una pagina record, gli utenti possono aggiungere un widget del componente front-end.
+* **Impostazioni dell'app** — Definito con [`defineSettingsFrontComponent()`](#custom-settings-component), il componente front-end viene renderizzato come una sezione all'interno della scheda **Settings** dell'app, al posto dell'interfaccia utente predefinita per la configurazione delle variabili.
 
-Un componente front da solo non è raggiungibile dall'interfaccia utente: devi renderlo visibile. I due modi per farlo sono:
+Un componente front da solo non è raggiungibile dall'interfaccia utente: devi renderlo visibile. I tre modi per farlo sono:
 
 * **Associarlo a un [elemento di menu dei comandi](/l/it/developers/extend/apps/layout/command-menu-items)** — lo registra nel menu dei comandi (Cmd+K) e, facoltativamente, come azione rapida fissata.
 * **Incorporarlo come widget in un [layout di pagina](/l/it/developers/extend/apps/layout/page-layouts)** — lo posiziona nella pagina dei dettagli di un record o in una dashboard.
+* **Definirlo con [`defineSettingsFrontComponent()`](#custom-settings-component)** — lo renderizza come una sezione all'interno della scheda **Settings** dell'app, al posto dell'interfaccia utente predefinita per la configurazione delle variabili.
 
 ## Esempio di base
 
@@ -76,6 +82,34 @@ Fai clic per renderizzare il componente in linea.
 ## Posizionare un componente front-end su una pagina
 
 Oltre ai comandi, puoi incorporare un componente front-end direttamente in una pagina record aggiungendolo come widget in un **layout di pagina**. Vedi [Layout di pagina](/l/it/developers/extend/apps/layout/page-layouts) per i dettagli.
+
+## Componente delle impostazioni personalizzato
+
+Per sostituire l'interfaccia utente di configurazione delle variabili generata automaticamente nella scheda **Settings** della tua app con il tuo componente, definiscilo con `defineSettingsFrontComponent` invece di `defineFrontComponent`. Utilizza gli stessi [campi di configurazione](#configuration-fields) (tranne `isHeadless`, che non è accettato poiché un componente delle impostazioni renderizza sempre un'interfaccia utente visibile) e inoltre contrassegna il componente come l'interfaccia delle impostazioni dell'app.
+
+Il componente viene renderizzato come una sezione **all'interno** della scheda Settings, non come una sostituzione dell'intera scheda. Le sezioni gestite dal sistema di Twenty — aggiornamento automatico, URL dell'app e connessioni — vengono sempre renderizzate sopra di essa e non possono essere sovrascritte dall'app.
+
+```tsx src/front-components/app-settings.tsx
+import { defineSettingsFrontComponent } from 'twenty-sdk/define';
+
+const AppSettings = () => {
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>My app settings</h2>
+      {/* render your own configuration UI here */}
+    </div>
+  );
+};
+
+export default defineSettingsFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'app-settings',
+  description: "Custom UI for the app's Settings tab",
+  component: AppSettings,
+});
+```
+
+È consentito un solo componente di front-end delle impostazioni per app; dichiararne più di uno fa fallire la build. Quando presente, la scheda **Settings** dell'app renderizza questo componente al posto dell'interfaccia utente di configurazione delle variabili predefinita.
 
 ## Headless vs non headless
 
@@ -299,6 +333,8 @@ export default defineLogicFunction({
 
 Per chiamare le route HTTP dell’app o leggere e scrivere record di Twenty da un front component, usa `RestApiClient` da `twenty-client-sdk/rest`. Invia i percorsi `/s/...` alla base URL delle funzioni del tuo workspace e tutti gli altri percorsi, inclusi `/rest/...`, a `TWENTY_API_URL`.
 
+Agisce sempre come la persona che visualizza la pagina. `runAs: 'application'` è un'opzione esclusiva delle funzioni logiche: un componente non riceve mai il token della tua applicazione, quindi richiederlo qui genera un errore. Inserisci il lavoro che richiede l'accesso dell'app dietro una funzione logica e chiama invece quella.
+
 | Metodo                            | Descrizione                                                                       |
 | --------------------------------- | --------------------------------------------------------------------------------- |
 | `get(path, options?)`             | Invia una richiesta `GET`                                                         |
@@ -373,14 +409,15 @@ export default defineFrontComponent({
 
 Hook disponibili:
 
-| Hook                                          | Restituisce          | Descrizione                                                                                 |
-| --------------------------------------------- | -------------------- | ------------------------------------------------------------------------------------------- |
-| `useUserId()`                                 | `string` o `null`    | L'ID dell'utente corrente                                                                   |
-| `useSelectedRecordIds()`                      | `string[]`           | Tutti gli ID dei record selezionati (array vuoto se nessuno è selezionato)                  |
-| `useRecordId()`                               | `string` o `null`    | **Deprecato.** Usa `useSelectedRecordIds()` al suo posto                                    |
-| `useFrontComponentId()`                       | `string`             | L'ID di questa istanza di componente                                                        |
-| `useColorScheme()`                            | `'light'` o `'dark'` | Lo schema di colori attivo dell'interfaccia utente dell'host (`System` è già stato risolto) |
-| `useFrontComponentExecutionContext(selector)` | varia                | Accedi all'intero contesto di esecuzione con una funzione selettore                         |
+| Hook                                          | Restituisce          | Descrizione                                                                                                   |
+| --------------------------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` o `null`    | L'ID dell'utente corrente                                                                                     |
+| `useSelectedRecordIds()`                      | `string[]`           | Tutti gli ID dei record selezionati (array vuoto se nessuno è selezionato)                                    |
+| `useRecordId()`                               | `string` o `null`    | **Deprecato.** Usa `useSelectedRecordIds()` al suo posto                                                      |
+| `useFrontComponentId()`                       | `string`             | L'ID di questa istanza di componente                                                                          |
+| `useTimelineActivityId()`                     | `string` o `null`    | L'ID dell'attività della cronologia corrente durante il rendering di una riga della cronologia personalizzata |
+| `useColorScheme()`                            | `'light'` o `'dark'` | Lo schema di colori attivo dell'interfaccia utente dell'host (`System` è già stato risolto)                   |
+| `useFrontComponentExecutionContext(selector)` | varia                | Accedi all'intero contesto di esecuzione con una funzione selettore                                           |
 
 ## Variabili dell'applicazione
 
@@ -411,10 +448,10 @@ Le variabili segrete (`isSecret: true`) **non** sono esposte ai componenti front
 
 Le seguenti variabili di sistema sono sempre disponibili tramite `process.env`:
 
-| Variabile                 | Descrizione                                                      |
-| ------------------------- | ---------------------------------------------------------------- |
-| `TWENTY_API_URL`          | URL di base dell'API Core di Twenty                              |
-| `TWENTY_APP_ACCESS_TOKEN` | Token di breve durata con ambito limitato al ruolo della tua app |
+| Variabile                 | Descrizione                                                                                                                                                                                                          |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `TWENTY_API_URL`          | URL di base dell'API Core di Twenty                                                                                                                                                                                  |
+| `TWENTY_APP_ACCESS_TOKEN` | Token di breve durata limitato al ruolo della persona che ha effettuato l'accesso, intersecato con quello della tua app, quindi un componente non può mai fare più di quanto possa fare la persona che lo visualizza |
 
 ### `TWENTY_FUNCTIONS_URL`
 
@@ -432,15 +469,16 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 I componenti front-end possono attivare navigazione, modali e notifiche utilizzando funzioni da `twenty-sdk`:
 
-| Funzione                                        | Descrizione                           |
-| ----------------------------------------------- | ------------------------------------- |
-| `navigate(to, params?, queryParams?, options?)` | Naviga a una pagina dell'app          |
-| `openSidePanelPage(params)`                     | Apri un pannello laterale             |
-| `closeSidePanel()`                              | Chiudi il pannello laterale           |
-| `openCommandConfirmationModal(params)`          | Mostra una finestra di conferma       |
-| `enqueueSnackbar(params)`                       | Mostra una notifica toast             |
-| `unmountFrontComponent()`                       | Smonta il componente                  |
-| `updateProgress(progress)`                      | Aggiorna un indicatore di avanzamento |
+| Funzione                                           | Descrizione                                                                                                                                                                                      |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `navigate(to, params?, queryParams?, options?)`    | Naviga a una pagina dell'app                                                                                                                                                                     |
+| `openSidePanelPage(params)`                        | Apri un pannello laterale                                                                                                                                                                        |
+| `closeSidePanel()`                                 | Chiudi il pannello laterale                                                                                                                                                                      |
+| `openCommandConfirmationModal(params)`             | Mostra una finestra di conferma                                                                                                                                                                  |
+| `enqueueSnackbar(params)`                          | Mostra una notifica toast                                                                                                                                                                        |
+| `unmountFrontComponent()`                          | Smonta il componente                                                                                                                                                                             |
+| `updateProgress(progress)`                         | Aggiorna un indicatore di avanzamento                                                                                                                                                            |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | Carica un `Blob` in un campo FILES; restituisce `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` oppure `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
 
 Ecco un esempio che usa l'API host per mostrare una snackbar e chiudere il pannello laterale dopo il completamento di un'azione:
 
@@ -485,6 +523,39 @@ export default defineFrontComponent({
   component: ArchiveRecord,
 });
 ```
+
+### Archiviazione
+
+`localStorage` e `sessionStorage` funzionano come in una pagina normale, con l’API sincrona standard. Le tue chiavi sono limitate all’installazione della tua app e all’utente connesso: nessun’altra app può leggerle e un altro utente che effettua l’accesso dallo stesso browser parte da un archivio vuoto. I valori scritti in `localStorage` rimangono sul dispositivo tra un ricaricamento e l’altro; `sessionStorage` dura per l’intera sessione del browser.
+
+```tsx src/front-components/note-draft.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const NoteDraft = () => {
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '');
+
+  const handleChange = (nextDraft: string) => {
+    setDraft(nextDraft);
+    localStorage.setItem('draft', nextDraft);
+  };
+
+  return (
+    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-def0-890123456789',
+  name: 'note-draft',
+  description: 'Keeps an unsaved note on this device',
+  component: NoteDraft,
+});
+```
+
+Twenty memorizza i valori per conto della tua app, quindi una scrittura viene applicata immediatamente in locale e salvata in background. Le letture non attendono mai l’host. Non viene sincronizzato nulla: i valori non seguono l'utente su un altro browser o macchina, quindi utilizza il [key-value store](/l/it/developers/extend/apps/logic/key-value-store) di una logic function per qualsiasi cosa che debba sopravvivere a un cambio di dispositivo.
+
+Le scritture sono limitate e ogni limite conta i caratteri anziché i byte: le chiavi sono lunghe al massimo 512 caratteri, un singolo valore al massimo 262.144 caratteri e ogni archivio al massimo 1.048.576 caratteri per app e utente. Una scrittura che supera un limite genera un `QuotaExceededError`, come nell'API del browser.
 
 ### Lavorare con più record
 
@@ -566,6 +637,43 @@ export default defineFrontComponent({
 ```
 
 Vedi la [sezione sugli asset pubblici](/l/it/developers/extend/apps/config/public-assets) per i dettagli.
+
+## Condivisione delle dipendenze tra front component
+
+Per impostazione predefinita, ogni front component include nel bundle la propria copia delle librerie che importa, quindi un'app con cinque componenti distribuisce React cinque volte. Dichiara le dipendenze condivise nel `package.json` della tua app per creare il bundle di queste librerie una sola volta e fare in modo che ogni componente dell'app le carichi da un unico file in cache:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+Ogni componente importa quindi le sue dipendenze esattamente come prima — non cambia nulla nel codice del tuo componente:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+Alcune cose da sapere:
+
+* **Un solo bundle di dipendenze condivise per app.** Il bundle è costruito a partire dalle dipendenze della tua app, così mantieni il pieno controllo delle versioni che distribuisci.
+* **Elenca gli specificatori esatti che importi.** `twenty-ui/input` e `twenty-ui/display` sono due voci; il solo nome del pacchetto non copre i suoi sottopercorsi. L'elenco di `react` copre automaticamente `react/jsx-runtime`.
+* **Condividi `react-dom/client` insieme a `react`.** Ogni componente effettua il rendering tramite `createRoot`, quindi ometterlo significa che ogni componente include ancora nel bundle React DOM.
+* **Il bundle è in cache.** È servito tramite un URL con content-hash con una cache immutabile a lunga durata, quindi viene scaricato una sola volta e riutilizzato in tutti i componenti dell'app finché una delle sue dipendenze non cambia.
+* **I componenti che non importano nessuno dei pacchetti condivisi non lo scaricano mai.**
 
 ## Stile
 
@@ -666,3 +774,76 @@ const Card = () => {
 Poiché `useTheme()` è un hook, leggi i token all’interno del corpo del componente, così i valori riflettono sempre il tema attivo in tempo reale. La stessa mappa di token è anche esportata come costante `themeCssVariables`, ma nei componenti front-end è preferibile usare `useTheme()`: una costante a livello di modulo che dereferenzia `themeCssVariables` può essere undefined mentre il manifest dell’app viene estratto.
 
 Per diramare esplicitamente in base allo schema attivo, leggilo con `useColorScheme()` da `twenty-sdk/front-component`, che restituisce `'light'` o `'dark'`.
+
+## Limitazioni attuali
+
+I componenti Front sono in fase di sviluppo attivo. Il rendering, lo styling, la gestione degli eventi, la misurazione degli elementi e lo storage del browser funzionano bene. Qualsiasi cosa che vada *oltre* questi aspetti (chiamare un metodo del DOM su un ref, osservare il ridimensionamento degli elementi, creare un portale al di fuori del tuo albero) oggi manca o è incompleta, e la maggior parte di queste operazioni fallisce silenziosamente: nessuna eccezione e nessun errore TypeScript, poiché lo scaffold è tipizzato contro il DOM completo del browser.
+
+Se una di queste limitazioni ti blocca, [apri una issue](https://github.com/twentyhq/twenty/issues/new/choose) così la sua priorità aumenta.
+
+### Layout e misurazione
+
+Gli elementi possono misurare sé stessi: l'host rispecchia la geometria nella sandbox, quindi le letture vengono gestite localmente ma possono essere non aggiornate fino a un frame, e la prima lettura di un elemento mai misurato restituisce zeri. Dopo la scrittura, rileggi in una callback di `requestAnimationFrame` o in un effetto.
+
+| API                                                                                      | Cosa succede                                                                                                                    |
+| ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Funzionano, dallo specchio; assegnare `scrollTop` / `scrollLeft` non ha effetto (no-op)                                         |
+| `getClientRects()`, `window.matchMedia()`                                                | Genera un’eccezione                                                                                                             |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | Funzionano, riportando il **viewport del browser**; la dimensione del tuo widget è `document.body.clientWidth` / `clientHeight` |
+| `window.getComputedStyle()`                                                              | Restituisce solo gli stili inline dell’elemento, mai la cascata calcolata dall’host                                             |
+| `ResizeObserver`, `IntersectionObserver`                                                 | `ReferenceError` (le verifiche con `typeof` funzionano)                                                                         |
+| `MutationObserver`                                                                       | Funziona, incluso `subtree`, `attributeFilter`, i vecchi valori e `takeRecords()`                                               |
+
+Il posizionamento tramite `getBoundingClientRect` ora funziona, ma qualsiasi cosa che osservi i cambi di dimensione tramite `ResizeObserver` (il `ResponsiveContainer` di recharts, l’`autoUpdate` di Floating UI) continua a non funzionare. Preferisci comunque il CSS per il layout: il tuo stylesheet raggiunge la pagina reale, quindi flexbox, grid, `aspect-ratio`, `clamp()` e `@container` si comportano normalmente, senza lag del frame.
+
+<Note>
+`requestAnimationFrame`, `fetch`, `setTimeout` e `queueMicrotask` funzionano senza il prefisso `window.`. Solo `window.requestAnimationFrame(...)` e simili generano un’eccezione.
+</Note>
+
+### Accesso al DOM
+
+Un `ref` ti restituisce un elemento sandbox, non un `HTMLElement`.
+
+| Cosa scrivi                                                                                                 | Cosa succede                                                | Usa invece                                                                                                                                                                                |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Genera un’eccezione                                         | Componenti controllati; leggi i valori da `event.target`                                                                                                                                  |
+| `element.classList.add(...)`                                                                                | Genera un’eccezione (`classList` è `undefined`)             | Costruisci tu stesso la stringa `className`                                                                                                                                               |
+| `document.createTreeWalker()`                                                                               | Genera un’eccezione                                         | `querySelector()` / `querySelectorAll()` e `getElementById()` funzionano; anche `getElementsByClassName()` funziona, ma restituisce una collezione statica, non una `HTMLCollection` live |
+| `document.activeElement`                                                                                    | Sempre `undefined`                                          | Tieni traccia del focus con `onFocus` / `onBlur`                                                                                                                                          |
+| `canvas`                                                                                                    | Non renderizza nulla, nessun errore                         | SVG, oppure disegna fuori dallo schermo e mostra il risultato in un elemento `img`                                                                                                        |
+| `createPortal(node, document.body)`                                                                         | Non renderizza nulla, mentre `isConnected` segnala successo | Overlay inline con `position: absolute`, oppure passa alla libreria un tuo elemento container                                                                                             |
+
+Il gap del portale è il motivo per cui i popover di Radix, Headless UI, MUI e react-select non renderizzano nulla per impostazione predefinita. La maggior parte accetta una prop container; indirizzala a un elemento che hai renderizzato.
+
+### Eventi
+
+Mouse, puntatore, touch, drag, tastiera, focus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` e `animationend`/`transitionend` passano all'host, più alcuni per elemento: `load`/`error` su `img`, appunti e composizione su `input`/`textarea`, media su `video`/`audio`, `toggle` su `details`/`dialog`. Tutto il resto (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, acquisizione del puntatore, `onLoad` su `img`) viene scartato senza alcun avviso.
+
+`document.addEventListener()` e `window.addEventListener()` si registrano senza errori e non vengono mai attivati, motivo per cui un drag si interrompe non appena il puntatore lascia l'elemento da cui è partito. `event.preventDefault()` non viene propagato nemmeno; l'invio dei form, `dragover`/`drop` e i clic sui link sono già protetti per te.
+
+### Attributi e stile
+
+Ogni elemento inoltra le proprie proprietà al DOM host (`href` su `a`, `src`/`alt` su `img`, `value`/`placeholder`/`disabled` su `input`, e così via), più un insieme comune su ogni elemento: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` e qualsiasi attributo `aria-*` / `data-*` (con trattino, quindi `ariaLabel` viene scartato). Qualsiasi cosa al di fuori di ciò viene silenziosamente scartata, quindi esprimi lo stato personalizzato come `data-*`.
+
+Il CSS del componente, che provenga da `import './styles.css'`, da CSS-in-JS o da un elemento `style`, viene iniettato nell'`head` della pagina host **senza ambito**. Quindi i nomi delle classi entrano in conflitto con quelli di Twenty (aggiungi un prefisso e non scrivere mai `div { ... }` come selettori), e `@media` corrisponde alla finestra del browser piuttosto che al tuo widget (usa `@container` con il tuo `container-type`). Le prop `style` inline non sono interessate.
+
+### Storage e rete
+
+`localStorage` e `sessionStorage` sono forniti da Twenty anziché dal browser: il componente viene eseguito in un worker con un'origine opaca, quindi l'host memorizza i valori per conto della tua app. Vedi [storage](#storage) per il loro ambito e i relativi limiti. IndexedDB, i cookie, la Cache API e `BroadcastChannel` restano non disponibili. Per rendere persistente lo stato tra i dispositivi, chiama una [logic function](/l/it/developers/extend/apps/logic/logic-functions) e utilizza il suo [key-value store](/l/it/developers/extend/apps/logic/key-value-store).
+
+`fetch` funziona, con alcune avvertenze:
+
+* Le chiamate alla Twenty API e alle route della tua app sono proxyate dall'host, quindi preferisci [`RestApiClient`](#calling-the-twenty-rest-api). Nelle chiamate proxyate, `AbortSignal` e le altre opzioni di `RequestInit` vengono scartate, e sono supportati solo body di tipo `string` e `URLSearchParams`.
+* Le altre origini escono dalla sandbox con `Origin: null`, quindi un'API di terze parti risponde solo se invia `Access-Control-Allow-Origin: *`. Invece, chiamala da una logic function.
+* `fetch('/rest/people')` non viene mai associato alla Twenty API, perché la sandbox non ha un URL di pagina rispetto a cui risolvere un percorso relativo.
+
+### Acquisizione multimediale
+
+`navigator.mediaDevices.getUserMedia()` e `MediaRecorder` funzionano all'interno dei front components tramite sandbox polyfill, quindi il codice di registrazione standard viene eseguito senza modifiche e `MediaRecorder.isTypeSupported` restituisce risultati per le combinazioni comuni di contenitore/codec. Gli oggetti di constraint dettagliati per `getUserMedia` vengono accettati ma non inoltrati — l'host acquisisce con i propri valori predefiniti per i tipi richiesti — e può essere attiva una sola acquisizione alla volta tra le applicazioni. Archivia un `Blob` registrato con la funzione host `uploadFile`.
+
+### Altre lacune
+
+* **Contenuti dei file.** Un `input` di tipo `file` fornisce al tuo gestore solo i metadati del file, non i byte, quindi `FileReader` non è disponibile. Per caricare un `Blob` già a disposizione del tuo codice — ad esempio uno prodotto da `MediaRecorder` — usa la funzione host `uploadFile`.
+* **Payload di drag-and-drop.** Gli eventi di drag vengono attivati, ma `event.dataTransfer` è `undefined`.
+* **Built-in di Node.** `fs`, `path` e `node:crypto` fanno fallire la build, quindi sposta quel lavoro in una [logic function](/l/it/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` e `URL` sono disponibili.
+* **`iframe`** viene sempre nuovamente messo in sandbox senza `allow-same-origin`, quindi un embed che dipende dalla propria sessione viene renderizzato come disconnesso. Non ha nemmeno `onLoad`.

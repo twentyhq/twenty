@@ -191,6 +191,9 @@ export class Sentry {
 
   @Field(() => String, { nullable: true })
   dsn?: string;
+
+  @Field(() => Number, { nullable: true })
+  tracesSampleRate?: number;
 }
 
 @ObjectType()
@@ -225,6 +228,9 @@ export class PublicFeatureFlagMetadata {
 
   @Field(() => String)
   description: string;
+
+  @Field(() => String)
+  icon: string;
 
   @Field(() => String, { nullable: true })
   imagePath?: string;
@@ -301,13 +307,18 @@ export class ClientConfig {
   @Field(() => ApiConfig)
   api: ApiConfig;
 
-  onboarding: OnboardingConfig;
+  onboarding: OnboardingConfig | null;
 
   @Field(() => Boolean)
   canManageFeatureFlags: boolean;
 
   @Field(() => [PublicFeatureFlag])
   publicFeatureFlags: PublicFeatureFlag[];
+
+  // Always true now that cookie sessions are the only web auth path. Kept in
+  // the schema because removing a field breaks the public API contract.
+  @Field(() => Boolean)
+  isCookieSessionEnabled: boolean;
 
   @Field(() => Boolean)
   isMicrosoftMessagingEnabled: boolean;
@@ -337,6 +348,12 @@ export class ClientConfig {
   calendarBookingPageId?: string;
 
   @Field(() => Boolean)
+  isBookCallOnboardingStepEnabled: boolean;
+
+  @Field(() => Boolean)
+  isCompanyEnrichmentEnabled: boolean;
+
+  @Field(() => Boolean)
   isCloudflareIntegrationEnabled: boolean;
 
   @Field(() => Boolean)
@@ -344,6 +361,9 @@ export class ClientConfig {
 
   @Field(() => Boolean)
   isWorkspaceSchemaDDLLocked: boolean;
+
+  @Field(() => Boolean)
+  isOnboardingAiChatEnabled: boolean;
 
   @Field(() => String)
   enterpriseInstanceType: string;

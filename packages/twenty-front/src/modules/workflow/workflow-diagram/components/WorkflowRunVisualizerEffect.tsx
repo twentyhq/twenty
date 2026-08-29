@@ -246,12 +246,16 @@ export const WorkflowRunVisualizerEffect = ({
   ]);
 
   useEffect(() => {
-    if (!isDefined(workflowVersion)) {
+    if (!isDefined(workflowVersion) || !isDefined(workflowRun?.state)) {
       return;
     }
 
-    populateStepsOutputSchema(workflowVersion);
-  }, [populateStepsOutputSchema, workflowVersion]);
+    populateStepsOutputSchema({
+      ...workflowVersion,
+      trigger: workflowRun.state.flow.trigger,
+      steps: workflowRun.state.flow.steps,
+    });
+  }, [populateStepsOutputSchema, workflowRun?.state, workflowVersion]);
 
   return null;
 };

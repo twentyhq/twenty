@@ -55,8 +55,8 @@ const Card = ({ count, name }: { count: number; name: string }) => {
 
 ### When to use which
 
-- **`<Trans>…</Trans>`** — static text in JSX. Use the `message` and `values`
-  props for interpolation (`<Trans message="Hi {name}" values={{ name }} />`);
+- **`Trans`** — static text in JSX. Use the `message` and `values` props for
+  interpolation, as in `Trans message="Hi {name}" values={{ name }}`;
   interpolating directly in the children is not statically extractable.
 - **`useTranslate().t`** — dynamic strings inside a component. Re-renders when the
   user switches language. Prefer this inside render.
@@ -76,6 +76,12 @@ t({ message: 'Open', context: 'window' });
 <Trans context="card-title">Untitled</Trans>
 ```
 
+Contextual strings appear in locale catalogs as a group keyed by their
+context: `"<context>": { "<message>": "<translation>" }`. Manifest labels are
+contextual by construction — each one carries the metadata role it plays
+(`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), so
+the same word can translate differently as an object name and as a view name.
+
 ## Extracting and translating
 
 Run the extract command from your app directory:
@@ -85,7 +91,7 @@ twenty dev:translations-extract                  # collect strings into locales/
 twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 ```
 
-Extraction collects both your manifest labels and the `t()`/`msg()`/`<Trans>`
+Extraction collects both your manifest labels and the `t()`/`msg()`/`Trans`
 strings from your front-component source into `locales/<locale>.json`, keyed by
 source string. Fill in the translations:
 
@@ -94,9 +100,18 @@ source string. Fill in the translations:
 {
   "Loading postcard…": "Chargement de la carte…",
   "Hi {name}": "Bonjour {name}",
-  "Saved {count} cards": "{count} cartes enregistrées"
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
 }
 ```
+
+Context-free strings are flat entries; contextual strings — including every
+manifest label — are nested under their context key.
 
 Placeholders like `{name}` are substituted at runtime — keep them in the
 translation. Any string left empty falls back to the source text.
@@ -108,18 +123,22 @@ current user: manifest labels are resolved server-side, and front-component
 catalogs are baked into each component bundle. At runtime a component reads the
 locale from its execution context (the host's current language) and resolves
 each string against its catalog, falling back to the source when a translation
-is missing. Switching language in the host re-renders `<Trans>` and
+is missing. Switching language in the host re-renders `Trans` and
 `useTranslate().t` strings live.
 
-Because catalogs are compiled at build time, updating a translation means
-re-running `twenty dev:build` (and redeploying), the same as any other change.
+Manifest labels are compiled on every sync — `twenty dev:build`, `twenty apply`
+and the continuous `twenty dev` watch alike — so editing a locale file and
+syncing is enough to see the new text. Front component catalogs are baked into
+each component bundle at build time, so changing one of those still means
+re-running `twenty dev:build` (and redeploying).
 
-<Note>
-Translations are compiled by `twenty dev:build` (and `twenty apply`). The
-continuous `twenty dev` watch shows source strings, so test localized output
-with a one-off build.
-</Note>
+`Trans` text children may span multiple lines — whitespace is collapsed the
+same way JSX collapses it, so both of these extract to the key `Welcome back`:
 
-`<Trans>` text children may span multiple lines — whitespace is collapsed the
-same way JSX collapses it, so `<Trans>Welcome\n  back</Trans>` and the extracted
-key both become `Welcome back`.
+```tsx
+<Trans>Welcome back</Trans>
+<Trans>
+  Welcome
+  back
+</Trans>
+```

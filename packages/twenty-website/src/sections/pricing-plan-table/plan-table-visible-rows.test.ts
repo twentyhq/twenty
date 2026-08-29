@@ -36,7 +36,7 @@ const FIXTURE: PlanTableBodyRowDataType[] = [
 ];
 
 const hasDashPro = (rows: PlanTableBodyRowDataType[]): boolean =>
-  rows.some((row) => row.type === 'row' && row.tiers.pro.kind === 'dash');
+  rows.some((row) => row.type === 'row' && row.tiers.pro?.kind === 'dash');
 
 describe('resolveVisibleRows', () => {
   it('drops self-host-only rows in cloud mode', () => {

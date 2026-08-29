@@ -36,9 +36,11 @@ const StyledRecordTableDraggableTr = styled.div`
   display: flex;
   flex-direction: row;
 
-  &:hover {
-    div:not(:first-of-type) {
-      background-color: ${themeCssVariables.background.secondary};
+  @media (hover: hover) {
+    &:hover {
+      div:not(:first-of-type) {
+        background-color: ${themeCssVariables.background.secondary};
+      }
     }
   }
 

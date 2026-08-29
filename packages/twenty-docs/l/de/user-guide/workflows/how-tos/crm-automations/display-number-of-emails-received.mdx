@@ -56,11 +56,6 @@ Die Aktion Datensätze suchen ist auf die Rückgabe von maximal 200 Datensätzen
 ### Schritt 4: Den Personendatensatz mit einer Create or Update Record-Aktion aktualisieren
 
 1. Fügen Sie eine **Create or Update Record**-Aktion hinzu
-
-<Warning>
-Verwenden Sie hier **Upsert Record** anstelle von **Update Record**. Dadurch können Sie die Person über ihre E-Mail-Adresse (das Feld `handle`) identifizieren, ohne eine Datensatz-ID aus einem vorherigen Schritt zu benötigen.
-</Warning>
-
 2. Wählen Sie **People** als Objekt
 3. Finden Sie die Person, indem Sie ihre E-Mail-Adresse mit dem `handle` des Message Participant abgleichen.
 4. Setzen Sie Ihr benutzerdefiniertes Feld "Anzahl empfangener E-Mails" auf `{{searchRecords.totalCount}}`

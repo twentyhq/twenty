@@ -19,9 +19,12 @@ import {
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const mockPageLayout: PageLayout = {
+  applicationId: 'application-id-mock',
   id: 'page-layout-1',
   name: 'Test Layout',
   type: PageLayoutType.DASHBOARD,
+  isFirstTabPinned: true,
+  isSystemSideEffect: false,
   objectMetadataId: null,
   universalIdentifier: '20202020-0000-0000-0000-000000000001',
   tabs: [],
@@ -59,6 +62,7 @@ const meta: Meta<typeof DashboardWidgetPlaceholder> = {
               value={{
                 tabId: 'tab-1',
                 layoutMode: PageLayoutTabLayoutMode.GRID,
+                presentation: 'stack',
               }}
             >
               <Story />

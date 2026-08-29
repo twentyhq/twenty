@@ -7,6 +7,8 @@ import {
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
+
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
@@ -18,6 +20,7 @@ import { ApplicationException } from 'src/engine/core-modules/application/applic
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
+import { UpdateApplicationInput } from 'src/engine/core-modules/application/dtos/update-application.input';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -125,6 +128,26 @@ export class ApplicationInstallResolver {
       appRegistrationId: registration.id,
       version: params.version,
       workspaceId: params.workspaceId,
+    });
+  }
+
+  @Mutation(() => ApplicationDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  async updateApplication(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @Args('input') input: UpdateApplicationInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ) {
+    await this.applicationService.findOneApplicationOrThrow({
+      id,
+      workspaceId,
+    });
+
+    return this.applicationService.update(id, {
+      ...(isDefined(input.autoUpgrade)
+        ? { autoUpgrade: input.autoUpgrade }
+        : {}),
+      workspaceId,
     });
   }
 

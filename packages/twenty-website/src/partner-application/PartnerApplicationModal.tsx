@@ -5,12 +5,9 @@ import { useLingui } from '@lingui/react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import dynamic from 'next/dynamic';
-import { useEffect, useState } from 'react';
 
 import {
   buildSchemeContext,
-  DURATION,
-  EASING,
   fontSize,
   mediaUp,
   semanticColor,
@@ -40,21 +37,12 @@ const PartnerApplicationWizard = dynamic(
   { loading: () => <WizardLoadingFallback />, ssr: false },
 );
 
-// The form sits in a narrow panel; the booking screen eases wider for the
-// calendar. The Modal reads --modal-panel-width, so the change is a smooth
-// transition rather than the old site's instant jump.
 const formPanelClass = css`
-  transition: width ${DURATION.md} ${EASING.standard};
   --modal-panel-width: min(360px, 100%);
 
   ${mediaUp('md')} {
     --modal-panel-width: min(720px, 100%);
   }
-`;
-
-const bookingPanelClass = css`
-  transition: width ${DURATION.md} ${EASING.standard};
-  --modal-panel-width: min(960px, 100%);
 `;
 
 // The near-black Modal panel is scheme-agnostic; the wizard reads semantic
@@ -72,27 +60,16 @@ export function PartnerApplicationModal({
   open: boolean;
 }) {
   const { i18n } = useLingui();
-  const [hasReachedBooking, setHasReachedBooking] = useState(false);
-
-  // Reset the widened panel after the modal closes, while nothing is on screen,
-  // so a prior session's booking width can't flash on the next open.
-  useEffect(() => {
-    if (!open) setHasReachedBooking(false);
-  }, [open]);
 
   return (
     <Modal
       ariaLabel={i18n._(msg`Partner application`)}
-      className={hasReachedBooking ? bookingPanelClass : formPanelClass}
+      className={formPanelClass}
       onClose={onClose}
       open={open}
     >
       <WizardScope data-scheme="dark">
-        <PartnerApplicationWizard
-          onSubmitted={() => setHasReachedBooking(true)}
-          onSuccess={onClose}
-          resetSignal={0}
-        />
+        <PartnerApplicationWizard onSuccess={onClose} resetSignal={0} />
       </WizardScope>
     </Modal>
   );

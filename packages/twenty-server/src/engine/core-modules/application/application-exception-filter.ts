@@ -41,9 +41,11 @@ export class ApplicationExceptionFilter implements ExceptionFilter {
       case ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED:
       case ApplicationExceptionCode.POST_INSTALL_ERROR:
       case ApplicationExceptionCode.PRE_INSTALL_ERROR:
+      case ApplicationExceptionCode.UNINSTALL_ERROR:
       case ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED:
       case ApplicationExceptionCode.UPGRADE_FAILED:
       case ApplicationExceptionCode.INVALID_SERVER_VERSION:
+      case ApplicationExceptionCode.KEY_VALUE_PERSISTENCE_FAILED:
         throw new InternalServerError(exception);
       case ApplicationExceptionCode.APPLICATION_INSTALLATION_FAILED: {
         const installationError = new BaseGraphQLError(

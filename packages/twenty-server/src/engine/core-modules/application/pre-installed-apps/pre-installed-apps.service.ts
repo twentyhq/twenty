@@ -10,6 +10,13 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import {
+  INSTALL_PRE_INSTALLED_APPS_JOB_NAME,
+  type InstallPreInstalledAppsJobData,
+} from 'src/engine/core-modules/application/pre-installed-apps/jobs/install-pre-installed-apps.job-constants';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 
 @Injectable()
 export class PreInstalledAppsService {
@@ -20,7 +27,17 @@ export class PreInstalledAppsService {
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly workspaceIteratorService: WorkspaceIteratorService,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
+
+  async enqueueInstallOnWorkspace(workspaceId: string): Promise<void> {
+    await this.messageQueueService.add<InstallPreInstalledAppsJobData>(
+      INSTALL_PRE_INSTALLED_APPS_JOB_NAME,
+      { workspaceId },
+      { id: `${INSTALL_PRE_INSTALLED_APPS_JOB_NAME}-${workspaceId}` },
+    );
+  }
 
   // Per-app failures are logged but never block the other installs —
   // `ApplicationInstallService` holds a per-app cache lock so parallel

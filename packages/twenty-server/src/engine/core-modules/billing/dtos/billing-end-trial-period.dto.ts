@@ -2,6 +2,7 @@
 
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 
 @ObjectType('BillingEndTrialPeriod')
@@ -23,4 +24,16 @@ export class BillingEndTrialPeriodDTO {
     nullable: true,
   })
   billingPortalUrl?: string;
+
+  @Field(() => BillingSubscriptionEntity, {
+    description: 'Updated current billing subscription',
+    nullable: true,
+  })
+  currentBillingSubscription?: BillingSubscriptionEntity;
+
+  @Field(() => [BillingSubscriptionEntity], {
+    description: 'All billing subscriptions',
+    nullable: true,
+  })
+  billingSubscriptions?: BillingSubscriptionEntity[];
 }

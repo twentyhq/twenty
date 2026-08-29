@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 import { isAutoSelectModelId } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/input';
 
+import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
@@ -23,15 +24,20 @@ export const useAiModelOptions = ({
   const aiModels = useAtomStateValue(aiModelsState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { enabledModels } = useWorkspaceAiModelAvailability();
+  const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
 
-  const workspaceSmartModel = aiModels.find(
-    (model) => model.modelId === currentWorkspace?.smartModel,
+  const workspaceDefaultModelId = isWorkspaceSetupChat
+    ? currentWorkspace?.fastModel
+    : currentWorkspace?.smartModel;
+
+  const workspaceDefaultModel = aiModels.find(
+    (model) => model.modelId === workspaceDefaultModelId,
   );
 
   const resolvedDefaultModelId = enabledModels.find(
     (model) =>
-      model.label === workspaceSmartModel?.label &&
-      model.providerName === workspaceSmartModel?.providerName,
+      model.label === workspaceDefaultModel?.label &&
+      model.providerName === workspaceDefaultModel?.providerName,
   )?.modelId;
 
   const allOptions = enabledModels
@@ -42,13 +48,13 @@ export const useAiModelOptions = ({
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
 
-  const pinnedOption = workspaceSmartModel
+  const pinnedOption = workspaceDefaultModel
     ? {
-        value: resolvedDefaultModelId ?? workspaceSmartModel.modelId,
-        label: workspaceSmartModel.label,
+        value: resolvedDefaultModelId ?? workspaceDefaultModel.modelId,
+        label: workspaceDefaultModel.label,
         Icon: getModelIcon(
-          workspaceSmartModel.modelFamily,
-          workspaceSmartModel.providerName,
+          workspaceDefaultModel.modelFamily,
+          workspaceDefaultModel.providerName,
         ),
         contextualText: t`default`,
       }

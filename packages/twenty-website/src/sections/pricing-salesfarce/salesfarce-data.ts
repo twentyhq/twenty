@@ -5,7 +5,7 @@ import { type SalesfarceDataType } from './salesfarce-types';
 const SALESFARCE_POPUP_TITLE = msg`Good choice!`;
 
 export const SALESFARCE_DATA: SalesfarceDataType = {
-  body: msg`Some call this enterprise pricing. We prefer a CRM where API access, webhooks, and workflows don't show up as surprise add-ons.`,
+  body: msg`Feature-by-feature price checks against the CRMs you're probably comparing us with. Sources included.`,
   pricing: {
     addons: [
       {

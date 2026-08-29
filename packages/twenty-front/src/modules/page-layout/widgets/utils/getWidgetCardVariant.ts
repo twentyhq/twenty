@@ -1,38 +1,27 @@
-import {
-  PageLayoutTabLayoutMode,
-  PageLayoutType,
-} from '~/generated-metadata/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
 
 type GetWidgetCardVariantParams = {
-  layoutMode: PageLayoutTabLayoutMode;
-  isInPinnedTab: boolean;
+  isSideColumnContext: boolean;
   pageLayoutType: PageLayoutType | null;
-  isMobile: boolean;
-  isInSidePanel: boolean;
 };
 
 export const getWidgetCardVariant = ({
-  layoutMode,
-  isInPinnedTab,
+  isSideColumnContext,
   pageLayoutType,
-  isMobile,
-  isInSidePanel,
 }: GetWidgetCardVariantParams): WidgetCardVariant => {
-  if (layoutMode === PageLayoutTabLayoutMode.CANVAS) {
-    return 'canvas';
+  if (isSideColumnContext) {
+    return 'flush';
   }
-
-  const isSideColumnContext = isInPinnedTab || isMobile || isInSidePanel;
 
   switch (pageLayoutType) {
     case PageLayoutType.DASHBOARD:
-      return 'dashboard';
     case PageLayoutType.STANDALONE_PAGE:
-      return 'standalone';
+      return 'framed';
     case PageLayoutType.RECORD_PAGE:
     case PageLayoutType.RECORD_INDEX:
+    case PageLayoutType.RECORD_FORM:
     case null:
-      return isSideColumnContext ? 'side-column' : 'record-page';
+      return 'flush';
   }
 };

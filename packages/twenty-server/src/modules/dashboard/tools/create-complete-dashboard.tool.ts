@@ -2,11 +2,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
-import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import {
+  PageLayoutType,
+  type PageLayoutWidgetGridPosition,
+  type WidgetType,
+} from 'twenty-shared/types';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
-  gridPositionSchema,
+  widgetPositionSchema,
   widgetConfigurationSchema,
   widgetTypeSchema,
 } from 'src/modules/dashboard/tools/schemas/widget.schema';
@@ -21,7 +24,7 @@ import { resolveWidgetFieldNamesToIds } from 'src/modules/dashboard/tools/utils/
 const widgetSchema = z.object({
   title: z.string().describe('Widget title displayed in the header'),
   type: widgetTypeSchema.describe('Widget type'),
-  gridPosition: gridPositionSchema.describe('Position in 12-column grid'),
+  position: widgetPositionSchema.describe('Position in 12-column grid'),
   objectMetadataId: z
     .uuid()
     .optional()
@@ -73,9 +76,9 @@ WIDGET TYPES:
 
 2. GRAPH with configurationType "BAR_CHART":
    - Additional required: configuration.primaryAxisGroupByFieldMetadataId, configuration.layout ("VERTICAL" or "HORIZONTAL")
-   - IMPORTANT: When grouping by a RELATION field (e.g. owner, company), you MUST provide primaryAxisGroupBySubFieldName (e.g. "name", "email") — otherwise it groups by raw UUID which is useless. Composite fields (e.g. address) also require a subfield (e.g. "addressCity").
+   - When grouping by a RELATION field (e.g. owner, company), omit primaryAxisGroupBySubFieldName to group by the related record itself, labelled with its display name. Provide a subfield (e.g. "name", "email") only to group by that specific attribute instead. Composite fields (e.g. address) always require a subfield (e.g. "addressCity").
    - Example (simple field): { type: "GRAPH", objectMetadataId: "<opportunity-object-uuid>", configuration: { configurationType: "BAR_CHART", aggregateFieldMetadataId: "<amount-field-uuid>", aggregateOperation: "COUNT", primaryAxisGroupByFieldMetadataId: "<stage-field-uuid>", layout: "VERTICAL" } }
-   - Example (relation field): { type: "GRAPH", objectMetadataId: "<opportunity-object-uuid>", configuration: { configurationType: "BAR_CHART", aggregateFieldMetadataId: "<amount-field-uuid>", aggregateOperation: "SUM", primaryAxisGroupByFieldMetadataId: "<company-field-uuid>", primaryAxisGroupBySubFieldName: "name", layout: "VERTICAL" } }
+   - Example (relation field): { type: "GRAPH", objectMetadataId: "<opportunity-object-uuid>", configuration: { configurationType: "BAR_CHART", aggregateFieldMetadataId: "<amount-field-uuid>", aggregateOperation: "SUM", primaryAxisGroupByFieldMetadataId: "<company-field-uuid>", layout: "VERTICAL" } }
 
 3. GRAPH with configurationType "LINE_CHART":
    - Additional required: configuration.primaryAxisGroupByFieldMetadataId
@@ -98,11 +101,12 @@ CHART FILTERS (AGGREGATE_CHART, BAR_CHART, LINE_CHART, PIE_CHART):
 6. STANDALONE_RICH_TEXT: { type: "STANDALONE_RICH_TEXT", configuration: { configurationType: "STANDALONE_RICH_TEXT", body: { ... } } }
 
 7. RECORD_TABLE: displays a live, filterable record list directly on the dashboard.
-   - IMPORTANT: you MUST create a dedicated view for the widget BEFORE creating the widget. Use create_view to create a new TABLE view for the object, then pass its ID as viewId. Never reuse an existing index-page view — widget views and record index views must not overlap.
+   - IMPORTANT: you MUST create a dedicated view for the widget BEFORE creating the widget. Use create_view to create a new TABLE_WIDGET view for the object, then pass its ID as viewId. Never reuse an existing index-page view and never use plain TABLE/KANBAN/CALENDAR types for widget-backing views — non-widget view types leak into record index view pickers.
    - Requires: objectMetadataId (top-level, UUID of the object to display) AND configuration.viewId (UUID of the dedicated view you just created)
    - configuration.configurationType must be "RECORD_TABLE"
    - Recommended size: rowSpan 8-10, columnSpan 12 (full width)
-   - Workflow: (1) call create_view with type TABLE for the object → get the viewId, (2) call create_many_view_fields to add visible columns to that view, (3) create the widget with that viewId
+   - Workflow: (1) call create_view with the appropriate *_WIDGET type (TABLE_WIDGET for a table, KANBAN_WIDGET for a board, LIST_WIDGET for a list, CALENDAR_WIDGET for a calendar — kanban requires mainGroupByFieldName, calendar requires calendarFieldName) → get the viewId, (2) call create_many_view_fields to add visible columns to that view, (3) create the widget with that viewId
+   - The widget renders according to its view type: TABLE_WIDGET renders a table, KANBAN_WIDGET a board (requires mainGroupByFieldName pointing at a SELECT or many-to-one relation field), LIST_WIDGET a list, CALENDAR_WIDGET a calendar (requires a date calendar field)
    - Example: { type: "RECORD_TABLE", objectMetadataId: "<object-uuid>", configuration: { configurationType: "RECORD_TABLE", viewId: "<dedicated-view-uuid>" } }
 
 AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`,
@@ -113,12 +117,7 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
     widgets?: Array<{
       title: string;
       type: WidgetType;
-      gridPosition: {
-        row: number;
-        column: number;
-        rowSpan: number;
-        columnSpan: number;
-      };
+      position: PageLayoutWidgetGridPosition;
       objectMetadataId?: string;
       objectName?: string;
       configuration?: WidgetConfigurationInput;
@@ -239,13 +238,13 @@ const createDashboardRecord = async (
 ): Promise<string> => {
   const authContext = buildSystemAuthContext(context.workspaceId);
 
-  return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-    const dashboardRepository =
-      await deps.globalWorkspaceOrmManager.getRepository(
-        context.workspaceId,
-        'dashboard',
-        { shouldBypassPermissionChecks: true },
-      );
+  return deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
+    const dashboardRepository = deps.workspaceOrmManager.getRepository(
+      'dashboard',
+      {
+        shouldBypassPermissionChecks: true,
+      },
+    );
 
     const position = await deps.recordPositionService.buildRecordPosition({
       value: 'first',

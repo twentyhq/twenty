@@ -2,18 +2,25 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import axios from 'axios';
-import { Repository } from 'typeorm';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { In, Repository } from 'typeorm';
 import { z } from 'zod';
 
+import {
+  WorkspaceIteratorService,
+  type WorkspaceIteratorReport,
+} from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 const npmPackageMetadataSchema = z.object({
   version: z.string(),
@@ -26,9 +33,13 @@ export class ApplicationUpgradeService {
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
+    @InjectRepository(ApplicationEntity)
+    private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly applicationInstallService: ApplicationInstallService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly workspaceVersionService: WorkspaceVersionService,
   ) {}
 
   async checkForUpdates(
@@ -79,6 +90,10 @@ export class ApplicationUpgradeService {
           sourceType: appRegistration.sourceType,
           version: parsed.data.version,
         });
+
+        await this.applicationRegistrationService.enqueueAutoUpgradeApplications(
+          appRegistration.id,
+        );
       }
 
       return parsed.data.version;
@@ -101,14 +116,160 @@ export class ApplicationUpgradeService {
     }
   }
 
+  async findApplicationsToUpgrade({
+    applicationRegistrationId,
+    onlyAutoUpgrade = false,
+    workspaceIds,
+    workspaceCountLimit,
+  }: {
+    applicationRegistrationId: string;
+    onlyAutoUpgrade?: boolean;
+    workspaceIds?: string[];
+    workspaceCountLimit?: number;
+  }): Promise<{
+    appRegistration: ApplicationRegistrationEntity;
+    targetVersion: string | null;
+    applicationsToUpgrade: ApplicationEntity[];
+    skippedNonProvisionedWorkspaceIds: string[];
+  }> {
+    const appRegistration = await this.appRegistrationRepository.findOneOrFail({
+      where: { id: applicationRegistrationId },
+    });
+
+    const targetVersion = appRegistration.latestAvailableVersion;
+
+    if (!isDefined(targetVersion)) {
+      return {
+        appRegistration,
+        targetVersion: null,
+        applicationsToUpgrade: [],
+        skippedNonProvisionedWorkspaceIds: [],
+      };
+    }
+
+    const applications = await this.applicationRepository.find({
+      where: {
+        applicationRegistrationId,
+        ...(onlyAutoUpgrade ? { autoUpgrade: true } : {}),
+        ...(isNonEmptyArray(workspaceIds)
+          ? { workspaceId: In(workspaceIds) }
+          : {}),
+      },
+    });
+
+    const outdatedApplications = applications.filter(
+      (application) => application.version !== targetVersion,
+    );
+
+    const provisionedWorkspaceIds = new Set(
+      await this.workspaceVersionService.getProvisionedWorkspaceIds(),
+    );
+
+    const provisionedApplications = outdatedApplications.filter((application) =>
+      provisionedWorkspaceIds.has(application.workspaceId),
+    );
+
+    const skippedNonProvisionedWorkspaceIds = outdatedApplications
+      .filter(
+        (application) => !provisionedWorkspaceIds.has(application.workspaceId),
+      )
+      .map((application) => application.workspaceId);
+
+    const applicationsToUpgrade = isDefined(workspaceCountLimit)
+      ? provisionedApplications.slice(0, workspaceCountLimit)
+      : provisionedApplications;
+
+    return {
+      appRegistration,
+      targetVersion,
+      applicationsToUpgrade,
+      skippedNonProvisionedWorkspaceIds,
+    };
+  }
+
+  async upgradeApplications({
+    appRegistration,
+    targetVersion,
+    applications,
+  }: {
+    appRegistration: ApplicationRegistrationEntity;
+    targetVersion: string;
+    applications: ApplicationEntity[];
+  }): Promise<WorkspaceIteratorReport> {
+    // An empty workspace id list makes the iterator fall back to every
+    // provisioned workspace, which would upgrade workspaces that were
+    // filtered out.
+    if (!isNonEmptyArray(applications)) {
+      return { success: [], fail: [], interrupted: false };
+    }
+
+    return this.workspaceIteratorService.iterate({
+      workspaceIds: applications.map((application) => application.workspaceId),
+      callback: async ({ workspaceId }) => {
+        await this.upgradeApplicationToVersion({
+          appRegistration,
+          targetVersion,
+          workspaceId,
+        });
+      },
+    });
+  }
+
+  async upgradeAllApplications({
+    applicationRegistrationId,
+    onlyAutoUpgrade = false,
+    workspaceIds,
+    workspaceCountLimit,
+  }: {
+    applicationRegistrationId: string;
+    onlyAutoUpgrade?: boolean;
+    workspaceIds?: string[];
+    workspaceCountLimit?: number;
+  }): Promise<void> {
+    const { appRegistration, targetVersion, applicationsToUpgrade } =
+      await this.findApplicationsToUpgrade({
+        applicationRegistrationId,
+        onlyAutoUpgrade,
+        workspaceIds,
+        workspaceCountLimit,
+      });
+
+    if (!isDefined(targetVersion)) {
+      return;
+    }
+
+    await this.upgradeApplications({
+      appRegistration,
+      targetVersion,
+      applications: applicationsToUpgrade,
+    });
+  }
+
   async upgradeApplication(params: {
     appRegistrationId: string;
     targetVersion: string;
     workspaceId: string;
+    skipWorkspaceCompatibilityCheck?: boolean;
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: params.appRegistrationId },
     });
+
+    return this.upgradeApplicationToVersion({
+      appRegistration,
+      targetVersion: params.targetVersion,
+      workspaceId: params.workspaceId,
+      skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
+    });
+  }
+
+  private async upgradeApplicationToVersion(params: {
+    appRegistration: ApplicationRegistrationEntity;
+    targetVersion: string;
+    workspaceId: string;
+    skipWorkspaceCompatibilityCheck?: boolean;
+  }): Promise<boolean> {
+    const { appRegistration } = params;
 
     // LOCAL apps are updated by dev sync and OAUTH_ONLY registrations have no
     // code artifacts.
@@ -125,9 +286,10 @@ export class ApplicationUpgradeService {
 
     try {
       return await this.applicationInstallService.installApplication({
-        appRegistrationId: params.appRegistrationId,
+        appRegistrationId: appRegistration.id,
         version: params.targetVersion,
         workspaceId: params.workspaceId,
+        skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
       });
     } catch (error) {
       const appName =

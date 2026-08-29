@@ -24,6 +24,7 @@ export const OBJECT_METADATA_FRAGMENT = gql`
     shortcut
     isLabelSyncedWithName
     isSearchable
+    openRecordIn
     duplicateCriteria
     searchFieldMetadataList {
       id

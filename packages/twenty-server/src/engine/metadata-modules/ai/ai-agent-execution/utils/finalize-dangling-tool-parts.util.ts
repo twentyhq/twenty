@@ -13,9 +13,24 @@ export const finalizeDanglingToolParts = <
   TPart extends UIMessagePart<UIDataTypes, UITools>,
 >(
   parts: TPart[],
-): TPart[] =>
-  parts
+): TPart[] => {
+  const seenToolCallIds = new Set<string>();
+
+  return parts
     .filter((part) => !(isToolUIPart(part) && part.state === 'input-streaming'))
+    .filter((part) => {
+      if (!isToolUIPart(part)) {
+        return true;
+      }
+
+      if (seenToolCallIds.has(part.toolCallId)) {
+        return false;
+      }
+
+      seenToolCallIds.add(part.toolCallId);
+
+      return true;
+    })
     .map((part) => {
       if (!isToolUIPart(part)) {
         return part;
@@ -41,3 +56,4 @@ export const finalizeDanglingToolParts = <
 
       return part;
     });
+};

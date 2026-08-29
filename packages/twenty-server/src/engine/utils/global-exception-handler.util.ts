@@ -1,6 +1,8 @@
 import { HttpException } from '@nestjs/common';
 
 import { GraphQLError } from 'graphql';
+import { RetryableLogicFunctionError } from 'twenty-shared/logic-function';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
 import { type ExceptionHandlerWorkspace } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-workspace.interface';
@@ -18,7 +20,7 @@ import {
   TimeoutError,
   ValidationError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { type CustomException } from 'src/utils/custom-exception';
+import { CustomException } from 'src/utils/custom-exception';
 
 const graphQLPredefinedExceptions = {
   400: ValidationError,
@@ -40,6 +42,8 @@ export const graphQLErrorCodesToFilter = [
   ErrorCode.CONFLICT,
   ErrorCode.BAD_USER_INPUT,
   ErrorCode.METADATA_VALIDATION_FAILED,
+  ErrorCode.RATE_LIMITED,
+  ErrorCode.QUOTA_EXHAUSTED,
 ];
 
 export const handleExceptionAndConvertToGraphQLError = (
@@ -62,6 +66,18 @@ export const shouldCaptureException = (
   exception: Error,
   statusCode?: number,
 ): boolean => {
+  if (exception instanceof RetryableLogicFunctionError) {
+    return false;
+  }
+
+  if (
+    exception instanceof CustomException &&
+    isDefined(exception.statusCode) &&
+    exception.statusCode < 500
+  ) {
+    return false;
+  }
+
   if (
     exception instanceof GraphQLError &&
     (exception?.extensions?.http?.status ?? 500) < 500
@@ -144,7 +160,6 @@ const convertHttpExceptionToGraphql = (exception: HttpException) => {
     );
   }
 
-  // Only show the stack trace in development mode
   if (process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT) {
     error.stack = exception.stack;
     error.extensions['response'] = exception.getResponse();

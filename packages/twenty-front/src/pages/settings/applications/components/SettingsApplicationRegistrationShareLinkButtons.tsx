@@ -74,7 +74,7 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
           <SettingsApplicationInstallPermissionValidationModal
             modalInstanceId={modalInstanceId}
             appDisplayName={displayName}
-            appLogoUrl={detail?.logo ?? undefined}
+            appLogoUrl={detail?.logoUrl ?? undefined}
             defaultRole={defaultRole}
             onAuthorize={handleInstall}
             isInstalling={isInstalling}

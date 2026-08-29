@@ -8,6 +8,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -19,6 +20,7 @@ import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 export const useDefaultHomePagePath = () => {
   const currentUser = useAtomStateValue(currentUserState);
+  const isMobile = useIsMobile();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const metadataStore = useAtomFamilyStateValue(
     metadataStoreState,
@@ -90,24 +92,19 @@ export const useDefaultHomePagePath = () => {
       return AppPath.SignInUp;
     }
 
-    if (isEmpty(readableNonSystemObjectMetadataItems)) {
-      // Object metadata may legitimately be empty for a user with no readable
-      // objects, in which case /settings/profile is the intended fallback.
-      // It can also be transiently empty during the post-login window before
-      // workspace metadata has finished loading. Defer to AppPath.Index in
-      // that case so the user isn't stranded on /settings/profile once
-      // metadata becomes available.
-      if (!areObjectMetadataItemsLoaded) {
-        return AppPath.Index;
-      }
-      return getSettingsPath(SettingsPath.ProfilePage);
+    if (isMobile) {
+      return AppPath.Home;
     }
 
-    // The navigation menu drives the redirect and loads after the minimal-
-    // metadata fast path. Wait for it instead of falling back to the
-    // alphabetically-first object during the post-login window.
-    if (!areNavigationMenuItemsLoaded) {
+    // Both stores are transiently empty during the post-login window;
+    // deciding the redirect before they are loaded could strand users on a
+    // wrong fallback (/settings/profile or the alphabetically-first object).
+    if (!areObjectMetadataItemsLoaded || !areNavigationMenuItemsLoaded) {
       return AppPath.Index;
+    }
+
+    if (isEmpty(readableNonSystemObjectMetadataItems)) {
+      return getSettingsPath(SettingsPath.ProfilePage);
     }
 
     if (isDefined(firstNavigationMenuItemLink)) {
@@ -127,6 +124,7 @@ export const useDefaultHomePagePath = () => {
     );
   }, [
     currentUser,
+    isMobile,
     readableNonSystemObjectMetadataItems,
     areObjectMetadataItemsLoaded,
     areNavigationMenuItemsLoaded,

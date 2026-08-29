@@ -1,15 +1,16 @@
 import { ImageBubbleMenu } from '@/advanced-text-editor/components/ImageBubbleMenu';
 import { LinkBubbleMenu } from '@/advanced-text-editor/components/LinkBubbleMenu';
 import { TextBubbleMenu } from '@/advanced-text-editor/components/TextBubbleMenu';
-import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/object-record/record-field/ui/form-types/constants/FormFieldPlaceholderStyles';
+import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
+import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtension';
+import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
 import { styled } from '@linaria/react';
-import { EditorContent, type Editor } from '@tiptap/react';
+import { EditorContent } from '@tiptap/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEditorContainer = styled.div<{
   readonly?: boolean;
   minHeight: number;
-  maxWidth: number;
 }>`
   box-sizing: border-box;
   display: flex;
@@ -73,6 +74,54 @@ const StyledEditorContainer = styled.div<{
       line-height: 1.5;
       margin-bottom: ${themeCssVariables.spacing[2]};
     }
+
+    .block-section {
+      border-radius: ${themeCssVariables.border.radius.sm};
+      box-sizing: border-box;
+      margin-bottom: ${themeCssVariables.spacing[2]};
+      outline: 1px dashed transparent;
+      outline-offset: 2px;
+
+      &:hover {
+        outline-color: ${themeCssVariables.border.color.medium};
+      }
+    }
+
+    .block-columns {
+      box-sizing: border-box;
+      display: flex;
+      gap: ${themeCssVariables.spacing[2]};
+      margin-bottom: ${themeCssVariables.spacing[2]};
+    }
+
+    .block-column {
+      border-radius: ${themeCssVariables.border.radius.sm};
+      box-sizing: border-box;
+      flex: 1;
+      min-width: 0;
+      outline: 1px dashed ${themeCssVariables.border.color.light};
+      outline-offset: 2px;
+    }
+
+    .block-button-wrapper {
+      margin-bottom: ${themeCssVariables.spacing[2]};
+    }
+
+    .block-button {
+      box-sizing: border-box;
+      cursor: text;
+      width: fit-content;
+    }
+
+    .block-divider {
+      border-bottom: none;
+      border-left: none;
+      border-right: none;
+    }
+
+    .ProseMirror-selectednode {
+      outline: 2px solid ${themeCssVariables.color.blue};
+    }
   }
 
   .ProseMirror-focused {
@@ -84,29 +133,37 @@ const StyledEditorContainer = styled.div<{
   }
 `;
 
-type AdvancedTextEditorProps = {
-  readonly: boolean | undefined;
-  editor: Editor;
-  minHeight: number;
-  maxWidth: number;
-};
+const TEXT_BUBBLE_MENU_EXTENSION_NAMES = [
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'bulletList',
+  'orderedList',
+  'heading',
+  'link',
+];
+
+type AdvancedTextEditorProps = AdvancedTextEditorComponentProps;
 
 export const AdvancedTextEditor = ({
   readonly,
   editor,
   minHeight,
-  maxWidth,
 }: AdvancedTextEditorProps) => {
+  const hasTextBubbleMenu = TEXT_BUBBLE_MENU_EXTENSION_NAMES.some(
+    (extensionName) => hasEditorExtension(editor, extensionName),
+  );
+
   return (
-    <StyledEditorContainer
-      readonly={readonly}
-      minHeight={minHeight}
-      maxWidth={maxWidth}
-    >
+    <StyledEditorContainer readonly={readonly} minHeight={minHeight}>
       <EditorContent className="editor-content" editor={editor} />
-      <ImageBubbleMenu editor={editor} />
-      <TextBubbleMenu editor={editor} />
-      <LinkBubbleMenu editor={editor} />
+      {hasEditorExtension(editor, 'image') &&
+        !hasEditorExtension(editor, 'section') && (
+          <ImageBubbleMenu editor={editor} />
+        )}
+      {hasTextBubbleMenu && <TextBubbleMenu editor={editor} />}
+      {hasEditorExtension(editor, 'link') && <LinkBubbleMenu editor={editor} />}
     </StyledEditorContainer>
   );
 };

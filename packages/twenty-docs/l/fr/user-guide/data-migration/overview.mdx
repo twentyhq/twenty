@@ -43,8 +43,8 @@ Vous pouvez importer des relations entre objets à l’aide de la fonction d’i
 
 Lors de l’import d’objets liés, téléversez les fichiers dans cet ordre :
 1. **Entreprises** d’abord (le côté "un" des relations)
-2. **Personnes** en second (liées aux entreprises via companyId)
-3. **Opportunités** en troisième (liées aux entreprises/personnes)
+2. **Personnes** en second (liées aux Entreprises via companyId)
+3. **Opportunités** en troisième (liées aux Entreprises/Personnes)
 4. **Objets personnalisés** avec relations en dernier
 
 Pourquoi ? Le côté "un" d’une relation un-à-plusieurs doit exister avant que vous puissiez y faire référence. Par exemple, l’enregistrement Entreprise doit exister avant d’importer une Personne avec l’ID de cette entreprise.

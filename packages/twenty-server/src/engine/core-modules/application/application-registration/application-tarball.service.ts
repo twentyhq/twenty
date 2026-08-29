@@ -135,6 +135,12 @@ export class ApplicationTarballService {
           sourceType: ApplicationRegistrationSourceType.TARBALL,
           version: incomingVersion,
         });
+
+        if (!isNewRegistration) {
+          await this.applicationRegistrationService.enqueueAutoUpgradeApplications(
+            appRegistration.id,
+          );
+        }
       }
 
       return this.appRegistrationRepository.findOneOrFail({

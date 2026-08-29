@@ -1,4 +1,7 @@
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import {
+  getSearchFieldUniversalIdentifier,
+  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+} from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { buildSearchFieldMetadataBackfillOperations } from 'src/database/commands/upgrade-version-command/2-16/utils/build-search-field-metadata-backfill-operations.util';
@@ -605,6 +608,54 @@ describe('buildSearchFieldMetadataBackfillOperations', () => {
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
           nameField,
           nameDescriptionField,
+        ]),
+        flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([
+          existingSearchFieldMetadata,
+        ]),
+        standardFlatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps(
+          [],
+        ),
+        customApplicationId: CUSTOM_APPLICATION_ID,
+      });
+
+    expect(
+      Object.keys(
+        flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier,
+      ),
+    ).toHaveLength(0);
+  });
+
+  it('skips a row whose deterministic universal identifier already exists even when the existing row carries stale metadata ids', () => {
+    const { customObject, nameField, nameDescriptionField, searchVectorField } =
+      buildCustomObjectFixture();
+
+    // Simulates a retry after a partial run during a cross-version upgrade: the
+    // previously committed row still points at the ids the metadata had at insert
+    // time, while the object/field maps now expose new ids (id churn from earlier
+    // upgrade commands). The (objectMetadataId, fieldMetadataId) dedupe misses the
+    // pair, but the deterministic universal identifier is unchanged and must
+    // prevent re-emitting the row.
+    const existingSearchFieldMetadata = buildSearchFieldMetadata({
+      id: 'existing-search-field-id',
+      universalIdentifier: getSearchFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+        fieldMetadataUniversalIdentifier: nameField.universalIdentifier,
+      }),
+      objectMetadataId: 'stale-object-metadata-id',
+      fieldMetadataId: 'stale-field-metadata-id',
+      objectMetadataUniversalIdentifier: customObject.universalIdentifier,
+      fieldMetadataUniversalIdentifier: nameField.universalIdentifier,
+      applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+    });
+
+    const { flatSearchFieldMetadatasToCreateByApplicationUniversalIdentifier } =
+      buildSearchFieldMetadataBackfillOperations({
+        flatObjectMetadataMaps: buildFlatObjectMetadataMaps([customObject]),
+        flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
+          nameField,
+          nameDescriptionField,
+          searchVectorField,
         ]),
         flatSearchFieldMetadataMaps: buildFlatSearchFieldMetadataMaps([
           existingSearchFieldMetadata,

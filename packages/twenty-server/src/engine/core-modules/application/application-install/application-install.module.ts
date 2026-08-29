@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -11,6 +12,8 @@ import { ApplicationPackageModule } from 'src/engine/core-modules/application/ap
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { ApplicationInstallResolver } from 'src/engine/core-modules/application/application-install/application-install.resolver';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
+import { InstallApplicationCommand } from 'src/engine/core-modules/application/application-install/commands/install-application.command';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { LogicFunctionModule } from 'src/engine/core-modules/logic-function/logic-function.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
@@ -20,7 +23,10 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ApplicationRegistrationEntity]),
+    TypeOrmModule.forFeature([
+      ApplicationEntity,
+      ApplicationRegistrationEntity,
+    ]),
     ApplicationModule,
     ApplicationRegistrationModule,
     ApplicationManifestModule,
@@ -34,8 +40,13 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     PermissionsModule,
     FileStorageModule,
     WorkspaceCacheModule,
+    WorkspaceIteratorModule,
   ],
-  providers: [ApplicationInstallResolver, ApplicationInstallService],
+  providers: [
+    ApplicationInstallResolver,
+    ApplicationInstallService,
+    InstallApplicationCommand,
+  ],
   exports: [ApplicationInstallService],
 })
 export class ApplicationInstallModule {}

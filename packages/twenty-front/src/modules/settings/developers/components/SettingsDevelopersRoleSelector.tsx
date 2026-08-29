@@ -1,13 +1,18 @@
-import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { Select } from '@/ui/input/components/Select';
+import { type Role } from '~/generated-metadata/graphql';
 import { type IconComponent, useIcons } from 'twenty-ui/icon';
+
+type ApiKeyAssignableRole = Pick<
+  Role,
+  'id' | 'label' | 'icon' | 'canBeAssignedToApiKeys'
+>;
 
 type SettingsDevelopersRoleSelectorProps = {
   value?: string | null | undefined;
   onChange: (roleId: string) => void;
   label?: string;
   description?: string;
-  roles: RoleWithPartialMembers[];
+  roles: ApiKeyAssignableRole[];
 };
 
 export const SettingsDevelopersRoleSelector = ({

@@ -41,6 +41,11 @@ jest.mock(
   }),
 );
 
+const mockNavigateApp = jest.fn();
+jest.mock('~/hooks/useNavigateApp', () => ({
+  useNavigateApp: () => mockNavigateApp,
+}));
+
 const calendarEventMockObjectMetadataItem =
   getTestEnrichedObjectMetadataItemsMock().find(
     (item) => item.nameSingular === CoreObjectNameSingular.CalendarEvent,

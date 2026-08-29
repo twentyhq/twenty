@@ -1,9 +1,8 @@
-import { fetchLiveMarketplacePartners } from './fetch-live-marketplace-partners';
+import { fetchLivePartnerProfile } from './fetch-live-partner-profile';
 import { type MarketplacePartner } from './marketplace-partner';
 
-export async function getMarketplacePartnerBySlug(
+export const getMarketplacePartnerBySlug = async (
   slug: string,
-): Promise<MarketplacePartner | null> {
-  const partners = await fetchLiveMarketplacePartners();
-  return partners.find((partner) => partner.slug === slug) ?? null;
-}
+): Promise<MarketplacePartner | undefined> => {
+  return fetchLivePartnerProfile(slug);
+};

@@ -43,9 +43,19 @@ const PAGE_LAYOUTS_GROUP_KEYS: MetadataEntityKey[] = [
   'pageLayoutWidgets',
 ];
 
-const INDEX_VIEW_TYPES = [ViewType.TABLE, ViewType.KANBAN, ViewType.CALENDAR];
+const INDEX_VIEW_TYPES = [
+  ViewType.TABLE,
+  ViewType.KANBAN,
+  ViewType.CALENDAR,
+  ViewType.LIST,
+];
 const FIELDS_WIDGET_VIEW_TYPES = [ViewType.FIELDS_WIDGET];
-const TABLE_WIDGET_VIEW_TYPES = [ViewType.TABLE_WIDGET];
+const WIDGET_VIEW_TYPES = [
+  ViewType.TABLE_WIDGET,
+  ViewType.KANBAN_WIDGET,
+  ViewType.LIST_WIDGET,
+  ViewType.CALENDAR_WIDGET,
+];
 
 const hasOverlap = (
   staleKeys: MetadataEntityKey[],
@@ -97,7 +107,7 @@ export const useLoadStaleMetadataEntities = () => {
             }),
             client.query({
               query: FindTableWidgetViewsDocument,
-              variables: { viewTypes: TABLE_WIDGET_VIEW_TYPES },
+              variables: { viewTypes: WIDGET_VIEW_TYPES },
               fetchPolicy: 'network-only',
             }),
           ]).then(

@@ -7,7 +7,7 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { WidgetType } from 'twenty-shared/types';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { STANDARD_RECORD_PAGE_LAYOUTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
@@ -39,6 +39,10 @@ const RECORD_PAGE_LAYOUT_WIDGET_TYPES = [
   WidgetType.WORKFLOW,
   WidgetType.WORKFLOW_VERSION,
   WidgetType.WORKFLOW_RUN,
+  WidgetType.CALL_RECORDING_SUMMARY,
+  WidgetType.CALL_RECORDING_TRANSCRIPT,
+  WidgetType.MESSAGE_CAMPAIGN_BODY,
+  WidgetType.MESSAGE_CAMPAIGN_DETAILS,
 ];
 
 const WIDGET_TYPE_TO_CONFIGURATION_TYPE: Partial<
@@ -60,6 +64,14 @@ const WIDGET_TYPE_TO_CONFIGURATION_TYPE: Partial<
   [WidgetType.WORKFLOW_RUN]: WidgetConfigurationType.WORKFLOW_RUN,
   [WidgetType.RECORD_TABLE]: WidgetConfigurationType.RECORD_TABLE,
   [WidgetType.EMAIL_THREAD]: WidgetConfigurationType.EMAIL_THREAD,
+  [WidgetType.CALL_RECORDING_SUMMARY]:
+    WidgetConfigurationType.CALL_RECORDING_SUMMARY,
+  [WidgetType.CALL_RECORDING_TRANSCRIPT]:
+    WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT,
+  [WidgetType.MESSAGE_CAMPAIGN_BODY]:
+    WidgetConfigurationType.MESSAGE_CAMPAIGN_BODY,
+  [WidgetType.MESSAGE_CAMPAIGN_DETAILS]:
+    WidgetConfigurationType.MESSAGE_CAMPAIGN_DETAILS,
 };
 
 const RECORD_PAGE_FIELDS_VIEW_NAME_BY_OBJECT: Partial<
@@ -72,6 +84,7 @@ const RECORD_PAGE_FIELDS_VIEW_NAME_BY_OBJECT: Partial<
   calendarEventParticipant: 'calendarEventParticipantRecordPageFields',
   callRecording: 'callRecordingRecordPageFields',
   company: 'companyRecordPageFields',
+  messageCampaign: 'messageCampaignRecordPageFields',
   messageChannelMessageAssociation:
     'messageChannelMessageAssociationRecordPageFields',
   messageChannelMessageAssociationMessageFolder:
@@ -309,7 +322,6 @@ const computeRecordPageWidgets = ({
               widgetName,
               title: widget.title,
               type: widget.type,
-              gridPosition: widget.gridPosition,
               position: widget.position ?? null,
               configuration,
               universalConfiguration,

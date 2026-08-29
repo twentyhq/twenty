@@ -9,21 +9,33 @@ import {
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from 'src/modules/dashboard/chart-data/constants/graph-default-date-granularity.constant';
 import { getRelationFieldOrderBy } from 'src/modules/dashboard/chart-data/utils/get-relation-field-order-by.util';
 
-export const getFieldOrderBy = (
-  groupByFieldMetadata: FlatFieldMetadata,
-  groupBySubFieldName: string | null | undefined,
-  dateGranularity: ObjectRecordGroupByDateGranularity | undefined,
-  direction: OrderByDirection,
-):
+export const getFieldOrderBy = ({
+  groupByFieldMetadata,
+  groupBySubFieldName,
+  dateGranularity,
+  direction,
+  flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
+}: {
+  groupByFieldMetadata: FlatFieldMetadata;
+  groupBySubFieldName: string | null | undefined;
+  dateGranularity: ObjectRecordGroupByDateGranularity | undefined;
+  direction: OrderByDirection;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+}): Array<
   | ObjectRecordOrderByForScalarField
   | ObjectRecordOrderByWithGroupByDateField
   | ObjectRecordOrderByForCompositeField
-  | ObjectRecordOrderByForRelationField => {
+  | ObjectRecordOrderByForRelationField
+> => {
   if (isCompositeFieldMetadataType(groupByFieldMetadata.type)) {
     if (!isDefined(groupBySubFieldName)) {
       throw new Error(
@@ -31,32 +43,40 @@ export const getFieldOrderBy = (
       );
     }
 
-    return {
-      [groupByFieldMetadata.name]: {
-        [groupBySubFieldName]: direction,
+    return [
+      {
+        [groupByFieldMetadata.name]: {
+          [groupBySubFieldName]: direction,
+        },
       },
-    };
+    ];
   }
 
   if (isFieldMetadataDateKind(groupByFieldMetadata.type)) {
-    return {
-      [groupByFieldMetadata.name]: {
-        orderBy: direction,
-        granularity: dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY,
+    return [
+      {
+        [groupByFieldMetadata.name]: {
+          orderBy: direction,
+          granularity: dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY,
+        },
       },
-    };
+    ];
   }
 
   if (isMorphOrRelationFlatFieldMetadata(groupByFieldMetadata)) {
-    return getRelationFieldOrderBy(
+    return getRelationFieldOrderBy({
       groupByFieldMetadata,
       groupBySubFieldName,
       direction,
       dateGranularity,
-    );
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
   }
 
-  return {
-    [groupByFieldMetadata.name]: direction,
-  };
+  return [
+    {
+      [groupByFieldMetadata.name]: direction,
+    },
+  ];
 };

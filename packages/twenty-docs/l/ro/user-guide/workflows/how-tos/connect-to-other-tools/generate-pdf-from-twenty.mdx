@@ -17,7 +17,7 @@ Acest flux de lucru folosește un **Manual Trigger** pentru ca utilizatorii să 
 
 Înainte de a configura fluxul de lucru:
 
-1. **Creați o cheie API**: Accesați **Settings → APIs** și creați o nouă cheie API. Veți avea nevoie de acest token pentru funcția logică.
+1. **Creați o cheie API**: Accesați **Settings → APIs** și creați o nouă cheie API. Vei avea nevoie de acest jeton pentru Funcția Logică.
 2. **Configurați un serviciu de generare PDF** (opțional): Dacă doriți să generați dinamic fișiere PDF (de ex., oferte), utilizați un serviciu precum Carbone, PDFMonkey sau DocuSeal pentru a crea PDF-ul și a obține un URL de descărcare.
 
 ## Configurare pas cu pas
@@ -29,12 +29,12 @@ Acest flux de lucru folosește un **Manual Trigger** pentru ca utilizatorii să 
 3. Alegeți obiectul la care doriți să atașați fișiere PDF (de ex., **Companie** sau **Oportunitate**)
 
 <Tip>
-Cu un Manual Trigger, utilizatorii pot rula acest flux de lucru folosind un buton care apare în dreapta sus după selectarea unei înregistrări, pentru a genera și atașa un PDF.
+Cu un declanșator manual, utilizatorii pot rula acest flux de lucru folosind un buton care apare în dreapta sus odată ce o înregistrare este selectată — aceasta rulează fluxul de lucru pentru a genera și atașează un PDF.
 </Tip>
 
 ### Pasul 2: Adăugați o funcție logică
 
-1. Adăugați o acțiune **Code** (funcție logică)
+1. Adauga o actiune **Codul** (Functie Logica)
 2. Creați o funcție nouă cu codul de mai jos
 3. Configurați parametrii de intrare
 
@@ -237,7 +237,7 @@ Pentru crearea de oferte sau facturi dinamice:
 | 1   | Manual Trigger (Company) | Utilizatorul inițiază dintr-o înregistrare             |
 | 2   | Căutare înregistrare     | Obțineți detalii despre Opportunity sau despre poziții |
 | 3   | Solicitare HTTP          | Apelați API-ul de generare PDF cu datele înregistrării |
-| 4   | Funcție serverless       | Descărcați și atașați PDF-ul generat                   |
+| 4   | Funcție logică           | Descărcați și atașați PDF-ul generat                   |
 
 ### Servicii populare de generare PDF
 
@@ -246,7 +246,7 @@ Pentru crearea de oferte sau facturi dinamice:
 * **DocuSeal** - Platformă de automatizare a documentelor
 * **Documint** - Generare de documente orientată pe API
 
-Fiecare serviciu oferă un API care returnează un URL către PDF, pe care îl puteți apoi transmite funcției logice.
+Fiecare serviciu furnizează un API care returnează un URL PDF, pe care apoi îl puteți trece la Funcția Logică.
 
 ## Depanare
 

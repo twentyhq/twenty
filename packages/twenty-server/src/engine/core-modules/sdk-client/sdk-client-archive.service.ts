@@ -165,6 +165,7 @@ export class SdkClientArchiveService {
       workspaceId,
       applicationId,
       applicationUniversalIdentifier,
+      trigger: 'missing-archive',
     });
   }
 }

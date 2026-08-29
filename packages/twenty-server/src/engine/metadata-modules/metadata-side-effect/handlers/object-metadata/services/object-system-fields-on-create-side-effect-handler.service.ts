@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
+import { fromArrayToUniqueKeyRecord } from 'twenty-shared/utils';
+
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
 import { buildReservedSystemFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-reserved-system-flat-field-metadatas-for-custom-object.util';
+import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 @Injectable()
 export class ObjectSystemFieldsOnCreateSideEffectHandlerService extends MetadataSideEffectHandler(
@@ -15,40 +17,34 @@ export class ObjectSystemFieldsOnCreateSideEffectHandlerService extends Metadata
     metadataName: 'objectMetadata',
     name: 'objectSystemFieldsOnCreate',
     description:
-      'When an object is created, generate its 7 reserved system fields (id, createdAt, updatedAt, deletedAt, createdBy, updatedBy, position). The searchVector field is provisioned by the self-contained objectSearchVectorOnCreate handler alongside its GIN index and searchFieldMetadata. The default name field is NOT synthesized here: it is a caller-provided default field (SDK auto-complete on the manifest path, input transpiler on the API path).',
+      'When an object is created, provision its 7 reserved system fields (id, createdAt, updatedAt, deletedAt, createdBy, updatedBy, position), all isSystemSideEffect so the engine owns their lifecycle; searchVector is handled by objectSearchVectorOnCreate and the name field is caller-provided. Their view fields are owned by the view handlers (objectIndexViewOnCreate, objectRecordPageOnCreate), which re-derive the same reserved fields statelessly from the object identity, so there is no ordering dependency between handlers. twenty-standard is not concerned: it synchronizes through the from/to migration path, which never runs the side-effect engine, and authors its own system fields.',
   },
 ) {
   buildSideEffects({
     flatEntity: flatObjectMetadata,
   }: BuildSideEffectsArgs<'objectMetadata'>): MetadataSideEffectResult {
+    const sourceFlatObjectMetadata =
+      flatObjectMetadata as UniversalFlatObjectMetadata;
     const { applicationUniversalIdentifier, universalIdentifier } =
-      flatObjectMetadata;
+      sourceFlatObjectMetadata;
 
-    const reservedSystemFlatFieldMetadatas =
+    const systemFlatFieldMetadatas = Object.values(
       buildReservedSystemFlatFieldMetadatasForCustomObject({
         flatObjectMetadata: {
           applicationUniversalIdentifier,
           universalIdentifier,
         },
-      });
-
-    const flatEntityToCreate: Record<
-      string,
-      MetadataUniversalFlatEntity<'fieldMetadata'>
-    > = {};
-
-    for (const flatFieldMetadata of Object.values(
-      reservedSystemFlatFieldMetadatas,
-    )) {
-      flatEntityToCreate[flatFieldMetadata.universalIdentifier] =
-        flatFieldMetadata;
-    }
+      }),
+    );
 
     return {
       status: 'success',
       operations: {
         fieldMetadata: {
-          flatEntityToCreate,
+          flatEntityToCreate: fromArrayToUniqueKeyRecord({
+            array: systemFlatFieldMetadatas,
+            uniqueKey: 'universalIdentifier',
+          }),
         },
       },
     };

@@ -31,11 +31,13 @@ export const InstallApps = () => {
 
   const availableApps = ONBOARDING_INSTALLABLE_APPS.flatMap((app) => {
     const marketplaceApp = marketplaceApps.find(
-      (marketplaceApp) => marketplaceApp.id === app.universalIdentifier,
+      (marketplaceApp) =>
+        marketplaceApp.id === app.universalIdentifier &&
+        marketplaceApp.isVetted,
     );
 
     return isDefined(marketplaceApp)
-      ? [{ ...app, logo: marketplaceApp.logo ?? null }]
+      ? [{ ...app, logoUrl: marketplaceApp.logoUrl ?? null }]
       : [];
   });
 

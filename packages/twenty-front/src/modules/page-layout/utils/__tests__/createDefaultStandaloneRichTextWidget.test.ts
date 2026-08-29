@@ -10,7 +10,13 @@ describe('createDefaultStandaloneRichTextWidget', () => {
       'widget-1',
       'tab-1',
       { blocknote: '[{"type":"paragraph","content":"Test"}]' },
-      { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
+      {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 0,
+        column: 0,
+        rowSpan: 4,
+        columnSpan: 4,
+      },
     );
 
     expect(widget).toMatchObject({
@@ -22,7 +28,6 @@ describe('createDefaultStandaloneRichTextWidget', () => {
       configuration: {
         body: { blocknote: '[{"type":"paragraph","content":"Test"}]' },
       },
-      gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
       position: {
         __typename: 'PageLayoutWidgetGridPosition',
         layoutMode: PageLayoutTabLayoutMode.GRID,
@@ -39,7 +44,13 @@ describe('createDefaultStandaloneRichTextWidget', () => {
       'w1',
       't1',
       { blocknote: '[]' },
-      { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
+      {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 0,
+        column: 0,
+        rowSpan: 1,
+        columnSpan: 1,
+      },
       'object-1',
     );
 
@@ -47,7 +58,13 @@ describe('createDefaultStandaloneRichTextWidget', () => {
       'w2',
       't1',
       { blocknote: '[]' },
-      { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
+      {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 0,
+        column: 0,
+        rowSpan: 1,
+        columnSpan: 1,
+      },
     );
 
     expect(withObjectId.objectMetadataId).toBe('object-1');

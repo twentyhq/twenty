@@ -1,33 +1,6 @@
+import { makeWidget } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { sortWidgetsByVerticalListPosition } from '@/page-layout/utils/sortWidgetsByVerticalListPosition';
-import {
-  PageLayoutTabLayoutMode,
-  WidgetConfigurationType,
-  WidgetType,
-} from '~/generated-metadata/graphql';
-
-const makeWidget = (id: string, index: number): PageLayoutWidget =>
-  ({
-    __typename: 'PageLayoutWidget',
-    id,
-    pageLayoutTabId: 'tab-1',
-    title: id,
-    type: WidgetType.FIELDS,
-    gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
-    configuration: {
-      __typename: 'FieldsConfiguration',
-      configurationType: WidgetConfigurationType.FIELDS,
-    },
-    position: {
-      __typename: 'PageLayoutWidgetVerticalListPosition',
-      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-      index,
-    },
-    objectMetadataId: null,
-    createdAt: '2024-01-01T00:00:00Z',
-    updatedAt: '2024-01-01T00:00:00Z',
-    deletedAt: null,
-  }) as unknown as PageLayoutWidget;
 
 describe('sortWidgetsByVerticalListPosition', () => {
   it('should sort widgets by index ascending', () => {

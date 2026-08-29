@@ -76,7 +76,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
 
   const commonFlatFieldMetadata = getDefaultFlatFieldMetadata({
     createFieldInput,
-    flatApplication,
+    applicationUniversalIdentifier: flatApplication.universalIdentifier,
     objectMetadataUniversalIdentifier:
       parentFlatObjectMetadata.universalIdentifier,
   });

@@ -1,4 +1,7 @@
-import { type SdkClientUrls } from '@/types/SdkClientUrls';
+import { type FrontComponentStorageSnapshots } from '@/types/FrontComponentStorageSnapshots';
+import { type MediaRecorderCapabilities } from '@/types/MediaSession';
+import { type SdkClientSources } from '@/types/SdkClientSources';
+import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
 
 export type HostToWorkerRenderContext = {
   componentUrl: string;
@@ -6,7 +9,13 @@ export type HostToWorkerRenderContext = {
   applicationAccessToken?: string;
   apiUrl?: string;
   functionsBaseUrl?: string;
-  sdkClientUrls?: SdkClientUrls;
+  sdkClientSources?: SdkClientSources;
+  sharedDependenciesSource?: string;
   hostFetchOrigins?: string[];
   applicationVariables?: Record<string, string>;
+  initialViewportGeometry?: ViewportGeometrySnapshot;
+  storageSnapshots?: FrontComponentStorageSnapshots;
+  // MediaRecorder.isTypeSupported is synchronous, so the worker polyfill
+  // answers from this snapshot instead of a round trip to the host.
+  mediaRecorderCapabilities?: MediaRecorderCapabilities;
 };

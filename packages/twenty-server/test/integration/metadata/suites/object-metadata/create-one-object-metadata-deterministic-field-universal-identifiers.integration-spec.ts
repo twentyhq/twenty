@@ -3,7 +3,10 @@ import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 
-import { getFieldUniversalIdentifier } from 'twenty-shared/application';
+import {
+  getFieldUniversalIdentifier,
+  getSystemRelationFieldUniversalIdentifier,
+} from 'twenty-shared/application';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
 const SYSTEM_FIELD_NAMES = [
@@ -140,13 +143,6 @@ describe('Custom object creation deterministic field universal identifiers', () 
       );
 
       expect(forwardField).toBeDefined();
-      expect(forwardField?.universalIdentifier).toBe(
-        getFieldUniversalIdentifier({
-          applicationUniversalIdentifier,
-          objectUniversalIdentifier,
-          name: forwardFieldName,
-        }),
-      );
 
       const standardRelationObject =
         forwardField?.relation?.targetObjectMetadata;
@@ -174,11 +170,23 @@ describe('Custom object creation deterministic field universal identifiers', () 
         .find((field: FetchedField) => field.name === storedReverseFieldName);
 
       expect(reverseField).toBeDefined();
-      expect(reverseField?.universalIdentifier).toBe(
-        getFieldUniversalIdentifier({
+      // Both sides of a system relation use the name-free deterministic
+      // identifier (host + relation target object, direction encoded by
+      // swapping them) so an object rename stays a lossless update.
+      expect(forwardField?.universalIdentifier).toBe(
+        getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier,
-          objectUniversalIdentifier: standardRelationObject.universalIdentifier,
-          name: storedReverseFieldName,
+          objectUniversalIdentifier: objectUniversalIdentifier,
+          relationTargetObjectUniversalIdentifier:
+            standardRelationObject.universalIdentifier,
+        }),
+      );
+      expect(reverseField?.universalIdentifier).toBe(
+        getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier,
+          objectUniversalIdentifier:
+            standardRelationObject.universalIdentifier,
+          relationTargetObjectUniversalIdentifier: objectUniversalIdentifier,
         }),
       );
     },

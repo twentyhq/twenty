@@ -1,0 +1,143 @@
+import {
+  RestrictToHorizontalAxis,
+  RestrictToVerticalAxis,
+} from '@dnd-kit/abstract/modifiers';
+import { type UseSortableInput, useSortable } from '@dnd-kit/react/sortable';
+import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+import { DND_KIT_PLUGINS_WITHOUT_OPTIMISTIC } from '@/ui/utilities/drag-and-drop/constants/DndKitPluginsWithoutOptimistic';
+import { DRAG_SOURCE_OPACITY } from '@/ui/utilities/drag-and-drop/constants/DragSourceOpacity';
+import { DragDropItemSortableHandleRefContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemSortableHandleRefContext';
+import { type DragDropItemDropTargetOrientation } from '@/ui/utilities/drag-and-drop/types/DragDropItemDropTargetOrientation';
+import { preventNativeDragStart } from '@/ui/utilities/drag-and-drop/utils/preventNativeDragStart';
+
+const SORTABLE_COLLISION_PRIORITY = 3;
+
+const SORTABLE_TRANSITION = {
+  duration: 180,
+  easing: 'cubic-bezier(0.2, 0, 0, 1)',
+  idle: true,
+};
+
+const StyledSortableRoot = styled.div<{
+  $disabled?: boolean;
+  $fill?: boolean;
+  $isDragSourceFaded?: boolean;
+  $isDraggingHighlighted?: boolean;
+}>`
+  background: ${({ $isDraggingHighlighted }) =>
+    $isDraggingHighlighted
+      ? themeCssVariables.background.transparent.light
+      : 'transparent'};
+  border-radius: ${({ $isDraggingHighlighted }) =>
+    $isDraggingHighlighted ? themeCssVariables.border.radius.sm : '0'};
+  cursor: ${({ $disabled }) => ($disabled ? 'inherit' : 'grab')};
+  display: ${({ $fill }) => ($fill ? 'flex' : 'block')};
+  flex-shrink: ${({ $fill }) => ($fill ? 0 : 'initial')};
+  height: ${({ $fill }) => ($fill ? '100%' : 'auto')};
+  min-height: 0;
+  min-width: ${({ $fill }) => ($fill ? '0' : 'auto')};
+  opacity: ${({ $isDragSourceFaded }) =>
+    $isDragSourceFaded ? DRAG_SOURCE_OPACITY : 1};
+  outline: none;
+  position: relative;
+  transition: background 0.1s ease;
+  will-change: transform;
+
+  /* When the cell delegates dragging to an explicit handle, only the handle
+     is grabbable, so the rest of the cell keeps its ambient cursor. */
+  &:has([data-dnd-sortable-handle]) {
+    cursor: inherit;
+  }
+`;
+
+type DragDropItemSortableCellProps = {
+  accept?: UseSortableInput['accept'];
+  allowNativeDragWhenDisabled?: boolean;
+  children: ReactNode;
+  data?: Record<string, unknown>;
+  disabled?: boolean;
+  fadeSourceWhileDragging?: boolean;
+  fill?: boolean;
+  group: string;
+  hasTransition?: boolean;
+  highlightWhileDragging?: boolean;
+  id: string;
+  index: number;
+  restrictMovementTo?: 'x' | 'y' | 'none';
+  // Tags the split axis on the sortable's data so a pointer resolver can pick
+  // the drop boundary per hovered item across lists of mixed orientations.
+  orientation?: DragDropItemDropTargetOrientation;
+  type?: string;
+};
+
+export const DragDropItemSortableCell = ({
+  accept,
+  allowNativeDragWhenDisabled = false,
+  children,
+  data,
+  disabled = false,
+  fadeSourceWhileDragging = false,
+  fill = false,
+  group,
+  hasTransition = true,
+  highlightWhileDragging = false,
+  id,
+  index,
+  restrictMovementTo = 'none',
+  orientation,
+  type,
+}: DragDropItemSortableCellProps) => {
+  const { handleRef, ref, isDragging, isDragSource } = useSortable({
+    id,
+    index,
+    group,
+    type,
+    accept,
+    collisionPriority: SORTABLE_COLLISION_PRIORITY,
+    // Sortable metadata stays authoritative over consumer data so drag
+    // handlers always resolve the cell's real group and position.
+    data: {
+      ...data,
+      droppableId: group,
+      index,
+      ...(isDefined(orientation) ? { orientation } : {}),
+    },
+    disabled,
+    transition: hasTransition ? SORTABLE_TRANSITION : null,
+    plugins: DND_KIT_PLUGINS_WITHOUT_OPTIMISTIC,
+    modifiers: [
+      ...(restrictMovementTo === 'x' ? [RestrictToHorizontalAxis] : []),
+      ...(restrictMovementTo === 'y' ? [RestrictToVerticalAxis] : []),
+    ],
+    feedback: 'clone',
+  });
+
+  return (
+    <DragDropItemSortableHandleRefContext.Provider value={handleRef}>
+      <StyledSortableRoot
+        ref={ref}
+        $disabled={disabled}
+        $fill={fill}
+        $isDragSourceFaded={fadeSourceWhileDragging && isDragSource}
+        $isDraggingHighlighted={highlightWhileDragging && isDragging}
+        // dnd-kit's accessibility plugin stamps role="button" and tabindex on
+        // any registered draggable that declares neither, so a disabled cell
+        // would join the tab order and make pointer automation resolve clicks
+        // on its content to a disabled button. Declaring both opts out.
+        role={disabled ? 'none' : undefined}
+        tabIndex={disabled ? -1 : undefined}
+        onDragStart={
+          disabled && allowNativeDragWhenDisabled
+            ? undefined
+            : preventNativeDragStart
+        }
+      >
+        {children}
+      </StyledSortableRoot>
+    </DragDropItemSortableHandleRefContext.Provider>
+  );
+};

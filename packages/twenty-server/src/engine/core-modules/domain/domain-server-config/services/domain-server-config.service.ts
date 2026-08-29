@@ -46,14 +46,17 @@ export class DomainServerConfigService {
   buildBaseUrl({
     pathname,
     searchParams,
+    hash,
   }: {
     pathname?: string;
     searchParams?: Record<string, string | number>;
+    hash?: string;
   }) {
     return buildUrlWithPathnameAndSearchParams({
       baseUrl: this.getBaseUrl(),
       pathname,
       searchParams,
+      hash,
     });
   }
 

@@ -132,7 +132,6 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
               : mainGroupByFieldMetadataId,
             type: viewType,
             objectMetadataId: sourceView.objectMetadataId,
-            openRecordIn: sourceView.openRecordIn,
             anyFieldFilterValue: anyFieldFilterValue,
             calendarLayout:
               viewType === ViewType.CALENDAR
@@ -207,9 +206,16 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             id: v4(),
           }));
 
-        await performViewFilterGroupAPICreate(viewFilterGroupsToCreate, {
-          id: newViewId,
-        });
+        const filterGroupResult = await performViewFilterGroupAPICreate(
+          viewFilterGroupsToCreate,
+          {
+            id: newViewId,
+          },
+        );
+
+        if (filterGroupResult.status === 'failed') {
+          return undefined;
+        }
 
         const createViewFilterInputs = viewFiltersToCreate.map(
           (viewFilter) => ({

@@ -58,7 +58,7 @@ Iterator は入力として**配列**を想定しています。 その後、次
 
 Iterator の後に配置したアクションは、各アイテムに対して実行されます:
 
-1. 「**Send Email**」アクションを追加（Iterator 内）
+1. Iterator 内に **Send Email** アクションを追加する
 2. 宛先: `{{iterator.currentItem.email}}`
 3. 件名: こんにちは `{{iterator.currentItem.firstName}}`!
 4. 本文: 現在のアイテムのフィールドを使用したパーソナライズメッセージ

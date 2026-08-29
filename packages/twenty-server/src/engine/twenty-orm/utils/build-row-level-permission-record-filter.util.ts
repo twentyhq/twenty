@@ -21,7 +21,7 @@ import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/type
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   PermissionsException,
@@ -31,27 +31,23 @@ import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metada
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
 import { validateEnumValueCompatibility } from 'src/engine/twenty-orm/utils/validate-enum-value-compatibility.util';
 
-type BuildRowLevelPermissionRecordFilterArgs = {
+type BuildRecordFilterForRoleArgs = {
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   objectMetadata: FlatObjectMetadata;
-  roleId: string | undefined;
+  roleId: string;
   workspaceMember?: UserWorkspaceAuthContext['workspaceMember'];
 };
 
-export const buildRowLevelPermissionRecordFilter = ({
+const buildRecordFilterForRole = ({
   flatRowLevelPermissionPredicateMaps,
   flatRowLevelPermissionPredicateGroupMaps,
   flatFieldMetadataMaps,
   objectMetadata,
   roleId,
   workspaceMember,
-}: BuildRowLevelPermissionRecordFilterArgs): RecordGqlOperationFilter | null => {
-  if (!isDefined(roleId)) {
-    return null;
-  }
-
+}: BuildRecordFilterForRoleArgs): RecordGqlOperationFilter | null => {
   const predicates = Object.values(
     flatRowLevelPermissionPredicateMaps.byUniversalIdentifier,
   )
@@ -129,7 +125,6 @@ export const buildRowLevelPermissionRecordFilter = ({
           return null;
         }
 
-        // Validate that workspace member enum value is compatible with target field enum options
         const isEnumValueCompatible = validateEnumValueCompatibility({
           workspaceMemberFieldMetadata,
           targetFieldMetadata: fieldMetadata,
@@ -225,4 +220,36 @@ export const buildRowLevelPermissionRecordFilter = ({
       currentWorkspaceMemberId: workspaceMember?.id,
     },
   });
+};
+
+type BuildRowLevelPermissionRecordFilterArgs = Omit<
+  BuildRecordFilterForRoleArgs,
+  'roleId'
+> & {
+  roleIds: string[];
+};
+
+// Each role compiles on its own and the results are ANDed. Merging the raw
+// predicates first would be wrong: compilation honours only the first
+// parentless group, so one role's restrictions would vanish and widen access.
+export const buildRowLevelPermissionRecordFilter = ({
+  roleIds,
+  ...buildRecordFilterForRoleArgs
+}: BuildRowLevelPermissionRecordFilterArgs): RecordGqlOperationFilter | null => {
+  const recordFilters = roleIds
+    .map((roleId) =>
+      buildRecordFilterForRole({ ...buildRecordFilterForRoleArgs, roleId }),
+    )
+    .filter(isDefined)
+    .filter((recordFilter) => Object.keys(recordFilter).length > 0);
+
+  if (recordFilters.length === 0) {
+    return null;
+  }
+
+  if (recordFilters.length === 1) {
+    return recordFilters[0];
+  }
+
+  return { and: recordFilters };
 };

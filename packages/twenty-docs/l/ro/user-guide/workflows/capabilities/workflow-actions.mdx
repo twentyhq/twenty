@@ -19,7 +19,7 @@ Acțiunile definesc ce se întâmplă după declanșarea unui trigger. Puteți �
 
 <img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
 
-### Creați o Înregistrare
+### Creează înregistrare
 
 Adaugă o nouă înregistrare la un obiect selectat.
 
@@ -112,12 +112,12 @@ Creează o înregistrare nouă sau actualizează una existentă pe baza criterii
 
 **Configurare**:
 
-* Selectați array-ul de înregistrări dintr-un pas anterior (de ex., rezultate din Search Records, dintr-un declanșator Manual cu disponibilitate Bulk, dintr-un nod de cod). Când un pas de tip Cod sau funcție logică returnează un array de nivel superior, selectează opțiunea **Whole list** pentru a itera peste întregul rezultat.
+* Selectați array de înregistrări dintr-un pas anterior (de exemplu, rezultate din Căutare Records, dintr-un declanșator manual cu disponibilitate în grup, dintr-un nod Cod). Când un pas de tip Cod sau funcție logică returnează un array de nivel superior, selectează opțiunea **Whole list** pentru a itera peste întregul rezultat.
 * Definiți acțiunile de efectuat pe fiecare înregistrare în buclă.
 
 <Note>
-- Puteți adăuga mai multe acțiuni în cadrul unui iterator.
-- Când folosiți ramuri în interiorul unui iterator, asigurați-vă că ultimul pas al fiecărei ramuri se conectează înapoi la iterator pentru a închide bucla.
+- Puteți adăuga mai multe acțiuni în interiorul unui Iterator.
+- Când folosești ramuri în interiorul unui Iterator, asigură-te că ultimul pas al fiecărei ramuri se conectează înapoi la Iterator pentru a închide bucla.
 </Note>
 
 * Accesați câmpurile `Current Item`: pentru a utiliza câmpuri din înregistrarea procesată în prezent, faceți clic pe pasul **Iterator**, apoi selectați **Current item**. Lista câmpurilor disponibile din acea înregistrare va fi afișată și poate fi selectată pentru utilizare în acțiunile ulterioare. Poți, de asemenea, să selectezi **Use the whole item** pentru a trimite întregul element curent într-un pas ulterior.
@@ -181,7 +181,7 @@ Data programată nu poate fi în trecut. Dacă este utilizat un câmp de tip dat
 ### Trimite email
 
 Trimite un email din fluxul dumneavoastră de lucru. Este excelent pentru emailuri de grup bazate pe șabloane. Emailurile vor arăta ca cele pe care le trimiteți din căsuța de e-mail.
-Nu este potrivit pentru newslettere (care necesită o formatare mai bogată) sau pentru secvențe automate de emailuri.
+Nu este potrivit pentru newsletter-uri (care necesită formatare mai bogată) sau secvențe automate de e-mail.
 
 **Cerințe prealabile**: Adăugați un cont de email în Settings → Accounts
 
@@ -202,7 +202,7 @@ Pentru toți pașii următori, puteți face referire la variabile din pașii ant
 </Note>
 
 * Setați linia de subiect.
-* Compuneți corpul mesajului. Puteți formata linkuri, crea liste numerotate, liste cu puncte, adăuga atașamente.
+* Compuneți corpul mesajului. Aveţi posibilitatea să formataţi link-uri, să creaţi liste numerotate, liste de puncte de liniuţă, şi să adăugaţi ataşamente.
 
 <Note>
 Adăugarea semnăturilor HTML nu este posibilă în acest moment.
@@ -213,24 +213,24 @@ Adăugarea semnăturilor HTML nu este posibilă în acest moment.
 Solicită un formular în timpul execuției fluxului de lucru pentru a colecta intrarea utilizatorului. Răspunsurile pot fi apoi folosite în pașii următori pentru a crea înregistrări, a trimite emailuri sau a executa orice altă acțiune pe baza datelor introduse.
 
 <Warning>
-**Formularele sunt concepute doar pentru declanșatoare manuale**. Pentru fluxurile de lucru cu alte declanșatoare (Înregistrare creată, actualizată, etc.), formularele sunt accesibile doar prin interfața de execuție a fluxului de lucru, ceea ce nu este experiența de utilizator așteptată. Un centru de notificări va fi lansat în 2026 pentru a sprijini corespunzător formularele în fluxurile de lucru automatizate.
+**Formularele sunt concepute doar pentru declanșatoare manuale**. Pentru fluxurile de lucru cu alte declanșatoare (Înregistrare creată, actualizată, etc.), formularele sunt accesibile doar prin interfața de execuție a fluxului de lucru, ceea ce nu este experiența de utilizator așteptată. Un centru de notificare va fi lansat în 2026 pentru a sprijini în mod corespunzător formulare în fluxuri de lucru automate.
 </Warning>
 
 **Configurare**:
 
 * Configurați câmpurile pe care utilizatorii vor fi solicitați să le completeze. Pentru fiecare câmp, alegeți
-  * un tip dintre text, număr, dată, o anumită înregistrare, un câmp select. Câmpurile de tip select din toate obiectele sunt disponibile.
+  * un tip dintre text, număr, dată, o anumită înregistrare, un câmp select. Câmpurile din toate obiectele sunt disponibile pentru selecţie.
   * o etichetă
   * o valoare implicită la `Placeholder` (opțional)
 * Editați titlul formularului
 
 **Output**: Răspunsurile formularului sunt disponibile pentru utilizare în pașii următori.
 
-**Exemplu**: Fluxul de lucru "Quick Lead" este disponibil implicit în toate spațiile de lucru, disponibil oriunde în Command Menu `Cmd + K`.
+**Exemplu**: Fluxul de lucru "Quick Lead" este disponibil implicit în toate locurile de lucru, disponibil oriunde în meniul de comandă `Cmd+K`.
 
 **Cum să completați formularul**:
 
-* Declanșați fluxul de lucru manual din meniul de comandă `Cmd K`
+* Declanşaţi fluxul de lucru manual din Meniul de Comandă `Cmd+K`
 * Completați formularul afișat în panoul lateral și faceți clic pe `Submit`.
 
 <Note>
@@ -249,7 +249,7 @@ Rulați JavaScript personalizat în cadrul fluxului dumneavoastră de lucru.
 
 **Configurare**:
 
-* Accesați variabilele din pașii anteriori. Puteți edita dinamic numele variabilelor.
+* Accesați variabilele din pașii anteriori. Poți edita dinamic numele variabilelor.
 
 <VimeoEmbed videoId="1147281795" title="Demonstrație video" />
 

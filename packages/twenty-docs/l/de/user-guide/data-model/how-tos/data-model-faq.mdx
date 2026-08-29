@@ -42,7 +42,6 @@ Alle aktiven Objekte erscheinen in der Navigation. Sie können Objekte, die Sie 
 Nein, Feldtypen können nach der Erstellung nicht geändert werden. Wenn Sie einen anderen Typ benötigen, erstellen Sie ein neues Feld mit dem richtigen Typ, migrieren Sie Ihre Daten und deaktivieren Sie anschließend das alte Feld.
 </Accordion>
 
-
 <Accordion title="Warum brauche ich unterschiedliche Singular- und Pluralnamen?">
 Unsere GraphQL-API verwendet beide Formen für verschiedene Operationen:
 * `createPerson` (Singular) für Einzelaktionen
@@ -73,15 +72,15 @@ Derzeit können benutzerdefinierte Felder nicht als erforderlich festgelegt werd
 </Accordion>
 
 <Accordion title="Kann ich Formelfelder erstellen?">
-Formelfelder kommen im **1. Quartal 2026**. In der Zwischenzeit können Sie Workflows verwenden, um Feldwerte automatisch zu berechnen und zu aktualisieren.
+Formel Felder kommen in **H2 2026**. In der Zwischenzeit können Sie Workflows verwenden, um Feldwerte automatisch zu berechnen und zu aktualisieren.
 </Accordion>
 
 <Accordion title="Kann ich verschachtelte Felder in meinen Objekten haben?">
-Verschachtelte Felder kommen im **1. Quartal 2026**. Aktuell können Sie Workflows verwenden, um Felderwerte von verwandten Objekten einzuholen. Zum Beispiel: Um die Branche eines Unternehmens in einem Personen-Datensatz anzuzeigen, erstellen Sie ein benutzerdefiniertes Feld für Personen und verwenden Sie einen Workflow, um den Wert zu synchronisieren.
+Verschachtelte Felder kommen in **H2 2026**. Aktuell können Sie Workflows verwenden, um Felderwerte von verwandten Objekten einzuholen. Zum Beispiel: Um die Branche eines Unternehmens in einem Personen-Datensatz anzuzeigen, erstellen Sie ein benutzerdefiniertes Feld für Personen und verwenden Sie einen Workflow, um den Wert zu synchronisieren.
 </Accordion>
 
 <Accordion title="Kann ich Felder in Objekten umsortieren?">
-Feld-Umsortierung wird mit benutzerdefinierten Layouts im **4. Quartal 2025** verfügbar sein. Derzeit werden Felder in alphabetischer Reihenfolge angezeigt.
+Ja, gehen Sie zu Einstellungen → Datenmodell → Objekt Ihrer Wahl → Layout und klicken Sie auf **Datensatzseite anpassen**. Wenn diese Schaltfläche deaktiviert ist, müssen Sie einen Datensatz erstellen.
 </Accordion>
 </AccordionGroup>
 
@@ -93,7 +92,7 @@ Ja! Sich selbst referenzierende Beziehungen werden unterstützt und für Anwendu
 </Accordion>
 
 <Accordion title="Kann ich Viele-zu-Viele-Beziehungen erstellen?">
-Viele-zu-Viele-Beziehungen kommen im **H1 2026**. Derzeit können Sie als Workaround ein Zwischenobjekt mit zwei 1-zu-viele-Beziehungen erstellen.
+In **H2 2026** kommen viele Beziehungen. Derzeit können Sie als Workaround ein Zwischenobjekt mit zwei 1-zu-viele-Beziehungen erstellen.
 
 Erstellen Sie beispielsweise, um People und Projects (Viele-zu-Viele) zu verknüpfen, ein Objekt "Projektzuweisungen" mit:
 * Eine Beziehung zu People (viele Zuweisungen → eine Person)
@@ -146,6 +145,10 @@ Ja, Sie können CSV-Daten in jedes Objekt importieren, einschließlich benutzerd
 
 <Accordion title="Kann ich meine Datenmodell-Konfiguration exportieren?">
 Derzeit gibt es keinen integrierten Export für die Datenmodell-Konfiguration. Kontaktieren Sie den Support, wenn Sie Ihr Datenmodell zwischen Workspaces migrieren müssen.
+</Accordion>
+
+<Accordion title="Wie viele Felder können ein einzelnes Objekt haben?">
+Die maximale Anzahl von Feldern, die ein einzelnes Objekt haben kann, ist 1600 Felder pro Postgres-Limit, einschließlich vorhandener und gelöschter Felder. Bitte beachten Sie, dass Zwanzig Ihren Arbeitsbereich nicht reparieren kann, wenn die Grenze von 1600 Feldern erreicht wird, da er unter unsere Richtlinien zur fairen Nutzung fällt.
 </Accordion>
 </AccordionGroup>
 

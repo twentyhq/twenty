@@ -28,11 +28,13 @@ const StyledHeaderCell = styled.div<{
 
   text-align: left;
 
-  &:hover {
-    background: ${({ isResizing, isReadOnly }) =>
-      isReadOnly || isResizing
-        ? themeCssVariables.background.primary
-        : themeCssVariables.background.secondary};
+  @media (hover: hover) {
+    &:hover {
+      background: ${({ isResizing, isReadOnly }) =>
+        isReadOnly || isResizing
+          ? themeCssVariables.background.primary
+          : themeCssVariables.background.secondary};
+    }
   }
 
   &:active {

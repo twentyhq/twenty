@@ -4,10 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import crypto, { randomUUID } from 'node:crypto';
 
 import { msg } from '@lingui/core/macro';
-import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
-import { PasswordUpdateNotifyEmail } from 'twenty-emails';
+import { PasswordUpdateNotifyEmail, renderEmail } from 'twenty-emails';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -46,7 +45,7 @@ import { type MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/m
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
+import { SSOExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
 import { AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import {
@@ -57,6 +56,8 @@ import {
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
+import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
@@ -71,16 +72,16 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { assertIssuerIsPublishedOrThrow } from 'src/engine/core-modules/auth/utils/assert-issuer-is-published.util';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
-// import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
+import { isEmailInApprovedAccessDomains } from 'src/engine/core-modules/approved-access-domain/utils/is-email-in-approved-access-domains.util';
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
 export class AuthService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
-    private readonly workspaceAgnosticTokenService: WorkspaceAgnosticTokenService,
+    private readonly ssoExchangeTokenService: SSOExchangeTokenService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly domainServerConfigService: DomainServerConfigService,
     private readonly refreshTokenService: RefreshTokenService,
@@ -105,6 +106,7 @@ export class AuthService {
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly createSSOConnectedAccountService: CreateSSOConnectedAccountService,
+    private readonly userSessionService: UserSessionService,
   ) {}
 
   private async checkAccessAndUseInvitationOrThrow(
@@ -504,11 +506,17 @@ export class AuthService {
     return { isValid: !!workspace };
   }
 
-  async generateAuthorizationCode(
-    authorizeAppInput: AuthorizeAppInput,
-    user: AuthContextUser,
-    workspace: WorkspaceEntity,
-  ): Promise<AuthorizeAppDTO> {
+  async generateAuthorizationCode({
+    authorizeAppInput,
+    user,
+    workspace,
+    requestBaseUrl,
+  }: {
+    authorizeAppInput: AuthorizeAppInput;
+    user: AuthContextUser;
+    workspace: WorkspaceEntity;
+    requestBaseUrl: string;
+  }): Promise<AuthorizeAppDTO> {
     const { clientId, codeChallenge } = authorizeAppInput;
 
     const applicationRegistration =
@@ -582,7 +590,6 @@ export class AuthService {
       }
     }
 
-    // Validate requested scopes are a subset of the registration's allowed scopes
     const parsedScopes = authorizeAppInput.scope
       ? authorizeAppInput.scope.split(' ').filter(Boolean)
       : [];
@@ -641,6 +648,16 @@ export class AuthService {
     await this.appTokenRepository.save(token);
 
     redirectUriValidation.parsed.searchParams.set('code', authorizationCode);
+
+    const issuer = authorizeAppInput.issuer ?? requestBaseUrl;
+
+    assertIssuerIsPublishedOrThrow({
+      issuer,
+      requestBaseUrl,
+      serverUrl: this.twentyConfigService.get('SERVER_URL'),
+    });
+
+    redirectUriValidation.parsed.searchParams.set('iss', issuer);
 
     if (authorizeAppInput.state) {
       redirectUriValidation.parsed.searchParams.set(
@@ -702,7 +719,6 @@ export class AuthService {
       passwordHash: newPasswordHash,
     });
 
-    // Invalidate all existing refresh tokens for this user across all workspaces
     await this.appTokenRepository.update(
       {
         userId,
@@ -714,6 +730,11 @@ export class AuthService {
       },
     );
 
+    await this.userSessionService.revokeAllSessionsForUser({
+      userId,
+      reason: UserSessionRevokedReason.PasswordChanged,
+    });
+
     const emailTemplate = PasswordUpdateNotifyEmail({
       userName: `${user.firstName} ${user.lastName}`,
       email: user.email,
@@ -721,8 +742,8 @@ export class AuthService {
       locale: firstUserWorkspace.locale,
     });
 
-    const html = await render(emailTemplate, { pretty: true });
-    const text = await render(emailTemplate, { plainText: true });
+    const html = await renderEmail(emailTemplate, { pretty: true });
+    const text = await renderEmail(emailTemplate, { plainText: true });
 
     const passwordChangedMsg = msg`Your Password Has Been Successfully Changed`;
     const i18n = this.i18nService.getI18nInstance(firstUserWorkspace.locale);
@@ -800,7 +821,10 @@ export class AuthService {
       .andWhere('"appToken".type IN (:...types)', {
         types: INVITATION_APP_TOKEN_TYPES,
       })
-      .andWhere('"appToken"."deletedAt" IS NULL');
+      .andWhere('"appToken"."deletedAt" IS NULL')
+      .andWhere('"appToken"."expiresAt" > :now', {
+        now: new Date(),
+      });
 
     if ('workspacePersonalInviteToken' in params) {
       qr.andWhere('"appToken".value = :personalInviteToken', {
@@ -809,7 +833,7 @@ export class AuthService {
     }
 
     if ('email' in params) {
-      qr.andWhere('"appToken".context->>\'email\' = :email', {
+      qr.andWhere('lower("appToken".context->>\'email\') = lower(:email)', {
         email: params.email,
       });
     }
@@ -897,11 +921,14 @@ export class AuthService {
         : userData.existingUser.email;
 
     if (
-      workspace?.approvedAccessDomains.some(
-        (trustDomain) =>
-          trustDomain.isValidated &&
-          trustDomain.domain === getDomainFromEmail(email),
-      )
+      isDefined(workspace) &&
+      isEmailInApprovedAccessDomains({
+        email,
+        approvedAccessDomains: workspace.approvedAccessDomains,
+        isEmailVerificationRequired: this.twentyConfigService.get(
+          'IS_EMAIL_VERIFICATION_REQUIRED',
+        ),
+      })
     ) {
       return;
     }
@@ -982,27 +1009,22 @@ export class AuthService {
           },
         ));
 
+      const ssoExchangeToken =
+        await this.ssoExchangeTokenService.generateSSOExchangeToken({
+          userId: user.id,
+          authProvider,
+        });
+
+      // The token rides in the fragment so it never reaches access logs,
+      // proxies or Referer headers: browsers keep it out of the request line.
       const url = this.domainServerConfigService.buildBaseUrl({
         pathname: AppPath.SignInUp,
         searchParams: {
-          tokenPair: JSON.stringify({
-            accessOrWorkspaceAgnosticToken:
-              await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
-                {
-                  userId: user.id,
-                  authProvider,
-                },
-              ),
-            refreshToken: await this.refreshTokenService.generateRefreshToken({
-              userId: user.id,
-              authProvider,
-              targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
-            }),
-          }),
           ...(isNonEmptyString(returnToPath) && returnToPath.startsWith('/')
             ? { returnToPath }
             : {}),
         },
+        hash: `ssoExchangeToken=${ssoExchangeToken.token}`,
       });
 
       return url.toString();

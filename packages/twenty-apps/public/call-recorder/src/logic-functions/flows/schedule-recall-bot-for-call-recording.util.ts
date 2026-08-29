@@ -86,6 +86,7 @@ export const scheduleRecallBotForCallRecording = async (
 
   const scheduleResult = await scheduleRecallBot({
     meetingUrl,
+    meetingStartsAt,
     joinAt,
     metadata,
     automaticVideoOutput,

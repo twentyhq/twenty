@@ -26,6 +26,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
+import { ChartNumberFormat } from 'src/engine/metadata-modules/page-layout-widget/enums/chart-number-format.enum';
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -135,6 +136,11 @@ export class LineChartConfigurationDTO implements LineChartConfiguration {
   @IsBoolean()
   @IsOptional()
   displayLegend?: boolean;
+
+  @Field(() => ChartNumberFormat, { nullable: true })
+  @IsEnum(ChartNumberFormat)
+  @IsOptional()
+  numberFormat?: ChartNumberFormat;
 
   @Field(() => Number, { nullable: true })
   @IsNumber()

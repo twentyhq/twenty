@@ -1,5 +1,6 @@
 import {
   defineCommandMenuItem,
+  isSelectAll,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
 
@@ -15,4 +16,5 @@ export default defineCommandMenuItem({
     GENERATE_CALL_RECORDING_SUMMARY_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   label: 'Generate call summary',
   availabilityType: 'RECORD_SELECTION',
+  conditionalAvailabilityExpression: !isSelectAll,
 });

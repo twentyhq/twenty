@@ -5,18 +5,25 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
+import { RecordTableWidgetNestedRelationAddNewRow } from '@/object-record/record-table-widget/components/RecordTableWidgetNestedRelationAddNewRow';
+import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { useLoadRecordsToVirtualRows } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToVirtualRows';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 
 export const RecordTableNoRecordGroupAddNew = () => {
-  const { objectMetadataItem } = useRecordTableContextOrThrow();
+  const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
+
+  const nestedRelationCreateThrough = useContext(
+    RecordTableWidgetContext,
+  )?.nestedRelationCreateThrough;
 
   const isRecordTableCellsNonEditable = useAtomComponentStateValue(
     isRecordTableCellsNonEditableComponentState,
@@ -41,25 +48,29 @@ export const RecordTableNoRecordGroupAddNew = () => {
   const { loadRecordsToVirtualRows } = useLoadRecordsToVirtualRows();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const handleButtonClick = useCallback(async () => {
-    const createdRecord = await createNewIndexRecord({
-      position: 'last',
-    });
-
-    upsertRecordsInStore({ partialRecords: [createdRecord] });
-
-    if (isDefined(totalNumberOfRecordsToVirtualize)) {
-      loadRecordsToVirtualRows({
-        records: [createdRecord],
-        startingRealIndex: totalNumberOfRecordsToVirtualize,
+  const handleCreateRecord = useCallback(
+    async (recordInput?: Partial<ObjectRecord>) => {
+      const createdRecord = await createNewIndexRecord({
+        position: 'last',
+        ...recordInput,
       });
-    }
-  }, [
-    createNewIndexRecord,
-    upsertRecordsInStore,
-    loadRecordsToVirtualRows,
-    totalNumberOfRecordsToVirtualize,
-  ]);
+
+      upsertRecordsInStore({ partialRecords: [createdRecord] });
+
+      if (isDefined(totalNumberOfRecordsToVirtualize)) {
+        loadRecordsToVirtualRows({
+          records: [createdRecord],
+          startingRealIndex: totalNumberOfRecordsToVirtualize,
+        });
+      }
+    },
+    [
+      createNewIndexRecord,
+      upsertRecordsInStore,
+      loadRecordsToVirtualRows,
+      totalNumberOfRecordsToVirtualize,
+    ],
+  );
 
   if (isRecordTableCellsNonEditable) {
     return null;
@@ -78,9 +89,24 @@ export const RecordTableNoRecordGroupAddNew = () => {
     return null;
   }
 
+  if (isDefined(nestedRelationCreateThrough)) {
+    return (
+      <RecordTableWidgetNestedRelationAddNewRow
+        dropdownId={`${recordTableId}-nested-relation-add-new`}
+        nestedRelationCreateThrough={nestedRelationCreateThrough}
+        onRelationRecordSelected={(relationRecordId) =>
+          handleCreateRecord({
+            [nestedRelationCreateThrough.nestedRelationJoinColumnName]:
+              relationRecordId,
+          })
+        }
+      />
+    );
+  }
+
   return (
     <RecordTableActionRow
-      onClick={handleButtonClick}
+      onClick={() => handleCreateRecord()}
       LeftIcon={IconPlus}
       text={t`Add New`}
     />

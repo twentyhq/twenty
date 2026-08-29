@@ -16,7 +16,7 @@ This workflow uses a **Manual Trigger** so users can generate a PDF on demand fo
 
 Before setting up the workflow:
 
-1. **Create an API Key**: Go to **Settings → APIs** and create a new API key. You'll need this token for the logic function.
+1. **Create an API Key**: Go to **Settings → APIs** and create a new API key. You'll need this token for the Logic Function.
 2. **Set up a PDF generation service** (optional): If you want to dynamically generate PDFs (e.g., quotes), use a service like Carbone, PDFMonkey, or DocuSeal to create the PDF and get a download URL.
 
 ## Step-by-Step Setup
@@ -28,12 +28,12 @@ Before setting up the workflow:
 3. Choose the object you want to attach PDFs to (e.g., **Company** or **Opportunity**)
 
 <Tip>
-With a Manual Trigger, users can run this workflow using a button that appears on the top right once a record is selected, to generate and attach a PDF.
+With a Manual Trigger, users can run this workflow using a button that appears on the top right once a record is selected — this runs the workflow to generate and attach a PDF.
 </Tip>
 
 ### Step 2: Add a Logic Function
 
-1. Add a **Code** action (logic function)
+1. Add a **Code** action (Logic Function)
 2. Create a new function with the code below
 3. Configure the input parameters
 
@@ -235,7 +235,7 @@ For creating dynamic quotes or invoices:
 | 1 | Manual Trigger (Company) | User initiates on a record |
 | 2 | Search Record | Get Opportunity or line item details |
 | 3 | HTTP Request | Call PDF generation API with record data |
-| 4 | Serverless Function | Download and attach the generated PDF |
+| 4 | Logic Function | Download and attach the generated PDF |
 
 ### Popular PDF Generation Services
 
@@ -244,7 +244,7 @@ For creating dynamic quotes or invoices:
 - **DocuSeal** - Document automation platform
 - **Documint** - API-first document generation
 
-Each service provides an API that returns a PDF URL, which you can then pass to the logic function.
+Each service provides an API that returns a PDF URL, which you can then pass to the Logic Function.
 
 ## Troubleshooting
 

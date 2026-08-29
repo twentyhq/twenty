@@ -168,14 +168,12 @@ describe('EmailDriverFactory', () => {
     });
 
     it('should create new driver when config key changes', () => {
-      // First call with logger
       jest
         .spyOn(twentyConfigService, 'get')
         .mockReturnValue(EmailDriver.LOGGER);
 
       const driver1 = factory.getCurrentDriver();
 
-      // Second call with smtp
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {

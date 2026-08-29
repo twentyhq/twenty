@@ -105,10 +105,18 @@ describe('AgentChatStreamingService claim & reap', () => {
         expect.objectContaining({ lastStreamError: null }),
       );
       expect(streamHeartbeatService.markClaimed).toHaveBeenCalled();
+      expect(
+        streamHeartbeatService.markClaimed.mock.invocationCallOrder[0],
+      ).toBeLessThan(threadRepository.update.mock.invocationCallOrder[0]);
     });
 
     it('queues the message when another stream wins the claim race', async () => {
-      const { service, agentChatService, messageQueueService } = buildService({
+      const {
+        service,
+        agentChatService,
+        messageQueueService,
+        streamHeartbeatService,
+      } = buildService({
         claimAffected: 0,
       });
 
@@ -117,6 +125,7 @@ describe('AgentChatStreamingService claim & reap', () => {
       expect(result.queued).toBe(true);
       expect(agentChatService.queueMessage).toHaveBeenCalled();
       expect(messageQueueService.add).not.toHaveBeenCalled();
+      expect(streamHeartbeatService.clear).toHaveBeenCalled();
     });
 
     it('queues behind a halted backlog and kicks the drain from the front', async () => {
@@ -138,8 +147,23 @@ describe('AgentChatStreamingService claim & reap', () => {
       );
     });
 
+    it('loads hidden messages for the model', async () => {
+      const { service, agentChatService } = buildService();
+
+      await service.streamAgentChat(sendArguments);
+
+      expect(agentChatService.getMessagesForThread).toHaveBeenCalledWith(
+        expect.objectContaining({ includeHidden: true }),
+      );
+    });
+
     it('releases the claim when enqueueing the job fails', async () => {
-      const { service, threadRepository, messageQueueService } = buildService();
+      const {
+        service,
+        threadRepository,
+        messageQueueService,
+        streamHeartbeatService,
+      } = buildService();
 
       messageQueueService.add.mockRejectedValue(new Error('redis down'));
 
@@ -152,6 +176,7 @@ describe('AgentChatStreamingService claim & reap', () => {
         { id: 'thread-id', activeStreamId: expect.any(String) },
         { activeStreamId: null },
       );
+      expect(streamHeartbeatService.clear).toHaveBeenCalled();
     });
   });
 

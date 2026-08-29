@@ -5,9 +5,7 @@ import {
 } from 'twenty-shared/constants';
 import { OrderByDirection } from 'twenty-shared/types';
 
-export const computeLimitParameters = (
-  fromMetadata = false,
-): OpenAPIV3_1.ParameterObject => {
+export const computeLimitParameters = (): OpenAPIV3_1.ParameterObject => {
   return {
     name: 'limit',
     in: 'query',
@@ -16,8 +14,8 @@ export const computeLimitParameters = (
     schema: {
       type: 'integer',
       minimum: 0,
-      maximum: fromMetadata ? 1000 : QUERY_MAX_RECORDS,
-      default: fromMetadata ? 1000 : QUERY_DEFAULT_LIMIT_RECORDS,
+      maximum: QUERY_MAX_RECORDS,
+      default: QUERY_DEFAULT_LIMIT_RECORDS,
     },
   };
 };

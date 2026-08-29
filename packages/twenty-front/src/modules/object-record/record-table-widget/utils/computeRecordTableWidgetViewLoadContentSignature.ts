@@ -11,6 +11,7 @@ export const computeRecordTableWidgetViewLoadContentSignature = (
         fieldMetadataId: field.fieldMetadataId,
         isVisible: field.isVisible,
         position: field.position,
+        aggregateOperation: field.aggregateOperation,
       })),
     filters: [...view.viewFilters]
       .sort((filterA, filterB) => filterA.id.localeCompare(filterB.id))
@@ -31,4 +32,23 @@ export const computeRecordTableWidgetViewLoadContentSignature = (
       fieldMetadataId: sort.fieldMetadataId,
       direction: sort.direction,
     })),
+    layout: {
+      type: view.type,
+      mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId,
+      shouldHideEmptyGroups: view.shouldHideEmptyGroups,
+      kanbanAggregateOperation: view.kanbanAggregateOperation,
+      kanbanAggregateOperationFieldMetadataId:
+        view.kanbanAggregateOperationFieldMetadataId,
+      calendarLayout: view.calendarLayout,
+      calendarFieldMetadataId: view.calendarFieldMetadataId,
+      calendarEndFieldMetadataId: view.calendarEndFieldMetadataId,
+    },
+    groups: [...(view.viewGroups ?? [])]
+      .sort((groupA, groupB) => groupA.position - groupB.position)
+      .map((group) => ({
+        id: group.id,
+        fieldValue: group.fieldValue,
+        isVisible: group.isVisible,
+        position: group.position,
+      })),
   });

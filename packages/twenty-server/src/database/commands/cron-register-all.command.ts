@@ -14,6 +14,7 @@ import { RotateSigningKeysCronCommand } from 'src/engine/core-modules/jwt/crons/
 import { CronTriggerCronCommand } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.command';
 import { CheckPublicDomainsValidRecordsCronCommand } from 'src/engine/core-modules/public-domain/crons/commands/check-public-domains-valid-records.cron.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserSessionCleanupCronCommand } from 'src/engine/core-modules/user-session/crons/commands/user-session-cleanup.cron.command';
 import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-modules/workspace/crons/commands/check-custom-domain-valid-records.cron.command';
 import { WebhookSubscriptionRenewalCronCommand } from 'src/modules/connected-account/webhook-subscription-manager/crons/commands/webhook-subscription-renewal.cron.command';
 import { TrashCleanupCronCommand } from 'src/engine/trash-cleanup/commands/trash-cleanup.cron.command';
@@ -27,6 +28,7 @@ import { MessagingMessageListFetchCronCommand } from 'src/modules/messaging/mess
 import { MessagingMessagesImportCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-messages-import.cron.command';
 import { MessagingOngoingStaleCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-ongoing-stale.cron.command';
 import { MessagingRelaunchFailedMessageChannelsCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-relaunch-failed-message-channels.cron.command';
+import { WorkflowCoreConsistencyCronCommand } from 'src/modules/workflow/workflow-core-consistency/crons/commands/workflow-core-consistency-cron.command';
 import { WorkflowCleanWorkflowRunsCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-clean-workflow-runs.cron.command';
 import { WorkflowHandleStaledRunsCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-handle-staled-runs.cron.command';
 import { WorkflowRunEnqueueCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-run-enqueue.cron.command';
@@ -56,6 +58,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly workflowRunEnqueueCronCommand: WorkflowRunEnqueueCronCommand,
     private readonly workflowHandleStaledRunsCronCommand: WorkflowHandleStaledRunsCronCommand,
     private readonly workflowCleanWorkflowRunsCronCommand: WorkflowCleanWorkflowRunsCronCommand,
+    private readonly workflowCoreConsistencyCronCommand: WorkflowCoreConsistencyCronCommand,
 
     private readonly checkCustomDomainValidRecordsCronCommand: CheckCustomDomainValidRecordsCronCommand,
     private readonly checkPublicDomainsValidRecordsCronCommand: CheckPublicDomainsValidRecordsCronCommand,
@@ -71,6 +74,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly staleRegistrationCleanupCronCommand: StaleRegistrationCleanupCronCommand,
     private readonly pendingFileCleanupCronCommand: PendingFileCleanupCronCommand,
     private readonly billingReminderCronCommand: BillingReminderCronCommand,
+    private readonly userSessionCleanupCronCommand: UserSessionCleanupCronCommand,
     private readonly twentyConfigService: TwentyConfigService,
   ) {
     super();
@@ -151,6 +155,10 @@ export class CronRegisterAllCommand extends CommandRunner {
         command: this.workflowCleanWorkflowRunsCronCommand,
       },
       {
+        name: 'WorkflowCoreConsistency',
+        command: this.workflowCoreConsistencyCronCommand,
+      },
+      {
         name: 'CronTrigger',
         command: this.cronTriggerCronCommand,
       },
@@ -200,6 +208,10 @@ export class CronRegisterAllCommand extends CommandRunner {
         name: 'BillingReminder',
         command: this.billingReminderCronCommand,
         isEnabled: isBillingEnabled,
+      },
+      {
+        name: 'UserSessionCleanup',
+        command: this.userSessionCleanupCronCommand,
       },
     ];
 

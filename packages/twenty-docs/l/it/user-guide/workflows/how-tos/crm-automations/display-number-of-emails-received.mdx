@@ -56,11 +56,6 @@ L'azione Search Records è limitata a restituire al massimo 200 record. Tuttavia
 ### Passaggio 4: Aggiorna il record Persona con un'azione Create or Update Record
 
 1. Aggiungi un'azione **Create or Update Record**
-
-<Warning>
-Usa **Upsert Record** invece di **Update Record** qui. Questo ti permette di identificare la persona tramite il suo indirizzo email (il campo `handle`) invece di richiedere un ID record da un passaggio precedente.
-</Warning>
-
 2. Seleziona **People** come oggetto
 3. Trova la persona facendo corrispondere la sua email all'`handle` del Message Participant
 4. Imposta il tuo campo personalizzato "Numero di email ricevute" su `{{searchRecords.totalCount}}`

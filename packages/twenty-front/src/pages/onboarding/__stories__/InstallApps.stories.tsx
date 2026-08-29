@@ -22,7 +22,7 @@ const ENRICHMENT_UNIVERSAL_IDENTIFIER = '4a1178c1-3535-4a47-b592-231d3216b36f';
 const LAST_CONTACT_UNIVERSAL_IDENTIFIER =
   '66a504cc-0a75-410e-a43f-cdeae1db1522';
 
-const buildMarketplaceApp = (id: string, name: string) => ({
+const buildMarketplaceApp = (id: string, name: string, isVetted = true) => ({
   __typename: 'MarketplaceApp',
   id,
   name,
@@ -31,7 +31,7 @@ const buildMarketplaceApp = (id: string, name: string) => ({
   category: 'productivity',
   logo: null,
   sourcePackage: name,
-  isVetted: true,
+  isVetted,
 });
 
 const currentUserHandler = graphql.query(
@@ -102,6 +102,35 @@ export const OnlyAvailableApps: Story = {
         buildMarketplaceApp(
           CALL_RECORDER_UNIVERSAL_IDENTIFIER,
           'Call recorder',
+        ),
+      ]),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+    await canvas.findByText('Call recorder');
+    expect(canvas.queryByText('Enrichment')).toBeNull();
+    expect(canvas.queryByText('Last contact')).toBeNull();
+  },
+};
+
+export const OnlyVettedApps: Story = {
+  parameters: {
+    msw: {
+      handlers: buildHandlers([
+        buildMarketplaceApp(
+          CALL_RECORDER_UNIVERSAL_IDENTIFIER,
+          'Call recorder',
+        ),
+        buildMarketplaceApp(
+          ENRICHMENT_UNIVERSAL_IDENTIFIER,
+          'Enrichment',
+          false,
+        ),
+        buildMarketplaceApp(
+          LAST_CONTACT_UNIVERSAL_IDENTIFIER,
+          'Last contact',
+          false,
         ),
       ]),
     },

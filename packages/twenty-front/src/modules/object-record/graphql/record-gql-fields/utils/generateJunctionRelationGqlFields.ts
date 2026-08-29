@@ -82,7 +82,6 @@ const buildTargetFieldGqlFields = (
   return buildRegularTargetFieldGqlFields(targetField, objectMetadataItems);
 };
 
-// Generates GraphQL fields for a junction relation, including the nested target objects
 export const generateJunctionRelationGqlFields = ({
   fieldMetadataItem,
   objectMetadataItems,
@@ -91,6 +90,8 @@ export const generateJunctionRelationGqlFields = ({
     settings: fieldMetadataItem.settings,
     relationObjectMetadataId:
       fieldMetadataItem.relation?.targetObjectMetadata.id ?? '',
+    relationTargetFieldMetadataId:
+      fieldMetadataItem.relation?.targetFieldMetadata.id,
     objectMetadataItems,
   });
 
