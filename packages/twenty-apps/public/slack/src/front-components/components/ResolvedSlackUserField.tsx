@@ -51,6 +51,11 @@ type ResolvedSlackUserFieldProps = {
   disabled?: boolean;
 };
 
+const buildFallbackMeta = (resolvedUser: SlackResolvedUser): string =>
+  isNonEmptyString(resolvedUser.slackTeamId)
+    ? `Slack user ${resolvedUser.slackUserId} · Team ${resolvedUser.slackTeamId}`
+    : `Slack user ${resolvedUser.slackUserId}`;
+
 export const ResolvedSlackUserField = ({
   resolvedUser,
   onChangeRequest,
@@ -69,7 +74,7 @@ export const ResolvedSlackUserField = ({
       <StyledMeta>
         {isNonEmptyString(resolvedUser.email)
           ? resolvedUser.email
-          : `Slack user ${resolvedUser.slackUserId} · Team ${resolvedUser.slackTeamId}`}
+          : buildFallbackMeta(resolvedUser)}
       </StyledMeta>
     </StyledDetails>
   </StyledResolvedUser>
