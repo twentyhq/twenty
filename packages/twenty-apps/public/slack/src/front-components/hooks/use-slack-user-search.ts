@@ -47,7 +47,6 @@ const parseSearchResponse = (value: unknown): SlackUserSearchResponse => {
         ? undefined
         : toSlackResolvedUser({
             record: slackUserRecord,
-            // The roster is the installed workspace by definition.
             isInInstalledWorkspace: true,
           });
 
