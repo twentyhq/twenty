@@ -25,7 +25,7 @@ const useRecordedSearchValues = (recorded: string[]) => {
   }
 };
 
-const SearchRecorder = ({ recorded }: { recorded: string[] }) => {
+const SearchRecorderEffect = ({ recorded }: { recorded: string[] }) => {
   useRecordedSearchValues(recorded);
 
   return null;
@@ -50,7 +50,7 @@ describe('restoring the panel from the url', () => {
             initialEntries={[`/chat?panel=${encodeURIComponent(OBJECT_PATH)}`]}
           >
             {children}
-            <SearchRecorder recorded={recordedSearchValues} />
+            <SearchRecorderEffect recorded={recordedSearchValues} />
           </MemoryRouter>
         </I18nProvider>
       </BaseWrapper>

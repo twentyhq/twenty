@@ -7,8 +7,6 @@ import { useCurrentSidePanelRoutedPath } from '@/side-panel/routing/hooks/useCur
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { isSidePanelHostablePath } from '@/side-panel/routing/utils/isSidePanelHostablePath';
 
-// What the panel hosts rides in the URL, so a conversation and what sits
-// beside it can be shared and survive a reload.
 export const SidePanelPathUrlSyncEffect = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentRoutedPath = useCurrentSidePanelRoutedPath();

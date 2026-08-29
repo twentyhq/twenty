@@ -16,8 +16,6 @@ export const useOpenRoutedPageInSidePanel = () => {
 
   const openRoutedPageInSidePanel = useCallback(
     ({ path }: { path: string }) => {
-      // A chat message or an open panel can outlive what it names, and this
-      // runs from a click handler, where throwing would reach no one.
       if (!isSidePanelHostablePath(path)) {
         return;
       }

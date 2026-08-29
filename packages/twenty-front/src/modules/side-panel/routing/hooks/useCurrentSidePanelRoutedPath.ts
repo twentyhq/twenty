@@ -6,8 +6,6 @@ import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoSta
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-// The path the panel is currently showing, or null whenever it is showing one
-// of the panel-native pages, which have no URL.
 export const useCurrentSidePanelRoutedPath = () => {
   const store = useStore();
   const sidePanelPage = useAtomStateValue(sidePanelPageState);

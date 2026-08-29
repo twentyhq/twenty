@@ -5,6 +5,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
+import { getPathnameFromPath } from '@/side-panel/routing/utils/getPathnameFromPath';
 
 export type SidePanelRoutedPageInfo = {
   title: string;
@@ -21,7 +22,7 @@ export const resolveSidePanelRoutedPageInfo = ({
   path: string;
   store: ReturnType<typeof getDefaultStore>;
 }): SidePanelRoutedPageInfo => {
-  const pathname = path.split('?')[0].split('#')[0];
+  const pathname = getPathnameFromPath(path);
   const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
   const fieldMatch = matchPath(

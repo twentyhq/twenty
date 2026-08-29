@@ -9,6 +9,7 @@ import {
 } from 'react-router-dom';
 
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
+import { SETTINGS_DATA_MODEL_PERMISSION } from '@/settings/constants/SettingsDataModelPermission';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
 import { SettingsPath } from 'twenty-shared/types';
@@ -848,7 +849,7 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={PermissionFlagType.DATA_MODEL}
+            settingsPermission={SETTINGS_DATA_MODEL_PERMISSION}
           />
         }
       >

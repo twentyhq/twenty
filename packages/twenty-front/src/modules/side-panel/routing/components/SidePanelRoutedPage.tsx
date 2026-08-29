@@ -13,9 +13,6 @@ import { isSidePanelHostablePath } from '@/side-panel/routing/utils/isSidePanelH
 import { toSidePanelLocation } from '@/side-panel/routing/utils/toSidePanelLocation';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-// A second outlet. The panel renders the same route elements as the main one
-// against a location it owns, so a hosted page reads its params from the path
-// it was opened with rather than from the browser URL.
 export const SidePanelRoutedPage = () => {
   const sidePanelRoutedPagePath = useAtomComponentStateValue(
     sidePanelRoutedPagePathComponentState,

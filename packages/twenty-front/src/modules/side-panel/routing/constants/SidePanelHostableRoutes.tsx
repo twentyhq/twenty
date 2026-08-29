@@ -3,7 +3,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 import { type SidePanelHostableRoute } from '@/side-panel/routing/types/SidePanelHostableRoute';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { SETTINGS_DATA_MODEL_PERMISSION } from '@/settings/constants/SettingsDataModelPermission';
 
 // Loaded lazily like the main route tree does it, so hosting a page in the
 // panel never pulls it into the bundle of everything that renders a panel.
@@ -23,11 +23,11 @@ export const SIDE_PANEL_HOSTABLE_ROUTES: SidePanelHostableRoute[] = [
   {
     path: getSettingsPath(SettingsPath.ObjectFieldEdit),
     element: <SettingsObjectFieldEdit />,
-    settingsPermission: PermissionFlagType.DATA_MODEL,
+    settingsPermission: SETTINGS_DATA_MODEL_PERMISSION,
   },
   {
     path: getSettingsPath(SettingsPath.ObjectDetail),
     element: <SettingsObjectDetailPage />,
-    settingsPermission: PermissionFlagType.DATA_MODEL,
+    settingsPermission: SETTINGS_DATA_MODEL_PERMISSION,
   },
 ];
