@@ -125,15 +125,17 @@ export const CalendarEventComposerFields = ({
                 contextRecord={contextRecord}
               />
             </ComposerFieldRow>
-            <ComposerFieldRow
-              label={t`Relations`}
-              labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
-            >
-              <CalendarEventComposerTargetsInput
-                targets={composerState.targets}
-                onTargetChange={composerState.handleTargetChange}
-              />
-            </ComposerFieldRow>
+            {composerState.canPickTargets && (
+              <ComposerFieldRow
+                label={t`Relations`}
+                labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
+              >
+                <CalendarEventComposerTargetsInput
+                  targets={composerState.targets}
+                  onTargetChange={composerState.handleTargetChange}
+                />
+              </ComposerFieldRow>
+            )}
             <ComposerFieldRow
               label={t`Title`}
               labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}

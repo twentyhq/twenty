@@ -123,6 +123,8 @@ export const useCalendarEventComposer = ({
         ]
       : [];
 
+  const canPickTargets = targetObjectMetadataItems.length > 0;
+
   const targets = [...contextTargets, ...pickedTargets].filter(
     ({ recordId }, index, allTargets) =>
       !discardedTargetRecordIds.includes(recordId) &&
@@ -296,6 +298,7 @@ export const useCalendarEventComposer = ({
     attendees,
     attendeeEmails,
     canCreate,
+    canPickTargets,
     connectedAccountId,
     dates,
     description,

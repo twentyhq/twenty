@@ -9,6 +9,9 @@ const mockCreateCalendarEventTargets = jest.fn();
 const mockContextRecord: { current: ObjectRecord | undefined } = {
   current: undefined,
 };
+const mockTargetObjectMetadataItems: {
+  current: { id: string; nameSingular: string }[];
+} = { current: [] };
 
 jest.mock('@/activities/calendar/hooks/useCreateCalendarEvent', () => ({
   useCreateCalendarEvent: () => ({
@@ -26,9 +29,8 @@ jest.mock('@/activities/calendar/hooks/useCreateCalendarEventTargets', () => ({
 jest.mock(
   '@/activities/calendar/hooks/useCalendarEventTargetObjectMetadataItems',
   () => ({
-    useCalendarEventTargetObjectMetadataItems: () => [
-      { id: 'person-object-metadata-id', nameSingular: 'person' },
-    ],
+    useCalendarEventTargetObjectMetadataItems: () =>
+      mockTargetObjectMetadataItems.current,
   }),
 );
 
@@ -67,6 +69,9 @@ describe('useCalendarEventComposer', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockContextRecord.current = undefined;
+    mockTargetObjectMetadataItems.current = [
+      { id: 'person-object-metadata-id', nameSingular: 'person' },
+    ];
   });
 
   it('submits only once while creation is pending', async () => {
@@ -231,6 +236,45 @@ describe('useCalendarEventComposer', () => {
     });
 
     expect(result.current.targets).toEqual([]);
+  });
+
+  it('creates the event without relations when the workspace has no junction', async () => {
+    mockTargetObjectMetadataItems.current = [];
+    mockContextRecord.current = { id: 'person-id' } as ObjectRecord;
+    mockCreateCalendarEvent.mockResolvedValue({
+      success: true,
+      calendarEventId: 'calendar-event-id',
+    });
+
+    const onCreated = jest.fn();
+    const { result } = renderHook(() =>
+      useCalendarEventComposer({
+        initialValues: {
+          connectedAccountId: 'account-id',
+          contextRecord: {
+            objectNameSingular: 'person',
+            recordId: 'person-id',
+          },
+          defaultAttendees: '',
+          timeZone: 'UTC',
+        },
+        onCreated,
+      }),
+    );
+
+    expect(result.current.canPickTargets).toBe(false);
+    expect(result.current.targets).toEqual([]);
+
+    act(() => {
+      result.current.setTitle('Planning session');
+    });
+
+    await act(async () => {
+      await result.current.handleCreate();
+    });
+
+    expect(mockCreateCalendarEventTargets).not.toHaveBeenCalled();
+    expect(onCreated).toHaveBeenCalledTimes(1);
   });
 
   it('keeps an all-day event at least one day long', () => {
