@@ -12,11 +12,13 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import {
   type NavigationDrawerActiveTab,
   NAVIGATION_DRAWER_TABS,
 } from '@/ui/navigation/states/navigationDrawerTabs';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const StyledSwitcher = styled.div`
@@ -96,6 +98,17 @@ export const MainNavigationDrawerModeSwitcher = () => {
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
   const { switchNavigationDrawerMode } = useSwitchNavigationDrawerMode();
+
+  const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
+    WorkspaceActivationStatus.SUSPENDED,
+  );
+
+  // A suspended workspace is held on the billing settings by the route guard,
+  // so offering the modes it would bounce back from only flashes the user out
+  // and in again.
+  if (isWorkspaceSuspended) {
+    return null;
+  }
 
   const modes: NavigationDrawerMode[] = [
     {

@@ -10,6 +10,7 @@ describe('isSettingsPath', () => {
 
   it.each([
     '/objects/companies',
+    '/objects/settings',
     '/settingsomething',
     // A custom object named "settings" gives a record path with the segment in it
     '/object/settings/20202020-0687-4c41-b707-ed1bfca972a7',
