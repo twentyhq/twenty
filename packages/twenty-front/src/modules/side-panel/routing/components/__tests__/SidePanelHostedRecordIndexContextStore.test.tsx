@@ -23,27 +23,35 @@ const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 
 // Reads without naming an instance, so what it renders is whichever context
 // store the surface around it resolves to.
-const mockHostedPageProbe = () => {
-  const objectMetadataItemId = useAtomComponentStateValue(
+const MockHostedPageProbe = () => {
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 
-  return <div data-testid="hosted-object-id">{objectMetadataItemId}</div>;
+  return (
+    <div data-testid="hosted-object-id">
+      {contextStoreCurrentObjectMetadataItemId}
+    </div>
+  );
 };
 
 // Standing in for the real page so the assertion is about which context store
 // the hosted route resolves, not about rendering a record index in jsdom.
 jest.mock('~/pages/object-record/RecordIndexPage', () => ({
-  RecordIndexPage: () => mockHostedPageProbe(),
+  RecordIndexPage: () => <MockHostedPageProbe />,
 }));
 
 const MainSurfaceProbe = () => {
-  const objectMetadataItemId = useAtomComponentStateValue(
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  return <div data-testid="main-object-id">{objectMetadataItemId}</div>;
+  return (
+    <div data-testid="main-object-id">
+      {contextStoreCurrentObjectMetadataItemId}
+    </div>
+  );
 };
 
 let jotaiStore: ReturnType<typeof createStore>;
