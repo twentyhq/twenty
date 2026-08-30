@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { useCallback, useEffect, useState } from 'react';
 import { RestApiClient } from 'twenty-client-sdk/rest';
 
@@ -6,8 +6,9 @@ import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-
 import { formatWorkspaceMemberName } from 'src/front-components/utils/format-workspace-member-name.util';
 
 // The list shows manual and email-matched links, so cap what we render and tell
-// the reader when more exist rather than silently dropping them. One extra
-// record is fetched only to detect that overflow.
+// the reader when more exist rather than silently dropping them. The server
+// silently clamps the limit to its 200-record page cap, so overflow is read
+// from the response's total count, never from an over-cap fetch.
 const SLACK_USER_LINKS_PAGE_SIZE = 200;
 
 const SLACK_USER_LINKS_ERROR_MESSAGE =
@@ -28,6 +29,7 @@ type SlackUserLinkRestRecord = {
 
 type SlackUserLinksResponse = {
   data?: { slackUserLinks?: SlackUserLinkRestRecord[] | null } | null;
+  totalCount?: number | null;
 };
 
 type SlackUserLinksState = {
@@ -58,7 +60,7 @@ export const useSlackUserLinks = (): SlackUserLinksState => {
         {
           query: {
             depth: '1',
-            limit: String(SLACK_USER_LINKS_PAGE_SIZE + 1),
+            limit: String(SLACK_USER_LINKS_PAGE_SIZE),
           },
         },
       );
@@ -89,8 +91,10 @@ export const useSlackUserLinks = (): SlackUserLinksState => {
         ),
       );
 
-      setHasMoreSlackUserLinks(records.length > SLACK_USER_LINKS_PAGE_SIZE);
-      setSlackUserLinks(records.slice(0, SLACK_USER_LINKS_PAGE_SIZE));
+      setHasMoreSlackUserLinks(
+        isNumber(response.totalCount) && response.totalCount > records.length,
+      );
+      setSlackUserLinks(records);
     } catch {
       setErrorMessage(SLACK_USER_LINKS_ERROR_MESSAGE);
     } finally {
