@@ -1,13 +1,16 @@
 import { z } from 'zod';
 
+import { AI_MODEL_KINDS } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-kind.type';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { longContextCostSchema } from 'src/engine/metadata-modules/ai/ai-models/types/long-context-cost.schema';
 
 export const aiProviderModelConfigSchema = z.object({
   name: z.string(),
   label: z.string(),
+  kind: z.enum(AI_MODEL_KINDS).optional(),
   description: z.string().optional(),
   modelFamily: z.nativeEnum(ModelFamily).optional(),
+  costPerMinute: z.number().nonnegative().optional(),
   inputCostPerMillionTokens: z.number().optional(),
   outputCostPerMillionTokens: z.number().optional(),
   cachedInputCostPerMillionTokens: z.number().optional(),

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type LanguageModel } from 'ai';
+import { type LanguageModel, type TranscriptionModel } from 'ai';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type AiSdkPackage } from 'twenty-shared/ai';
 
@@ -16,8 +16,13 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AiModelPreferencesService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-preferences.service';
 import { ProviderConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-config.service';
-import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
+import {
+  SdkProviderFactoryService,
+  type AiSdkProviderInstance,
+} from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
+import { DEFAULT_AI_MODEL_KIND } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-kind.type';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
+import { type AiTranscriptionModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-transcription-model-config.type';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
 import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
@@ -26,7 +31,7 @@ import {
   AUTO_SELECT_FAST_MODEL_ID,
   AUTO_SELECT_SMART_MODEL_ID,
 } from 'twenty-shared/constants';
-import { isAutoSelectModelId } from 'twenty-shared/utils';
+import { isAutoSelectModelId, isDefined } from 'twenty-shared/utils';
 
 import { DEFAULT_MAX_OUTPUT_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-max-output-tokens.const';
 import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
@@ -48,11 +53,24 @@ export interface RegisteredAiModel {
   modelsDevName?: string;
 }
 
+export type RegisteredAiTranscriptionModel = {
+  modelId: string;
+  sdkPackage: AiSdkPackage;
+  model: TranscriptionModel;
+  providerName: string;
+};
+
 @Injectable()
 export class AiModelRegistryService {
   private readonly logger = new Logger(AiModelRegistryService.name);
   private modelRegistry: Map<string, RegisteredAiModel> = new Map();
   private modelConfigCache: Map<string, AiModelConfig> = new Map();
+  // Transcription models are kept out of modelRegistry and modelConfigCache so
+  // they can never surface in the chat model picker or reach token costing.
+  private transcriptionRegistry: Map<string, RegisteredAiTranscriptionModel> =
+    new Map();
+  private transcriptionConfigCache: Map<string, AiTranscriptionModelConfig> =
+    new Map();
   private providerModelDefCache: Map<
     string,
     { providerName: string; modelDef: AiProviderModelConfig }
@@ -97,6 +115,8 @@ export class AiModelRegistryService {
     this.modelRegistry.clear();
     this.sdkProviderFactory.clearCache();
     this.modelConfigCache.clear();
+    this.transcriptionRegistry.clear();
+    this.transcriptionConfigCache.clear();
     this.providerModelDefCache.clear();
 
     const providers = this.providerConfigService.getResolvedProviders({
@@ -128,6 +148,18 @@ export class AiModelRegistryService {
       for (const modelDef of models) {
         const compositeId = buildCompositeModelId(providerKey, modelDef.name);
 
+        if ((modelDef.kind ?? DEFAULT_AI_MODEL_KIND) === 'transcription') {
+          this.registerTranscriptionModel({
+            compositeId,
+            providerKey,
+            config,
+            modelDef,
+            sdkInstance,
+          });
+
+          continue;
+        }
+
         this.modelConfigCache.set(
           compositeId,
           this.toAiModelConfig(compositeId, config, modelDef),
@@ -150,6 +182,89 @@ export class AiModelRegistryService {
         }
       }
     }
+  }
+
+  private registerTranscriptionModel({
+    compositeId,
+    providerKey,
+    config,
+    modelDef,
+    sdkInstance,
+  }: {
+    compositeId: string;
+    providerKey: string;
+    config: AiProviderConfig;
+    modelDef: AiProviderModelConfig;
+    sdkInstance: AiSdkProviderInstance | undefined;
+  }): void {
+    this.transcriptionConfigCache.set(compositeId, {
+      modelId: compositeId,
+      sdkPackage: config.npm,
+      label: modelDef.label,
+      description: modelDef.description ?? compositeId,
+      dataResidency: config.dataResidency,
+      costPerMinute: modelDef.costPerMinute ?? 0,
+      isDeprecated: modelDef.isDeprecated,
+    });
+
+    if (!sdkInstance) {
+      return;
+    }
+
+    const createTranscriptionModel = sdkInstance.createTranscriptionModel;
+
+    // A transcription model pointed at a provider with no speech-to-text API is
+    // a config mistake worth naming at boot rather than at the first dictation.
+    if (!isDefined(createTranscriptionModel)) {
+      this.logger.warn(
+        `Skipping transcription model "${compositeId}": ${config.npm} exposes no transcription API`,
+      );
+
+      return;
+    }
+
+    this.transcriptionRegistry.set(compositeId, {
+      modelId: compositeId,
+      sdkPackage: config.npm,
+      model: createTranscriptionModel(modelDef.name),
+      providerName: providerKey,
+    });
+  }
+
+  getTranscriptionModel(
+    modelId: string,
+  ): RegisteredAiTranscriptionModel | undefined {
+    this.ensureFresh();
+
+    return this.transcriptionRegistry.get(modelId);
+  }
+
+  getAvailableTranscriptionModels(): RegisteredAiTranscriptionModel[] {
+    this.ensureFresh();
+
+    return Array.from(this.transcriptionRegistry.values());
+  }
+
+  // Registration order follows the provider config, so the first entry is the
+  // one an operator listed first — the closest thing to an explicit default
+  // until dictation needs a preference of its own.
+  getDefaultTranscriptionModel(): RegisteredAiTranscriptionModel | undefined {
+    return this.getAvailableTranscriptionModels().find(
+      (model) =>
+        this.getTranscriptionModelConfig(model.modelId)?.isDeprecated !== true,
+    );
+  }
+
+  getTranscriptionModelConfig(
+    modelId: string,
+  ): AiTranscriptionModelConfig | undefined {
+    this.ensureFresh();
+
+    return this.transcriptionConfigCache.get(modelId);
+  }
+
+  hasTranscriptionModel(): boolean {
+    return this.getAvailableTranscriptionModels().length > 0;
   }
 
   private toAiModelConfig(
