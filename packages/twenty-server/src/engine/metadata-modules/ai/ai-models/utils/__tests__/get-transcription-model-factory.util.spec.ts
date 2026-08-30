@@ -9,6 +9,7 @@ describe('getTranscriptionModelFactory', () => {
 
     expect(factory).toBeDefined();
     expect(factory?.('whisper-1')).toBe(model);
+    expect(provider.transcription).toHaveBeenCalledTimes(1);
     expect(provider.transcription).toHaveBeenCalledWith('whisper-1');
   });
 
