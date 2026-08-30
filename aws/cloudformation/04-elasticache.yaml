@@ -1,0 +1,115 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'ElastiCache Redis for Twenty CRM'
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: 'twenty-crm'
+    Description: 'Environment name prefix for resources'
+
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: 'VPC ID from VPC stack'
+
+  PrivateSubnet1Id:
+    Type: AWS::EC2::Subnet::Id
+    Description: 'Private Subnet 1 ID'
+
+  PrivateSubnet2Id:
+    Type: AWS::EC2::Subnet::Id
+    Description: 'Private Subnet 2 ID'
+
+  ElastiCacheSecurityGroupId:
+    Type: String
+    Description: 'ElastiCache Security Group ID'
+
+  CacheNodeType:
+    Type: String
+    Default: 'cache.t3.micro'
+    AllowedValues:
+      - cache.t3.micro
+      - cache.t3.small
+      - cache.t3.medium
+      - cache.r5.large
+    Description: 'ElastiCache node type'
+
+  CacheEngineVersion:
+    Type: String
+    Default: '7.0'
+    Description: 'Redis engine version'
+
+  NumCacheNodes:
+    Type: Number
+    Default: 1
+    MinValue: 1
+    MaxValue: 1
+    Description: 'Number of cache nodes (1 for single-node)'
+
+Resources:
+  # Redis Subnet Group
+  RedisSubnetGroup:
+    Type: AWS::ElastiCache::SubnetGroup
+    Properties:
+      Description: 'Subnet group for Twenty CRM Redis'
+      SubnetIds:
+        - !Ref PrivateSubnet1Id
+        - !Ref PrivateSubnet2Id
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-redis-subnet-group'
+
+  # Redis Parameter Group
+  RedisParameterGroup:
+    Type: AWS::ElastiCache::ParameterGroup
+    Properties:
+      CacheParameterGroupFamily: redis7.0
+      Description: 'Parameter group for Twenty CRM Redis'
+      Properties:
+        maxmemory-policy: allkeys-lru
+        notify-keyspace-events: Ex
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-redis-params'
+
+  # Redis Replication Group (single node for dev, multi-node for prod)
+  RedisReplicationGroup:
+    Type: AWS::ElastiCache::ReplicationGroup
+    DeletionPolicy: Snapshot
+    UpdateReplacePolicy: Snapshot
+    Properties:
+      ReplicationGroupDescription: 'Redis cluster for Twenty CRM'
+      ReplicationGroupId: !Sub '${EnvironmentName}-redis'
+      NumCacheGroups: !Ref NumCacheNodes
+      CacheNodeType: !Ref CacheNodeType
+      Engine: redis
+      EngineVersion: !Ref CacheEngineVersion
+      CacheParameterGroupName: !Ref RedisParameterGroup
+      CacheSubnetGroupName: !Ref RedisSubnetGroup
+      SecurityGroupIds:
+        - !Ref ElastiCacheSecurityGroupId
+      AtRestEncryptionEnabled: true
+      TransitEncryptionEnabled: true
+      AutoMinorVersionUpgrade: true
+      SnapshotRetentionLimit: 7
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-redis'
+
+Outputs:
+  RedisEndpoint:
+    Description: 'Redis Primary Endpoint'
+    Value: !GetAtt RedisReplicationGroup.PrimaryEndPoint.Address
+    Export:
+      Name: !Sub '${EnvironmentName}-redis-endpoint'
+
+  RedisPort:
+    Description: 'Redis Port'
+    Value: !GetAtt RedisReplicationGroup.PrimaryEndPoint.Port
+    Export:
+      Name: !Sub '${EnvironmentName}-redis-port'
+
+  RedisArn:
+    Description: 'Redis Replication Group ARN'
+    Value: !GetAtt RedisReplicationGroup.Arn
+    Export:
+      Name: !Sub '${EnvironmentName}-redis-arn'

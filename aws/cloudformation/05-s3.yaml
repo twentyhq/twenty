@@ -1,0 +1,123 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'S3 Bucket for Twenty CRM File Storage'
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: 'twenty-crm'
+    Description: 'Environment name prefix for resources'
+
+  BucketName:
+    Type: String
+    Default: 'twenty-crm-files'
+    Description: 'S3 bucket name (must be globally unique)'
+
+  AllowedOrigins:
+    Type: String
+    Default: '*'
+    Description: 'Comma-separated list of allowed CORS origins'
+
+Resources:
+  # S3 Bucket
+  TwentyFilesBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: !Sub '${EnvironmentName}-${BucketName}'
+      VersioningConfiguration:
+        Status: Enabled
+      LifecycleConfiguration:
+        Rules:
+          - Id: TransitionToIA
+            Status: Enabled
+            Transitions:
+              - TransitionInDays: 90
+                StorageClass: STANDARD_IA
+          - Id: ExpireOldVersions
+            Status: Enabled
+            NoncurrentVersionExpiration:
+              NoncurrentDays: 30
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: aws:kms
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins:
+              - !Ref AllowedOrigins
+            AllowedMethods:
+              - GET
+              - PUT
+              - POST
+              - DELETE
+              - HEAD
+            AllowedHeaders:
+              - '*'
+            ExposedHeaders:
+              - ETag
+              - x-amz-meta-custom-header
+            MaxAge: 3600
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-files'
+
+  # Bucket Policy
+  TwentyFilesBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref TwentyFilesBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowIAMRoleAccess
+            Effect: Allow
+            Principal:
+              AWS: !Sub 'arn:aws:iam::${AWS::AccountId}:root'
+            Action:
+              - s3:GetObject
+              - s3:PutObject
+              - s3:DeleteObject
+            Resource: !Sub '${TwentyFilesBucket.Arn}/*'
+          - Sid: DenyUnencryptedObjectUploads
+            Effect: Deny
+            Principal: '*'
+            Action: s3:PutObject
+            Resource: !Sub '${TwentyFilesBucket.Arn}/*'
+            Condition:
+              StringNotEquals:
+                s3:x-amz-server-side-encryption: aws:kms
+          - Sid: DenyInsecureTransport
+            Effect: Deny
+            Principal: '*'
+            Action: s3:*
+            Resource:
+              - !Sub '${TwentyFilesBucket.Arn}'
+              - !Sub '${TwentyFilesBucket.Arn}/*'
+            Condition:
+              Bool:
+                aws:SecureTransport: false
+
+Outputs:
+  BucketName:
+    Description: 'S3 Bucket Name'
+    Value: !Ref TwentyFilesBucket
+    Export:
+      Name: !Sub '${EnvironmentName}-s3-bucket-name'
+
+  BucketArn:
+    Description: 'S3 Bucket ARN'
+    Value: !GetAtt TwentyFilesBucket.Arn
+    Export:
+      Name: !Sub '${EnvironmentName}-s3-bucket-arn'
+
+  BucketDomainName:
+    Description: 'S3 Bucket Domain Name'
+    Value: !GetAtt TwentyFilesBucket.DomainName
+    Export:
+      Name: !Sub '${EnvironmentName}-s3-bucket-domain'

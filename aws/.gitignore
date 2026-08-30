@@ -1,0 +1,24 @@
+# AWS Configuration
+*.pem
+*.key
+.env
+*.tfstate
+*.tfstate.backup
+.terraform/
+*.tfvars
+*.tfvars.json
+
+# CloudFormation
+*.template
+
+# Logs
+*.log
+
+# Backups
+backups/
+
+# Temporary files
+*.tmp
+*.swp
+*~
+.DS_Store

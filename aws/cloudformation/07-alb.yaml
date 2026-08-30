@@ -1,0 +1,139 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Application Load Balancer for Twenty CRM'
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: 'twenty-crm'
+    Description: 'Environment name prefix for resources'
+
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: 'VPC ID from VPC stack'
+
+  PublicSubnet1Id:
+    Type: AWS::EC2::Subnet::Id
+    Description: 'Public Subnet 1 ID'
+
+  PublicSubnet2Id:
+    Type: AWS::EC2::Subnet::Id
+    Description: 'Public Subnet 2 ID'
+
+  ALBSecurityGroupId:
+    Type: String
+    Description: 'ALB Security Group ID'
+
+  EC2SecurityGroupId:
+    Type: String
+    Description: 'EC2 Security Group ID'
+
+  CertificateArn:
+    Type: String
+    Default: ''
+    Description: 'ACM Certificate ARN for HTTPS (optional)'
+
+  EC2InstanceId:
+    Type: String
+    Description: 'EC2 Instance ID'
+
+Conditions:
+  HasCertificate: !Not [!Equals [!Ref CertificateArn, '']]
+
+Resources:
+  # Application Load Balancer
+  ApplicationLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub '${EnvironmentName}-alb'
+      Scheme: internet-facing
+      Type: application
+      SecurityGroups:
+        - !Ref ALBSecurityGroupId
+      Subnets:
+        - !Ref PublicSubnet1Id
+        - !Ref PublicSubnet2Id
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-alb'
+
+  # Target Group
+  ALBTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub '${EnvironmentName}-tg'
+      Port: 3000
+      Protocol: HTTP
+      VpcId: !Ref VpcId
+      TargetType: instance
+      HealthCheckEnabled: true
+      HealthCheckPath: '/'
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 3
+      Matcher:
+        HttpCode: '200-399'
+      Targets:
+        - Id: !Ref EC2InstanceId
+          Port: 3000
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-tg'
+
+  # HTTP Listener (redirects to HTTPS if certificate provided)
+  ALBHTTPListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - !If
+          - HasCertificate
+          - Type: redirect
+            RedirectConfig:
+              Protocol: HTTPS
+              Port: '443'
+              StatusCode: HTTP_301
+          - Type: forward
+            TargetGroupArn: !Ref ALBTargetGroup
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-http-listener'
+
+  # HTTPS Listener (only if certificate provided)
+  ALBHTTPSListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Condition: HasCertificate
+    Properties:
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 443
+      Protocol: HTTPS
+      SslPolicy: ELBSecurityPolicy-TLS13-1-2-2021-06
+      Certificates:
+        - CertificateArn: !Ref CertificateArn
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref ALBTargetGroup
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-https-listener'
+
+Outputs:
+  ALBDnsName:
+    Description: 'ALB DNS Name'
+    Value: !GetAtt ApplicationLoadBalancer.DNSName
+    Export:
+      Name: !Sub '${EnvironmentName}-alb-dns'
+
+  ALBArn:
+    Description: 'ALB ARN'
+    Value: !Ref ApplicationLoadBalancer
+    Export:
+      Name: !Sub '${EnvironmentName}-alb-arn'
+
+  TargetGroupArn:
+    Description: 'Target Group ARN'
+    Value: !Ref ALBTargetGroup
+    Export:
+      Name: !Sub '${EnvironmentName}-target-group-arn'

@@ -1,0 +1,210 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'EC2 Instance for Twenty CRM with Docker'
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: 'twenty-crm'
+    Description: 'Environment name prefix for resources'
+
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: 'VPC ID from VPC stack'
+
+  PrivateSubnet1Id:
+    Type: AWS::EC2::Subnet::Id
+    Description: 'Private Subnet 1 ID for EC2'
+
+  EC2SecurityGroupId:
+    Type: String
+    Description: 'EC2 Security Group ID'
+
+  EC2InstanceProfileName:
+    Type: String
+    Description: 'EC2 Instance Profile Name'
+
+  InstanceType:
+    Type: String
+    Default: 't3.medium'
+    AllowedValues:
+      - t3.micro
+      - t3.small
+      - t3.medium
+      - t3.large
+      - t3.xlarge
+    Description: 'EC2 instance type'
+
+  KeyPairName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: 'EC2 Key Pair for SSH access'
+
+  LatestAmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64
+
+  DBEndpoint:
+    Type: String
+    Description: 'RDS Endpoint from RDS stack'
+
+  DBPort:
+    Type: String
+    Default: '5432'
+    Description: 'RDS Port'
+
+  DBName:
+    Type: String
+    Default: 'twenty'
+    Description: 'Database name'
+
+  DBSecretArn:
+    Type: String
+    Description: 'RDS Credentials Secret ARN'
+
+  RedisEndpoint:
+    Type: String
+    Description: 'Redis Endpoint from ElastiCache stack'
+
+  RedisPort:
+    Type: String
+    Default: '6379'
+    Description: 'Redis Port'
+
+  S3BucketName:
+    Type: String
+    Description: 'S3 Bucket Name from S3 stack'
+
+  ServerUrl:
+    Type: String
+    Description: 'Public URL for Twenty CRM (e.g., https://crm.example.com)'
+
+  EncryptionKey:
+    Type: String
+    Description: 'Twenty CRM encryption key (generate with: openssl rand -base64 32)'
+
+Resources:
+  # EC2 Instance
+  TwentyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyPairName
+      ImageId: !Ref LatestAmiId
+      IamInstanceProfile: !Ref EC2InstanceProfileName
+      SubnetId: !Ref PrivateSubnet1Id
+      SecurityGroupIds:
+        - !Ref EC2SecurityGroupId
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: 50
+            VolumeType: gp3
+            Encrypted: true
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          
+          # Install Docker
+          dnf update -y
+          dnf install -y docker
+          systemctl start docker
+          systemctl enable docker
+          
+          # Install Docker Compose
+          curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          chmod +x /usr/local/bin/docker-compose
+          
+          # Add ec2-user to docker group
+          usermod -aG docker ec2-user
+          
+          # Create twenty directory
+          mkdir -p /home/ec2-user/twenty
+          cd /home/ec2-user/twenty
+          
+          # Download docker-compose.yml
+          curl -o docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml
+          
+          # Get DB password from Secrets Manager
+          DB_PASSWORD=$(aws secretsmanager get-secret-value --secret-id ${DBSecretArn} --query 'SecretString' --output text | jq -r '.password')
+          
+          # Create .env file
+          cat > .env << 'EOF'
+          # Server Configuration
+          SERVER_URL=${ServerUrl}
+          PORT=3000
+          
+          # Database Configuration
+          PG_DATABASE_URL=postgresql://twentyadmin:${DB_PASSWORD}@${DBEndpoint}:${DBPort}/${DBName}
+          PG_DATABASE_PASSWORD=${DB_PASSWORD}
+          
+          # Redis Configuration
+          REDIS_URL=redis://${RedisEndpoint}:${RedisPort}
+          
+          # Security
+          ENCRYPTION_KEY=${EncryptionKey}
+          LOGIN_TOKEN_EMAIL={SERIES_NUMBER}
+          LOGIN_TOKEN_KEY={SERIES_NUMBER}
+          
+          # Storage
+          STORAGE_TYPE=s3
+          STORAGE_S3_REGION=${AWS::Region}
+          STORAGE_S3_BUCKET=${S3BucketName}
+          STORAGE_S3_ACCESS_KEY_ID=$(aws sts get-caller-identity --query 'Account' --output text)
+          STORAGE_S3_SECRET_ACCESS_KEY=$(aws sts get-caller-identity --query 'Account' --output text)
+          
+          # Application
+          IS_CONFIG_VARIABLES_IN_DB_ENABLED=true
+          IS_MULTIWORKSPACE_ENABLED=false
+          
+          # Logging
+          NODE_ENV=production
+          LOG_LEVEL=info
+          EOF
+          
+          # Start Twenty CRM
+          docker-compose up -d
+          
+          # Signal CloudFormation
+          cfn-signal -e $? --stack ${AWS::StackName} --resource TwentyEC2Instance --region ${AWS::Region}
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-ec2'
+      CloudFormationMetadata:
+        SignalOptions:
+          Timeout: PT15M
+
+  # CloudWatch Alarm for CPU
+  EC2CPUAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: 'Alarm when EC2 CPU exceeds 80%'
+      MetricName: CPUUtilization
+      Namespace: AWS/EC2
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 80
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: InstanceId
+          Value: !Ref TwentyEC2Instance
+      AlarmActions:
+        - !Ref EC2InstanceRole
+
+Outputs:
+  InstanceId:
+    Description: 'EC2 Instance ID'
+    Value: !Ref TwentyEC2Instance
+    Export:
+      Name: !Sub '${EnvironmentName}-ec2-instance-id'
+
+  PrivateIp:
+    Description: 'EC2 Private IP'
+    Value: !GetAtt TwentyEC2Instance.PrivateIp
+    Export:
+      Name: !Sub '${EnvironmentName}-ec2-private-ip'
+
+  PublicIp:
+    Description: 'EC2 Public IP (if in public subnet)'
+    Value: !GetAtt TwentyEC2Instance.PublicIp
+    Export:
+      Name: !Sub '${EnvironmentName}-ec2-public-ip'

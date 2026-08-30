@@ -1,0 +1,157 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'RDS PostgreSQL for Twenty CRM'
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: 'twenty-crm'
+    Description: 'Environment name prefix for resources'
+
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: 'VPC ID from VPC stack'
+
+  PrivateSubnet1Id:
+    Type: AWS::EC2::Subnet::Id
+    Description: 'Private Subnet 1 ID'
+
+  PrivateSubnet2Id:
+    Type: AWS::EC2::Subnet::Id
+    Description: 'Private Subnet 2 ID'
+
+  RDSSecurityGroupId:
+    Type: String
+    Description: 'RDS Security Group ID'
+
+  DBMasterUsername:
+    Type: String
+    Default: 'twentyadmin'
+    Description: 'Database master username'
+
+  DBName:
+    Type: String
+    Default: 'twenty'
+    Description: 'Database name'
+
+  DBInstanceClass:
+    Type: String
+    Default: 'db.t3.micro'
+    AllowedValues:
+      - db.t3.micro
+      - db.t3.small
+      - db.t3.medium
+      - db.r5.large
+    Description: 'RDS instance class'
+
+  DBStorageSize:
+    Type: Number
+    Default: 20
+    MinValue: 20
+    MaxValue: 100
+    Description: 'Storage size in GB'
+
+  BackupRetentionPeriod:
+    Type: Number
+    Default: 7
+    MinValue: 1
+    MaxValue: 35
+    Description: 'Backup retention period in days'
+
+  MultiAZ:
+    Type: String
+    Default: 'false'
+    AllowedValues: ['true', 'false']
+    Description: 'Enable Multi-AZ deployment'
+
+Resources:
+  # DB Subnet Group
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: 'Subnet group for Twenty CRM RDS'
+      SubnetIds:
+        - !Ref PrivateSubnet1Id
+        - !Ref PrivateSubnet2Id
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-db-subnet-group'
+
+  # DB Parameter Group
+  DBParameterGroup:
+    Type: AWS::RDS::DBParameterGroup
+    Properties:
+      Description: 'Parameter group for Twenty CRM PostgreSQL'
+      Family: postgres15
+      Parameters:
+        shared_preload_libraries: pg_stat_statements
+        log_statement: all
+        log_min_duration_statement: 1000
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-db-params'
+
+  # RDS Instance
+  DBInstance:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Snapshot
+    UpdateReplacePolicy: Snapshot
+    Properties:
+      DBInstanceIdentifier: !Sub '${EnvironmentName}-db'
+      Engine: postgres
+      EngineVersion: '15.4'
+      DBInstanceClass: !Ref DBInstanceClass
+      AllocatedStorage: !Ref DBStorageSize
+      StorageType: gp3
+      StorageEncrypted: true
+      DBName: !Ref DBName
+      MasterUsername: !Ref DBMasterUsername
+      MasterUserPassword: !Sub '{{resolve:secretsmanager:${EnvironmentName}-db-credentials:SecretString:password}}'
+      VPCSecurityGroups:
+        - !Ref RDSSecurityGroupId
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      DBParameterGroupName: !Ref DBParameterGroup
+      BackupRetentionPeriod: !Ref BackupRetentionPeriod
+      MultiAZ: !Ref MultiAZ
+      PubliclyAccessible: false
+      CopyTagsToSnapshot: true
+      DeleteProtection: false
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-rds'
+
+  # Store DB password in Secrets Manager
+  DBCredentialsSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub '${EnvironmentName}-db-credentials'
+      Description: 'Database credentials for Twenty CRM'
+      GenerateSecretString:
+        SecretStringTemplate: !Sub '{"username": "${DBMasterUsername}"}'
+        GenerateStringKey: password
+        PasswordLength: 32
+        ExcludeCharacters: '"@/\'
+
+Outputs:
+  DBEndpoint:
+    Description: 'RDS Endpoint'
+    Value: !GetAtt DBInstance.Endpoint.Address
+    Export:
+      Name: !Sub '${EnvironmentName}-rds-endpoint'
+
+  DBPort:
+    Description: 'RDS Port'
+    Value: !GetAtt DBInstance.Endpoint.Port
+    Export:
+      Name: !Sub '${EnvironmentName}-rds-port'
+
+  DBSecretArn:
+    Description: 'RDS Credentials Secret ARN'
+    Value: !Ref DBCredentialsSecret
+    Export:
+      Name: !Sub '${EnvironmentName}-rds-secret-arn'
+
+  DBName:
+    Description: 'Database Name'
+    Value: !Ref DBName
+    Export:
+      Name: !Sub '${EnvironmentName}-rds-db-name'

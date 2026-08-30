@@ -1,0 +1,179 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Master Stack for Twenty CRM on AWS'
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: 'twenty-crm'
+    Description: 'Environment name prefix for resources'
+
+  VpcCidr:
+    Type: String
+    Default: '10.0.0.0/16'
+    Description: 'CIDR block for VPC'
+
+  KeyPairName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: 'EC2 Key Pair for SSH access'
+
+  InstanceType:
+    Type: String
+    Default: 't3.medium'
+    AllowedValues:
+      - t3.micro
+      - t3.small
+      - t3.medium
+      - t3.large
+      - t3.xlarge
+    Description: 'EC2 instance type'
+
+  DBInstanceClass:
+    Type: String
+    Default: 'db.t3.micro'
+    AllowedValues:
+      - db.t3.micro
+      - db.t3.small
+      - db.t3.medium
+    Description: 'RDS instance class'
+
+  CacheNodeType:
+    Type: String
+    Default: 'cache.t3.micro'
+    AllowedValues:
+      - cache.t3.micro
+      - cache.t3.small
+      - cache.t3.medium
+    Description: 'ElastiCache node type'
+
+  CertificateArn:
+    Type: String
+    Default: ''
+    Description: 'ACM Certificate ARN for HTTPS (optional)'
+
+  ServerUrl:
+    Type: String
+    Description: 'Public URL for Twenty CRM (e.g., https://crm.example.com)'
+
+  EncryptionKey:
+    Type: String
+    NoEcho: true
+    Description: 'Twenty CRM encryption key (generate with: openssl rand -base64 32)'
+
+Resources:
+  # Stack 1: VPC and Networking
+  VPCStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://raw.githubusercontent.com/your-org/twenty-crm-aws/main/cloudformation/01-vpc.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+        VpcCidr: !Ref VpcCidr
+
+  # Stack 2: Security Groups and IAM
+  SecurityStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: VPCStack
+    Properties:
+      TemplateURL: https://raw.githubusercontent.com/your-org/twenty-crm-aws/main/cloudformation/02-security.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+        VpcId: !GetAtt VPCStack.Outputs.VpcId
+        VpcCidr: !Ref VpcCidr
+
+  # Stack 3: RDS PostgreSQL
+  RDSStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: SecurityStack
+    Properties:
+      TemplateURL: https://raw.githubusercontent.com/your-org/twenty-crm-aws/main/cloudformation/03-rds.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+        VpcId: !GetAtt VPCStack.Outputs.VpcId
+        PrivateSubnet1Id: !GetAtt VPCStack.Outputs.PrivateSubnet1Id
+        PrivateSubnet2Id: !GetAtt VPCStack.Outputs.PrivateSubnet2Id
+        RDSSecurityGroupId: !GetAtt SecurityStack.Outputs.RDSSecurityGroupId
+        DBInstanceClass: !Ref DBInstanceClass
+
+  # Stack 4: ElastiCache Redis
+  ElastiCacheStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: SecurityStack
+    Properties:
+      TemplateURL: https://raw.githubusercontent.com/your-org/twenty-crm-aws/main/cloudformation/04-elasticache.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+        VpcId: !GetAtt VPCStack.Outputs.VpcId
+        PrivateSubnet1Id: !GetAtt VPCStack.Outputs.PrivateSubnet1Id
+        PrivateSubnet2Id: !GetAtt VPCStack.Outputs.PrivateSubnet2Id
+        ElastiCacheSecurityGroupId: !GetAtt SecurityStack.Outputs.ElastiCacheSecurityGroupId
+        CacheNodeType: !Ref CacheNodeType
+
+  # Stack 5: S3 Storage
+  S3Stack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://raw.githubusercontent.com/your-org/twenty-crm-aws/main/cloudformation/05-s3.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+        BucketName: twenty-crm-files
+
+  # Stack 6: EC2 Instance
+  EC2Stack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: RDSStack
+    Properties:
+      TemplateURL: https://raw.githubusercontent.com/your-org/twenty-crm-aws/main/cloudformation/06-ec2.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+        VpcId: !GetAtt VPCStack.Outputs.VpcId
+        PrivateSubnet1Id: !GetAtt VPCStack.Outputs.PrivateSubnet1Id
+        EC2SecurityGroupId: !GetAtt SecurityStack.Outputs.EC2SecurityGroupId
+        EC2InstanceProfileName: !GetAtt SecurityStack.Outputs.EC2InstanceProfileName
+        InstanceType: !Ref InstanceType
+        KeyPairName: !Ref KeyPairName
+        DBEndpoint: !GetAtt RDSStack.Outputs.DBEndpoint
+        DBPort: !GetAtt RDSStack.Outputs.DBPort
+        DBName: !GetAtt RDSStack.Outputs.DBName
+        DBSecretArn: !GetAtt RDSStack.Outputs.DBSecretArn
+        RedisEndpoint: !GetAtt ElastiCacheStack.Outputs.RedisEndpoint
+        RedisPort: !GetAtt ElastiCacheStack.Outputs.RedisPort
+        S3BucketName: !GetAtt S3Stack.Outputs.BucketName
+        ServerUrl: !Ref ServerUrl
+        EncryptionKey: !Ref EncryptionKey
+
+  # Stack 7: Application Load Balancer
+  ALBStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: EC2Stack
+    Properties:
+      TemplateURL: https://raw.githubusercontent.com/your-org/twenty-crm-aws/main/cloudformation/07-alb.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+        VpcId: !GetAtt VPCStack.Outputs.VpcId
+        PublicSubnet1Id: !GetAtt VPCStack.Outputs.PublicSubnet1Id
+        PublicSubnet2Id: !GetAtt VPCStack.Outputs.PublicSubnet2Id
+        ALBSecurityGroupId: !GetAtt SecurityStack.Outputs.ALBSecurityGroupId
+        EC2SecurityGroupId: !GetAtt SecurityStack.Outputs.EC2SecurityGroupId
+        EC2InstanceId: !GetAtt EC2Stack.Outputs.InstanceId
+        CertificateArn: !Ref CertificateArn
+
+Outputs:
+  ALBDnsName:
+    Description: 'ALB DNS Name - Use this to access Twenty CRM'
+    Value: !GetAtt ALBStack.Outputs.ALBDnsName
+
+  VpcId:
+    Description: 'VPC ID'
+    Value: !GetAtt VPCStack.Outputs.VpcId
+
+  DBEndpoint:
+    Description: 'RDS Endpoint'
+    Value: !GetAtt RDSStack.Outputs.DBEndpoint
+
+  RedisEndpoint:
+    Description: 'Redis Endpoint'
+    Value: !GetAtt ElastiCacheStack.Outputs.RedisEndpoint
+
+  S3BucketName:
+    Description: 'S3 Bucket Name'
+    Value: !GetAtt S3Stack.Outputs.BucketName
