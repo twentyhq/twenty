@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { AI_MODEL_KINDS } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-kind.type';
+import { AI_MODEL_KINDS } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-model-kinds.const';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { longContextCostSchema } from 'src/engine/metadata-modules/ai/ai-models/types/long-context-cost.schema';
 

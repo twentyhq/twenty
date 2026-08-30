@@ -1,8 +1,7 @@
 import { type AiSdkPackage, type DataResidency } from 'twenty-shared/ai';
 
-// Kept separate from AiModelConfig rather than bolted on as optional fields:
-// transcription has no token semantics, so computeCostBreakdown must never be
-// reachable with one of these.
+// Separate from AiModelConfig so computeCostBreakdown is never reachable with a
+// model that has no token semantics.
 export type AiTranscriptionModelConfig = {
   modelId: string;
   sdkPackage: AiSdkPackage;

@@ -20,7 +20,6 @@ import {
   SdkProviderFactoryService,
   type AiSdkProviderInstance,
 } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
-import { DEFAULT_AI_MODEL_KIND } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-kind.type';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { type AiTranscriptionModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-transcription-model-config.type';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
@@ -65,8 +64,8 @@ export class AiModelRegistryService {
   private readonly logger = new Logger(AiModelRegistryService.name);
   private modelRegistry: Map<string, RegisteredAiModel> = new Map();
   private modelConfigCache: Map<string, AiModelConfig> = new Map();
-  // Transcription models are kept out of modelRegistry and modelConfigCache so
-  // they can never surface in the chat model picker or reach token costing.
+  // Kept out of modelRegistry and modelConfigCache so transcription models can
+  // never surface in the chat model picker or reach token costing.
   private transcriptionRegistry: Map<string, RegisteredAiTranscriptionModel> =
     new Map();
   private transcriptionConfigCache: Map<string, AiTranscriptionModelConfig> =
@@ -148,7 +147,7 @@ export class AiModelRegistryService {
       for (const modelDef of models) {
         const compositeId = buildCompositeModelId(providerKey, modelDef.name);
 
-        if ((modelDef.kind ?? DEFAULT_AI_MODEL_KIND) === 'transcription') {
+        if (modelDef.kind === 'transcription') {
           this.registerTranscriptionModel({
             compositeId,
             providerKey,
@@ -213,8 +212,6 @@ export class AiModelRegistryService {
 
     const createTranscriptionModel = sdkInstance.createTranscriptionModel;
 
-    // A transcription model pointed at a provider with no speech-to-text API is
-    // a config mistake worth naming at boot rather than at the first dictation.
     if (!isDefined(createTranscriptionModel)) {
       this.logger.warn(
         `Skipping transcription model "${compositeId}": ${config.npm} exposes no transcription API`,
@@ -246,8 +243,7 @@ export class AiModelRegistryService {
   }
 
   // Registration order follows the provider config, so the first entry is the
-  // one an operator listed first — the closest thing to an explicit default
-  // until dictation needs a preference of its own.
+  // one an operator listed first.
   getDefaultTranscriptionModel(): RegisteredAiTranscriptionModel | undefined {
     return this.getAvailableTranscriptionModels().find(
       (model) =>

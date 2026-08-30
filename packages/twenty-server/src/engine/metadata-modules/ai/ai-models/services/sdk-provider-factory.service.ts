@@ -34,8 +34,7 @@ import { getTranscriptionModelFactory } from 'src/engine/metadata-modules/ai/ai-
 
 export type AiSdkProviderInstance = {
   createModel: (modelId: string) => LanguageModel;
-  // Absent on providers with no speech-to-text API, which is how the registry
-  // tells a transcription model it cannot build from one it can.
+  // Absent on providers with no speech-to-text API.
   createTranscriptionModel?: (modelId: string) => TranscriptionModel;
   rawProvider: unknown;
   sdkPackage: AiSdkPackage;
