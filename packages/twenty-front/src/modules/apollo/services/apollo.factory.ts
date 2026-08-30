@@ -116,9 +116,15 @@ export class ApolloFactory implements ApolloManager {
         },
         attempts: {
           max: 2,
-          retryIf: (error) => {
+          retryIf: (error, operation) => {
             // oxlint-disable-next-line no-console
             console.log('retryIf error from retryLink', error);
+            // A retry is a fresh request seconds later, so it carries whatever
+            // cookie exists by then rather than the one that was current when
+            // the operation was issued. See PendingServerSignOutEffect.
+            if (operation.getContext().skipRetry === true) {
+              return false;
+            }
             if (this.isAuthenticationError(error)) {
               return false;
             }
