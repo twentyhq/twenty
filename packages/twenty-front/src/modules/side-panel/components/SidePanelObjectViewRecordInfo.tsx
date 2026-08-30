@@ -1,7 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 
-import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
+import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/edit/hooks/useSelectedNavigationMenuItemEditItem';
@@ -42,9 +41,9 @@ export const SidePanelObjectViewRecordInfo = () => {
         : t`View`;
 
   return (
-    <SidePanelPageInfoLayout
+    <HeaderIdentifier
       icon={<NavigationMenuItemIcon navigationMenuItem={navItem} />}
-      title={<OverflowingTextWithTooltip text={selectedItemLabel} />}
+      title={selectedItemLabel}
       label={label}
     />
   );

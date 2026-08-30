@@ -60,7 +60,8 @@ const StyledCornerIconWrapper = styled.div<{
 `;
 
 const StyledVerticalHandle = styled.div`
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.pill};
+  corner-shape: round;
   height: ${themeCssVariables.spacing[5]};
   width: calc(${themeCssVariables.icon.stroke.lg} * 1px);
 `;
@@ -82,7 +83,8 @@ const StyledVerticalHandleWrapper = styled.div<{
 `;
 
 const StyledHorizontalHandle = styled.div`
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.pill};
+  corner-shape: round;
   height: calc(${themeCssVariables.icon.stroke.lg} * 1px);
   width: ${themeCssVariables.spacing[5]};
 `;

@@ -17,6 +17,7 @@ import {
   PARTNER_REGION_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_SCOPE_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_SKILLS_FIELD_UNIVERSAL_IDENTIFIER,
+  PARTNER_SUPER_PARTNER_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_TIER_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_TWENTY_EXPERIENCE_FIELD_UNIVERSAL_IDENTIFIER,
   PARTNER_TWENTY_EXPERIENCE_NOTES_FIELD_UNIVERSAL_IDENTIFIER,
@@ -26,16 +27,10 @@ import {
   PARTNER_WEBSITE_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/modules/partner/constants/partner-field-universal-identifiers';
 import { PARTNER_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import {
-  PARTNER_CONTENTS_ON_PARTNER_FIELD_ID,
-} from 'src/modules/partner/fields/partner-content-partner.field';
+import { PARTNER_CONTENTS_ON_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-content-partner.field';
 import { PARTNER_COMPANY_FIELD_ID } from 'src/modules/partner/fields/partner-company.field';
-import {
-  PARTNER_LINKS_ON_PARTNER_FIELD_ID,
-} from 'src/modules/partner/fields/partner-link-partner.field';
-import {
-  PARTNER_SERVICES_ON_PARTNER_FIELD_ID,
-} from 'src/modules/partner/fields/partner-service-partner.field';
+import { PARTNER_LINKS_ON_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-link-partner.field';
+import { PARTNER_SERVICES_ON_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-service-partner.field';
 import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/modules/partner/fields/partner-user-on-partner.field';
 
 export const PARTNER_RECORD_PAGE_FIELDS_VIEW_ID =
@@ -46,6 +41,7 @@ export const PARTNER_RECORD_PAGE_FIELDS_VIEW_ID =
 // in the fields widget when an explicit view marks them visible — this is that view.
 // Validation Stage and Partner Tier stay listed for admins but are read-locked for
 // the Partner role (see partner.role.ts), so partners don't see them on My Profile.
+// Super partner stays listed and is update-locked only: partners can see it, cannot set it.
 // Introduction is omitted here (marketplace bio lives on My Profile / public site);
 // Twenty experience fields are first-class for triage.
 export default defineView({
@@ -89,7 +85,8 @@ export default defineView({
     },
     {
       universalIdentifier: '2304f4b9-4faf-4813-8ef7-fb7697d64a92',
-      fieldMetadataUniversalIdentifier: PARTNER_SCOPE_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        PARTNER_SCOPE_FIELD_UNIVERSAL_IDENTIFIER,
       position: 5,
       isVisible: true,
     },
@@ -116,7 +113,8 @@ export default defineView({
     },
     {
       universalIdentifier: 'a0c47e12-6435-458a-b608-621bcee57474',
-      fieldMetadataUniversalIdentifier: PARTNER_SKILLS_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        PARTNER_SKILLS_FIELD_UNIVERSAL_IDENTIFIER,
       position: 9,
       isVisible: true,
     },
@@ -143,13 +141,15 @@ export default defineView({
     },
     {
       universalIdentifier: 'a85dc9bc-a5f5-446e-a36c-492f1b6c0035',
-      fieldMetadataUniversalIdentifier: PARTNER_REGION_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        PARTNER_REGION_FIELD_UNIVERSAL_IDENTIFIER,
       position: 13,
       isVisible: true,
     },
     {
       universalIdentifier: '90d11276-1666-4c36-9055-00c4680c3168',
-      fieldMetadataUniversalIdentifier: PARTNER_COUNTRY_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        PARTNER_COUNTRY_FIELD_UNIVERSAL_IDENTIFIER,
       position: 14,
       isVisible: true,
     },
@@ -175,13 +175,15 @@ export default defineView({
     },
     {
       universalIdentifier: '5c8727a3-6e4b-41c7-adf9-530ab6599bf9',
-      fieldMetadataUniversalIdentifier: PARTNER_LINKEDIN_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        PARTNER_LINKEDIN_FIELD_UNIVERSAL_IDENTIFIER,
       position: 18,
       isVisible: true,
     },
     {
       universalIdentifier: 'a6ef3c3b-103b-41b7-ba85-9d93a9af3296',
-      fieldMetadataUniversalIdentifier: PARTNER_WEBSITE_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        PARTNER_WEBSITE_FIELD_UNIVERSAL_IDENTIFIER,
       position: 19,
       isVisible: true,
     },
@@ -224,15 +226,22 @@ export default defineView({
       isVisible: true,
     },
     {
+      universalIdentifier: '70a176f0-c1ff-40c2-ab88-95ad8f964d67',
+      fieldMetadataUniversalIdentifier:
+        PARTNER_SUPER_PARTNER_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 26,
+      isVisible: true,
+    },
+    {
       universalIdentifier: 'ec1148d4-01ff-4128-9863-0ac42ea8eb47',
       fieldMetadataUniversalIdentifier: PARTNER_USER_ON_PARTNER_FIELD_ID,
-      position: 26,
+      position: 27,
       isVisible: true,
     },
     {
       universalIdentifier: '3ec293a1-da90-4104-a22e-771c0059e9b5',
       fieldMetadataUniversalIdentifier: PARTNER_COMPANY_FIELD_ID,
-      position: 27,
+      position: 28,
       isVisible: true,
     },
   ],
