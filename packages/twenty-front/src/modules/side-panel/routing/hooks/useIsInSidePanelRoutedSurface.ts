@@ -1,5 +1,6 @@
-import { useSidePanelRoutedSurface } from '@/side-panel/routing/hooks/useSidePanelRoutedSurface';
-import { isDefined } from 'twenty-shared/utils';
+import { useContext } from 'react';
+
+import { IsInSidePanelRoutedSurfaceContext } from '@/ui/layout/side-panel/contexts/IsInSidePanelRoutedSurfaceContext';
 
 export const useIsInSidePanelRoutedSurface = () =>
-  isDefined(useSidePanelRoutedSurface());
+  useContext(IsInSidePanelRoutedSurfaceContext);

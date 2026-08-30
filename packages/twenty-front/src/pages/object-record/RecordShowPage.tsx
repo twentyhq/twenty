@@ -49,25 +49,19 @@ export const RecordShowPage = () => {
       <CommandMenuComponentInstanceContext.Provider
         value={{ instanceId: commandMenuInstanceId }}
       >
-        {!isInSidePanelRoutedSurface && (
-          <RecordShowPageTitle
-            objectNameSingular={objectNameSingular}
-            objectRecordId={objectRecordId}
-          />
-        )}
+        <RecordShowPageTitle
+          objectNameSingular={objectNameSingular}
+          objectRecordId={objectRecordId}
+        />
         <PageCardLayout
           header={
-            // The panel top bar already names the record it is hosting, and the
-            // header's actions belong to a full width page.
-            isInSidePanelRoutedSurface ? null : (
-              <RecordShowPageHeader
-                objectNameSingular={objectNameSingular}
-                objectRecordId={objectRecordId}
-              >
-                <RecordShowCommandMenu />
-                {!isLayoutCustomizationModeEnabled && <SidePanelToggleButton />}
-              </RecordShowPageHeader>
-            )
+            <RecordShowPageHeader
+              objectNameSingular={objectNameSingular}
+              objectRecordId={objectRecordId}
+            >
+              <RecordShowCommandMenu />
+              {!isLayoutCustomizationModeEnabled && <SidePanelToggleButton />}
+            </RecordShowPageHeader>
           }
         >
           <TimelineActivityContext.Provider

@@ -1,4 +1,5 @@
 import { InformationBannerWrapper } from '@/information-banner/components/InformationBannerWrapper';
+import { useIsInSidePanelRoutedSurface } from '@/side-panel/routing/hooks/useIsInSidePanelRoutedSurface';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -111,11 +112,17 @@ export const PageCardLayout = ({
   children,
   showInformationBanner = true,
 }: PageCardLayoutProps) => {
+  const isInSidePanelRoutedSurface = useIsInSidePanelRoutedSurface();
+
   return (
     <StyledRoot>
       <StyledMainCardWrapper>
         <StyledCard>
-          <StyledPrintHidden>{header}</StyledPrintHidden>
+          {/* The panel top bar already names the page and carries its actions,
+              and a full width header's actions do not fit beside it. */}
+          {!isInSidePanelRoutedSurface && (
+            <StyledPrintHidden>{header}</StyledPrintHidden>
+          )}
           <StyledPrintHidden>{secondaryBar}</StyledPrintHidden>
           <StyledBodyContent>
             {showInformationBanner && (

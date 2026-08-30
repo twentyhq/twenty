@@ -14,6 +14,7 @@ import { sidePanelRoutedPagePathComponentState } from '@/side-panel/routing/stat
 import { isSidePanelHostablePath } from '@/side-panel/routing/utils/isSidePanelHostablePath';
 import { toSidePanelLocation } from '@/side-panel/routing/utils/toSidePanelLocation';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
+import { IsInSidePanelRoutedSurfaceContext } from '@/ui/layout/side-panel/contexts/IsInSidePanelRoutedSurfaceContext';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
@@ -63,8 +64,9 @@ export const SidePanelRoutedPage = () => {
   }
 
   return (
-    <SidePanelRoutedSurfaceContext.Provider value={surfaceValue}>
-      <ContextStoreComponentInstanceContext.Provider value={contextStoreValue}>
+    <IsInSidePanelRoutedSurfaceContext.Provider value={true}>
+      <SidePanelRoutedSurfaceContext.Provider value={surfaceValue}>
+        <ContextStoreComponentInstanceContext.Provider value={contextStoreValue}>
         <Suspense fallback={<SettingsSkeletonLoader />}>
           <Routes location={location}>
             {SIDE_PANEL_HOSTABLE_ROUTES.map((hostableRoute) => (
@@ -87,7 +89,8 @@ export const SidePanelRoutedPage = () => {
             <Route path="*" element={<SidePanelRoutedPageUnavailable />} />
           </Routes>
         </Suspense>
-      </ContextStoreComponentInstanceContext.Provider>
-    </SidePanelRoutedSurfaceContext.Provider>
+        </ContextStoreComponentInstanceContext.Provider>
+      </SidePanelRoutedSurfaceContext.Provider>
+    </IsInSidePanelRoutedSurfaceContext.Provider>
   );
 };
