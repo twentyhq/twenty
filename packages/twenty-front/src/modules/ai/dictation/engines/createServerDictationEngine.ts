@@ -27,6 +27,7 @@ export const createServerDictationEngine = ({
   // unmounted — the generation is what stops that late stream becoming a
   // recorder nothing owns, holding the microphone open with its indicator lit.
   let sessionGeneration = 0;
+  let isDisposed = false;
 
   const clearTimers = () => {
     if (readinessTimer !== null) {
@@ -71,6 +72,15 @@ export const createServerDictationEngine = ({
 
     releaseStream();
     mediaRecorder = null;
+
+    // Disposal stops the recorder, which lands here asynchronously. Uploading
+    // then would bill the workspace for a transcript that has no listener left
+    // to receive it.
+    if (isDisposed) {
+      chunks = [];
+
+      return;
+    }
 
     const audio = new Blob(
       chunks,
@@ -188,6 +198,7 @@ export const createServerDictationEngine = ({
 
     dispose: () => {
       sessionGeneration++;
+      isDisposed = true;
       clearTimers();
 
       if (isDefined(mediaRecorder) && mediaRecorder.state !== 'inactive') {
@@ -197,6 +208,9 @@ export const createServerDictationEngine = ({
       mediaRecorder = null;
       chunks = [];
       releaseStream();
+      // Emitted before the listeners go, so a caller holding interim text
+      // clears it: the recorder's own stop event arrives too late to be heard.
+      emitter.emit({ type: 'state', state: 'idle' });
       emitter.clear();
     },
 

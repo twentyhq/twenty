@@ -85,6 +85,71 @@ describe('dictation engine lifecycle', () => {
 
       expect(stop).toHaveBeenCalledTimes(1);
     });
+
+    // Disposal happens on unmount and on a tier change, both of which can land
+    // mid-recording.
+    it('does not upload audio captured before disposal', async () => {
+      const { stream } = createFakeStream();
+      const transcribeAudio = jest.fn();
+      const recorderListeners: Record<string, () => void> = {};
+
+      mockGetUserMedia(() => Promise.resolve(stream));
+      window.MediaRecorder = function MediaRecorder(
+        this: Record<string, unknown>,
+      ) {
+        this.state = 'recording';
+        this.mimeType = 'audio/webm';
+        this.addEventListener = (name: string, listener: () => void) => {
+          recorderListeners[name] = listener;
+        };
+        this.start = jest.fn();
+        this.stop = jest.fn();
+      } as never;
+
+      const engine = createServerDictationEngine({
+        transcribeAudio,
+        maxDurationSeconds: 120,
+      });
+
+      await engine.start();
+      engine.dispose();
+      recorderListeners['stop']?.();
+      await Promise.resolve();
+
+      expect(transcribeAudio).not.toHaveBeenCalled();
+    });
+
+    it('reports idle on disposal so a caller can clear interim text', async () => {
+      const { stream } = createFakeStream();
+
+      mockGetUserMedia(() => Promise.resolve(stream));
+      window.MediaRecorder = function MediaRecorder(
+        this: Record<string, unknown>,
+      ) {
+        this.state = 'recording';
+        this.mimeType = 'audio/webm';
+        this.addEventListener = jest.fn();
+        this.start = jest.fn();
+        this.stop = jest.fn();
+      } as never;
+
+      const engine = createServerDictationEngine({
+        transcribeAudio: jest.fn(),
+        maxDurationSeconds: 120,
+      });
+      const states: string[] = [];
+
+      engine.subscribe((event) => {
+        if (event.type === 'state') {
+          states.push(event.state);
+        }
+      });
+
+      await engine.start();
+      engine.dispose();
+
+      expect(states.at(-1)).toBe('idle');
+    });
   });
 
   describe('createWebSpeechDictationEngine', () => {

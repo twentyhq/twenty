@@ -229,6 +229,9 @@ export const createWebSpeechDictationEngine = ({
       }
 
       isActive = false;
+      // Emitted before the listeners go, so a caller holding interim text
+      // clears it: the recognizer's own end event arrives too late to be heard.
+      emitter.emit({ type: 'state', state: 'idle' });
       emitter.clear();
     },
 
