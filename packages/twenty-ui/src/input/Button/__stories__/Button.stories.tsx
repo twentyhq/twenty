@@ -6,6 +6,7 @@ import {
   type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
+import { expect, within } from 'storybook/test';
 import {
   Button,
   type ButtonAccent,
@@ -329,6 +330,49 @@ export const FullWidth: Story = {
     Icon: { control: false },
   },
   decorators: [ComponentDecorator],
+};
+
+// nl-NL rendering of "Permanently Destroy {objectLabel}", the confirm label of
+// the destroy-records modal, which is where this overflow was reported.
+const OVERFLOWING_LABEL = 'Definitief vernietigen Workflowuitvoeringen';
+
+export const LongLabelInNarrowContainer: Story = {
+  args: {
+    title: OVERFLOWING_LABEL,
+    fullWidth: true,
+    size: 'medium',
+    variant: 'primary',
+    accent: 'danger',
+  },
+  argTypes: {
+    size: { control: false },
+    variant: { control: false },
+    accent: { control: false },
+    focus: { control: false },
+    disabled: { control: false },
+    fullWidth: { control: false },
+    soon: { control: false },
+    position: { control: false },
+    className: { control: false },
+    Icon: { control: false },
+  },
+  parameters: {
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
+    container: { width: 240 },
+  },
+  decorators: [ComponentDecorator],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const button = canvas.getByRole('button');
+    const label = canvas.getByText(OVERFLOWING_LABEL);
+
+    const buttonBox = button.getBoundingClientRect();
+    const labelBox = label.getBoundingClientRect();
+
+    expect(labelBox.left).toBeGreaterThanOrEqual(buttonBox.left);
+    expect(labelBox.right).toBeLessThanOrEqual(buttonBox.right);
+  },
 };
 
 export const LoadingButton: Story = {

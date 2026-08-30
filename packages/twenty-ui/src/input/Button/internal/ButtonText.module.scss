@@ -6,12 +6,19 @@ $base-transition-timing: 300ms;
   display: flex;
   height: 100%;
   justify-content: center;
+  // Flex items default to min-width:auto, so without this the wrapper keeps the
+  // label's full intrinsic width and .text never shrinks far enough for its own
+  // overflow to clip it. justify-content then centres the excess, and a label
+  // wider than the button spills past both of its edges.
+  min-width: 0;
   position: relative;
 }
 
 .text {
   clip-path: inset(0 0 0 0);
   overflow: hidden;
+  // A label that does not fit is cut mid-glyph without this.
+  text-overflow: ellipsis;
   transform: none;
   transition:
     transform $base-transition-timing ease,
