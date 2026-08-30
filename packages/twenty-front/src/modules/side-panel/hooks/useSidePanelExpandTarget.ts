@@ -3,7 +3,7 @@ import { useIsMobile } from 'twenty-ui/utilities';
 
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { useExpandAskAiSidePanelPage } from '@/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage';
-import { useExpandRecordSidePanelPage } from '@/side-panel/pages/record-page/hooks/useExpandRecordSidePanelPage';
+import { useExpandRecordSidePanelPage } from '@/side-panel/routing/hooks/useExpandRecordSidePanelPage';
 import { useExpandRichTextSidePanelPage } from '@/side-panel/pages/rich-text-page/hooks/useExpandRichTextSidePanelPage';
 import { useExpandRoutedSidePanelPage } from '@/side-panel/routing/hooks/useExpandRoutedSidePanelPage';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';

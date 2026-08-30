@@ -4,7 +4,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type ReactNode } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   type FeatureFlagKey,
   type PermissionFlagType,
@@ -14,12 +14,16 @@ type SettingsProtectedRouteWrapperProps = {
   children?: ReactNode;
   settingsPermission?: PermissionFlagType;
   requiredFeatureFlag?: FeatureFlagKey;
+  // Rendered in place of the redirect, for a surface where redirecting would
+  // take the main outlet with it.
+  fallback?: ReactNode;
 };
 
 export const SettingsProtectedRouteWrapper = ({
   children,
   settingsPermission,
   requiredFeatureFlag,
+  fallback,
 }: SettingsProtectedRouteWrapperProps) => {
   const isLogged = useIsLogged();
   const hasPermission = useHasPermissionFlag(settingsPermission);
@@ -35,6 +39,10 @@ export const SettingsProtectedRouteWrapper = ({
   // - conflict (race conditions)
   // - degrade performance as we will redirect multiple times
   if ((requiredFeatureFlag && !requiredFeatureFlagEnabled) || !hasPermission) {
+    if (isDefined(fallback)) {
+      return <>{fallback}</>;
+    }
+
     return <Navigate to={getSettingsPath(SettingsPath.ProfilePage)} replace />;
   }
 

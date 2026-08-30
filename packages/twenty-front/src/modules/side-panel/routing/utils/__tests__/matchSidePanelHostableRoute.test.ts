@@ -10,7 +10,8 @@ describe('matchSidePanelHostableRoute', () => {
 
   it('should match a field settings path', () => {
     expect(
-      matchSidePanelHostableRoute('/settings/objects/companies/name')?.route.path,
+      matchSidePanelHostableRoute('/settings/objects/companies/name')?.route
+        .path,
     ).toBe('/settings/objects/:objectNamePlural/:fieldName');
   });
 
@@ -21,9 +22,9 @@ describe('matchSidePanelHostableRoute', () => {
   });
 
   it('should match a record show path', () => {
-    expect(matchSidePanelHostableRoute('/object/company/record-1')?.route.path).toBe(
-      '/object/:objectNameSingular/:objectRecordId',
-    );
+    expect(
+      matchSidePanelHostableRoute('/object/company/record-1')?.route.path,
+    ).toBe('/object/:objectNameSingular/:objectRecordId');
   });
 
   it('should ignore the search and hash when matching', () => {

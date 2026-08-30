@@ -1,3 +1,4 @@
+import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -74,6 +75,8 @@ const renderHostedRecordIndex = (path: string) => {
   const BaseWrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: [],
     onInitializeJotaiStore: (store: ReturnType<typeof createStore>) => {
+      // The panel only exists behind a session, and its gate checks for one.
+      store.set(isCookieAuthActiveState.atom, true);
       jotaiStore = store;
 
       setTestViewsInMetadataStore(store, [panelCompaniesView]);

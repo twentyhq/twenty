@@ -66,14 +66,18 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
     }
   }
 
-  const isHostedRecordPage =
+  const recordShowParams =
     pageChip.page?.page === SidePanelPages.RoutedPage &&
-    isDefined(routedPagePath) &&
-    isDefined(getRecordShowParamsFromPath(routedPagePath));
+    isDefined(routedPagePath)
+      ? getRecordShowParamsFromPath(routedPagePath)
+      : null;
 
-  if (isHostedRecordPage && isDefined(pageChip.page?.pageId)) {
+  if (isDefined(recordShowParams)) {
     return (
-      <SidePanelRecordInfo sidePanelPageInstanceId={pageChip.page.pageId} />
+      <SidePanelRecordInfo
+        objectNameSingular={recordShowParams.objectNameSingular}
+        objectRecordId={recordShowParams.objectRecordId}
+      />
     );
   }
 

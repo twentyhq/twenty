@@ -1,20 +1,21 @@
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
+import { useSurfaceScopedComponentInstanceId } from '@/side-panel/routing/hooks/useSurfaceScopedComponentInstanceId';
 
 type RecordShowPageSSESubscribeEffectProps = {
   objectNameSingular: string;
   recordId: string;
-  // The record page and the side panel can display the same record at the
-  // same time; distinct scopes keep their query registrations independent so
-  // closing one surface does not unsubscribe the other.
-  queryScope?: 'record-show' | 'side-panel-record';
 };
 
 export const RecordShowPageSSESubscribeEffect = ({
   objectNameSingular,
   recordId,
-  queryScope = 'record-show',
 }: RecordShowPageSSESubscribeEffectProps) => {
-  const queryId = `${queryScope}-${objectNameSingular}-${recordId}`;
+  // The record page and the side panel can display the same record at the same
+  // time; scoping the registration to the surface keeps closing one from
+  // unsubscribing the other.
+  const queryId = useSurfaceScopedComponentInstanceId(
+    `record-show-${objectNameSingular}-${recordId}`,
+  );
 
   useListenToEventsForQuery({
     queryId,

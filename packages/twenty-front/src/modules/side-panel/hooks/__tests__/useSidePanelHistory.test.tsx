@@ -55,7 +55,7 @@ describe('useSidePanelHistory', () => {
 
     act(() => {
       result.current.commandMenu.navigateSidePanelMenu({
-        page: SidePanelPages.ViewRecord,
+        page: SidePanelPages.RoutedPage,
         pageTitle: 'Company',
         pageIcon: IconList,
         pageId: '2',
@@ -70,7 +70,7 @@ describe('useSidePanelHistory', () => {
         pageId: '1',
       },
       {
-        page: SidePanelPages.ViewRecord,
+        page: SidePanelPages.RoutedPage,
         pageTitle: 'Company',
         pageIcon: IconList,
         pageId: '2',
@@ -123,7 +123,7 @@ describe('useSidePanelHistory', () => {
 
     act(() => {
       result.current.commandMenu.navigateSidePanelMenu({
-        page: SidePanelPages.ViewRecord,
+        page: SidePanelPages.RoutedPage,
         pageTitle: 'Company',
         pageIcon: IconList,
         pageId: '1',
@@ -132,7 +132,7 @@ describe('useSidePanelHistory', () => {
 
     expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([
       {
-        page: SidePanelPages.ViewRecord,
+        page: SidePanelPages.RoutedPage,
         pageTitle: 'Company',
         pageIcon: IconList,
         pageId: '1',

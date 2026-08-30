@@ -1,10 +1,7 @@
 import { RecordIdentifierBarCreatedAt } from '@/object-record/record-show/components/RecordIdentifierBarCreatedAt';
 import { RecordIdentifierBarTitle } from '@/object-record/record-show/components/RecordIdentifierBarTitle';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
-import { useSidePanelRoutedPagePathByPageId } from '@/side-panel/routing/hooks/useSidePanelRoutedPagePathByPageId';
-import { getRecordShowParamsFromPath } from '@/side-panel/routing/utils/getRecordShowParamsFromPath';
 import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRecordInfo = styled.div`
@@ -15,28 +12,15 @@ const StyledRecordInfo = styled.div`
 `;
 
 type SidePanelRecordInfoProps = {
-  sidePanelPageInstanceId: string;
+  objectNameSingular: string;
+  objectRecordId: string;
 };
 
-export const SidePanelRecordInfo = ({
-  sidePanelPageInstanceId,
-}: SidePanelRecordInfoProps) => {
-  const routedPagePath = useSidePanelRoutedPagePathByPageId(
-    sidePanelPageInstanceId,
-  );
-
-  const recordShowParams = isDefined(routedPagePath)
-    ? getRecordShowParamsFromPath(routedPagePath)
-    : null;
-
+export const SidePanelRecordInfo = (props: SidePanelRecordInfoProps) => {
   const { objectNameSingular, objectRecordId } = useRecordShowPage(
-    recordShowParams?.objectNameSingular ?? '',
-    recordShowParams?.objectRecordId ?? '',
+    props.objectNameSingular,
+    props.objectRecordId,
   );
-
-  if (!isDefined(recordShowParams)) {
-    return null;
-  }
 
   return (
     <StyledRecordInfo>

@@ -69,7 +69,7 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
     const { result } = renderHooks();
 
     act(() => {
-      jotaiStore.set(sidePanelPageState.atom, SidePanelPages.ViewRecord);
+      jotaiStore.set(sidePanelPageState.atom, SidePanelPages.RoutedPage);
       jotaiStore.set(sidePanelPageInfoState.atom, {
         title: 'Test Record',
         Icon: IconList,
@@ -90,7 +90,7 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
     });
 
     expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
-      SidePanelPages.ViewRecord,
+      SidePanelPages.RoutedPage,
     );
     expect(jotaiStore.get(sidePanelPageInfoState.atom)).toEqual({
       title: 'Test Record',

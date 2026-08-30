@@ -6,12 +6,9 @@ import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { IsInSidePanelRoutedSurfaceContext } from '@/ui/layout/side-panel/contexts/IsInSidePanelRoutedSurfaceContext';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 
-jest.mock(
-  '@/information-banner/components/InformationBannerWrapper',
-  () => ({
-    InformationBannerWrapper: () => null,
-  }),
-);
+jest.mock('@/information-banner/components/InformationBannerWrapper', () => ({
+  InformationBannerWrapper: () => null,
+}));
 
 const renderOnSurface = (children: ReactNode, isInSidePanel: boolean) =>
   render(

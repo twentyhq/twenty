@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { RouteContextStoreProvider } from '@/context-store/components/RouteContextStoreProvider';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { SidePanelRoutedPagePermissionGuard } from '@/side-panel/routing/components/SidePanelRoutedPagePermissionGuard';
+import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SidePanelRoutedPageUnavailable } from '@/side-panel/routing/components/SidePanelRoutedPageUnavailable';
 import { SIDE_PANEL_HOSTABLE_ROUTES } from '@/side-panel/routing/constants/SidePanelHostableRoutes';
 import { SidePanelRoutedSurfaceContext } from '@/side-panel/routing/contexts/SidePanelRoutedSurfaceContext';
@@ -66,29 +66,33 @@ export const SidePanelRoutedPage = () => {
   return (
     <IsInSidePanelRoutedSurfaceContext.Provider value={true}>
       <SidePanelRoutedSurfaceContext.Provider value={surfaceValue}>
-        <ContextStoreComponentInstanceContext.Provider value={contextStoreValue}>
-        <Suspense fallback={<SettingsSkeletonLoader />}>
-          <Routes location={location}>
-            {SIDE_PANEL_HOSTABLE_ROUTES.map((hostableRoute) => (
-              <Route
-                key={hostableRoute.path}
-                path={hostableRoute.path}
-                element={
-                  <SidePanelRoutedPagePermissionGuard
-                    settingsPermission={hostableRoute.settingsPermission}
-                  >
-                    {/* Inside the matched route, so it reads the panel's own
+        <ContextStoreComponentInstanceContext.Provider
+          value={contextStoreValue}
+        >
+          <Suspense fallback={<SettingsSkeletonLoader />}>
+            <Routes location={location}>
+              {SIDE_PANEL_HOSTABLE_ROUTES.map((hostableRoute) => (
+                <Route
+                  key={hostableRoute.path}
+                  path={hostableRoute.path}
+                  element={
+                    <SettingsProtectedRouteWrapper
+                      settingsPermission={hostableRoute.settingsPermission}
+                      requiredFeatureFlag={hostableRoute.requiredFeatureFlag}
+                      fallback={<SidePanelRoutedPageUnavailable />}
+                    >
+                      {/* Inside the matched route, so it reads the panel's own
                         location rather than the browser's and fills this
                         surface's context store from it. */}
-                    <RouteContextStoreProvider />
-                    {hostableRoute.element}
-                  </SidePanelRoutedPagePermissionGuard>
-                }
-              />
-            ))}
-            <Route path="*" element={<SidePanelRoutedPageUnavailable />} />
-          </Routes>
-        </Suspense>
+                      <RouteContextStoreProvider />
+                      {hostableRoute.element}
+                    </SettingsProtectedRouteWrapper>
+                  }
+                />
+              ))}
+              <Route path="*" element={<SidePanelRoutedPageUnavailable />} />
+            </Routes>
+          </Suspense>
         </ContextStoreComponentInstanceContext.Provider>
       </SidePanelRoutedSurfaceContext.Provider>
     </IsInSidePanelRoutedSurfaceContext.Provider>

@@ -1,3 +1,4 @@
+import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
@@ -27,6 +28,8 @@ const renderHostedSettingsPage = (path: string) => {
   const BaseWrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: [],
     onInitializeJotaiStore: (store) => {
+      // The panel only exists behind a session, and its gate checks for one.
+      store.set(isCookieAuthActiveState.atom, true);
       store.set(
         sidePanelRoutedPagePathComponentState.atomFamily({
           instanceId: PAGE_INSTANCE_ID,

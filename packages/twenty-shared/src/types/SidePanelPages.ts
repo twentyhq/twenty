@@ -4,7 +4,6 @@ export enum SidePanelPages {
   MergeRecords = 'merge-records',
   UpdateRecords = 'update-records',
   EditRichText = 'edit-rich-text',
-  Copilot = 'copilot',
   WorkflowTriggerSelectType = 'workflow-trigger-select-type',
   WorkflowStepCreate = 'workflow-step-create',
   WorkflowStepEditType = 'workflow-step-edit-type',

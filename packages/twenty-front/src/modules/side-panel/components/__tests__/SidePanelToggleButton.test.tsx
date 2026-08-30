@@ -122,7 +122,7 @@ describe('SidePanelToggleButton', () => {
   it('hides the navbar command menu button when the side panel has command-menu history', () => {
     renderSidePanelToggleButton({
       isSidePanelOpened: true,
-      sidePanelPage: SidePanelPages.ViewRecord,
+      sidePanelPage: SidePanelPages.RoutedPage,
       sidePanelNavigationStack: [
         {
           page: SidePanelPages.CommandMenuDisplay,
@@ -131,7 +131,7 @@ describe('SidePanelToggleButton', () => {
           pageId: 'command-menu',
         },
         {
-          page: SidePanelPages.ViewRecord,
+          page: SidePanelPages.RoutedPage,
           pageTitle: 'Company',
           pageIcon: IconDotsVertical,
           pageId: 'view-record',
@@ -251,12 +251,12 @@ describe('SidePanelToggleButton', () => {
   it('replaces a directly opened side-panel page with the root command menu', () => {
     const { store } = renderSidePanelToggleButton({
       isSidePanelOpened: true,
-      sidePanelPage: SidePanelPages.ViewRecord,
+      sidePanelPage: SidePanelPages.RoutedPage,
       sidePanelSearch: 'acme',
       sidePanelSearchObjectFilter: 'company',
       sidePanelNavigationStack: [
         {
-          page: SidePanelPages.ViewRecord,
+          page: SidePanelPages.RoutedPage,
           pageTitle: 'Company',
           pageIcon: IconDotsVertical,
           pageId: 'view-record',

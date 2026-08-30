@@ -1,13 +1,10 @@
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { SidePanelRecordInfo } from '@/side-panel/components/SidePanelRecordInfo';
-import { sidePanelRoutedPagePathComponentState } from '@/side-panel/routing/states/sidePanelRoutedPagePathComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { act } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
-import { AppPath } from 'twenty-shared/types';
-import { getAppPath } from 'twenty-shared/utils';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
@@ -16,7 +13,6 @@ import {
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
 
-const SIDE_PANEL_PAGE_INSTANCE_ID = 'side-panel-record-info';
 const CREATED_AT = '2026-08-25T12:00:00.000Z';
 const COMPANY = {
   ...mockedCompanyRecords[0],
@@ -27,21 +23,12 @@ const COMPANY = {
 const meta: Meta<typeof SidePanelRecordInfo> = {
   title: 'Modules/SidePanel/SidePanelRecordInfo',
   component: SidePanelRecordInfo,
-  args: { sidePanelPageInstanceId: SIDE_PANEL_PAGE_INSTANCE_ID },
+  args: { objectNameSingular: 'company', objectRecordId: COMPANY.id },
   parameters: {
     mockingDate: new Date('2026-08-27T12:00:00.000Z'),
   },
   beforeEach: () => {
     jotaiStore.set(recordStoreFamilyState.atomFamily(COMPANY.id), COMPANY);
-    jotaiStore.set(
-      sidePanelRoutedPagePathComponentState.atomFamily({
-        instanceId: SIDE_PANEL_PAGE_INSTANCE_ID,
-      }),
-      getAppPath(AppPath.RecordShowPage, {
-        objectNameSingular: 'company',
-        objectRecordId: COMPANY.id,
-      }),
-    );
   },
   decorators: [ObjectMetadataItemsDecorator, ComponentWithRouterDecorator],
 };

@@ -49,12 +49,9 @@ jest.mock(
   }),
 );
 
-jest.mock(
-  '@/side-panel/pages/record-page/hooks/useExpandRecordSidePanelPage',
-  () => ({
-    useExpandRecordSidePanelPage: () => mockRecordExpandTarget,
-  }),
-);
+jest.mock('@/side-panel/routing/hooks/useExpandRecordSidePanelPage', () => ({
+  useExpandRecordSidePanelPage: () => mockRecordExpandTarget,
+}));
 
 jest.mock(
   '@/side-panel/pages/rich-text-page/hooks/useExpandRichTextSidePanelPage',

@@ -47,7 +47,11 @@ export const SidePanelTopBarRightCornerIcon = () => {
 
   const TopBarRightCorner = hostableRouteMatch?.route.TopBarRightCorner;
 
-  if (isDefined(TopBarRightCorner) && isDefined(hostableRouteMatch) && !isMobile) {
+  if (
+    isDefined(TopBarRightCorner) &&
+    isDefined(hostableRouteMatch) &&
+    !isMobile
+  ) {
     return (
       <StyledIconButtonContainer>
         <TopBarRightCorner match={hostableRouteMatch.match} />
