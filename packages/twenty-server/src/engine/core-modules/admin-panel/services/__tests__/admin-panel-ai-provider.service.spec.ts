@@ -5,6 +5,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { AdminPanelAiProviderService } from 'src/engine/core-modules/admin-panel/services/admin-panel-ai-provider.service';
 import { MAX_SEATS_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-seats-without-enterprise-key.constant';
 import { EnterpriseExceptionCode } from 'src/engine/core-modules/enterprise/enterprise.exception';
+import { CustomAiProviderAccessService } from 'src/engine/core-modules/enterprise/services/custom-ai-provider-access.service';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -62,6 +63,9 @@ describe('AdminPanelAiProviderService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AdminPanelAiProviderService,
+        // The real gate is registered so these cover the seat rules end to end
+        // rather than a stub of the very logic under test.
+        CustomAiProviderAccessService,
         { provide: TwentyConfigService, useValue: twentyConfigService },
         { provide: EnterprisePlanService, useValue: enterprisePlanService },
         { provide: AiModelRegistryService, useValue: {} },

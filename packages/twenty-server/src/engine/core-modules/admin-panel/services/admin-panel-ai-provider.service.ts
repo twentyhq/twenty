@@ -7,8 +7,10 @@ import {
   EnterpriseException,
   EnterpriseExceptionCode,
 } from 'src/engine/core-modules/enterprise/enterprise.exception';
-import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
-import { hasCustomAiProviderAccess } from 'src/engine/core-modules/enterprise/utils/has-custom-ai-provider-access.util';
+import {
+  type CustomAiProviderAccess,
+  CustomAiProviderAccessService,
+} from 'src/engine/core-modules/enterprise/services/custom-ai-provider-access.service';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -20,33 +22,19 @@ import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-mod
 
 const PROVIDER_NAME_PATTERN = /^[a-zA-Z0-9_-]+$/;
 
-export type CustomAiProviderAccess = {
-  hasAccess: boolean;
-  seatCount: number;
-  seatThreshold: number;
-};
-
 @Injectable()
 export class AdminPanelAiProviderService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly enterprisePlanService: EnterprisePlanService,
+    private readonly customAiProviderAccessService: CustomAiProviderAccessService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly defaultAiCatalogService: DefaultAiCatalogService,
   ) {}
 
+  // Counting here rather than reading the cached verdict keeps the admin panel
+  // exact, and refreshes what model resolution will use on its next read.
   async getCustomAiProviderAccess(): Promise<CustomAiProviderAccess> {
-    const seatCount = await this.enterprisePlanService.getBillableSeatCount();
-
-    return {
-      hasAccess: hasCustomAiProviderAccess({
-        isBillingEnabled: this.twentyConfigService.get('IS_BILLING_ENABLED'),
-        hasValidEnterprisePlan: this.enterprisePlanService.isValid(),
-        seatCount,
-      }),
-      seatCount,
-      seatThreshold: MAX_SEATS_WITHOUT_ENTERPRISE_KEY,
-    };
+    return this.customAiProviderAccessService.computeAccess();
   }
 
   private async assertCustomAiProviderAccess(): Promise<void> {
