@@ -9,9 +9,9 @@ jest.mock('ai', () => ({
 }));
 
 const REGISTERED_MODEL = {
-  modelId: 'azure-foundry/gpt-4o-transcribe',
+  modelId: 'azure-foundry/gpt-transcribe',
   sdkPackage: '@ai-sdk/azure',
-  model: { modelId: 'gpt-4o-transcribe' },
+  model: { modelId: 'gpt-transcribe' },
   providerName: 'azure-foundry',
 };
 
@@ -62,16 +62,24 @@ describe('AiTranscriptionService', () => {
     });
   });
 
-  it('passes the speaker language to the provider as an ISO-639-1 code', async () => {
+  // Pinning one language makes the other one it hears come back as a confident
+  // mistranslation, which someone dictating in two languages never asked for.
+  it('lets the provider detect the language instead of pinning one', async () => {
     const { service } = buildService();
 
-    await service.transcribeAudio({ ...transcribeInput, language: 'fr-FR' });
+    await service.transcribeAudio(transcribeInput);
 
     expect(transcribeMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        providerOptions: { openai: { language: 'fr' } },
-      }),
+      expect.objectContaining({ providerOptions: { openai: {} } }),
     );
+  });
+
+  it('reports back the language the provider detected', async () => {
+    const { service } = buildService();
+
+    await expect(
+      service.transcribeAudio(transcribeInput),
+    ).resolves.toMatchObject({ language: 'en' });
   });
 
   it('returns the transcript and bills the reported duration', async () => {
@@ -151,6 +159,22 @@ describe('AiTranscriptionService', () => {
     const result = await service.transcribeAudio(transcribeInput);
 
     expect(result.text).toBe('call Acme tomorrow');
+  });
+
+  // Billing skips a non-positive duration, so returning the transcript would
+  // hand back paid provider work for free.
+  it('withholds the transcript when the provider reports a zero duration', async () => {
+    transcribeMock.mockResolvedValue({
+      text: 'zero duration reported',
+      durationInSeconds: 0,
+      language: 'en',
+    });
+    const billTranscriptionUsage = jest.fn().mockResolvedValue(undefined);
+    const { service } = buildService({ billTranscriptionUsage });
+
+    await expect(
+      service.transcribeAudio(transcribeInput),
+    ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_AUDIO_INPUT });
   });
 
   // Unbillable and unbounded: accepting it would leave half an hour of
