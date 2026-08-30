@@ -1,4 +1,5 @@
 import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { dictationConfigState } from '@/client-config/states/dictationConfigState';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { appVersionState } from '@/client-config/states/appVersionState';
@@ -53,6 +54,7 @@ export const useClientConfig = (): UseClientConfigResult => {
   const setDomainConfiguration = useSetAtomState(domainConfigurationState);
   const setAuthProviders = useSetAtomState(authProvidersState);
   const setAiModels = useSetAtomState(aiModelsState);
+  const setDictationConfig = useSetAtomState(dictationConfigState);
 
   const setIsDeveloperDefaultSignInPrefilled = useSetAtomState(
     isDeveloperDefaultSignInPrefilledState,
@@ -179,6 +181,9 @@ export const useClientConfig = (): UseClientConfigResult => {
         sso: clientConfig.authProviders.sso,
       });
       setAiModels(clientConfig.aiModels ?? []);
+      setDictationConfig(
+        clientConfig.dictation ?? { mode: 'disabled', maxDurationSeconds: 0 },
+      );
       setIsAnalyticsEnabled(clientConfig.analyticsEnabled);
       setIsDeveloperDefaultSignInPrefilled(clientConfig.signInPrefilled);
       setIsMultiWorkspaceEnabled(clientConfig.isMultiWorkspaceEnabled);
@@ -258,6 +263,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     }
   }, [
     setAiModels,
+    setDictationConfig,
     setApiConfig,
     setOnboardingConfig,
     setAppVersion,

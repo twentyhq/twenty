@@ -10,11 +10,13 @@ import {
   type Support,
 } from '~/generated-metadata/graphql';
 import { type EnterpriseInstanceType } from 'twenty-shared/constants';
+import { type DictationConfig } from '@/client-config/types/DictationConfig';
 import { type OnboardingConfig } from '@/client-config/types/OnboardingConfig';
 
 export type ClientConfig = {
   appVersion?: string;
   aiModels: Array<ClientAiModelConfig>;
+  dictation: DictationConfig;
   analyticsEnabled: boolean;
   api: ApiConfig;
   authProviders: AuthProviders;
