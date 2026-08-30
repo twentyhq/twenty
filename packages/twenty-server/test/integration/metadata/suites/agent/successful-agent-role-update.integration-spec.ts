@@ -1,3 +1,4 @@
+import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
 import { updateOneAgent } from 'test/integration/metadata/suites/agent/utils/update-one-agent.util';
@@ -74,7 +75,7 @@ describe('Agent role update should succeed', () => {
       input: {
         label: 'Agent Without Role',
         prompt: 'Test prompt',
-        modelId: 'openai/gpt-4.1',
+        modelId: TEST_AI_MODEL_ID,
       },
     });
 
@@ -103,7 +104,7 @@ describe('Agent role update should succeed', () => {
       input: {
         label: 'Agent With Initial Role',
         prompt: 'Test prompt',
-        modelId: 'openai/gpt-4.1',
+        modelId: TEST_AI_MODEL_ID,
         roleId: testRoleId,
       },
     });
@@ -133,7 +134,7 @@ describe('Agent role update should succeed', () => {
       input: {
         label: 'Agent With Role To Remove',
         prompt: 'Test prompt',
-        modelId: 'openai/gpt-4.1',
+        modelId: TEST_AI_MODEL_ID,
         roleId: testRoleId,
       },
     });
