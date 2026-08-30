@@ -1,2 +1,5 @@
+import { AppBasePath } from 'twenty-shared/types';
+
 export const isSettingsPath = (pathname: string) =>
-  pathname.includes('/settings/');
+  pathname === AppBasePath.Settings ||
+  pathname.startsWith(`${AppBasePath.Settings}/`);
