@@ -11,11 +11,9 @@ import { pickRecorderMimeType } from '@/ai/dictation/utils/pickRecorderMimeType'
 export const createServerDictationEngine = ({
   transcribeAudio,
   maxDurationSeconds,
-  language,
 }: {
   transcribeAudio: TranscribeDictationAudio;
   maxDurationSeconds: number;
-  language: string;
 }): DictationEngine => {
   const emitter = createDictationEventEmitter();
 
@@ -95,7 +93,7 @@ export const createServerDictationEngine = ({
 
     emitter.emit({ type: 'state', state: 'settling' });
 
-    const result = await transcribeAudio(audio, language);
+    const result = await transcribeAudio(audio);
 
     if (result.status === 'failed') {
       emitter.emit({ type: 'error', reason: result.reason });
@@ -180,7 +178,17 @@ export const createServerDictationEngine = ({
         emitter.emit({ type: 'state', state: 'idle' });
       });
 
-      mediaRecorder.start();
+      try {
+        mediaRecorder.start();
+      } catch {
+        releaseStream();
+        // Leaving it set would refuse every later start, with the mic still hot.
+        mediaRecorder = null;
+        emitter.emit({ type: 'error', reason: 'engine-error' });
+        emitter.emit({ type: 'state', state: 'idle' });
+
+        return;
+      }
 
       readinessTimer = setTimeout(() => {
         readinessTimer = null;

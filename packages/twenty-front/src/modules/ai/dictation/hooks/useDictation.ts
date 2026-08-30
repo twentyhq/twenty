@@ -54,7 +54,6 @@ export const useDictation = ({
         ? createServerDictationEngine({
             transcribeAudio,
             maxDurationSeconds,
-            language,
           })
         : createWebSpeechDictationEngine({
             isIOS: readDictationSurface().isIOS,
