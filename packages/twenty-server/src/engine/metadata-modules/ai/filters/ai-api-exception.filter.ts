@@ -34,6 +34,7 @@ export class AiRestApiExceptionFilter implements ExceptionFilter {
           404,
         );
       case AiExceptionCode.API_KEY_NOT_CONFIGURED:
+      case AiExceptionCode.TRANSCRIPTION_NOT_CONFIGURED:
         return this.httpExceptionHandlerService.handleError(
           exception,
           response,
@@ -44,6 +45,7 @@ export class AiRestApiExceptionFilter implements ExceptionFilter {
       case AiExceptionCode.INVALID_AGENT_INPUT:
       case AiExceptionCode.AGENT_ALREADY_EXISTS:
       case AiExceptionCode.AGENT_IS_STANDARD:
+      case AiExceptionCode.INVALID_AUDIO_INPUT:
         return this.httpExceptionHandlerService.handleError(
           exception,
           response,

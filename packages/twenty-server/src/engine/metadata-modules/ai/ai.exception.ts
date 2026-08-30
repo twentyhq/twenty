@@ -26,6 +26,8 @@ export enum AiExceptionCode {
   RUN_AGENT_NOT_ALLOWED = 'RUN_AGENT_NOT_ALLOWED',
   NO_FAILED_TURN_TO_RETRY = 'NO_FAILED_TURN_TO_RETRY',
   STREAM_INTERRUPTED = 'STREAM_INTERRUPTED',
+  TRANSCRIPTION_NOT_CONFIGURED = 'TRANSCRIPTION_NOT_CONFIGURED',
+  INVALID_AUDIO_INPUT = 'INVALID_AUDIO_INPUT',
 }
 
 const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
@@ -72,6 +74,10 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`There is no failed message to retry.`;
     case AiExceptionCode.STREAM_INTERRUPTED:
       return msg`The response was interrupted before it could finish.`;
+    case AiExceptionCode.TRANSCRIPTION_NOT_CONFIGURED:
+      return msg`Dictation is not configured on this workspace.`;
+    case AiExceptionCode.INVALID_AUDIO_INPUT:
+      return msg`The recording could not be read. Try again.`;
     default:
       assertUnreachable(code);
   }

@@ -117,6 +117,70 @@ export class AiBillingService {
     return { hasNoMoreAvailableCredits: remainingCredits <= 0 };
   }
 
+  // Priced per minute rather than per token, so this deliberately bypasses
+  // computeCostBreakdown instead of inventing token counts for audio.
+  async billTranscriptionUsage({
+    modelId,
+    costPerMinute,
+    durationInSeconds,
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    modelId: string;
+    costPerMinute: number;
+    durationInSeconds: number;
+    workspaceId: string;
+    userWorkspaceId?: string | null;
+  }): Promise<void> {
+    if (durationInSeconds <= 0 || costPerMinute <= 0) {
+      return;
+    }
+
+    const durationInMinutes = durationInSeconds / 60;
+    const costInDollars = durationInMinutes * costPerMinute;
+    const creditsUsedMicro = Math.round(
+      convertDollarsToBillingCredits(costInDollars),
+    );
+
+    this.logger.log(
+      `Transcription billing for ${modelId}: ${durationInSeconds.toFixed(1)}s, $${costInDollars.toFixed(6)}`,
+    );
+
+    let periodStart: Date | undefined;
+
+    if (this.billingService.isBillingEnabled()) {
+      const { currentBillingSubscription } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'currentBillingSubscription',
+        ]);
+
+      if (currentBillingSubscription !== NO_BILLING_SUBSCRIPTION) {
+        periodStart = currentBillingSubscription.currentPeriodStart;
+
+        await this.billingUsageService.decrementAvailableCreditsInCache({
+          workspaceId,
+          usedCredits: creditsUsedMicro,
+        });
+      }
+    }
+
+    this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
+      USAGE_RECORDED,
+      [
+        {
+          resourceType: UsageResourceType.AI,
+          operationType: UsageOperationType.DICTATION,
+          creditsUsedMicro,
+          quantity: durationInMinutes,
+          unit: UsageUnit.MINUTE,
+          userWorkspaceId: userWorkspaceId || null,
+          periodStart,
+        },
+      ],
+      workspaceId,
+    );
+  }
+
   async billNativeWebSearchUsage(
     nativeWebSearchCallCount: number,
     workspaceId: string,

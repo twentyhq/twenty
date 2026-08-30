@@ -5,7 +5,7 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 
-import { type AiSdkPackage } from 'twenty-shared/ai';
+import { type AiSdkPackage, type DictationMode } from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
@@ -258,6 +258,17 @@ export class ClientConfigMaintenanceMode {
 }
 
 @ObjectType()
+export class ClientDictationConfig {
+  @Field(() => String)
+  mode: DictationMode;
+
+  // Published so the recorder stops itself rather than discovering the limit
+  // by having an upload rejected after the user finished speaking.
+  @Field(() => Number)
+  maxDurationSeconds: number;
+}
+
+@ObjectType()
 export class ClientConfig {
   @Field(() => String, { nullable: true })
   appVersion?: string;
@@ -270,6 +281,9 @@ export class ClientConfig {
 
   @Field(() => [ClientAiModelConfig])
   aiModels: ClientAiModelConfig[];
+
+  @Field(() => ClientDictationConfig)
+  dictation: ClientDictationConfig;
 
   @Field(() => Boolean)
   signInPrefilled: boolean;

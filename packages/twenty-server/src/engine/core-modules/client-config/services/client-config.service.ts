@@ -23,7 +23,10 @@ import {
   AUTO_SELECT_SMART_MODEL_ID,
   ENTERPRISE_INSTANCE_TYPE,
 } from 'twenty-shared/constants';
+import { type DictationMode } from 'twenty-shared/ai';
+
 import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
+import { MAX_DICTATION_DURATION_SECONDS } from 'src/engine/metadata-modules/ai/ai-transcription/constants/dictation-audio-limits.const';
 import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
@@ -106,6 +109,11 @@ export class ClientConfigService {
         };
       },
     );
+
+    const dictation = {
+      mode: this.resolveDictationMode(),
+      maxDurationSeconds: MAX_DICTATION_DURATION_SECONDS,
+    };
 
     if (aiModels.length > 0) {
       const defaultSpeedModel =
@@ -191,6 +199,7 @@ export class ClientConfigService {
         ],
       },
       aiModels,
+      dictation,
       authProviders: {
         google: this.twentyConfigService.get('AUTH_GOOGLE_ENABLED'),
         magicLink: false,
@@ -320,5 +329,18 @@ export class ClientConfigService {
     }
 
     return clientConfig;
+  }
+
+  // Local mode is the fallback rather than an error state: browser speech
+  // recognition needs no provider, so an instance with no transcription model
+  // still gets dictation instead of a hidden button.
+  private resolveDictationMode(): DictationMode {
+    if (!this.twentyConfigService.get('IS_DICTATION_ENABLED')) {
+      return 'disabled';
+    }
+
+    return this.aiModelRegistryService.hasTranscriptionModel()
+      ? 'cloud'
+      : 'local';
   }
 }

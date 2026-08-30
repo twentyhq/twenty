@@ -1847,6 +1847,15 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
+      'Enable dictation in the AI chat composer. Falls back to on-device browser speech recognition when no transcription model is configured.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_DICTATION_ENABLED = true;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
       'Storage path for the AI catalog override (e.g. config/ai-catalog.json). When set, the catalog is fetched from the configured storage backend at startup instead of using the built-in ai-providers.json.',
     type: ConfigVariableType.STRING,
   })

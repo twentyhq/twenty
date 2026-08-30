@@ -16,6 +16,8 @@ export type { DataResidency } from './constants/data-residency.const';
 export { DATA_RESIDENCY_KEYS } from './constants/data-residency.const';
 export type { DatabaseCrudOperation } from './constants/database-crud-operation.const';
 export { DATABASE_CRUD_OPERATIONS } from './constants/database-crud-operation.const';
+export type { DictationMode } from './constants/dictation-mode.const';
+export { DICTATION_MODES } from './constants/dictation-mode.const';
 export type { NativeAiSdkProviderId } from './constants/native-ai-sdk-provider-ids.const';
 export { NATIVE_AI_SDK_PROVIDER_IDS } from './constants/native-ai-sdk-provider-ids.const';
 export { ToolCategory } from './constants/tool-category.const';

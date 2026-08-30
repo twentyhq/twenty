@@ -5,6 +5,7 @@ import { AiAgentMonitorModule } from 'src/engine/metadata-modules/ai/ai-agent-mo
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
 import { AiGenerateTextModule } from 'src/engine/metadata-modules/ai/ai-generate-text/ai-generate-text.module';
+import { AiTranscriptionModule } from 'src/engine/metadata-modules/ai/ai-transcription/ai-transcription.module';
 import { AiWorkspaceStatsModule } from 'src/engine/metadata-modules/ai/ai-workspace-stats/ai-workspace-stats.module';
 import { ApplicationConnectionsModule } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.module';
 import { ApplicationJobModule } from 'src/engine/core-modules/application/application-job/application-job.module';
@@ -53,6 +54,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     AiAgentMonitorModule,
     AiChatModule,
     AiGenerateTextModule,
+    AiTranscriptionModule,
     AiWorkspaceStatsModule,
     ApplicationConnectionsModule,
     ApplicationJobModule,

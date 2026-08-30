@@ -115,6 +115,7 @@ describe('ClientConfigController', () => {
         isWorkspaceSchemaDDLLocked: false,
         isOnboardingAiChatEnabled: false,
         enterpriseInstanceType: ENTERPRISE_INSTANCE_TYPE.PRODUCTION,
+        dictation: { mode: 'local' as const, maxDurationSeconds: 120 },
       };
 
       jest

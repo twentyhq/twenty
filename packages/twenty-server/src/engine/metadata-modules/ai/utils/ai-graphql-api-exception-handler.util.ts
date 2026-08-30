@@ -33,6 +33,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.INVALID_CHAT_THREAD_TITLE:
       case AiExceptionCode.QUESTION_NOT_PENDING:
       case AiExceptionCode.INVALID_QUESTION_ANSWER:
+      case AiExceptionCode.INVALID_AUDIO_INPUT:
         throw new UserInputError(error);
       case AiExceptionCode.AGENT_ALREADY_EXISTS:
       case AiExceptionCode.NO_FAILED_TURN_TO_RETRY:
@@ -44,6 +45,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
         throw new ForbiddenError(error);
       case AiExceptionCode.AGENT_EXECUTION_FAILED:
       case AiExceptionCode.API_KEY_NOT_CONFIGURED:
+      case AiExceptionCode.TRANSCRIPTION_NOT_CONFIGURED:
       case AiExceptionCode.USER_WORKSPACE_ID_NOT_FOUND:
       case AiExceptionCode.STREAM_INTERRUPTED:
         throw new InternalServerError(error);
