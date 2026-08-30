@@ -2,6 +2,7 @@ import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
 
+import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { isPendingServerSignOutState } from '@/auth/states/isPendingServerSignOutState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -20,8 +21,21 @@ export const PendingServerSignOutEffect = () => {
         return;
       }
 
+      // Signing out now would revoke the session that sign-in just established.
+      if (store.get(isCookieAuthActiveState.atom)) {
+        store.set(isPendingServerSignOutState.atom, false);
+
+        return;
+      }
+
       try {
-        await apolloClient.mutate({ mutation: SignOutDocument });
+        // Never retried: a retry is issued seconds later and carries whatever
+        // cookie exists by then, so it would revoke a session established in
+        // the meantime. A failure waits for the next boot instead.
+        await apolloClient.mutate({
+          mutation: SignOutDocument,
+          context: { skipRetry: true },
+        });
         store.set(isPendingServerSignOutState.atom, false);
       } catch {}
     };
