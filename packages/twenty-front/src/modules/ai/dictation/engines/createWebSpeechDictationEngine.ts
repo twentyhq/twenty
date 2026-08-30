@@ -35,10 +35,10 @@ const readTranscripts = (event: WebSpeechRecognitionEvent) => {
 
 export const createWebSpeechDictationEngine = ({
   isIOS,
-  language,
+  getLanguage,
 }: {
   isIOS: boolean;
-  language: string;
+  getLanguage: () => string;
 }): DictationEngine => {
   const emitter = createDictationEventEmitter();
 
@@ -142,7 +142,6 @@ export const createWebSpeechDictationEngine = ({
     // result.
     instance.continuous = !isIOS;
     instance.interimResults = true;
-    instance.lang = language;
 
     instance.onaudiostart = () => {
       watchdog.noteActivity();
@@ -248,6 +247,11 @@ export const createWebSpeechDictationEngine = ({
 
         return;
       }
+
+      // Read per session rather than per engine: the API takes lang at start(),
+      // so a speaker who changes their language does not need the engine torn
+      // down and rebuilt — and a session in flight is not aborted to apply it.
+      recognition.lang = getLanguage();
 
       isActive = true;
       document.addEventListener('visibilitychange', handleVisibilityChange);

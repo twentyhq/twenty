@@ -1,3 +1,4 @@
+import { useStore } from 'jotai';
 import { useCallback, useEffect, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -14,7 +15,6 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 type AiChatDictationEffectProps = {
@@ -27,8 +27,7 @@ export const AiChatDictationEffect = ({
   onFinalText,
 }: AiChatDictationEffectProps) => {
   const isSupported = useDictationAvailability();
-  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const language = getDictationLanguage(currentWorkspaceMember?.locale);
+  const store = useStore();
 
   const [dictationEngine, setDictationEngine] =
     useAtomState(dictationEngineState);
@@ -45,7 +44,16 @@ export const AiChatDictationEffect = ({
       return;
     }
 
-    const createdEngine = createWebSpeechDictationEngine({ isIOS, language });
+    const createdEngine = createWebSpeechDictationEngine({
+      isIOS,
+      // Read from the store rather than subscribed to, so a language change
+      // neither re-renders this nor rebuilds the engine; the next session
+      // picks it up.
+      getLanguage: () =>
+        getDictationLanguage(
+          store.get(currentWorkspaceMemberState.atom)?.locale,
+        ),
+    });
 
     setDictationEngine(createdEngine);
 
@@ -53,7 +61,7 @@ export const AiChatDictationEffect = ({
       createdEngine.dispose();
       setDictationEngine(null);
     };
-  }, [isSupported, isIOS, language, setDictationEngine]);
+  }, [isSupported, isIOS, store, setDictationEngine]);
 
   // Separate from construction so fresh handler identities re-subscribe instead
   // of tearing down a live recording.

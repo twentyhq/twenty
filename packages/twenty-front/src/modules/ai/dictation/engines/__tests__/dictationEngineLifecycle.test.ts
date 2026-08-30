@@ -90,8 +90,11 @@ const buildResultEvent = ({
 describe('createWebSpeechDictationEngine', () => {
   let instances: FakeRecognition[] = [];
 
-  const createTestEngine = ({ isIOS = false }: { isIOS?: boolean } = {}) =>
-    createWebSpeechDictationEngine({ isIOS, language: 'en-US' });
+  const createTestEngine = ({
+    isIOS = false,
+    getLanguage = () => 'en-US',
+  }: { isIOS?: boolean; getLanguage?: () => string } = {}) =>
+    createWebSpeechDictationEngine({ isIOS, getLanguage });
 
   const collectEvents = (engine: {
     subscribe: (listener: (event: DictationEngineEvent) => void) => () => void;
@@ -306,6 +309,28 @@ describe('createWebSpeechDictationEngine', () => {
 
     expect(events).toContainEqual({ type: 'error', reason: 'no-device' });
     expect(readStates(events).at(-1)).toBe('idle');
+  });
+
+  // The API reads lang at start(), so a speaker who changes their language mid
+  // session keeps that session and gets the new one on their next press —
+  // rebuilding the engine to apply it would abort what they are saying.
+  it('reads the language at the start of each session', async () => {
+    const languages = ['en-US', 'fr-FR'];
+    const engine = createTestEngine({
+      getLanguage: () => languages.shift() ?? 'en-US',
+    });
+
+    await engine.start();
+
+    expect(instances[0]?.lang).toBe('en-US');
+
+    engine.stop();
+    instances[0]?.endSession();
+
+    await engine.start();
+
+    expect(instances).toHaveLength(1);
+    expect(instances[0]?.lang).toBe('fr-FR');
   });
 
   // The end event of a session that is already over must not abandon a press
