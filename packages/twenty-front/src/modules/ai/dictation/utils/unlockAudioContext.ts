@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 type AudioContextWindow = {
   AudioContext?: typeof AudioContext;
   webkitAudioContext?: typeof AudioContext;
@@ -12,7 +14,7 @@ export const unlockAudioContext = async (): Promise<void> => {
   const AudioContextConstructor =
     audioContextWindow.AudioContext ?? audioContextWindow.webkitAudioContext;
 
-  if (AudioContextConstructor === undefined) {
+  if (!isDefined(AudioContextConstructor)) {
     return;
   }
 

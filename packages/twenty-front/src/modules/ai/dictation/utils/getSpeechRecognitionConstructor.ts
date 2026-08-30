@@ -1,5 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { type WebSpeechRecognitionConstructor } from '@/ai/dictation/types/WebSpeechRecognition';
 
 type SpeechRecognitionWindow = {
@@ -10,14 +8,10 @@ type SpeechRecognitionWindow = {
 export const getSpeechRecognitionConstructor = ():
   | WebSpeechRecognitionConstructor
   | undefined => {
-  if (typeof window === 'undefined') {
-    return undefined;
-  }
-
   const speechRecognitionWindow = window as unknown as SpeechRecognitionWindow;
-  const constructor =
-    speechRecognitionWindow.SpeechRecognition ??
-    speechRecognitionWindow.webkitSpeechRecognition;
 
-  return isDefined(constructor) ? constructor : undefined;
+  return (
+    speechRecognitionWindow.SpeechRecognition ??
+    speechRecognitionWindow.webkitSpeechRecognition
+  );
 };

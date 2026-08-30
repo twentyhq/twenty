@@ -8,7 +8,7 @@ export type DictationFailureReason =
   | 'network'
   | 'engine-error';
 
-export type DictationEngineState = 'idle' | 'starting' | 'listening';
+export type DictationEngineState = 'idle' | 'recording';
 
 export type DictationEngineEvent =
   | { type: 'interim'; text: string }

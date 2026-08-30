@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -8,57 +8,52 @@ import {
 } from '@/ai/dictation/types/DictationEngine';
 import { createWebSpeechDictationEngine } from '@/ai/dictation/engines/createWebSpeechDictationEngine';
 import { useDictationAvailability } from '@/ai/dictation/hooks/useDictationAvailability';
+import { hasWebSpeechProvenSilentState } from '@/ai/dictation/states/hasWebSpeechProvenSilentState';
 import { getDictationLanguage } from '@/ai/dictation/utils/getDictationLanguage';
 import { readDictationSurface } from '@/ai/dictation/utils/readDictationSurface';
 import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { recordWebSpeechSilentFailure } from '@/ai/dictation/utils/webSpeechSilentFailureStorage';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 type UseDictationProps = {
   onInterimText: (text: string) => void;
   onFinalText: (text: string) => void;
-  onSessionEnd: () => void;
   onFailure: (reason: DictationFailureReason) => void;
 };
 
 export const useDictation = ({
   onInterimText,
   onFinalText,
-  onSessionEnd,
   onFailure,
 }: UseDictationProps) => {
-  const availability = useDictationAvailability();
+  const isSupported = useDictationAvailability();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const language = getDictationLanguage(currentWorkspaceMember?.locale);
+  const setHasWebSpeechProvenSilent = useSetAtomState(
+    hasWebSpeechProvenSilentState,
+  );
+
+  const { isIOS } = useMemo(() => readDictationSurface(), []);
 
   const [engine, setEngine] = useState<DictationEngine | null>(null);
   const [engineState, setEngineState] = useState<DictationEngineState>('idle');
-  // In state as well as storage so the control disappears the moment the engine
-  // proves itself dead, without waiting for a remount.
-  const [hasEngineSilentlyFailed, setHasEngineSilentlyFailed] = useState(false);
-
-  const isSupported = availability.status === 'available';
 
   useEffect(() => {
     if (!isSupported) {
       return;
     }
 
-    const createdEngine = createWebSpeechDictationEngine({
-      isIOS: readDictationSurface().isIOS,
-      language,
-    });
+    const createdEngine = createWebSpeechDictationEngine({ isIOS, language });
 
     setEngine(createdEngine);
 
     return () => {
       createdEngine.dispose();
       setEngine(null);
-      setEngineState('idle');
     };
-  }, [isSupported, language]);
+  }, [isSupported, isIOS, language]);
 
   // Separate from construction so fresh handler identities re-subscribe instead
   // of tearing down a live recording.
@@ -77,20 +72,31 @@ export const useDictation = ({
           break;
         case 'state':
           setEngineState(event.state);
+          // The session took its pending words with it, settled or not.
           if (event.state === 'idle') {
-            onSessionEnd();
+            onInterimText('');
           }
           break;
         case 'error':
-          if (event.reason === 'engine-silent') {
-            recordWebSpeechSilentFailure();
-            setHasEngineSilentlyFailed(true);
+          // Remembered only where a silent engine stays silent. A desktop
+          // browser that missed one start — a cold speech service, a blip
+          // reaching it — would otherwise lose the button for the life of the
+          // origin, with clearing site data the only way back.
+          if (event.reason === 'engine-silent' && isIOS) {
+            setHasWebSpeechProvenSilent(true);
           }
           onFailure(event.reason);
           break;
       }
     });
-  }, [engine, onInterimText, onFinalText, onSessionEnd, onFailure]);
+  }, [
+    engine,
+    isIOS,
+    onInterimText,
+    onFinalText,
+    onFailure,
+    setHasWebSpeechProvenSilent,
+  ]);
 
   const toggleDictation = useCallback(() => {
     if (!isDefined(engine)) {
@@ -118,9 +124,8 @@ export const useDictation = ({
   });
 
   return {
-    engineState,
-    isAvailable: isSupported && !hasEngineSilentlyFailed && isDefined(engine),
-    isRecording: engineState === 'starting' || engineState === 'listening',
+    isAvailable: isSupported && isDefined(engine),
+    isRecording: engineState === 'recording',
     toggleDictation,
   };
 };

@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type DictationFailureReason } from '@/ai/dictation/types/DictationEngine';
 
@@ -18,5 +19,7 @@ export const getDictationFailureMessage = (
       return t`Speech recognition could not be reached. Check your connection.`;
     case 'engine-error':
       return t`Dictation failed. Try again.`;
+    default:
+      return assertUnreachable(reason);
   }
 };

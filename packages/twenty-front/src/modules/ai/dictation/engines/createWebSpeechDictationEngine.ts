@@ -2,8 +2,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { DICTATION_LIVENESS_TIMEOUT_IN_MS } from '@/ai/dictation/constants/DictationLivenessTimeoutInMs';
-import { DICTATION_READINESS_DELAY_IN_MS } from '@/ai/dictation/constants/DictationReadinessDelayInMs';
-import { type DictationEngine } from '@/ai/dictation/types/DictationEngine';
+import {
+  type DictationEngine,
+  type DictationFailureReason,
+} from '@/ai/dictation/types/DictationEngine';
 import {
   type WebSpeechRecognitionErrorEvent,
   type WebSpeechRecognitionEvent,
@@ -48,17 +50,13 @@ export const createWebSpeechDictationEngine = ({
   // iOS system chime and the first-attempt failures.
   let recognition: WebSpeechRecognitionInstance | null = null;
   let isActive = false;
-  let readinessTimer: ReturnType<typeof setTimeout> | null = null;
+  // The recognizer's own started flag outlives the session the UI sees: stop()
+  // and abort() only release it when the recognizer reports the session ended,
+  // and start() throws InvalidStateError until then.
+  let isRecognizerRunning = false;
   // A stop issued during the microphone warm-up has nothing to stop yet, so the
   // generation is what lets the resumed startup notice it was abandoned.
   let sessionGeneration = 0;
-
-  const clearReadinessTimer = () => {
-    if (readinessTimer !== null) {
-      clearTimeout(readinessTimer);
-      readinessTimer = null;
-    }
-  };
 
   const watchdog = createLivenessWatchdog({
     timeoutInMs: DICTATION_LIVENESS_TIMEOUT_IN_MS,
@@ -68,50 +66,63 @@ export const createWebSpeechDictationEngine = ({
     },
   });
 
-  // Every path that ends a session funnels through here, so the teardown cannot
-  // drift between them and cannot run twice. onend is deliberately not trusted
-  // to arrive: iOS can end a session without firing it, and leaving any of this
-  // to it wedges dictation — a stuck isActive refuses every later start, a state
-  // left at 'listening' leaves the button offering to stop a session that is
-  // already over, and a listener outliving its session calls back into a stopped
-  // engine. The isActive guard makes a second call a no-op, which is what keeps
-  // stop() from reporting idle twice once onend does arrive.
-  const endSession = (
-    recognitionAction: 'stop' | 'abort' | 'none',
-    { evenWhenIdle = false }: { evenWhenIdle?: boolean } = {},
-  ) => {
-    // Outside the guard: a start whose microphone warm-up is still in flight has
-    // not set isActive yet, and bumping the generation is what abandons it.
-    sessionGeneration++;
-
-    // Also outside it. stop() clears isActive eagerly but the recognizer can
-    // still be settling and deliver one last final result, so a cancel arriving
-    // in that window has to abort it even though the session already reads as
-    // over — otherwise that text lands in a composer the send just cleared.
-    // abort() on a recognizer that is not running is a no-op.
+  // An abandoned recognizer must not report into the session that replaces it.
+  const discardRecognition = () => {
     if (isDefined(recognition)) {
-      if (recognitionAction === 'abort') {
-        recognition.abort();
-      } else if (recognitionAction === 'stop') {
-        recognition.stop();
-      }
+      recognition.onaudiostart = null;
+      recognition.onresult = null;
+      recognition.onerror = null;
+      recognition.onend = null;
     }
 
-    // Only the announcement is guarded, so one session ends exactly once.
+    recognition = null;
+    isRecognizerRunning = false;
+  };
+
+  // The recognizer reported the session is over. Teardown funnels through here
+  // so it cannot drift between callers and cannot run twice: onend is
+  // deliberately not trusted to arrive — iOS can end a session without firing
+  // it, and leaving any of this to it wedges dictation. A stuck isActive
+  // refuses every later start, a state left at 'recording' leaves the button
+  // offering to stop a session that is already over, and a listener outliving
+  // its session calls back into a stopped engine.
+  const endSession = ({
+    evenWhenIdle = false,
+  }: { evenWhenIdle?: boolean } = {}) => {
     if (!isActive && !evenWhenIdle) {
       return;
     }
 
     isActive = false;
-    clearReadinessTimer();
     watchdog.disarm();
     document.removeEventListener('visibilitychange', handleVisibilityChange);
 
     emitter.emit({ type: 'state', state: 'idle' });
   };
 
+  // Asked to end the session, rather than told it ended. The recognizer is told
+  // even when the session already reads as over: stop() clears isActive eagerly
+  // but the recognizer can still be settling and deliver one last final result,
+  // so a cancel arriving in that window has to abort it — otherwise that text
+  // lands in a composer the send just cleared. Ending a session that was never
+  // told to stop (onend, onerror) must not bump the generation, or a recognizer
+  // reporting a previous session would abandon the start already warming up.
+  const requestSessionEnd = (
+    recognitionAction: 'stop' | 'abort',
+    { evenWhenIdle = false }: { evenWhenIdle?: boolean } = {},
+  ) => {
+    sessionGeneration++;
+
+    // A no-op on a recognizer that is not running.
+    if (isDefined(recognition)) {
+      recognition[recognitionAction]();
+    }
+
+    endSession({ evenWhenIdle });
+  };
+
   const stopRecognition = () => {
-    endSession('stop');
+    requestSessionEnd('stop');
   };
 
   const handleVisibilityChange = () => {
@@ -156,20 +167,36 @@ export const createWebSpeechDictationEngine = ({
     };
 
     instance.onerror = (event: WebSpeechRecognitionErrorEvent) => {
-      watchdog.disarm();
-
       const reason = mapSpeechRecognitionError(event.error);
 
       if (isDefined(reason)) {
         emitter.emit({ type: 'error', reason });
       }
+
+      // An error terminates the session — the spec fires end after it — but the
+      // WebKit surfaces this engine is written around can skip that, and waiting
+      // for it would leave the button offering to stop a session that is over.
+      // isRecognizerRunning deliberately stays set: only onend proves the
+      // recognizer released itself, so the next start replaces it instead.
+      endSession();
     };
 
     instance.onend = () => {
-      endSession('none');
+      isRecognizerRunning = false;
+      endSession();
     };
 
     return instance;
+  };
+
+  // Every early return from start() announces the session is over, so a press
+  // that never reached the recognizer still returns the button to idle.
+  const abandonStartup = (reason?: DictationFailureReason) => {
+    if (isDefined(reason)) {
+      emitter.emit({ type: 'error', reason });
+    }
+
+    emitter.emit({ type: 'state', state: 'idle' });
   };
 
   return {
@@ -181,36 +208,46 @@ export const createWebSpeechDictationEngine = ({
       const generation = ++sessionGeneration;
       const isAbandoned = () => generation !== sessionGeneration;
 
-      emitter.emit({ type: 'state', state: 'starting' });
+      emitter.emit({ type: 'state', state: 'recording' });
 
       try {
         await warmUpMicrophone();
       } catch (error) {
-        emitter.emit({ type: 'error', reason: mapMediaDeviceError(error) });
-        emitter.emit({ type: 'state', state: 'idle' });
+        abandonStartup(mapMediaDeviceError(error));
 
         return;
       }
 
       if (isAbandoned()) {
-        emitter.emit({ type: 'state', state: 'idle' });
+        abandonStartup();
 
         return;
       }
 
-      await unlockAudioContext();
+      // iOS only: a context created outside a user gesture is suspended there,
+      // and a suspended one blocks the capture path recognition runs on.
+      // Everywhere else it is a create/resume/close the press pays for nothing.
+      if (isIOS) {
+        await unlockAudioContext();
 
-      if (isAbandoned()) {
-        emitter.emit({ type: 'state', state: 'idle' });
+        if (isAbandoned()) {
+          abandonStartup();
 
-        return;
+          return;
+        }
+      }
+
+      // A recognizer that never reported its session ended cannot be started
+      // again, so a press inside that window gets a fresh one rather than an
+      // InvalidStateError.
+      if (isRecognizerRunning) {
+        discardRecognition();
       }
 
       recognition = recognition ?? buildRecognition();
 
       if (!isDefined(recognition)) {
-        emitter.emit({ type: 'error', reason: 'unsupported-surface' });
-        emitter.emit({ type: 'state', state: 'idle' });
+        abandonStartup('unsupported-surface');
 
         return;
       }
@@ -223,17 +260,12 @@ export const createWebSpeechDictationEngine = ({
         recognition.start();
       } catch {
         emitter.emit({ type: 'error', reason: 'engine-error' });
-        endSession('none');
+        endSession();
 
         return;
       }
 
-      readinessTimer = setTimeout(() => {
-        readinessTimer = null;
-        if (isActive) {
-          emitter.emit({ type: 'state', state: 'listening' });
-        }
-      }, DICTATION_READINESS_DELAY_IN_MS);
+      isRecognizerRunning = true;
     },
 
     stop: stopRecognition,
@@ -242,14 +274,14 @@ export const createWebSpeechDictationEngine = ({
     // belongs to neither the sent message nor the next draft. abort() ends the
     // session without delivering a result, unlike stop().
     cancel: () => {
-      endSession('abort');
+      requestSessionEnd('abort');
     },
 
     dispose: () => {
       // evenWhenIdle because disposal has to release the recognizer and let a
       // caller holding interim text clear it whether or not a session was live.
-      endSession('abort', { evenWhenIdle: true });
-      recognition = null;
+      requestSessionEnd('abort', { evenWhenIdle: true });
+      discardRecognition();
       emitter.clear();
     },
 

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
 import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
@@ -172,10 +172,6 @@ export const AiChatEditorSection = () => {
   const insertDictatedText = useInsertDictatedText(editor);
   const [dictationInterimText, setDictationInterimText] = useState('');
 
-  const handleDictationSessionEnd = useCallback(() => {
-    setDictationInterimText('');
-  }, []);
-
   const pendingQuestion = useAtomComponentSelectorValue(
     agentChatPendingQuestionComponentSelector,
   );
@@ -210,7 +206,6 @@ export const AiChatEditorSection = () => {
                 <AiChatDictationButton
                   onInterimText={setDictationInterimText}
                   onFinalText={insertDictatedText}
-                  onSessionEnd={handleDictationSessionEnd}
                 />
                 <AiChatContextUsageButton />
               </StyledLeftButtonsContainer>

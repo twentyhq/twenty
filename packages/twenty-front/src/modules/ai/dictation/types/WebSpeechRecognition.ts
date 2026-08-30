@@ -6,7 +6,6 @@ export type WebSpeechRecognitionAlternative = {
 
 export type WebSpeechRecognitionResult = {
   isFinal: boolean;
-  length: number;
   [index: number]: WebSpeechRecognitionAlternative;
 };
 
@@ -22,7 +21,6 @@ export type WebSpeechRecognitionEvent = {
 
 export type WebSpeechRecognitionErrorEvent = {
   error: string;
-  message?: string;
 };
 
 export type WebSpeechRecognitionInstance = {
@@ -32,7 +30,6 @@ export type WebSpeechRecognitionInstance = {
   start: () => void;
   stop: () => void;
   abort: () => void;
-  onstart: (() => void) | null;
   onaudiostart: (() => void) | null;
   onresult: ((event: WebSpeechRecognitionEvent) => void) | null;
   onerror: ((event: WebSpeechRecognitionErrorEvent) => void) | null;

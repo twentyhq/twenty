@@ -11,13 +11,11 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 type AiChatDictationButtonProps = {
   onInterimText: (text: string) => void;
   onFinalText: (text: string) => void;
-  onSessionEnd: () => void;
 };
 
 export const AiChatDictationButton = ({
   onInterimText,
   onFinalText,
-  onSessionEnd,
 }: AiChatDictationButtonProps) => {
   const { enqueueErrorSnackBar } = useSnackBar();
 
@@ -31,7 +29,6 @@ export const AiChatDictationButton = ({
   const { isAvailable, isRecording, toggleDictation } = useDictation({
     onInterimText,
     onFinalText,
-    onSessionEnd,
     onFailure: handleFailure,
   });
 

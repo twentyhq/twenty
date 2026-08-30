@@ -37,7 +37,7 @@ describe('createDictationEventEmitter', () => {
     });
 
     emitter.subscribe(later);
-    emitter.emit({ type: 'state', state: 'listening' });
+    emitter.emit({ type: 'state', state: 'recording' });
 
     expect(later).toHaveBeenCalledTimes(1);
   });

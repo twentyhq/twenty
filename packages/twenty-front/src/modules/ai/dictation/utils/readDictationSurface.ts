@@ -19,7 +19,7 @@ const getIsIOS = (userAgent: string): boolean =>
 // surfaces this module exists to survive, so its absence falls back to the
 // legacy iOS flag rather than throwing.
 const getIsStandaloneDisplayMode = (): boolean =>
-  (typeof window.matchMedia === 'function' &&
+  (isDefined(window.matchMedia) &&
     window.matchMedia('(display-mode: standalone)').matches) ||
   (navigator as StandaloneNavigator).standalone === true;
 

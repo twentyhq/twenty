@@ -14,9 +14,7 @@ const CAPABLE_DESKTOP_SURFACE: DictationSurface = {
 
 describe('resolveDictationAvailability', () => {
   it('offers dictation on a capable desktop browser', () => {
-    expect(resolveDictationAvailability(CAPABLE_DESKTOP_SURFACE)).toEqual({
-      status: 'available',
-    });
+    expect(resolveDictationAvailability(CAPABLE_DESKTOP_SURFACE)).toBe(true);
   });
 
   it('refuses without a secure context, since the microphone is gated on it', () => {
@@ -25,7 +23,7 @@ describe('resolveDictationAvailability', () => {
         ...CAPABLE_DESKTOP_SURFACE,
         isSecureContext: false,
       }),
-    ).toEqual({ status: 'unavailable', reason: 'unsupported-surface' });
+    ).toBe(false);
   });
 
   it('refuses without speech recognition', () => {
@@ -34,7 +32,7 @@ describe('resolveDictationAvailability', () => {
         ...CAPABLE_DESKTOP_SURFACE,
         hasSpeechRecognition: false,
       }),
-    ).toEqual({ status: 'unavailable', reason: 'unsupported-surface' });
+    ).toBe(false);
   });
 
   // The Web Speech API is exposed in these iOS contexts but never emits, so
@@ -46,7 +44,7 @@ describe('resolveDictationAvailability', () => {
         isIOS: true,
         isStandaloneDisplayMode: true,
       }),
-    ).toEqual({ status: 'unavailable', reason: 'unsupported-surface' });
+    ).toBe(false);
   });
 
   it('refuses a third-party iOS browser', () => {
@@ -56,7 +54,7 @@ describe('resolveDictationAvailability', () => {
         isIOS: true,
         isThirdPartyIOSBrowser: true,
       }),
-    ).toEqual({ status: 'unavailable', reason: 'unsupported-surface' });
+    ).toBe(false);
   });
 
   it('still offers dictation in iOS Safari itself', () => {
@@ -65,7 +63,7 @@ describe('resolveDictationAvailability', () => {
         ...CAPABLE_DESKTOP_SURFACE,
         isIOS: true,
       }),
-    ).toEqual({ status: 'available' });
+    ).toBe(true);
   });
 
   // The engine warms the microphone through getUserMedia before recognition, so
@@ -76,6 +74,6 @@ describe('resolveDictationAvailability', () => {
         ...CAPABLE_DESKTOP_SURFACE,
         hasMediaDevices: false,
       }),
-    ).toEqual({ status: 'unavailable', reason: 'unsupported-surface' });
+    ).toBe(false);
   });
 });

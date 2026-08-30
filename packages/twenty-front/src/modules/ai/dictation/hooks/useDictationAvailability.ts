@@ -1,21 +1,21 @@
 import { useMemo } from 'react';
 
+import { hasWebSpeechProvenSilentState } from '@/ai/dictation/states/hasWebSpeechProvenSilentState';
 import { readDictationSurface } from '@/ai/dictation/utils/readDictationSurface';
-import {
-  resolveDictationAvailability,
-  type DictationAvailabilityResult,
-} from '@/ai/dictation/utils/resolveDictationAvailability';
-import { readWebSpeechSilentFailure } from '@/ai/dictation/utils/webSpeechSilentFailureStorage';
+import { resolveDictationAvailability } from '@/ai/dictation/utils/resolveDictationAvailability';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export const useDictationAvailability = (): DictationAvailabilityResult =>
-  useMemo(() => {
-    const availability = resolveDictationAvailability(readDictationSurface());
+export const useDictationAvailability = (): boolean => {
+  const hasWebSpeechProvenSilent = useAtomStateValue(
+    hasWebSpeechProvenSilentState,
+  );
 
-    // A browser that already proved its speech engine never emits is treated as
-    // unsupported from then on.
-    if (availability.status === 'available' && readWebSpeechSilentFailure()) {
-      return { status: 'unavailable', reason: 'engine-silent' };
-    }
+  // Every field the surface reports is fixed for the life of the page; the
+  // remembered failure is the only part of availability that moves.
+  const isSurfaceCapable = useMemo(
+    () => resolveDictationAvailability(readDictationSurface()),
+    [],
+  );
 
-    return availability;
-  }, []);
+  return isSurfaceCapable && !hasWebSpeechProvenSilent;
+};
