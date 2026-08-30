@@ -9,6 +9,7 @@ import { type DataSource, type QueryRunner, Repository } from 'typeorm';
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -59,6 +60,7 @@ export class OnboardingService {
   constructor(
     private readonly billingService: BillingService,
     private readonly billingCreditService: BillingCreditService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(WorkspaceEntity)
@@ -863,18 +865,33 @@ export class OnboardingService {
     workspaceId: string;
     employeeCount: number | null;
   }) {
-    const amountMicro = getOnboardingEnrichmentCreditRewardMicro({
-      employeeCount,
-      tiers: this.twentyConfigService.get(
-        'ONBOARDING_ENRICHMENT_CREDIT_REWARD_TIERS',
-      ),
-    });
-
-    if (!isDefined(amountMicro)) {
-      return;
-    }
-
+    // Reading the tiers throws on its own when the configured value is not a
+    // parseable JSON object, so it sits inside the guard with the grant: a
+    // reward nobody has configured correctly must not cost anyone their
+    // onboarding.
     try {
+      const { amountMicro, malformedTierKeys } =
+        getOnboardingEnrichmentCreditRewardMicro({
+          employeeCount,
+          tiers: this.twentyConfigService.get(
+            'ONBOARDING_ENRICHMENT_CREDIT_REWARD_TIERS',
+          ),
+        });
+
+      if (malformedTierKeys.length > 0) {
+        // Dropping a malformed tier silently would under-pay every workspace
+        // that should have matched it, with nothing to notice it by.
+        this.exceptionHandlerService.captureExceptions([
+          new Error(
+            `Ignored malformed ONBOARDING_ENRICHMENT_CREDIT_REWARD_TIERS entries: ${malformedTierKeys.join(', ')}`,
+          ),
+        ]);
+      }
+
+      if (!isDefined(amountMicro)) {
+        return;
+      }
+
       await this.billingCreditService.grantCredits({
         workspaceId,
         amountMicro,
@@ -891,6 +908,10 @@ export class OnboardingService {
         `Failed to credit onboarding enrichment qualification reward for workspace ${workspaceId}`,
         error,
       );
+
+      this.exceptionHandlerService.captureExceptions([error], {
+        workspace: { id: workspaceId },
+      });
     }
   }
 

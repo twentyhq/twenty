@@ -1080,6 +1080,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
       'Credit reward tiers for workspaces enrichment matched to a real company, keyed by tier name, as {"midMarket":{"minEmployeeCount":20,"amountMicro":5000000}} (amounts in microCredits). The most generous matching tier wins; no tiers disables the reward. Independent of ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT, so credits and the book-a-call offer can target different companies.',
+    isHiddenInAdminPanel: true,
     type: ConfigVariableType.JSON,
   })
   @IsOptional()
