@@ -79,8 +79,9 @@ export const createWebSpeechDictationEngine = ({
     isRecognizerRunning = false;
   };
 
-  // The recognizer reported the session is over. Teardown funnels through here
-  // so it cannot drift between callers and cannot run twice: onend is
+  // Announces that the session is over and undoes what start() set up. Every
+  // ending funnels through here so it cannot drift between callers and cannot
+  // run twice, and onend is
   // deliberately not trusted to arrive — iOS can end a session without firing
   // it, and leaving any of this to it wedges dictation. A stuck isActive
   // refuses every later start, a state left at 'recording' leaves the button
@@ -189,8 +190,8 @@ export const createWebSpeechDictationEngine = ({
     return instance;
   };
 
-  // Every early return from start() announces the session is over, so a press
-  // that never reached the recognizer still returns the button to idle.
+  // A press that never reached the recognizer still has to return the button to
+  // idle, and there is nothing yet to tear down when it does.
   const abandonStartup = (reason?: DictationFailureReason) => {
     if (isDefined(reason)) {
       emitter.emit({ type: 'error', reason });
