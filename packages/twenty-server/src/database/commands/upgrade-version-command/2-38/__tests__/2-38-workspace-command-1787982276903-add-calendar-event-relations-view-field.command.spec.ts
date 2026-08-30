@@ -1,10 +1,7 @@
-import {
-  STANDARD_OBJECTS,
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
-} from 'twenty-shared/metadata';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { AddCalendarEventRelationsWidgetCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1787982276903-add-calendar-event-relations-widget.command';
+import { AddCalendarEventRelationsViewFieldCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1787982276903-add-calendar-event-relations-view-field.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -19,18 +16,18 @@ const computeTwentyStandardApplicationAllFlatEntityMapsMock =
   computeTwentyStandardApplicationAllFlatEntityMaps as jest.Mock;
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
-const PAGE_LAYOUT_ID = '20202020-0000-0000-0000-000000000002';
+const VIEW_ID = '20202020-0000-0000-0000-000000000002';
 const STANDARD_APPLICATION = {
   id: '20202020-0000-0000-0000-0000000000aa',
   universalIdentifier: '20202020-0000-0000-0000-0000000000bb',
 };
 
-const CALENDAR_EVENT_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
+const CALENDAR_EVENT_RECORD_PAGE_FIELDS_VIEW_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.calendarEvent.views.calendarEventRecordPageFields
     .universalIdentifier;
-const RELATIONS_WIDGET_UNIVERSAL_IDENTIFIER =
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs.home
-    .widgets.relations.universalIdentifier;
+const RELATIONS_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.calendarEvent.views.calendarEventRecordPageFields.viewFields
+    .calendarEventTargets.universalIdentifier;
 const CALENDAR_EVENT_TARGETS_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.calendarEvent.fields.calendarEventTargets
     .universalIdentifier;
@@ -48,8 +45,8 @@ const buildByUniversalIdentifierMap = <
   ),
 });
 
-describe('AddCalendarEventRelationsWidgetCommand', () => {
-  let command: AddCalendarEventRelationsWidgetCommand;
+describe('AddCalendarEventRelationsViewFieldCommand', () => {
+  let command: AddCalendarEventRelationsViewFieldCommand;
   let getOrRecomputeMock: jest.Mock;
   let validateBuildAndRunWorkspaceMigrationMock: jest.Mock;
 
@@ -63,13 +60,13 @@ describe('AddCalendarEventRelationsWidgetCommand', () => {
 
     computeTwentyStandardApplicationAllFlatEntityMapsMock.mockReturnValue({
       allFlatEntityMaps: {
-        flatPageLayoutWidgetMaps: buildByUniversalIdentifierMap([
-          { universalIdentifier: RELATIONS_WIDGET_UNIVERSAL_IDENTIFIER },
+        flatViewFieldMaps: buildByUniversalIdentifierMap([
+          { universalIdentifier: RELATIONS_VIEW_FIELD_UNIVERSAL_IDENTIFIER },
         ]),
       },
     });
 
-    command = new AddCalendarEventRelationsWidgetCommand(
+    command = new AddCalendarEventRelationsViewFieldCommand(
       {} as WorkspaceIteratorService,
       {
         findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
@@ -97,13 +94,13 @@ describe('AddCalendarEventRelationsWidgetCommand', () => {
     });
 
   const mockWorkspaceCache = ({
-    pageLayoutExists = true,
+    viewExists = true,
     targetsFieldExists = true,
-    widgets = [],
+    viewFields = [],
   }: {
-    pageLayoutExists?: boolean;
+    viewExists?: boolean;
     targetsFieldExists?: boolean;
-    widgets?: { universalIdentifier: string }[];
+    viewFields?: { universalIdentifier: string }[];
   }) => {
     getOrRecomputeMock.mockResolvedValue({
       flatFieldMetadataMaps: buildByUniversalIdentifierMap(
@@ -116,22 +113,22 @@ describe('AddCalendarEventRelationsWidgetCommand', () => {
             ]
           : [],
       ),
-      flatPageLayoutMaps: buildByUniversalIdentifierMap(
-        pageLayoutExists
+      flatViewMaps: buildByUniversalIdentifierMap(
+        viewExists
           ? [
               {
-                id: PAGE_LAYOUT_ID,
+                id: VIEW_ID,
                 universalIdentifier:
-                  CALENDAR_EVENT_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+                  CALENDAR_EVENT_RECORD_PAGE_FIELDS_VIEW_UNIVERSAL_IDENTIFIER,
               },
             ]
           : [],
       ),
-      flatPageLayoutWidgetMaps: buildByUniversalIdentifierMap(widgets),
+      flatViewFieldMaps: buildByUniversalIdentifierMap(viewFields),
     });
   };
 
-  it('creates the Relations widget', async () => {
+  it('creates the Relations view field', async () => {
     mockWorkspaceCache({});
 
     await runOnWorkspace();
@@ -139,18 +136,19 @@ describe('AddCalendarEventRelationsWidgetCommand', () => {
     const [payload] = validateBuildAndRunWorkspaceMigrationMock.mock.calls[0];
 
     expect(
-      payload.allFlatEntityOperationByMetadataName.pageLayoutWidget
-        .flatEntityToCreate,
+      payload.allFlatEntityOperationByMetadataName.viewField.flatEntityToCreate,
     ).toEqual([
       expect.objectContaining({
-        universalIdentifier: RELATIONS_WIDGET_UNIVERSAL_IDENTIFIER,
+        universalIdentifier: RELATIONS_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
       }),
     ]);
   });
 
-  it('is idempotent when the Relations widget already exists', async () => {
+  it('is idempotent when the Relations view field already exists', async () => {
     mockWorkspaceCache({
-      widgets: [{ universalIdentifier: RELATIONS_WIDGET_UNIVERSAL_IDENTIFIER }],
+      viewFields: [
+        { universalIdentifier: RELATIONS_VIEW_FIELD_UNIVERSAL_IDENTIFIER },
+      ],
     });
 
     await runOnWorkspace();
@@ -158,8 +156,8 @@ describe('AddCalendarEventRelationsWidgetCommand', () => {
     expect(validateBuildAndRunWorkspaceMigrationMock).not.toHaveBeenCalled();
   });
 
-  it('skips workspaces without a Calendar Event page layout', async () => {
-    mockWorkspaceCache({ pageLayoutExists: false });
+  it('skips workspaces without a Calendar Event record page fields view', async () => {
+    mockWorkspaceCache({ viewExists: false });
 
     await runOnWorkspace();
 
