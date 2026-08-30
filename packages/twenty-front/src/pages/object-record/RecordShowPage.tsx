@@ -32,22 +32,20 @@ export const RecordShowPage = () => {
     parameters.objectRecordId ?? '',
   );
 
-  const recordShowComponentInstanceId =
-    computeRecordShowComponentInstanceId(objectRecordId);
+  // The same record open on both sides would otherwise share one instance, so
+  // its fields, filters, tabs and command menu would cross-write.
+  const recordShowComponentInstanceId = useSurfaceScopedComponentInstanceId(
+    computeRecordShowComponentInstanceId(objectRecordId),
+  );
 
   const isInSidePanelRoutedSurface = useIsInSidePanelRoutedSurface();
-
-  // The same record open on both sides would otherwise share one command menu.
-  const commandMenuInstanceId = useSurfaceScopedComponentInstanceId(
-    recordShowComponentInstanceId,
-  );
 
   return (
     <RecordComponentInstanceContextsWrapper
       componentInstanceId={recordShowComponentInstanceId}
     >
       <CommandMenuComponentInstanceContext.Provider
-        value={{ instanceId: commandMenuInstanceId }}
+        value={{ instanceId: recordShowComponentInstanceId }}
       >
         <RecordShowPageTitle
           objectNameSingular={objectNameSingular}

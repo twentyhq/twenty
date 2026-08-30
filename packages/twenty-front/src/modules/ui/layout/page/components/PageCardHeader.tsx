@@ -1,4 +1,5 @@
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
+import { useIsInSidePanelRoutedSurface } from '@/side-panel/routing/hooks/useIsInSidePanelRoutedSurface';
 import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
 import {
   Breadcrumb,
@@ -91,6 +92,7 @@ export const PageCardHeader = ({
 }: PageCardHeaderProps) => {
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
+  const isInSidePanelRoutedSurface = useIsInSidePanelRoutedSurface();
 
   const hasTitleContent = isDefined(icon) || isDefined(title) || isDefined(tag);
   const shouldCenterTitle = centerTitle && hasTitleContent;
@@ -102,6 +104,26 @@ export const PageCardHeader = ({
       {tag}
     </>
   );
+
+  // The panel top bar already carries the name, the icon and the breadcrumb of
+  // the page it is hosting, but nothing that commits a form, so the actions
+  // stay and the rest goes.
+  if (isInSidePanelRoutedSurface) {
+    if (!isDefined(actionButton)) {
+      return null;
+    }
+
+    return (
+      <StyledHeader>
+        <StyledLeft />
+        <StyledRight
+          data-click-outside-id={PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID}
+        >
+          {actionButton}
+        </StyledRight>
+      </StyledHeader>
+    );
+  }
 
   return (
     <StyledHeader centerTitle={shouldCenterTitle}>

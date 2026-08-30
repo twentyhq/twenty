@@ -85,7 +85,9 @@ describe('a settings page hosted in the side panel', () => {
       { timeout: 10000 },
     );
 
+    // The breadcrumb and the page title repeat the panel top bar, the actions
+    // are the only way to act on the page and have nowhere else to go.
     expect(screen.queryByText('Workspace')).not.toBeInTheDocument();
-    expect(screen.queryByText('See records')).not.toBeInTheDocument();
+    expect(screen.getByText('See records')).toBeVisible();
   });
 });

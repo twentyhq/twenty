@@ -1,10 +1,14 @@
 import { HelmetProvider } from '@dr.pogodin/react-helmet';
 import { render, screen, waitFor } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
+import { MemoryRouter } from 'react-router-dom';
 
+import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { IsInSidePanelRoutedSurfaceContext } from '@/ui/layout/side-panel/contexts/IsInSidePanelRoutedSurfaceContext';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 jest.mock('@/information-banner/components/InformationBannerWrapper', () => ({
   InformationBannerWrapper: () => null,
@@ -13,36 +17,69 @@ jest.mock('@/information-banner/components/InformationBannerWrapper', () => ({
 const renderOnSurface = (children: ReactNode, isInSidePanel: boolean) =>
   render(
     <HelmetProvider>
-      <IsInSidePanelRoutedSurfaceContext.Provider value={isInSidePanel}>
-        {children}
-      </IsInSidePanelRoutedSurfaceContext.Provider>
+      <JotaiProvider store={jotaiStore}>
+        <MemoryRouter>
+          <IsInSidePanelRoutedSurfaceContext.Provider value={isInSidePanel}>
+            {children}
+          </IsInSidePanelRoutedSurfaceContext.Provider>
+        </MemoryRouter>
+      </JotaiProvider>
     </HelmetProvider>,
   );
 
 // These live on the primitives rather than on each page because guarding them
 // per call site let a header through anything that renders one indirectly.
 describe('page chrome on the side panel surface', () => {
-  it('should render the page header on the main surface', () => {
+  it('should render the whole header on the main surface', () => {
     renderOnSurface(
-      <PageCardLayout header={<div>Page header</div>}>
+      <PageCardLayout
+        header={
+          <PageCardHeader
+            title="Companies"
+            actionButton={<button>Save</button>}
+          />
+        }
+      >
         <div>Body</div>
       </PageCardLayout>,
       false,
     );
 
-    expect(screen.getByText('Page header')).toBeVisible();
+    expect(screen.getByText('Companies')).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Save' })).toBeVisible();
     expect(screen.getByText('Body')).toBeVisible();
   });
 
-  it('should drop the page header when the page is hosted in the panel', () => {
+  it('should keep the actions and drop the title when hosted in the panel', () => {
     renderOnSurface(
-      <PageCardLayout header={<div>Page header</div>}>
+      <PageCardLayout
+        header={
+          <PageCardHeader
+            title="Companies"
+            actionButton={<button>Save</button>}
+          />
+        }
+      >
         <div>Body</div>
       </PageCardLayout>,
       true,
     );
 
-    expect(screen.queryByText('Page header')).not.toBeInTheDocument();
+    // A hosted field editor commits through this button and has no other one.
+    expect(screen.getByRole('button', { name: 'Save' })).toBeVisible();
+    expect(screen.queryByText('Companies')).not.toBeInTheDocument();
+    expect(screen.getByText('Body')).toBeVisible();
+  });
+
+  it('should render no header bar in the panel when the page has no actions', () => {
+    renderOnSurface(
+      <PageCardLayout header={<PageCardHeader title="Companies" />}>
+        <div>Body</div>
+      </PageCardLayout>,
+      true,
+    );
+
+    expect(screen.queryByText('Companies')).not.toBeInTheDocument();
     expect(screen.getByText('Body')).toBeVisible();
   });
 

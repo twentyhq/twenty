@@ -75,12 +75,19 @@ export const useOpenRecordInSidePanel = () => {
 
         closeSidePanelMenu();
 
-        navigate(AppPath.RecordShowPage, {
-          objectNameSingular,
-          objectRecordId: recordId,
-        });
+        // Deliberately the main outlet: on mobile the panel is the viewport, so
+        // hosting the record on the right would be the thing being escaped.
+        navigate(
+          AppPath.RecordShowPage,
+          {
+            objectNameSingular,
+            objectRecordId: recordId,
+          },
+          undefined,
+          { surface: 'main' },
+        );
 
-        return;
+        return null;
       }
 
       const navigationStack = store.get(sidePanelNavigationStackState.atom);
@@ -99,7 +106,7 @@ export const useOpenRecordInSidePanel = () => {
           : null;
 
         if (currentRecordShowParams?.objectRecordId === recordId) {
-          return;
+          return currentNavigationStackItem.pageId;
         }
       }
 
@@ -128,7 +135,7 @@ export const useOpenRecordInSidePanel = () => {
       });
 
       if (!isDefined(pageComponentInstanceId)) {
-        return;
+        return null;
       }
 
       const currentMorphItems = store.get(
@@ -166,6 +173,10 @@ export const useOpenRecordInSidePanel = () => {
           });
         }
       }
+
+      // The panel page owns its own context store, so a caller with state to
+      // hand the record needs to know which instance will read it.
+      return pageComponentInstanceId;
     },
     [
       closeSidePanelMenu,

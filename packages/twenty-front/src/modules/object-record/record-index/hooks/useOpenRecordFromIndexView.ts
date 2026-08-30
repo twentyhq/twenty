@@ -1,7 +1,7 @@
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
-import { useContextStoreInstanceId } from '@/context-store/hooks/useContextStoreInstanceId';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
@@ -41,8 +41,6 @@ export const useOpenRecordFromIndexView = () => {
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
-  const contextStoreInstanceId = useContextStoreInstanceId();
-
   const store = useStore();
 
   const openRecordFromIndexView = useCallback(
@@ -53,26 +51,38 @@ export const useOpenRecordFromIndexView = () => {
 
       const parentViewFilterGroups = store.get(currentRecordFilterGroups);
 
-      store.set(
-        contextStoreRecordShowParentViewComponentState.atomFamily({
-          instanceId: contextStoreInstanceId,
-        }),
-        {
-          parentViewComponentId: recordIndexId,
-          parentViewObjectNameSingular: objectNameSingular,
-          parentViewFilterGroups,
-          parentViewFilters,
-          parentViewSorts,
-        },
-      );
+      const parentView = {
+        parentViewComponentId: recordIndexId,
+        parentViewObjectNameSingular: objectNameSingular,
+        parentViewFilterGroups,
+        parentViewFilters,
+        parentViewSorts,
+      };
+
+      // The record's related lists read this from the store of the surface they
+      // render on, so it has to land on the destination rather than on the index
+      // that is handing it over.
+      const setParentViewOn = (instanceId: string) =>
+        store.set(
+          contextStoreRecordShowParentViewComponentState.atomFamily({
+            instanceId,
+          }),
+          parentView,
+        );
 
       if (openRecordIn === OpenRecordIn.SIDE_PANEL) {
-        openRecordInSidePanel({
+        const sidePanelPageInstanceId = openRecordInSidePanel({
           recordId,
           objectNameSingular,
           resetNavigationStack: true,
         });
+
+        setParentViewOn(
+          sidePanelPageInstanceId ?? MAIN_CONTEXT_STORE_INSTANCE_ID,
+        );
       } else {
+        setParentViewOn(MAIN_CONTEXT_STORE_INSTANCE_ID);
+
         const isSidePanelAiChat =
           store.get(sidePanelPageState.atom) === SidePanelPages.AskAI;
 
@@ -96,7 +106,6 @@ export const useOpenRecordFromIndexView = () => {
       openRecordInSidePanel,
       openRecordIn,
       closeSidePanelMenu,
-      contextStoreInstanceId,
       store,
     ],
   );

@@ -4,6 +4,7 @@ import { type Store } from 'jotai/vanilla/store';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useNavigateToRecordPageFromSidePanel } from '@/side-panel/pages/record-page/hooks/useNavigateToRecordPageFromSidePanel';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
@@ -64,9 +65,11 @@ const renderNavigateToRecordPage = ({
       );
 
       if (parentView !== undefined) {
+        // The panel page holds it, since that is the surface the peek read it
+        // from; expanding is what moves it to the main one.
         initializedStore.set(
           contextStoreRecordShowParentViewComponentState.atomFamily({
-            instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+            instanceId: PAGE_INSTANCE_ID,
           }),
           parentView as never,
         );
@@ -76,11 +79,15 @@ const renderNavigateToRecordPage = ({
 
   const wrapper = ({ children }: { children: ReactNode }) => (
     <BaseWrapper>
-      <SidePanelPageComponentInstanceContext.Provider
+      <ContextStoreComponentInstanceContext.Provider
         value={{ instanceId: PAGE_INSTANCE_ID }}
       >
-        {children}
-      </SidePanelPageComponentInstanceContext.Provider>
+        <SidePanelPageComponentInstanceContext.Provider
+          value={{ instanceId: PAGE_INSTANCE_ID }}
+        >
+          {children}
+        </SidePanelPageComponentInstanceContext.Provider>
+      </ContextStoreComponentInstanceContext.Provider>
     </BaseWrapper>
   );
 

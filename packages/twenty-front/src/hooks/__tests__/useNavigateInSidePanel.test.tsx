@@ -113,6 +113,26 @@ describe('navigating from inside the side panel', () => {
     expect(navigateMock).not.toHaveBeenCalled();
   });
 
+  it('should send a record target to the main outlet when the caller asks for it', () => {
+    const { result } = renderInSurface(useNavigateApp, {
+      isInSidePanel: true,
+    });
+
+    act(() => {
+      result.current(
+        AppPath.RecordShowPage,
+        { objectNameSingular: 'company', objectRecordId: 'record-1' },
+        undefined,
+        { surface: 'main' },
+      );
+    });
+
+    expect(navigateFromSidePanelMock).not.toHaveBeenCalled();
+    expect(navigateMock).toHaveBeenCalledWith('/object/company/record-1', {
+      surface: 'main',
+    });
+  });
+
   it('should send an app target the panel cannot host to the main outlet', () => {
     const { result } = renderInSurface(useNavigateApp, {
       isInSidePanel: true,

@@ -4,7 +4,10 @@ import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getSidePanelCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getSidePanelCommandMenuDropdownIdFromCommandMenuId';
+import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
+import { getSurfaceScopedComponentInstanceId } from '@/side-panel/routing/utils/getSurfaceScopedComponentInstanceId';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { useContextStoreInstanceId } from '@/context-store/hooks/useContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
@@ -31,7 +34,14 @@ export const useNavigateToRecordPageFromSidePanel = () => {
     SidePanelPageComponentInstanceContext,
   )?.instanceId;
 
+  const contextStoreInstanceId = useContextStoreInstanceId();
+
   const parentViewState = useAtomComponentStateCallbackState(
+    contextStoreRecordShowParentViewComponentState,
+    contextStoreInstanceId,
+  );
+
+  const mainParentViewState = useAtomComponentStateCallbackState(
     contextStoreRecordShowParentViewComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
@@ -64,14 +74,18 @@ export const useNavigateToRecordPageFromSidePanel = () => {
         tabIdToOpen,
       );
 
+      // Expanding leaves this surface for the main one, so the record's related
+      // lists will read the main store; a parent view about another object is
+      // not this record's to inherit.
       const parentView = store.get(parentViewState);
 
-      if (
+      store.set(
+        mainParentViewState,
         isDefined(parentView) &&
-        parentView.parentViewObjectNameSingular !== objectNameSingular
-      ) {
-        store.set(parentViewState, undefined);
-      }
+          parentView.parentViewObjectNameSingular === objectNameSingular
+          ? parentView
+          : undefined,
+      );
 
       store.set(sidePanelNavigationStackState.atom, []);
 
@@ -81,9 +95,14 @@ export const useNavigateToRecordPageFromSidePanel = () => {
       });
 
       if (isDefined(sidePanelPageInstanceId)) {
+        // The hosted record page scopes its command menu to the surface, so the
+        // dropdown to close is keyed on that instance and not on the page alone.
         closeDropdown(
           getSidePanelCommandMenuDropdownIdFromCommandMenuId(
-            sidePanelPageInstanceId,
+            getSurfaceScopedComponentInstanceId(
+              computeRecordShowComponentInstanceId(recordId),
+              sidePanelPageInstanceId,
+            ),
           ),
         );
       }
@@ -93,6 +112,7 @@ export const useNavigateToRecordPageFromSidePanel = () => {
     [
       closeDropdown,
       closeSidePanelMenu,
+      mainParentViewState,
       navigate,
       parentViewState,
       sidePanelPageInstanceId,

@@ -5,6 +5,12 @@ import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { useSidePanelRoutedSurface } from '@/side-panel/routing/hooks/useSidePanelRoutedSurface';
 import { isSidePanelHostablePath } from '@/side-panel/routing/utils/isSidePanelHostablePath';
 
+export type NavigateAppOptions = NavigateOptions & {
+  // A caller that has already decided the main outlet is the destination, like
+  // the mobile escape out of the panel, opts out of being hosted on the right.
+  surface?: 'main';
+};
+
 export const useNavigateApp = () => {
   const navigate = useNavigate();
   const sidePanelRoutedSurface = useSidePanelRoutedSurface();
@@ -13,11 +19,15 @@ export const useNavigateApp = () => {
     to: T,
     params?: Parameters<typeof getAppPath<T>>[1],
     queryParams?: Record<string, any>,
-    options?: NavigateOptions,
+    options?: NavigateAppOptions,
   ) => {
     const path = getAppPath(to, params, queryParams);
 
-    if (isDefined(sidePanelRoutedSurface) && isSidePanelHostablePath(path)) {
+    if (
+      options?.surface !== 'main' &&
+      isDefined(sidePanelRoutedSurface) &&
+      isSidePanelHostablePath(path)
+    ) {
       return sidePanelRoutedSurface.navigateFromSidePanel(path);
     }
 

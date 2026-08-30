@@ -260,10 +260,12 @@ describe('useOpenRecordInSidePanel', () => {
       });
     });
 
-    expect(mockNavigateApp).toHaveBeenCalledWith(AppPath.RecordShowPage, {
-      objectNameSingular: 'person',
-      objectRecordId: 'record-123',
-    });
+    expect(mockNavigateApp).toHaveBeenCalledWith(
+      AppPath.RecordShowPage,
+      { objectNameSingular: 'person', objectRecordId: 'record-123' },
+      undefined,
+      { surface: 'main' },
+    );
     expect(mockNavigateSidePanel).not.toHaveBeenCalled();
     expect(jotaiStore.get(newRecordTitleCellToOpenState.atom)).toBeNull();
   });
@@ -280,10 +282,12 @@ describe('useOpenRecordInSidePanel', () => {
       });
     });
 
-    expect(mockNavigateApp).toHaveBeenCalledWith(AppPath.RecordShowPage, {
-      objectNameSingular: 'person',
-      objectRecordId: 'new-record-123',
-    });
+    expect(mockNavigateApp).toHaveBeenCalledWith(
+      AppPath.RecordShowPage,
+      { objectNameSingular: 'person', objectRecordId: 'new-record-123' },
+      undefined,
+      { surface: 'main' },
+    );
     expect(jotaiStore.get(newRecordTitleCellToOpenState.atom)).toEqual({
       recordId: 'new-record-123',
       fieldName: getLabelIdentifierFieldMetadataItem(
