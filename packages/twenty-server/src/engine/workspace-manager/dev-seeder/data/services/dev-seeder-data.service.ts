@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { readFile } from 'fs/promises';
-import { join } from 'path';
+import { join, sep } from 'path';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
@@ -464,7 +464,8 @@ export class DevSeederDataService {
     entityManager: EntityManager,
     fileSeedMetadata: AttachmentFileSeedMetadata[],
   ): Promise<void> {
-    const IS_BUILT = __dirname.includes('/dist/');
+    // Split on sep so the check also works on Windows, where __dirname uses backslashes.
+    const IS_BUILT = __dirname.split(sep).includes('dist');
     const sampleFilesDir = IS_BUILT
       ? join(
           __dirname,

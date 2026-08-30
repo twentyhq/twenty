@@ -2,8 +2,10 @@ import path from 'path';
 
 import { ASSET_PATH } from 'src/constants/assets-path';
 
+// Split on path.sep so the check also works on Windows, where __dirname uses backslashes.
 const IS_BUILT =
-  __dirname.includes('/dist/') && process.env.NODE_ENV !== 'development';
+  __dirname.split(path.sep).includes('dist') &&
+  process.env.NODE_ENV !== 'development';
 
 // In built mode the package is copied into dist/assets/ by the build step.
 // In dev mode it lives in node_modules via the monorepo workspace — resolve
