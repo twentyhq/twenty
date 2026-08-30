@@ -4,6 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { experimental_transcribe as transcribe } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   AiException,
   AiExceptionCode,
@@ -11,6 +12,7 @@ import {
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
+import { MAX_DICTATION_DURATION_SECONDS } from 'src/engine/metadata-modules/ai/ai-transcription/constants/dictation-audio-limits.const';
 
 export type TranscribeAudioResult = {
   text: string;
@@ -27,6 +29,7 @@ export class AiTranscriptionService {
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly aiBillingService: AiBillingService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async transcribeAudio({
@@ -42,6 +45,16 @@ export class AiTranscriptionService {
     workspaceId: string;
     userWorkspaceId?: string | null;
   }): Promise<TranscribeAudioResult> {
+    // Checked here rather than only in client config: an operator who turns
+    // dictation off expects the endpoint to stop spending, not just the button
+    // to disappear.
+    if (!this.twentyConfigService.get('IS_DICTATION_ENABLED')) {
+      throw new AiException(
+        'Dictation is disabled on this instance',
+        AiExceptionCode.TRANSCRIPTION_NOT_CONFIGURED,
+      );
+    }
+
     const registeredModel = isNonEmptyString(modelId)
       ? this.aiModelRegistryService.getTranscriptionModel(modelId)
       : this.aiModelRegistryService.getDefaultTranscriptionModel();
@@ -74,6 +87,8 @@ export class AiTranscriptionService {
       userWorkspaceId,
     );
 
+    this.rejectOverLongAudio(result.durationInSeconds);
+
     return {
       text: result.text,
       durationInSeconds: result.durationInSeconds,
@@ -81,6 +96,26 @@ export class AiTranscriptionService {
     };
   }
 
+  // Duration cannot be known before the provider reports it, and the byte cap
+  // is a weak proxy because the caller picks the bitrate. So the limit is
+  // enforced on the way out: over-long audio yields no transcript, which is
+  // what stops it being a way to transcribe long recordings a few minutes at a
+  // time. Billing has already run, because the provider was paid either way.
+  private rejectOverLongAudio(durationInSeconds: number | undefined): void {
+    if (
+      isDefined(durationInSeconds) &&
+      durationInSeconds > MAX_DICTATION_DURATION_SECONDS
+    ) {
+      throw new AiException(
+        `Dictation audio is ${Math.round(durationInSeconds)}s, above the ${MAX_DICTATION_DURATION_SECONDS}s limit`,
+        AiExceptionCode.INVALID_AUDIO_INPUT,
+      );
+    }
+  }
+
+  // Accounting runs after the provider has already been paid, so a Redis or
+  // billing-subscription outage must not turn completed work into an error the
+  // caller retries — that would pay for the same audio twice.
   private async billTranscription(
     modelId: string,
     durationInSeconds: number | undefined,
@@ -102,12 +137,19 @@ export class AiTranscriptionService {
       return;
     }
 
-    await this.aiBillingService.billTranscriptionUsage({
-      modelId,
-      costPerMinute,
-      durationInSeconds,
-      workspaceId,
-      userWorkspaceId,
-    });
+    try {
+      await this.aiBillingService.billTranscriptionUsage({
+        modelId,
+        costPerMinute,
+        durationInSeconds,
+        workspaceId,
+        userWorkspaceId,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to bill transcription with ${modelId} for workspace ${workspaceId}`,
+        error instanceof Error ? error.stack : String(error),
+      );
+    }
   }
 }
