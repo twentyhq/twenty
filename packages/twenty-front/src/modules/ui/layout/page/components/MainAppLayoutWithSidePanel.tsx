@@ -6,20 +6,15 @@ import { styled } from '@linaria/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useLocation, useOutlet } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { isSettingsPath } from '~/utils/isSettingsPath';
 
 const ROUTE_SECTION_DATA_ATTRIBUTE = 'data-main-app-route-section';
 
 const APP_TO_SETTINGS_TRANSITION_DURATION_IN_SECONDS = 0.3;
 
-const SETTINGS_PATH_PREFIX = `/${AppPath.Settings}`;
-
 const getMainAppLayoutRouteSection = (pathname: string) =>
-  pathname === SETTINGS_PATH_PREFIX ||
-  pathname.startsWith(`${SETTINGS_PATH_PREFIX}/`)
-    ? 'settings'
-    : 'app';
+  isSettingsPath(pathname) ? 'settings' : 'app';
 
 const StyledRow = styled.div`
   display: flex;

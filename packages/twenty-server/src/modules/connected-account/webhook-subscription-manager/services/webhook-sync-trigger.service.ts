@@ -1,21 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import {
-  CalendarChannelSyncStage,
-  MessageChannelSyncStage,
-} from 'twenty-shared/types';
+import { MessageChannelSyncStage } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import {
-  CalendarEventListFetchJob,
-  type CalendarEventListFetchJobData,
-} from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
+  CalendarEventWebhookSyncJob,
+  type CalendarEventWebhookSyncJobData,
+} from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/jobs/calendar-event-webhook-sync.job';
+import { CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_INITIAL_DELAY_MS } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-retry-initial-delay-ms.constant';
+import { CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_LIMIT } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-retry-limit.constant';
 import {
   MessagingMessageListFetchJob,
   type MessagingMessageListFetchJobData,
@@ -26,12 +24,10 @@ export class WebhookSyncTriggerService {
   constructor(
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messagingQueueService: MessageQueueService,
-    @InjectMessageQueue(MessageQueue.calendarQueue)
-    private readonly calendarQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.connectedAccountSyncWebhookQueue)
+    private readonly connectedAccountSyncWebhookQueueService: MessageQueueService,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
-    @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
   ) {}
 
   async triggerMessagingSync(
@@ -84,45 +80,18 @@ export class WebhookSyncTriggerService {
     calendarChannelId: string,
     workspaceId: string,
   ): Promise<void> {
-    const updateResult = await this.calendarChannelRepository
-      .createQueryBuilder()
-      .update()
-      .set({
-        syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,
-        syncStageStartedAt: new Date(),
-      })
-      .where({
-        id: calendarChannelId,
-        workspaceId,
-        isSyncEnabled: true,
-        syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
-      })
-      .returning('id')
-      .execute();
-
-    if (updateResult.raw.length === 0) {
-      return;
-    }
-
-    try {
-      await this.calendarQueueService.add<CalendarEventListFetchJobData>(
-        CalendarEventListFetchJob.name,
-        { workspaceId, calendarChannelId },
-      );
-    } catch (error) {
-      await this.calendarChannelRepository
-        .createQueryBuilder()
-        .update()
-        .set({
-          syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
-        })
-        .where({
-          id: calendarChannelId,
-          workspaceId,
-        })
-        .execute();
-
-      throw error;
-    }
+    await this.connectedAccountSyncWebhookQueueService.add<CalendarEventWebhookSyncJobData>(
+      CalendarEventWebhookSyncJob.name,
+      { workspaceId, calendarChannelId },
+      {
+        id: `${CalendarEventWebhookSyncJob.name}-${calendarChannelId}`,
+        retryLimit: CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_LIMIT,
+        backoff: {
+          strategy: 'exponential',
+          initialDelayMilliseconds:
+            CALENDAR_EVENT_WEBHOOK_SYNC_RETRY_INITIAL_DELAY_MS,
+        },
+      },
+    );
   }
 }
