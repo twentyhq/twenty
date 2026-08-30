@@ -62,6 +62,18 @@ describe('AiTranscriptionService', () => {
     });
   });
 
+  it('passes the speaker language to the provider as an ISO-639-1 code', async () => {
+    const { service } = buildService();
+
+    await service.transcribeAudio({ ...transcribeInput, language: 'fr-FR' });
+
+    expect(transcribeMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        providerOptions: { openai: { language: 'fr' } },
+      }),
+    );
+  });
+
   it('returns the transcript and bills the reported duration', async () => {
     const billTranscriptionUsage = jest.fn().mockResolvedValue(undefined);
     const { service } = buildService({ billTranscriptionUsage });

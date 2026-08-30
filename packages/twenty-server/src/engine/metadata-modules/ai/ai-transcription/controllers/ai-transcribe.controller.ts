@@ -56,6 +56,7 @@ export class AiTranscribeController {
       audio: decoded.audio,
       modelId: body.modelId,
       vocabularyPrompt: body.vocabularyPrompt,
+      language: body.language,
       workspaceId: workspace.id,
       userWorkspaceId,
     });
