@@ -9,7 +9,6 @@ import { AppPath } from 'twenty-shared/types';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   type AuthToken,
-  type AuthTokenPair,
   CheckUserExistsDocument,
   GetAuthTokensFromLoginTokenDocument,
   GetAuthTokensFromOtpDocument,
@@ -30,7 +29,6 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
-import { tokenPairState } from '@/auth/states/tokenPairState';
 import { clearSessionLocalStorageKeys } from '@/auth/utils/clearSessionLocalStorageKeys';
 import { broadcastSignOutToOtherTabs } from '@/auth/utils/crossTabSignOut';
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
@@ -67,7 +65,6 @@ import { useStore } from 'jotai';
 
 export const useAuth = () => {
   const store = useStore();
-  const setTokenPair = useSetAtomState(tokenPairState);
   const setLoginToken = useSetAtomState(loginTokenState);
   const setIsAppEffectRedirectEnabled = useSetAtomState(
     isAppEffectRedirectEnabledState,
@@ -122,7 +119,6 @@ export const useAuth = () => {
     // racing it to the sign-in page once the session is cleared.
     store.set(isAppEffectRedirectEnabledState.atom, false);
     sessionStorage.clear();
-    store.set(tokenPairState.atom, null);
     store.set(isCookieAuthActiveState.atom, false);
     store.set(currentUserState.atom, null);
     store.set(currentWorkspaceState.atom, null);
@@ -133,13 +129,12 @@ export const useAuth = () => {
     window.location.assign(AppPath.SignInUp);
   }, [store, setLastAuthenticateWorkspaceDomain]);
 
-  const handleSetAuthTokens = useCallback(
-    (tokens: AuthTokenPair) => {
-      setTokenPair(tokens);
-      store.set(isPendingServerSignOutState.atom, false);
-    },
-    [setTokenPair, store],
-  );
+  // The auth mutations set the session cookie server-side, so signing in only
+  // has to record that a session now exists.
+  const handleSetAuthTokens = useCallback(() => {
+    store.set(isCookieAuthActiveState.atom, true);
+    store.set(isPendingServerSignOutState.atom, false);
+  }, [store]);
 
   const navigateAfterMultiWorkspaceSignInUp = useCallback(
     async (
@@ -267,7 +262,7 @@ export const useAuth = () => {
         throw new Error('No workspace agnostic token in result');
       }
 
-      handleSetAuthTokens(data.verifyEmailAndGetWorkspaceAgnosticToken.tokens);
+      handleSetAuthTokens();
 
       const { user } = await loadCurrentUser();
 
@@ -291,19 +286,16 @@ export const useAuth = () => {
     [setLoginToken],
   );
 
-  const handleLoadWorkspaceAfterAuthentication = useCallback(
-    async (authTokens: AuthTokenPair) => {
-      handleSetAuthTokens(authTokens);
-      setIsAppEffectRedirectEnabled(false);
+  const handleLoadWorkspaceAfterAuthentication = useCallback(async () => {
+    handleSetAuthTokens();
+    setIsAppEffectRedirectEnabled(false);
 
-      try {
-        await loadCurrentUser();
-      } finally {
-        setIsAppEffectRedirectEnabled(true);
-      }
-    },
-    [loadCurrentUser, handleSetAuthTokens, setIsAppEffectRedirectEnabled],
-  );
+    try {
+      await loadCurrentUser();
+    } finally {
+      setIsAppEffectRedirectEnabled(true);
+    }
+  }, [loadCurrentUser, handleSetAuthTokens, setIsAppEffectRedirectEnabled]);
 
   const handleGetAuthTokensFromLoginToken = useCallback(
     async (loginToken: string) => {
@@ -323,9 +315,7 @@ export const useAuth = () => {
           throw new Error('No getAuthTokensFromLoginToken result');
         }
 
-        await handleLoadWorkspaceAfterAuthentication(
-          getAuthTokensResult.data.getAuthTokensFromLoginToken.tokens,
-        );
+        await handleLoadWorkspaceAfterAuthentication();
       } catch (error) {
         if (
           isGraphqlErrorOfType(
@@ -367,8 +357,8 @@ export const useAuth = () => {
     async (email: string, password: string, captchaToken?: string) => {
       await signIn({
         variables: { email, password, captchaToken },
-        onCompleted: async (data) => {
-          handleSetAuthTokens(data.signIn.tokens);
+        onCompleted: async () => {
+          handleSetAuthTokens();
           const { user } = await loadCurrentUser();
 
           await navigateAfterMultiWorkspaceSignInUp(
@@ -421,7 +411,7 @@ export const useAuth = () => {
         throw new Error('No signUp result');
       }
 
-      handleSetAuthTokens(signUpResult.data.signUp.tokens);
+      handleSetAuthTokens();
 
       const { user } = await loadCurrentUser();
 
@@ -454,16 +444,11 @@ export const useAuth = () => {
   );
 
   const handleSignOut = useCallback(async () => {
-    // Before clearSession: it needs the refresh token, and the navigation there
-    // kills in-flight requests.
+    // Before clearSession, whose navigation kills in-flight requests.
     store.set(isPendingServerSignOutState.atom, true);
 
     try {
-      await signOutMutation({
-        variables: {
-          refreshToken: store.get(tokenPairState.atom)?.refreshToken?.token,
-        },
-      });
+      await signOutMutation();
       store.set(isPendingServerSignOutState.atom, false);
     } catch {}
 
@@ -638,9 +623,7 @@ export const useAuth = () => {
         throw new Error('No getAuthTokensFromOTP result');
       }
 
-      await handleLoadWorkspaceAfterAuthentication(
-        getAuthTokensFromOtpResult.data.getAuthTokensFromOTP.tokens,
-      );
+      await handleLoadWorkspaceAfterAuthentication();
     },
     [getAuthTokensFromOtp, origin, handleLoadWorkspaceAfterAuthentication],
   );
