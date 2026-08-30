@@ -292,7 +292,10 @@ jobs:
           npm install -g @anthropic-ai/claude-code@2.1.247
           # stream-json teed into the artifact tree, ahead of the scrub,
           # keeps per-turn detail and permission denials so allowlist tuning
-          # reads real data.
+          # reads real data. stderr and the exit code are kept too: a run that
+          # never reaches a result line (bad flag, exhausted quota) explains
+          # itself only there, and the summary step reads both back.
+          set +e
           claude -p "Read .claude/skills/qa-scout/SKILL.md and follow it exactly. This is the CI invocation: every path and credential in the skill's Inputs table applies verbatim." \
             --max-turns 150 \
             --model opus \
@@ -301,7 +304,12 @@ jobs:
             --mcp-config /tmp/qa-scout/mcp.json \
             --allowedTools "Read,Grep,Glob,Write,TodoWrite,Bash(cat *),Bash(tail *),Bash(head *),Bash(wc *),Bash(ls *),Bash(grep *),Bash(jq *),Bash(echo *),Bash(diff *),Bash(sort *),Bash(uniq *),Bash(cut *),Bash(tr *),Bash(mkdir *),Bash(sleep *),Bash(date *),Bash(psql *),mcp__playwright" \
             --output-format stream-json --verbose \
+            2> >(tee /tmp/qa-scout/agent-stderr.log >&2) \
             | tee /tmp/qa-scout/execution.json
+          AGENT_EXIT=${PIPESTATUS[0]}
+          set -e
+          printf '%s' "$AGENT_EXIT" > /tmp/qa-scout/agent-exit.txt
+          exit "$AGENT_EXIT"
 
       # The agent process necessarily holds the inference credential, and a
       # prompt-injected agent could copy it into any file it can write. The
@@ -332,6 +340,37 @@ jobs:
           SCOUT_RUN: ${{ steps.qa-scout-pr.outputs.run }}
           SCOUT_PREP_OUTCOME: ${{ steps.qa-scout-pr.outcome }}
         run: |
+          # Why the run ended, from the evidence the agent leaves behind: the
+          # final stream-json result when it produced one, stderr when it died
+          # before that. Without this the summary can only say "no report".
+          scout_failure_reason() {
+            local result_line exit_code
+            exit_code=$(cat /tmp/qa-scout/agent-exit.txt 2>/dev/null || echo "unknown")
+            echo "**Why it stopped** (exit code \`${exit_code}\`)"
+            echo ""
+            result_line=$(grep -a '"type":"result"' /tmp/qa-scout/execution.json 2>/dev/null | tail -1 || true)
+            if [ -n "$result_line" ]; then
+              printf '%s' "$result_line" | jq -r '
+                "- outcome: `\(.subtype // "unknown")`" +
+                " · \(.num_turns // "?") turns" +
+                " · \(((.duration_ms // 0) / 60000 * 10 | round) / 10) min" +
+                " · $\(((.total_cost_usd // 0) * 100 | round) / 100)",
+                (if ((.errors? // []) | length) > 0 then "- error: " + ((.errors | join("; "))) else empty end)
+              ' 2>/dev/null || echo "- the final result line could not be parsed; see the artifact"
+            else
+              echo "- the agent produced no result line, so it failed before or during startup"
+            fi
+            if [ -s /tmp/qa-scout/agent-stderr.log ]; then
+              echo ""
+              echo "<details><summary>stderr (last 10 lines)</summary>"
+              echo ""
+              echo '```'
+              tail -n 10 /tmp/qa-scout/agent-stderr.log
+              echo '```'
+              echo ""
+              echo "</details>"
+            fi
+          }
           {
             echo "## QA Scout"
             if [ -f /tmp/qa-scout/output/report.md ]; then
@@ -339,18 +378,29 @@ jobs:
                 echo "> [!WARNING]"
                 echo "> The Scout stopped before finishing; the partial state it left follows."
                 echo ""
+                scout_failure_reason
+                echo ""
               fi
               cat /tmp/qa-scout/output/report.md
             elif [ -f /tmp/qa-scout/output/verdict.json ]; then
-              jq -r '"**\(.verdict)**: \(.headline // "no headline recorded")\n\n_Full report missing (agent stopped early); details in the qa-scout-report artifact._"' /tmp/qa-scout/output/verdict.json
+              jq -r '"**\(.verdict)**: \(.headline // "no headline recorded")\n\n_Full report missing (agent stopped early)._"' /tmp/qa-scout/output/verdict.json
+              echo ""
+              scout_failure_reason
             elif [ "$SCOUT_RUN" = "true" ]; then
-              echo "No report produced (agent run failed or timed out); see the qa-scout-report artifact and step logs."
+              echo "The Scout produced no verdict."
+              echo ""
+              scout_failure_reason
             elif [ "$SCOUT_PREP_OUTCOME" = "failure" ]; then
               echo "Did not run: the prepare step failed; see its logs."
             else
               echo "Did not run: skipped by the prepare step (no merged PR, [no-qa], or i18n translation PR)."
             fi
           } >> "$GITHUB_STEP_SUMMARY"
+          # Surfaced on the run page too, so a dead Scout is visible without
+          # opening the summary.
+          if [ "$SCOUT_RUN" = "true" ] && [ ! -f /tmp/qa-scout/output/report.md ]; then
+            echo "::warning title=QA Scout produced no report::$(head -n 1 /tmp/qa-scout/agent-stderr.log 2>/dev/null || echo 'see the job summary for why')"
+          fi
 
       - name: QA Scout / Upload report
         if: ${{ !cancelled() && steps.qa-scout-pr.outputs.run == 'true' }}
@@ -365,6 +415,8 @@ jobs:
             /tmp/qa-scout/server.log
             /tmp/qa-scout/worker.log
             /tmp/qa-scout/execution.json
+            /tmp/qa-scout/agent-stderr.log
+            /tmp/qa-scout/agent-exit.txt
           if-no-files-found: ignore
           retention-days: 14
 
