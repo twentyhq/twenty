@@ -7,6 +7,7 @@ const {
   coreApiClientMock,
   getSlackClientMock,
   authTestMock,
+  doesWorkspaceMemberExistMock,
   findSlackUserLinkMock,
   createSlackUserLinkMock,
   updateSlackUserLinkMock,
@@ -21,6 +22,7 @@ const {
   coreApiClientMock: vi.fn(),
   getSlackClientMock: vi.fn(),
   authTestMock: vi.fn(),
+  doesWorkspaceMemberExistMock: vi.fn(),
   findSlackUserLinkMock: vi.fn(),
   createSlackUserLinkMock: vi.fn(),
   updateSlackUserLinkMock: vi.fn(),
@@ -54,6 +56,10 @@ vi.mock('src/logic-functions/utils/resolve-slack-user-by-email', () => ({
 
 vi.mock('src/logic-functions/utils/fetch-slack-user-identity', () => ({
   fetchSlackUserIdentity: fetchSlackUserIdentityMock,
+}));
+
+vi.mock('src/logic-functions/data/does-workspace-member-exist', () => ({
+  doesWorkspaceMemberExist: doesWorkspaceMemberExistMock,
 }));
 
 vi.mock('src/logic-functions/data/find-slack-user-link', () => ({
@@ -101,6 +107,7 @@ describe('slackSetUserLinkHandler', () => {
       client: { auth: { test: authTestMock } },
     });
     authTestMock.mockResolvedValue({ team_id: INSTALLED_TEAM_ID });
+    doesWorkspaceMemberExistMock.mockResolvedValue(true);
     findSlackUserLinkMock.mockResolvedValue(undefined);
     createSlackUserLinkMock.mockResolvedValue('link-new');
     // A directly-supplied id resolves to the installed team by default (a normal
@@ -123,6 +130,35 @@ describe('slackSetUserLinkHandler', () => {
     expect(result.success).toBe(false);
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
     expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
+  });
+
+  it('should refuse a member id the workspace cannot confirm', async () => {
+    doesWorkspaceMemberExistMock.mockResolvedValue(false);
+
+    const result = await slackSetUserLinkHandler(INPUT);
+
+    expect(result).toEqual({
+      success: false,
+      message: 'Workspace member not found',
+      error: expect.stringContaining(INPUT.workspaceMemberId),
+    });
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
+  });
+
+  it('should fail closed when the member existence check errors', async () => {
+    doesWorkspaceMemberExistMock.mockRejectedValue(new Error('GraphQL error'));
+
+    const result = await slackSetUserLinkHandler(INPUT);
+
+    expect(result).toEqual({
+      success: false,
+      message: 'Could not verify the workspace member',
+      error: 'GraphQL error',
+    });
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(sendSlackUserLinkConsentDmMock).not.toHaveBeenCalled();
   });
 
   it('should refuse when Slack is not connected', async () => {

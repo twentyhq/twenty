@@ -3,6 +3,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_USER_LINK_CONSENT_STATE } from 'src/logic-functions/constants/slack-user-link-consent-state';
+import { doesWorkspaceMemberExist } from 'src/logic-functions/data/does-workspace-member-exist';
 import { findSlackUserLink } from 'src/logic-functions/data/find-slack-user-link';
 import { findWorkspaceMemberNameById } from 'src/logic-functions/data/find-workspace-member-name-by-id';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
@@ -156,6 +157,29 @@ export const slackSetUserLinkHandler = async (
   const isInInstalledWorkspace = slackTeamId === installedTeamId;
 
   const client = new CoreApiClient({ runAs: 'application' });
+
+  // The member id is free text on the tool path; a link is a permission
+  // grant, so an id the workspace cannot confirm fails the save rather than
+  // persisting a dangling grant behind a consent DM naming nobody.
+  let memberExists: boolean;
+
+  try {
+    memberExists = await doesWorkspaceMemberExist(client, workspaceMemberId);
+  } catch (error) {
+    return {
+      success: false,
+      message: 'Could not verify the workspace member',
+      error: toErrorMessage(error),
+    };
+  }
+
+  if (!memberExists) {
+    return {
+      success: false,
+      message: 'Workspace member not found',
+      error: `No workspace member with id ${workspaceMemberId}. Check the id and try again.`,
+    };
+  }
 
   let existingLink: SlackUserLink | undefined;
 
