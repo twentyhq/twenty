@@ -335,6 +335,11 @@ jobs:
           {
             echo "## QA Scout"
             if [ -f /tmp/qa-scout/output/report.md ]; then
+              if [ "$(jq -r '.status // "final"' /tmp/qa-scout/output/verdict.json 2>/dev/null || echo final)" != "final" ]; then
+                echo "> [!WARNING]"
+                echo "> The Scout stopped before finishing; the partial state it left follows."
+                echo ""
+              fi
               cat /tmp/qa-scout/output/report.md
             elif [ -f /tmp/qa-scout/output/verdict.json ]; then
               jq -r '"**\(.verdict)**: \(.headline // "no headline recorded")\n\n_Full report missing (agent stopped early); details in the qa-scout-report artifact._"' /tmp/qa-scout/output/verdict.json
@@ -449,6 +454,15 @@ jobs:
               exit 0
               ;;
           esac
+          # A checkpoint left by a run that died is not a finding: it says
+          # the Scout failed, not that the PR is broken. Only a finished run
+          # speaks, unless the partial state already caught a real failure.
+          STATUS=$(jq -r '.status // "final"' "$VERDICT_FILE" 2>/dev/null || echo final)
+          FAILED_COUNT=$(jq '[.scenarios[]? | select(.result == "fail")] | length' "$VERDICT_FILE" 2>/dev/null || echo 0)
+          if [ "$STATUS" != "final" ] && [ "${FAILED_COUNT:-0}" -eq 0 ]; then
+            echo "Scout did not finish (status=${STATUS}) and recorded no failing scenario; nothing to post. See the job summary and artifact."
+            exit 0
+          fi
           ARTIFACT_PR=$(jq -r '.prNumber // empty' "$VERDICT_FILE")
           if [ "$ARTIFACT_PR" != "$PR_NUMBER" ]; then
             echo "verdict.json prNumber (${ARTIFACT_PR:-none}) differs from the trusted target #${PR_NUMBER}; the trusted target wins."
@@ -476,6 +490,11 @@ jobs:
           fi
           {
             echo "<!-- qa-scout -->"
+            if [ "$STATUS" != "final" ]; then
+              echo "> [!WARNING]"
+              echo "> The QA Scout stopped before finishing; what follows is partial."
+              echo ""
+            fi
             # Drops a multi-byte character split by the byte cap so the payload
             # stays valid UTF-8 (iconv -c exits 1 on exactly this case, so
             # python does the lenient decode).

@@ -44,7 +44,7 @@ own browser observations unreliable.
    its noise is not yours. Only lines after your offsets count as evidence.
 
 2. **Scope from the diff.** Read `pr.json` and `files.json`; Grep and read
-   `pr.diff` selectively rather than end to end. Pick 2 to 5 user-visible
+   `pr.diff` selectively rather than end to end. Pick 2 to 4 user-visible
    scenarios this change could plausibly break. Bias toward:
    - writes over reads;
    - cross-object side effects (timeline entries, search, favorites,
@@ -55,13 +55,14 @@ own browser observations unreliable.
    types only), write a PASS verdict with an empty scenario list saying why,
    and stop. Do not perform browser theater.
 
-3. **Sanity-check the app, then log in.** If `http://localhost:3000` does not
-   respond, write a FAIL verdict with headline "app did not boot" immediately;
-   do not burn time. The app redirects to workspace subdomains
-   (`http://app.localhost:3000`, then `http://apple.localhost:3000` after
-   picking the workspace); those are in scope. Open the base URL, click
-   "Continue with Email" if visible, enter the email, Continue, enter the
-   password, Sign in, and pick the `Apple` workspace when asked.
+3. **Sanity-check the app, then log in.** Navigate to the app with the
+   browser; you have no `curl`. If it does not load, write a FAIL verdict with
+   headline "app did not boot" immediately; do not burn time. The app
+   redirects to workspace subdomains (`http://app.localhost:3000`, then
+   `http://apple.localhost:3000` once the workspace is picked); those are in
+   scope. Open the base URL, click "Continue with Email" if visible, enter the
+   email, Continue, enter the password, Sign in, and pick the `Apple`
+   workspace when asked.
 
 4. **Execute each scenario.** Use the Playwright tools: snapshot, act, verify
    the outcome a user would check (the record exists, the value stuck, no error
@@ -76,20 +77,30 @@ own browser observations unreliable.
    looked fine. Do not blame yourself for noise that predates your offsets.
 
 6. **Collect evidence.** Take a screenshot at each scenario's end state and at
-   every failure, with descriptive filenames (`03-note-timeline-missing.png`).
+   every failure, giving the browser tool an absolute path under
+   `/tmp/qa-scout/browser/` and a descriptive filename
+   (`03-note-timeline-missing.png`). That directory ships with the report, so
+   never copy or move screenshots afterwards.
 
 ## Verdict contract
 
-Always write both files to the output directory, whatever happens. Write
-first versions right after scoping, before the first scenario (verdict
-INVESTIGATE, headline "run still in progress", scenarios listed as pending),
-then update both after each scenario and finalize at the end: a run that dies
-on turns or time then leaves your last known state instead of silence.
+Always write both files to the output directory, whatever happens, and keep
+them current: write first versions right after scoping (`status`
+`in-progress`, scenarios listed as pending), rewrite both immediately after
+each scenario with what you now know, and set `status` to `final` only when
+you have finished testing.
+
+`status` decides who hears you. A `final` verdict is reported as a result;
+an `in-progress` one means the run died, so it stays out of the PR unless it
+already recorded a failing scenario. Two consequences: never mark `final`
+before you are done, and never leave a real failure sitting in an
+unfinished file, because a checkpoint no scenario has failed in is silence.
 
 `verdict.json`:
 
 ```json
 {
+  "status": "in-progress | final",
   "verdict": "PASS | INVESTIGATE | FAIL",
   "headline": "one sentence, user language",
   "prNumber": 12345,
@@ -123,9 +134,15 @@ on turns or time then leaves your last known state instead of silence.
   the report.
 - Never navigate outside `localhost:3000` and its `*.localhost:3000`
   workspace subdomains.
-- Budget roughly 12 minutes of browsing. Three scenarios done well beat eight
-  done badly. Out of time means INVESTIGATE with what you saw, not silence.
-- Do not modify the repository. Write only inside the output directory.
+- Two to four scenarios, finalized by roughly the 10-minute mark. Three done
+  well beat eight done badly, and a finished verdict on two beats an
+  unfinished one on five.
+- Your shell is a small allowlist, and a denied command costs a turn you
+  needed for testing: `jq` reads JSON (not `python3` or `node`), `tail`,
+  `head`, `grep` and `wc` read logs, `psql` reads the database. There is no
+  `curl`, `cp`, `mv`, `find` or `git`.
+- Do not modify the repository. Write your outputs to the output directory;
+  screenshots belong in the browser directory above.
 
 ## Running locally
 
