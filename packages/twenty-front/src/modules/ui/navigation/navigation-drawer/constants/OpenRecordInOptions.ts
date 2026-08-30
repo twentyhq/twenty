@@ -7,8 +7,6 @@ import {
   IconLayoutSidebarRight,
 } from 'twenty-ui/icon';
 
-// Keyed by OpenRecordIn so a new preference cannot ship without a label, and
-// offered in the enum's declaration order.
 export const OPEN_RECORD_IN_OPTIONS = {
   [OpenRecordIn.SIDE_PANEL]: {
     Icon: IconLayoutSidebarRight,
