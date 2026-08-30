@@ -53,7 +53,6 @@ describe('dictation engine lifecycle', () => {
       const engine = createServerDictationEngine({
         transcribeAudio: jest.fn(),
         maxDurationSeconds: 120,
-        language: 'en',
       });
 
       const startPromise = engine.start();
@@ -76,7 +75,6 @@ describe('dictation engine lifecycle', () => {
       const engine = createServerDictationEngine({
         transcribeAudio: jest.fn(),
         maxDurationSeconds: 120,
-        language: 'en',
       });
 
       const startPromise = engine.start();
@@ -111,7 +109,6 @@ describe('dictation engine lifecycle', () => {
       const engine = createServerDictationEngine({
         transcribeAudio,
         maxDurationSeconds: 120,
-        language: 'en',
       });
 
       await engine.start();
@@ -139,7 +136,6 @@ describe('dictation engine lifecycle', () => {
       const engine = createServerDictationEngine({
         transcribeAudio: jest.fn(),
         maxDurationSeconds: 120,
-        language: 'en',
       });
       const states: string[] = [];
 
