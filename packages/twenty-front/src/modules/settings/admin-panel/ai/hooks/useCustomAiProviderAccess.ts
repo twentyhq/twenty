@@ -32,11 +32,10 @@ export const useCustomAiProviderAccess = () => {
     ? t`Custom providers are complimentary up to ${access.seatThreshold} seats. This instance has ${access.seatCount}. Upgrade to add more.`
     : t`This instance's plan could not be verified. Reload the page to try again.`;
 
+  // The seat count and threshold stay internal: every caller wants the copy
+  // built from them, not the numbers.
   return {
     hasAccess,
-    isLoadingAccess: loading,
-    seatCount: access?.seatCount,
-    seatThreshold: access?.seatThreshold,
     tooltipContent,
     gateDescription,
   };
