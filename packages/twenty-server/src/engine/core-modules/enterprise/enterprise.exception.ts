@@ -40,7 +40,7 @@ const getEnterpriseExceptionUserFriendlyMessage = (
     case EnterpriseExceptionCode.ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED:
       return msg`You have reached the maximum number of license refreshes allowed today for this enterprise key. Please try again later.`;
     case EnterpriseExceptionCode.ENTERPRISE_SEAT_THRESHOLD_EXCEEDED:
-      return msg`This feature is complimentary below ${MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an enterprise key is required.`;
+      return msg`This feature is complimentary up to ${MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an enterprise key is required.`;
     default:
       assertUnreachable(code);
   }

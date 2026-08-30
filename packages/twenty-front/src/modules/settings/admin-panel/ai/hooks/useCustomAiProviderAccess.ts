@@ -25,11 +25,11 @@ export const useCustomAiProviderAccess = () => {
   const tooltipContent = !isDefined(access)
     ? undefined
     : access.hasAccess
-      ? t`Custom providers are complimentary for organizations under ${access.seatThreshold} seats. Above that, an Organization plan is required.`
-      : t`Custom providers are complimentary for organizations under ${access.seatThreshold} seats. This instance has ${access.seatCount} seats, so an Organization plan is required.`;
+      ? t`Custom providers are complimentary for organizations of up to ${access.seatThreshold} seats. Above that, an Organization plan is required.`
+      : t`Custom providers are complimentary for organizations of up to ${access.seatThreshold} seats. This instance has ${access.seatCount} seats, so an Organization plan is required.`;
 
   const gateDescription = isDefined(access)
-    ? t`Custom providers are complimentary below ${access.seatThreshold} seats. This instance has ${access.seatCount}. Upgrade to add more.`
+    ? t`Custom providers are complimentary up to ${access.seatThreshold} seats. This instance has ${access.seatCount}. Upgrade to add more.`
     : t`This instance's plan could not be verified. Reload the page to try again.`;
 
   return {
