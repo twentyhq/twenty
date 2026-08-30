@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledHint = styled.div`
@@ -17,7 +18,7 @@ type AiChatDictationHintProps = {
 export const AiChatDictationHint = ({
   interimText,
 }: AiChatDictationHintProps) => {
-  if (interimText === '') {
+  if (!isNonEmptyString(interimText)) {
     return null;
   }
 

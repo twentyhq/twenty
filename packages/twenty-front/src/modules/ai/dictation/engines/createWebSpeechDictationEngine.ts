@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { DICTATION_LIVENESS_TIMEOUT_IN_MS } from '@/ai/dictation/constants/DictationLivenessTimeoutInMs';
@@ -49,6 +50,11 @@ export const createWebSpeechDictationEngine = ({
   let recognition: WebSpeechRecognitionInstance | null = null;
   let isActive = false;
   let readinessTimer: ReturnType<typeof setTimeout> | null = null;
+  // Bumped by every start, stop and dispose. Startup awaits the microphone
+  // warm-up, and a stop issued during that wait has nothing to stop yet — the
+  // generation is what lets the resumed startup notice it was abandoned
+  // instead of opening the microphone after the user asked it not to.
+  let sessionGeneration = 0;
 
   const clearReadinessTimer = () => {
     if (readinessTimer !== null) {
@@ -66,6 +72,7 @@ export const createWebSpeechDictationEngine = ({
   });
 
   const stopRecognition = () => {
+    sessionGeneration++;
     clearReadinessTimer();
     watchdog.disarm();
 
@@ -106,11 +113,11 @@ export const createWebSpeechDictationEngine = ({
 
       const { finalText, interimText } = readTranscripts(event);
 
-      if (finalText !== '') {
+      if (isNonEmptyString(finalText)) {
         emitter.emit({ type: 'final', text: finalText });
       }
 
-      if (interimText !== '') {
+      if (isNonEmptyString(interimText)) {
         emitter.emit({ type: 'interim', text: interimText });
       }
     };
@@ -144,6 +151,9 @@ export const createWebSpeechDictationEngine = ({
         return;
       }
 
+      const generation = ++sessionGeneration;
+      const isAbandoned = () => generation !== sessionGeneration;
+
       emitter.emit({ type: 'state', state: 'starting' });
 
       try {
@@ -155,7 +165,19 @@ export const createWebSpeechDictationEngine = ({
         return;
       }
 
+      if (isAbandoned()) {
+        emitter.emit({ type: 'state', state: 'idle' });
+
+        return;
+      }
+
       await unlockAudioContext();
+
+      if (isAbandoned()) {
+        emitter.emit({ type: 'state', state: 'idle' });
+
+        return;
+      }
 
       recognition = recognition ?? buildRecognition();
 
@@ -196,6 +218,7 @@ export const createWebSpeechDictationEngine = ({
     stop: stopRecognition,
 
     dispose: () => {
+      sessionGeneration++;
       clearReadinessTimer();
       watchdog.disarm();
       document.removeEventListener('visibilitychange', handleVisibilityChange);

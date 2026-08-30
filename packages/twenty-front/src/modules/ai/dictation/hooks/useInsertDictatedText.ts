@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type Editor } from '@tiptap/react';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,7 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const useInsertDictatedText = (editor: Editor | null) =>
   useCallback(
     (text: string) => {
-      if (!isDefined(editor) || text === '') {
+      if (!isDefined(editor) || !isNonEmptyString(text)) {
         return;
       }
 

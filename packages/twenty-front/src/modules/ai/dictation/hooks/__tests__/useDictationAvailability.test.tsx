@@ -2,6 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { useDictationAvailability } from '@/ai/dictation/hooks/useDictationAvailability';
+import { type WebSpeechRecognitionConstructor } from '@/ai/dictation/types/WebSpeechRecognition';
 import { type DictationConfig } from '@/client-config/types/DictationConfig';
 import { dictationConfigState } from '@/client-config/states/dictationConfigState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -9,6 +10,10 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+
+type SpeechRecognitionTestWindow = {
+  SpeechRecognition?: WebSpeechRecognitionConstructor;
+};
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
@@ -34,8 +39,11 @@ describe('useDictationAvailability', () => {
   beforeEach(() => {
     resetJotaiStore();
     localStorage.clear();
-    window.SpeechRecognition =
-      function SpeechRecognition() {} as unknown as typeof window.SpeechRecognition;
+    // SpeechRecognition is absent from the DOM lib because it never became a
+    // standard, so the global is reached through the same structural type the
+    // engine declares.
+    (window as unknown as SpeechRecognitionTestWindow).SpeechRecognition =
+      function SpeechRecognition() {} as unknown as WebSpeechRecognitionConstructor;
     window.MediaRecorder = function MediaRecorder() {} as never;
     Object.defineProperty(navigator, 'mediaDevices', {
       value: { getUserMedia: jest.fn() },

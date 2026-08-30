@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { DICTATION_READINESS_DELAY_IN_MS } from '@/ai/dictation/constants/DictationReadinessDelayInMs';
@@ -21,6 +22,11 @@ export const createServerDictationEngine = ({
   let chunks: Blob[] = [];
   let readinessTimer: ReturnType<typeof setTimeout> | null = null;
   let durationTimer: ReturnType<typeof setTimeout> | null = null;
+  // Bumped by every start, stop and dispose. getUserMedia resolves whenever the
+  // user answers the permission prompt, which can be long after the composer
+  // unmounted — the generation is what stops that late stream becoming a
+  // recorder nothing owns, holding the microphone open with its indicator lit.
+  let sessionGeneration = 0;
 
   const clearTimers = () => {
     if (readinessTimer !== null) {
@@ -48,6 +54,7 @@ export const createServerDictationEngine = ({
   };
 
   const stopRecording = () => {
+    sessionGeneration++;
     clearTimers();
 
     if (isDefined(mediaRecorder) && mediaRecorder.state !== 'inactive') {
@@ -67,7 +74,7 @@ export const createServerDictationEngine = ({
 
     const audio = new Blob(
       chunks,
-      mimeType === '' ? undefined : { type: mimeType },
+      isNonEmptyString(mimeType) ? { type: mimeType } : undefined,
     );
 
     chunks = [];
@@ -84,7 +91,7 @@ export const createServerDictationEngine = ({
 
     if (result.status === 'failed') {
       emitter.emit({ type: 'error', reason: result.reason });
-    } else if (result.text !== '') {
+    } else if (isNonEmptyString(result.text)) {
       emitter.emit({ type: 'final', text: result.text });
     }
 
@@ -99,10 +106,14 @@ export const createServerDictationEngine = ({
         return;
       }
 
+      const generation = ++sessionGeneration;
+
       emitter.emit({ type: 'state', state: 'starting' });
 
+      let acquiredStream: MediaStream;
+
       try {
-        mediaStream = await navigator.mediaDevices.getUserMedia({
+        acquiredStream = await navigator.mediaDevices.getUserMedia({
           audio: true,
         });
       } catch (error) {
@@ -111,6 +122,18 @@ export const createServerDictationEngine = ({
 
         return;
       }
+
+      if (generation !== sessionGeneration) {
+        for (const track of acquiredStream.getTracks()) {
+          track.stop();
+        }
+
+        emitter.emit({ type: 'state', state: 'idle' });
+
+        return;
+      }
+
+      mediaStream = acquiredStream;
 
       const mimeType = pickRecorderMimeType();
 
@@ -164,6 +187,7 @@ export const createServerDictationEngine = ({
     stop: stopRecording,
 
     dispose: () => {
+      sessionGeneration++;
       clearTimers();
 
       if (isDefined(mediaRecorder) && mediaRecorder.state !== 'inactive') {
