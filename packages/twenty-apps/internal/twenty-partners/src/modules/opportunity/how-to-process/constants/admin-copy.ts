@@ -52,10 +52,7 @@ export const HOW_TO_PROCESS_STEPS: PlaybookStep[] = [
     num: '04',
     heading: 'Match',
     body: 'Briefs to Match is the queue with no Partner yet. You can do all of this through MCP. Ask the agent to make the changes in the CRM. Skills are also available: /twenty-partner-shortlist, or wait for applications. /twenty-lead-brief is available if the brief is still thin. /twenty-partner-intro is available once you name the partners.',
-    pills: [
-      'Applied — the partner came in',
-      'Invited — you pushed them',
-    ],
+    pills: ['Applied — the partner came in', 'Invited — you pushed them'],
     skills: [PLAYBOOK_SKILL_SHORTLIST],
   },
   {

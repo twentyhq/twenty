@@ -124,6 +124,12 @@ export const DragDropItemSortableCell = ({
         $fill={fill}
         $isDragSourceFaded={fadeSourceWhileDragging && isDragSource}
         $isDraggingHighlighted={highlightWhileDragging && isDragging}
+        // dnd-kit's accessibility plugin stamps role="button" and tabindex on
+        // any registered draggable that declares neither, so a disabled cell
+        // would join the tab order and make pointer automation resolve clicks
+        // on its content to a disabled button. Declaring both opts out.
+        role={disabled ? 'none' : undefined}
+        tabIndex={disabled ? -1 : undefined}
         onDragStart={
           disabled && allowNativeDragWhenDisabled
             ? undefined

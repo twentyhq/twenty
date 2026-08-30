@@ -174,6 +174,7 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       isUnique: true,
       settings: {
         maxNumberOfValues: 1,
+        type: 'domain',
       },
     },
     standardObjectMetadataRelatedEntityIds,

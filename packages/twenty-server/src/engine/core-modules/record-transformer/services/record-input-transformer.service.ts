@@ -11,6 +11,7 @@ import { transformEmailsValue } from 'src/engine/core-modules/record-transformer
 import { transformLinksValue } from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
 import { transformPhonesValue } from 'src/engine/core-modules/record-transformer/utils/transform-phones-value.util';
 import { transformRichTextValue } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text.util';
+import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -52,7 +53,7 @@ export class RecordInputTransformerService {
       const transformedValue = this.parseSubFields(
         fieldMetadata.type,
         await this.transformFieldValue(
-          fieldMetadata.type,
+          fieldMetadata,
           this.stringifySubFields(fieldMetadata.type, value),
         ),
       );
@@ -64,7 +65,7 @@ export class RecordInputTransformerService {
   }
 
   private async transformFieldValue(
-    fieldType: FieldMetadataType,
+    fieldMetadata: OrmFlatFieldMetadata,
     // oxlint-disable-next-line typescript/no-explicit-any
     value: any,
     // oxlint-disable-next-line typescript/no-explicit-any
@@ -73,7 +74,7 @@ export class RecordInputTransformerService {
       return value;
     }
 
-    switch (fieldType) {
+    switch (fieldMetadata.type) {
       case FieldMetadataType.UUID:
         return value || null;
       case FieldMetadataType.NUMBER:
@@ -81,7 +82,15 @@ export class RecordInputTransformerService {
       case FieldMetadataType.RICH_TEXT:
         return await transformRichTextValue(value);
       case FieldMetadataType.LINKS:
-        return transformLinksValue(value);
+        return transformLinksValue({
+          input: value,
+          settings: isFieldMetadataSettingsOfType(
+            fieldMetadata.settings,
+            FieldMetadataType.LINKS,
+          )
+            ? fieldMetadata.settings
+            : null,
+        });
       case FieldMetadataType.EMAILS:
         return transformEmailsValue(value);
       case FieldMetadataType.PHONES:
