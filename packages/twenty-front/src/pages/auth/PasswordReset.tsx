@@ -87,6 +87,7 @@ export const PasswordReset = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
+  const currentUser = useAtomStateValue(currentUserState);
   const setCurrentUser = useSetAtomState(currentUserState);
 
   const navigate = useNavigateApp();
@@ -174,11 +175,20 @@ export const PasswordReset = () => {
           ? t`Password has been set`
           : t`Password has been updated`;
 
-      setCurrentUser((currentUser) =>
-        currentUser ? { ...currentUser, hasPassword: true } : currentUser,
-      );
+      // The reset acts on the token's user, who is not necessarily the one
+      // signed in on this browser.
+      const didResetSignedInUser =
+        isLogged && isNonEmptyString(email) && currentUser?.email === email;
 
-      if (isLogged) {
+      if (didResetSignedInUser) {
+        setCurrentUser((previousCurrentUser) =>
+          previousCurrentUser
+            ? { ...previousCurrentUser, hasPassword: true }
+            : previousCurrentUser,
+        );
+      }
+
+      if (isLogged && !didResetSignedInUser) {
         enqueueSuccessSnackBar({
           message: successMessage,
         });
@@ -186,10 +196,16 @@ export const PasswordReset = () => {
         return;
       }
 
+      // updatePassword revokes every session belonging to the token's user, so
+      // past this point the browser is unauthenticated even if it was signed in
+      // a moment ago, and signing in again is what recovers it.
       if (!isCaptchaReady) {
-        enqueueErrorSnackBar({
-          message: t`Captcha (anti-bot check) is still loading, try again`,
+        // The reset token was spent by the mutation that just succeeded, so
+        // resubmitting this form can never work — sign-in is the way forward.
+        enqueueSuccessSnackBar({
+          message: successMessage,
         });
+        navigate(AppPath.SignInUp);
         return;
       }
 
