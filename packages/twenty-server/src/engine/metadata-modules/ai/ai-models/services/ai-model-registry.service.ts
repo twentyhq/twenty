@@ -1,8 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type LanguageModel } from 'ai';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type AiSdkPackage } from 'twenty-shared/ai';
 
+import { MAX_SEATS_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-seats-without-enterprise-key.constant';
+import { CustomAiProviderAccessService } from 'src/engine/core-modules/enterprise/services/custom-ai-provider-access.service';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
@@ -55,37 +58,50 @@ export class AiModelRegistryService {
     { providerName: string; modelDef: AiProviderModelConfig }
   > = new Map();
   private currentConfigHash: string | null = null;
+  private areCustomProvidersRegistered = true;
 
   constructor(
     private readonly providerConfigService: ProviderConfigService,
     private readonly sdkProviderFactory: SdkProviderFactoryService,
     private readonly preferencesService: AiModelPreferencesService,
     private readonly configGroupHashService: ConfigGroupHashService,
+    private readonly customAiProviderAccessService: CustomAiProviderAccessService,
   ) {}
 
   // The registry is rebuilt lazily whenever the LLM-group config hash changes,
   // so any mutation to an LLM-tagged config variable is picked up automatically
-  // on the next read — no explicit refresh from callers needed.
+  // on the next read — no explicit refresh from callers needed. Seats are not
+  // part of that hash, so the custom-provider entitlement is compared alongside
+  // it: an instance that grows past the threshold loses its custom models on the
+  // next read rather than waiting for an unrelated config change.
   private ensureFresh(): void {
     const configHash = this.configGroupHashService.computeHash(
       ConfigVariablesGroup.LLM,
     );
+    const areCustomProvidersAllowed =
+      this.customAiProviderAccessService.getCachedHasAccess();
 
-    if (configHash === this.currentConfigHash) {
+    if (
+      configHash === this.currentConfigHash &&
+      areCustomProvidersAllowed === this.areCustomProvidersRegistered
+    ) {
       return;
     }
 
-    this.buildModelRegistry();
+    this.buildModelRegistry(areCustomProvidersAllowed);
     this.currentConfigHash = configHash;
+    this.areCustomProvidersRegistered = areCustomProvidersAllowed;
   }
 
-  private buildModelRegistry(): void {
+  private buildModelRegistry(areCustomProvidersAllowed: boolean): void {
     this.modelRegistry.clear();
     this.sdkProviderFactory.clearCache();
     this.modelConfigCache.clear();
     this.providerModelDefCache.clear();
 
-    const providers = this.providerConfigService.getResolvedProviders();
+    const providers = this.providerConfigService.getResolvedProviders({
+      includeCustomProviders: areCustomProvidersAllowed,
+    });
 
     this.registerModelsFromProviders(providers);
   }
@@ -263,9 +279,31 @@ export class AiModelRegistryService {
     }
 
     throw new AiException(
-      `Model with ID ${modelId} not found`,
+      this.buildModelNotFoundMessage(modelId),
       AiExceptionCode.AGENT_EXECUTION_FAILED,
     );
+  }
+
+  // A model that disappeared because the instance outgrew the complimentary
+  // threshold looks exactly like a typo from the caller's side, so the reason is
+  // spelled out rather than leaving an operator to guess at a missing model.
+  private buildModelNotFoundMessage(modelId: string): string {
+    const message = `Model with ID ${modelId} not found`;
+
+    if (this.areCustomProvidersRegistered) {
+      return message;
+    }
+
+    const [providerName] = modelId.split('/');
+    const isCustomProviderModel =
+      isNonEmptyString(providerName) &&
+      !this.providerConfigService.getCatalogProviderNames().has(providerName);
+
+    if (!isCustomProviderModel) {
+      return message;
+    }
+
+    return `${message}. Custom AI providers require a valid enterprise key above ${MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats.`;
   }
 
   private createDefaultConfigForCustomModel(
