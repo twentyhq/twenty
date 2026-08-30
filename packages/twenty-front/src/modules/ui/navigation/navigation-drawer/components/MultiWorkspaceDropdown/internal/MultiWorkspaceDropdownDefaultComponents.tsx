@@ -42,6 +42,7 @@ import {
   MenuItemSelectAvatar,
   UndecoratedLink,
 } from 'twenty-ui/navigation';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -71,6 +72,10 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   );
 
   const { openRecordInPreference } = useOpenRecordInPreference();
+
+  // Mirrors resolveOpenRecordIn, which forces the record page on mobile: with
+  // no side panel to open a record in, the preference has nothing to switch.
+  const canDisplaySidePanel = !useIsMobile();
 
   const handleSupport = () => {
     window.FrontChat?.('show');
@@ -192,15 +197,17 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           hasSubMenu={true}
           onClick={() => setMultiWorkspaceDropdown('themes')}
         />
-        <MenuItem
-          LeftIcon={OPEN_RECORD_IN_OPTIONS[openRecordInPreference].Icon}
-          text={t`Open in`}
-          contextualText={t(
-            OPEN_RECORD_IN_OPTIONS[openRecordInPreference].label,
-          )}
-          hasSubMenu={true}
-          onClick={() => setMultiWorkspaceDropdown('open-record-in')}
-        />
+        {canDisplaySidePanel && (
+          <MenuItem
+            LeftIcon={OPEN_RECORD_IN_OPTIONS[openRecordInPreference].Icon}
+            text={t`Open in`}
+            contextualText={t(
+              OPEN_RECORD_IN_OPTIONS[openRecordInPreference].label,
+            )}
+            hasSubMenu={true}
+            onClick={() => setMultiWorkspaceDropdown('open-record-in')}
+          />
+        )}
         <UndecoratedLink
           to={`${getSettingsPath(SettingsPath.WorkspaceMembersPage)}#invite`}
           onClick={() => {
