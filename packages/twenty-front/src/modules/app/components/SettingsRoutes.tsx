@@ -9,7 +9,10 @@ import {
 } from 'react-router-dom';
 
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
-import { SETTINGS_DATA_MODEL_PERMISSION } from '@/settings/constants/SettingsDataModelPermission';
+import {
+  LazySettingsObjectDetailPage as SettingsObjectDetailPage,
+  LazySettingsObjectFieldEdit as SettingsObjectFieldEdit,
+} from '@/app/constants/LazyRoutePages';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
 import { SettingsPath } from 'twenty-shared/types';
@@ -121,14 +124,6 @@ const SettingsNewEmailGroupChannel = lazy(() =>
   import('@/settings/accounts/components/SettingsAccountsNewEmailGroupChannel').then(
     (module) => ({
       default: module.SettingsAccountsNewEmailGroupChannel,
-    }),
-  ),
-);
-
-const SettingsObjectDetailPage = lazy(() =>
-  import('~/pages/settings/data-model/SettingsObjectDetailPage').then(
-    (module) => ({
-      default: module.SettingsObjectDetailPage,
     }),
   ),
 );
@@ -504,13 +499,6 @@ const SettingsObjectNewIndex = lazy(() =>
     }),
   ),
 );
-const SettingsObjectFieldEdit = lazy(() =>
-  import('~/pages/settings/data-model/SettingsObjectFieldEdit').then(
-    (module) => ({
-      default: module.SettingsObjectFieldEdit,
-    }),
-  ),
-);
 
 const SettingsSecuritySSOIdentifyProvider = lazy(() =>
   import('~/pages/settings/security/SettingsSecuritySSOIdentifyProvider').then(
@@ -849,7 +837,7 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SETTINGS_DATA_MODEL_PERMISSION}
+            settingsPermission={PermissionFlagType.DATA_MODEL}
           />
         }
       >

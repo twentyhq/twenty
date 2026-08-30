@@ -4,24 +4,24 @@ import { matchSidePanelHostableRoute } from '@/side-panel/routing/utils/matchSid
 describe('matchSidePanelHostableRoute', () => {
   it('should match an object settings path', () => {
     expect(
-      matchSidePanelHostableRoute('/settings/objects/companies')?.path,
+      matchSidePanelHostableRoute('/settings/objects/companies')?.route.path,
     ).toBe('/settings/objects/:objectNamePlural');
   });
 
   it('should match a field settings path', () => {
     expect(
-      matchSidePanelHostableRoute('/settings/objects/companies/name')?.path,
+      matchSidePanelHostableRoute('/settings/objects/companies/name')?.route.path,
     ).toBe('/settings/objects/:objectNamePlural/:fieldName');
   });
 
   it('should match a record index path', () => {
-    expect(matchSidePanelHostableRoute('/objects/companies')?.path).toBe(
+    expect(matchSidePanelHostableRoute('/objects/companies')?.route.path).toBe(
       '/objects/:objectNamePlural',
     );
   });
 
   it('should match a record show path', () => {
-    expect(matchSidePanelHostableRoute('/object/company/record-1')?.path).toBe(
+    expect(matchSidePanelHostableRoute('/object/company/record-1')?.route.path).toBe(
       '/object/:objectNameSingular/:objectRecordId',
     );
   });

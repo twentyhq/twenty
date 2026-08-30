@@ -27,22 +27,14 @@ import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppLayoutWithSidePanel';
 import { Verify } from '~/pages/onboarding/Verify';
 import { lazyWithPreload } from '~/utils/lazyWithPreload';
+import {
+  LazyRecordIndexPage as RecordIndexPage,
+  LazyRecordShowPage as RecordShowPage,
+} from '@/app/constants/LazyRoutePages';
 
 const WorkflowCoreIndexPage = lazy(() =>
   import('~/pages/object-core/WorkflowCoreIndexPage').then((module) => ({
     default: module.WorkflowCoreIndexPage,
-  })),
-);
-
-const RecordIndexPage = lazy(() =>
-  import('~/pages/object-record/RecordIndexPage').then((module) => ({
-    default: module.RecordIndexPage,
-  })),
-);
-
-const RecordShowPage = lazy(() =>
-  import('~/pages/object-record/RecordShowPage').then((module) => ({
-    default: module.RecordShowPage,
   })),
 );
 

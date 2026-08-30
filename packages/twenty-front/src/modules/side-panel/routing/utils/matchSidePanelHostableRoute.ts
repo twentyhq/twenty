@@ -1,15 +1,25 @@
-import { matchPath } from 'react-router-dom';
+import { matchPath, parsePath, type PathMatch } from 'react-router-dom';
 
 import { SIDE_PANEL_HOSTABLE_ROUTES } from '@/side-panel/routing/constants/SidePanelHostableRoutes';
-import { getPathnameFromPath } from '@/side-panel/routing/utils/getPathnameFromPath';
 import { type SidePanelHostableRoute } from '@/side-panel/routing/types/SidePanelHostableRoute';
+
+export type SidePanelHostableRouteMatch = {
+  route: SidePanelHostableRoute;
+  match: PathMatch<string>;
+};
 
 export const matchSidePanelHostableRoute = (
   path: string,
-): SidePanelHostableRoute | undefined => {
-  const pathname = getPathnameFromPath(path);
+): SidePanelHostableRouteMatch | undefined => {
+  const pathname = parsePath(path).pathname ?? '';
 
-  return SIDE_PANEL_HOSTABLE_ROUTES.find((hostableRoute) =>
-    matchPath(hostableRoute.path, pathname),
-  );
+  for (const route of SIDE_PANEL_HOSTABLE_ROUTES) {
+    const match = matchPath(route.path, pathname);
+
+    if (match !== null) {
+      return { route, match };
+    }
+  }
+
+  return undefined;
 };

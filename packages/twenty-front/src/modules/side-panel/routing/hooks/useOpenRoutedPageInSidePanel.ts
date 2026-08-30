@@ -1,12 +1,13 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { sidePanelRoutedPagePathComponentState } from '@/side-panel/routing/states/sidePanelRoutedPagePathComponentState';
-import { isSidePanelHostablePath } from '@/side-panel/routing/utils/isSidePanelHostablePath';
+import { matchSidePanelHostableRoute } from '@/side-panel/routing/utils/matchSidePanelHostableRoute';
 import { resolveSidePanelRoutedPageInfo } from '@/side-panel/routing/utils/resolveSidePanelRoutedPageInfo';
 
 export const useOpenRoutedPageInSidePanel = () => {
@@ -24,12 +25,15 @@ export const useOpenRoutedPageInSidePanel = () => {
       pageTitle?: string;
       resetNavigationStack?: boolean;
     }) => {
-      if (!isSidePanelHostablePath(path)) {
+      const hostableRouteMatch = matchSidePanelHostableRoute(path);
+
+      if (!isDefined(hostableRouteMatch)) {
         return null;
       }
 
       const { title, iconKey, iconColor } = resolveSidePanelRoutedPageInfo({
         path,
+        hostableRouteMatch,
         store,
       });
 

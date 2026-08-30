@@ -1,53 +1,103 @@
-import { lazy } from 'react';
+import { parsePath } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
+import {
+  LazyRecordIndexPage,
+  LazyRecordShowPage,
+  LazySettingsObjectDetailPage,
+  LazySettingsObjectFieldEdit,
+} from '@/app/constants/LazyRoutePages';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
+import { SidePanelHostedRecordIndexDataModelButton } from '@/side-panel/routing/components/SidePanelHostedRecordIndexDataModelButton';
 import { type SidePanelHostableRoute } from '@/side-panel/routing/types/SidePanelHostableRoute';
-import { SETTINGS_DATA_MODEL_PERMISSION } from '@/settings/constants/SettingsDataModelPermission';
-
-// Loaded lazily like the main route tree does it, so hosting a page in the
-// panel never pulls it into the bundle of everything that renders a panel.
-const SettingsObjectDetailPage = lazy(() =>
-  import('~/pages/settings/data-model/SettingsObjectDetailPage').then(
-    (module) => ({ default: module.SettingsObjectDetailPage }),
-  ),
-);
-
-const SettingsObjectFieldEdit = lazy(() =>
-  import('~/pages/settings/data-model/SettingsObjectFieldEdit').then(
-    (module) => ({ default: module.SettingsObjectFieldEdit }),
-  ),
-);
-
-const RecordIndexPage = lazy(() =>
-  import('~/pages/object-record/RecordIndexPage').then((module) => ({
-    default: module.RecordIndexPage,
-  })),
-);
-
-const RecordShowPage = lazy(() =>
-  import('~/pages/object-record/RecordShowPage').then((module) => ({
-    default: module.RecordShowPage,
-  })),
-);
+import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 
 export const SIDE_PANEL_HOSTABLE_ROUTES: SidePanelHostableRoute[] = [
   {
     path: getSettingsPath(SettingsPath.ObjectFieldEdit),
-    element: <SettingsObjectFieldEdit />,
-    settingsPermission: SETTINGS_DATA_MODEL_PERMISSION,
+    element: <LazySettingsObjectFieldEdit />,
+    settingsPermission: PermissionFlagType.DATA_MODEL,
+    resolvePageInfo: ({ match, store }) => {
+      const objectMetadataItem = store
+        .get(objectMetadataItemsSelector.atom)
+        .find((item) => item.namePlural === match.params.objectNamePlural);
+
+      const fieldMetadataItem = objectMetadataItem?.fields.find(
+        (item) => item.name === match.params.fieldName,
+      );
+
+      return {
+        title: fieldMetadataItem?.label ?? '',
+        iconKey: fieldMetadataItem?.icon,
+      };
+    },
   },
   {
     path: getSettingsPath(SettingsPath.ObjectDetail),
-    element: <SettingsObjectDetailPage />,
-    settingsPermission: SETTINGS_DATA_MODEL_PERMISSION,
+    element: <LazySettingsObjectDetailPage />,
+    settingsPermission: PermissionFlagType.DATA_MODEL,
+    resolvePageInfo: ({ match, store }) => {
+      const objectMetadataItem = store
+        .get(objectMetadataItemsSelector.atom)
+        .find((item) => item.namePlural === match.params.objectNamePlural);
+
+      if (!isDefined(objectMetadataItem)) {
+        return { title: '' };
+      }
+
+      return {
+        title: objectMetadataItem.labelPlural,
+        iconKey: objectMetadataItem.icon,
+        iconColor: getIconColorForObjectType(objectMetadataItem.nameSingular),
+      };
+    },
   },
   {
     path: AppPath.RecordIndexPage,
-    element: <RecordIndexPage />,
+    element: <LazyRecordIndexPage />,
+    TopBarRightCorner: SidePanelHostedRecordIndexDataModelButton,
+    resolvePageInfo: ({ match, path, store }) => {
+      const objectMetadataItem = store
+        .get(objectMetadataItemsSelector.atom)
+        .find((item) => item.namePlural === match.params.objectNamePlural);
+
+      if (!isDefined(objectMetadataItem)) {
+        return { title: '' };
+      }
+
+      const viewId = new URLSearchParams(parsePath(path).search).get('viewId');
+
+      const view = isDefined(viewId)
+        ? store.get(viewFromViewIdFamilySelector.selectorFamily({ viewId }))
+        : undefined;
+
+      return {
+        title: view?.name ?? objectMetadataItem.labelPlural,
+        iconKey: view?.icon ?? objectMetadataItem.icon,
+        iconColor: getIconColorForObjectType(objectMetadataItem.nameSingular),
+      };
+    },
   },
   {
     path: AppPath.RecordShowPage,
-    element: <RecordShowPage />,
+    element: <LazyRecordShowPage />,
+    resolvePageInfo: ({ match, store }) => {
+      const objectMetadataItem = store
+        .get(objectMetadataItemsSelector.atom)
+        .find((item) => item.nameSingular === match.params.objectNameSingular);
+
+      if (!isDefined(objectMetadataItem)) {
+        return { title: '' };
+      }
+
+      return {
+        title: objectMetadataItem.labelSingular,
+        iconKey: objectMetadataItem.icon ?? 'IconList',
+        iconColor: getIconColorForObjectType(objectMetadataItem.nameSingular),
+      };
+    },
   },
 ];
