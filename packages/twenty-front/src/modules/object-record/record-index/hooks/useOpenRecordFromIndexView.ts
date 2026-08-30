@@ -1,7 +1,7 @@
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { useContextStoreInstanceId } from '@/context-store/hooks/useContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
@@ -41,6 +41,8 @@ export const useOpenRecordFromIndexView = () => {
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
+  const contextStoreInstanceId = useContextStoreInstanceId();
+
   const store = useStore();
 
   const openRecordFromIndexView = useCallback(
@@ -53,7 +55,7 @@ export const useOpenRecordFromIndexView = () => {
 
       store.set(
         contextStoreRecordShowParentViewComponentState.atomFamily({
-          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+          instanceId: contextStoreInstanceId,
         }),
         {
           parentViewComponentId: recordIndexId,
@@ -94,6 +96,7 @@ export const useOpenRecordFromIndexView = () => {
       openRecordInSidePanel,
       openRecordIn,
       closeSidePanelMenu,
+      contextStoreInstanceId,
       store,
     ],
   );

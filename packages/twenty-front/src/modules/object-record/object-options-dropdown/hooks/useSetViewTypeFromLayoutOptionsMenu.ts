@@ -1,4 +1,4 @@
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { useContextStoreInstanceId } from '@/context-store/hooks/useContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -27,13 +27,15 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
 
   const { availableFieldsForCalendar } = useGetAvailableFieldsForCalendar();
 
+  const contextStoreInstanceId = useContextStoreInstanceId();
+
   const store = useStore();
 
   const setAndPersistViewType = useCallback(
     async (viewType: ViewType) => {
       const currentViewId = store.get(
         contextStoreCurrentViewIdComponentState.atomFamily({
-          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+          instanceId: contextStoreInstanceId,
         }),
       );
 
@@ -132,6 +134,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
       availableFieldsForCalendar,
       loadRecordIndexStates,
       objectMetadataItem,
+      contextStoreInstanceId,
     ],
   );
 

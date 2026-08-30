@@ -3,6 +3,7 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
+import { useContextStoreInstanceId } from '@/context-store/hooks/useContextStoreInstanceId';
 import { getPageType } from '@/context-store/utils/getPageType';
 import { getViewType } from '@/context-store/utils/getViewType';
 import { useSetLastVisitedObjectMetadataId } from '@/navigation/hooks/useSetLastVisitedObjectMetadataId';
@@ -13,7 +14,7 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { useEffect } from 'react';
 
-type MainContextStoreProviderEffectProps = {
+type RouteContextStoreProviderEffectProps = {
   viewId?: string;
   objectMetadataItem?: EnrichedObjectMetadataItem;
   isRecordIndexPage: boolean;
@@ -22,14 +23,17 @@ type MainContextStoreProviderEffectProps = {
   isSettingsPage: boolean;
 };
 
-export const MainContextStoreProviderEffect = ({
+export const RouteContextStoreProviderEffect = ({
   viewId,
   objectMetadataItem,
   isRecordIndexPage,
   isRecordShowPage,
   isStandalonePage,
   isSettingsPage,
-}: MainContextStoreProviderEffectProps) => {
+}: RouteContextStoreProviderEffectProps) => {
+  const isMainSurface =
+    useContextStoreInstanceId() === MAIN_CONTEXT_STORE_INSTANCE_ID;
+
   const { setLastVisitedViewForObjectMetadataNamePlural } =
     useSetLastVisitedViewForObjectMetadataNamePlural();
 
@@ -37,29 +41,19 @@ export const MainContextStoreProviderEffect = ({
     useSetLastVisitedObjectMetadataId();
 
   const [contextStoreCurrentViewId, setContextStoreCurrentViewId] =
-    useAtomComponentState(
-      contextStoreCurrentViewIdComponentState,
-      MAIN_CONTEXT_STORE_INSTANCE_ID,
-    );
+    useAtomComponentState(contextStoreCurrentViewIdComponentState);
 
   const [contextStoreCurrentViewType, setContextStoreCurrentViewType] =
-    useAtomComponentState(
-      contextStoreCurrentViewTypeComponentState,
-      MAIN_CONTEXT_STORE_INSTANCE_ID,
-    );
+    useAtomComponentState(contextStoreCurrentViewTypeComponentState);
 
   const [contextStoreCurrentPageType, setContextStoreCurrentPageType] =
-    useAtomComponentState(
-      contextStoreCurrentPageTypeComponentState,
-      MAIN_CONTEXT_STORE_INSTANCE_ID,
-    );
+    useAtomComponentState(contextStoreCurrentPageTypeComponentState);
 
   const [
     contextStoreCurrentObjectMetadataItemId,
     setContextStoreCurrentObjectMetadataItemId,
   ] = useAtomComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const view = useAtomFamilySelectorValue(viewFromViewIdFamilySelector, {
@@ -75,6 +69,12 @@ export const MainContextStoreProviderEffect = ({
       return;
     }
 
+    // Where the user left off is a property of the app they navigate, not of
+    // whatever they happen to be peeking at on the right.
+    if (!isMainSurface) {
+      return;
+    }
+
     setLastVisitedViewForObjectMetadataNamePlural({
       objectNamePlural: objectMetadataItem.namePlural,
       viewId: viewId ?? '',
@@ -85,6 +85,7 @@ export const MainContextStoreProviderEffect = ({
     });
   }, [
     contextStoreCurrentObjectMetadataItemId,
+    isMainSurface,
     objectMetadataItem,
     setContextStoreCurrentObjectMetadataItemId,
     setLastVisitedObjectMetadataId,

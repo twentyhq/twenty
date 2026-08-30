@@ -1,6 +1,4 @@
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordIndexContainerGater } from '@/object-record/record-index/components/RecordIndexContainerGater';
 import { isCoreWorkflowsIndexEnabled } from '@/object-core/workflows/utils/isCoreWorkflowsIndexEnabled';
@@ -21,7 +19,6 @@ const WorkflowCoreIndexPage = lazy(() =>
 export const RecordIndexPage = () => {
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -58,13 +55,7 @@ export const RecordIndexPage = () => {
 
   return (
     <PageContainer>
-      <ContextStoreComponentInstanceContext.Provider
-        value={{
-          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-        }}
-      >
-        <RecordIndexContainerGater />
-      </ContextStoreComponentInstanceContext.Provider>
+      <RecordIndexContainerGater />
     </PageContainer>
   );
 };

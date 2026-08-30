@@ -1,4 +1,4 @@
-import { MainContextStoreProviderEffect } from '@/context-store/components/MainContextStoreProviderEffect';
+import { RouteContextStoreProviderEffect } from '@/context-store/components/RouteContextStoreProviderEffect';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
@@ -37,7 +37,7 @@ const getViewId = (
   return undefined;
 };
 
-export const MainContextStoreProvider = () => {
+export const RouteContextStoreProvider = () => {
   const location = useLocation();
   const isRecordIndexPage = isMatchingLocation(
     location,
@@ -122,7 +122,7 @@ export const MainContextStoreProvider = () => {
   }
 
   return (
-    <MainContextStoreProviderEffect
+    <RouteContextStoreProviderEffect
       viewId={viewId}
       objectMetadataItem={objectMetadataItem}
       isRecordIndexPage={isRecordIndexPage}

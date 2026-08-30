@@ -4,8 +4,6 @@ import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleBu
 import { RecordShowCommandMenu } from '@/command-menu-item/components/RecordShowCommandMenu';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/components/PageLayoutRecordPageRenderer';
@@ -39,47 +37,43 @@ export const RecordShowPage = () => {
     <RecordComponentInstanceContextsWrapper
       componentInstanceId={recordShowComponentInstanceId}
     >
-      <ContextStoreComponentInstanceContext.Provider
-        value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
+      <CommandMenuComponentInstanceContext.Provider
+        value={{ instanceId: recordShowComponentInstanceId }}
       >
-        <CommandMenuComponentInstanceContext.Provider
-          value={{ instanceId: recordShowComponentInstanceId }}
-        >
-          <RecordShowPageTitle
-            objectNameSingular={objectNameSingular}
-            objectRecordId={objectRecordId}
-          />
-          <PageCardLayout
-            header={
-              <RecordShowPageHeader
-                objectNameSingular={objectNameSingular}
-                objectRecordId={objectRecordId}
-              >
-                <RecordShowCommandMenu />
-                {!isLayoutCustomizationModeEnabled && <SidePanelToggleButton />}
-              </RecordShowPageHeader>
-            }
-          >
-            <TimelineActivityContext.Provider
-              value={{
-                recordId: objectRecordId,
-              }}
+        <RecordShowPageTitle
+          objectNameSingular={objectNameSingular}
+          objectRecordId={objectRecordId}
+        />
+        <PageCardLayout
+          header={
+            <RecordShowPageHeader
+              objectNameSingular={objectNameSingular}
+              objectRecordId={objectRecordId}
             >
-              <PageLayoutRecordPageRenderer
-                targetRecordIdentifier={{
-                  id: objectRecordId,
-                  targetObjectNameSingular: objectNameSingular,
-                }}
-                isInSidePanel={false}
-              />
-              <RecordShowPageSSESubscribeEffect
-                objectNameSingular={objectNameSingular}
-                recordId={objectRecordId}
-              />
-            </TimelineActivityContext.Provider>
-          </PageCardLayout>
-        </CommandMenuComponentInstanceContext.Provider>
-      </ContextStoreComponentInstanceContext.Provider>
+              <RecordShowCommandMenu />
+              {!isLayoutCustomizationModeEnabled && <SidePanelToggleButton />}
+            </RecordShowPageHeader>
+          }
+        >
+          <TimelineActivityContext.Provider
+            value={{
+              recordId: objectRecordId,
+            }}
+          >
+            <PageLayoutRecordPageRenderer
+              targetRecordIdentifier={{
+                id: objectRecordId,
+                targetObjectNameSingular: objectNameSingular,
+              }}
+              isInSidePanel={false}
+            />
+            <RecordShowPageSSESubscribeEffect
+              objectNameSingular={objectNameSingular}
+              recordId={objectRecordId}
+            />
+          </TimelineActivityContext.Provider>
+        </PageCardLayout>
+      </CommandMenuComponentInstanceContext.Provider>
     </RecordComponentInstanceContextsWrapper>
   );
 };
