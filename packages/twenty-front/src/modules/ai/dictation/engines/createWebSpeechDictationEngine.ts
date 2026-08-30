@@ -68,25 +68,44 @@ export const createWebSpeechDictationEngine = ({
     },
   });
 
-  const stopRecognition = () => {
+  // Every path that ends a session funnels through here, so the teardown cannot
+  // drift between them and cannot run twice. onend is deliberately not trusted
+  // to arrive: iOS can end a session without firing it, and leaving any of this
+  // to it wedges dictation — a stuck isActive refuses every later start, a state
+  // left at 'listening' leaves the button offering to stop a session that is
+  // already over, and a listener outliving its session calls back into a stopped
+  // engine. The isActive guard makes a second call a no-op, which is what keeps
+  // stop() from reporting idle twice once onend does arrive.
+  const endSession = (
+    recognitionAction: 'stop' | 'abort' | 'none',
+    { evenWhenIdle = false }: { evenWhenIdle?: boolean } = {},
+  ) => {
+    // Outside the guard: a start whose microphone warm-up is still in flight has
+    // not set isActive yet, and bumping the generation is what abandons it.
     sessionGeneration++;
-    clearReadinessTimer();
-    watchdog.disarm();
 
-    if (isActive && isDefined(recognition)) {
-      recognition.stop();
+    if (!isActive && !evenWhenIdle) {
+      return;
     }
 
-    // None of this is left to onend: iOS can end a session without firing it. A
-    // stuck isActive would refuse every later start, a state left at 'listening'
-    // would leave the button offering to stop a session that is already over —
-    // the caller only starts again from 'idle' — and a listener outliving its
-    // session would call back into a stopped engine. Repeating it when onend
-    // does arrive is harmless. Deliberately not done in onerror, where a
-    // non-terminal error like no-speech arrives while the session runs on.
     isActive = false;
+    clearReadinessTimer();
+    watchdog.disarm();
     document.removeEventListener('visibilitychange', handleVisibilityChange);
+
+    if (isDefined(recognition)) {
+      if (recognitionAction === 'abort') {
+        recognition.abort();
+      } else if (recognitionAction === 'stop') {
+        recognition.stop();
+      }
+    }
+
     emitter.emit({ type: 'state', state: 'idle' });
+  };
+
+  const stopRecognition = () => {
+    endSession('stop');
   };
 
   const handleVisibilityChange = () => {
@@ -141,11 +160,7 @@ export const createWebSpeechDictationEngine = ({
     };
 
     instance.onend = () => {
-      isActive = false;
-      clearReadinessTimer();
-      watchdog.disarm();
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      emitter.emit({ type: 'state', state: 'idle' });
+      endSession('none');
     };
 
     return instance;
@@ -201,14 +216,8 @@ export const createWebSpeechDictationEngine = ({
       try {
         recognition.start();
       } catch {
-        isActive = false;
-        watchdog.disarm();
-        document.removeEventListener(
-          'visibilitychange',
-          handleVisibilityChange,
-        );
         emitter.emit({ type: 'error', reason: 'engine-error' });
-        emitter.emit({ type: 'state', state: 'idle' });
+        endSession('none');
 
         return;
       }
@@ -227,33 +236,14 @@ export const createWebSpeechDictationEngine = ({
     // belongs to neither the sent message nor the next draft. abort() ends the
     // session without delivering a result, unlike stop().
     cancel: () => {
-      sessionGeneration++;
-      clearReadinessTimer();
-      watchdog.disarm();
-
-      if (isDefined(recognition)) {
-        recognition.abort();
-      }
-
-      isActive = false;
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      emitter.emit({ type: 'state', state: 'idle' });
+      endSession('abort');
     },
 
     dispose: () => {
-      sessionGeneration++;
-      clearReadinessTimer();
-      watchdog.disarm();
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-
-      if (isDefined(recognition)) {
-        recognition.abort();
-        recognition = null;
-      }
-
-      isActive = false;
-      // Before the listeners go, so a caller holding interim text clears it.
-      emitter.emit({ type: 'state', state: 'idle' });
+      // evenWhenIdle because disposal has to release the recognizer and let a
+      // caller holding interim text clear it whether or not a session was live.
+      endSession('abort', { evenWhenIdle: true });
+      recognition = null;
       emitter.clear();
     },
 

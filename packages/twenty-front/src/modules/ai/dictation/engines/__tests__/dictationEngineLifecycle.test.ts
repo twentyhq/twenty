@@ -295,4 +295,51 @@ describe('createWebSpeechDictationEngine', () => {
       );
     },
   );
+
+  // A session ends once. onend arriving after an explicit stop must not report
+  // a second one, or a caller counting session ends sees two per session.
+  it('reports idle once when stop is followed by onend', async () => {
+    const { stream } = createFakeStream();
+
+    mockGetUserMedia(() => Promise.resolve(stream));
+
+    const { instances } = stubCapturingSpeechRecognition();
+
+    const engine = createWebSpeechDictationEngine({
+      isIOS: false,
+      language: 'en-US',
+    });
+    const idleCount = { value: 0 };
+
+    engine.subscribe((event) => {
+      if (event.type === 'state' && event.state === 'idle') {
+        idleCount.value += 1;
+      }
+    });
+
+    await engine.start();
+    engine.stop();
+    instances[0]?.onend?.();
+
+    expect(idleCount.value).toBe(1);
+  });
+
+  // Every message send cancels, dictating or not, so cancelling an idle engine
+  // is the common case rather than an edge one.
+  it('does nothing when cancelling an engine that is not dictating', async () => {
+    const { abort } = stubCapturingSpeechRecognition();
+
+    const engine = createWebSpeechDictationEngine({
+      isIOS: false,
+      language: 'en-US',
+    });
+    const events: string[] = [];
+
+    engine.subscribe((event) => events.push(event.type));
+
+    engine.cancel();
+
+    expect(abort).not.toHaveBeenCalled();
+    expect(events).toEqual([]);
+  });
 });
