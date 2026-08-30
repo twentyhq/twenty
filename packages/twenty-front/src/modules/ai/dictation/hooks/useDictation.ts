@@ -10,7 +10,9 @@ import { createWebSpeechDictationEngine } from '@/ai/dictation/engines/createWeb
 import { useDictationAvailability } from '@/ai/dictation/hooks/useDictationAvailability';
 import { getDictationLanguage } from '@/ai/dictation/utils/getDictationLanguage';
 import { readDictationSurface } from '@/ai/dictation/utils/readDictationSurface';
+import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { recordWebSpeechSilentFailure } from '@/ai/dictation/utils/webSpeechSilentFailureStorage';
 
@@ -101,17 +103,24 @@ export const useDictation = ({
       return;
     }
 
-    // Settling means it is already transcribing; stopping would discard it.
-    if (engineState !== 'settling') {
-      engine.stop();
-    }
+    engine.stop();
   }, [engine, engineState]);
+
+  // Both send paths dispatch this, so dictation does not have to be lifted into
+  // the composer to be stopped by one.
+  const handleSendMessage = useCallback(() => {
+    engine?.cancel();
+  }, [engine]);
+
+  useListenToBrowserEvent({
+    eventName: AGENT_CHAT_SEND_MESSAGE_EVENT_NAME,
+    onBrowserEvent: handleSendMessage,
+  });
 
   return {
     engineState,
     isAvailable: isSupported && !hasEngineSilentlyFailed && isDefined(engine),
     isRecording: engineState === 'starting' || engineState === 'listening',
-    isSettling: engineState === 'settling',
     toggleDictation,
   };
 };

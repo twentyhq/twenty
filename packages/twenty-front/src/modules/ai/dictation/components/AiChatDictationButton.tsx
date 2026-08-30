@@ -28,30 +28,24 @@ export const AiChatDictationButton = ({
     [enqueueErrorSnackBar],
   );
 
-  const { isAvailable, isRecording, isSettling, toggleDictation } =
-    useDictation({
-      onInterimText,
-      onFinalText,
-      onSessionEnd,
-      onFailure: handleFailure,
-    });
+  const { isAvailable, isRecording, toggleDictation } = useDictation({
+    onInterimText,
+    onFinalText,
+    onSessionEnd,
+    onFailure: handleFailure,
+  });
 
   if (!isAvailable) {
     return null;
   }
 
-  const ariaLabel = isSettling
-    ? t`Transcribing`
-    : isRecording
-      ? t`Stop dictation`
-      : t`Start dictation`;
+  const ariaLabel = isRecording ? t`Stop dictation` : t`Start dictation`;
 
   return (
     <IconButton
       variant="tertiary"
       size="small"
       accent={isRecording ? 'danger' : 'default'}
-      disabled={isSettling}
       onClick={toggleDictation}
       Icon={IconMicrophone}
       ariaLabel={ariaLabel}

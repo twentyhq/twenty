@@ -8,11 +8,7 @@ export type DictationFailureReason =
   | 'network'
   | 'engine-error';
 
-export type DictationEngineState =
-  | 'idle'
-  | 'starting'
-  | 'listening'
-  | 'settling';
+export type DictationEngineState = 'idle' | 'starting' | 'listening';
 
 export type DictationEngineEvent =
   | { type: 'interim'; text: string }
@@ -25,6 +21,7 @@ export type DictationEngineListener = (event: DictationEngineEvent) => void;
 export type DictationEngine = {
   start: () => Promise<void>;
   stop: () => void;
+  cancel: () => void;
   dispose: () => void;
   subscribe: (listener: DictationEngineListener) => () => void;
 };

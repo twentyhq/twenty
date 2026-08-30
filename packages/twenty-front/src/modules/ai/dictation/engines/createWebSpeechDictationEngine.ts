@@ -113,9 +113,10 @@ export const createWebSpeechDictationEngine = ({
         emitter.emit({ type: 'final', text: finalText });
       }
 
-      if (isNonEmptyString(interimText)) {
-        emitter.emit({ type: 'interim', text: interimText });
-      }
+      // Emitted even when empty: the result that settles an utterance carries
+      // no interim for it, so the hint would keep showing words that are
+      // already in the document.
+      emitter.emit({ type: 'interim', text: interimText });
     };
 
     instance.onerror = (event: WebSpeechRecognitionErrorEvent) => {
@@ -210,6 +211,19 @@ export const createWebSpeechDictationEngine = ({
     },
 
     stop: stopRecognition,
+
+    // A send takes the composer's content with it, so a half-heard utterance
+    // belongs to neither the sent message nor the next draft. abort() ends the
+    // session without delivering a result, unlike stop().
+    cancel: () => {
+      sessionGeneration++;
+      clearReadinessTimer();
+      watchdog.disarm();
+
+      if (isDefined(recognition)) {
+        recognition.abort();
+      }
+    },
 
     dispose: () => {
       sessionGeneration++;
