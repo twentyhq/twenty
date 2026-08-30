@@ -19,24 +19,27 @@ describe('OnboardingService', () => {
 
   const userId = 'user-id';
   const workspaceId = 'workspace-id';
-  const minEmployeeCount = 20;
-  const creditsReward = 5_000_000;
+  const creditTiers = {
+    midMarket: { minEmployeeCount: 20, amountMicro: 5_000_000 },
+  };
+
+  // The book-call step deliberately asks for a far bigger company than the
+  // credit reward, so the two bars cannot be confused for one another.
+  const bookCallMinEmployeeCount = 200;
 
   const configValues: Record<string, unknown> = {
     CALENDAR_BOOKING_PAGE_ID: 'team/twenty/talk-to-us',
-    ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT: minEmployeeCount,
-    ONBOARDING_BOOK_CALL_QUALIFICATION_CREDITS_REWARD: creditsReward,
+    ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT: bookCallMinEmployeeCount,
+    ONBOARDING_ENRICHMENT_CREDIT_REWARD_TIERS: creditTiers,
   };
 
   const grantCredits = jest.fn();
   const setIfNotExists = jest.fn();
-  const setUserVar = jest.fn();
   const getConfig = jest.fn();
 
   beforeEach(async () => {
     grantCredits.mockResolvedValue(null);
     setIfNotExists.mockResolvedValue(true);
-    setUserVar.mockResolvedValue(undefined);
     getConfig.mockImplementation((key: string) => configValues[key]);
 
     const dataSource = {
@@ -54,7 +57,7 @@ describe('OnboardingService', () => {
           provide: UserVarsService,
           useValue: {
             get: jest.fn(),
-            set: setUserVar,
+            set: jest.fn(),
             delete: jest.fn(),
             setIfNotExists,
           },
@@ -77,80 +80,108 @@ describe('OnboardingService', () => {
     jest.resetAllMocks();
   });
 
-  describe('setOnboardingBookCallPendingIfQualified', () => {
-    it('grants the qualification reward once the workspace clears the employee-count bar', async () => {
-      const hasQualified = await service.setOnboardingBookCallPendingIfQualified(
-        { userId, workspaceId, employeeCount: minEmployeeCount },
-      );
+  describe('creditEnrichmentQualificationReward', () => {
+    it('grants the amount of the tier the enriched company lands in', async () => {
+      await service.creditEnrichmentQualificationReward({
+        workspaceId,
+        employeeCount: 20,
+      });
 
-      expect(hasQualified).toBe(true);
       expect(grantCredits).toHaveBeenCalledWith(
         expect.objectContaining({
           workspaceId,
-          amountMicro: creditsReward,
+          amountMicro: 5_000_000,
           type: BillingCreditGrantType.ONBOARDING_REWARD,
-          idempotencyKey: `onboarding-book-call-qualified:${workspaceId}`,
+          idempotencyKey: `onboarding-enrichment-qualified:${workspaceId}`,
         }),
       );
     });
 
-    it('grants nothing to a workspace below the employee-count bar', async () => {
-      const hasQualified = await service.setOnboardingBookCallPendingIfQualified(
-        { userId, workspaceId, employeeCount: minEmployeeCount - 1 },
-      );
+    it('grants nothing to a company below every tier', async () => {
+      await service.creditEnrichmentQualificationReward({
+        workspaceId,
+        employeeCount: 19,
+      });
 
-      expect(hasQualified).toBe(false);
       expect(grantCredits).not.toHaveBeenCalled();
     });
 
     it('grants nothing to a workspace enrichment could not match', async () => {
-      const hasQualified = await service.setOnboardingBookCallPendingIfQualified(
-        { userId, workspaceId, employeeCount: null },
-      );
+      await service.creditEnrichmentQualificationReward({
+        workspaceId,
+        employeeCount: null,
+      });
 
-      expect(hasQualified).toBe(false);
       expect(grantCredits).not.toHaveBeenCalled();
     });
 
-    it('grants nothing while the book-call step is unconfigured', async () => {
+    it('grants nothing while no tier is configured', async () => {
       getConfig.mockImplementation((key: string) =>
-        key === 'CALENDAR_BOOKING_PAGE_ID' ? undefined : configValues[key],
+        key === 'ONBOARDING_ENRICHMENT_CREDIT_REWARD_TIERS'
+          ? {}
+          : configValues[key],
       );
 
-      const hasQualified = await service.setOnboardingBookCallPendingIfQualified(
-        { userId, workspaceId, employeeCount: minEmployeeCount },
-      );
+      await service.creditEnrichmentQualificationReward({
+        workspaceId,
+        employeeCount: 5000,
+      });
 
-      expect(hasQualified).toBe(false);
       expect(grantCredits).not.toHaveBeenCalled();
     });
 
-    it('grants nothing when another qualification already claimed the offer', async () => {
-      setIfNotExists.mockResolvedValue(false);
-
-      const hasQualified = await service.setOnboardingBookCallPendingIfQualified(
-        { userId, workspaceId, employeeCount: minEmployeeCount },
-      );
-
-      expect(hasQualified).toBe(false);
-      expect(grantCredits).not.toHaveBeenCalled();
-    });
-
-    it('still offers the call when granting the credits fails', async () => {
+    it('swallows a billing failure so enrichment still completes', async () => {
       grantCredits.mockRejectedValue(new Error('billing is down'));
 
-      const hasQualified = await service.setOnboardingBookCallPendingIfQualified(
-        { userId, workspaceId, employeeCount: minEmployeeCount },
+      await expect(
+        service.creditEnrichmentQualificationReward({
+          workspaceId,
+          employeeCount: 5000,
+        }),
+      ).resolves.toBeUndefined();
+    });
+
+    it('grants credits even when the book-a-call step is switched off', async () => {
+      getConfig.mockImplementation((key: string) =>
+        key === 'CALENDAR_BOOKING_PAGE_ID' ||
+        key === 'ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT'
+          ? undefined
+          : configValues[key],
       );
 
-      expect(hasQualified).toBe(true);
-      expect(setUserVar).toHaveBeenCalledWith(
-        expect.objectContaining({
-          key: 'ONBOARDING_BOOK_CALL_PENDING',
-          value: true,
-        }),
-        expect.anything(),
+      await service.creditEnrichmentQualificationReward({
+        workspaceId,
+        employeeCount: 20,
+      });
+
+      expect(grantCredits).toHaveBeenCalledWith(
+        expect.objectContaining({ amountMicro: 5_000_000 }),
       );
+    });
+  });
+
+  describe('setOnboardingBookCallPendingIfQualified', () => {
+    it('offers the call without granting credits', async () => {
+      const hasQualified =
+        await service.setOnboardingBookCallPendingIfQualified({
+          userId,
+          workspaceId,
+          employeeCount: bookCallMinEmployeeCount,
+        });
+
+      expect(hasQualified).toBe(true);
+      expect(grantCredits).not.toHaveBeenCalled();
+    });
+
+    it('withholds the call from a company that only clears the credit tier', async () => {
+      const hasQualified =
+        await service.setOnboardingBookCallPendingIfQualified({
+          userId,
+          workspaceId,
+          employeeCount: 20,
+        });
+
+      expect(hasQualified).toBe(false);
     });
   });
 });

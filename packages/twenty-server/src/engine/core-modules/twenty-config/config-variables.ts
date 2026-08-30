@@ -59,6 +59,7 @@ import {
   ConfigVariableException,
   ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
+import { type OnboardingEnrichmentCreditRewardTier } from 'src/engine/core-modules/onboarding/types/onboarding-enrichment-credit-reward-tier.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import {
   DEFAULT_DISABLED_MODELS,
@@ -1078,13 +1079,14 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
-      'Free credits granted when enrichment qualifies a workspace for the book-a-call onboarding step (in microCredits)',
-    type: ConfigVariableType.NUMBER,
+      'Credit reward tiers for workspaces enrichment matched to a real company, keyed by tier name, as {"midMarket":{"minEmployeeCount":20,"amountMicro":5000000}} (amounts in microCredits). The most generous matching tier wins; no tiers disables the reward. Independent of ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT, so credits and the book-a-call offer can target different companies.',
+    type: ConfigVariableType.JSON,
   })
-  @CastToPositiveNumber()
-  @IsInt()
   @IsOptional()
-  ONBOARDING_BOOK_CALL_QUALIFICATION_CREDITS_REWARD = 5_000_000;
+  ONBOARDING_ENRICHMENT_CREDIT_REWARD_TIERS: Record<
+    string,
+    OnboardingEnrichmentCreditRewardTier
+  > = {};
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

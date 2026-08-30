@@ -25,6 +25,7 @@ import {
   OnboardingExceptionCode,
 } from 'src/engine/core-modules/onboarding/onboarding.exception';
 import { type ReversibleOnboardingStep } from 'src/engine/core-modules/onboarding/types/reversible-onboarding-step.type';
+import { getOnboardingEnrichmentCreditRewardMicro } from 'src/engine/core-modules/onboarding/utils/get-onboarding-enrichment-credit-reward-micro.util';
 import { readBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/read-book-call-step-min-employee-count.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
@@ -855,6 +856,44 @@ export class OnboardingService {
     );
   }
 
+  async creditEnrichmentQualificationReward({
+    workspaceId,
+    employeeCount,
+  }: {
+    workspaceId: string;
+    employeeCount: number | null;
+  }) {
+    const amountMicro = getOnboardingEnrichmentCreditRewardMicro({
+      employeeCount,
+      tiers: this.twentyConfigService.get(
+        'ONBOARDING_ENRICHMENT_CREDIT_REWARD_TIERS',
+      ),
+    });
+
+    if (!isDefined(amountMicro)) {
+      return;
+    }
+
+    try {
+      await this.billingCreditService.grantCredits({
+        workspaceId,
+        amountMicro,
+        type: BillingCreditGrantType.ONBOARDING_REWARD,
+        reason: 'Onboarding reward: enrichment-qualified workspace',
+        // The only gate on the reward, deliberately: it is keyed on the
+        // workspace rather than the enriching user so that a re-run of the
+        // enrichment, or a second member qualifying later, replays instead of
+        // topping up a balance the workspace already received.
+        idempotencyKey: `onboarding-enrichment-qualified:${workspaceId}`,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to credit onboarding enrichment qualification reward for workspace ${workspaceId}`,
+        error,
+      );
+    }
+  }
+
   async isOnboardingBookCallPending({
     userId,
     workspaceId,
@@ -1000,30 +1039,6 @@ export class OnboardingService {
       return false;
     }
 
-    const hasClaimedBookCallOffer = await this.claimBookCallOffer({
-      userId,
-      workspaceId,
-    });
-
-    if (!hasClaimedBookCallOffer) {
-      return false;
-    }
-
-    // Granted outside the claim transaction: grantCredits takes a Redis lock and
-    // writes on its own connection, so keeping it inside would hold the row lock
-    // across the lock wait without buying any rollback guarantee.
-    await this.creditBookCallQualificationReward({ workspaceId });
-
-    return true;
-  }
-
-  private async claimBookCallOffer({
-    userId,
-    workspaceId,
-  }: {
-    userId: string;
-    workspaceId: string;
-  }): Promise<boolean> {
     try {
       return await this.dataSource.transaction(async (entityManager) => {
         const { queryRunner } = entityManager;
@@ -1067,32 +1082,6 @@ export class OnboardingService {
       );
 
       return false;
-    }
-  }
-
-  private async creditBookCallQualificationReward({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }) {
-    try {
-      await this.billingCreditService.grantCredits({
-        workspaceId,
-        amountMicro: this.twentyConfigService.get(
-          'ONBOARDING_BOOK_CALL_QUALIFICATION_CREDITS_REWARD',
-        ),
-        type: BillingCreditGrantType.ONBOARDING_REWARD,
-        reason: 'Onboarding reward: enrichment-qualified workspace',
-        // Keyed on the workspace while the offer is claimed per user: credits are
-        // a workspace balance, so a second member qualifying later must not add
-        // another grant.
-        idempotencyKey: `onboarding-book-call-qualified:${workspaceId}`,
-      });
-    } catch (error) {
-      this.logger.error(
-        `Failed to credit onboarding book-call qualification reward for workspace ${workspaceId}`,
-        error,
-      );
     }
   }
 
