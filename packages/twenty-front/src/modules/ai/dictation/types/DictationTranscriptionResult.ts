@@ -8,5 +8,4 @@ export type DictationTranscriptionResult =
 
 export type TranscribeDictationAudio = (
   audio: Blob,
-  language: string,
 ) => Promise<DictationTranscriptionResult>;

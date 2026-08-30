@@ -1,9 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-// The speaker's Twenty language, not navigator.language: someone working in a
-// French workspace on an English-configured browser is dictating French, and
-// recognising it as English produces confident nonsense rather than an error.
+// Only the on-device engine needs this: the Web Speech API recognises exactly
+// one language per session and cannot detect it, so a wrong guess produces
+// confident nonsense rather than an error. The speaker's Twenty language beats
+// navigator.language, which is the browser UI's rather than the speaker's.
 export const getDictationLanguage = (
   workspaceMemberLocale?: string | null,
 ): string => {

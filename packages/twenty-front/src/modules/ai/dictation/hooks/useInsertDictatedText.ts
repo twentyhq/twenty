@@ -14,7 +14,26 @@ export const useInsertDictatedText = (editor: Editor | null) =>
         return;
       }
 
-      editor.chain().focus().insertContent(text).run();
+      const { from } = editor.state.selection;
+      // A bare string is parsed as HTML against the editor's schema, so a
+      // transcript containing "<b>" loses the tag and gains a mark. A text node
+      // writes what was actually said.
+      const precedingCharacter = editor.state.doc.textBetween(
+        Math.max(from - 1, 0),
+        from,
+      );
+      // Neither engine prefixes a space, and every press is a fresh utterance.
+      const needsSeparator =
+        isNonEmptyString(precedingCharacter) && !/\s/.test(precedingCharacter);
+
+      editor
+        .chain()
+        .focus()
+        .insertContent({
+          type: 'text',
+          text: needsSeparator ? ` ${text}` : text,
+        })
+        .run();
     },
     [editor],
   );
