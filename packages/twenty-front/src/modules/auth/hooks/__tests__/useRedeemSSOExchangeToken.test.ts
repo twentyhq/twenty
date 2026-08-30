@@ -2,8 +2,8 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
+import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { useRedeemSSOExchangeToken } from '@/auth/hooks/useRedeemSSOExchangeToken';
-import { tokenPairState } from '@/auth/states/tokenPairState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   jotaiStore,
@@ -27,17 +27,6 @@ const renderHooks = () => {
   });
 
   return { result };
-};
-
-const staleTokenPair = {
-  accessOrWorkspaceAgnosticToken: {
-    token: 'stale-access-token',
-    expiresAt: '2020-01-01T00:00:00.000Z',
-  },
-  refreshToken: {
-    token: 'stale-refresh-token',
-    expiresAt: '2020-01-01T00:00:00.000Z',
-  },
 };
 
 const freshTokenPair = {
@@ -70,37 +59,6 @@ describe('useRedeemSSOExchangeToken', () => {
     });
   });
 
-  it('should store the redeemed token pair', async () => {
-    const { result } = renderHooks();
-
-    await result.current.redeemSSOExchangeToken('sso-exchange-token');
-
-    expect(mockGetAuthTokensFromSSOExchangeToken).toHaveBeenCalledWith({
-      variables: { ssoExchangeToken: 'sso-exchange-token' },
-    });
-    expect(jotaiStore.get(tokenPairState.atom)).toEqual(freshTokenPair);
-  });
-
-  it('should clear the existing token pair before exchanging', async () => {
-    jotaiStore.set(tokenPairState.atom, staleTokenPair);
-
-    const tokenPairsAtExchangeTime: unknown[] = [];
-
-    mockGetAuthTokensFromSSOExchangeToken.mockImplementation(() => {
-      tokenPairsAtExchangeTime.push(jotaiStore.get(tokenPairState.atom));
-
-      return Promise.resolve({
-        data: { getAuthTokensFromSSOExchangeToken: { tokens: freshTokenPair } },
-      });
-    });
-
-    const { result } = renderHooks();
-
-    await result.current.redeemSSOExchangeToken('sso-exchange-token');
-
-    expect(tokenPairsAtExchangeTime).toEqual([null]);
-  });
-
   it('should disable the redirect effect while exchanging and restore it after', async () => {
     const redirectFlagsAtExchangeTime: unknown[] = [];
 
@@ -122,7 +80,29 @@ describe('useRedeemSSOExchangeToken', () => {
     expect(jotaiStore.get(isAppEffectRedirectEnabledState.atom)).toBe(true);
   });
 
-  it('should snackbar and leave no token pair when redemption fails', async () => {
+  // The cookie is httpOnly, so nothing else can tell the client it is now
+  // signed in; without this the user stays on the sign-in flow.
+  it('should mark the session active once the exchange succeeds', async () => {
+    const { result } = renderHooks();
+
+    await result.current.redeemSSOExchangeToken('sso-exchange-token');
+
+    expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(true);
+  });
+
+  it('should leave the session inactive when the exchange fails', async () => {
+    mockGetAuthTokensFromSSOExchangeToken.mockRejectedValueOnce(
+      new Error('Invalid SSO exchange token'),
+    );
+
+    const { result } = renderHooks();
+
+    await result.current.redeemSSOExchangeToken('sso-exchange-token');
+
+    expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(false);
+  });
+
+  it('should snackbar when redemption fails', async () => {
     mockGetAuthTokensFromSSOExchangeToken.mockRejectedValueOnce(
       new Error('Invalid SSO exchange token'),
     );
@@ -134,7 +114,6 @@ describe('useRedeemSSOExchangeToken', () => {
     expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
       message: 'Invalid SSO exchange token',
     });
-    expect(jotaiStore.get(tokenPairState.atom)).toBeNull();
     expect(jotaiStore.get(isAppEffectRedirectEnabledState.atom)).toBe(true);
   });
 });
