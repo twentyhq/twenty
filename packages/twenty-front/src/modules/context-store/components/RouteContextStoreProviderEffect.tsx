@@ -6,7 +6,6 @@ import { contextStoreCurrentViewTypeComponentState } from '@/context-store/state
 import { useContextStoreInstanceId } from '@/context-store/hooks/useContextStoreInstanceId';
 import { getPageType } from '@/context-store/utils/getPageType';
 import { getViewType } from '@/context-store/utils/getViewType';
-import { useSetLastVisitedObjectMetadataId } from '@/navigation/hooks/useSetLastVisitedObjectMetadataId';
 import { useSetLastVisitedViewForObjectMetadataNamePlural } from '@/navigation/hooks/useSetLastVisitedViewForObjectMetadataNamePlural';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
@@ -37,9 +36,6 @@ export const RouteContextStoreProviderEffect = ({
   const { setLastVisitedViewForObjectMetadataNamePlural } =
     useSetLastVisitedViewForObjectMetadataNamePlural();
 
-  const { setLastVisitedObjectMetadataId } =
-    useSetLastVisitedObjectMetadataId();
-
   const [contextStoreCurrentViewId, setContextStoreCurrentViewId] =
     useAtomComponentState(contextStoreCurrentViewIdComponentState);
 
@@ -69,8 +65,8 @@ export const RouteContextStoreProviderEffect = ({
       return;
     }
 
-    // Where the user left off is a property of the app they navigate, not of
-    // whatever they happen to be peeking at on the right.
+    // The sidebar links each object to the view last opened on it, so writing
+    // this from the panel would move where the left side takes you next.
     if (!isMainSurface) {
       return;
     }
@@ -79,16 +75,11 @@ export const RouteContextStoreProviderEffect = ({
       objectNamePlural: objectMetadataItem.namePlural,
       viewId: viewId ?? '',
     });
-
-    setLastVisitedObjectMetadataId({
-      objectMetadataItemId: objectMetadataItem.id,
-    });
   }, [
     contextStoreCurrentObjectMetadataItemId,
     isMainSurface,
     objectMetadataItem,
     setContextStoreCurrentObjectMetadataItemId,
-    setLastVisitedObjectMetadataId,
     setLastVisitedViewForObjectMetadataNamePlural,
     viewId,
   ]);

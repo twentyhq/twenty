@@ -6,7 +6,7 @@ import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { lastVisitedObjectMetadataItemIdState } from '@/navigation/states/lastVisitedObjectMetadataItemIdState';
+import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { SidePanelRoutedPage } from '@/side-panel/routing/components/SidePanelRoutedPage';
 import { sidePanelRoutedPagePathComponentState } from '@/side-panel/routing/states/sidePanelRoutedPagePathComponentState';
@@ -14,12 +14,26 @@ import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/conte
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 
 const PAGE_INSTANCE_ID = 'side-panel-page-instance-id';
 
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
+
+const MAIN_SURFACE_VIEW_ID = '44444444-4444-4444-4444-444444444444';
+const PANEL_VIEW_ID = '55555555-5555-4555-8555-555555555555';
+
+// The panel has to land on a real view of the same object, or the setter it
+// would call bails before writing and the guard below proves nothing.
+const panelCompaniesView = {
+  id: PANEL_VIEW_ID,
+  name: 'Companies in the panel',
+  icon: 'IconBuildingSkyscraper',
+  objectMetadataId: companyObjectMetadataItem.id,
+  isActive: true,
+} as ViewWithRelations;
 
 // Reads without naming an instance, so what it renders is whichever context
 // store the surface around it resolves to.
@@ -62,7 +76,7 @@ const renderHostedRecordIndex = (path: string) => {
     onInitializeJotaiStore: (store: ReturnType<typeof createStore>) => {
       jotaiStore = store;
 
-      setTestViewsInMetadataStore(store, []);
+      setTestViewsInMetadataStore(store, [panelCompaniesView]);
 
       store.set(
         sidePanelRoutedPagePathComponentState.atomFamily({
@@ -78,10 +92,9 @@ const renderHostedRecordIndex = (path: string) => {
         personObjectMetadataItem.id,
       );
 
-      store.set(
-        lastVisitedObjectMetadataItemIdState.atom,
-        personObjectMetadataItem.id,
-      );
+      store.set(lastVisitedViewPerObjectMetadataItemState.atom, {
+        [companyObjectMetadataItem.id]: MAIN_SURFACE_VIEW_ID,
+      });
     },
   });
 
@@ -128,8 +141,10 @@ describe('a record index hosted in the side panel', () => {
     );
   });
 
-  it('should not move where the user left off in the app', async () => {
-    renderHostedRecordIndex(`/objects/${companyObjectMetadataItem.namePlural}`);
+  it('should not move the view the sidebar links each object to', async () => {
+    renderHostedRecordIndex(
+      `/objects/${companyObjectMetadataItem.namePlural}?viewId=${PANEL_VIEW_ID}`,
+    );
 
     const hostedProbe = await screen.findByTestId(
       'hosted-object-id',
@@ -141,8 +156,8 @@ describe('a record index hosted in the side panel', () => {
       expect(hostedProbe).toHaveTextContent(companyObjectMetadataItem.id),
     );
 
-    expect(jotaiStore.get(lastVisitedObjectMetadataItemIdState.atom)).toBe(
-      personObjectMetadataItem.id,
-    );
+    expect(
+      jotaiStore.get(lastVisitedViewPerObjectMetadataItemState.atom),
+    ).toEqual({ [companyObjectMetadataItem.id]: MAIN_SURFACE_VIEW_ID });
   });
 });
