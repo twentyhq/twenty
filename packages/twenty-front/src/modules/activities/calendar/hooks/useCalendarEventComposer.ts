@@ -105,14 +105,16 @@ export const useCalendarEventComposer = ({
       nameSingular === initialValues?.contextRecord.objectNameSingular,
   );
 
-  const { record: contextRecord } = useFindOneRecord({
-    // The composer can be opened from a record the junction cannot target; the
-    // query is skipped there, but the hook still needs a resolvable object.
-    objectNameSingular:
-      contextObjectMetadataItem?.nameSingular ?? CoreObjectNameSingular.Person,
-    objectRecordId: initialValues?.contextRecord.recordId,
-    skip: !isDefined(contextObjectMetadataItem),
-  });
+  const { record: contextRecord, loading: isContextRecordLoading } =
+    useFindOneRecord({
+      // The composer can be opened from a record the junction cannot target; the
+      // query is skipped there, but the hook still needs a resolvable object.
+      objectNameSingular:
+        contextObjectMetadataItem?.nameSingular ??
+        CoreObjectNameSingular.Person,
+      objectRecordId: initialValues?.contextRecord.recordId,
+      skip: !isDefined(contextObjectMetadataItem),
+    });
 
   const contextTargets: CalendarEventComposerTarget[] =
     isDefined(contextObjectMetadataItem) && isDefined(contextRecord)
@@ -185,6 +187,9 @@ export const useCalendarEventComposer = ({
     invalidAttendeeEmails.length === 0 &&
     !hasTooManyAttendees &&
     hasValidDateRange &&
+    // Creating before it resolves would silently drop the relation the composer
+    // was opened for.
+    !(isDefined(contextObjectMetadataItem) && isContextRecordLoading) &&
     !isCreating &&
     !isCalendarEventComposerCreating;
 
