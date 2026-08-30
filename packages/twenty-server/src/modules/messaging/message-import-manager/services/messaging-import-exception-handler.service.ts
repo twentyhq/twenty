@@ -72,6 +72,7 @@ export class MessageImportExceptionHandlerService {
           );
           break;
         case TwentyOrmExceptionCode.QUERY_READ_TIMEOUT:
+        case TwentyOrmExceptionCode.TRANSIENT_DATABASE_ERROR:
         case MessageImportDriverExceptionCode.TEMPORARY_ERROR:
         case ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR:
         case MessageNetworkExceptionCode.ECONNABORTED:

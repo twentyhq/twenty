@@ -8,7 +8,6 @@ import { ViewType } from '~/generated-metadata/graphql';
 const ALL_AVAILABLE = {
   isKanbanAvailable: true,
   isCalendarAvailable: true,
-  isListViewEnabled: true,
 };
 
 describe('getRecordTableWidgetLayoutPickerOptions', () => {
@@ -23,15 +22,6 @@ describe('getRecordTableWidgetLayoutPickerOptions', () => {
       ViewType.LIST_WIDGET,
       ViewType.CALENDAR_WIDGET,
     ]);
-  });
-
-  it('should hide the list layout while the feature flag is off', () => {
-    expect(
-      getRecordTableWidgetLayoutPickerOptions({
-        ...ALL_AVAILABLE,
-        isListViewEnabled: false,
-      }).map((option) => option.viewType),
-    ).not.toContain(ViewType.LIST_WIDGET);
   });
 
   it('should enable every offered layout when the object supports them all', () => {
@@ -58,24 +48,22 @@ describe('getRecordTableWidgetLayoutPickerOptions', () => {
     },
   );
 
-  it('should refuse a layout the picker disabled or never offered', () => {
+  it('should refuse a layout the picker disabled', () => {
     const options = getRecordTableWidgetLayoutPickerOptions({
       isKanbanAvailable: false,
       isCalendarAvailable: true,
-      isListViewEnabled: false,
     });
 
     expect(isSelectableLayout(options, ViewType.TABLE_WIDGET)).toBe(true);
     expect(isSelectableLayout(options, ViewType.CALENDAR_WIDGET)).toBe(true);
+    expect(isSelectableLayout(options, ViewType.LIST_WIDGET)).toBe(true);
     expect(isSelectableLayout(options, ViewType.KANBAN_WIDGET)).toBe(false);
-    expect(isSelectableLayout(options, ViewType.LIST_WIDGET)).toBe(false);
   });
 
   it('should never disable the table or list layouts', () => {
     const options = getRecordTableWidgetLayoutPickerOptions({
       isKanbanAvailable: false,
       isCalendarAvailable: false,
-      isListViewEnabled: true,
     });
     const isDisabled = (viewType: ViewType) =>
       options.find((option) => option.viewType === viewType)?.isDisabled;

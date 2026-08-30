@@ -20,13 +20,11 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
-import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
 
 export type NavigationDrawerProps = {
   children?: ReactNode;
   className?: string;
-  title: string;
 };
 
 const StyledAnimatedContainer = styled.div<{
@@ -75,7 +73,6 @@ const StyledContainer = styled.div<{
 export const NavigationDrawer = ({
   children,
   className,
-  title,
 }: NavigationDrawerProps) => {
   const [isResizing, setIsResizing] = useState(false);
   const isMobile = useIsMobile();
@@ -122,11 +119,9 @@ export const NavigationDrawer = ({
         isResizing={isResizing}
       >
         <StyledContainer isExpanded={isExpanded}>
-          {!isMobile && isSettingsDrawer && title ? (
-            <NavigationDrawerBackButton title={title} />
-          ) : (
-            <NavigationDrawerHeader showCollapseButton />
-          )}
+          <NavigationDrawerHeader
+            showCollapseButton={isMobile || !isSettingsDrawer}
+          />
           {children}
         </StyledContainer>
 
