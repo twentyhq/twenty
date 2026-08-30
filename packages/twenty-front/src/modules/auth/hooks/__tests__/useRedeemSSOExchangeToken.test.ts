@@ -2,6 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
+import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { useRedeemSSOExchangeToken } from '@/auth/hooks/useRedeemSSOExchangeToken';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
@@ -77,6 +78,28 @@ describe('useRedeemSSOExchangeToken', () => {
 
     expect(redirectFlagsAtExchangeTime).toEqual([false]);
     expect(jotaiStore.get(isAppEffectRedirectEnabledState.atom)).toBe(true);
+  });
+
+  // The cookie is httpOnly, so nothing else can tell the client it is now
+  // signed in; without this the user stays on the sign-in flow.
+  it('should mark the session active once the exchange succeeds', async () => {
+    const { result } = renderHooks();
+
+    await result.current.redeemSSOExchangeToken('sso-exchange-token');
+
+    expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(true);
+  });
+
+  it('should leave the session inactive when the exchange fails', async () => {
+    mockGetAuthTokensFromSSOExchangeToken.mockRejectedValueOnce(
+      new Error('Invalid SSO exchange token'),
+    );
+
+    const { result } = renderHooks();
+
+    await result.current.redeemSSOExchangeToken('sso-exchange-token');
+
+    expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(false);
   });
 
   it('should snackbar when redemption fails', async () => {

@@ -1,4 +1,5 @@
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
+import { useMarkSessionActive } from '@/auth/hooks/useMarkSessionActive';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -9,6 +10,7 @@ import { GetAuthTokensFromSsoExchangeTokenDocument } from '~/generated-metadata/
 
 export const useRedeemSSOExchangeToken = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
+  const markSessionActive = useMarkSessionActive();
   const setIsAppEffectRedirectEnabled = useSetAtomState(
     isAppEffectRedirectEnabledState,
   );
@@ -30,6 +32,8 @@ export const useRedeemSSOExchangeToken = () => {
         if (!isDefined(data?.getAuthTokensFromSSOExchangeToken)) {
           throw new Error('No getAuthTokensFromSSOExchangeToken result');
         }
+
+        markSessionActive();
       } catch (error: unknown) {
         enqueueErrorSnackBar(
           CombinedGraphQLErrors.is(error)
@@ -42,6 +46,7 @@ export const useRedeemSSOExchangeToken = () => {
     },
     [
       getAuthTokensFromSSOExchangeToken,
+      markSessionActive,
       setIsAppEffectRedirectEnabled,
       enqueueErrorSnackBar,
     ],
