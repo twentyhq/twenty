@@ -1000,6 +1000,30 @@ export class OnboardingService {
       return false;
     }
 
+    const hasClaimedBookCallOffer = await this.claimBookCallOffer({
+      userId,
+      workspaceId,
+    });
+
+    if (!hasClaimedBookCallOffer) {
+      return false;
+    }
+
+    // Granted outside the claim transaction: grantCredits takes a Redis lock and
+    // writes on its own connection, so keeping it inside would hold the row lock
+    // across the lock wait without buying any rollback guarantee.
+    await this.creditBookCallQualificationReward({ workspaceId });
+
+    return true;
+  }
+
+  private async claimBookCallOffer({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
     try {
       return await this.dataSource.transaction(async (entityManager) => {
         const { queryRunner } = entityManager;
@@ -1043,6 +1067,32 @@ export class OnboardingService {
       );
 
       return false;
+    }
+  }
+
+  private async creditBookCallQualificationReward({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }) {
+    try {
+      await this.billingCreditService.grantCredits({
+        workspaceId,
+        amountMicro: this.twentyConfigService.get(
+          'ONBOARDING_BOOK_CALL_QUALIFICATION_CREDITS_REWARD',
+        ),
+        type: BillingCreditGrantType.ONBOARDING_REWARD,
+        reason: 'Onboarding reward: enrichment-qualified workspace',
+        // Keyed on the workspace while the offer is claimed per user: credits are
+        // a workspace balance, so a second member qualifying later must not add
+        // another grant.
+        idempotencyKey: `onboarding-book-call-qualified:${workspaceId}`,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to credit onboarding book-call qualification reward for workspace ${workspaceId}`,
+        error,
+      );
     }
   }
 
