@@ -268,4 +268,31 @@ describe('createWebSpeechDictationEngine', () => {
 
     expect(states.at(-1)).toBe('idle');
   });
+
+  // The listener must not outlive its session: onend is what normally removes
+  // it, and iOS can end a session without firing onend.
+  it.each(['stop', 'cancel'] as const)(
+    'removes the visibility listener on %s even when onend never fires',
+    async (method) => {
+      const { stream } = createFakeStream();
+
+      mockGetUserMedia(() => Promise.resolve(stream));
+      stubCapturingSpeechRecognition();
+
+      const removeEventListener = jest.spyOn(document, 'removeEventListener');
+
+      const engine = createWebSpeechDictationEngine({
+        isIOS: true,
+        language: 'en-US',
+      });
+
+      await engine.start();
+      engine[method]();
+
+      expect(removeEventListener).toHaveBeenCalledWith(
+        'visibilitychange',
+        expect.any(Function),
+      );
+    },
+  );
 });

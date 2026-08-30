@@ -77,13 +77,15 @@ export const createWebSpeechDictationEngine = ({
       recognition.stop();
     }
 
-    // Not left to onend: iOS can end a session without firing it. A stuck
-    // isActive would refuse every later start, and a state left at 'listening'
+    // None of this is left to onend: iOS can end a session without firing it. A
+    // stuck isActive would refuse every later start, a state left at 'listening'
     // would leave the button offering to stop a session that is already over —
-    // the caller only starts again from 'idle'. Emitting it twice when onend
+    // the caller only starts again from 'idle' — and a listener outliving its
+    // session would call back into a stopped engine. Repeating it when onend
     // does arrive is harmless. Deliberately not done in onerror, where a
     // non-terminal error like no-speech arrives while the session runs on.
     isActive = false;
+    document.removeEventListener('visibilitychange', handleVisibilityChange);
     emitter.emit({ type: 'state', state: 'idle' });
   };
 
@@ -234,6 +236,7 @@ export const createWebSpeechDictationEngine = ({
       }
 
       isActive = false;
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       emitter.emit({ type: 'state', state: 'idle' });
     },
 
