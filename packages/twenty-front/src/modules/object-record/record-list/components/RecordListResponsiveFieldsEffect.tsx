@@ -1,10 +1,10 @@
-import { recordListDisplayedFieldCountComponentState } from '@/object-record/record-list/states/recordListDisplayedFieldCountComponentState';
-import { computeRecordListDisplayedFieldCount } from '@/object-record/record-list/utils/computeRecordListDisplayedFieldCount';
+import { recordListDisplayedFieldsComponentState } from '@/object-record/record-list/states/recordListDisplayedFieldsComponentState';
+import { computeRecordListDisplayedFields } from '@/object-record/record-list/utils/computeRecordListDisplayedFields';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLayoutEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-type RecordListResponsiveFieldCountEffectProps = {
+type RecordListResponsiveFieldsEffectProps = {
   containerElement: HTMLElement | null;
 };
 
@@ -13,11 +13,11 @@ type RecordListResponsiveFieldCountEffectProps = {
 // parent's ref here on mount finds null and nothing re-runs the effect once it
 // is filled — the list would keep its default field count. A callback ref
 // stored in state re-renders instead, and the effect measures the real element.
-export const RecordListResponsiveFieldCountEffect = ({
+export const RecordListResponsiveFieldsEffect = ({
   containerElement,
-}: RecordListResponsiveFieldCountEffectProps) => {
-  const setRecordListDisplayedFieldCount = useSetAtomComponentState(
-    recordListDisplayedFieldCountComponentState,
+}: RecordListResponsiveFieldsEffectProps) => {
+  const setRecordListDisplayedFields = useSetAtomComponentState(
+    recordListDisplayedFieldsComponentState,
   );
 
   useLayoutEffect(() => {
@@ -25,20 +25,20 @@ export const RecordListResponsiveFieldCountEffect = ({
       return;
     }
 
-    const updateDisplayedFieldCount = () => {
-      setRecordListDisplayedFieldCount(
-        computeRecordListDisplayedFieldCount(containerElement.clientWidth),
+    const updateDisplayedFields = () => {
+      setRecordListDisplayedFields(
+        computeRecordListDisplayedFields(containerElement.clientWidth),
       );
     };
 
-    updateDisplayedFieldCount();
+    updateDisplayedFields();
 
-    const resizeObserver = new ResizeObserver(updateDisplayedFieldCount);
+    const resizeObserver = new ResizeObserver(updateDisplayedFields);
 
     resizeObserver.observe(containerElement);
 
     return () => resizeObserver.disconnect();
-  }, [containerElement, setRecordListDisplayedFieldCount]);
+  }, [containerElement, setRecordListDisplayedFields]);
 
   return null;
 };

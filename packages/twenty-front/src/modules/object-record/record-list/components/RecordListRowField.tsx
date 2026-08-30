@@ -4,7 +4,6 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { RECORD_LIST_ROW_FIELD_ANCHOR_CLASS_NAME } from '@/object-record/record-list/constants/RecordListRowFieldAnchorClassName';
-import { RECORD_LIST_ROW_FIELD_MAX_WIDTH } from '@/object-record/record-list/constants/RecordListRowFieldMaxWidth';
 import { RECORD_LIST_ROW_INPUT_ID_PREFIX } from '@/object-record/record-list/constants/RecordListRowInputIdPrefix';
 import { recordListHoveredFieldMetadataItemIdComponentState } from '@/object-record/record-list/states/recordListHoveredFieldMetadataItemIdComponentState';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
@@ -12,11 +11,13 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
 
+// Shrinkable rather than fixed: a long record label can eat into the fields'
+// share of the row, and a field that refuses to give any of it back is clipped
+// off the left edge of the right-aligned group instead of narrowing.
 const StyledFieldContainer = styled.div`
   align-items: center;
   display: flex;
-  flex-shrink: 0;
-  max-width: ${RECORD_LIST_ROW_FIELD_MAX_WIDTH}px;
+  min-width: 0;
   overflow: hidden;
 
   & > * {
@@ -28,12 +29,14 @@ type RecordListRowFieldProps = {
   recordId: string;
   recordField: RecordField;
   fieldDefinition: ColumnDefinition<FieldMetadata>;
+  maxWidth: number;
 };
 
 export const RecordListRowField = ({
   recordId,
   recordField,
   fieldDefinition,
+  maxWidth,
 }: RecordListRowFieldProps) => {
   const setRecordListHoveredFieldMetadataItemId = useSetAtomComponentState(
     recordListHoveredFieldMetadataItemIdComponentState,
@@ -42,6 +45,7 @@ export const RecordListRowField = ({
   return (
     <StyledFieldContainer
       className={RECORD_LIST_ROW_FIELD_ANCHOR_CLASS_NAME}
+      style={{ maxWidth }}
       onMouseEnter={() =>
         setRecordListHoveredFieldMetadataItemId(recordField.fieldMetadataItemId)
       }
@@ -49,7 +53,7 @@ export const RecordListRowField = ({
       <FieldContext.Provider
         value={{
           recordId,
-          maxWidth: RECORD_LIST_ROW_FIELD_MAX_WIDTH,
+          maxWidth,
           isLabelIdentifier: false,
           isRecordFieldReadOnly: true,
           fieldDefinition,

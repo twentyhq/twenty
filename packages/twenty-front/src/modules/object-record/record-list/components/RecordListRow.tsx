@@ -7,7 +7,7 @@ import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/u
 import { RecordListRowField } from '@/object-record/record-list/components/RecordListRowField';
 import { RECORD_LIST_ROW_LABEL_IDENTIFIER_WIDTH } from '@/object-record/record-list/constants/RecordListRowLabelIdentifierWidth';
 import { useRecordListContextOrThrow } from '@/object-record/record-list/contexts/RecordListContext';
-import { recordListDisplayedFieldCountComponentState } from '@/object-record/record-list/states/recordListDisplayedFieldCountComponentState';
+import { recordListDisplayedFieldsComponentState } from '@/object-record/record-list/states/recordListDisplayedFieldsComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -91,9 +91,8 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
     visibleRecordFieldsComponentSelector,
   );
 
-  const recordListDisplayedFieldCount = useAtomComponentStateValue(
-    recordListDisplayedFieldCountComponentState,
-  );
+  const { displayedFieldCount, displayedFieldMaxWidth } =
+    useAtomComponentStateValue(recordListDisplayedFieldsComponentState);
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
@@ -127,7 +126,7 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
 
   const displayedRecordFields = nonEmptyRecordFields.slice(
     0,
-    recordListDisplayedFieldCount,
+    displayedFieldCount,
   );
 
   const hiddenFieldCount =
@@ -171,6 +170,7 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
               recordId={recordId}
               recordField={recordField}
               fieldDefinition={fieldDefinition}
+              maxWidth={displayedFieldMaxWidth}
             />
           ))}
           {hiddenFieldCount > 0 && (
