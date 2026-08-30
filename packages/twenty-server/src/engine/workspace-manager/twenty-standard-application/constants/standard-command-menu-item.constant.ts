@@ -873,11 +873,9 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       msg({ message: `Ask AI`, context: 'commandMenuItem.label' }),
     ),
     icon: 'IconSparkles',
-    isPinned: false,
+    isPinned: true,
     position: 43,
-    shortLabel: i18nLabel(
-      msg({ message: `Ask AI`, context: 'commandMenuItem.shortLabel' }),
-    ),
+    shortLabel: null,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: 'permissionFlags.AI',
     availabilityObjectMetadataUniversalIdentifier: null,
