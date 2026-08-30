@@ -8,6 +8,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { type ChatReferenceIdentity } from '@/ai/types/ChatReferenceIdentity';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useChatTargetNavigation } from '@/ai/hooks/useChatTargetNavigation';
 import { isAiChatArtifactSurface } from '@/ai/utils/isAiChatArtifactSurface';
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
@@ -27,6 +28,9 @@ export type ChatReferenceTarget = {
   // Set on the artifact surface only, where the reference opens beside the
   // conversation instead of replacing it.
   onClick?: () => void;
+  // The field this reference resolved to, so a chip shows the icon of the same
+  // field its href points at rather than resolving it a second time.
+  fieldMetadataItem?: FieldMetadataItem;
 };
 
 // Every chat reference resolves its destination here, so a reference kind can
@@ -71,7 +75,7 @@ export const useChatReferenceTarget = (
     fieldMetadataItem,
     objectMetadataItem,
   }: {
-    fieldMetadataItem: { id: string; name: string } | undefined;
+    fieldMetadataItem: FieldMetadataItem | undefined;
     objectMetadataItem: { namePlural: string } | undefined;
   }): ChatReferenceTarget => {
     if (
@@ -79,10 +83,11 @@ export const useChatReferenceTarget = (
       !isDefined(objectMetadataItem) ||
       !hasDataModelPermission
     ) {
-      return {};
+      return { fieldMetadataItem };
     }
 
     return {
+      fieldMetadataItem,
       to: getSettingsPath(SettingsPath.ObjectFieldEdit, {
         objectNamePlural: objectMetadataItem.namePlural,
         fieldName: fieldMetadataItem.name,
