@@ -25,9 +25,18 @@ export const RecordListResponsiveFieldsEffect = ({
       return;
     }
 
+    // clientWidth counts the container's own padding, which the rows never get
+    // to use. Measuring the content box keeps the field widths handed to the
+    // rows equal to the space they actually render in.
     const updateDisplayedFields = () => {
+      const { paddingLeft, paddingRight } = getComputedStyle(containerElement);
+
       setRecordListDisplayedFields(
-        computeRecordListDisplayedFields(containerElement.clientWidth),
+        computeRecordListDisplayedFields(
+          containerElement.clientWidth -
+            parseFloat(paddingLeft) -
+            parseFloat(paddingRight),
+        ),
       );
     };
 

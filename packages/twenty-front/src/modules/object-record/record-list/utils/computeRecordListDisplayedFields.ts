@@ -27,8 +27,11 @@ const computeDisplayedFieldCount = (widthLeftForFields: number) => {
     : 0;
 };
 
+// Takes the width a row actually renders in, not the list container's own
+// width: a field told it may be wider than its slot is cut rather than
+// ellipsised.
 export const computeRecordListDisplayedFields = (
-  containerWidth: number,
+  rowWidth: number,
 ): RecordListDisplayedFields => {
   const reservedWidth =
     ROW_HORIZONTAL_PADDING_WIDTH +
@@ -36,7 +39,7 @@ export const computeRecordListDisplayedFields = (
     ROW_ITEM_GAP_WIDTH +
     HIDDEN_FIELD_COUNT_CHIP_WIDTH;
 
-  const widthLeftForFields = containerWidth - reservedWidth;
+  const widthLeftForFields = rowWidth - reservedWidth;
 
   const displayedFieldCount = computeDisplayedFieldCount(widthLeftForFields);
 

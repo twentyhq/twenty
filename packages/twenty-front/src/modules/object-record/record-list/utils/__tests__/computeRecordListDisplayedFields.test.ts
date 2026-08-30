@@ -32,8 +32,28 @@ describe('computeRecordListDisplayedFields', () => {
   });
 
   it('narrows the field to its slot on rows below the full-width breakpoint', () => {
-    expect(computeRecordListDisplayedFields(383).displayedFieldMaxWidth).toBe(
-      131,
+    // A 390px viewport leaves a 342px row, so the single field gets 90px.
+    expect(computeRecordListDisplayedFields(342).displayedFieldMaxWidth).toBe(
+      90,
     );
   });
+
+  // Row padding 12 + label 176 + gap 12 + hidden-count chip 40.
+  const WIDTH_RESERVED_AROUND_FIELDS = 240;
+  const GAP_BEFORE_EACH_FIELD = 12;
+
+  it.each([332, 342, 380, 407, 408, 500, 576, 900, 1200])(
+    'never promises a %ipx row more field width than it has',
+    (rowWidth) => {
+      const { displayedFieldCount, displayedFieldMaxWidth } =
+        computeRecordListDisplayedFields(rowWidth);
+
+      const widthTakenByFields =
+        displayedFieldCount * (displayedFieldMaxWidth + GAP_BEFORE_EACH_FIELD);
+
+      expect(widthTakenByFields).toBeLessThanOrEqual(
+        rowWidth - WIDTH_RESERVED_AROUND_FIELDS,
+      );
+    },
+  );
 });
