@@ -1,5 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { css, cx } from '@linaria/core';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useId } from 'react';
 import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -66,7 +67,7 @@ export const OrganizationAdornment = ({
     </span>
   );
 
-  if (!tooltipContent) {
+  if (!isNonEmptyString(tooltipContent)) {
     return adornment;
   }
 
