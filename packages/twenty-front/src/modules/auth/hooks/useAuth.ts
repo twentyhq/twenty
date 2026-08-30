@@ -22,6 +22,7 @@ import {
   VerifyEmailAndGetWorkspaceAgnosticTokenDocument,
 } from '~/generated-metadata/graphql';
 
+import { useMarkSessionActive } from '@/auth/hooks/useMarkSessionActive';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { isPendingServerSignOutState } from '@/auth/states/isPendingServerSignOutState';
@@ -65,6 +66,7 @@ import { useStore } from 'jotai';
 
 export const useAuth = () => {
   const store = useStore();
+  const markSessionActive = useMarkSessionActive();
   const setLoginToken = useSetAtomState(loginTokenState);
   const setIsAppEffectRedirectEnabled = useSetAtomState(
     isAppEffectRedirectEnabledState,
@@ -128,13 +130,6 @@ export const useAuth = () => {
     setLastAuthenticateWorkspaceDomain(null);
     window.location.assign(AppPath.SignInUp);
   }, [store, setLastAuthenticateWorkspaceDomain]);
-
-  // The auth mutations set the session cookie server-side, so signing in only
-  // has to record that a session now exists.
-  const handleSetAuthTokens = useCallback(() => {
-    store.set(isCookieAuthActiveState.atom, true);
-    store.set(isPendingServerSignOutState.atom, false);
-  }, [store]);
 
   const navigateAfterMultiWorkspaceSignInUp = useCallback(
     async (
@@ -262,7 +257,7 @@ export const useAuth = () => {
         throw new Error('No workspace agnostic token in result');
       }
 
-      handleSetAuthTokens();
+      markSessionActive();
 
       const { user } = await loadCurrentUser();
 
@@ -273,7 +268,7 @@ export const useAuth = () => {
     },
     [
       verifyEmailAndGetWorkspaceAgnosticToken,
-      handleSetAuthTokens,
+      markSessionActive,
       loadCurrentUser,
       navigateAfterMultiWorkspaceSignInUp,
     ],
@@ -287,7 +282,7 @@ export const useAuth = () => {
   );
 
   const handleLoadWorkspaceAfterAuthentication = useCallback(async () => {
-    handleSetAuthTokens();
+    markSessionActive();
     setIsAppEffectRedirectEnabled(false);
 
     try {
@@ -295,7 +290,7 @@ export const useAuth = () => {
     } finally {
       setIsAppEffectRedirectEnabled(true);
     }
-  }, [loadCurrentUser, handleSetAuthTokens, setIsAppEffectRedirectEnabled]);
+  }, [loadCurrentUser, markSessionActive, setIsAppEffectRedirectEnabled]);
 
   const handleGetAuthTokensFromLoginToken = useCallback(
     async (loginToken: string) => {
@@ -358,7 +353,7 @@ export const useAuth = () => {
       await signIn({
         variables: { email, password, captchaToken },
         onCompleted: async () => {
-          handleSetAuthTokens();
+          markSessionActive();
           const { user } = await loadCurrentUser();
 
           await navigateAfterMultiWorkspaceSignInUp(
@@ -377,7 +372,7 @@ export const useAuth = () => {
       });
     },
     [
-      handleSetAuthTokens,
+      markSessionActive,
       signIn,
       loadCurrentUser,
       setSearchParams,
@@ -411,7 +406,7 @@ export const useAuth = () => {
         throw new Error('No signUp result');
       }
 
-      handleSetAuthTokens();
+      markSessionActive();
 
       const { user } = await loadCurrentUser();
 
@@ -423,7 +418,7 @@ export const useAuth = () => {
     [
       isEmailVerificationRequired,
       setSearchParams,
-      handleSetAuthTokens,
+      markSessionActive,
       signUp,
       loadCurrentUser,
       setSignInUpStep,
