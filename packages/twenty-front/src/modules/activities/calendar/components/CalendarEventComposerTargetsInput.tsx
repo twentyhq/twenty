@@ -10,11 +10,9 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const CALENDAR_EVENT_COMPOSER_TARGETS_DROPDOWN_ID =
-  'calendar-event-composer-targets';
 
 const StyledClickableContainer = styled.div`
   align-items: center;
@@ -41,6 +39,9 @@ export const CalendarEventComposerTargetsInput = ({
   targets,
   onTargetChange,
 }: CalendarEventComposerTargetsInputProps) => {
+  const componentId = useId();
+  const dropdownId = `calendar-event-composer-targets-${componentId}`;
+
   const { closeDropdown } = useCloseDropdown();
   const { openCalendarEventTargetsPicker } =
     useOpenCalendarEventTargetsPicker();
@@ -54,7 +55,7 @@ export const CalendarEventComposerTargetsInput = ({
 
   const handleOpenDropdown = () => {
     openCalendarEventTargetsPicker({
-      pickerInstanceId: CALENDAR_EVENT_COMPOSER_TARGETS_DROPDOWN_ID,
+      pickerInstanceId: dropdownId,
       searchableObjectMetadataItems,
       targets,
     });
@@ -83,7 +84,7 @@ export const CalendarEventComposerTargetsInput = ({
 
   return (
     <Dropdown
-      dropdownId={CALENDAR_EVENT_COMPOSER_TARGETS_DROPDOWN_ID}
+      dropdownId={dropdownId}
       dropdownPlacement="bottom-start"
       clickableComponentWidth="100%"
       onOpen={handleOpenDropdown}
@@ -98,15 +99,11 @@ export const CalendarEventComposerTargetsInput = ({
       }
       dropdownComponents={
         <MultipleRecordPicker
-          componentInstanceId={CALENDAR_EVENT_COMPOSER_TARGETS_DROPDOWN_ID}
-          focusId={CALENDAR_EVENT_COMPOSER_TARGETS_DROPDOWN_ID}
+          componentInstanceId={dropdownId}
+          focusId={dropdownId}
           onChange={onTargetChange}
-          onSubmit={() =>
-            closeDropdown(CALENDAR_EVENT_COMPOSER_TARGETS_DROPDOWN_ID)
-          }
-          onClickOutside={() =>
-            closeDropdown(CALENDAR_EVENT_COMPOSER_TARGETS_DROPDOWN_ID)
-          }
+          onSubmit={() => closeDropdown(dropdownId)}
+          onClickOutside={() => closeDropdown(dropdownId)}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
       }
