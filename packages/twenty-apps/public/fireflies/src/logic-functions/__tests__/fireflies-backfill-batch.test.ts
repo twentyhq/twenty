@@ -8,6 +8,7 @@ import {
 import firefliesBackfillBatchLogicFunction from 'src/logic-functions/fireflies-backfill-batch';
 import { FIREFLIES_BACKFILL_BATCH_SIZE } from 'src/logic-functions/constants/fireflies-backfill-batch-size.constant';
 import { computeCallRecordingIdForFirefliesMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fireflies-meeting';
+import { LOGIC_FUNCTION_EXECUTION_CONTEXT } from 'src/logic-functions/__tests__/logic-function-execution-context.test-support';
 
 const queryMock = vi.hoisted(() => vi.fn());
 const mutationMock = vi.hoisted(() => vi.fn());
@@ -57,9 +58,12 @@ describe('firefliesBackfillBatchLogicFunction', () => {
     serveFirefliesApi([], fetchMock);
     vi.useFakeTimers();
 
-    const resultPromise = firefliesBackfillBatchLogicFunction.config.handler({
-      transcriptIds: ['call-1', 'call-2'],
-    });
+    const resultPromise = firefliesBackfillBatchLogicFunction.config.handler(
+      {
+        transcriptIds: ['call-1', 'call-2'],
+      },
+      LOGIC_FUNCTION_EXECUTION_CONTEXT,
+    );
 
     await vi.runAllTimersAsync();
 
@@ -93,9 +97,12 @@ describe('firefliesBackfillBatchLogicFunction', () => {
       ],
     });
 
-    const result = await firefliesBackfillBatchLogicFunction.config.handler({
-      transcriptIds: ['call-1'],
-    });
+    const result = await firefliesBackfillBatchLogicFunction.config.handler(
+      {
+        transcriptIds: ['call-1'],
+      },
+      LOGIC_FUNCTION_EXECUTION_CONTEXT,
+    );
 
     expect(result).toEqual(
       expect.objectContaining({ status: 'completed', skippedCallCount: 1 }),
@@ -118,9 +125,12 @@ describe('firefliesBackfillBatchLogicFunction', () => {
     );
     vi.stubGlobal('fetch', fetchMock);
 
-    const resultPromise = firefliesBackfillBatchLogicFunction.config.handler({
-      transcriptIds: ['call-1'],
-    });
+    const resultPromise = firefliesBackfillBatchLogicFunction.config.handler(
+      {
+        transcriptIds: ['call-1'],
+      },
+      LOGIC_FUNCTION_EXECUTION_CONTEXT,
+    );
     const resultExpectation = expect(resultPromise).rejects.toThrow(
       'transient Fireflies API error',
     );
@@ -140,18 +150,24 @@ describe('firefliesBackfillBatchLogicFunction', () => {
 
   it('throws on an invalid job payload', async () => {
     await expect(
-      firefliesBackfillBatchLogicFunction.config.handler({ transcriptIds: [] }),
+      firefliesBackfillBatchLogicFunction.config.handler(
+        { transcriptIds: [] },
+        LOGIC_FUNCTION_EXECUTION_CONTEXT,
+      ),
     ).rejects.toThrow('requires 1 to 20 non-empty transcript ids');
   });
 
   it('throws when a job payload exceeds the configured batch size', async () => {
     await expect(
-      firefliesBackfillBatchLogicFunction.config.handler({
-        transcriptIds: Array.from(
-          { length: FIREFLIES_BACKFILL_BATCH_SIZE + 1 },
-          (_, transcriptIndex) => `call-${transcriptIndex}`,
-        ),
-      }),
+      firefliesBackfillBatchLogicFunction.config.handler(
+        {
+          transcriptIds: Array.from(
+            { length: FIREFLIES_BACKFILL_BATCH_SIZE + 1 },
+            (_, transcriptIndex) => `call-${transcriptIndex}`,
+          ),
+        },
+        LOGIC_FUNCTION_EXECUTION_CONTEXT,
+      ),
     ).rejects.toThrow('requires 1 to 20 non-empty transcript ids');
   });
 
@@ -159,9 +175,12 @@ describe('firefliesBackfillBatchLogicFunction', () => {
     vi.stubEnv('FIREFLIES_API_KEY', '');
 
     await expect(
-      firefliesBackfillBatchLogicFunction.config.handler({
-        transcriptIds: ['call-1'],
-      }),
+      firefliesBackfillBatchLogicFunction.config.handler(
+        {
+          transcriptIds: ['call-1'],
+        },
+        LOGIC_FUNCTION_EXECUTION_CONTEXT,
+      ),
     ).rejects.toThrow('Fireflies is not configured');
   });
 });
