@@ -679,7 +679,7 @@ export interface UsageLimit {
 
 export type UsageResourceType = 'AI' | 'WORKFLOW' | 'APP' | 'STORAGE' | 'API' | 'LOGIC_FUNCTION' | 'EMAIL'
 
-export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'API_REQUEST'
+export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'DICTATION' | 'EMAIL_SEND' | 'API_REQUEST'
 
 export interface SdkClientChecksums {
     core?: Scalars['String']
@@ -1649,11 +1649,18 @@ export interface ClientConfigMaintenanceMode {
     __typename: 'ClientConfigMaintenanceMode'
 }
 
+export interface ClientDictationConfig {
+    mode: Scalars['String']
+    maxDurationSeconds: Scalars['Float']
+    __typename: 'ClientDictationConfig'
+}
+
 export interface ClientConfig {
     appVersion?: Scalars['String']
     authProviders: AuthProviders
     billing: Billing
     aiModels: ClientAiModelConfig[]
+    dictation: ClientDictationConfig
     signInPrefilled: Scalars['Boolean']
     isMultiWorkspaceEnabled: Scalars['Boolean']
     isEmailVerificationRequired: Scalars['Boolean']
@@ -5075,11 +5082,19 @@ export interface ClientConfigMaintenanceModeGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ClientDictationConfigGenqlSelection{
+    mode?: boolean | number
+    maxDurationSeconds?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ClientConfigGenqlSelection{
     appVersion?: boolean | number
     authProviders?: AuthProvidersGenqlSelection
     billing?: BillingGenqlSelection
     aiModels?: ClientAiModelConfigGenqlSelection
+    dictation?: ClientDictationConfigGenqlSelection
     signInPrefilled?: boolean | number
     isMultiWorkspaceEnabled?: boolean | number
     isEmailVerificationRequired?: boolean | number
@@ -8441,6 +8456,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const ClientDictationConfig_possibleTypes: string[] = ['ClientDictationConfig']
+    export const isClientDictationConfig = (obj?: { __typename?: any } | null): obj is ClientDictationConfig => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isClientDictationConfig"')
+      return ClientDictationConfig_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const ClientConfig_possibleTypes: string[] = ['ClientConfig']
     export const isClientConfig = (obj?: { __typename?: any } | null): obj is ClientConfig => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isClientConfig"')
@@ -9890,6 +9913,7 @@ export const enumUsageOperationType = {
    CODE_EXECUTION: 'CODE_EXECUTION' as const,
    WEB_SEARCH: 'WEB_SEARCH' as const,
    CALL_RECORDING: 'CALL_RECORDING' as const,
+   DICTATION: 'DICTATION' as const,
    EMAIL_SEND: 'EMAIL_SEND' as const,
    API_REQUEST: 'API_REQUEST' as const
 }

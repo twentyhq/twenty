@@ -958,6 +958,7 @@ enum UsageOperationType {
   CODE_EXECUTION
   WEB_SEARCH
   CALL_RECORDING
+  DICTATION
   EMAIL_SEND
   API_REQUEST
 }
@@ -2015,11 +2016,17 @@ type ClientConfigMaintenanceMode {
   link: String
 }
 
+type ClientDictationConfig {
+  mode: String!
+  maxDurationSeconds: Float!
+}
+
 type ClientConfig {
   appVersion: String
   authProviders: AuthProviders!
   billing: Billing!
   aiModels: [ClientAiModelConfig!]!
+  dictation: ClientDictationConfig!
   signInPrefilled: Boolean!
   isMultiWorkspaceEnabled: Boolean!
   isEmailVerificationRequired: Boolean!

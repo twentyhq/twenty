@@ -990,6 +990,7 @@ export type ClientConfig = {
   canManageFeatureFlags: Scalars['Boolean']['output'];
   captcha: Captcha;
   defaultSubdomain?: Maybe<Scalars['String']['output']>;
+  dictation: ClientDictationConfig;
   enterpriseInstanceType: Scalars['String']['output'];
   frontDomain: Scalars['String']['output'];
   isAttachmentPreviewEnabled: Scalars['Boolean']['output'];
@@ -1022,6 +1023,12 @@ export type ClientConfigMaintenanceMode = {
   endAt: Scalars['DateTime']['output'];
   link?: Maybe<Scalars['String']['output']>;
   startAt: Scalars['DateTime']['output'];
+};
+
+export type ClientDictationConfig = {
+  __typename?: 'ClientDictationConfig';
+  maxDurationSeconds: Scalars['Float']['output'];
+  mode: Scalars['String']['output'];
 };
 
 export type CollectionHash = {
@@ -6428,6 +6435,7 @@ export enum UsageOperationType {
   API_REQUEST = 'API_REQUEST',
   CALL_RECORDING = 'CALL_RECORDING',
   CODE_EXECUTION = 'CODE_EXECUTION',
+  DICTATION = 'DICTATION',
   EMAIL_SEND = 'EMAIL_SEND',
   WEB_SEARCH = 'WEB_SEARCH',
   WORKFLOW_EXECUTION = 'WORKFLOW_EXECUTION'
