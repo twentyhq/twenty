@@ -97,19 +97,22 @@ export class GmailGetHistoryService {
       { messagesAdded: [], messagesDeleted: [] },
     );
 
-    const uniqueMessagesAdded = messagesAdded.filter(
+    const messagesAddedSet = new Set(messagesAdded);
+    const messagesDeletedSet = new Set(messagesDeleted);
+
+    const uniqueMessagesAdded = [...messagesAddedSet].filter(
       (messageId) =>
-        isNonEmptyString(messageId) && !messagesDeleted.includes(messageId),
+        isNonEmptyString(messageId) && !messagesDeletedSet.has(messageId),
     );
 
-    const uniqueMessagesDeleted = messagesDeleted.filter(
+    const uniqueMessagesDeleted = [...messagesDeletedSet].filter(
       (messageId) =>
-        isNonEmptyString(messageId) && !messagesAdded.includes(messageId),
+        isNonEmptyString(messageId) && !messagesAddedSet.has(messageId),
     );
 
     return {
-      messagesAdded: [...new Set(uniqueMessagesAdded)],
-      messagesDeleted: [...new Set(uniqueMessagesDeleted)],
+      messagesAdded: uniqueMessagesAdded,
+      messagesDeleted: uniqueMessagesDeleted,
     };
   }
 }
