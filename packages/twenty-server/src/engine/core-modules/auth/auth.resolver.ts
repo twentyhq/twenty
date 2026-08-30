@@ -294,7 +294,6 @@ export class AuthResolver {
     @Args()
     getAuthTokenFromEmailVerificationTokenInput: GetAuthTokenFromEmailVerificationTokenInput,
     @Args('origin') origin: string,
-    @AuthProvider() authProvider: AuthProviderEnum,
   ) {
     const appToken =
       await this.emailVerificationTokenService.validateEmailVerificationTokenOrThrow(
@@ -324,7 +323,7 @@ export class AuthResolver {
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
       workspace.id,
-      authProvider,
+      AuthProviderEnum.Password,
     );
 
     const workspaceUrls =
@@ -338,7 +337,6 @@ export class AuthResolver {
   async verifyEmailAndGetWorkspaceAgnosticToken(
     @Args()
     getAuthTokenFromEmailVerificationTokenInput: GetAuthTokenFromEmailVerificationTokenInput,
-    @AuthProvider() authProvider: AuthProviderEnum,
     @Context() context: { req: Request },
   ) {
     const appToken =
@@ -370,7 +368,7 @@ export class AuthResolver {
         await this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
           availableWorkspaces,
           user,
-          authProvider,
+          AuthProviderEnum.Password,
         ),
       tokens: {
         accessOrWorkspaceAgnosticToken:
@@ -506,7 +504,6 @@ export class AuthResolver {
   @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   async signUpInWorkspace(
     @Args() signUpInput: SignUpInput,
-    @AuthProvider() authProvider: AuthProviderEnum,
   ): Promise<SignUpDTO> {
     const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
       workspaceInviteHash: signUpInput.workspaceInviteHash,
@@ -564,7 +561,7 @@ export class AuthResolver {
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
       workspace.id,
-      authProvider,
+      AuthProviderEnum.Password,
     );
 
     return {
@@ -603,6 +600,14 @@ export class AuthResolver {
     @AuthProvider() authProvider: AuthProviderEnum,
     @Args('input', { nullable: true }) input?: SignUpInNewWorkspaceInput,
   ): Promise<SignUpDTO> {
+    assertIsDefinedOrThrow(
+      authProvider,
+      new AuthException(
+        'Authentication provider is missing',
+        AuthExceptionCode.UNAUTHENTICATED,
+      ),
+    );
+
     const fullUser = await this.userService.findUserByIdOrThrow(currentUser.id);
 
     const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
