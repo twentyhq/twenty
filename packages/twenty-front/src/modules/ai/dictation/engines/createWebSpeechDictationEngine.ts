@@ -76,6 +76,12 @@ export const createWebSpeechDictationEngine = ({
     if (isActive && isDefined(recognition)) {
       recognition.stop();
     }
+
+    // Not left to onend: iOS can end a session without firing it, and an
+    // isActive left true would refuse every later start for the life of the
+    // page. Deliberately not done in onerror, where a non-terminal error like
+    // no-speech can arrive while the session is still running.
+    isActive = false;
   };
 
   const handleVisibilityChange = () => {
@@ -223,6 +229,8 @@ export const createWebSpeechDictationEngine = ({
       if (isDefined(recognition)) {
         recognition.abort();
       }
+
+      isActive = false;
     },
 
     dispose: () => {

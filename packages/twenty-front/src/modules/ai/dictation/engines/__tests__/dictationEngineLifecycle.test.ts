@@ -194,4 +194,28 @@ describe('createWebSpeechDictationEngine', () => {
 
     expect(abort).toHaveBeenCalledTimes(1);
   });
+
+  // iOS can end a session without firing onend. If that left isActive true, the
+  // start guard would refuse every later attempt for the life of the page.
+  it('can start again after a stop that never fired onend', async () => {
+    const { stream } = createFakeStream();
+
+    mockGetUserMedia(() => Promise.resolve(stream));
+
+    const { instances } = stubCapturingSpeechRecognition();
+
+    const engine = createWebSpeechDictationEngine({
+      isIOS: true,
+      language: 'en-US',
+    });
+
+    await engine.start();
+    engine.stop();
+
+    // Deliberately no onend: this is the platform behaviour being guarded.
+    await engine.start();
+
+    expect(instances).toHaveLength(1);
+    expect(instances[0]?.start).toHaveBeenCalledTimes(2);
+  });
 });
