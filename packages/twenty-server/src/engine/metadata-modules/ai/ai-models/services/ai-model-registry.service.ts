@@ -196,13 +196,23 @@ export class AiModelRegistryService {
     modelDef: AiProviderModelConfig;
     sdkInstance: AiSdkProviderInstance | undefined;
   }): void {
+    // An omitted price bills nothing while the provider still charges, so the
+    // model is refused rather than run for free. An explicit 0 is allowed.
+    if (!isDefined(modelDef.costPerMinute)) {
+      this.logger.error(
+        `Skipping transcription model "${compositeId}": costPerMinute is required`,
+      );
+
+      return;
+    }
+
     this.transcriptionConfigCache.set(compositeId, {
       modelId: compositeId,
       sdkPackage: config.npm,
       label: modelDef.label,
       description: modelDef.description ?? compositeId,
       dataResidency: config.dataResidency,
-      costPerMinute: modelDef.costPerMinute ?? 0,
+      costPerMinute: modelDef.costPerMinute,
       isDeprecated: modelDef.isDeprecated,
     });
 
@@ -259,8 +269,11 @@ export class AiModelRegistryService {
     return this.transcriptionConfigCache.get(modelId);
   }
 
+  // Deliberately the same rule as getDefaultTranscriptionModel: a registry
+  // holding only deprecated models would otherwise advertise cloud dictation
+  // that every request without an explicit model id then fails to resolve.
   hasTranscriptionModel(): boolean {
-    return this.getAvailableTranscriptionModels().length > 0;
+    return isDefined(this.getDefaultTranscriptionModel());
   }
 
   private toAiModelConfig(
