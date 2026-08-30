@@ -289,6 +289,7 @@ export {
   IconMaximize,
   IconMessage,
   IconMessageCirclePlus,
+  IconMicrophone,
   IconMinus,
   IconMoneybag,
   IconMoodSmile,
