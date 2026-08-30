@@ -1,11 +1,13 @@
 import { type getDefaultStore } from 'jotai';
 import { matchPath } from 'react-router-dom';
-import { SettingsPath } from 'twenty-shared/types';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
 import { getPathnameFromPath } from '@/side-panel/routing/utils/getPathnameFromPath';
+import { getViewIdFromPath } from '@/side-panel/routing/utils/getViewIdFromPath';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 
 export type SidePanelRoutedPageInfo = {
   title: string;
@@ -35,8 +37,12 @@ export const resolveSidePanelRoutedPageInfo = ({
     pathname,
   );
 
+  const recordIndexMatch = matchPath(AppPath.RecordIndexPage, pathname);
+
   const objectNamePlural =
-    fieldMatch?.params.objectNamePlural ?? objectMatch?.params.objectNamePlural;
+    fieldMatch?.params.objectNamePlural ??
+    objectMatch?.params.objectNamePlural ??
+    recordIndexMatch?.params.objectNamePlural;
 
   const objectMetadataItem = objectMetadataItems.find(
     (item) => item.namePlural === objectNamePlural,
@@ -59,6 +65,20 @@ export const resolveSidePanelRoutedPageInfo = ({
     return {
       title: objectMetadataItem.labelPlural,
       iconKey: objectMetadataItem.icon,
+      iconColor: getIconColorForObjectType(objectMetadataItem.nameSingular),
+    };
+  }
+
+  if (isDefined(recordIndexMatch) && isDefined(objectMetadataItem)) {
+    const viewId = getViewIdFromPath(path);
+
+    const view = isDefined(viewId)
+      ? store.get(viewsSelector.atom).find((view) => view.id === viewId)
+      : undefined;
+
+    return {
+      title: view?.name ?? objectMetadataItem.labelPlural,
+      iconKey: view?.icon ?? objectMetadataItem.icon,
       iconColor: getIconColorForObjectType(objectMetadataItem.nameSingular),
     };
   }

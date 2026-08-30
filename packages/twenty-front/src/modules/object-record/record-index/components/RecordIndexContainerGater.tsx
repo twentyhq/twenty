@@ -16,6 +16,7 @@ import { RecordIndexViewFieldsSSESyncEffect } from '@/object-record/record-index
 import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hooks/useHandleIndexIdentifierClick';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
+import { useIsInSidePanelRoutedSurface } from '@/side-panel/routing/hooks/useIsInSidePanelRoutedSurface';
 import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
@@ -33,6 +34,8 @@ const StyledIndexContainer = styled.div`
 
 export const RecordIndexContainerGater = () => {
   const store = useStore();
+
+  const isInSidePanelRoutedSurface = useIsInSidePanelRoutedSurface();
 
   const { recordIndexId, objectMetadataItem } =
     useRecordIndexIdFromCurrentContextStore();
@@ -93,9 +96,15 @@ export const RecordIndexContainerGater = () => {
                 instanceId: getCommandMenuIdFromRecordIndexId(recordIndexId),
               }}
             >
-              <PageTitle title={objectMetadataItem.labelPlural} />
+              {!isInSidePanelRoutedSurface && (
+                <PageTitle title={objectMetadataItem.labelPlural} />
+              )}
               <PageCardLayout
-                header={<RecordIndexPageHeader />}
+                header={
+                  // The panel top bar already names the object it is hosting,
+                  // and the page header's actions belong to a full width page.
+                  isInSidePanelRoutedSurface ? null : <RecordIndexPageHeader />
+                }
                 secondaryBar={
                   hasObjectReadPermissions && <RecordIndexViewBar />
                 }

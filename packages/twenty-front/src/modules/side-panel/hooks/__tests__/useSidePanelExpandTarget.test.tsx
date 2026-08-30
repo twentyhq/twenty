@@ -20,12 +20,6 @@ const mockRecordExpandTarget: SidePanelExpandTarget = {
   expand: jest.fn(),
 };
 
-const mockRecordsExpandTarget: SidePanelExpandTarget = {
-  label: 'Expand view',
-  hasExpandShortcut: true,
-  expand: jest.fn(),
-};
-
 const mockRichTextExpandTarget: SidePanelExpandTarget = {
   label: 'Expand record',
   hasExpandShortcut: true,
@@ -57,13 +51,6 @@ jest.mock(
   '@/side-panel/pages/record-page/hooks/useExpandRecordSidePanelPage',
   () => ({
     useExpandRecordSidePanelPage: () => mockRecordExpandTarget,
-  }),
-);
-
-jest.mock(
-  '@/side-panel/pages/records-page/hooks/useExpandRecordsSidePanelPage',
-  () => ({
-    useExpandRecordsSidePanelPage: () => mockRecordsExpandTarget,
   }),
 );
 
@@ -111,12 +98,6 @@ describe('useSidePanelExpandTarget', () => {
     const { result } = renderExpandTarget(SidePanelPages.ViewRecord);
 
     expect(result.current).toBe(mockRecordExpandTarget);
-  });
-
-  it('should return the records target when a records page is open', () => {
-    const { result } = renderExpandTarget(SidePanelPages.ViewRecords);
-
-    expect(result.current).toBe(mockRecordsExpandTarget);
   });
 
   it('should return the routed target when a hosted route is open', () => {

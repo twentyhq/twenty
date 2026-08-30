@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { SettingsPath } from 'twenty-shared/types';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 import { type SidePanelHostableRoute } from '@/side-panel/routing/types/SidePanelHostableRoute';
@@ -19,6 +19,12 @@ const SettingsObjectFieldEdit = lazy(() =>
   ),
 );
 
+const RecordIndexPage = lazy(() =>
+  import('~/pages/object-record/RecordIndexPage').then((module) => ({
+    default: module.RecordIndexPage,
+  })),
+);
+
 export const SIDE_PANEL_HOSTABLE_ROUTES: SidePanelHostableRoute[] = [
   {
     path: getSettingsPath(SettingsPath.ObjectFieldEdit),
@@ -29,5 +35,9 @@ export const SIDE_PANEL_HOSTABLE_ROUTES: SidePanelHostableRoute[] = [
     path: getSettingsPath(SettingsPath.ObjectDetail),
     element: <SettingsObjectDetailPage />,
     settingsPermission: SETTINGS_DATA_MODEL_PERMISSION,
+  },
+  {
+    path: AppPath.RecordIndexPage,
+    element: <RecordIndexPage />,
   },
 ];

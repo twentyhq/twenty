@@ -1,12 +1,11 @@
 import { useStore } from 'jotai';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { isAiChatArtifactSurface } from '@/ai/utils/isAiChatArtifactSurface';
 import { fieldMetadataItemByIdMapSelector } from '@/object-metadata/states/fieldMetadataItemByIdMapSelector';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
-import { useOpenRecordsInSidePanel } from '@/side-panel/hooks/useOpenRecordsInSidePanel';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -17,7 +16,6 @@ export const useChatTargetNavigation = () => {
   const navigateApp = useNavigateApp();
   const navigateSettings = useNavigateSettings();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
-  const { openRecordsInSidePanel } = useOpenRecordsInSidePanel();
   const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
 
   const isArtifactSurface = () => isAiChatArtifactSurface(store);
@@ -51,15 +49,6 @@ export const useChatTargetNavigation = () => {
     objectNameSingular: string;
     viewId?: string;
   }) => {
-    if (isArtifactSurface()) {
-      openRecordsInSidePanel({
-        objectNameSingular,
-        viewId,
-      });
-
-      return;
-    }
-
     const objectMetadataItem = store.get(
       objectMetadataItemFamilySelector.selectorFamily({
         objectName: objectNameSingular,
@@ -73,10 +62,27 @@ export const useChatTargetNavigation = () => {
       );
     }
 
+    const recordIndexParams = {
+      objectNamePlural: objectMetadataItem.namePlural,
+    };
+    const recordIndexQueryParams = isDefined(viewId) ? { viewId } : undefined;
+
+    if (isArtifactSurface()) {
+      openRoutedPageInSidePanel({
+        path: getAppPath(
+          AppPath.RecordIndexPage,
+          recordIndexParams,
+          recordIndexQueryParams,
+        ),
+      });
+
+      return;
+    }
+
     navigateApp(
       AppPath.RecordIndexPage,
-      { objectNamePlural: objectMetadataItem.namePlural },
-      isDefined(viewId) ? { viewId } : undefined,
+      recordIndexParams,
+      recordIndexQueryParams,
     );
   };
 

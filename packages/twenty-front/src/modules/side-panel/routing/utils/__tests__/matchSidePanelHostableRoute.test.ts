@@ -14,14 +14,23 @@ describe('matchSidePanelHostableRoute', () => {
     ).toBe('/settings/objects/:objectNamePlural/:fieldName');
   });
 
+  it('should match a record index path', () => {
+    expect(matchSidePanelHostableRoute('/objects/companies')?.path).toBe(
+      '/objects/:objectNamePlural',
+    );
+  });
+
   it('should ignore the search and hash when matching', () => {
     expect(
       isSidePanelHostablePath('/settings/objects/companies?tab=fields#top'),
     ).toBe(true);
+    expect(isSidePanelHostablePath('/objects/companies?viewId=view-1')).toBe(
+      true,
+    );
   });
 
   it('should not match a route that is not hostable', () => {
     expect(isSidePanelHostablePath('/settings/billing')).toBe(false);
-    expect(isSidePanelHostablePath('/objects/companies')).toBe(false);
+    expect(isSidePanelHostablePath('/object/company/record-1')).toBe(false);
   });
 });

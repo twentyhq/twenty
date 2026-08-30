@@ -1,6 +1,6 @@
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { SidePanelObjectFilterDropdown } from '@/side-panel/components/SidePanelObjectFilterDropdown';
-import { SidePanelRecordsDataModelButton } from '@/side-panel/pages/records-page/components/SidePanelRecordsDataModelButton';
+import { SidePanelHostedRecordIndexDataModelButton } from '@/side-panel/routing/components/SidePanelHostedRecordIndexDataModelButton';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -35,12 +35,12 @@ export const SidePanelTopBarRightCornerIcon = () => {
     );
   }
 
-  const isOnRecordsPage = sidePanelPage === SidePanelPages.ViewRecords;
+  const isOnRoutedPage = sidePanelPage === SidePanelPages.RoutedPage;
 
-  if (isOnRecordsPage && !isMobile) {
+  if (isOnRoutedPage && !isMobile) {
     return (
       <StyledIconButtonContainer>
-        <SidePanelRecordsDataModelButton />
+        <SidePanelHostedRecordIndexDataModelButton />
       </StyledIconButtonContainer>
     );
   }

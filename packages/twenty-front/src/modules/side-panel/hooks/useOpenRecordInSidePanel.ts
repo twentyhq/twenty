@@ -12,7 +12,6 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
-import { viewableRecordIdState } from '@/object-record/record-side-panel/states/viewableRecordIdState';
 import { useOpenNewRecordTitleCell } from '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell';
 import { newRecordTitleCellToOpenState } from '@/object-record/record-title-cell/states/newRecordTitleCellToOpenState';
 import { setRecordPageActiveTabId } from '@/page-layout/utils/setRecordPageActiveTabId';
@@ -127,7 +126,6 @@ export const useOpenRecordInSidePanel = () => {
         }),
         recordId,
       );
-      store.set(viewableRecordIdState.atom, recordId);
 
       const objectMetadataItem = store.get(
         objectMetadataItemFamilySelector.selectorFamily({

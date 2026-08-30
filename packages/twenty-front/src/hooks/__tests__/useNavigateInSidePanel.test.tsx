@@ -78,7 +78,7 @@ describe('navigating from inside the side panel', () => {
     expect(openSettingsMenuMock).toHaveBeenCalled();
   });
 
-  it('should send an app target the panel cannot host to the main outlet', () => {
+  it('should keep a hostable app target on the panel', () => {
     const { result } = renderInSurface(useNavigateApp, {
       isInSidePanel: true,
     });
@@ -89,8 +89,29 @@ describe('navigating from inside the side panel', () => {
       });
     });
 
+    expect(navigateFromSidePanelMock).toHaveBeenCalledWith(
+      '/objects/companies',
+    );
+    expect(navigateMock).not.toHaveBeenCalled();
+  });
+
+  it('should send an app target the panel cannot host to the main outlet', () => {
+    const { result } = renderInSurface(useNavigateApp, {
+      isInSidePanel: true,
+    });
+
+    act(() => {
+      result.current(AppPath.RecordShowPage, {
+        objectNameSingular: 'company',
+        objectRecordId: 'record-1',
+      });
+    });
+
     expect(navigateFromSidePanelMock).not.toHaveBeenCalled();
-    expect(navigateMock).toHaveBeenCalledWith('/objects/companies', undefined);
+    expect(navigateMock).toHaveBeenCalledWith(
+      '/object/company/record-1',
+      undefined,
+    );
   });
 
   it('should navigate the main outlet outside the panel', () => {
