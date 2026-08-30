@@ -12,6 +12,10 @@ export type SidePanelRoutedSurfaceContextValue = {
   // would double-open the rows that pair a Link with a panel-aware onClick,
   // so closing the gap properly means giving the panel its own router.
   navigateFromSidePanel: (path: string) => void;
+  // Returning from a hosted page pops the panel's own stack. Browser history
+  // belongs to the main outlet, and the panel path sync would rewrite a
+  // memorized URL back to whatever the panel is currently showing.
+  goBackFromSidePanel: () => void;
 };
 
 export const SidePanelRoutedSurfaceContext =

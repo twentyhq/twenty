@@ -28,7 +28,10 @@ const renderInSurface = <TResult,>(
     <MemoryRouter>
       {isInSidePanel ? (
         <SidePanelRoutedSurfaceContext.Provider
-          value={{ navigateFromSidePanel: navigateFromSidePanelMock }}
+          value={{
+            navigateFromSidePanel: navigateFromSidePanelMock,
+            goBackFromSidePanel: jest.fn(),
+          }}
         >
           {children}
         </SidePanelRoutedSurfaceContext.Provider>

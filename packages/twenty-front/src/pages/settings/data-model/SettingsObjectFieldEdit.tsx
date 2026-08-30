@@ -45,6 +45,7 @@ import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { useSidePanelRoutedSurface } from '@/side-panel/routing/hooks/useSidePanelRoutedSurface';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getFieldMetadataItemInitialValues } from '~/pages/settings/data-model/utils/getFieldMetadataItemInitialValues';
 
@@ -69,6 +70,7 @@ export const SettingsObjectFieldEdit = () => {
   const { enqueueSuccessSnackBar } = useSnackBar();
 
   const navigate = useNavigate();
+  const sidePanelRoutedSurface = useSidePanelRoutedSurface();
 
   const [navigationMemorizedUrl, setNavigationMemorizedUrl] = useAtomState(
     navigationMemorizedUrlState,
@@ -247,6 +249,19 @@ export const SettingsObjectFieldEdit = () => {
   };
 
   const navigateBackOrToSettings = () => {
+    // Hosted on the right, where the memorized URL belongs to the main outlet
+    // and the panel path sync would put this editor straight back.
+    if (isDefined(sidePanelRoutedSurface)) {
+      if (shouldNavigateBackToMemorizedUrlOnSave) {
+        setShouldNavigateBackToMemorizedUrlOnSave(false);
+        setNavigationMemorizedUrl('/');
+      }
+
+      sidePanelRoutedSurface.goBackFromSidePanel();
+
+      return;
+    }
+
     if (
       shouldNavigateBackToMemorizedUrlOnSave &&
       isDefined(navigationMemorizedUrl)

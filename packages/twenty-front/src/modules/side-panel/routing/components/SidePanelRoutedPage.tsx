@@ -10,6 +10,7 @@ import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsPro
 import { SidePanelRoutedPageUnavailable } from '@/side-panel/routing/components/SidePanelRoutedPageUnavailable';
 import { SIDE_PANEL_HOSTABLE_ROUTES } from '@/side-panel/routing/constants/SidePanelHostableRoutes';
 import { SidePanelRoutedSurfaceContext } from '@/side-panel/routing/contexts/SidePanelRoutedSurfaceContext';
+import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { sidePanelRoutedPagePathComponentState } from '@/side-panel/routing/states/sidePanelRoutedPagePathComponentState';
 import { isSidePanelHostablePath } from '@/side-panel/routing/utils/isSidePanelHostablePath';
@@ -30,6 +31,7 @@ export const SidePanelRoutedPage = () => {
     sidePanelRoutedPagePathComponentState,
   );
   const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
+  const { goBackFromSidePanel } = useSidePanelHistory();
   const navigate = useNavigate();
 
   const sidePanelPageInstanceId = useComponentInstanceStateContext(
@@ -94,8 +96,8 @@ export const SidePanelRoutedPage = () => {
   );
 
   const surfaceValue = useMemo(
-    () => ({ navigateFromSidePanel }),
-    [navigateFromSidePanel],
+    () => ({ navigateFromSidePanel, goBackFromSidePanel }),
+    [navigateFromSidePanel, goBackFromSidePanel],
   );
 
   const location = useMemo(
