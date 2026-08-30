@@ -1,4 +1,14 @@
-import { Body, Controller, Post, UseFilters, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Query,
+  Req,
+  UseFilters,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common';
+
+import { type Request } from 'express';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { ApiPath } from 'twenty-shared/types';
@@ -17,7 +27,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { TranscribeAudioInput } from 'src/engine/metadata-modules/ai/ai-transcription/dtos/transcribe-audio.input';
 import { AiTranscriptionService } from 'src/engine/metadata-modules/ai/ai-transcription/services/ai-transcription.service';
-import { decodeDictationAudio } from 'src/engine/metadata-modules/ai/ai-transcription/utils/decode-dictation-audio.util';
+import { readRequestAudio } from 'src/engine/metadata-modules/ai/ai-transcription/utils/read-request-audio.util';
 import { AiRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/filters/ai-api-exception.filter';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 
@@ -37,26 +47,27 @@ export class AiTranscribeController {
   @Post('transcribe')
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI))
   async handleTranscribe(
-    @Body() body: TranscribeAudioInput,
+    @Req() request: Request,
+    @Query(new ValidationPipe({ whitelist: true, transform: true }))
+    query: TranscribeAudioInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
     await this.billingUsageService.hasAvailableCreditsOrThrow(workspace.id);
 
-    const decoded = decodeDictationAudio(body.audioBase64);
+    const body = await readRequestAudio(request);
 
-    if (decoded.status === 'invalid') {
+    if (body.status === 'invalid') {
       throw new AiException(
-        `Rejected dictation audio: ${decoded.reason}`,
+        `Rejected dictation audio: ${body.reason}`,
         AiExceptionCode.INVALID_AUDIO_INPUT,
       );
     }
 
     const result = await this.aiTranscriptionService.transcribeAudio({
-      audio: decoded.audio,
-      modelId: body.modelId,
-      vocabularyPrompt: body.vocabularyPrompt,
-      language: body.language,
+      audio: body.audio,
+      modelId: query.modelId,
+      vocabularyPrompt: query.vocabularyPrompt,
       workspaceId: workspace.id,
       userWorkspaceId,
     });

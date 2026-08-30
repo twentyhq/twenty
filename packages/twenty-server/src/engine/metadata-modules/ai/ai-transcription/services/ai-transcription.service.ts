@@ -12,7 +12,6 @@ import {
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
-import { toIso639LanguageCode } from 'src/engine/metadata-modules/ai/ai-transcription/utils/to-iso-639-language-code.util';
 import { MAX_DICTATION_DURATION_SECONDS } from 'src/engine/metadata-modules/ai/ai-transcription/constants/dictation-audio-limits.const';
 
 export type TranscribeAudioResult = {
@@ -37,14 +36,12 @@ export class AiTranscriptionService {
     audio,
     modelId,
     vocabularyPrompt,
-    language,
     workspaceId,
     userWorkspaceId,
   }: {
     audio: Buffer;
     modelId?: string;
     vocabularyPrompt?: string;
-    language?: string;
     workspaceId: string;
     userWorkspaceId?: string | null;
   }): Promise<TranscribeAudioResult> {
@@ -81,9 +78,6 @@ export class AiTranscriptionService {
             ...(isNonEmptyString(vocabularyPrompt) && {
               prompt: vocabularyPrompt,
             }),
-            ...(isNonEmptyString(language) && {
-              language: toIso639LanguageCode(language),
-            }),
           },
         },
       }),
@@ -108,13 +102,13 @@ export class AiTranscriptionService {
   // Duration is unknown until the provider reports it and the byte cap is a weak
   // proxy, so the limit is enforced on the way out: over-long audio yields no
   // transcript. Billing has already run, because the provider was paid anyway.
-  // An unreported duration is refused for the same reason: it cannot be billed
-  // either, so accepting it would leave half an hour of low-bitrate audio inside
-  // the byte cap transcribed for free.
+  // A duration that cannot be billed is refused for the same reason: billing
+  // skips anything non-positive, so accepting it would leave half an hour of
+  // low-bitrate audio inside the byte cap transcribed for free.
   private enforceDurationLimit(durationInSeconds: number | undefined): void {
-    if (!isDefined(durationInSeconds)) {
+    if (!isDefined(durationInSeconds) || durationInSeconds <= 0) {
       throw new AiException(
-        'Transcription provider reported no audio duration',
+        'Transcription provider reported no usable audio duration',
         AiExceptionCode.INVALID_AUDIO_INPUT,
       );
     }
@@ -140,7 +134,7 @@ export class AiTranscriptionService {
         ?.costPerMinute ?? 0;
 
     // Nothing is billed rather than a guess invented from byte length.
-    if (!isDefined(durationInSeconds)) {
+    if (!isDefined(durationInSeconds) || durationInSeconds <= 0) {
       this.logger.warn(
         `Transcription with ${modelId} returned no duration; skipping billing`,
       );
