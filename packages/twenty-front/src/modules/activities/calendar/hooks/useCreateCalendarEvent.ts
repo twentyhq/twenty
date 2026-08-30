@@ -1,6 +1,5 @@
 import { CREATE_CALENDAR_EVENT } from '@/activities/calendar/graphql/mutations/createCalendarEvent';
-import { getTimelineCalendarEventsFromObjectRecord } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromObjectRecord';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { useRefetchTimelineCalendarEvents } from '@/activities/calendar/hooks/useRefetchTimelineCalendarEvents';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -12,7 +11,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const useCreateCalendarEvent = () => {
-  const apolloCoreClient = useApolloCoreClient();
+  const { refetchTimelineCalendarEvents } = useRefetchTimelineCalendarEvents();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
   const [createCalendarEventMutation, { loading }] = useMutation<
@@ -41,9 +40,7 @@ export const useCreateCalendarEvent = () => {
           message: t`Calendar event created successfully`,
         });
 
-        await apolloCoreClient.refetchQueries({
-          include: [getTimelineCalendarEventsFromObjectRecord],
-        });
+        await refetchTimelineCalendarEvents();
 
         return {
           success: true,
@@ -59,7 +56,7 @@ export const useCreateCalendarEvent = () => {
       }
     },
     [
-      apolloCoreClient,
+      refetchTimelineCalendarEvents,
       createCalendarEventMutation,
       enqueueErrorSnackBar,
       enqueueSuccessSnackBar,

@@ -1,6 +1,7 @@
 import { getMissingCreateCalendarEventScopes } from '@/accounts/utils/hasMissingCreateCalendarEventScopes';
 import { useCalendarEventTargetObjectMetadataItems } from '@/activities/calendar/hooks/useCalendarEventTargetObjectMetadataItems';
 import { useCreateCalendarEvent } from '@/activities/calendar/hooks/useCreateCalendarEvent';
+import { useRefetchTimelineCalendarEvents } from '@/activities/calendar/hooks/useRefetchTimelineCalendarEvents';
 import { useCreateCalendarEventTargets } from '@/activities/calendar/hooks/useCreateCalendarEventTargets';
 import { isCalendarEventComposerCreatingState } from '@/activities/calendar/states/isCalendarEventComposerCreatingState';
 import { type CalendarEventComposerInitialValues } from '@/activities/calendar/types/CalendarEventComposerInitialValues';
@@ -38,6 +39,7 @@ export const useCalendarEventComposer = ({
 }) => {
   const { accounts, loading: accountsLoading } = useMyConnectedAccounts();
   const { createCalendarEvent, loading: isCreating } = useCreateCalendarEvent();
+  const { refetchTimelineCalendarEvents } = useRefetchTimelineCalendarEvents();
   const { createCalendarEventTargets } = useCreateCalendarEventTargets();
   const { enqueueErrorSnackBar } = useSnackBar();
   const store = useStore();
@@ -268,7 +270,11 @@ export const useCalendarEventComposer = ({
           }
         }
 
-        if (!areTargetsLinked) {
+        if (areTargetsLinked) {
+          // createCalendarEvent already refetched, but that ran before these
+          // links existed, so an event related only through them stays invisible.
+          await refetchTimelineCalendarEvents();
+        } else {
           enqueueErrorSnackBar({
             message: t`Failed to link the related records to this event`,
           });
@@ -293,6 +299,7 @@ export const useCalendarEventComposer = ({
     isFullDay,
     location,
     onCreated,
+    refetchTimelineCalendarEvents,
     sendInvitations,
     store,
     targets,

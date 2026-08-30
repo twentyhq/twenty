@@ -78,4 +78,22 @@ describe('RecordTargetsInlineCell', () => {
       screen.getByTestId('inline-cell-edit-mode-container'),
     ).toBeInTheDocument();
   });
+
+  it('closes the record picker on escape', async () => {
+    renderCell('note');
+
+    const relationsTexts = await screen.findAllByText('Relations');
+
+    await userEvent.click(relationsTexts[relationsTexts.length - 1]);
+
+    expect(
+      screen.getByTestId('inline-cell-edit-mode-container'),
+    ).toBeInTheDocument();
+
+    await userEvent.keyboard('{Escape}');
+
+    expect(
+      screen.queryByTestId('inline-cell-edit-mode-container'),
+    ).not.toBeInTheDocument();
+  });
 });

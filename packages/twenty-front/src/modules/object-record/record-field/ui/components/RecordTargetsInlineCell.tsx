@@ -29,7 +29,7 @@ export const RecordTargetsInlineCell = ({
 }: RecordTargetsInlineCellProps) => {
   const junctionConfig = useObjectMorphJunctionConfig({ objectNameSingular });
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
-  const { openFieldInput } = useOpenFieldInputEditMode();
+  const { openFieldInput, closeFieldInput } = useOpenFieldInputEditMode();
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -45,19 +45,23 @@ export const RecordTargetsInlineCell = ({
     prefix: instanceIdPrefix,
   });
 
-  const closeEditMode = () => setIsEditing(false);
+  const fieldDefinition = formatFieldMetadataItemAsFieldDefinition({
+    field: junctionField,
+    objectMetadataItem,
+  });
+
+  // Opening pushes the picker onto the focus stack, so closing has to pop it or
+  // the app keeps treating this dropdown as focused.
+  const closeEditMode = () => {
+    setIsEditing(false);
+
+    closeFieldInput({ fieldDefinition, recordId, prefix: instanceIdPrefix });
+  };
 
   const openEditMode = () => {
     setIsEditing(true);
 
-    openFieldInput({
-      fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
-        field: junctionField,
-        objectMetadataItem,
-      }),
-      recordId,
-      prefix: instanceIdPrefix,
-    });
+    openFieldInput({ fieldDefinition, recordId, prefix: instanceIdPrefix });
   };
 
   return (

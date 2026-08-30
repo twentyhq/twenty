@@ -6,6 +6,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 const mockCreateCalendarEvent = jest.fn();
 const mockCreateCalendarEventTargets = jest.fn();
+const mockRefetchTimelineCalendarEvents = jest.fn();
 const mockContextRecord: { current: ObjectRecord | undefined } = {
   current: undefined,
 };
@@ -19,6 +20,15 @@ jest.mock('@/activities/calendar/hooks/useCreateCalendarEvent', () => ({
     loading: false,
   }),
 }));
+
+jest.mock(
+  '@/activities/calendar/hooks/useRefetchTimelineCalendarEvents',
+  () => ({
+    useRefetchTimelineCalendarEvents: () => ({
+      refetchTimelineCalendarEvents: mockRefetchTimelineCalendarEvents,
+    }),
+  }),
+);
 
 jest.mock('@/activities/calendar/hooks/useCreateCalendarEventTargets', () => ({
   useCreateCalendarEventTargets: () => ({
@@ -206,6 +216,8 @@ describe('useCalendarEventComposer', () => {
         },
       ],
     });
+
+    expect(mockRefetchTimelineCalendarEvents).toHaveBeenCalled();
   });
 
   it('drops a relation the user removed from the picker', () => {
