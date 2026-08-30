@@ -1,6 +1,4 @@
-import {
-  type DictationFailureReason,
-} from '@/ai/dictation/types/DictationEngine';
+import { type DictationFailureReason } from '@/ai/dictation/types/DictationEngine';
 
 export type DictationSurface = {
   isIOS: boolean;

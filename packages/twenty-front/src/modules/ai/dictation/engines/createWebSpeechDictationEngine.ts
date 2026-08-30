@@ -140,7 +140,6 @@ export const createWebSpeechDictationEngine = ({
   };
 
   return {
-
     start: async () => {
       if (isActive) {
         return;
