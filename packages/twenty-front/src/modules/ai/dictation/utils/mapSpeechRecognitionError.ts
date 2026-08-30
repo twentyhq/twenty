@@ -1,4 +1,4 @@
-import { type DictationFailureReason } from '@/ai/dictation/types/DictationEngine';
+import { type DictationFailureReason } from '@/ai/dictation/types/DictationFailureReason';
 
 // 'aborted' is absent on purpose: it is what a deliberate stop() produces, and
 // treating it as a failure would surface an error every time a user finishes.

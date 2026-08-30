@@ -1,10 +1,8 @@
 import { createWebSpeechDictationEngine } from '@/ai/dictation/engines/createWebSpeechDictationEngine';
-import { type DictationEngineEvent } from '@/ai/dictation/types/DictationEngine';
-import {
-  type WebSpeechRecognitionConstructor,
-  type WebSpeechRecognitionEvent,
-  type WebSpeechRecognitionInstance,
-} from '@/ai/dictation/types/WebSpeechRecognition';
+import { type DictationEngineEvent } from '@/ai/dictation/types/DictationEngineEvent';
+import { type WebSpeechRecognitionConstructor } from '@/ai/dictation/types/WebSpeechRecognitionConstructor';
+import { type WebSpeechRecognitionEvent } from '@/ai/dictation/types/WebSpeechRecognitionEvent';
+import { type WebSpeechRecognitionInstance } from '@/ai/dictation/types/WebSpeechRecognitionInstance';
 
 // endSession is the test's stand-in for the recognizer reporting it finished,
 // which is the only thing that releases the started slot below.

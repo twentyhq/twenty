@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { type DictationFailureReason } from '@/ai/dictation/types/DictationEngine';
+import { type DictationFailureReason } from '@/ai/dictation/types/DictationFailureReason';
 
 export const getDictationFailureMessage = (
   reason: DictationFailureReason,

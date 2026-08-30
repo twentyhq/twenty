@@ -1,4 +1,4 @@
-import { type DictationFailureReason } from '@/ai/dictation/types/DictationEngine';
+import { type DictationFailureReason } from '@/ai/dictation/types/DictationFailureReason';
 
 // getUserMedia rejects with a DOMException whose name is the only stable part
 // of the failure; the message is browser-specific prose.

@@ -1,11 +1,4 @@
-export type DictationSurface = {
-  isIOS: boolean;
-  isStandaloneDisplayMode: boolean;
-  isThirdPartyIOSBrowser: boolean;
-  hasSpeechRecognition: boolean;
-  hasMediaDevices: boolean;
-  isSecureContext: boolean;
-};
+import { type DictationSurface } from '@/ai/dictation/types/DictationSurface';
 
 // On iOS the Web Speech API is exposed inside installed PWAs and third-party
 // browsers (all WKWebView) but never emits, so these surfaces would otherwise

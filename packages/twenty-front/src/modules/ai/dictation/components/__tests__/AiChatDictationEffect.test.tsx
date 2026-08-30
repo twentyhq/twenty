@@ -4,7 +4,7 @@ import { getDefaultStore } from 'jotai';
 import { AiChatDictationEffect } from '@/ai/dictation/components/AiChatDictationEffect';
 import { dictationEngineState } from '@/ai/dictation/states/dictationEngineState';
 import { hasWebSpeechProvenSilentState } from '@/ai/dictation/states/hasWebSpeechProvenSilentState';
-import { type WebSpeechRecognitionConstructor } from '@/ai/dictation/types/WebSpeechRecognition';
+import { type WebSpeechRecognitionConstructor } from '@/ai/dictation/types/WebSpeechRecognitionConstructor';
 
 type SpeechRecognitionTestWindow = {
   SpeechRecognition?: WebSpeechRecognitionConstructor;

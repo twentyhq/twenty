@@ -1,9 +1,4 @@
-export type LivenessWatchdog = {
-  arm: () => void;
-  noteActivity: () => void;
-  disarm: () => void;
-};
-
+import { type LivenessWatchdog } from '@/ai/dictation/types/LivenessWatchdog';
 // iOS can accept start() and then emit nothing at all, so liveness is measured
 // rather than assumed. Kept free of browser APIs beyond timers so the rule that
 // decides whether dictation is working can be tested without a microphone.

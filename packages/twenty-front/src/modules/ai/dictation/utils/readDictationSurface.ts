@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { getSpeechRecognitionConstructor } from '@/ai/dictation/utils/getSpeechRecognitionConstructor';
-import { type DictationSurface } from '@/ai/dictation/utils/resolveDictationAvailability';
+import { type DictationSurface } from '@/ai/dictation/types/DictationSurface';
 
 // Every browser shipped for iOS is WKWebView underneath, so these are detected
 // by name rather than by engine — the engine would report Safari for all of them.

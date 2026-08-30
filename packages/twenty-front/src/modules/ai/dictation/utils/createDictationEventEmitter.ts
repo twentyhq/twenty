@@ -1,13 +1,5 @@
-import {
-  type DictationEngineEvent,
-  type DictationEngineListener,
-} from '@/ai/dictation/types/DictationEngine';
-
-export type DictationEventEmitter = {
-  emit: (event: DictationEngineEvent) => void;
-  subscribe: (listener: DictationEngineListener) => () => void;
-  clear: () => void;
-};
+import { type DictationEventEmitter } from '@/ai/dictation/types/DictationEventEmitter';
+import { type DictationEngineListener } from '@/ai/dictation/types/DictationEngineListener';
 
 export const createDictationEventEmitter = (): DictationEventEmitter => {
   const listeners = new Set<DictationEngineListener>();

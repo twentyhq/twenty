@@ -1,7 +1,5 @@
-import {
-  resolveDictationAvailability,
-  type DictationSurface,
-} from '@/ai/dictation/utils/resolveDictationAvailability';
+import { type DictationSurface } from '@/ai/dictation/types/DictationSurface';
+import { resolveDictationAvailability } from '@/ai/dictation/utils/resolveDictationAvailability';
 
 const CAPABLE_DESKTOP_SURFACE: DictationSurface = {
   isIOS: false,

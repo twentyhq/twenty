@@ -2,15 +2,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { DICTATION_LIVENESS_TIMEOUT_IN_MS } from '@/ai/dictation/constants/DictationLivenessTimeoutInMs';
-import {
-  type DictationEngine,
-  type DictationFailureReason,
-} from '@/ai/dictation/types/DictationEngine';
-import {
-  type WebSpeechRecognitionErrorEvent,
-  type WebSpeechRecognitionEvent,
-  type WebSpeechRecognitionInstance,
-} from '@/ai/dictation/types/WebSpeechRecognition';
+import { type DictationEngine } from '@/ai/dictation/types/DictationEngine';
+import { type DictationFailureReason } from '@/ai/dictation/types/DictationFailureReason';
+import { type WebSpeechRecognitionErrorEvent } from '@/ai/dictation/types/WebSpeechRecognitionErrorEvent';
+import { type WebSpeechRecognitionEvent } from '@/ai/dictation/types/WebSpeechRecognitionEvent';
+import { type WebSpeechRecognitionInstance } from '@/ai/dictation/types/WebSpeechRecognitionInstance';
 import { createDictationEventEmitter } from '@/ai/dictation/utils/createDictationEventEmitter';
 import { createLivenessWatchdog } from '@/ai/dictation/utils/createLivenessWatchdog';
 import { getSpeechRecognitionConstructor } from '@/ai/dictation/utils/getSpeechRecognitionConstructor';

@@ -3,7 +3,7 @@ import { getDefaultStore } from 'jotai';
 
 import { useDictationAvailability } from '@/ai/dictation/hooks/useDictationAvailability';
 import { hasWebSpeechProvenSilentState } from '@/ai/dictation/states/hasWebSpeechProvenSilentState';
-import { type WebSpeechRecognitionConstructor } from '@/ai/dictation/types/WebSpeechRecognition';
+import { type WebSpeechRecognitionConstructor } from '@/ai/dictation/types/WebSpeechRecognitionConstructor';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 type SpeechRecognitionTestWindow = {

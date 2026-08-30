@@ -1,4 +1,4 @@
-import { type WebSpeechRecognitionConstructor } from '@/ai/dictation/types/WebSpeechRecognition';
+import { type WebSpeechRecognitionConstructor } from '@/ai/dictation/types/WebSpeechRecognitionConstructor';
 
 type SpeechRecognitionWindow = {
   SpeechRecognition?: WebSpeechRecognitionConstructor;
