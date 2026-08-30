@@ -73,8 +73,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
 
   const { openRecordInPreference } = useOpenRecordInPreference();
 
-  // Mirrors resolveOpenRecordIn, which forces the record page on mobile: with
-  // no side panel to open a record in, the preference has nothing to switch.
   const canDisplaySidePanel = !useIsMobile();
 
   const handleSupport = () => {
