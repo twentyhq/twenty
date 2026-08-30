@@ -32,7 +32,7 @@ const StyledMode = styled.button<{ isActive: boolean }>`
   background: ${({ isActive }) =>
     isActive ? themeCssVariables.background.transparent.light : 'transparent'};
   border: none;
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.smRound};
   color: ${({ isActive }) =>
     isActive
       ? themeCssVariables.font.color.primary
