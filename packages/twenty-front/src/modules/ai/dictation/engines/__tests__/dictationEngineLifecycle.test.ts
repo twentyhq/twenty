@@ -218,4 +218,54 @@ describe('createWebSpeechDictationEngine', () => {
     expect(instances).toHaveLength(1);
     expect(instances[0]?.start).toHaveBeenCalledTimes(2);
   });
+
+  // The caller only starts again from 'idle', so a state left at 'listening'
+  // wedges the button into offering to stop a session that is already over.
+  it('reports idle on stop even when onend never fires', async () => {
+    const { stream } = createFakeStream();
+
+    mockGetUserMedia(() => Promise.resolve(stream));
+    stubCapturingSpeechRecognition();
+
+    const engine = createWebSpeechDictationEngine({
+      isIOS: true,
+      language: 'en-US',
+    });
+    const states: string[] = [];
+
+    engine.subscribe((event) => {
+      if (event.type === 'state') {
+        states.push(event.state);
+      }
+    });
+
+    await engine.start();
+    engine.stop();
+
+    expect(states.at(-1)).toBe('idle');
+  });
+
+  it('reports idle on cancel even when onend never fires', async () => {
+    const { stream } = createFakeStream();
+
+    mockGetUserMedia(() => Promise.resolve(stream));
+    stubCapturingSpeechRecognition();
+
+    const engine = createWebSpeechDictationEngine({
+      isIOS: true,
+      language: 'en-US',
+    });
+    const states: string[] = [];
+
+    engine.subscribe((event) => {
+      if (event.type === 'state') {
+        states.push(event.state);
+      }
+    });
+
+    await engine.start();
+    engine.cancel();
+
+    expect(states.at(-1)).toBe('idle');
+  });
 });
