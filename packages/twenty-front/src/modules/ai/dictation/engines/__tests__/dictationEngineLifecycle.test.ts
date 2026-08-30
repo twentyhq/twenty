@@ -342,4 +342,26 @@ describe('createWebSpeechDictationEngine', () => {
     expect(abort).not.toHaveBeenCalled();
     expect(events).toEqual([]);
   });
+
+  // stop() clears the session eagerly but the recognizer can still be settling.
+  // A send in that window must abort it, or its last final result is inserted
+  // into the composer the send just cleared.
+  it('still aborts a settling recognizer when cancelled after stop', async () => {
+    const { stream } = createFakeStream();
+
+    mockGetUserMedia(() => Promise.resolve(stream));
+
+    const { abort } = stubCapturingSpeechRecognition();
+
+    const engine = createWebSpeechDictationEngine({
+      isIOS: false,
+      language: 'en-US',
+    });
+
+    await engine.start();
+    engine.stop();
+    engine.cancel();
+
+    expect(abort).toHaveBeenCalledTimes(1);
+  });
 });

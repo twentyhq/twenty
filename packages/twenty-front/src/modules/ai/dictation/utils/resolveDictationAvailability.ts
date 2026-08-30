@@ -28,7 +28,15 @@ export const resolveDictationAvailability = (
     return { status: 'unavailable', reason: 'unsupported-surface' };
   }
 
-  if (!surface.hasSpeechRecognition || isWebSpeechKnownDead(surface)) {
+  // hasMediaDevices matters even though recognition does its own capture: the
+  // engine warms the microphone through getUserMedia first, so a WebView that
+  // exposes SpeechRecognition without it would offer a button that fails on
+  // every press.
+  if (
+    !surface.hasSpeechRecognition ||
+    !surface.hasMediaDevices ||
+    isWebSpeechKnownDead(surface)
+  ) {
     return { status: 'unavailable', reason: 'unsupported-surface' };
   }
 

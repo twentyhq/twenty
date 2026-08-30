@@ -84,6 +84,20 @@ export const createWebSpeechDictationEngine = ({
     // not set isActive yet, and bumping the generation is what abandons it.
     sessionGeneration++;
 
+    // Also outside it. stop() clears isActive eagerly but the recognizer can
+    // still be settling and deliver one last final result, so a cancel arriving
+    // in that window has to abort it even though the session already reads as
+    // over — otherwise that text lands in a composer the send just cleared.
+    // abort() on a recognizer that is not running is a no-op.
+    if (isDefined(recognition)) {
+      if (recognitionAction === 'abort') {
+        recognition.abort();
+      } else if (recognitionAction === 'stop') {
+        recognition.stop();
+      }
+    }
+
+    // Only the announcement is guarded, so one session ends exactly once.
     if (!isActive && !evenWhenIdle) {
       return;
     }
@@ -92,14 +106,6 @@ export const createWebSpeechDictationEngine = ({
     clearReadinessTimer();
     watchdog.disarm();
     document.removeEventListener('visibilitychange', handleVisibilityChange);
-
-    if (isDefined(recognition)) {
-      if (recognitionAction === 'abort') {
-        recognition.abort();
-      } else if (recognitionAction === 'stop') {
-        recognition.stop();
-      }
-    }
 
     emitter.emit({ type: 'state', state: 'idle' });
   };

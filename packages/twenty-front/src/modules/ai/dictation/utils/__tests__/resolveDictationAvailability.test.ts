@@ -67,4 +67,15 @@ describe('resolveDictationAvailability', () => {
       }),
     ).toEqual({ status: 'available' });
   });
+
+  // The engine warms the microphone through getUserMedia before recognition, so
+  // a WebView exposing SpeechRecognition without it fails on every press.
+  it('refuses a surface with no microphone capture support', () => {
+    expect(
+      resolveDictationAvailability({
+        ...CAPABLE_DESKTOP_SURFACE,
+        hasMediaDevices: false,
+      }),
+    ).toEqual({ status: 'unavailable', reason: 'unsupported-surface' });
+  });
 });
