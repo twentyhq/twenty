@@ -254,16 +254,25 @@ export const useCalendarEventComposer = ({
 
       // The event already exists at this point, so a failure to link the
       // related records must not keep the composer open: retrying would create
-      // a second event. The id is missing when persistence failed, and the next
+      // a second event. A missing id means persistence failed, and the next
       // provider sync then recreates the event without these links.
-      try {
-        if (isDefined(calendarEventId) && targets.length > 0) {
-          await createCalendarEventTargets({ calendarEventId, targets });
+      if (targets.length > 0) {
+        let areTargetsLinked = false;
+
+        if (isDefined(calendarEventId)) {
+          try {
+            await createCalendarEventTargets({ calendarEventId, targets });
+            areTargetsLinked = true;
+          } catch {
+            areTargetsLinked = false;
+          }
         }
-      } catch {
-        enqueueErrorSnackBar({
-          message: t`Failed to link the related records to this event`,
-        });
+
+        if (!areTargetsLinked) {
+          enqueueErrorSnackBar({
+            message: t`Failed to link the related records to this event`,
+          });
+        }
       }
 
       onCreated();

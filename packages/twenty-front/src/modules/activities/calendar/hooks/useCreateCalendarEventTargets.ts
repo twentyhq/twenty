@@ -60,7 +60,10 @@ export const useCreateCalendarEventTargets = () => {
         return;
       }
 
-      await createCalendarEventTargetRecords({ recordsToCreate });
+      // Participant matching already linked the guests it resolved, including
+      // the record the composer was opened from, so these rows can collide with
+      // the junction's unique indexes. Upsert resolves against them.
+      await createCalendarEventTargetRecords({ recordsToCreate, upsert: true });
     },
     [createCalendarEventTargetRecords, junctionConfig, objectMetadataItems],
   );

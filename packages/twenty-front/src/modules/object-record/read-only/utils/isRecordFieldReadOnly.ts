@@ -47,8 +47,8 @@ export const isRecordFieldReadOnly = ({
     });
 
   // A junction target field carries links the workspace owns, not data synced
-  // from the provider, so it stays editable on otherwise read-only records like
-  // calendar events and message threads.
+  // from the provider, so it is exempt from the system-object lock below.
+  // Record-level read-only still wins.
   const isJunctionTargetField =
     isDefined(fieldMetadataItem.type) &&
     isConfiguredJunctionRelationField({
