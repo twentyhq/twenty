@@ -2971,6 +2971,7 @@ type ChannelSyncSuccess {
 type CreateCalendarEventOutput {
   success: Boolean!
   iCalUid: String
+  calendarEventId: String
   conferenceLink: String
   error: String
 }

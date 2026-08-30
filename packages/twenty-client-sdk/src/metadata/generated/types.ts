@@ -5826,6 +5826,9 @@ export default {
             "iCalUid": [
                 1
             ],
+            "calendarEventId": [
+                1
+            ],
             "conferenceLink": [
                 1
             ],
