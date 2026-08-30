@@ -85,6 +85,11 @@ describe('slackUserLinkConsentHandler', () => {
       consentState: 'ACTIVE',
     });
     expect(updateSlackMessageViaResponseUrlMock).toHaveBeenCalledTimes(1);
+    expect(updateSlackMessageViaResponseUrlMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        text: expect.stringContaining('approved'),
+      }),
+    );
   });
 
   it('should report a failure to the user when the write fails', async () => {
@@ -127,6 +132,11 @@ describe('slackUserLinkConsentHandler', () => {
       id: 'link-1',
       consentState: 'DECLINED',
     });
+    expect(updateSlackMessageViaResponseUrlMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        text: expect.stringContaining('declined'),
+      }),
+    );
   });
 
   it('should ignore a decision from a different Slack user', async () => {
