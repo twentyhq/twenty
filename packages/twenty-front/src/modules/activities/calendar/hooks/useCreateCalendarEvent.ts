@@ -34,7 +34,7 @@ export const useCreateCalendarEvent = () => {
               t`Failed to create calendar event`,
           });
 
-          return false;
+          return { success: false };
         }
 
         enqueueSuccessSnackBar({
@@ -45,13 +45,17 @@ export const useCreateCalendarEvent = () => {
           include: [getTimelineCalendarEventsFromObjectRecord],
         });
 
-        return true;
+        return {
+          success: true,
+          calendarEventId:
+            result.data.createCalendarEvent.calendarEventId ?? undefined,
+        };
       } catch {
         enqueueErrorSnackBar({
           message: t`Failed to create calendar event`,
         });
 
-        return false;
+        return { success: false };
       }
     },
     [

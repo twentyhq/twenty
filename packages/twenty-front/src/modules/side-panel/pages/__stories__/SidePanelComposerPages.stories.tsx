@@ -196,6 +196,11 @@ const meta = {
                 __typename: 'Person',
                 id: KIMBERLY_PERSON_ID,
                 companyId: null,
+                name: {
+                  __typename: 'FullName',
+                  firstName: 'Kimberly',
+                  lastName: 'Gordon',
+                },
               },
             },
           }),
@@ -222,8 +227,16 @@ export const CalendarEvent: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Kimberly Gordon')).toBeVisible();
+    const guestsRow = await canvas.findByRole('group', { name: 'Guests' });
+
+    expect(within(guestsRow).getByText('Kimberly Gordon')).toBeVisible();
     expect(canvas.getByText('tim@apple.dev')).toBeVisible();
+
+    const relationsRow = canvas.getByRole('group', { name: 'Relations' });
+
+    expect(
+      await within(relationsRow).findByText('Kimberly Gordon'),
+    ).toBeVisible();
 
     await userEvent.type(
       canvas.getByPlaceholderText('Add an event title'),
