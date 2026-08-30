@@ -1,10 +1,10 @@
 import { RecordIdentifierBarCreatedAt } from '@/object-record/record-show/components/RecordIdentifierBarCreatedAt';
 import { RecordIdentifierBarTitle } from '@/object-record/record-show/components/RecordIdentifierBarTitle';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
-import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
-import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSidePanelRoutedPagePathByPageId } from '@/side-panel/routing/hooks/useSidePanelRoutedPagePathByPageId';
+import { getRecordShowParamsFromPath } from '@/side-panel/routing/utils/getRecordShowParamsFromPath';
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRecordInfo = styled.div`
@@ -21,19 +21,22 @@ type SidePanelRecordInfoProps = {
 export const SidePanelRecordInfo = ({
   sidePanelPageInstanceId,
 }: SidePanelRecordInfoProps) => {
-  const viewableRecordNameSingular = useAtomComponentStateValue(
-    viewableRecordNameSingularComponentState,
-    sidePanelPageInstanceId,
-  );
-  const viewableRecordId = useAtomComponentStateValue(
-    viewableRecordIdComponentState,
+  const routedPagePath = useSidePanelRoutedPagePathByPageId(
     sidePanelPageInstanceId,
   );
 
+  const recordShowParams = isDefined(routedPagePath)
+    ? getRecordShowParamsFromPath(routedPagePath)
+    : null;
+
   const { objectNameSingular, objectRecordId } = useRecordShowPage(
-    viewableRecordNameSingular!,
-    viewableRecordId!,
+    recordShowParams?.objectNameSingular ?? '',
+    recordShowParams?.objectRecordId ?? '',
   );
+
+  if (!isDefined(recordShowParams)) {
+    return null;
+  }
 
   return (
     <StyledRecordInfo>

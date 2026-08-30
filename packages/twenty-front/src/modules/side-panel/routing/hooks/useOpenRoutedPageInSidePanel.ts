@@ -15,9 +15,17 @@ export const useOpenRoutedPageInSidePanel = () => {
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
   const openRoutedPageInSidePanel = useCallback(
-    ({ path }: { path: string }) => {
+    ({
+      path,
+      pageTitle,
+      resetNavigationStack = false,
+    }: {
+      path: string;
+      pageTitle?: string;
+      resetNavigationStack?: boolean;
+    }) => {
       if (!isSidePanelHostablePath(path)) {
-        return;
+        return null;
       }
 
       const { title, iconKey, iconColor } = resolveSidePanelRoutedPageInfo({
@@ -36,11 +44,16 @@ export const useOpenRoutedPageInSidePanel = () => {
 
       navigateSidePanelMenu({
         page: SidePanelPages.RoutedPage,
-        pageTitle: title,
+        pageTitle: pageTitle ?? title,
         pageIcon: getIcon(iconKey),
         pageIconColor: iconColor,
         pageId: pageComponentInstanceId,
+        resetNavigationStack,
       });
+
+      // The caller keys its own per-visit state off this, the way the morph
+      // navigation stack does for a record.
+      return pageComponentInstanceId;
     },
     [store, getIcon, navigateSidePanelMenu],
   );

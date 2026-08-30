@@ -2,29 +2,25 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useNavigateToRecordPageFromSidePanel } from '@/side-panel/pages/record-page/hooks/useNavigateToRecordPageFromSidePanel';
-import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
-import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
+import { useCurrentSidePanelRoutedPath } from '@/side-panel/routing/hooks/useCurrentSidePanelRoutedPath';
+import { getRecordShowParamsFromPath } from '@/side-panel/routing/utils/getRecordShowParamsFromPath';
 import { type SidePanelExpandTarget } from '@/side-panel/types/SidePanelExpandTarget';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
+// A record expands through its own hook rather than the generic routed one,
+// because it also carries the open tab across and clears a stale parent view.
 export const useExpandRecordSidePanelPage =
   (): SidePanelExpandTarget | null => {
     const { t } = useLingui();
 
-    const viewableRecordId = useAtomComponentStateValue(
-      viewableRecordIdComponentState,
-    );
-
-    const viewableRecordNameSingular = useAtomComponentStateValue(
-      viewableRecordNameSingularComponentState,
-    );
+    const currentRoutedPath = useCurrentSidePanelRoutedPath();
 
     const { navigateToRecordPage } = useNavigateToRecordPageFromSidePanel();
 
-    if (
-      !isDefined(viewableRecordId) ||
-      !isDefined(viewableRecordNameSingular)
-    ) {
+    const recordShowParams = isDefined(currentRoutedPath)
+      ? getRecordShowParamsFromPath(currentRoutedPath)
+      : null;
+
+    if (!isDefined(recordShowParams)) {
       return null;
     }
 
@@ -33,8 +29,8 @@ export const useExpandRecordSidePanelPage =
       hasExpandShortcut: true,
       expand: () =>
         navigateToRecordPage({
-          objectNameSingular: viewableRecordNameSingular,
-          recordId: viewableRecordId,
+          objectNameSingular: recordShowParams.objectNameSingular,
+          recordId: recordShowParams.objectRecordId,
         }),
     };
   };

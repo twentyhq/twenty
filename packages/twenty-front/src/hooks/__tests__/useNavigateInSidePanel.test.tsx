@@ -95,7 +95,7 @@ describe('navigating from inside the side panel', () => {
     expect(navigateMock).not.toHaveBeenCalled();
   });
 
-  it('should send an app target the panel cannot host to the main outlet', () => {
+  it('should keep a record target on the panel', () => {
     const { result } = renderInSurface(useNavigateApp, {
       isInSidePanel: true,
     });
@@ -107,11 +107,25 @@ describe('navigating from inside the side panel', () => {
       });
     });
 
-    expect(navigateFromSidePanelMock).not.toHaveBeenCalled();
-    expect(navigateMock).toHaveBeenCalledWith(
+    expect(navigateFromSidePanelMock).toHaveBeenCalledWith(
       '/object/company/record-1',
-      undefined,
     );
+    expect(navigateMock).not.toHaveBeenCalled();
+  });
+
+  it('should send an app target the panel cannot host to the main outlet', () => {
+    const { result } = renderInSurface(useNavigateApp, {
+      isInSidePanel: true,
+    });
+
+    act(() => {
+      result.current(AppPath.PageLayoutPage, {
+        pageLayoutId: 'page-layout-1',
+      });
+    });
+
+    expect(navigateFromSidePanelMock).not.toHaveBeenCalled();
+    expect(navigateMock).toHaveBeenCalledWith('/page/page-layout-1', undefined);
   });
 
   it('should navigate the main outlet outside the panel', () => {

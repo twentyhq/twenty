@@ -1,10 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
-import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { newRecordTitleCellToOpenState } from '@/object-record/record-title-cell/states/newRecordTitleCellToOpenState';
@@ -12,17 +8,12 @@ import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
-import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
+import { sidePanelRoutedPagePathComponentState } from '@/side-panel/routing/states/sidePanelRoutedPagePathComponentState';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import {
-  AppPath,
-  ContextStorePageType,
-  SidePanelPages,
-} from 'twenty-shared/types';
+import { AppPath, SidePanelPages } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
@@ -97,42 +88,10 @@ const renderHooks = () => {
   const { result } = renderHook(
     () => {
       const { openRecordInSidePanel } = useOpenRecordInSidePanel();
-
-      const viewableRecordId = useAtomComponentStateValue(
-        viewableRecordIdComponentState,
-        'mocked-uuid',
-      );
-      const viewableRecordNameSingular = useAtomComponentStateValue(
-        viewableRecordNameSingularComponentState,
-        'mocked-uuid',
-      );
-      const contextStoreCurrentObjectMetadataItemId =
-        useAtomComponentStateValue(
-          contextStoreCurrentObjectMetadataItemIdComponentState,
-          'mocked-uuid',
-        );
-      const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
-        contextStoreTargetedRecordsRuleComponentState,
-        'mocked-uuid',
-      );
-      const contextStoreNumberOfSelectedRecords = useAtomComponentStateValue(
-        contextStoreNumberOfSelectedRecordsComponentState,
-        'mocked-uuid',
-      );
-      const contextStoreCurrentPageType = useAtomComponentStateValue(
-        contextStoreCurrentPageTypeComponentState,
-        'mocked-uuid',
-      );
       const { getIcon } = useIcons();
 
       return {
         openRecordInSidePanel,
-        viewableRecordId,
-        viewableRecordNameSingular,
-        contextStoreCurrentObjectMetadataItemId,
-        contextStoreTargetedRecordsRule,
-        contextStoreNumberOfSelectedRecords,
-        contextStoreCurrentPageType,
         getIcon,
       };
     },
@@ -155,7 +114,7 @@ describe('useOpenRecordInSidePanel', () => {
     });
   });
 
-  it('should set the correct states and navigate to the record page', () => {
+  it('should host the record page and navigate to it', () => {
     const { result } = renderHooks();
 
     const recordId = 'record-123';
@@ -168,18 +127,17 @@ describe('useOpenRecordInSidePanel', () => {
       });
     });
 
-    expect(result.current.viewableRecordId).toBe(recordId);
-    expect(result.current.viewableRecordNameSingular).toBe(objectNameSingular);
-    expect(result.current.contextStoreCurrentObjectMetadataItemId).toBe(
-      personMockObjectMetadataItem.id,
-    );
-    expect(result.current.contextStoreTargetedRecordsRule).toEqual({
-      mode: 'selection',
-      selectedRecordIds: [recordId],
-    });
-    expect(result.current.contextStoreNumberOfSelectedRecords).toBe(1);
-    expect(result.current.contextStoreCurrentPageType).toBe(
-      ContextStorePageType.Record,
+    expect(
+      jotaiStore.get(
+        sidePanelRoutedPagePathComponentState.atomFamily({
+          instanceId: 'mocked-uuid',
+        }),
+      ),
+    ).toBe(
+      getAppPath(AppPath.RecordShowPage, {
+        objectNameSingular,
+        objectRecordId: recordId,
+      }),
     );
 
     const sidePanelNavigationMorphItemsByPage = jotaiStore.get(
@@ -194,7 +152,7 @@ describe('useOpenRecordInSidePanel', () => {
     ]);
 
     expect(mockNavigateSidePanel).toHaveBeenCalledWith({
-      page: SidePanelPages.ViewRecord,
+      page: SidePanelPages.RoutedPage,
       pageTitle: 'Person',
       pageIcon: result.current.getIcon(personMockObjectMetadataItem.icon),
       pageIconColor: 'currentColor',
@@ -218,7 +176,7 @@ describe('useOpenRecordInSidePanel', () => {
     });
 
     expect(mockNavigateSidePanel).toHaveBeenCalledWith({
-      page: SidePanelPages.ViewRecord,
+      page: SidePanelPages.RoutedPage,
       pageTitle: 'New Person',
       pageIcon: result.current.getIcon(personMockObjectMetadataItem.icon),
       pageIconColor: 'currentColor',

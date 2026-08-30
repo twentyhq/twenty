@@ -1,12 +1,13 @@
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { SidePanelRecordInfo } from '@/side-panel/components/SidePanelRecordInfo';
-import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
-import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
+import { sidePanelRoutedPagePathComponentState } from '@/side-panel/routing/states/sidePanelRoutedPagePathComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { act } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
@@ -33,16 +34,13 @@ const meta: Meta<typeof SidePanelRecordInfo> = {
   beforeEach: () => {
     jotaiStore.set(recordStoreFamilyState.atomFamily(COMPANY.id), COMPANY);
     jotaiStore.set(
-      viewableRecordIdComponentState.atomFamily({
+      sidePanelRoutedPagePathComponentState.atomFamily({
         instanceId: SIDE_PANEL_PAGE_INSTANCE_ID,
       }),
-      COMPANY.id,
-    );
-    jotaiStore.set(
-      viewableRecordNameSingularComponentState.atomFamily({
-        instanceId: SIDE_PANEL_PAGE_INSTANCE_ID,
+      getAppPath(AppPath.RecordShowPage, {
+        objectNameSingular: 'company',
+        objectRecordId: COMPANY.id,
       }),
-      'company',
     );
   },
   decorators: [ObjectMetadataItemsDecorator, ComponentWithRouterDecorator],

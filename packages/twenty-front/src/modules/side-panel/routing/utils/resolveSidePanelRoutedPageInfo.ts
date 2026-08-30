@@ -6,6 +6,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
 import { getPathnameFromPath } from '@/side-panel/routing/utils/getPathnameFromPath';
+import { getRecordShowParamsFromPath } from '@/side-panel/routing/utils/getRecordShowParamsFromPath';
 import { getViewIdFromPath } from '@/side-panel/routing/utils/getViewIdFromPath';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 
@@ -38,6 +39,24 @@ export const resolveSidePanelRoutedPageInfo = ({
   );
 
   const recordIndexMatch = matchPath(AppPath.RecordIndexPage, pathname);
+
+  const recordShowParams = getRecordShowParamsFromPath(path);
+
+  if (isDefined(recordShowParams)) {
+    const recordObjectMetadataItem = objectMetadataItems.find(
+      (item) => item.nameSingular === recordShowParams.objectNameSingular,
+    );
+
+    if (isDefined(recordObjectMetadataItem)) {
+      return {
+        title: recordObjectMetadataItem.labelSingular,
+        iconKey: recordObjectMetadataItem.icon ?? 'IconList',
+        iconColor: getIconColorForObjectType(
+          recordObjectMetadataItem.nameSingular,
+        ),
+      };
+    }
+  }
 
   const objectNamePlural =
     fieldMatch?.params.objectNamePlural ??

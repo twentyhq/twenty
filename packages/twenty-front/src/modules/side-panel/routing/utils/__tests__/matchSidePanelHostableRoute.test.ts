@@ -20,6 +20,12 @@ describe('matchSidePanelHostableRoute', () => {
     );
   });
 
+  it('should match a record show path', () => {
+    expect(matchSidePanelHostableRoute('/object/company/record-1')?.path).toBe(
+      '/object/:objectNameSingular/:objectRecordId',
+    );
+  });
+
   it('should ignore the search and hash when matching', () => {
     expect(
       isSidePanelHostablePath('/settings/objects/companies?tab=fields#top'),
@@ -31,6 +37,6 @@ describe('matchSidePanelHostableRoute', () => {
 
   it('should not match a route that is not hostable', () => {
     expect(isSidePanelHostablePath('/settings/billing')).toBe(false);
-    expect(isSidePanelHostablePath('/object/company/record-1')).toBe(false);
+    expect(isSidePanelHostablePath('/settings/objects')).toBe(false);
   });
 });

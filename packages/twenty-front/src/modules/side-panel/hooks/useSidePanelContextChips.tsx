@@ -3,18 +3,22 @@ import { SidePanelContextRecordChipAvatars } from '@/side-panel/components/SideP
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { sidePanelRoutedPagePathComponentState } from '@/side-panel/routing/states/sidePanelRoutedPagePathComponentState';
+import { getRecordShowParamsFromPath } from '@/side-panel/routing/utils/getRecordShowParamsFromPath';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { recordStoreIdentifiersFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifiersSelector';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useStore } from 'jotai';
 import { useContext, useMemo } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const useSidePanelContextChips = () => {
+  const store = useStore();
   const { theme } = useContext(ThemeContext);
   const iconSizeSm = theme.icon.size.sm;
   const sidePanelNavigationStack = useAtomStateValue(
@@ -60,7 +64,20 @@ export const useSidePanelContextChips = () => {
         const isLastChip =
           index === filteredSidePanelNavigationStack.length - 1;
 
-        const isRecordPage = page.page === SidePanelPages.ViewRecord;
+        // A stack entry hosts a record when the path it was opened with is a
+        // record show path; the path never changes once the entry exists.
+        const routedPagePath =
+          page.page === SidePanelPages.RoutedPage
+            ? store.get(
+                sidePanelRoutedPagePathComponentState.atomFamily({
+                  instanceId: page.pageId,
+                }),
+              )
+            : null;
+
+        const isRecordPage =
+          isDefined(routedPagePath) &&
+          isDefined(getRecordShowParamsFromPath(routedPagePath));
 
         if (isRecordPage && !isLastChip) {
           const sidePanelNavigationMorphItem =
@@ -140,6 +157,7 @@ export const useSidePanelContextChips = () => {
     objectMetadataItems,
     recordIdentifiers,
     records,
+    store,
   ]);
 
   return {

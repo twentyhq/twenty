@@ -14,7 +14,9 @@ const mockAskAiExpandTarget: SidePanelExpandTarget = {
   expand: jest.fn(),
 };
 
-const mockRecordExpandTarget: SidePanelExpandTarget = {
+let mockRecordExpandTarget: SidePanelExpandTarget | null = null;
+
+const RECORD_EXPAND_TARGET: SidePanelExpandTarget = {
   label: 'Expand record',
   hasExpandShortcut: true,
   expand: jest.fn(),
@@ -85,6 +87,7 @@ describe('useSidePanelExpandTarget', () => {
   beforeEach(() => {
     mockHasSidePanelSubPages = false;
     mockIsMobile = false;
+    mockRecordExpandTarget = RECORD_EXPAND_TARGET;
     jest.clearAllMocks();
   });
 
@@ -94,13 +97,15 @@ describe('useSidePanelExpandTarget', () => {
     expect(result.current).toBe(mockAskAiExpandTarget);
   });
 
-  it('should return the record target when a record page is open', () => {
-    const { result } = renderExpandTarget(SidePanelPages.ViewRecord);
+  it('should return the record target when a hosted record page is open', () => {
+    const { result } = renderExpandTarget(SidePanelPages.RoutedPage);
 
-    expect(result.current).toBe(mockRecordExpandTarget);
+    expect(result.current).toBe(RECORD_EXPAND_TARGET);
   });
 
-  it('should return the routed target when a hosted route is open', () => {
+  it('should return the routed target when a hosted page is not a record', () => {
+    mockRecordExpandTarget = null;
+
     const { result } = renderExpandTarget(SidePanelPages.RoutedPage);
 
     expect(result.current).toBe(mockRoutedExpandTarget);
@@ -121,7 +126,7 @@ describe('useSidePanelExpandTarget', () => {
   it('should return null when a sub page has taken over the panel', () => {
     mockHasSidePanelSubPages = true;
 
-    const { result } = renderExpandTarget(SidePanelPages.ViewRecord);
+    const { result } = renderExpandTarget(SidePanelPages.RoutedPage);
 
     expect(result.current).toBeNull();
   });
@@ -129,7 +134,7 @@ describe('useSidePanelExpandTarget', () => {
   it('should return null on mobile where the panel already fills the viewport', () => {
     mockIsMobile = true;
 
-    const { result } = renderExpandTarget(SidePanelPages.ViewRecord);
+    const { result } = renderExpandTarget(SidePanelPages.RoutedPage);
 
     expect(result.current).toBeNull();
   });

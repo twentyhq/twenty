@@ -25,6 +25,12 @@ const RecordIndexPage = lazy(() =>
   })),
 );
 
+const RecordShowPage = lazy(() =>
+  import('~/pages/object-record/RecordShowPage').then((module) => ({
+    default: module.RecordShowPage,
+  })),
+);
+
 export const SIDE_PANEL_HOSTABLE_ROUTES: SidePanelHostableRoute[] = [
   {
     path: getSettingsPath(SettingsPath.ObjectFieldEdit),
@@ -39,5 +45,9 @@ export const SIDE_PANEL_HOSTABLE_ROUTES: SidePanelHostableRoute[] = [
   {
     path: AppPath.RecordIndexPage,
     element: <RecordIndexPage />,
+  },
+  {
+    path: AppPath.RecordShowPage,
+    element: <RecordShowPage />,
   },
 ];

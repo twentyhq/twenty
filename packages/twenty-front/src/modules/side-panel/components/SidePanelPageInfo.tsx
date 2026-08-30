@@ -13,6 +13,8 @@ import { SidePanelPageLayoutInfo } from '@/side-panel/components/SidePanelPageLa
 import { SidePanelRecordInfo } from '@/side-panel/components/SidePanelRecordInfo';
 import { SidePanelWorkflowStepInfo } from '@/side-panel/components/SidePanelWorkflowStepInfo';
 import { isPageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/utils/isPageLayoutSidePanelPage';
+import { useSidePanelRoutedPagePathByPageId } from '@/side-panel/routing/hooks/useSidePanelRoutedPagePathByPageId';
+import { getRecordShowParamsFromPath } from '@/side-panel/routing/utils/getRecordShowParamsFromPath';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { NavigationMenuItemType, SidePanelPages } from 'twenty-shared/types';
 
@@ -30,6 +32,9 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
     selectedNavigationMenuItemIdInEditModeState,
   );
   const items = useNavigationMenuItemEditSectionItems();
+  const routedPagePath = useSidePanelRoutedPagePathByPageId(
+    pageChip?.page?.pageId ?? '',
+  );
 
   if (!isDefined(pageChip)) {
     return null;
@@ -61,9 +66,12 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
     }
   }
 
-  const isRecordPage = pageChip.page?.page === SidePanelPages.ViewRecord;
+  const isHostedRecordPage =
+    pageChip.page?.page === SidePanelPages.RoutedPage &&
+    isDefined(routedPagePath) &&
+    isDefined(getRecordShowParamsFromPath(routedPagePath));
 
-  if (isRecordPage && isDefined(pageChip.page?.pageId)) {
+  if (isHostedRecordPage && isDefined(pageChip.page?.pageId)) {
     return (
       <SidePanelRecordInfo sidePanelPageInstanceId={pageChip.page.pageId} />
     );

@@ -10,6 +10,8 @@ import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/compon
 import { RecordShowPageSSESubscribeEffect } from '@/object-record/record-show/components/RecordShowPageSSESubscribeEffect';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
+import { useIsInSidePanelRoutedSurface } from '@/side-panel/routing/hooks/useIsInSidePanelRoutedSurface';
+import { useSurfaceScopedComponentInstanceId } from '@/side-panel/routing/hooks/useSurfaceScopedComponentInstanceId';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { RecordShowPageHeader } from '~/pages/object-record/RecordShowPageHeader';
@@ -33,26 +35,39 @@ export const RecordShowPage = () => {
   const recordShowComponentInstanceId =
     computeRecordShowComponentInstanceId(objectRecordId);
 
+  const isInSidePanelRoutedSurface = useIsInSidePanelRoutedSurface();
+
+  // The same record open on both sides would otherwise share one command menu.
+  const commandMenuInstanceId = useSurfaceScopedComponentInstanceId(
+    recordShowComponentInstanceId,
+  );
+
   return (
     <RecordComponentInstanceContextsWrapper
       componentInstanceId={recordShowComponentInstanceId}
     >
       <CommandMenuComponentInstanceContext.Provider
-        value={{ instanceId: recordShowComponentInstanceId }}
+        value={{ instanceId: commandMenuInstanceId }}
       >
-        <RecordShowPageTitle
-          objectNameSingular={objectNameSingular}
-          objectRecordId={objectRecordId}
-        />
+        {!isInSidePanelRoutedSurface && (
+          <RecordShowPageTitle
+            objectNameSingular={objectNameSingular}
+            objectRecordId={objectRecordId}
+          />
+        )}
         <PageCardLayout
           header={
-            <RecordShowPageHeader
-              objectNameSingular={objectNameSingular}
-              objectRecordId={objectRecordId}
-            >
-              <RecordShowCommandMenu />
-              {!isLayoutCustomizationModeEnabled && <SidePanelToggleButton />}
-            </RecordShowPageHeader>
+            // The panel top bar already names the record it is hosting, and the
+            // header's actions belong to a full width page.
+            isInSidePanelRoutedSurface ? null : (
+              <RecordShowPageHeader
+                objectNameSingular={objectNameSingular}
+                objectRecordId={objectRecordId}
+              >
+                <RecordShowCommandMenu />
+                {!isLayoutCustomizationModeEnabled && <SidePanelToggleButton />}
+              </RecordShowPageHeader>
+            )
           }
         >
           <TimelineActivityContext.Provider
@@ -65,7 +80,7 @@ export const RecordShowPage = () => {
                 id: objectRecordId,
                 targetObjectNameSingular: objectNameSingular,
               }}
-              isInSidePanel={false}
+              isInSidePanel={isInSidePanelRoutedSurface}
             />
             <RecordShowPageSSESubscribeEffect
               objectNameSingular={objectNameSingular}

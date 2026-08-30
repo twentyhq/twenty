@@ -30,12 +30,10 @@ export const useSidePanelExpandTarget = (): SidePanelExpandTarget | null => {
   switch (sidePanelPage) {
     case SidePanelPages.AskAI:
       return askAiExpandTarget;
-    case SidePanelPages.ViewRecord:
-      return recordExpandTarget;
     case SidePanelPages.EditRichText:
       return richTextExpandTarget;
     case SidePanelPages.RoutedPage:
-      return routedExpandTarget;
+      return recordExpandTarget ?? routedExpandTarget;
     default:
       return null;
   }
