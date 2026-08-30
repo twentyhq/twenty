@@ -1,7 +1,7 @@
 import { isBoolean, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { asRecord } from 'src/front-components/utils/as-record.util';
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { toSlackResolvedUser } from 'src/front-components/utils/to-slack-resolved-user.util';
 import { type SlackResolvedUser } from 'src/logic-functions/types/slack-resolved-user.type';
 

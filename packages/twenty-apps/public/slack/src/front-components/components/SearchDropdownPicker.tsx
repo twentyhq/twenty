@@ -126,7 +126,12 @@ export const SearchDropdownPicker = <TOption,>({
         aria-label={searchLabel}
       />
       {isDropdownOpen && (
-        <StyledDropdown>
+        <StyledDropdown
+          // preventDefault keeps the input focused for any press inside the
+          // dropdown, scrollbar included; without it the blur closes and
+          // unmounts the list mid-interaction.
+          onMouseDown={(event) => event.preventDefault()}
+        >
           {options.map((option) => {
             const meta = getOptionMeta(option);
 
@@ -137,11 +142,7 @@ export const SearchDropdownPicker = <TOption,>({
                 // Select on mousedown: the input's blur fires before a click
                 // would, closing the dropdown and unmounting this option, so
                 // onClick never runs in the front-component sandbox.
-                // preventDefault keeps focus.
-                onMouseDown={(event) => {
-                  event.preventDefault();
-                  handleSelect(option);
-                }}
+                onMouseDown={() => handleSelect(option)}
               >
                 <StyledOptionName>{getOptionName(option)}</StyledOptionName>
                 {isNonEmptyString(meta) && (

@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
+import { isDefined } from 'twenty-sdk/utils';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -8,6 +9,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
 import { ResolvedSlackUserField } from 'src/front-components/components/ResolvedSlackUserField';
+import { SlackConnectUserIdFields } from 'src/front-components/components/SlackConnectUserIdFields';
 import { SlackUserLinkTextInput } from 'src/front-components/components/SlackUserLinkTextInput';
 import { SlackUserPicker } from 'src/front-components/components/SlackUserPicker';
 import { WorkspaceMemberPicker } from 'src/front-components/components/WorkspaceMemberPicker';
@@ -95,19 +97,18 @@ export const SlackUserLinkForm = ({
   const { setSlackUserLink, isSubmitting } = useSetSlackUserLink();
 
   const canSubmit =
-    selectedMember !== null && resolvedUser !== null && !isSubmitting;
+    isDefined(selectedMember) && isDefined(resolvedUser) && !isSubmitting;
 
   // A team-less side only rules the link out when both sides know their team.
-  const existingLink =
-    resolvedUser === null
-      ? undefined
-      : existingLinks.find(
-          (link) =>
-            link.slackUserId === resolvedUser.slackUserId &&
-            (!isNonEmptyString(link.slackTeamId) ||
-              !isNonEmptyString(resolvedUser.slackTeamId) ||
-              link.slackTeamId === resolvedUser.slackTeamId),
-        );
+  const existingLink = !isDefined(resolvedUser)
+    ? undefined
+    : existingLinks.find(
+        (link) =>
+          link.slackUserId === resolvedUser.slackUserId &&
+          (!isNonEmptyString(link.slackTeamId) ||
+            !isNonEmptyString(resolvedUser.slackTeamId) ||
+            link.slackTeamId === resolvedUser.slackTeamId),
+      );
 
   const resetForm = () => {
     setSelectedMember(null);
@@ -120,7 +121,7 @@ export const SlackUserLinkForm = ({
   };
 
   const handleSubmit = async () => {
-    if (selectedMember === null || resolvedUser === null) {
+    if (!isDefined(selectedMember) || !isDefined(resolvedUser)) {
       return;
     }
 
@@ -147,7 +148,7 @@ export const SlackUserLinkForm = ({
   };
 
   const handleFormSubmit = () => {
-    if (resolvedUser === null) {
+    if (!isDefined(resolvedUser)) {
       resolveNow({ email: '', slackUserId, slackTeamId });
       return;
     }
@@ -178,7 +179,7 @@ export const SlackUserLinkForm = ({
             disabled={isSubmitting}
           />
         </StyledField>
-        {resolvedUser !== null ? (
+        {isDefined(resolvedUser) ? (
           <StyledField>
             <StyledLabel>Slack user</StyledLabel>
             <ResolvedSlackUserField
@@ -204,54 +205,27 @@ export const SlackUserLinkForm = ({
               />
             </StyledField>
             {isConnectUser ? (
-              <>
-                <StyledField>
-                  <StyledLabel htmlFor="slack-user-id">
-                    Slack user ID
-                  </StyledLabel>
-                  <SlackUserLinkTextInput
-                    id="slack-user-id"
-                    value={slackUserId}
-                    onChange={(event) => {
-                      setSlackUserId(event.target.value);
-                      onIdentityChange({
-                        email: '',
-                        slackUserId: event.target.value,
-                        slackTeamId,
-                      });
-                    }}
-                    placeholder="U0123456789"
-                    disabled={isSubmitting}
-                  />
-                  <StyledHint>
-                    Use this for a Slack Connect user from another workspace,
-                    who will not appear in the search above.
-                  </StyledHint>
-                </StyledField>
-                <StyledField>
-                  <StyledLabel htmlFor="slack-team-id">
-                    Slack team ID (optional)
-                  </StyledLabel>
-                  <SlackUserLinkTextInput
-                    id="slack-team-id"
-                    value={slackTeamId}
-                    onChange={(event) => {
-                      setSlackTeamId(event.target.value);
-                      onIdentityChange({
-                        email: '',
-                        slackUserId,
-                        slackTeamId: event.target.value,
-                      });
-                    }}
-                    placeholder="T0123456789"
-                    disabled={isSubmitting}
-                  />
-                  <StyledHint>
-                    Defaults to the installed Slack workspace. Set it for a
-                    Slack Connect user, using the team ID their messages carry.
-                  </StyledHint>
-                </StyledField>
-              </>
+              <SlackConnectUserIdFields
+                slackUserId={slackUserId}
+                slackTeamId={slackTeamId}
+                onSlackUserIdChange={(nextSlackUserId) => {
+                  setSlackUserId(nextSlackUserId);
+                  onIdentityChange({
+                    email: '',
+                    slackUserId: nextSlackUserId,
+                    slackTeamId,
+                  });
+                }}
+                onSlackTeamIdChange={(nextSlackTeamId) => {
+                  setSlackTeamId(nextSlackTeamId);
+                  onIdentityChange({
+                    email: '',
+                    slackUserId,
+                    slackTeamId: nextSlackTeamId,
+                  });
+                }}
+                disabled={isSubmitting}
+              />
             ) : (
               <StyledDisclosureButton
                 type="button"
@@ -262,7 +236,7 @@ export const SlackUserLinkForm = ({
             )}
             {isResolving ? (
               <StyledHint>Finding the Slack user…</StyledHint>
-            ) : resolveError !== null ? (
+            ) : isDefined(resolveError) ? (
               <StyledResolveError>{resolveError}</StyledResolveError>
             ) : null}
           </>
@@ -279,7 +253,7 @@ export const SlackUserLinkForm = ({
             disabled={isSubmitting}
           />
         </StyledField>
-        {resolvedUser !== null && (
+        {isDefined(resolvedUser) && (
           <StyledHint>
             {buildSlackUserLinkSaveNote({
               resolvedUser,

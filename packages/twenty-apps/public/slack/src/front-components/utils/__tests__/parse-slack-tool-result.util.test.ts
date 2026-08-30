@@ -54,6 +54,15 @@ describe('parseSlackToolResult', () => {
         value: { success: true, message: 42, error: null },
         fallbackMessage: FALLBACK_MESSAGE,
       }),
-    ).toEqual({ success: true, message: '', error: undefined });
+    ).toEqual({ success: true, message: FALLBACK_MESSAGE, error: undefined });
+  });
+
+  it('should fall back on an empty message so the snackbar is never blank', () => {
+    expect(
+      parseSlackToolResult({
+        value: { success: true, message: '' },
+        fallbackMessage: FALLBACK_MESSAGE,
+      }),
+    ).toEqual({ success: true, message: FALLBACK_MESSAGE, error: undefined });
   });
 });

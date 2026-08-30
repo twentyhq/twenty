@@ -1,5 +1,5 @@
 import { isNonEmptyString, isNumber } from '@sniptt/guards';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { RestApiClient } from 'twenty-client-sdk/rest';
 
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
@@ -50,8 +50,14 @@ export const useSlackUserLinks = (): SlackUserLinksState => {
     undefined,
   );
   const [hasMoreSlackUserLinks, setHasMoreSlackUserLinks] = useState(false);
+  // Bumps on every fetch so an older, slower response can never overwrite a
+  // newer one after back-to-back remove/resend refetches.
+  const fetchIdRef = useRef(0);
 
   const fetchSlackUserLinks = useCallback(async () => {
+    fetchIdRef.current += 1;
+    const fetchId = fetchIdRef.current;
+
     setIsSlackUserLinksLoading(true);
     setErrorMessage(undefined);
 
@@ -93,14 +99,22 @@ export const useSlackUserLinks = (): SlackUserLinksState => {
         ),
       );
 
+      if (fetchId !== fetchIdRef.current) {
+        return;
+      }
+
       setHasMoreSlackUserLinks(
         isNumber(response.totalCount) && response.totalCount > records.length,
       );
       setSlackUserLinks(records);
     } catch {
-      setErrorMessage(SLACK_USER_LINKS_ERROR_MESSAGE);
+      if (fetchId === fetchIdRef.current) {
+        setErrorMessage(SLACK_USER_LINKS_ERROR_MESSAGE);
+      }
     } finally {
-      setIsSlackUserLinksLoading(false);
+      if (fetchId === fetchIdRef.current) {
+        setIsSlackUserLinksLoading(false);
+      }
     }
   }, []);
 

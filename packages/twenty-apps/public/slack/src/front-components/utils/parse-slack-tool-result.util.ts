@@ -1,6 +1,6 @@
-import { isBoolean, isString } from '@sniptt/guards';
+import { isBoolean, isNonEmptyString, isString } from '@sniptt/guards';
 
-import { asRecord } from 'src/front-components/utils/as-record.util';
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 
 export const parseSlackToolResult = ({
@@ -22,7 +22,10 @@ export const parseSlackToolResult = ({
 
   return {
     success: record.success,
-    message: isString(record.message) ? record.message : '',
+    // A missing message would render an empty snackbar; fall back instead.
+    message: isNonEmptyString(record.message)
+      ? record.message
+      : fallbackMessage,
     error: isString(record.error) ? record.error : undefined,
   };
 };

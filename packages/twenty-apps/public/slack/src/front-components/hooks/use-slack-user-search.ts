@@ -4,7 +4,7 @@ import { RestApiClient } from 'twenty-client-sdk/rest';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_USER_LINKS_SEARCH_ROUTE_PATH } from 'src/constants/slack-user-links-route-path.constant';
-import { asRecord } from 'src/front-components/utils/as-record.util';
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { toSlackResolvedUser } from 'src/front-components/utils/to-slack-resolved-user.util';
 import { type SlackResolvedUser } from 'src/logic-functions/types/slack-resolved-user.type';
 
@@ -108,14 +108,12 @@ export const useSlackUserSearch = (
           setOptions(parsedOptions);
           setSearchErrorMessage(errorMessage);
         }
-      } catch (error) {
+      } catch {
+        // A transport error's message carries the raw request URL; the admin
+        // gets the generic wording instead.
         if (!cancelled) {
           setOptions([]);
-          setSearchErrorMessage(
-            error instanceof Error && isNonEmptyString(error.message)
-              ? error.message
-              : FALLBACK_SEARCH_ERROR_MESSAGE,
-          );
+          setSearchErrorMessage(FALLBACK_SEARCH_ERROR_MESSAGE);
         }
       } finally {
         if (!cancelled) {

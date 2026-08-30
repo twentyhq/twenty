@@ -18,7 +18,7 @@ export const buildSlackUserLinkSaveNote = ({
   selectedMember: WorkspaceMemberOption | null;
   existingLink: SlackUserLinkRecord | undefined;
 }): string => {
-  if (selectedMember === null) {
+  if (!isDefined(selectedMember)) {
     return 'Pick the workspace member this Slack account should act as.';
   }
 

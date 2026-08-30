@@ -53,7 +53,8 @@ export const WorkspaceMemberPicker = ({
   // True after the selection is clicked open, so the returning search input
   // takes focus; never on first render, which would steal the page focus.
   const [isReopening, setIsReopening] = useState(false);
-  const { options, isSearching } = useWorkspaceMemberSearch(searchTerm);
+  const { options, isSearching, searchErrorMessage } =
+    useWorkspaceMemberSearch(searchTerm);
 
   if (isDefined(selectedMember)) {
     return (
@@ -81,14 +82,19 @@ export const WorkspaceMemberPicker = ({
       onSearchTermChange={setSearchTerm}
       options={options}
       isSearching={isSearching}
-      onSelect={onSelect}
+      onSelect={(member) => {
+        // The next mount of the search input is a fresh form, not a reopen,
+        // so it must not steal focus.
+        setIsReopening(false);
+        onSelect(member);
+      }}
       getOptionKey={(member) => member.id}
       getOptionName={(member) =>
         isNonEmptyString(member.name) ? member.name : member.id
       }
       getOptionMeta={(member) => member.userEmail ?? undefined}
       searchLabel="Search a workspace member by name"
-      emptyText="No members found"
+      emptyText={searchErrorMessage ?? 'No members found'}
       disabled={disabled}
       autoFocus={isReopening}
     />

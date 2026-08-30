@@ -9,7 +9,6 @@ import {
 } from 'src/front-components/utils/parse-resolve-slack-user-result.util';
 import { type SlackResolveInput } from 'src/front-components/utils/to-slack-resolve-input.util';
 
-export { type ResolveSlackUserResult } from 'src/front-components/utils/parse-resolve-slack-user-result.util';
 
 type ResolveSlackUserState = {
   resolveSlackUser: (

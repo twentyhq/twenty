@@ -117,7 +117,9 @@ export const SlackUserLinksSettings = () => {
           title="Slack user links"
           description="Each link maps a Slack account to the workspace member whose permissions the assistant borrows."
         />
-        {isSlackUserLinksLoading ? (
+        {isSlackUserLinksLoading && slackUserLinks.length === 0 ? (
+          // Only the first load gets the placeholder; a refetch after remove
+          // or resend keeps the current list up instead of flashing it away.
           <StyledCenteredState>Loading links…</StyledCenteredState>
         ) : isDefined(errorMessage) ? (
           <StyledCenteredState>{errorMessage}</StyledCenteredState>

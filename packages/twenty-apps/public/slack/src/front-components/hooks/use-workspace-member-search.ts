@@ -9,6 +9,9 @@ import { formatWorkspaceMemberName } from 'src/front-components/utils/format-wor
 const WORKSPACE_MEMBER_SEARCH_DEBOUNCE_MS = 250;
 const WORKSPACE_MEMBER_SEARCH_PAGE_SIZE = 20;
 
+const MEMBER_SEARCH_ERROR_MESSAGE =
+  'Workspace member search failed. Try again.';
+
 type WorkspaceMemberRestRecord = {
   id?: string | null;
   name?: { firstName?: string | null; lastName?: string | null } | null;
@@ -22,6 +25,7 @@ type WorkspaceMembersResponse = {
 type WorkspaceMemberSearchState = {
   options: WorkspaceMemberOption[];
   isSearching: boolean;
+  searchErrorMessage: string | undefined;
 };
 
 export const useWorkspaceMemberSearch = (
@@ -29,6 +33,9 @@ export const useWorkspaceMemberSearch = (
 ): WorkspaceMemberSearchState => {
   const [options, setOptions] = useState<WorkspaceMemberOption[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [searchErrorMessage, setSearchErrorMessage] = useState<
+    string | undefined
+  >(undefined);
 
   useEffect(() => {
     const filter = buildWorkspaceMemberSearchFilter(searchTerm);
@@ -36,6 +43,7 @@ export const useWorkspaceMemberSearch = (
     // Enter selects the top option, so stale results must never survive a
     // changed term: an admin could otherwise pick the previous search's match.
     setOptions([]);
+    setSearchErrorMessage(undefined);
 
     if (!isNonEmptyString(filter)) {
       setIsSearching(false);
@@ -79,8 +87,11 @@ export const useWorkspaceMemberSearch = (
 
         setOptions(memberOptions);
       } catch {
+        // A failed search must not read as an empty roster: the picker would
+        // tell the admin the member does not exist.
         if (!cancelled) {
           setOptions([]);
+          setSearchErrorMessage(MEMBER_SEARCH_ERROR_MESSAGE);
         }
       } finally {
         if (!cancelled) {
@@ -95,5 +106,5 @@ export const useWorkspaceMemberSearch = (
     };
   }, [searchTerm]);
 
-  return { options, isSearching };
+  return { options, isSearching, searchErrorMessage };
 };
