@@ -13,7 +13,9 @@ export const runInRollbackSafeTransaction = async <T>({
   pool: Pool;
   work: (client: PoolClient) => Promise<T>;
 }): Promise<T> => {
-  const client = await pool.connect();
+  const client = await pool.connect().catch((error: unknown) => {
+    throw computeTwentyOrmException(error);
+  });
   let shouldDestroyConnection = false;
 
   try {

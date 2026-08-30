@@ -18,6 +18,26 @@ const buildPool = (client: ReturnType<typeof buildClient>): Pool =>
   }) as unknown as Pool;
 
 describe('runInRollbackSafeTransaction', () => {
+  it('should map a transient failure raised while acquiring the connection', async () => {
+    const connectionError = Object.assign(
+      new Error('too many clients already'),
+      { code: POSTGRESQL_ERROR_CODES.TOO_MANY_CONNECTIONS },
+    );
+    const pool = {
+      connect: jest.fn().mockRejectedValue(connectionError),
+    } as unknown as Pool;
+
+    const error = await runInRollbackSafeTransaction({
+      pool,
+      work: async () => 'never runs',
+    }).catch((thrownError: Error) => thrownError);
+
+    expect(error).toBeInstanceOf(TwentyOrmException);
+    expect((error as TwentyOrmException).code).toBe(
+      TwentyOrmExceptionCode.TRANSIENT_DATABASE_ERROR,
+    );
+  });
+
   it('should wrap the work in BEGIN/COMMIT and release the client reusable', async () => {
     const client = buildClient();
 

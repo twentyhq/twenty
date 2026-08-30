@@ -199,6 +199,13 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
 
     await this.messageParticipantService.matchMessageParticipants({
       participants: savedMessagesResult.savedMessageParticipants,
+      messageIds: [
+        ...new Set(
+          savedMessagesResult.participantsWithMessageId.map(
+            ({ messageId }) => messageId,
+          ),
+        ),
+      ],
       workspaceId,
     });
 

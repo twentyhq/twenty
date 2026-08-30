@@ -76,9 +76,11 @@ export class MessagingMessageParticipantService {
 
   public async matchMessageParticipants({
     participants,
+    messageIds,
     workspaceId,
   }: {
     participants: MessageParticipantWorkspaceEntity[];
+    messageIds: string[];
     workspaceId: string;
   }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
@@ -87,9 +89,7 @@ export class MessagingMessageParticipantService {
       async () => {
         await this.matchParticipantService.matchParticipants({
           participants,
-          sourceRecordIds: [
-            ...new Set(participants.map(({ messageId }) => messageId)),
-          ],
+          sourceRecordIds: messageIds,
           objectMetadataName: 'messageParticipant',
           matchWith: 'workspaceMemberAndPerson',
         });
