@@ -1,6 +1,4 @@
-import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
-import withLinaria, { type LinariaConfig } from 'next-with-linaria';
-import path from 'path';
+import { type NextConfig } from 'next';
 
 import { WEBSITE_LOCALE_LIST } from './src/platform/i18n/website-locale-list';
 import { buildLocaleRewrites } from './src/platform/routing/locale-rewrite-patterns';
@@ -20,15 +18,7 @@ const SECURITY_HEADERS: { key: string; value: string }[] = [
   { key: 'Content-Security-Policy', value: "frame-ancestors 'none'" },
 ];
 
-// Skew protection: CI sets DEPLOYMENT_ID at build time so it's baked into
-// prerendered HTML + the RSC payloads. The Worker reads the same value at
-// runtime (via the worker env var) and routes mismatched requests to the
-// matching older Worker version via its preview URL. Required whenever
-// open-next.config.ts has cloudflare.skewProtection.enabled.
-const deploymentId = process.env.DEPLOYMENT_ID;
-
-const nextConfig: LinariaConfig = {
-  deploymentId,
+const nextConfig: NextConfig = {
   reactCompiler: true,
   images: {
     formats: ['image/avif', 'image/webp'],
@@ -43,22 +33,6 @@ const nextConfig: LinariaConfig = {
         pathname: '/**',
         protocol: 'https',
       },
-    ],
-  },
-  linaria: {
-    configFile: path.resolve(__dirname, 'wyw-in-js.config.cjs'),
-  },
-  experimental: {
-    swcPlugins: [
-      [
-        '@lingui/swc-plugin',
-        {
-          runtimeModules: {
-            i18n: ['@lingui/core', 'i18n'],
-            trans: ['@lingui/react', 'Trans'],
-          },
-        },
-      ],
     ],
   },
   async headers() {
@@ -227,8 +201,4 @@ const nextConfig: LinariaConfig = {
   },
 };
 
-export default withLinaria(nextConfig);
-
-// Binds the Cloudflare dev context (R2 incremental cache, env vars) into
-// `next dev` so local runs mirror the deployed OpenNext worker.
-initOpenNextCloudflareForDev();
+export default nextConfig;

@@ -16,3 +16,6 @@ next-env.d.ts
 .wrangler/
 .dev.vars
 cloudflare-env.d.ts
+
+# vinext build output
+dist
