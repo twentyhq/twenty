@@ -15,6 +15,7 @@ import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
 import { AiChatDictationButton } from '@/ai/dictation/components/AiChatDictationButton';
+import { AiChatDictationEffect } from '@/ai/dictation/components/AiChatDictationEffect';
 import { AiChatDictationHint } from '@/ai/dictation/components/AiChatDictationHint';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatEditorFocusEffect } from '@/ai/components/internal/AiChatEditorFocusEffect';
@@ -179,6 +180,10 @@ export const AiChatEditorSection = () => {
   return (
     <>
       <AiChatEditorFocusEffect editor={editor} />
+      <AiChatDictationEffect
+        onInterimText={setDictationInterimText}
+        onFinalText={insertDictatedText}
+      />
       <AiChatEmptyState isCentered={isComposerCentered} />
       <AiChatStandaloneError />
       <AiChatSkeletonLoader />
@@ -203,10 +208,7 @@ export const AiChatEditorSection = () => {
             <StyledButtonsContainer>
               <StyledLeftButtonsContainer>
                 <AgentChatFileUploadButton />
-                <AiChatDictationButton
-                  onInterimText={setDictationInterimText}
-                  onFinalText={insertDictatedText}
-                />
+                <AiChatDictationButton />
                 <AiChatContextUsageButton />
               </StyledLeftButtonsContainer>
               <StyledRightButtonsContainer>
