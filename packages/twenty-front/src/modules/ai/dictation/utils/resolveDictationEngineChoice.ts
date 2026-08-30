@@ -1,4 +1,4 @@
-import { type DictationMode } from 'twenty-shared/ai';
+import { DICTATION_MODES, type DictationMode } from 'twenty-shared/ai';
 
 import {
   type DictationFailureReason,
@@ -19,10 +19,9 @@ export type DictationEngineChoice =
   | { status: 'available'; tier: DictationTier }
   | { status: 'unavailable'; reason: DictationFailureReason };
 
-// Refused up front rather than left to the watchdog: on iOS the Web Speech API
-// is exposed inside installed PWAs and third-party browsers (all WKWebView)
-// but never emits, so these surfaces would otherwise cost the user a recording
-// before failing.
+// On iOS the Web Speech API is exposed inside installed PWAs and third-party
+// browsers (all WKWebView) but never emits, so these surfaces would otherwise
+// cost the user a recording before failing.
 const isWebSpeechKnownDead = (surface: DictationSurface) =>
   surface.isIOS &&
   (surface.isStandaloneDisplayMode || surface.isThirdPartyIOSBrowser);
@@ -39,9 +38,9 @@ export const resolveDictationEngineChoice = ({
     return { status: 'unavailable', reason: 'unsupported-surface' };
   }
 
-  if (mode === 'cloud') {
+  if (mode === DICTATION_MODES.cloud) {
     return surface.hasMediaRecorder && surface.hasMediaDevices
-      ? { status: 'available', tier: 'cloud' }
+      ? { status: 'available', tier: DICTATION_MODES.cloud }
       : { status: 'unavailable', reason: 'unsupported-surface' };
   }
 
@@ -49,5 +48,5 @@ export const resolveDictationEngineChoice = ({
     return { status: 'unavailable', reason: 'unsupported-surface' };
   }
 
-  return { status: 'available', tier: 'local' };
+  return { status: 'available', tier: DICTATION_MODES.local };
 };

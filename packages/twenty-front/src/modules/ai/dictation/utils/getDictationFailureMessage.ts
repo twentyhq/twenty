@@ -2,8 +2,6 @@ import { t } from '@lingui/core/macro';
 
 import { type DictationFailureReason } from '@/ai/dictation/types/DictationEngine';
 
-// Each message names what went wrong and what the user can do about it; a bare
-// "dictation failed" leaves someone toggling a button that will never work.
 export const getDictationFailureMessage = (
   reason: DictationFailureReason,
 ): string => {
@@ -20,6 +18,8 @@ export const getDictationFailureMessage = (
       return t`Could not reach the transcription service. Check your connection.`;
     case 'quota-exhausted':
       return t`Your workspace is out of AI credits.`;
+    case 'service-unavailable':
+      return t`Dictation is unavailable on this workspace right now.`;
     case 'engine-error':
       return t`Dictation failed. Try again.`;
   }

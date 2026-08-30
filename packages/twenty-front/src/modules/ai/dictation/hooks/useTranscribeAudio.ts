@@ -7,13 +7,13 @@ import { readBlobAsBase64 } from '@/ai/dictation/utils/readBlobAsBase64';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const CREDITS_EXHAUSTED_STATUS = 402;
-const TRANSCRIPTION_UNAVAILABLE_STATUS = 503;
+const SERVICE_UNAVAILABLE_STATUS = 503;
 
 export const useTranscribeAudio = (): TranscribeDictationAudio => {
   const store = useStore();
 
   return useCallback(
-    async (audio: Blob) => {
+    async (audio: Blob, language: string) => {
       let audioBase64: string;
 
       try {
@@ -32,7 +32,7 @@ export const useTranscribeAudio = (): TranscribeDictationAudio => {
               'Content-Type': 'application/json',
               ...getAuthorizationHeaders(store),
             },
-            body: JSON.stringify({ audioBase64 }),
+            body: JSON.stringify({ audioBase64, language }),
           },
         );
 
@@ -47,8 +47,8 @@ export const useTranscribeAudio = (): TranscribeDictationAudio => {
           return {
             status: 'failed' as const,
             reason:
-              response.status === TRANSCRIPTION_UNAVAILABLE_STATUS
-                ? ('unsupported-surface' as const)
+              response.status === SERVICE_UNAVAILABLE_STATUS
+                ? ('service-unavailable' as const)
                 : ('network' as const),
           };
         }

@@ -6,12 +6,12 @@ export type DictationFailureReason =
   | 'permission-denied'
   | 'no-device'
   | 'unsupported-surface'
-  // Started cleanly and then said nothing at all. iOS exposes
-  // webkitSpeechRecognition in contexts where it never emits, so feature
-  // detection reports success while dictation silently does nothing.
+  // iOS exposes webkitSpeechRecognition in contexts where it never emits, so
+  // feature detection reports success while dictation does nothing.
   | 'engine-silent'
   | 'network'
   | 'quota-exhausted'
+  | 'service-unavailable'
   | 'engine-error';
 
 export type DictationEngineState =

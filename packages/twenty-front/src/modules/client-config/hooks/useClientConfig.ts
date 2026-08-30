@@ -1,4 +1,6 @@
 import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { DICTATION_MODES } from 'twenty-shared/ai';
+
 import { dictationConfigState } from '@/client-config/states/dictationConfigState';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
@@ -182,7 +184,10 @@ export const useClientConfig = (): UseClientConfigResult => {
       });
       setAiModels(clientConfig.aiModels ?? []);
       setDictationConfig(
-        clientConfig.dictation ?? { mode: 'disabled', maxDurationSeconds: 0 },
+        clientConfig.dictation ?? {
+          mode: DICTATION_MODES.disabled,
+          maxDurationSeconds: 0,
+        },
       );
       setIsAnalyticsEnabled(clientConfig.analyticsEnabled);
       setIsDeveloperDefaultSignInPrefilled(clientConfig.signInPrefilled);

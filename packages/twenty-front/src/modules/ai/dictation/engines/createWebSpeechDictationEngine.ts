@@ -44,16 +44,13 @@ export const createWebSpeechDictationEngine = ({
 }): DictationEngine => {
   const emitter = createDictationEventEmitter();
 
-  // Created once and reused for the lifetime of the engine. Re-instantiating
-  // per press is what produces the iOS system chime and the first-attempt
-  // failures, because each new instance restarts the audio stack.
+  // Reused for the engine's lifetime: re-instantiating per press produces the
+  // iOS system chime and the first-attempt failures.
   let recognition: WebSpeechRecognitionInstance | null = null;
   let isActive = false;
   let readinessTimer: ReturnType<typeof setTimeout> | null = null;
-  // Bumped by every start, stop and dispose. Startup awaits the microphone
-  // warm-up, and a stop issued during that wait has nothing to stop yet — the
-  // generation is what lets the resumed startup notice it was abandoned
-  // instead of opening the microphone after the user asked it not to.
+  // A stop issued during the microphone warm-up has nothing to stop yet, so the
+  // generation is what lets the resumed startup notice it was abandoned.
   let sessionGeneration = 0;
 
   const clearReadinessTimer = () => {
@@ -82,8 +79,7 @@ export const createWebSpeechDictationEngine = ({
   };
 
   const handleVisibilityChange = () => {
-    // A session that survives backgrounding on iOS comes back in a state
-    // nothing but a reload recovers from, so it is ended instead.
+    // A session that survives backgrounding on iOS only recovers on reload.
     if (document.visibilityState === 'hidden') {
       stopRecognition();
     }
@@ -99,7 +95,7 @@ export const createWebSpeechDictationEngine = ({
     const instance = new SpeechRecognitionConstructor();
 
     // Continuous mode never releases the iOS microphone and never delivers a
-    // result, so dictation there is one push-to-talk utterance at a time.
+    // result.
     instance.continuous = !isIOS;
     instance.interimResults = true;
     instance.lang = language;
@@ -229,8 +225,7 @@ export const createWebSpeechDictationEngine = ({
       }
 
       isActive = false;
-      // Emitted before the listeners go, so a caller holding interim text
-      // clears it: the recognizer's own end event arrives too late to be heard.
+      // Before the listeners go, so a caller holding interim text clears it.
       emitter.emit({ type: 'state', state: 'idle' });
       emitter.clear();
     },

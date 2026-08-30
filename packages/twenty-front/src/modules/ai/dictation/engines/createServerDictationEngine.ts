@@ -11,9 +11,11 @@ import { pickRecorderMimeType } from '@/ai/dictation/utils/pickRecorderMimeType'
 export const createServerDictationEngine = ({
   transcribeAudio,
   maxDurationSeconds,
+  language,
 }: {
   transcribeAudio: TranscribeDictationAudio;
   maxDurationSeconds: number;
+  language: string;
 }): DictationEngine => {
   const emitter = createDictationEventEmitter();
 
@@ -22,10 +24,9 @@ export const createServerDictationEngine = ({
   let chunks: Blob[] = [];
   let readinessTimer: ReturnType<typeof setTimeout> | null = null;
   let durationTimer: ReturnType<typeof setTimeout> | null = null;
-  // Bumped by every start, stop and dispose. getUserMedia resolves whenever the
-  // user answers the permission prompt, which can be long after the composer
-  // unmounted — the generation is what stops that late stream becoming a
-  // recorder nothing owns, holding the microphone open with its indicator lit.
+  // getUserMedia resolves whenever the user answers the permission prompt, which
+  // can be long after the composer unmounted. The generation is what stops that
+  // late stream becoming a recorder nothing owns.
   let sessionGeneration = 0;
   let isDisposed = false;
 
@@ -41,9 +42,8 @@ export const createServerDictationEngine = ({
     }
   };
 
-  // The stream is released as soon as recording ends rather than on dispose:
-  // an open microphone leaves the browser's recording indicator lit, which
-  // reads as the app still listening.
+  // Released as soon as recording ends rather than on dispose: an open
+  // microphone leaves the browser's recording indicator lit.
   const releaseStream = () => {
     if (isDefined(mediaStream)) {
       for (const track of mediaStream.getTracks()) {
@@ -73,9 +73,7 @@ export const createServerDictationEngine = ({
     releaseStream();
     mediaRecorder = null;
 
-    // Disposal stops the recorder, which lands here asynchronously. Uploading
-    // then would bill the workspace for a transcript that has no listener left
-    // to receive it.
+    // Uploading after disposal would bill for a transcript with no listener.
     if (isDisposed) {
       chunks = [];
 
@@ -97,7 +95,7 @@ export const createServerDictationEngine = ({
 
     emitter.emit({ type: 'state', state: 'settling' });
 
-    const result = await transcribeAudio(audio);
+    const result = await transcribeAudio(audio, language);
 
     if (result.status === 'failed') {
       emitter.emit({ type: 'error', reason: result.reason });
@@ -175,6 +173,9 @@ export const createServerDictationEngine = ({
       mediaRecorder.addEventListener('error', () => {
         clearTimers();
         releaseStream();
+        // The spec says a stop event follows, but a browser that skips it would
+        // leave the recorder set and every later start refused.
+        mediaRecorder = null;
         emitter.emit({ type: 'error', reason: 'engine-error' });
         emitter.emit({ type: 'state', state: 'idle' });
       });
@@ -186,8 +187,7 @@ export const createServerDictationEngine = ({
         emitter.emit({ type: 'state', state: 'listening' });
       }, DICTATION_READINESS_DELAY_IN_MS);
 
-      // The server rejects anything longer, so recording is cut here instead of
-      // letting the user finish a sentence that was never going to be accepted.
+      // The server rejects anything longer.
       durationTimer = setTimeout(() => {
         durationTimer = null;
         stopRecording();
@@ -208,8 +208,7 @@ export const createServerDictationEngine = ({
       mediaRecorder = null;
       chunks = [];
       releaseStream();
-      // Emitted before the listeners go, so a caller holding interim text
-      // clears it: the recorder's own stop event arrives too late to be heard.
+      // Before the listeners go, so a caller holding interim text clears it.
       emitter.emit({ type: 'state', state: 'idle' });
       emitter.clear();
     },
