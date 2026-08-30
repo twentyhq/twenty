@@ -153,7 +153,9 @@ describe('AiTranscriptionService', () => {
     expect(result.text).toBe('call Acme tomorrow');
   });
 
-  it('skips billing when the provider reports no duration', async () => {
+  // Unbillable and unbounded: accepting it would leave half an hour of
+  // low-bitrate audio inside the byte cap transcribed for free.
+  it('withholds the transcript when the provider reports no duration', async () => {
     transcribeMock.mockResolvedValue({
       text: 'no duration reported',
       durationInSeconds: undefined,
@@ -162,9 +164,9 @@ describe('AiTranscriptionService', () => {
     const billTranscriptionUsage = jest.fn().mockResolvedValue(undefined);
     const { service } = buildService({ billTranscriptionUsage });
 
-    const result = await service.transcribeAudio(transcribeInput);
-
-    expect(result.text).toBe('no duration reported');
+    await expect(
+      service.transcribeAudio(transcribeInput),
+    ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_AUDIO_INPUT });
     expect(billTranscriptionUsage).not.toHaveBeenCalled();
   });
 });

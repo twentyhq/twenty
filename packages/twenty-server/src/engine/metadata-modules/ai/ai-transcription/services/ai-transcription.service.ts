@@ -96,7 +96,7 @@ export class AiTranscriptionService {
       userWorkspaceId,
     );
 
-    this.rejectOverLongAudio(result.durationInSeconds);
+    this.enforceDurationLimit(result.durationInSeconds);
 
     return {
       text: result.text,
@@ -108,11 +108,18 @@ export class AiTranscriptionService {
   // Duration is unknown until the provider reports it and the byte cap is a weak
   // proxy, so the limit is enforced on the way out: over-long audio yields no
   // transcript. Billing has already run, because the provider was paid anyway.
-  private rejectOverLongAudio(durationInSeconds: number | undefined): void {
-    if (
-      isDefined(durationInSeconds) &&
-      durationInSeconds > MAX_DICTATION_DURATION_SECONDS
-    ) {
+  // An unreported duration is refused for the same reason: it cannot be billed
+  // either, so accepting it would leave half an hour of low-bitrate audio inside
+  // the byte cap transcribed for free.
+  private enforceDurationLimit(durationInSeconds: number | undefined): void {
+    if (!isDefined(durationInSeconds)) {
+      throw new AiException(
+        'Transcription provider reported no audio duration',
+        AiExceptionCode.INVALID_AUDIO_INPUT,
+      );
+    }
+
+    if (durationInSeconds > MAX_DICTATION_DURATION_SECONDS) {
       throw new AiException(
         `Dictation audio is ${Math.round(durationInSeconds)}s, above the ${MAX_DICTATION_DURATION_SECONDS}s limit`,
         AiExceptionCode.INVALID_AUDIO_INPUT,

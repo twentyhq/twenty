@@ -1847,7 +1847,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Enable dictation in the AI chat composer. Falls back to on-device browser speech recognition when no transcription model is configured.',
+      'Enable dictation in the AI chat composer. With a transcription model configured, audio goes to that provider. Without one, dictation falls back to the browser speech recognition API, which on Chrome sends audio to the browser vendor rather than to a Twenty-configured provider.',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
