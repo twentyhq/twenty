@@ -86,9 +86,12 @@ own browser observations unreliable.
 
 Always write both files to the output directory, whatever happens, and keep
 them current: write first versions right after scoping (`status`
-`in-progress`, scenarios listed as pending), rewrite both immediately after
-each scenario with what you now know, and set `status` to `final` only when
-you have finished testing.
+`in-progress`, verdict INVESTIGATE, headline "run still in progress",
+scenarios listed as pending), rewrite both immediately after each scenario
+with what you now know, and set `status` to `final` once you stop testing.
+Stopping early still counts as stopping: a verdict you reach without running
+scenarios, such as "app did not boot" or a change with no user-visible
+surface, is `final` the moment you write it.
 
 `status` decides who hears you. A `final` verdict is reported as a result;
 an `in-progress` one means the run died, so it stays out of the PR unless it

@@ -456,10 +456,12 @@ jobs:
           esac
           # A checkpoint left by a run that died is not a finding: it says
           # the Scout failed, not that the PR is broken. Only a finished run
-          # speaks, unless the partial state already caught a real failure.
+          # speaks, unless the partial state already caught something real: a
+          # failed scenario, or a top-level FAIL (which is how a boot failure
+          # arrives, before any scenario exists to fail).
           STATUS=$(jq -r '.status // "final"' "$VERDICT_FILE" 2>/dev/null || echo final)
           FAILED_COUNT=$(jq '[.scenarios[]? | select(.result == "fail")] | length' "$VERDICT_FILE" 2>/dev/null || echo 0)
-          if [ "$STATUS" != "final" ] && [ "${FAILED_COUNT:-0}" -eq 0 ]; then
+          if [ "$STATUS" != "final" ] && [ "${FAILED_COUNT:-0}" -eq 0 ] && [ "$VERDICT" != "FAIL" ]; then
             echo "Scout did not finish (status=${STATUS}) and recorded no failing scenario; nothing to post. See the job summary and artifact."
             exit 0
           fi
