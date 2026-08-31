@@ -10,8 +10,6 @@ export type CoreWorkflowStatusFilterOption = {
   color: ThemeColor;
 };
 
-// mirrors the workflow statuses field options seeded by the standard
-// application so the facet reads like the statuses column
 export const CORE_WORKFLOW_STATUS_FILTER_OPTIONS: CoreWorkflowStatusFilterOption[] =
   [
     {

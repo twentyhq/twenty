@@ -5,6 +5,7 @@ import { IconButton, SearchInput } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CORE_WORKFLOW_STATUS_FILTER_OPTIONS } from '@/object-core/workflows/constants/CoreWorkflowStatusFilterOptions';
+import { toggleCoreWorkflowStatusFilter } from '@/object-core/workflows/utils/toggleCoreWorkflowStatusFilter';
 import { useOpenCoreWorkflowFiltersSidePanel } from '@/object-core/workflows/hooks/useOpenCoreWorkflowFiltersSidePanel';
 import { coreWorkflowsSearchTermState } from '@/object-core/workflows/states/coreWorkflowsSearchTermState';
 import { coreWorkflowsStatusesFilterState } from '@/object-core/workflows/states/coreWorkflowsStatusesFilterState';
@@ -35,7 +36,7 @@ export const CoreWorkflowsFilterBar = () => {
 
   const removeStatus = (status: CoreWorkflowStatus) => {
     setCoreWorkflowsStatusesFilter((previousStatuses) =>
-      previousStatuses.filter((previousStatus) => previousStatus !== status),
+      toggleCoreWorkflowStatusFilter(previousStatuses, status),
     );
   };
 

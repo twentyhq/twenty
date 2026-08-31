@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  escapeForIlike,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import {
@@ -18,7 +22,7 @@ import {
 } from 'src/engine/core-modules/workflow/dtos/core-workflows.input';
 import { buildCoreWorkflowStatusesHavingClause } from 'src/engine/core-modules/workflow/utils/build-core-workflow-statuses-having-clause.util';
 import { computeCoreWorkflowStatuses } from 'src/engine/core-modules/workflow/utils/compute-core-workflow-statuses.util';
-import { escapeLikeWildcards } from 'src/engine/core-modules/workflow/utils/escape-like-wildcards.util';
+
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
@@ -88,7 +92,7 @@ export class CoreWorkflowListService {
 
     const trimmedSearchTerm = searchTerm?.trim();
     const searchPattern = isNonEmptyString(trimmedSearchTerm)
-      ? `%${escapeLikeWildcards(trimmedSearchTerm)}%`
+      ? `%${escapeForIlike(trimmedSearchTerm)}%`
       : undefined;
     const statusesFilter = isNonEmptyArray(statuses) ? statuses : undefined;
 
@@ -226,9 +230,6 @@ export class CoreWorkflowListService {
 
       return totalCount;
     }
-
-    // the statuses filter is a HAVING clause over aggregated versions, so the
-    // filtered count needs the same joined and grouped shape as the page query
     const [{ totalCount }]: [{ totalCount: number }] =
       await this.coreDataSource.query(
         `SELECT count(*)::int AS "totalCount"

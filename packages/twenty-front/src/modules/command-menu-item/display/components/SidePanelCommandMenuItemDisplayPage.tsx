@@ -8,6 +8,7 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { useNavigationDrawerTogglePresentation } from '@/navigation/hooks/useNavigationDrawerTogglePresentation';
 import { useToggleNavigationDrawer } from '@/navigation/hooks/useToggleNavigationDrawer';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useOpenCoreWorkflowFiltersSidePanel } from '@/object-core/workflows/hooks/useOpenCoreWorkflowFiltersSidePanel';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -22,7 +23,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { useContext, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, FeatureFlagKey } from 'twenty-shared/types';
 import { IconFilter } from 'twenty-ui/icon';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
@@ -63,8 +64,16 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     useOpenCoreWorkflowFiltersSidePanel();
 
   const coreWorkflowFiltersCommandLabel = t`Filter workflows`;
+  const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
+  );
+  const isOnCoreWorkflowsIndex =
+    isMatchingLocation(location, AppPath.WorkflowCoreIndexPage) ||
+    (isWorkflowCoreIndexPageEnabled &&
+      location.pathname === '/objects/workflows');
+
   const shouldDisplayCoreWorkflowFiltersCommand =
-    isMatchingLocation(location, AppPath.WorkflowCoreIndexPage) &&
+    isOnCoreWorkflowsIndex &&
     !isInPreviewMode &&
     normalizeSearchText(coreWorkflowFiltersCommandLabel).includes(
       normalizeSearchText(sidePanelSearch.trim()),

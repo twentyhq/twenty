@@ -84,9 +84,6 @@ export const useCoreWorkflows = () => {
       },
     },
   );
-
-  // falling back to the previous page keeps the list rendered while a filter
-  // change is in flight
   const connection = (data ?? previousData)?.coreWorkflows;
 
   const fetchNextPage = async () => {
