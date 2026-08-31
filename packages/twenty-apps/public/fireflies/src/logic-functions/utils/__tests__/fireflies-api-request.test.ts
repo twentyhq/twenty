@@ -86,6 +86,36 @@ describe('firefliesApiRequest', () => {
     expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 
+  it('bounds a stalled request with the per-request timeout and retries it', async () => {
+    vi.useFakeTimers();
+    const timeoutError = Object.assign(
+      new Error('The operation was aborted due to timeout'),
+      { name: 'TimeoutError' },
+    );
+    const fetchMock = vi.fn().mockRejectedValue(timeoutError);
+
+    vi.stubGlobal('fetch', fetchMock);
+
+    const resultPromise = firefliesApiRequest({
+      accessToken: 'access-token',
+      query: 'query Test { user { user_id } }',
+    });
+
+    await vi.runAllTimersAsync();
+    const result = await resultPromise;
+
+    expect(result).toEqual({
+      ok: false,
+      status: 0,
+      errorMessage: 'Fireflies API request timed out after 10000ms',
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
+  });
+
   it('retries rate limiting using the shared retry policy', async () => {
     vi.useFakeTimers();
     const fetchMock = vi

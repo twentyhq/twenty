@@ -1,15 +1,12 @@
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
-import { enqueueJobs, listConnections } from 'twenty-sdk/logic-function';
 
-import {
-  FIREFLIES_BACKFILL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-  FIREFLIES_BACKFILL_WORKER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-} from 'src/constants/universal-identifiers';
+import { FIREFLIES_BACKFILL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { FIREFLIES_BACKFILL_ROUTE_PATH } from 'src/constants/fireflies-backfill-route-path.constant';
 import { FIREFLIES_BACKFILL_MAX_WINDOW_DAYS } from 'src/constants/fireflies-backfill-max-window-days.constant';
 import { FIREFLIES_BACKFILL_OUTCOME } from 'src/constants/fireflies-backfill-outcome.constant';
 import { FIREFLIES_BACKFILL_TIMEOUT_SECONDS } from 'src/logic-functions/constants/fireflies-backfill-timeout-seconds.constant';
 import { firefliesBackfillRequestBodySchema } from 'src/logic-functions/schemas/fireflies-backfill-request-body.schema';
+import { startFirefliesBackfillWorkers } from 'src/logic-functions/utils/start-fireflies-backfill-workers.util';
 
 const firefliesBackfillRequestHandler = async (
   payload: RoutePayload<unknown>,
@@ -25,32 +22,9 @@ const firefliesBackfillRequestHandler = async (
     };
   }
 
-  const connections = await listConnections({
-    providerName: 'fireflies',
-    visibility: 'workspace',
+  return startFirefliesBackfillWorkers({
+    days: requestBodyParseResult.data.days,
   });
-
-  if (connections.length === 0) {
-    return {
-      outcome: FIREFLIES_BACKFILL_OUTCOME.NOT_CONFIGURED,
-      error:
-        'Fireflies is not configured. Add at least one workspace-shared Fireflies connection.',
-    };
-  }
-
-  await enqueueJobs({
-    logicFunctionUniversalIdentifier:
-      FIREFLIES_BACKFILL_WORKER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-    payloads: connections.map((connection) => ({
-      connectionId: connection.id,
-      days: requestBodyParseResult.data.days,
-    })),
-  });
-
-  return {
-    outcome: FIREFLIES_BACKFILL_OUTCOME.STARTED,
-    connectionCount: connections.length,
-  };
 };
 
 export default defineLogicFunction({

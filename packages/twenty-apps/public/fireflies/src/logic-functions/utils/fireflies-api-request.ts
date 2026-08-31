@@ -2,6 +2,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { sleepForMilliseconds } from 'src/utils/sleep-for-milliseconds.util';
 
 import { FIREFLIES_API_MAX_ATTEMPTS } from 'src/logic-functions/constants/fireflies-api-max-attempts.constant';
+import { FIREFLIES_API_REQUEST_TIMEOUT_MILLISECONDS } from 'src/logic-functions/constants/fireflies-api-request-timeout-milliseconds.constant';
 import { FIREFLIES_API_RETRY_DELAY_MILLISECONDS } from 'src/logic-functions/constants/fireflies-api-retry-delay-milliseconds.constant';
 import { isRetryableFirefliesApiStatus } from 'src/logic-functions/utils/is-retryable-fireflies-api-status.util';
 
@@ -87,6 +88,8 @@ const performFirefliesApiRequest = async <TData = unknown>({
   let response: Response;
 
   try {
+    // A stalled Fireflies account must not exhaust the logic-function
+    // deadline and suppress results from healthy accounts.
     response = await fetch(FIREFLIES_API_URL, {
       method: 'POST',
       headers: {
@@ -94,12 +97,15 @@ const performFirefliesApiRequest = async <TData = unknown>({
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ query, variables }),
+      signal: AbortSignal.timeout(FIREFLIES_API_REQUEST_TIMEOUT_MILLISECONDS),
     });
   } catch (error) {
     return {
       ok: false,
       status: 0,
-      errorMessage: `Fireflies API request failed: ${(error as Error).message}`,
+      errorMessage: isTimeoutError(error)
+        ? buildFirefliesTimeoutMessage()
+        : `Fireflies API request failed: ${(error as Error).message}`,
     };
   }
 
@@ -110,6 +116,15 @@ const performFirefliesApiRequest = async <TData = unknown>({
     envelope = (await response.json()) as FirefliesGraphqlEnvelope<TData>;
   } catch (error) {
     parseError = error as Error;
+  }
+
+  // The timeout signal can also fire while the response body streams in.
+  if (parseError !== null && isTimeoutError(parseError)) {
+    return {
+      ok: false,
+      status: 0,
+      errorMessage: buildFirefliesTimeoutMessage(),
+    };
   }
 
   if (
@@ -157,6 +172,12 @@ const performFirefliesApiRequest = async <TData = unknown>({
 
   return { ok: true, status: response.status, data: envelope.data };
 };
+
+const isTimeoutError = (error: unknown): boolean =>
+  error instanceof Error && error.name === 'TimeoutError';
+
+const buildFirefliesTimeoutMessage = (): string =>
+  `Fireflies API request timed out after ${FIREFLIES_API_REQUEST_TIMEOUT_MILLISECONDS}ms`;
 
 const formatFirefliesGraphqlError = (
   error: FirefliesGraphqlError | undefined,
