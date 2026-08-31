@@ -21,9 +21,40 @@ import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty
 
 describe('Successful user and workspace creation', () => {
   let createdUserAccessToken: string | undefined;
+  let createdWorkspaceIdToCleanup: string | undefined;
 
   afterEach(async () => {
     jest.restoreAllMocks();
+
+    if (isDefined(createdWorkspaceIdToCleanup)) {
+      const [workspaceToCleanup] = await testDataSource.query(
+        'SELECT id FROM core.workspace WHERE id = $1',
+        [createdWorkspaceIdToCleanup],
+      );
+      const [userWorkspaceToCleanup] = await testDataSource.query(
+        'SELECT "userId" FROM core."userWorkspace" WHERE "workspaceId" = $1',
+        [createdWorkspaceIdToCleanup],
+      );
+
+      if (isDefined(workspaceToCleanup)) {
+        const workspaceService = getAppProviderByClassName<{
+          deleteWorkspace: (id: string) => Promise<unknown>;
+        }>('WorkspaceService');
+
+        await workspaceService.deleteWorkspace(createdWorkspaceIdToCleanup);
+      }
+
+      if (isDefined(userWorkspaceToCleanup)) {
+        const userService = getAppProviderByClassName<{
+          deleteUser: (id: string) => Promise<unknown>;
+        }>('UserService');
+
+        await userService.deleteUser(userWorkspaceToCleanup.userId);
+        createdUserAccessToken = undefined;
+      }
+
+      createdWorkspaceIdToCleanup = undefined;
+    }
 
     if (!isDefined(createdUserAccessToken)) {
       return;
@@ -218,6 +249,7 @@ describe('Successful user and workspace creation', () => {
     });
 
     const workspaceId = signUpInNewWorkspaceData.workspace.id;
+    createdWorkspaceIdToCleanup = workspaceId;
     const persistedWorkspaces = await testDataSource.query(
       'SELECT id FROM core.workspace WHERE id = $1',
       [workspaceId],
@@ -232,19 +264,6 @@ describe('Successful user and workspace creation', () => {
     expect(captureExceptions).toHaveBeenCalledWith([uploadError], {
       workspace: { id: workspaceId },
       additionalData: { source: 'inferred-workspace-logo' },
-    });
-
-    const {
-      data: { getAuthTokensFromLoginToken: authTokensData },
-    } = await getAuthTokensFromLoginToken({
-      origin: signUpInNewWorkspaceData.workspace.workspaceUrls.subdomainUrl,
-      loginToken: signUpInNewWorkspaceData.loginToken.token,
-      expectToFail: false,
-    });
-
-    await activateWorkspace({
-      accessToken: authTokensData.tokens.accessOrWorkspaceAgnosticToken.token,
-      expectToFail: false,
     });
   });
 
