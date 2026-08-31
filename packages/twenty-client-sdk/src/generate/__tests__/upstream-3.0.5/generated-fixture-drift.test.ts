@@ -52,7 +52,9 @@ describe('upstream fixture client matches the engine output', () => {
       output: regeneratedDir,
     });
 
-    if (process.env.UPDATE_GENQL_UPSTREAM_FIXTURE) {
+    if (
+      ['1', 'true'].includes(process.env.UPDATE_GENQL_UPSTREAM_FIXTURE ?? '')
+    ) {
       await rm(FIXTURE_DIR, { recursive: true, force: true });
       await cp(regeneratedDir, FIXTURE_DIR, { recursive: true });
     }
