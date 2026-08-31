@@ -278,7 +278,12 @@ export const buildSlackRecordUnfurlEntity = ({
         ? { custom_fields: definedCustomFields }
         : {}),
     },
-    external_ref: { id: recordLink.recordId },
+    // The type makes the flexpane request self-describing: Slack echoes the
+    // external_ref back in entity_details_requested.
+    external_ref: {
+      id: recordLink.recordId,
+      type: recordLink.objectNameSingular,
+    },
     url: recordLink.url,
     app_unfurl_url: recordLink.url,
   };

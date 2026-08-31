@@ -27,6 +27,11 @@ type SlackInboundEvent = {
   tokens?: SlackRevokedTokens;
   message_ts?: string;
   links?: SlackSharedLink[];
+  trigger_id?: string;
+  external_ref?: { id?: string; type?: string };
+  link?: SlackSharedLink;
+  entity_url?: string;
+  url?: string;
 };
 
 export type SlackEventsRequestBody = {

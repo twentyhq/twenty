@@ -67,6 +67,7 @@ The assistant reuses the same Slack connection — no second bot identity.
    - `app_home_opened` — a user opened the bot's Messages tab; sets the suggested prompts
    - `app_mention` — mentions of the bot in a channel
    - `link_shared` — a Twenty record link was posted; renders the record link preview (see the Record link previews section)
+   - `entity_details_requested` — a user expanded a record link preview; fills the side panel with the record's details
    - `message.im` — direct messages to the bot
    - `message.channels` — replies in public-channel threads, for un-mentioned follow-ups
    - `message.groups` — same, for private channels the bot is in
@@ -75,7 +76,7 @@ The assistant reuses the same Slack connection — no second bot identity.
 
    Invite the bot to any channel where it should follow threads. Slack may ask you to reinstall after changing subscriptions.
 
-   Event subscriptions added in app upgrades must be added here by hand on existing installs — the Slack app only reads the manifest at creation. Upgrading from any version before 0.4.1 adds `app_uninstalled` and `tokens_revoked`; without them the team claim of a Slack-side removal is never released. No new scopes are involved, so the connection itself needs no re-authorization. Upgrading from any version before 0.6.0 adds `link_shared` and the `links:read` / `links:write` scopes for the record link previews; that one does need a reconnect (see the Record link previews section).
+   Event subscriptions added in app upgrades must be added here by hand on existing installs — the Slack app only reads the manifest at creation. Upgrading from any version before 0.4.1 adds `app_uninstalled` and `tokens_revoked`; without them the team claim of a Slack-side removal is never released. No new scopes are involved, so the connection itself needs no re-authorization. Upgrading from any version before 0.6.0 adds `link_shared`, `entity_details_requested` and the `links:read` / `links:write` scopes for the record link previews; that one does need a reconnect (see the Record link previews section).
 
 3. **Interactivity.** On the Slack app, enable **Interactivity & Shortcuts** and set the Request URL to:
 
@@ -99,9 +100,9 @@ Pasting a link to a Twenty person, company, opportunity, note or task in Slack r
 
 2. **Work Object Previews.** In the Slack app settings, open **Work Object Previews** in the left sidebar, enable the toggle, and select the **Item** entity type. Without it, Slack falls back to ignoring the unfurl metadata.
 
-3. **Scope and event.** The previews need the `links:read` scope and the `link_shared` event subscription from the tables above. On an existing install, add both and reconnect (disconnect and **Add connection** again) so the token picks up the scope.
+3. **Scopes and events.** The previews need the `links:read` and `links:write` scopes plus the `link_shared` and `entity_details_requested` event subscriptions from the lists above. On an existing install, add them and reconnect (disconnect and **Add connection** again) so the token picks up the scopes.
 
-Previews are rendered only when the person who posted the link maps to a workspace member (the same Slack-account-to-member matching the assistant uses). The record card is visible to everyone in the channel, so the preview stays to a handful of headline fields; members open the record in Twenty for the rest.
+Previews are rendered only when the person who posted the link maps to a workspace member (the same Slack-account-to-member matching the assistant uses). The record card is visible to everyone in the channel, so the preview stays to a handful of headline fields; expanding the card opens a side panel with the same details, and members open the record in Twenty for the rest.
 
 ## Behaviour notes
 

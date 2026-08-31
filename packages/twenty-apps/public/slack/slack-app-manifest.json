@@ -51,6 +51,7 @@
         "app_home_opened",
         "app_mention",
         "app_uninstalled",
+        "entity_details_requested",
         "link_shared",
         "member_joined_channel",
         "message.channels",
