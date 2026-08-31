@@ -2,6 +2,7 @@ import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirec
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -20,10 +21,14 @@ export const useVerifyLogin = () => {
     setIsAppEffectRedirectEnabled(false);
     try {
       await getAuthTokensFromLoginToken(loginToken);
-    } catch {
-      enqueueErrorSnackBar({
-        message: t`Authentication failed`,
-      });
+    } catch (error) {
+      enqueueErrorSnackBar(
+        CombinedGraphQLErrors.is(error)
+          ? { apolloError: error }
+          : {
+              message: t`Authentication failed`,
+            },
+      );
       navigate(AppPath.SignInUp);
     } finally {
       setIsAppEffectRedirectEnabled(true);
