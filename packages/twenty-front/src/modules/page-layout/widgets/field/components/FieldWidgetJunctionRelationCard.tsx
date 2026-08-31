@@ -17,7 +17,7 @@ import { usePersistField } from '@/object-record/record-field/ui/hooks/usePersis
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { type ValidResolvedJunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/ValidResolvedJunctionConfig';
 import { StyledWidgetContentContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { FieldWidgetShowMoreButton } from '@/page-layout/widgets/field/components/FieldWidgetShowMoreButton';
 import { FIELD_WIDGET_RELATION_CARD_INITIAL_VISIBLE_ITEMS } from '@/page-layout/widgets/field/constants/FieldWidgetRelationCardInitialVisibleItems';
@@ -37,14 +37,14 @@ type FieldWidgetJunctionRelationCardProps = {
   fieldDefinition: FieldDefinition<FieldRelationMetadata>;
   relationValue: any;
   isInSidePanel: boolean;
-  sourceObjectMetadataId: string;
+  junctionConfig: ValidResolvedJunctionConfig;
 };
 
 export const FieldWidgetJunctionRelationCard = ({
   fieldDefinition,
   relationValue,
   isInSidePanel,
-  sourceObjectMetadataId,
+  junctionConfig,
 }: FieldWidgetJunctionRelationCardProps) => {
   const widget = useCurrentWidget();
 
@@ -69,8 +69,6 @@ export const FieldWidgetJunctionRelationCard = ({
       (prevCount) => prevCount + FIELD_WIDGET_RELATION_CARD_LOAD_MORE_INCREMENT,
     );
   };
-
-  const fieldMetadata = fieldDefinition.metadata;
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -112,18 +110,6 @@ export const FieldWidgetJunctionRelationCard = ({
       valueToPersist: newValue,
     });
   };
-
-  const junctionConfig = getJunctionConfig({
-    settings: fieldMetadata.settings,
-    relationObjectMetadataId: fieldMetadata.relationObjectMetadataId,
-    relationTargetFieldMetadataId: fieldMetadata.relationFieldMetadataId,
-    sourceObjectMetadataId,
-    objectMetadataItems,
-  });
-
-  if (!isDefined(junctionConfig)) {
-    return null;
-  }
 
   const junctionRecords = Array.isArray(relationValue) ? relationValue : [];
 

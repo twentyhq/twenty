@@ -1,4 +1,4 @@
-import { isObject, isString } from '@sniptt/guards';
+import { isObject, isString, isUndefined } from '@sniptt/guards';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -8,6 +8,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
 import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { isNullRelationValue } from 'src/modules/workflow/workflow-executor/utils/is-null-relation-value.util';
 
 type MorphRelationTargetJoinColumn = {
   joinColumnName: string;
@@ -191,9 +192,11 @@ const formatWorkflowRecordSimpleRelationFields = (
       continue;
     }
 
-    const legacyId = extractLegacyRelationId(value);
+    const joinColumnValue = isNullRelationValue(value)
+      ? null
+      : extractLegacyRelationId(value);
 
-    if (!isDefined(legacyId)) {
+    if (isUndefined(joinColumnValue)) {
       formattedRecord[key] = value;
       continue;
     }
@@ -203,7 +206,7 @@ const formatWorkflowRecordSimpleRelationFields = (
     });
 
     if (!isDefined(record[joinColumnName])) {
-      formattedRecord[joinColumnName] = legacyId;
+      formattedRecord[joinColumnName] = joinColumnValue;
     }
   }
 

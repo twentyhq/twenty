@@ -572,6 +572,17 @@ export const TWENTY_ICON_DICTIONARY = [
       'Representing a general file collection, import, or upload action.',
   },
   {
+    key: 'dictation',
+    label: 'Dictation',
+    category: 'general',
+    iconName: 'IconMicrophone',
+    tablerName: 'microphone',
+    keywords: ['dictation', 'voice input', 'speech to text', 'microphone'],
+    useWhen: 'Representing voice input or a dictation control.',
+    avoidWhen:
+      'Representing audio playback, a call recording, or a phone number.',
+  },
+  {
     key: 'app',
     label: 'App',
     category: 'general',

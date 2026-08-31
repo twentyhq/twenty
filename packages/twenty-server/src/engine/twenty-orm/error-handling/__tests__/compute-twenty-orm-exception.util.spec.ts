@@ -68,6 +68,27 @@ describe('computeTwentyOrmException', () => {
     );
   });
 
+  it.each([
+    POSTGRESQL_ERROR_CODES.IDLE_IN_TRANSACTION_SESSION_TIMEOUT,
+    POSTGRESQL_ERROR_CODES.CONNECTION_FAILURE,
+    POSTGRESQL_ERROR_CODES.DEADLOCK_DETECTED,
+  ])(
+    'should map the transient failure %s to TRANSIENT_DATABASE_ERROR',
+    (code) => {
+      const result = computeTwentyOrmException(
+        buildPostgresError(
+          'terminating connection due to idle-in-transaction timeout',
+          code,
+        ),
+      );
+
+      expect(result).toBeInstanceOf(TwentyOrmException);
+      expect((result as TwentyOrmException).code).toBe(
+        TwentyOrmExceptionCode.TRANSIENT_DATABASE_ERROR,
+      );
+    },
+  );
+
   it('should map any other known postgres code to a PostgresException carrying that code', () => {
     const error = buildPostgresError(
       'cannot execute UPDATE in a read-only transaction',
@@ -83,8 +104,19 @@ describe('computeTwentyOrmException', () => {
     expect(result.message).toBe('Data validation error.');
   });
 
-  it('should return an unrecognised driver error untouched', () => {
+  it('should return a TRANSIENT_DATABASE_ERROR exception when the socket dies before postgres reports a code', () => {
     const error = new Error('Connection terminated unexpectedly');
+
+    const result = computeTwentyOrmException(error);
+
+    expect(result).toBeInstanceOf(TwentyOrmException);
+    expect((result as TwentyOrmException).code).toBe(
+      TwentyOrmExceptionCode.TRANSIENT_DATABASE_ERROR,
+    );
+  });
+
+  it('should return an unrecognised driver error untouched', () => {
+    const error = new Error('some driver failure nobody maps');
 
     expect(computeTwentyOrmException(error)).toBe(error);
   });

@@ -26,6 +26,7 @@ const COMMAND_MENU_ITEM_GQL_FIELDS = `
   label
   icon
   isActive
+  conditionalAvailabilityExpression
   payload {
     ... on PathCommandMenuItemPayload {
       path
@@ -208,6 +209,70 @@ describe('Command menu item side effect on object metadata', () => {
         createdObjectMetadataId,
       ),
     ).toEqual(expect.objectContaining({ isActive: false }));
+  });
+
+  it('should recompute the availability expression when the object is renamed, keeping the same command', async () => {
+    const {
+      data: { createOneObject },
+    } = await createOneObjectMetadata({
+      expectToFail: false,
+      input: createObjectInput,
+      gqlFields: 'id',
+    });
+
+    createdObjectMetadataId = createOneObject.id;
+
+    const {
+      data: { commandMenuItems: itemsBeforeRename },
+    } = await findCommandMenuItems({
+      expectToFail: false,
+      input: undefined,
+      gqlFields: COMMAND_MENU_ITEM_GQL_FIELDS,
+    });
+
+    const navigationItemBeforeRename = findNavigationCommandMenuItemForObject(
+      itemsBeforeRename,
+      createdObjectMetadataId,
+    );
+
+    expect(navigationItemBeforeRename).toEqual(
+      expect.objectContaining({
+        conditionalAvailabilityExpression: `targetObjectReadPermissions.${createObjectInput.nameSingular}`,
+      }),
+    );
+
+    const renamedNameSingular = `renamedItem${uniqueSuffix}`;
+
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: createdObjectMetadataId,
+        updatePayload: {
+          nameSingular: renamedNameSingular,
+          namePlural: `renamedItems${uniqueSuffix}`,
+        },
+      },
+    });
+
+    const {
+      data: { commandMenuItems: itemsAfterRename },
+    } = await findCommandMenuItems({
+      expectToFail: false,
+      input: undefined,
+      gqlFields: COMMAND_MENU_ITEM_GQL_FIELDS,
+    });
+
+    const navigationItemAfterRename = findNavigationCommandMenuItemForObject(
+      itemsAfterRename,
+      createdObjectMetadataId,
+    );
+
+    expect(navigationItemAfterRename).toEqual(
+      expect.objectContaining({
+        id: navigationItemBeforeRename?.id,
+        conditionalAvailabilityExpression: `targetObjectReadPermissions.${renamedNameSingular}`,
+      }),
+    );
   });
 
   it('should reactivate the navigation command menu item when a disabled object is re-enabled', async () => {

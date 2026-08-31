@@ -6,18 +6,19 @@ export const removeWidgetLayoutFromTab = (
   tabId: string,
   widgetId: string,
 ): TabLayouts => {
-  if (!isDefined(allTabLayouts[tabId])) {
+  const currentTabLayouts = allTabLayouts[tabId];
+
+  if (!isDefined(currentTabLayouts)) {
     return allTabLayouts;
   }
 
-  const currentTabLayouts = allTabLayouts[tabId];
   return {
     ...allTabLayouts,
     [tabId]: {
-      desktop: currentTabLayouts.desktop.filter(
+      desktop: (currentTabLayouts.desktop ?? []).filter(
         (layout) => layout.i !== widgetId,
       ),
-      mobile: currentTabLayouts.mobile.filter(
+      mobile: (currentTabLayouts.mobile ?? []).filter(
         (layout) => layout.i !== widgetId,
       ),
     },

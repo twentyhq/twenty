@@ -1,6 +1,7 @@
 import {
   defineObject,
   FieldType,
+  MetadataWritability,
   OnDeleteAction,
   RelationType,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
@@ -26,6 +27,7 @@ export default defineObject({
   description:
     'Links a Slack account to a workspace member so the assistant can act with that member permissions instead of its own.',
   icon: 'IconBrandSlack',
+  writability: MetadataWritability.APPLICATION,
   labelIdentifierFieldMetadataUniversalIdentifier:
     SLACK_USER_LINK_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [

@@ -115,6 +115,7 @@ import { IconHierarchy } from 'twenty-ui/icon';
 | Notification | `IconBell` | `bell` | Representing notifications or notification settings. | Representing an error severity, favorite, or decorative star. | notification, notice, notification settings, alert |
 | Files | `IconFiles` | `files` | Representing a collection of files or a files section. | Representing one file, an attachment, or an upload action. | files, file collection, documents, file section |
 | Attachments | `IconPaperclip` | `paperclip` | Representing attachments or an attachment relationship. | Representing a general file collection, import, or upload action. | attachment, attachments, attached file, record attachment |
+| Dictation | `IconMicrophone` | `microphone` | Representing voice input or a dictation control. | Representing audio playback, a call recording, or a phone number. | dictation, voice input, speech to text, microphone |
 | App | `IconApps` | `apps` | Representing an application or the apps platform. | Representing a widget, integration, or one navigation item. | app, application, Twenty app |
 | Navigation Sidebar | `IconLayoutSidebar` | `layout-sidebar` | Representing the application navigation sidebar. | Representing a destination inside the navigation menu. | navigation sidebar, sidebar, left navigation |
 | Iframe | `IconFrame` | `frame` | Representing an iframe or embedded external page. | Representing a native page layout or browser window. | iframe, embedded page, web frame |
