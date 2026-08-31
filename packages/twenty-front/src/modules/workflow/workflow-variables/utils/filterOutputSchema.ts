@@ -183,18 +183,17 @@ const filterRecordOutputSchemaFieldsByType = ({
   };
 };
 
-const filterNonRecordOutputSchemaFieldsByType = ({
+const filterNonRecordOutputSchemaFieldsByType = <TOutputSchema extends object>({
   outputSchema,
   fieldTypesToExclude,
 }: {
-  outputSchema: OutputSchemaV2;
+  outputSchema: TOutputSchema;
   fieldTypesToExclude: InputSchemaPropertyType[];
-}): OutputSchemaV2 => {
-  const filteredSchema: Record<string, unknown> = {};
+}): TOutputSchema => {
+  const filteredSchema = { ...outputSchema };
 
   for (const [key, field] of Object.entries(outputSchema)) {
     if (!isObject(field)) {
-      filteredSchema[key] = field;
       continue;
     }
 
@@ -202,6 +201,7 @@ const filterNonRecordOutputSchemaFieldsByType = ({
       'type' in field &&
       fieldTypesToExclude.some((fieldType) => fieldType === field.type)
     ) {
+      Reflect.deleteProperty(filteredSchema, key);
       continue;
     }
 
@@ -211,25 +211,22 @@ const filterNonRecordOutputSchemaFieldsByType = ({
       'value' in field &&
       isObject(field.value)
     ) {
-      filteredSchema[key] = {
+      Reflect.set(filteredSchema, key, {
         ...field,
-        value: isRecordOutputSchemaV2(field.value as OutputSchemaV2)
+        value: isRecordOutputSchemaV2(field.value)
           ? filterRecordOutputSchemaFieldsByType({
-              outputSchema: field.value as RecordOutputSchemaV2,
+              outputSchema: field.value,
               fieldTypesToExclude,
             })
           : filterNonRecordOutputSchemaFieldsByType({
-              outputSchema: field.value as OutputSchemaV2,
+              outputSchema: field.value,
               fieldTypesToExclude,
             }),
-      };
-      continue;
+      });
     }
-
-    filteredSchema[key] = field;
   }
 
-  return filteredSchema as OutputSchemaV2;
+  return filteredSchema;
 };
 
 const filterOutputSchemaFieldsByType = ({
