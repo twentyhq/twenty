@@ -3,6 +3,7 @@ import { getFieldRelations } from '@/object-record/record-field/ui/utils/junctio
 import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
 import { hasJunctionTargetFieldId } from '@/object-record/record-field/ui/utils/junction/hasJunctionTargetFieldId';
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
+import { isValidJunctionTargetField } from '@/object-record/record-field/ui/utils/junction/isValidJunctionTargetField';
 import { type JunctionObjectMetadataItem } from '@/object-record/record-field/ui/utils/junction/types/JunctionObjectMetadataItem';
 import { type ValidJunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/ValidJunctionConfig';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -18,7 +19,7 @@ type ReverseJunctionConfigResolution =
   | { status: 'invalid' }
   | { status: 'not-found' };
 
-type GetReverseJunctionConfigArgs = {
+type ResolveReverseJunctionConfigArgs = {
   junctionObjectMetadataId?: string;
   relationTargetFieldMetadataId?: string;
   sourceObjectMetadataId?: string;
@@ -75,7 +76,7 @@ export const resolveReverseJunctionConfig = ({
   relationTargetFieldMetadataId,
   sourceObjectMetadataId,
   objectMetadataItems,
-}: GetReverseJunctionConfigArgs): ReverseJunctionConfigResolution => {
+}: ResolveReverseJunctionConfigArgs): ReverseJunctionConfigResolution => {
   if (
     !isDefined(junctionObjectMetadataId) ||
     !isDefined(relationTargetFieldMetadataId) ||
@@ -86,6 +87,7 @@ export const resolveReverseJunctionConfig = ({
 
   const reverseJunctionConfigCandidates: ReverseJunctionConfigCandidate[] = [];
   let hasInvalidConfiguredCandidate = false;
+  let hasInvalidCandidateForRequestedReverse = false;
 
   for (const relatedObjectMetadata of objectMetadataItems) {
     for (const forwardJunctionField of relatedObjectMetadata.fields) {
@@ -109,34 +111,55 @@ export const resolveReverseJunctionConfig = ({
         const isConfiguredOnOwningSide = hasJunctionTargetFieldId(
           forwardJunctionField.settings,
         );
+        const isConfiguredForRequestedReverse =
+          isConfiguredOnOwningSide &&
+          forwardJunctionField.settings.junctionTargetFieldId ===
+            relationTargetFieldMetadataId;
 
-        if (!isUsableJunctionConfig(junctionConfig)) {
+        if (
+          !isUsableJunctionConfig(junctionConfig) ||
+          !isDefined(junctionConfig.sourceField)
+        ) {
           hasInvalidConfiguredCandidate ||= isConfiguredOnOwningSide;
+          hasInvalidCandidateForRequestedReverse ||=
+            isConfiguredForRequestedReverse;
           continue;
         }
 
-        if (!isDefined(junctionConfig.sourceField)) {
-          hasInvalidConfiguredCandidate ||= isConfiguredOnOwningSide;
-          continue;
-        }
+        const targetsRequestedReverse = junctionConfig.targetFields.some(
+          (targetField) => targetField.id === relationTargetFieldMetadataId,
+        );
 
         if (
           !getTargetObjectMetadataIdsFromField(
             junctionConfig.sourceField,
           ).includes(relatedObjectMetadata.id)
         ) {
+          hasInvalidConfiguredCandidate ||= isConfiguredOnOwningSide;
+          hasInvalidCandidateForRequestedReverse ||=
+            isConfiguredForRequestedReverse || targetsRequestedReverse;
           continue;
         }
 
         const reverseSourceField = junctionConfig.targetFields.find(
-          (targetField) =>
-            targetField.id === relationTargetFieldMetadataId &&
-            getTargetObjectMetadataIdsFromField(targetField).includes(
-              sourceObjectMetadataId,
-            ),
+          (targetField) => targetField.id === relationTargetFieldMetadataId,
         );
 
         if (!isDefined(reverseSourceField)) {
+          continue;
+        }
+
+        if (
+          !getTargetObjectMetadataIdsFromField(reverseSourceField).includes(
+            sourceObjectMetadataId,
+          ) ||
+          !isValidJunctionTargetField({
+            fieldMetadataItem: junctionConfig.sourceField,
+            sourceFieldMetadataId: reverseSourceField.id,
+          })
+        ) {
+          hasInvalidConfiguredCandidate ||= isConfiguredOnOwningSide;
+          hasInvalidCandidateForRequestedReverse = true;
           continue;
         }
 
@@ -170,7 +193,7 @@ export const resolveReverseJunctionConfig = ({
     reverseJunctionConfigCandidates,
   );
 
-  if (hasInvalidConfiguredCandidate) {
+  if (hasInvalidCandidateForRequestedReverse) {
     return { status: 'invalid' };
   }
 
@@ -200,10 +223,14 @@ export const resolveReverseJunctionConfig = ({
       : { status: 'ambiguous' };
   }
 
-  return reverseJunctionConfigCandidates.length === 1
-    ? {
-        status: 'resolved',
-        junctionConfig: reverseJunctionConfigCandidates[0].junctionConfig,
-      }
+  if (reverseJunctionConfigCandidates.length === 1) {
+    return {
+      status: 'resolved',
+      junctionConfig: reverseJunctionConfigCandidates[0].junctionConfig,
+    };
+  }
+
+  return hasInvalidConfiguredCandidate
+    ? { status: 'invalid' }
     : { status: 'not-found' };
 };

@@ -126,7 +126,7 @@ describe('useOpenFieldWidgetFieldInputEditMode', () => {
     jest.clearAllMocks();
   });
 
-  it('does not fall back to raw pivot editing for an ambiguous reverse junction', () => {
+  it('fails closed without falling back to raw pivot editing for an ambiguous reverse junction', () => {
     const { result } = renderHook(() => useOpenFieldWidgetFieldInputEditMode());
 
     act(() => {
@@ -136,7 +136,7 @@ describe('useOpenFieldWidgetFieldInputEditMode', () => {
       });
     });
 
-    expect(mockOpenJunctionRelationFieldInput).toHaveBeenCalledTimes(1);
+    expect(mockOpenJunctionRelationFieldInput).not.toHaveBeenCalled();
     expect(mockOpenRelationFromManyFieldInput).not.toHaveBeenCalled();
     expect(mockPushFocusItemToFocusStack).not.toHaveBeenCalled();
   });

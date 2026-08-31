@@ -4,7 +4,7 @@ import {
   type JunctionObjectMetadataItem,
   type ValidJunctionConfig,
 } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
-import { resolveReverseJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getReverseJunctionConfig';
+import { resolveReverseJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveReverseJunctionConfig';
 import { hasJunctionTargetFieldId } from '@/object-record/record-field/ui/utils/junction/hasJunctionTargetFieldId';
 import { isDefined } from 'twenty-shared/utils';
 

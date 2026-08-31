@@ -187,28 +187,31 @@ describe('resolveJunctionConfig', () => {
 
   it('fails closed when a configured owning field is invalid', () => {
     const taskMetadata = getMockObjectMetadataItemOrThrow('task');
+    const taskTargetMetadata = getMockObjectMetadataItemOrThrow('taskTarget');
     const rocketMetadata = getMockObjectMetadataItemOrThrow('rocket');
     const taskTargetsField = getMockFieldMetadataItemOrThrow({
       objectMetadataItem: taskMetadata,
       fieldName: 'taskTargets',
     });
 
-    if (!taskTargetsField.relation) {
-      throw new Error('Task targets relation not found');
+    const configuredTargetFieldId =
+      taskTargetsField.settings?.junctionTargetFieldId;
+
+    if (typeof configuredTargetFieldId !== 'string') {
+      throw new Error('Task target junction configuration not found');
     }
 
     const metadataWithInvalidOwner = objectMetadataItems.map((item) =>
-      item.id === taskMetadata.id
+      item.id === taskTargetMetadata.id
         ? {
             ...item,
             fields: item.fields.map((field) =>
-              field.name === 'taskTargets'
+              field.id === configuredTargetFieldId
                 ? {
                     ...field,
-                    settings: {
-                      ...field.settings,
-                      junctionTargetFieldId: 'missing-target-field-id',
-                    },
+                    type: FieldMetadataType.TEXT,
+                    relation: undefined,
+                    morphRelations: undefined,
                   }
                 : field,
             ),
@@ -225,7 +228,42 @@ describe('resolveJunctionConfig', () => {
     });
     expect(
       getJunctionObjectMetadataIds(metadataWithInvalidOwner),
-    ).not.toContain(taskTargetsField.relation.targetObjectMetadata.id);
+    ).not.toContain(taskTargetMetadata.id);
+  });
+
+  it('fails closed when a reverse owner points to a missing target field', () => {
+    const taskMetadata = getMockObjectMetadataItemOrThrow('task');
+    const rocketMetadata = getMockObjectMetadataItemOrThrow('rocket');
+    const taskTargetsField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: taskMetadata,
+      fieldName: 'taskTargets',
+    });
+    const metadataWithStaleOwner = objectMetadataItems.map((item) =>
+      item.id === taskMetadata.id
+        ? {
+            ...item,
+            fields: item.fields.map((field) =>
+              field.id === taskTargetsField.id
+                ? {
+                    ...field,
+                    settings: {
+                      ...field.settings,
+                      junctionTargetFieldId: 'missing-target-field-id',
+                    },
+                  }
+                : field,
+            ),
+          }
+        : item,
+    );
+
+    expect(
+      resolveField(rocketMetadata, 'taskTargets', metadataWithStaleOwner),
+    ).toMatchObject({
+      direction: 'reverse',
+      isValid: false,
+      targetFields: [],
+    });
   });
 
   it('keeps morph terminal semantics when the owning-side source is morph', () => {
