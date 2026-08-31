@@ -72,13 +72,15 @@ export const computeRecordFormWidgetForExistingObject = ({
     -1,
   );
 
-  // Every field of the batch reads the same pre-operation widget maps, so the
-  // rank inside the batch is what keeps their indexes distinct.
   const rankInBatch = orderedFormFlatFieldMetadatasInBatch.findIndex(
     (flatFieldMetadata) =>
       flatFieldMetadata.universalIdentifier ===
       sourceFlatFieldMetadata.universalIdentifier,
   );
+
+  if (rankInBatch === -1) {
+    return undefined;
+  }
 
   return buildSystemFormFieldPageLayoutWidget({
     applicationUniversalIdentifier:
@@ -88,6 +90,6 @@ export const computeRecordFormWidgetForExistingObject = ({
     objectMetadataUniversalIdentifier:
       sourceFlatFieldMetadata.objectMetadataUniversalIdentifier,
     flatFieldMetadata: sourceFlatFieldMetadata,
-    index: lastExistingIndex + 1 + Math.max(rankInBatch, 0),
+    index: lastExistingIndex + 1 + rankInBatch,
   });
 };

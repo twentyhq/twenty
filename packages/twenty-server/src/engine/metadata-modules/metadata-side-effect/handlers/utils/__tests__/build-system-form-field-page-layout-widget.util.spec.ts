@@ -34,7 +34,6 @@ describe('buildSystemFormFieldPageLayoutWidget', () => {
       objectMetadataUniversalIdentifier: objectUniversalIdentifier,
       flatFieldMetadata: {
         universalIdentifier: fieldUniversalIdentifier,
-        label: 'Name',
       },
       index,
     });
@@ -52,7 +51,7 @@ describe('buildSystemFormFieldPageLayoutWidget', () => {
       }),
     );
     expect(widget.type).toBe(WidgetType.FORM_FIELD);
-    expect(widget.title).toBe('Name');
+    expect(widget.title).toBe('');
     expect(widget.universalConfiguration).toEqual({
       configurationType: WidgetConfigurationType.FORM_FIELD,
       fieldMetadataId: fieldUniversalIdentifier,
@@ -68,7 +67,7 @@ describe('buildSystemFormFieldPageLayoutWidget', () => {
     });
   });
 
-  it('should keep the same identifier whatever the field label and position', () => {
+  it('should keep the same identifier whatever the position', () => {
     expect(buildWidget(0).universalIdentifier).toBe(
       buildWidget(7).universalIdentifier,
     );

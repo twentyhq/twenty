@@ -15,10 +15,7 @@ export const buildSystemFormFieldPageLayoutWidget = ({
   applicationUniversalIdentifier: string;
   pageLayoutTabUniversalIdentifier: string;
   objectMetadataUniversalIdentifier: string;
-  flatFieldMetadata: Pick<
-    UniversalFlatFieldMetadata,
-    'universalIdentifier' | 'label'
-  >;
+  flatFieldMetadata: Pick<UniversalFlatFieldMetadata, 'universalIdentifier'>;
   index: number;
 }): UniversalFlatPageLayoutWidget => {
   const now = new Date().toISOString();
@@ -32,7 +29,7 @@ export const buildSystemFormFieldPageLayoutWidget = ({
     }),
     applicationUniversalIdentifier,
     pageLayoutTabUniversalIdentifier,
-    title: flatFieldMetadata.label,
+    title: '',
     type: WidgetType.FORM_FIELD,
     position: {
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,

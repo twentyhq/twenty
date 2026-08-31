@@ -4,7 +4,10 @@ import {
 } from 'twenty-shared/application';
 import { PageLayoutType } from 'twenty-shared/types';
 
-import { RECORD_FORM_TAB_PROPS } from 'src/engine/metadata-modules/metadata-side-effect/constants/record-form-tab-props.constant';
+import {
+  RECORD_FORM_PAGE_LAYOUT_NAME,
+  RECORD_FORM_TAB_PROPS,
+} from 'src/engine/metadata-modules/metadata-side-effect/constants/record-form-tab-props.constant';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
 import { type UniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout.type';
@@ -14,10 +17,7 @@ export const computeSystemRecordFormPageLayoutToCreate = ({
   applicationUniversalIdentifier,
 }: {
   applicationUniversalIdentifier: string;
-  objectMetadata: Pick<
-    UniversalFlatObjectMetadata,
-    'universalIdentifier' | 'labelSingular'
-  >;
+  objectMetadata: Pick<UniversalFlatObjectMetadata, 'universalIdentifier'>;
 }): {
   pageLayout: UniversalFlatPageLayout;
   pageLayoutTab: UniversalFlatPageLayoutTab;
@@ -59,7 +59,7 @@ export const computeSystemRecordFormPageLayoutToCreate = ({
   const pageLayout: UniversalFlatPageLayout = {
     universalIdentifier: pageLayoutUniversalIdentifier,
     applicationUniversalIdentifier,
-    name: `Default ${objectMetadata.labelSingular} Creation Form`,
+    name: RECORD_FORM_PAGE_LAYOUT_NAME,
     type: PageLayoutType.RECORD_FORM,
     objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
     tabUniversalIdentifiers: [pageLayoutTabUniversalIdentifier],

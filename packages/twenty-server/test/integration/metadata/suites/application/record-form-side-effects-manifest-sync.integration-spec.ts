@@ -225,12 +225,9 @@ describe('Manifest sync - engine-provisioned record-form stack', () => {
       (widget) => widget.formFieldMetadataId,
     );
 
-    // Unlike the record page, the label identifier gets a widget: a creation
-    // form must let the user fill it.
     expect(widgetFieldMetadataIds).toContain(nameField.id);
     expect(widgetFieldMetadataIds).toContain(codeField.id);
 
-    // RATING has no form input, so it is skipped: 2 widgets, not 3.
     expect(widgets).toHaveLength(2);
 
     const nameWidget = widgets.find(

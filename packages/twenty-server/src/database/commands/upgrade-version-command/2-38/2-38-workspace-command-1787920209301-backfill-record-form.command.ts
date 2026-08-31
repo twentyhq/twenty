@@ -6,6 +6,7 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { computeRecordFormFlatFieldMetadatas } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-record-form-flat-field-metadatas.util';
 import { buildSystemFormFieldPageLayoutWidget } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/build-system-form-field-page-layout-widget.util';
 import { computeSystemRecordFormPageLayoutToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-record-form-page-layout-to-create.util';
@@ -28,7 +29,7 @@ type BackfillOperationsByApplication = Map<string, BackfillOperations>;
 @Command({
   name: 'upgrade:2-38:backfill-record-form',
   description:
-    'Backfill the RECORD_FORM page layout stack for every workspace-custom and application object missing it, converging upgraded installs with the stack objectRecordFormOnCreate and fieldRecordFormWidgetOnCreate now emit at creation time. Each object gets one layout, one "Fields" tab and one FORM_FIELD widget per creatable field, label identifier first, in record-page field order. Fields the form cannot render (system, non UI editable, id, and any type the form has no input for, which today means ACTOR, FILES, NUMERIC, POSITION, RATING, TS_VECTOR and relations other than MANY_TO_ONE) are skipped. Every entity is isSystemSideEffect with the same derived universal identifiers the engine uses, so the backfill is idempotent: objects whose derived layout already exists are skipped entirely, and on a layout that exists with missing widgets only the missing ones are topped up, which also makes a retry after a partial failure safe. Widgets land in the migration bucket of the application owning their displayed field, matching the engine emission for app-contributed fields on foreign objects. Twenty-standard objects are skipped: they never reach the side-effect engine, so their form is authored in the standard definitions instead, which reach fresh and upgraded workspaces alike through the normal standard sync.',
+    'Backfill the RECORD_FORM page layout stack for every workspace-custom and application object missing it, converging upgraded installs with what objectRecordFormOnCreate and fieldRecordFormWidgetOnCreate emit at creation time. Twenty-standard objects are skipped: they never reach the side-effect engine, so their form comes from the standard definitions instead.',
 })
 export class BackfillRecordFormCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -195,10 +196,7 @@ export class BackfillRecordFormCommand extends ProvisionedWorkspaceCommandRunner
                   fieldUniversalIdentifier
                 ],
             )
-            .filter(isDefined)
-            .filter(
-              (flatFieldMetadata) => !flatFieldMetadata.isSystemSideEffect,
-            ),
+            .filter(isDefined),
           labelIdentifierFieldMetadataUniversalIdentifier:
             flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
         },
@@ -299,14 +297,7 @@ export class BackfillRecordFormCommand extends ProvisionedWorkspaceCommandRunner
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
-    allFlatEntityOperationByMetadataName: Record<
-      string,
-      {
-        flatEntityToCreate: unknown[];
-        flatEntityToDelete: never[];
-        flatEntityToUpdate: never[];
-      }
-    >;
+    allFlatEntityOperationByMetadataName: Partial<AllFlatEntityOperationByMetadataName>;
   }): Promise<void> {
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
@@ -315,7 +306,7 @@ export class BackfillRecordFormCommand extends ProvisionedWorkspaceCommandRunner
           workspaceId,
           applicationUniversalIdentifier,
           allFlatEntityOperationByMetadataName:
-            allFlatEntityOperationByMetadataName as never,
+            allFlatEntityOperationByMetadataName as AllFlatEntityOperationByMetadataName,
         },
       );
 

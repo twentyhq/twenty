@@ -11,7 +11,7 @@ export const computeRecordFormFlatFieldMetadatas = ({
 }): UniversalFlatFieldMetadata[] =>
   orderFlatFieldMetadatasForSystemIndexView({
     labelIdentifierFieldMetadataUniversalIdentifier,
-    flatFieldMetadatas: flatFieldMetadatas.filter(
-      isFlatFieldMetadataEligibleForRecordForm,
-    ),
+    flatFieldMetadatas: flatFieldMetadatas
+      .filter((flatFieldMetadata) => !flatFieldMetadata.isSystemSideEffect)
+      .filter(isFlatFieldMetadataEligibleForRecordForm),
   });

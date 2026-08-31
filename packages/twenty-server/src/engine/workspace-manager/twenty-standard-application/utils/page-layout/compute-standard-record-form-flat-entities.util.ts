@@ -34,7 +34,7 @@ const STANDARD_RECORD_FORM_TAB_TITLE = i18nLabel(
 
 const STANDARD_RECORD_FORM_NAME = i18nLabel(
   msg({
-    message: `Default {objectLabelSingular} Creation Form`,
+    message: `Creation Form`,
     context: 'pageLayout.name',
   }),
 );
@@ -47,9 +47,6 @@ type ComputeStandardRecordFormFlatEntitiesArgs = {
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 };
 
-// twenty-standard synchronizes through the from/to migration path, which never
-// runs the metadata side-effect engine, so the record form the engine emits for
-// every other object is authored here instead, on the same derived identifiers.
 export const computeStandardRecordFormFlatEntities = ({
   now,
   workspaceId,
@@ -68,8 +65,6 @@ export const computeStandardRecordFormFlatEntities = ({
   const flatPageLayoutTabs: FlatPageLayoutTab[] = [];
   const flatPageLayoutWidgets: FlatPageLayoutWidget[] = [];
 
-  // Standard object maps are built before the field maps and never learn their
-  // fieldUniversalIdentifiers, so the ownership has to be read the other way.
   const flatFieldMetadatasByObjectUniversalIdentifier = new Map<
     string,
     FlatFieldMetadata[]
@@ -148,7 +143,7 @@ export const computeStandardRecordFormFlatEntities = ({
           workspaceId,
           pageLayoutTabId,
           pageLayoutTabUniversalIdentifier,
-          title: flatFieldMetadata.label,
+          title: '',
           type: WidgetType.FORM_FIELD,
           position: {
             layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,

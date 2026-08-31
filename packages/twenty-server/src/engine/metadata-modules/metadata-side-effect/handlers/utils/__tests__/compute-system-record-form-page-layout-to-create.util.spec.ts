@@ -11,7 +11,6 @@ const objectUniversalIdentifier = 'b1b2b3b4-b5b6-4000-8000-000000000001';
 
 const objectMetadata = {
   universalIdentifier: objectUniversalIdentifier,
-  labelSingular: 'Ticket',
 };
 
 const derivedPageLayoutUniversalIdentifier =
@@ -40,7 +39,7 @@ describe('computeSystemRecordFormPageLayoutToCreate', () => {
       derivedPageLayoutUniversalIdentifier,
     );
     expect(pageLayout.type).toBe(PageLayoutType.RECORD_FORM);
-    expect(pageLayout.name).toBe('Default Ticket Creation Form');
+    expect(pageLayout.name).toBe('Creation Form');
     expect(pageLayout.objectMetadataUniversalIdentifier).toBe(
       objectUniversalIdentifier,
     );
@@ -68,19 +67,5 @@ describe('computeSystemRecordFormPageLayoutToCreate', () => {
     expect(pageLayoutTab.widgetUniversalIdentifiers).toEqual([]);
     expect(pageLayoutTab.isActive).toBe(true);
     expect(pageLayoutTab.isSystemSideEffect).toBe(true);
-  });
-
-  it('should not depend on the object label for its identifiers', () => {
-    const renamedResult = computeSystemRecordFormPageLayoutToCreate({
-      applicationUniversalIdentifier,
-      objectMetadata: { ...objectMetadata, labelSingular: 'Renamed' },
-    });
-
-    expect(renamedResult.pageLayout.universalIdentifier).toBe(
-      derivedPageLayoutUniversalIdentifier,
-    );
-    expect(renamedResult.pageLayoutTab.universalIdentifier).toBe(
-      derivedPageLayoutTabUniversalIdentifier,
-    );
   });
 });

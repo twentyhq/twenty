@@ -33,22 +33,19 @@ const pageLayoutTabUniversalIdentifier =
     title: 'Fields',
   });
 
-const buildFlatFieldMetadata = (universalIdentifier: string, label: string) =>
+const buildFlatFieldMetadata = (universalIdentifier: string) =>
   ({
     universalIdentifier,
     applicationUniversalIdentifier,
     objectMetadataUniversalIdentifier: objectUniversalIdentifier,
-    label,
   }) as unknown as UniversalFlatFieldMetadata;
 
 const sourceFlatFieldMetadata = buildFlatFieldMetadata(
   fieldUniversalIdentifier,
-  'Name',
 );
 
 const secondFlatFieldMetadata = buildFlatFieldMetadata(
   otherFieldUniversalIdentifier,
-  'Code',
 );
 
 const buildFlatPageLayoutTab = (overrides: Record<string, unknown> = {}) => ({
