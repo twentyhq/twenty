@@ -102,6 +102,8 @@ Pasting a link to a Twenty person, company, opportunity, note or task in Slack r
 
 3. **Scopes and events.** The previews need the `links:read` and `links:write` scopes plus the `link_shared` and `entity_details_requested` event subscriptions from the lists above. On an existing install, add them and reconnect (disconnect and **Add connection** again) so the token picks up the scopes.
 
+4. **App icon.** Slack stamps your Slack app's icon on the corner of every record card for attribution, and an app without one gets Slack's generic placeholder. Upload the Twenty logo (or your own) under **Basic Information → Display Information → App icon**; icons cannot be set from the manifest.
+
 Previews are rendered only when the person who posted the link maps to a workspace member (the same Slack-account-to-member matching the assistant uses). The record card is visible to everyone in the channel, so the preview stays to a handful of headline fields; expanding the card opens a side panel with the same details, and members open the record in Twenty for the rest.
 
 Record links the bot itself posts (assistant answers, workflow message steps) carry the preview too. Slack never sends `link_shared` for an app's own messages, so those previews are attached when the message is posted; the member gate does not apply there, since what the bot says is already decided upstream (the assistant runs with the requester's permissions, workflow steps post what their author configured).
