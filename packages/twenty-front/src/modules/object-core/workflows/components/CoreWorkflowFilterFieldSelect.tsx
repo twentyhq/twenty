@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { ViewFilterOperand, type StepFilter } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CORE_WORKFLOW_FILTER_FIELDS } from '@/object-core/workflows/constants/CoreWorkflowFilterFields';
 import { findCoreWorkflowFilterField } from '@/object-core/workflows/utils/findCoreWorkflowFilterField';
@@ -23,7 +24,7 @@ export const CoreWorkflowFilterFieldSelect = ({
   const handleFieldChange = (fieldKey: string) => {
     const selectedField = findCoreWorkflowFilterField(fieldKey);
 
-    if (selectedField === undefined) {
+    if (!isDefined(selectedField)) {
       return;
     }
 

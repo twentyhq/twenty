@@ -1,4 +1,8 @@
-import { ViewFilterOperand, type StepFilter } from 'twenty-shared/types';
+import {
+  StepLogicalOperator,
+  ViewFilterOperand,
+  type StepFilter,
+} from 'twenty-shared/types';
 import {
   isDefined,
   isRecordFilterOperandExpectingValue,
@@ -77,7 +81,7 @@ export const buildCoreWorkflowFilterInput = (
 
   return {
     logicalOperator:
-      rootStepFilterGroup?.logicalOperator === 'OR'
+      rootStepFilterGroup?.logicalOperator === StepLogicalOperator.OR
         ? CoreWorkflowFilterLogicalOperator.OR
         : CoreWorkflowFilterLogicalOperator.AND,
     rules,

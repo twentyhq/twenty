@@ -1,4 +1,8 @@
-import { StepLogicalOperator, ViewFilterOperand } from 'twenty-shared/types';
+import {
+  StepLogicalOperator,
+  ViewFilterOperand,
+  type StepFilter,
+} from 'twenty-shared/types';
 
 import { CORE_WORKFLOW_FILTER_FIELDS } from '@/object-core/workflows/constants/CoreWorkflowFilterFields';
 import { buildCoreWorkflowFilterInput } from '@/object-core/workflows/utils/buildCoreWorkflowFilterInput';
@@ -9,16 +13,16 @@ import {
   CoreWorkflowFilterOperand,
 } from '~/generated/graphql';
 
-const buildStepFilter = (overrides: Record<string, unknown> = {}) =>
-  ({
-    id: 'filter-1',
-    type: 'TEXT',
-    stepOutputKey: CoreWorkflowFilterFieldKey.NAME,
-    operand: ViewFilterOperand.CONTAINS,
-    value: 'sync',
-    stepFilterGroupId: 'group-1',
-    ...overrides,
-  }) as never;
+const buildStepFilter = (overrides: Partial<StepFilter> = {}): StepFilter => ({
+  id: 'filter-1',
+  type: 'TEXT',
+  stepOutputKey: CoreWorkflowFilterFieldKey.NAME,
+  operand: ViewFilterOperand.CONTAINS,
+  value: 'sync',
+  stepFilterGroupId: 'group-1',
+  positionInStepFilterGroup: 1,
+  ...overrides,
+});
 
 describe('buildCoreWorkflowFilterInput', () => {
   it('should return undefined when there is no usable rule', () => {
