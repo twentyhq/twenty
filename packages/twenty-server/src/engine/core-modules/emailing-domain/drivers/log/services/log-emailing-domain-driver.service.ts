@@ -1,5 +1,3 @@
-import { LOG_EMAILING_DRIVER_THROTTLE_FAILURE_RATIO } from 'src/engine/core-modules/emailing-domain/drivers/log/constants/log-emailing-driver-throttle-failure-ratio.constant';
-import { LOG_EMAILING_DRIVER_SEND_LATENCY_MS } from 'src/engine/core-modules/emailing-domain/drivers/log/constants/log-emailing-driver-send-latency-ms.constant';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -24,6 +22,8 @@ import { UnsubscribeContentService } from 'src/engine/core-modules/emailing-doma
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
+const SIMULATED_PROVIDER = { sendLatencyMs: 50, throttleFailureRatio: 0 };
+
 @Injectable()
 export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
   private readonly logger = new Logger(LogEmailingDomainDriver.name);
@@ -46,24 +46,24 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
   async verifyDomain(
     input: EmailingDomainResourceInput,
   ): Promise<EmailingDomainVerificationResult> {
-    this.logger.log(
-      `[log-driver] verifyDomain(${input.domain}) → VERIFIED (instant)`,
-    );
-
-    return {
-      status: EmailingDomainStatus.VERIFIED,
-      verificationRecords: this.buildSyntheticVerificationRecords(input.domain),
-    };
+    return this.alwaysVerified('verifyDomain', input.domain);
   }
 
   async getDomainStatus(
     input: EmailingDomainResourceInput,
   ): Promise<EmailingDomainVerificationResult> {
-    this.logger.log(`[log-driver] getDomainStatus(${input.domain}) → VERIFIED`);
+    return this.alwaysVerified('getDomainStatus', input.domain);
+  }
+
+  private alwaysVerified(
+    operation: string,
+    domain: string,
+  ): EmailingDomainVerificationResult {
+    this.logger.log(`[log-driver] ${operation}(${domain}) → VERIFIED`);
 
     return {
       status: EmailingDomainStatus.VERIFIED,
-      verificationRecords: this.buildSyntheticVerificationRecords(input.domain),
+      verificationRecords: this.buildSyntheticVerificationRecords(domain),
     };
   }
 
@@ -113,13 +113,13 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
   }
 
   private async simulateProviderCall(): Promise<void> {
-    if (LOG_EMAILING_DRIVER_SEND_LATENCY_MS > 0) {
+    if (SIMULATED_PROVIDER.sendLatencyMs > 0) {
       await new Promise((resolve) =>
-        setTimeout(resolve, LOG_EMAILING_DRIVER_SEND_LATENCY_MS),
+        setTimeout(resolve, SIMULATED_PROVIDER.sendLatencyMs),
       );
     }
 
-    if (Math.random() < LOG_EMAILING_DRIVER_THROTTLE_FAILURE_RATIO) {
+    if (Math.random() < SIMULATED_PROVIDER.throttleFailureRatio) {
       throw new EmailingDomainDriverException(
         '[log-driver] simulated provider throttling',
         EmailingDomainDriverExceptionCode.TEMPORARY_ERROR,
