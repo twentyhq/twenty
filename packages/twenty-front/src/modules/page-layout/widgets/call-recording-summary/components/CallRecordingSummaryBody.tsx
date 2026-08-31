@@ -50,7 +50,7 @@ export const CallRecordingSummaryBody = ({
   if (!isDefined(callRecording)) {
     return (
       <CallRecordingWidgetEmptyStateDisplay
-        animatedPlaceholderType="noMatchRecord"
+        animatedPlaceholderType="noCallRecording"
         title={t`No Call Recording`}
         subTitle={t`No call recording exists for this calendar event yet.`}
       />
@@ -89,7 +89,7 @@ export const CallRecordingSummaryBody = ({
 
   return (
     <CallRecordingWidgetEmptyStateDisplay
-      animatedPlaceholderType="noMatchRecord"
+      animatedPlaceholderType="noCallRecording"
       title={t`No Summary`}
       subTitle={t`No summary has been generated for this call recording yet.`}
     />

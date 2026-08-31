@@ -61,7 +61,7 @@ export const CallRecordingTranscriptContent = ({
   return (
     <StyledEmptyStateScrollContainer>
       <CallRecordingWidgetEmptyStateDisplay
-        animatedPlaceholderType="noMatchRecord"
+        animatedPlaceholderType="noCallRecording"
         title={t`No Transcript`}
         subTitle={t`No transcript is available for this recording.`}
       />
