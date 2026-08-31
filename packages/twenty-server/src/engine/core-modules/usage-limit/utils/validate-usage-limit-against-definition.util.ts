@@ -23,7 +23,10 @@ export const validateUsageLimitAgainstDefinition = (
     );
   }
 
-  if (!definition.allowedOperationTypes.includes(input.operationType)) {
+  if (
+    isDefined(input.operationType) &&
+    !definition.allowedOperationTypes.includes(input.operationType)
+  ) {
     throw new UsageLimitException(
       `${input.resourceType} ${input.limitKind} limits cannot target the ${input.operationType} operation`,
       UsageLimitExceptionCode.LIMIT_RULE_INVALID,
@@ -44,9 +47,44 @@ export const validateUsageLimitAgainstDefinition = (
     );
   }
 
-  if (input.limitKind === 'speed' && input.windowSeconds <= 0) {
+  if (input.limitKind === 'speed') {
+    if (input.windowSeconds <= 0) {
+      throw new UsageLimitException(
+        'A speed limit needs a window longer than zero seconds',
+        UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+      );
+    }
+
+    if (input.limitValueType === 'percent') {
+      throw new UsageLimitException(
+        'A speed limit cannot be a percentage',
+        UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+      );
+    }
+  }
+
+  if (input.limitKind === 'quota') {
+    if (input.windowSeconds !== 0) {
+      throw new UsageLimitException(
+        'A quota spans the whole period and cannot have a window',
+        UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+      );
+    }
+
+    if (isDefined(input.burstValue)) {
+      throw new UsageLimitException(
+        'A quota cannot hold a burst value',
+        UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+      );
+    }
+  }
+
+  if (
+    input.limitValueType === 'percent' &&
+    (input.limitValue < 1 || input.limitValue > 10000)
+  ) {
     throw new UsageLimitException(
-      'A speed limit needs a window longer than zero seconds',
+      'A percent limit is expressed in basis points, between 1 and 10000',
       UsageLimitExceptionCode.LIMIT_RULE_INVALID,
     );
   }

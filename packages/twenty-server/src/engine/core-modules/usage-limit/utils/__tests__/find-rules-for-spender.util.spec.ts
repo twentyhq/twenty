@@ -45,6 +45,19 @@ describe('findRulesForSpender', () => {
     ).toEqual([shared]);
   });
 
+  it('applies a rule covering every operation of the resource', () => {
+    const wildcard = buildRule({ id: 'wildcard', operationType: '' });
+    const specific = buildRule({ id: 'specific' });
+
+    expect(
+      findRulesForSpender({
+        rules: [wildcard, specific],
+        spender,
+        operationType: UsageOperationType.API_REQUEST,
+      }),
+    ).toEqual([wildcard, specific]);
+  });
+
   it('ignores a rule belonging to another spender', () => {
     const otherKey = buildRule({ id: 'other', spenderId: 'key-2' });
 

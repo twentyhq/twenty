@@ -11,5 +11,5 @@ export type ExhaustedScope = {
   remaining: number;
   windowSeconds: number;
   retryAfterMs: number;
-  isFallback: boolean;
+  isDefault: boolean;
 };

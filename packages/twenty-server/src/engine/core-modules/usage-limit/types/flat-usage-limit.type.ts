@@ -7,7 +7,7 @@ import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spen
 export type FlatUsageLimit = {
   id: string;
   resourceType: UsageResourceType;
-  operationType: UsageOperationType;
+  operationType: UsageOperationType | '';
   spenderType: SpenderType;
   spenderId: string;
   limitKind: LimitKind;
