@@ -22,6 +22,7 @@ type WorkspaceCommandMenuItem = {
   universalIdentifier: string;
   engineComponentKey?: EngineComponentKey;
   payload?: object | null;
+  navigationTargetObjectMetadataUniversalIdentifier?: string | null;
   isSystemSideEffect?: boolean;
 };
 
@@ -30,6 +31,7 @@ const buildFlatCommandMenuItem = (
 ) => ({
   engineComponentKey: EngineComponentKey.NAVIGATION,
   payload: { objectMetadataItemId: OBJECT_ID },
+  navigationTargetObjectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
   isSystemSideEffect: true,
   ...commandMenuItem,
 });
@@ -168,11 +170,14 @@ describe('ReownObjectNavigationCommandMenuItemsCommand', () => {
         id: 'path-command-id',
         universalIdentifier: 'path-identifier',
         payload: { path: '/settings/profile' },
+        navigationTargetObjectMetadataUniversalIdentifier: null,
       }),
       buildFlatCommandMenuItem({
         id: 'orphan-command-id',
         universalIdentifier: 'orphan-identifier',
         payload: { objectMetadataItemId: 'missing-object-id' },
+        navigationTargetObjectMetadataUniversalIdentifier:
+          'missing-object-universal-identifier',
       }),
     ]);
 
@@ -191,6 +196,7 @@ describe('ReownObjectNavigationCommandMenuItemsCommand', () => {
         id: 'holder-command-id',
         universalIdentifier: DERIVED_UNIVERSAL_IDENTIFIER,
         payload: { path: '/unrelated' },
+        navigationTargetObjectMetadataUniversalIdentifier: null,
       }),
     ]);
 
@@ -210,6 +216,7 @@ describe('ReownObjectNavigationCommandMenuItemsCommand', () => {
         id: 'holder-command-id',
         universalIdentifier: DERIVED_UNIVERSAL_IDENTIFIER,
         payload: { path: '/unrelated' },
+        navigationTargetObjectMetadataUniversalIdentifier: null,
       }),
     ]);
 

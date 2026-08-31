@@ -8,9 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { CommandMenuItemExceptionCode } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.exception';
 import { type CommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item-payload.union';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
-import { isObjectNavigationCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-navigation-command-menu-item-payload.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { MetadataSideEffectExceptionCode } from 'src/engine/metadata-modules/metadata-side-effect/exceptions/metadata-side-effect-exception-code';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
@@ -62,40 +60,66 @@ export class FlatCommandMenuItemValidatorService {
 
     if (
       isDefined(
-        flatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier,
-      ) &&
-      !isDefined(
         findFlatEntityByUniversalIdentifier({
-          universalIdentifier:
-            flatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier,
-          flatEntityMaps: flatObjectMetadataMaps,
+          universalIdentifier: flatCommandMenuItem.universalIdentifier,
+          flatEntityMaps: optimisticFlatCommandMenuItemMaps,
         }),
       )
     ) {
       validationResult.errors.push({
         code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
-        message: t`Navigation target object metadata not found`,
-        userFriendlyMessage: msg`Navigation target object not found`,
+        message: t`Command menu item with same universal identifier already exists`,
+        userFriendlyMessage: msg`Command menu item already exists`,
       });
     }
 
-    this.validateSystemUniversalIdentifierReservation({
-      universalIdentifier: flatCommandMenuItem.universalIdentifier,
-      isSystemSideEffect: flatCommandMenuItem.isSystemSideEffect,
-      optimisticFlatCommandMenuItemMaps,
-      validationResult,
-    });
-
-    this.validateObjectNavigationSingleton({
-      engineComponentKey: flatCommandMenuItem.engineComponentKey,
-      payload: flatCommandMenuItem.payload,
-      navigationTargetObjectMetadataUniversalIdentifier:
+    if (
+      isDefined(
         flatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier,
-      isSystemSideEffect: flatCommandMenuItem.isSystemSideEffect,
-      universalIdentifier: flatCommandMenuItem.universalIdentifier,
-      flatObjectMetadataMaps,
-      validationResult,
-    });
+      )
+    ) {
+      const navigationTargetFlatObjectMetadata =
+        findFlatEntityByUniversalIdentifier({
+          universalIdentifier:
+            flatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier,
+          flatEntityMaps: flatObjectMetadataMaps,
+        });
+
+      if (!isDefined(navigationTargetFlatObjectMetadata)) {
+        validationResult.errors.push({
+          code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+          message: t`Navigation target object metadata not found`,
+          userFriendlyMessage: msg`Navigation target object not found`,
+        });
+      }
+
+      // Side-effect expansion runs before validation, so a caller row and an
+      // engine-emitted one reach here in the same matrix and the flag is what
+      // tells them apart: no caller can set it, the public create input pins it
+      // to false.
+      if (flatCommandMenuItem.isSystemSideEffect !== true) {
+        validationResult.errors.push({
+          code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+          message: t`Object navigation command menu items are reserved for the engine-owned default command; remove the objectMetadataItemId payload from the command menu item definition`,
+          userFriendlyMessage: msg`Object navigation commands are reserved for the system`,
+        });
+      }
+
+      const objectAlreadyHasNavigationCommandMenuItem =
+        navigationTargetFlatObjectMetadata?.commandMenuItemUniversalIdentifiers.some(
+          (existingUniversalIdentifier) =>
+            existingUniversalIdentifier !==
+            flatCommandMenuItem.universalIdentifier,
+        ) === true;
+
+      if (objectAlreadyHasNavigationCommandMenuItem) {
+        validationResult.errors.push({
+          code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+          message: t`Object already has a navigation command menu item`,
+          userFriendlyMessage: msg`This object already has a navigation command`,
+        });
+      }
+    }
 
     return validationResult;
   }
@@ -137,7 +161,6 @@ export class FlatCommandMenuItemValidatorService {
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatCommandMenuItemMaps: optimisticFlatCommandMenuItemMaps,
-      flatObjectMetadataMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.commandMenuItem
@@ -193,142 +216,7 @@ export class FlatCommandMenuItemValidatorService {
       validationResult,
     });
 
-    // Only an update that changes the payload or the engine component key can
-    // turn a row into an object navigation command, so the singleton guard is
-    // scoped to those updates and tolerates rows not yet re-owned onto the
-    // derived identifier being updated in place (isActive follow on a legacy
-    // identifier).
-    if (
-      flatEntityUpdate.payload !== undefined ||
-      isDefined(flatEntityUpdate.engineComponentKey)
-    ) {
-      this.validateObjectNavigationSingleton({
-        engineComponentKey,
-        payload,
-        navigationTargetObjectMetadataUniversalIdentifier:
-          fromFlatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier,
-        isSystemSideEffect: fromFlatCommandMenuItem.isSystemSideEffect,
-        universalIdentifier,
-        flatObjectMetadataMaps,
-        validationResult,
-      });
-    }
-
     return validationResult;
-  }
-
-  // Non-system callers cannot claim a universal identifier already held by an
-  // engine-owned (isSystemSideEffect) row: squatting a standard action command
-  // or an object navigation command UID fails loudly instead of silently
-  // winning. Mirrors the side-effect engine collision detection for rows that
-  // are not produced by a metadata operation.
-  private validateSystemUniversalIdentifierReservation({
-    universalIdentifier,
-    isSystemSideEffect,
-    optimisticFlatCommandMenuItemMaps,
-    validationResult,
-  }: {
-    universalIdentifier: string;
-    isSystemSideEffect: boolean;
-    optimisticFlatCommandMenuItemMaps: UniversalFlatEntityValidationArgs<
-      typeof ALL_METADATA_NAME.commandMenuItem
-    >['optimisticFlatEntityMapsAndRelatedFlatEntityMaps']['flatCommandMenuItemMaps'];
-    validationResult: FailedFlatEntityValidation<'commandMenuItem', 'create'>;
-  }): void {
-    if (isSystemSideEffect === true) {
-      return;
-    }
-
-    const existingFlatCommandMenuItem = findFlatEntityByUniversalIdentifier({
-      universalIdentifier,
-      flatEntityMaps: optimisticFlatCommandMenuItemMaps,
-    });
-
-    if (
-      isDefined(existingFlatCommandMenuItem) &&
-      existingFlatCommandMenuItem.isSystemSideEffect === true
-    ) {
-      validationResult.errors.push({
-        code: MetadataSideEffectExceptionCode.RESERVED_SYSTEM_UNIVERSAL_IDENTIFIER,
-        message: t`Universal identifier is reserved for system-managed metadata`,
-        userFriendlyMessage: msg`This identifier is reserved by the system`,
-      });
-    }
-  }
-
-  // A NAVIGATION item targeting an object is the engine-owned singleton
-  // navigation command of that object: it must be isSystemSideEffect and must
-  // be the only one for the object (two of them are two identical rows sharing
-  // a hotkey). Discrimination is path-first, like the payload union: path-based
-  // NAVIGATION items share the engine key but are a legitimate authoring
-  // surface and are not caught, an incidental objectMetadataItemId next to
-  // their path included. Competitors come from the target object's command
-  // menu item aggregator, so this never scans the workspace.
-  private validateObjectNavigationSingleton({
-    engineComponentKey,
-    payload,
-    navigationTargetObjectMetadataUniversalIdentifier,
-    isSystemSideEffect,
-    universalIdentifier,
-    flatObjectMetadataMaps,
-    validationResult,
-  }: {
-    engineComponentKey: EngineComponentKey | null;
-    payload: CommandMenuItemPayload | null;
-    navigationTargetObjectMetadataUniversalIdentifier: string | null;
-    isSystemSideEffect: boolean;
-    universalIdentifier: string;
-    flatObjectMetadataMaps: UniversalFlatEntityValidationArgs<
-      typeof ALL_METADATA_NAME.commandMenuItem
-    >['optimisticFlatEntityMapsAndRelatedFlatEntityMaps']['flatObjectMetadataMaps'];
-    validationResult: FailedFlatEntityValidation<
-      'commandMenuItem',
-      'create' | 'update'
-    >;
-  }): void {
-    if (engineComponentKey !== EngineComponentKey.NAVIGATION) {
-      return;
-    }
-
-    if (!isObjectNavigationCommandMenuItemPayload(payload)) {
-      return;
-    }
-
-    if (isSystemSideEffect !== true) {
-      validationResult.errors.push({
-        code: MetadataSideEffectExceptionCode.RESERVED_SYSTEM_UNIVERSAL_IDENTIFIER,
-        message: t`Object navigation command menu items are reserved for the engine-owned default command; remove the objectMetadataItemId payload from the command menu item definition`,
-        userFriendlyMessage: msg`Object navigation commands are reserved for the system`,
-      });
-    }
-
-    // Every object-keyed NAVIGATION row carries its target: the mint path and
-    // the public create input both derive it from the payload, and the 2.35
-    // backfill filled the rows that predate the column. An unresolved target
-    // is therefore a payload pointing at an object that does not exist, which
-    // the target existence check above already reports.
-    if (!isDefined(navigationTargetObjectMetadataUniversalIdentifier)) {
-      return;
-    }
-
-    const flatObjectMetadata = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: navigationTargetObjectMetadataUniversalIdentifier,
-      flatEntityMaps: flatObjectMetadataMaps,
-    });
-
-    const duplicateNavigationCommandMenuItemUniversalIdentifier =
-      flatObjectMetadata?.commandMenuItemUniversalIdentifiers.find(
-        (existingUniversalIdentifier) =>
-          existingUniversalIdentifier !== universalIdentifier,
-      );
-
-    if (isDefined(duplicateNavigationCommandMenuItemUniversalIdentifier)) {
-      validationResult.errors.push({
-        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
-        message: t`Object already has a navigation command menu item`,
-        userFriendlyMessage: msg`This object already has a navigation command`,
-      });
-    }
   }
 
   private validateEngineComponentKeyCoherence({

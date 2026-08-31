@@ -11,8 +11,6 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { invalidateCommandMenuItemReownCache } from 'src/database/commands/upgrade-version-command/2-38/utils/invalidate-command-menu-item-reown-cache.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
-import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
-import { isObjectNavigationCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-navigation-command-menu-item-payload.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
@@ -118,22 +116,17 @@ export class ReownObjectNavigationCommandMenuItemsCommand extends ProvisionedWor
     )) {
       if (
         !isDefined(flatCommandMenuItem) ||
-        flatCommandMenuItem.engineComponentKey !==
-          EngineComponentKey.NAVIGATION ||
-        !isObjectNavigationCommandMenuItemPayload(flatCommandMenuItem.payload)
+        !isDefined(
+          flatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier,
+        )
       ) {
         continue;
       }
 
-      const objectMetadataUniversalIdentifier =
-        flatObjectMetadataMaps.universalIdentifierById[
-          flatCommandMenuItem.payload.objectMetadataItemId
+      const flatObjectMetadata =
+        flatObjectMetadataMaps.byUniversalIdentifier[
+          flatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier
         ];
-      const flatObjectMetadata = isDefined(objectMetadataUniversalIdentifier)
-        ? flatObjectMetadataMaps.byUniversalIdentifier[
-            objectMetadataUniversalIdentifier
-          ]
-        : undefined;
 
       if (!isDefined(flatObjectMetadata)) {
         this.logger.warn(
