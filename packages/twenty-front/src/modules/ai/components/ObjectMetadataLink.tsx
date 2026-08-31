@@ -36,8 +36,8 @@ export const ObjectMetadataLink = ({
   const path =
     isDefined(objectMetadataItem) && hasDataModelPermission
       ? getSettingsPath(SettingsPath.ObjectDetail, {
-        objectNamePlural: objectMetadataItem.namePlural,
-      })
+          objectNamePlural: objectMetadataItem.namePlural,
+        })
       : undefined;
 
   const { to, onClick } = useChatReferenceTarget(path);

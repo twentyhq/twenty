@@ -1,6 +1,6 @@
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import { sidePanelPageSelector } from '@/side-panel/states/sidePanelPageSelector';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
@@ -101,7 +101,7 @@ export const useOpenRecordFromIndexView = () => {
         setParentViewOn(MAIN_CONTEXT_STORE_INSTANCE_ID);
 
         const isSidePanelAiChat =
-          store.get(sidePanelPageState.atom) === SidePanelPages.AskAI;
+          store.get(sidePanelPageSelector.atom) === SidePanelPages.AskAI;
 
         if (!isSidePanelAiChat) {
           closeSidePanelMenu();

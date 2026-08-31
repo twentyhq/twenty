@@ -13,7 +13,6 @@ import { useHandleSidePanelBackspace } from '@/side-panel/hooks/useHandleSidePan
 import { useHandleSidePanelEscape } from '@/side-panel/hooks/useHandleSidePanelEscape';
 import { useSidePanelContextChips } from '@/side-panel/hooks/useSidePanelContextChips';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -130,11 +129,11 @@ export const SidePanelTopBar = ({
 
   const isMobile = useIsMobile();
 
-  const sidePanelPage = useAtomStateValue(sidePanelPageState);
-
   const sidePanelNavigationStack = useAtomStateValue(
     sidePanelNavigationStackState,
   );
+  const sidePanelPage =
+    sidePanelNavigationStack.at(-1)?.page ?? SidePanelPages.CommandMenuDisplay;
 
   const { theme } = useContext(ThemeContext);
 

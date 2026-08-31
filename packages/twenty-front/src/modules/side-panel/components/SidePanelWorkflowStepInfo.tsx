@@ -3,7 +3,7 @@ import { useLogicFunctionThirdPartyApplicationInformation } from '@/logic-functi
 import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { sidePanelWorkflowStepIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowStepIdComponentState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import { sidePanelPageSelector } from '@/side-panel/states/sidePanelPageSelector';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -38,7 +38,7 @@ export const SidePanelWorkflowStepInfo = ({
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
-  const sidePanelPage = useAtomStateValue(sidePanelPageState);
+  const sidePanelPage = useAtomStateValue(sidePanelPageSelector);
 
   const workflowId = useSidePanelWorkflowIdOrThrow();
 

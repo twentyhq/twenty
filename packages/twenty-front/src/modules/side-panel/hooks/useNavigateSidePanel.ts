@@ -10,8 +10,6 @@ import {
   type SidePanelNavigationTarget,
   sidePanelNavigationStackState,
 } from '@/side-panel/states/sidePanelNavigationStackState';
-import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelShouldFocusTitleInputComponentState } from '@/side-panel/states/sidePanelShouldFocusTitleInputComponentState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -74,7 +72,6 @@ export const useNavigateSidePanel = () => {
         ...navigationStackItemWithoutId
       } = navigationTarget;
 
-      const { page, pageTitle, pageIcon } = navigationStackItemWithoutId;
       const computedPageId = pageId || v4();
 
       const navigationStackItem = {
@@ -83,12 +80,6 @@ export const useNavigateSidePanel = () => {
       } as SidePanelNavigationStackItem;
 
       openSidePanel();
-      store.set(sidePanelPageState.atom, page);
-      store.set(sidePanelPageInfoState.atom, {
-        title: pageTitle,
-        Icon: pageIcon,
-        instanceId: computedPageId,
-      });
 
       if (focusTitleInput) {
         store.set(

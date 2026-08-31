@@ -17,7 +17,6 @@ import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
 import { SidePanelPathUrlSyncEffect } from '@/side-panel/routing/components/SidePanelPathUrlSyncEffect';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -98,9 +97,9 @@ describe('restoring the panel from the url', () => {
     );
 
     await waitFor(() => {
-      expect(capturedStore?.get(sidePanelPageState.atom)).toBe(
-        SidePanelPages.RoutedPage,
-      );
+      expect(
+        capturedStore?.get(sidePanelNavigationStackState.atom).at(-1)?.page,
+      ).toBe(SidePanelPages.RoutedPage);
     });
 
     expect(recordedSearchValues).not.toContain('');

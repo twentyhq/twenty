@@ -1,4 +1,4 @@
-import { type Location, type PathRouteProps } from 'react-router-dom';
+import { type Location, type NonIndexRouteObject } from 'react-router-dom';
 
 export type WorkspaceSurfaceType = 'main' | 'side-panel';
 
@@ -14,7 +14,7 @@ export type WorkspaceRouteHandle = {
 };
 
 export type WorkspaceRouteObject = Omit<
-  PathRouteProps,
+  NonIndexRouteObject,
   'children' | 'handle'
 > & {
   children?: WorkspaceRouteObject[];

@@ -10,8 +10,6 @@ import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { isSidePanelRoutedLocation } from '@/side-panel/routing/utils/isSidePanelRoutedLocation';
 import { toSidePanelLocation } from '@/side-panel/routing/utils/toSidePanelLocation';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 
 export const useOpenRoutedPageInSidePanel = () => {
   const store = useStore();
@@ -65,12 +63,6 @@ export const useOpenRoutedPageInSidePanel = () => {
             routedLocation,
           },
         ]);
-        store.set(sidePanelPageState.atom, SidePanelPages.RoutedPage);
-        store.set(sidePanelPageInfoState.atom, {
-          ...store.get(sidePanelPageInfoState.atom),
-          title,
-        });
-
         return currentItem.pageId;
       }
 

@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import { sidePanelPageSelector } from '@/side-panel/states/sidePanelPageSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -16,7 +16,7 @@ export const useIsNavigationMenuItemEditHighlighted = (
   const pendingInsertionNavigationMenuItem = useAtomStateValue(
     pendingInsertionNavigationMenuItemState,
   );
-  const sidePanelPage = useAtomStateValue(sidePanelPageState);
+  const sidePanelPage = useAtomStateValue(sidePanelPageSelector);
 
   const isSelectedById =
     selectedNavigationMenuItemIdInEditMode === navigationMenuItem.id;

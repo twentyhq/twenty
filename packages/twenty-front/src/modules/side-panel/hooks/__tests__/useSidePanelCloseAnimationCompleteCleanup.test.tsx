@@ -5,8 +5,6 @@ import { MemoryRouter } from 'react-router-dom';
 import { SIDE_PANEL_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/side-panel/constants/SidePanelContextChipGroupsDropdownId';
 import { useSidePanelCloseAnimationCompleteCleanup } from '@/side-panel/hooks/useSidePanelCloseAnimationCompleteCleanup';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
@@ -69,12 +67,6 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
     const { result } = renderHooks();
 
     act(() => {
-      jotaiStore.set(sidePanelPageState.atom, SidePanelPages.RoutedPage);
-      jotaiStore.set(sidePanelPageInfoState.atom, {
-        title: 'Test Record',
-        Icon: IconList,
-        instanceId: 'test-id',
-      });
       jotaiStore.set(isSidePanelOpenedState.atom, true);
       jotaiStore.set(sidePanelSearchState.atom, 'test search');
       jotaiStore.set(sidePanelNavigationStackState.atom, [
@@ -89,14 +81,6 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
       jotaiStore.set(isSidePanelClosingState.atom, true);
     });
 
-    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
-      SidePanelPages.RoutedPage,
-    );
-    expect(jotaiStore.get(sidePanelPageInfoState.atom)).toEqual({
-      title: 'Test Record',
-      Icon: IconList,
-      instanceId: 'test-id',
-    });
     expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(true);
     expect(jotaiStore.get(sidePanelSearchState.atom)).toBe('test search');
     expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([
@@ -116,17 +100,9 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
       result.current.sidePanelCloseAnimationCompleteCleanup();
     });
 
-    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
-      SidePanelPages.CommandMenuDisplay,
-    );
-    expect(jotaiStore.get(sidePanelPageInfoState.atom)).toEqual({
-      title: undefined,
-      Icon: undefined,
-      instanceId: '',
-    });
+    expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([]);
     expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
     expect(jotaiStore.get(sidePanelSearchState.atom)).toBe('');
-    expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([]);
     expect(jotaiStore.get(hasUserSelectedSidePanelListItemState.atom)).toBe(
       false,
     );

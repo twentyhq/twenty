@@ -4,10 +4,14 @@ import { type ReactNode } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 
 import { useSidePanelExpandTarget } from '@/side-panel/hooks/useSidePanelExpandTarget';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import {
+  type SidePanelNavigationStackItem,
+  sidePanelNavigationStackState,
+} from '@/side-panel/states/sidePanelNavigationStackState';
 import { type ActiveSidePanelPage } from '@/side-panel/types/SidePanelPage';
 import { type SidePanelExpandTarget } from '@/side-panel/types/SidePanelExpandTarget';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { IconDotsVertical } from 'twenty-ui/icon';
 
 const mockAskAiExpandTarget: SidePanelExpandTarget = {
   label: 'Expand chat',
@@ -76,7 +80,29 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 const renderExpandTarget = (sidePanelPage: ActiveSidePanelPage) => {
-  jotaiStore.set(sidePanelPageState.atom, sidePanelPage);
+  const navigationItem: SidePanelNavigationStackItem =
+    sidePanelPage === SidePanelPages.RoutedPage
+      ? {
+          page: sidePanelPage,
+          pageTitle: 'Test page',
+          pageIcon: IconDotsVertical,
+          pageId: 'test-page',
+          routedLocation: {
+            pathname: '/test',
+            search: '',
+            hash: '',
+            state: null,
+            key: 'test',
+          },
+        }
+      : {
+          page: sidePanelPage,
+          pageTitle: 'Test page',
+          pageIcon: IconDotsVertical,
+          pageId: 'test-page',
+        };
+
+  jotaiStore.set(sidePanelNavigationStackState.atom, [navigationItem]);
 
   return renderHook(() => useSidePanelExpandTarget(), { wrapper });
 };

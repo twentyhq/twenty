@@ -1,17 +1,13 @@
 import { lazy, useMemo } from 'react';
 
-import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Route,
-} from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 
 import { LazyRoute } from '@/app/components/LazyRoute';
 import { WorkspaceAppProviders } from '@/app/components/WorkspaceAppProviders';
 import { WorkspaceRouteObjectsProvider } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { createWorkspaceRouteObjects } from '@/app/routing/utils/createWorkspaceRouteObjects';
-import { getWorkspaceRouteElementsForSurface } from '@/app/routing/utils/getWorkspaceRouteElementsForSurface';
+import { getWorkspaceRouteObjectsForSurface } from '@/app/routing/utils/getWorkspaceRouteObjectsForSurface';
 import { VerifyEmail } from '@/auth/components/VerifyEmail';
 import { MinimalMetadataGate } from '@/metadata-store/components/MinimalMetadataGate';
 import { OnboardingActivationOutlet } from '@/onboarding/components/OnboardingActivationOutlet';
@@ -118,148 +114,164 @@ const createWorkspaceAppRouter = ({
     isWorkflowCoreIndexPageEnabled,
   });
 
-  return createBrowserRouter(
-    createRoutesFromElements(
-      <Route
-        element={
-          <WorkspaceRouteObjectsProvider routeObjects={workspaceRouteObjects} />
-        }
-      >
-        <Route
-          element={<WorkspaceAppProviders />}
-          loader={async () => Promise.resolve(null)}
-        >
-          <Route element={<MinimalMetadataGate />}>
-            <Route element={<DefaultLayout />}>
-              <Route element={<MainAppLayoutWithSidePanel />}>
-                {getWorkspaceRouteElementsForSurface(
-                  workspaceRouteObjects,
-                  'main',
-                )}
-              </Route>
-            </Route>
-          </Route>
-          <Route element={<AuthFlowLayout />}>
-            <Route path={AppPath.VerifyEmail} element={<VerifyEmail />} />
-            <Route
-              path={AppPath.ResetPassword}
-              element={
-                <LazyRoute fallback={null}>
-                  <PasswordReset />
-                </LazyRoute>
-              }
-            />
-            <Route
-              path={AppPath.PlanRequiredSuccess}
-              element={
-                <LazyRoute fallback={<OnboardingPageLoader />}>
-                  <PaymentSuccess />
-                </LazyRoute>
-              }
-            />
-          </Route>
-          <Route element={<BlankLayout />}>
-            <Route
-              element={<OnboardingTransitionOutlet />}
-              loader={preloadOnboardingPages}
-            >
-              <Route
-                path={AppPath.SignInUp}
-                element={
-                  <LazyRoute fallback={<OnboardingPageLoader />}>
-                    <SignInUp />
-                  </LazyRoute>
-                }
-              />
-              <Route
-                path={AppPath.Invite}
-                element={
-                  <LazyRoute fallback={<OnboardingPageLoader />}>
-                    <SignInUp />
-                  </LazyRoute>
-                }
-              />
-            </Route>
-            <Route
-              element={<OnboardingActivationOutlet />}
-              loader={preloadOnboardingPages}
-            >
-              <Route path={AppPath.Verify} element={<Verify />} />
-              <Route
-                path={AppPath.WorkspaceActivation}
-                element={
-                  <LazyRoute fallback={null}>
-                    <WorkspaceActivation />
-                  </LazyRoute>
-                }
-              />
-            </Route>
-            <Route
-              element={<OnboardingStepLayout />}
-              loader={preloadOnboardingPages}
-            >
-              <Route
-                path={AppPath.CreateProfile}
-                element={
-                  <LazyRoute fallback={<OnboardingStepPageLoader />}>
-                    <CreateProfile />
-                  </LazyRoute>
-                }
-              />
-              <Route
-                path={AppPath.SyncEmails}
-                element={
-                  <LazyRoute fallback={<OnboardingStepPageLoader />}>
-                    <SyncEmails />
-                  </LazyRoute>
-                }
-              />
-              <Route
-                path={AppPath.InstallApps}
-                element={
-                  <LazyRoute fallback={<OnboardingStepPageLoader />}>
-                    <InstallApps />
-                  </LazyRoute>
-                }
-              />
-              <Route
-                path={AppPath.InviteTeam}
-                element={
-                  <LazyRoute fallback={<OnboardingStepPageLoader />}>
-                    <InviteTeam />
-                  </LazyRoute>
-                }
-              />
-              <Route
-                path={AppPath.BookCall}
-                element={
-                  <LazyRoute fallback={<OnboardingStepPageLoader />}>
-                    <BookCall />
-                  </LazyRoute>
-                }
-              />
-              <Route
-                path={AppPath.PlanRequired}
-                element={
-                  <LazyRoute fallback={<OnboardingStepPageLoader />}>
-                    <ChooseYourPlan />
-                  </LazyRoute>
-                }
-              />
-            </Route>
-            <Route
-              path={AppPath.Authorize}
-              element={
-                <LazyRoute>
-                  <Authorize />
-                </LazyRoute>
-              }
-            />
-          </Route>
-        </Route>
-      </Route>,
-    ),
-  );
+  return createBrowserRouter([
+    {
+      element: (
+        <WorkspaceRouteObjectsProvider routeObjects={workspaceRouteObjects} />
+      ),
+      children: [
+        {
+          element: <WorkspaceAppProviders />,
+          loader: async () => Promise.resolve(null),
+          children: [
+            {
+              element: <MinimalMetadataGate />,
+              children: [
+                {
+                  element: <DefaultLayout />,
+                  children: [
+                    {
+                      element: <MainAppLayoutWithSidePanel />,
+                      children: getWorkspaceRouteObjectsForSurface(
+                        workspaceRouteObjects,
+                        'main',
+                      ),
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              element: <AuthFlowLayout />,
+              children: [
+                { path: AppPath.VerifyEmail, element: <VerifyEmail /> },
+                {
+                  path: AppPath.ResetPassword,
+                  element: (
+                    <LazyRoute fallback={null}>
+                      <PasswordReset />
+                    </LazyRoute>
+                  ),
+                },
+                {
+                  path: AppPath.PlanRequiredSuccess,
+                  element: (
+                    <LazyRoute fallback={<OnboardingPageLoader />}>
+                      <PaymentSuccess />
+                    </LazyRoute>
+                  ),
+                },
+              ],
+            },
+            {
+              element: <BlankLayout />,
+              children: [
+                {
+                  element: <OnboardingTransitionOutlet />,
+                  loader: preloadOnboardingPages,
+                  children: [
+                    {
+                      path: AppPath.SignInUp,
+                      element: (
+                        <LazyRoute fallback={<OnboardingPageLoader />}>
+                          <SignInUp />
+                        </LazyRoute>
+                      ),
+                    },
+                    {
+                      path: AppPath.Invite,
+                      element: (
+                        <LazyRoute fallback={<OnboardingPageLoader />}>
+                          <SignInUp />
+                        </LazyRoute>
+                      ),
+                    },
+                  ],
+                },
+                {
+                  element: <OnboardingActivationOutlet />,
+                  loader: preloadOnboardingPages,
+                  children: [
+                    { path: AppPath.Verify, element: <Verify /> },
+                    {
+                      path: AppPath.WorkspaceActivation,
+                      element: (
+                        <LazyRoute fallback={null}>
+                          <WorkspaceActivation />
+                        </LazyRoute>
+                      ),
+                    },
+                  ],
+                },
+                {
+                  element: <OnboardingStepLayout />,
+                  loader: preloadOnboardingPages,
+                  children: [
+                    {
+                      path: AppPath.CreateProfile,
+                      element: (
+                        <LazyRoute fallback={<OnboardingStepPageLoader />}>
+                          <CreateProfile />
+                        </LazyRoute>
+                      ),
+                    },
+                    {
+                      path: AppPath.SyncEmails,
+                      element: (
+                        <LazyRoute fallback={<OnboardingStepPageLoader />}>
+                          <SyncEmails />
+                        </LazyRoute>
+                      ),
+                    },
+                    {
+                      path: AppPath.InstallApps,
+                      element: (
+                        <LazyRoute fallback={<OnboardingStepPageLoader />}>
+                          <InstallApps />
+                        </LazyRoute>
+                      ),
+                    },
+                    {
+                      path: AppPath.InviteTeam,
+                      element: (
+                        <LazyRoute fallback={<OnboardingStepPageLoader />}>
+                          <InviteTeam />
+                        </LazyRoute>
+                      ),
+                    },
+                    {
+                      path: AppPath.BookCall,
+                      element: (
+                        <LazyRoute fallback={<OnboardingStepPageLoader />}>
+                          <BookCall />
+                        </LazyRoute>
+                      ),
+                    },
+                    {
+                      path: AppPath.PlanRequired,
+                      element: (
+                        <LazyRoute fallback={<OnboardingStepPageLoader />}>
+                          <ChooseYourPlan />
+                        </LazyRoute>
+                      ),
+                    },
+                  ],
+                },
+                {
+                  path: AppPath.Authorize,
+                  element: (
+                    <LazyRoute>
+                      <Authorize />
+                    </LazyRoute>
+                  ),
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ]);
 };
 
 export const useCreateWorkspaceAppRouter = ({

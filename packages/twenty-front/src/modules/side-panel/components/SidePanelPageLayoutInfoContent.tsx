@@ -5,8 +5,8 @@ import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pa
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { usePageLayoutHeaderInfo } from '@/side-panel/components/hooks/usePageLayoutHeaderInfo';
 import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
-import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
+import { sidePanelPageSelector } from '@/side-panel/states/sidePanelPageSelector';
 import { sidePanelShouldFocusTitleInputComponentState } from '@/side-panel/states/sidePanelShouldFocusTitleInputComponentState';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TitleInput } from '@/ui/input/components/TitleInput';
@@ -41,8 +41,8 @@ export const SidePanelPageLayoutInfoContent = ({
 }) => {
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
-  const sidePanelPage = useAtomStateValue(sidePanelPageState);
-  const sidePanelPageInfo = useAtomStateValue(sidePanelPageInfoState);
+  const sidePanelPage = useAtomStateValue(sidePanelPageSelector);
+  const sidePanelPageInfo = useAtomStateValue(sidePanelPageInfoSelector);
 
   const [sidePanelShouldFocusTitleInput, setSidePanelShouldFocusTitleInput] =
     useAtomComponentState(

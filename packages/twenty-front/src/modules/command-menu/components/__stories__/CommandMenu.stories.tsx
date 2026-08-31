@@ -34,13 +34,11 @@ import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
-import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
+import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { type SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -97,10 +95,6 @@ const meta: Meta<typeof SidePanelCommandMenuItemDisplayPage> = {
         mockedUserData.currentUserWorkspace,
       );
       jotaiStore.set(isSidePanelOpenedState.atom, true);
-      jotaiStore.set(sidePanelPageInfoState.atom, {
-        title: 'Command Menu',
-        instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
-      });
       jotaiStore.set(sidePanelNavigationStackState.atom, [
         {
           page: SidePanelPages.CommandMenuDisplay,
@@ -267,14 +261,6 @@ export const SubPageNavigation: Story = {
   },
   decorators: [
     (Story) => {
-      jotaiStore.set(
-        sidePanelPageState.atom,
-        SidePanelPages.NavigationMenuAddItem,
-      );
-      jotaiStore.set(sidePanelPageInfoState.atom, {
-        title: 'Add item',
-        instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
-      });
       jotaiStore.set(sidePanelNavigationStackState.atom, [
         {
           page: SidePanelPages.NavigationMenuAddItem,

@@ -1,13 +1,9 @@
 import { useWorkspaceRouteObjects } from '@/app/routing/hooks/useWorkspaceRouteObjects';
 import { type WorkspaceSurfaceType } from '@/app/routing/types/WorkspaceRouteObject';
-import { getWorkspaceRouteElementsForSurface } from '@/app/routing/utils/getWorkspaceRouteElementsForSurface';
+import { getWorkspaceRouteObjectsForSurface } from '@/app/routing/utils/getWorkspaceRouteObjectsForSurface';
 import { isWorkspaceLocationAvailableOnSurface } from '@/app/routing/utils/isWorkspaceLocationAvailableOnSurface';
 import { type ReactNode } from 'react';
-import {
-  createRoutesFromElements,
-  type Location,
-  useRoutes,
-} from 'react-router-dom';
+import { type Location, useRoutes } from 'react-router-dom';
 
 export const WorkspaceRoutes = ({
   surface,
@@ -20,8 +16,9 @@ export const WorkspaceRoutes = ({
 }) => {
   const routeObjects = useWorkspaceRouteObjects();
 
-  const surfaceRouteObjects = createRoutesFromElements(
-    getWorkspaceRouteElementsForSurface(routeObjects, surface),
+  const surfaceRouteObjects = getWorkspaceRouteObjectsForSurface(
+    routeObjects,
+    surface,
   );
 
   const routedElement = useRoutes(surfaceRouteObjects, location);

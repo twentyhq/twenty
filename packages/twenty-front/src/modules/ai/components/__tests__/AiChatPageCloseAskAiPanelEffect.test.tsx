@@ -5,11 +5,42 @@ import { SidePanelPages } from 'twenty-shared/types';
 
 import { AiChatPageCloseAskAiPanelEffect } from '@/ai/components/AiChatPageCloseAskAiPanelEffect';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import {
+  type SidePanelNavigationStackItem,
+  sidePanelNavigationStackState,
+} from '@/side-panel/states/sidePanelNavigationStackState';
+import { type ActiveSidePanelPage } from '@/side-panel/types/SidePanelPage';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import { IconDotsVertical } from 'twenty-ui/icon';
+
+const setCurrentSidePanelPage = (page: ActiveSidePanelPage) => {
+  const navigationItem: SidePanelNavigationStackItem =
+    page === SidePanelPages.RoutedPage
+      ? {
+          page,
+          pageTitle: 'Test page',
+          pageIcon: IconDotsVertical,
+          pageId: 'test-page',
+          routedLocation: {
+            pathname: '/test',
+            search: '',
+            hash: '',
+            state: null,
+            key: 'test',
+          },
+        }
+      : {
+          page,
+          pageTitle: 'Test page',
+          pageIcon: IconDotsVertical,
+          pageId: 'test-page',
+        };
+
+  jotaiStore.set(sidePanelNavigationStackState.atom, [navigationItem]);
+};
 
 const closeSidePanelMenuMock = jest.fn();
 
@@ -29,7 +60,7 @@ describe('AiChatPageCloseAskAiPanelEffect', () => {
 
   it('should dismiss a panel chat the browser navigated back onto', () => {
     jotaiStore.set(isSidePanelOpenedState.atom, true);
-    jotaiStore.set(sidePanelPageState.atom, SidePanelPages.AskAI);
+    setCurrentSidePanelPage(SidePanelPages.AskAI);
 
     render(<AiChatPageCloseAskAiPanelEffect />, { wrapper: Wrapper });
 
@@ -38,7 +69,7 @@ describe('AiChatPageCloseAskAiPanelEffect', () => {
 
   it('should leave an open artifact panel alone', () => {
     jotaiStore.set(isSidePanelOpenedState.atom, true);
-    jotaiStore.set(sidePanelPageState.atom, SidePanelPages.RoutedPage);
+    setCurrentSidePanelPage(SidePanelPages.RoutedPage);
 
     render(<AiChatPageCloseAskAiPanelEffect />, { wrapper: Wrapper });
 
@@ -47,7 +78,7 @@ describe('AiChatPageCloseAskAiPanelEffect', () => {
 
   it('should do nothing when the panel is closed', () => {
     jotaiStore.set(isSidePanelOpenedState.atom, false);
-    jotaiStore.set(sidePanelPageState.atom, SidePanelPages.AskAI);
+    setCurrentSidePanelPage(SidePanelPages.AskAI);
 
     render(<AiChatPageCloseAskAiPanelEffect />, { wrapper: Wrapper });
 
@@ -58,7 +89,7 @@ describe('AiChatPageCloseAskAiPanelEffect', () => {
     render(<AiChatPageCloseAskAiPanelEffect />, { wrapper: Wrapper });
 
     jotaiStore.set(isSidePanelOpenedState.atom, true);
-    jotaiStore.set(sidePanelPageState.atom, SidePanelPages.AskAI);
+    setCurrentSidePanelPage(SidePanelPages.AskAI);
 
     expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
   });

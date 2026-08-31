@@ -10,8 +10,6 @@ import { SIDE_PANEL_PAGES_CONFIG } from '@/side-panel/constants/SidePanelPagesCo
 import { isPageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/utils/isPageLayoutSidePanelPage';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -30,12 +28,13 @@ const StyledSidePanelContent = styled.div`
 `;
 
 export const SidePanelRouter = () => {
-  const sidePanelPage = useAtomStateValue(sidePanelPageState);
-  const sidePanelPageInfo = useAtomStateValue(sidePanelPageInfoState);
   const sidePanelNavigationStack = useAtomStateValue(
     sidePanelNavigationStackState,
   );
   const currentNavigationItem = sidePanelNavigationStack.at(-1);
+  const sidePanelPage =
+    currentNavigationItem?.page ?? SidePanelPages.CommandMenuDisplay;
+  const sidePanelPageInstanceId = currentNavigationItem?.pageId ?? '';
 
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
@@ -64,7 +63,7 @@ export const SidePanelRouter = () => {
   const sidePanelPageComponent =
     isDefined(rawPageComponent) && React.isValidElement(rawPageComponent)
       ? React.cloneElement(rawPageComponent, {
-          key: sidePanelPageInfo.instanceId,
+          key: sidePanelPageInstanceId,
         })
       : rawPageComponent;
 
@@ -78,11 +77,11 @@ export const SidePanelRouter = () => {
   const workspaceSurface = useMemo(
     () => ({
       type: 'side-panel' as const,
-      instanceId: sidePanelPageInfo.instanceId,
+      instanceId: sidePanelPageInstanceId,
       routedFlowStateScopeId:
         sidePanelPage === SidePanelPages.RoutedPage
           ? (currentNavigationItem?.routedFlowStateScopeId ??
-            sidePanelPageInfo.instanceId)
+            sidePanelPageInstanceId)
           : undefined,
       ownsRouteLocation: false,
       headerTitlePortal,
@@ -93,14 +92,14 @@ export const SidePanelRouter = () => {
       headerActionsPortal,
       headerTitlePortal,
       sidePanelPage,
-      sidePanelPageInfo.instanceId,
+      sidePanelPageInstanceId,
     ],
   );
 
   return (
     <SidePanelContainer>
       <SidePanelPageComponentInstanceContext.Provider
-        value={{ instanceId: sidePanelPageInfo.instanceId }}
+        value={{ instanceId: sidePanelPageInstanceId }}
       >
         <WorkspaceSurfaceContext.Provider value={workspaceSurface}>
           <motion.div

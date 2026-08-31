@@ -6,12 +6,12 @@ import { useExpandAskAiSidePanelPage } from '@/side-panel/pages/ask-ai/hooks/use
 import { useExpandRecordSidePanelPage } from '@/side-panel/routing/hooks/useExpandRecordSidePanelPage';
 import { useExpandRichTextSidePanelPage } from '@/side-panel/pages/rich-text-page/hooks/useExpandRichTextSidePanelPage';
 import { useExpandRoutedSidePanelPage } from '@/side-panel/routing/hooks/useExpandRoutedSidePanelPage';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import { sidePanelPageSelector } from '@/side-panel/states/sidePanelPageSelector';
 import { type SidePanelExpandTarget } from '@/side-panel/types/SidePanelExpandTarget';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useSidePanelExpandTarget = (): SidePanelExpandTarget | null => {
-  const sidePanelPage = useAtomStateValue(sidePanelPageState);
+  const sidePanelPage = useAtomStateValue(sidePanelPageSelector);
   const { hasSidePanelSubPages } = useSidePanelSubPageHistory();
   const isMobile = useIsMobile();
 

@@ -17,8 +17,6 @@ import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingS
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelShowHiddenObjectsState';
@@ -31,7 +29,6 @@ import { WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workfl
 import { WorkflowLogicFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowLogicFunctionTabId';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSidePanelCloseAnimationCompleteCleanup = () => {
@@ -48,7 +45,9 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
 
       // Snapshot values before any mutations (Jotai store.get is live and
       // reflects the latest state, so we capture before mutating).
-      const currentPage = store.get(sidePanelPageState.atom);
+      const currentPage = store
+        .get(sidePanelNavigationStackState.atom)
+        .at(-1)?.page;
       const morphItemsByPage = store.get(
         sidePanelNavigationMorphItemsByPageState.atom,
       );
@@ -95,12 +94,6 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
         }
       }
 
-      store.set(sidePanelPageState.atom, SidePanelPages.CommandMenuDisplay);
-      store.set(sidePanelPageInfoState.atom, {
-        title: undefined,
-        Icon: undefined,
-        instanceId: '',
-      });
       store.set(isSidePanelOpenedState.atom, false);
       store.set(sidePanelSearchState.atom, '');
       store.set(sidePanelSearchObjectFilterState.atom, null);

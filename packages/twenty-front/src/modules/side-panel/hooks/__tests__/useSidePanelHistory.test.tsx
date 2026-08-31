@@ -6,8 +6,6 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useSidePanelCloseAnimationCompleteCleanup } from '@/side-panel/hooks/useSidePanelCloseAnimationCompleteCleanup';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -103,14 +101,6 @@ describe('useSidePanelHistory', () => {
         pageId: '1',
       },
     ]);
-    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
-      SidePanelPages.SearchRecords,
-    );
-    expect(jotaiStore.get(sidePanelPageInfoState.atom)).toEqual({
-      title: 'Search',
-      Icon: IconSearch,
-      instanceId: '1',
-    });
 
     act(() => {
       result.current.commandMenuHistory.goBackFromSidePanel();
@@ -120,14 +110,6 @@ describe('useSidePanelHistory', () => {
 
     act(() => {
       result.current.sidePanelCloseAnimationCompleteCleanup.sidePanelCloseAnimationCompleteCleanup();
-    });
-    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
-      SidePanelPages.CommandMenuDisplay,
-    );
-    expect(jotaiStore.get(sidePanelPageInfoState.atom)).toEqual({
-      title: undefined,
-      instanceId: '',
-      Icon: undefined,
     });
     expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
   });
@@ -190,13 +172,11 @@ describe('useSidePanelHistory', () => {
       result.current.commandMenuHistory.navigateSidePanelHistory(0);
     });
 
-    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
-      SidePanelPages.SearchRecords,
-    );
-    expect(jotaiStore.get(sidePanelPageInfoState.atom)).toEqual({
-      title: 'Search',
-      Icon: IconSearch,
-      instanceId: '1',
+    expect(jotaiStore.get(sidePanelNavigationStackState.atom).at(-1)).toEqual({
+      page: SidePanelPages.SearchRecords,
+      pageTitle: 'Search',
+      pageIcon: IconSearch,
+      pageId: '1',
     });
   });
 });

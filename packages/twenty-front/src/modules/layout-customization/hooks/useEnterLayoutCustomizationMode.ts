@@ -18,7 +18,7 @@ import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDash
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import { sidePanelPageSelector } from '@/side-panel/states/sidePanelPageSelector';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -79,7 +79,7 @@ export const useEnterLayoutCustomizationMode = () => {
     store.set(isLayoutCustomizationModeEnabledState.atom, true);
 
     const isSidePanelOpened = store.get(isSidePanelOpenedState.atom);
-    const currentSidePanelPage = store.get(sidePanelPageState.atom);
+    const currentSidePanelPage = store.get(sidePanelPageSelector.atom);
 
     if (
       isSidePanelOpened &&
