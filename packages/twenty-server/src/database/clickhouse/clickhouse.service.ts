@@ -206,6 +206,26 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
+  public async selectOrThrow<T>(
+    query: string,
+    // oxlint-disable-next-line typescript/no-explicit-any
+    params?: Record<string, any>,
+  ): Promise<T[]> {
+    if (!this.mainClient) {
+      throw new Error('ClickHouse client is not available');
+    }
+
+    const resultSet = await this.mainClient.query({
+      query,
+      format: 'JSONEachRow',
+      query_params: params,
+    });
+
+    const result = await resultSet.json<T>();
+
+    return Array.isArray(result) ? result : [];
+  }
+
   public async createDatabase(databaseName: string): Promise<boolean> {
     try {
       if (!this.mainClient) {

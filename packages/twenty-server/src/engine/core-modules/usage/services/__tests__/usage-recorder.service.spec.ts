@@ -10,9 +10,9 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { UsagePeriodService } from 'src/engine/core-modules/usage/services/usage-period.service';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 const API_REQUEST: RecordUsageInput = {
@@ -49,8 +49,13 @@ describe('UsageRecorderService', () => {
           useValue: { emitCustomBatchEvent: jest.fn() },
         },
         {
-          provide: WorkspaceCacheService,
-          useValue: { getOrRecompute: jest.fn() },
+          provide: UsagePeriodService,
+          useValue: {
+            getCurrentPeriod: jest.fn().mockResolvedValue({
+              periodStart: new Date('2026-08-01T00:00:00.000Z'),
+              periodEnd: new Date('2026-09-01T00:00:00.000Z'),
+            }),
+          },
         },
         {
           provide: TwentyConfigService,

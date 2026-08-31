@@ -2,6 +2,8 @@ import { assertUnreachable } from 'twenty-shared/utils';
 
 import { BillingException } from 'src/engine/core-modules/billing/billing.exception';
 import { billingGraphqlApiExceptionHandler } from 'src/engine/core-modules/billing/utils/billing-graphql-api-exception-handler.util';
+import { UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import { usageLimitToGraphqlApiExceptionHandler } from 'src/engine/core-modules/usage-limit/utils/usage-limit-to-graphql-api-exception-handler.util';
 import {
   ConflictError,
   ForbiddenError,
@@ -17,6 +19,10 @@ import {
 export const aiGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof BillingException) {
     return billingGraphqlApiExceptionHandler(error);
+  }
+
+  if (error instanceof UsageLimitException) {
+    return usageLimitToGraphqlApiExceptionHandler(error);
   }
 
   if (error instanceof AiException) {

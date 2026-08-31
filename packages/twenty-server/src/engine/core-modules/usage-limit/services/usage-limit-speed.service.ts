@@ -68,6 +68,7 @@ export class UsageLimitSpeedService {
           limitKind: 'speed',
           spenderType: outcome.exhausted.spenderType,
           spenderId: outcome.exhausted.spenderId,
+          operationType,
           limitValue: outcome.exhausted.refillPerWindow,
           remaining: 0,
           periodCount: Math.ceil(outcome.exhausted.windowMs / 1000),

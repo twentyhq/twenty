@@ -9,15 +9,14 @@ import {
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
 import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
 import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
+import { UsagePeriodService } from 'src/engine/core-modules/usage/services/usage-period.service';
 import { buildUsageEventEnvelopes } from 'src/engine/core-modules/usage/utils/build-usage-event-envelopes';
 import { UsageRollupBuffer } from 'src/engine/core-modules/usage/utils/usage-rollup-buffer';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 const MAX_BUFFERED_ROLLUPS = 10_000;
@@ -32,7 +31,7 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly eventLogEmitterService: EventLogEmitterService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly usagePeriodService: UsagePeriodService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -150,20 +149,10 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
     return { ...input, creditsUsedMicro: input.creditsUsedMicro ?? 0 };
   }
 
-  private async resolvePeriodStart(
-    workspaceId: string,
-  ): Promise<Date | undefined> {
-    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
-      return undefined;
-    }
+  private async resolvePeriodStart(workspaceId: string): Promise<Date> {
+    const { periodStart } =
+      await this.usagePeriodService.getCurrentPeriod(workspaceId);
 
-    const { currentBillingSubscription } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'currentBillingSubscription',
-      ]);
-
-    return currentBillingSubscription === NO_BILLING_SUBSCRIPTION
-      ? undefined
-      : currentBillingSubscription.currentPeriodStart;
+    return periodStart;
   }
 }

@@ -1,5 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageLimitHttpException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit-http.exception';
 import {
@@ -16,6 +17,7 @@ const buildExhaustedScope = (
   limitKind: 'speed',
   spenderType: 'apiKey',
   spenderId: 'key-1',
+  operationType: UsageOperationType.API_REQUEST,
   limitValue: 3,
   remaining: 0,
   periodCount: 60,
@@ -53,7 +55,11 @@ describe('usageLimitToRestApiExceptionHandler', () => {
       error: 'RATE_LIMITED',
       messages: ['Rate limit exceeded for apiKey: 3 requests per 60s.'],
       limitKind: 'speed',
-      scope: { spenderType: 'apiKey', spenderId: 'key-1' },
+      scope: {
+        spenderType: 'apiKey',
+        spenderId: 'key-1',
+        operationType: UsageOperationType.API_REQUEST,
+      },
       limit: 3,
       remaining: 0,
       periodCount: 60,
