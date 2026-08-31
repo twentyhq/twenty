@@ -11,13 +11,13 @@ import { skipSyncEmailOnboardingStep } from 'test/integration/graphql/utils/skip
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { createOneLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/create-logic-function.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 describe('Successful user and workspace creation', () => {
@@ -188,7 +188,9 @@ describe('Successful user and workspace creation', () => {
     const pendingLogoUpload = new Promise<never>((_resolve, reject) => {
       rejectLogoUpload = reject;
     });
-    const fileCorePictureService = global.app.get(FileCorePictureService);
+    const fileCorePictureService = getAppProviderByClassName<{
+      uploadWorkspaceLogoFromUrl: (...args: unknown[]) => Promise<unknown>;
+    }>('FileCorePictureService');
     const exceptionHandlerService = global.app.get(ExceptionHandlerService);
     const uploadWorkspaceLogoFromUrl = jest
       .spyOn(fileCorePictureService, 'uploadWorkspaceLogoFromUrl')
