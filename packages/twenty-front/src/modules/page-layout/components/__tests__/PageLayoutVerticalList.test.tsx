@@ -13,17 +13,6 @@ let mockLayoutMode = PageLayoutTabLayoutMode.VERTICAL_LIST;
 let mockIsSideColumnContext = false;
 let mockIsInPinnedTab = false;
 
-jest.mock('@/page-layout/hooks/useNavigateToMoreWidgets', () => ({
-  useNavigateToMoreWidgets: () => ({ navigateToMoreWidgets: jest.fn() }),
-}));
-
-jest.mock(
-  '@/page-layout/widgets/components/RecordPageAddWidgetSection',
-  () => ({
-    RecordPageAddWidgetSection: () => <div>Add widget</div>,
-  }),
-);
-
 jest.mock('@/page-layout/contexts/PageLayoutContentContext', () => ({
   usePageLayoutContentContext: () => ({
     layoutMode: mockLayoutMode,
@@ -92,6 +81,26 @@ describe('PageLayoutVerticalList', () => {
     mockLayoutMode = PageLayoutTabLayoutMode.VERTICAL_LIST;
     mockIsSideColumnContext = false;
     mockIsInPinnedTab = false;
+  });
+
+  it('renders caller-provided edit controls without record-page dependencies', () => {
+    render(
+      <PageLayoutVerticalList
+        isInEditMode
+        widgets={[
+          makeWidget('first', WidgetType.FIELDS),
+          makeWidget('second', WidgetType.FIELDS),
+        ]}
+        leadingElement={<button>Before widgets</button>}
+        trailingElement={<button>After widgets</button>}
+        renderWidgetSeparator={(widget) => <button>Before {widget.id}</button>}
+      />,
+    );
+
+    expect(
+      screen.getAllByRole('button').map(({ textContent }) => textContent),
+    ).toEqual(['Before widgets', 'Before second', 'After widgets']);
+    expect(screen.queryByText('Add widget')).not.toBeInTheDocument();
   });
 
   it('gives Timeline FILL_VIEWPORT sizing regardless of its position', () => {

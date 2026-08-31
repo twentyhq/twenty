@@ -7,11 +7,13 @@ import userEvent from '@testing-library/user-event';
 import type * as React from 'react';
 import {
   PageLayoutTabLayoutMode,
+  PageLayoutType,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 
 let mockIsInEditMode = false;
+let mockLayoutType = PageLayoutType.RECORD_PAGE;
 const mockNavigateToMoreWidgets = jest.fn();
 
 jest.mock('@/page-layout/hooks/useNavigateToMoreWidgets', () => ({
@@ -66,7 +68,7 @@ jest.mock('@/page-layout/contexts/PageLayoutContentContext', () => ({
 jest.mock('@/page-layout/hooks/useCurrentPageLayoutOrThrow', () => ({
   useCurrentPageLayoutOrThrow: () => ({
     currentPageLayout: {
-      type: 'RECORD_PAGE',
+      type: mockLayoutType,
     },
   }),
 }));
@@ -156,7 +158,26 @@ describe('PageLayoutContent', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsInEditMode = false;
+    mockLayoutType = PageLayoutType.RECORD_PAGE;
     mockTab.widgets = [mockWidget];
+  });
+
+  it('keeps record-page insertion controls out of standalone pages', () => {
+    mockIsInEditMode = true;
+    mockLayoutType = PageLayoutType.STANDALONE_PAGE;
+    mockTab.widgets.push({
+      ...mockWidget,
+      id: 'tasks',
+      title: 'Tasks',
+      type: WidgetType.TASKS,
+    });
+
+    render(<PageLayoutContent />);
+
+    expect(screen.queryByText('Add widget')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /^Add widget above / }),
+    ).not.toBeInTheDocument();
   });
 
   it('keeps widget-local state when edit mode changes', async () => {

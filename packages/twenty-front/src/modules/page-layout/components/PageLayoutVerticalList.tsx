@@ -5,8 +5,6 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type PageLayoutWidgetListDropData } from '@/page-layout/types/PageLayoutWidgetListDropData';
 import { canVerticalListAcceptWidgetDrag } from '@/page-layout/utils/canVerticalListAcceptWidgetDrag';
 import { getIsSingleWidgetTab } from '@/page-layout/utils/getIsSingleWidgetTab';
-import { RecordPageAddWidgetSection } from '@/page-layout/widgets/components/RecordPageAddWidgetSection';
-import { RecordPageWidgetInsertionSeparator } from '@/page-layout/widgets/components/RecordPageWidgetInsertionSeparator';
 import { isViewportFillingWidgetType } from '@/page-layout/widgets/utils/isViewportFillingWidgetType';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 import { WorkflowDiagramAllowPageScrollContext } from '@/workflow/workflow-diagram/contexts/WorkflowDiagramAllowPageScrollContext';
@@ -14,7 +12,8 @@ import { type Draggable } from '@dnd-kit/abstract';
 import { pointerIntersection } from '@dnd-kit/collision';
 import { useDroppable } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
-import { Fragment, useCallback } from 'react';
+import { Fragment, type ReactNode, useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
@@ -79,11 +78,17 @@ const StyledDropTarget = styled.div`
 type PageLayoutVerticalListProps = {
   isInEditMode: boolean;
   widgets: PageLayoutWidget[];
+  leadingElement?: ReactNode;
+  trailingElement?: ReactNode;
+  renderWidgetSeparator?: (widget: PageLayoutWidget) => ReactNode;
 };
 
 export const PageLayoutVerticalList = ({
   isInEditMode,
   widgets,
+  leadingElement,
+  trailingElement,
+  renderWidgetSeparator,
 }: PageLayoutVerticalListProps) => {
   const { layoutMode, tabId } = usePageLayoutContentContext();
 
@@ -142,24 +147,16 @@ export const PageLayoutVerticalList = ({
       shouldUseWhiteBackground={!isInPinnedTab || isMobile}
     >
       <WorkflowDiagramAllowPageScrollContext.Provider value={hasPageScroll}>
-        {isInEditMode && firstViewportFillingWidgetIndex === 0 && (
-          <StyledHeader>
-            <RecordPageAddWidgetSection
-              insertionContext={{
-                targetWidgetId: widgets[0].id,
-                direction: 'above',
-              }}
-            />
-          </StyledHeader>
+        {isInEditMode && isDefined(leadingElement) && (
+          <StyledHeader>{leadingElement}</StyledHeader>
         )}
         {widgets.map((widget, index) => (
           <Fragment key={widget.id}>
             {isInEditMode &&
               index > 0 &&
               (!hasViewportFillingWidget ||
-                index <= firstViewportFillingWidgetIndex) && (
-                <RecordPageWidgetInsertionSeparator widget={widget} />
-              )}
+                index <= firstViewportFillingWidgetIndex) &&
+              renderWidgetSeparator?.(widget)}
             <PageLayoutVerticalListWidgetSlot
               canAcceptWidgetDrag={canAcceptWidgetDrag}
               index={index}
@@ -180,7 +177,7 @@ export const PageLayoutVerticalList = ({
               orientation="horizontal"
               compact
             />
-            <RecordPageAddWidgetSection />
+            {trailingElement}
           </StyledDropTarget>
         )}
       </WorkflowDiagramAllowPageScrollContext.Provider>
