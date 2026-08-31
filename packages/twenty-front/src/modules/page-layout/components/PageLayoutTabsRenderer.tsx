@@ -18,6 +18,8 @@ import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnable
 import { shouldPrerenderPageLayoutTab } from '@/page-layout/utils/shouldPrerenderPageLayoutTab';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -125,6 +127,7 @@ const StyledScrollWrapperContainer = styled.div`
 `;
 
 export const PageLayoutTabsRenderer = () => {
+  const workspaceSurface = useWorkspaceSurface();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
   const { isInSidePanel, layoutType, targetRecordIdentifier } =
@@ -145,11 +148,13 @@ export const PageLayoutTabsRenderer = () => {
       scrollWrapperArea: 'tab-content',
     });
 
-  const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
-    pageLayoutId: currentPageLayout.id,
-    layoutType,
-    targetRecordIdentifier,
-  });
+  const tabListInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
+    getTabListInstanceIdFromPageLayoutAndRecord({
+      pageLayoutId: currentPageLayout.id,
+      layoutType,
+      targetRecordIdentifier,
+    }),
+  );
 
   const addTabStrategy = usePageLayoutAddTabStrategy({
     pageLayoutId: currentPageLayout.id,
@@ -198,7 +203,9 @@ export const PageLayoutTabsRenderer = () => {
       }
       centerTabs={shouldRenderRecordIdentifierBar && !isDefined(pinnedLeftTab)}
       tabs={sortedTabs}
-      behaveAsLinks={!isInSidePanel && !isPageLayoutInEditMode}
+      behaveAsLinks={
+        workspaceSurface.type === 'main' && !isPageLayoutInEditMode
+      }
       isInSidePanel={isInSidePanel}
       componentInstanceId={tabListInstanceId}
       addTabStrategy={addTabStrategy}

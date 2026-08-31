@@ -1,5 +1,6 @@
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -16,9 +17,12 @@ export const useSelectableListListenToEnterHotkeyOnItem = ({
   itemId: string;
   onEnter: () => void;
 }) => {
-  const instanceId = useAvailableComponentInstanceIdOrThrow(
+  const unscopedInstanceId = useAvailableComponentInstanceIdOrThrow(
     SelectableListComponentInstanceContext,
   );
+  const instanceId =
+    useWorkspaceSurfaceScopedComponentInstanceId(unscopedInstanceId);
+  const scopedFocusId = useWorkspaceSurfaceScopedComponentInstanceId(focusId);
 
   const store = useStore();
 
@@ -37,7 +41,7 @@ export const useSelectableListListenToEnterHotkeyOnItem = ({
   useHotkeysOnFocusedElement({
     keys: Key.Enter,
     callback: handleEnterKey,
-    focusId,
+    focusId: scopedFocusId,
     dependencies: [itemId, onEnter],
   });
 };

@@ -8,20 +8,22 @@ import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
-export const setRecordPageActiveTabId = ({
-  recordId,
-  objectNameSingular,
-  tabId,
-  store,
-}: {
+type RecordPageTabListInstanceIdArgs = {
   recordId: string;
   objectNameSingular: string;
-  tabId: string;
   store: ReturnType<typeof getDefaultStore>;
-}) => {
+  surfaceInstanceId?: string;
+};
+
+export const getRecordPageTabListInstanceId = ({
+  recordId,
+  objectNameSingular,
+  store,
+  surfaceInstanceId,
+}: RecordPageTabListInstanceIdArgs) => {
   // Dashboards resolve their page layout from record data, not object metadata
   if (objectNameSingular === CoreObjectNameSingular.Dashboard) {
-    return;
+    return undefined;
   }
 
   const objectMetadataItem = store.get(
@@ -32,7 +34,7 @@ export const setRecordPageActiveTabId = ({
   );
 
   if (!isDefined(objectMetadataItem)) {
-    return;
+    return undefined;
   }
 
   const recordPageLayout = store.get(
@@ -42,19 +44,39 @@ export const setRecordPageActiveTabId = ({
   );
 
   if (!isDefined(recordPageLayout)) {
-    return;
+    return undefined;
   }
 
   const pageLayoutId = recordPageLayout.id;
 
-  const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
+  return getTabListInstanceIdFromPageLayoutAndRecord({
     pageLayoutId,
     layoutType: PageLayoutType.RECORD_PAGE,
     targetRecordIdentifier: {
       id: recordId,
       targetObjectNameSingular: objectNameSingular,
     },
+    surfaceInstanceId,
   });
+};
+
+export const setRecordPageActiveTabId = ({
+  recordId,
+  objectNameSingular,
+  tabId,
+  store,
+  surfaceInstanceId,
+}: RecordPageTabListInstanceIdArgs & { tabId: string }) => {
+  const tabListInstanceId = getRecordPageTabListInstanceId({
+    recordId,
+    objectNameSingular,
+    store,
+    surfaceInstanceId,
+  });
+
+  if (!isDefined(tabListInstanceId)) {
+    return;
+  }
 
   store.set(
     activeTabIdComponentState.atomFamily({ instanceId: tabListInstanceId }),

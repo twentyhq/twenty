@@ -1,4 +1,5 @@
 import { ChatReferenceChipDisplay } from '@/ai/components/ChatReferenceChipDisplay';
+import { useChatReferenceTarget } from '@/ai/hooks/useChatReferenceTarget';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -32,16 +33,20 @@ export const ObjectMetadataLink = ({
     },
   );
 
+  const path =
+    isDefined(objectMetadataItem) && hasDataModelPermission
+      ? getSettingsPath(SettingsPath.ObjectDetail, {
+        objectNamePlural: objectMetadataItem.namePlural,
+      })
+      : undefined;
+
+  const { to, onClick } = useChatReferenceTarget(path);
+
   return (
     <ChatReferenceChipDisplay
       displayName={displayName}
-      to={
-        isDefined(objectMetadataItem) && hasDataModelPermission
-          ? getSettingsPath(SettingsPath.ObjectDetail, {
-              objectNamePlural: objectMetadataItem.namePlural,
-            })
-          : undefined
-      }
+      to={to}
+      onClick={onClick}
       leftComponent={
         <ObjectMetadataIcon
           objectMetadataItem={

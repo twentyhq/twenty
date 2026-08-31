@@ -9,13 +9,16 @@ import { SidePanelTopBar } from '@/side-panel/components/SidePanelTopBar';
 import { SIDE_PANEL_PAGES_CONFIG } from '@/side-panel/constants/SidePanelPagesConfig';
 import { isPageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/utils/isPageLayoutSidePanelPage';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
-import React, { useContext } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
@@ -29,6 +32,10 @@ const StyledSidePanelContent = styled.div`
 export const SidePanelRouter = () => {
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
   const sidePanelPageInfo = useAtomStateValue(sidePanelPageInfoState);
+  const sidePanelNavigationStack = useAtomStateValue(
+    sidePanelNavigationStackState,
+  );
+  const currentNavigationItem = sidePanelNavigationStack.at(-1);
 
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
@@ -63,33 +70,65 @@ export const SidePanelRouter = () => {
 
   const { theme } = useContext(ThemeContext);
 
+  const [headerTitlePortal, setHeaderTitlePortal] =
+    useState<HTMLElement | null>(null);
+  const [headerActionsPortal, setHeaderActionsPortal] =
+    useState<HTMLElement | null>(null);
+
+  const workspaceSurface = useMemo(
+    () => ({
+      type: 'side-panel' as const,
+      instanceId: sidePanelPageInfo.instanceId,
+      routedFlowStateScopeId:
+        sidePanelPage === SidePanelPages.RoutedPage
+          ? (currentNavigationItem?.routedFlowStateScopeId ??
+            sidePanelPageInfo.instanceId)
+          : undefined,
+      ownsRouteLocation: false,
+      headerTitlePortal,
+      headerActionsPortal,
+    }),
+    [
+      currentNavigationItem?.routedFlowStateScopeId,
+      headerActionsPortal,
+      headerTitlePortal,
+      sidePanelPage,
+      sidePanelPageInfo.instanceId,
+    ],
+  );
+
   return (
     <SidePanelContainer>
       <SidePanelPageComponentInstanceContext.Provider
         value={{ instanceId: sidePanelPageInfo.instanceId }}
       >
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{
-            duration: theme.animation.duration.instant,
-            delay: 0.1,
-          }}
-        >
-          <SidePanelTopBar />
-        </motion.div>
-        <StyledSidePanelContent>
-          <CommandMenuContextProvider
-            isInSidePanel={true}
-            displayType="listItem"
-            containerType={CommandMenuItemContainerType.CommandMenuList}
+        <WorkspaceSurfaceContext.Provider value={workspaceSurface}>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{
+              duration: theme.animation.duration.instant,
+              delay: 0.1,
+            }}
           >
-            <SidePanelSubPageRouter>
-              {sidePanelPageComponent}
-            </SidePanelSubPageRouter>
-          </CommandMenuContextProvider>
-        </StyledSidePanelContent>
+            <SidePanelTopBar
+              setHeaderTitlePortal={setHeaderTitlePortal}
+              setHeaderActionsPortal={setHeaderActionsPortal}
+            />
+          </motion.div>
+          <StyledSidePanelContent>
+            <CommandMenuContextProvider
+              isInSidePanel={true}
+              displayType="listItem"
+              containerType={CommandMenuItemContainerType.CommandMenuList}
+            >
+              <SidePanelSubPageRouter>
+                {sidePanelPageComponent}
+              </SidePanelSubPageRouter>
+            </CommandMenuContextProvider>
+          </StyledSidePanelContent>
+        </WorkspaceSurfaceContext.Provider>
       </SidePanelPageComponentInstanceContext.Provider>
     </SidePanelContainer>
   );

@@ -66,7 +66,6 @@ const TabSelectionPreview = () => {
       />
       <TabListFromUrlOptionalEffect
         tabListIds={tabsToRenderInTabList.map((tab) => tab.id)}
-        isInSidePanel={false}
       />
       <output aria-label="Current tab URL">{hash}</output>
       <output aria-label="Active tab">{activeTabId}</output>

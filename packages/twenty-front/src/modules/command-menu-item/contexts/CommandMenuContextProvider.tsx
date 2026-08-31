@@ -13,6 +13,7 @@ type CommandMenuContextProviderProps = {
   containerType: CommandMenuContextType['containerType'];
   children: React.ReactNode;
   isInPreviewMode?: boolean;
+  pageLayoutIdOverride?: string | null;
 };
 
 export const CommandMenuContextProvider = ({
@@ -21,6 +22,7 @@ export const CommandMenuContextProvider = ({
   containerType,
   children,
   isInPreviewMode = false,
+  pageLayoutIdOverride,
 }: CommandMenuContextProviderProps) => {
   const commandMenuContextApiFromHook = useCurrentCommandMenuContextApi();
 
@@ -48,6 +50,7 @@ export const CommandMenuContextProvider = ({
         commandMenuContextApi={commandMenuContextApi}
         selectedWorkflowRecordIds={selectedWorkflowRecordIds}
         isInPreviewMode={isInPreviewMode}
+        pageLayoutIdOverride={pageLayoutIdOverride}
       >
         {children}
       </CommandMenuContextProviderWithWorkflowEnrichment>
@@ -60,6 +63,7 @@ export const CommandMenuContextProvider = ({
       containerType={containerType}
       commandMenuContextApi={commandMenuContextApi}
       isInPreviewMode={isInPreviewMode}
+      pageLayoutIdOverride={pageLayoutIdOverride}
     >
       {children}
     </CommandMenuContextProviderContent>

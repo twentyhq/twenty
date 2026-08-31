@@ -38,6 +38,7 @@ import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenCompos
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useOpenRichTextInSidePanel } from '@/side-panel/hooks/useOpenRichTextInSidePanel';
+import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { setRecordPageActiveTabId } from '@/page-layout/utils/setRecordPageActiveTabId';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -57,6 +58,27 @@ const FRONT_COMPONENT_CLIPBOARD_RATE_LIMIT_MS = 1000;
 const FRONT_COMPONENT_CLIPBOARD_PREVIEW_LENGTH = 30;
 
 const FRONT_COMPONENT_UPLOAD_FILE_NAME_MAX_LENGTH = 200;
+
+type OpenSidePanelPageParams = Parameters<
+  FrontComponentHostCommunicationApi['openSidePanelPage']
+>[0];
+
+type AskAiOpenSidePanelPageParams = Extract<
+  OpenSidePanelPageParams,
+  { page: SidePanelPages.AskAI }
+>;
+
+// Runtime-only compatibility for front components built with older SDKs.
+type LegacyOpenSidePanelPageParams =
+  | (Omit<AskAiOpenSidePanelPageParams, 'page'> & {
+      page: SidePanelPages.Copilot;
+    })
+  | {
+      page: SidePanelPages.ViewRecords;
+      pageTitle?: string;
+      pageIcon?: string;
+      shouldResetSearchState?: boolean;
+    };
 
 const sanitizeUploadFileName = (fileName: string, mimeType: string): string => {
   const withoutSeparators = fileName.replace(/[/\\\u0000-\u001f]/g, '').trim();
@@ -103,6 +125,7 @@ export const useFrontComponentExecutionContext = ({
   const { navigateSidePanel } = useNavigateSidePanel();
   const { openRecordInSidePanel: openRecordInSidePanelInternal } =
     useOpenRecordInSidePanel();
+  const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
   const { openRichTextInSidePanel } = useOpenRichTextInSidePanel();
   const { openComposeEmailInSidePanel } = useOpenComposeEmailInSidePanel();
   const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
@@ -164,7 +187,34 @@ export const useFrontComponentExecutionContext = ({
   };
 
   const openSidePanelPage: FrontComponentHostCommunicationApi['openSidePanelPage'] =
-    async (params) => {
+    async (params: OpenSidePanelPageParams | LegacyOpenSidePanelPageParams) => {
+      if (params.page === SidePanelPages.RoutedPage) {
+        const pageId = openRoutedPageInSidePanel({
+          path: params.path,
+          pageTitle: params.pageTitle,
+          resetNavigationStack: params.resetNavigationStack,
+        });
+
+        if (!isDefined(pageId)) {
+          throw new Error(`Unsupported side-panel route: ${params.path}`);
+        }
+
+        return;
+      }
+
+      if (params.page === SidePanelPages.ViewRecords) {
+        throw new Error(
+          'ViewRecords is no longer supported. Open a RoutedPage with the record index canonical path instead.',
+        );
+      }
+
+      if (params.page === SidePanelPages.Copilot) {
+        return openSidePanelPage({
+          ...params,
+          page: SidePanelPages.AskAI,
+        });
+      }
+
       if (params.page === SidePanelPages.ViewRecord) {
         const { recordId, objectNameSingular, tab, resetNavigationStack } =
           params;

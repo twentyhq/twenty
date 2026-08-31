@@ -55,10 +55,17 @@ describe('useSidePanelHistory', () => {
 
     act(() => {
       result.current.commandMenu.navigateSidePanelMenu({
-        page: SidePanelPages.ViewRecord,
+        page: SidePanelPages.RoutedPage,
         pageTitle: 'Company',
         pageIcon: IconList,
         pageId: '2',
+        routedLocation: {
+          pathname: '/object/company/record-id',
+          search: '',
+          hash: '',
+          state: null,
+          key: 'routed-page-2',
+        },
       });
     });
 
@@ -70,10 +77,17 @@ describe('useSidePanelHistory', () => {
         pageId: '1',
       },
       {
-        page: SidePanelPages.ViewRecord,
+        page: SidePanelPages.RoutedPage,
         pageTitle: 'Company',
         pageIcon: IconList,
         pageId: '2',
+        routedLocation: {
+          pathname: '/object/company/record-id',
+          search: '',
+          hash: '',
+          state: null,
+          key: 'routed-page-2',
+        },
       },
     ]);
 
@@ -123,19 +137,33 @@ describe('useSidePanelHistory', () => {
 
     act(() => {
       result.current.commandMenu.navigateSidePanelMenu({
-        page: SidePanelPages.ViewRecord,
+        page: SidePanelPages.RoutedPage,
         pageTitle: 'Company',
         pageIcon: IconList,
         pageId: '1',
+        routedLocation: {
+          pathname: '/object/company/record-id',
+          search: '',
+          hash: '',
+          state: null,
+          key: 'routed-page-1',
+        },
       });
     });
 
     expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([
       {
-        page: SidePanelPages.ViewRecord,
+        page: SidePanelPages.RoutedPage,
         pageTitle: 'Company',
         pageIcon: IconList,
         pageId: '1',
+        routedLocation: {
+          pathname: '/object/company/record-id',
+          search: '',
+          hash: '',
+          state: null,
+          key: 'routed-page-1',
+        },
       },
     ]);
 

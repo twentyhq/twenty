@@ -21,8 +21,8 @@ import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { styled } from '@linaria/react';
-import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 const StyledIndexContainer = styled.div`
   display: flex;
@@ -32,15 +32,17 @@ const StyledIndexContainer = styled.div`
 `;
 
 export const RecordIndexContainerGater = () => {
-  const store = useStore();
+  const setLastShowPageRecordId = useSetAtomComponentState(
+    lastShowPageRecordIdState,
+  );
 
   const { recordIndexId, objectMetadataItem } =
     useRecordIndexIdFromCurrentContextStore();
 
   const handleIndexRecordsLoaded = useCallback(() => {
     // TODO: find a better way to reset this state ?
-    store.set(lastShowPageRecordIdState.atom, null);
-  }, [store]);
+    setLastShowPageRecordId(null);
+  }, [setLastShowPageRecordId]);
 
   const { indexIdentifierUrl } = useHandleIndexIdentifierClick({
     objectMetadataItem,
@@ -62,6 +64,19 @@ export const RecordIndexContainerGater = () => {
   } = useRecordIndexFieldMetadataDerivedStates(
     objectMetadataItem,
     recordIndexId,
+  );
+
+  const indexContent = (
+    <StyledIndexContainer className={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}>
+      {hasObjectReadPermissions ? (
+        <>
+          <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
+          <RecordIndexContainer />
+        </>
+      ) : (
+        <RecordIndexEmptyStateNotShared />
+      )}
+    </StyledIndexContainer>
   );
 
   return (
@@ -100,18 +115,7 @@ export const RecordIndexContainerGater = () => {
                   hasObjectReadPermissions && <RecordIndexViewBar />
                 }
               >
-                <StyledIndexContainer
-                  className={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}
-                >
-                  {hasObjectReadPermissions ? (
-                    <>
-                      <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
-                      <RecordIndexContainer />
-                    </>
-                  ) : (
-                    <RecordIndexEmptyStateNotShared />
-                  )}
-                </StyledIndexContainer>
+                {indexContent}
               </PageCardLayout>
             </CommandMenuComponentInstanceContext.Provider>
           </RecordComponentInstanceContextsWrapper>

@@ -20,6 +20,7 @@ type CommandMenuContextProviderContentProps = {
   children: React.ReactNode;
   commandMenuContextApi: CommandMenuContextApi;
   isInPreviewMode: boolean;
+  pageLayoutIdOverride?: string | null;
 };
 
 export const CommandMenuContextProviderContent = ({
@@ -28,10 +29,15 @@ export const CommandMenuContextProviderContent = ({
   children,
   commandMenuContextApi,
   isInPreviewMode,
+  pageLayoutIdOverride,
 }: CommandMenuContextProviderContentProps) => {
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const commandMenuItemsDraft = useAtomStateValue(commandMenuItemsDraftState);
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
+  const effectivePageLayoutId =
+    pageLayoutIdOverride === undefined
+      ? currentPageLayoutId
+      : pageLayoutIdOverride;
 
   const filteredCommandMenuItems = useMemo(() => {
     const currentObjectMetadataItemId =
@@ -48,7 +54,7 @@ export const CommandMenuContextProviderContent = ({
       )
       .filter(doesCommandMenuItemMatchPageType(commandMenuContextApi.pageType))
       .filter(doesCommandMenuItemMatchSelectionState(hasSelectedRecords))
-      .filter(doesCommandMenuItemMatchPageLayoutId(currentPageLayoutId))
+      .filter(doesCommandMenuItemMatchPageLayoutId(effectivePageLayoutId))
       .filter((item) =>
         evaluateConditionalAvailabilityExpression(
           item.conditionalAvailabilityExpression,
@@ -62,7 +68,7 @@ export const CommandMenuContextProviderContent = ({
     commandMenuContextApi,
     commandMenuItems,
     commandMenuItemsDraft,
-    currentPageLayoutId,
+    effectivePageLayoutId,
     isInPreviewMode,
   ]);
 

@@ -17,6 +17,14 @@ export type NavigateFunction = <T extends AppPath>(
 
 export type OpenSidePanelPageParams =
   | {
+      page: SidePanelPages.RoutedPage;
+      // Canonical in-app path, including any query string and hash.
+      path: string;
+      pageTitle?: string;
+      resetNavigationStack?: boolean;
+    }
+  | {
+      // Deprecated: use RoutedPage with the record's canonical path.
       page: SidePanelPages.ViewRecord;
       recordId: string;
       objectNameSingular: string;
@@ -62,11 +70,14 @@ export type OpenSidePanelPageParams =
   | {
       page: Exclude<
         SidePanelPages,
+        | SidePanelPages.RoutedPage
         | SidePanelPages.ViewRecord
         | SidePanelPages.EditRichText
         | SidePanelPages.ComposeEmail
         | SidePanelPages.ViewFrontComponent
         | SidePanelPages.AskAI
+        | SidePanelPages.ViewRecords
+        | SidePanelPages.Copilot
       >;
       pageTitle: string;
       pageIcon?: string;

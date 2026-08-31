@@ -9,5 +9,10 @@ type JotaiWritableAtom<ValueType> = WritableAtom<
 export type FamilyState<ValueType, FamilyKey> = {
   type: 'FamilyState';
   key: string;
+  scope?: 'routed-flow';
   atomFamily: (key: FamilyKey) => JotaiWritableAtom<ValueType>;
+  atomFamilyForRoutedFlow: (
+    key: FamilyKey,
+    scopeId: string,
+  ) => JotaiWritableAtom<ValueType>;
 } & ((key: FamilyKey) => JotaiWritableAtom<ValueType>);

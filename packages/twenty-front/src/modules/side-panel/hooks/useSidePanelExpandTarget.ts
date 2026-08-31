@@ -3,9 +3,9 @@ import { useIsMobile } from 'twenty-ui/utilities';
 
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { useExpandAskAiSidePanelPage } from '@/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage';
-import { useExpandRecordSidePanelPage } from '@/side-panel/pages/record-page/hooks/useExpandRecordSidePanelPage';
-import { useExpandRecordsSidePanelPage } from '@/side-panel/pages/records-page/hooks/useExpandRecordsSidePanelPage';
+import { useExpandRecordSidePanelPage } from '@/side-panel/routing/hooks/useExpandRecordSidePanelPage';
 import { useExpandRichTextSidePanelPage } from '@/side-panel/pages/rich-text-page/hooks/useExpandRichTextSidePanelPage';
+import { useExpandRoutedSidePanelPage } from '@/side-panel/routing/hooks/useExpandRoutedSidePanelPage';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { type SidePanelExpandTarget } from '@/side-panel/types/SidePanelExpandTarget';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -17,8 +17,8 @@ export const useSidePanelExpandTarget = (): SidePanelExpandTarget | null => {
 
   const askAiExpandTarget = useExpandAskAiSidePanelPage();
   const recordExpandTarget = useExpandRecordSidePanelPage();
-  const recordsExpandTarget = useExpandRecordsSidePanelPage();
   const richTextExpandTarget = useExpandRichTextSidePanelPage();
+  const routedExpandTarget = useExpandRoutedSidePanelPage();
 
   // On mobile the panel already fills the viewport, so there is nothing to
   // expand into. A sub page has taken over the panel content, so expanding the
@@ -30,12 +30,10 @@ export const useSidePanelExpandTarget = (): SidePanelExpandTarget | null => {
   switch (sidePanelPage) {
     case SidePanelPages.AskAI:
       return askAiExpandTarget;
-    case SidePanelPages.ViewRecord:
-      return recordExpandTarget;
-    case SidePanelPages.ViewRecords:
-      return recordsExpandTarget;
     case SidePanelPages.EditRichText:
       return richTextExpandTarget;
+    case SidePanelPages.RoutedPage:
+      return recordExpandTarget ?? routedExpandTarget;
     default:
       return null;
   }

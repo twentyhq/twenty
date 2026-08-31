@@ -8,10 +8,14 @@ import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelS
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelTopBar } from '@/side-panel/components/SidePanelTopBar';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
-import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import {
+  type SidePanelNavigationStackItem,
+  sidePanelNavigationStackState,
+} from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { type ActiveSidePanelPage } from '@/side-panel/types/SidePanelPage';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { PageFocusId } from '@/types/PageFocusId';
@@ -73,13 +77,8 @@ const createSidePanelTopBarStore = ({
     },
   ],
 }: {
-  sidePanelPage?: SidePanelPages;
-  sidePanelNavigationStack?: Array<{
-    page: SidePanelPages;
-    pageTitle: string;
-    pageIcon: typeof IconDotsVertical;
-    pageId: string;
-  }>;
+  sidePanelPage?: ActiveSidePanelPage;
+  sidePanelNavigationStack?: SidePanelNavigationStackItem[];
 } = {}) => {
   const store = createStore();
 

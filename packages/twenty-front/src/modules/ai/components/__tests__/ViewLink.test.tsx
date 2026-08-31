@@ -7,11 +7,11 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 
-const openViewTargetMock = jest.fn();
+const openRoutedPageInSidePanelMock = jest.fn();
 
-jest.mock('@/ai/hooks/useChatTargetNavigation', () => ({
-  useChatTargetNavigation: () => ({
-    openViewTarget: openViewTargetMock,
+jest.mock('@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel', () => ({
+  useOpenRoutedPageInSidePanel: () => ({
+    openRoutedPageInSidePanel: openRoutedPageInSidePanelMock,
   }),
 }));
 
@@ -69,9 +69,8 @@ describe('ViewLink', () => {
     fireEvent.mouseDown(link);
     fireEvent.click(link);
 
-    expect(openViewTargetMock).toHaveBeenCalledWith({
-      objectNameSingular: companyObjectMetadataItem.nameSingular,
-      viewId: VIEW_ID,
+    expect(openRoutedPageInSidePanelMock).toHaveBeenCalledWith({
+      path: `/objects/${companyObjectMetadataItem.namePlural}?viewId=${VIEW_ID}`,
     });
   });
 
@@ -86,7 +85,7 @@ describe('ViewLink', () => {
     fireEvent.mouseDown(link);
     fireEvent.click(link);
 
-    expect(openViewTargetMock).not.toHaveBeenCalled();
+    expect(openRoutedPageInSidePanelMock).not.toHaveBeenCalled();
   });
 
   it('should link a view to its object index page', () => {

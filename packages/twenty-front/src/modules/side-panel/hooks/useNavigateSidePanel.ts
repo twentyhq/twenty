@@ -5,7 +5,11 @@ import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUs
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
-import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import {
+  type SidePanelNavigationStackItem,
+  type SidePanelNavigationTarget,
+  sidePanelNavigationStackState,
+} from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelShouldFocusTitleInputComponentState } from '@/side-panel/states/sidePanelShouldFocusTitleInputComponentState';
@@ -13,17 +17,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { type SidePanelPages } from 'twenty-shared/types';
-import { type IconComponent } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
-
-export type SidePanelNavigationStackItem = {
-  page: SidePanelPages;
-  pageTitle: string;
-  pageIcon: IconComponent;
-  pageIconColor?: string;
-  pageId?: string;
-};
 
 export const useNavigateSidePanel = () => {
   const store = useStore();
@@ -67,19 +61,26 @@ export const useNavigateSidePanel = () => {
   ]);
 
   const navigateSidePanel = useCallback(
-    ({
-      page,
-      pageTitle,
-      pageIcon,
-      pageIconColor,
-      pageId,
-      focusTitleInput = false,
-      resetNavigationStack = false,
-    }: SidePanelNavigationStackItem & {
-      resetNavigationStack?: boolean;
-      focusTitleInput?: boolean;
-    }) => {
+    (
+      navigationTarget: SidePanelNavigationTarget & {
+        resetNavigationStack?: boolean;
+        focusTitleInput?: boolean;
+      },
+    ) => {
+      const {
+        pageId,
+        focusTitleInput = false,
+        resetNavigationStack = false,
+        ...navigationStackItemWithoutId
+      } = navigationTarget;
+
+      const { page, pageTitle, pageIcon } = navigationStackItemWithoutId;
       const computedPageId = pageId || v4();
+
+      const navigationStackItem = {
+        ...navigationStackItemWithoutId,
+        pageId: computedPageId,
+      } as SidePanelNavigationStackItem;
 
       openSidePanel();
       store.set(sidePanelPageState.atom, page);
@@ -105,27 +106,13 @@ export const useNavigateSidePanel = () => {
         : store.get(sidePanelNavigationStackState.atom);
 
       if (resetNavigationStack) {
-        store.set(sidePanelNavigationStackState.atom, [
-          {
-            page,
-            pageTitle,
-            pageIcon,
-            pageIconColor,
-            pageId: computedPageId,
-          },
-        ]);
+        store.set(sidePanelNavigationStackState.atom, [navigationStackItem]);
 
         store.set(sidePanelNavigationMorphItemsByPageState.atom, new Map());
       } else {
         store.set(sidePanelNavigationStackState.atom, [
           ...currentNavigationStack,
-          {
-            page,
-            pageTitle,
-            pageIcon,
-            pageIconColor,
-            pageId: computedPageId,
-          },
+          navigationStackItem,
         ]);
       }
     },

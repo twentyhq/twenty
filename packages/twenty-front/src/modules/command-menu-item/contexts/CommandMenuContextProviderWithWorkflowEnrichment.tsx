@@ -13,6 +13,7 @@ type CommandMenuContextProviderWithWorkflowEnrichmentProps = {
   commandMenuContextApi: CommandMenuContextApi;
   selectedWorkflowRecordIds: string[];
   isInPreviewMode: boolean;
+  pageLayoutIdOverride?: string | null;
 };
 
 export const CommandMenuContextProviderWithWorkflowEnrichment = ({
@@ -22,6 +23,7 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
   commandMenuContextApi,
   selectedWorkflowRecordIds,
   isInPreviewMode,
+  pageLayoutIdOverride,
 }: CommandMenuContextProviderWithWorkflowEnrichmentProps) => {
   const workflowsWithCurrentVersions = useWorkflowsWithCurrentVersions(
     selectedWorkflowRecordIds,
@@ -59,6 +61,7 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
       containerType={containerType}
       commandMenuContextApi={enrichedCommandMenuContextApi}
       isInPreviewMode={isInPreviewMode}
+      pageLayoutIdOverride={pageLayoutIdOverride}
     >
       {children}
     </CommandMenuContextProviderContent>

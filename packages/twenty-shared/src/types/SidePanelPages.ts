@@ -1,10 +1,12 @@
 export enum SidePanelPages {
   CommandMenuDisplay = 'command-menu-display',
   ViewRecord = 'view-record',
+  // Deprecated: use RoutedPage with the record index canonical path.
   ViewRecords = 'view-records',
   MergeRecords = 'merge-records',
   UpdateRecords = 'update-records',
   EditRichText = 'edit-rich-text',
+  // Deprecated: use AskAI.
   Copilot = 'copilot',
   WorkflowTriggerSelectType = 'workflow-trigger-select-type',
   WorkflowStepCreate = 'workflow-step-create',
@@ -33,4 +35,5 @@ export enum SidePanelPages {
   SendCampaignTest = 'send-campaign-test',
   EmailBlockSettings = 'email-block-settings',
   SettingsMetadataTranslations = 'settings-metadata-translations',
+  RoutedPage = 'routed-page',
 }

@@ -154,7 +154,7 @@ Import them from `twenty-sdk/front-component`:
 - **`Command`** — Runs an async callback via the `execute` prop.
 - **`CommandLink`** — Navigates to an app path. Props: `to`, `params`, `queryParams`, `options`.
 - **`CommandModal`** — Opens a confirmation modal. If the user confirms, executes the `execute` callback. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-- **`CommandOpenSidePanelPage`** — Opens a side panel page. Props depend on `page` — e.g. `ViewRecord` takes `recordId` + `objectNameSingular` (plus an optional `tab` id to open the record on a specific tab), other pages take `pageTitle` + `pageIcon`.
+- **`CommandOpenSidePanelPage`** — Opens content in the side panel. Use `RoutedPage` with a canonical in-app `path` for records, views, and settings pages; purpose-built panel tools use their own page-specific props.
 
 Here is a full example of a headless front component using `Command` to run an action from the command menu:
 
@@ -248,10 +248,8 @@ const OpenCompanyEmails = () => {
 
   return (
     <CommandOpenSidePanelPage
-      page={SidePanelPages.ViewRecord}
-      recordId={recordId}
-      objectNameSingular="company"
-      tab="company-tab-emails"
+      page={SidePanelPages.RoutedPage}
+      path={`/object/company/${recordId}#company-tab-emails`}
       resetNavigationStack={false}
     />
   );

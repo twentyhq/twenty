@@ -4,7 +4,6 @@ import { addToNavPayloadRegistryState } from '@/navigation-menu-item/common/stat
 import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
-import { viewableRecordIdState } from '@/object-record/record-side-panel/states/viewableRecordIdState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -96,7 +95,6 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
         }
       }
 
-      store.set(viewableRecordIdState.atom, null);
       store.set(sidePanelPageState.atom, SidePanelPages.CommandMenuDisplay);
       store.set(sidePanelPageInfoState.atom, {
         title: undefined,

@@ -14,9 +14,8 @@ const HostApiSidePanelOpenFrontComponent = () => {
   const handleClick = async () => {
     try {
       await openSidePanelPage({
-        page: SidePanelPages.ViewRecord,
-        recordId: 'test-record-id',
-        objectNameSingular: 'company',
+        page: SidePanelPages.RoutedPage,
+        path: '/object/company/test-record-id',
       });
       setStatus('sidePanel:success');
     } catch (error) {

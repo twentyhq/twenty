@@ -32,6 +32,7 @@ const SETTINGS_MEMBERS_HERO_INSTANCE_ID_PREFIX = 'settings-members-hero';
 
 export const SettingsWorkspaceMembers = () => {
   const { t } = useLingui();
+  const membersTabListId = MEMBERS_TAB_LIST_ID;
 
   const hasRolesPermission = useHasPermissionFlag(PermissionFlagType.ROLES);
 
@@ -44,7 +45,7 @@ export const SettingsWorkspaceMembers = () => {
   ];
 
   const activeTabId = useSettingsActiveTabId(
-    MEMBERS_TAB_LIST_ID,
+    membersTabListId,
     tabs.map((tab) => tab.id),
   );
 
@@ -67,7 +68,7 @@ export const SettingsWorkspaceMembers = () => {
     <SettingsPageLayout
       title={t`Members`}
       secondaryBar={
-        <SettingsTabBar tabs={tabs} componentInstanceId={MEMBERS_TAB_LIST_ID} />
+        <SettingsTabBar tabs={tabs} componentInstanceId={membersTabListId} />
       }
       links={[
         {

@@ -9,9 +9,11 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { AppPath, OpenRecordIn, SidePanelPages } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useOpenRecordFromIndexView = () => {
@@ -21,6 +23,7 @@ export const useOpenRecordFromIndexView = () => {
 
   const navigate = useNavigateApp();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+  const workspaceSurface = useWorkspaceSurface();
 
   const openRecordIn = useResolveOpenRecordIn(objectNameSingular);
 
@@ -51,26 +54,52 @@ export const useOpenRecordFromIndexView = () => {
 
       const parentViewFilterGroups = store.get(currentRecordFilterGroups);
 
-      store.set(
-        contextStoreRecordShowParentViewComponentState.atomFamily({
-          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-        }),
-        {
-          parentViewComponentId: recordIndexId,
-          parentViewObjectNameSingular: objectNameSingular,
-          parentViewFilterGroups,
-          parentViewFilters,
-          parentViewSorts,
-        },
-      );
+      const parentView = {
+        parentViewComponentId: recordIndexId,
+        parentViewObjectNameSingular: objectNameSingular,
+        parentViewFilterGroups,
+        parentViewFilters,
+        parentViewSorts,
+      };
+
+      // The record's related lists read this from the store of the surface they
+      // render on, so it has to land on the destination rather than on the index
+      // that is handing it over.
+      const setParentViewOn = (instanceId: string) =>
+        store.set(
+          contextStoreRecordShowParentViewComponentState.atomFamily({
+            instanceId,
+          }),
+          parentView,
+        );
+
+      if (workspaceSurface.type === 'side-panel') {
+        const destinationSurfaceInstanceId = openRecordInSidePanel({
+          recordId,
+          objectNameSingular,
+          resetNavigationStack: false,
+        });
+
+        if (isDefined(destinationSurfaceInstanceId)) {
+          setParentViewOn(destinationSurfaceInstanceId);
+        }
+
+        return;
+      }
 
       if (openRecordIn === OpenRecordIn.SIDE_PANEL) {
-        openRecordInSidePanel({
+        const sidePanelPageInstanceId = openRecordInSidePanel({
           recordId,
           objectNameSingular,
           resetNavigationStack: true,
         });
+
+        setParentViewOn(
+          sidePanelPageInstanceId ?? MAIN_CONTEXT_STORE_INSTANCE_ID,
+        );
       } else {
+        setParentViewOn(MAIN_CONTEXT_STORE_INSTANCE_ID);
+
         const isSidePanelAiChat =
           store.get(sidePanelPageState.atom) === SidePanelPages.AskAI;
 
@@ -95,6 +124,7 @@ export const useOpenRecordFromIndexView = () => {
       openRecordIn,
       closeSidePanelMenu,
       store,
+      workspaceSurface.type,
     ],
   );
 

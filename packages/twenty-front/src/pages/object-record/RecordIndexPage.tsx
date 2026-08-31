@@ -1,15 +1,16 @@
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordIndexContainerGater } from '@/object-record/record-index/components/RecordIndexContainerGater';
 import { isCoreWorkflowsIndexEnabled } from '@/object-core/workflows/utils/isCoreWorkflowsIndexEnabled';
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isUndefined } from '@sniptt/guards';
 import { lazy, Suspense } from 'react';
+import { useParams } from 'react-router-dom';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 const WorkflowCoreIndexPage = lazy(() =>
@@ -19,9 +20,11 @@ const WorkflowCoreIndexPage = lazy(() =>
 );
 
 export const RecordIndexPage = () => {
+  const workspaceSurface = useWorkspaceSurface();
+  const { objectNamePlural } = useParams<{ objectNamePlural: string }>();
+
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -29,6 +32,18 @@ export const RecordIndexPage = () => {
   const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
   );
+
+  const routeObjectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
+  );
+
+  if (
+    workspaceSurface.type === 'side-panel' &&
+    !isUndefined(objectNamePlural) &&
+    isUndefined(routeObjectMetadataItem)
+  ) {
+    return <WorkspaceRouteUnavailable />;
+  }
 
   if (isUndefined(contextStoreCurrentObjectMetadataItemId)) {
     return <RecordIndexSkeletonLoader />;
@@ -56,15 +71,13 @@ export const RecordIndexPage = () => {
     );
   }
 
+  if (workspaceSurface.type === 'side-panel') {
+    return <RecordIndexContainerGater />;
+  }
+
   return (
     <PageContainer>
-      <ContextStoreComponentInstanceContext.Provider
-        value={{
-          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-        }}
-      >
-        <RecordIndexContainerGater />
-      </ContextStoreComponentInstanceContext.Provider>
+      <RecordIndexContainerGater />
     </PageContainer>
   );
 };

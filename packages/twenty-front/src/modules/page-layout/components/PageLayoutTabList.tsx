@@ -3,7 +3,7 @@ import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { IconPlus, useIcons } from 'twenty-ui/icon';
 import { TabButton } from 'twenty-ui/input';
 
@@ -21,6 +21,7 @@ import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/con
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -123,7 +124,6 @@ export const PageLayoutTabList = ({
   tabs,
   loading,
   behaveAsLinks,
-  isInSidePanel,
   className,
   presentation = 'standalone',
   centerTabs = false,
@@ -135,6 +135,7 @@ export const PageLayoutTabList = ({
 }: PageLayoutTabListProps) => {
   const { getIcon } = useIcons();
   const { t } = useLingui();
+  const workspaceSurface = useWorkspaceSurface();
   const isInIdentifierBar = presentation === 'identifier-bar';
 
   const tabsWithIcons: SingleTabProps[] = tabs.map((tab) => ({
@@ -144,6 +145,7 @@ export const PageLayoutTabList = ({
   }));
 
   const navigate = useNavigate();
+  const location = useLocation();
   const isMobile = useIsMobile();
 
   const [activeTabId, setActiveTabId] = useAtomComponentState(
@@ -188,26 +190,54 @@ export const PageLayoutTabList = ({
 
   const selectTab = useCallback(
     (tabId: string) => {
-      if (!isInSidePanel) {
-        navigate(`#${tabId}`);
+      if (workspaceSurface.ownsRouteLocation) {
+        navigate(
+          { search: location.search, hash: `#${tabId}` },
+          {
+            replace: workspaceSurface.type === 'side-panel',
+            state: location.state,
+          },
+        );
       }
       setActiveTabId(tabId);
       onChangeTab?.(tabId);
     },
-    [isInSidePanel, navigate, setActiveTabId, onChangeTab],
+    [
+      navigate,
+      location.search,
+      location.state,
+      onChangeTab,
+      setActiveTabId,
+      workspaceSurface.ownsRouteLocation,
+      workspaceSurface.type,
+    ],
   );
 
   const selectTabFromDropdown = useCallback(
     (tabId: string) => {
       if (behaveAsLinks) {
-        navigate(`#${tabId}`);
+        navigate(
+          { search: location.search, hash: `#${tabId}` },
+          {
+            replace: workspaceSurface.type === 'side-panel',
+            state: location.state,
+          },
+        );
         onChangeTab?.(tabId);
         return;
       }
 
       selectTab(tabId);
     },
-    [behaveAsLinks, selectTab, navigate, onChangeTab],
+    [
+      behaveAsLinks,
+      location.search,
+      location.state,
+      selectTab,
+      navigate,
+      onChangeTab,
+      workspaceSurface.type,
+    ],
   );
 
   const closeOverflowDropdown = useCallback(() => {
@@ -387,7 +417,6 @@ export const PageLayoutTabList = ({
       value={{ instanceId: componentInstanceId }}
     >
       <TabListFromUrlOptionalEffect
-        isInSidePanel={!!isInSidePanel}
         tabListIds={tabsWithIcons.map((tab) => tab.id)}
       />
 

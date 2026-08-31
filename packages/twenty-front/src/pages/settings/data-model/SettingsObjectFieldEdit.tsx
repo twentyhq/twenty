@@ -2,8 +2,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import omit from 'lodash.omit';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
+import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
@@ -28,9 +29,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { shouldNavigateBackToMemorizedUrlOnSaveState } from '@/ui/navigation/states/shouldNavigateBackToMemorizedUrlOnSaveState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -55,21 +54,23 @@ const StyledDangerButtons = styled.div`
 export const SettingsObjectFieldEdit = () => {
   const navigateSettings = useNavigateSettings();
   const navigateApp = useNavigateApp();
+  const workspaceSurface = useWorkspaceSurface();
   const { t } = useLingui();
 
   const { openModal, closeModal } = useModal();
   const { enqueueSuccessSnackBar } = useSnackBar();
 
   const navigate = useNavigate();
-
-  const [navigationMemorizedUrl, setNavigationMemorizedUrl] = useAtomState(
-    navigationMemorizedUrlState,
-  );
-
-  const [
-    shouldNavigateBackToMemorizedUrlOnSave,
-    setShouldNavigateBackToMemorizedUrlOnSave,
-  ] = useAtomState(shouldNavigateBackToMemorizedUrlOnSaveState);
+  const location = useLocation();
+  const returnTo =
+    typeof location.state === 'object' &&
+    location.state !== null &&
+    'returnTo' in location.state &&
+    typeof location.state.returnTo === 'string' &&
+    location.state.returnTo.startsWith('/') &&
+    !location.state.returnTo.startsWith('//')
+      ? location.state.returnTo
+      : undefined;
 
   const { objectNamePlural = '', fieldName = '' } = useParams();
 
@@ -136,17 +137,29 @@ export const SettingsObjectFieldEdit = () => {
   });
 
   useEffect(() => {
-    if (!isDeleting && (!objectMetadataItem || !fieldMetadataItem)) {
+    if (
+      workspaceSurface.type === 'main' &&
+      !isDeleting &&
+      (!objectMetadataItem || !fieldMetadataItem)
+    ) {
       navigateApp(AppPath.NotFound);
     }
-  }, [navigateApp, objectMetadataItem, fieldMetadataItem, isDeleting]);
+  }, [
+    navigateApp,
+    objectMetadataItem,
+    fieldMetadataItem,
+    isDeleting,
+    workspaceSurface.type,
+  ]);
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
 
   const canSave = isDirty && isValid && !isSubmitting;
 
   if (!isDefined(objectMetadataItem) || !isDefined(fieldMetadataItem)) {
-    return null;
+    return workspaceSurface.type === 'side-panel' ? (
+      <WorkspaceRouteUnavailable />
+    ) : null;
   }
 
   const isCustomField = getIsMetadataItemCustom(fieldMetadataItem);
@@ -225,15 +238,8 @@ export const SettingsObjectFieldEdit = () => {
   };
 
   const navigateBackOrToSettings = () => {
-    if (
-      shouldNavigateBackToMemorizedUrlOnSave &&
-      isDefined(navigationMemorizedUrl)
-    ) {
-      navigate(navigationMemorizedUrl, { replace: true });
-
-      setShouldNavigateBackToMemorizedUrlOnSave(false);
-      setNavigationMemorizedUrl('/');
-
+    if (isDefined(returnTo)) {
+      navigate(returnTo, { replace: true });
       return;
     }
 

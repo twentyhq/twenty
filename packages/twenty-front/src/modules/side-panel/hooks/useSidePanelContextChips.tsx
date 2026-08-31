@@ -1,8 +1,8 @@
 import { SidePanelContextChipIconWrapper } from '@/side-panel/components/SidePanelContextChipIconWrapper';
 import { SidePanelContextRecordChipAvatars } from '@/side-panel/components/SidePanelContextRecordChipAvatars';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
-import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { getRecordShowParamsFromPath } from '@/side-panel/routing/utils/getRecordShowParamsFromPath';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { recordStoreIdentifiersFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifiersSelector';
@@ -10,6 +10,7 @@ import { recordStoreRecordsSelector } from '@/object-record/record-store/states/
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useMemo } from 'react';
+import { createPath } from 'react-router-dom';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -29,15 +30,22 @@ export const useSidePanelContextChips = () => {
 
   const { navigateSidePanelHistory } = useSidePanelHistory();
 
-  const sidePanelNavigationMorphItemsByPage = useAtomStateValue(
-    sidePanelNavigationMorphItemsByPageState,
-  );
+  const routedRecordIds = sidePanelNavigationStack.flatMap((page) => {
+    if (
+      page.page !== SidePanelPages.RoutedPage ||
+      !isDefined(page.routedLocation)
+    ) {
+      return [];
+    }
 
-  const allRecordIds = Array.from(
-    sidePanelNavigationMorphItemsByPage.entries(),
-  ).flatMap(([, morphItems]) =>
-    morphItems.map((morphItem) => morphItem.recordId),
-  );
+    const recordShowParams = getRecordShowParamsFromPath(
+      createPath(page.routedLocation),
+    );
+
+    return isDefined(recordShowParams) ? [recordShowParams.objectRecordId] : [];
+  });
+
+  const allRecordIds = Array.from(new Set(routedRecordIds));
 
   const recordIdentifiers = useAtomFamilySelectorValue(
     recordStoreIdentifiersFamilySelector,
@@ -51,37 +59,36 @@ export const useSidePanelContextChips = () => {
   });
 
   const contextChips = useMemo(() => {
-    const filteredSidePanelNavigationStack = sidePanelNavigationStack.filter(
-      (page) => page.page !== SidePanelPages.CommandMenuDisplay,
-    );
+    const visibleSidePanelNavigationStack = sidePanelNavigationStack
+      .map((page, originalStackIndex) => ({ page, originalStackIndex }))
+      .filter(({ page }) => page.page !== SidePanelPages.CommandMenuDisplay);
 
-    return filteredSidePanelNavigationStack
-      .map((page, index) => {
+    return visibleSidePanelNavigationStack
+      .map(({ page, originalStackIndex }, visibleIndex) => {
         const isLastChip =
-          index === filteredSidePanelNavigationStack.length - 1;
+          visibleIndex === visibleSidePanelNavigationStack.length - 1;
 
-        const isRecordPage = page.page === SidePanelPages.ViewRecord;
+        const routedRecordShowParams =
+          page.page === SidePanelPages.RoutedPage &&
+          isDefined(page.routedLocation)
+            ? getRecordShowParamsFromPath(createPath(page.routedLocation))
+            : null;
 
-        if (isRecordPage && !isLastChip) {
-          const sidePanelNavigationMorphItem =
-            sidePanelNavigationMorphItemsByPage.get(page.pageId)?.[0];
+        const recordId = routedRecordShowParams?.objectRecordId;
 
-          if (!isDefined(sidePanelNavigationMorphItem?.recordId)) {
-            return null;
-          }
+        const objectMetadataItem = isDefined(routedRecordShowParams)
+          ? objectMetadataItems.find(
+              (item) =>
+                item.nameSingular === routedRecordShowParams.objectNameSingular,
+            )
+          : undefined;
 
-          const objectMetadataItem = objectMetadataItems.find(
-            (item) => item.id === sidePanelNavigationMorphItem.objectMetadataId,
-          );
-
+        if (isDefined(recordId) && !isLastChip) {
           const recordIdentifier = recordIdentifiers.find(
-            (recordIdentifier) =>
-              recordIdentifier.id === sidePanelNavigationMorphItem.recordId,
+            (recordIdentifier) => recordIdentifier.id === recordId,
           );
 
-          const record = records.find(
-            (record) => record.id === sidePanelNavigationMorphItem.recordId,
-          );
+          const record = records.find((record) => record.id === recordId);
 
           if (
             !isDefined(objectMetadataItem) ||
@@ -101,7 +108,7 @@ export const useSidePanelContextChips = () => {
             ],
             text: recordIdentifier.name,
             onClick: () => {
-              navigateSidePanelHistory(index);
+              navigateSidePanelHistory(originalStackIndex);
             },
           };
         }
@@ -127,13 +134,12 @@ export const useSidePanelContextChips = () => {
           onClick: isLastChip
             ? undefined
             : () => {
-                navigateSidePanelHistory(index);
+                navigateSidePanelHistory(originalStackIndex);
               },
         };
       })
       .filter(isDefined);
   }, [
-    sidePanelNavigationMorphItemsByPage,
     sidePanelNavigationStack,
     navigateSidePanelHistory,
     iconSizeSm,

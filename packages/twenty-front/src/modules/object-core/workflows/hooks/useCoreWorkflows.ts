@@ -25,12 +25,16 @@ const ORDER_BY_FIELD_BY_FIELD_NAME: Record<string, CoreWorkflowOrderByField> = {
   updatedAt: CoreWorkflowOrderByField.UPDATED_AT,
 };
 
-export const useCoreWorkflows = () => {
+export const useCoreWorkflows = ({
+  tableId = CORE_WORKFLOWS_TABLE_ID,
+}: {
+  tableId?: string;
+} = {}) => {
   const apolloCoreClient = useApolloCoreClient();
 
   const sortedFieldByTable = useAtomFamilyStateValue(
     sortedFieldByTableFamilyState,
-    { tableId: CORE_WORKFLOWS_TABLE_ID },
+    { tableId },
   );
 
   const sortValue = sortedFieldByTable ?? CORE_WORKFLOWS_INITIAL_SORT;

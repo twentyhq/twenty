@@ -11,23 +11,29 @@ export const createAtomFamilyState = <ValueType, FamilyKey>({
   useLocalStorage = false,
   localStorageOptions,
   storage,
+  scope,
 }: {
   key: string;
   defaultValue: ValueType;
   useLocalStorage?: boolean;
   localStorageOptions?: { getOnInit?: boolean };
   storage?: JotaiSyncStorage<ValueType>;
+  scope?: 'routed-flow';
 }): FamilyState<ValueType, FamilyKey> => {
   const atomCache = new Map<
     string,
     ReturnType<FamilyState<ValueType, FamilyKey>['atomFamily']>
   >();
 
-  const familyFunction = (
+  const getAtomForCacheKey = (
     familyKey: FamilyKey,
+    scopeId?: string,
   ): ReturnType<FamilyState<ValueType, FamilyKey>['atomFamily']> => {
-    const cacheKey =
+    const familyCacheKey =
       typeof familyKey === 'string' ? familyKey : JSON.stringify(familyKey);
+    const cacheKey = isDefined(scopeId)
+      ? `${scopeId}__${familyCacheKey}`
+      : familyCacheKey;
 
     const existing = atomCache.get(cacheKey);
 
@@ -66,9 +72,17 @@ export const createAtomFamilyState = <ValueType, FamilyKey>({
     return baseAtom;
   };
 
+  const familyFunction = (
+    familyKey: FamilyKey,
+  ): ReturnType<FamilyState<ValueType, FamilyKey>['atomFamily']> =>
+    getAtomForCacheKey(familyKey);
+
   return Object.assign(familyFunction, {
     type: 'FamilyState' as const,
     key,
+    scope,
     atomFamily: familyFunction,
+    atomFamilyForRoutedFlow: (familyKey: FamilyKey, scopeId: string) =>
+      getAtomForCacheKey(familyKey, scopeId),
   });
 };

@@ -1,10 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
-import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { newRecordTitleCellToOpenState } from '@/object-record/record-title-cell/states/newRecordTitleCellToOpenState';
@@ -12,18 +8,13 @@ import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
-import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import {
-  AppPath,
-  ContextStorePageType,
-  SidePanelPages,
-} from 'twenty-shared/types';
-import { useIcons } from 'twenty-ui/icon';
+import { AppPath, SidePanelPages } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
+import { IconDotsVertical } from 'twenty-ui/icon';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
@@ -38,6 +29,10 @@ jest.mock('@/side-panel/hooks/useNavigateSidePanel', () => ({
   useNavigateSidePanel: () => ({
     navigateSidePanel: mockNavigateSidePanel,
   }),
+}));
+
+jest.mock('@/side-panel/routing/utils/isSidePanelRoutedLocation', () => ({
+  isSidePanelRoutedLocation: () => true,
 }));
 
 const mockOpenNewRecordTitleCell = jest.fn();
@@ -98,42 +93,8 @@ const renderHooks = () => {
     () => {
       const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
-      const viewableRecordId = useAtomComponentStateValue(
-        viewableRecordIdComponentState,
-        'mocked-uuid',
-      );
-      const viewableRecordNameSingular = useAtomComponentStateValue(
-        viewableRecordNameSingularComponentState,
-        'mocked-uuid',
-      );
-      const contextStoreCurrentObjectMetadataItemId =
-        useAtomComponentStateValue(
-          contextStoreCurrentObjectMetadataItemIdComponentState,
-          'mocked-uuid',
-        );
-      const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
-        contextStoreTargetedRecordsRuleComponentState,
-        'mocked-uuid',
-      );
-      const contextStoreNumberOfSelectedRecords = useAtomComponentStateValue(
-        contextStoreNumberOfSelectedRecordsComponentState,
-        'mocked-uuid',
-      );
-      const contextStoreCurrentPageType = useAtomComponentStateValue(
-        contextStoreCurrentPageTypeComponentState,
-        'mocked-uuid',
-      );
-      const { getIcon } = useIcons();
-
       return {
         openRecordInSidePanel,
-        viewableRecordId,
-        viewableRecordNameSingular,
-        contextStoreCurrentObjectMetadataItemId,
-        contextStoreTargetedRecordsRule,
-        contextStoreNumberOfSelectedRecords,
-        contextStoreCurrentPageType,
-        getIcon,
       };
     },
     {
@@ -153,9 +114,11 @@ describe('useOpenRecordInSidePanel', () => {
       draft: [],
       status: 'up-to-date',
     });
+    jotaiStore.set(sidePanelNavigationStackState.atom, []);
+    jotaiStore.set(sidePanelNavigationMorphItemsByPageState.atom, new Map());
   });
 
-  it('should set the correct states and navigate to the record page', () => {
+  it('should host the record page and navigate to it', () => {
     const { result } = renderHooks();
 
     const recordId = 'record-123';
@@ -168,37 +131,26 @@ describe('useOpenRecordInSidePanel', () => {
       });
     });
 
-    expect(result.current.viewableRecordId).toBe(recordId);
-    expect(result.current.viewableRecordNameSingular).toBe(objectNameSingular);
-    expect(result.current.contextStoreCurrentObjectMetadataItemId).toBe(
-      personMockObjectMetadataItem.id,
-    );
-    expect(result.current.contextStoreTargetedRecordsRule).toEqual({
-      mode: 'selection',
-      selectedRecordIds: [recordId],
+    const recordPath = getAppPath(AppPath.RecordShowPage, {
+      objectNameSingular,
+      objectRecordId: recordId,
     });
-    expect(result.current.contextStoreNumberOfSelectedRecords).toBe(1);
-    expect(result.current.contextStoreCurrentPageType).toBe(
-      ContextStorePageType.Record,
-    );
 
     const sidePanelNavigationMorphItemsByPage = jotaiStore.get(
       sidePanelNavigationMorphItemsByPageState.atom,
     );
-    expect(sidePanelNavigationMorphItemsByPage.size).toBe(1);
-    expect(sidePanelNavigationMorphItemsByPage.get('mocked-uuid')).toEqual([
-      {
-        objectMetadataId: personMockObjectMetadataItem.id,
-        recordId,
-      },
-    ]);
+    expect(sidePanelNavigationMorphItemsByPage.size).toBe(0);
 
     expect(mockNavigateSidePanel).toHaveBeenCalledWith({
-      page: SidePanelPages.ViewRecord,
-      pageTitle: 'Person',
-      pageIcon: result.current.getIcon(personMockObjectMetadataItem.icon),
-      pageIconColor: 'currentColor',
+      page: SidePanelPages.RoutedPage,
+      pageTitle: recordPath,
+      pageIcon: IconDotsVertical,
       pageId: 'mocked-uuid',
+      routedFlowStateScopeId: 'mocked-uuid',
+      routedLocation: expect.objectContaining({
+        pathname: recordPath,
+        state: null,
+      }),
       resetNavigationStack: false,
     });
   });
@@ -218,11 +170,18 @@ describe('useOpenRecordInSidePanel', () => {
     });
 
     expect(mockNavigateSidePanel).toHaveBeenCalledWith({
-      page: SidePanelPages.ViewRecord,
+      page: SidePanelPages.RoutedPage,
       pageTitle: 'New Person',
-      pageIcon: result.current.getIcon(personMockObjectMetadataItem.icon),
-      pageIconColor: 'currentColor',
+      pageIcon: IconDotsVertical,
       pageId: 'mocked-uuid',
+      routedFlowStateScopeId: 'mocked-uuid',
+      routedLocation: expect.objectContaining({
+        pathname: getAppPath(AppPath.RecordShowPage, {
+          objectNameSingular,
+          objectRecordId: recordId,
+        }),
+        state: null,
+      }),
       resetNavigationStack: false,
     });
   });
@@ -246,7 +205,7 @@ describe('useOpenRecordInSidePanel', () => {
     });
   });
 
-  it('should preset the record page active tab when a tab is provided', () => {
+  it('puts the requested tab in the canonical routed record URL', () => {
     const { result } = renderHooks();
 
     const recordId = 'record-123';
@@ -260,22 +219,110 @@ describe('useOpenRecordInSidePanel', () => {
       });
     });
 
-    const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
-      pageLayoutId: personRecordPageLayout.id,
-      layoutType: PageLayoutType.RECORD_PAGE,
-      targetRecordIdentifier: {
-        id: recordId,
-        targetObjectNameSingular: objectNameSingular,
-      },
+    expect(mockNavigateSidePanel).toHaveBeenCalledWith(
+      expect.objectContaining({
+        routedLocation: expect.objectContaining({
+          pathname: getAppPath(AppPath.RecordShowPage, {
+            objectNameSingular,
+            objectRecordId: recordId,
+          }),
+          hash: '#tab-emails',
+        }),
+      }),
+    );
+  });
+
+  it('updates the tab on the existing panel page without pushing the same record again', () => {
+    const { result } = renderHooks();
+
+    const recordId = 'already-open-record';
+    const objectNameSingular = 'person';
+    const existingPageId = 'existing-side-panel-page';
+    const recordPath = getAppPath(AppPath.RecordShowPage, {
+      objectNameSingular,
+      objectRecordId: recordId,
     });
 
-    expect(
-      jotaiStore.get(
-        activeTabIdComponentState.atomFamily({
-          instanceId: tabListInstanceId,
+    jotaiStore.set(sidePanelNavigationStackState.atom, [
+      {
+        page: SidePanelPages.RoutedPage,
+        pageTitle: 'Person',
+        pageIcon: IconDotsVertical,
+        pageId: existingPageId,
+        routedLocation: {
+          pathname: recordPath,
+          search: '',
+          hash: '',
+          state: null,
+          key: 'existing-location',
+        },
+      },
+    ]);
+
+    let openedPageId: string | null = null;
+
+    act(() => {
+      openedPageId = result.current.openRecordInSidePanel({
+        recordId,
+        objectNameSingular,
+        tab: 'tab-emails',
+      });
+    });
+
+    expect(openedPageId).toBe(existingPageId);
+    expect(mockNavigateSidePanel).not.toHaveBeenCalled();
+    expect(jotaiStore.get(sidePanelNavigationStackState.atom).at(-1)).toEqual(
+      expect.objectContaining({
+        pageId: existingPageId,
+        routedLocation: expect.objectContaining({
+          pathname: recordPath,
+          hash: '#tab-emails',
         }),
-      ),
-    ).toBe('tab-emails');
+      }),
+    );
+  });
+
+  it('pushes a route when the record ID matches but the object does not', () => {
+    const { result } = renderHooks();
+    const recordId = 'shared-record-id';
+
+    jotaiStore.set(sidePanelNavigationStackState.atom, [
+      {
+        page: SidePanelPages.RoutedPage,
+        pageTitle: 'Company',
+        pageIcon: IconDotsVertical,
+        pageId: 'existing-company-page',
+        routedLocation: {
+          pathname: getAppPath(AppPath.RecordShowPage, {
+            objectNameSingular: 'company',
+            objectRecordId: recordId,
+          }),
+          search: '',
+          hash: '',
+          state: null,
+          key: 'existing-company-location',
+        },
+      },
+    ]);
+
+    act(() => {
+      result.current.openRecordInSidePanel({
+        recordId,
+        objectNameSingular: 'person',
+      });
+    });
+
+    expect(mockNavigateSidePanel).toHaveBeenCalledTimes(1);
+    expect(mockNavigateSidePanel).toHaveBeenCalledWith(
+      expect.objectContaining({
+        routedLocation: expect.objectContaining({
+          pathname: getAppPath(AppPath.RecordShowPage, {
+            objectNameSingular: 'person',
+            objectRecordId: recordId,
+          }),
+        }),
+      }),
+    );
   });
 
   it('should not open title cell when isNewRecord is false', () => {
@@ -302,10 +349,15 @@ describe('useOpenRecordInSidePanel', () => {
       });
     });
 
-    expect(mockNavigateApp).toHaveBeenCalledWith(AppPath.RecordShowPage, {
-      objectNameSingular: 'person',
-      objectRecordId: 'record-123',
-    });
+    expect(mockNavigateApp).toHaveBeenCalledWith(
+      AppPath.RecordShowPage,
+      {
+        objectNameSingular: 'person',
+        objectRecordId: 'record-123',
+      },
+      undefined,
+      { surface: 'main' },
+    );
     expect(mockNavigateSidePanel).not.toHaveBeenCalled();
     expect(jotaiStore.get(newRecordTitleCellToOpenState.atom)).toBeNull();
   });
@@ -322,10 +374,15 @@ describe('useOpenRecordInSidePanel', () => {
       });
     });
 
-    expect(mockNavigateApp).toHaveBeenCalledWith(AppPath.RecordShowPage, {
-      objectNameSingular: 'person',
-      objectRecordId: 'new-record-123',
-    });
+    expect(mockNavigateApp).toHaveBeenCalledWith(
+      AppPath.RecordShowPage,
+      {
+        objectNameSingular: 'person',
+        objectRecordId: 'new-record-123',
+      },
+      undefined,
+      { surface: 'main' },
+    );
     expect(jotaiStore.get(newRecordTitleCellToOpenState.atom)).toEqual({
       recordId: 'new-record-123',
       fieldName: getLabelIdentifierFieldMetadataItem(

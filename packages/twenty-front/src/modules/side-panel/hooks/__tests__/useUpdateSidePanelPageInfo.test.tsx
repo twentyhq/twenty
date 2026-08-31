@@ -1,5 +1,8 @@
 import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
-import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import {
+  type SidePanelNavigationStackItem,
+  sidePanelNavigationStackState,
+} from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { renderHook } from '@testing-library/react';
@@ -14,7 +17,7 @@ const mockedPageInfo = {
   instanceId: 'test-instance',
 };
 
-const mockedNavigationStack = [
+const mockedNavigationStack: SidePanelNavigationStackItem[] = [
   {
     page: SidePanelPages.CommandMenuDisplay,
     pageTitle: 'Initial Title',
