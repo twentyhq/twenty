@@ -17,7 +17,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 describe('Successful user and workspace creation', () => {
@@ -191,7 +190,9 @@ describe('Successful user and workspace creation', () => {
     const fileCorePictureService = getAppProviderByClassName<{
       uploadWorkspaceLogoFromUrl: (...args: unknown[]) => Promise<unknown>;
     }>('FileCorePictureService');
-    const exceptionHandlerService = global.app.get(ExceptionHandlerService);
+    const exceptionHandlerService = getAppProviderByClassName<{
+      captureExceptions: (exceptions: readonly unknown[]) => string[];
+    }>('ExceptionHandlerService');
     const uploadWorkspaceLogoFromUrl = jest
       .spyOn(fileCorePictureService, 'uploadWorkspaceLogoFromUrl')
       .mockReturnValue(pendingLogoUpload);
