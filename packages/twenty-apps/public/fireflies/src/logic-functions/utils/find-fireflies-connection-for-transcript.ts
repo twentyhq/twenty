@@ -14,9 +14,6 @@ export const findFirefliesConnectionForTranscript = async ({
   | { success: true; connection: AppConnection }
   | { success: false; error: string }
 > => {
-  // Probe every connection concurrently so a stalled account cannot delay
-  // reaching the account that owns the transcript; each probe is bounded by
-  // the per-request Fireflies API timeout.
   const probeResults = await Promise.all(
     connections.map(async (connection) => ({
       connection,

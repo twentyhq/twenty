@@ -88,8 +88,6 @@ const performFirefliesApiRequest = async <TData = unknown>({
   let response: Response;
 
   try {
-    // A stalled Fireflies account must not exhaust the logic-function
-    // deadline and suppress results from healthy accounts.
     response = await fetch(FIREFLIES_API_URL, {
       method: 'POST',
       headers: {
