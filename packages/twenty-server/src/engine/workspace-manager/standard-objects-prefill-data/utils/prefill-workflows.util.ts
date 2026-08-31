@@ -470,6 +470,11 @@ export const prefillWorkflows = async (
     },
   ]);
 
+  const ifElseStepPosition = { x: 0, y: 780 };
+
+  const elseBranchStepX =
+    ifElseStepPosition.x + IF_ELSE_BRANCH_POSITION_OFFSETS.ELSE.x;
+
   const createCompanySteps = JSON.stringify([
     {
       id: 'c30d7cbe-00e0-4966-bc1a-99b0a11a2cca',
@@ -691,10 +696,7 @@ export const prefillWorkflows = async (
       name: 'If a company already exists',
       type: 'IF_ELSE',
       valid: false,
-      position: {
-        x: 0,
-        y: 780,
-      },
+      position: ifElseStepPosition,
       settings: {
         input: {
           branches: [
@@ -746,7 +748,7 @@ export const prefillWorkflows = async (
       type: 'UPDATE_RECORD',
       valid: false,
       position: {
-        x: IF_ELSE_BRANCH_POSITION_OFFSETS.IF.x,
+        x: ifElseStepPosition.x + IF_ELSE_BRANCH_POSITION_OFFSETS.IF.x,
         y: 910,
       },
       settings: {
@@ -776,7 +778,7 @@ export const prefillWorkflows = async (
       type: 'CREATE_RECORD',
       valid: false,
       position: {
-        x: IF_ELSE_BRANCH_POSITION_OFFSETS.ELSE.x,
+        x: elseBranchStepX,
         y: 910,
       },
       settings: {
@@ -810,7 +812,7 @@ export const prefillWorkflows = async (
       type: 'UPDATE_RECORD',
       valid: false,
       position: {
-        x: IF_ELSE_BRANCH_POSITION_OFFSETS.ELSE.x,
+        x: elseBranchStepX,
         y: 1040,
       },
       settings: {
