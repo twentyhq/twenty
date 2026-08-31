@@ -19,7 +19,7 @@ export const parseResolveSlackUserResult = (
 ): ResolveSlackUserResult => {
   const record = asRecord(value);
 
-  if (record === undefined || !isBoolean(record.success)) {
+  if (!isDefined(record) || !isBoolean(record.success)) {
     return GENERIC_RESOLVE_ERROR;
   }
 
@@ -36,14 +36,12 @@ export const parseResolveSlackUserResult = (
 
   const slackUserRecord = asRecord(record.slackUser);
 
-  const resolvedUser =
-    slackUserRecord === undefined
-      ? undefined
-      : toSlackResolvedUser({
-          record: slackUserRecord,
-          isInInstalledWorkspace:
-            slackUserRecord.isInInstalledWorkspace === true,
-        });
+  const resolvedUser = isDefined(slackUserRecord)
+    ? toSlackResolvedUser({
+        record: slackUserRecord,
+        isInInstalledWorkspace: slackUserRecord.isInInstalledWorkspace === true,
+      })
+    : undefined;
 
   if (!isDefined(resolvedUser)) {
     return GENERIC_RESOLVE_ERROR;

@@ -18,7 +18,7 @@ export const parseSlackUserSearchResponse = (
 ): SlackUserSearchResponse => {
   const record = asRecord(value);
 
-  if (record === undefined || record.success !== true) {
+  if (!isDefined(record) || record.success !== true) {
     const error = record?.error;
 
     return {
@@ -36,13 +36,12 @@ export const parseSlackUserSearchResponse = (
   for (const entry of slackUsers) {
     const slackUserRecord = asRecord(entry);
 
-    const option =
-      slackUserRecord === undefined
-        ? undefined
-        : toSlackResolvedUser({
-            record: slackUserRecord,
-            isInInstalledWorkspace: true,
-          });
+    const option = isDefined(slackUserRecord)
+      ? toSlackResolvedUser({
+          record: slackUserRecord,
+          isInInstalledWorkspace: true,
+        })
+      : undefined;
 
     if (!isDefined(option) || !isNonEmptyString(option.slackTeamId)) {
       continue;
