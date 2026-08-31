@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildObjectNavigationFlatCommandMenuItemToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/build-object-navigation-flat-command-menu-item-to-create.util';
+import { buildObjectNavigationUniversalFlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -17,7 +17,7 @@ export class ObjectNavigationCommandOnCreateSideEffectHandlerService extends Met
     metadataName: 'objectMetadata',
     name: 'objectNavigationCommandOnCreate',
     description:
-      'When an object is created, provision its singleton "Go to" navigation command menu item (engineComponentKey NAVIGATION, an { objectMetadataItemId } payload and the matching navigationTargetObjectMetadataId), isSystemSideEffect so the engine owns its lifecycle, and isActive mirrors the object so an object created inactive gets a disabled command rather than none. Label, shortLabel and icon are interpolation templates resolved from the object at render time, the availability expression gates on the object read permission plus a feature flag for gated standard objects, and hotKeys derive from the object shortcut. The identifier is name-free and keyed on (application, object), so an object rename keeps the same command. Position is derived from the synced maximum plus the object index in the creation batch, so batch object creation never double-books a position. Noops when an engine-owned command already targets the object pending or synced, or when the object create carries no workspace id (the manifest sync path mints entity ids after side-effect expansion). twenty-standard is not concerned: it synchronizes through the from/to migration path, which never runs the side-effect engine, and seeds one navigation command per active object itself.',
+      'When an object is created, provision its singleton "Go to" navigation command menu item (engineComponentKey NAVIGATION, an { objectMetadataItemId } payload and the matching navigationTargetObjectMetadataId), isSystemSideEffect so the engine owns its lifecycle, and isActive mirrors the object so an object created inactive gets a disabled command rather than none. Label, shortLabel and icon are interpolation templates resolved from the object at render time, the availability expression gates on the object read permission plus a feature flag for gated standard objects, and hotKeys derive from the object shortcut. The identifier is name-free and keyed on (application, object), so an object rename keeps the same command. Position is derived from the synced maximum plus the object index in the creation batch, so batch object creation never double-books a position. Noops when the object create carries no workspace id (the manifest sync path mints entity ids after side-effect expansion). twenty-standard is not concerned: it synchronizes through the from/to migration path, which never runs the side-effect engine, and seeds one navigation command per active object itself.',
   },
 ) {
   buildSideEffects({
@@ -32,8 +32,30 @@ export class ObjectNavigationCommandOnCreateSideEffectHandlerService extends Met
       return { status: 'noop' };
     }
 
+    // The command menu is one flat ordered list, so the next free position is a
+    // workspace-wide maximum: no aggregator narrows it. Offsetting by the index
+    // of the object in the creation batch keeps a batch from double-booking a
+    // position, since every invocation reads the same synced maximum.
+    const syncedMaxPosition = Object.values(
+      relatedFlatEntityMaps.flatCommandMenuItemMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .reduce(
+        (maxPosition, flatCommandMenuItem) =>
+          Math.max(maxPosition, flatCommandMenuItem.position),
+        -1,
+      );
+
+    const indexInBatch = Math.max(
+      Object.keys(
+        allFlatEntityOperationRecordByMetadataName.objectMetadata
+          ?.flatEntityToCreate ?? {},
+      ).indexOf(sourceFlatObjectMetadata.universalIdentifier),
+      0,
+    );
+
     const navigationFlatCommandMenuItemToCreate =
-      buildObjectNavigationFlatCommandMenuItemToCreate({
+      buildObjectNavigationUniversalFlatCommandMenuItem({
         objectMetadata: {
           id: sourceFlatObjectMetadata.id,
           universalIdentifier: sourceFlatObjectMetadata.universalIdentifier,
@@ -43,20 +65,9 @@ export class ObjectNavigationCommandOnCreateSideEffectHandlerService extends Met
         },
         applicationUniversalIdentifier:
           sourceFlatObjectMetadata.applicationUniversalIdentifier,
-        pendingFlatCommandMenuItemsToCreate:
-          allFlatEntityOperationRecordByMetadataName.commandMenuItem
-            ?.flatEntityToCreate ?? {},
-        syncedFlatCommandMenuItemMaps:
-          relatedFlatEntityMaps.flatCommandMenuItemMaps,
-        batchObjectUniversalIdentifiers: Object.keys(
-          allFlatEntityOperationRecordByMetadataName.objectMetadata
-            ?.flatEntityToCreate ?? {},
-        ),
+        position: syncedMaxPosition + 1 + indexInBatch,
+        now: new Date().toISOString(),
       });
-
-    if (!isDefined(navigationFlatCommandMenuItemToCreate)) {
-      return { status: 'noop' };
-    }
 
     return {
       status: 'success',
