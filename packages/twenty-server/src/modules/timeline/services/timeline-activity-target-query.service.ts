@@ -5,13 +5,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type RelationTargetJoinColumn } from 'src/engine/metadata-modules/flat-field-metadata/types/relation-target-join-column.type';
 import { type ResolvedTimelineActivityTarget } from 'src/modules/timeline/types/resolved-timeline-activity-target.type';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
-import { type TimelineActivityRuleTargetJoinColumn } from 'src/modules/timeline/types/timeline-activity-rule-target-join-column.type';
 
 const readTargetFromRecord = (
   record: Record<string, unknown>,
-  targetJoinColumns: TimelineActivityRuleTargetJoinColumn[],
+  targetJoinColumns: RelationTargetJoinColumn[],
 ): ResolvedTimelineActivityTarget | undefined => {
   for (const {
     joinColumnName,

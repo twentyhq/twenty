@@ -1,15 +1,10 @@
-import { type TimelineActivityRuleTargetJoinColumn } from 'src/modules/timeline/types/timeline-activity-rule-target-join-column.type';
+import { type JunctionRelationTargetShape } from 'src/engine/metadata-modules/flat-field-metadata/types/junction-relation-target-shape.type';
+import { type RelationTargetJoinColumn } from 'src/engine/metadata-modules/flat-field-metadata/types/relation-target-join-column.type';
 
 export type TimelineActivityRuleTargetShape =
   | { kind: 'SELF' }
   | {
       kind: 'DIRECT_RELATION';
-      targetJoinColumns: TimelineActivityRuleTargetJoinColumn[];
+      targetJoinColumns: RelationTargetJoinColumn[];
     }
-  | {
-      kind: 'JUNCTION';
-      junctionObjectMetadataId: string;
-      junctionObjectNameSingular: string;
-      junctionSourceJoinColumnName: string;
-      targetJoinColumns: TimelineActivityRuleTargetJoinColumn[];
-    };
+  | JunctionRelationTargetShape;

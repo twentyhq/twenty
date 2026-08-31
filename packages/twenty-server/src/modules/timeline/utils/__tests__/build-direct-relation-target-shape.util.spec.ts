@@ -100,10 +100,12 @@ describe('buildDirectRelationTargetShape', () => {
       targetJoinColumns: [
         {
           joinColumnName: 'targetPersonId',
+          targetObjectMetadataId: PERSON_OBJECT.id,
           targetObjectNameSingular: 'person',
         },
         {
           joinColumnName: 'targetCompanyId',
+          targetObjectMetadataId: COMPANY_OBJECT.id,
           targetObjectNameSingular: 'company',
         },
       ],
