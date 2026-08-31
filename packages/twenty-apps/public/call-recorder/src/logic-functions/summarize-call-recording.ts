@@ -7,6 +7,7 @@ import {
 
 import { SUMMARIZE_CALL_RECORDING_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/summarize-call-recording-logic-function-universal-identifier';
 import { generateCallRecordingSummary } from 'src/logic-functions/flows/generate-call-recording-summary.util';
+import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 
 const CALL_RECORDING_OBJECT_NAME = 'callRecording';
 const TRANSCRIPT_FIELD_NAME = 'transcript';
@@ -35,12 +36,17 @@ export const summarizeCallRecordingHandler = async (
   }
 
   const client = new CoreApiClient();
-  const result = await generateCallRecordingSummary(client, {
-    callRecordingId: event.recordId,
-    requireCreatedByCallRecorder: true,
-  });
 
-  return { callRecordingId: event.recordId, ...result };
+  try {
+    const result = await generateCallRecordingSummary(client, {
+      callRecordingId: event.recordId,
+      requireCreatedByCallRecorder: true,
+    });
+
+    return { callRecordingId: event.recordId, ...result };
+  } catch (error) {
+    throw buildRetryableStepFailure('call recording summarization', error);
+  }
 };
 
 export default defineLogicFunction({

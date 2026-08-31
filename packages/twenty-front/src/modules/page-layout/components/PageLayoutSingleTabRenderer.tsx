@@ -1,13 +1,14 @@
-import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
+import { RecordIdentifierBarCreatedAt } from '@/object-record/record-show/components/RecordIdentifierBarCreatedAt';
+import { RecordIdentifierBarTitle } from '@/object-record/record-show/components/RecordIdentifierBarTitle';
 import { PageLayoutWidgetDndProvider } from '@/page-layout/components/dnd/PageLayoutWidgetDndProvider';
 import { PageLayoutContent } from '@/page-layout/components/PageLayoutContent';
 import { PageLayoutEditModeProvider } from '@/page-layout/components/PageLayoutEditModeProvider';
 import { PageLayoutInitializationQueryEffect } from '@/page-layout/components/PageLayoutInitializationQueryEffect';
 import { PageLayoutRecordPageCustomizationSessionRegistrationEffect } from '@/page-layout/components/PageLayoutRecordPageCustomizationSessionRegistrationEffect';
+import { PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_HEIGHT } from '@/page-layout/constants/PageLayoutRecordIdentifierBarHeight';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
-import { usePageLayoutTabsFilteredByFeatureFlags } from '@/page-layout/hooks/usePageLayoutTabsFilteredByFeatureFlags';
 import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutIsInitializedComponentState } from '@/page-layout/states/pageLayoutIsInitializedComponentState';
@@ -20,7 +21,22 @@ import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingC
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledRecordIdentifierBar = styled.div`
+  align-items: center;
+  background: ${themeCssVariables.background.secondary};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  box-sizing: border-box;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  height: ${PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_HEIGHT}px;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 0 ${themeCssVariables.spacing[3]};
+`;
 
 type PageLayoutSingleTabRendererProps = {
   pageLayoutId: string;
@@ -39,23 +55,25 @@ const PageLayoutSingleTabRendererContent = () => {
 };
 
 const PageLayoutSingleTabRendererInner = () => {
-  const { featureFilteredPageLayoutTabs } =
-    usePageLayoutTabsFilteredByFeatureFlags();
+  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
   const targetRecordIdentifier = useTargetRecord();
-  const { isInSidePanel } = useLayoutRenderingContext();
 
   const sortedActiveTabs = sortTabsByPosition(
-    featureFilteredPageLayoutTabs.filter((tab) => tab.isActive),
+    currentPageLayout.tabs.filter((tab) => tab.isActive),
   );
   const firstTab = sortedActiveTabs.at(0);
 
   return (
     <>
-      <SummaryCard
-        objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
-        objectRecordId={targetRecordIdentifier.id}
-        isInSidePanel={isInSidePanel}
-      />
+      <StyledRecordIdentifierBar>
+        <RecordIdentifierBarTitle
+          objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
+          objectRecordId={targetRecordIdentifier.id}
+        />
+        <RecordIdentifierBarCreatedAt
+          objectRecordId={targetRecordIdentifier.id}
+        />
+      </StyledRecordIdentifierBar>
 
       {isDefined(firstTab) && (
         <PageLayoutSingleTabRendererTabContent firstTabId={firstTab.id} />

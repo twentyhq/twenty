@@ -10,6 +10,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
+import { Info } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -25,6 +26,8 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { useCustomAiProviderAccess } from '@/settings/admin-panel/ai/hooks/useCustomAiProviderAccess';
+import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 import { Checkbox, Toggle } from 'twenty-ui/input';
 
 const StyledComboInputContainer = styled.div`
@@ -97,6 +100,11 @@ export const SettingsAdminNewAiModel = () => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCustomModelId, setIsCustomModelId] = useState(false);
+  const {
+    hasAccess: hasCustomAiProviderAccess,
+    gateDescription: customAiProviderGateDescription,
+    tooltipContent: customAiProviderTooltipContent,
+  } = useCustomAiProviderAccess();
 
   const { data: providersData } = useQuery<GetAiProvidersResult>(
     GET_AI_PROVIDERS,
@@ -333,12 +341,21 @@ export const SettingsAdminNewAiModel = () => {
         actionButton={
           <SaveAndCancelButtons
             onCancel={() => navigate(providerDetailPath)}
-            isSaveDisabled={isSubmitting}
+            isSaveDisabled={isSubmitting || !hasCustomAiProviderAccess}
             onSave={handleSave}
           />
         }
       >
         <SettingsPageContainer>
+          {!hasCustomAiProviderAccess && (
+            <Info
+              accent="danger"
+              text={customAiProviderGateDescription}
+              buttonTitle={t`Activate`}
+              to={getSettingsPath(SettingsPath.AdminPanelEnterprise)}
+            />
+          )}
+
           <Section>
             <H2Title
               title={t`Model ID`}
@@ -346,6 +363,11 @@ export const SettingsAdminNewAiModel = () => {
                 showModelSelect
                   ? t`Select a known model or add a custom one`
                   : t`The model identifier used by the provider API`
+              }
+              adornment={
+                <OrganizationAdornment
+                  tooltipContent={customAiProviderTooltipContent}
+                />
               }
             />
             {showModelSelect ? (

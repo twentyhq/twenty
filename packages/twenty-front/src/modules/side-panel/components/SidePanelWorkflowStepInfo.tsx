@@ -27,7 +27,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/icon';
-import { SidePanelPageInfoLayout } from './SidePanelPageInfoLayout';
+import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const SidePanelWorkflowStepInfo = ({
@@ -177,7 +177,7 @@ export const SidePanelWorkflowStepInfo = ({
   };
 
   return (
-    <SidePanelPageInfoLayout
+    <HeaderIdentifier
       icon={
         isDefined(thirdPartyApplicationInformation) ? (
           <AppChip

@@ -10,7 +10,7 @@ import {
   MessageChannelType,
   MessageChannelVisibility,
 } from 'twenty-shared/types';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 
@@ -25,9 +25,7 @@ export type CreateMessageChannelInput = {
 
 @Injectable()
 export class CreateMessageChannelService {
-  constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-  ) {}
+  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
   async createMessageChannel(
     input: CreateMessageChannelInput,
@@ -43,31 +41,28 @@ export class CreateMessageChannelService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const messageChannelRepo =
-          transactionManager.getRepository(MessageChannelEntity);
-        const newMessageChannelId = v4();
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const messageChannelRepo =
+        transactionManager.getRepository(MessageChannelEntity);
+      const newMessageChannelId = v4();
 
-        await messageChannelRepo.save({
-          id: newMessageChannelId,
-          connectedAccountId,
-          type: MessageChannelType.EMAIL,
-          handle,
-          visibility: messageVisibility || MessageChannelVisibility.METADATA,
-          syncStatus: skipMessageChannelConfiguration
-            ? MessageChannelSyncStatus.ONGOING
-            : MessageChannelSyncStatus.NOT_SYNCED,
-          syncStage: skipMessageChannelConfiguration
-            ? MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING
-            : MessageChannelSyncStage.PENDING_CONFIGURATION,
-          pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
-          workspaceId,
-        });
+      await messageChannelRepo.save({
+        id: newMessageChannelId,
+        connectedAccountId,
+        type: MessageChannelType.EMAIL,
+        handle,
+        visibility: messageVisibility || MessageChannelVisibility.METADATA,
+        syncStatus: skipMessageChannelConfiguration
+          ? MessageChannelSyncStatus.ONGOING
+          : MessageChannelSyncStatus.NOT_SYNCED,
+        syncStage: skipMessageChannelConfiguration
+          ? MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING
+          : MessageChannelSyncStage.PENDING_CONFIGURATION,
+        pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
+        workspaceId,
+      });
 
-        return newMessageChannelId;
-      },
-      authContext,
-    );
+      return newMessageChannelId;
+    }, authContext);
   }
 }

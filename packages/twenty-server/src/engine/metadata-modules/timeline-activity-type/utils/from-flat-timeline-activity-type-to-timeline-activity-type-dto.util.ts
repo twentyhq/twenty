@@ -24,13 +24,14 @@ export const fromFlatTimelineActivityTypeToTimelineActivityTypeDto = (
                 flatTimelineActivityType.targetRelationFieldUniversalIdentifier,
               triggerFieldUniversalIdentifiers:
                 flatTimelineActivityType.triggerFieldUniversalIdentifiers,
+              happensAtFieldUniversalIdentifier:
+                flatTimelineActivityType.happensAtFieldUniversalIdentifier,
             }
           : null,
       }
     : null,
   action: flatTimelineActivityType.action,
   icon: resolveOverridableEntityProperty(flatTimelineActivityType, 'icon'),
-  renderer: null,
   frontComponentUniversalIdentifier:
     flatTimelineActivityType.frontComponentUniversalIdentifier,
   objectUniversalIdentifier: flatTimelineActivityType.objectUniversalIdentifier,

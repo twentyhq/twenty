@@ -15,6 +15,7 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import {
+  PageLayoutTabLayoutMode,
   type PageLayoutWidget,
   type RichTextBody,
   WidgetType,
@@ -83,6 +84,7 @@ export const useCreatePageLayoutStandaloneRichTextWidget = ({
 
         body,
         {
+          layoutMode: PageLayoutTabLayoutMode.GRID,
           row: position.y,
           column: position.x,
           rowSpan: position.h,

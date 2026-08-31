@@ -5,8 +5,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
-import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
-import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
+import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
+import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import {
   BillingException,
@@ -147,7 +147,7 @@ export class BillingUsageService {
   ): Promise<BillingResourceCreditUsageDTO> {
     const [usedCredits, rolloverCredits] = await Promise.all([
       this.getCurrentPeriodCreditsUsed(workspaceId, periodStart),
-      this.billingCreditGrantService.getSpendableCreditsMicro(workspaceId),
+      this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
     ]);
 
     const grantedCredits =
@@ -196,7 +196,7 @@ export class BillingUsageService {
     const resourceUsageCap = this.getResourceUsageCap(subscription);
 
     const [creditBalance, usage] = await Promise.all([
-      this.billingCreditGrantService.getSpendableCreditsMicro(workspaceId),
+      this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
       this.getCurrentPeriodCreditsUsed(
         subscription.workspaceId,
         subscription.currentPeriodStart,

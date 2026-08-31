@@ -33,6 +33,7 @@ describe('listAvailablePartners', () => {
               languagesSpoken: ['ENGLISH'],
               deploymentExpertise: ['CLOUD'],
               partnerTier: 'ADVANCED',
+              superPartner: true,
               partnerScope: ['SOLUTIONING'],
               region: ['EUROPE'],
               calendarLink: { primaryLinkUrl: 'https://cal.example.com/acme' },
@@ -108,6 +109,7 @@ describe('listAvailablePartners', () => {
 
     expect(result.partners[0]).toMatchObject({
       partnerTier: 'ADVANCED',
+      superPartner: true,
       serviceCount: 2,
       approvedCaseStudyCount: 3,
       approvedCaseStudyWithCoverCount: 2,
@@ -129,6 +131,7 @@ describe('listAvailablePartners', () => {
               languagesSpoken: [],
               deploymentExpertise: [],
               partnerTier: null,
+              superPartner: false,
               partnerScope: [],
               region: [],
               calendarLink: { primaryLinkUrl: null },
@@ -156,6 +159,7 @@ describe('listAvailablePartners', () => {
 
     expect(result.partners[0]).toMatchObject({
       partnerTier: null,
+      superPartner: false,
       serviceCount: 0,
       approvedCaseStudyCount: 0,
       approvedCaseStudyWithCoverCount: 0,

@@ -1,6 +1,5 @@
 import { type Page } from '@playwright/test';
-import { getAccessAuthToken } from '../utils/getAccessAuthToken';
-import { backendGraphQLUrl } from './backend';
+import { postBackendGraphQL } from './post-backend-graphql';
 
 export const deleteWorkflow = async ({
   page,
@@ -9,12 +8,8 @@ export const deleteWorkflow = async ({
   page: Page;
   workflowId: string;
 }) => {
-  const { authToken } = await getAccessAuthToken(page);
-
-  return page.request.post(backendGraphQLUrl, {
-    headers: {
-      Authorization: `Bearer ${authToken}`,
-    },
+  return postBackendGraphQL({
+    page,
     data: {
       operationName: 'DeleteOneWorkflow',
       variables: { idToDelete: workflowId },

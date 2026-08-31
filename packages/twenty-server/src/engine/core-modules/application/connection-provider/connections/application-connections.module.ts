@@ -6,23 +6,29 @@ import { ApplicationConnectionsController } from 'src/engine/core-modules/applic
 import { ApplicationConnectionsResolver } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.resolver';
 import { ApplicationConnectionsListService } from 'src/engine/core-modules/application/connection-provider/connections/services/application-connections-list.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { RefreshTokensManagerModule } from 'src/modules/connected-account/refresh-tokens-manager/connected-account-refresh-tokens-manager.module';
 
 // Top-level consumer: depends on RefreshTokensManagerModule (which itself
 // imports the engine-side AppOAuthRefreshModule). Kept separate from
 // ConnectionProviderModule to avoid the import cycle. TokenModule +
 // WorkspaceCacheStorageModule are pulled in for the controller's JwtAuthGuard.
+// WorkspaceCacheModule resolves each connection's workspaceMemberId from its
+// userWorkspaceId via the cached flatWorkspaceMemberMaps.
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       ConnectedAccountEntity,
       ConnectionProviderEntity,
+      UserWorkspaceEntity,
     ]),
     TokenModule,
     WorkspaceCacheStorageModule,
+    WorkspaceCacheModule,
     RefreshTokensManagerModule,
     ConnectedAccountTokenEncryptionModule,
   ],

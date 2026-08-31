@@ -21,8 +21,9 @@ const mockWidget = {
   },
   createdAt: '2026-08-19T00:00:00.000Z',
   deletedAt: null,
-  gridPosition: {
-    __typename: 'GridPosition',
+  position: {
+    layoutMode: PageLayoutTabLayoutMode.GRID,
+    __typename: 'PageLayoutWidgetGridPosition',
     column: 0,
     columnSpan: 1,
     row: 0,

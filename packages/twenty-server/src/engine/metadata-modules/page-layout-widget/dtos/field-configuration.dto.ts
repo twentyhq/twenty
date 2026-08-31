@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import {
+  IsBoolean,
   IsEnum,
   IsIn,
   IsNotEmpty,
@@ -40,4 +41,9 @@ export class FieldConfigurationDTO implements FieldConfiguration {
   @IsOptional()
   @IsUUID()
   nestedRelationFieldMetadataId?: string | null;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  isUIEditable?: boolean;
 }

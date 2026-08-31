@@ -8,14 +8,13 @@ import {
   type ObjectRecordUpdateEvent,
   type ObjectRecordUpsertEvent,
 } from 'twenty-shared/database-events';
-import { FeatureFlagKey, type ObjectRecord } from 'twenty-shared/types';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { In, Raw } from 'typeorm';
+import { In } from 'typeorm';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -25,15 +24,11 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { isCachedDatabaseEventTrigger } from 'src/engine/core-modules/workflow/utils/cached-workflow-automated-trigger.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import {
-  AutomatedTriggerType,
-  type WorkflowAutomatedTriggerWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { evaluateStepFilters } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-step-filters.util';
 import {
@@ -46,8 +41,6 @@ import {
   type WorkflowTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
 
-// Both the workspace workflowAutomatedTrigger entity and the core-derived
-// trigger-map entry satisfy this shape, so dispatch can evaluate either source.
 type DatabaseEventTriggerListener = {
   workflowId: string;
   settings: AutomatedTriggerSettings;
@@ -66,11 +59,10 @@ export class WorkflowDatabaseEventTriggerListener {
   );
 
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -269,7 +261,7 @@ export class WorkflowDatabaseEventTriggerListener {
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const { fieldIdByJoinColumnName } = buildFieldMapsFromFlatObjectMetadata(
         flatFieldMetadataMaps,
         flatObjectMetadata,
@@ -308,12 +300,10 @@ export class WorkflowDatabaseEventTriggerListener {
           continue;
         }
 
-        const relatedObjectRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            relatedObjectMetadataNameSingular,
-            { shouldBypassPermissionChecks: true },
-          );
+        const relatedObjectRepository = this.workspaceOrmManager.getRepository(
+          relatedObjectMetadataNameSingular,
+          { shouldBypassPermissionChecks: true },
+        );
 
         const relatedRecords = await relatedObjectRepository.find({
           where: { id: In(joinRecordIds) },
@@ -389,48 +379,15 @@ export class WorkflowDatabaseEventTriggerListener {
     workspaceId: string,
     databaseEventName: string,
   ): Promise<DatabaseEventTriggerListener[]> {
-    const isDispatchFromCoreEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED,
-        workspaceId,
-      );
+    const { workflowAutomatedTriggerMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'workflowAutomatedTriggerMaps',
+      ]);
 
-    if (isDispatchFromCoreEnabled) {
-      const { workflowAutomatedTriggerMaps } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'workflowAutomatedTriggerMaps',
-        ]);
-
-      return Object.values(workflowAutomatedTriggerMaps.byWorkflowId).filter(
-        (trigger) =>
-          isCachedDatabaseEventTrigger(trigger) &&
-          trigger.settings.eventName === databaseEventName,
-      );
-    }
-
-    const automatedTriggerTableName = 'workflowAutomatedTrigger';
-
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const workflowAutomatedTriggerRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
-            workspaceId,
-            automatedTriggerTableName,
-            { shouldBypassPermissionChecks: true },
-          );
-
-        return workflowAutomatedTriggerRepository.find({
-          where: {
-            type: AutomatedTriggerType.DATABASE_EVENT,
-            settings: Raw(
-              () =>
-                `"${automatedTriggerTableName}"."settings"->>'eventName' = :eventName`,
-              { eventName: databaseEventName },
-            ),
-          },
-        });
-      },
-      buildSystemAuthContext(workspaceId),
+    return Object.values(workflowAutomatedTriggerMaps.byWorkflowId).filter(
+      (trigger) =>
+        isCachedDatabaseEventTrigger(trigger) &&
+        trigger.settings.eventName === databaseEventName,
     );
   }
 

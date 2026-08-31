@@ -11,7 +11,7 @@ import {
   errorResponse,
   failureResponse,
   resolvePartnerFromRequest,
-} from 'src/modules/partner/self-service/services/resolve-partner-from-request.service';
+} from 'src/modules/shared/http/resolve-partner-from-request.service';
 
 export type SaveResult = { ok: true } | { ok: false; reason: string };
 

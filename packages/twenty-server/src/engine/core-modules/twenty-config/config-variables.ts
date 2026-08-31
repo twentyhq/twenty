@@ -59,6 +59,7 @@ import {
   ConfigVariableException,
   ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
+import { type OnboardingEnrichmentCreditRewardTier } from 'src/engine/core-modules/onboarding/types/onboarding-enrichment-credit-reward-tier.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import {
   DEFAULT_DISABLED_MODELS,
@@ -539,7 +540,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'When enabled, only server admins can create new workspaces. Ignored during initial setup when no workspace exists.',
+      'When enabled, only server admins can create new workspaces, and signing up without a pending invitation or an approved access domain is refused. Ignored during initial setup when no workspace exists.',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
@@ -558,6 +559,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
       'Deployment region that determines the DPA hosting location shown to customers. The Processor entity (Twenty.com PBC) and governing law (Delaware, USA) are the same for all regions. EU (default) = Frankfurt, Germany; US = United States. Must match where Customer Personal Data actually lives.',
+    isHiddenInAdminPanel: true,
     type: ConfigVariableType.ENUM,
     options: Object.values(DpaRegion),
     // Deployment-fixed: must mirror where data actually lives. Allowing a
@@ -1076,6 +1078,19 @@ export class ConfigVariables {
   ONBOARDING_INSTALL_APPS_CREDITS_REWARD_PER_APP = 500_000;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
+      'Credit reward tiers for workspaces enrichment matched to a real company, keyed by tier name, as {"midMarket":{"minEmployeeCount":20,"amountMicro":5000000}} (amounts in microCredits). The most generous matching tier wins; no tiers disables the reward. Independent of ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT, so credits and the book-a-call offer can target different companies.',
+    isHiddenInAdminPanel: true,
+    type: ConfigVariableType.JSON,
+  })
+  @IsOptional()
+  ONBOARDING_ENRICHMENT_CREDIT_REWARD_TIERS: Record<
+    string,
+    OnboardingEnrichmentCreditRewardTier
+  > = {};
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Url for the frontend application',
     type: ConfigVariableType.STRING,
@@ -1514,6 +1529,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
       'ISO date from which HTTP logic functions are no longer served on the legacy /s/ route. Functions created on or after this date are only reachable on the isolated public domain (*.withtwenty.com). Only enforced when PUBLIC_DOMAIN_URL is set; leave empty to keep serving every function on /s/ (default for self-hosting).',
+    isHiddenInAdminPanel: true,
     type: ConfigVariableType.STRING,
   })
   @IsDateString()
@@ -2292,6 +2308,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
       'Client ID of the GitHub OAuth app used to verify app ownership when claiming a marketplace application',
+    isHiddenInAdminPanel: true,
     type: ConfigVariableType.STRING,
   })
   @IsString()
@@ -2303,6 +2320,7 @@ export class ConfigVariables {
     isSensitive: true,
     description:
       'Client secret of the GitHub OAuth app used to verify app ownership when claiming a marketplace application',
+    isHiddenInAdminPanel: true,
     type: ConfigVariableType.STRING,
   })
   @IsString()

@@ -506,27 +506,32 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
 
       for (const pageLayoutTabManifest of pageLayoutManifest.tabs ?? []) {
+        const pageLayoutTab =
+          fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
+            pageLayoutTabManifest,
+            pageLayoutUniversalIdentifier:
+              pageLayoutManifest.universalIdentifier,
+            pageLayoutType: pageLayoutManifest.type,
+            applicationUniversalIdentifier,
+            now,
+          });
+
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-          universalFlatEntity:
-            fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
-              pageLayoutTabManifest,
-              pageLayoutUniversalIdentifier:
-                pageLayoutManifest.universalIdentifier,
-              pageLayoutType: pageLayoutManifest.type,
-              applicationUniversalIdentifier,
-              now,
-            }),
+          universalFlatEntity: pageLayoutTab,
           universalFlatEntityMapsToMutate:
             allUniversalFlatEntityMaps.flatPageLayoutTabMaps,
         });
 
-        for (const pageLayoutWidgetManifest of pageLayoutTabManifest.widgets ??
-          []) {
+        for (const [widgetIndex, pageLayoutWidgetManifest] of (
+          pageLayoutTabManifest.widgets ?? []
+        ).entries()) {
           addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow(
             {
               universalFlatEntity:
                 fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
                   pageLayoutWidgetManifest,
+                  pageLayoutTabLayoutMode: pageLayoutTab.layoutMode,
+                  widgetIndex,
                   pageLayoutTabUniversalIdentifier:
                     pageLayoutTabManifest.universalIdentifier,
                   applicationUniversalIdentifier,
@@ -553,26 +558,31 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           pageLayoutTabManifest.pageLayoutUniversalIdentifier,
       );
 
+      const pageLayoutTab =
+        fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
+          pageLayoutTabManifest,
+          pageLayoutUniversalIdentifier:
+            pageLayoutTabManifest.pageLayoutUniversalIdentifier,
+          pageLayoutType: referencedPageLayoutManifest?.type,
+          applicationUniversalIdentifier,
+          now,
+        });
+
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-        universalFlatEntity:
-          fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
-            pageLayoutTabManifest,
-            pageLayoutUniversalIdentifier:
-              pageLayoutTabManifest.pageLayoutUniversalIdentifier,
-            pageLayoutType: referencedPageLayoutManifest?.type,
-            applicationUniversalIdentifier,
-            now,
-          }),
+        universalFlatEntity: pageLayoutTab,
         universalFlatEntityMapsToMutate:
           allUniversalFlatEntityMaps.flatPageLayoutTabMaps,
       });
 
-      for (const pageLayoutWidgetManifest of pageLayoutTabManifest.widgets ??
-        []) {
+      for (const [widgetIndex, pageLayoutWidgetManifest] of (
+        pageLayoutTabManifest.widgets ?? []
+      ).entries()) {
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
           universalFlatEntity:
             fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
               pageLayoutWidgetManifest,
+              pageLayoutTabLayoutMode: pageLayoutTab.layoutMode,
+              widgetIndex,
               pageLayoutTabUniversalIdentifier:
                 pageLayoutTabManifest.universalIdentifier,
               applicationUniversalIdentifier,
@@ -611,6 +621,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
               { workspaceId },
             ),
             description: applicationVariableManifest.description,
+            label: applicationVariableManifest.label,
             isSecret,
             isDeprecated: applicationVariableManifest.isDeprecated,
             type,

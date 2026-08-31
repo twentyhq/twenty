@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { In } from 'typeorm';
 
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/global-workspace-datasource/types/workspace-transaction-scope.type';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MatchParticipantService } from 'src/modules/match-participant/match-participant.service';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
@@ -12,7 +12,7 @@ import { type ParticipantWithMessageId } from 'src/modules/messaging/message-imp
 @Injectable()
 export class MessagingMessageParticipantService {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly matchParticipantService: MatchParticipantService<MessageParticipantWorkspaceEntity>,
   ) {}
 
@@ -20,10 +20,10 @@ export class MessagingMessageParticipantService {
     participants: ParticipantWithMessageId[],
     workspaceId: string,
     transactionScope: WorkspaceTransactionScope,
-  ): Promise<void> {
+  ): Promise<MessageParticipantWorkspaceEntity[]> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const messageParticipantRepository =
           transactionScope.getRepository<MessageParticipantWorkspaceEntity>(
@@ -65,16 +65,33 @@ export class MessagingMessageParticipantService {
         const { identifiers } =
           await messageParticipantRepository.insert(participantsToCreate);
 
-        const createdParticipants = await messageParticipantRepository.find({
+        return messageParticipantRepository.find({
           where: { id: In(identifiers.map(({ id }) => id)) },
         });
+      },
+      authContext,
+      { lite: true },
+    );
+  }
 
+  public async matchMessageParticipants({
+    participants,
+    messageIds,
+    workspaceId,
+  }: {
+    participants: MessageParticipantWorkspaceEntity[];
+    messageIds: string[];
+    workspaceId: string;
+  }): Promise<void> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
         await this.matchParticipantService.matchParticipants({
-          participants: createdParticipants,
+          participants,
+          sourceRecordIds: messageIds,
           objectMetadataName: 'messageParticipant',
           matchWith: 'workspaceMemberAndPerson',
-          workspaceId,
-          transactionScope,
         });
       },
       authContext,

@@ -15,20 +15,15 @@ import {
 import { constructViewFromRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/constructViewFromRecordTableWidgetViewSnapshot';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useViewById } from '@/views/hooks/useViewById';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  FeatureFlagKey,
-  ViewCalendarLayout,
-  ViewType,
-} from '~/generated-metadata/graphql';
+import { ViewCalendarLayout, ViewType } from '~/generated-metadata/graphql';
 
 type RecordTableWidgetRendererContentProps = {
   objectMetadataId: string;
   viewId: string;
   widgetId: string;
-  isReadOnly?: boolean;
+  isUIEditable?: boolean;
   isEmptyStateHidden?: boolean;
   recordLimit?: number;
   instanceIdSuffix?: string;
@@ -39,7 +34,7 @@ export const RecordTableWidgetRendererContent = ({
   objectMetadataId,
   viewId,
   widgetId,
-  isReadOnly = true,
+  isUIEditable = false,
   isEmptyStateHidden = false,
   recordLimit,
   instanceIdSuffix,
@@ -67,10 +62,6 @@ export const RecordTableWidgetRendererContent = ({
 
   const isCalendarLayout = widgetViewLayout === ViewType.CALENDAR;
 
-  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
-  );
-
   // Widget calendars are read-only month projections, except live (non
   // edit-mode) day/week calendars, which allow drag-to-reschedule and
   // record creation under the usual object permissions.
@@ -78,13 +69,9 @@ export const RecordTableWidgetRendererContent = ({
     widgetView?.calendarLayout === ViewCalendarLayout.DAY ||
     widgetView?.calendarLayout === ViewCalendarLayout.WEEK;
   const canEditCalendar =
-    isCalendarLayout &&
-    !isPageLayoutInEditMode &&
-    isCalendarWeekViewEnabled &&
-    isCalendarDayOrWeek;
-  // Read-only unless this is the explicitly allowed live day/week calendar;
-  // a caller passing isReadOnly={false} must not make month (or flag-off)
-  // widget calendars editable. Object permissions still gate the drag.
+    isCalendarLayout && !isPageLayoutInEditMode && isCalendarDayOrWeek;
+  // Read-only unless this is the explicitly allowed live day/week calendar.
+  // Object permissions still gate the drag.
   const calendarIsReadOnly = !canEditCalendar;
 
   // Keyed rather than chained so a layout added to RECORD_TABLE_WIDGET_LAYOUTS
@@ -92,11 +79,11 @@ export const RecordTableWidgetRendererContent = ({
   const renderWidgetForLayout = {
     [ViewType.TABLE]: () => (
       <RecordTableWidget
-        isReadOnly={isReadOnly}
+        isUIEditable={isUIEditable}
         isEmptyStateHidden={isEmptyStateHidden}
       />
     ),
-    [ViewType.KANBAN]: () => <RecordBoardWidget isReadOnly={isReadOnly} />,
+    [ViewType.KANBAN]: () => <RecordBoardWidget isUIEditable={isUIEditable} />,
     [ViewType.LIST]: () => <RecordListWidget />,
     [ViewType.CALENDAR]: () => (
       <RecordCalendarWidget isReadOnly={calendarIsReadOnly} />

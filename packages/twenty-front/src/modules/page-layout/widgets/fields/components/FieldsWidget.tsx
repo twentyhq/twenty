@@ -97,6 +97,9 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
 
   const hasFieldsToDisplay = groups.length > 0;
 
+  const shouldDisplayGroupHeaders =
+    displayMode === 'grouped' && groups.length > 1;
+
   if (!hasFieldsToDisplay) {
     return (
       <SidePanelProvider value={{ isInSidePanel }}>
@@ -125,16 +128,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
             instanceId,
           }}
         >
-          {displayMode === 'inline' ? (
-            <StyledInlineFieldsPropertyBox
-              hasMoreGroup={shouldShowHiddenFields}
-            >
-              <FieldsWidgetFieldList
-                fields={groups.flatMap((group) => group.fields)}
-                instanceId={instanceId}
-              />
-            </StyledInlineFieldsPropertyBox>
-          ) : (
+          {shouldDisplayGroupHeaders ? (
             groups.map((group) => (
               <FieldsWidgetGroupContainer key={group.id} title={group.name}>
                 <StyledPropertyBox>
@@ -145,6 +139,15 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
                 </StyledPropertyBox>
               </FieldsWidgetGroupContainer>
             ))
+          ) : (
+            <StyledInlineFieldsPropertyBox
+              hasMoreGroup={shouldShowHiddenFields}
+            >
+              <FieldsWidgetFieldList
+                fields={visibleFields}
+                instanceId={instanceId}
+              />
+            </StyledInlineFieldsPropertyBox>
           )}
 
           {shouldShowHiddenFields && (
