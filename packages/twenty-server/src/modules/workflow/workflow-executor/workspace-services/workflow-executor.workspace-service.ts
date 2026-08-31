@@ -336,15 +336,17 @@ export class WorkflowExecutorWorkspaceService {
       }
     }
 
-    await this.usageRecorderService.record(workspaceId, {
-      resourceType: UsageResourceType.WORKFLOW,
-      operationType: UsageOperationType.WORKFLOW_EXECUTION,
-      creditsUsedMicro: 100,
-      quantity: 1,
-      unit: UsageUnit.INVOCATION,
-      resourceId: workflowId,
-      spenders: { workflowId },
-    });
+    await this.usageRecorderService.record(workspaceId, [
+      {
+        resourceType: UsageResourceType.WORKFLOW,
+        operationType: UsageOperationType.WORKFLOW_EXECUTION,
+        creditsUsedMicro: 100,
+        quantity: 1,
+        unit: UsageUnit.INVOCATION,
+        resourceId: workflowId,
+        spenders: { workflowId },
+      },
+    ]);
   }
 
   private async processStepExecutionResult({

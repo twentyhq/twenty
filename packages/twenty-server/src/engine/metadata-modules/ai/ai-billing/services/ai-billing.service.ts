@@ -148,14 +148,16 @@ export class AiBillingService {
       }
     }
 
-    await this.usageRecorderService.record(workspaceId, {
-      resourceType: UsageResourceType.AI,
-      operationType: UsageOperationType.WEB_SEARCH,
-      creditsUsedMicro,
-      quantity: nativeWebSearchCallCount,
-      unit: UsageUnit.INVOCATION,
-      spenders: { userWorkspaceId },
-    });
+    await this.usageRecorderService.record(workspaceId, [
+      {
+        resourceType: UsageResourceType.AI,
+        operationType: UsageOperationType.WEB_SEARCH,
+        creditsUsedMicro,
+        quantity: nativeWebSearchCallCount,
+        unit: UsageUnit.INVOCATION,
+        spenders: { userWorkspaceId },
+      },
+    ]);
   }
 
   async emitAiTokenUsageEvent(
@@ -167,15 +169,17 @@ export class AiBillingService {
     agentId?: string | null,
     userWorkspaceId?: string | null,
   ): Promise<void> {
-    await this.usageRecorderService.record(workspaceId, {
-      resourceType: UsageResourceType.AI,
-      operationType,
-      creditsUsedMicro,
-      quantity: totalTokens,
-      unit: UsageUnit.TOKEN,
-      resourceId: agentId || null,
-      resourceContext: modelId,
-      spenders: { userWorkspaceId, agentId },
-    });
+    await this.usageRecorderService.record(workspaceId, [
+      {
+        resourceType: UsageResourceType.AI,
+        operationType,
+        creditsUsedMicro,
+        quantity: totalTokens,
+        unit: UsageUnit.TOKEN,
+        resourceId: agentId || null,
+        resourceContext: modelId,
+        spenders: { userWorkspaceId, agentId },
+      },
+    ]);
   }
 }

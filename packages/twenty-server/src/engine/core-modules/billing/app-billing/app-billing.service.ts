@@ -44,15 +44,17 @@ export class AppBillingService {
         `${charge.creditsUsedMicro} micro-credits (${charge.quantity} ${unit}, ${charge.operationType})`,
     );
 
-    await this.usageRecorderService.record(workspaceId, {
-      resourceType: UsageResourceType.APP,
-      operationType: charge.operationType,
-      creditsUsedMicro: charge.creditsUsedMicro,
-      quantity: charge.quantity,
-      unit,
-      resourceId: applicationId,
-      resourceContext: charge.resourceContext ?? null,
-      spenders: { userWorkspaceId, applicationId },
-    });
+    await this.usageRecorderService.record(workspaceId, [
+      {
+        resourceType: UsageResourceType.APP,
+        operationType: charge.operationType,
+        creditsUsedMicro: charge.creditsUsedMicro,
+        quantity: charge.quantity,
+        unit,
+        resourceId: applicationId,
+        resourceContext: charge.resourceContext ?? null,
+        spenders: { userWorkspaceId, applicationId },
+      },
+    ]);
   }
 }

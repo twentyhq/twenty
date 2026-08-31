@@ -63,13 +63,15 @@ export class EmailBillingService {
       }
     }
 
-    await this.usageRecorderService.record(workspaceId, {
-      resourceType: UsageResourceType.EMAIL,
-      operationType: UsageOperationType.EMAIL_SEND,
-      creditsUsedMicro,
-      quantity: sentEmailCount,
-      unit: UsageUnit.INVOCATION,
-      spenders: { userWorkspaceId },
-    });
+    await this.usageRecorderService.record(workspaceId, [
+      {
+        resourceType: UsageResourceType.EMAIL,
+        operationType: UsageOperationType.EMAIL_SEND,
+        creditsUsedMicro,
+        quantity: sentEmailCount,
+        unit: UsageUnit.INVOCATION,
+        spenders: { userWorkspaceId },
+      },
+    ]);
   }
 }

@@ -54,19 +54,19 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
     await this.flush();
   }
 
-  async record(workspaceId: string, input: RecordUsageInput): Promise<void> {
-    if (!this.eventLogEmitterService.isEnabled()) {
+  async record(workspaceId: string, inputs: RecordUsageInput[]): Promise<void> {
+    if (!this.eventLogEmitterService.isEnabled() || inputs.length === 0) {
       return;
     }
 
+    const periodStart = await this.resolvePeriodStart(workspaceId);
+
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
       USAGE_RECORDED,
-      [
-        {
-          ...this.withDefaults(input),
-          periodStart: await this.resolvePeriodStart(workspaceId),
-        },
-      ],
+      inputs.map((input) => ({
+        ...this.withDefaults(input),
+        periodStart,
+      })),
       workspaceId,
     );
   }
@@ -111,14 +111,6 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
     );
 
     if (failedEntries.length === 0) {
-      return;
-    }
-
-    if (this.buffer.isFull) {
-      this.logger.error(
-        `Dropped usage rollups for ${failedEntries.length}/${entries.length} workspace(s): the buffer is full`,
-      );
-
       return;
     }
 
