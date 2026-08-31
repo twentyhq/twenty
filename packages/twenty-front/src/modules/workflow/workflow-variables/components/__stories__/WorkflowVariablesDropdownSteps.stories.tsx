@@ -43,6 +43,8 @@ const STEPS: StepOutputSchemaV2[] = [
   },
 ];
 
+const ASYNC_DECORATOR_WAIT_OPTIONS = { timeout: 5_000 };
+
 const meta = {
   title: 'Modules/Workflow/Variables/WorkflowVariablesDropdownSteps',
   component: WorkflowVariablesDropdownSteps,
@@ -69,8 +71,14 @@ export const Default: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
+    const runCodeItem = await canvas.findByText(
+      'Run code',
+      undefined,
+      ASYNC_DECORATOR_WAIT_OPTIONS,
+    );
+
     expect(canvas.queryByText('Company name')).not.toBeInTheDocument();
-    await userEvent.click(canvas.getByText('Run code'));
+    await userEvent.click(runCodeItem);
     expect(args.onSelect).toHaveBeenCalledWith('code');
   },
 };
@@ -79,10 +87,13 @@ export const NestedFieldSearch: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.type(
-      canvas.getByPlaceholderText('Search steps and fields'),
-      ' COMPANY NAME ',
+    const searchInput = await canvas.findByPlaceholderText(
+      'Search steps and fields',
+      undefined,
+      ASYNC_DECORATOR_WAIT_OPTIONS,
     );
+
+    await userEvent.type(searchInput, ' COMPANY NAME ');
     expect(canvas.getAllByText('Company name')).toHaveLength(2);
     expect(
       canvas.getByText('Run code / Result', { exact: false }),
@@ -101,10 +112,13 @@ export const NestedContainerSearch: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.type(
-      canvas.getByPlaceholderText('Search steps and fields'),
-      'result',
+    const searchInput = await canvas.findByPlaceholderText(
+      'Search steps and fields',
+      undefined,
+      ASYNC_DECORATOR_WAIT_OPTIONS,
     );
+
+    await userEvent.type(searchInput, 'result');
     await userEvent.click(canvas.getByText('Result'));
     expect(args.onSelect).toHaveBeenCalledWith('code', ['result']);
     expect(args.onVariableSelect).not.toHaveBeenCalled();
@@ -130,10 +144,13 @@ export const WholeRecordSearch: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.type(
-      canvas.getByPlaceholderText('Search steps and fields'),
-      'company',
+    const searchInput = await canvas.findByPlaceholderText(
+      'Search steps and fields',
+      undefined,
+      ASYNC_DECORATOR_WAIT_OPTIONS,
     );
+
+    await userEvent.type(searchInput, 'company');
     await userEvent.click(canvas.getByText('Company'));
     expect(args.onVariableSelect).toHaveBeenCalledWith({
       rawVariableName: '{{trigger.id}}',
@@ -146,7 +163,11 @@ export const WholeRecordSearch: Story = {
 export const StepSearchAndEmptyState: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const searchInput = canvas.getByPlaceholderText('Search steps and fields');
+    const searchInput = await canvas.findByPlaceholderText(
+      'Search steps and fields',
+      undefined,
+      ASYNC_DECORATOR_WAIT_OPTIONS,
+    );
 
     await userEvent.type(searchInput, 'RUN CODE');
     expect(canvas.getByText('Run code')).toBeInTheDocument();

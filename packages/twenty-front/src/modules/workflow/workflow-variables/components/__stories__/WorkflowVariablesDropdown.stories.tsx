@@ -31,7 +31,11 @@ export const SearchNestedFieldFromAutoOpenedStep: Story = {
     const canvas = within(canvasElement.ownerDocument.body);
 
     await userEvent.click(
-      await canvas.findByRole('button', { name: 'Open variables' }),
+      await canvas.findByRole(
+        'button',
+        { name: 'Open variables' },
+        { timeout: 5_000 },
+      ),
     );
     expect(await canvas.findByText('Record Fields')).toBeInTheDocument();
     expect(canvas.queryByText(' Address City')).not.toBeInTheDocument();
