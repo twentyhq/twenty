@@ -11,12 +11,6 @@ import {
 
 export const MAX_CORE_WORKFLOW_FILTER_RULES = 50;
 
-export enum CoreWorkflowStatus {
-  DRAFT = 'DRAFT',
-  ACTIVE = 'ACTIVE',
-  DEACTIVATED = 'DEACTIVATED',
-}
-
 export enum CoreWorkflowFilterFieldKey {
   NAME = 'NAME',
   STATUSES = 'STATUSES',

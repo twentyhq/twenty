@@ -4,10 +4,10 @@ import {
   CoreWorkflowFilterLogicalOperator,
   CoreWorkflowFilterOperand,
   type CoreWorkflowFilterRuleInput,
-  CoreWorkflowStatus,
 } from 'src/engine/core-modules/workflow/dtos/core-workflow-filter.input';
 import { buildCoreWorkflowFilterPredicate } from 'src/engine/core-modules/workflow/utils/build-core-workflow-filter-predicate.util';
 import { computeCoreWorkflowStatuses } from 'src/engine/core-modules/workflow/utils/compute-core-workflow-statuses.util';
+import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 const FIRST_PARAMETER_INDEX = 2;
 
@@ -206,8 +206,8 @@ describe('buildCoreWorkflowFilterPredicate', () => {
             fieldKey: CoreWorkflowFilterFieldKey.STATUSES,
             operand: CoreWorkflowFilterOperand.CONTAINS,
             value: JSON.stringify([
-              CoreWorkflowStatus.DRAFT,
-              CoreWorkflowStatus.ACTIVE,
+              WorkflowStatus.DRAFT,
+              WorkflowStatus.ACTIVE,
             ]),
           },
         ]),
@@ -235,7 +235,7 @@ describe('buildCoreWorkflowFilterPredicate', () => {
           {
             fieldKey: CoreWorkflowFilterFieldKey.STATUSES,
             operand: CoreWorkflowFilterOperand.DOES_NOT_CONTAIN,
-            value: JSON.stringify([CoreWorkflowStatus.ACTIVE]),
+            value: JSON.stringify([WorkflowStatus.ACTIVE]),
           },
         ]).predicate,
       ).toBe(`((NOT (coalesce(bool_or(v.status = 'ACTIVE'), false))))`);
@@ -274,8 +274,8 @@ describe('buildCoreWorkflowFilterPredicate', () => {
       'should match exactly the workflows computeCoreWorkflowStatuses derives for %s',
       (operand) => {
         const selectedStatuses = [
-          CoreWorkflowStatus.ACTIVE,
-          CoreWorkflowStatus.DEACTIVATED,
+          WorkflowStatus.ACTIVE,
+          WorkflowStatus.DEACTIVATED,
         ];
         const { predicate } = buildPredicate([
           {
@@ -462,7 +462,7 @@ describe('buildCoreWorkflowFilterPredicate', () => {
     const VALUE_BY_FIELD_KEY: Record<CoreWorkflowFilterFieldKey, string> = {
       [CoreWorkflowFilterFieldKey.NAME]: 'invoice',
       [CoreWorkflowFilterFieldKey.STATUSES]: JSON.stringify([
-        CoreWorkflowStatus.ACTIVE,
+        WorkflowStatus.ACTIVE,
       ]),
       [CoreWorkflowFilterFieldKey.UPDATED_AT]: JSON.stringify(
         '2026-08-31T13:45:00.000Z',
@@ -536,7 +536,7 @@ describe('buildCoreWorkflowFilterPredicate', () => {
     const statusRule: CoreWorkflowFilterRuleInput = {
       fieldKey: CoreWorkflowFilterFieldKey.STATUSES,
       operand: CoreWorkflowFilterOperand.CONTAINS,
-      value: JSON.stringify([CoreWorkflowStatus.ACTIVE]),
+      value: JSON.stringify([WorkflowStatus.ACTIVE]),
     };
 
     it('should join rules with AND', () => {

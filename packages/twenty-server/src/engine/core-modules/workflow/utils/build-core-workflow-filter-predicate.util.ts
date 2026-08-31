@@ -15,18 +15,18 @@ import {
   CoreWorkflowFilterLogicalOperator,
   CoreWorkflowFilterOperand,
   type CoreWorkflowFilterRuleInput,
-  CoreWorkflowStatus,
 } from 'src/engine/core-modules/workflow/dtos/core-workflow-filter.input';
 import {
   buildCoreWorkflowHasAnyOfStatusesPredicate,
   CORE_WORKFLOW_HAS_ANY_STATUS_PREDICATE,
 } from 'src/engine/core-modules/workflow/utils/build-core-workflow-status-predicate.util';
+import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 const NAME_COLUMN = 'c.name';
 const UPDATED_AT_COLUMN = 'c."updatedAt"';
 const ONE_DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
-const CORE_WORKFLOW_STATUS_VALUES: CoreWorkflowStatus[] =
-  Object.values(CoreWorkflowStatus);
+const CORE_WORKFLOW_STATUS_VALUES: WorkflowStatus[] =
+  Object.values(WorkflowStatus);
 
 type BindParameter = (value: unknown) => string;
 
@@ -65,7 +65,7 @@ const parseJsonValue = (value: string): unknown => {
 const parseStatusValue = (
   candidate: unknown,
   rule: CoreWorkflowFilterRuleInput,
-): CoreWorkflowStatus => {
+): WorkflowStatus => {
   const status =
     typeof candidate === 'string'
       ? CORE_WORKFLOW_STATUS_VALUES.find(
@@ -84,7 +84,7 @@ const parseStatusValue = (
 
 const parseStatusesValue = (
   rule: CoreWorkflowFilterRuleInput,
-): CoreWorkflowStatus[] => {
+): WorkflowStatus[] => {
   const parsedValue = parseJsonValue(requireTextValue(rule));
   const candidates: unknown[] = Array.isArray(parsedValue)
     ? parsedValue

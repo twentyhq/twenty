@@ -1,4 +1,4 @@
-import { CoreWorkflowStatus } from 'src/engine/core-modules/workflow/dtos/core-workflow-filter.input';
+import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
   buildCoreWorkflowHasAnyOfStatusesPredicate,
   CORE_WORKFLOW_HAS_ANY_STATUS_PREDICATE,
@@ -7,13 +7,11 @@ import {
 describe('buildCoreWorkflowHasAnyOfStatusesPredicate', () => {
   it('should build a single predicate per requested status', () => {
     expect(
-      buildCoreWorkflowHasAnyOfStatusesPredicate([CoreWorkflowStatus.DRAFT]),
+      buildCoreWorkflowHasAnyOfStatusesPredicate([WorkflowStatus.DRAFT]),
     ).toBe(`(coalesce(bool_or(v.status = 'DRAFT'), false))`);
 
     expect(
-      buildCoreWorkflowHasAnyOfStatusesPredicate([
-        CoreWorkflowStatus.DEACTIVATED,
-      ]),
+      buildCoreWorkflowHasAnyOfStatusesPredicate([WorkflowStatus.DEACTIVATED]),
     ).toBe(
       `((NOT coalesce(bool_or(v.status = 'ACTIVE'), false) AND coalesce(bool_or(v.status = 'DEACTIVATED'), false)))`,
     );
@@ -22,8 +20,8 @@ describe('buildCoreWorkflowHasAnyOfStatusesPredicate', () => {
   it('should join multiple requested statuses with OR', () => {
     expect(
       buildCoreWorkflowHasAnyOfStatusesPredicate([
-        CoreWorkflowStatus.DRAFT,
-        CoreWorkflowStatus.ACTIVE,
+        WorkflowStatus.DRAFT,
+        WorkflowStatus.ACTIVE,
       ]),
     ).toBe(
       `(coalesce(bool_or(v.status = 'DRAFT'), false) OR coalesce(bool_or(v.status = 'ACTIVE'), false))`,
