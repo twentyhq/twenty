@@ -8,9 +8,10 @@ import {
 } from '@aws-sdk/client-sesv2';
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { AWS_SES_OUTBOUND_EVENT_DESTINATION_NAME } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-outbound-event-destination-name.constant';
 import { AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
+const EVENT_DESTINATION_NAME = 'twenty-outbound-sns';
 
 @Injectable()
 export class AwsSesOutboundEventDestinationService {
@@ -54,7 +55,7 @@ export class AwsSesOutboundEventDestinationService {
       .send(
         new CreateConfigurationSetEventDestinationCommand({
           ConfigurationSetName: configurationSetName,
-          EventDestinationName: AWS_SES_OUTBOUND_EVENT_DESTINATION_NAME,
+          EventDestinationName: EVENT_DESTINATION_NAME,
           EventDestination: eventDestination,
         }),
       )
@@ -66,7 +67,7 @@ export class AwsSesOutboundEventDestinationService {
         await sesClient.send(
           new UpdateConfigurationSetEventDestinationCommand({
             ConfigurationSetName: configurationSetName,
-            EventDestinationName: AWS_SES_OUTBOUND_EVENT_DESTINATION_NAME,
+            EventDestinationName: EVENT_DESTINATION_NAME,
             EventDestination: eventDestination,
           }),
         );

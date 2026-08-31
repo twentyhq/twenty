@@ -1,1 +1,0 @@
-export const AWS_SES_MAIL_FROM_MX_PRIORITY = 10;

@@ -1,5 +1,3 @@
-import { AWS_SES_MAIL_FROM_MX_PRIORITY } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-mail-from-mx-priority.constant';
-import { AWS_SES_MAIL_FROM_SPF_VALUE } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-mail-from-spf-value.constant';
 import { AWS_SES_MAIL_FROM_SUBDOMAIN } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-mail-from-subdomain.constant';
 import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
 
@@ -8,6 +6,9 @@ type BuildAwsSesVerificationRecordsArgs = {
   dkimTokens: string[];
   region: string;
 };
+
+const MAIL_FROM_MX_PRIORITY = 10;
+const MAIL_FROM_SPF_VALUE = 'v=spf1 include:amazonses.com ~all';
 
 export const buildAwsSesVerificationRecords = ({
   domain,
@@ -28,12 +29,12 @@ export const buildAwsSesVerificationRecords = ({
       type: 'MX',
       key: mailFromDomain,
       value: `feedback-smtp.${region}.amazonses.com`,
-      priority: AWS_SES_MAIL_FROM_MX_PRIORITY,
+      priority: MAIL_FROM_MX_PRIORITY,
     },
     {
       type: 'TXT',
       key: mailFromDomain,
-      value: AWS_SES_MAIL_FROM_SPF_VALUE,
+      value: MAIL_FROM_SPF_VALUE,
     },
   ];
 };

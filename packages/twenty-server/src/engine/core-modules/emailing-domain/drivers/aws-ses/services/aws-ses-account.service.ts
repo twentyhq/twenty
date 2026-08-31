@@ -3,7 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { GetAccountCommand } from '@aws-sdk/client-sesv2';
 
 import { AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
-import { type AwsSesAccountState } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/types/aws-ses-account-state.type';
+
+type AwsSesAccountState = {
+  isProductionAccessEnabled: boolean;
+};
 
 @Injectable()
 export class AwsSesAccountService {

@@ -1,7 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
+import { type NormalizedOutboundDeliveryEvent } from 'src/modules/messaging-webhooks/types/normalized-outbound-delivery-event.type';
+import { type NormalizedOutboundSendingStateEvent } from 'src/modules/messaging-webhooks/types/normalized-outbound-sending-state-event.type';
 
 import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
-import { type NormalizedSesOutboundEvent } from 'src/modules/messaging-webhooks/drivers/aws-ses/types/normalized-ses-outbound-event.type';
 import { type SesOutboundEventPayload } from 'src/modules/messaging-webhooks/drivers/aws-ses/types/ses-outbound-event-payload.type';
 import { type SesOutboundNotification } from 'src/modules/messaging-webhooks/drivers/aws-ses/types/ses-outbound-notification.type';
 import { resolveSesOutboundDeliveryOutcome } from 'src/modules/messaging-webhooks/drivers/aws-ses/utils/resolve-ses-outbound-delivery-outcome.util';
@@ -79,6 +80,25 @@ const classifyOutboundEvent = ({
     sendingState: { workspaceId, status: sendingStatus },
   };
 };
+
+type SesOutboundEventUnprocessableReason =
+  | 'UNSUPPORTED_EVENT_NAME'
+  | 'UNRESOLVED_WORKSPACE';
+
+type NormalizedSesOutboundEvent =
+  | {
+      status: 'DELIVERY';
+      delivery: Omit<NormalizedOutboundDeliveryEvent, 'dedupeKey'>;
+    }
+  | {
+      status: 'SENDING_STATE';
+      sendingState: NormalizedOutboundSendingStateEvent;
+    }
+  | {
+      status: 'UNPROCESSABLE';
+      eventName: string;
+      reason: SesOutboundEventUnprocessableReason;
+    };
 
 export const normalizeSesOutboundEvent = (
   notification: SesOutboundNotification,
