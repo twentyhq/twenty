@@ -109,6 +109,8 @@ const bootstrap = async () => {
   httpServer.keepAliveTimeout = keepAliveTimeout;
   httpServer.headersTimeout = keepAliveTimeout + 1000;
 
+  app.enableShutdownHooks();
+
   await app.listen(twentyConfigService.get('NODE_PORT'));
 };
 
