@@ -104,7 +104,7 @@ const defaultFitViewOptions = {
 
 const CENTERED_NODE_ORIGIN = [0.5, 0.5] satisfies NodeOrigin;
 
-const CREATED_NODE_DISTANCE_BELOW_CONNECTION_DROP = 50;
+const CREATED_NODE_TOP_EDGE_DISTANCE_BELOW_CONNECTION_DROP = 50;
 
 export const WorkflowDiagramCanvasBase = ({
   nodeTypes,
@@ -390,7 +390,7 @@ export const WorkflowDiagramCanvasBase = ({
     (changes: NodeChange<WorkflowDiagramNode>[]) => {
       const existingWorkflowDiagram = store.get(workflowDiagramCallbackState);
 
-      const measuredEmptyNodeDimensions = changes.find(
+      const measuredEmptyNodeDimensions = changes.findLast(
         (change): change is NodeDimensionChange =>
           change.type === 'dimensions' &&
           change.id === WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION.id,
@@ -595,7 +595,7 @@ export const WorkflowDiagramCanvasBase = ({
         x: flowPosition.x,
         y:
           flowPosition.y +
-          CREATED_NODE_DISTANCE_BELOW_CONNECTION_DROP +
+          CREATED_NODE_TOP_EDGE_DISTANCE_BELOW_CONNECTION_DROP +
           WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS.height / 2,
       },
       connectionOptions: getConnectionOptionsForSourceHandle({

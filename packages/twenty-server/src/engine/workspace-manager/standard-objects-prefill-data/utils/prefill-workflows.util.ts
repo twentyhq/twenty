@@ -472,8 +472,15 @@ export const prefillWorkflows = async (
 
   const ifElseStepPosition = { x: 0, y: 780 };
 
-  const elseBranchStepX =
-    ifElseStepPosition.x + IF_ELSE_BRANCH_POSITION_OFFSETS.ELSE.x;
+  const ifBranchStepPosition = {
+    x: ifElseStepPosition.x + IF_ELSE_BRANCH_POSITION_OFFSETS.IF.x,
+    y: ifElseStepPosition.y + IF_ELSE_BRANCH_POSITION_OFFSETS.IF.y,
+  };
+
+  const elseBranchStepPosition = {
+    x: ifElseStepPosition.x + IF_ELSE_BRANCH_POSITION_OFFSETS.ELSE.x,
+    y: ifElseStepPosition.y + IF_ELSE_BRANCH_POSITION_OFFSETS.ELSE.y,
+  };
 
   const createCompanySteps = JSON.stringify([
     {
@@ -747,10 +754,7 @@ export const prefillWorkflows = async (
       name: 'Attach person to existing company',
       type: 'UPDATE_RECORD',
       valid: false,
-      position: {
-        x: ifElseStepPosition.x + IF_ELSE_BRANCH_POSITION_OFFSETS.IF.x,
-        y: 910,
-      },
+      position: ifBranchStepPosition,
       settings: {
         input: {
           objectName: 'person',
@@ -777,10 +781,7 @@ export const prefillWorkflows = async (
       name: 'Create a new company',
       type: 'CREATE_RECORD',
       valid: false,
-      position: {
-        x: elseBranchStepX,
-        y: 910,
-      },
+      position: elseBranchStepPosition,
       settings: {
         input: {
           objectName: 'company',
@@ -812,8 +813,8 @@ export const prefillWorkflows = async (
       type: 'UPDATE_RECORD',
       valid: false,
       position: {
-        x: elseBranchStepX,
-        y: 1040,
+        x: elseBranchStepPosition.x,
+        y: elseBranchStepPosition.y + 130,
       },
       settings: {
         input: {
