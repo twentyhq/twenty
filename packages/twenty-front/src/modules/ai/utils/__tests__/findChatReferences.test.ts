@@ -108,6 +108,29 @@ describe('findChatReferences', () => {
     ]);
   });
 
+  it('should find role and app references instead of reading them as records', () => {
+    expect(
+      findChatReferences(
+        'Review [[role:55555555-5555-4555-8555-555555555555:Admin]] in [[app:66666666-6666-4666-8666-666666666666:Twenty]]',
+      ),
+    ).toEqual([
+      {
+        kind: 'role',
+        fullMatch: '[[role:55555555-5555-4555-8555-555555555555:Admin]]',
+        index: 7,
+        roleId: '55555555-5555-4555-8555-555555555555',
+        displayName: 'Admin',
+      },
+      {
+        kind: 'app',
+        fullMatch: '[[app:66666666-6666-4666-8666-666666666666:Twenty]]',
+        index: 62,
+        applicationId: '66666666-6666-4666-8666-666666666666',
+        displayName: 'Twenty',
+      },
+    ]);
+  });
+
   it('should read an explicit record prefix as a record even when the object is named view', () => {
     expect(
       findChatReferences(
@@ -153,7 +176,7 @@ describe('findChatReferences', () => {
 
   it('should find every kind in a single string', () => {
     const references = findChatReferences(
-      'The [[view:44444444-4444-4444-4444-444444444444:Pipeline]] view of [[object:partner:Partners]] groups [[record:person:11111111-1111-1111-1111-111111111111:Alice]] by [[field:33333333-3333-3333-3333-333333333333:Stage]]',
+      'The [[view:44444444-4444-4444-4444-444444444444:Pipeline]] view of [[object:partner:Partners]] groups [[record:person:11111111-1111-1111-1111-111111111111:Alice]] by [[field:33333333-3333-3333-3333-333333333333:Stage]] for [[role:55555555-5555-4555-8555-555555555555:Admin]] in [[app:66666666-6666-4666-8666-666666666666:Twenty]]',
     );
 
     expect(references.map((reference) => reference.kind)).toEqual([
@@ -161,12 +184,16 @@ describe('findChatReferences', () => {
       'object',
       'record',
       'legacyFieldById',
+      'role',
+      'app',
     ]);
     expect(references.map((reference) => reference.displayName)).toEqual([
       'Pipeline',
       'Partners',
       'Alice',
       'Stage',
+      'Admin',
+      'Twenty',
     ]);
   });
 

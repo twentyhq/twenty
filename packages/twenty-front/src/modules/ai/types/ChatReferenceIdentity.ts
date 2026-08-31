@@ -3,4 +3,6 @@ export type ChatReferenceIdentity =
   | { kind: 'object'; objectNameSingular: string }
   | { kind: 'field'; objectNameSingular: string; fieldName: string }
   | { kind: 'legacyFieldById'; fieldMetadataItemId: string }
-  | { kind: 'view'; viewId: string };
+  | { kind: 'view'; viewId: string }
+  | { kind: 'role'; roleId: string }
+  | { kind: 'app'; applicationId: string };

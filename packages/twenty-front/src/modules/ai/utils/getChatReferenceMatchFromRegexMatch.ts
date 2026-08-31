@@ -14,6 +14,10 @@ export const getChatReferenceMatchFromRegexMatch = (
     legacyFieldLabel,
     viewId,
     viewLabel,
+    roleId,
+    roleLabel,
+    applicationId,
+    applicationLabel,
     recordObjectNameSingular,
     recordId,
     recordLabel,
@@ -55,6 +59,24 @@ export const getChatReferenceMatchFromRegexMatch = (
       kind: 'view',
       viewId,
       displayName: viewLabel,
+    };
+  }
+
+  if (isDefined(roleId)) {
+    return {
+      ...position,
+      kind: 'role',
+      roleId,
+      displayName: roleLabel,
+    };
+  }
+
+  if (isDefined(applicationId)) {
+    return {
+      ...position,
+      kind: 'app',
+      applicationId,
+      displayName: applicationLabel,
     };
   }
 

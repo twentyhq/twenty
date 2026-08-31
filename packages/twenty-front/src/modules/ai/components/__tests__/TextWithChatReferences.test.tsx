@@ -79,6 +79,34 @@ jest.mock('@/ai/components/ViewLink', () => ({
   ),
 }));
 
+jest.mock('@/ai/components/RoleLink', () => ({
+  RoleLink: ({
+    displayName,
+    roleId,
+  }: {
+    displayName: string;
+    roleId: string;
+  }) => (
+    <a data-testid="role-link" href={`/roles/${roleId}`}>
+      {displayName}
+    </a>
+  ),
+}));
+
+jest.mock('@/ai/components/ApplicationLink', () => ({
+  ApplicationLink: ({
+    applicationId,
+    displayName,
+  }: {
+    applicationId: string;
+    displayName: string;
+  }) => (
+    <a data-testid="app-link" href={`/apps/${applicationId}`}>
+      {displayName}
+    </a>
+  ),
+}));
+
 describe('TextWithChatReferences', () => {
   it('should render plain text without references as-is', () => {
     render(<TextWithChatReferences text="Which company should we contact?" />);
@@ -150,7 +178,7 @@ describe('TextWithChatReferences', () => {
 
   it('should route each reference kind to its own chip', () => {
     render(
-      <TextWithChatReferences text="The [[view:44444444-4444-4444-4444-444444444444:Pipeline]] view of [[object:partner:Partners]] groups [[record:person:11111111-1111-1111-1111-111111111111:Alice]] by [[field:33333333-3333-3333-3333-333333333333:Stage]]" />,
+      <TextWithChatReferences text="The [[view:44444444-4444-4444-4444-444444444444:Pipeline]] view of [[object:partner:Partners]] groups [[record:person:11111111-1111-1111-1111-111111111111:Alice]] by [[field:33333333-3333-3333-3333-333333333333:Stage]] for [[role:55555555-5555-4555-8555-555555555555:Admin]] in [[app:66666666-6666-4666-8666-666666666666:Twenty]]" />,
     );
 
     expect(screen.getByTestId('view-link')).toHaveAttribute(
@@ -165,6 +193,14 @@ describe('TextWithChatReferences', () => {
     expect(screen.getByTestId('legacy-field-link')).toHaveAttribute(
       'href',
       '/fields/33333333-3333-3333-3333-333333333333',
+    );
+    expect(screen.getByTestId('role-link')).toHaveAttribute(
+      'href',
+      '/roles/55555555-5555-4555-8555-555555555555',
+    );
+    expect(screen.getByTestId('app-link')).toHaveAttribute(
+      'href',
+      '/apps/66666666-6666-4666-8666-666666666666',
     );
   });
 });
