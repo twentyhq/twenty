@@ -72,6 +72,17 @@ describe('updateSlackMessageViaResponseUrl', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it('should report a rejected response url rather than calling it a success', async () => {
+    fetchMock.mockResolvedValue({ ok: false, status: 404 });
+
+    const result = await updateSlackMessageViaResponseUrl({
+      responseUrl: RESPONSE_URL,
+      text: 'Thanks',
+    });
+
+    expect(result.success).toBe(false);
+  });
+
   it('should report a network failure instead of throwing', async () => {
     fetchMock.mockRejectedValue(new Error('network down'));
 

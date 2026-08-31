@@ -36,11 +36,20 @@ export const updateSlackMessageViaResponseUrl = async ({
   }
 
   try {
-    await fetch(responseUrl, {
+    const response = await fetch(responseUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ replace_original: true, text }),
     });
+
+    // fetch only rejects on a transport failure, so an expired or revoked
+    // response url comes back as a resolved non-2xx.
+    if (!response.ok) {
+      return {
+        success: false,
+        error: `Slack rejected the message update with status ${response.status}.`,
+      };
+    }
 
     return { success: true };
   } catch (error) {
