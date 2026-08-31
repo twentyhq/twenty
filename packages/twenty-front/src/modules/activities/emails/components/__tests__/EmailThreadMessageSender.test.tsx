@@ -30,7 +30,10 @@ describe('EmailThreadMessageSender', () => {
 
   it('renders the received date relative to now', () => {
     render(
-      <EmailThreadMessageSender sender={SENDER} sentAt={TWO_HOURS_BEFORE_NOW} />,
+      <EmailThreadMessageSender
+        sender={SENDER}
+        sentAt={TWO_HOURS_BEFORE_NOW}
+      />,
     );
 
     expect(screen.getByText('Ada Lovelace')).toBeInTheDocument();
