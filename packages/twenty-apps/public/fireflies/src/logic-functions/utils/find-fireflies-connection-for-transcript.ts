@@ -1,5 +1,7 @@
 import { type AppConnection } from 'twenty-sdk/logic-function';
 
+import { isDefined } from 'src/utils/is-defined';
+
 import { fetchFirefliesTranscript } from 'src/logic-functions/utils/fetch-fireflies-transcript';
 
 export const findFirefliesConnectionForTranscript = async ({
@@ -12,22 +14,28 @@ export const findFirefliesConnectionForTranscript = async ({
   | { success: true; connection: AppConnection }
   | { success: false; error: string }
 > => {
-  const connectionErrors: string[] = [];
+  // Probe every connection concurrently so a stalled account cannot delay
+  // reaching the account that owns the transcript; each probe is bounded by
+  // the per-request Fireflies API timeout.
+  const probeResults = await Promise.all(
+    connections.map(async (connection) => ({
+      connection,
+      result: await fetchFirefliesTranscript({
+        accessToken: connection.accessToken,
+        transcriptId,
+      }),
+    })),
+  );
 
-  for (const connection of connections) {
-    const transcriptResult = await fetchFirefliesTranscript({
-      accessToken: connection.accessToken,
-      transcriptId,
-    });
+  const matchingProbe = probeResults.find(({ result }) => result.ok);
 
-    if (transcriptResult.ok) {
-      return { success: true, connection };
-    }
-
-    connectionErrors.push(
-      `${connection.name}: ${transcriptResult.errorMessage}`,
-    );
+  if (isDefined(matchingProbe)) {
+    return { success: true, connection: matchingProbe.connection };
   }
+
+  const connectionErrors = probeResults.flatMap(({ connection, result }) =>
+    result.ok ? [] : [`${connection.name}: ${result.errorMessage}`],
+  );
 
   return {
     success: false,

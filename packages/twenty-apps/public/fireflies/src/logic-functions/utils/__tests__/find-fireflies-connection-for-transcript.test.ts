@@ -62,6 +62,40 @@ describe('findFirefliesConnectionForTranscript', () => {
     expect(result).toEqual({ success: true, connection: connections[1] });
   });
 
+  it('probes accounts concurrently so a stalled account cannot delay the match', async () => {
+    vi.useFakeTimers();
+    fetchFirefliesTranscriptMock.mockImplementation(
+      ({ accessToken }: { accessToken: string }) =>
+        new Promise((resolve) =>
+          setTimeout(
+            () =>
+              resolve(
+                accessToken === 'support-access-token'
+                  ? { ok: true, data: { id: 'transcript-1' } }
+                  : { ok: false, errorMessage: 'timed out' },
+              ),
+            accessToken === 'support-access-token' ? 10 : 30_000,
+          ),
+        ),
+    );
+
+    const resultPromise = findFirefliesConnectionForTranscript({
+      connections,
+      transcriptId: 'transcript-1',
+    });
+
+    expect(fetchFirefliesTranscriptMock).toHaveBeenCalledTimes(2);
+
+    await vi.runAllTimersAsync();
+
+    await expect(resultPromise).resolves.toEqual({
+      success: true,
+      connection: connections[1],
+    });
+
+    vi.useRealTimers();
+  });
+
   it('reports every account failure when no account can access the transcript', async () => {
     fetchFirefliesTranscriptMock
       .mockResolvedValueOnce({ ok: false, errorMessage: 'not found' })
