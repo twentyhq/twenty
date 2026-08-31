@@ -12,8 +12,8 @@ export const getJunctionObjectMetadataIds = (
   new Set(
     objectMetadataItems.flatMap((objectMetadataItem) =>
       objectMetadataItem.fields
-        .filter((field) =>
-          isDefined(
+        .filter(
+          (field) =>
             getJunctionConfig({
               settings: field.settings,
               relationObjectMetadataId:
@@ -22,8 +22,7 @@ export const getJunctionObjectMetadataIds = (
                 field.relation?.targetFieldMetadata.id,
               sourceObjectMetadataId: objectMetadataItem.id,
               objectMetadataItems,
-            }),
-          ),
+            })?.isValid === true,
         )
         .map((junctionField) => junctionField.relation?.targetObjectMetadata.id)
         .filter(isDefined),
