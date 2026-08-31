@@ -76,11 +76,13 @@ const StyledVideoLoadingContainer = styled.div`
   width: 100%;
 `;
 
-const StyledVideo = styled.video`
+const StyledVideo = styled.video<{ $isHidden?: boolean }>`
   max-height: 100%;
   max-width: 100%;
   outline: none;
+  visibility: ${({ $isHidden }) => ($isHidden ? 'hidden' : 'visible')};
 `;
+
 
 const StyledUnavailablePreviewContainer = styled.div`
   align-items: center;
@@ -339,8 +341,9 @@ export const DocumentViewer = ({
               setIsVideoLoading(false);
               setHasVideoError(true);
             }}
-            style={{ visibility: isVideoLoading ? 'hidden' : 'visible' }}
+            $isHidden={isVideoLoading}
           />
+
         </StyledVideoContainer>
       </StyledDocumentViewerContainer>
     );
