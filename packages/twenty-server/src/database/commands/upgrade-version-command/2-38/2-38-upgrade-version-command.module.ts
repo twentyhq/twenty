@@ -9,7 +9,6 @@ import { BackfillLinkedTimelineActivityHappensAtCommand } from 'src/database/com
 import { ConfigureTimelineActivityHappensAtCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1787918663365-configure-timeline-activity-happens-at.command';
 import { PinAskAiCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1787938100000-pin-ask-ai-command-menu-item.command';
 import { ReownObjectNavigationCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788166853000-reown-object-navigation-command-menu-items.command';
-import { FlagStandardActionCommandMenuItemsSystemSideEffectCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788166854000-flag-standard-action-command-menu-items-system-side-effect.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
@@ -35,7 +34,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ConfigureTimelineActivityHappensAtCommand,
     PinAskAiCommandMenuItemCommand,
     ReownObjectNavigationCommandMenuItemsCommand,
-    FlagStandardActionCommandMenuItemsSystemSideEffectCommand,
   ],
 })
 export class V2_38_UpgradeVersionCommandModule {}
