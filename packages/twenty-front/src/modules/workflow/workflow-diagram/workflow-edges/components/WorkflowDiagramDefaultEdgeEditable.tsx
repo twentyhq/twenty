@@ -53,6 +53,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     markerStart,
     markerEnd,
     strategy: data?.edgePathStrategy,
+    parallelEdgeOffset: data?.parallelEdgeOffset,
   });
 
   const { deleteEdge } = useDeleteEdge();
@@ -62,6 +63,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
   const nodeCreationStarted = isNodeCreationStarted({
     parentStepId: source,
     nextStepId: target,
+    connectionOptions: data?.sourceConnectionOptions,
   });
 
   const handleNodeButtonClick = () => {

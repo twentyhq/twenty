@@ -48,6 +48,7 @@ export type WorkflowDiagramNodeDefaultHandleOptions = {
 export type WorkflowDiagramStepNodeData =
   | {
       nodeType: 'trigger';
+      targetHandleIds?: string[];
       triggerType: WorkflowTriggerType;
       name: string;
       icon?: string;
@@ -63,6 +64,7 @@ export type WorkflowDiagramStepNodeData =
     }
   | {
       nodeType: 'action';
+      targetHandleIds?: string[];
       actionType: WorkflowActionType;
       name: string;
       logicFunctionId?: string;
@@ -117,6 +119,7 @@ export type WorkflowDiagramDefaultEdgeData = {
   edgeExecutionStatus?: StepStatus;
   labelOptions?: WorkflowDiagramEdgeLabelOptions;
   edgePathStrategy?: WorkflowDiagramEdgePathStrategy;
+  parallelEdgeOffset?: number;
 };
 
 export type WorkflowDiagramEdgeData = WorkflowDiagramDefaultEdgeData;

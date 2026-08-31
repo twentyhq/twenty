@@ -11,6 +11,7 @@ import { type StartNodeCreationParams } from '@/workflow/workflow-diagram/types/
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { useCallback, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useStartNodeCreation = () => {
   const { commandMenuContextApi } = useContext(CommandMenuContext);
@@ -77,13 +78,16 @@ export const useStartNodeCreation = () => {
   const isNodeCreationStarted = ({
     parentStepId,
     nextStepId,
-  }: {
-    parentStepId?: string;
-    nextStepId?: string;
-  }) => {
+    connectionOptions,
+  }: StartNodeCreationParams) => {
     return (
       workflowInsertStepIds.parentStepId === parentStepId &&
-      workflowInsertStepIds.nextStepId === nextStepId
+      workflowInsertStepIds.nextStepId === nextStepId &&
+      (!isDefined(connectionOptions) ||
+        isDeeplyEqual(
+          workflowInsertStepIds.connectionOptions,
+          connectionOptions,
+        ))
     );
   };
 

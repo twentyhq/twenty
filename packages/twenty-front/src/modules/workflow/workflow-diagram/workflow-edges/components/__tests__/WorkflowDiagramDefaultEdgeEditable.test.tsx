@@ -120,6 +120,71 @@ const renderEdge = (deletable: boolean) =>
   );
 
 describe('WorkflowDiagramDefaultEdgeEditable', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('inserts on each shared-destination branch using its own control and branch identity', async () => {
+    const user = userEvent.setup();
+    render(
+      <>
+        {['if', 'else'].map((branchId, index) => (
+          <WorkflowDiagramDefaultEdgeEditable
+            key={branchId}
+            id={branchId}
+            source={edgeProps.source}
+            sourceHandleId={edgeProps.sourceHandleId}
+            sourcePosition={edgeProps.sourcePosition}
+            sourceX={edgeProps.sourceX}
+            sourceY={edgeProps.sourceY}
+            target={edgeProps.target}
+            targetHandleId={branchId}
+            targetPosition={edgeProps.targetPosition}
+            targetX={edgeProps.targetX}
+            targetY={edgeProps.targetY}
+            deletable={false}
+            data={{
+              edgeType: 'default',
+              parallelEdgeOffset: index === 0 ? -50 : 50,
+              sourceConnectionOptions: {
+                connectedStepType: 'IF_ELSE',
+                settings: { branchId },
+              },
+            }}
+          />
+        ))}
+      </>,
+      { wrapper: Wrapper },
+    );
+
+    const buttons = screen.getAllByRole('button', { name: 'Insert action' });
+    await user.click(buttons[0]);
+    await user.click(buttons[1]);
+
+    expect(
+      mockStartNodeCreation.mock.calls.map(([options]) => options),
+    ).toEqual([
+      {
+        parentStepId: edgeProps.source,
+        nextStepId: edgeProps.target,
+        position: { x: 50, y: 150 },
+        connectionOptions: {
+          connectedStepType: 'IF_ELSE',
+          settings: { branchId: 'if' },
+        },
+      },
+      {
+        parentStepId: edgeProps.source,
+        nextStepId: edgeProps.target,
+        position: { x: 150, y: 150 },
+        connectionOptions: {
+          connectedStepType: 'IF_ELSE',
+          settings: { branchId: 'else' },
+        },
+      },
+    ]);
+  });
+
   it('allows inserting an action on a non-deletable branch', async () => {
     const user = userEvent.setup();
     renderEdge(false);
