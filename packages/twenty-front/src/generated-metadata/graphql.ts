@@ -6310,7 +6310,8 @@ export type UpsertUsageLimitInput = {
   burstValue?: InputMaybe<Scalars['BigInt']['input']>;
   limitKind: Scalars['String']['input'];
   limitValue: Scalars['BigInt']['input'];
-  operationType: UsageOperationType;
+  limitValueType?: Scalars['String']['input'];
+  operationType?: InputMaybe<UsageOperationType>;
   resourceType: UsageResourceType;
   spenderId?: InputMaybe<Scalars['String']['input']>;
   spenderType: Scalars['String']['input'];
@@ -6415,7 +6416,7 @@ export type UsageLimit = {
   limitKind: Scalars['String']['output'];
   limitValue: Scalars['BigInt']['output'];
   limitValueType: Scalars['String']['output'];
-  operationType: UsageOperationType;
+  operationType?: Maybe<UsageOperationType>;
   resourceType: UsageResourceType;
   spenderId: Scalars['String']['output'];
   spenderType: Scalars['String']['output'];
