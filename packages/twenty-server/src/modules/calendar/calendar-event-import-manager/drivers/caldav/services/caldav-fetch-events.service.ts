@@ -13,6 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type CalDavSyncCursor } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/types/caldav-sync-cursor';
 import { extractICalData } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/extract-ical-data.util';
+import { isCalDavCollectionHref } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-caldav-collection-href.util';
 import { isEventInTimeRange } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-event-in-time-range.util';
 import { isInvalidSyncTokenResponse } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-invalid-sync-token-response.util';
 import { isValidCalDavHref } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-valid-caldav-href.util';
@@ -203,17 +204,6 @@ export class CalDavFetchEventsService {
     return new URL(collectionPath, client.serverUrl).href;
   }
 
-  private isCollectionHref(href: string, collectionUrl: string): boolean {
-    const resolvedHref = new URL(href, collectionUrl);
-    const resolvedCollectionUrl = new URL(collectionUrl);
-
-    return (
-      resolvedHref.origin === resolvedCollectionUrl.origin &&
-      resolvedHref.pathname.replace(/\/+$/, '') ===
-        resolvedCollectionUrl.pathname.replace(/\/+$/, '')
-    );
-  }
-
   private async syncCalendar(
     client: DAVClient,
     calendar: DAVCalendar,
@@ -257,7 +247,7 @@ export class CalDavFetchEventsService {
       (entry): entry is DAVResponse & { href: string } =>
         isNonEmptyString(entry.href) &&
         isValidCalDavHref(entry.href) &&
-        !this.isCollectionHref(entry.href, calendar.url),
+        !isCalDavCollectionHref(entry.href, calendar.url),
     );
 
     const changedHrefs = memberResponses
@@ -388,7 +378,7 @@ export class CalDavFetchEventsService {
         !isNonEmptyString(href) ||
         !isNonEmptyString(etag) ||
         !isValidCalDavHref(href) ||
-        this.isCollectionHref(href, calendarUrl)
+        isCalDavCollectionHref(href, calendarUrl)
       ) {
         return map;
       }
