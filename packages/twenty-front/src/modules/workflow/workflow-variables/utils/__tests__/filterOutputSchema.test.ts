@@ -299,6 +299,50 @@ describe('filterOutputSchema', () => {
       );
     });
 
+    it('should filter out excluded types from nested non-record fields', () => {
+      const inputSchema = createRecordSchema('person', {
+        details: {
+          isLeaf: false,
+          type: 'object',
+          value: {
+            metrics: {
+              isLeaf: false,
+              type: 'object',
+              value: {
+                label: { isLeaf: true, type: FieldMetadataType.TEXT },
+                score: { isLeaf: true, type: FieldMetadataType.RATING },
+              },
+            },
+          },
+        },
+      });
+
+      expect(
+        filterOutputSchema({
+          shouldDisplayRecordFields: true,
+          shouldDisplayRecordObjects: true,
+          outputSchema: inputSchema,
+          fieldTypesToExclude: [FieldMetadataType.RATING],
+        }),
+      ).toEqual(
+        createRecordSchema('person', {
+          details: {
+            isLeaf: false,
+            type: 'object',
+            value: {
+              metrics: {
+                isLeaf: false,
+                type: 'object',
+                value: {
+                  label: { isLeaf: true, type: FieldMetadataType.TEXT },
+                },
+              },
+            },
+          },
+        }),
+      );
+    });
+
     it('should preserve step outputs while filtering their nested records', () => {
       const inputSchema: FindRecordsOutputSchema = {
         first: {
