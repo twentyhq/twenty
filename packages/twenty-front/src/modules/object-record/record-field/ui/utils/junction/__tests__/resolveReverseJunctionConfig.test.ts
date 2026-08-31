@@ -148,6 +148,66 @@ describe('resolveReverseJunctionConfig', () => {
     });
   });
 
+  it('prefers a valid configured owner over a malformed duplicate for the same inverse field', () => {
+    const taskMetadata = getMockObjectMetadataItemOrThrow('task');
+    const taskTargetsField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: taskMetadata,
+      fieldName: 'taskTargets',
+    });
+    const rocketMetadata = getMockObjectMetadataItemOrThrow('rocket');
+    const rocketTaskTargetsField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: rocketMetadata,
+      fieldName: 'taskTargets',
+    });
+    const taskTargetMetadata = getMockObjectMetadataItemOrThrow('taskTarget');
+
+    if (!taskTargetsField.relation || !rocketTaskTargetsField.relation) {
+      throw new Error('Task targets relation not found');
+    }
+
+    const taskTargetsRelation = taskTargetsField.relation;
+    const rocketTaskTargetsRelation = rocketTaskTargetsField.relation;
+    const objectMetadataItemsWithMalformedDuplicate = objectMetadataItems.map(
+      (item) =>
+        item.id === taskMetadata.id
+          ? {
+              ...item,
+              fields: [
+                ...item.fields,
+                {
+                  ...taskTargetsField,
+                  id: 'malformed-duplicate-task-targets-field-id',
+                  name: 'malformedDuplicateTaskTargets',
+                  relation: {
+                    ...taskTargetsRelation,
+                    type: RelationType.ONE_TO_MANY,
+                    targetFieldMetadata:
+                      rocketTaskTargetsRelation.targetFieldMetadata,
+                  },
+                },
+              ],
+            }
+          : item,
+    );
+
+    expect(
+      resolveReverseJunctionConfig({
+        junctionObjectMetadataId: taskTargetMetadata.id,
+        relationTargetFieldMetadataId:
+          rocketTaskTargetsRelation.targetFieldMetadata.id,
+        sourceObjectMetadataId: rocketMetadata.id,
+        objectMetadataItems: objectMetadataItemsWithMalformedDuplicate,
+      }),
+    ).toMatchObject({
+      status: 'resolved',
+      junctionConfig: {
+        sourceField: { name: 'target' },
+        targetFields: [{ name: 'task' }],
+        isConfiguredOnOwningSide: true,
+      },
+    });
+  });
+
   it('returns invalid instead of falling back when the only configured target is stale', () => {
     const taskMetadata = getMockObjectMetadataItemOrThrow('task');
     const taskTargetsField = getMockFieldMetadataItemOrThrow({

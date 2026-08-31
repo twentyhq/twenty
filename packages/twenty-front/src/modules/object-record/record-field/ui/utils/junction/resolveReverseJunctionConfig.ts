@@ -184,18 +184,6 @@ export const resolveReverseJunctionConfig = ({
     reverseJunctionConfigCandidates.filter(
       ({ junctionConfig }) => junctionConfig.isConfiguredOnOwningSide,
     );
-  const compatibleConfiguredMorphSiblingConfig =
-    collapseCompatibleMorphSiblingCandidates(
-      configuredReverseJunctionConfigCandidates,
-    );
-
-  const compatibleMorphSiblingConfig = collapseCompatibleMorphSiblingCandidates(
-    reverseJunctionConfigCandidates,
-  );
-
-  if (hasInvalidCandidateForRequestedReverse) {
-    return { status: 'invalid' };
-  }
 
   if (configuredReverseJunctionConfigCandidates.length > 0) {
     if (configuredReverseJunctionConfigCandidates.length === 1) {
@@ -206,6 +194,11 @@ export const resolveReverseJunctionConfig = ({
       };
     }
 
+    const compatibleConfiguredMorphSiblingConfig =
+      collapseCompatibleMorphSiblingCandidates(
+        configuredReverseJunctionConfigCandidates,
+      );
+
     return isDefined(compatibleConfiguredMorphSiblingConfig)
       ? {
           status: 'resolved',
@@ -214,7 +207,14 @@ export const resolveReverseJunctionConfig = ({
       : { status: 'ambiguous' };
   }
 
+  if (hasInvalidCandidateForRequestedReverse) {
+    return { status: 'invalid' };
+  }
+
   if (reverseJunctionConfigCandidates.length > 1) {
+    const compatibleMorphSiblingConfig =
+      collapseCompatibleMorphSiblingCandidates(reverseJunctionConfigCandidates);
+
     return isDefined(compatibleMorphSiblingConfig)
       ? {
           status: 'resolved',
