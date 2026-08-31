@@ -4,8 +4,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
-import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
-import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/message-suppression-source.type';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 
 @Injectable()
@@ -38,12 +36,9 @@ export class InboundUnsubscribeHandlerService {
       return;
     }
 
-    await this.messageSuppressionService.suppress({
+    await this.messageSuppressionService.unsubscribeFromEverything({
       workspaceId: payload.workspaceId,
       emailAddress: payload.emailAddress,
-      reason: MessageSuppressionReason.UNSUBSCRIBE,
-      source: MessageSuppressionSource.SYSTEM,
-      unsubscribeTopicId: null,
     });
   }
 }

@@ -17,8 +17,6 @@ import { type Request } from 'express';
 import { ApiPath } from 'twenty-shared/types';
 
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
-import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
-import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/message-suppression-source.type';
 import { type UnsubscribeTokenVerification } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-token-verification.type';
 import { buildUnsubscribePreferencesPage } from 'src/engine/core-modules/emailing-domain/utils/build-unsubscribe-preferences-page.util';
 import { buildUnsubscribeResultPage } from 'src/engine/core-modules/emailing-domain/utils/build-unsubscribe-result-page.util';
@@ -96,12 +94,9 @@ export class UnsubscribeController {
       return;
     }
 
-    await this.messageSuppressionService.suppress({
+    await this.messageSuppressionService.unsubscribeFromEverything({
       workspaceId: payload.workspaceId,
       emailAddress: payload.emailAddress,
-      reason: MessageSuppressionReason.UNSUBSCRIBE,
-      source: MessageSuppressionSource.SYSTEM,
-      unsubscribeTopicId: null,
     });
   }
 
@@ -179,11 +174,9 @@ export class UnsubscribeController {
       return PREVIEW_RESULT_PAGE;
     }
 
-    await this.messageSuppressionService.suppress({
+    await this.messageSuppressionService.unsubscribeFromEverything({
       workspaceId: payload.workspaceId,
       emailAddress: payload.emailAddress,
-      reason: MessageSuppressionReason.UNSUBSCRIBE,
-      source: MessageSuppressionSource.SYSTEM,
     });
 
     return buildUnsubscribeResultPage(

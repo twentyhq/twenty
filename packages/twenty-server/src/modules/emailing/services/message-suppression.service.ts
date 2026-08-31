@@ -328,7 +328,7 @@ export class MessageSuppressionService {
     );
 
     if (keptTopicIdSet.size === 0) {
-      await this.suppressEveryTopic({ workspaceId, emailAddress });
+      await this.unsubscribeFromEverything({ workspaceId, emailAddress });
 
       return;
     }
@@ -351,7 +351,7 @@ export class MessageSuppressionService {
     }
   }
 
-  private async suppressEveryTopic({
+  async unsubscribeFromEverything({
     workspaceId,
     emailAddress,
   }: {
