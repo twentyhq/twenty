@@ -44,6 +44,7 @@ import {
   type EdgeChange,
   type FitViewOptions,
   type NodeChange,
+  type NodeDimensionChange,
   type NodeOrigin,
   type NodeProps,
   type OnBeforeDelete,
@@ -216,6 +217,9 @@ export const WorkflowDiagramCanvasBase = ({
     startPosition: { x: number; y: number };
   } | null>(null);
 
+  const [emptyNodeMeasuredDimensions, setEmptyNodeMeasuredDimensions] =
+    useState<{ width: number; height: number } | undefined>(undefined);
+
   const { nodes, edges } = useMemo(() => {
     if (!isDefined(workflowDiagram)) {
       return { nodes: [], edges: [] };
@@ -231,6 +235,7 @@ export const WorkflowDiagramCanvasBase = ({
       const emptyNode = {
         ...WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION,
         position: workflowInsertStepIds.position,
+        measured: emptyNodeMeasuredDimensions,
         data: {
           ...WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION.data,
           position: workflowInsertStepIds.position,
@@ -259,7 +264,7 @@ export const WorkflowDiagramCanvasBase = ({
     }
 
     return { nodes, edges };
-  }, [workflowDiagram, workflowInsertStepIds]);
+  }, [workflowDiagram, workflowInsertStepIds, emptyNodeMeasuredDimensions]);
 
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const { commandMenuContextApi } = useContext(CommandMenuContext);
@@ -384,6 +389,16 @@ export const WorkflowDiagramCanvasBase = ({
   const handleNodesChanges = useCallback(
     (changes: NodeChange<WorkflowDiagramNode>[]) => {
       const existingWorkflowDiagram = store.get(workflowDiagramCallbackState);
+
+      const measuredEmptyNodeDimensions = changes.find(
+        (change): change is NodeDimensionChange =>
+          change.type === 'dimensions' &&
+          change.id === WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION.id,
+      )?.dimensions;
+
+      if (isDefined(measuredEmptyNodeDimensions)) {
+        setEmptyNodeMeasuredDimensions(measuredEmptyNodeDimensions);
+      }
 
       const filteredChanges = changes.filter(
         (change) =>
