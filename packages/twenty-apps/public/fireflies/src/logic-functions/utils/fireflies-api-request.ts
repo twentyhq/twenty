@@ -88,40 +88,45 @@ const performFirefliesApiRequest = async <TData = unknown>({
   query,
   variables,
 }: FirefliesApiRequestParams): Promise<FirefliesApiResult<TData>> => {
-  let response: Response;
+  const fetchResult = await fetch(FIREFLIES_API_URL, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ query, variables }),
+    signal: AbortSignal.timeout(FIREFLIES_API_REQUEST_TIMEOUT_MILLISECONDS),
+  }).then(
+    (response) => ({ ok: true as const, response }),
+    (fetchError: unknown) => ({ ok: false as const, fetchError }),
+  );
 
-  try {
-    response = await fetch(FIREFLIES_API_URL, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ query, variables }),
-      signal: AbortSignal.timeout(FIREFLIES_API_REQUEST_TIMEOUT_MILLISECONDS),
-    });
-  } catch (error) {
+  if (!fetchResult.ok) {
     return {
       ok: false,
       status: 0,
-      errorMessage: isTimeoutError(error)
+      errorMessage: isTimeoutError(fetchResult.fetchError)
         ? buildFirefliesTimeoutMessage()
-        : `Fireflies API request failed: ${(error as Error).message}`,
-      isTimeout: isTimeoutError(error),
+        : `Fireflies API request failed: ${(fetchResult.fetchError as Error).message}`,
+      isTimeout: isTimeoutError(fetchResult.fetchError),
     };
   }
 
-  let envelope: FirefliesGraphqlEnvelope<TData> | null = null;
-  let parseError: Error | null = null;
+  const { response } = fetchResult;
 
-  try {
-    envelope = (await response.json()) as FirefliesGraphqlEnvelope<TData>;
-  } catch (error) {
-    parseError = error as Error;
-  }
+  const parseResult = await response.json().then(
+    (envelopeJson) => ({
+      ok: true as const,
+      envelope: envelopeJson as FirefliesGraphqlEnvelope<TData> | null,
+    }),
+    (parseError: unknown) => ({
+      ok: false as const,
+      parseError: parseError as Error,
+    }),
+  );
 
   // The timeout signal can also fire while the response body streams in.
-  if (parseError !== null && isTimeoutError(parseError)) {
+  if (!parseResult.ok && isTimeoutError(parseResult.parseError)) {
     return {
       ok: false,
       status: 0,
@@ -129,6 +134,8 @@ const performFirefliesApiRequest = async <TData = unknown>({
       isTimeout: true,
     };
   }
+
+  const envelope = parseResult.ok ? parseResult.envelope : null;
 
   if (
     envelope !== null &&
@@ -157,11 +164,11 @@ const performFirefliesApiRequest = async <TData = unknown>({
     };
   }
 
-  if (parseError !== null) {
+  if (!parseResult.ok) {
     return {
       ok: false,
       status: response.status,
-      errorMessage: `Fireflies API returned a non-JSON response: ${parseError.message}`,
+      errorMessage: `Fireflies API returned a non-JSON response: ${parseResult.parseError.message}`,
     };
   }
 

@@ -1,5 +1,7 @@
 import { type AppConnection } from 'twenty-sdk/logic-function';
 
+import { isDefined } from 'src/utils/is-defined';
+
 import { fetchFirefliesTranscript } from 'src/logic-functions/utils/fetch-fireflies-transcript';
 
 type FindFirefliesConnectionForTranscriptResult =
@@ -12,54 +14,52 @@ export const findFirefliesConnectionForTranscript = ({
 }: {
   connections: AppConnection[];
   transcriptId: string;
-}): Promise<FindFirefliesConnectionForTranscriptResult> =>
-  new Promise((resolve) => {
-    if (connections.length === 0) {
-      resolve({
-        success: false,
-        error: `No connected Fireflies account can access transcript ${transcriptId}.`,
-      });
+}): Promise<FindFirefliesConnectionForTranscriptResult> => {
+  const probes = connections.map(async (connection) => ({
+    connection,
+    transcriptResult: await fetchFirefliesTranscript({
+      accessToken: connection.accessToken,
+      transcriptId,
+    }),
+  }));
 
-      return;
-    }
-
-    const probeErrors: string[] = [];
-    let settledProbeCount = 0;
-
-    const recordProbeFailure = (
-      connectionIndex: number,
-      errorMessage: string,
-    ) => {
-      probeErrors[connectionIndex] = errorMessage;
-      settledProbeCount += 1;
-
-      if (settledProbeCount === connections.length) {
-        resolve({ success: false, error: probeErrors.join(' | ') });
-      }
-    };
-
-    connections.forEach((connection, connectionIndex) => {
-      fetchFirefliesTranscript({
-        accessToken: connection.accessToken,
-        transcriptId,
-      }).then(
-        (transcriptResult) => {
+  // Resolves only on success so the race can finish without waiting for stalled accounts.
+  const successfulProbes = probes.map(
+    (probe) =>
+      new Promise<FindFirefliesConnectionForTranscriptResult>((resolve) => {
+        probe.then(({ connection, transcriptResult }) => {
           if (transcriptResult.ok) {
             resolve({ success: true, connection });
-
-            return;
           }
+        });
+      }),
+  );
 
-          recordProbeFailure(
-            connectionIndex,
-            `${connection.name}: ${transcriptResult.errorMessage}`,
-          );
-        },
-        (probeError: unknown) =>
-          recordProbeFailure(
-            connectionIndex,
-            `${connection.name}: ${(probeError as Error).message}`,
-          ),
+  const settledProbes = Promise.all(probes).then(
+    (probeOutcomes): FindFirefliesConnectionForTranscriptResult => {
+      const successfulProbe = probeOutcomes.find(
+        ({ transcriptResult }) => transcriptResult.ok,
       );
-    });
-  });
+
+      if (isDefined(successfulProbe)) {
+        return { success: true, connection: successfulProbe.connection };
+      }
+
+      const probeErrors = probeOutcomes.flatMap(
+        ({ connection, transcriptResult }) =>
+          transcriptResult.ok
+            ? []
+            : [`${connection.name}: ${transcriptResult.errorMessage}`],
+      );
+
+      return {
+        success: false,
+        error:
+          probeErrors.join(' | ') ||
+          `No connected Fireflies account can access transcript ${transcriptId}.`,
+      };
+    },
+  );
+
+  return Promise.race([...successfulProbes, settledProbes]);
+};

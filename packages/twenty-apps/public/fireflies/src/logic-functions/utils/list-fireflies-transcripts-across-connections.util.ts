@@ -47,17 +47,20 @@ export const listFirefliesTranscriptsAcrossConnections = async ({
     })),
   );
 
-  const callsById = new Map<string, FirefliesCallSummary>();
-  const connectionErrors: string[] = [];
-  let successfulConnectionCount = 0;
+  const connectionErrors = connectionResults.flatMap(
+    ({ connection, result }) =>
+      result.ok ? [] : [`${connection.name}: ${result.errorMessage}`],
+  );
+  const successfulConnectionCount = connectionResults.filter(
+    ({ result }) => result.ok,
+  ).length;
 
-  for (const { connection, result } of connectionResults) {
+  const callsById = new Map<string, FirefliesCallSummary>();
+
+  for (const { result } of connectionResults) {
     if (!result.ok) {
-      connectionErrors.push(`${connection.name}: ${result.errorMessage}`);
       continue;
     }
-
-    successfulConnectionCount += 1;
 
     for (const call of result.data) {
       if (!callsById.has(call.id)) {
