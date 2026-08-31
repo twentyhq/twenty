@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CommonCreateOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-one-query-runner.service';
@@ -145,39 +144,42 @@ export class CreateAndConnectJunctionRecordService {
             );
           }
 
-          const { results: targetRecord } =
-            await this.commonCreateOneQueryRunnerService.execute(
-              {
-                data: input.targetRecordInput,
-                selectedFields: targetApiContext.selectedFields,
-              },
-              {
-                ...targetApiContext.queryRunnerContext,
-                transactionScope,
-              },
-            );
-
-          const { results: junctionRecord } =
-            await this.commonCreateOneQueryRunnerService.execute(
-              {
-                data: {
-                  [junctionShape.junctionSourceJoinColumnName]:
-                    input.sourceRecordId,
-                  [junctionShape.targetJoinColumns[0].joinColumnName]:
-                    targetRecord.id,
+          return this.commonCreateOneQueryRunnerService.executeComposite({
+            authContext,
+            run: async (execute) => {
+              const { results: targetRecord } = await execute(
+                {
+                  data: input.targetRecordInput,
+                  selectedFields: targetApiContext.selectedFields,
                 },
-                selectedFields: junctionApiContext.selectedFields,
-              },
-              {
-                ...junctionApiContext.queryRunnerContext,
-                transactionScope,
-              },
-            );
+                {
+                  ...targetApiContext.queryRunnerContext,
+                  transactionScope,
+                },
+              );
 
-          return {
-            targetRecord: targetRecord as ObjectRecord,
-            junctionRecord: junctionRecord as ObjectRecord,
-          };
+              const { results: junctionRecord } = await execute(
+                {
+                  data: {
+                    [junctionShape.junctionSourceJoinColumnName]:
+                      input.sourceRecordId,
+                    [junctionShape.targetJoinColumns[0].joinColumnName]:
+                      targetRecord.id,
+                  },
+                  selectedFields: junctionApiContext.selectedFields,
+                },
+                {
+                  ...junctionApiContext.queryRunnerContext,
+                  transactionScope,
+                },
+              );
+
+              return {
+                targetRecord,
+                junctionRecord,
+              };
+            },
+          });
         },
       );
     }, authContext);

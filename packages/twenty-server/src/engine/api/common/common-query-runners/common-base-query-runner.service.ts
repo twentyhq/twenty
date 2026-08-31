@@ -127,14 +127,41 @@ export abstract class CommonBaseQueryRunnerService<
     args: CommonInput<Args>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonQueryExecutionResult<Output, Args>> {
+    return this.executeComposite({
+      authContext: queryRunnerContext.authContext,
+      run: (execute) => execute(args, queryRunnerContext),
+    });
+  }
+
+  public async executeComposite<Result>({
+    authContext,
+    run,
+  }: {
+    authContext: WorkspaceAuthContext;
+    run: (
+      execute: (
+        args: CommonInput<Args>,
+        queryRunnerContext: CommonBaseQueryRunnerContext,
+      ) => Promise<CommonQueryExecutionResult<Output, Args>>,
+    ) => Promise<Result>;
+  }): Promise<Result> {
+    await this.throttleQueryExecution(authContext);
+
+    return run((args, queryRunnerContext) =>
+      this.executeWithoutThrottle(args, queryRunnerContext),
+    );
+  }
+
+  private async executeWithoutThrottle(
+    args: CommonInput<Args>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): Promise<CommonQueryExecutionResult<Output, Args>> {
     const {
       authContext,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     } = queryRunnerContext;
-
-    await this.throttleQueryExecution(authContext);
 
     await this.validate(args, queryRunnerContext);
 
