@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-sdk/utils';
 import { type SlackUnfurlObjectName } from 'src/logic-functions/constants/slack-unfurl-object-names';
 
 type SlackUnfurlRecordSelection = {
-  queryField: string;
+  queryField: 'people' | 'companies' | 'opportunities' | 'notes' | 'tasks';
   node: Record<string, unknown>;
 };
 
