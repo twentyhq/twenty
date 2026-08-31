@@ -3,6 +3,7 @@ import { TRIGGER_STEP_ID, WorkflowActionType } from 'twenty-shared/workflow';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/insert-step';
 import {
   type WorkflowAction,
+  type WorkflowEmptyAction,
   type WorkflowIfElseAction,
   type WorkflowIteratorAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -82,6 +83,106 @@ describe('insertStep', () => {
         ],
       },
     },
+  });
+
+  const createEmptyAction = (id: string): WorkflowEmptyAction => ({
+    ...createMockAction(id),
+    type: WorkflowActionType.EMPTY,
+    settings: { ...createMockAction(id).settings, input: {} },
+  });
+
+  it.each(['action', 'if', 'else-if', 'else'])(
+    'preserves the downstream continuation when inserting If/Else on %s',
+    (parentConnection) => {
+      const parentStep =
+        parentConnection === 'action'
+          ? createMockAction('parent', ['shared'])
+          : createMockIfElseAction();
+      const branchSteps = [
+        createEmptyAction('new-if'),
+        createEmptyAction('new-else'),
+      ];
+      const insertedStep: WorkflowIfElseAction = {
+        ...createMockIfElseAction(),
+        id: 'new',
+        settings: {
+          ...createMockIfElseAction().settings,
+          input: {
+            ...createMockIfElseAction().settings.input,
+            branches: [
+              {
+                id: 'new-if-branch',
+                filterGroupId: 'new-filter',
+                nextStepIds: ['new-if'],
+              },
+              { id: 'new-else-branch', nextStepIds: ['new-else'] },
+            ],
+          },
+        },
+      };
+
+      const result = insertStep({
+        existingSteps: [parentStep, createMockAction('shared')],
+        existingTrigger: null,
+        insertedStep,
+        additionalCreatedSteps: branchSteps,
+        parentStepId: parentStep.id,
+        nextStepId: 'shared',
+        parentStepConnectionOptions:
+          parentConnection === 'action'
+            ? undefined
+            : {
+                connectedStepType: WorkflowActionType.IF_ELSE,
+                settings: { branchId: parentConnection },
+              },
+      });
+
+      expect(result.updatedInsertedStep).toEqual(insertedStep);
+      for (const branchStep of branchSteps) {
+        expect(
+          result.updatedSteps.find((step) => step.id === branchStep.id),
+        ).toEqual({
+          ...branchStep,
+          nextStepIds: ['shared'],
+        });
+        expect(branchStep.nextStepIds).toBeUndefined();
+      }
+    },
+  );
+
+  it('keeps new branch placeholders empty when there is no downstream action', () => {
+    const branchSteps = [
+      createEmptyAction('shared'),
+      createEmptyAction('other'),
+    ];
+    const insertedStep = createMockIfElseAction();
+    const result = insertStep({
+      existingSteps: [],
+      existingTrigger: null,
+      insertedStep,
+      additionalCreatedSteps: branchSteps,
+    });
+
+    expect(result.updatedSteps).toEqual([insertedStep, ...branchSteps]);
+  });
+
+  it('preserves the iterator loop while connecting its completion to the downstream action', () => {
+    const loopStep = {
+      ...createEmptyAction('existing-loop-step'),
+      nextStepIds: [mockIteratorStep.id],
+    };
+    const result = insertStep({
+      existingSteps: [createMockAction('downstream')],
+      existingTrigger: createMockTrigger(['downstream']),
+      insertedStep: mockIteratorStep,
+      additionalCreatedSteps: [loopStep],
+      parentStepId: TRIGGER_STEP_ID,
+      nextStepId: 'downstream',
+    });
+
+    expect(result.updatedInsertedStep.nextStepIds).toEqual(['downstream']);
+    expect(result.updatedSteps).toContainEqual(loopStep);
+    expect(result.updatedTrigger?.nextStepIds).toEqual([mockIteratorStep.id]);
   });
 
   it.each(['if', 'else-if', 'else'])(

@@ -14,6 +14,7 @@ export const insertStep = ({
   existingSteps,
   existingTrigger,
   insertedStep,
+  additionalCreatedSteps = [],
   nextStepId,
   parentStepId,
   parentStepConnectionOptions,
@@ -21,6 +22,7 @@ export const insertStep = ({
   existingSteps: WorkflowAction[];
   existingTrigger: WorkflowTrigger | null;
   insertedStep: WorkflowAction;
+  additionalCreatedSteps?: WorkflowAction[];
   nextStepId?: string;
   parentStepId?: string;
   parentStepConnectionOptions?: WorkflowStepConnectionOptions;
@@ -43,13 +45,29 @@ export const insertStep = ({
         updatedTrigger: existingTrigger,
       };
 
+  const isInsertedStepIfElse = insertedStep.type === WorkflowActionType.IF_ELSE;
+  const nextStepIds = isDefined(nextStepId) ? [nextStepId] : undefined;
   const updatedInsertedStep = {
     ...insertedStep,
-    nextStepIds: nextStepId ? [nextStepId] : undefined,
+    nextStepIds: isInsertedStepIfElse ? undefined : nextStepIds,
   };
+  const branchStepIds = isInsertedStepIfElse
+    ? insertedStep.settings.input.branches.flatMap(
+        (branch) => branch.nextStepIds,
+      )
+    : [];
+  const updatedAdditionalSteps = additionalCreatedSteps.map((step) =>
+    isDefined(nextStepId) && branchStepIds.includes(step.id)
+      ? { ...step, nextStepIds }
+      : step,
+  );
 
   return {
-    updatedSteps: [...updatedSteps, updatedInsertedStep],
+    updatedSteps: [
+      ...updatedSteps,
+      updatedInsertedStep,
+      ...updatedAdditionalSteps,
+    ],
     updatedTrigger,
     updatedInsertedStep,
   };
