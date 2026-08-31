@@ -167,7 +167,7 @@ describe('useCreateRecordPageNoteWidget', () => {
               ? widgetToReplace.position.index
               : undefined,
         });
-        result.current.insertCreatedWidgetAtContext(note.id);
+        result.current.insertCreatedWidgetAtContext({ newWidgetId: note.id });
       });
       const draft = store.get(draftAtom);
       expect(draft.tabs[0]).toEqual(otherTab);

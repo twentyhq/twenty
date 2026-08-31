@@ -32,7 +32,12 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconApps, IconListDetails, IconNotes } from 'twenty-ui/icon';
+import {
+  IconApps,
+  IconListDetails,
+  IconListSearch,
+  IconNotes,
+} from 'twenty-ui/icon';
 import { v4 as uuidv4 } from 'uuid';
 import {
   type FrontComponent,
@@ -176,7 +181,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     }));
 
     setPageLayoutEditingWidgetId(widgetId);
-    insertCreatedWidgetAtContext(widgetId);
+    insertCreatedWidgetAtContext({ newWidgetId: widgetId });
 
     navigatePageLayoutSidePanel({
       sidePanelPage: SidePanelPages.RecordPageFieldsSettings,
@@ -247,7 +252,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     }));
 
     setPageLayoutEditingWidgetId(widgetId);
-    insertCreatedWidgetAtContext(widgetId);
+    insertCreatedWidgetAtContext({ newWidgetId: widgetId });
 
     navigatePageLayoutSidePanel({
       sidePanelPage: SidePanelPages.RecordPageFieldSettings,
@@ -276,7 +281,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
       positionIndex: replacePositionIndex,
     });
 
-    insertCreatedWidgetAtContext(newWidget.id);
+    insertCreatedWidgetAtContext({ newWidgetId: newWidget.id });
   };
 
   const handleCreateFrontComponentWidget = useCallback(
@@ -322,7 +327,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
       }));
 
       setPageLayoutEditingWidgetId(widgetId);
-      insertCreatedWidgetAtContext(widgetId);
+      insertCreatedWidgetAtContext({ newWidgetId: widgetId });
 
       closeSidePanelMenu();
     },
@@ -347,18 +352,18 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
 
   return (
     <SidePanelList selectableItemIds={selectableItemIds}>
-      <SidePanelGroup heading={t`Widget type`}>
+      <SidePanelGroup heading={t`Standard widgets`}>
         <SelectableListItem itemId="fields" onEnter={handleCreateFieldsWidget}>
           <CommandMenuItem
             Icon={IconListDetails}
-            label={t`Fields`}
+            label={t`Fields group`}
             id="fields"
             onClick={handleCreateFieldsWidget}
           />
         </SelectableListItem>
         <SelectableListItem itemId="field" onEnter={handleCreateFieldWidget}>
           <CommandMenuItem
-            Icon={IconListDetails}
+            Icon={IconListSearch}
             label={t`Field`}
             id="field"
             onClick={handleCreateFieldWidget}
