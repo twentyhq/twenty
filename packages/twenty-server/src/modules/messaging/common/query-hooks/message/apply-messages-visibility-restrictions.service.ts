@@ -40,6 +40,7 @@ export class ApplyMessagesVisibilityRestrictionsService {
         const messageChannelMessageAssociationRepository =
           this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
             'messageChannelMessageAssociation',
+            { shouldBypassPermissionChecks: true },
           );
 
         const messageChannelMessagesAssociations =
