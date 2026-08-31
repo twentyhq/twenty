@@ -721,6 +721,7 @@ export class SignInUpService {
                 : userData.newUserWithPicture.picture,
               applicationUniversalIdentifier:
                 customApplication.universalIdentifier,
+              locale: user.locale,
             },
             queryRunner,
           );
