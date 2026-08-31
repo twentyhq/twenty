@@ -209,6 +209,42 @@ describe('useMultipleRecordPickerChange', () => {
     });
   });
 
+  it('isolates queues for pickers backed by different stores', async () => {
+    const firstChange = createDeferred();
+    const firstOnChange = jest.fn(() => firstChange.promise);
+    const secondOnChange = jest.fn();
+    const initialMorphItem = createMorphItem('record-id', false);
+    const firstPicker = setup({
+      initialMorphItems: [initialMorphItem],
+      onChange: firstOnChange,
+    });
+    const secondPicker = setup({
+      initialMorphItems: [initialMorphItem],
+      onChange: secondOnChange,
+    });
+
+    let firstChangeResult: Promise<void> = Promise.resolve();
+    let secondChangeResult: Promise<void> = Promise.resolve();
+    act(() => {
+      firstChangeResult = firstPicker.result.current.handleChange({
+        ...initialMorphItem,
+        isSelected: true,
+      });
+      secondChangeResult = secondPicker.result.current.handleChange({
+        ...initialMorphItem,
+        isSelected: true,
+      });
+    });
+
+    await waitFor(() => expect(firstOnChange).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(secondOnChange).toHaveBeenCalledTimes(1));
+
+    await act(async () => {
+      firstChange.resolve();
+      await Promise.all([firstChangeResult, secondChangeResult]);
+    });
+  });
+
   it('rolls back and reports the latest rejected change', async () => {
     const change = createDeferred();
     const error = new Error('Could not update relation');

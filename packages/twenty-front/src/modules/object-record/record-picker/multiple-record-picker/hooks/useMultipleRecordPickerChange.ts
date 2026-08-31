@@ -22,10 +22,24 @@ type PickerMorphItemChangeQueue = {
   pendingChange: Promise<void>;
 };
 
-const changeQueueByPickerMorphItemKey = new Map<
-  string,
-  PickerMorphItemChangeQueue
+const changeQueuesByStore = new WeakMap<
+  ReturnType<typeof useStore>,
+  Map<string, PickerMorphItemChangeQueue>
 >();
+
+const getChangeQueueForStore = (store: ReturnType<typeof useStore>) => {
+  const existingChangeQueue = changeQueuesByStore.get(store);
+
+  if (existingChangeQueue) {
+    return existingChangeQueue;
+  }
+
+  const changeQueue = new Map<string, PickerMorphItemChangeQueue>();
+
+  changeQueuesByStore.set(store, changeQueue);
+
+  return changeQueue;
+};
 
 export const useMultipleRecordPickerChange = ({
   onChange,
@@ -45,6 +59,7 @@ export const useMultipleRecordPickerChange = ({
 
   const handleChange = useCallback(
     (morphItem: RecordPickerPickableMorphItem) => {
+      const changeQueueByPickerMorphItemKey = getChangeQueueForStore(store);
       const morphItemKey = getMorphItemKey(morphItem);
       const pickerMorphItemKey = `${componentInstanceId}:${morphItemKey}`;
       const changeToken = Symbol(morphItemKey);

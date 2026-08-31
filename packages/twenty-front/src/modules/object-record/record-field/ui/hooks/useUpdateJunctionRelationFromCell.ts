@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { t } from '@lingui/core/macro';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -79,13 +80,13 @@ export const useUpdateJunctionRelationFromCell = ({
         targetFields.length === 0
       ) {
         throw new Error(
-          'Cannot update junction relation without a valid junction configuration',
+          t`Cannot update junction relation without a valid junction configuration`,
         );
       }
 
       if (!isDefined(sourceObjectMetadata)) {
         throw new Error(
-          'Cannot update junction relation without source object metadata',
+          t`Cannot update junction relation without source object metadata`,
         );
       }
 
@@ -100,7 +101,7 @@ export const useUpdateJunctionRelationFromCell = ({
 
       if (!isDefined(targetFieldInfo)) {
         throw new Error(
-          'Cannot update junction relation for an unsupported target object',
+          t`Cannot update junction relation for an unsupported target object`,
         );
       }
 
@@ -165,7 +166,7 @@ export const useUpdateJunctionRelationFromCell = ({
 
         if (!isDefined(searchRecord?.record)) {
           throw new Error(
-            'Cannot create junction relation because the target record is unavailable',
+            t`Cannot create junction relation because the target record is unavailable`,
           );
         }
 
@@ -177,13 +178,13 @@ export const useUpdateJunctionRelationFromCell = ({
 
         if (!isDefined(sourceJoinColumnName)) {
           throw new Error(
-            'Cannot create junction relation without a source join column',
+            t`Cannot create junction relation without a source join column`,
           );
         }
 
         if (!isDefined(targetJoinColumnName)) {
           throw new Error(
-            'Cannot create junction relation without a target join column',
+            t`Cannot create junction relation without a target join column`,
           );
         }
 
@@ -232,7 +233,7 @@ export const useUpdateJunctionRelationFromCell = ({
           });
 
           if (!isDefined(persistedJunctionRecordNode)) {
-            throw new Error('Failed to create junction record');
+            throw new Error(t`Failed to create junction record`);
           }
 
           const persistedJunctionRecord = getRecordFromRecordNode({
