@@ -203,6 +203,17 @@ export class CalDavFetchEventsService {
     return new URL(collectionPath, client.serverUrl).href;
   }
 
+  private isCollectionHref(href: string, collectionUrl: string): boolean {
+    const resolvedHref = new URL(href, collectionUrl);
+    const resolvedCollectionUrl = new URL(collectionUrl);
+
+    return (
+      resolvedHref.origin === resolvedCollectionUrl.origin &&
+      resolvedHref.pathname.replace(/\/+$/, '') ===
+        resolvedCollectionUrl.pathname.replace(/\/+$/, '')
+    );
+  }
+
   private async syncCalendar(
     client: DAVClient,
     calendar: DAVCalendar,
@@ -244,7 +255,9 @@ export class CalDavFetchEventsService {
 
     const memberResponses = syncResult.filter(
       (entry): entry is DAVResponse & { href: string } =>
-        isNonEmptyString(entry.href) && isValidCalDavHref(entry.href),
+        isNonEmptyString(entry.href) &&
+        isValidCalDavHref(entry.href) &&
+        !this.isCollectionHref(entry.href, calendar.url),
     );
 
     const changedHrefs = memberResponses
@@ -374,7 +387,8 @@ export class CalDavFetchEventsService {
       if (
         !isNonEmptyString(href) ||
         !isNonEmptyString(etag) ||
-        !isValidCalDavHref(href)
+        !isValidCalDavHref(href) ||
+        this.isCollectionHref(href, calendarUrl)
       ) {
         return map;
       }
