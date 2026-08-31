@@ -98,9 +98,21 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const [installedApplicationId, setInstalledApplicationId] = useState<
-    string | null
-  >(null);
+  // The row an install is waiting on, and whether reading INSTALLED on it is
+  // enough: a row that was already there reads INSTALLED until the job moves it,
+  // so only a state change proves that job finished.
+  const [installFollowUp, setInstallFollowUp] = useState<{
+    applicationId: string;
+    requiresStateChange: boolean;
+  } | null>(null);
+
+  const [hasSeenApplicationRow, setHasSeenApplicationRow] = useState(false);
+
+  const installedApplicationId = installFollowUp?.applicationId ?? null;
+
+  const { application: followedApplication } = useApplicationFromStore({
+    applicationId: installFollowUp?.applicationId,
+  });
 
   const isUnlisted = isDefined(detail) && !detail.isListed;
   const isApplicationInstalling =
@@ -121,57 +133,70 @@ export const SettingsAvailableApplicationDetails = () => {
       return;
     }
 
+    const applicationAlreadyKnown = isDefined(application);
     const data = await install({
       universalIdentifier: detail.universalIdentifier,
     });
+    const startedApplicationId = data?.installApplication?.id;
 
-    setInstalledApplicationId(data?.installApplication?.id ?? null);
-  };
-
-  const [hasSeenInstallingApplication, setHasSeenInstallingApplication] =
-    useState(false);
-
-  // The install runs in a background job, so this page follows the row it
-  // created: it opens the application once the install completes, and stays
-  // here with an error when the rolled back install takes the row away. The row
-  // has to be seen first — it only reaches the store on the created event, a
-  // moment after the mutation returns.
-  useEffect(() => {
-    if (!isNonEmptyString(installedApplicationId)) {
+    if (!isNonEmptyString(startedApplicationId)) {
       return;
     }
 
-    if (isDefined(application)) {
-      if (application.state === ApplicationState.INSTALLED) {
-        setHasSeenInstallingApplication(false);
-        setInstalledApplicationId(null);
+    setHasSeenApplicationRow(false);
+    setInstallFollowUp({
+      applicationId: startedApplicationId,
+      requiresStateChange: applicationAlreadyKnown || !isApplicationsStoreReady,
+    });
+  };
 
-        navigateSettings(SettingsPath.ApplicationDetail, {
-          applicationId: installedApplicationId,
-        });
+  // The install runs in a background job, so this page follows the row the
+  // mutation named: it opens the application once that row settles on
+  // INSTALLED, and stays here with an error when the rolled back install takes
+  // it away.
+  useEffect(() => {
+    if (!isDefined(installFollowUp)) {
+      return;
+    }
+
+    if (isDefined(followedApplication)) {
+      if (followedApplication.state !== ApplicationState.INSTALLED) {
+        setHasSeenApplicationRow(true);
 
         return;
       }
 
-      setHasSeenInstallingApplication(true);
+      if (installFollowUp.requiresStateChange && !hasSeenApplicationRow) {
+        return;
+      }
+
+      setHasSeenApplicationRow(false);
+      setInstallFollowUp(null);
+
+      navigateSettings(SettingsPath.ApplicationDetail, {
+        applicationId: installFollowUp.applicationId,
+      });
 
       return;
     }
 
-    if (isApplicationsStoreReady && hasSeenInstallingApplication) {
-      setHasSeenInstallingApplication(false);
-      setInstalledApplicationId(null);
+    // Absence only means the install was rolled back once the row has been
+    // seen: it reaches the store on the created event, a moment after the
+    // mutation returns.
+    if (isApplicationsStoreReady && hasSeenApplicationRow) {
+      setHasSeenApplicationRow(false);
+      setInstallFollowUp(null);
 
       enqueueErrorSnackBar({
         message: t`Failed to install ${displayName}.`,
       });
     }
   }, [
-    application,
     displayName,
     enqueueErrorSnackBar,
-    hasSeenInstallingApplication,
-    installedApplicationId,
+    followedApplication,
+    hasSeenApplicationRow,
+    installFollowUp,
     isApplicationsStoreReady,
     navigateSettings,
   ]);
