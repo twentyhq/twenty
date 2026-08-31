@@ -266,6 +266,46 @@ describe('getJunctionConfig', () => {
       expect(result!.targetFields[0].name).toBe('linkedObject');
     });
 
+    it('should resolve a merged morph field referenced through another member ID', () => {
+      const morphField = createMockField({
+        id: 'morph-representative-field-id',
+        name: 'linkedObject',
+        type: FieldMetadataType.MORPH_RELATION,
+        morphRelations: [
+          createMockRelation(
+            'first-target-object-id',
+            'firstTargetObject',
+            RelationType.MANY_TO_ONE,
+            'morph-representative-field-id',
+          ),
+          createMockRelation(
+            'second-target-object-id',
+            'secondTargetObject',
+            RelationType.MANY_TO_ONE,
+            'configured-morph-member-field-id',
+          ),
+        ],
+      });
+      const junctionObject = createMockObjectMetadata({
+        id: 'junction-id',
+        fields: [morphField],
+      });
+
+      expect(
+        getJunctionConfig({
+          settings: {
+            junctionTargetFieldId: 'configured-morph-member-field-id',
+          },
+          relationObjectMetadataId: 'junction-id',
+          objectMetadataItems: [junctionObject],
+        }),
+      ).toMatchObject({
+        isValid: true,
+        isMorphRelation: true,
+        targetFields: [{ id: 'morph-representative-field-id' }],
+      });
+    });
+
     it('returns an invalid junction instead of falling back for a one-to-many morph target', () => {
       const morphField = createMockField({
         id: 'morph-field-id',

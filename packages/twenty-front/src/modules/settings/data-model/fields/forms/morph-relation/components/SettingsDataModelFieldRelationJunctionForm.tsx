@@ -7,6 +7,7 @@ import { IconLink } from 'twenty-ui/icon';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
+import { doesFieldMetadataItemMatchFieldMetadataId } from '@/object-metadata/utils/doesFieldMetadataItemMatchFieldMetadataId';
 import { isValidJunctionTargetField } from '@/object-record/record-field/ui/utils/junction/isValidJunctionTargetField';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
@@ -101,8 +102,16 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
   }
 
   const isJunctionConfigEnabled = isDefined(junctionTargetFieldId);
+  const selectedJunctionTargetFieldId = isDefined(junctionTargetFieldId)
+    ? (junctionObjectMetadataItem.fields.find((fieldMetadataItem) =>
+        doesFieldMetadataItemMatchFieldMetadataId({
+          fieldMetadataItem,
+          fieldMetadataId: junctionTargetFieldId,
+        }),
+      )?.id ?? junctionTargetFieldId)
+    : undefined;
   const isConfiguredTargetValid = junctionFieldOptions.some(
-    ({ value }) => value === junctionTargetFieldId,
+    ({ value }) => value === selectedJunctionTargetFieldId,
   );
 
   if (junctionFieldOptions.length === 0 && !isJunctionConfigEnabled) {
@@ -169,12 +178,12 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
             dropdownId="junction-target-field-select"
             selectSizeVariant="small"
             dropdownWidth={120}
-            value={junctionTargetFieldId}
+            value={selectedJunctionTargetFieldId}
             emptyOption={
               !isConfiguredTargetValid && isDefined(junctionTargetFieldId)
                 ? {
                     label: t`Select a valid target`,
-                    value: junctionTargetFieldId,
+                    value: selectedJunctionTargetFieldId,
                   }
                 : undefined
             }

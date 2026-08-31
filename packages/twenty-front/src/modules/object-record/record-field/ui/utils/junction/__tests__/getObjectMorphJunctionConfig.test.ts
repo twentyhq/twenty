@@ -88,6 +88,63 @@ describe('getObjectMorphJunctionConfig', () => {
     });
   });
 
+  it('resolves a target setting that references a non-representative morph member', () => {
+    const taskObjectMetadata = getMockObjectMetadataItemOrThrow('task');
+    const taskTargetObjectMetadata =
+      getMockObjectMetadataItemOrThrow('taskTarget');
+    const taskTargetsField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: taskObjectMetadata,
+      fieldName: 'taskTargets',
+    });
+    const targetMorphField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: taskTargetObjectMetadata,
+      fieldName: 'target',
+    });
+    const nonRepresentativeMorphMemberId =
+      targetMorphField.morphRelations?.find(
+        ({ sourceFieldMetadata }) =>
+          sourceFieldMetadata.id !== targetMorphField.id,
+      )?.sourceFieldMetadata.id;
+
+    if (!nonRepresentativeMorphMemberId) {
+      throw new Error('Non-representative task target morph member not found');
+    }
+
+    const taskWithPhysicalMorphMemberSetting = {
+      ...taskObjectMetadata,
+      fields: taskObjectMetadata.fields.map((field) =>
+        field.id === taskTargetsField.id
+          ? {
+              ...field,
+              settings: {
+                ...field.settings,
+                junctionTargetFieldId: nonRepresentativeMorphMemberId,
+              },
+            }
+          : field,
+      ),
+    };
+    const metadataWithPhysicalMorphMemberSetting = objectMetadataItems.map(
+      (item) =>
+        item.id === taskObjectMetadata.id
+          ? taskWithPhysicalMorphMemberSetting
+          : item,
+    );
+
+    expect(
+      getObjectMorphJunctionConfig({
+        objectMetadata: taskWithPhysicalMorphMemberSetting,
+        objectMetadataItems: metadataWithPhysicalMorphMemberSetting,
+      }),
+    ).toMatchObject({
+      junctionObjectMetadata: { nameSingular: 'taskTarget' },
+      junctionField: { name: 'taskTargets' },
+      sourceField: { name: 'task' },
+      sourceJoinColumnName: 'taskId',
+      isMorphRelation: true,
+    });
+  });
+
   it('does not guess between unconfigured morph junctions', () => {
     const taskObjectMetadata = getMockObjectMetadataItemOrThrow('task');
     const taskTargetsField = getMockFieldMetadataItemOrThrow({
