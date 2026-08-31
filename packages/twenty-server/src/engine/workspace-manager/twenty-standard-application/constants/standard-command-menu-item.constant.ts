@@ -1,15 +1,10 @@
 import { msg } from '@lingui/core/macro';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
+import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 
-// The universal identifiers stay literal on purpose: the deterministic
-// derivation helpers key on (availabilityType, engineComponentKey[, object]),
-// and that keying does not hold here. The 17 path-based GLOBAL NAVIGATION
-// entries (goToSettings and friends) would all collapse onto one identifier,
-// and FALLBACK has no helper.
 export const STANDARD_COMMAND_MENU_ITEMS = {
   navigateToNextRecord: {
     universalIdentifier: '3db2457d-8e96-4b8e-94c9-ed95d3f95738',
