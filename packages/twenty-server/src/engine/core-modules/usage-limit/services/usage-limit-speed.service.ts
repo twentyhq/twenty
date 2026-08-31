@@ -72,7 +72,7 @@ export class UsageLimitSpeedService {
           remaining: 0,
           windowSeconds: Math.ceil(outcome.exhausted.windowMs / 1000),
           retryAfterMs: outcome.retryAfterMs,
-          isFallback: outcome.exhausted.isFallback,
+          isDefault: outcome.exhausted.isDefault,
         },
       },
     );
@@ -177,15 +177,19 @@ export class UsageLimitSpeedService {
     }
 
     return buildSpeedBuckets({
-      defaultUsageLimitFallbacks: definition.fallbacks.map((fallback) => ({
-        spenderType: fallback.spenderType,
-        counterScope: fallback.counterScope,
-        isOverridable: fallback.isOverridable,
-        maxTokens: this.twentyConfigService.get(
-          fallback.limitValueConfigVariable,
-        ),
-        windowMs: this.twentyConfigService.get(fallback.windowMsConfigVariable),
-      })),
+      resolvedSpeedLimitDefaults: definition.defaults.map(
+        (speedLimitDefault) => ({
+          spenderType: speedLimitDefault.spenderType,
+          counterScope: speedLimitDefault.counterScope,
+          isOverridable: speedLimitDefault.isOverridable,
+          maxTokens: this.twentyConfigService.get(
+            speedLimitDefault.limitValueConfigVariable,
+          ),
+          windowMs: this.twentyConfigService.get(
+            speedLimitDefault.windowMsConfigVariable,
+          ),
+        }),
+      ),
       rules,
       authContext,
       resourceType,

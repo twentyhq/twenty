@@ -1,7 +1,7 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { type DefaultUsageLimitFallback } from 'src/engine/core-modules/usage-limit/types/default-usage-limit-fallback.type';
+import { type ResolvedSpeedLimitDefault } from 'src/engine/core-modules/usage-limit/types/resolved-speed-limit-default.type';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { buildSpeedBuckets } from 'src/engine/core-modules/usage-limit/utils/build-speed-buckets.util';
 
@@ -9,7 +9,7 @@ const workspace = { id: 'workspace-1' };
 
 // The registry defaults, standing in for API_RATE_LIMITING_* and
 // APPLICATION_API_RATE_LIMITING_*.
-const DEFAULT_USAGE_LIMIT_FALLBACKS: DefaultUsageLimitFallback[] = [
+const RESOLVED_SPEED_LIMIT_DEFAULTS: ResolvedSpeedLimitDefault[] = [
   {
     spenderType: 'apiKey',
     counterScope: 'perWorkspace',
@@ -55,7 +55,7 @@ const buildBuckets = ({
   rules?: FlatUsageLimit[];
 }) =>
   buildSpeedBuckets({
-    defaultUsageLimitFallbacks: DEFAULT_USAGE_LIMIT_FALLBACKS,
+    resolvedSpeedLimitDefaults: RESOLVED_SPEED_LIMIT_DEFAULTS,
     rules,
     authContext,
     resourceType: UsageResourceType.API,
@@ -192,7 +192,7 @@ describe('buildSpeedBuckets with rules configured', () => {
       rules: [buildRule({ spenderId: 'key-1', limitValue: 5 })],
     });
 
-    expect(buckets.map((bucket) => bucket.isFallback)).toEqual([
+    expect(buckets.map((bucket) => bucket.isDefault)).toEqual([
       false,
       true,
       true,

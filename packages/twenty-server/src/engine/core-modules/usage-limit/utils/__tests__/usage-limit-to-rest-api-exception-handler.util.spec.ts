@@ -20,7 +20,7 @@ const buildExhaustedScope = (
   remaining: 0,
   windowSeconds: 60,
   retryAfterMs: 11983,
-  isFallback: true,
+  isDefault: true,
   ...overrides,
 });
 

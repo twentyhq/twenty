@@ -594,7 +594,7 @@ export abstract class CommonBaseQueryRunnerService<
       if (
         error instanceof UsageLimitException &&
         isDefined(error.exhaustedScope) &&
-        error.exhaustedScope.isFallback
+        error.exhaustedScope.isDefault
       ) {
         await this.incrementApiSpeedCeilingMetrics({
           authContext,

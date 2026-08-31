@@ -11,6 +11,7 @@ import {
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
+import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { validateUsageLimitAgainstDefinition } from 'src/engine/core-modules/usage-limit/utils/validate-usage-limit-against-definition.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -59,9 +60,11 @@ export class UsageLimitService {
       });
     }
 
+    const operationType: UsageOperationType | '' = input.operationType ?? '';
+
     const scope = {
       resourceType: input.resourceType,
-      operationType: input.operationType,
+      operationType,
       spenderType: input.spenderType,
       spenderId: input.spenderId ?? '',
       limitKind: input.limitKind,
@@ -73,7 +76,7 @@ export class UsageLimitService {
       {
         workspaceId,
         ...scope,
-        limitValueType: 'absolute',
+        limitValueType: input.limitValueType,
         limitValue: input.limitValue,
         burstValue: input.burstValue ?? null,
       },
