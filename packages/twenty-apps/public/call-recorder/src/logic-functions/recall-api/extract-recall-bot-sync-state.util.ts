@@ -2,6 +2,7 @@ import { isUndefined } from '@sniptt/guards';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { mapRecallStatusCodeToCallRecordingStatus } from 'src/logic-functions/domain/map-recall-status-code-to-call-recording-status.util';
+import { getLatestRecallBotStatusChange } from 'src/logic-functions/recall-api/get-latest-recall-bot-status-change.util';
 import { normalizeRecallTimestamp } from 'src/logic-functions/recall-api/normalize-recall-timestamp.util';
 import {
   type RecallBotSnapshot,
@@ -22,7 +23,7 @@ export const extractRecallBotSyncState = (
   bot: RecallBotSnapshot,
 ): RecallBotSyncState => {
   const { statusChanges } = bot;
-  const latestStatusChange = getLatestStatusChange(statusChanges);
+  const latestStatusChange = getLatestRecallBotStatusChange(statusChanges);
   const recording = bot.recordings[0];
   // A later 'done' change hides the no-capture sub code, so scan the history.
   const notRecordedStatusChange = isUndefined(recording)
@@ -85,52 +86,6 @@ const getFailureReason = ({
   }
 
   return undefined;
-};
-
-const getLatestStatusChange = (
-  statusChanges: RecallBotStatusChange[],
-): RecallBotStatusChange | undefined =>
-  statusChanges.reduce<RecallBotStatusChange | undefined>(
-    (latestStatusChange, statusChange) => {
-      if (isUndefined(latestStatusChange)) {
-        return statusChange;
-      }
-
-      const statusChangeTime = getStatusChangeTime(statusChange);
-      const latestStatusChangeTime = getStatusChangeTime(latestStatusChange);
-
-      if (
-        isUndefined(statusChangeTime) &&
-        isUndefined(latestStatusChangeTime)
-      ) {
-        return statusChange;
-      }
-
-      if (isUndefined(statusChangeTime)) {
-        return latestStatusChange;
-      }
-
-      if (isUndefined(latestStatusChangeTime)) {
-        return statusChange;
-      }
-
-      return statusChangeTime >= latestStatusChangeTime
-        ? statusChange
-        : latestStatusChange;
-    },
-    undefined,
-  );
-
-const getStatusChangeTime = (
-  statusChange: RecallBotStatusChange,
-): number | undefined => {
-  const normalizedTimestamp = normalizeRecallTimestamp(statusChange.createdAt);
-
-  if (isUndefined(normalizedTimestamp)) {
-    return undefined;
-  }
-
-  return new Date(normalizedTimestamp).getTime();
 };
 
 const findStatusChangeTimestamp = (
