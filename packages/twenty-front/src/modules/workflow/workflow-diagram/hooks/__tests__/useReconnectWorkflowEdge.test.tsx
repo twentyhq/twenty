@@ -1,7 +1,7 @@
 import { type WorkflowAction } from '@/workflow/types/Workflow';
 import { useReconnectWorkflowEdge } from '@/workflow/workflow-diagram/hooks/useReconnectWorkflowEdge';
 import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 
 const mockUpdateStep = jest.fn();
 const mockUpdateTrigger = jest.fn();
@@ -31,6 +31,8 @@ const mockFlow = {
     sourceStep,
     { ...sourceStep, id: 'old' },
     { ...sourceStep, id: 'new' },
+    { ...sourceStep, id: 'old-2', nextStepIds: [] },
+    { ...sourceStep, id: 'new-2', nextStepIds: [] },
   ],
 };
 
@@ -67,7 +69,11 @@ const connection = {
 };
 
 describe('useReconnectWorkflowEdge', () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    sourceStep.nextStepIds = ['old'];
+    mockFlow.steps.find((step) => step.id === 'old')!.nextStepIds = [];
+  });
 
   it('persists a replacement as one update without deleting either action', async () => {
     const { result } = renderHook(() => useReconnectWorkflowEdge());
@@ -77,7 +83,7 @@ describe('useReconnectWorkflowEdge', () => {
       ...sourceStep,
       nextStepIds: ['new'],
     });
-    expect(mockFlow.steps).toHaveLength(3);
+    expect(mockFlow.steps).toHaveLength(5);
     expect(sourceStep.nextStepIds).toEqual(['old']);
   });
 
@@ -96,10 +102,56 @@ describe('useReconnectWorkflowEdge', () => {
       { ...edge, source: 'trigger' },
       { ...connection, source: 'trigger' },
     );
+    expect(mockUpdateTrigger).toHaveBeenCalledTimes(1);
     expect(mockUpdateTrigger).toHaveBeenCalledWith({
       ...mockFlow.trigger,
       nextStepIds: ['new'],
     });
+    expect(mockUpdateStep).not.toHaveBeenCalled();
+  });
+
+  it('serializes rapid reconnections from the same source', async () => {
+    sourceStep.nextStepIds = ['old', 'old-2'];
+    let finishFirstUpdate: () => void = () => {};
+    mockUpdateStep
+      .mockImplementationOnce(
+        () =>
+          new Promise<void>((resolve) => {
+            finishFirstUpdate = resolve;
+          }),
+      )
+      .mockResolvedValueOnce(undefined);
+    const { result } = renderHook(() => useReconnectWorkflowEdge());
+
+    const firstReconnection = result.current.reconnectEdge(edge, connection);
+    const secondReconnection = result.current.reconnectEdge(
+      { ...edge, id: 'edge-2', target: 'old-2' },
+      { ...connection, target: 'new-2' },
+    );
+    await waitFor(() => expect(mockUpdateStep).toHaveBeenCalledTimes(1));
+    finishFirstUpdate();
+    await Promise.all([firstReconnection, secondReconnection]);
+
+    expect(mockUpdateStep).toHaveBeenCalledTimes(2);
+    expect(mockUpdateStep).toHaveBeenLastCalledWith({
+      ...sourceStep,
+      nextStepIds: ['new', 'new-2'],
+    });
+  });
+
+  it('ignores reconnections that would create a cycle', async () => {
+    sourceStep.nextStepIds = ['new'];
+    mockFlow.steps.find((step) => step.id === 'old')!.nextStepIds = ['source'];
+    const { result } = renderHook(() => useReconnectWorkflowEdge());
+
+    await result.current.reconnectEdge(
+      { ...edge, target: 'new' },
+      {
+        ...connection,
+        target: 'old',
+      },
+    );
+
     expect(mockUpdateStep).not.toHaveBeenCalled();
   });
 
