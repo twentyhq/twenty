@@ -1,6 +1,7 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { AppChip } from '@/applications/components/AppChip';
 import { useApplicationFromStore } from '@/applications/hooks/useApplicationFromStore';
+import { useFollowApplicationInstall } from '@/applications/hooks/useFollowApplicationInstall';
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
@@ -11,13 +12,10 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useQuery } from '@apollo/client/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
-import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -54,7 +52,6 @@ export const SettingsAvailableApplicationDetails = () => {
     availableApplicationId: string;
   }>();
 
-  const navigateSettings = useNavigateSettings();
   const { requestInstall, install, isInstalling, modalInstanceId } =
     useInstallMarketplaceAppWithPermissionValidation();
   const { upgrade, isUpgrading } = useUpgradeApplication();
@@ -96,28 +93,13 @@ export const SettingsAvailableApplicationDetails = () => {
       ? `https://www.npmjs.com/package/${detail.sourcePackage}`
       : undefined;
 
-  const { enqueueErrorSnackBar } = useSnackBar();
-
-  // The row an install is waiting on, and whether reading INSTALLED on it is
-  // enough: a row that was already there reads INSTALLED until the job moves it,
-  // so only a state change proves that job finished.
-  const [installFollowUp, setInstallFollowUp] = useState<{
-    applicationId: string;
-    requiresStateChange: boolean;
-  } | null>(null);
-
-  const [hasSeenApplicationRow, setHasSeenApplicationRow] = useState(false);
-
-  const installedApplicationId = installFollowUp?.applicationId ?? null;
-
-  const { application: followedApplication } = useApplicationFromStore({
-    applicationId: installFollowUp?.applicationId,
-  });
+  const { followInstall, followedInstallApplicationId } =
+    useFollowApplicationInstall({ applicationName: displayName });
 
   const isUnlisted = isDefined(detail) && !detail.isListed;
   const isApplicationInstalling =
     application?.state === ApplicationState.INSTALLING ||
-    isNonEmptyString(installedApplicationId);
+    isNonEmptyString(followedInstallApplicationId);
   const isAlreadyInstalled = isDefined(application) && !isApplicationInstalling;
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
@@ -143,63 +125,11 @@ export const SettingsAvailableApplicationDetails = () => {
       return;
     }
 
-    setHasSeenApplicationRow(false);
-    setInstallFollowUp({
+    followInstall({
       applicationId: startedApplicationId,
       requiresStateChange: applicationAlreadyKnown || !isApplicationsStoreReady,
     });
   };
-
-  // The install runs in a background job, so this page follows the row the
-  // mutation named: it opens the application once that row settles on
-  // INSTALLED, and stays here with an error when the rolled back install takes
-  // it away.
-  useEffect(() => {
-    if (!isDefined(installFollowUp)) {
-      return;
-    }
-
-    if (isDefined(followedApplication)) {
-      if (followedApplication.state !== ApplicationState.INSTALLED) {
-        setHasSeenApplicationRow(true);
-
-        return;
-      }
-
-      if (installFollowUp.requiresStateChange && !hasSeenApplicationRow) {
-        return;
-      }
-
-      setHasSeenApplicationRow(false);
-      setInstallFollowUp(null);
-
-      navigateSettings(SettingsPath.ApplicationDetail, {
-        applicationId: installFollowUp.applicationId,
-      });
-
-      return;
-    }
-
-    // Absence only means the install was rolled back once the row has been
-    // seen: it reaches the store on the created event, a moment after the
-    // mutation returns.
-    if (isApplicationsStoreReady && hasSeenApplicationRow) {
-      setHasSeenApplicationRow(false);
-      setInstallFollowUp(null);
-
-      enqueueErrorSnackBar({
-        message: t`Failed to install ${displayName}.`,
-      });
-    }
-  }, [
-    displayName,
-    enqueueErrorSnackBar,
-    followedApplication,
-    hasSeenApplicationRow,
-    installFollowUp,
-    isApplicationsStoreReady,
-    navigateSettings,
-  ]);
 
   const handleUpgrade = async () => {
     if (!isDefined(registrationId) || !isDefined(latestAvailableVersion)) {

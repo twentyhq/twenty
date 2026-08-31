@@ -223,7 +223,7 @@ export class ApplicationInstallResolver {
         },
       );
     } catch (error) {
-      await this.applicationService.transitionState({
+      await this.applicationService.transitionStateBestEffort({
         id: application.id,
         workspaceId,
         fromState: ApplicationState.UNINSTALLING,
