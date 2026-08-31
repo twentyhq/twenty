@@ -3,7 +3,7 @@ import { CAMPAIGN_STATS_REFRESH_LOCK_TTL_MS } from 'src/engine/core-modules/emai
 import { CAMPAIGN_JOB_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-job-retry-limit.constant';
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
 
 import { MoreThanOrEqual } from 'typeorm';
 import { MessageCampaignStatus } from 'twenty-shared/types';
@@ -21,7 +21,6 @@ import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/
 import { type CampaignCountGroup } from 'src/engine/core-modules/emailing-domain/types/campaign-count-group.type';
 import { type CampaignCounts } from 'src/engine/core-modules/emailing-domain/types/campaign-counts.type';
 import { computeCampaignCounts } from 'src/engine/core-modules/emailing-domain/utils/compute-campaign-counts.util';
-import { hasCampaignCountsChanged } from 'src/engine/core-modules/emailing-domain/utils/has-campaign-counts-changed.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -176,21 +175,33 @@ export class MessageCampaignStatisticsService {
         },
       });
 
-      if (!isDefined(campaign) || !hasCampaignCountsChanged(campaign, counts)) {
+      if (!isDefined(campaign)) {
         return;
       }
 
-      await campaignRepository.update(
-        { id: campaignId },
-        {
-          sentCount: counts.sentCount,
-          deliveredCount: counts.deliveredCount,
-          failedCount: counts.failedCount,
-          skippedCount: counts.skippedCount,
-          bouncedCount: counts.bouncedCount,
-          complainedCount: counts.complainedCount,
-        },
-      );
+      const nextCounts = {
+        sentCount: counts.sentCount,
+        deliveredCount: counts.deliveredCount,
+        failedCount: counts.failedCount,
+        skippedCount: counts.skippedCount,
+        bouncedCount: counts.bouncedCount,
+        complainedCount: counts.complainedCount,
+      };
+
+      const storedCounts = {
+        sentCount: campaign.sentCount,
+        deliveredCount: campaign.deliveredCount,
+        failedCount: campaign.failedCount,
+        skippedCount: campaign.skippedCount,
+        bouncedCount: campaign.bouncedCount,
+        complainedCount: campaign.complainedCount,
+      };
+
+      if (fastDeepEqual(storedCounts, nextCounts)) {
+        return;
+      }
+
+      await campaignRepository.update({ id: campaignId }, nextCounts);
     }, buildSystemAuthContext(workspaceId));
   }
 
