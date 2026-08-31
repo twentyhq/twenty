@@ -54,19 +54,9 @@ const extractLegacyRelationId = (value: unknown): string | undefined => {
   return record.id;
 };
 
-const isNullRelationValue = (value: unknown): boolean => {
-  if (value === null) {
-    return true;
-  }
-
-  if (!isObject(value)) {
-    return false;
-  }
-
-  const record = value as Record<string, unknown>;
-
-  return Object.keys(record).length === 1 && record.id === null;
-};
+const isNullRelationValue = (value: unknown): boolean =>
+  value === null ||
+  (isObject(value) && (value as Record<string, unknown>).id === null);
 
 const formatWorkflowRecordMorphRelationFields = (
   record: Record<string, unknown>,

@@ -69,7 +69,7 @@ describe('formatWorkflowRecordRelationFields', () => {
     });
   });
 
-  it.each([[null], [{ id: null }]])(
+  it.each([[null], [{ id: null }], [{ id: null, name: 'Unassigned' }]])(
     'nullifies the join column when the relation resolves to %p',
     (value) => {
       expect(format({ title: 'Follow up', assignee: value })).toEqual({
