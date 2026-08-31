@@ -35,6 +35,7 @@ describe('buildJunctionRelationTargetShape', () => {
       junctionObjectMetadataId: NOTE_TARGET_OBJECT.id,
       junctionObjectNameSingular: 'noteTarget',
       junctionSourceJoinColumnName: 'noteId',
+      isTargetMorphRelation: true,
       targetJoinColumns: [
         {
           joinColumnName: 'targetPersonId',
@@ -49,6 +50,58 @@ describe('buildJunctionRelationTargetShape', () => {
       ],
     });
   });
+
+  it.each([
+    {
+      caseName: 'the morph group has only one member',
+      junctionObject: {
+        ...NOTE_TARGET_OBJECT,
+        fieldIds: [NOTE_TARGET_NOTE_FIELD.id, NOTE_TARGET_PERSON_FIELD.id],
+      },
+      objectMetadata: [NOTE_OBJECT, PERSON_OBJECT, COMPANY_OBJECT],
+      fieldMetadata: [
+        NOTE_TARGETS_FIELD,
+        NOTE_TARGET_NOTE_FIELD,
+        NOTE_TARGET_PERSON_FIELD,
+      ],
+    },
+    {
+      caseName: 'another morph member target object cannot be resolved',
+      junctionObject: NOTE_TARGET_OBJECT,
+      objectMetadata: [NOTE_OBJECT, PERSON_OBJECT],
+      fieldMetadata: [
+        NOTE_TARGETS_FIELD,
+        NOTE_TARGET_NOTE_FIELD,
+        NOTE_TARGET_PERSON_FIELD,
+        NOTE_TARGET_COMPANY_FIELD,
+      ],
+    },
+  ])(
+    'should preserve the morph target kind when $caseName',
+    ({ junctionObject, objectMetadata, fieldMetadata }) => {
+      expect(
+        buildJunctionRelationTargetShape({
+          relationFlatFieldMetadata:
+            NOTE_TARGETS_FIELD as unknown as FlatFieldMetadata,
+          flatObjectMetadataMaps: buildFlatEntityMaps([
+            junctionObject,
+            ...objectMetadata,
+          ]) as unknown as FlatEntityMaps<FlatObjectMetadata>,
+          flatFieldMetadataMaps: buildFlatEntityMaps(
+            fieldMetadata,
+          ) as unknown as FlatEntityMaps<FlatFieldMetadata>,
+        }),
+      ).toMatchObject({
+        isTargetMorphRelation: true,
+        targetJoinColumns: [
+          {
+            joinColumnName: 'targetPersonId',
+            targetObjectMetadataId: PERSON_OBJECT.id,
+          },
+        ],
+      });
+    },
+  );
 
   it('should return undefined when the relation declares no junction target', () => {
     expect(
@@ -178,6 +231,7 @@ describe('buildJunctionRelationTargetShape', () => {
       junctionObjectMetadataId: NOTE_TARGET_OBJECT.id,
       junctionObjectNameSingular: 'noteTarget',
       junctionSourceJoinColumnName: 'noteId',
+      isTargetMorphRelation: false,
       targetJoinColumns: [
         {
           joinColumnName: 'personId',

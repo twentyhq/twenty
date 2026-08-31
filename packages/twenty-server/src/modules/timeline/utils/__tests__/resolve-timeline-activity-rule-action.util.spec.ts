@@ -13,6 +13,7 @@ const JUNCTION_TARGET_SHAPE: TimelineActivityRuleTargetShape = {
   junctionObjectMetadataId: 'junction-object-id',
   junctionObjectNameSingular: 'junctionObject',
   junctionSourceJoinColumnName: 'sourceId',
+  isTargetMorphRelation: false,
   targetJoinColumns: [],
 };
 

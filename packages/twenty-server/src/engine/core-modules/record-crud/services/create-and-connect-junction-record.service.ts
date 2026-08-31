@@ -63,6 +63,7 @@ export class CreateAndConnectJunctionRecordService {
 
       if (
         !isDefined(junctionShape) ||
+        junctionShape.isTargetMorphRelation ||
         junctionShape.targetJoinColumns.length !== 1
       ) {
         throw new CommonQueryRunnerException(

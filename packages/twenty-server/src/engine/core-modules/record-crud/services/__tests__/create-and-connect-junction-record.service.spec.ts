@@ -210,18 +210,22 @@ describe('CreateAndConnectJunctionRecordService', () => {
   const setWorkspaceMetadata = ({
     sourceField = SOURCE_JUNCTIONS_FIELD,
     targetFields = [JUNCTION_TARGET_FIELD],
+    flatObjects = [
+      SOURCE_OBJECT,
+      JUNCTION_OBJECT,
+      TARGET_OBJECT,
+      OTHER_TARGET_OBJECT,
+    ],
   }: {
     sourceField?: object;
     targetFields?: object[];
+    flatObjects?: object[];
   } = {}) => {
     workspaceContext = {
       authContext,
-      flatObjectMetadataMaps: buildFlatEntityMaps([
-        SOURCE_OBJECT,
-        JUNCTION_OBJECT,
-        TARGET_OBJECT,
-        OTHER_TARGET_OBJECT,
-      ]) as unknown as FlatEntityMaps<FlatObjectMetadata>,
+      flatObjectMetadataMaps: buildFlatEntityMaps(
+        flatObjects as FlatEntityFixture[],
+      ) as unknown as FlatEntityMaps<FlatObjectMetadata>,
       flatFieldMetadataMaps: buildFlatEntityMaps([
         sourceField,
         JUNCTION_SOURCE_FIELD,
@@ -576,6 +580,43 @@ describe('CreateAndConnectJunctionRecordService', () => {
     ).not.toHaveBeenCalled();
     expect(commonCreateOneQueryRunnerService.execute).not.toHaveBeenCalled();
   });
+
+  it.each([
+    {
+      caseName: 'the morph group has only one member',
+      flatObjects: [
+        SOURCE_OBJECT,
+        {
+          ...JUNCTION_OBJECT,
+          fieldIds: [JUNCTION_SOURCE_FIELD.id, JUNCTION_MORPH_TARGET_FIELD.id],
+        },
+        TARGET_OBJECT,
+        OTHER_TARGET_OBJECT,
+      ],
+      targetFields: [JUNCTION_MORPH_TARGET_FIELD],
+    },
+    {
+      caseName: 'another morph member target object cannot be resolved',
+      flatObjects: [SOURCE_OBJECT, JUNCTION_OBJECT, TARGET_OBJECT],
+      targetFields: [JUNCTION_MORPH_TARGET_FIELD, JUNCTION_MORPH_COMPANY_FIELD],
+    },
+  ])(
+    'rejects a one-column morph junction when $caseName',
+    async ({ flatObjects, targetFields }) => {
+      setWorkspaceMetadata({ flatObjects, targetFields });
+
+      await expect(execute()).rejects.toMatchObject({
+        code: CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+        message: 'Create and connect only supports regular junction relations',
+      });
+
+      expect(commonApiContextBuilderService.build).not.toHaveBeenCalled();
+      expect(
+        workspaceOrmManager.runInWorkspaceTransaction,
+      ).not.toHaveBeenCalled();
+      expect(commonCreateOneQueryRunnerService.execute).not.toHaveBeenCalled();
+    },
+  );
 
   it('rejects an invalid junction configuration before opening a transaction', async () => {
     setWorkspaceMetadata({
