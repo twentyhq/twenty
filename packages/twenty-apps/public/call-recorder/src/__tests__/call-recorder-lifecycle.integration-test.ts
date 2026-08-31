@@ -16,6 +16,11 @@ import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/fl
 import { retryFailedRecallCancellations } from 'src/logic-functions/flows/retry-failed-recall-cancellations.util';
 import { scheduleRecallBotsForPendingCallRecordings } from 'src/logic-functions/flows/schedule-recall-bots-for-pending-call-recordings.util';
 import { processRecallWebhookHandler } from 'src/logic-functions/process-recall-webhook';
+import { removeRecallBotOnCallRecordingDeletionHandler } from 'src/logic-functions/remove-recall-bot-on-call-recording-deletion';
+import { removeRecallBotOnCallRecordingDestructionHandler } from 'src/logic-functions/remove-recall-bot-on-call-recording-destruction';
+import { resumeRestoredCallRecordingHandler } from 'src/logic-functions/resume-restored-call-recording';
+import { retryRecallBotCancellation } from 'src/logic-functions/flows/retry-recall-bot-cancellation.util';
+import { RETRY_RECALL_BOT_CANCELLATION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/retry-recall-bot-cancellation-logic-function-universal-identifier';
 
 // ---------------------------------------------------------------------------
 // Call Recorder end-to-end behavior against a live Twenty server.
@@ -132,7 +137,9 @@ class FakeRecallApi {
   deletedBotIds: string[] = [];
   listRequestCount = 0;
   artifactImportRequests: object[] = [];
+  enqueuedJobInputs: Array<Record<string, unknown>> = [];
   failNextDelete = false;
+  rejectEject = false;
 
   seedBot(bot: FakeRecallBot): void {
     this.bots.set(bot.id, bot);
@@ -159,6 +166,7 @@ class FakeRecallApi {
       }[];
 
       this.artifactImportRequests.push(...(input?.payloads ?? []));
+      this.enqueuedJobInputs.push(input ?? {});
 
       return jsonResponse(200, {
         data: {
@@ -193,13 +201,54 @@ class FakeRecallApi {
       });
     }
 
+    const ejectMatch = requestUrl.match(/\/bot\/([^/]+)\/leave_call\/$/);
+
+    if (method === 'POST' && ejectMatch !== null) {
+      const bot = this.bots.get(ejectMatch[1]);
+
+      if (bot === undefined) {
+        return jsonResponse(404, {});
+      }
+
+      if (this.rejectEject || isTerminalFakeBot(bot)) {
+        return jsonResponse(400, { code: 'cannot_command_completed_bot' });
+      }
+
+      this.bots.delete(bot.id);
+      this.deletedBotIds.push(bot.id);
+
+      return jsonResponse(200, {});
+    }
+
     const botIdMatch = requestUrl.match(/\/bot\/([^/]+)\/$/);
+
+    if (method === 'GET' && botIdMatch !== null) {
+      const bot = this.bots.get(botIdMatch[1]);
+
+      if (bot === undefined) {
+        return jsonResponse(404, {});
+      }
+
+      return jsonResponse(200, {
+        id: bot.id,
+        metadata: bot.metadata,
+        status_changes: [
+          { code: bot.statusCode, created_at: new Date().toISOString() },
+        ],
+      });
+    }
 
     if (method === 'DELETE' && botIdMatch !== null) {
       if (this.failNextDelete) {
         this.failNextDelete = false;
 
         return jsonResponse(400, {});
+      }
+
+      const bot = this.bots.get(botIdMatch[1]);
+
+      if (bot !== undefined && isTerminalFakeBot(bot)) {
+        return jsonResponse(405, {});
       }
 
       this.bots.delete(botIdMatch[1]);
@@ -239,6 +288,9 @@ class FakeRecallApi {
     return jsonResponse(201, { id: bot.id });
   }
 }
+
+const isTerminalFakeBot = (bot: FakeRecallBot): boolean =>
+  ['call_ended', 'done', 'fatal'].includes(bot.statusCode);
 
 const jsonResponse = (status: number, body: object): Response =>
   new Response(JSON.stringify(body), { status });
@@ -574,6 +626,61 @@ describe('call recorder app lifecycle (integration)', () => {
   // the payload Recall would have delivered.
   const deliverRecallWebhook = (body: object) =>
     processRecallWebhookHandler(body);
+
+  // Mocked database-event triggers: invoke the lifecycle handlers with the
+  // payloads the callRecording.* triggers deliver.
+  const buildLifecycleContext = () =>
+    ({ retryCount: 0, maxRetries: 0, workspaceId }) as Parameters<
+      typeof removeRecallBotOnCallRecordingDeletionHandler
+    >[1];
+
+  const deliverCallRecordingDeletionEvent = (
+    callRecordingId: string,
+    before: Record<string, unknown>,
+  ) =>
+    removeRecallBotOnCallRecordingDeletionHandler(
+      {
+        name: 'callRecording.deleted',
+        recordId: callRecordingId,
+        properties: { before },
+      } as Parameters<typeof removeRecallBotOnCallRecordingDeletionHandler>[0],
+      buildLifecycleContext(),
+    );
+
+  const deliverCallRecordingDestructionEvent = (
+    callRecordingId: string,
+    before: Record<string, unknown>,
+  ) =>
+    removeRecallBotOnCallRecordingDestructionHandler(
+      {
+        name: 'callRecording.destroyed',
+        recordId: callRecordingId,
+        properties: { before },
+      } as Parameters<
+        typeof removeRecallBotOnCallRecordingDestructionHandler
+      >[0],
+      buildLifecycleContext(),
+    );
+
+  const deliverCallRecordingRestoreEvent = (callRecordingId: string) =>
+    resumeRestoredCallRecordingHandler(
+      {
+        name: 'callRecording.restored',
+        recordId: callRecordingId,
+        properties: {},
+      } as Parameters<typeof resumeRestoredCallRecordingHandler>[0],
+      buildLifecycleContext(),
+    );
+
+  const deleteCallRecordingRow = (callRecordingId: string) =>
+    client.mutation({
+      deleteCallRecording: { __args: { id: callRecordingId }, id: true },
+    });
+
+  const restoreCallRecordingRow = (callRecordingId: string) =>
+    client.mutation({
+      restoreCallRecording: { __args: { id: callRecordingId }, id: true },
+    });
 
   // Mocked cron trigger: runs the flows the recovery cron dispatches.
   const runPendingRecoveryCron = () =>
@@ -917,6 +1024,189 @@ describe('call recorder app lifecycle (integration)', () => {
         'bot_never_scheduled',
       );
       expect(recall.botForCallRecording(callRecordingId)).toBeUndefined();
+    });
+  });
+
+  describe('cleanup on deletion, destruction, and restore', () => {
+    it('cancels the Recall bot when its recording is deleted', async () => {
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      await deleteCallRecordingRow(callRecordingId);
+
+      const result = await deliverCallRecordingDeletionEvent(callRecordingId, {
+        id: callRecordingId,
+        externalBotId: botId,
+        botScheduleAttemptedAt: callRecording.botScheduleAttemptedAt,
+      });
+
+      expect(result).toEqual({ status: 'canceled', externalBotId: botId });
+      expect(recall.deletedBotIds).toContain(botId);
+    });
+
+    it('re-reads the soft-deleted row when the deletion event is slim', async () => {
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      await deleteCallRecordingRow(callRecordingId);
+
+      const result = await deliverCallRecordingDeletionEvent(callRecordingId, {
+        id: callRecordingId,
+      });
+
+      expect(result).toEqual({ status: 'canceled', externalBotId: botId });
+      expect(recall.deletedBotIds).toContain(botId);
+    });
+
+    it("cancels a destroyed recording's bot through the Recall lookup", async () => {
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      await client.mutation({
+        destroyCallRecording: { __args: { id: callRecordingId }, id: true },
+      });
+
+      const result = await deliverCallRecordingDestructionEvent(
+        callRecordingId,
+        { id: callRecordingId },
+      );
+
+      expect(result).toEqual({ status: 'canceled', externalBotId: botId });
+      expect(recall.deletedBotIds).toContain(botId);
+    });
+
+    it('leaves the bot alone when the recording was restored before the deletion event ran', async () => {
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      await deleteCallRecordingRow(callRecordingId);
+      await restoreCallRecordingRow(callRecordingId);
+
+      const result = await deliverCallRecordingDeletionEvent(callRecordingId, {
+        id: callRecordingId,
+        externalBotId: botId,
+      });
+
+      expect(result).toEqual({ status: 'reclaimed', externalBotId: botId });
+      expect(recall.bots.get(botId)).toBeDefined();
+    });
+
+    it('keeps a live bot on a restored recording', async () => {
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      await deleteCallRecordingRow(callRecordingId);
+      await restoreCallRecordingRow(callRecordingId);
+
+      const result = await deliverCallRecordingRestoreEvent(callRecordingId);
+
+      expect(result).toEqual({
+        status: 'keptExistingBot',
+        externalBotId: botId,
+      });
+      expect((await fetchCallRecording(callRecordingId)).externalBotId).toBe(
+        botId,
+      );
+    });
+
+    it('reschedules a restored recording whose bot is gone at Recall', async () => {
+      const { calendarEventId, callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      await deleteCallRecordingRow(callRecordingId);
+      await deliverCallRecordingDeletionEvent(callRecordingId, {
+        id: callRecordingId,
+        externalBotId: botId,
+      });
+      // The meeting moved while the recording sat in the trash, so the
+      // re-send key drifts and a fresh bot is created instead of replaying
+      // the canceled one from Recall's idempotency cache.
+      await client.mutation({
+        updateCalendarEvent: {
+          __args: {
+            id: calendarEventId,
+            data: { startsAt: inTwoHours() },
+          },
+          id: true,
+        },
+      });
+      await restoreCallRecordingRow(callRecordingId);
+
+      const result = await deliverCallRecordingRestoreEvent(callRecordingId);
+
+      expect(result).toMatchObject({
+        status: 'rescheduled',
+        result: { status: 'scheduled' },
+      });
+      const rescheduled = await fetchCallRecording(callRecordingId);
+
+      expect(rescheduled.externalBotId).toBeTruthy();
+      expect(rescheduled.externalBotId).not.toBe(botId);
+      expect(recall.bots.get(rescheduled.externalBotId)).toBeDefined();
+    });
+
+    it('escalates a failed cancellation onto the delayed retry ladder and finishes there', async () => {
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      await deleteCallRecordingRow(callRecordingId);
+      recall.failNextDelete = true;
+      recall.rejectEject = true;
+
+      const escalated = await deliverCallRecordingDeletionEvent(
+        callRecordingId,
+        { id: callRecordingId, externalBotId: botId },
+      );
+
+      expect(escalated).toEqual({ status: 'retryScheduled' });
+      expect(recall.enqueuedJobInputs).toEqual([
+        expect.objectContaining({
+          logicFunctionUniversalIdentifier:
+            RETRY_RECALL_BOT_CANCELLATION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+          delayMs: 60_000,
+          payloads: [
+            {
+              callRecordingId,
+              externalBotId: botId,
+              ladderAttempt: 0,
+            },
+          ],
+        }),
+      ]);
+
+      recall.rejectEject = false;
+      const retried = await retryRecallBotCancellation({
+        client,
+        callRecordingId,
+        externalBotId: botId,
+        ladderAttempt: 0,
+      });
+
+      expect(retried).toEqual({ status: 'canceled', externalBotId: botId });
+      expect(recall.deletedBotIds).toContain(botId);
+    });
+
+    it('cancels an unclaimed bot the moment it announces itself', async () => {
+      const staleBotId = `recall-bot-${randomUUID()}`;
+      const metadata = buildBotMetadata(randomUUID(), workspaceId);
+
+      recall.seedBot({ id: staleBotId, metadata, statusCode: 'joining_call' });
+
+      const result = await deliverRecallWebhook(
+        buildBotStatusChangeWebhook({
+          botId: staleBotId,
+          metadata,
+          statusCode: 'joining_call',
+        }),
+      );
+
+      expect(result).toEqual({
+        status: 'staleBotCanceled',
+        event: 'bot.status_change',
+        externalBotId: staleBotId,
+      });
+      expect(recall.deletedBotIds).toContain(staleBotId);
     });
   });
 });
