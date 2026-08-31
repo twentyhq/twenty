@@ -38,12 +38,23 @@ describe('isTerminalRecallBotSnapshot', () => {
     ).toBe(false);
   });
 
-  it('picks the latest change by timestamp when the array is out of order', () => {
+  it('detects a terminal entry regardless of array order', () => {
     expect(
       isTerminalRecallBotSnapshot(
         buildSnapshot([
           { code: 'done', createdAt: '2026-01-01T11:00:00Z' },
           { code: 'in_call_recording', createdAt: '2026-01-01T10:05:00Z' },
+        ]),
+      ),
+    ).toBe(true);
+  });
+
+  it('detects a terminal entry without a timestamp', () => {
+    expect(
+      isTerminalRecallBotSnapshot(
+        buildSnapshot([
+          { code: 'in_call_recording', createdAt: '2026-01-01T10:05:00Z' },
+          { code: 'done' },
         ]),
       ),
     ).toBe(true);
