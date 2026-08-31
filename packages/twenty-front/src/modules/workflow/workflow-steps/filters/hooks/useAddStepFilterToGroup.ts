@@ -1,11 +1,7 @@
 import { useChildStepFiltersAndChildStepFilterGroups } from '@/workflow/workflow-steps/filters/hooks/useChildStepFiltersAndChildStepFilterGroups';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/filters/hooks/useUpsertStepFilterSettings';
-import {
-  ViewFilterOperand,
-  type StepFilter,
-  type StepFilterGroup,
-} from 'twenty-shared/types';
-import { v4 } from 'uuid';
+import { buildEmptyStepFilter } from '@/workflow/workflow-steps/filters/utils/buildEmptyStepFilter';
+import { type StepFilterGroup } from 'twenty-shared/types';
 
 export const useAddStepFilterToGroup = ({
   stepFilterGroup,
@@ -19,18 +15,11 @@ export const useAddStepFilterToGroup = ({
   });
 
   const addStepFilterToGroup = () => {
-    const newStepFilter = {
-      id: v4(),
-      type: 'unknown',
-      value: '',
-      operand: ViewFilterOperand.IS,
-      stepOutputKey: '',
-      stepFilterGroupId: stepFilterGroup.id,
-      positionInStepFilterGroup: lastChildPosition + 1,
-    } satisfies StepFilter;
-
     upsertStepFilterSettings({
-      stepFilterToUpsert: newStepFilter,
+      stepFilterToUpsert: buildEmptyStepFilter({
+        stepFilterGroupId: stepFilterGroup.id,
+        positionInStepFilterGroup: lastChildPosition + 1,
+      }),
     });
   };
 

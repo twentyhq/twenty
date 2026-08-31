@@ -7,12 +7,8 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAddStepFilterToGroup } from '@/workflow/workflow-steps/filters/hooks/useAddStepFilterToGroup';
 import { useChildStepFiltersAndChildStepFilterGroups } from '@/workflow/workflow-steps/filters/hooks/useChildStepFiltersAndChildStepFilterGroups';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/filters/hooks/useUpsertStepFilterSettings';
-import {
-  StepLogicalOperator,
-  ViewFilterOperand,
-  type StepFilter,
-  type StepFilterGroup,
-} from 'twenty-shared/types';
+import { buildEmptyStepFilter } from '@/workflow/workflow-steps/filters/utils/buildEmptyStepFilter';
+import { StepLogicalOperator, type StepFilterGroup } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { t } from '@lingui/core/macro';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/icon';
@@ -21,16 +17,6 @@ import { v4 } from 'uuid';
 
 type WorkflowStepFilterAddFilterRuleSelectProps = {
   stepFilterGroup: StepFilterGroup;
-};
-
-const BASE_NEW_STEP_FILTER = {
-  type: 'unknown',
-  label: '',
-  value: '',
-  operand: ViewFilterOperand.IS,
-  displayValue: '',
-  stepFilterGroupId: '',
-  stepOutputKey: '',
 };
 
 export const WorkflowStepFilterAddFilterRuleSelect = ({
@@ -72,15 +58,11 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
       positionInStepFilterGroup: newPositionInStepFilterGroup,
     };
 
-    const newStepFilter: StepFilter = {
-      id: v4(),
-      ...BASE_NEW_STEP_FILTER,
-      stepFilterGroupId: newStepFilterGroupId,
-      positionInStepFilterGroup: 1,
-    };
-
     upsertStepFilterSettings({
-      stepFilterToUpsert: newStepFilter,
+      stepFilterToUpsert: buildEmptyStepFilter({
+        stepFilterGroupId: newStepFilterGroupId,
+        positionInStepFilterGroup: 1,
+      }),
       stepFilterGroupToUpsert: newStepFilterGroup,
     });
   };
