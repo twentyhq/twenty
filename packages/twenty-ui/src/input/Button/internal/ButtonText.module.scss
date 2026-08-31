@@ -17,14 +17,19 @@ $base-transition-timing: 300ms;
 .text {
   clip-path: inset(0 0 0 0);
   overflow: hidden;
-  // A label that does not fit is cut mid-glyph without this.
-  text-overflow: ellipsis;
   transform: none;
   transition:
     transform $base-transition-timing ease,
     clip-path $base-transition-timing ease;
   transition-delay: $base-transition-timing * 0.25;
   white-space: nowrap;
+
+  // A label that does not fit is cut mid-glyph without this. Scoped away from
+  // the loading state, where .ellipsis already renders its own dots at the same
+  // right edge and the two indicators would collide.
+  &:not([data-loading]) {
+    text-overflow: ellipsis;
+  }
 
   &[data-loading] {
     clip-path: inset(0 var(--t-spacing-12) 0 0);
