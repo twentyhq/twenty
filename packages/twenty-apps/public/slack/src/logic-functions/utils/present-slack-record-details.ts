@@ -117,10 +117,15 @@ export const presentSlackRecordDetails = async (
     recordLink,
   ).catch(() => undefined);
 
-  // The flexpane repeats what the channel-visible card already shows, so
-  // there is no extra per-viewer gating here yet.
+  // The flexpane shows the full field set, read with the app's role-bounded
+  // access; per-viewer gating is deferred until flexpane actions land.
   const entity = isDefined(record)
-    ? buildSlackRecordUnfurlEntity({ recordLink, record, workspaceBaseUrl })
+    ? buildSlackRecordUnfurlEntity({
+        recordLink,
+        record,
+        workspaceBaseUrl,
+        includeDetails: true,
+      })
     : undefined;
 
   if (!isDefined(entity)) {

@@ -110,7 +110,67 @@ const timestampField = (
 type SlackUnfurlContentArgs = {
   record: Record<string, unknown>;
   workspaceBaseUrl: string;
+  includeDetails: boolean;
 };
+
+const buildFullName = (
+  nameValue: unknown,
+): string | undefined => {
+  const name = asObject(nameValue);
+  const fullName = [
+    asNonEmptyString(name?.firstName),
+    asNonEmptyString(name?.lastName),
+  ]
+    .filter(isDefined)
+    .join(' ');
+
+  return fullName || undefined;
+};
+
+const BODY_PREVIEW_MAX_LENGTH = 300;
+
+const bodyPreviewField = (bodyValue: unknown): EntityCustomField | undefined => {
+  const markdown = asNonEmptyString(asObject(bodyValue)?.markdown)?.trim();
+
+  if (!isDefined(markdown) || markdown === '') {
+    return undefined;
+  }
+
+  const preview =
+    markdown.length > BODY_PREVIEW_MAX_LENGTH
+      ? `${markdown.slice(0, BODY_PREVIEW_MAX_LENGTH)}…`
+      : markdown;
+
+  return { key: 'body', label: 'Body', type: 'string', value: preview, long: true };
+};
+
+const buildRecordRefField = ({
+  key,
+  label,
+  objectNameSingular,
+  recordId,
+  title,
+  iconUrl,
+  workspaceBaseUrl,
+}: {
+  key: string;
+  label: string;
+  objectNameSingular: SlackUnfurlObjectName;
+  recordId: string;
+  title: string;
+  iconUrl?: string;
+  workspaceBaseUrl: string;
+}): EntityCustomField => ({
+  key,
+  label,
+  type: ENTITY_REF_FIELD_TYPE,
+  entity_ref: {
+    entity_url: `${workspaceBaseUrl}/object/${objectNameSingular}/${recordId}`,
+    external_ref: { id: recordId, type: objectNameSingular },
+    title,
+    ...(isDefined(iconUrl) ? { icon: { alt_text: title, url: iconUrl } } : {}),
+  },
+});
 
 const buildCompanyRefField = ({
   company,
@@ -126,24 +186,25 @@ const buildCompanyRefField = ({
     return undefined;
   }
 
-  const companyLogoUrl = getCompanyLogoUrl(
-    asNonEmptyString(asObject(company?.domainName)?.primaryLinkUrl),
-  );
-
-  return {
+  return buildRecordRefField({
     key: 'company',
     label: 'Company',
-    type: ENTITY_REF_FIELD_TYPE,
-    entity_ref: {
-      entity_url: `${workspaceBaseUrl}/object/company/${companyId}`,
-      external_ref: { id: companyId },
-      title: companyName,
-      ...(isDefined(companyLogoUrl)
-        ? { icon: { alt_text: companyName, url: companyLogoUrl } }
-        : {}),
-    },
-  };
+    objectNameSingular: 'company',
+    recordId: companyId,
+    title: companyName,
+    iconUrl: getCompanyLogoUrl(
+      asNonEmptyString(asObject(company?.domainName)?.primaryLinkUrl),
+    ),
+    workspaceBaseUrl,
+  });
 };
+
+const timestampDetailFields = (
+  record: Record<string, unknown>,
+): (EntityCustomField | undefined)[] => [
+  timestampField('createdAt', 'Created', record.createdAt),
+  timestampField('updatedAt', 'Updated', record.updatedAt),
+];
 
 // Only avatars that are already public absolute URLs render in Slack:
 // instance-hosted files sit behind signed, often unreachable, URLs that
@@ -167,14 +228,9 @@ const getPublicAvatarUrl = ({
 const buildPersonContent = ({
   record,
   workspaceBaseUrl,
+  includeDetails,
 }: SlackUnfurlContentArgs) => {
-  const name = asObject(record.name);
-  const title = [
-    asNonEmptyString(name?.firstName),
-    asNonEmptyString(name?.lastName),
-  ]
-    .filter(isDefined)
-    .join(' ');
+  const title = buildFullName(record.name) ?? '';
 
   const phones = asObject(record.phones);
   const phoneNumber = asNonEmptyString(phones?.primaryPhoneNumber);
@@ -204,34 +260,62 @@ const buildPersonContent = ({
       ),
       stringField('phone', 'Phone', phone),
       stringField('jobTitle', 'Job title', asNonEmptyString(record.jobTitle)),
-      stringField('city', 'City', asNonEmptyString(record.city)),
+      ...(includeDetails
+        ? [
+            stringField(
+              'linkedin',
+              'LinkedIn',
+              asNonEmptyString(asObject(record.linkedinLink)?.primaryLinkUrl),
+              LINK_FIELD_TYPE,
+            ),
+            ...timestampDetailFields(record),
+          ]
+        : []),
     ],
   };
 };
 
-const buildCompanyContent = ({ record }: SlackUnfurlContentArgs) => {
+const buildCompanyContent = ({
+  record,
+  includeDetails,
+}: SlackUnfurlContentArgs) => {
   const domainUrl = asNonEmptyString(
     asObject(record.domainName)?.primaryLinkUrl,
   );
-  const employees = asFiniteNumber(record.employees);
+  const address = asObject(record.address);
 
   return {
     title: asNonEmptyString(record.name) ?? '',
     iconUrl: getCompanyLogoUrl(domainUrl),
     customFields: [
       stringField('domain', 'Domain', domainUrl, LINK_FIELD_TYPE),
-      stringField(
-        'employees',
-        'Employees',
-        isDefined(employees)
-          ? new Intl.NumberFormat('en-US').format(employees)
-          : undefined,
-      ),
-      stringField(
-        'city',
-        'City',
-        asNonEmptyString(asObject(record.address)?.addressCity),
-      ),
+      stringField('city', 'City', asNonEmptyString(address?.addressCity)),
+      ...(includeDetails
+        ? [
+            stringField(
+              'country',
+              'Country',
+              asNonEmptyString(address?.addressCountry),
+            ),
+            stringField(
+              'annualRevenue',
+              'Annual revenue',
+              formatAmount(asObject(record.annualRevenue)),
+            ),
+            stringField(
+              'accountOwner',
+              'Account owner',
+              buildFullName(asObject(record.accountOwner)?.name),
+            ),
+            stringField(
+              'linkedin',
+              'LinkedIn',
+              asNonEmptyString(asObject(record.linkedinLink)?.primaryLinkUrl),
+              LINK_FIELD_TYPE,
+            ),
+            ...timestampDetailFields(record),
+          ]
+        : []),
     ],
   };
 };
@@ -239,9 +323,13 @@ const buildCompanyContent = ({ record }: SlackUnfurlContentArgs) => {
 const buildOpportunityContent = ({
   record,
   workspaceBaseUrl,
+  includeDetails,
 }: SlackUnfurlContentArgs) => {
   const stage = asNonEmptyString(record.stage);
   const company = asObject(record.company);
+  const pointOfContact = asObject(record.pointOfContact);
+  const pointOfContactId = asNonEmptyString(pointOfContact?.id);
+  const pointOfContactName = buildFullName(pointOfContact?.name);
 
   return {
     title: asNonEmptyString(record.name) ?? '',
@@ -259,16 +347,43 @@ const buildOpportunityContent = ({
       ),
       stringField('amount', 'Amount', formatAmount(asObject(record.amount))),
       timestampField('closeDate', 'Close date', record.closeDate),
+      ...(includeDetails
+        ? [
+            isDefined(pointOfContactId) && isDefined(pointOfContactName)
+              ? buildRecordRefField({
+                  key: 'pointOfContact',
+                  label: 'Point of contact',
+                  objectNameSingular: 'person',
+                  recordId: pointOfContactId,
+                  title: pointOfContactName,
+                  workspaceBaseUrl,
+                })
+              : undefined,
+            ...timestampDetailFields(record),
+          ]
+        : []),
     ],
   };
 };
 
-const buildNoteContent = ({ record }: SlackUnfurlContentArgs) => ({
+const buildNoteContent = ({
+  record,
+  includeDetails,
+}: SlackUnfurlContentArgs) => ({
   title: asNonEmptyString(record.title) ?? '',
-  customFields: [timestampField('createdAt', 'Created', record.createdAt)],
+  customFields: includeDetails
+    ? [
+        bodyPreviewField(record.bodyV2),
+        timestampField('createdAt', 'Created', record.createdAt),
+        timestampField('updatedAt', 'Updated', record.updatedAt),
+      ]
+    : [timestampField('createdAt', 'Created', record.createdAt)],
 });
 
-const buildTaskContent = ({ record }: SlackUnfurlContentArgs) => {
+const buildTaskContent = ({
+  record,
+  includeDetails,
+}: SlackUnfurlContentArgs) => {
   const status = asNonEmptyString(record.status);
 
   return {
@@ -280,6 +395,17 @@ const buildTaskContent = ({ record }: SlackUnfurlContentArgs) => {
         isDefined(status) ? humanizeSelectValue(status) : undefined,
       ),
       timestampField('dueAt', 'Due date', record.dueAt),
+      ...(includeDetails
+        ? [
+            stringField(
+              'assignee',
+              'Assignee',
+              buildFullName(asObject(record.assignee)?.name),
+            ),
+            bodyPreviewField(record.bodyV2),
+            ...timestampDetailFields(record),
+          ]
+        : []),
     ],
   };
 };
@@ -303,14 +429,18 @@ export const buildSlackRecordUnfurlEntity = ({
   recordLink,
   record,
   workspaceBaseUrl,
+  includeDetails = false,
 }: {
   recordLink: SlackRecordLink;
   record: Record<string, unknown>;
   workspaceBaseUrl: string;
+  // The flexpane has room for the full field set; the in-channel card
+  // stays to the headline fields.
+  includeDetails?: boolean;
 }): EntityMetadata | undefined => {
   const { title, customFields, iconUrl } = CONTENT_BUILDERS[
     recordLink.objectNameSingular
-  ]({ record, workspaceBaseUrl });
+  ]({ record, workspaceBaseUrl, includeDetails });
 
   if (!isNonEmptyString(title)) {
     return undefined;

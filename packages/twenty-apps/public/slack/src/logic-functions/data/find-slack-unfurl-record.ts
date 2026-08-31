@@ -8,6 +8,9 @@ type SlackUnfurlRecordSelection = {
   node: Record<string, unknown>;
 };
 
+// Selections stick to standard fields: a single unknown field fails the
+// whole GraphQL query, and dev-seeded workspaces carry custom fields
+// (employees, city, ...) that other workspaces do not have.
 const RECORD_SELECTIONS: Record<
   SlackUnfurlObjectName,
   SlackUnfurlRecordSelection
@@ -18,11 +21,12 @@ const RECORD_SELECTIONS: Record<
       id: true,
       name: { firstName: true, lastName: true },
       jobTitle: true,
-      city: true,
       avatarUrl: true,
       emails: { primaryEmail: true },
       phones: { primaryPhoneNumber: true, primaryPhoneCallingCode: true },
+      linkedinLink: { primaryLinkUrl: true },
       company: { id: true, name: true, domainName: { primaryLinkUrl: true } },
+      createdAt: true,
       updatedAt: true,
     },
   },
@@ -31,9 +35,12 @@ const RECORD_SELECTIONS: Record<
     node: {
       id: true,
       name: true,
-      employees: true,
       domainName: { primaryLinkUrl: true },
-      address: { addressCity: true },
+      linkedinLink: { primaryLinkUrl: true },
+      annualRevenue: { amountMicros: true, currencyCode: true },
+      address: { addressCity: true, addressCountry: true },
+      accountOwner: { id: true, name: { firstName: true, lastName: true } },
+      createdAt: true,
       updatedAt: true,
     },
   },
@@ -46,6 +53,8 @@ const RECORD_SELECTIONS: Record<
       amount: { amountMicros: true, currencyCode: true },
       closeDate: true,
       company: { id: true, name: true, domainName: { primaryLinkUrl: true } },
+      pointOfContact: { id: true, name: { firstName: true, lastName: true } },
+      createdAt: true,
       updatedAt: true,
     },
   },
@@ -54,6 +63,7 @@ const RECORD_SELECTIONS: Record<
     node: {
       id: true,
       title: true,
+      bodyV2: { markdown: true },
       createdAt: true,
       updatedAt: true,
     },
@@ -65,6 +75,9 @@ const RECORD_SELECTIONS: Record<
       title: true,
       status: true,
       dueAt: true,
+      bodyV2: { markdown: true },
+      assignee: { id: true, name: { firstName: true, lastName: true } },
+      createdAt: true,
       updatedAt: true,
     },
   },
