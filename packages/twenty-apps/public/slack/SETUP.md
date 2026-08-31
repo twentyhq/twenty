@@ -104,6 +104,8 @@ Pasting a link to a Twenty person, company, opportunity, note or task in Slack r
 
 Previews are rendered only when the person who posted the link maps to a workspace member (the same Slack-account-to-member matching the assistant uses). The record card is visible to everyone in the channel, so the preview stays to a handful of headline fields; expanding the card opens a side panel with the same details, and members open the record in Twenty for the rest.
 
+Record links the bot itself posts (assistant answers, workflow message steps) carry the preview too. Slack never sends `link_shared` for an app's own messages, so those previews are attached when the message is posted; the member gate does not apply there, since what the bot says is already decided upstream (the assistant runs with the requester's permissions, workflow steps post what their author configured).
+
 ## Behaviour notes
 
 - **Suggested prompts.** With `app_home_opened` subscribed and the Agents feature enabled, opening the bot's Messages tab shows clickable example prompts, refreshed on every open.

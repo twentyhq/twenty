@@ -1,12 +1,10 @@
-import { type EntityMetadata } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_UNFURL_MAX_ENTITIES } from 'src/logic-functions/constants/slack-unfurl-max-entities';
-import { findSlackUnfurlRecord } from 'src/logic-functions/data/find-slack-unfurl-record';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
-import { buildSlackRecordUnfurlEntity } from 'src/logic-functions/utils/build-slack-record-unfurl-entity';
+import { fetchSlackRecordEntities } from 'src/logic-functions/utils/fetch-slack-record-entities';
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
 import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
@@ -78,33 +76,11 @@ export const unfurlSlackRecordLinks = async (
     };
   }
 
-  const entities: EntityMetadata[] = [];
-
-  for (const recordLink of recordLinks) {
-    const record = await findSlackUnfurlRecord(client, recordLink).catch(
-      (error) => {
-        console.warn(
-          `[slack] record fetch for unfurl failed (${recordLink.objectNameSingular} ${recordLink.recordId}): ${error instanceof Error ? error.message : String(error)}`,
-        );
-
-        return undefined;
-      },
-    );
-
-    if (!isDefined(record)) {
-      continue;
-    }
-
-    const entity = buildSlackRecordUnfurlEntity({
-      recordLink,
-      record,
-      workspaceBaseUrl,
-    });
-
-    if (isDefined(entity)) {
-      entities.push(entity);
-    }
-  }
+  const entities = await fetchSlackRecordEntities({
+    client,
+    recordLinks,
+    workspaceBaseUrl,
+  });
 
   if (entities.length === 0) {
     return { ok: true, skipped: 'No readable records to unfurl' };
