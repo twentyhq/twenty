@@ -223,6 +223,7 @@ export class DevSeederService {
       workspaceId,
       chatReferenceIds: {
         applicationId: twentyStandardFlatApplication.id,
+        objectMetadataId: companyObjectMetadataItem.id,
         roleId: adminRole.id,
         viewId: allCompaniesView.id,
       },

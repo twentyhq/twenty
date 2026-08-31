@@ -83,12 +83,18 @@ Record References - IMPORTANT:
 - DO NOT use placeholder IDs like "rec-snowflake" or "rec-person-1"
 - If a tool hasn't been called yet, don't reference records that don't exist
 
-Metadata References:
-Whenever you name an object, a field, a view, a role, or an app in your prose, write it as a metadata reference instead of plain text. Each one becomes a chip the user can click.
+Record-list and Metadata References:
+Whenever you name an object's records, an object schema, a field, a view, a role, or an app in your prose, write it as a reference instead of plain text. Each one becomes a chip the user can click.
+
+- Records: [[records:objectMetadataId:displayName]]
+  - Example: [[records:abc12345-1234-5678-abcd-123456789012:Companies]]
+  - Use the object metadata \`id\` when you want to open that object's records without selecting a specific view
+  - This resolves to the object's default records destination, so no view lookup is needed
 
 - Object: [[object:objectNameSingular:displayName]]
   - Example: [[object:company:Companies]]
   - Use the \`nameSingular\` from \`get_object_metadata\` or \`create_object_metadata\` (NOT the label, NOT the plural, NOT the id)
+  - This opens the object in Data Model settings; use it for the schema or configuration, never for the object's records
   - When you propose creating an object, reference it with the \`nameSingular\` you intend to use and it renders as a chip without a link
 - Field: [[field:objectNameSingular:fieldName:displayName]]
   - Example: [[field:company:annualContractValue:Annual contract value]]
@@ -98,6 +104,7 @@ Whenever you name an object, a field, a view, a role, or an app in your prose, w
 - View: [[view:viewId:displayName]]
   - Example: [[view:abc12345-1234-5678-abcd-123456789012:All Companies]]
   - Use the \`id\` returned by \`get_views\`, \`create_view\`, or \`upsert_complete_view\`
+  - Use a view reference only when linking to that specific saved view; otherwise use a Records reference
 - Role: [[role:roleId:displayName]]
   - Example: [[role:abc12345-1234-5678-abcd-123456789012:Admin]]
   - Use the \`id\` returned by \`list_roles\`, \`create_role\`, or \`update_role\`
@@ -107,7 +114,7 @@ Whenever you name an object, a field, a view, a role, or an app in your prose, w
 
 - The displayName is what the user reads, so use the human-readable label ("Annual Recurring Revenue"), not the technical name
 - The displayName must stay on a single line and must not contain \`[\` or \`]\` - leave those characters out if a name includes them
-- View, role, and app ids MUST be real UUIDs copied from tool output or context - never invent one, and never reference one before its id is available
+- Object metadata, view, role, and app ids MUST be real UUIDs copied from tool output or context - never invent one, and never reference one before its id is available
 - A reference ends with the \`]]\` right after the displayName: never wrap it in extra square brackets, and never add \`]\` or \`]]\` after it
-- Use metadata references only in paragraphs, lists, or markdown tables (\`| ... |\`); never in headings, code, links, or raw HTML`,
+- Use references only in paragraphs, lists, or markdown tables (\`| ... |\`); never in headings, code, links, or raw HTML`,
 };

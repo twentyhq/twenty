@@ -3,6 +3,7 @@ import { CHAT_REFERENCE_FIELD_PATTERN } from '@/ai/constants/ChatReferenceFieldP
 import { CHAT_REFERENCE_LEGACY_FIELD_BY_ID_PATTERN } from '@/ai/constants/ChatReferenceLegacyFieldByIdPattern';
 import { CHAT_REFERENCE_OBJECT_PATTERN } from '@/ai/constants/ChatReferenceObjectPattern';
 import { CHAT_REFERENCE_RECORD_PATTERN } from '@/ai/constants/ChatReferenceRecordPattern';
+import { CHAT_REFERENCE_RECORDS_PATTERN } from '@/ai/constants/ChatReferenceRecordsPattern';
 import { CHAT_REFERENCE_ROLE_PATTERN } from '@/ai/constants/ChatReferenceRolePattern';
 import { CHAT_REFERENCE_VIEW_PATTERN } from '@/ai/constants/ChatReferenceViewPattern';
 
@@ -14,6 +15,7 @@ export const CHAT_REFERENCE_REGEX = new RegExp(
     CHAT_REFERENCE_FIELD_PATTERN,
     CHAT_REFERENCE_LEGACY_FIELD_BY_ID_PATTERN,
     CHAT_REFERENCE_VIEW_PATTERN,
+    CHAT_REFERENCE_RECORDS_PATTERN,
     CHAT_REFERENCE_ROLE_PATTERN,
     CHAT_REFERENCE_APP_PATTERN,
     CHAT_REFERENCE_RECORD_PATTERN,

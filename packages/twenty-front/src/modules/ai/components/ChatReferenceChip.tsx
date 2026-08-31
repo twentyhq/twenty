@@ -3,6 +3,7 @@ import { FieldMetadataLink } from '@/ai/components/FieldMetadataLink';
 import { DeprecatedFieldMetadataLinkById } from '@/ai/components/DeprecatedFieldMetadataLinkById';
 import { ObjectMetadataLink } from '@/ai/components/ObjectMetadataLink';
 import { RecordLink } from '@/ai/components/RecordLink';
+import { RecordsLink } from '@/ai/components/RecordsLink';
 import { RoleLink } from '@/ai/components/RoleLink';
 import { ViewLink } from '@/ai/components/ViewLink';
 import { type ChatReferenceMatch } from '@/ai/types/ChatReferenceMatch';
@@ -19,6 +20,13 @@ export const ChatReferenceChip = ({ reference }: ChatReferenceChipProps) => {
         <RecordLink
           objectNameSingular={reference.objectNameSingular}
           recordId={reference.recordId}
+          displayName={reference.displayName}
+        />
+      );
+    case 'records':
+      return (
+        <RecordsLink
+          objectMetadataId={reference.objectMetadataId}
           displayName={reference.displayName}
         />
       );

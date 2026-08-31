@@ -7,6 +7,8 @@ export const getChatReferenceMatchFromRegexMatch = (
   const {
     objectNameSingular,
     objectLabel,
+    objectMetadataId,
+    recordsLabel,
     fieldObjectNameSingular,
     fieldName,
     fieldLabel,
@@ -31,6 +33,15 @@ export const getChatReferenceMatchFromRegexMatch = (
       kind: 'object',
       objectNameSingular,
       displayName: objectLabel,
+    };
+  }
+
+  if (isDefined(objectMetadataId)) {
+    return {
+      ...position,
+      kind: 'records',
+      objectMetadataId,
+      displayName: recordsLabel,
     };
   }
 

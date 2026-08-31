@@ -7,6 +7,8 @@ export const getChatReferenceIdentitySegment = (
   switch (identity.kind) {
     case 'record':
       return `${identity.objectNameSingular}:${identity.recordId}`;
+    case 'records':
+      return identity.objectMetadataId;
     case 'object':
       return identity.objectNameSingular;
     case 'field':
