@@ -124,12 +124,14 @@ export class UserWorkspaceService {
       isExistingUser,
       pictureUrl,
       applicationUniversalIdentifier,
+      locale,
     }: {
       userId: string;
       workspaceId: string;
       isExistingUser: boolean;
       pictureUrl?: string;
       applicationUniversalIdentifier?: string;
+      locale?: UserWorkspaceEntity['locale'];
     },
     queryRunner?: QueryRunner,
   ): Promise<UserWorkspaceEntity> {
@@ -146,6 +148,7 @@ export class UserWorkspaceService {
       userId,
       workspaceId,
       defaultAvatarUrl,
+      locale: locale ?? SOURCE_LOCALE,
     });
 
     return queryRunner
@@ -232,13 +235,12 @@ export class UserWorkspaceService {
 
     const userWorkspace = await this.create({
       userId: user.id,
+      workspaceId: workspace.i    const userWorkspace = await this.create({
+      userId: user.id,
       workspaceId: workspace.id,
       isExistingUser: true,
-    });
-
-    await this.createWorkspaceMember(workspace.id, user);
-
-    await this.userRoleService.assignRoleToManyUserWorkspace({
+      locale: user.locale,
+    });oleToManyUserWorkspace({
       workspaceId: workspace.id,
       userWorkspaceIds: [userWorkspace.id],
       roleId: resolvedRoleId,
