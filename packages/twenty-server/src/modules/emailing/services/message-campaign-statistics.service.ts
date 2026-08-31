@@ -226,5 +226,4 @@ export class MessageCampaignStatisticsService {
   }): string {
     return `campaign-stats-refresh:${workspaceId}:${campaignId}`;
   }
-
 }
