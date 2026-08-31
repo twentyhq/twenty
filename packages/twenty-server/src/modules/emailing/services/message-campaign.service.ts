@@ -1,7 +1,5 @@
 import { CAMPAIGN_SEND_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-limit.constant';
 import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
-import { MESSAGE_CAMPAIGN_TEST_SEND_MAX_REQUESTS } from 'src/modules/emailing/constants/message-campaign-test-send-max-requests.constant';
-import { MESSAGE_CAMPAIGN_TEST_SEND_WINDOW_MS } from 'src/modules/emailing/constants/message-campaign-test-send-window-ms.constant';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { Injectable } from '@nestjs/common';
 
@@ -47,6 +45,8 @@ type SendCampaignResult = {
 };
 
 type SendableDraftCampaign = z.infer<typeof sendableDraftCampaignSchema>;
+
+const TEST_SEND_THROTTLE = { maxRequests: 3, windowMs: 24 * 60 * 60 * 1000 };
 
 @Injectable()
 export class MessageCampaignService {
@@ -211,8 +211,8 @@ export class MessageCampaignService {
     await this.throttlerService.tokenBucketThrottleOrThrow(
       `message-campaign-test-send:throttler:${workspaceId}`,
       1,
-      MESSAGE_CAMPAIGN_TEST_SEND_MAX_REQUESTS,
-      MESSAGE_CAMPAIGN_TEST_SEND_WINDOW_MS,
+      TEST_SEND_THROTTLE.maxRequests,
+      TEST_SEND_THROTTLE.windowMs,
     );
 
     return this.emailingDomainSenderService.sendEmail(

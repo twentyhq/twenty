@@ -6,11 +6,6 @@ import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/
 import { SEND_CAMPAIGN_EMAIL_JOB } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
 import { CAMPAIGN_SEND_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-limit.constant';
-import { CAMPAIGN_SEND_SLOT_RETRY_ATTEMPT_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-slot-retry-attempt-limit.constant';
-import { CAMPAIGN_SEND_SLOT_RETRY_JITTER_RATIO } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-slot-retry-jitter-ratio.constant';
-import { CAMPAIGN_SEND_SLOT_RETRY_MAX_WINDOWS } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-slot-retry-max-windows.constant';
-import { CAMPAIGN_SEND_SLOT_RETRY_MAX_DELAY_MS } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-slot-retry-max-delay-ms.constant';
-import { CAMPAIGN_SEND_SLOT_RETRY_MIN_DELAY_MS } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-slot-retry-min-delay-ms.constant';
 import { CAMPAIGN_DELIVERY_CLAIM_TTL_MS } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-claim-ttl-ms.constant';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -53,6 +48,14 @@ type SendContext = {
   campaign: MessageCampaignWorkspaceEntity;
   person: PersonWorkspaceEntity | null;
   claimToken: string;
+};
+
+const SEND_SLOT_RETRY = {
+  attemptLimit: 60,
+  jitterRatio: 0.5,
+  maxWindows: 3,
+  minDelayMs: 1_000,
+  maxDelayMs: 60_000,
 };
 
 @Injectable()
@@ -181,7 +184,7 @@ export class MessageCampaignDeliveryService {
       return {
         retryDelayMs: Math.max(
           error.exhaustedScope?.retryAfterMs ?? 0,
-          CAMPAIGN_SEND_SLOT_RETRY_MIN_DELAY_MS,
+          SEND_SLOT_RETRY.minDelayMs,
         ),
         windowMs: (error.exhaustedScope?.windowSeconds ?? 0) * 1000,
       };
@@ -197,7 +200,7 @@ export class MessageCampaignDeliveryService {
   }): Promise<void> {
     const attemptCount = (data.rateLimitedAttemptCount ?? 0) + 1;
 
-    if (attemptCount > CAMPAIGN_SEND_SLOT_RETRY_ATTEMPT_LIMIT) {
+    if (attemptCount > SEND_SLOT_RETRY.attemptLimit) {
       await this.failRateLimitedDelivery({
         workspaceId: data.workspaceId,
         campaignId: data.campaignId,
@@ -208,13 +211,13 @@ export class MessageCampaignDeliveryService {
     }
 
     const backoffCeilingMs = Math.min(
-      windowMs * CAMPAIGN_SEND_SLOT_RETRY_MAX_WINDOWS,
-      CAMPAIGN_SEND_SLOT_RETRY_MAX_DELAY_MS,
+      windowMs * SEND_SLOT_RETRY.maxWindows,
+      SEND_SLOT_RETRY.maxDelayMs,
     );
 
     const backoffMs = Math.min(
       retryDelayMs * 2 ** (attemptCount - 1),
-      Math.max(backoffCeilingMs, CAMPAIGN_SEND_SLOT_RETRY_MIN_DELAY_MS),
+      Math.max(backoffCeilingMs, SEND_SLOT_RETRY.minDelayMs),
     );
 
     await this.messageQueueService.add<SendCampaignEmailJobData>(
@@ -222,8 +225,7 @@ export class MessageCampaignDeliveryService {
       { ...data, rateLimitedAttemptCount: attemptCount },
       {
         delay: Math.ceil(
-          backoffMs *
-            (1 + Math.random() * CAMPAIGN_SEND_SLOT_RETRY_JITTER_RATIO),
+          backoffMs * (1 + Math.random() * SEND_SLOT_RETRY.jitterRatio),
         ),
         retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,
         backoff: CAMPAIGN_SEND_RETRY_BACKOFF,
@@ -257,7 +259,7 @@ export class MessageCampaignDeliveryService {
 
     if (affected === 1) {
       this.logger.warn(
-        `Campaign ${campaignId} of workspace ${workspaceId} gave up on message ${messageId} after ${CAMPAIGN_SEND_SLOT_RETRY_ATTEMPT_LIMIT} refused send slots`,
+        `Campaign ${campaignId} of workspace ${workspaceId} gave up on message ${messageId} after ${SEND_SLOT_RETRY.attemptLimit} refused send slots`,
       );
     }
 
