@@ -6,6 +6,7 @@ export const lastLoadedRecordTableWidgetViewIdComponentState =
     viewId: string;
     objectMetadataItemUpdatedAt: string;
     loadedViewContentSignature: string;
+    loadSource: 'draft' | 'persisted';
   } | null>({
     key: 'lastLoadedRecordTableWidgetViewIdComponentState',
     defaultValue: null,

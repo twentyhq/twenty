@@ -56,6 +56,9 @@ export const FieldWidgetRelationTable = ({
   const isUIEditable = isFieldWidget(widget)
     ? (widget.configuration.isUIEditable ?? true)
     : true;
+  const viewerControls = isFieldWidget(widget)
+    ? widget.configuration.viewerControls
+    : undefined;
   const nestedRelationFieldMetadataId = isFieldWidget(widget)
     ? widget.configuration.nestedRelationFieldMetadataId
     : undefined;
@@ -179,6 +182,7 @@ export const FieldWidgetRelationTable = ({
           viewId={viewId}
           widgetId={widget.id}
           isUIEditable={!isPageLayoutInEditMode && isUIEditable}
+          viewerControls={viewerControls}
           isEmptyStateHidden
           instanceIdSuffix={`${recordId}${isInSidePanel ? '-side-panel' : ''}`}
           nestedRelationCreateThrough={nestedRelationCreateThrough}

@@ -23,6 +23,10 @@ import { RecordTableGroupByDropdownContent } from '@/side-panel/pages/page-layou
 import { RecordTableCalendarFieldDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableCalendarFieldDropdownContent';
 import { RecordTableCalendarLayoutDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableCalendarLayoutDropdownContent';
 import { RecordTableLayoutDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutDropdownContent';
+import {
+  getWidgetViewerControlsSettingsItemIds,
+  WidgetViewerControlsSettingsRows,
+} from '@/side-panel/pages/page-layout/components/record-table-settings/WidgetViewerControlsSettingsRows';
 import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useRecordTableSettingsDescriptions } from '@/side-panel/pages/page-layout/hooks/useRecordTableSettingsDescriptions';
@@ -33,6 +37,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { type ViewerControlsConfiguration } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconArrowBarToDownDashed,
@@ -98,6 +103,17 @@ export const SidePanelDashboardRecordTableSettings = () => {
     currentPageLayout.type,
   );
 
+  const viewerControls =
+    isRecordTableConfiguration &&
+    isDefined(configuration) &&
+    'viewerControls' in configuration &&
+    isDefined(configuration.viewerControls)
+      ? {
+          filter: configuration.viewerControls.filter === true,
+          sort: configuration.viewerControls.sort === true,
+        }
+      : undefined;
+
   const {
     sourceDescription,
     fieldsDescription,
@@ -124,6 +140,16 @@ export const SidePanelDashboardRecordTableSettings = () => {
     updateCurrentWidgetConfig({
       configToUpdate: {
         isUIEditable: nextIsUIEditable,
+      },
+    });
+  };
+
+  const handleViewerControlsChange = (
+    nextViewerControls: ViewerControlsConfiguration,
+  ) => {
+    updateCurrentWidgetConfig({
+      configToUpdate: {
+        viewerControls: nextViewerControls,
       },
     });
   };
@@ -214,6 +240,9 @@ export const SidePanelDashboardRecordTableSettings = () => {
             ? ['record-table-hide-empty-groups']
             : []),
           ...(!isCalendarLayout && !hasGroupBy ? ['record-table-limit'] : []),
+          ...getWidgetViewerControlsSettingsItemIds({
+            isSortAvailable: !isCalendarLayout,
+          }),
           ...(isWidgetContentEditingSupported
             ? ['record-table-allow-editing']
             : []),
@@ -434,6 +463,11 @@ export const SidePanelDashboardRecordTableSettings = () => {
                       />
                     </SelectableListItem>
                   )}
+                  <WidgetViewerControlsSettingsRows
+                    viewerControls={viewerControls}
+                    isSortAvailable={!isCalendarLayout}
+                    onViewerControlsChange={handleViewerControlsChange}
+                  />
                   {isWidgetContentEditingSupported && (
                     <SelectableListItem itemId="record-table-allow-editing">
                       <CommandMenuItemToggle

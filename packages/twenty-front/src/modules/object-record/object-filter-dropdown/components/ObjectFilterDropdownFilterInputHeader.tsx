@@ -5,12 +5,14 @@ import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { ViewBarFilterDropdownFilterInputMenuHeader } from '@/views/components/ViewBarFilterDropdownFilterInputMenuHeader';
-import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
+import { useViewBarFilterDropdownIds } from '@/views/contexts/ViewBarFilterDropdownIdsContext';
 import { useContext } from 'react';
 import { IconX } from 'twenty-ui/icon';
 
 // TODO: we shouldn't guess in which parent we are, this should be splitted in two components, one for each case
 export const ObjectFilterDropdownFilterInputHeader = () => {
+  const { mainDropdownId } = useViewBarFilterDropdownIds();
+
   const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
@@ -21,8 +23,7 @@ export const ObjectFilterDropdownFilterInputHeader = () => {
     DropdownComponentInstanceContext,
   )?.instanceId;
 
-  const isInViewBarFilterDropdown =
-    dropdownInstanceId === ViewBarFilterDropdownIds.MAIN;
+  const isInViewBarFilterDropdown = dropdownInstanceId === mainDropdownId;
 
   if (isInViewBarFilterDropdown) {
     return <ViewBarFilterDropdownFilterInputMenuHeader />;

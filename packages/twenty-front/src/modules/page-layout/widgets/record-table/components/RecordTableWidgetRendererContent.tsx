@@ -16,6 +16,7 @@ import { constructViewFromRecordTableWidgetViewSnapshot } from '@/page-layout/wi
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useViewById } from '@/views/hooks/useViewById';
 import { type ReactNode } from 'react';
+import { type ViewerControlsConfiguration } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewCalendarLayout, ViewType } from '~/generated-metadata/graphql';
 
@@ -25,6 +26,7 @@ type RecordTableWidgetRendererContentProps = {
   widgetId: string;
   isUIEditable?: boolean;
   isEmptyStateHidden?: boolean;
+  viewerControls?: ViewerControlsConfiguration;
   recordLimit?: number;
   instanceIdSuffix?: string;
   nestedRelationCreateThrough?: RecordTableWidgetNestedRelationCreateThrough;
@@ -36,6 +38,7 @@ export const RecordTableWidgetRendererContent = ({
   widgetId,
   isUIEditable = false,
   isEmptyStateHidden = false,
+  viewerControls,
   recordLimit,
   instanceIdSuffix,
   nestedRelationCreateThrough,
@@ -99,6 +102,10 @@ export const RecordTableWidgetRendererContent = ({
       instanceIdSuffix={instanceIdSuffix}
       nestedRelationCreateThrough={nestedRelationCreateThrough}
       contextStoreViewType={getContextStoreViewType(widgetViewLayout)}
+      viewerControls={{
+        filter: viewerControls?.filter ?? false,
+        sort: (viewerControls?.sort ?? false) && !isCalendarLayout,
+      }}
     >
       {renderWidgetForLayout[widgetViewLayout]()}
     </RecordTableWidgetProvider>

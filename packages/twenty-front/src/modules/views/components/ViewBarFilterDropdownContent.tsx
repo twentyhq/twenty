@@ -5,12 +5,14 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { ViewBarFilterDropdownAnyFieldSearchInput } from '@/views/components/ViewBarFilterDropdownAnyFieldSearchInput';
 import { ViewBarFilterDropdownFieldSelectMenu } from '@/views/components/ViewBarFilterDropdownFieldSelectMenu';
 import { ViewBarFilterDropdownFilterInput } from '@/views/components/ViewBarFilterDropdownFilterInput';
-import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
+import { useViewBarFilterDropdownIds } from '@/views/contexts/ViewBarFilterDropdownIdsContext';
 
 export const ViewBarFilterDropdownContent = () => {
+  const { mainDropdownId } = useViewBarFilterDropdownIds();
+
   const [objectFilterDropdownFilterIsSelected] = useAtomComponentState(
     objectFilterDropdownFilterIsSelectedComponentState,
-    ViewBarFilterDropdownIds.MAIN,
+    mainDropdownId,
   );
 
   const objectFilterDropdownAnyFieldSearchIsSelected =

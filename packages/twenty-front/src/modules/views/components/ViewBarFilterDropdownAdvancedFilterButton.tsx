@@ -17,7 +17,7 @@ import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
+import { useViewBarFilterDropdownIds } from '@/views/contexts/ViewBarFilterDropdownIdsContext';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -37,6 +37,8 @@ const StyledPillContainer = styled.span`
 `;
 
 export const ViewBarFilterDropdownAdvancedFilterButton = () => {
+  const { mainDropdownId, advancedDropdownId } = useViewBarFilterDropdownIds();
+
   const rootRecordFilterGroup = useAtomComponentSelectorValue(
     rootLevelRecordFilterGroupComponentSelector,
   );
@@ -131,9 +133,9 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
       setRecordFilterUsedInAdvancedFilterDropdownRow(newRecordFilter);
     }
 
-    closeObjectFilterDropdown(ViewBarFilterDropdownIds.MAIN);
+    closeObjectFilterDropdown(mainDropdownId);
     openAdvancedFilterDropdown({
-      dropdownComponentInstanceIdFromProps: ViewBarFilterDropdownIds.ADVANCED,
+      dropdownComponentInstanceIdFromProps: advancedDropdownId,
     });
   };
 

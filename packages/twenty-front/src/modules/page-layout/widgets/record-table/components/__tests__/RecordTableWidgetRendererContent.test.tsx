@@ -5,6 +5,7 @@ import { ViewCalendarLayout, ViewType } from '~/generated-metadata/graphql';
 
 const mockUseViewById = jest.fn();
 const mockIsPageLayoutInEditMode = jest.fn();
+const mockRecordTableWidgetProviderProps = jest.fn();
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItemById', () => ({
   useObjectMetadataItemById: jest.fn(() => ({
@@ -24,8 +25,11 @@ jest.mock('@/views/hooks/useViewById', () => ({
 jest.mock(
   '@/object-record/record-table-widget/components/RecordTableWidgetProvider',
   () => ({
-    RecordTableWidgetProvider: ({ children }: { children: React.ReactNode }) =>
-      children,
+    RecordTableWidgetProvider: (props: { children: React.ReactNode }) => {
+      mockRecordTableWidgetProviderProps(props);
+
+      return props.children;
+    },
   }),
 );
 jest.mock(
@@ -133,5 +137,53 @@ describe('RecordTableWidgetRendererContent', () => {
     renderWidgetForViewType(undefined);
 
     expect(screen.getByText('record table widget')).toBeVisible();
+  });
+
+  it('should forward viewer filter and sort controls to the widget provider', () => {
+    mockUseViewById.mockReturnValue({
+      view: { id: 'view-id', type: ViewType.TABLE_WIDGET },
+    });
+
+    render(
+      <RecordTableWidgetRendererContent
+        objectMetadataId="object-metadata-id"
+        viewId="view-id"
+        widgetId="widget-id"
+        viewerControls={{ filter: true, sort: true }}
+      />,
+    );
+
+    expect(mockRecordTableWidgetProviderProps).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        viewerControls: {
+          filter: true,
+          sort: true,
+        },
+      }),
+    );
+  });
+
+  it('should suppress the sort control for calendar widgets', () => {
+    mockUseViewById.mockReturnValue({
+      view: { id: 'view-id', type: ViewType.CALENDAR_WIDGET },
+    });
+
+    render(
+      <RecordTableWidgetRendererContent
+        objectMetadataId="object-metadata-id"
+        viewId="view-id"
+        widgetId="widget-id"
+        viewerControls={{ filter: true, sort: true }}
+      />,
+    );
+
+    expect(mockRecordTableWidgetProviderProps).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        viewerControls: {
+          filter: true,
+          sort: false,
+        },
+      }),
+    );
   });
 });

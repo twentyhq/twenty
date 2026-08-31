@@ -211,6 +211,7 @@ export type {
   BarChartConfiguration,
   LineChartConfiguration,
   ViewConfiguration,
+  ViewerControlsConfiguration,
   RecordTableConfiguration,
   FieldConfiguration,
   FormFieldConfiguration,

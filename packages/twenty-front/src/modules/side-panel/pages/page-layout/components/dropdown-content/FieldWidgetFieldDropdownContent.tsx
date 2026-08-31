@@ -12,6 +12,7 @@ import {
   getFieldWidgetDefaultDisplayMode,
   isDisplayModeValidForFieldType,
 } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
+import { getFieldWidgetDisplayModeConfigurationUpdate } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfigurationUpdate';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
@@ -224,9 +225,9 @@ export const FieldWidgetFieldDropdownContent = () => {
         fieldMetadataId: selectedField.id,
         nestedRelationFieldMetadataId: null,
         ...relationTableViewIdChange,
-        ...(needsDisplayModeSwitch && {
-          fieldDisplayMode: nextDisplayMode,
-        }),
+        ...(needsDisplayModeSwitch &&
+          isDefined(nextDisplayMode) &&
+          getFieldWidgetDisplayModeConfigurationUpdate(nextDisplayMode)),
       },
     });
 

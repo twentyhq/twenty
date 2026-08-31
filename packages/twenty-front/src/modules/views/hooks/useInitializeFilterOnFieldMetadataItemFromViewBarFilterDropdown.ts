@@ -14,7 +14,7 @@ import { getRecordFilterOperands } from '@/object-record/record-filter/utils/get
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
+import { useViewBarFilterDropdownIds } from '@/views/contexts/ViewBarFilterDropdownIdsContext';
 
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -23,6 +23,8 @@ import { v4 } from 'uuid';
 
 export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
   () => {
+    const { mainDropdownId } = useViewBarFilterDropdownIds();
+
     const selectedOperandInDropdownCallbackState =
       useAtomComponentStateCallbackState(
         selectedOperandInDropdownComponentState,
@@ -75,7 +77,7 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
 
           if (filterType === 'RELATION' || filterType === 'SELECT') {
             pushFocusItemToFocusStack({
-              focusId: ViewBarFilterDropdownIds.MAIN,
+              focusId: mainDropdownId,
               component: {
                 type: FocusComponentType.DROPDOWN,
                 instanceId: fieldMetadataItem.id,
@@ -153,6 +155,7 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
           selectedOperandInDropdownCallbackState,
           upsertObjectFilterDropdownCurrentFilter,
           getInitialFilterValue,
+          mainDropdownId,
         ],
       );
 

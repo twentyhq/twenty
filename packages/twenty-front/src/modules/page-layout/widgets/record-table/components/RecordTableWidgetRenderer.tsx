@@ -37,6 +37,16 @@ export const RecordTableWidgetRenderer = ({
     currentPageLayout.type,
   );
 
+  const viewerControls =
+    isRecordTableConfiguration &&
+    'viewerControls' in configuration &&
+    isDefined(configuration.viewerControls)
+      ? {
+          filter: configuration.viewerControls.filter === true,
+          sort: configuration.viewerControls.sort === true,
+        }
+      : undefined;
+
   if (!isDefined(widget.objectMetadataId) || !isDefined(viewId)) {
     return null;
   }
@@ -50,6 +60,7 @@ export const RecordTableWidgetRenderer = ({
         isEmptyStateHidden
         recordLimit={recordLimit}
         isUIEditable={!isPageLayoutInEditMode && isUIEditable}
+        viewerControls={viewerControls}
       />
     </StyledWidgetTableOutline>
   );

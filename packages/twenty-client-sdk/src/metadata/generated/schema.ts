@@ -951,6 +951,7 @@ export interface FieldConfiguration {
     viewId?: Scalars['String']
     nestedRelationFieldMetadataId?: Scalars['String']
     isUIEditable?: Scalars['Boolean']
+    viewerControls?: ViewerControlsConfiguration
     __typename: 'FieldConfiguration'
 }
 
@@ -1007,7 +1008,14 @@ export interface RecordTableConfiguration {
     viewId?: Scalars['String']
     recordLimit?: Scalars['Int']
     isUIEditable?: Scalars['Boolean']
+    viewerControls?: ViewerControlsConfiguration
     __typename: 'RecordTableConfiguration'
+}
+
+export interface ViewerControlsConfiguration {
+    filter?: Scalars['Boolean']
+    sort?: Scalars['Boolean']
+    __typename: 'ViewerControlsConfiguration'
 }
 
 export interface WorkflowConfiguration {
@@ -4349,6 +4357,7 @@ export interface FieldConfigurationGenqlSelection{
     viewId?: boolean | number
     nestedRelationFieldMetadataId?: boolean | number
     isUIEditable?: boolean | number
+    viewerControls?: ViewerControlsConfigurationGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4410,6 +4419,14 @@ export interface RecordTableConfigurationGenqlSelection{
     viewId?: boolean | number
     recordLimit?: boolean | number
     isUIEditable?: boolean | number
+    viewerControls?: ViewerControlsConfigurationGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ViewerControlsConfigurationGenqlSelection{
+    filter?: boolean | number
+    sort?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7899,6 +7916,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
       return RecordTableConfiguration_possibleTypes.includes(obj.__typename)
     }
     
+
+
+    const ViewerControlsConfiguration_possibleTypes: string[] = ['ViewerControlsConfiguration']
+    export const isViewerControlsConfiguration = (obj?: { __typename?: any } | null): obj is ViewerControlsConfiguration => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isViewerControlsConfiguration"')
+      return ViewerControlsConfiguration_possibleTypes.includes(obj.__typename)
+    }
+
 
 
     const WorkflowConfiguration_possibleTypes: string[] = ['WorkflowConfiguration']

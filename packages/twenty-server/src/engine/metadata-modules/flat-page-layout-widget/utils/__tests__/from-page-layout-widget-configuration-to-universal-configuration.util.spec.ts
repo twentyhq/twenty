@@ -112,7 +112,7 @@ describe('fromPageLayoutWidgetConfigurationToUniversalConfiguration', () => {
     ).toBeNull();
   });
 
-  it('should preserve disabled widget content editing on field configurations', () => {
+  it('should preserve widget UI capability flags on field configurations', () => {
     const fieldMetadataId = '3e20d40a-0e85-44c1-8fa8-f802e8a1edce';
     const fieldMetadataUniversalIdentifier =
       'eb7b0329-4069-4de3-8f7c-6e6e3451e4f0';
@@ -124,6 +124,10 @@ describe('fromPageLayoutWidgetConfigurationToUniversalConfiguration', () => {
           fieldMetadataId,
           fieldDisplayMode: FieldDisplayMode.TABLE,
           isUIEditable: false,
+          viewerControls: {
+            filter: false,
+            sort: true,
+          },
         },
         fieldMetadataUniversalIdentifierById: {
           [fieldMetadataId]: fieldMetadataUniversalIdentifier,
@@ -132,20 +136,32 @@ describe('fromPageLayoutWidgetConfigurationToUniversalConfiguration', () => {
     ).toMatchObject({
       fieldMetadataId: fieldMetadataUniversalIdentifier,
       isUIEditable: false,
+      viewerControls: {
+        filter: false,
+        sort: true,
+      },
     });
   });
 
-  it('should preserve disabled widget content editing on record table configurations', () => {
+  it('should preserve widget UI capability flags on record table configurations', () => {
     expect(
       fromPageLayoutWidgetConfigurationToUniversalConfiguration({
         configuration: {
           configurationType: WidgetConfigurationType.RECORD_TABLE,
           isUIEditable: false,
+          viewerControls: {
+            filter: false,
+            sort: true,
+          },
         },
         fieldMetadataUniversalIdentifierById: {},
       }),
     ).toMatchObject({
       isUIEditable: false,
+      viewerControls: {
+        filter: false,
+        sort: true,
+      },
     });
   });
 });

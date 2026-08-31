@@ -13,13 +13,15 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
-import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
+import { useViewBarFilterDropdownIds } from '@/views/contexts/ViewBarFilterDropdownIdsContext';
 import { plural } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/icon';
 
 export const AdvancedFilterChip = () => {
+  const { advancedDropdownId } = useViewBarFilterDropdownIds();
+
   const { closeDropdown } = useCloseDropdown();
 
   const currentRecordFilterGroups = useAtomComponentStateValue(
@@ -50,7 +52,7 @@ export const AdvancedFilterChip = () => {
     });
 
   const handleRemoveClick = () => {
-    closeDropdown(ViewBarFilterDropdownIds.ADVANCED);
+    closeDropdown(advancedDropdownId);
 
     const viewFilterGroupIds = currentRecordFilterGroups.map(
       (recordFilterGroup) => recordFilterGroup.id,
@@ -110,7 +112,7 @@ export const AdvancedFilterChip = () => {
 
   return (
     <SortOrFilterChip
-      testId={ViewBarFilterDropdownIds.ADVANCED}
+      testId={advancedDropdownId}
       labelKey={chipLabel}
       labelValue=""
       Icon={IconFilter}

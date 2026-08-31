@@ -20,6 +20,10 @@ import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPa
 import { FieldWidgetFieldDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetFieldDropdownContent';
 import { FieldWidgetLayoutDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent';
 import { WidgetViewLayoutSettingsRows } from '@/side-panel/pages/page-layout/components/record-table-settings/WidgetViewLayoutSettingsRows';
+import {
+  getWidgetViewerControlsSettingsItemIds,
+  WidgetViewerControlsSettingsRows,
+} from '@/side-panel/pages/page-layout/components/record-table-settings/WidgetViewerControlsSettingsRows';
 import { WidgetSettingsManageSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsManageSection';
 import { WidgetSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
@@ -33,6 +37,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { type ViewerControlsConfiguration } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconLayoutSidebarRight,
@@ -112,11 +117,22 @@ export const SidePanelRecordPageFieldSettings = () => {
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
   const isUIEditable = fieldConfiguration?.isUIEditable ?? true;
+  const viewerControls = fieldConfiguration?.viewerControls;
 
   const handleIsUIEditableChange = (nextIsUIEditable: boolean) => {
     updateCurrentWidgetConfig({
       configToUpdate: {
         isUIEditable: nextIsUIEditable,
+      },
+    });
+  };
+
+  const handleViewerControlsChange = (
+    nextViewerControls: ViewerControlsConfiguration,
+  ) => {
+    updateCurrentWidgetConfig({
+      configToUpdate: {
+        viewerControls: nextViewerControls,
       },
     });
   };
@@ -195,6 +211,11 @@ export const SidePanelRecordPageFieldSettings = () => {
         })
       : []),
     ...(isTableDisplayMode ? ['fields'] : []),
+    ...(isTableDisplayMode
+      ? getWidgetViewerControlsSettingsItemIds({
+          isSortAvailable: !isEmbeddedViewCalendarLayout,
+        })
+      : []),
     ...(isTableDisplayMode && isWidgetContentEditingSupported
       ? ['field-allow-editing']
       : []),
@@ -268,6 +289,13 @@ export const SidePanelRecordPageFieldSettings = () => {
                   contextualTextPosition="right"
                 />
               </SelectableListItem>
+            )}
+            {isTableDisplayMode && (
+              <WidgetViewerControlsSettingsRows
+                viewerControls={viewerControls}
+                isSortAvailable={!isEmbeddedViewCalendarLayout}
+                onViewerControlsChange={handleViewerControlsChange}
+              />
             )}
             {isTableDisplayMode && isWidgetContentEditingSupported && (
               <SelectableListItem itemId="field-allow-editing">

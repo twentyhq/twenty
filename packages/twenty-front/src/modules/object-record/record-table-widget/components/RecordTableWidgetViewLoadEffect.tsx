@@ -45,6 +45,8 @@ export const RecordTableWidgetViewLoadEffect = ({
       ? constructViewFromRecordTableWidgetViewSnapshot(draftSnapshot)
       : undefined;
 
+  const loadSource = isDefined(viewFromDraft) ? 'draft' : 'persisted';
+
   const viewFromSelector = useAtomFamilySelectorValue(
     viewFromViewIdFamilySelector,
     { viewId },
@@ -71,6 +73,7 @@ export const RecordTableWidgetViewLoadEffect = ({
       viewId === lastLoadedRecordTableWidgetViewId?.viewId &&
       objectMetadataItem.updatedAt ===
         lastLoadedRecordTableWidgetViewId?.objectMetadataItemUpdatedAt &&
+      loadSource === lastLoadedRecordTableWidgetViewId?.loadSource &&
       contentSignature ===
         lastLoadedRecordTableWidgetViewId?.loadedViewContentSignature;
 
@@ -87,6 +90,7 @@ export const RecordTableWidgetViewLoadEffect = ({
       viewId,
       objectMetadataItemUpdatedAt: objectMetadataItem.updatedAt,
       loadedViewContentSignature: contentSignature,
+      loadSource,
     });
   }, [
     viewId,
@@ -97,6 +101,7 @@ export const RecordTableWidgetViewLoadEffect = ({
     objectMetadataItem,
     loadRecordIndexStates,
     recordIndexId,
+    loadSource,
   ]);
 
   return null;

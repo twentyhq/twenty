@@ -9,6 +9,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowDown, IconArrowUp } from 'twenty-ui/icon';
@@ -17,9 +18,13 @@ import { ViewSortDirection } from '~/generated-metadata/graphql';
 
 type EditableSortChipProps = {
   recordSort: RecordSort;
+  dropdownIdScope?: string;
 };
 
-export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
+export const EditableSortChip = ({
+  recordSort,
+  dropdownIdScope,
+}: EditableSortChipProps) => {
   const { t } = useLingui();
   const { removeRecordSort } = useRemoveRecordSort();
   const { upsertRecordSort } = useUpsertRecordSort();
@@ -34,7 +39,9 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
     primaryCompositeSubField: recordSort.subFieldName,
   });
 
-  const dropdownId = `sort-chip-${recordSort.id}`;
+  const dropdownId = `sort-chip-${
+    isNonEmptyString(dropdownIdScope) ? `${dropdownIdScope}-` : ''
+  }${recordSort.id}`;
 
   const setDirection = (direction: ViewSortDirection) => {
     upsertRecordSort({ ...recordSort, direction });

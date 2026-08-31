@@ -17,18 +17,24 @@ export const useSetEditableFilterChipDropdownStates = () => {
   const store = useStore();
 
   const setEditableFilterChipDropdownStates = useCallback(
-    (recordFilter: RecordFilter) => {
+    (
+      recordFilter: RecordFilter,
+      objectFilterDropdownComponentInstanceIdFromProps?: string,
+    ) => {
       const fieldMetadataItem = filterableFieldMetadataItems.find(
         (fieldMetadataItem) =>
           fieldMetadataItem.id === recordFilter.fieldMetadataId,
       );
+      const objectFilterDropdownComponentInstanceId =
+        objectFilterDropdownComponentInstanceIdFromProps ??
+        getEditableChipObjectFilterDropdownComponentInstanceId({
+          recordFilterId: recordFilter.id,
+        });
 
       if (isDefined(fieldMetadataItem)) {
         store.set(
           fieldMetadataItemIdUsedInDropdownComponentState.atomFamily({
-            instanceId: getEditableChipObjectFilterDropdownComponentInstanceId({
-              recordFilterId: recordFilter.id,
-            }),
+            instanceId: objectFilterDropdownComponentInstanceId,
           }),
           fieldMetadataItem.id,
         );
@@ -36,36 +42,28 @@ export const useSetEditableFilterChipDropdownStates = () => {
 
       store.set(
         selectedOperandInDropdownComponentState.atomFamily({
-          instanceId: getEditableChipObjectFilterDropdownComponentInstanceId({
-            recordFilterId: recordFilter.id,
-          }),
+          instanceId: objectFilterDropdownComponentInstanceId,
         }),
         recordFilter.operand,
       );
 
       store.set(
         objectFilterDropdownCurrentRecordFilterComponentState.atomFamily({
-          instanceId: getEditableChipObjectFilterDropdownComponentInstanceId({
-            recordFilterId: recordFilter.id,
-          }),
+          instanceId: objectFilterDropdownComponentInstanceId,
         }),
         recordFilter,
       );
 
       store.set(
         subFieldNameUsedInDropdownComponentState.atomFamily({
-          instanceId: getEditableChipObjectFilterDropdownComponentInstanceId({
-            recordFilterId: recordFilter.id,
-          }),
+          instanceId: objectFilterDropdownComponentInstanceId,
         }),
         recordFilter.subFieldName,
       );
 
       store.set(
         relationTargetFieldMetadataIdUsedInDropdownComponentState.atomFamily({
-          instanceId: getEditableChipObjectFilterDropdownComponentInstanceId({
-            recordFilterId: recordFilter.id,
-          }),
+          instanceId: objectFilterDropdownComponentInstanceId,
         }),
         recordFilter.relationTargetFieldMetadataId ?? null,
       );

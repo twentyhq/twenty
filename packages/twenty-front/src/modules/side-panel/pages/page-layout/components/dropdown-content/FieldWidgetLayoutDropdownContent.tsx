@@ -3,6 +3,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { getFieldWidgetAvailableDisplayModes } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
+import { getFieldWidgetDisplayModeConfigurationUpdate } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfigurationUpdate';
 import { getFieldWidgetEffectiveDisplayMode } from '@/page-layout/widgets/field/utils/getFieldWidgetEffectiveDisplayMode';
 import { getFieldWidgetRelationTraversal } from '@/page-layout/widgets/field/utils/getFieldWidgetRelationTraversal';
 import { resolveFieldWidgetNestedRelation } from '@/page-layout/widgets/field/utils/resolveFieldWidgetNestedRelation';
@@ -182,9 +183,8 @@ export const FieldWidgetLayoutDropdownContent = () => {
 
   const handleSelectDisplayMode = (fieldDisplayMode: FieldDisplayMode) => {
     updateCurrentWidgetConfig({
-      configToUpdate: {
-        fieldDisplayMode,
-      },
+      configToUpdate:
+        getFieldWidgetDisplayModeConfigurationUpdate(fieldDisplayMode),
     });
     closeDropdown();
   };

@@ -7,6 +7,8 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { RecordTableWidgetContextStoreInitEffect } from '@/object-record/record-table-widget/components/RecordTableWidgetContextStoreInitEffect';
+import { RecordTableWidgetSessionViewControls } from '@/object-record/record-table-widget/components/RecordTableWidgetSessionViewControls';
+import { RecordTableWidgetSessionViewStateSyncEffect } from '@/object-record/record-table-widget/components/RecordTableWidgetSessionViewStateSyncEffect';
 import { RecordTableWidgetViewLoadEffect } from '@/object-record/record-table-widget/components/RecordTableWidgetViewLoadEffect';
 import { MISSING_RECORD_TABLE_WIDGET_PAGE_LAYOUT_ID } from '@/object-record/record-table-widget/constants/MissingRecordTableWidgetPageLayoutId';
 import {
@@ -18,11 +20,11 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { useRecordTableWidgetFieldUpdate } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetFieldUpdate';
 import { useUpdateRecordTableWidgetViewDraft } from '@/page-layout/widgets/record-table/hooks/useUpdateRecordTableWidgetViewDraft';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
-import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { getRecordTableWidgetRecordIndexId } from '@/object-record/record-table-widget/utils/getRecordTableWidgetRecordIndexId';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type PropsWithChildren, useCallback, useMemo } from 'react';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, type ViewerControlsConfiguration } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
 type RecordTableWidgetProviderProps = PropsWithChildren<{
@@ -33,6 +35,7 @@ type RecordTableWidgetProviderProps = PropsWithChildren<{
   instanceIdSuffix?: string;
   contextStoreViewType?: ContextStoreViewType;
   nestedRelationCreateThrough?: RecordTableWidgetNestedRelationCreateThrough;
+  viewerControls?: ViewerControlsConfiguration;
 }>;
 
 export const RecordTableWidgetProvider = ({
@@ -43,21 +46,19 @@ export const RecordTableWidgetProvider = ({
   instanceIdSuffix,
   contextStoreViewType,
   nestedRelationCreateThrough,
+  viewerControls,
   children,
 }: RecordTableWidgetProviderProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 
-  const recordIndexIdWithoutSuffix =
-    getRecordIndexIdFromObjectNamePluralAndViewId(
-      objectMetadataItem.namePlural,
-      viewId,
-    );
-
-  const recordIndexId = isNonEmptyString(instanceIdSuffix)
-    ? `${recordIndexIdWithoutSuffix}-${instanceIdSuffix}`
-    : recordIndexIdWithoutSuffix;
+  const recordIndexId = getRecordTableWidgetRecordIndexId({
+    objectNamePlural: objectMetadataItem.namePlural,
+    viewId,
+    widgetId,
+    instanceIdSuffix,
+  });
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const objectPermissions = getObjectPermissionsForObject(
@@ -171,6 +172,15 @@ export const RecordTableWidgetProvider = ({
                 viewId={viewId}
                 widgetId={widgetId}
                 objectMetadataItem={objectMetadataItem}
+              />
+              <RecordTableWidgetSessionViewStateSyncEffect
+                recordIndexId={recordIndexId}
+                viewerControls={viewerControls}
+              />
+              <RecordTableWidgetSessionViewControls
+                objectNamePlural={objectMetadataItem.namePlural}
+                recordIndexId={recordIndexId}
+                viewerControls={viewerControls}
               />
               {children}
             </RecordComponentInstanceContextsWrapper>

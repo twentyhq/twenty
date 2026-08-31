@@ -2,6 +2,7 @@ import {
   type FieldDisplayMode,
   type WidgetConfigurationType,
 } from '~/generated-metadata/graphql';
+import { type ViewerControlsConfiguration } from 'twenty-shared/types';
 
 export type FieldConfiguration = {
   __typename: 'FieldConfiguration';
@@ -11,4 +12,5 @@ export type FieldConfiguration = {
   viewId?: string;
   nestedRelationFieldMetadataId?: string | null;
   isUIEditable?: boolean;
+  viewerControls?: ViewerControlsConfiguration;
 };

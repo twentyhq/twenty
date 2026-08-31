@@ -90,11 +90,17 @@ export type ViewConfiguration = {
   configurationType: 'VIEW';
 };
 
+export type ViewerControlsConfiguration = {
+  filter?: boolean;
+  sort?: boolean;
+};
+
 export type RecordTableConfiguration = {
   configurationType: 'RECORD_TABLE';
   viewId?: SerializedRelation | null;
   recordLimit?: number;
   isUIEditable?: boolean;
+  viewerControls?: ViewerControlsConfiguration;
 };
 
 export type FieldConfiguration = {
@@ -106,6 +112,7 @@ export type FieldConfiguration = {
   // two relation hops away (e.g. Company -> People -> Owned opportunities)
   nestedRelationFieldMetadataId?: string | null;
   isUIEditable?: boolean;
+  viewerControls?: ViewerControlsConfiguration;
 };
 
 export type FormFieldConfiguration = {

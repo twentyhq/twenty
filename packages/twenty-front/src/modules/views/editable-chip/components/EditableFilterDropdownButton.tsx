@@ -10,23 +10,34 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { EditableFilterChipDropdownContent } from '@/views/editable-chip/components/EditableFilterChipDropdownContent';
 import { EditableRelationFilterChip } from '@/views/editable-chip/components/EditableRelationFilterChip';
 import { getEditableChipDropdownId } from '@/views/editable-chip/utils/getEditableChipDropdownId';
+import { getEditableChipObjectFilterDropdownComponentInstanceId } from '@/views/editable-chip/utils/getEditableChipObjectFilterDropdownComponentInstanceId';
 import { useSetEditableFilterChipDropdownStates } from '@/views/hooks/useSetEditableFilterChipDropdownStates';
 
 type EditableFilterDropdownButtonProps = {
   recordFilter: RecordFilter;
+  dropdownIdScope?: string;
 };
 
 export const EditableFilterDropdownButton = ({
   recordFilter,
+  dropdownIdScope,
 }: EditableFilterDropdownButtonProps) => {
   const { closeDropdown } = useCloseDropdown();
 
   const { removeRecordFilter } = useRemoveRecordFilter();
 
+  const dropdownId = getEditableChipDropdownId({
+    recordFilterId: recordFilter.id,
+    dropdownIdScope,
+  });
+  const objectFilterDropdownComponentInstanceId =
+    getEditableChipObjectFilterDropdownComponentInstanceId({
+      recordFilterId: recordFilter.id,
+      dropdownIdScope,
+    });
+
   const handleRemove = () => {
-    closeDropdown(
-      getEditableChipDropdownId({ recordFilterId: recordFilter.id }),
-    );
+    closeDropdown(dropdownId);
 
     removeRecordFilter({ recordFilterId: recordFilter.id });
   };
@@ -43,15 +54,16 @@ export const EditableFilterDropdownButton = ({
     useSetEditableFilterChipDropdownStates();
 
   const handleFilterChipClick = () => {
-    setEditableFilterChipDropdownStates(recordFilter);
+    setEditableFilterChipDropdownStates(
+      recordFilter,
+      objectFilterDropdownComponentInstanceId,
+    );
   };
 
   return (
     <>
       <Dropdown
-        dropdownId={getEditableChipDropdownId({
-          recordFilterId: recordFilter.id,
-        })}
+        dropdownId={dropdownId}
         clickableComponent={
           recordFilter.type === 'RELATION' ? (
             <EditableRelationFilterChip
@@ -68,7 +80,10 @@ export const EditableFilterDropdownButton = ({
           )
         }
         dropdownComponents={
-          <EditableFilterChipDropdownContent recordFilterId={recordFilter.id} />
+          <EditableFilterChipDropdownContent
+            recordFilterId={recordFilter.id}
+            filterDropdownId={dropdownId}
+          />
         }
         dropdownOffset={{ y: 8, x: 0 }}
         dropdownPlacement="bottom-start"

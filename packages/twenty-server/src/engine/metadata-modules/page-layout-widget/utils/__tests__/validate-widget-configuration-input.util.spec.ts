@@ -20,6 +20,7 @@ import {
   TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL,
 } from 'test/integration/constants/widget-configuration-test-data.constants';
 
+import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { validateWidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-input.util';
 
@@ -82,6 +83,144 @@ describe('validateWidgetConfigurationInput', () => {
           },
         }),
       ).not.toThrow();
+    });
+  });
+
+  describe('RECORD_TABLE widget', () => {
+    const minimalConfiguration = {
+      configurationType: WidgetConfigurationType.RECORD_TABLE,
+    };
+
+    it('should accept omitted or boolean viewer controls', () => {
+      expect(() =>
+        validateWidgetConfigurationInput({
+          configuration: minimalConfiguration,
+        }),
+      ).not.toThrow();
+
+      expect(() =>
+        validateWidgetConfigurationInput({
+          configuration: {
+            ...minimalConfiguration,
+            viewerControls: {
+              filter: true,
+              sort: false,
+            },
+          },
+        }),
+      ).not.toThrow();
+    });
+
+    it.each(['filter', 'sort'] as const)(
+      'should reject a non-boolean %s',
+      (property) => {
+        expect(() =>
+          validateWidgetConfigurationInput({
+            configuration: {
+              ...minimalConfiguration,
+              viewerControls: {
+                [property]: 'yes',
+              },
+            },
+          }),
+        ).toThrow(
+          new RegExp(
+            `viewerControls.${property}: ${property} must be a boolean value`,
+          ),
+        );
+      },
+    );
+
+    it.each([[[]], [[{}]], [[{ filter: true }]]])(
+      'should reject viewer controls arrays',
+      (viewerControls) => {
+        expect(() =>
+          validateWidgetConfigurationInput({
+            configuration: {
+              ...minimalConfiguration,
+              viewerControls,
+            },
+          }),
+        ).toThrow(/viewerControls: viewerControls must be an object/);
+      },
+    );
+  });
+
+  describe('FIELD widget', () => {
+    const minimalConfiguration = {
+      configurationType: WidgetConfigurationType.FIELD,
+      fieldMetadataId: '11111111-1111-4111-8111-000000000001',
+      fieldDisplayMode: FieldDisplayMode.TABLE,
+    };
+
+    it('should accept omitted or boolean viewer controls in table mode', () => {
+      expect(() =>
+        validateWidgetConfigurationInput({
+          configuration: minimalConfiguration,
+        }),
+      ).not.toThrow();
+
+      expect(() =>
+        validateWidgetConfigurationInput({
+          configuration: {
+            ...minimalConfiguration,
+            viewerControls: {
+              filter: true,
+              sort: false,
+            },
+          },
+        }),
+      ).not.toThrow();
+    });
+
+    it.each(['filter', 'sort'] as const)(
+      'should reject a non-boolean %s',
+      (property) => {
+        expect(() =>
+          validateWidgetConfigurationInput({
+            configuration: {
+              ...minimalConfiguration,
+              viewerControls: {
+                [property]: 'yes',
+              },
+            },
+          }),
+        ).toThrow(
+          new RegExp(
+            `viewerControls.${property}: ${property} must be a boolean value`,
+          ),
+        );
+      },
+    );
+
+    it.each([[[]], [[{}]], [[{ filter: true }]]])(
+      'should reject viewer controls arrays',
+      (viewerControls) => {
+        expect(() =>
+          validateWidgetConfigurationInput({
+            configuration: {
+              ...minimalConfiguration,
+              viewerControls,
+            },
+          }),
+        ).toThrow(/viewerControls: viewerControls must be an object/);
+      },
+    );
+
+    it('should reject viewer controls outside table mode', () => {
+      expect(() =>
+        validateWidgetConfigurationInput({
+          configuration: {
+            ...minimalConfiguration,
+            fieldDisplayMode: FieldDisplayMode.CARD,
+            viewerControls: {
+              filter: true,
+            },
+          },
+        }),
+      ).toThrow(
+        /viewerControls: viewerControls is only supported when fieldDisplayMode is TABLE/,
+      );
     });
   });
 

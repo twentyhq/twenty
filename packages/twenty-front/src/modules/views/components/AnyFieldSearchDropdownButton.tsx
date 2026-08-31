@@ -4,20 +4,22 @@ import { DROPDOWN_OFFSET_Y } from '@/ui/layout/dropdown/constants/DropdownOffset
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { AnyFieldSearchChip } from '@/views/components/AnyFieldSearchChip';
 import { AnyFieldSearchDropdownContent } from '@/views/components/AnyFieldSearchDropdownContent';
-import { ANY_FIELD_SEARCH_DROPDOWN_ID } from '@/views/constants/AnyFieldSearchDropdownId';
+import { useViewBarFilterDropdownIds } from '@/views/contexts/ViewBarFilterDropdownIdsContext';
 
 export const AnyFieldSearchDropdownButton = () => {
+  const { anyFieldSearchDropdownId } = useViewBarFilterDropdownIds();
+
   const { openDropdown } = useOpenDropdown();
 
   const handleOpenAnyFieldSearchDropdown = () => {
     openDropdown({
-      dropdownComponentInstanceIdFromProps: ANY_FIELD_SEARCH_DROPDOWN_ID,
+      dropdownComponentInstanceIdFromProps: anyFieldSearchDropdownId,
     });
   };
 
   return (
     <Dropdown
-      dropdownId={ANY_FIELD_SEARCH_DROPDOWN_ID}
+      dropdownId={anyFieldSearchDropdownId}
       clickableComponent={<AnyFieldSearchChip />}
       dropdownComponents={<AnyFieldSearchDropdownContent />}
       dropdownOffset={{ y: DROPDOWN_OFFSET_Y, x: 0 }}

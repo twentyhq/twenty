@@ -23,7 +23,7 @@ import { anyFieldFilterValueComponentState } from '@/object-record/record-filter
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { AnyFieldSearchDropdownButton } from '@/views/components/AnyFieldSearchDropdownButton';
-import { ANY_FIELD_SEARCH_DROPDOWN_ID } from '@/views/constants/AnyFieldSearchDropdownId';
+import { useViewBarFilterDropdownIds } from '@/views/contexts/ViewBarFilterDropdownIdsContext';
 import { EditableFilterDropdownButton } from '@/views/editable-chip/components/EditableFilterDropdownButton';
 import { getEditableChipObjectFilterDropdownComponentInstanceId } from '@/views/editable-chip/utils/getEditableChipObjectFilterDropdownComponentInstanceId';
 import { useHasFiltersInQueryParams } from '@/views/hooks/internal/useHasFiltersInQueryParams';
@@ -43,6 +43,9 @@ export type ViewBarDetailsProps = {
   rightComponent?: ReactNode;
   viewBarId: string;
   objectNamePlural: string;
+  shouldShowFilters?: boolean;
+  shouldShowSorts?: boolean;
+  shouldIgnoreQueryParamsFilters?: boolean;
 };
 
 const StyledBar = styled.div`
@@ -104,7 +107,13 @@ export const ViewBarDetails = ({
   rightComponent,
   viewBarId,
   objectNamePlural,
+  shouldShowFilters = true,
+  shouldShowSorts = true,
+  shouldIgnoreQueryParamsFilters = false,
 }: ViewBarDetailsProps) => {
+  const { anyFieldSearchDropdownId, dropdownIdScope } =
+    useViewBarFilterDropdownIds();
+
   const isViewBarExpanded = useAtomComponentStateValue(
     isViewBarExpandedComponentState,
   );
@@ -178,11 +187,16 @@ export const ViewBarDetails = ({
     useApplyCurrentViewSortsToCurrentRecordSorts();
 
   const handleCancelClick = () => {
-    applyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
-    applyCurrentViewFiltersToCurrentRecordFilters();
-    applyCurrentViewSortsToCurrentRecordSorts();
-    applyCurrentViewAnyFieldFilterToAnyFieldFilter();
-    toggleSoftDeleteFilterState(false);
+    if (shouldShowFilters) {
+      applyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
+      applyCurrentViewFiltersToCurrentRecordFilters();
+      applyCurrentViewAnyFieldFilterToAnyFieldFilter();
+      toggleSoftDeleteFilterState(false);
+    }
+
+    if (shouldShowSorts) {
+      applyCurrentViewSortsToCurrentRecordSorts();
+    }
   };
 
   const shouldShowAdvancedFilterDropdownButton =
@@ -190,28 +204,32 @@ export const ViewBarDetails = ({
 
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
-    ANY_FIELD_SEARCH_DROPDOWN_ID,
+    anyFieldSearchDropdownId,
   );
 
   const canResetView =
-    (viewFiltersAreDifferentFromRecordFilters ||
-      viewSortsAreDifferentFromRecordSorts ||
-      viewFilterGroupsAreDifferentFromRecordFilterGroups ||
-      viewAnyFieldFilterDifferentFromCurrentAnyFieldFilter) &&
-    !hasFiltersQueryParams;
+    ((shouldShowFilters &&
+      (viewFiltersAreDifferentFromRecordFilters ||
+        viewFilterGroupsAreDifferentFromRecordFilterGroups ||
+        viewAnyFieldFilterDifferentFromCurrentAnyFieldFilter)) ||
+      (shouldShowSorts && viewSortsAreDifferentFromRecordSorts)) &&
+    (shouldIgnoreQueryParamsFilters || !hasFiltersQueryParams);
 
   const shouldShowAnyFieldSearchChip =
-    isNonEmptyString(anyFieldFilterValue) || isDropdownOpen;
+    shouldShowFilters &&
+    (isNonEmptyString(anyFieldFilterValue) || isDropdownOpen);
 
   const shouldExpandViewBar =
     shouldShowAnyFieldSearchChip ||
-    viewFiltersAreDifferentFromRecordFilters ||
-    viewSortsAreDifferentFromRecordSorts ||
-    viewFilterGroupsAreDifferentFromRecordFilterGroups ||
-    viewAnyFieldFilterDifferentFromCurrentAnyFieldFilter ||
-    ((currentRecordSorts.length > 0 ||
-      currentRecordFilters.length > 0 ||
-      currentRecordFilterGroups.length > 0) &&
+    (shouldShowFilters &&
+      (viewFiltersAreDifferentFromRecordFilters ||
+        viewFilterGroupsAreDifferentFromRecordFilterGroups ||
+        viewAnyFieldFilterDifferentFromCurrentAnyFieldFilter)) ||
+    (shouldShowSorts && viewSortsAreDifferentFromRecordSorts) ||
+    (((shouldShowSorts && currentRecordSorts.length > 0) ||
+      (shouldShowFilters &&
+        (currentRecordFilters.length > 0 ||
+          currentRecordFilterGroups.length > 0))) &&
       isViewBarExpanded);
 
   if (!shouldExpandViewBar) {
@@ -226,50 +244,59 @@ export const ViewBarDetails = ({
           defaultEnableYScroll={false}
         >
           <StyledChipContainer>
-            {isDefined(allSoftDeletedRecordsFilter) && (
+            {shouldShowFilters && isDefined(allSoftDeletedRecordsFilter) && (
               <SoftDeleteFilterChip
                 key={allSoftDeletedRecordsFilter.fieldMetadataId}
                 recordFilter={allSoftDeletedRecordsFilter}
                 viewBarId={viewBarId}
               />
             )}
-            {isDefined(allSoftDeletedRecordsFilter) && (
+            {shouldShowFilters && isDefined(allSoftDeletedRecordsFilter) && (
               <StyledSeparatorContainer>
                 <StyledSeparator />
               </StyledSeparatorContainer>
             )}
-            {currentRecordSorts.map((recordSort) => (
-              <EditableSortChip
-                key={recordSort.fieldMetadataId}
-                recordSort={recordSort}
-              />
-            ))}
-            {isNonEmptyArray(recordFilters) &&
+            {shouldShowSorts &&
+              currentRecordSorts.map((recordSort) => (
+                <EditableSortChip
+                  key={recordSort.fieldMetadataId}
+                  recordSort={recordSort}
+                  dropdownIdScope={dropdownIdScope}
+                />
+              ))}
+            {shouldShowFilters &&
+              shouldShowSorts &&
+              isNonEmptyArray(recordFilters) &&
               isNonEmptyArray(currentRecordSorts) && (
                 <StyledSeparatorContainer>
                   <StyledSeparator />
                 </StyledSeparatorContainer>
               )}
             {shouldShowAnyFieldSearchChip && <AnyFieldSearchDropdownButton />}
-            {shouldShowAdvancedFilterDropdownButton && (
+            {shouldShowFilters && shouldShowAdvancedFilterDropdownButton && (
               <AdvancedFilterDropdownButton />
             )}
-            {recordFilters.map((recordFilter) => (
-              <ObjectFilterDropdownComponentInstanceContext.Provider
-                key={recordFilter.id}
-                value={{
-                  instanceId:
-                    getEditableChipObjectFilterDropdownComponentInstanceId({
-                      recordFilterId: recordFilter.id,
-                    }),
-                }}
-              >
-                <EditableFilterDropdownButton recordFilter={recordFilter} />
-              </ObjectFilterDropdownComponentInstanceContext.Provider>
-            ))}
+            {shouldShowFilters &&
+              recordFilters.map((recordFilter) => (
+                <ObjectFilterDropdownComponentInstanceContext.Provider
+                  key={recordFilter.id}
+                  value={{
+                    instanceId:
+                      getEditableChipObjectFilterDropdownComponentInstanceId({
+                        recordFilterId: recordFilter.id,
+                        dropdownIdScope,
+                      }),
+                  }}
+                >
+                  <EditableFilterDropdownButton
+                    recordFilter={recordFilter}
+                    dropdownIdScope={dropdownIdScope}
+                  />
+                </ObjectFilterDropdownComponentInstanceContext.Provider>
+              ))}
           </StyledChipContainer>
         </ScrollWrapper>
-        {hasFilterButton && (
+        {shouldShowFilters && hasFilterButton && (
           <StyledAddFilterContainer>
             <ViewBarDetailsAddFilterButton />
           </StyledAddFilterContainer>

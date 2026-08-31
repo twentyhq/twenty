@@ -1,13 +1,16 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsIn,
   IsInt,
   IsNotEmpty,
+  IsObject,
   IsOptional,
   IsUUID,
   Min,
+  ValidateNested,
 } from 'class-validator';
 import {
   type RecordTableConfiguration,
@@ -15,6 +18,7 @@ import {
 } from 'twenty-shared/types';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { ViewerControlsConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/viewer-controls-configuration.dto';
 
 @ObjectType('RecordTableConfiguration')
 export class RecordTableConfigurationDTO implements RecordTableConfiguration {
@@ -38,4 +42,11 @@ export class RecordTableConfigurationDTO implements RecordTableConfiguration {
   @IsOptional()
   @IsBoolean()
   isUIEditable?: boolean;
+
+  @Field(() => ViewerControlsConfigurationDTO, { nullable: true })
+  @IsOptional()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => ViewerControlsConfigurationDTO)
+  viewerControls?: ViewerControlsConfigurationDTO;
 }

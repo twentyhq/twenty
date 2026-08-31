@@ -37,7 +37,18 @@ import { MenuItem } from 'twenty-ui/navigation';
 import { v4 } from 'uuid';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 
-export const ObjectSortDropdownButton = () => {
+type ObjectSortDropdownButtonProps = {
+  dropdownId?: string;
+};
+
+export const ObjectSortDropdownButton = ({
+  dropdownId = OBJECT_SORT_DROPDOWN_ID,
+}: ObjectSortDropdownButtonProps) => {
+  const directionDropdownId =
+    dropdownId === OBJECT_SORT_DROPDOWN_ID
+      ? 'record-sort-direction-dropdown'
+      : `${dropdownId}-direction`;
+
   const { resetRecordSortDropdownSearchInput } =
     useResetRecordSortDropdownSearchInput();
 
@@ -114,7 +125,7 @@ export const ObjectSortDropdownButton = () => {
     setSelectedItemId(selectableItemIdArray[0]);
   };
 
-  const { closeSortDropdown } = useCloseSortDropdown();
+  const { closeSortDropdown } = useCloseSortDropdown(dropdownId);
 
   const { upsertRecordSort } = useUpsertRecordSort();
 
@@ -142,7 +153,7 @@ export const ObjectSortDropdownButton = () => {
 
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
-    OBJECT_SORT_DROPDOWN_ID,
+    dropdownId,
   );
 
   const { t } = useLingui();
@@ -154,12 +165,12 @@ export const ObjectSortDropdownButton = () => {
 
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    OBJECT_SORT_DROPDOWN_ID,
+    dropdownId,
   );
 
   const setSelectedItemId = useSetAtomComponentState(
     selectedItemIdComponentState,
-    OBJECT_SORT_DROPDOWN_ID,
+    dropdownId,
   );
 
   const shouldShowHiddenFields = hiddenFieldMetadataItemsSorted.length > 0;
@@ -167,7 +178,7 @@ export const ObjectSortDropdownButton = () => {
 
   return (
     <Dropdown
-      dropdownId={OBJECT_SORT_DROPDOWN_ID}
+      dropdownId={dropdownId}
       dropdownOffset={{ y: 8 }}
       onOpen={handleDropdownOpen}
       clickableComponent={
@@ -188,7 +199,7 @@ export const ObjectSortDropdownButton = () => {
             {t`Sort`}
           </DropdownMenuHeader>
           <DropdownMenuInnerSelect
-            dropdownId="record-sort-direction-dropdown"
+            dropdownId={directionDropdownId}
             options={[ViewSortDirection.ASC, ViewSortDirection.DESC].map(
               (sortDirection) => ({
                 value: sortDirection,
@@ -220,9 +231,9 @@ export const ObjectSortDropdownButton = () => {
             }
           />
           <SelectableList
-            selectableListInstanceId={OBJECT_SORT_DROPDOWN_ID}
+            selectableListInstanceId={dropdownId}
             selectableItemIdArray={selectableItemIdArray}
-            focusId={OBJECT_SORT_DROPDOWN_ID}
+            focusId={dropdownId}
           >
             {shouldShowVisibleFields && (
               <>
