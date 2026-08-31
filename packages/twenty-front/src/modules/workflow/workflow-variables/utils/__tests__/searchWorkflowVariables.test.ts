@@ -53,6 +53,97 @@ const STEPS: StepOutputSchemaV2[] = [
 ];
 
 describe('searchWorkflowVariables', () => {
+  it('searches only the current subtree while preserving full variable paths', () => {
+    const results = searchWorkflowVariables({
+      steps: [STEPS[1]],
+      currentPath: ['first'],
+      searchInputValue: 'company name',
+    });
+
+    expect(results).toEqual([
+      expect.objectContaining({
+        path: ['first', 'name'],
+        breadcrumb: 'Find companies / First record',
+      }),
+    ]);
+    expect(
+      searchWorkflowVariables({
+        steps: [STEPS[1]],
+        currentPath: ['first'],
+        searchInputValue: 'total count',
+      }),
+    ).toEqual([]);
+  });
+
+  it('finds whole records using their configured identifier field', () => {
+    const results = searchWorkflowVariables({
+      steps: [
+        {
+          ...STEPS[0],
+          outputSchema: {
+            ...COMPANY_SCHEMA,
+            object: { ...COMPANY_SCHEMA.object, fieldIdName: 'companyId' },
+            fields: {},
+          },
+        },
+      ],
+      searchInputValue: ' COMPANY ',
+      shouldDisplayRecordObjects: true,
+    });
+
+    expect(results).toEqual([
+      expect.objectContaining({
+        path: ['companyId'],
+        label: 'Company',
+        isLeaf: true,
+        isFullRecord: true,
+      }),
+    ]);
+  });
+
+  it('respects allowed record types without hiding eligible field values', () => {
+    const objectMetadataItems = [
+      {
+        id: 'company',
+        nameSingular: 'company',
+        labelSingular: 'Business',
+        icon: 'IconBuildingSkyscraper',
+        color: 'blue',
+        isSystem: false,
+      },
+    ];
+    const search = (objectNameSingularsToSelect: string[]) =>
+      searchWorkflowVariables({
+        steps: STEPS,
+        searchInputValue: 'business',
+        shouldDisplayRecordObjects: true,
+        objectMetadataItems,
+        objectNameSingularsToSelect,
+      });
+
+    expect(search(['company']).map((result) => result.path)).toEqual([
+      ['id'],
+      ['first', 'id'],
+    ]);
+    expect(search(['person'])).toEqual([]);
+    expect(
+      searchWorkflowVariables({
+        steps: STEPS,
+        searchInputValue: 'Business',
+        objectMetadataItems,
+      }),
+    ).toEqual([]);
+    expect(
+      searchWorkflowVariables({
+        steps: STEPS,
+        searchInputValue: 'Company name',
+        shouldDisplayRecordObjects: true,
+        objectMetadataItems,
+        objectNameSingularsToSelect: ['person'],
+      }),
+    ).toHaveLength(2);
+  });
+
   it('finds matching fields across steps and nested records with their source paths', () => {
     const results = searchWorkflowVariables({
       steps: STEPS,

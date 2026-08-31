@@ -1,3 +1,5 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { isBaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isBaseOutputSchemaV2';
 import { isLinkOutputSchema } from '@/workflow/workflow-variables/types/guards/isLinkOutputSchema';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
@@ -6,6 +8,8 @@ import {
   type StepOutputSchemaV2,
 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { type WorkflowVariableSearchResult } from '@/workflow/workflow-variables/types/WorkflowVariableSearchResult';
+import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
+import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
 import { getStepItemIcon } from '@/workflow/workflow-variables/utils/getStepItemIcon';
 import { getWorkflowVariableSpecialItems } from '@/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems';
 import { isDefined } from 'twenty-shared/utils';
@@ -15,10 +19,21 @@ export const searchWorkflowVariables = ({
   steps,
   searchInputValue,
   shouldDisplaySpecialItems = true,
+  currentPath = [],
+  shouldDisplayRecordObjects = false,
+  objectNameSingularsToSelect,
+  objectMetadataItems = [],
 }: {
   steps: StepOutputSchemaV2[];
   searchInputValue: string;
   shouldDisplaySpecialItems?: boolean;
+  currentPath?: string[];
+  shouldDisplayRecordObjects?: boolean;
+  objectNameSingularsToSelect?: string[];
+  objectMetadataItems?: Pick<
+    EnrichedObjectMetadataItem,
+    'id' | 'labelSingular' | 'nameSingular' | 'icon' | 'color' | 'isSystem'
+  >[];
 }): WorkflowVariableSearchResult[] => {
   const search = searchInputValue.trim().toLowerCase();
 
@@ -35,6 +50,43 @@ export const searchWorkflowVariables = ({
       labels: string[],
     ) => {
       const breadcrumb = [step.name, ...labels].join(' / ');
+
+      if (
+        shouldDisplayRecordObjects &&
+        isRecordOutputSchemaV2(outputSchema) &&
+        isDefined(outputSchema.object)
+      ) {
+        const object = outputSchema.object;
+        const objectMetadataItem = objectMetadataItems.find(
+          (item) => item.id === object.objectMetadataId,
+        );
+        const label = objectMetadataItem?.labelSingular ?? object.label;
+        const isSelectable =
+          !isDefined(objectNameSingularsToSelect) ||
+          (isDefined(objectMetadataItem) &&
+            objectNameSingularsToSelect.includes(
+              objectMetadataItem.nameSingular,
+            ));
+
+        if (
+          isSelectable &&
+          isDefined(label) &&
+          label.toLowerCase().includes(search)
+        ) {
+          results.push({
+            stepId: step.id,
+            path: [...path, object.fieldIdName ?? 'id'],
+            label,
+            breadcrumb,
+            icon: objectMetadataItem?.icon ?? object.icon,
+            iconColor: isDefined(objectMetadataItem)
+              ? getObjectColorWithFallback(objectMetadataItem)
+              : undefined,
+            isLeaf: true,
+            isFullRecord: true,
+          });
+        }
+      }
 
       const specialItems = shouldDisplaySpecialItems
         ? getWorkflowVariableSpecialItems({
@@ -102,7 +154,13 @@ export const searchWorkflowVariables = ({
       }
     };
 
-    visitOutputSchema(step.outputSchema, [], []);
+    visitOutputSchema(
+      getCurrentSubStepFromPath(step, currentPath),
+      currentPath,
+      currentPath.map((_, index) =>
+        getStepHeaderLabel(step, currentPath.slice(0, index + 1)),
+      ),
+    );
 
     return results;
   });

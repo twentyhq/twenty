@@ -101,7 +101,11 @@ export const WorkflowStepFilterFieldSelect = ({
     setSelectedStep(undefined);
   };
 
-  const handleVariableSelect = (rawVariableName: string, stepId: string) => {
+  const handleVariableSelect = (
+    rawVariableName: string,
+    stepId: string,
+    isFullRecord = false,
+  ) => {
     const step = availableVariablesInWorkflowStep.find(
       (item) => item.id === stepId,
     );
@@ -113,7 +117,7 @@ export const WorkflowStepFilterFieldSelect = ({
     updateStepFilterFromVariable({
       rawVariableName,
       stepType: step.type,
-      isFullRecord: false,
+      isFullRecord,
     });
     handleSubItemSelect();
   };
@@ -203,6 +207,7 @@ export const WorkflowStepFilterFieldSelect = ({
               onSelect={handleStepSelect}
               onVariableSelect={handleVariableSelect}
               shouldDisplaySpecialItems={false}
+              shouldDisplayRecordObjects
             />
           ) : (
             <WorkflowDropdownStepOutputItems

@@ -51,13 +51,18 @@ export const WorkflowVariablesDropdownStepItems = ({
     setSearchInputValue,
     handleSelectField,
     goBack,
-    filteredOptions,
+    options,
     currentPath,
+    isSearching,
+    searchResults,
+    handleSelectSearchResult,
   } = useVariableDropdown({
     step,
     initialPath,
     onSelect,
     onBack,
+    shouldDisplayRecordObjects,
+    objectNameSingularsToSelect,
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -90,7 +95,6 @@ export const WorkflowVariablesDropdownStepItems = ({
   const specialItems = getWorkflowVariableSpecialItems({
     step,
     currentPath,
-    searchInputValue,
   });
 
   const handleSelectSpecialItem = (
@@ -112,13 +116,6 @@ export const WorkflowVariablesDropdownStepItems = ({
       )
     : undefined;
 
-  const isObjectFoundThroughSearch = isDefined(searchInputValue)
-    ? isDefined(displayedSubStepObject?.label) &&
-      displayedSubStepObject?.label
-        .toLowerCase()
-        .includes(searchInputValue.toLowerCase())
-    : true;
-
   const objectLabel = displayedSubStepObjectMetadata?.labelSingular;
 
   const isSubStepObjectSelectable =
@@ -130,7 +127,7 @@ export const WorkflowVariablesDropdownStepItems = ({
 
   const shouldDisplaySubStepObject =
     shouldDisplayRecordObjects &&
-    isObjectFoundThroughSearch &&
+    isDefined(displayedSubStepObject) &&
     isSubStepObjectSelectable;
 
   const displayedSubStepObjectIconProps = isDefined(
@@ -160,62 +157,80 @@ export const WorkflowVariablesDropdownStepItems = ({
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
-        {specialItems.map((specialItem) => (
-          <MenuItemSelect
-            key={specialItem.id}
-            selected={false}
-            focused={false}
-            onClick={() => handleSelectSpecialItem(specialItem)}
-            text={specialItem.label}
-            hasSubMenu={false}
-            LeftIcon={getIcon(specialItem.iconName)}
-            contextualText={specialItem.contextualText}
-          />
-        ))}
-        {shouldDisplaySubStepObject && (
-          <MenuItemSelect
-            selected={false}
-            focused={false}
-            onClick={handleSelectObject}
-            text={objectLabel || ''}
-            hasSubMenu={false}
-            LeftIcon={displayedSubStepObjectIconProps?.Icon}
-            leftIconColor={displayedSubStepObjectIconProps?.iconThemeColor}
-            contextualText={t`Pick a ${objectLabel} record`}
-          />
-        )}
-        {filteredOptions.length > 0 &&
-          (shouldDisplaySubStepObject || specialItems.length > 0) && (
-            <DropdownMenuSeparator />
-          )}
-        {filteredOptions.map(([key, subStep]) => {
-          if (!isDefined(subStep)) {
-            return null;
-          }
-
-          return (
+        {isSearching ? (
+          searchResults.map((result) => (
             <MenuItemSelect
-              key={key}
+              key={`${JSON.stringify(result.path)}-${result.label}-${result.isLeaf}-${result.isFullRecord}`}
               selected={false}
               focused={false}
-              onClick={() => handleSelectField(key)}
-              text={subStep.label || key}
-              hasSubMenu={!subStep.isLeaf}
-              LeftIcon={
-                subStep.icon
-                  ? getIcon(subStep.icon)
-                  : getIcon(
-                      getStepItemIcon({
-                        itemType: subStep.type,
-                      }),
-                    )
-              }
-              contextualText={
-                subStep.isLeaf ? subStep?.value?.toString() : undefined
-              }
+              onClick={() => handleSelectSearchResult(result)}
+              text={result.label}
+              contextualText={result.breadcrumb}
+              LeftIcon={getIcon(result.icon)}
+              leftIconColor={result.iconColor}
+              hasSubMenu={!result.isLeaf}
             />
-          );
-        })}
+          ))
+        ) : (
+          <>
+            {specialItems.map((specialItem) => (
+              <MenuItemSelect
+                key={specialItem.id}
+                selected={false}
+                focused={false}
+                onClick={() => handleSelectSpecialItem(specialItem)}
+                text={specialItem.label}
+                hasSubMenu={false}
+                LeftIcon={getIcon(specialItem.iconName)}
+                contextualText={specialItem.contextualText}
+              />
+            ))}
+            {shouldDisplaySubStepObject && (
+              <MenuItemSelect
+                selected={false}
+                focused={false}
+                onClick={handleSelectObject}
+                text={objectLabel || ''}
+                hasSubMenu={false}
+                LeftIcon={displayedSubStepObjectIconProps?.Icon}
+                leftIconColor={displayedSubStepObjectIconProps?.iconThemeColor}
+                contextualText={t`Pick a ${objectLabel} record`}
+              />
+            )}
+            {options.length > 0 &&
+              (shouldDisplaySubStepObject || specialItems.length > 0) && (
+                <DropdownMenuSeparator />
+              )}
+            {options.map(([key, subStep]) => {
+              if (!isDefined(subStep)) {
+                return null;
+              }
+
+              return (
+                <MenuItemSelect
+                  key={key}
+                  selected={false}
+                  focused={false}
+                  onClick={() => handleSelectField(key)}
+                  text={subStep.label || key}
+                  hasSubMenu={!subStep.isLeaf}
+                  LeftIcon={
+                    subStep.icon
+                      ? getIcon(subStep.icon)
+                      : getIcon(
+                          getStepItemIcon({
+                            itemType: subStep.type,
+                          }),
+                        )
+                  }
+                  contextualText={
+                    subStep.isLeaf ? subStep?.value?.toString() : undefined
+                  }
+                />
+              );
+            })}
+          </>
+        )}
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

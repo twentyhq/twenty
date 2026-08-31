@@ -5,6 +5,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
@@ -19,8 +20,14 @@ type WorkflowVariablesDropdownStepsProps = {
   dropdownId: string;
   steps: StepOutputSchemaV2[];
   onSelect: (value: string, path?: string[]) => void;
-  onVariableSelect: (value: string, stepId: string) => void;
+  onVariableSelect: (
+    value: string,
+    stepId: string,
+    isFullRecord?: boolean,
+  ) => void;
   shouldDisplaySpecialItems?: boolean;
+  shouldDisplayRecordObjects?: boolean;
+  objectNameSingularsToSelect?: string[];
 };
 
 export const WorkflowVariablesDropdownSteps = ({
@@ -29,8 +36,11 @@ export const WorkflowVariablesDropdownSteps = ({
   onSelect,
   onVariableSelect,
   shouldDisplaySpecialItems,
+  shouldDisplayRecordObjects,
+  objectNameSingularsToSelect,
 }: WorkflowVariablesDropdownStepsProps) => {
   const { getIcon } = useIcons();
+  const { objectMetadataItems } = useObjectMetadataItems();
   const [searchInputValue, setSearchInputValue] = useState('');
 
   const { closeDropdown } = useCloseDropdown();
@@ -43,6 +53,9 @@ export const WorkflowVariablesDropdownSteps = ({
     steps,
     searchInputValue,
     shouldDisplaySpecialItems,
+    shouldDisplayRecordObjects,
+    objectNameSingularsToSelect,
+    objectMetadataItems,
   });
 
   return (
@@ -67,7 +80,7 @@ export const WorkflowVariablesDropdownSteps = ({
       <DropdownMenuItemsContainer hasMaxHeight>
         {matchingVariables.map((variable) => (
           <MenuItemSelect
-            key={`${variable.stepId}-${JSON.stringify(variable.path)}-${variable.label}-${variable.isLeaf}`}
+            key={`${variable.stepId}-${JSON.stringify(variable.path)}-${variable.label}-${variable.isLeaf}-${variable.isFullRecord}`}
             selected={false}
             focused={false}
             onClick={() =>
@@ -78,12 +91,14 @@ export const WorkflowVariablesDropdownSteps = ({
                       path: variable.path,
                     }),
                     variable.stepId,
+                    variable.isFullRecord ?? false,
                   )
                 : onSelect(variable.stepId, variable.path)
             }
             text={variable.label}
             contextualText={variable.breadcrumb}
             LeftIcon={getIcon(variable.icon)}
+            leftIconColor={variable.iconColor}
             hasSubMenu={!variable.isLeaf}
           />
         ))}

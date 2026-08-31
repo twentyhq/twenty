@@ -48,10 +48,10 @@ export const WorkflowDropdownStepOutputItems = ({
   });
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const handleStepFilterFieldSelect = (key: string) => {
+  const handleStepFilterFieldSelect = (key: string, isFullRecord = false) => {
     updateStepFilterFromVariable({
       rawVariableName: key,
-      isFullRecord: false,
+      isFullRecord,
       stepType: step.type,
     });
     onSelect();
@@ -62,13 +62,18 @@ export const WorkflowDropdownStepOutputItems = ({
     setSearchInputValue,
     handleSelectField,
     goBack,
-    filteredOptions,
+    options,
     currentPath,
+    isSearching,
+    searchResults,
+    handleSelectSearchResult,
   } = useVariableDropdown({
     step,
     initialPath,
     onSelect: handleStepFilterFieldSelect,
     onBack,
+    shouldDisplaySpecialItems: false,
+    shouldDisplayRecordObjects: true,
   });
 
   const getDisplayedSubStepObject = () => {
@@ -109,12 +114,7 @@ export const WorkflowDropdownStepOutputItems = ({
       )
     : undefined;
 
-  const shouldDisplaySubStepObject = searchInputValue
-    ? isDefined(subStepObjectMetadataItem) &&
-      subStepObjectMetadataItem.labelSingular
-        .toLowerCase()
-        .includes(searchInputValue.toLowerCase())
-    : isDefined(displayedSubStepObject);
+  const shouldDisplaySubStepObject = isDefined(displayedSubStepObject);
 
   const objectLabel = subStepObjectMetadataItem?.labelSingular;
 
@@ -143,49 +143,67 @@ export const WorkflowDropdownStepOutputItems = ({
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
-        {shouldDisplaySubStepObject && (
-          <MenuItemSelect
-            selected={false}
-            focused={false}
-            onClick={handleSelectObject}
-            text={objectLabel || ''}
-            hasSubMenu={false}
-            LeftIcon={subStepObjectIconProps?.Icon}
-            leftIconColor={subStepObjectIconProps?.iconThemeColor}
-            contextualText={t`Pick a ${objectLabel} record`}
-          />
-        )}
-        {filteredOptions.length > 0 && shouldDisplaySubStepObject && (
-          <DropdownMenuSeparator />
-        )}
-        {filteredOptions.map(([key, subStep]) => {
-          if (!isDefined(subStep)) {
-            return null;
-          }
-
-          return (
+        {isSearching ? (
+          searchResults.map((result) => (
             <MenuItemSelect
-              key={key}
+              key={`${JSON.stringify(result.path)}-${result.label}-${result.isLeaf}-${result.isFullRecord}`}
               selected={false}
               focused={false}
-              onClick={() => handleSelectField(key)}
-              text={subStep.label || key}
-              hasSubMenu={!subStep.isLeaf}
-              LeftIcon={
-                subStep.icon
-                  ? getIcon(subStep.icon)
-                  : getIcon(
-                      getStepItemIcon({
-                        itemType: subStep.type,
-                      }),
-                    )
-              }
-              contextualText={
-                subStep.isLeaf ? subStep?.value?.toString() : undefined
-              }
+              onClick={() => handleSelectSearchResult(result)}
+              text={result.label}
+              contextualText={result.breadcrumb}
+              LeftIcon={getIcon(result.icon)}
+              leftIconColor={result.iconColor}
+              hasSubMenu={!result.isLeaf}
             />
-          );
-        })}
+          ))
+        ) : (
+          <>
+            {shouldDisplaySubStepObject && (
+              <MenuItemSelect
+                selected={false}
+                focused={false}
+                onClick={handleSelectObject}
+                text={objectLabel || ''}
+                hasSubMenu={false}
+                LeftIcon={subStepObjectIconProps?.Icon}
+                leftIconColor={subStepObjectIconProps?.iconThemeColor}
+                contextualText={t`Pick a ${objectLabel} record`}
+              />
+            )}
+            {options.length > 0 && shouldDisplaySubStepObject && (
+              <DropdownMenuSeparator />
+            )}
+            {options.map(([key, subStep]) => {
+              if (!isDefined(subStep)) {
+                return null;
+              }
+
+              return (
+                <MenuItemSelect
+                  key={key}
+                  selected={false}
+                  focused={false}
+                  onClick={() => handleSelectField(key)}
+                  text={subStep.label || key}
+                  hasSubMenu={!subStep.isLeaf}
+                  LeftIcon={
+                    subStep.icon
+                      ? getIcon(subStep.icon)
+                      : getIcon(
+                          getStepItemIcon({
+                            itemType: subStep.type,
+                          }),
+                        )
+                  }
+                  contextualText={
+                    subStep.isLeaf ? subStep?.value?.toString() : undefined
+                  }
+                />
+              );
+            })}
+          </>
+        )}
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

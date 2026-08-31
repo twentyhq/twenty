@@ -9,6 +9,10 @@ jest.mock('@/ui/layout/dropdown/hooks/useCloseDropdown', () => ({
   useCloseDropdown: () => ({ closeDropdown: jest.fn() }),
 }));
 
+jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
+  useObjectMetadataItems: () => ({ objectMetadataItems: [] }),
+}));
+
 const STEPS: StepOutputSchemaV2[] = [
   {
     id: 'trigger',
@@ -85,6 +89,7 @@ describe('WorkflowVariablesDropdownSteps', () => {
     expect(onVariableSelect).toHaveBeenCalledWith(
       '{{code.result.companyName}}',
       'code',
+      false,
     );
     expect(onSelect).not.toHaveBeenCalled();
   });
@@ -99,6 +104,44 @@ describe('WorkflowVariablesDropdownSteps', () => {
     await user.click(screen.getByText('Result'));
     expect(onSelect).toHaveBeenCalledWith('code', ['result']);
     expect(onVariableSelect).not.toHaveBeenCalled();
+  });
+
+  it('selects a whole record from root search', async () => {
+    const user = userEvent.setup();
+    const onVariableSelect = jest.fn();
+    render(
+      <I18nProvider i18n={i18n}>
+        <WorkflowVariablesDropdownSteps
+          dropdownId="variables"
+          steps={[
+            {
+              id: 'trigger',
+              name: 'Record created',
+              type: 'DATABASE_EVENT',
+              outputSchema: {
+                _outputSchemaType: 'RECORD',
+                object: { label: 'Company', objectMetadataId: 'company' },
+                fields: {},
+              },
+            },
+          ]}
+          onSelect={jest.fn()}
+          onVariableSelect={onVariableSelect}
+          shouldDisplayRecordObjects
+        />
+      </I18nProvider>,
+    );
+
+    await user.type(
+      screen.getByPlaceholderText('Search steps and fields'),
+      'company',
+    );
+    await user.click(screen.getByText('Company'));
+    expect(onVariableSelect).toHaveBeenCalledWith(
+      '{{trigger.id}}',
+      'trigger',
+      true,
+    );
   });
 
   it('matches step names case-insensitively and restores all steps when cleared', async () => {
