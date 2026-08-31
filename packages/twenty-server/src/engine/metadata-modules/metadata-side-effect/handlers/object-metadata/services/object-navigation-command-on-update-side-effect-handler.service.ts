@@ -4,16 +4,15 @@ import { Injectable } from '@nestjs/common';
 import { getSystemNavigationCommandMenuItemUniversalIdentifier } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+import { buildNavigationConditionalAvailabilityExpression } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
-import { buildNavigationConditionalAvailabilityExpression } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
 import { MetadataSideEffectExceptionCode } from 'src/engine/metadata-modules/metadata-side-effect/exceptions/metadata-side-effect-exception-code';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
-import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 @Injectable()
 export class ObjectNavigationCommandOnUpdateSideEffectHandlerService extends MetadataSideEffectHandler(
@@ -26,11 +25,9 @@ export class ObjectNavigationCommandOnUpdateSideEffectHandlerService extends Met
   },
 ) {
   buildSideEffects({
-    flatEntity,
+    flatEntity: updatedFlatObjectMetadata,
     relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'objectMetadata'>): MetadataSideEffectResult {
-    const updatedFlatObjectMetadata = flatEntity as UniversalFlatObjectMetadata;
-
     const existingFlatObjectMetadata =
       relatedFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
         updatedFlatObjectMetadata.universalIdentifier
