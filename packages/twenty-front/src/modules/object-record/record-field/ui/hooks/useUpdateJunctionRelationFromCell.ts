@@ -305,14 +305,15 @@ export const useUpdateJunctionRelationFromCell = ({
     ],
   );
 
-  const isJunctionConfigValid =
+  const validJunctionConfig =
     isDefined(junctionConfig) &&
     isDefined(sourceFieldOnJunction) &&
-    isDefined(junctionConfig.targetFields) &&
-    junctionConfig.targetFields.length > 0;
+    junctionConfig.targetFields.length > 0
+      ? junctionConfig
+      : null;
 
   return {
     updateJunctionRelationFromCell,
-    isJunctionConfigValid,
+    junctionConfig: validJunctionConfig,
   };
 };

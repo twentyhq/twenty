@@ -138,35 +138,32 @@ export const FormAdvancedTextFieldInput = ({
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const editor = useAdvancedTextEditor(
-    {
-      profile,
-      placeholder: placeholder,
-      readonly,
-      defaultValue,
-      onUpdate: (editor) => {
-        onChange?.(serializeAdvancedTextEditorDocument(editor));
-      },
-      onFocus: () => {
-        pushFocusItemToFocusStack({
-          focusId: instanceId,
-          component: {
-            type: FocusComponentType.FORM_FIELD_INPUT,
-            instanceId: instanceId,
-          },
-          globalHotkeysConfig: {
-            enableGlobalHotkeysConflictingWithKeyboard: false,
-          },
-        });
-      },
-      onBlur: () => {
-        removeFocusItemFromFocusStackById({ focusId: instanceId });
-      },
-      onImageUpload,
-      onImageUploadError,
+  const editor = useAdvancedTextEditor({
+    profile,
+    placeholder: placeholder,
+    readonly,
+    defaultValue,
+    onUpdate: (editor) => {
+      onChange?.(serializeAdvancedTextEditorDocument(editor));
     },
-    [isFullScreen],
-  );
+    onFocus: () => {
+      pushFocusItemToFocusStack({
+        focusId: instanceId,
+        component: {
+          type: FocusComponentType.FORM_FIELD_INPUT,
+          instanceId: instanceId,
+        },
+        globalHotkeysConfig: {
+          enableGlobalHotkeysConflictingWithKeyboard: false,
+        },
+      });
+    },
+    onBlur: () => {
+      removeFocusItemFromFocusStackById({ focusId: instanceId });
+    },
+    onImageUpload,
+    onImageUploadError,
+  });
 
   useEffect(() => {
     onEditorReady?.(editor);

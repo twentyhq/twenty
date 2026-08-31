@@ -10,6 +10,7 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutGridDragHoveredTabIdComponentState } from '@/page-layout/states/pageLayoutGridDragHoveredTabIdComponentState';
 import { pageLayoutShouldIgnoreNextGridLayoutChangeComponentState } from '@/page-layout/states/pageLayoutShouldIgnoreNextGridLayoutChangeComponentState';
 import { buildTabWidgetLayouts } from '@/page-layout/utils/buildTabWidgetLayouts';
+import { getPointerEventClientPosition } from '@/page-layout/utils/getPointerEventClientPosition';
 import { moveWidgetToGridTabInDraft } from '@/page-layout/utils/moveWidgetToGridTabInDraft';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -95,11 +96,15 @@ export const usePageLayoutGridCrossTabDrop = ({ tabId }: { tabId: string }) => {
   );
 
   const handleGridDrag = useCallback(
-    (event: MouseEvent) => {
-      const destinationTabId = findGridDropDestinationTabId(
-        event.clientX,
-        event.clientY,
-      );
+    (event: Event) => {
+      const pointerPosition = getPointerEventClientPosition(event);
+
+      const destinationTabId = isDefined(pointerPosition)
+        ? findGridDropDestinationTabId(
+            pointerPosition.clientX,
+            pointerPosition.clientY,
+          )
+        : null;
 
       if (store.get(gridDragHoveredTabIdState) !== destinationTabId) {
         store.set(gridDragHoveredTabIdState, destinationTabId);
@@ -109,12 +114,18 @@ export const usePageLayoutGridCrossTabDrop = ({ tabId }: { tabId: string }) => {
   );
 
   const handleGridDragStop = useCallback(
-    (widgetId: string, event: MouseEvent): boolean => {
+    (widgetId: string, event: Event): boolean => {
       store.set(gridDragHoveredTabIdState, null);
 
+      const pointerPosition = getPointerEventClientPosition(event);
+
+      if (!isDefined(pointerPosition)) {
+        return false;
+      }
+
       const destinationTabId = findGridDropDestinationTabId(
-        event.clientX,
-        event.clientY,
+        pointerPosition.clientX,
+        pointerPosition.clientY,
       );
 
       if (!isDefined(destinationTabId)) {
