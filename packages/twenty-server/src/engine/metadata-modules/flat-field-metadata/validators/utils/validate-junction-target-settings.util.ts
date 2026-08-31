@@ -112,6 +112,9 @@ export const validateJunctionTargetSettings = ({
     ];
   }
 
+  // The frontend mirrors the direction and source-group checks in
+  // isValidJunctionTargetField after resolving GraphQL relation groups. These
+  // representations use different identifiers, so update both together.
   const sourceFieldUniversalIdentifier =
     universalFlatFieldMetadata.relationTargetFieldMetadataUniversalIdentifier;
   const sourceField = isDefined(sourceFieldUniversalIdentifier)
