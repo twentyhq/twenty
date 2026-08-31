@@ -23,7 +23,6 @@ import { computeRecordFormFlatFieldMetadatas } from 'src/engine/metadata-modules
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
-import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 const STANDARD_RECORD_FORM_TAB_TITLE = i18nLabel(
   msg({
@@ -115,63 +114,57 @@ export const computeStandardRecordFormFlatEntities = ({
       });
 
     const orderedFormFlatFieldMetadatas = computeRecordFormFlatFieldMetadatas({
-      flatFieldMetadatas: (flatFieldMetadatasByObjectUniversalIdentifier.get(
-        flatObjectMetadata.universalIdentifier,
-      ) ?? []) as unknown as UniversalFlatFieldMetadata[],
+      flatFieldMetadatas:
+        flatFieldMetadatasByObjectUniversalIdentifier.get(
+          flatObjectMetadata.universalIdentifier,
+        ) ?? [],
       labelIdentifierFieldMetadataUniversalIdentifier:
         flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
     });
 
-    const objectFlatPageLayoutWidgets = orderedFormFlatFieldMetadatas.map(
-      (orderedFlatFieldMetadata, index) => {
-        const flatFieldMetadata = flatFieldMetadataMaps.byUniversalIdentifier[
-          orderedFlatFieldMetadata.universalIdentifier
-        ] as FlatFieldMetadata;
-
-        return {
-          id: v4(),
-          universalIdentifier:
-            getSystemFormFieldPageLayoutWidgetUniversalIdentifier({
-              fieldMetadataApplicationUniversalIdentifier:
-                applicationUniversalIdentifier,
-              pageLayoutTabUniversalIdentifier,
-              fieldMetadataUniversalIdentifier:
-                flatFieldMetadata.universalIdentifier,
-            }),
-          applicationId: twentyStandardApplicationId,
-          applicationUniversalIdentifier,
-          workspaceId,
-          pageLayoutTabId,
-          pageLayoutTabUniversalIdentifier,
-          title: '',
-          type: WidgetType.FORM_FIELD,
-          position: {
-            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-            index,
-          },
-          configuration: {
-            configurationType: WidgetConfigurationType.FORM_FIELD,
-            fieldMetadataId: flatFieldMetadata.id,
-          },
-          universalConfiguration: {
-            configurationType: WidgetConfigurationType.FORM_FIELD,
-            fieldMetadataId: flatFieldMetadata.universalIdentifier,
-          },
-          objectMetadataId: flatObjectMetadata.id,
-          objectMetadataUniversalIdentifier:
-            flatObjectMetadata.universalIdentifier,
-          isActive: true,
-          isSystemSideEffect: true,
-          createdAt: now,
-          updatedAt: now,
-          deletedAt: null,
-          conditionalDisplay: null,
-          conditionalAvailabilityExpression: null,
-          overrides: null,
-          universalOverrides: null,
-        } as FlatPageLayoutWidget;
-      },
-    );
+    const objectFlatPageLayoutWidgets: FlatPageLayoutWidget[] =
+      orderedFormFlatFieldMetadatas.map((flatFieldMetadata, index) => ({
+        id: v4(),
+        universalIdentifier:
+          getSystemFormFieldPageLayoutWidgetUniversalIdentifier({
+            fieldMetadataApplicationUniversalIdentifier:
+              applicationUniversalIdentifier,
+            pageLayoutTabUniversalIdentifier,
+            fieldMetadataUniversalIdentifier:
+              flatFieldMetadata.universalIdentifier,
+          }),
+        applicationId: twentyStandardApplicationId,
+        applicationUniversalIdentifier,
+        workspaceId,
+        pageLayoutTabId,
+        pageLayoutTabUniversalIdentifier,
+        title: '',
+        type: WidgetType.FORM_FIELD,
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+          index,
+        },
+        configuration: {
+          configurationType: WidgetConfigurationType.FORM_FIELD,
+          fieldMetadataId: flatFieldMetadata.id,
+        },
+        universalConfiguration: {
+          configurationType: WidgetConfigurationType.FORM_FIELD,
+          fieldMetadataId: flatFieldMetadata.universalIdentifier,
+        },
+        objectMetadataId: flatObjectMetadata.id,
+        objectMetadataUniversalIdentifier:
+          flatObjectMetadata.universalIdentifier,
+        isActive: true,
+        isSystemSideEffect: true,
+        createdAt: now,
+        updatedAt: now,
+        deletedAt: null,
+        conditionalDisplay: null,
+        conditionalAvailabilityExpression: null,
+        overrides: null,
+        universalOverrides: null,
+      }));
 
     flatPageLayoutWidgets.push(...objectFlatPageLayoutWidgets);
 

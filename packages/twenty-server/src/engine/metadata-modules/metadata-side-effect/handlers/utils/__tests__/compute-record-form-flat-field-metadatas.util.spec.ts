@@ -1,6 +1,6 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
-import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { type RecordFormCandidateFlatFieldMetadata } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/is-flat-field-metadata-eligible-for-record-form.util';
 
 import { computeRecordFormFlatFieldMetadatas } from '../compute-record-form-flat-field-metadatas.util';
 
@@ -20,7 +20,7 @@ const buildFlatFieldMetadata = ({
   isUIEditable?: boolean;
   isActive?: boolean;
   universalSettings?: Record<string, unknown> | null;
-}): UniversalFlatFieldMetadata =>
+}): RecordFormCandidateFlatFieldMetadata =>
   ({
     universalIdentifier,
     name,
@@ -29,7 +29,7 @@ const buildFlatFieldMetadata = ({
     isUIEditable,
     isActive,
     universalSettings,
-  }) as unknown as UniversalFlatFieldMetadata;
+  }) as RecordFormCandidateFlatFieldMetadata;
 
 const nameField = buildFlatFieldMetadata({
   universalIdentifier: 'field-name',
