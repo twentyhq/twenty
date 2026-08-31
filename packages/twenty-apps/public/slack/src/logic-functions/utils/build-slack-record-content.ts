@@ -16,6 +16,7 @@ import { formatAmount } from 'src/logic-functions/utils/format-amount';
 import { getCompanyLogoUrl } from 'src/logic-functions/utils/get-company-logo-url';
 import { getPublicAvatarUrl } from 'src/logic-functions/utils/get-public-avatar-url';
 import { humanizeSelectValue } from 'src/logic-functions/utils/humanize-select-value';
+import { toAbsoluteHttpUrl } from 'src/logic-functions/utils/to-absolute-http-url';
 
 type SlackUnfurlContentArgs = {
   record: Record<string, unknown>;
@@ -69,8 +70,8 @@ const buildPersonContent = ({
             buildSlackStringField({
               key: 'linkedin',
               label: 'LinkedIn',
-              value: asNonEmptyString(
-                asObject(record.linkedinLink)?.primaryLinkUrl,
+              value: toAbsoluteHttpUrl(
+                asNonEmptyString(asObject(record.linkedinLink)?.primaryLinkUrl),
               ),
               type: SLACK_ENTITY_FIELD_TYPE.LINK,
             }),
@@ -97,7 +98,7 @@ const buildCompanyContent = ({
       buildSlackStringField({
         key: 'domain',
         label: 'Domain',
-        value: domainUrl,
+        value: toAbsoluteHttpUrl(domainUrl),
         type: SLACK_ENTITY_FIELD_TYPE.LINK,
       }),
       buildSlackStringField({
@@ -125,8 +126,8 @@ const buildCompanyContent = ({
             buildSlackStringField({
               key: 'linkedin',
               label: 'LinkedIn',
-              value: asNonEmptyString(
-                asObject(record.linkedinLink)?.primaryLinkUrl,
+              value: toAbsoluteHttpUrl(
+                asNonEmptyString(asObject(record.linkedinLink)?.primaryLinkUrl),
               ),
               type: SLACK_ENTITY_FIELD_TYPE.LINK,
             }),
