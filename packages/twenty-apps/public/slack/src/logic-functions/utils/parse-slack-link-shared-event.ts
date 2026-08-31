@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 
@@ -25,7 +26,7 @@ export const parseSlackLinkSharedEvent = (
 
   const event = body.event;
 
-  if (!event) {
+  if (!isDefined(event)) {
     return { linkShared: null, skipReason: 'Missing event payload' };
   }
 
