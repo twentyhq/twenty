@@ -10,7 +10,9 @@ const validSpeedRule: UpsertUsageLimitInput = {
   spenderType: 'apiKey',
   spenderId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
   limitKind: 'speed',
-  windowSeconds: 60,
+  periodCount: 60,
+  periodUnit: 'second',
+  meter: 'creditsUsedMicro',
   limitValueType: 'absolute',
   limitValue: 100,
 };
@@ -21,7 +23,9 @@ const validQuotaRule: UpsertUsageLimitInput = {
   spenderType: 'workspace',
   spenderId: null,
   limitKind: 'quota',
-  windowSeconds: 0,
+  periodCount: 1,
+  periodUnit: 'billingPeriod',
+  meter: 'creditsUsedMicro',
   limitValueType: 'percent',
   limitValue: 9900,
 };
@@ -72,11 +76,11 @@ describe('validateUsageLimitAgainstDefinition', () => {
     );
   });
 
-  it('rejects a speed rule with no window', () => {
+  it('rejects a speed rule without a rolling window', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
         ...validSpeedRule,
-        windowSeconds: 0,
+        periodUnit: 'billingPeriod',
       }),
     ).toThrow(
       expect.objectContaining({
@@ -136,11 +140,12 @@ describe('validateUsageLimitAgainstDefinition', () => {
     ).not.toThrow();
   });
 
-  it('rejects a quota with a window', () => {
+  it('rejects a quota on a rolling window', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
         ...validQuotaRule,
-        windowSeconds: 60,
+        periodUnit: 'second',
+        periodCount: 60,
       }),
     ).toThrow(
       expect.objectContaining({
@@ -181,6 +186,72 @@ describe('validateUsageLimitAgainstDefinition', () => {
       validateUsageLimitAgainstDefinition({
         ...validQuotaRule,
         limitValue: 10001,
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+      }),
+    );
+  });
+
+  it('accepts an absolute weekly quota', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validQuotaRule,
+        periodUnit: 'week',
+        limitValueType: 'absolute',
+        limitValue: 5_000_000,
+      }),
+    ).not.toThrow();
+  });
+
+  it('rejects a percent quota outside the billing period', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validQuotaRule,
+        periodUnit: 'week',
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+      }),
+    );
+  });
+
+  it('rejects a quota spanning several periods', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validQuotaRule,
+        periodUnit: 'week',
+        limitValueType: 'absolute',
+        periodCount: 2,
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+      }),
+    );
+  });
+
+  it('accepts a token quota on one operation', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validQuotaRule,
+        meter: 'quantity',
+        limitValueType: 'absolute',
+        limitValue: 1_000_000,
+      }),
+    ).not.toThrow();
+  });
+
+  it('rejects a quantity quota covering every operation', () => {
+    expect(() =>
+      validateUsageLimitAgainstDefinition({
+        ...validQuotaRule,
+        operationType: null,
+        meter: 'quantity',
+        limitValueType: 'absolute',
+        limitValue: 1_000_000,
       }),
     ).toThrow(
       expect.objectContaining({

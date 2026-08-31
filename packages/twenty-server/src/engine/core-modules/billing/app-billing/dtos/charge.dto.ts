@@ -1,6 +1,14 @@
 /* @license Enterprise */
 
-import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import {
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+  NotEquals,
+} from 'class-validator';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
@@ -21,7 +29,8 @@ export class ChargeDto {
   quantity!: number;
 
   @IsEnum(UsageOperationType)
-  operationType!: UsageOperationType;
+  @NotEquals(UsageOperationType.ALL)
+  operationType!: Exclude<UsageOperationType, UsageOperationType.ALL>;
 
   @IsOptional()
   @IsString()

@@ -12,7 +12,7 @@ export type SpeedLimitDefinition = {
 export type QuotaLimitDefinition = {
   allowedOperationTypes: UsageOperationType[];
   allowedSpenderTypes: SpenderType[];
-  meter: UsageMeter;
+  allowedMeters: UsageMeter[];
 };
 
 export type UsageLimitDefinitions = {

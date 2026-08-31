@@ -40,7 +40,9 @@ const buildRule = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   spenderType: 'apiKey',
   spenderId: '',
   limitKind: 'speed',
-  windowSeconds: 60,
+  periodCount: 60,
+  periodUnit: 'second',
+  meter: 'creditsUsedMicro',
   limitValueType: 'absolute',
   limitValue: 100,
   burstValue: null,
@@ -137,7 +139,7 @@ describe('buildSpeedBuckets with rules configured', () => {
   it('shares one counter between every api key when the rule names none', () => {
     const [bucket] = buildBuckets({
       authContext: apiKeyContext,
-      rules: [buildRule({ spenderId: '', limitValue: 10, windowSeconds: 1 })],
+      rules: [buildRule({ spenderId: '', limitValue: 10, periodCount: 1 })],
     });
 
     expect(bucket).toMatchObject({
@@ -178,7 +180,7 @@ describe('buildSpeedBuckets with rules configured', () => {
   it('replaces every default once a rule covers the spender type', () => {
     const buckets = buildBuckets({
       authContext: apiKeyContext,
-      rules: [buildRule({ spenderId: '', windowSeconds: 60, limitValue: 10 })],
+      rules: [buildRule({ spenderId: '', periodCount: 60, limitValue: 10 })],
     });
 
     expect(

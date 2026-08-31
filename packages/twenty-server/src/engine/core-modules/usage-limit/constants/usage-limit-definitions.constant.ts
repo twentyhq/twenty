@@ -48,7 +48,7 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
         'apiKey',
         'application',
       ],
-      meter: 'creditsUsedMicro',
+      allowedMeters: ['creditsUsedMicro', 'quantity'],
     },
   },
   [UsageResourceType.WORKFLOW]: {},

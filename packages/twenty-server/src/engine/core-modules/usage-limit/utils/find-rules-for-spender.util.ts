@@ -1,6 +1,6 @@
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { type Spender } from 'src/engine/core-modules/usage-limit/types/spender.type';
-import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
 export const findRulesForSpender = ({
   rules,
@@ -14,6 +14,7 @@ export const findRulesForSpender = ({
   rules.filter(
     (rule) =>
       rule.spenderType === spender.spenderType &&
-      (rule.operationType === '' || rule.operationType === operationType) &&
+      (rule.operationType === UsageOperationType.ALL ||
+        rule.operationType === operationType) &&
       (rule.spenderId === '' || rule.spenderId === spender.spenderId),
   );

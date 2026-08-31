@@ -5,6 +5,8 @@ import { GraphQLBigInt } from 'graphql-scalars';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type LimitKind } from 'src/engine/core-modules/usage-limit/types/limit-kind.type';
 import { type LimitValueType } from 'src/engine/core-modules/usage-limit/types/limit-value-type.type';
+import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
+import { type UsageMeter } from 'src/engine/core-modules/usage-limit/types/usage-meter.type';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -17,8 +19,8 @@ export class UsageLimitDTO {
   @Field(() => UsageResourceType)
   resourceType: UsageResourceType;
 
-  @Field(() => UsageOperationType, { nullable: true })
-  operationType: UsageOperationType | null;
+  @Field(() => UsageOperationType)
+  operationType: UsageOperationType;
 
   @Field(() => String)
   spenderType: SpenderType;
@@ -30,7 +32,18 @@ export class UsageLimitDTO {
   limitKind: LimitKind;
 
   @Field(() => Int)
+  periodCount: number;
+
+  @Field(() => Int, {
+    deprecationReason: 'Use periodCount and periodUnit',
+  })
   windowSeconds: number;
+
+  @Field(() => String)
+  periodUnit: PeriodUnit;
+
+  @Field(() => String)
+  meter: UsageMeter;
 
   @Field(() => String)
   limitValueType: LimitValueType;

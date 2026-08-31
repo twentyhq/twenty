@@ -145,7 +145,8 @@ describe('API rate limiting', () => {
         spenderType: 'apiKey',
         spenderId: apiKeyId,
         limitKind: 'speed',
-        windowSeconds: WINDOW_SECONDS,
+        periodCount: WINDOW_SECONDS,
+        periodUnit: 'second',
         limitValueType: 'absolute',
         limitValue: LIMIT_VALUE,
         burstValue: LIMIT_VALUE,
@@ -205,7 +206,8 @@ describe('API rate limiting', () => {
         limitKind: 'speed',
         limit: LIMIT_VALUE,
         remaining: 0,
-        windowSeconds: WINDOW_SECONDS,
+        periodCount: WINDOW_SECONDS,
+        periodUnit: 'second',
         scope: { spenderType: 'apiKey', spenderId: apiKeyId },
       });
       expect(extensions.retryAfterMs).toBeGreaterThan(0);
@@ -247,7 +249,8 @@ describe('API rate limiting', () => {
         limitKind: 'speed',
         limit: LIMIT_VALUE,
         remaining: 0,
-        windowSeconds: WINDOW_SECONDS,
+        periodCount: WINDOW_SECONDS,
+        periodUnit: 'second',
         retryAfterSeconds: 1,
         scope: { spenderType: 'apiKey', spenderId: apiKeyId },
       });

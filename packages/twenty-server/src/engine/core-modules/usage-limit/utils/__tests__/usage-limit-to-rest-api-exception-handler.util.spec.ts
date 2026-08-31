@@ -18,7 +18,8 @@ const buildExhaustedScope = (
   spenderId: 'key-1',
   limitValue: 3,
   remaining: 0,
-  windowSeconds: 60,
+  periodCount: 60,
+  periodUnit: 'second',
   retryAfterMs: 11983,
   isDefault: true,
   ...overrides,
@@ -55,6 +56,8 @@ describe('usageLimitToRestApiExceptionHandler', () => {
       scope: { spenderType: 'apiKey', spenderId: 'key-1' },
       limit: 3,
       remaining: 0,
+      periodCount: 60,
+      periodUnit: 'second',
       windowSeconds: 60,
       retryAfterSeconds: 12,
     });
