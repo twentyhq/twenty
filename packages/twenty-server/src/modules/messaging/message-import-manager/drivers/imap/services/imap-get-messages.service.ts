@@ -15,6 +15,7 @@ import { extractMessageBodyText } from 'src/modules/messaging/message-import-man
 import { extractParticipantsFromParsedEmail } from 'src/modules/messaging/message-import-manager/utils/extract-participants-from-parsed-email.util';
 import { extractThreadIdFromParsedEmail } from 'src/modules/messaging/message-import-manager/utils/extract-thread-id-from-parsed-email.util';
 import { sanitizeString } from 'src/modules/messaging/message-import-manager/utils/sanitize-string.util';
+import { isValidDate } from 'src/utils/date/isValidDate';
 
 type ConnectedAccount = Pick<
   ConnectedAccountEntity,
@@ -146,6 +147,7 @@ export class ImapGetMessagesService {
           folderExternalId,
           connectedAccount,
           result.flags,
+          result.internalDate,
         ),
       );
     }
@@ -164,6 +166,7 @@ export class ImapGetMessagesService {
     folderExternalId: string,
     connectedAccount: Pick<ConnectedAccountEntity, 'handle' | 'handleAliases'>,
     flags?: Set<string>,
+    internalDate?: Date | string,
   ): MessageWithParticipants {
     const fromAddresses = extractAddressesFromParsedEmail(parsed.from);
     const senderAddress = fromAddresses[0]?.address ?? '';
@@ -179,7 +182,7 @@ export class ImapGetMessagesService {
       headerMessageId: parsed.messageId || String(uid),
       subject: sanitizeString(parsed.subject || ''),
       text,
-      receivedAt: parsed.date ? new Date(parsed.date) : null,
+      receivedAt: this.resolveReceivedAt(parsed.date, internalDate),
       direction: computeMessageDirection(senderAddress, connectedAccount),
       attachments: (parsed.attachments || []).map((attachment) => ({
         filename: attachment.filename || 'unnamed-attachment',
@@ -192,5 +195,22 @@ export class ImapGetMessagesService {
         value,
       })),
     };
+  }
+
+  private resolveReceivedAt(
+    parsedDate?: string,
+    internalDate?: Date | string,
+  ): Date {
+    const receivedAtFromHeader = parsedDate ? new Date(parsedDate) : undefined;
+
+    if (isValidDate(receivedAtFromHeader)) {
+      return receivedAtFromHeader;
+    }
+
+    const receivedAtFromImap = internalDate
+      ? new Date(internalDate)
+      : undefined;
+
+    return isValidDate(receivedAtFromImap) ? receivedAtFromImap : new Date();
   }
 }
