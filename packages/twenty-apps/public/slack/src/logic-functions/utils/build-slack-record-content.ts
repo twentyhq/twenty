@@ -1,36 +1,29 @@
 import { type EntityCustomField } from '@slack/web-api';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { SLACK_ENTITY_FIELD_TYPE } from 'src/logic-functions/constants/slack-entity-field-type';
 import { type SlackUnfurlObjectName } from 'src/logic-functions/constants/slack-unfurl-object-names';
-import {
-  EMAIL_FIELD_TYPE,
-  LINK_FIELD_TYPE,
-  bodyPreviewField,
-  buildCompanyRefField,
-  buildFullName,
-  buildRecordRefField,
-  getPublicAvatarUrl,
-  stringField,
-  timestampDetailFields,
-  timestampField,
-} from 'src/logic-functions/utils/build-slack-entity-custom-fields';
-import {
-  asNonEmptyString,
-  asObject,
-} from 'src/logic-functions/utils/coerce-record-field-value';
-import {
-  formatAmount,
-  humanizeSelectValue,
-} from 'src/logic-functions/utils/format-record-field-value';
+import { asNonEmptyString } from 'src/logic-functions/utils/as-non-empty-string';
+import { asObject } from 'src/logic-functions/utils/as-object';
+import { buildFullName } from 'src/logic-functions/utils/build-full-name';
+import { buildSlackBodyPreviewField } from 'src/logic-functions/utils/build-slack-body-preview-field';
+import { buildSlackCompanyRefField } from 'src/logic-functions/utils/build-slack-company-ref-field';
+import { buildSlackRecordRefField } from 'src/logic-functions/utils/build-slack-record-ref-field';
+import { buildSlackStringField } from 'src/logic-functions/utils/build-slack-string-field';
+import { buildSlackTimestampDetailFields } from 'src/logic-functions/utils/build-slack-timestamp-detail-fields';
+import { buildSlackTimestampField } from 'src/logic-functions/utils/build-slack-timestamp-field';
+import { formatAmount } from 'src/logic-functions/utils/format-amount';
 import { getCompanyLogoUrl } from 'src/logic-functions/utils/get-company-logo-url';
+import { getPublicAvatarUrl } from 'src/logic-functions/utils/get-public-avatar-url';
+import { humanizeSelectValue } from 'src/logic-functions/utils/humanize-select-value';
 
-export type SlackUnfurlContentArgs = {
+type SlackUnfurlContentArgs = {
   record: Record<string, unknown>;
   workspaceBaseUrl: string;
   includeDetails: boolean;
 };
 
-export type SlackUnfurlContent = {
+type SlackUnfurlContent = {
   title: string;
   customFields: (EntityCustomField | undefined)[];
   iconUrl?: string;
@@ -55,27 +48,33 @@ const buildPersonContent = ({
       workspaceBaseUrl,
     }),
     customFields: [
-      buildCompanyRefField({
+      buildSlackCompanyRefField({
         company: asObject(record.company),
         workspaceBaseUrl,
       }),
-      stringField(
-        'email',
-        'Email',
-        asNonEmptyString(asObject(record.emails)?.primaryEmail),
-        EMAIL_FIELD_TYPE,
-      ),
-      stringField('phone', 'Phone', phone),
-      stringField('jobTitle', 'Job title', asNonEmptyString(record.jobTitle)),
+      buildSlackStringField({
+        key: 'email',
+        label: 'Email',
+        value: asNonEmptyString(asObject(record.emails)?.primaryEmail),
+        type: SLACK_ENTITY_FIELD_TYPE.EMAIL,
+      }),
+      buildSlackStringField({ key: 'phone', label: 'Phone', value: phone }),
+      buildSlackStringField({
+        key: 'jobTitle',
+        label: 'Job title',
+        value: asNonEmptyString(record.jobTitle),
+      }),
       ...(includeDetails
         ? [
-            stringField(
-              'linkedin',
-              'LinkedIn',
-              asNonEmptyString(asObject(record.linkedinLink)?.primaryLinkUrl),
-              LINK_FIELD_TYPE,
-            ),
-            ...timestampDetailFields(record),
+            buildSlackStringField({
+              key: 'linkedin',
+              label: 'LinkedIn',
+              value: asNonEmptyString(
+                asObject(record.linkedinLink)?.primaryLinkUrl,
+              ),
+              type: SLACK_ENTITY_FIELD_TYPE.LINK,
+            }),
+            ...buildSlackTimestampDetailFields(record),
           ]
         : []),
     ],
@@ -95,32 +94,43 @@ const buildCompanyContent = ({
     title: asNonEmptyString(record.name) ?? '',
     iconUrl: getCompanyLogoUrl(domainUrl),
     customFields: [
-      stringField('domain', 'Domain', domainUrl, LINK_FIELD_TYPE),
-      stringField('city', 'City', asNonEmptyString(address?.addressCity)),
+      buildSlackStringField({
+        key: 'domain',
+        label: 'Domain',
+        value: domainUrl,
+        type: SLACK_ENTITY_FIELD_TYPE.LINK,
+      }),
+      buildSlackStringField({
+        key: 'city',
+        label: 'City',
+        value: asNonEmptyString(address?.addressCity),
+      }),
       ...(includeDetails
         ? [
-            stringField(
-              'country',
-              'Country',
-              asNonEmptyString(address?.addressCountry),
-            ),
-            stringField(
-              'annualRevenue',
-              'Annual revenue',
-              formatAmount(asObject(record.annualRevenue)),
-            ),
-            stringField(
-              'accountOwner',
-              'Account owner',
-              buildFullName(asObject(record.accountOwner)?.name),
-            ),
-            stringField(
-              'linkedin',
-              'LinkedIn',
-              asNonEmptyString(asObject(record.linkedinLink)?.primaryLinkUrl),
-              LINK_FIELD_TYPE,
-            ),
-            ...timestampDetailFields(record),
+            buildSlackStringField({
+              key: 'country',
+              label: 'Country',
+              value: asNonEmptyString(address?.addressCountry),
+            }),
+            buildSlackStringField({
+              key: 'annualRevenue',
+              label: 'Annual revenue',
+              value: formatAmount(asObject(record.annualRevenue)),
+            }),
+            buildSlackStringField({
+              key: 'accountOwner',
+              label: 'Account owner',
+              value: buildFullName(asObject(record.accountOwner)?.name),
+            }),
+            buildSlackStringField({
+              key: 'linkedin',
+              label: 'LinkedIn',
+              value: asNonEmptyString(
+                asObject(record.linkedinLink)?.primaryLinkUrl,
+              ),
+              type: SLACK_ENTITY_FIELD_TYPE.LINK,
+            }),
+            ...buildSlackTimestampDetailFields(record),
           ]
         : []),
     ],
@@ -146,18 +156,26 @@ const buildOpportunityContent = ({
       asNonEmptyString(asObject(company?.domainName)?.primaryLinkUrl),
     ),
     customFields: [
-      buildCompanyRefField({ company, workspaceBaseUrl }),
-      stringField(
-        'stage',
-        'Stage',
-        isDefined(stage) ? humanizeSelectValue(stage) : undefined,
-      ),
-      stringField('amount', 'Amount', formatAmount(asObject(record.amount))),
-      timestampField('closeDate', 'Close date', record.closeDate),
+      buildSlackCompanyRefField({ company, workspaceBaseUrl }),
+      buildSlackStringField({
+        key: 'stage',
+        label: 'Stage',
+        value: isDefined(stage) ? humanizeSelectValue(stage) : undefined,
+      }),
+      buildSlackStringField({
+        key: 'amount',
+        label: 'Amount',
+        value: formatAmount(asObject(record.amount)),
+      }),
+      buildSlackTimestampField({
+        key: 'closeDate',
+        label: 'Close date',
+        value: record.closeDate,
+      }),
       ...(includeDetails
         ? [
             isDefined(pointOfContactId) && isDefined(pointOfContactName)
-              ? buildRecordRefField({
+              ? buildSlackRecordRefField({
                   key: 'pointOfContact',
                   label: 'Point of contact',
                   objectNameSingular: 'person',
@@ -166,7 +184,7 @@ const buildOpportunityContent = ({
                   workspaceBaseUrl,
                 })
               : undefined,
-            ...timestampDetailFields(record),
+            ...buildSlackTimestampDetailFields(record),
           ]
         : []),
     ],
@@ -180,10 +198,16 @@ const buildNoteContent = ({
   title: asNonEmptyString(record.title) ?? '',
   customFields: includeDetails
     ? [
-        bodyPreviewField(record.bodyV2),
-        ...timestampDetailFields(record),
+        buildSlackBodyPreviewField(record.bodyV2),
+        ...buildSlackTimestampDetailFields(record),
       ]
-    : [timestampField('createdAt', 'Created', record.createdAt)],
+    : [
+        buildSlackTimestampField({
+          key: 'createdAt',
+          label: 'Created',
+          value: record.createdAt,
+        }),
+      ],
 });
 
 const buildTaskContent = ({
@@ -195,21 +219,25 @@ const buildTaskContent = ({
   return {
     title: asNonEmptyString(record.title) ?? '',
     customFields: [
-      stringField(
-        'status',
-        'Status',
-        isDefined(status) ? humanizeSelectValue(status) : undefined,
-      ),
-      timestampField('dueAt', 'Due date', record.dueAt),
+      buildSlackStringField({
+        key: 'status',
+        label: 'Status',
+        value: isDefined(status) ? humanizeSelectValue(status) : undefined,
+      }),
+      buildSlackTimestampField({
+        key: 'dueAt',
+        label: 'Due date',
+        value: record.dueAt,
+      }),
       ...(includeDetails
         ? [
-            stringField(
-              'assignee',
-              'Assignee',
-              buildFullName(asObject(record.assignee)?.name),
-            ),
-            bodyPreviewField(record.bodyV2),
-            ...timestampDetailFields(record),
+            buildSlackStringField({
+              key: 'assignee',
+              label: 'Assignee',
+              value: buildFullName(asObject(record.assignee)?.name),
+            }),
+            buildSlackBodyPreviewField(record.bodyV2),
+            ...buildSlackTimestampDetailFields(record),
           ]
         : []),
     ],

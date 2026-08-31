@@ -1,16 +1,7 @@
 import { isDefined } from 'twenty-sdk/utils';
 
-import {
-  asFiniteNumber,
-  asNonEmptyString,
-} from 'src/logic-functions/utils/coerce-record-field-value';
-
-// SELECT values arrive as API enum-like strings such as IN_PROGRESS.
-export const humanizeSelectValue = (value: string): string => {
-  const words = value.replace(/_/g, ' ').toLowerCase();
-
-  return words.charAt(0).toUpperCase() + words.slice(1);
-};
+import { asFiniteNumber } from 'src/logic-functions/utils/as-finite-number';
+import { asNonEmptyString } from 'src/logic-functions/utils/as-non-empty-string';
 
 export const formatAmount = (
   amount: Record<string, unknown> | undefined,
