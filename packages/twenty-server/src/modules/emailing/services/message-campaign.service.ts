@@ -1,3 +1,4 @@
+import { CAMPAIGN_SEND_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-limit.constant';
 import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
 import { Injectable } from '@nestjs/common';
 
@@ -53,7 +54,7 @@ export class MessageCampaignService {
     private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    @InjectMessageQueue(MessageQueue.emailQueue)
+    @InjectMessageQueue(MessageQueue.campaignQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly messageChannelMetadataService: MessageChannelMetadataService,
     private readonly userRoleService: UserRoleService,
@@ -133,7 +134,10 @@ export class MessageCampaignService {
           emailingDomainId: emailingDomain.id,
           recipients,
         },
-        { retryLimit: 3, backoff: CAMPAIGN_SEND_RETRY_BACKOFF },
+        {
+          retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,
+          backoff: CAMPAIGN_SEND_RETRY_BACKOFF,
+        },
       )
       .catch(async (error) => {
         await this.messageCampaignLifecycleService.transitionCampaignStatus({

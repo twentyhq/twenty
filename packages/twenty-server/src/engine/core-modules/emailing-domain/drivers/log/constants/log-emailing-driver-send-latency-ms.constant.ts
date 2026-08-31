@@ -1,0 +1,1 @@
+export const LOG_EMAILING_DRIVER_SEND_LATENCY_MS = 50;

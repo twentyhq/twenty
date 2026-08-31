@@ -5,7 +5,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
-@Processor(MessageQueue.emailQueue)
+@Processor(MessageQueue.campaignQueue)
 export class SendCampaignEmailJob {
   constructor(
     private readonly messageCampaignDeliveryService: MessageCampaignDeliveryService,

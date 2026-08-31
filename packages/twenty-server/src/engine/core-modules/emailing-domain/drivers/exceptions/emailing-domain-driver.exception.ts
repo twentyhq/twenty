@@ -11,6 +11,7 @@ export enum EmailingDomainDriverExceptionCode {
   INSUFFICIENT_PERMISSIONS = 'INSUFFICIENT_PERMISSIONS',
   CONFIGURATION_ERROR = 'CONFIGURATION_ERROR',
   SENDING_SUSPENDED = 'SENDING_SUSPENDED',
+  SANDBOX_ACCOUNT = 'SANDBOX_ACCOUNT',
   ALL_RECIPIENTS_SUPPRESSED = 'ALL_RECIPIENTS_SUPPRESSED',
   UNSUBSCRIBE_NOT_READY = 'UNSUBSCRIBE_NOT_READY',
   UNKNOWN = 'UNKNOWN',
@@ -28,6 +29,8 @@ const getEmailingDomainDriverExceptionUserFriendlyMessage = (
       return msg`Email domain configuration error.`;
     case EmailingDomainDriverExceptionCode.SENDING_SUSPENDED:
       return msg`Sending is currently suspended for this email domain.`;
+    case EmailingDomainDriverExceptionCode.SANDBOX_ACCOUNT:
+      return msg`Your AWS SES account is still in the sandbox, so this domain cannot send to unverified recipients. Request production access from AWS, then verify the domain again.`;
     case EmailingDomainDriverExceptionCode.ALL_RECIPIENTS_SUPPRESSED:
       return msg`All recipients are suppressed for this email domain.`;
     case EmailingDomainDriverExceptionCode.UNSUBSCRIBE_NOT_READY:
