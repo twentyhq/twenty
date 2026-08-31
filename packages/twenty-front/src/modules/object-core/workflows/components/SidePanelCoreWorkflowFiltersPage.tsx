@@ -1,14 +1,12 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { CoreWorkflowFilterFieldSelect } from '@/object-core/workflows/components/CoreWorkflowFilterFieldSelect';
-import { CoreWorkflowFilterValueInput } from '@/object-core/workflows/components/CoreWorkflowFilterValueInput';
+import { CoreWorkflowFiltersBuilder } from '@/object-core/workflows/components/CoreWorkflowFiltersBuilder';
 import {
   CORE_WORKFLOWS_FILTER_INSTANCE_ID,
   coreWorkflowsFilterSettingsState,
 } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { WorkflowStepFilterBuilder } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterBuilder';
 
 const StyledPageContainer = styled.div`
   display: flex;
@@ -22,13 +20,10 @@ export const SidePanelCoreWorkflowFiltersPage = () => {
 
   return (
     <StyledPageContainer>
-      <WorkflowStepFilterBuilder
+      <CoreWorkflowFiltersBuilder
         instanceId={CORE_WORKFLOWS_FILTER_INSTANCE_ID}
         defaultValue={coreWorkflowsFilterSettings}
         onFilterSettingsUpdate={setCoreWorkflowsFilterSettings}
-        FieldSelectComponent={CoreWorkflowFilterFieldSelect}
-        ValueInputComponent={CoreWorkflowFilterValueInput}
-        canAddFilterGroups={false}
       />
     </StyledPageContainer>
   );

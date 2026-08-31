@@ -4,8 +4,8 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useAddStepFilterToGroup } from '@/workflow/workflow-steps/filters/hooks/useAddStepFilterToGroup';
 import { useChildStepFiltersAndChildStepFilterGroups } from '@/workflow/workflow-steps/filters/hooks/useChildStepFiltersAndChildStepFilterGroups';
-import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/filters/hooks/useUpsertStepFilterSettings';
 import {
   StepLogicalOperator,
@@ -15,7 +15,6 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { v4 } from 'uuid';
@@ -38,7 +37,6 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
   stepFilterGroup,
 }: WorkflowStepFilterAddFilterRuleSelectProps) => {
   const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
-  const { canAddFilterGroups = true } = useContext(WorkflowStepFilterContext);
 
   const dropdownId = getAdvancedFilterAddFilterRuleSelectDropdownId(
     stepFilterGroup.id,
@@ -52,19 +50,14 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
 
   const { closeDropdown } = useCloseDropdown();
 
+  const { addStepFilterToGroup } = useAddStepFilterToGroup({
+    stepFilterGroup,
+  });
+
   const handleAddFilter = () => {
     closeDropdown(dropdownId);
 
-    const newStepFilter = {
-      id: v4(),
-      ...BASE_NEW_STEP_FILTER,
-      stepFilterGroupId: stepFilterGroup.id,
-      positionInStepFilterGroup: newPositionInStepFilterGroup,
-    } satisfies StepFilter;
-
-    upsertStepFilterSettings({
-      stepFilterToUpsert: newStepFilter,
-    });
+    addStepFilterToGroup();
   };
 
   const handleAddFilterGroup = () => {
@@ -92,8 +85,9 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
     });
   };
 
-  const isFilterRuleGroupOptionVisible =
-    canAddFilterGroups && !isDefined(stepFilterGroup.parentStepFilterGroupId);
+  const isFilterRuleGroupOptionVisible = !isDefined(
+    stepFilterGroup.parentStepFilterGroupId,
+  );
 
   if (!isFilterRuleGroupOptionVisible) {
     return (

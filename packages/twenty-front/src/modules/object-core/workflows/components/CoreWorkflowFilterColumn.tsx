@@ -1,22 +1,20 @@
-import { AdvancedFilterSidePanelColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelColumn';
-import { WorkflowStepFilterFieldSelect } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect';
-import { WorkflowStepFilterLogicalOperatorCell } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterLogicalOperatorCell';
-import { WorkflowStepFilterOperandSelect } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterOperandSelect';
-import { WorkflowStepFilterOptionsDropdown } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterOptionsDropdown';
-import { WorkflowStepFilterValueInput } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterValueInput';
-import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-type WorkflowStepFilterColumnProps = {
+import { CoreWorkflowFilterFieldSelect } from '@/object-core/workflows/components/CoreWorkflowFilterFieldSelect';
+import { CoreWorkflowFilterValueInput } from '@/object-core/workflows/components/CoreWorkflowFilterValueInput';
+import { AdvancedFilterSidePanelColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelColumn';
+import { WorkflowStepFilterLogicalOperatorCell } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterLogicalOperatorCell';
+import { WorkflowStepFilterOperandSelect } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterOperandSelect';
+import { WorkflowStepFilterOptionsDropdown } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterOptionsDropdown';
+import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
+
+type CoreWorkflowFilterColumnProps = {
   stepFilterGroup: StepFilterGroup;
   stepFilter: StepFilter;
   stepFilterIndex: number;
-  firstFilterLabel?: string;
-  elseIfIndex?: number;
-  preventDeletion?: boolean;
 };
 
 const StyledContainer = styled.div`
@@ -26,17 +24,12 @@ const StyledContainer = styled.div`
   justify-content: space-between;
 `;
 
-export const WorkflowStepFilterColumn = ({
+export const CoreWorkflowFilterColumn = ({
   stepFilterGroup,
   stepFilter,
   stepFilterIndex,
-  firstFilterLabel,
-  elseIfIndex,
-  preventDeletion = false,
-}: WorkflowStepFilterColumnProps) => {
+}: CoreWorkflowFilterColumnProps) => {
   const { readonly } = useContext(WorkflowStepFilterContext);
-
-  const shouldShowDropdown = !readonly && !preventDeletion;
 
   return (
     <AdvancedFilterSidePanelColumn>
@@ -44,16 +37,14 @@ export const WorkflowStepFilterColumn = ({
         <WorkflowStepFilterLogicalOperatorCell
           index={stepFilterIndex}
           stepFilterGroup={stepFilterGroup}
-          firstFilterLabel={firstFilterLabel}
-          elseIfIndex={elseIfIndex}
         />
-        {shouldShowDropdown && (
+        {!readonly && (
           <WorkflowStepFilterOptionsDropdown stepFilterId={stepFilter.id} />
         )}
       </StyledContainer>
-      <WorkflowStepFilterFieldSelect stepFilter={stepFilter} />
+      <CoreWorkflowFilterFieldSelect stepFilter={stepFilter} />
       <WorkflowStepFilterOperandSelect stepFilter={stepFilter} />
-      <WorkflowStepFilterValueInput stepFilter={stepFilter} />
+      <CoreWorkflowFilterValueInput stepFilter={stepFilter} />
     </AdvancedFilterSidePanelColumn>
   );
 };
