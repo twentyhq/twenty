@@ -306,6 +306,51 @@ describe('getJunctionConfig', () => {
       });
     });
 
+    it('should resolve a merged morph source field referenced through another member ID', () => {
+      const morphSourceField = createMockField({
+        id: 'morph-source-representative-field-id',
+        name: 'target',
+        type: FieldMetadataType.MORPH_RELATION,
+        morphRelations: [
+          createMockRelation(
+            'first-source-object-id',
+            'firstSourceObject',
+            RelationType.MANY_TO_ONE,
+            'morph-source-representative-field-id',
+          ),
+          createMockRelation(
+            'second-source-object-id',
+            'secondSourceObject',
+            RelationType.MANY_TO_ONE,
+            'relation-target-morph-member-field-id',
+          ),
+        ],
+      });
+      const targetField = createMockField({
+        id: 'target-field-id',
+        name: 'task',
+        relation: createMockRelation('task-object-id', 'task'),
+      });
+      const junctionObject = createMockObjectMetadata({
+        id: 'junction-id',
+        fields: [morphSourceField, targetField],
+      });
+
+      expect(
+        getJunctionConfig({
+          settings: { junctionTargetFieldId: 'target-field-id' },
+          relationObjectMetadataId: 'junction-id',
+          relationTargetFieldMetadataId:
+            'relation-target-morph-member-field-id',
+          objectMetadataItems: [junctionObject],
+        }),
+      ).toMatchObject({
+        isValid: true,
+        sourceField: { id: 'morph-source-representative-field-id' },
+        targetFields: [{ id: 'target-field-id' }],
+      });
+    });
+
     it('returns an invalid junction instead of falling back for a one-to-many morph target', () => {
       const morphField = createMockField({
         id: 'morph-field-id',
