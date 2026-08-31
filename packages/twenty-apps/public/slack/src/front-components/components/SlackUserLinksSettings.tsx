@@ -102,8 +102,8 @@ export const SlackUserLinksSettings = () => {
       {!canManage && (
         <Callout
           variant="warning"
-          title="You need the workspace members permission"
-          description="Only members with the workspace members permission can create or change Slack user links. You can review the existing links below."
+          title="You need the roles permission"
+          description="Only members with the roles permission can create or change Slack user links. You can review the existing links below."
         />
       )}
       {canManage && (

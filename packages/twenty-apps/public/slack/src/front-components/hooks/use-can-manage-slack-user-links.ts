@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/utils/current-user-has-workspace-members-permission';
+import { currentUserHasRolesPermission } from 'src/logic-functions/utils/current-user-has-roles-permission';
 
 type CanManageSlackUserLinksState = {
   canManage: boolean;
@@ -22,7 +22,7 @@ export const useCanManageSlackUserLinks = (): CanManageSlackUserLinksState => {
     setState(LOADING_STATE);
 
     const fetchPermission = async () => {
-      const canManage = await currentUserHasWorkspaceMembersPermission();
+      const canManage = await currentUserHasRolesPermission();
 
       if (!cancelled) {
         setState({ canManage, isPermissionLoading: false });

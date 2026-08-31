@@ -8,7 +8,7 @@ import {
   type SlackUserSearchResult,
 } from 'src/logic-functions/types/slack-user-search.type';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
-import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/utils/current-user-has-workspace-members-permission';
+import { currentUserHasRolesPermission } from 'src/logic-functions/utils/current-user-has-roles-permission';
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
@@ -110,14 +110,13 @@ export const slackSearchUsersHandler = async (
     return { success: true, slackUsers: [] };
   }
 
-  const isAllowed = await currentUserHasWorkspaceMembersPermission();
+  const isAllowed = await currentUserHasRolesPermission();
 
   if (!isAllowed) {
     return {
       success: false,
       message: 'Not allowed',
-      error:
-        'Only members with the workspace members permission can search Slack users.',
+      error: 'Only members with the roles permission can search Slack users.',
     };
   }
 

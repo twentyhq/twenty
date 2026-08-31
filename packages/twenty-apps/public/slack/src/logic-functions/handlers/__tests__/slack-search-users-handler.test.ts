@@ -3,24 +3,20 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { slackSearchUsersHandler } from 'src/logic-functions/handlers/slack-search-users-handler';
 
 const {
-  currentUserHasWorkspaceMembersPermissionMock,
+  currentUserHasRolesPermissionMock,
   getSlackClientMock,
   authTestMock,
   usersListMock,
 } = vi.hoisted(() => ({
-  currentUserHasWorkspaceMembersPermissionMock: vi.fn(),
+  currentUserHasRolesPermissionMock: vi.fn(),
   getSlackClientMock: vi.fn(),
   authTestMock: vi.fn(),
   usersListMock: vi.fn(),
 }));
 
-vi.mock(
-  'src/logic-functions/utils/current-user-has-workspace-members-permission',
-  () => ({
-    currentUserHasWorkspaceMembersPermission:
-      currentUserHasWorkspaceMembersPermissionMock,
-  }),
-);
+vi.mock('src/logic-functions/utils/current-user-has-roles-permission', () => ({
+  currentUserHasRolesPermission: currentUserHasRolesPermissionMock,
+}));
 
 vi.mock('src/logic-functions/utils/get-slack-client', () => ({
   getSlackClient: getSlackClientMock,
@@ -47,7 +43,7 @@ const buildPayload = (query: unknown) => ({ body: { query } });
 describe('slackSearchUsersHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    currentUserHasWorkspaceMembersPermissionMock.mockResolvedValue(true);
+    currentUserHasRolesPermissionMock.mockResolvedValue(true);
     getSlackClientMock.mockResolvedValue({
       success: true,
       client: {
@@ -66,8 +62,8 @@ describe('slackSearchUsersHandler', () => {
     expect(usersListMock).not.toHaveBeenCalled();
   });
 
-  it('should refuse when the user lacks the workspace members permission', async () => {
-    currentUserHasWorkspaceMembersPermissionMock.mockResolvedValue(false);
+  it('should refuse when the user lacks the roles permission', async () => {
+    currentUserHasRolesPermissionMock.mockResolvedValue(false);
 
     const result = await slackSearchUsersHandler(buildPayload('ada'));
 

@@ -3,26 +3,22 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { slackResolveUserLinkHandler } from 'src/logic-functions/handlers/slack-resolve-user-link-handler';
 
 const {
-  currentUserHasWorkspaceMembersPermissionMock,
+  currentUserHasRolesPermissionMock,
   getSlackClientMock,
   authTestMock,
   resolveSlackUserByEmailMock,
   fetchSlackUserIdentityMock,
 } = vi.hoisted(() => ({
-  currentUserHasWorkspaceMembersPermissionMock: vi.fn(),
+  currentUserHasRolesPermissionMock: vi.fn(),
   getSlackClientMock: vi.fn(),
   authTestMock: vi.fn(),
   resolveSlackUserByEmailMock: vi.fn(),
   fetchSlackUserIdentityMock: vi.fn(),
 }));
 
-vi.mock(
-  'src/logic-functions/utils/current-user-has-workspace-members-permission',
-  () => ({
-    currentUserHasWorkspaceMembersPermission:
-      currentUserHasWorkspaceMembersPermissionMock,
-  }),
-);
+vi.mock('src/logic-functions/utils/current-user-has-roles-permission', () => ({
+  currentUserHasRolesPermission: currentUserHasRolesPermissionMock,
+}));
 
 vi.mock('src/logic-functions/utils/get-slack-client', () => ({
   getSlackClient: getSlackClientMock,
@@ -43,7 +39,7 @@ const buildPayload = (body: unknown) => ({ body });
 describe('slackResolveUserLinkHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    currentUserHasWorkspaceMembersPermissionMock.mockResolvedValue(true);
+    currentUserHasRolesPermissionMock.mockResolvedValue(true);
     getSlackClientMock.mockResolvedValue({
       success: true,
       client: { auth: { test: authTestMock } },
@@ -55,11 +51,11 @@ describe('slackResolveUserLinkHandler', () => {
     const result = await slackResolveUserLinkHandler(buildPayload({}));
 
     expect(result.success).toBe(false);
-    expect(currentUserHasWorkspaceMembersPermissionMock).not.toHaveBeenCalled();
+    expect(currentUserHasRolesPermissionMock).not.toHaveBeenCalled();
   });
 
-  it('should refuse when the user lacks the workspace members permission', async () => {
-    currentUserHasWorkspaceMembersPermissionMock.mockResolvedValue(false);
+  it('should refuse when the user lacks the roles permission', async () => {
+    currentUserHasRolesPermissionMock.mockResolvedValue(false);
 
     const result = await slackResolveUserLinkHandler(
       buildPayload({ email: 'ada@twenty.com' }),

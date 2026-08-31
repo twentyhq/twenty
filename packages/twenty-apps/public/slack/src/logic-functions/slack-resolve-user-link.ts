@@ -8,7 +8,7 @@ export default defineLogicFunction({
   universalIdentifier: SLACK_RESOLVE_USER_LINK_UNIVERSAL_IDENTIFIER,
   name: 'slack-resolve-user-link',
   description:
-    'Resolves a Slack account from an email or Slack user id so an admin can confirm the right person before linking. Restricted to members with the workspace members permission.',
+    'Resolves a Slack account from an email or Slack user id so an admin can confirm the right person before linking. Restricted to members with the roles permission.',
   timeoutSeconds: 30,
   httpRouteTriggerSettings: {
     path: SLACK_USER_LINKS_RESOLVE_ROUTE_PATH,

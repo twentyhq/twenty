@@ -9,7 +9,7 @@ import { findWorkspaceMemberNameById } from 'src/logic-functions/data/find-works
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
 import { type SlackUserLink } from 'src/logic-functions/types/slack-user-link.type';
-import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/utils/current-user-has-workspace-members-permission';
+import { currentUserHasRolesPermission } from 'src/logic-functions/utils/current-user-has-roles-permission';
 import { decideSlackUserLinkWrite } from 'src/logic-functions/utils/decide-slack-user-link-write';
 import {
   extractSlackSetUserLinkInput,
@@ -57,14 +57,13 @@ export const slackSetUserLinkHandler = async (
     };
   }
 
-  const isAllowed = await currentUserHasWorkspaceMembersPermission();
+  const isAllowed = await currentUserHasRolesPermission();
 
   if (!isAllowed) {
     return {
       success: false,
       message: 'Not allowed',
-      error:
-        'Only members with the workspace members permission can set Slack user links.',
+      error: 'Only members with the roles permission can set Slack user links.',
     };
   }
 

@@ -8,7 +8,7 @@ import { findWorkspaceMemberNameById } from 'src/logic-functions/data/find-works
 import { type SlackRouteBody } from 'src/logic-functions/types/slack-route-body.type';
 import { type SlackUserLink } from 'src/logic-functions/types/slack-user-link.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
-import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/utils/current-user-has-workspace-members-permission';
+import { currentUserHasRolesPermission } from 'src/logic-functions/utils/current-user-has-roles-permission';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
@@ -39,14 +39,14 @@ export const slackResendUserLinkConsentHandler = async (
     };
   }
 
-  const isAllowed = await currentUserHasWorkspaceMembersPermission();
+  const isAllowed = await currentUserHasRolesPermission();
 
   if (!isAllowed) {
     return {
       success: false,
       message: 'Not allowed',
       error:
-        'Only members with the workspace members permission can resend consent requests.',
+        'Only members with the roles permission can resend consent requests.',
     };
   }
 

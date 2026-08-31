@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { slackSetUserLinkHandler } from 'src/logic-functions/handlers/slack-set-user-link-handler';
 
 const {
-  currentUserHasWorkspaceMembersPermissionMock,
+  currentUserHasRolesPermissionMock,
   coreApiClientMock,
   getSlackClientMock,
   authTestMock,
@@ -18,7 +18,7 @@ const {
   findWorkspaceMemberNameByIdMock,
   sendSlackUserLinkConsentDmMock,
 } = vi.hoisted(() => ({
-  currentUserHasWorkspaceMembersPermissionMock: vi.fn(),
+  currentUserHasRolesPermissionMock: vi.fn(),
   coreApiClientMock: vi.fn(),
   getSlackClientMock: vi.fn(),
   authTestMock: vi.fn(),
@@ -34,13 +34,9 @@ const {
   sendSlackUserLinkConsentDmMock: vi.fn(),
 }));
 
-vi.mock(
-  'src/logic-functions/utils/current-user-has-workspace-members-permission',
-  () => ({
-    currentUserHasWorkspaceMembersPermission:
-      currentUserHasWorkspaceMembersPermissionMock,
-  }),
-);
+vi.mock('src/logic-functions/utils/current-user-has-roles-permission', () => ({
+  currentUserHasRolesPermission: currentUserHasRolesPermissionMock,
+}));
 
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: coreApiClientMock,
@@ -100,7 +96,7 @@ const INPUT = {
 describe('slackSetUserLinkHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    currentUserHasWorkspaceMembersPermissionMock.mockResolvedValue(true);
+    currentUserHasRolesPermissionMock.mockResolvedValue(true);
     getSlackClientMock.mockResolvedValue({
       success: true,
       client: { auth: { test: authTestMock } },
@@ -119,8 +115,8 @@ describe('slackSetUserLinkHandler', () => {
     sendSlackUserLinkConsentDmMock.mockResolvedValue({ success: true });
   });
 
-  it('should refuse when the triggering person lacks the workspace members permission', async () => {
-    currentUserHasWorkspaceMembersPermissionMock.mockResolvedValue(false);
+  it('should refuse when the triggering person lacks the roles permission', async () => {
+    currentUserHasRolesPermissionMock.mockResolvedValue(false);
 
     const result = await slackSetUserLinkHandler(INPUT);
 
@@ -525,7 +521,7 @@ describe('slackSetUserLinkHandler', () => {
     });
 
     expect(result.success).toBe(false);
-    expect(currentUserHasWorkspaceMembersPermissionMock).not.toHaveBeenCalled();
+    expect(currentUserHasRolesPermissionMock).not.toHaveBeenCalled();
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
@@ -535,7 +531,7 @@ describe('slackSetUserLinkHandler', () => {
     });
 
     expect(result.success).toBe(false);
-    expect(currentUserHasWorkspaceMembersPermissionMock).not.toHaveBeenCalled();
+    expect(currentUserHasRolesPermissionMock).not.toHaveBeenCalled();
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
 

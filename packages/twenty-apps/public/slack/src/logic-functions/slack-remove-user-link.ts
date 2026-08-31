@@ -8,7 +8,7 @@ export default defineLogicFunction({
   universalIdentifier: SLACK_REMOVE_USER_LINK_UNIVERSAL_IDENTIFIER,
   name: 'slack-remove-user-link',
   description:
-    'Removes a Slack user link so the assistant stops acting with that member permissions for the account. Restricted to members with the workspace members permission.',
+    'Removes a Slack user link so the assistant stops acting with that member permissions for the account. Restricted to members with the roles permission.',
   timeoutSeconds: 30,
   httpRouteTriggerSettings: {
     path: SLACK_USER_LINKS_REMOVE_ROUTE_PATH,

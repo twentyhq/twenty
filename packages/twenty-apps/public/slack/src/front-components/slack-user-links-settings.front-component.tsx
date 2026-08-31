@@ -8,6 +8,6 @@ export default defineSettingsFrontComponent({
     SLACK_USER_LINKS_SETTINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   name: 'slack-user-links-settings',
   description:
-    'Manage Slack user links: review existing links and, with the workspace members permission, link a Slack account to a workspace member.',
+    'Manage Slack user links: review existing links and, with the roles permission, link a Slack account to a workspace member.',
   component: SlackUserLinksSettings,
 });
