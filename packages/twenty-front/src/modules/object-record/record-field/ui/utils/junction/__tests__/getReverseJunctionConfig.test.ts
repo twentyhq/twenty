@@ -1,57 +1,92 @@
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
-import { getReverseJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getReverseJunctionConfig';
+import { resolveReverseJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getReverseJunctionConfig';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
-describe('getReverseJunctionConfig', () => {
+describe('resolveReverseJunctionConfig', () => {
   const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
   const companyMetadata = getMockObjectMetadataItemOrThrow('company');
-  const noteTargetMetadata = getMockObjectMetadataItemOrThrow('noteTarget');
-  const taskTargetMetadata = getMockObjectMetadataItemOrThrow('taskTarget');
 
   it.each([
     {
-      junctionObjectMetadataId: noteTargetMetadata.id,
-      relatedObjectNameSingular: 'note',
-      relationFieldName: 'note',
+      reverseFieldName: 'noteTargets',
+      junctionObjectNameSingular: 'noteTarget',
+      targetFieldName: 'note',
     },
     {
-      junctionObjectMetadataId: taskTargetMetadata.id,
-      relatedObjectNameSingular: 'task',
-      relationFieldName: 'task',
+      reverseFieldName: 'taskTargets',
+      junctionObjectNameSingular: 'taskTarget',
+      targetFieldName: 'task',
     },
   ])(
-    'resolves $relatedObjectNameSingular through configured junction metadata',
-    ({
-      junctionObjectMetadataId,
-      relatedObjectNameSingular,
-      relationFieldName,
-    }) => {
-      const result = getReverseJunctionConfig({
-        junctionObjectMetadataId,
+    'normalizes $reverseFieldName into source and target fields',
+    ({ reverseFieldName, junctionObjectNameSingular, targetFieldName }) => {
+      const reverseField = getMockFieldMetadataItemOrThrow({
+        objectMetadataItem: companyMetadata,
+        fieldName: reverseFieldName,
+      });
+      const junctionObjectMetadata = getMockObjectMetadataItemOrThrow(
+        junctionObjectNameSingular,
+      );
+
+      const result = resolveReverseJunctionConfig({
+        junctionObjectMetadataId: junctionObjectMetadata.id,
+        relationTargetFieldMetadataId:
+          reverseField.relation?.targetFieldMetadata.id,
         sourceObjectMetadataId: companyMetadata.id,
         objectMetadataItems,
       });
 
       expect(result).toMatchObject({
-        junctionObjectMetadata: { id: junctionObjectMetadataId },
-        relatedObjectMetadata: {
-          nameSingular: relatedObjectNameSingular,
+        status: 'resolved',
+        junctionConfig: {
+          junctionObjectMetadata: { id: junctionObjectMetadata.id },
+          sourceField: { id: reverseField.relation?.targetFieldMetadata.id },
+          targetFields: [{ name: targetFieldName }],
+          isMorphRelation: false,
         },
-        relationFieldName,
       });
     },
   );
 
-  it('returns null when no configured junction targets the source object', () => {
+  it('returns not-found when no junction targets the source object', () => {
     expect(
-      getReverseJunctionConfig({
-        junctionObjectMetadataId: noteTargetMetadata.id,
+      resolveReverseJunctionConfig({
+        junctionObjectMetadataId:
+          getMockObjectMetadataItemOrThrow('noteTarget').id,
+        relationTargetFieldMetadataId: 'unsupported-target-field-id',
         sourceObjectMetadataId: 'unsupported-object-id',
         objectMetadataItems,
       }),
-    ).toBeNull();
+    ).toEqual({ status: 'not-found' });
+  });
+
+  it('collapses distinct owning-object branches of the same morph field', () => {
+    const petMetadata = getMockObjectMetadataItemOrThrow('pet');
+    const caretakersField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: petMetadata,
+      fieldName: 'caretakers',
+    });
+    const petCareAgreementMetadata =
+      getMockObjectMetadataItemOrThrow('petCareAgreement');
+
+    expect(
+      resolveReverseJunctionConfig({
+        junctionObjectMetadataId: petCareAgreementMetadata.id,
+        relationTargetFieldMetadataId:
+          caretakersField.relation?.targetFieldMetadata.id,
+        sourceObjectMetadataId: petMetadata.id,
+        objectMetadataItems,
+      }),
+    ).toMatchObject({
+      status: 'resolved',
+      junctionConfig: {
+        sourceField: { name: 'pet' },
+        targetFields: [{ name: 'caretaker' }],
+        isMorphRelation: true,
+      },
+    });
   });
 
   it('generates reverse relation fields without activity-specific names', () => {

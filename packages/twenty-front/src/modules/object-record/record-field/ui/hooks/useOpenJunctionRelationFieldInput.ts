@@ -5,9 +5,9 @@ import {
   type FieldRelationMetadata,
   type FieldRelationValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getJunctionRelationPickerData } from '@/object-record/record-field/ui/utils/junction/getJunctionRelationPickerData';
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
+import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
@@ -46,7 +46,7 @@ export const useOpenJunctionRelationFieldInput = () => {
           fieldDefinition.metadata.objectMetadataNameSingular,
       )?.id;
 
-      const junctionConfig = getJunctionConfig({
+      const junctionConfig = resolveJunctionConfig({
         settings: fieldDefinition.metadata.settings,
         relationObjectMetadataId:
           fieldDefinition.metadata.relationObjectMetadataId,

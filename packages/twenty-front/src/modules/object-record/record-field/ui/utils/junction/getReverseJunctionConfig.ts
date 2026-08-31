@@ -1,76 +1,209 @@
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { getFieldRelations } from '@/object-record/record-field/ui/utils/junction/getFieldRelations';
 import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
+import { hasJunctionTargetFieldId } from '@/object-record/record-field/ui/utils/junction/hasJunctionTargetFieldId';
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
 import { type JunctionObjectMetadataItem } from '@/object-record/record-field/ui/utils/junction/types/JunctionObjectMetadataItem';
+import { type ValidJunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/ValidJunctionConfig';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-type ReverseJunctionConfig = {
-  junctionObjectMetadata: JunctionObjectMetadataItem;
-  relatedObjectMetadata: JunctionObjectMetadataItem;
-  relationFieldName: string;
+type ReverseJunctionConfig = ValidJunctionConfig & {
+  isConfiguredOnOwningSide: boolean;
 };
+
+type ReverseJunctionConfigResolution =
+  | { status: 'resolved'; junctionConfig: ReverseJunctionConfig }
+  | { status: 'ambiguous' }
+  | { status: 'invalid' }
+  | { status: 'not-found' };
 
 type GetReverseJunctionConfigArgs = {
   junctionObjectMetadataId?: string;
+  relationTargetFieldMetadataId?: string;
   sourceObjectMetadataId?: string;
   objectMetadataItems: JunctionObjectMetadataItem[];
 };
 
-// Only the owning side of a junction carries the junction settings, so reaching the owner
-// from one of its targets means looking for the object whose junction field points here.
-export const getReverseJunctionConfig = ({
-  junctionObjectMetadataId,
-  sourceObjectMetadataId,
-  objectMetadataItems,
-}: GetReverseJunctionConfigArgs): ReverseJunctionConfig | null => {
+type ReverseJunctionConfigCandidate = {
+  junctionConfig: ReverseJunctionConfig;
+  owningObjectMetadataId: string;
+};
+
+const collapseCompatibleMorphSiblingCandidates = (
+  candidates: ReverseJunctionConfigCandidate[],
+): ReverseJunctionConfig | null => {
+  const firstCandidate = candidates[0];
+  const firstTargetField = firstCandidate?.junctionConfig.targetFields[0];
+
   if (
-    !isDefined(junctionObjectMetadataId) ||
-    !isDefined(sourceObjectMetadataId)
+    !isDefined(firstCandidate) ||
+    candidates.length < 2 ||
+    firstCandidate.junctionConfig.targetFields.length !== 1 ||
+    firstTargetField?.type !== FieldMetadataType.MORPH_RELATION
   ) {
     return null;
   }
 
+  const owningObjectMetadataIds = new Set(
+    candidates.map(({ owningObjectMetadataId }) => owningObjectMetadataId),
+  );
+  const morphTargetObjectMetadataIds =
+    getTargetObjectMetadataIdsFromField(firstTargetField);
+
+  const areCompatibleMorphSiblings =
+    owningObjectMetadataIds.size === candidates.length &&
+    candidates.every(
+      ({ junctionConfig, owningObjectMetadataId }) =>
+        junctionConfig.junctionObjectMetadata.id ===
+          firstCandidate.junctionConfig.junctionObjectMetadata.id &&
+        junctionConfig.sourceField?.id ===
+          firstCandidate.junctionConfig.sourceField?.id &&
+        junctionConfig.targetFields.length === 1 &&
+        junctionConfig.targetFields[0].id === firstTargetField.id &&
+        junctionConfig.isMorphRelation &&
+        morphTargetObjectMetadataIds.includes(owningObjectMetadataId),
+    );
+
+  return areCompatibleMorphSiblings ? firstCandidate.junctionConfig : null;
+};
+
+// Only the owning side of a junction carries the junction settings, so reaching the owner
+// from one of its targets means looking for the object whose junction field points here.
+export const resolveReverseJunctionConfig = ({
+  junctionObjectMetadataId,
+  relationTargetFieldMetadataId,
+  sourceObjectMetadataId,
+  objectMetadataItems,
+}: GetReverseJunctionConfigArgs): ReverseJunctionConfigResolution => {
+  if (
+    !isDefined(junctionObjectMetadataId) ||
+    !isDefined(relationTargetFieldMetadataId) ||
+    !isDefined(sourceObjectMetadataId)
+  ) {
+    return { status: 'not-found' };
+  }
+
+  const reverseJunctionConfigCandidates: ReverseJunctionConfigCandidate[] = [];
+  let hasInvalidConfiguredCandidate = false;
+
   for (const relatedObjectMetadata of objectMetadataItems) {
     for (const forwardJunctionField of relatedObjectMetadata.fields) {
-      if (
-        forwardJunctionField.relation?.targetObjectMetadata.id !==
-        junctionObjectMetadataId
-      ) {
-        continue;
-      }
-
-      const junctionConfig = getJunctionConfig({
-        settings: forwardJunctionField.settings,
-        relationObjectMetadataId: junctionObjectMetadataId,
-        relationTargetFieldMetadataId:
-          forwardJunctionField.relation?.targetFieldMetadata.id,
-        sourceObjectMetadataId: relatedObjectMetadata.id,
-        objectMetadataItems,
-      });
-
-      if (
-        !isUsableJunctionConfig(junctionConfig) ||
-        !isDefined(junctionConfig.sourceField)
-      ) {
-        continue;
-      }
-
-      const targetsSourceObject = junctionConfig.targetFields.some(
-        (targetField) =>
-          getTargetObjectMetadataIdsFromField(targetField).includes(
-            sourceObjectMetadataId,
-          ),
+      const relationsTargetingJunction = getFieldRelations(
+        forwardJunctionField,
+      ).filter(
+        (relation) =>
+          relation.targetObjectMetadata.id === junctionObjectMetadataId,
       );
 
-      if (targetsSourceObject) {
-        return {
-          junctionObjectMetadata: junctionConfig.junctionObjectMetadata,
-          relatedObjectMetadata,
-          relationFieldName: junctionConfig.sourceField.name,
-        };
+      for (const relationTargetingJunction of relationsTargetingJunction) {
+        const junctionConfig = getJunctionConfig({
+          settings: forwardJunctionField.settings,
+          relationObjectMetadataId: junctionObjectMetadataId,
+          relationTargetFieldMetadataId:
+            relationTargetingJunction.targetFieldMetadata.id,
+          sourceObjectMetadataId: relatedObjectMetadata.id,
+          objectMetadataItems,
+        });
+
+        const isConfiguredOnOwningSide = hasJunctionTargetFieldId(
+          forwardJunctionField.settings,
+        );
+
+        if (!isUsableJunctionConfig(junctionConfig)) {
+          hasInvalidConfiguredCandidate ||= isConfiguredOnOwningSide;
+          continue;
+        }
+
+        if (!isDefined(junctionConfig.sourceField)) {
+          hasInvalidConfiguredCandidate ||= isConfiguredOnOwningSide;
+          continue;
+        }
+
+        if (
+          !getTargetObjectMetadataIdsFromField(
+            junctionConfig.sourceField,
+          ).includes(relatedObjectMetadata.id)
+        ) {
+          continue;
+        }
+
+        const reverseSourceField = junctionConfig.targetFields.find(
+          (targetField) =>
+            targetField.id === relationTargetFieldMetadataId &&
+            getTargetObjectMetadataIdsFromField(targetField).includes(
+              sourceObjectMetadataId,
+            ),
+        );
+
+        if (!isDefined(reverseSourceField)) {
+          continue;
+        }
+
+        reverseJunctionConfigCandidates.push({
+          junctionConfig: {
+            junctionObjectMetadata: junctionConfig.junctionObjectMetadata,
+            sourceField: reverseSourceField,
+            targetFields: [junctionConfig.sourceField],
+            isMorphRelation:
+              junctionConfig.sourceField.type ===
+              FieldMetadataType.MORPH_RELATION,
+            isValid: true,
+            isConfiguredOnOwningSide,
+          },
+          owningObjectMetadataId: relatedObjectMetadata.id,
+        });
       }
     }
   }
 
-  return null;
+  const configuredReverseJunctionConfigCandidates =
+    reverseJunctionConfigCandidates.filter(
+      ({ junctionConfig }) => junctionConfig.isConfiguredOnOwningSide,
+    );
+  const compatibleConfiguredMorphSiblingConfig =
+    collapseCompatibleMorphSiblingCandidates(
+      configuredReverseJunctionConfigCandidates,
+    );
+
+  const compatibleMorphSiblingConfig = collapseCompatibleMorphSiblingCandidates(
+    reverseJunctionConfigCandidates,
+  );
+
+  if (hasInvalidConfiguredCandidate) {
+    return { status: 'invalid' };
+  }
+
+  if (configuredReverseJunctionConfigCandidates.length > 0) {
+    if (configuredReverseJunctionConfigCandidates.length === 1) {
+      return {
+        status: 'resolved',
+        junctionConfig:
+          configuredReverseJunctionConfigCandidates[0].junctionConfig,
+      };
+    }
+
+    return isDefined(compatibleConfiguredMorphSiblingConfig)
+      ? {
+          status: 'resolved',
+          junctionConfig: compatibleConfiguredMorphSiblingConfig,
+        }
+      : { status: 'ambiguous' };
+  }
+
+  if (reverseJunctionConfigCandidates.length > 1) {
+    return isDefined(compatibleMorphSiblingConfig)
+      ? {
+          status: 'resolved',
+          junctionConfig: compatibleMorphSiblingConfig,
+        }
+      : { status: 'ambiguous' };
+  }
+
+  return reverseJunctionConfigCandidates.length === 1
+    ? {
+        status: 'resolved',
+        junctionConfig: reverseJunctionConfigCandidates[0].junctionConfig,
+      }
+    : { status: 'not-found' };
 };

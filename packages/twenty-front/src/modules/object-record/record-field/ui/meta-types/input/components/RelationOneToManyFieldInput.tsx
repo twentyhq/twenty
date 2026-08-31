@@ -65,9 +65,8 @@ export const RelationOneToManyFieldInput = () => {
       recordId,
     });
 
-  const isJunctionRelation = isUsableJunctionConfig(junctionConfig);
-  const isInvalidJunctionRelation =
-    isDefined(junctionConfig) && !isJunctionRelation;
+  const isJunctionRelation = junctionConfig?.isValid === true;
+  const isInvalidJunctionRelation = junctionConfig?.isValid === false;
 
   const junctionTargetObjectMetadata = (() => {
     if (!junctionConfig || junctionConfig.isMorphRelation) {

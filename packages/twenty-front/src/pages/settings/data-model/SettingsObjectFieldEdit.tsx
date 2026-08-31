@@ -14,7 +14,7 @@ import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFiel
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
-import { getReverseJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getReverseJunctionConfig';
+import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
@@ -109,14 +109,16 @@ export const SettingsObjectFieldEdit = () => {
       fieldMetadataItem.name === newNameDuringSave,
   );
 
-  const isReverseJunctionRelation = isDefined(
-    getReverseJunctionConfig({
-      junctionObjectMetadataId:
-        fieldMetadataItem?.relation?.targetObjectMetadata.id,
+  const isReverseJunctionRelation =
+    resolveJunctionConfig({
+      settings: fieldMetadataItem?.settings,
+      relationObjectMetadataId:
+        fieldMetadataItem?.relation?.targetObjectMetadata.id ?? '',
+      relationTargetFieldMetadataId:
+        fieldMetadataItem?.relation?.targetFieldMetadata.id,
       sourceObjectMetadataId: objectMetadataItem?.id,
       objectMetadataItems,
-    }),
-  );
+    })?.direction === 'reverse';
 
   const getRelationMetadata = useGetRelationMetadata();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();

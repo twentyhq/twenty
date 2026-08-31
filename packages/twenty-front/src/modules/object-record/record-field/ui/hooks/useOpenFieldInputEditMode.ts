@@ -14,8 +14,8 @@ import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/t
 import { isFieldMorphRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationOneToMany';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
+import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -64,7 +64,7 @@ export const useOpenFieldInputEditMode = () => {
           nameSingular === fieldDefinition.metadata.objectMetadataNameSingular,
       )?.id;
       const junctionConfig = isFieldRelationOneToMany(fieldDefinition)
-        ? getJunctionConfig({
+        ? resolveJunctionConfig({
             settings: fieldDefinition.metadata.settings,
             relationObjectMetadataId:
               fieldDefinition.metadata.relationObjectMetadataId,
