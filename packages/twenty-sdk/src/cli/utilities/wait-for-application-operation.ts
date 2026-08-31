@@ -30,24 +30,30 @@ const pollApplicationState = async ({
 }): Promise<ApplicationOperationOutcome> => {
   const deadline = Date.now() + timeoutMs;
 
+  let lastPollError: string | undefined;
+
   while (Date.now() < deadline) {
     const result =
       await apiService.findApplicationInstallState(universalIdentifier);
 
+    // The operation runs server-side whatever happens to this connection, so a
+    // failed read is retried until the deadline instead of ending the wait on
+    // the first hiccup.
     if (!result.success) {
-      return {
-        outcome: 'failure',
-        message: String(result.error ?? 'Failed to fetch application state'),
-      };
-    }
+      lastPollError = String(
+        result.error ?? 'Failed to fetch application state',
+      );
+    } else {
+      lastPollError = undefined;
 
-    const resolvedOutcome = resolveOutcome({
-      state: result.data?.state ?? null,
-      version: result.data?.version ?? null,
-    });
+      const resolvedOutcome = resolveOutcome({
+        state: result.data?.state ?? null,
+        version: result.data?.version ?? null,
+      });
 
-    if (resolvedOutcome) {
-      return resolvedOutcome;
+      if (resolvedOutcome) {
+        return resolvedOutcome;
+      }
     }
 
     await sleep(POLL_INTERVAL_MS);
@@ -55,7 +61,10 @@ const pollApplicationState = async ({
 
   return {
     outcome: 'failure',
-    message: 'Timed out waiting for the application operation to complete',
+    message:
+      lastPollError !== undefined
+        ? `Timed out waiting for the application operation to complete. Last error: ${lastPollError}`
+        : 'Timed out waiting for the application operation to complete',
   };
 };
 

@@ -7,8 +7,10 @@ import { isAbsolute, relative, resolve } from 'path';
 import { Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { buildApplicationFileList } from 'src/engine/core-modules/application/application-install/utils/build-application-file-list.util';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
@@ -174,15 +176,8 @@ export class ApplicationInstallService {
           fromState: ApplicationState.INSTALLED,
           toState: ApplicationState.UPGRADING,
         })
-      : await this.applicationService.create({
-          universalIdentifier: appRegistration.universalIdentifier,
-          name: appRegistration.name,
-          description: appRegistration.description,
-          logo: appRegistration.logo,
-          sourcePath: appRegistration.universalIdentifier,
-          sourceType: appRegistration.sourceType,
-          applicationRegistrationId: appRegistration.id,
-          state: ApplicationState.INSTALLING,
+      : await this.createInstallingApplication({
+          appRegistration,
           workspaceId: params.workspaceId,
         });
 
@@ -209,6 +204,41 @@ export class ApplicationInstallService {
     }
 
     return application;
+  }
+
+  // Two concurrent first installs both read no application, so the loser of the
+  // race is arbitrated by the unique index rather than by the state gate the
+  // other paths use.
+  private async createInstallingApplication({
+    appRegistration,
+    workspaceId,
+  }: {
+    appRegistration: ApplicationRegistrationEntity;
+    workspaceId: string;
+  }): Promise<ApplicationEntity | null> {
+    try {
+      return await this.applicationService.create({
+        universalIdentifier: appRegistration.universalIdentifier,
+        name: appRegistration.name,
+        description: appRegistration.description,
+        logo: appRegistration.logo,
+        sourcePath: appRegistration.universalIdentifier,
+        sourceType: appRegistration.sourceType,
+        applicationRegistrationId: appRegistration.id,
+        state: ApplicationState.INSTALLING,
+        workspaceId,
+      });
+    } catch (error) {
+      if (
+        error instanceof QueryFailedError &&
+        (error as QueryFailedErrorWithCode).code ===
+          POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION
+      ) {
+        return null;
+      }
+
+      throw error;
+    }
   }
 
   async runEnqueuedInstall(params: {

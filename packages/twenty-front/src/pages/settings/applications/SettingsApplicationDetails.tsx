@@ -56,6 +56,7 @@ import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications
 import { applicationHasHttpTriggeredFunctions } from '~/pages/settings/applications/utils/applicationHasHttpTriggeredFunctions';
 import { getDisplayedApplicationVariables } from '~/pages/settings/applications/utils/getDisplayedApplicationVariables';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 const APPLICATION_DETAIL_ID = 'application-detail-id';
 
@@ -75,9 +76,13 @@ export const SettingsApplicationDetails = () => {
   const application = data?.findOneApplication;
 
   // An uninstall — or a failed install rolled back — deletes the row this page
-  // is built on, and the lookup then errors: send the visitor back to the
-  // applications page rather than leaving them on a page without an app.
-  const hasVanished = !loading && (isDefined(error) || !isDefined(application));
+  // is built on, and the lookup then answers NOT_FOUND: send the visitor back to
+  // the applications page rather than leaving them on a page without an app.
+  // Any other error is transient as far as this page knows, so it stays put.
+  const hasVanished =
+    !loading &&
+    (isGraphqlErrorOfType(error, 'NOT_FOUND') ||
+      (!isDefined(error) && !isDefined(application)));
 
   const { connectionProviders } =
     useFindApplicationConnectionProviders(applicationId);
