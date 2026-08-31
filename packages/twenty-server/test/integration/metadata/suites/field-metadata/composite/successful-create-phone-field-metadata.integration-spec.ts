@@ -8,6 +8,7 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { type EachTestingContext } from 'twenty-shared/testing';
 import {
   FieldMetadataType,
+  type AdditionalPhoneMetadata,
   type PhonesMetadata,
 } from 'twenty-shared/types';
 
@@ -16,11 +17,9 @@ const FIELD_NAME = 'phonenumber';
 type TestCaseInputAndExpected = Partial<
   Omit<PhonesMetadata, 'additionalPhones'>
 > & {
-  additionalPhones?: Array<{
-    number?: string | null;
-    callingCode?: string | null;
-    countryCode?: CountryCode | null;
-  }> | null;
+  additionalPhones?: Array<
+    Partial<Record<keyof AdditionalPhoneMetadata, string | null>>
+  > | null;
 };
 
 type CreatePhoneFieldMetadataTestCase = {

@@ -1,11 +1,14 @@
 import {
+  getNamedType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLString,
+  isObjectType,
   type GraphQLInputType,
   type GraphQLOutputType,
 } from 'graphql';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ActorContextInputType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/actor-context.input-type';
 import { AdditionalPhonesInputType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/additional-phones.input-type';
@@ -57,3 +60,21 @@ export const getCompositeSubFieldGqlTypes = (
   propertyName: string,
 ): CompositeSubFieldGqlTypes | undefined =>
   COMPOSITE_SUB_FIELD_GQL_TYPES[compositeFieldMetadataType]?.[propertyName];
+
+export const getCompositeSubFieldObjectTypeName = (
+  compositeFieldMetadataType: FieldMetadataType,
+  propertyName: string,
+): string | undefined => {
+  const outputType = getCompositeSubFieldGqlTypes(
+    compositeFieldMetadataType,
+    propertyName,
+  )?.output;
+
+  if (!isDefined(outputType)) {
+    return undefined;
+  }
+
+  const namedType = getNamedType(outputType);
+
+  return isObjectType(namedType) ? namedType.name : undefined;
+};
