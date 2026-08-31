@@ -79,7 +79,10 @@ export const useStartNodeCreation = () => {
     parentStepId,
     nextStepId,
     connectionOptions,
-  }: StartNodeCreationParams) => {
+  }: Pick<
+    StartNodeCreationParams,
+    'parentStepId' | 'nextStepId' | 'connectionOptions'
+  >) => {
     return (
       workflowInsertStepIds.parentStepId === parentStepId &&
       workflowInsertStepIds.nextStepId === nextStepId &&
