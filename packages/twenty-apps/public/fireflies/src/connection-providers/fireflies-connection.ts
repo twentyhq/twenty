@@ -8,8 +8,10 @@ const firefliesConnectionProviderConfig = {
   displayName: 'Fireflies',
   type: 'oauth' as const,
   oauth: {
-    authorizationEndpoint: 'https://api.fireflies.ai/authorize',
-    tokenEndpoint: 'https://api.fireflies.ai/token',
+    authorizationEndpoint:
+      'https://user-service-rest.fireflies.ai/auth/oidc/authorize',
+    tokenEndpoint:
+      'https://user-service-rest.fireflies.ai/auth/oidc-oauth/token',
     scopes: ['openid', 'meetings.read.user', 'offline_access'],
     clientIdVariable: 'FIREFLIES_CLIENT_ID',
     clientSecretVariable: 'FIREFLIES_CLIENT_SECRET',
