@@ -50,6 +50,7 @@ export default defineApplication({
   applicationVariables: {
     [CALL_RECORDER_NAME_ENV_VAR_NAME]: {
       universalIdentifier: CALL_RECORDER_NAME_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Recorder name',
       description: 'Display name the call recorder uses when it joins a call.',
       isSecret: false,
       type: FieldType.TEXT,
@@ -58,6 +59,7 @@ export default defineApplication({
     [CALL_RECORDER_JOIN_EARLY_MINUTES_ENV_VAR_NAME]: {
       universalIdentifier:
         CALL_RECORDER_JOIN_EARLY_MINUTES_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Join early (minutes)',
       description:
         'How many minutes before the meeting start time the bot should join. Set to 0 to join at the scheduled start time.',
       isSecret: false,
@@ -67,6 +69,7 @@ export default defineApplication({
     [CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME]: {
       universalIdentifier:
         CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Waiting room timeout (seconds)',
       description:
         'How many seconds the bot waits in a meeting lobby before giving up and leaving.',
       isSecret: false,
@@ -76,6 +79,7 @@ export default defineApplication({
     [CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME]: {
       universalIdentifier:
         CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'No-one joined timeout (seconds)',
       description:
         'How many seconds the bot stays in an empty meeting when no one else ever joins.',
       isSecret: false,
@@ -85,6 +89,7 @@ export default defineApplication({
     [CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME]: {
       universalIdentifier:
         CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Everyone left timeout (seconds)',
       description:
         'How many seconds the bot keeps recording after everyone else leaves the meeting.',
       isSecret: false,
@@ -94,6 +99,7 @@ export default defineApplication({
     [CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME]: {
       universalIdentifier:
         CALL_RECORDER_TRANSCRIPT_PROVIDER_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Transcript provider',
       description:
         'Speech-to-text provider used to transcribe recordings once the call ends. Recall.ai transcription needs no extra setup. Gladia re-detects the spoken language per utterance, which transcribes mixed-language calls more accurately, but requires a Gladia API key in the Recall.ai dashboard (Transcription > Gladia) for each region in use.',
       isSecret: false,
@@ -107,6 +113,7 @@ export default defineApplication({
     [CALL_RECORDER_SUMMARY_ENABLED_ENV_VAR_NAME]: {
       universalIdentifier:
         CALL_RECORDER_SUMMARY_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'AI summaries',
       description:
         'Whether AI summaries are generated for call recordings. Set to false to disable and avoid AI credit usage.',
       isSecret: false,
@@ -116,6 +123,7 @@ export default defineApplication({
     [CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT_ENV_VAR_NAME]: {
       universalIdentifier:
         CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Additional summary prompt',
       description:
         'Extra instructions appended to the built-in summary prompt (tone, language, focus areas). Leave empty to use the built-in prompt alone.',
       isSecret: false,
@@ -124,6 +132,7 @@ export default defineApplication({
     [CALL_RECORDER_USE_WORKSPACE_LOGO_ENV_VAR_NAME]: {
       universalIdentifier:
         CALL_RECORDER_USE_WORKSPACE_LOGO_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Use workspace logo',
       description:
         'Whether the bot displays the workspace logo on its camera tile while in a call. Set to false to disable.',
       isSecret: false,
@@ -133,6 +142,7 @@ export default defineApplication({
     [CALL_RECORDER_BOT_IMAGE_BACKGROUND_ENV_VAR_NAME]: {
       universalIdentifier:
         CALL_RECORDER_BOT_IMAGE_BACKGROUND_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Bot camera background color',
       description:
         'Hex color (e.g. #ffffff) drawn behind the workspace logo on the bot camera tile. Defaults to dark gray when unset or invalid.',
       isSecret: false,

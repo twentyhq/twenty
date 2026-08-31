@@ -2,19 +2,13 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
-import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-record/record-table/states/shouldCompactRecordTableFirstColumnComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { RECORD_TABLE_CELL_CONTENT_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableCellContentClassName';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useIcons } from 'twenty-ui/icon';
-import {
-  MOBILE_VIEWPORT,
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledTitle = styled.div<{ hideTitle?: boolean }>`
+const StyledTitle = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
@@ -23,10 +17,6 @@ const StyledTitle = styled.div<{ hideTitle?: boolean }>`
   height: ${themeCssVariables.spacing[8]};
   padding-left: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[2]};
-
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    display: ${({ hideTitle }) => (hideTitle ? 'none' : 'flex')};
-  }
 `;
 
 const StyledIcon = styled.div`
@@ -64,20 +54,8 @@ export const RecordTableColumnHead = ({
     correspondingFieldMetadataItem.foundFieldMetadataItem?.icon,
   );
 
-  const isLabelIdentifier = useAtomFamilySelectorValue(
-    isFieldMetadataItemLabelIdentifierSelector,
-    { fieldMetadataItemId: recordField.fieldMetadataItemId },
-  );
-
-  const shouldCompactRecordTableFirstColumn = useAtomComponentStateValue(
-    shouldCompactRecordTableFirstColumnComponentState,
-  );
-
-  const shouldHideTitle =
-    shouldCompactRecordTableFirstColumn && isLabelIdentifier;
-
   return (
-    <StyledTitle hideTitle={shouldHideTitle}>
+    <StyledTitle className={RECORD_TABLE_CELL_CONTENT_CLASS_NAME}>
       <StyledIcon>
         <Icon size={theme.icon.size.md} />
       </StyledIcon>

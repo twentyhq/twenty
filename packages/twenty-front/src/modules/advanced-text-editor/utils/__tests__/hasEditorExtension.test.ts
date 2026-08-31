@@ -23,4 +23,14 @@ describe('hasEditorExtension', () => {
     expect(hasEditorExtension(editor, 'italic')).toBe(false);
     expect(hasEditorExtension(editor, 'heading')).toBe(false);
   });
+
+  it('should return false for a destroyed editor', () => {
+    const destroyedEditor = new Editor({
+      extensions: [Document, Paragraph, Text, Bold],
+    });
+
+    destroyedEditor.destroy();
+
+    expect(hasEditorExtension(destroyedEditor, 'bold')).toBe(false);
+  });
 });
