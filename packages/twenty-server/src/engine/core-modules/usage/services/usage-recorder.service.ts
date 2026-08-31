@@ -54,19 +54,28 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
     await this.flush();
   }
 
-  async record(workspaceId: string, input: RecordUsageInput): Promise<void> {
+  async record(
+    workspaceId: string,
+    input: RecordUsageInput | RecordUsageInput[],
+  ): Promise<void> {
     if (!this.eventLogEmitterService.isEnabled()) {
       return;
     }
 
+    const inputs = Array.isArray(input) ? input : [input];
+
+    if (inputs.length === 0) {
+      return;
+    }
+
+    const periodStart = await this.resolvePeriodStart(workspaceId);
+
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
       USAGE_RECORDED,
-      [
-        {
-          ...this.withDefaults(input),
-          periodStart: await this.resolvePeriodStart(workspaceId),
-        },
-      ],
+      inputs.map((usageInput) => ({
+        ...this.withDefaults(usageInput),
+        periodStart,
+      })),
       workspaceId,
     );
   }
@@ -114,6 +123,8 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
       return;
     }
 
+    // Concurrent accumulate() calls can refill the drained buffer to capacity
+    // while the dispatch above awaits, so re-buffering here could exceed maxEntries.
     if (this.buffer.isFull) {
       this.logger.error(
         `Dropped usage rollups for ${failedEntries.length}/${entries.length} workspace(s): the buffer is full`,

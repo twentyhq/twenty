@@ -632,24 +632,25 @@ export class LogicFunctionExecutorService {
       applicationId: flatApplication.id,
     };
 
-    await this.usageRecorderService.record(workspaceId, {
-      resourceType: UsageResourceType.LOGIC_FUNCTION,
-      operationType: UsageOperationType.CODE_EXECUTION,
-      creditsUsedMicro: invocationCreditsMicro,
-      quantity: 1,
-      unit: UsageUnit.INVOCATION,
-      resourceId: flatLogicFunction.id,
-      spenders,
-    });
-
-    await this.usageRecorderService.record(workspaceId, {
-      resourceType: UsageResourceType.LOGIC_FUNCTION,
-      operationType: UsageOperationType.CODE_EXECUTION,
-      creditsUsedMicro: durationCreditsMicro,
-      quantity: billedDurationMs,
-      unit: UsageUnit.MILLISECOND,
-      resourceId: flatLogicFunction.id,
-      spenders,
-    });
+    await this.usageRecorderService.record(workspaceId, [
+      {
+        resourceType: UsageResourceType.LOGIC_FUNCTION,
+        operationType: UsageOperationType.CODE_EXECUTION,
+        creditsUsedMicro: invocationCreditsMicro,
+        quantity: 1,
+        unit: UsageUnit.INVOCATION,
+        resourceId: flatLogicFunction.id,
+        spenders,
+      },
+      {
+        resourceType: UsageResourceType.LOGIC_FUNCTION,
+        operationType: UsageOperationType.CODE_EXECUTION,
+        creditsUsedMicro: durationCreditsMicro,
+        quantity: billedDurationMs,
+        unit: UsageUnit.MILLISECOND,
+        resourceId: flatLogicFunction.id,
+        spenders,
+      },
+    ]);
   }
 }
