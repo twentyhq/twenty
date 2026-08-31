@@ -103,13 +103,6 @@ const collectMatches = async (
 export const slackSearchUsersHandler = async (
   payload: SlackRouteBody,
 ): Promise<SlackUserSearchResult> => {
-  const body = asRecord(payload.body) ?? {};
-  const query = readOptionalString(body.query)?.trim().toLowerCase();
-
-  if (!isNonEmptyString(query)) {
-    return { success: true, slackUsers: [] };
-  }
-
   const isAllowed = await currentUserHasWorkspaceMembersPermission();
 
   if (!isAllowed) {
@@ -119,6 +112,13 @@ export const slackSearchUsersHandler = async (
       error:
         'Only members with the workspace members permission can search Slack users.',
     };
+  }
+
+  const body = asRecord(payload.body) ?? {};
+  const query = readOptionalString(body.query)?.trim().toLowerCase();
+
+  if (!isNonEmptyString(query)) {
+    return { success: true, slackUsers: [] };
   }
 
   const slackClientResult = await getSlackClient();

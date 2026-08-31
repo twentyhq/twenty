@@ -7,8 +7,8 @@ import { doesWorkspaceMemberExist } from 'src/logic-functions/data/does-workspac
 import { findSlackUserLink } from 'src/logic-functions/data/find-slack-user-link';
 import { findWorkspaceMemberNameById } from 'src/logic-functions/data/find-workspace-member-name-by-id';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
-import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
 import { type SlackUserLink } from 'src/logic-functions/types/slack-user-link.type';
+import { type SlackUserLinkConsentState } from 'src/logic-functions/types/slack-user-link-consent-state.type';
 import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/utils/current-user-has-workspace-members-permission';
 import { decideSlackUserLinkWrite } from 'src/logic-functions/utils/decide-slack-user-link-write';
 import {
@@ -18,12 +18,11 @@ import {
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { persistSlackUserLink } from 'src/logic-functions/utils/persist-slack-user-link';
-import { resolveLinkTargetByEmail } from 'src/logic-functions/utils/resolve-link-target-by-email';
-import { resolveLinkTargetById } from 'src/logic-functions/utils/resolve-link-target-by-id';
+import { resolveSlackUserLinkTarget } from 'src/logic-functions/utils/resolve-slack-user-link-target';
 import { sendSlackUserLinkConsentDm } from 'src/logic-functions/utils/send-slack-user-link-consent-dm';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
-const RELINK_STATE_NOTES: Record<string, string> = {
+const RELINK_STATE_NOTES: Partial<Record<SlackUserLinkConsentState, string>> = {
   [SLACK_USER_LINK_CONSENT_STATE.DECLINED]:
     'They previously declined, so their choice stands and no new request was sent. Remove the link and add it again to ask them once more.',
   [SLACK_USER_LINK_CONSENT_STATE.PENDING]:
@@ -80,27 +79,6 @@ export const slackSetUserLinkHandler = async (
 
   const slackClient = slackClientResult.client;
 
-  let slackUserId = requestedSlackUserId;
-  let slackTeamId = requestedSlackTeamId;
-  let resolvedName = name;
-  let fetchedIdentity: SlackUserIdentity | undefined;
-
-  if (!isNonEmptyString(slackUserId) && isNonEmptyString(email)) {
-    const emailTarget = await resolveLinkTargetByEmail({
-      slackClient,
-      email,
-      requestedSlackTeamId,
-    });
-
-    if (!emailTarget.success) {
-      return emailTarget;
-    }
-
-    slackUserId = emailTarget.slackUserId;
-    slackTeamId = emailTarget.slackTeamId;
-    resolvedName = resolvedName ?? emailTarget.displayName;
-  }
-
   const installedTeamId = await getInstalledSlackTeamId(slackClient);
 
   if (!isNonEmptyString(installedTeamId)) {
@@ -111,42 +89,25 @@ export const slackSetUserLinkHandler = async (
     };
   }
 
-  if (isNonEmptyString(requestedSlackUserId)) {
-    const idTarget = await resolveLinkTargetById({
-      slackClient,
-      slackUserId: requestedSlackUserId,
-      requestedSlackTeamId,
-      installedSlackTeamId: installedTeamId,
-    });
+  const target = await resolveSlackUserLinkTarget({
+    slackClient,
+    requestedSlackUserId,
+    email,
+    requestedSlackTeamId,
+    requestedName: name,
+    installedSlackTeamId: installedTeamId,
+  });
 
-    if (!idTarget.success) {
-      return idTarget;
-    }
-
-    slackTeamId = idTarget.slackTeamId;
-    fetchedIdentity = idTarget.identity;
-    resolvedName = resolvedName ?? idTarget.identity?.displayName;
+  if (!target.success) {
+    return target;
   }
 
-  if (!isNonEmptyString(slackTeamId)) {
-    slackTeamId = installedTeamId;
-  }
-
-  if (!isNonEmptyString(slackUserId)) {
-    return {
-      success: false,
-      message: 'Could not resolve the Slack user',
-      error: 'Slack did not return a user id for that email.',
-    };
-  }
-
-  if (!isNonEmptyString(slackTeamId)) {
-    return {
-      success: false,
-      message: 'Could not resolve the Slack workspace',
-      error: 'Slack did not return a team id for the installed connection.',
-    };
-  }
+  const {
+    slackUserId,
+    slackTeamId,
+    name: resolvedName,
+    identity: fetchedIdentity,
+  } = target;
 
   const isInInstalledWorkspace = slackTeamId === installedTeamId;
 
@@ -243,7 +204,9 @@ export const slackSetUserLinkHandler = async (
 
   if (!requiresConsent) {
     const stateNote =
-      RELINK_STATE_NOTES[existingLink?.consentState ?? ''] ??
+      (isDefined(existingLink?.consentState)
+        ? RELINK_STATE_NOTES[existingLink.consentState]
+        : undefined) ??
       'It is already active for that workspace member, so no new consent request was sent.';
 
     return {

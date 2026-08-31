@@ -21,6 +21,22 @@ describe('buildWorkspaceMemberSearchFilter', () => {
     );
   });
 
+  it('keeps the marks that appear inside real names', () => {
+    expect(buildWorkspaceMemberSearchFilter("O'Brien")).toBe(
+      "or(name.firstName[ilike]:%O'Brien%,name.lastName[ilike]:%O'Brien%)",
+    );
+    expect(buildWorkspaceMemberSearchFilter('Jean-Luc')).toBe(
+      'or(name.firstName[ilike]:%Jean-Luc%,name.lastName[ilike]:%Jean-Luc%)',
+    );
+    expect(buildWorkspaceMemberSearchFilter('Ada Lovelace')).toContain('Ada');
+  });
+
+  it('drops characters that could reach the query string or the filter grammar', () => {
+    expect(buildWorkspaceMemberSearchFilter('ada&limit=1000')).toBe(
+      'and(or(name.firstName[ilike]:%ada%,name.lastName[ilike]:%ada%),or(name.firstName[ilike]:%limit%,name.lastName[ilike]:%limit%),or(name.firstName[ilike]:%1000%,name.lastName[ilike]:%1000%))',
+    );
+  });
+
   it('returns undefined when nothing searchable remains', () => {
     expect(buildWorkspaceMemberSearchFilter('  %_() ')).toBeUndefined();
     expect(buildWorkspaceMemberSearchFilter('')).toBeUndefined();

@@ -4,6 +4,8 @@ import { RestApiClient } from 'twenty-client-sdk/rest';
 
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
 import { formatWorkspaceMemberName } from 'src/front-components/utils/format-workspace-member-name.util';
+import { isSlackUserLinkConsentState } from 'src/logic-functions/utils/is-slack-user-link-consent-state';
+import { isSlackUserLinkSource } from 'src/logic-functions/utils/is-slack-user-link-source';
 
 const SLACK_USER_LINKS_PAGE_SIZE = 200;
 
@@ -78,8 +80,12 @@ export const useSlackUserLinks = (): SlackUserLinksState => {
           name: record.name ?? null,
           slackUserId: record.slackUserId ?? null,
           slackTeamId: record.slackTeamId ?? null,
-          source: record.source ?? null,
-          consentState: record.consentState ?? null,
+          source: isSlackUserLinkSource(record.source)
+            ? record.source
+            : undefined,
+          consentState: isSlackUserLinkConsentState(record.consentState)
+            ? record.consentState
+            : undefined,
           workspaceMemberId: record.workspaceMemberId ?? null,
           workspaceMemberName: record.workspaceMember
             ? formatWorkspaceMemberName(record.workspaceMember.name)

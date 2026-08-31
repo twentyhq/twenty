@@ -1,14 +1,19 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-const sanitizeSearchTerm = (value: string): string =>
-  value.replace(/[(),[\]:%\\_]/g, ' ').trim();
+// Allow-list rather than strip known delimiters: the REST filter grammar can
+// grow new ones, and a name only ever needs letters, digits and these marks.
+const NON_NAME_CHARACTERS = /[^\p{L}\p{M}\p{N}'\-.]+/gu;
+
+const toSearchWords = (searchTerm: string): string[] =>
+  searchTerm
+    .replace(NON_NAME_CHARACTERS, ' ')
+    .split(' ')
+    .filter(isNonEmptyString);
 
 export const buildWorkspaceMemberSearchFilter = (
   searchTerm: string,
 ): string | undefined => {
-  const words = sanitizeSearchTerm(searchTerm)
-    .split(/\s+/)
-    .filter(isNonEmptyString);
+  const words = toSearchWords(searchTerm);
 
   if (words.length === 0) {
     return undefined;

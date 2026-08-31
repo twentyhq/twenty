@@ -6,6 +6,8 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SLACK_USER_LINK_CONSENT_STATE } from 'src/logic-functions/constants/slack-user-link-consent-state';
 import { SLACK_USER_LINK_SOURCE } from 'src/logic-functions/constants/slack-user-link-source';
+import { type SlackUserLinkConsentState } from 'src/logic-functions/types/slack-user-link-consent-state.type';
+import { type SlackUserLinkSource } from 'src/logic-functions/types/slack-user-link-source.type';
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
 
 const StyledList = styled.div`
@@ -87,22 +89,22 @@ const StyledEmptyState = styled.div`
 
 type TagColor = 'blue' | 'green' | 'orange' | 'red' | 'gray';
 
-const getSourceLabel = (source: string | null): string =>
+const getSourceLabel = (source: SlackUserLinkSource | undefined): string =>
   source === SLACK_USER_LINK_SOURCE.MANUAL
     ? 'Set manually'
     : 'Matched on email';
 
-const getSourceColor = (source: string | null): TagColor =>
+const getSourceColor = (source: SlackUserLinkSource | undefined): TagColor =>
   source === SLACK_USER_LINK_SOURCE.MANUAL ? 'blue' : 'green';
 
-const CONSENT_LABELS: Record<string, string> = {
+const CONSENT_LABELS: Record<SlackUserLinkConsentState, string> = {
   [SLACK_USER_LINK_CONSENT_STATE.ACTIVE]: 'Active',
   [SLACK_USER_LINK_CONSENT_STATE.PENDING]: 'Awaiting consent',
   [SLACK_USER_LINK_CONSENT_STATE.DECLINED]: 'Declined',
   [SLACK_USER_LINK_CONSENT_STATE.ADMIN_SET]: 'Admin set',
 };
 
-const CONSENT_COLORS: Record<string, TagColor> = {
+const CONSENT_COLORS: Record<SlackUserLinkConsentState, TagColor> = {
   [SLACK_USER_LINK_CONSENT_STATE.ACTIVE]: 'green',
   [SLACK_USER_LINK_CONSENT_STATE.PENDING]: 'orange',
   [SLACK_USER_LINK_CONSENT_STATE.DECLINED]: 'red',
@@ -148,7 +150,10 @@ export const SlackUserLinksList = ({
         </StyledEmptyState>
       )}
       {slackUserLinks.map((slackUserLink) => {
-        const consentState = slackUserLink.consentState ?? undefined;
+        // A link written before consent existed carries no state and still
+        // lends its member access, so show it for what it is rather than blank.
+        const consentState =
+          slackUserLink.consentState ?? SLACK_USER_LINK_CONSENT_STATE.ACTIVE;
         const isPending =
           consentState === SLACK_USER_LINK_CONSENT_STATE.PENDING;
 
@@ -170,13 +175,10 @@ export const SlackUserLinksList = ({
             </StyledDetails>
             <StyledRight>
               <StyledBadges>
-                {isDefined(consentState) &&
-                  isDefined(CONSENT_LABELS[consentState]) && (
-                    <Tag
-                      color={CONSENT_COLORS[consentState] ?? 'gray'}
-                      text={CONSENT_LABELS[consentState]}
-                    />
-                  )}
+                <Tag
+                  color={CONSENT_COLORS[consentState]}
+                  text={CONSENT_LABELS[consentState]}
+                />
                 <Tag
                   color={getSourceColor(slackUserLink.source)}
                   text={getSourceLabel(slackUserLink.source)}

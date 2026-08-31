@@ -2,6 +2,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type SlackUserLink } from 'src/logic-functions/types/slack-user-link.type';
+import { isSlackUserLinkConsentState } from 'src/logic-functions/utils/is-slack-user-link-consent-state';
+import { isSlackUserLinkSource } from 'src/logic-functions/utils/is-slack-user-link-source';
 
 export const findSlackUserLink = async (
   client: CoreApiClient,
@@ -36,7 +38,9 @@ export const findSlackUserLink = async (
   return {
     id: node.id,
     workspaceMemberId: node.workspaceMemberId ?? undefined,
-    source: node.source ?? undefined,
-    consentState: node.consentState ?? undefined,
+    source: isSlackUserLinkSource(node.source) ? node.source : undefined,
+    consentState: isSlackUserLinkConsentState(node.consentState)
+      ? node.consentState
+      : undefined,
   };
 };

@@ -75,6 +75,14 @@ describe('slackSearchUsersHandler', () => {
     expect(usersListMock).not.toHaveBeenCalled();
   });
 
+  it('should refuse an empty query from someone without the permission rather than answering it', async () => {
+    currentUserHasWorkspaceMembersPermissionMock.mockResolvedValue(false);
+
+    const result = await slackSearchUsersHandler(buildPayload('   '));
+
+    expect(result.success).toBe(false);
+  });
+
   it('should match by name or email, case-insensitively', async () => {
     const result = await slackSearchUsersHandler(buildPayload('ADA'));
 

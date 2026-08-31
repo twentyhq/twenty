@@ -28,9 +28,12 @@ vi.mock('src/logic-functions/data/update-slack-user-link', () => ({
   updateSlackUserLink: updateSlackUserLinkMock,
 }));
 
-vi.mock('src/logic-functions/utils/update-slack-message-via-response-url', () => ({
-  updateSlackMessageViaResponseUrl: updateSlackMessageViaResponseUrlMock,
-}));
+vi.mock(
+  'src/logic-functions/utils/update-slack-message-via-response-url',
+  () => ({
+    updateSlackMessageViaResponseUrl: updateSlackMessageViaResponseUrlMock,
+  }),
+);
 
 const buildPayload = (
   decision: 'APPROVE' | 'DECLINE',
@@ -73,6 +76,7 @@ describe('slackUserLinkConsentHandler', () => {
       consentState: 'PENDING',
     });
     updateSlackUserLinkMock.mockResolvedValue(undefined);
+    updateSlackMessageViaResponseUrlMock.mockResolvedValue({ success: true });
   });
 
   it('should activate the link when the invited user approves', async () => {

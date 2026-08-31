@@ -21,10 +21,12 @@ export const resolveLinkTargetByEmail = async ({
   slackClient,
   email,
   requestedSlackTeamId,
+  installedSlackTeamId,
 }: {
   slackClient: WebClient;
   email: string;
   requestedSlackTeamId: string | undefined;
+  installedSlackTeamId: string;
 }): Promise<EmailLinkTarget> => {
   let resolvedUser: ResolvedSlackUser | undefined;
 
@@ -59,10 +61,26 @@ export const resolveLinkTargetByEmail = async ({
     };
   }
 
+  // Slack resolved the account but would not say which workspace it is in, so a
+  // team id other than the installed one is a claim nothing can corroborate -
+  // and claiming another workspace is what skips the consent request.
+  if (
+    isNonEmptyString(requestedSlackTeamId) &&
+    !isNonEmptyString(resolvedUser.slackTeamId) &&
+    requestedSlackTeamId !== installedSlackTeamId
+  ) {
+    return {
+      success: false,
+      message: 'Could not verify the Slack workspace for that user',
+      error:
+        'Slack did not confirm which workspace this user belongs to, so that team id cannot be accepted. Leave the team id blank to use the installed workspace.',
+    };
+  }
+
   return {
     success: true,
     slackUserId: resolvedUser.slackUserId,
-    slackTeamId: requestedSlackTeamId ?? resolvedUser.slackTeamId,
+    slackTeamId: resolvedUser.slackTeamId ?? requestedSlackTeamId,
     displayName: resolvedUser.displayName,
   };
 };

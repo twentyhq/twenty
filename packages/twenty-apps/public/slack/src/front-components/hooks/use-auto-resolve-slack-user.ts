@@ -11,7 +11,6 @@ import { type SlackResolvedUser } from 'src/logic-functions/types/slack-resolved
 const AUTO_RESOLVE_DEBOUNCE_MS = 600;
 
 type RawSlackIdentity = {
-  email: string;
   slackUserId: string;
   slackTeamId: string;
 };
