@@ -32,10 +32,6 @@ export class ObjectNavigationCommandOnCreateSideEffectHandlerService extends Met
       return { status: 'noop' };
     }
 
-    // The command menu is one flat ordered list, so the next free position is a
-    // workspace-wide maximum: no aggregator narrows it. Offsetting by the index
-    // of the object in the creation batch keeps a batch from double-booking a
-    // position, since every invocation reads the same synced maximum.
     const syncedMaxPosition = Object.values(
       relatedFlatEntityMaps.flatCommandMenuItemMaps.byUniversalIdentifier,
     )
