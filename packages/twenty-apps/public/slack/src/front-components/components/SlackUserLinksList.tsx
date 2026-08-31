@@ -132,8 +132,6 @@ export const SlackUserLinksList = ({
     null,
   );
 
-  // One operation at a time: each hook tracks a single in-flight id, so a
-  // second row's action would clobber the first row's marker mid-flight.
   const isActionInFlight =
     isDefined(removingLinkId) || isDefined(resendingLinkId);
 
@@ -199,8 +197,6 @@ export const SlackUserLinksList = ({
                   )}
                   <StyledActionButton
                     type="button"
-                    // Removing discards the recorded consent, so a lone
-                    // misclick must not be enough; the second click confirms.
                     onClick={() => {
                       if (removalArmedLinkId !== slackUserLink.id) {
                         setRemovalArmedLinkId(slackUserLink.id);

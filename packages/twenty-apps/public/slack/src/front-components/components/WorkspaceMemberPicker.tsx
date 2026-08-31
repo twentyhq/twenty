@@ -50,8 +50,6 @@ export const WorkspaceMemberPicker = ({
   disabled,
 }: WorkspaceMemberPickerProps) => {
   const [searchTerm, setSearchTerm] = useState('');
-  // True after the selection is clicked open, so the returning search input
-  // takes focus; never on first render, which would steal the page focus.
   const [isReopening, setIsReopening] = useState(false);
   const { options, isSearching, searchErrorMessage } =
     useWorkspaceMemberSearch(searchTerm);
@@ -83,8 +81,6 @@ export const WorkspaceMemberPicker = ({
       options={options}
       isSearching={isSearching}
       onSelect={(member) => {
-        // The next mount of the search input is a fresh form, not a reopen,
-        // so it must not steal focus.
         setIsReopening(false);
         onSelect(member);
       }}

@@ -22,7 +22,6 @@ export const parseSlackToolResult = ({
 
   return {
     success: record.success,
-    // A missing message would render an empty snackbar; fall back instead.
     message: isNonEmptyString(record.message)
       ? record.message
       : fallbackMessage,

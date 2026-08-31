@@ -81,8 +81,6 @@ export const SlackUserLinkForm = ({
   const [slackUserId, setSlackUserId] = useState('');
   const [slackTeamId, setSlackTeamId] = useState('');
   const [isConnectUser, setIsConnectUser] = useState(false);
-  // True after the picked Slack user is clicked open, so the returning search
-  // input takes focus; never on first render.
   const [isSlackSearchReopening, setIsSlackSearchReopening] = useState(false);
 
   const {
@@ -99,7 +97,6 @@ export const SlackUserLinkForm = ({
   const canSubmit =
     isDefined(selectedMember) && isDefined(resolvedUser) && !isSubmitting;
 
-  // A team-less side only rules the link out when both sides know their team.
   const existingLink = !isDefined(resolvedUser)
     ? undefined
     : existingLinks.find(
@@ -186,8 +183,6 @@ export const SlackUserLinkForm = ({
               resolvedUser={resolvedUser}
               onChangeRequest={() => {
                 setIsSlackSearchReopening(true);
-                // The typed display name belonged to this pick; a different
-                // person must not silently inherit it.
                 setName('');
                 clearResolution();
               }}

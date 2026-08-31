@@ -107,8 +107,6 @@ export const SearchDropdownPicker = <TOption,>({
         onChange={(event) => onSearchTermChange(event.target.value)}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        // Enter picks the top match instead of submitting the form the search
-        // sits in, which would silently do nothing for a partial name.
         onKeyDown={(event) => {
           if (event.key !== 'Enter') {
             return;
@@ -127,9 +125,8 @@ export const SearchDropdownPicker = <TOption,>({
       />
       {isDropdownOpen && (
         <StyledDropdown
-          // preventDefault keeps the input focused for any press inside the
-          // dropdown, scrollbar included; without it the blur closes and
-          // unmounts the list mid-interaction.
+          // Keeps the input focused for presses inside the dropdown; the
+          // blur would unmount the list mid-interaction.
           onMouseDown={(event) => event.preventDefault()}
         >
           {options.map((option) => {
@@ -139,9 +136,8 @@ export const SearchDropdownPicker = <TOption,>({
               <StyledOption
                 key={getOptionKey(option)}
                 type="button"
-                // Select on mousedown: the input's blur fires before a click
-                // would, closing the dropdown and unmounting this option, so
-                // onClick never runs in the front-component sandbox.
+                // The sandbox fires the input's blur before click, so select
+                // on mousedown or the option unmounts before onClick runs.
                 onMouseDown={() => handleSelect(option)}
               >
                 <StyledOptionName>{getOptionName(option)}</StyledOptionName>
