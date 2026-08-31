@@ -6,6 +6,7 @@ type ParsedSlackEntityDetailsEvent =
   | {
       detailsRequest: {
         triggerId: string;
+        slackUserId: string;
         entityUrl: string | undefined;
         externalRef: { id: string; type: string | undefined } | undefined;
       };
@@ -39,11 +40,11 @@ export const parseSlackEntityDetailsEvent = (
     return { detailsRequest: null, skipReason: 'Event has no trigger_id' };
   }
 
-  // The event schema is young; accept the entity URL and external_ref under
-  // the spellings Slack has used so far.
-  const entityUrl = [event.link?.url, event.entity_url, event.url].find(
-    isNonEmptyString,
-  );
+  if (!isNonEmptyString(event.user)) {
+    return { detailsRequest: null, skipReason: 'Event has no user' };
+  }
+
+  const entityUrl = [event.link?.url, event.entity_url].find(isNonEmptyString);
 
   const externalRefId = event.external_ref?.id;
   const externalRef = isNonEmptyString(externalRefId)
@@ -56,6 +57,11 @@ export const parseSlackEntityDetailsEvent = (
     : undefined;
 
   return {
-    detailsRequest: { triggerId: event.trigger_id, entityUrl, externalRef },
+    detailsRequest: {
+      triggerId: event.trigger_id,
+      slackUserId: event.user,
+      entityUrl,
+      externalRef,
+    },
   };
 };

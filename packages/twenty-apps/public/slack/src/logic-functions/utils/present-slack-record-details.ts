@@ -1,4 +1,5 @@
 import { type WebClient } from '@slack/web-api';
+import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
@@ -6,10 +7,12 @@ import { findSlackUnfurlRecord } from 'src/logic-functions/data/find-slack-unfur
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { type SlackRecordLink } from 'src/logic-functions/types/slack-record-link.type';
 import { buildSlackRecordUnfurlEntity } from 'src/logic-functions/utils/build-slack-record-unfurl-entity';
+import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
 import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { parseSlackEntityDetailsEvent } from 'src/logic-functions/utils/parse-slack-entity-details-event';
 import { parseTwentyRecordLinks } from 'src/logic-functions/utils/parse-twenty-record-links';
+import { resolveSlackRunAsWorkspaceMemberId } from 'src/logic-functions/utils/resolve-slack-run-as-workspace-member-id';
 
 type SlackRecordDetailsResult = {
   ok: boolean;
@@ -69,7 +72,8 @@ export const presentSlackRecordDetails = async (
     return { ok: true, skipped: parsed.skipReason };
   }
 
-  const { triggerId, entityUrl, externalRef } = parsed.detailsRequest;
+  const { triggerId, slackUserId, entityUrl, externalRef } =
+    parsed.detailsRequest;
 
   const slackClientResult = await getSlackClient();
 
@@ -78,6 +82,33 @@ export const presentSlackRecordDetails = async (
   }
 
   const slackClient = slackClientResult.client;
+  const client = new CoreApiClient();
+
+  // Anyone who can see the card can request the flexpane — including
+  // external users in Slack Connect channels — and it carries the full
+  // field set, so it is gated on the viewer like the unfurl is gated on
+  // the poster.
+  const identity = await fetchSlackUserIdentity({
+    client: slackClient,
+    slackUserId,
+  });
+
+  const workspaceMemberId = await resolveSlackRunAsWorkspaceMemberId({
+    client,
+    slackClient,
+    identity,
+  });
+
+  if (!isNonEmptyString(workspaceMemberId)) {
+    await presentDetailsError({
+      slackClient,
+      triggerId,
+      message: 'Record details are only available to Twenty workspace members.',
+    });
+
+    return { ok: true, skipped: 'Viewer does not map to a workspace member' };
+  }
+
   const workspaceBaseUrl = await fetchWorkspaceBaseUrl();
 
   if (!isDefined(workspaceBaseUrl)) {
@@ -113,10 +144,16 @@ export const presentSlackRecordDetails = async (
   }
 
   const record = await findSlackUnfurlRecord({
-    client: new CoreApiClient(),
+    client,
     objectNameSingular: recordLink.objectNameSingular,
     recordId: recordLink.recordId,
-  }).catch(() => undefined);
+  }).catch((error) => {
+    console.warn(
+      `[slack] record fetch for the flexpane failed (${recordLink.objectNameSingular} ${recordLink.recordId}): ${error instanceof Error ? error.message : String(error)}`,
+    );
+
+    return undefined;
+  });
 
   // The flexpane shows the full field set, read with the app's role-bounded
   // access; per-viewer gating is deferred until flexpane actions land.

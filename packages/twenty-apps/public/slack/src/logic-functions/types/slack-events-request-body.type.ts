@@ -31,7 +31,6 @@ type SlackInboundEvent = {
   external_ref?: { id?: string; type?: string };
   link?: SlackSharedLink;
   entity_url?: string;
-  url?: string;
 };
 
 export type SlackEventsRequestBody = {
