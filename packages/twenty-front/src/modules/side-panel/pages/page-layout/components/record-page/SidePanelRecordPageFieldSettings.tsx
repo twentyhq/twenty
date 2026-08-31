@@ -36,7 +36,6 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconLayoutSidebarRight,
-  IconList,
   IconListDetails,
   IconPencil,
 } from 'twenty-ui/icon';
@@ -262,7 +261,7 @@ export const SidePanelRecordPageFieldSettings = () => {
                 <CommandMenuItem
                   id="fields"
                   label={t`Fields`}
-                  Icon={IconList}
+                  Icon={IconListDetails}
                   hasSubMenu
                   onClick={handleNavigateToFields}
                   description={t`${visibleFieldsCount} visible fields`}

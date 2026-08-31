@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
 import { useLingui } from '@lingui/react/macro';
@@ -12,12 +14,17 @@ import { AIChatNoMoreBillingCreditsBanner } from '@/ai/components/AIChatNoMoreBi
 import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
+import { AiChatDictationButton } from '@/ai/dictation/components/AiChatDictationButton';
+import { AiChatDictationEffect } from '@/ai/dictation/components/AiChatDictationEffect';
+import { AiChatDictationHint } from '@/ai/dictation/components/AiChatDictationHint';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatEditorFocusEffect } from '@/ai/components/internal/AiChatEditorFocusEffect';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
+import { useInsertDictatedText } from '@/ai/dictation/hooks/useInsertDictatedText';
+import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
@@ -96,6 +103,28 @@ const StyledEditorWrapper = styled.div<{ isMobile: boolean }>`
   }
 `;
 
+// Collapsing this spacer is what slides the composer from the middle of an
+// empty page down to the bottom once the conversation starts.
+const StyledComposerBottomSpacer = styled.div`
+  flex-basis: 0;
+  flex-grow: 0;
+  flex-shrink: 0;
+  transition-duration: calc(${themeCssVariables.animation.duration.fast} * 1s);
+  transition-property: flex-grow;
+  transition-timing-function: ease-out;
+
+  // Only the collapse is animated: the composer becomes centered again on a
+  // thread switch, where sliding it back up would trail the content change.
+  &.is-centered {
+    flex-grow: 1;
+    transition-property: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: none;
+  }
+`;
+
 const StyledButtonsContainer = styled.div`
   align-items: center;
   display: flex;
@@ -118,6 +147,7 @@ const StyledRightButtonsContainer = styled.div`
 export const AiChatEditorSection = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
+  const isComposerCentered = useIsAiChatComposerCentered();
   const hasReachedAiChatCreditsCap = useHasReachedAiChatCreditsCap();
   const { enabledModels } = useWorkspaceAiModelAvailability();
   const hasNoEnabledModels = enabledModels.length === 0;
@@ -140,6 +170,9 @@ export const AiChatEditorSection = () => {
 
   const { editor, handleSendAndClear } = useAiChatEditor();
 
+  const insertDictatedText = useInsertDictatedText(editor);
+  const [dictationInterimText, setDictationInterimText] = useState('');
+
   const pendingQuestion = useAtomComponentSelectorValue(
     agentChatPendingQuestionComponentSelector,
   );
@@ -147,7 +180,11 @@ export const AiChatEditorSection = () => {
   return (
     <>
       <AiChatEditorFocusEffect editor={editor} />
-      <AiChatEmptyState editor={editor} />
+      <AiChatDictationEffect
+        onInterimText={setDictationInterimText}
+        onFinalText={insertDictatedText}
+      />
+      <AiChatEmptyState isCentered={isComposerCentered} />
       <AiChatStandaloneError />
       <AiChatSkeletonLoader />
 
@@ -167,9 +204,11 @@ export const AiChatEditorSection = () => {
             <StyledEditorWrapper isMobile={isMobile}>
               <EditorContent editor={editor} />
             </StyledEditorWrapper>
+            <AiChatDictationHint interimText={dictationInterimText} />
             <StyledButtonsContainer>
               <StyledLeftButtonsContainer>
                 <AgentChatFileUploadButton />
+                <AiChatDictationButton />
                 <AiChatContextUsageButton />
               </StyledLeftButtonsContainer>
               <StyledRightButtonsContainer>
@@ -194,6 +233,9 @@ export const AiChatEditorSection = () => {
           </StyledInputBox>
         )}
       </StyledInputArea>
+      <StyledComposerBottomSpacer
+        className={isComposerCentered ? 'is-centered' : undefined}
+      />
     </>
   );
 };

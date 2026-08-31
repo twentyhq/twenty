@@ -5,6 +5,7 @@ import { type SyncableEntityOptions } from './syncableEntityOptionsType';
 export type TimelineActivityTypeEmitThroughManifest = {
   relationFieldUniversalIdentifier: string;
   triggerFieldUniversalIdentifiers?: string[];
+  happensAtFieldUniversalIdentifier?: string;
 };
 
 export type TimelineActivityTypeEmitManifest = {

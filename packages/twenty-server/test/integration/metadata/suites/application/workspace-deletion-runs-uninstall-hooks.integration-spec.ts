@@ -83,6 +83,7 @@ describe('Workspace deletion runs application uninstall hooks', () => {
       .mockResolvedValue({
         data: {},
         duration: 1,
+        billedDurationMs: 1,
         logs: '',
         status: LogicFunctionExecutionStatus.SUCCESS,
       });

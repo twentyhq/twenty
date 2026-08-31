@@ -17,6 +17,7 @@ import {
 } from 'twenty-shared/workflow';
 
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { getPickRecordLoadBalanceConfigError } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-pick-record-load-balance-config-error.util';
 import {
@@ -43,6 +44,7 @@ const OBJECT_TARGETING_ACTION_TYPES = new Set<WorkflowActionType>([
 export class WorkflowValidationWorkspaceService {
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly workflowMetadataReadService: WorkflowMetadataReadService,
     private readonly workflowSchemaWorkspaceService: WorkflowSchemaWorkspaceService,
   ) {}
 
@@ -284,7 +286,7 @@ export class WorkflowValidationWorkspaceService {
 
     try {
       const logicFunction =
-        await this.workflowCommonWorkspaceService.getLogicFunctionById({
+        await this.workflowMetadataReadService.getLogicFunctionById({
           logicFunctionId,
           workspaceId,
         });
@@ -325,7 +327,7 @@ export class WorkflowValidationWorkspaceService {
     }
 
     const { objectIdByNameSingular, flatFieldMetadataMaps } =
-      await this.workflowCommonWorkspaceService.getFlatEntityMaps(workspaceId);
+      await this.workflowMetadataReadService.getFlatEntityMaps(workspaceId);
 
     const issues: WorkflowValidationIssue[] = [];
 

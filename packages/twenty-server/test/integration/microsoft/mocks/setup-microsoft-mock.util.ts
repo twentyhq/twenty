@@ -32,7 +32,7 @@ export type MicrosoftMock = {
   createdCalendarEvents: Event[];
   serveCalendarEvents: (
     events: Event[],
-    options?: { deltaToken?: string },
+    options?: { deltaToken?: string; removedEventIds?: string[] },
   ) => void;
   failSubscriptionRenewal: () => void;
   failMessageDelta: (failure: MicrosoftGraphFailure) => void;
@@ -154,8 +154,11 @@ export const setupMicrosoftMock = ({
     createdCalendarEvents,
     serveCalendarEvents: (
       events,
-      { deltaToken = 'mock-calendar-delta-token' } = {},
-    ) => httpMock.use(...microsoftCalendarEventsHandlers(events, deltaToken)),
+      { deltaToken = 'mock-calendar-delta-token', removedEventIds = [] } = {},
+    ) =>
+      httpMock.use(
+        ...microsoftCalendarEventsHandlers(events, deltaToken, removedEventIds),
+      ),
     failSubscriptionRenewal: () =>
       httpMock.use(
         ...microsoftWebhookSubscriptionHandlers(subscriptionStore, {

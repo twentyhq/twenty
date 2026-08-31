@@ -20,6 +20,7 @@ const makeNode = () => ({
   skills: ['Salesforce', 'HubSpot'],
   city: 'Paris',
   country: 'France',
+  superPartner: false,
   partnerLinks: {
     edges: [] as Array<{
       node: {
@@ -193,9 +194,9 @@ describe('mapPartnerForMarketplace', () => {
       },
     ];
 
-    expect(mapPartnerForMarketplace(node, 'profile').portfolio[0].imageUrl).toBe(
-      'https://file.example.com/cover.png',
-    );
+    expect(
+      mapPartnerForMarketplace(node, 'profile').portfolio[0].imageUrl,
+    ).toBe('https://file.example.com/cover.png');
   });
 
   it('prefers the pasted coverImageUrl over the uploaded coverImage file in portfolio', () => {
@@ -216,9 +217,9 @@ describe('mapPartnerForMarketplace', () => {
       },
     ];
 
-    expect(mapPartnerForMarketplace(node, 'profile').portfolio[0].imageUrl).toBe(
-      'https://paste.example.com/cover.png',
-    );
+    expect(
+      mapPartnerForMarketplace(node, 'profile').portfolio[0].imageUrl,
+    ).toBe('https://paste.example.com/cover.png');
   });
 
   it('falls back to the coverImage file url when coverImageUrl is absent', () => {
@@ -239,9 +240,9 @@ describe('mapPartnerForMarketplace', () => {
       },
     ];
 
-    expect(mapPartnerForMarketplace(node, 'profile').portfolio[0].imageUrl).toBe(
-      'https://file.example.com/cover.png',
-    );
+    expect(
+      mapPartnerForMarketplace(node, 'profile').portfolio[0].imageUrl,
+    ).toBe('https://file.example.com/cover.png');
   });
 
   it('sorts services by sortOrder ascending with nulls last', () => {
@@ -286,5 +287,20 @@ describe('mapPartnerForMarketplace', () => {
         description: 'Weekly operating cadence support.',
       },
     ]);
+  });
+
+  it('copies superPartner onto list and profile payloads', () => {
+    const node = makeNode();
+    node.superPartner = true;
+
+    expect(mapPartnerForMarketplace(node, 'list').superPartner).toBe(true);
+    expect(mapPartnerForMarketplace(node, 'profile').superPartner).toBe(true);
+  });
+
+  it('coerces a missing superPartner to false', () => {
+    const node = makeNode();
+    delete (node as { superPartner?: boolean }).superPartner;
+
+    expect(mapPartnerForMarketplace(node, 'list').superPartner).toBe(false);
   });
 });

@@ -23,7 +23,6 @@ import {
 } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -37,10 +36,7 @@ import {
 } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { MenuItem, MenuItemSelect, MenuItemToggle } from 'twenty-ui/navigation';
-import {
-  FeatureFlagKey,
-  ViewCalendarLayout,
-} from '~/generated-metadata/graphql';
+import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownLayoutContent = () => {
   const { t } = useLingui();
@@ -65,9 +61,6 @@ export const ObjectOptionsDropdownLayoutContent = () => {
 
   const recordIndexCalendarLayout = useAtomComponentStateValue(
     recordIndexCalendarLayoutComponentState,
-  );
-  const isListViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_LIST_VIEW_ENABLED,
   );
   const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
@@ -119,7 +112,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
 
   const selectableItemIdArray = [
     ViewType.TABLE,
-    ...(isListViewEnabled ? [ViewType.LIST] : []),
+    ViewType.LIST,
     ...(!isDefaultView ? [ViewType.CALENDAR] : []),
     ...(isDefaultView ? [] : [ViewType.KANBAN]),
     ...(currentView?.type === ViewType.KANBAN ? ['Group'] : []),
@@ -175,26 +168,24 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 }}
               />
             </SelectableListItem>
-            {isListViewEnabled && (
-              <SelectableListItem
-                itemId={ViewType.LIST}
-                onEnter={() => {
-                  setAndPersistViewType(ViewType.LIST);
+            <SelectableListItem
+              itemId={ViewType.LIST}
+              onEnter={() => {
+                setAndPersistViewType(ViewType.LIST);
+              }}
+            >
+              <MenuItemSelect
+                LeftIcon={viewTypeIconMapping(ViewType.LIST)}
+                text={t(getViewTypeLabel(ViewType.LIST))}
+                selected={currentView?.type === ViewType.LIST}
+                focused={selectedItemId === ViewType.LIST}
+                onClick={async () => {
+                  if (currentView?.type !== ViewType.LIST) {
+                    await setAndPersistViewType(ViewType.LIST);
+                  }
                 }}
-              >
-                <MenuItemSelect
-                  LeftIcon={viewTypeIconMapping(ViewType.LIST)}
-                  text={t(getViewTypeLabel(ViewType.LIST))}
-                  selected={currentView?.type === ViewType.LIST}
-                  focused={selectedItemId === ViewType.LIST}
-                  onClick={async () => {
-                    if (currentView?.type !== ViewType.LIST) {
-                      await setAndPersistViewType(ViewType.LIST);
-                    }
-                  }}
-                />
-              </SelectableListItem>
-            )}
+              />
+            </SelectableListItem>
             <SelectableListItem
               itemId={ViewType.CALENDAR}
               onEnter={() => {

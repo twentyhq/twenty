@@ -18,7 +18,7 @@ import { RecordTableGroupSectionLastDynamicFillingCell } from '@/object-record/r
 
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
-import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE } from '@/object-record/record-table/constants/RecordTableLabelIdentifierColumnWidthOnMobile';
+import { useRecordTableFirstColumnWidthOverride } from '@/object-record/record-table/hooks/useRecordTableFirstColumnWidthOverride';
 
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
@@ -35,7 +35,6 @@ import {
   isDefined,
   sumByProperty,
 } from 'twenty-shared/utils';
-import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledTrContainer = styled.div`
   display: flex;
@@ -124,16 +123,17 @@ export const RecordTableRecordGroupSection = () => {
     visibleRecordFieldsComponentSelector,
   );
 
-  const isMobile = useIsMobile();
+  const firstColumnWidthOverride = useRecordTableFirstColumnWidthOverride();
 
-  const widthOfLabelIdentifierRecordField = isMobile
-    ? RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE
-    : (visibleRecordFields.find(
-        findByProperty(
-          'fieldMetadataItemId',
-          labelIdentifierFieldMetadataItem?.id ?? '',
-        ),
-      )?.size ?? RECORD_TABLE_COLUMN_MIN_WIDTH);
+  const widthOfLabelIdentifierRecordField =
+    firstColumnWidthOverride ??
+    visibleRecordFields.find(
+      findByProperty(
+        'fieldMetadataItemId',
+        labelIdentifierFieldMetadataItem?.id ?? '',
+      ),
+    )?.size ??
+    RECORD_TABLE_COLUMN_MIN_WIDTH;
 
   const [
     isRecordGroupTableSectionToggled,

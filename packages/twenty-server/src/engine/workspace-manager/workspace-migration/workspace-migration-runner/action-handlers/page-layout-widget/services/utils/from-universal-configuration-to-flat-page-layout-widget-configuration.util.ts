@@ -329,6 +329,19 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
       };
     }
 
+    case WidgetConfigurationType.FORM_FIELD: {
+      const { fieldMetadataId: fieldMetadataUniversalIdentifier, ...rest } =
+        universalConfiguration;
+
+      return {
+        ...rest,
+        fieldMetadataId: resolveFieldMetadataIdOrThrow({
+          fieldMetadataUniversalIdentifier,
+          flatFieldMetadataMaps,
+        }),
+      };
+    }
+
     case WidgetConfigurationType.FIELD: {
       const {
         fieldMetadataId: fieldMetadataUniversalIdentifier,

@@ -85,7 +85,9 @@ describe('notifyListedBrief', () => {
   });
 
   it('omits empty fields and falls back to the name as description', async () => {
-    queryMock.mockResolvedValue(briefResult({ id: OPP, name: 'Acme — marketplace brief' }));
+    queryMock.mockResolvedValue(
+      briefResult({ id: OPP, name: 'Acme — marketplace brief' }),
+    );
     await notifyListedBrief(OPP);
     const embed = postWebhookMock.mock.calls[0][1].embeds[0];
     expect(embed.description).toBe('Acme — marketplace brief');

@@ -146,4 +146,52 @@ describe('Manifest sync - page layout default tab', () => {
       secondTabRow.id,
     );
   }, 60000);
+
+  it('should clear defaultTabToFocusOnMobileAndSidePanel when a second sync removes it from the manifest', async () => {
+    await syncApplication({
+      manifest: buildManifest({
+        pageLayouts: [
+          {
+            universalIdentifier: TEST_PAGE_LAYOUT_ID,
+            name: 'Test Page',
+            type: PageLayoutType.STANDALONE_PAGE,
+            defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier:
+              TEST_FIRST_TAB_ID,
+            tabs: [
+              {
+                universalIdentifier: TEST_FIRST_TAB_ID,
+                title: 'Overview',
+                position: 0,
+              },
+            ],
+          },
+        ],
+      }),
+      expectToFail: false,
+    });
+
+    await syncApplication({
+      manifest: buildManifest({
+        pageLayouts: [
+          {
+            universalIdentifier: TEST_PAGE_LAYOUT_ID,
+            name: 'Test Page',
+            type: PageLayoutType.STANDALONE_PAGE,
+            tabs: [
+              {
+                universalIdentifier: TEST_FIRST_TAB_ID,
+                title: 'Overview',
+                position: 0,
+              },
+            ],
+          },
+        ],
+      }),
+      expectToFail: false,
+    });
+
+    const pageLayoutRow = await findTestPageLayoutRow();
+
+    expect(pageLayoutRow.defaultTabToFocusOnMobileAndSidePanelId).toBeNull();
+  }, 60000);
 });

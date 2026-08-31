@@ -8,9 +8,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { type AppConnectionDto } from 'src/engine/core-modules/application/connection-provider/connections/dtos/app-connection.dto';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { resolveWorkspaceMemberId } from 'src/engine/core-modules/user-workspace/utils/resolve-workspace-member-id.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type ListArgs = {
   applicationId: string;
@@ -40,10 +43,13 @@ export class ApplicationConnectionsListService {
   constructor(
     private readonly refreshTokensService: ConnectedAccountRefreshTokensService,
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(ConnectionProviderEntity)
     private readonly oauthProviderRepository: Repository<ConnectionProviderEntity>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
   async list({
@@ -90,8 +96,18 @@ export class ApplicationConnectionsListService {
     });
 
     const refreshed = await Promise.all(
-      accounts.map((account) =>
-        this.refreshAndMap(account, workspaceId, providerById),
+      accounts.map(async (account) =>
+        this.refreshAndMap(
+          account,
+          workspaceId,
+          providerById,
+          await resolveWorkspaceMemberId({
+            userWorkspaceId: account.userWorkspaceId,
+            workspaceId,
+            userWorkspaceRepository: this.userWorkspaceRepository,
+            workspaceCacheService: this.workspaceCacheService,
+          }),
+        ),
       ),
     );
 
@@ -141,6 +157,12 @@ export class ApplicationConnectionsListService {
       account,
       workspaceId,
       new Map([[provider.id, provider]]),
+      await resolveWorkspaceMemberId({
+        userWorkspaceId: account.userWorkspaceId,
+        workspaceId,
+        userWorkspaceRepository: this.userWorkspaceRepository,
+        workspaceCacheService: this.workspaceCacheService,
+      }),
     );
 
     if (!isDefined(dto)) {
@@ -191,6 +213,7 @@ export class ApplicationConnectionsListService {
     account: ConnectedAccountEntity,
     workspaceId: string,
     providerById: Map<string, ConnectionProviderEntity>,
+    workspaceMemberId: string | null,
   ): Promise<AppConnectionDto | null> {
     const provider = isDefined(account.connectionProviderId)
       ? providerById.get(account.connectionProviderId)
@@ -221,6 +244,7 @@ export class ApplicationConnectionsListService {
         handle: account.handle,
         visibility: account.visibility as 'user' | 'workspace',
         userWorkspaceId: account.userWorkspaceId,
+        workspaceMemberId,
         accessToken: this.connectedAccountTokenEncryptionService.decrypt({
           ciphertext: encryptedTokens.accessToken,
           workspaceId,

@@ -108,6 +108,11 @@ export type FieldConfiguration = {
   isUIEditable?: boolean;
 };
 
+export type FormFieldConfiguration = {
+  configurationType: 'FORM_FIELD';
+  fieldMetadataId: string;
+};
+
 export type FieldsConfiguration = {
   configurationType: 'FIELDS';
   viewId?: SerializedRelation | null;
@@ -203,6 +208,7 @@ export type PageLayoutWidgetConfiguration =
   | RecordTableConfiguration
   | FieldConfiguration
   | FieldsConfiguration
+  | FormFieldConfiguration
   | FieldRichTextConfiguration
   | StandaloneRichTextConfiguration
   | IframeConfiguration

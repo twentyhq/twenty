@@ -147,7 +147,7 @@ export class BillingUsageService {
   ): Promise<BillingResourceCreditUsageDTO> {
     const [usedCredits, rolloverCredits] = await Promise.all([
       this.getCurrentPeriodCreditsUsed(workspaceId, periodStart),
-      this.billingCreditGrantService.getSpendableCreditsMicro(workspaceId),
+      this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
     ]);
 
     const grantedCredits =
@@ -196,7 +196,7 @@ export class BillingUsageService {
     const resourceUsageCap = this.getResourceUsageCap(subscription);
 
     const [creditBalance, usage] = await Promise.all([
-      this.billingCreditGrantService.getSpendableCreditsMicro(workspaceId),
+      this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
       this.getCurrentPeriodCreditsUsed(
         subscription.workspaceId,
         subscription.currentPeriodStart,
