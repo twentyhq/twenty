@@ -1,7 +1,9 @@
 import { isNull } from '@sniptt/guards';
 
+import { isTerminalRecallBotSnapshot } from 'src/logic-functions/domain/is-terminal-recall-bot-snapshot.util';
 import { cancelRecallBot } from 'src/logic-functions/recall-api/cancel-recall-bot.util';
 import { ejectRecallBot } from 'src/logic-functions/recall-api/eject-recall-bot.util';
+import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
 
 export const cancelOrEjectRecallBot = async (
   externalBotId: string,
@@ -23,6 +25,12 @@ export const cancelOrEjectRecallBot = async (
     }
 
     failureMessage = ejectResult.errorMessage;
+
+    // A finished bot rejects both commands forever; that is a completed
+    // removal, not a failure to keep retrying.
+    if (await isTerminalRecallBot(externalBotId)) {
+      return true;
+    }
   }
 
   console.warn(
@@ -30,4 +38,10 @@ export const cancelOrEjectRecallBot = async (
   );
 
   return false;
+};
+
+const isTerminalRecallBot = async (externalBotId: string): Promise<boolean> => {
+  const botResult = await getRecallBot({ externalBotId });
+
+  return botResult.ok && isTerminalRecallBotSnapshot(botResult.bot);
 };

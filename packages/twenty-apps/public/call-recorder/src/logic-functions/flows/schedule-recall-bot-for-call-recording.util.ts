@@ -6,6 +6,7 @@ import { CallRecordingStatus } from 'src/logic-functions/constants/call-recordin
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
 import { buildRecallBotAutomaticVideoOutput } from 'src/logic-functions/domain/build-recall-bot-automatic-video-output.util';
 import { buildRecallRoutingMetadata } from 'src/logic-functions/domain/build-recall-routing-metadata.util';
+import { claimCallRecordingBotSchedule } from 'src/logic-functions/data/claim-call-recording-bot-schedule.util';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
@@ -75,14 +76,18 @@ export const scheduleRecallBotForCallRecording = async (
       ? freshCallRecording.botScheduleAttemptedAt
       : undefined;
 
-  await updateCallRecording(client, {
+  const claimed = await claimCallRecordingBotSchedule(client, {
     id: callRecording.id,
-    data: {
-      botScheduleAttemptedAt:
-        recordedAttemptTimestamp ?? new Date().toISOString(),
-      botScheduleIdempotencyKey: idempotencyKey,
-    },
+    expectedBotScheduleIdempotencyKey:
+      freshCallRecording.botScheduleIdempotencyKey,
+    botScheduleAttemptedAt:
+      recordedAttemptTimestamp ?? new Date().toISOString(),
+    botScheduleIdempotencyKey: idempotencyKey,
   });
+
+  if (!claimed) {
+    return false;
+  }
 
   const scheduleResult = await scheduleRecallBot({
     meetingUrl,

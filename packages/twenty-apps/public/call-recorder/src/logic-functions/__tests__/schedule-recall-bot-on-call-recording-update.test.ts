@@ -36,7 +36,9 @@ type HandlerEvent = Parameters<
   typeof scheduleRecallBotOnCallRecordingUpdateHandler
 >[0];
 
-const buildUpdateEvent = (overrides: Partial<HandlerEvent> = {}): HandlerEvent =>
+const buildUpdateEvent = (
+  overrides: Partial<HandlerEvent> = {},
+): HandlerEvent =>
   ({
     name: 'callRecording.updated',
     recordId: 'call-recording-1',
@@ -110,9 +112,19 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
     );
     queryMock.mockReset();
     mutationMock.mockReset();
-    mutationMock.mockImplementation(async (mutation: any) => ({
-      updateCallRecording: { id: mutation.updateCallRecording.__args.id },
-    }));
+    mutationMock.mockImplementation(async (mutation: any) => {
+      if (mutation.updateCallRecordings !== undefined) {
+        return {
+          updateCallRecordings: [
+            { id: mutation.updateCallRecordings.__args.filter.id.eq },
+          ],
+        };
+      }
+
+      return {
+        updateCallRecording: { id: mutation.updateCallRecording.__args.id },
+      };
+    });
     fetchMock.mockReset();
     fetchMock.mockImplementation(async (requestUrl: string) => {
       if (requestUrl === RECALL_CREATE_BOT_URL) {
@@ -150,9 +162,8 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
   it('schedules a bot when an update clears the bot id of a requested recording', async () => {
     stubPendingCallRecordingQueries();
 
-    const result = await scheduleRecallBotOnCallRecordingUpdateHandler(
-      buildUpdateEvent(),
-    );
+    const result =
+      await scheduleRecallBotOnCallRecordingUpdateHandler(buildUpdateEvent());
 
     expect(result).toEqual({
       callRecordingId: 'call-recording-1',
@@ -256,9 +267,8 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
       ]),
     }));
 
-    const result = await scheduleRecallBotOnCallRecordingUpdateHandler(
-      buildUpdateEvent(),
-    );
+    const result =
+      await scheduleRecallBotOnCallRecordingUpdateHandler(buildUpdateEvent());
 
     expect(result).toEqual({
       callRecordingId: 'call-recording-1',
@@ -313,9 +323,8 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
       ]),
     }));
 
-    const result = await scheduleRecallBotOnCallRecordingUpdateHandler(
-      buildUpdateEvent(),
-    );
+    const result =
+      await scheduleRecallBotOnCallRecordingUpdateHandler(buildUpdateEvent());
 
     expect(result).toEqual({
       callRecordingId: 'call-recording-1',

@@ -105,9 +105,53 @@ class FakeCoreApiClient {
       return { updateCallRecording: { id } };
     }
 
+    if (mutation.updateCallRecordings !== undefined) {
+      const { filter, data } = mutation.updateCallRecordings.__args;
+      const claimedCallRecording = claimCallRecordingInFake(
+        this.callRecordings,
+        filter,
+      );
+
+      if (claimedCallRecording === undefined) {
+        return { updateCallRecordings: [] };
+      }
+
+      Object.assign(claimedCallRecording, data);
+
+      return { updateCallRecordings: [{ id: claimedCallRecording.id }] };
+    }
+
     throw new Error(`Unhandled mutation: ${JSON.stringify(mutation)}`);
   }
 }
+
+const claimCallRecordingInFake = (
+  callRecordings: CallRecordingNode[],
+  filter: any,
+): CallRecordingNode | undefined => {
+  const callRecording = callRecordings.find(
+    (candidate) => candidate.id === filter.id.eq,
+  );
+
+  if (callRecording === undefined) {
+    return undefined;
+  }
+
+  const matchesExpectedIdempotencyKey =
+    filter.botScheduleIdempotencyKey === undefined ||
+    (filter.botScheduleIdempotencyKey.is === 'NULL'
+      ? (callRecording.botScheduleIdempotencyKey ?? null) === null
+      : callRecording.botScheduleIdempotencyKey ===
+        filter.botScheduleIdempotencyKey.eq);
+
+  const isClaimable =
+    callRecording.recordingRequestStatus === filter.recordingRequestStatus.eq &&
+    callRecording.status === filter.status.eq &&
+    (callRecording.externalBotId ?? null) === null &&
+    matchesExpectedIdempotencyKey;
+
+  return isClaimable ? callRecording : undefined;
+};
 
 const buildConnection = <Node>(nodes: Node[]) => ({
   pageInfo: { hasNextPage: false, endCursor: undefined },
@@ -276,9 +320,7 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(lookupParameters.get('metadata__twentyWorkspaceId')).toBe(
       WORKSPACE_ID,
     );
-    expect(lookupParameters.has('metadata__twentyCallRecordingId')).toBe(
-      false,
-    );
+    expect(lookupParameters.has('metadata__twentyCallRecordingId')).toBe(false);
     expect(lookupParameters.has('join_at_after')).toBe(false);
     expect(lookupParameters.has('join_at_before')).toBe(false);
     expect(lookupParameters.getAll('status')).toEqual([

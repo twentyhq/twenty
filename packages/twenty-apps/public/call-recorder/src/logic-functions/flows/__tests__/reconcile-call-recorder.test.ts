@@ -68,6 +68,8 @@ type CallRecordingNode = {
   externalBotId?: string | null;
   externalRecordingId?: string | null;
   callRecorderFailureReason?: string | null;
+  botScheduleAttemptedAt?: string | null;
+  botScheduleIdempotencyKey?: string | null;
 };
 
 type FakeCoreApiClientFixture = {
@@ -166,6 +168,40 @@ class FakeCoreApiClient {
           id,
         },
       };
+    }
+
+    if (mutation.updateCallRecordings !== undefined) {
+      const { filter, data } = mutation.updateCallRecordings.__args;
+      const callRecording = this.callRecordings.find(
+        (candidate) => candidate.id === filter.id.eq,
+      );
+
+      const matchesExpectedIdempotencyKey =
+        filter.botScheduleIdempotencyKey === undefined ||
+        (filter.botScheduleIdempotencyKey.is === 'NULL'
+          ? (callRecording?.botScheduleIdempotencyKey ?? null) === null
+          : callRecording?.botScheduleIdempotencyKey ===
+            filter.botScheduleIdempotencyKey.eq);
+
+      const isClaimable =
+        callRecording !== undefined &&
+        callRecording.recordingRequestStatus ===
+          filter.recordingRequestStatus.eq &&
+        callRecording.status === filter.status.eq &&
+        (callRecording.externalBotId ?? null) === null &&
+        matchesExpectedIdempotencyKey;
+
+      if (!isClaimable) {
+        return { updateCallRecordings: [] };
+      }
+
+      Object.assign(callRecording, data);
+      this.mutations.push({
+        name: 'updateCallRecordings',
+        args: { filter, data },
+      });
+
+      return { updateCallRecordings: [{ id: callRecording.id }] };
     }
 
     throw new Error(`Unhandled mutation: ${JSON.stringify(mutation)}`);
