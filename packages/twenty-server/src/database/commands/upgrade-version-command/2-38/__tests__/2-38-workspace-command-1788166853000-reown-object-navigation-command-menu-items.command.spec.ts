@@ -1,6 +1,7 @@
 import { getSystemNavigationCommandMenuItemUniversalIdentifier } from 'twenty-shared/application';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { getLegacyNavigationCommandUniversalIdentifier } from 'src/database/commands/upgrade-version-command/utils/build-legacy-navigation-flat-command-menu-item.util';
 import { ReownObjectNavigationCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788166853000-reown-object-navigation-command-menu-items.command';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -17,9 +18,14 @@ const DERIVED_UNIVERSAL_IDENTIFIER = getSystemNavigationCommandMenuItemUniversal
   objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
 });
 
+const LEGACY_UNIVERSAL_IDENTIFIER = getLegacyNavigationCommandUniversalIdentifier(
+  OBJECT_UNIVERSAL_IDENTIFIER,
+);
+
 type WorkspaceCommandMenuItem = {
   id: string;
   universalIdentifier: string;
+  applicationUniversalIdentifier?: string;
   engineComponentKey?: EngineComponentKey;
   payload?: object | null;
   navigationTargetObjectMetadataUniversalIdentifier?: string | null;
@@ -30,6 +36,7 @@ const buildFlatCommandMenuItem = (
   commandMenuItem: WorkspaceCommandMenuItem,
 ) => ({
   engineComponentKey: EngineComponentKey.NAVIGATION,
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   payload: { objectMetadataItemId: OBJECT_ID },
   navigationTargetObjectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
   isSystemSideEffect: true,
@@ -116,7 +123,7 @@ describe('ReownObjectNavigationCommandMenuItemsCommand', () => {
     mockWorkspaceCache([
       buildFlatCommandMenuItem({
         id: 'command-id',
-        universalIdentifier: 'legacy-v5-identifier',
+        universalIdentifier: LEGACY_UNIVERSAL_IDENTIFIER,
       }),
     ]);
 
@@ -134,7 +141,7 @@ describe('ReownObjectNavigationCommandMenuItemsCommand', () => {
     mockWorkspaceCache([
       buildFlatCommandMenuItem({
         id: 'command-id',
-        universalIdentifier: 'legacy-v5-identifier',
+        universalIdentifier: LEGACY_UNIVERSAL_IDENTIFIER,
         isSystemSideEffect: false,
       }),
     ]);
@@ -190,7 +197,7 @@ describe('ReownObjectNavigationCommandMenuItemsCommand', () => {
     mockWorkspaceCache([
       buildFlatCommandMenuItem({
         id: 'legacy-command-id',
-        universalIdentifier: 'legacy-v5-identifier',
+        universalIdentifier: LEGACY_UNIVERSAL_IDENTIFIER,
       }),
       buildFlatCommandMenuItem({
         id: 'holder-command-id',
@@ -209,7 +216,7 @@ describe('ReownObjectNavigationCommandMenuItemsCommand', () => {
     mockWorkspaceCache([
       buildFlatCommandMenuItem({
         id: 'legacy-command-id',
-        universalIdentifier: 'legacy-v5-identifier',
+        universalIdentifier: LEGACY_UNIVERSAL_IDENTIFIER,
         isSystemSideEffect: false,
       }),
       buildFlatCommandMenuItem({
@@ -233,7 +240,7 @@ describe('ReownObjectNavigationCommandMenuItemsCommand', () => {
     mockWorkspaceCache([
       buildFlatCommandMenuItem({
         id: 'command-id',
-        universalIdentifier: 'legacy-v5-identifier',
+        universalIdentifier: LEGACY_UNIVERSAL_IDENTIFIER,
       }),
     ]);
 

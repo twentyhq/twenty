@@ -9,6 +9,7 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { invalidateCommandMenuItemReownCache } from 'src/database/commands/upgrade-version-command/2-38/utils/invalidate-command-menu-item-reown-cache.util';
+import { getLegacyNavigationCommandUniversalIdentifier } from 'src/database/commands/upgrade-version-command/utils/build-legacy-navigation-flat-command-menu-item.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -27,7 +28,7 @@ type ReownUpdate = {
 @Command({
   name: 'upgrade:2-38:reown-object-navigation-command-menu-items',
   description:
-    'Re-own the object navigation command menu items (engineComponentKey NAVIGATION with an { objectMetadataItemId } payload) onto the derived (application, object) universal identifier (getSystemNavigationCommandMenuItemUniversalIdentifier, keyed on the application of the target object), retiring the bespoke v5 namespace derivation that was keyed on the object alone. Only universalIdentifier changes (plus isSystemSideEffect for legacy rows still carrying false): position, isPinned, hotKeys and overrides are left untouched so the re-own is workspace-invisible. Path-based NAVIGATION commands (payload: { path }) share the engine key but are not object-keyed and are not touched. Idempotent: rows already holding their derived identifier only get the flag reconciled, and a derived identifier already held by another row keeps its identifier with a warning, isSystemSideEffect still reconciled so the object delete cascade keeps owning it.',
+    'Move the object navigation command menu items off the retired v5 namespace derivation, which was keyed on the object alone, onto the derived (application, object) universal identifier. Walks objects rather than command menu items and takes only the row sitting on the legacy identifier of the object and belonging to the same application as that object, so a command an application authored for an object is never adopted. Only universalIdentifier changes, plus isSystemSideEffect for rows the 2.12 backfill left false because they belong to the workspace custom application: position, isPinned, hotKeys and overrides are untouched so the re-own is workspace-invisible. Idempotent, since a converged object no longer has a row on its legacy identifier. A derived identifier already held by another row keeps its holder, the legacy row keeps its identifier with a warning, and the flag is still reconciled.',
 })
 export class ReownObjectNavigationCommandMenuItemsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -109,92 +110,68 @@ export class ReownObjectNavigationCommandMenuItemsCommand extends ProvisionedWor
     flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
   }): ReownUpdate[] {
     const commandMenuItemUpdates: ReownUpdate[] = [];
-    const claimedUniversalIdentifiers = new Set<string>();
 
-    for (const flatCommandMenuItem of Object.values(
-      flatCommandMenuItemMaps.byUniversalIdentifier,
+    for (const flatObjectMetadata of Object.values(
+      flatObjectMetadataMaps.byUniversalIdentifier,
     )) {
+      if (!isDefined(flatObjectMetadata)) {
+        continue;
+      }
+
+      // Eligible means minted by the retired scheme, which only the engine ever
+      // produced: a caller could not have derived that value. Requiring the row
+      // to belong to the object's own application keeps an application that
+      // authored a command for someone else's object out of the re-own.
+      const legacyFlatCommandMenuItem =
+        flatCommandMenuItemMaps.byUniversalIdentifier[
+          getLegacyNavigationCommandUniversalIdentifier(
+            flatObjectMetadata.universalIdentifier,
+          )
+        ];
+
       if (
-        !isDefined(flatCommandMenuItem) ||
-        !isDefined(
-          flatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier,
-        )
+        !isDefined(legacyFlatCommandMenuItem) ||
+        legacyFlatCommandMenuItem.applicationUniversalIdentifier !==
+          flatObjectMetadata.applicationUniversalIdentifier
       ) {
         continue;
       }
 
-      const flatObjectMetadata =
-        flatObjectMetadataMaps.byUniversalIdentifier[
-          flatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier
-        ];
-
-      if (!isDefined(flatObjectMetadata)) {
-        this.logger.warn(
-          `Missing object for navigation command menu item ${flatCommandMenuItem.id} in workspace ${workspaceId}, skipping`,
-        );
-        continue;
-      }
-
-      const derivedUniversalIdentifier = getSystemNavigationCommandMenuItemUniversalIdentifier(
-        {
+      const derivedUniversalIdentifier =
+        getSystemNavigationCommandMenuItemUniversalIdentifier({
           objectMetadataApplicationUniversalIdentifier:
             flatObjectMetadata.applicationUniversalIdentifier,
           objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
-        },
-      );
+        });
 
-      if (
-        flatCommandMenuItem.universalIdentifier === derivedUniversalIdentifier
-      ) {
-        claimedUniversalIdentifiers.add(derivedUniversalIdentifier);
+      const update: ReownUpdate['update'] = {};
 
-        if (!flatCommandMenuItem.isSystemSideEffect) {
-          commandMenuItemUpdates.push({
-            id: flatCommandMenuItem.id,
-            update: { isSystemSideEffect: true },
-          });
-        }
-        continue;
+      // Rows owned by the workspace custom application were left false by the
+      // 2.12 backfill, which only flagged rows of other applications.
+      if (!legacyFlatCommandMenuItem.isSystemSideEffect) {
+        update.isSystemSideEffect = true;
       }
 
-      // Any holder of the derived identifier makes the re-own impossible:
-      // universalIdentifier is unique per workspace.
-      const isDerivedUniversalIdentifierTaken =
+      if (
         isDefined(
           flatCommandMenuItemMaps.byUniversalIdentifier[
             derivedUniversalIdentifier
           ],
-        ) || claimedUniversalIdentifiers.has(derivedUniversalIdentifier);
-
-      if (isDerivedUniversalIdentifierTaken) {
+        )
+      ) {
         this.logger.warn(
-          `Derived identifier ${derivedUniversalIdentifier} of navigation command menu item ${flatCommandMenuItem.id} is already held by another command menu item in workspace ${workspaceId}, skipping`,
+          `Derived identifier ${derivedUniversalIdentifier} of navigation command menu item ${legacyFlatCommandMenuItem.id} is already held by another command menu item in workspace ${workspaceId}, keeping its identifier`,
         );
-
-        // The identifier stays as it is, but the row still targets the object
-        // and is engine-owned: without the flag the object delete cascade
-        // would leave it behind, pointing at an object that no longer exists.
-        if (!flatCommandMenuItem.isSystemSideEffect) {
-          commandMenuItemUpdates.push({
-            id: flatCommandMenuItem.id,
-            update: { isSystemSideEffect: true },
-          });
-        }
-
-        continue;
+      } else {
+        update.universalIdentifier = derivedUniversalIdentifier;
       }
 
-      claimedUniversalIdentifiers.add(derivedUniversalIdentifier);
-
-      const update: ReownUpdate['update'] = {
-        universalIdentifier: derivedUniversalIdentifier,
-      };
-
-      if (!flatCommandMenuItem.isSystemSideEffect) {
-        update.isSystemSideEffect = true;
+      if (Object.keys(update).length > 0) {
+        commandMenuItemUpdates.push({
+          id: legacyFlatCommandMenuItem.id,
+          update,
+        });
       }
-
-      commandMenuItemUpdates.push({ id: flatCommandMenuItem.id, update });
     }
 
     return commandMenuItemUpdates;
