@@ -1,1 +1,0 @@
-export const MAX_TRANSACTIONAL_RECIPIENTS = 10;

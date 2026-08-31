@@ -33,6 +33,7 @@ import { EmailingDomainSenderService } from 'src/modules/emailing/services/email
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
+import { countDeliveredRecipients } from 'src/engine/core-modules/emailing-domain/utils/count-delivered-recipients.util';
 
 @UseGuards(
   WorkspaceAuthGuard,
@@ -78,10 +79,7 @@ export class EmailingSendResolver {
     await this.emailBillingService.billSentEmails({
       workspaceId: currentWorkspace.id,
       userWorkspaceId,
-      sentEmailCount:
-        result.deliveredRecipients.to.length +
-        result.deliveredRecipients.cc.length +
-        result.deliveredRecipients.bcc.length,
+      sentEmailCount: countDeliveredRecipients(result.deliveredRecipients),
     });
 
     return { messageId: result.messageId };
@@ -144,10 +142,7 @@ export class EmailingSendResolver {
 
     await this.emailBillingService.billSentEmails({
       workspaceId: currentWorkspace.id,
-      sentEmailCount:
-        result.deliveredRecipients.to.length +
-        result.deliveredRecipients.cc.length +
-        result.deliveredRecipients.bcc.length,
+      sentEmailCount: countDeliveredRecipients(result.deliveredRecipients),
     });
 
     return { messageId: result.messageId };

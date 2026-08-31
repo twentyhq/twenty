@@ -18,6 +18,7 @@ import { type MessageOutboundDriver } from 'src/modules/messaging/message-outbou
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
+import { countDeliveredRecipients } from 'src/engine/core-modules/emailing-domain/utils/count-delivered-recipients.util';
 
 @Injectable()
 export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
@@ -66,10 +67,7 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
 
     await this.emailBillingService.billSentEmails({
       workspaceId: connectedAccount.workspaceId,
-      sentEmailCount:
-        result.deliveredRecipients.to.length +
-        result.deliveredRecipients.cc.length +
-        result.deliveredRecipients.bcc.length,
+      sentEmailCount: countDeliveredRecipients(result.deliveredRecipients),
     });
 
     return {

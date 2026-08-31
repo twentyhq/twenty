@@ -1,6 +1,3 @@
-import { UNSUBSCRIBE_RATE_LIMIT_WINDOW_MS } from 'src/modules/emailing/constants/unsubscribe-rate-limit-window-ms.constant';
-import { UNSUBSCRIBE_RATE_LIMIT_MAX_REQUESTS } from 'src/modules/emailing/constants/unsubscribe-rate-limit-max-requests.constant';
-import { UNSUBSCRIBE_RESUBSCRIBE_MAX_AGE_MS } from 'src/engine/core-modules/emailing-domain/constants/unsubscribe-resubscribe-max-age-ms.constant';
 import { isUnsubscribeTokenExpired } from 'src/engine/core-modules/emailing-domain/utils/is-unsubscribe-token-expired.util';
 import {
   BadRequestException,
@@ -49,6 +46,9 @@ type UnsubscribeFormBody = {
   unsubscribeTopicId?: string | string[];
 };
 
+const RATE_LIMIT = { maxRequests: 120, windowMs: 60_000 };
+const RESUBSCRIBE_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
+
 @Controller(`${ApiPath.Emailing}/unsubscribe`)
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
 export class UnsubscribeController {
@@ -63,8 +63,8 @@ export class UnsubscribeController {
       await this.throttlerService.tokenBucketThrottleOrThrow(
         bucketKey,
         1,
-        UNSUBSCRIBE_RATE_LIMIT_MAX_REQUESTS,
-        UNSUBSCRIBE_RATE_LIMIT_WINDOW_MS,
+        RATE_LIMIT.maxRequests,
+        RATE_LIMIT.windowMs,
       );
     } catch (error) {
       if (error instanceof ThrottlerException) {
@@ -155,7 +155,7 @@ export class UnsubscribeController {
       canResubscribe: !isUnsubscribeTokenExpired({
         issuedAt: payload.issuedAt,
         now: Date.now(),
-        maxAgeMs: UNSUBSCRIBE_RESUBSCRIBE_MAX_AGE_MS,
+        maxAgeMs: RESUBSCRIBE_MAX_AGE_MS,
       }),
     });
 

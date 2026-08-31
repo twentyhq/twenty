@@ -1,6 +1,6 @@
 import { RECONCILE_CAMPAIGN_STATS_CRON_PATTERN } from 'src/modules/emailing/constants/reconcile-campaign-stats-cron-pattern.constant';
 import { CAMPAIGN_JOB_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-job-retry-limit.constant';
-import { RECONCILE_WORKSPACE_CAMPAIGN_STATS_JOB } from 'src/engine/core-modules/emailing-domain/constants/reconcile-workspace-campaign-stats-job.constant';
+import { RECONCILE_WORKSPACE_CAMPAIGN_STATS_JOB } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';

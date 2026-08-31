@@ -1,4 +1,4 @@
-import { RECONCILE_WORKSPACE_CAMPAIGN_STATS_JOB } from 'src/engine/core-modules/emailing-domain/constants/reconcile-workspace-campaign-stats-job.constant';
+import { RECONCILE_WORKSPACE_CAMPAIGN_STATS_JOB } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { type ReconcileWorkspaceCampaignStatsJobData } from 'src/engine/core-modules/emailing-domain/types/reconcile-workspace-campaign-stats-job-data.type';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';

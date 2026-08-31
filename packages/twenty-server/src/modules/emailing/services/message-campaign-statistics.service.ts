@@ -1,5 +1,3 @@
-import { CAMPAIGN_STATS_RECONCILIATION_WINDOW_MS } from 'src/engine/core-modules/emailing-domain/constants/campaign-stats-reconciliation-window-ms.constant';
-import { CAMPAIGN_STATS_REFRESH_LOCK_TTL_MS } from 'src/engine/core-modules/emailing-domain/constants/campaign-stats-refresh-lock-ttl-ms.constant';
 import { CAMPAIGN_JOB_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-job-retry-limit.constant';
 import { Injectable } from '@nestjs/common';
 
@@ -30,6 +28,9 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 
+const RECONCILIATION_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+const REFRESH_LOCK_TTL_MS = CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS + 2_000;
+
 @Injectable()
 export class MessageCampaignStatisticsService {
   constructor(
@@ -56,7 +57,7 @@ export class MessageCampaignStatisticsService {
 
     const acquired = await this.cacheStorageService.acquireLock(
       lockKey,
-      CAMPAIGN_STATS_REFRESH_LOCK_TTL_MS,
+      REFRESH_LOCK_TTL_MS,
     );
 
     if (!acquired) {
@@ -132,7 +133,7 @@ export class MessageCampaignStatisticsService {
             { status: MessageCampaignStatus.SENDING },
             {
               sentAt: MoreThanOrEqual(
-                new Date(Date.now() - CAMPAIGN_STATS_RECONCILIATION_WINDOW_MS),
+                new Date(Date.now() - RECONCILIATION_WINDOW_MS),
               ),
             },
           ],
