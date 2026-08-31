@@ -20,7 +20,7 @@ export const WORKFLOW_CORE_TABLE_COLUMNS: CoreObjectTableColumn<CoreWorkflow>[] 
     },
     {
       fieldName: 'statuses',
-      fieldLabel: msg`Status`,
+      fieldLabel: msg`Statuses`,
       align: 'left',
       gridTrack: '160px',
       renderCell: (workflow) => (

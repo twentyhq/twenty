@@ -37,7 +37,7 @@ export const CORE_WORKFLOW_FILTER_FIELDS: CoreWorkflowFilterFieldDefinition[] =
     },
     {
       key: CoreWorkflowFilterFieldKey.STATUSES,
-      label: msg`Status`,
+      label: msg`Statuses`,
       filterType: 'MULTI_SELECT',
       Icon: IconStatusChange,
       options: CORE_WORKFLOW_STATUS_FILTER_OPTIONS,

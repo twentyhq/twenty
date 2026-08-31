@@ -2,6 +2,7 @@ import { ViewFilterOperand, type StepFilter } from 'twenty-shared/types';
 import {
   isDefined,
   isRecordFilterOperandExpectingValue,
+  parseJson,
 } from 'twenty-shared/utils';
 
 import { findCoreWorkflowFilterField } from '@/object-core/workflows/utils/findCoreWorkflowFilterField';
@@ -31,6 +32,12 @@ const CORE_WORKFLOW_FILTER_OPERAND_BY_VIEW_FILTER_OPERAND: Partial<
   [ViewFilterOperand.IS_RELATIVE]: CoreWorkflowFilterOperand.IS_RELATIVE,
 };
 
+const isEmptyValue = (value: string): boolean => {
+  const parsedValue = parseJson<unknown>(value);
+
+  return Array.isArray(parsedValue) ? parsedValue.length === 0 : value === '';
+};
+
 const toCoreWorkflowFilterRule = (
   stepFilter: StepFilter,
 ): CoreWorkflowFilterRuleInput | undefined => {
@@ -44,7 +51,7 @@ const toCoreWorkflowFilterRule = (
 
   const expectsValue = isRecordFilterOperandExpectingValue(stepFilter.operand);
 
-  if (expectsValue && stepFilter.value === '') {
+  if (expectsValue && isEmptyValue(stepFilter.value)) {
     return undefined;
   }
 

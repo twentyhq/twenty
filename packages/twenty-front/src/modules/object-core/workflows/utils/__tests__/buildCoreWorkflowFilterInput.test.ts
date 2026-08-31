@@ -70,6 +70,20 @@ describe('buildCoreWorkflowFilterInput', () => {
     });
   });
 
+  it('should drop a rule whose multi select value has no option left', () => {
+    expect(
+      buildCoreWorkflowFilterInput({
+        stepFilters: [
+          buildStepFilter({
+            stepOutputKey: CoreWorkflowFilterFieldKey.STATUSES,
+            operand: ViewFilterOperand.CONTAINS,
+            value: JSON.stringify([]),
+          }),
+        ],
+      }),
+    ).toBeUndefined();
+  });
+
   it('should drop rules on unknown fields', () => {
     expect(
       buildCoreWorkflowFilterInput({
