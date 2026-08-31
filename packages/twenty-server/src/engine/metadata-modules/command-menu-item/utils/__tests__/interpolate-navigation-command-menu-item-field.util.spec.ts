@@ -5,7 +5,7 @@ import {
   NAVIGATION_INTERPOLATED_ICON,
   NAVIGATION_INTERPOLATED_LABEL,
   NAVIGATION_INTERPOLATED_SHORT_LABEL,
-} from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util';
+} from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
 
 const mockI18nInstance = {
   _: (messageId: string) => messageId,

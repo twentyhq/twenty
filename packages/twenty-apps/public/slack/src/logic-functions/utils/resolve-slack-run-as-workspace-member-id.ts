@@ -1,6 +1,6 @@
 import { type WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_USER_LINK_SOURCE } from 'src/logic-functions/constants/slack-user-link-source';
@@ -10,6 +10,7 @@ import { findWorkspaceMemberIdByEmail } from 'src/logic-functions/data/find-work
 import { updateSlackUserLink } from 'src/logic-functions/data/update-slack-user-link';
 import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
 import { type SlackUserLink } from 'src/logic-functions/types/slack-user-link.type';
+import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 
 const resolveLinkableEmail = async ({
   slackClient,
@@ -22,8 +23,7 @@ const resolveLinkableEmail = async ({
     return undefined;
   }
 
-  const authResult = await slackClient.auth.test().catch(() => undefined);
-  const installedTeamId = authResult?.team_id;
+  const installedTeamId = await getInstalledSlackTeamId(slackClient);
 
   if (
     !isNonEmptyString(installedTeamId) ||
@@ -61,6 +61,12 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
   const isManualLink =
     existingLink?.source === SLACK_USER_LINK_SOURCE.MANUAL;
 
+  if (isManualLink) {
+    return isNonEmptyString(existingLink?.workspaceMemberId)
+      ? existingLink.workspaceMemberId
+      : undefined;
+  }
+
   const linkableEmail = await resolveLinkableEmail({ slackClient, identity });
 
   if (!isNonEmptyString(linkableEmail)) {
@@ -76,8 +82,10 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
     return undefined;
   }
 
+  const applicationClient = new CoreApiClient({ runAs: 'application' });
+
   if (!isDefined(existingLink)) {
-    await createSlackUserLink(client, {
+    await createSlackUserLink(applicationClient, {
       slackTeamId,
       slackUserId,
       workspaceMemberId,
@@ -87,8 +95,8 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
     return workspaceMemberId;
   }
 
-  if (!isManualLink && existingLink.workspaceMemberId !== workspaceMemberId) {
-    await updateSlackUserLink(client, {
+  if (existingLink.workspaceMemberId !== workspaceMemberId) {
+    await updateSlackUserLink(applicationClient, {
       id: existingLink.id,
       workspaceMemberId,
     }).catch(() => undefined);

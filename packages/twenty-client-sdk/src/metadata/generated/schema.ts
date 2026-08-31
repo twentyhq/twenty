@@ -950,6 +950,7 @@ export interface FieldConfiguration {
     fieldDisplayMode: FieldDisplayMode
     viewId?: Scalars['String']
     nestedRelationFieldMetadataId?: Scalars['String']
+    isUIEditable?: Scalars['Boolean']
     __typename: 'FieldConfiguration'
 }
 
@@ -1005,6 +1006,7 @@ export interface RecordTableConfiguration {
     configurationType: WidgetConfigurationType
     viewId?: Scalars['String']
     recordLimit?: Scalars['Int']
+    isUIEditable?: Scalars['Boolean']
     __typename: 'RecordTableConfiguration'
 }
 
@@ -4346,6 +4348,7 @@ export interface FieldConfigurationGenqlSelection{
     fieldDisplayMode?: boolean | number
     viewId?: boolean | number
     nestedRelationFieldMetadataId?: boolean | number
+    isUIEditable?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4406,6 +4409,7 @@ export interface RecordTableConfigurationGenqlSelection{
     configurationType?: boolean | number
     viewId?: boolean | number
     recordLimit?: boolean | number
+    isUIEditable?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

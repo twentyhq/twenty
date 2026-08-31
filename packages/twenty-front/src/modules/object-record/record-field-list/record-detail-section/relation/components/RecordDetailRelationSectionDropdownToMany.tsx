@@ -13,8 +13,7 @@ import { useAddNewRecordAndOpenSidePanel } from '@/object-record/record-field/ui
 import { useUpdateRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateRelationOneToManyFieldInput';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { getJunctionRelationPickerData } from '@/object-record/record-field/ui/utils/junction/getJunctionRelationPickerData';
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
@@ -74,23 +73,13 @@ export const RecordDetailRelationSectionDropdownToMany = ({
   const relationFieldDefinition =
     fieldDefinition as FieldDefinition<FieldRelationMetadata>;
 
-  const { updateJunctionRelationFromCell, isJunctionConfigValid } =
+  const { updateJunctionRelationFromCell, junctionConfig } =
     useUpdateJunctionRelationFromCell({
       fieldMetadataItem,
       fieldDefinition: relationFieldDefinition,
       recordId,
     });
 
-  const junctionConfig = isJunctionConfigValid
-    ? getJunctionConfig({
-        settings: fieldMetadataItem.settings,
-        relationObjectMetadataId:
-          relationFieldDefinition.metadata.relationObjectMetadataId,
-        relationTargetFieldMetadataId: relationFieldMetadataId,
-        sourceObjectMetadataId: objectMetadataItem.id,
-        objectMetadataItems,
-      })
-    : null;
   const isJunctionRelation = isDefined(junctionConfig);
 
   const firstJunctionTargetField =
@@ -110,11 +99,6 @@ export const RecordDetailRelationSectionDropdownToMany = ({
       objectNameSingular: relationObjectMetadataNameSingular,
     });
 
-  const pickerObjectMetadataItem =
-    isJunctionRelation && isDefined(junctionTargetObjectMetadata)
-      ? junctionTargetObjectMetadata
-      : relationObjectMetadataItem;
-
   const relationFieldMetadataItem = relationObjectMetadataItem.fields.find(
     ({ id }) => id === relationFieldMetadataId,
   );
@@ -132,22 +116,23 @@ export const RecordDetailRelationSectionDropdownToMany = ({
 
   const relationRecords: ObjectRecord[] = (fieldValue as ObjectRecord[]) ?? [];
 
-  const pickerRecords =
-    isJunctionRelation &&
-    isDefined(junctionConfig) &&
-    isDefined(junctionTargetObjectMetadata)
-      ? extractTargetRecordsFromJunction({
-          junctionRecords: relationRecords,
-          targetFields: junctionConfig.targetFields,
-          objectMetadataItems,
-        }).map((extracted) => ({
-          recordId: extracted.recordId,
-          objectMetadataId: extracted.objectMetadataId,
-        }))
-      : relationRecords.map((record) => ({
-          recordId: record.id,
-          objectMetadataId: pickerObjectMetadataItem.id,
-        }));
+  const { pickableMorphItems, searchableObjectMetadataItems } = isDefined(
+    junctionConfig,
+  )
+    ? getJunctionRelationPickerData({
+        junctionRecords: relationRecords,
+        targetFields: junctionConfig.targetFields,
+        objectMetadataItems,
+      })
+    : {
+        pickableMorphItems: relationRecords.map(({ id: recordId }) => ({
+          recordId,
+          objectMetadataId: relationObjectMetadataItem.id,
+          isSelected: true,
+          isMatchingSearchFilter: true,
+        })),
+        searchableObjectMetadataItems: [relationObjectMetadataItem],
+      };
 
   const dropdownId = getRecordFieldCardRelationPickerDropdownId({
     fieldDefinition,
@@ -217,16 +202,9 @@ export const RecordDetailRelationSectionDropdownToMany = ({
   });
 
   const handleOpenRelationPickerDropdown = () => {
-    const pickableMorphItems = pickerRecords.map((item) => ({
-      recordId: item.recordId,
-      objectMetadataId: item.objectMetadataId,
-      isSelected: true,
-      isMatchingSearchFilter: true,
-    }));
-
-    setMultipleRecordPickerSearchableObjectMetadataItems([
-      pickerObjectMetadataItem,
-    ]);
+    setMultipleRecordPickerSearchableObjectMetadataItems(
+      searchableObjectMetadataItems,
+    );
     setMultipleRecordPickerSearchFilter('');
     setMultipleRecordPickerPickableMorphItems(pickableMorphItems);
 
@@ -235,7 +213,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     multipleRecordPickerPerformSearch({
       multipleRecordPickerInstanceId: dropdownId,
       forceSearchFilter: '',
-      forceSearchableObjectMetadataItems: [pickerObjectMetadataItem],
+      forceSearchableObjectMetadataItems: searchableObjectMetadataItems,
       forcePickableMorphItems: pickableMorphItems,
     });
   };
@@ -265,7 +243,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
         multipleRecordPickerPerformSearch({
           multipleRecordPickerInstanceId: dropdownId,
           forceSearchFilter: searchString,
-          forceSearchableObjectMetadataItems: [pickerObjectMetadataItem],
+          forceSearchableObjectMetadataItems: searchableObjectMetadataItems,
           forcePickableMorphItems: newMorphItems,
         });
       };
@@ -334,8 +312,8 @@ export const RecordDetailRelationSectionDropdownToMany = ({
       multipleRecordPickerPickableMorphItemsCallbackState,
       multipleRecordPickerPerformSearch,
       objectMetadataItem,
-      pickerObjectMetadataItem,
       recordId,
+      searchableObjectMetadataItems,
       store,
     ],
   );
@@ -349,18 +327,13 @@ export const RecordDetailRelationSectionDropdownToMany = ({
 
   const handleChange = useCallback(
     (morphItem: Parameters<typeof updateRelation>[0]) => {
-      if (isJunctionRelation && isJunctionConfigValid) {
+      if (isJunctionRelation) {
         updateJunctionRelationFromCell({ morphItem });
       } else {
         updateRelation(morphItem);
       }
     },
-    [
-      isJunctionRelation,
-      isJunctionConfigValid,
-      updateJunctionRelationFromCell,
-      updateRelation,
-    ],
+    [isJunctionRelation, updateJunctionRelationFromCell, updateRelation],
   );
 
   return (

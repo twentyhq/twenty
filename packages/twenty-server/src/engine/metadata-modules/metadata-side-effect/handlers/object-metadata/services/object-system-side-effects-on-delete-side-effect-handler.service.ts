@@ -24,7 +24,8 @@ type FlatEntityToDelete<
     | 'viewFieldGroup'
     | 'pageLayout'
     | 'pageLayoutTab'
-    | 'pageLayoutWidget',
+    | 'pageLayoutWidget'
+    | 'commandMenuItem',
 > = Record<string, MetadataUniversalFlatEntity<TMetadataName>>;
 
 @Injectable()
@@ -34,7 +35,7 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
     metadataName: 'objectMetadata',
     name: 'objectSystemSideEffectsOnDelete',
     description:
-      'When an object is deleted, cascade-delete its engine-owned side effects: the reserved system fields, the default relation fields (forward field on the deleted object and reverse morph field on the standard object), every system index (reverse join-column indexes, the GIN searchVector index), its searchFieldMetadata rows, its engine-owned views (the INDEX table view and the FIELDS_WIDGET record-page view) with their view fields and view field groups, and its engine-owned record-page layout stack (pageLayout, pageLayoutTab, pageLayoutWidget). View fields of the deleted system fields are cascaded too even when they live on another object view, which happens for the reverse relation fields. Every lookup walks a foreign key aggregator down from the deleted object (its fields, indexes, searchFieldMetadatas, views, then their view fields and groups, then its page layouts, their tabs and widgets) and indexes into the flat entity maps. The engine is the sole authority for isSystemSideEffect entities on delete: the API object delete transpiler cascades only user-authored fields and indexes and emits nothing for the layout stack, and manifest deletion inference excludes these entities entirely, so without these buckets the layout stack would only ever disappear through raw DB foreign key cascade, behind the engine back. Caller-provided defaults (e.g. the name field) are NOT engine-owned and are deleted through normal deletion inference / the object delete transpiler.',
+      'When an object is deleted, cascade-delete its engine-owned side effects: the reserved system fields, the default relation fields (forward field on the deleted object and reverse morph field on the standard object), every system index (reverse join-column indexes, the GIN searchVector index), its searchFieldMetadata rows, its engine-owned views (the INDEX table view and the FIELDS_WIDGET record-page view) with their view fields and view field groups, its engine-owned record-page layout stack (pageLayout, pageLayoutTab, pageLayoutWidget), and its engine-owned navigation command menu item (provisioned by objectNavigationCommandOnCreate). View fields of the deleted system fields are cascaded too even when they live on another object view, which happens for the reverse relation fields. Every lookup walks a foreign key aggregator down from the deleted object (its fields, indexes, searchFieldMetadatas, views, then their view fields and groups, then its page layouts, their tabs and widgets, and its command menu items) and indexes into the flat entity maps. The engine is the sole authority for isSystemSideEffect entities on delete: the API object delete transpiler cascades only user-authored fields and indexes and emits nothing for the layout stack, and manifest deletion inference excludes these entities entirely, so without these buckets the layout stack would only ever disappear through raw DB foreign key cascade, behind the engine back. Caller-provided defaults (e.g. the name field) are NOT engine-owned and are deleted through normal deletion inference / the object delete transpiler.',
   },
 ) {
   buildSideEffects({
@@ -87,6 +88,10 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
       pageLayoutWidget: this.computePageLayoutWidgetToDelete({
         relatedFlatEntityMaps,
         flatPageLayoutTabsToDelete: Object.values(pageLayoutTabToDelete),
+      }),
+      commandMenuItem: this.computeCommandMenuItemToDelete({
+        flatObjectMetadata,
+        relatedFlatEntityMaps,
       }),
     };
 
@@ -285,6 +290,35 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
     }
 
     return viewToDelete;
+  }
+
+  private computeCommandMenuItemToDelete({
+    flatObjectMetadata,
+    relatedFlatEntityMaps,
+  }: {
+    flatObjectMetadata: MetadataUniversalFlatEntity<'objectMetadata'>;
+    relatedFlatEntityMaps: RelatedFlatEntityMaps;
+  }): FlatEntityToDelete<'commandMenuItem'> {
+    const commandMenuItemToDelete: FlatEntityToDelete<'commandMenuItem'> = {};
+
+    for (const commandMenuItemUniversalIdentifier of flatObjectMetadata.commandMenuItemUniversalIdentifiers) {
+      const flatCommandMenuItem =
+        relatedFlatEntityMaps.flatCommandMenuItemMaps.byUniversalIdentifier[
+          commandMenuItemUniversalIdentifier
+        ];
+
+      if (
+        !isDefined(flatCommandMenuItem) ||
+        flatCommandMenuItem.isSystemSideEffect !== true
+      ) {
+        continue;
+      }
+
+      commandMenuItemToDelete[flatCommandMenuItem.universalIdentifier] =
+        flatCommandMenuItem;
+    }
+
+    return commandMenuItemToDelete;
   }
 
   private computeViewFieldToDelete({

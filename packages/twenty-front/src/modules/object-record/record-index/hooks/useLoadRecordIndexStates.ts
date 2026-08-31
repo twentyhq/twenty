@@ -9,6 +9,7 @@ import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
@@ -282,6 +283,10 @@ export const useLoadRecordIndexStates = () => {
         currentRecordFiltersComponentState.atomFamily({
           instanceId: recordIndexId,
         });
+      const anyFieldFilterValueAtom =
+        anyFieldFilterValueComponentState.atomFamily({
+          instanceId: recordIndexId,
+        });
       const currentRecordFilterGroupsAtom =
         currentRecordFilterGroupsComponentState.atomFamily({
           instanceId: recordIndexId,
@@ -311,6 +316,7 @@ export const useLoadRecordIndexStates = () => {
         atom(null, (get, batchSet) => {
           batchSet(currentRecordFiltersAtom, recordFilters);
           batchSet(currentRecordFilterGroupsAtom, recordFilterGroups);
+          batchSet(anyFieldFilterValueAtom, view.anyFieldFilterValue ?? '');
           batchSet(hasInitializedFiltersAtom, true);
 
           batchSet(currentRecordSortsAtom, view.viewSorts);

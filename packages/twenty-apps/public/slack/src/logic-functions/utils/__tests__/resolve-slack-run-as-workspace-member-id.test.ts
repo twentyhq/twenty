@@ -10,11 +10,19 @@ const {
   findWorkspaceMemberIdByEmailMock,
   createSlackUserLinkMock,
   updateSlackUserLinkMock,
+  coreApiClientMock,
+  applicationClient,
 } = vi.hoisted(() => ({
   findSlackUserLinkMock: vi.fn(),
   findWorkspaceMemberIdByEmailMock: vi.fn(),
   createSlackUserLinkMock: vi.fn(),
   updateSlackUserLinkMock: vi.fn(),
+  coreApiClientMock: vi.fn(),
+  applicationClient: {},
+}));
+
+vi.mock('twenty-client-sdk/core', () => ({
+  CoreApiClient: coreApiClientMock,
 }));
 
 vi.mock('src/logic-functions/data/find-slack-user-link', () => ({
@@ -65,11 +73,33 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
     findWorkspaceMemberIdByEmailMock.mockResolvedValue(undefined);
     createSlackUserLinkMock.mockResolvedValue(undefined);
     updateSlackUserLinkMock.mockResolvedValue(undefined);
+    coreApiClientMock.mockImplementation(function () {
+      return applicationClient;
+    });
     authTestMock.mockResolvedValue({ team_id: 'T0INSTALLED' });
   });
 
-  it('should not honor a manual link while link writes cannot be restricted', async () => {
+  it('should honor a manual link without consulting the email match', async () => {
     findSlackUserLinkMock.mockResolvedValue(MANUAL_LINK);
+
+    expect(
+      await resolveSlackRunAsWorkspaceMemberId({
+        client,
+        slackClient,
+        identity: IDENTITY,
+      }),
+    ).toBe('member-1');
+    expect(findWorkspaceMemberIdByEmailMock).not.toHaveBeenCalled();
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
+  });
+
+  it('should not run as anyone when a manual link has no workspace member', async () => {
+    findSlackUserLinkMock.mockResolvedValue({
+      ...MANUAL_LINK,
+      workspaceMemberId: undefined,
+    });
+    findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
 
     expect(
       await resolveSlackRunAsWorkspaceMemberId({
@@ -82,10 +112,10 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
     expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
-  it('should still act on the live email match when a manual link exists, without touching it', async () => {
+  it('should prefer the manual link over a disagreeing email match, without touching it', async () => {
     findSlackUserLinkMock.mockResolvedValue({
       ...MANUAL_LINK,
-      workspaceMemberId: 'member-victim',
+      workspaceMemberId: 'member-2',
     });
     findWorkspaceMemberIdByEmailMock.mockResolvedValue('member-1');
 
@@ -95,7 +125,7 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
         slackClient,
         identity: IDENTITY,
       }),
-    ).toBe('member-1');
+    ).toBe('member-2');
     expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
@@ -129,7 +159,8 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
         identity: IDENTITY,
       }),
     ).toBe('member-1');
-    expect(updateSlackUserLinkMock).toHaveBeenCalledWith(client, {
+    expect(coreApiClientMock).toHaveBeenCalledWith({ runAs: 'application' });
+    expect(updateSlackUserLinkMock).toHaveBeenCalledWith(applicationClient, {
       id: 'link-1',
       workspaceMemberId: 'member-1',
     });
@@ -183,7 +214,8 @@ describe('resolveSlackRunAsWorkspaceMemberId', () => {
         identity: IDENTITY,
       }),
     ).toBe('member-1');
-    expect(createSlackUserLinkMock).toHaveBeenCalledWith(client, {
+    expect(coreApiClientMock).toHaveBeenCalledWith({ runAs: 'application' });
+    expect(createSlackUserLinkMock).toHaveBeenCalledWith(applicationClient, {
       slackTeamId: 'T0INSTALLED',
       slackUserId: 'U0123456789',
       workspaceMemberId: 'member-1',

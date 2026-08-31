@@ -18,7 +18,7 @@ Out of the box the bot runs with the **Slack Assistant** role, which can read, c
 
 A link matched on email is re-verified on every request: the bot rechecks that the Slack account's current verified email still points at the same member, and follows the live match rather than the stored record if they disagree. The record is an audit trail, not the source of truth.
 
-Only members of the Slack workspace that installed the app are matched automatically. Guests and Slack Connect users from another Slack workspace are not, because their email is vouched for by someone other than your admin. A link can be created by hand from **Slack User Links** with its source set to manual, but the bot does not act on manual links yet: any role with broad record access could write one, so until Twenty can restrict who creates them they are stored without borrowing anyone's permissions, and those users get the Slack Assistant role.
+Only members of the Slack workspace that installed the app are matched automatically. Guests and Slack Connect users from another Slack workspace are not, because their email is vouched for by someone other than your admin. For those cases a member with the workspace members permission can link them by hand: ask the assistant to link a Slack user to a workspace member, and the pair is stored with its source set to manual. For a Slack Connect user, include their own Slack workspace's team ID so the link matches the messages they send. Manual links win over email matching. Slack User Link records can only be written by the app itself, never directly through the API or the UI, so a manual link always reflects an admin's decision.
 
 One Slack workspace answers into one Twenty workspace.
 
@@ -45,4 +45,4 @@ The assistant still runs on your workspace AI credits, billed on the model's tok
 
 ## 📌 Heads up
 
-You need to create a Slack app and connect it — see [SETUP.md](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/slack/SETUP.md). The assistant needs a few extra steps (signing secret and event subscriptions) on top of the base connection.
+You need to create a Slack app and connect it — see [SETUP.md](./SETUP.md). The assistant needs a few extra steps (signing secret and event subscriptions) on top of the base connection.
