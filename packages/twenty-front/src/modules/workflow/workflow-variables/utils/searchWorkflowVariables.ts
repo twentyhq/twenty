@@ -13,7 +13,7 @@ import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepH
 import { getStepItemIcon } from '@/workflow/workflow-variables/utils/getStepItemIcon';
 import { getWorkflowVariableSpecialItems } from '@/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems';
 import { isDefined } from 'twenty-shared/utils';
-import { isObject } from '@sniptt/guards';
+import { isNonEmptyString, isObject } from '@sniptt/guards';
 
 export const searchWorkflowVariables = ({
   steps,
@@ -134,7 +134,7 @@ export const searchWorkflowVariables = ({
           continue;
         }
 
-        const label = field.label || key;
+        const label = isNonEmptyString(field.label) ? field.label : key;
         const fieldPath = [...path, key];
 
         if (label.toLowerCase().includes(search)) {

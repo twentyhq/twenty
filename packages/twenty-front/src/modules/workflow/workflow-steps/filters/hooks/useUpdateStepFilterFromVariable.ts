@@ -3,7 +3,7 @@ import { useGetInitialFilterValue } from '@/object-record/object-filter-dropdown
 import { useWorkflowVersionIdOrThrow } from '@/workflow/hooks/useWorkflowVersionIdOrThrow';
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/filters/hooks/useUpsertStepFilterSettings';
-import { getStepFilterOperands } from '@/workflow/workflow-steps/filters/utils/getStepFilterOperands';
+import { getStepFilterVariableSelectionSettings } from '@/workflow/workflow-steps/filters/utils/getStepFilterVariableSelectionSettings';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { searchVariableThroughOutputSchemaV2 } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchemaV2';
 import { useStore } from 'jotai';
@@ -58,29 +58,24 @@ export const useUpdateStepFilterFromVariable = ({
     )
       ? getFieldMetadataItemByIdOrThrow(fieldMetadataId)
       : { fieldMetadataItem: undefined };
-    const filterType = isDefined(fieldMetadataId)
-      ? (filterFieldMetadataItem?.type ?? 'unknown')
-      : variableType;
-    const availableOperandsForFilter = getStepFilterOperands({
-      filterType,
-      subFieldName: compositeFieldSubFieldName,
+    const variableSelectionSettings = getStepFilterVariableSelectionSettings({
+      rawVariableName,
+      isFullRecord,
+      variableType,
+      fieldMetadataId,
+      fieldMetadataType: filterFieldMetadataItem?.type,
+      compositeFieldSubFieldName,
     });
-    const defaultOperand = availableOperandsForFilter[0];
     const { value } = getInitialFilterValue(
-      filterType as FilterableAndTSVectorFieldType,
-      defaultOperand,
+      variableSelectionSettings.type as FilterableAndTSVectorFieldType,
+      variableSelectionSettings.operand,
     );
 
     upsertStepFilterSettings({
       stepFilterToUpsert: {
         ...stepFilter,
-        stepOutputKey: rawVariableName,
-        isFullRecord,
-        type: filterType ?? 'unknown',
+        ...variableSelectionSettings,
         value,
-        fieldMetadataId,
-        compositeFieldSubFieldName,
-        operand: defaultOperand,
       },
     });
   };

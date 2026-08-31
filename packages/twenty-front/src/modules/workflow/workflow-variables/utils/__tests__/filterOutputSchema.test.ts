@@ -1,4 +1,5 @@
 import { type RecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
+import { type FindRecordsOutputSchema } from '@/workflow/workflow-variables/types/FindRecordsOutputSchema';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
 import { filterOutputSchema } from '@/workflow/workflow-variables/utils/filterOutputSchema';
@@ -264,6 +265,75 @@ describe('filterOutputSchema', () => {
           fieldTypesToExclude: [],
         }),
       ).toEqual(inputSchema);
+    });
+
+    it('should filter out excluded types from nested schemas', () => {
+      const inputSchema = createRecordSchema('person', {
+        company: {
+          isLeaf: false,
+          type: FieldMetadataType.RELATION,
+          value: createRecordSchema('company', {
+            name: { isLeaf: true, type: FieldMetadataType.TEXT },
+            score: { isLeaf: true, type: FieldMetadataType.RATING },
+          }),
+        },
+      });
+
+      expect(
+        filterOutputSchema({
+          shouldDisplayRecordFields: true,
+          shouldDisplayRecordObjects: true,
+          outputSchema: inputSchema,
+          fieldTypesToExclude: [FieldMetadataType.RATING],
+        }),
+      ).toEqual(
+        createRecordSchema('person', {
+          company: {
+            isLeaf: false,
+            type: FieldMetadataType.RELATION,
+            value: createRecordSchema('company', {
+              name: { isLeaf: true, type: FieldMetadataType.TEXT },
+            }),
+          },
+        }),
+      );
+    });
+
+    it('should preserve step outputs while filtering their nested records', () => {
+      const inputSchema: FindRecordsOutputSchema = {
+        first: {
+          isLeaf: false,
+          label: 'First company',
+          value: createRecordSchema('company', {
+            name: { isLeaf: true, type: FieldMetadataType.TEXT },
+            score: { isLeaf: true, type: FieldMetadataType.RATING },
+          }),
+        },
+        all: undefined,
+        totalCount: {
+          isLeaf: true,
+          type: 'number',
+          label: 'Total count',
+          value: 1,
+        },
+      };
+
+      expect(
+        filterOutputSchema({
+          shouldDisplayRecordFields: true,
+          shouldDisplayRecordObjects: true,
+          outputSchema: inputSchema,
+          fieldTypesToExclude: [FieldMetadataType.RATING],
+        }),
+      ).toEqual({
+        ...inputSchema,
+        first: {
+          ...inputSchema.first,
+          value: createRecordSchema('company', {
+            name: { isLeaf: true, type: FieldMetadataType.TEXT },
+          }),
+        },
+      });
     });
   });
 });
