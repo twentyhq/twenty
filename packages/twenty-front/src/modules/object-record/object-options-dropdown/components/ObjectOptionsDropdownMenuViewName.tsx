@@ -75,7 +75,7 @@ export const ObjectOptionsDropdownMenuViewName = ({
     useUpdateObjectViewOptions();
 
   const { updateViewFromCurrentState } = useUpdateViewFromCurrentState();
-  const [viewName, setViewName] = useState(currentView?.name);
+  const [viewName, setViewName] = useState(currentView?.name ?? '');
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -103,8 +103,8 @@ export const ObjectOptionsDropdownMenuViewName = ({
   }, 500);
 
   useEffect(() => {
-    setViewPickerSelectedIcon(currentView.icon);
-  }, [currentView.icon, setViewPickerSelectedIcon]);
+    setViewPickerSelectedIcon(currentView?.icon ?? '');
+  }, [currentView?.icon, setViewPickerSelectedIcon]);
 
   useEffect(() => {
     if (currentView?.key !== 'INDEX' && inputRef.current !== null) {
@@ -123,7 +123,7 @@ export const ObjectOptionsDropdownMenuViewName = ({
             <MainIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
           </StyledMenuIconContainer>
           <StyledMainText>
-            <OverflowingTextWithTooltip text={currentView.name} />
+            <OverflowingTextWithTooltip text={currentView?.name ?? ''} />
           </StyledMainText>
         </StyledMenuTitleContainer>
       ) : (

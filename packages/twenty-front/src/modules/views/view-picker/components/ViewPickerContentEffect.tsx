@@ -94,7 +94,7 @@ export const ViewPickerContentEffect = () => {
       setViewPickerVisibility(
         hasViewPermission ? referenceView.visibility : ViewVisibility.UNLISTED,
       );
-      setViewPickerInputName(referenceView.name);
+      setViewPickerInputName(referenceView.name ?? '');
       setViewPickerType(referenceView.type);
 
       const calendarFieldMetadataId =

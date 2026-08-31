@@ -3,6 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  buildObjectMetadataLabelPlaceholderValues,
+  interpolateMessagePlaceholders,
+} from 'twenty-shared/i18n';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { validateFlatObjectMetadataNameAndLabels } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util';
@@ -22,6 +26,7 @@ export class FlatObjectMetadataValidatorService {
     buildOptions,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
+      flatViewMaps: optimisticFlatViewMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.objectMetadata
@@ -83,6 +88,99 @@ export class FlatObjectMetadataValidatorService {
         buildOptions,
       }),
     );
+
+    // Prevent label changes from creating duplicate resolved view names
+    // (e.g. custom "All Tasks" + system "All {objectLabelPlural}" both resolve to "All Tasks" after a label rename)
+    if (isDefined(optimisticFlatViewMaps)) {
+      const getEffective = (
+        obj: typeof existingFlatObjectMetadata,
+        key: 'labelSingular' | 'labelPlural' | 'icon',
+      ): string | null | undefined => {
+        const overrides = obj.overrides as
+          | Record<string, unknown>
+          | null
+          | undefined;
+        if (
+          isDefined(overrides) &&
+          isDefined(overrides[key]) &&
+          typeof overrides[key] === 'string'
+        ) {
+          return overrides[key] as string;
+        }
+        return obj[key] as string | null | undefined;
+      };
+
+      const existingLabelPlural = getEffective(
+        existingFlatObjectMetadata,
+        'labelPlural',
+      );
+      const updatedLabelPlural = getEffective(
+        updatedFlatObjectMetadata,
+        'labelPlural',
+      );
+      const existingLabelSingular = getEffective(
+        existingFlatObjectMetadata,
+        'labelSingular',
+      );
+      const updatedLabelSingular = getEffective(
+        updatedFlatObjectMetadata,
+        'labelSingular',
+      );
+
+      const labelChanged =
+        existingLabelPlural !== updatedLabelPlural ||
+        existingLabelSingular !== updatedLabelSingular;
+
+      if (labelChanged) {
+        const viewIds = existingFlatObjectMetadata.viewUniversalIdentifiers;
+        const resolvedNames = new Map<string, string>();
+
+        for (const viewUniversalIdentifier of viewIds) {
+          const flatView = findFlatEntityByUniversalIdentifier({
+            universalIdentifier: viewUniversalIdentifier,
+            flatEntityMaps: optimisticFlatViewMaps,
+          });
+
+          if (
+            !isDefined(flatView) ||
+            isDefined(flatView.deletedAt) ||
+            flatView.isActive === false
+          ) {
+            continue;
+          }
+
+          const resolvedName = interpolateMessagePlaceholders(
+            flatView.name,
+            buildObjectMetadataLabelPlaceholderValues({
+              labelSingular: updatedLabelSingular ?? undefined,
+              labelPlural: updatedLabelPlural ?? undefined,
+              icon: getEffective(updatedFlatObjectMetadata, 'icon') as
+                | string
+                | null
+                | undefined,
+            }),
+          )
+            .trim()
+            .toLowerCase();
+
+          if (resolvedName.length === 0) {
+            continue;
+          }
+
+          if (resolvedNames.has(resolvedName)) {
+            validationResult.errors.push({
+              code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+              message: t`Renaming this object would create duplicate view names ("${flatView.name}" resolves to "${resolvedName}")`,
+              userFriendlyMessage: msg`This label change would create duplicate view names`,
+            });
+            break;
+          }
+
+          resolvedNames.set(resolvedName, flatView.name);
+        }
+      }
+    }
+
     // TODO remove this once we migrated labelIdentifierFieldMetadataId as non nullable
     if (
       flatEntityUpdate.labelIdentifierFieldMetadataUniversalIdentifier !==

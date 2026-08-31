@@ -42,12 +42,13 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
   const { views } = useNavigationMenuObjectMetadataForSection(currentItems);
 
   const viewsForSelectedObject = views
+    .filter(isDefined)
     .filter(
       (view) =>
         view.objectMetadataId === selectedObjectMetadataIdForView &&
         isViewDisplayableInNavigationMenu(view),
     )
-    .sort((a, b) => a.position - b.position);
+    .sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
 
   const selectedObjectMetadataItem = objectMetadataItems.find(
     (item) => item.id === selectedObjectMetadataIdForView,
@@ -59,9 +60,9 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
     isEmpty,
     hasSearchQuery,
   } = useSidePanelFilteredPickerItems({
-    items: viewsForSelectedObject,
+    items: viewsForSelectedObject.filter(isDefined),
     searchQuery: searchValue,
-    getSearchableValues: (view) => [view.name],
+    getSearchableValues: (view) => [view.name ?? ''],
   });
   const noResultsText = hasSearchQuery
     ? t`No results found`
@@ -86,7 +87,7 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
     setPendingInsertionNavigationMenuItem(null);
     openNavigationMenuItemInSidePanel({
       itemId,
-      pageTitle: view.name,
+      pageTitle: view.name ?? '',
       pageIcon: getIcon(view.icon),
     });
   };
@@ -130,14 +131,14 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
                           ? undefined
                           : getIcon(view.icon)
                       }
-                      label={view.name}
+                      label={view.name ?? ''}
                       id={view.id}
                       onClick={() => handleSelectView(view)}
                       dragIndex={index}
                       payload={{
                         type: NavigationMenuItemType.VIEW,
                         viewId: view.id,
-                        label: view.name,
+                        label: view.name ?? '',
                       }}
                     />
                   </SelectableListItem>

@@ -2,9 +2,15 @@ import { msg, t } from '@lingui/core/macro';
 import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { ViewType } from 'twenty-shared/types';
 import { getViewLayoutFromViewType, isDefined } from 'twenty-shared/utils';
+import {
+  buildObjectMetadataLabelPlaceholderValues,
+  interpolateMessagePlaceholders,
+} from 'twenty-shared/i18n';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
+// object-label placeholder collisions are handled in FlatObjectMetadataValidatorService
+// to cover renames that bypass direct view updates
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
@@ -18,6 +24,7 @@ export const validateFlatViewUpdate = ({
   optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
     flatViewMaps: optimisticFlatViewMaps,
     flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
   },
 }: FlatEntityUpdateValidationArgs<
   typeof ALL_METADATA_NAME.view
@@ -49,6 +56,76 @@ export const validateFlatViewUpdate = ({
     ...existingFlatView,
     ...flatEntityUpdate,
   };
+
+  // Prevent duplicate resolved names on rename
+  if (
+    isDefined(flatEntityUpdate.name) &&
+    isDefined(updatedFlatView.name) &&
+    isDefined(flatObjectMetadataMaps)
+  ) {
+    const optimisticFlatObjectMetadata = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: updatedFlatView.objectMetadataUniversalIdentifier,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
+
+    if (isDefined(optimisticFlatObjectMetadata)) {
+      const newResolvedName = interpolateMessagePlaceholders(
+        updatedFlatView.name,
+        buildObjectMetadataLabelPlaceholderValues({
+          labelSingular: optimisticFlatObjectMetadata.labelSingular,
+          labelPlural: optimisticFlatObjectMetadata.labelPlural,
+          icon: optimisticFlatObjectMetadata.icon,
+        }),
+      )
+        .trim()
+        .toLowerCase();
+
+      if (newResolvedName.length > 0) {
+        const hasDuplicateName =
+          optimisticFlatObjectMetadata.viewUniversalIdentifiers.some(
+            (viewUniversalIdentifier) => {
+              if (viewUniversalIdentifier === universalIdentifier) {
+                return false;
+              }
+
+              const existingView = findFlatEntityByUniversalIdentifier({
+                universalIdentifier: viewUniversalIdentifier,
+                flatEntityMaps: optimisticFlatViewMaps,
+              });
+
+              if (
+                !isDefined(existingView) ||
+                isDefined(existingView.deletedAt) ||
+                existingView.isActive === false
+              ) {
+                return false;
+              }
+
+              const existingResolvedName = interpolateMessagePlaceholders(
+                existingView.name,
+                buildObjectMetadataLabelPlaceholderValues({
+                  labelSingular: optimisticFlatObjectMetadata.labelSingular,
+                  labelPlural: optimisticFlatObjectMetadata.labelPlural,
+                  icon: optimisticFlatObjectMetadata.icon,
+                }),
+              )
+                .trim()
+                .toLowerCase();
+
+              return existingResolvedName === newResolvedName;
+            },
+          );
+
+        if (hasDuplicateName) {
+          validationResult.errors.push({
+            code: ViewExceptionCode.INVALID_VIEW_DATA,
+            message: t`A view with the name "${updatedFlatView.name}" already exists for this object`,
+            userFriendlyMessage: msg`A view with this name already exists`,
+          });
+        }
+      }
+    }
+  }
 
   const kanbanAggregateOperationFieldMetadataUniversalIdentifierUpdate =
     flatEntityUpdate.kanbanAggregateOperationFieldMetadataUniversalIdentifier;

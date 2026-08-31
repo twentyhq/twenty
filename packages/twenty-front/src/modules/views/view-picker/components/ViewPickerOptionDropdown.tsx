@@ -122,7 +122,7 @@ export const ViewPickerOptionDropdown = ({
   return (
     <>
       <MenuItemWithOptionDropdown
-        text={view.name}
+        text={view.name ?? ''}
         LeftIcon={getIcon(view.icon)}
         onClick={() => handleViewSelect(view.id)}
         isIconDisplayedOnHoverOnly={!shouldShowIconAlways}

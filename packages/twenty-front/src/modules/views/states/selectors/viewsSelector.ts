@@ -10,37 +10,60 @@ import { type FlatViewSort } from '@/metadata-store/types/FlatViewSort';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { resolveViewNamePlaceholders } from '@/views/utils/resolveViewNamePlaceholders';
+import { isDefined } from 'twenty-shared/utils';
 
 export const viewsSelector = createAtomSelector<ViewWithRelations[]>({
   key: 'viewsSelector',
   get: ({ get }) => {
-    const allFlatViews = get(metadataStoreState, 'views').current as FlatView[];
-    const flatViews = allFlatViews.filter((view) => view.isActive);
-    const flatObjectMetadataItems = get(
-      metadataStoreState,
-      'objectMetadataItems',
-    ).current as FlatObjectMetadataItem[];
+    const allFlatViews = (
+      (get(metadataStoreState, 'views').current as FlatView[]) ?? []
+    ).filter(isDefined);
+    const flatViews = allFlatViews.filter(
+      (view) => view.isActive && !view.deletedAt,
+    );
+    const flatObjectMetadataItems = (
+      (get(metadataStoreState, 'objectMetadataItems')
+        .current as FlatObjectMetadataItem[]) ?? []
+    ).filter(isDefined);
 
     const objectMetadataItemsById = new Map(
       flatObjectMetadataItems.map((item) => [item.id, item]),
     );
 
-    const allFlatViewFields = get(metadataStoreState, 'viewFields')
-      .current as FlatViewField[];
-    const flatViewFilters = get(metadataStoreState, 'viewFilters')
-      .current as FlatViewFilter[];
-    const flatViewSorts = get(metadataStoreState, 'viewSorts')
-      .current as FlatViewSort[];
-    const flatViewGroups = get(metadataStoreState, 'viewGroups')
-      .current as FlatViewGroup[];
-    const flatViewFilterGroups = get(metadataStoreState, 'viewFilterGroups')
-      .current as FlatViewFilterGroup[];
-    const allFlatViewFieldGroups = get(metadataStoreState, 'viewFieldGroups')
-      .current as FlatViewFieldGroup[];
+    const allFlatViewFields = (
+      (get(metadataStoreState, 'viewFields').current as FlatViewField[]) ?? []
+    ).filter(isDefined);
+    const flatViewFilters = (
+      (get(metadataStoreState, 'viewFilters').current as FlatViewFilter[]) ?? []
+    )
+      .filter(isDefined)
+      .filter((filter) => !filter.deletedAt);
+    const flatViewSorts = (
+      (get(metadataStoreState, 'viewSorts').current as FlatViewSort[]) ?? []
+    )
+      .filter(isDefined)
+      .filter((sort) => !sort.deletedAt);
+    const flatViewGroups = (
+      (get(metadataStoreState, 'viewGroups').current as FlatViewGroup[]) ?? []
+    )
+      .filter(isDefined)
+      .filter((group) => !group.deletedAt);
+    const flatViewFilterGroups = (
+      (get(metadataStoreState, 'viewFilterGroups')
+        .current as FlatViewFilterGroup[]) ?? []
+    )
+      .filter(isDefined)
+      .filter((group) => !group.deletedAt);
+    const allFlatViewFieldGroups = (
+      (get(metadataStoreState, 'viewFieldGroups')
+        .current as FlatViewFieldGroup[]) ?? []
+    ).filter(isDefined);
 
-    const flatViewFields = allFlatViewFields.filter((field) => field.isActive);
+    const flatViewFields = allFlatViewFields.filter(
+      (field) => field.isActive && !field.deletedAt,
+    );
     const flatViewFieldGroups = allFlatViewFieldGroups.filter(
-      (group) => group.isActive,
+      (group) => group.isActive && !group.deletedAt,
     );
 
     const viewFieldsByViewId = new Map<string, FlatViewField[]>();
@@ -90,8 +113,9 @@ export const viewsSelector = createAtomSelector<ViewWithRelations[]>({
       }
     }
 
-    return flatViews.map((view) => ({
+    return flatViews.filter(isDefined).map((view) => ({
       ...view,
+      // view.name can be a placeholder like "All {objectLabelPlural}"; guard missing objectMetadataItem
       name: resolveViewNamePlaceholders(
         view.name,
         objectMetadataItemsById.get(view.objectMetadataId),

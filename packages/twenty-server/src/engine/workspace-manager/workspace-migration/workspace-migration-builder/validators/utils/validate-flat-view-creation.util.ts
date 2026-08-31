@@ -2,6 +2,10 @@ import { msg, t } from '@lingui/core/macro';
 import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { ViewType } from 'twenty-shared/types';
 import { getViewLayoutFromViewType, isDefined } from 'twenty-shared/utils';
+import {
+  buildObjectMetadataLabelPlaceholderValues,
+  interpolateMessagePlaceholders,
+} from 'twenty-shared/i18n';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
@@ -91,6 +95,64 @@ export const validateFlatViewCreation = ({
         message: t`Object already has a view with the ${reservedViewKey} key`,
         userFriendlyMessage: msg`This object already has a default view`,
       });
+    }
+  }
+
+  // Prevent duplicate resolved names per object (custom "All tasks" colliding with system "All {objectLabelPlural}")
+  if (
+    isDefined(optimisticFlatObjectMetadata) &&
+    isDefined(flatViewToValidate.name)
+  ) {
+    const newResolvedName = interpolateMessagePlaceholders(
+      flatViewToValidate.name,
+      buildObjectMetadataLabelPlaceholderValues({
+        labelSingular: optimisticFlatObjectMetadata.labelSingular,
+        labelPlural: optimisticFlatObjectMetadata.labelPlural,
+        icon: optimisticFlatObjectMetadata.icon,
+      }),
+    )
+      .trim()
+      .toLowerCase();
+
+    if (newResolvedName.length > 0) {
+      const hasDuplicateName =
+        optimisticFlatObjectMetadata.viewUniversalIdentifiers.some(
+          (viewUniversalIdentifier) => {
+            const existingView = findFlatEntityByUniversalIdentifier({
+              universalIdentifier: viewUniversalIdentifier,
+              flatEntityMaps: optimisticFlatViewMaps,
+            });
+
+            if (
+              !isDefined(existingView) ||
+              isDefined(existingView.deletedAt) ||
+              existingView.isActive === false
+            ) {
+              return false;
+            }
+
+            const existingResolvedName = interpolateMessagePlaceholders(
+              existingView.name,
+              buildObjectMetadataLabelPlaceholderValues({
+                labelSingular: optimisticFlatObjectMetadata.labelSingular,
+                labelPlural: optimisticFlatObjectMetadata.labelPlural,
+                icon: optimisticFlatObjectMetadata.icon,
+              }),
+            )
+              .trim()
+              .toLowerCase();
+
+            return existingResolvedName === newResolvedName;
+          },
+        );
+
+      if (hasDuplicateName) {
+        validationResult.errors.push({
+          code: ViewExceptionCode.INVALID_VIEW_DATA,
+          message: t`A view with the name "${flatViewToValidate.name}" already exists for this object`,
+          userFriendlyMessage: msg`A view with this name already exists`,
+        });
+      }
     }
   }
 

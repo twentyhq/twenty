@@ -105,12 +105,15 @@ export const SidePanelNewSidebarItemSearchResults = ({
 
   const filteredViews = filterBySearchQuery({
     items: availableViews
+      .filter((view) => isDefined(view))
       .filter((view) =>
         objectMetadataItemIdsWithViews.has(view.objectMetadataId),
       )
-      .sort((viewA, viewB) => viewA.name.localeCompare(viewB.name)),
+      .sort((viewA, viewB) =>
+        (viewA.name ?? '').localeCompare(viewB.name ?? ''),
+      ),
     searchQuery: trimmedSearchValue,
-    getSearchableValues: (view) => [view.name],
+    getSearchableValues: (view) => [view.name ?? ''],
   });
 
   const selectableItemIds = [
@@ -229,14 +232,14 @@ export const SidePanelNewSidebarItemSearchResults = ({
                           ? undefined
                           : getIcon(view.icon)
                       }
-                      label={view.name}
+                      label={view.name ?? ''}
                       id={view.id}
                       onClick={() => handleSelectView(view)}
                       dragIndex={filteredObjectMetadataItems.length + index}
                       payload={{
                         type: NavigationMenuItemType.VIEW,
                         viewId: view.id,
-                        label: view.name,
+                        label: view.name ?? '',
                       }}
                     />
                   </SelectableListItem>
