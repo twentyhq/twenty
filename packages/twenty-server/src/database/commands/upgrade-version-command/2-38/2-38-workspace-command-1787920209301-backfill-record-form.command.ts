@@ -10,6 +10,7 @@ import { computeRecordFormFlatFieldMetadatas } from 'src/engine/metadata-modules
 import { buildSystemFormFieldPageLayoutWidget } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/build-system-form-field-page-layout-widget.util';
 import { computeSystemRecordFormPageLayoutToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-record-form-page-layout-to-create.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
@@ -27,7 +28,7 @@ type BackfillOperationsByApplication = Map<string, BackfillOperations>;
 @Command({
   name: 'upgrade:2-38:backfill-record-form',
   description:
-    'Backfill the RECORD_FORM page layout stack for every object missing it, converging upgraded installs with the stack objectRecordFormOnCreate and fieldRecordFormWidgetOnCreate now emit at creation time. Each object gets one layout, one "Fields" tab and one FORM_FIELD widget per creatable field, label identifier first, in record-page field order. Fields the form cannot render (system, non UI editable, id, and any type the form has no input for, which today means ACTOR, FILES, NUMERIC, POSITION, RATING, TS_VECTOR and relations other than MANY_TO_ONE) are skipped. Every entity is isSystemSideEffect with the same derived universal identifiers the engine uses, so the backfill is idempotent: objects whose derived layout already exists are skipped entirely, and on a layout that exists with missing widgets only the missing ones are topped up, which also makes a retry after a partial failure safe. Widgets land in the migration bucket of the application owning their displayed field, matching the engine emission for app-contributed fields on foreign objects.',
+    'Backfill the RECORD_FORM page layout stack for every workspace-custom and application object missing it, converging upgraded installs with the stack objectRecordFormOnCreate and fieldRecordFormWidgetOnCreate now emit at creation time. Each object gets one layout, one "Fields" tab and one FORM_FIELD widget per creatable field, label identifier first, in record-page field order. Fields the form cannot render (system, non UI editable, id, and any type the form has no input for, which today means ACTOR, FILES, NUMERIC, POSITION, RATING, TS_VECTOR and relations other than MANY_TO_ONE) are skipped. Every entity is isSystemSideEffect with the same derived universal identifiers the engine uses, so the backfill is idempotent: objects whose derived layout already exists are skipped entirely, and on a layout that exists with missing widgets only the missing ones are topped up, which also makes a retry after a partial failure safe. Widgets land in the migration bucket of the application owning their displayed field, matching the engine emission for app-contributed fields on foreign objects. Twenty-standard objects are skipped: they never reach the side-effect engine, so their form is authored in the standard definitions instead, which reach fresh and upgraded workspaces alike through the normal standard sync.',
 })
 export class BackfillRecordFormCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -145,7 +146,15 @@ export class BackfillRecordFormCommand extends ProvisionedWorkspaceCommandRunner
     for (const flatObjectMetadata of Object.values(
       flatObjectMetadataMaps.byUniversalIdentifier,
     )) {
-      if (!isDefined(flatObjectMetadata) || flatObjectMetadata.isRemote) {
+      const isTwentyStandardObject =
+        flatObjectMetadata?.applicationUniversalIdentifier ===
+        TWENTY_STANDARD_APPLICATION.universalIdentifier;
+
+      if (
+        !isDefined(flatObjectMetadata) ||
+        flatObjectMetadata.isRemote ||
+        isTwentyStandardObject
+      ) {
         continue;
       }
 
