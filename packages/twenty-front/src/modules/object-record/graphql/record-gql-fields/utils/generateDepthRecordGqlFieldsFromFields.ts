@@ -1,38 +1,15 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type GenerateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/types/GenerateDepthRecordGqlFieldsFromFields';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
 import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
-import {
-  getJunctionConfig,
-  isUsableJunctionConfig,
-} from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getReverseJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getReverseJunctionConfig';
+import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
 import {
   computeMorphRelationGqlFieldName,
   isDefined,
 } from 'twenty-shared/utils';
-
-export type GenerateDepthRecordGqlFieldsFromFields = {
-  objectMetadataItems: Pick<
-    EnrichedObjectMetadataItem,
-    | 'id'
-    | 'fields'
-    | 'labelIdentifierFieldMetadataId'
-    | 'imageIdentifierFieldMetadataId'
-    | 'nameSingular'
-    | 'namePlural'
-  >[];
-  // Required to resolve the junction records held by the reverse side of a junction
-  sourceObjectMetadataItem?: Pick<EnrichedObjectMetadataItem, 'id'>;
-  fields: Pick<
-    FieldMetadataItem,
-    'id' | 'name' | 'type' | 'settings' | 'morphRelations' | 'relation'
-  >[];
-  depth: 0 | 1;
-  shouldOnlyLoadRelationIdentifiers?: boolean;
-};
 
 export const generateDepthRecordGqlFieldsFromFields = ({
   objectMetadataItems,

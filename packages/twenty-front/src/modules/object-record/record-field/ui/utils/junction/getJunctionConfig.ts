@@ -1,43 +1,10 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type JunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/JunctionConfig';
+import { type JunctionObjectMetadataItem } from '@/object-record/record-field/ui/utils/junction/types/JunctionObjectMetadataItem';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { hasJunctionTargetFieldId } from './hasJunctionTargetFieldId';
 import { isValidJunctionTargetField } from './isValidJunctionTargetField';
-
-export type JunctionObjectMetadataItem = Pick<
-  EnrichedObjectMetadataItem,
-  | 'id'
-  | 'fields'
-  | 'labelIdentifierFieldMetadataId'
-  | 'imageIdentifierFieldMetadataId'
-  | 'nameSingular'
-  | 'namePlural'
->;
-
-type BaseJunctionConfig = {
-  junctionObjectMetadata: JunctionObjectMetadataItem;
-};
-
-export type ValidJunctionConfig = BaseJunctionConfig & {
-  targetFields: FieldMetadataItem[];
-  sourceField?: FieldMetadataItem;
-  isMorphRelation: boolean;
-  isValid: true;
-};
-
-export type InvalidJunctionConfig = BaseJunctionConfig & {
-  targetFields: [];
-  sourceField?: never;
-  isMorphRelation: false;
-  isValid: false;
-};
-
-export type JunctionConfig = ValidJunctionConfig | InvalidJunctionConfig;
-
-export const isUsableJunctionConfig = (
-  junctionConfig: JunctionConfig | null | undefined,
-): junctionConfig is ValidJunctionConfig => junctionConfig?.isValid === true;
 
 type GetJunctionConfigArgs = {
   settings: FieldMetadataItem['settings'] | undefined;
