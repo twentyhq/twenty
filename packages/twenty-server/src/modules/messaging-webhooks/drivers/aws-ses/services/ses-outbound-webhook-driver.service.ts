@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import type SnsPayloadValidator from 'sns-payload-validator';
 import { isDefined, parseJson } from 'twenty-shared/utils';
@@ -17,6 +17,8 @@ type SnsPayload = SnsPayloadValidator.SnsPayload;
 
 @Injectable()
 export class SesOutboundWebhookDriverService {
+  private readonly logger = new Logger(SesOutboundWebhookDriverService.name);
+
   constructor(
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly snsSignatureVerifierService: SnsSignatureVerifierService,
@@ -76,6 +78,12 @@ export class SesOutboundWebhookDriverService {
 
         return;
       case 'UNPROCESSABLE':
+        if (event.reason === 'UNSUPPORTED_EVENT_NAME') {
+          this.logger.log(`Ignored SES outbound event ${event.eventName}`);
+
+          return;
+        }
+
         this.exceptionHandlerService.captureExceptions([
           new MessagingWebhookException(
             `Dropped SES outbound event ${event.eventName}: ${event.reason}`,

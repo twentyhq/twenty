@@ -70,6 +70,7 @@ export class MessageCampaignMaterializationService {
     campaignId,
     messageChannelId,
     emailingDomainId,
+    userWorkspaceId,
     recipients,
   }: MaterializeCampaignJobData): Promise<void> {
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
@@ -122,6 +123,7 @@ export class MessageCampaignMaterializationService {
         campaignId,
         messageChannelId,
         emailingDomainId,
+        userWorkspaceId,
         recipientsToCreate,
         recipientsStrandedByAnEarlierAttempt,
       });
@@ -143,6 +145,7 @@ export class MessageCampaignMaterializationService {
     campaignId,
     messageChannelId,
     emailingDomainId,
+    userWorkspaceId,
     recipientsToCreate,
     recipientsStrandedByAnEarlierAttempt,
   }: {
@@ -150,6 +153,7 @@ export class MessageCampaignMaterializationService {
     campaignId: string;
     messageChannelId: string;
     emailingDomainId: string;
+    userWorkspaceId: string;
     recipientsToCreate: CampaignMessageRecipient[];
     recipientsStrandedByAnEarlierAttempt: CampaignMessageRecipient[];
   }): Promise<number> {
@@ -168,6 +172,7 @@ export class MessageCampaignMaterializationService {
       campaignId,
       messageChannelId,
       emailingDomainId,
+      userWorkspaceId,
       receivedAtIso,
       shouldCreateMessages,
       recipients,
@@ -191,6 +196,7 @@ export class MessageCampaignMaterializationService {
     campaignId,
     messageChannelId,
     emailingDomainId,
+    userWorkspaceId,
     receivedAtIso,
     shouldCreateMessages,
     recipients,
@@ -238,6 +244,7 @@ export class MessageCampaignMaterializationService {
         workspaceId,
         campaignId,
         emailingDomainId,
+        userWorkspaceId,
         recipients,
       });
 
@@ -315,11 +322,13 @@ export class MessageCampaignMaterializationService {
     workspaceId,
     campaignId,
     emailingDomainId,
+    userWorkspaceId,
     recipients,
   }: {
     workspaceId: string;
     campaignId: string;
     emailingDomainId: string;
+    userWorkspaceId: string;
     recipients: CampaignMessageRecipient[];
   }): Promise<void> {
     if (recipients.length === 0) {
@@ -335,6 +344,7 @@ export class MessageCampaignMaterializationService {
         personId: recipient.personId,
         recipientEmail: recipient.email,
         emailingDomainId,
+        userWorkspaceId,
       })),
       {
         retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,

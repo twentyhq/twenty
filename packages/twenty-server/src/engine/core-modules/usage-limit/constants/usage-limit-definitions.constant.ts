@@ -41,5 +41,19 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
   [UsageResourceType.APP]: {},
   [UsageResourceType.STORAGE]: {},
   [UsageResourceType.LOGIC_FUNCTION]: {},
-  [UsageResourceType.EMAIL]: {},
+  [UsageResourceType.EMAIL]: {
+    speed: {
+      allowedOperationTypes: [UsageOperationType.EMAIL_SEND],
+      allowedSpenderTypes: ['workspace'],
+      fallbacks: [
+        {
+          spenderType: 'workspace',
+          counterScope: 'crossWorkspace',
+          limitValueConfigVariable: 'EMAIL_SEND_RATE_LIMITING_LIMIT',
+          windowMsConfigVariable: 'EMAIL_SEND_RATE_LIMITING_TTL_IN_MS',
+          isOverridable: false,
+        },
+      ],
+    },
+  },
 };

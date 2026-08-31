@@ -1,0 +1,1 @@
+export const CAMPAIGN_SEND_SLOT_RETRY_MAX_WINDOWS = 3;

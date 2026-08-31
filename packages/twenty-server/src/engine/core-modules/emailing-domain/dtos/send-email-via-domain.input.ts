@@ -1,6 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql';
 
+import { MAX_TRANSACTIONAL_RECIPIENTS } from 'src/engine/core-modules/emailing-domain/constants/max-transactional-recipients.constant';
+
 import {
+  ArrayMaxSize,
   ArrayMinSize,
   IsArray,
   IsEmail,
@@ -18,18 +21,21 @@ export class SendEmailViaDomainInput {
   @Field(() => [String])
   @IsArray()
   @ArrayMinSize(1)
+  @ArrayMaxSize(MAX_TRANSACTIONAL_RECIPIENTS)
   @IsEmail({}, { each: true })
   to: string[];
 
   @Field(() => [String], { nullable: true })
   @IsOptional()
   @IsArray()
+  @ArrayMaxSize(MAX_TRANSACTIONAL_RECIPIENTS)
   @IsEmail({}, { each: true })
   cc?: string[];
 
   @Field(() => [String], { nullable: true })
   @IsOptional()
   @IsArray()
+  @ArrayMaxSize(MAX_TRANSACTIONAL_RECIPIENTS)
   @IsEmail({}, { each: true })
   bcc?: string[];
 

@@ -1,0 +1,6 @@
+import { CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+
+const CAMPAIGN_STATS_REFRESH_LOCK_GRACE_MS = 2_000;
+
+export const CAMPAIGN_STATS_REFRESH_LOCK_TTL_MS =
+  CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS + CAMPAIGN_STATS_REFRESH_LOCK_GRACE_MS;

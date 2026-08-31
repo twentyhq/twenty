@@ -1,5 +1,8 @@
 import { CAMPAIGN_SEND_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-limit.constant';
 import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
+import { MESSAGE_CAMPAIGN_TEST_SEND_MAX_REQUESTS } from 'src/modules/emailing/constants/message-campaign-test-send-max-requests.constant';
+import { MESSAGE_CAMPAIGN_TEST_SEND_WINDOW_MS } from 'src/modules/emailing/constants/message-campaign-test-send-window-ms.constant';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -13,9 +16,8 @@ import {
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
-import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
-import { type CampaignSkippedBreakdown } from 'src/engine/core-modules/emailing-domain/types/campaign-skipped-breakdown.type';
+import { type CampaignAudienceResolution } from 'src/engine/core-modules/emailing-domain/types/campaign-audience-resolution.type';
 import { type MaterializeCampaignJobData } from 'src/engine/core-modules/emailing-domain/types/materialize-campaign-job-data.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -26,6 +28,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
+import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
@@ -40,7 +43,7 @@ import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 type SendCampaignResult = {
   campaignId: string;
   queuedCount: number;
-  skipped: CampaignSkippedBreakdown;
+  audience: CampaignAudienceResolution['audience'];
 };
 
 type SendableDraftCampaign = z.infer<typeof sendableDraftCampaignSchema>;
@@ -50,8 +53,6 @@ export class MessageCampaignService {
   constructor(
     @InjectWorkspaceScopedRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
-    @InjectWorkspaceScopedRepository(CampaignDeliveryEntity)
-    private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectMessageQueue(MessageQueue.campaignQueue)
@@ -61,6 +62,8 @@ export class MessageCampaignService {
     private readonly campaignVariableService: CampaignVariableService,
     private readonly messageCampaignAudienceService: MessageCampaignAudienceService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
+    private readonly throttlerService: ThrottlerService,
+    private readonly emailBillingService: EmailBillingService,
   ) {}
 
   async send({
@@ -77,16 +80,20 @@ export class MessageCampaignService {
       userWorkspaceId,
     });
 
-    const { fromAddress, listId } =
+    const { fromAddress, listId, unsubscribeTopicId } =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-        const { fromAddress, listId } =
+        const { fromAddress, listId, unsubscribeTopicId } =
           await this.findSendableDraftCampaignOrThrow({
             workspaceId,
             campaignId,
             roleId,
           });
 
-        return { fromAddress: fromAddress.primaryEmail, listId };
+        return {
+          fromAddress: fromAddress.primaryEmail,
+          listId,
+          unsubscribeTopicId,
+        };
       });
 
     const emailingDomain = await this.findSendReadyEmailingDomainOrThrow({
@@ -94,12 +101,23 @@ export class MessageCampaignService {
       fromAddress,
     });
 
-    const { recipients, skipped } =
+    const { sendableRecipients, audience } =
       await this.messageCampaignAudienceService.resolveNormalizedAudience({
         workspaceId,
         listId,
         roleId,
+        unsubscribeTopicId: unsubscribeTopicId ?? undefined,
       });
+
+    const { hasCredits } =
+      await this.emailBillingService.resolveEmailCreditContext(workspaceId);
+
+    if (sendableRecipients.length > 0 && !hasCredits) {
+      throw new EmailingDomainException(
+        `Campaign ${campaignId} cannot be sent to ${sendableRecipients.length} recipient(s) because the workspace has no email credits left`,
+        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS,
+      );
+    }
 
     const messageChannel =
       await this.messageChannelMetadataService.getOrCreateEmailGroupChannel({
@@ -132,7 +150,8 @@ export class MessageCampaignService {
           campaignId,
           messageChannelId: messageChannel.id,
           emailingDomainId: emailingDomain.id,
-          recipients,
+          userWorkspaceId,
+          recipients: sendableRecipients,
         },
         {
           retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,
@@ -151,7 +170,11 @@ export class MessageCampaignService {
         throw error;
       });
 
-    return { campaignId, queuedCount: recipients.length, skipped };
+    return {
+      campaignId,
+      queuedCount: sendableRecipients.length,
+      audience,
+    };
   }
 
   async sendTest({
@@ -185,6 +208,13 @@ export class MessageCampaignService {
       variables,
     });
 
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      `message-campaign-test-send:throttler:${workspaceId}`,
+      1,
+      MESSAGE_CAMPAIGN_TEST_SEND_MAX_REQUESTS,
+      MESSAGE_CAMPAIGN_TEST_SEND_WINDOW_MS,
+    );
+
     return this.emailingDomainSenderService.sendEmail(
       workspaceId,
       emailingDomain.id,
@@ -194,6 +224,7 @@ export class MessageCampaignService {
         subject: rendered.subject,
         text: rendered.plainText,
         html: rendered.html,
+        sendKind: 'MARKETING',
         unsubscribeTopicId,
       },
     );

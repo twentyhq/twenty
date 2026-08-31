@@ -27,6 +27,7 @@ import {
 } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
@@ -41,6 +42,7 @@ import { MessageCampaignService } from 'src/modules/emailing/services/message-ca
 @UseFilters(
   EmailGroupAccessGraphqlApiExceptionFilter,
   EmailingDomainGraphqlApiExceptionFilter,
+  ThrottlerGraphqlApiExceptionFilter,
 )
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -59,6 +61,7 @@ export class EmailingSendResolver {
   async sendEmailViaEmailingDomain(
     @Args('input') input: SendEmailViaDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<SendEmailViaDomainOutputDTO> {
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
     await this.emailBillingService.validateEmailCreditsOrThrow(
@@ -69,12 +72,16 @@ export class EmailingSendResolver {
     const result = await this.emailingDomainSenderService.sendEmail(
       currentWorkspace.id,
       emailingDomainId,
-      content,
+      { ...content, sendKind: 'TRANSACTIONAL' },
     );
 
     await this.emailBillingService.billSentEmails({
       workspaceId: currentWorkspace.id,
-      sentEmailCount: 1,
+      userWorkspaceId,
+      sentEmailCount:
+        result.deliveredRecipients.to.length +
+        result.deliveredRecipients.cc.length +
+        result.deliveredRecipients.bcc.length,
     });
 
     return { messageId: result.messageId };
@@ -133,6 +140,14 @@ export class EmailingSendResolver {
       subject: input.subject,
       html: input.body,
       fromAddress: input.fromAddress,
+    });
+
+    await this.emailBillingService.billSentEmails({
+      workspaceId: currentWorkspace.id,
+      sentEmailCount:
+        result.deliveredRecipients.to.length +
+        result.deliveredRecipients.cc.length +
+        result.deliveredRecipients.bcc.length,
     });
 
     return { messageId: result.messageId };

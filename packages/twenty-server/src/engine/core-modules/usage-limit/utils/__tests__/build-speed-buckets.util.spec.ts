@@ -50,12 +50,14 @@ const buildRule = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
 const buildBuckets = ({
   authContext,
   rules = [],
+  defaultUsageLimitFallbacks = DEFAULT_USAGE_LIMIT_FALLBACKS,
 }: {
   authContext: WorkspaceAuthContext;
   rules?: FlatUsageLimit[];
+  defaultUsageLimitFallbacks?: DefaultUsageLimitFallback[];
 }) =>
   buildSpeedBuckets({
-    defaultUsageLimitFallbacks: DEFAULT_USAGE_LIMIT_FALLBACKS,
+    defaultUsageLimitFallbacks,
     rules,
     authContext,
     resourceType: UsageResourceType.API,
@@ -130,6 +132,60 @@ describe('buildSpeedBuckets with no rules configured', () => {
 
   it('leaves a system request alone', () => {
     expect(buildBuckets({ authContext: systemContext })).toEqual([]);
+  });
+});
+
+describe('buildSpeedBuckets for a spender no application identifies', () => {
+  const WORKSPACE_FALLBACKS: DefaultUsageLimitFallback[] = [
+    {
+      spenderType: 'workspace',
+      counterScope: 'crossWorkspace',
+      maxTokens: 14,
+      windowMs: 10_000,
+      isOverridable: true,
+    },
+  ];
+
+  it('meters a system sender against one counter across every workspace', () => {
+    expect(
+      buildBuckets({
+        authContext: systemContext,
+        defaultUsageLimitFallbacks: WORKSPACE_FALLBACKS,
+      }),
+    ).toEqual([
+      expect.objectContaining({
+        key: '{server}:speed:API:API_REQUEST:workspace:-:10',
+        refillPerWindow: 14,
+        spenderType: 'workspace',
+        spenderId: null,
+      }),
+    ]);
+  });
+
+  it('meters a user request against that same counter', () => {
+    const [bucket] = buildBuckets({
+      authContext: userContext,
+      defaultUsageLimitFallbacks: WORKSPACE_FALLBACKS,
+    });
+
+    expect(bucket.key).toBe('{server}:speed:API:API_REQUEST:workspace:-:10');
+  });
+
+  it('still drops an application bucket when no application identifies the caller', () => {
+    expect(
+      buildBuckets({
+        authContext: systemContext,
+        defaultUsageLimitFallbacks: [
+          {
+            spenderType: 'application',
+            counterScope: 'crossWorkspace',
+            maxTokens: 500,
+            windowMs: 60_000,
+            isOverridable: false,
+          },
+        ],
+      }),
+    ).toEqual([]);
   });
 });
 

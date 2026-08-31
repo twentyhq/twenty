@@ -26,6 +26,7 @@ import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { EmailingModule } from 'src/modules/emailing/emailing.module';
 import { MaterializeCampaignChunkJob } from 'src/modules/emailing/jobs/materialize-campaign-chunk.job';
 import { MaterializeCampaignJob } from 'src/modules/emailing/jobs/materialize-campaign.job';
+import { ReconcileWorkspaceCampaignStatsJob } from 'src/modules/emailing/jobs/reconcile-workspace-campaign-stats.job';
 import { RefreshCampaignStatsJob } from 'src/modules/emailing/jobs/refresh-campaign-stats.job';
 import { SendCampaignEmailJob } from 'src/modules/emailing/jobs/send-campaign-email.job';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
@@ -114,6 +115,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     MaterializeCampaignJob,
     MaterializeCampaignChunkJob,
     RefreshCampaignStatsJob,
+    ReconcileWorkspaceCampaignStatsJob,
     UpdateSubscriptionQuantityJob,
     HandleWorkspaceMemberDeletedJob,
     WorkspaceDeletionApplicationUninstallJob,

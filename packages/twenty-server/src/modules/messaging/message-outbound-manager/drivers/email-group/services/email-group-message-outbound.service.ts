@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
@@ -24,6 +25,7 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
     @InjectWorkspaceScopedRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
+    private readonly emailBillingService: EmailBillingService,
   ) {}
 
   async sendMessage(
@@ -39,10 +41,15 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
       );
     }
 
+    await this.emailBillingService.validateEmailCreditsOrThrow(
+      connectedAccount.workspaceId,
+    );
+
     const result = await this.emailingDomainSenderService.sendEmail(
       connectedAccount.workspaceId,
       emailingDomain.id,
       {
+        sendKind: 'TRANSACTIONAL',
         to: this.toRecipientArray(sendMessageInput.to),
         cc: this.toRecipientArray(sendMessageInput.cc),
         bcc: this.toRecipientArray(sendMessageInput.bcc),
@@ -56,6 +63,14 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
         attachments: sendMessageInput.attachments,
       },
     );
+
+    await this.emailBillingService.billSentEmails({
+      workspaceId: connectedAccount.workspaceId,
+      sentEmailCount:
+        result.deliveredRecipients.to.length +
+        result.deliveredRecipients.cc.length +
+        result.deliveredRecipients.bcc.length,
+    });
 
     return {
       headerMessageId: result.messageId,
