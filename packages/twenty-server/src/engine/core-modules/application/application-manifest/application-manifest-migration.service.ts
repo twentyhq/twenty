@@ -114,7 +114,9 @@ export class ApplicationManifestMigrationService {
         ownerFlatApplication,
         fromAllFlatEntityMaps,
         isLogicFunctionPrebuiltModeEnabled:
-          featureFlagsMap[FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED],
+          featureFlagsMap[
+            FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
+          ],
         now,
         workspaceId,
       });
@@ -207,7 +209,9 @@ export class ApplicationManifestMigrationService {
         ownerFlatApplication,
         fromAllFlatEntityMaps,
         isLogicFunctionPrebuiltModeEnabled:
-          featureFlagsMap[FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED],
+          featureFlagsMap[
+            FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
+          ],
         now,
         workspaceId,
       });
