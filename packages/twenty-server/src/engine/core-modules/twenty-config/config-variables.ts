@@ -2149,7 +2149,6 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.AWS_SES_SETTINGS,
     description: 'AWS region',
     type: ConfigVariableType.STRING,
-    isEnvOnly: true,
   })
   @ValidateIf(
     (env) => env.EMAILING_DOMAIN_DRIVER === EmailingDomainDriver.AWS_SES,
@@ -2189,7 +2188,6 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.AWS_SES_SETTINGS,
     description: 'AWS Account ID for SES ARN construction',
     type: ConfigVariableType.STRING,
-    isEnvOnly: true,
   })
   @ValidateIf(
     (env) => env.EMAILING_DOMAIN_DRIVER === EmailingDomainDriver.AWS_SES,
@@ -2212,7 +2210,6 @@ export class ConfigVariables {
     description:
       'Comma-separated list of SNS topic ARNs accepted by the inbound-email and outbound-event webhooks (e.g. arn:aws:sns:us-east-1:123:my-inbound). Every SNS payload whose topic is absent from this list is rejected.',
     type: ConfigVariableType.STRING,
-    isEnvOnly: true,
   })
   @ValidateIf(
     (env) => env.EMAILING_DOMAIN_DRIVER === EmailingDomainDriver.AWS_SES,
@@ -2226,7 +2223,6 @@ export class ConfigVariables {
     description:
       'SNS topic ARN that receives SES DELIVERY, BOUNCE, COMPLAINT, REJECT and RENDERING_FAILURE events. An SNS event destination pointing at it is added to each workspace SES configuration set, and the topic must be subscribed to /webhooks/messaging/ses/outbound. Bounces and complaints also arrive through the pre-existing EventBridge destination, so those two are delivered twice and deduplicated downstream.',
     type: ConfigVariableType.STRING,
-    isEnvOnly: true,
   })
   @IsOptional()
   @IsString()
