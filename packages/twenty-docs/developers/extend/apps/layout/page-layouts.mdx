@@ -62,7 +62,9 @@ export default definePageLayout({
 
 ### Field widgets
 
-A `FIELD` widget renders one field of the record. For relation fields it can also embed a list of related records:
+A `FIELD` widget renders one field of the current record. For relation fields, it can also embed a view of records related to the current record.
+
+To embed a view that is not scoped to the current record, use a [record table widget](#record-table-widgets).
 
 ```ts
 {
@@ -80,7 +82,33 @@ A `FIELD` widget renders one field of the record. For relation fields it can als
 
 - `fieldMetadataId` takes the universal identifier of a field on the layout's object.
 - `fieldDisplayMode` is one of `'FIELD'`, `'CARD'`, `'EDITOR'`, `'VIEW'` or `'TABLE'`. `TABLE` embeds a view listing the records of a one-to-many relation field.
+- `isUIEditable` applies to relation fields in `TABLE` display mode. It defaults to `true`; set it to `false` to prevent editing records from the embedded table or kanban.
 - `nestedRelationFieldMetadataId` is optional and takes the universal identifier of a one-to-many relation field on the relation target object, to list records two relation hops away (e.g. a Company page listing the opportunities of the company's people, or a Person page listing the opportunities of the person's company). The first hop can be a one-to-many or a many-to-one relation field, the second must be one-to-many (junction relations are not supported), and it requires `fieldDisplayMode: 'TABLE'` — combining it with any other display mode is a validation error, since a nested widget always renders as an embedded view.
+
+### Record table widgets
+
+A `RECORD_TABLE` widget embeds a saved view on a dashboard, record page, or standalone page. The saved view determines the records, fields, filters, sorts, and layout shown in the widget.
+
+```ts
+{
+  universalIdentifier: 'd1d2d3d4-d5d6-4000-8000-000000000004',
+  title: 'Open opportunities',
+  type: 'RECORD_TABLE',
+  configuration: {
+    configurationType: 'RECORD_TABLE',
+    viewUniversalIdentifier: OPPORTUNITIES_VIEW_UNIVERSAL_IDENTIFIER,
+    recordLimit: 8,
+    isUIEditable: false,
+  },
+}
+```
+
+- `viewUniversalIdentifier` identifies the view to display.
+- `recordLimit` is optional and caps how many records the widget displays.
+- `isUIEditable` applies to table and kanban views. It enables table cell editing or kanban card editing, moving, and creation. It defaults to `true` on `RECORD_PAGE` layouts and `false` on other layouts.
+- `isUIEditable` controls UI actions only. Record permissions still apply, and view settings remain editable only in the page layout editor.
+
+Workspace admins can configure the same behavior with **Allow editing** in the [dashboard widget](/user-guide/dashboards/capabilities/widgets#editing-records) and [record page](/user-guide/layout/capabilities/record-pages#editing-related-records) editors.
 
 ## definePageLayoutTab
 
