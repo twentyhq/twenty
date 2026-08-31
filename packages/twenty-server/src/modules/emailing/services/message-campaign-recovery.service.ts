@@ -1,4 +1,3 @@
-import { CAMPAIGN_SENDING_STALE_THRESHOLD_MS } from 'src/engine/core-modules/emailing-domain/constants/campaign-sending-stale-threshold-ms.constant';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { In, LessThan, MoreThan } from 'typeorm';
@@ -10,6 +9,8 @@ import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+
+const SENDING_STALE_THRESHOLD_MS = 60 * 60 * 1000;
 
 @Injectable()
 export class MessageCampaignRecoveryService {
@@ -27,7 +28,7 @@ export class MessageCampaignRecoveryService {
     workspaceId: string;
   }): Promise<void> {
     const staleSince = new Date(
-      Date.now() - CAMPAIGN_SENDING_STALE_THRESHOLD_MS,
+      Date.now() - SENDING_STALE_THRESHOLD_MS,
     ).toISOString();
 
     const staleCampaigns =
