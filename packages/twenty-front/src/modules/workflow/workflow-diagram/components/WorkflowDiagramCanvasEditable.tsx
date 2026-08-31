@@ -6,6 +6,7 @@ import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/wo
 import { WorkflowDiagramCanvasBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasBase';
 import { WorkflowDiagramCanvasEditableEffect } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
+import { useReconnectWorkflowEdge } from '@/workflow/workflow-diagram/hooks/useReconnectWorkflowEdge';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramRightClickMenuPositionState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuPositionState';
 import {
@@ -13,8 +14,6 @@ import {
   type WorkflowDiagramEdge,
   type WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { assertEdgeHasDefinedHandlesOrThrow } from '@/workflow/workflow-diagram/utils/assertEdgeHasDefinedHandlesOrThrow';
-import { assertWorkflowConnectionOrThrow } from '@/workflow/workflow-diagram/utils/assertWorkflowConnectionOrThrow';
 import { getWorkflowVersionStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps';
 import { WorkflowDiagramBlankEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBlankEdge';
 import { WorkflowDiagramDefaultEdgeEditable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeEditable';
@@ -26,14 +25,7 @@ import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { prepareIfElseStepWithNewBranch } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/prepareIfElseStepWithNewBranch';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
-import {
-  addEdge,
-  ReactFlowProvider,
-  type Connection,
-  type Edge,
-  type OnNodeDrag,
-} from '@xyflow/react';
-import { useCallback } from 'react';
+import { addEdge, ReactFlowProvider, type OnNodeDrag } from '@xyflow/react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowDiagramCanvasEditable = () => {
@@ -56,6 +48,7 @@ export const WorkflowDiagramCanvasEditable = () => {
   const { createEdge } = useCreateEdge();
 
   const { deleteEdge } = useDeleteEdge();
+  const { reconnectEdge } = useReconnectWorkflowEdge();
 
   const { updateStep } = useUpdateStep();
 
@@ -105,30 +98,6 @@ export const WorkflowDiagramCanvasEditable = () => {
       }),
     });
   };
-
-  const handleReconnect = useCallback(
-    async (oldEdge: Edge, connection: Connection) => {
-      assertEdgeHasDefinedHandlesOrThrow(oldEdge);
-      assertWorkflowConnectionOrThrow(connection);
-
-      await deleteEdge({
-        source: oldEdge.source,
-        target: oldEdge.target,
-        sourceConnectionOptions: getConnectionOptionsForSourceHandle({
-          sourceHandleId: oldEdge.sourceHandle,
-        }),
-      });
-
-      await createEdge({
-        source: connection.source,
-        target: connection.target,
-        connectionOptions: getConnectionOptionsForSourceHandle({
-          sourceHandleId: connection.sourceHandle,
-        }),
-      });
-    },
-    [deleteEdge, createEdge],
-  );
 
   const onDeleteEdge = async (edge: WorkflowDiagramEdge) => {
     await deleteEdge({
@@ -192,7 +161,7 @@ export const WorkflowDiagramCanvasEditable = () => {
         tagColor={tagProps.color}
         tagText={tagProps.text}
         onConnect={onConnect}
-        onReconnect={handleReconnect}
+        onReconnect={reconnectEdge}
         onNodeDragStop={onNodeDragStop}
         handlePaneContextMenu={handlePaneContextMenu}
         nodesConnectable

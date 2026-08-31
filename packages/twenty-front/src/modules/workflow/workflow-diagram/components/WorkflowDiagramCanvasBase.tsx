@@ -14,6 +14,7 @@ import { useWorkflowDiagramScreenToFlowPosition } from '@/workflow/workflow-diag
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
 import { workflowDiagramWaitingNodesDimensionsComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramWaitingNodesDimensionsComponentState';
+import { workflowReconnectingEdgeComponentState } from '@/workflow/workflow-diagram/states/workflowReconnectingEdgeComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import {
   type StartNodeCreationParams,
@@ -112,8 +113,6 @@ export const WorkflowDiagramCanvasBase = ({
   onDeleteEdge,
   onNodeDragStop,
   onReconnect,
-  onReconnectStart,
-  onReconnectEnd,
   startNodeCreation,
   handlePaneContextMenu,
   nodesConnectable = false,
@@ -149,9 +148,7 @@ export const WorkflowDiagramCanvasBase = ({
   onConnect?: (params: WorkflowConnection) => void;
   onDeleteEdge?: (edge: WorkflowDiagramEdge) => void;
   onNodeDragStop?: OnNodeDrag<WorkflowDiagramNode>;
-  onReconnect?: OnReconnect;
-  onReconnectStart?: () => void;
-  onReconnectEnd?: () => void;
+  onReconnect?: OnReconnect<WorkflowDiagramEdge>;
   startNodeCreation?: (params: StartNodeCreationParams) => void;
   nodesConnectable?: boolean;
   nodesDraggable?: boolean;
@@ -202,6 +199,11 @@ export const WorkflowDiagramCanvasBase = ({
     useWorkflowDiagramScreenToFlowPosition();
 
   const { setEdgeHovered, clearEdgeHover } = useEdgeState();
+  const setWorkflowReconnectingEdge = useSetAtomComponentState(
+    workflowReconnectingEdgeComponentState,
+  );
+  const workflowReconnectingEdgeCallbackState =
+    useAtomComponentStateCallbackState(workflowReconnectingEdgeComponentState);
 
   const [workflowDiagramFlowInitialized, setWorkflowDiagramFlowInitialized] =
     useState<boolean>(false);
@@ -539,6 +541,7 @@ export const WorkflowDiagramCanvasBase = ({
     });
 
     if (
+      isDefined(store.get(workflowReconnectingEdgeCallbackState)) ||
       !isDefined(startInfo) ||
       !isDefined(startNodeCreation) ||
       !(event instanceof MouseEvent) ||
@@ -607,8 +610,14 @@ export const WorkflowDiagramCanvasBase = ({
         onConnectStart={handleConnectStart}
         onConnectEnd={handleConnectEnd}
         onReconnect={onReconnect}
-        onReconnectStart={onReconnectStart}
-        onReconnectEnd={onReconnectEnd}
+        onReconnectStart={(_, edge) => {
+          setWorkflowReconnectingEdge(edge);
+          setConnectionStartInfo(null);
+        }}
+        onReconnectEnd={() => {
+          setWorkflowReconnectingEdge(undefined);
+          setConnectionStartInfo(null);
+        }}
         onNodeDragStop={onNodeDragStop}
         onBeforeDelete={onBeforeDelete}
         onDelete={onDelete}
