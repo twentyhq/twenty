@@ -18,7 +18,11 @@ export const fetchSlackRecordEntities = async ({
   const entities: EntityMetadata[] = [];
 
   for (const recordLink of recordLinks) {
-    const record = await findSlackUnfurlRecord(client, recordLink).catch(
+    const record = await findSlackUnfurlRecord({
+      client,
+      objectNameSingular: recordLink.objectNameSingular,
+      recordId: recordLink.recordId,
+    }).catch(
       (error) => {
         console.warn(
           `[slack] record fetch for preview failed (${recordLink.objectNameSingular} ${recordLink.recordId}): ${error instanceof Error ? error.message : String(error)}`,

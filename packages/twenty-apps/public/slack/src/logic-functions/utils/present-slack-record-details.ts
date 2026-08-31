@@ -112,10 +112,11 @@ export const presentSlackRecordDetails = async (
     return { ok: true, skipped: 'No resolvable record in the event' };
   }
 
-  const record = await findSlackUnfurlRecord(
-    new CoreApiClient(),
-    recordLink,
-  ).catch(() => undefined);
+  const record = await findSlackUnfurlRecord({
+    client: new CoreApiClient(),
+    objectNameSingular: recordLink.objectNameSingular,
+    recordId: recordLink.recordId,
+  }).catch(() => undefined);
 
   // The flexpane shows the full field set, read with the app's role-bounded
   // access; per-viewer gating is deferred until flexpane actions land.

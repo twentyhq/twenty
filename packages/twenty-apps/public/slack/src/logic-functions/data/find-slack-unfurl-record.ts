@@ -83,16 +83,15 @@ const RECORD_SELECTIONS: Record<
   },
 };
 
-export const findSlackUnfurlRecord = async (
-  client: CoreApiClient,
-  {
-    objectNameSingular,
-    recordId,
-  }: {
-    objectNameSingular: SlackUnfurlObjectName;
-    recordId: string;
-  },
-): Promise<Record<string, unknown> | undefined> => {
+export const findSlackUnfurlRecord = async ({
+  client,
+  objectNameSingular,
+  recordId,
+}: {
+  client: CoreApiClient;
+  objectNameSingular: SlackUnfurlObjectName;
+  recordId: string;
+}): Promise<Record<string, unknown> | undefined> => {
   const { queryField, node } = RECORD_SELECTIONS[objectNameSingular];
 
   const queryResult = await client.query({
