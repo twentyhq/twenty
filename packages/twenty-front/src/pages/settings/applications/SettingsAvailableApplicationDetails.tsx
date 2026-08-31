@@ -1,6 +1,5 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { AppChip } from '@/applications/components/AppChip';
-import { useListenToApplicationEvents } from '@/applications/hooks/useListenToApplicationEvents';
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
@@ -80,8 +79,6 @@ export const SettingsAvailableApplicationDetails = () => {
   });
 
   const application = applicationData?.findOneApplication;
-
-  useListenToApplicationEvents();
 
   const detail = detailData?.findMarketplaceAppDetail;
   const manifest = manifestData?.findMarketplaceAppDetail?.manifest as

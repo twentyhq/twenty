@@ -1,12 +1,9 @@
-import { useListenToApplicationEvents } from '@/applications/hooks/useListenToApplicationEvents';
 import { useQuery } from '@apollo/client/react';
 import { FindManyApplicationsDocument } from '~/generated-metadata/graphql';
 import { SettingsApplicationsTable } from '~/pages/settings/applications/components/SettingsApplicationsTable';
 
 export const SettingsApplicationsInstalledTab = () => {
   const { data } = useQuery(FindManyApplicationsDocument);
-
-  useListenToApplicationEvents();
 
   const applications = data?.findManyApplications ?? [];
 

@@ -1,6 +1,5 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { AppChip } from '@/applications/components/AppChip';
-import { useListenToApplicationEvents } from '@/applications/hooks/useListenToApplicationEvents';
 import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
@@ -19,7 +18,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -68,14 +67,17 @@ export const SettingsApplicationDetails = () => {
     APPLICATION_DETAIL_ID,
   );
 
-  const { data } = useQuery(FindOneApplicationDocument, {
+  const { data, loading, error } = useQuery(FindOneApplicationDocument, {
     variables: { id: applicationId },
     skip: !applicationId,
   });
 
   const application = data?.findOneApplication;
 
-  useListenToApplicationEvents();
+  // An uninstall — or a failed install rolled back — deletes the row this page
+  // is built on, and the lookup then errors: send the visitor back to the
+  // applications page rather than leaving them on a page without an app.
+  const hasVanished = !loading && (isDefined(error) || !isDefined(application));
 
   const { connectionProviders } =
     useFindApplicationConnectionProviders(applicationId);
@@ -351,6 +353,10 @@ export const SettingsApplicationDetails = () => {
         return <></>;
     }
   };
+
+  if (hasVanished) {
+    return <Navigate to={getSettingsPath(SettingsPath.Applications)} replace />;
+  }
 
   return (
     <CurrentApplicationContext.Provider value={application?.id ?? null}>

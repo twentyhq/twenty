@@ -1,174 +1,83 @@
 import { type ApplicationBroadcastRecord } from '@/applications/types/ApplicationBroadcastRecord';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
-import { FIND_APPLICATION_CONNECTION_PROVIDERS } from '@/settings/applications/graphql/queries/findApplicationConnectionProviders';
 import { type MetadataOperationBrowserEventDetail } from '@/browser-event/types/MetadataOperationBrowserEventDetail';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { FIND_APPLICATION_CONNECTION_PROVIDERS } from '@/settings/applications/graphql/queries/findApplicationConnectionProviders';
+import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useApolloClient } from '@apollo/client/react';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import {
-  ApplicationState,
+  FindAdminApplicationRegistrationInstalledWorkspacesDocument,
+  FindOneAdminApplicationRegistrationDocument,
+} from '~/generated-admin/graphql';
+import {
   FindManyApplicationsDocument,
   FindOneApplicationByUniversalIdentifierDocument,
   FindOneApplicationDocument,
   FindOneApplicationSummaryDocument,
 } from '~/generated-metadata/graphql';
 
-// Keeps the applications Apollo cache and the workspace installedApplications
-// list in sync with SSE broadcast events so install/upgrade/uninstall state
-// changes are visible without a reload.
-export const useListenToApplicationEvents = ({
-  skip = false,
-}: {
-  skip?: boolean;
-} = {}) => {
+// An application row carries none of the metadata an install, upgrade or
+// uninstall attaches to it — roles, objects, logic functions, connection
+// providers — so the broadcast payload cannot be applied to the cache: every
+// application view is re-read from the server instead.
+export const useListenToApplicationEvents = () => {
   const apolloClient = useApolloClient();
-  const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
+  const apolloAdminClient = useApolloAdminClient();
+  const { loadCurrentUser } = useLoadCurrentUser();
 
-  // Broadcast events only carry the application row, never its relations
-  // (roles, objects, logic functions, agents, variables, connection
-  // providers), and lookups by universalIdentifier error while the
-  // application is absent, so the cache cannot be patched into a correct
-  // state on its own.
-  const refetchApplicationQueries = useCallback(() => {
-    void apolloClient
-      .refetchQueries({
-        include: [
-          FindOneApplicationDocument,
-          FindOneApplicationByUniversalIdentifierDocument,
-          FindOneApplicationSummaryDocument,
-          FIND_APPLICATION_CONNECTION_PROVIDERS,
-        ],
-      })
-      .catch(() => {
-        // NOT_FOUND after an uninstall is a valid outcome.
-      });
-  }, [apolloClient]);
-
-  const applyApplicationEventToApolloCache = useCallback(
+  const refreshApplications = useCallback(
     (
       detail: MetadataOperationBrowserEventDetail<ApplicationBroadcastRecord>,
     ) => {
-      if (detail.operation.type === 'update') {
-        const { updatedRecord, updatedFields } = detail.operation;
-
-        const cacheId = apolloClient.cache.identify({
-          __typename: 'Application',
-          id: updatedRecord.id,
-        });
-
-        if (!isDefined(cacheId)) {
-          return;
-        }
-
-        apolloClient.cache.modify({
-          id: cacheId,
-          fields: {
-            state: (existingState) => updatedRecord.state ?? existingState,
-            version: (existingVersion) =>
-              updatedRecord.version !== undefined
-                ? updatedRecord.version
-                : existingVersion,
-            name: (existingName) => updatedRecord.name ?? existingName,
-          },
-        });
-
-        // An install or upgrade attaches its metadata to the application as it
-        // runs, so the relations are only complete once it leaves a
-        // transitional state.
-        if (
-          !isDefined(updatedFields) ||
-          (updatedFields.includes('state') &&
-            updatedRecord.state === ApplicationState.INSTALLED)
-        ) {
-          refetchApplicationQueries();
-        }
-
-        return;
-      }
-
       if (detail.operation.type === 'delete') {
-        const { deletedRecordId } = detail.operation;
-
         apolloClient.cache.evict({
           id: apolloClient.cache.identify({
             __typename: 'Application',
-            id: deletedRecordId,
+            id: detail.operation.deletedRecordId,
           }),
         });
         apolloClient.cache.gc();
-
-        // The workspace carries the applications app chips resolve their
-        // logo from; drop the uninstalled one so no stale chip remains.
-        setCurrentWorkspace((currentWorkspace) =>
-          isDefined(currentWorkspace)
-            ? {
-                ...currentWorkspace,
-                installedApplications:
-                  currentWorkspace.installedApplications.filter(
-                    (installedApplication) =>
-                      installedApplication.id !== deletedRecordId,
-                  ),
-              }
-            : currentWorkspace,
-        );
       }
 
-      const createdRecordId =
-        detail.operation.type === 'create'
-          ? detail.operation.createdRecord.id
-          : undefined;
-
-      // Creations and deletions change the list membership.
       void apolloClient
-        .query({
-          query: FindManyApplicationsDocument,
-          fetchPolicy: 'network-only',
-        })
-        .then(({ data }) => {
-          if (!isDefined(createdRecordId)) {
-            return;
-          }
-
-          const createdApplication = data?.findManyApplications.find(
-            (application) => application.id === createdRecordId,
-          );
-
-          if (!isDefined(createdApplication)) {
-            return;
-          }
-
-          // App chips resolve their logo from the workspace, so an install
-          // triggered elsewhere (another tab, the CLI, a background path)
-          // has to land there too.
-          setCurrentWorkspace((currentWorkspace) =>
-            isDefined(currentWorkspace)
-              ? {
-                  ...currentWorkspace,
-                  installedApplications: [
-                    ...currentWorkspace.installedApplications.filter(
-                      (installedApplication) =>
-                        installedApplication.id !== createdApplication.id,
-                    ),
-                    createdApplication,
-                  ],
-                }
-              : currentWorkspace,
-          );
+        .refetchQueries({
+          include: [
+            FindManyApplicationsDocument,
+            FindOneApplicationDocument,
+            FindOneApplicationByUniversalIdentifierDocument,
+            FindOneApplicationSummaryDocument,
+            FIND_APPLICATION_CONNECTION_PROVIDERS,
+          ],
         })
         .catch(() => {
-          // The list refresh is best-effort; queries keep their cached value.
+          // Single-application lookups throw once the application is gone, which
+          // is the expected outcome of an uninstall.
         });
 
-      refetchApplicationQueries();
+      // The admin panel reads applications through its own Apollo client.
+      void apolloAdminClient
+        .refetchQueries({
+          include: [
+            FindOneAdminApplicationRegistrationDocument,
+            FindAdminApplicationRegistrationInstalledWorkspacesDocument,
+          ],
+        })
+        .catch(() => {
+          // Best-effort: the admin views keep their last value.
+        });
+
+      // App chips resolve their logo from the workspace, whose installed
+      // applications only change with the current user payload.
+      void loadCurrentUser().catch(() => {
+        // Best-effort: the workspace keeps its last value.
+      });
     },
-    [apolloClient, refetchApplicationQueries, setCurrentWorkspace],
+    [apolloAdminClient, apolloClient, loadCurrentUser],
   );
 
   useListenToMetadataOperationBrowserEvent<ApplicationBroadcastRecord>({
     metadataName: 'application',
-    onMetadataOperationBrowserEvent: applyApplicationEventToApolloCache,
-    skip,
+    onMetadataOperationBrowserEvent: refreshApplications,
   });
 };

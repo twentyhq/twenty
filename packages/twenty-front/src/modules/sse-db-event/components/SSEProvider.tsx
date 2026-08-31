@@ -1,3 +1,4 @@
+import { ApplicationSSEEffect } from '@/applications/components/ApplicationSSEEffect';
 import { MetadataStoreSSEEffect } from '@/metadata-store/effect-components/MetadataStoreSSEEffect';
 import { SSEClientEffect } from '@/sse-db-event/components/SSEClientEffect';
 import { SSEEventStreamEffect } from '@/sse-db-event/components/SSEEventStreamEffect';
@@ -17,6 +18,7 @@ export const SSEProvider = ({ children }: SSEProviderProps) => {
       <SSEQuerySubscribeEffect />
       <SSEKeepAliveEffect />
       <MetadataStoreSSEEffect />
+      <ApplicationSSEEffect />
       {children}
     </>
   );

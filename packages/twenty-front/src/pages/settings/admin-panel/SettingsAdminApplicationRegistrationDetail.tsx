@@ -1,4 +1,3 @@
-import { useListenToApplicationEvents } from '@/applications/hooks/useListenToApplicationEvents';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client/react';
 import { FindOneAdminApplicationRegistrationDocument } from '~/generated-admin/graphql';
@@ -49,8 +48,6 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
       skip: !applicationRegistrationId,
     },
   );
-
-  useListenToApplicationEvents();
 
   const registration = data?.findOneAdminApplicationRegistration;
 
