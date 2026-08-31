@@ -64,8 +64,12 @@ export const useRelevantRecordsGqlFields = ({
     ...additionalFieldMetadataItems,
   ].filter(filterDuplicatesById);
 
+  // The source object is what lets a junction relation resolve its reverse config; without
+  // it a visible junction field collapses to junction ids and, being spread in last, would
+  // overwrite the resolved entry that junctionRelationGqlFields contributes below.
   const allDepthOneGqlFields = generateDepthRecordGqlFieldsFromFields({
     objectMetadataItems,
+    sourceObjectMetadataItem: objectMetadataItem,
     fields: fieldMetadataItemsToUse,
     depth: 1,
   });
