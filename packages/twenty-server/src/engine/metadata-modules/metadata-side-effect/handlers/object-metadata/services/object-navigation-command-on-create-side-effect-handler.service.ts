@@ -40,8 +40,6 @@ export class ObjectNavigationCommandOnCreateSideEffectHandlerService extends Met
           nameSingular: sourceFlatObjectMetadata.nameSingular,
           shortcut: sourceFlatObjectMetadata.shortcut,
           isActive: sourceFlatObjectMetadata.isActive,
-          commandMenuItemUniversalIdentifiers:
-            sourceFlatObjectMetadata.commandMenuItemUniversalIdentifiers,
         },
         applicationUniversalIdentifier:
           sourceFlatObjectMetadata.applicationUniversalIdentifier,

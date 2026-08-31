@@ -207,15 +207,12 @@ describe('ObjectNavigationCommandOnCreateSideEffectHandlerService', () => {
     expect(result.status).toBe('noop');
   });
 
-  it('noops when a synced engine-owned navigation command already targets the object, whatever its identifier', () => {
+  it('noops when a synced engine-owned command already holds the derived identifier', () => {
     const result = handler.buildSideEffects(
       buildArgs({
-        flatObjectMetadata: buildFlatObjectMetadata({
-          commandMenuItemUniversalIdentifiers: ['legacy-v5-derived-identifier'],
-        }),
         syncedFlatCommandMenuItems: [
           {
-            universalIdentifier: 'legacy-v5-derived-identifier',
+            universalIdentifier: DERIVED_UNIVERSAL_IDENTIFIER,
             position: 3,
             engineComponentKey: EngineComponentKey.NAVIGATION,
             payload: { objectMetadataItemId: OBJECT_ID },
@@ -226,6 +223,24 @@ describe('ObjectNavigationCommandOnCreateSideEffectHandlerService', () => {
     );
 
     expect(result.status).toBe('noop');
+  });
+
+  it('still emits when a caller row holds the derived identifier, leaving the squat to the collision detector', () => {
+    const result = handler.buildSideEffects(
+      buildArgs({
+        syncedFlatCommandMenuItems: [
+          {
+            universalIdentifier: DERIVED_UNIVERSAL_IDENTIFIER,
+            position: 3,
+            engineComponentKey: EngineComponentKey.NAVIGATION,
+            payload: { objectMetadataItemId: OBJECT_ID },
+            isSystemSideEffect: false,
+          } as never,
+        ],
+      }),
+    );
+
+    expect(result.status).toBe('success');
   });
 
   it('noops when the engine already emitted the command earlier in the same batch', () => {

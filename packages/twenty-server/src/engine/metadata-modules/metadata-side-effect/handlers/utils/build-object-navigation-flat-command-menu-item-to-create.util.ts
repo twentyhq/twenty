@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { buildObjectNavigationUniversalFlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { type BuildSideEffectsArgs } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
-import { findObjectNavigationFlatCommandMenuItem } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/find-object-navigation-flat-command-menu-item.util';
 import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-command-menu-item.type';
 
 type ObjectMetadataToProvision = {
@@ -13,7 +12,6 @@ type ObjectMetadataToProvision = {
   nameSingular: string;
   shortcut: string | null;
   isActive: boolean;
-  commandMenuItemUniversalIdentifiers: string[];
 };
 
 // Returns undefined only when the engine already owns a command for the
@@ -55,14 +53,9 @@ export const buildObjectNavigationFlatCommandMenuItemToCreate = ({
   }
 
   const syncedNavigationFlatCommandMenuItem =
-    findObjectNavigationFlatCommandMenuItem({
-      commandMenuItemUniversalIdentifiers:
-        objectMetadata.commandMenuItemUniversalIdentifiers,
-      flatCommandMenuItemMaps: syncedFlatCommandMenuItemMaps,
-      engineOwnedOnly: true,
-    });
+    syncedFlatCommandMenuItemMaps.byUniversalIdentifier[universalIdentifier];
 
-  if (isDefined(syncedNavigationFlatCommandMenuItem)) {
+  if (syncedNavigationFlatCommandMenuItem?.isSystemSideEffect === true) {
     return undefined;
   }
 

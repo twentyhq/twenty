@@ -1,13 +1,13 @@
 import { msg, t } from '@lingui/core/macro';
 import { Injectable } from '@nestjs/common';
 
+import { getNavigationCommandUniversalIdentifier } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { buildNavigationConditionalAvailabilityExpression } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
 import { MetadataSideEffectExceptionCode } from 'src/engine/metadata-modules/metadata-side-effect/exceptions/metadata-side-effect-exception-code';
-import { findObjectNavigationFlatCommandMenuItem } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/find-object-navigation-flat-command-menu-item.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -22,7 +22,7 @@ export class ObjectNavigationCommandOnUpdateSideEffectHandlerService extends Met
     metadataName: 'objectMetadata',
     name: 'objectNavigationCommandOnUpdate',
     description:
-      'When an object is updated, keep its navigation command menu item in sync with the fields it denormalizes: follow an isActive toggle (deactivate soft-disables rather than deletes, the correct semantics for an overridable entity), recompute conditionalAvailabilityExpression when nameSingular changes (the expression embeds nameSingular, so a rename would otherwise leave the permission gate pointing at a name that no longer exists), and recompute hotKeys when the shortcut changes. The command is resolved through the object navigation target aggregator whatever its identifier, so a legacy row in a workspace not yet re-owned onto the derived (application, object) identifier is kept in sync rather than duplicated. Noops when none of isActive, nameSingular or shortcut changed and when the resulting state already matches.',
+      'When an object is updated, keep its navigation command menu item in sync with the fields it denormalizes: follow an isActive toggle (deactivate soft-disables rather than deletes, the correct semantics for an overridable entity), recompute conditionalAvailabilityExpression when nameSingular changes (the expression embeds nameSingular, so a rename would otherwise leave the permission gate pointing at a name that no longer exists), and recompute hotKeys when the shortcut changes. The command is resolved by its derived (application, object) identifier, so a workspace whose rows the 2-38 re-own has not converged yet keeps the stale expression until that command runs rather than being reconciled here. Noops when none of isActive, nameSingular or shortcut changed and when the resulting state already matches.',
   },
 ) {
   buildSideEffects({
@@ -69,11 +69,14 @@ export class ObjectNavigationCommandOnUpdateSideEffectHandlerService extends Met
     }
 
     const existingNavigationFlatCommandMenuItem =
-      findObjectNavigationFlatCommandMenuItem({
-        commandMenuItemUniversalIdentifiers:
-          existingFlatObjectMetadata.commandMenuItemUniversalIdentifiers,
-        flatCommandMenuItemMaps: relatedFlatEntityMaps.flatCommandMenuItemMaps,
-      });
+      relatedFlatEntityMaps.flatCommandMenuItemMaps.byUniversalIdentifier[
+        getNavigationCommandUniversalIdentifier({
+          applicationUniversalIdentifier:
+            existingFlatObjectMetadata.applicationUniversalIdentifier,
+          objectUniversalIdentifier:
+            existingFlatObjectMetadata.universalIdentifier,
+        })
+      ];
 
     if (!isDefined(existingNavigationFlatCommandMenuItem)) {
       return { status: 'noop' };

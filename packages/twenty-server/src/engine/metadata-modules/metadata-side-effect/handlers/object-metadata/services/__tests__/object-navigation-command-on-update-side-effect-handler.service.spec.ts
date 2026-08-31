@@ -40,11 +40,13 @@ const buildNavigationCommand = (
     conditionalAvailabilityExpression: string;
     hotKeys: string[] | null;
     payload: object;
+    isSystemSideEffect: boolean;
   }> = {},
 ) => ({
   universalIdentifier: DERIVED_UNIVERSAL_IDENTIFIER,
   engineComponentKey: EngineComponentKey.NAVIGATION,
   payload: { objectMetadataItemId: OBJECT_ID },
+  isSystemSideEffect: true,
   isActive: true,
   conditionalAvailabilityExpression: 'targetObjectReadPermissions.ticket',
   hotKeys: ['G', 'T'],
@@ -252,29 +254,25 @@ describe('ObjectNavigationCommandOnUpdateSideEffectHandlerService', () => {
     ).toBeNull();
   });
 
-  it('follows a command still holding a legacy identifier, resolved through the object aggregator', () => {
-    const result = expectSuccess(
-      handler.buildSideEffects(
-        buildArgs({
-          updatedFlatObjectMetadata: buildFlatObjectMetadata({
-            isActive: false,
-            commandMenuItemUniversalIdentifiers: [LEGACY_UNIVERSAL_IDENTIFIER],
-          }),
-          existingFlatObjectMetadata: buildFlatObjectMetadata({
-            commandMenuItemUniversalIdentifiers: [LEGACY_UNIVERSAL_IDENTIFIER],
-          }),
-          syncedFlatCommandMenuItems: [
-            buildNavigationCommand({
-              universalIdentifier: LEGACY_UNIVERSAL_IDENTIFIER,
-            }),
-          ],
+  it('noops on a command still holding a legacy identifier, until the 2-38 re-own converges it', () => {
+    const result = handler.buildSideEffects(
+      buildArgs({
+        updatedFlatObjectMetadata: buildFlatObjectMetadata({
+          isActive: false,
+          commandMenuItemUniversalIdentifiers: [LEGACY_UNIVERSAL_IDENTIFIER],
         }),
-      ),
+        existingFlatObjectMetadata: buildFlatObjectMetadata({
+          commandMenuItemUniversalIdentifiers: [LEGACY_UNIVERSAL_IDENTIFIER],
+        }),
+        syncedFlatCommandMenuItems: [
+          buildNavigationCommand({
+            universalIdentifier: LEGACY_UNIVERSAL_IDENTIFIER,
+          }),
+        ],
+      }),
     );
 
-    const updated = result.operations.commandMenuItem?.flatEntityToUpdate ?? {};
-
-    expect(Object.keys(updated)).toEqual([LEGACY_UNIVERSAL_IDENTIFIER]);
+    expect(result.status).toBe('noop');
   });
 
   it('noops when the object has no navigation command, as manifest-created objects do', () => {
@@ -285,6 +283,28 @@ describe('ObjectNavigationCommandOnUpdateSideEffectHandlerService', () => {
           isActive: false,
         }),
         syncedFlatCommandMenuItems: [],
+      }),
+    );
+
+    expect(result.status).toBe('noop');
+  });
+
+  it('leaves a caller-authored command targeting the same object alone, since it does not hold the derived identifier', () => {
+    const result = handler.buildSideEffects(
+      buildArgs({
+        updatedFlatObjectMetadata: buildFlatObjectMetadata({
+          nameSingular: 'renamedTicket',
+          commandMenuItemUniversalIdentifiers: ['app-authored-identifier'],
+        }),
+        existingFlatObjectMetadata: buildFlatObjectMetadata({
+          commandMenuItemUniversalIdentifiers: ['app-authored-identifier'],
+        }),
+        syncedFlatCommandMenuItems: [
+          buildNavigationCommand({
+            universalIdentifier: 'app-authored-identifier',
+            isSystemSideEffect: false,
+          }),
+        ],
       }),
     );
 
