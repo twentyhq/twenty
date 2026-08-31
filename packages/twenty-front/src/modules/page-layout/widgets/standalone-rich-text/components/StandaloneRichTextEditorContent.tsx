@@ -27,7 +27,7 @@ type StandaloneRichTextEditorContentProps = {
   widget: PageLayoutWidget;
   currentBody: string;
   isEditable: boolean;
-  shouldFocus?: boolean;
+  shouldFocus: boolean;
   containerElement: HTMLDivElement | null;
 };
 
@@ -35,7 +35,7 @@ export const StandaloneRichTextEditorContent = ({
   widget,
   currentBody,
   isEditable,
-  shouldFocus = isEditable,
+  shouldFocus,
   containerElement,
 }: StandaloneRichTextEditorContentProps) => {
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget();

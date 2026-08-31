@@ -273,9 +273,12 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
   ]);
 
   const handleCreateNoteWidget = () => {
+    const replacePositionIndex = getExistingWidgetPositionIndex();
+    removeExistingWidgetIfReplacing();
+
     const newWidget = createRecordPageNoteWidget({
       tabId,
-      widgetToReplace: existingWidget,
+      positionIndex: replacePositionIndex,
     });
 
     insertCreatedWidgetAtContext({ newWidgetId: newWidget.id });
