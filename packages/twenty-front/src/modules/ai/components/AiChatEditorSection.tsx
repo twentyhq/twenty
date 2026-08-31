@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
 import { useLingui } from '@lingui/react/macro';
@@ -12,12 +14,16 @@ import { AIChatNoMoreBillingCreditsBanner } from '@/ai/components/AIChatNoMoreBi
 import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
+import { AiChatDictationButton } from '@/ai/dictation/components/AiChatDictationButton';
+import { AiChatDictationEffect } from '@/ai/dictation/components/AiChatDictationEffect';
+import { AiChatDictationHint } from '@/ai/dictation/components/AiChatDictationHint';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatEditorFocusEffect } from '@/ai/components/internal/AiChatEditorFocusEffect';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
+import { useInsertDictatedText } from '@/ai/dictation/hooks/useInsertDictatedText';
 import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
@@ -164,6 +170,9 @@ export const AiChatEditorSection = () => {
 
   const { editor, handleSendAndClear } = useAiChatEditor();
 
+  const insertDictatedText = useInsertDictatedText(editor);
+  const [dictationInterimText, setDictationInterimText] = useState('');
+
   const pendingQuestion = useAtomComponentSelectorValue(
     agentChatPendingQuestionComponentSelector,
   );
@@ -171,6 +180,10 @@ export const AiChatEditorSection = () => {
   return (
     <>
       <AiChatEditorFocusEffect editor={editor} />
+      <AiChatDictationEffect
+        onInterimText={setDictationInterimText}
+        onFinalText={insertDictatedText}
+      />
       <AiChatEmptyState isCentered={isComposerCentered} />
       <AiChatStandaloneError />
       <AiChatSkeletonLoader />
@@ -191,9 +204,11 @@ export const AiChatEditorSection = () => {
             <StyledEditorWrapper isMobile={isMobile}>
               <EditorContent editor={editor} />
             </StyledEditorWrapper>
+            <AiChatDictationHint interimText={dictationInterimText} />
             <StyledButtonsContainer>
               <StyledLeftButtonsContainer>
                 <AgentChatFileUploadButton />
+                <AiChatDictationButton />
                 <AiChatContextUsageButton />
               </StyledLeftButtonsContainer>
               <StyledRightButtonsContainer>

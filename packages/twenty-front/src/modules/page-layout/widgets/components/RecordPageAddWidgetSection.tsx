@@ -1,10 +1,17 @@
+import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
+import { useCreateRecordPageNoteWidget } from '@/page-layout/hooks/useCreateRecordPageNoteWidget';
 import { useCreateRecordPageFieldWidget } from '@/page-layout/hooks/useCreateRecordPageFieldWidget';
 import { useCreateRecordPageFieldsWidget } from '@/page-layout/hooks/useCreateRecordPageFieldsWidget';
 import { useNavigateToMoreWidgets } from '@/page-layout/hooks/useNavigateToMoreWidgets';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { IconListDetails, IconPlus, IconSquarePlus } from 'twenty-ui/icon';
+import {
+  IconListDetails,
+  IconNotes,
+  IconPlus,
+  IconSquarePlus,
+} from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -41,6 +48,8 @@ const StyledMenuItemList = styled.div`
 
 export const RecordPageAddWidgetSection = () => {
   const { theme } = useContext(ThemeContext);
+  const { tabId } = usePageLayoutContentContext();
+  const { createRecordPageNoteWidget } = useCreateRecordPageNoteWidget();
 
   const { createRecordPageFieldsWidget } = useCreateRecordPageFieldsWidget();
 
@@ -72,6 +81,13 @@ export const RecordPageAddWidgetSection = () => {
           text={t`Field`}
           contextualText={t`Single field with smart formats`}
           onClick={createRecordPageFieldWidget}
+        />
+        <MenuItem
+          LeftIcon={IconNotes}
+          withIconContainer
+          text={t`Note`}
+          contextualText={t`Static text shared across all record pages`}
+          onClick={() => createRecordPageNoteWidget({ tabId })}
         />
         <MenuItem
           LeftIcon={IconPlus}

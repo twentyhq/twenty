@@ -7,14 +7,15 @@ import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/p
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { WIDGET_TYPES_WITH_ALWAYS_VISIBLE_SOLO_HEADER } from '@/page-layout/widgets/constants/WidgetTypesWithAlwaysVisibleSoloHeader';
 import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { getWidgetCardVariant } from '@/page-layout/widgets/utils/getWidgetCardVariant';
+import { getWidgetHeaderActionDefinition } from '@/page-layout/widgets/utils/getWidgetHeaderActionDefinition';
 import { useOpenWidgetSettingsInSidePanel } from '@/side-panel/hooks/useOpenWidgetSettingsInSidePanel';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { type MouseEvent } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { WidgetType } from '~/generated-metadata/graphql';
 
 export const useWidgetRendererState = (widget: PageLayoutWidget) => {
@@ -58,10 +59,10 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
   const hideHeaderInViewMode =
     isHeaderHiddenInViewMode && !isPageLayoutInEditMode;
 
+  const hasHeaderAction = isDefined(getWidgetHeaderActionDefinition(widget));
+
   const showHeader =
-    presentation === 'solo'
-      ? WIDGET_TYPES_WITH_ALWAYS_VISIBLE_SOLO_HEADER.includes(widget.type)
-      : !hideHeaderInViewMode;
+    presentation === 'solo' ? hasHeaderAction : !hideHeaderInViewMode;
 
   const handleClick = () => {
     openWidgetSettingsInSidePanel({

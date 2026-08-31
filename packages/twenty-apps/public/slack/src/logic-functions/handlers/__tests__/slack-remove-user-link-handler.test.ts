@@ -3,22 +3,18 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { slackRemoveUserLinkHandler } from 'src/logic-functions/handlers/slack-remove-user-link-handler';
 
 const {
-  currentUserHasWorkspaceMembersPermissionMock,
+  currentUserHasRolesPermissionMock,
   coreApiClientMock,
   destroySlackUserLinkMock,
 } = vi.hoisted(() => ({
-  currentUserHasWorkspaceMembersPermissionMock: vi.fn(),
+  currentUserHasRolesPermissionMock: vi.fn(),
   coreApiClientMock: vi.fn(),
   destroySlackUserLinkMock: vi.fn(),
 }));
 
-vi.mock(
-  'src/logic-functions/utils/current-user-has-workspace-members-permission',
-  () => ({
-    currentUserHasWorkspaceMembersPermission:
-      currentUserHasWorkspaceMembersPermissionMock,
-  }),
-);
+vi.mock('src/logic-functions/utils/current-user-has-roles-permission', () => ({
+  currentUserHasRolesPermission: currentUserHasRolesPermissionMock,
+}));
 
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: coreApiClientMock,
@@ -33,12 +29,12 @@ const buildPayload = (body: unknown) => ({ body });
 describe('slackRemoveUserLinkHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    currentUserHasWorkspaceMembersPermissionMock.mockResolvedValue(true);
+    currentUserHasRolesPermissionMock.mockResolvedValue(true);
     destroySlackUserLinkMock.mockResolvedValue(undefined);
   });
 
-  it('should refuse when the user lacks the workspace members permission', async () => {
-    currentUserHasWorkspaceMembersPermissionMock.mockResolvedValue(false);
+  it('should refuse when the user lacks the roles permission', async () => {
+    currentUserHasRolesPermissionMock.mockResolvedValue(false);
 
     const result = await slackRemoveUserLinkHandler(
       buildPayload({ id: 'link-1' }),
@@ -52,7 +48,7 @@ describe('slackRemoveUserLinkHandler', () => {
     const result = await slackRemoveUserLinkHandler(buildPayload({}));
 
     expect(result.success).toBe(false);
-    expect(currentUserHasWorkspaceMembersPermissionMock).not.toHaveBeenCalled();
+    expect(currentUserHasRolesPermissionMock).not.toHaveBeenCalled();
     expect(destroySlackUserLinkMock).not.toHaveBeenCalled();
   });
 

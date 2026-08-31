@@ -23,8 +23,8 @@ jest.mock('@/client-config/components/ClientConfigProviderEffect', () => ({
   ClientConfigProviderEffect: () => null,
 }));
 
-jest.mock('@/auth/effect-components/CookieSessionBootEffect', () => ({
-  CookieSessionBootEffect: () => null,
+jest.mock('@/auth/effect-components/PendingServerSignOutEffect', () => ({
+  PendingServerSignOutEffect: () => null,
 }));
 
 jest.mock('@/client-config/components/ClientConfigProvider', () => ({

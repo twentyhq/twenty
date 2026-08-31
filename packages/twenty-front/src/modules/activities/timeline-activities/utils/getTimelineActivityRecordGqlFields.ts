@@ -1,8 +1,6 @@
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
-import {
-  generateDepthRecordGqlFieldsFromFields,
-  type GenerateDepthRecordGqlFieldsFromFields,
-} from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
+import { type GenerateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/types/GenerateDepthRecordGqlFieldsFromFields';
+import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 type GetTimelineActivityRecordGqlFieldsParams = Pick<

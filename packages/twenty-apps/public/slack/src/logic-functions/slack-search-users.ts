@@ -8,7 +8,7 @@ export default defineLogicFunction({
   universalIdentifier: SLACK_SEARCH_USERS_UNIVERSAL_IDENTIFIER,
   name: 'slack-search-users',
   description:
-    'Searches the installed Slack workspace for users by name or email so an admin can pick the right account to link. Restricted to members with the workspace members permission.',
+    'Searches the installed Slack workspace for users by name or email so an admin can pick the right account to link. Restricted to members with the roles permission.',
   timeoutSeconds: 30,
   httpRouteTriggerSettings: {
     path: SLACK_USER_LINKS_SEARCH_ROUTE_PATH,

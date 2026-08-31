@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { type SlackResolveUserLinkResult } from 'src/logic-functions/types/slack-resolved-user.type';
 import { type SlackRouteBody } from 'src/logic-functions/types/slack-route-body.type';
-import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/utils/current-user-has-workspace-members-permission';
+import { currentUserHasRolesPermission } from 'src/logic-functions/utils/current-user-has-roles-permission';
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { resolveLinkTargetById } from 'src/logic-functions/utils/resolve-link-target-by-id';
@@ -44,14 +44,13 @@ export const slackResolveUserLinkHandler = async (
     };
   }
 
-  const isAllowed = await currentUserHasWorkspaceMembersPermission();
+  const isAllowed = await currentUserHasRolesPermission();
 
   if (!isAllowed) {
     return {
       success: false,
       message: 'Not allowed',
-      error:
-        'Only members with the workspace members permission can resolve Slack users.',
+      error: 'Only members with the roles permission can resolve Slack users.',
     };
   }
 

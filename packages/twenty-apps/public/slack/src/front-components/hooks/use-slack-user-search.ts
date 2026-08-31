@@ -1,60 +1,15 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { RestApiClient } from 'twenty-client-sdk/rest';
-import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_USER_LINKS_SEARCH_ROUTE_PATH } from 'src/constants/slack-user-links-route-path.constant';
-import { asRecord } from 'src/logic-functions/utils/as-record.util';
-import { toSlackResolvedUser } from 'src/front-components/utils/to-slack-resolved-user.util';
+import {
+  FALLBACK_SEARCH_ERROR_MESSAGE,
+  parseSlackUserSearchResponse,
+} from 'src/front-components/utils/parse-slack-user-search-response.util';
 import { type SlackResolvedUser } from 'src/logic-functions/types/slack-resolved-user.type';
 
 const SLACK_USER_SEARCH_DEBOUNCE_MS = 400;
-
-type SlackUserSearchResponse = {
-  options: SlackResolvedUser[];
-  errorMessage: string | undefined;
-};
-
-const FALLBACK_SEARCH_ERROR_MESSAGE = 'Slack user search failed. Try again.';
-
-const parseSearchResponse = (value: unknown): SlackUserSearchResponse => {
-  const record = asRecord(value);
-
-  if (record === undefined || record.success !== true) {
-    const error = record?.error;
-
-    return {
-      options: [],
-      errorMessage: isNonEmptyString(error)
-        ? error
-        : FALLBACK_SEARCH_ERROR_MESSAGE,
-    };
-  }
-
-  const slackUsers = Array.isArray(record.slackUsers) ? record.slackUsers : [];
-
-  const options: SlackResolvedUser[] = [];
-
-  for (const entry of slackUsers) {
-    const slackUserRecord = asRecord(entry);
-
-    const option =
-      slackUserRecord === undefined
-        ? undefined
-        : toSlackResolvedUser({
-            record: slackUserRecord,
-            isInInstalledWorkspace: true,
-          });
-
-    if (!isDefined(option) || !isNonEmptyString(option.slackTeamId)) {
-      continue;
-    }
-
-    options.push(option);
-  }
-
-  return { options, errorMessage: undefined };
-};
 
 type SlackUserSearchState = {
   options: SlackResolvedUser[];
@@ -97,7 +52,7 @@ export const useSlackUserSearch = (
 
         if (!cancelled) {
           const { options: parsedOptions, errorMessage } =
-            parseSearchResponse(result);
+            parseSlackUserSearchResponse(result);
 
           setOptions(parsedOptions);
           setSearchErrorMessage(errorMessage);

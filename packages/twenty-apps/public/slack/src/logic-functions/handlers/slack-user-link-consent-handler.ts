@@ -94,10 +94,16 @@ export const slackUserLinkConsentHandler = async (
         : SLACK_USER_LINK_CONSENT_STATE.DECLINED,
     });
   } catch (error) {
-    await updateSlackMessageViaResponseUrl({
+    const failureNotice = await updateSlackMessageViaResponseUrl({
       responseUrl: payload.response_url,
       text: FAILURE_MESSAGE,
     });
+
+    if (!failureNotice.success) {
+      console.warn(
+        `[slack] response_url message update failed: ${failureNotice.error}`,
+      );
+    }
 
     return {
       skipped: true,

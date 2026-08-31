@@ -3,14 +3,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { slackResendUserLinkConsentHandler } from 'src/logic-functions/handlers/slack-resend-user-link-consent-handler';
 
 const {
-  currentUserHasWorkspaceMembersPermissionMock,
+  currentUserHasRolesPermissionMock,
   coreApiClientMock,
   findSlackUserLinkMock,
   findWorkspaceMemberNameByIdMock,
   getSlackClientMock,
   sendSlackUserLinkConsentDmMock,
 } = vi.hoisted(() => ({
-  currentUserHasWorkspaceMembersPermissionMock: vi.fn(),
+  currentUserHasRolesPermissionMock: vi.fn(),
   coreApiClientMock: vi.fn(),
   findSlackUserLinkMock: vi.fn(),
   findWorkspaceMemberNameByIdMock: vi.fn(),
@@ -18,13 +18,9 @@ const {
   sendSlackUserLinkConsentDmMock: vi.fn(),
 }));
 
-vi.mock(
-  'src/logic-functions/utils/current-user-has-workspace-members-permission',
-  () => ({
-    currentUserHasWorkspaceMembersPermission:
-      currentUserHasWorkspaceMembersPermissionMock,
-  }),
-);
+vi.mock('src/logic-functions/utils/current-user-has-roles-permission', () => ({
+  currentUserHasRolesPermission: currentUserHasRolesPermissionMock,
+}));
 
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: coreApiClientMock,
@@ -53,7 +49,7 @@ const PENDING_BODY = { slackTeamId: 'T1', slackUserId: 'U1' };
 describe('slackResendUserLinkConsentHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    currentUserHasWorkspaceMembersPermissionMock.mockResolvedValue(true);
+    currentUserHasRolesPermissionMock.mockResolvedValue(true);
     findSlackUserLinkMock.mockResolvedValue({
       id: 'link-1',
       workspaceMemberId: 'member-1',
@@ -65,8 +61,8 @@ describe('slackResendUserLinkConsentHandler', () => {
     sendSlackUserLinkConsentDmMock.mockResolvedValue({ success: true });
   });
 
-  it('should refuse when the user lacks the workspace members permission', async () => {
-    currentUserHasWorkspaceMembersPermissionMock.mockResolvedValue(false);
+  it('should refuse when the user lacks the roles permission', async () => {
+    currentUserHasRolesPermissionMock.mockResolvedValue(false);
 
     const result = await slackResendUserLinkConsentHandler(
       buildPayload(PENDING_BODY),
@@ -82,7 +78,7 @@ describe('slackResendUserLinkConsentHandler', () => {
     );
 
     expect(result.success).toBe(false);
-    expect(currentUserHasWorkspaceMembersPermissionMock).not.toHaveBeenCalled();
+    expect(currentUserHasRolesPermissionMock).not.toHaveBeenCalled();
   });
 
   it('should fail when there is no link to resend', async () => {

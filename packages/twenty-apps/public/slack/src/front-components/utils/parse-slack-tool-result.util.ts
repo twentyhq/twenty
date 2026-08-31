@@ -1,4 +1,5 @@
 import { isBoolean, isNonEmptyString, isString } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
@@ -12,7 +13,7 @@ export const parseSlackToolResult = ({
 }): SlackToolResult => {
   const record = asRecord(value);
 
-  if (record === undefined || !isBoolean(record.success)) {
+  if (!isDefined(record) || !isBoolean(record.success)) {
     return {
       success: false,
       message: fallbackMessage,

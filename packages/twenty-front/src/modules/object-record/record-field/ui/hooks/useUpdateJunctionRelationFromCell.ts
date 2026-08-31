@@ -19,6 +19,7 @@ import { findJunctionRecordByTargetId } from '@/object-record/record-field/ui/ut
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
+import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -73,6 +74,7 @@ export const useUpdateJunctionRelationFromCell = ({
       const targetFields = junctionConfig?.targetFields;
 
       if (
+        !isUsableJunctionConfig(junctionConfig) ||
         !isDefined(junctionObjectMetadata) ||
         !isDefined(sourceFieldOnJunction) ||
         !isDefined(targetFields) ||
@@ -305,14 +307,8 @@ export const useUpdateJunctionRelationFromCell = ({
     ],
   );
 
-  const isJunctionConfigValid =
-    isDefined(junctionConfig) &&
-    isDefined(sourceFieldOnJunction) &&
-    isDefined(junctionConfig.targetFields) &&
-    junctionConfig.targetFields.length > 0;
-
   return {
     updateJunctionRelationFromCell,
-    isJunctionConfigValid,
+    junctionConfig,
   };
 };

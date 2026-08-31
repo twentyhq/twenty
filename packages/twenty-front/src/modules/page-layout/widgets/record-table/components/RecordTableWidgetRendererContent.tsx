@@ -23,7 +23,7 @@ type RecordTableWidgetRendererContentProps = {
   objectMetadataId: string;
   viewId: string;
   widgetId: string;
-  isReadOnly?: boolean;
+  isUIEditable?: boolean;
   isEmptyStateHidden?: boolean;
   recordLimit?: number;
   instanceIdSuffix?: string;
@@ -34,7 +34,7 @@ export const RecordTableWidgetRendererContent = ({
   objectMetadataId,
   viewId,
   widgetId,
-  isReadOnly = true,
+  isUIEditable = false,
   isEmptyStateHidden = false,
   recordLimit,
   instanceIdSuffix,
@@ -70,9 +70,8 @@ export const RecordTableWidgetRendererContent = ({
     widgetView?.calendarLayout === ViewCalendarLayout.WEEK;
   const canEditCalendar =
     isCalendarLayout && !isPageLayoutInEditMode && isCalendarDayOrWeek;
-  // Read-only unless this is the explicitly allowed live day/week calendar;
-  // a caller passing isReadOnly={false} must not make month
-  // widget calendars editable. Object permissions still gate the drag.
+  // Read-only unless this is the explicitly allowed live day/week calendar.
+  // Object permissions still gate the drag.
   const calendarIsReadOnly = !canEditCalendar;
 
   // Keyed rather than chained so a layout added to RECORD_TABLE_WIDGET_LAYOUTS
@@ -80,11 +79,11 @@ export const RecordTableWidgetRendererContent = ({
   const renderWidgetForLayout = {
     [ViewType.TABLE]: () => (
       <RecordTableWidget
-        isReadOnly={isReadOnly}
+        isUIEditable={isUIEditable}
         isEmptyStateHidden={isEmptyStateHidden}
       />
     ),
-    [ViewType.KANBAN]: () => <RecordBoardWidget isReadOnly={isReadOnly} />,
+    [ViewType.KANBAN]: () => <RecordBoardWidget isUIEditable={isUIEditable} />,
     [ViewType.LIST]: () => <RecordListWidget />,
     [ViewType.CALENDAR]: () => (
       <RecordCalendarWidget isReadOnly={calendarIsReadOnly} />
