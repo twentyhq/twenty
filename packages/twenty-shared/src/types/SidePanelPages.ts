@@ -33,4 +33,5 @@ export enum SidePanelPages {
   SendCampaignTest = 'send-campaign-test',
   EmailBlockSettings = 'email-block-settings',
   SettingsMetadataTranslations = 'settings-metadata-translations',
+  WorkflowCoreFilters = 'workflow-core-filters',
 }

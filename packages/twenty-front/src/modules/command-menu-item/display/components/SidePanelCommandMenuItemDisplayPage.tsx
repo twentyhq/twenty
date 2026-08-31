@@ -8,6 +8,7 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { useNavigationDrawerTogglePresentation } from '@/navigation/hooks/useNavigationDrawerTogglePresentation';
 import { useToggleNavigationDrawer } from '@/navigation/hooks/useToggleNavigationDrawer';
+import { useOpenCoreWorkflowFiltersSidePanel } from '@/object-core/workflows/hooks/useOpenCoreWorkflowFiltersSidePanel';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -20,10 +21,15 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { useContext, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
+import { AppPath } from 'twenty-shared/types';
+import { IconFilter } from 'twenty-ui/icon';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const TOGGLE_NAVIGATION_DRAWER_COMMAND_ID = 'toggle-navigation-drawer';
+const CORE_WORKFLOW_FILTERS_COMMAND_ID = 'core-workflow-filters';
 
 export const SidePanelCommandMenuItemDisplayPage = () => {
   const { t } = useLingui();
@@ -51,6 +57,18 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     toggleNavigationDrawer();
     closeSidePanelMenu();
   };
+
+  const location = useLocation();
+  const { openCoreWorkflowFiltersSidePanel } =
+    useOpenCoreWorkflowFiltersSidePanel();
+
+  const coreWorkflowFiltersCommandLabel = t`Filter workflows`;
+  const shouldDisplayCoreWorkflowFiltersCommand =
+    isMatchingLocation(location, AppPath.WorkflowCoreIndexPage) &&
+    !isInPreviewMode &&
+    normalizeSearchText(coreWorkflowFiltersCommandLabel).includes(
+      normalizeSearchText(sidePanelSearch.trim()),
+    );
 
   // The command menu list surfaces whatever overflowed out of the page header.
   const commandMenuPinnedInlineLayout = useAtomFamilyStateValue(
@@ -127,7 +145,8 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const hasNoMatchingItems =
     !matchingPinnedItems.length &&
     !matchingOtherItems.length &&
-    !shouldDisplayNavigationDrawerCommand;
+    !shouldDisplayNavigationDrawerCommand &&
+    !shouldDisplayCoreWorkflowFiltersCommand;
 
   const shouldDisplayFallbackItems =
     hasNoMatchingItems && fallbackCommandMenuItems.length > 0;
@@ -138,6 +157,9 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const selectableItemIds = [
     ...matchingPinnedItems.map((item) => item.id),
     ...matchingOtherItems.map((item) => item.id),
+    ...(shouldDisplayCoreWorkflowFiltersCommand
+      ? [CORE_WORKFLOW_FILTERS_COMMAND_ID]
+      : []),
     ...(shouldDisplayNavigationDrawerCommand
       ? [TOGGLE_NAVIGATION_DRAWER_COMMAND_ID]
       : []),
@@ -159,11 +181,25 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
         </SidePanelGroup>
       )}
       {(matchingOtherItems.length > 0 ||
-        shouldDisplayNavigationDrawerCommand) && (
+        shouldDisplayNavigationDrawerCommand ||
+        shouldDisplayCoreWorkflowFiltersCommand) && (
         <SidePanelGroup heading={t`Other`}>
           {matchingOtherItems.map((item) => (
             <CommandMenuItemRenderer item={item} key={item.id} />
           ))}
+          {shouldDisplayCoreWorkflowFiltersCommand && (
+            <SelectableListItem
+              itemId={CORE_WORKFLOW_FILTERS_COMMAND_ID}
+              onEnter={openCoreWorkflowFiltersSidePanel}
+            >
+              <CommandMenuItem
+                id={CORE_WORKFLOW_FILTERS_COMMAND_ID}
+                label={coreWorkflowFiltersCommandLabel}
+                Icon={IconFilter}
+                onClick={openCoreWorkflowFiltersSidePanel}
+              />
+            </SelectableListItem>
+          )}
           {shouldDisplayNavigationDrawerCommand && (
             <SelectableListItem
               itemId={TOGGLE_NAVIGATION_DRAWER_COMMAND_ID}

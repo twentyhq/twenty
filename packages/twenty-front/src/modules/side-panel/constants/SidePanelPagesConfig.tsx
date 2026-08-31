@@ -1,6 +1,7 @@
 import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
 import { SidePanelCommandMenuItemEditPage } from '@/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage';
 import { SidePanelNavigationMenuItemEditPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage';
+import { SidePanelCoreWorkflowFiltersPage } from '@/object-core/workflows/components/SidePanelCoreWorkflowFiltersPage';
 import { SidePanelSettingsMetadataTranslationsPage } from '@/settings/translations/components/SidePanelSettingsMetadataTranslationsPage';
 import { SidePanelNewSidebarItemPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemPage';
 import { SidePanelEmailBlockSettingsPage } from '@/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage';
@@ -107,5 +108,6 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<SidePanelPages, React.ReactNode>(
       SidePanelPages.SettingsMetadataTranslations,
       <SidePanelSettingsMetadataTranslationsPage />,
     ],
+    [SidePanelPages.WorkflowCoreFilters, <SidePanelCoreWorkflowFiltersPage />],
   ],
 );

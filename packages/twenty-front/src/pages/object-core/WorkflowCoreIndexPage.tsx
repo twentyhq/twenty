@@ -5,6 +5,7 @@ import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
+import { CoreWorkflowsFilterBar } from '@/object-core/workflows/components/CoreWorkflowsFilterBar';
 import { WORKFLOW_CORE_TABLE_COLUMNS } from '@/object-core/workflows/constants/WorkflowCoreTableColumns';
 import {
   CORE_WORKFLOWS_INITIAL_SORT,
@@ -62,6 +63,7 @@ export const WorkflowCoreIndexPage = () => {
               <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
             }
             title={objectMetadataItem.labelPlural}
+            actionButton={<CoreWorkflowsFilterBar />}
           />
         }
       >
