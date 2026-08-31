@@ -32,10 +32,14 @@
     },
     "test": {
       "executor": "@nx/vitest:test",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "dependsOn": ["^build"],
       "options": {
         "config": "{projectRoot}/vitest.config.ts"
+      },
+      "configurations": {
+        "ci": {
+          "watch": false
+        }
       }
     },
     "set-local-version": {},

@@ -19,6 +19,7 @@ jobs:
       files: |
         packages/twenty-client-sdk/**
         packages/twenty-shared/**
+        yarn.lock
         .github/workflows/ci-client-sdk.yaml
         !packages/twenty-client-sdk/package.json
   client-sdk-test:
