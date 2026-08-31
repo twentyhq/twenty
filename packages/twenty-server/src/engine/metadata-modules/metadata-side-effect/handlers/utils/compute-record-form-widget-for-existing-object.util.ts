@@ -2,18 +2,20 @@ import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { buildSystemFormFieldPageLayoutWidget } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-record-form-page-layout-to-create.util';
+import { buildSystemFormFieldPageLayoutWidget } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/build-system-form-field-page-layout-widget.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 
 export const computeRecordFormWidgetForExistingObject = ({
   sourceFlatFieldMetadata,
+  orderedFormFlatFieldMetadatasInBatch,
   recordFormPageLayoutTabUniversalIdentifier,
   flatPageLayoutTabMaps,
   flatPageLayoutWidgetMaps,
 }: {
   sourceFlatFieldMetadata: UniversalFlatFieldMetadata;
+  orderedFormFlatFieldMetadatasInBatch: UniversalFlatFieldMetadata[];
   recordFormPageLayoutTabUniversalIdentifier: string;
 } & Pick<
   AllFlatEntityMaps,
@@ -61,15 +63,22 @@ export const computeRecordFormWidgetForExistingObject = ({
     return undefined;
   }
 
-  const index =
-    existingFlatPageLayoutWidgets.reduce(
-      (maxIndex, flatPageLayoutWidget) =>
-        flatPageLayoutWidget.position?.layoutMode ===
-        PageLayoutTabLayoutMode.VERTICAL_LIST
-          ? Math.max(maxIndex, flatPageLayoutWidget.position.index)
-          : maxIndex,
-      -1,
-    ) + 1;
+  const lastExistingIndex = existingFlatPageLayoutWidgets.reduce(
+    (maxIndex, flatPageLayoutWidget) =>
+      flatPageLayoutWidget.position?.layoutMode ===
+      PageLayoutTabLayoutMode.VERTICAL_LIST
+        ? Math.max(maxIndex, flatPageLayoutWidget.position.index)
+        : maxIndex,
+    -1,
+  );
+
+  // Every field of the batch reads the same pre-operation widget maps, so the
+  // rank inside the batch is what keeps their indexes distinct.
+  const rankInBatch = orderedFormFlatFieldMetadatasInBatch.findIndex(
+    (flatFieldMetadata) =>
+      flatFieldMetadata.universalIdentifier ===
+      sourceFlatFieldMetadata.universalIdentifier,
+  );
 
   return buildSystemFormFieldPageLayoutWidget({
     applicationUniversalIdentifier:
@@ -79,6 +88,6 @@ export const computeRecordFormWidgetForExistingObject = ({
     objectMetadataUniversalIdentifier:
       sourceFlatFieldMetadata.objectMetadataUniversalIdentifier,
     flatFieldMetadata: sourceFlatFieldMetadata,
-    index,
+    index: lastExistingIndex + 1 + Math.max(rankInBatch, 0),
   });
 };

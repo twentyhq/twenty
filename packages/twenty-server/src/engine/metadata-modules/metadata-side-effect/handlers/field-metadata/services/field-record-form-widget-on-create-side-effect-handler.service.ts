@@ -10,12 +10,10 @@ import { buildFieldSideEffectParentNotFoundFailure } from 'src/engine/metadata-m
 import { resolveParentFlatObjectMetadataAfterStateForFieldSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/resolve-parent-flat-object-metadata-after-state-for-field-side-effect.util';
 import { RECORD_FORM_TAB_PROPS } from 'src/engine/metadata-modules/metadata-side-effect/constants/record-form-tab-props.constant';
 import { computeCallerFlatFieldMetadatasForObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-caller-flat-field-metadatas-for-object.util';
-import {
-  computeRecordFormFlatFieldMetadatas,
-  isFlatFieldMetadataEligibleForRecordForm,
-} from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-record-form-flat-field-metadatas.util';
+import { computeRecordFormFlatFieldMetadatas } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-record-form-flat-field-metadatas.util';
+import { isFlatFieldMetadataEligibleForRecordForm } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/is-flat-field-metadata-eligible-for-record-form.util';
 import { computeRecordFormWidgetForExistingObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-record-form-widget-for-existing-object.util';
-import { buildSystemFormFieldPageLayoutWidget } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-record-form-page-layout-to-create.util';
+import { buildSystemFormFieldPageLayoutWidget } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/build-system-form-field-page-layout-widget.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -78,6 +76,19 @@ export class FieldRecordFormWidgetOnCreateSideEffectHandlerService extends Metad
         title: RECORD_FORM_TAB_PROPS.title,
       });
 
+    const { labelIdentifierFieldMetadataUniversalIdentifier } =
+      parentFlatObjectMetadata;
+
+    const orderedFormFlatFieldMetadatasInBatch =
+      computeRecordFormFlatFieldMetadatas({
+        flatFieldMetadatas: computeCallerFlatFieldMetadatasForObject({
+          objectMetadataUniversalIdentifier,
+          labelIdentifierFieldMetadataUniversalIdentifier,
+          allFlatEntityOperationRecordByMetadataName,
+        }),
+        labelIdentifierFieldMetadataUniversalIdentifier,
+      });
+
     const parentObjectCreatedInSameBatch = isDefined(
       allFlatEntityOperationRecordByMetadataName.objectMetadata
         ?.flatEntityToCreate[objectMetadataUniversalIdentifier],
@@ -86,13 +97,12 @@ export class FieldRecordFormWidgetOnCreateSideEffectHandlerService extends Metad
     const flatPageLayoutWidgetToCreate = parentObjectCreatedInSameBatch
       ? this.buildRecordFormWidgetForObjectCreatedInSameBatch({
           sourceFlatFieldMetadata,
-          labelIdentifierFieldMetadataUniversalIdentifier:
-            parentFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
+          orderedFormFlatFieldMetadatasInBatch,
           recordFormPageLayoutTabUniversalIdentifier,
-          allFlatEntityOperationRecordByMetadataName,
         })
       : computeRecordFormWidgetForExistingObject({
           sourceFlatFieldMetadata,
+          orderedFormFlatFieldMetadatasInBatch,
           recordFormPageLayoutTabUniversalIdentifier,
           flatPageLayoutTabMaps: relatedFlatEntityMaps.flatPageLayoutTabMaps,
           flatPageLayoutWidgetMaps:
@@ -118,26 +128,14 @@ export class FieldRecordFormWidgetOnCreateSideEffectHandlerService extends Metad
 
   private buildRecordFormWidgetForObjectCreatedInSameBatch({
     sourceFlatFieldMetadata,
-    labelIdentifierFieldMetadataUniversalIdentifier,
+    orderedFormFlatFieldMetadatasInBatch,
     recordFormPageLayoutTabUniversalIdentifier,
-    allFlatEntityOperationRecordByMetadataName,
   }: {
     sourceFlatFieldMetadata: UniversalFlatFieldMetadata;
-    labelIdentifierFieldMetadataUniversalIdentifier: string | null;
+    orderedFormFlatFieldMetadatasInBatch: UniversalFlatFieldMetadata[];
     recordFormPageLayoutTabUniversalIdentifier: string;
-    allFlatEntityOperationRecordByMetadataName: BuildSideEffectsArgs<'fieldMetadata'>['allFlatEntityOperationRecordByMetadataName'];
   }): UniversalFlatPageLayoutWidget | undefined {
-    const orderedFormFlatFieldMetadatas = computeRecordFormFlatFieldMetadatas({
-      flatFieldMetadatas: computeCallerFlatFieldMetadatasForObject({
-        objectMetadataUniversalIdentifier:
-          sourceFlatFieldMetadata.objectMetadataUniversalIdentifier,
-        labelIdentifierFieldMetadataUniversalIdentifier,
-        allFlatEntityOperationRecordByMetadataName,
-      }),
-      labelIdentifierFieldMetadataUniversalIdentifier,
-    });
-
-    const index = orderedFormFlatFieldMetadatas.findIndex(
+    const index = orderedFormFlatFieldMetadatasInBatch.findIndex(
       (orderedFlatFieldMetadata) =>
         orderedFlatFieldMetadata.universalIdentifier ===
         sourceFlatFieldMetadata.universalIdentifier,

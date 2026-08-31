@@ -33,12 +33,23 @@ const pageLayoutTabUniversalIdentifier =
     title: 'Fields',
   });
 
-const sourceFlatFieldMetadata = {
-  universalIdentifier: fieldUniversalIdentifier,
-  applicationUniversalIdentifier,
-  objectMetadataUniversalIdentifier: objectUniversalIdentifier,
-  label: 'Name',
-} as unknown as UniversalFlatFieldMetadata;
+const buildFlatFieldMetadata = (universalIdentifier: string, label: string) =>
+  ({
+    universalIdentifier,
+    applicationUniversalIdentifier,
+    objectMetadataUniversalIdentifier: objectUniversalIdentifier,
+    label,
+  }) as unknown as UniversalFlatFieldMetadata;
+
+const sourceFlatFieldMetadata = buildFlatFieldMetadata(
+  fieldUniversalIdentifier,
+  'Name',
+);
+
+const secondFlatFieldMetadata = buildFlatFieldMetadata(
+  otherFieldUniversalIdentifier,
+  'Code',
+);
 
 const buildFlatPageLayoutTab = (overrides: Record<string, unknown> = {}) => ({
   universalIdentifier: pageLayoutTabUniversalIdentifier,
@@ -99,6 +110,7 @@ describe('computeRecordFormWidgetForExistingObject', () => {
       sourceFlatFieldMetadata,
       recordFormPageLayoutTabUniversalIdentifier:
         pageLayoutTabUniversalIdentifier,
+      orderedFormFlatFieldMetadatasInBatch: [sourceFlatFieldMetadata],
       ...buildMaps({ flatPageLayoutTab: buildFlatPageLayoutTab() }),
     });
 
@@ -113,6 +125,7 @@ describe('computeRecordFormWidgetForExistingObject', () => {
       sourceFlatFieldMetadata,
       recordFormPageLayoutTabUniversalIdentifier:
         pageLayoutTabUniversalIdentifier,
+      orderedFormFlatFieldMetadatasInBatch: [sourceFlatFieldMetadata],
       ...buildMaps({
         flatPageLayoutTab: buildFlatPageLayoutTab({
           widgetUniversalIdentifiers: ['widget-1', 'widget-2'],
@@ -138,11 +151,47 @@ describe('computeRecordFormWidgetForExistingObject', () => {
     });
   });
 
+  it('should give each field of one batch a distinct index', () => {
+    const maps = buildMaps({
+      flatPageLayoutTab: buildFlatPageLayoutTab({
+        widgetUniversalIdentifiers: ['widget-1'],
+      }),
+      flatPageLayoutWidgets: {
+        'widget-1': buildFormFieldWidget({
+          universalIdentifier: 'widget-1',
+          fieldMetadataId: 'c1c2c3c4-c5c6-4000-8000-000000000009',
+          index: 2,
+        }),
+      },
+    });
+    const orderedFormFlatFieldMetadatasInBatch = [
+      sourceFlatFieldMetadata,
+      secondFlatFieldMetadata,
+    ];
+
+    const indexes = orderedFormFlatFieldMetadatasInBatch.map(
+      (flatFieldMetadata) =>
+        computeRecordFormWidgetForExistingObject({
+          sourceFlatFieldMetadata: flatFieldMetadata,
+          orderedFormFlatFieldMetadatasInBatch,
+          recordFormPageLayoutTabUniversalIdentifier:
+            pageLayoutTabUniversalIdentifier,
+          ...maps,
+        })?.position,
+    );
+
+    expect(indexes).toEqual([
+      { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 3 },
+      { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 4 },
+    ]);
+  });
+
   it('should noop when the field already has a widget on the tab', () => {
     const result = computeRecordFormWidgetForExistingObject({
       sourceFlatFieldMetadata,
       recordFormPageLayoutTabUniversalIdentifier:
         pageLayoutTabUniversalIdentifier,
+      orderedFormFlatFieldMetadatasInBatch: [sourceFlatFieldMetadata],
       ...buildMaps({
         flatPageLayoutTab: buildFlatPageLayoutTab({
           widgetUniversalIdentifiers: ['widget-1'],
@@ -165,6 +214,7 @@ describe('computeRecordFormWidgetForExistingObject', () => {
       sourceFlatFieldMetadata,
       recordFormPageLayoutTabUniversalIdentifier:
         pageLayoutTabUniversalIdentifier,
+      orderedFormFlatFieldMetadatasInBatch: [sourceFlatFieldMetadata],
       ...buildMaps({
         flatPageLayoutTab: buildFlatPageLayoutTab({
           widgetUniversalIdentifiers: ['widget-1'],
@@ -191,6 +241,7 @@ describe('computeRecordFormWidgetForExistingObject', () => {
       sourceFlatFieldMetadata,
       recordFormPageLayoutTabUniversalIdentifier:
         pageLayoutTabUniversalIdentifier,
+      orderedFormFlatFieldMetadatasInBatch: [sourceFlatFieldMetadata],
       ...buildMaps({}),
     });
 
@@ -205,6 +256,7 @@ describe('computeRecordFormWidgetForExistingObject', () => {
       sourceFlatFieldMetadata,
       recordFormPageLayoutTabUniversalIdentifier:
         pageLayoutTabUniversalIdentifier,
+      orderedFormFlatFieldMetadatasInBatch: [sourceFlatFieldMetadata],
       ...buildMaps({
         flatPageLayoutTab: buildFlatPageLayoutTab(overrides),
       }),
