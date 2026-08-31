@@ -14,7 +14,7 @@ import {
   type WorkflowVariableSelection,
   type WorkflowVariableStepSelection,
 } from '@/workflow/workflow-variables/types/WorkflowVariableSelection';
-import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
+import { getWorkflowVariableSelectionFromSearchResult } from '@/workflow/workflow-variables/utils/getWorkflowVariableSelectionFromSearchResult';
 import { searchWorkflowVariables } from '@/workflow/workflow-variables/utils/searchWorkflowVariables';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -66,14 +66,7 @@ export const WorkflowVariablesDropdownSteps = ({
       return;
     }
 
-    onVariableSelect({
-      rawVariableName: getVariableTemplateFromPath({
-        stepId: variable.stepId,
-        path: variable.path,
-      }),
-      stepId: variable.stepId,
-      isFullRecord: variable.isFullRecord ?? false,
-    });
+    onVariableSelect(getWorkflowVariableSelectionFromSearchResult(variable));
   };
 
   return (

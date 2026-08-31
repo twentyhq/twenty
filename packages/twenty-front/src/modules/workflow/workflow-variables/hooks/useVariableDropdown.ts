@@ -25,6 +25,7 @@ import { isBaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards
 import { isLinkOutputSchema } from '@/workflow/workflow-variables/types/guards/isLinkOutputSchema';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
+import { getWorkflowVariableSelectionFromSearchResult } from '@/workflow/workflow-variables/utils/getWorkflowVariableSelectionFromSearchResult';
 import { searchWorkflowVariables } from '@/workflow/workflow-variables/utils/searchWorkflowVariables';
 
 type UseVariableDropdownProps = {
@@ -198,14 +199,7 @@ export const useVariableDropdown = ({
 
   const handleSelectSearchResult = (result: WorkflowVariableSearchResult) => {
     if (result.isLeaf) {
-      onSelect({
-        rawVariableName: getVariableTemplateFromPath({
-          stepId: result.stepId,
-          path: result.path,
-        }),
-        stepId: result.stepId,
-        isFullRecord: result.isFullRecord ?? false,
-      });
+      onSelect(getWorkflowVariableSelectionFromSearchResult(result));
       return;
     }
 
