@@ -1,7 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
-import { isDefined } from 'twenty-sdk/utils';
 
 import { type SlackUnfurlObjectName } from 'src/logic-functions/constants/slack-unfurl-object-names';
+import { asObject } from 'src/logic-functions/utils/as-object';
 
 type SlackUnfurlRecordSelection = {
   queryField: 'people' | 'companies' | 'opportunities' | 'notes' | 'tasks';
@@ -100,5 +100,5 @@ export const findSlackUnfurlRecord = async ({
 
   const record = queryResult?.[queryField]?.edges?.[0]?.node;
 
-  return isDefined(record) ? (record as Record<string, unknown>) : undefined;
+  return asObject(record);
 };
