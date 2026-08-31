@@ -341,6 +341,7 @@ export const DocumentViewer = ({
               setHasVideoError(true);
             }}
             $isHidden={isVideoLoading}
+            style={{ visibility: isVideoLoading ? 'hidden' : 'visible' }}
           />
         </StyledVideoContainer>
       </StyledDocumentViewerContainer>
