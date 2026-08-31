@@ -1,4 +1,4 @@
-import { isObject, isString } from '@sniptt/guards';
+import { isObject, isString, isUndefined } from '@sniptt/guards';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -40,18 +40,29 @@ const extractMorphValue = (value: unknown): ExtractedMorphValue | null => {
   return null;
 };
 
-const extractLegacyRelationId = (value: unknown): string | undefined => {
+const extractLegacyRelationJoinColumnValue = (
+  value: unknown,
+): string | null | undefined => {
+  if (value === null) {
+    return null;
+  }
+
   if (!isObject(value)) {
     return undefined;
   }
 
   const record = value as Record<string, unknown>;
+  const keys = Object.keys(record);
 
-  if (Object.keys(record).length !== 1 || !isString(record.id)) {
+  if (keys.length !== 1 || keys[0] !== 'id') {
     return undefined;
   }
 
-  return record.id;
+  if (!isDefined(record.id)) {
+    return null;
+  }
+
+  return isString(record.id) ? record.id : undefined;
 };
 
 const formatWorkflowRecordMorphRelationFields = (
@@ -191,9 +202,9 @@ const formatWorkflowRecordSimpleRelationFields = (
       continue;
     }
 
-    const legacyId = extractLegacyRelationId(value);
+    const joinColumnValue = extractLegacyRelationJoinColumnValue(value);
 
-    if (!isDefined(legacyId)) {
+    if (isUndefined(joinColumnValue)) {
       formattedRecord[key] = value;
       continue;
     }
@@ -203,7 +214,7 @@ const formatWorkflowRecordSimpleRelationFields = (
     });
 
     if (!isDefined(record[joinColumnName])) {
-      formattedRecord[joinColumnName] = legacyId;
+      formattedRecord[joinColumnName] = joinColumnValue;
     }
   }
 
