@@ -7,6 +7,10 @@ import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-tr
 
 export const computeAutomatedTriggerFromWorkflowVersion = (
   workflowVersion: WorkflowVersionEntity,
+  workspaceLinks: {
+    coreWorkflowId: string | null;
+    workspaceWorkflowVersionId: string | null;
+  },
 ): CachedWorkflowAutomatedTrigger | null => {
   const trigger = workflowVersion.triggers?.[0] ?? null;
 
@@ -18,14 +22,18 @@ export const computeAutomatedTriggerFromWorkflowVersion = (
     case WorkflowTriggerType.DATABASE_EVENT:
       return {
         workflowId: workflowVersion.workflowId,
-        workflowVersionId: workflowVersion.id,
+        coreWorkflowId: workspaceLinks.coreWorkflowId,
+        coreWorkflowVersionId: workflowVersion.id,
+        workspaceWorkflowVersionId: workspaceLinks.workspaceWorkflowVersionId,
         type: AutomatedTriggerType.DATABASE_EVENT,
         settings: trigger.settings as DatabaseEventTriggerSettings,
       };
     case WorkflowTriggerType.CRON:
       return {
         workflowId: workflowVersion.workflowId,
-        workflowVersionId: workflowVersion.id,
+        coreWorkflowId: workspaceLinks.coreWorkflowId,
+        coreWorkflowVersionId: workflowVersion.id,
+        workspaceWorkflowVersionId: workspaceLinks.workspaceWorkflowVersionId,
         type: AutomatedTriggerType.CRON,
         settings: { pattern: computeCronPatternFromSchedule(trigger) },
       };

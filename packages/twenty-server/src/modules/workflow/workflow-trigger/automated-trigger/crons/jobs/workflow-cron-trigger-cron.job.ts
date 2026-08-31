@@ -101,6 +101,9 @@ export class WorkflowCronTriggerCronJob {
           {
             workspaceId: trigger.workspaceId,
             workflowId: trigger.workflowId,
+            coreWorkflowId: trigger.coreWorkflowId,
+            coreWorkflowVersionId: trigger.coreWorkflowVersionId,
+            workspaceWorkflowVersionId: trigger.workspaceWorkflowVersionId,
             payload: {},
           },
           { retryLimit: 3 },
@@ -162,7 +165,9 @@ export class WorkflowCronTriggerCronJob {
 
       const triggersToCache: CachedCronTrigger[] = [];
 
-      for (const { workflowId, pattern } of cronTriggers) {
+      for (const cronTrigger of cronTriggers) {
+        const { workflowId, pattern } = cronTrigger;
+
         if (!isDefined(pattern)) {
           this.logger.warn(
             `Workflow ${workflowId}: skipping - cron pattern not defined`,
@@ -173,6 +178,9 @@ export class WorkflowCronTriggerCronJob {
         const cachedTrigger: CachedCronTrigger = {
           workspaceId,
           workflowId,
+          coreWorkflowId: cronTrigger.coreWorkflowId,
+          coreWorkflowVersionId: cronTrigger.coreWorkflowVersionId,
+          workspaceWorkflowVersionId: cronTrigger.workspaceWorkflowVersionId,
           pattern,
         };
 
@@ -213,9 +221,15 @@ export class WorkflowCronTriggerCronJob {
     }
   }
 
-  private async getWorkspaceCronTriggers(
-    workspaceId: string,
-  ): Promise<Array<{ workflowId: string; pattern?: string }>> {
+  private async getWorkspaceCronTriggers(workspaceId: string): Promise<
+    Array<{
+      workflowId: string;
+      coreWorkflowId: string | null;
+      coreWorkflowVersionId: string | null;
+      workspaceWorkflowVersionId: string | null;
+      pattern?: string;
+    }>
+  > {
     const { workflowAutomatedTriggerMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'workflowAutomatedTriggerMaps',
@@ -225,6 +239,9 @@ export class WorkflowCronTriggerCronJob {
       .filter(isCachedCronTrigger)
       .map((trigger) => ({
         workflowId: trigger.workflowId,
+        coreWorkflowId: trigger.coreWorkflowId,
+        coreWorkflowVersionId: trigger.coreWorkflowVersionId,
+        workspaceWorkflowVersionId: trigger.workspaceWorkflowVersionId,
         pattern: trigger.settings.pattern,
       }));
   }

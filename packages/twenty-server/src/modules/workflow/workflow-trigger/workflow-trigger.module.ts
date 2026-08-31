@@ -10,6 +10,7 @@ import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workf
 import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-core-consistency/workflow-core-consistency.module';
 import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workflow-runner.module';
 import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
+import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { WorkflowTriggerJob } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
 import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
 
@@ -25,6 +26,7 @@ import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-t
     FeatureFlagModule,
     LogicFunctionModule,
     WorkflowVersionCoreModule,
+    WorkflowCoreModule,
   ],
   providers: [WorkflowTriggerWorkspaceService, WorkflowTriggerJob],
   exports: [WorkflowTriggerWorkspaceService],

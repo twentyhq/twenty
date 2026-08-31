@@ -1,5 +1,6 @@
 import { Logger, Scope } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import isEmpty from 'lodash.isempty';
 import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -7,6 +8,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { WorkflowVersionStatus as CoreWorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
+import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
+import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
@@ -19,6 +23,9 @@ export type WorkflowTriggerJobData = {
   workspaceId: string;
   workflowId: string;
   payload: object;
+  coreWorkflowId?: string | null;
+  coreWorkflowVersionId?: string | null;
+  workspaceWorkflowVersionId?: string | null;
 };
 
 const DEFAULT_WORKFLOW_NAME = 'Workflow';
@@ -30,10 +37,90 @@ export class WorkflowTriggerJob {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
+    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
+    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
   ) {}
 
   @Process(WorkflowTriggerJob.name)
   async handle(data: WorkflowTriggerJobData): Promise<void> {
+    if (
+      isDefined(data.coreWorkflowId) &&
+      isDefined(data.coreWorkflowVersionId) &&
+      isDefined(data.workspaceWorkflowVersionId)
+    ) {
+      return this.handleFromCore({
+        workspaceId: data.workspaceId,
+        coreWorkflowId: data.coreWorkflowId,
+        coreWorkflowVersionId: data.coreWorkflowVersionId,
+        workspaceWorkflowVersionId: data.workspaceWorkflowVersionId,
+        payload: data.payload,
+      });
+    }
+
+    return this.handleFromWorkspace(data);
+  }
+
+  private async handleFromCore({
+    workspaceId,
+    coreWorkflowId,
+    coreWorkflowVersionId,
+    workspaceWorkflowVersionId,
+    payload,
+  }: {
+    workspaceId: string;
+    coreWorkflowId: string;
+    coreWorkflowVersionId: string;
+    workspaceWorkflowVersionId: string;
+    payload: object;
+  }): Promise<void> {
+    const coreWorkflowVersion =
+      await this.workflowVersionCoreSyncService.findCoreVersionById(
+        workspaceId,
+        coreWorkflowVersionId,
+      );
+
+    if (!isDefined(coreWorkflowVersion)) {
+      this.logger.error(
+        `Core workflow version ${coreWorkflowVersionId} not found in workspace ${workspaceId}`,
+        WorkflowTriggerExceptionCode.NOT_FOUND,
+      );
+
+      return;
+    }
+
+    if (coreWorkflowVersion.status !== CoreWorkflowVersionStatus.ACTIVE) {
+      this.logger.error(
+        `Core workflow version ${coreWorkflowVersionId} is not active in workspace ${workspaceId}`,
+        WorkflowTriggerExceptionCode.INTERNAL_ERROR,
+      );
+
+      return;
+    }
+
+    const coreWorkflow =
+      await this.workflowCoreSyncService.findCoreWorkflowById(
+        workspaceId,
+        coreWorkflowId,
+      );
+
+    await this.workflowRunnerWorkspaceService.run({
+      workspaceId,
+      workflowVersionId: workspaceWorkflowVersionId,
+      payload,
+      source: {
+        source: FieldActorSource.WORKFLOW,
+        name: isNonEmptyString(coreWorkflow?.name)
+          ? coreWorkflow.name
+          : DEFAULT_WORKFLOW_NAME,
+        context: {},
+        workspaceMemberId: null,
+      },
+    });
+  }
+
+  private async handleFromWorkspace(
+    data: WorkflowTriggerJobData,
+  ): Promise<void> {
     const authContext = buildSystemAuthContext(data.workspaceId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {

@@ -29,6 +29,15 @@ export class WorkflowCoreSyncService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
+  async findCoreWorkflowById(
+    workspaceId: string,
+    coreWorkflowId: string,
+  ): Promise<WorkflowEntity | null> {
+    return this.coreWorkflowRepository.findOne(workspaceId, {
+      where: { id: coreWorkflowId },
+    });
+  }
+
   async upsertToCore(
     workspaceId: string,
     workflows: WorkflowWorkspaceEntity[],
