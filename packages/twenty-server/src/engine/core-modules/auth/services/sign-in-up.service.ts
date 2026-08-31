@@ -610,6 +610,8 @@ export class SignInUpService {
     workspaceId: string;
     applicationUniversalIdentifier: string;
   }): Promise<void> {
+    let uploadedLogoFileId: string | undefined;
+
     try {
       const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainFromEmailOrThrow(email)}`;
       const logoFile =
@@ -620,9 +622,18 @@ export class SignInUpService {
         });
 
       if (isDefined(logoFile)) {
-        await this.workspaceRepository.update(workspaceId, {
-          logoFileId: logoFile.id,
-        });
+        uploadedLogoFileId = logoFile.id;
+
+        const updateResult = await this.workspaceRepository.update(
+          workspaceId,
+          {
+            logoFileId: logoFile.id,
+          },
+        );
+
+        if ((updateResult.affected ?? 0) === 0) {
+          throw new Error('Workspace no longer exists for inferred logo');
+        }
       }
     } catch (error) {
       this.logger.error(
@@ -633,6 +644,24 @@ export class SignInUpService {
         workspace: { id: workspaceId },
         additionalData: { source: 'inferred-workspace-logo' },
       });
+
+      if (isDefined(uploadedLogoFileId)) {
+        try {
+          await this.fileCorePictureService.deleteCorePicture({
+            fileId: uploadedLogoFileId,
+            workspaceId,
+          });
+        } catch (cleanupError) {
+          this.logger.error(
+            `Failed to clean up inferred logo for workspace ${workspaceId}`,
+            cleanupError,
+          );
+          this.exceptionHandlerService.captureExceptions([cleanupError], {
+            workspace: { id: workspaceId },
+            additionalData: { source: 'inferred-workspace-logo-cleanup' },
+          });
+        }
+      }
     }
   }
 

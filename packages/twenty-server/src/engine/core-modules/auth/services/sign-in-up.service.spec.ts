@@ -28,6 +28,7 @@ describe('SignInUpService', () => {
   let service: SignInUpService;
 
   const uploadWorkspaceLogoFromUrl = jest.fn();
+  const deleteCorePicture = jest.fn();
   const captureExceptions = jest.fn();
   const updateWorkspace = jest.fn();
   const insertWorkspaceEvent = jest.fn();
@@ -54,6 +55,8 @@ describe('SignInUpService', () => {
 
   beforeEach(async () => {
     jest.spyOn(Logger.prototype, 'error').mockImplementation();
+    updateWorkspace.mockResolvedValue({ affected: 1 });
+    deleteCorePicture.mockResolvedValue(undefined);
 
     const workspaceRepository = {
       count: jest.fn().mockResolvedValue(0),
@@ -142,7 +145,7 @@ describe('SignInUpService', () => {
         },
         {
           provide: FileCorePictureService,
-          useValue: { uploadWorkspaceLogoFromUrl },
+          useValue: { deleteCorePicture, uploadWorkspaceLogoFromUrl },
         },
         {
           provide: ExceptionHandlerService,
@@ -198,11 +201,14 @@ describe('SignInUpService', () => {
     await flushMicrotasks();
 
     expect(resolvedBeforeLogoUpload).toBe(true);
+    expect(uploadWorkspaceLogoFromUrl).toHaveBeenCalledTimes(1);
+    expect(captureExceptions).toHaveBeenCalledTimes(1);
     expect(captureExceptions).toHaveBeenCalledWith([uploadError], {
       workspace: { id: workspace.id },
       additionalData: { source: 'inferred-workspace-logo' },
     });
-    expect(updateWorkspace).not.toHaveBeenCalled();
+    expect(updateWorkspace).toHaveBeenCalledTimes(0);
+    expect(deleteCorePicture).toHaveBeenCalledTimes(0);
   });
 
   it('sets the inferred logo after workspace creation', async () => {
@@ -211,14 +217,86 @@ describe('SignInUpService', () => {
     const { workspace } = await createWorkspace();
     await flushMicrotasks();
 
+    expect(uploadWorkspaceLogoFromUrl).toHaveBeenCalledTimes(1);
     expect(uploadWorkspaceLogoFromUrl).toHaveBeenCalledWith({
       imageUrl: 'https://twenty-icons.com/acme.com',
       workspaceId: workspace.id,
       applicationUniversalIdentifier: 'custom-application',
     });
+    expect(updateWorkspace).toHaveBeenCalledTimes(1);
     expect(updateWorkspace).toHaveBeenCalledWith(workspace.id, {
       logoFileId: 'logo-file-id',
     });
-    expect(captureExceptions).not.toHaveBeenCalled();
+    expect(captureExceptions).toHaveBeenCalledTimes(0);
+    expect(deleteCorePicture).toHaveBeenCalledTimes(0);
+  });
+
+  it('deletes an uploaded logo when associating it fails', async () => {
+    const associationError = new Error('Database unavailable');
+
+    uploadWorkspaceLogoFromUrl.mockResolvedValue({ id: 'logo-file-id' });
+    updateWorkspace.mockRejectedValue(associationError);
+    deleteCorePicture.mockResolvedValue(undefined);
+
+    const { workspace } = await createWorkspace();
+    await flushMicrotasks();
+
+    expect(uploadWorkspaceLogoFromUrl).toHaveBeenCalledTimes(1);
+    expect(updateWorkspace).toHaveBeenCalledTimes(1);
+    expect(deleteCorePicture).toHaveBeenCalledTimes(1);
+    expect(deleteCorePicture).toHaveBeenCalledWith({
+      fileId: 'logo-file-id',
+      workspaceId: workspace.id,
+    });
+    expect(captureExceptions).toHaveBeenCalledTimes(1);
+    expect(captureExceptions).toHaveBeenCalledWith([associationError], {
+      workspace: { id: workspace.id },
+      additionalData: { source: 'inferred-workspace-logo' },
+    });
+  });
+
+  it('deletes an uploaded logo when its workspace no longer exists', async () => {
+    uploadWorkspaceLogoFromUrl.mockResolvedValue({ id: 'logo-file-id' });
+    updateWorkspace.mockResolvedValue({ affected: 0 });
+
+    const { workspace } = await createWorkspace();
+    await flushMicrotasks();
+
+    expect(uploadWorkspaceLogoFromUrl).toHaveBeenCalledTimes(1);
+    expect(updateWorkspace).toHaveBeenCalledTimes(1);
+    expect(deleteCorePicture).toHaveBeenCalledTimes(1);
+    expect(deleteCorePicture).toHaveBeenCalledWith({
+      fileId: 'logo-file-id',
+      workspaceId: workspace.id,
+    });
+    expect(captureExceptions).toHaveBeenCalledTimes(1);
+    expect(captureExceptions.mock.calls[0][0][0]).toEqual(
+      new Error('Workspace no longer exists for inferred logo'),
+    );
+  });
+
+  it('reports both association and cleanup failures', async () => {
+    const associationError = new Error('Database unavailable');
+    const cleanupError = new Error('S3 cleanup unavailable');
+
+    uploadWorkspaceLogoFromUrl.mockResolvedValue({ id: 'logo-file-id' });
+    updateWorkspace.mockRejectedValue(associationError);
+    deleteCorePicture.mockRejectedValue(cleanupError);
+
+    const { workspace } = await createWorkspace();
+    await flushMicrotasks();
+
+    expect(uploadWorkspaceLogoFromUrl).toHaveBeenCalledTimes(1);
+    expect(updateWorkspace).toHaveBeenCalledTimes(1);
+    expect(deleteCorePicture).toHaveBeenCalledTimes(1);
+    expect(captureExceptions).toHaveBeenCalledTimes(2);
+    expect(captureExceptions).toHaveBeenNthCalledWith(1, [associationError], {
+      workspace: { id: workspace.id },
+      additionalData: { source: 'inferred-workspace-logo' },
+    });
+    expect(captureExceptions).toHaveBeenNthCalledWith(2, [cleanupError], {
+      workspace: { id: workspace.id },
+      additionalData: { source: 'inferred-workspace-logo-cleanup' },
+    });
   });
 });
