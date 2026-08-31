@@ -11,12 +11,14 @@ export const createDefaultRecordTableWidget = ({
   title,
   position,
   objectMetadataId,
+  isUIEditable,
 }: {
   id: string;
   pageLayoutTabId: string;
   title: string;
   position: PageLayoutWidgetGridPosition;
   objectMetadataId?: string;
+  isUIEditable?: boolean;
 }): PageLayoutWidget => {
   return {
     __typename: 'PageLayoutWidget',
@@ -30,6 +32,7 @@ export const createDefaultRecordTableWidget = ({
     type: WidgetType.RECORD_TABLE,
     configuration: {
       configurationType: WidgetConfigurationType.RECORD_TABLE,
+      isUIEditable,
     },
     position: {
       ...position,
