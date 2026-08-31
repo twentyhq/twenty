@@ -103,9 +103,11 @@ type WorkspaceRepositoryOptions = {
   flatObjectMetadataByObjectMetadataId: (
     objectMetadataId: string,
   ) => FlatObjectMetadata;
-  getRepositoryForObjectMetadataId: (
+  getRepositoryForObjectMetadataId: <
+    Entity extends ObjectLiteral = ObjectRecord,
+  >(
     objectMetadataId: string,
-  ) => WorkspaceRepository;
+  ) => WorkspaceRepository<Entity>;
   isTransactional: boolean;
   runInNewTransaction: <T>(
     work: (
@@ -198,6 +200,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   get internalContext(): WorkspaceInternalContext {
     return this.options.internalContext;
+  }
+
+  getRepositoryForObjectMetadataId<Entity extends ObjectLiteral = ObjectRecord>(
+    objectMetadataId: string,
+  ): WorkspaceRepository<Entity> {
+    return this.options.getRepositoryForObjectMetadataId<Entity>(
+      objectMetadataId,
+    );
   }
 
   async find(options?: WorkspaceFindOptions): Promise<TEntity[]> {

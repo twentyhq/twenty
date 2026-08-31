@@ -3,11 +3,6 @@ import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
 import { type EntityTarget, type ObjectLiteral } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
-import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
-
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-
 import { type QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import { type RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 import {
@@ -24,20 +19,13 @@ import { createSqlWhereTupleInClause } from 'src/engine/twenty-orm/utils/create-
 import { extractNestedRelationFieldsByEntityIndex } from 'src/engine/twenty-orm/utils/extract-nested-relation-fields-by-entity-index.util';
 import { getAssociatedRelationFieldName } from 'src/engine/twenty-orm/utils/get-associated-relation-field-name.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 
 export class RelationNestedQueries {
-  private readonly internalContext: WorkspaceInternalContext;
-  private readonly workspaceOrmManager: WorkspaceOrmManager;
-  private readonly rolePermissionConfig?: RolePermissionConfig;
+  private readonly workspaceRepository: WorkspaceRepository;
 
-  constructor(
-    internalContext: WorkspaceInternalContext,
-    workspaceOrmManager: WorkspaceOrmManager,
-    rolePermissionConfig?: RolePermissionConfig,
-  ) {
-    this.internalContext = internalContext;
-    this.workspaceOrmManager = workspaceOrmManager;
-    this.rolePermissionConfig = rolePermissionConfig;
+  constructor(workspaceRepository: WorkspaceRepository) {
+    this.workspaceRepository = workspaceRepository;
   }
 
   prepareNestedRelationQueries<Entity extends ObjectLiteral>(
@@ -74,15 +62,15 @@ export class RelationNestedQueries {
   ) {
     const objectMetadata = getObjectMetadataFromEntityTarget(
       target,
-      this.internalContext,
+      this.workspaceRepository.internalContext,
     );
 
     const relationConnectQueryConfigs = computeRelationConnectQueryConfigs(
       entities,
       objectMetadata,
-      this.internalContext.flatObjectMetadataMaps,
-      this.internalContext.flatFieldMetadataMaps,
-      this.internalContext.flatIndexMaps,
+      this.workspaceRepository.internalContext.flatObjectMetadataMaps,
+      this.workspaceRepository.internalContext.flatFieldMetadataMaps,
+      this.workspaceRepository.internalContext.flatIndexMaps,
       relationConnectQueryFieldsByEntityIndex,
     );
 
@@ -180,16 +168,33 @@ export class RelationNestedQueries {
     clause: string;
     parameters: Record<string, unknown>;
   }): Promise<Record<string, unknown>[]> {
-    const targetObjectName = connectQueryConfig.targetObjectName;
-    const targetQueryBuilder = this.workspaceOrmManager
-      .getRepository(targetObjectName, this.rolePermissionConfig)
-      .createQueryBuilder(targetObjectName);
+    const targetObjectMetadataId =
+      this.workspaceRepository.internalContext.objectIdByNameSingular[
+        connectQueryConfig.targetObjectName
+      ];
+
+    if (!isDefined(targetObjectMetadataId)) {
+      throw new TwentyOrmException(
+        `Object "${connectQueryConfig.targetObjectName}" does not exist in this workspace`,
+        TwentyOrmExceptionCode.UNKNOWN_OBJECT,
+      );
+    }
+
+    const targetQueryBuilder = this.workspaceRepository
+      .getRepositoryForObjectMetadataId(targetObjectMetadataId)
+      .createQueryBuilder(connectQueryConfig.targetObjectName);
 
     targetQueryBuilder.select([]);
-    targetQueryBuilder.addSelect(`"${targetObjectName}"."id"`, 'id');
+    targetQueryBuilder.addSelect(
+      `"${connectQueryConfig.targetObjectName}"."id"`,
+      'id',
+    );
 
     for (const [field] of connectQueryConfig.recordToConnectConditions[0]) {
-      targetQueryBuilder.addSelect(`"${targetObjectName}"."${field}"`, field);
+      targetQueryBuilder.addSelect(
+        `"${connectQueryConfig.targetObjectName}"."${field}"`,
+        field,
+      );
     }
 
     return targetQueryBuilder.where(clause, parameters).getRawMany();

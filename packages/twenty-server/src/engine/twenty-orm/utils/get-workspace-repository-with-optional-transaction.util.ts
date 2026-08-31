@@ -13,11 +13,13 @@ export const getWorkspaceRepositoryWithOptionalTransaction = <
   transactionScope,
   workspaceOrmManager,
   rolePermissionConfig,
+  repositoryOptions,
 }: {
   objectMetadataName: string;
   transactionScope?: WorkspaceTransactionScope;
   workspaceOrmManager: WorkspaceOrmManager;
   rolePermissionConfig?: RolePermissionConfig;
+  repositoryOptions?: { useReplica?: boolean };
 }): WorkspaceRepository<Entity> =>
   isDefined(transactionScope)
     ? transactionScope.getRepository<Entity>(
@@ -27,4 +29,5 @@ export const getWorkspaceRepositoryWithOptionalTransaction = <
     : workspaceOrmManager.getRepository<Entity>(
         objectMetadataName,
         rolePermissionConfig,
+        repositoryOptions,
       );

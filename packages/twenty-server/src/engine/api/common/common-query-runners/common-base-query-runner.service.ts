@@ -7,7 +7,6 @@ import {
   type ObjectRecord,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type ObjectLiteral } from 'typeorm';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -78,6 +77,7 @@ import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
+import { getWorkspaceRepositoryWithOptionalTransaction } from 'src/engine/twenty-orm/utils/get-workspace-repository-with-optional-transaction.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -244,9 +244,7 @@ export abstract class CommonBaseQueryRunnerService<
     commonQueryParser: GraphqlQueryParser,
   ): Promise<Output> {
     const extendedQueryRunnerContext =
-      await this.prepareExtendedQueryRunnerContextWithGlobalDatasource(
-        queryRunnerContext,
-      );
+      await this.prepareExtendedQueryRunnerContext(queryRunnerContext);
 
     const results = await this.run(processedArgs, {
       ...extendedQueryRunnerContext,
@@ -335,7 +333,7 @@ export abstract class CommonBaseQueryRunnerService<
     }
   }
 
-  private async prepareExtendedQueryRunnerContextWithGlobalDatasource(
+  private async prepareExtendedQueryRunnerContext(
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<Omit<CommonExtendedQueryRunnerContext, 'commonQueryParser'>> {
     const context = getWorkspaceContext();
@@ -356,11 +354,14 @@ export abstract class CommonBaseQueryRunnerService<
       );
     }
 
-    const repository = this.workspaceOrmManager.getRepository<ObjectLiteral>(
-      queryRunnerContext.flatObjectMetadata.nameSingular,
-      rolePermissionConfig,
-      { useReplica: this.isReadOnly },
-    );
+    const repository =
+      getWorkspaceRepositoryWithOptionalTransaction<ObjectRecord>({
+        objectMetadataName: queryRunnerContext.flatObjectMetadata.nameSingular,
+        transactionScope: queryRunnerContext.transactionScope,
+        workspaceOrmManager: this.workspaceOrmManager,
+        rolePermissionConfig,
+        repositoryOptions: { useReplica: this.isReadOnly },
+      });
 
     return {
       ...queryRunnerContext,
@@ -375,43 +376,34 @@ export abstract class CommonBaseQueryRunnerService<
   // and everything else the primary, keeping root read and nested-relation
   // loading consistent.
   protected getReadRepository({
-    rolePermissionConfig,
-    flatObjectMetadata,
+    repository,
   }: Pick<
     CommonExtendedQueryRunnerContext,
-    'rolePermissionConfig' | 'flatObjectMetadata'
-  >): WorkspaceRepository {
+    'repository'
+  >): WorkspaceRepository<ObjectRecord> {
     this.metricsService.incrementCounterBy({
       key: MetricsKeys.OrmV2ReadPathUsed,
       amount: 1,
       attributes: { operation: this.operationName },
     });
 
-    return this.workspaceOrmManager.getRepository(
-      flatObjectMetadata.nameSingular,
-      rolePermissionConfig,
-      { useReplica: this.isReadOnly },
-    );
+    return repository;
   }
 
   // Writes always hit the primary, so useReplica is pinned false regardless of isReadOnly.
   protected getWriteRepository({
-    rolePermissionConfig,
-    flatObjectMetadata,
+    repository,
   }: Pick<
     CommonExtendedQueryRunnerContext,
-    'rolePermissionConfig' | 'flatObjectMetadata'
-  >): WorkspaceRepository {
+    'repository'
+  >): WorkspaceRepository<ObjectRecord> {
     this.metricsService.incrementCounterBy({
       key: MetricsKeys.OrmV2WritePathUsed,
       amount: 1,
       attributes: { operation: this.operationName },
     });
 
-    return this.workspaceOrmManager.getRepository(
-      flatObjectMetadata.nameSingular,
-      rolePermissionConfig,
-    );
+    return repository;
   }
 
   protected async runFilteredMutation({
@@ -477,15 +469,10 @@ export abstract class CommonBaseQueryRunnerService<
     queryRunnerContext: CommonExtendedQueryRunnerContext;
     writeRepository: WorkspaceRepository;
   }): Promise<Partial<ObjectRecord>[]> {
-    const { flatObjectMetadata, flatFieldMetadataMaps, rolePermissionConfig } =
-      queryRunnerContext;
+    const { flatObjectMetadata, flatFieldMetadataMaps } = queryRunnerContext;
     const nameSingular = flatObjectMetadata.nameSingular;
 
-    const relationNestedQueries = new RelationNestedQueries(
-      writeRepository.getInternalContext(),
-      this.workspaceOrmManager,
-      rolePermissionConfig,
-    );
+    const relationNestedQueries = new RelationNestedQueries(writeRepository);
 
     const relationNestedConfig =
       relationNestedQueries.prepareNestedRelationQueries(records, nameSingular);
