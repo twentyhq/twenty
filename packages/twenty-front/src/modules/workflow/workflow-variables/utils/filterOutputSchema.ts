@@ -183,50 +183,54 @@ const filterRecordOutputSchemaFieldsByType = ({
   };
 };
 
-const filterNonRecordOutputSchemaFieldsByType = <TOutputSchema extends object>({
+const filterNonRecordOutputSchemaFieldsByType = ({
   outputSchema,
   fieldTypesToExclude,
 }: {
-  outputSchema: TOutputSchema;
+  outputSchema: OutputSchemaV2;
   fieldTypesToExclude: InputSchemaPropertyType[];
-}): TOutputSchema => {
-  const filteredSchema = { ...outputSchema };
+}): OutputSchemaV2 => {
+  const filteredEntries = Object.entries(outputSchema)
+    .map(([key, field]) => {
+      if (!isObject(field)) {
+        return [key, field];
+      }
 
-  for (const [key, field] of Object.entries(outputSchema)) {
-    if (!isObject(field)) {
-      continue;
-    }
+      if (
+        'type' in field &&
+        fieldTypesToExclude.some((fieldType) => fieldType === field.type)
+      ) {
+        return undefined;
+      }
 
-    if (
-      'type' in field &&
-      fieldTypesToExclude.some((fieldType) => fieldType === field.type)
-    ) {
-      Reflect.deleteProperty(filteredSchema, key);
-      continue;
-    }
+      if (
+        'isLeaf' in field &&
+        field.isLeaf === false &&
+        'value' in field &&
+        isObject(field.value)
+      ) {
+        return [
+          key,
+          {
+            ...field,
+            value: isRecordOutputSchemaV2(field.value)
+              ? filterRecordOutputSchemaFieldsByType({
+                  outputSchema: field.value,
+                  fieldTypesToExclude,
+                })
+              : filterNonRecordOutputSchemaFieldsByType({
+                  outputSchema: field.value,
+                  fieldTypesToExclude,
+                }),
+          },
+        ];
+      }
 
-    if (
-      'isLeaf' in field &&
-      field.isLeaf === false &&
-      'value' in field &&
-      isObject(field.value)
-    ) {
-      Reflect.set(filteredSchema, key, {
-        ...field,
-        value: isRecordOutputSchemaV2(field.value)
-          ? filterRecordOutputSchemaFieldsByType({
-              outputSchema: field.value,
-              fieldTypesToExclude,
-            })
-          : filterNonRecordOutputSchemaFieldsByType({
-              outputSchema: field.value,
-              fieldTypesToExclude,
-            }),
-      });
-    }
-  }
+      return [key, field];
+    })
+    .filter(isDefined);
 
-  return filteredSchema;
+  return Object.fromEntries(filteredEntries);
 };
 
 const filterOutputSchemaFieldsByType = ({

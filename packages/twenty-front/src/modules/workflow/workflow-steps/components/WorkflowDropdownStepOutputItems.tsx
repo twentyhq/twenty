@@ -8,6 +8,7 @@ import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjec
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { WorkflowVariableSearchResultItems } from '@/workflow/workflow-variables/components/WorkflowVariableSearchResultItems';
 import { useUpdateStepFilterFromVariable } from '@/workflow/workflow-steps/filters/hooks/useUpdateStepFilterFromVariable';
 import { useVariableDropdown } from '@/workflow/workflow-variables/hooks/useVariableDropdown';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
@@ -144,19 +145,10 @@ export const WorkflowDropdownStepOutputItems = ({
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         {isSearching ? (
-          searchResults.map((result) => (
-            <MenuItemSelect
-              key={`${JSON.stringify(result.path)}-${result.label}-${result.isLeaf}-${result.isFullRecord}`}
-              selected={false}
-              focused={false}
-              onClick={() => handleSelectSearchResult(result)}
-              text={result.label}
-              contextualText={result.breadcrumb}
-              LeftIcon={getIcon(result.icon)}
-              leftIconColor={result.iconColor}
-              hasSubMenu={!result.isLeaf}
-            />
-          ))
+          <WorkflowVariableSearchResultItems
+            searchResults={searchResults}
+            onSelect={handleSelectSearchResult}
+          />
         ) : (
           <>
             {shouldDisplaySubStepObject && (

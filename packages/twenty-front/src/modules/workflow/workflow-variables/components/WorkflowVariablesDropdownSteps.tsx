@@ -7,7 +7,9 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { WorkflowVariableSearchResultItems } from '@/workflow/workflow-variables/components/WorkflowVariableSearchResultItems';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
+import { type WorkflowVariableSearchResult } from '@/workflow/workflow-variables/types/WorkflowVariableSearchResult';
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
 import { searchWorkflowVariables } from '@/workflow/workflow-variables/utils/searchWorkflowVariables';
 import { t } from '@lingui/core/macro';
@@ -58,6 +60,22 @@ export const WorkflowVariablesDropdownSteps = ({
     objectMetadataItems,
   });
 
+  const handleSearchResultSelect = (variable: WorkflowVariableSearchResult) => {
+    if (!variable.isLeaf) {
+      onSelect(variable.stepId, variable.path);
+      return;
+    }
+
+    onVariableSelect(
+      getVariableTemplateFromPath({
+        stepId: variable.stepId,
+        path: variable.path,
+      }),
+      variable.stepId,
+      variable.isFullRecord ?? false,
+    );
+  };
+
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <DropdownMenuHeader
@@ -78,30 +96,10 @@ export const WorkflowVariablesDropdownSteps = ({
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
-        {matchingVariables.map((variable) => (
-          <MenuItemSelect
-            key={`${variable.stepId}-${JSON.stringify(variable.path)}-${variable.label}-${variable.isLeaf}-${variable.isFullRecord}`}
-            selected={false}
-            focused={false}
-            onClick={() =>
-              variable.isLeaf
-                ? onVariableSelect(
-                    getVariableTemplateFromPath({
-                      stepId: variable.stepId,
-                      path: variable.path,
-                    }),
-                    variable.stepId,
-                    variable.isFullRecord ?? false,
-                  )
-                : onSelect(variable.stepId, variable.path)
-            }
-            text={variable.label}
-            contextualText={variable.breadcrumb}
-            LeftIcon={getIcon(variable.icon)}
-            leftIconColor={variable.iconColor}
-            hasSubMenu={!variable.isLeaf}
-          />
-        ))}
+        <WorkflowVariableSearchResultItems
+          searchResults={matchingVariables}
+          onSelect={handleSearchResultSelect}
+        />
         {matchingVariables.length > 0 && availableSteps.length > 0 && (
           <DropdownMenuSeparator />
         )}

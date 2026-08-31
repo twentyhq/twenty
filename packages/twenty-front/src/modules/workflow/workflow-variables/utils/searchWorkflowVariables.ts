@@ -41,6 +41,10 @@ export const searchWorkflowVariables = ({
     return [];
   }
 
+  const objectMetadataItemsById = new Map(
+    objectMetadataItems.map((item) => [item.id, item]),
+  );
+
   return steps.flatMap((step) => {
     const results: WorkflowVariableSearchResult[] = [];
 
@@ -57,8 +61,8 @@ export const searchWorkflowVariables = ({
         isDefined(outputSchema.object)
       ) {
         const object = outputSchema.object;
-        const objectMetadataItem = objectMetadataItems.find(
-          (item) => item.id === object.objectMetadataId,
+        const objectMetadataItem = objectMetadataItemsById.get(
+          object.objectMetadataId,
         );
         const label = objectMetadataItem?.labelSingular ?? object.label;
         const isSelectable =
