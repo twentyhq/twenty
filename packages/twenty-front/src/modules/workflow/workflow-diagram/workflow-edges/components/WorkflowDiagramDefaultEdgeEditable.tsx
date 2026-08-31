@@ -36,11 +36,9 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
   data,
   deletable,
 }: WorkflowDiagramDefaultEdgeEditableProps) => {
-  const { i18n } = useLingui();
+  const { i18n, t } = useLingui();
 
   const { isEdgeHovered } = useEdgeState();
-
-  const isEditable = deletable !== false;
 
   const {
     segments,
@@ -71,9 +69,9 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
       parentStepId: source,
       nextStepId: target,
       position: { x: labelX, y: labelY },
-      connectionOptions: getConnectionOptionsForSourceHandle({
-        sourceHandleId,
-      }),
+      connectionOptions:
+        data?.sourceConnectionOptions ??
+        getConnectionOptionsForSourceHandle({ sourceHandleId }),
     });
   };
 
@@ -120,41 +118,43 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
           </WorkflowDiagramEdgeLabelContainer>
         )}
 
-        {isEditable && (
-          <WorkflowDiagramEdgeV2Container
-            data-click-outside-id={
-              WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID
+        <WorkflowDiagramEdgeV2Container
+          data-click-outside-id={WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}
+          labelX={labelX}
+          labelY={labelY}
+        >
+          <WorkflowDiagramEdgeV2VisibilityContainer
+            shouldDisplay={
+              nodeCreationStarted ||
+              isEdgeHovered({
+                source,
+                target,
+                sourceHandle: sourceHandleId,
+                targetHandle: targetHandleId,
+              })
             }
-            labelX={labelX}
-            labelY={labelY}
           >
-            <WorkflowDiagramEdgeV2VisibilityContainer
-              shouldDisplay={
-                nodeCreationStarted ||
-                isEdgeHovered({
-                  source,
-                  target,
-                  sourceHandle: sourceHandleId,
-                  targetHandle: targetHandleId,
-                })
-              }
-            >
-              <WorkflowDiagramEdgeButtonGroup
-                iconButtons={[
-                  {
-                    Icon: IconPlus,
-                    onClick: handleNodeButtonClick,
-                  },
-                  {
-                    Icon: IconTrash,
-                    onClick: handleDeleteBranch,
-                  },
-                ]}
-                selected={nodeCreationStarted}
-              />
-            </WorkflowDiagramEdgeV2VisibilityContainer>
-          </WorkflowDiagramEdgeV2Container>
-        )}
+            <WorkflowDiagramEdgeButtonGroup
+              iconButtons={[
+                {
+                  Icon: IconPlus,
+                  ariaLabel: t`Insert action`,
+                  onClick: handleNodeButtonClick,
+                },
+                ...(deletable === false
+                  ? []
+                  : [
+                      {
+                        Icon: IconTrash,
+                        ariaLabel: t`Delete connection`,
+                        onClick: handleDeleteBranch,
+                      },
+                    ]),
+              ]}
+              selected={nodeCreationStarted}
+            />
+          </WorkflowDiagramEdgeV2VisibilityContainer>
+        </WorkflowDiagramEdgeV2Container>
       </EdgeLabelRenderer>
     </>
   );

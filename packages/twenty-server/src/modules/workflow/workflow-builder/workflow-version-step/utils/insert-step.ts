@@ -172,6 +172,59 @@ const updateStepsWithOptions = ({
   let updatedSteps = steps;
 
   switch (parentStepConnectionOptions.connectedStepType) {
+    case WorkflowActionType.IF_ELSE: {
+      const parentStep = steps.find((step) => step.id === parentStepId);
+
+      if (parentStep?.type !== WorkflowActionType.IF_ELSE) {
+        throw new WorkflowVersionStepException(
+          `Step ${parentStepId} is not an If/Else action`,
+          WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+        );
+      }
+
+      const branchId = parentStepConnectionOptions.settings.branchId;
+      const branch = parentStep.settings.input.branches.find(
+        (branch) => branch.id === branchId,
+      );
+
+      if (
+        !isDefined(branch) ||
+        (isDefined(nextStepId) && !branch.nextStepIds.includes(nextStepId))
+      ) {
+        throw new WorkflowVersionStepException(
+          `Cannot insert a step on branch ${branchId}`,
+          WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+        );
+      }
+
+      const updatedParentStep = {
+        ...parentStep,
+        settings: {
+          ...parentStep.settings,
+          input: {
+            ...parentStep.settings.input,
+            branches: parentStep.settings.input.branches.map((branch) =>
+              branch.id === branchId
+                ? {
+                    ...branch,
+                    nextStepIds: isDefined(nextStepId)
+                      ? branch.nextStepIds.map((stepId) =>
+                          stepId === nextStepId ? insertedStepId : stepId,
+                        )
+                      : [...branch.nextStepIds, insertedStepId],
+                  }
+                : branch,
+            ),
+          },
+        },
+      };
+
+      updatedSteps = steps.map((step) =>
+        step.id === parentStepId ? updatedParentStep : step,
+      );
+
+      break;
+    }
     case WorkflowActionType.ITERATOR:
       if (!parentStepConnectionOptions.settings.isConnectedToLoop) {
         break;

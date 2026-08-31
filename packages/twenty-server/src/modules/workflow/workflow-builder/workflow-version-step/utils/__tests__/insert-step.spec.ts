@@ -3,6 +3,7 @@ import { TRIGGER_STEP_ID, WorkflowActionType } from 'twenty-shared/workflow';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/insert-step';
 import {
   type WorkflowAction,
+  type WorkflowIfElseAction,
   type WorkflowIteratorAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
@@ -56,6 +57,115 @@ describe('insertStep', () => {
     type: WorkflowTriggerType.MANUAL,
     settings: { outputSchema: {} },
     nextStepIds,
+  });
+
+  const createMockIfElseAction = (): WorkflowIfElseAction => ({
+    ...createMockAction('if-else'),
+    type: WorkflowActionType.IF_ELSE,
+    settings: {
+      ...createMockAction('if-else').settings,
+      input: {
+        stepFilterGroups: [],
+        stepFilters: [],
+        branches: [
+          {
+            id: 'if',
+            filterGroupId: 'filter-if',
+            nextStepIds: ['shared', 'other'],
+          },
+          {
+            id: 'else-if',
+            filterGroupId: 'filter-else-if',
+            nextStepIds: ['shared'],
+          },
+          { id: 'else', nextStepIds: ['shared'] },
+        ],
+      },
+    },
+  });
+
+  it.each(['if', 'else-if', 'else'])(
+    'inserts an action only on the selected %s branch',
+    (branchId) => {
+      const parentStep = createMockIfElseAction();
+      const existingAction = createMockAction('shared', ['downstream']);
+      const insertedStep = createMockAction('new');
+      const existingTrigger = createMockTrigger(['if-else']);
+
+      const result = insertStep({
+        existingSteps: [parentStep, existingAction],
+        existingTrigger,
+        insertedStep,
+        parentStepId: parentStep.id,
+        nextStepId: existingAction.id,
+        parentStepConnectionOptions: {
+          connectedStepType: WorkflowActionType.IF_ELSE,
+          settings: { branchId },
+        },
+      });
+
+      expect(result.updatedSteps).toEqual([
+        {
+          ...parentStep,
+          settings: {
+            ...parentStep.settings,
+            input: {
+              ...parentStep.settings.input,
+              branches: parentStep.settings.input.branches.map((branch) =>
+                branch.id === branchId
+                  ? {
+                      ...branch,
+                      nextStepIds: branch.nextStepIds.map((stepId) =>
+                        stepId === 'shared' ? 'new' : stepId,
+                      ),
+                    }
+                  : branch,
+              ),
+            },
+          },
+        },
+        existingAction,
+        { ...insertedStep, nextStepIds: ['shared'] },
+      ]);
+      expect(result.updatedTrigger).toEqual(existingTrigger);
+      expect(parentStep).toEqual(createMockIfElseAction());
+    },
+  );
+
+  it.each([
+    { branchId: 'missing', nextStepId: 'shared' },
+    { branchId: 'if', nextStepId: 'missing' },
+  ])('rejects a missing branch or a stale connection: %j', (connection) => {
+    const parentStep = createMockIfElseAction();
+
+    expect(() =>
+      insertStep({
+        existingSteps: [parentStep],
+        existingTrigger: null,
+        insertedStep: createMockAction('new'),
+        parentStepId: parentStep.id,
+        nextStepId: connection.nextStepId,
+        parentStepConnectionOptions: {
+          connectedStepType: WorkflowActionType.IF_ELSE,
+          settings: { branchId: connection.branchId },
+        },
+      }),
+    ).toThrow('Cannot insert a step on branch');
+  });
+
+  it('rejects If/Else connection options on a different action type', () => {
+    expect(() =>
+      insertStep({
+        existingSteps: [createMockAction('parent')],
+        existingTrigger: null,
+        insertedStep: createMockAction('new'),
+        parentStepId: 'parent',
+        parentStepConnectionOptions: {
+          connectedStepType: WorkflowActionType.IF_ELSE,
+          settings: { branchId: 'if' },
+        },
+      }),
+    ).toThrow('Step parent is not an If/Else action');
   });
 
   it('should insert a step at the end of the array when no parent or next step is specified', () => {

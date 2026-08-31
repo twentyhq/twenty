@@ -113,6 +113,7 @@ export type WorkflowDiagramEdgePathStrategy =
 
 export type WorkflowDiagramDefaultEdgeData = {
   edgeType: 'default';
+  sourceConnectionOptions?: WorkflowStepConnectionOptions;
   edgeExecutionStatus?: StepStatus;
   labelOptions?: WorkflowDiagramEdgeLabelOptions;
   edgePathStrategy?: WorkflowDiagramEdgePathStrategy;
