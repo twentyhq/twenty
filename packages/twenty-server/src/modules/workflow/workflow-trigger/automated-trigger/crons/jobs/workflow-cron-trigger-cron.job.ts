@@ -203,6 +203,10 @@ export class WorkflowCronTriggerCronJob {
             {
               workspaceId,
               workflowId,
+              coreWorkflowId: cronTrigger.coreWorkflowId,
+              coreWorkflowVersionId: cronTrigger.coreWorkflowVersionId,
+              workspaceWorkflowVersionId:
+                cronTrigger.workspaceWorkflowVersionId,
               payload: {},
             },
             { retryLimit: 3 },
@@ -239,9 +243,9 @@ export class WorkflowCronTriggerCronJob {
       .filter(isCachedCronTrigger)
       .map((trigger) => ({
         workflowId: trigger.workflowId,
-        coreWorkflowId: trigger.coreWorkflowId,
-        coreWorkflowVersionId: trigger.coreWorkflowVersionId,
-        workspaceWorkflowVersionId: trigger.workspaceWorkflowVersionId,
+        coreWorkflowId: trigger.coreWorkflowId ?? null,
+        coreWorkflowVersionId: trigger.coreWorkflowVersionId ?? null,
+        workspaceWorkflowVersionId: trigger.workspaceWorkflowVersionId ?? null,
         pattern: trigger.settings.pattern,
       }));
   }

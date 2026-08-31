@@ -3,6 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { WorkflowVersionStatus as CoreWorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -33,6 +34,9 @@ describe('WorkflowTriggerJob', () => {
   const mockWorkflowVersionCoreSyncService = {
     findCoreVersionById: jest.fn(),
   };
+  const mockExceptionHandlerService = {
+    captureExceptions: jest.fn(),
+  };
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -57,6 +61,10 @@ describe('WorkflowTriggerJob', () => {
           provide: WorkflowVersionCoreSyncService,
           useValue: mockWorkflowVersionCoreSyncService,
         },
+        {
+          provide: ExceptionHandlerService,
+          useValue: mockExceptionHandlerService,
+        },
       ],
     }).compile();
 
@@ -77,6 +85,12 @@ describe('WorkflowTriggerJob', () => {
       id: 'core-version-1',
       status: CoreWorkflowVersionStatus.ACTIVE,
     });
+    mockWorkflowCommonWorkspaceService.getWorkflowVersionOrFail.mockResolvedValue(
+      {
+        id: 'workspace-version-1',
+        status: WorkflowVersionStatus.ACTIVE,
+      },
+    );
     mockWorkflowCoreSyncService.findCoreWorkflowById.mockResolvedValue({
       id: 'core-workflow-1',
       name: 'Core name',
@@ -114,6 +128,49 @@ describe('WorkflowTriggerJob', () => {
     await job.handle(coreJobData);
 
     expect(mockWorkflowRunnerWorkspaceService.run).not.toHaveBeenCalled();
+  });
+
+  it('should not run when the workspace twin of an active core version is not active', async () => {
+    mockWorkflowVersionCoreSyncService.findCoreVersionById.mockResolvedValue({
+      id: 'core-version-1',
+      status: CoreWorkflowVersionStatus.ACTIVE,
+    });
+    mockWorkflowCommonWorkspaceService.getWorkflowVersionOrFail.mockResolvedValue(
+      {
+        id: 'workspace-version-1',
+        status: WorkflowVersionStatus.DEACTIVATED,
+      },
+    );
+
+    await job.handle(coreJobData);
+
+    expect(mockWorkflowRunnerWorkspaceService.run).not.toHaveBeenCalled();
+  });
+
+  it('should fall back to the workspace path when only part of the core ids are present', async () => {
+    mockWorkflowRepository.findOneBy.mockResolvedValue({
+      id: 'workspace-workflow-1',
+      name: 'Workspace name',
+      lastPublishedVersionId: 'workspace-version-1',
+    });
+    mockWorkflowCommonWorkspaceService.getWorkflowVersionOrFail.mockResolvedValue(
+      {
+        id: 'workspace-version-1',
+        status: WorkflowVersionStatus.ACTIVE,
+      },
+    );
+
+    await job.handle({
+      ...coreJobData,
+      coreWorkflowId: null,
+    });
+
+    expect(
+      mockWorkflowVersionCoreSyncService.findCoreVersionById,
+    ).not.toHaveBeenCalled();
+    expect(mockWorkflowRunnerWorkspaceService.run).toHaveBeenCalledWith(
+      expect.objectContaining({ workflowVersionId: 'workspace-version-1' }),
+    );
   });
 
   it('should fall back to the workspace path when core ids are absent', async () => {

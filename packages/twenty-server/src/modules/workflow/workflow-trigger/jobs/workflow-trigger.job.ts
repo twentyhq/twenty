@@ -5,6 +5,7 @@ import isEmpty from 'lodash.isempty';
 import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -39,6 +40,7 @@ export class WorkflowTriggerJob {
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly workflowCoreSyncService: WorkflowCoreSyncService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @Process(WorkflowTriggerJob.name)
@@ -82,8 +84,12 @@ export class WorkflowTriggerJob {
     if (!isDefined(coreWorkflowVersion)) {
       this.logger.error(
         `Core workflow version ${coreWorkflowVersionId} not found in workspace ${workspaceId}`,
-        WorkflowTriggerExceptionCode.NOT_FOUND,
       );
+      this.exceptionHandlerService.captureExceptions([
+        new Error(
+          `Dispatched core workflow version ${coreWorkflowVersionId} not found in workspace ${workspaceId}`,
+        ),
+      ]);
 
       return;
     }
@@ -92,6 +98,20 @@ export class WorkflowTriggerJob {
       this.logger.error(
         `Core workflow version ${coreWorkflowVersionId} is not active in workspace ${workspaceId}`,
         WorkflowTriggerExceptionCode.INTERNAL_ERROR,
+      );
+
+      return;
+    }
+
+    const workspaceWorkflowVersion =
+      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
+        workspaceId,
+        workflowVersionId: workspaceWorkflowVersionId,
+      });
+
+    if (workspaceWorkflowVersion.status !== WorkflowVersionStatus.ACTIVE) {
+      this.logger.error(
+        `Workspace workflow version ${workspaceWorkflowVersionId} is not active in workspace ${workspaceId}`,
       );
 
       return;

@@ -3,9 +3,9 @@ import { type AutomatedTriggerSettings } from 'src/modules/workflow/workflow-tri
 
 export type CachedWorkflowAutomatedTrigger = {
   workflowId: string;
-  coreWorkflowId: string | null;
-  coreWorkflowVersionId: string;
-  workspaceWorkflowVersionId: string | null;
+  coreWorkflowId?: string | null;
+  coreWorkflowVersionId?: string | null;
+  workspaceWorkflowVersionId?: string | null;
   type: AutomatedTriggerType;
   settings: AutomatedTriggerSettings;
 };

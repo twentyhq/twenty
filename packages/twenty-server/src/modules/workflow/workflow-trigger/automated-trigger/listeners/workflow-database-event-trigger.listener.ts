@@ -43,9 +43,9 @@ import {
 
 type DatabaseEventTriggerListener = {
   workflowId: string;
-  coreWorkflowId: string | null;
-  coreWorkflowVersionId: string;
-  workspaceWorkflowVersionId: string | null;
+  coreWorkflowId?: string | null;
+  coreWorkflowVersionId?: string | null;
+  workspaceWorkflowVersionId?: string | null;
   settings: AutomatedTriggerSettings;
 };
 
