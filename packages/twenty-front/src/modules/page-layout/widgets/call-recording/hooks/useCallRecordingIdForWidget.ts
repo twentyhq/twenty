@@ -13,7 +13,7 @@ export const useCallRecordingIdForWidget = ({
   targetKind: 'calendarEvent' | 'callRecording' | undefined;
   loading: boolean;
   error: Error | undefined;
-  refetch: () => Promise<unknown>;
+  refetchCallRecordingId: () => Promise<void>;
 } => {
   const callRecordingWidgetTarget = useCallRecordingWidgetTarget();
   const targetKind = callRecordingWidgetTarget?.targetKind;
@@ -34,7 +34,7 @@ export const useCallRecordingIdForWidget = ({
       ? targetRecordId
       : (data?.callRecordingIdForCalendarEvent ?? undefined);
 
-  const refetch = useCallback(async () => {
+  const refetchCallRecordingId = useCallback(async () => {
     if (skip || targetKind !== 'calendarEvent') {
       return;
     }
@@ -47,6 +47,6 @@ export const useCallRecordingIdForWidget = ({
     targetKind,
     loading,
     error,
-    refetch,
+    refetchCallRecordingId,
   };
 };

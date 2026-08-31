@@ -8,11 +8,13 @@ import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recordin
 import { CALL_RECORDING_TRANSCRIPT_CURRENT_SPOKEN_WORD_DATA_ATTRIBUTE } from '@/page-layout/widgets/call-recording-transcript/constants/CallRecordingTranscriptCurrentSpokenWordDataAttribute';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { HttpResponse, graphql } from 'msw';
 import { useState, type ComponentProps } from 'react';
 import {
   expect,
   fireEvent,
   fn,
+  spyOn,
   userEvent,
   waitFor,
   within,
@@ -329,6 +331,24 @@ const meta: Meta<typeof CallRecordingTranscriptBodyStory> = {
   ],
   parameters: {
     layout: 'centered',
+    msw: {
+      handlers: [
+        graphql.query('CallRecordingIdForCalendarEvent', () =>
+          HttpResponse.json({
+            data: {
+              callRecordingIdForCalendarEvent: recordedCallRecording.id,
+            },
+          }),
+        ),
+        graphql.query('FindOneCallRecording', () =>
+          HttpResponse.json({
+            data: {
+              callRecording: recordedCallRecording,
+            },
+          }),
+        ),
+      ],
+    },
   },
   render: CallRecordingTranscriptBodyStory,
   args: {
@@ -387,6 +407,40 @@ export const WithVideo: Story = {
     expect(
       canvasElement.querySelector('[aria-current="true"]'),
     ).not.toBeInTheDocument();
+
+    const copyTranscriptButton = await canvas.findByRole('button', {
+      name: 'Copy transcript',
+    });
+    const copyVideoLinkButton = canvas.getByRole('button', {
+      name: 'Copy video download link',
+    });
+    const writeText = spyOn(
+      navigator.clipboard,
+      'writeText',
+    ).mockResolvedValue();
+
+    await userEvent.click(copyTranscriptButton);
+
+    expect(writeText).toHaveBeenLastCalledWith(
+      expect.stringContaining(
+        "Ada Lovelace (0:01)\nWelcome everyone, let's start with a quick project update.",
+      ),
+    );
+
+    await userEvent.click(copyVideoLinkButton);
+
+    expect(writeText).toHaveBeenLastCalledWith(VIDEO_URL);
+
+    writeText.mockRestore();
+
+    const seeAllLink = canvas.getByRole('link', {
+      name: 'See all call recordings linked to this calendar event',
+    });
+
+    expect(seeAllLink).toHaveAttribute(
+      'href',
+      expect.stringContaining('calendar-event-id'),
+    );
 
     await waitForVideoMetadata(videoElement);
 

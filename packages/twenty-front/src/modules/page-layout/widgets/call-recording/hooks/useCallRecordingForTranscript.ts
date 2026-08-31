@@ -27,7 +27,7 @@ export const useCallRecordingForTranscript = (): {
   loading: boolean;
   error: Error | undefined;
   restriction: WidgetAccessDenialInfo | undefined;
-  refetch: () => Promise<unknown>;
+  refetchCallRecording: () => Promise<void>;
 } => {
   const { restriction, isFieldRestricted } = useCallRecordingWidgetRestriction({
     requiredFieldNames: ['status', 'transcript', 'createdAt'],
@@ -39,14 +39,14 @@ export const useCallRecordingForTranscript = (): {
     targetKind,
     loading: callRecordingIdLoading,
     error: callRecordingIdError,
-    refetch: refetchCallRecordingId,
+    refetchCallRecordingId,
   } = useCallRecordingIdForWidget({ skip: shouldSkipQuery });
 
   const {
     record: callRecording,
     loading: callRecordingLoading,
     error: callRecordingError,
-    refetch: refetchCallRecording,
+    refetch: refetchCallRecordingRecord,
   } = useFindOneRecord<WidgetCallRecordingCandidate>({
     objectNameSingular: CoreObjectNameSingular.CallRecording,
     objectRecordId: callRecordingId,
@@ -57,18 +57,20 @@ export const useCallRecordingForTranscript = (): {
     skip: shouldSkipQuery || !isDefined(callRecordingId),
   });
 
-  const refetch = useCallback(async () => {
+  const refetchCallRecording = useCallback(async () => {
     await Promise.all([
       refetchCallRecordingId(),
-      isDefined(callRecordingId) ? refetchCallRecording() : Promise.resolve(),
+      isDefined(callRecordingId)
+        ? refetchCallRecordingRecord()
+        : Promise.resolve(),
     ]);
-  }, [refetchCallRecording, refetchCallRecordingId, callRecordingId]);
+  }, [refetchCallRecordingRecord, refetchCallRecordingId, callRecordingId]);
 
   return {
     callRecording,
     loading: callRecordingIdLoading || callRecordingLoading,
     error: callRecordingIdError ?? callRecordingError,
     restriction,
-    refetch,
+    refetchCallRecording,
   };
 };

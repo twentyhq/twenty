@@ -17,7 +17,7 @@ export const CallRecordingTranscriptWidgetContent = () => {
     loading,
     error,
     restriction,
-    refetch,
+    refetchCallRecordingWidget,
   } = useCallRecordingTranscriptWidgetData();
 
   const canExposeCallRecordingData =
@@ -54,7 +54,7 @@ export const CallRecordingTranscriptWidgetContent = () => {
         loading={loading}
         error={error}
         restriction={restriction}
-        refetchCallRecording={refetch}
+        refetchCallRecording={refetchCallRecordingWidget}
       />
     </>
   );

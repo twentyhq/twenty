@@ -1,8 +1,40 @@
 import { useCallRecordingForSummary } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingForSummary';
-import { useCallRecordingWidgetData } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingWidgetData';
+import { useCallRecordingWidgetCount } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingWidgetCount';
+import { useSubscribeToCallRecordingWidgetUpdates } from '@/page-layout/widgets/call-recording/hooks/useSubscribeToCallRecordingWidgetUpdates';
+import { useCallback } from 'react';
 
 export const useCallRecordingSummaryWidgetData = () => {
-  const callRecordingData = useCallRecordingForSummary();
+  const {
+    callRecording,
+    loading: callRecordingLoading,
+    error: callRecordingError,
+    restriction,
+    refetchCallRecording,
+  } = useCallRecordingForSummary();
+  const {
+    callRecordingsCount,
+    loading: callRecordingCountLoading,
+    error: callRecordingCountError,
+    refetchCallRecordingsCount,
+  } = useCallRecordingWidgetCount({
+    restriction,
+  });
 
-  return useCallRecordingWidgetData({ callRecordingData });
+  const refetchCallRecordingWidget = useCallback(async () => {
+    await Promise.all([refetchCallRecording(), refetchCallRecordingsCount()]);
+  }, [refetchCallRecording, refetchCallRecordingsCount]);
+
+  useSubscribeToCallRecordingWidgetUpdates({
+    restriction,
+    refetchCallRecordingWidget,
+  });
+
+  return {
+    callRecording,
+    callRecordingsCount,
+    loading: callRecordingLoading || callRecordingCountLoading,
+    error: callRecordingError ?? callRecordingCountError,
+    restriction,
+    refetchCallRecordingWidget,
+  };
 };
