@@ -1,5 +1,4 @@
 import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
-import { CAMPAIGN_MATERIALIZATION_CHUNK_SIZE } from 'src/engine/core-modules/emailing-domain/constants/campaign-materialization-chunk-size.constant';
 import { Injectable } from '@nestjs/common';
 
 import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
@@ -22,7 +21,6 @@ import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/m
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { type CampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/campaign-recipient.type';
 import { type CampaignMessageRecipient } from 'src/modules/emailing/types/campaign-message-recipient.type';
-import { type CampaignMessageRow } from 'src/modules/emailing/types/campaign-message-row.type';
 import { buildCampaignMessageId } from 'src/modules/emailing/utils/build-campaign-message-id.util';
 import { compileCampaignEmailContent } from 'src/modules/emailing/utils/compile-campaign-email-content.util';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
@@ -45,6 +43,15 @@ type MaterializeMessagesArgs = {
   subjectTemplate: string;
   bodyTemplate: string;
   recipients: CampaignMessageRecipient[];
+};
+
+const MATERIALIZATION_CHUNK_SIZE = 500;
+
+type CampaignMessageRow = {
+  recipient: CampaignMessageRecipient;
+  messageId: string;
+  threadId: string;
+  temporaryExternalId: string;
 };
 
 @Injectable()
@@ -174,10 +181,7 @@ export class MessageCampaignMaterializationService {
       null,
     );
 
-    const recipientChunks = chunk(
-      recipients,
-      CAMPAIGN_MATERIALIZATION_CHUNK_SIZE,
-    );
+    const recipientChunks = chunk(recipients, MATERIALIZATION_CHUNK_SIZE);
 
     for (const recipientsChunk of recipientChunks) {
       await this.insertMessagesBeforeTheirDeliveries({
