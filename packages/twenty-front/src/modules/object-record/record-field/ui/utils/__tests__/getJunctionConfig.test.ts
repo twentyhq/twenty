@@ -197,9 +197,16 @@ describe('getJunctionConfig', () => {
     });
 
     it('should return an invalid junction when configured target field is not found', () => {
+      const inferredMorphTarget = createMockField({
+        id: 'legacy-inferred-morph-target-id',
+        type: FieldMetadataType.MORPH_RELATION,
+        morphRelations: [
+          createMockRelation('target-object-id', 'targetObject'),
+        ],
+      });
       const junctionObject = createMockObjectMetadata({
         id: 'junction-id',
-        fields: [],
+        fields: [inferredMorphTarget],
       });
 
       const result = getJunctionConfig({

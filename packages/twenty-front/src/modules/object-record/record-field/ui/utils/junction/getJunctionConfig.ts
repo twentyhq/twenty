@@ -97,7 +97,7 @@ export const getJunctionConfig = ({
 
   // Legacy workspaces can lack the target marker. Only infer a pure junction:
   // an unlabeled intermediate record with exactly one morph target.
-  const inferredMorphTargetFields = isDefined(configuredTargetField)
+  const inferredMorphTargetFields = hasConfiguredTargetField
     ? []
     : junctionObjectMetadata.fields.filter(
         (field) => field.type === FieldMetadataType.MORPH_RELATION,
