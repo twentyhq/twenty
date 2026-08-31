@@ -86,8 +86,7 @@ describe('firefliesApiRequest', () => {
     expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 
-  it('bounds a stalled request with the per-request timeout and retries it', async () => {
-    vi.useFakeTimers();
+  it('bounds a stalled request with the per-request timeout and does not retry it', async () => {
     const timeoutError = Object.assign(
       new Error('The operation was aborted due to timeout'),
       { name: 'TimeoutError' },
@@ -96,20 +95,18 @@ describe('firefliesApiRequest', () => {
 
     vi.stubGlobal('fetch', fetchMock);
 
-    const resultPromise = firefliesApiRequest({
+    const result = await firefliesApiRequest({
       accessToken: 'access-token',
       query: 'query Test { user { user_id } }',
     });
-
-    await vi.runAllTimersAsync();
-    const result = await resultPromise;
 
     expect(result).toEqual({
       ok: false,
       status: 0,
       errorMessage: 'Fireflies API request timed out after 10000ms',
+      isTimeout: true,
     });
-    expect(fetchMock).toHaveBeenCalledTimes(3);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({ signal: expect.any(AbortSignal) }),

@@ -1,7 +1,5 @@
 import { type AppConnection } from 'twenty-sdk/logic-function';
 
-import { isDefined } from 'src/utils/is-defined';
-
 import { fetchFirefliesTranscript } from 'src/logic-functions/utils/fetch-fireflies-transcript';
 
 export const findFirefliesConnectionForTranscript = async ({
@@ -14,30 +12,36 @@ export const findFirefliesConnectionForTranscript = async ({
   | { success: true; connection: AppConnection }
   | { success: false; error: string }
 > => {
-  const probeResults = await Promise.all(
-    connections.map(async (connection) => ({
-      connection,
-      result: await fetchFirefliesTranscript({
-        accessToken: connection.accessToken,
-        transcriptId,
+  try {
+    const connection = await Promise.any(
+      connections.map(async (connection) => {
+        const transcriptResult = await fetchFirefliesTranscript({
+          accessToken: connection.accessToken,
+          transcriptId,
+        });
+
+        if (!transcriptResult.ok) {
+          throw new Error(
+            `${connection.name}: ${transcriptResult.errorMessage}`,
+          );
+        }
+
+        return connection;
       }),
-    })),
-  );
+    );
 
-  const matchingProbe = probeResults.find(({ result }) => result.ok);
+    return { success: true, connection };
+  } catch (error) {
+    const probeErrors =
+      error instanceof AggregateError
+        ? error.errors.map((probeError) => (probeError as Error).message)
+        : [(error as Error).message];
 
-  if (isDefined(matchingProbe)) {
-    return { success: true, connection: matchingProbe.connection };
+    return {
+      success: false,
+      error:
+        probeErrors.join(' | ') ||
+        `No connected Fireflies account can access transcript ${transcriptId}.`,
+    };
   }
-
-  const connectionErrors = probeResults.flatMap(({ connection, result }) =>
-    result.ok ? [] : [`${connection.name}: ${result.errorMessage}`],
-  );
-
-  return {
-    success: false,
-    error:
-      connectionErrors.join(' | ') ||
-      `No connected Fireflies account can access transcript ${transcriptId}.`,
-  };
 };

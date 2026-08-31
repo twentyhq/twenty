@@ -18,6 +18,7 @@ type FirefliesApiFailure = {
   ok: false;
   status: number;
   errorMessage: string;
+  isTimeout?: boolean;
 };
 
 export type FirefliesApiResult<TData> =
@@ -62,8 +63,10 @@ const performFirefliesApiRequestWithRetries = async <TData>({
 }): Promise<FirefliesApiResult<TData>> => {
   const result = await performFirefliesApiRequest<TData>(params);
 
+  // Retrying a stalled request would exceed the interactive functions' 30s/60s budgets.
   if (
     result.ok ||
+    result.isTimeout === true ||
     !isRetryableFirefliesApiStatus(result.status) ||
     attemptNumber >= FIREFLIES_API_MAX_ATTEMPTS
   ) {
@@ -104,6 +107,7 @@ const performFirefliesApiRequest = async <TData = unknown>({
       errorMessage: isTimeoutError(error)
         ? buildFirefliesTimeoutMessage()
         : `Fireflies API request failed: ${(error as Error).message}`,
+      isTimeout: isTimeoutError(error),
     };
   }
 
@@ -122,6 +126,7 @@ const performFirefliesApiRequest = async <TData = unknown>({
       ok: false,
       status: 0,
       errorMessage: buildFirefliesTimeoutMessage(),
+      isTimeout: true,
     };
   }
 

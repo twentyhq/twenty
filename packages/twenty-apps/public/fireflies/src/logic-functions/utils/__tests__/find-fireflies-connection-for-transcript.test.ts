@@ -62,7 +62,7 @@ describe('findFirefliesConnectionForTranscript', () => {
     expect(result).toEqual({ success: true, connection: connections[1] });
   });
 
-  it('probes accounts concurrently so a stalled account cannot delay the match', async () => {
+  it('returns a successful probe without waiting for a stalled account', async () => {
     vi.useFakeTimers();
     fetchFirefliesTranscriptMock.mockImplementation(
       ({ accessToken }: { accessToken: string }) =>
@@ -86,13 +86,14 @@ describe('findFirefliesConnectionForTranscript', () => {
 
     expect(fetchFirefliesTranscriptMock).toHaveBeenCalledTimes(2);
 
-    await vi.runAllTimersAsync();
+    await vi.advanceTimersByTimeAsync(10);
 
     await expect(resultPromise).resolves.toEqual({
       success: true,
       connection: connections[1],
     });
 
+    vi.clearAllTimers();
     vi.useRealTimers();
   });
 
