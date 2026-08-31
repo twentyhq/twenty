@@ -1,20 +1,18 @@
 import { useStore } from 'jotai';
 import { type ReactNode, useCallback, useContext } from 'react';
-import { v4 } from 'uuid';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
-import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { useCreateAndConnectJunctionRecord } from '@/object-record/record-field/ui/hooks/useCreateAndConnectJunctionRecord';
 import { useUpdateJunctionRelationFromCell } from '@/object-record/record-field/ui/hooks/useUpdateJunctionRelationFromCell';
 import { useAddNewRecordAndOpenSidePanel } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenSidePanel';
 import { useUpdateRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateRelationOneToManyFieldInput';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getJunctionRelationPickerData } from '@/object-record/record-field/ui/utils/junction/getJunctionRelationPickerData';
-import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
@@ -25,7 +23,6 @@ import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from 
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelPayload';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
@@ -33,11 +30,7 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import {
-  computeRelationGqlFieldJoinColumnName,
-  CustomError,
-  isDefined,
-} from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 
@@ -192,17 +185,19 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     recordId,
   });
 
-  const { createOneRecord: createTargetRecord } = useCreateOneRecord({
-    objectNameSingular:
-      junctionTargetObjectMetadata?.nameSingular ??
-      relationObjectMetadataNameSingular,
-  });
+  const junctionObjectMetadataItem =
+    objectMetadataItems.find(
+      ({ id }) => id === junctionConfig?.junctionObjectMetadata?.id,
+    ) ?? relationObjectMetadataItem;
 
-  const { createOneRecord: createJunctionRecord } = useCreateOneRecord({
-    objectNameSingular:
-      junctionConfig?.junctionObjectMetadata?.nameSingular ??
-      relationObjectMetadataNameSingular,
-  });
+  const { createAndConnectJunctionRecord, loading: isCreatingJunctionRecord } =
+    useCreateAndConnectJunctionRecord({
+      sourceRecordId: recordId,
+      relationFieldMetadataId: fieldMetadataItem.id,
+      targetObjectMetadataItem:
+        junctionTargetObjectMetadata ?? relationObjectMetadataItem,
+      junctionObjectMetadataItem,
+    });
 
   const handleOpenRelationPickerDropdown = () => {
     setMultipleRecordPickerSearchableObjectMetadataItems(
@@ -257,45 +252,11 @@ export const RecordDetailRelationSectionDropdownToMany = ({
         !isMorphJunction &&
         isDefined(junctionTargetObjectMetadata)
       ) {
-        const { targetFields, sourceField } = junctionConfig;
-        const targetField = targetFields[0];
+        const newTargetId = await createAndConnectJunctionRecord(searchString);
 
-        if (!isDefined(targetField) || !isDefined(sourceField)) {
-          return;
+        if (isDefined(newTargetId)) {
+          updatePickerState(newTargetId, junctionTargetObjectMetadata.id);
         }
-
-        const sourceJoinColumnName = getSourceJoinColumnName({
-          sourceField,
-          sourceObjectMetadata: objectMetadataItem,
-        });
-
-        const targetJoinColumnName = computeRelationGqlFieldJoinColumnName({
-          name: targetField.name,
-        });
-
-        if (!sourceJoinColumnName) {
-          return;
-        }
-
-        const newTargetId = v4();
-        const targetPayload = buildRecordLabelPayload({
-          id: newTargetId,
-          searchInput: searchString,
-          objectMetadataItem: junctionTargetObjectMetadata,
-        });
-
-        await createTargetRecord(targetPayload);
-
-        // The junction is already attached to the source record's field by
-        // useCreateOneRecord's post-optimistic effect; appending it here as
-        // well would render the same target twice until a reload
-        await createJunctionRecord({
-          id: v4(),
-          [sourceJoinColumnName]: recordId,
-          [targetJoinColumnName]: newTargetId,
-        });
-
-        updatePickerState(newTargetId, junctionTargetObjectMetadata.id);
         return;
       }
 
@@ -304,9 +265,8 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     },
     [
       closeDropdown,
-      createJunctionRecord,
       createNewRecordAndOpenSidePanel,
-      createTargetRecord,
+      createAndConnectJunctionRecord,
       dropdownId,
       isMorphJunction,
       isJunctionRelation,
@@ -314,8 +274,6 @@ export const RecordDetailRelationSectionDropdownToMany = ({
       junctionTargetObjectMetadata,
       multipleRecordPickerPickableMorphItemsCallbackState,
       multipleRecordPickerPerformSearch,
-      objectMetadataItem,
-      recordId,
       searchableObjectMetadataItems,
       store,
     ],
@@ -363,6 +321,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
           focusId={dropdownId}
           componentInstanceId={dropdownId}
           onCreate={canCreateNew ? handleCreateNew : undefined}
+          isCreatePending={isCreatingJunctionRecord}
           objectMetadataItemIdForCreate={objectMetadataItemIdForCreate}
           onChange={handleChange}
           onSubmit={() => {

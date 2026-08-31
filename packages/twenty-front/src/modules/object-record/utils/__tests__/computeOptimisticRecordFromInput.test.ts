@@ -7,7 +7,7 @@ import { type FieldActorForInputValue } from '@/object-record/record-field/ui/ty
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { InMemoryCache } from '@apollo/client';
+import { gql, InMemoryCache } from '@apollo/client';
 import { mockedWorkspaceMemberRecords } from '~/testing/mock-data/generated/data/workspaceMembers/mock-workspaceMembers-data';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
@@ -127,6 +127,48 @@ describe('computeOptimisticRecordFromInput', () => {
 
     expect(result).toEqual({
       companyId: '123',
+    });
+  });
+
+  it('should resolve regular and morph junction relations from cache', () => {
+    const cache = new InMemoryCache();
+    const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
+    const taskTargetObjectMetadataItem =
+      getMockObjectMetadataItemOrThrow('taskTarget');
+    const taskRecord = { id: 'task-id', __typename: 'Task' };
+    const companyRecord = { id: 'company-id', __typename: 'Company' };
+
+    for (const record of [taskRecord, companyRecord]) {
+      cache.writeFragment({
+        id: `${record.__typename}:${record.id}`,
+        fragment: gql`
+          fragment Cached${record.__typename}Id on ${record.__typename} {
+            id
+          }
+        `,
+        data: record,
+      });
+    }
+
+    expect(
+      computeOptimisticRecordFromInput({
+        cache,
+        currentWorkspaceMember,
+        objectMetadataItem: taskTargetObjectMetadataItem,
+        objectMetadataItems,
+        recordInput: {
+          id: 'task-target-id',
+          taskId: taskRecord.id,
+          targetCompanyId: companyRecord.id,
+        },
+        objectPermissionsByObjectMetadataId: {},
+      }),
+    ).toMatchObject({
+      id: 'task-target-id',
+      taskId: taskRecord.id,
+      task: taskRecord,
+      targetCompanyId: companyRecord.id,
+      targetCompany: companyRecord,
     });
   });
 

@@ -27,7 +27,8 @@ import { IconPlus } from 'twenty-ui/icon';
 type MultipleRecordPickerProps = {
   onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
   onSubmit?: () => void;
-  onCreate?: ((searchInput?: string) => void) | (() => void);
+  onCreate?: (searchInput?: string) => void | Promise<void>;
+  isCreatePending?: boolean;
   layoutDirection?: RecordPickerLayoutDirection;
   componentInstanceId: string;
   onClickOutside: () => void;
@@ -46,6 +47,7 @@ export const MultipleRecordPicker = ({
   focusId,
   objectMetadataItemIdForCreate,
   dropdownWidth,
+  isCreatePending = false,
 }: MultipleRecordPickerProps) => {
   const selectableListComponentInstanceId =
     getMultipleRecordPickerSelectableListId(componentInstanceId);
@@ -100,11 +102,16 @@ export const MultipleRecordPicker = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleCreateNewButtonClick = useCallback(() => {
+    if (isCreatePending) {
+      return;
+    }
+
     const recordPickerSearchFilter = store.get(
       multipleRecordPickerSearchFilterState,
     );
+
     onCreate?.(recordPickerSearchFilter);
-  }, [multipleRecordPickerSearchFilterState, onCreate, store]);
+  }, [isCreatePending, multipleRecordPickerSearchFilterState, onCreate, store]);
 
   const objectPermissionsForCreate = useObjectPermissionsForObject(
     objectMetadataItemIdForCreate ?? '',
@@ -129,6 +136,7 @@ export const MultipleRecordPicker = ({
       <DropdownMenuItemsContainer scrollable={false}>
         <CreateNewButton
           onClick={handleCreateNewButtonClick}
+          disabled={isCreatePending}
           LeftIcon={IconPlus}
           text={t`Add New`}
         />

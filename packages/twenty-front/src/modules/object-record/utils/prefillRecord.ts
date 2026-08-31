@@ -60,8 +60,13 @@ export const prefillRecord = <T extends ObjectRecord>({
             const joinColumnName = computeRelationGqlFieldJoinColumnName({
               name: gqlField,
             });
+            const gqlFieldValue = input[gqlField];
+
             return [
-              [gqlField, fieldValue],
+              [
+                gqlField,
+                isUndefined(gqlFieldValue) ? fieldValue : gqlFieldValue,
+              ],
               [joinColumnName, input[joinColumnName] ?? null],
             ];
           });
