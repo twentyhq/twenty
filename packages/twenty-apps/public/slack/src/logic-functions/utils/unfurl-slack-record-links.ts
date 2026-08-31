@@ -95,7 +95,11 @@ export const unfurlSlackRecordLinks = async (
       continue;
     }
 
-    const entity = buildSlackRecordUnfurlEntity({ recordLink, record });
+    const entity = buildSlackRecordUnfurlEntity({
+      recordLink,
+      record,
+      workspaceBaseUrl,
+    });
 
     if (isDefined(entity)) {
       entities.push(entity);

@@ -25,6 +25,7 @@ Two parts: a **Slack app** you create, and the **Twenty side** where you paste i
    | `im:history` | assistant: direct messages |
    | `im:read` | assistant: confirm with Slack that a conversation really is a direct message |
    | `links:read` | record link previews: receive `link_shared` events for the registered unfurl domain |
+   | `links:write` | record link previews: attach the preview with `chat.unfurl` |
    | `users:read` | assistant: look up the requester's display name |
    | `users:read.email` | assistant: match a Slack account to a workspace member |
    | `assistant:write` | agent surface: `assistant.threads.*` (statuses, titles, suggested prompts) |
@@ -74,7 +75,7 @@ The assistant reuses the same Slack connection — no second bot identity.
 
    Invite the bot to any channel where it should follow threads. Slack may ask you to reinstall after changing subscriptions.
 
-   Event subscriptions added in app upgrades must be added here by hand on existing installs — the Slack app only reads the manifest at creation. Upgrading from any version before 0.4.1 adds `app_uninstalled` and `tokens_revoked`; without them the team claim of a Slack-side removal is never released. No new scopes are involved, so the connection itself needs no re-authorization. Upgrading from any version before 0.6.0 adds `link_shared` and the `links:read` scope for the record link previews; that one does need a reconnect (see the Record link previews section).
+   Event subscriptions added in app upgrades must be added here by hand on existing installs — the Slack app only reads the manifest at creation. Upgrading from any version before 0.4.1 adds `app_uninstalled` and `tokens_revoked`; without them the team claim of a Slack-side removal is never released. No new scopes are involved, so the connection itself needs no re-authorization. Upgrading from any version before 0.6.0 adds `link_shared` and the `links:read` / `links:write` scopes for the record link previews; that one does need a reconnect (see the Record link previews section).
 
 3. **Interactivity.** On the Slack app, enable **Interactivity & Shortcuts** and set the Request URL to:
 

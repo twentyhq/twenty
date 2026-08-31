@@ -12,6 +12,12 @@ const ITEM_ENTITY_TYPE = 'slack#/entities/item';
 const TIMESTAMP_FIELD_TYPE = 'slack#/types/timestamp';
 const LINK_FIELD_TYPE = 'slack#/types/link';
 const EMAIL_FIELD_TYPE = 'slack#/types/email';
+const ENTITY_REF_FIELD_TYPE = 'slack#/types/entity_ref';
+
+// Slack fetches the icon itself, so it must be a public URL: the workspace's
+// own instance may not be reachable from Slack (self-hosted, local dev).
+const TWENTY_PRODUCT_ICON_URL =
+  'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-front/public/images/icons/ios/192.png';
 
 const DISPLAY_TYPE_BY_OBJECT: Record<SlackUnfurlObjectName, string> = {
   person: 'Person',
@@ -100,7 +106,15 @@ const timestampField = (
     : undefined;
 };
 
-const buildPersonContent = (record: Record<string, unknown>) => {
+type SlackUnfurlContentArgs = {
+  record: Record<string, unknown>;
+  workspaceBaseUrl: string;
+};
+
+const buildPersonContent = ({
+  record,
+  workspaceBaseUrl,
+}: SlackUnfurlContentArgs) => {
   const name = asObject(record.name);
   const title = [
     asNonEmptyString(name?.firstName),
@@ -116,9 +130,27 @@ const buildPersonContent = (record: Record<string, unknown>) => {
     ? [phoneCallingCode, phoneNumber].filter(isDefined).join(' ')
     : undefined;
 
+  const company = asObject(record.company);
+  const companyId = asNonEmptyString(company?.id);
+  const companyName = asNonEmptyString(company?.name);
+  const companyField: EntityCustomField | undefined =
+    isDefined(companyId) && isDefined(companyName)
+      ? {
+          key: 'company',
+          label: 'Company',
+          type: ENTITY_REF_FIELD_TYPE,
+          entity_ref: {
+            entity_url: `${workspaceBaseUrl}/object/company/${companyId}`,
+            external_ref: { id: companyId },
+            title: companyName,
+          },
+        }
+      : undefined;
+
   return {
     title,
     customFields: [
+      companyField,
       stringField(
         'email',
         'Email',
@@ -132,7 +164,7 @@ const buildPersonContent = (record: Record<string, unknown>) => {
   };
 };
 
-const buildCompanyContent = (record: Record<string, unknown>) => {
+const buildCompanyContent = ({ record }: SlackUnfurlContentArgs) => {
   const domainUrl = asNonEmptyString(
     asObject(record.domainName)?.primaryLinkUrl,
   );
@@ -158,7 +190,7 @@ const buildCompanyContent = (record: Record<string, unknown>) => {
   };
 };
 
-const buildOpportunityContent = (record: Record<string, unknown>) => {
+const buildOpportunityContent = ({ record }: SlackUnfurlContentArgs) => {
   const stage = asNonEmptyString(record.stage);
 
   return {
@@ -175,12 +207,12 @@ const buildOpportunityContent = (record: Record<string, unknown>) => {
   };
 };
 
-const buildNoteContent = (record: Record<string, unknown>) => ({
+const buildNoteContent = ({ record }: SlackUnfurlContentArgs) => ({
   title: asNonEmptyString(record.title) ?? '',
   customFields: [timestampField('createdAt', 'Created', record.createdAt)],
 });
 
-const buildTaskContent = (record: Record<string, unknown>) => {
+const buildTaskContent = ({ record }: SlackUnfurlContentArgs) => {
   const status = asNonEmptyString(record.status);
 
   return {
@@ -198,7 +230,7 @@ const buildTaskContent = (record: Record<string, unknown>) => {
 
 const CONTENT_BUILDERS: Record<
   SlackUnfurlObjectName,
-  (record: Record<string, unknown>) => {
+  (args: SlackUnfurlContentArgs) => {
     title: string;
     customFields: (EntityCustomField | undefined)[];
   }
@@ -213,13 +245,15 @@ const CONTENT_BUILDERS: Record<
 export const buildSlackRecordUnfurlEntity = ({
   recordLink,
   record,
+  workspaceBaseUrl,
 }: {
   recordLink: SlackRecordLink;
   record: Record<string, unknown>;
+  workspaceBaseUrl: string;
 }): EntityMetadata | undefined => {
   const { title, customFields } = CONTENT_BUILDERS[
     recordLink.objectNameSingular
-  ](record);
+  ]({ record, workspaceBaseUrl });
 
   if (!isNonEmptyString(title)) {
     return undefined;
@@ -235,6 +269,7 @@ export const buildSlackRecordUnfurlEntity = ({
         title: { text: title },
         display_type: DISPLAY_TYPE_BY_OBJECT[recordLink.objectNameSingular],
         product_name: 'Twenty',
+        product_icon: { alt_text: 'Twenty', url: TWENTY_PRODUCT_ICON_URL },
         ...(isDefined(metadataLastModified)
           ? { metadata_last_modified: metadataLastModified }
           : {}),
