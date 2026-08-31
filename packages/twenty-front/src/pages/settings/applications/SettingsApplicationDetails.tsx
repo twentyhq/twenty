@@ -1,7 +1,7 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { AppChip } from '@/applications/components/AppChip';
 import { useApplicationFromStore } from '@/applications/hooks/useApplicationFromStore';
-import { useOnApplicationsStoreChange } from '@/applications/hooks/useOnApplicationsStoreChange';
+import { ApplicationsStoreChangeEffect } from '@/applications/components/ApplicationsStoreChangeEffect';
 import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
@@ -104,8 +104,6 @@ export const SettingsApplicationDetails = () => {
     void refetch();
     void refetchConnectionProviders();
   }, [refetch, refetchConnectionProviders]);
-
-  useOnApplicationsStoreChange(refreshApplicationDetail);
 
   const { data: detailData } = useQuery(FindMarketplaceAppDetailDocument, {
     variables: { universalIdentifier: application?.universalIdentifier ?? '' },
@@ -390,6 +388,9 @@ export const SettingsApplicationDetails = () => {
 
   return (
     <CurrentApplicationContext.Provider value={application?.id ?? null}>
+      <ApplicationsStoreChangeEffect
+        onApplicationsStoreChange={refreshApplicationDetail}
+      />
       <SettingsPageLayout
         title={displayName}
         icon={

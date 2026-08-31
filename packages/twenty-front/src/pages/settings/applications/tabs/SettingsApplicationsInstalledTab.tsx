@@ -1,4 +1,4 @@
-import { useOnApplicationsStoreChange } from '@/applications/hooks/useOnApplicationsStoreChange';
+import { ApplicationsStoreChangeEffect } from '@/applications/components/ApplicationsStoreChangeEffect';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useQuery } from '@apollo/client/react';
 import { useCallback } from 'react';
@@ -19,13 +19,16 @@ export const SettingsApplicationsInstalledTab = () => {
     });
   }, [loadCurrentUser, refetch]);
 
-  useOnApplicationsStoreChange(refreshApplications);
-
   const applications = data?.findManyApplications ?? [];
 
-  if (applications.length === 0) {
-    return null;
-  }
-
-  return <SettingsApplicationsTable applications={applications} />;
+  return (
+    <>
+      <ApplicationsStoreChangeEffect
+        onApplicationsStoreChange={refreshApplications}
+      />
+      {applications.length > 0 && (
+        <SettingsApplicationsTable applications={applications} />
+      )}
+    </>
+  );
 };

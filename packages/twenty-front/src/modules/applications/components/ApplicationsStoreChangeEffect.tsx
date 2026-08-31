@@ -1,12 +1,16 @@
 import { useApplications } from '@/applications/hooks/useApplications';
 import { useEffect, useState } from 'react';
 
+type ApplicationsStoreChangeEffectProps = {
+  onApplicationsStoreChange: () => void;
+};
+
 // The store holds the application rows the SSE events carry; everything derived
 // from them — relations, logos, the workspace payload — is re-read by the page
 // that needs it when one of those rows appears, changes or disappears.
-export const useOnApplicationsStoreChange = (
-  onApplicationsStoreChange: () => void,
-) => {
+export const ApplicationsStoreChangeEffect = ({
+  onApplicationsStoreChange,
+}: ApplicationsStoreChangeEffectProps) => {
   const { applications, isApplicationsStoreReady } = useApplications();
 
   const applicationsSignature = applications
@@ -43,4 +47,6 @@ export const useOnApplicationsStoreChange = (
     observedApplicationsSignature,
     onApplicationsStoreChange,
   ]);
+
+  return null;
 };

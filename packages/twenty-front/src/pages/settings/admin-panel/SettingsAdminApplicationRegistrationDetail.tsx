@@ -1,4 +1,4 @@
-import { useOnApplicationsStoreChange } from '@/applications/hooks/useOnApplicationsStoreChange';
+import { ApplicationsStoreChangeEffect } from '@/applications/components/ApplicationsStoreChangeEffect';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client/react';
@@ -68,8 +68,6 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
       });
   }, [apolloAdminClient, refetch]);
 
-  useOnApplicationsStoreChange(refreshAdminRegistration);
-
   const registration = data?.findOneAdminApplicationRegistration;
 
   if (loading || !isDefined(registration)) {
@@ -117,36 +115,41 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
   };
 
   return (
-    <SettingsPageLayout
-      title={registration.name}
-      icon={
-        <Avatar
-          type="app"
-          size="md"
-          avatarUrl={getAbsoluteImageUrl(registration.logoUrl ?? undefined)}
-          placeholder={registration.name}
-          placeholderColorSeed={registration.name}
-        />
-      }
-      links={[
-        {
-          children: t`Other`,
-          href: getSettingsPath(SettingsPath.AdminPanel),
-        },
-        {
-          children: t`Admin Panel - Apps`,
-          href: APPLICATION_REGISTRATION_ADMIN_PATH,
-        },
-        { children: registration.name },
-      ]}
-    >
-      <SettingsPageContainer>
-        <TabList
-          tabs={tabs}
-          componentInstanceId={REGISTRATION_DETAIL_TAB_LIST_ID}
-        />
-        {renderActiveTabContent()}
-      </SettingsPageContainer>
-    </SettingsPageLayout>
+    <>
+      <ApplicationsStoreChangeEffect
+        onApplicationsStoreChange={refreshAdminRegistration}
+      />
+      <SettingsPageLayout
+        title={registration.name}
+        icon={
+          <Avatar
+            type="app"
+            size="md"
+            avatarUrl={getAbsoluteImageUrl(registration.logoUrl ?? undefined)}
+            placeholder={registration.name}
+            placeholderColorSeed={registration.name}
+          />
+        }
+        links={[
+          {
+            children: t`Other`,
+            href: getSettingsPath(SettingsPath.AdminPanel),
+          },
+          {
+            children: t`Admin Panel - Apps`,
+            href: APPLICATION_REGISTRATION_ADMIN_PATH,
+          },
+          { children: registration.name },
+        ]}
+      >
+        <SettingsPageContainer>
+          <TabList
+            tabs={tabs}
+            componentInstanceId={REGISTRATION_DETAIL_TAB_LIST_ID}
+          />
+          {renderActiveTabContent()}
+        </SettingsPageContainer>
+      </SettingsPageLayout>
+    </>
   );
 };
