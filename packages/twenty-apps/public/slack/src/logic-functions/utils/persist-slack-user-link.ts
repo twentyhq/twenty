@@ -3,7 +3,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { createSlackUserLink } from 'src/logic-functions/data/create-slack-user-link';
-import { deleteSlackUserLink } from 'src/logic-functions/data/delete-slack-user-link';
+import { destroySlackUserLink } from 'src/logic-functions/data/destroy-slack-user-link';
 import { updateSlackUserLink } from 'src/logic-functions/data/update-slack-user-link';
 import { type SlackUserLink } from 'src/logic-functions/types/slack-user-link.type';
 import { type SlackUserLinkConsentState } from 'src/logic-functions/types/slack-user-link-consent-state.type';
@@ -63,7 +63,7 @@ export const persistSlackUserLink = async (
   // error, no access is granted, a stale consent DM now targets a missing id
   // and is refused, and the admin's retry simply recreates the link.
   if (isDefined(existingLink)) {
-    await deleteSlackUserLink(client, { id: existingLink.id });
+    await destroySlackUserLink(client, { id: existingLink.id });
   }
 
   return createSlackUserLink(client, {

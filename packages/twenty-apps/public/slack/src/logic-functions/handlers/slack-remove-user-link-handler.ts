@@ -3,7 +3,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type SlackRouteBody } from 'src/logic-functions/types/slack-route-body.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
-import { deleteSlackUserLink } from 'src/logic-functions/data/delete-slack-user-link';
+import { destroySlackUserLink } from 'src/logic-functions/data/destroy-slack-user-link';
 import { currentUserHasWorkspaceMembersPermission } from 'src/logic-functions/utils/current-user-has-workspace-members-permission';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
@@ -37,7 +37,7 @@ export const slackRemoveUserLinkHandler = async (
   }
 
   try {
-    await deleteSlackUserLink(new CoreApiClient({ runAs: 'application' }), {
+    await destroySlackUserLink(new CoreApiClient({ runAs: 'application' }), {
       id,
     });
   } catch (error) {

@@ -5,11 +5,11 @@ import { slackRemoveUserLinkHandler } from 'src/logic-functions/handlers/slack-r
 const {
   currentUserHasWorkspaceMembersPermissionMock,
   coreApiClientMock,
-  deleteSlackUserLinkMock,
+  destroySlackUserLinkMock,
 } = vi.hoisted(() => ({
   currentUserHasWorkspaceMembersPermissionMock: vi.fn(),
   coreApiClientMock: vi.fn(),
-  deleteSlackUserLinkMock: vi.fn(),
+  destroySlackUserLinkMock: vi.fn(),
 }));
 
 vi.mock(
@@ -24,8 +24,8 @@ vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: coreApiClientMock,
 }));
 
-vi.mock('src/logic-functions/data/delete-slack-user-link', () => ({
-  deleteSlackUserLink: deleteSlackUserLinkMock,
+vi.mock('src/logic-functions/data/destroy-slack-user-link', () => ({
+  destroySlackUserLink: destroySlackUserLinkMock,
 }));
 
 const buildPayload = (body: unknown) => ({ body });
@@ -34,7 +34,7 @@ describe('slackRemoveUserLinkHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     currentUserHasWorkspaceMembersPermissionMock.mockResolvedValue(true);
-    deleteSlackUserLinkMock.mockResolvedValue(undefined);
+    destroySlackUserLinkMock.mockResolvedValue(undefined);
   });
 
   it('should refuse when the user lacks the workspace members permission', async () => {
@@ -45,7 +45,7 @@ describe('slackRemoveUserLinkHandler', () => {
     );
 
     expect(result.success).toBe(false);
-    expect(deleteSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(destroySlackUserLinkMock).not.toHaveBeenCalled();
   });
 
   it('should fail closed when the id is missing', async () => {
@@ -53,7 +53,7 @@ describe('slackRemoveUserLinkHandler', () => {
 
     expect(result.success).toBe(false);
     expect(currentUserHasWorkspaceMembersPermissionMock).not.toHaveBeenCalled();
-    expect(deleteSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(destroySlackUserLinkMock).not.toHaveBeenCalled();
   });
 
   it('should delete the link with the application access', async () => {
@@ -63,14 +63,14 @@ describe('slackRemoveUserLinkHandler', () => {
 
     expect(result.success).toBe(true);
     expect(coreApiClientMock).toHaveBeenCalledWith({ runAs: 'application' });
-    expect(deleteSlackUserLinkMock).toHaveBeenCalledTimes(1);
-    expect(deleteSlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
+    expect(destroySlackUserLinkMock).toHaveBeenCalledTimes(1);
+    expect(destroySlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
       id: 'link-1',
     });
   });
 
   it('should fail with a structured result when the delete errors', async () => {
-    deleteSlackUserLinkMock.mockRejectedValueOnce(new Error('delete refused'));
+    destroySlackUserLinkMock.mockRejectedValueOnce(new Error('delete refused'));
 
     const result = await slackRemoveUserLinkHandler(
       buildPayload({ id: 'link-1' }),

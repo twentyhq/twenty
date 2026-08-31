@@ -11,7 +11,7 @@ const {
   findSlackUserLinkMock,
   createSlackUserLinkMock,
   updateSlackUserLinkMock,
-  deleteSlackUserLinkMock,
+  destroySlackUserLinkMock,
   resolveSlackUserByEmailMock,
   fetchSlackUserIdentityMock,
   findWorkspaceMemberEmailByIdMock,
@@ -26,7 +26,7 @@ const {
   findSlackUserLinkMock: vi.fn(),
   createSlackUserLinkMock: vi.fn(),
   updateSlackUserLinkMock: vi.fn(),
-  deleteSlackUserLinkMock: vi.fn(),
+  destroySlackUserLinkMock: vi.fn(),
   resolveSlackUserByEmailMock: vi.fn(),
   fetchSlackUserIdentityMock: vi.fn(),
   findWorkspaceMemberEmailByIdMock: vi.fn(),
@@ -74,8 +74,8 @@ vi.mock('src/logic-functions/data/update-slack-user-link', () => ({
   updateSlackUserLink: updateSlackUserLinkMock,
 }));
 
-vi.mock('src/logic-functions/data/delete-slack-user-link', () => ({
-  deleteSlackUserLink: deleteSlackUserLinkMock,
+vi.mock('src/logic-functions/data/destroy-slack-user-link', () => ({
+  destroySlackUserLink: destroySlackUserLinkMock,
 }));
 
 vi.mock('src/logic-functions/data/find-workspace-member-email-by-id', () => ({
@@ -382,7 +382,7 @@ describe('slackSetUserLinkHandler', () => {
     expect(result.success).toBe(true);
     // A fresh id keeps a consent DM for the old assignment from ever
     // activating the new one, even when the approval races the re-point.
-    expect(deleteSlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
+    expect(destroySlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
       id: 'link-1',
     });
     expect(createSlackUserLinkMock).toHaveBeenCalledWith(
@@ -474,7 +474,7 @@ describe('slackSetUserLinkHandler', () => {
     const result = await slackSetUserLinkHandler({ ...INPUT, name: 'Ada' });
 
     expect(result.success).toBe(true);
-    expect(deleteSlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
+    expect(destroySlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
       id: 'link-1',
     });
     expect(createSlackUserLinkMock).toHaveBeenCalledWith(

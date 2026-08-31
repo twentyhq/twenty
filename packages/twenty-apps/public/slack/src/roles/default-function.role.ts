@@ -36,8 +36,8 @@ export default defineApplicationRole({
       objectUniversalIdentifier: SLACK_USER_LINK_OBJECT_UNIVERSAL_IDENTIFIER,
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
-      canSoftDeleteObjectRecords: true,
-      canDestroyObjectRecords: false,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: true,
     },
     {
       objectUniversalIdentifier:
