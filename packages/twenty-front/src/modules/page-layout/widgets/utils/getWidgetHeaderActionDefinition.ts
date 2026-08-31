@@ -7,6 +7,7 @@ import { WidgetActionFileAttach } from '@/page-layout/widgets/files/components/W
 import { WidgetActionNoteCreate } from '@/page-layout/widgets/notes/components/WidgetActionNoteCreate';
 import { WidgetActionTaskCreate } from '@/page-layout/widgets/tasks/components/WidgetActionTaskCreate';
 import { WidgetActionTimeline } from '@/page-layout/widgets/timeline/components/WidgetActionTimeline';
+import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type ComponentType } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { WidgetType } from '~/generated-metadata/graphql';
@@ -39,10 +40,13 @@ const widgetHeaderActionComponentByWidgetType: Partial<
 };
 
 export const getWidgetHeaderActionDefinition = (
-  widget: PageLayoutWidget,
+  widget: Pick<PageLayoutWidget, 'configuration' | 'type'>,
 ): WidgetHeaderActionDefinition | undefined => {
   if (
-    widget.configuration.__typename === 'FrontComponentConfiguration' &&
+    isWidgetConfigurationOfType(
+      widget.configuration,
+      'FrontComponentConfiguration',
+    ) &&
     isNonEmptyArray(
       widget.configuration.headerCommandMenuItemUniversalIdentifiers,
     )
