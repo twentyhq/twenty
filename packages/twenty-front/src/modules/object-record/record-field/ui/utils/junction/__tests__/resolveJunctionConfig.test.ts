@@ -139,14 +139,14 @@ describe('resolveJunctionConfig', () => {
     expect(resolveField(personMetadata, 'company')).toBeNull();
   });
 
-  it('fails closed when more than one owning field matches the inverse', () => {
+  it('ignores owner-shaped fields not referenced by the junction inverse edge', () => {
     const taskMetadata = getMockObjectMetadataItemOrThrow('task');
     const taskTargetsField = getMockFieldMetadataItemOrThrow({
       objectMetadataItem: taskMetadata,
       fieldName: 'taskTargets',
     });
     const rocketMetadata = getMockObjectMetadataItemOrThrow('rocket');
-    const metadataWithAmbiguousOwner = objectMetadataItems.map((item) =>
+    const metadataWithUnreferencedOwner = objectMetadataItems.map((item) =>
       item.id === taskMetadata.id
         ? {
             ...item,
@@ -163,11 +163,17 @@ describe('resolveJunctionConfig', () => {
     );
 
     expect(
-      resolveField(rocketMetadata, 'taskTargets', metadataWithAmbiguousOwner),
+      resolveField(
+        rocketMetadata,
+        'taskTargets',
+        metadataWithUnreferencedOwner,
+      ),
     ).toMatchObject({
-      isValid: false,
+      direction: 'reverse',
+      isValid: true,
       junctionObjectMetadata: { nameSingular: 'taskTarget' },
-      targetFields: [],
+      sourceField: { name: 'target' },
+      targetFields: [{ name: 'task' }],
     });
 
     const rocketTaskTargetsField = getMockFieldMetadataItemOrThrow({
@@ -177,12 +183,12 @@ describe('resolveJunctionConfig', () => {
 
     expect(
       generateDepthRecordGqlFieldsFromFields({
-        objectMetadataItems: metadataWithAmbiguousOwner,
+        objectMetadataItems: metadataWithUnreferencedOwner,
         sourceObjectMetadataItem: rocketMetadata,
         fields: [rocketTaskTargetsField],
         depth: 1,
       }),
-    ).not.toHaveProperty('taskTargets');
+    ).toHaveProperty('taskTargets');
   });
 
   it('fails closed when a configured owning field is invalid', () => {
@@ -395,7 +401,7 @@ describe('resolveJunctionConfig', () => {
       isMorphRelation: true,
     });
 
-    const metadataWithAmbiguousOwner = metadataItems.map((item) =>
+    const metadataWithUnreferencedOwner = metadataItems.map((item) =>
       item.id === ownerObject.id
         ? {
             ...item,
@@ -414,12 +420,15 @@ describe('resolveJunctionConfig', () => {
     expect(
       resolveJunctionConfig({
         ...resolverArgs,
-        objectMetadataItems: metadataWithAmbiguousOwner,
+        objectMetadataItems: metadataWithUnreferencedOwner,
       }),
     ).toMatchObject({
-      isValid: false,
+      direction: 'reverse',
+      isValid: true,
       junctionObjectMetadata: { id: junctionObject.id },
-      targetFields: [],
+      sourceField: { id: junctionSourceField.id },
+      targetFields: [{ id: morphOwnerField.id }],
+      isMorphRelation: true,
     });
   });
 

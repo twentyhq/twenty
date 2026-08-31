@@ -30,25 +30,6 @@ const taskTargetsField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: rocketMetadata,
   fieldName: 'taskTargets',
 });
-const owningTaskTargetsField = getMockFieldMetadataItemOrThrow({
-  objectMetadataItem: taskMetadata,
-  fieldName: 'taskTargets',
-});
-const ambiguousObjectMetadataItems = objectMetadataItems.map((item) =>
-  item.id === taskMetadata.id
-    ? {
-        ...item,
-        fields: [
-          ...item.fields,
-          {
-            ...owningTaskTargetsField,
-            id: 'duplicate-task-targets-field-id',
-            name: 'duplicateTaskTargets',
-          },
-        ],
-      }
-    : item,
-);
 const fieldDefinition = formatFieldMetadataItemAsFieldDefinition({
   field: taskTargetsField,
   objectMetadataItem: rocketMetadata,
@@ -191,41 +172,5 @@ describe('useUpdateJunctionRelationFromCell', () => {
 
     expect(mockDeleteOneRecord).toHaveBeenCalledWith('task-target-id');
     expect(mockCreateManyRecords).not.toHaveBeenCalled();
-  });
-
-  it('does not mutate records when reverse junction ownership is ambiguous', async () => {
-    jest.mocked(useObjectMetadataItems).mockReturnValue({
-      objectMetadataItems: ambiguousObjectMetadataItems,
-    });
-
-    const store = createStore();
-    const { result } = renderHook(
-      () =>
-        useUpdateJunctionRelationFromCell({
-          fieldMetadataItem: taskTargetsField,
-          fieldDefinition,
-          recordId: 'rocket-id',
-        }),
-      { wrapper: createWrapper(store) },
-    );
-
-    expect(result.current.junctionConfig).toMatchObject({
-      isValid: false,
-      targetFields: [],
-    });
-
-    await act(async () => {
-      await result.current.updateJunctionRelationFromCell({
-        morphItem: {
-          recordId: 'task-id',
-          objectMetadataId: taskMetadata.id,
-          isSelected: true,
-          isMatchingSearchFilter: true,
-        },
-      });
-    });
-
-    expect(mockCreateManyRecords).not.toHaveBeenCalled();
-    expect(mockDeleteOneRecord).not.toHaveBeenCalled();
   });
 });

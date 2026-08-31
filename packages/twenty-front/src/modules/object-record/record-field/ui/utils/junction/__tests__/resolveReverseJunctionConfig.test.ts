@@ -1,9 +1,65 @@
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 import { resolveReverseJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveReverseJunctionConfig';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { RelationType } from 'twenty-shared/types';
+
+const cloneRelationPair = ({
+  ownerField,
+  junctionField,
+  ownerFieldId,
+  junctionFieldId,
+  ownerFieldSettings,
+}: {
+  ownerField: FieldMetadataItem;
+  junctionField: FieldMetadataItem;
+  ownerFieldId: string;
+  junctionFieldId: string;
+  ownerFieldSettings: FieldMetadataItem['settings'];
+}) => {
+  const ownerRelation = ownerField.relation;
+  const junctionRelation = junctionField.relation;
+
+  if (!ownerRelation || !junctionRelation) {
+    throw new Error('Relation pair not found');
+  }
+
+  return {
+    ownerField: {
+      ...ownerField,
+      id: ownerFieldId,
+      settings: ownerFieldSettings,
+      relation: {
+        ...ownerRelation,
+        sourceFieldMetadata: {
+          ...ownerRelation.sourceFieldMetadata,
+          id: ownerFieldId,
+        },
+        targetFieldMetadata: {
+          ...ownerRelation.targetFieldMetadata,
+          id: junctionFieldId,
+        },
+      },
+    },
+    junctionField: {
+      ...junctionField,
+      id: junctionFieldId,
+      relation: {
+        ...junctionRelation,
+        sourceFieldMetadata: {
+          ...junctionRelation.sourceFieldMetadata,
+          id: junctionFieldId,
+        },
+        targetFieldMetadata: {
+          ...junctionRelation.targetFieldMetadata,
+          id: ownerFieldId,
+        },
+      },
+    },
+  };
+};
 
 describe('resolveReverseJunctionConfig', () => {
   const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
@@ -50,6 +106,86 @@ describe('resolveReverseJunctionConfig', () => {
       });
     },
   );
+
+  it('resolves a merged morph relation through its physical member ID', () => {
+    const taskMetadata = getMockObjectMetadataItemOrThrow('task');
+    const taskTargetsField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: taskMetadata,
+      fieldName: 'taskTargets',
+    });
+    const rocketMetadata = getMockObjectMetadataItemOrThrow('rocket');
+    const taskTargetMetadata = getMockObjectMetadataItemOrThrow('taskTarget');
+    const targetField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: taskTargetMetadata,
+      fieldName: 'target',
+    });
+    const rocketTargetMemberId = targetField.morphRelations?.find(
+      (relation) =>
+        relation.targetObjectMetadata.id === rocketMetadata.id &&
+        relation.sourceFieldMetadata.id !== targetField.id,
+    )?.sourceFieldMetadata.id;
+    const configuredTargetMemberId = targetField.morphRelations?.find(
+      (relation) => relation.sourceFieldMetadata.id !== rocketTargetMemberId,
+    )?.sourceFieldMetadata.id;
+    const mismatchedTargetMemberId = targetField.morphRelations?.find(
+      (relation) =>
+        relation.sourceFieldMetadata.id !== rocketTargetMemberId &&
+        relation.sourceFieldMetadata.id !== targetField.id,
+    )?.sourceFieldMetadata.id;
+
+    if (
+      !rocketTargetMemberId ||
+      !configuredTargetMemberId ||
+      !mismatchedTargetMemberId
+    ) {
+      throw new Error('Task target morph members not found');
+    }
+
+    const metadataWithPhysicalMorphMemberSetting = objectMetadataItems.map(
+      (item) =>
+        item.id === taskMetadata.id
+          ? {
+              ...item,
+              fields: item.fields.map((field) =>
+                field.id === taskTargetsField.id
+                  ? {
+                      ...field,
+                      settings: {
+                        ...field.settings,
+                        junctionTargetFieldId: configuredTargetMemberId,
+                      },
+                    }
+                  : field,
+              ),
+            }
+          : item,
+    );
+
+    expect(
+      resolveReverseJunctionConfig({
+        junctionObjectMetadataId: taskTargetMetadata.id,
+        relationTargetFieldMetadataId: rocketTargetMemberId,
+        sourceObjectMetadataId: rocketMetadata.id,
+        objectMetadataItems: metadataWithPhysicalMorphMemberSetting,
+      }),
+    ).toMatchObject({
+      status: 'resolved',
+      junctionConfig: {
+        sourceField: { id: targetField.id },
+        targetFields: [{ name: 'task' }],
+        isConfiguredOnOwningSide: true,
+      },
+    });
+
+    expect(
+      resolveReverseJunctionConfig({
+        junctionObjectMetadataId: taskTargetMetadata.id,
+        relationTargetFieldMetadataId: mismatchedTargetMemberId,
+        sourceObjectMetadataId: rocketMetadata.id,
+        objectMetadataItems: metadataWithPhysicalMorphMemberSetting,
+      }),
+    ).toEqual({ status: 'invalid' });
+  });
 
   it('returns not-found when no junction targets the source object', () => {
     expect(
@@ -102,34 +238,40 @@ describe('resolveReverseJunctionConfig', () => {
       fieldName: 'taskTargets',
     });
     const taskTargetMetadata = getMockObjectMetadataItemOrThrow('taskTarget');
-
-    if (!taskTargetsField.relation) {
-      throw new Error('Task targets relation not found');
-    }
-
-    const taskTargetSourceFieldId =
-      taskTargetsField.relation.targetFieldMetadata.id;
+    const taskField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: taskTargetMetadata,
+      fieldName: 'task',
+    });
+    const stalePair = cloneRelationPair({
+      ownerField: taskTargetsField,
+      junctionField: taskField,
+      ownerFieldId: 'stale-task-targets-field-id',
+      junctionFieldId: 'stale-task-field-id',
+      ownerFieldSettings: {
+        junctionTargetFieldId: 'missing-target-field-id',
+      },
+    });
 
     const objectMetadataItemsWithUnrelatedInvalidConfig =
-      objectMetadataItems.map((item) =>
-        item.id === taskMetadata.id
-          ? {
-              ...item,
-              fields: [
-                ...item.fields,
-                {
-                  ...taskTargetsField,
-                  id: 'unrelated-invalid-task-targets-field-id',
-                  name: 'unrelatedInvalidTaskTargets',
-                  settings: {
-                    ...taskTargetsField.settings,
-                    junctionTargetFieldId: taskTargetSourceFieldId,
-                  },
-                },
-              ],
-            }
-          : item,
-      );
+      objectMetadataItems.map((item) => {
+        if (item.id === taskMetadata.id) {
+          return {
+            ...item,
+            fields: [
+              ...item.fields.map((field) =>
+                field.id === taskTargetsField.id
+                  ? { ...field, settings: undefined }
+                  : field,
+              ),
+              stalePair.ownerField,
+            ],
+          };
+        }
+
+        return item.id === taskTargetMetadata.id
+          ? { ...item, fields: [...item.fields, stalePair.junctionField] }
+          : item;
+      });
 
     expect(
       resolveReverseJunctionConfig({
@@ -148,7 +290,7 @@ describe('resolveReverseJunctionConfig', () => {
     });
   });
 
-  it('prefers a valid configured owner over a malformed duplicate for the same inverse field', () => {
+  it('ignores an owner-shaped field that is not the declared inverse edge', () => {
     const taskMetadata = getMockObjectMetadataItemOrThrow('task');
     const taskTargetsField = getMockFieldMetadataItemOrThrow({
       objectMetadataItem: taskMetadata,
@@ -167,8 +309,8 @@ describe('resolveReverseJunctionConfig', () => {
 
     const taskTargetsRelation = taskTargetsField.relation;
     const rocketTaskTargetsRelation = rocketTaskTargetsField.relation;
-    const objectMetadataItemsWithMalformedDuplicate = objectMetadataItems.map(
-      (item) =>
+    const objectMetadataItemsWithUnreferencedDuplicate =
+      objectMetadataItems.map((item) =>
         item.id === taskMetadata.id
           ? {
               ...item,
@@ -176,19 +318,21 @@ describe('resolveReverseJunctionConfig', () => {
                 ...item.fields,
                 {
                   ...taskTargetsField,
-                  id: 'malformed-duplicate-task-targets-field-id',
-                  name: 'malformedDuplicateTaskTargets',
+                  id: 'unreferenced-task-targets-field-id',
+                  name: 'unreferencedTaskTargets',
                   relation: {
                     ...taskTargetsRelation,
-                    type: RelationType.ONE_TO_MANY,
-                    targetFieldMetadata:
-                      rocketTaskTargetsRelation.targetFieldMetadata,
+                    sourceFieldMetadata: {
+                      ...taskTargetsRelation.sourceFieldMetadata,
+                      id: 'unreferenced-task-targets-field-id',
+                      name: 'unreferencedTaskTargets',
+                    },
                   },
                 },
               ],
             }
           : item,
-    );
+      );
 
     expect(
       resolveReverseJunctionConfig({
@@ -196,7 +340,7 @@ describe('resolveReverseJunctionConfig', () => {
         relationTargetFieldMetadataId:
           rocketTaskTargetsRelation.targetFieldMetadata.id,
         sourceObjectMetadataId: rocketMetadata.id,
-        objectMetadataItems: objectMetadataItemsWithMalformedDuplicate,
+        objectMetadataItems: objectMetadataItemsWithUnreferencedDuplicate,
       }),
     ).toMatchObject({
       status: 'resolved',
@@ -206,6 +350,63 @@ describe('resolveReverseJunctionConfig', () => {
         isConfiguredOnOwningSide: true,
       },
     });
+  });
+
+  it('returns ambiguous when two declared inverse edges target the same reverse field', () => {
+    const taskMetadata = getMockObjectMetadataItemOrThrow('task');
+    const taskTargetsField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: taskMetadata,
+      fieldName: 'taskTargets',
+    });
+    const rocketMetadata = getMockObjectMetadataItemOrThrow('rocket');
+    const rocketTaskTargetsField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: rocketMetadata,
+      fieldName: 'taskTargets',
+    });
+    const taskTargetMetadata = getMockObjectMetadataItemOrThrow('taskTarget');
+    const taskField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: taskTargetMetadata,
+      fieldName: 'task',
+    });
+
+    const duplicateOwnerFieldId = 'duplicate-task-targets-field-id';
+    const duplicateJunctionFieldId = 'duplicate-task-field-id';
+    const duplicatePair = cloneRelationPair({
+      ownerField: taskTargetsField,
+      junctionField: taskField,
+      ownerFieldId: duplicateOwnerFieldId,
+      junctionFieldId: duplicateJunctionFieldId,
+      ownerFieldSettings: taskTargetsField.settings,
+    });
+    const metadataWithTwoDeclaredInverseEdges = objectMetadataItems.map(
+      (item) => {
+        if (item.id === taskMetadata.id) {
+          return {
+            ...item,
+            fields: [...item.fields, duplicatePair.ownerField],
+          };
+        }
+
+        if (item.id === taskTargetMetadata.id) {
+          return {
+            ...item,
+            fields: [...item.fields, duplicatePair.junctionField],
+          };
+        }
+
+        return item;
+      },
+    );
+
+    expect(
+      resolveReverseJunctionConfig({
+        junctionObjectMetadataId: taskTargetMetadata.id,
+        relationTargetFieldMetadataId:
+          rocketTaskTargetsField.relation?.targetFieldMetadata.id,
+        sourceObjectMetadataId: rocketMetadata.id,
+        objectMetadataItems: metadataWithTwoDeclaredInverseEdges,
+      }),
+    ).toEqual({ status: 'ambiguous' });
   });
 
   it('returns invalid instead of falling back when the only configured target is stale', () => {
@@ -287,6 +488,27 @@ describe('resolveReverseJunctionConfig', () => {
           }
         : item,
     );
+    const metadataWithInvalidSourceOwnership = objectMetadataItems.map((item) =>
+      item.id === taskTargetMetadata.id
+        ? {
+            ...item,
+            fields: item.fields.map((field) =>
+              field.id === taskTargetSourceFieldId && field.relation
+                ? {
+                    ...field,
+                    relation: {
+                      ...field.relation,
+                      sourceObjectMetadata: {
+                        ...field.relation.sourceObjectMetadata,
+                        id: 'misowned-junction-object-id',
+                      },
+                    },
+                  }
+                : field,
+            ),
+          }
+        : item,
+    );
     const metadataWithInvalidTargetEndpoint = objectMetadataItems.map((item) =>
       item.id === taskTargetMetadata.id
         ? {
@@ -320,6 +542,7 @@ describe('resolveReverseJunctionConfig', () => {
 
     for (const metadataItems of [
       metadataWithInvalidSourceEndpoint,
+      metadataWithInvalidSourceOwnership,
       metadataWithInvalidTargetEndpoint,
     ]) {
       expect(
