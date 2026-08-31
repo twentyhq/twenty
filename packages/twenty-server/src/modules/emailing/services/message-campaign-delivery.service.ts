@@ -49,8 +49,6 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-type MessageRepository = WorkspaceRepository<MessageWorkspaceEntity>;
-
 type SendContext = {
   campaign: MessageCampaignWorkspaceEntity;
   person: PersonWorkspaceEntity | null;
@@ -330,7 +328,7 @@ export class MessageCampaignDeliveryService {
     creditContext: { hasCredits, currentBillingSubscription },
   }: {
     data: SendCampaignEmailJobData;
-    messageRepository: MessageRepository;
+    messageRepository: WorkspaceRepository<MessageWorkspaceEntity>;
     sendContext: SendContext;
     creditContext: EmailCreditContext;
   }): Promise<void> {

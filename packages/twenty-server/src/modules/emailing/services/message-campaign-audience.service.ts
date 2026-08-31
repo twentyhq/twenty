@@ -14,14 +14,6 @@ import { MessageSuppressionService } from 'src/modules/emailing/services/message
 import { MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
-const toRawRecipient = (person: {
-  id: string;
-  emails?: { primaryEmail?: string | null } | null;
-}): RawCampaignRecipient => ({
-  personId: person.id,
-  email: person.emails?.primaryEmail ?? null,
-});
-
 @Injectable()
 export class MessageCampaignAudienceService {
   constructor(
@@ -157,7 +149,10 @@ export class MessageCampaignAudienceService {
     });
 
     return {
-      rawRecipients: people.map(toRawRecipient),
+      rawRecipients: people.map((person) => ({
+        personId: person.id,
+        email: person.emails?.primaryEmail ?? null,
+      })),
       totalMemberCount: members.length,
     };
   }
