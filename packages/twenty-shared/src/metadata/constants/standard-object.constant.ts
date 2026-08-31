@@ -415,7 +415,9 @@ export const STANDARD_OBJECTS = {
           'fromAddress',
           'sentAt',
           'sentCount',
+          'deliveredCount',
           'failedCount',
+          'skippedCount',
           'bouncedCount',
           'complainedCount',
           'recipients',
@@ -430,7 +432,9 @@ export const STANDARD_OBJECTS = {
           'status',
           'sentAt',
           'sentCount',
+          'deliveredCount',
           'failedCount',
+          'skippedCount',
           'bouncedCount',
           'complainedCount',
         ],
@@ -674,6 +678,9 @@ export const STANDARD_OBJECTS = {
       },
       messageCampaignIdIndex: {
         universalIdentifier: '79e777ca-7008-46c5-b3a6-3108b7c7dfb6',
+      },
+      headerMessageIdIndex: {
+        universalIdentifier: '0904b3e4-6052-4a8d-bf41-f12a27c7e34a',
       },
     },
     views: {
