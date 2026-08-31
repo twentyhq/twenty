@@ -6,8 +6,6 @@ export type SlackResolveInput = {
   slackTeamId: string | undefined;
 };
 
-// Raw field values become the resolve route's payload: trimmed, with empties
-// dropped so the handler's guards read them as absent.
 export const toSlackResolveInput = ({
   email,
   slackUserId,

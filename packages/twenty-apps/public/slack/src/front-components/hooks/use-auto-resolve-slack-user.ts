@@ -16,9 +16,6 @@ type RawSlackIdentity = {
   slackTeamId: string;
 };
 
-// Resolves the Slack user as the admin types, like a picker: once the
-// identity looks complete and the typing pauses, look it up; any further edit
-// invalidates the match and whatever request is still in flight.
 export const useAutoResolveSlackUser = () => {
   const [resolvedUser, setResolvedUser] = useState<SlackResolvedUser | null>(
     null,

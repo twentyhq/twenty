@@ -1,8 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-// Best-effort display name for the consent DM; falls back to undefined so the
-// message still reads sensibly when the member cannot be read.
 export const findWorkspaceMemberNameById = async (
   client: CoreApiClient,
   workspaceMemberId: string,
