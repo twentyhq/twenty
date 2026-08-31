@@ -85,17 +85,19 @@ describe('Admin panel application registration stats and installed workspaces (i
   const insertApplication = async ({
     workspaceId,
     version,
+    state = 'INSTALLED',
   }: {
     workspaceId: string;
     version: string;
+    state?: string;
   }): Promise<SeededApplication> => {
     const id = randomUUID();
 
     await dataSource.query(
       `INSERT INTO core."application"
         (id, "universalIdentifier", name, version, "sourcePath",
-         "sourceType", "workspaceId", "applicationRegistrationId")
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+         "sourceType", "workspaceId", "applicationRegistrationId", state)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
       [
         id,
         randomUUID(),
@@ -105,12 +107,20 @@ describe('Admin panel application registration stats and installed workspaces (i
         'local',
         workspaceId,
         applicationRegistrationId,
+        state,
       ],
     );
 
     seededApplicationIds.push(id);
 
     return { id, workspaceId, version };
+  };
+
+  const deleteApplications = async (ids: string[]): Promise<void> => {
+    await dataSource.query(
+      `DELETE FROM core."application" WHERE id = ANY($1)`,
+      [ids],
+    );
   };
 
   beforeAll(async () => {
@@ -193,6 +203,44 @@ describe('Admin panel application registration stats and installed workspaces (i
       // Distribution is ordered by count DESC, so the top entry matches
       // mostInstalledVersion.
       expect(stats.versionDistribution[0].version).toBe('2.0.0');
+    });
+
+    it('counts an upgrading install but not one that is still installing', async () => {
+      const upgrading = await insertApplication({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        version: '3.0.0',
+        state: 'UPGRADING',
+      });
+      const installing = await insertApplication({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        version: '4.0.0',
+        state: 'INSTALLING',
+      });
+
+      try {
+        const response = await makeAdminPanelAPIRequest({
+          query: FIND_STATS,
+          variables: { id: applicationRegistrationId },
+        });
+
+        const stats = response.body.data?.findAdminApplicationRegistrationStats;
+
+        // The upgrading one is still installed, at its previous version; the
+        // installing one is a placeholder its job has not finished with.
+        expect(stats.activeInstalls).toBe(4);
+        expect(
+          stats.versionDistribution.map(
+            (entry: { version: string }) => entry.version,
+          ),
+        ).toContain('3.0.0');
+        expect(
+          stats.versionDistribution.map(
+            (entry: { version: string }) => entry.version,
+          ),
+        ).not.toContain('4.0.0');
+      } finally {
+        await deleteApplications([upgrading.id, installing.id]);
+      }
     });
 
     it('rejects a caller without the SECURITY permission flag', async () => {
@@ -286,6 +334,34 @@ describe('Admin panel application registration stats and installed workspaces (i
       expect(result.workspaces[0].displayName).toBe(
         YCOMBINATOR_WORKSPACE_DISPLAY_NAME,
       );
+    });
+
+    it('leaves out a workspace whose install is still running', async () => {
+      const installing = await insertApplication({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        version: '4.0.0',
+        state: 'INSTALLING',
+      });
+
+      try {
+        const response = await makeAdminPanelAPIRequest({
+          query: FIND_INSTALLED_WORKSPACES,
+          variables: { input: { id: applicationRegistrationId, offset: 0 } },
+        });
+
+        const result =
+          response.body.data
+            ?.findAdminApplicationRegistrationInstalledWorkspaces;
+
+        expect(result.totalCount).toBe(3);
+        expect(
+          result.workspaces.map(
+            (workspace: { version: string }) => workspace.version,
+          ),
+        ).not.toContain('4.0.0');
+      } finally {
+        await deleteApplications([installing.id]);
+      }
     });
 
     it('rejects a caller without the SECURITY permission flag', async () => {
