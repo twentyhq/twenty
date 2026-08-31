@@ -5,11 +5,12 @@ This folder is a narrowed, vendored copy of [`@genql/cli`](https://github.com/re
 © Tommaso De Rossi "morse"), used to generate the typed GraphQL client from an
 SDL string.
 
-Per-file provenance lives in `provenance.json`: every file is recorded as
-`engine` (upstream renderer/runtime code kept near-verbatim, frozen by a
-content hash), `orchestration` (rewritten when vendoring) or `twenty`
-(Twenty-only). `../__tests__/genql-provenance.test.ts` enforces the ledger, so
-an `engine` file cannot change without a deliberate ledger update in the same
+Per-file provenance lives in `provenance.json`: every file's `origin` names
+who authored its current content — `genql` (upstream code kept near-verbatim:
+`render/`, `runtime/`, `LICENSE`; frozen by a content hash) or `twenty`
+(written by Twenty: the orchestration rewritten when vendoring, and this
+README). `../__tests__/genql-provenance.test.ts` enforces the ledger, so a
+`genql` file cannot change without a deliberate ledger update in the same
 commit. Upstream's own test suite (integration + unit) is ported under
 `../__tests__/upstream-3.0.5/` and pins the engine's behavior and generated
 types; the snapshot test below pins its bytes.

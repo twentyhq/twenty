@@ -6,16 +6,16 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 // Guards the vendored genql tree (../genql) with its provenance ledger
-// (../genql/provenance.json), which records, for every file, whether it is
-// upstream @genql/cli engine code kept near-verbatim ("engine", frozen by a
-// content hash), orchestration Twenty rewrote when vendoring
-// ("orchestration"), or Twenty-only ("twenty"). Failing here means either a
-// file was added/removed without a ledger entry, or an "engine" file was
-// edited: engine edits must be deliberate — typically a ported upstream patch
-// — and land with an updated ledger plus a note in ../genql/README.md, never
-// as a side effect of another change.
+// (../genql/provenance.json), which records, for every file, who authored its
+// current content: "genql" (upstream @genql/cli code kept near-verbatim,
+// frozen by a content hash) or "twenty" (written by Twenty: the orchestration
+// rewritten when vendoring, and the README). Failing here means either a file
+// was added/removed without a ledger entry, or a "genql" file was edited:
+// such edits must be deliberate — typically a ported upstream patch —
+// and land with an updated ledger plus a note in ../genql/README.md, never as
+// a side effect of another change.
 //
-// After an intentional engine change, refresh the hashes with:
+// After an intentional change to a "genql" file, refresh the hashes with:
 //   UPDATE_GENQL_PROVENANCE=1 npx vitest run src/generate/__tests__/genql-provenance.test.ts
 const GENQL_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'genql');
 
@@ -30,7 +30,7 @@ type ProvenanceManifest = {
   };
   files: {
     [path: string]: {
-      origin: 'engine' | 'orchestration' | 'twenty' | 'upstream-license';
+      origin: 'genql' | 'twenty';
       sha256?: string;
     };
   };
@@ -66,24 +66,24 @@ describe('vendored genql provenance', () => {
     ).toEqual(filesInLedger);
   });
 
-  it('keeps "engine" files frozen at their recorded content', async () => {
+  it('keeps "genql" files frozen at their recorded content', async () => {
     const manifest: ProvenanceManifest = JSON.parse(
       await readFile(MANIFEST_PATH, 'utf-8'),
     );
 
-    const engineEntries = Object.entries(manifest.files).filter(
-      ([, entry]) => entry.origin === 'engine',
+    const genqlEntries = Object.entries(manifest.files).filter(
+      ([, entry]) => entry.origin === 'genql',
     );
 
-    // every engine entry carries a hash, otherwise the freeze is a no-op
-    for (const [path, entry] of engineEntries) {
+    // every "genql" entry carries a hash, otherwise the freeze is a no-op
+    for (const [path, entry] of genqlEntries) {
       expect(entry.sha256, `${path} has no sha256 in provenance.json`).toMatch(
         /^[0-9a-f]{64}$/,
       );
     }
 
     if (process.env.UPDATE_GENQL_PROVENANCE) {
-      for (const [path, entry] of engineEntries) {
+      for (const [path, entry] of genqlEntries) {
         entry.sha256 = await sha256OfFile(join(GENQL_DIR, path));
       }
       await writeFile(MANIFEST_PATH, JSON.stringify(manifest, null, 2) + '\n');
@@ -91,10 +91,10 @@ describe('vendored genql provenance', () => {
       return;
     }
 
-    for (const [path, entry] of engineEntries) {
+    for (const [path, entry] of genqlEntries) {
       expect(
         await sha256OfFile(join(GENQL_DIR, path)),
-        `engine file ${path} was modified; the vendored genql engine is frozen — if this change is deliberate (e.g. a ported upstream patch), update provenance.json in the same commit and document it in src/generate/genql/README.md`,
+        `genql file ${path} was modified; the vendored upstream code is frozen — if this change is deliberate (e.g. a ported upstream patch), update provenance.json in the same commit and document it in src/generate/genql/README.md`,
       ).toBe(entry.sha256);
     }
   });
