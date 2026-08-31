@@ -6,11 +6,6 @@ import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-ite
 import { NAVIGATION_INTERPOLATED_ICON, NAVIGATION_INTERPOLATED_LABEL, NAVIGATION_INTERPOLATED_SHORT_LABEL, buildNavigationConditionalAvailabilityExpression } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 
-// Frozen copy of the pre-2.38 navigation command identifier scheme, kept so
-// committed upgrade commands (1-21, 2-10, 2-17) preserve their historical
-// behavior after buildNavigationFlatCommandMenuItem moved to
-// getSystemNavigationCommandMenuItemUniversalIdentifier. The 2-38 re-own command migrates
-// rows minted under this scheme onto the derived identifier.
 export const LEGACY_NAVIGATION_COMMAND_UUID_NAMESPACE =
   'b31830da-2ae0-48eb-a915-12fa4ab96dd3';
 
@@ -68,8 +63,6 @@ export const buildLegacyNavigationFlatCommandMenuItem = ({
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATION,
     payload: { objectMetadataItemId: objectMetadata.id },
-    // The navigation target foreign key landed in 2.35; the commands frozen
-    // against this builder predate it and must keep minting it null.
     navigationTargetObjectMetadataId: null,
     navigationTargetObjectMetadataUniversalIdentifier: null,
     hotKeys: isDefined(objectMetadata.shortcut)

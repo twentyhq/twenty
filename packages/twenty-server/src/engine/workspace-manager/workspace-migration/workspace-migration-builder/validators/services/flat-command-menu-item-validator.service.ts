@@ -176,8 +176,6 @@ export class FlatCommandMenuItemValidatorService {
       validationResult,
     });
 
-    // navigationTargetObjectMetadataId is a comparable property, so a from/to
-    // sync can retarget an existing row at another object.
     this.validateNavigationTarget({
       navigationTargetObjectMetadataUniversalIdentifier:
         flatEntityUpdate.navigationTargetObjectMetadataUniversalIdentifier !==

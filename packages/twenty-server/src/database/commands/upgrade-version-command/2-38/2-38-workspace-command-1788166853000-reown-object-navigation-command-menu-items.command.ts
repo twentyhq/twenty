@@ -118,10 +118,6 @@ export class ReownObjectNavigationCommandMenuItemsCommand extends ProvisionedWor
         continue;
       }
 
-      // Eligible means minted by the retired scheme, which only the engine ever
-      // produced: a caller could not have derived that value. Requiring the row
-      // to belong to the object's own application keeps an application that
-      // authored a command for someone else's object out of the re-own.
       const legacyFlatCommandMenuItem =
         flatCommandMenuItemMaps.byUniversalIdentifier[
           getLegacyNavigationCommandUniversalIdentifier(
@@ -146,8 +142,6 @@ export class ReownObjectNavigationCommandMenuItemsCommand extends ProvisionedWor
 
       const update: ReownUpdate['update'] = {};
 
-      // Rows owned by the workspace custom application were left false by the
-      // 2.12 backfill, which only flagged rows of other applications.
       if (!legacyFlatCommandMenuItem.isSystemSideEffect) {
         update.isSystemSideEffect = true;
       }
