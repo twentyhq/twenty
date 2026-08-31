@@ -8,7 +8,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 import chunk from 'lodash.chunk';
-import { In } from 'typeorm';
+import { In, type ObjectLiteral } from 'typeorm';
 import { v4 } from 'uuid';
 
 import {
@@ -419,75 +419,64 @@ export class MessageCampaignMaterializationService {
   }): Promise<void> {
     await this.workspaceOrmManager.runInWorkspaceTransaction(
       async (transactionScope) => {
-        await transactionScope
-          .getRepository<MessageThreadWorkspaceEntity>(
-            'messageThread',
+        const repositoryFor = <T extends ObjectLiteral>(objectName: string) =>
+          transactionScope.getRepository<T>(
+            objectName,
             { shouldBypassPermissionChecks: true },
             SKIP_EVENT_EMISSION,
-          )
-          .insert(rows.map((row) => ({ id: row.threadId })));
-
-        await transactionScope
-          .getRepository<MessageWorkspaceEntity>(
-            'message',
-            { shouldBypassPermissionChecks: true },
-            SKIP_EVENT_EMISSION,
-          )
-          .insert(
-            rows.map((row) => ({
-              id: row.messageId,
-              headerMessageId: row.temporaryExternalId,
-              subject: subjectTemplate,
-              text,
-              receivedAt: now,
-              messageThreadId: row.threadId,
-              messageCampaignId: campaignId,
-            })),
           );
 
-        await transactionScope
-          .getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-            'messageChannelMessageAssociation',
-            { shouldBypassPermissionChecks: true },
-            SKIP_EVENT_EMISSION,
-          )
-          .insert(
-            rows.map((row) => ({
+        await repositoryFor<MessageThreadWorkspaceEntity>(
+          'messageThread',
+        ).insert(rows.map((row) => ({ id: row.threadId })));
+
+        await repositoryFor<MessageWorkspaceEntity>('message').insert(
+          rows.map((row) => ({
+            id: row.messageId,
+            headerMessageId: row.temporaryExternalId,
+            subject: subjectTemplate,
+            text,
+            receivedAt: now,
+            messageThreadId: row.threadId,
+            messageCampaignId: campaignId,
+          })),
+        );
+
+        await repositoryFor<MessageChannelMessageAssociationWorkspaceEntity>(
+          'messageChannelMessageAssociation',
+        ).insert(
+          rows.map((row) => ({
+            id: v4(),
+            messageId: row.messageId,
+            messageChannelId,
+            messageExternalId: row.temporaryExternalId,
+            messageThreadExternalId: row.temporaryExternalId,
+            direction: MessageDirection.OUTGOING,
+          })),
+        );
+
+        await repositoryFor<MessageParticipantWorkspaceEntity>(
+          'messageParticipant',
+        ).insert(
+          rows.flatMap((row) => [
+            {
               id: v4(),
               messageId: row.messageId,
-              messageChannelId,
-              messageExternalId: row.temporaryExternalId,
-              messageThreadExternalId: row.temporaryExternalId,
-              direction: MessageDirection.OUTGOING,
-            })),
-          );
-
-        await transactionScope
-          .getRepository<MessageParticipantWorkspaceEntity>(
-            'messageParticipant',
-            { shouldBypassPermissionChecks: true },
-            SKIP_EVENT_EMISSION,
-          )
-          .insert(
-            rows.flatMap((row) => [
-              {
-                id: v4(),
-                messageId: row.messageId,
-                role: MessageParticipantRole.FROM,
-                handle: fromAddress,
-                displayName: fromAddress,
-              },
-              {
-                id: v4(),
-                messageId: row.messageId,
-                role: MessageParticipantRole.TO,
-                handle: row.recipient.email,
-                displayName: row.recipient.email,
-                personId: row.recipient.personId,
-                messageCampaignId: campaignId,
-              },
-            ]),
-          );
+              role: MessageParticipantRole.FROM,
+              handle: fromAddress,
+              displayName: fromAddress,
+            },
+            {
+              id: v4(),
+              messageId: row.messageId,
+              role: MessageParticipantRole.TO,
+              handle: row.recipient.email,
+              displayName: row.recipient.email,
+              personId: row.recipient.personId,
+              messageCampaignId: campaignId,
+            },
+          ]),
+        );
       },
     );
   }

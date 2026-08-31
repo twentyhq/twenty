@@ -280,24 +280,28 @@ export class MessageSuppressionService {
     }
 
     const optOuts = await this.suppressionRepository.find(workspaceId, {
-      where: {
-        emailAddress: normalizedEmailAddress,
-        reason: MessageSuppressionReason.UNSUBSCRIBE,
-        unsubscribeTopicId: In(visibleTopics.map((topic) => topic.id)),
-      },
+      where: [
+        {
+          emailAddress: normalizedEmailAddress,
+          reason: MessageSuppressionReason.UNSUBSCRIBE,
+          unsubscribeTopicId: In(visibleTopics.map((topic) => topic.id)),
+        },
+        {
+          emailAddress: normalizedEmailAddress,
+          reason: MessageSuppressionReason.UNSUBSCRIBE,
+          unsubscribeTopicId: IsNull(),
+        },
+      ],
     });
 
     const optedOutTopicIds = new Set(
-      optOuts.map((suppression) => suppression.unsubscribeTopicId),
+      optOuts
+        .filter((suppression) => isDefined(suppression.unsubscribeTopicId))
+        .map((suppression) => suppression.unsubscribeTopicId),
     );
 
-    const globalOptOut = await this.suppressionRepository.findOneBy(
-      workspaceId,
-      {
-        emailAddress: normalizedEmailAddress,
-        reason: MessageSuppressionReason.UNSUBSCRIBE,
-        unsubscribeTopicId: IsNull(),
-      },
+    const globalOptOut = optOuts.find(
+      (suppression) => !isDefined(suppression.unsubscribeTopicId),
     );
 
     return visibleTopics.map((topic) => ({
