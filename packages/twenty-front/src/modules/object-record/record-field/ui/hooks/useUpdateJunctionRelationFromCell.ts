@@ -78,17 +78,16 @@ export const useUpdateJunctionRelationFromCell = ({
         !isDefined(targetFields) ||
         targetFields.length === 0
       ) {
-        return;
+        throw new Error(
+          'Cannot update junction relation without a valid junction configuration',
+        );
       }
 
       if (!isDefined(sourceObjectMetadata)) {
-        return;
+        throw new Error(
+          'Cannot update junction relation without source object metadata',
+        );
       }
-
-      const sourceJoinColumnName = getSourceJoinColumnName({
-        sourceField: sourceFieldOnJunction,
-        sourceObjectMetadata,
-      });
 
       const fieldName = fieldDefinition.metadata.fieldName;
       const junctionObjectName = junctionObjectMetadata.nameSingular;
@@ -100,18 +99,12 @@ export const useUpdateJunctionRelationFromCell = ({
       );
 
       if (!isDefined(targetFieldInfo)) {
-        return;
+        throw new Error(
+          'Cannot update junction relation for an unsupported target object',
+        );
       }
 
       const targetFieldName = targetFieldInfo.fieldName;
-      const targetJoinColumnName = targetFieldInfo.joinColumnName;
-
-      if (
-        !isDefined(sourceJoinColumnName) ||
-        !isDefined(targetJoinColumnName)
-      ) {
-        return;
-      }
 
       const recordFromStore = store.get(
         recordStoreFamilyState.atomFamily(recordId),
@@ -134,44 +127,33 @@ export const useUpdateJunctionRelationFromCell = ({
         }
 
         await deleteJunctionRecord(junctionRecordToDelete.id);
-
-        const recordFromStoreForDelete = store.get(
-          recordStoreFamilyState.atomFamily(recordId),
-        );
-        const currentFieldValue = recordFromStoreForDelete?.[fieldName] as
-          | FieldRelationValue<FieldRelationFromManyValue>
-          | undefined;
-
-        if (
-          !isDefined(currentFieldValue) ||
-          !Array.isArray(currentFieldValue)
-        ) {
-          return;
-        }
-
-        const updatedJunctionRecords = currentFieldValue.filter(
-          (record) => record.id !== junctionRecordToDelete.id,
-        );
-
-        store.set(
-          recordStoreFamilyState.atomFamily(recordId),
-          (currentRecord: Record<string, unknown> | null | undefined) => {
-            if (!isDefined(currentRecord)) {
-              return currentRecord;
-            }
-            return {
-              ...currentRecord,
-              [fieldName]: updatedJunctionRecords,
-            } as ObjectRecord;
-          },
-        );
       } else {
         const searchRecord = store.get(
           searchRecordStoreFamilyState.atomFamily(morphItem.recordId),
         );
 
         if (!isDefined(searchRecord?.record)) {
-          return;
+          throw new Error(
+            'Cannot create junction relation because the target record is unavailable',
+          );
+        }
+
+        const sourceJoinColumnName = getSourceJoinColumnName({
+          sourceField: sourceFieldOnJunction,
+          sourceObjectMetadata,
+        });
+        const targetJoinColumnName = targetFieldInfo.joinColumnName;
+
+        if (!isDefined(sourceJoinColumnName)) {
+          throw new Error(
+            'Cannot create junction relation without a source join column',
+          );
+        }
+
+        if (!isDefined(targetJoinColumnName)) {
+          throw new Error(
+            'Cannot create junction relation without a target join column',
+          );
         }
 
         const targetRecord = searchRecord.record;
@@ -229,66 +211,64 @@ export const useUpdateJunctionRelationFromCell = ({
             },
           );
 
-        const persistedJunctionRecordNode = await createJunctionRecords({
-          recordsToCreate: [
-            {
-              [sourceJoinColumnName]: recordId,
-              [targetJoinColumnName]: morphItem.recordId,
-            },
-          ],
-          upsert: true,
-        })
-          .then(([createdJunctionRecordNode]) => createdJunctionRecordNode)
-          .catch((error: Error) => {
-            removeOptimisticJunctionRecord();
-
-            throw error;
+        try {
+          const [persistedJunctionRecordNode] = await createJunctionRecords({
+            recordsToCreate: [
+              {
+                [sourceJoinColumnName]: recordId,
+                [targetJoinColumnName]: morphItem.recordId,
+              },
+            ],
+            upsert: true,
           });
 
-        if (!isDefined(persistedJunctionRecordNode)) {
-          removeOptimisticJunctionRecord();
+          if (!isDefined(persistedJunctionRecordNode)) {
+            throw new Error('Failed to create junction record');
+          }
 
-          return;
-        }
+          const persistedJunctionRecord = getRecordFromRecordNode({
+            recordNode: persistedJunctionRecordNode,
+          });
 
-        const persistedJunctionRecord = getRecordFromRecordNode({
-          recordNode: persistedJunctionRecordNode,
-        });
+          store.set(
+            recordStoreFamilyState.atomFamily(recordId),
+            (currentRecord: Record<string, unknown> | null | undefined) => {
+              if (!isDefined(currentRecord)) {
+                return currentRecord;
+              }
 
-        store.set(
-          recordStoreFamilyState.atomFamily(recordId),
-          (currentRecord: Record<string, unknown> | null | undefined) => {
-            if (!isDefined(currentRecord)) {
-              return currentRecord;
-            }
+              const currentFieldValue = currentRecord[fieldName];
 
-            const currentFieldValue = currentRecord[fieldName];
+              if (!Array.isArray(currentFieldValue)) {
+                return currentRecord as ObjectRecord;
+              }
 
-            if (!Array.isArray(currentFieldValue)) {
-              return currentRecord as ObjectRecord;
-            }
-
-            const junctionRecordsWithoutOptimistic = currentFieldValue.filter(
-              (junctionRecord) => junctionRecord.id !== optimisticJunctionId,
-            );
-
-            const isPersistedJunctionRecordAlreadyInStore =
-              junctionRecordsWithoutOptimistic.some(
-                (junctionRecord) =>
-                  junctionRecord.id === persistedJunctionRecord.id,
+              const junctionRecordsWithoutOptimistic = currentFieldValue.filter(
+                (junctionRecord) => junctionRecord.id !== optimisticJunctionId,
               );
 
-            return {
-              ...currentRecord,
-              [fieldName]: isPersistedJunctionRecordAlreadyInStore
-                ? junctionRecordsWithoutOptimistic
-                : [
-                    ...junctionRecordsWithoutOptimistic,
-                    { ...junctionRecordForStore, ...persistedJunctionRecord },
-                  ],
-            } as ObjectRecord;
-          },
-        );
+              const isPersistedJunctionRecordAlreadyInStore =
+                junctionRecordsWithoutOptimistic.some(
+                  (junctionRecord) =>
+                    junctionRecord.id === persistedJunctionRecord.id,
+                );
+
+              return {
+                ...currentRecord,
+                [fieldName]: isPersistedJunctionRecordAlreadyInStore
+                  ? junctionRecordsWithoutOptimistic
+                  : [
+                      ...junctionRecordsWithoutOptimistic,
+                      { ...junctionRecordForStore, ...persistedJunctionRecord },
+                    ],
+              } as ObjectRecord;
+            },
+          );
+        } catch (error) {
+          removeOptimisticJunctionRecord();
+
+          throw error;
+        }
       }
     },
     [

@@ -250,12 +250,12 @@ export const RelationOneToManyFieldInput = () => {
       onSubmit={handleSubmit}
       onChange={(morphItem) => {
         if (isJunctionRelation) {
-          updateJunctionRelationFromCell({
+          return updateJunctionRelationFromCell({
             morphItem,
           });
-        } else {
-          updateRelation(morphItem);
         }
+
+        return updateRelation(morphItem);
       }}
       onCreate={canCreateNew ? handleCreateNew : undefined}
       objectMetadataItemIdForCreate={objectMetadataItemIdForCreate}

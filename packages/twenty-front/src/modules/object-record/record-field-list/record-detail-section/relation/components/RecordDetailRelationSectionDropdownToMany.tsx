@@ -328,10 +328,10 @@ export const RecordDetailRelationSectionDropdownToMany = ({
   const handleChange = useCallback(
     (morphItem: Parameters<typeof updateRelation>[0]) => {
       if (isJunctionRelation) {
-        updateJunctionRelationFromCell({ morphItem });
-      } else {
-        updateRelation(morphItem);
+        return updateJunctionRelationFromCell({ morphItem });
       }
+
+      return updateRelation(morphItem);
     },
     [isJunctionRelation, updateJunctionRelationFromCell, updateRelation],
   );

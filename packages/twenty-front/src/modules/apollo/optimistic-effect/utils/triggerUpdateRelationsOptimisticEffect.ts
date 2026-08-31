@@ -63,6 +63,11 @@ export const triggerUpdateRelationsOptimisticEffect = ({
   const isDeletion =
     isDefined(updatedSourceRecord) &&
     isDefined(updatedSourceRecord['deletedAt']);
+  const isRestoration =
+    isDefined(currentSourceRecord) &&
+    isDefined(currentSourceRecord['deletedAt']) &&
+    isDefined(updatedSourceRecord) &&
+    !isDefined(updatedSourceRecord['deletedAt']);
   const junctionObjectMetadataIds =
     getJunctionObjectMetadataIds(objectMetadataItems);
 
@@ -83,6 +88,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         sourceObjectMetadataItem,
         cache,
         isDeletion,
+        isRestoration,
         upsertRecordsInStore,
         objectPermissionsByObjectMetadataId,
         junctionObjectMetadataIds,
@@ -98,6 +104,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         sourceObjectMetadataItem,
         cache,
         isDeletion,
+        isRestoration,
         upsertRecordsInStore,
         objectPermissionsByObjectMetadataId,
         junctionObjectMetadataIds,
@@ -114,6 +121,7 @@ const triggerUpdateRelationOptimisticEffect = ({
   sourceObjectMetadataItem,
   cache,
   isDeletion,
+  isRestoration,
   upsertRecordsInStore,
   objectPermissionsByObjectMetadataId,
   junctionObjectMetadataIds,
@@ -125,6 +133,7 @@ const triggerUpdateRelationOptimisticEffect = ({
   sourceObjectMetadataItem: EnrichedObjectMetadataItem;
   cache: ApolloCache;
   isDeletion: boolean;
+  isRestoration: boolean;
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
   objectPermissionsByObjectMetadataId: Record<
     string,
@@ -182,22 +191,16 @@ const triggerUpdateRelationOptimisticEffect = ({
     updatedFieldValueOnSourceRecord,
     { strict: true },
   );
-  if (noDiff && !isDeletion) {
-    return;
-  }
-
-  const recordToExtractDetachFrom = isDeletion
-    ? updatedFieldValueOnSourceRecord
-    : currentFieldValueOnSourceRecord;
-  const targetRecordsToDetachFrom = extractTargetRecordsFromRelation(
-    recordToExtractDetachFrom,
-    relation,
-  );
-
   const shouldCascadeDeleteTargetRecords = shouldCascadeDeleteOnDetach({
     targetObjectMetadata,
     junctionObjectMetadataIds,
   });
+  const shouldReattachUnchangedRelationOnRestoration =
+    isRestoration && noDiff && !shouldCascadeDeleteTargetRecords;
+
+  if (noDiff && !isDeletion && !shouldReattachUnchangedRelationOnRestoration) {
+    return;
+  }
 
   const gqlFieldNameOnTargetRecord =
     targetFieldMetadataFullObject.type === FieldMetadataType.RELATION
@@ -209,35 +212,46 @@ const triggerUpdateRelationOptimisticEffect = ({
             sourceObjectMetadataItem.nameSingular,
           targetObjectMetadataNamePlural: sourceObjectMetadataItem.namePlural,
         });
-  if (
-    shouldCascadeDeleteTargetRecords &&
-    targetRecordsToDetachFrom.length > 0
-  ) {
-    triggerDestroyRecordsOptimisticEffect({
-      cache,
-      objectMetadataItem: fullTargetObjectMetadataItem,
-      recordsToDestroy: targetRecordsToDetachFrom,
-      objectMetadataItems,
-      upsertRecordsInStore,
-      objectPermissionsByObjectMetadataId,
-    });
-  } else if (
-    isDefined(currentSourceRecord) &&
-    targetRecordsToDetachFrom.length > 0
-  ) {
-    targetRecordsToDetachFrom.forEach((targetRecordToDetachFrom) => {
-      triggerDetachRelationOptimisticEffect({
+
+  if (!shouldReattachUnchangedRelationOnRestoration) {
+    const recordToExtractDetachFrom = isDeletion
+      ? updatedFieldValueOnSourceRecord
+      : currentFieldValueOnSourceRecord;
+    const targetRecordsToDetachFrom = extractTargetRecordsFromRelation(
+      recordToExtractDetachFrom,
+      relation,
+    );
+
+    if (
+      shouldCascadeDeleteTargetRecords &&
+      targetRecordsToDetachFrom.length > 0
+    ) {
+      triggerDestroyRecordsOptimisticEffect({
         cache,
-        sourceObjectNameSingular: sourceObjectMetadataItem.nameSingular,
-        sourceRecordId: currentSourceRecord.id,
-        fieldNameOnTargetRecord: gqlFieldNameOnTargetRecord,
-        targetObjectMetadataItem: fullTargetObjectMetadataItem,
-        targetRecordId: targetRecordToDetachFrom.id,
+        objectMetadataItem: fullTargetObjectMetadataItem,
+        recordsToDestroy: targetRecordsToDetachFrom,
         objectMetadataItems,
-        objectPermissionsByObjectMetadataId,
         upsertRecordsInStore,
+        objectPermissionsByObjectMetadataId,
       });
-    });
+    } else if (
+      isDefined(currentSourceRecord) &&
+      targetRecordsToDetachFrom.length > 0
+    ) {
+      targetRecordsToDetachFrom.forEach((targetRecordToDetachFrom) => {
+        triggerDetachRelationOptimisticEffect({
+          cache,
+          sourceObjectNameSingular: sourceObjectMetadataItem.nameSingular,
+          sourceRecordId: currentSourceRecord.id,
+          fieldNameOnTargetRecord: gqlFieldNameOnTargetRecord,
+          targetObjectMetadataItem: fullTargetObjectMetadataItem,
+          targetRecordId: targetRecordToDetachFrom.id,
+          objectMetadataItems,
+          objectPermissionsByObjectMetadataId,
+          upsertRecordsInStore,
+        });
+      });
+    }
   }
 
   if (!isDeletion && isDefined(updatedSourceRecord)) {
@@ -270,6 +284,7 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
   sourceObjectMetadataItem,
   cache,
   isDeletion,
+  isRestoration,
   objectPermissionsByObjectMetadataId,
   upsertRecordsInStore,
   junctionObjectMetadataIds,
@@ -281,6 +296,7 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
   sourceObjectMetadataItem: EnrichedObjectMetadataItem;
   cache: ApolloCache;
   isDeletion: boolean;
+  isRestoration: boolean;
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
   objectPermissionsByObjectMetadataId: Record<
     string,
@@ -348,51 +364,60 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
       updatedFieldValueOnSourceRecord,
       { strict: true },
     );
-    if (noDiff && !isDeletion) {
-      return;
-    }
-
-    const recordToExtractDetachFrom = isDeletion
-      ? updatedFieldValueOnSourceRecord
-      : currentFieldValueOnSourceRecord;
-    const targetRecordsToDetachFrom = extractTargetRecordsFromRelation(
-      recordToExtractDetachFrom,
-      morphRelation,
-    );
-
     const shouldCascadeDeleteTargetRecords = shouldCascadeDeleteOnDetach({
       targetObjectMetadata,
       junctionObjectMetadataIds,
     });
+    const shouldReattachUnchangedRelationOnRestoration =
+      isRestoration && noDiff && !shouldCascadeDeleteTargetRecords;
+
     if (
-      shouldCascadeDeleteTargetRecords &&
-      targetRecordsToDetachFrom.length > 0
+      noDiff &&
+      !isDeletion &&
+      !shouldReattachUnchangedRelationOnRestoration
     ) {
-      triggerDestroyRecordsOptimisticEffect({
-        cache,
-        objectMetadataItem: fullTargetObjectMetadataItem,
-        recordsToDestroy: targetRecordsToDetachFrom,
-        objectMetadataItems,
-        objectPermissionsByObjectMetadataId,
-        upsertRecordsInStore,
-      });
-    } else if (
-      isDefined(currentSourceRecord) &&
-      targetRecordsToDetachFrom.length > 0
-    ) {
-      targetRecordsToDetachFrom.forEach((targetRecordToDetachFrom) => {
-        triggerDetachRelationOptimisticEffect({
+      return;
+    }
+
+    if (!shouldReattachUnchangedRelationOnRestoration) {
+      const recordToExtractDetachFrom = isDeletion
+        ? updatedFieldValueOnSourceRecord
+        : currentFieldValueOnSourceRecord;
+      const targetRecordsToDetachFrom = extractTargetRecordsFromRelation(
+        recordToExtractDetachFrom,
+        morphRelation,
+      );
+
+      if (
+        shouldCascadeDeleteTargetRecords &&
+        targetRecordsToDetachFrom.length > 0
+      ) {
+        triggerDestroyRecordsOptimisticEffect({
           cache,
-          sourceObjectNameSingular: sourceObjectMetadataItem.nameSingular,
-          sourceRecordId: currentSourceRecord.id,
-          fieldNameOnTargetRecord: targetFieldMetadata.name,
-          targetObjectMetadataItem: fullTargetObjectMetadataItem,
+          objectMetadataItem: fullTargetObjectMetadataItem,
+          recordsToDestroy: targetRecordsToDetachFrom,
           objectMetadataItems,
           objectPermissionsByObjectMetadataId,
-          targetRecordId: targetRecordToDetachFrom.id,
           upsertRecordsInStore,
         });
-      });
+      } else if (
+        isDefined(currentSourceRecord) &&
+        targetRecordsToDetachFrom.length > 0
+      ) {
+        targetRecordsToDetachFrom.forEach((targetRecordToDetachFrom) => {
+          triggerDetachRelationOptimisticEffect({
+            cache,
+            sourceObjectNameSingular: sourceObjectMetadataItem.nameSingular,
+            sourceRecordId: currentSourceRecord.id,
+            fieldNameOnTargetRecord: targetFieldMetadata.name,
+            targetObjectMetadataItem: fullTargetObjectMetadataItem,
+            objectMetadataItems,
+            objectPermissionsByObjectMetadataId,
+            targetRecordId: targetRecordToDetachFrom.id,
+            upsertRecordsInStore,
+          });
+        });
+      }
     }
 
     if (!isDeletion && isDefined(updatedSourceRecord)) {

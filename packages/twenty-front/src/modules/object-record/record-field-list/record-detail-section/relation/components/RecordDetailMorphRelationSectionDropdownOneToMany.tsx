@@ -171,9 +171,7 @@ export const RecordDetailMorphRelationSectionDropdownOneToMany = ({
         <MultipleRecordPicker
           focusId={dropdownId}
           componentInstanceId={dropdownId}
-          onChange={(morphItem) => {
-            updateMorphRelationOneToMany(morphItem);
-          }}
+          onChange={(morphItem) => updateMorphRelationOneToMany(morphItem)}
           onSubmit={() => {
             closeDropdown(dropdownId);
           }}

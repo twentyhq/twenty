@@ -12,7 +12,7 @@ import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-r
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { type RecordPickerLayoutDirection } from '@/object-record/record-picker/types/RecordPickerLayoutDirection';
-import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
+import { type RecordPickerOnChange } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -25,7 +25,7 @@ import { t } from '@lingui/core/macro';
 import { IconPlus } from 'twenty-ui/icon';
 
 type MultipleRecordPickerProps = {
-  onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
+  onChange?: RecordPickerOnChange;
   onSubmit?: () => void;
   onCreate?: ((searchInput?: string) => void) | (() => void);
   layoutDirection?: RecordPickerLayoutDirection;
