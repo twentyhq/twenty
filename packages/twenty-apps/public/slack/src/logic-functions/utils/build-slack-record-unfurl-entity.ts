@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { type SlackUnfurlObjectName } from 'src/logic-functions/constants/slack-unfurl-object-names';
 import { type SlackRecordLink } from 'src/logic-functions/types/slack-record-link.type';
+import { getCompanyLogoUrl } from 'src/logic-functions/utils/get-company-logo-url';
 
 const ITEM_ENTITY_TYPE = 'slack#/entities/item';
 const TIMESTAMP_FIELD_TYPE = 'slack#/types/timestamp';
@@ -133,6 +134,9 @@ const buildPersonContent = ({
   const company = asObject(record.company);
   const companyId = asNonEmptyString(company?.id);
   const companyName = asNonEmptyString(company?.name);
+  const companyLogoUrl = getCompanyLogoUrl(
+    asNonEmptyString(asObject(company?.domainName)?.primaryLinkUrl),
+  );
   const companyField: EntityCustomField | undefined =
     isDefined(companyId) && isDefined(companyName)
       ? {
@@ -143,6 +147,9 @@ const buildPersonContent = ({
             entity_url: `${workspaceBaseUrl}/object/company/${companyId}`,
             external_ref: { id: companyId },
             title: companyName,
+            ...(isDefined(companyLogoUrl)
+              ? { icon: { alt_text: companyName, url: companyLogoUrl } }
+              : {}),
           },
         }
       : undefined;
@@ -172,6 +179,7 @@ const buildCompanyContent = ({ record }: SlackUnfurlContentArgs) => {
 
   return {
     title: asNonEmptyString(record.name) ?? '',
+    iconUrl: getCompanyLogoUrl(domainUrl),
     customFields: [
       stringField('domain', 'Domain', domainUrl, LINK_FIELD_TYPE),
       stringField(
@@ -233,6 +241,7 @@ const CONTENT_BUILDERS: Record<
   (args: SlackUnfurlContentArgs) => {
     title: string;
     customFields: (EntityCustomField | undefined)[];
+    iconUrl?: string;
   }
 > = {
   person: buildPersonContent,
@@ -251,7 +260,7 @@ export const buildSlackRecordUnfurlEntity = ({
   record: Record<string, unknown>;
   workspaceBaseUrl: string;
 }): EntityMetadata | undefined => {
-  const { title, customFields } = CONTENT_BUILDERS[
+  const { title, customFields, iconUrl } = CONTENT_BUILDERS[
     recordLink.objectNameSingular
   ]({ record, workspaceBaseUrl });
 
@@ -269,7 +278,11 @@ export const buildSlackRecordUnfurlEntity = ({
         title: { text: title },
         display_type: DISPLAY_TYPE_BY_OBJECT[recordLink.objectNameSingular],
         product_name: 'Twenty',
-        product_icon: { alt_text: 'Twenty', url: TWENTY_PRODUCT_ICON_URL },
+        // The record's own logo when it has one (company favicon), so the
+        // card is recognizable at a glance; the Twenty mark otherwise.
+        product_icon: isDefined(iconUrl)
+          ? { alt_text: title, url: iconUrl }
+          : { alt_text: 'Twenty', url: TWENTY_PRODUCT_ICON_URL },
         ...(isDefined(metadataLastModified)
           ? { metadata_last_modified: metadataLastModified }
           : {}),

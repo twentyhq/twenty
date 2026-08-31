@@ -21,7 +21,7 @@ const RECORD_SELECTIONS: Record<
       city: true,
       emails: { primaryEmail: true },
       phones: { primaryPhoneNumber: true, primaryPhoneCallingCode: true },
-      company: { id: true, name: true },
+      company: { id: true, name: true, domainName: { primaryLinkUrl: true } },
       updatedAt: true,
     },
   },
