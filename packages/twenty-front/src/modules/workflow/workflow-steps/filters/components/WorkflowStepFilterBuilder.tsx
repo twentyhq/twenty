@@ -8,7 +8,10 @@ import { WorkflowStepFilterGroupColumn } from '@/workflow/workflow-steps/filters
 import { useChildStepFiltersAndChildStepFilterGroups } from '@/workflow/workflow-steps/filters/hooks/useChildStepFiltersAndChildStepFilterGroups';
 import { StepFilterGroupsComponentInstanceContext } from '@/workflow/workflow-steps/filters/states/context/StepFilterGroupsComponentInstanceContext';
 import { StepFiltersComponentInstanceContext } from '@/workflow/workflow-steps/filters/states/context/StepFiltersComponentInstanceContext';
-import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
+import {
+  WorkflowStepFilterContext,
+  type StepFilterCellComponent,
+} from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { rootLevelStepFilterGroupComponentSelector } from '@/workflow/workflow-steps/filters/states/rootLevelStepFilterGroupComponentSelector';
 import {
   type FilterSettings,
@@ -45,6 +48,9 @@ type WorkflowStepFilterBuilderProps = {
   defaultValue?: FilterSettingsWithPotentiallyDeprecatedOperand;
   readonly?: boolean;
   onFilterSettingsUpdate: (filterSettings: FilterSettings) => void;
+  FieldSelectComponent?: StepFilterCellComponent;
+  ValueInputComponent?: StepFilterCellComponent;
+  canAddFilterGroups?: boolean;
 };
 
 const WorkflowStepFilterBuilderConditions = ({
@@ -104,6 +110,9 @@ export const WorkflowStepFilterBuilder = ({
   defaultValue,
   readonly,
   onFilterSettingsUpdate,
+  FieldSelectComponent,
+  ValueInputComponent,
+  canAddFilterGroups = true,
 }: WorkflowStepFilterBuilderProps) => {
   return (
     <StepFiltersComponentInstanceContext.Provider value={{ instanceId }}>
@@ -113,6 +122,9 @@ export const WorkflowStepFilterBuilder = ({
             stepId: instanceId,
             readonly,
             onFilterSettingsUpdate,
+            FieldSelectComponent,
+            ValueInputComponent,
+            canAddFilterGroups,
           }}
         >
           <WorkflowStepFilterBuilderConditions readonly={readonly} />

@@ -1,6 +1,17 @@
 import { ArgsType, Field, Int, registerEnumType } from '@nestjs/graphql';
 
-import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+  ValidateNested,
+} from 'class-validator';
+
+import { CoreWorkflowFilterInput } from 'src/engine/core-modules/workflow/dtos/core-workflow-filter.input';
 
 export enum CoreWorkflowOrderByField {
   NAME = 'name',
@@ -12,22 +23,12 @@ export enum CoreWorkflowOrderByDirection {
   DESC = 'DESC',
 }
 
-export enum CoreWorkflowStatus {
-  DRAFT = 'DRAFT',
-  ACTIVE = 'ACTIVE',
-  DEACTIVATED = 'DEACTIVATED',
-}
-
 registerEnumType(CoreWorkflowOrderByField, {
   name: 'CoreWorkflowOrderByField',
 });
 
 registerEnumType(CoreWorkflowOrderByDirection, {
   name: 'CoreWorkflowOrderByDirection',
-});
-
-registerEnumType(CoreWorkflowStatus, {
-  name: 'CoreWorkflowStatus',
 });
 
 @ArgsType()
@@ -57,13 +58,9 @@ export class CoreWorkflowsArgs {
   @IsEnum(CoreWorkflowOrderByDirection)
   orderByDirection: CoreWorkflowOrderByDirection;
 
-  @Field(() => [CoreWorkflowStatus], { nullable: true })
+  @Field(() => CoreWorkflowFilterInput, { nullable: true })
   @IsOptional()
-  @IsEnum(CoreWorkflowStatus, { each: true })
-  statuses?: CoreWorkflowStatus[];
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsString()
-  searchTerm?: string;
+  @ValidateNested()
+  @Type(() => CoreWorkflowFilterInput)
+  filter?: CoreWorkflowFilterInput | null;
 }

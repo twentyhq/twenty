@@ -1,12 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { isNonEmptyString } from '@sniptt/guards';
-import {
-  escapeForIlike,
-  isDefined,
-  isNonEmptyArray,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import {
@@ -14,13 +9,13 @@ import {
   encodeCursorData,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { type CoreWorkflowConnectionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-connection.dto';
+import { type CoreWorkflowFilterInput } from 'src/engine/core-modules/workflow/dtos/core-workflow-filter.input';
 import {
   CoreWorkflowOrderByDirection,
   CoreWorkflowOrderByField,
-  type CoreWorkflowStatus,
   type CoreWorkflowsArgs,
 } from 'src/engine/core-modules/workflow/dtos/core-workflows.input';
-import { buildCoreWorkflowStatusesHavingClause } from 'src/engine/core-modules/workflow/utils/build-core-workflow-statuses-having-clause.util';
+import { buildCoreWorkflowFilterPredicate } from 'src/engine/core-modules/workflow/utils/build-core-workflow-filter-predicate.util';
 import { computeCoreWorkflowStatuses } from 'src/engine/core-modules/workflow/utils/compute-core-workflow-statuses.util';
 
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -64,6 +59,16 @@ const SORT_COLUMN_BY_FIELD: Record<
   },
 };
 
+// the filter predicate reads c.name and c."updatedAt" from the HAVING clause,
+// so both have to be grouping columns
+const GROUPED_WORKFLOW_COLUMNS = `c.id, c.name, c."updatedAt"`;
+
+const buildWorkflowVersionsJoinClause = (schemaName: string) =>
+  `LEFT JOIN ${schemaName}."workflow" wf
+     ON wf."coreWorkflowId" = c.id AND wf."deletedAt" IS NULL
+   LEFT JOIN core."workflowVersion" v
+     ON v."workflowId" = wf.id AND v."workspaceId" = $1`;
+
 @Injectable()
 export class CoreWorkflowListService {
   constructor(
@@ -73,14 +78,7 @@ export class CoreWorkflowListService {
 
   async findManyByWorkspaceId(
     workspaceId: string,
-    {
-      first,
-      after,
-      orderBy,
-      orderByDirection,
-      statuses,
-      searchTerm,
-    }: CoreWorkflowsArgs,
+    { first, after, orderBy, orderByDirection, filter }: CoreWorkflowsArgs,
   ): Promise<CoreWorkflowConnectionDTO> {
     const schemaName = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
     const { column, cursorExpression, nullable, cast } =
@@ -90,19 +88,15 @@ export class CoreWorkflowListService {
     const direction = isAscending ? 'ASC' : 'DESC';
     const nullsClause = nullable ? ' NULLS LAST' : '';
 
-    const trimmedSearchTerm = searchTerm?.trim();
-    const searchPattern = isNonEmptyString(trimmedSearchTerm)
-      ? `%${escapeForIlike(trimmedSearchTerm)}%`
-      : undefined;
-    const statusesFilter = isNonEmptyArray(statuses) ? statuses : undefined;
-
     const parameters: unknown[] = [workspaceId];
-    let searchCondition = '';
 
-    if (isDefined(searchPattern)) {
-      parameters.push(searchPattern);
-      searchCondition = `AND c.name ILIKE $${parameters.length} ESCAPE '\\'`;
-    }
+    const { predicate: filterPredicate, parameters: filterParameters } =
+      buildCoreWorkflowFilterPredicate({
+        filter,
+        firstParameterIndex: parameters.length + 1,
+      });
+
+    parameters.push(...filterParameters);
 
     let keysetCondition = '';
 
@@ -127,8 +121,8 @@ export class CoreWorkflowListService {
       }
     }
 
-    const havingClause = isDefined(statusesFilter)
-      ? `HAVING ${buildCoreWorkflowStatusesHavingClause(statusesFilter)}`
+    const havingClause = isDefined(filterPredicate)
+      ? `HAVING ${filterPredicate}`
       : '';
 
     parameters.push(first + 1);
@@ -146,14 +140,10 @@ export class CoreWorkflowListService {
          coalesce(bool_or(v.status = 'ACTIVE'), false) AS "hasActiveVersion",
          coalesce(bool_or(v.status = 'DEACTIVATED'), false) AS "hasDeactivatedVersion"
        FROM core."workflow" c
-       LEFT JOIN ${schemaName}."workflow" wf
-         ON wf."coreWorkflowId" = c.id AND wf."deletedAt" IS NULL
-       LEFT JOIN core."workflowVersion" v
-         ON v."workflowId" = wf.id AND v."workspaceId" = $1
+       ${buildWorkflowVersionsJoinClause(schemaName)}
        WHERE c."workspaceId" = $1
-       ${searchCondition}
        ${keysetCondition}
-       GROUP BY c.id, c.name, c."applicationId", c."updatedAt"
+       GROUP BY ${GROUPED_WORKFLOW_COLUMNS}, c."applicationId"
        ${havingClause}
        ORDER BY ${column} ${direction}${nullsClause}, c.id ${direction}
        LIMIT ${limitParameter}`,
@@ -163,8 +153,7 @@ export class CoreWorkflowListService {
     const totalCount = await this.countByWorkspaceId({
       workspaceId,
       schemaName,
-      searchPattern,
-      statuses: statusesFilter,
+      filter,
     });
 
     const hasNextPage = rows.length > first;
@@ -202,48 +191,44 @@ export class CoreWorkflowListService {
   private async countByWorkspaceId({
     workspaceId,
     schemaName,
-    searchPattern,
-    statuses,
+    filter,
   }: {
     workspaceId: string;
     schemaName: string;
-    searchPattern?: string;
-    statuses?: CoreWorkflowStatus[];
+    filter?: CoreWorkflowFilterInput | null;
   }): Promise<number> {
     const parameters: unknown[] = [workspaceId];
-    let searchCondition = '';
 
-    if (isDefined(searchPattern)) {
-      parameters.push(searchPattern);
-      searchCondition = `AND c.name ILIKE $${parameters.length} ESCAPE '\\'`;
-    }
+    const { predicate: filterPredicate, parameters: filterParameters } =
+      buildCoreWorkflowFilterPredicate({
+        filter,
+        firstParameterIndex: parameters.length + 1,
+      });
 
-    if (!isDefined(statuses)) {
+    if (!isDefined(filterPredicate)) {
       const [{ totalCount }]: [{ totalCount: number }] =
         await this.coreDataSource.query(
           `SELECT count(*)::int AS "totalCount"
            FROM core."workflow" c
-           WHERE c."workspaceId" = $1
-           ${searchCondition}`,
+           WHERE c."workspaceId" = $1`,
           parameters,
         );
 
       return totalCount;
     }
+
+    parameters.push(...filterParameters);
+
     const [{ totalCount }]: [{ totalCount: number }] =
       await this.coreDataSource.query(
         `SELECT count(*)::int AS "totalCount"
          FROM (
            SELECT c.id
            FROM core."workflow" c
-           LEFT JOIN ${schemaName}."workflow" wf
-             ON wf."coreWorkflowId" = c.id AND wf."deletedAt" IS NULL
-           LEFT JOIN core."workflowVersion" v
-             ON v."workflowId" = wf.id AND v."workspaceId" = $1
+           ${buildWorkflowVersionsJoinClause(schemaName)}
            WHERE c."workspaceId" = $1
-           ${searchCondition}
-           GROUP BY c.id
-           HAVING ${buildCoreWorkflowStatusesHavingClause(statuses)}
+           GROUP BY ${GROUPED_WORKFLOW_COLUMNS}
+           HAVING ${filterPredicate}
          ) filtered`,
         parameters,
       );

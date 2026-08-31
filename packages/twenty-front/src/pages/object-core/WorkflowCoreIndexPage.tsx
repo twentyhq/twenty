@@ -15,6 +15,7 @@ import {
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
@@ -63,7 +64,12 @@ export const WorkflowCoreIndexPage = () => {
               <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
             }
             title={objectMetadataItem.labelPlural}
-            actionButton={<CoreWorkflowsFilterBar />}
+            actionButton={
+              <>
+                <CoreWorkflowsFilterBar />
+                <SidePanelToggleButton />
+              </>
+            }
           />
         }
       >

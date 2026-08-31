@@ -1,6 +1,5 @@
 import { msg } from '@lingui/core/macro';
 
-import { AppChip } from '@/applications/components/AppChip';
 import { CoreWorkflowNameCell } from '@/object-core/workflows/components/CoreWorkflowNameCell';
 import { CoreWorkflowStatusesCell } from '@/object-core/workflows/components/CoreWorkflowStatusesCell';
 import { type CoreObjectTableColumn } from '@/object-core/types/CoreObjectTableColumn';
@@ -15,7 +14,9 @@ export const WORKFLOW_CORE_TABLE_COLUMNS: CoreObjectTableColumn<CoreWorkflow>[] 
       fieldType: 'string',
       align: 'left',
       gridTrack: 'minmax(0, 1fr)',
-      renderCell: (workflow) => <CoreWorkflowNameCell name={workflow.name} />,
+      renderCell: (workflow) => (
+        <CoreWorkflowNameCell name={workflow.name} workflowId={workflow.id} />
+      ),
     },
     {
       fieldName: 'statuses',
@@ -24,15 +25,6 @@ export const WORKFLOW_CORE_TABLE_COLUMNS: CoreObjectTableColumn<CoreWorkflow>[] 
       gridTrack: '160px',
       renderCell: (workflow) => (
         <CoreWorkflowStatusesCell statuses={workflow.statuses} />
-      ),
-    },
-    {
-      fieldName: 'applicationId',
-      fieldLabel: msg`App`,
-      align: 'left',
-      gridTrack: '160px',
-      renderCell: (workflow) => (
-        <AppChip applicationId={workflow.applicationId} />
       ),
     },
     {

@@ -1,5 +1,7 @@
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type CoreObjectTableColumn } from '@/object-core/types/CoreObjectTableColumn';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
@@ -11,6 +13,18 @@ import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { type TableFieldMetadata } from '@/ui/layout/table/types/TableFieldMetadata';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
+
+const StyledSeparatedTableBody = styled(TableBody)`
+  gap: 0;
+`;
+
+const StyledSeparatedTableRow = styled(TableRow)`
+  border-radius: 0;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  }
+`;
 
 type CoreObjectTableProps<TItem> = {
   tableId: string;
@@ -62,9 +76,9 @@ export const CoreObjectTable = <TItem,>({
           ),
         )}
       </TableRow>
-      <TableBody>
+      <StyledSeparatedTableBody>
         {items.map((item) => (
-          <TableRow
+          <StyledSeparatedTableRow
             key={getItemKey(item)}
             gridTemplateColumns={gridTemplateColumns}
             to={getItemLink?.(item)}
@@ -74,9 +88,9 @@ export const CoreObjectTable = <TItem,>({
                 {column.renderCell(item)}
               </TableCell>
             ))}
-          </TableRow>
+          </StyledSeparatedTableRow>
         ))}
-      </TableBody>
+      </StyledSeparatedTableBody>
     </Table>
   );
 };

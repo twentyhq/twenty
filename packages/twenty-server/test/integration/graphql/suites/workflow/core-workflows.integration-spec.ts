@@ -14,8 +14,8 @@ const graphql = (query: string, variables?: object) =>
     .send({ query, variables });
 
 const CORE_WORKFLOWS_QUERY = `
-  query CoreWorkflows($statuses: [CoreWorkflowStatus!], $searchTerm: String) {
-    coreWorkflows(first: 200, statuses: $statuses, searchTerm: $searchTerm) {
+  query CoreWorkflows($filter: CoreWorkflowFilterInput) {
+    coreWorkflows(first: 200, filter: $filter) {
       edges {
         node {
           id
@@ -45,20 +45,50 @@ type CoreWorkflow = {
   updatedAt: string;
 };
 
+type CoreWorkflowFilterRule = {
+  fieldKey: 'NAME' | 'STATUSES' | 'UPDATED_AT';
+  operand:
+    | 'CONTAINS'
+    | 'DOES_NOT_CONTAIN'
+    | 'IS'
+    | 'IS_NOT'
+    | 'IS_EMPTY'
+    | 'IS_NOT_EMPTY'
+    | 'IS_BEFORE'
+    | 'IS_AFTER';
+  value?: string;
+};
+
+type CoreWorkflowFilter = {
+  logicalOperator: 'AND' | 'OR';
+  rules: CoreWorkflowFilterRule[];
+};
+
 describe('coreWorkflows (e2e)', () => {
   let workflowId: string;
   let firstVersionId: string;
   let alreadyDestroyed = false;
 
-  const findCoreWorkflow = async (variables?: {
-    statuses?: string[];
-    searchTerm?: string;
-  }): Promise<CoreWorkflow | undefined> => {
-    const response = await graphql(CORE_WORKFLOWS_QUERY, variables);
+  const findCoreWorkflow = async (
+    filter?: CoreWorkflowFilter,
+  ): Promise<CoreWorkflow | undefined> => {
+    const response = await graphql(CORE_WORKFLOWS_QUERY, { filter });
 
     expect(response.body.errors).toBeUndefined();
 
-    return (response.body.data.coreWorkflows.edges as { node: CoreWorkflow }[])
+    const { edges, pageInfo, totalCount } = response.body.data
+      .coreWorkflows as {
+      edges: { node: CoreWorkflow }[];
+      pageInfo: { hasNextPage: boolean };
+      totalCount: number;
+    };
+
+    // the whole filtered set fits in one page here, so the count has to match
+    if (!pageInfo.hasNextPage) {
+      expect(totalCount).toBe(edges.length);
+    }
+
+    return edges
       .map((edge) => edge.node)
       .find((workflow) => workflow.workspaceWorkflowId === workflowId);
   };
@@ -145,51 +175,199 @@ describe('coreWorkflows (e2e)', () => {
       (workflow) => workflow?.statuses.includes('DRAFT') === true,
     );
 
-    const draftFiltered = await findCoreWorkflow({ statuses: ['DRAFT'] });
+    const draftFiltered = await findCoreWorkflow({
+      logicalOperator: 'AND',
+      rules: [
+        {
+          fieldKey: 'STATUSES',
+          operand: 'CONTAINS',
+          value: JSON.stringify(['DRAFT']),
+        },
+      ],
+    });
 
     expect(draftFiltered?.statuses).toEqual(['DRAFT']);
 
     const activeOrDeactivatedFiltered = await findCoreWorkflow({
-      statuses: ['ACTIVE', 'DEACTIVATED'],
+      logicalOperator: 'AND',
+      rules: [
+        {
+          fieldKey: 'STATUSES',
+          operand: 'CONTAINS',
+          value: JSON.stringify(['ACTIVE', 'DEACTIVATED']),
+        },
+      ],
     });
 
     expect(activeOrDeactivatedFiltered).toBeUndefined();
   });
 
-  it('should filter by search term with a case-insensitive name match', async () => {
+  it('should filter by a case-insensitive name match', async () => {
     await waitForCoreWorkflow((workflow) => isDefined(workflow));
 
     const matching = await findCoreWorkflow({
-      searchTerm: 'core workflows li',
+      logicalOperator: 'AND',
+      rules: [
+        { fieldKey: 'NAME', operand: 'CONTAINS', value: 'core workflows li' },
+      ],
     });
 
     expect(matching?.name).toBe('Core Workflows List');
 
     const notMatching = await findCoreWorkflow({
-      searchTerm: 'no workflow bears this name',
+      logicalOperator: 'AND',
+      rules: [
+        {
+          fieldKey: 'NAME',
+          operand: 'CONTAINS',
+          value: 'no workflow bears this name',
+        },
+      ],
     });
 
     expect(notMatching).toBeUndefined();
   });
 
-  it('should compose statuses and search term filters', async () => {
+  it('should compose a status rule and a name rule with AND', async () => {
     await waitForCoreWorkflow(
       (workflow) => workflow?.statuses.includes('DRAFT') === true,
     );
 
     const filtered = await findCoreWorkflow({
-      statuses: ['DRAFT'],
-      searchTerm: 'CORE WORKFLOWS LIST',
+      logicalOperator: 'AND',
+      rules: [
+        {
+          fieldKey: 'STATUSES',
+          operand: 'CONTAINS',
+          value: JSON.stringify(['DRAFT']),
+        },
+        { fieldKey: 'NAME', operand: 'CONTAINS', value: 'CORE WORKFLOWS LIST' },
+      ],
     });
 
     expect(filtered?.statuses).toEqual(['DRAFT']);
 
     const filteredOut = await findCoreWorkflow({
-      statuses: ['ACTIVE'],
-      searchTerm: 'CORE WORKFLOWS LIST',
+      logicalOperator: 'AND',
+      rules: [
+        {
+          fieldKey: 'STATUSES',
+          operand: 'CONTAINS',
+          value: JSON.stringify(['ACTIVE']),
+        },
+        { fieldKey: 'NAME', operand: 'CONTAINS', value: 'CORE WORKFLOWS LIST' },
+      ],
     });
 
     expect(filteredOut).toBeUndefined();
+  });
+
+  // the name rule reads a workflow column and the status rule aggregates its
+  // versions, so OR across both is the case a WHERE/HAVING split cannot express
+  it('should compose a name rule and a status rule with OR', async () => {
+    await waitForCoreWorkflow(
+      (workflow) => workflow?.statuses.includes('DRAFT') === true,
+    );
+
+    const matchedByStatusOnly = await findCoreWorkflow({
+      logicalOperator: 'OR',
+      rules: [
+        {
+          fieldKey: 'NAME',
+          operand: 'CONTAINS',
+          value: 'no workflow bears this name',
+        },
+        {
+          fieldKey: 'STATUSES',
+          operand: 'CONTAINS',
+          value: JSON.stringify(['DRAFT']),
+        },
+      ],
+    });
+
+    expect(matchedByStatusOnly?.statuses).toEqual(['DRAFT']);
+
+    const matchedByNeither = await findCoreWorkflow({
+      logicalOperator: 'OR',
+      rules: [
+        {
+          fieldKey: 'NAME',
+          operand: 'CONTAINS',
+          value: 'no workflow bears this name',
+        },
+        {
+          fieldKey: 'STATUSES',
+          operand: 'CONTAINS',
+          value: JSON.stringify(['ACTIVE']),
+        },
+      ],
+    });
+
+    expect(matchedByNeither).toBeUndefined();
+  });
+
+  it('should filter by update date', async () => {
+    const coreWorkflow = await waitForCoreWorkflow((workflow) =>
+      isDefined(workflow),
+    );
+
+    expect(coreWorkflow).toBeDefined();
+
+    const updatedAt = new Date(coreWorkflow?.updatedAt ?? '');
+    const oneHourBefore = new Date(updatedAt.getTime() - 60 * 60 * 1000);
+
+    const updatedAfter = await findCoreWorkflow({
+      logicalOperator: 'AND',
+      rules: [
+        {
+          fieldKey: 'UPDATED_AT',
+          operand: 'IS_AFTER',
+          value: JSON.stringify(oneHourBefore.toISOString()),
+        },
+      ],
+    });
+
+    expect(updatedAfter?.workspaceWorkflowId).toBe(workflowId);
+
+    const updatedBefore = await findCoreWorkflow({
+      logicalOperator: 'AND',
+      rules: [
+        {
+          fieldKey: 'UPDATED_AT',
+          operand: 'IS_BEFORE',
+          value: JSON.stringify(oneHourBefore.toISOString()),
+        },
+      ],
+    });
+
+    expect(updatedBefore).toBeUndefined();
+
+    const updatedOnTheSameDay = await findCoreWorkflow({
+      logicalOperator: 'AND',
+      rules: [
+        {
+          fieldKey: 'UPDATED_AT',
+          operand: 'IS',
+          value: JSON.stringify(updatedAt.toISOString()),
+        },
+      ],
+    });
+
+    expect(updatedOnTheSameDay?.workspaceWorkflowId).toBe(workflowId);
+  });
+
+  it('should reject an operand the field does not support', async () => {
+    const response = await graphql(CORE_WORKFLOWS_QUERY, {
+      filter: {
+        logicalOperator: 'AND',
+        rules: [{ fieldKey: 'STATUSES', operand: 'IS', value: 'ACTIVE' }],
+      },
+    });
+
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].message).toContain(
+      'Operand IS is not supported on field STATUSES',
+    );
   });
 
   it('should list the workflow as ACTIVE once its version is activated', async () => {

@@ -1,12 +1,10 @@
 import { useState } from 'react';
 
 import { useQuery } from '@apollo/client/react';
-import { isNonEmptyString } from '@sniptt/guards';
-import { useDebounce } from 'use-debounce';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { coreWorkflowsSearchTermState } from '@/object-core/workflows/states/coreWorkflowsSearchTermState';
-import { coreWorkflowsStatusesFilterState } from '@/object-core/workflows/states/coreWorkflowsStatusesFilterState';
+import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
+import { buildCoreWorkflowFilterInput } from '@/object-core/workflows/utils/buildCoreWorkflowFilterInput';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -19,7 +17,6 @@ import {
 
 export const CORE_WORKFLOWS_TABLE_ID = 'workflowCore';
 export const CORE_WORKFLOWS_PAGE_SIZE = 60;
-export const CORE_WORKFLOWS_SEARCH_DEBOUNCE_MS = 300;
 
 export const CORE_WORKFLOWS_INITIAL_SORT: TableSortValue = {
   fieldName: 'updatedAt',
@@ -49,18 +46,11 @@ export const useCoreWorkflows = () => {
       ? CoreWorkflowOrderByDirection.ASC
       : CoreWorkflowOrderByDirection.DESC;
 
-  const coreWorkflowsStatusesFilter = useAtomStateValue(
-    coreWorkflowsStatusesFilterState,
-  );
-  const coreWorkflowsSearchTerm = useAtomStateValue(
-    coreWorkflowsSearchTermState,
+  const coreWorkflowsFilterSettings = useAtomStateValue(
+    coreWorkflowsFilterSettingsState,
   );
 
-  const trimmedSearchTerm = coreWorkflowsSearchTerm.trim();
-  const [debouncedSearchTerm] = useDebounce(
-    trimmedSearchTerm,
-    CORE_WORKFLOWS_SEARCH_DEBOUNCE_MS,
-  );
+  const filter = buildCoreWorkflowFilterInput(coreWorkflowsFilterSettings);
 
   const [isFetchingMore, setIsFetchingMore] = useState(false);
 
@@ -74,13 +64,7 @@ export const useCoreWorkflows = () => {
         first: CORE_WORKFLOWS_PAGE_SIZE,
         orderBy,
         orderByDirection,
-        statuses:
-          coreWorkflowsStatusesFilter.length > 0
-            ? coreWorkflowsStatusesFilter
-            : undefined,
-        searchTerm: isNonEmptyString(debouncedSearchTerm)
-          ? debouncedSearchTerm
-          : undefined,
+        filter,
       },
     },
   );

@@ -1,4 +1,4 @@
-import { CoreWorkflowStatus } from 'src/engine/core-modules/workflow/dtos/core-workflows.input';
+import { CoreWorkflowStatus } from 'src/engine/core-modules/workflow/dtos/core-workflow-filter.input';
 
 const HAS_DRAFT_VERSION = `coalesce(bool_or(v.status = 'DRAFT'), false)`;
 const HAS_ACTIVE_VERSION = `coalesce(bool_or(v.status = 'ACTIVE'), false)`;
@@ -12,7 +12,10 @@ const STATUS_PREDICATE_BY_STATUS: Record<CoreWorkflowStatus, string> = {
   [CoreWorkflowStatus.DEACTIVATED]: `(NOT ${HAS_ACTIVE_VERSION} AND ${HAS_DEACTIVATED_VERSION})`,
 };
 
-export const buildCoreWorkflowStatusesHavingClause = (
+export const buildCoreWorkflowHasAnyOfStatusesPredicate = (
   statuses: CoreWorkflowStatus[],
 ): string =>
-  statuses.map((status) => STATUS_PREDICATE_BY_STATUS[status]).join(' OR ');
+  `(${statuses.map((status) => STATUS_PREDICATE_BY_STATUS[status]).join(' OR ')})`;
+
+export const CORE_WORKFLOW_HAS_ANY_STATUS_PREDICATE =
+  buildCoreWorkflowHasAnyOfStatusesPredicate(Object.values(CoreWorkflowStatus));
