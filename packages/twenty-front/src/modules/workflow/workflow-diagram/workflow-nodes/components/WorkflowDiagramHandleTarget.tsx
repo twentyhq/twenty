@@ -1,12 +1,7 @@
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultTargetHandleId';
+import { WorkflowDiagramHandleTargetEffect } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleTargetEffect';
 import { styled } from '@linaria/react';
-import {
-  Handle,
-  Position,
-  useNodeId,
-  useUpdateNodeInternals,
-} from '@xyflow/react';
-import { useEffect } from 'react';
+import { Handle, Position, useNodeId } from '@xyflow/react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -45,18 +40,16 @@ export const WorkflowDiagramHandleTarget = ({
   targetHandleIds,
 }: WorkflowDiagramHandleTargetProps) => {
   const nodeId = useNodeId();
-  const updateNodeInternals = useUpdateNodeInternals();
   const targetHandlesKey = targetHandleIds?.join(',');
-
-  useEffect(() => {
-    // React Flow caches handle geometry independently of node data.
-    if (isDefined(nodeId)) {
-      updateNodeInternals(nodeId);
-    }
-  }, [nodeId, targetHandlesKey, updateNodeInternals]);
 
   return (
     <>
+      {isDefined(nodeId) && (
+        <WorkflowDiagramHandleTargetEffect
+          nodeId={nodeId}
+          targetHandlesKey={targetHandlesKey}
+        />
+      )}
       <StyledHandleContainer>
         <Handle
           id={WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID}
