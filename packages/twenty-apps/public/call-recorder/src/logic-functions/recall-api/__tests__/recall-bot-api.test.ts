@@ -164,9 +164,9 @@ describe('recall bot api', () => {
     expect(JSON.parse(fetchMock.mock.calls[0][1].body).chat).toBeUndefined();
   });
 
-  it('truncates custom recording notices to the cross-platform limit', async () => {
+  it('truncates custom recording notices without splitting Unicode characters', async () => {
     process.env[CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME] =
-      'a'.repeat(CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH + 1);
+      `${'a'.repeat(CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH - 1)}👋extra`;
 
     await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
@@ -177,7 +177,7 @@ describe('recall bot api', () => {
 
     expect(
       JSON.parse(fetchMock.mock.calls[0][1].body).chat.on_bot_join.message,
-    ).toHaveLength(CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH);
+    ).toBe(`${'a'.repeat(CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH - 1)}👋`);
   });
 
   it('omits unsupported chat configuration for Webex meetings', async () => {
