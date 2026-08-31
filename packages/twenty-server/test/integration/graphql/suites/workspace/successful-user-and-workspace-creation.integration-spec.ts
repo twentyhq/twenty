@@ -16,12 +16,16 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 describe('Successful user and workspace creation', () => {
   let createdUserAccessToken: string | undefined;
 
   afterEach(async () => {
+    jest.restoreAllMocks();
+
     if (!isDefined(createdUserAccessToken)) {
       return;
     }
@@ -158,6 +162,74 @@ describe('Successful user and workspace creation', () => {
     expect(workpsaceCustomApplication.universalIdentifier).toEqual(
       workpsaceCustomApplication.id,
     );
+  });
+
+  it('should commit workspace creation before inferred logo upload settles', async () => {
+    const uniqueEmail = `test-post-commit-${randomUUID()}@company.com`;
+
+    const { data } = await signUp({
+      input: {
+        email: uniqueEmail,
+        password: 'Test123!@#',
+      },
+      expectToFail: false,
+    });
+
+    createdUserAccessToken =
+      data.signUp.tokens.accessOrWorkspaceAgnosticToken.token;
+
+    await testDataSource.query(
+      'UPDATE core."user" SET "isEmailVerified" = true WHERE email = $1',
+      [uniqueEmail],
+    );
+
+    const uploadError = new Error('S3 unavailable');
+    let rejectLogoUpload: (error: Error) => void = () => undefined;
+    const pendingLogoUpload = new Promise<never>((_resolve, reject) => {
+      rejectLogoUpload = reject;
+    });
+    const fileCorePictureService = global.app.get(FileCorePictureService);
+    const exceptionHandlerService = global.app.get(ExceptionHandlerService);
+    const uploadWorkspaceLogoFromUrl = jest
+      .spyOn(fileCorePictureService, 'uploadWorkspaceLogoFromUrl')
+      .mockReturnValue(pendingLogoUpload);
+    let resolveUploadFailureCaptured: () => void = () => undefined;
+    const uploadFailureCaptured = new Promise<void>((resolve) => {
+      resolveUploadFailureCaptured = resolve;
+    });
+    const captureExceptions = jest
+      .spyOn(exceptionHandlerService, 'captureExceptions')
+      .mockImplementation((exceptions) => {
+        if (exceptions.includes(uploadError)) {
+          resolveUploadFailureCaptured();
+        }
+
+        return [];
+      });
+
+    const {
+      data: { signUpInNewWorkspace: signUpInNewWorkspaceData },
+    } = await signUpInNewWorkspace({
+      accessToken: createdUserAccessToken,
+      expectToFail: false,
+    });
+
+    const workspaceId = signUpInNewWorkspaceData.workspace.id;
+    const persistedWorkspaces = await testDataSource.query(
+      'SELECT id FROM core.workspace WHERE id = $1',
+      [workspaceId],
+    );
+
+    expect(persistedWorkspaces).toHaveLength(1);
+    expect(uploadWorkspaceLogoFromUrl).toHaveBeenCalled();
+
+    rejectLogoUpload(uploadError);
+    await uploadFailureCaptured;
+
+    expect(captureExceptions).toHaveBeenCalledWith([uploadError], {
+      workspace: { id: workspaceId },
+      additionalData: { source: 'inferred-workspace-logo' },
+    });
   });
 
   it('should reclaim a stale ONGOING_CREATION workspace and activate it', async () => {

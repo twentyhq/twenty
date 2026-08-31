@@ -6,6 +6,7 @@ import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
+  IsNull,
   QueryFailedError,
   Repository,
   type DataSource,
@@ -601,6 +602,30 @@ export class SignInUpService {
     );
   }
 
+  private async deleteInferredWorkspaceLogo({
+    fileId,
+    workspaceId,
+  }: {
+    fileId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    try {
+      await this.fileCorePictureService.deleteCorePicture({
+        fileId,
+        workspaceId,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to clean up inferred logo for workspace ${workspaceId}`,
+        error,
+      );
+      this.exceptionHandlerService.captureExceptions([error], {
+        workspace: { id: workspaceId },
+        additionalData: { source: 'inferred-workspace-logo-cleanup' },
+      });
+    }
+  }
+
   private async uploadInferredWorkspaceLogo({
     email,
     workspaceId,
@@ -621,19 +646,22 @@ export class SignInUpService {
           applicationUniversalIdentifier,
         });
 
-      if (isDefined(logoFile)) {
-        uploadedLogoFileId = logoFile.id;
+      if (!isDefined(logoFile)) {
+        return;
+      }
 
-        const updateResult = await this.workspaceRepository.update(
+      uploadedLogoFileId = logoFile.id;
+
+      const updateResult = await this.workspaceRepository.update(
+        { id: workspaceId, logoFileId: IsNull() },
+        { logoFileId: logoFile.id },
+      );
+
+      if ((updateResult.affected ?? 0) === 0) {
+        await this.deleteInferredWorkspaceLogo({
+          fileId: logoFile.id,
           workspaceId,
-          {
-            logoFileId: logoFile.id,
-          },
-        );
-
-        if ((updateResult.affected ?? 0) === 0) {
-          throw new Error('Workspace no longer exists for inferred logo');
-        }
+        });
       }
     } catch (error) {
       this.logger.error(
@@ -646,21 +674,10 @@ export class SignInUpService {
       });
 
       if (isDefined(uploadedLogoFileId)) {
-        try {
-          await this.fileCorePictureService.deleteCorePicture({
-            fileId: uploadedLogoFileId,
-            workspaceId,
-          });
-        } catch (cleanupError) {
-          this.logger.error(
-            `Failed to clean up inferred logo for workspace ${workspaceId}`,
-            cleanupError,
-          );
-          this.exceptionHandlerService.captureExceptions([cleanupError], {
-            workspace: { id: workspaceId },
-            additionalData: { source: 'inferred-workspace-logo-cleanup' },
-          });
-        }
+        await this.deleteInferredWorkspaceLogo({
+          fileId: uploadedLogoFileId,
+          workspaceId,
+        });
       }
     }
   }
