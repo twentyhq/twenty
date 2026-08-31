@@ -235,12 +235,14 @@ export class UserWorkspaceService {
 
     const userWorkspace = await this.create({
       userId: user.id,
-      workspaceId: workspace.i    const userWorkspace = await this.create({
-      userId: user.id,
       workspaceId: workspace.id,
       isExistingUser: true,
       locale: user.locale,
-    });oleToManyUserWorkspace({
+    });
+
+    await this.createWorkspaceMember(workspace.id, user);
+
+    await this.userRoleService.assignRoleToManyUserWorkspace({
       workspaceId: workspace.id,
       userWorkspaceIds: [userWorkspace.id],
       roleId: resolvedRoleId,
