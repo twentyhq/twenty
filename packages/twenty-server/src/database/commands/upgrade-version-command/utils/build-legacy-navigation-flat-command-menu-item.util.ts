@@ -9,7 +9,7 @@ import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-comma
 // Frozen copy of the pre-2.38 navigation command identifier scheme, kept so
 // committed upgrade commands (1-21, 2-10, 2-17) preserve their historical
 // behavior after buildNavigationFlatCommandMenuItem moved to
-// getNavigationCommandUniversalIdentifier. The 2-38 re-own command migrates
+// getSystemNavigationCommandMenuItemUniversalIdentifier. The 2-38 re-own command migrates
 // rows minted under this scheme onto the derived identifier.
 export const LEGACY_NAVIGATION_COMMAND_UUID_NAMESPACE =
   'b31830da-2ae0-48eb-a915-12fa4ab96dd3';

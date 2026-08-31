@@ -1,4 +1,4 @@
-import { getNavigationCommandUniversalIdentifier } from 'twenty-shared/application';
+import { getSystemNavigationCommandMenuItemUniversalIdentifier } from 'twenty-shared/application';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ReownObjectNavigationCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788166853000-reown-object-navigation-command-menu-items.command';
@@ -12,8 +12,8 @@ const APPLICATION_UNIVERSAL_IDENTIFIER =
 const OBJECT_ID = '20202020-0000-4000-8000-0000000000b1';
 const OBJECT_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-0000000000bb';
 
-const DERIVED_UNIVERSAL_IDENTIFIER = getNavigationCommandUniversalIdentifier({
-  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+const DERIVED_UNIVERSAL_IDENTIFIER = getSystemNavigationCommandMenuItemUniversalIdentifier({
+  objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
 });
 

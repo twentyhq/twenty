@@ -1,4 +1,4 @@
-import { getNavigationCommandUniversalIdentifier } from 'twenty-shared/application';
+import { getSystemNavigationCommandMenuItemUniversalIdentifier } from 'twenty-shared/application';
 
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
@@ -14,10 +14,12 @@ const OTHER_OBJECT_UNIVERSAL_IDENTIFIER =
 const OBJECT_ID = 'c1c2c3c4-c5c6-4000-8000-000000000001';
 const OTHER_OBJECT_ID = 'c1c2c3c4-c5c6-4000-8000-000000000002';
 
-const DERIVED_UNIVERSAL_IDENTIFIER = getNavigationCommandUniversalIdentifier({
-  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-  objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-});
+const DERIVED_UNIVERSAL_IDENTIFIER =
+  getSystemNavigationCommandMenuItemUniversalIdentifier({
+    objectMetadataApplicationUniversalIdentifier:
+      APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+  });
 
 type ObjectMetadataOverrides = Partial<{
   id: string | undefined;
@@ -171,8 +173,9 @@ describe('ObjectNavigationCommandOnCreateSideEffectHandlerService', () => {
     ) as unknown as [{ universalIdentifier: string }];
 
     expect(navigationCommand.universalIdentifier).toBe(
-      getNavigationCommandUniversalIdentifier({
-        applicationUniversalIdentifier: OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
+      getSystemNavigationCommandMenuItemUniversalIdentifier({
+        objectMetadataApplicationUniversalIdentifier:
+          OTHER_APPLICATION_UNIVERSAL_IDENTIFIER,
         objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
       }),
     );

@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { getNavigationCommandUniversalIdentifier } from 'twenty-shared/application';
+import { getSystemNavigationCommandMenuItemUniversalIdentifier } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -27,7 +27,7 @@ type ReownUpdate = {
 @Command({
   name: 'upgrade:2-38:reown-object-navigation-command-menu-items',
   description:
-    'Re-own the object navigation command menu items (engineComponentKey NAVIGATION with an { objectMetadataItemId } payload) onto the derived (application, object) universal identifier (getNavigationCommandUniversalIdentifier, keyed on the application of the target object), retiring the bespoke v5 namespace derivation that was keyed on the object alone. Only universalIdentifier changes (plus isSystemSideEffect for legacy rows still carrying false): position, isPinned, hotKeys and overrides are left untouched so the re-own is workspace-invisible. Path-based NAVIGATION commands (payload: { path }) share the engine key but are not object-keyed and are not touched. Idempotent: rows already holding their derived identifier only get the flag reconciled, and a derived identifier already held by another row keeps its identifier with a warning, isSystemSideEffect still reconciled so the object delete cascade keeps owning it.',
+    'Re-own the object navigation command menu items (engineComponentKey NAVIGATION with an { objectMetadataItemId } payload) onto the derived (application, object) universal identifier (getSystemNavigationCommandMenuItemUniversalIdentifier, keyed on the application of the target object), retiring the bespoke v5 namespace derivation that was keyed on the object alone. Only universalIdentifier changes (plus isSystemSideEffect for legacy rows still carrying false): position, isPinned, hotKeys and overrides are left untouched so the re-own is workspace-invisible. Path-based NAVIGATION commands (payload: { path }) share the engine key but are not object-keyed and are not touched. Idempotent: rows already holding their derived identifier only get the flag reconciled, and a derived identifier already held by another row keeps its identifier with a warning, isSystemSideEffect still reconciled so the object delete cascade keeps owning it.',
 })
 export class ReownObjectNavigationCommandMenuItemsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -135,9 +135,9 @@ export class ReownObjectNavigationCommandMenuItemsCommand extends ProvisionedWor
         continue;
       }
 
-      const derivedUniversalIdentifier = getNavigationCommandUniversalIdentifier(
+      const derivedUniversalIdentifier = getSystemNavigationCommandMenuItemUniversalIdentifier(
         {
-          applicationUniversalIdentifier:
+          objectMetadataApplicationUniversalIdentifier:
             flatObjectMetadata.applicationUniversalIdentifier,
           objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
         },

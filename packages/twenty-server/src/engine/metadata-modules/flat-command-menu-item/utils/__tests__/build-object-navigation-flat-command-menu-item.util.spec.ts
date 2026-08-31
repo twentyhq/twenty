@@ -1,4 +1,4 @@
-import { getNavigationCommandUniversalIdentifier } from 'twenty-shared/application';
+import { getSystemNavigationCommandMenuItemUniversalIdentifier } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
@@ -36,12 +36,12 @@ describe('buildObjectNavigationFlatCommandMenuItem', () => {
   it('should derive the universalIdentifier from the application and the object', () => {
     const result = buildObjectNavigationFlatCommandMenuItem(baseArgs);
 
-    const expectedUniversalIdentifier = getNavigationCommandUniversalIdentifier(
-      {
-        applicationUniversalIdentifier: baseArgs.applicationUniversalIdentifier,
+    const expectedUniversalIdentifier =
+      getSystemNavigationCommandMenuItemUniversalIdentifier({
+        objectMetadataApplicationUniversalIdentifier:
+          baseArgs.applicationUniversalIdentifier,
         objectUniversalIdentifier: baseObjectMetadata.universalIdentifier,
-      },
-    );
+      });
 
     expect(result.universalIdentifier).toBe(expectedUniversalIdentifier);
   });

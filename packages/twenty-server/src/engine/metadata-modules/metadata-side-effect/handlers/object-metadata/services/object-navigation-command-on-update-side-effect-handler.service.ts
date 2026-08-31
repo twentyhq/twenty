@@ -1,7 +1,7 @@
 import { msg, t } from '@lingui/core/macro';
 import { Injectable } from '@nestjs/common';
 
-import { getNavigationCommandUniversalIdentifier } from 'twenty-shared/application';
+import { getSystemNavigationCommandMenuItemUniversalIdentifier } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
@@ -70,8 +70,8 @@ export class ObjectNavigationCommandOnUpdateSideEffectHandlerService extends Met
 
     const existingNavigationFlatCommandMenuItem =
       relatedFlatEntityMaps.flatCommandMenuItemMaps.byUniversalIdentifier[
-        getNavigationCommandUniversalIdentifier({
-          applicationUniversalIdentifier:
+        getSystemNavigationCommandMenuItemUniversalIdentifier({
+          objectMetadataApplicationUniversalIdentifier:
             existingFlatObjectMetadata.applicationUniversalIdentifier,
           objectUniversalIdentifier:
             existingFlatObjectMetadata.universalIdentifier,

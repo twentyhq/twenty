@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { getNavigationCommandUniversalIdentifier } from 'twenty-shared/application';
+import { getSystemNavigationCommandMenuItemUniversalIdentifier } from 'twenty-shared/application';
 import { getMetadataLabelPlaceholder } from 'twenty-shared/i18n';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
@@ -69,10 +69,12 @@ export const buildObjectNavigationUniversalFlatCommandMenuItem = ({
   position: number;
   now: string;
 }): UniversalFlatCommandMenuItem => {
-  const universalIdentifier = getNavigationCommandUniversalIdentifier({
-    applicationUniversalIdentifier,
-    objectUniversalIdentifier: objectMetadata.universalIdentifier,
-  });
+  const universalIdentifier =
+    getSystemNavigationCommandMenuItemUniversalIdentifier({
+      objectMetadataApplicationUniversalIdentifier:
+        applicationUniversalIdentifier,
+      objectUniversalIdentifier: objectMetadata.universalIdentifier,
+    });
 
   const conditionalAvailabilityExpression =
     buildNavigationConditionalAvailabilityExpression({

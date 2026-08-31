@@ -1,4 +1,4 @@
-import { getNavigationCommandUniversalIdentifier } from 'twenty-shared/application';
+import { getSystemNavigationCommandMenuItemUniversalIdentifier } from 'twenty-shared/application';
 
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
@@ -9,10 +9,12 @@ const APPLICATION_UNIVERSAL_IDENTIFIER = 'a1a2a3a4-a5a6-4000-8000-000000000001';
 const OBJECT_UNIVERSAL_IDENTIFIER = 'b1b2b3b4-b5b6-4000-8000-000000000001';
 const OBJECT_ID = 'c1c2c3c4-c5c6-4000-8000-000000000001';
 
-const DERIVED_UNIVERSAL_IDENTIFIER = getNavigationCommandUniversalIdentifier({
-  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-  objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-});
+const DERIVED_UNIVERSAL_IDENTIFIER =
+  getSystemNavigationCommandMenuItemUniversalIdentifier({
+    objectMetadataApplicationUniversalIdentifier:
+      APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+  });
 const LEGACY_UNIVERSAL_IDENTIFIER = 'legacy-v5-derived-identifier';
 
 const buildFlatObjectMetadata = (
