@@ -260,16 +260,18 @@ export class LogicFunctionExecutorService {
         applicationUniversalIdentifier: flatApplication.universalIdentifier,
       });
     } catch (error) {
+      const cause = error instanceof Error ? error.message : String(error);
+
       this.logger.error(
         `Failed to install prebuilt bundle on-demand for function '${flatLogicFunction.id}' ` +
           `(installed=${installedChecksum ?? 'none'}, expected=${flatLogicFunction.checksum ?? 'none'}): ` +
-          `${error instanceof Error ? error.message : String(error)}`,
+          `${cause}`,
         error instanceof Error ? error.stack : undefined,
       );
       throw new LogicFunctionException(
-        `Prebuilt bundle is not installed for function '${flatLogicFunction.id}' ` +
-          `(installed=${installedChecksum ?? 'none'}, expected=${flatLogicFunction.checksum ?? 'none'}). ` +
-          `Rebuild and try again.`,
+        `Failed to install the prebuilt bundle for function '${flatLogicFunction.id}' ` +
+          `(installed=${installedChecksum ?? 'none'}, expected=${flatLogicFunction.checksum ?? 'none'}): ` +
+          `${cause}`,
         LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
       );
     }
