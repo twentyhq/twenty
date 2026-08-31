@@ -313,6 +313,21 @@ describe('ObjectNavigationCommandOnUpdateSideEffectHandlerService', () => {
     expect(result.status).toBe('noop');
   });
 
+  it('noops when the derived identifier is held by a row the engine does not own', () => {
+    const result = handler.buildSideEffects(
+      buildArgs({
+        updatedFlatObjectMetadata: buildFlatObjectMetadata({
+          nameSingular: 'renamedTicket',
+        }),
+        syncedFlatCommandMenuItems: [
+          buildNavigationCommand({ isSystemSideEffect: false }),
+        ],
+      }),
+    );
+
+    expect(result.status).toBe('noop');
+  });
+
   it('fails when the existing object cannot be resolved', () => {
     const args = buildArgs({
       updatedFlatObjectMetadata: buildFlatObjectMetadata({ isActive: false }),

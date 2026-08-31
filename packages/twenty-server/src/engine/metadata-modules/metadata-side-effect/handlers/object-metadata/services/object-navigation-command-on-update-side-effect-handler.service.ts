@@ -21,7 +21,7 @@ export class ObjectNavigationCommandOnUpdateSideEffectHandlerService extends Met
     metadataName: 'objectMetadata',
     name: 'objectNavigationCommandOnUpdate',
     description:
-      'When an object is updated, keep its navigation command menu item in sync with the fields it denormalizes: follow an isActive toggle (deactivate soft-disables rather than deletes, the correct semantics for an overridable entity), recompute conditionalAvailabilityExpression when nameSingular changes (the expression embeds nameSingular, so a rename would otherwise leave the permission gate pointing at a name that no longer exists), and recompute hotKeys when the shortcut changes. The command is resolved by its derived (application, object) identifier, so a workspace whose rows the 2-38 re-own has not converged yet keeps the stale expression until that command runs rather than being reconciled here. Noops when none of isActive, nameSingular or shortcut changed and when the resulting state already matches.',
+      'When an object is updated, keep its navigation command menu item in sync with the fields it denormalizes: follow an isActive toggle (deactivate soft-disables rather than deletes, the correct semantics for an overridable entity), recompute conditionalAvailabilityExpression when nameSingular changes (the expression embeds nameSingular, so a rename would otherwise leave the permission gate pointing at a name that no longer exists), and recompute hotKeys when the shortcut changes. The command is resolved by its derived (application, object) identifier, so a workspace whose rows the 2-38 re-own has not converged yet keeps the stale expression until that command runs rather than being reconciled here. Only an engine-owned command is touched. Noops when none of isActive, nameSingular or shortcut changed and when the resulting state already matches.',
   },
 ) {
   buildSideEffects({
@@ -75,7 +75,10 @@ export class ObjectNavigationCommandOnUpdateSideEffectHandlerService extends Met
         })
       ];
 
-    if (!isDefined(existingNavigationFlatCommandMenuItem)) {
+    if (
+      !isDefined(existingNavigationFlatCommandMenuItem) ||
+      existingNavigationFlatCommandMenuItem.isSystemSideEffect !== true
+    ) {
       return { status: 'noop' };
     }
 
