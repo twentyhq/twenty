@@ -73,53 +73,14 @@ export class FlatCommandMenuItemValidatorService {
       });
     }
 
-    if (
-      isDefined(
+    this.validateNavigationTarget({
+      navigationTargetObjectMetadataUniversalIdentifier:
         flatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier,
-      )
-    ) {
-      const navigationTargetFlatObjectMetadata =
-        findFlatEntityByUniversalIdentifier({
-          universalIdentifier:
-            flatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier,
-          flatEntityMaps: flatObjectMetadataMaps,
-        });
-
-      if (!isDefined(navigationTargetFlatObjectMetadata)) {
-        validationResult.errors.push({
-          code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
-          message: t`Navigation target object metadata not found`,
-          userFriendlyMessage: msg`Navigation target object not found`,
-        });
-      }
-
-      // Side-effect expansion runs before validation, so a caller row and an
-      // engine-emitted one reach here in the same matrix and the flag is what
-      // tells them apart: no caller can set it, the public create input pins it
-      // to false.
-      if (flatCommandMenuItem.isSystemSideEffect !== true) {
-        validationResult.errors.push({
-          code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
-          message: t`Object navigation command menu items are reserved for the engine-owned default command; remove the objectMetadataItemId payload from the command menu item definition`,
-          userFriendlyMessage: msg`Object navigation commands are reserved for the system`,
-        });
-      }
-
-      const objectAlreadyHasNavigationCommandMenuItem =
-        navigationTargetFlatObjectMetadata?.commandMenuItemUniversalIdentifiers.some(
-          (existingUniversalIdentifier) =>
-            existingUniversalIdentifier !==
-            flatCommandMenuItem.universalIdentifier,
-        ) === true;
-
-      if (objectAlreadyHasNavigationCommandMenuItem) {
-        validationResult.errors.push({
-          code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
-          message: t`Object already has a navigation command menu item`,
-          userFriendlyMessage: msg`This object already has a navigation command`,
-        });
-      }
-    }
+      isSystemSideEffect: flatCommandMenuItem.isSystemSideEffect,
+      universalIdentifier: flatCommandMenuItem.universalIdentifier,
+      flatObjectMetadataMaps,
+      validationResult,
+    });
 
     return validationResult;
   }
@@ -161,6 +122,7 @@ export class FlatCommandMenuItemValidatorService {
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatCommandMenuItemMaps: optimisticFlatCommandMenuItemMaps,
+      flatObjectMetadataMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.commandMenuItem
@@ -216,7 +178,86 @@ export class FlatCommandMenuItemValidatorService {
       validationResult,
     });
 
+    // navigationTargetObjectMetadataId is a comparable property, so a from/to
+    // sync can retarget an existing row at another object.
+    this.validateNavigationTarget({
+      navigationTargetObjectMetadataUniversalIdentifier:
+        flatEntityUpdate.navigationTargetObjectMetadataUniversalIdentifier !==
+        undefined
+          ? flatEntityUpdate.navigationTargetObjectMetadataUniversalIdentifier
+          : fromFlatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier,
+      isSystemSideEffect: fromFlatCommandMenuItem.isSystemSideEffect,
+      universalIdentifier,
+      flatObjectMetadataMaps,
+      validationResult,
+    });
+
     return validationResult;
+  }
+
+  private validateNavigationTarget({
+    navigationTargetObjectMetadataUniversalIdentifier,
+    isSystemSideEffect,
+    universalIdentifier,
+    flatObjectMetadataMaps,
+    validationResult,
+  }: {
+    navigationTargetObjectMetadataUniversalIdentifier: string | null;
+    isSystemSideEffect: boolean;
+    universalIdentifier: string;
+    flatObjectMetadataMaps: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.commandMenuItem
+    >['optimisticFlatEntityMapsAndRelatedFlatEntityMaps']['flatObjectMetadataMaps'];
+    validationResult: FailedFlatEntityValidation<
+      'commandMenuItem',
+      'create' | 'update'
+    >;
+  }): void {
+    if (!isDefined(navigationTargetObjectMetadataUniversalIdentifier)) {
+      return;
+    }
+
+    const navigationTargetFlatObjectMetadata =
+      findFlatEntityByUniversalIdentifier({
+        universalIdentifier: navigationTargetObjectMetadataUniversalIdentifier,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
+
+    if (!isDefined(navigationTargetFlatObjectMetadata)) {
+      validationResult.errors.push({
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+        message: t`Navigation target object metadata not found`,
+        userFriendlyMessage: msg`Navigation target object not found`,
+      });
+
+      return;
+    }
+
+    // Side-effect expansion runs before validation, so a caller row and an
+    // engine-emitted one reach here in the same matrix and the flag is what
+    // tells them apart: no caller can set it, the public create input pins it
+    // to false.
+    if (isSystemSideEffect !== true) {
+      validationResult.errors.push({
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+        message: t`Object navigation command menu items are reserved for the engine-owned default command; remove the objectMetadataItemId payload from the command menu item definition`,
+        userFriendlyMessage: msg`Object navigation commands are reserved for the system`,
+      });
+    }
+
+    const objectAlreadyHasNavigationCommandMenuItem =
+      navigationTargetFlatObjectMetadata.commandMenuItemUniversalIdentifiers.some(
+        (existingUniversalIdentifier) =>
+          existingUniversalIdentifier !== universalIdentifier,
+      );
+
+    if (objectAlreadyHasNavigationCommandMenuItem) {
+      validationResult.errors.push({
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+        message: t`Object already has a navigation command menu item`,
+        userFriendlyMessage: msg`This object already has a navigation command`,
+      });
+    }
   }
 
   private validateEngineComponentKeyCoherence({
