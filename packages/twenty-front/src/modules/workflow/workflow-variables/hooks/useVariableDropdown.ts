@@ -15,7 +15,10 @@ import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
+import {
+  type BaseOutputSchemaV2,
+  type InputSchemaPropertyType,
+} from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/icon';
 import { isBaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isBaseOutputSchemaV2';
 import { isLinkOutputSchema } from '@/workflow/workflow-variables/types/guards/isLinkOutputSchema';
@@ -33,6 +36,14 @@ type UseVariableDropdownProps = {
   objectNameSingularsToSelect?: string[];
 };
 
+type VariableDropdownOption = {
+  isLeaf: boolean;
+  label?: string;
+  icon?: string;
+  type?: InputSchemaPropertyType;
+  value?: { toString: () => string } | null;
+};
+
 type UseVariableDropdownReturn = {
   currentPath: string[];
   searchInputValue: string;
@@ -42,8 +53,7 @@ type UseVariableDropdownReturn = {
   searchResults: WorkflowVariableSearchResult[];
   handleSelectSearchResult: (result: WorkflowVariableSearchResult) => void;
   goBack: () => void;
-  // TODO: fix typing here
-  options: [string, any][];
+  options: Array<[string, VariableDropdownOption]>;
 };
 
 export const useVariableDropdown = ({

@@ -216,7 +216,7 @@ export const WorkflowVariablesDropdownStepItems = ({
                         )
                   }
                   contextualText={
-                    subStep.isLeaf ? subStep?.value?.toString() : undefined
+                    subStep.isLeaf ? subStep.value?.toString() : undefined
                   }
                 />
               );
