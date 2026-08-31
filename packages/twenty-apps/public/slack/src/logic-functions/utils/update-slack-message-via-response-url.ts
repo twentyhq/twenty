@@ -1,5 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
+
 export const updateSlackMessageViaResponseUrl = async ({
   responseUrl,
   text,
@@ -17,5 +19,9 @@ export const updateSlackMessageViaResponseUrl = async ({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ replace_original: true, text }),
     });
-  } catch {}
+  } catch (error) {
+    console.warn(
+      `[slack] response_url message update failed: ${toErrorMessage(error)}`,
+    );
+  }
 };
