@@ -2,6 +2,8 @@ import { type WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { UNVERIFIABLE_SLACK_TEAM_ID_FAILURE } from 'src/logic-functions/constants/unverifiable-slack-team-id-failure';
+import { isUnverifiableSlackTeamIdClaim } from 'src/logic-functions/utils/is-unverifiable-slack-team-id-claim';
 import {
   type ResolvedSlackUser,
   resolveSlackUserByEmail,
@@ -61,20 +63,14 @@ export const resolveLinkTargetByEmail = async ({
     };
   }
 
-  // Slack resolved the account but would not say which workspace it is in, so a
-  // team id other than the installed one is a claim nothing can corroborate -
-  // and claiming another workspace is what skips the consent request.
   if (
-    isNonEmptyString(requestedSlackTeamId) &&
-    !isNonEmptyString(resolvedUser.slackTeamId) &&
-    requestedSlackTeamId !== installedSlackTeamId
+    isUnverifiableSlackTeamIdClaim({
+      requestedSlackTeamId,
+      resolvedSlackAccount: resolvedUser,
+      installedSlackTeamId,
+    })
   ) {
-    return {
-      success: false,
-      message: 'Could not verify the Slack workspace for that user',
-      error:
-        'Slack did not confirm which workspace this user belongs to, so that team id cannot be accepted. Leave the team id blank to use the installed workspace.',
-    };
+    return UNVERIFIABLE_SLACK_TEAM_ID_FAILURE;
   }
 
   return {

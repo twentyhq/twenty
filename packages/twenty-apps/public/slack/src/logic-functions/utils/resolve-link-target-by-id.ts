@@ -2,8 +2,10 @@ import { type WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { UNVERIFIABLE_SLACK_TEAM_ID_FAILURE } from 'src/logic-functions/constants/unverifiable-slack-team-id-failure';
 import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
+import { isUnverifiableSlackTeamIdClaim } from 'src/logic-functions/utils/is-unverifiable-slack-team-id-claim';
 
 type IdLinkTarget =
   | {
@@ -12,13 +14,6 @@ type IdLinkTarget =
       identity: SlackUserIdentity | undefined;
     }
   | { success: false; message: string; error: string };
-
-const UNVERIFIABLE_TEAM_ID_TARGET: IdLinkTarget = {
-  success: false,
-  message: 'Could not verify the Slack workspace for that user',
-  error:
-    'Slack did not confirm which workspace this user belongs to, so that team id cannot be accepted. Leave the team id blank to use the installed workspace.',
-};
 
 export const resolveLinkTargetById = async ({
   slackClient,
@@ -49,16 +44,14 @@ export const resolveLinkTargetById = async ({
     };
   }
 
-  // Slack resolved the account but would not say which workspace it is in, so a
-  // team id other than the installed one is a claim nothing can corroborate -
-  // and claiming another workspace is what skips the consent request.
   if (
-    isNonEmptyString(requestedSlackTeamId) &&
-    isDefined(identity) &&
-    !isNonEmptyString(identity.slackTeamId) &&
-    requestedSlackTeamId !== installedSlackTeamId
+    isUnverifiableSlackTeamIdClaim({
+      requestedSlackTeamId,
+      resolvedSlackAccount: identity,
+      installedSlackTeamId,
+    })
   ) {
-    return UNVERIFIABLE_TEAM_ID_TARGET;
+    return UNVERIFIABLE_SLACK_TEAM_ID_FAILURE;
   }
 
   const slackTeamId = isNonEmptyString(requestedSlackTeamId)

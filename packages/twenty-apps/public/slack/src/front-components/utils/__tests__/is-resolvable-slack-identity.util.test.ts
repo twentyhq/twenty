@@ -7,7 +7,6 @@ describe('isResolvableSlackIdentity', () => {
     expect(
       isResolvableSlackIdentity({
         slackUserId: 'U0123456789',
-        slackTeamId: undefined,
       }),
     ).toBe(true);
   });
@@ -16,22 +15,18 @@ describe('isResolvableSlackIdentity', () => {
     expect(
       isResolvableSlackIdentity({
         slackUserId: 'W0123456789',
-        slackTeamId: undefined,
       }),
     ).toBe(true);
   });
 
   it('should reject an id still being typed', () => {
-    expect(
-      isResolvableSlackIdentity({ slackUserId: 'U01', slackTeamId: undefined }),
-    ).toBe(false);
+    expect(isResolvableSlackIdentity({ slackUserId: 'U01' })).toBe(false);
   });
 
   it('should reject an id not shaped like a Slack user id', () => {
     expect(
       isResolvableSlackIdentity({
         slackUserId: 'not-an-id',
-        slackTeamId: undefined,
       }),
     ).toBe(false);
   });
@@ -40,7 +35,6 @@ describe('isResolvableSlackIdentity', () => {
     expect(
       isResolvableSlackIdentity({
         slackUserId: undefined,
-        slackTeamId: undefined,
       }),
     ).toBe(false);
   });

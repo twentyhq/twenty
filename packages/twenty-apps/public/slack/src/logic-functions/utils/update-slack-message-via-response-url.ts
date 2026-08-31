@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { type SlackMessageUpdateResult } from 'src/logic-functions/types/slack-message-update-result.type';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 const SLACK_RESPONSE_URL_ORIGIN = 'https://hooks.slack.com';
@@ -18,7 +19,7 @@ export const updateSlackMessageViaResponseUrl = async ({
 }: {
   responseUrl: string | undefined;
   text: string;
-}): Promise<{ success: boolean; error?: string }> => {
+}): Promise<SlackMessageUpdateResult> => {
   if (!isNonEmptyString(responseUrl)) {
     return {
       success: false,

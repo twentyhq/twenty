@@ -98,9 +98,8 @@ const getSourceLabel = (source: string | null): string =>
 const getSourceColor = (source: string | null): TagColor =>
   source === SLACK_USER_LINK_SOURCE.MANUAL ? 'blue' : 'green';
 
-// An absent state means a link written before consent existed, which still
-// lends its member access. A state this version cannot interpret is not the
-// same thing and must not be shown as consented.
+// An absent state is a pre-consent link and still lends access; a state this
+// version cannot interpret is not the same thing and is left unlabelled.
 const toDisplayedConsentState = (
   consentState: string | null,
 ): SlackUserLinkConsentState | undefined => {

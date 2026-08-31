@@ -6,5 +6,5 @@ const SLACK_USER_ID_PATTERN = /^[UW][A-Z0-9]{7,}$/i;
 
 export const isResolvableSlackIdentity = ({
   slackUserId,
-}: SlackResolveInput): boolean =>
+}: Pick<SlackResolveInput, 'slackUserId'>): boolean =>
   isNonEmptyString(slackUserId) && SLACK_USER_ID_PATTERN.test(slackUserId);
