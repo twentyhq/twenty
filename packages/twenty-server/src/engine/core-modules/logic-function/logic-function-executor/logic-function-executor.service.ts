@@ -165,9 +165,10 @@ export class LogicFunctionExecutorService {
     });
 
     if (effectiveExecutionMode === LogicFunctionExecutionMode.PREBUILT) {
-      await this.assertPrebuiltBundleInstalled({
+      await this.ensurePrebuiltBundleInstalled({
         driver,
         flatLogicFunction,
+        flatApplication,
       });
     }
 
@@ -233,20 +234,49 @@ export class LogicFunctionExecutorService {
     return flatLogicFunction.executionMode ?? LogicFunctionExecutionMode.LIVE;
   }
 
-  private async assertPrebuiltBundleInstalled({
+  // The bundle is installed by the migration action handlers, but with the local
+  // driver it only lands on the node that ran the install, so any other node has
+  // to install it on first execution.
+  private async ensurePrebuiltBundleInstalled({
     driver,
     flatLogicFunction,
+    flatApplication,
   }: {
     driver: ReturnType<LogicFunctionDriverFactory['getCurrentDriver']>;
     flatLogicFunction: FlatLogicFunction;
+    flatApplication: FlatApplication;
   }): Promise<void> {
     const installedChecksum =
       await driver.getInstalledBundleChecksum(flatLogicFunction);
 
-    if (installedChecksum !== flatLogicFunction.checksum) {
+    if (installedChecksum === flatLogicFunction.checksum) {
+      return;
+    }
+
+    if (isDefined(installedChecksum)) {
+      throw new LogicFunctionException(
+        `Prebuilt bundle is outdated for function '${flatLogicFunction.id}' ` +
+          `(installed=${installedChecksum}, expected=${flatLogicFunction.checksum ?? 'none'}). ` +
+          `Rebuild and try again.`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
+      );
+    }
+
+    try {
+      await driver.installPrebuiltBundle({
+        flatLogicFunction,
+        flatApplication,
+        applicationUniversalIdentifier: flatApplication.universalIdentifier,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to install prebuilt bundle on-demand for function '${flatLogicFunction.id}': ` +
+          `${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
+      );
       throw new LogicFunctionException(
         `Prebuilt bundle is not installed for function '${flatLogicFunction.id}' ` +
-          `(installed=${installedChecksum ?? 'none'}, expected=${flatLogicFunction.checksum ?? 'none'}). ` +
+          `(expected=${flatLogicFunction.checksum ?? 'none'}). ` +
           `Rebuild and try again.`,
         LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
       );
