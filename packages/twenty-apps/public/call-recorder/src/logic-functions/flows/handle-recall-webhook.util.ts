@@ -2,7 +2,11 @@ import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { TERMINAL_RECALL_BOT_STATUS_CODES } from 'src/logic-functions/constants/terminal-recall-bot-status-codes';
+import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or-eject-recall-bot.util';
+import { cancelRecallBotUnlessReclaimed } from 'src/logic-functions/flows/cancel-recall-bot-unless-reclaimed.util';
 import { enqueueCallRecordingArtifactsImport } from 'src/logic-functions/data/enqueue-call-recording-artifacts-import.util';
+import { enqueueRecallBotCancellationRetry } from 'src/logic-functions/data/enqueue-recall-bot-cancellation-retry.util';
 import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-recordings-by-filter.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isRecallRecordingDoneSignal } from 'src/logic-functions/domain/is-recall-recording-done-signal.util';
@@ -32,6 +36,11 @@ type RecallWebhookHandlerResult =
       status: 'skipped';
       event: string | null;
       reason: string;
+    }
+  | {
+      status: 'staleBotCanceled';
+      event: string;
+      externalBotId: string;
     };
 
 export const handleRecallWebhook = async ({
@@ -88,11 +97,7 @@ const handleRecallStatusEvent = async ({
   });
 
   if (isUndefined(callRecording)) {
-    return {
-      status: 'skipped',
-      event,
-      reason: 'no matching call recording',
-    };
+    return handleUnclaimedRecallBotStatusEvent({ client, webhookEvent });
   }
 
   const callRecordingStatus = resolveStatusAgainstKnownRecording({
@@ -183,6 +188,80 @@ const queueCallRecordingArtifactsImport = async ({
     status: 'queued',
     event: webhookEvent.event,
     callRecordingId: callRecording.id,
+  };
+};
+
+// An unclaimed bot would still join and record; it is removed when it
+// announces itself instead of waiting for the daily sweep.
+const handleUnclaimedRecallBotStatusEvent = async ({
+  client,
+  webhookEvent,
+}: {
+  client: CoreApiClient;
+  webhookEvent: RecallWebhookEvent;
+}): Promise<RecallWebhookHandlerResult> => {
+  const { event, statusCode, externalBotId, callRecordingIdFromMetadata } =
+    webhookEvent;
+
+  if (isUndefined(externalBotId)) {
+    return {
+      status: 'skipped',
+      event,
+      reason: 'no matching call recording',
+    };
+  }
+
+  if (
+    !isUndefined(statusCode) &&
+    (TERMINAL_RECALL_BOT_STATUS_CODES as readonly string[]).includes(statusCode)
+  ) {
+    return {
+      status: 'skipped',
+      event,
+      reason: 'no matching call recording for a finished bot',
+    };
+  }
+
+  if (isUndefined(callRecordingIdFromMetadata)) {
+    if (await cancelOrEjectRecallBot(externalBotId)) {
+      return { status: 'staleBotCanceled', event, externalBotId };
+    }
+
+    return {
+      status: 'skipped',
+      event,
+      reason: 'stale bot cancellation failed',
+    };
+  }
+
+  const cancelResult = await cancelRecallBotUnlessReclaimed({
+    client,
+    callRecordingId: callRecordingIdFromMetadata,
+    externalBotId,
+  });
+
+  if (cancelResult.status === 'reclaimed') {
+    return {
+      status: 'skipped',
+      event,
+      reason: 'call recording reclaimed the bot',
+    };
+  }
+
+  if (cancelResult.status === 'canceled') {
+    return { status: 'staleBotCanceled', event, externalBotId };
+  }
+
+  await enqueueRecallBotCancellationRetry({
+    callRecordingId: callRecordingIdFromMetadata,
+    externalBotId,
+    ladderAttempt: 0,
+  });
+
+  return {
+    status: 'skipped',
+    event,
+    reason: 'stale bot cancellation failed; delayed retry scheduled',
   };
 };
 
