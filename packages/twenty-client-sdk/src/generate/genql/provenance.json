@@ -131,9 +131,6 @@
       "origin": "engine",
       "sha256": "593a05b507c4f83c65184790b93de5f249e5f12f2d836b4e34e8f18f448b40a9"
     },
-    "runtime-templates.ts": {
-      "origin": "twenty"
-    },
     "runtime/batcher.ts": {
       "origin": "engine",
       "sha256": "fb14fae43a3879f3759bede68d3e2c2340bfd497dc59313551b82627d75a86bb"

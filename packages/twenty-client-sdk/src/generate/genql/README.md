@@ -22,7 +22,7 @@ in abandoned and vulnerable transitive packages (`undici`, `native-fetch`,
 
 - `render/` — the schema → TypeScript client renderers (copied verbatim).
 - `runtime/` — the genql client runtime, copied verbatim into every generated
-  client's `runtime/` folder (see `runtime-templates.ts`).
+  client's `runtime/` folder (see `../runtime-templates.ts`).
 - `tasks/`, `helpers/`, `main.ts` — narrowed orchestration.
 
 ## What was changed vs upstream
@@ -36,7 +36,7 @@ in abandoned and vulnerable transitive packages (`undici`, `native-fetch`,
 - **Replaced `@graphql-tools/load`** with graphql's own `buildSchema` — Twenty
   passes an SDL string, so the extra loader (and its dependency) is unnecessary.
   Verified to produce byte-identical output.
-- **Runtime files are imported as `?raw` text** (`runtime-templates.ts`) instead
+- **Runtime files are imported as `?raw` text** (`../runtime-templates.ts`) instead
   of read from `node_modules` at generation time, so they ship with this bundle.
 - **`Config` was narrowed** to the schema-string inputs Twenty actually passes
   (`schema`, `output`, `scalarTypes`, `sortProperties`). The introspection
