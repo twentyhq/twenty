@@ -35,6 +35,24 @@ export const findSlackUserLink = async (
     return undefined;
   }
 
+  // An absent value means a link written before the field existed, which the
+  // consent check trusts. A value this version cannot interpret must never
+  // collapse into that, so refuse the record and let every caller fail closed.
+  if (isNonEmptyString(node.source) && !isSlackUserLinkSource(node.source)) {
+    throw new Error(
+      `Slack user link ${node.id} has an unsupported source "${node.source}"`,
+    );
+  }
+
+  if (
+    isNonEmptyString(node.consentState) &&
+    !isSlackUserLinkConsentState(node.consentState)
+  ) {
+    throw new Error(
+      `Slack user link ${node.id} has an unsupported consentState "${node.consentState}"`,
+    );
+  }
+
   return {
     id: node.id,
     workspaceMemberId: node.workspaceMemberId ?? undefined,
