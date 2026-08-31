@@ -1,5 +1,6 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { AppChip } from '@/applications/components/AppChip';
+import { useApplicationFromStore } from '@/applications/hooks/useApplicationFromStore';
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
@@ -10,8 +11,11 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useQuery } from '@apollo/client/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type Manifest } from 'twenty-shared/application';
@@ -35,7 +39,6 @@ import {
   ApplicationState,
   FindMarketplaceAppDetailDocument,
   FindMarketplaceAppManifestDocument,
-  FindOneApplicationByUniversalIdentifierDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
@@ -60,14 +63,6 @@ export const SettingsAvailableApplicationDetails = () => {
     PermissionFlagType.APPLICATIONS,
   );
 
-  const { data: applicationData } = useQuery(
-    FindOneApplicationByUniversalIdentifierDocument,
-    {
-      variables: { universalIdentifier: availableApplicationId },
-      skip: !availableApplicationId,
-    },
-  );
-
   const { data: detailData } = useQuery(FindMarketplaceAppDetailDocument, {
     variables: { universalIdentifier: availableApplicationId },
     skip: !availableApplicationId,
@@ -78,7 +73,9 @@ export const SettingsAvailableApplicationDetails = () => {
     skip: !availableApplicationId,
   });
 
-  const application = applicationData?.findOneApplication;
+  const { application, isApplicationsStoreReady } = useApplicationFromStore({
+    universalIdentifier: availableApplicationId,
+  });
 
   const detail = detailData?.findMarketplaceAppDetail;
   const manifest = manifestData?.findMarketplaceAppDetail?.manifest as
@@ -99,9 +96,16 @@ export const SettingsAvailableApplicationDetails = () => {
       ? `https://www.npmjs.com/package/${detail.sourcePackage}`
       : undefined;
 
+  const { enqueueErrorSnackBar } = useSnackBar();
+
+  const [installedApplicationId, setInstalledApplicationId] = useState<
+    string | null
+  >(null);
+
   const isUnlisted = isDefined(detail) && !detail.isListed;
   const isApplicationInstalling =
-    application?.state === ApplicationState.INSTALLING;
+    application?.state === ApplicationState.INSTALLING ||
+    isNonEmptyString(installedApplicationId);
   const isAlreadyInstalled = isDefined(application) && !isApplicationInstalling;
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
@@ -113,20 +117,64 @@ export const SettingsAvailableApplicationDetails = () => {
     isNewerSemver(latestAvailableVersion, currentVersion);
 
   const handleInstall = async () => {
-    if (isDefined(detail)) {
-      const data = await install({
-        universalIdentifier: detail.universalIdentifier,
-      });
-
-      const applicationId = data?.installApplication?.id;
-
-      if (isDefined(applicationId)) {
-        navigateSettings(SettingsPath.ApplicationDetail, {
-          applicationId,
-        });
-      }
+    if (!isDefined(detail)) {
+      return;
     }
+
+    const data = await install({
+      universalIdentifier: detail.universalIdentifier,
+    });
+
+    setInstalledApplicationId(data?.installApplication?.id ?? null);
   };
+
+  const [hasSeenInstallingApplication, setHasSeenInstallingApplication] =
+    useState(false);
+
+  // The install runs in a background job, so this page follows the row it
+  // created: it opens the application once the install completes, and stays
+  // here with an error when the rolled back install takes the row away. The row
+  // has to be seen first — it only reaches the store on the created event, a
+  // moment after the mutation returns.
+  useEffect(() => {
+    if (!isNonEmptyString(installedApplicationId)) {
+      return;
+    }
+
+    if (isDefined(application)) {
+      if (application.state === ApplicationState.INSTALLED) {
+        setHasSeenInstallingApplication(false);
+        setInstalledApplicationId(null);
+
+        navigateSettings(SettingsPath.ApplicationDetail, {
+          applicationId: installedApplicationId,
+        });
+
+        return;
+      }
+
+      setHasSeenInstallingApplication(true);
+
+      return;
+    }
+
+    if (isApplicationsStoreReady && hasSeenInstallingApplication) {
+      setHasSeenInstallingApplication(false);
+      setInstalledApplicationId(null);
+
+      enqueueErrorSnackBar({
+        message: t`Failed to install ${displayName}.`,
+      });
+    }
+  }, [
+    application,
+    displayName,
+    enqueueErrorSnackBar,
+    hasSeenInstallingApplication,
+    installedApplicationId,
+    isApplicationsStoreReady,
+    navigateSettings,
+  ]);
 
   const handleUpgrade = async () => {
     if (!isDefined(registrationId) || !isDefined(latestAvailableVersion)) {

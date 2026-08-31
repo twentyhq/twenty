@@ -19,6 +19,7 @@ import {
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
 import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { serializeApplicationForBroadcast } from 'src/engine/core-modules/application/utils/serialize-application-for-broadcast.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -640,7 +641,7 @@ export class ApplicationService {
       workspaceId: data.workspaceId,
       type: 'created',
       recordId: savedApplication.id,
-      properties: { after: { ...savedApplication } },
+      properties: { after: serializeApplicationForBroadcast(savedApplication) },
     });
 
     return savedApplication;
@@ -744,7 +745,7 @@ export class ApplicationService {
       recordId: id,
       properties: {
         updatedFields,
-        after: { ...updatedApplication },
+        after: serializeApplicationForBroadcast(updatedApplication),
       },
     });
 

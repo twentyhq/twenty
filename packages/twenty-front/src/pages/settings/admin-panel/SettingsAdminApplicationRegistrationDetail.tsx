@@ -1,6 +1,11 @@
+import { useOnApplicationsStoreChange } from '@/applications/hooks/useOnApplicationsStoreChange';
+import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client/react';
-import { FindOneAdminApplicationRegistrationDocument } from '~/generated-admin/graphql';
+import {
+  FindAdminApplicationRegistrationInstalledWorkspacesDocument,
+  FindOneAdminApplicationRegistrationDocument,
+} from '~/generated-admin/graphql';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { useLingui } from '@lingui/react/macro';
@@ -40,7 +45,7 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
     applicationRegistrationId: string;
   }>();
 
-  const { data, loading } = useQuery(
+  const { data, loading, refetch } = useQuery(
     FindOneAdminApplicationRegistrationDocument,
     {
       client: apolloAdminClient,
@@ -48,6 +53,22 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
       skip: !applicationRegistrationId,
     },
   );
+
+  // The admin panel reads applications through its own Apollo client, which the
+  // metadata store does not feed.
+  const refreshAdminRegistration = useCallback(() => {
+    void refetch();
+
+    void apolloAdminClient
+      .refetchQueries({
+        include: [FindAdminApplicationRegistrationInstalledWorkspacesDocument],
+      })
+      .catch(() => {
+        // Best-effort: the installed workspaces keep their last value.
+      });
+  }, [apolloAdminClient, refetch]);
+
+  useOnApplicationsStoreChange(refreshAdminRegistration);
 
   const registration = data?.findOneAdminApplicationRegistration;
 

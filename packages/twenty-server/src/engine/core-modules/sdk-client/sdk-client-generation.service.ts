@@ -8,11 +8,13 @@ import path, { join } from 'path';
 
 import { replaceCoreClient } from 'twenty-client-sdk/generate';
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { serializeApplicationForBroadcast } from 'src/engine/core-modules/application/utils/serialize-application-for-broadcast.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
@@ -261,6 +263,16 @@ export class SdkClientGenerationService {
     sdkClientCoreChecksum: string;
   }): Promise<void> {
     try {
+      // The front metadata store rebuilds the application row from `after`, so a
+      // payload carrying the checksum alone would drop the other columns it holds.
+      const application = await this.applicationRepository.findOne({
+        where: { id: applicationId, workspaceId },
+      });
+
+      if (!isDefined(application)) {
+        return;
+      }
+
       await this.workspaceEventBroadcaster.broadcast({
         workspaceId,
         events: [
@@ -271,7 +283,7 @@ export class SdkClientGenerationService {
             properties: {
               updatedFields: ['sdkClientCoreChecksum'],
               after: {
-                id: applicationId,
+                ...serializeApplicationForBroadcast(application),
                 sdkClientCoreChecksum,
               },
             },

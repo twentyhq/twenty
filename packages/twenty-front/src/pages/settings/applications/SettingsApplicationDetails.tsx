@@ -1,5 +1,7 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { AppChip } from '@/applications/components/AppChip';
+import { useApplicationFromStore } from '@/applications/hooks/useApplicationFromStore';
+import { useOnApplicationsStoreChange } from '@/applications/hooks/useOnApplicationsStoreChange';
 import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
@@ -17,7 +19,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
@@ -68,24 +70,42 @@ export const SettingsApplicationDetails = () => {
     APPLICATION_DETAIL_ID,
   );
 
-  const { data, loading, error } = useQuery(FindOneApplicationDocument, {
-    variables: { id: applicationId },
-    skip: !applicationId,
-  });
+  const { data, loading, error, refetch } = useQuery(
+    FindOneApplicationDocument,
+    {
+      variables: { id: applicationId },
+      skip: !applicationId,
+    },
+  );
 
   const application = data?.findOneApplication;
 
+  const { application: storedApplication, isApplicationsStoreReady } =
+    useApplicationFromStore({ applicationId });
+
   // An uninstall — or a failed install rolled back — deletes the row this page
-  // is built on, and the lookup then answers NOT_FOUND: send the visitor back to
-  // the applications page rather than leaving them on a page without an app.
-  // Any other error is transient as far as this page knows, so it stays put.
+  // is built on. The store alone is not proof it is gone: it is persisted across
+  // sessions and refilled asynchronously, so the lookup has to answer NOT_FOUND
+  // too. Any other error is transient as far as this page knows, so it stays put.
   const hasVanished =
+    isApplicationsStoreReady &&
+    !isDefined(storedApplication) &&
     !loading &&
     (isGraphqlErrorOfType(error, 'NOT_FOUND') ||
       (!isDefined(error) && !isDefined(application)));
 
-  const { connectionProviders } =
+  const { connectionProviders, refetch: refetchConnectionProviders } =
     useFindApplicationConnectionProviders(applicationId);
+
+  // An install or upgrade attaches its metadata to the application as it runs,
+  // so everything this page reads besides the row itself has to be re-read once
+  // the row settles.
+  const refreshApplicationDetail = useCallback(() => {
+    void refetch();
+    void refetchConnectionProviders();
+  }, [refetch, refetchConnectionProviders]);
+
+  useOnApplicationsStoreChange(refreshApplicationDetail);
 
   const { data: detailData } = useQuery(FindMarketplaceAppDetailDocument, {
     variables: { universalIdentifier: application?.universalIdentifier ?? '' },
@@ -314,19 +334,24 @@ export const SettingsApplicationDetails = () => {
                   }
                 : undefined
             }
-            isInstalled={application.state !== ApplicationState.INSTALLING}
+            isInstalled={
+              storedApplication?.state !== ApplicationState.INSTALLING
+            }
             canInstallMarketplaceApps={canInstallMarketplaceApps}
-            isInstalling={application.state === ApplicationState.INSTALLING}
+            isInstalling={
+              storedApplication?.state === ApplicationState.INSTALLING
+            }
             hasUpdate={hasUpdate}
             onUpgrade={handleUpgrade}
             isUpgrading={
-              isUpgrading || application.state === ApplicationState.UPGRADING
+              isUpgrading ||
+              storedApplication?.state === ApplicationState.UPGRADING
             }
             canBeUninstalled={application.canBeUninstalled}
             onUninstall={handleUninstall}
             isUninstalling={
               isUninstalling ||
-              application.state === ApplicationState.UNINSTALLING
+              storedApplication?.state === ApplicationState.UNINSTALLING
             }
           />
         );

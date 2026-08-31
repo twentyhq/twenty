@@ -7,6 +7,7 @@ import {
 } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { useApplicationFromStore } from '@/applications/hooks/useApplicationFromStore';
 import {
   SettingsTableCard,
   type TableItem,
@@ -16,7 +17,6 @@ import {
   ApplicationRegistrationSourceType,
   ApplicationRegistrationTarballUrlDocument,
   ApplicationState,
-  FindOneApplicationSummaryDocument,
   GetPublicWorkspaceDataByIdDocument,
 } from '~/generated-metadata/graphql';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -74,19 +74,14 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
     },
   );
 
-  const { data: applicationSummaryData } = useQuery(
-    FindOneApplicationSummaryDocument,
-    {
-      variables: { universalIdentifier: registration.universalIdentifier },
-      skip: !registration.universalIdentifier,
-    },
-  );
+  const { application } = useApplicationFromStore({
+    universalIdentifier: registration.universalIdentifier,
+  });
 
-  const applicationSummary = applicationSummaryData?.findOneApplication;
   const isApplicationInstalling =
-    applicationSummary?.state === ApplicationState.INSTALLING;
+    application?.state === ApplicationState.INSTALLING;
   const isApplicationInstalled =
-    isDefined(applicationSummary) && !isApplicationInstalling;
+    isDefined(application) && !isApplicationInstalling;
 
   const { data: ownerWorkspaceData } = useQuery(
     GetPublicWorkspaceDataByIdDocument,
