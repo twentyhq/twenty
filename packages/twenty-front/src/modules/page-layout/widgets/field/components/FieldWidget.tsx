@@ -125,19 +125,21 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
   }
 
   if (isFieldRelation(fieldDefinition)) {
-    const isJunctionRelation = isDefined(
-      getJunctionConfig({
-        settings: fieldDefinition.metadata.settings,
-        relationObjectMetadataId:
-          fieldDefinition.metadata.relationObjectMetadataId,
-        relationTargetFieldMetadataId:
-          fieldDefinition.metadata.relationFieldMetadataId,
-        sourceObjectMetadataId: objectMetadataItem.id,
-        objectMetadataItems,
-      }),
-    );
+    const junctionConfig = getJunctionConfig({
+      settings: fieldDefinition.metadata.settings,
+      relationObjectMetadataId:
+        fieldDefinition.metadata.relationObjectMetadataId,
+      relationTargetFieldMetadataId:
+        fieldDefinition.metadata.relationFieldMetadataId,
+      sourceObjectMetadataId: objectMetadataItem.id,
+      objectMetadataItems,
+    });
 
-    if (isJunctionRelation) {
+    if (isDefined(junctionConfig)) {
+      if (!junctionConfig.isValid) {
+        return null;
+      }
+
       if (fieldDisplayMode === FieldDisplayMode.CARD) {
         return (
           <FieldWidgetJunctionRelationCard

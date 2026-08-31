@@ -15,6 +15,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
@@ -258,17 +259,10 @@ export class BackfillActivityTargetsJunctionTargetCommand extends ProvisionedWor
       return undefined;
     }
 
-    const junctionTargetSettings = junctionTargetFlatFieldMetadata.settings;
-    const isMorphTarget =
-      junctionTargetFlatFieldMetadata.type === FieldMetadataType.MORPH_RELATION;
-
     if (
-      !isMorphTarget &&
-      (!isFieldMetadataSettingsOfType(
-        junctionTargetSettings,
-        FieldMetadataType.RELATION,
-      ) ||
-        junctionTargetSettings.relationType !== RelationType.MANY_TO_ONE)
+      !isMorphOrRelationFlatFieldMetadata(junctionTargetFlatFieldMetadata) ||
+      junctionTargetFlatFieldMetadata.settings.relationType !==
+        RelationType.MANY_TO_ONE
     ) {
       this.logger.warn(
         `Junction target field for ${label} is not a many to one relation in workspace ${workspaceId}, skipping`,

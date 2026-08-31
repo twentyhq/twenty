@@ -103,6 +103,7 @@ const LEGACY_TASK_TARGET_PERSON_FLAT_FIELD_METADATA = buildFlatFieldMetadata({
 describe('BackfillActivityTargetsJunctionTargetCommand', () => {
   let command: BackfillActivityTargetsJunctionTargetCommand;
   let findOneMock: jest.Mock;
+  let getOrRecomputeMock: jest.Mock;
   let updateMock: jest.Mock;
 
   beforeEach(() => {
@@ -117,6 +118,14 @@ describe('BackfillActivityTargetsJunctionTargetCommand', () => {
         settings: { relationType: RelationType.ONE_TO_MANY },
       });
     updateMock = jest.fn();
+    getOrRecomputeMock = jest.fn().mockResolvedValue({
+      flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
+        NOTE_TARGETS_FLAT_FIELD_METADATA,
+        TASK_TARGETS_FLAT_FIELD_METADATA,
+        LEGACY_NOTE_TARGET_PERSON_FLAT_FIELD_METADATA,
+        LEGACY_TASK_TARGET_PERSON_FLAT_FIELD_METADATA,
+      ]),
+    });
 
     const transactionalRepository = {
       findOne: findOneMock,
@@ -140,14 +149,7 @@ describe('BackfillActivityTargetsJunctionTargetCommand', () => {
     command = new BackfillActivityTargetsJunctionTargetCommand(
       {} as WorkspaceIteratorService,
       {
-        getOrRecompute: jest.fn().mockResolvedValue({
-          flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
-            NOTE_TARGETS_FLAT_FIELD_METADATA,
-            TASK_TARGETS_FLAT_FIELD_METADATA,
-            LEGACY_NOTE_TARGET_PERSON_FLAT_FIELD_METADATA,
-            LEGACY_TASK_TARGET_PERSON_FLAT_FIELD_METADATA,
-          ]),
-        }),
+        getOrRecompute: getOrRecomputeMock,
       } as unknown as WorkspaceCacheService,
       {} as WorkspaceMigrationRunnerService,
       fieldMetadataRepository,
@@ -186,5 +188,28 @@ describe('BackfillActivityTargetsJunctionTargetCommand', () => {
       workspaceId: WORKSPACE_ID,
       workspaceMigrationRunnerService: expect.anything(),
     });
+  });
+
+  it('does not backfill a one-to-many morph target', async () => {
+    getOrRecomputeMock.mockResolvedValueOnce({
+      flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
+        NOTE_TARGETS_FLAT_FIELD_METADATA,
+        {
+          ...LEGACY_NOTE_TARGET_PERSON_FLAT_FIELD_METADATA,
+          type: FieldMetadataType.MORPH_RELATION,
+          settings: { relationType: RelationType.ONE_TO_MANY },
+        },
+      ]),
+    });
+
+    await command.runOnWorkspace({
+      workspaceId: WORKSPACE_ID,
+      options: {},
+      index: 0,
+      total: 1,
+    });
+
+    expect(updateMock).not.toHaveBeenCalled();
+    expect(invalidateFieldMetadataCacheMock).not.toHaveBeenCalled();
   });
 });

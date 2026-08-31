@@ -3,6 +3,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { hasJunctionTargetFieldId } from './hasJunctionTargetFieldId';
+import { isValidJunctionTargetField } from './isValidJunctionTargetField';
 
 export type JunctionObjectMetadataItem = Pick<
   EnrichedObjectMetadataItem,
@@ -19,6 +20,7 @@ export type JunctionConfig = {
   targetFields: FieldMetadataItem[];
   sourceField?: FieldMetadataItem;
   isMorphRelation: boolean;
+  isValid: boolean;
 };
 
 type GetJunctionConfigArgs = {
@@ -73,7 +75,8 @@ export const getJunctionConfig = ({
     );
   };
 
-  const configuredTargetField = hasJunctionTargetFieldId(settings)
+  const hasConfiguredTargetField = hasJunctionTargetFieldId(settings);
+  const configuredTargetField = hasConfiguredTargetField
     ? junctionObjectMetadata.fields.find(
         (field) => field.id === settings.junctionTargetFieldId,
       )
@@ -85,6 +88,12 @@ export const getJunctionConfig = ({
     : undefined;
   const sourceField =
     relationSourceField ?? findSourceField(configuredTargetField?.id);
+  const invalidConfiguredJunction: JunctionConfig = {
+    junctionObjectMetadata,
+    targetFields: [],
+    isMorphRelation: false,
+    isValid: false,
+  };
 
   // Legacy workspaces can lack the target marker. Only infer a pure junction:
   // an unlabeled intermediate record with exactly one morph target.
@@ -106,19 +115,25 @@ export const getJunctionConfig = ({
       : undefined);
 
   if (!isDefined(targetField)) {
-    return null;
+    return hasConfiguredTargetField ? invalidConfiguredJunction : null;
+  }
+
+  if (
+    !isValidJunctionTargetField({
+      fieldMetadataItem: targetField,
+      sourceFieldMetadataId: relationTargetFieldMetadataId,
+    })
+  ) {
+    return hasConfiguredTargetField ? invalidConfiguredJunction : null;
   }
 
   const isMorphRelation = targetField.type === FieldMetadataType.MORPH_RELATION;
-
-  if (!isMorphRelation && !isDefined(targetField.relation)) {
-    return null;
-  }
 
   return {
     junctionObjectMetadata,
     targetFields: [targetField],
     sourceField,
     isMorphRelation,
+    isValid: true,
   };
 };

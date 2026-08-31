@@ -336,6 +336,10 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     [isJunctionRelation, updateJunctionRelationFromCell, updateRelation],
   );
 
+  if (junctionConfig?.isValid === false) {
+    return null;
+  }
+
   return (
     <Dropdown
       dropdownId={dropdownId}

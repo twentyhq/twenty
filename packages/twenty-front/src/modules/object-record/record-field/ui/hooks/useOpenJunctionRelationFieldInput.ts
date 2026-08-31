@@ -56,15 +56,11 @@ export const useOpenJunctionRelationFieldInput = () => {
         objectMetadataItems,
       });
 
-      if (!isDefined(junctionConfig)) {
+      if (!isDefined(junctionConfig) || !junctionConfig.isValid) {
         return;
       }
 
       const { targetFields } = junctionConfig;
-
-      if (targetFields.length === 0) {
-        return;
-      }
 
       const resolvedRecordPickerInstanceId =
         recordPickerInstanceId ??
