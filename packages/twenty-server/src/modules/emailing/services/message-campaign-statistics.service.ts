@@ -14,7 +14,6 @@ import {
   REFRESH_CAMPAIGN_STATS_JOB,
 } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { type RefreshCampaignStatsJobData } from 'src/engine/core-modules/emailing-domain/types/refresh-campaign-stats-job-data.type';
-import { buildCampaignStatsRefreshLockKey } from 'src/engine/core-modules/emailing-domain/utils/build-campaign-stats-refresh-lock-key.util';
 import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
 import { type CampaignCountGroup } from 'src/engine/core-modules/emailing-domain/types/campaign-count-group.type';
 import { type CampaignCounts } from 'src/engine/core-modules/emailing-domain/types/campaign-counts.type';
@@ -50,10 +49,7 @@ export class MessageCampaignStatisticsService {
     workspaceId: string;
     campaignId: string;
   }): Promise<void> {
-    const lockKey = buildCampaignStatsRefreshLockKey({
-      workspaceId,
-      campaignId,
-    });
+    const lockKey = this.buildRefreshLockKey({ workspaceId, campaignId });
 
     const acquired = await this.cacheStorageService.acquireLock(
       lockKey,
@@ -111,7 +107,7 @@ export class MessageCampaignStatisticsService {
       await this.recomputeCampaignCounts({ workspaceId, campaignId });
     } finally {
       await this.cacheStorageService.releaseLock(
-        buildCampaignStatsRefreshLockKey({ workspaceId, campaignId }),
+        this.buildRefreshLockKey({ workspaceId, campaignId }),
       );
     }
   }
@@ -220,4 +216,15 @@ export class MessageCampaignStatisticsService {
 
     await this.persistCampaignCounts({ workspaceId, campaignId, counts });
   }
+
+  private buildRefreshLockKey({
+    workspaceId,
+    campaignId,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+  }): string {
+    return `campaign-stats-refresh:${workspaceId}:${campaignId}`;
+  }
+
 }
