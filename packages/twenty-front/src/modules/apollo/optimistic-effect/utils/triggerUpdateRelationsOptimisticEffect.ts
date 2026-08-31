@@ -195,12 +195,6 @@ const triggerUpdateRelationOptimisticEffect = ({
     targetObjectMetadata,
     junctionObjectMetadataIds,
   });
-  const shouldReattachUnchangedRelationOnRestoration =
-    isRestoration && noDiff && !shouldCascadeDeleteTargetRecords;
-
-  if (noDiff && !isDeletion && !shouldReattachUnchangedRelationOnRestoration) {
-    return;
-  }
 
   const gqlFieldNameOnTargetRecord =
     targetFieldMetadataFullObject.type === FieldMetadataType.RELATION
@@ -213,7 +207,11 @@ const triggerUpdateRelationOptimisticEffect = ({
           targetObjectMetadataNamePlural: sourceObjectMetadataItem.namePlural,
         });
 
-  if (!shouldReattachUnchangedRelationOnRestoration) {
+  if (noDiff && !isDeletion) {
+    if (!isRestoration || shouldCascadeDeleteTargetRecords) {
+      return;
+    }
+  } else {
     const recordToExtractDetachFrom = isDeletion
       ? updatedFieldValueOnSourceRecord
       : currentFieldValueOnSourceRecord;
@@ -368,18 +366,12 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
       targetObjectMetadata,
       junctionObjectMetadataIds,
     });
-    const shouldReattachUnchangedRelationOnRestoration =
-      isRestoration && noDiff && !shouldCascadeDeleteTargetRecords;
 
-    if (
-      noDiff &&
-      !isDeletion &&
-      !shouldReattachUnchangedRelationOnRestoration
-    ) {
-      return;
-    }
-
-    if (!shouldReattachUnchangedRelationOnRestoration) {
+    if (noDiff && !isDeletion) {
+      if (!isRestoration || shouldCascadeDeleteTargetRecords) {
+        return;
+      }
+    } else {
       const recordToExtractDetachFrom = isDeletion
         ? updatedFieldValueOnSourceRecord
         : currentFieldValueOnSourceRecord;

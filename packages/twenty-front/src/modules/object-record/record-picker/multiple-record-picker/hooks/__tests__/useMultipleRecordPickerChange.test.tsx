@@ -110,7 +110,7 @@ describe('useMultipleRecordPickerChange', () => {
       secondChangeResult = result.current.handleChange(initialMorphItem);
     });
 
-    expect(onChange).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1));
     expect(getMorphItems()[0].isSelected).toBe(false);
 
     await act(async () => {
@@ -157,7 +157,7 @@ describe('useMultipleRecordPickerChange', () => {
         remountedHook.result.current.handleChange(initialMorphItem);
     });
 
-    expect(onChange).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1));
 
     await act(async () => {
       selection.resolve();
@@ -200,7 +200,7 @@ describe('useMultipleRecordPickerChange', () => {
       });
     });
 
-    expect(onChange).toHaveBeenCalledTimes(2);
+    await waitFor(() => expect(onChange).toHaveBeenCalledTimes(2));
 
     await act(async () => {
       firstChange.resolve();

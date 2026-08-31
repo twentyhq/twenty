@@ -39,22 +39,65 @@ const targetObject = {
   namePlural: 'targets',
 };
 
-const createRelation = ({
-  sourceFieldId,
-  sourceFieldName,
-  targetFieldId,
-  targetFieldName,
+const createFields = ({ isMorph = false }: { isMorph?: boolean } = {}) => {
+  const sourceFieldName = isMorph ? 'linkedTarget' : 'target';
+  const relation = {
+    type: RelationType.MANY_TO_ONE,
+    sourceFieldMetadata: {
+      id: 'source-target-field-id',
+      name: sourceFieldName,
+    },
+    targetFieldMetadata: {
+      id: 'target-sources-field-id',
+      name: 'sources',
+    },
+    sourceObjectMetadata: sourceObject,
+    targetObjectMetadata: targetObject,
+  } satisfies FieldMetadataItemRelation;
+
+  const sourceField = {
+    id: relation.sourceFieldMetadata.id,
+    name: sourceFieldName,
+    type: isMorph
+      ? FieldMetadataType.MORPH_RELATION
+      : FieldMetadataType.RELATION,
+    ...(isMorph ? { morphRelations: [relation] } : { relation }),
+  } as FieldMetadataItem;
+  const targetField = {
+    id: relation.targetFieldMetadata.id,
+    name: relation.targetFieldMetadata.name,
+    type: isMorph
+      ? FieldMetadataType.MORPH_RELATION
+      : FieldMetadataType.RELATION,
+  } as FieldMetadataItem;
+  const recordFieldName = isMorph
+    ? computeMorphRelationGqlFieldName({
+        fieldName: sourceFieldName,
+        relationType: relation.type,
+        targetObjectMetadataNameSingular: targetObject.nameSingular,
+        targetObjectMetadataNamePlural: targetObject.namePlural,
+      })
+    : sourceFieldName;
+
+  return { recordFieldName, sourceField, targetField };
+};
+
+const createSourceRecord = ({
+  deletedAt,
+  recordFieldName,
+  targetRecordId,
 }: {
-  sourceFieldId: string;
-  sourceFieldName: string;
-  targetFieldId: string;
-  targetFieldName: string;
-}): FieldMetadataItemRelation => ({
-  type: RelationType.MANY_TO_ONE,
-  sourceFieldMetadata: { id: sourceFieldId, name: sourceFieldName },
-  targetFieldMetadata: { id: targetFieldId, name: targetFieldName },
-  sourceObjectMetadata: sourceObject,
-  targetObjectMetadata: targetObject,
+  deletedAt: string | null;
+  recordFieldName: string;
+  targetRecordId: string;
+}): RecordGqlNode => ({
+  id: 'source-record-id',
+  __typename: 'Source',
+  deletedAt,
+  [recordFieldName]: {
+    id: targetRecordId,
+    __typename: 'Target',
+  },
 });
 
 const callOptimisticEffect = ({
@@ -94,41 +137,24 @@ describe('triggerUpdateRelationsOptimisticEffect restoration', () => {
     jest.mocked(getJunctionObjectMetadataIds).mockReturnValue(new Set());
   });
 
-  it('reattaches an unchanged relation when a soft-deleted record is restored', () => {
-    const relation = createRelation({
-      sourceFieldId: 'source-target-field-id',
-      sourceFieldName: 'target',
-      targetFieldId: 'target-sources-field-id',
-      targetFieldName: 'sources',
+  it.each([
+    ['relation', false],
+    ['morph relation', true],
+  ])('reattaches an unchanged %s', (_, isMorph) => {
+    const { recordFieldName, sourceField, targetField } = createFields({
+      isMorph,
     });
-    const sourceField = {
-      id: 'source-target-field-id',
-      name: 'target',
-      type: FieldMetadataType.RELATION,
-      relation,
-    } as FieldMetadataItem;
-    const targetField = {
-      id: 'target-sources-field-id',
-      name: 'sources',
-      type: FieldMetadataType.RELATION,
-    } as FieldMetadataItem;
-    const relatedRecord = {
-      id: 'target-record-id',
-      __typename: 'Target',
-    };
+    const currentSourceRecord = createSourceRecord({
+      deletedAt: '2026-08-31T12:00:00.000Z',
+      recordFieldName,
+      targetRecordId: 'target-record-id',
+    });
 
     callOptimisticEffect({
-      currentSourceRecord: {
-        id: 'source-record-id',
-        __typename: 'Source',
-        deletedAt: '2026-08-31T12:00:00.000Z',
-        target: relatedRecord,
-      },
+      currentSourceRecord,
       updatedSourceRecord: {
-        id: 'source-record-id',
-        __typename: 'Source',
+        ...currentSourceRecord,
         deletedAt: null,
-        target: relatedRecord,
       },
       sourceField,
       targetField,
@@ -146,41 +172,16 @@ describe('triggerUpdateRelationsOptimisticEffect restoration', () => {
   });
 
   it('does not touch an unchanged relation during a regular update', () => {
-    const relation = createRelation({
-      sourceFieldId: 'source-target-field-id',
-      sourceFieldName: 'target',
-      targetFieldId: 'target-sources-field-id',
-      targetFieldName: 'sources',
+    const { recordFieldName, sourceField, targetField } = createFields();
+    const currentSourceRecord = createSourceRecord({
+      deletedAt: null,
+      recordFieldName,
+      targetRecordId: 'target-record-id',
     });
-    const sourceField = {
-      id: 'source-target-field-id',
-      name: 'target',
-      type: FieldMetadataType.RELATION,
-      relation,
-    } as FieldMetadataItem;
-    const targetField = {
-      id: 'target-sources-field-id',
-      name: 'sources',
-      type: FieldMetadataType.RELATION,
-    } as FieldMetadataItem;
-    const relatedRecord = {
-      id: 'target-record-id',
-      __typename: 'Target',
-    };
 
     callOptimisticEffect({
-      currentSourceRecord: {
-        id: 'source-record-id',
-        __typename: 'Source',
-        deletedAt: null,
-        target: relatedRecord,
-      },
-      updatedSourceRecord: {
-        id: 'source-record-id',
-        __typename: 'Source',
-        deletedAt: null,
-        target: relatedRecord,
-      },
+      currentSourceRecord,
+      updatedSourceRecord: { ...currentSourceRecord },
       sourceField,
       targetField,
     });
@@ -189,44 +190,20 @@ describe('triggerUpdateRelationsOptimisticEffect restoration', () => {
     expect(triggerAttachRelationOptimisticEffect).not.toHaveBeenCalled();
   });
 
-  it('preserves detach and attach behavior for a changed relation during restoration', () => {
-    const relation = createRelation({
-      sourceFieldId: 'source-target-field-id',
-      sourceFieldName: 'target',
-      targetFieldId: 'target-sources-field-id',
-      targetFieldName: 'sources',
-    });
-    const sourceField = {
-      id: 'source-target-field-id',
-      name: 'target',
-      type: FieldMetadataType.RELATION,
-      relation,
-    } as FieldMetadataItem;
-    const targetField = {
-      id: 'target-sources-field-id',
-      name: 'sources',
-      type: FieldMetadataType.RELATION,
-    } as FieldMetadataItem;
+  it('preserves detach and attach for a changed relation during restoration', () => {
+    const { recordFieldName, sourceField, targetField } = createFields();
 
     callOptimisticEffect({
-      currentSourceRecord: {
-        id: 'source-record-id',
-        __typename: 'Source',
+      currentSourceRecord: createSourceRecord({
         deletedAt: '2026-08-31T12:00:00.000Z',
-        target: {
-          id: 'previous-target-record-id',
-          __typename: 'Target',
-        },
-      },
-      updatedSourceRecord: {
-        id: 'source-record-id',
-        __typename: 'Source',
+        recordFieldName,
+        targetRecordId: 'previous-target-record-id',
+      }),
+      updatedSourceRecord: createSourceRecord({
         deletedAt: null,
-        target: {
-          id: 'next-target-record-id',
-          __typename: 'Target',
-        },
-      },
+        recordFieldName,
+        targetRecordId: 'next-target-record-id',
+      }),
       sourceField,
       targetField,
     });
@@ -245,44 +222,22 @@ describe('triggerUpdateRelationsOptimisticEffect restoration', () => {
     );
   });
 
-  it('does not reattach an unchanged cascade-deleted relation during restoration', () => {
+  it('does not reattach an unchanged cascade-deleted relation', () => {
     jest
       .mocked(getJunctionObjectMetadataIds)
       .mockReturnValue(new Set([targetObject.id]));
-    const relation = createRelation({
-      sourceFieldId: 'source-target-field-id',
-      sourceFieldName: 'target',
-      targetFieldId: 'target-sources-field-id',
-      targetFieldName: 'sources',
+    const { recordFieldName, sourceField, targetField } = createFields();
+    const currentSourceRecord = createSourceRecord({
+      deletedAt: '2026-08-31T12:00:00.000Z',
+      recordFieldName,
+      targetRecordId: 'target-record-id',
     });
-    const sourceField = {
-      id: 'source-target-field-id',
-      name: 'target',
-      type: FieldMetadataType.RELATION,
-      relation,
-    } as FieldMetadataItem;
-    const targetField = {
-      id: 'target-sources-field-id',
-      name: 'sources',
-      type: FieldMetadataType.RELATION,
-    } as FieldMetadataItem;
-    const relatedRecord = {
-      id: 'target-record-id',
-      __typename: 'Target',
-    };
 
     callOptimisticEffect({
-      currentSourceRecord: {
-        id: 'source-record-id',
-        __typename: 'Source',
-        deletedAt: '2026-08-31T12:00:00.000Z',
-        target: relatedRecord,
-      },
+      currentSourceRecord,
       updatedSourceRecord: {
-        id: 'source-record-id',
-        __typename: 'Source',
+        ...currentSourceRecord,
         deletedAt: null,
-        target: relatedRecord,
       },
       sourceField,
       targetField,
@@ -291,62 +246,5 @@ describe('triggerUpdateRelationsOptimisticEffect restoration', () => {
     expect(triggerDestroyRecordsOptimisticEffect).not.toHaveBeenCalled();
     expect(triggerDetachRelationOptimisticEffect).not.toHaveBeenCalled();
     expect(triggerAttachRelationOptimisticEffect).not.toHaveBeenCalled();
-  });
-
-  it('reattaches an unchanged morph relation when a record is restored', () => {
-    const relation = createRelation({
-      sourceFieldId: 'source-morph-field-id',
-      sourceFieldName: 'linkedTarget',
-      targetFieldId: 'target-sources-field-id',
-      targetFieldName: 'sources',
-    });
-    const sourceField = {
-      id: 'source-morph-field-id',
-      name: 'linkedTarget',
-      type: FieldMetadataType.MORPH_RELATION,
-      morphRelations: [relation],
-    } as FieldMetadataItem;
-    const targetField = {
-      id: 'target-sources-field-id',
-      name: 'sources',
-      type: FieldMetadataType.MORPH_RELATION,
-    } as FieldMetadataItem;
-    const morphFieldName = computeMorphRelationGqlFieldName({
-      fieldName: sourceField.name,
-      relationType: relation.type,
-      targetObjectMetadataNameSingular: targetObject.nameSingular,
-      targetObjectMetadataNamePlural: targetObject.namePlural,
-    });
-    const relatedRecord = {
-      id: 'target-record-id',
-      __typename: 'Target',
-    };
-
-    callOptimisticEffect({
-      currentSourceRecord: {
-        id: 'source-record-id',
-        __typename: 'Source',
-        deletedAt: '2026-08-31T12:00:00.000Z',
-        [morphFieldName]: relatedRecord,
-      },
-      updatedSourceRecord: {
-        id: 'source-record-id',
-        __typename: 'Source',
-        deletedAt: null,
-        [morphFieldName]: relatedRecord,
-      },
-      sourceField,
-      targetField,
-    });
-
-    expect(triggerDetachRelationOptimisticEffect).not.toHaveBeenCalled();
-    expect(triggerAttachRelationOptimisticEffect).toHaveBeenCalledTimes(1);
-    expect(triggerAttachRelationOptimisticEffect).toHaveBeenCalledWith(
-      expect.objectContaining({
-        sourceRecordId: 'source-record-id',
-        targetRecordId: 'target-record-id',
-        fieldNameOnTargetRecord: 'sources',
-      }),
-    );
   });
 });

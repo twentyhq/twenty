@@ -3,10 +3,8 @@ import { useStore } from 'jotai';
 
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
-import {
-  type RecordPickerOnChange,
-  type RecordPickerPickableMorphItem,
-} from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
+import { type RecordPickerOnChange } from '@/object-record/record-picker/types/RecordPickerOnChange';
+import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -71,19 +69,9 @@ export const useMultipleRecordPickerChange = ({
 
       store.set(pickableMorphItemsState, nextMorphItems);
 
-      const runOnChange = () => {
-        try {
-          return Promise.resolve(onChange?.(morphItem));
-        } catch (error) {
-          return Promise.reject(error);
-        }
-      };
-
-      const currentChange = existingChangeQueue
-        ? existingChangeQueue.pendingChange
-            .catch(() => undefined)
-            .then(runOnChange)
-        : runOnChange();
+      const currentChange = Promise.resolve(existingChangeQueue?.pendingChange)
+        .catch(() => undefined)
+        .then(() => onChange?.(morphItem));
 
       changeQueueByPickerMorphItemKey.set(pickerMorphItemKey, {
         confirmedIsSelected,
@@ -132,11 +120,7 @@ export const useMultipleRecordPickerChange = ({
 
           if (isLatestChange) {
             enqueueErrorSnackBar(
-              isErrorLike(error)
-                ? { apolloError: error }
-                : error instanceof Error
-                  ? { message: error.message }
-                  : {},
+              isErrorLike(error) ? { apolloError: error } : {},
             );
           }
         },
