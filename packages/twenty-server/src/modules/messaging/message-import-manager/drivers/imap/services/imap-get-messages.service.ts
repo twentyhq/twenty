@@ -9,13 +9,13 @@ import { ImapClientProvider } from 'src/modules/messaging/message-import-manager
 import { ImapMessageParserService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-parser.service';
 import { ImapMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-messages-import-error-handler.service';
 import { parseMessageId } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-message-id.util';
+import { resolveReceivedAt } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/resolve-received-at.util';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { extractAddressesFromParsedEmail } from 'src/modules/messaging/message-import-manager/utils/extract-addresses-from-parsed-email.util';
 import { extractMessageBodyText } from 'src/modules/messaging/message-import-manager/utils/extract-message-body-text.util';
 import { extractParticipantsFromParsedEmail } from 'src/modules/messaging/message-import-manager/utils/extract-participants-from-parsed-email.util';
 import { extractThreadIdFromParsedEmail } from 'src/modules/messaging/message-import-manager/utils/extract-thread-id-from-parsed-email.util';
 import { sanitizeString } from 'src/modules/messaging/message-import-manager/utils/sanitize-string.util';
-import { isValidDate } from 'src/utils/date/isValidDate';
 
 type ConnectedAccount = Pick<
   ConnectedAccountEntity,
@@ -182,7 +182,7 @@ export class ImapGetMessagesService {
       headerMessageId: parsed.messageId || String(uid),
       subject: sanitizeString(parsed.subject || ''),
       text,
-      receivedAt: this.resolveReceivedAt(parsed.date, internalDate),
+      receivedAt: resolveReceivedAt({ headerDate: parsed.date, internalDate }),
       direction: computeMessageDirection(senderAddress, connectedAccount),
       attachments: (parsed.attachments || []).map((attachment) => ({
         filename: attachment.filename || 'unnamed-attachment',
@@ -195,22 +195,5 @@ export class ImapGetMessagesService {
         value,
       })),
     };
-  }
-
-  private resolveReceivedAt(
-    parsedDate?: string,
-    internalDate?: Date | string,
-  ): Date {
-    const receivedAtFromHeader = parsedDate ? new Date(parsedDate) : undefined;
-
-    if (isValidDate(receivedAtFromHeader)) {
-      return receivedAtFromHeader;
-    }
-
-    const receivedAtFromImap = internalDate
-      ? new Date(internalDate)
-      : undefined;
-
-    return isValidDate(receivedAtFromImap) ? receivedAtFromImap : new Date();
   }
 }

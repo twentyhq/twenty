@@ -3,56 +3,37 @@ import { render, screen } from '@testing-library/react';
 import { EmailThreadMessageSender } from '@/activities/emails/components/EmailThreadMessageSender';
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 
-jest.mock('@/activities/components/ParticipantChip', () => ({
-  ParticipantChip: ({
-    participant,
-  }: {
-    participant: EmailThreadMessageParticipant;
-  }) => <span>{participant.displayName}</span>,
-}));
-
-jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
-  useAtomStateValue: () => ({ localeCatalog: {} }),
-}));
-
-jest.mock('twenty-ui/surfaces', () => ({
-  AppTooltip: ({ content }: { content: string }) => (
-    <span role="tooltip">{content}</span>
-  ),
-  TooltipPosition: { Top: 'top' },
-}));
-
-jest.mock('~/utils/date-utils', () => ({
-  beautifyPastDateRelativeToNow: () => 'Relative date',
-  formatToHumanReadableDate: () => 'Human-readable date',
-}));
+const NOW = new Date('2026-08-31T12:00:00.000Z');
+const TWO_HOURS_BEFORE_NOW = '2026-08-31T10:00:00.000Z';
 
 const SENDER = {
   id: 'sender-id',
-  displayName: 'Sender Name',
-  handle: 'sender@example.com',
+  displayName: 'Ada Lovelace',
+  handle: 'ada@example.com',
 } as EmailThreadMessageParticipant;
 
 describe('EmailThreadMessageSender', () => {
-  it('should keep rendering the sender when the received date is missing', () => {
-    render(<EmailThreadMessageSender sender={SENDER} sentAt={null} />);
-
-    expect(screen.getByText('Sender Name')).toBeInTheDocument();
-    expect(screen.queryByText('Relative date')).not.toBeInTheDocument();
-    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+  beforeEach(() => {
+    jest.useFakeTimers().setSystemTime(NOW);
   });
 
-  it('should render the received date and tooltip when available', () => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('renders the sender without a timestamp when the message has no received date', () => {
+    render(<EmailThreadMessageSender sender={SENDER} sentAt={null} />);
+
+    expect(screen.getByText('Ada Lovelace')).toBeInTheDocument();
+    expect(screen.queryByText(/ago/)).not.toBeInTheDocument();
+  });
+
+  it('renders the received date relative to now', () => {
     render(
-      <EmailThreadMessageSender
-        sender={SENDER}
-        sentAt="2026-08-31T12:00:00.000Z"
-      />,
+      <EmailThreadMessageSender sender={SENDER} sentAt={TWO_HOURS_BEFORE_NOW} />,
     );
 
-    expect(screen.getByText('Relative date')).toBeInTheDocument();
-    expect(screen.getByRole('tooltip')).toHaveTextContent(
-      'Human-readable date',
-    );
+    expect(screen.getByText('Ada Lovelace')).toBeInTheDocument();
+    expect(screen.getByText('about 2 hours ago')).toBeInTheDocument();
   });
 });
