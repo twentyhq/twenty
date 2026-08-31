@@ -1,40 +1,11 @@
-import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 import { useState } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SearchDropdownPicker } from 'src/front-components/components/SearchDropdownPicker';
+import { SlackPickedEntityButton } from 'src/front-components/components/SlackPickedEntityButton';
 import { useWorkspaceMemberSearch } from 'src/front-components/hooks/use-workspace-member-search';
 import { type WorkspaceMemberOption } from 'src/front-components/types/workspace-member-option.type';
-
-const StyledSelectedMember = styled.button`
-  align-items: center;
-  background: ${() => themeCssVariables.background.secondary};
-  border: 1px solid ${() => themeCssVariables.border.color.medium};
-  border-radius: ${() => themeCssVariables.border.radius.sm};
-  box-sizing: border-box;
-  cursor: pointer;
-  display: flex;
-  gap: ${() => themeCssVariables.spacing[2]};
-  padding: ${() => themeCssVariables.spacing[2]};
-  text-align: left;
-  width: 100%;
-
-  &:hover:enabled {
-    border-color: ${() => themeCssVariables.color.blue};
-  }
-
-  &:disabled {
-    cursor: default;
-  }
-`;
-
-const StyledSelectedMemberLabel = styled.span`
-  color: ${() => themeCssVariables.font.color.primary};
-  font-family: ${() => themeCssVariables.font.family};
-  font-size: ${() => themeCssVariables.font.size.sm};
-`;
 
 type WorkspaceMemberPickerProps = {
   selectedMember: WorkspaceMemberOption | null;
@@ -56,21 +27,19 @@ export const WorkspaceMemberPicker = ({
 
   if (isDefined(selectedMember)) {
     return (
-      <StyledSelectedMember
-        type="button"
-        onClick={() => {
+      <SlackPickedEntityButton
+        name={
+          isNonEmptyString(selectedMember.name)
+            ? selectedMember.name
+            : (selectedMember.userEmail ?? selectedMember.id)
+        }
+        changeLabel="Change the workspace member"
+        onChangeRequest={() => {
           setIsReopening(true);
           onClear();
         }}
         disabled={disabled}
-        aria-label="Change the workspace member"
-      >
-        <StyledSelectedMemberLabel>
-          {isNonEmptyString(selectedMember.name)
-            ? selectedMember.name
-            : (selectedMember.userEmail ?? selectedMember.id)}
-        </StyledSelectedMemberLabel>
-      </StyledSelectedMember>
+      />
     );
   }
 

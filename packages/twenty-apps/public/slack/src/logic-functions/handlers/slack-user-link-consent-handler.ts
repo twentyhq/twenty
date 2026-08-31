@@ -94,10 +94,16 @@ export const slackUserLinkConsentHandler = async (
         : SLACK_USER_LINK_CONSENT_STATE.DECLINED,
     });
   } catch (error) {
-    await updateSlackMessageViaResponseUrl({
+    const failureNotice = await updateSlackMessageViaResponseUrl({
       responseUrl: payload.response_url,
       text: FAILURE_MESSAGE,
     });
+
+    if (!failureNotice.success) {
+      console.warn(
+        `[slack] response_url message update failed: ${failureNotice.error}`,
+      );
+    }
 
     return {
       skipped: true,
@@ -105,10 +111,19 @@ export const slackUserLinkConsentHandler = async (
     };
   }
 
-  await updateSlackMessageViaResponseUrl({
+  const messageUpdate = await updateSlackMessageViaResponseUrl({
     responseUrl: payload.response_url,
     text: approved ? APPROVED_MESSAGE : DECLINED_MESSAGE,
   });
+
+  // The decision is already saved, so a failed message refresh is worth
+  // reporting but must not undo it.
+  if (!messageUpdate.success) {
+    return {
+      done: true,
+      messageUpdateError: messageUpdate.error,
+    };
+  }
 
   return { done: true };
 };

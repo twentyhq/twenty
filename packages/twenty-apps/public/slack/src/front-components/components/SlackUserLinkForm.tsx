@@ -10,6 +10,8 @@ import { H2Title } from 'twenty-ui/typography';
 
 import { ResolvedSlackUserField } from 'src/front-components/components/ResolvedSlackUserField';
 import { SlackConnectUserIdFields } from 'src/front-components/components/SlackConnectUserIdFields';
+import { SlackUserLinkFormField } from 'src/front-components/components/SlackUserLinkFormField';
+import { SlackUserLinkFormHint } from 'src/front-components/components/SlackUserLinkFormHint';
 import { SlackUserLinkTextInput } from 'src/front-components/components/SlackUserLinkTextInput';
 import { SlackUserPicker } from 'src/front-components/components/SlackUserPicker';
 import { WorkspaceMemberPicker } from 'src/front-components/components/WorkspaceMemberPicker';
@@ -23,25 +25,6 @@ const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
   gap: ${() => themeCssVariables.spacing[4]};
-`;
-
-const StyledField = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${() => themeCssVariables.spacing[1]};
-`;
-
-const StyledLabel = styled.label`
-  color: ${() => themeCssVariables.font.color.secondary};
-  font-family: ${() => themeCssVariables.font.family};
-  font-size: ${() => themeCssVariables.font.size.sm};
-  font-weight: ${() => themeCssVariables.font.weight.medium};
-`;
-
-const StyledHint = styled.span`
-  color: ${() => themeCssVariables.font.color.tertiary};
-  font-family: ${() => themeCssVariables.font.family};
-  font-size: ${() => themeCssVariables.font.size.xs};
 `;
 
 const StyledResolveError = styled.span`
@@ -146,7 +129,7 @@ export const SlackUserLinkForm = ({
 
   const handleFormSubmit = () => {
     if (!isDefined(resolvedUser)) {
-      resolveNow({ email: '', slackUserId, slackTeamId });
+      resolveNow({ slackUserId, slackTeamId });
       return;
     }
 
@@ -167,18 +150,16 @@ export const SlackUserLinkForm = ({
           handleFormSubmit();
         }}
       >
-        <StyledField>
-          <StyledLabel>Workspace member</StyledLabel>
+        <SlackUserLinkFormField label="Workspace member">
           <WorkspaceMemberPicker
             selectedMember={selectedMember}
             onSelect={setSelectedMember}
             onClear={() => setSelectedMember(null)}
             disabled={isSubmitting}
           />
-        </StyledField>
+        </SlackUserLinkFormField>
         {isDefined(resolvedUser) ? (
-          <StyledField>
-            <StyledLabel>Slack user</StyledLabel>
+          <SlackUserLinkFormField label="Slack user">
             <ResolvedSlackUserField
               resolvedUser={resolvedUser}
               onChangeRequest={() => {
@@ -188,17 +169,16 @@ export const SlackUserLinkForm = ({
               }}
               disabled={isSubmitting}
             />
-          </StyledField>
+          </SlackUserLinkFormField>
         ) : (
           <>
-            <StyledField>
-              <StyledLabel>Slack user</StyledLabel>
+            <SlackUserLinkFormField label="Slack user">
               <SlackUserPicker
                 onSelect={selectResolvedUser}
                 disabled={isSubmitting}
                 autoFocus={isSlackSearchReopening}
               />
-            </StyledField>
+            </SlackUserLinkFormField>
             {isConnectUser ? (
               <SlackConnectUserIdFields
                 slackUserId={slackUserId}
@@ -206,7 +186,6 @@ export const SlackUserLinkForm = ({
                 onSlackUserIdChange={(nextSlackUserId) => {
                   setSlackUserId(nextSlackUserId);
                   onIdentityChange({
-                    email: '',
                     slackUserId: nextSlackUserId,
                     slackTeamId,
                   });
@@ -214,7 +193,6 @@ export const SlackUserLinkForm = ({
                 onSlackTeamIdChange={(nextSlackTeamId) => {
                   setSlackTeamId(nextSlackTeamId);
                   onIdentityChange({
-                    email: '',
                     slackUserId,
                     slackTeamId: nextSlackTeamId,
                   });
@@ -230,16 +208,18 @@ export const SlackUserLinkForm = ({
               </StyledDisclosureButton>
             )}
             {isResolving ? (
-              <StyledHint>Finding the Slack user…</StyledHint>
+              <SlackUserLinkFormHint>
+                Finding the Slack user…
+              </SlackUserLinkFormHint>
             ) : isDefined(resolveError) ? (
               <StyledResolveError>{resolveError}</StyledResolveError>
             ) : null}
           </>
         )}
-        <StyledField>
-          <StyledLabel htmlFor="slack-display-name">
-            Display name (optional)
-          </StyledLabel>
+        <SlackUserLinkFormField
+          label="Display name (optional)"
+          htmlFor="slack-display-name"
+        >
           <SlackUserLinkTextInput
             id="slack-display-name"
             value={name}
@@ -247,15 +227,15 @@ export const SlackUserLinkForm = ({
             placeholder={resolvedUser?.displayName ?? 'Ada Lovelace'}
             disabled={isSubmitting}
           />
-        </StyledField>
+        </SlackUserLinkFormField>
         {isDefined(resolvedUser) && (
-          <StyledHint>
+          <SlackUserLinkFormHint>
             {buildSlackUserLinkSaveNote({
               resolvedUser,
               selectedMember,
               existingLink,
             })}
-          </StyledHint>
+          </SlackUserLinkFormHint>
         )}
         <StyledActions>
           <Button

@@ -2,8 +2,10 @@ import { type WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { UNVERIFIABLE_SLACK_TEAM_ID_FAILURE } from 'src/logic-functions/constants/unverifiable-slack-team-id-failure';
 import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
+import { isUnverifiableSlackTeamIdClaim } from 'src/logic-functions/utils/is-unverifiable-slack-team-id-claim';
 
 type IdLinkTarget =
   | {
@@ -40,6 +42,16 @@ export const resolveLinkTargetById = async ({
       message: 'Slack team id does not match the user',
       error: `That Slack user belongs to workspace ${identity.slackTeamId}, not ${requestedSlackTeamId}. Check the team id and try again.`,
     };
+  }
+
+  if (
+    isUnverifiableSlackTeamIdClaim({
+      requestedSlackTeamId,
+      resolvedSlackAccount: identity,
+      installedSlackTeamId,
+    })
+  ) {
+    return UNVERIFIABLE_SLACK_TEAM_ID_FAILURE;
   }
 
   const slackTeamId = isNonEmptyString(requestedSlackTeamId)

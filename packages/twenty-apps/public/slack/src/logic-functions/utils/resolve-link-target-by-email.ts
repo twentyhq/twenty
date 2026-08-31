@@ -2,6 +2,8 @@ import { type WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { UNVERIFIABLE_SLACK_TEAM_ID_FAILURE } from 'src/logic-functions/constants/unverifiable-slack-team-id-failure';
+import { isUnverifiableSlackTeamIdClaim } from 'src/logic-functions/utils/is-unverifiable-slack-team-id-claim';
 import {
   type ResolvedSlackUser,
   resolveSlackUserByEmail,
@@ -21,10 +23,12 @@ export const resolveLinkTargetByEmail = async ({
   slackClient,
   email,
   requestedSlackTeamId,
+  installedSlackTeamId,
 }: {
   slackClient: WebClient;
   email: string;
   requestedSlackTeamId: string | undefined;
+  installedSlackTeamId: string;
 }): Promise<EmailLinkTarget> => {
   let resolvedUser: ResolvedSlackUser | undefined;
 
@@ -59,10 +63,20 @@ export const resolveLinkTargetByEmail = async ({
     };
   }
 
+  if (
+    isUnverifiableSlackTeamIdClaim({
+      requestedSlackTeamId,
+      resolvedSlackAccount: resolvedUser,
+      installedSlackTeamId,
+    })
+  ) {
+    return UNVERIFIABLE_SLACK_TEAM_ID_FAILURE;
+  }
+
   return {
     success: true,
     slackUserId: resolvedUser.slackUserId,
-    slackTeamId: requestedSlackTeamId ?? resolvedUser.slackTeamId,
+    slackTeamId: resolvedUser.slackTeamId ?? requestedSlackTeamId,
     displayName: resolvedUser.displayName,
   };
 };

@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-sdk/utils';
 import { Tag } from 'twenty-ui/data-display';
@@ -6,6 +7,8 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SLACK_USER_LINK_CONSENT_STATE } from 'src/logic-functions/constants/slack-user-link-consent-state';
 import { SLACK_USER_LINK_SOURCE } from 'src/logic-functions/constants/slack-user-link-source';
+import { type SlackUserLinkConsentState } from 'src/logic-functions/types/slack-user-link-consent-state.type';
+import { isSlackUserLinkConsentState } from 'src/logic-functions/utils/is-slack-user-link-consent-state';
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
 
 const StyledList = styled.div`
@@ -95,14 +98,26 @@ const getSourceLabel = (source: string | null): string =>
 const getSourceColor = (source: string | null): TagColor =>
   source === SLACK_USER_LINK_SOURCE.MANUAL ? 'blue' : 'green';
 
-const CONSENT_LABELS: Record<string, string> = {
+// An absent state is a pre-consent link and still lends access; a state this
+// version cannot interpret is not the same thing and is left unlabelled.
+const toDisplayedConsentState = (
+  consentState: string | null,
+): SlackUserLinkConsentState | undefined => {
+  if (!isNonEmptyString(consentState)) {
+    return SLACK_USER_LINK_CONSENT_STATE.ACTIVE;
+  }
+
+  return isSlackUserLinkConsentState(consentState) ? consentState : undefined;
+};
+
+const CONSENT_LABELS: Record<SlackUserLinkConsentState, string> = {
   [SLACK_USER_LINK_CONSENT_STATE.ACTIVE]: 'Active',
   [SLACK_USER_LINK_CONSENT_STATE.PENDING]: 'Awaiting consent',
   [SLACK_USER_LINK_CONSENT_STATE.DECLINED]: 'Declined',
   [SLACK_USER_LINK_CONSENT_STATE.ADMIN_SET]: 'Admin set',
 };
 
-const CONSENT_COLORS: Record<string, TagColor> = {
+const CONSENT_COLORS: Record<SlackUserLinkConsentState, TagColor> = {
   [SLACK_USER_LINK_CONSENT_STATE.ACTIVE]: 'green',
   [SLACK_USER_LINK_CONSENT_STATE.PENDING]: 'orange',
   [SLACK_USER_LINK_CONSENT_STATE.DECLINED]: 'red',
@@ -148,7 +163,9 @@ export const SlackUserLinksList = ({
         </StyledEmptyState>
       )}
       {slackUserLinks.map((slackUserLink) => {
-        const consentState = slackUserLink.consentState ?? undefined;
+        const consentState = toDisplayedConsentState(
+          slackUserLink.consentState,
+        );
         const isPending =
           consentState === SLACK_USER_LINK_CONSENT_STATE.PENDING;
 
@@ -170,13 +187,12 @@ export const SlackUserLinksList = ({
             </StyledDetails>
             <StyledRight>
               <StyledBadges>
-                {isDefined(consentState) &&
-                  isDefined(CONSENT_LABELS[consentState]) && (
-                    <Tag
-                      color={CONSENT_COLORS[consentState] ?? 'gray'}
-                      text={CONSENT_LABELS[consentState]}
-                    />
-                  )}
+                {isDefined(consentState) && (
+                  <Tag
+                    color={CONSENT_COLORS[consentState]}
+                    text={CONSENT_LABELS[consentState]}
+                  />
+                )}
                 <Tag
                   color={getSourceColor(slackUserLink.source)}
                   text={getSourceLabel(slackUserLink.source)}

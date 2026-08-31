@@ -1,3 +1,3 @@
 export type SlackUserLinkConsentResult =
-  | { done: true }
+  | { done: true; messageUpdateError?: string }
   | { skipped: true; reason: string };
