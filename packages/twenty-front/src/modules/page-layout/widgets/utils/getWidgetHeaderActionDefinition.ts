@@ -7,14 +7,26 @@ import { WidgetActionFileAttach } from '@/page-layout/widgets/files/components/W
 import { WidgetActionNoteCreate } from '@/page-layout/widgets/notes/components/WidgetActionNoteCreate';
 import { WidgetActionTaskCreate } from '@/page-layout/widgets/tasks/components/WidgetActionTaskCreate';
 import { WidgetActionTimeline } from '@/page-layout/widgets/timeline/components/WidgetActionTimeline';
+import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type ComponentType } from 'react';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { WidgetType } from '~/generated-metadata/graphql';
 
-export type WidgetHeaderActionComponentProps = {
+type WidgetHeaderActionComponentProps = {
   widget: PageLayoutWidget;
 };
 
-export const WIDGET_HEADER_ACTION_COMPONENT_BY_WIDGET_TYPE: Partial<
+type WidgetHeaderActionDefinition =
+  | {
+      kind: 'component';
+      Component: ComponentType<WidgetHeaderActionComponentProps>;
+    }
+  | {
+      kind: 'command-menu-items';
+      commandMenuItemUniversalIdentifiers: string[];
+    };
+
+const widgetHeaderActionComponentByWidgetType: Partial<
   Record<WidgetType, ComponentType<WidgetHeaderActionComponentProps>>
 > = {
   [WidgetType.FIELD]: WidgetFieldActions,
@@ -25,4 +37,33 @@ export const WIDGET_HEADER_ACTION_COMPONENT_BY_WIDGET_TYPE: Partial<
   [WidgetType.FILES]: WidgetActionFileAttach,
   [WidgetType.TIMELINE]: WidgetActionTimeline,
   [WidgetType.CALL_RECORDING_TRANSCRIPT]: WidgetActionCallRecordingTranscript,
+};
+
+export const getWidgetHeaderActionDefinition = (
+  widget: Pick<PageLayoutWidget, 'configuration' | 'type'>,
+): WidgetHeaderActionDefinition | undefined => {
+  if (
+    isWidgetConfigurationOfType(
+      widget.configuration,
+      'FrontComponentConfiguration',
+    ) &&
+    isNonEmptyArray(
+      widget.configuration.headerCommandMenuItemUniversalIdentifiers,
+    )
+  ) {
+    return {
+      kind: 'command-menu-items',
+      commandMenuItemUniversalIdentifiers:
+        widget.configuration.headerCommandMenuItemUniversalIdentifiers,
+    };
+  }
+
+  const Component = widgetHeaderActionComponentByWidgetType[widget.type];
+
+  return isDefined(Component)
+    ? {
+        kind: 'component',
+        Component,
+      }
+    : undefined;
 };
