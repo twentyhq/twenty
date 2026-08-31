@@ -32,12 +32,13 @@ import { type GraphqlOperation } from './fixture/generated/runtime';
 // `expectType` becomes `expectTypeOf`. The skipped upstream subscription suite
 // (already skipped there) is not ported.
 //
-// One deliberate correction: upstream ran this file through mocha + sucrase,
-// which strips types without checking them, so its `expectType` assertions
-// were never verified — and several were wrong. The type assertions below pin
-// what the 3.0.5 engine actually generates: response fields are `undefined`
-// when unset (never `null` — honest `| null` response types arrived in genql
-// v4), and `__typename` is a literal type, not `string`.
+// One deliberate correction: upstream typechecked this file with plain tsc
+// (never the tsd CLI), and under plain tsc tsd's `expectType<T>(value)` is
+// only an assignability check — so several assertions were looser than the
+// real types. The exact assertions below pin what the 3.0.5 engine actually
+// generates: response fields are `undefined` when unset (never `null` —
+// honest `| null` response types arrived in genql v4), and `__typename` is a
+// literal type, not `string`.
 
 const SCHEMA_PATH = join(
   dirname(fileURLToPath(import.meta.url)),

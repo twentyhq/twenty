@@ -34,12 +34,14 @@ Selections, resolvers, assertions and test names are upstream's. What changed:
   resolvers through `graphql()` behind an injected `fetch`/`fetcher`, which
   exercises the identical client code path with no network and no new
   dependency.
-- **tsd `expectType` → vitest `expectTypeOf`, now actually checked.** Upstream
-  ran its integration tests through sucrase, which strips types without
-  checking them, so its type assertions were never verified — and several were
-  wrong. The assertions here pin what the 3.0.5 engine actually generates
-  (fields absent from a response are `undefined`, never `null`; `__typename`
-  is a literal type) and are enforced by the package typecheck.
+- **tsd `expectType` → vitest `expectTypeOf`, strengthened to exact.**
+  Upstream's CI did typecheck its integration tests (its `gen` step ran
+  `tsc --noEmit` over tests plus a freshly generated client), but it never ran
+  the tsd CLI — and under plain tsc, tsd's `expectType<T>(value)` degrades to
+  an assignability check. Several assertions were therefore looser than the
+  real types. The exact assertions here pin what the 3.0.5 engine actually
+  generates (fields absent from a response are `undefined`, never `null`;
+  `__typename` is a literal type) and are enforced by the package typecheck.
 - **`type-map.test.ts` assertions enabled.** Upstream ran them in
   output-logging mode with stale expected values; the values here match the
   engine's actual output.
