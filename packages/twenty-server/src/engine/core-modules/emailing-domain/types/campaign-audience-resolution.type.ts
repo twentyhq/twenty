@@ -1,7 +1,14 @@
-import { type CampaignAudience } from 'src/engine/core-modules/emailing-domain/types/campaign-audience.type';
 import { type CampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/campaign-recipient.type';
 
 export type CampaignAudienceResolution = {
   sendableRecipients: CampaignRecipient[];
-  audience: CampaignAudience;
+  audience: {
+    totalMembers: number;
+    withoutEmail: number;
+    duplicateEmails: number;
+    overCap: number;
+    globallyUnsubscribed: number;
+    topicUnsubscribed: number;
+    sendable: number;
+  };
 };

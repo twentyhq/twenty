@@ -1,8 +1,19 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
+import { type CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
 import { CAMPAIGN_PROVIDER_OUTCOME } from 'src/engine/core-modules/emailing-domain/constants/campaign-provider-outcome.constant';
-import { type CampaignDeliveryOutcomeUpdate } from 'src/engine/core-modules/emailing-domain/types/campaign-delivery-outcome-update.type';
 import { type CampaignProviderOutcome } from 'src/engine/core-modules/emailing-domain/types/campaign-provider-outcome.type';
+
+type CampaignDeliveryOutcomeUpdate = Partial<
+  Pick<
+    CampaignDeliveryEntity,
+    | 'deliveredAt'
+    | 'bouncedAt'
+    | 'complainedAt'
+    | 'rejectedAt'
+    | 'renderingFailedAt'
+  >
+>;
 
 export const buildCampaignDeliveryOutcomeUpdate = ({
   outcome,

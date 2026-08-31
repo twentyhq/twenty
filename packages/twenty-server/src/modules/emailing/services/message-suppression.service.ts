@@ -210,11 +210,9 @@ export class MessageSuppressionService {
     emailAddress,
     unsubscribeTopicId,
   }: SuppressManuallyArgs): Promise<MessageSuppressionEntity> {
-    await this.suppress({
+    await this.recordUnsubscribe({
       workspaceId,
       emailAddress,
-      reason: MessageSuppressionReason.UNSUBSCRIBE,
-      source: MessageSuppressionSource.SYSTEM,
       unsubscribeTopicId,
     });
 
@@ -358,12 +356,28 @@ export class MessageSuppressionService {
     workspaceId: string;
     emailAddress: string;
   }): Promise<void> {
+    await this.recordUnsubscribe({
+      workspaceId,
+      emailAddress,
+      unsubscribeTopicId: null,
+    });
+  }
+
+  private async recordUnsubscribe({
+    workspaceId,
+    emailAddress,
+    unsubscribeTopicId,
+  }: {
+    workspaceId: string;
+    emailAddress: string;
+    unsubscribeTopicId?: string | null;
+  }): Promise<void> {
     await this.suppress({
       workspaceId,
       emailAddress,
       reason: MessageSuppressionReason.UNSUBSCRIBE,
       source: MessageSuppressionSource.SYSTEM,
-      unsubscribeTopicId: null,
+      unsubscribeTopicId,
     });
   }
 
@@ -383,11 +397,9 @@ export class MessageSuppressionService {
         continue;
       }
 
-      await this.suppress({
+      await this.recordUnsubscribe({
         workspaceId,
         emailAddress,
-        reason: MessageSuppressionReason.UNSUBSCRIBE,
-        source: MessageSuppressionSource.SYSTEM,
         unsubscribeTopicId: topic.id,
       });
     }
