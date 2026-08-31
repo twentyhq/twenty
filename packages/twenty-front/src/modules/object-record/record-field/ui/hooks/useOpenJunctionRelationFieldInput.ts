@@ -5,9 +5,8 @@ import {
   type FieldRelationMetadata,
   type FieldRelationValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
-import { getSearchableObjectMetadataItems } from '@/object-record/record-field/ui/utils/junction/getSearchableObjectMetadataItems';
+import { getJunctionRelationPickerData } from '@/object-record/record-field/ui/utils/junction/getJunctionRelationPickerData';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
@@ -82,23 +81,12 @@ export const useOpenJunctionRelationFieldInput = () => {
         }),
       ) as FieldRelationValue<FieldRelationFromManyValue>;
 
-      const selectedTargetRecords = extractTargetRecordsFromJunction({
-        junctionRecords,
-        targetFields,
-        objectMetadataItems,
-      });
-
-      const searchableObjectMetadataItems = getSearchableObjectMetadataItems(
-        targetFields,
-        objectMetadataItems,
-      );
-
-      const pickableMorphItems = selectedTargetRecords.map((record) => ({
-        recordId: record.recordId,
-        objectMetadataId: record.objectMetadataId,
-        isSelected: true,
-        isMatchingSearchFilter: true,
-      }));
+      const { pickableMorphItems, searchableObjectMetadataItems } =
+        getJunctionRelationPickerData({
+          junctionRecords,
+          targetFields,
+          objectMetadataItems,
+        });
 
       store.set(
         multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
