@@ -101,11 +101,15 @@ export const WorkflowStepFilterFieldSelect = ({
     setSelectedStep(undefined);
   };
 
-  const handleVariableSelect = (
-    rawVariableName: string,
-    stepId: string,
-    isFullRecord = false,
-  ) => {
+  const handleVariableSelect = ({
+    rawVariableName,
+    stepId,
+    isFullRecord,
+  }: {
+    rawVariableName: string;
+    stepId: string;
+    isFullRecord: boolean;
+  }) => {
     const step = availableVariablesInWorkflowStep.find(
       (item) => item.id === stepId,
     );

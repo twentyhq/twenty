@@ -22,11 +22,11 @@ type WorkflowVariablesDropdownStepsProps = {
   dropdownId: string;
   steps: StepOutputSchemaV2[];
   onSelect: (value: string, path?: string[]) => void;
-  onVariableSelect: (
-    value: string,
-    stepId: string,
-    isFullRecord?: boolean,
-  ) => void;
+  onVariableSelect: (selection: {
+    rawVariableName: string;
+    stepId: string;
+    isFullRecord: boolean;
+  }) => void;
   shouldDisplaySpecialItems?: boolean;
   shouldDisplayRecordObjects?: boolean;
   objectNameSingularsToSelect?: string[];
@@ -66,14 +66,14 @@ export const WorkflowVariablesDropdownSteps = ({
       return;
     }
 
-    onVariableSelect(
-      getVariableTemplateFromPath({
+    onVariableSelect({
+      rawVariableName: getVariableTemplateFromPath({
         stepId: variable.stepId,
         path: variable.path,
       }),
-      variable.stepId,
-      variable.isFullRecord ?? false,
-    );
+      stepId: variable.stepId,
+      isFullRecord: variable.isFullRecord ?? false,
+    });
   };
 
   return (

@@ -129,7 +129,9 @@ export const WorkflowVariablesDropdown = ({
             dropdownId={dropdownId}
             steps={availableVariablesInWorkflowStep}
             onSelect={handleStepSelect}
-            onVariableSelect={handleSubItemSelect}
+            onVariableSelect={({ rawVariableName }) =>
+              handleSubItemSelect(rawVariableName)
+            }
             shouldDisplayRecordObjects={shouldDisplayRecordObjects}
             objectNameSingularsToSelect={objectNameSingularsToSelect}
           />

@@ -88,11 +88,11 @@ export const NestedFieldSearch: Story = {
       canvas.getByText('Run code / Result', { exact: false }),
     ).toBeInTheDocument();
     await userEvent.click(canvas.getAllByText('Company name')[1]);
-    expect(args.onVariableSelect).toHaveBeenCalledWith(
-      '{{code.result.companyName}}',
-      'code',
-      false,
-    );
+    expect(args.onVariableSelect).toHaveBeenCalledWith({
+      rawVariableName: '{{code.result.companyName}}',
+      stepId: 'code',
+      isFullRecord: false,
+    });
     expect(args.onSelect).not.toHaveBeenCalled();
   },
 };
@@ -135,11 +135,11 @@ export const WholeRecordSearch: Story = {
       'company',
     );
     await userEvent.click(canvas.getByText('Company'));
-    expect(args.onVariableSelect).toHaveBeenCalledWith(
-      '{{trigger.id}}',
-      'trigger',
-      true,
-    );
+    expect(args.onVariableSelect).toHaveBeenCalledWith({
+      rawVariableName: '{{trigger.id}}',
+      stepId: 'trigger',
+      isFullRecord: true,
+    });
   },
 };
 
