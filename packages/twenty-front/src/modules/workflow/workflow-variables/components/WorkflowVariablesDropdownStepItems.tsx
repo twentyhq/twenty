@@ -27,6 +27,7 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 
 type WorkflowVariablesDropdownStepItemsProps = {
   step: StepOutputSchemaV2;
+  initialPath?: string[];
   onSelect: (value: string) => void;
   onBack: () => void;
   shouldDisplayRecordObjects: boolean;
@@ -35,6 +36,7 @@ type WorkflowVariablesDropdownStepItemsProps = {
 
 export const WorkflowVariablesDropdownStepItems = ({
   step,
+  initialPath,
   onSelect,
   onBack,
   shouldDisplayRecordObjects,
@@ -53,6 +55,7 @@ export const WorkflowVariablesDropdownStepItems = ({
     currentPath,
   } = useVariableDropdown({
     step,
+    initialPath,
     onSelect,
     onBack,
   });

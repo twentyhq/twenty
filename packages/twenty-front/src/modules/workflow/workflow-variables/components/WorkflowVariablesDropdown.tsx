@@ -68,8 +68,10 @@ export const WorkflowVariablesDropdown = ({
   const [selectedStep, setSelectedStep] = useState<
     StepOutputSchemaV2 | undefined
   >(initialStep);
+  const [selectedPath, setSelectedPath] = useState<string[]>([]);
 
-  const handleStepSelect = (stepId: string) => {
+  const handleStepSelect = (stepId: string, path: string[] = []) => {
+    setSelectedPath(path);
     setSelectedStep(
       availableVariablesInWorkflowStep.find((step) => step.id === stepId),
     );
@@ -78,6 +80,7 @@ export const WorkflowVariablesDropdown = ({
   const handleSubItemSelect = (subItem: string) => {
     onVariableSelect(subItem);
     setSelectedStep(initialStep);
+    setSelectedPath([]);
     closeDropdown(dropdownId);
   };
 
@@ -126,10 +129,12 @@ export const WorkflowVariablesDropdown = ({
             dropdownId={dropdownId}
             steps={availableVariablesInWorkflowStep}
             onSelect={handleStepSelect}
+            onVariableSelect={handleSubItemSelect}
           />
         ) : (
           <WorkflowVariablesDropdownStepItems
             step={selectedStep}
+            initialPath={selectedPath}
             onSelect={handleSubItemSelect}
             onBack={handleBack}
             shouldDisplayRecordObjects={shouldDisplayRecordObjects}

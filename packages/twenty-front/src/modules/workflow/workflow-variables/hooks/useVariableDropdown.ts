@@ -22,6 +22,7 @@ import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/g
 
 type UseVariableDropdownProps = {
   step: StepOutputSchemaV2;
+  initialPath?: string[];
   onSelect: (value: string) => void;
   onBack: () => void;
 };
@@ -38,12 +39,13 @@ type UseVariableDropdownReturn = {
 
 export const useVariableDropdown = ({
   step,
+  initialPath = [],
   onSelect,
   onBack,
 }: UseVariableDropdownProps): UseVariableDropdownReturn => {
   const { getIcon } = useIcons();
 
-  const [currentPath, setCurrentPath] = useState<string[]>([]);
+  const [currentPath, setCurrentPath] = useState<string[]>(initialPath);
   const [searchInputValue, setSearchInputValue] = useState('');
 
   const { openWorkflowEditStepInSidePanel } = useSidePanelWorkflowNavigation();
