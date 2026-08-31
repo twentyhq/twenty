@@ -1,9 +1,6 @@
 import { RecordIdentifierBarCreatedAt } from '@/object-record/record-show/components/RecordIdentifierBarCreatedAt';
 import { RecordIdentifierBarTitle } from '@/object-record/record-show/components/RecordIdentifierBarTitle';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
-import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
-import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -15,30 +12,21 @@ const StyledRecordInfo = styled.div`
 `;
 
 type SidePanelRecordInfoProps = {
-  sidePanelPageInstanceId: string;
+  objectNameSingular: string;
+  recordId: string;
 };
 
 export const SidePanelRecordInfo = ({
-  sidePanelPageInstanceId,
+  objectNameSingular,
+  recordId,
 }: SidePanelRecordInfoProps) => {
-  const viewableRecordNameSingular = useAtomComponentStateValue(
-    viewableRecordNameSingularComponentState,
-    sidePanelPageInstanceId,
-  );
-  const viewableRecordId = useAtomComponentStateValue(
-    viewableRecordIdComponentState,
-    sidePanelPageInstanceId,
-  );
-
-  const { objectNameSingular, objectRecordId } = useRecordShowPage(
-    viewableRecordNameSingular!,
-    viewableRecordId!,
-  );
+  const { objectNameSingular: resolvedObjectNameSingular, objectRecordId } =
+    useRecordShowPage(objectNameSingular, recordId);
 
   return (
     <StyledRecordInfo>
       <RecordIdentifierBarTitle
-        objectNameSingular={objectNameSingular}
+        objectNameSingular={resolvedObjectNameSingular}
         objectRecordId={objectRecordId}
         variant="side-panel"
       />

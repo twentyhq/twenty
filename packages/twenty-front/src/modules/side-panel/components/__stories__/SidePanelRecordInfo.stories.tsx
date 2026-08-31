@@ -1,8 +1,6 @@
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { SidePanelRecordInfo } from '@/side-panel/components/SidePanelRecordInfo';
-import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
-import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { act } from 'react';
@@ -15,7 +13,6 @@ import {
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
 
-const SIDE_PANEL_PAGE_INSTANCE_ID = 'side-panel-record-info';
 const CREATED_AT = '2026-08-25T12:00:00.000Z';
 const COMPANY = {
   ...mockedCompanyRecords[0],
@@ -26,24 +23,12 @@ const COMPANY = {
 const meta: Meta<typeof SidePanelRecordInfo> = {
   title: 'Modules/SidePanel/SidePanelRecordInfo',
   component: SidePanelRecordInfo,
-  args: { sidePanelPageInstanceId: SIDE_PANEL_PAGE_INSTANCE_ID },
+  args: { objectNameSingular: 'company', recordId: COMPANY.id },
   parameters: {
     mockingDate: new Date('2026-08-27T12:00:00.000Z'),
   },
   beforeEach: () => {
     jotaiStore.set(recordStoreFamilyState.atomFamily(COMPANY.id), COMPANY);
-    jotaiStore.set(
-      viewableRecordIdComponentState.atomFamily({
-        instanceId: SIDE_PANEL_PAGE_INSTANCE_ID,
-      }),
-      COMPANY.id,
-    );
-    jotaiStore.set(
-      viewableRecordNameSingularComponentState.atomFamily({
-        instanceId: SIDE_PANEL_PAGE_INSTANCE_ID,
-      }),
-      'company',
-    );
   },
   decorators: [ObjectMetadataItemsDecorator, ComponentWithRouterDecorator],
 };

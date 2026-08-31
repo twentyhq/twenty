@@ -7,11 +7,11 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 
-const openViewTargetMock = jest.fn();
+const openWorkspaceTargetMock = jest.fn();
 
-jest.mock('@/ai/hooks/useChatTargetNavigation', () => ({
-  useChatTargetNavigation: () => ({
-    openViewTarget: openViewTargetMock,
+jest.mock('@/navigation/hooks/useOpenWorkspaceTarget', () => ({
+  useOpenWorkspaceTarget: () => ({
+    openWorkspaceTarget: openWorkspaceTargetMock,
   }),
 }));
 
@@ -56,9 +56,7 @@ describe('ViewLink', () => {
     window.history.pushState({}, '', '/objects/companies');
   });
 
-  it('should open the view as an artifact on a plain click on the chat page', () => {
-    window.history.pushState({}, '', '/chat');
-
+  it('should delegate a plain click to target navigation', () => {
     renderViewLink({
       viewId: VIEW_ID,
       displayName: 'All Companies',
@@ -69,24 +67,9 @@ describe('ViewLink', () => {
     fireEvent.mouseDown(link);
     fireEvent.click(link);
 
-    expect(openViewTargetMock).toHaveBeenCalledWith({
-      objectNameSingular: companyObjectMetadataItem.nameSingular,
-      viewId: VIEW_ID,
+    expect(openWorkspaceTargetMock).toHaveBeenCalledWith({
+      path: `/objects/${companyObjectMetadataItem.namePlural}?viewId=${VIEW_ID}`,
     });
-  });
-
-  it('should not open an artifact on click outside the chat page', () => {
-    renderViewLink({
-      viewId: VIEW_ID,
-      displayName: 'All Companies',
-      views: [allCompaniesView],
-    });
-
-    const link = screen.getByText('All Companies').closest('a') as HTMLElement;
-    fireEvent.mouseDown(link);
-    fireEvent.click(link);
-
-    expect(openViewTargetMock).not.toHaveBeenCalled();
   });
 
   it('should link a view to its object index page', () => {

@@ -10,19 +10,16 @@ import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { newRecordTitleCellToOpenState } from '@/object-record/record-title-cell/states/newRecordTitleCellToOpenState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
+import { SIDE_PANEL_ARTIFACT_PAGE } from '@/side-panel/constants/SidePanelArtifactPage';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
-import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import {
-  AppPath,
-  ContextStorePageType,
-  SidePanelPages,
-} from 'twenty-shared/types';
+import { AppPath, ContextStorePageType } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
@@ -98,14 +95,6 @@ const renderHooks = () => {
     () => {
       const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
-      const viewableRecordId = useAtomComponentStateValue(
-        viewableRecordIdComponentState,
-        'mocked-uuid',
-      );
-      const viewableRecordNameSingular = useAtomComponentStateValue(
-        viewableRecordNameSingularComponentState,
-        'mocked-uuid',
-      );
       const contextStoreCurrentObjectMetadataItemId =
         useAtomComponentStateValue(
           contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -127,8 +116,6 @@ const renderHooks = () => {
 
       return {
         openRecordInSidePanel,
-        viewableRecordId,
-        viewableRecordNameSingular,
         contextStoreCurrentObjectMetadataItemId,
         contextStoreTargetedRecordsRule,
         contextStoreNumberOfSelectedRecords,
@@ -168,8 +155,6 @@ describe('useOpenRecordInSidePanel', () => {
       });
     });
 
-    expect(result.current.viewableRecordId).toBe(recordId);
-    expect(result.current.viewableRecordNameSingular).toBe(objectNameSingular);
     expect(result.current.contextStoreCurrentObjectMetadataItemId).toBe(
       personMockObjectMetadataItem.id,
     );
@@ -194,7 +179,11 @@ describe('useOpenRecordInSidePanel', () => {
     ]);
 
     expect(mockNavigateSidePanel).toHaveBeenCalledWith({
-      page: SidePanelPages.ViewRecord,
+      page: SIDE_PANEL_ARTIFACT_PAGE,
+      artifactPath: getAppPath(AppPath.RecordShowPage, {
+        objectNameSingular,
+        objectRecordId: recordId,
+      }),
       pageTitle: 'Person',
       pageIcon: result.current.getIcon(personMockObjectMetadataItem.icon),
       pageIconColor: 'currentColor',
@@ -218,13 +207,37 @@ describe('useOpenRecordInSidePanel', () => {
     });
 
     expect(mockNavigateSidePanel).toHaveBeenCalledWith({
-      page: SidePanelPages.ViewRecord,
+      page: SIDE_PANEL_ARTIFACT_PAGE,
+      artifactPath: getAppPath(AppPath.RecordShowPage, {
+        objectNameSingular,
+        objectRecordId: recordId,
+      }),
       pageTitle: 'New Person',
       pageIcon: result.current.getIcon(personMockObjectMetadataItem.icon),
       pageIconColor: 'currentColor',
       pageId: 'mocked-uuid',
       resetNavigationStack: false,
     });
+  });
+
+  it('preserves an explicit canonical artifact path', () => {
+    const { result } = renderHooks();
+    const artifactPath = `${getAppPath(AppPath.RecordShowPage, {
+      objectNameSingular: 'person',
+      objectRecordId: 'record-123',
+    })}?tab=timeline#activity`;
+
+    act(() => {
+      result.current.openRecordInSidePanel({
+        recordId: 'record-123',
+        objectNameSingular: 'person',
+        artifactPath,
+      });
+    });
+
+    expect(mockNavigateSidePanel).toHaveBeenCalledWith(
+      expect.objectContaining({ artifactPath }),
+    );
   });
 
   it('should open title cell in edit mode when isNewRecord is true', () => {
@@ -289,6 +302,46 @@ describe('useOpenRecordInSidePanel', () => {
     });
 
     expect(mockOpenNewRecordTitleCell).not.toHaveBeenCalled();
+  });
+
+  it('does not repeat new-record effects when the record is already current', () => {
+    const { result } = renderHooks();
+    const artifactPath = getAppPath(AppPath.RecordShowPage, {
+      objectNameSingular: 'person',
+      objectRecordId: 'new-record-123',
+    });
+
+    act(() => {
+      result.current.openRecordInSidePanel({
+        recordId: 'new-record-123',
+        objectNameSingular: 'person',
+        isNewRecord: true,
+      });
+    });
+
+    // This suite mocks the low-level navigator, so mirror the stack write it
+    // normally performs before exercising the idempotent adapter path.
+    jotaiStore.set(sidePanelNavigationStackState.atom, [
+      {
+        page: SIDE_PANEL_ARTIFACT_PAGE,
+        artifactPath,
+        pageTitle: 'New Person',
+        pageIcon: result.current.getIcon(personMockObjectMetadataItem.icon),
+        pageIconColor: 'currentColor',
+        pageId: 'mocked-uuid',
+      },
+    ]);
+
+    act(() => {
+      result.current.openRecordInSidePanel({
+        recordId: 'new-record-123',
+        objectNameSingular: 'person',
+        isNewRecord: true,
+      });
+    });
+
+    expect(mockNavigateSidePanel).toHaveBeenCalledTimes(1);
+    expect(mockOpenNewRecordTitleCell).toHaveBeenCalledTimes(1);
   });
 
   it('should navigate to the record page instead of the side panel on mobile', () => {

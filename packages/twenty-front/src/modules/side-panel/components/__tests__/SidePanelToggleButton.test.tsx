@@ -6,8 +6,15 @@ import { MemoryRouter } from 'react-router-dom';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
+import {
+  SIDE_PANEL_ARTIFACT_PAGE,
+  type SidePanelPage,
+} from '@/side-panel/constants/SidePanelArtifactPage';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
-import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import {
+  type SidePanelNavigationStackItem,
+  sidePanelNavigationStackState,
+} from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -41,13 +48,8 @@ const renderSidePanelToggleButton = ({
   isLayoutCustomizationModeEnabled = false,
 }: {
   isSidePanelOpened?: boolean;
-  sidePanelPage?: SidePanelPages;
-  sidePanelNavigationStack?: Array<{
-    page: SidePanelPages;
-    pageTitle: string;
-    pageIcon: typeof IconDotsVertical;
-    pageId: string;
-  }>;
+  sidePanelPage?: SidePanelPage;
+  sidePanelNavigationStack?: SidePanelNavigationStackItem[];
   sidePanelSearch?: string;
   sidePanelSearchObjectFilter?: string | null;
   isLayoutCustomizationModeEnabled?: boolean;
@@ -122,7 +124,7 @@ describe('SidePanelToggleButton', () => {
   it('hides the navbar command menu button when the side panel has command-menu history', () => {
     renderSidePanelToggleButton({
       isSidePanelOpened: true,
-      sidePanelPage: SidePanelPages.ViewRecord,
+      sidePanelPage: SIDE_PANEL_ARTIFACT_PAGE,
       sidePanelNavigationStack: [
         {
           page: SidePanelPages.CommandMenuDisplay,
@@ -131,7 +133,8 @@ describe('SidePanelToggleButton', () => {
           pageId: 'command-menu',
         },
         {
-          page: SidePanelPages.ViewRecord,
+          page: SIDE_PANEL_ARTIFACT_PAGE,
+          artifactPath: '/object/company/record-id',
           pageTitle: 'Company',
           pageIcon: IconDotsVertical,
           pageId: 'view-record',
@@ -251,12 +254,13 @@ describe('SidePanelToggleButton', () => {
   it('replaces a directly opened side-panel page with the root command menu', () => {
     const { store } = renderSidePanelToggleButton({
       isSidePanelOpened: true,
-      sidePanelPage: SidePanelPages.ViewRecord,
+      sidePanelPage: SIDE_PANEL_ARTIFACT_PAGE,
       sidePanelSearch: 'acme',
       sidePanelSearchObjectFilter: 'company',
       sidePanelNavigationStack: [
         {
-          page: SidePanelPages.ViewRecord,
+          page: SIDE_PANEL_ARTIFACT_PAGE,
+          artifactPath: '/object/company/record-id',
           pageTitle: 'Company',
           pageIcon: IconDotsVertical,
           pageId: 'view-record',

@@ -6,16 +6,16 @@ import { contextStoreCurrentPageTypeComponentState } from '@/context-store/state
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
+import { SIDE_PANEL_ARTIFACT_PAGE } from '@/side-panel/constants/SidePanelArtifactPage';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { useOpenCalendarEventInSidePanel } from '@/side-panel/hooks/useOpenCalendarEventInSidePanel';
-import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
-import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import {
+  AppPath,
   ContextStorePageType,
   CoreObjectNameSingular,
-  SidePanelPages,
 } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
@@ -71,14 +71,6 @@ const renderHooks = () => {
       const { openCalendarEventInSidePanel } =
         useOpenCalendarEventInSidePanel();
 
-      const viewableRecordId = useAtomComponentStateValue(
-        viewableRecordIdComponentState,
-        'mocked-uuid',
-      );
-      const viewableRecordNameSingular = useAtomComponentStateValue(
-        viewableRecordNameSingularComponentState,
-        'mocked-uuid',
-      );
       const contextStoreCurrentObjectMetadataItemId =
         useAtomComponentStateValue(
           contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -99,8 +91,6 @@ const renderHooks = () => {
 
       return {
         openCalendarEventInSidePanel,
-        viewableRecordId,
-        viewableRecordNameSingular,
         contextStoreCurrentObjectMetadataItemId,
         contextStoreTargetedRecordsRule,
         contextStoreNumberOfSelectedRecords,
@@ -128,10 +118,6 @@ describe('useOpenCalendarEventInSidePanel', () => {
       result.current.openCalendarEventInSidePanel(calendarEventId);
     });
 
-    expect(result.current.viewableRecordId).toBe(calendarEventId);
-    expect(result.current.viewableRecordNameSingular).toBe(
-      CoreObjectNameSingular.CalendarEvent,
-    );
     expect(result.current.contextStoreCurrentObjectMetadataItemId).toBe(
       calendarEventMockObjectMetadataItem.id,
     );
@@ -146,7 +132,11 @@ describe('useOpenCalendarEventInSidePanel', () => {
 
     expect(mockNavigateSidePanel).toHaveBeenCalledWith(
       expect.objectContaining({
-        page: SidePanelPages.ViewRecord,
+        page: SIDE_PANEL_ARTIFACT_PAGE,
+        artifactPath: getAppPath(AppPath.RecordShowPage, {
+          objectNameSingular: CoreObjectNameSingular.CalendarEvent,
+          objectRecordId: calendarEventId,
+        }),
         pageId: 'mocked-uuid',
       }),
     );

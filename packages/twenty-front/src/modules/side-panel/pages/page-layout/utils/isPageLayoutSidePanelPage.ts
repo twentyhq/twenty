@@ -1,3 +1,4 @@
+import { type SidePanelPage } from '@/side-panel/constants/SidePanelArtifactPage';
 import { SidePanelPages } from 'twenty-shared/types';
 
 import { type PageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/types/PageLayoutSidePanelPage';
@@ -15,7 +16,7 @@ const PAGE_LAYOUT_SIDE_PANEL_PAGES: PageLayoutSidePanelPage[] = [
 ];
 
 export const isPageLayoutSidePanelPage = (
-  page: SidePanelPages,
+  page: SidePanelPage,
 ): page is PageLayoutSidePanelPage => {
-  return (PAGE_LAYOUT_SIDE_PANEL_PAGES as SidePanelPages[]).includes(page);
+  return (PAGE_LAYOUT_SIDE_PANEL_PAGES as SidePanelPage[]).includes(page);
 };

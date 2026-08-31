@@ -3,6 +3,10 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 
+import {
+  SIDE_PANEL_ARTIFACT_PAGE,
+  type SidePanelPage,
+} from '@/side-panel/constants/SidePanelArtifactPage';
 import { useSidePanelExpandTarget } from '@/side-panel/hooks/useSidePanelExpandTarget';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { type SidePanelExpandTarget } from '@/side-panel/types/SidePanelExpandTarget';
@@ -14,14 +18,8 @@ const mockAskAiExpandTarget: SidePanelExpandTarget = {
   expand: jest.fn(),
 };
 
-const mockRecordExpandTarget: SidePanelExpandTarget = {
-  label: 'Expand record',
-  hasExpandShortcut: true,
-  expand: jest.fn(),
-};
-
-const mockRecordsExpandTarget: SidePanelExpandTarget = {
-  label: 'Expand view',
+const mockArtifactExpandTarget: SidePanelExpandTarget = {
+  label: 'Expand artifact',
   hasExpandShortcut: true,
   expand: jest.fn(),
 };
@@ -47,19 +45,9 @@ jest.mock(
   }),
 );
 
-jest.mock(
-  '@/side-panel/pages/record-page/hooks/useExpandRecordSidePanelPage',
-  () => ({
-    useExpandRecordSidePanelPage: () => mockRecordExpandTarget,
-  }),
-);
-
-jest.mock(
-  '@/side-panel/pages/records-page/hooks/useExpandRecordsSidePanelPage',
-  () => ({
-    useExpandRecordsSidePanelPage: () => mockRecordsExpandTarget,
-  }),
-);
+jest.mock('@/side-panel/artifacts/hooks/useExpandSidePanelArtifact', () => ({
+  useExpandSidePanelArtifact: () => mockArtifactExpandTarget,
+}));
 
 jest.mock(
   '@/side-panel/pages/rich-text-page/hooks/useExpandRichTextSidePanelPage',
@@ -78,7 +66,7 @@ const wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
-const renderExpandTarget = (sidePanelPage: SidePanelPages) => {
+const renderExpandTarget = (sidePanelPage: SidePanelPage) => {
   jotaiStore.set(sidePanelPageState.atom, sidePanelPage);
 
   return renderHook(() => useSidePanelExpandTarget(), { wrapper });
@@ -97,16 +85,10 @@ describe('useSidePanelExpandTarget', () => {
     expect(result.current).toBe(mockAskAiExpandTarget);
   });
 
-  it('should return the record target when a record page is open', () => {
-    const { result } = renderExpandTarget(SidePanelPages.ViewRecord);
+  it('should return the artifact target when an artifact page is open', () => {
+    const { result } = renderExpandTarget(SIDE_PANEL_ARTIFACT_PAGE);
 
-    expect(result.current).toBe(mockRecordExpandTarget);
-  });
-
-  it('should return the records target when a records page is open', () => {
-    const { result } = renderExpandTarget(SidePanelPages.ViewRecords);
-
-    expect(result.current).toBe(mockRecordsExpandTarget);
+    expect(result.current).toBe(mockArtifactExpandTarget);
   });
 
   it('should return the rich text target when a rich text page is open', () => {
@@ -124,7 +106,7 @@ describe('useSidePanelExpandTarget', () => {
   it('should return null when a sub page has taken over the panel', () => {
     mockHasSidePanelSubPages = true;
 
-    const { result } = renderExpandTarget(SidePanelPages.ViewRecord);
+    const { result } = renderExpandTarget(SIDE_PANEL_ARTIFACT_PAGE);
 
     expect(result.current).toBeNull();
   });
@@ -132,7 +114,7 @@ describe('useSidePanelExpandTarget', () => {
   it('should return null on mobile where the panel already fills the viewport', () => {
     mockIsMobile = true;
 
-    const { result } = renderExpandTarget(SidePanelPages.ViewRecord);
+    const { result } = renderExpandTarget(SIDE_PANEL_ARTIFACT_PAGE);
 
     expect(result.current).toBeNull();
   });

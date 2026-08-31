@@ -4,6 +4,7 @@ import { IconColumnInsertRight } from 'twenty-ui/icon';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
 import { SidePanelAskAiInfo } from '@/side-panel/components/SidePanelAskAiInfo';
+import { useSidePanelArtifact } from '@/side-panel/artifacts/hooks/useCurrentSidePanelArtifact';
 import { SidePanelFolderInfo } from '@/side-panel/components/SidePanelFolderInfo';
 import { SidePanelLinkInfo } from '@/side-panel/components/SidePanelLinkInfo';
 import { SidePanelMultipleRecordsInfo } from '@/side-panel/components/SidePanelMultipleRecordsInfo';
@@ -30,6 +31,7 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
     selectedNavigationMenuItemIdInEditModeState,
   );
   const items = useNavigationMenuItemEditSectionItems();
+  const artifact = useSidePanelArtifact(pageChip?.page?.artifactPath);
 
   if (!isDefined(pageChip)) {
     return null;
@@ -61,21 +63,19 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
     }
   }
 
-  const isRecordPage = pageChip.page?.page === SidePanelPages.ViewRecord;
-
-  if (isRecordPage && isDefined(pageChip.page?.pageId)) {
+  if (artifact?.kind === 'record') {
     return (
-      <SidePanelRecordInfo sidePanelPageInstanceId={pageChip.page.pageId} />
+      <SidePanelRecordInfo
+        objectNameSingular={artifact.objectMetadataItem.nameSingular}
+        recordId={artifact.recordId}
+      />
     );
   }
 
-  const isWorkflowStepPage = pageChip.page?.page
-    ? [
-        SidePanelPages.WorkflowStepEdit,
-        SidePanelPages.WorkflowStepView,
-        SidePanelPages.WorkflowRunStepView,
-      ].includes(pageChip.page?.page)
-    : false;
+  const isWorkflowStepPage =
+    pageChip.page?.page === SidePanelPages.WorkflowStepEdit ||
+    pageChip.page?.page === SidePanelPages.WorkflowStepView ||
+    pageChip.page?.page === SidePanelPages.WorkflowRunStepView;
 
   if (isWorkflowStepPage && isDefined(pageChip.page?.pageId)) {
     return (

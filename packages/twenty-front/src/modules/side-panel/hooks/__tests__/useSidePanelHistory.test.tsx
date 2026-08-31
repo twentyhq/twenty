@@ -2,6 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { SIDE_PANEL_ARTIFACT_PAGE } from '@/side-panel/constants/SidePanelArtifactPage';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useSidePanelCloseAnimationCompleteCleanup } from '@/side-panel/hooks/useSidePanelCloseAnimationCompleteCleanup';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
@@ -46,16 +47,18 @@ describe('useSidePanelHistory', () => {
 
     act(() => {
       result.current.commandMenu.navigateSidePanelMenu({
-        page: SidePanelPages.SearchRecords,
-        pageTitle: 'Search',
-        pageIcon: IconSearch,
+        page: SIDE_PANEL_ARTIFACT_PAGE,
+        artifactPath: '/objects/companies',
+        pageTitle: 'Companies',
+        pageIcon: IconList,
         pageId: '1',
       });
     });
 
     act(() => {
       result.current.commandMenu.navigateSidePanelMenu({
-        page: SidePanelPages.ViewRecord,
+        page: SIDE_PANEL_ARTIFACT_PAGE,
+        artifactPath: '/object/company/record-id',
         pageTitle: 'Company',
         pageIcon: IconList,
         pageId: '2',
@@ -64,13 +67,15 @@ describe('useSidePanelHistory', () => {
 
     expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([
       {
-        page: SidePanelPages.SearchRecords,
-        pageTitle: 'Search',
-        pageIcon: IconSearch,
+        page: SIDE_PANEL_ARTIFACT_PAGE,
+        artifactPath: '/objects/companies',
+        pageTitle: 'Companies',
+        pageIcon: IconList,
         pageId: '1',
       },
       {
-        page: SidePanelPages.ViewRecord,
+        page: SIDE_PANEL_ARTIFACT_PAGE,
+        artifactPath: '/object/company/record-id',
         pageTitle: 'Company',
         pageIcon: IconList,
         pageId: '2',
@@ -83,18 +88,19 @@ describe('useSidePanelHistory', () => {
 
     expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([
       {
-        page: SidePanelPages.SearchRecords,
-        pageTitle: 'Search',
-        pageIcon: IconSearch,
+        page: SIDE_PANEL_ARTIFACT_PAGE,
+        artifactPath: '/objects/companies',
+        pageTitle: 'Companies',
+        pageIcon: IconList,
         pageId: '1',
       },
     ]);
     expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
-      SidePanelPages.SearchRecords,
+      SIDE_PANEL_ARTIFACT_PAGE,
     );
     expect(jotaiStore.get(sidePanelPageInfoState.atom)).toEqual({
-      title: 'Search',
-      Icon: IconSearch,
+      title: 'Companies',
+      Icon: IconList,
       instanceId: '1',
     });
 
@@ -123,7 +129,8 @@ describe('useSidePanelHistory', () => {
 
     act(() => {
       result.current.commandMenu.navigateSidePanelMenu({
-        page: SidePanelPages.ViewRecord,
+        page: SIDE_PANEL_ARTIFACT_PAGE,
+        artifactPath: '/object/company/record-id',
         pageTitle: 'Company',
         pageIcon: IconList,
         pageId: '1',
@@ -132,7 +139,8 @@ describe('useSidePanelHistory', () => {
 
     expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([
       {
-        page: SidePanelPages.ViewRecord,
+        page: SIDE_PANEL_ARTIFACT_PAGE,
+        artifactPath: '/object/company/record-id',
         pageTitle: 'Company',
         pageIcon: IconList,
         pageId: '1',

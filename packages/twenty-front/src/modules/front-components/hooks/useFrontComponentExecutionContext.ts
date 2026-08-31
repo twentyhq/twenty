@@ -165,6 +165,12 @@ export const useFrontComponentExecutionContext = ({
 
   const openSidePanelPage: FrontComponentHostCommunicationApi['openSidePanelPage'] =
     async (params) => {
+      if ((params.page as SidePanelPages) === SidePanelPages.ViewRecords) {
+        throw new Error(
+          'ViewRecords side-panel requests are unsupported because they do not identify an object or view',
+        );
+      }
+
       if (params.page === SidePanelPages.ViewRecord) {
         const { recordId, objectNameSingular, tab, resetNavigationStack } =
           params;

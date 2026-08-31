@@ -1,6 +1,7 @@
 import { SidePanelContextChipIconWrapper } from '@/side-panel/components/SidePanelContextChipIconWrapper';
 import { SidePanelContextRecordChipAvatars } from '@/side-panel/components/SidePanelContextRecordChipAvatars';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
+import { SIDE_PANEL_ARTIFACT_PAGE } from '@/side-panel/constants/SidePanelArtifactPage';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
@@ -60,16 +61,13 @@ export const useSidePanelContextChips = () => {
         const isLastChip =
           index === filteredSidePanelNavigationStack.length - 1;
 
-        const isRecordPage = page.page === SidePanelPages.ViewRecord;
+        const sidePanelNavigationMorphItem =
+          sidePanelNavigationMorphItemsByPage.get(page.pageId)?.[0];
+        const isRecordPage =
+          page.page === SIDE_PANEL_ARTIFACT_PAGE &&
+          isDefined(sidePanelNavigationMorphItem);
 
         if (isRecordPage && !isLastChip) {
-          const sidePanelNavigationMorphItem =
-            sidePanelNavigationMorphItemsByPage.get(page.pageId)?.[0];
-
-          if (!isDefined(sidePanelNavigationMorphItem?.recordId)) {
-            return null;
-          }
-
           const objectMetadataItem = objectMetadataItems.find(
             (item) => item.id === sidePanelNavigationMorphItem.objectMetadataId,
           );

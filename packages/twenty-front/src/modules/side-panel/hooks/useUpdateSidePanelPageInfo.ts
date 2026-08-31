@@ -37,10 +37,9 @@ export const useUpdateSidePanelPageInfo = () => {
       const newSidePanelNavigationStack = [
         ...sidePanelNavigationStack.slice(0, -1),
         {
-          page: lastSidePanelNavigationStackItem.page,
+          ...lastSidePanelNavigationStackItem,
           pageTitle: newSidePanelPageInfo.title,
           pageIcon: newSidePanelPageInfo.Icon,
-          pageId: lastSidePanelNavigationStackItem.pageId,
         },
       ];
 

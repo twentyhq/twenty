@@ -63,6 +63,7 @@ export type OpenSidePanelPageParams =
       page: Exclude<
         SidePanelPages,
         | SidePanelPages.ViewRecord
+        | SidePanelPages.ViewRecords
         | SidePanelPages.EditRichText
         | SidePanelPages.ComposeEmail
         | SidePanelPages.ViewFrontComponent

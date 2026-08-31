@@ -51,7 +51,7 @@ describe('usePageLayoutHeaderInfo', () => {
   it.each([
     SidePanelPages.RecordPageFieldsSettings,
     SidePanelPages.RecordPageFieldSettings,
-  ])('uses the canonical field icon for %s', (sidePanelPage) => {
+  ] as const)('uses the canonical field icon for %s', (sidePanelPage) => {
     const widget = makeWidget('widget-id', 0);
     const { result } = renderHook(() =>
       usePageLayoutHeaderInfo({

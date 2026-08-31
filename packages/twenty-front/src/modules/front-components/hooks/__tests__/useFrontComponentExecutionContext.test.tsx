@@ -384,6 +384,23 @@ describe('useFrontComponentExecutionContext', () => {
   });
 
   describe('openSidePanelPage', () => {
+    it('rejects legacy record-index requests without target identity', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await expect(
+        result.current.frontComponentHostCommunicationApi.openSidePanelPage({
+          page: SidePanelPages.ViewRecords,
+          pageTitle: 'Records',
+        } as never),
+      ).rejects.toThrow(
+        'ViewRecords side-panel requests are unsupported because they do not identify an object or view',
+      );
+
+      expect(mockNavigateSidePanel).not.toHaveBeenCalled();
+    });
+
     it('should call navigateSidePanel with resolved icon', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,

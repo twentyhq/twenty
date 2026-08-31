@@ -3,6 +3,11 @@ import { SidePanelCommandMenuItemEditPage } from '@/command-menu-item/edit/compo
 import { SidePanelNavigationMenuItemEditPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage';
 import { SidePanelSettingsMetadataTranslationsPage } from '@/settings/translations/components/SidePanelSettingsMetadataTranslationsPage';
 import { SidePanelNewSidebarItemPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemPage';
+import { SidePanelArtifactPage } from '@/side-panel/artifacts/components/SidePanelArtifactPage';
+import {
+  SIDE_PANEL_ARTIFACT_PAGE,
+  type SidePanelPage,
+} from '@/side-panel/constants/SidePanelArtifactPage';
 import { SidePanelEmailBlockSettingsPage } from '@/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage';
 import { SidePanelAskAiPage } from '@/side-panel/pages/ask-ai/components/SidePanelAskAiPage';
 import { SidePanelComposeEmailPage } from '@/side-panel/pages/compose-email/components/SidePanelComposeEmailPage';
@@ -20,8 +25,6 @@ import { SidePanelPageLayoutRecordPageWidgetTypeSelect } from '@/side-panel/page
 import { SidePanelPageLayoutTabSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettings';
 import { SidePanelPageLayoutWidgetSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutWidgetSettings';
 import { SidePanelMergeRecordPage } from '@/side-panel/pages/record-page/components/SidePanelMergeRecordPage';
-import { SidePanelRecordsPage } from '@/side-panel/pages/records-page/components/SidePanelRecordsPage';
-import { SidePanelRecordPage } from '@/side-panel/pages/record-page/components/SidePanelRecordPage';
 import { SidePanelUpdateMultipleRecords } from '@/side-panel/pages/record-page/components/SidePanelUpdateMultipleRecords';
 import { SidePanelEditRichTextPage } from '@/side-panel/pages/rich-text-page/components/SidePanelEditRichTextPage';
 import { SidePanelSearchRecordsPage } from '@/side-panel/pages/search/components/SidePanelSearchRecordsPage';
@@ -33,79 +36,67 @@ import { SidePanelWorkflowViewStep } from '@/side-panel/pages/workflow/step/view
 import { SidePanelWorkflowSelectTriggerType } from '@/side-panel/pages/workflow/trigger-type/components/SidePanelWorkflowSelectTriggerType';
 import { SidePanelPages } from 'twenty-shared/types';
 
-export const SIDE_PANEL_PAGES_CONFIG = new Map<SidePanelPages, React.ReactNode>(
+export const SIDE_PANEL_PAGES_CONFIG = new Map<SidePanelPage, React.ReactNode>([
+  [SidePanelPages.CommandMenuDisplay, <SidePanelCommandMenuItemDisplayPage />],
+  [SIDE_PANEL_ARTIFACT_PAGE, <SidePanelArtifactPage />],
+  [SidePanelPages.MergeRecords, <SidePanelMergeRecordPage />],
+  [SidePanelPages.UpdateRecords, <SidePanelUpdateMultipleRecords />],
+  [SidePanelPages.EditRichText, <SidePanelEditRichTextPage />],
   [
-    [
-      SidePanelPages.CommandMenuDisplay,
-      <SidePanelCommandMenuItemDisplayPage />,
-    ],
-    [SidePanelPages.ViewRecord, <SidePanelRecordPage />],
-    [SidePanelPages.ViewRecords, <SidePanelRecordsPage />],
-    [SidePanelPages.MergeRecords, <SidePanelMergeRecordPage />],
-    [SidePanelPages.UpdateRecords, <SidePanelUpdateMultipleRecords />],
-    [SidePanelPages.EditRichText, <SidePanelEditRichTextPage />],
-    [
-      SidePanelPages.WorkflowTriggerSelectType,
-      <SidePanelWorkflowSelectTriggerType />,
-    ],
-    [SidePanelPages.WorkflowStepCreate, <SidePanelWorkflowCreateStep />],
-    [SidePanelPages.WorkflowStepEditType, <SidePanelWorkflowEditStepType />],
-    [SidePanelPages.WorkflowStepEdit, <SidePanelWorkflowEditStep />],
-    [SidePanelPages.WorkflowStepView, <SidePanelWorkflowViewStep />],
-    [SidePanelPages.WorkflowRunStepView, <SidePanelWorkflowRunViewStep />],
-    [SidePanelPages.SearchRecords, <SidePanelSearchRecordsPage />],
-    [SidePanelPages.AskAI, <SidePanelAskAiPage />],
-    [
-      SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
-      <SidePanelPageLayoutDashboardWidgetTypeSelect />,
-    ],
-    [
-      SidePanelPages.DashboardChartSettings,
-      <SidePanelDashboardChartSettings />,
-    ],
-    [
-      SidePanelPages.DashboardIframeSettings,
-      <SidePanelDashboardIframeSettings />,
-    ],
-    [SidePanelPages.PageLayoutTabSettings, <SidePanelPageLayoutTabSettings />],
-    [
-      SidePanelPages.PageLayoutWidgetSettings,
-      <SidePanelPageLayoutWidgetSettings />,
-    ],
-    [
-      SidePanelPages.DashboardRecordTableSettings,
-      <SidePanelDashboardRecordTableSettings />,
-    ],
-    [
-      SidePanelPages.RecordPageFieldsSettings,
-      <SidePanelRecordPageFieldsSettings />,
-    ],
-    [
-      SidePanelPages.RecordPageFieldSettings,
-      <SidePanelRecordPageFieldSettings />,
-    ],
-    [SidePanelPages.ViewFrontComponent, <SidePanelFrontComponentPage />],
-    [
-      SidePanelPages.PageLayoutRecordPageWidgetTypeSelect,
-      <SidePanelPageLayoutRecordPageWidgetTypeSelect />,
-    ],
-    [
-      SidePanelPages.NavigationMenuItemEdit,
-      <SidePanelNavigationMenuItemEditPage />,
-    ],
-    [SidePanelPages.NavigationMenuAddItem, <SidePanelNewSidebarItemPage />],
-    [SidePanelPages.CommandMenuEdit, <SidePanelCommandMenuItemEditPage />],
-    [
-      SidePanelPages.ComposeCalendarEvent,
-      <SidePanelComposeCalendarEventPage />,
-    ],
-    [SidePanelPages.ComposeEmail, <SidePanelComposeEmailPage />],
-    [SidePanelPages.CreateRelatedRecord, <SidePanelCreateRelatedRecordPage />],
-    [SidePanelPages.SendCampaignTest, <SidePanelSendCampaignTestPage />],
-    [SidePanelPages.EmailBlockSettings, <SidePanelEmailBlockSettingsPage />],
-    [
-      SidePanelPages.SettingsMetadataTranslations,
-      <SidePanelSettingsMetadataTranslationsPage />,
-    ],
+    SidePanelPages.WorkflowTriggerSelectType,
+    <SidePanelWorkflowSelectTriggerType />,
   ],
-);
+  [SidePanelPages.WorkflowStepCreate, <SidePanelWorkflowCreateStep />],
+  [SidePanelPages.WorkflowStepEditType, <SidePanelWorkflowEditStepType />],
+  [SidePanelPages.WorkflowStepEdit, <SidePanelWorkflowEditStep />],
+  [SidePanelPages.WorkflowStepView, <SidePanelWorkflowViewStep />],
+  [SidePanelPages.WorkflowRunStepView, <SidePanelWorkflowRunViewStep />],
+  [SidePanelPages.SearchRecords, <SidePanelSearchRecordsPage />],
+  [SidePanelPages.AskAI, <SidePanelAskAiPage />],
+  [
+    SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
+    <SidePanelPageLayoutDashboardWidgetTypeSelect />,
+  ],
+  [SidePanelPages.DashboardChartSettings, <SidePanelDashboardChartSettings />],
+  [
+    SidePanelPages.DashboardIframeSettings,
+    <SidePanelDashboardIframeSettings />,
+  ],
+  [SidePanelPages.PageLayoutTabSettings, <SidePanelPageLayoutTabSettings />],
+  [
+    SidePanelPages.PageLayoutWidgetSettings,
+    <SidePanelPageLayoutWidgetSettings />,
+  ],
+  [
+    SidePanelPages.DashboardRecordTableSettings,
+    <SidePanelDashboardRecordTableSettings />,
+  ],
+  [
+    SidePanelPages.RecordPageFieldsSettings,
+    <SidePanelRecordPageFieldsSettings />,
+  ],
+  [
+    SidePanelPages.RecordPageFieldSettings,
+    <SidePanelRecordPageFieldSettings />,
+  ],
+  [SidePanelPages.ViewFrontComponent, <SidePanelFrontComponentPage />],
+  [
+    SidePanelPages.PageLayoutRecordPageWidgetTypeSelect,
+    <SidePanelPageLayoutRecordPageWidgetTypeSelect />,
+  ],
+  [
+    SidePanelPages.NavigationMenuItemEdit,
+    <SidePanelNavigationMenuItemEditPage />,
+  ],
+  [SidePanelPages.NavigationMenuAddItem, <SidePanelNewSidebarItemPage />],
+  [SidePanelPages.CommandMenuEdit, <SidePanelCommandMenuItemEditPage />],
+  [SidePanelPages.ComposeCalendarEvent, <SidePanelComposeCalendarEventPage />],
+  [SidePanelPages.ComposeEmail, <SidePanelComposeEmailPage />],
+  [SidePanelPages.CreateRelatedRecord, <SidePanelCreateRelatedRecordPage />],
+  [SidePanelPages.SendCampaignTest, <SidePanelSendCampaignTestPage />],
+  [SidePanelPages.EmailBlockSettings, <SidePanelEmailBlockSettingsPage />],
+  [
+    SidePanelPages.SettingsMetadataTranslations,
+    <SidePanelSettingsMetadataTranslationsPage />,
+  ],
+]);

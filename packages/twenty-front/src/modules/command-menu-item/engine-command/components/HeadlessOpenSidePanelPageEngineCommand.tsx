@@ -1,10 +1,10 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
+import { type SidePanelRegularPage } from '@/side-panel/constants/SidePanelArtifactPage';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type MessageDescriptor } from '@lingui/core';
 import { t } from '@lingui/core/macro';
-import { type SidePanelPages } from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/icon';
 
 export const HeadlessOpenSidePanelPageEngineCommand = ({
@@ -13,7 +13,7 @@ export const HeadlessOpenSidePanelPageEngineCommand = ({
   pageIcon,
   shouldResetSearchState = false,
 }: {
-  page: SidePanelPages;
+  page: SidePanelRegularPage;
   pageTitle: MessageDescriptor;
   pageIcon: IconComponent;
   shouldResetSearchState?: boolean;

@@ -2,6 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { act, type ReactNode } from 'react';
 import { type Store } from 'jotai/vanilla/store';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
@@ -12,12 +13,13 @@ import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getSh
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
-const navigateAppMock = jest.fn();
+const navigateMock = jest.fn();
 const closeSidePanelMenuMock = jest.fn();
 const closeDropdownMock = jest.fn();
 
-jest.mock('~/hooks/useNavigateApp', () => ({
-  useNavigateApp: () => navigateAppMock,
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => navigateMock,
 }));
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
@@ -116,11 +118,33 @@ describe('useNavigateToRecordPageFromSidePanel', () => {
       ),
     ).toBe('files');
 
-    expect(navigateAppMock).toHaveBeenCalledWith(AppPath.RecordShowPage, {
+    expect(navigateMock).toHaveBeenCalledWith(
+      getAppPath(AppPath.RecordShowPage, {
+        objectNameSingular: CoreObjectNameSingular.Company,
+        objectRecordId: RECORD_ID,
+      }),
+    );
+    expect(closeSidePanelMenuMock).toHaveBeenCalled();
+  });
+
+  it('preserves an explicit canonical record path', () => {
+    const { result } = renderNavigateToRecordPage({
+      activeTabIdInSidePanel: 'files',
+    });
+    const artifactPath = `${getAppPath(AppPath.RecordShowPage, {
       objectNameSingular: CoreObjectNameSingular.Company,
       objectRecordId: RECORD_ID,
+    })}?tab=files#activity`;
+
+    act(() => {
+      result.current.navigateToRecordPage({
+        objectNameSingular: CoreObjectNameSingular.Company,
+        recordId: RECORD_ID,
+        artifactPath,
+      });
     });
-    expect(closeSidePanelMenuMock).toHaveBeenCalled();
+
+    expect(navigateMock).toHaveBeenCalledWith(artifactPath);
   });
 
   it('should open the timeline tab when the side panel is on its home tab', () => {

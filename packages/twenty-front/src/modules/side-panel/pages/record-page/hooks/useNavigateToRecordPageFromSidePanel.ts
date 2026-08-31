@@ -1,7 +1,8 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { getSidePanelCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getSidePanelCommandMenuDropdownIdFromCommandMenuId';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -14,16 +15,16 @@ import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getSh
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type NavigateToRecordPageParams = {
   objectNameSingular: string;
   recordId: string;
+  artifactPath?: string;
 };
 
 export const useNavigateToRecordPageFromSidePanel = () => {
   const store = useStore();
-  const navigate = useNavigateApp();
+  const navigate = useNavigate();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { closeDropdown } = useCloseDropdown();
 
@@ -37,7 +38,11 @@ export const useNavigateToRecordPageFromSidePanel = () => {
   );
 
   const navigateToRecordPage = useCallback(
-    ({ objectNameSingular, recordId }: NavigateToRecordPageParams) => {
+    ({
+      objectNameSingular,
+      recordId,
+      artifactPath,
+    }: NavigateToRecordPageParams) => {
       const activeTabId = store.get(
         activeTabIdComponentState.atomFamily({
           instanceId: getShowPageTabListComponentId({
@@ -75,10 +80,13 @@ export const useNavigateToRecordPageFromSidePanel = () => {
 
       store.set(sidePanelNavigationStackState.atom, []);
 
-      navigate(AppPath.RecordShowPage, {
-        objectNameSingular,
-        objectRecordId: recordId,
-      });
+      navigate(
+        artifactPath ??
+          getAppPath(AppPath.RecordShowPage, {
+            objectNameSingular,
+            objectRecordId: recordId,
+          }),
+      );
 
       if (isDefined(sidePanelPageInstanceId)) {
         closeDropdown(

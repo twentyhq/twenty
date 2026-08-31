@@ -1,11 +1,6 @@
 import { ChatReferenceChipDisplay } from '@/ai/components/ChatReferenceChipDisplay';
-import { useChatTargetNavigation } from '@/ai/hooks/useChatTargetNavigation';
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
-import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { isNonEmptyString } from '@sniptt/guards';
+import { useChatReferenceTarget } from '@/ai/hooks/useChatReferenceTarget';
 import { AvatarOrIcon } from 'twenty-ui/data-display';
-import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 type RecordLinkProps = {
   objectNameSingular: string;
@@ -18,32 +13,21 @@ export const RecordLink = ({
   recordId,
   displayName,
 }: RecordLinkProps) => {
-  const objectMetadataItem = useAtomFamilySelectorValue(
-    objectMetadataItemFamilySelector,
-    {
-      objectName: objectNameSingular,
-      objectNameType: 'singular',
-    },
-  );
+  const { objectMetadataItem, to, onClick } = useChatReferenceTarget({
+    kind: 'record',
+    objectNameSingular,
+    recordId,
+  });
 
-  const { openRecordTarget } = useChatTargetNavigation();
-
-  if (!objectMetadataItem || !isNonEmptyString(recordId)) {
+  if (!objectMetadataItem) {
     return <span>{displayName}</span>;
   }
-
-  const handleOpenRecordTarget = () => {
-    openRecordTarget({
-      recordId,
-      objectNameSingular,
-    });
-  };
 
   return (
     <ChatReferenceChipDisplay
       displayName={displayName}
-      to={getLinkToShowPage(objectNameSingular, { id: recordId })}
-      onClick={isCurrentPathAiChatPage() ? handleOpenRecordTarget : undefined}
+      to={to}
+      onClick={onClick}
       leftComponent={
         <AvatarOrIcon
           placeholder={displayName}

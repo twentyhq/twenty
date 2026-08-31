@@ -4,6 +4,7 @@ import { isViewportFillingWidgetType } from '@/page-layout/widgets/utils/isViewp
 import { GRAPH_TYPE_INFORMATION } from '@/side-panel/pages/page-layout/constants/GraphTypeInformation';
 import { getCurrentGraphTypeFromConfig } from '@/side-panel/pages/page-layout/utils/getCurrentGraphTypeFromConfig';
 import { isWidgetConfigurationOfTypeGraph } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
+import { type SidePanelPage } from '@/side-panel/constants/SidePanelArtifactPage';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
@@ -34,7 +35,7 @@ type PageLayoutHeaderInfo = {
 };
 
 type UsePageLayoutHeaderInfoParams = {
-  sidePanelPage: SidePanelPages;
+  sidePanelPage: SidePanelPage;
   draftPageLayout: {
     tabs: PageLayoutTab[];
   };

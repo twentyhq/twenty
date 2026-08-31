@@ -1,8 +1,10 @@
+import { type SidePanelRegularPage } from '@/side-panel/constants/SidePanelArtifactPage';
+import { type PageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/types/PageLayoutSidePanelPage';
 import { isPageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/utils/isPageLayoutSidePanelPage';
 import { SidePanelPages } from 'twenty-shared/types';
 
 describe('isPageLayoutSidePanelPage', () => {
-  const pageLayoutPages: SidePanelPages[] = [
+  const pageLayoutPages: PageLayoutSidePanelPage[] = [
     SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
     SidePanelPages.PageLayoutTabSettings,
     SidePanelPages.PageLayoutWidgetSettings,
@@ -21,8 +23,8 @@ describe('isPageLayoutSidePanelPage', () => {
     },
   );
 
-  const nonPageLayoutPages: SidePanelPages[] = [
-    SidePanelPages.ViewRecord,
+  const nonPageLayoutPages: SidePanelRegularPage[] = [
+    SidePanelPages.CommandMenuDisplay,
     SidePanelPages.AskAI,
     SidePanelPages.ComposeCalendarEvent,
     SidePanelPages.ComposeEmail,

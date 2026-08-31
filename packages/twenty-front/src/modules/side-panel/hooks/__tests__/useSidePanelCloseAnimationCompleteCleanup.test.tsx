@@ -2,6 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { SIDE_PANEL_ARTIFACT_PAGE } from '@/side-panel/constants/SidePanelArtifactPage';
 import { SIDE_PANEL_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/side-panel/constants/SidePanelContextChipGroupsDropdownId';
 import { useSidePanelCloseAnimationCompleteCleanup } from '@/side-panel/hooks/useSidePanelCloseAnimationCompleteCleanup';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
@@ -11,9 +12,6 @@ import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
-import { viewableRecordIdState } from '@/object-record/record-side-panel/states/viewableRecordIdState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconList } from 'twenty-ui/icon';
@@ -52,25 +50,9 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
   });
 
   const renderHooks = () => {
-    const { result } = renderHook(
-      () => {
-        const { sidePanelCloseAnimationCompleteCleanup } =
-          useSidePanelCloseAnimationCompleteCleanup();
-
-        const viewableRecordId = useAtomStateValue(viewableRecordIdState);
-
-        const setViewableRecordId = useSetAtomState(viewableRecordIdState);
-
-        return {
-          sidePanelCloseAnimationCompleteCleanup,
-          viewableRecordId,
-          setViewableRecordId,
-        };
-      },
-      {
-        wrapper: Wrapper,
-      },
-    );
+    const { result } = renderHook(useSidePanelCloseAnimationCompleteCleanup, {
+      wrapper: Wrapper,
+    });
     return { result };
   };
 
@@ -78,7 +60,7 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
     const { result } = renderHooks();
 
     act(() => {
-      jotaiStore.set(sidePanelPageState.atom, SidePanelPages.ViewRecord);
+      jotaiStore.set(sidePanelPageState.atom, SIDE_PANEL_ARTIFACT_PAGE);
       jotaiStore.set(sidePanelPageInfoState.atom, {
         title: 'Test Record',
         Icon: IconList,
@@ -96,11 +78,10 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
       ]);
       jotaiStore.set(hasUserSelectedSidePanelListItemState.atom, true);
       jotaiStore.set(isSidePanelClosingState.atom, true);
-      result.current.setViewableRecordId('record-123');
     });
 
     expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
-      SidePanelPages.ViewRecord,
+      SIDE_PANEL_ARTIFACT_PAGE,
     );
     expect(jotaiStore.get(sidePanelPageInfoState.atom)).toEqual({
       title: 'Test Record',
@@ -121,8 +102,6 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
       true,
     );
     expect(jotaiStore.get(isSidePanelClosingState.atom)).toBe(true);
-    expect(result.current.viewableRecordId).toBe('record-123');
-
     act(() => {
       result.current.sidePanelCloseAnimationCompleteCleanup();
     });
@@ -142,7 +121,6 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
       false,
     );
     expect(jotaiStore.get(isSidePanelClosingState.atom)).toBe(false);
-    expect(result.current.viewableRecordId).toBe(null);
   });
 
   it('should call all dependent functions correctly', () => {

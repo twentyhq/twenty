@@ -1,11 +1,16 @@
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
+import { SIDE_PANEL_ARTIFACT_PAGE } from '@/side-panel/constants/SidePanelArtifactPage';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelCloseAnimationCompleteCleanup } from '@/side-panel/hooks/useSidePanelCloseAnimationCompleteCleanup';
 import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
-import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import {
+  type SidePanelNavigationStackItem,
+  type SidePanelNavigationTarget,
+  sidePanelNavigationStackState,
+} from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelShouldFocusTitleInputComponentState } from '@/side-panel/states/sidePanelShouldFocusTitleInputComponentState';
@@ -13,17 +18,8 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { type SidePanelPages } from 'twenty-shared/types';
-import { type IconComponent } from 'twenty-ui/icon';
+import { isNonEmptyString } from '@sniptt/guards';
 import { v4 } from 'uuid';
-
-export type SidePanelNavigationStackItem = {
-  page: SidePanelPages;
-  pageTitle: string;
-  pageIcon: IconComponent;
-  pageIconColor?: string;
-  pageId?: string;
-};
 
 export const useNavigateSidePanel = () => {
   const store = useStore();
@@ -67,22 +63,54 @@ export const useNavigateSidePanel = () => {
   ]);
 
   const navigateSidePanel = useCallback(
-    ({
-      page,
-      pageTitle,
-      pageIcon,
-      pageIconColor,
-      pageId,
-      focusTitleInput = false,
-      resetNavigationStack = false,
-    }: SidePanelNavigationStackItem & {
-      resetNavigationStack?: boolean;
-      focusTitleInput?: boolean;
-    }) => {
+    (
+      params: SidePanelNavigationTarget & {
+        resetNavigationStack?: boolean;
+        focusTitleInput?: boolean;
+      },
+    ) => {
+      const {
+        pageTitle,
+        pageIcon,
+        pageIconColor,
+        pageId,
+        focusTitleInput = false,
+        resetNavigationStack = false,
+      } = params;
       const computedPageId = pageId || v4();
 
+      const navigationStackItemBase = {
+        pageTitle,
+        pageIcon,
+        pageIconColor,
+        pageId: computedPageId,
+      };
+
+      let navigationStackItem: SidePanelNavigationStackItem;
+
+      if (params.page === SIDE_PANEL_ARTIFACT_PAGE) {
+        const artifactPath = params.artifactPath;
+
+        if (!isNonEmptyString(artifactPath)) {
+          throw new Error(
+            'An artifact side-panel page requires a canonical path',
+          );
+        }
+
+        navigationStackItem = {
+          ...navigationStackItemBase,
+          page: SIDE_PANEL_ARTIFACT_PAGE,
+          artifactPath,
+        };
+      } else {
+        navigationStackItem = {
+          ...navigationStackItemBase,
+          page: params.page,
+        };
+      }
+
       openSidePanel();
-      store.set(sidePanelPageState.atom, page);
+      store.set(sidePanelPageState.atom, params.page);
       store.set(sidePanelPageInfoState.atom, {
         title: pageTitle,
         Icon: pageIcon,
@@ -105,27 +133,13 @@ export const useNavigateSidePanel = () => {
         : store.get(sidePanelNavigationStackState.atom);
 
       if (resetNavigationStack) {
-        store.set(sidePanelNavigationStackState.atom, [
-          {
-            page,
-            pageTitle,
-            pageIcon,
-            pageIconColor,
-            pageId: computedPageId,
-          },
-        ]);
+        store.set(sidePanelNavigationStackState.atom, [navigationStackItem]);
 
         store.set(sidePanelNavigationMorphItemsByPageState.atom, new Map());
       } else {
         store.set(sidePanelNavigationStackState.atom, [
           ...currentNavigationStack,
-          {
-            page,
-            pageTitle,
-            pageIcon,
-            pageIconColor,
-            pageId: computedPageId,
-          },
+          navigationStackItem,
         ]);
       }
     },

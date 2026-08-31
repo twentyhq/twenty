@@ -1,15 +1,17 @@
-import { useChatTargetNavigation } from '@/ai/hooks/useChatTargetNavigation';
 import { processedToolExecutionPartIdsComponentState } from '@/ai/states/processedToolExecutionPartIdsComponentState';
 import { extractUIToolCallParts } from '@/ai/utils/extractUIToolCallParts';
+import { useOpenWorkspaceTarget } from '@/navigation/hooks/useOpenWorkspaceTarget';
+import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 import { useStore } from 'jotai';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
 
 export const useProcessUIToolCallMessage = () => {
-  const { openRecordTarget, openViewTarget } = useChatTargetNavigation();
+  const { openWorkspaceTarget } = useOpenWorkspaceTarget();
 
   const processedToolExecutionPartIdsCallbackState =
     useAtomComponentStateCallbackState(
@@ -17,6 +19,29 @@ export const useProcessUIToolCallMessage = () => {
     );
 
   const store = useStore();
+
+  const getRecordIndexPath = ({
+    objectNameSingular,
+    viewId,
+  }: {
+    objectNameSingular: string;
+    viewId?: string;
+  }) => {
+    const objectMetadataItem = store.get(
+      objectMetadataItemFamilySelector.selectorFamily({
+        objectName: objectNameSingular,
+        objectNameType: 'singular',
+      }),
+    );
+
+    return isDefined(objectMetadataItem)
+      ? getAppPath(
+          AppPath.RecordIndexPage,
+          { objectNamePlural: objectMetadataItem.namePlural },
+          isDefined(viewId) ? { viewId } : undefined,
+        )
+      : null;
+  };
 
   const processUIToolCallMessage = async (
     uiToolCallMessage: ExtendedUIMessage,
@@ -55,25 +80,39 @@ export const useProcessUIToolCallMessage = () => {
 
       switch (navigateAppOutput.action) {
         case 'navigateToObject': {
-          openViewTarget({
+          const path = getRecordIndexPath({
             objectNameSingular: navigateAppOutput.objectNameSingular,
           });
+
+          if (!isDefined(path)) {
+            break;
+          }
+
+          openWorkspaceTarget({ path });
 
           break;
         }
         case 'navigateToRecord': {
-          openRecordTarget({
-            recordId: navigateAppOutput.recordId,
-            objectNameSingular: navigateAppOutput.objectNameSingular,
+          openWorkspaceTarget({
+            path: getAppPath(AppPath.RecordShowPage, {
+              objectNameSingular: navigateAppOutput.objectNameSingular,
+              objectRecordId: navigateAppOutput.recordId,
+            }),
           });
 
           break;
         }
         case 'navigateToView': {
-          openViewTarget({
+          const path = getRecordIndexPath({
             objectNameSingular: navigateAppOutput.objectNameSingular,
             viewId: navigateAppOutput.viewId,
           });
+
+          if (!isDefined(path)) {
+            break;
+          }
+
+          openWorkspaceTarget({ path });
 
           break;
         }

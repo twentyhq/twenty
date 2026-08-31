@@ -1,10 +1,10 @@
 import { SidePanelPages } from 'twenty-shared/types';
 import { useIsMobile } from 'twenty-ui/utilities';
 
+import { useExpandSidePanelArtifact } from '@/side-panel/artifacts/hooks/useExpandSidePanelArtifact';
+import { SIDE_PANEL_ARTIFACT_PAGE } from '@/side-panel/constants/SidePanelArtifactPage';
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { useExpandAskAiSidePanelPage } from '@/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage';
-import { useExpandRecordSidePanelPage } from '@/side-panel/pages/record-page/hooks/useExpandRecordSidePanelPage';
-import { useExpandRecordsSidePanelPage } from '@/side-panel/pages/records-page/hooks/useExpandRecordsSidePanelPage';
 import { useExpandRichTextSidePanelPage } from '@/side-panel/pages/rich-text-page/hooks/useExpandRichTextSidePanelPage';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { type SidePanelExpandTarget } from '@/side-panel/types/SidePanelExpandTarget';
@@ -16,8 +16,7 @@ export const useSidePanelExpandTarget = (): SidePanelExpandTarget | null => {
   const isMobile = useIsMobile();
 
   const askAiExpandTarget = useExpandAskAiSidePanelPage();
-  const recordExpandTarget = useExpandRecordSidePanelPage();
-  const recordsExpandTarget = useExpandRecordsSidePanelPage();
+  const artifactExpandTarget = useExpandSidePanelArtifact();
   const richTextExpandTarget = useExpandRichTextSidePanelPage();
 
   // On mobile the panel already fills the viewport, so there is nothing to
@@ -30,10 +29,8 @@ export const useSidePanelExpandTarget = (): SidePanelExpandTarget | null => {
   switch (sidePanelPage) {
     case SidePanelPages.AskAI:
       return askAiExpandTarget;
-    case SidePanelPages.ViewRecord:
-      return recordExpandTarget;
-    case SidePanelPages.ViewRecords:
-      return recordsExpandTarget;
+    case SIDE_PANEL_ARTIFACT_PAGE:
+      return artifactExpandTarget;
     case SidePanelPages.EditRichText:
       return richTextExpandTarget;
     default:

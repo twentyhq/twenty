@@ -4,6 +4,7 @@ import { type ReactNode } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 
 import { AiChatPageCloseAskAiPanelEffect } from '@/ai/components/AiChatPageCloseAskAiPanelEffect';
+import { SIDE_PANEL_ARTIFACT_PAGE } from '@/side-panel/constants/SidePanelArtifactPage';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import {
@@ -38,7 +39,7 @@ describe('AiChatPageCloseAskAiPanelEffect', () => {
 
   it('should leave an open artifact panel alone', () => {
     jotaiStore.set(isSidePanelOpenedState.atom, true);
-    jotaiStore.set(sidePanelPageState.atom, SidePanelPages.ViewRecords);
+    jotaiStore.set(sidePanelPageState.atom, SIDE_PANEL_ARTIFACT_PAGE);
 
     render(<AiChatPageCloseAskAiPanelEffect />, { wrapper: Wrapper });
 

@@ -12,7 +12,9 @@ import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { WorkspaceTargetArtifactHostContext } from '@/navigation/contexts/WorkspaceTargetArtifactHostContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const PANEL_CORNER_RADIUS_DERIVED_FROM_THEME_SCALE = `calc(${themeCssVariables.border.radius.md} + ${themeCssVariables.spacing[1]})`;
 
@@ -39,9 +41,13 @@ const StyledCenteredChatContainer = styled.div`
 `;
 
 export const AiChatPage = () => {
+  const isMobile = useIsMobile();
   const shouldOpenAiChatAfterOnboarding = useAtomStateValue(
     shouldOpenAiChatAfterOnboardingState,
   );
+
+  const canHostWorkspaceTargetArtifacts =
+    !isMobile && !shouldOpenAiChatAfterOnboarding;
 
   return (
     <StyledPanel>
@@ -58,9 +64,13 @@ export const AiChatPage = () => {
             ) : null
           }
         >
-          <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.PAGE}>
-            <AiChatTab />
-          </AiChatSurfaceContext.Provider>
+          <WorkspaceTargetArtifactHostContext.Provider
+            value={canHostWorkspaceTargetArtifacts}
+          >
+            <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.PAGE}>
+              <AiChatTab />
+            </AiChatSurfaceContext.Provider>
+          </WorkspaceTargetArtifactHostContext.Provider>
         </AiChatMessageListPreambleContext.Provider>
       </StyledCenteredChatContainer>
     </StyledPanel>
