@@ -2,7 +2,9 @@ import { Module } from '@nestjs/common';
 
 import { CoreCommonApiModule } from 'src/engine/api/common/core-common-api.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
+import { CreateAndConnectJunctionRecordResolver } from 'src/engine/core-modules/record-crud/resolvers/create-and-connect-junction-record.resolver';
 import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
+import { CreateAndConnectJunctionRecordService } from 'src/engine/core-modules/record-crud/services/create-and-connect-junction-record.service';
 import { CreateManyRecordsService } from 'src/engine/core-modules/record-crud/services/create-many-records.service';
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
 import { DeleteManyRecordsService } from 'src/engine/core-modules/record-crud/services/delete-many-records.service';
@@ -27,6 +29,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   ],
   providers: [
     CommonApiContextBuilderService,
+    CreateAndConnectJunctionRecordResolver,
+    CreateAndConnectJunctionRecordService,
     CreateRecordService,
     CreateManyRecordsService,
     UpdateRecordService,

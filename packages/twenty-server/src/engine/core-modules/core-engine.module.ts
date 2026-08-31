@@ -55,6 +55,7 @@ import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { OpenApiModule } from 'src/engine/core-modules/open-api/open-api.module';
 import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
+import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SearchModule } from 'src/engine/core-modules/search/search.module';
@@ -122,6 +123,7 @@ import { FileModule } from './file/file.module';
     EmailingDomainModule,
     EmailingModule,
     PublicDomainModule,
+    RecordCrudModule,
     CloudflareModule,
     DnsManagerModule,
     WorkflowApiModule,
