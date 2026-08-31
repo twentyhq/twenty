@@ -58,10 +58,10 @@ export const buildJunctionRelationTargetShape = ({
       relationFlatFieldMetadata.objectMetadataId ||
     junctionSourceFlatFieldMetadata.relationTargetFieldMetadataId !==
       relationFlatFieldMetadata.id ||
-    areFlatFieldMetadatasInSameRelationGroup(
-      junctionSourceFlatFieldMetadata,
-      junctionTargetFlatFieldMetadata,
-    )
+    areFlatFieldMetadatasInSameRelationGroup({
+      firstFlatFieldMetadata: junctionSourceFlatFieldMetadata,
+      secondFlatFieldMetadata: junctionTargetFlatFieldMetadata,
+    })
   ) {
     return undefined;
   }

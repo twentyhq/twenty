@@ -35,10 +35,13 @@ const isManyToOneRelationOrMorphField = (
   );
 };
 
-const areRelationFieldsReciprocal = (
-  firstFlatFieldMetadata: OrmFlatFieldMetadata,
-  secondFlatFieldMetadata: OrmFlatFieldMetadata,
-) =>
+const areRelationFieldsReciprocal = ({
+  firstFlatFieldMetadata,
+  secondFlatFieldMetadata,
+}: {
+  firstFlatFieldMetadata: OrmFlatFieldMetadata;
+  secondFlatFieldMetadata: OrmFlatFieldMetadata;
+}) =>
   firstFlatFieldMetadata.relationTargetObjectMetadataId ===
     secondFlatFieldMetadata.objectMetadataId &&
   firstFlatFieldMetadata.relationTargetFieldMetadataId ===
@@ -90,10 +93,10 @@ export const resolveJunctionRelationTargetShapeFromVisibleField = ({
       isManyToOneRelationOrMorphField(configuredTargetFlatFieldMetadata) &&
       isDefined(configuredTargetInverseFlatFieldMetadata) &&
       isOneToManyRelationField(configuredTargetInverseFlatFieldMetadata) &&
-      areRelationFieldsReciprocal(
-        configuredTargetFlatFieldMetadata,
-        configuredTargetInverseFlatFieldMetadata,
-      )
+      areRelationFieldsReciprocal({
+        firstFlatFieldMetadata: configuredTargetFlatFieldMetadata,
+        secondFlatFieldMetadata: configuredTargetInverseFlatFieldMetadata,
+      })
       ? owningShape
       : undefined;
   }
@@ -129,10 +132,10 @@ export const resolveJunctionRelationTargetShapeFromVisibleField = ({
     visibleJunctionTargetFlatFieldMetadata.objectMetadataId !==
       junctionFlatObjectMetadata.id ||
     !isManyToOneRelationOrMorphField(visibleJunctionTargetFlatFieldMetadata) ||
-    !areRelationFieldsReciprocal(
-      relationFlatFieldMetadata,
-      visibleJunctionTargetFlatFieldMetadata,
-    )
+    !areRelationFieldsReciprocal({
+      firstFlatFieldMetadata: relationFlatFieldMetadata,
+      secondFlatFieldMetadata: visibleJunctionTargetFlatFieldMetadata,
+    })
   ) {
     return undefined;
   }
@@ -160,10 +163,10 @@ export const resolveJunctionRelationTargetShapeFromVisibleField = ({
 
       return (
         isDefined(configuredTargetFlatFieldMetadata) &&
-        areFlatFieldMetadatasInSameRelationGroup(
-          configuredTargetFlatFieldMetadata,
-          visibleJunctionTargetFlatFieldMetadata,
-        )
+        areFlatFieldMetadatasInSameRelationGroup({
+          firstFlatFieldMetadata: configuredTargetFlatFieldMetadata,
+          secondFlatFieldMetadata: visibleJunctionTargetFlatFieldMetadata,
+        })
       );
     });
 
