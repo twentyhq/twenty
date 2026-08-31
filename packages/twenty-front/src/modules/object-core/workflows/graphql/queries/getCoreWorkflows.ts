@@ -6,12 +6,16 @@ export const GET_CORE_WORKFLOWS = gql`
     $after: String
     $orderBy: CoreWorkflowOrderByField
     $orderByDirection: CoreWorkflowOrderByDirection
+    $statuses: [CoreWorkflowStatus!]
+    $searchTerm: String
   ) {
     coreWorkflows(
       first: $first
       after: $after
       orderBy: $orderBy
       orderByDirection: $orderByDirection
+      statuses: $statuses
+      searchTerm: $searchTerm
     ) {
       edges {
         node {
