@@ -4,7 +4,10 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import {
+  getJunctionConfig,
+  isUsableJunctionConfig,
+} from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useFieldWidgetFieldDefinition } from '@/page-layout/widgets/field/hooks/useFieldWidgetFieldDefinition';
@@ -97,7 +100,7 @@ export const useFieldWidgetActionVisibility = ({
   const showEdit =
     !isPageLayoutInEditMode &&
     !isFieldReadOnly &&
-    junctionConfig?.isValid !== false;
+    (!isDefined(junctionConfig) || isUsableJunctionConfig(junctionConfig));
 
   return { showSeeAll, showEdit };
 };

@@ -3,7 +3,10 @@ import { RecordChip } from '@/object-record/components/RecordChip';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import {
+  getJunctionConfig,
+  isUsableJunctionConfig,
+} from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
@@ -46,7 +49,7 @@ export const FieldWidgetJunctionRelationField = ({
     objectMetadataItems,
   });
 
-  if (!isDefined(junctionConfig)) {
+  if (!isUsableJunctionConfig(junctionConfig)) {
     return null;
   }
 

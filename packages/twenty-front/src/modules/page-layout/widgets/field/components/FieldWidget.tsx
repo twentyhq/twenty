@@ -6,7 +6,10 @@ import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guar
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import {
+  getJunctionConfig,
+  isUsableJunctionConfig,
+} from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
@@ -136,7 +139,7 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
     });
 
     if (isDefined(junctionConfig)) {
-      if (!junctionConfig.isValid) {
+      if (!isUsableJunctionConfig(junctionConfig)) {
         return null;
       }
 

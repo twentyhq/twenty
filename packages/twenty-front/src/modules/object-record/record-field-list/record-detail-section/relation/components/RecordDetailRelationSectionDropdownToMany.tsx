@@ -13,6 +13,7 @@ import { useAddNewRecordAndOpenSidePanel } from '@/object-record/record-field/ui
 import { useUpdateRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateRelationOneToManyFieldInput';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getJunctionRelationPickerData } from '@/object-record/record-field/ui/utils/junction/getJunctionRelationPickerData';
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
@@ -80,7 +81,9 @@ export const RecordDetailRelationSectionDropdownToMany = ({
       recordId,
     });
 
-  const isJunctionRelation = isDefined(junctionConfig);
+  const isJunctionRelation = isUsableJunctionConfig(junctionConfig);
+  const isInvalidJunctionRelation =
+    isDefined(junctionConfig) && !isJunctionRelation;
 
   const firstJunctionTargetField =
     junctionConfig && !junctionConfig.isMorphRelation
@@ -336,7 +339,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     [isJunctionRelation, updateJunctionRelationFromCell, updateRelation],
   );
 
-  if (junctionConfig?.isValid === false) {
+  if (isInvalidJunctionRelation) {
     return null;
   }
 

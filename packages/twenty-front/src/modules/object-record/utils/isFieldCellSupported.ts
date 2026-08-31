@@ -2,7 +2,10 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import {
+  getJunctionConfig,
+  isUsableJunctionConfig,
+} from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -40,7 +43,7 @@ export const isFieldCellSupported = (
     });
 
     if (isDefined(junctionConfig)) {
-      return true;
+      return isUsableJunctionConfig(junctionConfig);
     }
 
     if (!fieldMetadataItem.relation || !relationObjectMetadataItem) {

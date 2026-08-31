@@ -1,7 +1,10 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import {
+  getJunctionConfig,
+  isUsableJunctionConfig,
+} from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -64,8 +67,11 @@ export const categorizeRelationFields = ({
     });
 
     if (isDefined(junctionConfig)) {
-      inlineRelationFields.push(field);
-      junctionRelationFields.push(field);
+      if (isUsableJunctionConfig(junctionConfig)) {
+        inlineRelationFields.push(field);
+        junctionRelationFields.push(field);
+      }
+
       continue;
     }
 

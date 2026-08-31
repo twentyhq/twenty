@@ -12,7 +12,10 @@ import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/t
 import { isFieldMorphRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationOneToMany';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import {
+  getJunctionConfig,
+  isUsableJunctionConfig,
+} from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -49,10 +52,8 @@ export const useOpenFieldWidgetFieldInputEditMode = () => {
       fieldDefinition: FieldDefinition<FieldMetadata>;
       recordId: string;
     }) => {
-      if (
-        isFieldRelationOneToMany(fieldDefinition) &&
-        isDefined(
-          getJunctionConfig({
+      const junctionConfig = isFieldRelationOneToMany(fieldDefinition)
+        ? getJunctionConfig({
             settings: fieldDefinition.metadata.settings,
             relationObjectMetadataId:
               fieldDefinition.metadata.relationObjectMetadataId,
@@ -64,14 +65,21 @@ export const useOpenFieldWidgetFieldInputEditMode = () => {
                 fieldDefinition.metadata.objectMetadataNameSingular,
             )?.id,
             objectMetadataItems,
-          }),
-        )
+          })
+        : null;
+
+      if (
+        isFieldRelationOneToMany(fieldDefinition) &&
+        isDefined(junctionConfig)
       ) {
-        openJunctionRelationFieldInput({
-          fieldDefinition,
-          recordId,
-          recordPickerInstanceId: instanceId,
-        });
+        if (isUsableJunctionConfig(junctionConfig)) {
+          openJunctionRelationFieldInput({
+            fieldDefinition,
+            recordId,
+            recordPickerInstanceId: instanceId,
+          });
+        }
+
         return;
       }
 

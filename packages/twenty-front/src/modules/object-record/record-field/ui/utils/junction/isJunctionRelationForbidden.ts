@@ -1,6 +1,9 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import {
+  getJunctionConfig,
+  isUsableJunctionConfig,
+} from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -43,6 +46,10 @@ export const isJunctionRelationForbidden = ({
 
   if (!isDefined(junctionConfig)) {
     return false;
+  }
+
+  if (!isUsableJunctionConfig(junctionConfig)) {
+    return true;
   }
 
   const junctionPermissions = getObjectPermissionsForObject(

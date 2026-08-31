@@ -4,6 +4,10 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
 import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
+import {
+  getJunctionConfig,
+  isUsableJunctionConfig,
+} from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getReverseJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getReverseJunctionConfig';
 import {
   computeMorphRelationGqlFieldName,
@@ -59,6 +63,23 @@ export const generateDepthRecordGqlFieldsFromFields = ({
           );
         }
 
+        const junctionConfig = getJunctionConfig({
+          settings: fieldMetadata.settings,
+          relationObjectMetadataId: targetObjectMetadataItem.id,
+          relationTargetFieldMetadataId:
+            fieldMetadata.relation?.targetFieldMetadata.id,
+          sourceObjectMetadataId:
+            fieldMetadata.relation?.sourceObjectMetadata.id,
+          objectMetadataItems,
+        });
+
+        if (
+          isDefined(junctionConfig) &&
+          !isUsableJunctionConfig(junctionConfig)
+        ) {
+          return recordGqlFields;
+        }
+
         const reverseJunctionConfig = getReverseJunctionConfig({
           junctionObjectMetadataId: targetObjectMetadataItem.id,
           sourceObjectMetadataId: sourceObjectMetadataItem?.id,
@@ -80,15 +101,13 @@ export const generateDepthRecordGqlFieldsFromFields = ({
           };
         }
 
-        const junctionGqlFields = generateJunctionRelationGqlFields({
-          fieldMetadataItem: fieldMetadata,
-          objectMetadataItems,
-        });
-
-        if (isDefined(junctionGqlFields) && depth === 1) {
+        if (isUsableJunctionConfig(junctionConfig) && depth === 1) {
           return {
             ...recordGqlFields,
-            [fieldMetadata.name]: junctionGqlFields,
+            [fieldMetadata.name]: generateJunctionRelationGqlFields({
+              junctionConfig,
+              objectMetadataItems,
+            }),
           };
         }
 

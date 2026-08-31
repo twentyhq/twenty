@@ -5,7 +5,10 @@ import {
   type FieldRelationMetadata,
   type FieldRelationValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import {
+  getJunctionConfig,
+  isUsableJunctionConfig,
+} from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getJunctionRelationPickerData } from '@/object-record/record-field/ui/utils/junction/getJunctionRelationPickerData';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
@@ -18,7 +21,6 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useOpenJunctionRelationFieldInput = () => {
   const { performSearch } = useMultipleRecordPickerPerformSearch();
@@ -56,7 +58,7 @@ export const useOpenJunctionRelationFieldInput = () => {
         objectMetadataItems,
       });
 
-      if (!isDefined(junctionConfig) || !junctionConfig.isValid) {
+      if (!isUsableJunctionConfig(junctionConfig)) {
         return;
       }
 

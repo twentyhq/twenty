@@ -1,6 +1,7 @@
 import {
   getJunctionConfig,
   type JunctionObjectMetadataItem,
+  isUsableJunctionConfig,
 } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -12,18 +13,19 @@ export const getJunctionObjectMetadataIds = (
   new Set(
     objectMetadataItems.flatMap((objectMetadataItem) =>
       objectMetadataItem.fields
-        .filter(
-          (field) =>
-            getJunctionConfig({
-              settings: field.settings,
-              relationObjectMetadataId:
-                field.relation?.targetObjectMetadata.id ?? '',
-              relationTargetFieldMetadataId:
-                field.relation?.targetFieldMetadata.id,
-              sourceObjectMetadataId: objectMetadataItem.id,
-              objectMetadataItems,
-            })?.isValid === true,
-        )
+        .filter((field) => {
+          const junctionConfig = getJunctionConfig({
+            settings: field.settings,
+            relationObjectMetadataId:
+              field.relation?.targetObjectMetadata.id ?? '',
+            relationTargetFieldMetadataId:
+              field.relation?.targetFieldMetadata.id,
+            sourceObjectMetadataId: objectMetadataItem.id,
+            objectMetadataItems,
+          });
+
+          return isUsableJunctionConfig(junctionConfig);
+        })
         .map((junctionField) => junctionField.relation?.targetObjectMetadata.id)
         .filter(isDefined),
     ),

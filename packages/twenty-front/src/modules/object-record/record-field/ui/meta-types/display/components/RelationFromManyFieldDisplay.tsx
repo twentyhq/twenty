@@ -7,7 +7,10 @@ import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFoc
 import { MAX_RELATION_CHIPS_DISPLAYED_INLINE } from '@/object-record/record-field/ui/meta-types/display/constants/MaxRelationChipsDisplayedInline';
 import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useRelationFromManyFieldDisplay';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import {
+  getJunctionConfig,
+  isUsableJunctionConfig,
+} from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getReverseJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getReverseJunctionConfig';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
@@ -70,6 +73,10 @@ export const RelationFromManyFieldDisplay = () => {
   }
 
   if (isDefined(junctionConfig)) {
+    if (!isUsableJunctionConfig(junctionConfig)) {
+      return null;
+    }
+
     const { targetFields } = junctionConfig;
 
     if (targetFields.length === 0) {

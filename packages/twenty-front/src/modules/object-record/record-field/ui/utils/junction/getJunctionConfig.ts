@@ -15,13 +15,29 @@ export type JunctionObjectMetadataItem = Pick<
   | 'namePlural'
 >;
 
-export type JunctionConfig = {
+type BaseJunctionConfig = {
   junctionObjectMetadata: JunctionObjectMetadataItem;
+};
+
+export type ValidJunctionConfig = BaseJunctionConfig & {
   targetFields: FieldMetadataItem[];
   sourceField?: FieldMetadataItem;
   isMorphRelation: boolean;
-  isValid: boolean;
+  isValid: true;
 };
+
+export type InvalidJunctionConfig = BaseJunctionConfig & {
+  targetFields: [];
+  sourceField?: never;
+  isMorphRelation: false;
+  isValid: false;
+};
+
+export type JunctionConfig = ValidJunctionConfig | InvalidJunctionConfig;
+
+export const isUsableJunctionConfig = (
+  junctionConfig: JunctionConfig | null | undefined,
+): junctionConfig is ValidJunctionConfig => junctionConfig?.isValid === true;
 
 type GetJunctionConfigArgs = {
   settings: FieldMetadataItem['settings'] | undefined;

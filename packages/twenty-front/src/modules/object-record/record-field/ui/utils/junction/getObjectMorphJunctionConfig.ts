@@ -3,6 +3,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import {
   getJunctionConfig,
   type JunctionConfig,
+  isUsableJunctionConfig,
 } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
 import { isConfiguredJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isConfiguredJunctionRelationField';
@@ -39,7 +40,8 @@ export const getObjectMorphJunctionConfig = ({
     });
 
     if (
-      !junctionConfig?.isMorphRelation ||
+      !isUsableJunctionConfig(junctionConfig) ||
+      !junctionConfig.isMorphRelation ||
       !isDefined(junctionConfig.sourceField)
     ) {
       continue;
