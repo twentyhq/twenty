@@ -33,30 +33,30 @@ export default {
         69,
         71,
         72,
-        75,
-        76,
-        77,
-        83,
-        86,
+        79,
+        82,
+        87,
+        88,
         91,
         92,
-        95,
-        96,
+        94,
+        97,
         98,
-        101,
-        102,
-        112,
-        127,
+        108,
+        123,
+        129,
+        130,
+        131,
         133,
-        134,
-        135,
-        137,
-        146,
-        148,
-        156,
-        159,
-        161,
+        142,
+        144,
+        152,
+        155,
+        157,
+        173,
         177,
+        178,
+        179,
         185,
         192,
         193,
@@ -108,13 +108,13 @@ export default {
                 1
             ],
             "metadata": [
-                132
+                128
             ],
             "on_BillingLicensedProduct": [
-                141
+                137
             ],
             "on_BillingMeteredProduct": [
-                142
+                138
             ],
             "__typename": [
                 1
@@ -1634,16 +1634,16 @@ export default {
                 184
             ],
             "billingSubscriptions": [
-                145
+                141
             ],
             "installedApplications": [
                 47
             ],
             "currentBillingSubscription": [
-                145
+                141
             ],
             "billingCustomer": [
-                144
+                140
             ],
             "billingEntitlements": [
                 253
@@ -1810,50 +1810,6 @@ export default {
                 1
             ]
         },
-        "UsageLimit": {
-            "id": [
-                3
-            ],
-            "resourceType": [
-                75
-            ],
-            "operationType": [
-                76
-            ],
-            "spenderType": [
-                1
-            ],
-            "spenderId": [
-                1
-            ],
-            "limitKind": [
-                1
-            ],
-            "windowSeconds": [
-                26
-            ],
-            "limitValueType": [
-                1
-            ],
-            "limitValue": [
-                77
-            ],
-            "burstValue": [
-                77
-            ],
-            "createdAt": [
-                4
-            ],
-            "updatedAt": [
-                4
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UsageResourceType": {},
-        "UsageOperationType": {},
-        "BigInt": {},
         "SdkClientChecksums": {
             "core": [
                 1
@@ -1924,19 +1880,19 @@ export default {
                 1
             ],
             "type": [
-                83
+                79
             ],
             "objectMetadataId": [
                 3
             ],
             "gridPosition": [
-                81
+                77
             ],
             "position": [
-                84
+                80
             ],
             "configuration": [
-                89
+                85
             ],
             "conditionalDisplay": [
                 9
@@ -1966,13 +1922,13 @@ export default {
         "WidgetType": {},
         "PageLayoutWidgetPosition": {
             "on_PageLayoutWidgetGridPosition": [
-                85
+                81
             ],
             "on_PageLayoutWidgetVerticalListPosition": [
-                87
+                83
             ],
             "on_PageLayoutWidgetCanvasPosition": [
-                88
+                84
             ],
             "__typename": [
                 1
@@ -1980,7 +1936,7 @@ export default {
         },
         "PageLayoutWidgetGridPosition": {
             "layoutMode": [
-                86
+                82
             ],
             "row": [
                 26
@@ -2001,7 +1957,7 @@ export default {
         "PageLayoutTabLayoutMode": {},
         "PageLayoutWidgetVerticalListPosition": {
             "layoutMode": [
-                86
+                82
             ],
             "index": [
                 26
@@ -2012,7 +1968,7 @@ export default {
         },
         "PageLayoutWidgetCanvasPosition": {
             "layoutMode": [
-                86
+                82
             ],
             "__typename": [
                 1
@@ -2020,85 +1976,85 @@ export default {
         },
         "WidgetConfiguration": {
             "on_AggregateChartConfiguration": [
-                90
+                86
             ],
             "on_StandaloneRichTextConfiguration": [
-                93
+                89
             ],
             "on_PieChartConfiguration": [
-                94
+                90
             ],
             "on_LineChartConfiguration": [
-                97
+                93
             ],
             "on_IframeConfiguration": [
-                99
+                95
             ],
             "on_BarChartConfiguration": [
-                100
+                96
             ],
             "on_CalendarConfiguration": [
-                103
+                99
             ],
             "on_FrontComponentConfiguration": [
-                104
+                100
             ],
             "on_EmailsConfiguration": [
-                105
+                101
             ],
             "on_EmailThreadConfiguration": [
-                106
+                102
             ],
             "on_CallRecordingSummaryConfiguration": [
-                107
+                103
             ],
             "on_CallRecordingTranscriptConfiguration": [
-                108
+                104
             ],
             "on_MessageCampaignBodyConfiguration": [
-                109
+                105
             ],
             "on_MessageCampaignDetailsConfiguration": [
-                110
+                106
             ],
             "on_FieldConfiguration": [
-                111
+                107
             ],
             "on_FieldRichTextConfiguration": [
-                113
+                109
             ],
             "on_FieldsConfiguration": [
-                114
+                110
             ],
             "on_FormFieldConfiguration": [
-                115
+                111
             ],
             "on_FilesConfiguration": [
-                116
+                112
             ],
             "on_NotesConfiguration": [
-                117
+                113
             ],
             "on_TasksConfiguration": [
-                118
+                114
             ],
             "on_TimelineConfiguration": [
-                119
+                115
             ],
             "on_ViewConfiguration": [
-                120
+                116
             ],
             "on_RecordTableConfiguration": [
-                121
+                117
             ],
             "on_WorkflowConfiguration": [
-                122
+                118
             ],
             "on_WorkflowRunConfiguration": [
-                123
+                119
             ],
             "on_WorkflowVersionConfiguration": [
-                124
+                120
             ],
             "__typename": [
                 1
@@ -2106,7 +2062,7 @@ export default {
         },
         "AggregateChartConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "aggregateFieldMetadataId": [
                 3
@@ -2121,7 +2077,7 @@ export default {
                 8
             ],
             "numberFormat": [
-                92
+                88
             ],
             "description": [
                 1
@@ -2142,7 +2098,7 @@ export default {
                 1
             ],
             "ratioAggregateConfig": [
-                79
+                75
             ],
             "__typename": [
                 1
@@ -2152,10 +2108,10 @@ export default {
         "ChartNumberFormat": {},
         "StandaloneRichTextConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "body": [
-                80
+                76
             ],
             "__typename": [
                 1
@@ -2163,7 +2119,7 @@ export default {
         },
         "PieChartConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "aggregateFieldMetadataId": [
                 3
@@ -2178,10 +2134,10 @@ export default {
                 1
             ],
             "dateGranularity": [
-                95
+                91
             ],
             "orderBy": [
-                96
+                92
             ],
             "manualSortOrder": [
                 1
@@ -2199,7 +2155,7 @@ export default {
                 8
             ],
             "numberFormat": [
-                92
+                88
             ],
             "splitMultiValueFields": [
                 8
@@ -2227,7 +2183,7 @@ export default {
         "GraphOrderBy": {},
         "LineChartConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "aggregateFieldMetadataId": [
                 3
@@ -2242,10 +2198,10 @@ export default {
                 1
             ],
             "primaryAxisDateGranularity": [
-                95
+                91
             ],
             "primaryAxisOrderBy": [
-                96
+                92
             ],
             "primaryAxisManualSortOrder": [
                 1
@@ -2257,10 +2213,10 @@ export default {
                 1
             ],
             "secondaryAxisGroupByDateGranularity": [
-                95
+                91
             ],
             "secondaryAxisOrderBy": [
-                96
+                92
             ],
             "secondaryAxisManualSortOrder": [
                 1
@@ -2272,7 +2228,7 @@ export default {
                 8
             ],
             "axisNameDisplay": [
-                98
+                94
             ],
             "displayDataLabel": [
                 8
@@ -2281,7 +2237,7 @@ export default {
                 8
             ],
             "numberFormat": [
-                92
+                88
             ],
             "rangeMin": [
                 15
@@ -2317,7 +2273,7 @@ export default {
         "AxisNameDisplay": {},
         "IframeConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "url": [
                 1
@@ -2328,7 +2284,7 @@ export default {
         },
         "BarChartConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "aggregateFieldMetadataId": [
                 3
@@ -2343,10 +2299,10 @@ export default {
                 1
             ],
             "primaryAxisDateGranularity": [
-                95
+                91
             ],
             "primaryAxisOrderBy": [
-                96
+                92
             ],
             "primaryAxisManualSortOrder": [
                 1
@@ -2358,10 +2314,10 @@ export default {
                 1
             ],
             "secondaryAxisGroupByDateGranularity": [
-                95
+                91
             ],
             "secondaryAxisOrderBy": [
-                96
+                92
             ],
             "secondaryAxisManualSortOrder": [
                 1
@@ -2373,7 +2329,7 @@ export default {
                 8
             ],
             "axisNameDisplay": [
-                98
+                94
             ],
             "displayDataLabel": [
                 8
@@ -2382,7 +2338,7 @@ export default {
                 8
             ],
             "numberFormat": [
-                92
+                88
             ],
             "rangeMin": [
                 15
@@ -2400,10 +2356,10 @@ export default {
                 9
             ],
             "groupMode": [
-                101
+                97
             ],
             "layout": [
-                102
+                98
             ],
             "isCumulative": [
                 8
@@ -2422,7 +2378,7 @@ export default {
         "BarChartLayout": {},
         "CalendarConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "__typename": [
                 1
@@ -2430,7 +2386,7 @@ export default {
         },
         "FrontComponentConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "frontComponentId": [
                 3
@@ -2444,7 +2400,7 @@ export default {
         },
         "EmailsConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "__typename": [
                 1
@@ -2452,7 +2408,7 @@ export default {
         },
         "EmailThreadConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "__typename": [
                 1
@@ -2460,7 +2416,7 @@ export default {
         },
         "CallRecordingSummaryConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "__typename": [
                 1
@@ -2468,7 +2424,7 @@ export default {
         },
         "CallRecordingTranscriptConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "__typename": [
                 1
@@ -2476,7 +2432,7 @@ export default {
         },
         "MessageCampaignBodyConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "__typename": [
                 1
@@ -2484,7 +2440,7 @@ export default {
         },
         "MessageCampaignDetailsConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "__typename": [
                 1
@@ -2492,13 +2448,13 @@ export default {
         },
         "FieldConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "fieldMetadataId": [
                 1
             ],
             "fieldDisplayMode": [
-                112
+                108
             ],
             "viewId": [
                 1
@@ -2516,7 +2472,7 @@ export default {
         "FieldDisplayMode": {},
         "FieldRichTextConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "__typename": [
                 1
@@ -2524,7 +2480,7 @@ export default {
         },
         "FieldsConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "viewId": [
                 1
@@ -2541,7 +2497,7 @@ export default {
         },
         "FormFieldConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "fieldMetadataId": [
                 1
@@ -2552,7 +2508,7 @@ export default {
         },
         "FilesConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "__typename": [
                 1
@@ -2560,7 +2516,7 @@ export default {
         },
         "NotesConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "__typename": [
                 1
@@ -2568,7 +2524,7 @@ export default {
         },
         "TasksConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "__typename": [
                 1
@@ -2576,7 +2532,7 @@ export default {
         },
         "TimelineConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "__typename": [
                 1
@@ -2584,7 +2540,7 @@ export default {
         },
         "ViewConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "__typename": [
                 1
@@ -2592,7 +2548,7 @@ export default {
         },
         "RecordTableConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "viewId": [
                 1
@@ -2609,7 +2565,7 @@ export default {
         },
         "WorkflowConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "__typename": [
                 1
@@ -2617,7 +2573,7 @@ export default {
         },
         "WorkflowRunConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "__typename": [
                 1
@@ -2625,7 +2581,7 @@ export default {
         },
         "WorkflowVersionConfiguration": {
             "configurationType": [
-                91
+                87
             ],
             "__typename": [
                 1
@@ -2654,13 +2610,13 @@ export default {
                 3
             ],
             "widgets": [
-                82
+                78
             ],
             "icon": [
                 1
             ],
             "layoutMode": [
-                86
+                82
             ],
             "createdAt": [
                 4
@@ -2689,13 +2645,13 @@ export default {
                 1
             ],
             "type": [
-                127
+                123
             ],
             "objectMetadataId": [
                 3
             ],
             "tabs": [
-                125
+                121
             ],
             "defaultTabToFocusOnMobileAndSidePanelId": [
                 3
@@ -2754,7 +2710,7 @@ export default {
                 1
             ],
             "oauth": [
-                128
+                124
             ],
             "__typename": [
                 1
@@ -2779,7 +2735,7 @@ export default {
                 15
             ],
             "items": [
-                130
+                126
             ],
             "__typename": [
                 1
@@ -2787,13 +2743,13 @@ export default {
         },
         "BillingProductMetadata": {
             "planKey": [
-                133
+                129
             ],
             "priceUsageBased": [
-                134
+                130
             ],
             "productKey": [
-                135
+                131
             ],
             "__typename": [
                 1
@@ -2804,7 +2760,7 @@ export default {
         "BillingProductKey": {},
         "BillingPriceLicensed": {
             "recurringInterval": [
-                137
+                133
             ],
             "unitAmount": [
                 15
@@ -2813,7 +2769,7 @@ export default {
                 1
             ],
             "priceUsageType": [
-                134
+                130
             ],
             "creditAmount": [
                 15
@@ -2839,16 +2795,16 @@ export default {
         },
         "BillingPriceMetered": {
             "tiers": [
-                138
+                134
             ],
             "recurringInterval": [
-                137
+                133
             ],
             "stripePriceId": [
                 1
             ],
             "priceUsageType": [
-                134
+                130
             ],
             "__typename": [
                 1
@@ -2865,7 +2821,7 @@ export default {
                 1
             ],
             "metadata": [
-                132
+                128
             ],
             "__typename": [
                 1
@@ -2882,10 +2838,10 @@ export default {
                 1
             ],
             "metadata": [
-                132
+                128
             ],
             "prices": [
-                136
+                132
             ],
             "__typename": [
                 1
@@ -2902,10 +2858,10 @@ export default {
                 1
             ],
             "metadata": [
-                132
+                128
             ],
             "prices": [
-                139
+                135
             ],
             "__typename": [
                 1
@@ -2947,13 +2903,13 @@ export default {
                 3
             ],
             "status": [
-                146
+                142
             ],
             "interval": [
-                137
+                133
             ],
             "billingSubscriptionItems": [
-                143
+                139
             ],
             "currentPeriodEnd": [
                 4
@@ -2962,7 +2918,7 @@ export default {
                 9
             ],
             "phases": [
-                131
+                127
             ],
             "cancelAt": [
                 4
@@ -2983,7 +2939,7 @@ export default {
                 15
             ],
             "status": [
-                148
+                144
             ],
             "error": [
                 9
@@ -3118,7 +3074,7 @@ export default {
                 3
             ],
             "type": [
-                156
+                152
             ],
             "name": [
                 1
@@ -3151,7 +3107,7 @@ export default {
                 4
             ],
             "targetRecordIdentifier": [
-                154
+                150
             ],
             "__typename": [
                 1
@@ -3177,7 +3133,7 @@ export default {
         },
         "MetadataEvent": {
             "type": [
-                159
+                155
             ],
             "metadataName": [
                 1
@@ -3186,7 +3142,7 @@ export default {
                 1
             ],
             "properties": [
-                157
+                153
             ],
             "updatedCollectionHash": [
                 1
@@ -3198,7 +3154,7 @@ export default {
         "MetadataEventAction": {},
         "ObjectRecordEvent": {
             "action": [
-                161
+                157
             ],
             "objectNameSingular": [
                 1
@@ -3213,7 +3169,7 @@ export default {
                 1
             ],
             "properties": [
-                157
+                153
             ],
             "__typename": [
                 1
@@ -3225,7 +3181,7 @@ export default {
                 1
             ],
             "objectRecordEvent": [
-                160
+                156
             ],
             "__typename": [
                 1
@@ -3236,10 +3192,10 @@ export default {
                 1
             ],
             "objectRecordEventsWithQueryIds": [
-                162
+                158
             ],
             "metadataEvents": [
-                158
+                154
             ],
             "__typename": [
                 1
@@ -3282,7 +3238,7 @@ export default {
         },
         "BillingEndTrialPeriod": {
             "status": [
-                146
+                142
             ],
             "hasPaymentMethod": [
                 8
@@ -3291,10 +3247,10 @@ export default {
                 1
             ],
             "currentBillingSubscription": [
-                145
+                141
             ],
             "billingSubscriptions": [
-                145
+                141
             ],
             "__typename": [
                 1
@@ -3302,7 +3258,7 @@ export default {
         },
         "BillingResourceCreditUsage": {
             "productKey": [
-                135
+                131
             ],
             "periodStart": [
                 4
@@ -3331,16 +3287,16 @@ export default {
         },
         "BillingPlan": {
             "planKey": [
-                133
+                129
             ],
             "baseProducts": [
-                141
+                137
             ],
             "resourceCreditProducts": [
-                141
+                137
             ],
             "meteredProducts": [
-                142
+                138
             ],
             "__typename": [
                 1
@@ -3367,10 +3323,10 @@ export default {
         },
         "BillingUpdate": {
             "currentBillingSubscription": [
-                145
+                141
             ],
             "billingSubscriptions": [
-                145
+                141
             ],
             "__typename": [
                 1
@@ -3431,7 +3387,7 @@ export default {
                 1
             ],
             "result": [
-                174
+                170
             ],
             "__typename": [
                 1
@@ -3448,7 +3404,7 @@ export default {
                 1
             ],
             "connectionSecurity": [
-                177
+                173
             ],
             "__typename": [
                 1
@@ -3457,13 +3413,13 @@ export default {
         "EmailConnectionSecurity": {},
         "PublicImapSmtpCaldavConnectionParameters": {
             "IMAP": [
-                176
+                172
             ],
             "SMTP": [
-                176
+                172
             ],
             "CALDAV": [
-                176
+                172
             ],
             "__typename": [
                 1
@@ -3519,12 +3475,65 @@ export default {
                 4
             ],
             "connectionParameters": [
-                178
+                174
             ],
             "__typename": [
                 1
             ]
         },
+        "UsageLimit": {
+            "id": [
+                3
+            ],
+            "resourceType": [
+                177
+            ],
+            "operationType": [
+                178
+            ],
+            "spenderType": [
+                1
+            ],
+            "spenderId": [
+                1
+            ],
+            "limitKind": [
+                1
+            ],
+            "periodCount": [
+                26
+            ],
+            "windowSeconds": [
+                26
+            ],
+            "periodUnit": [
+                1
+            ],
+            "meter": [
+                1
+            ],
+            "limitValueType": [
+                1
+            ],
+            "limitValue": [
+                179
+            ],
+            "burstValue": [
+                179
+            ],
+            "createdAt": [
+                4
+            ],
+            "updatedAt": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UsageResourceType": {},
+        "UsageOperationType": {},
+        "BigInt": {},
         "UsageBreakdownItem": {
             "key": [
                 1
@@ -5406,7 +5415,7 @@ export default {
                 4
             ],
             "connectedAccount": [
-                179
+                175
             ],
             "__typename": [
                 1
@@ -5605,7 +5614,7 @@ export default {
                 1
             ],
             "connectionSecurity": [
-                177
+                173
             ],
             "__typename": [
                 1
@@ -5879,10 +5888,10 @@ export default {
                 8
             ],
             "layout": [
-                102
+                98
             ],
             "groupMode": [
-                101
+                97
             ],
             "hasTooManyGroups": [
                 8
@@ -6645,10 +6654,10 @@ export default {
         },
         "Query": {
             "navigationMenuItems": [
-                155
+                151
             ],
             "navigationMenuItem": [
-                155,
+                151,
                 {
                     "id": [
                         3,
@@ -6657,7 +6666,7 @@ export default {
                 }
             ],
             "applicationSdkClientChecksums": [
-                78,
+                74,
                 {
                     "applicationId": [
                         3,
@@ -6691,7 +6700,7 @@ export default {
                 }
             ],
             "enterpriseSubscriptionStatus": [
-                150
+                146
             ],
             "getUsageAnalytics": [
                 183,
@@ -6702,7 +6711,7 @@ export default {
                 }
             ],
             "usageLimits": [
-                74
+                176
             ],
             "getViewFilterGroups": [
                 53,
@@ -6828,13 +6837,13 @@ export default {
                 }
             ],
             "currentUserSessions": [
-                164
+                160
             ],
             "myConnectedAccounts": [
-                179
+                175
             ],
             "applicationConnectionProviders": [
-                129,
+                125,
                 {
                     "applicationId": [
                         3,
@@ -6843,10 +6852,10 @@ export default {
                 }
             ],
             "getInviteSuggestions": [
-                171
+                167
             ],
             "billingPortalSession": [
-                169,
+                165,
                 {
                     "returnUrlPath": [
                         1
@@ -6857,19 +6866,19 @@ export default {
                 }
             ],
             "listPlans": [
-                167
+                163
             ],
             "getResourceCreditUsage": [
-                166
+                162
             ],
             "findWorkspaceInvitations": [
-                174
+                170
             ],
             "getApprovedAccessDomains": [
-                151
+                147
             ],
             "getPageLayoutTabs": [
-                125,
+                121,
                 {
                     "pageLayoutId": [
                         1,
@@ -6878,7 +6887,7 @@ export default {
                 }
             ],
             "getPageLayoutTab": [
-                125,
+                121,
                 {
                     "id": [
                         1,
@@ -6887,18 +6896,18 @@ export default {
                 }
             ],
             "getPageLayouts": [
-                126,
+                122,
                 {
                     "objectMetadataId": [
                         1
                     ],
                     "pageLayoutType": [
-                        127
+                        123
                     ]
                 }
             ],
             "getPageLayout": [
-                126,
+                122,
                 {
                     "id": [
                         1,
@@ -6907,7 +6916,7 @@ export default {
                 }
             ],
             "getPageLayoutWidgets": [
-                82,
+                78,
                 {
                     "pageLayoutTabId": [
                         1,
@@ -6916,7 +6925,7 @@ export default {
                 }
             ],
             "getPageLayoutWidget": [
-                82,
+                78,
                 {
                     "id": [
                         1,
@@ -7541,7 +7550,7 @@ export default {
                 1
             ],
             "operationTypes": [
-                76
+                178
             ],
             "__typename": [
                 1
@@ -7770,7 +7779,7 @@ export default {
                 }
             ],
             "createManyNavigationMenuItems": [
-                155,
+                151,
                 {
                     "inputs": [
                         396,
@@ -7779,7 +7788,7 @@ export default {
                 }
             ],
             "createNavigationMenuItem": [
-                155,
+                151,
                 {
                     "input": [
                         396,
@@ -7788,7 +7797,7 @@ export default {
                 }
             ],
             "updateManyNavigationMenuItems": [
-                155,
+                151,
                 {
                     "inputs": [
                         397,
@@ -7797,7 +7806,7 @@ export default {
                 }
             ],
             "updateNavigationMenuItem": [
-                155,
+                151,
                 {
                     "input": [
                         397,
@@ -7806,7 +7815,7 @@ export default {
                 }
             ],
             "deleteManyNavigationMenuItems": [
-                155,
+                151,
                 {
                     "ids": [
                         3,
@@ -7815,7 +7824,7 @@ export default {
                 }
             ],
             "deleteNavigationMenuItem": [
-                155,
+                151,
                 {
                     "id": [
                         3,
@@ -7824,7 +7833,7 @@ export default {
                 }
             ],
             "createFileUpload": [
-                153,
+                149,
                 {
                     "filename": [
                         1,
@@ -7847,7 +7856,7 @@ export default {
                 }
             ],
             "completeFileUpload": [
-                152,
+                148,
                 {
                     "fileId": [
                         1,
@@ -7859,10 +7868,10 @@ export default {
                 8
             ],
             "releaseEnterpriseServerBinding": [
-                149
+                145
             ],
             "setEnterpriseKey": [
-                149,
+                145,
                 {
                     "enterpriseKey": [
                         1,
@@ -7871,7 +7880,7 @@ export default {
                 }
             ],
             "uploadEmailAttachmentFile": [
-                152,
+                148,
                 {
                     "file": [
                         399,
@@ -7880,7 +7889,7 @@ export default {
                 }
             ],
             "uploadAiChatFile": [
-                152,
+                148,
                 {
                     "file": [
                         399,
@@ -7889,7 +7898,7 @@ export default {
                 }
             ],
             "uploadWorkflowFile": [
-                152,
+                148,
                 {
                     "file": [
                         399,
@@ -7898,7 +7907,7 @@ export default {
                 }
             ],
             "uploadWorkspaceLogo": [
-                152,
+                148,
                 {
                     "file": [
                         399,
@@ -7907,7 +7916,7 @@ export default {
                 }
             ],
             "uploadWorkspaceMemberProfilePicture": [
-                152,
+                148,
                 {
                     "file": [
                         399,
@@ -7916,7 +7925,7 @@ export default {
                 }
             ],
             "uploadFilesFieldFile": [
-                152,
+                148,
                 {
                     "file": [
                         399,
@@ -7929,7 +7938,7 @@ export default {
                 }
             ],
             "uploadFilesFieldFileByUniversalIdentifier": [
-                152,
+                148,
                 {
                     "file": [
                         399,
@@ -7942,7 +7951,7 @@ export default {
                 }
             ],
             "upsertUsageLimit": [
-                74,
+                176,
                 {
                     "input": [
                         400,
@@ -8272,7 +8281,7 @@ export default {
                 26
             ],
             "deleteConnectedAccount": [
-                179,
+                175,
                 {
                     "id": [
                         3,
@@ -8298,7 +8307,7 @@ export default {
                 }
             ],
             "skipSyncEmailOnboardingStep": [
-                173,
+                169,
                 {
                     "isAutoSkipped": [
                         8,
@@ -8307,7 +8316,7 @@ export default {
                 }
             ],
             "completeBookCallOnboardingStep": [
-                173,
+                169,
                 {
                     "hasBookedCall": [
                         8,
@@ -8320,7 +8329,7 @@ export default {
                 }
             ],
             "triggerInstallAppsOnboardingStep": [
-                173,
+                169,
                 {
                     "universalIdentifiers": [
                         1,
@@ -8333,17 +8342,17 @@ export default {
                 }
             ],
             "goBackToPreviousOnboardingStep": [
-                172
+                168
             ],
             "checkoutSession": [
-                169,
+                165,
                 {
                     "recurringInterval": [
-                        137,
+                        133,
                         "SubscriptionInterval!"
                     ],
                     "plan": [
-                        133,
+                        129,
                         "BillingPlanKey!"
                     ],
                     "requirePaymentMethod": [
@@ -8356,14 +8365,14 @@ export default {
                 }
             ],
             "createSubscriptionPaymentIntent": [
-                168,
+                164,
                 {
                     "recurringInterval": [
-                        137,
+                        133,
                         "SubscriptionInterval!"
                     ],
                     "plan": [
-                        133,
+                        129,
                         "BillingPlanKey!"
                     ],
                     "requirePaymentMethod": [
@@ -8380,22 +8389,22 @@ export default {
                 }
             ],
             "createBillingPaymentMethodSetupIntent": [
-                168
+                164
             ],
             "switchSubscriptionInterval": [
-                170
+                166
             ],
             "switchBillingPlan": [
-                170
+                166
             ],
             "cancelSwitchBillingPlan": [
-                170
+                166
             ],
             "cancelSwitchBillingInterval": [
-                170
+                166
             ],
             "setResourceCreditSubscriptionPrice": [
-                170,
+                166,
                 {
                     "priceId": [
                         1,
@@ -8404,10 +8413,10 @@ export default {
                 }
             ],
             "endSubscriptionTrialPeriod": [
-                165
+                161
             ],
             "cancelSwitchResourceCreditPrice": [
-                170
+                166
             ],
             "deleteWorkspaceInvitation": [
                 1,
@@ -8419,7 +8428,7 @@ export default {
                 }
             ],
             "resendWorkspaceInvitation": [
-                175,
+                171,
                 {
                     "appTokenId": [
                         1,
@@ -8428,7 +8437,7 @@ export default {
                 }
             ],
             "sendInvitations": [
-                175,
+                171,
                 {
                     "emails": [
                         1,
@@ -8440,7 +8449,7 @@ export default {
                 }
             ],
             "createApprovedAccessDomain": [
-                151,
+                147,
                 {
                     "input": [
                         437,
@@ -8458,7 +8467,7 @@ export default {
                 }
             ],
             "validateApprovedAccessDomain": [
-                151,
+                147,
                 {
                     "input": [
                         439,
@@ -8467,7 +8476,7 @@ export default {
                 }
             ],
             "createPageLayoutTab": [
-                125,
+                121,
                 {
                     "input": [
                         440,
@@ -8476,7 +8485,7 @@ export default {
                 }
             ],
             "updatePageLayoutTab": [
-                125,
+                121,
                 {
                     "id": [
                         1,
@@ -8498,7 +8507,7 @@ export default {
                 }
             ],
             "createPageLayout": [
-                126,
+                122,
                 {
                     "input": [
                         442,
@@ -8507,7 +8516,7 @@ export default {
                 }
             ],
             "updatePageLayout": [
-                126,
+                122,
                 {
                     "id": [
                         1,
@@ -8529,7 +8538,7 @@ export default {
                 }
             ],
             "updatePageLayoutWithTabsAndWidgets": [
-                126,
+                122,
                 {
                     "id": [
                         1,
@@ -8542,7 +8551,7 @@ export default {
                 }
             ],
             "resetPageLayoutToDefault": [
-                126,
+                122,
                 {
                     "id": [
                         1,
@@ -8551,7 +8560,7 @@ export default {
                 }
             ],
             "resetPageLayoutWidgetToDefault": [
-                82,
+                78,
                 {
                     "id": [
                         1,
@@ -8560,7 +8569,7 @@ export default {
                 }
             ],
             "resetPageLayoutTabToDefault": [
-                125,
+                121,
                 {
                     "id": [
                         1,
@@ -8569,7 +8578,7 @@ export default {
                 }
             ],
             "createPageLayoutWidget": [
-                82,
+                78,
                 {
                     "input": [
                         447,
@@ -8578,7 +8587,7 @@ export default {
                 }
             ],
             "updatePageLayoutWidget": [
-                82,
+                78,
                 {
                     "id": [
                         1,
@@ -8690,7 +8699,7 @@ export default {
                 }
             ],
             "executeOneLogicFunction": [
-                147,
+                143,
                 {
                     "input": [
                         462,
@@ -9749,7 +9758,7 @@ export default {
                 }
             ],
             "uploadNewWorkspaceLogo": [
-                152,
+                148,
                 {
                     "workspaceId": [
                         1,
@@ -10279,7 +10288,7 @@ export default {
                 3
             ],
             "type": [
-                156
+                152
             ],
             "name": [
                 1
@@ -10346,10 +10355,10 @@ export default {
         "Upload": {},
         "UpsertUsageLimitInput": {
             "resourceType": [
-                75
+                177
             ],
             "operationType": [
-                76
+                178
             ],
             "spenderType": [
                 1
@@ -10360,14 +10369,26 @@ export default {
             "limitKind": [
                 1
             ],
+            "periodCount": [
+                26
+            ],
+            "periodUnit": [
+                1
+            ],
             "windowSeconds": [
                 26
             ],
+            "meter": [
+                1
+            ],
+            "limitValueType": [
+                1
+            ],
             "limitValue": [
-                77
+                179
             ],
             "burstValue": [
-                77
+                179
             ],
             "__typename": [
                 1
@@ -11089,7 +11110,7 @@ export default {
                 3
             ],
             "layoutMode": [
-                86
+                82
             ],
             "__typename": [
                 1
@@ -11106,7 +11127,7 @@ export default {
                 1
             ],
             "layoutMode": [
-                86
+                82
             ],
             "__typename": [
                 1
@@ -11117,7 +11138,7 @@ export default {
                 1
             ],
             "type": [
-                127
+                123
             ],
             "objectMetadataId": [
                 3
@@ -11131,7 +11152,7 @@ export default {
                 1
             ],
             "type": [
-                127
+                123
             ],
             "objectMetadataId": [
                 3
@@ -11145,7 +11166,7 @@ export default {
                 1
             ],
             "type": [
-                127
+                123
             ],
             "objectMetadataId": [
                 3
@@ -11174,7 +11195,7 @@ export default {
                 1
             ],
             "layoutMode": [
-                86
+                82
             ],
             "widgets": [
                 446
@@ -11194,7 +11215,7 @@ export default {
                 1
             ],
             "type": [
-                83
+                79
             ],
             "objectMetadataId": [
                 3
@@ -11223,7 +11244,7 @@ export default {
                 1
             ],
             "type": [
-                83
+                79
             ],
             "objectMetadataId": [
                 3
@@ -11246,7 +11267,7 @@ export default {
                 1
             ],
             "type": [
-                83
+                79
             ],
             "objectMetadataId": [
                 3
@@ -13032,7 +13053,7 @@ export default {
                 1
             ],
             "connectionSecurity": [
-                177
+                173
             ],
             "__typename": [
                 1
@@ -13065,7 +13086,7 @@ export default {
         },
         "Subscription": {
             "onEventSubscription": [
-                163,
+                159,
                 {
                     "eventStreamId": [
                         1,

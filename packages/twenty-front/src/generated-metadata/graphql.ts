@@ -6311,11 +6311,15 @@ export type UpsertUsageLimitInput = {
   limitKind: Scalars['String']['input'];
   limitValue: Scalars['BigInt']['input'];
   limitValueType?: Scalars['String']['input'];
+  meter?: Scalars['String']['input'];
   operationType?: InputMaybe<UsageOperationType>;
+  periodCount?: Scalars['Int']['input'];
+  periodUnit?: Scalars['String']['input'];
   resourceType: UsageResourceType;
   spenderId?: InputMaybe<Scalars['String']['input']>;
   spenderType: Scalars['String']['input'];
-  windowSeconds?: Scalars['Int']['input'];
+  /** Deprecated: use periodCount and periodUnit */
+  windowSeconds?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UpsertViewWidgetInput = {
@@ -6416,17 +6420,22 @@ export type UsageLimit = {
   limitKind: Scalars['String']['output'];
   limitValue: Scalars['BigInt']['output'];
   limitValueType: Scalars['String']['output'];
-  operationType?: Maybe<UsageOperationType>;
+  meter: Scalars['String']['output'];
+  operationType: UsageOperationType;
+  periodCount: Scalars['Int']['output'];
+  periodUnit: Scalars['String']['output'];
   resourceType: UsageResourceType;
   spenderId: Scalars['String']['output'];
   spenderType: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
+  /** @deprecated Use periodCount and periodUnit */
   windowSeconds: Scalars['Int']['output'];
 };
 
 export enum UsageOperationType {
   AI_CHAT_TOKEN = 'AI_CHAT_TOKEN',
   AI_WORKFLOW_TOKEN = 'AI_WORKFLOW_TOKEN',
+  ALL = 'ALL',
   API_REQUEST = 'API_REQUEST',
   CALL_RECORDING = 'CALL_RECORDING',
   CODE_EXECUTION = 'CODE_EXECUTION',
