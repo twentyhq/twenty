@@ -3,6 +3,7 @@ set -eu
 
 LOG_FILE="${TWENTY_COMMAND_LOG_FILE:-/tmp/twenty-command.log}"
 PID_FILE="${TWENTY_COMMAND_PID_FILE:-/tmp/twenty-command.pid}"
+LOCK_FILE="$PID_FILE.lock"
 TAIL_LINES=20
 export LOG_FILE PID_FILE
 
@@ -32,9 +33,9 @@ last_run() {
   code=$(grep '^EXIT=' "$LOG_FILE" 2>/dev/null | tail -n 1 | cut -d= -f2)
   case "$code" in
     0)   echo "completed" ;;
-    130) echo "stopped gracefully on SIGINT" ;;
-    143) echo "stopped gracefully on SIGTERM" ;;
-    137) echo "killed (SIGKILL) — partial work possible" ;;
+    130) echo "stopped by SIGINT (graceful only if the command handles it)" ;;
+    143) echo "stopped by SIGTERM (graceful only if the command handles it)" ;;
+    137) echo "killed (SIGKILL), partial work possible" ;;
     "")  echo "left no exit code — killed, or never started" ;;
     *)   echo "failed (exit $code)" ;;
   esac
@@ -51,6 +52,15 @@ start() {
     exit 1
   }
 
+  # The lock fd is inherited by the detached run and held until it exits, so
+  # two concurrent starts cannot both pass the liveness check.
+  exec 9>> "$LOCK_FILE"
+  if command -v flock > /dev/null; then
+    flock -n 9 || {
+      echo "Failed to start: already running (pid $(command_pid || echo unknown)), one background command at a time" >&2
+      exit 1
+    }
+  fi
   if is_running; then
     echo "Failed to start: already running (pid $(command_pid)), one background command at a time" >&2
     exit 1
@@ -76,6 +86,9 @@ start() {
 
   echo "Running (pid $(command_pid)), logging to $LOG_FILE"
   detach_hint
+  # Release the lock here so only the run itself holds it: a reader left
+  # attached to the stream must not block the next start.
+  exec 9>&-
   stream
 }
 

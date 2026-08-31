@@ -156,7 +156,7 @@ yarn command:prod:background:stop               # graceful stop; --now immediate
 
 Ctrl+C detaches the stream only, and `logs` takes any number of concurrent readers. `logs` reports whether a run is alive before streaming, and on a finished one prints the verdict and the log tail rather than following a log that will never grow again: a segment can run for minutes without printing, so a silent log alone cannot tell a slow step from a dead process.
 
-`stop` has three tiers, three explicit invocations with no timed escalation between them, since a segment can take many minutes and a timer would defeat the graceful path. Each prints the log tail after signalling. Only the node process is signalled, never the process group, which would also kill the wrapper that records the exit code.
+`stop` has three tiers, three explicit invocations with no timed escalation between them, since a segment can take many minutes and a timer would defeat the graceful path. Each prints the log tail after signalling. Only the node process is signalled, never the process group, which would also kill the wrapper that records the exit code. Graceful handling belongs to the command, not the wrapper: `upgrade` traps `SIGTERM` and stops at its next boundary, but a command without a handler dies immediately with the same exit `143`.
 
 | Invocation | Signal | Effect |
 | --- | --- | --- |
@@ -179,7 +179,7 @@ A graceful stop is always safe to rerun: nothing is rolled back and the run resu
 Limits of this mode:
 
 - Ctrl+C cannot reach a detached run, so `stop` is the only graceful entry point and `130` only ever appears on foreground runs.
-- Log and PID files live in `/tmp` in the container (`TWENTY_COMMAND_LOG_FILE`, `TWENTY_COMMAND_PID_FILE`) and are lost with the pod. There is a single PID and log file, so the wrapper runs one background command at a time per machine.
+- Log and PID files live in `/tmp` in the container (`TWENTY_COMMAND_LOG_FILE`, `TWENTY_COMMAND_PID_FILE`) and are lost with the pod. There is a single PID and log file, so the wrapper runs one background command at a time per machine, enforced by a `flock` on `<pid file>.lock` held for the lifetime of the run.
 - The start refusal only sees this container. Nothing in `upgrade` prevents two concurrent sequences either: `upgradeMigration` has no in-progress state and the sequence runner takes no advisory lock. One upgrade at a time is an operational rule, not an enforced one.
 - Needs `setsid`, present in the runtime image and on Linux, absent on macOS where `start` refuses and points at the foreground command.
 - `terminationGracePeriodSeconds` does not apply. PID 1 in the command-runner pod is `tail -f /dev/null`, so on pod deletion the detached process is torn down without ever receiving `SIGTERM`.
