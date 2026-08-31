@@ -277,74 +277,18 @@ describe('ObjectNavigationCommandOnUpdateSideEffectHandlerService', () => {
     expect(Object.keys(updated)).toEqual([LEGACY_UNIVERSAL_IDENTIFIER]);
   });
 
-  it('provisions a command when enabling an object that has none', () => {
-    const result = expectSuccess(
-      handler.buildSideEffects(
-        buildArgs({
-          updatedFlatObjectMetadata: buildFlatObjectMetadata(),
-          existingFlatObjectMetadata: buildFlatObjectMetadata({
-            isActive: false,
-          }),
-          syncedFlatCommandMenuItems: [],
-        }),
-      ),
-    );
-
-    const created = result.operations.commandMenuItem?.flatEntityToCreate ?? {};
-
-    expect(Object.keys(created)).toEqual([DERIVED_UNIVERSAL_IDENTIFIER]);
-    expect(
-      (created[DERIVED_UNIVERSAL_IDENTIFIER] as { payload: unknown }).payload,
-    ).toEqual({ objectMetadataItemId: OBJECT_ID });
-  });
-
-  it('noops instead of creating when the engine already emitted the command earlier in the same batch', () => {
+  it('noops when the object has no navigation command, as manifest-created objects do', () => {
     const result = handler.buildSideEffects(
       buildArgs({
-        updatedFlatObjectMetadata: buildFlatObjectMetadata({
-          commandMenuItemUniversalIdentifiers: [],
-        }),
+        updatedFlatObjectMetadata: buildFlatObjectMetadata(),
         existingFlatObjectMetadata: buildFlatObjectMetadata({
           isActive: false,
-          commandMenuItemUniversalIdentifiers: [],
         }),
-        pendingFlatCommandMenuItems: [
-          {
-            universalIdentifier: DERIVED_UNIVERSAL_IDENTIFIER,
-            engineComponentKey: EngineComponentKey.NAVIGATION,
-            payload: { objectMetadataItemId: OBJECT_ID },
-            isSystemSideEffect: true,
-          },
-        ],
+        syncedFlatCommandMenuItems: [],
       }),
     );
 
     expect(result.status).toBe('noop');
-  });
-
-  it('still provisions on enable when a caller-authored pending row targets the object', () => {
-    const result = expectSuccess(
-      handler.buildSideEffects(
-        buildArgs({
-          updatedFlatObjectMetadata: buildFlatObjectMetadata(),
-          existingFlatObjectMetadata: buildFlatObjectMetadata({
-            isActive: false,
-          }),
-          pendingFlatCommandMenuItems: [
-            {
-              universalIdentifier: 'manifest-authored-identifier',
-              engineComponentKey: EngineComponentKey.NAVIGATION,
-              payload: { objectMetadataItemId: OBJECT_ID },
-              isSystemSideEffect: false,
-            },
-          ],
-        }),
-      ),
-    );
-
-    expect(
-      Object.keys(result.operations.commandMenuItem?.flatEntityToCreate ?? {}),
-    ).toEqual([DERIVED_UNIVERSAL_IDENTIFIER]);
   });
 
   it('fails when the existing object cannot be resolved', () => {

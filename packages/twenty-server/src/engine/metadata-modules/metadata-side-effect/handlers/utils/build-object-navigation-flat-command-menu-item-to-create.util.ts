@@ -12,14 +12,13 @@ type ObjectMetadataToProvision = {
   universalIdentifier: string;
   nameSingular: string;
   shortcut: string | null;
+  isActive: boolean;
   commandMenuItemUniversalIdentifiers: string[];
 };
 
-// Shared by the create handler and the provision-on-enable path of the update
-// handler: both mint the same command, and the position contract (synced
-// maximum plus the index of the object in the operation batch, so a batch
-// never double-books a position) has to hold identically on both. Returns
-// undefined only when the engine already owns a command for the object.
+// Returns undefined only when the engine already owns a command for the
+// object. Position is the synced maximum plus the index of the object in the
+// operation batch, so a batch never double-books a position.
 export const buildObjectNavigationFlatCommandMenuItemToCreate = ({
   objectMetadata,
   applicationUniversalIdentifier,

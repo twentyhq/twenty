@@ -15,6 +15,7 @@ export const buildObjectNavigationFlatCommandMenuItem = ({
     universalIdentifier: string;
     nameSingular: string;
     shortcut: string | null;
+    isActive: boolean;
   };
   commandMenuItemId: string;
   applicationId: string;

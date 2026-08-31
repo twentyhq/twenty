@@ -7,7 +7,6 @@ import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { buildNavigationConditionalAvailabilityExpression } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
 import { MetadataSideEffectExceptionCode } from 'src/engine/metadata-modules/metadata-side-effect/exceptions/metadata-side-effect-exception-code';
-import { buildObjectNavigationFlatCommandMenuItemToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/build-object-navigation-flat-command-menu-item-to-create.util';
 import { findObjectNavigationFlatCommandMenuItem } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/find-object-navigation-flat-command-menu-item.util';
 import {
   type BuildSideEffectsArgs,
@@ -23,12 +22,11 @@ export class ObjectNavigationCommandOnUpdateSideEffectHandlerService extends Met
     metadataName: 'objectMetadata',
     name: 'objectNavigationCommandOnUpdate',
     description:
-      'When an object is updated, keep its navigation command menu item in sync with the fields it denormalizes: follow an isActive toggle (deactivate soft-disables rather than deletes, the correct semantics for an overridable entity), recompute conditionalAvailabilityExpression when nameSingular changes (the expression embeds nameSingular, so a rename would otherwise leave the permission gate pointing at a name that no longer exists), and recompute hotKeys when the shortcut changes. The command is resolved through the object navigation target aggregator whatever its identifier, so a legacy row in a workspace not yet re-owned onto the derived (application, object) identifier is kept in sync rather than duplicated. Provisioning on enable only stands down for an engine-owned command, so a caller row squatting the derived identifier is left to the collision detector. Noops when none of isActive, nameSingular or shortcut changed and when the resulting state already matches.',
+      'When an object is updated, keep its navigation command menu item in sync with the fields it denormalizes: follow an isActive toggle (deactivate soft-disables rather than deletes, the correct semantics for an overridable entity), recompute conditionalAvailabilityExpression when nameSingular changes (the expression embeds nameSingular, so a rename would otherwise leave the permission gate pointing at a name that no longer exists), and recompute hotKeys when the shortcut changes. The command is resolved through the object navigation target aggregator whatever its identifier, so a legacy row in a workspace not yet re-owned onto the derived (application, object) identifier is kept in sync rather than duplicated. Noops when none of isActive, nameSingular or shortcut changed and when the resulting state already matches.',
   },
 ) {
   buildSideEffects({
     flatEntity,
-    allFlatEntityOperationRecordByMetadataName,
     relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'objectMetadata'>): MetadataSideEffectResult {
     const updatedFlatObjectMetadata = flatEntity as UniversalFlatObjectMetadata;
@@ -78,19 +76,7 @@ export class ObjectNavigationCommandOnUpdateSideEffectHandlerService extends Met
       });
 
     if (!isDefined(existingNavigationFlatCommandMenuItem)) {
-      const isBeingEnabled =
-        isActiveChanged && updatedFlatObjectMetadata.isActive;
-
-      if (!isBeingEnabled) {
-        return { status: 'noop' };
-      }
-
-      return this.buildCreateOperationsForEnabledObject({
-        updatedFlatObjectMetadata,
-        existingFlatObjectMetadata,
-        allFlatEntityOperationRecordByMetadataName,
-        relatedFlatEntityMaps,
-      });
+      return { status: 'noop' };
     }
 
     const navigationFlatCommandMenuItemToUpdate = {
@@ -136,57 +122,6 @@ export class ObjectNavigationCommandOnUpdateSideEffectHandlerService extends Met
           flatEntityToUpdate: {
             [navigationFlatCommandMenuItemToUpdate.universalIdentifier]:
               navigationFlatCommandMenuItemToUpdate as unknown as MetadataUniversalFlatEntity<'commandMenuItem'>,
-          },
-        },
-      },
-    };
-  }
-
-  private buildCreateOperationsForEnabledObject({
-    updatedFlatObjectMetadata,
-    existingFlatObjectMetadata,
-    allFlatEntityOperationRecordByMetadataName,
-    relatedFlatEntityMaps,
-  }: {
-    updatedFlatObjectMetadata: UniversalFlatObjectMetadata;
-    existingFlatObjectMetadata: MetadataFlatEntity<'objectMetadata'>;
-    allFlatEntityOperationRecordByMetadataName: BuildSideEffectsArgs<'objectMetadata'>['allFlatEntityOperationRecordByMetadataName'];
-    relatedFlatEntityMaps: BuildSideEffectsArgs<'objectMetadata'>['relatedFlatEntityMaps'];
-  }): MetadataSideEffectResult {
-    const navigationFlatCommandMenuItemToCreate =
-      buildObjectNavigationFlatCommandMenuItemToCreate({
-        objectMetadata: {
-          id: existingFlatObjectMetadata.id,
-          universalIdentifier: updatedFlatObjectMetadata.universalIdentifier,
-          nameSingular: updatedFlatObjectMetadata.nameSingular,
-          shortcut: updatedFlatObjectMetadata.shortcut,
-          commandMenuItemUniversalIdentifiers:
-            existingFlatObjectMetadata.commandMenuItemUniversalIdentifiers,
-        },
-        applicationUniversalIdentifier:
-          updatedFlatObjectMetadata.applicationUniversalIdentifier,
-        pendingFlatCommandMenuItemsToCreate:
-          allFlatEntityOperationRecordByMetadataName.commandMenuItem
-            ?.flatEntityToCreate ?? {},
-        syncedFlatCommandMenuItemMaps:
-          relatedFlatEntityMaps.flatCommandMenuItemMaps,
-        batchObjectUniversalIdentifiers: Object.keys(
-          allFlatEntityOperationRecordByMetadataName.objectMetadata
-            ?.flatEntityToUpdate ?? {},
-        ),
-      });
-
-    if (!isDefined(navigationFlatCommandMenuItemToCreate)) {
-      return { status: 'noop' };
-    }
-
-    return {
-      status: 'success',
-      operations: {
-        commandMenuItem: {
-          flatEntityToCreate: {
-            [navigationFlatCommandMenuItemToCreate.universalIdentifier]:
-              navigationFlatCommandMenuItemToCreate,
           },
         },
       },

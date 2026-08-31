@@ -19,6 +19,7 @@ const baseObjectMetadata = {
   universalIdentifier: 'obj-universal-1',
   nameSingular: 'person',
   shortcut: 'P',
+  isActive: true,
 };
 
 const baseArgs = {

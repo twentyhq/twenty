@@ -181,14 +181,20 @@ describe('ObjectNavigationCommandOnCreateSideEffectHandlerService', () => {
     );
   });
 
-  it('noops when the object is created inactive', () => {
-    const result = handler.buildSideEffects(
-      buildArgs({
-        flatObjectMetadata: buildFlatObjectMetadata({ isActive: false }),
-      }),
+  it('provisions a disabled command when the object is created inactive', () => {
+    const result = expectSuccess(
+      handler.buildSideEffects(
+        buildArgs({
+          flatObjectMetadata: buildFlatObjectMetadata({ isActive: false }),
+        }),
+      ),
     );
 
-    expect(result.status).toBe('noop');
+    const [navigationCommand] = Object.values(
+      result.operations.commandMenuItem?.flatEntityToCreate ?? {},
+    ) as unknown as [{ isActive: boolean }];
+
+    expect(navigationCommand.isActive).toBe(false);
   });
 
   it('noops when the object create carries no workspace id (manifest sync path)', () => {

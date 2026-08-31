@@ -63,6 +63,7 @@ export const buildObjectNavigationUniversalFlatCommandMenuItem = ({
     universalIdentifier: string;
     nameSingular: string;
     shortcut: string | null;
+    isActive: boolean;
   };
   applicationUniversalIdentifier: string;
   position: number;
@@ -100,7 +101,7 @@ export const buildObjectNavigationUniversalFlatCommandMenuItem = ({
     workflowVersionId: null,
     availabilityObjectMetadataUniversalIdentifier: null,
     pageLayoutUniversalIdentifier: null,
-    isActive: true,
+    isActive: objectMetadata.isActive,
     isSystemSideEffect: true,
     universalOverrides: null,
     createdAt: now,
