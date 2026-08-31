@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { asNonEmptyString } from 'src/logic-functions/utils/as-non-empty-string';
@@ -12,5 +13,5 @@ export const buildFullName = (nameValue: unknown): string | undefined => {
     .filter(isDefined)
     .join(' ');
 
-  return fullName || undefined;
+  return isNonEmptyString(fullName) ? fullName : undefined;
 };
