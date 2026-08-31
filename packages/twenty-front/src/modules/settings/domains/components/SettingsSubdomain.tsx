@@ -44,7 +44,7 @@ export const SettingsSubdomain = () => {
   } = useSettingsSubdomain();
 
   if (!isMultiWorkspaceSubdomainEnabled) {
-    navigate(getSettingsPath(SettingsPath.General));
+    navigate(SettingsPath.General);
     return null;
   }
 

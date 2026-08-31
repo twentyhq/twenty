@@ -1656,6 +1656,7 @@ export interface ClientConfig {
     aiModels: ClientAiModelConfig[]
     signInPrefilled: Scalars['Boolean']
     isMultiWorkspaceEnabled: Scalars['Boolean']
+    isMultiWorkspaceSubdomainEnabled: Scalars['Boolean']
     isEmailVerificationRequired: Scalars['Boolean']
     defaultSubdomain?: Scalars['String']
     frontDomain: Scalars['String']
@@ -5082,6 +5083,7 @@ export interface ClientConfigGenqlSelection{
     aiModels?: ClientAiModelConfigGenqlSelection
     signInPrefilled?: boolean | number
     isMultiWorkspaceEnabled?: boolean | number
+    isMultiWorkspaceSubdomainEnabled?: boolean | number
     isEmailVerificationRequired?: boolean | number
     defaultSubdomain?: boolean | number
     frontDomain?: boolean | number

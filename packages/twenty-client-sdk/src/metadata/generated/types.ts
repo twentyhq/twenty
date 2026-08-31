@@ -3901,6 +3901,9 @@ export default {
             "isMultiWorkspaceEnabled": [
                 8
             ],
+            "isMultiWorkspaceSubdomainEnabled": [
+                8
+            ],
             "isEmailVerificationRequired": [
                 8
             ],
