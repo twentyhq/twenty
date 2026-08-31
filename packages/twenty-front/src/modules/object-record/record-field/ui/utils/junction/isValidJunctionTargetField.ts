@@ -1,5 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { doesFieldMetadataItemMatchFieldMetadataId } from '@/object-metadata/utils/doesFieldMetadataItemMatchFieldMetadataId';
 import { getFieldRelations } from '@/object-record/record-field/ui/utils/junction/getFieldRelations';
+import { isDefined } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 
 export const isValidJunctionTargetField = ({
@@ -17,10 +19,10 @@ export const isValidJunctionTargetField = ({
   return (
     relations.length > 0 &&
     relations.every(({ type }) => type === RelationType.MANY_TO_ONE) &&
-    fieldMetadataItem.id !== sourceFieldMetadataId &&
-    relations.every(
-      ({ sourceFieldMetadata }) =>
-        sourceFieldMetadata.id !== sourceFieldMetadataId,
-    )
+    (!isDefined(sourceFieldMetadataId) ||
+      !doesFieldMetadataItemMatchFieldMetadataId({
+        fieldMetadataItem,
+        fieldMetadataId: sourceFieldMetadataId,
+      }))
   );
 };

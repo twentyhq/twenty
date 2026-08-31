@@ -1,7 +1,7 @@
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { getFieldRelations } from '@/object-record/record-field/ui/utils/junction/getFieldRelations';
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
 import { type JunctionObjectMetadataItem } from '@/object-record/record-field/ui/utils/junction/types/JunctionObjectMetadataItem';
-import { isDefined } from 'twenty-shared/utils';
 
 // A junction object carries no marker of its own, so the relation graph is walked to
 // collect every object resolved as a junction.
@@ -10,21 +10,20 @@ export const getJunctionObjectMetadataIds = (
 ): Set<string> =>
   new Set(
     objectMetadataItems.flatMap((objectMetadataItem) =>
-      objectMetadataItem.fields
-        .filter((field) => {
-          const junctionConfig = getJunctionConfig({
-            settings: field.settings,
-            relationObjectMetadataId:
-              field.relation?.targetObjectMetadata.id ?? '',
-            relationTargetFieldMetadataId:
-              field.relation?.targetFieldMetadata.id,
-            sourceObjectMetadataId: objectMetadataItem.id,
-            objectMetadataItems,
-          });
-
-          return isUsableJunctionConfig(junctionConfig);
-        })
-        .map((junctionField) => junctionField.relation?.targetObjectMetadata.id)
-        .filter(isDefined),
+      objectMetadataItem.fields.flatMap((field) =>
+        getFieldRelations(field)
+          .filter((relation) =>
+            isUsableJunctionConfig(
+              getJunctionConfig({
+                settings: field.settings,
+                relationObjectMetadataId: relation.targetObjectMetadata.id,
+                relationTargetFieldMetadataId: relation.targetFieldMetadata.id,
+                sourceObjectMetadataId: objectMetadataItem.id,
+                objectMetadataItems,
+              }),
+            ),
+          )
+          .map((relation) => relation.targetObjectMetadata.id),
+      ),
     ),
   );
