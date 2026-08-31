@@ -100,7 +100,6 @@ export class ApplicationInstallService {
     appRegistrationId: string;
     version?: string;
     workspaceId: string;
-    initiatorUserWorkspaceId?: string;
   }): Promise<ApplicationEntity | null> {
     const appRegistration = await this.appRegistrationRepository.findOne({
       where: { id: params.appRegistrationId },
@@ -201,7 +200,6 @@ export class ApplicationInstallService {
           appRegistrationId: params.appRegistrationId,
           version: params.version,
           workspaceId: params.workspaceId,
-          initiatorUserWorkspaceId: params.initiatorUserWorkspaceId,
         },
       );
     } catch (error) {
@@ -217,38 +215,14 @@ export class ApplicationInstallService {
     appRegistrationId: string;
     version?: string;
     workspaceId: string;
-    initiatorUserWorkspaceId?: string;
   }): Promise<void> {
     try {
       await this.installApplication(params);
     } catch (error) {
       await this.cleanupEnqueuedInstallBestEffort(params);
-      await this.broadcastInstallFailureBestEffort(params);
 
       throw error;
     }
-  }
-
-  private async broadcastInstallFailureBestEffort(params: {
-    appRegistrationId: string;
-    workspaceId: string;
-    initiatorUserWorkspaceId?: string;
-  }): Promise<void> {
-    const appRegistration = await this.appRegistrationRepository
-      .findOne({ where: { id: params.appRegistrationId } })
-      .catch(() => null);
-
-    if (!isDefined(appRegistration)) {
-      return;
-    }
-
-    await this.applicationService.broadcastApplicationOperationFailure({
-      workspaceId: params.workspaceId,
-      universalIdentifier: appRegistration.universalIdentifier,
-      applicationName: appRegistration.name,
-      operation: 'install',
-      initiatorUserWorkspaceId: params.initiatorUserWorkspaceId,
-    });
   }
 
   private async cleanupEnqueuedInstallBestEffort(params: {

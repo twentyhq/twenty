@@ -13,7 +13,6 @@ import { BillingReminderModule } from 'src/engine/core-modules/billing/reminders
 import { BillingReminderCronJob } from 'src/engine/core-modules/billing/reminders/crons/billing-reminder.cron.job';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
-import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
@@ -101,7 +100,6 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     LogicFunctionModule,
     EnterpriseModule,
     EmailingModule,
-    ApplicationModule,
     ApplicationInstallModule,
     ApplicationManifestModule,
     ApplicationRegistrationModule,

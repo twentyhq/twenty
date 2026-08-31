@@ -4,5 +4,4 @@ export type UpgradeApplicationJobData = {
   appRegistrationId: string;
   targetVersion: string;
   workspaceId: string;
-  initiatorUserWorkspaceId?: string;
 };

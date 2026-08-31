@@ -18,7 +18,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
@@ -75,35 +75,7 @@ export const SettingsApplicationDetails = () => {
 
   const application = data?.findOneApplication;
 
-  const navigate = useNavigateSettings();
-
-  // A rolled back install (and an uninstall started elsewhere) removes the row
-  // this page is built on, leaving it stuck on the state the app had when it
-  // disappeared: send the visitor back to where the app can be installed again.
-  const handleApplicationDeleted = useCallback(
-    (deletedApplicationId: string) => {
-      if (deletedApplicationId !== applicationId) {
-        return;
-      }
-
-      const universalIdentifier = application?.universalIdentifier;
-
-      if (isDefined(universalIdentifier)) {
-        navigate(SettingsPath.AvailableApplicationDetail, {
-          availableApplicationId: universalIdentifier,
-        });
-
-        return;
-      }
-
-      navigate(SettingsPath.Applications);
-    },
-    [application?.universalIdentifier, applicationId, navigate],
-  );
-
-  useListenToApplicationEvents({
-    onApplicationDeleted: handleApplicationDeleted,
-  });
+  useListenToApplicationEvents();
 
   const { connectionProviders } =
     useFindApplicationConnectionProviders(applicationId);
@@ -192,6 +164,7 @@ export const SettingsApplicationDetails = () => {
   const [uninstallApplication] = useMutation(UninstallApplicationDocument);
   const [isUninstalling, setIsUninstalling] = useState(false);
   const { enqueueErrorSnackBar } = useSnackBar();
+  const navigate = useNavigateSettings();
 
   const handleUninstall = async () => {
     if (!isDefined(application)) return;

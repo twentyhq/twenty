@@ -261,7 +261,6 @@ export class ApplicationUpgradeService {
     appRegistrationId: string;
     targetVersion: string;
     workspaceId: string;
-    initiatorUserWorkspaceId?: string;
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: params.appRegistrationId },
@@ -320,7 +319,6 @@ export class ApplicationUpgradeService {
           appRegistrationId: params.appRegistrationId,
           targetVersion: params.targetVersion,
           workspaceId: params.workspaceId,
-          initiatorUserWorkspaceId: params.initiatorUserWorkspaceId,
         },
       );
     } catch (error) {
@@ -339,38 +337,14 @@ export class ApplicationUpgradeService {
     appRegistrationId: string;
     targetVersion: string;
     workspaceId: string;
-    initiatorUserWorkspaceId?: string;
   }): Promise<void> {
     try {
       await this.upgradeApplication(params);
     } catch (error) {
       await this.revertUpgradeStateBestEffort(params);
-      await this.broadcastUpgradeFailureBestEffort(params);
 
       throw error;
     }
-  }
-
-  private async broadcastUpgradeFailureBestEffort(params: {
-    appRegistrationId: string;
-    workspaceId: string;
-    initiatorUserWorkspaceId?: string;
-  }): Promise<void> {
-    const appRegistration = await this.appRegistrationRepository
-      .findOne({ where: { id: params.appRegistrationId } })
-      .catch(() => null);
-
-    if (!isDefined(appRegistration)) {
-      return;
-    }
-
-    await this.applicationService.broadcastApplicationOperationFailure({
-      workspaceId: params.workspaceId,
-      universalIdentifier: appRegistration.universalIdentifier,
-      applicationName: appRegistration.name,
-      operation: 'upgrade',
-      initiatorUserWorkspaceId: params.initiatorUserWorkspaceId,
-    });
   }
 
   private async revertUpgradeStateBestEffort(params: {
