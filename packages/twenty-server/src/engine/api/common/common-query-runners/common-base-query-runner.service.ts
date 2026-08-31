@@ -390,7 +390,6 @@ export abstract class CommonBaseQueryRunnerService<
     return repository;
   }
 
-  // Writes always hit the primary, so useReplica is pinned false regardless of isReadOnly.
   protected getWriteRepository({
     repository,
   }: Pick<
