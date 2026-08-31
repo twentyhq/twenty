@@ -20,8 +20,12 @@ import {
 // changes are visible without a reload.
 export const useListenToApplicationEvents = ({
   skip = false,
+  onApplicationEvent,
+  onApplicationDeleted,
 }: {
   skip?: boolean;
+  onApplicationEvent?: () => void;
+  onApplicationDeleted?: (deletedApplicationId: string) => void;
 } = {}) => {
   const apolloClient = useApolloClient();
   const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
@@ -85,6 +89,8 @@ export const useListenToApplicationEvents = ({
           refetchApplicationQueries();
         }
 
+        onApplicationEvent?.();
+
         return;
       }
 
@@ -96,6 +102,16 @@ export const useListenToApplicationEvents = ({
             __typename: 'Application',
             id: deletedRecordId,
           }),
+        });
+        // Single-application lookups throw once the row is gone, so their
+        // refetch below cannot overwrite the cached result: without dropping
+        // it, pages keep reporting the application as installed. Lookups are
+        // keyed by id or universalIdentifier and the event only carries the
+        // id, so the whole field goes — the other applications it holds are
+        // refetched by the same round.
+        apolloClient.cache.evict({
+          id: 'ROOT_QUERY',
+          fieldName: 'findOneApplication',
         });
         apolloClient.cache.gc();
 
@@ -162,8 +178,20 @@ export const useListenToApplicationEvents = ({
         });
 
       refetchApplicationQueries();
+
+      if (detail.operation.type === 'delete') {
+        onApplicationDeleted?.(detail.operation.deletedRecordId);
+      }
+
+      onApplicationEvent?.();
     },
-    [apolloClient, refetchApplicationQueries, setCurrentWorkspace],
+    [
+      apolloClient,
+      onApplicationDeleted,
+      onApplicationEvent,
+      refetchApplicationQueries,
+      setCurrentWorkspace,
+    ],
   );
 
   useListenToMetadataOperationBrowserEvent<ApplicationBroadcastRecord>({

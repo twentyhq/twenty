@@ -1,5 +1,6 @@
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import {
   UNINSTALL_APPLICATION_JOB_NAME,
   type UninstallApplicationJobData,
@@ -14,6 +15,7 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 export class UninstallApplicationJob {
   constructor(
     private readonly applicationSyncService: ApplicationSyncService,
+    private readonly applicationService: ApplicationService,
     private readonly metricsService: MetricsService,
   ) {}
 
@@ -25,6 +27,14 @@ export class UninstallApplicationJob {
         workspaceId: data.workspaceId,
       });
     } catch (error) {
+      await this.applicationService.broadcastApplicationOperationFailure({
+        workspaceId: data.workspaceId,
+        universalIdentifier: data.applicationUniversalIdentifier,
+        applicationName: data.metricsAttributes.app_name,
+        operation: 'uninstall',
+        initiatorUserWorkspaceId: data.initiatorUserWorkspaceId,
+      });
+
       this.metricsService.incrementCounterBy({
         key: MetricsKeys.AppUninstallFailed,
         amount: 1,

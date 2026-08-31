@@ -36,6 +36,7 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -95,11 +96,14 @@ export class ApplicationInstallResolver {
     @Args('version', { type: () => String, nullable: true })
     version: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<boolean> {
     await this.installRegisteredApplication({
       universalIdentifier,
       version,
       workspaceId: workspace.id,
+      initiatorUserWorkspaceId: userWorkspaceId,
     });
 
     return true;
@@ -112,11 +116,14 @@ export class ApplicationInstallResolver {
     @Args('version', { type: () => String, nullable: true })
     version: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ) {
     const application = await this.installRegisteredApplication({
       universalIdentifier,
       version,
       workspaceId: workspace.id,
+      initiatorUserWorkspaceId: userWorkspaceId,
     });
 
     return (
@@ -132,6 +139,7 @@ export class ApplicationInstallResolver {
     universalIdentifier: string;
     version: string | undefined;
     workspaceId: string;
+    initiatorUserWorkspaceId: string | undefined;
   }) {
     const registration =
       await this.marketplaceQueryService.findRegistrationByUniversalIdentifier(
@@ -142,6 +150,7 @@ export class ApplicationInstallResolver {
       appRegistrationId: registration.id,
       version: params.version,
       workspaceId: params.workspaceId,
+      initiatorUserWorkspaceId: params.initiatorUserWorkspaceId,
     });
   }
 
@@ -170,6 +179,8 @@ export class ApplicationInstallResolver {
   async uninstallApplication(
     @Args() { universalIdentifier }: UninstallApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ) {
     const application = await this.applicationService.findByUniversalIdentifier(
       {
@@ -220,6 +231,7 @@ export class ApplicationInstallResolver {
           applicationUniversalIdentifier: universalIdentifier,
           workspaceId,
           metricsAttributes: attributes,
+          initiatorUserWorkspaceId: userWorkspaceId,
         },
       );
     } catch (error) {

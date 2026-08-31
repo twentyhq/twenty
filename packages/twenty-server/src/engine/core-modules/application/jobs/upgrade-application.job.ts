@@ -19,6 +19,7 @@ export class UpgradeApplicationJob {
       appRegistrationId: data.appRegistrationId,
       targetVersion: data.targetVersion,
       workspaceId: data.workspaceId,
+      initiatorUserWorkspaceId: data.initiatorUserWorkspaceId,
     });
   }
 }

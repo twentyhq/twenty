@@ -4,4 +4,5 @@ export type UninstallApplicationJobData = {
   applicationUniversalIdentifier: string;
   workspaceId: string;
   metricsAttributes: Record<string, string>;
+  initiatorUserWorkspaceId?: string;
 };

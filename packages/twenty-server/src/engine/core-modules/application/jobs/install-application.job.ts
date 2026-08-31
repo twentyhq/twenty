@@ -19,6 +19,7 @@ export class InstallApplicationJob {
       appRegistrationId: data.appRegistrationId,
       version: data.version,
       workspaceId: data.workspaceId,
+      initiatorUserWorkspaceId: data.initiatorUserWorkspaceId,
     });
   }
 }

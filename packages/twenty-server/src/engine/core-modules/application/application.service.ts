@@ -18,6 +18,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
 import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
+import { type ApplicationOperation } from 'src/engine/core-modules/application/types/application-operation.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -94,6 +95,49 @@ export class ApplicationService {
     } catch (error) {
       this.logger.warn(
         `Failed to broadcast application ${type} event for ${recordId} in workspace ${workspaceId}`,
+        error,
+      );
+    }
+  }
+
+  // A failed asynchronous operation either leaves no row at all (rolled back
+  // install) or a row that looks untouched (reverted upgrade or uninstall), so
+  // the outcome cannot be told from the row events alone. Delivery is
+  // restricted to the user who asked for the operation when it is known, so
+  // their colleagues are not told about a failure they did not trigger.
+  async broadcastApplicationOperationFailure({
+    workspaceId,
+    universalIdentifier,
+    applicationName,
+    operation,
+    initiatorUserWorkspaceId,
+  }: {
+    workspaceId: string;
+    universalIdentifier: string;
+    applicationName?: string;
+    operation: ApplicationOperation;
+    initiatorUserWorkspaceId?: string;
+  }): Promise<void> {
+    try {
+      await this.workspaceEventBroadcaster.broadcast({
+        workspaceId,
+        events: [
+          {
+            type: 'created',
+            entityName: 'applicationOperationFailure',
+            recordId: universalIdentifier,
+            properties: {
+              after: { universalIdentifier, applicationName, operation },
+            },
+            ...(isDefined(initiatorUserWorkspaceId)
+              ? { recipientUserWorkspaceIds: [initiatorUserWorkspaceId] }
+              : {}),
+          },
+        ],
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to broadcast application ${operation} failure for ${universalIdentifier} in workspace ${workspaceId}`,
         error,
       );
     }

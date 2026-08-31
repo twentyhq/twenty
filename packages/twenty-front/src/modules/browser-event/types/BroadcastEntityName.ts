@@ -6,6 +6,7 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 const ALL_NON_SYNCABLE_BROADCAST_ENTITY_NAME = {
   agentChatThread: 'agentChatThread',
   application: 'application',
+  applicationOperationFailure: 'applicationOperationFailure',
 } as const;
 
 type NonSyncableBroadcastEntityName =

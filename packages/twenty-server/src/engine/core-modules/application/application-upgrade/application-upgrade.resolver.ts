@@ -6,6 +6,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -26,11 +27,14 @@ export class ApplicationUpgradeResolver {
     @Args('appRegistrationId') appRegistrationId: string,
     @Args('targetVersion') targetVersion: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<boolean> {
     return this.applicationUpgradeService.enqueueApplicationUpgrade({
       appRegistrationId,
       targetVersion,
       workspaceId: workspace.id,
+      initiatorUserWorkspaceId: userWorkspaceId,
     });
   }
 }

@@ -4,4 +4,5 @@ export type InstallApplicationJobData = {
   appRegistrationId: string;
   version?: string;
   workspaceId: string;
+  initiatorUserWorkspaceId?: string;
 };

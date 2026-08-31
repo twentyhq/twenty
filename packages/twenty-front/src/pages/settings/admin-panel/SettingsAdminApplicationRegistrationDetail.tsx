@@ -1,7 +1,11 @@
 import { useListenToApplicationEvents } from '@/applications/hooks/useListenToApplicationEvents';
+import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client/react';
-import { FindOneAdminApplicationRegistrationDocument } from '~/generated-admin/graphql';
+import {
+  FindAdminApplicationRegistrationInstalledWorkspacesDocument,
+  FindOneAdminApplicationRegistrationDocument,
+} from '~/generated-admin/graphql';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { useLingui } from '@lingui/react/macro';
@@ -50,7 +54,24 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
     },
   );
 
-  useListenToApplicationEvents();
+  // The admin panel reads applications through its own Apollo client, which the
+  // application event listener does not touch.
+  const refetchAdminApplicationQueries = useCallback(() => {
+    void apolloAdminClient
+      .refetchQueries({
+        include: [
+          FindOneAdminApplicationRegistrationDocument,
+          FindAdminApplicationRegistrationInstalledWorkspacesDocument,
+        ],
+      })
+      .catch(() => {
+        // Best-effort refresh; the queries keep their cached value.
+      });
+  }, [apolloAdminClient]);
+
+  useListenToApplicationEvents({
+    onApplicationEvent: refetchAdminApplicationQueries,
+  });
 
   const registration = data?.findOneAdminApplicationRegistration;
 
