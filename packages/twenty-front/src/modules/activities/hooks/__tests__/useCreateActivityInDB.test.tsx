@@ -74,7 +74,13 @@ const mocks: MockedResponse[] = [
     request: {
       query: createOneTaskMutation,
       variables: {
-        input: mockedActivity,
+        input: {
+          ...mockedActivity,
+          bodyV2: {
+            blocknote: bodyV2.blocknote,
+            markdown: bodyV2.markdown,
+          },
+        },
       },
     },
     result: mockResult,
