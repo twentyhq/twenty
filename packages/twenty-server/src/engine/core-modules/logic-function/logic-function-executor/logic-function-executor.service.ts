@@ -234,9 +234,9 @@ export class LogicFunctionExecutorService {
     return flatLogicFunction.executionMode ?? LogicFunctionExecutionMode.LIVE;
   }
 
-  // The bundle is installed by the migration action handlers, but with the local
-  // driver it only lands on the node that ran the install, so any other node has
-  // to install it on first execution.
+  // The migration action handlers install the bundle on whichever node ran them,
+  // so with the local driver every other node reaches execution with a missing
+  // or outdated node-local bundle and has to install the expected one itself.
   private async ensurePrebuiltBundleInstalled({
     driver,
     flatLogicFunction,
@@ -253,15 +253,6 @@ export class LogicFunctionExecutorService {
       return;
     }
 
-    if (isDefined(installedChecksum)) {
-      throw new LogicFunctionException(
-        `Prebuilt bundle is outdated for function '${flatLogicFunction.id}' ` +
-          `(installed=${installedChecksum}, expected=${flatLogicFunction.checksum ?? 'none'}). ` +
-          `Rebuild and try again.`,
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
-      );
-    }
-
     try {
       await driver.installPrebuiltBundle({
         flatLogicFunction,
@@ -270,13 +261,14 @@ export class LogicFunctionExecutorService {
       });
     } catch (error) {
       this.logger.error(
-        `Failed to install prebuilt bundle on-demand for function '${flatLogicFunction.id}': ` +
+        `Failed to install prebuilt bundle on-demand for function '${flatLogicFunction.id}' ` +
+          `(installed=${installedChecksum ?? 'none'}, expected=${flatLogicFunction.checksum ?? 'none'}): ` +
           `${error instanceof Error ? error.message : String(error)}`,
         error instanceof Error ? error.stack : undefined,
       );
       throw new LogicFunctionException(
         `Prebuilt bundle is not installed for function '${flatLogicFunction.id}' ` +
-          `(expected=${flatLogicFunction.checksum ?? 'none'}). ` +
+          `(installed=${installedChecksum ?? 'none'}, expected=${flatLogicFunction.checksum ?? 'none'}). ` +
           `Rebuild and try again.`,
         LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
       );
