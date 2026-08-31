@@ -1,7 +1,7 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
-import { type ValidResolvedJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
+import { type ValidResolvedJunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/ValidResolvedJunctionConfig';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';

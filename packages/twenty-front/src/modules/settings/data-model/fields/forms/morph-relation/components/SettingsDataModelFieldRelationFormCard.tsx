@@ -19,7 +19,7 @@ import {
   RelationType,
   FeatureFlagKey,
 } from '~/generated-metadata/graphql';
-import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
+import { type SettingsDataModelFieldEditFormValues } from '@/settings/data-model/types/SettingsDataModelFieldEditFormValues';
 
 type SettingsDataModelFieldRelationFormCardProps = {
   existingFieldMetadataId: string;

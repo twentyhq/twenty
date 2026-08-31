@@ -1,21 +1,14 @@
-import {
-  getJunctionConfig,
-  type GetJunctionConfigArgs,
-  type JunctionObjectMetadataItem,
-  type ValidJunctionConfig,
-} from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { resolveReverseJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveReverseJunctionConfig';
+import { type JunctionObjectMetadataItem } from '@/object-record/record-field/ui/utils/junction/types/JunctionObjectMetadataItem';
+import { type ValidJunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/ValidJunctionConfig';
+import { type ValidResolvedJunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/ValidResolvedJunctionConfig';
 import { hasJunctionTargetFieldId } from '@/object-record/record-field/ui/utils/junction/hasJunctionTargetFieldId';
 import { isDefined } from 'twenty-shared/utils';
 
 type JunctionDirection = 'forward' | 'reverse';
 
-export type ValidResolvedJunctionConfig = ValidJunctionConfig & {
-  direction: JunctionDirection;
-  isValid: true;
-};
-
-export type InvalidResolvedJunctionConfig = {
+type InvalidResolvedJunctionConfig = {
   junctionObjectMetadata?: JunctionObjectMetadataItem;
   targetFields: [];
   sourceField?: never;
@@ -24,9 +17,11 @@ export type InvalidResolvedJunctionConfig = {
   isValid: false;
 };
 
-export type ResolvedJunctionConfig =
+type ResolvedJunctionConfig =
   | ValidResolvedJunctionConfig
   | InvalidResolvedJunctionConfig;
+
+type ResolveJunctionConfigArgs = Parameters<typeof getJunctionConfig>[0];
 
 const toValidResolvedJunctionConfig = (
   junctionConfig: ValidJunctionConfig,
@@ -68,7 +63,7 @@ export const resolveJunctionConfig = ({
   relationTargetFieldMetadataId,
   sourceObjectMetadataId,
   objectMetadataItems,
-}: GetJunctionConfigArgs): ResolvedJunctionConfig | null => {
+}: ResolveJunctionConfigArgs): ResolvedJunctionConfig | null => {
   const forwardJunctionConfig = getJunctionConfig({
     settings,
     relationObjectMetadataId,

@@ -14,7 +14,7 @@ import { Select } from '@/ui/input/components/Select';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { RelationType } from '~/generated-metadata/graphql';
-import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
+import { type SettingsDataModelFieldEditFormValues } from '@/settings/data-model/types/SettingsDataModelFieldEditFormValues';
 
 type SettingsDataModelFieldRelationJunctionFormProps = {
   objectNameSingular: string;
