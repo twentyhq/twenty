@@ -2211,11 +2211,8 @@ export class ConfigVariables {
       'Comma-separated list of SNS topic ARNs accepted by the inbound-email and outbound-event webhooks (e.g. arn:aws:sns:us-east-1:123:my-inbound). Every SNS payload whose topic is absent from this list is rejected.',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf(
-    (env) => env.EMAILING_DOMAIN_DRIVER === EmailingDomainDriver.AWS_SES,
-  )
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   SES_SNS_TOPIC_ARN_ALLOWLIST: string;
 
   @ConfigVariablesMetadata({
