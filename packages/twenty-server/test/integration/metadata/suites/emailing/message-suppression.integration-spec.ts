@@ -3,6 +3,7 @@ import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/m
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared/utils';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -74,7 +75,7 @@ describe('messageSuppressionResolver (integration)', () => {
     const createdId: string | undefined =
       response.body.data?.createMessageSuppression?.id;
 
-    if (createdId !== undefined) {
+    if (isDefined(createdId)) {
       createdSuppressionIds.push(createdId);
     }
 
