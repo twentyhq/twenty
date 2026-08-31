@@ -10,6 +10,8 @@ import {
 import { type LimitKind } from 'src/engine/core-modules/usage-limit/types/limit-kind.type';
 import { type LimitValueType } from 'src/engine/core-modules/usage-limit/types/limit-value-type.type';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
+import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
+import { type UsageMeter } from 'src/engine/core-modules/usage-limit/types/usage-meter.type';
 import { nullableBigintColumnTransformer } from 'src/engine/core-modules/usage-limit/utils/nullable-bigint-column-transformer.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -22,7 +24,8 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
   'spenderType',
   'spenderId',
   'limitKind',
-  'windowSeconds',
+  'periodCount',
+  'periodUnit',
 ])
 @Entity({ name: 'usageLimit', schema: 'core' })
 export class UsageLimitEntity extends WorkspaceRelatedEntity {
@@ -33,7 +36,7 @@ export class UsageLimitEntity extends WorkspaceRelatedEntity {
   resourceType: UsageResourceType;
 
   @Column({ type: 'varchar' })
-  operationType: UsageOperationType | '';
+  operationType: UsageOperationType;
 
   @Column({ type: 'varchar' })
   spenderType: SpenderType;
@@ -44,8 +47,14 @@ export class UsageLimitEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'varchar' })
   limitKind: LimitKind;
 
-  @Column({ type: 'int', default: 0 })
-  windowSeconds: number;
+  @Column({ type: 'int', default: 1 })
+  periodCount: number;
+
+  @Column({ type: 'varchar', default: 'billingPeriod' })
+  periodUnit: PeriodUnit;
+
+  @Column({ type: 'varchar', default: 'creditsUsedMicro' })
+  meter: UsageMeter;
 
   @Column({ type: 'varchar', default: 'absolute' })
   limitValueType: LimitValueType;

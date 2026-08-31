@@ -10,7 +10,9 @@ const buildRule = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   spenderType: 'apiKey',
   spenderId: '',
   limitKind: 'speed',
-  windowSeconds: 60,
+  periodCount: 60,
+  periodUnit: 'second',
+  meter: 'creditsUsedMicro',
   limitValueType: 'absolute',
   limitValue: 100,
   burstValue: null,
@@ -46,7 +48,10 @@ describe('findRulesForSpender', () => {
   });
 
   it('applies a rule covering every operation of the resource', () => {
-    const wildcard = buildRule({ id: 'wildcard', operationType: '' });
+    const wildcard = buildRule({
+      id: 'wildcard',
+      operationType: UsageOperationType.ALL,
+    });
     const specific = buildRule({ id: 'specific' });
 
     expect(
@@ -102,8 +107,8 @@ describe('findRulesForSpender', () => {
   });
 
   it('returns a burst and a sustained rule together', () => {
-    const burst = buildRule({ id: 'burst', windowSeconds: 1, limitValue: 20 });
-    const sustained = buildRule({ id: 'sustained', windowSeconds: 60 });
+    const burst = buildRule({ id: 'burst', periodCount: 1, limitValue: 20 });
+    const sustained = buildRule({ id: 'sustained', periodCount: 60 });
 
     expect(
       findRulesForSpender({
@@ -117,7 +122,7 @@ describe('findRulesForSpender', () => {
   it('keeps every window of the shared rules when the spender has its own rule', () => {
     const sharedBurst = buildRule({
       id: 'shared-burst',
-      windowSeconds: 1,
+      periodCount: 1,
       limitValue: 20,
     });
     const sharedSustained = buildRule({ id: 'shared-sustained' });

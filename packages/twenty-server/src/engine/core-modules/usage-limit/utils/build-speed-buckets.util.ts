@@ -32,7 +32,11 @@ export const buildSpeedBuckets = ({
   const spenders = buildSpendersFromAuthContext(authContext);
 
   const buckets = spenders.flatMap((spender) => {
-    const spenderRules = findRulesForSpender({ rules, spender, operationType });
+    const spenderRules = findRulesForSpender({
+      rules,
+      spender,
+      operationType,
+    }).filter((rule) => rule.periodUnit === 'second');
 
     const ruleBuckets = spenderRules.map((rule) => ({
       key: buildSpeedBucketKey({
@@ -42,11 +46,11 @@ export const buildSpeedBuckets = ({
         operationType,
         spenderType: spender.spenderType,
         spenderId: rule.spenderId,
-        windowSeconds: rule.windowSeconds,
+        windowSeconds: rule.periodCount,
       }),
       burst: rule.burstValue ?? rule.limitValue,
       refillPerWindow: rule.limitValue,
-      windowMs: rule.windowSeconds * 1000,
+      windowMs: rule.periodCount * 1000,
       spenderType: spender.spenderType,
       spenderId: rule.spenderId === '' ? null : rule.spenderId,
       isDefault: false,

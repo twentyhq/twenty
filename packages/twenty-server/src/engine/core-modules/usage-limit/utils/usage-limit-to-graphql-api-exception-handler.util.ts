@@ -30,7 +30,10 @@ export const usageLimitToGraphqlApiExceptionHandler = (
       limitKind: exhaustedScope.limitKind,
       limit: exhaustedScope.limitValue,
       remaining: exhaustedScope.remaining,
-      windowSeconds: exhaustedScope.windowSeconds,
+      periodCount: exhaustedScope.periodCount,
+      periodUnit: exhaustedScope.periodUnit,
+      windowSeconds:
+        exhaustedScope.periodUnit === 'second' ? exhaustedScope.periodCount : 0,
       retryAfterMs: exhaustedScope.retryAfterMs,
       scope: {
         spenderType: exhaustedScope.spenderType,

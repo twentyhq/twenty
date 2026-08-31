@@ -6,12 +6,15 @@ export const fromUsageLimitEntityToDto = (
 ): UsageLimitDTO => ({
   id: usageLimit.id,
   resourceType: usageLimit.resourceType,
-  operationType:
-    usageLimit.operationType === '' ? null : usageLimit.operationType,
+  operationType: usageLimit.operationType,
   spenderType: usageLimit.spenderType,
   spenderId: usageLimit.spenderId,
   limitKind: usageLimit.limitKind,
-  windowSeconds: usageLimit.windowSeconds,
+  periodCount: usageLimit.periodCount,
+  windowSeconds:
+    usageLimit.periodUnit === 'second' ? usageLimit.periodCount : 0,
+  periodUnit: usageLimit.periodUnit,
+  meter: usageLimit.meter,
   limitValueType: usageLimit.limitValueType,
   limitValue: usageLimit.limitValue,
   burstValue: usageLimit.burstValue,

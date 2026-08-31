@@ -11,8 +11,9 @@ import {
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
-import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
+import { normalizeUpsertUsageLimitInput } from 'src/engine/core-modules/usage-limit/utils/normalize-upsert-usage-limit-input.util';
 import { validateUsageLimitAgainstDefinition } from 'src/engine/core-modules/usage-limit/utils/validate-usage-limit-against-definition.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -45,11 +46,13 @@ export class UsageLimitService {
 
   async upsert({
     workspaceId,
-    input,
+    input: rawInput,
   }: {
     workspaceId: string;
     input: UpsertUsageLimitInput;
   }): Promise<UsageLimitEntity> {
+    const input = normalizeUpsertUsageLimitInput(rawInput);
+
     validateUsageLimitAgainstDefinition(input);
 
     if (isNonEmptyString(input.spenderId)) {
@@ -60,15 +63,14 @@ export class UsageLimitService {
       });
     }
 
-    const operationType: UsageOperationType | '' = input.operationType ?? '';
-
     const scope = {
       resourceType: input.resourceType,
-      operationType,
+      operationType: input.operationType ?? UsageOperationType.ALL,
       spenderType: input.spenderType,
       spenderId: input.spenderId ?? '',
       limitKind: input.limitKind,
-      windowSeconds: input.windowSeconds,
+      periodCount: input.periodCount,
+      periodUnit: input.periodUnit,
     };
 
     await this.usageLimitRepository.upsert(
@@ -77,6 +79,7 @@ export class UsageLimitService {
         workspaceId,
         ...scope,
         limitValueType: input.limitValueType,
+        meter: input.meter,
         limitValue: input.limitValue,
         burstValue: input.burstValue ?? null,
       },
