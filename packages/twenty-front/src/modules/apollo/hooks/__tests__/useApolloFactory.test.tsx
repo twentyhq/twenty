@@ -7,13 +7,6 @@ import { useApolloFactory } from '@/apollo/hooks/useApolloFactory';
 
 enableFetchMocks();
 
-jest.mock('@/apollo/utils/getTokenPair', () => ({
-  getTokenPair: jest.fn().mockReturnValue({
-    accessOrWorkspaceAgnosticToken: { token: 'testAccessToken', expiresAt: '' },
-    refreshToken: { token: 'testRefreshToken', expiresAt: '' },
-  }),
-}));
-
 const mockNavigate = jest.fn();
 
 jest.mock('react-router-dom', () => {

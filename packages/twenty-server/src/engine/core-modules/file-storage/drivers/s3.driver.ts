@@ -109,7 +109,7 @@ export class S3Driver implements StorageDriver {
         throw new Error('Unable to get file stream');
       }
 
-      return Readable.from(file.Body);
+      return file.Body;
     } catch (error) {
       if (error.name === 'NoSuchKey') {
         throw new FileStorageException(

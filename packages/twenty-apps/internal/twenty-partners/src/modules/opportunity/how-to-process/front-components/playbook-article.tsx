@@ -29,11 +29,7 @@ export const PlaybookArticle = ({
     <article style={styles.article}>
       <p style={styles.kicker}>{kicker}</p>
       <h1 style={styles.title}>{title}</h1>
-      <p
-        style={
-          headerLinks !== undefined ? styles.ledeWithLinks : styles.lede
-        }
-      >
+      <p style={headerLinks !== undefined ? styles.ledeWithLinks : styles.lede}>
         <PlaybookMarkedText text={lede} links={bodyLinks} skills={skills} />
       </p>
       {headerLinks !== undefined ? (

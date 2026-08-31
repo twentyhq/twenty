@@ -20,6 +20,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import {
   PageLayoutTabLayoutMode,
+  PageLayoutType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 
@@ -76,6 +77,8 @@ export const useCreatePageLayoutRecordTableWidget = (
         minimumSize,
       );
 
+      const pageLayoutDraft = store.get(pageLayoutDraftState);
+
       const newWidget = createDefaultRecordTableWidget({
         id: widgetId,
         pageLayoutTabId: activeTabId,
@@ -88,6 +91,7 @@ export const useCreatePageLayoutRecordTableWidget = (
           columnSpan: position.w,
         },
         objectMetadataId: objectMetadata?.id,
+        isUIEditable: pageLayoutDraft.type === PageLayoutType.RECORD_PAGE,
       });
 
       const newLayout = {

@@ -731,7 +731,7 @@ export interface PageLayoutWidget {
     __typename: 'PageLayoutWidget'
 }
 
-export type WidgetType = 'VIEW' | 'IFRAME' | 'FIELD' | 'FIELDS' | 'GRAPH' | 'STANDALONE_RICH_TEXT' | 'TIMELINE' | 'TASKS' | 'NOTES' | 'FILES' | 'EMAILS' | 'CALENDAR' | 'FIELD_RICH_TEXT' | 'WORKFLOW' | 'WORKFLOW_VERSION' | 'WORKFLOW_RUN' | 'FRONT_COMPONENT' | 'RECORD_TABLE' | 'EMAIL_THREAD' | 'CALL_RECORDING_SUMMARY' | 'CALL_RECORDING_TRANSCRIPT' | 'MESSAGE_CAMPAIGN_BODY' | 'MESSAGE_CAMPAIGN_DETAILS'
+export type WidgetType = 'VIEW' | 'IFRAME' | 'FIELD' | 'FIELDS' | 'GRAPH' | 'STANDALONE_RICH_TEXT' | 'TIMELINE' | 'TASKS' | 'NOTES' | 'FILES' | 'EMAILS' | 'CALENDAR' | 'FIELD_RICH_TEXT' | 'WORKFLOW' | 'WORKFLOW_VERSION' | 'WORKFLOW_RUN' | 'FRONT_COMPONENT' | 'RECORD_TABLE' | 'EMAIL_THREAD' | 'CALL_RECORDING_SUMMARY' | 'CALL_RECORDING_TRANSCRIPT' | 'MESSAGE_CAMPAIGN_BODY' | 'MESSAGE_CAMPAIGN_DETAILS' | 'FORM_FIELD'
 
 export type PageLayoutWidgetPosition = (PageLayoutWidgetGridPosition | PageLayoutWidgetVerticalListPosition | PageLayoutWidgetCanvasPosition) & { __isUnion?: true }
 
@@ -757,7 +757,7 @@ export interface PageLayoutWidgetCanvasPosition {
     __typename: 'PageLayoutWidgetCanvasPosition'
 }
 
-export type WidgetConfiguration = (AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration) & { __isUnion?: true }
+export type WidgetConfiguration = (AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FormFieldConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration) & { __isUnion?: true }
 
 export interface AggregateChartConfiguration {
     configurationType: WidgetConfigurationType
@@ -776,7 +776,7 @@ export interface AggregateChartConfiguration {
     __typename: 'AggregateChartConfiguration'
 }
 
-export type WidgetConfigurationType = 'AGGREGATE_CHART' | 'PIE_CHART' | 'BAR_CHART' | 'LINE_CHART' | 'IFRAME' | 'STANDALONE_RICH_TEXT' | 'VIEW' | 'FIELD' | 'FIELDS' | 'TIMELINE' | 'TASKS' | 'NOTES' | 'FILES' | 'EMAILS' | 'CALENDAR' | 'FIELD_RICH_TEXT' | 'WORKFLOW' | 'WORKFLOW_VERSION' | 'WORKFLOW_RUN' | 'FRONT_COMPONENT' | 'RECORD_TABLE' | 'EMAIL_THREAD' | 'CALL_RECORDING_SUMMARY' | 'CALL_RECORDING_TRANSCRIPT' | 'MESSAGE_CAMPAIGN_BODY' | 'MESSAGE_CAMPAIGN_DETAILS'
+export type WidgetConfigurationType = 'AGGREGATE_CHART' | 'PIE_CHART' | 'BAR_CHART' | 'LINE_CHART' | 'IFRAME' | 'STANDALONE_RICH_TEXT' | 'VIEW' | 'FIELD' | 'FIELDS' | 'TIMELINE' | 'TASKS' | 'NOTES' | 'FILES' | 'EMAILS' | 'CALENDAR' | 'FIELD_RICH_TEXT' | 'WORKFLOW' | 'WORKFLOW_VERSION' | 'WORKFLOW_RUN' | 'FRONT_COMPONENT' | 'RECORD_TABLE' | 'EMAIL_THREAD' | 'CALL_RECORDING_SUMMARY' | 'CALL_RECORDING_TRANSCRIPT' | 'MESSAGE_CAMPAIGN_BODY' | 'MESSAGE_CAMPAIGN_DETAILS' | 'FORM_FIELD'
 
 
 /** Format used to display the chart value */
@@ -950,6 +950,7 @@ export interface FieldConfiguration {
     fieldDisplayMode: FieldDisplayMode
     viewId?: Scalars['String']
     nestedRelationFieldMetadataId?: Scalars['String']
+    isUIEditable?: Scalars['Boolean']
     __typename: 'FieldConfiguration'
 }
 
@@ -968,6 +969,12 @@ export interface FieldsConfiguration {
     newFieldDefaultVisibility?: Scalars['Boolean']
     shouldAllowUserToSeeHiddenFields?: Scalars['Boolean']
     __typename: 'FieldsConfiguration'
+}
+
+export interface FormFieldConfiguration {
+    configurationType: WidgetConfigurationType
+    fieldMetadataId: Scalars['String']
+    __typename: 'FormFieldConfiguration'
 }
 
 export interface FilesConfiguration {
@@ -999,6 +1006,7 @@ export interface RecordTableConfiguration {
     configurationType: WidgetConfigurationType
     viewId?: Scalars['String']
     recordLimit?: Scalars['Int']
+    isUIEditable?: Scalars['Boolean']
     __typename: 'RecordTableConfiguration'
 }
 
@@ -1047,13 +1055,14 @@ export interface PageLayout {
     universalIdentifier: Scalars['UUID']
     applicationId: Scalars['UUID']
     isSystemSideEffect: Scalars['Boolean']
+    isFirstTabPinned: Scalars['Boolean']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
     __typename: 'PageLayout'
 }
 
-export type PageLayoutType = 'RECORD_INDEX' | 'RECORD_PAGE' | 'DASHBOARD' | 'STANDALONE_PAGE'
+export type PageLayoutType = 'RECORD_INDEX' | 'RECORD_PAGE' | 'DASHBOARD' | 'STANDALONE_PAGE' | 'RECORD_FORM'
 
 export interface ApplicationConnectionProviderOAuthConfig {
     scopes: Scalars['String'][]
@@ -1462,43 +1471,13 @@ export interface ConnectedAccountPublicDTO {
     __typename: 'ConnectedAccountPublicDTO'
 }
 
-export interface UsageBreakdownItem {
-    key: Scalars['String']
-    label?: Scalars['String']
-    creditsUsed: Scalars['Float']
-    __typename: 'UsageBreakdownItem'
-}
-
-export interface UsageTimeSeries {
-    date: Scalars['String']
-    creditsUsed: Scalars['Float']
-    __typename: 'UsageTimeSeries'
-}
-
-export interface UsageUserDaily {
-    userWorkspaceId: Scalars['String']
-    dailyUsage: UsageTimeSeries[]
-    __typename: 'UsageUserDaily'
-}
-
-export interface UsageAnalytics {
-    usageByUser: UsageBreakdownItem[]
-    usageByOperationType: UsageBreakdownItem[]
-    usageByModel: UsageBreakdownItem[]
-    timeSeries: UsageTimeSeries[]
-    periodStart: Scalars['DateTime']
-    periodEnd: Scalars['DateTime']
-    userDailyUsage?: UsageUserDaily
-    __typename: 'UsageAnalytics'
-}
-
 export interface FeatureFlag {
     key: FeatureFlagKey
     value: Scalars['Boolean']
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_LIST_VIEW_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' | 'IS_API_RATE_LIMIT_V2_ENABLED' | 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED'
+export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' | 'IS_API_RATE_LIMIT_V2_ENABLED' | 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -1710,6 +1689,13 @@ export interface ClientConfig {
     enterpriseInstanceType: Scalars['String']
     maintenance?: ClientConfigMaintenanceMode
     __typename: 'ClientConfig'
+}
+
+export interface UsageBreakdownItem {
+    key: Scalars['String']
+    label?: Scalars['String']
+    creditsUsed: Scalars['Float']
+    __typename: 'UsageBreakdownItem'
 }
 
 export interface ClaimableApplicationRegistration {
@@ -2254,6 +2240,29 @@ export interface Impersonate {
 export interface StopImpersonation {
     canRestoreImpersonatorSession: Scalars['Boolean']
     __typename: 'StopImpersonation'
+}
+
+export interface UsageTimeSeries {
+    date: Scalars['String']
+    creditsUsed: Scalars['Float']
+    __typename: 'UsageTimeSeries'
+}
+
+export interface UsageUserDaily {
+    userWorkspaceId: Scalars['String']
+    dailyUsage: UsageTimeSeries[]
+    __typename: 'UsageUserDaily'
+}
+
+export interface UsageAnalytics {
+    usageByUser: UsageBreakdownItem[]
+    usageByOperationType: UsageBreakdownItem[]
+    usageByModel: UsageBreakdownItem[]
+    timeSeries: UsageTimeSeries[]
+    periodStart: Scalars['DateTime']
+    periodEnd: Scalars['DateTime']
+    userDailyUsage?: UsageUserDaily
+    __typename: 'UsageAnalytics'
 }
 
 export interface ApplicationAuthorization {
@@ -2980,7 +2989,6 @@ export interface Query {
     enterprisePortalSession?: Scalars['String']
     enterpriseCheckoutSession?: Scalars['String']
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTO
-    getUsageAnalytics: UsageAnalytics
     usageLimits: UsageLimit[]
     getViewFilterGroups: ViewFilterGroup[]
     getViewFilterGroup?: ViewFilterGroup
@@ -3090,6 +3098,7 @@ export interface Query {
     getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount
     getAutoCompleteAddress: AutocompleteResult[]
     getAddressDetails: PlaceDetailsResult
+    getUsageAnalytics: UsageAnalytics
     findManyPublicDomains: PublicDomain[]
     currentUserApplicationAuthorizations: ApplicationAuthorization[]
     __typename: 'Query'
@@ -4147,6 +4156,7 @@ export interface WidgetConfigurationGenqlSelection{
     on_FieldConfiguration?:FieldConfigurationGenqlSelection,
     on_FieldRichTextConfiguration?:FieldRichTextConfigurationGenqlSelection,
     on_FieldsConfiguration?:FieldsConfigurationGenqlSelection,
+    on_FormFieldConfiguration?:FormFieldConfigurationGenqlSelection,
     on_FilesConfiguration?:FilesConfigurationGenqlSelection,
     on_NotesConfiguration?:NotesConfigurationGenqlSelection,
     on_TasksConfiguration?:TasksConfigurationGenqlSelection,
@@ -4338,6 +4348,7 @@ export interface FieldConfigurationGenqlSelection{
     fieldDisplayMode?: boolean | number
     viewId?: boolean | number
     nestedRelationFieldMetadataId?: boolean | number
+    isUIEditable?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4353,6 +4364,13 @@ export interface FieldsConfigurationGenqlSelection{
     viewId?: boolean | number
     newFieldDefaultVisibility?: boolean | number
     shouldAllowUserToSeeHiddenFields?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface FormFieldConfigurationGenqlSelection{
+    configurationType?: boolean | number
+    fieldMetadataId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4391,6 +4409,7 @@ export interface RecordTableConfigurationGenqlSelection{
     configurationType?: boolean | number
     viewId?: boolean | number
     recordLimit?: boolean | number
+    isUIEditable?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4444,6 +4463,7 @@ export interface PageLayoutGenqlSelection{
     universalIdentifier?: boolean | number
     applicationId?: boolean | number
     isSystemSideEffect?: boolean | number
+    isFirstTabPinned?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     deletedAt?: boolean | number
@@ -4870,40 +4890,6 @@ export interface ConnectedAccountPublicDTOGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface UsageBreakdownItemGenqlSelection{
-    key?: boolean | number
-    label?: boolean | number
-    creditsUsed?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UsageTimeSeriesGenqlSelection{
-    date?: boolean | number
-    creditsUsed?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UsageUserDailyGenqlSelection{
-    userWorkspaceId?: boolean | number
-    dailyUsage?: UsageTimeSeriesGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UsageAnalyticsGenqlSelection{
-    usageByUser?: UsageBreakdownItemGenqlSelection
-    usageByOperationType?: UsageBreakdownItemGenqlSelection
-    usageByModel?: UsageBreakdownItemGenqlSelection
-    timeSeries?: UsageTimeSeriesGenqlSelection
-    periodStart?: boolean | number
-    periodEnd?: boolean | number
-    userDailyUsage?: UsageUserDailyGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface FeatureFlagGenqlSelection{
     key?: boolean | number
     value?: boolean | number
@@ -5130,6 +5116,14 @@ export interface ClientConfigGenqlSelection{
     isOnboardingAiChatEnabled?: boolean | number
     enterpriseInstanceType?: boolean | number
     maintenance?: ClientConfigMaintenanceModeGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageBreakdownItemGenqlSelection{
+    key?: boolean | number
+    label?: boolean | number
+    creditsUsed?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5719,6 +5713,32 @@ export interface ImpersonateGenqlSelection{
 
 export interface StopImpersonationGenqlSelection{
     canRestoreImpersonatorSession?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageTimeSeriesGenqlSelection{
+    date?: boolean | number
+    creditsUsed?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageUserDailyGenqlSelection{
+    userWorkspaceId?: boolean | number
+    dailyUsage?: UsageTimeSeriesGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageAnalyticsGenqlSelection{
+    usageByUser?: UsageBreakdownItemGenqlSelection
+    usageByOperationType?: UsageBreakdownItemGenqlSelection
+    usageByModel?: UsageBreakdownItemGenqlSelection
+    timeSeries?: UsageTimeSeriesGenqlSelection
+    periodStart?: boolean | number
+    periodEnd?: boolean | number
+    userDailyUsage?: UsageUserDailyGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6474,7 +6494,6 @@ export interface QueryGenqlSelection{
     enterprisePortalSession?: { __args: {returnUrlPath?: (Scalars['String'] | null)} } | boolean | number
     enterpriseCheckoutSession?: { __args: {billingInterval?: (Scalars['String'] | null)} } | boolean | number
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTOGenqlSelection
-    getUsageAnalytics?: (UsageAnalyticsGenqlSelection & { __args?: {input?: (UsageAnalyticsInput | null)} })
     usageLimits?: UsageLimitGenqlSelection
     getViewFilterGroups?: (ViewFilterGroupGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
     getViewFilterGroup?: (ViewFilterGroupGenqlSelection & { __args: {id: Scalars['String']} })
@@ -6596,13 +6615,12 @@ export interface QueryGenqlSelection{
     getConnectedImapSmtpCaldavAccount?: (ConnectedImapSmtpCaldavAccountGenqlSelection & { __args: {id: Scalars['UUID']} })
     getAutoCompleteAddress?: (AutocompleteResultGenqlSelection & { __args: {address: Scalars['String'], token: Scalars['String'], country?: (Scalars['String'] | null), isFieldCity?: (Scalars['Boolean'] | null)} })
     getAddressDetails?: (PlaceDetailsResultGenqlSelection & { __args: {placeId: Scalars['String'], token: Scalars['String']} })
+    getUsageAnalytics?: (UsageAnalyticsGenqlSelection & { __args?: {input?: (UsageAnalyticsInput | null)} })
     findManyPublicDomains?: PublicDomainGenqlSelection
     currentUserApplicationAuthorizations?: ApplicationAuthorizationGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
-
-export interface UsageAnalyticsInput {periodStart?: (Scalars['DateTime'] | null),periodEnd?: (Scalars['DateTime'] | null),userWorkspaceId?: (Scalars['String'] | null),operationTypes?: (UsageOperationType[] | null)}
 
 export interface GetApiKeyInput {id: Scalars['UUID']}
 
@@ -6635,6 +6653,8 @@ export interface PieChartDataInput {objectMetadataId: Scalars['UUID'],configurat
 export interface LineChartDataInput {objectMetadataId: Scalars['UUID'],configuration: Scalars['JSON']}
 
 export interface BarChartDataInput {objectMetadataId: Scalars['UUID'],configuration: Scalars['JSON']}
+
+export interface UsageAnalyticsInput {periodStart?: (Scalars['DateTime'] | null),periodEnd?: (Scalars['DateTime'] | null),userWorkspaceId?: (Scalars['String'] | null),operationTypes?: (UsageOperationType[] | null)}
 
 export interface MutationGenqlSelection{
     addQueryToEventStream?: { __args: {input: AddQuerySubscriptionInput} }
@@ -7059,7 +7079,7 @@ export interface CreatePageLayoutInput {name: Scalars['String'],type?: (PageLayo
 
 export interface UpdatePageLayoutInput {name?: (Scalars['String'] | null),type?: (PageLayoutType | null),objectMetadataId?: (Scalars['UUID'] | null)}
 
-export interface UpdatePageLayoutWithTabsInput {name: Scalars['String'],type: PageLayoutType,objectMetadataId?: (Scalars['UUID'] | null),tabs: UpdatePageLayoutTabWithWidgetsInput[]}
+export interface UpdatePageLayoutWithTabsInput {name: Scalars['String'],type: PageLayoutType,objectMetadataId?: (Scalars['UUID'] | null),isFirstTabPinned?: (Scalars['Boolean'] | null),tabs: UpdatePageLayoutTabWithWidgetsInput[]}
 
 export interface UpdatePageLayoutTabWithWidgetsInput {id: Scalars['UUID'],title: Scalars['String'],position: Scalars['Float'],icon?: (Scalars['String'] | null),layoutMode?: (PageLayoutTabLayoutMode | null),widgets: UpdatePageLayoutWidgetWithIdInput[]}
 
@@ -7681,7 +7701,7 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const WidgetConfiguration_possibleTypes: string[] = ['AggregateChartConfiguration','StandaloneRichTextConfiguration','PieChartConfiguration','LineChartConfiguration','IframeConfiguration','BarChartConfiguration','CalendarConfiguration','FrontComponentConfiguration','EmailsConfiguration','EmailThreadConfiguration','CallRecordingSummaryConfiguration','CallRecordingTranscriptConfiguration','MessageCampaignBodyConfiguration','MessageCampaignDetailsConfiguration','FieldConfiguration','FieldRichTextConfiguration','FieldsConfiguration','FilesConfiguration','NotesConfiguration','TasksConfiguration','TimelineConfiguration','ViewConfiguration','RecordTableConfiguration','WorkflowConfiguration','WorkflowRunConfiguration','WorkflowVersionConfiguration']
+    const WidgetConfiguration_possibleTypes: string[] = ['AggregateChartConfiguration','StandaloneRichTextConfiguration','PieChartConfiguration','LineChartConfiguration','IframeConfiguration','BarChartConfiguration','CalendarConfiguration','FrontComponentConfiguration','EmailsConfiguration','EmailThreadConfiguration','CallRecordingSummaryConfiguration','CallRecordingTranscriptConfiguration','MessageCampaignBodyConfiguration','MessageCampaignDetailsConfiguration','FieldConfiguration','FieldRichTextConfiguration','FieldsConfiguration','FormFieldConfiguration','FilesConfiguration','NotesConfiguration','TasksConfiguration','TimelineConfiguration','ViewConfiguration','RecordTableConfiguration','WorkflowConfiguration','WorkflowRunConfiguration','WorkflowVersionConfiguration']
     export const isWidgetConfiguration = (obj?: { __typename?: any } | null): obj is WidgetConfiguration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWidgetConfiguration"')
       return WidgetConfiguration_possibleTypes.includes(obj.__typename)
@@ -7821,6 +7841,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isFieldsConfiguration = (obj?: { __typename?: any } | null): obj is FieldsConfiguration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isFieldsConfiguration"')
       return FieldsConfiguration_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const FormFieldConfiguration_possibleTypes: string[] = ['FormFieldConfiguration']
+    export const isFormFieldConfiguration = (obj?: { __typename?: any } | null): obj is FormFieldConfiguration => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isFormFieldConfiguration"')
+      return FormFieldConfiguration_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -8249,38 +8277,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const UsageBreakdownItem_possibleTypes: string[] = ['UsageBreakdownItem']
-    export const isUsageBreakdownItem = (obj?: { __typename?: any } | null): obj is UsageBreakdownItem => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageBreakdownItem"')
-      return UsageBreakdownItem_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const UsageTimeSeries_possibleTypes: string[] = ['UsageTimeSeries']
-    export const isUsageTimeSeries = (obj?: { __typename?: any } | null): obj is UsageTimeSeries => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageTimeSeries"')
-      return UsageTimeSeries_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const UsageUserDaily_possibleTypes: string[] = ['UsageUserDaily']
-    export const isUsageUserDaily = (obj?: { __typename?: any } | null): obj is UsageUserDaily => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageUserDaily"')
-      return UsageUserDaily_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const UsageAnalytics_possibleTypes: string[] = ['UsageAnalytics']
-    export const isUsageAnalytics = (obj?: { __typename?: any } | null): obj is UsageAnalytics => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageAnalytics"')
-      return UsageAnalytics_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const FeatureFlag_possibleTypes: string[] = ['FeatureFlag']
     export const isFeatureFlag = (obj?: { __typename?: any } | null): obj is FeatureFlag => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isFeatureFlag"')
@@ -8453,6 +8449,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isClientConfig = (obj?: { __typename?: any } | null): obj is ClientConfig => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isClientConfig"')
       return ClientConfig_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageBreakdownItem_possibleTypes: string[] = ['UsageBreakdownItem']
+    export const isUsageBreakdownItem = (obj?: { __typename?: any } | null): obj is UsageBreakdownItem => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageBreakdownItem"')
+      return UsageBreakdownItem_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -8957,6 +8961,30 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isStopImpersonation = (obj?: { __typename?: any } | null): obj is StopImpersonation => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isStopImpersonation"')
       return StopImpersonation_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageTimeSeries_possibleTypes: string[] = ['UsageTimeSeries']
+    export const isUsageTimeSeries = (obj?: { __typename?: any } | null): obj is UsageTimeSeries => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageTimeSeries"')
+      return UsageTimeSeries_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageUserDaily_possibleTypes: string[] = ['UsageUserDaily']
+    export const isUsageUserDaily = (obj?: { __typename?: any } | null): obj is UsageUserDaily => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageUserDaily"')
+      return UsageUserDaily_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageAnalytics_possibleTypes: string[] = ['UsageAnalytics']
+    export const isUsageAnalytics = (obj?: { __typename?: any } | null): obj is UsageAnalytics => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageAnalytics"')
+      return UsageAnalytics_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -9893,7 +9921,8 @@ export const enumWidgetType = {
    CALL_RECORDING_SUMMARY: 'CALL_RECORDING_SUMMARY' as const,
    CALL_RECORDING_TRANSCRIPT: 'CALL_RECORDING_TRANSCRIPT' as const,
    MESSAGE_CAMPAIGN_BODY: 'MESSAGE_CAMPAIGN_BODY' as const,
-   MESSAGE_CAMPAIGN_DETAILS: 'MESSAGE_CAMPAIGN_DETAILS' as const
+   MESSAGE_CAMPAIGN_DETAILS: 'MESSAGE_CAMPAIGN_DETAILS' as const,
+   FORM_FIELD: 'FORM_FIELD' as const
 }
 
 export const enumPageLayoutTabLayoutMode = {
@@ -9928,7 +9957,8 @@ export const enumWidgetConfigurationType = {
    CALL_RECORDING_SUMMARY: 'CALL_RECORDING_SUMMARY' as const,
    CALL_RECORDING_TRANSCRIPT: 'CALL_RECORDING_TRANSCRIPT' as const,
    MESSAGE_CAMPAIGN_BODY: 'MESSAGE_CAMPAIGN_BODY' as const,
-   MESSAGE_CAMPAIGN_DETAILS: 'MESSAGE_CAMPAIGN_DETAILS' as const
+   MESSAGE_CAMPAIGN_DETAILS: 'MESSAGE_CAMPAIGN_DETAILS' as const,
+   FORM_FIELD: 'FORM_FIELD' as const
 }
 
 export const enumChartNumberFormat = {
@@ -9987,7 +10017,8 @@ export const enumPageLayoutType = {
    RECORD_INDEX: 'RECORD_INDEX' as const,
    RECORD_PAGE: 'RECORD_PAGE' as const,
    DASHBOARD: 'DASHBOARD' as const,
-   STANDALONE_PAGE: 'STANDALONE_PAGE' as const
+   STANDALONE_PAGE: 'STANDALONE_PAGE' as const,
+   RECORD_FORM: 'RECORD_FORM' as const
 }
 
 export const enumBillingPlanKey = {
@@ -10063,7 +10094,6 @@ export const enumFeatureFlagKey = {
    IS_JSON_FILTER_ENABLED: 'IS_JSON_FILTER_ENABLED' as const,
    IS_EMAIL_GROUP_ENABLED: 'IS_EMAIL_GROUP_ENABLED' as const,
    IS_JUNCTION_RELATIONS_ENABLED: 'IS_JUNCTION_RELATIONS_ENABLED' as const,
-   IS_LIST_VIEW_ENABLED: 'IS_LIST_VIEW_ENABLED' as const,
    IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const,
    IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED: 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' as const,
    IS_WORKFLOW_VERSION_IN_CORE_ENABLED: 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' as const,
