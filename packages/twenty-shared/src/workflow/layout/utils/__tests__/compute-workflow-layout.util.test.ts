@@ -49,7 +49,7 @@ describe('computeWorkflowLayout', () => {
       edges: [],
     });
 
-    expect(positions[0].position).toEqual({
+    expect(positions[0].centerPosition).toEqual({
       x: width / 2,
       y: height / 2,
     });
@@ -65,7 +65,7 @@ describe('computeWorkflowLayout', () => {
     const positionById = new Map(
       computeWorkflowLayout({ nodes, edges }).map((position) => [
         position.id,
-        position.position,
+        position.centerPosition,
       ]),
     );
 
@@ -93,7 +93,7 @@ describe('computeWorkflowLayout', () => {
     const positionById = new Map(
       computeWorkflowLayout({ nodes, edges }).map((position) => [
         position.id,
-        position.position,
+        position.centerPosition,
       ]),
     );
 
@@ -120,7 +120,7 @@ describe('computeWorkflowLayout', () => {
     const positionById = new Map(
       computeWorkflowLayout({ nodes, edges }).map((position) => [
         position.id,
-        position.position,
+        position.centerPosition,
       ]),
     );
 

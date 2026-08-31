@@ -473,7 +473,9 @@ export class WorkflowVersionWorkspaceService {
       targets.map((target) => ({ source, target })),
     );
 
-    const positions = computeWorkflowLayout({ nodes, edges });
+    const positions = computeWorkflowLayout({ nodes, edges }).map(
+      ({ id, centerPosition }) => ({ id, position: centerPosition }),
+    );
 
     await this.updateWorkflowVersionPositions({
       workflowVersionId,

@@ -15,7 +15,7 @@ export type WorkflowLayoutEdge = {
 
 export type WorkflowLayoutPosition = {
   id: string;
-  position: { x: number; y: number };
+  centerPosition: { x: number; y: number };
 };
 
 export type WorkflowLayoutOptions = {
@@ -63,7 +63,7 @@ export const computeWorkflowLayout = ({
 
     return {
       id: node.id,
-      position: { x: layoutedNode.x, y: layoutedNode.y },
+      centerPosition: { x: layoutedNode.x, y: layoutedNode.y },
     };
   });
 };
