@@ -7,7 +7,13 @@ import { isNonEmptyString } from '@sniptt/guards';
 import * as bcrypt from 'bcrypt';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { ILike, IsNull, type FindOptionsWhere, type Repository } from 'typeorm';
+import {
+  ILike,
+  In,
+  IsNull,
+  type FindOptionsWhere,
+  type Repository,
+} from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
@@ -16,6 +22,7 @@ import { shouldRefreshApplicationRegistrationOnInstall } from 'src/engine/core-m
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
+import { INSTALLED_APPLICATION_STATES } from 'src/engine/core-modules/application/constants/installed-application-states.constant';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -878,6 +885,9 @@ export class ApplicationRegistrationService {
           { applicationRegistrationId },
         )
         .andWhere('application."deletedAt" IS NULL')
+        .andWhere('application.state IN (:...installedStates)', {
+          installedStates: INSTALLED_APPLICATION_STATES,
+        })
         .groupBy('version')
         .orderBy('count', 'DESC')
         .getRawMany();
@@ -924,6 +934,7 @@ export class ApplicationRegistrationService {
 
     const where: FindOptionsWhere<ApplicationEntity> = {
       applicationRegistrationId,
+      state: In(INSTALLED_APPLICATION_STATES),
     };
 
     const whereClauses: FindOptionsWhere<ApplicationEntity>[] =
@@ -951,7 +962,6 @@ export class ApplicationRegistrationService {
       displayName: application.workspace.displayName ?? null,
       logo: application.workspace.logo ?? null,
       version: application.version ?? null,
-      state: application.state,
     }));
 
     return {

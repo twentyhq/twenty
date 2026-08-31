@@ -12,7 +12,6 @@ export const FIND_ADMIN_APPLICATION_REGISTRATION_INSTALLED_WORKSPACES = gql`
         displayName
         logo
         version
-        state
       }
     }
   }

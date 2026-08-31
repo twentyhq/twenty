@@ -4,7 +4,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Avatar, Tag } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/data-display';
 import { IconChevronDown, IconDotsVertical } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -22,7 +22,6 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 import { FindAdminApplicationRegistrationInstalledWorkspacesDocument } from '~/generated-admin/graphql';
-import { getApplicationTransitionalStateLabel } from '~/pages/settings/applications/utils/getApplicationTransitionalStateLabel';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { SettingsPath } from 'twenty-shared/types';
 
@@ -154,54 +153,38 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
             <TableHeader align="right">{t`Version installed`}</TableHeader>
           </TableRow>
           <TableBody>
-            {visibleWorkspaces.map((workspace) => {
-              const transitionalStateLabel =
-                getApplicationTransitionalStateLabel(workspace.state);
-
-              return (
-                <TableRow
-                  key={workspace.id}
-                  gridTemplateColumns={
-                    INSTALLED_WORKSPACES_GRID_TEMPLATE_COLUMNS
-                  }
-                  to={getSettingsPath(SettingsPath.AdminPanelWorkspaceDetail, {
-                    workspaceId: workspace.id,
-                  })}
+            {visibleWorkspaces.map((workspace) => (
+              <TableRow
+                key={workspace.id}
+                gridTemplateColumns={INSTALLED_WORKSPACES_GRID_TEMPLATE_COLUMNS}
+                to={getSettingsPath(SettingsPath.AdminPanelWorkspaceDetail, {
+                  workspaceId: workspace.id,
+                })}
+              >
+                <TableCell
+                  color={themeCssVariables.font.color.primary}
+                  gap={themeCssVariables.spacing[2]}
+                  overflow="hidden"
                 >
-                  <TableCell
-                    color={themeCssVariables.font.color.primary}
-                    gap={themeCssVariables.spacing[2]}
-                    overflow="hidden"
-                  >
-                    <Avatar
-                      avatarUrl={getAbsoluteImageUrl(
-                        workspace.logo ?? undefined,
-                      )}
-                      placeholder={workspace.displayName ?? '—'}
-                      placeholderColorSeed={workspace.id}
-                      size="md"
-                    />
-                    <OverflowingTextWithTooltip
-                      text={workspace.displayName ?? '—'}
-                    />
-                  </TableCell>
-                  <TableCell
-                    align="right"
-                    color={themeCssVariables.font.color.tertiary}
-                    gap={themeCssVariables.spacing[2]}
-                  >
-                    {isDefined(transitionalStateLabel) && (
-                      <Tag
-                        color="orange"
-                        text={transitionalStateLabel}
-                        weight="medium"
-                      />
-                    )}
-                    {workspace.version ?? '—'}
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+                  <Avatar
+                    avatarUrl={getAbsoluteImageUrl(workspace.logo ?? undefined)}
+                    placeholder={workspace.displayName ?? '—'}
+                    placeholderColorSeed={workspace.id}
+                    size="md"
+                  />
+                  <OverflowingTextWithTooltip
+                    text={workspace.displayName ?? '—'}
+                  />
+                </TableCell>
+                <TableCell
+                  align="right"
+                  color={themeCssVariables.font.color.tertiary}
+                  gap={themeCssVariables.spacing[2]}
+                >
+                  {workspace.version ?? '—'}
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       )}

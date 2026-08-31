@@ -1,7 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 
 @ObjectType('InstalledWorkspace')
 export class InstalledWorkspaceDTO {
@@ -16,9 +15,6 @@ export class InstalledWorkspaceDTO {
 
   @Field(() => String, { nullable: true })
   version: string | null;
-
-  @Field(() => ApplicationState)
-  state: ApplicationState;
 }
 
 @ObjectType('ApplicationRegistrationInstalledWorkspaces')
