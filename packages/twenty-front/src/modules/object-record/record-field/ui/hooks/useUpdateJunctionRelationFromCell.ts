@@ -114,6 +114,33 @@ export const useUpdateJunctionRelationFromCell = ({
           | FieldRelationValue<FieldRelationFromManyValue>
           | undefined) ?? [];
 
+      const removeJunctionRecordFromStore = (junctionRecordId: string) =>
+        store.set(
+          recordStoreFamilyState.atomFamily(recordId),
+          (currentRecord: ObjectRecord | null | undefined) => {
+            if (!isDefined(currentRecord)) {
+              return currentRecord;
+            }
+
+            const currentFieldValue = currentRecord[fieldName];
+
+            if (!Array.isArray(currentFieldValue)) {
+              return currentRecord;
+            }
+
+            const updatedJunctionRecords = currentFieldValue.filter(
+              (junctionRecord) => junctionRecord.id !== junctionRecordId,
+            );
+
+            return updatedJunctionRecords.length === currentFieldValue.length
+              ? currentRecord
+              : ({
+                  ...currentRecord,
+                  [fieldName]: updatedJunctionRecords,
+                } as ObjectRecord);
+          },
+        );
+
       // morphItem.isSelected represents the NEW state (what the user wants)
       if (!morphItem.isSelected) {
         const junctionRecordToDelete = findJunctionRecordByTargetId({
@@ -127,6 +154,10 @@ export const useUpdateJunctionRelationFromCell = ({
         }
 
         await deleteJunctionRecord(junctionRecordToDelete.id);
+
+        // The shared delete effect normally detaches the pivot. Keep this
+        // idempotent fallback for upsert-created records missing from Apollo.
+        removeJunctionRecordFromStore(junctionRecordToDelete.id);
       } else {
         const searchRecord = store.get(
           searchRecordStoreFamilyState.atomFamily(morphItem.recordId),
@@ -189,28 +220,6 @@ export const useUpdateJunctionRelationFromCell = ({
           },
         );
 
-        const removeOptimisticJunctionRecord = () =>
-          store.set(
-            recordStoreFamilyState.atomFamily(recordId),
-            (currentRecord: Record<string, unknown> | null | undefined) => {
-              if (!isDefined(currentRecord)) {
-                return currentRecord;
-              }
-
-              const currentFieldValue = currentRecord[fieldName];
-
-              return {
-                ...currentRecord,
-                [fieldName]: Array.isArray(currentFieldValue)
-                  ? currentFieldValue.filter(
-                      (junctionRecord) =>
-                        junctionRecord.id !== optimisticJunctionId,
-                    )
-                  : currentFieldValue,
-              } as ObjectRecord;
-            },
-          );
-
         try {
           const [persistedJunctionRecordNode] = await createJunctionRecords({
             recordsToCreate: [
@@ -265,7 +274,7 @@ export const useUpdateJunctionRelationFromCell = ({
             },
           );
         } catch (error) {
-          removeOptimisticJunctionRecord();
+          removeJunctionRecordFromStore(optimisticJunctionId);
 
           throw error;
         }

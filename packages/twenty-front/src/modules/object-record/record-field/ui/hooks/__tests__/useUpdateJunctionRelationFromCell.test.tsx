@@ -285,5 +285,8 @@ describe('useUpdateJunctionRelationFromCell', () => {
     });
 
     expect(mockDeleteJunctionRecord).toHaveBeenCalledWith(persistedJunctionId);
+    expect(
+      store.get(recordStoreFamilyState.atomFamily(sourceRecordId))?.taskTargets,
+    ).toEqual([]);
   });
 });
