@@ -1191,7 +1191,7 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
     docs: {
       description: {
         story:
-          'A ONE_TO_MANY relation field widget with visible "See all" button and a well-formed link.',
+          'A solo ONE_TO_MANY relation field widget with visible header actions and a well-formed "See all" link.',
       },
     },
   },
@@ -1288,7 +1288,7 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
                 <PageLayoutContentProvider
                   value={{
                     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-                    presentation: 'stack',
+                    presentation: 'solo',
                     tabId: TAB_ID_OVERVIEW,
                   }}
                 >
@@ -1309,6 +1309,21 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+
+    const header = canvasElement.querySelector('.widget-card-header');
+
+    expect(header).not.toBeNull();
+
+    if (!(header instanceof HTMLElement)) {
+      throw new Error('Widget header not found');
+    }
+
+    const headerCanvas = within(header);
+
+    expect(headerCanvas.getByText('People')).toBeVisible();
+    expect(
+      headerCanvas.getByRole('button', { name: 'Edit relation' }),
+    ).toBeVisible();
 
     const seeAllLink = await canvas.findByRole('link', {
       name: /See all .* linked to this record/,

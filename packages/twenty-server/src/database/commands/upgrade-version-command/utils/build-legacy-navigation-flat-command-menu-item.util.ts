@@ -1,61 +1,20 @@
-import { msg } from '@lingui/core/macro';
-import { getMetadataLabelPlaceholder } from 'twenty-shared/i18n';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import {
-  CommandMenuItemAvailabilityType,
-  FeatureFlagKey,
-} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v5 } from 'uuid';
 
+import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
+import { NAVIGATION_INTERPOLATED_ICON, NAVIGATION_INTERPOLATED_LABEL, NAVIGATION_INTERPOLATED_SHORT_LABEL, buildNavigationConditionalAvailabilityExpression } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
-import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
-export const NAVIGATION_COMMAND_UUID_NAMESPACE =
+export const LEGACY_NAVIGATION_COMMAND_UUID_NAMESPACE =
   'b31830da-2ae0-48eb-a915-12fa4ab96dd3';
 
-// The stored label is the source message; the target object's label stays a
-// placeholder filled at read time for the reader's locale.
-export const NAVIGATION_INTERPOLATED_LABEL = i18nLabel(
-  msg({
-    message: `Go to {objectLabelPlural}`,
-    context: 'commandMenuItem.label',
-  }),
-);
-export const NAVIGATION_INTERPOLATED_SHORT_LABEL =
-  getMetadataLabelPlaceholder('objectLabelPlural');
-export const NAVIGATION_INTERPOLATED_ICON =
-  getMetadataLabelPlaceholder('objectIcon');
+export const getLegacyNavigationCommandUniversalIdentifier = (
+  objectUniversalIdentifier: string,
+): string =>
+  v5(objectUniversalIdentifier, LEGACY_NAVIGATION_COMMAND_UUID_NAMESPACE);
 
-const NAVIGATION_FEATURE_FLAG_GATE_BY_OBJECT_UNIVERSAL_IDENTIFIER: Partial<
-  Record<string, FeatureFlagKey>
-> = {
-  [STANDARD_OBJECTS.messageCampaign.universalIdentifier]:
-    FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
-  [STANDARD_OBJECTS.messageList.universalIdentifier]:
-    FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
-};
-
-export const buildNavigationConditionalAvailabilityExpression = ({
-  universalIdentifier,
-  nameSingular,
-}: {
-  universalIdentifier: string;
-  nameSingular: string;
-}): string => {
-  const targetObjectReadPermissionExpression = `targetObjectReadPermissions.${nameSingular}`;
-  const featureFlagGate =
-    NAVIGATION_FEATURE_FLAG_GATE_BY_OBJECT_UNIVERSAL_IDENTIFIER[
-      universalIdentifier
-    ];
-
-  return isDefined(featureFlagGate)
-    ? `featureFlags.${featureFlagGate} and ${targetObjectReadPermissionExpression}`
-    : targetObjectReadPermissionExpression;
-};
-
-export const buildNavigationFlatCommandMenuItem = ({
+export const buildLegacyNavigationFlatCommandMenuItem = ({
   objectMetadata,
   commandMenuItemId,
   applicationId,
@@ -77,9 +36,8 @@ export const buildNavigationFlatCommandMenuItem = ({
   position: number;
   now: string;
 }): FlatCommandMenuItem => {
-  const universalIdentifier = v5(
+  const universalIdentifier = getLegacyNavigationCommandUniversalIdentifier(
     objectMetadata.universalIdentifier,
-    NAVIGATION_COMMAND_UUID_NAMESPACE,
   );
 
   const conditionalAvailabilityExpression =
@@ -105,9 +63,8 @@ export const buildNavigationFlatCommandMenuItem = ({
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATION,
     payload: { objectMetadataItemId: objectMetadata.id },
-    navigationTargetObjectMetadataId: objectMetadata.id,
-    navigationTargetObjectMetadataUniversalIdentifier:
-      objectMetadata.universalIdentifier,
+    navigationTargetObjectMetadataId: null,
+    navigationTargetObjectMetadataUniversalIdentifier: null,
     hotKeys: isDefined(objectMetadata.shortcut)
       ? ['G', objectMetadata.shortcut]
       : null,

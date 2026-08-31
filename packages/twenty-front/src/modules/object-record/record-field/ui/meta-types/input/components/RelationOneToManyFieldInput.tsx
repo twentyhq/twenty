@@ -16,6 +16,7 @@ import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/r
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
+import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
@@ -64,7 +65,9 @@ export const RelationOneToManyFieldInput = () => {
       recordId,
     });
 
-  const isJunctionRelation = isDefined(junctionConfig);
+  const isJunctionRelation = isUsableJunctionConfig(junctionConfig);
+  const isInvalidJunctionRelation =
+    isDefined(junctionConfig) && !isJunctionRelation;
 
   const junctionTargetObjectMetadata = (() => {
     if (!junctionConfig || junctionConfig.isMorphRelation) {
@@ -242,6 +245,10 @@ export const RelationOneToManyFieldInput = () => {
     isJunctionRelation && isDefined(junctionTargetObjectMetadata)
       ? junctionTargetObjectMetadata.id
       : relationObjectMetadataItem.id;
+
+  if (isInvalidJunctionRelation) {
+    return null;
+  }
 
   return (
     <MultipleRecordPicker
