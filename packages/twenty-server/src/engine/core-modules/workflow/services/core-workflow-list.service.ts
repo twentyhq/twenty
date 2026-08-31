@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import {
@@ -12,9 +13,12 @@ import { type CoreWorkflowConnectionDTO } from 'src/engine/core-modules/workflow
 import {
   CoreWorkflowOrderByDirection,
   CoreWorkflowOrderByField,
+  type CoreWorkflowStatus,
   type CoreWorkflowsArgs,
 } from 'src/engine/core-modules/workflow/dtos/core-workflows.input';
+import { buildCoreWorkflowStatusesHavingClause } from 'src/engine/core-modules/workflow/utils/build-core-workflow-statuses-having-clause.util';
 import { computeCoreWorkflowStatuses } from 'src/engine/core-modules/workflow/utils/compute-core-workflow-statuses.util';
+import { escapeLikeWildcards } from 'src/engine/core-modules/workflow/utils/escape-like-wildcards.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
@@ -65,7 +69,14 @@ export class CoreWorkflowListService {
 
   async findManyByWorkspaceId(
     workspaceId: string,
-    { first, after, orderBy, orderByDirection }: CoreWorkflowsArgs,
+    {
+      first,
+      after,
+      orderBy,
+      orderByDirection,
+      statuses,
+      searchTerm,
+    }: CoreWorkflowsArgs,
   ): Promise<CoreWorkflowConnectionDTO> {
     const schemaName = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
     const { column, cursorExpression, nullable, cast } =
@@ -75,7 +86,20 @@ export class CoreWorkflowListService {
     const direction = isAscending ? 'ASC' : 'DESC';
     const nullsClause = nullable ? ' NULLS LAST' : '';
 
+    const trimmedSearchTerm = searchTerm?.trim();
+    const searchPattern = isNonEmptyString(trimmedSearchTerm)
+      ? `%${escapeLikeWildcards(trimmedSearchTerm)}%`
+      : undefined;
+    const statusesFilter = isNonEmptyArray(statuses) ? statuses : undefined;
+
     const parameters: unknown[] = [workspaceId];
+    let searchCondition = '';
+
+    if (isDefined(searchPattern)) {
+      parameters.push(searchPattern);
+      searchCondition = `AND c.name ILIKE $${parameters.length} ESCAPE '\\'`;
+    }
+
     let keysetCondition = '';
 
     if (isDefined(after)) {
@@ -83,16 +107,25 @@ export class CoreWorkflowListService {
 
       if (cursor.sortValue === null) {
         parameters.push(cursor.id);
-        keysetCondition = `AND (${column} IS NULL AND c.id ${comparator} $2::uuid)`;
+        keysetCondition = `AND (${column} IS NULL AND c.id ${comparator} $${parameters.length}::uuid)`;
       } else {
-        parameters.push(cursor.sortValue, cursor.id);
+        parameters.push(cursor.sortValue);
+        const sortValueParameter = `$${parameters.length}`;
+
+        parameters.push(cursor.id);
+        const idParameter = `$${parameters.length}`;
+
         keysetCondition = nullable
-          ? `AND (${column} ${comparator} $2${cast}
-               OR (${column} = $2${cast} AND c.id ${comparator} $3::uuid)
+          ? `AND (${column} ${comparator} ${sortValueParameter}${cast}
+               OR (${column} = ${sortValueParameter}${cast} AND c.id ${comparator} ${idParameter}::uuid)
                OR ${column} IS NULL)`
-          : `AND (${column}, c.id) ${comparator} ($2${cast}, $3::uuid)`;
+          : `AND (${column}, c.id) ${comparator} (${sortValueParameter}${cast}, ${idParameter}::uuid)`;
       }
     }
+
+    const havingClause = isDefined(statusesFilter)
+      ? `HAVING ${buildCoreWorkflowStatusesHavingClause(statusesFilter)}`
+      : '';
 
     parameters.push(first + 1);
     const limitParameter = `$${parameters.length}`;
@@ -114,20 +147,21 @@ export class CoreWorkflowListService {
        LEFT JOIN core."workflowVersion" v
          ON v."workflowId" = wf.id AND v."workspaceId" = $1
        WHERE c."workspaceId" = $1
+       ${searchCondition}
        ${keysetCondition}
        GROUP BY c.id, c.name, c."applicationId", c."updatedAt"
+       ${havingClause}
        ORDER BY ${column} ${direction}${nullsClause}, c.id ${direction}
        LIMIT ${limitParameter}`,
       parameters,
     );
 
-    const [{ totalCount }]: [{ totalCount: number }] =
-      await this.coreDataSource.query(
-        `SELECT count(*)::int AS "totalCount"
-         FROM core."workflow" c
-         WHERE c."workspaceId" = $1`,
-        [workspaceId],
-      );
+    const totalCount = await this.countByWorkspaceId({
+      workspaceId,
+      schemaName,
+      searchPattern,
+      statuses: statusesFilter,
+    });
 
     const hasNextPage = rows.length > first;
     const pageRows = hasNextPage ? rows.slice(0, first) : rows;
@@ -159,5 +193,60 @@ export class CoreWorkflowListService {
       },
       totalCount,
     };
+  }
+
+  private async countByWorkspaceId({
+    workspaceId,
+    schemaName,
+    searchPattern,
+    statuses,
+  }: {
+    workspaceId: string;
+    schemaName: string;
+    searchPattern?: string;
+    statuses?: CoreWorkflowStatus[];
+  }): Promise<number> {
+    const parameters: unknown[] = [workspaceId];
+    let searchCondition = '';
+
+    if (isDefined(searchPattern)) {
+      parameters.push(searchPattern);
+      searchCondition = `AND c.name ILIKE $${parameters.length} ESCAPE '\\'`;
+    }
+
+    if (!isDefined(statuses)) {
+      const [{ totalCount }]: [{ totalCount: number }] =
+        await this.coreDataSource.query(
+          `SELECT count(*)::int AS "totalCount"
+           FROM core."workflow" c
+           WHERE c."workspaceId" = $1
+           ${searchCondition}`,
+          parameters,
+        );
+
+      return totalCount;
+    }
+
+    // the statuses filter is a HAVING clause over aggregated versions, so the
+    // filtered count needs the same joined and grouped shape as the page query
+    const [{ totalCount }]: [{ totalCount: number }] =
+      await this.coreDataSource.query(
+        `SELECT count(*)::int AS "totalCount"
+         FROM (
+           SELECT c.id
+           FROM core."workflow" c
+           LEFT JOIN ${schemaName}."workflow" wf
+             ON wf."coreWorkflowId" = c.id AND wf."deletedAt" IS NULL
+           LEFT JOIN core."workflowVersion" v
+             ON v."workflowId" = wf.id AND v."workspaceId" = $1
+           WHERE c."workspaceId" = $1
+           ${searchCondition}
+           GROUP BY c.id
+           HAVING ${buildCoreWorkflowStatusesHavingClause(statuses)}
+         ) filtered`,
+        parameters,
+      );
+
+    return totalCount;
   }
 }

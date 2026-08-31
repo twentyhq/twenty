@@ -12,12 +12,22 @@ export enum CoreWorkflowOrderByDirection {
   DESC = 'DESC',
 }
 
+export enum CoreWorkflowStatus {
+  DRAFT = 'DRAFT',
+  ACTIVE = 'ACTIVE',
+  DEACTIVATED = 'DEACTIVATED',
+}
+
 registerEnumType(CoreWorkflowOrderByField, {
   name: 'CoreWorkflowOrderByField',
 });
 
 registerEnumType(CoreWorkflowOrderByDirection, {
   name: 'CoreWorkflowOrderByDirection',
+});
+
+registerEnumType(CoreWorkflowStatus, {
+  name: 'CoreWorkflowStatus',
 });
 
 @ArgsType()
@@ -46,4 +56,14 @@ export class CoreWorkflowsArgs {
   })
   @IsEnum(CoreWorkflowOrderByDirection)
   orderByDirection: CoreWorkflowOrderByDirection;
+
+  @Field(() => [CoreWorkflowStatus], { nullable: true })
+  @IsOptional()
+  @IsEnum(CoreWorkflowStatus, { each: true })
+  statuses?: CoreWorkflowStatus[];
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  searchTerm?: string;
 }

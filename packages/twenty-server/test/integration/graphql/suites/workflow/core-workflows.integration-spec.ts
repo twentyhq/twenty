@@ -14,8 +14,8 @@ const graphql = (query: string, variables?: object) =>
     .send({ query, variables });
 
 const CORE_WORKFLOWS_QUERY = `
-  query CoreWorkflows {
-    coreWorkflows(first: 200) {
+  query CoreWorkflows($statuses: [CoreWorkflowStatus!], $searchTerm: String) {
+    coreWorkflows(first: 200, statuses: $statuses, searchTerm: $searchTerm) {
       edges {
         node {
           id
@@ -50,8 +50,11 @@ describe('coreWorkflows (e2e)', () => {
   let firstVersionId: string;
   let alreadyDestroyed = false;
 
-  const findCoreWorkflow = async (): Promise<CoreWorkflow | undefined> => {
-    const response = await graphql(CORE_WORKFLOWS_QUERY);
+  const findCoreWorkflow = async (variables?: {
+    statuses?: string[];
+    searchTerm?: string;
+  }): Promise<CoreWorkflow | undefined> => {
+    const response = await graphql(CORE_WORKFLOWS_QUERY, variables);
 
     expect(response.body.errors).toBeUndefined();
 
@@ -135,6 +138,58 @@ describe('coreWorkflows (e2e)', () => {
     expect(coreWorkflow).toBeDefined();
     expect(coreWorkflow?.name).toBe('Core Workflows List');
     expect(coreWorkflow?.statuses).toEqual(['DRAFT']);
+  });
+
+  it('should filter by derived statuses', async () => {
+    await waitForCoreWorkflow(
+      (workflow) => workflow?.statuses.includes('DRAFT') === true,
+    );
+
+    const draftFiltered = await findCoreWorkflow({ statuses: ['DRAFT'] });
+
+    expect(draftFiltered?.statuses).toEqual(['DRAFT']);
+
+    const activeOrDeactivatedFiltered = await findCoreWorkflow({
+      statuses: ['ACTIVE', 'DEACTIVATED'],
+    });
+
+    expect(activeOrDeactivatedFiltered).toBeUndefined();
+  });
+
+  it('should filter by search term with a case-insensitive name match', async () => {
+    await waitForCoreWorkflow((workflow) => isDefined(workflow));
+
+    const matching = await findCoreWorkflow({
+      searchTerm: 'core workflows li',
+    });
+
+    expect(matching?.name).toBe('Core Workflows List');
+
+    const notMatching = await findCoreWorkflow({
+      searchTerm: 'no workflow bears this name',
+    });
+
+    expect(notMatching).toBeUndefined();
+  });
+
+  it('should compose statuses and search term filters', async () => {
+    await waitForCoreWorkflow(
+      (workflow) => workflow?.statuses.includes('DRAFT') === true,
+    );
+
+    const filtered = await findCoreWorkflow({
+      statuses: ['DRAFT'],
+      searchTerm: 'CORE WORKFLOWS LIST',
+    });
+
+    expect(filtered?.statuses).toEqual(['DRAFT']);
+
+    const filteredOut = await findCoreWorkflow({
+      statuses: ['ACTIVE'],
+      searchTerm: 'CORE WORKFLOWS LIST',
+    });
+
+    expect(filteredOut).toBeUndefined();
   });
 
   it('should list the workflow as ACTIVE once its version is activated', async () => {
