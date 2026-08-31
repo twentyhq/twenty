@@ -36,8 +36,6 @@ export default defineApplicationRole({
       objectUniversalIdentifier: SLACK_USER_LINK_OBJECT_UNIVERSAL_IDENTIFIER,
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
-      // Removing a link and re-pointing one (delete then recreate) both go
-      // through the soft-delete mutation.
       canSoftDeleteObjectRecords: true,
       canDestroyObjectRecords: false,
     },
