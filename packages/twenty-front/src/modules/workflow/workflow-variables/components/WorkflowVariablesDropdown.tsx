@@ -7,6 +7,7 @@ import { type InputSchemaPropertyType } from 'twenty-shared/workflow';
 
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
+import { type WorkflowVariableStepSelection } from '@/workflow/workflow-variables/types/WorkflowVariableSelection';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
@@ -70,7 +71,10 @@ export const WorkflowVariablesDropdown = ({
   >(initialStep);
   const [selectedPath, setSelectedPath] = useState<string[]>([]);
 
-  const handleStepSelect = (stepId: string, path: string[] = []) => {
+  const handleStepSelect = ({
+    stepId,
+    path = [],
+  }: WorkflowVariableStepSelection) => {
     setSelectedPath(path);
     setSelectedStep(
       availableVariablesInWorkflowStep.find((step) => step.id === stepId),

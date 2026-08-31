@@ -9,6 +9,10 @@ import { useUpdateStepFilterFromVariable } from '@/workflow/workflow-steps/filte
 import { WorkflowVariablesDropdownSteps } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps';
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
 import { useSearchVariable } from '@/workflow/workflow-variables/hooks/useSearchVariable';
+import {
+  type WorkflowVariableSelection,
+  type WorkflowVariableStepSelection,
+} from '@/workflow/workflow-variables/types/WorkflowVariableSelection';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 
 import { useLingui } from '@lingui/react/macro';
@@ -84,7 +88,10 @@ export const WorkflowStepFilterFieldSelect = ({
 
   const dropdownId = `step-filter-field-${stepFilter.id}`;
 
-  const handleStepSelect = (stepId: string, path: string[] = []) => {
+  const handleStepSelect = ({
+    stepId,
+    path = [],
+  }: WorkflowVariableStepSelection) => {
     setSelectedPath(path);
     setSelectedStep(
       availableVariablesInWorkflowStep.find((step) => step.id === stepId),
@@ -105,11 +112,7 @@ export const WorkflowStepFilterFieldSelect = ({
     rawVariableName,
     stepId,
     isFullRecord,
-  }: {
-    rawVariableName: string;
-    stepId: string;
-    isFullRecord: boolean;
-  }) => {
+  }: WorkflowVariableSelection) => {
     const step = availableVariablesInWorkflowStep.find(
       (item) => item.id === stepId,
     );

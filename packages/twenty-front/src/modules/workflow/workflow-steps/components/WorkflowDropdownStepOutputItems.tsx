@@ -13,6 +13,7 @@ import { useUpdateStepFilterFromVariable } from '@/workflow/workflow-steps/filte
 import { useVariableDropdown } from '@/workflow/workflow-variables/hooks/useVariableDropdown';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
+import { type WorkflowVariableSelection } from '@/workflow/workflow-variables/types/WorkflowVariableSelection';
 import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
 import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
 import { getStepItemIcon } from '@/workflow/workflow-variables/utils/getStepItemIcon';
@@ -49,9 +50,12 @@ export const WorkflowDropdownStepOutputItems = ({
   });
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const handleStepFilterFieldSelect = (key: string, isFullRecord = false) => {
+  const handleStepFilterFieldSelect = ({
+    rawVariableName,
+    isFullRecord,
+  }: WorkflowVariableSelection) => {
     updateStepFilterFromVariable({
-      rawVariableName: key,
+      rawVariableName,
       isFullRecord,
       stepType: step.type,
     });

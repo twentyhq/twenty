@@ -11,6 +11,7 @@ import { type LinkOutputSchema } from '@/workflow/workflow-variables/types/LinkO
 import { type FieldOutputSchemaV2 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { type WorkflowVariableSearchResult } from '@/workflow/workflow-variables/types/WorkflowVariableSearchResult';
+import { type WorkflowVariableSelection } from '@/workflow/workflow-variables/types/WorkflowVariableSelection';
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useState } from 'react';
@@ -29,7 +30,7 @@ import { searchWorkflowVariables } from '@/workflow/workflow-variables/utils/sea
 type UseVariableDropdownProps = {
   step: StepOutputSchemaV2;
   initialPath?: string[];
-  onSelect: (value: string, isFullRecord?: boolean) => void;
+  onSelect: (selection: WorkflowVariableSelection) => void;
   onBack: () => void;
   shouldDisplaySpecialItems?: boolean;
   shouldDisplayRecordObjects?: boolean;
@@ -115,12 +116,14 @@ export const useVariableDropdown = ({
         setCurrentPath([...currentPath, key]);
         setSearchInputValue('');
       } else {
-        onSelect(
-          getVariableTemplateFromPath({
+        onSelect({
+          rawVariableName: getVariableTemplateFromPath({
             stepId: step.id,
             path: [...currentPath, key],
           }),
-        );
+          stepId: step.id,
+          isFullRecord: false,
+        });
       }
     };
 
@@ -195,13 +198,14 @@ export const useVariableDropdown = ({
 
   const handleSelectSearchResult = (result: WorkflowVariableSearchResult) => {
     if (result.isLeaf) {
-      onSelect(
-        getVariableTemplateFromPath({
+      onSelect({
+        rawVariableName: getVariableTemplateFromPath({
           stepId: result.stepId,
           path: result.path,
         }),
-        result.isFullRecord ?? false,
-      );
+        stepId: result.stepId,
+        isFullRecord: result.isFullRecord ?? false,
+      });
       return;
     }
 

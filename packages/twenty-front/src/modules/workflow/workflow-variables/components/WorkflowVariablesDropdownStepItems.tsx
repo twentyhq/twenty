@@ -60,7 +60,7 @@ export const WorkflowVariablesDropdownStepItems = ({
   } = useVariableDropdown({
     step,
     initialPath,
-    onSelect,
+    onSelect: ({ rawVariableName }) => onSelect(rawVariableName),
     onBack,
     shouldDisplayRecordObjects,
     objectNameSingularsToSelect,

@@ -79,7 +79,7 @@ export const Default: Story = {
 
     expect(canvas.queryByText('Company name')).not.toBeInTheDocument();
     await userEvent.click(runCodeItem);
-    expect(args.onSelect).toHaveBeenCalledWith('code');
+    expect(args.onSelect).toHaveBeenCalledWith({ stepId: 'code' });
   },
 };
 
@@ -120,7 +120,10 @@ export const NestedContainerSearch: Story = {
 
     await userEvent.type(searchInput, 'result');
     await userEvent.click(canvas.getByText('Result'));
-    expect(args.onSelect).toHaveBeenCalledWith('code', ['result']);
+    expect(args.onSelect).toHaveBeenCalledWith({
+      stepId: 'code',
+      path: ['result'],
+    });
     expect(args.onVariableSelect).not.toHaveBeenCalled();
   },
 };

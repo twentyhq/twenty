@@ -10,6 +10,10 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { WorkflowVariableSearchResultItems } from '@/workflow/workflow-variables/components/WorkflowVariableSearchResultItems';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { type WorkflowVariableSearchResult } from '@/workflow/workflow-variables/types/WorkflowVariableSearchResult';
+import {
+  type WorkflowVariableSelection,
+  type WorkflowVariableStepSelection,
+} from '@/workflow/workflow-variables/types/WorkflowVariableSelection';
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
 import { searchWorkflowVariables } from '@/workflow/workflow-variables/utils/searchWorkflowVariables';
 import { t } from '@lingui/core/macro';
@@ -21,12 +25,8 @@ import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 type WorkflowVariablesDropdownStepsProps = {
   dropdownId: string;
   steps: StepOutputSchemaV2[];
-  onSelect: (value: string, path?: string[]) => void;
-  onVariableSelect: (selection: {
-    rawVariableName: string;
-    stepId: string;
-    isFullRecord: boolean;
-  }) => void;
+  onSelect: (selection: WorkflowVariableStepSelection) => void;
+  onVariableSelect: (selection: WorkflowVariableSelection) => void;
   shouldDisplaySpecialItems?: boolean;
   shouldDisplayRecordObjects?: boolean;
   objectNameSingularsToSelect?: string[];
@@ -62,7 +62,7 @@ export const WorkflowVariablesDropdownSteps = ({
 
   const handleSearchResultSelect = (variable: WorkflowVariableSearchResult) => {
     if (!variable.isLeaf) {
-      onSelect(variable.stepId, variable.path);
+      onSelect({ stepId: variable.stepId, path: variable.path });
       return;
     }
 
@@ -108,7 +108,7 @@ export const WorkflowVariablesDropdownSteps = ({
             key={`step-${item.id}`}
             selected={false}
             focused={false}
-            onClick={() => onSelect(item.id)}
+            onClick={() => onSelect({ stepId: item.id })}
             text={item.name}
             LeftIcon={item.icon ? getIcon(item.icon) : undefined}
             hasSubMenu
