@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 // Mirrors twenty-shared's getLinkFaviconUrl (not a dependency of this app):
 // Twenty serves company logos from twenty-icons.com, which is public, so
 // Slack can fetch them for the record cards.
@@ -6,7 +8,7 @@ export const getCompanyLogoUrl = (
 ): string | undefined => {
   const trimmed = (domainUrl ?? '').trim();
 
-  if (!trimmed) {
+  if (!isNonEmptyString(trimmed)) {
     return undefined;
   }
 
@@ -18,7 +20,9 @@ export const getCompanyLogoUrl = (
   try {
     const hostname = new URL(normalized).hostname.replace(/^www\./, '');
 
-    return hostname ? `https://twenty-icons.com/${hostname}` : undefined;
+    return isNonEmptyString(hostname)
+      ? `https://twenty-icons.com/${hostname}`
+      : undefined;
   } catch {
     return undefined;
   }

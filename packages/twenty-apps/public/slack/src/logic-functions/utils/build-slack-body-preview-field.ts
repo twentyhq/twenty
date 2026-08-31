@@ -1,5 +1,5 @@
 import { type EntityCustomField } from '@slack/web-api';
-import { isDefined } from 'twenty-sdk/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { SLACK_ENTITY_FIELD_TYPE } from 'src/logic-functions/constants/slack-entity-field-type';
 import { asNonEmptyString } from 'src/logic-functions/utils/as-non-empty-string';
@@ -12,7 +12,7 @@ export const buildSlackBodyPreviewField = (
 ): EntityCustomField | undefined => {
   const markdown = asNonEmptyString(asObject(bodyValue)?.markdown)?.trim();
 
-  if (!isDefined(markdown) || markdown === '') {
+  if (!isNonEmptyString(markdown)) {
     return undefined;
   }
 
