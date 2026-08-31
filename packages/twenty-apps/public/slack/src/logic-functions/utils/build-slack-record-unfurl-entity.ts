@@ -112,6 +112,58 @@ type SlackUnfurlContentArgs = {
   workspaceBaseUrl: string;
 };
 
+const buildCompanyRefField = ({
+  company,
+  workspaceBaseUrl,
+}: {
+  company: Record<string, unknown> | undefined;
+  workspaceBaseUrl: string;
+}): EntityCustomField | undefined => {
+  const companyId = asNonEmptyString(company?.id);
+  const companyName = asNonEmptyString(company?.name);
+
+  if (!isDefined(companyId) || !isDefined(companyName)) {
+    return undefined;
+  }
+
+  const companyLogoUrl = getCompanyLogoUrl(
+    asNonEmptyString(asObject(company?.domainName)?.primaryLinkUrl),
+  );
+
+  return {
+    key: 'company',
+    label: 'Company',
+    type: ENTITY_REF_FIELD_TYPE,
+    entity_ref: {
+      entity_url: `${workspaceBaseUrl}/object/company/${companyId}`,
+      external_ref: { id: companyId },
+      title: companyName,
+      ...(isDefined(companyLogoUrl)
+        ? { icon: { alt_text: companyName, url: companyLogoUrl } }
+        : {}),
+    },
+  };
+};
+
+// Only avatars that are already public absolute URLs render in Slack:
+// instance-hosted files sit behind signed, often unreachable, URLs that
+// Slack cannot fetch.
+const getPublicAvatarUrl = ({
+  avatarUrl,
+  workspaceBaseUrl,
+}: {
+  avatarUrl: unknown;
+  workspaceBaseUrl: string;
+}): string | undefined => {
+  const url = asNonEmptyString(avatarUrl);
+
+  if (!isDefined(url) || !/^https?:\/\//.test(url)) {
+    return undefined;
+  }
+
+  return url.startsWith(workspaceBaseUrl) ? undefined : url;
+};
+
 const buildPersonContent = ({
   record,
   workspaceBaseUrl,
@@ -131,31 +183,17 @@ const buildPersonContent = ({
     ? [phoneCallingCode, phoneNumber].filter(isDefined).join(' ')
     : undefined;
 
-  const company = asObject(record.company);
-  const companyId = asNonEmptyString(company?.id);
-  const companyName = asNonEmptyString(company?.name);
-  const companyLogoUrl = getCompanyLogoUrl(
-    asNonEmptyString(asObject(company?.domainName)?.primaryLinkUrl),
-  );
-  const companyField: EntityCustomField | undefined =
-    isDefined(companyId) && isDefined(companyName)
-      ? {
-          key: 'company',
-          label: 'Company',
-          type: ENTITY_REF_FIELD_TYPE,
-          entity_ref: {
-            entity_url: `${workspaceBaseUrl}/object/company/${companyId}`,
-            external_ref: { id: companyId },
-            title: companyName,
-            ...(isDefined(companyLogoUrl)
-              ? { icon: { alt_text: companyName, url: companyLogoUrl } }
-              : {}),
-          },
-        }
-      : undefined;
+  const companyField = buildCompanyRefField({
+    company: asObject(record.company),
+    workspaceBaseUrl,
+  });
 
   return {
     title,
+    iconUrl: getPublicAvatarUrl({
+      avatarUrl: record.avatarUrl,
+      workspaceBaseUrl,
+    }),
     customFields: [
       companyField,
       stringField(
@@ -198,12 +236,22 @@ const buildCompanyContent = ({ record }: SlackUnfurlContentArgs) => {
   };
 };
 
-const buildOpportunityContent = ({ record }: SlackUnfurlContentArgs) => {
+const buildOpportunityContent = ({
+  record,
+  workspaceBaseUrl,
+}: SlackUnfurlContentArgs) => {
   const stage = asNonEmptyString(record.stage);
+  const company = asObject(record.company);
 
   return {
     title: asNonEmptyString(record.name) ?? '',
+    // An opportunity has no avatar of its own; its company's logo is the
+    // recognizable mark.
+    iconUrl: getCompanyLogoUrl(
+      asNonEmptyString(asObject(company?.domainName)?.primaryLinkUrl),
+    ),
     customFields: [
+      buildCompanyRefField({ company, workspaceBaseUrl }),
       stringField(
         'stage',
         'Stage',
