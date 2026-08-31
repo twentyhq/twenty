@@ -233,6 +233,19 @@ describe('Successful user and workspace creation', () => {
       workspace: { id: workspaceId },
       additionalData: { source: 'inferred-workspace-logo' },
     });
+
+    const {
+      data: { getAuthTokensFromLoginToken: authTokensData },
+    } = await getAuthTokensFromLoginToken({
+      origin: signUpInNewWorkspaceData.workspace.workspaceUrls.subdomainUrl,
+      loginToken: signUpInNewWorkspaceData.loginToken.token,
+      expectToFail: false,
+    });
+
+    await activateWorkspace({
+      accessToken: authTokensData.tokens.accessOrWorkspaceAgnosticToken.token,
+      expectToFail: false,
+    });
   });
 
   it('should reclaim a stale ONGOING_CREATION workspace and activate it', async () => {
