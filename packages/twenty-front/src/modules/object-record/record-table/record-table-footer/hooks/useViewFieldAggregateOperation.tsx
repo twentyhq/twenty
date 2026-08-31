@@ -4,6 +4,7 @@ import { type ExtendedAggregateOperations } from '@/object-record/record-table/t
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
 import { MISSING_RECORD_TABLE_WIDGET_PAGE_LAYOUT_ID } from '@/object-record/record-table-widget/constants/MissingRecordTableWidgetPageLayoutId';
 import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
+import { getViewPersistTarget } from '@/object-record/record-table-widget/utils/getViewPersistTarget';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { constructViewFromRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/constructViewFromRecordTableWidgetViewSnapshot';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -30,11 +31,10 @@ export const useViewFieldAggregateOperation = () => {
     ? undefined
     : recordTableWidgetViewDraft[recordTableWidgetContext.widgetId];
 
+  const persistTarget = getViewPersistTarget(recordTableWidgetContext);
+
   const shouldUseRecordTableWidgetDraft =
-    isDefined(recordTableWidgetContext) &&
-    recordTableWidgetContext.isPageLayoutInEditMode &&
-    isDefined(recordTableWidgetContext.pageLayoutId) &&
-    isDefined(draftSnapshot);
+    persistTarget.target === 'pageLayoutDraft' && isDefined(draftSnapshot);
 
   const currentViewForAggregateOperation = shouldUseRecordTableWidgetDraft
     ? constructViewFromRecordTableWidgetViewSnapshot(draftSnapshot)
@@ -60,14 +60,17 @@ export const useViewFieldAggregateOperation = () => {
             aggregateOperation,
           );
 
-    if (shouldUseRecordTableWidgetDraft) {
-      recordTableWidgetContext.updateViewDraftField(currentViewField.id, {
+    if (
+      persistTarget.target === 'pageLayoutDraft' &&
+      shouldUseRecordTableWidgetDraft
+    ) {
+      persistTarget.widgetContext.updateViewDraftField(currentViewField.id, {
         aggregateOperation: aggregateOperationForPersistence,
       });
       return;
     }
 
-    if (isDefined(recordTableWidgetContext)) {
+    if (persistTarget.target !== 'api') {
       return;
     }
 

@@ -2,6 +2,7 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
+import { getViewPersistTarget } from '@/object-record/record-table-widget/utils/getViewPersistTarget';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -39,15 +40,14 @@ export const useUpdateViewAggregate = () => {
           )
         : null;
 
-      if (isDefined(recordTableWidgetContext)) {
-        if (
-          !recordTableWidgetContext.isPageLayoutInEditMode ||
-          !isDefined(recordTableWidgetContext.pageLayoutId)
-        ) {
-          return;
-        }
+      const persistTarget = getViewPersistTarget(recordTableWidgetContext);
 
-        recordTableWidgetContext.updateViewDraft({
+      if (persistTarget.target === 'none') {
+        return;
+      }
+
+      if (persistTarget.target === 'pageLayoutDraft') {
+        persistTarget.widgetContext.updateViewDraft({
           kanbanAggregateOperationFieldMetadataId,
           kanbanAggregateOperation: convertedKanbanAggregateOperation,
         });
