@@ -1,5 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
@@ -70,7 +71,7 @@ describe('useVerifyLogin', () => {
     expect(mockGetAuthTokensFromLoginToken).toHaveBeenCalledWith('test-token');
   });
 
-  it('should handle verification error', async () => {
+  it('should handle a non-GraphQL verification error', async () => {
     const error = new Error('Verification failed');
     mockGetAuthTokensFromLoginToken.mockRejectedValueOnce(error);
 
@@ -80,6 +81,22 @@ describe('useVerifyLogin', () => {
 
     expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
       message: 'Authentication failed',
+    });
+    expect(mockNavigate).toHaveBeenCalledWith(AppPath.SignInUp);
+  });
+
+  it('should preserve a GraphQL verification error for the snackbar', async () => {
+    const error = new CombinedGraphQLErrors({
+      errors: [{ message: 'Session could not be created' }],
+    });
+    mockGetAuthTokensFromLoginToken.mockRejectedValueOnce(error);
+
+    const { result } = renderHooks();
+
+    await result.current.verifyLoginToken('test-token');
+
+    expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
+      apolloError: error,
     });
     expect(mockNavigate).toHaveBeenCalledWith(AppPath.SignInUp);
   });
