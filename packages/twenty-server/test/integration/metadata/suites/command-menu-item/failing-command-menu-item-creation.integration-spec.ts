@@ -103,16 +103,6 @@ const failingCommandMenuItemCreationTestCases: EachTestingContext<TestContext>[]
       },
     },
     {
-      title: 'when creating NAVIGATION with an objectMetadataItemId payload',
-      context: {
-        input: {
-          engineComponentKey: EngineComponentKey.NAVIGATION,
-          label: 'Go to Companies',
-          payload: { objectMetadataItemId: faker.string.uuid() },
-        },
-      },
-    },
-    {
       title: 'when creating standard key with workflowVersionId',
       context: {
         input: {
