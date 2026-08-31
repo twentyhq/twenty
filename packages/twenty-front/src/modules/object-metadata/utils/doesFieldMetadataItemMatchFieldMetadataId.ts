@@ -8,6 +8,7 @@ export const doesFieldMetadataItemMatchFieldMetadataId = ({
   fieldMetadataId: string;
 }): boolean =>
   fieldMetadataItem.id === fieldMetadataId ||
+  fieldMetadataItem.relation?.sourceFieldMetadata.id === fieldMetadataId ||
   (fieldMetadataItem.morphRelations ?? []).some(
     ({ sourceFieldMetadata }) => sourceFieldMetadata.id === fieldMetadataId,
   );
