@@ -23,4 +23,36 @@ describe('categorizeRelationFields', () => {
       boxedRelationFields: [],
     });
   });
+
+  it('does not expose an invalid configured junction as a regular relation', () => {
+    const taskMetadata = getMockObjectMetadataItemOrThrow('task');
+    const taskTargetsField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: taskMetadata,
+      fieldName: 'taskTargets',
+    });
+
+    if (!taskTargetsField.relation) {
+      throw new Error('Task targets relation not found');
+    }
+
+    const invalidTaskTargetsField = {
+      ...taskTargetsField,
+      settings: {
+        ...taskTargetsField.settings,
+        junctionTargetFieldId: taskTargetsField.relation.targetFieldMetadata.id,
+      },
+    };
+
+    expect(
+      categorizeRelationFields({
+        relationFields: [invalidTaskTargetsField],
+        objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
+        objectPermissionsByObjectMetadataId: {},
+      }),
+    ).toEqual({
+      inlineRelationFields: [],
+      junctionRelationFields: [],
+      boxedRelationFields: [],
+    });
+  });
 });

@@ -3,9 +3,13 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
-import { v4, v5 } from 'uuid';
+import { v4 } from 'uuid';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
+import {
+  buildLegacyNavigationFlatCommandMenuItem,
+  getLegacyNavigationCommandUniversalIdentifier,
+} from 'src/database/commands/upgrade-version-command/utils/build-legacy-navigation-flat-command-menu-item.util';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import {
   type RunOnWorkspaceArgs,
@@ -17,13 +21,7 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
-import {
-  buildNavigationFlatCommandMenuItem,
-  NAVIGATION_COMMAND_UUID_NAMESPACE,
-  NAVIGATION_INTERPOLATED_ICON,
-  NAVIGATION_INTERPOLATED_LABEL,
-  NAVIGATION_INTERPOLATED_SHORT_LABEL,
-} from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util';
+import { NAVIGATION_INTERPOLATED_ICON, NAVIGATION_INTERPOLATED_LABEL, NAVIGATION_INTERPOLATED_SHORT_LABEL } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
 import { seedCompareObjectMetadataForNavigationPosition } from 'src/engine/metadata-modules/flat-command-menu-item/utils/seed-compare-object-metadata-for-navigation-position.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
@@ -183,9 +181,8 @@ export class RefactorNavigationCommandsCommand extends ProvisionedWorkspaceComma
     const flatCommandMenuItemsToCreate: FlatCommandMenuItem[] = [];
 
     for (const objectMetadata of activeObjects) {
-      const universalIdentifier = v5(
+      const universalIdentifier = getLegacyNavigationCommandUniversalIdentifier(
         objectMetadata.universalIdentifier,
-        NAVIGATION_COMMAND_UUID_NAMESPACE,
       );
 
       if (existingNavigationUniversalIdentifiers.has(universalIdentifier)) {
@@ -193,7 +190,7 @@ export class RefactorNavigationCommandsCommand extends ProvisionedWorkspaceComma
       }
 
       flatCommandMenuItemsToCreate.push(
-        buildNavigationFlatCommandMenuItem({
+        buildLegacyNavigationFlatCommandMenuItem({
           objectMetadata,
           commandMenuItemId: v4(),
           applicationId: twentyStandardFlatApplication.id,

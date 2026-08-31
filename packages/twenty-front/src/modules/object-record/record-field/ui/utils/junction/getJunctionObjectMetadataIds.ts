@@ -1,7 +1,6 @@
-import {
-  getJunctionConfig,
-  type JunctionObjectMetadataItem,
-} from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
+import { type JunctionObjectMetadataItem } from '@/object-record/record-field/ui/utils/junction/types/JunctionObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 
 // A junction object carries no marker of its own, so the relation graph is walked to
@@ -12,19 +11,19 @@ export const getJunctionObjectMetadataIds = (
   new Set(
     objectMetadataItems.flatMap((objectMetadataItem) =>
       objectMetadataItem.fields
-        .filter((field) =>
-          isDefined(
-            getJunctionConfig({
-              settings: field.settings,
-              relationObjectMetadataId:
-                field.relation?.targetObjectMetadata.id ?? '',
-              relationTargetFieldMetadataId:
-                field.relation?.targetFieldMetadata.id,
-              sourceObjectMetadataId: objectMetadataItem.id,
-              objectMetadataItems,
-            }),
-          ),
-        )
+        .filter((field) => {
+          const junctionConfig = getJunctionConfig({
+            settings: field.settings,
+            relationObjectMetadataId:
+              field.relation?.targetObjectMetadata.id ?? '',
+            relationTargetFieldMetadataId:
+              field.relation?.targetFieldMetadata.id,
+            sourceObjectMetadataId: objectMetadataItem.id,
+            objectMetadataItems,
+          });
+
+          return isUsableJunctionConfig(junctionConfig);
+        })
         .map((junctionField) => junctionField.relation?.targetObjectMetadata.id)
         .filter(isDefined),
     ),

@@ -15,6 +15,7 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getJunctionRelationPickerData } from '@/object-record/record-field/ui/utils/junction/getJunctionRelationPickerData';
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
+import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
@@ -80,7 +81,9 @@ export const RecordDetailRelationSectionDropdownToMany = ({
       recordId,
     });
 
-  const isJunctionRelation = isDefined(junctionConfig);
+  const isJunctionRelation = isUsableJunctionConfig(junctionConfig);
+  const isInvalidJunctionRelation =
+    isDefined(junctionConfig) && !isJunctionRelation;
 
   const firstJunctionTargetField =
     junctionConfig && !junctionConfig.isMorphRelation
@@ -335,6 +338,10 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     },
     [isJunctionRelation, updateJunctionRelationFromCell, updateRelation],
   );
+
+  if (isInvalidJunctionRelation) {
+    return null;
+  }
 
   return (
     <Dropdown
