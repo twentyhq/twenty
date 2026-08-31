@@ -34,6 +34,16 @@ const resolveExecutionMode = ({
   // from LIVE to PREBUILT is a separate backfill, not a side effect of the
   // next manifest sync.
   if (isDefined(existingFlatLogicFunction)) {
+    // A manifest that stopped shipping a checksum cannot stay PREBUILT: the
+    // update would fail validation and take the whole sync down with it.
+    if (
+      existingFlatLogicFunction.executionMode ===
+        LogicFunctionExecutionMode.PREBUILT &&
+      !isNonEmptyString(logicFunctionManifest.builtHandlerChecksum)
+    ) {
+      return LogicFunctionExecutionMode.LIVE;
+    }
+
     return existingFlatLogicFunction.executionMode;
   }
 

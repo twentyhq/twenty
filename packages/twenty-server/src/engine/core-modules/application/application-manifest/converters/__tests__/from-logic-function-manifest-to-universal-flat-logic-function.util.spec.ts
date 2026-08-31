@@ -132,6 +132,23 @@ describe('fromLogicFunctionManifestToUniversalFlatLogicFunction', () => {
     expect(result.executionMode).toBe(LogicFunctionExecutionMode.PREBUILT);
   });
 
+  it.each([['empty', ''] as const, ['undefined', undefined] as const])(
+    'should demote an already synced PREBUILT function to LIVE when the manifest has an %s checksum',
+    (_label, builtHandlerChecksum) => {
+      const result = convert({
+        logicFunctionManifest: buildLogicFunctionManifest({
+          builtHandlerChecksum,
+        }),
+        applicationSourceType: ApplicationRegistrationSourceType.NPM,
+        existingFlatLogicFunctionMaps: buildFlatLogicFunctionMaps(
+          LogicFunctionExecutionMode.PREBUILT,
+        ),
+      });
+
+      expect(result.executionMode).toBe(LogicFunctionExecutionMode.LIVE);
+    },
+  );
+
   it('should derive the name from the handler when the manifest has no name', () => {
     const result = convert({
       logicFunctionManifest: buildLogicFunctionManifest({
