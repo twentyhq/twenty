@@ -12,10 +12,13 @@ import {
   makeTab,
   makeWidget,
 } from '@/page-layout/testing/pageLayoutDraftFixtures';
+import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPosition';
+import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
 import { act, renderHook } from '@testing-library/react';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   PageLayoutTabLayoutMode,
   WidgetConfigurationType,
@@ -147,9 +150,22 @@ describe('useCreateRecordPageNoteWidget', () => {
         },
       );
       act(() => {
+        const widgetToReplace = widgets.find(
+          ({ id }) => id === widgetIdToReplace,
+        );
+        if (isDefined(widgetToReplace)) {
+          store.set(draftAtom, (draft) => ({
+            ...draft,
+            tabs: removeWidgetFromTab(draft.tabs, 'tab-1', widgetToReplace.id),
+          }));
+        }
         const note = result.current.createRecordPageNoteWidget({
           tabId: 'tab-1',
-          widgetToReplace: widgets.find(({ id }) => id === widgetIdToReplace),
+          positionIndex:
+            isDefined(widgetToReplace?.position) &&
+            isVerticalListPosition(widgetToReplace.position)
+              ? widgetToReplace.position.index
+              : undefined,
         });
         result.current.insertCreatedWidgetAtContext(note.id);
       });

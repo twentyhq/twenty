@@ -18,6 +18,7 @@ import { widgetCreationTargetTabIdComponentState } from '@/page-layout/states/wi
 import {
   makeDraft,
   makeTab,
+  makeWidget,
 } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { createDefaultStandaloneRichTextWidget } from '@/page-layout/utils/createDefaultStandaloneRichTextWidget';
 import { RecordPageAddWidgetSection } from '@/page-layout/widgets/components/RecordPageAddWidgetSection';
@@ -32,9 +33,11 @@ import { graphql, HttpResponse } from 'msw';
 import { MemoryRouter } from 'react-router-dom';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { SidePanelPages } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
+  WidgetType,
 } from '~/generated-metadata/graphql';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -64,6 +67,7 @@ type RecordPageNoteWidgetStoryProps = {
   isEditable: boolean;
   layoutType: PageLayoutType;
   surface: 'widget' | 'inline-picker' | 'side-panel';
+  replacementPosition?: number;
 };
 
 const RecordPageNoteWidgetStory = ({
@@ -125,10 +129,17 @@ const meta: Meta<typeof RecordPageNoteWidgetStory> = {
       getTestEnrichedObjectMetadataItemsMock(),
     );
     const company = getMockObjectMetadataItemOrThrow('company');
+    const widgets = isDefined(args.replacementPosition)
+      ? [
+          makeWidget('first', 0),
+          makeWidget('second', 1),
+          { ...makeWidget('tasks', 2), type: WidgetType.TASKS },
+        ]
+      : args.surface === 'widget'
+        ? [NOTE_WIDGET]
+        : [];
     const layout = {
-      ...makeDraft([
-        makeTab('tab-1', args.surface === 'widget' ? [NOTE_WIDGET] : []),
-      ]),
+      ...makeDraft([makeTab('tab-1', widgets)]),
       id: PAGE_LAYOUT_TEST_INSTANCE_ID,
       type: args.layoutType,
       objectMetadataId: company.id,
@@ -163,7 +174,11 @@ const meta: Meta<typeof RecordPageNoteWidgetStory> = {
     );
     jotaiStore.set(
       EDITING_WIDGET_ATOM,
-      args.surface === 'widget' ? 'other-widget' : null,
+      isDefined(args.replacementPosition)
+        ? widgets[args.replacementPosition].id
+        : args.surface === 'widget'
+          ? 'other-widget'
+          : null,
     );
     jotaiStore.set(
       widgetCreationTargetTabIdComponentState.atomFamily({
@@ -327,6 +342,38 @@ export const AddFromInlinePicker: Story = {
 export const AddFromSidePanel: Story = {
   args: { surface: 'side-panel' },
   play: AddFromInlinePicker.play,
+};
+
+export const ReplaceFirstFromSidePanel: Story = {
+  args: { surface: 'side-panel', replacementPosition: 0 },
+  play: async ({ args, canvasElement }) => {
+    await userEvent.click(
+      await within(canvasElement).findByText('Note', { exact: true }),
+    );
+    const widgets = jotaiStore.get(DRAFT_ATOM).tabs[0].widgets;
+    await expect(widgets.map(({ title }) => title)).toEqual(
+      ['first', 'second', 'tasks'].map((title, index) =>
+        index === args.replacementPosition ? 'Note' : title,
+      ),
+    );
+    await expect(widgets.map(({ position }) => position)).toMatchObject(
+      [0, 1, 2].map((index) => ({ index })),
+    );
+    await expect(
+      widgets.find(({ id }) => id === jotaiStore.get(EDITING_WIDGET_ATOM))
+        ?.title,
+    ).toBe('Note');
+  },
+};
+
+export const ReplaceMiddleFromSidePanel: Story = {
+  args: { surface: 'side-panel', replacementPosition: 1 },
+  play: ReplaceFirstFromSidePanel.play,
+};
+
+export const ReplaceTasksFromSidePanel: Story = {
+  args: { surface: 'side-panel', replacementPosition: 2 },
+  play: ReplaceFirstFromSidePanel.play,
 };
 
 export const MoreWidgets: Story = {
