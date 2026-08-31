@@ -126,7 +126,6 @@ export class CommandMenuItemEntity
   @JoinColumn({ name: 'availabilityObjectMetadataId' })
   availabilityObjectMetadata: Relation<ObjectMetadataEntity> | null;
 
-  // Dual-written with payload.objectMetadataItemId until https://github.com/twentyhq/core-team-issues/issues/2794
   @WasIntroducedInUpgrade({
     upgradeCommandName:
       ADD_COMMAND_MENU_ITEM_TARGET_OBJECT_METADATA_UPGRADE_COMMAND_NAME,

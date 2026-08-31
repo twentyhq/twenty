@@ -6,6 +6,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CommandMenuItemExceptionCode } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.exception';
+import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
 import { type CommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item-payload.union';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -55,6 +56,8 @@ export class FlatCommandMenuItemValidatorService {
       frontComponentUniversalIdentifier:
         flatCommandMenuItem.frontComponentUniversalIdentifier,
       payload: flatCommandMenuItem.payload,
+      navigationTargetObjectMetadataUniversalIdentifier:
+        flatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier,
       validationResult,
     });
 
@@ -167,21 +170,24 @@ export class FlatCommandMenuItemValidatorService {
         ? flatEntityUpdate.payload
         : fromFlatCommandMenuItem.payload;
 
+    const navigationTargetObjectMetadataUniversalIdentifier =
+      flatEntityUpdate.navigationTargetObjectMetadataUniversalIdentifier !==
+      undefined
+        ? flatEntityUpdate.navigationTargetObjectMetadataUniversalIdentifier
+        : fromFlatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier;
+
     this.validateEngineComponentKeyCoherence({
       engineComponentKey,
       workflowVersionId: fromFlatCommandMenuItem.workflowVersionId,
       frontComponentUniversalIdentifier:
         fromFlatCommandMenuItem.frontComponentUniversalIdentifier,
       payload,
+      navigationTargetObjectMetadataUniversalIdentifier,
       validationResult,
     });
 
     this.validateNavigationTarget({
-      navigationTargetObjectMetadataUniversalIdentifier:
-        flatEntityUpdate.navigationTargetObjectMetadataUniversalIdentifier !==
-        undefined
-          ? flatEntityUpdate.navigationTargetObjectMetadataUniversalIdentifier
-          : fromFlatCommandMenuItem.navigationTargetObjectMetadataUniversalIdentifier,
+      navigationTargetObjectMetadataUniversalIdentifier,
       flatObjectMetadataMaps,
       validationResult,
     });
@@ -227,12 +233,14 @@ export class FlatCommandMenuItemValidatorService {
     workflowVersionId,
     frontComponentUniversalIdentifier,
     payload,
+    navigationTargetObjectMetadataUniversalIdentifier,
     validationResult,
   }: {
     engineComponentKey: EngineComponentKey | null;
     workflowVersionId: string | null;
     frontComponentUniversalIdentifier: string | null;
     payload: CommandMenuItemPayload | null;
+    navigationTargetObjectMetadataUniversalIdentifier: string | null;
     validationResult: FailedFlatEntityValidation<
       'commandMenuItem',
       'create' | 'update'
@@ -282,7 +290,11 @@ export class FlatCommandMenuItemValidatorService {
         break;
       }
       case EngineComponentKey.NAVIGATION: {
-        this.validateNavigationPayload({ payload, validationResult });
+        this.validateNavigationPayload({
+          payload,
+          navigationTargetObjectMetadataUniversalIdentifier,
+          validationResult,
+        });
 
         if (isNonEmptyString(workflowVersionId)) {
           validationResult.errors.push({
@@ -326,9 +338,11 @@ export class FlatCommandMenuItemValidatorService {
 
   private validateNavigationPayload({
     payload,
+    navigationTargetObjectMetadataUniversalIdentifier,
     validationResult,
   }: {
     payload: CommandMenuItemPayload | null;
+    navigationTargetObjectMetadataUniversalIdentifier: string | null;
     validationResult: FailedFlatEntityValidation<
       'commandMenuItem',
       'create' | 'update'
@@ -344,16 +358,40 @@ export class FlatCommandMenuItemValidatorService {
       return;
     }
 
-    const hasPath = 'path' in payload && isNonEmptyString(payload.path);
-    const hasObjectMetadataItemId =
-      'objectMetadataItemId' in payload &&
-      isNonEmptyString(payload.objectMetadataItemId);
+    // Pre-2-38 upgrade commands replayed during sequential upgrades still
+    // produce the { objectMetadataItemId } shape; the 2-38 payload rewrite
+    // converges those rows onto { path: null } plus the foreign key.
+    if (isObjectMetadataCommandMenuItemPayload(payload)) {
+      return;
+    }
 
-    if (!hasPath && !hasObjectMetadataItemId) {
+    if (!('path' in payload)) {
       validationResult.errors.push({
         code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
-        message: t`payload must contain either a "path" or "objectMetadataItemId" property`,
-        userFriendlyMessage: msg`Payload must contain either a path or an object metadata item identifier`,
+        message: t`payload must contain a "path" property`,
+        userFriendlyMessage: msg`Payload must contain a path`,
+      });
+
+      return;
+    }
+
+    if (payload.path === null) {
+      if (!isDefined(navigationTargetObjectMetadataUniversalIdentifier)) {
+        validationResult.errors.push({
+          code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+          message: t`navigationTargetObjectMetadataId is required when payload path is null`,
+          userFriendlyMessage: msg`A navigation target object is required when no path is provided`,
+        });
+      }
+
+      return;
+    }
+
+    if (!isNonEmptyString(payload.path)) {
+      validationResult.errors.push({
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+        message: t`payload path must be a non-empty string or null`,
+        userFriendlyMessage: msg`Payload path must be a non-empty string or null`,
       });
     }
   }

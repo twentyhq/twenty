@@ -207,14 +207,13 @@ enum CommandMenuItemAvailabilityType {
   FALLBACK
 }
 
-union CommandMenuItemPayload = PathCommandMenuItemPayload | ObjectMetadataCommandMenuItemPayload
+union CommandMenuItemPayload = PathCommandMenuItemPayload
 
 type PathCommandMenuItemPayload {
-  path: String!
-}
-
-type ObjectMetadataCommandMenuItemPayload {
-  objectMetadataItemId: UUID! @deprecated(reason: "Use CommandMenuItem.navigationTargetObjectMetadataId instead, which is the modelled relation. This variant is dual-written and kept for backward compatibility.")
+  """
+  Null on object navigation items, whose target is CommandMenuItem.navigationTargetObjectMetadataId
+  """
+  path: String
 }
 
 type LogicFunction {
@@ -4563,6 +4562,7 @@ input CreateCommandMenuItemInput {
   conditionalAvailabilityExpression: String
   availabilityObjectMetadataId: UUID
   payload: JSON
+  navigationTargetObjectMetadataId: UUID
   pageLayoutId: UUID
 }
 

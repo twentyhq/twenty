@@ -196,13 +196,13 @@ describe('CommandMenuItem creation should succeed', () => {
     });
   });
 
-  it('should create NAVIGATION command menu item with objectMetadataItemId payload', async () => {
+  it('should create NAVIGATION command menu item with navigationTargetObjectMetadataId', async () => {
     const { data } = await createCommandMenuItem({
       expectToFail: false,
       input: {
         engineComponentKey: EngineComponentKey.NAVIGATION,
         label: 'Go to Companies',
-        payload: { objectMetadataItemId: companyObjectMetadataId },
+        navigationTargetObjectMetadataId: companyObjectMetadataId,
       },
     });
 
@@ -212,8 +212,9 @@ describe('CommandMenuItem creation should succeed', () => {
       id: expect.any(String),
       engineComponentKey: EngineComponentKey.NAVIGATION,
       label: 'Go to Companies',
+      navigationTargetObjectMetadataId: companyObjectMetadataId,
       payload: {
-        objectMetadataItemId: companyObjectMetadataId,
+        path: null,
       },
     });
   });

@@ -1,11 +1,15 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 @ObjectType('PathCommandMenuItemPayload')
 export class PathCommandMenuItemPayloadDTO {
   @IsString()
-  @IsNotEmpty()
-  @Field()
-  path: string;
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+    description:
+      'Null on object navigation items, whose target is CommandMenuItem.navigationTargetObjectMetadataId',
+  })
+  path: string | null;
 }

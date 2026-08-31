@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -27,16 +28,28 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   const id = uuidv4();
   const now = new Date().toISOString();
 
-  const payload =
+  const isNavigation =
     createCommandMenuItemInput.engineComponentKey ===
-    EngineComponentKey.NAVIGATION
-      ? (createCommandMenuItemInput.payload ?? null)
-      : null;
+    EngineComponentKey.NAVIGATION;
 
-  const navigationTargetObjectMetadataId =
-    isObjectMetadataCommandMenuItemPayload(payload)
-      ? payload.objectMetadataItemId
-      : null;
+  // Clients predating the navigationTargetObjectMetadataId input sent the
+  // target inside the payload; fold it into the foreign key so the legacy
+  // shape never reaches the column again.
+  const navigationTargetObjectMetadataId = isNavigation
+    ? (createCommandMenuItemInput.navigationTargetObjectMetadataId ??
+      (isObjectMetadataCommandMenuItemPayload(createCommandMenuItemInput.payload)
+        ? createCommandMenuItemInput.payload.objectMetadataItemId
+        : null))
+    : null;
+
+  // Object navigation rows carry their target in the foreign key only; the
+  // payload stays present to satisfy the NAVIGATION payload requirement.
+  const payload = !isNavigation
+    ? null
+    : isObjectMetadataCommandMenuItemPayload(createCommandMenuItemInput.payload)
+      ? { path: null }
+      : (createCommandMenuItemInput.payload ??
+        (isDefined(navigationTargetObjectMetadataId) ? { path: null } : null));
 
   const {
     availabilityObjectMetadataUniversalIdentifier,
