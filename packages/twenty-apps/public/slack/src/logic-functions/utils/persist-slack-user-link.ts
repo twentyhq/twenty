@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { createSlackUserLink } from 'src/logic-functions/data/create-slack-user-link';
 import { destroySlackUserLink } from 'src/logic-functions/data/destroy-slack-user-link';
+import { findDeletedSlackUserLinkId } from 'src/logic-functions/data/find-deleted-slack-user-link-id';
 import { updateSlackUserLink } from 'src/logic-functions/data/update-slack-user-link';
 import { type SlackUserLink } from 'src/logic-functions/types/slack-user-link.type';
 import { type SlackUserLinkConsentState } from 'src/logic-functions/types/slack-user-link-consent-state.type';
@@ -64,6 +65,18 @@ export const persistSlackUserLink = async (
   // and is refused, and the admin's retry simply recreates the link.
   if (isDefined(existingLink)) {
     await destroySlackUserLink(client, { id: existingLink.id });
+  } else {
+    // Deleting a workspace member cascade-soft-deletes their links, and the
+    // unique index still counts soft-deleted rows, so a ghost row would block
+    // this create until it is destroyed.
+    const deletedLinkId = await findDeletedSlackUserLinkId(client, {
+      slackTeamId,
+      slackUserId,
+    });
+
+    if (isDefined(deletedLinkId)) {
+      await destroySlackUserLink(client, { id: deletedLinkId });
+    }
   }
 
   return createSlackUserLink(client, {
