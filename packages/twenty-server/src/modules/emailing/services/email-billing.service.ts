@@ -76,12 +76,10 @@ export class EmailBillingService {
 
     if (this.billingService.isBillingEnabled()) {
       const currentBillingSubscription =
-        providedCurrentBillingSubscription ??
-        (
-          await this.workspaceCacheService.getOrRecompute(workspaceId, [
-            'currentBillingSubscription',
-          ])
-        ).currentBillingSubscription;
+        await this.billingUsageService.resolveCurrentBillingSubscription({
+          workspaceId,
+          providedCurrentBillingSubscription,
+        });
 
       if (currentBillingSubscription !== NO_BILLING_SUBSCRIPTION) {
         await this.billingUsageService.decrementAvailableCreditsInCache({

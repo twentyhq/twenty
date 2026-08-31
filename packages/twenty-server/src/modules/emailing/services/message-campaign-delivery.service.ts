@@ -344,17 +344,6 @@ export class MessageCampaignDeliveryService {
       userWorkspaceId,
     } = data;
 
-    const variables =
-      await this.campaignVariableService.buildVariablesForPerson(
-        workspaceId,
-        person,
-      );
-    const { subject, html, plainText } = await renderCampaignEmail({
-      subjectTemplate: campaign.subject ?? '',
-      bodyTemplate: campaign.bodyTemplate ?? '',
-      variables,
-    });
-
     if (!hasCredits) {
       await this.settleClaimedDelivery({
         workspaceId,
@@ -368,6 +357,17 @@ export class MessageCampaignDeliveryService {
 
       return;
     }
+
+    const variables =
+      await this.campaignVariableService.buildVariablesForPerson(
+        workspaceId,
+        person,
+      );
+    const { subject, html, plainText } = await renderCampaignEmail({
+      subjectTemplate: campaign.subject ?? '',
+      bodyTemplate: campaign.bodyTemplate ?? '',
+      variables,
+    });
 
     const result = await this.sendOrRecordFailure({
       messageId,

@@ -251,12 +251,10 @@ export class BillingUsageService {
     currentBillingSubscription?: CurrentBillingSubscription;
   }): Promise<number> {
     const currentBillingSubscription =
-      providedCurrentBillingSubscription ??
-      (
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'currentBillingSubscription',
-        ])
-      ).currentBillingSubscription;
+      await this.resolveCurrentBillingSubscription({
+        workspaceId,
+        providedCurrentBillingSubscription,
+      });
 
     if (currentBillingSubscription === NO_BILLING_SUBSCRIPTION) {
       return 0;
@@ -386,12 +384,10 @@ export class BillingUsageService {
     }
 
     const currentBillingSubscription =
-      providedCurrentBillingSubscription ??
-      (
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'currentBillingSubscription',
-        ])
-      ).currentBillingSubscription;
+      await this.resolveCurrentBillingSubscription({
+        workspaceId,
+        providedCurrentBillingSubscription,
+      });
 
     if (currentBillingSubscription === NO_BILLING_SUBSCRIPTION) {
       return { hasAvailableCredits: false, reason: 'no-subscription' };
@@ -493,5 +489,22 @@ export class BillingUsageService {
     );
 
     return usedMicro ?? 0;
+  }
+
+  async resolveCurrentBillingSubscription({
+    workspaceId,
+    providedCurrentBillingSubscription,
+  }: {
+    workspaceId: string;
+    providedCurrentBillingSubscription?: CurrentBillingSubscription;
+  }): Promise<CurrentBillingSubscription> {
+    return (
+      providedCurrentBillingSubscription ??
+      (
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'currentBillingSubscription',
+        ])
+      ).currentBillingSubscription
+    );
   }
 }
