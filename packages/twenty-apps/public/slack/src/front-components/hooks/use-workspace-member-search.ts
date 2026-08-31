@@ -40,8 +40,6 @@ export const useWorkspaceMemberSearch = (
   useEffect(() => {
     const filter = buildWorkspaceMemberSearchFilter(searchTerm);
 
-    // Enter selects the top option, so stale results must never survive a
-    // changed term: an admin could otherwise pick the previous search's match.
     setOptions([]);
     setSearchErrorMessage(undefined);
 
@@ -57,15 +55,16 @@ export const useWorkspaceMemberSearch = (
 
     const timeoutId = setTimeout(async () => {
       try {
-        const response = await new RestApiClient().get<WorkspaceMembersResponse>(
-          '/rest/workspaceMembers',
-          {
-            query: {
-              filter,
-              limit: String(WORKSPACE_MEMBER_SEARCH_PAGE_SIZE),
+        const response =
+          await new RestApiClient().get<WorkspaceMembersResponse>(
+            '/rest/workspaceMembers',
+            {
+              query: {
+                filter,
+                limit: String(WORKSPACE_MEMBER_SEARCH_PAGE_SIZE),
+              },
             },
-          },
-        );
+          );
 
         if (cancelled) {
           return;
@@ -87,8 +86,6 @@ export const useWorkspaceMemberSearch = (
 
         setOptions(memberOptions);
       } catch {
-        // A failed search must not read as an empty roster: the picker would
-        // tell the admin the member does not exist.
         if (!cancelled) {
           setOptions([]);
           setSearchErrorMessage(MEMBER_SEARCH_ERROR_MESSAGE);

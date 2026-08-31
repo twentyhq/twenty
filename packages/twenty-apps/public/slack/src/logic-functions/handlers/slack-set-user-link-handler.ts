@@ -103,9 +103,6 @@ export const slackSetUserLinkHandler = async (
 
   const installedTeamId = await getInstalledSlackTeamId(slackClient);
 
-  // The consent decision hinges on whether the user is in the installed
-  // workspace, so a failed team lookup must fail closed rather than silently
-  // admin-set an in-workspace user without ever asking them.
   if (!isNonEmptyString(installedTeamId)) {
     return {
       success: false,
@@ -151,16 +148,10 @@ export const slackSetUserLinkHandler = async (
     };
   }
 
-  // We can only ask for consent from someone in the installed workspace; guests
-  // and Slack Connect users from another workspace cannot be DMed, so an admin
-  // link for them is authoritative on save.
   const isInInstalledWorkspace = slackTeamId === installedTeamId;
 
   const client = new CoreApiClient({ runAs: 'application' });
 
-  // The member id is free text on the tool path; a link is a permission
-  // grant, so an id the workspace cannot confirm fails the save rather than
-  // persisting a dangling grant behind a consent DM naming nobody.
   let memberExists: boolean;
 
   try {
@@ -196,11 +187,6 @@ export const slackSetUserLinkHandler = async (
     };
   }
 
-  // A same-member re-save changes nothing about the mapping, so it must not
-  // re-open consent: an ACTIVE/ADMIN_SET link stays as is, a pending one is
-  // left for the resend action, and a decline is respected rather than silently
-  // re-requested. Consent is only (re-)asked for a new link or a new member; to
-  // ask a declined user again, remove the link and add it back.
   const isSameMemberRelink =
     isDefined(existingLink) &&
     existingLink.workspaceMemberId === workspaceMemberId;

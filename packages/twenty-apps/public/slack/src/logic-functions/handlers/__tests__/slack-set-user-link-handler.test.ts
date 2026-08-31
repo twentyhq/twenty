@@ -92,7 +92,6 @@ vi.mock('src/logic-functions/utils/send-slack-user-link-consent-dm', () => ({
 
 const INSTALLED_TEAM_ID = 'T0123456789';
 
-// A Slack user in the installed workspace: linking asks them to consent first.
 const INPUT = {
   slackUserId: 'U0123456789',
   workspaceMemberId: 'workspace-member-1',
@@ -110,8 +109,6 @@ describe('slackSetUserLinkHandler', () => {
     doesWorkspaceMemberExistMock.mockResolvedValue(true);
     findSlackUserLinkMock.mockResolvedValue(undefined);
     createSlackUserLinkMock.mockResolvedValue('link-new');
-    // A directly-supplied id resolves to the installed team by default (a normal
-    // in-workspace user); tests override this for cross-workspace or failure.
     fetchSlackUserIdentityMock.mockResolvedValue({
       slackUserId: INPUT.slackUserId,
       slackTeamId: INSTALLED_TEAM_ID,
@@ -257,8 +254,6 @@ describe('slackSetUserLinkHandler', () => {
   });
 
   it('should admin-set the link without consent for a Slack Connect user from another workspace', async () => {
-    // A Slack Connect user from another workspace is typically not visible to
-    // users.info, so the supplied team stands.
     fetchSlackUserIdentityMock.mockResolvedValue(undefined);
 
     const result = await slackSetUserLinkHandler({
@@ -278,9 +273,6 @@ describe('slackSetUserLinkHandler', () => {
   });
 
   it('should refuse an unresolvable id that claims the installed workspace', async () => {
-    // An in-workspace id resolves via users.info, so an unresolvable one
-    // claiming the installed team is contradictory input; saving it would
-    // leave a pending link whose consent DM can never be delivered.
     fetchSlackUserIdentityMock.mockResolvedValue(undefined);
 
     const result = await slackSetUserLinkHandler({
@@ -380,8 +372,6 @@ describe('slackSetUserLinkHandler', () => {
     const result = await slackSetUserLinkHandler({ ...INPUT, name: 'Ada' });
 
     expect(result.success).toBe(true);
-    // A fresh id keeps a consent DM for the old assignment from ever
-    // activating the new one, even when the approval races the re-point.
     expect(destroySlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
       id: 'link-1',
     });
@@ -433,8 +423,6 @@ describe('slackSetUserLinkHandler', () => {
     const result = await slackSetUserLinkHandler({ ...INPUT, name: 'Ada' });
 
     expect(result.success).toBe(true);
-    // Rewriting source would trade the AUTO link's live email re-verification
-    // for a static grant the person never consented to.
     expect(updateSlackUserLinkMock).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({ source: undefined, consentState: undefined }),
@@ -630,8 +618,6 @@ describe('slackSetUserLinkHandler', () => {
       slackTeamId: INSTALLED_TEAM_ID,
       displayName: 'Ada Lovelace',
     });
-    // The match only counts once users.info certifies the account's own
-    // profile email, exactly like an id submission.
     fetchSlackUserIdentityMock.mockResolvedValue({
       slackUserId: 'U9999999999',
       slackTeamId: INSTALLED_TEAM_ID,
@@ -711,8 +697,6 @@ describe('slackSetUserLinkHandler', () => {
   });
 
   it('should activate immediately when the form submits a resolved id and team that match', async () => {
-    // The settings form sends the resolved id + team, never the email it
-    // started from, so the match must come from Slack's own profile email.
     fetchSlackUserIdentityMock.mockResolvedValue({
       slackUserId: INPUT.slackUserId,
       slackTeamId: INSTALLED_TEAM_ID,
@@ -775,8 +759,6 @@ describe('slackSetUserLinkHandler', () => {
     });
 
     expect(result.success).toBe(true);
-    // The relink guard must keep the decline out of the match rule entirely,
-    // or the AUTO source would let the resolver bypass the refusal.
     expect(findWorkspaceMemberEmailByIdMock).not.toHaveBeenCalled();
     expect(updateSlackUserLinkMock).toHaveBeenCalledWith(
       expect.anything(),

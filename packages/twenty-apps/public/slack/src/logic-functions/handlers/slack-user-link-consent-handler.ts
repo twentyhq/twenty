@@ -39,7 +39,6 @@ export const slackUserLinkConsentHandler = async (
     return { skipped: true, reason: 'Consent action has no valid value' };
   }
 
-  // Only the invited Slack user, acting from that same workspace, can answer.
   if (
     payload.user?.id !== buttonValue.slackUserId ||
     payload.team?.id !== buttonValue.slackTeamId
@@ -67,7 +66,6 @@ export const slackUserLinkConsentHandler = async (
     return { skipped: true, reason: 'No link for this Slack user' };
   }
 
-  // Idempotent: a decision only transitions a link that is still pending.
   if (link.consentState !== SLACK_USER_LINK_CONSENT_STATE.PENDING) {
     return {
       skipped: true,
@@ -75,10 +73,6 @@ export const slackUserLinkConsentHandler = async (
     };
   }
 
-  // The button carries the exact record and member the DM described. A link is
-  // keyed only by (team, user), so a delete-and-recreate reuses that tuple with
-  // a new id, and an in-place re-point keeps the id but changes the member;
-  // either way a stale DM must not activate a record the user never saw.
   if (
     link.id !== buttonValue.slackUserLinkId ||
     link.workspaceMemberId !== buttonValue.workspaceMemberId
@@ -100,8 +94,6 @@ export const slackUserLinkConsentHandler = async (
         : SLACK_USER_LINK_CONSENT_STATE.DECLINED,
     });
   } catch (error) {
-    // The write failed, so the link is still pending; tell the user their click
-    // did not stick instead of leaving the message unchanged.
     await updateSlackMessageViaResponseUrl({
       responseUrl: payload.response_url,
       text: FAILURE_MESSAGE,

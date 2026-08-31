@@ -17,8 +17,6 @@ import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util'
 const SLACKBOT_USER_ID = 'USLACKBOT';
 const MAX_RESULTS = 10;
 const PAGE_SIZE = 200;
-// users.list is Tier 2 rate limited, so cap how deep one search walks the
-// roster. Anyone past the cap is still linkable by their email or Slack id.
 const MAX_PAGES = 3;
 
 type SlackRosterMember = {
@@ -32,8 +30,6 @@ type SlackRosterMember = {
   profile?: { display_name?: string; email?: string };
 };
 
-// Guests stay listed on purpose: unlike the auto-match, an admin may link a
-// restricted account, and the consent DM still reaches it.
 const isLinkableRosterMember = (member: SlackRosterMember): boolean =>
   isNonEmptyString(member.id) &&
   member.id !== SLACKBOT_USER_ID &&
@@ -50,11 +46,6 @@ const matchesQuery = (member: SlackRosterMember, query: string): boolean =>
     (value) => isNonEmptyString(value) && value.toLowerCase().includes(query),
   );
 
-// Only a regular, confirmed account's profile email certifies its owner, so
-// anything else stays out of the option: the save-outcome note keys on this
-// email to promise instant activation, and the backend refuses the match for
-// guests and unconfirmed accounts. The row itself still matches an email
-// search either way.
 const isEmailVouchedForOwner = (member: SlackRosterMember): boolean =>
   member.is_restricted !== true &&
   member.is_ultra_restricted !== true &&
@@ -142,8 +133,6 @@ export const slackSearchUsersHandler = async (
 
   const slackClient = slackClientResult.client;
 
-  // The roster is the installed workspace by definition, so its team id
-  // stamps every result; without it the results could not be saved.
   const installedTeamId = await getInstalledSlackTeamId(slackClient);
 
   if (!isDefined(installedTeamId)) {

@@ -68,10 +68,6 @@ export const slackResolveUserLinkHandler = async (
   const slackClient = slackClientResult.client;
   const installedTeamId = await getInstalledSlackTeamId(slackClient);
 
-  // isInInstalledWorkspace drives whether the confirm card offers a consent
-  // request or an admin-set link, so a failed installed-team lookup must fail
-  // closed rather than mislabel an in-workspace user as external. Mirrors the
-  // set handler.
   if (!isNonEmptyString(installedTeamId)) {
     return {
       success: false,
@@ -80,9 +76,6 @@ export const slackResolveUserLinkHandler = async (
     };
   }
 
-  // Shared with the set handler, so the preview enforces the same trust rule
-  // the save does: a supplied team must agree with the account's real
-  // workspace, and a directly-supplied id never assumes the installed team.
   if (isNonEmptyString(requestedSlackUserId)) {
     const idTarget = await resolveLinkTargetById({
       slackClient,
@@ -101,8 +94,6 @@ export const slackResolveUserLinkHandler = async (
         slackUserId: requestedSlackUserId,
         slackTeamId: idTarget.slackTeamId,
         displayName: idTarget.identity?.displayName,
-        // Mirror the set handler: only a regular account's profile email can
-        // certify an email match.
         email: idTarget.identity?.isRegularUserAccount
           ? idTarget.identity.email
           : undefined,
@@ -140,9 +131,6 @@ export const slackResolveUserLinkHandler = async (
       slackUserId: resolvedUser.slackUserId,
       slackTeamId: resolvedTeamId,
       displayName: resolvedUser.displayName,
-      // Mirror the id path and the search route: a hit certifies the address,
-      // but only a regular account's email vouches for its owner, so a guest
-      // must not preview the instant activation the save will refuse.
       email: resolvedUser.isRegularUserAccount ? email : undefined,
       isInInstalledWorkspace: resolvedTeamId === installedTeamId,
     },

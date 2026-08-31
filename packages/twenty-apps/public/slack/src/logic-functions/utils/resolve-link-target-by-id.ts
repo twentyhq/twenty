@@ -13,13 +13,6 @@ type IdLinkTarget =
     }
   | { success: false; message: string; error: string };
 
-// A directly-supplied id may belong to another workspace, so resolve the
-// account's real team before trusting a supplied one. With no team supplied,
-// an unresolvable account fails closed rather than assume the installed
-// workspace. With one, the resolved team must agree, or an admin could hand
-// an in-workspace user a bogus external team and skip the consent ask. A
-// Slack Connect user typically cannot be resolved here and keeps the
-// supplied team.
 export const resolveLinkTargetById = async ({
   slackClient,
   slackUserId,
@@ -62,10 +55,6 @@ export const resolveLinkTargetById = async ({
     };
   }
 
-  // An id Slack cannot see may not claim the installed workspace: any
-  // in-workspace id resolves via users.info, so the claim is contradictory,
-  // and accepting it would save a pending link whose consent DM can never be
-  // delivered.
   if (!isDefined(identity) && slackTeamId === installedSlackTeamId) {
     return {
       success: false,

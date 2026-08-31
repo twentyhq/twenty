@@ -21,8 +21,6 @@ export const useAutoResolveSlackUser = () => {
     null,
   );
   const [resolveError, setResolveError] = useState<string | null>(null);
-  // Bumps whenever the Slack identity changes, so a resolve that is already in
-  // flight against an earlier identity does not restore a stale match.
   const resolveRequestIdRef = useRef(0);
   const autoResolveTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
@@ -75,8 +73,6 @@ export const useAutoResolveSlackUser = () => {
     setResolvedUser(slackUser);
   };
 
-  // Clearing first bumps the request id, so an in-flight debounced lookup
-  // cannot land on top of this one's result.
   const resolveNow = (rawIdentity: RawSlackIdentity) => {
     const input = toSlackResolveInput(rawIdentity);
 
@@ -88,8 +84,6 @@ export const useAutoResolveSlackUser = () => {
       return;
     }
 
-    // Clearing bumps the request id, so a debounced lookup already in flight
-    // can never land on top of this one's result.
     clearResolution();
     resolveIdentity(input);
   };

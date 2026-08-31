@@ -17,9 +17,6 @@ type EmailLinkTarget =
     }
   | { success: false; message: string; error: string };
 
-// lookupByEmail only sees the installed workspace, so its team is
-// authoritative: a different supplied team would misclassify this in-workspace
-// user as external and skip the consent ask.
 export const resolveLinkTargetByEmail = async ({
   slackClient,
   email,

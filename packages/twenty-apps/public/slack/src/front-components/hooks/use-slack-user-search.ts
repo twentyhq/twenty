@@ -17,13 +17,9 @@ type SlackUserSearchResponse = {
 
 const FALLBACK_SEARCH_ERROR_MESSAGE = 'Slack user search failed. Try again.';
 
-// The search roster is the installed workspace by definition, so every option
-// is in-workspace; guests and Slack Connect users go through the id path.
 const parseSearchResponse = (value: unknown): SlackUserSearchResponse => {
   const record = asRecord(value);
 
-  // A failed search must not read as an empty roster: the picker would tell
-  // the admin the person does not exist and steer them to the id path.
   if (record === undefined || record.success !== true) {
     const error = record?.error;
 
@@ -88,8 +84,6 @@ export const useSlackUserSearch = (
 
     let cancelled = false;
 
-    // Enter selects the top option, so stale results must never survive a
-    // changed term: an admin could otherwise pick the previous search's match.
     setOptions([]);
     setSearchErrorMessage(undefined);
     setIsSearching(true);
@@ -109,8 +103,6 @@ export const useSlackUserSearch = (
           setSearchErrorMessage(errorMessage);
         }
       } catch {
-        // A transport error's message carries the raw request URL; the admin
-        // gets the generic wording instead.
         if (!cancelled) {
           setOptions([]);
           setSearchErrorMessage(FALLBACK_SEARCH_ERROR_MESSAGE);

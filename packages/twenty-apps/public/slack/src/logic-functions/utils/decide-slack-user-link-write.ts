@@ -17,13 +17,6 @@ type SlackUserLinkWriteDecision = {
   source: SlackUserLinkSource | undefined;
 };
 
-// Linking a Slack account to the member with the same email is the email
-// auto-match created eagerly, before the person's first message, so it needs
-// no consent handshake. Storing it as an AUTO link keeps it exactly as safe
-// as a lazily matched one: the run-as resolver never trusts a stored AUTO
-// link and re-verifies the live Slack email on every request. The relink
-// guard keeps an explicit decline from being overwritten into an AUTO link
-// the resolver would bypass.
 export const decideSlackUserLinkWrite = async ({
   client,
   slackClient,
@@ -43,11 +36,6 @@ export const decideSlackUserLinkWrite = async ({
 }): Promise<SlackUserLinkWriteDecision> => {
   const shouldCheckEmailMatch = isInInstalledWorkspace && !isSameMemberRelink;
 
-  // Only the profile email of the account itself, fetched from Slack, can
-  // certify a match that skips consent. Mirroring the lazy auto-match, only a
-  // regular account's email counts (not bots, deleted, guest, or
-  // unconfirmed-email users) -- an email-submitted save passes the same gate
-  // as an id-submitted one, so a guest resolved by email still gets asked.
   const resolveVerifiedEmail = async (): Promise<string | undefined> => {
     if (!shouldCheckEmailMatch) {
       return undefined;
@@ -74,10 +62,6 @@ export const decideSlackUserLinkWrite = async ({
   const requiresConsent =
     isInInstalledWorkspace && !isSameMemberRelink && !isEagerAutoMatch;
 
-  // A same-member re-save rewrites neither consent state nor source: it
-  // changes nothing about the mapping, so the stored state stands. Forcing
-  // MANUAL on it would also pin an AUTO link, silently trading its live email
-  // re-verification for a static grant the person may never have consented to.
   if (isSameMemberRelink) {
     return {
       isEagerAutoMatch,

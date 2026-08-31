@@ -14,20 +14,24 @@ const { parsePayloadMock, resolveTargetWorkspaceIdMock } = vi.hoisted(() => ({
   resolveTargetWorkspaceIdMock: vi.fn(),
 }));
 
-vi.mock('src/logic-functions/utils/verify-slack-webhook-request-or-throw', () => ({
-  verifySlackWebhookRequestOrThrow: vi.fn(),
-}));
+vi.mock(
+  'src/logic-functions/utils/verify-slack-webhook-request-or-throw',
+  () => ({
+    verifySlackWebhookRequestOrThrow: vi.fn(),
+  }),
+);
 
-vi.mock('src/logic-functions/utils/parse-slack-interactivity-payload-or-throw', () => ({
-  parseSlackInteractivityPayloadOrThrow: parsePayloadMock,
-}));
+vi.mock(
+  'src/logic-functions/utils/parse-slack-interactivity-payload-or-throw',
+  () => ({
+    parseSlackInteractivityPayloadOrThrow: parsePayloadMock,
+  }),
+);
 
 vi.mock('src/logic-functions/utils/resolve-target-workspace-id', () => ({
   resolveTargetWorkspaceId: resolveTargetWorkspaceIdMock,
 }));
 
-// The webhook verification reading the headers is mocked, so the fixture
-// carries an empty but correctly shaped route payload.
 const routePayload = {
   body: {},
   headers: {},

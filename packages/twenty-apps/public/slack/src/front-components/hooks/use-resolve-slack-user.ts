@@ -9,7 +9,6 @@ import {
 } from 'src/front-components/utils/parse-resolve-slack-user-result.util';
 import { type SlackResolveInput } from 'src/front-components/utils/to-slack-resolve-input.util';
 
-
 type ResolveSlackUserState = {
   resolveSlackUser: (
     input: SlackResolveInput,
@@ -18,8 +17,6 @@ type ResolveSlackUserState = {
 };
 
 export const useResolveSlackUser = (): ResolveSlackUserState => {
-  // Counted, not boolean: an invalidated lookup may still be settling when
-  // the next one starts, and its completion must not clear the flag early.
   const [inFlightResolveCount, setInFlightResolveCount] = useState(0);
 
   const resolveSlackUser = async (

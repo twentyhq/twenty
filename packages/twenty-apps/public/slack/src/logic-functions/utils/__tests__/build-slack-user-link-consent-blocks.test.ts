@@ -32,32 +32,29 @@ const findButtonValue = (decisionActionId: string): string | undefined => {
   return undefined;
 };
 
-// The button value crosses Slack as JSON and is the only thing binding a
-// decision to the exact link and member the DM described; the round trip
-// pins the encode side to what the consent handler parses.
 describe('buildSlackUserLinkConsentBlocks', () => {
   it('should encode an approve value the consent parser reads back intact', () => {
-    expect(parseSlackUserLinkConsentButtonValue(findButtonValue(':approve'))).toEqual(
-      {
-        decision: 'APPROVE',
-        slackTeamId: BLOCK_INPUT.slackTeamId,
-        slackUserId: BLOCK_INPUT.slackUserId,
-        workspaceMemberId: BLOCK_INPUT.workspaceMemberId,
-        slackUserLinkId: BLOCK_INPUT.slackUserLinkId,
-      },
-    );
+    expect(
+      parseSlackUserLinkConsentButtonValue(findButtonValue(':approve')),
+    ).toEqual({
+      decision: 'APPROVE',
+      slackTeamId: BLOCK_INPUT.slackTeamId,
+      slackUserId: BLOCK_INPUT.slackUserId,
+      workspaceMemberId: BLOCK_INPUT.workspaceMemberId,
+      slackUserLinkId: BLOCK_INPUT.slackUserLinkId,
+    });
   });
 
   it('should encode a decline value the consent parser reads back intact', () => {
-    expect(parseSlackUserLinkConsentButtonValue(findButtonValue(':decline'))).toEqual(
-      {
-        decision: 'DECLINE',
-        slackTeamId: BLOCK_INPUT.slackTeamId,
-        slackUserId: BLOCK_INPUT.slackUserId,
-        workspaceMemberId: BLOCK_INPUT.workspaceMemberId,
-        slackUserLinkId: BLOCK_INPUT.slackUserLinkId,
-      },
-    );
+    expect(
+      parseSlackUserLinkConsentButtonValue(findButtonValue(':decline')),
+    ).toEqual({
+      decision: 'DECLINE',
+      slackTeamId: BLOCK_INPUT.slackTeamId,
+      slackUserId: BLOCK_INPUT.slackUserId,
+      workspaceMemberId: BLOCK_INPUT.workspaceMemberId,
+      slackUserLinkId: BLOCK_INPUT.slackUserLinkId,
+    });
   });
 
   it('should name the member in the consent message', () => {

@@ -5,8 +5,6 @@ import { RestApiClient } from 'twenty-client-sdk/rest';
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
 import { formatWorkspaceMemberName } from 'src/front-components/utils/format-workspace-member-name.util';
 
-// The server silently clamps the limit to its 200-record page cap, so overflow
-// is read from the response's total count, never from an over-cap fetch.
 const SLACK_USER_LINKS_PAGE_SIZE = 200;
 
 const SLACK_USER_LINKS_ERROR_MESSAGE =
@@ -48,8 +46,6 @@ export const useSlackUserLinks = (): SlackUserLinksState => {
     undefined,
   );
   const [hasMoreSlackUserLinks, setHasMoreSlackUserLinks] = useState(false);
-  // Bumps on every fetch so an older, slower response can never overwrite a
-  // newer one after back-to-back remove/resend refetches.
   const fetchIdRef = useRef(0);
 
   const fetchSlackUserLinks = useCallback(async () => {

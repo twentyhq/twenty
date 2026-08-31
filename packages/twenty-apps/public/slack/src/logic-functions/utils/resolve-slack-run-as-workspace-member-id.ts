@@ -55,7 +55,10 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
   let existingLink: SlackUserLink | undefined;
 
   try {
-    existingLink = await findSlackUserLink(client, { slackTeamId, slackUserId });
+    existingLink = await findSlackUserLink(client, {
+      slackTeamId,
+      slackUserId,
+    });
   } catch {
     return undefined;
   }
@@ -69,13 +72,9 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
         : undefined;
     }
 
-    // A declined link is an explicit refusal, so the assistant keeps its own access.
     if (existingLink?.consentState === SLACK_USER_LINK_CONSENT_STATE.DECLINED) {
       return undefined;
     }
-
-    // A pending link is not authoritative yet; fall through to the user's own
-    // email match, leaving the pending link untouched below.
   }
 
   const linkableEmail = await resolveLinkableEmail({ slackClient, identity });
@@ -93,7 +92,6 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
     return undefined;
   }
 
-  // Never let the email auto-match overwrite an in-flight manual link.
   if (isManualLink) {
     return workspaceMemberId;
   }
@@ -101,8 +99,6 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
   const applicationClient = new CoreApiClient({ runAs: 'application' });
 
   if (!isDefined(existingLink)) {
-    // The live email match is the person acting as themselves, so the link
-    // is auto-sourced and consented from the start.
     await createSlackUserLink(applicationClient, {
       slackTeamId,
       slackUserId,

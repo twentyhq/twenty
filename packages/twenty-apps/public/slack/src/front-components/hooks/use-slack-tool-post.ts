@@ -24,9 +24,6 @@ export const useSlackToolPost = ({
   const [inFlightLinkId, setInFlightLinkId] = useState<string | undefined>(
     undefined,
   );
-  // Ref, not state: a same-tick second click sees pre-rerender state, so a
-  // state guard would let it start a second request and clear the first
-  // one's marker mid-flight.
   const isPostingRef = useRef(false);
 
   const postSlackTool = async ({

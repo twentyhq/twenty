@@ -6,9 +6,6 @@ import { type WorkspaceMemberOption } from 'src/front-components/types/workspace
 import { SLACK_USER_LINK_CONSENT_STATE } from 'src/logic-functions/constants/slack-user-link-consent-state';
 import { type SlackResolvedUser } from 'src/logic-functions/types/slack-resolved-user.type';
 
-// Saving a link can DM a real person, so the outcome is spelled out next to
-// the save button before the admin commits. The wording must agree with what
-// the backend actually does, including for an account that is already linked.
 export const buildSlackUserLinkSaveNote = ({
   resolvedUser,
   selectedMember,

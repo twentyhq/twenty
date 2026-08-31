@@ -124,11 +124,7 @@ export const SearchDropdownPicker = <TOption,>({
         aria-label={searchLabel}
       />
       {isDropdownOpen && (
-        <StyledDropdown
-          // Keeps the input focused for presses inside the dropdown; the
-          // blur would unmount the list mid-interaction.
-          onMouseDown={(event) => event.preventDefault()}
-        >
+        <StyledDropdown onMouseDown={(event) => event.preventDefault()}>
           {options.map((option) => {
             const meta = getOptionMeta(option);
 
@@ -136,8 +132,6 @@ export const SearchDropdownPicker = <TOption,>({
               <StyledOption
                 key={getOptionKey(option)}
                 type="button"
-                // The sandbox fires the input's blur before click, so select
-                // on mousedown or the option unmounts before onClick runs.
                 onMouseDown={() => handleSelect(option)}
               >
                 <StyledOptionName>{getOptionName(option)}</StyledOptionName>

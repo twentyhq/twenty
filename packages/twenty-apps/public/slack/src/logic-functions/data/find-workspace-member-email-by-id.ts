@@ -1,8 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-// Feeds the email-match check that skips consent; a failed read must resolve
-// to undefined (no match) so the consent flow stays the fallback, never throw.
 export const findWorkspaceMemberEmailById = async (
   client: CoreApiClient,
   workspaceMemberId: string,

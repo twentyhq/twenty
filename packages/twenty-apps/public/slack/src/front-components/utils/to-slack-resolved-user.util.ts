@@ -2,9 +2,6 @@ import { isNonEmptyString, isString } from '@sniptt/guards';
 
 import { type SlackResolvedUser } from 'src/logic-functions/types/slack-resolved-user.type';
 
-// The resolve preview and the roster search deliver the same untrusted user
-// shape; the caller states what certifies workspace membership since the two
-// routes learn it differently.
 export const toSlackResolvedUser = ({
   record,
   isInInstalledWorkspace,

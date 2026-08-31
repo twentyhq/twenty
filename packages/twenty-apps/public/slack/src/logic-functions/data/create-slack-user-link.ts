@@ -18,7 +18,6 @@ export const createSlackUserLink = async (
     slackUserId: string;
     workspaceMemberId: string;
     name: string;
-    // No defaults: a link is a permission grant, so creators state both explicitly.
     source: SlackUserLinkSource;
     consentState: SlackUserLinkConsentState;
   },

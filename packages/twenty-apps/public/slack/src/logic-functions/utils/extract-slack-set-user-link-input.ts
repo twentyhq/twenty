@@ -4,7 +4,6 @@ import { type SlackSetUserLinkInput } from 'src/logic-functions/types/slack-set-
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
 
-// The agent tool passes the input directly, the HTTP route wraps it in a RoutePayload body.
 export type SlackSetUserLinkPayload =
   | SlackSetUserLinkInput
   | RoutePayload<SlackSetUserLinkInput>;
@@ -13,7 +12,6 @@ const isRoutePayload = (
   payload: SlackSetUserLinkPayload,
 ): payload is RoutePayload<SlackSetUserLinkInput> => 'body' in payload;
 
-// The HTTP route body is untrusted, so read each field rather than trusting its declared type.
 const toSlackSetUserLinkInput = (source: unknown): SlackSetUserLinkInput => {
   const body = asRecord(source) ?? {};
 
