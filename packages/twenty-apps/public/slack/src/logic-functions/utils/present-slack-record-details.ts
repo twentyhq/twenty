@@ -51,8 +51,6 @@ const resolveRecordLink = ({
   entityUrl: string | undefined;
   externalRef: { id: string; type: string | undefined } | undefined;
 }): SlackRecordLink | undefined => {
-  // Rebuilding a URL from the external_ref reuses the URL parser as the
-  // single validator of object names and record ids.
   const candidateUrls = [
     entityUrl,
     isDefined(externalRef?.type)
@@ -84,10 +82,6 @@ export const presentSlackRecordDetails = async (
   const slackClient = slackClientResult.client;
   const client = new CoreApiClient();
 
-  // Anyone who can see the card can request the flexpane — including
-  // external users in Slack Connect channels — and it carries the full
-  // field set, so it is gated on the viewer like the unfurl is gated on
-  // the poster.
   const identity = await fetchSlackUserIdentity({
     client: slackClient,
     slackUserId,
@@ -128,8 +122,6 @@ export const presentSlackRecordDetails = async (
   });
 
   if (!isDefined(recordLink)) {
-    // Logged verbatim while the event schema settles, so an unrecognized
-    // shape can be diagnosed from the logs.
     console.warn(
       `[slack] entity_details_requested carries no resolvable record: ${JSON.stringify(body.event)}`,
     );
@@ -155,8 +147,6 @@ export const presentSlackRecordDetails = async (
     return undefined;
   });
 
-  // The flexpane shows the full field set, read with the app's role-bounded
-  // access; per-viewer gating is deferred until flexpane actions land.
   const entity = isDefined(record)
     ? buildSlackRecordUnfurlEntity({
         recordLink,

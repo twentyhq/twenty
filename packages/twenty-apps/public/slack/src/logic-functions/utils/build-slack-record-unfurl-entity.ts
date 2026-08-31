@@ -9,8 +9,6 @@ import { toEpochSeconds } from 'src/logic-functions/utils/to-epoch-seconds';
 
 const ITEM_ENTITY_TYPE = 'slack#/entities/item';
 
-// Slack fetches the icon itself, so it must be a public URL: the workspace's
-// own instance may not be reachable from Slack (self-hosted, local dev).
 const TWENTY_PRODUCT_ICON_URL =
   'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-front/public/images/icons/ios/192.png';
 
@@ -31,8 +29,6 @@ export const buildSlackRecordUnfurlEntity = ({
   recordLink: SlackRecordLink;
   record: Record<string, unknown>;
   workspaceBaseUrl: string;
-  // The flexpane has room for the full field set; the in-channel card
-  // stays to the headline fields.
   includeDetails?: boolean;
 }): EntityMetadata | undefined => {
   const { title, customFields, iconUrl } = SLACK_RECORD_CONTENT_BUILDERS[
@@ -53,9 +49,6 @@ export const buildSlackRecordUnfurlEntity = ({
         title: { text: title },
         display_type: DISPLAY_TYPE_BY_OBJECT[recordLink.objectNameSingular],
         product_name: 'Twenty',
-        // The record's own logo when it has one (company favicon, public
-        // avatar), so the card is recognizable at a glance; the Twenty mark
-        // otherwise.
         product_icon: isDefined(iconUrl)
           ? { alt_text: title, url: iconUrl }
           : { alt_text: 'Twenty', url: TWENTY_PRODUCT_ICON_URL },
@@ -67,8 +60,6 @@ export const buildSlackRecordUnfurlEntity = ({
         ? { custom_fields: definedCustomFields }
         : {}),
     },
-    // The type makes the flexpane request self-describing: Slack echoes the
-    // external_ref back in entity_details_requested.
     external_ref: {
       id: recordLink.recordId,
       type: recordLink.objectNameSingular,

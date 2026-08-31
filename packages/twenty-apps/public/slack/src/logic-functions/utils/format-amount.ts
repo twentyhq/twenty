@@ -23,7 +23,6 @@ export const formatAmount = (
         maximumFractionDigits: 2,
       }).format(value);
     } catch {
-      // Falls through for currency codes Intl does not know.
     }
   }
 

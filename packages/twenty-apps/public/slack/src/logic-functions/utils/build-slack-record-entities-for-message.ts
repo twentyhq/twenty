@@ -8,12 +8,6 @@ import { fetchSlackRecordEntities } from 'src/logic-functions/utils/fetch-slack-
 import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
 import { parseTwentyRecordLinks } from 'src/logic-functions/utils/parse-twenty-record-links';
 
-// Slack never fires link_shared for an app's own messages, so record links
-// the bot posts get their preview attached at post time instead. The bot's
-// message content is decided upstream (the agent ran with the requester's
-// permissions, workflow steps post what their author configured), so there
-// is no poster gate here. Best-effort: any failure means no preview, never
-// a failed post.
 export const buildSlackRecordEntitiesForMessage = async (
   messageText: string,
 ): Promise<EntityMetadata[]> => {

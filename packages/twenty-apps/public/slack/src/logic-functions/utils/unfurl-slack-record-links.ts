@@ -55,9 +55,6 @@ export const unfurlSlackRecordLinks = async (
   const slackClient = slackClientResult.client;
   const client = new CoreApiClient();
 
-  // The unfurl is visible to the whole channel, so it is only rendered for
-  // links posted by someone who maps to a workspace member; the record data
-  // itself is read with the app's own role-bounded access.
   const identity = await fetchSlackUserIdentity({
     client: slackClient,
     slackUserId,

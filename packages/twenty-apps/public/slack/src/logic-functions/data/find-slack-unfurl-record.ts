@@ -8,9 +8,6 @@ type SlackUnfurlRecordSelection = {
   node: Record<string, unknown>;
 };
 
-// Selections stick to standard fields: a single unknown field fails the
-// whole GraphQL query, and dev-seeded workspaces carry custom fields
-// (employees, city, ...) that other workspaces do not have.
 const RECORD_SELECTIONS: Record<
   SlackUnfurlObjectName,
   SlackUnfurlRecordSelection

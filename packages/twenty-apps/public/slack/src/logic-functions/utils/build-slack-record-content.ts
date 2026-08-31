@@ -151,8 +151,6 @@ const buildOpportunityContent = ({
 
   return {
     title: asNonEmptyString(record.name) ?? '',
-    // An opportunity has no avatar of its own; its company's logo is the
-    // recognizable mark.
     iconUrl: getCompanyLogoUrl(
       asNonEmptyString(asObject(company?.domainName)?.primaryLinkUrl),
     ),

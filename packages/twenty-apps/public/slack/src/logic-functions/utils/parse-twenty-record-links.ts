@@ -18,8 +18,6 @@ const parseRecordLink = ({
   workspaceBaseUrl: string;
   url: string;
 }): SlackRecordLink | undefined => {
-  // Slack HTML-escapes ampersands in shared URLs; record paths carry none,
-  // but normalizing keeps the base-URL prefix comparison exact.
   const normalizedUrl = url.replace(/&amp;/g, '&');
 
   if (!normalizedUrl.startsWith(`${workspaceBaseUrl}/`)) {

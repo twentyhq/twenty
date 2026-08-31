@@ -48,8 +48,6 @@ export default defineApplicationRole({
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     },
-    // Read-only CRM access for the record link previews (work objects);
-    // functions never write CRM records, only the agent's role can.
     ...(
       [
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,

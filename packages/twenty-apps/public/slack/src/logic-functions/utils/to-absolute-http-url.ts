@@ -1,8 +1,5 @@
 import { isDefined } from 'twenty-sdk/utils';
 
-// Twenty stores bare domains like "goo.gle"; Slack link fields reject
-// values without a scheme and fail the whole unfurl with
-// error_processing_metadata.
 export const toAbsoluteHttpUrl = (
   value: string | undefined,
 ): string | undefined => {
