@@ -135,6 +135,7 @@ export const SettingsDataModelFieldRelationFormCard = ({
           {isJunctionRelationsEnabled && (
             <SettingsDataModelFieldRelationJunctionForm
               objectNameSingular={objectNameSingular}
+              existingFieldMetadataId={existingFieldMetadataId}
             />
           )}
         </>

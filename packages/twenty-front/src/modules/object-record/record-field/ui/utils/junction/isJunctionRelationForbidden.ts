@@ -2,10 +2,10 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
+import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
+import { type JunctionObjectMetadataItem } from '@/object-record/record-field/ui/utils/junction/types/JunctionObjectMetadataItem';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-
-import { type JunctionObjectMetadataItem } from './getJunctionConfig';
 
 type ObjectPermissionsByObjectMetadataId = Record<
   string,
@@ -43,6 +43,10 @@ export const isJunctionRelationForbidden = ({
 
   if (!isDefined(junctionConfig)) {
     return false;
+  }
+
+  if (!isUsableJunctionConfig(junctionConfig)) {
+    return true;
   }
 
   const junctionPermissions = getObjectPermissionsForObject(

@@ -18,6 +18,7 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
 import { StyledWidgetContentContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { FieldWidgetShowMoreButton } from '@/page-layout/widgets/field/components/FieldWidgetShowMoreButton';
 import { FIELD_WIDGET_RELATION_CARD_INITIAL_VISIBLE_ITEMS } from '@/page-layout/widgets/field/constants/FieldWidgetRelationCardInitialVisibleItems';
@@ -121,7 +122,7 @@ export const FieldWidgetJunctionRelationCard = ({
     objectMetadataItems,
   });
 
-  if (!isDefined(junctionConfig)) {
+  if (!isUsableJunctionConfig(junctionConfig)) {
     return null;
   }
 
