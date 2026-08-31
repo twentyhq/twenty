@@ -10,8 +10,24 @@ import { generateCoreClientFromSchema } from '../generate-core-client';
 import { WORKSPACE_SCHEMA_FIXTURE } from './fixtures/workspace-schema.fixture';
 
 type GeneratedClient = {
-  query: (request: Record<string, unknown>) => Promise<any>;
-  mutation: (request: Record<string, unknown>) => Promise<any>;
+  query: <TData>(request: Record<string, unknown>) => Promise<TData>;
+  mutation: <TData>(request: Record<string, unknown>) => Promise<TData>;
+};
+
+type PeopleQueryResult = {
+  people: {
+    edges: {
+      node: {
+        id: string;
+        emails: { primaryEmail: string; additionalEmails: string[] };
+        createdBy: { context: { provider: string } };
+      };
+    }[];
+  };
+};
+
+type CreatePersonResult = {
+  createPerson: { id: string; emails: { additionalEmails: string[] } };
 };
 
 type CreateClient = (options: {
@@ -291,7 +307,7 @@ describe('Core client generated from a workspace schema', () => {
         fetch: fetchMock as unknown as typeof globalThis.fetch,
       });
 
-      const result = await client.query({
+      const result = await client.query<PeopleQueryResult>({
         people: {
           __args: {
             filter: { emails: { primaryEmail: { ilike: '%ada%' } } },
@@ -339,7 +355,7 @@ describe('Core client generated from a workspace schema', () => {
         fetch: fetchMock as unknown as typeof globalThis.fetch,
       });
 
-      await client.mutation({
+      await client.mutation<CreatePersonResult>({
         createPerson: {
           __args: {
             data: {
