@@ -3,9 +3,9 @@ import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUp
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { t } from '@lingui/core/macro';
+import { isErrorLike } from '@apollo/client/errors';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -17,37 +17,61 @@ import {
 
 export const useColorScheme = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const store = useStore();
 
   const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
-  const setPersistedColorScheme = useSetAtomState(persistedColorSchemeState);
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';
 
   const setColorScheme = useCallback(
     async (value: ColorScheme) => {
-      if (!isDefined(currentWorkspaceMember)) {
+      const workspaceMember = store.get(currentWorkspaceMemberState.atom);
+
+      if (!isDefined(workspaceMember)) {
         return;
       }
 
+      const previousPersistedColorScheme = store.get(
+        persistedColorSchemeState.atom,
+      );
+
+      store.set(currentWorkspaceMemberState.atom, {
+        ...workspaceMember,
+        colorScheme: value,
+      });
+      store.set(persistedColorSchemeState.atom, value);
+
       try {
         await updateWorkspaceMemberSettings({
-          workspaceMemberId: currentWorkspaceMember.id,
+          workspaceMemberId: workspaceMember.id,
           update: {
             colorScheme: value,
           },
         });
-        setPersistedColorScheme(value);
-      } catch {
-        enqueueErrorSnackBar({ message: t`Failed to update theme` });
+      } catch (error) {
+        const latestWorkspaceMember = store.get(
+          currentWorkspaceMemberState.atom,
+        );
+
+        if (
+          latestWorkspaceMember?.id === workspaceMember.id &&
+          latestWorkspaceMember.colorScheme === value
+        ) {
+          store.set(currentWorkspaceMemberState.atom, {
+            ...latestWorkspaceMember,
+            colorScheme: workspaceMember.colorScheme,
+          });
+          store.set(
+            persistedColorSchemeState.atom,
+            previousPersistedColorScheme,
+          );
+        }
+
+        enqueueErrorSnackBar(isErrorLike(error) ? { apolloError: error } : {});
       }
     },
-    [
-      currentWorkspaceMember,
-      setPersistedColorScheme,
-      updateWorkspaceMemberSettings,
-      enqueueErrorSnackBar,
-    ],
+    [store, updateWorkspaceMemberSettings, enqueueErrorSnackBar],
   );
 
   const colorSchemeList: Array<{

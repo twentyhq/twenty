@@ -13,7 +13,7 @@ import { IconCopy } from 'twenty-ui/icon';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
-export const useCommandMenuUtilityItems = () => {
+export const useCommandMenuAppActions = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
   const isSettingsDrawer = useIsSettingsDrawer();
@@ -33,7 +33,7 @@ export const useCommandMenuUtilityItems = () => {
     System: t`Change theme to system`,
   };
 
-  const utilityItems = [
+  const appActions = [
     {
       id: 'toggle-navigation-drawer',
       ...navigationDrawerPresentation,
@@ -60,7 +60,7 @@ export const useCommandMenuUtilityItems = () => {
   const normalizedSearch = normalizeSearchText(sidePanelSearch.trim());
 
   return {
-    utilityItems: utilityItems.filter(
+    appActions: appActions.filter(
       (item) =>
         !isInPreviewMode &&
         item.isAvailable &&

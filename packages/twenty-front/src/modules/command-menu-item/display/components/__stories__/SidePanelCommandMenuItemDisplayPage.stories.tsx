@@ -499,10 +499,10 @@ const createThemeStory = (colorScheme: ColorScheme, label: string): Story => {
 
       await waitFor(() => {
         expect(canvas.queryByText(label)).not.toBeInTheDocument();
-      });
-      expect(updateWorkspaceMemberSettings).toHaveBeenCalledWith({
-        workspaceMemberId: mockedWorkspaceMemberData.id,
-        update: { colorScheme },
+        expect(updateWorkspaceMemberSettings).toHaveBeenCalledWith({
+          workspaceMemberId: mockedWorkspaceMemberData.id,
+          update: { colorScheme },
+        });
       });
       expect(
         jotaiStore.get(currentWorkspaceMemberState.atom)?.colorScheme,
@@ -540,7 +540,17 @@ export const ChangeThemeFailure: Story = {
     msw: {
       handlers: [
         graphql.mutation('UpdateWorkspaceMemberSettings', () =>
-          HttpResponse.json({ errors: [{ message: 'Profile update failed' }] }),
+          HttpResponse.json({
+            errors: [
+              {
+                message: 'Permission denied',
+                extensions: {
+                  userFriendlyMessage:
+                    'You do not have permission to update this workspace member.',
+                },
+              },
+            ],
+          }),
         ),
       ],
     },
@@ -551,7 +561,11 @@ export const ChangeThemeFailure: Story = {
     await userEvent.click(await canvas.findByText('Change theme to dark'));
 
     await waitFor(() => {
-      expect(canvas.getByText('Failed to update theme')).toBeVisible();
+      expect(
+        canvas.getByText(
+          'You do not have permission to update this workspace member.',
+        ),
+      ).toBeVisible();
     });
     expect(jotaiStore.get(currentWorkspaceMemberState.atom)?.colorScheme).toBe(
       'System',
@@ -561,7 +575,7 @@ export const ChangeThemeFailure: Story = {
   },
 };
 
-export const UtilitiesHiddenInLayoutPreview: Story = {
+export const AppActionsHiddenInLayoutPreview: Story = {
   decorators: [
     createDecorator({
       commandMenuItems: [],

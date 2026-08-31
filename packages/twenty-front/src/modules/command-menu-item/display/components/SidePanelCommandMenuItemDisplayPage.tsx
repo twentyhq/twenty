@@ -1,7 +1,7 @@
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
 import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/constants/PinnedCommandMenuItemsGap';
-import { useCommandMenuUtilityItems } from '@/command-menu-item/display/hooks/useCommandMenuUtilityItems';
+import { useCommandMenuAppActions } from '@/command-menu-item/display/hooks/useCommandMenuAppActions';
 import { commandMenuPinnedInlineLayoutFamilyState } from '@/command-menu-item/display/states/commandMenuPinnedInlineLayoutFamilyState';
 import { getVisibleCommandMenuItemCountForContainerWidth } from '@/command-menu-item/display/utils/getVisibleCommandMenuItemCountForContainerWidth';
 import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
@@ -21,7 +21,7 @@ import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 export const SidePanelCommandMenuItemDisplayPage = () => {
   const { t } = useLingui();
-  const { utilityItems } = useCommandMenuUtilityItems();
+  const { appActions } = useCommandMenuAppActions();
   const { closeSidePanelMenu } = useSidePanelMenu();
 
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
@@ -103,7 +103,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const hasNoMatchingItems =
     !matchingPinnedItems.length &&
     !matchingOtherItems.length &&
-    utilityItems.length === 0;
+    appActions.length === 0;
 
   const shouldDisplayFallbackItems =
     hasNoMatchingItems && fallbackCommandMenuItems.length > 0;
@@ -114,7 +114,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const selectableItemIds = [
     ...matchingPinnedItems.map((item) => item.id),
     ...matchingOtherItems.map((item) => item.id),
-    ...utilityItems.map((item) => item.id),
+    ...appActions.map((item) => item.id),
     ...(shouldDisplayFallbackItems
       ? fallbackCommandMenuItems.map((item) => item.id)
       : []),
@@ -132,12 +132,12 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
           ))}
         </SidePanelGroup>
       )}
-      {(matchingOtherItems.length > 0 || utilityItems.length > 0) && (
+      {(matchingOtherItems.length > 0 || appActions.length > 0) && (
         <SidePanelGroup heading={t`Other`}>
           {matchingOtherItems.map((item) => (
             <CommandMenuItemRenderer item={item} key={item.id} />
           ))}
-          {utilityItems.map((item) => {
+          {appActions.map((item) => {
             const handleClick = () => {
               item.onClick();
               closeSidePanelMenu();
