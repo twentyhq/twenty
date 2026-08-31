@@ -42,9 +42,7 @@ describe('getJunctionObjectMetadataIds', () => {
     );
 
     expect(
-      getJunctionObjectMetadataIds(
-        objectMetadataItemsWithInvalidTaskJunction,
-      ),
+      getJunctionObjectMetadataIds(objectMetadataItemsWithInvalidTaskJunction),
     ).not.toContain(taskTargetObjectMetadata.id);
   });
 });
