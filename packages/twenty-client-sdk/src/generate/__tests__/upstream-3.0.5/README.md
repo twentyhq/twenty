@@ -3,8 +3,9 @@
 Port of the test suite of [`remorses/genql`](https://github.com/remorses/genql)
 at `@genql/cli@3.0.5` (commit `4a547db46a9a614cc2b5958e28674af351898464`), the
 version the codegen in `../../genql` was vendored from. It protects the
-vendored engine's behavior — the drift ledger (`../../genql/provenance.json` +
-`genql-provenance.test.ts`) protects its bytes.
+vendored engine's behavior; the engine's output bytes are pinned by
+`../genql-engine-output.test.ts` and by the checked-in `fixture/generated/`
+client (`generated-fixture-drift.test.ts`).
 
 | Here | Upstream |
 | --- | --- |
