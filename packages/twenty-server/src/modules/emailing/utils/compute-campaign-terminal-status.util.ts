@@ -1,18 +1,16 @@
 import { MessageCampaignStatus } from 'twenty-shared/types';
 
-type CampaignMessageCounts = {
-  totalCount: number;
-  inProgressCount: number;
-  failedCount: number;
-  skippedCount: number;
-};
+import { type CampaignCounts } from 'src/engine/core-modules/emailing-domain/types/campaign-counts.type';
 
 export const computeCampaignTerminalStatus = ({
   totalCount,
   inProgressCount,
   failedCount,
   skippedCount,
-}: CampaignMessageCounts):
+}: Pick<
+  CampaignCounts,
+  'totalCount' | 'inProgressCount' | 'failedCount' | 'skippedCount'
+>):
   | MessageCampaignStatus.SENT
   | MessageCampaignStatus.SENT_WITH_ERRORS
   | undefined => {
