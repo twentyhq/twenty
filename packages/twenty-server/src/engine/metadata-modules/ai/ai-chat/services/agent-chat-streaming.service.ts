@@ -546,6 +546,17 @@ export class AgentChatStreamingService {
     modelId?: string;
     fileAttachments?: AiChatFileAttachment[];
   }): Promise<{ streamId: string; turnId: string | null }> {
+    const thread = await this.threadRepository.findOne(workspace.id, {
+      where: { id: threadId },
+      select: ['id', 'activeStreamId'],
+    });
+
+    // A crashed stream can leave a stale claim that would block answering
+    // its own question.
+    if (isDefined(thread)) {
+      await this.reapDeadStream({ thread, workspaceId: workspace.id });
+    }
+
     const streamId = generateId();
 
     await this.streamHeartbeatService.markClaimed(streamId);

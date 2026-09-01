@@ -78,6 +78,44 @@ describe('AgentChatStreamingService answerPendingQuestionAndResumeStream', () =>
     workspace,
   };
 
+  it('reaps a dead stream claim before resolving the answer', async () => {
+    const { service, threadRepository, streamHeartbeatService } =
+      buildService();
+
+    threadRepository.findOne.mockResolvedValue({
+      ...thread,
+      activeStreamId: 'dead-stream-id',
+    });
+    streamHeartbeatService.isAlive.mockResolvedValue(false);
+
+    await service.answerPendingQuestionAndResumeStream(answerArguments);
+
+    expect(threadRepository.update).toHaveBeenCalledWith(
+      'workspace-id',
+      { id: 'thread-id', activeStreamId: 'dead-stream-id' },
+      expect.objectContaining({ activeStreamId: null }),
+    );
+  });
+
+  it('leaves a live stream claim untouched before resolving the answer', async () => {
+    const { service, threadRepository, streamHeartbeatService } =
+      buildService();
+
+    threadRepository.findOne.mockResolvedValue({
+      ...thread,
+      activeStreamId: 'live-stream-id',
+    });
+    streamHeartbeatService.isAlive.mockResolvedValue(true);
+
+    await service.answerPendingQuestionAndResumeStream(answerArguments);
+
+    expect(threadRepository.update).not.toHaveBeenCalledWith(
+      'workspace-id',
+      { id: 'thread-id', activeStreamId: 'live-stream-id' },
+      expect.objectContaining({ activeStreamId: null }),
+    );
+  });
+
   it('marks the heartbeat before the pending question claims the thread', async () => {
     const { service, agentChatService, streamHeartbeatService } =
       buildService();
