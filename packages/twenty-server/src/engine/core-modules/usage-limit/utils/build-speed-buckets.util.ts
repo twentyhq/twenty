@@ -43,7 +43,7 @@ export const buildSpeedBuckets = ({
         counterScope: 'perWorkspace',
         workspaceId: authContext.workspace.id,
         resourceType,
-        operationType,
+        operationType: limit.operationType,
         spenderType: spender.spenderType,
         spenderId: limit.spenderId,
         windowSeconds: limit.periodCount,
