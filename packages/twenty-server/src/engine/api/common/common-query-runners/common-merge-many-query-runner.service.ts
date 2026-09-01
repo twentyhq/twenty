@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
+import chunk from 'lodash.chunk';
 import {
   MUTATION_MAX_MERGE_RECORDS,
+  QUERY_MAX_RECORDS,
   QUERY_MAX_RECORDS_FROM_RELATION,
 } from 'twenty-shared/constants';
 import {
@@ -16,6 +18,7 @@ import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { getConflictingFields } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-conflicting-fields.util';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -43,6 +46,7 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 
 @Injectable()
 export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -332,6 +336,174 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     return relationFields;
   }
 
+  private computeConflictingColumnGroups({
+    flatObjectMetadata,
+    joinColumnName,
+    queryRunnerContext,
+  }: {
+    flatObjectMetadata: FlatObjectMetadata;
+    joinColumnName: string;
+    queryRunnerContext: CommonExtendedQueryRunnerContext;
+  }): string[][] {
+    const { flatFieldMetadataMaps, flatIndexMaps } = queryRunnerContext;
+
+    if (!isDefined(flatIndexMaps)) {
+      return [];
+    }
+
+    const conflictingColumnGroups: string[][] = [];
+
+    for (const conflictingFieldGroup of getConflictingFields(
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      flatIndexMaps,
+    )) {
+      const columns = conflictingFieldGroup.conflictingProperties.map(
+        (conflictingProperty) => conflictingProperty.column,
+      );
+
+      if (columns.length < 2 || !columns.includes(joinColumnName)) {
+        continue;
+      }
+
+      conflictingColumnGroups.push(
+        columns.filter((column) => column !== joinColumnName),
+      );
+    }
+
+    return conflictingColumnGroups;
+  }
+
+  private computeConflictKeys({
+    record,
+    conflictingColumnGroups,
+  }: {
+    record: ObjectRecord;
+    conflictingColumnGroups: string[][];
+  }): string[] {
+    const conflictKeys: string[] = [];
+
+    for (const columns of conflictingColumnGroups) {
+      const values = columns.map((column) => record[column]);
+
+      if (values.some((value) => !isDefined(value))) {
+        continue;
+      }
+
+      conflictKeys.push(JSON.stringify([columns, values]));
+    }
+
+    return conflictKeys;
+  }
+
+  private async rePointRelatedRecordsToPriorityRecord({
+    transactionScope,
+    queryRunnerContext,
+    relationField,
+    idsToDelete,
+    priorityRecordId,
+  }: {
+    transactionScope: WorkspaceTransactionScope;
+    queryRunnerContext: CommonExtendedQueryRunnerContext;
+    relationField: {
+      objectMetadata: FlatObjectMetadata;
+      joinColumnName: string;
+    };
+    idsToDelete: string[];
+    priorityRecordId: string;
+  }): Promise<void> {
+    const { joinColumnName } = relationField;
+    const alias = relationField.objectMetadata.nameSingular;
+
+    const relatedRepository = transactionScope.getRepository(
+      alias,
+      queryRunnerContext.rolePermissionConfig,
+    );
+
+    const conflictingColumnGroups = this.computeConflictingColumnGroups({
+      flatObjectMetadata: relationField.objectMetadata,
+      joinColumnName,
+      queryRunnerContext,
+    });
+
+    const columnsToRead = ['id', ...new Set(conflictingColumnGroups.flat())];
+
+    const absorbedRecords = await relatedRepository
+      .createQueryBuilder(alias)
+      .select(columnsToRead)
+      .where({ [joinColumnName]: In(idsToDelete) })
+      .getMany<ObjectRecord>({ noFormatting: true });
+
+    if (absorbedRecords.length === 0) {
+      return;
+    }
+
+    const takenConflictKeys = new Set<string>();
+
+    if (conflictingColumnGroups.length > 0) {
+      const priorityRecords = await relatedRepository
+        .createQueryBuilder(alias)
+        .select(columnsToRead)
+        .where({ [joinColumnName]: priorityRecordId })
+        .getMany<ObjectRecord>({ noFormatting: true });
+
+      for (const priorityRecord of priorityRecords) {
+        for (const conflictKey of this.computeConflictKeys({
+          record: priorityRecord,
+          conflictingColumnGroups,
+        })) {
+          takenConflictKeys.add(conflictKey);
+        }
+      }
+    }
+
+    const idsToRePoint: string[] = [];
+    const idsToSoftDelete: string[] = [];
+
+    for (const absorbedRecord of absorbedRecords) {
+      const conflictKeys = this.computeConflictKeys({
+        record: absorbedRecord,
+        conflictingColumnGroups,
+      });
+
+      if (
+        conflictKeys.some((conflictKey) => takenConflictKeys.has(conflictKey))
+      ) {
+        idsToSoftDelete.push(absorbedRecord.id);
+        continue;
+      }
+
+      for (const conflictKey of conflictKeys) {
+        takenConflictKeys.add(conflictKey);
+      }
+
+      idsToRePoint.push(absorbedRecord.id);
+    }
+
+    for (const idsChunk of chunk(idsToSoftDelete, QUERY_MAX_RECORDS)) {
+      await relatedRepository.runMutation({
+        selectQueryBuilder: relatedRepository
+          .createQueryBuilder(alias)
+          .where({ id: In(idsChunk) }),
+        rowLevelPermissionsApplied: false,
+        kind: 'soft-delete',
+        columnsToReturn: ['id'],
+      });
+    }
+
+    for (const idsChunk of chunk(idsToRePoint, QUERY_MAX_RECORDS)) {
+      await relatedRepository.runMutation({
+        selectQueryBuilder: relatedRepository
+          .createQueryBuilder(alias)
+          .where({ id: In(idsChunk) }),
+        rowLevelPermissionsApplied: false,
+        kind: 'update',
+        columnsToReturn: ['id'],
+        data: { [joinColumnName]: priorityRecordId },
+      });
+    }
+  }
+
   private async executeMergeWithinTransaction({
     args,
     queryRunnerContext,
@@ -372,19 +544,12 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         for (const relationField of this.getRelationFieldsPointingToCurrentObject(
           queryRunnerContext,
         )) {
-          const relatedRepository = transactionScope.getRepository(
-            relationField.objectMetadata.nameSingular,
-            rolePermissionConfig,
-          );
-
-          await relatedRepository.runMutation({
-            selectQueryBuilder: relatedRepository
-              .createQueryBuilder(relationField.objectMetadata.nameSingular)
-              .where({ [relationField.joinColumnName]: In(idsToDelete) }),
-            rowLevelPermissionsApplied: false,
-            kind: 'update',
-            columnsToReturn: ['id'],
-            data: { [relationField.joinColumnName]: priorityRecordId },
+          await this.rePointRelatedRecordsToPriorityRecord({
+            transactionScope,
+            queryRunnerContext,
+            relationField,
+            idsToDelete,
+            priorityRecordId,
           });
         }
 
