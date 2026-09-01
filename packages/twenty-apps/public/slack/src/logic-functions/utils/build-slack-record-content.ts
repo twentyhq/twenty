@@ -8,6 +8,7 @@ import { asObject } from 'src/logic-functions/utils/as-object';
 import { buildFullName } from 'src/logic-functions/utils/build-full-name';
 import { buildSlackBodyPreviewField } from 'src/logic-functions/utils/build-slack-body-preview-field';
 import { buildSlackCompanyRefField } from 'src/logic-functions/utils/build-slack-company-ref-field';
+import { buildSlackLinkedinField } from 'src/logic-functions/utils/build-slack-linkedin-field';
 import { buildSlackRecordRefField } from 'src/logic-functions/utils/build-slack-record-ref-field';
 import { buildSlackStringField } from 'src/logic-functions/utils/build-slack-string-field';
 import { buildSlackTimestampDetailFields } from 'src/logic-functions/utils/build-slack-timestamp-detail-fields';
@@ -67,14 +68,7 @@ const buildPersonContent = ({
       }),
       ...(includeDetails
         ? [
-            buildSlackStringField({
-              key: 'linkedin',
-              label: 'LinkedIn',
-              value: toAbsoluteHttpUrl(
-                asNonEmptyString(asObject(record.linkedinLink)?.primaryLinkUrl),
-              ),
-              type: SLACK_ENTITY_FIELD_TYPE.LINK,
-            }),
+            buildSlackLinkedinField(record),
             ...buildSlackTimestampDetailFields(record),
           ]
         : []),
@@ -123,14 +117,7 @@ const buildCompanyContent = ({
               label: 'Account owner',
               value: buildFullName(asObject(record.accountOwner)?.name),
             }),
-            buildSlackStringField({
-              key: 'linkedin',
-              label: 'LinkedIn',
-              value: toAbsoluteHttpUrl(
-                asNonEmptyString(asObject(record.linkedinLink)?.primaryLinkUrl),
-              ),
-              type: SLACK_ENTITY_FIELD_TYPE.LINK,
-            }),
+            buildSlackLinkedinField(record),
             ...buildSlackTimestampDetailFields(record),
           ]
         : []),
