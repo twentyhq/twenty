@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { AppPath, FeatureFlagKey } from 'twenty-shared/types';
 
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CORE_WORKFLOW_FILTERS_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowFiltersCommandId';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -24,7 +25,13 @@ export const useCoreObjectsCommands = () => {
   const isOnCoreWorkflowsIndex =
     isMatchingLocation(location, AppPath.WorkflowCoreIndexPage) ||
     (isWorkflowCoreIndexPageEnabled &&
-      isMatchingLocation(location, '/objects/workflows'));
+      isMatchingLocation(
+        location,
+        AppPath.RecordIndexPage.replace(
+          ':objectNamePlural',
+          CoreObjectNamePlural.Workflow,
+        ),
+      ));
 
   const coreWorkflowFiltersCommandLabel = t`Filter workflows`;
 
