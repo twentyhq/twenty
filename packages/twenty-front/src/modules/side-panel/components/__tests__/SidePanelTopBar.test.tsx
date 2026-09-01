@@ -8,9 +8,10 @@ import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelS
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelTopBar } from '@/side-panel/components/SidePanelTopBar';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
-import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import {
+  type SidePanelNavigationStackItem,
+  sidePanelNavigationStackState,
+} from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
@@ -63,7 +64,6 @@ const recordIndexFocusItem = {
 };
 
 const createSidePanelTopBarStore = ({
-  sidePanelPage = SidePanelPages.CommandMenuDisplay,
   sidePanelNavigationStack = [
     {
       page: SidePanelPages.CommandMenuDisplay,
@@ -73,24 +73,12 @@ const createSidePanelTopBarStore = ({
     },
   ],
 }: {
-  sidePanelPage?: SidePanelPages;
-  sidePanelNavigationStack?: Array<{
-    page: SidePanelPages;
-    pageTitle: string;
-    pageIcon: typeof IconDotsVertical;
-    pageId: string;
-  }>;
+  sidePanelNavigationStack?: SidePanelNavigationStackItem[];
 } = {}) => {
   const store = createStore();
 
   store.set(isSidePanelOpenedState.atom, true);
-  store.set(sidePanelPageState.atom, sidePanelPage);
   store.set(sidePanelNavigationStackState.atom, sidePanelNavigationStack);
-  store.set(sidePanelPageInfoState.atom, {
-    title: sidePanelNavigationStack.at(-1)?.pageTitle,
-    Icon: sidePanelNavigationStack.at(-1)?.pageIcon,
-    instanceId: sidePanelNavigationStack.at(-1)?.pageId ?? '',
-  });
   store.set(focusStackState.atom, [recordIndexFocusItem]);
 
   return store;
@@ -219,7 +207,6 @@ describe('SidePanelTopBar', () => {
   it('does not navigate with Backspace while search has text', () => {
     const { store } = renderSidePanelCommandMenu(
       createSidePanelTopBarStore({
-        sidePanelPage: SidePanelPages.SearchRecords,
         sidePanelNavigationStack: [
           {
             page: SidePanelPages.CommandMenuDisplay,
@@ -255,7 +242,6 @@ describe('SidePanelTopBar', () => {
   it('goes back with Backspace from an empty search when side panel history exists', () => {
     const { store } = renderSidePanelCommandMenu(
       createSidePanelTopBarStore({
-        sidePanelPage: SidePanelPages.SearchRecords,
         sidePanelNavigationStack: [
           {
             page: SidePanelPages.CommandMenuDisplay,
@@ -281,7 +267,7 @@ describe('SidePanelTopBar', () => {
     });
 
     expect(store.get(sidePanelNavigationStackState.atom)).toHaveLength(1);
-    expect(store.get(sidePanelPageState.atom)).toBe(
+    expect(store.get(sidePanelNavigationStackState.atom).at(-1)?.page).toBe(
       SidePanelPages.CommandMenuDisplay,
     );
     expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
@@ -304,7 +290,6 @@ describe('SidePanelTopBar', () => {
   it('goes back with Escape while the search input is not focused', () => {
     const { store } = renderSidePanelCommandMenu(
       createSidePanelTopBarStore({
-        sidePanelPage: SidePanelPages.SearchRecords,
         sidePanelNavigationStack: [
           {
             page: SidePanelPages.CommandMenuDisplay,
@@ -362,7 +347,6 @@ describe('SidePanelTopBar', () => {
 
     renderSidePanelCommandMenu(
       createSidePanelTopBarStore({
-        sidePanelPage: SidePanelPages.SearchRecords,
         sidePanelNavigationStack: [
           {
             page: SidePanelPages.CommandMenuDisplay,

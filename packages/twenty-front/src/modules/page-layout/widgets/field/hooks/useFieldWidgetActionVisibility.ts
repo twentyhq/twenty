@@ -4,7 +4,8 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
+import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useFieldWidgetFieldDefinition } from '@/page-layout/widgets/field/hooks/useFieldWidgetFieldDefinition';
@@ -60,18 +61,16 @@ export const useFieldWidgetActionVisibility = ({
     widget.configuration.nestedRelationFieldMetadataId,
   );
 
-  const isJunctionRelation = isDefined(
-    isDefined(relationMetadata)
-      ? getJunctionConfig({
-          settings: relationMetadata.settings,
-          relationObjectMetadataId: relationMetadata.relationObjectMetadataId,
-          relationTargetFieldMetadataId:
-            relationMetadata.relationFieldMetadataId,
-          sourceObjectMetadataId: objectMetadataItem.id,
-          objectMetadataItems,
-        })
-      : null,
-  );
+  const junctionConfig = isDefined(relationMetadata)
+    ? resolveJunctionConfig({
+        settings: relationMetadata.settings,
+        relationObjectMetadataId: relationMetadata.relationObjectMetadataId,
+        relationTargetFieldMetadataId: relationMetadata.relationFieldMetadataId,
+        sourceObjectMetadataId: objectMetadataItem.id,
+        objectMetadataItems,
+      })
+    : null;
+  const isJunctionRelation = isDefined(junctionConfig);
 
   const showSeeAll =
     isOneToManyRelation && !isNestedRelationWidget && !isJunctionRelation;
@@ -88,6 +87,8 @@ export const useFieldWidgetActionVisibility = ({
     fieldMetadataItem: {
       id: fieldMetadataItem.id,
       isUIEditable: fieldMetadataItem.isUIEditable ?? true,
+      type: fieldMetadataItem.type,
+      settings: fieldMetadataItem.settings,
     },
     fieldDefinition,
     objectPermissionsByObjectMetadataId,
@@ -96,7 +97,10 @@ export const useFieldWidgetActionVisibility = ({
   // The read-only chain already hides edit during layout customization
   // (useIsRecordReadOnly returns true then); the explicit check states the
   // rule here instead of leaving it implicit.
-  const showEdit = !isPageLayoutInEditMode && !isFieldReadOnly;
+  const showEdit =
+    !isPageLayoutInEditMode &&
+    !isFieldReadOnly &&
+    (!isDefined(junctionConfig) || isUsableJunctionConfig(junctionConfig));
 
   return { showSeeAll, showEdit };
 };

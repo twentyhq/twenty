@@ -111,8 +111,16 @@ export const useOpenWidgetSettingsInSidePanel = (
       }
 
       if (widgetType === WidgetType.STANDALONE_RICH_TEXT) {
+        if (isDashboardPageLayout) {
+          closeSidePanelMenu();
+        } else {
+          navigatePageLayoutSidePanel({
+            sidePanelPage: SidePanelPages.PageLayoutWidgetSettings,
+            pageTitle: t`Note`,
+            resetNavigationStack: true,
+          });
+        }
         setPageLayoutEditingWidgetId(widgetId);
-        closeSidePanelMenu();
         return;
       }
 
@@ -133,19 +141,19 @@ export const useOpenWidgetSettingsInSidePanel = (
         isContainingTabSingleWidget &&
         !isViewportFillingWidgetInVerticalList
       ) {
-        setPageLayoutTabSettingsOpenTabId(containingTab.id);
         navigatePageLayoutSidePanel({
           sidePanelPage: SidePanelPages.PageLayoutTabSettings,
           resetNavigationStack: true,
         });
+        setPageLayoutTabSettingsOpenTabId(containingTab.id);
         return;
       }
 
-      setPageLayoutEditingWidgetId(widgetId);
       navigatePageLayoutSidePanel({
         sidePanelPage: SidePanelPages.PageLayoutWidgetSettings,
         resetNavigationStack: true,
       });
+      setPageLayoutEditingWidgetId(widgetId);
     },
     [
       isDashboardPageLayout,

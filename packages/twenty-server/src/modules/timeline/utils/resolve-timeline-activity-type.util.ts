@@ -23,6 +23,7 @@ export type ResolvableTimelineActivityType = Pick<
   | 'objectUniversalIdentifier'
   | 'targetRelationFieldUniversalIdentifier'
   | 'triggerFieldUniversalIdentifiers'
+  | 'happensAtFieldUniversalIdentifier'
   | 'frontComponentUniversalIdentifier'
   | 'replacesTimelineActivityTypeUniversalIdentifier'
   | 'isActive'

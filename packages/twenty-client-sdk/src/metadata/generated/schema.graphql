@@ -1035,6 +1035,7 @@ enum WidgetType {
   CALL_RECORDING_TRANSCRIPT
   MESSAGE_CAMPAIGN_BODY
   MESSAGE_CAMPAIGN_DETAILS
+  FORM_FIELD
 }
 
 union PageLayoutWidgetPosition = PageLayoutWidgetGridPosition | PageLayoutWidgetVerticalListPosition | PageLayoutWidgetCanvasPosition
@@ -1062,7 +1063,7 @@ type PageLayoutWidgetCanvasPosition {
   layoutMode: PageLayoutTabLayoutMode!
 }
 
-union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
+union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FormFieldConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
 
 type AggregateChartConfiguration {
   configurationType: WidgetConfigurationType!
@@ -1107,6 +1108,7 @@ enum WidgetConfigurationType {
   CALL_RECORDING_TRANSCRIPT
   MESSAGE_CAMPAIGN_BODY
   MESSAGE_CAMPAIGN_DETAILS
+  FORM_FIELD
 }
 
 """Format used to display the chart value"""
@@ -1296,6 +1298,7 @@ type FieldConfiguration {
   fieldDisplayMode: FieldDisplayMode!
   viewId: String
   nestedRelationFieldMetadataId: String
+  isUIEditable: Boolean
 }
 
 """Display mode for field configuration widgets"""
@@ -1316,6 +1319,11 @@ type FieldsConfiguration {
   viewId: String
   newFieldDefaultVisibility: Boolean
   shouldAllowUserToSeeHiddenFields: Boolean
+}
+
+type FormFieldConfiguration {
+  configurationType: WidgetConfigurationType!
+  fieldMetadataId: String!
 }
 
 type FilesConfiguration {
@@ -1342,6 +1350,7 @@ type RecordTableConfiguration {
   configurationType: WidgetConfigurationType!
   viewId: String
   recordLimit: Int
+  isUIEditable: Boolean
 }
 
 type WorkflowConfiguration {
@@ -1384,6 +1393,7 @@ type PageLayout {
   universalIdentifier: UUID!
   applicationId: UUID!
   isSystemSideEffect: Boolean!
+  isFirstTabPinned: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
@@ -1394,6 +1404,7 @@ enum PageLayoutType {
   RECORD_PAGE
   DASHBOARD
   STANDALONE_PAGE
+  RECORD_FORM
 }
 
 type ApplicationConnectionProviderOAuthConfig {
@@ -1826,7 +1837,6 @@ enum FeatureFlagKey {
   IS_JSON_FILTER_ENABLED
   IS_EMAIL_GROUP_ENABLED
   IS_JUNCTION_RELATIONS_ENABLED
-  IS_LIST_VIEW_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
   IS_WORKFLOW_VERSION_IN_CORE_ENABLED
@@ -2966,6 +2976,7 @@ type ChannelSyncSuccess {
 type CreateCalendarEventOutput {
   success: Boolean!
   iCalUid: String
+  calendarEventId: String
   conferenceLink: String
   error: String
 }
@@ -3290,6 +3301,7 @@ enum MetadataTranslationProvenance {
 type TimelineActivityTypeEmitThrough {
   relationFieldUniversalIdentifier: UUID!
   triggerFieldUniversalIdentifiers: [UUID!]
+  happensAtFieldUniversalIdentifier: UUID
 }
 
 type TimelineActivityTypeEmit {
@@ -3513,6 +3525,7 @@ type Query {
   pieChartData(input: PieChartDataInput!): PieChartData!
   lineChartData(input: LineChartDataInput!): LineChartData!
   barChartData(input: BarChartDataInput!): BarChartData!
+  callRecordingIdForCalendarEvent(calendarEventId: UUID!): UUID
   getConnectedImapSmtpCaldavAccount(id: UUID!): ConnectedImapSmtpCaldavAccount!
   getAutoCompleteAddress(address: String!, token: String!, country: String, isFieldCity: Boolean): [AutocompleteResult!]!
   getAddressDetails(placeId: String!, token: String!): PlaceDetailsResult!
@@ -4318,6 +4331,7 @@ input UpdatePageLayoutWithTabsInput {
   name: String!
   type: PageLayoutType!
   objectMetadataId: UUID
+  isFirstTabPinned: Boolean
   tabs: [UpdatePageLayoutTabWithWidgetsInput!]!
 }
 

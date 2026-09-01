@@ -3,7 +3,7 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   enqueueSnackbar,
   openSidePanelPage,
-  SidePanelPages,
+  AppPath,
   useFrontComponentExecutionContext,
   type FrontComponentExecutionContext,
 } from 'twenty-sdk/front-component';
@@ -104,9 +104,11 @@ const ApplyToBrief = () => {
           variant: 'success',
         });
         await openSidePanelPage({
-          page: SidePanelPages.ViewRecord,
-          recordId: result.applicationId,
-          objectNameSingular: 'application',
+          to: AppPath.RecordShowPage,
+          params: {
+            objectNameSingular: 'application',
+            objectRecordId: result.applicationId,
+          },
           resetNavigationStack: true,
         });
       } else {

@@ -24,19 +24,19 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 // TODO: Refacto-common - Rename CommonRecordsToGraphqlConnectionHelper
 export class ObjectRecordsToGraphqlConnectionHelper {
   private flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  private flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  private flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   private objectIdByNameSingular: Record<string, string>;
 
   constructor(
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     objectIdByNameSingular: Record<string, string>,
   ) {
     this.flatObjectMetadataMaps = flatObjectMetadataMaps;
@@ -295,7 +295,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
   }
 
   private processCompositeField(
-    fieldMetadata: FlatFieldMetadata,
+    fieldMetadata: OrmFlatFieldMetadata,
     // oxlint-disable-next-line typescript/no-explicit-any
     fieldValue: any,
     // oxlint-disable-next-line typescript/no-explicit-any

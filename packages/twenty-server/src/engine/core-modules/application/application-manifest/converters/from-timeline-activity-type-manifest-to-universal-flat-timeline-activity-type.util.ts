@@ -28,6 +28,9 @@ export const fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType
     triggerFieldUniversalIdentifiers:
       timelineActivityTypeManifest.emit?.through
         ?.triggerFieldUniversalIdentifiers ?? null,
+    happensAtFieldUniversalIdentifier:
+      timelineActivityTypeManifest.emit?.through
+        ?.happensAtFieldUniversalIdentifier ?? null,
     replacesTimelineActivityTypeUniversalIdentifier:
       timelineActivityTypeManifest.replacesTimelineActivityTypeUniversalIdentifier ??
       null,

@@ -7,11 +7,11 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 
-const openViewTargetMock = jest.fn();
+const openRoutedPageInSidePanelMock = jest.fn();
 
-jest.mock('@/ai/hooks/useChatTargetNavigation', () => ({
-  useChatTargetNavigation: () => ({
-    openViewTarget: openViewTargetMock,
+jest.mock('@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel', () => ({
+  useOpenRoutedPageInSidePanel: () => ({
+    openRoutedPageInSidePanel: openRoutedPageInSidePanelMock,
   }),
 }));
 
@@ -31,10 +31,12 @@ const renderViewLink = ({
   viewId,
   displayName,
   views,
+  initialPath = '/objects/companies',
 }: {
   viewId: string;
   displayName: string;
   views: ViewWithRelations[];
+  initialPath?: string;
 }) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: [],
@@ -43,7 +45,7 @@ const renderViewLink = ({
   });
 
   return render(
-    <MemoryRouter>
+    <MemoryRouter initialEntries={[initialPath]}>
       <ViewLink viewId={viewId} displayName={displayName} />
     </MemoryRouter>,
     { wrapper: Wrapper },
@@ -53,25 +55,22 @@ const renderViewLink = ({
 describe('ViewLink', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    window.history.pushState({}, '', '/objects/companies');
   });
 
   it('should open the view as an artifact on a plain click on the chat page', () => {
-    window.history.pushState({}, '', '/chat');
-
     renderViewLink({
       viewId: VIEW_ID,
       displayName: 'All Companies',
       views: [allCompaniesView],
+      initialPath: '/chat',
     });
 
     const link = screen.getByText('All Companies').closest('a') as HTMLElement;
     fireEvent.mouseDown(link);
     fireEvent.click(link);
 
-    expect(openViewTargetMock).toHaveBeenCalledWith({
-      objectNameSingular: companyObjectMetadataItem.nameSingular,
-      viewId: VIEW_ID,
+    expect(openRoutedPageInSidePanelMock).toHaveBeenCalledWith({
+      path: `/objects/${companyObjectMetadataItem.namePlural}?viewId=${VIEW_ID}`,
     });
   });
 
@@ -86,7 +85,7 @@ describe('ViewLink', () => {
     fireEvent.mouseDown(link);
     fireEvent.click(link);
 
-    expect(openViewTargetMock).not.toHaveBeenCalled();
+    expect(openRoutedPageInSidePanelMock).not.toHaveBeenCalled();
   });
 
   it('should link a view to its object index page', () => {

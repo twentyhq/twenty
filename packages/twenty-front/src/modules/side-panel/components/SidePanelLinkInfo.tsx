@@ -8,8 +8,8 @@ import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/display/link/com
 import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
 import { useNavigationMenuItemTitleEdit } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemTitleEdit';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
-import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
-import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
+import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
+import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
 import { sidePanelShouldFocusTitleInputComponentState } from '@/side-panel/states/sidePanelShouldFocusTitleInputComponentState';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
@@ -17,7 +17,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 export const SidePanelLinkInfo = () => {
   const { t } = useLingui();
-  const sidePanelPageInfo = useAtomStateValue(sidePanelPageInfoState);
+  const sidePanelPageInfo = useAtomStateValue(sidePanelPageInfoSelector);
   const [sidePanelShouldFocusTitleInput, setSidePanelShouldFocusTitleInput] =
     useAtomComponentState(
       sidePanelShouldFocusTitleInputComponentState,
@@ -54,7 +54,7 @@ export const SidePanelLinkInfo = () => {
   if (!isDefined(selectedItem)) return null;
 
   return (
-    <SidePanelPageInfoLayout
+    <HeaderIdentifier
       icon={
         <LinkIconWithLinkOverlay
           link={selectedItem.link}

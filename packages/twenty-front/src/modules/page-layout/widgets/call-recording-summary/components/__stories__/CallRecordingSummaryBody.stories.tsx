@@ -14,6 +14,8 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { CallRecordingStatus } from '~/generated/graphql';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const SUMMARY_WIDGET_ID = 'summary-widget';
 const SUMMARY_TAB_ID = 'summary-tab';
@@ -50,6 +52,7 @@ const pageLayoutWithSummaryWidget: PageLayout = {
   id: PAGE_LAYOUT_TEST_INSTANCE_ID,
   name: 'Calendar Event Layout',
   type: PageLayoutType.RECORD_PAGE,
+  isFirstTabPinned: true,
   applicationId: '',
   isSystemSideEffect: false,
   objectMetadataId: null,
@@ -126,6 +129,8 @@ const meta: Meta<typeof CallRecordingSummaryBody> = {
       tabId: SUMMARY_TAB_ID,
       widgetId: SUMMARY_WIDGET_ID,
     }),
+    MemoryRouterDecorator,
+    SnackBarDecorator,
     ComponentDecorator,
   ],
   parameters: {

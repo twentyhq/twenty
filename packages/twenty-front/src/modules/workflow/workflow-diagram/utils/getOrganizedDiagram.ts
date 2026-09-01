@@ -17,7 +17,7 @@ export const getOrganizedDiagram = (
   });
 
   const positionByNodeId = new Map(
-    positions.map((position) => [position.id, position.position]),
+    positions.map((position) => [position.id, position.centerPosition]),
   );
 
   return {

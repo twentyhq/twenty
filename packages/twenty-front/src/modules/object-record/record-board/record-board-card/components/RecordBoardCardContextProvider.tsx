@@ -7,6 +7,7 @@ import { RecordBoardColumnContext } from '@/object-record/record-board/record-bo
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
 import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
+import { isRecordBoardCellsNonEditableComponentState } from '@/object-record/record-board/states/isRecordBoardCellsNonEditableComponentState';
 import { isRecordBoardDropProcessingComponentState } from '@/object-record/record-board/states/isRecordBoardDropProcessingComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
@@ -38,10 +39,17 @@ export const RecordBoardCardContextProvider = ({
   const { objectMetadataItem } = useContext(RecordBoardContext);
   const { columnIndex } = useContext(RecordBoardColumnContext);
 
-  const isRecordReadOnly = useIsRecordReadOnly({
+  const isRecordReadOnlyFromPermissions = useIsRecordReadOnly({
     recordId,
     objectMetadataId: objectMetadataItem.id,
   });
+
+  const isRecordBoardCellsNonEditable = useAtomComponentStateValue(
+    isRecordBoardCellsNonEditableComponentState,
+  );
+
+  const isRecordReadOnly =
+    isRecordBoardCellsNonEditable || isRecordReadOnlyFromPermissions;
 
   const isRecordBoardCardFocused = useAtomComponentFamilyStateValue(
     isRecordBoardCardFocusedComponentFamilyState,
@@ -65,10 +73,12 @@ export const RecordBoardCardContextProvider = ({
         group={group}
         type={RECORD_BOARD_CARD_DND_TYPE}
         accept={RECORD_BOARD_CARD_DND_TYPE}
-        disabled={isRecordBoardDropProcessing}
+        disabled={isRecordBoardDropProcessing || isRecordBoardCellsNonEditable}
       >
         <StyledDraggableContainer
-          isDragDisabled={isRecordBoardDropProcessing}
+          isDragDisabled={
+            isRecordBoardDropProcessing || isRecordBoardCellsNonEditable
+          }
           id={`record-board-card-${columnIndex}-${rowIndex}`}
           data-selectable-id={recordId}
           data-select-disable

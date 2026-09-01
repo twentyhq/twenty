@@ -5,6 +5,7 @@ export enum UsageUnit {
   TOKEN = 'TOKEN',
   INVOCATION = 'INVOCATION',
   MINUTE = 'MINUTE',
+  MILLISECOND = 'MILLISECOND',
   BYTE = 'BYTE',
   REQUEST = 'REQUEST',
   SEAT = 'SEAT',

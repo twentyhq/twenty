@@ -124,12 +124,14 @@ export class UserWorkspaceService {
       isExistingUser,
       pictureUrl,
       applicationUniversalIdentifier,
+      locale,
     }: {
       userId: string;
       workspaceId: string;
       isExistingUser: boolean;
       pictureUrl?: string;
       applicationUniversalIdentifier?: string;
+      locale?: UserWorkspaceEntity['locale'];
     },
     queryRunner?: QueryRunner,
   ): Promise<UserWorkspaceEntity> {
@@ -146,6 +148,7 @@ export class UserWorkspaceService {
       userId,
       workspaceId,
       defaultAvatarUrl,
+      locale: locale ?? SOURCE_LOCALE,
     });
 
     return queryRunner
@@ -234,6 +237,7 @@ export class UserWorkspaceService {
       userId: user.id,
       workspaceId: workspace.id,
       isExistingUser: true,
+      locale: user.locale,
     });
 
     await this.createWorkspaceMember(workspace.id, user);

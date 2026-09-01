@@ -1,3 +1,4 @@
+import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -10,6 +11,7 @@ import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fi
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
@@ -44,6 +46,7 @@ export const SettingsObjectNewFieldConfigure = () => {
 
   const navigateApp = useNavigateApp();
   const navigate = useNavigateSettings();
+  const workspaceSurface = useWorkspaceSurface();
 
   const { objectNamePlural = '' } = useParams();
   const [searchParams] = useSearchParams();
@@ -87,14 +90,21 @@ export const SettingsObjectNewFieldConfigure = () => {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    if (!isDefined(activeObjectMetadataItem)) {
+    if (
+      workspaceSurface.type === 'main' &&
+      !isDefined(activeObjectMetadataItem)
+    ) {
       navigateApp(AppPath.NotFound);
     }
-  }, [activeObjectMetadataItem, navigateApp]);
+  }, [activeObjectMetadataItem, navigateApp, workspaceSurface.type]);
 
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
 
-  if (!isDefined(activeObjectMetadataItem)) return null;
+  if (!isDefined(activeObjectMetadataItem)) {
+    return workspaceSurface.type === 'side-panel' ? (
+      <WorkspaceRouteUnavailable />
+    ) : null;
+  }
 
   const { isValid, isSubmitting } = formConfig.formState;
 
@@ -175,8 +185,6 @@ export const SettingsObjectNewFieldConfigure = () => {
       }
     }
   };
-
-  if (!isDefined(activeObjectMetadataItem)) return null;
 
   return (
     <FormProvider // oxlint-disable-next-line react/jsx-props-no-spreading
