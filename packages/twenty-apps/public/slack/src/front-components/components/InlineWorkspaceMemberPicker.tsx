@@ -106,6 +106,24 @@ const StyledOptions = styled.div`
   padding: ${() => themeCssVariables.spacing[1]};
 `;
 
+const getEmptyStateText = ({
+  isSearching,
+  searchErrorMessage,
+}: {
+  isSearching: boolean;
+  searchErrorMessage: string | undefined;
+}): string => {
+  if (isSearching) {
+    return 'Searching…';
+  }
+
+  if (isNonEmptyString(searchErrorMessage)) {
+    return searchErrorMessage;
+  }
+
+  return 'No results';
+};
+
 type InlineWorkspaceMemberPickerPanelProps = {
   onSelect: (member: WorkspaceMemberOption) => void;
   onClose: () => void;
@@ -164,13 +182,7 @@ const InlineWorkspaceMemberPickerPanel = ({
         {options.length === 0 && (
           <MenuItem
             disabled
-            text={
-              isSearching
-                ? 'Searching…'
-                : isNonEmptyString(searchErrorMessage)
-                  ? searchErrorMessage
-                  : 'No results'
-            }
+            text={getEmptyStateText({ isSearching, searchErrorMessage })}
           />
         )}
       </StyledOptions>
