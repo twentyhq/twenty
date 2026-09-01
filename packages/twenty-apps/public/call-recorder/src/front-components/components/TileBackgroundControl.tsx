@@ -2,7 +2,7 @@ import { isUndefined } from '@sniptt/guards';
 import { useRef, useState } from 'react';
 import { ColorSample } from 'twenty-ui/data-display';
 import { DEFAULT_COLOR_LABELS } from 'twenty-ui/navigation';
-import { type ThemeColor } from 'twenty-ui/theme';
+import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
 
 import { FloatingMenu } from 'src/front-components/components/FloatingMenu';
 import { SettingsSelectControl } from 'src/front-components/components/SettingsSelectControl';
@@ -10,7 +10,19 @@ import { ThemeColorPickerMenu } from 'src/front-components/components/ThemeColor
 
 // The control is capped at 120px, where "Custom hex" ellipsises to "Custom …".
 const CUSTOM_CONTROL_LABEL = 'Custom';
+const CUSTOM_OPTION_VALUE = 'custom';
 const FALLBACK_SWATCH_COLOR_NAME: ThemeColor = 'gray';
+const TILE_BACKGROUND_LISTBOX_ID = 'call-recorder-tile-background';
+
+type TileBackgroundOption = ThemeColor | typeof CUSTOM_OPTION_VALUE;
+
+const TILE_BACKGROUND_OPTIONS: TileBackgroundOption[] = [
+  ...MAIN_COLOR_NAMES,
+  CUSTOM_OPTION_VALUE,
+];
+
+const getTileBackgroundOptionId = (option: TileBackgroundOption) =>
+  `${TILE_BACKGROUND_LISTBOX_ID}-option-${option}`;
 
 type TileBackgroundControlProps = {
   swatchColor: string;
@@ -31,19 +43,66 @@ export const TileBackgroundControl = ({
 }: TileBackgroundControlProps) => {
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeOptionIndex, setActiveOptionIndex] = useState(0);
 
   const label = isUndefined(selectedColor)
     ? CUSTOM_CONTROL_LABEL
     : (DEFAULT_COLOR_LABELS[selectedColor] ?? selectedColor);
 
-  const handleMenuToggle = () => setIsMenuOpen((isOpen) => !isOpen);
+  const selectedOption: TileBackgroundOption = isCustomSelected
+    ? CUSTOM_OPTION_VALUE
+    : (selectedColor ?? FALLBACK_SWATCH_COLOR_NAME);
+
+  const handleMenuToggle = () => {
+    if (!isMenuOpen) {
+      setActiveOptionIndex(
+        Math.max(TILE_BACKGROUND_OPTIONS.indexOf(selectedOption), 0),
+      );
+    }
+
+    setIsMenuOpen((isOpen) => !isOpen);
+  };
   const handleMenuClose = () => setIsMenuOpen(false);
+
+  const handleNavigate = (key: 'ArrowDown' | 'ArrowUp' | 'Home' | 'End') => {
+    setActiveOptionIndex((currentIndex) =>
+      key === 'ArrowDown'
+        ? (currentIndex + 1) % TILE_BACKGROUND_OPTIONS.length
+        : key === 'ArrowUp'
+          ? (currentIndex - 1 + TILE_BACKGROUND_OPTIONS.length) %
+            TILE_BACKGROUND_OPTIONS.length
+          : key === 'Home'
+            ? 0
+            : TILE_BACKGROUND_OPTIONS.length - 1,
+    );
+  };
+
+  const handleSelectActive = () => {
+    const activeOption = TILE_BACKGROUND_OPTIONS[activeOptionIndex];
+
+    if (activeOption === CUSTOM_OPTION_VALUE) {
+      onSelectCustom();
+    } else if (activeOption) {
+      onSelectColor(activeOption);
+    }
+
+    handleMenuClose();
+  };
 
   return (
     <div ref={anchorRef}>
       <SettingsSelectControl
         label={label}
+        ariaLabel="Tile background"
         disabled={disabled}
+        listboxId={TILE_BACKGROUND_LISTBOX_ID}
+        activeDescendantId={getTileBackgroundOptionId(
+          TILE_BACKGROUND_OPTIONS[activeOptionIndex] ?? CUSTOM_OPTION_VALUE,
+        )}
+        isExpanded={isMenuOpen}
+        onNavigate={handleNavigate}
+        onSelectActive={handleSelectActive}
+        onEscape={handleMenuClose}
         adornment={
           <ColorSample
             colorName={selectedColor ?? FALLBACK_SWATCH_COLOR_NAME}
@@ -55,8 +114,13 @@ export const TileBackgroundControl = ({
       {isMenuOpen && (
         <FloatingMenu anchorRef={anchorRef} onClose={handleMenuClose}>
           <ThemeColorPickerMenu
+            listboxId={TILE_BACKGROUND_LISTBOX_ID}
             selectedColor={selectedColor}
             isCustomSelected={isCustomSelected}
+            activeOption={
+              TILE_BACKGROUND_OPTIONS[activeOptionIndex] ?? CUSTOM_OPTION_VALUE
+            }
+            getOptionId={getTileBackgroundOptionId}
             onSelectColor={(color) => {
               onSelectColor(color);
               handleMenuClose();

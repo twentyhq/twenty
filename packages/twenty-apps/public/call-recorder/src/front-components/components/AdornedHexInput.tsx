@@ -3,12 +3,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { StyledSettingsTextInput } from 'src/front-components/components/StyledSettingsTextInput';
 
-const StyledContainer = styled.div`
-  align-items: center;
-  display: flex;
-  width: 100%;
-`;
-
 const StyledAdornmentContainer = styled.div`
   align-items: center;
   background-color: ${() => themeCssVariables.background.transparent.light};
@@ -32,7 +26,18 @@ const StyledSwatch = styled.div`
 
 const StyledAdornedInput = styled(StyledSettingsTextInput)`
   border-bottom-left-radius: 0;
+  border-left: none;
   border-top-left-radius: 0;
+`;
+
+const StyledContainer = styled.div`
+  align-items: center;
+  display: flex;
+  width: 100%;
+
+  &:focus-within ${StyledAdornmentContainer} {
+    border-color: ${() => themeCssVariables.color.blue};
+  }
 `;
 
 type AdornedHexInputProps = {

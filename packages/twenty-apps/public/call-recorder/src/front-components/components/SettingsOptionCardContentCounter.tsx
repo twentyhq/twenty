@@ -40,36 +40,45 @@ export const SettingsOptionCardContentCounter = ({
   onChange,
   minValue,
   maxValue,
-}: SettingsOptionCardContentCounterProps) => (
-  <>
-    <StyledSettingsCardContent>
-      {Icon && (
-        <StyledSettingsCardIcon>
-          <SettingsOptionIconCustomizer Icon={Icon} />
-        </StyledSettingsCardIcon>
-      )}
-      <StyledSettingsCardTextContainer>
-        <StyledSettingsCardTitle>
-          <label htmlFor={inputId}>{title}</label>
-        </StyledSettingsCardTitle>
-        {description && (
-          <StyledSettingsCardDescription>
-            <OverflowingTextWithTooltip text={description} />
-          </StyledSettingsCardDescription>
+}: SettingsOptionCardContentCounterProps) => {
+  const hasError = isNonEmptyString(errorMessage);
+  const errorMessageId = hasError && inputId ? `${inputId}-error` : undefined;
+
+  return (
+    <>
+      <StyledSettingsCardContent>
+        {Icon && (
+          <StyledSettingsCardIcon>
+            <SettingsOptionIconCustomizer Icon={Icon} />
+          </StyledSettingsCardIcon>
         )}
-        {isNonEmptyString(errorMessage) && (
-          <StyledSettingsError>{errorMessage}</StyledSettingsError>
-        )}
-      </StyledSettingsCardTextContainer>
-      <SettingsCounter
-        inputId={inputId}
-        value={value}
-        onChange={onChange}
-        minValue={minValue}
-        maxValue={maxValue}
-        disabled={disabled}
-      />
-    </StyledSettingsCardContent>
-    {divider && <Separator />}
-  </>
-);
+        <StyledSettingsCardTextContainer>
+          <StyledSettingsCardTitle>
+            <label htmlFor={inputId}>{title}</label>
+          </StyledSettingsCardTitle>
+          {description && (
+            <StyledSettingsCardDescription>
+              <OverflowingTextWithTooltip text={description} />
+            </StyledSettingsCardDescription>
+          )}
+          {hasError && (
+            <StyledSettingsError id={errorMessageId} role="alert">
+              {errorMessage}
+            </StyledSettingsError>
+          )}
+        </StyledSettingsCardTextContainer>
+        <SettingsCounter
+          inputId={inputId}
+          value={value}
+          onChange={onChange}
+          minValue={minValue}
+          maxValue={maxValue}
+          disabled={disabled}
+          errorMessageId={errorMessageId}
+          isInvalid={hasError}
+        />
+      </StyledSettingsCardContent>
+      {divider && <Separator />}
+    </>
+  );
+};

@@ -28,6 +28,7 @@ import {
   type UpdateApplicationVariableDraft,
 } from 'src/front-components/types/application-variable-draft.type';
 import { getOptimisticApplicationVariableValue } from 'src/front-components/utils/get-optimistic-application-variable-value.util';
+import { isApplicationVariableDraftUnchanged } from 'src/front-components/utils/is-application-variable-draft-unchanged.util';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -41,6 +42,20 @@ const StyledToolbar = styled.div`
   display: flex;
   justify-content: flex-end;
   min-height: ${() => themeCssVariables.spacing[8]};
+`;
+
+const StyledSettingsFieldset = styled.fieldset`
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: ${() => themeCssVariables.spacing[8]};
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+
+  &:disabled {
+    pointer-events: none;
+  }
 `;
 
 const StyledCenteredState = styled.div`
@@ -100,7 +115,14 @@ export const CallRecorderSettings = () => {
     }
 
     setDraftValueByVariableKey((previousDraftValues) => {
-      if (!isUndefined(valueToSave) && valueToSave === currentVariable.value) {
+      if (
+        !isUndefined(valueToSave) &&
+        isApplicationVariableDraftUnchanged({
+          persistedValue: currentVariable.value,
+          valueToSave,
+          isSecret: currentVariable.isSecret,
+        })
+      ) {
         const nextDraftValues = { ...previousDraftValues };
 
         delete nextDraftValues[variableKey];
@@ -226,39 +248,41 @@ export const CallRecorderSettings = () => {
             onClick={handleSave}
           />
         </StyledToolbar>
-        <TimingSection
-          applicationVariables={currentApplicationVariables}
-          draftValueByVariableKey={draftValueByVariableKey}
-          onDraftValueChange={handleDraftValueChange}
-        />
-        <TranscriptionSection
-          applicationVariables={currentApplicationVariables}
-          draftValueByVariableKey={draftValueByVariableKey}
-          onDraftValueChange={handleDraftValueChange}
-        />
-        <RecorderSection
-          applicationVariables={currentApplicationVariables}
-          draftValueByVariableKey={draftValueByVariableKey}
-          onDraftValueChange={handleDraftValueChange}
-        />
-        {otherVariables.length > 0 && (
-          <Section>
-            <H2Title
-              title="Other"
-              description="Variables this app does not lay out explicitly."
-            />
-            <StyledSettingsSectionStack>
-              {otherVariables.map((variable) => (
-                <ApplicationVariableRow
-                  key={variable.key}
-                  variable={variable}
-                  draftValue={draftValueByVariableKey[variable.key]}
-                  onDraftValueChange={handleDraftValueChange}
-                />
-              ))}
-            </StyledSettingsSectionStack>
-          </Section>
-        )}
+        <StyledSettingsFieldset disabled={isSaving}>
+          <TimingSection
+            applicationVariables={currentApplicationVariables}
+            draftValueByVariableKey={draftValueByVariableKey}
+            onDraftValueChange={handleDraftValueChange}
+          />
+          <TranscriptionSection
+            applicationVariables={currentApplicationVariables}
+            draftValueByVariableKey={draftValueByVariableKey}
+            onDraftValueChange={handleDraftValueChange}
+          />
+          <RecorderSection
+            applicationVariables={currentApplicationVariables}
+            draftValueByVariableKey={draftValueByVariableKey}
+            onDraftValueChange={handleDraftValueChange}
+          />
+          {otherVariables.length > 0 && (
+            <Section>
+              <H2Title
+                title="Other"
+                description="Variables this app does not lay out explicitly."
+              />
+              <StyledSettingsSectionStack>
+                {otherVariables.map((variable) => (
+                  <ApplicationVariableRow
+                    key={variable.key}
+                    variable={variable}
+                    draftValue={draftValueByVariableKey[variable.key]}
+                    onDraftValueChange={handleDraftValueChange}
+                  />
+                ))}
+              </StyledSettingsSectionStack>
+            </Section>
+          )}
+        </StyledSettingsFieldset>
       </StyledContainer>
     </ThemeContext.Provider>
   );

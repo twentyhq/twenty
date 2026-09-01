@@ -1,11 +1,21 @@
+import styled from '@emotion/styled';
 import { useRef, useState } from 'react';
-import { MenuItemSelect } from 'twenty-ui/navigation';
 
 import { DropdownMenuItemsContainer } from 'src/front-components/components/DropdownMenuItemsContainer';
+import { DropdownMenuOption } from 'src/front-components/components/DropdownMenuOption';
 import { FloatingMenu } from 'src/front-components/components/FloatingMenu';
 import { SettingsSelectControl } from 'src/front-components/components/SettingsSelectControl';
 import { EMPTY_OPTION_LABEL } from 'src/front-components/constants/empty-option-label.constant';
 import { type CallRecorderApplicationVariableOption } from 'src/front-components/types/call-recorder-application-variable.type';
+
+const StyledListbox = styled.div`
+  width: 100%;
+`;
+
+const TRANSCRIPT_PROVIDER_LISTBOX_ID = 'call-recorder-transcript-provider';
+
+const getTranscriptProviderOptionId = (index: number) =>
+  `${TRANSCRIPT_PROVIDER_LISTBOX_ID}-option-${index}`;
 
 type TranscriptProviderControlProps = {
   value: string;
@@ -20,33 +30,87 @@ export const TranscriptProviderControl = ({
 }: TranscriptProviderControlProps) => {
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeOptionIndex, setActiveOptionIndex] = useState(0);
 
   const selectedOption = options.find((option) => option.value === value);
+  const selectableOptions = [
+    { label: EMPTY_OPTION_LABEL, value: '' },
+    ...options,
+  ];
+  const selectedOptionIndex = Math.max(
+    selectableOptions.findIndex(
+      (selectableOption) => selectableOption.value === value,
+    ),
+    0,
+  );
 
-  const handleMenuToggle = () => setIsMenuOpen((isOpen) => !isOpen);
+  const handleMenuToggle = () => {
+    if (!isMenuOpen) {
+      setActiveOptionIndex(selectedOptionIndex);
+    }
+
+    setIsMenuOpen((isOpen) => !isOpen);
+  };
   const handleMenuClose = () => setIsMenuOpen(false);
+
+  const handleNavigate = (key: 'ArrowDown' | 'ArrowUp' | 'Home' | 'End') => {
+    setActiveOptionIndex((currentIndex) =>
+      key === 'ArrowDown'
+        ? (currentIndex + 1) % selectableOptions.length
+        : key === 'ArrowUp'
+          ? (currentIndex - 1 + selectableOptions.length) %
+            selectableOptions.length
+          : key === 'Home'
+            ? 0
+            : selectableOptions.length - 1,
+    );
+  };
+
+  const handleSelectActive = () => {
+    const activeOption = selectableOptions[activeOptionIndex];
+
+    if (activeOption) {
+      onChange(activeOption.value);
+      handleMenuClose();
+    }
+  };
 
   return (
     <div ref={anchorRef}>
       <SettingsSelectControl
         label={selectedOption?.label ?? EMPTY_OPTION_LABEL}
+        ariaLabel="Transcript provider"
+        listboxId={TRANSCRIPT_PROVIDER_LISTBOX_ID}
+        activeDescendantId={getTranscriptProviderOptionId(activeOptionIndex)}
+        isExpanded={isMenuOpen}
+        onNavigate={handleNavigate}
+        onSelectActive={handleSelectActive}
+        onEscape={handleMenuClose}
         onClick={handleMenuToggle}
       />
       {isMenuOpen && (
         <FloatingMenu anchorRef={anchorRef} onClose={handleMenuClose}>
-          <DropdownMenuItemsContainer>
-            {options.map((option) => (
-              <MenuItemSelect
-                key={option.value}
-                text={option.label}
-                selected={option.value === value}
-                onClick={() => {
-                  onChange(option.value);
-                  handleMenuClose();
-                }}
-              />
-            ))}
-          </DropdownMenuItemsContainer>
+          <StyledListbox
+            id={TRANSCRIPT_PROVIDER_LISTBOX_ID}
+            role="listbox"
+            aria-label="Transcript provider"
+          >
+            <DropdownMenuItemsContainer>
+              {selectableOptions.map((option, index) => (
+                <DropdownMenuOption
+                  key={option.value}
+                  id={getTranscriptProviderOptionId(index)}
+                  text={option.label}
+                  selected={option.value === value}
+                  isActive={index === activeOptionIndex}
+                  onSelect={() => {
+                    onChange(option.value);
+                    handleMenuClose();
+                  }}
+                />
+              ))}
+            </DropdownMenuItemsContainer>
+          </StyledListbox>
         </FloatingMenu>
       )}
     </div>

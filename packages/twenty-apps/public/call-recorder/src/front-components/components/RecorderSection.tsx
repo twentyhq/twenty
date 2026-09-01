@@ -156,7 +156,9 @@ export const RecorderSection = ({
             >
               <TileBackgroundControl
                 swatchColor={swatchColor}
-                selectedColor={selectedTileColor}
+                selectedColor={
+                  isCustomHexSelected ? undefined : selectedTileColor
+                }
                 isCustomSelected={isCustomHexSelected}
                 disabled={!isWorkspaceLogoEnabled}
                 onSelectColor={handleSelectTileColor}

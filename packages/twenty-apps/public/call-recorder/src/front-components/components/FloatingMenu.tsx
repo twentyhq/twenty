@@ -35,6 +35,7 @@ const StyledMenu = styled.div`
   font-family: ${() => themeCssVariables.font.family};
   font-size: ${() => themeCssVariables.font.size.md};
   max-height: ${FLOATING_MENU_MAX_HEIGHT_PIXELS}px;
+  max-width: calc(100vw - ${FLOATING_MENU_VIEWPORT_MARGIN_PIXELS * 2}px);
   overflow: hidden;
   position: fixed;
   visibility: hidden;
@@ -81,9 +82,10 @@ export const FloatingMenu = ({
         }
 
         const anchorDomRect = anchorElement.getBoundingClientRect();
+        const menuWidth = floatingMenuElement.offsetWidth;
         const menuHeight = floatingMenuElement.offsetHeight;
 
-        if (anchorDomRect.width <= 0 || menuHeight <= 0) {
+        if (anchorDomRect.width <= 0 || menuWidth <= 0 || menuHeight <= 0) {
           return;
         }
 
@@ -97,7 +99,7 @@ export const FloatingMenu = ({
             bottom: anchorDomRect.bottom,
             width: anchorDomRect.width,
           },
-          menuWidth: FLOATING_MENU_DEFAULT_WIDTH_PIXELS,
+          menuWidth,
           menuHeight,
           viewportWidth:
             viewportWidth > 0

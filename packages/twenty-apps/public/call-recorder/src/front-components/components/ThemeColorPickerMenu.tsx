@@ -1,68 +1,58 @@
-import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
-import {
-  DEFAULT_COLOR_LABELS,
-  MenuItemSelect,
-  MenuItemSelectColor,
-} from 'twenty-ui/navigation';
+import styled from '@emotion/styled';
+import { ColorSample } from 'twenty-ui/data-display';
+import { DEFAULT_COLOR_LABELS } from 'twenty-ui/navigation';
 import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
 
 import { DropdownMenuItemsContainer } from 'src/front-components/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from 'src/front-components/components/DropdownMenuSearchInput';
+import { DropdownMenuOption } from 'src/front-components/components/DropdownMenuOption';
 import { DropdownMenuSeparator } from 'src/front-components/components/DropdownMenuSeparator';
 
+const StyledListbox = styled.div`
+  width: 100%;
+`;
+
 type ThemeColorPickerMenuProps = {
+  listboxId: string;
   selectedColor: ThemeColor | undefined;
   isCustomSelected: boolean;
+  activeOption: ThemeColor | 'custom';
+  getOptionId: (option: ThemeColor | 'custom') => string;
   onSelectColor: (color: ThemeColor) => void;
   onSelectCustom: () => void;
 };
 
 export const ThemeColorPickerMenu = ({
+  listboxId,
   selectedColor,
   isCustomSelected,
+  activeOption,
+  getOptionId,
   onSelectColor,
   onSelectCustom,
-}: ThemeColorPickerMenuProps) => {
-  const [searchValue, setSearchValue] = useState('');
-
-  const query = searchValue.trim().toLowerCase();
-
-  const filteredColorNames = isNonEmptyString(query)
-    ? MAIN_COLOR_NAMES.filter(
-        (colorName) =>
-          colorName.toLowerCase().includes(query) ||
-          (DEFAULT_COLOR_LABELS[colorName] ?? '').toLowerCase().includes(query),
-      )
-    : MAIN_COLOR_NAMES;
-
-  return (
-    <>
-      <DropdownMenuSearchInput
-        placeholder="Search colors..."
-        value={searchValue}
-        onChange={setSearchValue}
-      />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
-        {filteredColorNames.map((colorName) => (
-          <MenuItemSelectColor
-            key={colorName}
-            onClick={() => onSelectColor(colorName)}
-            color={colorName}
-            selected={colorName === selectedColor}
-            colorLabels={DEFAULT_COLOR_LABELS}
-          />
-        ))}
-      </DropdownMenuItemsContainer>
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
-        <MenuItemSelect
-          text="Custom hex"
-          selected={isCustomSelected}
-          onClick={onSelectCustom}
+}: ThemeColorPickerMenuProps) => (
+  <StyledListbox id={listboxId} role="listbox" aria-label="Tile background">
+    <DropdownMenuItemsContainer>
+      {MAIN_COLOR_NAMES.map((colorName) => (
+        <DropdownMenuOption
+          key={colorName}
+          id={getOptionId(colorName)}
+          onSelect={() => onSelectColor(colorName)}
+          text={DEFAULT_COLOR_LABELS[colorName]}
+          selected={colorName === selectedColor}
+          isActive={colorName === activeOption}
+          LeftComponent={<ColorSample colorName={colorName} />}
         />
-      </DropdownMenuItemsContainer>
-    </>
-  );
-};
+      ))}
+    </DropdownMenuItemsContainer>
+    <DropdownMenuSeparator />
+    <DropdownMenuItemsContainer>
+      <DropdownMenuOption
+        id={getOptionId('custom')}
+        text="Custom hex"
+        selected={isCustomSelected}
+        isActive={activeOption === 'custom'}
+        onSelect={onSelectCustom}
+      />
+    </DropdownMenuItemsContainer>
+  </StyledListbox>
+);

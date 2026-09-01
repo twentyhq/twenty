@@ -36,6 +36,8 @@ type SettingsCounterProps = {
   disabled?: boolean;
   showButtons?: boolean;
   inputId?: string;
+  errorMessageId?: string;
+  isInvalid?: boolean;
 };
 
 // twenty-front's SettingsCounter works on numbers and snaps invalid text back
@@ -49,6 +51,8 @@ export const SettingsCounter = ({
   disabled = false,
   showButtons = true,
   inputId,
+  errorMessageId,
+  isInvalid = false,
 }: SettingsCounterProps) => {
   const parsedValue = Number(value.trim());
   const isParsable = value.trim() !== '' && Number.isFinite(parsedValue);
@@ -59,8 +63,10 @@ export const SettingsCounter = ({
       return;
     }
 
-    if (parsedValue > minValue) {
-      onChange(String(parsedValue - 1));
+    const nextValue = Math.max(parsedValue - 1, minValue);
+
+    if (nextValue !== parsedValue) {
+      onChange(String(nextValue));
     }
   };
 
@@ -70,9 +76,28 @@ export const SettingsCounter = ({
       return;
     }
 
-    if (isUndefined(maxValue) || parsedValue < maxValue) {
-      onChange(String(parsedValue + 1));
+    const nextValue = isUndefined(maxValue)
+      ? parsedValue + 1
+      : Math.min(parsedValue + 1, maxValue);
+
+    if (nextValue !== parsedValue) {
+      onChange(String(nextValue));
     }
+  };
+
+  const handleTextInputChange = (nextValue: string) => {
+    const nextParsedValue = Number(nextValue.trim());
+
+    if (
+      nextValue.trim() !== '' &&
+      Number.isFinite(nextParsedValue) &&
+      (nextParsedValue < minValue ||
+        (!isUndefined(maxValue) && nextParsedValue > maxValue))
+    ) {
+      return;
+    }
+
+    onChange(nextValue);
   };
 
   return (
@@ -95,7 +120,9 @@ export const SettingsCounter = ({
           autoComplete="off"
           value={value}
           disabled={disabled}
-          onChange={(event) => onChange(event.target.value)}
+          aria-describedby={errorMessageId}
+          aria-invalid={isInvalid}
+          onChange={(event) => handleTextInputChange(event.target.value)}
         />
       </StyledTextInputContainer>
       {showButtons && (
