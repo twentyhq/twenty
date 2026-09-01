@@ -3,13 +3,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-sdk/utils';
 import { Avatar, Tag } from 'twenty-ui/data-display';
-import {
-  IconSend,
-  IconTrash,
-  type IconComponent,
-  type IconComponentProps,
-} from 'twenty-ui/icon';
-import { Button, LightIconButton } from 'twenty-ui/input';
+import { IconSend, IconTrash } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -64,19 +59,39 @@ const StyledEmptyState = styled.div`
   padding: ${() => themeCssVariables.spacing[2]};
 `;
 
-// The app's React types differ from twenty-ui's, so the tabler icons need a
-// local wrapper to satisfy the IconComponent prop; the size is pinned because
-// the renderer's emotion theme resolves the button's icon size larger than
-// the small button box.
+// LightIconButton's box styles do not apply inside the app renderer, so the
+// row actions use a self-contained icon button instead.
 const ACTION_ICON_SIZE = 16;
 
-const ResendIcon: IconComponent = (props: IconComponentProps) => (
-  <IconSend {...props} size={ACTION_ICON_SIZE} />
-);
+const StyledActionIconButton = styled.button`
+  align-items: center;
+  background: transparent;
+  border: none;
+  border-radius: ${() => themeCssVariables.border.radius.sm};
+  color: ${() => themeCssVariables.font.color.tertiary};
+  cursor: pointer;
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 24px;
+  justify-content: center;
+  padding: 0;
+  width: 24px;
 
-const RemoveIcon: IconComponent = (props: IconComponentProps) => (
-  <IconTrash {...props} size={ACTION_ICON_SIZE} />
-);
+  &:hover:enabled {
+    background: ${() => themeCssVariables.background.transparent.light};
+    color: ${() => themeCssVariables.font.color.secondary};
+  }
+
+  &:disabled {
+    color: ${() => themeCssVariables.font.color.light};
+    cursor: default;
+  }
+
+  & svg {
+    height: ${ACTION_ICON_SIZE}px;
+    width: ${ACTION_ICON_SIZE}px;
+  }
+`;
 
 type TagColor = 'blue' | 'green' | 'orange' | 'red' | 'gray';
 
@@ -224,18 +239,19 @@ export const SlackUserLinksList = ({
                 {canManage && (
                   <>
                     {isPending && removalArmedLinkId !== slackUserLink.id && (
-                      <LightIconButton
-                        Icon={ResendIcon}
+                      <StyledActionIconButton
+                        type="button"
                         title={
                           resendingLinkId === slackUserLink.id
                             ? 'Resending…'
                             : 'Resend the approval request'
                         }
-                        size="small"
-                        accent="tertiary"
+                        aria-label="Resend the approval request"
                         disabled={isActionInFlight}
                         onClick={() => onResend(slackUserLink)}
-                      />
+                      >
+                        <IconSend />
+                      </StyledActionIconButton>
                     )}
                     {removalArmedLinkId === slackUserLink.id ? (
                       <Button
@@ -254,14 +270,15 @@ export const SlackUserLinksList = ({
                         }}
                       />
                     ) : (
-                      <LightIconButton
-                        Icon={RemoveIcon}
+                      <StyledActionIconButton
+                        type="button"
                         title="Remove the link"
-                        size="small"
-                        accent="tertiary"
+                        aria-label="Remove the link"
                         disabled={isActionInFlight}
                         onClick={() => setRemovalArmedLinkId(slackUserLink.id)}
-                      />
+                      >
+                        <IconTrash />
+                      </StyledActionIconButton>
                     )}
                   </>
                 )}
