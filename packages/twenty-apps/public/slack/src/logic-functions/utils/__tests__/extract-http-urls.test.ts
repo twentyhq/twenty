@@ -27,6 +27,15 @@ describe('extractHttpUrls', () => {
     ]);
   });
 
+  it('should trim sentence punctuation from a URL with no query', () => {
+    expect(extractHttpUrls('See https://acme.dev/object/company/x!')).toEqual([
+      'https://acme.dev/object/company/x',
+    ]);
+    expect(extractHttpUrls('Really https://acme.dev/a?')).toEqual([
+      'https://acme.dev/a',
+    ]);
+  });
+
   it('should not keep wrapping delimiters', () => {
     expect(extractHttpUrls('"https://acme.dev/a"')).toEqual([
       'https://acme.dev/a',
