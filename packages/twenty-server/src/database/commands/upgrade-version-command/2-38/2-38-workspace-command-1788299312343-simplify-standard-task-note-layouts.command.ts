@@ -124,7 +124,7 @@ const includesUniversalIdentifier = (
       allowedUniversalIdentifier === universalIdentifier,
   );
 
-@RegisteredWorkspaceCommand('2.38.0', 1788270000000)
+@RegisteredWorkspaceCommand('2.38.0', 1788299312343)
 @Command({
   name: 'upgrade:2-38:simplify-standard-task-note-layouts',
   description: 'Simplify uncustomized standard task and note record pages',

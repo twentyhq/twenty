@@ -13,7 +13,7 @@ import { SyncMessageCampaignSchemaCommand } from 'src/database/commands/upgrade-
 import { ReownObjectNavigationCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788166853000-reown-object-navigation-command-menu-items.command';
 import { ProvisionMissingObjectNavigationCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788181550000-provision-missing-object-navigation-command-menu-items.command';
 import { EnableStandardActivityTargetFieldsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788197000000-enable-standard-activity-target-fields.command';
-import { SimplifyStandardTaskNoteLayoutsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788270000000-simplify-standard-task-note-layouts.command';
+import { SimplifyStandardTaskNoteLayoutsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788299312343-simplify-standard-task-note-layouts.command';
 import { ProvisionMissingObjectSystemRelationsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788266912940-provision-missing-object-system-relations.command';
 import { HideAskAiInSidePanelCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788266562942-hide-ask-ai-in-side-panel.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
