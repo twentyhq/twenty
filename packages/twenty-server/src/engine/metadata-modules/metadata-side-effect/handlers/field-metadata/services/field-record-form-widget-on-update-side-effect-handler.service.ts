@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { buildFieldSideEffectParentNotFoundFailure } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-field-side-effect-parent-not-found-failure.util';
 import { resolveParentFlatObjectMetadataAfterStateForFieldSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/resolve-parent-flat-object-metadata-after-state-for-field-side-effect.util';
-import { computeRecordFormFlatFieldMetadatas } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-record-form-flat-field-metadatas.util';
+import { computeOrderedNewRecordFormFlatFieldMetadatas } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-ordered-new-record-form-flat-field-metadatas.util';
 import { computeRecordFormWidgetForExistingObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-record-form-widget-for-existing-object.util';
 import { getRecordFormPageLayoutTabUniversalIdentifier } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/get-record-form-page-layout-tab-universal-identifier.util';
 import { isFlatFieldMetadataEligibleForRecordForm } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/is-flat-field-metadata-eligible-for-record-form.util';
@@ -14,7 +14,6 @@ import {
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
-import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 @Injectable()
 export class FieldRecordFormWidgetOnUpdateSideEffectHandlerService extends MetadataSideEffectHandler(
@@ -70,40 +69,16 @@ export class FieldRecordFormWidgetOnUpdateSideEffectHandlerService extends Metad
       sourceFlatFieldMetadata,
     );
 
-    const deriveWidgetUniversalIdentifier = (
-      flatFieldMetadata: UniversalFlatFieldMetadata,
-    ) =>
-      getSystemFormFieldPageLayoutWidgetUniversalIdentifier({
-        fieldMetadataApplicationUniversalIdentifier:
-          flatFieldMetadata.applicationUniversalIdentifier,
-        pageLayoutTabUniversalIdentifier:
-          recordFormPageLayoutTabUniversalIdentifier,
-        fieldMetadataUniversalIdentifier: flatFieldMetadata.universalIdentifier,
-      });
-
     const orderedNewlyEligibleFlatFieldMetadatas =
-      computeRecordFormFlatFieldMetadatas({
-        flatFieldMetadatas: (
-          Object.values(
-            allFlatEntityOperationRecordByMetadataName.fieldMetadata
-              ?.flatEntityToUpdate ?? {},
-          ) as UniversalFlatFieldMetadata[]
-        ).filter(
-          (updatedFlatFieldMetadata) =>
-            updatedFlatFieldMetadata.objectMetadataUniversalIdentifier ===
-            objectMetadataUniversalIdentifier,
-        ),
+      computeOrderedNewRecordFormFlatFieldMetadatas({
+        objectMetadataUniversalIdentifier,
         labelIdentifierFieldMetadataUniversalIdentifier:
           parentFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
-      }).filter(
-        (eligibleFlatFieldMetadata: UniversalFlatFieldMetadata) =>
-          !isDefined(
-            relatedFlatEntityMaps.flatPageLayoutWidgetMaps
-              .byUniversalIdentifier[
-              deriveWidgetUniversalIdentifier(eligibleFlatFieldMetadata)
-            ],
-          ),
-      );
+        recordFormPageLayoutTabUniversalIdentifier,
+        allFlatEntityOperationRecordByMetadataName,
+        flatPageLayoutWidgetMaps:
+          relatedFlatEntityMaps.flatPageLayoutWidgetMaps,
+      });
 
     if (
       isEligible &&

@@ -8,6 +8,7 @@ import { getRecordFormPageLayoutTabUniversalIdentifier } from 'src/engine/metada
 import { computeCallerFlatFieldMetadatasForObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-caller-flat-field-metadatas-for-object.util';
 import { computeRecordFormFlatFieldMetadatas } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-record-form-flat-field-metadatas.util';
 import { isFlatFieldMetadataEligibleForRecordForm } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/is-flat-field-metadata-eligible-for-record-form.util';
+import { computeOrderedNewRecordFormFlatFieldMetadatas } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-ordered-new-record-form-flat-field-metadatas.util';
 import { computeRecordFormWidgetForExistingObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-record-form-widget-for-existing-object.util';
 import { buildSystemFormFieldPageLayoutWidget } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/build-system-form-field-page-layout-widget.util';
 import {
@@ -88,7 +89,15 @@ export class FieldRecordFormWidgetOnCreateSideEffectHandlerService extends Metad
         })
       : computeRecordFormWidgetForExistingObject({
           sourceFlatFieldMetadata,
-          orderedFormFlatFieldMetadatasInBatch,
+          orderedFormFlatFieldMetadatasInBatch:
+            computeOrderedNewRecordFormFlatFieldMetadatas({
+              objectMetadataUniversalIdentifier,
+              labelIdentifierFieldMetadataUniversalIdentifier,
+              recordFormPageLayoutTabUniversalIdentifier,
+              allFlatEntityOperationRecordByMetadataName,
+              flatPageLayoutWidgetMaps:
+                relatedFlatEntityMaps.flatPageLayoutWidgetMaps,
+            }),
           recordFormPageLayoutTabUniversalIdentifier,
           flatPageLayoutTabMaps: relatedFlatEntityMaps.flatPageLayoutTabMaps,
           flatPageLayoutWidgetMaps:
