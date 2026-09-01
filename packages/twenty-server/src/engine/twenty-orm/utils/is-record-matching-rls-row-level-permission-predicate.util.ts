@@ -1,5 +1,6 @@
 /* @license Enterprise */
 
+import { Logger } from '@nestjs/common';
 import { isObject } from '@sniptt/guards';
 import {
   FieldMetadataType,
@@ -74,7 +75,7 @@ const isNotFilter = (
   filter: RecordGqlOperationFilter,
 ): filter is NotObjectRecordFilter => 'not' in filter && !!filter.not;
 
-export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
+const isRecordMatchingRLSRowLevelPermissionPredicateInternal = ({
   record,
   filter,
   flatObjectMetadata,
@@ -94,7 +95,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
 
   if (isImplicitAndFilter(filter)) {
     return Object.entries(filter).every(([filterKey, value]) =>
-      isRecordMatchingRLSRowLevelPermissionPredicate({
+      isRecordMatchingRLSRowLevelPermissionPredicateInternal({
         record,
         filter: { [filterKey]: value },
         flatObjectMetadata,
@@ -116,7 +117,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
     return (
       filterValue.length === 0 ||
       filterValue.every((andFilter) =>
-        isRecordMatchingRLSRowLevelPermissionPredicate({
+        isRecordMatchingRLSRowLevelPermissionPredicateInternal({
           record,
           filter: andFilter,
           flatObjectMetadata,
@@ -134,7 +135,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       return (
         filterValue.length === 0 ||
         filterValue.some((orFilter) =>
-          isRecordMatchingRLSRowLevelPermissionPredicate({
+          isRecordMatchingRLSRowLevelPermissionPredicateInternal({
             record,
             filter: orFilter,
             flatObjectMetadata,
@@ -147,7 +148,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
 
     if (isObject(filterValue)) {
       // The API considers "or" with an object as an "and"
-      return isRecordMatchingRLSRowLevelPermissionPredicate({
+      return isRecordMatchingRLSRowLevelPermissionPredicateInternal({
         record,
         filter: filterValue,
         flatObjectMetadata,
@@ -168,7 +169,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
 
     return (
       isEmptyObject(filterValue) ||
-      !isRecordMatchingRLSRowLevelPermissionPredicate({
+      !isRecordMatchingRLSRowLevelPermissionPredicateInternal({
         record,
         filter: filterValue,
         flatObjectMetadata,
@@ -446,4 +447,24 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       }
     }
   });
+};
+
+export const isRecordMatchingRLSRowLevelPermissionPredicate = (args: {
+  // oxlint-disable-next-line typescript/no-explicit-any
+  record: any;
+  filter: RecordGqlOperationFilter;
+  flatObjectMetadata: FlatObjectMetadata;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  shouldIgnoreSoftDeleteDefaultFilter?: boolean;
+}): boolean => {
+  try {
+    return isRecordMatchingRLSRowLevelPermissionPredicateInternal(args);
+  } catch (error) {
+    Logger.error(
+      `Error matching RLS permission predicate: ${error instanceof Error ? error.message : error}`,
+      error instanceof Error ? error.stack : undefined,
+      'isRecordMatchingRLSRowLevelPermissionPredicate',
+    );
+    return false;
+  }
 };
