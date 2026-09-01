@@ -85,10 +85,15 @@ export class UnsubscribeController {
 
   @Post()
   @HttpCode(200)
-  async handleOneClickUnsubscribe(@Query('t') token: string): Promise<void> {
-    await this.throttleByTokenOrThrow(token);
+  async handleOneClickUnsubscribe(
+    @Query('t') token: string,
+    @Req() request: Request,
+  ): Promise<void> {
+    await this.throttleByRequesterOrThrow(request);
 
     const { payload } = this.verifyTokenOrThrow(token);
+
+    await this.throttleByTokenOrThrow(token);
 
     if (payload.preview === true) {
       return;

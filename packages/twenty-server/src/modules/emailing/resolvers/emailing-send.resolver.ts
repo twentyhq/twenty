@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import { Logger, UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -34,6 +34,7 @@ import { MessageCampaignAudienceService } from 'src/modules/emailing/services/me
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 import { countDeliveredRecipients } from 'src/engine/core-modules/emailing-domain/utils/count-delivered-recipients.util';
+import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 
 @UseGuards(
   WorkspaceAuthGuard,
@@ -48,6 +49,8 @@ import { countDeliveredRecipients } from 'src/engine/core-modules/emailing-domai
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
 export class EmailingSendResolver {
+  private readonly logger = new Logger(EmailingSendResolver.name);
+
   constructor(
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly messageCampaignService: MessageCampaignService,
@@ -62,7 +65,8 @@ export class EmailingSendResolver {
   async sendEmailViaEmailingDomain(
     @Args('input') input: SendEmailViaDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<SendEmailViaDomainOutputDTO> {
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
     await this.emailBillingService.validateEmailCreditsOrThrow(
@@ -76,10 +80,10 @@ export class EmailingSendResolver {
       { ...content, sendKind: 'TRANSACTIONAL' },
     );
 
-    await this.emailBillingService.billSentEmails({
+    await this.billAcceptedSend({
       workspaceId: currentWorkspace.id,
       userWorkspaceId,
-      sentEmailCount: countDeliveredRecipients(result.deliveredRecipients),
+      result,
     });
 
     return { messageId: result.messageId };
@@ -140,10 +144,7 @@ export class EmailingSendResolver {
       fromAddress: input.fromAddress,
     });
 
-    await this.emailBillingService.billSentEmails({
-      workspaceId: currentWorkspace.id,
-      sentEmailCount: countDeliveredRecipients(result.deliveredRecipients),
-    });
+    await this.billAcceptedSend({ workspaceId: currentWorkspace.id, result });
 
     return { messageId: result.messageId };
   }
@@ -163,5 +164,31 @@ export class EmailingSendResolver {
       listId: input.listId,
       unsubscribeTopicId: input.unsubscribeTopicId,
     });
+  }
+
+  // The provider has already accepted the mail, so surfacing a billing failure
+  // would invite a retry that sends it a second time.
+  private async billAcceptedSend({
+    workspaceId,
+    userWorkspaceId,
+    result,
+  }: {
+    workspaceId: string;
+    userWorkspaceId?: string;
+    result: EmailingDomainSendEmailResult;
+  }): Promise<void> {
+    await this.emailBillingService
+      .billSentEmails({
+        workspaceId,
+        userWorkspaceId,
+        sentEmailCount: countDeliveredRecipients(result.deliveredRecipients),
+      })
+      .catch((error) => {
+        this.logger.error(
+          `Workspace ${workspaceId} sent email ${result.messageId} but failed to bill it, so this send is unbilled: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      });
   }
 }

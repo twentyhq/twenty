@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isObject } from '@sniptt/guards';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 
 import { SnsSignatureVerifierService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/sns-signature-verifier.service';
@@ -46,7 +47,9 @@ export class SnsEnvelopeService {
 
     const notification = parseJson<TNotification>(payload.Message);
 
-    if (!isDefined(notification)) {
+    // parseJson happily returns a JSON scalar, which every caller then reads as
+    // a notification object.
+    if (!isObject(notification)) {
       throw new MessagingWebhookException(
         'Invalid SNS notification message',
         MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_INVALID_PAYLOAD,

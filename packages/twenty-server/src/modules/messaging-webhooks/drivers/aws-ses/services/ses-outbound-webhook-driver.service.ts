@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import type SnsPayloadValidator from 'sns-payload-validator';
-import { isDefined, parseJson } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { SnsEnvelopeService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/sns-envelope.service';
@@ -11,8 +10,6 @@ import { OutboundDeliveryEventHandlerService } from 'src/modules/messaging-webho
 import { OutboundSendingStateHandlerService } from 'src/modules/messaging-webhooks/handlers/outbound-sending-state-handler.service';
 import { MessagingWebhookExceptionCode } from 'src/modules/messaging-webhooks/messaging-webhook-exception-code.enum';
 import { MessagingWebhookException } from 'src/modules/messaging-webhooks/messaging-webhook.exception';
-
-type SnsPayload = SnsPayloadValidator.SnsPayload;
 
 @Injectable()
 export class SesOutboundWebhookDriverService {

@@ -49,7 +49,7 @@ export class MessageCampaignStatisticsService {
     workspaceId: string;
     campaignId: string;
   }): Promise<void> {
-    const lockKey = this.buildRefreshLockKey({ workspaceId, campaignId });
+    const lockKey = `campaign-stats-refresh:${workspaceId}:${campaignId}`;
 
     const acquired = await this.cacheStorageService.acquireLock(
       lockKey,
@@ -60,14 +60,20 @@ export class MessageCampaignStatisticsService {
       return;
     }
 
-    await this.messageQueueService.add<RefreshCampaignStatsJobData>(
-      REFRESH_CAMPAIGN_STATS_JOB,
-      { workspaceId, campaignId },
-      {
-        delay: CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS,
-        retryLimit: CAMPAIGN_JOB_RETRY_LIMIT,
-      },
-    );
+    await this.messageQueueService
+      .add<RefreshCampaignStatsJobData>(
+        REFRESH_CAMPAIGN_STATS_JOB,
+        { workspaceId, campaignId },
+        {
+          delay: CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS,
+          retryLimit: CAMPAIGN_JOB_RETRY_LIMIT,
+        },
+      )
+      .catch(async (error) => {
+        await this.cacheStorageService.releaseLock(lockKey);
+
+        throw error;
+      });
   }
 
   async countDeliveriesByState({
@@ -96,6 +102,9 @@ export class MessageCampaignStatisticsService {
     return computeCampaignCounts({ groups });
   }
 
+  // The refresh lock is left to expire instead of being released here: a
+  // backed-up queue can start this job after the lock TTL, and deleting the key
+  // then would drop the lock a newer schedule already owns.
   async refreshCampaignCounts({
     workspaceId,
     campaignId,
@@ -103,13 +112,12 @@ export class MessageCampaignStatisticsService {
     workspaceId: string;
     campaignId: string;
   }): Promise<void> {
-    try {
-      await this.recomputeCampaignCounts({ workspaceId, campaignId });
-    } finally {
-      await this.cacheStorageService.releaseLock(
-        this.buildRefreshLockKey({ workspaceId, campaignId }),
-      );
-    }
+    const counts = await this.countDeliveriesByState({
+      workspaceId,
+      campaignId,
+    });
+
+    await this.persistCampaignCounts({ workspaceId, campaignId, counts });
   }
 
   async reconcileWorkspaceCampaignCounts({
@@ -140,7 +148,7 @@ export class MessageCampaignStatisticsService {
       }, buildSystemAuthContext(workspaceId));
 
     for (const campaignId of campaignIds) {
-      await this.recomputeCampaignCounts({ workspaceId, campaignId });
+      await this.refreshCampaignCounts({ workspaceId, campaignId });
     }
   }
 
@@ -200,30 +208,5 @@ export class MessageCampaignStatisticsService {
 
       await campaignRepository.update({ id: campaignId }, nextCounts);
     }, buildSystemAuthContext(workspaceId));
-  }
-
-  private async recomputeCampaignCounts({
-    workspaceId,
-    campaignId,
-  }: {
-    workspaceId: string;
-    campaignId: string;
-  }): Promise<void> {
-    const counts = await this.countDeliveriesByState({
-      workspaceId,
-      campaignId,
-    });
-
-    await this.persistCampaignCounts({ workspaceId, campaignId, counts });
-  }
-
-  private buildRefreshLockKey({
-    workspaceId,
-    campaignId,
-  }: {
-    workspaceId: string;
-    campaignId: string;
-  }): string {
-    return `campaign-stats-refresh:${workspaceId}:${campaignId}`;
   }
 }

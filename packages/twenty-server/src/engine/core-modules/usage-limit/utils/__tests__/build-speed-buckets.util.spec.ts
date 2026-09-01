@@ -172,9 +172,15 @@ describe('buildSpeedBuckets for a spender no application identifies', () => {
   });
 
   it('still drops an application bucket when no application identifies the caller', () => {
+    const unidentifiedApplicationContext = {
+      type: 'application',
+      workspace,
+      application: { id: 'app-1' },
+    } as WorkspaceAuthContext;
+
     expect(
       buildBuckets({
-        authContext: systemContext,
+        authContext: unidentifiedApplicationContext,
         defaultUsageLimitFallbacks: [
           {
             spenderType: 'application',

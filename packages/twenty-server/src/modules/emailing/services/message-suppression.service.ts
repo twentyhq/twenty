@@ -6,7 +6,7 @@ import {
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
-import { ILike, In, IsNull, QueryFailedError } from 'typeorm';
+import { ILike, In, IsNull, Not, QueryFailedError } from 'typeorm';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
@@ -252,14 +252,17 @@ export class MessageSuppressionService {
       );
     }
 
-    if (HARD_SUPPRESSION_REASONS.includes(suppression.reason)) {
+    const { affected } = await this.suppressionRepository.delete(workspaceId, {
+      id: suppressionId,
+      reason: Not(In(HARD_SUPPRESSION_REASONS)),
+    });
+
+    if (affected === 0) {
       throw new EmailingDomainException(
         `Suppression ${suppressionId} records a ${suppression.reason} and cannot be removed`,
         EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_REMOVABLE,
       );
     }
-
-    await this.suppressionRepository.delete(workspaceId, { id: suppressionId });
   }
 
   async getTopicOptOutState({

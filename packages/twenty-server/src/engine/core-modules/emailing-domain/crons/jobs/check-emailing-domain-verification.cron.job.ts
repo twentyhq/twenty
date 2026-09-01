@@ -94,15 +94,11 @@ export class CheckEmailingDomainVerificationCronJob {
       });
 
     for (const emailingDomain of verifiedDomainsWithPendingHostname) {
-      await this.unsubscribeHostnameService
-        .sync(emailingDomain.workspaceId, emailingDomain.id, {
-          provision: false,
-        })
-        .catch((error) => {
-          this.logger.error(
-            `[${CheckEmailingDomainVerificationCronJob.name}] Cannot sync unsubscribe hostname of workspace ${emailingDomain.workspaceId}: ${error}`,
-          );
-        });
+      await this.unsubscribeHostnameService.sync(
+        emailingDomain.workspaceId,
+        emailingDomain.id,
+        { provision: false },
+      );
     }
   }
 }

@@ -3,6 +3,7 @@ import { CAMPAIGN_JOB_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domai
 import { RECONCILE_WORKSPACE_CAMPAIGN_STATS_JOB } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import chunk from 'lodash.chunk';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IsNull, Repository } from 'typeorm';
 
@@ -15,6 +16,8 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+
+const ENQUEUE_BATCH_SIZE = 500;
 
 @Processor(MessageQueue.cronQueue)
 export class ReconcileCampaignStatsCronJob {
@@ -34,18 +37,16 @@ export class ReconcileCampaignStatsCronJob {
   async handle(): Promise<void> {
     const workspaceIds = await this.findSendingWorkspaceIds();
 
-    for (const workspaceId of workspaceIds) {
-      try {
-        await this.messageQueueService.add<ReconcileWorkspaceCampaignStatsJobData>(
+    for (const workspaceIdsBatch of chunk(workspaceIds, ENQUEUE_BATCH_SIZE)) {
+      await this.messageQueueService
+        .bulkAdd<ReconcileWorkspaceCampaignStatsJobData>(
           RECONCILE_WORKSPACE_CAMPAIGN_STATS_JOB,
-          { workspaceId },
+          workspaceIdsBatch.map((workspaceId) => ({ workspaceId })),
           { retryLimit: CAMPAIGN_JOB_RETRY_LIMIT },
-        );
-      } catch (error) {
-        this.exceptionHandlerService.captureExceptions([error], {
-          workspace: { id: workspaceId },
+        )
+        .catch((error) => {
+          this.exceptionHandlerService.captureExceptions([error]);
         });
-      }
     }
   }
 

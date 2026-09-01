@@ -6,6 +6,7 @@ import { In } from 'typeorm';
 
 import { type CampaignAudienceResolution } from 'src/engine/core-modules/emailing-domain/types/campaign-audience-resolution.type';
 import { resolveCampaignAudience } from 'src/engine/core-modules/emailing-domain/utils/resolve-campaign-audience.util';
+import { HARD_SUPPRESSION_REASONS } from 'src/engine/core-modules/emailing-domain/constants/hard-suppression-reasons.constant';
 import { MAX_CAMPAIGN_RECIPIENTS } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { type RawCampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/raw-campaign-recipient.type';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -71,20 +72,31 @@ export class MessageCampaignAudienceService {
         unsubscribeTopicId,
       });
 
+    const hardSuppressedEmails = new Set<string>();
+    const globallySuppressedEmails = new Set<string>();
+    const topicSuppressedEmails = new Set<string>();
+
+    for (const suppression of suppressions) {
+      if (isDefined(suppression.unsubscribeTopicId)) {
+        topicSuppressedEmails.add(suppression.emailAddress);
+        continue;
+      }
+
+      if (HARD_SUPPRESSION_REASONS.includes(suppression.reason)) {
+        hardSuppressedEmails.add(suppression.emailAddress);
+        continue;
+      }
+
+      globallySuppressedEmails.add(suppression.emailAddress);
+    }
+
     return resolveCampaignAudience({
       rawRecipients,
       totalMemberCount,
       maxRecipients: MAX_CAMPAIGN_RECIPIENTS,
-      globallySuppressedEmails: new Set(
-        suppressions
-          .filter((suppression) => !isDefined(suppression.unsubscribeTopicId))
-          .map((suppression) => suppression.emailAddress),
-      ),
-      topicSuppressedEmails: new Set(
-        suppressions
-          .filter((suppression) => isDefined(suppression.unsubscribeTopicId))
-          .map((suppression) => suppression.emailAddress),
-      ),
+      hardSuppressedEmails,
+      globallySuppressedEmails,
+      topicSuppressedEmails,
     });
   }
 

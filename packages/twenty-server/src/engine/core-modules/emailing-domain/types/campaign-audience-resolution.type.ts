@@ -7,6 +7,7 @@ export type CampaignAudienceResolution = {
     withoutEmail: number;
     duplicateEmails: number;
     overCap: number;
+    hardSuppressed: number;
     globallyUnsubscribed: number;
     topicUnsubscribed: number;
     sendable: number;

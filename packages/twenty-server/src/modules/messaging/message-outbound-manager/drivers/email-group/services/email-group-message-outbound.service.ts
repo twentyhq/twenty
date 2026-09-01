@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,6 +22,8 @@ import { countDeliveredRecipients } from 'src/engine/core-modules/emailing-domai
 
 @Injectable()
 export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
+  private readonly logger = new Logger(EmailGroupMessageOutboundService.name);
+
   constructor(
     @InjectWorkspaceScopedRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
@@ -65,10 +67,20 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
       },
     );
 
-    await this.emailBillingService.billSentEmails({
-      workspaceId: connectedAccount.workspaceId,
-      sentEmailCount: countDeliveredRecipients(result.deliveredRecipients),
-    });
+    // The provider has already accepted the mail, so surfacing a billing
+    // failure would invite a retry that sends it a second time.
+    await this.emailBillingService
+      .billSentEmails({
+        workspaceId: connectedAccount.workspaceId,
+        sentEmailCount: countDeliveredRecipients(result.deliveredRecipients),
+      })
+      .catch((error) => {
+        this.logger.error(
+          `Workspace ${connectedAccount.workspaceId} sent email ${result.messageId} but failed to bill it, so this send is unbilled: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      });
 
     return {
       headerMessageId: result.messageId,
