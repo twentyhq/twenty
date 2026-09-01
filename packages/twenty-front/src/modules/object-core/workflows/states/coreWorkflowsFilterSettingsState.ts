@@ -12,10 +12,9 @@ export const coreWorkflowsFilterSettingsState = createAtomState<FilterSettings>(
     validateInitFn: (filterSettings) =>
       typeof filterSettings === 'object' &&
       filterSettings !== null &&
-      ['stepFilters', 'stepFilterGroups'].every((key) => {
-        const candidate = (filterSettings as Record<string, unknown>)[key];
-
-        return candidate === undefined || Array.isArray(candidate);
-      }),
+      (!('stepFilters' in filterSettings) ||
+        Array.isArray(filterSettings.stepFilters)) &&
+      (!('stepFilterGroups' in filterSettings) ||
+        Array.isArray(filterSettings.stepFilterGroups)),
   },
 );

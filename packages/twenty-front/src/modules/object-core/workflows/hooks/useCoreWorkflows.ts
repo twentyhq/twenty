@@ -58,10 +58,10 @@ export const useCoreWorkflows = ({
   );
 
   const { userTimezone } = useUserTimezone();
-  const filter = buildCoreWorkflowFilterInput(
-    coreWorkflowsFilterSettings,
-    userTimezone,
-  );
+  const filter = buildCoreWorkflowFilterInput({
+    filterSettings: coreWorkflowsFilterSettings,
+    timezone: userTimezone,
+  });
 
   const [isFetchingMore, setIsFetchingMore] = useState(false);
 

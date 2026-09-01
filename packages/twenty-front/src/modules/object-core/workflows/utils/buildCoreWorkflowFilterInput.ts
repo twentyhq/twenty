@@ -44,10 +44,13 @@ const toCoreWorkflowFilterRule = ({
   };
 };
 
-export const buildCoreWorkflowFilterInput = (
-  filterSettings: FilterSettings,
-  timezone?: string,
-): CoreWorkflowFilterInput | undefined => {
+export const buildCoreWorkflowFilterInput = ({
+  filterSettings,
+  timezone,
+}: {
+  filterSettings: FilterSettings;
+  timezone?: string;
+}): CoreWorkflowFilterInput | undefined => {
   const rules = (filterSettings.stepFilters ?? [])
     .filter(isUsableCoreWorkflowFilterRule)
     .slice(0, MAX_CORE_WORKFLOW_FILTER_RULES)

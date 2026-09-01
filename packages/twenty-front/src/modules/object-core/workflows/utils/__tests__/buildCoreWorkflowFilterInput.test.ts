@@ -26,17 +26,21 @@ const buildStepFilter = (overrides: Partial<StepFilter> = {}): StepFilter => ({
 
 describe('buildCoreWorkflowFilterInput', () => {
   it('should return undefined when there is no usable rule', () => {
-    expect(buildCoreWorkflowFilterInput({})).toBeUndefined();
+    expect(
+      buildCoreWorkflowFilterInput({ filterSettings: {} }),
+    ).toBeUndefined();
     expect(
       buildCoreWorkflowFilterInput({
-        stepFilters: [buildStepFilter({ value: '' })],
+        filterSettings: { stepFilters: [buildStepFilter({ value: '' })] },
       }),
     ).toBeUndefined();
   });
 
   it('should map a text rule', () => {
     expect(
-      buildCoreWorkflowFilterInput({ stepFilters: [buildStepFilter()] }),
+      buildCoreWorkflowFilterInput({
+        filterSettings: { stepFilters: [buildStepFilter()] },
+      }),
     ).toEqual({
       logicalOperator: CoreWorkflowFilterLogicalOperator.AND,
       rules: [
@@ -53,10 +57,12 @@ describe('buildCoreWorkflowFilterInput', () => {
   it('should keep the root logical operator', () => {
     expect(
       buildCoreWorkflowFilterInput({
-        stepFilters: [buildStepFilter()],
-        stepFilterGroups: [
-          { id: 'group-1', logicalOperator: StepLogicalOperator.OR },
-        ],
+        filterSettings: {
+          stepFilters: [buildStepFilter()],
+          stepFilterGroups: [
+            { id: 'group-1', logicalOperator: StepLogicalOperator.OR },
+          ],
+        },
       })?.logicalOperator,
     ).toBe(CoreWorkflowFilterLogicalOperator.OR);
   });
@@ -64,9 +70,11 @@ describe('buildCoreWorkflowFilterInput', () => {
   it('should send no value for value-less operands', () => {
     expect(
       buildCoreWorkflowFilterInput({
-        stepFilters: [
-          buildStepFilter({ operand: ViewFilterOperand.IS_EMPTY, value: '' }),
-        ],
+        filterSettings: {
+          stepFilters: [
+            buildStepFilter({ operand: ViewFilterOperand.IS_EMPTY, value: '' }),
+          ],
+        },
       })?.rules[0],
     ).toEqual({
       fieldKey: CoreWorkflowFilterFieldKey.NAME,
@@ -77,8 +85,8 @@ describe('buildCoreWorkflowFilterInput', () => {
   });
 
   it('should stamp the timezone on date rules only', () => {
-    const rules = buildCoreWorkflowFilterInput(
-      {
+    const rules = buildCoreWorkflowFilterInput({
+      filterSettings: {
         stepFilters: [
           buildStepFilter(),
           buildStepFilter({
@@ -89,8 +97,8 @@ describe('buildCoreWorkflowFilterInput', () => {
           }),
         ],
       },
-      'Asia/Tokyo',
-    )?.rules;
+      timezone: 'Asia/Tokyo',
+    })?.rules;
 
     expect(rules?.[0].timezone).toBeNull();
     expect(rules?.[1].timezone).toBe('Asia/Tokyo');
@@ -99,13 +107,15 @@ describe('buildCoreWorkflowFilterInput', () => {
   it('should drop a rule whose multi select value has no option left', () => {
     expect(
       buildCoreWorkflowFilterInput({
-        stepFilters: [
-          buildStepFilter({
-            stepOutputKey: CoreWorkflowFilterFieldKey.STATUSES,
-            operand: ViewFilterOperand.CONTAINS,
-            value: JSON.stringify([]),
-          }),
-        ],
+        filterSettings: {
+          stepFilters: [
+            buildStepFilter({
+              stepOutputKey: CoreWorkflowFilterFieldKey.STATUSES,
+              operand: ViewFilterOperand.CONTAINS,
+              value: JSON.stringify([]),
+            }),
+          ],
+        },
       }),
     ).toBeUndefined();
   });
@@ -113,7 +123,9 @@ describe('buildCoreWorkflowFilterInput', () => {
   it('should drop rules on unknown fields', () => {
     expect(
       buildCoreWorkflowFilterInput({
-        stepFilters: [buildStepFilter({ stepOutputKey: 'unknown' })],
+        filterSettings: {
+          stepFilters: [buildStepFilter({ stepOutputKey: 'unknown' })],
+        },
       }),
     ).toBeUndefined();
   });
@@ -129,9 +141,15 @@ describe('buildCoreWorkflowFilterInput', () => {
     'should map every operand the builder offers on %s (%s)',
     (fieldKey, operand) => {
       const rules = buildCoreWorkflowFilterInput({
-        stepFilters: [
-          buildStepFilter({ stepOutputKey: fieldKey, operand, value: 'sync' }),
-        ],
+        filterSettings: {
+          stepFilters: [
+            buildStepFilter({
+              stepOutputKey: fieldKey,
+              operand,
+              value: 'sync',
+            }),
+          ],
+        },
       })?.rules;
 
       expect(rules).toHaveLength(1);
