@@ -134,7 +134,7 @@ export const RecordTableRowDragOverlayContent = ({
 }) => {
   const { lastColumnWidth } = useRecordTableLastColumnWidthToFill();
 
-  const { visibleRecordFields, recordTableId } = useRecordTableContextOrThrow();
+  const { visibleRecordFields } = useRecordTableContextOrThrow();
 
   const isRecordTableDragColumnHidden = useAtomComponentStateValue(
     isRecordTableDragColumnHiddenComponentState,
@@ -143,9 +143,7 @@ export const RecordTableRowDragOverlayContent = ({
   const isRecordTableCheckboxColumnHidden =
     useIsRecordTableCheckboxColumnHidden();
 
-  const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement(
-    `record-table-scroll-${recordTableId}`,
-  );
+  const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
   const visibleTableWidth = scrollWrapperHTMLElement?.clientWidth;
 

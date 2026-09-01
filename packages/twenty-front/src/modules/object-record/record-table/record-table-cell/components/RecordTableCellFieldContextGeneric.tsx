@@ -6,9 +6,9 @@ import { type RecordField } from '@/object-record/record-field/types/RecordField
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
+import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
@@ -66,7 +66,7 @@ export const RecordTableCellFieldContextGeneric = ({
     hasObjectReadPermissions = relationObjectPermissions.canReadObjectRecords;
 
     if (hasObjectReadPermissions) {
-      const junctionConfig = getJunctionConfig({
+      const junctionConfig = resolveJunctionConfig({
         settings: fieldDefinition.metadata.settings,
         relationObjectMetadataId,
         relationTargetFieldMetadataId:

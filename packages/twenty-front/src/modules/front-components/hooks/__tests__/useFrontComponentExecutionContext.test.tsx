@@ -34,6 +34,7 @@ const mockRequestAccessTokenRefresh = jest.fn();
 const mockOpenConfirmationModal = jest.fn();
 const mockNavigateSidePanel = jest.fn();
 const mockOpenRecordInSidePanel = jest.fn();
+const mockOpenRoutedPageInSidePanel = jest.fn(() => 'routed-page-id');
 const mockOpenRichTextInSidePanel = jest.fn();
 const mockOpenComposeEmailInSidePanel = jest.fn();
 const mockOpenFrontComponentInSidePanel = jest.fn();
@@ -84,6 +85,12 @@ jest.mock('@/side-panel/hooks/useNavigateSidePanel', () => ({
 jest.mock('@/side-panel/hooks/useOpenRecordInSidePanel', () => ({
   useOpenRecordInSidePanel: () => ({
     openRecordInSidePanel: mockOpenRecordInSidePanel,
+  }),
+}));
+
+jest.mock('@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel', () => ({
+  useOpenRoutedPageInSidePanel: () => ({
+    openRoutedPageInSidePanel: mockOpenRoutedPageInSidePanel,
   }),
 }));
 
@@ -425,6 +432,88 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
+      expect(mockSetSidePanelSearch).toHaveBeenCalledWith('');
+    });
+  });
+
+  describe('openSidePanelPage with a routed page', () => {
+    it('should open a canonical app path in the secondary surface', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            to: AppPath.RecordIndexPage,
+            params: { objectNamePlural: 'companies' },
+            queryParams: { viewId: 'view-id' },
+            hash: 'table',
+            pageTitle: 'Companies',
+            resetNavigationStack: true,
+          },
+        );
+      });
+
+      expect(mockOpenRoutedPageInSidePanel).toHaveBeenCalledWith({
+        path: '/objects/companies?viewId=view-id#table',
+        pageTitle: 'Companies',
+        resetNavigationStack: true,
+      });
+    });
+
+    it('should reject a path the secondary route tree cannot render', async () => {
+      mockOpenRoutedPageInSidePanel.mockReturnValueOnce(null as never);
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await expect(
+        result.current.frontComponentHostCommunicationApi.openSidePanelPage({
+          to: AppPath.Home,
+        }),
+      ).rejects.toThrow('Unsupported side-panel route: /home');
+    });
+
+    it('rejects legacy ViewRecords because it has no canonical route params', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await expect(
+        result.current.frontComponentHostCommunicationApi.openSidePanelPage({
+          page: SidePanelPages.ViewRecords,
+          pageTitle: 'Legacy records',
+        } as never),
+      ).rejects.toThrow(
+        'ViewRecords is no longer supported. Open AppPath.RecordIndexPage with typed params instead.',
+      );
+
+      expect(mockNavigateSidePanel).not.toHaveBeenCalled();
+    });
+
+    it('maps legacy Copilot calls to AskAI', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            page: SidePanelPages.Copilot,
+            pageTitle: 'Legacy AI',
+            pageIcon: 'IconSparkles',
+            shouldResetSearchState: true,
+          } as never,
+        );
+      });
+
+      expect(mockNavigateSidePanel).toHaveBeenCalledWith({
+        page: SidePanelPages.AskAI,
+        pageTitle: 'Legacy AI',
+        pageIcon: 'icon-IconSparkles',
+      });
       expect(mockSetSidePanelSearch).toHaveBeenCalledWith('');
     });
   });

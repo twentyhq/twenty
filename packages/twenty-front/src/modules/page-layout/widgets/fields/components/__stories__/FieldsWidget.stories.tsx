@@ -282,7 +282,6 @@ const FieldsWidgetStoryRenderer = ({ view }: { view: ViewWithRelations }) => {
           <PageLayoutTestWrapper store={jotaiStore}>
             <LayoutRenderingProvider
               value={{
-                isInSidePanel: false,
                 layoutType: PageLayoutType.RECORD_PAGE,
                 targetRecordIdentifier: {
                   id: TEST_RECORD_ID,

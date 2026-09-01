@@ -5,10 +5,12 @@ import { expect, userEvent, within } from 'storybook/test';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
+import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
 import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/components/PageLayoutRecordPageRenderer';
+import { RecordShowResourceLoader } from '@/object-record/record-show/components/RecordShowResourceLoader';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
@@ -159,7 +161,6 @@ const SeedEmailThreadPageLayoutEffect = () => {
 
 type EmailThreadStoryArgs = PageDecoratorArgs & {
   targetRecordIdentifier: TargetRecordIdentifier;
-  isInSidePanel: boolean;
 };
 
 const meta: Meta<EmailThreadStoryArgs> = {
@@ -168,12 +169,26 @@ const meta: Meta<EmailThreadStoryArgs> = {
   component: PageLayoutRecordPageRenderer,
   decorators: [
     (Story) => (
-      <CommandMenuComponentInstanceContext.Provider
-        value={{ instanceId: 'story-command-menu' }}
+      <WorkspaceSurfaceContext.Provider
+        value={{
+          type: 'side-panel',
+          instanceId: 'story-side-panel',
+          ownsRouteLocation: true,
+          headerTitlePortal: null,
+          headerActionsPortal: null,
+        }}
       >
-        <SeedEmailThreadPageLayoutEffect />
-        <Story />
-      </CommandMenuComponentInstanceContext.Provider>
+        <CommandMenuComponentInstanceContext.Provider
+          value={{ instanceId: 'story-command-menu' }}
+        >
+          <SeedEmailThreadPageLayoutEffect />
+          <RecordShowResourceLoader
+            objectNameSingular={CoreObjectNameSingular.MessageThread}
+            recordId={THREAD_ID}
+          />
+          <Story />
+        </CommandMenuComponentInstanceContext.Provider>
+      </WorkspaceSurfaceContext.Provider>
     ),
     FileUploadDecorator,
     ContextStoreDecorator,
@@ -189,7 +204,6 @@ const meta: Meta<EmailThreadStoryArgs> = {
       id: THREAD_ID,
       targetObjectNameSingular: CoreObjectNameSingular.MessageThread,
     },
-    isInSidePanel: true,
   },
   parameters: {
     layout: 'fullscreen',
