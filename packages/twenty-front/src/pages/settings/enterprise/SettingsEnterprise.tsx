@@ -223,12 +223,13 @@ export const SettingsEnterprise = ({
     stripeStatus === 'incomplete' || stripeStatus === 'incomplete_expired';
 
   const licensee = subscriptionStatus?.licensee ?? null;
-  const expiresAt = subscriptionStatus?.expiresAt
-    ? new Date(subscriptionStatus.expiresAt)
-    : null;
 
   const cancelAt = isDefined(subscriptionStatus?.cancelAt)
     ? new Date(subscriptionStatus.cancelAt)
+    : null;
+
+  const currentPeriodEnd = isDefined(subscriptionStatus?.currentPeriodEnd)
+    ? new Date(subscriptionStatus.currentPeriodEnd)
     : null;
 
   const cancelAtDate =
@@ -240,6 +241,13 @@ export const SettingsEnterprise = ({
     isCancelScheduled && isDefined(cancelAt)
       ? t`Your enterprise features will remain active until ${cancelAtDate}.`
       : null;
+
+  // expiresAt is the validity token lease renewed daily by the instance, not a
+  // billing date, so the subscription rows read the Stripe period instead.
+  const subscriptionDate = isCancelScheduled ? cancelAt : currentPeriodEnd;
+  const subscriptionDateLabel = isCancelScheduled
+    ? t`Cancels on`
+    : t`Renews on`;
 
   const handleActivate = useCallback(async () => {
     if (!enterpriseKey.trim()) return;
@@ -694,11 +702,11 @@ export const SettingsEnterprise = ({
                   currentValue={licensee}
                 />
               )}
-              {expiresAt && (
+              {isDefined(subscriptionDate) && (
                 <SubscriptionInfoRowContainer
-                  label={t`Valid until`}
+                  label={subscriptionDateLabel}
                   Icon={IconCalendarRepeat}
-                  currentValue={new Date(expiresAt).toLocaleDateString()}
+                  currentValue={subscriptionDate.toLocaleDateString()}
                 />
               )}
             </SubscriptionInfoContainer>
@@ -756,11 +764,11 @@ export const SettingsEnterprise = ({
                   currentValue={licensee}
                 />
               )}
-              {expiresAt && (
+              {isDefined(subscriptionDate) && (
                 <SubscriptionInfoRowContainer
-                  label={isCancelScheduled ? t`Cancels on` : t`Valid until`}
+                  label={subscriptionDateLabel}
                   Icon={IconCalendarRepeat}
-                  currentValue={new Date(expiresAt).toLocaleDateString()}
+                  currentValue={subscriptionDate.toLocaleDateString()}
                 />
               )}
             </SubscriptionInfoContainer>
