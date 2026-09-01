@@ -1,11 +1,15 @@
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { WorkflowVariablesDropdown } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdown';
+import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/workflow-variables/constants/SearchVariablesDropdownId';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
-import { Button } from 'twenty-ui/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+
+const DROPDOWN_ID = `${SEARCH_VARIABLES_DROPDOWN_ID}-variables`;
 
 const meta = {
   title: 'Modules/Workflow/Variables/WorkflowVariablesDropdown',
@@ -18,7 +22,12 @@ const meta = {
     onVariableSelect: fn(),
     shouldDisplayRecordFields: true,
     shouldDisplayRecordObjects: false,
-    clickableComponent: <Button title="Open variables" />,
+  },
+  beforeEach: () => {
+    jotaiStore.set(
+      isDropdownOpenComponentState.atomFamily({ instanceId: DROPDOWN_ID }),
+      true,
+    );
   },
   decorators: [WorkflowStepDecorator, ComponentDecorator, WorkspaceDecorator],
 } satisfies Meta<typeof WorkflowVariablesDropdown>;
@@ -28,16 +37,8 @@ type Story = StoryObj<typeof meta>;
 
 export const SearchNestedFieldFromAutoOpenedStep: Story = {
   play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
 
-    await userEvent.click(
-      await canvas.findByRole(
-        'button',
-        { expanded: false },
-        { timeout: 5_000 },
-      ),
-    );
     expect(await body.findByText('Record Fields')).toBeInTheDocument();
     expect(body.queryByText(' Address City')).not.toBeInTheDocument();
     await userEvent.type(await body.findByRole('textbox'), ' ADDRESS CITY ');
