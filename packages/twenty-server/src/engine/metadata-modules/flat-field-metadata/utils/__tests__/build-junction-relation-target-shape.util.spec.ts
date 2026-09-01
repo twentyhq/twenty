@@ -93,7 +93,7 @@ describe('buildJunctionRelationTargetShape', () => {
           NOTE_TARGET_NOTE_FIELD,
           {
             ...NOTE_TARGET_PERSON_FIELD,
-            relationTargetFieldMetadataId: 'another-person-field',
+            relationTargetFieldMetadataId: PERSON_JUNCTIONS_FIELD.id,
           },
           NOTE_TARGET_COMPANY_FIELD,
           PERSON_JUNCTIONS_FIELD,
