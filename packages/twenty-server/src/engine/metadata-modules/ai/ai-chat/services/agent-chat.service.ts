@@ -766,10 +766,6 @@ export class AgentChatService {
     };
   }
 
-  // An interrupted stream can persist a pending question part without ever
-  // registering it on the thread; accept the user's answer for that orphaned
-  // question instead of rejecting it, as long as it is still the latest
-  // assistant message and no other stream holds the thread.
   private async claimOrphanedQuestion({
     threadId,
     messageId,
@@ -781,20 +777,24 @@ export class AgentChatService {
     streamId: string;
     workspaceId: string;
   }): Promise<boolean> {
-    const latestAssistantMessage = await this.messageRepository.findOne(
-      workspaceId,
-      {
-        where: { threadId, role: AgentMessageRole.ASSISTANT },
-        order: {
-          processedAt: { direction: 'DESC', nulls: 'LAST' },
-          createdAt: 'DESC',
-          id: 'DESC',
+    const isLatestAssistantMessage = async () => {
+      const latestAssistantMessage = await this.messageRepository.findOne(
+        workspaceId,
+        {
+          where: { threadId, role: AgentMessageRole.ASSISTANT },
+          order: {
+            processedAt: { direction: 'DESC', nulls: 'LAST' },
+            createdAt: 'DESC',
+            id: 'DESC',
+          },
+          select: ['id'],
         },
-        select: ['id'],
-      },
-    );
+      );
 
-    if (latestAssistantMessage?.id !== messageId) {
+      return latestAssistantMessage?.id === messageId;
+    };
+
+    if (!(await isLatestAssistantMessage())) {
       return false;
     }
 
@@ -808,7 +808,23 @@ export class AgentChatService {
       { activeStreamId: streamId },
     );
 
-    return (claim.affected ?? 0) > 0;
+    if ((claim.affected ?? 0) === 0) {
+      return false;
+    }
+
+    // A stream finishing between the check above and the claim can have
+    // appended a newer message; re-checking under the claim is race-free.
+    if (!(await isLatestAssistantMessage())) {
+      await this.threadRepository.update(
+        workspaceId,
+        { id: threadId, activeStreamId: streamId },
+        { activeStreamId: null },
+      );
+
+      return false;
+    }
+
+    return true;
   }
 
   async restorePendingQuestion({
