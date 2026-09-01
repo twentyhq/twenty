@@ -8,30 +8,16 @@ import { Button } from 'twenty-ui/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import {
+  SlackTableCell,
+  SlackTableRow,
+} from 'src/front-components/components/SlackSettingsTable';
 import { SlackUserLinkFormHint } from 'src/front-components/components/SlackUserLinkFormHint';
 import { WorkspaceMemberPicker } from 'src/front-components/components/WorkspaceMemberPicker';
 import { useSetSlackUserLink } from 'src/front-components/hooks/use-set-slack-user-link';
 import { type WorkspaceMemberOption } from 'src/front-components/types/workspace-member-option.type';
 import { buildSlackUserLinkSaveNote } from 'src/front-components/utils/build-slack-user-link-save-note.util';
 import { type SlackResolvedUser } from 'src/logic-functions/types/slack-resolved-user.type';
-
-const StyledRow = styled.div`
-  border: 1px solid ${() => themeCssVariables.border.color.light};
-  border-radius: ${() => themeCssVariables.border.radius.sm};
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: ${() => themeCssVariables.spacing[2]};
-  padding: ${() => themeCssVariables.spacing[3]};
-`;
-
-const StyledRowMain = styled.div`
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${() => themeCssVariables.spacing[4]};
-  justify-content: space-between;
-`;
 
 const StyledIdentity = styled.div`
   align-items: center;
@@ -40,45 +26,39 @@ const StyledIdentity = styled.div`
   min-width: 0;
 `;
 
-const StyledDetails = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${() => themeCssVariables.spacing[1]};
-  min-width: 0;
-`;
-
 const StyledName = styled.span`
   color: ${() => themeCssVariables.font.color.primary};
-  font-family: ${() => themeCssVariables.font.family};
-  font-size: ${() => themeCssVariables.font.size.sm};
-  font-weight: ${() => themeCssVariables.font.weight.medium};
   min-width: 0;
 `;
 
-const StyledMeta = styled.span`
-  color: ${() => themeCssVariables.font.color.tertiary};
-  font-family: ${() => themeCssVariables.font.family};
-  font-size: ${() => themeCssVariables.font.size.xs};
+const StyledPickerCell = styled.div`
+  flex: 1;
+  min-width: 0;
 `;
 
-const StyledLinkControls = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${() => themeCssVariables.spacing[2]};
+const StyledHint = styled.div`
+  padding: 0 ${() => themeCssVariables.spacing[2]}
+    ${() => themeCssVariables.spacing[2]};
 `;
 
 type UnlinkedSlackUserRowProps = {
   slackUser: SlackResolvedUser;
+  gridTemplateColumns: string;
   onLinkSaved: () => void;
 };
 
 export const UnlinkedSlackUserRow = ({
   slackUser,
+  gridTemplateColumns,
   onLinkSaved,
 }: UnlinkedSlackUserRowProps) => {
   const [selectedMember, setSelectedMember] =
     useState<WorkspaceMemberOption | null>(null);
   const { setSlackUserLink, isSubmitting } = useSetSlackUserLink();
+
+  const displayedName = isNonEmptyString(slackUser.displayName)
+    ? slackUser.displayName
+    : slackUser.slackUserId;
 
   const handleLink = async () => {
     if (!isDefined(selectedMember)) {
@@ -106,43 +86,39 @@ export const UnlinkedSlackUserRow = ({
   };
 
   return (
-    <StyledRow>
-      <StyledRowMain>
-        <StyledIdentity>
-          <Avatar
-            placeholder={
-              isNonEmptyString(slackUser.displayName)
-                ? slackUser.displayName
+    <>
+      <SlackTableRow gridTemplateColumns={gridTemplateColumns}>
+        <SlackTableCell>
+          <StyledIdentity>
+            <Avatar
+              placeholder={displayedName}
+              placeholderColorSeed={slackUser.slackUserId}
+              type="rounded"
+              size="md"
+            />
+            <StyledName>
+              <OverflowingTextWithTooltip text={displayedName} />
+            </StyledName>
+          </StyledIdentity>
+        </SlackTableCell>
+        <SlackTableCell>
+          <OverflowingTextWithTooltip
+            text={
+              isNonEmptyString(slackUser.email)
+                ? slackUser.email
                 : slackUser.slackUserId
             }
-            placeholderColorSeed={slackUser.slackUserId}
-            type="rounded"
-            size="md"
           />
-          <StyledDetails>
-            <StyledName>
-              <OverflowingTextWithTooltip
-                text={
-                  isNonEmptyString(slackUser.displayName)
-                    ? slackUser.displayName
-                    : slackUser.slackUserId
-                }
-              />
-            </StyledName>
-            <StyledMeta>
-              {isNonEmptyString(slackUser.email)
-                ? slackUser.email
-                : slackUser.slackUserId}
-            </StyledMeta>
-          </StyledDetails>
-        </StyledIdentity>
-        <StyledLinkControls>
-          <WorkspaceMemberPicker
-            selectedMember={selectedMember}
-            onSelect={setSelectedMember}
-            onClear={() => setSelectedMember(null)}
-            disabled={isSubmitting}
-          />
+        </SlackTableCell>
+        <SlackTableCell>
+          <StyledPickerCell>
+            <WorkspaceMemberPicker
+              selectedMember={selectedMember}
+              onSelect={setSelectedMember}
+              onClear={() => setSelectedMember(null)}
+              disabled={isSubmitting}
+            />
+          </StyledPickerCell>
           <Button
             title={isSubmitting ? 'Linking…' : 'Link'}
             size="small"
@@ -151,17 +127,19 @@ export const UnlinkedSlackUserRow = ({
             disabled={!isDefined(selectedMember) || isSubmitting}
             onClick={handleLink}
           />
-        </StyledLinkControls>
-      </StyledRowMain>
+        </SlackTableCell>
+      </SlackTableRow>
       {isDefined(selectedMember) && (
-        <SlackUserLinkFormHint>
-          {buildSlackUserLinkSaveNote({
-            resolvedUser: slackUser,
-            selectedMember,
-            existingLink: undefined,
-          })}
-        </SlackUserLinkFormHint>
+        <StyledHint>
+          <SlackUserLinkFormHint>
+            {buildSlackUserLinkSaveNote({
+              resolvedUser: slackUser,
+              selectedMember,
+              existingLink: undefined,
+            })}
+          </SlackUserLinkFormHint>
+        </StyledHint>
       )}
-    </StyledRow>
+    </>
   );
 };

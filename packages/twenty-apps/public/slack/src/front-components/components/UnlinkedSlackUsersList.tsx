@@ -1,14 +1,16 @@
 import styled from '@emotion/styled';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import {
+  SlackTable,
+  SlackTableBody,
+  SlackTableHeader,
+  SlackTableRow,
+} from 'src/front-components/components/SlackSettingsTable';
 import { UnlinkedSlackUserRow } from 'src/front-components/components/UnlinkedSlackUserRow';
 import { type SlackResolvedUser } from 'src/logic-functions/types/slack-resolved-user.type';
 
-const StyledList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${() => themeCssVariables.spacing[2]};
-`;
+const UNLINKED_GRID_TEMPLATE_COLUMNS = '2fr 2fr 3fr';
 
 const StyledEmptyState = styled.div`
   color: ${() => themeCssVariables.font.color.tertiary};
@@ -21,7 +23,8 @@ const StyledTruncationNote = styled.div`
   color: ${() => themeCssVariables.font.color.tertiary};
   font-family: ${() => themeCssVariables.font.family};
   font-size: ${() => themeCssVariables.font.size.xs};
-  padding: ${() => themeCssVariables.spacing[1]} 0;
+  padding: ${() => themeCssVariables.spacing[1]}
+    ${() => themeCssVariables.spacing[2]};
 `;
 
 type UnlinkedSlackUsersListProps = {
@@ -44,20 +47,28 @@ export const UnlinkedSlackUsersList = ({
   }
 
   return (
-    <StyledList>
-      {unlinkedSlackUsers.map((slackUser) => (
-        <UnlinkedSlackUserRow
-          key={slackUser.slackUserId}
-          slackUser={slackUser}
-          onLinkSaved={onLinkSaved}
-        />
-      ))}
-      {hasMore && (
-        <StyledTruncationNote>
-          There may be more unlinked users. Link some of these first, or find a
-          specific person with the search below.
-        </StyledTruncationNote>
-      )}
-    </StyledList>
+    <SlackTable>
+      <SlackTableRow gridTemplateColumns={UNLINKED_GRID_TEMPLATE_COLUMNS}>
+        <SlackTableHeader>Slack user</SlackTableHeader>
+        <SlackTableHeader>Email</SlackTableHeader>
+        <SlackTableHeader>Workspace member</SlackTableHeader>
+      </SlackTableRow>
+      <SlackTableBody>
+        {unlinkedSlackUsers.map((slackUser) => (
+          <UnlinkedSlackUserRow
+            key={slackUser.slackUserId}
+            slackUser={slackUser}
+            gridTemplateColumns={UNLINKED_GRID_TEMPLATE_COLUMNS}
+            onLinkSaved={onLinkSaved}
+          />
+        ))}
+        {hasMore && (
+          <StyledTruncationNote>
+            There may be more unlinked users. Link some of these first, or find
+            a specific person with the search below.
+          </StyledTruncationNote>
+        )}
+      </SlackTableBody>
+    </SlackTable>
   );
 };

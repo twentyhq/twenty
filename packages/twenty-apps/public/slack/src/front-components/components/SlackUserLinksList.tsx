@@ -13,28 +13,20 @@ import { Button, LightIconButton } from 'twenty-ui/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import {
+  SlackTable,
+  SlackTableBody,
+  SlackTableCell,
+  SlackTableHeader,
+  SlackTableRow,
+} from 'src/front-components/components/SlackSettingsTable';
 import { SLACK_USER_LINK_CONSENT_STATE } from 'src/logic-functions/constants/slack-user-link-consent-state';
 import { SLACK_USER_LINK_SOURCE } from 'src/logic-functions/constants/slack-user-link-source';
 import { type SlackUserLinkConsentState } from 'src/logic-functions/types/slack-user-link-consent-state.type';
 import { isSlackUserLinkConsentState } from 'src/logic-functions/utils/is-slack-user-link-consent-state';
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
 
-const StyledList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${() => themeCssVariables.spacing[2]};
-`;
-
-const StyledRow = styled.div`
-  align-items: center;
-  border: 1px solid ${() => themeCssVariables.border.color.light};
-  border-radius: ${() => themeCssVariables.border.radius.sm};
-  box-sizing: border-box;
-  display: flex;
-  gap: ${() => themeCssVariables.spacing[4]};
-  justify-content: space-between;
-  padding: ${() => themeCssVariables.spacing[3]};
-`;
+const LINKS_GRID_TEMPLATE_COLUMNS = '3fr 3fr 2fr 80px';
 
 const StyledIdentity = styled.div`
   align-items: center;
@@ -43,44 +35,9 @@ const StyledIdentity = styled.div`
   min-width: 0;
 `;
 
-const StyledDetails = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${() => themeCssVariables.spacing[1]};
-  min-width: 0;
-`;
-
 const StyledName = styled.span`
   color: ${() => themeCssVariables.font.color.primary};
-  font-family: ${() => themeCssVariables.font.family};
-  font-size: ${() => themeCssVariables.font.size.sm};
-  font-weight: ${() => themeCssVariables.font.weight.medium};
   min-width: 0;
-`;
-
-const StyledMeta = styled.span`
-  color: ${() => themeCssVariables.font.color.tertiary};
-  font-family: ${() => themeCssVariables.font.family};
-  font-size: ${() => themeCssVariables.font.size.xs};
-`;
-
-const StyledRight = styled.div`
-  align-items: flex-end;
-  display: flex;
-  flex-direction: column;
-  gap: ${() => themeCssVariables.spacing[2]};
-`;
-
-const StyledBadges = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${() => themeCssVariables.spacing[1]};
-`;
-
-const StyledActions = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${() => themeCssVariables.spacing[1]};
 `;
 
 const StyledEmptyState = styled.div`
@@ -167,52 +124,49 @@ export const SlackUserLinksList = ({
   }
 
   return (
-    <StyledList>
-      {hasMore && (
-        <StyledEmptyState>
-          Showing {slackUserLinks.length} links; more exist than can be shown
-          here.
-        </StyledEmptyState>
-      )}
-      {slackUserLinks.map((slackUserLink) => {
-        const consentState = toDisplayedConsentState(
-          slackUserLink.consentState,
-        );
-        const isPending =
-          consentState === SLACK_USER_LINK_CONSENT_STATE.PENDING;
+    <SlackTable>
+      <SlackTableRow gridTemplateColumns={LINKS_GRID_TEMPLATE_COLUMNS}>
+        <SlackTableHeader>Slack account</SlackTableHeader>
+        <SlackTableHeader>Workspace member</SlackTableHeader>
+        <SlackTableHeader>Status</SlackTableHeader>
+        <SlackTableHeader align="right" />
+      </SlackTableRow>
+      <SlackTableBody>
+        {slackUserLinks.map((slackUserLink) => {
+          const consentState = toDisplayedConsentState(
+            slackUserLink.consentState,
+          );
+          const isPending =
+            consentState === SLACK_USER_LINK_CONSENT_STATE.PENDING;
+          const displayedName =
+            slackUserLink.name ?? slackUserLink.slackUserId ?? 'Unnamed link';
 
-        return (
-          <StyledRow key={slackUserLink.id}>
-            <StyledIdentity>
-              <Avatar
-                placeholder={
-                  slackUserLink.name ?? slackUserLink.slackUserId ?? undefined
-                }
-                placeholderColorSeed={slackUserLink.id}
-                type="rounded"
-                size="md"
-              />
-              <StyledDetails>
-                <StyledName>
-                  <OverflowingTextWithTooltip
-                    text={
-                      slackUserLink.name ??
-                      slackUserLink.slackUserId ??
-                      'Unnamed link'
-                    }
+          return (
+            <SlackTableRow
+              key={slackUserLink.id}
+              gridTemplateColumns={LINKS_GRID_TEMPLATE_COLUMNS}
+            >
+              <SlackTableCell>
+                <StyledIdentity>
+                  <Avatar
+                    placeholder={displayedName}
+                    placeholderColorSeed={slackUserLink.id}
+                    type="rounded"
+                    size="md"
                   />
-                </StyledName>
-                <StyledMeta>
-                  {slackUserLink.workspaceMemberName ?? 'No workspace member'}
-                </StyledMeta>
-                <StyledMeta>
-                  Slack user {slackUserLink.slackUserId ?? 'unknown'} · Team{' '}
-                  {slackUserLink.slackTeamId ?? 'unknown'}
-                </StyledMeta>
-              </StyledDetails>
-            </StyledIdentity>
-            <StyledRight>
-              <StyledBadges>
+                  <StyledName>
+                    <OverflowingTextWithTooltip text={displayedName} />
+                  </StyledName>
+                </StyledIdentity>
+              </SlackTableCell>
+              <SlackTableCell>
+                <OverflowingTextWithTooltip
+                  text={
+                    slackUserLink.workspaceMemberName ?? 'No workspace member'
+                  }
+                />
+              </SlackTableCell>
+              <SlackTableCell>
                 {isDefined(consentState) && (
                   <Tag
                     color={CONSENT_COLORS[consentState]}
@@ -223,55 +177,63 @@ export const SlackUserLinksList = ({
                   color={getSourceColor(slackUserLink.source)}
                   text={getSourceLabel(slackUserLink.source)}
                 />
-              </StyledBadges>
-              {canManage && (
-                <StyledActions>
-                  {isPending && (
-                    <LightIconButton
-                      Icon={ResendIcon}
-                      title={
-                        resendingLinkId === slackUserLink.id
-                          ? 'Resending…'
-                          : 'Resend the approval request'
-                      }
-                      size="small"
-                      accent="tertiary"
-                      disabled={isActionInFlight}
-                      onClick={() => onResend(slackUserLink)}
-                    />
-                  )}
-                  {removalArmedLinkId === slackUserLink.id ? (
-                    <Button
-                      title={
-                        removingLinkId === slackUserLink.id
-                          ? 'Removing…'
-                          : 'Confirm removal'
-                      }
-                      size="small"
-                      variant="secondary"
-                      accent="danger"
-                      disabled={isActionInFlight}
-                      onClick={() => {
-                        setRemovalArmedLinkId(null);
-                        onRemove(slackUserLink);
-                      }}
-                    />
-                  ) : (
-                    <LightIconButton
-                      Icon={RemoveIcon}
-                      title="Remove the link"
-                      size="small"
-                      accent="tertiary"
-                      disabled={isActionInFlight}
-                      onClick={() => setRemovalArmedLinkId(slackUserLink.id)}
-                    />
-                  )}
-                </StyledActions>
-              )}
-            </StyledRight>
-          </StyledRow>
-        );
-      })}
-    </StyledList>
+              </SlackTableCell>
+              <SlackTableCell align="right">
+                {canManage && (
+                  <>
+                    {isPending && (
+                      <LightIconButton
+                        Icon={ResendIcon}
+                        title={
+                          resendingLinkId === slackUserLink.id
+                            ? 'Resending…'
+                            : 'Resend the approval request'
+                        }
+                        size="small"
+                        accent="tertiary"
+                        disabled={isActionInFlight}
+                        onClick={() => onResend(slackUserLink)}
+                      />
+                    )}
+                    {removalArmedLinkId === slackUserLink.id ? (
+                      <Button
+                        title={
+                          removingLinkId === slackUserLink.id
+                            ? 'Removing…'
+                            : 'Confirm removal'
+                        }
+                        size="small"
+                        variant="secondary"
+                        accent="danger"
+                        disabled={isActionInFlight}
+                        onClick={() => {
+                          setRemovalArmedLinkId(null);
+                          onRemove(slackUserLink);
+                        }}
+                      />
+                    ) : (
+                      <LightIconButton
+                        Icon={RemoveIcon}
+                        title="Remove the link"
+                        size="small"
+                        accent="tertiary"
+                        disabled={isActionInFlight}
+                        onClick={() => setRemovalArmedLinkId(slackUserLink.id)}
+                      />
+                    )}
+                  </>
+                )}
+              </SlackTableCell>
+            </SlackTableRow>
+          );
+        })}
+        {hasMore && (
+          <StyledEmptyState>
+            Showing {slackUserLinks.length} links; more exist than can be shown
+            here.
+          </StyledEmptyState>
+        )}
+      </SlackTableBody>
+    </SlackTable>
   );
 };
