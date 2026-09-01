@@ -107,10 +107,6 @@ export class CommandMenuItemEntity
   })
   availabilityType: CommandMenuItemAvailabilityType;
 
-  // Pre-2-38 upgrade commands replayed during sequential upgrades still write
-  // the legacy { objectMetadataItemId } shape into this column (force-cast on
-  // their side); the 2-38 slow migration erases it in favour of
-  // navigationTargetObjectMetadataId.
   @Column({ type: 'jsonb', nullable: true })
   payload: PathCommandMenuItemPayload | null;
 
