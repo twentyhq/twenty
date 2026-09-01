@@ -43,7 +43,7 @@ export const buildHostReactPropsFromRemoteProps = (
     // React only focuses on mount through its camelCase autoFocus prop, while
     // the wire carries the lowercase attribute the guest set.
     if (remotePropName === 'autofocus') {
-      hostReactProps.autoFocus = remotePropValue !== 'false';
+      hostReactProps.autoFocus = String(remotePropValue) !== 'false';
       continue;
     }
 

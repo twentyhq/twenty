@@ -32,6 +32,9 @@ describe('buildHostReactPropsFromRemoteProps', () => {
     expect(
       buildHostReactPropsFromRemoteProps({ autofocus: 'false' }, 'input'),
     ).toEqual({ autoFocus: false });
+    expect(
+      buildHostReactPropsFromRemoteProps({ autofocus: false }, 'input'),
+    ).toEqual({ autoFocus: false });
   });
 
   it('should parse the style string into an object', () => {
