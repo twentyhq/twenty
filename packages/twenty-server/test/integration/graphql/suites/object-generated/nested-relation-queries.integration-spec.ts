@@ -620,7 +620,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toBe(
-      'Cannot have both connect and disconnect for the same field on undefined.',
+      'Cannot have both connect and disconnect for the same relation field company.',
     );
   });
 
