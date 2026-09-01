@@ -427,6 +427,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
         },
         "viewFields": {
+          "calendarEventTargets": {
+            "universalIdentifier": "ccfb6671-0211-56d6-a5bc-d91c1f0cb5bc",
+          },
           "conferenceLink": {
             "universalIdentifier": "a4520a9a-427d-5fca-af4b-9b7fc83be97a",
           },

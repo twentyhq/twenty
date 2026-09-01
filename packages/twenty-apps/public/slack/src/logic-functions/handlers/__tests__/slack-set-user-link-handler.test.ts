@@ -9,6 +9,7 @@ const {
   authTestMock,
   doesWorkspaceMemberExistMock,
   findSlackUserLinkMock,
+  findDeletedSlackUserLinkIdMock,
   createSlackUserLinkMock,
   updateSlackUserLinkMock,
   destroySlackUserLinkMock,
@@ -24,6 +25,7 @@ const {
   authTestMock: vi.fn(),
   doesWorkspaceMemberExistMock: vi.fn(),
   findSlackUserLinkMock: vi.fn(),
+  findDeletedSlackUserLinkIdMock: vi.fn(),
   createSlackUserLinkMock: vi.fn(),
   updateSlackUserLinkMock: vi.fn(),
   destroySlackUserLinkMock: vi.fn(),
@@ -60,6 +62,10 @@ vi.mock('src/logic-functions/data/does-workspace-member-exist', () => ({
 
 vi.mock('src/logic-functions/data/find-slack-user-link', () => ({
   findSlackUserLink: findSlackUserLinkMock,
+}));
+
+vi.mock('src/logic-functions/data/find-deleted-slack-user-link-id', () => ({
+  findDeletedSlackUserLinkId: findDeletedSlackUserLinkIdMock,
 }));
 
 vi.mock('src/logic-functions/data/create-slack-user-link', () => ({
@@ -104,6 +110,7 @@ describe('slackSetUserLinkHandler', () => {
     authTestMock.mockResolvedValue({ team_id: INSTALLED_TEAM_ID });
     doesWorkspaceMemberExistMock.mockResolvedValue(true);
     findSlackUserLinkMock.mockResolvedValue(undefined);
+    findDeletedSlackUserLinkIdMock.mockResolvedValue(undefined);
     createSlackUserLinkMock.mockResolvedValue('link-new');
     fetchSlackUserIdentityMock.mockResolvedValue({
       slackUserId: INPUT.slackUserId,
@@ -123,6 +130,21 @@ describe('slackSetUserLinkHandler', () => {
     expect(result.success).toBe(false);
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
     expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
+  });
+
+  it('should destroy a soft-deleted ghost link before creating the same tuple', async () => {
+    findDeletedSlackUserLinkIdMock.mockResolvedValue('link-ghost');
+
+    const result = await slackSetUserLinkHandler(INPUT);
+
+    expect(result.success).toBe(true);
+    expect(destroySlackUserLinkMock).toHaveBeenCalledWith(expect.anything(), {
+      id: 'link-ghost',
+    });
+    expect(createSlackUserLinkMock).toHaveBeenCalledTimes(1);
+    expect(destroySlackUserLinkMock.mock.invocationCallOrder[0]).toBeLessThan(
+      createSlackUserLinkMock.mock.invocationCallOrder[0] ?? 0,
+    );
   });
 
   it('should refuse a member id the workspace cannot confirm', async () => {

@@ -1,4 +1,5 @@
 import { ChatReferenceChipDisplay } from '@/ai/components/ChatReferenceChipDisplay';
+import { useChatReferenceTarget } from '@/ai/hooks/useChatReferenceTarget';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -30,19 +31,23 @@ export const FieldMetadataChip = ({
 
   const Icon = getIcon(fieldMetadataItem?.icon ?? PROPOSED_FIELD_METADATA_ICON);
 
+  const path =
+    isDefined(objectMetadataItem) &&
+    isDefined(fieldMetadataItem) &&
+    hasDataModelPermission
+      ? getSettingsPath(SettingsPath.ObjectFieldEdit, {
+          objectNamePlural: objectMetadataItem.namePlural,
+          fieldName: fieldMetadataItem.name,
+        })
+      : undefined;
+
+  const target = useChatReferenceTarget(path);
+
   return (
     <ChatReferenceChipDisplay
       displayName={displayName}
-      to={
-        isDefined(objectMetadataItem) &&
-        isDefined(fieldMetadataItem) &&
-        hasDataModelPermission
-          ? getSettingsPath(SettingsPath.ObjectFieldEdit, {
-              objectNamePlural: objectMetadataItem.namePlural,
-              fieldName: fieldMetadataItem.name,
-            })
-          : undefined
-      }
+      to={target.to}
+      onClick={target.onClick}
       leftComponent={
         <Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
       }
