@@ -16,9 +16,8 @@ export type CommandMenuItemPayload =
 export const CommandMenuItemPayloadUnion = createUnionType({
   name: 'CommandMenuItemPayload',
   types: () => [PathCommandMenuItemPayloadDTO],
-  // A legacy payload not yet erased by the 2-38 slow migration degrades to a
-  // { path: null } reading: its target is already served by
-  // navigationTargetObjectMetadataId since the 2-35 backfill.
+  // Only path payloads reach the schema: fromFlatCommandMenuItemToCommandMenuItemDto
+  // serves a legacy payload not yet erased by the 2-38 slow migration as null.
   resolveType() {
     return PathCommandMenuItemPayloadDTO;
   },

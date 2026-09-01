@@ -11,15 +11,6 @@ describe('isPathCommandMenuItemPayload', () => {
     expect(isPathCommandMenuItemPayload(payload)).toBe(true);
   });
 
-  it('should return true for a null-path payload', () => {
-    const payload: CommandMenuItemPayload = {
-      __typename: 'PathCommandMenuItemPayload',
-      path: null,
-    };
-
-    expect(isPathCommandMenuItemPayload(payload)).toBe(true);
-  });
-
   it('should return false for a payload with another typename', () => {
     const payload = {
       __typename: 'UnknownPayload',

@@ -210,10 +210,7 @@ enum CommandMenuItemAvailabilityType {
 union CommandMenuItemPayload = PathCommandMenuItemPayload
 
 type PathCommandMenuItemPayload {
-  """
-  Null only on legacy rows not yet rewritten onto CommandMenuItem.navigationTargetObjectMetadataId; object navigation items carry no payload at all
-  """
-  path: String
+  path: String!
 }
 
 type LogicFunction {
