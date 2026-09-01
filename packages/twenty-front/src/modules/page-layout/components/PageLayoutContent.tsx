@@ -4,9 +4,12 @@ import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutCo
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
-import { StandaloneWidgetPlaceholder } from '@/page-layout/widgets/components/StandaloneWidgetPlaceholder';
 import { RecordPageAddWidgetSection } from '@/page-layout/widgets/components/RecordPageAddWidgetSection';
+import { RecordPageWidgetInsertionSeparator } from '@/page-layout/widgets/components/RecordPageWidgetInsertionSeparator';
+import { StandaloneWidgetPlaceholder } from '@/page-layout/widgets/components/StandaloneWidgetPlaceholder';
+import { isViewportFillingWidgetType } from '@/page-layout/widgets/utils/isViewportFillingWidgetType';
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
@@ -23,6 +26,7 @@ export const PageLayoutContent = () => {
   const { layoutMode, tabId } = usePageLayoutContentContext();
 
   const activeTab = usePageLayoutTabWithVisibleWidgetsOrThrow(tabId);
+  const firstWidget = activeTab.widgets[0];
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
@@ -47,14 +51,29 @@ export const PageLayoutContent = () => {
     return <PageLayoutGridLayout tabId={tabId} />;
   }
 
-  const isVerticalListInEditMode = isPageLayoutInEditMode && isRecordPageLayout;
-
   return (
     <PageLayoutVerticalList
-      isInEditMode={isVerticalListInEditMode}
+      isInEditMode={isPageLayoutInEditMode && isRecordPageLayout}
       widgets={activeTab.widgets}
+      leadingElement={
+        isRecordPageLayout &&
+        isDefined(firstWidget) &&
+        isViewportFillingWidgetType(firstWidget.type) ? (
+          <RecordPageAddWidgetSection
+            insertionContext={{
+              targetWidgetId: firstWidget.id,
+              direction: 'above',
+            }}
+          />
+        ) : undefined
+      }
       trailingElement={
-        isVerticalListInEditMode ? <RecordPageAddWidgetSection /> : undefined
+        isRecordPageLayout ? <RecordPageAddWidgetSection /> : undefined
+      }
+      renderWidgetSeparator={
+        isRecordPageLayout
+          ? (widget) => <RecordPageWidgetInsertionSeparator widget={widget} />
+          : undefined
       }
     />
   );

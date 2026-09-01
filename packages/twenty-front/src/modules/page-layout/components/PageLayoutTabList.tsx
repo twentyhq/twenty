@@ -41,12 +41,12 @@ import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type PageLayoutWidgetDndData } from '@/page-layout/types/PageLayoutWidgetDndData';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { TabListDropdown } from '@/ui/layout/tab-list/components/TabListDropdown';
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -297,11 +297,13 @@ export const PageLayoutTabList = ({
   });
 
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
-  const pageLayoutTabSettingsOpenTabId = useAtomComponentStateValue(
-    pageLayoutTabSettingsOpenTabIdComponentState,
-    pageLayoutId,
-  );
+  const [pageLayoutTabSettingsOpenTabId, setPageLayoutTabSettingsOpenTabId] =
+    useAtomComponentState(
+      pageLayoutTabSettingsOpenTabIdComponentState,
+      pageLayoutId,
+    );
   const { openTabSettings } = useOpenPageLayoutTabSettings(pageLayoutId);
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const isTabSettingsOpen = isDefined(pageLayoutTabSettingsOpenTabId);
 
@@ -325,7 +327,13 @@ export const PageLayoutTabList = ({
   );
 
   const handleSelectTab = useCallback(
-    (tabId: string) => {
+    ({
+      tabId,
+      select = selectTab,
+    }: {
+      tabId: string;
+      select?: (tabId: string) => void;
+    }) => {
       const shouldOpenSettings =
         isPageLayoutInEditMode &&
         shouldEnableTabEditingFeatures(pageLayoutType);
@@ -336,16 +344,23 @@ export const PageLayoutTabList = ({
       }
 
       if (shouldOpenSettings && isTabSettingsOpen) {
-        openTabSettings(tabId);
+        if (pageLayoutType === PageLayoutType.RECORD_PAGE) {
+          closeSidePanelMenu();
+          setPageLayoutTabSettingsOpenTabId(null);
+        } else {
+          openTabSettings(tabId);
+        }
       }
 
-      selectTab(tabId);
+      select(tabId);
     },
     [
       isPageLayoutInEditMode,
       pageLayoutType,
       activeTabId,
       isTabSettingsOpen,
+      closeSidePanelMenu,
+      setPageLayoutTabSettingsOpenTabId,
       openTabSettings,
       selectTab,
     ],
@@ -353,31 +368,10 @@ export const PageLayoutTabList = ({
 
   const handleSelectTabFromDropdown = useCallback(
     (tabId: string) => {
-      const shouldOpenSettings =
-        isPageLayoutInEditMode &&
-        shouldEnableTabEditingFeatures(pageLayoutType);
-
-      if (shouldOpenSettings && activeTabId === tabId) {
-        openTabSettings(tabId);
-        closeOverflowDropdown();
-        return;
-      }
-
-      if (shouldOpenSettings && isTabSettingsOpen) {
-        openTabSettings(tabId);
-      }
-
-      selectTabFromDropdown(tabId);
+      handleSelectTab({ tabId, select: selectTabFromDropdown });
+      closeOverflowDropdown();
     },
-    [
-      isPageLayoutInEditMode,
-      pageLayoutType,
-      activeTabId,
-      isTabSettingsOpen,
-      openTabSettings,
-      closeOverflowDropdown,
-      selectTabFromDropdown,
-    ],
+    [handleSelectTab, closeOverflowDropdown, selectTabFromDropdown],
   );
 
   if (tabsWithIcons.length === 0) {
@@ -464,7 +458,7 @@ export const PageLayoutTabList = ({
             behaveAsLinks={behaveAsLinks}
             loading={loading}
             onChangeTab={onChangeTab}
-            onSelectTab={handleSelectTab}
+            onSelectTab={(tabId) => handleSelectTab({ tabId })}
             canReorder={canReorderTabs}
             widgetDropTargetWidgetsByTabId={widgetDropTargetWidgetsByTabId}
             firstHiddenTabId={
