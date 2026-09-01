@@ -103,8 +103,6 @@ export const useSubmitQuestionAnswer = () => {
         ]);
 
         if (isGraphqlErrorOfType(error, AiChatErrorCode.QUESTION_NOT_PENDING)) {
-          // The question is no longer answerable; re-arming the card would
-          // trap the user in a retry loop, so reload the server state instead.
           dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
         } else {
           const currentMessages = store.get(messagesAtom);

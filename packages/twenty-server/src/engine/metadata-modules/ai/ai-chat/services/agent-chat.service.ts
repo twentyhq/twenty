@@ -812,8 +812,6 @@ export class AgentChatService {
       return false;
     }
 
-    // A stream finishing between the check above and the claim can have
-    // appended a newer message; re-checking under the claim is race-free.
     if (!(await isLatestAssistantMessage())) {
       await this.threadRepository.update(
         workspaceId,
