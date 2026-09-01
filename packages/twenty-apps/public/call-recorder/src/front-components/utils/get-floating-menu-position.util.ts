@@ -1,4 +1,12 @@
 import {
+  computePosition,
+  flip,
+  offset,
+  shift,
+  type Platform,
+} from '@floating-ui/core';
+
+import {
   FLOATING_MENU_GAP_PIXELS,
   FLOATING_MENU_VIEWPORT_MARGIN_PIXELS,
 } from 'src/front-components/constants/floating-menu.constant';
@@ -12,41 +20,50 @@ type GetFloatingMenuPositionParams = {
   viewportHeight: number;
 };
 
-export const getFloatingMenuPosition = ({
+export const getFloatingMenuPosition = async ({
   anchorRect,
   menuWidth,
   menuHeight,
   viewportWidth,
   viewportHeight,
-}: GetFloatingMenuPositionParams): { top: number; left: number } => {
-  const spaceBelow = viewportHeight - anchorRect.bottom;
-  const shouldFlipAbove =
-    spaceBelow < menuHeight + FLOATING_MENU_GAP_PIXELS &&
-    anchorRect.top > spaceBelow;
-
-  const unclampedTop = shouldFlipAbove
-    ? anchorRect.top - menuHeight - FLOATING_MENU_GAP_PIXELS
-    : anchorRect.bottom + FLOATING_MENU_GAP_PIXELS;
-
-  const maxTop = Math.max(
-    FLOATING_MENU_VIEWPORT_MARGIN_PIXELS,
-    viewportHeight - menuHeight - FLOATING_MENU_VIEWPORT_MARGIN_PIXELS,
-  );
-
-  const unclampedLeft = anchorRect.left + anchorRect.width - menuWidth;
-  const maxLeft = Math.max(
-    FLOATING_MENU_VIEWPORT_MARGIN_PIXELS,
-    viewportWidth - menuWidth - FLOATING_MENU_VIEWPORT_MARGIN_PIXELS,
-  );
-
-  return {
-    top: Math.min(
-      Math.max(unclampedTop, FLOATING_MENU_VIEWPORT_MARGIN_PIXELS),
-      maxTop,
-    ),
-    left: Math.min(
-      Math.max(unclampedLeft, FLOATING_MENU_VIEWPORT_MARGIN_PIXELS),
-      maxLeft,
-    ),
+}: GetFloatingMenuPositionParams): Promise<{ top: number; left: number }> => {
+  const platform: Platform = {
+    getElementRects: () => ({
+      reference: {
+        x: anchorRect.left,
+        y: anchorRect.top,
+        width: anchorRect.width,
+        height: anchorRect.bottom - anchorRect.top,
+      },
+      floating: {
+        x: 0,
+        y: 0,
+        width: menuWidth,
+        height: menuHeight,
+      },
+    }),
+    getClippingRect: () => ({
+      x: 0,
+      y: 0,
+      width: viewportWidth,
+      height: viewportHeight,
+    }),
+    getDimensions: () => ({ width: menuWidth, height: menuHeight }),
   };
+
+  const { x, y } = await computePosition(undefined, undefined, {
+    platform,
+    placement: 'bottom-end',
+    strategy: 'fixed',
+    middleware: [
+      offset(FLOATING_MENU_GAP_PIXELS),
+      flip({ padding: FLOATING_MENU_VIEWPORT_MARGIN_PIXELS }),
+      shift({
+        padding: FLOATING_MENU_VIEWPORT_MARGIN_PIXELS,
+        crossAxis: true,
+      }),
+    ],
+  });
+
+  return { top: y, left: x };
 };

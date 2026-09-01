@@ -1,4 +1,5 @@
 import { isUndefined } from '@sniptt/guards';
+import { useRef, useState } from 'react';
 import { ColorSample } from 'twenty-ui/data-display';
 import { DEFAULT_COLOR_LABELS } from 'twenty-ui/navigation';
 import { type ThemeColor } from 'twenty-ui/theme';
@@ -6,8 +7,6 @@ import { type ThemeColor } from 'twenty-ui/theme';
 import { FloatingMenu } from 'src/front-components/components/FloatingMenu';
 import { SettingsSelectControl } from 'src/front-components/components/SettingsSelectControl';
 import { ThemeColorPickerMenu } from 'src/front-components/components/ThemeColorPickerMenu';
-import { FLOATING_MENU_DEFAULT_WIDTH_PIXELS } from 'src/front-components/constants/floating-menu.constant';
-import { useAnchoredMenu } from 'src/front-components/hooks/use-anchored-menu';
 
 // The control is capped at 120px, where "Custom hex" ellipsises to "Custom …".
 const CUSTOM_CONTROL_LABEL = 'Custom';
@@ -30,11 +29,15 @@ export const TileBackgroundControl = ({
   onSelectColor,
   onSelectCustom,
 }: TileBackgroundControlProps) => {
-  const { anchorRef, anchorRect, isOpen, close, toggle } = useAnchoredMenu();
+  const anchorRef = useRef<HTMLDivElement | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const label = isUndefined(selectedColor)
     ? CUSTOM_CONTROL_LABEL
     : (DEFAULT_COLOR_LABELS[selectedColor] ?? selectedColor);
+
+  const handleMenuToggle = () => setIsMenuOpen((isOpen) => !isOpen);
+  const handleMenuClose = () => setIsMenuOpen(false);
 
   return (
     <div ref={anchorRef}>
@@ -47,24 +50,20 @@ export const TileBackgroundControl = ({
             color={swatchColor}
           />
         }
-        onClick={toggle}
+        onClick={handleMenuToggle}
       />
-      {isOpen && !isUndefined(anchorRect) && (
-        <FloatingMenu
-          anchorRect={anchorRect}
-          width={Math.max(anchorRect.width, FLOATING_MENU_DEFAULT_WIDTH_PIXELS)}
-          onClose={close}
-        >
+      {isMenuOpen && (
+        <FloatingMenu anchorRef={anchorRef} onClose={handleMenuClose}>
           <ThemeColorPickerMenu
             selectedColor={selectedColor}
             isCustomSelected={isCustomSelected}
             onSelectColor={(color) => {
               onSelectColor(color);
-              close();
+              handleMenuClose();
             }}
             onSelectCustom={() => {
               onSelectCustom();
-              close();
+              handleMenuClose();
             }}
           />
         </FloatingMenu>

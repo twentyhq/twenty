@@ -32,13 +32,15 @@ export const useCallRecorderApplicationVariables =
     );
 
     useEffect(() => {
-      let cancelled = false;
+      const abortController = new AbortController();
 
       setState(APPLICATION_VARIABLES_LOADING_STATE);
 
       const fetchApplicationVariables = async () => {
         try {
-          const client = new MetadataApiClient();
+          const client = new MetadataApiClient({
+            signal: abortController.signal,
+          });
           const frontComponentResult = await client.query({
             frontComponent: {
               __args: { id: frontComponentId },
@@ -49,15 +51,17 @@ export const useCallRecorderApplicationVariables =
           const applicationId =
             frontComponentResult.frontComponent?.applicationId;
 
+          if (abortController.signal.aborted) {
+            return;
+          }
+
           if (!isNonEmptyString(applicationId)) {
-            if (!cancelled) {
-              setState({
-                applicationId: undefined,
-                applicationVariables: [],
-                isApplicationVariablesQueryLoading: false,
-                errorMessage: APPLICATION_VARIABLES_ERROR_MESSAGE,
-              });
-            }
+            setState({
+              applicationId: undefined,
+              applicationVariables: [],
+              isApplicationVariablesQueryLoading: false,
+              errorMessage: APPLICATION_VARIABLES_ERROR_MESSAGE,
+            });
             return;
           }
 
@@ -76,7 +80,7 @@ export const useCallRecorderApplicationVariables =
             },
           });
 
-          if (cancelled) {
+          if (abortController.signal.aborted) {
             return;
           }
 
@@ -97,7 +101,7 @@ export const useCallRecorderApplicationVariables =
             errorMessage: undefined,
           });
         } catch {
-          if (cancelled) {
+          if (abortController.signal.aborted) {
             return;
           }
 
@@ -112,9 +116,7 @@ export const useCallRecorderApplicationVariables =
 
       fetchApplicationVariables();
 
-      return () => {
-        cancelled = true;
-      };
+      return () => abortController.abort();
     }, [frontComponentId]);
 
     return state;

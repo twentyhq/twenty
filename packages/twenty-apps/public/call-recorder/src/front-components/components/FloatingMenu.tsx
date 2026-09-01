@@ -1,13 +1,18 @@
 import styled from '@emotion/styled';
-import { isUndefined } from '@sniptt/guards';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import {
+  useCallback,
+  useRef,
+  useState,
+  type ReactNode,
+  type RefObject,
+} from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {
+  FLOATING_MENU_DEFAULT_WIDTH_PIXELS,
   FLOATING_MENU_MAX_HEIGHT_PIXELS,
   FLOATING_MENU_VIEWPORT_MARGIN_PIXELS,
 } from 'src/front-components/constants/floating-menu.constant';
-import { type AnchorRect } from 'src/front-components/types/anchor-rect.type';
 import { getFloatingMenuPosition } from 'src/front-components/utils/get-floating-menu-position.util';
 
 // Card sets overflow: hidden, so the menu cannot be a child of the row. It is
@@ -32,67 +37,98 @@ const StyledMenu = styled.div`
   max-height: ${FLOATING_MENU_MAX_HEIGHT_PIXELS}px;
   overflow: hidden;
   position: fixed;
+  visibility: hidden;
+  width: ${FLOATING_MENU_DEFAULT_WIDTH_PIXELS}px;
   z-index: 2001;
 `;
 
 type FloatingMenuProps = {
-  anchorRect: AnchorRect;
-  width: number;
+  anchorRef: RefObject<HTMLDivElement | null>;
   onClose: () => void;
   children: ReactNode;
 };
 
 export const FloatingMenu = ({
-  anchorRect,
-  width,
+  anchorRef,
   onClose,
   children,
 }: FloatingMenuProps) => {
-  const menuRef = useRef<HTMLDivElement>(null);
-  const [menuHeight, setMenuHeight] = useState<number | undefined>(undefined);
+  const floatingMenuElementRef = useRef<HTMLDivElement | null>(null);
+  const [position, setPosition] = useState<
+    { top: number; left: number } | undefined
+  >(undefined);
 
-  // Positioning against the max height would flip a two-item menu above its
-  // anchor, so the real height is measured once painted and kept in sync as
-  // the content filters down.
-  useEffect(() => {
-    const measuredHeight = menuRef.current?.offsetHeight;
+  const setFloatingMenuElementRef = useCallback(
+    (floatingMenuElement: HTMLDivElement | null) => {
+      floatingMenuElementRef.current = floatingMenuElement;
 
-    if (
-      !isUndefined(measuredHeight) &&
-      measuredHeight > 0 &&
-      measuredHeight !== menuHeight
-    ) {
-      setMenuHeight(measuredHeight);
-    }
-  });
+      if (floatingMenuElement === null || anchorRef.current === null) {
+        return;
+      }
 
-  const viewportWidth = window.innerWidth;
-  const viewportHeight = window.innerHeight;
+      // First reads enroll remote elements for geometry tracking.
+      void anchorRef.current.getBoundingClientRect();
+      void floatingMenuElement.offsetHeight;
 
-  const { top, left } = getFloatingMenuPosition({
-    anchorRect,
-    menuWidth: width,
-    menuHeight: menuHeight ?? FLOATING_MENU_MAX_HEIGHT_PIXELS,
-    viewportWidth:
-      viewportWidth > 0
-        ? viewportWidth
-        : width + FLOATING_MENU_VIEWPORT_MARGIN_PIXELS * 2,
-    viewportHeight:
-      viewportHeight > 0
-        ? viewportHeight
-        : anchorRect.bottom + FLOATING_MENU_MAX_HEIGHT_PIXELS,
-  });
+      requestAnimationFrame(() => {
+        const anchorElement = anchorRef.current;
+
+        if (
+          anchorElement === null ||
+          floatingMenuElementRef.current !== floatingMenuElement
+        ) {
+          return;
+        }
+
+        const anchorDomRect = anchorElement.getBoundingClientRect();
+        const menuHeight = floatingMenuElement.offsetHeight;
+
+        if (anchorDomRect.width <= 0 || menuHeight <= 0) {
+          return;
+        }
+
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        void getFloatingMenuPosition({
+          anchorRect: {
+            top: anchorDomRect.top,
+            left: anchorDomRect.left,
+            bottom: anchorDomRect.bottom,
+            width: anchorDomRect.width,
+          },
+          menuWidth: FLOATING_MENU_DEFAULT_WIDTH_PIXELS,
+          menuHeight,
+          viewportWidth:
+            viewportWidth > 0
+              ? viewportWidth
+              : FLOATING_MENU_DEFAULT_WIDTH_PIXELS +
+                FLOATING_MENU_VIEWPORT_MARGIN_PIXELS * 2,
+          viewportHeight:
+            viewportHeight > 0
+              ? viewportHeight
+              : anchorDomRect.bottom + FLOATING_MENU_MAX_HEIGHT_PIXELS,
+        }).then((nextPosition) => {
+          if (floatingMenuElementRef.current !== floatingMenuElement) {
+            return;
+          }
+
+          setPosition(nextPosition);
+        });
+      });
+    },
+    [anchorRef],
+  );
 
   return (
     <>
       <StyledBackdrop onClick={onClose} />
       <StyledMenu
-        ref={menuRef}
+        ref={setFloatingMenuElementRef}
         style={{
-          top,
-          left,
-          width,
-          visibility: isUndefined(menuHeight) ? 'hidden' : 'visible',
+          top: position?.top ?? 0,
+          left: position?.left ?? 0,
+          visibility: position === undefined ? 'hidden' : 'visible',
         }}
         onKeyDown={(event) => {
           if (event.key === 'Escape') {
