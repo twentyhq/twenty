@@ -21,7 +21,6 @@ import { useResendSlackUserLinkConsent } from 'src/front-components/hooks/use-re
 import { useSlackUserLinks } from 'src/front-components/hooks/use-slack-user-links';
 import { useUnlinkedSlackUsers } from 'src/front-components/hooks/use-unlinked-slack-users';
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
-import { type SlackResolvedUser } from 'src/logic-functions/types/slack-resolved-user.type';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -32,8 +31,27 @@ const StyledContainer = styled.div`
 `;
 
 const StyledMatchAction = styled.div`
+  align-items: center;
   display: flex;
+  gap: ${() => themeCssVariables.spacing[3]};
   padding-bottom: ${() => themeCssVariables.spacing[3]};
+`;
+
+const StyledMatchSummary = styled.span`
+  color: ${() => themeCssVariables.font.color.secondary};
+  font-family: ${() => themeCssVariables.font.family};
+  font-size: ${() => themeCssVariables.font.size.xs};
+`;
+
+const StyledDisclosureButton = styled.button`
+  align-self: flex-start;
+  background: transparent;
+  border: none;
+  color: ${() => themeCssVariables.color.blue};
+  cursor: pointer;
+  font-family: ${() => themeCssVariables.font.family};
+  font-size: ${() => themeCssVariables.font.size.sm};
+  padding: 0;
 `;
 
 const StyledCenteredState = styled.div`
@@ -68,30 +86,29 @@ export const SlackUserLinksSettings = () => {
     refetchUnlinkedSlackUsers,
   } = useUnlinkedSlackUsers({ isEnabled: canManage });
   const { matchSlackUserLinks, isMatching } = useMatchSlackUserLinks();
-  const [formPrefill, setFormPrefill] = useState<{
-    slackUser: SlackResolvedUser;
-    nonce: number;
-  } | null>(null);
+  const [matchSummary, setMatchSummary] = useState<string | undefined>(
+    undefined,
+  );
+  const [isManualFormOpen, setIsManualFormOpen] = useState(false);
 
   const handleLinkSaved = async () => {
     await Promise.all([refetchSlackUserLinks(), refetchUnlinkedSlackUsers()]);
   };
 
-  const handlePickUnlinkedUser = (slackUser: SlackResolvedUser) => {
-    setFormPrefill({ slackUser, nonce: (formPrefill?.nonce ?? 0) + 1 });
-  };
-
   const handleMatchByEmail = async () => {
     const result = await matchSlackUserLinks();
 
-    enqueueSnackbar({
-      message: isNonEmptyString(result.error) ? result.error : result.message,
-      variant: result.success ? 'success' : 'error',
-    });
+    if (!result.success) {
+      enqueueSnackbar({
+        message: isNonEmptyString(result.error) ? result.error : result.message,
+        variant: 'error',
+      });
 
-    if (result.success) {
-      await handleLinkSaved();
+      return;
     }
+
+    setMatchSummary(result.message);
+    await handleLinkSaved();
   };
 
   const handleRemove = async (slackUserLink: SlackUserLinkRecord) => {
@@ -151,18 +168,10 @@ export const SlackUserLinksSettings = () => {
         />
       )}
       {canManage && (
-        <SlackUserLinkForm
-          key={formPrefill?.nonce ?? 0}
-          existingLinks={slackUserLinks}
-          onLinkSaved={handleLinkSaved}
-          initialSlackUser={formPrefill?.slackUser ?? null}
-        />
-      )}
-      {canManage && (
         <Section>
           <H2Title
             title="Unlinked Slack users"
-            description="Slack users with no link yet. They talk to the assistant with its default role until they are linked."
+            description="These Slack users talk to the assistant with its default role. Pick a workspace member on a row to link them in place, or rerun the email match."
           />
           <StyledMatchAction>
             <Button
@@ -170,6 +179,9 @@ export const SlackUserLinksSettings = () => {
               disabled={isMatching}
               onClick={handleMatchByEmail}
             />
+            {isDefined(matchSummary) && (
+              <StyledMatchSummary>{matchSummary}</StyledMatchSummary>
+            )}
           </StyledMatchAction>
           {isUnlinkedSlackUsersLoading && unlinkedSlackUsers.length === 0 ? (
             <StyledCenteredState>
@@ -181,7 +193,7 @@ export const SlackUserLinksSettings = () => {
             <UnlinkedSlackUsersList
               unlinkedSlackUsers={unlinkedSlackUsers}
               hasMore={hasMoreUnlinkedSlackUsers}
-              onLink={handlePickUnlinkedUser}
+              onLinkSaved={handleLinkSaved}
             />
           )}
         </Section>
@@ -207,6 +219,21 @@ export const SlackUserLinksSettings = () => {
           />
         )}
       </Section>
+      {canManage &&
+        (isManualFormOpen ? (
+          <SlackUserLinkForm
+            existingLinks={slackUserLinks}
+            onLinkSaved={handleLinkSaved}
+          />
+        ) : (
+          <StyledDisclosureButton
+            type="button"
+            onClick={() => setIsManualFormOpen(true)}
+          >
+            Need someone who is not listed? Search Slack by name, or link a
+            guest or Slack Connect user
+          </StyledDisclosureButton>
+        ))}
     </StyledContainer>
   );
 };
