@@ -1,20 +1,6 @@
 import { type ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
-const computeDuplicateKeys = ({
-  relatedRecord,
-  duplicateKeyColumnGroups,
-}: {
-  relatedRecord: ObjectRecord;
-  duplicateKeyColumnGroups: string[][];
-}): string[] =>
-  duplicateKeyColumnGroups
-    .map((columns) => ({
-      columns,
-      values: columns.map((column) => relatedRecord[column]),
-    }))
-    .filter(({ values }) => values.every(isDefined))
-    .map(({ columns, values }) => JSON.stringify([columns, values]));
+import { computeDuplicateKeys } from 'src/engine/api/common/common-query-runners/utils/compute-duplicate-keys.util';
 
 export const splitRelatedRecordIdsToMigrateAndSoftDelete = ({
   relatedRecordsOfRecordsToDelete,
@@ -26,31 +12,31 @@ export const splitRelatedRecordIdsToMigrateAndSoftDelete = ({
   duplicateKeyColumnGroups: string[][];
 }): { idsToMigrate: string[]; idsToSoftDelete: string[] } => {
   const takenDuplicateKeys = new Set(
-    relatedRecordsOfPriorityRecord.flatMap((relatedRecord) =>
-      computeDuplicateKeys({ relatedRecord, duplicateKeyColumnGroups }),
+    relatedRecordsOfPriorityRecord.flatMap((record) =>
+      computeDuplicateKeys({ record, duplicateKeyColumnGroups }),
     ),
   );
 
   const idsToMigrate: string[] = [];
   const idsToSoftDelete: string[] = [];
 
-  for (const relatedRecord of relatedRecordsOfRecordsToDelete) {
+  for (const record of relatedRecordsOfRecordsToDelete) {
     const duplicateKeys = computeDuplicateKeys({
-      relatedRecord,
+      record,
       duplicateKeyColumnGroups,
     });
 
     if (
       duplicateKeys.some((duplicateKey) => takenDuplicateKeys.has(duplicateKey))
     ) {
-      idsToSoftDelete.push(relatedRecord.id);
+      idsToSoftDelete.push(record.id);
       continue;
     }
 
     duplicateKeys.forEach((duplicateKey) =>
       takenDuplicateKeys.add(duplicateKey),
     );
-    idsToMigrate.push(relatedRecord.id);
+    idsToMigrate.push(record.id);
   }
 
   return { idsToMigrate, idsToSoftDelete };
