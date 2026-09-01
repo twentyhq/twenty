@@ -164,10 +164,9 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     recordId,
   });
 
-  const junctionObjectMetadataItem =
-    objectMetadataItems.find(
-      ({ id }) => id === junctionConfig?.junctionObjectMetadata?.id,
-    ) ?? relationObjectMetadataItem;
+  const junctionObjectMetadataItem = objectMetadataItems.find(
+    ({ id }) => id === junctionConfig?.junctionObjectMetadata?.id,
+  );
 
   const { createAndConnectJunctionRecord, loading: isCreatingJunctionRecord } =
     useCreateAndConnectJunctionRecord({

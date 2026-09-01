@@ -30,7 +30,7 @@ import { isDefined } from 'twenty-shared/utils';
 type UseCreateAndConnectJunctionRecordArgs = {
   sourceRecordId: string;
   relationFieldMetadataId: string;
-  junctionObjectMetadataItem: EnrichedObjectMetadataItem;
+  junctionObjectMetadataItem?: EnrichedObjectMetadataItem;
 };
 
 export const useCreateAndConnectJunctionRecord = ({
@@ -61,6 +61,11 @@ export const useCreateAndConnectJunctionRecord = ({
       setLoading(true);
 
       try {
+        if (!isDefined(junctionObjectMetadataItem)) {
+          enqueueErrorSnackBar({});
+          return undefined;
+        }
+
         const targetObjectMetadataItem = objectMetadataItems.find(
           ({ id }) => id === targetObjectMetadataItemId,
         );
