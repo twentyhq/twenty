@@ -123,30 +123,31 @@ export class CreateAndConnectJunctionRecordService {
         }),
       ]);
 
-      return this.workspaceOrmManager.runInWorkspaceTransaction(
-        async (transactionScope) => {
-          const sourceRecordExists = await transactionScope
-            .getRepository(
-              sourceFlatObjectMetadata.nameSingular,
-              rolePermissionConfig,
-            )
-            .existsBy({ id: input.sourceRecordId });
+      return this.commonCreateOneQueryRunnerService.executeComposite({
+        authContext,
+        run: (execute) =>
+          this.workspaceOrmManager.runInWorkspaceTransaction(
+            async (transactionScope) => {
+              const sourceRecordExists = await transactionScope
+                .getRepository(
+                  sourceFlatObjectMetadata.nameSingular,
+                  rolePermissionConfig,
+                )
+                .existsBy({ id: input.sourceRecordId });
 
-          if (!sourceRecordExists) {
-            throw new CommonQueryRunnerException(
-              'Source record not found',
-              CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
-              {
-                userFriendlyMessage: getRecordCrudExceptionUserFriendlyMessage(
-                  RecordCrudExceptionCode.RECORD_NOT_FOUND,
-                ),
-              },
-            );
-          }
+              if (!sourceRecordExists) {
+                throw new CommonQueryRunnerException(
+                  'Source record not found',
+                  CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
+                  {
+                    userFriendlyMessage:
+                      getRecordCrudExceptionUserFriendlyMessage(
+                        RecordCrudExceptionCode.RECORD_NOT_FOUND,
+                      ),
+                  },
+                );
+              }
 
-          return this.commonCreateOneQueryRunnerService.executeComposite({
-            authContext,
-            run: async (execute) => {
               const { results: targetRecord } = await execute(
                 {
                   data: input.targetRecordInput,
@@ -179,9 +180,8 @@ export class CreateAndConnectJunctionRecordService {
                 junctionRecord,
               };
             },
-          });
-        },
-      );
+          ),
+      });
     }, authContext);
   }
 }

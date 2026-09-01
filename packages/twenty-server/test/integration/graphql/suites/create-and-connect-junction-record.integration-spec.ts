@@ -1,7 +1,6 @@
 import gql from 'graphql-tag';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
-import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { isDefined } from 'twenty-shared/utils';
@@ -11,6 +10,7 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 
 const SOURCE_MESSAGE_LIST_ID = '20202020-a710-4000-8000-000000000001';
 const TARGET_PERSON_ID = '20202020-a710-4000-8000-000000000002';
+const SUCCESS_TARGET_PERSON_ID = '20202020-a710-4000-8000-000000000003';
 const PIVOT_FAILURE_CONSTRAINT_NAME =
   'create_and_connect_junction_record_failure_test';
 const WORKSPACE_SCHEMA_NAME = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
@@ -35,10 +35,22 @@ const dropPivotFailureConstraint = () =>
 const destroyFixtures = async () => {
   await makeGraphqlAPIRequest(
     destroyManyOperationFactory({
+      objectMetadataSingularName: 'messageListMember',
+      objectMetadataPluralName: 'messageListMembers',
+      gqlFields: 'id',
+      filter: {
+        listId: { eq: SOURCE_MESSAGE_LIST_ID },
+        personId: { in: [TARGET_PERSON_ID, SUCCESS_TARGET_PERSON_ID] },
+      },
+    }),
+  );
+
+  await makeGraphqlAPIRequest(
+    destroyManyOperationFactory({
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',
       gqlFields: 'id',
-      filter: { id: { in: [TARGET_PERSON_ID] } },
+      filter: { id: { in: [TARGET_PERSON_ID, SUCCESS_TARGET_PERSON_ID] } },
     }),
   );
 
@@ -50,6 +62,23 @@ const destroyFixtures = async () => {
       filter: { id: { in: [SOURCE_MESSAGE_LIST_ID] } },
     }),
   );
+};
+
+const getFixtureState = async (targetPersonId: string) => {
+  const [fixtureState] = await global.testDataSource.query(
+    `SELECT
+       EXISTS(
+         SELECT 1 FROM "${WORKSPACE_SCHEMA_NAME}"."person"
+         WHERE "id" = $1
+       ) AS "targetExists",
+       EXISTS(
+         SELECT 1 FROM "${WORKSPACE_SCHEMA_NAME}"."messageListMember"
+         WHERE "listId" = $2 AND "personId" = $1
+       ) AS "pivotExists"`,
+    [targetPersonId, SOURCE_MESSAGE_LIST_ID],
+  );
+
+  return fixtureState as { targetExists: boolean; pivotExists: boolean };
 };
 
 describe('createAndConnectJunctionRecord (integration)', () => {
@@ -117,6 +146,40 @@ describe('createAndConnectJunctionRecord (integration)', () => {
 
   afterEach(destroyFixtures);
 
+  it('creates and connects a regular junction target', async () => {
+    const mutationResponse = await makeGraphqlAPIRequest({
+      query: CREATE_AND_CONNECT_JUNCTION_RECORD,
+      variables: {
+        input: {
+          sourceRecordId: SOURCE_MESSAGE_LIST_ID,
+          relationFieldMetadataId: membersFieldMetadataId,
+          targetRecordInput: {
+            id: SUCCESS_TARGET_PERSON_ID,
+            name: {
+              firstName: 'Created',
+              lastName: 'Atomically',
+            },
+          },
+        },
+      },
+    });
+
+    expect(mutationResponse.body.errors).toBeUndefined();
+    expect(
+      mutationResponse.body.data.createAndConnectJunctionRecord,
+    ).toMatchObject({
+      targetRecord: { id: SUCCESS_TARGET_PERSON_ID },
+      junctionRecord: {
+        listId: SOURCE_MESSAGE_LIST_ID,
+        personId: SUCCESS_TARGET_PERSON_ID,
+      },
+    });
+    await expect(getFixtureState(SUCCESS_TARGET_PERSON_ID)).resolves.toEqual({
+      targetExists: true,
+      pivotExists: true,
+    });
+  });
+
   it('rolls back the target when the junction insert fails', async () => {
     const mutationResponse = await makeGraphqlAPIRequest({
       query: CREATE_AND_CONNECT_JUNCTION_RECORD,
@@ -135,39 +198,15 @@ describe('createAndConnectJunctionRecord (integration)', () => {
       },
     });
 
-    expect(mutationResponse.body.errors).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ message: expect.any(String) }),
-      ]),
-    );
-
-    const targetResponse = await makeGraphqlAPIRequest(
-      findManyOperationFactory({
-        objectMetadataSingularName: 'person',
-        objectMetadataPluralName: 'people',
-        gqlFields: 'id',
-        filter: { id: { eq: TARGET_PERSON_ID } },
+    expect(mutationResponse.body.errors).toEqual([
+      expect.objectContaining({
+        message: 'Data validation error.',
+        extensions: expect.objectContaining({ code: 'INTERNAL_SERVER_ERROR' }),
       }),
-    );
-
-    expect(targetResponse.body.errors).toBeUndefined();
-    expect(targetResponse.body.data.people.edges).toHaveLength(0);
-
-    const membershipResponse = await makeGraphqlAPIRequest(
-      findManyOperationFactory({
-        objectMetadataSingularName: 'messageListMember',
-        objectMetadataPluralName: 'messageListMembers',
-        gqlFields: 'id listId personId',
-        filter: {
-          listId: { eq: SOURCE_MESSAGE_LIST_ID },
-          personId: { eq: TARGET_PERSON_ID },
-        },
-      }),
-    );
-
-    expect(membershipResponse.body.errors).toBeUndefined();
-    expect(membershipResponse.body.data.messageListMembers.edges).toHaveLength(
-      0,
-    );
+    ]);
+    await expect(getFixtureState(TARGET_PERSON_ID)).resolves.toEqual({
+      targetExists: false,
+      pivotExists: false,
+    });
   });
 });
