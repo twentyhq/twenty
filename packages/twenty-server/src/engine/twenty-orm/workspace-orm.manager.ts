@@ -29,19 +29,28 @@ export class WorkspaceOrmManager {
   getRepository<T extends ObjectLiteral = ObjectRecord>(
     workspaceEntity: Type<T>,
     permissionOptions?: RolePermissionConfig,
-    repositoryOptions?: { useReplica?: boolean },
+    repositoryOptions?: {
+      useReplica?: boolean;
+      shouldSkipEventEmission?: boolean;
+    },
   ): WorkspaceRepository<T>;
 
   getRepository<T extends ObjectLiteral = ObjectRecord>(
     objectMetadataName: string,
     permissionOptions?: RolePermissionConfig,
-    repositoryOptions?: { useReplica?: boolean },
+    repositoryOptions?: {
+      useReplica?: boolean;
+      shouldSkipEventEmission?: boolean;
+    },
   ): WorkspaceRepository<T>;
 
   getRepository<T extends ObjectLiteral = ObjectRecord>(
     workspaceEntityOrObjectMetadataName: Type<T> | string,
     permissionOptions?: RolePermissionConfig,
-    repositoryOptions?: { useReplica?: boolean },
+    repositoryOptions?: {
+      useReplica?: boolean;
+      shouldSkipEventEmission?: boolean;
+    },
   ): WorkspaceRepository<T> {
     const objectMetadataName = this.resolveObjectMetadataName(
       workspaceEntityOrObjectMetadataName,
@@ -49,7 +58,10 @@ export class WorkspaceOrmManager {
 
     return this.workspaceDataSourceService
       .getDataSource({ useReplica: repositoryOptions?.useReplica ?? false })
-      .getRepository<T>(objectMetadataName, permissionOptions);
+      .getRepository<T>(objectMetadataName, permissionOptions, {
+        shouldSkipEventEmission:
+          repositoryOptions?.shouldSkipEventEmission ?? false,
+      });
   }
 
   private resolveObjectMetadataName<T extends ObjectLiteral>(

@@ -515,6 +515,7 @@ type Application {
   logoFileId: UUID
   version: String
   universalIdentifier: String!
+  state: ApplicationState!
   packageJsonChecksum: String
   packageJsonFileId: UUID
   yarnLockChecksum: String
@@ -534,6 +535,13 @@ type Application {
   applicationVariables: [ApplicationVariable!]!
   applicationRegistration: ApplicationRegistrationSummary
   logoUrl: String
+}
+
+enum ApplicationState {
+  INSTALLING
+  INSTALLED
+  UPGRADING
+  UNINSTALLING
 }
 
 type TwoFactorAuthenticationMethodSummary {
@@ -2807,6 +2815,11 @@ type CampaignAudiencePreviewDTO {
   sendable: Int!
 }
 
+type CancelMessageCampaignOutputDTO {
+  campaignId: String!
+  canceledMessageCount: Int!
+}
+
 type SendEmailViaDomainOutput {
   messageId: String!
 }
@@ -3787,6 +3800,7 @@ type Mutation {
   removeRoleFromAgent(agentId: UUID!): Boolean!
   sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
+  cancelMessageCampaign(input: CancelMessageCampaignInput!): CancelMessageCampaignOutputDTO!
   sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
   createUnsubscribeTopic(input: CreateUnsubscribeTopicInput!): UnsubscribeTopic!
   updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
@@ -4858,6 +4872,10 @@ input SendEmailViaDomainInput {
 }
 
 input SendMessageCampaignInput {
+  campaignId: String!
+}
+
+input CancelMessageCampaignInput {
   campaignId: String!
 }
 

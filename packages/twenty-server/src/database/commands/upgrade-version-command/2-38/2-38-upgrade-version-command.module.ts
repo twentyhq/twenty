@@ -14,6 +14,7 @@ import { ReownObjectNavigationCommandMenuItemsCommand } from 'src/database/comma
 import { ProvisionMissingObjectNavigationCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788181550000-provision-missing-object-navigation-command-menu-items.command';
 import { EnableStandardActivityTargetFieldsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788197000000-enable-standard-activity-target-fields.command';
 import { ProvisionMissingObjectSystemRelationsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788266912940-provision-missing-object-system-relations.command';
+import { HideAskAiInSidePanelCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788266562942-hide-ask-ai-in-side-panel.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
@@ -44,6 +45,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ProvisionMissingObjectNavigationCommandMenuItemsCommand,
     EnableStandardActivityTargetFieldsCommand,
     ProvisionMissingObjectSystemRelationsCommand,
+    HideAskAiInSidePanelCommand,
   ],
 })
 export class V2_38_UpgradeVersionCommandModule {}

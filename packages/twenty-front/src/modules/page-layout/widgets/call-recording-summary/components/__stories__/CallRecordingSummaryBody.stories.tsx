@@ -97,10 +97,7 @@ const summarizedCallRecording: WidgetCallRecordingCandidate = {
   __typename: 'CallRecording',
   id: 'call-recording-id',
   status: CallRecordingStatus.COMPLETED,
-  transcript: [],
   summary: { markdown: summaryMarkdown },
-  video: null,
-  createdAt: '2026-01-01T00:00:00Z',
 };
 
 const unsummarizedCallRecording: WidgetCallRecordingCandidate = {
@@ -108,7 +105,7 @@ const unsummarizedCallRecording: WidgetCallRecordingCandidate = {
   summary: null,
 };
 
-const pendingCallRecording: WidgetCallRecordingCandidate = {
+const processingCallRecording: WidgetCallRecordingCandidate = {
   ...unsummarizedCallRecording,
   status: CallRecordingStatus.PROCESSING,
   transcript: { status: 'PENDING' },
@@ -117,7 +114,7 @@ const pendingCallRecording: WidgetCallRecordingCandidate = {
 const failedCallRecording: WidgetCallRecordingCandidate = {
   ...unsummarizedCallRecording,
   status: CallRecordingStatus.FAILED,
-  transcript: null,
+  transcript: { status: 'FAILED' },
 };
 
 const meta: Meta<typeof CallRecordingSummaryBody> = {
@@ -157,25 +154,6 @@ export const Ready: Story = {
   },
 };
 
-export const ReadyWhileRecordingIsPending: Story = {
-  args: {
-    callRecording: {
-      ...pendingCallRecording,
-      summary: { markdown: summaryMarkdown },
-    },
-    loading: false,
-    error: undefined,
-    restriction: undefined,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await canvas.findByText('Quarterly review call', undefined, {
-      timeout: 5000,
-    });
-  },
-};
-
 export const Loading: Story = {
   args: {
     callRecording: undefined,
@@ -192,7 +170,7 @@ export const Loading: Story = {
   },
 };
 
-export const NoSummary: Story = {
+export const SummaryNotAvailable: Story = {
   args: {
     callRecording: unsummarizedCallRecording,
     loading: false,
@@ -202,13 +180,13 @@ export const NoSummary: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('No Summary');
+    await canvas.findByText('Summary Not Available');
   },
 };
 
-export const Pending: Story = {
+export const Processing: Story = {
   args: {
-    callRecording: pendingCallRecording,
+    callRecording: processingCallRecording,
     loading: false,
     error: undefined,
     restriction: undefined,
@@ -230,7 +208,7 @@ export const Failed: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Processing Failed');
+    await canvas.findByText('Recording Failed');
   },
 };
 

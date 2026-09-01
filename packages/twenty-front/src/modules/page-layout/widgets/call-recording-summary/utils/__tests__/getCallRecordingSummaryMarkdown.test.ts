@@ -1,17 +1,10 @@
 import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
 import { getCallRecordingSummaryMarkdown } from '@/page-layout/widgets/call-recording-summary/utils/getCallRecordingSummaryMarkdown';
-import { CallRecordingStatus } from '~/generated/graphql';
 
 const makeCallRecording = (
   summary: WidgetCallRecordingCandidate['summary'],
-): WidgetCallRecordingCandidate => ({
-  __typename: 'CallRecording',
-  id: 'call-recording-id',
-  status: CallRecordingStatus.COMPLETED,
-  transcript: null,
+): Pick<WidgetCallRecordingCandidate, 'summary'> => ({
   summary,
-  video: null,
-  createdAt: '2026-01-01T00:00:00Z',
 });
 
 describe('getCallRecordingSummaryMarkdown', () => {
