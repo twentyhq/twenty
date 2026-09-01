@@ -12,60 +12,67 @@ import { type WorkspaceMemberOption } from 'src/front-components/types/workspace
 import { getMemberDisplayName } from 'src/front-components/utils/get-member-display-name.util';
 
 const StyledContainer = styled.div`
+  flex: 1;
   min-width: 0;
   position: relative;
 `;
 
-const StyledTriggerButton = styled.button`
+// Mirrors twenty-front's SelectControl look; apps cannot import it from the
+// front package.
+const StyledSelectTrigger = styled.button`
   align-items: center;
-  background: ${() => themeCssVariables.background.primary};
+  background-color: ${() => themeCssVariables.background.transparent.lighter};
   border: 1px solid ${() => themeCssVariables.border.color.medium};
-  border-radius: ${() => themeCssVariables.border.radius.sm};
-  color: ${() => themeCssVariables.font.color.secondary};
+  border-radius: ${() => themeCssVariables.border.radius.md};
+  box-sizing: border-box;
   cursor: pointer;
-  display: inline-flex;
+  display: grid;
   font-family: ${() => themeCssVariables.font.family};
   font-size: ${() => themeCssVariables.font.size.sm};
-  font-weight: ${() => themeCssVariables.font.weight.medium};
-  height: 24px;
+  gap: ${() => themeCssVariables.spacing[1]};
+  grid-template-columns: 1fr auto;
+  height: ${() => themeCssVariables.spacing[6]};
   padding: 0 ${() => themeCssVariables.spacing[2]};
-  white-space: nowrap;
+  text-align: left;
+  width: 100%;
 
   &:hover:enabled {
-    background: ${() => themeCssVariables.background.transparent.light};
+    background-color: ${() => themeCssVariables.background.transparent.light};
   }
 
   &:disabled {
-    color: ${() => themeCssVariables.font.color.light};
-    cursor: default;
+    cursor: not-allowed;
   }
 `;
 
-const StyledSelectedChip = styled.button`
+const StyledSelectedValue = styled.div`
   align-items: center;
-  background: transparent;
-  border: none;
-  border-radius: ${() => themeCssVariables.border.radius.sm};
-  cursor: pointer;
   display: flex;
-  gap: ${() => themeCssVariables.spacing[2]};
-  max-width: 100%;
-  padding: ${() => themeCssVariables.spacing[1]};
-
-  &:hover:enabled {
-    background: ${() => themeCssVariables.background.transparent.light};
-  }
-
-  &:disabled {
-    cursor: default;
-  }
+  gap: ${() => themeCssVariables.spacing[1]};
+  min-width: 0;
 `;
 
-const StyledChipName = styled.div`
+const StyledValueName = styled.div`
   color: ${() => themeCssVariables.font.color.primary};
-  font-family: ${() => themeCssVariables.font.family};
-  font-size: ${() => themeCssVariables.font.size.sm};
   min-width: 0;
+`;
+
+const StyledPlaceholder = styled.div`
+  color: ${() => themeCssVariables.font.color.tertiary};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+// A CSS chevron: icon components do not size reliably in the
+// front-component runtime.
+const StyledChevron = styled.div`
+  border-bottom: 1px solid ${() => themeCssVariables.font.color.tertiary};
+  border-right: 1px solid ${() => themeCssVariables.font.color.tertiary};
+  height: 5px;
+  margin-top: -3px;
+  transform: rotate(45deg);
+  width: 5px;
 `;
 
 const StyledDropdownPanel = styled.div`
@@ -76,9 +83,10 @@ const StyledDropdownPanel = styled.div`
   box-sizing: border-box;
   left: 0;
   margin-top: ${() => themeCssVariables.spacing[1]};
+  min-width: 240px;
   position: absolute;
   top: 100%;
-  width: 240px;
+  width: 100%;
   z-index: 1;
 `;
 
@@ -209,36 +217,31 @@ export const InlineWorkspaceMemberPicker = ({
 
   return (
     <StyledContainer>
-      {isDefined(selectedMember) && isDefined(selectedName) ? (
-        <StyledSelectedChip
-          type="button"
-          onClick={() => setIsOpen(true)}
-          disabled={disabled}
-          aria-label="Change the workspace member"
-          aria-haspopup="listbox"
-          aria-expanded={isOpen}
-        >
-          <Avatar
-            placeholder={selectedName}
-            placeholderColorSeed={selectedMember.id}
-            type="rounded"
-            size="sm"
-          />
-          <StyledChipName>
-            <OverflowingTextWithTooltip text={selectedName} />
-          </StyledChipName>
-        </StyledSelectedChip>
-      ) : (
-        <StyledTriggerButton
-          type="button"
-          disabled={disabled}
-          onClick={() => setIsOpen(true)}
-          aria-haspopup="listbox"
-          aria-expanded={isOpen}
-        >
-          Select member
-        </StyledTriggerButton>
-      )}
+      <StyledSelectTrigger
+        type="button"
+        disabled={disabled}
+        onClick={() => setIsOpen(true)}
+        aria-label="Select the workspace member"
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+      >
+        {isDefined(selectedMember) && isDefined(selectedName) ? (
+          <StyledSelectedValue>
+            <Avatar
+              placeholder={selectedName}
+              placeholderColorSeed={selectedMember.id}
+              type="rounded"
+              size="sm"
+            />
+            <StyledValueName>
+              <OverflowingTextWithTooltip text={selectedName} />
+            </StyledValueName>
+          </StyledSelectedValue>
+        ) : (
+          <StyledPlaceholder>Select member</StyledPlaceholder>
+        )}
+        <StyledChevron />
+      </StyledSelectTrigger>
       {isOpen && (
         <InlineWorkspaceMemberPickerPanel
           onSelect={(member) => {
