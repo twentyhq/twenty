@@ -154,6 +154,59 @@ describe('patchRemoteElementAttributes', () => {
     });
   });
 
+  describe('attribute forwarding across the remote boundary', () => {
+    const createElementWithForwardingSpy = () => {
+      const element = createHtmlDivElement() as HTMLElement & {
+        updateRemoteAttribute: (attributeName: string, value?: string) => void;
+      };
+      const updateRemoteAttribute = jest.fn();
+
+      element.updateRemoteAttribute = updateRemoteAttribute;
+
+      return { element, updateRemoteAttribute };
+    };
+
+    it('should forward the autofocus attribute', () => {
+      const { element, updateRemoteAttribute } =
+        createElementWithForwardingSpy();
+
+      element.setAttribute('autofocus', 'true');
+
+      expect(updateRemoteAttribute).toHaveBeenCalledWith('autofocus', 'true');
+    });
+
+    it('should forward aria attributes', () => {
+      const { element, updateRemoteAttribute } =
+        createElementWithForwardingSpy();
+
+      element.setAttribute('aria-expanded', 'true');
+
+      expect(updateRemoteAttribute).toHaveBeenCalledWith(
+        'aria-expanded',
+        'true',
+      );
+    });
+
+    it('should not forward other plain attributes', () => {
+      const { element, updateRemoteAttribute } =
+        createElementWithForwardingSpy();
+
+      element.setAttribute('lang', 'en');
+
+      expect(updateRemoteAttribute).not.toHaveBeenCalled();
+    });
+
+    it('should forward autofocus removal', () => {
+      const { element, updateRemoteAttribute } =
+        createElementWithForwardingSpy();
+
+      element.setAttribute('autofocus', 'true');
+      element.removeAttribute('autofocus');
+
+      expect(updateRemoteAttribute).toHaveBeenLastCalledWith('autofocus');
+    });
+  });
+
   describe('attribute names colliding with Object prototype keys', () => {
     it('should store them as real attributes instead of mapping them to a property', () => {
       const element = createHtmlDivElement();

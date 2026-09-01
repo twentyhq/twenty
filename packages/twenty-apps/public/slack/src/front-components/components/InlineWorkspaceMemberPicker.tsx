@@ -150,11 +150,10 @@ const InlineWorkspaceMemberPickerPanel = ({
   return (
     <>
       <StyledBackdrop onClick={onClose} />
-      <StyledDropdownPanel onMouseDown={(event) => event.preventDefault()}>
+      <StyledDropdownPanel>
         <StyledSearchInput
           value={searchTerm}
           onChange={(event) => setSearchTerm(event.target.value)}
-          onBlur={onClose}
           onKeyDown={(event) => {
             if (event.key === 'Escape') {
               event.preventDefault();
@@ -174,6 +173,7 @@ const InlineWorkspaceMemberPickerPanel = ({
           placeholder="Search members"
           aria-label="Search workspace members"
           autoFocus
+          ref={(node) => node?.setAttribute('autofocus', 'true')}
         />
         <StyledOptions role="listbox" aria-label="Workspace members">
           {options.map((member) => (

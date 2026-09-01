@@ -10,6 +10,11 @@ const PROPERTY_MAPPED_ATTRIBUTES = [
   { attributeName: 'srcdoc', elementPropertyName: 'srcDoc' },
 ];
 
+// React consumes autoFocus in the guest by calling focus(), which the worker
+// DOM cannot honor, so guests express the intent as this attribute and the
+// host turns it back into a mount-time focus.
+const FORWARDED_BEHAVIOR_ATTRIBUTES = new Set(['autofocus']);
+
 const ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME = new Map<string, string>(
   PROPERTY_MAPPED_ATTRIBUTES.flatMap(
     ({ attributeName, elementPropertyName }): [string, string][] => [
@@ -46,7 +51,8 @@ export const patchRemoteElementAttributes = (): void => {
     const shouldForwardAttributeAcrossBoundary = (
       attributeName: string,
     ): boolean =>
-      isAriaOrDataAttribute(attributeName) &&
+      (isAriaOrDataAttribute(attributeName) ||
+        FORWARDED_BEHAVIOR_ATTRIBUTES.has(attributeName.toLowerCase())) &&
       !attributeNamesAlreadySyncedByRemoteDom.has(attributeName);
 
     const originalGetAttribute = elementConstructor.prototype.getAttribute;
