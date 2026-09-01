@@ -5,6 +5,10 @@ import {
 
 import { PageLayoutType } from 'twenty-shared/types';
 import {
+  CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP,
+  CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE,
+  CONDITIONAL_DISPLAY_DEVICE_DESKTOP,
+  CONDITIONAL_DISPLAY_DEVICE_MOBILE,
   TAB_PROPS,
   WIDGET_PROPS,
 } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
@@ -30,8 +34,29 @@ const NOTE_PAGE_TABS = {
         universalIdentifier:
           STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.tabs.home
             .widgets.noteRichText.universalIdentifier,
-        ...WIDGET_PROPS.noteRichText,
+        title: WIDGET_PROPS.noteRichText.title,
+        type: WIDGET_PROPS.noteRichText.type,
         position: { layoutMode: TAB_PROPS.home.layoutMode, index: 1 },
+        conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_MOBILE,
+        conditionalAvailabilityExpression:
+          CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE,
+      },
+    },
+  },
+  note: {
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.tabs.note
+        .universalIdentifier,
+    ...TAB_PROPS.note,
+    widgets: {
+      noteRichText: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.tabs.note
+            .widgets.noteRichText.universalIdentifier,
+        ...WIDGET_PROPS.noteRichText,
+        conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_DESKTOP,
+        conditionalAvailabilityExpression:
+          CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP,
       },
     },
   },

@@ -18,25 +18,14 @@ const STANDARD_ACTIVITY_LAYOUT_UNIVERSAL_IDENTIFIERS = [
 ];
 
 const REMOVED_TAB_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.note
-    .universalIdentifier,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.timeline
     .universalIdentifier,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.files
-    .universalIdentifier,
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.tabs.note
     .universalIdentifier,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.tabs.timeline
     .universalIdentifier,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.tabs.files
     .universalIdentifier,
-];
-
-const HOME_RICH_TEXT_WIDGET_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets
-    .taskRichText.universalIdentifier,
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.tabs.home.widgets
-    .noteRichText.universalIdentifier,
 ];
 
 const REMOVED_FIELD_UNIVERSAL_IDENTIFIERS = [
@@ -56,7 +45,7 @@ const REMOVED_FIELD_UNIVERSAL_IDENTIFIERS = [
 @Command({
   name: 'upgrade:2-38:simplify-standard-task-note-layouts',
   description:
-    'Simplify uncustomized standard task and note record pages to their home content',
+    'Simplify uncustomized standard task and note record pages',
 })
 export class SimplifyStandardTaskNoteLayoutsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -131,19 +120,6 @@ export class SimplifyStandardTaskNoteLayoutsCommand extends ProvisionedWorkspace
            AND "applicationId" = $2
            AND "universalIdentifier" = ANY($4::uuid[])`,
         [...parameters, REMOVED_TAB_UNIVERSAL_IDENTIFIERS],
-      );
-
-      await manager.query(
-        `UPDATE core."pageLayoutWidget" widget
-         SET "conditionalDisplay" = NULL,
-             "conditionalAvailabilityExpression" = NULL,
-             "updatedAt" = now()
-         FROM core."pageLayoutTab" tab
-         WHERE widget."pageLayoutTabId" = tab.id
-           AND tab."pageLayoutId" IN (${eligibleLayouts})
-           AND widget."applicationId" = $2
-           AND widget."universalIdentifier" = ANY($4::uuid[])`,
-        [...parameters, HOME_RICH_TEXT_WIDGET_UNIVERSAL_IDENTIFIERS],
       );
 
       await manager.query(
