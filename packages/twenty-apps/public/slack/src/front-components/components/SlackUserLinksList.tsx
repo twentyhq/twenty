@@ -26,7 +26,7 @@ import { type SlackUserLinkConsentState } from 'src/logic-functions/types/slack-
 import { isSlackUserLinkConsentState } from 'src/logic-functions/utils/is-slack-user-link-consent-state';
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
 
-const LINKS_GRID_TEMPLATE_COLUMNS = '3fr 3fr 2fr 80px';
+const LINKS_GRID_TEMPLATE_COLUMNS = 'minmax(0, 2fr) minmax(0, 2fr) 252px 120px';
 const REMOVAL_CONFIRM_TIMEOUT_MS = 4000;
 
 const StyledIdentity = styled.div`
@@ -219,7 +219,7 @@ export const SlackUserLinksList = ({
               <SlackTableCell align="right">
                 {canManage && (
                   <>
-                    {isPending && (
+                    {isPending && removalArmedLinkId !== slackUserLink.id && (
                       <LightIconButton
                         Icon={ResendIcon}
                         title={
