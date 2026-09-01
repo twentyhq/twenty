@@ -26,6 +26,7 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
   'limitKind',
   'periodCount',
   'periodUnit',
+  'meter',
 ])
 @Entity({ name: 'usageLimit', schema: 'core' })
 export class UsageLimitEntity extends WorkspaceRelatedEntity {

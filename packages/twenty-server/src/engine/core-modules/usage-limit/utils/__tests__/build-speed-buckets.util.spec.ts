@@ -42,7 +42,7 @@ const buildRule = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   limitKind: 'speed',
   periodCount: 60,
   periodUnit: 'second',
-  meter: 'creditsUsedMicro',
+  meter: 'quantity',
   limitValueType: 'absolute',
   limitValue: 100,
   burstValue: null,
@@ -210,6 +210,26 @@ describe('buildSpeedBuckets with rules configured', () => {
     expect(buckets.map((bucket) => bucket.key)).toEqual([
       '{server}:speed:API:API_REQUEST:application:app-uid:60',
       '{workspace-1}:speed:API:API_REQUEST:application:-:60',
+    ]);
+  });
+
+  it('gives a rule covering every operation its own counter next to a specific one', () => {
+    const buckets = buildBuckets({
+      authContext: apiKeyContext,
+      rules: [
+        buildRule({
+          id: 'every-operation',
+          operationType: UsageOperationType.ALL,
+          spenderId: '',
+          limitValue: 20,
+        }),
+        buildRule({ id: 'specific', spenderId: '', limitValue: 10 }),
+      ],
+    });
+
+    expect(buckets.map((bucket) => bucket.key)).toEqual([
+      '{workspace-1}:speed:API:ALL:apiKey:-:60',
+      '{workspace-1}:speed:API:API_REQUEST:apiKey:-:60',
     ]);
   });
 

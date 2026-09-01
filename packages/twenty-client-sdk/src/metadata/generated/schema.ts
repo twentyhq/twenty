@@ -1459,7 +1459,7 @@ export interface UsageLimit {
     resourceType: UsageResourceType
     operationType: UsageOperationType
     spenderType: Scalars['String']
-    spenderId: Scalars['String']
+    spenderId?: Scalars['String']
     limitKind: Scalars['String']
     periodCount: Scalars['Int']
     periodUnit: Scalars['String']

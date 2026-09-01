@@ -8,7 +8,7 @@ export const fromUsageLimitEntityToDto = (
   resourceType: usageLimit.resourceType,
   operationType: usageLimit.operationType,
   spenderType: usageLimit.spenderType,
-  spenderId: usageLimit.spenderId,
+  spenderId: usageLimit.spenderId === '' ? null : usageLimit.spenderId,
   limitKind: usageLimit.limitKind,
   periodCount: usageLimit.periodCount,
   periodUnit: usageLimit.periodUnit,

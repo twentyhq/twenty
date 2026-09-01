@@ -43,7 +43,9 @@ export const buildSpeedBuckets = ({
         counterScope: 'perWorkspace',
         workspaceId: authContext.workspace.id,
         resourceType,
-        operationType,
+        // The rule's own operation, not the requested one: an ALL rule shares
+        // one counter across operations instead of colliding with specific rules.
+        operationType: rule.operationType,
         spenderType: spender.spenderType,
         spenderId: rule.spenderId,
         windowSeconds: rule.periodCount,

@@ -22,7 +22,7 @@ export class ReshapeUsageLimitPeriodFastInstanceCommand implements FastInstanceC
       `ALTER TABLE "core"."usageLimit" DROP COLUMN "windowSeconds"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."usageLimit" ADD CONSTRAINT "UQ_USAGE_LIMIT_SCOPE" UNIQUE ("workspaceId", "resourceType", "operationType", "spenderType", "spenderId", "limitKind", "periodCount", "periodUnit")`,
+      `ALTER TABLE "core"."usageLimit" ADD CONSTRAINT "UQ_USAGE_LIMIT_SCOPE" UNIQUE ("workspaceId", "resourceType", "operationType", "spenderType", "spenderId", "limitKind", "periodCount", "periodUnit", "meter")`,
     );
   }
 

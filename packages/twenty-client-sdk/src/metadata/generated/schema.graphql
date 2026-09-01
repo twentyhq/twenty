@@ -1797,7 +1797,7 @@ type UsageLimit {
   resourceType: UsageResourceType!
   operationType: UsageOperationType!
   spenderType: String!
-  spenderId: String!
+  spenderId: String
   limitKind: String!
   periodCount: Int!
   periodUnit: String!
@@ -3957,10 +3957,10 @@ input UpsertUsageLimitInput {
   spenderType: String!
   spenderId: String
   limitKind: String!
-  periodCount: Int! = 1
-  periodUnit: String! = "billingPeriod"
-  meter: String! = "creditsUsedMicro"
-  limitValueType: String! = "absolute"
+  periodCount: Int!
+  periodUnit: String!
+  meter: String!
+  limitValueType: String!
   limitValue: BigInt!
   burstValue: BigInt
 }

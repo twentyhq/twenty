@@ -12,7 +12,7 @@ const buildRule = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   limitKind: 'speed',
   periodCount: 60,
   periodUnit: 'second',
-  meter: 'creditsUsedMicro',
+  meter: 'quantity',
   limitValueType: 'absolute',
   limitValue: 100,
   burstValue: null,

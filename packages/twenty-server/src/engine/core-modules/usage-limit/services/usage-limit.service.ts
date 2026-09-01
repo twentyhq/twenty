@@ -67,6 +67,7 @@ export class UsageLimitService {
       limitKind: input.limitKind,
       periodCount: input.periodCount,
       periodUnit: input.periodUnit,
+      meter: input.meter,
     };
 
     await this.usageLimitRepository.upsert(
@@ -75,7 +76,6 @@ export class UsageLimitService {
         workspaceId,
         ...scope,
         limitValueType: input.limitValueType,
-        meter: input.meter,
         limitValue: input.limitValue,
         burstValue: input.burstValue ?? null,
       },

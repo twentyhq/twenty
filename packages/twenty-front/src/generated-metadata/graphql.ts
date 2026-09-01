@@ -6342,11 +6342,11 @@ export type UpsertUsageLimitInput = {
   burstValue?: InputMaybe<Scalars['BigInt']['input']>;
   limitKind: Scalars['String']['input'];
   limitValue: Scalars['BigInt']['input'];
-  limitValueType?: Scalars['String']['input'];
-  meter?: Scalars['String']['input'];
+  limitValueType: Scalars['String']['input'];
+  meter: Scalars['String']['input'];
   operationType: UsageOperationType;
-  periodCount?: Scalars['Int']['input'];
-  periodUnit?: Scalars['String']['input'];
+  periodCount: Scalars['Int']['input'];
+  periodUnit: Scalars['String']['input'];
   resourceType: UsageResourceType;
   spenderId?: InputMaybe<Scalars['String']['input']>;
   spenderType: Scalars['String']['input'];
@@ -6455,7 +6455,7 @@ export type UsageLimit = {
   periodCount: Scalars['Int']['output'];
   periodUnit: Scalars['String']['output'];
   resourceType: UsageResourceType;
-  spenderId: Scalars['String']['output'];
+  spenderId?: Maybe<Scalars['String']['output']>;
   spenderType: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
