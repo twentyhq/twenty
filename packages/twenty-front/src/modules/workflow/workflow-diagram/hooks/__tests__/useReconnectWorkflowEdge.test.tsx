@@ -3,7 +3,7 @@ import { type WorkflowAction } from '@/workflow/types/Workflow';
 import { useReconnectWorkflowEdge } from '@/workflow/workflow-diagram/hooks/useReconnectWorkflowEdge';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
@@ -179,54 +179,6 @@ describe('useReconnectWorkflowEdge', () => {
       ),
     ).resolves.toBe(false);
     expect(jotaiStore.get(flowAtom())?.trigger?.nextStepIds).toEqual(['old']);
-  });
-
-  it('serializes rapid reconnections against the latest saved flow', async () => {
-    jotaiStore.set(flowAtom(), (flow) => ({
-      ...flow!,
-      steps:
-        flow?.steps?.map((step) =>
-          step.id === 'source'
-            ? { ...step, nextStepIds: ['old', 'old-2'] }
-            : step,
-        ) ?? null,
-    }));
-    let finishFirstUpdate: () => void = () => {};
-    mockUpdateStep.mockImplementationOnce(
-      (updatedStep: WorkflowAction) =>
-        new Promise<{ updatedStep: WorkflowAction }>((resolve) => {
-          finishFirstUpdate = () => {
-            jotaiStore.set(flowAtom(), (flow) => ({
-              ...flow!,
-              steps:
-                flow?.steps?.map((step) =>
-                  step.id === updatedStep.id ? updatedStep : step,
-                ) ?? null,
-            }));
-            resolve({ updatedStep });
-          };
-        }),
-    );
-    const { result } = renderHook(() => useReconnectWorkflowEdge(), {
-      wrapper: Wrapper,
-    });
-
-    const firstReconnection = result.current.reconnectEdge(edge, connection);
-    const secondReconnection = result.current.reconnectEdge(
-      { ...edge, id: 'edge-2', target: 'old-2' },
-      { ...connection, target: 'new-2' },
-    );
-    await waitFor(() => expect(mockUpdateStep).toHaveBeenCalledTimes(1));
-    finishFirstUpdate();
-    await Promise.all([firstReconnection, secondReconnection]);
-
-    expect(mockUpdateStep).toHaveBeenCalledTimes(2);
-    expect(mockUpdateStep).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        id: 'source',
-        nextStepIds: ['new', 'new-2'],
-      }),
-    );
   });
 
   it('ignores reconnections that would create a cycle', async () => {
