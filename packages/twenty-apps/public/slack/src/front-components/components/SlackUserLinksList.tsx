@@ -205,6 +205,7 @@ export const SlackUserLinksList = ({
                   <>
                     {isPending && removalArmedLinkId !== slackUserLink.id && (
                       <Button
+                        type="button"
                         title={
                           resendingLinkId === slackUserLink.id
                             ? 'Resending…'
@@ -218,6 +219,7 @@ export const SlackUserLinksList = ({
                     )}
                     {removalArmedLinkId === slackUserLink.id ? (
                       <Button
+                        type="button"
                         title={
                           removingLinkId === slackUserLink.id
                             ? 'Removing…'
@@ -234,6 +236,7 @@ export const SlackUserLinksList = ({
                       />
                     ) : (
                       <Button
+                        type="button"
                         title="Remove"
                         size="small"
                         variant="secondary"

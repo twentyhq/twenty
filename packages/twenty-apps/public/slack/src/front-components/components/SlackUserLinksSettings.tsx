@@ -186,6 +186,7 @@ export const SlackUserLinksSettings = () => {
               <StyledMatchSummary>{matchSummary}</StyledMatchSummary>
             )}
             <Button
+              type="button"
               title={isMatching ? 'Matching…' : 'Match by email'}
               size="small"
               variant="secondary"
@@ -225,6 +226,7 @@ export const SlackUserLinksSettings = () => {
         ) : (
           <StyledDisclosure>
             <Button
+              type="button"
               title="Link someone not listed above"
               size="small"
               variant="secondary"
