@@ -46,11 +46,11 @@ export const usePageLayoutAddTabStrategy = ({
       navigate(`#${newTabId}`);
     }
 
-    setPageLayoutTabSettingsOpenTabId(newTabId);
     navigatePageLayoutSidePanel({
       sidePanelPage: SidePanelPages.PageLayoutTabSettings,
       focusTitleInput: true,
     });
+    setPageLayoutTabSettingsOpenTabId(newTabId);
   }, [
     createPageLayoutTab,
     isInSidePanel,

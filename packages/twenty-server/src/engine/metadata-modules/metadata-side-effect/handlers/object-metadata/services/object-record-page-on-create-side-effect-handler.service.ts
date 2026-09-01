@@ -11,7 +11,6 @@ import {
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
-import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 @Injectable()
 export class ObjectRecordPageOnCreateSideEffectHandlerService extends MetadataSideEffectHandler(
@@ -24,11 +23,9 @@ export class ObjectRecordPageOnCreateSideEffectHandlerService extends MetadataSi
   },
 ) {
   buildSideEffects({
-    flatEntity: flatObjectMetadata,
+    flatEntity: sourceFlatObjectMetadata,
     allFlatEntityOperationRecordByMetadataName,
   }: BuildSideEffectsArgs<'objectMetadata'>): MetadataSideEffectResult {
-    const sourceFlatObjectMetadata =
-      flatObjectMetadata as UniversalFlatObjectMetadata;
     const { applicationUniversalIdentifier } = sourceFlatObjectMetadata;
 
     const flatRecordPageViewToCreate = computeSystemViewToCreate({
