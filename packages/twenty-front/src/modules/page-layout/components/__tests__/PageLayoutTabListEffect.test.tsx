@@ -1,6 +1,7 @@
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
 import { makeTab } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
@@ -30,6 +31,7 @@ describe('PageLayoutTabListEffect', () => {
       activeTabId: 'home',
       hash: '#home',
       isInSidePanel: false,
+      ownsRouteLocation: true,
       expectedHash: '#timeline',
       expectedActiveTabId: 'timeline',
       expectedNavigationType: 'REPLACE',
@@ -39,6 +41,7 @@ describe('PageLayoutTabListEffect', () => {
       activeTabId: 'home',
       hash: '#home',
       isInSidePanel: true,
+      ownsRouteLocation: false,
       expectedHash: '#home',
       expectedActiveTabId: 'timeline',
       expectedNavigationType: 'POP',
@@ -48,6 +51,7 @@ describe('PageLayoutTabListEffect', () => {
       activeTabId: 'home',
       hash: '',
       isInSidePanel: false,
+      ownsRouteLocation: true,
       expectedHash: '',
       expectedActiveTabId: 'timeline',
       expectedNavigationType: 'POP',
@@ -57,6 +61,7 @@ describe('PageLayoutTabListEffect', () => {
       activeTabId: 'home',
       hash: '#notes',
       isInSidePanel: false,
+      ownsRouteLocation: true,
       expectedHash: '#notes',
       expectedActiveTabId: 'notes',
       expectedNavigationType: 'POP',
@@ -66,6 +71,7 @@ describe('PageLayoutTabListEffect', () => {
       activeTabId: null,
       hash: '#notes',
       isInSidePanel: false,
+      ownsRouteLocation: true,
       expectedHash: '#notes',
       expectedActiveTabId: 'notes',
       expectedNavigationType: 'POP',
@@ -75,9 +81,30 @@ describe('PageLayoutTabListEffect', () => {
       activeTabId: 'notes',
       hash: '#notes',
       isInSidePanel: false,
+      ownsRouteLocation: true,
       expectedHash: '#notes',
       expectedActiveTabId: 'notes',
       expectedNavigationType: 'POP',
+    },
+    {
+      name: 'honors a deep-linked tab in a routed side panel',
+      activeTabId: null,
+      hash: '#notes',
+      isInSidePanel: true,
+      ownsRouteLocation: true,
+      expectedHash: '#notes',
+      expectedActiveTabId: 'notes',
+      expectedNavigationType: 'POP',
+    },
+    {
+      name: 'replaces a stale hash in the current routed side-panel page',
+      activeTabId: 'home',
+      hash: '#home',
+      isInSidePanel: true,
+      ownsRouteLocation: true,
+      expectedHash: '#timeline',
+      expectedActiveTabId: 'timeline',
+      expectedNavigationType: 'REPLACE',
     },
   ])(
     '$name',
@@ -85,6 +112,7 @@ describe('PageLayoutTabListEffect', () => {
       activeTabId,
       hash,
       isInSidePanel,
+      ownsRouteLocation,
       expectedHash,
       expectedActiveTabId,
       expectedNavigationType,
@@ -102,32 +130,40 @@ describe('PageLayoutTabListEffect', () => {
               `/object/company/record-id?viewId=company-view${hash}`,
             ]}
           >
-            <LayoutRenderingProvider
+            <WorkspaceSurfaceContext.Provider
               value={{
-                isInSidePanel,
-                layoutType: PageLayoutType.RECORD_PAGE,
-                targetRecordIdentifier: {
-                  id: 'record-id',
-                  targetObjectNameSingular: 'company',
-                },
+                type: isInSidePanel ? 'side-panel' : 'main',
+                instanceId: isInSidePanel ? 'side-panel-page-1' : 'main',
+                ownsRouteLocation,
+                headerTitlePortal: null,
+                headerActionsPortal: null,
               }}
             >
-              <TabListComponentInstanceContext.Provider
+              <LayoutRenderingProvider
                 value={{
-                  instanceId: TAB_LIST_INSTANCE_ID,
+                  layoutType: PageLayoutType.RECORD_PAGE,
+                  targetRecordIdentifier: {
+                    id: 'record-id',
+                    targetObjectNameSingular: 'company',
+                  },
                 }}
               >
-                <PageLayoutTabListEffect
-                  tabs={[makeTab('timeline', []), makeTab('notes', [], 1)]}
-                  componentInstanceId={TAB_LIST_INSTANCE_ID}
-                />
-                <TabListFromUrlOptionalEffect
-                  tabListIds={['timeline', 'notes']}
-                  isInSidePanel={isInSidePanel}
-                />
-                <CurrentLocation />
-              </TabListComponentInstanceContext.Provider>
-            </LayoutRenderingProvider>
+                <TabListComponentInstanceContext.Provider
+                  value={{
+                    instanceId: TAB_LIST_INSTANCE_ID,
+                  }}
+                >
+                  <PageLayoutTabListEffect
+                    tabs={[makeTab('timeline', []), makeTab('notes', [], 1)]}
+                    componentInstanceId={TAB_LIST_INSTANCE_ID}
+                  />
+                  <TabListFromUrlOptionalEffect
+                    tabListIds={['timeline', 'notes']}
+                  />
+                  <CurrentLocation />
+                </TabListComponentInstanceContext.Provider>
+              </LayoutRenderingProvider>
+            </WorkspaceSurfaceContext.Provider>
           </MemoryRouter>
         </Provider>,
       );

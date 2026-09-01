@@ -187,7 +187,6 @@ export const getCallRecordingWidgetStoryDecorator =
         <PageLayoutTestWrapper store={jotaiStore}>
           <LayoutRenderingProvider
             value={{
-              isInSidePanel: false,
               layoutType: PageLayoutType.RECORD_PAGE,
               targetRecordIdentifier: {
                 id: 'calendar-event-id',

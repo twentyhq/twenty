@@ -9,6 +9,7 @@ import { EnableEditLayoutAcrossAppCommand } from 'src/database/commands/upgrade-
 import { BackfillLinkedTimelineActivityHappensAtCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1787914663665-backfill-linked-timeline-activity-happens-at.command';
 import { ConfigureTimelineActivityHappensAtCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1787918663365-configure-timeline-activity-happens-at.command';
 import { PinAskAiCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1787938100000-pin-ask-ai-command-menu-item.command';
+import { SyncMessageCampaignSchemaCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788200701000-sync-message-campaign-schema.command';
 import { ReownObjectNavigationCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788166853000-reown-object-navigation-command-menu-items.command';
 import { ProvisionMissingObjectNavigationCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788181550000-provision-missing-object-navigation-command-menu-items.command';
 import { EnableStandardActivityTargetFieldsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788197000000-enable-standard-activity-target-fields.command';
@@ -37,6 +38,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     BackfillLinkedTimelineActivityHappensAtCommand,
     ConfigureTimelineActivityHappensAtCommand,
     PinAskAiCommandMenuItemCommand,
+    SyncMessageCampaignSchemaCommand,
     ReownObjectNavigationCommandMenuItemsCommand,
     ProvisionMissingObjectNavigationCommandMenuItemsCommand,
     EnableStandardActivityTargetFieldsCommand,

@@ -166,6 +166,7 @@ import { DropBillingCustomerCreditBalanceMicroFastInstanceCommand } from 'src/da
 import { DropHasReachedCurrentPeriodCapFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787906740819-drop-has-reached-current-period-cap';
 import { AddTimelineActivityHappensAtFieldFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787918663364-add-timeline-activity-happens-at-field';
 import { AddPageLayoutIsFirstTabPinnedFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787929843737-add-page-layout-is-first-tab-pinned';
+import { CreateCampaignDeliveryFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788200700000-create-campaign-delivery';
 import { AddStateToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788260646460-add-state-to-application';
 
 export const INSTANCE_COMMANDS = [
@@ -335,5 +336,6 @@ export const INSTANCE_COMMANDS = [
   DropHasReachedCurrentPeriodCapFastInstanceCommand,
   AddTimelineActivityHappensAtFieldFastInstanceCommand,
   AddPageLayoutIsFirstTabPinnedFastInstanceCommand,
+  CreateCampaignDeliveryFastInstanceCommand,
   AddStateToApplicationFastInstanceCommand,
 ];

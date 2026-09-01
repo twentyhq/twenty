@@ -34,7 +34,6 @@ const renderHeader = (targetObjectNameSingular: string) => {
                 targetObjectNameSingular,
               },
               layoutType: PageLayoutType.RECORD_PAGE,
-              isInSidePanel: false,
             }}
           >
             <div data-testid="header-slot">
