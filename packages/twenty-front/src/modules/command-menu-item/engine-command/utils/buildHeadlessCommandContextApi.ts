@@ -17,7 +17,7 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { isDefined } from 'twenty-shared/utils';
 import {
   type EngineComponentKey,
-  type PathCommandMenuItemPayload,
+  type CommandMenuItemPayload,
 } from '~/generated-metadata/graphql';
 
 export const buildHeadlessCommandContextApi = ({
@@ -31,7 +31,7 @@ export const buildHeadlessCommandContextApi = ({
   store: Store;
   contextStoreInstanceId: string;
   engineComponentKey: EngineComponentKey;
-  payload?: PathCommandMenuItemPayload | null;
+  payload?: CommandMenuItemPayload | null;
   navigationTargetObjectMetadataId?: string | null;
   isInSidePanel?: boolean;
 }): HeadlessEngineCommandContextApi => {

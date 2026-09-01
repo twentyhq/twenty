@@ -1,5 +1,6 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
+import { isPathCommandMenuItemPayload } from '@/command-menu-item/engine-command/utils/isPathCommandMenuItemPayload';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useNavigate } from 'react-router-dom';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -32,7 +33,11 @@ export const NavigationEngineCommand = () => {
       return;
     }
 
-    if (isNonEmptyString(payload?.path)) {
+    if (
+      isDefined(payload) &&
+      isPathCommandMenuItemPayload(payload) &&
+      isNonEmptyString(payload.path)
+    ) {
       // eslint-disable-next-line twenty/no-navigate-prefer-link
       navigate(payload.path);
     }

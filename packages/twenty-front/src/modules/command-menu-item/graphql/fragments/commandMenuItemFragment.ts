@@ -19,7 +19,9 @@ export const COMMAND_MENU_ITEM_FRAGMENT = gql`
     position
     isPinned
     payload {
-      path
+      ... on PathCommandMenuItemPayload {
+        path
+      }
     }
     hotKeys
     conditionalAvailabilityExpression

@@ -72,10 +72,6 @@ type Agent {
   evaluationInputs: [String!]!
 }
 
-type PathCommandMenuItemPayload {
-  path: String!
-}
-
 type AuthToken {
   token: String!
   expiresAt: DateTime!
@@ -117,7 +113,7 @@ type CommandMenuItem {
   position: Float!
   isPinned: Boolean!
   availabilityType: CommandMenuItemAvailabilityType!
-  payload: PathCommandMenuItemPayload
+  payload: CommandMenuItemPayload
   hotKeys: [String!]
   conditionalAvailabilityExpression: String
   availabilityObjectMetadataId: UUID
@@ -209,6 +205,16 @@ enum CommandMenuItemAvailabilityType {
   GLOBAL_OBJECT_CONTEXT
   RECORD_SELECTION
   FALLBACK
+}
+
+union CommandMenuItemPayload = PathCommandMenuItemPayload | ObjectMetadataCommandMenuItemPayload
+
+type PathCommandMenuItemPayload {
+  path: String!
+}
+
+type ObjectMetadataCommandMenuItemPayload {
+  objectMetadataItemId: UUID! @deprecated(reason: "Never returned anymore: navigation targets moved to CommandMenuItem.navigationTargetObjectMetadataId. This variant only remains one release so frontends deployed after the server keep validating; it will be removed in the next release.")
 }
 
 type LogicFunction {
