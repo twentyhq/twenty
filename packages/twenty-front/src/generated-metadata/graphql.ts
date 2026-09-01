@@ -6312,14 +6312,12 @@ export type UpsertUsageLimitInput = {
   limitValue: Scalars['BigInt']['input'];
   limitValueType?: Scalars['String']['input'];
   meter?: Scalars['String']['input'];
-  operationType?: InputMaybe<UsageOperationType>;
+  operationType: UsageOperationType;
   periodCount?: Scalars['Int']['input'];
   periodUnit?: Scalars['String']['input'];
   resourceType: UsageResourceType;
   spenderId?: InputMaybe<Scalars['String']['input']>;
   spenderType: Scalars['String']['input'];
-  /** Deprecated: use periodCount and periodUnit */
-  windowSeconds?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UpsertViewWidgetInput = {
@@ -6428,8 +6426,6 @@ export type UsageLimit = {
   spenderId: Scalars['String']['output'];
   spenderType: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
-  /** @deprecated Use periodCount and periodUnit */
-  windowSeconds: Scalars['Int']['output'];
 };
 
 export enum UsageOperationType {
