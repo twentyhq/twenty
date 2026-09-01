@@ -159,6 +159,43 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     );
   });
 
+  it('should create and connect a concrete target through a MANY-TO-ONE morph relation', async () => {
+    const taskTargetId = v4();
+    const personId = v4();
+    const response = await makeGraphqlAPIRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'taskTarget',
+        gqlFields: 'id targetPerson { id }',
+        data: {
+          id: taskTargetId,
+          targetPerson: {
+            create: { id: personId },
+          },
+        },
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.createTaskTarget.targetPerson.id).toBe(personId);
+
+    await makeGraphqlAPIRequest(
+      destroyManyOperationFactory({
+        objectMetadataSingularName: 'taskTarget',
+        objectMetadataPluralName: 'taskTargets',
+        gqlFields: 'id',
+        filter: { id: { eq: taskTargetId } },
+      }),
+    );
+    await makeGraphqlAPIRequest(
+      destroyManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: 'id',
+        filter: { id: { eq: personId } },
+      }),
+    );
+  });
+
   it('should roll back a nested create when the parent record cannot be created', async () => {
     const personId = v4();
     const companyId = v4();
