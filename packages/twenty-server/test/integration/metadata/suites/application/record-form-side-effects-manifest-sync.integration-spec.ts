@@ -27,7 +27,7 @@ const TEST_ROLE_ID = uuidv4();
 const TEST_OBJECT_ID = uuidv4();
 const NAME_FIELD_ID = uuidv4();
 const CODE_FIELD_ID = uuidv4();
-const RATING_FIELD_ID = uuidv4();
+const FILES_FIELD_ID = uuidv4();
 
 const NAME_FIELD: ObjectManifest['fields'][number] = {
   universalIdentifier: NAME_FIELD_ID,
@@ -43,11 +43,11 @@ const CODE_FIELD: ObjectManifest['fields'][number] = {
   label: 'Code',
 };
 
-const RATING_FIELD: ObjectManifest['fields'][number] = {
-  universalIdentifier: RATING_FIELD_ID,
-  type: FieldMetadataType.RATING,
-  name: 'severity',
-  label: 'Severity',
+const FILES_FIELD: ObjectManifest['fields'][number] = {
+  universalIdentifier: FILES_FIELD_ID,
+  type: FieldMetadataType.FILES,
+  name: 'attachments',
+  label: 'Attachments',
 };
 
 const buildTicketObject = (additionalFields: ObjectManifest['fields']) =>
@@ -192,10 +192,10 @@ describe('Manifest sync - engine-provisioned record-form stack', () => {
     });
   });
 
-  it('provisions the RECORD_FORM layout with one FORM_FIELD widget per creatable field, label identifier first', async () => {
+  it('provisions the RECORD_FORM layout with one FORM_FIELD widget per creatable field, skipping the types the form has no input for', async () => {
     await syncApplication({
       manifest: buildManifest(
-        buildTicketObject([NAME_FIELD, CODE_FIELD, RATING_FIELD]),
+        buildTicketObject([NAME_FIELD, CODE_FIELD, FILES_FIELD]),
       ),
       expectToFail: false,
     });
