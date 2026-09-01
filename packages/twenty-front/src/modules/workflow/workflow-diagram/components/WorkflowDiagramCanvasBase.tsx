@@ -27,7 +27,7 @@ import {
   type WorkflowDiagramNodeType,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { assertWorkflowConnectionOrThrow } from '@/workflow/workflow-diagram/utils/assertWorkflowConnectionOrThrow';
-import { getWorkflowReconnectionForbiddenTargetStepIds } from '@/workflow/workflow-diagram/utils/wouldReconnectWorkflowEdgeCreateCycle';
+import { getWorkflowReconnectionForbiddenTargetStepIds } from '@/workflow/workflow-diagram/utils/getWorkflowReconnectionForbiddenTargetStepIds';
 import { WorkflowDiagramConnection } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramConnection';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramCustomMarkers';
 import { EDGE_BRANCH_ARROW_MARKER } from '@/workflow/workflow-diagram/workflow-edges/constants/EdgeBranchArrowMarker';
