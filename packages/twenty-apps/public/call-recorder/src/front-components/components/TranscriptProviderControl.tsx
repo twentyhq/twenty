@@ -1,3 +1,4 @@
+import { isUndefined } from '@sniptt/guards';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
 import { DropdownMenuItemsContainer } from 'src/front-components/components/DropdownMenuItemsContainer';
@@ -29,7 +30,7 @@ export const TranscriptProviderControl = ({
         label={selectedOption?.label ?? EMPTY_OPTION_LABEL}
         onClick={toggle}
       />
-      {isOpen && anchorRect !== undefined && (
+      {isOpen && !isUndefined(anchorRect) && (
         <FloatingMenu
           anchorRect={anchorRect}
           width={Math.max(anchorRect.width, FLOATING_MENU_DEFAULT_WIDTH_PIXELS)}

@@ -31,7 +31,6 @@ type SettingsOptionCardContentCounterProps = {
   inputId?: string;
   value: string;
   onChange: (value: string) => void;
-  onBlur?: () => void;
   minValue?: number;
   maxValue?: number;
 };
@@ -46,7 +45,6 @@ export const SettingsOptionCardContentCounter = ({
   inputId,
   value,
   onChange,
-  onBlur,
   minValue,
   maxValue,
 }: SettingsOptionCardContentCounterProps) => (
@@ -74,7 +72,6 @@ export const SettingsOptionCardContentCounter = ({
         inputId={inputId}
         value={value}
         onChange={onChange}
-        onBlur={onBlur}
         minValue={minValue}
         maxValue={maxValue}
         disabled={disabled}

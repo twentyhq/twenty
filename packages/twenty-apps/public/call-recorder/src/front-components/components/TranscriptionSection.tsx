@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useId } from 'react';
 import { Section } from 'twenty-ui/layout';
 import { Card } from 'twenty-ui/surfaces';
 import { H2Title } from 'twenty-ui/typography';
@@ -15,54 +15,57 @@ import {
   CALL_RECORDER_SUMMARY_PROMPT_FIELD,
   CALL_RECORDER_TRANSCRIPT_PROVIDER_ROW,
 } from 'src/front-components/constants/call-recorder-settings-layout.constant';
-import { useDebouncedSaveApplicationVariable } from 'src/front-components/hooks/use-debounced-save-application-variable';
-import { useSaveApplicationVariable } from 'src/front-components/hooks/use-save-application-variable';
+import {
+  type ApplicationVariableDraftByKey,
+  type UpdateApplicationVariableDraft,
+} from 'src/front-components/types/application-variable-draft.type';
 import { type CallRecorderApplicationVariable } from 'src/front-components/types/call-recorder-application-variable.type';
 import { getApplicationVariableValue } from 'src/front-components/utils/get-application-variable-value.util';
 import { serializeRichTextMarkdown } from 'src/front-components/utils/serialize-rich-text-markdown.util';
 import { extractRichTextMarkdown } from 'src/logic-functions/utils/extract-rich-text-markdown.util';
 
 type TranscriptionSectionProps = {
-  applicationId: string;
   applicationVariables: Pick<
     CallRecorderApplicationVariable,
     'key' | 'value' | 'options'
   >[];
+  draftValueByVariableKey: ApplicationVariableDraftByKey;
+  onDraftValueChange: UpdateApplicationVariableDraft;
 };
 
 export const TranscriptionSection = ({
-  applicationId,
   applicationVariables,
+  draftValueByVariableKey,
+  onDraftValueChange,
 }: TranscriptionSectionProps) => {
   const inputId = useId();
-  const [providerValue, setProviderValue] = useState(() =>
+  const providerDraftValue =
+    draftValueByVariableKey[CALL_RECORDER_TRANSCRIPT_PROVIDER_ROW.variableKey];
+  const providerValue =
+    providerDraftValue?.inputValue ??
     getApplicationVariableValue({
       applicationVariables,
       variableKey: CALL_RECORDER_TRANSCRIPT_PROVIDER_ROW.variableKey,
-    }),
-  );
-  const [isSummaryEnabled, setIsSummaryEnabled] = useState(
-    () =>
+    });
+  const summaryEnabledDraftValue =
+    draftValueByVariableKey[CALL_RECORDER_SUMMARY_ENABLED_ROW.variableKey];
+  const isSummaryEnabled =
+    (summaryEnabledDraftValue?.inputValue ??
       getApplicationVariableValue({
         applicationVariables,
         variableKey: CALL_RECORDER_SUMMARY_ENABLED_ROW.variableKey,
-      }) === 'true',
-  );
-  const [promptMarkdown, setPromptMarkdown] = useState(
-    () =>
-      extractRichTextMarkdown(
-        getApplicationVariableValue({
-          applicationVariables,
-          variableKey: CALL_RECORDER_SUMMARY_PROMPT_FIELD.variableKey,
-        }),
-      ) ?? '',
-  );
-
-  const { saveApplicationVariable } = useSaveApplicationVariable(applicationId);
-  const { saveDebounced } = useDebouncedSaveApplicationVariable({
-    applicationId,
-    variableKey: CALL_RECORDER_SUMMARY_PROMPT_FIELD.variableKey,
-  });
+      })) === 'true';
+  const promptDraftValue =
+    draftValueByVariableKey[CALL_RECORDER_SUMMARY_PROMPT_FIELD.variableKey];
+  const promptMarkdown =
+    promptDraftValue?.inputValue ??
+    extractRichTextMarkdown(
+      getApplicationVariableValue({
+        applicationVariables,
+        variableKey: CALL_RECORDER_SUMMARY_PROMPT_FIELD.variableKey,
+      }),
+    ) ??
+    '';
 
   const providerOptions =
     applicationVariables.find(
@@ -71,30 +74,35 @@ export const TranscriptionSection = ({
     )?.options ?? [];
 
   const handleProviderChange = (value: string) => {
-    setProviderValue(value);
-    saveApplicationVariable({
+    onDraftValueChange({
       variableKey: CALL_RECORDER_TRANSCRIPT_PROVIDER_ROW.variableKey,
-      value,
+      inputValue: value,
+      valueToSave: value,
     });
   };
 
   const handleSummaryEnabledChange = (checked: boolean) => {
-    setIsSummaryEnabled(checked);
-    saveApplicationVariable({
+    const value = checked ? 'true' : 'false';
+
+    onDraftValueChange({
       variableKey: CALL_RECORDER_SUMMARY_ENABLED_ROW.variableKey,
-      value: checked ? 'true' : 'false',
+      inputValue: value,
+      valueToSave: value,
     });
   };
 
   const handlePromptChange = (value: string) => {
-    setPromptMarkdown(value);
-    saveDebounced(serializeRichTextMarkdown(value));
+    onDraftValueChange({
+      variableKey: CALL_RECORDER_SUMMARY_PROMPT_FIELD.variableKey,
+      inputValue: value,
+      valueToSave: serializeRichTextMarkdown(value),
+    });
   };
 
   return (
     <Section>
       <H2Title
-        title="Transcription & AI"
+        title="Transcription"
         description="What happens to a recording once the call ends."
       />
       <StyledSettingsSectionStack>
@@ -130,7 +138,6 @@ export const TranscriptionSection = ({
               placeholder="Value"
               value={promptMarkdown}
               onChange={(event) => handlePromptChange(event.target.value)}
-              onBlur={() => saveDebounced.flush()}
             />
           </LabelledSettingsField>
         </StyledDimmable>

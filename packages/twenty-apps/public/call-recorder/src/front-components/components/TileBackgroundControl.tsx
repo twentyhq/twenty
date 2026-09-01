@@ -49,7 +49,7 @@ export const TileBackgroundControl = ({
         }
         onClick={toggle}
       />
-      {isOpen && anchorRect !== undefined && (
+      {isOpen && !isUndefined(anchorRect) && (
         <FloatingMenu
           anchorRect={anchorRect}
           width={Math.max(anchorRect.width, FLOATING_MENU_DEFAULT_WIDTH_PIXELS)}

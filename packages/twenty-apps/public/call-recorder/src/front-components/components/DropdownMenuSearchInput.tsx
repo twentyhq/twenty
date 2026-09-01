@@ -23,7 +23,7 @@ const StyledInput = styled.input`
 
   &::placeholder,
   &::-webkit-input-placeholder {
-    color: ${() => themeCssVariables.font.color.light};
+    color: ${() => themeCssVariables.font.color.tertiary};
     font-family: ${() => themeCssVariables.font.family};
     font-weight: ${() => themeCssVariables.font.weight.medium};
   }

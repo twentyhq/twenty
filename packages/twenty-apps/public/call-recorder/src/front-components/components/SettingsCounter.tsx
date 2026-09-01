@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { isUndefined } from '@sniptt/guards';
 import { IconMinus, IconPlus } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -30,7 +31,6 @@ const StyledTextInputContainer = styled.div`
 type SettingsCounterProps = {
   value: string;
   onChange: (value: string) => void;
-  onBlur?: () => void;
   minValue?: number;
   maxValue?: number;
   disabled?: boolean;
@@ -44,7 +44,6 @@ type SettingsCounterProps = {
 export const SettingsCounter = ({
   value,
   onChange,
-  onBlur,
   minValue = 0,
   maxValue,
   disabled = false,
@@ -71,7 +70,7 @@ export const SettingsCounter = ({
       return;
     }
 
-    if (maxValue === undefined || parsedValue < maxValue) {
+    if (isUndefined(maxValue) || parsedValue < maxValue) {
       onChange(String(parsedValue + 1));
     }
   };
@@ -97,7 +96,6 @@ export const SettingsCounter = ({
           value={value}
           disabled={disabled}
           onChange={(event) => onChange(event.target.value)}
-          onBlur={onBlur}
         />
       </StyledTextInputContainer>
       {showButtons && (

@@ -11,14 +11,18 @@ import { SettingsOptionCardContentSelect } from 'src/front-components/components
 import { SettingsOptionCardContentToggle } from 'src/front-components/components/SettingsOptionCardContentToggle';
 import { StyledDimmable } from 'src/front-components/components/StyledDimmable';
 import { StyledSettingsSectionStack } from 'src/front-components/components/StyledSettingsSectionStack';
+import { StyledSettingsTextInput } from 'src/front-components/components/StyledSettingsTextInput';
 import { TileBackgroundControl } from 'src/front-components/components/TileBackgroundControl';
 import {
+  CALL_RECORDER_NAME_FIELD,
   CALL_RECORDER_TILE_BACKGROUND_ROW,
   CALL_RECORDER_USE_WORKSPACE_LOGO_ROW,
 } from 'src/front-components/constants/call-recorder-settings-layout.constant';
 import { THEME_COLOR_HEX } from 'src/front-components/constants/theme-color-hex.constant';
-import { useDebouncedSaveApplicationVariable } from 'src/front-components/hooks/use-debounced-save-application-variable';
-import { useSaveApplicationVariable } from 'src/front-components/hooks/use-save-application-variable';
+import {
+  type ApplicationVariableDraftByKey,
+  type UpdateApplicationVariableDraft,
+} from 'src/front-components/types/application-variable-draft.type';
 import { type CallRecorderApplicationVariable } from 'src/front-components/types/call-recorder-application-variable.type';
 import { getApplicationVariableValue } from 'src/front-components/utils/get-application-variable-value.util';
 import { getNormalizedHexValue } from 'src/front-components/utils/get-normalized-hex-value.util';
@@ -26,41 +30,49 @@ import { getThemeColorFromHex } from 'src/front-components/utils/get-theme-color
 import { normalizeHexColor } from 'src/front-components/utils/normalize-hex-color.util';
 import { DEFAULT_CALL_RECORDER_BOT_IMAGE_BACKGROUND } from 'src/logic-functions/constants/default-call-recorder-bot-image-background';
 
-type BotAppearanceSectionProps = {
-  applicationId: string;
+type RecorderSectionProps = {
   applicationVariables: Pick<
     CallRecorderApplicationVariable,
     'key' | 'value'
   >[];
+  draftValueByVariableKey: ApplicationVariableDraftByKey;
+  onDraftValueChange: UpdateApplicationVariableDraft;
 };
 
-export const BotAppearanceSection = ({
-  applicationId,
+export const RecorderSection = ({
   applicationVariables,
-}: BotAppearanceSectionProps) => {
-  const inputId = useId();
-  const [isWorkspaceLogoEnabled, setIsWorkspaceLogoEnabled] = useState(
-    () =>
+  draftValueByVariableKey,
+  onDraftValueChange,
+}: RecorderSectionProps) => {
+  const nameInputId = useId();
+  const hexInputId = useId();
+  const nameDraftValue =
+    draftValueByVariableKey[CALL_RECORDER_NAME_FIELD.variableKey];
+  const nameValue =
+    nameDraftValue?.inputValue ??
+    getApplicationVariableValue({
+      applicationVariables,
+      variableKey: CALL_RECORDER_NAME_FIELD.variableKey,
+    });
+  const workspaceLogoDraftValue =
+    draftValueByVariableKey[CALL_RECORDER_USE_WORKSPACE_LOGO_ROW.variableKey];
+  const isWorkspaceLogoEnabled =
+    (workspaceLogoDraftValue?.inputValue ??
       getApplicationVariableValue({
         applicationVariables,
         variableKey: CALL_RECORDER_USE_WORKSPACE_LOGO_ROW.variableKey,
-      }) === 'true',
-  );
-  const [tileBackgroundValue, setTileBackgroundValue] = useState(() =>
+      })) === 'true';
+  const tileBackgroundDraftValue =
+    draftValueByVariableKey[CALL_RECORDER_TILE_BACKGROUND_ROW.variableKey];
+  const tileBackgroundValue =
+    tileBackgroundDraftValue?.inputValue ??
     getApplicationVariableValue({
       applicationVariables,
       variableKey: CALL_RECORDER_TILE_BACKGROUND_ROW.variableKey,
-    }),
-  );
+    });
   const [isCustomHexOverride, setIsCustomHexOverride] = useState<
     boolean | undefined
   >(undefined);
-
-  const { saveApplicationVariable } = useSaveApplicationVariable(applicationId);
-  const { saveDebounced } = useDebouncedSaveApplicationVariable({
-    applicationId,
-    variableKey: CALL_RECORDER_TILE_BACKGROUND_ROW.variableKey,
-  });
 
   const selectedTileColor = getThemeColorFromHex(tileBackgroundValue);
   const isCustomHexSelected =
@@ -69,45 +81,64 @@ export const BotAppearanceSection = ({
     normalizeHexColor(tileBackgroundValue) ??
     DEFAULT_CALL_RECORDER_BOT_IMAGE_BACKGROUND;
 
+  const handleNameChange = (value: string) => {
+    onDraftValueChange({
+      variableKey: CALL_RECORDER_NAME_FIELD.variableKey,
+      inputValue: value,
+      valueToSave: value,
+    });
+  };
+
   const handleWorkspaceLogoChange = (checked: boolean) => {
-    setIsWorkspaceLogoEnabled(checked);
-    saveApplicationVariable({
+    const value = checked ? 'true' : 'false';
+
+    onDraftValueChange({
       variableKey: CALL_RECORDER_USE_WORKSPACE_LOGO_ROW.variableKey,
-      value: checked ? 'true' : 'false',
+      inputValue: value,
+      valueToSave: value,
     });
   };
 
   const handleSelectTileColor = (color: ThemeColor) => {
-    // a pending custom-hex save would overwrite the picked colour 250ms later
-    saveDebounced.cancel();
+    const value = THEME_COLOR_HEX[color];
+
     setIsCustomHexOverride(false);
-    setTileBackgroundValue(THEME_COLOR_HEX[color]);
-    saveApplicationVariable({
+    onDraftValueChange({
       variableKey: CALL_RECORDER_TILE_BACKGROUND_ROW.variableKey,
-      value: THEME_COLOR_HEX[color],
+      inputValue: value,
+      valueToSave: value,
     });
   };
 
   const handleHexChange = (value: string) => {
-    setTileBackgroundValue(value);
-
-    const valueToSave = getNormalizedHexValue(value);
-
-    if (isUndefined(valueToSave)) {
-      saveDebounced.cancel();
-      return;
-    }
-
-    saveDebounced(valueToSave);
+    onDraftValueChange({
+      variableKey: CALL_RECORDER_TILE_BACKGROUND_ROW.variableKey,
+      inputValue: value,
+      valueToSave: getNormalizedHexValue(value),
+    });
   };
 
   return (
     <Section>
       <H2Title
-        title="Bot appearance"
-        description="What participants see on the recorder's camera tile."
+        title="Recorder"
+        description="How the recorder appears when it joins your meetings."
       />
       <StyledSettingsSectionStack>
+        <LabelledSettingsField
+          label={CALL_RECORDER_NAME_FIELD.label}
+          inputId={nameInputId}
+          hint={CALL_RECORDER_NAME_FIELD.hint}
+        >
+          <StyledSettingsTextInput
+            id={nameInputId}
+            type="text"
+            autoComplete="off"
+            placeholder="Value"
+            value={nameValue}
+            onChange={(event) => handleNameChange(event.target.value)}
+          />
+        </LabelledSettingsField>
         <Card rounded fullWidth>
           <SettingsOptionCardContentToggle
             Icon={CALL_RECORDER_USE_WORKSPACE_LOGO_ROW.Icon}
@@ -138,7 +169,7 @@ export const BotAppearanceSection = ({
           <StyledDimmable $dimmed={!isWorkspaceLogoEnabled}>
             <LabelledSettingsField
               label="Custom hex"
-              inputId={inputId}
+              inputId={hexInputId}
               hint="Six-digit hex, for example #1d1d1d."
               errorMessage={
                 isUndefined(getNormalizedHexValue(tileBackgroundValue))
@@ -147,11 +178,10 @@ export const BotAppearanceSection = ({
               }
             >
               <AdornedHexInput
-                id={inputId}
+                id={hexInputId}
                 value={tileBackgroundValue}
                 swatchColor={swatchColor}
                 onChange={handleHexChange}
-                onBlur={() => saveDebounced.flush()}
               />
             </LabelledSettingsField>
           </StyledDimmable>

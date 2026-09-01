@@ -10,7 +10,7 @@ const StyledLabelRow = styled.div`
 `;
 
 const StyledLabel = styled.label`
-  color: ${() => themeCssVariables.font.color.light};
+  color: ${() => themeCssVariables.font.color.primary};
   font-family: ${() => themeCssVariables.font.family};
   font-size: 11px;
   font-weight: ${() => themeCssVariables.font.weight.semiBold};

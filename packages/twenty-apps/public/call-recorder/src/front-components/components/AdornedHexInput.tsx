@@ -40,7 +40,6 @@ type AdornedHexInputProps = {
   value: string;
   swatchColor: string;
   onChange: (value: string) => void;
-  onBlur: () => void;
 };
 
 export const AdornedHexInput = ({
@@ -48,7 +47,6 @@ export const AdornedHexInput = ({
   value,
   swatchColor,
   onChange,
-  onBlur,
 }: AdornedHexInputProps) => (
   <StyledContainer>
     <StyledAdornmentContainer>
@@ -61,7 +59,6 @@ export const AdornedHexInput = ({
       placeholder="#1d1d1d"
       value={value}
       onChange={(event) => onChange(event.target.value)}
-      onBlur={onBlur}
     />
   </StyledContainer>
 );

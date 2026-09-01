@@ -17,11 +17,11 @@ import { SettingsOptionIconCustomizer } from 'src/front-components/components/Se
 const StyledSettingsCardToggleContent = styled.div<{ $disabled?: boolean }>`
   align-items: center;
   background-color: ${() => themeCssVariables.background.secondary};
-  cursor: ${({ $disabled }) => ($disabled === true ? 'default' : 'pointer')};
+  cursor: ${({ $disabled }) => ($disabled ? 'default' : 'pointer')};
   display: flex;
   gap: ${() => themeCssVariables.spacing[3]};
   padding: ${() => themeCssVariables.spacing[4]};
-  pointer-events: ${({ $disabled }) => ($disabled === true ? 'none' : 'auto')};
+  pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
   position: relative;
 
   &:hover {

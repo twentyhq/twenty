@@ -5,7 +5,10 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ApplicationVariableInput } from 'src/front-components/components/ApplicationVariableInput';
 import { ApplicationVariableLabelRow } from 'src/front-components/components/ApplicationVariableLabelRow';
-import { useDebouncedSaveApplicationVariable } from 'src/front-components/hooks/use-debounced-save-application-variable';
+import {
+  type ApplicationVariableDraft,
+  type UpdateApplicationVariableDraft,
+} from 'src/front-components/types/application-variable-draft.type';
 import { type CallRecorderApplicationVariable } from 'src/front-components/types/call-recorder-application-variable.type';
 import { getNormalizedNumberValue } from 'src/front-components/utils/get-normalized-number-value.util';
 
@@ -15,7 +18,7 @@ const StyledRow = styled.div`
 `;
 
 const StyledDescription = styled.span`
-  color: ${() => themeCssVariables.font.color.tertiary};
+  color: ${() => themeCssVariables.font.color.secondary};
   font-family: ${() => themeCssVariables.font.family};
   font-size: ${() => themeCssVariables.font.size.xs};
   margin-bottom: ${() => themeCssVariables.spacing[1]};
@@ -30,45 +33,34 @@ const StyledError = styled.span`
 
 type ApplicationVariableRowProps = {
   variable: CallRecorderApplicationVariable;
-  applicationId: string;
-  value: string | undefined;
-  onValueChange: (params: { variableKey: string; value: string }) => void;
+  draftValue: ApplicationVariableDraft | undefined;
+  onDraftValueChange: UpdateApplicationVariableDraft;
 };
 
 export const ApplicationVariableRow = ({
   variable,
-  applicationId,
-  value,
-  onValueChange,
+  draftValue,
+  onDraftValueChange,
 }: ApplicationVariableRowProps) => {
   const inputId = useId();
 
-  const { saveDebounced } = useDebouncedSaveApplicationVariable({
-    applicationId,
-    variableKey: variable.key,
-  });
-
   const isSecretStored = variable.isSecret && isNonEmptyString(variable.value);
-  const draftValue = value ?? (isSecretStored ? '' : variable.value);
+  const inputValue =
+    draftValue?.inputValue ?? (isSecretStored ? '' : variable.value);
 
   const isNumberVariable =
     variable.type === 'NUMBER' || variable.type === 'NUMERIC';
   const hasInvalidNumber =
-    isNumberVariable && isUndefined(getNormalizedNumberValue(draftValue));
+    isNumberVariable && isUndefined(getNormalizedNumberValue(inputValue));
 
   const handleChange = (newValue: string) => {
-    onValueChange({ variableKey: variable.key, value: newValue });
-
-    const valueToSave = isNumberVariable
-      ? getNormalizedNumberValue(newValue)
-      : newValue;
-
-    if (isUndefined(valueToSave)) {
-      saveDebounced.cancel();
-      return;
-    }
-
-    saveDebounced(valueToSave);
+    onDraftValueChange({
+      variableKey: variable.key,
+      inputValue: newValue,
+      valueToSave: isNumberVariable
+        ? getNormalizedNumberValue(newValue)
+        : newValue,
+    });
   };
 
   return (
@@ -84,10 +76,9 @@ export const ApplicationVariableRow = ({
       <ApplicationVariableInput
         inputId={inputId}
         variable={variable}
-        value={draftValue}
+        value={inputValue}
         placeholder={isSecretStored ? variable.value : undefined}
         onChange={handleChange}
-        onBlur={() => saveDebounced.flush()}
       />
       {hasInvalidNumber && <StyledError>Invalid number</StyledError>}
     </StyledRow>

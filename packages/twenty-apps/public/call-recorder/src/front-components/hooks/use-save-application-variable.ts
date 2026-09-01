@@ -7,7 +7,9 @@ type SaveApplicationVariableParams = {
   value: string;
 };
 
-export const useSaveApplicationVariable = (applicationId: string) => {
+export const useSaveApplicationVariable = (
+  applicationId: string | undefined,
+) => {
   const { updateApplicationVariable } =
     useUpdateApplicationVariable(applicationId);
 
@@ -23,6 +25,8 @@ export const useSaveApplicationVariable = (applicationId: string) => {
         variant: 'error',
       });
     }
+
+    return isUpdated;
   };
 
   return { saveApplicationVariable };

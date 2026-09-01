@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { isUndefined } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { ICON } from 'twenty-ui/theme';
@@ -10,13 +11,13 @@ const StyledControlContainer = styled.div<{
   $hasAdornment: boolean;
 }>`
   align-items: center;
-  background-color: ${() => themeCssVariables.background.transparent.lighter};
+  background-color: ${() => themeCssVariables.background.transparent.light};
   border: 1px solid ${() => themeCssVariables.border.color.medium};
   border-radius: ${() => themeCssVariables.border.radius.md};
   box-sizing: border-box;
   color: ${({ $disabled }) =>
     $disabled
-      ? themeCssVariables.font.color.tertiary
+      ? themeCssVariables.font.color.secondary
       : themeCssVariables.font.color.primary};
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
   display: grid;
@@ -29,11 +30,8 @@ const StyledControlContainer = styled.div<{
   text-align: left;
 `;
 
-const StyledChevronWrapper = styled.div<{ $disabled: boolean }>`
-  color: ${({ $disabled }) =>
-    $disabled
-      ? themeCssVariables.font.color.extraLight
-      : themeCssVariables.font.color.tertiary};
+const StyledChevronWrapper = styled.div`
+  color: ${() => themeCssVariables.font.color.tertiary};
   display: flex;
 `;
 
@@ -52,12 +50,12 @@ export const SettingsSelectControl = ({
 }: SettingsSelectControlProps) => (
   <StyledControlContainer
     $disabled={disabled}
-    $hasAdornment={adornment !== undefined}
+    $hasAdornment={!isUndefined(adornment)}
     onClick={disabled ? undefined : onClick}
   >
     {adornment}
     <OverflowingTextWithTooltip text={label} />
-    <StyledChevronWrapper $disabled={disabled}>
+    <StyledChevronWrapper>
       <IconChevronDown size={ICON.size.md} stroke={ICON.stroke.sm} />
     </StyledChevronWrapper>
   </StyledControlContainer>

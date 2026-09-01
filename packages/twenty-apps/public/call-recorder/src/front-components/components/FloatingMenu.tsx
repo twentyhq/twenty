@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { isUndefined } from '@sniptt/guards';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -57,7 +58,7 @@ export const FloatingMenu = ({
     const measuredHeight = menuRef.current?.offsetHeight;
 
     if (
-      measuredHeight !== undefined &&
+      !isUndefined(measuredHeight) &&
       measuredHeight > 0 &&
       measuredHeight !== menuHeight
     ) {
@@ -73,7 +74,9 @@ export const FloatingMenu = ({
     menuWidth: width,
     menuHeight: menuHeight ?? FLOATING_MENU_MAX_HEIGHT_PIXELS,
     viewportWidth:
-      viewportWidth > 0 ? viewportWidth : width + FLOATING_MENU_VIEWPORT_MARGIN_PIXELS * 2,
+      viewportWidth > 0
+        ? viewportWidth
+        : width + FLOATING_MENU_VIEWPORT_MARGIN_PIXELS * 2,
     viewportHeight:
       viewportHeight > 0
         ? viewportHeight
@@ -89,7 +92,7 @@ export const FloatingMenu = ({
           top,
           left,
           width,
-          visibility: menuHeight === undefined ? 'hidden' : 'visible',
+          visibility: isUndefined(menuHeight) ? 'hidden' : 'visible',
         }}
         onKeyDown={(event) => {
           if (event.key === 'Escape') {

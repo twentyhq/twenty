@@ -11,7 +11,7 @@ export const StyledSettingsCardContent = styled.div<StyledCardContentProps>`
   background-color: ${() => themeCssVariables.background.secondary};
   display: flex;
   gap: ${() => themeCssVariables.spacing[3]};
-  height: ${({ $fullHeight }) => ($fullHeight === true ? '100%' : 'auto')};
+  height: ${({ $fullHeight }) => ($fullHeight ? '100%' : 'auto')};
   padding: ${() => themeCssVariables.spacing[4]};
 `;
 

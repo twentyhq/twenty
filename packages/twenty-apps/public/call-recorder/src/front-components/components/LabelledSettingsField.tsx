@@ -10,7 +10,7 @@ const StyledField = styled.div`
 
 // twenty-front hard-codes this size in FieldLabel.module.scss; there is no token.
 const StyledLabel = styled.label`
-  color: ${() => themeCssVariables.font.color.light};
+  color: ${() => themeCssVariables.font.color.primary};
   font-family: ${() => themeCssVariables.font.family};
   font-size: 11px;
   font-weight: ${() => themeCssVariables.font.weight.semiBold};
@@ -18,7 +18,7 @@ const StyledLabel = styled.label`
 `;
 
 const StyledHint = styled.span`
-  color: ${() => themeCssVariables.font.color.tertiary};
+  color: ${() => themeCssVariables.font.color.secondary};
   font-family: ${() => themeCssVariables.font.family};
   font-size: ${() => themeCssVariables.font.size.sm};
   margin-top: ${() => themeCssVariables.spacing[3]};
@@ -49,7 +49,9 @@ export const LabelledSettingsField = ({
   <StyledField>
     <StyledLabel htmlFor={inputId}>{label}</StyledLabel>
     {children}
-    {isNonEmptyString(errorMessage) && <StyledError>{errorMessage}</StyledError>}
+    {isNonEmptyString(errorMessage) && (
+      <StyledError>{errorMessage}</StyledError>
+    )}
     {isNonEmptyString(hint) && <StyledHint>{hint}</StyledHint>}
   </StyledField>
 );

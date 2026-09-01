@@ -4,7 +4,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 // which cannot be imported here: twenty-ui ships no text, select or textarea
 // input, and front components cannot reach into twenty-front internals.
 export const getSettingsControlStyles = () => `
-  background-color: ${themeCssVariables.background.transparent.lighter};
+  background-color: ${themeCssVariables.background.transparent.light};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
@@ -18,13 +18,13 @@ export const getSettingsControlStyles = () => `
 
   &::placeholder,
   &::-webkit-input-placeholder {
-    color: ${themeCssVariables.font.color.light};
+    color: ${themeCssVariables.font.color.tertiary};
     font-family: ${themeCssVariables.font.family};
     font-weight: ${themeCssVariables.font.weight.medium};
   }
 
   &:disabled {
-    color: ${themeCssVariables.font.color.tertiary};
+    color: ${themeCssVariables.font.color.secondary};
   }
 
   &[readonly] {
