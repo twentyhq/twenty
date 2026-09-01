@@ -191,7 +191,7 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
           </TableBody>
         </Table>
       )}
-      {!isExpanded && totalCount > INITIAL_VISIBLE_WORKSPACES && (
+      {!hasFailed && !isExpanded && totalCount > INITIAL_VISIBLE_WORKSPACES && (
         <StyledButtonContainer>
           <Button
             title={t`Show all`}
@@ -202,7 +202,7 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
           />
         </StyledButtonContainer>
       )}
-      {isExpanded && hasMore && (
+      {!hasFailed && isExpanded && hasMore && (
         <StyledButtonContainer>
           <Button
             title={t`Show more`}
