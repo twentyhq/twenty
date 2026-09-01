@@ -29,7 +29,7 @@ export const computeOrderedNewRecordFormFlatFieldMetadatas = ({
   const candidateFlatFieldMetadatas = [
     ...Object.values(flatFieldMetadataOperations?.flatEntityToCreate ?? {}),
     ...Object.values(flatFieldMetadataOperations?.flatEntityToUpdate ?? {}),
-  ].filter(isDefined) as UniversalFlatFieldMetadata[];
+  ].filter(isDefined);
 
   const seenUniversalIdentifiers = new Set<string>();
   const objectFlatFieldMetadatas = candidateFlatFieldMetadatas.filter(
