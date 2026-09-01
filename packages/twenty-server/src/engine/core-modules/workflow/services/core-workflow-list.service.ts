@@ -9,7 +9,6 @@ import {
   encodeCursorData,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { type CoreWorkflowConnectionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-connection.dto';
-import { type CoreWorkflowFilterInput } from 'src/engine/core-modules/workflow/dtos/core-workflow-filter.input';
 import {
   CoreWorkflowOrderByDirection,
   CoreWorkflowOrderByField,
@@ -153,7 +152,8 @@ export class CoreWorkflowListService {
     const totalCount = await this.countByWorkspaceId({
       workspaceId,
       schemaName,
-      filter,
+      filterPredicate,
+      filterParameters,
     });
 
     const hasNextPage = rows.length > first;
@@ -191,19 +191,15 @@ export class CoreWorkflowListService {
   private async countByWorkspaceId({
     workspaceId,
     schemaName,
-    filter,
+    filterPredicate,
+    filterParameters,
   }: {
     workspaceId: string;
     schemaName: string;
-    filter?: CoreWorkflowFilterInput | null;
+    filterPredicate?: string;
+    filterParameters: unknown[];
   }): Promise<number> {
     const parameters: unknown[] = [workspaceId];
-
-    const { predicate: filterPredicate, parameters: filterParameters } =
-      buildCoreWorkflowFilterPredicate({
-        filter,
-        firstParameterIndex: parameters.length + 1,
-      });
 
     if (!isDefined(filterPredicate)) {
       const [{ totalCount }]: [{ totalCount: number }] =

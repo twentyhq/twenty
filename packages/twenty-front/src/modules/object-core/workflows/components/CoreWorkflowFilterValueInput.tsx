@@ -46,6 +46,7 @@ export const CoreWorkflowFilterValueInput = ({
   if (selectedField.filterType === 'MULTI_SELECT') {
     return (
       <FormMultiSelectFieldInput
+        key={`${stepFilter.id}-${stepFilter.operand}`}
         label=""
         defaultValue={stepFilter.value}
         options={(selectedField.options ?? []).map((option) => ({
@@ -87,6 +88,7 @@ export const CoreWorkflowFilterValueInput = ({
 
     return (
       <FormDateTimeFieldInput
+        key={`${stepFilter.id}-${stepFilter.operand}`}
         defaultValue={stepFilter.value}
         onChange={(value) => persistValue(value ?? '')}
         readonly={readonly}
@@ -96,6 +98,7 @@ export const CoreWorkflowFilterValueInput = ({
 
   return (
     <FormTextFieldInput
+      key={`${stepFilter.id}-${stepFilter.operand}`}
       defaultValue={stepFilter.value}
       onChange={persistValue}
       readonly={readonly}

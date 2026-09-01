@@ -310,6 +310,30 @@ describe('buildCoreWorkflowFilterPredicate', () => {
     );
   });
 
+  describe('STATUSES value shapes', () => {
+    it('should accept a bare status string but reject a JSON encoded scalar', () => {
+      expect(
+        buildPredicate([
+          {
+            fieldKey: CoreWorkflowFilterFieldKey.STATUSES,
+            operand: CoreWorkflowFilterOperand.CONTAINS,
+            value: 'ACTIVE',
+          },
+        ]).predicate,
+      ).toContain("v.status = 'ACTIVE'");
+
+      expect(() =>
+        buildPredicate([
+          {
+            fieldKey: CoreWorkflowFilterFieldKey.STATUSES,
+            operand: CoreWorkflowFilterOperand.CONTAINS,
+            value: JSON.stringify('ACTIVE'),
+          },
+        ]),
+      ).toThrow(UserInputError);
+    });
+  });
+
   describe('UPDATED_AT rules', () => {
     it('should bind UTC day bounds for IS when no timezone travels with the rule', () => {
       expect(
@@ -438,6 +462,23 @@ describe('buildCoreWorkflowFilterPredicate', () => {
       ).toBe(dayInMilliseconds);
       expect(new Date(todayStart).getTime()).toBeLessThanOrEqual(Date.now());
       expect(new Date(tomorrowStart).getTime()).toBeGreaterThan(Date.now());
+    });
+
+    it('should reject a relative filter carrying an invalid timezone', () => {
+      expect(() =>
+        buildPredicate([
+          {
+            fieldKey: CoreWorkflowFilterFieldKey.UPDATED_AT,
+            operand: CoreWorkflowFilterOperand.IS_RELATIVE,
+            value: JSON.stringify({
+              direction: 'PAST',
+              amount: 1,
+              unit: 'DAY',
+              timezone: 'Not/AZone',
+            }),
+          },
+        ]),
+      ).toThrow(UserInputError);
     });
 
     it('should resolve a relative date filter into a bound range', () => {

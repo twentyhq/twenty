@@ -10,13 +10,16 @@ import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states
 import { getCoreWorkflowFilterChipLabel } from '@/object-core/workflows/utils/getCoreWorkflowFilterChipLabel';
 import { isUsableCoreWorkflowFilterRule } from '@/object-core/workflows/utils/isUsableCoreWorkflowFilterRule';
 import { removeCoreWorkflowFilterRule } from '@/object-core/workflows/utils/removeCoreWorkflowFilterRule';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[2]};
+  min-width: 0;
 `;
 
 export const CoreWorkflowsFilterBar = () => {
@@ -26,6 +29,7 @@ export const CoreWorkflowsFilterBar = () => {
 
   const [coreWorkflowsFilterSettings, setCoreWorkflowsFilterSettings] =
     useAtomState(coreWorkflowsFilterSettingsState);
+  const { userTimezone } = useUserTimezone();
 
   const appliedStepFilters = (
     coreWorkflowsFilterSettings.stepFilters ?? []
@@ -37,7 +41,10 @@ export const CoreWorkflowsFilterBar = () => {
         <SortOrFilterChip
           key={stepFilter.id}
           type="filter"
-          labelValue={getCoreWorkflowFilterChipLabel(stepFilter)}
+          labelValue={getCoreWorkflowFilterChipLabel({
+            stepFilter,
+            timezone: userTimezone,
+          })}
           Icon={findCoreWorkflowFilterField(stepFilter.stepOutputKey)?.Icon}
           testId={`core-workflow-filter-${stepFilter.id}`}
           onClick={openCoreWorkflowFiltersSidePanel}

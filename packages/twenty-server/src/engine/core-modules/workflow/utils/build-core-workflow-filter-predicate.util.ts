@@ -63,10 +63,13 @@ const parseJsonValue = (value: string): unknown => {
   }
 };
 
-const parseStatusValue = (
-  candidate: unknown,
-  rule: CoreWorkflowFilterRuleInput,
-): WorkflowStatus => {
+const parseStatusValue = ({
+  candidate,
+  rule,
+}: {
+  candidate: unknown;
+  rule: CoreWorkflowFilterRuleInput;
+}): WorkflowStatus => {
   const status =
     typeof candidate === 'string'
       ? CORE_WORKFLOW_STATUS_VALUES.find(
@@ -86,12 +89,29 @@ const parseStatusValue = (
 const parseStatusesValue = (
   rule: CoreWorkflowFilterRuleInput,
 ): WorkflowStatus[] => {
-  const parsedValue = parseJsonValue(requireTextValue(rule));
-  const candidates: unknown[] = Array.isArray(parsedValue)
-    ? parsedValue
-    : [parsedValue];
+  const rawValue = requireTextValue(rule);
+  let candidates: unknown[];
+
+  try {
+    const parsedValue: unknown = JSON.parse(rawValue);
+
+    if (!Array.isArray(parsedValue)) {
+      throw new UserInputError(
+        `Operand ${rule.operand} on field ${rule.fieldKey} requires a JSON array of workflow statuses`,
+      );
+    }
+
+    candidates = parsedValue;
+  } catch (error) {
+    if (error instanceof UserInputError) {
+      throw error;
+    }
+
+    candidates = [rawValue];
+  }
+
   const statuses = candidates.map((candidate) =>
-    parseStatusValue(candidate, rule),
+    parseStatusValue({ candidate, rule }),
   );
 
   if (!isNonEmptyArray(statuses)) {
@@ -126,10 +146,13 @@ const computeDayBounds = (
   nextDayStart: getNextPeriodStart(zonedDateTime, 'DAY').toInstant().toString(),
 });
 
-const toRuleZonedDateTime = (
-  date: Date,
-  rule: CoreWorkflowFilterRuleInput,
-): Temporal.ZonedDateTime =>
+const toRuleZonedDateTime = ({
+  date,
+  rule,
+}: {
+  date: Date;
+  rule: CoreWorkflowFilterRuleInput;
+}): Temporal.ZonedDateTime =>
   Temporal.Instant.fromEpochMilliseconds(date.getTime()).toZonedDateTimeISO(
     rule.timezone ?? 'UTC',
   );
@@ -147,9 +170,17 @@ const parseRelativeDateRange = (
     );
   }
 
-  const referenceZonedDateTime = isDefined(relativeDateFilter.timezone)
-    ? Temporal.Now.zonedDateTimeISO(relativeDateFilter.timezone)
-    : Temporal.Now.zonedDateTimeISO();
+  let referenceZonedDateTime: Temporal.ZonedDateTime;
+
+  try {
+    referenceZonedDateTime = isDefined(relativeDateFilter.timezone)
+      ? Temporal.Now.zonedDateTimeISO(relativeDateFilter.timezone)
+      : Temporal.Now.zonedDateTimeISO();
+  } catch {
+    throw new UserInputError(
+      `Operand ${rule.operand} on field ${rule.fieldKey} carries an invalid timezone`,
+    );
+  }
 
   const resolvedFilter = resolveRelativeDateTimeFilter(
     relativeDateFilter,
@@ -263,7 +294,7 @@ const PREDICATE_BUILDER_BY_OPERAND_BY_FIELD_KEY: Record<
   [CoreWorkflowFilterFieldKey.UPDATED_AT]: {
     [CoreWorkflowFilterOperand.IS]: ({ rule, bindParameter }) => {
       const { dayStart, nextDayStart } = computeDayBounds(
-        toRuleZonedDateTime(parseDateValue(rule), rule),
+        toRuleZonedDateTime({ date: parseDateValue(rule), rule }),
       );
 
       return buildUpdatedAtRangePredicate({

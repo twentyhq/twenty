@@ -10,6 +10,12 @@ export const coreWorkflowsFilterSettingsState = createAtomState<FilterSettings>(
     useLocalStorage: true,
     localStorageOptions: { getOnInit: true },
     validateInitFn: (filterSettings) =>
-      typeof filterSettings === 'object' && filterSettings !== null,
+      typeof filterSettings === 'object' &&
+      filterSettings !== null &&
+      ['stepFilters', 'stepFilterGroups'].every((key) => {
+        const candidate = (filterSettings as Record<string, unknown>)[key];
+
+        return candidate === undefined || Array.isArray(candidate);
+      }),
   },
 );

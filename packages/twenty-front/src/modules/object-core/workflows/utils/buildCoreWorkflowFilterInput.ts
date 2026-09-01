@@ -14,10 +14,15 @@ import {
   type CoreWorkflowFilterRuleInput,
 } from '~/generated/graphql';
 
-const toCoreWorkflowFilterRule = (
-  stepFilter: StepFilter,
-  timezone: string | undefined,
-): CoreWorkflowFilterRuleInput | undefined => {
+export const MAX_CORE_WORKFLOW_FILTER_RULES = 50;
+
+const toCoreWorkflowFilterRule = ({
+  stepFilter,
+  timezone,
+}: {
+  stepFilter: StepFilter;
+  timezone: string | undefined;
+}): CoreWorkflowFilterRuleInput | undefined => {
   const selectedField = findCoreWorkflowFilterField(stepFilter.stepOutputKey);
   const operand =
     CORE_WORKFLOW_FILTER_OPERAND_BY_VIEW_FILTER_OPERAND[stepFilter.operand];
@@ -45,7 +50,8 @@ export const buildCoreWorkflowFilterInput = (
 ): CoreWorkflowFilterInput | undefined => {
   const rules = (filterSettings.stepFilters ?? [])
     .filter(isUsableCoreWorkflowFilterRule)
-    .map((stepFilter) => toCoreWorkflowFilterRule(stepFilter, timezone))
+    .slice(0, MAX_CORE_WORKFLOW_FILTER_RULES)
+    .map((stepFilter) => toCoreWorkflowFilterRule({ stepFilter, timezone }))
     .filter(isDefined);
 
   if (rules.length === 0) {

@@ -7,10 +7,12 @@ import {
   IsOptional,
   IsString,
   IsTimeZone,
+  MaxLength,
   ValidateNested,
 } from 'class-validator';
 
 export const MAX_CORE_WORKFLOW_FILTER_RULES = 50;
+export const MAX_CORE_WORKFLOW_FILTER_VALUE_LENGTH = 2000;
 
 export enum CoreWorkflowFilterFieldKey {
   NAME = 'NAME',
@@ -63,6 +65,7 @@ export class CoreWorkflowFilterRuleInput {
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
+  @MaxLength(MAX_CORE_WORKFLOW_FILTER_VALUE_LENGTH)
   value?: string | null;
 
   @Field(() => String, { nullable: true })

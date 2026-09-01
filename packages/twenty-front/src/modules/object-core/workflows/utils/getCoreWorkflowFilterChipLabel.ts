@@ -11,10 +11,15 @@ import { findCoreWorkflowFilterField } from '@/object-core/workflows/utils/findC
 import { getOperandLabelShort } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
 
-const getReadableValue = (
-  stepFilter: StepFilter,
-  selectedField: CoreWorkflowFilterFieldDefinition,
-): string => {
+const getReadableValue = ({
+  stepFilter,
+  selectedField,
+  timezone,
+}: {
+  stepFilter: StepFilter;
+  selectedField: CoreWorkflowFilterFieldDefinition;
+  timezone: string | undefined;
+}): string => {
   if (stepFilter.operand === ViewFilterOperand.IS_RELATIVE) {
     const relativeDateFilter = safeParseRelativeDateFilterJsonStringified(
       stepFilter.value,
@@ -25,10 +30,13 @@ const getReadableValue = (
       : '';
   }
 
-  const parsedValue = parseJson<string[]>(stepFilter.value);
+  if (selectedField.filterType === 'MULTI_SELECT') {
+    const parsedValue = parseJson<string[]>(stepFilter.value);
+    const selectedValues = Array.isArray(parsedValue)
+      ? parsedValue
+      : [stepFilter.value];
 
-  if (Array.isArray(parsedValue)) {
-    return parsedValue
+    return selectedValues
       .map((value) => {
         const option = selectedField.options?.find(
           (fieldOption) => fieldOption.value === value,
@@ -40,26 +48,41 @@ const getReadableValue = (
   }
 
   if (selectedField.filterType === 'DATE_TIME') {
+    const parsedValue = parseJson<string>(stepFilter.value);
     const date = new Date(
       typeof parsedValue === 'string' ? parsedValue : stepFilter.value,
     );
 
-    return Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString();
+    return Number.isNaN(date.getTime())
+      ? ''
+      : new Intl.DateTimeFormat(undefined, {
+          dateStyle: 'medium',
+          timeStyle: 'short',
+          timeZone: timezone,
+        }).format(date);
   }
 
   return stepFilter.value;
 };
 
-export const getCoreWorkflowFilterChipLabel = (
-  stepFilter: StepFilter,
-): string => {
+export const getCoreWorkflowFilterChipLabel = ({
+  stepFilter,
+  timezone,
+}: {
+  stepFilter: StepFilter;
+  timezone?: string;
+}): string => {
   const selectedField = findCoreWorkflowFilterField(stepFilter.stepOutputKey);
 
   if (!isDefined(selectedField)) {
     return '';
   }
 
-  const readableValue = getReadableValue(stepFilter, selectedField);
+  const readableValue = getReadableValue({
+    stepFilter,
+    selectedField,
+    timezone,
+  });
   const operandLabel = getOperandLabelShort(stepFilter.operand);
 
   return `${t(selectedField.label)} ${operandLabel} ${readableValue}`.trim();
