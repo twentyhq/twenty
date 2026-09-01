@@ -117,8 +117,6 @@ export const SlackUserLinksList = ({
     null,
   );
 
-  // The armed confirm button cannot listen for blur, so it disarms on its own
-  // before a later stray click on the same spot can remove the link.
   useEffect(() => {
     if (removalArmedLinkId === null) {
       return undefined;

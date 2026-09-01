@@ -17,8 +17,6 @@ const StyledContainer = styled.div`
   position: relative;
 `;
 
-// Mirrors twenty-front's SelectControl look; apps cannot import it from the
-// front package.
 const StyledSelectTrigger = styled.button`
   align-items: center;
   background-color: ${() => themeCssVariables.background.transparent.lighter};
@@ -64,8 +62,6 @@ const StyledPlaceholder = styled.div`
   white-space: nowrap;
 `;
 
-// A CSS chevron: icon components do not size reliably in the
-// front-component runtime.
 const StyledChevron = styled.div`
   border-bottom: 1px solid ${() => themeCssVariables.font.color.tertiary};
   border-right: 1px solid ${() => themeCssVariables.font.color.tertiary};
@@ -75,8 +71,6 @@ const StyledChevron = styled.div`
   width: 5px;
 `;
 
-// Blur never fires in the front-component runtime because autofocus does not
-// reach the search input, so an invisible backdrop catches outside clicks.
 const StyledBackdrop = styled.div`
   inset: 0;
   position: fixed;

@@ -1,8 +1,6 @@
 import styled from '@emotion/styled';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-// Local copy of twenty-front's settings table primitives; apps cannot import
-// them from the front package, so the styles are mirrored here.
 export const SlackTable = styled.div`
   display: flex;
   flex-direction: column;
