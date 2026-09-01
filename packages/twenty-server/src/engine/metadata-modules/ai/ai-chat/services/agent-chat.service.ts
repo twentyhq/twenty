@@ -777,24 +777,20 @@ export class AgentChatService {
     streamId: string;
     workspaceId: string;
   }): Promise<boolean> {
-    const isLatestAssistantMessage = async () => {
-      const latestAssistantMessage = await this.messageRepository.findOne(
-        workspaceId,
-        {
-          where: { threadId, role: AgentMessageRole.ASSISTANT },
-          order: {
-            processedAt: { direction: 'DESC', nulls: 'LAST' },
-            createdAt: 'DESC',
-            id: 'DESC',
-          },
-          select: ['id'],
+    const latestAssistantMessage = await this.messageRepository.findOne(
+      workspaceId,
+      {
+        where: { threadId, role: AgentMessageRole.ASSISTANT },
+        order: {
+          processedAt: { direction: 'DESC', nulls: 'LAST' },
+          createdAt: 'DESC',
+          id: 'DESC',
         },
-      );
+        select: ['id'],
+      },
+    );
 
-      return latestAssistantMessage?.id === messageId;
-    };
-
-    if (!(await isLatestAssistantMessage())) {
+    if (latestAssistantMessage?.id !== messageId) {
       return false;
     }
 
@@ -808,21 +804,7 @@ export class AgentChatService {
       { activeStreamId: streamId },
     );
 
-    if ((claim.affected ?? 0) === 0) {
-      return false;
-    }
-
-    if (!(await isLatestAssistantMessage())) {
-      await this.threadRepository.update(
-        workspaceId,
-        { id: threadId, activeStreamId: streamId },
-        { activeStreamId: null },
-      );
-
-      return false;
-    }
-
-    return true;
+    return (claim.affected ?? 0) > 0;
   }
 
   async restorePendingQuestion({
