@@ -370,16 +370,16 @@ export class ApplicationSyncService {
       });
     } catch (error) {
       if (shouldTransitionState) {
-        await this.applicationService
-          .update(application.id, {
+        try {
+          await this.applicationService.update(application.id, {
             state: ApplicationState.INSTALLED,
             workspaceId,
-          })
-          .catch((revertError) =>
-            this.logger.warn(
-              `Failed to revert state of application ${applicationUniversalIdentifier} in workspace ${workspaceId}: ${revertError instanceof Error ? revertError.message : String(revertError)}`,
-            ),
+          });
+        } catch (revertError) {
+          this.logger.warn(
+            `Failed to revert state of application ${applicationUniversalIdentifier} in workspace ${workspaceId}: ${revertError instanceof Error ? revertError.message : String(revertError)}`,
           );
+        }
       }
 
       throw error;

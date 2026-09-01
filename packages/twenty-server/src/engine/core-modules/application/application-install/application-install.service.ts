@@ -309,7 +309,10 @@ export class ApplicationInstallService {
       sourceType: appRegistration.sourceType,
     });
 
-    if (isVersionUpgrade) {
+    const shouldTransitionState =
+      isVersionUpgrade && application.state === ApplicationState.INSTALLED;
+
+    if (shouldTransitionState) {
       await this.applicationService.update(application.id, {
         state: ApplicationState.UPGRADING,
         workspaceId: params.workspaceId,
@@ -417,12 +420,20 @@ export class ApplicationInstallService {
         `Failed to install app ${appRegistration.universalIdentifier}: ${error}`,
       );
 
-      if (isVersionUpgrade) {
-        await this.applicationService.update(application.id, {
-          state: ApplicationState.INSTALLED,
-          workspaceId: params.workspaceId,
-        });
-      } else {
+      if (shouldTransitionState) {
+        try {
+          await this.applicationService.update(application.id, {
+            state: ApplicationState.INSTALLED,
+            workspaceId: params.workspaceId,
+          });
+        } catch (revertError) {
+          this.logger.warn(
+            `Failed to revert state of application ${universalIdentifier} in workspace ${params.workspaceId}: ${revertError instanceof Error ? revertError.message : String(revertError)}`,
+          );
+        }
+      }
+
+      if (!isVersionUpgrade) {
         // Rollback of a failed fresh install: the app never finished
         // installing, so the uninstall hook must not run.
         await this.applicationSyncService.uninstallApplication({
