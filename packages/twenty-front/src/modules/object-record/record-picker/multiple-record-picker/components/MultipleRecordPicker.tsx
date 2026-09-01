@@ -45,6 +45,14 @@ type MultipleRecordPickerProps = {
   dropdownWidth?: number;
 };
 
+const upsertMorphItem = (
+  morphItems: RecordPickerPickableMorphItem[],
+  morphItem: RecordPickerPickableMorphItem,
+) => [
+  ...morphItems.filter(({ recordId }) => recordId !== morphItem.recordId),
+  morphItem,
+];
+
 export const MultipleRecordPicker = ({
   onChange,
   onSubmit,
@@ -174,16 +182,10 @@ export const MultipleRecordPicker = ({
       const currentMorphItems = store.get(
         multipleRecordPickerPickableMorphItemsState,
       );
-      const existingMorphItemIndex = currentMorphItems.findIndex(
-        ({ recordId }) => recordId === createdMorphItem.recordId,
+      const newMorphItems = upsertMorphItem(
+        currentMorphItems,
+        createdMorphItem,
       );
-      const newMorphItems = [...currentMorphItems];
-
-      if (existingMorphItemIndex === -1) {
-        newMorphItems.push(createdMorphItem);
-      } else {
-        newMorphItems[existingMorphItemIndex] = createdMorphItem;
-      }
 
       store.set(multipleRecordPickerPickableMorphItemsState, newMorphItems);
       resetSelectedItem();
@@ -196,6 +198,14 @@ export const MultipleRecordPicker = ({
           multipleRecordPickerSearchableObjectMetadataItems,
         forcePickableMorphItems: newMorphItems,
       });
+
+      store.set(
+        multipleRecordPickerPickableMorphItemsState,
+        upsertMorphItem(
+          store.get(multipleRecordPickerPickableMorphItemsState),
+          createdMorphItem,
+        ),
+      );
     } catch (error) {
       store.set(multipleRecordPickerIsLoadingState, false);
       logError(error);

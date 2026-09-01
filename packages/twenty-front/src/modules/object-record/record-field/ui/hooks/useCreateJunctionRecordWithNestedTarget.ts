@@ -1,14 +1,18 @@
 import { useCallback, useState } from 'react';
+import { useStore } from 'jotai';
 import { v4 } from 'uuid';
 
+import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useBuildRecordInputFromRLSPredicates } from '@/object-record/hooks/useBuildRecordInputFromRLSPredicates';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { appendJunctionRecordToSourceRecordStore } from '@/object-record/record-field/ui/utils/junction/appendJunctionRecordToSourceRecordStore';
 import { type ValidJunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/ValidJunctionConfig';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelPayload';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -16,15 +20,18 @@ import { isDefined } from 'twenty-shared/utils';
 
 type UseCreateJunctionRecordWithNestedTargetArgs = {
   sourceRecordId: string;
+  sourceFieldName: string;
   sourceObjectMetadataItem: EnrichedObjectMetadataItem;
   junctionConfig?: ValidJunctionConfig;
 };
 
 export const useCreateJunctionRecordWithNestedTarget = ({
   sourceRecordId,
+  sourceFieldName,
   sourceObjectMetadataItem,
   junctionConfig,
 }: UseCreateJunctionRecordWithNestedTargetArgs) => {
+  const store = useStore();
   const [loading, setLoading] = useState(false);
   const { objectMetadataItems } = useObjectMetadataItems();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -91,10 +98,32 @@ export const useCreateJunctionRecordWithNestedTarget = ({
           id: targetRecordId,
         };
 
-        await createJunctionRecord({
+        const createdJunctionRecord = await createJunctionRecord({
           id: v4(),
           [sourceJoinColumnName]: sourceRecordId,
           [targetFieldInfo.fieldName]: { create: targetRecordInput },
+        });
+
+        const createdTargetRecord = createdJunctionRecord[
+          targetFieldInfo.fieldName
+        ] as ObjectRecord | undefined;
+        const targetRecord = {
+          ...targetRecordInput,
+          ...(createdTargetRecord ?? {}),
+          __typename:
+            createdTargetRecord?.__typename ??
+            getObjectTypename(targetObjectMetadataItem.nameSingular),
+        };
+        const junctionRecordForStore = {
+          ...createdJunctionRecord,
+          [targetFieldInfo.fieldName]: targetRecord,
+        };
+
+        appendJunctionRecordToSourceRecordStore({
+          store,
+          sourceRecordId,
+          sourceFieldName,
+          junctionRecord: junctionRecordForStore,
         });
 
         return {
@@ -119,7 +148,9 @@ export const useCreateJunctionRecordWithNestedTarget = ({
       junctionConfig,
       objectMetadataItems,
       sourceObjectMetadataItem,
+      sourceFieldName,
       sourceRecordId,
+      store,
     ],
   );
 

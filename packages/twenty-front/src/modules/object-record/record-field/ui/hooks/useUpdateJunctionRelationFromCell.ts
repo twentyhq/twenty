@@ -15,6 +15,7 @@ import {
   type FieldRelationMetadata,
   type FieldRelationValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { appendJunctionRecordToSourceRecordStore } from '@/object-record/record-field/ui/utils/junction/appendJunctionRecordToSourceRecordStore';
 import { findJunctionRecordByTargetId } from '@/object-record/record-field/ui/utils/junction/findJunctionRecordByTargetId';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
@@ -190,24 +191,12 @@ export const useUpdateJunctionRelationFromCell = ({
           [targetFieldName]: targetRecord,
         };
 
-        store.set(
-          recordStoreFamilyState.atomFamily(recordId),
-          (currentRecord: Record<string, unknown> | null | undefined) => {
-            if (!isDefined(currentRecord)) {
-              return currentRecord;
-            }
-
-            const currentFieldValue = currentRecord[fieldName];
-            const updatedJunctionRecords = Array.isArray(currentFieldValue)
-              ? [...currentFieldValue, junctionRecordForStore]
-              : [junctionRecordForStore];
-
-            return {
-              ...currentRecord,
-              [fieldName]: updatedJunctionRecords,
-            } as ObjectRecord;
-          },
-        );
+        appendJunctionRecordToSourceRecordStore({
+          store,
+          sourceRecordId: recordId,
+          sourceFieldName: fieldName,
+          junctionRecord: junctionRecordForStore,
+        });
 
         const removeOptimisticJunctionRecord = () =>
           store.set(

@@ -169,6 +169,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     loading: isCreatingJunctionRecord,
   } = useCreateJunctionRecordWithNestedTarget({
     sourceRecordId: recordId,
+    sourceFieldName: fieldName,
     sourceObjectMetadataItem: objectMetadataItem,
     junctionConfig: isJunctionRelation ? junctionConfig : undefined,
   });
