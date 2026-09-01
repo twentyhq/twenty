@@ -27,16 +27,19 @@ export const getStepFilterVariableSelectionSettings = ({
   fieldMetadataType: FieldMetadataType | undefined;
   compositeFieldSubFieldName: string | undefined;
 }): StepFilterVariableSelectionSettings => {
-  let filterType = variableType ?? 'unknown';
+  const filterType = (() => {
+    if (!isDefined(fieldMetadataId)) {
+      return variableType ?? 'unknown';
+    }
 
-  if (isDefined(fieldMetadataId) && isDefined(fieldMetadataType)) {
-    filterType =
-      fieldMetadataType === FieldMetadataType.MORPH_RELATION
+    if (isDefined(fieldMetadataType)) {
+      return fieldMetadataType === FieldMetadataType.MORPH_RELATION
         ? FieldMetadataType.RELATION
         : fieldMetadataType;
-  } else if (isDefined(fieldMetadataId)) {
-    filterType = 'unknown';
-  }
+    }
+
+    return 'unknown';
+  })();
 
   const [defaultOperand] = getStepFilterOperands({
     filterType,

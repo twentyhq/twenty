@@ -162,7 +162,11 @@ export const WorkflowDropdownStepOutputItems = ({
                 onClick={handleSelectObject}
                 text={subStepObjectDisplay?.label ?? ''}
                 hasSubMenu={false}
-                LeftIcon={getIcon(subStepObjectDisplay?.icon)}
+                LeftIcon={
+                  isDefined(subStepObjectDisplay?.icon)
+                    ? getIcon(subStepObjectDisplay.icon)
+                    : undefined
+                }
                 leftIconColor={subStepObjectDisplay?.iconColor}
                 contextualText={t`Pick a ${subStepObjectDisplay?.label} record`}
               />
