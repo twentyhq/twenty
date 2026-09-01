@@ -1,14 +1,17 @@
 import { randomUUID } from 'node:crypto';
 
-import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
-import { type ObjectRecord } from 'twenty-shared/types';
-
-import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
 import { CommonCreateOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-one-query-runner.service';
+import { CommonFindOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-one-query-runner.service';
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { fromApiKeyEntityToFlat } from 'src/engine/core-modules/api-key/utils/from-api-key-entity-to-flat.util';
+import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
+import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
 import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
@@ -16,28 +19,37 @@ import {
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
 const ROLLBACK_TEST_TRANSACTION = 'ROLLBACK_TEST_TRANSACTION';
 
-describe('ProcessNestedRelationsHelper transaction visibility', () => {
+describe('CommonFindOneQueryRunnerService transaction visibility', () => {
   it('hydrates a relation inserted in the current transaction', async () => {
     const workspaceOrmManager = getAppProviderByClassName<WorkspaceOrmManager>(
       'WorkspaceOrmManager',
     );
-    const processNestedRelationsHelper =
-      getAppProviderByClassName<ProcessNestedRelationsHelper>(
-        'ProcessNestedRelationsHelper',
+    const commonFindOneQueryRunnerService =
+      getAppProviderByClassName<CommonFindOneQueryRunnerService>(
+        'CommonFindOneQueryRunnerService',
       );
+    const authContext = buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID);
 
     await expect(
       workspaceOrmManager.executeInWorkspaceContext(
         async () =>
           workspaceOrmManager.runInWorkspaceTransaction(
             async (transactionScope) => {
-              const personRepository = transactionScope.getRepository('person');
+              const rolePermissionConfig = {
+                shouldBypassPermissionChecks: true,
+              } as const;
+              const personRepository = transactionScope.getRepository(
+                'person',
+                rolePermissionConfig,
+              );
               const {
                 flatObjectMetadataMaps,
                 flatFieldMetadataMaps,
+                flatIndexMaps,
                 objectIdByNameSingular,
               } = personRepository.getInternalContext();
               const personObjectMetadata =
@@ -46,42 +58,54 @@ describe('ProcessNestedRelationsHelper transaction visibility', () => {
                   flatEntityMaps: flatObjectMetadataMaps,
                 });
               const companyId = randomUUID();
+              const personId = randomUUID();
               const companyName = `Uncommitted company ${companyId}`;
-              const personRecord: ObjectRecord = {
-                id: randomUUID(),
+
+              await transactionScope
+                .getRepository('company', rolePermissionConfig)
+                .insert({
+                  id: companyId,
+                  name: companyName,
+                });
+              await personRepository.insert({
+                id: personId,
                 companyId,
-              };
-
-              await transactionScope.getRepository('company').insert({
-                id: companyId,
-                name: companyName,
               });
 
-              await processNestedRelationsHelper.processNestedRelations({
-                flatObjectMetadataMaps,
-                flatFieldMetadataMaps,
-                parentObjectMetadataItem: personObjectMetadata,
-                parentObjectRecords: [personRecord],
-                relations: { company: {} },
-                limit: QUERY_MAX_RECORDS_FROM_RELATION,
-                parentObjectRepository: personRepository,
-                selectedFields: {
-                  company: {
-                    id: true,
-                    name: true,
+              const { results: person } =
+                await commonFindOneQueryRunnerService.execute(
+                  {
+                    filter: { id: { eq: personId } },
+                    selectedFields: {
+                      id: true,
+                      company: { id: true, name: true },
+                    },
                   },
-                },
-              });
+                  {
+                    authContext,
+                    flatObjectMetadata: personObjectMetadata,
+                    flatObjectMetadataMaps,
+                    flatFieldMetadataMaps,
+                    flatIndexMaps,
+                    objectIdByNameSingular,
+                    rolePermissionConfig,
+                    transactionScope,
+                  },
+                );
 
-              expect(personRecord.company).toEqual({
-                id: companyId,
-                name: companyName,
+              expect(person).toMatchObject({
+                id: personId,
+                companyId,
+                company: {
+                  id: companyId,
+                  name: companyName,
+                },
               });
 
               throw new Error(ROLLBACK_TEST_TRANSACTION);
             },
           ),
-        buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
+        authContext,
         { lite: true },
       ),
     ).rejects.toThrow(ROLLBACK_TEST_TRANSACTION);
@@ -97,7 +121,18 @@ describe('CommonCreateOneQueryRunnerService transaction scope', () => {
       getAppProviderByClassName<CommonCreateOneQueryRunnerService>(
         'CommonCreateOneQueryRunnerService',
       );
-    const authContext = buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID);
+    const [apiKey, workspace] = await Promise.all([
+      getCoreRepository<ApiKeyEntity>(ApiKeyEntity).findOneByOrFail({
+        id: API_KEY_DATA_SEED_IDS.ID_1,
+      }),
+      getCoreRepository<WorkspaceEntity>(WorkspaceEntity).findOneByOrFail({
+        id: SEED_APPLE_WORKSPACE_ID,
+      }),
+    ]);
+    const authContext = buildApiKeyAuthContext({
+      apiKey: fromApiKeyEntityToFlat(apiKey),
+      workspace: fromWorkspaceEntityToFlat(workspace),
+    });
     const workflowId = randomUUID();
     const workflowName = `Rolled back workflow ${workflowId}`;
 
@@ -148,15 +183,20 @@ describe('CommonCreateOneQueryRunnerService transaction scope', () => {
                 name: workflowName,
               });
 
-              const workflowInTransaction = await workflowRepository.findOne({
-                where: { id: workflowId },
-              });
+              const workflowInTransaction = await workflowRepository
+                .createQueryBuilder('workflow')
+                .where('"workflow"."id" = :workflowId', { workflowId })
+                .getOne<WorkflowWorkspaceEntity>();
               const workflowVersionsInTransaction = await transactionScope
                 .getRepository<WorkflowVersionWorkspaceEntity>(
                   'workflowVersion',
                   { shouldBypassPermissionChecks: true },
                 )
-                .find({ where: { workflowId } });
+                .createQueryBuilder('workflowVersion')
+                .where('"workflowVersion"."workflowId" = :workflowId', {
+                  workflowId,
+                })
+                .getMany<WorkflowVersionWorkspaceEntity>();
 
               expect(workflowInTransaction).toMatchObject({ id: workflowId });
               expect(workflowVersionsInTransaction).toHaveLength(1);
@@ -207,14 +247,18 @@ describe('CommonCreateOneQueryRunnerService transaction scope', () => {
             );
 
           return Promise.all([
-            workflowRepository.findOne({
-              where: { id: workflowId },
-              withDeleted: true,
-            }),
-            workflowVersionRepository.find({
-              where: { workflowId },
-              withDeleted: true,
-            }),
+            workflowRepository
+              .createQueryBuilder('workflow')
+              .withDeleted()
+              .where('"workflow"."id" = :workflowId', { workflowId })
+              .getOne<WorkflowWorkspaceEntity>(),
+            workflowVersionRepository
+              .createQueryBuilder('workflowVersion')
+              .withDeleted()
+              .where('"workflowVersion"."workflowId" = :workflowId', {
+                workflowId,
+              })
+              .getMany<WorkflowVersionWorkspaceEntity>(),
           ]);
         },
         authContext,
