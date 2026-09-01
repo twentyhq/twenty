@@ -16,7 +16,7 @@ import {
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { type SpeedBucketOutcome } from 'src/engine/core-modules/usage-limit/types/speed-bucket-outcome.type';
 import { type SpeedBucketRequest } from 'src/engine/core-modules/usage-limit/types/speed-bucket-request.type';
-import { type UsageLimitRules } from 'src/engine/core-modules/usage-limit/types/usage-limit-rules.type';
+import { type UsageLimits } from 'src/engine/core-modules/usage-limit/types/usage-limits.type';
 import { buildSpeedBuckets } from 'src/engine/core-modules/usage-limit/utils/build-speed-buckets.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -68,6 +68,7 @@ export class UsageLimitSpeedService {
           limitKind: 'speed',
           spenderType: outcome.exhausted.spenderType,
           spenderId: outcome.exhausted.spenderId,
+          operationType,
           limitValue: outcome.exhausted.refillPerWindow,
           remaining: 0,
           periodCount: Math.ceil(outcome.exhausted.windowMs / 1000),
@@ -168,12 +169,12 @@ export class UsageLimitSpeedService {
       return [];
     }
 
-    const rules = await this.findRulesAdmittingOnFailure({
+    const limits = await this.findLimitsAdmittingOnFailure({
       workspaceId: authContext.workspace.id,
       resourceType,
     });
 
-    if (!isDefined(rules)) {
+    if (!isDefined(limits)) {
       return [];
     }
 
@@ -191,26 +192,26 @@ export class UsageLimitSpeedService {
           ),
         }),
       ),
-      rules,
+      limits,
       authContext,
       resourceType,
       operationType,
     });
   }
 
-  private async findRulesAdmittingOnFailure({
+  private async findLimitsAdmittingOnFailure({
     workspaceId,
     resourceType,
   }: {
     workspaceId: string;
     resourceType: UsageResourceType;
   }): Promise<FlatUsageLimit[] | null> {
-    let usageLimitRules: UsageLimitRules;
+    let usageLimits: UsageLimits;
 
     try {
-      ({ usageLimitRules } = await this.workspaceCacheService.getOrRecompute(
+      ({ usageLimits } = await this.workspaceCacheService.getOrRecompute(
         workspaceId,
-        ['usageLimitRules'],
+        ['usageLimits'],
       ));
     } catch (error) {
       if (error instanceof WorkspaceCacheException) {
@@ -218,13 +219,13 @@ export class UsageLimitSpeedService {
       }
 
       this.logger.error(
-        'Usage limit rules unavailable, enforcement degraded',
+        'Usage limits unavailable, enforcement degraded',
         error,
       );
 
       return null;
     }
 
-    return usageLimitRules.byResourceType[resourceType] ?? [];
+    return usageLimits.byResourceType[resourceType] ?? [];
   }
 }

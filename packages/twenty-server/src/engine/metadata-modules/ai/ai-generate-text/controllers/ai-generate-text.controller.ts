@@ -5,7 +5,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { ApiPath } from 'twenty-shared/types';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
-import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { UsageLimitRestApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-rest-api-exception.filter';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -30,13 +30,13 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/p
 @UseFilters(
   PermissionsRestApiExceptionFilter,
   AiRestApiExceptionFilter,
+  UsageLimitRestApiExceptionFilter,
   RestApiExceptionFilter,
 )
 export class AiGenerateTextController {
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly aiBillingService: AiBillingService,
-    private readonly billingUsageService: BillingUsageService,
   ) {}
 
   @Post('generate-text')
@@ -53,7 +53,11 @@ export class AiGenerateTextController {
       );
     }
 
-    await this.billingUsageService.hasAvailableCreditsOrThrow(workspace.id);
+    await this.aiBillingService.assertAiExecutionAllowed({
+      workspaceId: workspace.id,
+      operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+      spenders: { userWorkspaceId },
+    });
 
     const resolvedModelId = body.modelId ?? workspace.fastModel;
 

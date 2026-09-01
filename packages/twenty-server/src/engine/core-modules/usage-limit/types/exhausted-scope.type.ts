@@ -1,3 +1,4 @@
+import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { type LimitKind } from 'src/engine/core-modules/usage-limit/types/limit-kind.type';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
@@ -8,6 +9,7 @@ export type ExhaustedScope = {
   limitKind: LimitKind;
   spenderType: SpenderType;
   spenderId: string | null;
+  operationType: UsageOperationType | '';
   limitValue: number;
   remaining: number;
   periodCount: number;

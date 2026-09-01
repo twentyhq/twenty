@@ -147,7 +147,6 @@ describe('API rate limiting', () => {
         limitKind: 'speed',
         periodCount: WINDOW_SECONDS,
         periodUnit: 'second',
-        meter: 'quantity',
         limitValueType: 'absolute',
         limitValue: LIMIT_VALUE,
         burstValue: LIMIT_VALUE,

@@ -26,7 +26,6 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
   'limitKind',
   'periodCount',
   'periodUnit',
-  'meter',
 ])
 @Entity({ name: 'usageLimit', schema: 'core' })
 export class UsageLimitEntity extends WorkspaceRelatedEntity {
@@ -48,13 +47,13 @@ export class UsageLimitEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'varchar' })
   limitKind: LimitKind;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'int', default: 1 })
   periodCount: number;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', default: 'billingPeriod' })
   periodUnit: PeriodUnit;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', default: 'creditsUsedMicro' })
   meter: UsageMeter;
 
   @Column({ type: 'varchar', default: 'absolute' })

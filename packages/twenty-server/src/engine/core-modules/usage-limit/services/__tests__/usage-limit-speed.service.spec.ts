@@ -32,7 +32,7 @@ describe('UsageLimitSpeedService', () => {
   const workspaceCacheService = {
     getOrRecompute: jest
       .fn()
-      .mockResolvedValue({ usageLimitRules: { byResourceType: {} } }),
+      .mockResolvedValue({ usageLimits: { byResourceType: {} } }),
   };
 
   const twentyConfigService = {
@@ -64,7 +64,7 @@ describe('UsageLimitSpeedService', () => {
     service = module.get<UsageLimitSpeedService>(UsageLimitSpeedService);
   });
 
-  it('admits the request when the rules cannot be read from storage', async () => {
+  it('admits the request when the limits cannot be read from storage', async () => {
     workspaceCacheService.getOrRecompute.mockRejectedValueOnce(
       new Error('Socket closed unexpectedly'),
     );

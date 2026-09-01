@@ -8,7 +8,7 @@ import { type SpeedBucketRequest } from 'src/engine/core-modules/usage-limit/typ
 import { buildDefaultSpeedBucket } from 'src/engine/core-modules/usage-limit/utils/build-default-speed-bucket.util';
 import { buildSpeedBucketKey } from 'src/engine/core-modules/usage-limit/utils/build-speed-bucket-key.util';
 import { buildSpendersFromAuthContext } from 'src/engine/core-modules/usage-limit/utils/build-spenders-from-auth-context.util';
-import { findRulesForSpender } from 'src/engine/core-modules/usage-limit/utils/find-rules-for-spender.util';
+import { findLimitsForSpender } from 'src/engine/core-modules/usage-limit/utils/find-limits-for-spender.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
@@ -18,13 +18,13 @@ const bucketSpecificity = (bucket: SpeedBucketRequest): number =>
 
 export const buildSpeedBuckets = ({
   speedLimitDefaults,
-  rules,
+  limits,
   authContext,
   resourceType,
   operationType,
 }: {
   speedLimitDefaults: SpeedLimitDefault[];
-  rules: FlatUsageLimit[];
+  limits: FlatUsageLimit[];
   authContext: WorkspaceAuthContext;
   resourceType: UsageResourceType;
   operationType: UsageOperationType;
@@ -32,39 +32,39 @@ export const buildSpeedBuckets = ({
   const spenders = buildSpendersFromAuthContext(authContext);
 
   const buckets = spenders.flatMap((spender) => {
-    const spenderRules = findRulesForSpender({
-      rules,
+    const spenderLimits = findLimitsForSpender({
+      limits,
       spender,
       operationType,
-    }).filter((rule) => rule.limitKind === 'speed');
+    }).filter((limit) => limit.limitKind === 'speed');
 
-    const ruleBuckets = spenderRules.map((rule) => ({
+    const limitBuckets = spenderLimits.map((limit) => ({
       key: buildSpeedBucketKey({
         counterScope: 'perWorkspace',
         workspaceId: authContext.workspace.id,
         resourceType,
-        operationType: rule.operationType,
+        operationType,
         spenderType: spender.spenderType,
-        spenderId: rule.spenderId,
-        windowSeconds: rule.periodCount,
+        spenderId: limit.spenderId,
+        windowSeconds: limit.periodCount,
       }),
-      burst: rule.burstValue ?? rule.limitValue,
-      refillPerWindow: rule.limitValue,
-      windowMs: rule.periodCount * 1000,
+      burst: limit.burstValue ?? limit.limitValue,
+      refillPerWindow: limit.limitValue,
+      windowMs: limit.periodCount * 1000,
       spenderType: spender.spenderType,
-      spenderId: rule.spenderId === '' ? null : rule.spenderId,
+      spenderId: limit.spenderId === '' ? null : limit.spenderId,
       isDefault: false,
     }));
 
-    const hasRuleForEverySpender = spenderRules.some(
-      (rule) => rule.spenderId === '',
+    const hasLimitForEverySpender = spenderLimits.some(
+      (limit) => limit.spenderId === '',
     );
 
     const defaultBuckets = speedLimitDefaults
       .filter(
         (speedLimitDefault) =>
           speedLimitDefault.spenderType === spender.spenderType &&
-          !(speedLimitDefault.isOverridable && hasRuleForEverySpender),
+          !(speedLimitDefault.isOverridable && hasLimitForEverySpender),
       )
       .map((speedLimitDefault) =>
         buildDefaultSpeedBucket({
@@ -77,7 +77,7 @@ export const buildSpeedBuckets = ({
       )
       .filter(isDefined);
 
-    return [...ruleBuckets, ...defaultBuckets];
+    return [...limitBuckets, ...defaultBuckets];
   });
 
   return buckets.sort((a, b) => bucketSpecificity(a) - bucketSpecificity(b));

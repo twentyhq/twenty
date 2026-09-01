@@ -1,10 +1,10 @@
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
-import { findRulesForSpender } from 'src/engine/core-modules/usage-limit/utils/find-rules-for-spender.util';
+import { findLimitsForSpender } from 'src/engine/core-modules/usage-limit/utils/find-limits-for-spender.util';
 
-const buildRule = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
-  id: 'rule-id',
+const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
+  id: 'limit-id',
   resourceType: UsageResourceType.API,
   operationType: UsageOperationType.API_REQUEST,
   spenderType: 'apiKey',
@@ -12,129 +12,129 @@ const buildRule = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   limitKind: 'speed',
   periodCount: 60,
   periodUnit: 'second',
-  meter: 'quantity',
+  meter: 'creditsUsedMicro',
   limitValueType: 'absolute',
   limitValue: 100,
   burstValue: null,
   ...overrides,
 });
 
-describe('findRulesForSpender', () => {
+describe('findLimitsForSpender', () => {
   const spender = { spenderType: 'apiKey' as const, spenderId: 'key-1' };
 
-  it('charges a named spender against its own rule and the shared one', () => {
-    const shared = buildRule({ id: 'shared', spenderId: '' });
-    const own = buildRule({ id: 'own', spenderId: 'key-1', limitValue: 50 });
+  it('charges a named spender against its own limit and the shared one', () => {
+    const shared = buildLimit({ id: 'shared', spenderId: '' });
+    const own = buildLimit({ id: 'own', spenderId: 'key-1', limitValue: 50 });
 
     expect(
-      findRulesForSpender({
-        rules: [shared, own],
+      findLimitsForSpender({
+        limits: [shared, own],
         spender,
         operationType: UsageOperationType.API_REQUEST,
       }),
     ).toEqual([shared, own]);
   });
 
-  it('charges a spender with no rule of its own against the shared rule', () => {
-    const shared = buildRule({ id: 'shared', spenderId: '' });
+  it('charges a spender with no limit of its own against the shared limit', () => {
+    const shared = buildLimit({ id: 'shared', spenderId: '' });
 
     expect(
-      findRulesForSpender({
-        rules: [shared],
+      findLimitsForSpender({
+        limits: [shared],
         spender,
         operationType: UsageOperationType.API_REQUEST,
       }),
     ).toEqual([shared]);
   });
 
-  it('applies a rule covering every operation of the resource', () => {
-    const wildcard = buildRule({
+  it('applies a limit covering every operation of the resource', () => {
+    const wildcard = buildLimit({
       id: 'wildcard',
       operationType: UsageOperationType.ALL,
     });
-    const specific = buildRule({ id: 'specific' });
+    const specific = buildLimit({ id: 'specific' });
 
     expect(
-      findRulesForSpender({
-        rules: [wildcard, specific],
+      findLimitsForSpender({
+        limits: [wildcard, specific],
         spender,
         operationType: UsageOperationType.API_REQUEST,
       }),
     ).toEqual([wildcard, specific]);
   });
 
-  it('ignores a rule belonging to another spender', () => {
-    const otherKey = buildRule({ id: 'other', spenderId: 'key-2' });
+  it('ignores a limit belonging to another spender', () => {
+    const otherKey = buildLimit({ id: 'other', spenderId: 'key-2' });
 
     expect(
-      findRulesForSpender({
-        rules: [otherKey],
+      findLimitsForSpender({
+        limits: [otherKey],
         spender,
         operationType: UsageOperationType.API_REQUEST,
       }),
     ).toEqual([]);
   });
 
-  it('ignores a rule scoped to another spender type', () => {
-    const application = buildRule({
+  it('ignores a limit scoped to another spender type', () => {
+    const application = buildLimit({
       id: 'application',
       spenderType: 'application',
       spenderId: '',
     });
 
     expect(
-      findRulesForSpender({
-        rules: [application],
+      findLimitsForSpender({
+        limits: [application],
         spender,
         operationType: UsageOperationType.API_REQUEST,
       }),
     ).toEqual([]);
   });
 
-  it('ignores a rule scoped to a different operation', () => {
-    const otherOperation = buildRule({
+  it('ignores a limit scoped to a different operation', () => {
+    const otherOperation = buildLimit({
       spenderId: 'key-1',
       operationType: UsageOperationType.AI_CHAT_TOKEN,
     });
 
     expect(
-      findRulesForSpender({
-        rules: [otherOperation],
+      findLimitsForSpender({
+        limits: [otherOperation],
         spender,
         operationType: UsageOperationType.API_REQUEST,
       }),
     ).toEqual([]);
   });
 
-  it('returns a burst and a sustained rule together', () => {
-    const burst = buildRule({ id: 'burst', periodCount: 1, limitValue: 20 });
-    const sustained = buildRule({ id: 'sustained', periodCount: 60 });
+  it('returns a burst and a sustained limit together', () => {
+    const burst = buildLimit({ id: 'burst', periodCount: 1, limitValue: 20 });
+    const sustained = buildLimit({ id: 'sustained', periodCount: 60 });
 
     expect(
-      findRulesForSpender({
-        rules: [burst, sustained],
+      findLimitsForSpender({
+        limits: [burst, sustained],
         spender,
         operationType: UsageOperationType.API_REQUEST,
       }),
     ).toEqual([burst, sustained]);
   });
 
-  it('keeps every window of the shared rules when the spender has its own rule', () => {
-    const sharedBurst = buildRule({
+  it('keeps every window of the shared limits when the spender has its own limit', () => {
+    const sharedBurst = buildLimit({
       id: 'shared-burst',
       periodCount: 1,
       limitValue: 20,
     });
-    const sharedSustained = buildRule({ id: 'shared-sustained' });
-    const own = buildRule({
+    const sharedSustained = buildLimit({ id: 'shared-sustained' });
+    const own = buildLimit({
       id: 'own',
       spenderId: 'key-1',
       limitValue: 5000,
     });
 
     expect(
-      findRulesForSpender({
-        rules: [sharedBurst, sharedSustained, own],
+      findLimitsForSpender({
+        limits: [sharedBurst, sharedSustained, own],
         spender,
         operationType: UsageOperationType.API_REQUEST,
       }),

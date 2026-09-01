@@ -241,6 +241,46 @@ export class BillingUsageService {
     return Number(resourceCreditPrice.metadata?.credit_amount ?? 0);
   }
 
+  async getCurrentAllowanceMicro(workspaceId: string): Promise<number | null> {
+    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+      return null;
+    }
+
+    const { currentBillingSubscription } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'currentBillingSubscription',
+      ]);
+
+    if (currentBillingSubscription === NO_BILLING_SUBSCRIPTION) {
+      return null;
+    }
+
+    const subscription = await this.billingSubscriptionRepository.findOne(
+      workspaceId,
+      {
+        where: {
+          currentPeriodStart: new Date(
+            currentBillingSubscription.currentPeriodStart,
+          ),
+        },
+        relations: [
+          'billingSubscriptionItems',
+          'billingSubscriptionItems.billingProduct',
+          'billingSubscriptionItems.billingProduct.billingPrices',
+        ],
+      },
+    );
+
+    if (!isDefined(subscription)) {
+      return null;
+    }
+
+    const creditBalance =
+      await this.billingCreditGrantService.getActiveCreditsMicro(workspaceId);
+
+    return this.getResourceUsageCap(subscription) + creditBalance;
+  }
+
   async decrementAvailableCreditsInCache({
     workspaceId,
     usedCredits,
