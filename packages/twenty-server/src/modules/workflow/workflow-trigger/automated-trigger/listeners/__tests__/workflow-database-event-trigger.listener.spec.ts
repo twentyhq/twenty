@@ -26,7 +26,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
             listener.workflowId,
             {
               type: AutomatedTriggerType.DATABASE_EVENT,
-              coreWorkflowId: `core-${listener.workflowId}`,
               coreWorkflowVersionId: `core-version-${listener.workflowId}`,
               workspaceWorkflowVersionId: `workspace-version-${listener.workflowId}`,
               ...listener,
@@ -163,7 +162,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           workspaceId,
           workflowId,
-          coreWorkflowId: `core-${workflowId}`,
           coreWorkflowVersionId: `core-version-${workflowId}`,
           workspaceWorkflowVersionId: `workspace-version-${workflowId}`,
           payload: mockPayload.events[0],
@@ -251,7 +249,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           workspaceId,
           workflowId,
-          coreWorkflowId: `core-${workflowId}`,
           coreWorkflowVersionId: `core-version-${workflowId}`,
           workspaceWorkflowVersionId: `workspace-version-${workflowId}`,
           payload: createPayload.events[0],
@@ -291,7 +288,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           workspaceId,
           workflowId,
-          coreWorkflowId: `core-${workflowId}`,
           coreWorkflowVersionId: `core-version-${workflowId}`,
           workspaceWorkflowVersionId: `workspace-version-${workflowId}`,
           payload: deletePayload.events[0],
@@ -331,7 +327,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           workspaceId,
           workflowId,
-          coreWorkflowId: `core-${workflowId}`,
           coreWorkflowVersionId: `core-version-${workflowId}`,
           workspaceWorkflowVersionId: `workspace-version-${workflowId}`,
           payload: destroyPayload.events[0],
@@ -377,7 +372,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           workspaceId,
           workflowId,
-          coreWorkflowId: `core-${workflowId}`,
           coreWorkflowVersionId: `core-version-${workflowId}`,
           workspaceWorkflowVersionId: `workspace-version-${workflowId}`,
           payload: batchPayload.events[0],
@@ -390,7 +384,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           workspaceId,
           workflowId,
-          coreWorkflowId: `core-${workflowId}`,
           coreWorkflowVersionId: `core-version-${workflowId}`,
           workspaceWorkflowVersionId: `workspace-version-${workflowId}`,
           payload: batchPayload.events[1],
@@ -431,7 +424,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           workspaceId,
           workflowId,
-          coreWorkflowId: `core-${workflowId}`,
           coreWorkflowVersionId: `core-version-${workflowId}`,
           workspaceWorkflowVersionId: `workspace-version-${workflowId}`,
           payload: positionOnlyPayload.events[0],

@@ -578,7 +578,6 @@ export class WorkflowTriggerWorkspaceService {
         const cachedTrigger: CachedCronTrigger = {
           workspaceId,
           workflowId: workflowVersion.workflowId,
-          coreWorkflowId: null,
           coreWorkflowVersionId: workflowVersion.coreWorkflowVersionId ?? null,
           workspaceWorkflowVersionId: workflowVersion.id,
           pattern,

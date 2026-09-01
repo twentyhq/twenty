@@ -43,7 +43,6 @@ import {
 
 type DatabaseEventTriggerListener = {
   workflowId: string;
-  coreWorkflowId?: string | null;
   coreWorkflowVersionId?: string | null;
   workspaceWorkflowVersionId?: string | null;
   settings: AutomatedTriggerSettings;
@@ -369,7 +368,6 @@ export class WorkflowDatabaseEventTriggerListener {
             {
               workspaceId,
               workflowId: eventListener.workflowId,
-              coreWorkflowId: eventListener.coreWorkflowId,
               coreWorkflowVersionId: eventListener.coreWorkflowVersionId,
               workspaceWorkflowVersionId:
                 eventListener.workspaceWorkflowVersionId,

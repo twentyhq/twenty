@@ -17,7 +17,6 @@ import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 @Injectable()
 @WorkspaceCache('workflowAutomatedTriggerMaps', { packingPonderation: 1 })
@@ -38,8 +37,8 @@ export class WorkspaceWorkflowAutomatedTriggerMapCacheService extends WorkspaceC
       { where: { status: WorkflowVersionStatus.ACTIVE } },
     );
 
-    const workspaceLinksByCoreVersionId =
-      await this.findWorkspaceLinksByCoreVersionId(
+    const workspaceVersionIdByCoreVersionId =
+      await this.findWorkspaceVersionIdByCoreVersionId(
         workspaceId,
         activeWorkflowVersions,
       );
@@ -49,10 +48,7 @@ export class WorkspaceWorkflowAutomatedTriggerMapCacheService extends WorkspaceC
     for (const workflowVersion of activeWorkflowVersions) {
       const automatedTrigger = computeAutomatedTriggerFromWorkflowVersion(
         workflowVersion,
-        workspaceLinksByCoreVersionId[workflowVersion.id] ?? {
-          coreWorkflowId: null,
-          workspaceWorkflowVersionId: null,
-        },
+        workspaceVersionIdByCoreVersionId[workflowVersion.id] ?? null,
       );
 
       if (isDefined(automatedTrigger)) {
@@ -63,18 +59,10 @@ export class WorkspaceWorkflowAutomatedTriggerMapCacheService extends WorkspaceC
     return { byWorkflowId };
   }
 
-  private async findWorkspaceLinksByCoreVersionId(
+  private async findWorkspaceVersionIdByCoreVersionId(
     workspaceId: string,
     activeWorkflowVersions: WorkflowVersionEntity[],
-  ): Promise<
-    Record<
-      string,
-      {
-        coreWorkflowId: string | null;
-        workspaceWorkflowVersionId: string | null;
-      }
-    >
-  > {
+  ): Promise<Record<string, string>> {
     if (activeWorkflowVersions.length === 0) {
       return {};
     }
@@ -82,47 +70,24 @@ export class WorkspaceWorkflowAutomatedTriggerMapCacheService extends WorkspaceC
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workspaceWorkflowRepository =
-        this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-          'workflow',
-          { shouldBypassPermissionChecks: true },
-        );
       const workspaceWorkflowVersionRepository =
         this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
           'workflowVersion',
           { shouldBypassPermissionChecks: true },
         );
 
-      const [workspaceWorkflows, workspaceWorkflowVersions] = await Promise.all(
-        [
-          workspaceWorkflowRepository.find({
-            where: {
-              id: In(
-                activeWorkflowVersions.map(
-                  (workflowVersion) => workflowVersion.workflowId,
-                ),
+      const workspaceWorkflowVersions =
+        await workspaceWorkflowVersionRepository.find({
+          where: {
+            coreWorkflowVersionId: In(
+              activeWorkflowVersions.map(
+                (workflowVersion) => workflowVersion.id,
               ),
-            },
-          }),
-          workspaceWorkflowVersionRepository.find({
-            where: {
-              coreWorkflowVersionId: In(
-                activeWorkflowVersions.map(
-                  (workflowVersion) => workflowVersion.id,
-                ),
-              ),
-            },
-          }),
-        ],
-      );
+            ),
+          },
+        });
 
-      const coreWorkflowIdByWorkspaceWorkflowId = Object.fromEntries(
-        workspaceWorkflows.map((workspaceWorkflow) => [
-          workspaceWorkflow.id,
-          workspaceWorkflow.coreWorkflowId,
-        ]),
-      );
-      const workspaceVersionIdByCoreVersionId = Object.fromEntries(
+      return Object.fromEntries(
         workspaceWorkflowVersions
           .filter((workspaceWorkflowVersion) =>
             isDefined(workspaceWorkflowVersion.coreWorkflowVersionId),
@@ -131,19 +96,6 @@ export class WorkspaceWorkflowAutomatedTriggerMapCacheService extends WorkspaceC
             workspaceWorkflowVersion.coreWorkflowVersionId as string,
             workspaceWorkflowVersion.id,
           ]),
-      );
-
-      return Object.fromEntries(
-        activeWorkflowVersions.map((workflowVersion) => [
-          workflowVersion.id,
-          {
-            coreWorkflowId:
-              coreWorkflowIdByWorkspaceWorkflowId[workflowVersion.workflowId] ??
-              null,
-            workspaceWorkflowVersionId:
-              workspaceVersionIdByCoreVersionId[workflowVersion.id] ?? null,
-          },
-        ]),
       );
     }, authContext);
   }

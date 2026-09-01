@@ -132,7 +132,6 @@ describe('WorkflowCronTriggerCronJob', () => {
         JSON.stringify({
           workspaceId: WORKSPACE_1,
           workflowId: 'workflow-1',
-          coreWorkflowId: 'core-workflow-1',
           coreWorkflowVersionId: 'core-version-1',
           workspaceWorkflowVersionId: 'workspace-version-1',
           pattern: '* * * * *',
@@ -146,7 +145,6 @@ describe('WorkflowCronTriggerCronJob', () => {
         {
           workspaceId: WORKSPACE_1,
           workflowId: 'workflow-1',
-          coreWorkflowId: 'core-workflow-1',
           coreWorkflowVersionId: 'core-version-1',
           workspaceWorkflowVersionId: 'workspace-version-1',
           payload: {},
@@ -233,7 +231,6 @@ describe('WorkflowCronTriggerCronJob', () => {
             byWorkflowId: {
               'workflow-1': {
                 workflowId: 'workflow-1',
-                coreWorkflowId: 'core-workflow-1',
                 coreWorkflowVersionId: 'core-version-1',
                 workspaceWorkflowVersionId: 'workspace-version-1',
                 type: 'CRON',
@@ -250,7 +247,6 @@ describe('WorkflowCronTriggerCronJob', () => {
             byWorkflowId: {
               'workflow-2': {
                 workflowId: 'workflow-2',
-                coreWorkflowId: 'core-workflow-2',
                 coreWorkflowVersionId: 'core-version-2',
                 workspaceWorkflowVersionId: 'workspace-version-2',
                 type: 'CRON',
@@ -278,7 +274,6 @@ describe('WorkflowCronTriggerCronJob', () => {
           value: JSON.stringify({
             workspaceId: WORKSPACE_1,
             workflowId: 'workflow-1',
-            coreWorkflowId: 'core-workflow-1',
             coreWorkflowVersionId: 'core-version-1',
             workspaceWorkflowVersionId: 'workspace-version-1',
             pattern: '* * * * *',
@@ -294,7 +289,6 @@ describe('WorkflowCronTriggerCronJob', () => {
           value: JSON.stringify({
             workspaceId: WORKSPACE_3,
             workflowId: 'workflow-2',
-            coreWorkflowId: 'core-workflow-2',
             coreWorkflowVersionId: 'core-version-2',
             workspaceWorkflowVersionId: 'workspace-version-2',
             pattern: '* * * * *',
@@ -358,7 +352,6 @@ describe('WorkflowCronTriggerCronJob', () => {
             byWorkflowId: {
               'workflow-1': {
                 workflowId: 'workflow-1',
-                coreWorkflowId: 'core-workflow-1',
                 coreWorkflowVersionId: 'core-version-1',
                 workspaceWorkflowVersionId: 'workspace-version-1',
                 type: 'CRON',
@@ -380,7 +373,6 @@ describe('WorkflowCronTriggerCronJob', () => {
         {
           workspaceId: WORKSPACE_2,
           workflowId: 'workflow-1',
-          coreWorkflowId: 'core-workflow-1',
           coreWorkflowVersionId: 'core-version-1',
           workspaceWorkflowVersionId: 'workspace-version-1',
           payload: {},

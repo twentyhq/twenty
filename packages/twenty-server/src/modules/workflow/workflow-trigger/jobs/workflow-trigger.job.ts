@@ -10,7 +10,6 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { WorkflowVersionStatus as CoreWorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
-import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -24,7 +23,6 @@ export type WorkflowTriggerJobData = {
   workspaceId: string;
   workflowId: string;
   payload: object;
-  coreWorkflowId?: string | null;
   coreWorkflowVersionId?: string | null;
   workspaceWorkflowVersionId?: string | null;
 };
@@ -38,7 +36,6 @@ export class WorkflowTriggerJob {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
-    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
@@ -46,13 +43,11 @@ export class WorkflowTriggerJob {
   @Process(WorkflowTriggerJob.name)
   async handle(data: WorkflowTriggerJobData): Promise<void> {
     if (
-      isDefined(data.coreWorkflowId) &&
       isDefined(data.coreWorkflowVersionId) &&
       isDefined(data.workspaceWorkflowVersionId)
     ) {
       return this.handleFromCore({
         workspaceId: data.workspaceId,
-        coreWorkflowId: data.coreWorkflowId,
         coreWorkflowVersionId: data.coreWorkflowVersionId,
         workspaceWorkflowVersionId: data.workspaceWorkflowVersionId,
         payload: data.payload,
@@ -64,13 +59,11 @@ export class WorkflowTriggerJob {
 
   private async handleFromCore({
     workspaceId,
-    coreWorkflowId,
     coreWorkflowVersionId,
     workspaceWorkflowVersionId,
     payload,
   }: {
     workspaceId: string;
-    coreWorkflowId: string;
     coreWorkflowVersionId: string;
     workspaceWorkflowVersionId: string;
     payload: object;
@@ -117,10 +110,16 @@ export class WorkflowTriggerJob {
       return;
     }
 
-    const coreWorkflow =
-      await this.workflowCoreSyncService.findCoreWorkflowById(
-        workspaceId,
-        coreWorkflowId,
+    const authContext = buildSystemAuthContext(workspaceId);
+    const workspaceWorkflow =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        async () =>
+          this.workspaceOrmManager
+            .getRepository<WorkflowWorkspaceEntity>('workflow', {
+              shouldBypassPermissionChecks: true,
+            })
+            .findOneBy({ id: coreWorkflowVersion.workflowId }),
+        authContext,
       );
 
     await this.workflowRunnerWorkspaceService.run({
@@ -129,8 +128,8 @@ export class WorkflowTriggerJob {
       payload,
       source: {
         source: FieldActorSource.WORKFLOW,
-        name: isNonEmptyString(coreWorkflow?.name)
-          ? coreWorkflow.name
+        name: isNonEmptyString(workspaceWorkflow?.name)
+          ? workspaceWorkflow.name
           : DEFAULT_WORKFLOW_NAME,
         context: {},
         workspaceMemberId: null,

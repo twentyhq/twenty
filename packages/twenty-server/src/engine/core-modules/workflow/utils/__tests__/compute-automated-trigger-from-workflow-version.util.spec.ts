@@ -3,11 +3,6 @@ import { computeAutomatedTriggerFromWorkflowVersion } from 'src/engine/core-modu
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
-const WORKSPACE_LINKS = {
-  coreWorkflowId: 'core-workflow-1',
-  workspaceWorkflowVersionId: 'workspace-version-1',
-};
-
 const buildWorkflowVersion = (trigger: object | null) =>
   ({
     id: 'core-version-1',
@@ -16,7 +11,7 @@ const buildWorkflowVersion = (trigger: object | null) =>
   }) as unknown as WorkflowVersionEntity;
 
 describe('computeAutomatedTriggerFromWorkflowVersion', () => {
-  it('should build a database event trigger carrying both id pairs', () => {
+  it('should build a database event trigger carrying both version ids', () => {
     const workflowVersion = buildWorkflowVersion({
       type: WorkflowTriggerType.DATABASE_EVENT,
       settings: { eventName: 'company.created' },
@@ -25,11 +20,10 @@ describe('computeAutomatedTriggerFromWorkflowVersion', () => {
     expect(
       computeAutomatedTriggerFromWorkflowVersion(
         workflowVersion,
-        WORKSPACE_LINKS,
+        'workspace-version-1',
       ),
     ).toEqual({
       workflowId: 'workspace-workflow-1',
-      coreWorkflowId: 'core-workflow-1',
       coreWorkflowVersionId: 'core-version-1',
       workspaceWorkflowVersionId: 'workspace-version-1',
       type: AutomatedTriggerType.DATABASE_EVENT,
@@ -37,7 +31,7 @@ describe('computeAutomatedTriggerFromWorkflowVersion', () => {
     });
   });
 
-  it('should keep null links when the workspace twins are missing', () => {
+  it('should keep a null workspace version id when the twin is missing', () => {
     const workflowVersion = buildWorkflowVersion({
       type: WorkflowTriggerType.DATABASE_EVENT,
       settings: { eventName: 'company.created' },
@@ -45,10 +39,9 @@ describe('computeAutomatedTriggerFromWorkflowVersion', () => {
 
     const automatedTrigger = computeAutomatedTriggerFromWorkflowVersion(
       workflowVersion,
-      { coreWorkflowId: null, workspaceWorkflowVersionId: null },
+      null,
     );
 
-    expect(automatedTrigger?.coreWorkflowId).toBeNull();
     expect(automatedTrigger?.workspaceWorkflowVersionId).toBeNull();
     expect(automatedTrigger?.coreWorkflowVersionId).toBe('core-version-1');
   });
@@ -62,7 +55,7 @@ describe('computeAutomatedTriggerFromWorkflowVersion', () => {
     expect(
       computeAutomatedTriggerFromWorkflowVersion(
         workflowVersion,
-        WORKSPACE_LINKS,
+        'workspace-version-1',
       ),
     ).toBeNull();
   });

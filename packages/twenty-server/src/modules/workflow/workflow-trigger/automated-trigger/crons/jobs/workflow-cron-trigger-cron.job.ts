@@ -101,7 +101,6 @@ export class WorkflowCronTriggerCronJob {
           {
             workspaceId: trigger.workspaceId,
             workflowId: trigger.workflowId,
-            coreWorkflowId: trigger.coreWorkflowId,
             coreWorkflowVersionId: trigger.coreWorkflowVersionId,
             workspaceWorkflowVersionId: trigger.workspaceWorkflowVersionId,
             payload: {},
@@ -178,7 +177,6 @@ export class WorkflowCronTriggerCronJob {
         const cachedTrigger: CachedCronTrigger = {
           workspaceId,
           workflowId,
-          coreWorkflowId: cronTrigger.coreWorkflowId,
           coreWorkflowVersionId: cronTrigger.coreWorkflowVersionId,
           workspaceWorkflowVersionId: cronTrigger.workspaceWorkflowVersionId,
           pattern,
@@ -203,7 +201,6 @@ export class WorkflowCronTriggerCronJob {
             {
               workspaceId,
               workflowId,
-              coreWorkflowId: cronTrigger.coreWorkflowId,
               coreWorkflowVersionId: cronTrigger.coreWorkflowVersionId,
               workspaceWorkflowVersionId:
                 cronTrigger.workspaceWorkflowVersionId,
@@ -228,7 +225,6 @@ export class WorkflowCronTriggerCronJob {
   private async getWorkspaceCronTriggers(workspaceId: string): Promise<
     Array<{
       workflowId: string;
-      coreWorkflowId: string | null;
       coreWorkflowVersionId: string | null;
       workspaceWorkflowVersionId: string | null;
       pattern?: string;
@@ -243,7 +239,6 @@ export class WorkflowCronTriggerCronJob {
       .filter(isCachedCronTrigger)
       .map((trigger) => ({
         workflowId: trigger.workflowId,
-        coreWorkflowId: trigger.coreWorkflowId ?? null,
         coreWorkflowVersionId: trigger.coreWorkflowVersionId ?? null,
         workspaceWorkflowVersionId: trigger.workspaceWorkflowVersionId ?? null,
         pattern: trigger.settings.pattern,
