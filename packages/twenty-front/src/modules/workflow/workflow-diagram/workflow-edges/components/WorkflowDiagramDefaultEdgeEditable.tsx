@@ -59,11 +59,14 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
   const { deleteEdge } = useDeleteEdge();
 
   const { startNodeCreation, isNodeCreationStarted } = useStartNodeCreation();
+  const sourceConnectionOptions =
+    data?.sourceConnectionOptions ??
+    getConnectionOptionsForSourceHandle({ sourceHandleId });
 
   const nodeCreationStarted = isNodeCreationStarted({
     parentStepId: source,
     nextStepId: target,
-    connectionOptions: data?.sourceConnectionOptions,
+    connectionOptions: sourceConnectionOptions,
   });
 
   const handleNodeButtonClick = () => {
@@ -71,9 +74,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
       parentStepId: source,
       nextStepId: target,
       position: { x: labelX, y: labelY },
-      connectionOptions:
-        data?.sourceConnectionOptions ??
-        getConnectionOptionsForSourceHandle({ sourceHandleId }),
+      connectionOptions: sourceConnectionOptions,
     });
   };
 
@@ -83,9 +84,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
     await deleteEdge({
       source,
       target,
-      sourceConnectionOptions: getConnectionOptionsForSourceHandle({
-        sourceHandleId,
-      }),
+      sourceConnectionOptions,
     });
   };
 
