@@ -103,9 +103,7 @@ const completedCallRecording: WidgetCallRecordingCandidate = {
   id: 'call-recording-id',
   status: CallRecordingStatus.COMPLETED,
   transcript: [],
-  summary: null,
   video: null,
-  createdAt: '2026-01-01T00:00:00Z',
 };
 
 const pendingCallRecording: WidgetCallRecordingCandidate = {
@@ -117,7 +115,7 @@ const pendingCallRecording: WidgetCallRecordingCandidate = {
 const failedCallRecording: WidgetCallRecordingCandidate = {
   ...completedCallRecording,
   status: CallRecordingStatus.FAILED,
-  transcript: null,
+  transcript: { status: 'FAILED' },
 };
 
 const makeMockTranscriptEntry = ({
