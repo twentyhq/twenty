@@ -9,7 +9,7 @@ import {
 import {
   type CommandMenuItemAvailabilityType,
   type EngineComponentKey,
-  type CommandMenuItemPayload,
+  type PathCommandMenuItemPayload,
 } from '~/generated-metadata/graphql';
 
 export type HeadlessEngineCommandContextApi = {
@@ -21,7 +21,7 @@ export type HeadlessEngineCommandContextApi = {
   targetedRecordsRule: ContextStoreTargetedRecordsRule;
   selectedRecords: ObjectRecord[];
   graphqlFilter: Nullable<RecordGqlOperationFilter>;
-  payload: Nullable<CommandMenuItemPayload>;
+  payload: Nullable<PathCommandMenuItemPayload>;
   navigationTargetObjectMetadataId: Nullable<string>;
   isInSidePanel?: boolean;
 };

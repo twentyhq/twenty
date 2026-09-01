@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type CommandMenuItemAvailabilityType,
   type EngineComponentKey,
-  type CommandMenuItemPayload,
+  type PathCommandMenuItemPayload,
 } from '~/generated-metadata/graphql';
 
 type MountCommandParams = {
@@ -19,7 +19,7 @@ type MountCommandParams = {
   workflowVersionId?: string;
   availabilityType?: CommandMenuItemAvailabilityType;
   availabilityObjectMetadataId?: string | null;
-  payload?: CommandMenuItemPayload | null;
+  payload?: PathCommandMenuItemPayload | null;
   navigationTargetObjectMetadataId?: string | null;
   isInSidePanel?: boolean;
 };

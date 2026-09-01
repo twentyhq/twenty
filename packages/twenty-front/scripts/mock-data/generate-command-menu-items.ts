@@ -22,9 +22,7 @@ const FIND_MANY_COMMAND_MENU_ITEMS_QUERY = `
       isPinned
       payload {
         __typename
-        ... on PathCommandMenuItemPayload {
-          path
-        }
+        path
       }
       hotKeys
       conditionalAvailabilityExpression

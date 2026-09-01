@@ -72,6 +72,10 @@ type Agent {
   evaluationInputs: [String!]!
 }
 
+type PathCommandMenuItemPayload {
+  path: String!
+}
+
 type AuthToken {
   token: String!
   expiresAt: DateTime!
@@ -113,7 +117,7 @@ type CommandMenuItem {
   position: Float!
   isPinned: Boolean!
   availabilityType: CommandMenuItemAvailabilityType!
-  payload: CommandMenuItemPayload
+  payload: PathCommandMenuItemPayload
   hotKeys: [String!]
   conditionalAvailabilityExpression: String
   availabilityObjectMetadataId: UUID
@@ -205,12 +209,6 @@ enum CommandMenuItemAvailabilityType {
   GLOBAL_OBJECT_CONTEXT
   RECORD_SELECTION
   FALLBACK
-}
-
-union CommandMenuItemPayload = PathCommandMenuItemPayload
-
-type PathCommandMenuItemPayload {
-  path: String!
 }
 
 type LogicFunction {
