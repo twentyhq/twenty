@@ -87,6 +87,13 @@ describe('computeMetadataNameFromLabel', () => {
       },
     },
     {
+      title: 'should add "Custom" suffix to nested relation keywords',
+      context: {
+        input: 'Connect',
+        expected: 'connectCustom',
+      },
+    },
+    {
       title: 'should not modify non-reserved keywords',
       context: {
         input: 'Customer',

@@ -30,6 +30,12 @@ describe('computeMetadataNameFromLabel', () => {
     expect(result.length).toBeGreaterThan(0);
   });
 
+  it('should reserve the nested relation connect keyword', () => {
+    expect(computeMetadataNameFromLabel({ label: 'Connect' })).toBe(
+      'connectCustom',
+    );
+  });
+
   it('should skip custom suffix when applyCustomSuffix is false', () => {
     const result = computeMetadataNameFromLabel({
       label: 'My Field',

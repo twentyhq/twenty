@@ -23,6 +23,7 @@ describe('computeMetadataNameFromLabel', () => {
     expect(computeMetadataNameFromLabel('Plan')).toEqual('planCustom');
     expect(computeMetadataNameFromLabel('Event')).toEqual('eventCustom');
     expect(computeMetadataNameFromLabel('User')).toEqual('userCustom');
+    expect(computeMetadataNameFromLabel('Connect')).toEqual('connectCustom');
   });
 
   it('adds "Custom" suffix to plural reserved keywords', () => {

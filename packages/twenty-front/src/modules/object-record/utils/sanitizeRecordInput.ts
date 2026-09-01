@@ -67,7 +67,8 @@ export const sanitizeRecordInput = ({
         if (
           isDefined(fieldMetadataItem) &&
           isManyToOneRelationField(fieldMetadataItem) &&
-          !isDefined(recordInput[fieldMetadataItem.name]?.connect?.where)
+          !isDefined(recordInput[fieldMetadataItem.name]?.connect?.where) &&
+          !isDefined(recordInput[fieldMetadataItem.name]?.create)
         ) {
           return undefined;
         }

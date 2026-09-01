@@ -17,10 +17,12 @@ import { createManyOperationFactory } from 'test/integration/graphql/utils/creat
 import { createManyOperation } from 'test/integration/graphql/utils/create-many-operation.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
+import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { type ObjectRecord } from 'twenty-shared/types';
+import { v4 } from 'uuid';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
@@ -117,6 +119,116 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     );
   });
 
+  it('should create and connect a related record through a MANY-TO-ONE relation', async () => {
+    const personId = v4();
+    const companyId = v4();
+    const response = await makeGraphqlAPIRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
+        data: {
+          id: personId,
+          company: {
+            create: {
+              id: companyId,
+              name: 'Nested create company',
+            },
+          },
+        },
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.createPerson.company.id).toBe(companyId);
+
+    await makeGraphqlAPIRequest(
+      destroyManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: 'id',
+        filter: { id: { eq: personId } },
+      }),
+    );
+    await makeGraphqlAPIRequest(
+      destroyManyOperationFactory({
+        objectMetadataSingularName: 'company',
+        objectMetadataPluralName: 'companies',
+        gqlFields: 'id',
+        filter: { id: { eq: companyId } },
+      }),
+    );
+  });
+
+  it('should roll back a nested create when the parent record cannot be created', async () => {
+    const personId = v4();
+    const companyId = v4();
+
+    await makeGraphqlAPIRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: 'id',
+        data: { id: personId },
+      }),
+    );
+
+    const response = await makeGraphqlAPIRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
+        data: {
+          id: personId,
+          company: {
+            create: {
+              id: companyId,
+              name: 'Must be rolled back',
+            },
+          },
+        },
+      }),
+    );
+
+    expect(response.body.errors).toBeDefined();
+
+    const companyResponse = await makeGraphqlAPIRequest(
+      findOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: 'id',
+        filter: { id: { eq: companyId } },
+      }),
+    );
+
+    expect(companyResponse.body.data.company).toBeNull();
+
+    await makeGraphqlAPIRequest(
+      destroyManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: 'id',
+        filter: { id: { eq: personId } },
+      }),
+    );
+  });
+
+  it('should not expose nested create in update relation inputs', async () => {
+    const response = await makeGraphqlAPIRequest(
+      updateOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: 'id',
+        recordId: TEST_PERSON_1_ID,
+        data: {
+          company: {
+            create: { id: v4() },
+          },
+        },
+      }),
+    );
+
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].message).toContain(
+      'Field "create" is not defined',
+    );
+  });
+
   it('should connect to other records through a MANY-TO-ONE relation - create One', async () => {
     const graphqlOperation = createOneOperationFactory({
       objectMetadataSingularName: 'person',
@@ -202,9 +314,9 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
           },
         },
         {
-        id: TEST_PERSON_2_ID,
-        jobTitle: 'new-record',
-        company: {
+          id: TEST_PERSON_2_ID,
+          jobTitle: 'new-record',
+          company: {
             connect: {
               where: { domainName: { primaryLinkUrl: 'company1.com' } },
             },

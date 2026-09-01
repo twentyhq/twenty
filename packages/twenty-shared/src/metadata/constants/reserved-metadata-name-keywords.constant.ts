@@ -60,6 +60,7 @@ export const RESERVED_METADATA_NAME_KEYWORDS = [
   'relation',
   'relations',
   'aggregate',
+  'connect',
   'search',
   'searches',
 ];

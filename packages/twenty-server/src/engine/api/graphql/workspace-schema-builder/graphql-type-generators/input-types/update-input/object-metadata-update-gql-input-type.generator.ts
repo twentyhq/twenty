@@ -91,6 +91,7 @@ export class ObjectMetadataUpdateGqlInputTypeGenerator {
             {
               fieldMetadata,
               typeOptions,
+              kind: GqlInputTypeDefinitionKind.Update,
             },
           ),
         };
