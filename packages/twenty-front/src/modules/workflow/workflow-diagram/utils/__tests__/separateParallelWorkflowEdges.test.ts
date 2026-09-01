@@ -109,6 +109,36 @@ describe('parallel workflow branches', () => {
     );
   });
 
+  it('gives repeated connections stable, distinct target handles', () => {
+    const repeatedBranchStep: WorkflowIfElseAction = {
+      ...branchStep,
+      settings: {
+        ...branchStep.settings,
+        input: {
+          ...branchStep.settings.input,
+          branches: [
+            {
+              ...branchStep.settings.input.branches[0],
+              nextStepIds: ['target', 'target'],
+            },
+          ],
+        },
+      },
+    };
+    const generate = () =>
+      generateWorkflowDiagram({
+        trigger: undefined,
+        steps: [repeatedBranchStep, targetStep],
+        workflowContext: 'workflow',
+      });
+    const targetHandles = generate().edges.map((edge) => edge.targetHandle);
+
+    expect(new Set(targetHandles).size).toBe(2);
+    expect(targetHandles).toEqual(
+      generate().edges.map((edge) => edge.targetHandle),
+    );
+  });
+
   it('keeps other incoming connections separate from the shared branches', () => {
     const diagram = generateWorkflowDiagram({
       trigger: {

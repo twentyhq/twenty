@@ -33,12 +33,27 @@ export const separateParallelWorkflowEdges = ({
   }
 
   const targetHandleIdsByNode = new Map<string, string[]>();
+  const targetHandleOccurrences = new Map<string, number>();
   const separatedEdges = edges.map((edge): WorkflowDiagram['edges'][number] => {
     if (!sharedTargetIds.has(edge.target)) {
       return edge;
     }
 
     const connectionOptions = edge.data?.sourceConnectionOptions;
+    const targetHandleConnection = JSON.stringify([
+      edge.source,
+      edge.sourceHandle,
+      edge.target,
+      connectionOptions?.connectedStepType === 'IF_ELSE'
+        ? connectionOptions.settings.branchId
+        : null,
+    ]);
+    const targetHandleOccurrence =
+      targetHandleOccurrences.get(targetHandleConnection) ?? 0;
+    targetHandleOccurrences.set(
+      targetHandleConnection,
+      targetHandleOccurrence + 1,
+    );
     const targetHandle = encodeURIComponent(
       JSON.stringify([
         edge.source,
@@ -46,6 +61,7 @@ export const separateParallelWorkflowEdges = ({
         connectionOptions?.connectedStepType === 'IF_ELSE'
           ? connectionOptions.settings.branchId
           : null,
+        targetHandleOccurrence,
       ]),
     );
     const targetHandleIds = targetHandleIdsByNode.get(edge.target) ?? [];

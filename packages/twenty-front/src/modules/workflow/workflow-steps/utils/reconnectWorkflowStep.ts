@@ -1,6 +1,7 @@
 import { type WorkflowAction } from '@/workflow/types/Workflow';
 import { getReconnectedStepIds } from '@/workflow/workflow-diagram/utils/getReconnectedStepIds';
 import { type WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/types/WorkflowStepConnectionOptions';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 export const reconnectWorkflowStep = ({
@@ -58,11 +59,15 @@ export const reconnectWorkflowStep = ({
       return undefined;
     }
 
-    const initialLoopStepIds = reconnectStepIds(
-      step.settings.input.initialLoopStepIds,
+    const initialLoopStepIds = step.settings.input.initialLoopStepIds;
+    const normalizedInitialLoopStepIds = isNonEmptyString(initialLoopStepIds)
+      ? [initialLoopStepIds]
+      : initialLoopStepIds;
+    const reconnectedInitialLoopStepIds = reconnectStepIds(
+      normalizedInitialLoopStepIds,
     );
 
-    if (!isDefined(initialLoopStepIds)) {
+    if (!isDefined(reconnectedInitialLoopStepIds)) {
       return undefined;
     }
 
@@ -70,7 +75,10 @@ export const reconnectWorkflowStep = ({
       ...step,
       settings: {
         ...step.settings,
-        input: { ...step.settings.input, initialLoopStepIds },
+        input: {
+          ...step.settings.input,
+          initialLoopStepIds: reconnectedInitialLoopStepIds,
+        },
       },
     };
   }

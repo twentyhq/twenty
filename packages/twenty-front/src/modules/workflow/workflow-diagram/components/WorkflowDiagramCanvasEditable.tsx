@@ -32,6 +32,7 @@ import {
   type OnNodeDrag,
   type OnReconnect,
 } from '@xyflow/react';
+import { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowDiagramCanvasEditable = () => {
@@ -55,6 +56,9 @@ export const WorkflowDiagramCanvasEditable = () => {
 
   const { deleteEdge } = useDeleteEdge();
   const { reconnectEdge: persistReconnectedEdge } = useReconnectWorkflowEdge();
+  // Queue UI and persistence so rollback starts from the last saved edge.
+  // oxlint-disable-next-line twenty/no-state-useref
+  const reconnectionQueueRef = useRef<Promise<void>>(Promise.resolve());
 
   const { updateStep } = useUpdateStep();
 
@@ -112,43 +116,65 @@ export const WorkflowDiagramCanvasEditable = () => {
     });
   };
 
-  const onReconnect: OnReconnect<WorkflowDiagramEdge> = async (
+  const onReconnect: OnReconnect<WorkflowDiagramEdge> = (
     oldEdge,
     connection,
   ) => {
-    setWorkflowDiagram((diagram) => {
-      if (!isDefined(diagram)) {
-        return diagram;
-      }
+    const reconnection = reconnectionQueueRef.current.then(async () => {
+      let edgeBeforeReconnect = oldEdge;
 
-      return {
-        ...diagram,
-        edges: reconnectDiagramEdge(oldEdge, connection, diagram.edges, {
-          shouldReplaceId: false,
-        }),
-      };
+      setWorkflowDiagram((diagram) => {
+        if (!isDefined(diagram)) {
+          return diagram;
+        }
+
+        edgeBeforeReconnect =
+          diagram.edges.find((edge) => edge.id === oldEdge.id) ?? oldEdge;
+
+        return {
+          ...diagram,
+          edges: reconnectDiagramEdge(
+            edgeBeforeReconnect,
+            connection,
+            diagram.edges,
+            {
+              shouldReplaceId: false,
+            },
+          ),
+        };
+      });
+
+      let wasSaved = false;
+
+      try {
+        wasSaved = await persistReconnectedEdge(
+          edgeBeforeReconnect,
+          connection,
+        );
+      } finally {
+        if (!wasSaved) {
+          setWorkflowDiagram((diagram) => {
+            if (!isDefined(diagram)) {
+              return diagram;
+            }
+
+            return {
+              ...diagram,
+              edges: diagram.edges.map((edge) =>
+                edge.id === edgeBeforeReconnect.id ? edgeBeforeReconnect : edge,
+              ),
+            };
+          });
+        }
+      }
     });
 
-    let wasSaved = false;
+    reconnectionQueueRef.current = reconnection.then(
+      () => undefined,
+      () => undefined,
+    );
 
-    try {
-      wasSaved = await persistReconnectedEdge(oldEdge, connection);
-    } finally {
-      if (!wasSaved) {
-        setWorkflowDiagram((diagram) => {
-          if (!isDefined(diagram)) {
-            return diagram;
-          }
-
-          return {
-            ...diagram,
-            edges: diagram.edges.map((edge) =>
-              edge.id === oldEdge.id ? oldEdge : edge,
-            ),
-          };
-        });
-      }
-    }
+    return reconnection;
   };
 
   const onNodeDragStop: OnNodeDrag<WorkflowDiagramNode> = async (_, node) => {

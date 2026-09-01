@@ -166,6 +166,21 @@ describe('useReconnectWorkflowEdge', () => {
     expect(mockUpdateStep).not.toHaveBeenCalled();
   });
 
+  it('reports a failed trigger save without recording the attempted update', async () => {
+    mockUpdateTrigger.mockResolvedValueOnce(undefined);
+    const { result } = renderHook(() => useReconnectWorkflowEdge(), {
+      wrapper: Wrapper,
+    });
+
+    await expect(
+      result.current.reconnectEdge(
+        { ...edge, source: 'trigger' },
+        { ...connection, source: 'trigger' },
+      ),
+    ).resolves.toBe(false);
+    expect(jotaiStore.get(flowAtom())?.trigger?.nextStepIds).toEqual(['old']);
+  });
+
   it('serializes rapid reconnections against the latest saved flow', async () => {
     jotaiStore.set(flowAtom(), (flow) => ({
       ...flow!,

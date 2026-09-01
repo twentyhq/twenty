@@ -129,6 +129,29 @@ describe('reconnectWorkflowStep', () => {
     });
   });
 
+  it('reconnects a legacy serialized iterator loop edge', () => {
+    const legacyIteratorStep = structuredClone(iteratorStep);
+    Object.assign(legacyIteratorStep.settings.input, {
+      initialLoopStepIds: 'old',
+    });
+
+    expect(
+      reconnectWorkflowStep({
+        step: legacyIteratorStep,
+        oldTargetId: 'old',
+        newTargetId: 'new',
+        connectionOptions: {
+          connectedStepType: 'ITERATOR',
+          settings: { isConnectedToLoop: true },
+        },
+      }),
+    ).toMatchObject({
+      settings: {
+        input: { initialLoopStepIds: ['new'] },
+      },
+    });
+  });
+
   it('reconnects the iterator completion branch without changing the loop', () => {
     expect(
       reconnectWorkflowStep({
