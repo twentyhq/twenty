@@ -38,6 +38,7 @@ const INSTALLED_TEAM_ID = 'T0INSTALLED';
 
 const ADA = {
   id: 'U0ADA',
+  team_id: INSTALLED_TEAM_ID,
   real_name: 'Ada Lovelace',
   is_email_confirmed: true,
   profile: { display_name: 'ada', email: 'ada@twenty.com' },
@@ -45,6 +46,7 @@ const ADA = {
 
 const BOB = {
   id: 'U0BOB',
+  team_id: INSTALLED_TEAM_ID,
   real_name: 'Bob Builder',
   is_email_confirmed: true,
   profile: { display_name: 'bob', email: 'bob@twenty.com' },

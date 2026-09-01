@@ -54,6 +54,7 @@ const fullMember = ({
   displayName?: string;
 }): SlackRosterMember => ({
   id,
+  team_id: SLACK_TEAM_ID,
   is_email_confirmed: true,
   real_name: displayName,
   profile: { email, display_name: displayName },
@@ -145,6 +146,21 @@ describe('matchSlackRosterByEmail', () => {
         {
           ...fullMember({ id: 'U1', email: 'ada@twenty.com' }),
           is_restricted: true,
+        },
+      ]),
+      slackTeamId: SLACK_TEAM_ID,
+    });
+
+    expect(persistSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(summary.unmatchedCount).toBe(1);
+  });
+
+  it('should not trust an account from another Slack workspace even when it matches', async () => {
+    const summary = await matchSlackRosterByEmail({
+      slackClient: buildSlackClient([
+        {
+          ...fullMember({ id: 'U1', email: 'ada@twenty.com' }),
+          team_id: 'T-other',
         },
       ]),
       slackTeamId: SLACK_TEAM_ID,

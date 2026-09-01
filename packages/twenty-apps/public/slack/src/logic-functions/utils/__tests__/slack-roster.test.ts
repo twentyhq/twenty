@@ -50,30 +50,68 @@ describe('isLinkableRosterMember', () => {
 });
 
 describe('isRosterEmailVouchedForOwner', () => {
-  it('should accept a full member with a confirmed email', () => {
-    expect(isRosterEmailVouchedForOwner({ is_email_confirmed: true })).toBe(
-      true,
-    );
+  const INSTALLED_TEAM_ID = 'T-installed';
+  const vouchedMember: SlackRosterMember = {
+    team_id: INSTALLED_TEAM_ID,
+    is_email_confirmed: true,
+  };
+
+  it('should accept a full member of the installed workspace with a confirmed email', () => {
+    expect(
+      isRosterEmailVouchedForOwner({
+        member: vouchedMember,
+        installedSlackTeamId: INSTALLED_TEAM_ID,
+      }),
+    ).toBe(true);
   });
 
   it('should reject an unconfirmed email', () => {
-    expect(isRosterEmailVouchedForOwner({ is_email_confirmed: false })).toBe(
-      false,
-    );
-    expect(isRosterEmailVouchedForOwner({})).toBe(false);
+    expect(
+      isRosterEmailVouchedForOwner({
+        member: { ...vouchedMember, is_email_confirmed: false },
+        installedSlackTeamId: INSTALLED_TEAM_ID,
+      }),
+    ).toBe(false);
+    expect(
+      isRosterEmailVouchedForOwner({
+        member: { team_id: INSTALLED_TEAM_ID },
+        installedSlackTeamId: INSTALLED_TEAM_ID,
+      }),
+    ).toBe(false);
   });
 
   it('should reject guests even with a confirmed email', () => {
     expect(
       isRosterEmailVouchedForOwner({
-        is_email_confirmed: true,
-        is_restricted: true,
+        member: { ...vouchedMember, is_restricted: true },
+        installedSlackTeamId: INSTALLED_TEAM_ID,
       }),
     ).toBe(false);
     expect(
       isRosterEmailVouchedForOwner({
-        is_email_confirmed: true,
-        is_ultra_restricted: true,
+        member: { ...vouchedMember, is_ultra_restricted: true },
+        installedSlackTeamId: INSTALLED_TEAM_ID,
+      }),
+    ).toBe(false);
+  });
+
+  it('should reject accounts from another Slack workspace', () => {
+    expect(
+      isRosterEmailVouchedForOwner({
+        member: { ...vouchedMember, team_id: 'T-other' },
+        installedSlackTeamId: INSTALLED_TEAM_ID,
+      }),
+    ).toBe(false);
+    expect(
+      isRosterEmailVouchedForOwner({
+        member: { is_email_confirmed: true },
+        installedSlackTeamId: INSTALLED_TEAM_ID,
+      }),
+    ).toBe(false);
+    expect(
+      isRosterEmailVouchedForOwner({
+        member: { ...vouchedMember, is_stranger: true },
+        installedSlackTeamId: INSTALLED_TEAM_ID,
       }),
     ).toBe(false);
   });

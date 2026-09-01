@@ -9,6 +9,7 @@ export const listWorkspaceMemberEmails = async (
   client: CoreApiClient,
 ): Promise<Map<string, string>> => {
   const memberIdByEmail = new Map<string, string>();
+  const ambiguousEmails = new Set<string>();
 
   let after: string | undefined;
 
@@ -30,7 +31,16 @@ export const listWorkspaceMemberEmails = async (
       const node = edge?.node;
 
       if (isNonEmptyString(node?.id) && isNonEmptyString(node.userEmail)) {
-        memberIdByEmail.set(node.userEmail.toLowerCase(), node.id);
+        const email = node.userEmail.toLowerCase();
+
+        if (
+          memberIdByEmail.has(email) &&
+          memberIdByEmail.get(email) !== node.id
+        ) {
+          ambiguousEmails.add(email);
+        } else {
+          memberIdByEmail.set(email, node.id);
+        }
       }
     }
 
@@ -44,6 +54,10 @@ export const listWorkspaceMemberEmails = async (
     }
 
     after = pageInfo.endCursor;
+  }
+
+  for (const email of ambiguousEmails) {
+    memberIdByEmail.delete(email);
   }
 
   return memberIdByEmail;

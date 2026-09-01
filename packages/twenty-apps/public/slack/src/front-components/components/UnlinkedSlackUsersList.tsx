@@ -76,7 +76,7 @@ export const UnlinkedSlackUsersList = ({
   hasMore,
   onLink,
 }: UnlinkedSlackUsersListProps) => {
-  if (unlinkedSlackUsers.length === 0) {
+  if (unlinkedSlackUsers.length === 0 && !hasMore) {
     return (
       <StyledEmptyState>
         Everyone in the Slack workspace is linked.
@@ -107,8 +107,8 @@ export const UnlinkedSlackUsersList = ({
       ))}
       {hasMore && (
         <StyledTruncationNote>
-          More unlinked users exist. Link some of these or use the pickers above
-          to find a specific person.
+          There may be more unlinked users. Link some of these or use the
+          pickers above to find a specific person.
         </StyledTruncationNote>
       )}
     </StyledList>

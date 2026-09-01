@@ -80,8 +80,10 @@ export const slackListUnlinkedUsersHandler =
           slackTeamId: installedTeamId,
           displayName: getRosterMemberDisplayName(member),
           email:
-            isRosterEmailVouchedForOwner(member) &&
-            isNonEmptyString(member.profile?.email)
+            isRosterEmailVouchedForOwner({
+              member,
+              installedSlackTeamId: installedTeamId,
+            }) && isNonEmptyString(member.profile?.email)
               ? member.profile.email
               : undefined,
         });

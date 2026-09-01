@@ -7,10 +7,12 @@ const MAX_PAGES = 5;
 
 export type SlackRosterMember = {
   id?: string;
+  team_id?: string;
   is_bot?: boolean;
   deleted?: boolean;
   is_restricted?: boolean;
   is_ultra_restricted?: boolean;
+  is_stranger?: boolean;
   is_email_confirmed?: boolean;
   real_name?: string;
   profile?: { display_name?: string; email?: string };
@@ -22,9 +24,15 @@ export const isLinkableRosterMember = (member: SlackRosterMember): boolean =>
   member.is_bot !== true &&
   member.deleted !== true;
 
-export const isRosterEmailVouchedForOwner = (
-  member: SlackRosterMember,
-): boolean =>
+export const isRosterEmailVouchedForOwner = ({
+  member,
+  installedSlackTeamId,
+}: {
+  member: SlackRosterMember;
+  installedSlackTeamId: string;
+}): boolean =>
+  member.team_id === installedSlackTeamId &&
+  member.is_stranger !== true &&
   member.is_restricted !== true &&
   member.is_ultra_restricted !== true &&
   member.is_email_confirmed === true;

@@ -58,7 +58,10 @@ export const matchSlackRosterByEmail = async ({
       return undefined;
     }
 
-    const email = isRosterEmailVouchedForOwner(member)
+    const email = isRosterEmailVouchedForOwner({
+      member,
+      installedSlackTeamId: slackTeamId,
+    })
       ? member.profile?.email
       : undefined;
     const workspaceMemberId = isNonEmptyString(email)

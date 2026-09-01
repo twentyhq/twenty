@@ -103,7 +103,7 @@ export const SlackUserLinksSettings = () => {
     });
 
     if (result.success) {
-      await refetchSlackUserLinks();
+      await handleLinkSaved();
     }
   };
 

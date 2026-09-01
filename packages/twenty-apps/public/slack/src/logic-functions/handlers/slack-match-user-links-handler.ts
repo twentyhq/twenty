@@ -53,6 +53,16 @@ export const slackMatchUserLinksHandler =
         `Matched ${summary.linkedCount} Slack ${summary.linkedCount === 1 ? 'user' : 'users'} by email.`,
       ];
 
+      if (summary.alreadyLinkedCount > 0) {
+        messageParts.push(`${summary.alreadyLinkedCount} already linked.`);
+      }
+
+      if (summary.unmatchedCount > 0) {
+        messageParts.push(
+          `${summary.unmatchedCount} without a matching member email.`,
+        );
+      }
+
       if (summary.failedCount > 0) {
         messageParts.push(
           `${summary.failedCount} could not be linked; try the match again.`,
