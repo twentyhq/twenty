@@ -416,6 +416,7 @@ export type ApplicationRegistrationStats = {
   __typename?: 'ApplicationRegistrationStats';
   activeInstalls: Scalars['Int']['output'];
   mostInstalledVersion?: Maybe<Scalars['String']['output']>;
+  suspendedInstalls: Scalars['Int']['output'];
   versionDistribution: Array<VersionDistributionEntry>;
 };
 
