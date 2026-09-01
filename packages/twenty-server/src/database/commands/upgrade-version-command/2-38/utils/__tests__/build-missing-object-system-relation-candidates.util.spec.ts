@@ -274,7 +274,7 @@ describe('buildMissingObjectSystemRelationCandidates', () => {
     ]);
   });
 
-  it('reports an inactive object instead of provisioning it', () => {
+  it('provisions pairs for an inactive object like creation would have', () => {
     const result = buildMissingObjectSystemRelationCandidates(
       buildArgs({
         sources: [
@@ -287,11 +287,13 @@ describe('buildMissingObjectSystemRelationCandidates', () => {
       }),
     );
 
-    expect(result.candidates).toEqual([]);
-    expect(result.unprovisionableSystemRelations).toHaveLength(4);
-    expect(result.unprovisionableSystemRelations[0].reason).toContain(
-      'inactive',
-    );
+    expect(result.unprovisionableSystemRelations).toEqual([]);
+    expect(result.candidates[0].missingHolderNameSingulars).toEqual([
+      'timelineActivity',
+      'attachment',
+      'noteTarget',
+      'taskTarget',
+    ]);
   });
 
   it('reports a reverse field name already taken on the holder', () => {

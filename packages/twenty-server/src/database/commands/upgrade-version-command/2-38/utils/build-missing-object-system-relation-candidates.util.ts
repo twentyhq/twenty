@@ -94,7 +94,6 @@ export const buildMissingObjectSystemRelationCandidates = ({
   for (const sourceFlatObjectMetadata of Object.values(
     flatObjectMetadataMaps.byUniversalIdentifier,
   ).filter(isDefined)) {
-    // twenty-standard authors its own default relations and syncs them itself
     if (
       sourceFlatObjectMetadata.applicationUniversalIdentifier ===
       twentyStandardApplicationUniversalIdentifier
@@ -140,8 +139,6 @@ export const buildMissingObjectSystemRelationCandidates = ({
             holderFlatObjectMetadata.universalIdentifier,
         });
 
-      // Pre-deterministic-identifier pairs are matched by relation semantics,
-      // so a healthy legacy pair is skipped silently instead of reported
       const reverseFieldExists =
         isDefined(
           flatFieldMetadataMaps.byUniversalIdentifier[
@@ -172,13 +169,6 @@ export const buildMissingObjectSystemRelationCandidates = ({
           `only the ${
             reverseFieldExists ? 'reverse morph' : 'forward relation'
           } leg of the pair exists; a partial pair cannot be completed automatically`,
-        );
-        continue;
-      }
-
-      if (!sourceFlatObjectMetadata.isActive) {
-        pushUnprovisionable(
-          'object is inactive; default relations are only provisioned for active objects',
         );
         continue;
       }

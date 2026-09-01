@@ -30,7 +30,7 @@ import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-mana
 @Command({
   name: 'upgrade:2-38:provision-missing-object-system-relations',
   description:
-    'Provision the default system-relation pairs (forward relation field on the object, target* morph leg on timelineActivity/attachment/noteTarget/taskTarget, join-column index) for non-standard objects that lost them, typically to pre-2.20 application syncs. The 2-35 restore command only recreated the pairs twenty-standard authors for its own objects; pairs of custom or app-installed objects were never restored, so runtime writes deriving the join column from the object name throw UNKNOWN_COLUMN on every event (Sentry TWENTY-SERVER-JRV). Mints exactly what the objectSystemRelationsOnCreate handler mints at object creation, only for pairs where both legs are absent, and reports pairs it cannot complete safely (partial pair, taken field name, surviving physical column, inactive object) instead of guessing.',
+    'Provision the default system-relation pairs (forward relation field on the object, target* morph leg on timelineActivity/attachment/noteTarget/taskTarget, join-column index) for non-standard objects that lost them, typically to pre-2.20 application syncs. The 2-35 restore command only recreated the pairs twenty-standard authors for its own objects; pairs of custom or app-installed objects were never restored, so runtime writes deriving the join column from the object name throw UNKNOWN_COLUMN on every event (Sentry TWENTY-SERVER-JRV). Mints exactly what the objectSystemRelationsOnCreate handler mints at object creation, only for pairs where both legs are absent, and reports pairs it cannot complete safely (partial pair, taken field name, surviving physical column) instead of guessing.',
 })
 export class ProvisionMissingObjectSystemRelationsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -112,9 +112,9 @@ export class ProvisionMissingObjectSystemRelationsCommand extends ProvisionedWor
       });
 
     if (unprovisionableSystemRelations.length > 0) {
-      this.logger.warn(
+      this.logger.error(
         [
-          `Skipped ${unprovisionableSystemRelations.length} unprovisionable system relation(s) for workspace ${workspaceId}:`,
+          `MANUAL REPAIR REQUIRED: ${unprovisionableSystemRelations.length} system relation(s) in workspace ${workspaceId} cannot be provisioned automatically:`,
           ...unprovisionableSystemRelations.map(
             ({ sourceObjectNameSingular, holderNameSingular, reason }) =>
               `  - ${sourceObjectNameSingular} <-> ${holderNameSingular}: ${reason}`,
@@ -249,12 +249,18 @@ export class ProvisionMissingObjectSystemRelationsCommand extends ProvisionedWor
         candidate.sourceFlatObjectMetadata.applicationUniversalIdentifier,
     });
 
-    // The builder emits bundles in DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS order
-    return DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.flatMap(
-      (holderNameSingular, index) =>
-        candidate.missingHolderNameSingulars.includes(holderNameSingular)
-          ? [allBundles[index]]
-          : [],
+    const missingHolderUniversalIdentifiers = new Set(
+      candidate.missingHolderNameSingulars.map(
+        (holderNameSingular) =>
+          holderFlatObjectMetadataByNameSingular[holderNameSingular]
+            .universalIdentifier,
+      ),
+    );
+
+    return allBundles.filter(({ reverseFlatFieldMetadata }) =>
+      missingHolderUniversalIdentifiers.has(
+        reverseFlatFieldMetadata.objectMetadataUniversalIdentifier,
+      ),
     );
   }
 
