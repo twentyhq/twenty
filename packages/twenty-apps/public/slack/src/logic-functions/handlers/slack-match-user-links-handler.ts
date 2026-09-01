@@ -49,9 +49,13 @@ export const slackMatchUserLinksHandler =
         slackTeamId: installedTeamId,
       });
 
+      const matchedMessage = `Matched ${summary.linkedCount} Slack ${summary.linkedCount === 1 ? 'user' : 'users'} by email.`;
+
       return {
         success: true,
-        message: `Matched ${summary.linkedCount} Slack ${summary.linkedCount === 1 ? 'user' : 'users'} by email.`,
+        message: summary.isRosterTruncated
+          ? `${matchedMessage} The Slack roster is too large to scan in one pass, so some users were not checked.`
+          : matchedMessage,
         ...summary,
       };
     } catch (error) {

@@ -18,6 +18,7 @@ export type SlackRosterMatchSummary = {
   linkedCount: number;
   alreadyLinkedCount: number;
   unmatchedCount: number;
+  isRosterTruncated: boolean;
 };
 
 export const matchSlackRosterByEmail = async ({
@@ -42,7 +43,7 @@ export const matchSlackRosterByEmail = async ({
   let alreadyLinkedCount = 0;
   let unmatchedCount = 0;
 
-  await walkSlackRoster(slackClient, (member) => {
+  const { isTruncated } = await walkSlackRoster(slackClient, (member) => {
     const slackUserId = member.id;
 
     if (!isNonEmptyString(slackUserId)) {
@@ -94,5 +95,6 @@ export const matchSlackRosterByEmail = async ({
     linkedCount: candidates.length,
     alreadyLinkedCount,
     unmatchedCount,
+    isRosterTruncated: isTruncated,
   };
 };

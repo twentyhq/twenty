@@ -91,6 +91,7 @@ describe('matchSlackRosterByEmail', () => {
       linkedCount: 1,
       alreadyLinkedCount: 0,
       unmatchedCount: 0,
+      isRosterTruncated: false,
     });
   });
 
@@ -120,6 +121,7 @@ describe('matchSlackRosterByEmail', () => {
       linkedCount: 0,
       alreadyLinkedCount: 1,
       unmatchedCount: 0,
+      isRosterTruncated: false,
     });
   });
 
@@ -190,6 +192,23 @@ describe('matchSlackRosterByEmail', () => {
       linkedCount: 2,
       alreadyLinkedCount: 1,
       unmatchedCount: 2,
+      isRosterTruncated: false,
     });
+  });
+
+  it('should report truncation when the roster exceeds the page cap', async () => {
+    const usersListMock = vi.fn().mockResolvedValue({
+      members: [fullMember({ id: 'U1', email: 'ada@twenty.com' })],
+      response_metadata: { next_cursor: 'cursor-next' },
+    });
+
+    const summary = await matchSlackRosterByEmail({
+      slackClient: {
+        users: { list: usersListMock },
+      } as unknown as WebClient,
+      slackTeamId: SLACK_TEAM_ID,
+    });
+
+    expect(summary.isRosterTruncated).toBe(true);
   });
 });

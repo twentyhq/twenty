@@ -133,6 +133,24 @@ describe('slackListUnlinkedUsersHandler', () => {
     }
   });
 
+  it('should not report more results when exactly the cap is unlinked', async () => {
+    usersListMock.mockResolvedValue({
+      members: Array.from({ length: 20 }, (_, index) => ({
+        id: `U${index}`,
+        is_email_confirmed: true,
+        real_name: `User ${index}`,
+      })),
+    });
+
+    const result = await slackListUnlinkedUsersHandler();
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.slackUsers).toHaveLength(20);
+      expect(result.hasMore).toBe(false);
+    }
+  });
+
   it('should stop early and report more results past the cap', async () => {
     usersListMock.mockResolvedValue({
       members: Array.from({ length: 30 }, (_, index) => ({

@@ -71,6 +71,10 @@ export const slackListUnlinkedUsersHandler =
           return undefined;
         }
 
+        if (slackUsers.length >= MAX_UNLINKED_RESULTS) {
+          return 'stop';
+        }
+
         slackUsers.push({
           slackUserId,
           slackTeamId: installedTeamId,
@@ -82,7 +86,7 @@ export const slackListUnlinkedUsersHandler =
               : undefined,
         });
 
-        return slackUsers.length >= MAX_UNLINKED_RESULTS ? 'stop' : undefined;
+        return undefined;
       });
 
       return { success: true, slackUsers, hasMore: isTruncated };
