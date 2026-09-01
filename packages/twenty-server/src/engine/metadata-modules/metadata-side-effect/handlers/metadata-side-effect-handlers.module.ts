@@ -4,6 +4,7 @@ import { FieldSearchFieldMetadataOnDeleteSideEffectHandlerService } from 'src/en
 import { FieldIndexViewFieldOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-index-view-field-on-create-side-effect-handler.service';
 import { FieldRecordFormWidgetOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-record-form-widget-on-create-side-effect-handler.service';
 import { FieldRecordFormWidgetOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-record-form-widget-on-delete-side-effect-handler.service';
+import { FieldRecordFormWidgetOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-record-form-widget-on-update-side-effect-handler.service';
 import { FieldRecordPageViewFieldOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-record-page-view-field-on-create-side-effect-handler.service';
 import { FieldSystemViewFieldsOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-system-view-fields-on-delete-side-effect-handler.service';
 import { FieldUniqueBackingIndexOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-unique-backing-index-on-create-side-effect-handler.service';
@@ -33,6 +34,7 @@ import { ObjectSystemSideEffectsOnDeleteSideEffectHandlerService } from 'src/eng
     FieldRecordPageViewFieldOnCreateSideEffectHandlerService,
     FieldRecordFormWidgetOnCreateSideEffectHandlerService,
     FieldRecordFormWidgetOnDeleteSideEffectHandlerService,
+    FieldRecordFormWidgetOnUpdateSideEffectHandlerService,
     FieldSystemViewFieldsOnDeleteSideEffectHandlerService,
     ObjectSystemFieldsOnCreateSideEffectHandlerService,
     ObjectIndexViewOnCreateSideEffectHandlerService,

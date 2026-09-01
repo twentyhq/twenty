@@ -248,6 +248,50 @@ describe('Manifest sync - engine-provisioned record-form stack', () => {
     );
   }, 60000);
 
+  it('removes the widget when a field stops being UI editable and restores it when it comes back', async () => {
+    await syncApplication({
+      manifest: buildManifest(buildTicketObject([NAME_FIELD, CODE_FIELD])),
+      expectToFail: false,
+    });
+
+    const ticket = await findTicketObject();
+
+    if (!isDefined(ticket)) {
+      throw new Error('expected the ticket object');
+    }
+
+    const recordFormTabId = await findRecordFormTabId(ticket.id);
+
+    await syncApplication({
+      manifest: buildManifest(
+        buildTicketObject([NAME_FIELD, { ...CODE_FIELD, isUIEditable: false }]),
+      ),
+      expectToFail: false,
+    });
+
+    expect(
+      (await findRecordFormWidgets(recordFormTabId)).map(
+        (widget) => widget.universalIdentifier,
+      ),
+    ).toEqual([derivedFormFieldWidgetUniversalIdentifier(NAME_FIELD_ID)]);
+
+    await syncApplication({
+      manifest: buildManifest(buildTicketObject([NAME_FIELD, CODE_FIELD])),
+      expectToFail: false,
+    });
+
+    expect(
+      (await findRecordFormWidgets(recordFormTabId)).map(
+        (widget) => widget.universalIdentifier,
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        derivedFormFieldWidgetUniversalIdentifier(NAME_FIELD_ID),
+        derivedFormFieldWidgetUniversalIdentifier(CODE_FIELD_ID),
+      ]),
+    );
+  }, 60000);
+
   it('appends a widget for a field added after the object and removes it on field deletion', async () => {
     await syncApplication({
       manifest: buildManifest(buildTicketObject([NAME_FIELD])),
