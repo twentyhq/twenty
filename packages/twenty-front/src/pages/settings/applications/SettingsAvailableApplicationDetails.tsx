@@ -246,6 +246,7 @@ export const SettingsAvailableApplicationDetails = () => {
             hasUpdate={hasUpdate}
             onUpgrade={handleUpgrade}
             isUpgrading={isUpgrading}
+            state={application?.state}
           />
         );
       case 'content':
