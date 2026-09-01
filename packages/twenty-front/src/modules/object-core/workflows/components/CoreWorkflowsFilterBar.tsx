@@ -50,10 +50,10 @@ export const CoreWorkflowsFilterBar = () => {
           onClick={openCoreWorkflowFiltersSidePanel}
           onRemove={() =>
             setCoreWorkflowsFilterSettings((previousFilterSettings) =>
-              removeCoreWorkflowFilterRule(
-                previousFilterSettings,
-                stepFilter.id,
-              ),
+              removeCoreWorkflowFilterRule({
+                filterSettings: previousFilterSettings,
+                stepFilterId: stepFilter.id,
+              }),
             )
           }
         />

@@ -9,10 +9,13 @@ import { CORE_WORKFLOW_FILTER_OPERAND_BY_VIEW_FILTER_OPERAND } from '@/object-co
 import { type CoreWorkflowFilterFieldDefinition } from '@/object-core/workflows/constants/CoreWorkflowFilterFields';
 import { findCoreWorkflowFilterField } from '@/object-core/workflows/utils/findCoreWorkflowFilterField';
 
-const isEmptyValue = (
-  value: string,
-  selectedField: CoreWorkflowFilterFieldDefinition,
-): boolean => {
+const isEmptyValue = ({
+  value,
+  selectedField,
+}: {
+  value: string;
+  selectedField: CoreWorkflowFilterFieldDefinition;
+}): boolean => {
   if (selectedField.filterType === 'MULTI_SELECT') {
     const parsedValue = parseJson<unknown>(value);
 
@@ -37,6 +40,6 @@ export const isUsableCoreWorkflowFilterRule = (
 
   return (
     !isRecordFilterOperandExpectingValue(stepFilter.operand) ||
-    !isEmptyValue(stepFilter.value, selectedField)
+    !isEmptyValue({ value: stepFilter.value, selectedField })
   );
 };
