@@ -29,13 +29,10 @@ export class FieldRecordFormWidgetOnCreateSideEffectHandlerService extends Metad
   },
 ) {
   buildSideEffects({
-    flatEntity: flatFieldMetadata,
+    flatEntity: sourceFlatFieldMetadata,
     allFlatEntityOperationRecordByMetadataName,
     relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'fieldMetadata'>): MetadataSideEffectResult {
-    const sourceFlatFieldMetadata =
-      flatFieldMetadata as UniversalFlatFieldMetadata;
-
     if (!isFlatFieldMetadataEligibleForRecordForm(sourceFlatFieldMetadata)) {
       return { status: 'noop' };
     }

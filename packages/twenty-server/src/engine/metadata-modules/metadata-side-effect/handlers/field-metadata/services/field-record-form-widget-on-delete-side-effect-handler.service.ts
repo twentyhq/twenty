@@ -10,7 +10,6 @@ import {
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
-import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 @Injectable()
 export class FieldRecordFormWidgetOnDeleteSideEffectHandlerService extends MetadataSideEffectHandler(
@@ -23,12 +22,10 @@ export class FieldRecordFormWidgetOnDeleteSideEffectHandlerService extends Metad
   },
 ) {
   buildSideEffects({
-    flatEntity: flatFieldMetadata,
+    flatEntity: sourceFlatFieldMetadata,
     allFlatEntityOperationRecordByMetadataName,
     relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'fieldMetadata'>): MetadataSideEffectResult {
-    const sourceFlatFieldMetadata =
-      flatFieldMetadata as UniversalFlatFieldMetadata;
     const { objectMetadataUniversalIdentifier } = sourceFlatFieldMetadata;
 
     const parentFlatObjectMetadata =
