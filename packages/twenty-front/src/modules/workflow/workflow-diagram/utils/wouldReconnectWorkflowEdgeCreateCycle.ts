@@ -1,15 +1,41 @@
-import { buildWorkflowGraph } from 'twenty-shared/workflow';
+import { type WorkflowAction } from '@/workflow/types/Workflow';
+import { getPreviousSteps } from '@/workflow/workflow-steps/utils/getWorkflowPreviousSteps';
+import { isDefined } from 'twenty-shared/utils';
+
+type WorkflowFlow = {
+  steps: WorkflowAction[] | null;
+};
+
+export const getWorkflowReconnectionForbiddenTargetStepIds = ({
+  flow,
+  sourceStepId,
+}: {
+  flow: WorkflowFlow;
+  sourceStepId: string;
+}): Set<string> => {
+  const steps = flow.steps ?? [];
+  const sourceStep = steps.find((step) => step.id === sourceStepId);
+
+  if (!isDefined(sourceStep)) {
+    return new Set<string>();
+  }
+
+  return new Set(
+    getPreviousSteps({ steps, currentStep: sourceStep }).map((step) => step.id),
+  );
+};
 
 export const wouldReconnectWorkflowEdgeCreateCycle = ({
   flow,
   sourceStepId,
   targetStepId,
 }: {
-  flow: Parameters<typeof buildWorkflowGraph>[0];
+  flow: WorkflowFlow;
   sourceStepId: string;
   targetStepId: string;
 }): boolean => {
-  const { ancestorsByStepId } = buildWorkflowGraph(flow);
-
-  return ancestorsByStepId.get(sourceStepId)?.has(targetStepId) === true;
+  return getWorkflowReconnectionForbiddenTargetStepIds({
+    flow,
+    sourceStepId,
+  }).has(targetStepId);
 };

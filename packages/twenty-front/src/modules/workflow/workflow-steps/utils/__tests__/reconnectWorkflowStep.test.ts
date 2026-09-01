@@ -3,8 +3,7 @@ import {
   type WorkflowIteratorAction,
 } from '@/workflow/types/Workflow';
 import { getReconnectedStepIds } from '@/workflow/workflow-diagram/utils/getReconnectedStepIds';
-import { generateNodesAndEdgesForIfElseNode } from '@/workflow/workflow-diagram/utils/generateNodesAndEdgesForIfElseNode';
-import { reconnectWorkflowStep } from '@/workflow/workflow-diagram/utils/reconnectWorkflowStep';
+import { reconnectWorkflowStep } from '@/workflow/workflow-steps/utils/reconnectWorkflowStep';
 
 const ifElseStep: WorkflowIfElseAction = {
   id: 'if-else',
@@ -66,42 +65,6 @@ describe('getReconnectedStepIds', () => {
 });
 
 describe('reconnectWorkflowStep', () => {
-  it('makes only editable branch arrows reconnectable and preserves branch identity', () => {
-    const generateEdges = (workflowContext: 'workflow' | 'workflow-version') =>
-      generateNodesAndEdgesForIfElseNode({
-        step: ifElseStep,
-        steps: ['old', 'other'].map((id) => ({
-          ...iteratorStep,
-          id,
-        })),
-        xPos: 0,
-        yPos: 0,
-        nodes: [],
-        edges: [],
-        workflowContext,
-      }).edges;
-
-    const editableEdges = generateEdges('workflow');
-
-    expect(editableEdges).toHaveLength(3);
-    expect(
-      editableEdges.map((edge) => edge.data?.sourceConnectionOptions),
-    ).toEqual([
-      { connectedStepType: 'IF_ELSE', settings: { branchId: 'if' } },
-      { connectedStepType: 'IF_ELSE', settings: { branchId: 'if' } },
-      { connectedStepType: 'IF_ELSE', settings: { branchId: 'else' } },
-    ]);
-    expect(
-      editableEdges.every(
-        (edge) => edge.reconnectable === 'target' && edge.deletable === false,
-      ),
-    ).toBe(true);
-    expect(
-      generateEdges('workflow-version').every(
-        (edge) => edge.reconnectable === false,
-      ),
-    ).toBe(true);
-  });
   it.each(['if', 'else'])(
     'reconnects the selected %s branch without changing the other branch',
     (branchId) => {

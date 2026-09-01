@@ -1,13 +1,23 @@
+import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { type WorkflowAction } from '@/workflow/types/Workflow';
 import { useReconnectWorkflowEdge } from '@/workflow/workflow-diagram/hooks/useReconnectWorkflowEdge';
+import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { renderHook, waitFor } from '@testing-library/react';
+import { createStore, Provider as JotaiProvider } from 'jotai';
+import { type ReactNode } from 'react';
 
 const mockUpdateStep = jest.fn();
 const mockUpdateTrigger = jest.fn();
-const sourceStep: WorkflowAction = {
-  id: 'source',
-  name: 'Configured HTTP request',
+const workflowVisualizerComponentInstanceId = 'workflow-visualizer-instance-id';
+let jotaiStore: ReturnType<typeof createStore>;
+
+const createAction = (
+  id: string,
+  nextStepIds: string[] = [],
+): WorkflowAction => ({
+  id,
+  name: id,
   type: 'HTTP_REQUEST',
   valid: true,
   settings: {
@@ -23,25 +33,24 @@ const sourceStep: WorkflowAction = {
       continueOnFailure: { value: false },
     },
   },
-  nextStepIds: ['old'],
-};
-const mockFlow = {
-  trigger: { type: 'MANUAL', settings: {}, nextStepIds: ['old'] },
-  steps: [
-    sourceStep,
-    { ...sourceStep, id: 'old' },
-    { ...sourceStep, id: 'new' },
-    { ...sourceStep, id: 'old-2', nextStepIds: [] },
-    { ...sourceStep, id: 'new-2', nextStepIds: [] },
-  ],
-};
+  nextStepIds,
+});
 
-jest.mock(
-  '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue',
-  () => ({
-    useAtomComponentStateValue: () => mockFlow,
-  }),
+const flowAtom = () =>
+  flowComponentState.atomFamily({
+    instanceId: workflowVisualizerComponentInstanceId,
+  });
+
+const Wrapper = ({ children }: { children: ReactNode }) => (
+  <JotaiProvider store={jotaiStore}>
+    <WorkflowVisualizerComponentInstanceContext.Provider
+      value={{ instanceId: workflowVisualizerComponentInstanceId }}
+    >
+      {children}
+    </WorkflowVisualizerComponentInstanceContext.Provider>
+  </JotaiProvider>
 );
+
 jest.mock('@/workflow/workflow-steps/hooks/useUpdateStep', () => ({
   useUpdateStep: () => ({ updateStep: mockUpdateStep }),
 }));
@@ -71,57 +80,121 @@ const connection = {
 describe('useReconnectWorkflowEdge', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    sourceStep.nextStepIds = ['old'];
-    mockFlow.steps.find((step) => step.id === 'old')!.nextStepIds = [];
+    jotaiStore = createStore();
+    jotaiStore.set(flowAtom(), {
+      workflowVersionId: 'workflow-version-id',
+      trigger: {
+        type: 'MANUAL',
+        settings: { outputSchema: {} },
+        nextStepIds: ['old'],
+      },
+      steps: [
+        createAction('source', ['old']),
+        createAction('old'),
+        createAction('new'),
+        createAction('old-2'),
+        createAction('new-2'),
+      ],
+    });
+    mockUpdateStep.mockImplementation(async (updatedStep: WorkflowAction) => {
+      jotaiStore.set(flowAtom(), (flow) =>
+        !flow
+          ? flow
+          : {
+              ...flow,
+              steps:
+                flow.steps?.map((step) =>
+                  step.id === updatedStep.id ? updatedStep : step,
+                ) ?? null,
+            },
+      );
+
+      return { updatedStep };
+    });
+    mockUpdateTrigger.mockImplementation(async (updatedTrigger) => {
+      jotaiStore.set(flowAtom(), (flow) =>
+        !flow ? flow : { ...flow, trigger: updatedTrigger },
+      );
+    });
   });
 
   it('persists a replacement as one update without deleting either action', async () => {
-    const { result } = renderHook(() => useReconnectWorkflowEdge());
-    await result.current.reconnectEdge(edge, connection);
-    expect(mockUpdateStep).toHaveBeenCalledTimes(1);
-    expect(mockUpdateStep).toHaveBeenCalledWith({
-      ...sourceStep,
-      nextStepIds: ['new'],
+    const { result } = renderHook(() => useReconnectWorkflowEdge(), {
+      wrapper: Wrapper,
     });
-    expect(mockFlow.steps).toHaveLength(5);
-    expect(sourceStep.nextStepIds).toEqual(['old']);
+
+    await expect(result.current.reconnectEdge(edge, connection)).resolves.toBe(
+      true,
+    );
+    expect(mockUpdateStep).toHaveBeenCalledTimes(1);
+    expect(mockUpdateStep).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'source', nextStepIds: ['new'] }),
+    );
+    expect(jotaiStore.get(flowAtom())?.steps).toHaveLength(5);
   });
 
-  it('keeps the original connection when saving fails', async () => {
-    mockUpdateStep.mockRejectedValueOnce(new Error('Save failed'));
-    const { result } = renderHook(() => useReconnectWorkflowEdge());
-    await expect(
-      result.current.reconnectEdge(edge, connection),
-    ).rejects.toThrow('Save failed');
-    expect(sourceStep.nextStepIds).toEqual(['old']);
+  it('reports a failed save without recording the attempted update', async () => {
+    mockUpdateStep.mockResolvedValueOnce({ updatedStep: undefined });
+    const { result } = renderHook(() => useReconnectWorkflowEdge(), {
+      wrapper: Wrapper,
+    });
+
+    await expect(result.current.reconnectEdge(edge, connection)).resolves.toBe(
+      false,
+    );
+    expect(
+      jotaiStore.get(flowAtom())?.steps?.find((step) => step.id === 'source')
+        ?.nextStepIds,
+    ).toEqual(['old']);
   });
 
   it('updates the trigger in a single operation', async () => {
-    const { result } = renderHook(() => useReconnectWorkflowEdge());
-    await result.current.reconnectEdge(
-      { ...edge, source: 'trigger' },
-      { ...connection, source: 'trigger' },
-    );
-    expect(mockUpdateTrigger).toHaveBeenCalledTimes(1);
-    expect(mockUpdateTrigger).toHaveBeenCalledWith({
-      ...mockFlow.trigger,
-      nextStepIds: ['new'],
+    const { result } = renderHook(() => useReconnectWorkflowEdge(), {
+      wrapper: Wrapper,
     });
+
+    await expect(
+      result.current.reconnectEdge(
+        { ...edge, source: 'trigger' },
+        { ...connection, source: 'trigger' },
+      ),
+    ).resolves.toBe(true);
+    expect(mockUpdateTrigger).toHaveBeenCalledTimes(1);
+    expect(mockUpdateTrigger).toHaveBeenCalledWith(
+      expect.objectContaining({ nextStepIds: ['new'] }),
+    );
     expect(mockUpdateStep).not.toHaveBeenCalled();
   });
 
-  it('serializes rapid reconnections from the same source', async () => {
-    sourceStep.nextStepIds = ['old', 'old-2'];
+  it('serializes rapid reconnections against the latest saved flow', async () => {
+    jotaiStore.set(flowAtom(), (flow) => ({
+      ...flow!,
+      steps:
+        flow?.steps?.map((step) =>
+          step.id === 'source'
+            ? { ...step, nextStepIds: ['old', 'old-2'] }
+            : step,
+        ) ?? null,
+    }));
     let finishFirstUpdate: () => void = () => {};
-    mockUpdateStep
-      .mockImplementationOnce(
-        () =>
-          new Promise<void>((resolve) => {
-            finishFirstUpdate = resolve;
-          }),
-      )
-      .mockResolvedValueOnce(undefined);
-    const { result } = renderHook(() => useReconnectWorkflowEdge());
+    mockUpdateStep.mockImplementationOnce(
+      (updatedStep: WorkflowAction) =>
+        new Promise<{ updatedStep: WorkflowAction }>((resolve) => {
+          finishFirstUpdate = () => {
+            jotaiStore.set(flowAtom(), (flow) => ({
+              ...flow!,
+              steps:
+                flow?.steps?.map((step) =>
+                  step.id === updatedStep.id ? updatedStep : step,
+                ) ?? null,
+            }));
+            resolve({ updatedStep });
+          };
+        }),
+    );
+    const { result } = renderHook(() => useReconnectWorkflowEdge(), {
+      wrapper: Wrapper,
+    });
 
     const firstReconnection = result.current.reconnectEdge(edge, connection);
     const secondReconnection = result.current.reconnectEdge(
@@ -133,24 +206,38 @@ describe('useReconnectWorkflowEdge', () => {
     await Promise.all([firstReconnection, secondReconnection]);
 
     expect(mockUpdateStep).toHaveBeenCalledTimes(2);
-    expect(mockUpdateStep).toHaveBeenLastCalledWith({
-      ...sourceStep,
-      nextStepIds: ['new', 'new-2'],
-    });
+    expect(mockUpdateStep).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        id: 'source',
+        nextStepIds: ['new', 'new-2'],
+      }),
+    );
   });
 
   it('ignores reconnections that would create a cycle', async () => {
-    sourceStep.nextStepIds = ['new'];
-    mockFlow.steps.find((step) => step.id === 'old')!.nextStepIds = ['source'];
-    const { result } = renderHook(() => useReconnectWorkflowEdge());
+    jotaiStore.set(flowAtom(), (flow) => ({
+      ...flow!,
+      steps:
+        flow?.steps?.map((step) => {
+          if (step.id === 'source') {
+            return { ...step, nextStepIds: ['new'] };
+          }
 
-    await result.current.reconnectEdge(
-      { ...edge, target: 'new' },
-      {
-        ...connection,
-        target: 'old',
-      },
-    );
+          return step.id === 'old'
+            ? { ...step, nextStepIds: ['source'] }
+            : step;
+        }) ?? null,
+    }));
+    const { result } = renderHook(() => useReconnectWorkflowEdge(), {
+      wrapper: Wrapper,
+    });
+
+    await expect(
+      result.current.reconnectEdge(
+        { ...edge, target: 'new' },
+        { ...connection, target: 'old' },
+      ),
+    ).resolves.toBe(false);
 
     expect(mockUpdateStep).not.toHaveBeenCalled();
   });
@@ -162,8 +249,13 @@ describe('useReconnectWorkflowEdge', () => {
   ])(
     'ignores invalid or unchanged connections: %j',
     async (invalidConnection) => {
-      const { result } = renderHook(() => useReconnectWorkflowEdge());
-      await result.current.reconnectEdge(edge, invalidConnection);
+      const { result } = renderHook(() => useReconnectWorkflowEdge(), {
+        wrapper: Wrapper,
+      });
+
+      await expect(
+        result.current.reconnectEdge(edge, invalidConnection),
+      ).resolves.toBe(false);
       expect(mockUpdateStep).not.toHaveBeenCalled();
       expect(mockUpdateTrigger).not.toHaveBeenCalled();
     },
