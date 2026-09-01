@@ -8,3 +8,8 @@ export const SLACK_USER_LINKS_REMOVE_ROUTE_PATH = '/slack-user-links/remove';
 
 export const SLACK_USER_LINKS_RESEND_CONSENT_ROUTE_PATH =
   '/slack-user-links/resend-consent';
+
+export const SLACK_USER_LINKS_MATCH_ROUTE_PATH = '/slack-user-links/match';
+
+export const SLACK_USER_LINKS_UNLINKED_ROUTE_PATH =
+  '/slack-user-links/unlinked';

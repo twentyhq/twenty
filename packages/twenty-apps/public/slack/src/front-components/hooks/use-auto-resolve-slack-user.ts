@@ -15,9 +15,11 @@ type RawSlackIdentity = {
   slackTeamId: string;
 };
 
-export const useAutoResolveSlackUser = () => {
+export const useAutoResolveSlackUser = ({
+  initialResolvedUser,
+}: { initialResolvedUser?: SlackResolvedUser | null } = {}) => {
   const [resolvedUser, setResolvedUser] = useState<SlackResolvedUser | null>(
-    null,
+    initialResolvedUser ?? null,
   );
   const [resolveError, setResolveError] = useState<string | null>(null);
   const resolveRequestIdRef = useRef(0);

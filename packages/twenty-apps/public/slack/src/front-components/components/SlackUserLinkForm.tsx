@@ -19,6 +19,7 @@ import { useAutoResolveSlackUser } from 'src/front-components/hooks/use-auto-res
 import { useSetSlackUserLink } from 'src/front-components/hooks/use-set-slack-user-link';
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
 import { type WorkspaceMemberOption } from 'src/front-components/types/workspace-member-option.type';
+import { type SlackResolvedUser } from 'src/logic-functions/types/slack-resolved-user.type';
 import { buildSlackUserLinkSaveNote } from 'src/front-components/utils/build-slack-user-link-save-note.util';
 
 const StyledForm = styled.form`
@@ -52,11 +53,13 @@ const StyledActions = styled.div`
 type SlackUserLinkFormProps = {
   existingLinks: SlackUserLinkRecord[];
   onLinkSaved: () => void;
+  initialSlackUser?: SlackResolvedUser | null;
 };
 
 export const SlackUserLinkForm = ({
   existingLinks,
   onLinkSaved,
+  initialSlackUser,
 }: SlackUserLinkFormProps) => {
   const [selectedMember, setSelectedMember] =
     useState<WorkspaceMemberOption | null>(null);
@@ -74,7 +77,7 @@ export const SlackUserLinkForm = ({
     resolveNow,
     selectResolvedUser,
     clearResolution,
-  } = useAutoResolveSlackUser();
+  } = useAutoResolveSlackUser({ initialResolvedUser: initialSlackUser });
   const { setSlackUserLink, isSubmitting } = useSetSlackUserLink();
 
   const canSubmit =
