@@ -7,13 +7,13 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 export class ReshapeUsageLimitPeriodFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."usageLimit" ADD COLUMN IF NOT EXISTS "periodCount" integer NOT NULL DEFAULT 1`,
+      `ALTER TABLE "core"."usageLimit" ADD COLUMN IF NOT EXISTS "periodCount" integer NOT NULL`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."usageLimit" ADD COLUMN IF NOT EXISTS "periodUnit" character varying NOT NULL DEFAULT 'billingPeriod'`,
+      `ALTER TABLE "core"."usageLimit" ADD COLUMN IF NOT EXISTS "periodUnit" character varying NOT NULL`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."usageLimit" ADD COLUMN IF NOT EXISTS "meter" character varying NOT NULL DEFAULT 'creditsUsedMicro'`,
+      `ALTER TABLE "core"."usageLimit" ADD COLUMN IF NOT EXISTS "meter" character varying NOT NULL`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."usageLimit" DROP CONSTRAINT "UQ_USAGE_LIMIT_SCOPE"`,

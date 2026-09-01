@@ -48,13 +48,13 @@ export class UsageLimitEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'varchar' })
   limitKind: LimitKind;
 
-  @Column({ type: 'int', default: 1 })
+  @Column({ type: 'int' })
   periodCount: number;
 
-  @Column({ type: 'varchar', default: 'billingPeriod' })
+  @Column({ type: 'varchar' })
   periodUnit: PeriodUnit;
 
-  @Column({ type: 'varchar', default: 'creditsUsedMicro' })
+  @Column({ type: 'varchar' })
   meter: UsageMeter;
 
   @Column({ type: 'varchar', default: 'absolute' })
