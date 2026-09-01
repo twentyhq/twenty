@@ -1,4 +1,7 @@
-import { NavigationMenuItemType, defineNavigationMenuItem } from 'twenty-sdk/define';
+import {
+  NavigationMenuItemType,
+  defineNavigationMenuItem,
+} from 'twenty-sdk/define';
 
 import {
   MY_PROFILE_NAV_ITEM_ID,
@@ -12,7 +15,7 @@ export default defineNavigationMenuItem({
   name: 'My Profile',
   type: NavigationMenuItemType.PAGE_LAYOUT,
   icon: 'IconUser',
-  position: 3,
+  position: 4,
   folderUniversalIdentifier: PARTNER_WORKSPACE_FOLDER_UNIVERSAL_IDENTIFIER,
   pageLayoutUniversalIdentifier: MY_PROFILE_PAGE_LAYOUT_ID,
 });

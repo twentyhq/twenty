@@ -1,7 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { type PermissionFlagType } from 'twenty-shared/constants';
-import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  FieldMetadataType,
+  type ObjectRecord,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
@@ -52,9 +56,14 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
+import { type ExhaustedScope } from 'src/engine/core-modules/usage-limit/types/exhausted-scope.type';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
@@ -102,6 +111,8 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly commonResultGettersService: CommonResultGettersService;
   @Inject()
   protected readonly throttlerService: ThrottlerService;
+  @Inject()
+  protected readonly usageLimitSpeedService: UsageLimitSpeedService;
   @Inject()
   protected readonly twentyConfigService: TwentyConfigService;
   @Inject()
@@ -191,7 +202,7 @@ export abstract class CommonBaseQueryRunnerService<
     queryResult: Output,
     flatObjectMetadata: FlatObjectMetadata,
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     authContext: WorkspaceAuthContext,
   ): Promise<Output>;
 
@@ -265,7 +276,7 @@ export abstract class CommonBaseQueryRunnerService<
     authContext: WorkspaceAuthContext;
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): Promise<Output> {
     const resultWithGetters = await this.processQueryResult(
       results,
@@ -525,8 +536,73 @@ export abstract class CommonBaseQueryRunnerService<
   }
 
   private async throttleQueryExecution(authContext: WorkspaceAuthContext) {
+    const isApiRateLimitV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_API_RATE_LIMIT_V2_ENABLED,
+        authContext.workspace.id,
+      );
+
+    if (isApiRateLimitV2Enabled) {
+      await this.consumeApiSpeedLimit(authContext);
+
+      return;
+    }
+
     await this.throttleApiKeyQueryExecution(authContext);
     await this.throttleApplicationQueryExecution(authContext);
+  }
+
+  private async consumeApiSpeedLimit(authContext: WorkspaceAuthContext) {
+    try {
+      await this.usageLimitSpeedService.consumeOrThrow({
+        resourceType: UsageResourceType.API,
+        authContext,
+        operationType: UsageOperationType.API_REQUEST,
+      });
+    } catch (error) {
+      if (
+        error instanceof UsageLimitException &&
+        isDefined(error.exhaustedScope) &&
+        error.exhaustedScope.isFallback
+      ) {
+        await this.incrementApiSpeedCeilingMetrics({
+          authContext,
+          exhaustedScope: error.exhaustedScope,
+        });
+      }
+
+      throw error;
+    }
+  }
+
+  private async incrementApiSpeedCeilingMetrics({
+    authContext,
+    exhaustedScope,
+  }: {
+    authContext: WorkspaceAuthContext;
+    exhaustedScope: ExhaustedScope;
+  }) {
+    if (exhaustedScope.spenderType === 'apiKey') {
+      await this.metricsService.incrementCounterForEvent({
+        key: MetricsKeys.CommonApiQueryRateLimited,
+        shouldStoreInCache: false,
+      });
+    }
+
+    if (
+      exhaustedScope.spenderType === 'application' &&
+      isApplicationAuthContext(authContext)
+    ) {
+      await this.metricsService.incrementCounterForEvent({
+        key: MetricsKeys.CommonApiApplicationQueryRateLimited,
+        shouldStoreInCache: false,
+        attributes: {
+          universal_identifier: authContext.application.universalIdentifier,
+          app_name: authContext.application.name,
+          source_type: authContext.application.sourceType,
+        },
+      });
+    }
   }
 
   private async throttleApplicationQueryExecution(

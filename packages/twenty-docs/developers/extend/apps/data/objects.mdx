@@ -98,7 +98,7 @@ The full set of `FieldType` values, exported from `twenty-sdk/define`:
 | Numeric | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (arbitrary precision), `RATING`, `POSITION` |
 | Dates | `DATE`, `DATE_TIME` |
 | Choice | `BOOLEAN`, `SELECT`, `MULTI_SELECT` |
-| Composite | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS`, `CURRENCY`, `ACTOR`, `FILES` |
+| Composite | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS` (`universalSettings.type`: `'url'` (default) / `'domain'` — a domain field stores the bare host, so `https://www.acme.com/careers` is written as `acme.com`, and a value that is not a host is rejected), `CURRENCY`, `ACTOR`, `FILES` |
 | Identifiers & relations | `UUID`, `RELATION`, `MORPH_RELATION` (see [Relations](/developers/extend/apps/data/relations)) |
 | System | `TS_VECTOR` (full-text search vector, managed by the server) |
 

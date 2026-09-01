@@ -1,10 +1,5 @@
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
-import { tokenPairState } from '@/auth/states/tokenPairState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export const useIsLogged = (): boolean => {
-  const [tokenPair] = useAtomState(tokenPairState);
-  const [isCookieAuthActive] = useAtomState(isCookieAuthActiveState);
-
-  return !!tokenPair || isCookieAuthActive;
-};
+export const useIsLogged = (): boolean =>
+  useAtomStateValue(isCookieAuthActiveState);

@@ -51,9 +51,10 @@ export default definePageLayout({
 
 ### Key points
 
-- `type` is one of `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` or `'STANDALONE_PAGE'`. Use `'RECORD_PAGE'` to customize the detail view of a specific object.
+- `type` is one of `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'`, `'STANDALONE_PAGE'` or `'RECORD_FORM'`. Use `'RECORD_PAGE'` to customize the detail view of a specific object. `'RECORD_FORM'` describes the creation form of an object and only accepts `FORM_FIELD` widgets, each rendering a single field; conversely, every other widget type is rejected in a `'RECORD_FORM'` layout. Twenty does not render record forms yet.
 - `objectUniversalIdentifier` specifies which object this layout applies to.
-- Each `tab` defines a section of the page with a `title`, `position`, and `layoutMode`: `VERTICAL_LIST` for record pages and standalone pages, `GRID` for dashboards, and `CANVAS` for a single widget that should fill the tab viewport. A `VERTICAL_LIST` tab stacks widgets vertically. Built-in widgets that manage their own scrolling, such as timelines, files, notes, tasks, and workflows, fill one viewport; fields, front components, graphs, and other fit-content widgets render at their content or configured height. A `GRID` tab always lays its widgets out as cards on a 12-column grid. A `CANVAS` widget has no explicit position; if a canvas tab contains multiple widgets, they render at their content height instead of filling the viewport.
+- Each `tab` defines a section of the page with a `title`, `position`, and `layoutMode`: `VERTICAL_LIST` for record pages and standalone pages, `GRID` for dashboards, and `CANVAS` for a single widget that should fill the tab viewport. A `VERTICAL_LIST` tab stacks widgets vertically. Built-in widgets that manage their own scrolling, such as timelines, files, notes, tasks, and workflows, fill one viewport; fields, front components, graphs, and other fit-content widgets render at their content or configured height. A `GRID` tab always lays its widgets out as cards on a 12-column grid. A `CANVAS` widget has no coordinates and can omit `position`; Twenty normalizes it to `{ layoutMode: PageLayoutTabLayoutMode.CANVAS }` from the tab layout mode. If a canvas tab contains multiple widgets, they render at their content height instead of filling the viewport.
+- A widget `position` matches its tab layout mode. `VERTICAL_LIST` uses `{ layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index }`, `GRID` uses `{ layoutMode: PageLayoutTabLayoutMode.GRID, row, column, rowSpan, columnSpan }`, and `CANVAS` uses `{ layoutMode: PageLayoutTabLayoutMode.CANVAS }` or omits `position`.
 - Set `layoutMode` explicitly. Omitting it gives you `VERTICAL_LIST` on a `STANDALONE_PAGE` and `GRID` everywhere else, which is rarely what you want on a record page.
 - Each `widget` inside a tab can render a [front component](/developers/extend/apps/layout/front-components), a relation list, or other built-in widget types.
 - A `FRONT_COMPONENT` widget can set `headerCommandMenuItemUniversalIdentifiers` to an ordered array of command menu item universal identifiers from the same app. These actions appear as icon buttons in the widget card header and keep their command-level availability and permission checks. Identifiers must be unique and must resolve when the app is installed.
@@ -61,7 +62,9 @@ export default definePageLayout({
 
 ### Field widgets
 
-A `FIELD` widget renders one field of the record. For relation fields it can also embed a list of related records:
+A `FIELD` widget renders one field of the current record. For relation fields, it can also embed a view of records related to the current record.
+
+To embed a view that is not scoped to the current record, use a [record table widget](#record-table-widgets).
 
 ```ts
 {
@@ -79,7 +82,33 @@ A `FIELD` widget renders one field of the record. For relation fields it can als
 
 - `fieldMetadataId` takes the universal identifier of a field on the layout's object.
 - `fieldDisplayMode` is one of `'FIELD'`, `'CARD'`, `'EDITOR'`, `'VIEW'` or `'TABLE'`. `TABLE` embeds a view listing the records of a one-to-many relation field.
+- `isUIEditable` applies to relation fields in `TABLE` display mode. It defaults to `true`; set it to `false` to prevent editing records from the embedded table or kanban.
 - `nestedRelationFieldMetadataId` is optional and takes the universal identifier of a one-to-many relation field on the relation target object, to list records two relation hops away (e.g. a Company page listing the opportunities of the company's people, or a Person page listing the opportunities of the person's company). The first hop can be a one-to-many or a many-to-one relation field, the second must be one-to-many (junction relations are not supported), and it requires `fieldDisplayMode: 'TABLE'` — combining it with any other display mode is a validation error, since a nested widget always renders as an embedded view.
+
+### Record table widgets
+
+A `RECORD_TABLE` widget embeds a saved view on a dashboard, record page, or standalone page. The saved view determines the records, fields, filters, sorts, and layout shown in the widget.
+
+```ts
+{
+  universalIdentifier: 'd1d2d3d4-d5d6-4000-8000-000000000004',
+  title: 'Open opportunities',
+  type: 'RECORD_TABLE',
+  configuration: {
+    configurationType: 'RECORD_TABLE',
+    viewUniversalIdentifier: OPPORTUNITIES_VIEW_UNIVERSAL_IDENTIFIER,
+    recordLimit: 8,
+    isUIEditable: false,
+  },
+}
+```
+
+- `viewUniversalIdentifier` identifies the view to display.
+- `recordLimit` is optional and caps how many records the widget displays.
+- `isUIEditable` applies to table and kanban views. It enables table cell editing or kanban card editing, moving, and creation. It defaults to `true` on `RECORD_PAGE` layouts and `false` on other layouts.
+- `isUIEditable` controls UI actions only. Record permissions still apply, and view settings remain editable only in the page layout editor.
+
+Workspace admins can configure the same behavior with **Allow editing** in the [dashboard widget](/user-guide/dashboards/capabilities/widgets#editing-records) and [record page](/user-guide/layout/capabilities/record-pages#editing-related-records) editors.
 
 ## definePageLayoutTab
 

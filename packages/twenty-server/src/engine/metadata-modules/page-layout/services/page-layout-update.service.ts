@@ -30,10 +30,10 @@ import { validateFieldConfigurationNestedRelationOrThrow } from 'src/engine/meta
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
 import { PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
 import {
+  generatePageLayoutExceptionMessage,
   PageLayoutException,
   PageLayoutExceptionCode,
   PageLayoutExceptionMessageKey,
-  generatePageLayoutExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 import { fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-with-tabs-and-widgets-to-page-layout-dto.util';
 import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
@@ -114,6 +114,8 @@ export class PageLayoutUpdateService {
       name: updateData.name,
       type: updateData.type,
       objectMetadataId: updateData.objectMetadataId,
+      isFirstTabPinned:
+        updateData.isFirstTabPinned ?? existingPageLayout.isFirstTabPinned,
       updatedAt: new Date().toISOString(),
     };
 
@@ -730,7 +732,6 @@ export class PageLayoutUpdateService {
       title: widgetInput.title,
       type: widgetInput.type,
       objectMetadataId: widgetInput.objectMetadataId ?? null,
-      gridPosition: widgetInput.gridPosition,
       position: widgetInput.position ?? null,
       configuration,
       pageLayoutTabId: widgetInput.pageLayoutTabId,

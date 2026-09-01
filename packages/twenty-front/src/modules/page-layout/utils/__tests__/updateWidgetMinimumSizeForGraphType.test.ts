@@ -1,7 +1,7 @@
 import { getWidgetSize } from '@/page-layout/utils/getWidgetSize';
 import { updateLayoutItemConstraints } from '@/page-layout/utils/updateLayoutItemConstraints';
 import { updateWidgetMinimumSizeForGraphType } from '@/page-layout/utils/updateWidgetMinimumSizeForGraphType';
-import { type Layouts } from 'react-grid-layout';
+import { type ResponsiveLayouts } from 'react-grid-layout';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 jest.mock('../getWidgetSize');
@@ -13,7 +13,7 @@ describe('updateWidgetMinimumSizeForGraphType', () => {
   });
 
   it('should update widget minimum size for a valid graph type and existing tab', () => {
-    const mockLayouts: Record<string, Layouts> = {
+    const mockLayouts: Record<string, ResponsiveLayouts> = {
       'tab-1': {
         desktop: [{ i: 'widget-1', x: 0, y: 0, w: 4, h: 3 }],
       },
@@ -22,7 +22,7 @@ describe('updateWidgetMinimumSizeForGraphType', () => {
       },
     };
 
-    const updatedLayouts: Layouts = {
+    const updatedLayouts: ResponsiveLayouts = {
       desktop: [{ i: 'widget-1', x: 0, y: 0, w: 4, h: 3, minW: 3, minH: 2 }],
     };
 
@@ -52,7 +52,7 @@ describe('updateWidgetMinimumSizeForGraphType', () => {
   });
 
   it('should return original layouts when tab does not exist', () => {
-    const mockLayouts: Record<string, Layouts> = {
+    const mockLayouts: Record<string, ResponsiveLayouts> = {
       'tab-1': {
         desktop: [{ i: 'widget-1', x: 0, y: 0, w: 4, h: 3 }],
       },
@@ -75,7 +75,7 @@ describe('updateWidgetMinimumSizeForGraphType', () => {
   });
 
   it('should handle different graph types correctly', () => {
-    const mockLayouts: Record<string, Layouts> = {
+    const mockLayouts: Record<string, ResponsiveLayouts> = {
       'tab-1': {
         desktop: [{ i: 'widget-1', x: 0, y: 0, w: 4, h: 3 }],
       },
@@ -123,7 +123,7 @@ describe('updateWidgetMinimumSizeForGraphType', () => {
   });
 
   it('should preserve other tabs when updating a specific tab', () => {
-    const mockLayouts: Record<string, Layouts> = {
+    const mockLayouts: Record<string, ResponsiveLayouts> = {
       'tab-1': {
         desktop: [{ i: 'widget-1', x: 0, y: 0, w: 4, h: 3 }],
       },
@@ -135,7 +135,7 @@ describe('updateWidgetMinimumSizeForGraphType', () => {
       },
     };
 
-    const updatedTab2Layouts: Layouts = {
+    const updatedTab2Layouts: ResponsiveLayouts = {
       desktop: [{ i: 'widget-2', x: 0, y: 0, w: 5, h: 4, minW: 4, minH: 3 }],
     };
 
@@ -159,7 +159,7 @@ describe('updateWidgetMinimumSizeForGraphType', () => {
   });
 
   it('should handle empty layouts object', () => {
-    const mockLayouts: Record<string, Layouts> = {};
+    const mockLayouts: Record<string, ResponsiveLayouts> = {};
 
     (getWidgetSize as jest.Mock).mockReturnValue({ w: 3, h: 2 });
 
@@ -175,14 +175,14 @@ describe('updateWidgetMinimumSizeForGraphType', () => {
   });
 
   it('should handle layouts with both desktop and mobile', () => {
-    const mockLayouts: Record<string, Layouts> = {
+    const mockLayouts: Record<string, ResponsiveLayouts> = {
       'tab-1': {
         desktop: [{ i: 'widget-1', x: 0, y: 0, w: 4, h: 3 }],
         mobile: [{ i: 'widget-1', x: 0, y: 0, w: 2, h: 2 }],
       },
     };
 
-    const updatedLayouts: Layouts = {
+    const updatedLayouts: ResponsiveLayouts = {
       desktop: [{ i: 'widget-1', x: 0, y: 0, w: 4, h: 3, minW: 3, minH: 2 }],
       mobile: [{ i: 'widget-1', x: 0, y: 0, w: 2, h: 2, minW: 3, minH: 2 }],
     };
@@ -201,7 +201,7 @@ describe('updateWidgetMinimumSizeForGraphType', () => {
   });
 
   it('should handle widget not found in tab layouts', () => {
-    const mockLayouts: Record<string, Layouts> = {
+    const mockLayouts: Record<string, ResponsiveLayouts> = {
       'tab-1': {
         desktop: [{ i: 'widget-1', x: 0, y: 0, w: 4, h: 3 }],
       },
@@ -230,7 +230,7 @@ describe('updateWidgetMinimumSizeForGraphType', () => {
   });
 
   it('should call updateLayoutItemConstraints with correct parameters', () => {
-    const mockLayouts: Record<string, Layouts> = {
+    const mockLayouts: Record<string, ResponsiveLayouts> = {
       'tab-1': {
         desktop: [
           { i: 'widget-1', x: 0, y: 0, w: 4, h: 3 },
@@ -262,7 +262,7 @@ describe('updateWidgetMinimumSizeForGraphType', () => {
   });
 
   it('should handle undefined tab layouts gracefully', () => {
-    const mockLayouts: Record<string, Layouts> = {
+    const mockLayouts: Record<string, ResponsiveLayouts> = {
       'tab-1': {
         desktop: [{ i: 'widget-1', x: 0, y: 0, w: 4, h: 3 }],
       },
