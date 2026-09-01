@@ -333,7 +333,7 @@ export const WorkflowDiagramCanvasBase = ({
 
       const sidePanelWidth = store.get(sidePanelWidthState.atom);
 
-      if (!isInSidePanel && isSidePanelOpened) {
+      if (!isInSidePanel && isSidePanelOpened && hasViewportBeenMoved) {
         adjustedContainerWidth = baseContainerWidth - sidePanelWidth;
       } else if (!isInSidePanel && hasViewportBeenMoved) {
         adjustedContainerWidth = baseContainerWidth + sidePanelWidth;
