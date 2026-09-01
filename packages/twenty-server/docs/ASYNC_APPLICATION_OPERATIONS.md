@@ -4,15 +4,15 @@
 
 `installApplication`, `upgradeApplication` and `uninstallApplication` run the whole operation inside the GraphQL mutation. An install fetches and extracts the package, writes files to storage, runs a pre-install hook, applies the manifest through the workspace-migration pipeline, and runs a post-install hook — third-party logic functions of arbitrary duration. Uninstall symmetrically runs the uninstall hook, builds and runs a full "diff against empty" workspace migration, and tears down runtime resources. The UI (and the CLI) block on the mutation for the whole time, and a slow hook holds an HTTP request open for minutes.
 
-Goal: run these operations in queue jobs on the worker, persist an application lifecycle `state`, and push state changes to clients over the existing SSE broadcast channel.
+Goal: run these operations in queue jobs on the worker, persist an application lifecycle `state`, and push state changes to clients over the existing SSE broadcast channel. The existing synchronous mutations are kept as-is — the frontend moves to new async mutations, so there is no API breaking change and the CLI keeps its blocking behavior.
 
 ## Prior attempt
 
-[#24941](https://github.com/twentyhq/twenty/pull/24941) implemented the full feature in one PR: 97 files, +2905/−1199. It worked in the end but was closed as unreviewable ("Too large to review reliably") and went through many fix rounds because the server, realtime and UI concerns all landed at once. This design keeps its validated decisions (listed per PR below, marked *from #24941*) and splits the work into three independently shippable PRs:
+[#24941](https://github.com/twentyhq/twenty/pull/24941) implemented the full feature in one PR: 97 files, +2905/−1199. It was closed because it was too big to review and, despite many fix rounds, still not working properly in the end — the server, realtime and UI concerns all landed at once and fixes kept chasing each other. This design keeps the decisions from it that did hold up (listed per PR below, marked *from #24941*), drops the ones that did not (mutating the existing endpoints in place), and splits the work into three independently shippable PRs:
 
 1. **PR 1 — `state` column**, written by the current synchronous operations, surfaced read-only in the UI.
 2. **PR 2 — realtime**: broadcast `application` and `applicationRegistration` changes over the existing SSE mechanism, consume them in the front.
-3. **PR 3 — jobs**: mutations become enqueue-only; install/upgrade/uninstall run in worker jobs; CLI polls for the outcome.
+3. **PR 3 — jobs**: new async mutations enqueue install/upgrade/uninstall worker jobs and the frontend switches to them; the existing synchronous mutations are unchanged (no API break — the CLI stays on them).
 
 Each PR is useful on its own: PR 1 gives a persisted lifecycle the DB and admin tooling can inspect, PR 2 makes every applications surface live-update (installs triggered by another user/tab/CLI already benefit), PR 3 flips the execution model without touching data shape or transport again.
 
@@ -136,22 +136,23 @@ Notes:
 - Enqueue with `id: <jobName>-<workspaceId>-<universalIdentifier>` for waiting-job dedup, but do not rely on it for correctness — BullMQ dedup only covers *waiting* jobs. Correctness comes from state gating (below).
 - `retryLimit: 0` for install/upgrade/uninstall: these are not idempotent and have their own rollback; a retry after a partial failure would run against rolled-back state. Failures are terminal and handled in the job's catch.
 
-### Mutations become enqueue-only
+### New async mutations — existing ones unchanged
 
-`installApplication` / `upgradeApplication` / `uninstallApplication`:
+The existing `installApplication` / `upgradeApplication` / `uninstallApplication` mutations keep their synchronous behavior, untouched: the CLI and any external API consumer see no breaking change. New enqueue-only mutations are added for the frontend — `installApplicationAsync` / `upgradeApplicationAsync` / `uninstallApplicationAsync` (naming open; same guards, same DTOs). They:
 
 1. **Fail fast at enqueue time** (*from #24941*) so common errors still surface synchronously on the mutation: registration existence, tarball ownership/listing availability, `canBeUninstalled`, synchronous version-progression check, and the concurrent-operation guard.
 2. **Reserve the lifecycle atomically.** Every transition goes through `ApplicationService.transitionState`, a single conditional write: `UPDATE application SET state = $next WHERE id = $id AND state = $expected`, affected-rows-checked. The loser of a race gets a new `APPLICATION_OPERATION_IN_PROGRESS` exception code. Two concurrent *fresh* installs have no row to gate on; the partial unique index on `(universalIdentifier, workspaceId)` arbitrates and the losing insert maps to the same error. This must be atomic from the first commit — the read-then-check-then-update variant was #24941's main review finding.
-3. Install pre-creates the row (`INSTALLING` placeholder from registration data) or flips an installed row to `UPGRADING`; uninstall flips to `UNINSTALLING`; then enqueue. **Enqueue failure compensates**: revert via `transitionStateBestEffort` (log, don't throw — a failed recovery must not mask the enqueue error) or delete the fresh placeholder. `installApplication` still returns the `Application` (now with a transitional `state`); `uninstallApplication` keeps returning `Boolean`.
-4. Keep the existing `app-install:` cache lock inside the service as the execution-time serializer; state gating is the request-time arbiter.
+3. Install pre-creates the row (`INSTALLING` placeholder from registration data) or flips an installed row to `UPGRADING`; uninstall flips to `UNINSTALLING`; then enqueue. **Enqueue failure compensates**: revert via `transitionStateBestEffort` (log, don't throw — a failed recovery must not mask the enqueue error) or delete the fresh placeholder. `installApplicationAsync` returns the `Application` with its transitional `state`; `uninstallApplicationAsync` returns `Boolean` like its synchronous counterpart.
 
-Failure handling in jobs (same model as PR 1): failed fresh install → rollback deletes the placeholder (broadcasts `deleted`); failed upgrade/uninstall → revert to `INSTALLED`. Uninstall metrics move from the resolver into the job.
+Because sync and async operations now coexist, the synchronous paths must claim the lifecycle through the same `transitionState` gate (they already write the states since PR 1 — this upgrades those writes to conditional ones), so a sync CLI install and an async UI install on the same app cannot run concurrently: the loser gets `APPLICATION_OPERATION_IN_PROGRESS` whichever side it is. The existing `app-install:` cache lock stays inside the service as the execution-time serializer; state gating is the request-time arbiter.
 
-Direct service callers stay direct: auto-upgrade cron, pre-installed/onboarding app jobs, the CLI install command, workspace deletion — they already run in workers or CLI processes and now get consistent state transitions for free.
+Failure handling in jobs (same model as PR 1): failed fresh install → rollback deletes the placeholder (broadcasts `deleted`); failed upgrade/uninstall → revert to `INSTALLED`. The jobs emit the same install/upgrade/uninstall metrics the synchronous paths do.
+
+Direct service callers stay direct and synchronous: auto-upgrade cron, pre-installed/onboarding app jobs, the CLI install command, workspace deletion — they already run in workers or CLI processes and now get consistent state transitions for free.
 
 ### Frontend
 
-PR 2 already delivers the events; this PR only teaches the flows that the mutation no longer means "done":
+PR 2 already delivers the events; this PR switches the install/upgrade/uninstall flows to the async mutations and teaches them that the mutation no longer means "done":
 
 - Marketplace install flow follows **the row the mutation named, by id**, via the store: navigate to the app when that row settles on `INSTALLED`, show a failure snackbar when the rolled-back install removes it. A row already `INSTALLED` when the install starts must be seen in a transitional state first (*from #24941*: following by `universalIdentifier` and navigating on the first `INSTALLED` read caused premature redirects).
 - Detail page redirects to the applications list only when the store says the row is gone *and* the lookup answers `NOT_FOUND` — a transient error must not bounce the visitor.
@@ -160,16 +161,15 @@ PR 2 already delivers the events; this PR only teaches the flows that the mutati
 
 ### CLI (`twenty-sdk`)
 
-`app install` / `app uninstall` poll `findOneApplication` after the enqueue mutation (2s interval, 10min timeout): success on `INSTALLED` (with `version` matching the package's, so a reverted upgrade reads as failure) or row-gone for uninstall; failure on rollback/revert. A failed poll is recorded and polling continues to the deadline (*from #24941*).
+Unchanged. `app install` / `app uninstall` keep calling the synchronous mutations and blocking until the real outcome — no polling, no timeout handling. This also removes #24941's need to start queue workers in the CLI-driven CI workflows (hello-world, postcard, sdk e2e, create-app minimal).
 
-### CI / tests
+### Tests
 
-- CI workflows that install apps against a server-only stack (hello-world, postcard, sdk e2e, create-app minimal) must start a queue worker (`worker:ci` target) (*from #24941*).
-- Integration test utils drain the queues after the mutation (the in-process test app runs the job workers), switching to real timers when jest fake timers are active (*from #24941*).
-- Failing-install suites (workspace-version gate, manifest validation) assert the async outcome — installation rolled back — while suites covered by enqueue-time checks (version progression, registration not found) keep their synchronous error snapshots.
+- Existing install/uninstall integration suites keep exercising the synchronous mutations unchanged.
+- New integration coverage for the async mutations: enqueue-time errors surface synchronously (version progression, registration not found, operation in progress), and the happy path reaches `INSTALLED` after draining the queues (the in-process test app runs the job workers; switch to real timers when jest fake timers are active — *from #24941*).
 - Unit tests: `transitionState` gating (winner/loser), enqueue-failure compensation. Nothing else.
 
-**Estimated size:** the biggest of the three, but bounded: jobs + resolver rework + `transitionState` + CLI polling + test utils, with no schema or transport changes.
+**Estimated size:** the biggest of the three, but bounded: jobs + new resolvers + `transitionState` + frontend flow changes, with no schema-breaking or transport changes and no CLI/CI changes.
 
 ---
 
@@ -180,6 +180,7 @@ PR 2 already delivers the events; this PR only teaches the flows that the mutati
 - **Cross-workspace realtime for the admin panel** (broadcasts are workspace-scoped).
 - **`useTriggerEventStreamCreation` double-dispatch**: every SSE payload is processed twice (subscription sink + `message` listener). Idempotent consumers hide it; fix separately.
 - Making `findOneApplication` nullable instead of throwing `NOT_FOUND` (breaking schema change).
+- Migrating the CLI to the async mutations or deprecating the synchronous ones — the CLI deliberately keeps the blocking endpoints.
 
 ## Key file references
 
