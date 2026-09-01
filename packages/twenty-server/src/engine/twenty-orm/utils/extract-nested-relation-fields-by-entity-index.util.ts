@@ -120,7 +120,7 @@ export const extractNestedRelationFieldsByEntityIndex = (
       const hasCreate = hasRelationCreate(value);
       const hasDisconnect = hasRelationDisconnect(value);
 
-      if ([hasConnect, hasCreate, hasDisconnect].filter(Boolean).length > 1) {
+      if (hasCreate && (hasConnect || hasDisconnect)) {
         throw new TwentyOrmException(
           `Cannot combine create, connect, and disconnect for the same relation field ${key}.`,
           TwentyOrmExceptionCode.CONNECT_NOT_ALLOWED,

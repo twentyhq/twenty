@@ -147,6 +147,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatFieldMetadataMaps,
       authContext,
       rolePermissionConfig,
+      repository,
       nestedRelationsReadPathOptions: this.getNestedRelationsReadPathOptions(),
     });
 
@@ -161,6 +162,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatFieldMetadataMaps,
     authContext,
     rolePermissionConfig,
+    repository,
     nestedRelationsReadPathOptions,
   }: {
     args: CommonExtendedInput<CreateManyQueryArgs>;
@@ -170,6 +172,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     authContext: WorkspaceAuthContext;
     rolePermissionConfig?: RolePermissionConfig;
+    repository: WorkspaceRepository<ObjectRecord>;
     nestedRelationsReadPathOptions: NestedRelationsReadPathOptions;
   }): Promise<void> {
     if (!args.selectedFieldsResult.relations) {
@@ -188,6 +191,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       limit: QUERY_MAX_RECORDS,
       authContext,
       rolePermissionConfig,
+      repository,
       selectedFields: args.selectedFieldsResult.select,
       ...nestedRelationsReadPathOptions,
     });
