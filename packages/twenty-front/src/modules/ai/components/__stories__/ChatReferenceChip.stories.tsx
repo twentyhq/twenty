@@ -98,7 +98,7 @@ export const ExistingMetadata: Story = {
 
     expect((await canvas.findByText('Companies')).closest('a')).toHaveAttribute(
       'href',
-      `/objects/${companyObjectMetadataItem.namePlural}`,
+      `/settings/objects/${companyObjectMetadataItem.namePlural}`,
     );
     expect((await canvas.findByText('Employees')).closest('a')).toHaveAttribute(
       'href',

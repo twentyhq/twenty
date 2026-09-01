@@ -64,7 +64,8 @@ export const RelationOneToManyFieldInput = () => {
       recordId,
     });
 
-  const isJunctionRelation = isDefined(junctionConfig);
+  const isJunctionRelation = junctionConfig?.isValid === true;
+  const isInvalidJunctionRelation = junctionConfig?.isValid === false;
 
   const junctionTargetObjectMetadata = (() => {
     if (!junctionConfig || junctionConfig.isMorphRelation) {
@@ -242,6 +243,10 @@ export const RelationOneToManyFieldInput = () => {
     isJunctionRelation && isDefined(junctionTargetObjectMetadata)
       ? junctionTargetObjectMetadata.id
       : relationObjectMetadataItem.id;
+
+  if (isInvalidJunctionRelation) {
+    return null;
+  }
 
   return (
     <MultipleRecordPicker

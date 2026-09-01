@@ -1,10 +1,8 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
-import {
-  getJunctionConfig,
-  type JunctionObjectMetadataItem,
-} from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { type JunctionObjectMetadataItem } from '@/object-record/record-field/ui/utils/junction/types/JunctionObjectMetadataItem';
+import { type ValidJunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/ValidJunctionConfig';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   computeMorphRelationGqlFieldName,
@@ -17,7 +15,7 @@ type JunctionFieldMetadataItem = Pick<
 >;
 
 type GenerateJunctionRelationGqlFieldsArgs = {
-  fieldMetadataItem: JunctionFieldMetadataItem;
+  junctionConfig: ValidJunctionConfig;
   objectMetadataItems: JunctionObjectMetadataItem[];
 };
 
@@ -83,22 +81,9 @@ const buildTargetFieldGqlFields = (
 };
 
 export const generateJunctionRelationGqlFields = ({
-  fieldMetadataItem,
+  junctionConfig,
   objectMetadataItems,
-}: GenerateJunctionRelationGqlFieldsArgs): RecordGqlFields | null => {
-  const junctionConfig = getJunctionConfig({
-    settings: fieldMetadataItem.settings,
-    relationObjectMetadataId:
-      fieldMetadataItem.relation?.targetObjectMetadata.id ?? '',
-    relationTargetFieldMetadataId:
-      fieldMetadataItem.relation?.targetFieldMetadata.id,
-    objectMetadataItems,
-  });
-
-  if (!isDefined(junctionConfig)) {
-    return null;
-  }
-
+}: GenerateJunctionRelationGqlFieldsArgs): RecordGqlFields => {
   const { junctionObjectMetadata, targetFields } = junctionConfig;
 
   const junctionTargetFields = targetFields.reduce<RecordGqlFields>(

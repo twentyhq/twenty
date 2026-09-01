@@ -25,6 +25,7 @@ export default defineConnectionProvider({
       'channels:read',
       'chat:write',
       'chat:write.public',
+      'im:write',
       'groups:read',
       'reactions:write',
       // Only used by the conversational assistant

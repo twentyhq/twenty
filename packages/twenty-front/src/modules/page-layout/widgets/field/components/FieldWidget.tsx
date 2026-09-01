@@ -6,7 +6,8 @@ import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guar
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
+import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
@@ -125,26 +126,28 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
   }
 
   if (isFieldRelation(fieldDefinition)) {
-    const isJunctionRelation = isDefined(
-      getJunctionConfig({
-        settings: fieldDefinition.metadata.settings,
-        relationObjectMetadataId:
-          fieldDefinition.metadata.relationObjectMetadataId,
-        relationTargetFieldMetadataId:
-          fieldDefinition.metadata.relationFieldMetadataId,
-        sourceObjectMetadataId: objectMetadataItem.id,
-        objectMetadataItems,
-      }),
-    );
+    const junctionConfig = resolveJunctionConfig({
+      settings: fieldDefinition.metadata.settings,
+      relationObjectMetadataId:
+        fieldDefinition.metadata.relationObjectMetadataId,
+      relationTargetFieldMetadataId:
+        fieldDefinition.metadata.relationFieldMetadataId,
+      sourceObjectMetadataId: objectMetadataItem.id,
+      objectMetadataItems,
+    });
 
-    if (isJunctionRelation) {
+    if (isDefined(junctionConfig)) {
+      if (!isUsableJunctionConfig(junctionConfig)) {
+        return null;
+      }
+
       if (fieldDisplayMode === FieldDisplayMode.CARD) {
         return (
           <FieldWidgetJunctionRelationCard
             fieldDefinition={fieldDefinition}
             relationValue={record}
             isInSidePanel={isInSidePanel}
-            sourceObjectMetadataId={objectMetadataItem.id}
+            junctionConfig={junctionConfig}
           />
         );
       }
@@ -160,10 +163,9 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
 
       return (
         <FieldWidgetJunctionRelationField
-          fieldDefinition={fieldDefinition}
           relationValue={record}
           isInSidePanel={isInSidePanel}
-          sourceObjectMetadataId={objectMetadataItem.id}
+          junctionConfig={junctionConfig}
         />
       );
     }
