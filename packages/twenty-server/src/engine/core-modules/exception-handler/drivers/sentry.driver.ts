@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/node';
+import { isObject } from '@sniptt/guards';
 import {
   getGenericOperationName,
   getHumanReadableNameFromCode,
@@ -48,8 +49,7 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
       }
 
       for (const exception of exceptions) {
-        const isObjectException =
-          typeof exception === 'object' && exception !== null;
+        const isObjectException = isObject(exception);
 
         const errorPath = (isObjectException ? (exception.path ?? []) : [])
           .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
