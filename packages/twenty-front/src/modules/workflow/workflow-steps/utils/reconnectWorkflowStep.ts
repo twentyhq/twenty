@@ -1,6 +1,6 @@
 import { type WorkflowAction } from '@/workflow/types/Workflow';
 import { getReconnectedStepIds } from '@/workflow/workflow-diagram/utils/getReconnectedStepIds';
-import { type WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowStepConnectionOptions';
+import { type WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/types/WorkflowStepConnectionOptions';
 import { isDefined } from 'twenty-shared/utils';
 
 export const reconnectWorkflowStep = ({

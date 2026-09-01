@@ -86,11 +86,7 @@ export const useStartNodeCreation = () => {
     return (
       workflowInsertStepIds.parentStepId === parentStepId &&
       workflowInsertStepIds.nextStepId === nextStepId &&
-      (!isDefined(connectionOptions) ||
-        isDeeplyEqual(
-          workflowInsertStepIds.connectionOptions,
-          connectionOptions,
-        ))
+      isDeeplyEqual(workflowInsertStepIds.connectionOptions, connectionOptions)
     );
   };
 

@@ -1,11 +1,9 @@
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { workflowReconnectingEdgeComponentState } from '@/workflow/workflow-diagram/states/workflowReconnectingEdgeComponentState';
-import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useConnection, useEdges } from '@xyflow/react';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { wouldReconnectWorkflowEdgeCreateCycle } from '@/workflow/workflow-diagram/utils/wouldReconnectWorkflowEdgeCreateCycle';
 
 export const useConnectionState = (nodeType: 'action' | 'trigger') => {
   const connection = useConnection();
@@ -14,7 +12,6 @@ export const useConnectionState = (nodeType: 'action' | 'trigger') => {
   const workflowReconnectingEdge = useAtomComponentStateValue(
     workflowReconnectingEdgeComponentState,
   );
-  const flow = useAtomComponentStateValue(flowComponentState);
 
   const isConnectionInProgress = connection.inProgress;
 
@@ -33,12 +30,7 @@ export const useConnectionState = (nodeType: 'action' | 'trigger') => {
 
     if (
       isDefined(workflowReconnectingEdge) &&
-      isDefined(flow) &&
-      wouldReconnectWorkflowEdgeCreateCycle({
-        flow,
-        sourceStepId: connection.fromNode.id,
-        targetStepId: nodeId,
-      })
+      workflowReconnectingEdge.forbiddenTargetStepIds.has(nodeId)
     ) {
       return false;
     }

@@ -25,7 +25,13 @@ import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { prepareIfElseStepWithNewBranch } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/prepareIfElseStepWithNewBranch';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
-import { addEdge, ReactFlowProvider, type OnNodeDrag } from '@xyflow/react';
+import {
+  addEdge,
+  ReactFlowProvider,
+  reconnectEdge as reconnectDiagramEdge,
+  type OnNodeDrag,
+  type OnReconnect,
+} from '@xyflow/react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowDiagramCanvasEditable = () => {
@@ -48,7 +54,7 @@ export const WorkflowDiagramCanvasEditable = () => {
   const { createEdge } = useCreateEdge();
 
   const { deleteEdge } = useDeleteEdge();
-  const { reconnectEdge } = useReconnectWorkflowEdge();
+  const { reconnectEdge: persistReconnectedEdge } = useReconnectWorkflowEdge();
 
   const { updateStep } = useUpdateStep();
 
@@ -106,6 +112,45 @@ export const WorkflowDiagramCanvasEditable = () => {
     });
   };
 
+  const onReconnect: OnReconnect<WorkflowDiagramEdge> = async (
+    oldEdge,
+    connection,
+  ) => {
+    setWorkflowDiagram((diagram) => {
+      if (!isDefined(diagram)) {
+        return diagram;
+      }
+
+      return {
+        ...diagram,
+        edges: reconnectDiagramEdge(oldEdge, connection, diagram.edges, {
+          shouldReplaceId: false,
+        }),
+      };
+    });
+
+    let wasSaved = false;
+
+    try {
+      wasSaved = await persistReconnectedEdge(oldEdge, connection);
+    } finally {
+      if (!wasSaved) {
+        setWorkflowDiagram((diagram) => {
+          if (!isDefined(diagram)) {
+            return diagram;
+          }
+
+          return {
+            ...diagram,
+            edges: diagram.edges.map((edge) =>
+              edge.id === oldEdge.id ? oldEdge : edge,
+            ),
+          };
+        });
+      }
+    }
+  };
+
   const onNodeDragStop: OnNodeDrag<WorkflowDiagramNode> = async (_, node) => {
     const stepToUpdate = flow?.steps?.find((step) => step.id === node.id);
 
@@ -161,7 +206,7 @@ export const WorkflowDiagramCanvasEditable = () => {
         tagColor={tagProps.color}
         tagText={tagProps.text}
         onConnect={onConnect}
-        onReconnect={reconnectEdge}
+        onReconnect={onReconnect}
         onNodeDragStop={onNodeDragStop}
         handlePaneContextMenu={handlePaneContextMenu}
         nodesConnectable

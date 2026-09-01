@@ -2,8 +2,12 @@ import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/creat
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 
+type WorkflowReconnectingEdgeState = WorkflowDiagramEdge & {
+  forbiddenTargetStepIds: Set<string>;
+};
+
 export const workflowReconnectingEdgeComponentState = createAtomComponentState<
-  WorkflowDiagramEdge | undefined
+  WorkflowReconnectingEdgeState | undefined
 >({
   key: 'workflowReconnectingEdgeComponentState',
   defaultValue: undefined,

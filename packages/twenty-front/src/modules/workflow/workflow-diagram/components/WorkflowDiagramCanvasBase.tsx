@@ -6,6 +6,7 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu';
 import { WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEmptyNodeDefinition';
 import { useResetWorkflowInsertStepIds } from '@/workflow/workflow-diagram/hooks/useResetWorkflowInsertStepIds';
@@ -26,6 +27,7 @@ import {
   type WorkflowDiagramNodeType,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { assertWorkflowConnectionOrThrow } from '@/workflow/workflow-diagram/utils/assertWorkflowConnectionOrThrow';
+import { getWorkflowReconnectionForbiddenTargetStepIds } from '@/workflow/workflow-diagram/utils/wouldReconnectWorkflowEdgeCreateCycle';
 import { WorkflowDiagramConnection } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramConnection';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramCustomMarkers';
 import { EDGE_BRANCH_ARROW_MARKER } from '@/workflow/workflow-diagram/workflow-edges/constants/EdgeBranchArrowMarker';
@@ -170,6 +172,7 @@ export const WorkflowDiagramCanvasBase = ({
   const workflowDiagram = useAtomComponentStateValue(
     workflowDiagramComponentState,
   );
+  const flow = useAtomComponentStateValue(flowComponentState);
   const workflowDiagramPanOnDrag = useAtomComponentStateValue(
     workflowDiagramPanOnDragComponentState,
   );
@@ -611,7 +614,15 @@ export const WorkflowDiagramCanvasBase = ({
         onConnectEnd={handleConnectEnd}
         onReconnect={onReconnect}
         onReconnectStart={(_, edge) => {
-          setWorkflowReconnectingEdge(edge);
+          setWorkflowReconnectingEdge({
+            ...edge,
+            forbiddenTargetStepIds: isDefined(flow)
+              ? getWorkflowReconnectionForbiddenTargetStepIds({
+                  flow,
+                  sourceStepId: edge.source,
+                })
+              : new Set<string>(),
+          });
           setConnectionStartInfo(null);
         }}
         onReconnectEnd={() => {

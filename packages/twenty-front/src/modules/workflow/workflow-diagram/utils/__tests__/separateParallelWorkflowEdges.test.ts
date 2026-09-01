@@ -68,6 +68,11 @@ describe('parallel workflow branches', () => {
           settings: { branchId: branch.id },
         })),
       );
+      expect(diagram.edges.map((edge) => edge.data?.edgePathStrategy)).toEqual([
+        'parallel-edge',
+        'parallel-edge',
+        'parallel-edge',
+      ]);
 
       for (const targetY of [200, 50]) {
         const paths = diagram.edges.map((edge) =>
@@ -78,6 +83,7 @@ describe('parallel workflow branches', () => {
             targetX: 100,
             targetY,
             targetPosition: Position.Top,
+            strategy: edge.data?.edgePathStrategy,
             parallelEdgeOffset: edge.data?.parallelEdgeOffset,
           }),
         );
