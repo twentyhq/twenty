@@ -41,11 +41,8 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
         : null))
     : null;
 
-  // Only the legacy shape is folded away; a path payload provided alongside a
-  // target flows through so validation rejects the ambiguous combination.
-  const payload = !isNavigation
-    ? null
-    : isObjectMetadataCommandMenuItemPayload(createCommandMenuItemInput.payload)
+  const payload =
+    !isNavigation || isDefined(navigationTargetObjectMetadataId)
       ? null
       : (createCommandMenuItemInput.payload ?? null);
 
