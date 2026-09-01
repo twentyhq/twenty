@@ -24,14 +24,12 @@ export const validateUsageLimitAgainstDefinition = (
     );
   }
 
-  const operationType = input.operationType ?? UsageOperationType.ALL;
-
   if (
-    operationType !== UsageOperationType.ALL &&
-    !definition.allowedOperationTypes.includes(operationType)
+    input.operationType !== UsageOperationType.ALL &&
+    !definition.allowedOperationTypes.includes(input.operationType)
   ) {
     throw new UsageLimitException(
-      `${input.resourceType} ${input.limitKind} limits cannot target the ${operationType} operation`,
+      `${input.resourceType} ${input.limitKind} limits cannot target the ${input.operationType} operation`,
       UsageLimitExceptionCode.LIMIT_RULE_INVALID,
     );
   }
@@ -100,7 +98,7 @@ export const validateUsageLimitAgainstDefinition = (
 
     if (
       input.meter === 'quantity' &&
-      operationType === UsageOperationType.ALL
+      input.operationType === UsageOperationType.ALL
     ) {
       throw new UsageLimitException(
         'A quantity quota needs an operation: only credits aggregate across operations',

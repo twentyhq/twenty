@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { SPENDER_TYPE_SPECIFICITY } from 'src/engine/core-modules/usage-limit/constants/spender-type-specificity.constant';
-import { type ResolvedSpeedLimitDefault } from 'src/engine/core-modules/usage-limit/types/resolved-speed-limit-default.type';
+import { type SpeedLimitDefault } from 'src/engine/core-modules/usage-limit/types/speed-limit-default.type';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { type SpeedBucketRequest } from 'src/engine/core-modules/usage-limit/types/speed-bucket-request.type';
 import { buildDefaultSpeedBucket } from 'src/engine/core-modules/usage-limit/utils/build-default-speed-bucket.util';
@@ -17,13 +17,13 @@ const bucketSpecificity = (bucket: SpeedBucketRequest): number =>
   (isDefined(bucket.spenderId) ? 0 : 1);
 
 export const buildSpeedBuckets = ({
-  resolvedSpeedLimitDefaults,
+  speedLimitDefaults,
   rules,
   authContext,
   resourceType,
   operationType,
 }: {
-  resolvedSpeedLimitDefaults: ResolvedSpeedLimitDefault[];
+  speedLimitDefaults: SpeedLimitDefault[];
   rules: FlatUsageLimit[];
   authContext: WorkspaceAuthContext;
   resourceType: UsageResourceType;
@@ -36,7 +36,7 @@ export const buildSpeedBuckets = ({
       rules,
       spender,
       operationType,
-    }).filter((rule) => rule.periodUnit === 'second');
+    }).filter((rule) => rule.limitKind === 'speed');
 
     const ruleBuckets = spenderRules.map((rule) => ({
       key: buildSpeedBucketKey({
@@ -60,7 +60,7 @@ export const buildSpeedBuckets = ({
       (rule) => rule.spenderId === '',
     );
 
-    const defaultBuckets = resolvedSpeedLimitDefaults
+    const defaultBuckets = speedLimitDefaults
       .filter(
         (speedLimitDefault) =>
           speedLimitDefault.spenderType === spender.spenderType &&

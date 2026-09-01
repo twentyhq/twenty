@@ -166,8 +166,7 @@ import { DropBillingCustomerCreditBalanceMicroFastInstanceCommand } from 'src/da
 import { DropHasReachedCurrentPeriodCapFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787906740819-drop-has-reached-current-period-cap';
 import { AddTimelineActivityHappensAtFieldFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787918663364-add-timeline-activity-happens-at-field';
 import { AddPageLayoutIsFirstTabPinnedFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787929843737-add-page-layout-is-first-tab-pinned';
-import { AddUsageLimitPeriodColumnsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788198642266-add-usage-limit-period-columns';
-import { ReshapeUsageLimitPeriodSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-slow-1788198642267-reshape-usage-limit-period';
+import { ReshapeUsageLimitPeriodFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788198642266-reshape-usage-limit-period';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -336,6 +335,5 @@ export const INSTANCE_COMMANDS = [
   DropHasReachedCurrentPeriodCapFastInstanceCommand,
   AddTimelineActivityHappensAtFieldFastInstanceCommand,
   AddPageLayoutIsFirstTabPinnedFastInstanceCommand,
-  AddUsageLimitPeriodColumnsFastInstanceCommand,
-  ReshapeUsageLimitPeriodSlowInstanceCommand,
+  ReshapeUsageLimitPeriodFastInstanceCommand,
 ];

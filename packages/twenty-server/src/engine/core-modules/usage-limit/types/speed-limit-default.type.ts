@@ -1,11 +1,9 @@
-import { type NumericConfigVariableKey } from 'src/engine/core-modules/twenty-config/types/numeric-config-variable-key.type';
-import { type CounterScope } from 'src/engine/core-modules/usage-limit/types/counter-scope.type';
-import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
+import { type SpeedLimitDefaultDefinition } from 'src/engine/core-modules/usage-limit/types/speed-limit-default-definition.type';
 
-export type SpeedLimitDefault = {
-  spenderType: SpenderType;
-  counterScope: CounterScope;
-  isOverridable: boolean;
-  limitValueConfigVariable: NumericConfigVariableKey;
-  windowMsConfigVariable: NumericConfigVariableKey;
+export type SpeedLimitDefault = Pick<
+  SpeedLimitDefaultDefinition,
+  'spenderType' | 'counterScope' | 'isOverridable'
+> & {
+  maxTokens: number;
+  windowMs: number;
 };

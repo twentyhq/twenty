@@ -1,7 +1,7 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { type ResolvedSpeedLimitDefault } from 'src/engine/core-modules/usage-limit/types/resolved-speed-limit-default.type';
+import { type SpeedLimitDefault } from 'src/engine/core-modules/usage-limit/types/speed-limit-default.type';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { buildSpeedBuckets } from 'src/engine/core-modules/usage-limit/utils/build-speed-buckets.util';
 
@@ -9,7 +9,7 @@ const workspace = { id: 'workspace-1' };
 
 // The registry defaults, standing in for API_RATE_LIMITING_* and
 // APPLICATION_API_RATE_LIMITING_*.
-const RESOLVED_SPEED_LIMIT_DEFAULTS: ResolvedSpeedLimitDefault[] = [
+const SPEED_LIMIT_DEFAULTS: SpeedLimitDefault[] = [
   {
     spenderType: 'apiKey',
     counterScope: 'perWorkspace',
@@ -57,7 +57,7 @@ const buildBuckets = ({
   rules?: FlatUsageLimit[];
 }) =>
   buildSpeedBuckets({
-    resolvedSpeedLimitDefaults: RESOLVED_SPEED_LIMIT_DEFAULTS,
+    speedLimitDefaults: SPEED_LIMIT_DEFAULTS,
     rules,
     authContext,
     resourceType: UsageResourceType.API,

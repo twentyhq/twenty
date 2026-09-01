@@ -64,7 +64,6 @@ describe('usageLimitToGraphqlApiExceptionHandler', () => {
       remaining: 0,
       periodCount: 60,
       periodUnit: 'second',
-      windowSeconds: 60,
       retryAfterMs: 11983,
       scope: { spenderType: 'apiKey', spenderId: 'key-1' },
     });

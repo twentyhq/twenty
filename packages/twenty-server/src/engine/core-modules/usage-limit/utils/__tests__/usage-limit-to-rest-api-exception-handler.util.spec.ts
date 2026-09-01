@@ -58,7 +58,6 @@ describe('usageLimitToRestApiExceptionHandler', () => {
       remaining: 0,
       periodCount: 60,
       periodUnit: 'second',
-      windowSeconds: 60,
       retryAfterSeconds: 12,
     });
   });

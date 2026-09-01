@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type ResolvedSpeedLimitDefault } from 'src/engine/core-modules/usage-limit/types/resolved-speed-limit-default.type';
+import { type SpeedLimitDefault } from 'src/engine/core-modules/usage-limit/types/speed-limit-default.type';
 import { type SpeedBucketRequest } from 'src/engine/core-modules/usage-limit/types/speed-bucket-request.type';
 import { type Spender } from 'src/engine/core-modules/usage-limit/types/spender.type';
 import { buildSpeedBucketKey } from 'src/engine/core-modules/usage-limit/utils/build-speed-bucket-key.util';
@@ -16,7 +16,7 @@ export const buildDefaultSpeedBucket = ({
   resourceType,
   operationType,
 }: {
-  speedLimitDefault: ResolvedSpeedLimitDefault;
+  speedLimitDefault: SpeedLimitDefault;
   spender: Spender;
   authContext: WorkspaceAuthContext;
   resourceType: UsageResourceType;

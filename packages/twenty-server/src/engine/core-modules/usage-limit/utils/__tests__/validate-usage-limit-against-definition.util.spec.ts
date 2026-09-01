@@ -135,7 +135,7 @@ describe('validateUsageLimitAgainstDefinition', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
         ...validQuotaRule,
-        operationType: null,
+        operationType: UsageOperationType.ALL,
       }),
     ).not.toThrow();
   });
@@ -248,7 +248,7 @@ describe('validateUsageLimitAgainstDefinition', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
         ...validQuotaRule,
-        operationType: null,
+        operationType: UsageOperationType.ALL,
         meter: 'quantity',
         limitValueType: 'absolute',
         limitValue: 1_000_000,
