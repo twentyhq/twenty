@@ -9,10 +9,9 @@ export const getCompanyLogoUrl = (
     return undefined;
   }
 
-  const normalized =
-    trimmed.startsWith('http://') || trimmed.startsWith('https://')
-      ? trimmed
-      : `https://${trimmed}`;
+  const normalized = /^https?:\/\//i.test(trimmed)
+    ? trimmed
+    : `https://${trimmed}`;
 
   try {
     const hostname = new URL(normalized).hostname.replace(/^www\./, '');

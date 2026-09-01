@@ -11,7 +11,7 @@ export const getPublicAvatarUrl = ({
 }): string | undefined => {
   const url = asNonEmptyString(avatarUrl);
 
-  if (!isDefined(url) || !/^https?:\/\//.test(url)) {
+  if (!isDefined(url) || !/^https?:\/\//i.test(url)) {
     return undefined;
   }
 

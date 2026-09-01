@@ -1,4 +1,4 @@
-import { type WebClient } from '@slack/web-api';
+import { type EntityMetadata, type WebClient } from '@slack/web-api';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { type SlackPostMessageInput } from 'src/logic-functions/types/slack-post-message-input.type';
@@ -19,37 +19,45 @@ export const postSlackMessage = async (
     parameters.messageText,
   );
 
-  return await sendSlackMessageWithBodyFallbacks({
-    messageText: parameters.messageText,
-    messageBody: {
-      messageFormat: parameters.messageFormat,
-      messageBlocks: parameters.messageBlocks,
-    },
-    failureMessage: 'Failed to post Slack message',
-    sendMessage: async (bodyFields) => {
-      const data = await client.chat.postMessage({
-        channel: parameters.slackChannelId,
-        thread_ts: parentTimestamp,
-        ...(isDefined(parameters.unfurlLinks)
-          ? { unfurl_links: parameters.unfurlLinks }
-          : {}),
-        ...(isDefined(parameters.unfurlMedia)
-          ? { unfurl_media: parameters.unfurlMedia }
-          : {}),
-        ...(recordEntities.length > 0
-          ? { metadata: { entities: recordEntities } }
-          : {}),
-        ...bodyFields,
-      });
+  const post = async (entities: EntityMetadata[]): Promise<SlackToolResult> =>
+    await sendSlackMessageWithBodyFallbacks({
+      messageText: parameters.messageText,
+      messageBody: {
+        messageFormat: parameters.messageFormat,
+        messageBlocks: parameters.messageBlocks,
+      },
+      failureMessage: 'Failed to post Slack message',
+      sendMessage: async (bodyFields) => {
+        const data = await client.chat.postMessage({
+          channel: parameters.slackChannelId,
+          thread_ts: parentTimestamp,
+          ...(isDefined(parameters.unfurlLinks)
+            ? { unfurl_links: parameters.unfurlLinks }
+            : {}),
+          ...(isDefined(parameters.unfurlMedia)
+            ? { unfurl_media: parameters.unfurlMedia }
+            : {}),
+          ...(entities.length > 0 ? { metadata: { entities } } : {}),
+          ...bodyFields,
+        });
 
-      return {
-        success: true,
-        message: data.ts
-          ? `Message posted to Slack (ts=${data.ts}).`
-          : 'Message posted to Slack.',
-        slackTs: data.ts,
-        channel: data.channel,
-      };
-    },
-  });
+        return {
+          success: true,
+          message: data.ts
+            ? `Message posted to Slack (ts=${data.ts}).`
+            : 'Message posted to Slack.',
+          slackTs: data.ts,
+          channel: data.channel,
+        };
+      },
+    });
+
+  const result = await post(recordEntities);
+
+  if (result.success || recordEntities.length === 0) {
+    return result;
+  }
+
+  // a preview Slack refuses must cost the preview, never the message
+  return await post([]);
 };

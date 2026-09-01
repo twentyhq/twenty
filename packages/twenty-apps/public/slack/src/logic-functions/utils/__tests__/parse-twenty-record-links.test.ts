@@ -25,7 +25,8 @@ describe('parseTwentyRecordLinks', () => {
       'task',
     ]);
     expect(recordLinks[0]).toEqual({
-      url: urls[0],
+      sharedUrl: urls[0],
+      canonicalUrl: urls[0],
       objectNameSingular: 'person',
       recordId: RECORD_ID,
     });
@@ -76,6 +77,22 @@ describe('parseTwentyRecordLinks', () => {
         ],
       }),
     ).toHaveLength(1);
+  });
+
+  it('should keep the shared URL for matching and a canonical URL for the link', () => {
+    const sharedUrl = `${WORKSPACE_BASE_URL}/object/person/${RECORD_ID}?view=table#top`;
+
+    expect(
+      parseTwentyRecordLinks({
+        workspaceBaseUrl: WORKSPACE_BASE_URL,
+        urls: [sharedUrl],
+      })[0],
+    ).toEqual({
+      sharedUrl,
+      canonicalUrl: `${WORKSPACE_BASE_URL}/object/person/${RECORD_ID}`,
+      objectNameSingular: 'person',
+      recordId: RECORD_ID,
+    });
   });
 
   it('should skip links from another host', () => {

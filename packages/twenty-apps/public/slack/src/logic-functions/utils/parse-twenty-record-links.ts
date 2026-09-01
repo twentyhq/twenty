@@ -9,7 +9,7 @@ const UUID_PATTERN =
 const isSupportedObjectName = (
   value: string,
 ): value is SlackRecordLink['objectNameSingular'] =>
-  (SLACK_UNFURL_OBJECT_NAMES as readonly string[]).includes(value);
+  SLACK_UNFURL_OBJECT_NAMES.some((objectName) => objectName === value);
 
 const parseRecordLink = ({
   workspaceBaseUrl,
@@ -40,7 +40,12 @@ const parseRecordLink = ({
     return undefined;
   }
 
-  return { url, objectNameSingular, recordId };
+  return {
+    sharedUrl: url,
+    canonicalUrl: `${workspaceBaseUrl}/object/${objectNameSingular}/${recordId}`,
+    objectNameSingular,
+    recordId,
+  };
 };
 
 export const parseTwentyRecordLinks = ({

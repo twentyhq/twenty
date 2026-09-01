@@ -15,37 +15,29 @@ export const fetchSlackRecordEntities = async ({
   recordLinks: SlackRecordLink[];
   workspaceBaseUrl: string;
 }): Promise<EntityMetadata[]> => {
-  const entities: EntityMetadata[] = [];
-
-  for (const recordLink of recordLinks) {
-    const record = await findSlackUnfurlRecord({
-      client,
-      objectNameSingular: recordLink.objectNameSingular,
-      recordId: recordLink.recordId,
-    }).catch(
-      (error) => {
+  const entities = await Promise.all(
+    recordLinks.map(async (recordLink) => {
+      const record = await findSlackUnfurlRecord({
+        client,
+        objectNameSingular: recordLink.objectNameSingular,
+        recordId: recordLink.recordId,
+      }).catch((error) => {
         console.warn(
           `[slack] record fetch for preview failed (${recordLink.objectNameSingular} ${recordLink.recordId}): ${error instanceof Error ? error.message : String(error)}`,
         );
 
         return undefined;
-      },
-    );
+      });
 
-    if (!isDefined(record)) {
-      continue;
-    }
+      return isDefined(record)
+        ? buildSlackRecordUnfurlEntity({
+            recordLink,
+            record,
+            workspaceBaseUrl,
+          })
+        : undefined;
+    }),
+  );
 
-    const entity = buildSlackRecordUnfurlEntity({
-      recordLink,
-      record,
-      workspaceBaseUrl,
-    });
-
-    if (isDefined(entity)) {
-      entities.push(entity);
-    }
-  }
-
-  return entities;
+  return entities.filter(isDefined);
 };

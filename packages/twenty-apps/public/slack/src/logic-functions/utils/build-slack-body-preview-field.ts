@@ -16,9 +16,11 @@ export const buildSlackBodyPreviewField = (
     return undefined;
   }
 
+  const codePoints = [...markdown];
+
   const preview =
-    markdown.length > BODY_PREVIEW_MAX_LENGTH
-      ? `${markdown.slice(0, BODY_PREVIEW_MAX_LENGTH)}…`
+    codePoints.length > BODY_PREVIEW_MAX_LENGTH
+      ? `${codePoints.slice(0, BODY_PREVIEW_MAX_LENGTH).join('')}…`
       : markdown;
 
   return {

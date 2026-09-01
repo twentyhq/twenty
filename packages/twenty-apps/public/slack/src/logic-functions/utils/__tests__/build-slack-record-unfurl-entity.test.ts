@@ -7,7 +7,8 @@ const PERSON_ID = '20202020-0713-4b29-8f43-1111e2f6a4b1';
 const COMPANY_ID = '20202020-0713-4b29-8f43-2222e2f6a4b2';
 
 const buildPersonRecordLink = () => ({
-  url: `${WORKSPACE_BASE_URL}/object/person/${PERSON_ID}`,
+  sharedUrl: `${WORKSPACE_BASE_URL}/object/person/${PERSON_ID}`,
+  canonicalUrl: `${WORKSPACE_BASE_URL}/object/person/${PERSON_ID}`,
   objectNameSingular: 'person' as const,
   recordId: PERSON_ID,
 });
@@ -110,7 +111,8 @@ describe('buildSlackRecordUnfurlEntity', () => {
   it('should absolutize a bare company domain so Slack accepts the link field', () => {
     const entity = buildSlackRecordUnfurlEntity({
       recordLink: {
-        url: `${WORKSPACE_BASE_URL}/object/company/${COMPANY_ID}`,
+        sharedUrl: `${WORKSPACE_BASE_URL}/object/company/${COMPANY_ID}`,
+        canonicalUrl: `${WORKSPACE_BASE_URL}/object/company/${COMPANY_ID}`,
         objectNameSingular: 'company',
         recordId: COMPANY_ID,
       },
@@ -129,7 +131,8 @@ describe('buildSlackRecordUnfurlEntity', () => {
   it('should fall back to the Twenty mark when the record has no icon', () => {
     const entity = buildSlackRecordUnfurlEntity({
       recordLink: {
-        url: `${WORKSPACE_BASE_URL}/object/note/${PERSON_ID}`,
+        sharedUrl: `${WORKSPACE_BASE_URL}/object/note/${PERSON_ID}`,
+        canonicalUrl: `${WORKSPACE_BASE_URL}/object/note/${PERSON_ID}`,
         objectNameSingular: 'note',
         recordId: PERSON_ID,
       },

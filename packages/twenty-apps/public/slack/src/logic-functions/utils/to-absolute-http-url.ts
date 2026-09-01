@@ -7,10 +7,16 @@ export const toAbsoluteHttpUrl = (
     return undefined;
   }
 
-  const candidate = /^https?:\/\//i.test(value) ? value : `https://${value}`;
+  // a colon followed by digits is a port, not a scheme (acme.dev:8080)
+  const hasScheme = /^[a-z][a-z0-9+.-]*:(?!\d)/i.test(value);
+  const candidate = hasScheme ? value : `https://${value}`;
 
   try {
-    return new URL(candidate).toString();
+    const url = new URL(candidate);
+
+    return url.protocol === 'http:' || url.protocol === 'https:'
+      ? url.toString()
+      : undefined;
   } catch {
     return undefined;
   }

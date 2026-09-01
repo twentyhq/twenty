@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
+import { asObject } from 'src/logic-functions/utils/as-object';
 
 type ParsedSlackLinkSharedEvent =
   | {
@@ -48,8 +49,8 @@ export const parseSlackLinkSharedEvent = (
     };
   }
 
-  const urls = (event.links ?? [])
-    .map((link) => link.url)
+  const urls = (Array.isArray(event.links) ? event.links : [])
+    .map((link) => asObject(link)?.url)
     .filter(isNonEmptyString);
 
   if (urls.length === 0) {

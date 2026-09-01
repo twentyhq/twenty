@@ -64,7 +64,7 @@ export const buildSlackRecordUnfurlEntity = ({
       id: recordLink.recordId,
       type: recordLink.objectNameSingular,
     },
-    url: recordLink.url,
-    app_unfurl_url: recordLink.url,
+    url: recordLink.canonicalUrl,
+    app_unfurl_url: recordLink.sharedUrl,
   };
 };

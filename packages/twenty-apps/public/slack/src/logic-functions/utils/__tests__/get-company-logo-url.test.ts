@@ -15,6 +15,12 @@ describe('getCompanyLogoUrl', () => {
     );
   });
 
+  it('should handle an upper-case scheme', () => {
+    expect(getCompanyLogoUrl('HTTP://acme.dev')).toBe(
+      'https://twenty-icons.com/acme.dev',
+    );
+  });
+
   it('should return undefined for empty or missing input', () => {
     expect(getCompanyLogoUrl(undefined)).toBeUndefined();
     expect(getCompanyLogoUrl('   ')).toBeUndefined();

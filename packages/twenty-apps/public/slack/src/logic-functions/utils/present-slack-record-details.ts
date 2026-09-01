@@ -160,7 +160,9 @@ export const presentSlackRecordDetails = async (
     await presentDetailsError({
       slackClient,
       triggerId,
-      message: 'This record could not be found in Twenty.',
+      message: isDefined(record)
+        ? 'This record has no name to show.'
+        : 'This record could not be found in Twenty.',
     });
 
     return { ok: true, skipped: 'Record is missing or unreadable' };
