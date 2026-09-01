@@ -318,7 +318,8 @@ export class CalDavFetchEventsService {
       (href) => storedEtags[href] !== currentEtags[href],
     );
     const cancelledHrefs = Object.keys(storedEtags).filter(
-      (href) => !(href in currentEtags),
+      (href) =>
+        !(href in currentEtags) && !isCalDavCollectionHref(href, calendar.url),
     );
 
     return {

@@ -31,6 +31,13 @@ describe('isCalDavCollectionHref', () => {
     expect(isCalDavCollectionHref(href, collectionUrl)).toBe(false);
   });
 
+  it.each(['http://[', 'https://%%', 'http://host name/calendar/'])(
+    'does not identify the unparseable href %s as collection',
+    (href) => {
+      expect(isCalDavCollectionHref(href, collectionUrl)).toBe(false);
+    },
+  );
+
   it('does not identify an event hosted on another origin as collection', () => {
     expect(
       isCalDavCollectionHref(

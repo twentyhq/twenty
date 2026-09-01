@@ -24,6 +24,19 @@ describe('isSameCalDavResource', () => {
     expect(isSameCalDavResource(href, collectionUrl)).toBe(false);
   });
 
+  it.each(['http://[', 'https://%%', 'http://host name/calendar/'])(
+    'treats the unparseable href %s as a different resource',
+    (href) => {
+      expect(isSameCalDavResource(href, collectionUrl)).toBe(false);
+    },
+  );
+
+  it('treats an unparseable collection url as a different resource', () => {
+    expect(isSameCalDavResource('/calendars/user/work/', 'not a url')).toBe(
+      false,
+    );
+  });
+
   it('resolves percent-encoded and decoded paths to the same resource', () => {
     expect(
       isSameCalDavResource(
