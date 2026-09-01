@@ -87,7 +87,6 @@ export class ObjectMetadataCreateGqlInputTypeGenerator {
             {
               fieldMetadata: relationFieldMetadata,
               typeOptions,
-              kind: GqlInputTypeDefinitionKind.Create,
             },
           ),
         };

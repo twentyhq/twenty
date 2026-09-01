@@ -17,7 +17,6 @@ import {
   applyTypeOptionsForCreateInput,
 } from 'src/engine/api/graphql/workspace-schema-builder/utils/apply-type-options-for-create-input.util';
 import { computeObjectMetadataInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-input-type.util';
-import { computeRelationCreateInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-relation-create-input-type-key.util';
 import { computeRelationConnectInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-relation-connect-input-type-key.util';
 import { extractGraphQLRelationFieldNames } from 'src/engine/api/graphql/workspace-schema-builder/utils/extract-graphql-relation-field-names.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -235,13 +234,11 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
   public generateConnectRelationFieldInputType({
     fieldMetadata,
     typeOptions,
-    kind,
   }: {
     fieldMetadata: FlatFieldMetadata<
       FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
     >;
     typeOptions: CreateInputTypeOptions;
-    kind: GqlInputTypeDefinitionKind.Create | GqlInputTypeDefinitionKind.Update;
   }) {
     if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY) {
       return {};
@@ -256,14 +253,9 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
       );
     }
 
-    const key =
-      kind === GqlInputTypeDefinitionKind.Create
-        ? computeRelationCreateInputTypeKey(
-            fieldMetadata.relationTargetObjectMetadataId,
-          )
-        : computeRelationConnectInputTypeKey(
-            fieldMetadata.relationTargetObjectMetadataId,
-          );
+    const key = computeRelationConnectInputTypeKey(
+      fieldMetadata.relationTargetObjectMetadataId,
+    );
 
     const type = this.gqlTypesStorage.getGqlTypeByKey(key);
 

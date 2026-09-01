@@ -260,7 +260,11 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     expect(companyResponse.body.data.company).toBeNull();
   });
 
-  it('should not expose nested create in update relation inputs', async () => {
+  it('should reject nested create in update operations', async () => {
+    const companyId = v4();
+
+    generatedCompanyIds.push(companyId);
+
     const response = await makeGraphqlAPIRequest(
       updateOneOperationFactory({
         objectMetadataSingularName: 'person',
@@ -268,16 +272,23 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
         recordId: TEST_PERSON_1_ID,
         data: {
           company: {
-            create: { id: v4() },
+            create: { id: companyId },
           },
         },
       }),
     );
 
     expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].message).toContain(
-      'Field "create" is not defined',
+
+    const companyResponse = await makeGraphqlAPIRequest(
+      findOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: 'id',
+        filter: { id: { eq: companyId } },
+      }),
     );
+
+    expect(companyResponse.body.data.company).toBeNull();
   });
 
   it('should connect to other records through a MANY-TO-ONE relation - create One', async () => {
