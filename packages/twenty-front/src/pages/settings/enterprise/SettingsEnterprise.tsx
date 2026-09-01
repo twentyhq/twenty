@@ -242,10 +242,10 @@ export const SettingsEnterprise = ({
       ? t`Your enterprise features will remain active until ${cancelAtDate}.`
       : null;
 
-  // expiresAt is the validity token lease renewed daily by the instance, not a
-  // billing date, so the subscription rows read the Stripe period instead.
-  const subscriptionDate = isCancelScheduled ? cancelAt : currentPeriodEnd;
-  const subscriptionDateLabel = isCancelScheduled
+  const cancellationOrPeriodEndDate = isCancelScheduled
+    ? cancelAt
+    : currentPeriodEnd;
+  const cancellationOrPeriodEndDateLabel = isCancelScheduled
     ? t`Cancels on`
     : t`Renews on`;
 
@@ -702,11 +702,11 @@ export const SettingsEnterprise = ({
                   currentValue={licensee}
                 />
               )}
-              {isDefined(subscriptionDate) && (
+              {isDefined(cancellationOrPeriodEndDate) && (
                 <SubscriptionInfoRowContainer
-                  label={subscriptionDateLabel}
+                  label={cancellationOrPeriodEndDateLabel}
                   Icon={IconCalendarRepeat}
-                  currentValue={subscriptionDate.toLocaleDateString()}
+                  currentValue={cancellationOrPeriodEndDate.toLocaleDateString()}
                 />
               )}
             </SubscriptionInfoContainer>
@@ -764,11 +764,11 @@ export const SettingsEnterprise = ({
                   currentValue={licensee}
                 />
               )}
-              {isDefined(subscriptionDate) && (
+              {isDefined(cancellationOrPeriodEndDate) && (
                 <SubscriptionInfoRowContainer
-                  label={subscriptionDateLabel}
+                  label={cancellationOrPeriodEndDateLabel}
                   Icon={IconCalendarRepeat}
-                  currentValue={subscriptionDate.toLocaleDateString()}
+                  currentValue={cancellationOrPeriodEndDate.toLocaleDateString()}
                 />
               )}
             </SubscriptionInfoContainer>
