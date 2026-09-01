@@ -43,12 +43,6 @@ export const useWorkspaceMemberSearch = (
     setOptions([]);
     setSearchErrorMessage(undefined);
 
-    if (!isNonEmptyString(filter)) {
-      setIsSearching(false);
-
-      return;
-    }
-
     let cancelled = false;
 
     setIsSearching(true);
@@ -60,7 +54,7 @@ export const useWorkspaceMemberSearch = (
             '/rest/workspaceMembers',
             {
               query: {
-                filter,
+                ...(isNonEmptyString(filter) ? { filter } : {}),
                 limit: String(WORKSPACE_MEMBER_SEARCH_PAGE_SIZE),
               },
             },
