@@ -8,7 +8,7 @@ import { buildUnsubscribeHeaders } from 'src/engine/core-modules/emailing-domain
 import { appendHtmlFooter } from 'src/engine/core-modules/emailing-domain/utils/append-html-footer.util';
 import { buildUnsubscribeHtmlFooter } from 'src/engine/core-modules/emailing-domain/utils/build-unsubscribe-html-footer.util';
 import { buildUnsubscribeTextFooter } from 'src/engine/core-modules/emailing-domain/utils/build-unsubscribe-text-footer.util';
-import { buildUnsubscribeUrls } from 'src/engine/core-modules/emailing-domain/utils/build-unsubscribe-urls.util';
+import { buildUnsubscribeWebUrl } from 'src/engine/core-modules/emailing-domain/utils/build-unsubscribe-web-url.util';
 
 @Injectable()
 export class UnsubscribeContentService {
@@ -32,24 +32,20 @@ export class UnsubscribeContentService {
         : {}),
     });
 
-    const unsubscribeUrls = buildUnsubscribeUrls({
+    const webUrl = buildUnsubscribeWebUrl({
       unsubscribeBaseUrl,
-      domain: email.domain,
       token,
     });
 
     return {
       ...email,
-      text: `${email.text}${buildUnsubscribeTextFooter(unsubscribeUrls.webUrl)}`,
+      text: `${email.text}${buildUnsubscribeTextFooter(webUrl)}`,
       html: isNonEmptyString(email.html)
-        ? appendHtmlFooter(
-            email.html,
-            buildUnsubscribeHtmlFooter(unsubscribeUrls.webUrl),
-          )
+        ? appendHtmlFooter(email.html, buildUnsubscribeHtmlFooter(webUrl))
         : email.html,
       headers: [
         ...(email.headers ?? []),
-        ...buildUnsubscribeHeaders(unsubscribeUrls),
+        ...buildUnsubscribeHeaders({ webUrl }),
       ],
     };
   }
