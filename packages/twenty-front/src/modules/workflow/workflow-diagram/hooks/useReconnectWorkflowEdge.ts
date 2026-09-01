@@ -13,7 +13,6 @@ import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { useRef } from 'react';
 
 export const useReconnectWorkflowEdge = () => {
   const store = useStore();
@@ -21,11 +20,8 @@ export const useReconnectWorkflowEdge = () => {
     useAtomComponentStateCallbackState(flowComponentState);
   const { updateStep } = useUpdateStep();
   const { updateTrigger } = useUpdateWorkflowVersionTrigger();
-  // Events from the same render must share an imperative queue.
-  // oxlint-disable-next-line twenty/no-state-useref
-  const reconnectionQueueRef = useRef<Promise<void>>(Promise.resolve());
 
-  const reconnectEdgeImmediately = async (
+  const reconnectEdge = async (
     oldEdge: WorkflowDiagramEdge,
     connection: Connection,
   ) => {
@@ -98,22 +94,6 @@ export const useReconnectWorkflowEdge = () => {
     }
 
     return false;
-  };
-
-  const reconnectEdge = (
-    oldEdge: WorkflowDiagramEdge,
-    connection: Connection,
-  ) => {
-    const reconnection = reconnectionQueueRef.current.then(() =>
-      reconnectEdgeImmediately(oldEdge, connection),
-    );
-
-    reconnectionQueueRef.current = reconnection.then(
-      () => undefined,
-      () => undefined,
-    );
-
-    return reconnection;
   };
 
   return { reconnectEdge };
