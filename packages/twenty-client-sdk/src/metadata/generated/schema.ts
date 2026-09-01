@@ -2596,6 +2596,7 @@ export interface ChannelSyncSuccess {
 export interface CreateCalendarEventOutput {
     success: Scalars['Boolean']
     iCalUid?: Scalars['String']
+    calendarEventId?: Scalars['String']
     conferenceLink?: Scalars['String']
     error?: Scalars['String']
     __typename: 'CreateCalendarEventOutput'
@@ -6083,6 +6084,7 @@ export interface ChannelSyncSuccessGenqlSelection{
 export interface CreateCalendarEventOutputGenqlSelection{
     success?: boolean | number
     iCalUid?: boolean | number
+    calendarEventId?: boolean | number
     conferenceLink?: boolean | number
     error?: boolean | number
     __typename?: boolean | number

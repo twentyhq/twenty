@@ -23,6 +23,8 @@ export const FieldContextProvider = ({
   showLabel = true,
   maxWidth,
   isDisplayModeFixHeight,
+  onOpenEditMode,
+  onCloseEditMode,
   children,
 }: {
   clearable?: boolean;
@@ -38,6 +40,8 @@ export const FieldContextProvider = ({
   showLabel?: boolean;
   maxWidth?: number;
   isDisplayModeFixHeight?: boolean;
+  onOpenEditMode?: () => void;
+  onCloseEditMode?: () => void;
   children: ReactNode;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -94,6 +98,8 @@ export const FieldContextProvider = ({
         anchorId,
         maxWidth,
         isDisplayModeFixHeight,
+        onOpenEditMode,
+        onCloseEditMode,
       }}
     >
       {children}
