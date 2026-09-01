@@ -713,7 +713,11 @@ export class AgentChatService {
     const claim = await this.threadRepository.update(
       workspaceId,
       { id: threadId, pendingQuestionMessageId: messageId },
-      { pendingQuestionMessageId: null, activeStreamId: streamId },
+      {
+        pendingQuestionMessageId: null,
+        activeStreamId: streamId,
+        lastStreamError: null,
+      },
     );
 
     if ((claim.affected ?? 0) === 0) {
@@ -801,7 +805,7 @@ export class AgentChatService {
         pendingQuestionMessageId: IsNull(),
         activeStreamId: IsNull(),
       },
-      { activeStreamId: streamId },
+      { activeStreamId: streamId, lastStreamError: null },
     );
 
     return (claim.affected ?? 0) > 0;
