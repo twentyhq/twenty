@@ -138,11 +138,21 @@ Notes:
 
 ### New async mutations — existing ones unchanged
 
-The existing `installApplication` / `upgradeApplication` / `uninstallApplication` mutations keep their synchronous behavior, untouched: the CLI and any external API consumer see no breaking change. New enqueue-only mutations are added for the frontend — `installApplicationAsync` / `upgradeApplicationAsync` / `uninstallApplicationAsync` (naming open; same guards, same DTOs). They:
+The existing `installApplication` / `upgradeApplication` / `uninstallApplication` mutations keep their synchronous behavior, signatures and outputs, untouched: the CLI and any external API consumer see no breaking change. New enqueue-only mutations are added for the frontend — `installApplicationAsync` / `upgradeApplicationAsync` / `uninstallApplicationAsync` (naming open).
+
+Their outputs differ from the synchronous ones, because resolving means "operation accepted and enqueued", not "operation done" — completion arrives over SSE (PR 2). All three return the `Application` row in its transitional state, which is exactly what the front needs to follow the operation by id:
+
+| Mutation | Sync output (unchanged) | Async output |
+|---|---|---|
+| install | `Application`, fully installed | `Application`, `state: INSTALLING` (or `UPGRADING` when already installed) |
+| upgrade | `Application`, upgraded | `Application`, `state: UPGRADING` |
+| uninstall | `Boolean`, uninstall done | `Application`, `state: UNINSTALLING` — the front follows this row until it disappears |
+
+The async mutations:
 
 1. **Fail fast at enqueue time** (*from #24941*) so common errors still surface synchronously on the mutation: registration existence, tarball ownership/listing availability, `canBeUninstalled`, synchronous version-progression check, and the concurrent-operation guard.
 2. **Reserve the lifecycle atomically.** Every transition goes through `ApplicationService.transitionState`, a single conditional write: `UPDATE application SET state = $next WHERE id = $id AND state = $expected`, affected-rows-checked. The loser of a race gets a new `APPLICATION_OPERATION_IN_PROGRESS` exception code. Two concurrent *fresh* installs have no row to gate on; the partial unique index on `(universalIdentifier, workspaceId)` arbitrates and the losing insert maps to the same error. This must be atomic from the first commit — the read-then-check-then-update variant was #24941's main review finding.
-3. Install pre-creates the row (`INSTALLING` placeholder from registration data) or flips an installed row to `UPGRADING`; uninstall flips to `UNINSTALLING`; then enqueue. **Enqueue failure compensates**: revert via `transitionStateBestEffort` (log, don't throw — a failed recovery must not mask the enqueue error) or delete the fresh placeholder. `installApplicationAsync` returns the `Application` with its transitional `state`; `uninstallApplicationAsync` returns `Boolean` like its synchronous counterpart.
+3. Install pre-creates the row (`INSTALLING` placeholder from registration data) or flips an installed row to `UPGRADING`; uninstall flips to `UNINSTALLING`; then enqueue, and return the row as claimed. **Enqueue failure compensates**: revert via `transitionStateBestEffort` (log, don't throw — a failed recovery must not mask the enqueue error) or delete the fresh placeholder.
 
 Because sync and async operations now coexist, the synchronous paths must claim the lifecycle through the same `transitionState` gate (they already write the states since PR 1 — this upgrades those writes to conditional ones), so a sync CLI install and an async UI install on the same app cannot run concurrently: the loser gets `APPLICATION_OPERATION_IN_PROGRESS` whichever side it is. The existing `app-install:` cache lock stays inside the service as the execution-time serializer; state gating is the request-time arbiter.
 
