@@ -9,7 +9,7 @@ const RELAXED_ENGINE_KEY_COHERENCE_CHECK = `("engineComponentKey" = 'TRIGGER_WOR
 
 const EXCLUSIVE_ENGINE_KEY_COHERENCE_CHECK = `("engineComponentKey" = 'TRIGGER_WORKFLOW_VERSION' AND "workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "payload" IS NULL AND "navigationTargetObjectMetadataId" IS NULL) OR ("engineComponentKey" = 'FRONT_COMPONENT_RENDERER' AND "frontComponentId" IS NOT NULL AND "workflowVersionId" IS NULL AND "payload" IS NULL AND "navigationTargetObjectMetadataId" IS NULL) OR ("engineComponentKey" = 'NAVIGATION' AND (("payload" IS NOT NULL AND "navigationTargetObjectMetadataId" IS NULL) OR ("payload" IS NULL AND "navigationTargetObjectMetadataId" IS NOT NULL)) AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL) OR ("engineComponentKey" NOT IN ('TRIGGER_WORKFLOW_VERSION', 'FRONT_COMPONENT_RENDERER', 'NAVIGATION') AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "payload" IS NULL AND "navigationTargetObjectMetadataId" IS NULL)`;
 
-@RegisteredInstanceCommand('2.38.0', 1788270952908, { type: 'slow' })
+@RegisteredInstanceCommand('2.38.0', 1788272351971, { type: 'slow' })
 export class EraseObjectNavigationCommandMenuItemPayloadsSlowInstanceCommand
   implements SlowInstanceCommand
 {
