@@ -2,7 +2,15 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-sdk/utils';
-import { Tag } from 'twenty-ui/data-display';
+import { Avatar, Tag } from 'twenty-ui/data-display';
+import {
+  IconSend,
+  IconTrash,
+  type IconComponent,
+  type IconComponentProps,
+} from 'twenty-ui/icon';
+import { Button, LightIconButton } from 'twenty-ui/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SLACK_USER_LINK_CONSENT_STATE } from 'src/logic-functions/constants/slack-user-link-consent-state';
@@ -28,6 +36,13 @@ const StyledRow = styled.div`
   padding: ${() => themeCssVariables.spacing[3]};
 `;
 
+const StyledIdentity = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${() => themeCssVariables.spacing[2]};
+  min-width: 0;
+`;
+
 const StyledDetails = styled.div`
   display: flex;
   flex-direction: column;
@@ -40,6 +55,7 @@ const StyledName = styled.span`
   font-family: ${() => themeCssVariables.font.family};
   font-size: ${() => themeCssVariables.font.size.sm};
   font-weight: ${() => themeCssVariables.font.weight.medium};
+  min-width: 0;
 `;
 
 const StyledMeta = styled.span`
@@ -62,23 +78,9 @@ const StyledBadges = styled.div`
 `;
 
 const StyledActions = styled.div`
+  align-items: center;
   display: flex;
-  gap: ${() => themeCssVariables.spacing[2]};
-`;
-
-const StyledActionButton = styled.button`
-  background: transparent;
-  border: none;
-  color: ${() => themeCssVariables.color.blue};
-  cursor: pointer;
-  font-family: ${() => themeCssVariables.font.family};
-  font-size: ${() => themeCssVariables.font.size.xs};
-  padding: 0;
-
-  &:disabled {
-    color: ${() => themeCssVariables.font.color.tertiary};
-    cursor: default;
-  }
+  gap: ${() => themeCssVariables.spacing[1]};
 `;
 
 const StyledEmptyState = styled.div`
@@ -87,6 +89,16 @@ const StyledEmptyState = styled.div`
   font-size: ${() => themeCssVariables.font.size.sm};
   padding: ${() => themeCssVariables.spacing[2]};
 `;
+
+// The app's React types differ from twenty-ui's, so the tabler icons need a
+// local wrapper to satisfy the IconComponent prop.
+const ResendIcon: IconComponent = (props: IconComponentProps) => (
+  <IconSend {...props} />
+);
+
+const RemoveIcon: IconComponent = (props: IconComponentProps) => (
+  <IconTrash {...props} />
+);
 
 type TagColor = 'blue' | 'green' | 'orange' | 'red' | 'gray';
 
@@ -171,20 +183,34 @@ export const SlackUserLinksList = ({
 
         return (
           <StyledRow key={slackUserLink.id}>
-            <StyledDetails>
-              <StyledName>
-                {slackUserLink.name ??
-                  slackUserLink.slackUserId ??
-                  'Unnamed link'}
-              </StyledName>
-              <StyledMeta>
-                {slackUserLink.workspaceMemberName ?? 'No workspace member'}
-              </StyledMeta>
-              <StyledMeta>
-                Slack user {slackUserLink.slackUserId ?? 'unknown'} · Team{' '}
-                {slackUserLink.slackTeamId ?? 'unknown'}
-              </StyledMeta>
-            </StyledDetails>
+            <StyledIdentity>
+              <Avatar
+                placeholder={
+                  slackUserLink.name ?? slackUserLink.slackUserId ?? undefined
+                }
+                placeholderColorSeed={slackUserLink.id}
+                type="rounded"
+                size="md"
+              />
+              <StyledDetails>
+                <StyledName>
+                  <OverflowingTextWithTooltip
+                    text={
+                      slackUserLink.name ??
+                      slackUserLink.slackUserId ??
+                      'Unnamed link'
+                    }
+                  />
+                </StyledName>
+                <StyledMeta>
+                  {slackUserLink.workspaceMemberName ?? 'No workspace member'}
+                </StyledMeta>
+                <StyledMeta>
+                  Slack user {slackUserLink.slackUserId ?? 'unknown'} · Team{' '}
+                  {slackUserLink.slackTeamId ?? 'unknown'}
+                </StyledMeta>
+              </StyledDetails>
+            </StyledIdentity>
             <StyledRight>
               <StyledBadges>
                 {isDefined(consentState) && (
@@ -201,36 +227,45 @@ export const SlackUserLinksList = ({
               {canManage && (
                 <StyledActions>
                   {isPending && (
-                    <StyledActionButton
-                      type="button"
-                      onClick={() => onResend(slackUserLink)}
-                      disabled={isActionInFlight}
-                    >
-                      {resendingLinkId === slackUserLink.id
-                        ? 'Resending…'
-                        : 'Resend request'}
-                    </StyledActionButton>
-                  )}
-                  <StyledActionButton
-                    type="button"
-                    onClick={() => {
-                      if (removalArmedLinkId !== slackUserLink.id) {
-                        setRemovalArmedLinkId(slackUserLink.id);
-                        return;
+                    <LightIconButton
+                      Icon={ResendIcon}
+                      title={
+                        resendingLinkId === slackUserLink.id
+                          ? 'Resending…'
+                          : 'Resend the approval request'
                       }
-
-                      setRemovalArmedLinkId(null);
-                      onRemove(slackUserLink);
-                    }}
-                    onBlur={() => setRemovalArmedLinkId(null)}
-                    disabled={isActionInFlight}
-                  >
-                    {removingLinkId === slackUserLink.id
-                      ? 'Removing…'
-                      : removalArmedLinkId === slackUserLink.id
-                        ? 'Confirm removal'
-                        : 'Remove'}
-                  </StyledActionButton>
+                      size="small"
+                      accent="tertiary"
+                      disabled={isActionInFlight}
+                      onClick={() => onResend(slackUserLink)}
+                    />
+                  )}
+                  {removalArmedLinkId === slackUserLink.id ? (
+                    <Button
+                      title={
+                        removingLinkId === slackUserLink.id
+                          ? 'Removing…'
+                          : 'Confirm removal'
+                      }
+                      size="small"
+                      variant="secondary"
+                      accent="danger"
+                      disabled={isActionInFlight}
+                      onClick={() => {
+                        setRemovalArmedLinkId(null);
+                        onRemove(slackUserLink);
+                      }}
+                    />
+                  ) : (
+                    <LightIconButton
+                      Icon={RemoveIcon}
+                      title="Remove the link"
+                      size="small"
+                      accent="tertiary"
+                      disabled={isActionInFlight}
+                      onClick={() => setRemovalArmedLinkId(slackUserLink.id)}
+                    />
+                  )}
                 </StyledActions>
               )}
             </StyledRight>

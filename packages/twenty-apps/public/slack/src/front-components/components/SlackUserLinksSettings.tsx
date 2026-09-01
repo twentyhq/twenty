@@ -43,15 +43,8 @@ const StyledMatchSummary = styled.span`
   font-size: ${() => themeCssVariables.font.size.xs};
 `;
 
-const StyledDisclosureButton = styled.button`
+const StyledDisclosure = styled.div`
   align-self: flex-start;
-  background: transparent;
-  border: none;
-  color: ${() => themeCssVariables.color.blue};
-  cursor: pointer;
-  font-family: ${() => themeCssVariables.font.family};
-  font-size: ${() => themeCssVariables.font.size.sm};
-  padding: 0;
 `;
 
 const StyledCenteredState = styled.div`
@@ -227,13 +220,14 @@ export const SlackUserLinksSettings = () => {
             onLinkSaved={handleLinkSaved}
           />
         ) : (
-          <StyledDisclosureButton
-            type="button"
-            onClick={() => setIsManualFormOpen(true)}
-          >
-            Need someone who is not listed? Search Slack by name, or link a
-            guest or Slack Connect user
-          </StyledDisclosureButton>
+          <StyledDisclosure>
+            <Button
+              title="Link someone not listed above"
+              size="small"
+              variant="secondary"
+              onClick={() => setIsManualFormOpen(true)}
+            />
+          </StyledDisclosure>
         ))}
     </StyledContainer>
   );

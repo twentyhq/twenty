@@ -3,7 +3,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
+import { Avatar } from 'twenty-ui/data-display';
 import { Button } from 'twenty-ui/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SlackUserLinkFormHint } from 'src/front-components/components/SlackUserLinkFormHint';
@@ -31,6 +33,13 @@ const StyledRowMain = styled.div`
   justify-content: space-between;
 `;
 
+const StyledIdentity = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${() => themeCssVariables.spacing[2]};
+  min-width: 0;
+`;
+
 const StyledDetails = styled.div`
   display: flex;
   flex-direction: column;
@@ -43,6 +52,7 @@ const StyledName = styled.span`
   font-family: ${() => themeCssVariables.font.family};
   font-size: ${() => themeCssVariables.font.size.sm};
   font-weight: ${() => themeCssVariables.font.weight.medium};
+  min-width: 0;
 `;
 
 const StyledMeta = styled.span`
@@ -98,18 +108,34 @@ export const UnlinkedSlackUserRow = ({
   return (
     <StyledRow>
       <StyledRowMain>
-        <StyledDetails>
-          <StyledName>
-            {isNonEmptyString(slackUser.displayName)
-              ? slackUser.displayName
-              : slackUser.slackUserId}
-          </StyledName>
-          <StyledMeta>
-            {isNonEmptyString(slackUser.email)
-              ? slackUser.email
-              : slackUser.slackUserId}
-          </StyledMeta>
-        </StyledDetails>
+        <StyledIdentity>
+          <Avatar
+            placeholder={
+              isNonEmptyString(slackUser.displayName)
+                ? slackUser.displayName
+                : slackUser.slackUserId
+            }
+            placeholderColorSeed={slackUser.slackUserId}
+            type="rounded"
+            size="md"
+          />
+          <StyledDetails>
+            <StyledName>
+              <OverflowingTextWithTooltip
+                text={
+                  isNonEmptyString(slackUser.displayName)
+                    ? slackUser.displayName
+                    : slackUser.slackUserId
+                }
+              />
+            </StyledName>
+            <StyledMeta>
+              {isNonEmptyString(slackUser.email)
+                ? slackUser.email
+                : slackUser.slackUserId}
+            </StyledMeta>
+          </StyledDetails>
+        </StyledIdentity>
         <StyledLinkControls>
           <WorkspaceMemberPicker
             selectedMember={selectedMember}
@@ -119,7 +145,9 @@ export const UnlinkedSlackUserRow = ({
           />
           <Button
             title={isSubmitting ? 'Linking…' : 'Link'}
+            size="small"
             variant="secondary"
+            accent="blue"
             disabled={!isDefined(selectedMember) || isSubmitting}
             onClick={handleLink}
           />
