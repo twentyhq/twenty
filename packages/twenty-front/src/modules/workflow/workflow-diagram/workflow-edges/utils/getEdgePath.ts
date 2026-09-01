@@ -1,7 +1,6 @@
 import { type WorkflowDiagramEdgePathStrategy } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
 import { getBezierPath, getSmoothStepPath, Position } from '@xyflow/react';
-import { isDefined } from 'twenty-shared/utils';
 
 const EDGE_PADDING_BOTTOM = 40;
 const EDGE_PADDING_X = 40;
@@ -34,8 +33,8 @@ export const getEdgePath = ({
   strategy,
   parallelEdgeOffset,
 }: GetEdgePathParams) => {
-  if (isDefined(parallelEdgeOffset) && sourceY < targetY) {
-    const middleX = (sourceX + targetX) / 2 + parallelEdgeOffset;
+  if (strategy === 'parallel-edge' && sourceY < targetY) {
+    const middleX = (sourceX + targetX) / 2 + (parallelEdgeOffset ?? 0);
     const middleY = (sourceY + targetY) / 2;
     const [firstPath] = getBezierPath({
       sourceX,
@@ -63,10 +62,7 @@ export const getEdgePath = ({
     };
   }
 
-  if (
-    strategy === 'smooth-step-path-to-target' &&
-    !isDefined(parallelEdgeOffset)
-  ) {
+  if (strategy === 'smooth-step-path-to-target') {
     const [path] = getSmoothStepPath({
       sourceX,
       sourceY,
@@ -121,7 +117,8 @@ export const getEdgePath = ({
   const firstSegmentTargetX =
     (strategy === 'bypass-source-node-on-right-side'
       ? sourceX + 200
-      : (sourceX + targetX) / 2) + (parallelEdgeOffset ?? 0);
+      : (sourceX + targetX) / 2) +
+    (strategy === 'parallel-edge' ? (parallelEdgeOffset ?? 0) : 0);
   const firstSegmentTargetY = sourceY + EDGE_PADDING_BOTTOM;
   const firstSegment = getSmoothStepPath({
     sourceX,
@@ -159,8 +156,7 @@ export const getEdgePath = ({
       },
     ],
     overlayPosition:
-      strategy === 'bypass-source-node-on-right-side' &&
-      !isDefined(parallelEdgeOffset)
+      strategy === 'bypass-source-node-on-right-side'
         ? [sourceX, sourceY + EDGE_PADDING_BOTTOM]
         : [firstSegmentTargetX, firstSegmentTargetY],
   };

@@ -58,6 +58,7 @@ export const separateParallelWorkflowEdges = ({
       data: {
         ...edge.data,
         edgeType: 'default',
+        edgePathStrategy: 'parallel-edge',
         parallelEdgeOffset: parallelEdgeOffsets.get(edge.id),
       },
     };
