@@ -1,6 +1,6 @@
 import { getStepFilterOperands } from '@/workflow/workflow-steps/filters/utils/getStepFilterOperands';
-import { type FieldMetadataType, type StepFilter } from 'twenty-shared/types';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType, type StepFilter } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 type StepFilterVariableSelectionSettings = Pick<
   StepFilter,
@@ -30,7 +30,10 @@ export const getStepFilterVariableSelectionSettings = ({
   let filterType = variableType ?? 'unknown';
 
   if (isDefined(fieldMetadataId) && isDefined(fieldMetadataType)) {
-    filterType = getFilterTypeFromFieldType(fieldMetadataType);
+    filterType =
+      fieldMetadataType === FieldMetadataType.MORPH_RELATION
+        ? FieldMetadataType.RELATION
+        : fieldMetadataType;
   } else if (isDefined(fieldMetadataId)) {
     filterType = 'unknown';
   }

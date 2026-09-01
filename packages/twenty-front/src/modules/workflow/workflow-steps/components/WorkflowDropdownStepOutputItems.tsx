@@ -4,7 +4,6 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -18,6 +17,7 @@ import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/g
 import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
 import { getStepItemIcon } from '@/workflow/workflow-variables/utils/getStepItemIcon';
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
+import { getWorkflowVariableRecordObjectDisplay } from '@/workflow/workflow-variables/utils/getWorkflowVariableRecordObjectDisplay';
 import { useLingui } from '@lingui/react/macro';
 import { type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -42,8 +42,6 @@ export const WorkflowDropdownStepOutputItems = ({
 }: WorkflowDropdownStepOutputItemsProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
-  const { getSelectIconPropsFromObjectMetadataItem } =
-    useObjectMetadataSelectHelpers();
 
   const { updateStepFilterFromVariable } = useUpdateStepFilterFromVariable({
     stepFilter,
@@ -119,13 +117,15 @@ export const WorkflowDropdownStepOutputItems = ({
       )
     : undefined;
 
-  const shouldDisplaySubStepObject = isDefined(displayedSubStepObject);
-
-  const objectLabel = subStepObjectMetadataItem?.labelSingular;
-
-  const subStepObjectIconProps = isDefined(subStepObjectMetadataItem)
-    ? getSelectIconPropsFromObjectMetadataItem(subStepObjectMetadataItem)
+  const subStepObjectDisplay = isDefined(displayedSubStepObject)
+    ? getWorkflowVariableRecordObjectDisplay({
+        recordObject: displayedSubStepObject,
+        objectMetadataItem: subStepObjectMetadataItem,
+      })
     : undefined;
+
+  const shouldDisplaySubStepObject =
+    subStepObjectDisplay?.isSelectable === true;
 
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
@@ -160,11 +160,11 @@ export const WorkflowDropdownStepOutputItems = ({
                 selected={false}
                 focused={false}
                 onClick={handleSelectObject}
-                text={objectLabel || ''}
+                text={subStepObjectDisplay?.label ?? ''}
                 hasSubMenu={false}
-                LeftIcon={subStepObjectIconProps?.Icon}
-                leftIconColor={subStepObjectIconProps?.iconThemeColor}
-                contextualText={t`Pick a ${objectLabel} record`}
+                LeftIcon={getIcon(subStepObjectDisplay?.icon)}
+                leftIconColor={subStepObjectDisplay?.iconColor}
+                contextualText={t`Pick a ${subStepObjectDisplay?.label} record`}
               />
             )}
             {options.length > 0 && shouldDisplaySubStepObject && (

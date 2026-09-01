@@ -47,7 +47,7 @@ export const useUpdateStepFilterFromVariable = ({
     );
 
     if (!isDefined(currentStepOutputSchema)) {
-      return;
+      throw new Error(`No output schema found for workflow step ${stepId}`);
     }
 
     const { variableType, fieldMetadataId, compositeFieldSubFieldName } =

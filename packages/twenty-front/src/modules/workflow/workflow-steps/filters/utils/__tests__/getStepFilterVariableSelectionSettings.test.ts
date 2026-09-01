@@ -60,6 +60,23 @@ describe('getStepFilterVariableSelectionSettings', () => {
     );
   });
 
+  it('keeps field types without a specialized filter mapping', () => {
+    expect(
+      getStepFilterVariableSelectionSettings({
+        rawVariableName: '{{trigger.description}}',
+        isFullRecord: false,
+        variableType: 'string',
+        fieldMetadataId: 'description',
+        fieldMetadataType: FieldMetadataType.RICH_TEXT,
+        compositeFieldSubFieldName: undefined,
+      }),
+    ).toEqual(
+      expect.objectContaining({
+        type: FieldMetadataType.RICH_TEXT,
+      }),
+    );
+  });
+
   it('retains whole-record selection', () => {
     expect(
       getStepFilterVariableSelectionSettings({

@@ -1,5 +1,4 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { isBaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isBaseOutputSchemaV2';
 import { isLinkOutputSchema } from '@/workflow/workflow-variables/types/guards/isLinkOutputSchema';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
@@ -11,6 +10,7 @@ import { type WorkflowVariableSearchResult } from '@/workflow/workflow-variables
 import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
 import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
 import { getStepItemIcon } from '@/workflow/workflow-variables/utils/getStepItemIcon';
+import { getWorkflowVariableRecordObjectDisplay } from '@/workflow/workflow-variables/utils/getWorkflowVariableRecordObjectDisplay';
 import { getWorkflowVariableSpecialItems } from '@/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems';
 import { isDefined } from 'twenty-shared/utils';
 import { isNonEmptyString, isObject } from '@sniptt/guards';
@@ -64,28 +64,21 @@ export const searchWorkflowVariables = ({
         const objectMetadataItem = objectMetadataItemsById.get(
           object.objectMetadataId,
         );
-        const label = objectMetadataItem?.labelSingular ?? object.label;
-        const isSelectable =
-          !isDefined(objectNameSingularsToSelect) ||
-          (isDefined(objectMetadataItem) &&
-            objectNameSingularsToSelect.includes(
-              objectMetadataItem.nameSingular,
-            ));
+        const { label, icon, iconColor, isSelectable } =
+          getWorkflowVariableRecordObjectDisplay({
+            recordObject: object,
+            objectMetadataItem,
+            objectNameSingularsToSelect,
+          });
 
-        if (
-          isSelectable &&
-          isDefined(label) &&
-          label.toLowerCase().includes(search)
-        ) {
+        if (isSelectable && label.toLowerCase().includes(search)) {
           results.push({
             stepId: step.id,
             path: [...path, object.fieldIdName ?? 'id'],
             label,
             breadcrumb,
-            icon: objectMetadataItem?.icon ?? object.icon,
-            iconColor: isDefined(objectMetadataItem)
-              ? getObjectColorWithFallback(objectMetadataItem)
-              : undefined,
+            icon,
+            iconColor,
             isLeaf: true,
             isFullRecord: true,
           });

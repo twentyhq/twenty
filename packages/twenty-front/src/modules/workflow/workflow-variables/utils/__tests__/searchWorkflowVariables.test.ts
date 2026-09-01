@@ -121,10 +121,21 @@ describe('searchWorkflowVariables', () => {
         objectNameSingularsToSelect,
       });
 
-    expect(search(['company']).map((result) => result.path)).toEqual([
+    const companyResults = search(['company']);
+
+    expect(companyResults.map((result) => result.path)).toEqual([
       ['id'],
       ['first', 'id'],
     ]);
+    expect(companyResults).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          label: 'Business',
+          icon: 'IconBuildingSkyscraper',
+          iconColor: 'blue',
+        }),
+      ]),
+    );
     expect(search(['person'])).toEqual([]);
     expect(
       searchWorkflowVariables({
