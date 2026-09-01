@@ -48,7 +48,10 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
       }
 
       for (const exception of exceptions) {
-        const errorPath = (exception.path ?? [])
+        const isObjectException =
+          typeof exception === 'object' && exception !== null;
+
+        const errorPath = (isObjectException ? (exception.path ?? []) : [])
           .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
           .join(' > ');
 
@@ -60,13 +63,13 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
           });
         }
 
-        if ('context' in exception && exception.context) {
+        if (isObjectException && 'context' in exception && exception.context) {
           Object.entries(exception.context).forEach(([key, value]) => {
             scope.setExtra(key, value);
           });
         }
 
-        if ('cause' in exception && exception.cause) {
+        if (isObjectException && 'cause' in exception && exception.cause) {
           scope.setContext('cause', {
             name: exception.cause.name,
             message: exception.cause.message,
