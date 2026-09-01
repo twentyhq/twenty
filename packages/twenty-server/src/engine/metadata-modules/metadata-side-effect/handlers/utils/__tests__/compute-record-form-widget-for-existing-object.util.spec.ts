@@ -206,7 +206,7 @@ describe('computeRecordFormWidgetForExistingObject', () => {
     expect(result).toBeUndefined();
   });
 
-  it('should ignore a soft deleted widget for both idempotency and indexing', () => {
+  it('should noop when the field has a soft deleted widget, whose identifier is still taken', () => {
     const result = computeRecordFormWidgetForExistingObject({
       sourceFlatFieldMetadata,
       recordFormPageLayoutTabUniversalIdentifier:
@@ -220,6 +220,30 @@ describe('computeRecordFormWidgetForExistingObject', () => {
           'widget-1': buildFormFieldWidget({
             universalIdentifier: 'widget-1',
             fieldMetadataId: fieldUniversalIdentifier,
+            index: 6,
+            deletedAt: '2026-08-28T00:00:00.000Z',
+          }),
+        },
+      }),
+    });
+
+    expect(result).toBeUndefined();
+  });
+
+  it('should not count another field soft deleted widget toward the append index', () => {
+    const result = computeRecordFormWidgetForExistingObject({
+      sourceFlatFieldMetadata,
+      recordFormPageLayoutTabUniversalIdentifier:
+        pageLayoutTabUniversalIdentifier,
+      orderedFormFlatFieldMetadatasInBatch: [sourceFlatFieldMetadata],
+      ...buildMaps({
+        flatPageLayoutTab: buildFlatPageLayoutTab({
+          widgetUniversalIdentifiers: ['widget-1'],
+        }),
+        flatPageLayoutWidgets: {
+          'widget-1': buildFormFieldWidget({
+            universalIdentifier: 'widget-1',
+            fieldMetadataId: otherFieldUniversalIdentifier,
             index: 6,
             deletedAt: '2026-08-28T00:00:00.000Z',
           }),

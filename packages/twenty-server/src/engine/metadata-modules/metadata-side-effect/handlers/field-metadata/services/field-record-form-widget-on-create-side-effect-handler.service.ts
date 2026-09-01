@@ -1,14 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  getSystemPageLayoutTabUniversalIdentifier,
-  getSystemRecordFormPageLayoutUniversalIdentifier,
-} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildFieldSideEffectParentNotFoundFailure } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-field-side-effect-parent-not-found-failure.util';
 import { resolveParentFlatObjectMetadataAfterStateForFieldSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/resolve-parent-flat-object-metadata-after-state-for-field-side-effect.util';
-import { RECORD_FORM_TAB_PROPS } from 'src/engine/metadata-modules/metadata-side-effect/constants/record-form-tab-props.constant';
+import { getRecordFormPageLayoutTabUniversalIdentifier } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/get-record-form-page-layout-tab-universal-identifier.util';
 import { computeCallerFlatFieldMetadatasForObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-caller-flat-field-metadatas-for-object.util';
 import { computeRecordFormFlatFieldMetadatas } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-record-form-flat-field-metadatas.util';
 import { isFlatFieldMetadataEligibleForRecordForm } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/is-flat-field-metadata-eligible-for-record-form.util';
@@ -64,16 +60,9 @@ export class FieldRecordFormWidgetOnCreateSideEffectHandlerService extends Metad
       parentFlatObjectMetadata.applicationUniversalIdentifier;
 
     const recordFormPageLayoutTabUniversalIdentifier =
-      getSystemPageLayoutTabUniversalIdentifier({
-        objectMetadataApplicationUniversalIdentifier:
-          objectApplicationUniversalIdentifier,
-        pageLayoutUniversalIdentifier:
-          getSystemRecordFormPageLayoutUniversalIdentifier({
-            objectMetadataApplicationUniversalIdentifier:
-              objectApplicationUniversalIdentifier,
-            objectUniversalIdentifier: objectMetadataUniversalIdentifier,
-          }),
-        title: RECORD_FORM_TAB_PROPS.title,
+      getRecordFormPageLayoutTabUniversalIdentifier({
+        objectApplicationUniversalIdentifier,
+        objectMetadataUniversalIdentifier,
       });
 
     const { labelIdentifierFieldMetadataUniversalIdentifier } =

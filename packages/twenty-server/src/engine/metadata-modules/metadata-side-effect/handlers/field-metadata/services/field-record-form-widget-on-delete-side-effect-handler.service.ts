@@ -1,13 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  getSystemFormFieldPageLayoutWidgetUniversalIdentifier,
-  getSystemPageLayoutTabUniversalIdentifier,
-  getSystemRecordFormPageLayoutUniversalIdentifier,
-} from 'twenty-shared/application';
+import { getSystemFormFieldPageLayoutWidgetUniversalIdentifier } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { RECORD_FORM_TAB_PROPS } from 'src/engine/metadata-modules/metadata-side-effect/constants/record-form-tab-props.constant';
+import { getRecordFormPageLayoutTabUniversalIdentifier } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/get-record-form-page-layout-tab-universal-identifier.util';
 import { resolveParentFlatObjectMetadataAfterStateForFieldSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/resolve-parent-flat-object-metadata-after-state-for-field-side-effect.util';
 import {
   type BuildSideEffectsArgs,
@@ -50,16 +46,9 @@ export class FieldRecordFormWidgetOnDeleteSideEffectHandlerService extends Metad
       parentFlatObjectMetadata.applicationUniversalIdentifier;
 
     const recordFormPageLayoutTabUniversalIdentifier =
-      getSystemPageLayoutTabUniversalIdentifier({
-        objectMetadataApplicationUniversalIdentifier:
-          objectApplicationUniversalIdentifier,
-        pageLayoutUniversalIdentifier:
-          getSystemRecordFormPageLayoutUniversalIdentifier({
-            objectMetadataApplicationUniversalIdentifier:
-              objectApplicationUniversalIdentifier,
-            objectUniversalIdentifier: objectMetadataUniversalIdentifier,
-          }),
-        title: RECORD_FORM_TAB_PROPS.title,
+      getRecordFormPageLayoutTabUniversalIdentifier({
+        objectApplicationUniversalIdentifier,
+        objectMetadataUniversalIdentifier,
       });
 
     const flatPageLayoutWidgetToDelete =

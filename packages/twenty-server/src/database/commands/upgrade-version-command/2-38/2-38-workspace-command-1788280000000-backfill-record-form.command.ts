@@ -11,7 +11,6 @@ import { computeRecordFormFlatFieldMetadatas } from 'src/engine/metadata-modules
 import { buildSystemFormFieldPageLayoutWidget } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/build-system-form-field-page-layout-widget.util';
 import { computeSystemRecordFormPageLayoutToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-record-form-page-layout-to-create.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
@@ -29,7 +28,7 @@ type BackfillOperationsByApplication = Map<string, BackfillOperations>;
 @Command({
   name: 'upgrade:2-38:backfill-record-form',
   description:
-    'Backfill the RECORD_FORM page layout stack for every workspace-custom and application object missing it, converging upgraded installs with what objectRecordFormOnCreate and fieldRecordFormWidgetOnCreate emit at creation time. Twenty-standard objects are skipped: they never reach the side-effect engine, so their form comes from the standard definitions instead.',
+    'Backfill the RECORD_FORM page layout stack for every object missing it, converging upgraded installs with what objectRecordFormOnCreate and fieldRecordFormWidgetOnCreate emit at creation time. Twenty-standard objects are included: the standard definitions only reach a workspace at creation, so an upgraded workspace would otherwise never get their form, and both paths derive the same entities.',
 })
 export class BackfillRecordFormCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -147,15 +146,7 @@ export class BackfillRecordFormCommand extends ProvisionedWorkspaceCommandRunner
     for (const flatObjectMetadata of Object.values(
       flatObjectMetadataMaps.byUniversalIdentifier,
     )) {
-      const isTwentyStandardObject =
-        flatObjectMetadata?.applicationUniversalIdentifier ===
-        TWENTY_STANDARD_APPLICATION.universalIdentifier;
-
-      if (
-        !isDefined(flatObjectMetadata) ||
-        flatObjectMetadata.isRemote ||
-        isTwentyStandardObject
-      ) {
+      if (!isDefined(flatObjectMetadata) || flatObjectMetadata.isRemote) {
         continue;
       }
 
@@ -297,7 +288,7 @@ export class BackfillRecordFormCommand extends ProvisionedWorkspaceCommandRunner
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
-    allFlatEntityOperationByMetadataName: Partial<AllFlatEntityOperationByMetadataName>;
+    allFlatEntityOperationByMetadataName: AllFlatEntityOperationByMetadataName;
   }): Promise<void> {
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
@@ -305,8 +296,7 @@ export class BackfillRecordFormCommand extends ProvisionedWorkspaceCommandRunner
           isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier,
-          allFlatEntityOperationByMetadataName:
-            allFlatEntityOperationByMetadataName as AllFlatEntityOperationByMetadataName,
+          allFlatEntityOperationByMetadataName,
         },
       );
 

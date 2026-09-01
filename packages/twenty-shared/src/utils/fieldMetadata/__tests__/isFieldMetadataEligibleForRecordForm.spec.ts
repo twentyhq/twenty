@@ -44,6 +44,8 @@ describe('isFieldMetadataEligibleForRecordForm', () => {
     FieldMetadataType.POSITION,
     FieldMetadataType.ACTOR,
     FieldMetadataType.RATING,
+    FieldMetadataType.FILES,
+    FieldMetadataType.NUMERIC,
   ])('rejects the unsupported type %s', (fieldType) => {
     expect(
       isFieldMetadataEligibleForRecordForm({

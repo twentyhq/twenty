@@ -20,6 +20,10 @@ export type RecordFormCandidateFlatFieldMetadata = Pick<
 export const isFlatFieldMetadataEligibleForRecordForm = (
   flatFieldMetadata: RecordFormCandidateFlatFieldMetadata,
 ): boolean => {
+  if (flatFieldMetadata.isSystemSideEffect) {
+    return false;
+  }
+
   const { universalSettings } = flatFieldMetadata;
 
   return isFieldMetadataEligibleForRecordForm({
