@@ -1,11 +1,5 @@
+import { type SlackRosterMatchSummary } from 'src/logic-functions/utils/match-slack-roster-by-email';
+
 export type SlackRosterMatchResult =
-  | {
-      success: true;
-      message: string;
-      linkedCount: number;
-      alreadyLinkedCount: number;
-      unmatchedCount: number;
-      failedCount: number;
-      isRosterTruncated: boolean;
-    }
+  | ({ success: true; message: string } & SlackRosterMatchSummary)
   | { success: false; message: string; error: string };
