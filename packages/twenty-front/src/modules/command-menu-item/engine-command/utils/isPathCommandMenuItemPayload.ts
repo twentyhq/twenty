@@ -1,6 +1,8 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { type PathCommandMenuItemPayload } from '~/generated-metadata/graphql';
 
 export const isPathCommandMenuItemPayload = (payload: {
   __typename?: string;
-}): payload is PathCommandMenuItemPayload =>
-  payload.__typename === 'PathCommandMenuItemPayload';
+  path?: string | null;
+}): payload is PathCommandMenuItemPayload => isNonEmptyString(payload.path);

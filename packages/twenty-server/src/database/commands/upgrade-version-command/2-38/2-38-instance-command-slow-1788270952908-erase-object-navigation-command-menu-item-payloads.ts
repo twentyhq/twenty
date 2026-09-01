@@ -36,6 +36,15 @@ export class EraseObjectNavigationCommandMenuItemPayloadsSlowInstanceCommand
     await queryRunner.query(
       `ALTER TABLE "core"."commandMenuItem" DROP CONSTRAINT IF EXISTS "${ENGINE_KEY_COHERENCE_CHECK_NAME}"`,
     );
+    // Resynthesizes the legacy payloads from the foreign key so the fast
+    // command's down can reinstate the payload-required check afterwards.
+    await queryRunner.query(`
+      UPDATE "core"."commandMenuItem"
+      SET "payload" = jsonb_build_object('objectMetadataItemId', "navigationTargetObjectMetadataId")
+      WHERE "engineComponentKey" = 'NAVIGATION'
+        AND "navigationTargetObjectMetadataId" IS NOT NULL
+        AND "payload" IS NULL
+    `);
     await queryRunner.query(
       `ALTER TABLE "core"."commandMenuItem" ADD CONSTRAINT "${ENGINE_KEY_COHERENCE_CHECK_NAME}" CHECK (${RELAXED_ENGINE_KEY_COHERENCE_CHECK})`,
     );
