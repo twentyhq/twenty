@@ -41,6 +41,22 @@ const StyledName = styled.div`
   min-width: 0;
 `;
 
+const StyledDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: ${() => themeCssVariables.spacing[1]} 0;
+`;
+
+const StyledMeta = styled.div`
+  color: ${() => themeCssVariables.font.color.tertiary};
+  font-size: ${() => themeCssVariables.font.size.xs};
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 const StyledEmptyState = styled.div`
   color: ${() => themeCssVariables.font.color.tertiary};
   font-family: ${() => themeCssVariables.font.family};
@@ -170,9 +186,15 @@ export const SlackUserLinksList = ({
                     type="rounded"
                     size="md"
                   />
-                  <StyledName>
-                    <OverflowingTextWithTooltip text={displayedName} />
-                  </StyledName>
+                  <StyledDetails>
+                    <StyledName>
+                      <OverflowingTextWithTooltip text={displayedName} />
+                    </StyledName>
+                    <StyledMeta>
+                      {slackUserLink.slackUserId ?? 'unknown'} ·{' '}
+                      {slackUserLink.slackTeamId ?? 'unknown'}
+                    </StyledMeta>
+                  </StyledDetails>
                 </StyledIdentity>
               </SlackTableCell>
               <SlackTableCell>
