@@ -25,7 +25,7 @@ type BackfillOperations = {
 
 type BackfillOperationsByApplication = Map<string, BackfillOperations>;
 
-@RegisteredWorkspaceCommand('2.38.0', 1787920209301)
+@RegisteredWorkspaceCommand('2.38.0', 1788280000000)
 @Command({
   name: 'upgrade:2-38:backfill-record-form',
   description:

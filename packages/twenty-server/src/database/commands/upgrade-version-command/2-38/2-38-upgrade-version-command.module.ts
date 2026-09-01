@@ -11,7 +11,7 @@ import { PinAskAiCommandMenuItemCommand } from 'src/database/commands/upgrade-ve
 import { ReownObjectNavigationCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788166853000-reown-object-navigation-command-menu-items.command';
 import { ProvisionMissingObjectNavigationCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788181550000-provision-missing-object-navigation-command-menu-items.command';
 import { EnableStandardActivityTargetFieldsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788197000000-enable-standard-activity-target-fields.command';
-import { BackfillRecordFormCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1787920209301-backfill-record-form.command';
+import { BackfillRecordFormCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788280000000-backfill-record-form.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';

@@ -202,6 +202,7 @@ export const computeStandardRecordFormFlatEntities = ({
       workspaceId,
       name: STANDARD_RECORD_FORM_NAME,
       type: PageLayoutType.RECORD_FORM,
+      isFirstTabPinned: true,
       objectMetadataId: flatObjectMetadata.id,
       objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,
       isSystemSideEffect: true,
