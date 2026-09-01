@@ -28,7 +28,8 @@ type Story = StoryObj<typeof meta>;
 
 export const SearchNestedFieldFromAutoOpenedStep: Story = {
   play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement.ownerDocument.body);
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
 
     await userEvent.click(
       await canvas.findByRole(
@@ -37,10 +38,10 @@ export const SearchNestedFieldFromAutoOpenedStep: Story = {
         { timeout: 5_000 },
       ),
     );
-    expect(await canvas.findByText('Record Fields')).toBeInTheDocument();
-    expect(canvas.queryByText(' Address City')).not.toBeInTheDocument();
-    await userEvent.type(await canvas.findByRole('textbox'), ' ADDRESS CITY ');
-    await userEvent.click(await canvas.findByText(' Address City'));
+    expect(await body.findByText('Record Fields')).toBeInTheDocument();
+    expect(body.queryByText(' Address City')).not.toBeInTheDocument();
+    await userEvent.type(await body.findByRole('textbox'), ' ADDRESS CITY ');
+    await userEvent.click(await body.findByText(' Address City'));
     expect(args.onVariableSelect).toHaveBeenCalledWith(
       '{{trigger.properties.after.fields.address.addressCity}}',
     );
