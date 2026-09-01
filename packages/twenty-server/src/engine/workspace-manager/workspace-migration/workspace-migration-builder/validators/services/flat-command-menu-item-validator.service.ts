@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CommandMenuItemExceptionCode } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.exception';
 import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
-import { type CommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/types/command-menu-item-payload.type';
+import { type PathCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/types/path-command-menu-item-payload.type';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
@@ -239,7 +239,7 @@ export class FlatCommandMenuItemValidatorService {
     engineComponentKey: EngineComponentKey | null;
     workflowVersionId: string | null;
     frontComponentUniversalIdentifier: string | null;
-    payload: CommandMenuItemPayload | null;
+    payload: PathCommandMenuItemPayload | null;
     navigationTargetObjectMetadataUniversalIdentifier: string | null;
     validationResult: FailedFlatEntityValidation<
       'commandMenuItem',
@@ -341,7 +341,7 @@ export class FlatCommandMenuItemValidatorService {
     navigationTargetObjectMetadataUniversalIdentifier,
     validationResult,
   }: {
-    payload: CommandMenuItemPayload | null;
+    payload: PathCommandMenuItemPayload | null;
     navigationTargetObjectMetadataUniversalIdentifier: string | null;
     validationResult: FailedFlatEntityValidation<
       'commandMenuItem',

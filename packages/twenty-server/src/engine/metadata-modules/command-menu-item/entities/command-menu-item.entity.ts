@@ -18,7 +18,7 @@ import {
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
 import { ADD_COMMAND_MENU_ITEM_TARGET_OBJECT_METADATA_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-35/add-command-menu-item-target-object-metadata-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
-import { type CommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/types/command-menu-item-payload.type';
+import { type PathCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/types/path-command-menu-item-payload.type';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -107,8 +107,12 @@ export class CommandMenuItemEntity
   })
   availabilityType: CommandMenuItemAvailabilityType;
 
+  // Pre-2-38 upgrade commands replayed during sequential upgrades still write
+  // the legacy { objectMetadataItemId } shape into this column (force-cast on
+  // their side); the 2-38 slow migration erases it in favour of
+  // navigationTargetObjectMetadataId.
   @Column({ type: 'jsonb', nullable: true })
-  payload: CommandMenuItemPayload | null;
+  payload: PathCommandMenuItemPayload | null;
 
   @Column({ type: 'text', array: true, nullable: true })
   hotKeys: string[] | null;

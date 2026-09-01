@@ -62,7 +62,11 @@ export const buildLegacyNavigationFlatCommandMenuItem = ({
     frontComponentId: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATION,
-    payload: { objectMetadataItemId: objectMetadata.id },
+    // Replayed pre-2-38 state, force-cast into the path-only column type: the
+    // 2-38 slow migration converges it onto navigationTargetObjectMetadataId.
+    payload: {
+      objectMetadataItemId: objectMetadata.id,
+    } as unknown as FlatCommandMenuItem['payload'],
     navigationTargetObjectMetadataId: null,
     navigationTargetObjectMetadataUniversalIdentifier: null,
     hotKeys: isDefined(objectMetadata.shortcut)
