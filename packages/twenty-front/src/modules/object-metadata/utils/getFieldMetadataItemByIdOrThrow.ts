@@ -1,5 +1,5 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { doesFieldMetadataItemMatchFieldMetadataId } from '@/object-metadata/utils/doesFieldMetadataItemMatchFieldMetadataId';
+import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
 type GetFieldMetadataItemByIdParams = {
@@ -15,12 +15,10 @@ export const getFieldMetadataItemByIdOrThrow = ({
   objectMetadataItems,
 }: GetFieldMetadataItemByIdParams) => {
   for (const objectMetadataItem of objectMetadataItems) {
-    const fieldMetadataItem = objectMetadataItem.fields.find((field) =>
-      doesFieldMetadataItemMatchFieldMetadataId({
-        fieldMetadataItem: field,
-        fieldMetadataId,
-      }),
-    );
+    const fieldMetadataItem = findFieldMetadataItemByFieldMetadataId({
+      fieldMetadataItems: objectMetadataItem.fields,
+      fieldMetadataId,
+    });
 
     if (isDefined(fieldMetadataItem)) {
       return {
