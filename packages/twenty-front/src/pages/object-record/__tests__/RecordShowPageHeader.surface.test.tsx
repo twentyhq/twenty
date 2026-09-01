@@ -91,8 +91,6 @@ describe('RecordShowPageHeader workspace surface composition', () => {
           type: 'side-panel',
           instanceId: 'side-panel-page-1',
           ownsRouteLocation: true,
-          headerTitlePortal: null,
-          headerActionsPortal: null,
         }}
       >
         {header}

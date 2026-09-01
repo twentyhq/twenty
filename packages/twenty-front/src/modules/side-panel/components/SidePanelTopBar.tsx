@@ -83,11 +83,6 @@ const StyledHeaderTitleContainer = styled.div`
   display: flex;
   flex: 1;
   min-width: 0;
-
-  &:has([data-workspace-header-title-portal]:not(:empty))
-    > [data-routed-page-fallback-info] {
-    display: none;
-  }
 `;
 
 const StyledHeaderTitlePortal = styled.div`
@@ -230,15 +225,10 @@ export const SidePanelTopBar = ({
         </AnimatePresence>
         {!COMMAND_MENU_SIDE_PANEL_PAGES.includes(sidePanelPage) && (
           <StyledHeaderTitleContainer>
-            {lastChip && (
-              <div data-routed-page-fallback-info="">
-                <SidePanelPageInfo pageChip={lastChip} />
-              </div>
+            {sidePanelPage !== SidePanelPages.RoutedPage && lastChip && (
+              <SidePanelPageInfo pageChip={lastChip} />
             )}
-            <StyledHeaderTitlePortal
-              ref={setHeaderTitlePortal}
-              data-workspace-header-title-portal=""
-            />
+            <StyledHeaderTitlePortal ref={setHeaderTitlePortal} />
           </StyledHeaderTitleContainer>
         )}
         {COMMAND_MENU_SIDE_PANEL_PAGES.includes(sidePanelPage) && (

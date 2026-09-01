@@ -1505,8 +1505,6 @@ export const InSidePanel: Story = {
                   type: 'side-panel',
                   instanceId: 'widget-side-panel',
                   ownsRouteLocation: false,
-                  headerTitlePortal: null,
-                  headerActionsPortal: null,
                 }}
               >
                 <LayoutRenderingProvider

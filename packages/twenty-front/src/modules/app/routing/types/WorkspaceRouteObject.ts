@@ -8,9 +8,9 @@ export type WorkspaceRouteHandle = {
     surface: WorkspaceSurfaceType;
     location: Partial<Location> | string;
   }) => boolean;
-  isLocationExpandableFromSidePanel?: (args: {
-    location: Partial<Location> | string;
-  }) => boolean;
+  isLocationExpandableFromSidePanel?:
+    | boolean
+    | ((args: { location: Partial<Location> | string }) => boolean);
 };
 
 export type WorkspaceRouteObject = Omit<

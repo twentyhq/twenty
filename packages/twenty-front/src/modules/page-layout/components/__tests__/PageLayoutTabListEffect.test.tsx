@@ -135,8 +135,6 @@ describe('PageLayoutTabListEffect', () => {
                 type: isInSidePanel ? 'side-panel' : 'main',
                 instanceId: isInSidePanel ? 'side-panel-page-1' : 'main',
                 ownsRouteLocation,
-                headerTitlePortal: null,
-                headerActionsPortal: null,
               }}
             >
               <LayoutRenderingProvider

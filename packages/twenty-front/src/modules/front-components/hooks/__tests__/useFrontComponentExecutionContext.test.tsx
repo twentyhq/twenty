@@ -472,8 +472,25 @@ describe('useFrontComponentExecutionContext', () => {
       await expect(
         result.current.frontComponentHostCommunicationApi.openSidePanelPage({
           to: AppPath.Home,
-        }),
-      ).rejects.toThrow('Unsupported side-panel route: /home');
+        } as never),
+      ).rejects.toThrow('Unsupported side-panel route for an app: /home');
+    });
+
+    it('does not let an app embed host settings routes', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await expect(
+        result.current.frontComponentHostCommunicationApi.openSidePanelPage({
+          to: AppPath.SettingsCatchAll,
+          params: { '*': 'members/roles' },
+        } as never),
+      ).rejects.toThrow(
+        'Unsupported side-panel route for an app: /settings/members/roles',
+      );
+
+      expect(mockOpenRoutedPageInSidePanel).not.toHaveBeenCalled();
     });
 
     it('rejects legacy ViewRecords because it has no canonical route params', async () => {

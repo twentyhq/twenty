@@ -91,7 +91,7 @@ export const createWorkspaceRouteObjects = ({
             ),
             handle: {
               workspaceSurfaces: MAIN_AND_SIDE_PANEL,
-              isLocationExpandableFromSidePanel: () => true,
+              isLocationExpandableFromSidePanel: true,
             },
           } satisfies WorkspaceRouteObject,
         ]
@@ -109,7 +109,7 @@ export const createWorkspaceRouteObjects = ({
       ),
       handle: {
         workspaceSurfaces: MAIN_AND_SIDE_PANEL,
-        isLocationExpandableFromSidePanel: () => true,
+        isLocationExpandableFromSidePanel: true,
       },
     },
     {

@@ -7,12 +7,14 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { RecordIndexPageHeaderIcon } from '@/object-record/record-index/components/RecordIndexPageHeaderIcon';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
+import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -34,6 +36,7 @@ const StyledSelectedRecordsCount = styled.div`
 
 export const RecordIndexPageHeader = () => {
   const workspaceSurface = useWorkspaceSurface();
+  const { updateSidePanelPageInfo } = useUpdateSidePanelPageInfo();
 
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
@@ -50,6 +53,12 @@ export const RecordIndexPageHeader = () => {
     findObjectMetadataItemByNamePlural(objectNamePlural);
 
   const label = objectMetadataItem?.labelPlural ?? objectNamePlural;
+
+  useEffect(() => {
+    if (workspaceSurface.type === 'side-panel') {
+      updateSidePanelPageInfo({ pageTitle: label });
+    }
+  }, [label, updateSidePanelPageInfo, workspaceSurface.type]);
 
   const pageHeaderTitle =
     contextStoreNumberOfSelectedRecords > 0 ? (

@@ -27,8 +27,6 @@ const SidePanelWrapper = ({ children }: { children: React.ReactNode }) => (
         type: 'side-panel',
         instanceId: 'side-panel-page',
         ownsRouteLocation: false,
-        headerTitlePortal: null,
-        headerActionsPortal: null,
       }}
     >
       {children}

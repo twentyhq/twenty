@@ -1,6 +1,7 @@
 import { SCROLL_RESTORATION_TOP_THRESHOLD_PX } from '@/ui/utilities/scroll/constants/ScrollRestorationTopThreshold';
 import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -8,9 +9,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useScrollRestoration = (componentInstanceId: string) => {
   const location = useLocation();
+  const workspaceSurface = useWorkspaceSurface();
   const scopedComponentInstanceId =
     useWorkspaceSurfaceScopedComponentInstanceId(componentInstanceId);
-  const storageKey = `scroll-${location.pathname}-${scopedComponentInstanceId}`;
+  const storageKey = `scroll-${workspaceSurface.type}-${location.pathname}-${componentInstanceId}`;
   const [isRestoring, setIsRestoring] = useState(false);
 
   const scrollWrapperScrollTop = useAtomComponentStateValue(

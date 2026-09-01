@@ -15,7 +15,12 @@ export type NavigateFunction = <T extends AppPath>(
   options?: NavigateOptions,
 ) => Promise<void>;
 
-type OpenRoutedSidePanelPageParams<T extends AppPath> = {
+export type SidePanelAppPath =
+  | AppPath.RecordIndexPage
+  | AppPath.RecordShowPage
+  | AppPath.WorkflowCoreIndexPage;
+
+type OpenRoutedSidePanelPageParams<T extends SidePanelAppPath> = {
   to: T;
   queryParams?: Record<string, any>;
   hash?: string;
@@ -87,11 +92,11 @@ type OpenPurposeBuiltSidePanelPageParams =
       shouldResetSearchState?: boolean;
     };
 
-export type OpenSidePanelPageParams<T extends AppPath = AppPath> =
-  | OpenRoutedSidePanelPageParams<T>
-  | OpenPurposeBuiltSidePanelPageParams;
+export type OpenSidePanelPageParams<
+  T extends SidePanelAppPath = SidePanelAppPath,
+> = OpenRoutedSidePanelPageParams<T> | OpenPurposeBuiltSidePanelPageParams;
 
-export type OpenSidePanelPageFunction = <T extends AppPath>(
+export type OpenSidePanelPageFunction = <T extends SidePanelAppPath>(
   params: OpenSidePanelPageParams<T>,
 ) => Promise<void>;
 

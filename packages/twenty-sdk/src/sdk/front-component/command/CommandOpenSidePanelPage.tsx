@@ -1,16 +1,17 @@
 import {
   openSidePanelPage,
   type OpenSidePanelPageParams,
+  type SidePanelAppPath,
   unmountFrontComponent,
   useFrontComponentId,
 } from '@/sdk/front-component';
 import { useEffect, useState } from 'react';
-import { type AppPath } from 'twenty-shared/types';
 
-export type CommandOpenSidePanelPageProps<T extends AppPath = AppPath> =
-  OpenSidePanelPageParams<T>;
+export type CommandOpenSidePanelPageProps<
+  T extends SidePanelAppPath = SidePanelAppPath,
+> = OpenSidePanelPageParams<T>;
 
-export const CommandOpenSidePanelPage = <T extends AppPath>(
+export const CommandOpenSidePanelPage = <T extends SidePanelAppPath>(
   props: CommandOpenSidePanelPageProps<T>,
 ) => {
   const [hasExecuted, setHasExecuted] = useState(false);
