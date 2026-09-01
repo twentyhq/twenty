@@ -145,6 +145,7 @@ describe('WorkflowDiagramDefaultEdgeEditable', () => {
             deletable={false}
             data={{
               edgeType: 'default',
+              edgePathStrategy: 'parallel-edge',
               parallelEdgeOffset: index === 0 ? -50 : 50,
               sourceConnectionOptions: {
                 connectedStepType: 'IF_ELSE',
