@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+
 import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
 import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-state.constant';
 import { CAMPAIGN_FAILURE_REASON } from 'src/engine/core-modules/emailing-domain/constants/campaign-failure-reason.constant';
@@ -40,24 +42,30 @@ export class MessageCampaignDeliveryFeedbackService {
       return;
     }
 
-    const delivery = await this.campaignDeliveryRepository.findOneBy(
-      workspaceId,
-      { providerMessageId },
-    );
+    // Matched and stamped in one statement rather than a lookup followed by an
+    // update: providerMessageId is unique per workspace, so this settles the
+    // same single row, halves the queries a webhook costs, and closes the
+    // window where the row could change between the two.
+    const { raw } = await this.campaignDeliveryRepository
+      .createQueryBuilder()
+      .update()
+      .set(update as QueryDeepPartialEntity<CampaignDeliveryEntity>)
+      .where('"workspaceId" = :workspaceId', { workspaceId })
+      .andWhere('"providerMessageId" = :providerMessageId', {
+        providerMessageId,
+      })
+      .returning(['campaignId'])
+      .execute();
 
-    if (!isDefined(delivery)) {
+    const [updatedDelivery] = raw as { campaignId: string }[];
+
+    if (!isDefined(updatedDelivery)) {
       return;
     }
 
-    await this.campaignDeliveryRepository.update(
-      workspaceId,
-      { id: delivery.id },
-      update,
-    );
-
     await this.messageCampaignLifecycleService.scheduleStatsRefresh({
       workspaceId,
-      campaignId: delivery.campaignId,
+      campaignId: updatedDelivery.campaignId,
     });
   }
 
