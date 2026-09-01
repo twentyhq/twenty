@@ -5,10 +5,6 @@ import {
 
 import { PageLayoutType } from 'twenty-shared/types';
 import {
-  CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP,
-  CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE,
-  CONDITIONAL_DISPLAY_DEVICE_DESKTOP,
-  CONDITIONAL_DISPLAY_DEVICE_MOBILE,
   TAB_PROPS,
   WIDGET_PROPS,
 } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
@@ -34,57 +30,8 @@ const NOTE_PAGE_TABS = {
         universalIdentifier:
           STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.tabs.home
             .widgets.noteRichText.universalIdentifier,
-        title: WIDGET_PROPS.noteRichText.title,
-        type: WIDGET_PROPS.noteRichText.type,
-        position: { layoutMode: TAB_PROPS.home.layoutMode, index: 1 },
-        conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_MOBILE,
-        conditionalAvailabilityExpression:
-          CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE,
-      },
-    },
-  },
-  note: {
-    universalIdentifier:
-      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.tabs.note
-        .universalIdentifier,
-    ...TAB_PROPS.note,
-    widgets: {
-      noteRichText: {
-        universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.tabs.note
-            .widgets.noteRichText.universalIdentifier,
         ...WIDGET_PROPS.noteRichText,
-        conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_DESKTOP,
-        conditionalAvailabilityExpression:
-          CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP,
-      },
-    },
-  },
-  timeline: {
-    universalIdentifier:
-      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.tabs.timeline
-        .universalIdentifier,
-    ...TAB_PROPS.timeline,
-    widgets: {
-      timeline: {
-        universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.tabs
-            .timeline.widgets.timeline.universalIdentifier,
-        ...WIDGET_PROPS.timeline,
-      },
-    },
-  },
-  files: {
-    universalIdentifier:
-      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.tabs.files
-        .universalIdentifier,
-    ...TAB_PROPS.files,
-    widgets: {
-      files: {
-        universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.tabs.files
-            .widgets.files.universalIdentifier,
-        ...WIDGET_PROPS.files,
+        position: { layoutMode: TAB_PROPS.home.layoutMode, index: 1 },
       },
     },
   },
