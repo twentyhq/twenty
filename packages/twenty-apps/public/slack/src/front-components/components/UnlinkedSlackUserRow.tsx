@@ -90,7 +90,7 @@ export const UnlinkedSlackUserRow = ({
   };
 
   return (
-    <SlackTableRow gridTemplateColumns={gridTemplateColumns}>
+    <SlackTableRow gridTemplateColumns={gridTemplateColumns} isHoverable>
       <SlackTableCell>
         <StyledIdentity>
           <Avatar

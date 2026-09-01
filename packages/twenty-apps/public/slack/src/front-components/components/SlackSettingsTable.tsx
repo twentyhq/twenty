@@ -9,7 +9,10 @@ export const SlackTable = styled.div`
   width: 100%;
 `;
 
-export const SlackTableRow = styled.div<{ gridTemplateColumns: string }>`
+export const SlackTableRow = styled.div<{
+  gridTemplateColumns: string;
+  isHoverable?: boolean;
+}>`
   align-items: center;
   border-radius: ${() => themeCssVariables.border.radius.md};
   display: grid;
@@ -19,7 +22,10 @@ export const SlackTableRow = styled.div<{ gridTemplateColumns: string }>`
   width: 100%;
 
   &:hover {
-    background-color: ${() => themeCssVariables.background.transparent.light};
+    background-color: ${({ isHoverable }) =>
+      isHoverable === true
+        ? themeCssVariables.background.transparent.light
+        : 'transparent'};
   }
 `;
 
