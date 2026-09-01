@@ -3,7 +3,7 @@ import {
   type WorkflowRunStepStatus,
   type WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
-import { type WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowStepConnectionOptions';
+import { type WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/types/WorkflowStepConnectionOptions';
 import { type MessageDescriptor } from '@lingui/core';
 import {
   type Connection,
@@ -111,7 +111,8 @@ export type WorkflowDiagramEdgeLabelOptions = {
 
 export type WorkflowDiagramEdgePathStrategy =
   | 'smooth-step-path-to-target'
-  | 'bypass-source-node-on-right-side';
+  | 'bypass-source-node-on-right-side'
+  | 'parallel-edge';
 
 export type WorkflowDiagramDefaultEdgeData = {
   edgeType: 'default';

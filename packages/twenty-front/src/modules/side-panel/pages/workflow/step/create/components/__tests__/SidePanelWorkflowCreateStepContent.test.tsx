@@ -1,18 +1,29 @@
 import { SidePanelWorkflowCreateStepContent } from '@/side-panel/pages/workflow/step/create/components/SidePanelWorkflowCreateStepContent';
 import { type WorkflowActionSelection } from '@/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction';
+import { flowComponentState } from '@/workflow/states/flowComponentState';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { type WorkflowIfElseAction } from '@/workflow/types/Workflow';
+import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { type StartNodeCreationParams } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { createStore, Provider as JotaiProvider } from 'jotai';
 
 const mockCreateStep = jest.fn();
 const mockUpdateStep = jest.fn();
 const mockOpenWorkflowEditStep = jest.fn();
-const mockSetInsertStepIds = jest.fn();
-let mockInsertStepIds: StartNodeCreationParams;
-const mockParentStep = {
+let mockInsertStepIds: StartNodeCreationParams & {
+  parentStepId: string | undefined;
+  nextStepId: string | undefined;
+};
+let jotaiStore: ReturnType<typeof createStore>;
+const workflowVisualizerComponentInstanceId = 'workflow-visualizer-instance-id';
+const mockParentStep: WorkflowIfElseAction = {
   id: 'if-else',
   type: 'IF_ELSE',
   name: 'If/Else',
+  valid: true,
   settings: {
     input: {
       stepFilterGroups: [],
@@ -25,6 +36,11 @@ const mockParentStep = {
         },
         { id: 'else', nextStepIds: ['other-action'] },
       ],
+    },
+    outputSchema: {},
+    errorHandlingOptions: {
+      retryOnFailure: { value: false },
+      continueOnFailure: { value: false },
     },
   },
 };
@@ -43,19 +59,6 @@ jest.mock(
     ),
   }),
 );
-jest.mock('@/workflow/states/flowComponentState', () => ({
-  flowComponentState: 'flow',
-}));
-jest.mock(
-  '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue',
-  () => ({
-    useAtomComponentStateValue: (state: string) =>
-      state === 'flow' ? { steps: [mockParentStep] } : 'workflow-id',
-  }),
-);
-jest.mock('@/ui/utilities/state/jotai/hooks/useAtomComponentState', () => ({
-  useAtomComponentState: () => [mockInsertStepIds, mockSetInsertStepIds],
-}));
 jest.mock('@/ui/utilities/state/jotai/hooks/useSetAtomState', () => ({
   useSetAtomState: () => jest.fn(),
 }));
@@ -77,9 +80,47 @@ jest.mock(
   }),
 );
 
+const Wrapper = ({ children }: { children: React.ReactNode }) => (
+  <JotaiProvider store={jotaiStore}>
+    <WorkflowVisualizerComponentInstanceContext.Provider
+      value={{ instanceId: workflowVisualizerComponentInstanceId }}
+    >
+      {children}
+    </WorkflowVisualizerComponentInstanceContext.Provider>
+  </JotaiProvider>
+);
+
+const renderContent = () => {
+  jotaiStore.set(
+    workflowInsertStepIdsComponentState.atomFamily({
+      instanceId: workflowVisualizerComponentInstanceId,
+    }),
+    mockInsertStepIds,
+  );
+
+  return render(<SidePanelWorkflowCreateStepContent />, { wrapper: Wrapper });
+};
+
 describe('SidePanelWorkflowCreateStepContent', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jotaiStore = createStore();
+    jotaiStore.set(
+      workflowVisualizerWorkflowIdComponentState.atomFamily({
+        instanceId: workflowVisualizerComponentInstanceId,
+      }),
+      'workflow-id',
+    );
+    jotaiStore.set(
+      flowComponentState.atomFamily({
+        instanceId: workflowVisualizerComponentInstanceId,
+      }),
+      {
+        workflowVersionId: 'workflow-version-id',
+        trigger: null,
+        steps: [mockParentStep],
+      },
+    );
     mockCreateStep.mockResolvedValue({
       id: 'inserted',
       name: 'Search Records',
@@ -98,7 +139,7 @@ describe('SidePanelWorkflowCreateStepContent', () => {
 
   it('does not overwrite insertion with a new branch built from the old step', async () => {
     const user = userEvent.setup();
-    render(<SidePanelWorkflowCreateStepContent />);
+    renderContent();
     await user.click(screen.getByRole('button', { name: 'Search Records' }));
     await waitFor(() => expect(mockOpenWorkflowEditStep).toHaveBeenCalled());
     expect(mockCreateStep).toHaveBeenCalledWith(
@@ -121,7 +162,7 @@ describe('SidePanelWorkflowCreateStepContent', () => {
       position: { x: 100, y: 200 },
     };
     const user = userEvent.setup();
-    render(<SidePanelWorkflowCreateStepContent />);
+    renderContent();
     await user.click(screen.getByRole('button', { name: 'Search Records' }));
     await waitFor(() => expect(mockOpenWorkflowEditStep).toHaveBeenCalled());
     expect(mockUpdateStep).toHaveBeenCalledTimes(1);
