@@ -6,6 +6,7 @@ import { HelmetProvider } from '@dr.pogodin/react-helmet';
 import {
   createMemoryRouter,
   createRoutesFromElements,
+  Outlet,
   Route,
   RouterProvider,
 } from 'react-router-dom';
@@ -114,6 +115,7 @@ const Providers = () => {
                       </FullHeightStorybookLayout>
                     </PreComputedChipGeneratorsProvider>
                     <RouteContextStoreProvider />
+                    <Outlet />
                   </ContextStoreComponentInstanceContext.Provider>
                 </ApolloCoreClientMockedProvider>
               </UserContextProvider>

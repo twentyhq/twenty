@@ -113,6 +113,7 @@ describe('workspace route objects', () => {
   it.each([
     '/settings',
     '/settings/',
+    '/settings/profile',
     '/settings/billing',
     '/settings/api-webhooks/graphql',
     '/settings/admin-panel',

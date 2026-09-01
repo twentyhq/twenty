@@ -95,7 +95,7 @@ describe('useNavigateSettings', () => {
     expect(mockNavigate).toHaveBeenCalledWith('/settings/accounts', options);
   });
 
-  it('forwards an explicit main-surface escape to the active navigator', () => {
+  it('opens settings when a legacy side-panel page escapes to main', () => {
     const { result } = renderHook(() => useNavigateSettings(), {
       wrapper: SidePanelWrapper,
     });
@@ -104,7 +104,7 @@ describe('useNavigateSettings', () => {
       surface: 'main',
     });
 
-    expect(openSettingsMenuMock).not.toHaveBeenCalled();
+    expect(openSettingsMenuMock).toHaveBeenCalledTimes(1);
     expect(mockNavigate).toHaveBeenCalledWith('/settings/accounts/new', {
       surface: 'main',
     });

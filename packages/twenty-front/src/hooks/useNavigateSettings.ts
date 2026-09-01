@@ -24,12 +24,15 @@ export const useNavigateSettings = () => {
     ) => {
       const path = getSettingsPath(to, params, queryParams, hash);
 
-      if (workspaceSurface.type === 'main') {
+      if (
+        workspaceSurface.type === 'main' ||
+        (options?.surface === 'main' && !workspaceSurface.ownsRouteLocation)
+      ) {
         openSettingsMenu();
       }
 
       return navigate(path, options);
     },
-    [navigate, openSettingsMenu, workspaceSurface.type],
+    [navigate, openSettingsMenu, workspaceSurface],
   );
 };
