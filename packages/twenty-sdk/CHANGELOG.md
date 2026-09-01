@@ -6,10 +6,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
-### Breaking Changes
-
-- **Routed side-panel pages now use an explicit allowlist.** `openSidePanelPage` and `CommandOpenSidePanelPage` accept `AppPath.RecordIndexPage`, `AppPath.RecordShowPage`, and `AppPath.WorkflowCoreIndexPage`. Other `AppPath` values no longer typecheck or open through the app sandbox. Use the exported `SidePanelAppPath` type when storing a routed side-panel destination. Purpose-built side-panel page parameters are unchanged.
-
 ### Added
 
 - **`enqueueJobs` in `twenty-sdk/logic-function`.** Enqueues one run per payload of a single logic function in one call (up to 200 payloads per batch). `retryLimit` and `delayMs` apply to every run in the batch.
