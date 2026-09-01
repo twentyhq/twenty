@@ -4,7 +4,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-export const computeConflictingColumnGroupsForJoinColumn = ({
+export const computeDuplicateKeyColumnGroupsForJoinColumn = ({
   flatObjectMetadata,
   flatFieldMetadataMaps,
   flatIndexMaps,
@@ -21,5 +21,7 @@ export const computeConflictingColumnGroupsForJoinColumn = ({
         (conflictingProperty) => conflictingProperty.column,
       ),
     )
-    .filter((columns) => columns.includes(joinColumnName))
-    .map((columns) => columns.filter((column) => column !== joinColumnName));
+    .filter((uniqueIndexColumns) => uniqueIndexColumns.includes(joinColumnName))
+    .map((uniqueIndexColumns) =>
+      uniqueIndexColumns.filter((column) => column !== joinColumnName),
+    );

@@ -44,9 +44,11 @@ const computeDuplicateEntryMessage = (error: Error): string => {
       ? error.table
       : undefined;
 
-  const location = isDefined(table) ? `${table}.${constraint}` : constraint;
+  const qualifiedConstraintName = isDefined(table)
+    ? `${table}.${constraint}`
+    : constraint;
 
-  return `${DUPLICATE_ENTRY_DETECTED_MESSAGE}: unique constraint ${location} was violated`;
+  return `${DUPLICATE_ENTRY_DETECTED_MESSAGE}: unique constraint ${qualifiedConstraintName} was violated`;
 };
 
 export const computeTwentyOrmException = (error: unknown): Error => {

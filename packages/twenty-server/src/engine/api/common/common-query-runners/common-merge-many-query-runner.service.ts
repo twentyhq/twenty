@@ -23,8 +23,8 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
-import { computeConflictingColumnGroupsForJoinColumn } from 'src/engine/api/common/common-query-runners/utils/compute-conflicting-column-groups-for-join-column.util';
-import { splitRelatedRecordIdsToMigrate } from 'src/engine/api/common/common-query-runners/utils/split-related-record-ids-to-migrate.util';
+import { computeDuplicateKeyColumnGroupsForJoinColumn } from 'src/engine/api/common/common-query-runners/utils/compute-duplicate-key-column-groups-for-join-column.util';
+import { splitRelatedRecordIdsToMigrateAndSoftDelete } from 'src/engine/api/common/common-query-runners/utils/split-related-record-ids-to-migrate-and-soft-delete.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
@@ -339,7 +339,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     return relationFields;
   }
 
-  private async migrateRelatedRecordsToPriorityRecord({
+  private async mergeRelatedRecordsIntoPriorityRecord({
     transactionScope,
     relationField,
     flatFieldMetadataMaps,
@@ -367,41 +367,41 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       rolePermissionConfig,
     );
 
-    const conflictingColumnGroups = computeConflictingColumnGroupsForJoinColumn(
-      {
+    const duplicateKeyColumnGroups =
+      computeDuplicateKeyColumnGroupsForJoinColumn({
         flatObjectMetadata: relationField.objectMetadata,
         flatFieldMetadataMaps,
         flatIndexMaps,
         joinColumnName,
-      },
-    );
+      });
 
-    const columnsToRead = ['id', ...new Set(conflictingColumnGroups.flat())];
+    const columnsToSelect = ['id', ...new Set(duplicateKeyColumnGroups.flat())];
 
-    const relatedRecordsToMigrate = await relatedRepository
+    const relatedRecordsOfRecordsToDelete = await relatedRepository
       .createQueryBuilder(alias)
-      .select(columnsToRead)
+      .select(columnsToSelect)
       .where({ [joinColumnName]: In(idsToDelete) })
       .getMany<ObjectRecord>({ noFormatting: true });
 
-    if (relatedRecordsToMigrate.length === 0) {
+    if (relatedRecordsOfRecordsToDelete.length === 0) {
       return;
     }
 
-    const priorityRelatedRecords =
-      conflictingColumnGroups.length === 0
+    const relatedRecordsOfPriorityRecord =
+      duplicateKeyColumnGroups.length === 0
         ? []
         : await relatedRepository
             .createQueryBuilder(alias)
-            .select(columnsToRead)
+            .select(columnsToSelect)
             .where({ [joinColumnName]: priorityRecordId })
             .getMany<ObjectRecord>({ noFormatting: true });
 
-    const { idsToMigrate, idsToSoftDelete } = splitRelatedRecordIdsToMigrate({
-      relatedRecordsToMigrate,
-      priorityRelatedRecords,
-      conflictingColumnGroups,
-    });
+    const { idsToMigrate, idsToSoftDelete } =
+      splitRelatedRecordIdsToMigrateAndSoftDelete({
+        relatedRecordsOfRecordsToDelete,
+        relatedRecordsOfPriorityRecord,
+        duplicateKeyColumnGroups,
+      });
 
     for (const idsChunk of chunk(idsToSoftDelete, QUERY_MAX_RECORDS)) {
       await relatedRepository.runMutation({
@@ -477,7 +477,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         for (const relationField of this.getRelationFieldsPointingToCurrentObject(
           queryRunnerContext,
         )) {
-          await this.migrateRelatedRecordsToPriorityRecord({
+          await this.mergeRelatedRecordsIntoPriorityRecord({
             transactionScope,
             relationField,
             flatFieldMetadataMaps,
