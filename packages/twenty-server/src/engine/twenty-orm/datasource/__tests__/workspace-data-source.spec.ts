@@ -196,7 +196,7 @@ describe('WorkspaceDataSource transactions', () => {
     ]);
   });
 
-  it('propagates callback errors after commit without rolling back', async () => {
+  it('logs callback errors without rejecting an already committed transaction', async () => {
     const executionOrder: string[] = [];
     const { dataSource } = buildDataSource({ executionOrder });
     const callbackError = new Error('callback failed');
@@ -220,11 +220,18 @@ describe('WorkspaceDataSource transactions', () => {
         transactionScope.afterCommit(() => {
           executionOrder.push('last-callback');
         });
+        return 'result';
       }),
-    ).rejects.toBe(callbackError);
+    ).resolves.toBe('result');
 
-    expect(loggerError).toHaveBeenCalledWith(
-      `Additional after-commit callback failed for workspace ${WORKSPACE_ID}`,
+    expect(loggerError).toHaveBeenNthCalledWith(
+      1,
+      `After-commit callback failed for workspace ${WORKSPACE_ID}`,
+      callbackError,
+    );
+    expect(loggerError).toHaveBeenNthCalledWith(
+      2,
+      `After-commit callback failed for workspace ${WORKSPACE_ID}`,
       additionalCallbackError,
     );
     expect(executionOrder).toEqual([

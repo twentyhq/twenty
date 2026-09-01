@@ -134,27 +134,15 @@ export class WorkspaceDataSource {
         ),
     });
 
-    let firstAfterCommitError: unknown;
-    let hasAfterCommitError = false;
-
     for (const callback of afterCommitCallbacks) {
       try {
         await callback();
       } catch (error) {
-        if (!hasAfterCommitError) {
-          firstAfterCommitError = error;
-          hasAfterCommitError = true;
-        } else {
-          this.logger.error(
-            `Additional after-commit callback failed for workspace ${this.internalContext.workspaceId}`,
-            error,
-          );
-        }
+        this.logger.error(
+          `After-commit callback failed for workspace ${this.internalContext.workspaceId}`,
+          error,
+        );
       }
-    }
-
-    if (hasAfterCommitError) {
-      throw firstAfterCommitError;
     }
 
     return result;
