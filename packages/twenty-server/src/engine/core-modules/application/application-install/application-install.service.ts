@@ -309,8 +309,10 @@ export class ApplicationInstallService {
       sourceType: appRegistration.sourceType,
     });
 
-    const shouldTransitionState =
-      isVersionUpgrade && application.state === ApplicationState.INSTALLED;
+    const isUpgradeOfInstalledApplication =
+      isVersionUpgrade &&
+      (application.state === ApplicationState.INSTALLED ||
+        application.state === ApplicationState.UPGRADING);
 
     const hasNeverCompletedInstall =
       isVersionUpgrade && application.state === ApplicationState.INSTALLING;
@@ -318,10 +320,10 @@ export class ApplicationInstallService {
     const incomingVersion = resolvedPackage.packageJson.version;
 
     // Rollback is scoped to the work after the application row exists: reaching
-    // this catch means creation succeeded, so a fresh install (not an upgrade)
-    // is the only case that needs uninstalling.
+    // this catch means creation succeeded, so only an application that never
+    // finished installing needs uninstalling.
     try {
-      if (shouldTransitionState) {
+      if (isUpgradeOfInstalledApplication) {
         await this.applicationService.update(application.id, {
           state: ApplicationState.UPGRADING,
           workspaceId: params.workspaceId,
@@ -423,7 +425,7 @@ export class ApplicationInstallService {
         `Failed to install app ${appRegistration.universalIdentifier}: ${error}`,
       );
 
-      if (shouldTransitionState) {
+      if (isUpgradeOfInstalledApplication) {
         await this.applicationService.revertStateToInstalledBestEffort({
           applicationId: application.id,
           universalIdentifier,

@@ -640,7 +640,7 @@ export class ApplicationService {
       });
     } catch (error) {
       this.logger.warn(
-        `Failed to revert state of application ${universalIdentifier} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+        `State revert to INSTALLED did not complete for application ${universalIdentifier} in workspace ${workspaceId}, the row may or may not have been updated: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
