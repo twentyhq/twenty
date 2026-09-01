@@ -11,6 +11,7 @@ import { WorkspaceQueryHookStorage } from 'src/engine/api/graphql/workspace-quer
 import { type WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { WorkspaceQueryHookExplorer } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.explorer';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 
 @Injectable()
 export class WorkspaceQueryHookService {
@@ -60,6 +61,7 @@ export class WorkspaceQueryHookService {
     objectName: string,
     methodName: T,
     payload: QueryResultFieldValue,
+    transactionScope?: WorkspaceTransactionScope,
   ): Promise<void> {
     const key: WorkspaceQueryHookKey = `${objectName}.${methodName}`;
     const postHookInstances =
@@ -71,7 +73,7 @@ export class WorkspaceQueryHookService {
 
     for (const postHookInstance of postHookInstances) {
       await this.workspaceQueryHookExplorer.handlePostHook(
-        [authContext, objectName, payload],
+        [authContext, objectName, payload, transactionScope],
         postHookInstance.instance,
         postHookInstance.host,
         postHookInstance.isRequestScoped,

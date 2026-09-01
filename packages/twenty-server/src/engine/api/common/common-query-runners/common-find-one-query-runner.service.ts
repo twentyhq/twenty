@@ -40,8 +40,6 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<ObjectRecord> {
     const {
-      authContext,
-      rolePermissionConfig,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatObjectMetadata,
@@ -102,10 +100,8 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
           FindOptionsRelations<ObjectLiteral>
         >,
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
-        authContext,
-        rolePermissionConfig,
+        parentObjectRepository: readRepository,
         selectedFields: args.selectedFieldsResult.select,
-        ...this.getNestedRelationsReadPathOptions(),
       });
     }
 

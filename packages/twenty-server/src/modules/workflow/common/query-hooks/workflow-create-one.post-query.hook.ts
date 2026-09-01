@@ -8,6 +8,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
@@ -28,6 +29,7 @@ export class WorkflowCreateOnePostQueryHook implements WorkspacePostQueryHookIns
     authContext: WorkspaceAuthContext,
     _objectName: string,
     payload: WorkflowWorkspaceEntity[],
+    transactionScope?: WorkspaceTransactionScope,
   ): Promise<void> {
     const workspace = authContext.workspace;
 
@@ -45,6 +47,7 @@ export class WorkflowCreateOnePostQueryHook implements WorkspacePostQueryHookIns
             nameSingular: 'workflowVersion',
           },
           workspaceId: workspace.id,
+          transactionScope,
         });
 
         const insertResult = await workflowVersionRepository.insert({
@@ -57,6 +60,7 @@ export class WorkflowCreateOnePostQueryHook implements WorkspacePostQueryHookIns
         return (insertResult.generatedMaps[0] as WorkflowVersionWorkspaceEntity)
           .id;
       },
+      transactionScope,
     );
   }
 }

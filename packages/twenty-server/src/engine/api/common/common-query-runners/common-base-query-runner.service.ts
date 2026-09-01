@@ -40,7 +40,6 @@ import {
   CommonQueryResult,
 } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
-import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
 import { OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS } from 'src/engine/api/graphql/graphql-query-runner/constants/objects-with-settings-permissions-requirements';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
@@ -258,6 +257,7 @@ export abstract class CommonBaseQueryRunnerService<
       flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
       flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
       flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+      transactionScope: queryRunnerContext.transactionScope,
     });
   }
 
@@ -268,6 +268,7 @@ export abstract class CommonBaseQueryRunnerService<
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
+    transactionScope,
   }: {
     results: Output;
     operationName: CommonQueryNames;
@@ -275,6 +276,7 @@ export abstract class CommonBaseQueryRunnerService<
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    transactionScope: CommonBaseQueryRunnerContext['transactionScope'];
   }): Promise<Output> {
     const resultWithGetters = await this.processQueryResult(
       results,
@@ -289,6 +291,7 @@ export abstract class CommonBaseQueryRunnerService<
       flatObjectMetadata.nameSingular,
       operationName,
       resultWithGetters as QueryResultFieldValue,
+      transactionScope,
     );
 
     return resultWithGetters as Output;
@@ -513,12 +516,6 @@ export abstract class CommonBaseQueryRunnerService<
 
       return columnKeyedRecord;
     });
-  }
-
-  protected getNestedRelationsReadPathOptions(): NestedRelationsReadPathOptions {
-    return {
-      useReplica: this.isReadOnly,
-    };
   }
 
   private async throttleQueryExecution(authContext: WorkspaceAuthContext) {

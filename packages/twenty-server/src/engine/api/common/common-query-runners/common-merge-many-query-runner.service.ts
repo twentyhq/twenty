@@ -143,10 +143,8 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
           FindOptionsRelations<ObjectLiteral>
         >,
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
-        authContext: context.authContext,
-        rolePermissionConfig: context.rolePermissionConfig,
+        parentObjectRepository: context.repository,
         selectedFields: args.selectedFieldsResult.select,
-        ...this.getNestedRelationsReadPathOptions(),
       });
     }
 
@@ -349,7 +347,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      rolePermissionConfig,
+      repository,
     } = queryRunnerContext;
     const alias = flatObjectMetadata.nameSingular;
 
@@ -367,68 +365,61 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       attributes: { operation: this.operationName },
     });
 
-    return this.workspaceOrmManager.runInWorkspaceTransaction(
-      async (transactionScope) => {
-        for (const relationField of this.getRelationFieldsPointingToCurrentObject(
-          queryRunnerContext,
-        )) {
-          const relatedRepository = transactionScope.getRepository(
-            relationField.objectMetadata.nameSingular,
-            rolePermissionConfig,
+    return repository.runAtomically(async (objectRepository) => {
+      for (const relationField of this.getRelationFieldsPointingToCurrentObject(
+        queryRunnerContext,
+      )) {
+        const relatedRepository =
+          objectRepository.getRepositoryForObjectMetadataId(
+            relationField.objectMetadata.id,
           );
 
-          await relatedRepository.runMutation({
-            selectQueryBuilder: relatedRepository
-              .createQueryBuilder(relationField.objectMetadata.nameSingular)
-              .where({ [relationField.joinColumnName]: In(idsToDelete) }),
-            rowLevelPermissionsApplied: false,
-            kind: 'update',
-            columnsToReturn: ['id'],
-            data: { [relationField.joinColumnName]: priorityRecordId },
-          });
-        }
-
-        const objectRepository = transactionScope.getRepository(
-          alias,
-          rolePermissionConfig,
-        );
-
-        await objectRepository.runMutation({
-          selectQueryBuilder: objectRepository
-            .createQueryBuilder(alias)
-            .where({ id: In(idsToDelete) }),
-          rowLevelPermissionsApplied: false,
-          kind: 'delete',
-          columnsToReturn,
-        });
-
-        const [resolvedMergedData] = await this.resolveNestedRelations({
-          records: [mergedData],
-          queryRunnerContext,
-          writeRepository: objectRepository,
-        });
-
-        const updatedRecords = await objectRepository.runMutation({
-          selectQueryBuilder: objectRepository
-            .createQueryBuilder(alias)
-            .where({ id: priorityRecordId }),
+        await relatedRepository.runMutation({
+          selectQueryBuilder: relatedRepository
+            .createQueryBuilder(relationField.objectMetadata.nameSingular)
+            .where({ [relationField.joinColumnName]: In(idsToDelete) }),
           rowLevelPermissionsApplied: false,
           kind: 'update',
-          columnsToReturn,
-          data: resolvedMergedData,
+          columnsToReturn: ['id'],
+          data: { [relationField.joinColumnName]: priorityRecordId },
         });
+      }
 
-        if (!isDefined(updatedRecords[0])) {
-          throw new CommonQueryRunnerException(
-            'Failed to update record',
-            CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
-            { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-          );
-        }
+      await objectRepository.runMutation({
+        selectQueryBuilder: objectRepository
+          .createQueryBuilder(alias)
+          .where({ id: In(idsToDelete) }),
+        rowLevelPermissionsApplied: false,
+        kind: 'delete',
+        columnsToReturn,
+      });
 
-        return updatedRecords[0];
-      },
-    );
+      const [resolvedMergedData] = await this.resolveNestedRelations({
+        records: [mergedData],
+        queryRunnerContext,
+        writeRepository: objectRepository,
+      });
+
+      const updatedRecords = await objectRepository.runMutation({
+        selectQueryBuilder: objectRepository
+          .createQueryBuilder(alias)
+          .where({ id: priorityRecordId }),
+        rowLevelPermissionsApplied: false,
+        kind: 'update',
+        columnsToReturn,
+        data: resolvedMergedData,
+      });
+
+      if (!isDefined(updatedRecords[0])) {
+        throw new CommonQueryRunnerException(
+          'Failed to update record',
+          CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
+          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+        );
+      }
+
+      return updatedRecords[0];
+    });
   }
 
   private async processNestedRelations({
@@ -444,8 +435,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatObjectMetadata,
-      authContext,
-      rolePermissionConfig,
+      repository,
     } = queryRunnerContext;
 
     if (args.selectedFieldsResult.relations) {
@@ -459,10 +449,8 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
           FindOptionsRelations<ObjectLiteral>
         >,
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
-        authContext,
-        rolePermissionConfig,
+        parentObjectRepository: repository,
         selectedFields: args.selectedFieldsResult.select,
-        ...this.getNestedRelationsReadPathOptions(),
       });
     }
   }

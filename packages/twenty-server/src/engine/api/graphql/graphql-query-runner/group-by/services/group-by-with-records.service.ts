@@ -15,7 +15,6 @@ import { CommonResultGettersService } from 'src/engine/api/common/common-result-
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
-import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import {
@@ -49,7 +48,6 @@ export class GroupByWithRecordsService {
     orderByForRecords,
     groupLimit,
     offsetForRecords,
-    nestedRelationsReadPathOptions,
   }: {
     queryBuilderWithGroupBy: WorkspaceSelectQueryBuilder;
     queryBuilderWithFiltersAndWithoutGroupBy: WorkspaceSelectQueryBuilder;
@@ -60,7 +58,6 @@ export class GroupByWithRecordsService {
     orderByForRecords: ObjectRecordOrderBy;
     groupLimit?: number;
     offsetForRecords?: number;
-    nestedRelationsReadPathOptions: NestedRelationsReadPathOptions;
   }): Promise<CommonGroupByOutputItem[]> {
     const effectiveGroupLimit = getGroupLimit(groupLimit);
 
@@ -74,7 +71,6 @@ export class GroupByWithRecordsService {
 
     const {
       authContext,
-      rolePermissionConfig,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -121,10 +117,8 @@ export class GroupByWithRecordsService {
         >,
         aggregate: selectedFieldsResult.aggregate,
         limit: RELATIONS_PER_RECORD_LIMIT,
-        authContext,
-        rolePermissionConfig,
+        parentObjectRepository: readRepository,
         selectedFields: selectedFieldsResult.select,
-        ...nestedRelationsReadPathOptions,
       });
     }
 

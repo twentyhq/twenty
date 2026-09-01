@@ -2,6 +2,7 @@ import { type QueryResultFieldValue } from 'src/engine/api/graphql/workspace-que
 import { type ResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 
 export interface WorkspacePreQueryHookInstance {
   execute(
@@ -16,5 +17,6 @@ export interface WorkspacePostQueryHookInstance {
     authContext: WorkspaceAuthContext,
     objectName: string,
     payload: QueryResultFieldValue,
+    transactionScope?: WorkspaceTransactionScope,
   ): Promise<void>;
 }

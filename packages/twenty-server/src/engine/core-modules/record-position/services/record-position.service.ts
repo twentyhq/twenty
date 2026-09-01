@@ -5,7 +5,9 @@ import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { getWorkspaceRepositoryWithOptionalTransaction } from 'src/engine/twenty-orm/utils/get-workspace-repository-with-optional-transaction.util';
 import { sanitizeNumber } from 'src/engine/utils/sanitize-number.utli';
 
 export type RecordPositionServiceCreateArgs = {
@@ -13,6 +15,7 @@ export type RecordPositionServiceCreateArgs = {
   objectMetadata: { isCustom: boolean; nameSingular: string };
   workspaceId: string;
   index?: number;
+  transactionScope?: WorkspaceTransactionScope;
 };
 
 @Injectable()
@@ -24,6 +27,7 @@ export class RecordPositionService {
     value,
     workspaceId,
     index = 0,
+    transactionScope,
   }: RecordPositionServiceCreateArgs): Promise<number> {
     if (isNumber(value) && !Number.isNaN(value)) {
       return value;
@@ -33,6 +37,7 @@ export class RecordPositionService {
       const recordWithMinPosition = await this.findMinPosition(
         objectMetadata,
         workspaceId,
+        transactionScope,
       );
 
       return recordWithMinPosition !== null
@@ -43,6 +48,7 @@ export class RecordPositionService {
     const recordWithMaxPosition = await this.findMaxPosition(
       objectMetadata,
       workspaceId,
+      transactionScope,
     );
 
     return recordWithMaxPosition !== null
@@ -55,6 +61,7 @@ export class RecordPositionService {
     workspaceId,
     objectMetadata,
     shouldBackfillPositionIfUndefined,
+    transactionScope,
   }: {
     partialRecordInputs: Partial<ObjectRecord>[];
     workspaceId: string;
@@ -64,6 +71,7 @@ export class RecordPositionService {
       fieldIdByName: Record<string, string>;
     };
     shouldBackfillPositionIfUndefined: boolean;
+    transactionScope?: WorkspaceTransactionScope;
   }): Promise<Partial<ObjectRecord>[]> {
     const recordsThatNeedFirstPosition: Partial<ObjectRecord>[] = [];
     const recordsThatNeedLastPosition: Partial<ObjectRecord>[] = [];
@@ -117,6 +125,7 @@ export class RecordPositionService {
       const existingRecordMinPosition = await this.findMinPosition(
         objectMetadata,
         workspaceId,
+        transactionScope,
       );
 
       const minPosition = calculatePosition(
@@ -133,6 +142,7 @@ export class RecordPositionService {
       const existingRecordMaxPosition = await this.findMaxPosition(
         objectMetadata,
         workspaceId,
+        transactionScope,
       );
 
       const maxPosition = calculatePosition(
@@ -201,17 +211,20 @@ export class RecordPositionService {
   private async findMinPosition(
     objectMetadata: { isCustom: boolean; nameSingular: string },
     workspaceId: string,
+    transactionScope?: WorkspaceTransactionScope,
   ): Promise<number | null> {
     const authContext = buildSystemAuthContext(workspaceId);
 
     const result = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const repository = this.workspaceOrmManager.getRepository(
-          objectMetadata.nameSingular,
-          {
+        const repository = getWorkspaceRepositoryWithOptionalTransaction({
+          objectMetadataName: objectMetadata.nameSingular,
+          transactionScope,
+          workspaceOrmManager: this.workspaceOrmManager,
+          rolePermissionConfig: {
             shouldBypassPermissionChecks: true,
           },
-        );
+        });
 
         return await repository.minimum('position');
       },
@@ -224,17 +237,20 @@ export class RecordPositionService {
   private async findMaxPosition(
     objectMetadata: { isCustom: boolean; nameSingular: string },
     workspaceId: string,
+    transactionScope?: WorkspaceTransactionScope,
   ): Promise<number | null> {
     const authContext = buildSystemAuthContext(workspaceId);
 
     const result = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const repository = this.workspaceOrmManager.getRepository(
-          objectMetadata.nameSingular,
-          {
+        const repository = getWorkspaceRepositoryWithOptionalTransaction({
+          objectMetadataName: objectMetadata.nameSingular,
+          transactionScope,
+          workspaceOrmManager: this.workspaceOrmManager,
+          rolePermissionConfig: {
             shouldBypassPermissionChecks: true,
           },
-        );
+        });
 
         return await repository.maximum('position');
       },

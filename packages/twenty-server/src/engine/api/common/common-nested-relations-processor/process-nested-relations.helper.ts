@@ -21,7 +21,6 @@ import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-run
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -30,8 +29,6 @@ import {
   type FieldMapsForObject,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
@@ -50,17 +47,13 @@ type ProcessNestedRelationsArgs<T extends ObjectRecord = ObjectRecord> = {
   relations: Record<string, FindOptionsRelations<ObjectLiteral>>;
   aggregate?: Record<string, AggregationField>;
   limit: number;
-  authContext: WorkspaceAuthContext;
-  useReplica?: boolean;
-  rolePermissionConfig?: RolePermissionConfig;
+  parentObjectRepository: WorkspaceRepository;
   // oxlint-disable-next-line typescript/no-explicit-any
   selectedFields: Record<string, any>;
 };
 
 @Injectable()
 export class ProcessNestedRelationsHelper {
-  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
-
   public async processNestedRelations<T extends ObjectRecord = ObjectRecord>(
     args: ProcessNestedRelationsArgs<T>,
   ): Promise<void> {
@@ -82,9 +75,7 @@ export class ProcessNestedRelationsHelper {
       relations,
       aggregate = {},
       limit,
-      authContext,
-      useReplica = false,
-      rolePermissionConfig,
+      parentObjectRepository,
       selectedFields,
     }: ProcessNestedRelationsArgs<T>,
     relationQueryLimiter: ConcurrencyLimiter,
@@ -101,9 +92,7 @@ export class ProcessNestedRelationsHelper {
           nestedRelations,
           aggregate,
           limit,
-          authContext,
-          useReplica,
-          rolePermissionConfig,
+          parentObjectRepository,
           relationQueryLimiter,
           selectedFields:
             selectedFields[sourceFieldName] instanceof Object
@@ -125,9 +114,7 @@ export class ProcessNestedRelationsHelper {
     nestedRelations,
     aggregate,
     limit,
-    authContext,
-    useReplica,
-    rolePermissionConfig,
+    parentObjectRepository,
     relationQueryLimiter,
     selectedFields,
   }: {
@@ -141,9 +128,7 @@ export class ProcessNestedRelationsHelper {
     nestedRelations: FindOptionsRelations<ObjectLiteral>;
     aggregate: Record<string, AggregationField>;
     limit: number;
-    authContext: WorkspaceAuthContext;
-    useReplica: boolean;
-    rolePermissionConfig?: RolePermissionConfig;
+    parentObjectRepository: WorkspaceRepository;
     relationQueryLimiter: ConcurrencyLimiter;
     selectedFields: Record<string, unknown>;
   }): Promise<void> {
@@ -192,11 +177,10 @@ export class ProcessNestedRelationsHelper {
         fieldMaps,
       });
 
-    const targetObjectRepository = this.workspaceOrmManager.getRepository(
-      targetObjectMetadata.nameSingular,
-      rolePermissionConfig,
-      { useReplica },
-    );
+    const targetObjectRepository =
+      parentObjectRepository.getRepositoryForObjectMetadataId(
+        targetObjectMetadata.id,
+      );
 
     const targetObjectNameSingular = targetObjectMetadata.nameSingular;
 
@@ -302,9 +286,7 @@ export class ProcessNestedRelationsHelper {
           >,
           aggregate,
           limit,
-          authContext,
-          useReplica,
-          rolePermissionConfig,
+          parentObjectRepository: targetObjectRepository,
           selectedFields,
         },
         relationQueryLimiter,

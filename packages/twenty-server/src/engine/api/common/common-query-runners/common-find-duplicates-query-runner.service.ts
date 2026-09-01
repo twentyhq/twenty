@@ -49,8 +49,6 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       commonQueryParser,
-      authContext,
-      rolePermissionConfig,
     } = queryRunnerContext;
 
     const readRepository = this.getReadRepository(queryRunnerContext);
@@ -165,10 +163,8 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
           FindOptionsRelations<ObjectLiteral>
         >,
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
-        authContext,
-        rolePermissionConfig,
+        parentObjectRepository: readRepository,
         selectedFields: args.selectedFieldsResult.select,
-        ...this.getNestedRelationsReadPathOptions(),
       });
     }
 
@@ -211,6 +207,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
         flatFieldMetadataMaps,
         flatObjectMetadataMaps,
         shouldBackfillPositionIfUndefined: false,
+        transactionScope: queryRunnerContext.transactionScope,
       }),
     };
   }

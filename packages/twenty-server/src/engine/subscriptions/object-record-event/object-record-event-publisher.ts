@@ -25,7 +25,6 @@ import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/serializable-auth-context.type';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -44,6 +43,7 @@ import {
 import { type EventStreamPayload } from 'src/engine/subscriptions/types/event-stream-payload.type';
 import { ObjectRecordSubscriptionEvent } from 'src/engine/subscriptions/types/object-record-subscription-event.type';
 import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twenty-orm/utils/is-record-matching-rls-row-level-permission-predicate.util';
@@ -72,6 +72,7 @@ export class ObjectRecordEventPublisher {
     private readonly processNestedRelationsHelper: ProcessNestedRelationsHelper,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly commonSelectFieldsHelper: CommonSelectFieldsHelper,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   async publish(
@@ -237,7 +238,6 @@ export class ObjectRecordEventPublisher {
           events: matchedEvents.map(
             (matchedEvent) => matchedEvent.objectRecordEvent,
           ),
-          streamData,
           workspaceId: workspaceEventBatch.workspaceId,
           roleIds,
           objectsPermissions,
@@ -265,14 +265,12 @@ export class ObjectRecordEventPublisher {
   }
 
   private async enrichEventBatchWithNestedRelations({
-    streamData,
     objectMetadata,
     events,
     workspaceId,
     roleIds,
     objectsPermissions,
   }: {
-    streamData: EventStreamData;
     objectMetadata: FlatObjectMetadata;
     events: ObjectRecordEvent[];
     workspaceId: string;
@@ -329,15 +327,18 @@ export class ObjectRecordEventPublisher {
 
     const selectedFieldsResult =
       commonQueryParser.parseSelectedFields(selectedFields);
+    const parentObjectRepository = this.workspaceOrmManager.getRepository(
+      objectMetadata.nameSingular,
+      rolePermissionConfig,
+    );
 
     await this.processNestedRelationsHelper.processNestedRelations({
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       parentObjectMetadataItem: objectMetadata,
       parentObjectRecords: allRecords,
-      authContext: streamData.authContext as unknown as WorkspaceAuthContext,
       limit: QUERY_MAX_RECORDS_FROM_RELATION,
-      rolePermissionConfig,
+      parentObjectRepository,
       relations: selectedFieldsResult.relations as Record<
         string,
         FindOptionsRelations<ObjectLiteral>

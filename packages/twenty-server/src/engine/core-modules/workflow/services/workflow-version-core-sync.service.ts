@@ -279,34 +279,46 @@ export class WorkflowVersionCoreSyncService {
       workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
       transactionScope: WorkspaceTransactionScope,
     ) => Promise<string>,
+    transactionScope?: WorkspaceTransactionScope,
   ): Promise<void> {
-    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      await this.workspaceOrmManager.runInWorkspaceTransaction(
-        async (transactionScope) => {
-          const workflowVersionRepository =
-            transactionScope.getRepository<WorkflowVersionWorkspaceEntity>(
-              'workflowVersion',
-              { shouldBypassPermissionChecks: true },
-            );
+    const writeAndMirror = async (
+      activeTransactionScope: WorkspaceTransactionScope,
+    ) => {
+      const workflowVersionRepository =
+        activeTransactionScope.getRepository<WorkflowVersionWorkspaceEntity>(
+          'workflowVersion',
+          { shouldBypassPermissionChecks: true },
+        );
 
-          const workflowVersionId = await write(
-            workflowVersionRepository,
-            transactionScope,
-          );
-
-          const workflowVersion = await workflowVersionRepository.findOne({
-            where: { id: workflowVersionId },
-          });
-
-          if (isDefined(workflowVersion)) {
-            await this.mirrorWorkflowVersionWrite({
-              workspaceId,
-              transactionScope,
-              workflowVersion,
-            });
-          }
-        },
+      const workflowVersionId = await write(
+        workflowVersionRepository,
+        activeTransactionScope,
       );
+
+      const workflowVersion = await workflowVersionRepository.findOne({
+        where: { id: workflowVersionId },
+      });
+
+      if (isDefined(workflowVersion)) {
+        await this.mirrorWorkflowVersionWrite({
+          workspaceId,
+          transactionScope: activeTransactionScope,
+          workflowVersion,
+        });
+      }
+    };
+
+    if (isDefined(transactionScope)) {
+      await writeAndMirror(transactionScope);
+      transactionScope.afterCommit(() =>
+        this.invalidateAutomatedTriggerMaps(workspaceId),
+      );
+
+      return;
+    }
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      await this.workspaceOrmManager.runInWorkspaceTransaction(writeAndMirror);
     }, buildSystemAuthContext(workspaceId));
 
     await this.invalidateAutomatedTriggerMaps(workspaceId);

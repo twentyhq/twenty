@@ -39,8 +39,7 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<ObjectRecord[]> {
     const {
-      authContext,
-      rolePermissionConfig,
+      repository,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatObjectMetadata,
@@ -72,10 +71,8 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
           FindOptionsRelations<ObjectLiteral>
         >,
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
-        authContext,
-        rolePermissionConfig,
+        parentObjectRepository: repository,
         selectedFields: args.selectedFieldsResult.select,
-        ...this.getNestedRelationsReadPathOptions(),
       });
     }
 

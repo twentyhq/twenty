@@ -39,8 +39,7 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<ObjectRecord[]> {
     const {
-      authContext,
-      rolePermissionConfig,
+      repository,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatObjectMetadata,
@@ -73,10 +72,8 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
           FindOptionsRelations<ObjectLiteral>
         >,
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
-        authContext,
-        rolePermissionConfig,
+        parentObjectRepository: repository,
         selectedFields: args.selectedFieldsResult.select,
-        ...this.getNestedRelationsReadPathOptions(),
       });
     }
 
@@ -110,6 +107,7 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
           shouldBackfillPositionIfUndefined: false,
+          transactionScope: queryRunnerContext.transactionScope,
         })
       )[0],
     };

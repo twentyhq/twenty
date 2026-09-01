@@ -64,6 +64,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 
 @Injectable()
 export class DataArgProcessorService {
@@ -76,6 +77,7 @@ export class DataArgProcessorService {
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
     shouldBackfillPositionIfUndefined = true,
+    transactionScope,
   }: {
     partialRecordInputs: Partial<ObjectRecord>[] | undefined;
     authContext: WorkspaceAuthContext;
@@ -83,6 +85,7 @@ export class DataArgProcessorService {
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     shouldBackfillPositionIfUndefined?: boolean;
+    transactionScope?: WorkspaceTransactionScope;
   }): Promise<Partial<ObjectRecord>[]> {
     if (!isDefined(partialRecordInputs)) {
       return [];
@@ -108,6 +111,7 @@ export class DataArgProcessorService {
           fieldIdByName,
         },
         shouldBackfillPositionIfUndefined,
+        transactionScope,
       });
 
     const processedRecords: Partial<ObjectRecord>[] = [];

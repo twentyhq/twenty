@@ -21,6 +21,8 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { type EventStreamData } from 'src/engine/subscriptions/types/event-stream-data.type';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { ObjectRecordEventPublisher } from 'src/engine/subscriptions/object-record-event/object-record-event-publisher';
@@ -87,6 +89,9 @@ describe('ObjectRecordEventPublisher', () => {
   let mockProcessNestedRelationsHelper: jest.Mocked<
     Pick<ProcessNestedRelationsHelper, 'processNestedRelations'>
   >;
+  let mockWorkspaceOrmManager: jest.Mocked<
+    Pick<WorkspaceOrmManager, 'getRepository'>
+  >;
   let mockWorkspaceManyOrAllFlatEntityMapsCacheService: jest.Mocked<
     Pick<
       WorkspaceManyOrAllFlatEntityMapsCacheService,
@@ -98,6 +103,7 @@ describe('ObjectRecordEventPublisher', () => {
   const streamChannelId = 'test-stream-channel-id';
   const userWorkspaceId = 'test-user-workspace-id';
   const roleId = 'test-role-id';
+  const parentObjectRepository = {} as WorkspaceRepository;
 
   const companyObjectMetadata: FlatObjectMetadata = COMPANY_FLAT_OBJECT_MOCK;
 
@@ -252,6 +258,9 @@ describe('ObjectRecordEventPublisher', () => {
     mockProcessNestedRelationsHelper = {
       processNestedRelations: jest.fn(),
     };
+    mockWorkspaceOrmManager = {
+      getRepository: jest.fn().mockReturnValue(parentObjectRepository),
+    };
 
     mockWorkspaceManyOrAllFlatEntityMapsCacheService = {
       getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
@@ -289,6 +298,10 @@ describe('ObjectRecordEventPublisher', () => {
         {
           provide: ProcessNestedRelationsHelper,
           useValue: mockProcessNestedRelationsHelper,
+        },
+        {
+          provide: WorkspaceOrmManager,
+          useValue: mockWorkspaceOrmManager,
         },
         {
           provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
@@ -1555,14 +1568,13 @@ describe('ObjectRecordEventPublisher', () => {
           expect.objectContaining({
             parentObjectMetadataItem: companyObjectMetadata,
             parentObjectRecords: expect.arrayContaining([recordAfter]),
-            authContext: expect.objectContaining({
-              userWorkspaceId,
-              userId: 'test-user-id',
-            }),
-            rolePermissionConfig: expect.objectContaining({
-              intersectionOf: [roleId],
-            }),
+            parentObjectRepository,
           }),
+        );
+
+        expect(mockWorkspaceOrmManager.getRepository).toHaveBeenCalledWith(
+          companyObjectMetadata.nameSingular,
+          { intersectionOf: [roleId] },
         );
       });
 
@@ -1717,7 +1729,7 @@ describe('ObjectRecordEventPublisher', () => {
         ).not.toHaveBeenCalled();
       });
 
-      it('should pass correct role permission config when enriching events', async () => {
+      it('should create the relation repository with the stream permissions', async () => {
         const customRoleId = 'custom-role-id';
         const customUserWorkspaceRoleMap = {
           [userWorkspaceId]: customRoleId,
@@ -1761,14 +1773,9 @@ describe('ObjectRecordEventPublisher', () => {
 
         await service.publish(eventBatch as WorkspaceEventBatch<never>);
 
-        expect(
-          mockProcessNestedRelationsHelper.processNestedRelations,
-        ).toHaveBeenCalledWith(
-          expect.objectContaining({
-            rolePermissionConfig: {
-              intersectionOf: [customRoleId],
-            },
-          }),
+        expect(mockWorkspaceOrmManager.getRepository).toHaveBeenCalledWith(
+          companyObjectMetadata.nameSingular,
+          { intersectionOf: [customRoleId] },
         );
       });
     });

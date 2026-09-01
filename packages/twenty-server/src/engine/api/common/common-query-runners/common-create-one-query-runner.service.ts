@@ -66,6 +66,7 @@ export class CommonCreateOneQueryRunnerService extends CommonBaseQueryRunnerServ
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
       shouldBackfillPositionIfUndefined: !args.upsert,
+      transactionScope: queryRunnerContext.transactionScope,
     });
 
     return {

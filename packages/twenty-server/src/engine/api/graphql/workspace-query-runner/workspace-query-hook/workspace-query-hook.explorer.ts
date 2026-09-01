@@ -210,6 +210,7 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
         executeParams[0],
         executeParams[1],
         transformedPayload,
+        executeParams[3],
       );
     } else {
       // @ts-expect-error legacy noImplicitAny
@@ -218,6 +219,7 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
         executeParams[0],
         executeParams[1],
         transformedPayload,
+        executeParams[3],
       );
     }
   }

@@ -71,22 +71,24 @@ export class WorkspaceDataSource {
   async transaction<T>(
     work: (transactionScope: WorkspaceTransactionScope) => Promise<T>,
   ): Promise<T> {
-    return this.runInClientTransaction((executor, internalContext) =>
-      work({
-        getRepository: <T extends ObjectLiteral = ObjectRecord>(
-          nameSingular: string,
-          rolePermissionConfig?: RolePermissionConfig,
-        ) =>
-          this.buildRepository<T>({
-            nameSingular,
-            rolePermissionConfig,
-            executor,
-            isTransactional: true,
-            internalContext,
-          }),
-        executeRawQuery: (sql, parameters = []) =>
-          executor.execute({ text: sql, values: parameters }),
-      }),
+    return this.runInClientTransaction(
+      (executor, internalContext, afterCommit) =>
+        work({
+          getRepository: <T extends ObjectLiteral = ObjectRecord>(
+            nameSingular: string,
+            rolePermissionConfig?: RolePermissionConfig,
+          ) =>
+            this.buildRepository<T>({
+              nameSingular,
+              rolePermissionConfig,
+              executor,
+              isTransactional: true,
+              internalContext,
+            }),
+          executeRawQuery: (sql, parameters = []) =>
+            executor.execute({ text: sql, values: parameters }),
+          afterCommit,
+        }),
     );
   }
 
@@ -94,17 +96,30 @@ export class WorkspaceDataSource {
     work: (
       executor: QueryExecutor,
       internalContext: WorkspaceInternalContext,
+      afterCommit: WorkspaceTransactionScope['afterCommit'],
     ) => Promise<T>,
   ): Promise<T> {
-    const deferredDatabaseEvents: Parameters<
-      WorkspaceInternalContext['eventEmitterService']['emitDatabaseBatchEvent']
-    >[0][] = [];
+    const afterCommitCallbacks: Array<() => void | Promise<void>> = [];
     const eventEmitterService = this.internalContext.eventEmitterService;
+    const afterCommit: WorkspaceTransactionScope['afterCommit'] = (
+      callback,
+    ) => {
+      afterCommitCallbacks.push(callback);
+    };
     const transactionalInternalContext: WorkspaceInternalContext = {
       ...this.internalContext,
       eventEmitterService: {
         emitDatabaseBatchEvent: (event) => {
-          deferredDatabaseEvents.push(event);
+          afterCommit(() => {
+            try {
+              eventEmitterService.emitDatabaseBatchEvent(event);
+            } catch (error) {
+              this.logger.error(
+                `Failed to emit deferred database event for workspace ${this.internalContext.workspaceId}`,
+                error,
+              );
+            }
+          });
         },
       },
     };
@@ -112,18 +127,34 @@ export class WorkspaceDataSource {
     const result = await runInRollbackSafeTransaction({
       pool: this.pool,
       work: (client) =>
-        work(new ClientQueryExecutor({ client }), transactionalInternalContext),
+        work(
+          new ClientQueryExecutor({ client }),
+          transactionalInternalContext,
+          afterCommit,
+        ),
     });
 
-    for (const deferredDatabaseEvent of deferredDatabaseEvents) {
+    let firstAfterCommitError: unknown;
+    let hasAfterCommitError = false;
+
+    for (const callback of afterCommitCallbacks) {
       try {
-        eventEmitterService.emitDatabaseBatchEvent(deferredDatabaseEvent);
+        await callback();
       } catch (error) {
-        this.logger.error(
-          `Failed to emit deferred database event for workspace ${this.internalContext.workspaceId}`,
-          error,
-        );
+        if (!hasAfterCommitError) {
+          firstAfterCommitError = error;
+          hasAfterCommitError = true;
+        } else {
+          this.logger.error(
+            `Additional after-commit callback failed for workspace ${this.internalContext.workspaceId}`,
+            error,
+          );
+        }
       }
+    }
+
+    if (hasAfterCommitError) {
+      throw firstAfterCommitError;
     }
 
     return result;
@@ -214,7 +245,7 @@ export class WorkspaceDataSource {
         this.runInClientTransaction(
           (transactionExecutor, transactionalInternalContext) =>
             work(
-              this.buildRepositoryForObjectMetadataId({
+              this.buildRepositoryForObjectMetadataId<T>({
                 objectMetadataId,
                 rolePermissionConfig,
                 executor: transactionExecutor,

@@ -32,7 +32,6 @@ import {
   CreateManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
-import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
@@ -47,7 +46,6 @@ import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
-import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 @Injectable()
 export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -77,7 +75,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const {
       repository,
       authContext,
-      rolePermissionConfig,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -115,12 +112,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     await this.processNestedRelationsIfNeeded({
       args,
       records: upsertedRecords,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      authContext,
-      rolePermissionConfig,
-      nestedRelationsReadPathOptions: this.getNestedRelationsReadPathOptions(),
+      queryRunnerContext,
     });
 
     return upsertedRecords;
@@ -129,25 +121,22 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   private async processNestedRelationsIfNeeded({
     args,
     records,
-    flatObjectMetadata,
-    flatObjectMetadataMaps,
-    flatFieldMetadataMaps,
-    authContext,
-    rolePermissionConfig,
-    nestedRelationsReadPathOptions,
+    queryRunnerContext,
   }: {
     args: CommonExtendedInput<CreateManyQueryArgs>;
     records: ObjectRecord[];
-    flatObjectMetadata: FlatObjectMetadata;
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-    authContext: WorkspaceAuthContext;
-    rolePermissionConfig?: RolePermissionConfig;
-    nestedRelationsReadPathOptions: NestedRelationsReadPathOptions;
+    queryRunnerContext: CommonExtendedQueryRunnerContext;
   }): Promise<void> {
     if (!args.selectedFieldsResult.relations) {
       return;
     }
+
+    const {
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      repository,
+    } = queryRunnerContext;
 
     await this.processNestedRelationsHelper.processNestedRelations({
       flatObjectMetadataMaps,
@@ -159,10 +148,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         FindOptionsRelations<ObjectLiteral>
       >,
       limit: QUERY_MAX_RECORDS,
-      authContext,
-      rolePermissionConfig,
+      parentObjectRepository: repository,
       selectedFields: args.selectedFieldsResult.select,
-      ...nestedRelationsReadPathOptions,
     });
   }
 
@@ -186,6 +173,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         flatFieldMetadataMaps,
         flatObjectMetadataMaps,
         shouldBackfillPositionIfUndefined: !args.upsert,
+        transactionScope: queryRunnerContext.transactionScope,
       }),
     };
   }
@@ -305,6 +293,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadata,
       flatFieldMetadataMaps,
       workspaceId,
+      transactionScope: queryRunnerContext.transactionScope,
     });
 
     const result: InsertResult = {
@@ -347,11 +336,13 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatObjectMetadata,
     flatFieldMetadataMaps,
     workspaceId,
+    transactionScope,
   }: {
     recordsToInsert: Partial<ObjectRecord>[];
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     workspaceId: string;
+    transactionScope?: CommonBaseQueryRunnerContext['transactionScope'];
   }): Promise<Partial<ObjectRecord>[]> {
     if (recordsToInsert.length === 0) {
       return recordsToInsert;
@@ -371,6 +362,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         fieldIdByName,
       },
       shouldBackfillPositionIfUndefined: true,
+      transactionScope,
     });
   }
 

@@ -6,7 +6,6 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace-data-source';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type DatabaseBatchEventInput } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
@@ -109,14 +108,8 @@ const buildDataSource = ({
   };
 };
 
-type AtomicallyRunnableRepository = {
-  runAtomically: <T>(
-    work: (repository: WorkspaceRepository<ObjectLiteral>) => Promise<T>,
-  ) => Promise<T>;
-};
-
-describe('WorkspaceDataSource transaction database event deferral', () => {
-  it('flushes database events in registration order only after commit', async () => {
+describe('WorkspaceDataSource transactions', () => {
+  it('runs after-commit work in registration order only after commit', async () => {
     const executionOrder: string[] = [];
     const { dataSource, emitDatabaseBatchEvent } = buildDataSource({
       executionOrder,
@@ -128,6 +121,9 @@ describe('WorkspaceDataSource transaction database event deferral', () => {
         .getInternalContext().eventEmitterService;
 
       eventEmitterService.emitDatabaseBatchEvent(buildDatabaseEvent('first'));
+      transactionScope.afterCommit(() => {
+        executionOrder.push('callback');
+      });
       eventEmitterService.emitDatabaseBatchEvent(buildDatabaseEvent('last'));
 
       expect(emitDatabaseBatchEvent).not.toHaveBeenCalled();
@@ -142,6 +138,7 @@ describe('WorkspaceDataSource transaction database event deferral', () => {
       'work',
       'COMMIT',
       'database:first',
+      'callback',
       'database:last',
     ]);
   });
@@ -199,6 +196,46 @@ describe('WorkspaceDataSource transaction database event deferral', () => {
     ]);
   });
 
+  it('propagates callback errors after commit without rolling back', async () => {
+    const executionOrder: string[] = [];
+    const { dataSource } = buildDataSource({ executionOrder });
+    const callbackError = new Error('callback failed');
+    const additionalCallbackError = new Error('additional callback failed');
+    const loggerError = jest
+      .spyOn(dataSource['logger'], 'error')
+      .mockImplementation();
+
+    await expect(
+      dataSource.transaction(async (transactionScope) => {
+        transactionScope.afterCommit(() => {
+          executionOrder.push('callback');
+
+          throw callbackError;
+        });
+        transactionScope.afterCommit(() => {
+          executionOrder.push('callback-after-error');
+
+          throw additionalCallbackError;
+        });
+        transactionScope.afterCommit(() => {
+          executionOrder.push('last-callback');
+        });
+      }),
+    ).rejects.toBe(callbackError);
+
+    expect(loggerError).toHaveBeenCalledWith(
+      `Additional after-commit callback failed for workspace ${WORKSPACE_ID}`,
+      additionalCallbackError,
+    );
+    expect(executionOrder).toEqual([
+      'BEGIN',
+      'COMMIT',
+      'callback',
+      'callback-after-error',
+      'last-callback',
+    ]);
+  });
+
   it('discards deferred events when work rolls back', async () => {
     const executionOrder: string[] = [];
     const { dataSource, emitDatabaseBatchEvent } = buildDataSource({
@@ -214,6 +251,9 @@ describe('WorkspaceDataSource transaction database event deferral', () => {
           .eventEmitterService.emitDatabaseBatchEvent(
             buildDatabaseEvent('rolled-back'),
           );
+        transactionScope.afterCommit(() => {
+          executionOrder.push('callback');
+        });
 
         throw workError;
       }),
@@ -239,6 +279,9 @@ describe('WorkspaceDataSource transaction database event deferral', () => {
           .eventEmitterService.emitDatabaseBatchEvent(
             buildDatabaseEvent('not-committed'),
           );
+        transactionScope.afterCommit(() => {
+          executionOrder.push('callback');
+        });
       }),
     ).rejects.toBe(commitError);
 
@@ -253,18 +296,16 @@ describe('WorkspaceDataSource transaction database event deferral', () => {
     });
     const repository = dataSource.getRepository(OBJECT_NAME);
 
-    await (repository as unknown as AtomicallyRunnableRepository).runAtomically(
-      async (transactionalRepository) => {
-        transactionalRepository
-          .getInternalContext()
-          .eventEmitterService.emitDatabaseBatchEvent(
-            buildDatabaseEvent('repository-transaction'),
-          );
+    await repository.runAtomically(async (transactionalRepository) => {
+      transactionalRepository
+        .getInternalContext()
+        .eventEmitterService.emitDatabaseBatchEvent(
+          buildDatabaseEvent('repository-transaction'),
+        );
 
-        expect(emitDatabaseBatchEvent).not.toHaveBeenCalled();
-        executionOrder.push('work');
-      },
-    );
+      expect(emitDatabaseBatchEvent).not.toHaveBeenCalled();
+      executionOrder.push('work');
+    });
 
     expect(executionOrder).toEqual([
       'BEGIN',
@@ -272,5 +313,21 @@ describe('WorkspaceDataSource transaction database event deferral', () => {
       'COMMIT',
       'database:repository-transaction',
     ]);
+  });
+
+  it('reuses a repository transaction instead of nesting one', async () => {
+    const executionOrder: string[] = [];
+    const { dataSource } = buildDataSource({ executionOrder });
+
+    await dataSource.transaction(async (transactionScope) => {
+      const repository = transactionScope.getRepository(OBJECT_NAME);
+
+      await repository.runAtomically(async (transactionalRepository) => {
+        expect(transactionalRepository).toBe(repository);
+        executionOrder.push('work');
+      });
+    });
+
+    expect(executionOrder).toEqual(['BEGIN', 'work', 'COMMIT']);
   });
 });
