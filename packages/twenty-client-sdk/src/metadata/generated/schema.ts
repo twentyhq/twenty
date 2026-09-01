@@ -343,6 +343,7 @@ export interface Application {
     logoFileId?: Scalars['UUID']
     version?: Scalars['String']
     universalIdentifier: Scalars['String']
+    state: ApplicationState
     packageJsonChecksum?: Scalars['String']
     packageJsonFileId?: Scalars['UUID']
     yarnLockChecksum?: Scalars['String']
@@ -364,6 +365,8 @@ export interface Application {
     logoUrl?: Scalars['String']
     __typename: 'Application'
 }
+
+export type ApplicationState = 'INSTALLING' | 'INSTALLED' | 'UPGRADING' | 'UNINSTALLING'
 
 export interface TwoFactorAuthenticationMethodSummary {
     twoFactorAuthenticationMethodId: Scalars['UUID']
@@ -2422,6 +2425,12 @@ export interface CampaignAudiencePreviewDTO {
     __typename: 'CampaignAudiencePreviewDTO'
 }
 
+export interface CancelMessageCampaignOutputDTO {
+    campaignId: Scalars['String']
+    canceledMessageCount: Scalars['Int']
+    __typename: 'CancelMessageCampaignOutputDTO'
+}
+
 export interface SendEmailViaDomainOutput {
     messageId: Scalars['String']
     __typename: 'SendEmailViaDomainOutput'
@@ -3262,6 +3271,7 @@ export interface Mutation {
     removeRoleFromAgent: Scalars['Boolean']
     sendEmailViaEmailingDomain: SendEmailViaDomainOutput
     sendMessageCampaign: SendMessageCampaignOutputDTO
+    cancelMessageCampaign: CancelMessageCampaignOutputDTO
     sendMessageCampaignTest: SendEmailViaDomainOutput
     createUnsubscribeTopic: UnsubscribeTopic
     updateUnsubscribeTopic: UnsubscribeTopic
@@ -3735,6 +3745,7 @@ export interface ApplicationGenqlSelection{
     logoFileId?: boolean | number
     version?: boolean | number
     universalIdentifier?: boolean | number
+    state?: boolean | number
     packageJsonChecksum?: boolean | number
     packageJsonFileId?: boolean | number
     yarnLockChecksum?: boolean | number
@@ -5899,6 +5910,13 @@ export interface CampaignAudiencePreviewDTOGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface CancelMessageCampaignOutputDTOGenqlSelection{
+    campaignId?: boolean | number
+    canceledMessageCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface SendEmailViaDomainOutputGenqlSelection{
     messageId?: boolean | number
     __typename?: boolean | number
@@ -6814,6 +6832,7 @@ export interface MutationGenqlSelection{
     removeRoleFromAgent?: { __args: {agentId: Scalars['UUID']} }
     sendEmailViaEmailingDomain?: (SendEmailViaDomainOutputGenqlSelection & { __args: {input: SendEmailViaDomainInput} })
     sendMessageCampaign?: (SendMessageCampaignOutputDTOGenqlSelection & { __args: {input: SendMessageCampaignInput} })
+    cancelMessageCampaign?: (CancelMessageCampaignOutputDTOGenqlSelection & { __args: {input: CancelMessageCampaignInput} })
     sendMessageCampaignTest?: (SendEmailViaDomainOutputGenqlSelection & { __args: {input: SendMessageCampaignTestInput} })
     createUnsubscribeTopic?: (UnsubscribeTopicGenqlSelection & { __args: {input: CreateUnsubscribeTopicInput} })
     updateUnsubscribeTopic?: (UnsubscribeTopicGenqlSelection & { __args: {input: UpdateUnsubscribeTopicInput} })
@@ -7240,6 +7259,8 @@ export interface RowLevelPermissionPredicateGroupInput {id?: (Scalars['UUID'] | 
 export interface SendEmailViaDomainInput {emailingDomainId: Scalars['String'],to: Scalars['String'][],cc?: (Scalars['String'][] | null),bcc?: (Scalars['String'][] | null),subject: Scalars['String'],text: Scalars['String'],html?: (Scalars['String'] | null),from: Scalars['String'],replyTo?: (Scalars['String'][] | null)}
 
 export interface SendMessageCampaignInput {campaignId: Scalars['String']}
+
+export interface CancelMessageCampaignInput {campaignId: Scalars['String']}
 
 export interface SendMessageCampaignTestInput {toAddress: Scalars['String'],unsubscribeTopicId?: (Scalars['String'] | null),subject: Scalars['String'],body: Scalars['String'],fromAddress: Scalars['String']}
 
@@ -9113,6 +9134,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const CancelMessageCampaignOutputDTO_possibleTypes: string[] = ['CancelMessageCampaignOutputDTO']
+    export const isCancelMessageCampaignOutputDTO = (obj?: { __typename?: any } | null): obj is CancelMessageCampaignOutputDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCancelMessageCampaignOutputDTO"')
+      return CancelMessageCampaignOutputDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const SendEmailViaDomainOutput_possibleTypes: string[] = ['SendEmailViaDomainOutput']
     export const isSendEmailViaDomainOutput = (obj?: { __typename?: any } | null): obj is SendEmailViaDomainOutput => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isSendEmailViaDomainOutput"')
@@ -9747,6 +9776,13 @@ export const enumRowLevelPermissionPredicateOperand = {
    IS_IN_FUTURE: 'IS_IN_FUTURE' as const,
    IS_TODAY: 'IS_TODAY' as const,
    VECTOR_SEARCH: 'VECTOR_SEARCH' as const
+}
+
+export const enumApplicationState = {
+   INSTALLING: 'INSTALLING' as const,
+   INSTALLED: 'INSTALLED' as const,
+   UPGRADING: 'UPGRADING' as const,
+   UNINSTALLING: 'UNINSTALLING' as const
 }
 
 export const enumPermissionFlagType = {

@@ -3,16 +3,18 @@ import { type MaterializeCampaignJobData } from 'src/engine/core-modules/emailin
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
+import { MessageCampaignMaterializationService } from 'src/modules/emailing/services/message-campaign-materialization.service';
 
 @Processor(MessageQueue.emailQueue)
 export class MaterializeCampaignJob {
   constructor(
-    private readonly messageCampaignService: MessageCampaignService,
+    private readonly messageCampaignMaterializationService: MessageCampaignMaterializationService,
   ) {}
 
   @Process(MATERIALIZE_CAMPAIGN_JOB)
   async handle(data: MaterializeCampaignJobData): Promise<void> {
-    await this.messageCampaignService.processMaterializeJob(data);
+    await this.messageCampaignMaterializationService.processMaterializeJob(
+      data,
+    );
   }
 }

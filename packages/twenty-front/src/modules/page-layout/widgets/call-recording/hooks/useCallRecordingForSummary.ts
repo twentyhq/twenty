@@ -14,7 +14,6 @@ const CALL_RECORDING_SUMMARY_RECORD_FIELDS = {
   id: true,
   status: true,
   summary: true,
-  createdAt: true,
 } as const satisfies RecordGqlOperationGqlRecordFields;
 
 export const useCallRecordingForSummary = (): {
@@ -25,7 +24,7 @@ export const useCallRecordingForSummary = (): {
   refetchCallRecording: () => Promise<void>;
 } => {
   const { restriction } = useCallRecordingWidgetRestriction({
-    requiredFieldNames: ['status', 'summary', 'createdAt'],
+    requiredFieldNames: ['status', 'summary'],
   });
   const shouldSkipQuery = isDefined(restriction);
 

@@ -37,7 +37,6 @@ export const WidgetHeaderCommandMenuItems = ({
   commandMenuItemUniversalIdentifiers: string[];
 }) => (
   <CommandMenuContextProvider
-    isInSidePanel={false}
     displayType="button"
     containerType={CommandMenuItemContainerType.WidgetHeader}
   >

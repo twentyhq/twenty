@@ -1,5 +1,4 @@
 import { RecordIndexCommandMenu } from '@/command-menu-item/components/RecordIndexCommandMenu';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -9,6 +8,7 @@ import { RecordIndexPageHeaderIcon } from '@/object-record/record-index/componen
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -33,6 +33,8 @@ const StyledSelectedRecordsCount = styled.div`
 `;
 
 export const RecordIndexPageHeader = () => {
+  const workspaceSurface = useWorkspaceSurface();
+
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
 
@@ -64,7 +66,6 @@ export const RecordIndexPageHeader = () => {
 
   const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
@@ -80,7 +81,8 @@ export const RecordIndexPageHeader = () => {
         isDefined(contextStoreCurrentViewId) ? (
           <>
             <RecordIndexCommandMenu />
-            {!isLayoutCustomizationModeEnabled && <SidePanelToggleButton />}
+            {!isLayoutCustomizationModeEnabled &&
+              workspaceSurface.type === 'main' && <SidePanelToggleButton />}
           </>
         ) : undefined
       }

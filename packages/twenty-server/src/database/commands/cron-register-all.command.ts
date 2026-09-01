@@ -17,6 +17,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UserSessionCleanupCronCommand } from 'src/engine/core-modules/user-session/crons/commands/user-session-cleanup.cron.command';
 import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-modules/workspace/crons/commands/check-custom-domain-valid-records.cron.command';
 import { WebhookSubscriptionRenewalCronCommand } from 'src/modules/connected-account/webhook-subscription-manager/crons/commands/webhook-subscription-renewal.cron.command';
+import { EmailingOngoingStaleCronCommand } from 'src/modules/emailing/crons/commands/emailing-ongoing-stale.cron.command';
 import { TrashCleanupCronCommand } from 'src/engine/trash-cleanup/commands/trash-cleanup.cron.command';
 import { CleanOnboardingWorkspacesCronCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-onboarding-workspaces.cron.command';
 import { CleanSuspendedWorkspacesCronCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-suspended-workspaces.cron.command';
@@ -53,6 +54,8 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly calendarRelaunchFailedCalendarChannelsCronCommand: CalendarRelaunchFailedCalendarChannelsCronCommand,
 
     private readonly webhookSubscriptionRenewalCronCommand: WebhookSubscriptionRenewalCronCommand,
+
+    private readonly emailingOngoingStaleCronCommand: EmailingOngoingStaleCronCommand,
 
     private readonly workflowCronTriggerCronCommand: WorkflowCronTriggerCronCommand,
     private readonly workflowRunEnqueueCronCommand: WorkflowRunEnqueueCronCommand,
@@ -129,6 +132,10 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'WebhookSubscriptionRenewal',
         command: this.webhookSubscriptionRenewalCronCommand,
+      },
+      {
+        name: 'EmailingOngoingStale',
+        command: this.emailingOngoingStaleCronCommand,
       },
       {
         name: 'CheckCustomDomainValidRecords',
