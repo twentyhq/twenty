@@ -10,6 +10,7 @@ import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { isSidePanelRoutedLocation } from '@/side-panel/routing/utils/isSidePanelRoutedLocation';
 import { toSidePanelLocation } from '@/side-panel/routing/utils/toSidePanelLocation';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { releaseRemovedRoutedFlowStateScopes } from '@/side-panel/routing/utils/releaseRemovedRoutedFlowStateScopes';
 
 export const useOpenRoutedPageInSidePanel = () => {
   const store = useStore();
@@ -36,7 +37,7 @@ export const useOpenRoutedPageInSidePanel = () => {
         return null;
       }
 
-      const routedLocation = toSidePanelLocation(path, state);
+      let routedLocation = toSidePanelLocation(path, state);
 
       if (!isSidePanelRoutedLocation(routeObjects, routedLocation)) {
         return null;
@@ -55,14 +56,29 @@ export const useOpenRoutedPageInSidePanel = () => {
           return null;
         }
 
-        store.set(sidePanelNavigationStackState.atom, [
-          ...navigationStack.slice(0, -1),
-          {
-            ...currentItem,
-            pageTitle: title,
-            routedLocation,
-          },
-        ]);
+        routedLocation = {
+          ...routedLocation,
+          key: currentItem.routedLocation.key,
+        };
+
+        const updatedCurrentItem = {
+          ...currentItem,
+          pageTitle: title,
+          routedLocation,
+        };
+
+        store.set(
+          sidePanelNavigationStackState.atom,
+          resetNavigationStack
+            ? [updatedCurrentItem]
+            : [...navigationStack.slice(0, -1), updatedCurrentItem],
+        );
+        if (resetNavigationStack) {
+          releaseRemovedRoutedFlowStateScopes({
+            removedItems: navigationStack.slice(0, -1),
+            remainingItems: [updatedCurrentItem],
+          });
+        }
         return currentItem.pageId;
       }
 

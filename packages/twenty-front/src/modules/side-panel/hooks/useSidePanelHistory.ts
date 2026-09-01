@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { releaseRemovedRoutedFlowStateScopes } from '@/side-panel/routing/utils/releaseRemovedRoutedFlowStateScopes';
 import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
@@ -56,19 +57,23 @@ export const useSidePanelHistory = () => {
   }, [store]);
 
   const goBackFromSidePanel = useCallback(() => {
-    cleanupCurrentPage();
-
     const currentNavigationStack = store.get(
       sidePanelNavigationStackState.atom,
     );
 
     const newNavigationStack = currentNavigationStack.slice(0, -1);
-    store.set(sidePanelNavigationStackState.atom, newNavigationStack);
 
     if (newNavigationStack.length === 0) {
       closeSidePanelMenu();
       return;
     }
+
+    cleanupCurrentPage();
+    store.set(sidePanelNavigationStackState.atom, newNavigationStack);
+    releaseRemovedRoutedFlowStateScopes({
+      removedItems: currentNavigationStack.slice(-1),
+      remainingItems: newNavigationStack,
+    });
 
     store.set(hasUserSelectedSidePanelListItemState.atom, false);
   }, [cleanupCurrentPage, closeSidePanelMenu, store]);
@@ -109,8 +114,15 @@ export const useSidePanelHistory = () => {
       );
 
       const newNavigationStack = currentNavigationStack.slice(0, pageIndex + 1);
+      const removedNavigationItems = currentNavigationStack.slice(
+        pageIndex + 1,
+      );
 
       store.set(sidePanelNavigationStackState.atom, newNavigationStack);
+      releaseRemovedRoutedFlowStateScopes({
+        removedItems: removedNavigationItems,
+        remainingItems: newNavigationStack,
+      });
 
       const newNavigationStackItem = newNavigationStack.at(-1);
 

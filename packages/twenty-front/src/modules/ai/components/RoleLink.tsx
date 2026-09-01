@@ -1,4 +1,5 @@
 import { ChatReferenceChipDisplay } from '@/ai/components/ChatReferenceChipDisplay';
+import { useChatReferenceTarget } from '@/ai/hooks/useChatReferenceTarget';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -14,15 +15,16 @@ type RoleLinkProps = {
 export const RoleLink = ({ roleId, displayName }: RoleLinkProps) => {
   const theme = useTheme();
   const hasRolesPermission = useHasPermissionFlag(PermissionFlagType.ROLES);
+  const path = hasRolesPermission
+    ? getSettingsPath(SettingsPath.RoleDetail, { roleId })
+    : undefined;
+  const { to, onClick } = useChatReferenceTarget(path);
 
   return (
     <ChatReferenceChipDisplay
       displayName={displayName}
-      to={
-        hasRolesPermission
-          ? getSettingsPath(SettingsPath.RoleDetail, { roleId })
-          : undefined
-      }
+      to={to}
+      onClick={onClick}
       leftComponent={
         <IconLock size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
       }

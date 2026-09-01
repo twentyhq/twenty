@@ -7,6 +7,8 @@ import { RecordIndexSkeletonLoader } from '@/object-record/record-index/componen
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isUndefined } from '@sniptt/guards';
 import { lazy, Suspense } from 'react';
@@ -28,6 +30,10 @@ export const RecordIndexPage = () => {
   );
 
   const { objectMetadataItems } = useObjectMetadataItems();
+  const metadataStore = useAtomFamilyStateValue(
+    metadataStoreState,
+    'objectMetadataItems',
+  );
 
   const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
@@ -36,6 +42,13 @@ export const RecordIndexPage = () => {
   const routeObjectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
   );
+
+  if (
+    workspaceSurface.type === 'side-panel' &&
+    metadataStore.status === 'empty'
+  ) {
+    return <RecordIndexSkeletonLoader />;
+  }
 
   if (
     workspaceSurface.type === 'side-panel' &&

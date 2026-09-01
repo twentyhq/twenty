@@ -13,7 +13,6 @@ import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { AppPath, OpenRecordIn, SidePanelPages } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useOpenRecordFromIndexView = () => {
@@ -78,9 +77,9 @@ export const useOpenRecordFromIndexView = () => {
           resetNavigationStack: false,
         });
 
-        if (isDefined(destinationSurfaceInstanceId)) {
-          setParentViewOn(destinationSurfaceInstanceId);
-        }
+        setParentViewOn(
+          destinationSurfaceInstanceId ?? MAIN_CONTEXT_STORE_INSTANCE_ID,
+        );
 
         return;
       }

@@ -11,6 +11,7 @@ import { RecordComponentInstanceContextsWrapper } from '@/object-record/componen
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/components/PageLayoutRecordPageRenderer';
 import { RecordShowPageSSESubscribeEffect } from '@/object-record/record-show/components/RecordShowPageSSESubscribeEffect';
+import { RecordShowPageResourceEffect } from '@/object-record/record-show/components/RecordShowPageResourceEffect';
 import { useRecordShowPageResource } from '@/object-record/record-show/hooks/useRecordShowPageResource';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
@@ -51,8 +52,21 @@ const RecordShowPageContent = ({
       computeRecordShowComponentInstanceId(objectRecordId),
     );
 
+  const resourceEffect = (
+    <RecordShowPageResourceEffect
+      loading={loading}
+      record={record}
+      recordId={objectRecordId}
+    />
+  );
+
   if (isInSidePanel && !loading && (isDefined(error) || !isDefined(record))) {
-    return <WorkspaceRouteUnavailable />;
+    return (
+      <>
+        {resourceEffect}
+        <WorkspaceRouteUnavailable />
+      </>
+    );
   }
 
   const recordContent = (
@@ -81,6 +95,7 @@ const RecordShowPageContent = ({
       <CommandMenuComponentInstanceContext.Provider
         value={{ instanceId: recordShowComponentInstanceId }}
       >
+        {resourceEffect}
         <RecordShowPageTitle
           objectNameSingular={objectNameSingular}
           objectRecordId={objectRecordId}

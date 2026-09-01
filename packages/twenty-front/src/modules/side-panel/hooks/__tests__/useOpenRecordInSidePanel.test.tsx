@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react';
+import { i18n } from '@lingui/core';
 import { act } from 'react';
 
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
@@ -23,6 +24,8 @@ jest.mock('uuid', () => ({
   ...jest.requireActual('uuid'),
   v4: jest.fn().mockReturnValue('mocked-uuid'),
 }));
+
+i18n.activate('en');
 
 const mockNavigateSidePanel = jest.fn();
 jest.mock('@/side-panel/hooks/useNavigateSidePanel', () => ({

@@ -11,6 +11,7 @@ import {
   sidePanelNavigationStackState,
 } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelShouldFocusTitleInputComponentState } from '@/side-panel/states/sidePanelShouldFocusTitleInputComponentState';
+import { releaseRemovedRoutedFlowStateScopes } from '@/side-panel/routing/utils/releaseRemovedRoutedFlowStateScopes';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useStore } from 'jotai';
@@ -77,7 +78,7 @@ export const useNavigateSidePanel = () => {
       const navigationStackItem = {
         ...navigationStackItemWithoutId,
         pageId: computedPageId,
-      } as SidePanelNavigationStackItem;
+      } satisfies SidePanelNavigationStackItem;
 
       openSidePanel();
 
@@ -98,6 +99,10 @@ export const useNavigateSidePanel = () => {
 
       if (resetNavigationStack) {
         store.set(sidePanelNavigationStackState.atom, [navigationStackItem]);
+        releaseRemovedRoutedFlowStateScopes({
+          removedItems: currentNavigationStack,
+          remainingItems: [navigationStackItem],
+        });
 
         store.set(sidePanelNavigationMorphItemsByPageState.atom, new Map());
       } else {

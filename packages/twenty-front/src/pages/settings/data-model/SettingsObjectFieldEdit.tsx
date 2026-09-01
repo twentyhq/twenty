@@ -44,6 +44,8 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getFieldMetadataItemInitialValues } from '~/pages/settings/data-model/utils/getFieldMetadataItemInitialValues';
+import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
+import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 
 const DELETE_FIELD_MODAL_ID = 'delete-field-confirmation-modal';
 const StyledDangerButtons = styled.div`
@@ -62,15 +64,21 @@ export const SettingsObjectFieldEdit = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const returnTo =
+  const stateReturnTo =
     typeof location.state === 'object' &&
     location.state !== null &&
     'returnTo' in location.state &&
     typeof location.state.returnTo === 'string' &&
-    location.state.returnTo.startsWith('/') &&
-    !location.state.returnTo.startsWith('//')
+    isValidReturnToPath(location.state.returnTo)
       ? location.state.returnTo
       : undefined;
+  const navigationMemorizedUrl = useAtomStateValue(navigationMemorizedUrlState);
+  const returnTo =
+    stateReturnTo ??
+    (workspaceSurface.type === 'main' &&
+    isValidReturnToPath(navigationMemorizedUrl)
+      ? navigationMemorizedUrl
+      : undefined);
 
   const { objectNamePlural = '', fieldName = '' } = useParams();
 

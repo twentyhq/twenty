@@ -17,12 +17,13 @@ export type NavigateFunction = <T extends AppPath>(
 
 type OpenRoutedSidePanelPageParams<T extends AppPath> = {
   to: T;
-  params?: Parameters<typeof getAppPath<T>>[1];
   queryParams?: Record<string, any>;
   hash?: string;
   pageTitle?: string;
   resetNavigationStack?: boolean;
-};
+} & (T extends `${string}:${string}`
+  ? { params: NonNullable<Parameters<typeof getAppPath<T>>[1]> }
+  : { params?: Parameters<typeof getAppPath<T>>[1] });
 
 type OpenPurposeBuiltSidePanelPageParams =
   | {

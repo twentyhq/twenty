@@ -17,6 +17,10 @@ jest.mock(
   }),
 );
 
+jest.mock('@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue', () => ({
+  useAtomFamilyStateValue: () => ({ status: 'up-to-date' }),
+}));
+
 jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   useObjectMetadataItems: () => ({
     objectMetadataItems: [

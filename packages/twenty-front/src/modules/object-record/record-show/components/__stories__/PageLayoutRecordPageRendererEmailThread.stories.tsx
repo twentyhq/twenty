@@ -10,7 +10,7 @@ import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceCo
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
 import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/components/PageLayoutRecordPageRenderer';
-import { RecordShowEffect } from '@/object-record/record-show/components/RecordShowEffect';
+import { RecordShowResourceLoader } from '@/object-record/record-show/components/RecordShowResourceLoader';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
@@ -182,7 +182,7 @@ const meta: Meta<EmailThreadStoryArgs> = {
           value={{ instanceId: 'story-command-menu' }}
         >
           <SeedEmailThreadPageLayoutEffect />
-          <RecordShowEffect
+          <RecordShowResourceLoader
             objectNameSingular={CoreObjectNameSingular.MessageThread}
             recordId={THREAD_ID}
           />

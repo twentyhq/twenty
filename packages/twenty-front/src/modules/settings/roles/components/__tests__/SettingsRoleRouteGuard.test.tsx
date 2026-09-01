@@ -56,10 +56,10 @@ describe('SettingsRoleRouteGuard', () => {
     expect(screen.queryByTestId('role-page')).not.toBeInTheDocument();
   });
 
-  it('preserves the main route behavior', () => {
+  it('contains a missing role on the main surface', () => {
     renderGuard({ surface: 'main', roleIds: [] });
 
-    expect(screen.getByTestId('role-page')).toBeInTheDocument();
-    expect(screen.queryByTestId('route-unavailable')).not.toBeInTheDocument();
+    expect(screen.getByTestId('route-unavailable')).toBeInTheDocument();
+    expect(screen.queryByTestId('role-page')).not.toBeInTheDocument();
   });
 });

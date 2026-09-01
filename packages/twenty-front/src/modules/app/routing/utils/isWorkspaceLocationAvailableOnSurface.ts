@@ -27,7 +27,7 @@ export const isWorkspaceLocationExpandableFromSidePanel = (
   const routeHandle = canonicalMatch?.route.handle;
 
   return (
-    routeHandle?.workspaceSurfaces.includes('side-panel') === true &&
+    !!routeHandle?.workspaceSurfaces.includes('side-panel') &&
     (routeHandle.isLocationAvailableOnSurface?.({
       surface: 'side-panel',
       location,

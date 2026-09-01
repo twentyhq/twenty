@@ -11,19 +11,22 @@ import {
   useLocation,
   useNavigate,
 } from 'react-router-dom';
-import { AppPath, SidePanelPages } from 'twenty-shared/types';
+import { AppPath, SettingsPath, SidePanelPages } from 'twenty-shared/types';
 import { IconSettings } from 'twenty-ui/icon';
 
 import { WorkspaceRouteObjectsContext } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { SidePanelRouteNavigatorProvider } from '@/side-panel/routing/components/SidePanelRouteNavigatorProvider';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const openRoutedPageInSidePanelMock = jest.fn();
 const closeSidePanelMenuMock = jest.fn();
 const goBackFromSidePanelMock = jest.fn();
 const navigateSidePanelHistoryMock = jest.fn();
+const openSettingsMenuMock = jest.fn();
 
 jest.mock('@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel', () => ({
   useOpenRoutedPageInSidePanel: () => ({
@@ -42,6 +45,10 @@ jest.mock('@/side-panel/hooks/useSidePanelHistory', () => ({
     goBackFromSidePanel: goBackFromSidePanelMock,
     navigateSidePanelHistory: navigateSidePanelHistoryMock,
   }),
+}));
+
+jest.mock('@/navigation/hooks/useOpenSettings', () => ({
+  useOpenSettingsMenu: () => ({ openSettingsMenu: openSettingsMenuMock }),
 }));
 
 const routeObjects: WorkspaceRouteObject[] = [
@@ -75,6 +82,7 @@ const ParentLocation = () => {
 const PanelNavigationProbe = () => {
   const navigate = useNavigate();
   const navigateApp = useNavigateApp();
+  const navigateSettings = useNavigateSettings();
   const [shouldRedirect, setShouldRedirect] = useState(false);
 
   return (
@@ -100,6 +108,15 @@ const PanelNavigationProbe = () => {
         }
       >
         main
+      </button>
+      <button
+        onClick={() =>
+          navigateSettings(SettingsPath.NewAccount, undefined, undefined, {
+            surface: 'main',
+          })
+        }
+      >
+        main settings
       </button>
       <button onClick={() => navigate(-1)}>back</button>
       {shouldRedirect && (
@@ -149,11 +166,24 @@ const renderNavigationProbe = () => {
             <Route
               path="/settings/*"
               element={
-                <SidePanelRouteNavigatorProvider>
-                  <Routes>
-                    <Route path="members" element={<PanelNavigationProbe />} />
-                  </Routes>
-                </SidePanelRouteNavigatorProvider>
+                <WorkspaceSurfaceContext.Provider
+                  value={{
+                    type: 'side-panel',
+                    instanceId: 'panel-page-1',
+                    ownsRouteLocation: true,
+                    headerTitlePortal: null,
+                    headerActionsPortal: null,
+                  }}
+                >
+                  <SidePanelRouteNavigatorProvider>
+                    <Routes>
+                      <Route
+                        path="members"
+                        element={<PanelNavigationProbe />}
+                      />
+                    </Routes>
+                  </SidePanelRouteNavigatorProvider>
+                </WorkspaceSurfaceContext.Provider>
               }
             />
           </Routes>
@@ -192,7 +222,11 @@ describe('SidePanelRouteNavigatorProvider', () => {
   it('leaves modified Link clicks to the canonical browser href', () => {
     renderNavigationProbe();
 
-    fireEvent.click(screen.getByRole('link', { name: 'role' }), {
+    const link = screen.getByRole('link', { name: 'role' });
+
+    link.addEventListener('click', (event) => event.preventDefault());
+
+    fireEvent.click(link, {
       metaKey: true,
     });
 
@@ -255,6 +289,19 @@ describe('SidePanelRouteNavigatorProvider', () => {
     expect(openRoutedPageInSidePanelMock).not.toHaveBeenCalled();
     expect(screen.getByTestId('parent-location')).toHaveTextContent(
       '/object/company/record-1',
+    );
+  });
+
+  it('opens the settings shell once when escaping settings to the main surface', () => {
+    renderNavigationProbe();
+
+    fireEvent.click(screen.getByRole('button', { name: 'main settings' }));
+
+    expect(closeSidePanelMenuMock).toHaveBeenCalledTimes(1);
+    expect(openSettingsMenuMock).toHaveBeenCalledTimes(1);
+    expect(openRoutedPageInSidePanelMock).not.toHaveBeenCalled();
+    expect(screen.getByTestId('parent-location')).toHaveTextContent(
+      '/settings/accounts/new',
     );
   });
 

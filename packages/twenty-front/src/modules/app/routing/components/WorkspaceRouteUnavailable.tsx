@@ -22,7 +22,7 @@ export const WorkspaceRouteUnavailable = ({
 
   return (
     <StyledContainer>
-      {children ?? t`This page isn't available in the side panel.`}
+      {children ?? t`This page isn't available.`}
     </StyledContainer>
   );
 };

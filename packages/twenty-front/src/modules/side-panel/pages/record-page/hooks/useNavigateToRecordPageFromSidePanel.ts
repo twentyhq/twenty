@@ -14,7 +14,6 @@ import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavi
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
-import { type NavigateAppOptions } from '~/hooks/useNavigateApp';
 
 type NavigateToRecordPageParams = {
   objectNameSingular: string;
@@ -76,9 +75,7 @@ export const useNavigateToRecordPageFromSidePanel = () => {
           : undefined,
       );
 
-      store.set(sidePanelNavigationStackState.atom, []);
-
-      navigate(destinationPath, { surface: 'main' } as NavigateAppOptions);
+      navigate(destinationPath, { surface: 'main' });
 
       if (isDefined(sidePanelPageInstanceId)) {
         const baseCommandMenuInstanceId =

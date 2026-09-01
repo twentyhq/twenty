@@ -242,7 +242,7 @@ describe('useNavigateToRecordPageFromSidePanel', () => {
     ).toMatchObject(parentView);
   });
 
-  it('should reset the side panel navigation stack', () => {
+  it('keeps the side panel navigation stack until close cleanup runs', () => {
     const { result, getStore } = renderNavigateToRecordPage({});
 
     getStore().set(sidePanelNavigationStackState.atom, [
@@ -256,6 +256,9 @@ describe('useNavigateToRecordPageFromSidePanel', () => {
       });
     });
 
-    expect(getStore().get(sidePanelNavigationStackState.atom)).toEqual([]);
+    expect(getStore().get(sidePanelNavigationStackState.atom)).toEqual([
+      { page: 'view-record', pageTitle: 'Company', pageId: 'x' },
+    ]);
+    expect(closeSidePanelMenuMock).toHaveBeenCalled();
   });
 });

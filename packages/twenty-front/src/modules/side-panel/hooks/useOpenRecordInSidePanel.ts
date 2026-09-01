@@ -105,11 +105,12 @@ export const useOpenRecordInSidePanel = () => {
         isDefined(currentNavigationStackItem) &&
         currentRoutedLocation?.pathname === recordPath
       ) {
-        if (isDefined(tab)) {
+        if (isDefined(tab) || resetNavigationStack) {
           openRoutedPageInSidePanel({
             path: recordPathWithTab,
             pageTitle: currentNavigationStackItem.pageTitle,
             replaceCurrent: true,
+            resetNavigationStack,
           });
         }
 

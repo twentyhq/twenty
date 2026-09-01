@@ -1,6 +1,7 @@
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { RecordShowPageResourceEffect } from '@/object-record/record-show/components/RecordShowPageResourceEffect';
 import { useRecordShowPageResource } from '@/object-record/record-show/hooks/useRecordShowPageResource';
-import { renderHook } from '@testing-library/react';
+import { render, renderHook } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 
 const mockUseFindOneRecord = jest.fn();
@@ -29,9 +30,9 @@ jest.mock(
 );
 
 describe('useRecordShowPageResource', () => {
-  it('loads the canonical show-page fields and synchronizes the record store', () => {
+  it('loads the canonical show-page fields', () => {
     const store = createStore();
-    const record = { id: 'record-1', name: 'Ada' };
+    const record = { __typename: 'Person', id: 'record-1', name: 'Ada' };
     mockUseFindOneRecord.mockReturnValue({
       record,
       loading: false,
@@ -58,8 +59,35 @@ describe('useRecordShowPageResource', () => {
       withSoftDeleted: true,
     });
     expect(result.current.record).toEqual(record);
+  });
+
+  it('synchronizes and clears the record store through its effect', () => {
+    const store = createStore();
+    const record = { __typename: 'Person', id: 'record-1', name: 'Ada' };
+    const { rerender } = render(
+      <Provider store={store}>
+        <RecordShowPageResourceEffect
+          loading={false}
+          record={record}
+          recordId="record-1"
+        />
+      </Provider>,
+    );
+
     expect(store.get(recordStoreFamilyState.atomFamily('record-1'))).toEqual(
       record,
     );
+
+    rerender(
+      <Provider store={store}>
+        <RecordShowPageResourceEffect
+          loading={false}
+          record={undefined}
+          recordId="record-1"
+        />
+      </Provider>,
+    );
+
+    expect(store.get(recordStoreFamilyState.atomFamily('record-1'))).toBeNull();
   });
 });

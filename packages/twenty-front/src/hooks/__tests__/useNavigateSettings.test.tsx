@@ -1,16 +1,39 @@
 import { renderHook } from '@testing-library/react';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 
+import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 import { SettingsPath } from 'twenty-shared/types';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+
+const openSettingsMenuMock = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: jest.fn(),
 }));
 
+jest.mock('@/navigation/hooks/useOpenSettings', () => ({
+  useOpenSettingsMenu: () => ({ openSettingsMenu: openSettingsMenuMock }),
+}));
+
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <MemoryRouter>{children}</MemoryRouter>
+);
+
+const SidePanelWrapper = ({ children }: { children: React.ReactNode }) => (
+  <MemoryRouter>
+    <WorkspaceSurfaceContext.Provider
+      value={{
+        type: 'side-panel',
+        instanceId: 'side-panel-page',
+        ownsRouteLocation: false,
+        headerTitlePortal: null,
+        headerActionsPortal: null,
+      }}
+    >
+      {children}
+    </WorkspaceSurfaceContext.Provider>
+  </MemoryRouter>
 );
 
 describe('useNavigateSettings', () => {
@@ -70,5 +93,20 @@ describe('useNavigateSettings', () => {
     result.current(SettingsPath.Accounts, undefined, undefined, options);
 
     expect(mockNavigate).toHaveBeenCalledWith('/settings/accounts', options);
+  });
+
+  it('forwards an explicit main-surface escape to the active navigator', () => {
+    const { result } = renderHook(() => useNavigateSettings(), {
+      wrapper: SidePanelWrapper,
+    });
+
+    result.current(SettingsPath.NewAccount, undefined, undefined, {
+      surface: 'main',
+    });
+
+    expect(openSettingsMenuMock).not.toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith('/settings/accounts/new', {
+      surface: 'main',
+    });
   });
 });

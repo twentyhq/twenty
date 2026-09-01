@@ -18,6 +18,7 @@ export const useNavigateSettings = () => {
       options?: {
         replace?: boolean;
         state?: any;
+        surface?: 'main';
       },
       hash?: string,
     ) => {

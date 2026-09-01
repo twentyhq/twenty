@@ -207,7 +207,18 @@ export const useFrontComponentExecutionContext = ({
   const openSidePanelPage: FrontComponentHostCommunicationApi['openSidePanelPage'] =
     async (params: OpenSidePanelPageParams | LegacyOpenSidePanelPageParams) => {
       if ('to' in params) {
-        const path = getAppPath(params.to, params.params, params.queryParams);
+        if (params.to.includes(':') && !isDefined(params.params)) {
+          throw new CustomError(
+            `Missing params for side-panel route: ${params.to}`,
+            'FRONT_COMPONENT_SIDE_PANEL_ROUTE_PARAMS_REQUIRED',
+          );
+        }
+
+        const path = getAppPath(
+          params.to,
+          params.params as never,
+          params.queryParams,
+        );
         const pathWithHash = isNonEmptyString(params.hash)
           ? `${path}#${encodeURIComponent(params.hash)}`
           : path;
@@ -218,7 +229,10 @@ export const useFrontComponentExecutionContext = ({
         });
 
         if (!isDefined(pageId)) {
-          throw new Error(`Unsupported side-panel route: ${pathWithHash}`);
+          throw new CustomError(
+            `Unsupported side-panel route: ${pathWithHash}`,
+            'FRONT_COMPONENT_UNSUPPORTED_SIDE_PANEL_ROUTE',
+          );
         }
 
         return;
@@ -232,15 +246,19 @@ export const useFrontComponentExecutionContext = ({
         });
 
         if (!isDefined(pageId)) {
-          throw new Error(`Unsupported side-panel route: ${params.path}`);
+          throw new CustomError(
+            `Unsupported side-panel route: ${params.path}`,
+            'FRONT_COMPONENT_UNSUPPORTED_SIDE_PANEL_ROUTE',
+          );
         }
 
         return;
       }
 
       if (params.page === SidePanelPages.ViewRecords) {
-        throw new Error(
+        throw new CustomError(
           'ViewRecords is no longer supported. Open AppPath.RecordIndexPage with typed params instead.',
+          'FRONT_COMPONENT_VIEW_RECORDS_UNSUPPORTED',
         );
       }
 

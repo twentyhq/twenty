@@ -30,6 +30,7 @@ import { WorkflowLogicFunctionTabId } from '@/workflow/workflow-steps/workflow-a
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { releaseRemovedRoutedFlowStateScopes } from '@/side-panel/routing/utils/releaseRemovedRoutedFlowStateScopes';
 
 export const useSidePanelCloseAnimationCompleteCleanup = () => {
   const store = useStore();
@@ -45,9 +46,10 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
 
       // Snapshot values before any mutations (Jotai store.get is live and
       // reflects the latest state, so we capture before mutating).
-      const currentPage = store
-        .get(sidePanelNavigationStackState.atom)
-        .at(-1)?.page;
+      const currentNavigationStack = store.get(
+        sidePanelNavigationStackState.atom,
+      );
+      const currentPage = currentNavigationStack.at(-1)?.page;
       const morphItemsByPage = store.get(
         sidePanelNavigationMorphItemsByPageState.atom,
       );
@@ -100,6 +102,10 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
       store.set(sidePanelShowHiddenObjectsState.atom, false);
       store.set(sidePanelNavigationMorphItemsByPageState.atom, new Map());
       store.set(sidePanelNavigationStackState.atom, []);
+      releaseRemovedRoutedFlowStateScopes({
+        removedItems: currentNavigationStack,
+        remainingItems: [],
+      });
       store.set(selectedNavigationMenuItemIdInEditModeState.atom, null);
       store.set(pendingInsertionNavigationMenuItemState.atom, null);
       store.set(navigationMenuItemEditSectionState.atom, 'workspace');

@@ -24,10 +24,17 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
+import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
 
 const ROLE_ID = 'role-1';
 const MODAL_ID = 'role-modal';
 const DROPDOWN_ID = 'role-dropdown';
+
+const buildRole = (label: string): RoleWithPartialMembers => ({
+  ...mockedRoles[0],
+  id: ROLE_ID,
+  label,
+});
 
 const ScopedStateProbe = ({
   name,
@@ -126,10 +133,7 @@ const ScopedStateProbe = ({
       </button>
       <button
         onClick={() =>
-          setSettingsPersistedRole({
-            id: ROLE_ID,
-            label: 'shared-persisted-role',
-          } as RoleWithPartialMembers)
+          setSettingsPersistedRole(buildRole('shared-persisted-role'))
         }
       >
         {name} persisted
@@ -147,10 +151,10 @@ const ScopeIdProbe = () => {
 describe('settings routed-flow state scope', () => {
   it('keeps drafts flow-local, UI state entry-local, and persisted entities global', () => {
     const store = createStore();
-    store.set(settingsPersistedRoleFamilyState.atomFamily(ROLE_ID), {
-      id: ROLE_ID,
-      label: 'initial-persisted-role',
-    } as RoleWithPartialMembers);
+    store.set(
+      settingsPersistedRoleFamilyState.atomFamily(ROLE_ID),
+      buildRole('initial-persisted-role'),
+    );
 
     render(
       <JotaiProvider store={store}>

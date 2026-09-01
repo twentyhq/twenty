@@ -7,7 +7,6 @@ import { isWorkspaceLocationExpandableFromSidePanel } from '@/app/routing/utils/
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useCurrentSidePanelRoutedPath } from '@/side-panel/routing/hooks/useCurrentSidePanelRoutedPath';
 import { type SidePanelExpandTarget } from '@/side-panel/types/SidePanelExpandTarget';
-import { type NavigateAppOptions } from '~/hooks/useNavigateApp';
 
 // A route opts into generic expansion only when moving it between surface
 // stores cannot discard in-progress state.
@@ -35,7 +34,7 @@ export const useExpandRoutedSidePanelPage =
         void closeSidePanelMenu();
         navigate(currentRoutedPath, {
           surface: 'main',
-        } as NavigateAppOptions);
+        });
       },
       hasExpandShortcut: true,
     };

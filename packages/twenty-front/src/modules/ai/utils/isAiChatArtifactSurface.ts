@@ -10,4 +10,4 @@ export const isAiChatArtifactSurface = (
   store: ReturnType<typeof getDefaultStore>,
 ) =>
   isCurrentPathAiChatPage() &&
-  store.get(shouldOpenAiChatAfterOnboardingState.atom) !== true;
+  !store.get(shouldOpenAiChatAfterOnboardingState.atom);

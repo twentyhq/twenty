@@ -31,10 +31,12 @@ const renderViewLink = ({
   viewId,
   displayName,
   views,
+  initialPath = '/objects/companies',
 }: {
   viewId: string;
   displayName: string;
   views: ViewWithRelations[];
+  initialPath?: string;
 }) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: [],
@@ -43,7 +45,7 @@ const renderViewLink = ({
   });
 
   return render(
-    <MemoryRouter>
+    <MemoryRouter initialEntries={[initialPath]}>
       <ViewLink viewId={viewId} displayName={displayName} />
     </MemoryRouter>,
     { wrapper: Wrapper },
@@ -53,16 +55,14 @@ const renderViewLink = ({
 describe('ViewLink', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    window.history.pushState({}, '', '/objects/companies');
   });
 
   it('should open the view as an artifact on a plain click on the chat page', () => {
-    window.history.pushState({}, '', '/chat');
-
     renderViewLink({
       viewId: VIEW_ID,
       displayName: 'All Companies',
       views: [allCompaniesView],
+      initialPath: '/chat',
     });
 
     const link = screen.getByText('All Companies').closest('a') as HTMLElement;

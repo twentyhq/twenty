@@ -1,7 +1,7 @@
 import { useWorkspaceRouteObjects } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
-import { type NavigateAppOptions } from '~/hooks/useNavigateApp';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { isSidePanelRoutedLocation } from '@/side-panel/routing/utils/isSidePanelRoutedLocation';
 import { toSidePanelLocation } from '@/side-panel/routing/utils/toSidePanelLocation';
@@ -30,6 +30,7 @@ export const SidePanelRouteNavigatorProvider = ({
   const store = useStore();
   const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
   const { closeSidePanelMenu } = useSidePanelMenu();
+  const { openSettingsMenu } = useOpenSettingsMenu();
   const { goBackFromSidePanel, navigateSidePanelHistory } =
     useSidePanelHistory();
 
@@ -40,8 +41,7 @@ export const SidePanelRouteNavigatorProvider = ({
       state?: unknown,
       options?: NavigateOptions,
     ) => {
-      const shouldNavigateMain =
-        (options as NavigateAppOptions | undefined)?.surface === 'main';
+      const shouldNavigateMain = options?.surface === 'main';
       const path = getPathFromTo(to);
       const location = toSidePanelLocation(path, state);
 
@@ -65,6 +65,9 @@ export const SidePanelRouteNavigatorProvider = ({
       }
 
       void closeSidePanelMenu();
+      if (location.pathname.startsWith('/settings')) {
+        openSettingsMenu();
+      }
       parentNavigator[method](to, state, options);
     };
 
@@ -82,6 +85,8 @@ export const SidePanelRouteNavigatorProvider = ({
         }
 
         if (delta >= 0) {
+          void closeSidePanelMenu();
+          parentNavigator.go(delta);
           return;
         }
 
@@ -101,6 +106,7 @@ export const SidePanelRouteNavigatorProvider = ({
     goBackFromSidePanel,
     navigateSidePanelHistory,
     openRoutedPageInSidePanel,
+    openSettingsMenu,
     parentNavigator,
     routeObjects,
     store,

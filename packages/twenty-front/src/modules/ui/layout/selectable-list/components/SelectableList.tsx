@@ -33,13 +33,7 @@ export const SelectableList = ({
 }: SelectableListProps) => {
   const scopedSelectableListInstanceId =
     useWorkspaceSurfaceScopedComponentInstanceId(selectableListInstanceId);
-  const scopedFocusId = useWorkspaceSurfaceScopedComponentInstanceId(focusId);
-
-  useSelectableListHotKeys(
-    scopedSelectableListInstanceId,
-    scopedFocusId,
-    onSelect,
-  );
+  useSelectableListHotKeys(scopedSelectableListInstanceId, focusId, onSelect);
 
   const store = useStore();
 
@@ -106,7 +100,7 @@ export const SelectableList = ({
         instanceId: scopedSelectableListInstanceId,
       }}
     >
-      <SelectableListContextProvider value={{ focusId: scopedFocusId }}>
+      <SelectableListContextProvider value={{ focusId }}>
         {children}
       </SelectableListContextProvider>
     </SelectableListComponentInstanceContext.Provider>

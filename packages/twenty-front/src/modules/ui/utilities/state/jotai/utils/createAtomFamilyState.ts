@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FamilyState } from '@/ui/utilities/state/jotai/types/FamilyState';
 import { type JotaiSyncStorage } from '@/ui/utilities/state/jotai/types/JotaiSyncStorage';
+import { registerRoutedFlowStateScopeRelease } from '@/ui/utilities/state/jotai/utils/routedFlowStateScopeRegistry';
 
 export const createAtomFamilyState = <ValueType, FamilyKey>({
   key,
@@ -24,6 +25,18 @@ export const createAtomFamilyState = <ValueType, FamilyKey>({
     string,
     ReturnType<FamilyState<ValueType, FamilyKey>['atomFamily']>
   >();
+
+  if (scope === 'routed-flow') {
+    registerRoutedFlowStateScopeRelease((scopeId) => {
+      const scopedKeyPrefix = `${scopeId}__`;
+
+      for (const cacheKey of atomCache.keys()) {
+        if (cacheKey.startsWith(scopedKeyPrefix)) {
+          atomCache.delete(cacheKey);
+        }
+      }
+    });
+  }
 
   const getAtomForCacheKey = (
     familyKey: FamilyKey,
