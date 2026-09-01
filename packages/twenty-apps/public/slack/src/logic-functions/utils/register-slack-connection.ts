@@ -2,9 +2,11 @@ import { WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
 import { getConnection, kv } from 'twenty-sdk/logic-function';
 
+import { autoLinkSlackInstaller } from 'src/logic-functions/utils/auto-link-slack-installer';
 import { cacheSlackBotUserId } from 'src/logic-functions/utils/cache-slack-bot-user-id';
 import { getSlackConnectedAccountTeamKvKey } from 'src/logic-functions/utils/get-slack-connected-account-team-kv-key';
 import { getSlackTeamKvKey } from 'src/logic-functions/utils/get-slack-team-kv-key';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 type RegisterSlackConnectionArgs = {
   connectedAccountId: string;
@@ -40,6 +42,18 @@ export const registerSlackConnection = async ({
   await kv.set(getSlackTeamKvKey(teamId), null, { scope: 'SERVER' });
 
   await cacheSlackBotUserId(botUserId);
+
+  try {
+    await autoLinkSlackInstaller({
+      slackClient: client,
+      slackTeamId: teamId,
+      workspaceMemberId: connection.workspaceMemberId,
+    });
+  } catch (error) {
+    console.warn(
+      `[slack] installer auto-link skipped: ${toErrorMessage(error)}`,
+    );
+  }
 
   return { ok: true, teamId };
 };
