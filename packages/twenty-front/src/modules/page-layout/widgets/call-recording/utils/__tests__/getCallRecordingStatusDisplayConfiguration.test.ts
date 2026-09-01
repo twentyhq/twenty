@@ -1,4 +1,4 @@
-import { getCallRecordingStatusDisplayConfiguration } from '@/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.util';
+import { getCallRecordingStatusDisplayConfiguration } from '@/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration';
 import { CallRecordingStatus } from '~/generated/graphql';
 
 describe('getCallRecordingStatusDisplayConfiguration', () => {

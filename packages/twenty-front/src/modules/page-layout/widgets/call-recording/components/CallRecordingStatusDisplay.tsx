@@ -3,7 +3,7 @@ import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-re
 import {
   type CallRecordingArtifactType,
   getCallRecordingStatusDisplayConfiguration,
-} from '@/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.util';
+} from '@/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration';
 
 type CallRecordingStatusDisplayProps = {
   callRecording: Pick<WidgetCallRecordingCandidate, 'status' | 'transcript'>;
@@ -14,12 +14,14 @@ export const CallRecordingStatusDisplay = ({
   callRecording,
   artifactType,
 }: CallRecordingStatusDisplayProps) => {
-  const { animatedPlaceholderType, title, subTitle } =
-    getCallRecordingStatusDisplayConfiguration(callRecording, artifactType);
+  const { title, subTitle } = getCallRecordingStatusDisplayConfiguration(
+    callRecording,
+    artifactType,
+  );
 
   return (
     <CallRecordingWidgetEmptyStateDisplay
-      animatedPlaceholderType={animatedPlaceholderType}
+      animatedPlaceholderType="noMatchRecord"
       title={title}
       subTitle={subTitle}
     />
