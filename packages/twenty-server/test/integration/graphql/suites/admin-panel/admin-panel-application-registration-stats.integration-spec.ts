@@ -156,13 +156,11 @@ describe('Admin panel application registration stats and installed workspaces (i
 
     deletedWorkspaceId = randomUUID();
 
-    // Circular FK: a workspace requires an application, which requires a workspace.
     const [{ workspaceCustomApplicationId }] = await dataSource.query(
       `SELECT "workspaceCustomApplicationId" FROM core."workspace" WHERE id = $1`,
       [SEED_APPLE_WORKSPACE_ID],
     );
 
-    // PENDING_CREATION exempts this row from the defaultRoleId and databaseSchema checks.
     await dataSource.query(
       `INSERT INTO core."workspace"
         (id, "displayName", subdomain, "activationStatus",
@@ -260,86 +258,6 @@ describe('Admin panel application registration stats and installed workspaces (i
       expect(
         response.body.data?.findAdminApplicationRegistrationStats,
       ).toBeFalsy();
-    });
-  });
-
-  describe('suspended workspace installs', () => {
-    let suspendedWorkspaceId: string;
-    let suspendedApplicationId: string;
-
-    beforeAll(async () => {
-      suspendedWorkspaceId = randomUUID();
-
-      const [{ workspaceCustomApplicationId }] = await dataSource.query(
-        `SELECT "workspaceCustomApplicationId" FROM core."workspace" WHERE id = $1`,
-        [SEED_APPLE_WORKSPACE_ID],
-      );
-
-      await dataSource.query(
-        `INSERT INTO core."workspace"
-          (id, "displayName", subdomain, "activationStatus", "defaultRoleId",
-           "databaseSchema", "workspaceCustomApplicationId")
-         VALUES ($1, $2, $3, 'SUSPENDED', $4, $5, $6)`,
-        [
-          suspendedWorkspaceId,
-          'admin-panel-stats-suspended-workspace',
-          `admin-panel-stats-suspended-${suspendedWorkspaceId}`,
-          randomUUID(),
-          'admin_panel_stats_suspended',
-          workspaceCustomApplicationId,
-        ],
-      );
-
-      const { id } = await insertApplication({
-        workspaceId: suspendedWorkspaceId,
-        version: '2.0.0',
-      });
-
-      suspendedApplicationId = id;
-    });
-
-    afterAll(async () => {
-      await dataSource.query(`DELETE FROM core."application" WHERE id = $1`, [
-        suspendedApplicationId,
-      ]);
-      await dataSource.query(`DELETE FROM core."workspace" WHERE id = $1`, [
-        suspendedWorkspaceId,
-      ]);
-    });
-
-    it('counts them as installs and reports them separately', async () => {
-      const response = await makeAdminPanelAPIRequest({
-        query: FIND_STATS,
-        variables: { id: applicationRegistrationId },
-      });
-
-      expect(response.body.errors).toBeUndefined();
-
-      const stats = response.body.data?.findAdminApplicationRegistrationStats;
-
-      expect(stats.activeInstalls).toBe(4);
-      expect(stats.suspendedInstalls).toBe(1);
-    });
-
-    it('lists them alongside installs on active workspaces', async () => {
-      const response = await makeAdminPanelAPIRequest({
-        query: FIND_INSTALLED_WORKSPACES,
-        variables: {
-          input: {
-            id: applicationRegistrationId,
-            offset: 0,
-            searchTerm: 'admin-panel-stats-suspended-workspace',
-          },
-        },
-      });
-
-      expect(response.body.errors).toBeUndefined();
-
-      const result =
-        response.body.data?.findAdminApplicationRegistrationInstalledWorkspaces;
-
-      expect(result.totalCount).toBe(1);
-      expect(result.workspaces[0].id).toBe(suspendedWorkspaceId);
     });
   });
 
@@ -502,6 +420,86 @@ describe('Admin panel application registration stats and installed workspaces (i
 
       expect(response.body.errors).toBeDefined();
       expect(response.body.data?.findAllApplicationRegistrations).toBeFalsy();
+    });
+  });
+
+  describe('suspended workspace installs', () => {
+    let suspendedWorkspaceId: string;
+    let suspendedApplicationId: string;
+
+    beforeAll(async () => {
+      suspendedWorkspaceId = randomUUID();
+
+      const [{ workspaceCustomApplicationId }] = await dataSource.query(
+        `SELECT "workspaceCustomApplicationId" FROM core."workspace" WHERE id = $1`,
+        [SEED_APPLE_WORKSPACE_ID],
+      );
+
+      await dataSource.query(
+        `INSERT INTO core."workspace"
+          (id, "displayName", subdomain, "activationStatus", "defaultRoleId",
+           "databaseSchema", "workspaceCustomApplicationId")
+         VALUES ($1, $2, $3, 'SUSPENDED', $4, $5, $6)`,
+        [
+          suspendedWorkspaceId,
+          'admin-panel-stats-suspended-workspace',
+          `admin-panel-stats-suspended-${suspendedWorkspaceId}`,
+          randomUUID(),
+          'admin_panel_stats_suspended',
+          workspaceCustomApplicationId,
+        ],
+      );
+
+      const { id } = await insertApplication({
+        workspaceId: suspendedWorkspaceId,
+        version: '2.0.0',
+      });
+
+      suspendedApplicationId = id;
+    });
+
+    afterAll(async () => {
+      await dataSource.query(`DELETE FROM core."application" WHERE id = $1`, [
+        suspendedApplicationId,
+      ]);
+      await dataSource.query(`DELETE FROM core."workspace" WHERE id = $1`, [
+        suspendedWorkspaceId,
+      ]);
+    });
+
+    it('counts them as installs and reports them separately', async () => {
+      const response = await makeAdminPanelAPIRequest({
+        query: FIND_STATS,
+        variables: { id: applicationRegistrationId },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+
+      const stats = response.body.data?.findAdminApplicationRegistrationStats;
+
+      expect(stats.activeInstalls).toBe(4);
+      expect(stats.suspendedInstalls).toBe(1);
+    });
+
+    it('lists them alongside installs on active workspaces', async () => {
+      const response = await makeAdminPanelAPIRequest({
+        query: FIND_INSTALLED_WORKSPACES,
+        variables: {
+          input: {
+            id: applicationRegistrationId,
+            offset: 0,
+            searchTerm: 'admin-panel-stats-suspended-workspace',
+          },
+        },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+
+      const result =
+        response.body.data?.findAdminApplicationRegistrationInstalledWorkspaces;
+
+      expect(result.totalCount).toBe(1);
+      expect(result.workspaces[0].id).toBe(suspendedWorkspaceId);
     });
   });
 });

@@ -20,6 +20,7 @@ import {
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
@@ -567,14 +568,18 @@ export class WorkspaceService {
 
     assert(workspace, 'Workspace not found');
 
-    // A workspace can be hard deleted after being soft deleted, so only the
-    // call that ends the installs emits, never both.
-    if (!isDefined(workspace.deletedAt)) {
-      await this.emitWorkspaceDeletionUninstallMetrics(workspace.id);
-    }
+    // Applications cascade with the workspace, so read before deleting and count after.
+    const uninstalledApplications = isDefined(workspace.deletedAt)
+      ? []
+      : await this.findApplicationsForUninstallMetrics(workspace.id);
 
     if (!softDelete) {
-      return this.hardDeleteWorkspaceWithApplicationUninstallLock(workspace);
+      const hardDeletedWorkspace =
+        await this.hardDeleteWorkspaceWithApplicationUninstallLock(workspace);
+
+      this.emitWorkspaceDeletionUninstallMetrics(uninstalledApplications);
+
+      return hardDeletedWorkspace;
     }
 
     const userWorkspaces = await this.userWorkspaceRepository.find({
@@ -599,36 +604,43 @@ export class WorkspaceService {
     await this.coreEntityCacheService.invalidate('workspaceEntity', id);
     await this.enqueueWorkspaceDeletionApplicationUninstall(id);
 
+    this.emitWorkspaceDeletionUninstallMetrics(uninstalledApplications);
+
     this.logger.log(`workspace ${id} soft deleted`);
 
     return workspace;
   }
 
-  private async emitWorkspaceDeletionUninstallMetrics(
+  private async findApplicationsForUninstallMetrics(
     workspaceId: string,
-  ): Promise<void> {
+  ): Promise<ApplicationEntity[]> {
     try {
-      const applications =
-        await this.applicationService.findManyApplications(workspaceId);
-
-      for (const application of applications) {
-        this.metricsService.incrementCounterBy({
-          key: MetricsKeys.AppUninstallSucceeded,
-          amount: 1,
-          attributes: {
-            universal_identifier: application.universalIdentifier,
-            app_name: application.name,
-            source_type: application.sourceType,
-            version: application.version ?? 'unknown',
-            reason: 'workspace_deletion',
-          },
-        });
-      }
+      return await this.applicationService.findManyApplications(workspaceId);
     } catch (error) {
       this.logger.error(
-        `Failed to emit uninstall metrics for workspace ${workspaceId}`,
+        `Failed to read applications for uninstall metrics of workspace ${workspaceId}`,
         error,
       );
+
+      return [];
+    }
+  }
+
+  private emitWorkspaceDeletionUninstallMetrics(
+    applications: ApplicationEntity[],
+  ): void {
+    for (const application of applications) {
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.AppUninstallSucceeded,
+        amount: 1,
+        attributes: {
+          universal_identifier: application.universalIdentifier,
+          app_name: application.name,
+          source_type: application.sourceType,
+          version: application.version ?? 'unknown',
+          reason: 'workspace_deletion',
+        },
+      });
     }
   }
 
