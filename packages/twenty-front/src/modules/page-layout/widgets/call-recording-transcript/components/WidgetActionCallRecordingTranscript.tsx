@@ -1,21 +1,26 @@
 import { useCallRecordingsSeeAllHref } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingsSeeAllHref';
+import { useCallRecordingForTranscript } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingForTranscript';
+import { getCallRecordingVideoFileUrl } from '@/page-layout/widgets/call-recording/utils/getCallRecordingVideoFileUrl';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
-import { callRecordingTranscriptHeaderDataComponentFamilyState } from '@/page-layout/widgets/call-recording-transcript/states/callRecordingTranscriptHeaderDataComponentFamilyState';
+import { buildCallRecordingTranscriptPlainText } from '@/page-layout/widgets/call-recording-transcript/utils/buildCallRecordingTranscriptPlainText';
 import { widgetHeaderCountComponentFamilyState } from '@/page-layout/widgets/states/widgetHeaderCountComponentFamilyState';
 import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
 import { WidgetCardHeaderActionLink } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionLink';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { useMemo } from 'react';
+import {
+  isDefined,
+  isNonEmptyArray,
+  parseCallRecordingTranscriptEntries,
+} from 'twenty-shared/utils';
 import { IconArrowUpRight, IconCopy, IconLink } from 'twenty-ui/icon';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const WidgetActionCallRecordingTranscript = () => {
   const widget = useCurrentWidget();
-  const callRecordingTranscriptHeaderData = useAtomComponentFamilyStateValue(
-    callRecordingTranscriptHeaderDataComponentFamilyState,
-    widget.id,
-  );
+  const { callRecording, loading, error, restriction } =
+    useCallRecordingForTranscript();
   const widgetHeaderCount = useAtomComponentFamilyStateValue(
     widgetHeaderCountComponentFamilyState,
     widget.id,
@@ -23,9 +28,24 @@ export const WidgetActionCallRecordingTranscript = () => {
   const callRecordingsSeeAllHref = useCallRecordingsSeeAllHref();
   const { copyToClipboard } = useCopyToClipboard();
 
-  const transcriptPlainText =
-    callRecordingTranscriptHeaderData?.transcriptPlainText;
-  const videoFileUrl = callRecordingTranscriptHeaderData?.videoFileUrl;
+  const canExposeCallRecording =
+    !loading && !isDefined(error) && !isDefined(restriction);
+
+  const transcriptEntries = useMemo(
+    () =>
+      parseCallRecordingTranscriptEntries(
+        canExposeCallRecording ? callRecording?.transcript : undefined,
+      ),
+    [callRecording?.transcript, canExposeCallRecording],
+  );
+
+  const transcriptPlainText = isNonEmptyArray(transcriptEntries)
+    ? buildCallRecordingTranscriptPlainText(transcriptEntries)
+    : undefined;
+
+  const videoFileUrl = getCallRecordingVideoFileUrl(
+    canExposeCallRecording ? callRecording : undefined,
+  );
 
   return (
     <>
