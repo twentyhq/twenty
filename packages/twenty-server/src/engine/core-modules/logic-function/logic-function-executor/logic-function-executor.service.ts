@@ -234,9 +234,6 @@ export class LogicFunctionExecutorService {
     return flatLogicFunction.executionMode ?? LogicFunctionExecutionMode.LIVE;
   }
 
-  // The migration action handlers install the bundle on whichever node ran them,
-  // so with the local driver every other node reaches execution with a missing
-  // or outdated node-local bundle and has to install the expected one itself.
   private async ensurePrebuiltBundleInstalled({
     driver,
     flatLogicFunction,
