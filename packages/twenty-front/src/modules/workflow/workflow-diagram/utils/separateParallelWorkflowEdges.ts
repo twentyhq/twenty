@@ -1,4 +1,5 @@
 import { type WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { isDefined } from 'twenty-shared/utils';
 
 const PARALLEL_EDGE_SPACING = 100;
 
@@ -67,6 +68,7 @@ export const separateParallelWorkflowEdges = ({
     const targetHandleIds = targetHandleIdsByNode.get(edge.target) ?? [];
     targetHandleIds.push(targetHandle);
     targetHandleIdsByNode.set(edge.target, targetHandleIds);
+    const parallelEdgeOffset = parallelEdgeOffsets.get(edge.id);
 
     return {
       ...edge,
@@ -74,8 +76,10 @@ export const separateParallelWorkflowEdges = ({
       data: {
         ...edge.data,
         edgeType: 'default',
-        edgePathStrategy: 'parallel-edge',
-        parallelEdgeOffset: parallelEdgeOffsets.get(edge.id),
+        edgePathStrategy: isDefined(parallelEdgeOffset)
+          ? 'parallel-edge'
+          : edge.data?.edgePathStrategy,
+        parallelEdgeOffset,
       },
     };
   });
