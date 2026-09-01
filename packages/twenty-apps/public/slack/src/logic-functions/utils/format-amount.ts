@@ -1,14 +1,14 @@
+import { isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { asFiniteNumber } from 'src/logic-functions/utils/as-finite-number';
 import { asNonEmptyString } from 'src/logic-functions/utils/as-non-empty-string';
 
 export const formatAmount = (
   amount: Record<string, unknown> | undefined,
 ): string | undefined => {
-  const amountMicros = asFiniteNumber(amount?.amountMicros);
+  const amountMicros = amount?.amountMicros;
 
-  if (!isDefined(amountMicros)) {
+  if (!isNumber(amountMicros) || !Number.isFinite(amountMicros)) {
     return undefined;
   }
 
