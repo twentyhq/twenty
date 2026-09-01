@@ -32,14 +32,15 @@ describe('ProcessNestedRelationsHelper transaction visibility', () => {
 
     await expect(
       workspaceOrmManager.executeInWorkspaceContext(
-        async () =>
-          workspaceOrmManager.runInWorkspaceTransaction(
+        async () => {
+          const {
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            objectIdByNameSingular,
+          } = getWorkspaceContext();
+
+          return workspaceOrmManager.runInWorkspaceTransaction(
             async (transactionScope) => {
-              const {
-                flatObjectMetadataMaps,
-                flatFieldMetadataMaps,
-                objectIdByNameSingular,
-              } = getWorkspaceContext();
               const personObjectMetadata =
                 findFlatEntityByIdInFlatEntityMapsOrThrow({
                   flatEntityId: objectIdByNameSingular.person,
@@ -81,7 +82,8 @@ describe('ProcessNestedRelationsHelper transaction visibility', () => {
 
               throw new Error(ROLLBACK_TEST_TRANSACTION);
             },
-          ),
+          );
+        },
         buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
         { lite: true },
       ),
@@ -104,15 +106,16 @@ describe('CommonCreateOneQueryRunnerService transaction scope', () => {
 
     await expect(
       workspaceOrmManager.executeInWorkspaceContext(
-        async () =>
-          workspaceOrmManager.runInWorkspaceTransaction(
+        async () => {
+          const {
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            flatIndexMaps,
+            objectIdByNameSingular,
+          } = getWorkspaceContext();
+
+          return workspaceOrmManager.runInWorkspaceTransaction(
             async (transactionScope) => {
-              const {
-                flatObjectMetadataMaps,
-                flatFieldMetadataMaps,
-                flatIndexMaps,
-                objectIdByNameSingular,
-              } = getWorkspaceContext();
               const workflowObjectMetadata =
                 findFlatEntityByIdInFlatEntityMapsOrThrow({
                   flatEntityId: objectIdByNameSingular.workflow,
@@ -184,7 +187,8 @@ describe('CommonCreateOneQueryRunnerService transaction scope', () => {
 
               throw new Error(ROLLBACK_TEST_TRANSACTION);
             },
-          ),
+          );
+        },
         authContext,
         { lite: true },
       ),
