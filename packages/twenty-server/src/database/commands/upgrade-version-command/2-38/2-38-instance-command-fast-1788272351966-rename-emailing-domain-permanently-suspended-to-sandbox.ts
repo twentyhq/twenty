@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.38.0', 1788200702000)
+@RegisteredInstanceCommand('2.38.0', 1788272351966)
 export class RenameEmailingDomainPermanentlySuspendedToSandboxFastInstanceCommand
   implements FastInstanceCommand
 {
