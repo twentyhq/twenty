@@ -31,6 +31,16 @@ describe('getWorkspaceSurfaceScopedComponentInstanceId', () => {
     ).toBe('table-panel-1');
   });
 
+  it('preserves a component ID that is already the side-panel instance ID', () => {
+    expect(
+      getWorkspaceSurfaceScopedComponentInstanceId({
+        componentInstanceId: 'panel-1',
+        surfaceType: 'side-panel',
+        surfaceInstanceId: 'panel-1',
+      }),
+    ).toBe('panel-1');
+  });
+
   it('preserves a missing component ID', () => {
     expect(
       getWorkspaceSurfaceScopedComponentInstanceId({

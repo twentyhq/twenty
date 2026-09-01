@@ -14,6 +14,7 @@ export const getWorkspaceSurfaceScopedComponentInstanceId = ({
     surfaceType !== 'side-panel' ||
     surfaceInstanceId.length === 0 ||
     componentInstanceId.length === 0 ||
+    componentInstanceId === surfaceInstanceId ||
     componentInstanceId.endsWith(`-${surfaceInstanceId}`)
   ) {
     return componentInstanceId;
