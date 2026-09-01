@@ -33,7 +33,7 @@ describe('computeAutomatedTriggerFromWorkflowVersion', () => {
     });
   });
 
-  it('should keep a null workspace version id when the twin is missing', () => {
+  it('should collapse both ids to the legacy shape when the twin is missing', () => {
     const workflowVersion = buildWorkflowVersion({
       type: WorkflowTriggerType.DATABASE_EVENT,
       name: 'Record created',
@@ -46,7 +46,7 @@ describe('computeAutomatedTriggerFromWorkflowVersion', () => {
     });
 
     expect(automatedTrigger?.workspaceWorkflowVersionId).toBeNull();
-    expect(automatedTrigger?.coreWorkflowVersionId).toBe('core-version-1');
+    expect(automatedTrigger?.coreWorkflowVersionId).toBeNull();
   });
 
   it('should return null for manual triggers', () => {

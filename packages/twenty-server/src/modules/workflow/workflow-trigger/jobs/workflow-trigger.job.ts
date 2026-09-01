@@ -11,6 +11,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { WorkflowVersionStatus as CoreWorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { type CoreDispatchIds } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
@@ -18,15 +19,13 @@ import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standa
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 import { WorkflowTriggerExceptionCode } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
-import { shouldDispatchWorkflowTriggerFromCore } from 'src/modules/workflow/workflow-trigger/utils/should-dispatch-workflow-trigger-from-core.util';
+import { resolveWorkflowTriggerDispatchMode } from 'src/modules/workflow/workflow-trigger/utils/resolve-workflow-trigger-dispatch-mode.util';
 
 export type WorkflowTriggerJobData = {
   workspaceId: string;
   workflowId: string;
   payload: object;
-  coreWorkflowVersionId?: string | null;
-  workspaceWorkflowVersionId?: string | null;
-};
+} & CoreDispatchIds;
 
 const DEFAULT_WORKFLOW_NAME = 'Workflow';
 
@@ -43,11 +42,26 @@ export class WorkflowTriggerJob {
 
   @Process(WorkflowTriggerJob.name)
   async handle(data: WorkflowTriggerJobData): Promise<void> {
-    if (shouldDispatchWorkflowTriggerFromCore(data)) {
+    const dispatchMode = resolveWorkflowTriggerDispatchMode(data);
+
+    if (dispatchMode.mode === 'INCOMPLETE') {
+      this.logger.error(
+        `Dispatch ids are half resolved for workflow ${data.workflowId} in workspace ${data.workspaceId}`,
+      );
+      this.exceptionHandlerService.captureExceptions([
+        new Error(
+          `Dropped workflow trigger with half resolved dispatch ids for workflow ${data.workflowId} in workspace ${data.workspaceId}`,
+        ),
+      ]);
+
+      return;
+    }
+
+    if (dispatchMode.mode === 'CORE') {
       return this.handleFromCore({
         workspaceId: data.workspaceId,
-        coreWorkflowVersionId: data.coreWorkflowVersionId,
-        workspaceWorkflowVersionId: data.workspaceWorkflowVersionId,
+        coreWorkflowVersionId: dispatchMode.coreWorkflowVersionId,
+        workspaceWorkflowVersionId: dispatchMode.workspaceWorkflowVersionId,
         payload: data.payload,
       });
     }

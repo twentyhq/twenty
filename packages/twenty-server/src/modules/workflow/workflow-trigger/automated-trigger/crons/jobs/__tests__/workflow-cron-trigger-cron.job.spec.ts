@@ -121,6 +121,8 @@ describe('WorkflowCronTriggerCronJob', () => {
         {
           workspaceId: WORKSPACE_1,
           workflowId: 'workflow-1',
+          coreWorkflowVersionId: null,
+          workspaceWorkflowVersionId: null,
           payload: {},
         },
         { retryLimit: 3 },
@@ -333,6 +335,8 @@ describe('WorkflowCronTriggerCronJob', () => {
         {
           workspaceId: WORKSPACE_2,
           workflowId: 'workflow-1',
+          coreWorkflowVersionId: null,
+          workspaceWorkflowVersionId: null,
           payload: {},
         },
         { retryLimit: 3 },

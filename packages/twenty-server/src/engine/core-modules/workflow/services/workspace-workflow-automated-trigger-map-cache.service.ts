@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
@@ -21,6 +21,10 @@ import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common
 @Injectable()
 @WorkspaceCache('workflowAutomatedTriggerMaps', { packingPonderation: 1 })
 export class WorkspaceWorkflowAutomatedTriggerMapCacheService extends WorkspaceCacheProvider<WorkflowAutomatedTriggerMaps> {
+  private readonly logger = new Logger(
+    WorkspaceWorkflowAutomatedTriggerMapCacheService.name,
+  );
+
   constructor(
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly workflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
@@ -98,20 +102,39 @@ export class WorkspaceWorkflowAutomatedTriggerMapCacheService extends WorkspaceC
         ]),
       );
 
+      const twinIdsByCoreVersionId = new Map<string, string[]>();
+
+      for (const workspaceWorkflowVersion of workspaceWorkflowVersions) {
+        const { coreWorkflowVersionId } = workspaceWorkflowVersion;
+
+        if (
+          !isDefined(coreWorkflowVersionId) ||
+          workflowIdByCoreVersionId[coreWorkflowVersionId] !==
+            workspaceWorkflowVersion.workflowId
+        ) {
+          continue;
+        }
+
+        twinIdsByCoreVersionId.set(coreWorkflowVersionId, [
+          ...(twinIdsByCoreVersionId.get(coreWorkflowVersionId) ?? []),
+          workspaceWorkflowVersion.id,
+        ]);
+      }
+
       return Object.fromEntries(
-        workspaceWorkflowVersions.flatMap((workspaceWorkflowVersion) => {
-          const { coreWorkflowVersionId } = workspaceWorkflowVersion;
+        [...twinIdsByCoreVersionId.entries()].flatMap(
+          ([coreWorkflowVersionId, twinIds]) => {
+            if (twinIds.length > 1) {
+              this.logger.error(
+                `Core workflow version ${coreWorkflowVersionId} has ${twinIds.length} workspace twins in workspace ${workspaceId}, skipping core dispatch`,
+              );
 
-          if (
-            !isDefined(coreWorkflowVersionId) ||
-            workflowIdByCoreVersionId[coreWorkflowVersionId] !==
-              workspaceWorkflowVersion.workflowId
-          ) {
-            return [];
-          }
+              return [];
+            }
 
-          return [[coreWorkflowVersionId, workspaceWorkflowVersion.id]];
-        }),
+            return [[coreWorkflowVersionId, twinIds[0]]];
+          },
+        ),
       );
     }, authContext);
   }
