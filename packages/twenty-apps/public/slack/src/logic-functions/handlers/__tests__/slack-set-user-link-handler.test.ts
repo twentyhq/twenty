@@ -142,6 +142,9 @@ describe('slackSetUserLinkHandler', () => {
       id: 'link-ghost',
     });
     expect(createSlackUserLinkMock).toHaveBeenCalledTimes(1);
+    expect(destroySlackUserLinkMock.mock.invocationCallOrder[0]).toBeLessThan(
+      createSlackUserLinkMock.mock.invocationCallOrder[0] ?? 0,
+    );
   });
 
   it('should refuse a member id the workspace cannot confirm', async () => {

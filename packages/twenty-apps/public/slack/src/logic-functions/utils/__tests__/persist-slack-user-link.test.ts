@@ -78,6 +78,9 @@ describe('persistSlackUserLink', () => {
       id: 'link-ghost',
     });
     expect(createSlackUserLinkMock).toHaveBeenCalledTimes(1);
+    expect(destroySlackUserLinkMock.mock.invocationCallOrder[0]).toBeLessThan(
+      createSlackUserLinkMock.mock.invocationCallOrder[0] ?? 0,
+    );
   });
 
   it('should not look for a ghost when replacing a live link', async () => {
