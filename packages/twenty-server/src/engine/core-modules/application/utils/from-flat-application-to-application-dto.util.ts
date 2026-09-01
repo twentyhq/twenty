@@ -15,6 +15,7 @@ export const fromFlatApplicationToApplicationDto = ({
   availablePackages,
   universalIdentifier,
   version,
+  state,
   settingsCustomTabFrontComponentId,
 }: FlatApplication): ApplicationDTO => {
   return {
@@ -32,6 +33,7 @@ export const fromFlatApplicationToApplicationDto = ({
     availablePackages: availablePackages ?? {},
     universalIdentifier,
     version: version ?? undefined,
+    state,
     settingsCustomTabFrontComponentId:
       settingsCustomTabFrontComponentId ?? undefined,
   };

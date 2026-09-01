@@ -7,6 +7,7 @@ export type ApplicationWithoutRelation = Pick<
   | 'description'
   | 'logoUrl'
   | 'version'
+  | 'state'
   | 'universalIdentifier'
   | 'applicationRegistrationId'
   | 'applicationRegistration'

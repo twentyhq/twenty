@@ -22,6 +22,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
@@ -159,6 +160,7 @@ export class ApplicationSyncService {
       logoFileId: null,
       version: null,
       sourceType: ApplicationRegistrationSourceType.LOCAL,
+      state: ApplicationState.INSTALLED,
       sourcePath: manifest.application.universalIdentifier,
       packageJsonChecksum: null,
       packageJsonFileId: null,
@@ -349,6 +351,56 @@ export class ApplicationSyncService {
       );
     }
 
+    // A rolled-back fresh install reaches here while still INSTALLING: only an
+    // application that finished installing can be reverted to INSTALLED, so the
+    // transitional flip is scoped to that case.
+    const shouldTransitionState =
+      application.state === ApplicationState.INSTALLED;
+
+    if (shouldTransitionState) {
+      await this.applicationService.update(application.id, {
+        state: ApplicationState.UNINSTALLING,
+        workspaceId,
+      });
+    }
+
+    try {
+      return await this.runUninstall({
+        application,
+        workspaceId,
+        applicationUniversalIdentifier,
+        shouldRunUninstallHook,
+      });
+    } catch (error) {
+      if (shouldTransitionState) {
+        // Reverting must never replace the uninstall error the caller needs
+        await this.applicationService
+          .update(application.id, {
+            state: ApplicationState.INSTALLED,
+            workspaceId,
+          })
+          .catch((revertError) =>
+            this.logger.warn(
+              `Failed to revert state of application ${applicationUniversalIdentifier} in workspace ${workspaceId}: ${revertError instanceof Error ? revertError.message : String(revertError)}`,
+            ),
+          );
+      }
+
+      throw error;
+    }
+  }
+
+  private async runUninstall({
+    application,
+    workspaceId,
+    applicationUniversalIdentifier,
+    shouldRunUninstallHook,
+  }: {
+    application: ApplicationEntity;
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+    shouldRunUninstallHook: boolean;
+  }): Promise<WorkspaceMigration> {
     if (shouldRunUninstallHook) {
       await this.applicationUninstallService.runUninstallHookBestEffort({
         application,
