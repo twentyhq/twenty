@@ -35,67 +35,65 @@ const dropPivotFailureConstraint = () =>
       DROP CONSTRAINT IF EXISTS "${PIVOT_FAILURE_CONSTRAINT_NAME}"`,
   );
 
+const destroyManyOrThrow = async (
+  input: Parameters<typeof destroyManyOperationFactory>[0],
+) => {
+  const response = await makeGraphqlAPIRequest(
+    destroyManyOperationFactory(input),
+  );
+
+  expect(response.body.errors).toBeUndefined();
+};
+
 const destroyFixtures = async () => {
-  await makeGraphqlAPIRequest(
-    destroyManyOperationFactory({
-      objectMetadataSingularName: 'taskTarget',
-      objectMetadataPluralName: 'taskTargets',
-      gqlFields: 'id',
-      filter: { taskId: { eq: SOURCE_TASK_ID } },
-    }),
-  );
+  await destroyManyOrThrow({
+    objectMetadataSingularName: 'taskTarget',
+    objectMetadataPluralName: 'taskTargets',
+    gqlFields: 'id',
+    filter: { taskId: { eq: SOURCE_TASK_ID } },
+  });
 
-  await makeGraphqlAPIRequest(
-    destroyManyOperationFactory({
-      objectMetadataSingularName: 'messageListMember',
-      objectMetadataPluralName: 'messageListMembers',
-      gqlFields: 'id',
-      filter: {
-        listId: { eq: SOURCE_MESSAGE_LIST_ID },
-        personId: { in: [TARGET_PERSON_ID, SUCCESS_TARGET_PERSON_ID] },
+  await destroyManyOrThrow({
+    objectMetadataSingularName: 'messageListMember',
+    objectMetadataPluralName: 'messageListMembers',
+    gqlFields: 'id',
+    filter: {
+      listId: { eq: SOURCE_MESSAGE_LIST_ID },
+      personId: { in: [TARGET_PERSON_ID, SUCCESS_TARGET_PERSON_ID] },
+    },
+  });
+
+  await destroyManyOrThrow({
+    objectMetadataSingularName: 'person',
+    objectMetadataPluralName: 'people',
+    gqlFields: 'id',
+    filter: { id: { in: [TARGET_PERSON_ID, SUCCESS_TARGET_PERSON_ID] } },
+  });
+
+  await destroyManyOrThrow({
+    objectMetadataSingularName: 'company',
+    objectMetadataPluralName: 'companies',
+    gqlFields: 'id',
+    filter: { id: { eq: SUCCESS_TARGET_COMPANY_ID } },
+  });
+
+  await destroyManyOrThrow({
+    objectMetadataSingularName: 'task',
+    objectMetadataPluralName: 'tasks',
+    gqlFields: 'id',
+    filter: { id: { eq: SOURCE_TASK_ID } },
+  });
+
+  await destroyManyOrThrow({
+    objectMetadataSingularName: 'messageList',
+    objectMetadataPluralName: 'messageLists',
+    gqlFields: 'id',
+    filter: {
+      id: {
+        in: [SOURCE_MESSAGE_LIST_ID, INVALID_TARGET_MESSAGE_LIST_ID],
       },
-    }),
-  );
-
-  await makeGraphqlAPIRequest(
-    destroyManyOperationFactory({
-      objectMetadataSingularName: 'person',
-      objectMetadataPluralName: 'people',
-      gqlFields: 'id',
-      filter: { id: { in: [TARGET_PERSON_ID, SUCCESS_TARGET_PERSON_ID] } },
-    }),
-  );
-
-  await makeGraphqlAPIRequest(
-    destroyManyOperationFactory({
-      objectMetadataSingularName: 'company',
-      objectMetadataPluralName: 'companies',
-      gqlFields: 'id',
-      filter: { id: { eq: SUCCESS_TARGET_COMPANY_ID } },
-    }),
-  );
-
-  await makeGraphqlAPIRequest(
-    destroyManyOperationFactory({
-      objectMetadataSingularName: 'task',
-      objectMetadataPluralName: 'tasks',
-      gqlFields: 'id',
-      filter: { id: { eq: SOURCE_TASK_ID } },
-    }),
-  );
-
-  await makeGraphqlAPIRequest(
-    destroyManyOperationFactory({
-      objectMetadataSingularName: 'messageList',
-      objectMetadataPluralName: 'messageLists',
-      gqlFields: 'id',
-      filter: {
-        id: {
-          in: [SOURCE_MESSAGE_LIST_ID, INVALID_TARGET_MESSAGE_LIST_ID],
-        },
-      },
-    }),
-  );
+    },
+  });
 };
 
 const getFixtureState = async (targetPersonId: string) => {

@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { v4 } from 'uuid';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
@@ -10,6 +10,7 @@ import { CREATE_AND_CONNECT_JUNCTION_RECORD } from '@/object-core/graphql/mutati
 import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
+import { useBuildRecordInputFromRLSPredicates } from '@/object-record/hooks/useBuildRecordInputFromRLSPredicates';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
@@ -38,15 +39,14 @@ export const useCreateAndConnectJunctionRecord = ({
   junctionObjectMetadataItem,
 }: UseCreateAndConnectJunctionRecordArgs) => {
   const [loading, setLoading] = useState(false);
-  // This is an imperative mutex; `loading` remains the render state.
-  // oxlint-disable-next-line twenty/no-state-useref
-  const isCreatingRef = useRef(false);
   const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { refetchAggregateQueries } = useRefetchAggregateQueries();
   const { enqueueErrorSnackBar } = useSnackBar();
+  const { buildRecordInputFromRLSPredicates } =
+    useBuildRecordInputFromRLSPredicates();
 
   const createOneRecordInCache = useCreateOneRecordInCache<ObjectRecord>();
 
@@ -58,11 +58,6 @@ export const useCreateAndConnectJunctionRecord = ({
       searchInput?: string;
       targetObjectMetadataItemId: string;
     }): Promise<RecordPickerPickableMorphItem | undefined> => {
-      if (isCreatingRef.current) {
-        return undefined;
-      }
-
-      isCreatingRef.current = true;
       setLoading(true);
 
       try {
@@ -84,11 +79,16 @@ export const useCreateAndConnectJunctionRecord = ({
           const targetRecordInput = {
             ...sanitizeRecordInput({
               objectMetadataItem: targetObjectMetadataItem,
-              recordInput: buildRecordLabelPayload({
-                id: targetRecordId,
-                searchInput,
-                objectMetadataItem: targetObjectMetadataItem,
-              }),
+              recordInput: {
+                ...buildRecordInputFromRLSPredicates({
+                  objectMetadataItem: targetObjectMetadataItem,
+                }),
+                ...buildRecordLabelPayload({
+                  id: targetRecordId,
+                  searchInput,
+                  objectMetadataItem: targetObjectMetadataItem,
+                }),
+              },
             }),
             id: targetRecordId,
           };
@@ -245,12 +245,12 @@ export const useCreateAndConnectJunctionRecord = ({
           isMatchingSearchFilter: true,
         };
       } finally {
-        isCreatingRef.current = false;
         setLoading(false);
       }
     },
     [
       apolloCoreClient,
+      buildRecordInputFromRLSPredicates,
       createOneRecordInCache,
       enqueueErrorSnackBar,
       junctionObjectMetadataItem,

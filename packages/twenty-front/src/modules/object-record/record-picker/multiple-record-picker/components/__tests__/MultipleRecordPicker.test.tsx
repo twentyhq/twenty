@@ -11,9 +11,11 @@ import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectM
 const COMPONENT_INSTANCE_ID = 'multiple-record-picker-test';
 const FOCUS_ID = 'multiple-record-picker-focus';
 
-const renderPicker = (targetNames: string[]) => {
+const renderPicker = (
+  targetNames: string[],
+  onCreate = jest.fn().mockResolvedValue(undefined),
+) => {
   const objectMetadataItems = targetNames.map(getMockObjectMetadataItemOrThrow);
-  const onCreate = jest.fn().mockResolvedValue(undefined);
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: [],
     onInitializeJotaiStore: (store) => {
@@ -72,5 +74,16 @@ describe('MultipleRecordPicker', () => {
       objectMetadataItemId: objectMetadataItems[1].id,
       searchInput: '',
     });
+  });
+
+  it('ignores concurrent create attempts', async () => {
+    const user = userEvent.setup();
+    const onCreate = jest.fn(() => new Promise(() => undefined));
+
+    renderPicker(['person'], onCreate);
+
+    await user.dblClick(screen.getByText('Add New'));
+
+    expect(onCreate).toHaveBeenCalledTimes(1);
   });
 });

@@ -51,9 +51,7 @@ export const useAddNewRecordAndOpenSidePanel = ({
   const { updateOneRecord } = useUpdateOneRecord();
 
   const { buildRecordInputFromRLSPredicates } =
-    useBuildRecordInputFromRLSPredicates({
-      objectMetadataItem: relationObjectMetadataItem,
-    });
+    useBuildRecordInputFromRLSPredicates();
 
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
@@ -82,7 +80,9 @@ export const useAddNewRecordAndOpenSidePanel = ({
       const newRecordId = v4();
 
       const createRecordPayload = {
-        ...buildRecordInputFromRLSPredicates(),
+        ...buildRecordInputFromRLSPredicates({
+          objectMetadataItem: relationObjectMetadataItem,
+        }),
         ...buildRecordLabelPayload({
           id: newRecordId,
           searchInput,

@@ -70,14 +70,14 @@ export const useCreateNewIndexRecord = ({
   });
 
   const { buildRecordInputFromRLSPredicates } =
-    useBuildRecordInputFromRLSPredicates({
-      objectMetadataItem,
-    });
+    useBuildRecordInputFromRLSPredicates();
 
   const createNewIndexRecord = useCallback(
     async (recordInput?: Partial<ObjectRecord>) => {
       const recordId = v4();
-      const recordInputFromRLSPredicates = buildRecordInputFromRLSPredicates();
+      const recordInputFromRLSPredicates = buildRecordInputFromRLSPredicates({
+        objectMetadataItem,
+      });
       const recordInputFromFilters = buildRecordInputFromFilters();
 
       const mergedRecordInput = {

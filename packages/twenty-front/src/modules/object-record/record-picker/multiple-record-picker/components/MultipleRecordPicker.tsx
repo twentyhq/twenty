@@ -60,6 +60,9 @@ export const MultipleRecordPicker = ({
   isCreatePending = false,
 }: MultipleRecordPickerProps) => {
   const [isSelectingCreateTarget, setIsSelectingCreateTarget] = useState(false);
+  // Close the gap before the pending prop can rerender the picker.
+  // oxlint-disable-next-line twenty/no-state-useref
+  const createInFlightRef = useRef(false);
 
   const selectableListComponentInstanceId =
     getMultipleRecordPickerSelectableListId(componentInstanceId);
@@ -156,46 +159,41 @@ export const MultipleRecordPicker = ({
     : [];
 
   const handleCreate = async (objectMetadataItemId: string) => {
-    if (isCreatePending || !isDefined(onCreate)) {
+    if (isCreatePending || createInFlightRef.current || !isDefined(onCreate)) {
       return;
     }
 
+    createInFlightRef.current = true;
     const searchInput = store.get(multipleRecordPickerSearchFilterState);
-    let createdMorphItem: RecordPickerPickableMorphItem | undefined;
 
     try {
-      createdMorphItem = await onCreate({
+      const createdMorphItem = await onCreate({
         searchInput,
         objectMetadataItemId,
       });
-    } catch (error) {
-      logError(error);
-      return;
-    }
 
-    if (!isDefined(createdMorphItem)) {
-      return;
-    }
+      if (!isDefined(createdMorphItem)) {
+        return;
+      }
 
-    const currentMorphItems = store.get(
-      multipleRecordPickerPickableMorphItemsState,
-    );
-    const existingMorphItemIndex = currentMorphItems.findIndex(
-      ({ recordId }) => recordId === createdMorphItem.recordId,
-    );
-    const newMorphItems = [...currentMorphItems];
+      const currentMorphItems = store.get(
+        multipleRecordPickerPickableMorphItemsState,
+      );
+      const existingMorphItemIndex = currentMorphItems.findIndex(
+        ({ recordId }) => recordId === createdMorphItem.recordId,
+      );
+      const newMorphItems = [...currentMorphItems];
 
-    if (existingMorphItemIndex === -1) {
-      newMorphItems.push(createdMorphItem);
-    } else {
-      newMorphItems[existingMorphItemIndex] = createdMorphItem;
-    }
+      if (existingMorphItemIndex === -1) {
+        newMorphItems.push(createdMorphItem);
+      } else {
+        newMorphItems[existingMorphItemIndex] = createdMorphItem;
+      }
 
-    store.set(multipleRecordPickerPickableMorphItemsState, newMorphItems);
-    resetSelectedItem();
-    setIsSelectingCreateTarget(false);
+      store.set(multipleRecordPickerPickableMorphItemsState, newMorphItems);
+      resetSelectedItem();
+      setIsSelectingCreateTarget(false);
 
-    try {
       await performSearch({
         multipleRecordPickerInstanceId: componentInstanceId,
         forceSearchFilter: searchInput,
@@ -206,6 +204,8 @@ export const MultipleRecordPicker = ({
     } catch (error) {
       store.set(multipleRecordPickerIsLoadingState, false);
       logError(error);
+    } finally {
+      createInFlightRef.current = false;
     }
   };
 

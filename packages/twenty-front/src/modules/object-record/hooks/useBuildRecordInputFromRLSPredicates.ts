@@ -23,11 +23,7 @@ const mergeCompositeValues = (existingValue: unknown, incomingValue: unknown) =>
     ? { ...existingValue, ...incomingValue }
     : incomingValue;
 
-export const useBuildRecordInputFromRLSPredicates = ({
-  objectMetadataItem,
-}: {
-  objectMetadataItem: EnrichedObjectMetadataItem;
-}) => {
+export const useBuildRecordInputFromRLSPredicates = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const { userTimezone } = useUserTimezone();
@@ -43,11 +39,6 @@ export const useBuildRecordInputFromRLSPredicates = ({
     });
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const objectPermissions = getObjectPermissionsForObject(
-    objectPermissionsByObjectMetadataId,
-    objectMetadataItem.id,
-  );
-
   const getRecordInputFieldName = (fieldMetadataItem: {
     name: string;
     type: string;
@@ -101,7 +92,16 @@ export const useBuildRecordInputFromRLSPredicates = ({
     return workspaceMemberFieldValue;
   };
 
-  const buildRecordInputFromRLSPredicates = (): Partial<ObjectRecord> => {
+  const buildRecordInputFromRLSPredicates = ({
+    objectMetadataItem,
+  }: {
+    objectMetadataItem: EnrichedObjectMetadataItem;
+  }): Partial<ObjectRecord> => {
+    const objectPermissions = getObjectPermissionsForObject(
+      objectPermissionsByObjectMetadataId,
+      objectMetadataItem.id,
+    );
+
     const rlsPredicates = objectPermissions.rowLevelPermissionPredicates.filter(
       (predicate) => predicate.objectMetadataId === objectMetadataItem.id,
     );
