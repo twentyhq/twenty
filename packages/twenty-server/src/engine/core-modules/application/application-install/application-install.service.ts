@@ -312,7 +312,7 @@ export class ApplicationInstallService {
     const shouldTransitionState =
       isVersionUpgrade && application.state === ApplicationState.INSTALLED;
 
-    const isInterruptedInstallRetry =
+    const hasNeverCompletedInstall =
       isVersionUpgrade && application.state === ApplicationState.INSTALLING;
 
     const incomingVersion = resolvedPackage.packageJson.version;
@@ -431,7 +431,7 @@ export class ApplicationInstallService {
         });
       }
 
-      if (!isVersionUpgrade || isInterruptedInstallRetry) {
+      if (!isVersionUpgrade || hasNeverCompletedInstall) {
         // Rollback of a failed fresh install: the app never finished
         // installing, so the uninstall hook must not run.
         await this.applicationSyncService.uninstallApplication({
