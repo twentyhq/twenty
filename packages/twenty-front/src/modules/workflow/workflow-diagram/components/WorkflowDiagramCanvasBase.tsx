@@ -45,6 +45,8 @@ import {
   type EdgeChange,
   type FitViewOptions,
   type NodeChange,
+  type NodeDimensionChange,
+  type NodeOrigin,
   type NodeProps,
   type OnBeforeDelete,
   type OnConnectStartParams,
@@ -63,6 +65,7 @@ import React, {
   useState,
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS } from 'twenty-shared/workflow';
 import { Tag, type TagColor } from 'twenty-ui/data-display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledResetReactflowStyles = styled.div`
@@ -99,6 +102,10 @@ const defaultFitViewOptions = {
   minZoom: 1,
   maxZoom: 1,
 } satisfies FitViewOptions;
+
+const CENTERED_NODE_ORIGIN = [0.5, 0.5] satisfies NodeOrigin;
+
+const CREATED_NODE_TOP_EDGE_DISTANCE_BELOW_CONNECTION_DROP = 50;
 
 export const WorkflowDiagramCanvasBase = ({
   nodeTypes,
@@ -212,6 +219,9 @@ export const WorkflowDiagramCanvasBase = ({
     startPosition: { x: number; y: number };
   } | null>(null);
 
+  const [emptyNodeMeasuredDimensions, setEmptyNodeMeasuredDimensions] =
+    useState<{ width: number; height: number } | undefined>(undefined);
+
   const { nodes, edges } = useMemo(() => {
     if (!isDefined(workflowDiagram)) {
       return { nodes: [], edges: [] };
@@ -227,6 +237,7 @@ export const WorkflowDiagramCanvasBase = ({
       const emptyNode = {
         ...WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION,
         position: workflowInsertStepIds.position,
+        measured: emptyNodeMeasuredDimensions,
         data: {
           ...WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION.data,
           position: workflowInsertStepIds.position,
@@ -255,7 +266,7 @@ export const WorkflowDiagramCanvasBase = ({
     }
 
     return { nodes, edges };
-  }, [workflowDiagram, workflowInsertStepIds]);
+  }, [workflowDiagram, workflowInsertStepIds, emptyNodeMeasuredDimensions]);
 
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const { commandMenuContextApi } = useContext(CommandMenuContext);
@@ -330,7 +341,7 @@ export const WorkflowDiagramCanvasBase = ({
 
       const flowBounds = reactflow.getNodesBounds(nodes);
       const centeredXPosition =
-        adjustedContainerWidth / 2 - flowBounds.width / 2;
+        adjustedContainerWidth / 2 - flowBounds.width / 2 - flowBounds.x;
 
       reactflow.setViewport(
         {
@@ -380,6 +391,16 @@ export const WorkflowDiagramCanvasBase = ({
   const handleNodesChanges = useCallback(
     (changes: NodeChange<WorkflowDiagramNode>[]) => {
       const existingWorkflowDiagram = store.get(workflowDiagramCallbackState);
+
+      const measuredEmptyNodeDimensions = changes.findLast(
+        (change): change is NodeDimensionChange =>
+          change.type === 'dimensions' &&
+          change.id === WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION.id,
+      )?.dimensions;
+
+      if (isDefined(measuredEmptyNodeDimensions)) {
+        setEmptyNodeMeasuredDimensions(measuredEmptyNodeDimensions);
+      }
 
       const filteredChanges = changes.filter(
         (change) =>
@@ -569,16 +590,16 @@ export const WorkflowDiagramCanvasBase = ({
       return;
     }
 
-    const DEFAULT_NODE_WIDTH = 200;
-    const adjustedPosition = {
-      x: flowPosition.x - DEFAULT_NODE_WIDTH / 2,
-      y: flowPosition.y + 50,
-    };
-
     startNodeCreation({
       parentStepId: startInfo.nodeId,
       nextStepId: undefined,
-      position: adjustedPosition,
+      position: {
+        x: flowPosition.x,
+        y:
+          flowPosition.y +
+          CREATED_NODE_TOP_EDGE_DISTANCE_BELOW_CONNECTION_DROP +
+          WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS.height / 2,
+      },
       connectionOptions: getConnectionOptionsForSourceHandle({
         sourceHandleId: startInfo.handleId,
       }),
@@ -594,6 +615,7 @@ export const WorkflowDiagramCanvasBase = ({
         minZoom={defaultFitViewOptions.minZoom}
         maxZoom={defaultFitViewOptions.maxZoom}
         defaultViewport={{ x: 0, y: 150, zoom: defaultFitViewOptions.maxZoom }}
+        nodeOrigin={CENTERED_NODE_ORIGIN}
         nodeTypes={nodeTypes}
         // @ts-expect-error We override Reactflow types for sourceHandle and targetHandle to be required
         edgeTypes={edgeTypes}
