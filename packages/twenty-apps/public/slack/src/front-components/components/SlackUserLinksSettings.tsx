@@ -89,6 +89,11 @@ export const SlackUserLinksSettings = () => {
     await Promise.all([refetchSlackUserLinks(), refetchUnlinkedSlackUsers()]);
   };
 
+  const handleManualLinkSaved = async () => {
+    setIsManualFormOpen(false);
+    await handleLinkSaved();
+  };
+
   const handleMatchByEmail = async () => {
     const result = await matchSlackUserLinks();
 
@@ -221,7 +226,7 @@ export const SlackUserLinksSettings = () => {
         (isManualFormOpen ? (
           <SlackUserLinkForm
             existingLinks={slackUserLinks}
-            onLinkSaved={handleLinkSaved}
+            onLinkSaved={handleManualLinkSaved}
           />
         ) : (
           <StyledDisclosure>
