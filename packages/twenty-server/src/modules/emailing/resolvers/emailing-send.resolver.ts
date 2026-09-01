@@ -25,6 +25,7 @@ import {
 } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { countDeliveredRecipients } from 'src/engine/core-modules/emailing-domain/utils/count-delivered-recipients.util';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
@@ -68,7 +69,7 @@ export class EmailingSendResolver {
 
     await this.emailBillingService.billSentEmails({
       workspaceId: currentWorkspace.id,
-      sentEmailCount: 1,
+      sentEmailCount: countDeliveredRecipients(result.deliveredRecipients),
     });
 
     return { messageId: result.messageId };
