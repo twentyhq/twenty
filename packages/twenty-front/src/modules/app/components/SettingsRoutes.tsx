@@ -1175,12 +1175,22 @@ const createSettingsRouteElements = ({
   </>
 );
 
+const removeGeneratedRouteIds = (
+  routeObjects: WorkspaceRouteObject[],
+): WorkspaceRouteObject[] =>
+  routeObjects.map(({ id: _generatedId, children, ...routeObject }) => ({
+    ...routeObject,
+    children: children && removeGeneratedRouteIds(children),
+  }));
+
 export const createSettingsRouteObjects = (
   args: CreateSettingsRouteObjectsArgs,
 ): WorkspaceRouteObject[] =>
-  createRoutesFromElements(
-    createSettingsRouteElements(args),
-  ) as WorkspaceRouteObject[];
+  removeGeneratedRouteIds(
+    createRoutesFromElements(
+      createSettingsRouteElements(args),
+    ) as WorkspaceRouteObject[],
+  );
 
 export const SettingsRouteOutlet = () => (
   <Suspense fallback={<SettingsSkeletonLoader />}>

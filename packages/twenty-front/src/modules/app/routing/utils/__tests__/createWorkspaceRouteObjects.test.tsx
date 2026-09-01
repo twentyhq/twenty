@@ -1,6 +1,6 @@
 import { AppPath } from 'twenty-shared/types';
 import { isValidElement, type ReactElement } from 'react';
-import { matchRoutes } from 'react-router-dom';
+import { createMemoryRouter, matchRoutes } from 'react-router-dom';
 
 import { getWorkspaceRouteObjectsForSurface } from '@/app/routing/utils/getWorkspaceRouteObjectsForSurface';
 import { createWorkspaceRouteObjects } from '@/app/routing/utils/createWorkspaceRouteObjects';
@@ -13,6 +13,14 @@ import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsPro
 const SETTINGS_ROOT_PATH = AppPath.SettingsCatchAll.replace('/*', '');
 
 describe('workspace route objects', () => {
+  it('can be embedded in a data router without route id collisions', () => {
+    const router = createMemoryRouter([
+      { children: createWorkspaceRouteObjects({}) },
+    ]);
+
+    router.dispose();
+  });
+
   it('shares one route definition while exposing only verified panel pages', () => {
     const routeObjects = createWorkspaceRouteObjects({});
     const mainRoutes = getWorkspaceRouteObjectsForSurface(routeObjects, 'main');
