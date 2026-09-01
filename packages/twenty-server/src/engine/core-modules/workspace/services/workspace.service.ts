@@ -20,7 +20,6 @@ import {
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
@@ -46,8 +45,6 @@ import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logi
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
@@ -173,7 +170,6 @@ export class WorkspaceService {
     private readonly sdkClientGenerationService: SdkClientGenerationService,
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
     private readonly applicationUninstallService: ApplicationUninstallService,
-    private readonly metricsService: MetricsService,
   ) {}
 
   async updateWorkspaceById({
@@ -568,18 +564,8 @@ export class WorkspaceService {
 
     assert(workspace, 'Workspace not found');
 
-    // Applications cascade with the workspace, so read before deleting and count after.
-    const uninstalledApplications = isDefined(workspace.deletedAt)
-      ? []
-      : await this.findApplicationsForUninstallMetrics(workspace.id);
-
     if (!softDelete) {
-      const hardDeletedWorkspace =
-        await this.hardDeleteWorkspaceWithApplicationUninstallLock(workspace);
-
-      this.emitWorkspaceDeletionUninstallMetrics(uninstalledApplications);
-
-      return hardDeletedWorkspace;
+      return this.hardDeleteWorkspaceWithApplicationUninstallLock(workspace);
     }
 
     const userWorkspaces = await this.userWorkspaceRepository.find({
@@ -604,44 +590,9 @@ export class WorkspaceService {
     await this.coreEntityCacheService.invalidate('workspaceEntity', id);
     await this.enqueueWorkspaceDeletionApplicationUninstall(id);
 
-    this.emitWorkspaceDeletionUninstallMetrics(uninstalledApplications);
-
     this.logger.log(`workspace ${id} soft deleted`);
 
     return workspace;
-  }
-
-  private async findApplicationsForUninstallMetrics(
-    workspaceId: string,
-  ): Promise<ApplicationEntity[]> {
-    try {
-      return await this.applicationService.findManyApplications(workspaceId);
-    } catch (error) {
-      this.logger.error(
-        `Failed to read applications for uninstall metrics of workspace ${workspaceId}`,
-        error,
-      );
-
-      return [];
-    }
-  }
-
-  private emitWorkspaceDeletionUninstallMetrics(
-    applications: ApplicationEntity[],
-  ): void {
-    for (const application of applications) {
-      this.metricsService.incrementCounterBy({
-        key: MetricsKeys.AppUninstallSucceeded,
-        amount: 1,
-        attributes: {
-          universal_identifier: application.universalIdentifier,
-          app_name: application.name,
-          source_type: application.sourceType,
-          version: application.version ?? 'unknown',
-          reason: 'workspace_deletion',
-        },
-      });
-    }
   }
 
   private async hardDeleteWorkspaceWithApplicationUninstallLock(
