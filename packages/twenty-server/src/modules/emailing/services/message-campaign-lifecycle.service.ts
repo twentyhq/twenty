@@ -173,20 +173,19 @@ export class MessageCampaignLifecycleService {
     workspaceId: string;
     campaignId: string;
   }): Promise<void> {
-    const unfinishedCount = await this.campaignDeliveryRepository.count(
-      workspaceId,
-      {
-        where: {
-          campaignId,
-          state: In([
-            CAMPAIGN_DELIVERY_STATE.QUEUED,
-            CAMPAIGN_DELIVERY_STATE.SENDING,
-          ]),
-        },
-      },
-    );
+    // Every settled delivery calls this, so the check must not scale with the
+    // campaign. Counting reads every unfinished row only to compare it against
+    // zero; the probe stops at the first row the partial index yields.
+    const hasUnfinishedDelivery =
+      await this.campaignDeliveryRepository.existsBy(workspaceId, {
+        campaignId,
+        state: In([
+          CAMPAIGN_DELIVERY_STATE.QUEUED,
+          CAMPAIGN_DELIVERY_STATE.SENDING,
+        ]),
+      });
 
-    if (unfinishedCount > 0) {
+    if (hasUnfinishedDelivery) {
       return;
     }
 
