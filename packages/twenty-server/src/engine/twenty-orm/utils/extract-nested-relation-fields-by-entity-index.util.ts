@@ -72,21 +72,26 @@ const hasRelationConnect = (value: unknown): value is ConnectObject => {
 };
 
 const hasRelationDisconnect = (value: unknown): value is DisconnectObject => {
-  if (!isDefined(value) || typeof value !== 'object') return false;
+  if (!isDefined(value) || typeof value !== 'object') {
+    return false;
+  }
 
   const obj = value as Record<string, unknown>;
 
   if (
     !isDefined(obj[RELATION_NESTED_QUERY_KEYWORDS.DISCONNECT]) ||
     typeof obj[RELATION_NESTED_QUERY_KEYWORDS.DISCONNECT] !== 'boolean'
-  )
+  ) {
     return false;
+  }
 
   return true;
 };
 
 const hasRelationCreate = (value: unknown): value is CreateObject => {
-  if (!isDefined(value) || typeof value !== 'object') return false;
+  if (!isDefined(value) || typeof value !== 'object') {
+    return false;
+  }
 
   const create = (value as Record<string, unknown>)[
     RELATION_NESTED_QUERY_KEYWORDS.CREATE
