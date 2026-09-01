@@ -3,6 +3,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { StyledSettingsError } from 'src/front-components/components/StyledSettingsError';
+
 const StyledField = styled.div`
   display: flex;
   flex-direction: column;
@@ -24,13 +26,6 @@ const StyledHint = styled.span`
   margin-top: ${() => themeCssVariables.spacing[3]};
 `;
 
-const StyledError = styled.span`
-  color: ${() => themeCssVariables.font.color.danger};
-  font-family: ${() => themeCssVariables.font.family};
-  font-size: ${() => themeCssVariables.font.size.xs};
-  margin-top: ${() => themeCssVariables.spacing[1]};
-`;
-
 type LabelledSettingsFieldProps = {
   label: string;
   inputId: string;
@@ -50,7 +45,7 @@ export const LabelledSettingsField = ({
     <StyledLabel htmlFor={inputId}>{label}</StyledLabel>
     {children}
     {isNonEmptyString(errorMessage) && (
-      <StyledError>{errorMessage}</StyledError>
+      <StyledSettingsError>{errorMessage}</StyledSettingsError>
     )}
     {isNonEmptyString(hint) && <StyledHint>{hint}</StyledHint>}
   </StyledField>

@@ -1,8 +1,6 @@
-import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type IconComponent } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { Separator } from 'src/front-components/components/Separator';
 import {
@@ -14,12 +12,7 @@ import {
 } from 'src/front-components/components/SettingsCardContentBase';
 import { SettingsCounter } from 'src/front-components/components/SettingsCounter';
 import { SettingsOptionIconCustomizer } from 'src/front-components/components/SettingsOptionIconCustomizer';
-
-const StyledError = styled.div`
-  color: ${() => themeCssVariables.font.color.danger};
-  font-size: ${() => themeCssVariables.font.size.xs};
-  margin-top: ${() => themeCssVariables.spacing[1]};
-`;
+import { StyledSettingsError } from 'src/front-components/components/StyledSettingsError';
 
 type SettingsOptionCardContentCounterProps = {
   Icon?: IconComponent;
@@ -65,7 +58,7 @@ export const SettingsOptionCardContentCounter = ({
           </StyledSettingsCardDescription>
         )}
         {isNonEmptyString(errorMessage) && (
-          <StyledError>{errorMessage}</StyledError>
+          <StyledSettingsError>{errorMessage}</StyledSettingsError>
         )}
       </StyledSettingsCardTextContainer>
       <SettingsCounter

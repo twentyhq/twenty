@@ -5,6 +5,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ApplicationVariableInput } from 'src/front-components/components/ApplicationVariableInput';
 import { ApplicationVariableLabelRow } from 'src/front-components/components/ApplicationVariableLabelRow';
+import { StyledSettingsError } from 'src/front-components/components/StyledSettingsError';
 import {
   type ApplicationVariableDraft,
   type UpdateApplicationVariableDraft,
@@ -22,13 +23,6 @@ const StyledDescription = styled.span`
   font-family: ${() => themeCssVariables.font.family};
   font-size: ${() => themeCssVariables.font.size.xs};
   margin-bottom: ${() => themeCssVariables.spacing[1]};
-`;
-
-const StyledError = styled.span`
-  color: ${() => themeCssVariables.font.color.danger};
-  font-family: ${() => themeCssVariables.font.family};
-  font-size: ${() => themeCssVariables.font.size.xs};
-  margin-top: ${() => themeCssVariables.spacing[1]};
 `;
 
 type ApplicationVariableRowProps = {
@@ -80,7 +74,9 @@ export const ApplicationVariableRow = ({
         placeholder={isSecretStored ? variable.value : undefined}
         onChange={handleChange}
       />
-      {hasInvalidNumber && <StyledError>Invalid number</StyledError>}
+      {hasInvalidNumber && (
+        <StyledSettingsError>Invalid number</StyledSettingsError>
+      )}
     </StyledRow>
   );
 };
