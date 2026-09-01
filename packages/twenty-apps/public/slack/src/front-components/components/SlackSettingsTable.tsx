@@ -23,7 +23,7 @@ export const SlackTableRow = styled.div<{
 
   &:hover {
     background-color: ${({ isHoverable }) =>
-      isHoverable === true
+      isHoverable
         ? themeCssVariables.background.transparent.light
         : 'transparent'};
   }
