@@ -80,14 +80,12 @@ export class MessageCampaignRecoveryService {
         { shouldBypassPermissionChecks: true },
       );
 
-      const recentlyChangedMessageCount = await messageRepository.count({
+      return messageRepository.exists({
         where: {
           messageCampaignId: campaignId,
           updatedAt: MoreThan(staleSince),
         },
       });
-
-      return recentlyChangedMessageCount > 0;
     }, buildSystemAuthContext(workspaceId));
   }
 
