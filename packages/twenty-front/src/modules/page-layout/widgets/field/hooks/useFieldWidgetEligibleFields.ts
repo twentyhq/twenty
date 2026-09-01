@@ -11,6 +11,7 @@ export const useFieldWidgetEligibleFields = (objectNameSingular: string) => {
     // Allow advanced relation fields targeting system objects (e.g. calendarEventParticipants)
     // to appear in the FieldWidget selector — the widget can render them as boxed relations.
     includeSystemObjectRelations: true,
+    includeNoteAndTaskBody: true,
   });
 
   return useMemo(() => {
