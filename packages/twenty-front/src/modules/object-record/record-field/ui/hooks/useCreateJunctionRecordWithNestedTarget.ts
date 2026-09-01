@@ -137,9 +137,13 @@ export const useCreateJunctionRecordWithNestedTarget = ({
           isMatchingSearchFilter: true,
         };
       } catch (error) {
-        enqueueErrorSnackBar({
-          ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
-        });
+        enqueueErrorSnackBar(
+          CombinedGraphQLErrors.is(error)
+            ? { apolloError: error }
+            : error instanceof Error
+              ? { message: error.message }
+              : {},
+        );
         return undefined;
       } finally {
         setLoading(false);

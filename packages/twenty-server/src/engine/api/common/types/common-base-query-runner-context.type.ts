@@ -16,4 +16,5 @@ export type CommonBaseQueryRunnerContext = {
   rolePermissionConfig?: RolePermissionConfig;
   transactionScope?: WorkspaceTransactionScope;
   nestedOperationDepth?: number;
+  nestedCreateRecordsCounter?: { count: number };
 };

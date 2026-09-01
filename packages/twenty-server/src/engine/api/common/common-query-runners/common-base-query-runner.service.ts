@@ -134,7 +134,9 @@ export abstract class CommonBaseQueryRunnerService<
       flatFieldMetadataMaps,
     } = queryRunnerContext;
 
-    await this.throttleQueryExecution(authContext);
+    if ((queryRunnerContext.nestedOperationDepth ?? 0) === 0) {
+      await this.throttleQueryExecution(authContext);
+    }
 
     await this.validate(args, queryRunnerContext);
 

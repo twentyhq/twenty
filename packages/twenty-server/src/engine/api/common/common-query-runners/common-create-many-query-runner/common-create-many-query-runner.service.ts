@@ -550,6 +550,9 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     queryRunnerContext: CommonExtendedQueryRunnerContext;
     writeRepository: WorkspaceRepository;
   }): Promise<Partial<ObjectRecord>[]> {
+    const nestedCreateRecordsCounter =
+      (queryRunnerContext.nestedCreateRecordsCounter ??= { count: 0 });
+
     return this.resolveNestedRelations({
       records,
       queryRunnerContext,
@@ -558,6 +561,18 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         targetObjectMetadata,
         records: targetRecords,
       }) => {
+        nestedCreateRecordsCounter.count += targetRecords.length;
+
+        if (nestedCreateRecordsCounter.count > QUERY_MAX_RECORDS) {
+          throw new CommonQueryRunnerException(
+            `Maximum number of nested records to create is ${QUERY_MAX_RECORDS}.`,
+            CommonQueryRunnerExceptionCode.TOO_MANY_RECORDS_TO_UPDATE,
+            {
+              userFriendlyMessage: msg`Maximum number of nested records to create is ${QUERY_MAX_RECORDS}.`,
+            },
+          );
+        }
+
         const nestedOperationDepth =
           (queryRunnerContext.nestedOperationDepth ?? 0) + 1;
 
@@ -577,6 +592,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
           {
             ...queryRunnerContext,
             flatObjectMetadata: targetObjectMetadata,
+            nestedCreateRecordsCounter,
             nestedOperationDepth,
           },
         );
