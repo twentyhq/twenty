@@ -31,17 +31,17 @@ describe('parseTwentyRecordLinks', () => {
     });
   });
 
-  it('should keep query params and fragments off the parsed record id', () => {
+  it.each([
+    ['a query param', `${WORKSPACE_BASE_URL}/object/person/${RECORD_ID}?view=table`],
+    ['a fragment', `${WORKSPACE_BASE_URL}/object/person/${RECORD_ID}#section`],
+    ['a trailing slash', `${WORKSPACE_BASE_URL}/object/person/${RECORD_ID}/`],
+  ])('should keep %s off the parsed record id', (_label, url) => {
     expect(
       parseTwentyRecordLinks({
         workspaceBaseUrl: WORKSPACE_BASE_URL,
-        urls: [
-          `${WORKSPACE_BASE_URL}/object/person/${RECORD_ID}?view=table`,
-          `${WORKSPACE_BASE_URL}/object/person/${RECORD_ID}#section`,
-          `${WORKSPACE_BASE_URL}/object/person/${RECORD_ID}/`,
-        ],
+        urls: [url],
       }).map((recordLink) => recordLink.recordId),
-    ).toEqual([RECORD_ID, RECORD_ID, RECORD_ID]);
+    ).toEqual([RECORD_ID]);
   });
 
   it('should normalize the HTML-escaped ampersands Slack sends', () => {
@@ -60,6 +60,20 @@ describe('parseTwentyRecordLinks', () => {
       parseTwentyRecordLinks({
         workspaceBaseUrl: WORKSPACE_BASE_URL,
         urls: [url, url, url],
+      }),
+    ).toHaveLength(1);
+  });
+
+  it('should deduplicate URL spellings that point at the same record', () => {
+    expect(
+      parseTwentyRecordLinks({
+        workspaceBaseUrl: WORKSPACE_BASE_URL,
+        urls: [
+          `${WORKSPACE_BASE_URL}/object/company/${RECORD_ID}`,
+          `${WORKSPACE_BASE_URL}/object/company/${RECORD_ID}/`,
+          `${WORKSPACE_BASE_URL}/object/company/${RECORD_ID}?a=1&b=2`,
+          `${WORKSPACE_BASE_URL}/object/company/${RECORD_ID}?a=1&amp;b=2`,
+        ],
       }),
     ).toHaveLength(1);
   });

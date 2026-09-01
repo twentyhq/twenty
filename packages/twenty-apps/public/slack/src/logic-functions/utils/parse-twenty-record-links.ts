@@ -50,21 +50,24 @@ export const parseTwentyRecordLinks = ({
   workspaceBaseUrl: string;
   urls: string[];
 }): SlackRecordLink[] => {
-  const seenUrls = new Set<string>();
+  const seenRecords = new Set<string>();
   const recordLinks: SlackRecordLink[] = [];
 
   for (const url of urls) {
-    if (seenUrls.has(url)) {
+    const recordLink = parseRecordLink({ workspaceBaseUrl, url });
+
+    if (!isDefined(recordLink)) {
       continue;
     }
 
-    seenUrls.add(url);
+    const recordKey = `${recordLink.objectNameSingular}:${recordLink.recordId}`;
 
-    const recordLink = parseRecordLink({ workspaceBaseUrl, url });
-
-    if (isDefined(recordLink)) {
-      recordLinks.push(recordLink);
+    if (seenRecords.has(recordKey)) {
+      continue;
     }
+
+    seenRecords.add(recordKey);
+    recordLinks.push(recordLink);
   }
 
   return recordLinks;
