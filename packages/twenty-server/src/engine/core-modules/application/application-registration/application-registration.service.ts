@@ -5,6 +5,7 @@ import crypto from 'crypto';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import * as bcrypt from 'bcrypt';
+import isEqual from 'lodash.isequal';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -36,6 +37,7 @@ import {
 } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { buildRegistrationManifestUpdateFields } from 'src/engine/core-modules/application/application-registration/utils/build-registration-manifest-update-fields.util';
+import { serializeApplicationRegistrationForBroadcast } from 'src/engine/core-modules/application/application-registration/utils/serialize-application-registration-for-broadcast.util';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
@@ -51,6 +53,7 @@ import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/s
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
 const BCRYPT_SALT_ROUNDS = 10;
@@ -127,7 +130,89 @@ export class ApplicationRegistrationService {
     private readonly metricsService: MetricsService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly workspaceQueueService: MessageQueueService,
+    private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
   ) {}
+
+  private async broadcastApplicationRegistrationUpdatedById(
+    applicationRegistrationId: string,
+    registrationBeforeUpdate?: ApplicationRegistrationEntity,
+  ): Promise<void> {
+    try {
+      const updatedRegistration =
+        await this.applicationRegistrationRepository.findOne({
+          select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
+          where: { id: applicationRegistrationId },
+        });
+
+      if (!isDefined(updatedRegistration)) {
+        return;
+      }
+
+      const serializedUpdatedRegistration =
+        serializeApplicationRegistrationForBroadcast(updatedRegistration);
+
+      if (
+        isDefined(registrationBeforeUpdate) &&
+        isEqual(
+          serializeApplicationRegistrationForBroadcast(
+            registrationBeforeUpdate,
+          ),
+          serializedUpdatedRegistration,
+        )
+      ) {
+        return;
+      }
+
+      await this.broadcastApplicationRegistrationEvent({
+        type: 'updated',
+        applicationRegistration: updatedRegistration,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to reload application registration ${applicationRegistrationId} for broadcast`,
+        error,
+      );
+    }
+  }
+
+  private async broadcastApplicationRegistrationEvent({
+    type,
+    applicationRegistration,
+  }: {
+    type: 'created' | 'updated' | 'deleted';
+    applicationRegistration: ApplicationRegistrationEntity;
+  }): Promise<void> {
+    const { ownerWorkspaceId } = applicationRegistration;
+
+    if (!isDefined(ownerWorkspaceId)) {
+      return;
+    }
+
+    const serializedApplicationRegistration =
+      serializeApplicationRegistrationForBroadcast(applicationRegistration);
+
+    try {
+      await this.workspaceEventBroadcaster.broadcast({
+        workspaceId: ownerWorkspaceId,
+        events: [
+          {
+            type,
+            entityName: 'applicationRegistration',
+            recordId: applicationRegistration.id,
+            properties:
+              type === 'deleted'
+                ? { before: serializedApplicationRegistration }
+                : { after: serializedApplicationRegistration },
+          },
+        ],
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to broadcast ${type} event for application registration ${applicationRegistration.universalIdentifier} in workspace ${ownerWorkspaceId}`,
+        error,
+      );
+    }
+  }
 
   // Best-effort: a queue outage must not fail the publish flow that
   // triggered the upgrade.
@@ -188,6 +273,7 @@ export class ApplicationRegistrationService {
   async setLatestAvailableVersionIfChanged(
     applicationRegistrationId: string,
     newVersion: string | null,
+    { shouldBroadcastUpdate = true }: { shouldBroadcastUpdate?: boolean } = {},
   ): Promise<boolean> {
     const result = await this.applicationRegistrationRepository
       .createQueryBuilder()
@@ -199,7 +285,15 @@ export class ApplicationRegistrationService {
       })
       .execute();
 
-    return (result.affected ?? 0) > 0;
+    const hasChanged = (result.affected ?? 0) > 0;
+
+    if (hasChanged && shouldBroadcastUpdate) {
+      await this.broadcastApplicationRegistrationUpdatedById(
+        applicationRegistrationId,
+      );
+    }
+
+    return hasChanged;
   }
 
   async findMany(
@@ -444,6 +538,11 @@ export class ApplicationRegistrationService {
 
     await this.invalidateMarketplaceAppsCache();
 
+    await this.broadcastApplicationRegistrationEvent({
+      type: 'created',
+      applicationRegistration: saved,
+    });
+
     return { applicationRegistration: saved, clientSecret };
   }
 
@@ -453,8 +552,14 @@ export class ApplicationRegistrationService {
   ): Promise<ApplicationRegistrationEntity> {
     const { id, update } = input;
 
-    await this.findOneById(id, ownerWorkspaceId);
+    const existingRegistration = await this.findOneById(id, ownerWorkspaceId);
+
     await this.applyUpdate(id, update);
+
+    await this.broadcastApplicationRegistrationUpdatedById(
+      id,
+      existingRegistration,
+    );
 
     return this.findOneById(id, ownerWorkspaceId);
   }
@@ -494,10 +599,12 @@ export class ApplicationRegistrationService {
       updateData.isPreInstalled = update.isPreInstalled;
     if (isDefined(update.isVetted)) updateData.isVetted = update.isVetted;
 
-    if (Object.keys(updateData).length > 0) {
-      await this.applicationRegistrationRepository.update(id, updateData);
-      await this.invalidateMarketplaceAppsCache();
+    if (Object.keys(updateData).length === 0) {
+      return;
     }
+
+    await this.applicationRegistrationRepository.update(id, updateData);
+    await this.invalidateMarketplaceAppsCache();
   }
 
   async updateFromManifest({
@@ -506,6 +613,7 @@ export class ApplicationRegistrationService {
     sourceType,
     latestAvailableVersion,
     preventVersionDowngrade = false,
+    registrationBeforeUpdate,
     additionalFields,
   }: {
     applicationRegistrationId: string;
@@ -514,6 +622,7 @@ export class ApplicationRegistrationService {
     // null clears the stored version; undefined leaves it untouched.
     latestAvailableVersion?: string | null;
     preventVersionDowngrade?: boolean;
+    registrationBeforeUpdate?: ApplicationRegistrationEntity;
     additionalFields?: Partial<
       Pick<
         ApplicationRegistrationEntity,
@@ -588,6 +697,11 @@ export class ApplicationRegistrationService {
 
         await this.invalidateMarketplaceAppsCache();
 
+        await this.broadcastApplicationRegistrationUpdatedById(
+          applicationRegistrationId,
+          registrationBeforeUpdate ?? existing,
+        );
+
         return true;
       },
       `application-registration-update:${applicationRegistrationId}`,
@@ -596,7 +710,10 @@ export class ApplicationRegistrationService {
   }
 
   async delete(id: string, ownerWorkspaceId: string): Promise<boolean> {
-    await this.findOneById(id, ownerWorkspaceId);
+    const applicationRegistration = await this.findOneById(
+      id,
+      ownerWorkspaceId,
+    );
 
     // Stored assets (logo, gallery images) go with the registration; deleting
     // them first also removes the bytes, which the row FK cascade cannot do.
@@ -612,6 +729,11 @@ export class ApplicationRegistrationService {
     await this.applicationRegistrationRepository.delete(id);
 
     await this.invalidateMarketplaceAppsCache();
+
+    await this.broadcastApplicationRegistrationEvent({
+      type: 'deleted',
+      applicationRegistration,
+    });
 
     return true;
   }
@@ -670,6 +792,7 @@ export class ApplicationRegistrationService {
       const isNewVersion = await this.setLatestAvailableVersionIfChanged(
         existing.id,
         params.latestAvailableVersion ?? null,
+        { shouldBroadcastUpdate: false },
       );
 
       await this.updateFromManifest({
@@ -677,6 +800,7 @@ export class ApplicationRegistrationService {
         manifest: params.manifest,
         sourceType: params.sourceType,
         latestAvailableVersion: params.latestAvailableVersion,
+        registrationBeforeUpdate: existing,
         additionalFields: {
           name: params.name,
           sourcePackage: params.sourcePackage,
@@ -703,6 +827,7 @@ export class ApplicationRegistrationService {
       const isNewVersion = await this.setLatestAvailableVersionIfChanged(
         existing.id,
         params.latestAvailableVersion ?? null,
+        { shouldBroadcastUpdate: false },
       );
 
       // A registration first created by a local install (CLI dev / tarball
@@ -726,6 +851,11 @@ export class ApplicationRegistrationService {
       });
 
       await this.invalidateMarketplaceAppsCache();
+
+      await this.broadcastApplicationRegistrationUpdatedById(
+        existing.id,
+        existing,
+      );
 
       if (isNewVersion) {
         this.emitRegistrationPublishMetric({
@@ -1055,9 +1185,17 @@ export class ApplicationRegistrationService {
 
     await this.invalidateMarketplaceAppsCache();
 
-    return this.applicationRegistrationRepository.findOneOrFail({
-      where: { id: registration.id },
+    const claimedRegistration =
+      await this.applicationRegistrationRepository.findOneOrFail({
+        where: { id: registration.id },
+      });
+
+    await this.broadcastApplicationRegistrationEvent({
+      type: 'created',
+      applicationRegistration: claimedRegistration,
     });
+
+    return claimedRegistration;
   }
 
   async transferOwnership(params: {
@@ -1094,9 +1232,22 @@ export class ApplicationRegistrationService {
 
     await this.invalidateMarketplaceAppsCache();
 
-    return this.applicationRegistrationRepository.findOneOrFail({
-      where: { id: registration.id },
+    const transferredRegistration =
+      await this.applicationRegistrationRepository.findOneOrFail({
+        where: { id: registration.id },
+      });
+
+    await this.broadcastApplicationRegistrationEvent({
+      type: 'deleted',
+      applicationRegistration: registration,
     });
+
+    await this.broadcastApplicationRegistrationEvent({
+      type: 'created',
+      applicationRegistration: transferredRegistration,
+    });
+
+    return transferredRegistration;
   }
 
   private async generateClientSecret(): Promise<{
