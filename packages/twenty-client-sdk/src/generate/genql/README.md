@@ -1,8 +1,14 @@
 # Vendored genql codegen
 
 This folder is a narrowed, vendored copy of [`@genql/cli`](https://github.com/remorses/genql)
-`3.0.5` (MIT, © Tommaso De Rossi "morse"), used to generate the typed GraphQL
-client from an SDL string.
+`3.0.5` (upstream commit `4a547db46a9a614cc2b5958e28674af351898464`; MIT,
+© Tommaso De Rossi "morse"), used to generate the typed GraphQL client from an
+SDL string.
+
+Upstream's own test suite (integration + unit) is ported under
+`../__tests__/upstream-3.0.5/` and pins the engine's behavior and generated
+types; the snapshot tests (`../__tests__/genql-engine-output.test.ts` and the
+ported suite's checked-in fixture client) pin its output byte-for-byte.
 
 It was vendored to remove `@genql/cli` from the dependency graph, which pulled
 in abandoned and vulnerable transitive packages (`undici`, `native-fetch`,
@@ -12,7 +18,7 @@ in abandoned and vulnerable transitive packages (`undici`, `native-fetch`,
 
 - `render/` — the schema → TypeScript client renderers (copied verbatim).
 - `runtime/` — the genql client runtime, copied verbatim into every generated
-  client's `runtime/` folder (see `runtime-templates.ts`).
+  client's `runtime/` folder (see `../runtime-templates.ts`).
 - `tasks/`, `helpers/`, `main.ts` — narrowed orchestration.
 
 ## What was changed vs upstream
@@ -26,7 +32,7 @@ in abandoned and vulnerable transitive packages (`undici`, `native-fetch`,
 - **Replaced `@graphql-tools/load`** with graphql's own `buildSchema` — Twenty
   passes an SDL string, so the extra loader (and its dependency) is unnecessary.
   Verified to produce byte-identical output.
-- **Runtime files are imported as `?raw` text** (`runtime-templates.ts`) instead
+- **Runtime files are imported as `?raw` text** (`../runtime-templates.ts`) instead
   of read from `node_modules` at generation time, so they ship with this bundle.
 - **`Config` was narrowed** to the schema-string inputs Twenty actually passes
   (`schema`, `output`, `scalarTypes`, `sortProperties`). The introspection
@@ -34,13 +40,6 @@ in abandoned and vulnerable transitive packages (`undici`, `native-fetch`,
   (`verbose`) options were removed. The renderers are otherwise verbatim, so the
   generated client still defaults its url/fetch to `undefined` (Twenty's wrapper
   supplies them) and the output is unchanged.
-
-Twenty-specific typing tweaks live OUTSIDE this tree so the vendored engine
-stays verbatim: composite RAW_JSON sub-fields (e.g. `Emails.additionalEmails`)
-get their real TypeScript shape via a post-processing pass over the generated
-`schema.ts` (`../composite-field-type-overrides.ts`), never via renderer edits.
-The engine's own output is pinned byte-for-byte by the snapshot test in
-`../__tests__/genql-engine-output.test.ts`.
 
 The renderers are vendored verbatim from `@genql/cli@3.0.5`. Formatting now runs
 on `prettier@^3` (the version the monorepo resolves): it needs the explicit

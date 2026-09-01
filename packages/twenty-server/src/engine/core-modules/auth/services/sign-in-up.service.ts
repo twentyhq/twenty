@@ -634,7 +634,7 @@ export class SignInUpService {
     email: string;
     workspaceId: string;
     applicationUniversalIdentifier: string;
-  }): Promise<void> {
+  }): Promise<string | undefined> {
     let uploadedLogoFileId: string | undefined;
 
     try {
@@ -662,7 +662,11 @@ export class SignInUpService {
           fileId: logoFile.id,
           workspaceId,
         });
+
+        return;
       }
+
+      return logoFile.id;
     } catch (error) {
       this.logger.error(
         `Failed to upload inferred logo for workspace ${workspaceId}`,
@@ -679,6 +683,8 @@ export class SignInUpService {
           workspaceId,
         });
       }
+
+      return;
     }
   }
 
@@ -841,11 +847,15 @@ export class SignInUpService {
         });
 
       if (isWorkEmailFound) {
-        void this.uploadInferredWorkspaceLogo({
+        const inferredLogoFileId = await this.uploadInferredWorkspaceLogo({
           email,
           workspaceId,
           applicationUniversalIdentifier: customApplicationUniversalIdentifier,
         });
+
+        if (isDefined(inferredLogoFileId)) {
+          workspace.logoFileId = inferredLogoFileId;
+        }
       }
 
       void this.eventLogEmitterService

@@ -1,3 +1,4 @@
+import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -7,6 +8,7 @@ import { SettingsObjectNewFieldHeaderIcon } from '@/settings/data-model/fields/c
 import { SettingsObjectNewFieldSelector } from '@/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector';
 import { type FieldType } from '@/settings/data-model/types/FieldType';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
@@ -34,6 +36,7 @@ export type SettingsDataModelFieldTypeFormValues = z.infer<
 
 export const SettingsObjectNewFieldSelect = () => {
   const navigate = useNavigateApp();
+  const workspaceSurface = useWorkspaceSurface();
   const { objectNamePlural = '' } = useParams();
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
@@ -55,12 +58,16 @@ export const SettingsObjectNewFieldSelect = () => {
   ).filter(isDefined);
 
   useEffect(() => {
-    if (!activeObjectMetadataItem) {
+    if (workspaceSurface.type === 'main' && !activeObjectMetadataItem) {
       navigate(AppPath.NotFound);
     }
-  }, [activeObjectMetadataItem, navigate]);
+  }, [activeObjectMetadataItem, navigate, workspaceSurface.type]);
 
-  if (!activeObjectMetadataItem) return null;
+  if (!activeObjectMetadataItem) {
+    return workspaceSurface.type === 'side-panel' ? (
+      <WorkspaceRouteUnavailable />
+    ) : null;
+  }
 
   return (
     <FormProvider // oxlint-disable-next-line react/jsx-props-no-spreading
