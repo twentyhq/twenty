@@ -9,7 +9,6 @@ export const CORE_WORKFLOW_FILTER_OPERAND_BY_VIEW_FILTER_OPERAND: Partial<
   [ViewFilterOperand.DOES_NOT_CONTAIN]:
     CoreWorkflowFilterOperand.DOES_NOT_CONTAIN,
   [ViewFilterOperand.IS]: CoreWorkflowFilterOperand.IS,
-  [ViewFilterOperand.IS_NOT]: CoreWorkflowFilterOperand.IS_NOT,
   [ViewFilterOperand.IS_EMPTY]: CoreWorkflowFilterOperand.IS_EMPTY,
   [ViewFilterOperand.IS_NOT_EMPTY]: CoreWorkflowFilterOperand.IS_NOT_EMPTY,
   [ViewFilterOperand.IS_BEFORE]: CoreWorkflowFilterOperand.IS_BEFORE,

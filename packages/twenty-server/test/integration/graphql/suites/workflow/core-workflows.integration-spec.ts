@@ -83,7 +83,6 @@ describe('coreWorkflows (e2e)', () => {
       totalCount: number;
     };
 
-    // the whole filtered set fits in one page here, so the count has to match
     if (!pageInfo.hasNextPage) {
       expect(totalCount).toBe(edges.length);
     }
@@ -93,8 +92,6 @@ describe('coreWorkflows (e2e)', () => {
       .find((workflow) => workflow.workspaceWorkflowId === workflowId);
   };
 
-  // the core mirror and the statuses update are async listeners, so the row
-  // lands shortly after the mutation returns rather than within it
   const waitForCoreWorkflow = async (
     predicate: (workflow: CoreWorkflow | undefined) => boolean,
   ): Promise<CoreWorkflow | undefined> => {
@@ -262,8 +259,6 @@ describe('coreWorkflows (e2e)', () => {
     expect(filteredOut).toBeUndefined();
   });
 
-  // the name rule reads a workflow column and the status rule aggregates its
-  // versions, so OR across both is the case a WHERE/HAVING split cannot express
   it('should compose a name rule and a status rule with OR', async () => {
     await waitForCoreWorkflow(
       (workflow) => workflow?.statuses.includes('DRAFT') === true,

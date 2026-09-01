@@ -44,8 +44,6 @@ const ALL_VERSION_FLAG_COMBINATIONS: VersionFlags[] = [false, true].flatMap(
     ),
 );
 
-// evaluates a generated status predicate against in-memory version flags by
-// substituting the aggregate expressions with their boolean values
 const evaluateStatusPredicate = (
   predicate: string,
   { hasDraftVersion, hasActiveVersion, hasDeactivatedVersion }: VersionFlags,
@@ -128,34 +126,21 @@ describe('buildCoreWorkflowFilterPredicate', () => {
       });
     });
 
-    it('should match the whole name without wildcards for IS', () => {
-      expect(
-        buildPredicate([
-          {
-            fieldKey: CoreWorkflowFilterFieldKey.NAME,
-            operand: CoreWorkflowFilterOperand.IS,
-            value: '  Send invoice  ',
-          },
-        ]),
-      ).toEqual({
-        predicate: `(c.name ILIKE $2 ESCAPE '\\')`,
-        parameters: ['Send invoice'],
-      });
-    });
-
-    it('should build an IS NOT predicate', () => {
-      expect(
-        buildPredicate([
-          {
-            fieldKey: CoreWorkflowFilterFieldKey.NAME,
-            operand: CoreWorkflowFilterOperand.IS_NOT,
-            value: 'Send invoice',
-          },
-        ]),
-      ).toEqual({
-        predicate: `((c.name IS NULL OR c.name NOT ILIKE $2 ESCAPE '\\'))`,
-        parameters: ['Send invoice'],
-      });
+    it('should reject IS and IS_NOT, which the builder does not offer on NAME', () => {
+      for (const operand of [
+        CoreWorkflowFilterOperand.IS,
+        CoreWorkflowFilterOperand.IS_NOT,
+      ]) {
+        expect(() =>
+          buildPredicate([
+            {
+              fieldKey: CoreWorkflowFilterFieldKey.NAME,
+              operand,
+              value: 'Send invoice',
+            },
+          ]),
+        ).toThrow(UserInputError);
+      }
     });
 
     it('should treat a blank name as empty', () => {
@@ -187,8 +172,6 @@ describe('buildCoreWorkflowFilterPredicate', () => {
     it.each([
       CoreWorkflowFilterOperand.CONTAINS,
       CoreWorkflowFilterOperand.DOES_NOT_CONTAIN,
-      CoreWorkflowFilterOperand.IS,
-      CoreWorkflowFilterOperand.IS_NOT,
     ])('should reject %s without a value', (operand) => {
       expect(() =>
         buildPredicate([
@@ -351,7 +334,6 @@ describe('buildCoreWorkflowFilterPredicate', () => {
     });
 
     it('should bind the day bounds of the rule timezone for IS', () => {
-      // 2026-08-31T23:30Z is already Sept 1 in Tokyo
       expect(
         buildPredicate([
           {
@@ -464,6 +446,23 @@ describe('buildCoreWorkflowFilterPredicate', () => {
       expect(new Date(tomorrowStart).getTime()).toBeGreaterThan(Date.now());
     });
 
+    it('should fall back to the rule timezone when the relative value carries none', () => {
+      const { parameters } = buildPredicate([
+        {
+          fieldKey: CoreWorkflowFilterFieldKey.UPDATED_AT,
+          operand: CoreWorkflowFilterOperand.IS_RELATIVE,
+          value: JSON.stringify({ direction: 'THIS', unit: 'DAY' }),
+          timezone: 'Asia/Tokyo',
+        },
+      ]);
+      const [start, end] = parameters as string[];
+
+      expect(new Date(end).getTime() - new Date(start).getTime()).toBe(
+        24 * 60 * 60 * 1000,
+      );
+      expect(start.endsWith('T15:00:00Z')).toBe(true);
+    });
+
     it('should reject a relative filter carrying an invalid timezone', () => {
       expect(() =>
         buildPredicate([
@@ -544,8 +543,6 @@ describe('buildCoreWorkflowFilterPredicate', () => {
       [CoreWorkflowFilterFieldKey.NAME]: [
         CoreWorkflowFilterOperand.CONTAINS,
         CoreWorkflowFilterOperand.DOES_NOT_CONTAIN,
-        CoreWorkflowFilterOperand.IS,
-        CoreWorkflowFilterOperand.IS_NOT,
         CoreWorkflowFilterOperand.IS_EMPTY,
         CoreWorkflowFilterOperand.IS_NOT_EMPTY,
       ],
@@ -619,8 +616,6 @@ describe('buildCoreWorkflowFilterPredicate', () => {
       });
     });
 
-    // a row-level rule and an aggregated status rule cannot be split into a
-    // WHERE and a HAVING clause under OR, so both land in the same expression
     it('should join a row level rule and a status rule with OR', () => {
       expect(
         buildPredicate(
@@ -648,7 +643,7 @@ describe('buildCoreWorkflowFilterPredicate', () => {
               statusRule,
               {
                 fieldKey: CoreWorkflowFilterFieldKey.NAME,
-                operand: CoreWorkflowFilterOperand.IS_NOT,
+                operand: CoreWorkflowFilterOperand.DOES_NOT_CONTAIN,
                 value: 'Draft',
               },
             ],
@@ -661,7 +656,7 @@ describe('buildCoreWorkflowFilterPredicate', () => {
           '%invoice%',
           '2026-08-31T00:00:00Z',
           '2026-09-01T00:00:00Z',
-          'Draft',
+          '%Draft%',
         ],
       });
     });

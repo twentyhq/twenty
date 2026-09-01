@@ -58,8 +58,6 @@ const SORT_COLUMN_BY_FIELD: Record<
   },
 };
 
-// the filter predicate reads c.name and c."updatedAt" from the HAVING clause,
-// so both have to be grouping columns
 const GROUPED_WORKFLOW_COLUMNS = `c.id, c.name, c."updatedAt"`;
 
 const buildWorkflowVersionsJoinClause = (schemaName: string) =>

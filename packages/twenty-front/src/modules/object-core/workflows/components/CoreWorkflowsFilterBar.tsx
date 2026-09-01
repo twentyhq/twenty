@@ -9,6 +9,7 @@ import { useOpenCoreWorkflowFiltersSidePanel } from '@/object-core/workflows/hoo
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { getCoreWorkflowFilterChipLabel } from '@/object-core/workflows/utils/getCoreWorkflowFilterChipLabel';
 import { isUsableCoreWorkflowFilterRule } from '@/object-core/workflows/utils/isUsableCoreWorkflowFilterRule';
+import { MAX_CORE_WORKFLOW_FILTER_RULES } from 'twenty-shared/constants';
 import { removeCoreWorkflowFilterRule } from '@/object-core/workflows/utils/removeCoreWorkflowFilterRule';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -31,9 +32,9 @@ export const CoreWorkflowsFilterBar = () => {
     useAtomState(coreWorkflowsFilterSettingsState);
   const { userTimezone } = useUserTimezone();
 
-  const appliedStepFilters = (
-    coreWorkflowsFilterSettings.stepFilters ?? []
-  ).filter(isUsableCoreWorkflowFilterRule);
+  const appliedStepFilters = (coreWorkflowsFilterSettings.stepFilters ?? [])
+    .filter(isUsableCoreWorkflowFilterRule)
+    .slice(0, MAX_CORE_WORKFLOW_FILTER_RULES);
 
   return (
     <StyledContainer>

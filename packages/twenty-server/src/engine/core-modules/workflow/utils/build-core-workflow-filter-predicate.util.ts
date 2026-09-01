@@ -53,8 +53,6 @@ const requireTextValue = (rule: CoreWorkflowFilterRuleInput): string => {
   return trimmedValue;
 };
 
-// STATUSES and UPDATED_AT values travel JSON encoded, but a bare status or a
-// bare ISO string is not valid JSON and would otherwise be rejected outright
 const parseJsonValue = (value: string): unknown => {
   try {
     return JSON.parse(value);
@@ -173,9 +171,9 @@ const parseRelativeDateRange = (
   let referenceZonedDateTime: Temporal.ZonedDateTime;
 
   try {
-    referenceZonedDateTime = isDefined(relativeDateFilter.timezone)
-      ? Temporal.Now.zonedDateTimeISO(relativeDateFilter.timezone)
-      : Temporal.Now.zonedDateTimeISO();
+    referenceZonedDateTime = Temporal.Now.zonedDateTimeISO(
+      relativeDateFilter.timezone ?? rule.timezone ?? 'UTC',
+    );
   } catch {
     throw new UserInputError(
       `Operand ${rule.operand} on field ${rule.fieldKey} carries an invalid timezone`,
@@ -215,8 +213,6 @@ const buildNameIlikePredicate = ({
 }): string => {
   const comparison = `${NAME_COLUMN} ${negated ? 'NOT ILIKE' : 'ILIKE'} ${bindParameter(pattern)} ESCAPE '\\'`;
 
-  // a workflow without a name matches no positive text rule, and matches every
-  // negative one, which SQL three-valued logic would otherwise drop
   return negated ? `(${NAME_COLUMN} IS NULL OR ${comparison})` : comparison;
 };
 
@@ -231,8 +227,6 @@ const buildUpdatedAtComparisonPredicate = ({
 }): string =>
   `${UPDATED_AT_COLUMN} ${sqlOperator} ${bindParameter(parseDateValue(rule).toISOString())}::timestamptz`;
 
-// null marks an operand the field does not support; every operand has to be
-// listed so a new one cannot silently fall through
 const PREDICATE_BUILDER_BY_OPERAND_BY_FIELD_KEY: Record<
   CoreWorkflowFilterFieldKey,
   Record<CoreWorkflowFilterOperand, RulePredicateBuilder | null>
@@ -250,18 +244,8 @@ const PREDICATE_BUILDER_BY_OPERAND_BY_FIELD_KEY: Record<
         pattern: `%${escapeForIlike(requireTextValue(rule))}%`,
         negated: true,
       }),
-    [CoreWorkflowFilterOperand.IS]: ({ rule, bindParameter }) =>
-      buildNameIlikePredicate({
-        bindParameter,
-        pattern: escapeForIlike(requireTextValue(rule)),
-        negated: false,
-      }),
-    [CoreWorkflowFilterOperand.IS_NOT]: ({ rule, bindParameter }) =>
-      buildNameIlikePredicate({
-        bindParameter,
-        pattern: escapeForIlike(requireTextValue(rule)),
-        negated: true,
-      }),
+    [CoreWorkflowFilterOperand.IS]: null,
+    [CoreWorkflowFilterOperand.IS_NOT]: null,
     [CoreWorkflowFilterOperand.IS_EMPTY]: () =>
       `(${NAME_COLUMN} IS NULL OR ${NAME_COLUMN} = '')`,
     [CoreWorkflowFilterOperand.IS_NOT_EMPTY]: () =>
@@ -371,10 +355,6 @@ const buildRulePredicate = ({
   return buildPredicate({ rule, bindParameter });
 };
 
-// Every rule lands in the same HAVING clause: NAME and UPDATED_AT are grouping
-// columns of the workflow row, STATUS is an aggregate over its versions, so
-// mixing both kinds under OR stays a single expression instead of an
-// unsplittable WHERE/HAVING pair
 export const buildCoreWorkflowFilterPredicate = ({
   filter,
   firstParameterIndex,
