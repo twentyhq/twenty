@@ -2,7 +2,6 @@ import { renderHook } from '@testing-library/react';
 
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
-import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { sidePanelWorkflowIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowIdComponentState';
 import { sidePanelWorkflowVersionIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowVersionIdComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -66,10 +65,6 @@ const renderHooks = () => {
         openWorkflowViewStepInSidePanel,
       } = useSidePanelWorkflowNavigation();
 
-      const viewableRecordNameSingular = useAtomComponentStateValue(
-        viewableRecordNameSingularComponentState,
-        'mocked-uuid',
-      );
       const contextStoreCurrentObjectMetadataItemId =
         useAtomComponentStateValue(
           contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -105,7 +100,6 @@ const renderHooks = () => {
         openWorkflowViewStepInSidePanel,
         sidePanelWorkflowId,
         sidePanelWorkflowVersionId,
-        viewableRecordNameSingular,
         contextStoreCurrentObjectMetadataItemId,
         contextStoreTargetedRecordsRule,
         contextStoreNumberOfSelectedRecords,

@@ -5832,6 +5832,9 @@ export default {
             "iCalUid": [
                 1
             ],
+            "calendarEventId": [
+                1
+            ],
             "conferenceLink": [
                 1
             ],
@@ -7468,6 +7471,15 @@ export default {
                     "input": [
                         391,
                         "BarChartDataInput!"
+                    ]
+                }
+            ],
+            "callRecordingIdForCalendarEvent": [
+                3,
+                {
+                    "calendarEventId": [
+                        3,
+                        "UUID!"
                     ]
                 }
             ],

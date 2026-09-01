@@ -14,7 +14,7 @@ Mention the bot in a channel or DM it. It replies in the thread with your CRM da
 
 Out of the box the bot runs with the **Slack Assistant** role, which can read, create, update and soft-delete people, companies, opportunities, notes and tasks. Workspace members stay read-only and hard delete is off. Tighten the role in **Settings → Roles** if you want a narrower bot.
 
-**It acts as whoever tagged it.** The first time someone mentions the bot, their Slack profile email is matched against workspace members and the pair is stored as a **Slack User Link** record. From then on the bot runs with that member's own permissions, so it can never do more than the person asking. Someone with no link gets the **Slack Assistant** role instead, exactly as before.
+**It acts as whoever tagged it.** The first time someone mentions the bot, their Slack profile email is matched against workspace members and the pair is stored as a **Slack User Link** record. The person who connects the Slack workspace is matched the same way right at connection time, so the installer is linked before anyone messages the bot. From then on the bot runs with that member's own permissions, so it can never do more than the person asking. Someone with no link gets the **Slack Assistant** role instead, exactly as before.
 
 A link matched on email is re-verified on every request: the bot rechecks that the Slack account's current verified email still points at the same member, and follows the live match rather than the stored record if they disagree. The record is an audit trail, not the source of truth.
 

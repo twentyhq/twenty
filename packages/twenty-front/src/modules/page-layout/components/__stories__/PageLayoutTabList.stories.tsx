@@ -193,7 +193,6 @@ const meta: Meta<typeof PageLayoutTabListPlayground> = {
         >
           <LayoutRenderingProvider
             value={{
-              isInSidePanel: false,
               layoutType:
                 args.presentation === 'identifier-bar'
                   ? PageLayoutType.RECORD_PAGE

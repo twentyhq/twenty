@@ -18,6 +18,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 
 const StyledTableContainer = styled.div`
@@ -39,12 +40,16 @@ const getCoreWorkflowLink = (workflow: CoreWorkflow) =>
     : undefined;
 
 export const WorkflowCoreIndexPage = () => {
+  const tableId = useWorkspaceSurfaceScopedComponentInstanceId(
+    CORE_WORKFLOWS_TABLE_ID,
+  );
+
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.Workflow,
   });
 
   const { coreWorkflows, hasNextPage, loading, fetchNextPage } =
-    useCoreWorkflows();
+    useCoreWorkflows({ tableId });
 
   const { ref: fetchMoreRef, inView } = useInView();
 
@@ -75,7 +80,7 @@ export const WorkflowCoreIndexPage = () => {
       >
         <StyledTableContainer>
           <CoreObjectTable
-            tableId={CORE_WORKFLOWS_TABLE_ID}
+            tableId={tableId}
             columns={WORKFLOW_CORE_TABLE_COLUMNS}
             items={coreWorkflows}
             getItemKey={(workflow) => workflow.id}

@@ -24,7 +24,7 @@ export const useCoreObjectsCommands = () => {
   const isOnCoreWorkflowsIndex =
     isMatchingLocation(location, AppPath.WorkflowCoreIndexPage) ||
     (isWorkflowCoreIndexPageEnabled &&
-      location.pathname === '/objects/workflows');
+      isMatchingLocation(location, '/objects/workflows'));
 
   const coreWorkflowFiltersCommandLabel = t`Filter workflows`;
 
