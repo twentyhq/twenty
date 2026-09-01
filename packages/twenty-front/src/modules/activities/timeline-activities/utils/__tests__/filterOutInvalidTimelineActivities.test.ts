@@ -10,7 +10,12 @@ const mainObjectMetadataItem = {
   nameSingular: 'company',
   namePlural: 'companies',
   fields: [{ name: 'field1' }, { name: 'field2' }, { name: 'field3' }],
-  readableFields: [{ name: 'field1' }, { name: 'field2' }, { name: 'field3' }],
+  readableFields: [
+    { name: 'field1' },
+    { name: 'field2' },
+    { name: 'field3' },
+    { name: 'company', settings: { joinColumnName: 'legacyCompanyId' } },
+  ],
   updatableFields: [{ name: 'field1' }, { name: 'field2' }, { name: 'field3' }],
 } as EnrichedObjectMetadataItem;
 
@@ -107,6 +112,7 @@ describe('filterOutInvalidTimelineActivities', () => {
           diff: {
             field1: { before: 'value1', after: 'value2' },
             field2: { before: 'value3', after: 'value4' },
+            companyId: { before: 'company1', after: 'company2' },
           },
         },
       },
@@ -130,6 +136,7 @@ describe('filterOutInvalidTimelineActivities', () => {
           diff: {
             field1: { before: 'value1', after: 'value2' },
             field2: { before: 'value3', after: 'value4' },
+            companyId: { before: 'company1', after: 'company2' },
           },
         },
       },

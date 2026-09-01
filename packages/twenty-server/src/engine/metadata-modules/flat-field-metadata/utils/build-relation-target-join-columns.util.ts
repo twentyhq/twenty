@@ -1,7 +1,7 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getJoinColumnNameForRelationField } from 'src/engine/metadata-modules/field-metadata/utils/get-join-column-name-for-relation-field.util';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
 import { FlatEntityMapsException } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -79,14 +79,17 @@ export const buildRelationTargetJoinColumns = ({
         flatEntityMaps: flatObjectMetadataMaps,
       });
 
-      return isDefined(targetFlatObjectMetadata)
-        ? {
-            joinColumnName:
-              getJoinColumnNameForRelationField(flatFieldMetadata),
-            targetObjectMetadataId: targetFlatObjectMetadata.id,
-            targetObjectNameSingular: targetFlatObjectMetadata.nameSingular,
-          }
-        : undefined;
+      if (!isDefined(targetFlatObjectMetadata)) {
+        return undefined;
+      }
+
+      return {
+        joinColumnName: computeMorphOrRelationFieldJoinColumnName({
+          name: flatFieldMetadata.name,
+        }),
+        targetObjectMetadataId: targetFlatObjectMetadata.id,
+        targetObjectNameSingular: targetFlatObjectMetadata.nameSingular,
+      };
     })
     .filter(isDefined);
 };

@@ -1,13 +1,14 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getJoinColumnNameForRelationField } from 'src/engine/metadata-modules/field-metadata/utils/get-join-column-name-for-relation-field.util';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type JunctionRelationTargetShape } from 'src/engine/metadata-modules/flat-field-metadata/types/junction-relation-target-shape.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { areFlatFieldMetadatasInSameRelationGroup } from 'src/engine/metadata-modules/flat-field-metadata/utils/are-flat-field-metadatas-in-same-relation-group.util';
+import { areFlatFieldMetadatasReciprocal } from 'src/engine/metadata-modules/flat-field-metadata/utils/are-flat-field-metadatas-reciprocal.util';
 import { buildJunctionRelationTargetShape } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-junction-relation-target-shape.util';
 import { buildRelationTargetJoinColumns } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-relation-target-join-columns.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -35,22 +36,6 @@ const isManyToOneRelationOrMorphField = (
   );
 };
 
-const areRelationFieldsReciprocal = ({
-  firstFlatFieldMetadata,
-  secondFlatFieldMetadata,
-}: {
-  firstFlatFieldMetadata: OrmFlatFieldMetadata;
-  secondFlatFieldMetadata: OrmFlatFieldMetadata;
-}) =>
-  firstFlatFieldMetadata.relationTargetObjectMetadataId ===
-    secondFlatFieldMetadata.objectMetadataId &&
-  firstFlatFieldMetadata.relationTargetFieldMetadataId ===
-    secondFlatFieldMetadata.id &&
-  secondFlatFieldMetadata.relationTargetObjectMetadataId ===
-    firstFlatFieldMetadata.objectMetadataId &&
-  secondFlatFieldMetadata.relationTargetFieldMetadataId ===
-    firstFlatFieldMetadata.id;
-
 export const resolveJunctionRelationTargetShapeFromVisibleField = ({
   relationFlatFieldMetadata,
   flatObjectMetadataMaps,
@@ -67,38 +52,7 @@ export const resolveJunctionRelationTargetShapeFromVisibleField = ({
   });
 
   if (isDefined(owningShape)) {
-    if (
-      !isOneToManyRelationField(relationFlatFieldMetadata) ||
-      !isDefined(relationFlatFieldMetadata.settings.junctionTargetFieldId)
-    ) {
-      return undefined;
-    }
-
-    const configuredTargetFlatFieldMetadata =
-      findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: relationFlatFieldMetadata.settings.junctionTargetFieldId,
-        flatEntityMaps: flatFieldMetadataMaps,
-      });
-    const configuredTargetInverseFlatFieldMetadata = isDefined(
-      configuredTargetFlatFieldMetadata?.relationTargetFieldMetadataId,
-    )
-      ? findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId:
-            configuredTargetFlatFieldMetadata.relationTargetFieldMetadataId,
-          flatEntityMaps: flatFieldMetadataMaps,
-        })
-      : undefined;
-
-    return isDefined(configuredTargetFlatFieldMetadata) &&
-      isManyToOneRelationOrMorphField(configuredTargetFlatFieldMetadata) &&
-      isDefined(configuredTargetInverseFlatFieldMetadata) &&
-      isOneToManyRelationField(configuredTargetInverseFlatFieldMetadata) &&
-      areRelationFieldsReciprocal({
-        firstFlatFieldMetadata: configuredTargetFlatFieldMetadata,
-        secondFlatFieldMetadata: configuredTargetInverseFlatFieldMetadata,
-      })
-      ? owningShape
-      : undefined;
+    return owningShape;
   }
 
   if (
@@ -132,7 +86,7 @@ export const resolveJunctionRelationTargetShapeFromVisibleField = ({
     visibleJunctionTargetFlatFieldMetadata.objectMetadataId !==
       junctionFlatObjectMetadata.id ||
     !isManyToOneRelationOrMorphField(visibleJunctionTargetFlatFieldMetadata) ||
-    !areRelationFieldsReciprocal({
+    !areFlatFieldMetadatasReciprocal({
       firstFlatFieldMetadata: relationFlatFieldMetadata,
       secondFlatFieldMetadata: visibleJunctionTargetFlatFieldMetadata,
     })
@@ -207,8 +161,10 @@ export const resolveJunctionRelationTargetShapeFromVisibleField = ({
     ? undefined
     : {
         ...validatedOwningShape,
-        junctionSourceJoinColumnName: getJoinColumnNameForRelationField(
-          visibleJunctionTargetFlatFieldMetadata,
+        junctionSourceJoinColumnName: computeMorphOrRelationFieldJoinColumnName(
+          {
+            name: visibleJunctionTargetFlatFieldMetadata.name,
+          },
         ),
         targetJoinColumns,
       };

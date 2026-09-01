@@ -13,11 +13,10 @@ export const findFieldMetadataItemByDiffKey = (
     return fieldMetadataItemByName;
   }
 
-  return fieldMetadataItems.find((fieldMetadataItem) => {
-    const joinColumnName =
-      fieldMetadataItem.settings?.joinColumnName ??
-      computeRelationGqlFieldJoinColumnName({ name: fieldMetadataItem.name });
-
-    return joinColumnName === diffKey;
-  });
+  return fieldMetadataItems.find(
+    (fieldMetadataItem) =>
+      computeRelationGqlFieldJoinColumnName({
+        name: fieldMetadataItem.name,
+      }) === diffKey,
+  );
 };

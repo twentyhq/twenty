@@ -16,6 +16,7 @@ const {
   NOTE_TARGET_PERSON_FIELD,
   NOTE_TARGET_OBJECT,
   NOTE_TARGETS_FIELD,
+  PERSON_JUNCTIONS_FIELD,
   PERSON_OBJECT,
 } = junctionRelationTargetShapeTestFixtures;
 
@@ -76,6 +77,26 @@ describe('buildJunctionRelationTargetShape', () => {
           },
           NOTE_TARGET_PERSON_FIELD,
           NOTE_TARGET_COMPANY_FIELD,
+        ]) as unknown as FlatEntityMaps<FlatFieldMetadata>,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('should return undefined when the configured junction target does not point back', () => {
+    expect(
+      buildJunctionRelationTargetShape({
+        relationFlatFieldMetadata:
+          NOTE_TARGETS_FIELD as unknown as FlatFieldMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps: buildFlatEntityMaps([
+          NOTE_TARGETS_FIELD,
+          NOTE_TARGET_NOTE_FIELD,
+          {
+            ...NOTE_TARGET_PERSON_FIELD,
+            relationTargetFieldMetadataId: 'another-person-field',
+          },
+          NOTE_TARGET_COMPANY_FIELD,
+          PERSON_JUNCTIONS_FIELD,
         ]) as unknown as FlatEntityMaps<FlatFieldMetadata>,
       }),
     ).toBeUndefined();
@@ -148,6 +169,7 @@ describe('buildJunctionRelationTargetShape', () => {
         NOTE_TARGETS_FIELD,
         NOTE_TARGET_NOTE_FIELD,
         NON_MORPH_JUNCTION_TARGET_FIELD,
+        PERSON_JUNCTIONS_FIELD,
       ]) as unknown as FlatEntityMaps<FlatFieldMetadata>,
     });
 

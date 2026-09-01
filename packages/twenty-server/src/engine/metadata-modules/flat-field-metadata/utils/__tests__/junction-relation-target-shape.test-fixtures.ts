@@ -111,7 +111,7 @@ const NOTE_TARGET_NOTE_FIELD = {
   relationTargetFieldMetadataId: NOTE_TARGETS_FIELD.id,
   settings: {
     relationType: RelationType.MANY_TO_ONE,
-    joinColumnName: 'noteId',
+    joinColumnName: 'staleNoteJoinColumn',
   },
 };
 
@@ -126,7 +126,7 @@ const NOTE_TARGET_PERSON_FIELD = {
   relationTargetFieldMetadataId: 'person-note-targets-field',
   settings: {
     relationType: RelationType.MANY_TO_ONE,
-    joinColumnName: 'targetPersonId',
+    joinColumnName: 'stalePersonJoinColumn',
   },
 };
 
@@ -141,7 +141,7 @@ const NOTE_TARGET_COMPANY_FIELD = {
   relationTargetFieldMetadataId: 'company-note-targets-field',
   settings: {
     relationType: RelationType.MANY_TO_ONE,
-    joinColumnName: 'targetCompanyId',
+    joinColumnName: 'staleCompanyJoinColumn',
   },
 };
 
@@ -156,7 +156,7 @@ const NON_MORPH_JUNCTION_TARGET_FIELD = {
   relationTargetFieldMetadataId: 'person-junctions-field',
   settings: {
     relationType: RelationType.MANY_TO_ONE,
-    joinColumnName: 'personId',
+    joinColumnName: 'stalePersonJoinColumn',
   },
 };
 

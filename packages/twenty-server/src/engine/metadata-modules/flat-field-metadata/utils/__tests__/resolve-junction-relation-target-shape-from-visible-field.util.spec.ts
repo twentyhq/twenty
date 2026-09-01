@@ -71,24 +71,36 @@ describe('resolveJunctionRelationTargetShapeFromVisibleField', () => {
     });
   });
 
-  it('fails closed when an owning junction target edge is not reciprocal', () => {
-    expect(
-      resolveVisibleShape({
-        relationFlatFieldMetadata: NOTE_TARGETS_FIELD,
-        fieldMetadata: [
-          NOTE_TARGETS_FIELD,
-          NOTE_TARGET_NOTE_FIELD,
-          {
-            ...NOTE_TARGET_PERSON_FIELD,
-            relationTargetFieldMetadataId: 'another-person-field',
-          },
-          NOTE_TARGET_COMPANY_FIELD,
-          PERSON_NOTE_TARGETS_FIELD,
-          COMPANY_NOTE_TARGETS_FIELD,
-        ],
-      }),
-    ).toBeUndefined();
-  });
+  it.each([
+    {
+      entryPoint: 'owning',
+      relationFlatFieldMetadata: NOTE_TARGETS_FIELD,
+    },
+    {
+      entryPoint: 'reverse',
+      relationFlatFieldMetadata: COMPANY_NOTE_TARGETS_FIELD,
+    },
+  ])(
+    'fails closed on a non-reciprocal configured target through the $entryPoint field',
+    ({ relationFlatFieldMetadata }) => {
+      expect(
+        resolveVisibleShape({
+          relationFlatFieldMetadata,
+          fieldMetadata: [
+            NOTE_TARGETS_FIELD,
+            NOTE_TARGET_NOTE_FIELD,
+            {
+              ...NOTE_TARGET_PERSON_FIELD,
+              relationTargetFieldMetadataId: 'another-person-field',
+            },
+            NOTE_TARGET_COMPANY_FIELD,
+            PERSON_NOTE_TARGETS_FIELD,
+            COMPANY_NOTE_TARGETS_FIELD,
+          ],
+        }),
+      ).toBeUndefined();
+    },
+  );
 
   it('orients a reverse regular junction from the visible source field', () => {
     const regularOwningField = {
@@ -251,6 +263,7 @@ describe('resolveJunctionRelationTargetShapeFromVisibleField', () => {
           NON_MORPH_JUNCTION_TARGET_FIELD,
           NOTE_TARGET_PERSON_FIELD,
           NOTE_TARGET_COMPANY_FIELD,
+          PERSON_NOTE_TARGETS_FIELD,
           COMPANY_NOTE_TARGETS_FIELD,
         ],
       }),
