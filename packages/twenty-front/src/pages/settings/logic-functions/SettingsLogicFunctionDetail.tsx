@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { useLogicFunctionForm } from '@/logic-functions/hooks/useLogicFunctionForm';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -31,6 +31,7 @@ const LOGIC_FUNCTION_DETAIL_ID = 'logic-function-detail';
 export const SettingsLogicFunctionDetail = () => {
   const { logicFunctionId = '', applicationId } = useParams();
 
+  const location = useLocation();
   const navigate = useNavigate();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
@@ -71,7 +72,10 @@ export const SettingsLogicFunctionDetail = () => {
   });
 
   const handleTestFunction = async () => {
-    navigate('#test');
+    navigate(
+      { search: location.search, hash: '#test' },
+      { state: location.state },
+    );
     await executeLogicFunction();
   };
 

@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { useLocation } from 'react-router-dom';
 import { TabButton } from 'twenty-ui/input';
 
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
@@ -10,6 +11,7 @@ import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/Pag
 import { PageLayoutTabListReorderableTab } from '@/page-layout/components/PageLayoutTabListReorderableTab';
 import { usePrerenderPageLayoutTabOnHover } from '@/page-layout/hooks/usePrerenderPageLayoutTabOnHover';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 
 type PageLayoutTabListVisibleTabsProps = {
@@ -61,6 +63,8 @@ export const PageLayoutTabListVisibleTabs = ({
   firstHiddenTabId,
   isScrollable,
 }: PageLayoutTabListVisibleTabsProps) => {
+  const location = useLocation();
+  const workspaceSurface = useWorkspaceSurface();
   const { tabRowRef } = useScrollActiveTabIntoView({
     activeTabId,
     isScrollable,
@@ -122,7 +126,13 @@ export const PageLayoutTabListVisibleTabs = ({
           active={tab.id === activeTabId}
           disabled={tab.disabled ?? loading}
           pill={tab.pill}
-          to={behaveAsLinks ? `#${tab.id}` : undefined}
+          to={
+            behaveAsLinks
+              ? { search: location.search, hash: `#${tab.id}` }
+              : undefined
+          }
+          state={behaveAsLinks ? location.state : undefined}
+          replace={behaveAsLinks && workspaceSurface.type === 'side-panel'}
           onClick={
             behaveAsLinks
               ? () => onChangeTab?.(tab.id)

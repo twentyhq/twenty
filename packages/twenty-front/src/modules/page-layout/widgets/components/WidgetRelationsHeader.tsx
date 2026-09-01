@@ -1,7 +1,7 @@
 import { RecordTargetsInlineCell } from '@/object-record/record-field/ui/components/RecordTargetsInlineCell';
 import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
@@ -18,7 +18,7 @@ const StyledContainer = styled.div`
 
 export const WidgetRelationsHeader = () => {
   const targetRecord = useTargetRecord();
-  const { isInSidePanel } = useLayoutRenderingContext();
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 
   const junctionConfig = useObjectMorphJunctionConfig({
     objectNameSingular: targetRecord.targetObjectNameSingular,
