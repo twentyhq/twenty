@@ -65,13 +65,17 @@ const StyledEmptyState = styled.div`
 `;
 
 // The app's React types differ from twenty-ui's, so the tabler icons need a
-// local wrapper to satisfy the IconComponent prop.
+// local wrapper to satisfy the IconComponent prop; the size is pinned because
+// the renderer's emotion theme resolves the button's icon size larger than
+// the small button box.
+const ACTION_ICON_SIZE = 16;
+
 const ResendIcon: IconComponent = (props: IconComponentProps) => (
-  <IconSend {...props} />
+  <IconSend {...props} size={ACTION_ICON_SIZE} />
 );
 
 const RemoveIcon: IconComponent = (props: IconComponentProps) => (
-  <IconTrash {...props} />
+  <IconTrash {...props} size={ACTION_ICON_SIZE} />
 );
 
 type TagColor = 'blue' | 'green' | 'orange' | 'red' | 'gray';
