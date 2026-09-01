@@ -8,7 +8,6 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { WorkflowVersionStatus as CoreWorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
-import { type CoreDispatchIds } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
@@ -17,13 +16,16 @@ import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/work
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 import { WorkflowTriggerExceptionCode } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 import { buildWorkflowRunSource } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-source.util';
-import { resolveWorkflowTriggerDispatchMode } from 'src/modules/workflow/workflow-trigger/utils/resolve-workflow-trigger-dispatch-mode.util';
+import {
+  type QueuedWorkflowTriggerDispatchIds,
+  resolveWorkflowTriggerDispatchMode,
+} from 'src/modules/workflow/workflow-trigger/utils/resolve-workflow-trigger-dispatch-mode.util';
 
 export type WorkflowTriggerJobData = {
   workspaceId: string;
   workflowId: string;
   payload: object;
-} & CoreDispatchIds;
+} & QueuedWorkflowTriggerDispatchIds;
 
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
 export class WorkflowTriggerJob {
@@ -100,14 +102,35 @@ export class WorkflowTriggerJob {
         `Core workflow version ${coreWorkflowVersionId} is not active in workspace ${workspaceId}`,
         WorkflowTriggerExceptionCode.INTERNAL_ERROR,
       );
+      this.exceptionHandlerService.captureExceptions([
+        new Error(
+          `Dropped event enqueued against core version ${coreWorkflowVersionId}, no longer active in workspace ${workspaceId}`,
+        ),
+      ]);
 
       return;
     }
 
-    await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
-      workspaceId,
-      workflowVersionId: workspaceWorkflowVersionId,
-    });
+    const workspaceWorkflowVersion =
+      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
+        workspaceId,
+        workflowVersionId: workspaceWorkflowVersionId,
+      });
+
+    if (
+      workspaceWorkflowVersion.coreWorkflowVersionId !== coreWorkflowVersionId
+    ) {
+      this.logger.error(
+        `Workspace version ${workspaceWorkflowVersionId} is linked to core version ${workspaceWorkflowVersion.coreWorkflowVersionId} instead of dispatched ${coreWorkflowVersionId} in workspace ${workspaceId}`,
+      );
+      this.exceptionHandlerService.captureExceptions([
+        new Error(
+          `Dispatched core version ${coreWorkflowVersionId} no longer matches the twin link of workspace version ${workspaceWorkflowVersionId} in workspace ${workspaceId}`,
+        ),
+      ]);
+
+      return;
+    }
 
     const authContext = buildSystemAuthContext(workspaceId);
     const workspaceWorkflow =

@@ -93,6 +93,11 @@ export class WorkspaceWorkflowAutomatedTriggerMapCacheService extends WorkspaceC
               ),
             ),
           },
+          select: {
+            id: true,
+            workflowId: true,
+            coreWorkflowVersionId: true,
+          },
         });
 
       const workflowIdByCoreVersionId = Object.fromEntries(

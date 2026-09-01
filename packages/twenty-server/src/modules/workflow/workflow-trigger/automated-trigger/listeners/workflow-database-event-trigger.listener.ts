@@ -37,7 +37,6 @@ import {
   type UpdateEventTriggerSettings,
 } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import { type CoreDispatchIds } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
-import { buildCoreDispatchIds } from 'src/engine/core-modules/workflow/utils/build-core-dispatch-ids.util';
 import {
   WorkflowTriggerJob,
   type WorkflowTriggerJobData,
@@ -368,11 +367,9 @@ export class WorkflowDatabaseEventTriggerListener {
             {
               workspaceId,
               workflowId: eventListener.workflowId,
-              ...buildCoreDispatchIds({
-                coreWorkflowVersionId: eventListener.coreWorkflowVersionId,
-                workspaceWorkflowVersionId:
-                  eventListener.workspaceWorkflowVersionId,
-              }),
+              coreWorkflowVersionId: eventListener.coreWorkflowVersionId,
+              workspaceWorkflowVersionId:
+                eventListener.workspaceWorkflowVersionId,
               payload: eventPayload,
             },
             { retryLimit: 3 },
