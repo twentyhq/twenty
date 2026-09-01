@@ -156,8 +156,10 @@ export const buildMissingObjectSystemRelationCandidates = ({
         ) ||
         sourceFlatFieldMetadatas.some(
           (flatFieldMetadata) =>
+            flatFieldMetadata.type === FieldMetadataType.RELATION &&
+            flatFieldMetadata.name === holderFlatObjectMetadata.namePlural &&
             flatFieldMetadata.relationTargetObjectMetadataId ===
-            holderFlatObjectMetadata.id,
+              holderFlatObjectMetadata.id,
         );
 
       if (reverseFieldExists && forwardFieldExists) {

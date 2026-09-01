@@ -3,12 +3,19 @@ import {
   DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
   STANDARD_OBJECTS,
 } from 'twenty-shared/metadata';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   buildMissingObjectSystemRelationCandidates,
   type DefaultRelationHolderNameSingular,
 } from 'src/database/commands/upgrade-version-command/2-38/utils/build-missing-object-system-relation-candidates.util';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 const STANDARD_APP_UID = '20202020-0000-4000-8000-000000000001';
 const CUSTOM_APP_UID = '20202020-0000-4000-8000-000000000002';
@@ -20,6 +27,16 @@ const HOLDER_NAME_PLURALS: Record<DefaultRelationHolderNameSingular, string> = {
   taskTarget: 'taskTargets',
 };
 
+type FieldSpecification = {
+  fieldId: string;
+  objectMetadataId: string;
+  name: string;
+  type?: FieldMetadataType;
+  morphId?: string;
+  relationTargetObjectMetadataId?: string;
+  universalIdentifier?: string;
+};
+
 type SourceSpecification = {
   key: string;
   nameSingular: string;
@@ -29,6 +46,10 @@ type SourceSpecification = {
   reverseOnlyHolders?: DefaultRelationHolderNameSingular[];
   forwardOnlyHolders?: DefaultRelationHolderNameSingular[];
   extraFieldNames?: string[];
+  extraRelationFields?: {
+    name: string;
+    holderNameSingular: DefaultRelationHolderNameSingular;
+  }[];
 };
 
 type BuildArgs = {
@@ -39,17 +60,17 @@ type BuildArgs = {
   columnNamesByHolder?: Partial<
     Record<DefaultRelationHolderNameSingular, string[]>
   >;
-  extraFieldsByUniversalIdentifier?: Record<string, object>;
+  detachedFields?: FieldSpecification[];
 };
 
 const buildArgs = ({
   sources,
   holderExtraFieldNames = {},
   columnNamesByHolder = {},
-  extraFieldsByUniversalIdentifier = {},
+  detachedFields = [],
 }: BuildArgs) => {
-  const objects: Record<string, object> = {};
-  const fields: Record<string, object> = {};
+  const flatObjectMetadatas: FlatObjectMetadata[] = [];
+  const flatFieldMetadatas: FlatFieldMetadata[] = [];
   const holderFieldIds: Record<DefaultRelationHolderNameSingular, string[]> = {
     timelineActivity: [],
     attachment: [],
@@ -57,12 +78,26 @@ const buildArgs = ({
     taskTarget: [],
   };
 
-  const registerField = (fieldId: string, field: object) => {
-    fields[`uid-${fieldId}`] = {
-      id: fieldId,
-      universalIdentifier: `uid-${fieldId}`,
-      ...field,
-    };
+  const registerField = ({
+    fieldId,
+    objectMetadataId,
+    name,
+    type = FieldMetadataType.TEXT,
+    morphId,
+    relationTargetObjectMetadataId,
+    universalIdentifier,
+  }: FieldSpecification) => {
+    flatFieldMetadatas.push(
+      getFlatFieldMetadataMock({
+        id: fieldId,
+        universalIdentifier: universalIdentifier ?? `uid-${fieldId}`,
+        objectMetadataId,
+        name,
+        type,
+        morphId: morphId ?? null,
+        relationTargetObjectMetadataId,
+      }),
+    );
   };
 
   for (const holderNameSingular of DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS) {
@@ -70,7 +105,11 @@ const buildArgs = ({
       const fieldId = `field-${holderNameSingular}-${name}`;
 
       holderFieldIds[holderNameSingular].push(fieldId);
-      registerField(fieldId, { name, type: FieldMetadataType.TEXT });
+      registerField({
+        fieldId,
+        objectMetadataId: `object-${holderNameSingular}`,
+        name,
+      });
     }
   }
 
@@ -84,13 +123,14 @@ const buildArgs = ({
       const fieldId = `field-${holderNameSingular}-target-${source.key}`;
 
       holderFieldIds[holderNameSingular].push(fieldId);
-      registerField(fieldId, {
+      registerField({
+        fieldId,
+        objectMetadataId: `object-${holderNameSingular}`,
         name: `target${source.nameSingular[0].toUpperCase()}${source.nameSingular.slice(1)}`,
         type: FieldMetadataType.MORPH_RELATION,
         morphId:
           STANDARD_OBJECTS[holderNameSingular].morphIds.targetMorphId.morphId,
         relationTargetObjectMetadataId: `object-${source.key}`,
-        universalSettings: { relationType: RelationType.MANY_TO_ONE },
       });
     }
 
@@ -101,11 +141,12 @@ const buildArgs = ({
       const fieldId = `field-${source.key}-${holderNameSingular}`;
 
       sourceFieldIds.push(fieldId);
-      registerField(fieldId, {
+      registerField({
+        fieldId,
+        objectMetadataId: `object-${source.key}`,
         name: HOLDER_NAME_PLURALS[holderNameSingular],
         type: FieldMetadataType.RELATION,
         relationTargetObjectMetadataId: `object-${holderNameSingular}`,
-        universalSettings: { relationType: RelationType.ONE_TO_MANY },
       });
     }
 
@@ -113,78 +154,88 @@ const buildArgs = ({
       const fieldId = `field-${source.key}-${name}`;
 
       sourceFieldIds.push(fieldId);
-      registerField(fieldId, { name, type: FieldMetadataType.TEXT });
+      registerField({
+        fieldId,
+        objectMetadataId: `object-${source.key}`,
+        name,
+      });
     }
 
-    objects[`object-uid-${source.key}`] = {
-      id: `object-${source.key}`,
-      universalIdentifier: `object-uid-${source.key}`,
-      applicationUniversalIdentifier:
-        source.applicationUniversalIdentifier ?? CUSTOM_APP_UID,
-      nameSingular: source.nameSingular,
-      namePlural: `${source.nameSingular}s`,
-      isActive: source.isActive ?? true,
-      fieldIds: sourceFieldIds,
-    };
+    for (const { name, holderNameSingular } of source.extraRelationFields ??
+      []) {
+      const fieldId = `field-${source.key}-${name}`;
+
+      sourceFieldIds.push(fieldId);
+      registerField({
+        fieldId,
+        objectMetadataId: `object-${source.key}`,
+        name,
+        type: FieldMetadataType.RELATION,
+        relationTargetObjectMetadataId: `object-${holderNameSingular}`,
+      });
+    }
+
+    flatObjectMetadatas.push(
+      getFlatObjectMetadataMock({
+        id: `object-${source.key}`,
+        universalIdentifier: `object-uid-${source.key}`,
+        applicationUniversalIdentifier:
+          source.applicationUniversalIdentifier ?? CUSTOM_APP_UID,
+        nameSingular: source.nameSingular,
+        namePlural: `${source.nameSingular}s`,
+        isActive: source.isActive ?? true,
+        fieldIds: sourceFieldIds,
+      }),
+    );
   }
+
+  detachedFields.forEach(registerField);
 
   const holderFlatObjectMetadataByNameSingular = {} as Record<
     DefaultRelationHolderNameSingular,
-    object
+    FlatObjectMetadata
   >;
 
   for (const holderNameSingular of DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS) {
-    const holderFlatObjectMetadata = {
+    const holderFlatObjectMetadata = getFlatObjectMetadataMock({
       id: `object-${holderNameSingular}`,
       universalIdentifier:
         STANDARD_OBJECTS[holderNameSingular].universalIdentifier,
       applicationUniversalIdentifier: STANDARD_APP_UID,
       nameSingular: holderNameSingular,
       namePlural: HOLDER_NAME_PLURALS[holderNameSingular],
-      isActive: true,
       fieldIds: holderFieldIds[holderNameSingular],
-    };
+    });
 
-    objects[STANDARD_OBJECTS[holderNameSingular].universalIdentifier] =
-      holderFlatObjectMetadata;
+    flatObjectMetadatas.push(holderFlatObjectMetadata);
     holderFlatObjectMetadataByNameSingular[holderNameSingular] =
       holderFlatObjectMetadata;
   }
 
-  const allFields = { ...fields, ...extraFieldsByUniversalIdentifier };
-
   return {
-    flatObjectMetadataMaps: {
-      byUniversalIdentifier: objects,
-      universalIdentifierById: Object.fromEntries(
-        Object.values(objects).map((object) => [
-          (object as { id: string }).id,
-          (object as { universalIdentifier: string }).universalIdentifier,
-        ]),
-      ),
-      universalIdentifiersByApplicationId: {},
-    },
-    flatFieldMetadataMaps: {
-      byUniversalIdentifier: allFields,
-      universalIdentifierById: Object.fromEntries(
-        Object.values(allFields).map((field) => [
-          (field as { id: string }).id,
-          (field as { universalIdentifier: string }).universalIdentifier,
-        ]),
-      ),
-      universalIdentifiersByApplicationId: {},
-    },
-    holderFlatObjectMetadataByNameSingular,
-    existingColumnNamesByHolderNameSingular: Object.fromEntries(
-      DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.map((holderNameSingular) => [
-        holderNameSingular,
-        new Set(columnNamesByHolder[holderNameSingular] ?? []),
-      ]),
+    flatObjectMetadataMaps: flatObjectMetadatas.reduce<
+      FlatEntityMaps<FlatObjectMetadata>
+    >(
+      (flatEntityMaps, flatEntity) =>
+        addFlatEntityToFlatEntityMapsOrThrow({ flatEntity, flatEntityMaps }),
+      createEmptyFlatEntityMaps(),
     ),
+    flatFieldMetadataMaps: flatFieldMetadatas.reduce<
+      FlatEntityMaps<FlatFieldMetadata>
+    >(
+      (flatEntityMaps, flatEntity) =>
+        addFlatEntityToFlatEntityMapsOrThrow({ flatEntity, flatEntityMaps }),
+      createEmptyFlatEntityMaps(),
+    ),
+    holderFlatObjectMetadataByNameSingular,
+    existingColumnNamesByHolderNameSingular: {
+      timelineActivity: new Set(columnNamesByHolder.timelineActivity ?? []),
+      attachment: new Set(columnNamesByHolder.attachment ?? []),
+      noteTarget: new Set(columnNamesByHolder.noteTarget ?? []),
+      taskTarget: new Set(columnNamesByHolder.taskTarget ?? []),
+    },
     twentyStandardApplicationUniversalIdentifier: STANDARD_APP_UID,
-  } as unknown as Parameters<
-    typeof buildMissingObjectSystemRelationCandidates
-  >[0];
+  };
 };
 
 describe('buildMissingObjectSystemRelationCandidates', () => {
@@ -296,6 +347,30 @@ describe('buildMissingObjectSystemRelationCandidates', () => {
     ]);
   });
 
+  it('does not let an unrelated relation to a holder mask a missing pair', () => {
+    const result = buildMissingObjectSystemRelationCandidates(
+      buildArgs({
+        sources: [
+          {
+            key: 'phone',
+            nameSingular: 'phoneNumber2',
+            extraRelationFields: [
+              { name: 'myAttachmentLink', holderNameSingular: 'attachment' },
+            ],
+          },
+        ],
+      }),
+    );
+
+    expect(result.unprovisionableSystemRelations).toEqual([]);
+    expect(result.candidates[0].missingHolderNameSingulars).toEqual([
+      'timelineActivity',
+      'attachment',
+      'noteTarget',
+      'taskTarget',
+    ]);
+  });
+
   it('reports a reverse field name already taken on the holder', () => {
     const result = buildMissingObjectSystemRelationCandidates(
       buildArgs({
@@ -372,25 +447,22 @@ describe('buildMissingObjectSystemRelationCandidates', () => {
   });
 
   it('counts a leg held by its deterministic identifier even without matching relation semantics', () => {
-    const reverseFieldUniversalIdentifier =
-      getSystemRelationFieldUniversalIdentifier({
-        applicationUniversalIdentifier: CUSTOM_APP_UID,
-        objectUniversalIdentifier:
-          STANDARD_OBJECTS.timelineActivity.universalIdentifier,
-        relationTargetObjectUniversalIdentifier: 'object-uid-phone',
-      });
-
     const result = buildMissingObjectSystemRelationCandidates(
       buildArgs({
         sources: [{ key: 'phone', nameSingular: 'phoneNumber2' }],
-        extraFieldsByUniversalIdentifier: {
-          [reverseFieldUniversalIdentifier]: {
-            id: 'field-detached',
-            universalIdentifier: reverseFieldUniversalIdentifier,
+        detachedFields: [
+          {
+            fieldId: 'field-detached',
+            objectMetadataId: 'object-detached',
             name: 'unrelated',
-            type: FieldMetadataType.TEXT,
+            universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+              applicationUniversalIdentifier: CUSTOM_APP_UID,
+              objectUniversalIdentifier:
+                STANDARD_OBJECTS.timelineActivity.universalIdentifier,
+              relationTargetObjectUniversalIdentifier: 'object-uid-phone',
+            }),
           },
-        },
+        ],
       }),
     );
 
