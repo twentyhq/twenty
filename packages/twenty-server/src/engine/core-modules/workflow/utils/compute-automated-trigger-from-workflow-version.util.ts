@@ -5,10 +5,13 @@ import { type DatabaseEventTriggerSettings } from 'src/modules/workflow/workflow
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
 
-export const computeAutomatedTriggerFromWorkflowVersion = (
-  workflowVersion: WorkflowVersionEntity,
-  workspaceWorkflowVersionId: string | null,
-): CachedWorkflowAutomatedTrigger | null => {
+export const computeAutomatedTriggerFromWorkflowVersion = ({
+  workflowVersion,
+  workspaceWorkflowVersionId,
+}: {
+  workflowVersion: WorkflowVersionEntity;
+  workspaceWorkflowVersionId: string | null;
+}): CachedWorkflowAutomatedTrigger | null => {
   const trigger = workflowVersion.triggers?.[0] ?? null;
 
   if (trigger === null) {

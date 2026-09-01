@@ -46,10 +46,11 @@ export class WorkspaceWorkflowAutomatedTriggerMapCacheService extends WorkspaceC
     const byWorkflowId: WorkflowAutomatedTriggerMaps['byWorkflowId'] = {};
 
     for (const workflowVersion of activeWorkflowVersions) {
-      const automatedTrigger = computeAutomatedTriggerFromWorkflowVersion(
+      const automatedTrigger = computeAutomatedTriggerFromWorkflowVersion({
         workflowVersion,
-        workspaceVersionIdByCoreVersionId[workflowVersion.id] ?? null,
-      );
+        workspaceWorkflowVersionId:
+          workspaceVersionIdByCoreVersionId[workflowVersion.id] ?? null,
+      });
 
       if (isDefined(automatedTrigger)) {
         byWorkflowId[workflowVersion.workflowId] = automatedTrigger;
@@ -87,10 +88,21 @@ export class WorkspaceWorkflowAutomatedTriggerMapCacheService extends WorkspaceC
           },
         });
 
+      const workflowIdByCoreVersionId = Object.fromEntries(
+        activeWorkflowVersions.map((workflowVersion) => [
+          workflowVersion.id,
+          workflowVersion.workflowId,
+        ]),
+      );
+
       return Object.fromEntries(
         workspaceWorkflowVersions
-          .filter((workspaceWorkflowVersion) =>
-            isDefined(workspaceWorkflowVersion.coreWorkflowVersionId),
+          .filter(
+            (workspaceWorkflowVersion) =>
+              isDefined(workspaceWorkflowVersion.coreWorkflowVersionId) &&
+              workflowIdByCoreVersionId[
+                workspaceWorkflowVersion.coreWorkflowVersionId
+              ] === workspaceWorkflowVersion.workflowId,
           )
           .map((workspaceWorkflowVersion) => [
             workspaceWorkflowVersion.coreWorkflowVersionId as string,

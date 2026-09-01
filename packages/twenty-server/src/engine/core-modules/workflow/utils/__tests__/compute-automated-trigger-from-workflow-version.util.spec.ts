@@ -18,10 +18,10 @@ describe('computeAutomatedTriggerFromWorkflowVersion', () => {
     });
 
     expect(
-      computeAutomatedTriggerFromWorkflowVersion(
+      computeAutomatedTriggerFromWorkflowVersion({
         workflowVersion,
-        'workspace-version-1',
-      ),
+        workspaceWorkflowVersionId: 'workspace-version-1',
+      }),
     ).toEqual({
       workflowId: 'workspace-workflow-1',
       coreWorkflowVersionId: 'core-version-1',
@@ -37,10 +37,10 @@ describe('computeAutomatedTriggerFromWorkflowVersion', () => {
       settings: { eventName: 'company.created' },
     });
 
-    const automatedTrigger = computeAutomatedTriggerFromWorkflowVersion(
+    const automatedTrigger = computeAutomatedTriggerFromWorkflowVersion({
       workflowVersion,
-      null,
-    );
+      workspaceWorkflowVersionId: null,
+    });
 
     expect(automatedTrigger?.workspaceWorkflowVersionId).toBeNull();
     expect(automatedTrigger?.coreWorkflowVersionId).toBe('core-version-1');
@@ -53,10 +53,10 @@ describe('computeAutomatedTriggerFromWorkflowVersion', () => {
     });
 
     expect(
-      computeAutomatedTriggerFromWorkflowVersion(
+      computeAutomatedTriggerFromWorkflowVersion({
         workflowVersion,
-        'workspace-version-1',
-      ),
+        workspaceWorkflowVersionId: 'workspace-version-1',
+      }),
     ).toBeNull();
   });
 });

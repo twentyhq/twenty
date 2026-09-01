@@ -125,20 +125,19 @@ describe('WorkflowTriggerJob', () => {
     expect(mockWorkflowRunnerWorkspaceService.run).not.toHaveBeenCalled();
   });
 
-  it('should not run when the workspace twin of an active core version is not active', async () => {
+  it('should not run when the workspace twin is missing', async () => {
     mockWorkflowVersionCoreSyncService.findCoreVersionById.mockResolvedValue({
       id: 'core-version-1',
       workflowId: 'workspace-workflow-1',
       status: CoreWorkflowVersionStatus.ACTIVE,
     });
-    mockWorkflowCommonWorkspaceService.getWorkflowVersionOrFail.mockResolvedValue(
-      {
-        id: 'workspace-version-1',
-        status: WorkflowVersionStatus.DEACTIVATED,
-      },
+    mockWorkflowCommonWorkspaceService.getWorkflowVersionOrFail.mockRejectedValue(
+      new Error('Workflow version not found'),
     );
 
-    await job.handle(coreJobData);
+    await expect(job.handle(coreJobData)).rejects.toThrow(
+      'Workflow version not found',
+    );
 
     expect(mockWorkflowRunnerWorkspaceService.run).not.toHaveBeenCalled();
   });

@@ -96,19 +96,10 @@ export class WorkflowTriggerJob {
       return;
     }
 
-    const workspaceWorkflowVersion =
-      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
-        workspaceId,
-        workflowVersionId: workspaceWorkflowVersionId,
-      });
-
-    if (workspaceWorkflowVersion.status !== WorkflowVersionStatus.ACTIVE) {
-      this.logger.error(
-        `Workspace workflow version ${workspaceWorkflowVersionId} is not active in workspace ${workspaceId}`,
-      );
-
-      return;
-    }
+    await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
+      workspaceId,
+      workflowVersionId: workspaceWorkflowVersionId,
+    });
 
     const authContext = buildSystemAuthContext(workspaceId);
     const workspaceWorkflow =
