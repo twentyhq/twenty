@@ -2,10 +2,12 @@ import { writeFile } from 'node:fs/promises';
 
 export const SERVER_URL = process.env.TWENTY_SERVER_URL ?? 'http://localhost:3000';
 export const GRAPHQL_URL = `${SERVER_URL}/graphql`;
+// Auth mutations are served by the core/metadata schema, not the workspace one.
+const METADATA_GRAPHQL_URL = `${SERVER_URL}/metadata`;
 const ORIGIN = process.env.TWENTY_FRONT_ORIGIN ?? 'http://localhost:3001';
 
-const rawGraphqlRequest = async ({ query, variables, token }) => {
-  const response = await fetch(GRAPHQL_URL, {
+const rawGraphqlRequest = async ({ query, variables, token, url = GRAPHQL_URL }) => {
+  const response = await fetch(url, {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
@@ -35,6 +37,7 @@ export const loginAndGetAccessToken = async () => {
       }
     }`,
     variables: { email, password, origin: ORIGIN },
+    url: METADATA_GRAPHQL_URL,
   });
 
   const loginToken = loginTokenData.getLoginTokenFromCredentials.loginToken.token;
@@ -46,6 +49,7 @@ export const loginAndGetAccessToken = async () => {
       }
     }`,
     variables: { loginToken, origin: ORIGIN },
+    url: METADATA_GRAPHQL_URL,
   });
 
   return authTokensData.getAuthTokensFromLoginToken.tokens
