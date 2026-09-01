@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-sdk/utils';
 import { Avatar } from 'twenty-ui/data-display';
-import { Button } from 'twenty-ui/input';
 import { MenuItem, MenuItemAvatar } from 'twenty-ui/navigation';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -14,6 +14,31 @@ import { getMemberDisplayName } from 'src/front-components/utils/get-member-disp
 const StyledContainer = styled.div`
   min-width: 0;
   position: relative;
+`;
+
+const StyledTriggerButton = styled.button`
+  align-items: center;
+  background: ${() => themeCssVariables.background.primary};
+  border: 1px solid ${() => themeCssVariables.border.color.medium};
+  border-radius: ${() => themeCssVariables.border.radius.sm};
+  color: ${() => themeCssVariables.font.color.secondary};
+  cursor: pointer;
+  display: inline-flex;
+  font-family: ${() => themeCssVariables.font.family};
+  font-size: ${() => themeCssVariables.font.size.sm};
+  font-weight: ${() => themeCssVariables.font.weight.medium};
+  height: 24px;
+  padding: 0 ${() => themeCssVariables.spacing[2]};
+  white-space: nowrap;
+
+  &:hover:enabled {
+    background: ${() => themeCssVariables.background.transparent.light};
+  }
+
+  &:disabled {
+    color: ${() => themeCssVariables.font.color.light};
+    cursor: default;
+  }
 `;
 
 const StyledSelectedChip = styled.button`
@@ -91,7 +116,8 @@ const InlineWorkspaceMemberPickerPanel = ({
   onClose,
 }: InlineWorkspaceMemberPickerPanelProps) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const { options, isSearching } = useWorkspaceMemberSearch(searchTerm);
+  const { options, isSearching, searchErrorMessage } =
+    useWorkspaceMemberSearch(searchTerm);
 
   return (
     <StyledDropdownPanel onMouseDown={(event) => event.preventDefault()}>
@@ -99,6 +125,22 @@ const InlineWorkspaceMemberPickerPanel = ({
         value={searchTerm}
         onChange={(event) => setSearchTerm(event.target.value)}
         onBlur={onClose}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') {
+            event.preventDefault();
+            onClose();
+
+            return;
+          }
+
+          if (event.key === 'Enter') {
+            event.preventDefault();
+
+            if (options.length > 0) {
+              onSelect(options[0]);
+            }
+          }
+        }}
         placeholder="Search members"
         aria-label="Search workspace members"
         autoFocus
@@ -119,7 +161,16 @@ const InlineWorkspaceMemberPickerPanel = ({
           />
         ))}
         {options.length === 0 && (
-          <MenuItem disabled text={isSearching ? 'Searching…' : 'No results'} />
+          <MenuItem
+            disabled
+            text={
+              isSearching
+                ? 'Searching…'
+                : isNonEmptyString(searchErrorMessage)
+                  ? searchErrorMessage
+                  : 'No results'
+            }
+          />
         )}
       </StyledOptions>
     </StyledDropdownPanel>
@@ -151,6 +202,8 @@ export const InlineWorkspaceMemberPicker = ({
           onClick={() => setIsOpen(true)}
           disabled={disabled}
           aria-label="Change the workspace member"
+          aria-haspopup="listbox"
+          aria-expanded={isOpen}
         >
           <Avatar
             placeholder={selectedName}
@@ -163,14 +216,15 @@ export const InlineWorkspaceMemberPicker = ({
           </StyledChipName>
         </StyledSelectedChip>
       ) : (
-        <Button
+        <StyledTriggerButton
           type="button"
-          title="Select member"
-          size="small"
-          variant="secondary"
           disabled={disabled}
           onClick={() => setIsOpen(true)}
-        />
+          aria-haspopup="listbox"
+          aria-expanded={isOpen}
+        >
+          Select member
+        </StyledTriggerButton>
       )}
       {isOpen && (
         <InlineWorkspaceMemberPickerPanel
