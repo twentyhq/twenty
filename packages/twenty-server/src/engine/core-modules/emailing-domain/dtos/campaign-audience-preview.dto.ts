@@ -15,9 +15,6 @@ export class CampaignAudiencePreviewDTO {
   overCap: number;
 
   @Field(() => Int)
-  hardSuppressed: number;
-
-  @Field(() => Int)
   globallyUnsubscribed: number;
 
   @Field(() => Int)
