@@ -145,20 +145,21 @@ const InlineWorkspaceMemberPickerPanel = ({
         aria-label="Search workspace members"
         autoFocus
       />
-      <StyledOptions>
+      <StyledOptions role="listbox" aria-label="Workspace members">
         {options.map((member) => (
-          <MenuItemAvatar
-            key={member.id}
-            avatar={{
-              type: 'rounded',
-              size: 'md',
-              placeholder: getMemberDisplayName(member),
-              placeholderColorSeed: member.id,
-            }}
-            text={getMemberDisplayName(member)}
-            contextualText={member.userEmail ?? undefined}
-            onClick={() => onSelect(member)}
-          />
+          <div key={member.id} role="option" aria-selected={false}>
+            <MenuItemAvatar
+              avatar={{
+                type: 'rounded',
+                size: 'md',
+                placeholder: getMemberDisplayName(member),
+                placeholderColorSeed: member.id,
+              }}
+              text={getMemberDisplayName(member)}
+              contextualText={member.userEmail ?? undefined}
+              onClick={() => onSelect(member)}
+            />
+          </div>
         ))}
         {options.length === 0 && (
           <MenuItem
