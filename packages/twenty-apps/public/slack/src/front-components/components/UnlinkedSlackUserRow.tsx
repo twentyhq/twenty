@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
-import { Avatar, Tag } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/data-display';
 import { Button } from 'twenty-ui/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -64,12 +64,6 @@ export const UnlinkedSlackUserRow = ({
     ? slackUser.displayName
     : slackUser.slackUserId;
 
-  const activatesImmediately =
-    isDefined(selectedMember) &&
-    isNonEmptyString(slackUser.email) &&
-    isNonEmptyString(selectedMember.userEmail) &&
-    slackUser.email.toLowerCase() === selectedMember.userEmail.toLowerCase();
-
   const handleLink = async () => {
     if (!isDefined(selectedMember)) {
       return;
@@ -127,16 +121,6 @@ export const UnlinkedSlackUserRow = ({
             disabled={isSubmitting}
           />
           <StyledLinkControls>
-            {isDefined(selectedMember) && (
-              <Tag
-                color={activatesImmediately ? 'green' : 'orange'}
-                text={
-                  activatesImmediately
-                    ? 'Activates immediately'
-                    : 'Asks for approval'
-                }
-              />
-            )}
             <Button
               type="button"
               title={isSubmitting ? 'Linking…' : 'Link'}
