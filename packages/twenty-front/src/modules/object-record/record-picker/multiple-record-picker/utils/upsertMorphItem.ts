@@ -3,7 +3,16 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 export const upsertMorphItem = (
   morphItems: RecordPickerPickableMorphItem[],
   morphItem: RecordPickerPickableMorphItem,
-) => [
-  ...morphItems.filter(({ recordId }) => recordId !== morphItem.recordId),
-  morphItem,
-];
+) => {
+  const existingIndex = morphItems.findIndex(
+    ({ recordId }) => recordId === morphItem.recordId,
+  );
+
+  if (existingIndex === -1) {
+    return [morphItem, ...morphItems];
+  }
+
+  return morphItems.map((existingItem, index) =>
+    index === existingIndex ? morphItem : existingItem,
+  );
+};
