@@ -1800,7 +1800,6 @@ type UsageLimit {
   spenderId: String!
   limitKind: String!
   periodCount: Int!
-  windowSeconds: Int! @deprecated(reason: "Use periodCount and periodUnit")
   periodUnit: String!
   meter: String!
   limitValueType: String!
@@ -3954,15 +3953,12 @@ scalar Upload
 
 input UpsertUsageLimitInput {
   resourceType: UsageResourceType!
-  operationType: UsageOperationType
+  operationType: UsageOperationType!
   spenderType: String!
   spenderId: String
   limitKind: String!
   periodCount: Int! = 1
   periodUnit: String! = "billingPeriod"
-
-  """Deprecated: use periodCount and periodUnit"""
-  windowSeconds: Int
   meter: String! = "creditsUsedMicro"
   limitValueType: String! = "absolute"
   limitValue: BigInt!

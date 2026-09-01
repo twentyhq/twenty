@@ -3503,9 +3503,6 @@ export default {
             "periodCount": [
                 26
             ],
-            "windowSeconds": [
-                26
-            ],
             "periodUnit": [
                 1
             ],
@@ -10374,9 +10371,6 @@ export default {
             ],
             "periodUnit": [
                 1
-            ],
-            "windowSeconds": [
-                26
             ],
             "meter": [
                 1
