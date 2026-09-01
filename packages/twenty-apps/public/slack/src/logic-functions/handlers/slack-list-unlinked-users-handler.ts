@@ -10,7 +10,7 @@ import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import {
   getRosterMemberDisplayName,
-  isRosterEmailVouchedForOwner,
+  getVouchedRosterEmail,
   walkSlackRoster,
 } from 'src/logic-functions/utils/slack-roster';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
@@ -79,13 +79,10 @@ export const slackListUnlinkedUsersHandler =
           slackUserId,
           slackTeamId: installedTeamId,
           displayName: getRosterMemberDisplayName(member),
-          email:
-            isRosterEmailVouchedForOwner({
-              member,
-              installedSlackTeamId: installedTeamId,
-            }) && isNonEmptyString(member.profile?.email)
-              ? member.profile.email
-              : undefined,
+          email: getVouchedRosterEmail({
+            member,
+            installedSlackTeamId: installedTeamId,
+          }),
         });
 
         return undefined;

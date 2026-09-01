@@ -11,7 +11,7 @@ import { persistSlackUserLink } from 'src/logic-functions/utils/persist-slack-us
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 import {
   getRosterMemberDisplayName,
-  isRosterEmailVouchedForOwner,
+  getVouchedRosterEmail,
   walkSlackRoster,
 } from 'src/logic-functions/utils/slack-roster';
 
@@ -58,12 +58,10 @@ export const matchSlackRosterByEmail = async ({
       return undefined;
     }
 
-    const email = isRosterEmailVouchedForOwner({
+    const email = getVouchedRosterEmail({
       member,
       installedSlackTeamId: slackTeamId,
-    })
-      ? member.profile?.email
-      : undefined;
+    });
     const workspaceMemberId = isNonEmptyString(email)
       ? memberIdByEmail.get(email.toLowerCase())
       : undefined;

@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import {
   getRosterMemberDisplayName,
+  getVouchedRosterEmail,
   isLinkableRosterMember,
   isRosterEmailVouchedForOwner,
   walkSlackRoster,
@@ -114,6 +115,46 @@ describe('isRosterEmailVouchedForOwner', () => {
         installedSlackTeamId: INSTALLED_TEAM_ID,
       }),
     ).toBe(false);
+  });
+});
+
+describe('getVouchedRosterEmail', () => {
+  const INSTALLED_TEAM_ID = 'T-installed';
+
+  it('should return the email of a vouched member', () => {
+    expect(
+      getVouchedRosterEmail({
+        member: {
+          team_id: INSTALLED_TEAM_ID,
+          is_email_confirmed: true,
+          profile: { email: 'ada@twenty.com' },
+        },
+        installedSlackTeamId: INSTALLED_TEAM_ID,
+      }),
+    ).toBe('ada@twenty.com');
+  });
+
+  it('should return undefined for a member whose email is not vouched', () => {
+    expect(
+      getVouchedRosterEmail({
+        member: {
+          team_id: INSTALLED_TEAM_ID,
+          is_restricted: true,
+          is_email_confirmed: true,
+          profile: { email: 'guest@example.com' },
+        },
+        installedSlackTeamId: INSTALLED_TEAM_ID,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('should return undefined when the vouched member has no email', () => {
+    expect(
+      getVouchedRosterEmail({
+        member: { team_id: INSTALLED_TEAM_ID, is_email_confirmed: true },
+        installedSlackTeamId: INSTALLED_TEAM_ID,
+      }),
+    ).toBeUndefined();
   });
 });
 

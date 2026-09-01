@@ -37,6 +37,18 @@ export const isRosterEmailVouchedForOwner = ({
   member.is_ultra_restricted !== true &&
   member.is_email_confirmed === true;
 
+export const getVouchedRosterEmail = ({
+  member,
+  installedSlackTeamId,
+}: {
+  member: SlackRosterMember;
+  installedSlackTeamId: string;
+}): string | undefined =>
+  isRosterEmailVouchedForOwner({ member, installedSlackTeamId }) &&
+  isNonEmptyString(member.profile?.email)
+    ? member.profile.email
+    : undefined;
+
 export const getRosterMemberDisplayName = (
   member: SlackRosterMember,
 ): string | undefined =>
