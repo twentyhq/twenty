@@ -186,23 +186,29 @@ describe('createHtmlHostWrapper client events', () => {
 
     document.body.appendChild(otherInput);
 
-    act(() => {
-      root.render(createElement(Wrapper, { type: 'text', autofocus: 'true' }));
-    });
+    try {
+      act(() => {
+        root.render(
+          createElement(Wrapper, { type: 'text', autofocus: 'true' }),
+        );
+      });
 
-    otherInput.focus();
-    expect(document.activeElement).toBe(otherInput);
+      otherInput.focus();
+      expect(document.activeElement).toBe(otherInput);
 
-    act(() => {
-      root.render(createElement(Wrapper, { type: 'text' }));
-    });
-    act(() => {
-      root.render(createElement(Wrapper, { type: 'text', autofocus: 'true' }));
-    });
+      act(() => {
+        root.render(createElement(Wrapper, { type: 'text' }));
+      });
+      act(() => {
+        root.render(
+          createElement(Wrapper, { type: 'text', autofocus: 'true' }),
+        );
+      });
 
-    expect(document.activeElement).toBe(otherInput);
-
-    otherInput.remove();
+      expect(document.activeElement).toBe(otherInput);
+    } finally {
+      otherInput.remove();
+    }
   });
 
   it('should re-assert an unchanged controlled value on an unrelated re-render', () => {

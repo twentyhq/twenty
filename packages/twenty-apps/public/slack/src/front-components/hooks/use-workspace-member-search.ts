@@ -47,7 +47,10 @@ export const useWorkspaceMemberSearch = ({
     setOptions([]);
     setSearchErrorMessage(undefined);
 
-    if (!isNonEmptyString(filter) && !shouldListWithoutSearchTerm) {
+    if (
+      !isNonEmptyString(filter) &&
+      (!shouldListWithoutSearchTerm || isNonEmptyString(searchTerm))
+    ) {
       setIsSearching(false);
 
       return;

@@ -35,15 +35,16 @@ export const collectSlackRosterMembers = async ({
       cursor,
     });
 
-    for (const member of response.members ?? []) {
-      if (!isLinkableSlackRosterMember(member)) {
-        continue;
-      }
+    const collectiblePageMembers = (response.members ?? [])
+      .filter(isLinkableSlackRosterMember)
+      .filter(
+        (member) =>
+          !isDefined(shouldCollectMember) || shouldCollectMember(member),
+      );
 
-      if (isDefined(shouldCollectMember) && !shouldCollectMember(member)) {
-        continue;
-      }
+    cursor = response.response_metadata?.next_cursor;
 
+    for (const member of collectiblePageMembers) {
       if (isDefined(maxMembers) && members.length >= maxMembers) {
         return { members, isTruncated: true };
       }
@@ -51,7 +52,9 @@ export const collectSlackRosterMembers = async ({
       members.push(member);
     }
 
-    cursor = response.response_metadata?.next_cursor;
+    if (isDefined(maxMembers) && members.length >= maxMembers) {
+      return { members, isTruncated: isNonEmptyString(cursor) };
+    }
 
     if (!isNonEmptyString(cursor)) {
       return { members, isTruncated: false };
