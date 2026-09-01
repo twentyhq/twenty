@@ -1,5 +1,7 @@
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
+import { STREAM_ENQUEUE_TIMEOUT_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/stream-enqueue-timeout-ms.constant';
+import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 
 describe('AgentChatStreamingService claim & reap', () => {
@@ -174,9 +176,74 @@ describe('AgentChatStreamingService claim & reap', () => {
       expect(threadRepository.update).toHaveBeenLastCalledWith(
         'workspace-id',
         { id: 'thread-id', activeStreamId: expect.any(String) },
-        { activeStreamId: null },
+        {
+          activeStreamId: null,
+          lastStreamError: expect.objectContaining({
+            failedAt: expect.any(String),
+          }),
+        },
       );
       expect(streamHeartbeatService.clear).toHaveBeenCalled();
+    });
+
+    it('converts a never-resolving enqueue into a timeout and releases the claim', async () => {
+      jest.useFakeTimers();
+
+      try {
+        const {
+          service,
+          threadRepository,
+          messageQueueService,
+          streamHeartbeatService,
+        } = buildService();
+
+        messageQueueService.add.mockReturnValue(new Promise(() => {}));
+
+        const streamPromise = service.streamAgentChat(sendArguments);
+        const assertion = expect(streamPromise).rejects.toMatchObject({
+          code: AiExceptionCode.STREAM_ENQUEUE_TIMEOUT,
+        });
+
+        await jest.advanceTimersByTimeAsync(STREAM_ENQUEUE_TIMEOUT_MS);
+        await assertion;
+
+        expect(threadRepository.update).toHaveBeenLastCalledWith(
+          'workspace-id',
+          { id: 'thread-id', activeStreamId: expect.any(String) },
+          {
+            activeStreamId: null,
+            lastStreamError: expect.objectContaining({
+              code: AiExceptionCode.STREAM_ENQUEUE_TIMEOUT,
+              failedAt: expect.any(String),
+            }),
+          },
+        );
+        expect(streamHeartbeatService.clear).toHaveBeenCalled();
+      } finally {
+        jest.useRealTimers();
+      }
+    });
+
+    it('does not let the thread-activity broadcast block or fail the enqueue', async () => {
+      const { service, agentChatService, messageQueueService } = buildService();
+
+      agentChatService.notifyThreadActivityUpdated.mockReturnValue(
+        new Promise(() => {}),
+      );
+
+      const result = await service.streamAgentChat(sendArguments);
+
+      expect(result.queued).toBe(false);
+      expect(messageQueueService.add).toHaveBeenCalledTimes(1);
+      expect(messageQueueService.add).toHaveBeenCalledWith(
+        STREAM_AGENT_CHAT_JOB_NAME,
+        expect.objectContaining({
+          threadId: 'thread-id',
+          userWorkspaceId: 'user-workspace-id',
+          streamId: expect.any(String),
+          existingTurnId: 'turn-id',
+        }),
+      );
     });
   });
 

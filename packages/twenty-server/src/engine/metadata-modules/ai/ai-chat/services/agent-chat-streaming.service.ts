@@ -25,6 +25,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartsToUIMessageParts';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
+import { STREAM_ENQUEUE_TIMEOUT_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/stream-enqueue-timeout-ms.constant';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
 import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
@@ -244,11 +245,13 @@ export class AgentChatStreamingService {
         workspaceId: workspace.id,
       });
 
-      await this.agentChatService.notifyThreadActivityUpdated({
-        threadId,
-        userWorkspaceId,
-        workspaceId: workspace.id,
-      });
+      this.agentChatService
+        .notifyThreadActivityUpdated({
+          threadId,
+          userWorkspaceId,
+          workspaceId: workspace.id,
+        })
+        .catch(() => {});
 
       const previousMessages = await this.loadMessagesFromDB(
         threadId,
@@ -256,23 +259,20 @@ export class AgentChatStreamingService {
         workspace.id,
       );
 
-      await this.messageQueueService.add<StreamAgentChatJobData>(
-        STREAM_AGENT_CHAT_JOB_NAME,
-        {
-          threadId: thread.id,
-          streamId,
-          userWorkspaceId,
-          workspaceId: workspace.id,
-          messages: previousMessages,
-          browsingContext,
-          modelId,
-          lastUserMessageText: text,
-          lastUserMessageParts: userMessageParts,
-          hasTitle: !!thread.title,
-          conversationSizeTokens: thread.conversationSize,
-          existingTurnId: savedUserMessage.turnId ?? undefined,
-        },
-      );
+      await this.enqueueStreamJob({
+        threadId: thread.id,
+        streamId,
+        userWorkspaceId,
+        workspaceId: workspace.id,
+        messages: previousMessages,
+        browsingContext,
+        modelId,
+        lastUserMessageText: text,
+        lastUserMessageParts: userMessageParts,
+        hasTitle: !!thread.title,
+        conversationSizeTokens: thread.conversationSize,
+        existingTurnId: savedUserMessage.turnId ?? undefined,
+      });
 
       return {
         queued: false,
@@ -281,8 +281,11 @@ export class AgentChatStreamingService {
         turnId: savedUserMessage.turnId,
       };
     } catch (error) {
-      await this.releaseStreamClaim(threadId, workspace.id, streamId);
       const streamError = mapErrorToStreamError(error);
+
+      await this.releaseStreamClaim(threadId, workspace.id, streamId, {
+        lastStreamError: { ...streamError, failedAt: new Date().toISOString() },
+      });
 
       this.metricsService.incrementCounterBy({
         key: MetricsKeys.AiChatTurnFailed,
@@ -365,23 +368,20 @@ export class AgentChatStreamingService {
         );
       }
 
-      await this.messageQueueService.add<StreamAgentChatJobData>(
-        STREAM_AGENT_CHAT_JOB_NAME,
-        {
-          threadId,
-          streamId,
-          userWorkspaceId,
-          workspaceId: workspace.id,
-          messages,
-          browsingContext: null,
-          modelId,
-          lastUserMessageText: text,
-          lastUserMessageParts: [{ type: 'text' as const, text }],
-          hasTitle: !!thread.title,
-          conversationSizeTokens: thread.conversationSize,
-          existingTurnId: turnId,
-        },
-      );
+      await this.enqueueStreamJob({
+        threadId,
+        streamId,
+        userWorkspaceId,
+        workspaceId: workspace.id,
+        messages,
+        browsingContext: null,
+        modelId,
+        lastUserMessageText: text,
+        lastUserMessageParts: [{ type: 'text' as const, text }],
+        hasTitle: !!thread.title,
+        conversationSizeTokens: thread.conversationSize,
+        existingTurnId: turnId,
+      });
 
       return { streamId, messageId, turnId };
     } catch (error) {
@@ -487,23 +487,20 @@ export class AgentChatStreamingService {
         (part) => part.type === 'text',
       );
 
-      await this.messageQueueService.add<StreamAgentChatJobData>(
-        STREAM_AGENT_CHAT_JOB_NAME,
-        {
-          threadId,
-          streamId,
-          userWorkspaceId,
-          workspaceId: workspace.id,
-          messages,
-          browsingContext: null,
-          modelId,
-          lastUserMessageText: textPart?.text ?? '',
-          lastUserMessageParts: retriedMessage.parts,
-          hasTitle: !!thread.title,
-          conversationSizeTokens: thread.conversationSize,
-          existingTurnId: lastUserMessage.turnId,
-        },
-      );
+      await this.enqueueStreamJob({
+        threadId,
+        streamId,
+        userWorkspaceId,
+        workspaceId: workspace.id,
+        messages,
+        browsingContext: null,
+        modelId,
+        lastUserMessageText: textPart?.text ?? '',
+        lastUserMessageParts: retriedMessage.parts,
+        hasTitle: !!thread.title,
+        conversationSizeTokens: thread.conversationSize,
+        existingTurnId: lastUserMessage.turnId,
+      });
 
       return {
         streamId,
@@ -654,24 +651,21 @@ export class AgentChatStreamingService {
       workspace.id,
     );
 
-    await this.messageQueueService.add<StreamAgentChatJobData>(
-      STREAM_AGENT_CHAT_JOB_NAME,
-      {
-        threadId,
-        streamId,
-        userWorkspaceId,
-        workspaceId: workspace.id,
-        messages,
-        browsingContext: null,
-        modelId,
-        lastUserMessageText: '',
-        lastUserMessageParts: [],
-        hasTitle: !!thread.title,
-        conversationSizeTokens: thread.conversationSize,
-        existingTurnId: turnId ?? undefined,
-        isResume: true,
-      },
-    );
+    await this.enqueueStreamJob({
+      threadId,
+      streamId,
+      userWorkspaceId,
+      workspaceId: workspace.id,
+      messages,
+      browsingContext: null,
+      modelId,
+      lastUserMessageText: '',
+      lastUserMessageParts: [],
+      hasTitle: !!thread.title,
+      conversationSizeTokens: thread.conversationSize,
+      existingTurnId: turnId ?? undefined,
+      isResume: true,
+    });
   }
 
   async flushNextQueuedMessage(
@@ -753,17 +747,21 @@ export class AgentChatStreamingService {
         return;
       }
 
-      await this.eventPublisherService.publish({
-        threadId,
-        workspaceId,
-        event: { type: 'queue-updated' },
-      });
+      this.eventPublisherService
+        .publish({
+          threadId,
+          workspaceId,
+          event: { type: 'queue-updated' },
+        })
+        .catch(() => {});
 
-      await this.eventPublisherService.publish({
-        threadId,
-        workspaceId,
-        event: { type: 'message-persisted', messageId: nextQueued.id },
-      });
+      this.eventPublisherService
+        .publish({
+          threadId,
+          workspaceId,
+          event: { type: 'message-persisted', messageId: nextQueued.id },
+        })
+        .catch(() => {});
 
       const [uiMessages, thread] = await Promise.all([
         this.loadMessagesFromDB(threadId, userWorkspaceId, workspaceId),
@@ -779,25 +777,25 @@ export class AgentChatStreamingService {
         ...fileParts,
       ];
 
-      await this.messageQueueService.add<StreamAgentChatJobData>(
-        STREAM_AGENT_CHAT_JOB_NAME,
-        {
-          threadId,
-          streamId,
-          userWorkspaceId,
-          workspaceId,
-          messages: uiMessages,
-          browsingContext: null,
-          lastUserMessageText: messageText,
-          lastUserMessageParts,
-          hasTitle,
-          conversationSizeTokens: thread.conversationSize,
-          existingTurnId: turnId,
-        },
-      );
+      await this.enqueueStreamJob({
+        threadId,
+        streamId,
+        userWorkspaceId,
+        workspaceId,
+        messages: uiMessages,
+        browsingContext: null,
+        lastUserMessageText: messageText,
+        lastUserMessageParts,
+        hasTitle,
+        conversationSizeTokens: thread.conversationSize,
+        existingTurnId: turnId,
+      });
     } catch (error) {
-      await this.releaseStreamClaim(threadId, workspaceId, streamId);
       const streamError = mapErrorToStreamError(error);
+
+      await this.releaseStreamClaim(threadId, workspaceId, streamId, {
+        lastStreamError: { ...streamError, failedAt: new Date().toISOString() },
+      });
 
       this.metricsService.incrementCounterBy({
         key: MetricsKeys.AiChatTurnFailed,
@@ -809,6 +807,35 @@ export class AgentChatStreamingService {
         },
       });
       throw error;
+    }
+  }
+
+  private async enqueueStreamJob(
+    jobData: StreamAgentChatJobData,
+  ): Promise<void> {
+    let timeoutHandle: NodeJS.Timeout | undefined;
+
+    try {
+      await Promise.race([
+        this.messageQueueService.add<StreamAgentChatJobData>(
+          STREAM_AGENT_CHAT_JOB_NAME,
+          jobData,
+        ),
+        new Promise<never>((_, reject) => {
+          timeoutHandle = setTimeout(() => {
+            reject(
+              new AiException(
+                `Could not enqueue the chat stream job within ${STREAM_ENQUEUE_TIMEOUT_MS}ms`,
+                AiExceptionCode.STREAM_ENQUEUE_TIMEOUT,
+              ),
+            );
+          }, STREAM_ENQUEUE_TIMEOUT_MS);
+        }),
+      ]);
+    } finally {
+      if (isDefined(timeoutHandle)) {
+        clearTimeout(timeoutHandle);
+      }
     }
   }
 

@@ -26,6 +26,7 @@ export enum AiExceptionCode {
   RUN_AGENT_NOT_ALLOWED = 'RUN_AGENT_NOT_ALLOWED',
   NO_FAILED_TURN_TO_RETRY = 'NO_FAILED_TURN_TO_RETRY',
   STREAM_INTERRUPTED = 'STREAM_INTERRUPTED',
+  STREAM_ENQUEUE_TIMEOUT = 'STREAM_ENQUEUE_TIMEOUT',
 }
 
 const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
@@ -72,6 +73,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`There is no failed message to retry.`;
     case AiExceptionCode.STREAM_INTERRUPTED:
       return msg`The response was interrupted before it could finish.`;
+    case AiExceptionCode.STREAM_ENQUEUE_TIMEOUT:
+      return msg`Your message could not be handed off for processing. Please try again.`;
     default:
       assertUnreachable(code);
   }
