@@ -77,14 +77,12 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
   const hasMore = result?.hasMore ?? false;
 
   const isSearching = debouncedSearchTerm.trim() !== '';
+  const hasFailed = isDefined(error);
 
-  // Don't render a misleading "no installs" state when the query actually failed
-  if (isDefined(error)) {
-    return null;
-  }
-
-  // The app is installed nowhere (as opposed to a search yielding no matches)
-  const hasNoInstalls = totalCount === 0 && !isSearching && !loading;
+  // The app is installed nowhere (as opposed to a search yielding no matches,
+  // or a failed query we cannot tell apart from an empty one)
+  const hasNoInstalls =
+    totalCount === 0 && !isSearching && !loading && !hasFailed;
 
   if (hasNoInstalls) {
     return null;
@@ -142,8 +140,14 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
       </StyledSearchInputContainer>
       {loading ? (
         <SettingsSectionSkeletonLoader />
+      ) : hasFailed ? (
+        <SettingsEmptyPlaceholder>{t`Couldn't load installed workspaces`}</SettingsEmptyPlaceholder>
       ) : workspaces.length === 0 ? (
-        <SettingsEmptyPlaceholder>{t`No workspaces found`}</SettingsEmptyPlaceholder>
+        <SettingsEmptyPlaceholder>
+          {isSearching
+            ? t`No workspaces match this search`
+            : t`No workspaces found`}
+        </SettingsEmptyPlaceholder>
       ) : (
         <Table>
           <TableRow

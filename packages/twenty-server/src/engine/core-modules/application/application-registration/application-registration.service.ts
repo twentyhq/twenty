@@ -7,7 +7,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import * as bcrypt from 'bcrypt';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { ILike, IsNull, type FindOptionsWhere, type Repository } from 'typeorm';
+import { IsNull, type FindOptionsWhere, type Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
@@ -873,11 +873,13 @@ export class ApplicationRegistrationService {
         .createQueryBuilder('application')
         .select("COALESCE(application.version, 'unknown')", 'version')
         .addSelect('COUNT(*)::int', 'count')
+        .innerJoin('application.workspace', 'workspace')
         .where(
           'application."applicationRegistrationId" = :applicationRegistrationId',
           { applicationRegistrationId },
         )
         .andWhere('application."deletedAt" IS NULL')
+        .andWhere('workspace."deletedAt" IS NULL')
         .groupBy('version')
         .orderBy('count', 'DESC')
         .getRawMany();
@@ -922,29 +924,29 @@ export class ApplicationRegistrationService {
   ): Promise<ApplicationRegistrationInstalledWorkspacesDTO> {
     const trimmedSearch = searchTerm?.trim();
 
-    const where: FindOptionsWhere<ApplicationEntity> = {
-      applicationRegistrationId,
-    };
+    const queryBuilder = this.applicationRepository
+      .createQueryBuilder('application')
+      .innerJoinAndSelect('application.workspace', 'workspace')
+      .where(
+        'application."applicationRegistrationId" = :applicationRegistrationId',
+        { applicationRegistrationId },
+      )
+      .andWhere('application."deletedAt" IS NULL')
+      .andWhere('workspace."deletedAt" IS NULL')
+      .orderBy('workspace.displayName', 'ASC')
+      .addOrderBy('application.id', 'ASC')
+      .skip(offset)
+      .take(limit);
 
-    const whereClauses: FindOptionsWhere<ApplicationEntity>[] =
-      isDefined(trimmedSearch) && trimmedSearch.length > 0
-        ? [
-            {
-              ...where,
-              workspace: { displayName: ILike(`%${trimmedSearch}%`) },
-            },
-            { ...where, version: ILike(`%${trimmedSearch}%`) },
-          ]
-        : [where];
+    if (isDefined(trimmedSearch) && trimmedSearch.length > 0) {
+      queryBuilder.andWhere(
+        `(workspace."displayName" ILIKE :searchTerm
+          OR application."version" ILIKE :searchTerm)`,
+        { searchTerm: `%${trimmedSearch}%` },
+      );
+    }
 
-    const [applications, totalCount] =
-      await this.applicationRepository.findAndCount({
-        where: whereClauses,
-        relations: { workspace: true },
-        order: { workspace: { displayName: 'ASC' }, id: 'ASC' },
-        skip: offset,
-        take: limit,
-      });
+    const [applications, totalCount] = await queryBuilder.getManyAndCount();
 
     const workspaces = applications.map((application) => ({
       id: application.workspace.id,

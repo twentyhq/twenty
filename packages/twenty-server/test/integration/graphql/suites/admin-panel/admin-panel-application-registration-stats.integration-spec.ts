@@ -71,6 +71,10 @@ const FIND_ALL_REGISTRATIONS = gql`
 
 const REGISTRATION_NAME = 'admin-panel-stats-integration-test-registration';
 
+// Only ever installed on the soft-deleted workspace, so a search for it must
+// come back empty rather than surfacing an install nobody can reach.
+const DELETED_WORKSPACE_ONLY_VERSION = '9.9.9';
+
 type SeededApplication = {
   id: string;
   workspaceId: string;
@@ -80,6 +84,7 @@ type SeededApplication = {
 describe('Admin panel application registration stats and installed workspaces (integration)', () => {
   let dataSource: DataSource;
   let applicationRegistrationId: string;
+  let deletedWorkspaceId: string;
   const seededApplicationIds: string[] = [];
 
   const insertApplication = async ({
@@ -149,6 +154,38 @@ describe('Admin panel application registration stats and installed workspaces (i
       workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
       version: '1.0.0',
     });
+
+    deletedWorkspaceId = randomUUID();
+
+    // workspace."workspaceCustomApplicationId" is NOT NULL with an FK to
+    // application, and application."workspaceId" points back, so a standalone
+    // workspace row can only be inserted by borrowing an existing application.
+    const [{ workspaceCustomApplicationId }] = await dataSource.query(
+      `SELECT "workspaceCustomApplicationId" FROM core."workspace" WHERE id = $1`,
+      [SEED_APPLE_WORKSPACE_ID],
+    );
+
+    // PENDING_CREATION is the only activationStatus that satisfies the
+    // workspace CHECK constraints without a defaultRoleId and databaseSchema;
+    // deletedAt is what this fixture actually exercises.
+    await dataSource.query(
+      `INSERT INTO core."workspace"
+        (id, "displayName", subdomain, "activationStatus",
+         "workspaceCustomApplicationId", "deletedAt")
+       VALUES ($1, $2, $3, $4, $5, now())`,
+      [
+        deletedWorkspaceId,
+        'admin-panel-stats-deleted-workspace',
+        `admin-panel-stats-deleted-${deletedWorkspaceId}`,
+        'PENDING_CREATION',
+        workspaceCustomApplicationId,
+      ],
+    );
+
+    await insertApplication({
+      workspaceId: deletedWorkspaceId,
+      version: DELETED_WORKSPACE_ONLY_VERSION,
+    });
   });
 
   afterAll(async () => {
@@ -163,6 +200,10 @@ describe('Admin panel application registration stats and installed workspaces (i
       `DELETE FROM core."applicationRegistration" WHERE id = $1`,
       [applicationRegistrationId],
     );
+
+    await dataSource.query(`DELETE FROM core."workspace" WHERE id = $1`, [
+      deletedWorkspaceId,
+    ]);
   });
 
   describe('findAdminApplicationRegistrationStats', () => {
@@ -193,6 +234,24 @@ describe('Admin panel application registration stats and installed workspaces (i
       // Distribution is ordered by count DESC, so the top entry matches
       // mostInstalledVersion.
       expect(stats.versionDistribution[0].version).toBe('2.0.0');
+    });
+
+    it('excludes installs on soft-deleted workspaces', async () => {
+      const response = await makeAdminPanelAPIRequest({
+        query: FIND_STATS,
+        variables: { id: applicationRegistrationId },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+
+      const stats = response.body.data?.findAdminApplicationRegistrationStats;
+
+      expect(stats.activeInstalls).toBe(3);
+      expect(
+        stats.versionDistribution.map(
+          (entry: { version: string }) => entry.version,
+        ),
+      ).not.toContain(DELETED_WORKSPACE_ONLY_VERSION);
     });
 
     it('rejects a caller without the SECURITY permission flag', async () => {
@@ -261,6 +320,28 @@ describe('Admin panel application registration stats and installed workspaces (i
       expect(result.workspaces[0].displayName).toBe(
         APPLE_WORKSPACE_DISPLAY_NAME,
       );
+    });
+
+    it('returns an empty result instead of erroring when a search only matches installs on soft-deleted workspaces', async () => {
+      const response = await makeAdminPanelAPIRequest({
+        query: FIND_INSTALLED_WORKSPACES,
+        variables: {
+          input: {
+            id: applicationRegistrationId,
+            offset: 0,
+            searchTerm: DELETED_WORKSPACE_ONLY_VERSION,
+          },
+        },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+
+      const result =
+        response.body.data?.findAdminApplicationRegistrationInstalledWorkspaces;
+
+      expect(result.totalCount).toBe(0);
+      expect(result.hasMore).toBe(false);
+      expect(result.workspaces).toHaveLength(0);
     });
 
     it('filters by application version via searchTerm', async () => {
