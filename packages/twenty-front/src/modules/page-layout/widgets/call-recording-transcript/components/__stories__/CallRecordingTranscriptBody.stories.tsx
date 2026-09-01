@@ -5,10 +5,10 @@ import { getCallRecordingWidgetStoryDecorator } from '@/page-layout/widgets/call
 import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
 import { getCallRecordingVideoFileUrl } from '@/page-layout/widgets/call-recording/utils/getCallRecordingVideoFileUrl';
 import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody';
-import { CallRecordingTranscriptHeaderDataEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptHeaderDataEffect';
 import { CALL_RECORDING_TRANSCRIPT_CURRENT_SPOKEN_WORD_DATA_ATTRIBUTE } from '@/page-layout/widgets/call-recording-transcript/constants/CallRecordingTranscriptCurrentSpokenWordDataAttribute';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { HttpResponse, graphql } from 'msw';
 import { useState, type ComponentProps } from 'react';
 import {
   expect,
@@ -269,30 +269,24 @@ type CallRecordingTranscriptBodyStoryProps = Omit<
 const CallRecordingTranscriptBodyStory = (
   args: CallRecordingTranscriptBodyStoryProps,
 ) => {
-  const canExposeCallRecordingHeaderData =
+  const canExposeCallRecordingData =
     !args.loading && !isDefined(args.error) && !isDefined(args.restriction);
 
-  const callRecordingForHeader = canExposeCallRecordingHeaderData
+  const callRecordingForDisplay = canExposeCallRecordingData
     ? args.callRecording
     : undefined;
 
   const transcriptEntries = parseCallRecordingTranscriptEntries(
-    callRecordingForHeader?.transcript,
+    callRecordingForDisplay?.transcript,
   );
-  const videoFileUrl = getCallRecordingVideoFileUrl(callRecordingForHeader);
+  const videoFileUrl = getCallRecordingVideoFileUrl(callRecordingForDisplay);
 
   return (
     <>
       <WidgetHeaderCountEffect
         count={
-          canExposeCallRecordingHeaderData && isDefined(args.callRecording)
-            ? 1
-            : 0
+          canExposeCallRecordingData && isDefined(args.callRecording) ? 1 : 0
         }
-      />
-      <CallRecordingTranscriptHeaderDataEffect
-        transcriptEntries={transcriptEntries}
-        videoFileUrl={videoFileUrl}
       />
       <CallRecordingTranscriptBody
         {...args}
@@ -337,6 +331,24 @@ const meta: Meta<typeof CallRecordingTranscriptBodyStory> = {
   ],
   parameters: {
     layout: 'centered',
+    msw: {
+      handlers: [
+        graphql.query('CallRecordingIdForCalendarEvent', () =>
+          HttpResponse.json({
+            data: {
+              callRecordingIdForCalendarEvent: recordedCallRecording.id,
+            },
+          }),
+        ),
+        graphql.query('FindOneCallRecording', () =>
+          HttpResponse.json({
+            data: {
+              callRecording: recordedCallRecording,
+            },
+          }),
+        ),
+      ],
+    },
   },
   render: CallRecordingTranscriptBodyStory,
   args: {

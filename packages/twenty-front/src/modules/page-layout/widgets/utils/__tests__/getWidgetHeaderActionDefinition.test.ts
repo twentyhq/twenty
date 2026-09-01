@@ -57,10 +57,11 @@ describe('getWidgetHeaderActionDefinition', () => {
 
   it('returns no action for an actionless widget', () => {
     const definition = getWidgetHeaderActionDefinition({
-      type: WidgetType.CALL_RECORDING_SUMMARY,
+      type: WidgetType.IFRAME,
       configuration: {
-        __typename: 'CallRecordingSummaryConfiguration',
-        configurationType: WidgetConfigurationType.CALL_RECORDING_SUMMARY,
+        __typename: 'IframeConfiguration',
+        configurationType: WidgetConfigurationType.IFRAME,
+        url: 'https://example.com',
       },
     });
 
