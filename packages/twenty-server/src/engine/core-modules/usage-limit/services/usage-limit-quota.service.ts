@@ -19,10 +19,10 @@ import { type UsagePoolAvailability } from 'src/engine/core-modules/usage-limit/
 import { type ExhaustedScope } from 'src/engine/core-modules/usage-limit/types/exhausted-scope.type';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
-import { type QuotaBound } from 'src/engine/core-modules/usage-limit/types/quota-bound.type';
+import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
 import { type QuotaConsumptionRow } from 'src/engine/core-modules/usage-limit/types/quota-consumption-row.type';
 import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
-import { buildQuotaBounds } from 'src/engine/core-modules/usage-limit/utils/build-quota-bounds.util';
+import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
 import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-warm-lock-key.util';
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
@@ -108,21 +108,21 @@ export class UsageLimitQuotaService {
     args: QuotaConsumeArgs,
   ): Promise<ExhaustedScope | null> {
     try {
-      const bounds = await this.resolveBounds(args);
+      const counters = await this.resolveCounters(args);
 
-      if (bounds.length === 0) {
+      if (counters.length === 0) {
         return null;
       }
 
       const remainings = await this.readRemainings({
         workspaceId: args.workspaceId,
         resourceType: args.resourceType,
-        bounds,
+        counters,
       });
 
       return this.findExhaustedScope({
         resourceType: args.resourceType,
-        bounds,
+        counters,
         remainings,
       });
     } catch (error) {
@@ -135,19 +135,19 @@ export class UsageLimitQuotaService {
     ...args
   }: QuotaConsumeArgs & { cost: QuotaCost }): Promise<ExhaustedScope | null> {
     try {
-      const bounds = await this.resolveBounds(args);
+      const counters = await this.resolveCounters(args);
 
-      if (bounds.length === 0) {
+      if (counters.length === 0) {
         return null;
       }
 
       const settleResults = await this.cacheStorage.runScript<number[]>({
         script: SETTLE_QUOTA_COUNTERS_SCRIPT,
-        keys: bounds.map((bound) => bound.key),
-        args: [JSON.stringify(bounds.map((bound) => cost[bound.meter]))],
+        keys: counters.map((counter) => counter.key),
+        args: [JSON.stringify(counters.map((counter) => cost[counter.meter]))],
       });
 
-      const remainings = bounds.map((_, index) => {
+      const remainings = counters.map((_, index) => {
         const existed = settleResults[2 * index] === 1;
 
         return existed ? settleResults[2 * index + 1] : null;
@@ -155,7 +155,7 @@ export class UsageLimitQuotaService {
 
       return this.findExhaustedScope({
         resourceType: args.resourceType,
-        bounds,
+        counters,
         remainings,
       });
     } catch (error) {
@@ -165,11 +165,11 @@ export class UsageLimitQuotaService {
 
   private findExhaustedScope({
     resourceType,
-    bounds,
+    counters,
     remainings,
   }: {
     resourceType: UsageResourceType;
-    bounds: QuotaBound[];
+    counters: QuotaCounter[];
     remainings: (number | null)[];
   }): ExhaustedScope | null {
     const exhaustedIndex = remainings.findIndex(
@@ -180,19 +180,19 @@ export class UsageLimitQuotaService {
       return null;
     }
 
-    const bound = bounds[exhaustedIndex];
+    const counter = counters[exhaustedIndex];
 
     return {
       resourceType,
       limitKind: 'quota',
-      spenderType: bound.spenderType,
-      spenderId: bound.spenderId,
-      operationType: bound.operationType,
-      limitValue: bound.limitValue,
+      spenderType: counter.spenderType,
+      spenderId: counter.spenderId,
+      operationType: counter.operationType,
+      limitValue: counter.limitValue,
       remaining: 0,
       periodCount: 1,
-      periodUnit: bound.periodUnit,
-      retryAfterMs: Math.max(bound.periodEnd.getTime() - Date.now(), 0),
+      periodUnit: counter.periodUnit,
+      retryAfterMs: Math.max(counter.periodEnd.getTime() - Date.now(), 0),
       isDefault: false,
     };
   }
@@ -244,12 +244,12 @@ export class UsageLimitQuotaService {
     return null;
   }
 
-  private async resolveBounds({
+  private async resolveCounters({
     workspaceId,
     resourceType,
     operationType,
     spenders,
-  }: QuotaConsumeArgs): Promise<QuotaBound[]> {
+  }: QuotaConsumeArgs): Promise<QuotaCounter[]> {
     const definition = findUsageLimitDefinition({
       resourceType,
       limitKind: 'quota',
@@ -281,7 +281,7 @@ export class UsageLimitQuotaService {
       ? await this.getAllowanceMicro(workspaceId)
       : null;
 
-    return buildQuotaBounds({
+    return buildQuotaCounters({
       limits: quotaLimits,
       usageSpenders: spenders,
       workspaceId,
@@ -341,57 +341,57 @@ export class UsageLimitQuotaService {
   private async readRemainings({
     workspaceId,
     resourceType,
-    bounds,
+    counters,
   }: {
     workspaceId: string;
     resourceType: UsageResourceType;
-    bounds: QuotaBound[];
+    counters: QuotaCounter[];
   }): Promise<(number | null)[]> {
     const remainings = await this.cacheStorage.mget<number>(
-      bounds.map((bound) => bound.key),
+      counters.map((counter) => counter.key),
     );
 
     if (remainings.every(isDefined)) {
       return remainings as number[];
     }
 
-    return this.warmColdBounds({ workspaceId, resourceType, bounds });
+    return this.warmColdCounters({ workspaceId, resourceType, counters });
   }
 
-  private async warmColdBounds({
+  private async warmColdCounters({
     workspaceId,
     resourceType,
-    bounds,
+    counters,
   }: {
     workspaceId: string;
     resourceType: UsageResourceType;
-    bounds: QuotaBound[];
+    counters: QuotaCounter[];
   }): Promise<(number | null)[]> {
     return this.cacheLockService.withLock(
       async () => {
         const remainings = await this.cacheStorage.mget<number>(
-          bounds.map((bound) => bound.key),
+          counters.map((counter) => counter.key),
         );
 
         if (remainings.every(isDefined)) {
           return remainings as number[];
         }
 
-        const coldBounds = bounds.filter(
+        const coldCounters = counters.filter(
           (_, index) => !isDefined(remainings[index]),
         );
 
         const rowsByPeriod = await this.fetchConsumptionRowsByPeriod({
           workspaceId,
           resourceType,
-          coldBounds,
+          coldCounters,
         });
 
         const now = Date.now();
 
-        const warmedEntries = coldBounds.flatMap((bound) => {
-          const ttl = bound.periodEnd.getTime() - now;
-          const rows = rowsByPeriod.get(buildPeriodGroupKey(bound));
+        const warmedEntries = coldCounters.flatMap((counter) => {
+          const ttl = counter.periodEnd.getTime() - now;
+          const rows = rowsByPeriod.get(buildPeriodGroupKey(counter));
 
           if (ttl <= 0 || !isDefined(rows)) {
             return [];
@@ -399,8 +399,9 @@ export class UsageLimitQuotaService {
 
           return [
             {
-              key: bound.key,
-              value: bound.limitValue - computeQuotaConsumed({ rows, bound }),
+              key: counter.key,
+              value:
+                counter.limitValue - computeQuotaConsumed({ rows, counter }),
               ttl,
             },
           ];
@@ -412,9 +413,9 @@ export class UsageLimitQuotaService {
           warmedEntries.map((entry) => [entry.key, entry.value]),
         );
 
-        return bounds.map(
-          (bound, index) =>
-            remainings[index] ?? warmedValueByKey.get(bound.key) ?? null,
+        return counters.map(
+          (counter, index) =>
+            remainings[index] ?? warmedValueByKey.get(counter.key) ?? null,
         );
       },
       buildQuotaWarmLockKey(workspaceId),
@@ -425,28 +426,28 @@ export class UsageLimitQuotaService {
   private async fetchConsumptionRowsByPeriod({
     workspaceId,
     resourceType,
-    coldBounds,
+    coldCounters,
   }: {
     workspaceId: string;
     resourceType: UsageResourceType;
-    coldBounds: QuotaBound[];
+    coldCounters: QuotaCounter[];
   }): Promise<Map<string, QuotaConsumptionRow[]>> {
-    const boundsByPeriod = new Map<string, QuotaBound>();
+    const countersByPeriod = new Map<string, QuotaCounter>();
 
-    for (const bound of coldBounds) {
-      boundsByPeriod.set(buildPeriodGroupKey(bound), bound);
+    for (const counter of coldCounters) {
+      countersByPeriod.set(buildPeriodGroupKey(counter), counter);
     }
 
     const rowsByPeriod = new Map<string, QuotaConsumptionRow[]>();
 
     await Promise.all(
-      [...boundsByPeriod.entries()].map(async ([periodGroupKey, bound]) => {
+      [...countersByPeriod.entries()].map(async ([periodGroupKey, counter]) => {
         rowsByPeriod.set(
           periodGroupKey,
           await this.fetchConsumptionRows({
             workspaceId,
             resourceType,
-            bound,
+            counter,
           }),
         );
       }),
@@ -458,14 +459,14 @@ export class UsageLimitQuotaService {
   private async fetchConsumptionRows({
     workspaceId,
     resourceType,
-    bound,
+    counter,
   }: {
     workspaceId: string;
     resourceType: UsageResourceType;
-    bound: QuotaBound;
+    counter: QuotaCounter;
   }): Promise<QuotaConsumptionRow[]> {
     const periodCondition =
-      bound.periodUnit === 'billingPeriod'
+      counter.periodUnit === 'billingPeriod'
         ? 'periodStart = {periodStart:DateTime64(3)}'
         : 'timestamp >= {periodStart:DateTime64(3)} AND timestamp < {periodEnd:DateTime64(3)}';
 
@@ -481,8 +482,8 @@ export class UsageLimitQuotaService {
       {
         workspaceId,
         resourceType,
-        periodStart: formatDateTimeForClickHouse(bound.periodStart),
-        periodEnd: formatDateTimeForClickHouse(bound.periodEnd),
+        periodStart: formatDateTimeForClickHouse(counter.periodStart),
+        periodEnd: formatDateTimeForClickHouse(counter.periodEnd),
       },
     );
   }
@@ -519,5 +520,5 @@ export class UsageLimitQuotaService {
   }
 }
 
-const buildPeriodGroupKey = (bound: QuotaBound): string =>
-  `${bound.periodUnit}:${bound.periodStart.getTime()}`;
+const buildPeriodGroupKey = (counter: QuotaCounter): string =>
+  `${counter.periodUnit}:${counter.periodStart.getTime()}`;

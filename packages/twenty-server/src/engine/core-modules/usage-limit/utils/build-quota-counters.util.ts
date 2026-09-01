@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { SPENDER_TYPE_SPECIFICITY } from 'src/engine/core-modules/usage-limit/constants/spender-type-specificity.constant';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
-import { type QuotaBound } from 'src/engine/core-modules/usage-limit/types/quota-bound.type';
+import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
 import { buildSpendersFromUsageSpenders } from 'src/engine/core-modules/usage-limit/utils/build-spenders-from-usage-spenders.util';
 import { findLimitsForSpender } from 'src/engine/core-modules/usage-limit/utils/find-limits-for-spender.util';
@@ -13,12 +13,12 @@ import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usag
 import { type UsagePeriod } from 'src/engine/core-modules/usage/types/usage-period.type';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 
-const boundSpecificity = (bound: QuotaBound): number =>
-  SPENDER_TYPE_SPECIFICITY[bound.spenderType] * 4 +
-  (isDefined(bound.spenderId) ? 0 : 2) +
-  (bound.operationType === UsageOperationType.ALL ? 1 : 0);
+const counterSpecificity = (counter: QuotaCounter): number =>
+  SPENDER_TYPE_SPECIFICITY[counter.spenderType] * 4 +
+  (isDefined(counter.spenderId) ? 0 : 2) +
+  (counter.operationType === UsageOperationType.ALL ? 1 : 0);
 
-export const buildQuotaBounds = ({
+export const buildQuotaCounters = ({
   limits,
   usageSpenders,
   workspaceId,
@@ -34,10 +34,10 @@ export const buildQuotaBounds = ({
   operationType: UsageOperationType;
   periodByUnit: Partial<Record<PeriodUnit, UsagePeriod>>;
   allowanceMicro: number | null;
-}): QuotaBound[] => {
+}): QuotaCounter[] => {
   const spenders = buildSpendersFromUsageSpenders(usageSpenders);
 
-  const bounds = spenders.flatMap((spender) =>
+  const counters = spenders.flatMap((spender) =>
     findLimitsForSpender({ limits, spender, operationType }).flatMap(
       (limit) => {
         const limitValue = resolveQuotaLimitValue({ limit, allowanceMicro });
@@ -72,5 +72,5 @@ export const buildQuotaBounds = ({
     ),
   );
 
-  return bounds.sort((a, b) => boundSpecificity(a) - boundSpecificity(b));
+  return counters.sort((a, b) => counterSpecificity(a) - counterSpecificity(b));
 };

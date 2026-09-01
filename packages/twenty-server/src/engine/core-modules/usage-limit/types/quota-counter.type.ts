@@ -3,7 +3,7 @@ import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spen
 import { type UsageMeter } from 'src/engine/core-modules/usage-limit/types/usage-meter.type';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
-export type QuotaBound = {
+export type QuotaCounter = {
   key: string;
   limitValue: number;
   meter: UsageMeter;

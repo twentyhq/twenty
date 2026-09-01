@@ -1,4 +1,4 @@
-import { type QuotaBound } from 'src/engine/core-modules/usage-limit/types/quota-bound.type';
+import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
 import { type QuotaConsumptionRow } from 'src/engine/core-modules/usage-limit/types/quota-consumption-row.type';
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -15,7 +15,7 @@ const buildRow = (
   ...overrides,
 });
 
-const buildBound = (overrides: Partial<QuotaBound>): QuotaBound => ({
+const buildCounter = (overrides: Partial<QuotaCounter>): QuotaCounter => ({
   key: 'counter-key',
   limitValue: 1_000,
   meter: 'creditsUsedMicro',
@@ -40,15 +40,15 @@ const rows = [
 ];
 
 describe('computeQuotaConsumed', () => {
-  it('sums every row for a workspace bound with no operation', () => {
-    expect(computeQuotaConsumed({ rows, bound: buildBound({}) })).toBe(147);
+  it('sums every row for a workspace counter with no operation', () => {
+    expect(computeQuotaConsumed({ rows, counter: buildCounter({}) })).toBe(147);
   });
 
-  it('cuts by operation when the bound names one', () => {
+  it('cuts by operation when the counter names one', () => {
     expect(
       computeQuotaConsumed({
         rows,
-        bound: buildBound({
+        counter: buildCounter({
           operationType: UsageOperationType.AI_CHAT_TOKEN,
         }),
       }),
@@ -59,7 +59,7 @@ describe('computeQuotaConsumed', () => {
     expect(
       computeQuotaConsumed({
         rows,
-        bound: buildBound({
+        counter: buildCounter({
           spenderType: 'userWorkspace',
           spenderId: 'user-2',
         }),
@@ -67,18 +67,24 @@ describe('computeQuotaConsumed', () => {
     ).toBe(40);
   });
 
-  it('sums every attributed row for a shared spender bound', () => {
+  it('sums every attributed row for a shared spender counter', () => {
     expect(
       computeQuotaConsumed({
         rows,
-        bound: buildBound({ spenderType: 'userWorkspace', spenderId: null }),
+        counter: buildCounter({
+          spenderType: 'userWorkspace',
+          spenderId: null,
+        }),
       }),
     ).toBe(140);
   });
 
-  it('sums the quantity column when the bound meters on it', () => {
+  it('sums the quantity column when the counter meters on it', () => {
     expect(
-      computeQuotaConsumed({ rows, bound: buildBound({ meter: 'quantity' }) }),
+      computeQuotaConsumed({
+        rows,
+        counter: buildCounter({ meter: 'quantity' }),
+      }),
     ).toBe(23);
   });
 
@@ -86,7 +92,7 @@ describe('computeQuotaConsumed', () => {
     expect(
       computeQuotaConsumed({
         rows,
-        bound: buildBound({ spenderType: 'agent', spenderId: 'agent-1' }),
+        counter: buildCounter({ spenderType: 'agent', spenderId: 'agent-1' }),
       }),
     ).toBe(0);
   });

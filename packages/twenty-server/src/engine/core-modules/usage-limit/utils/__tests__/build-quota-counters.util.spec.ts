@@ -1,5 +1,5 @@
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
-import { buildQuotaBounds } from 'src/engine/core-modules/usage-limit/utils/build-quota-bounds.util';
+import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
@@ -29,14 +29,14 @@ const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   ...overrides,
 });
 
-const buildBounds = ({
+const buildCounters = ({
   limits,
   allowanceMicro = null,
 }: {
   limits: FlatUsageLimit[];
   allowanceMicro?: number | null;
 }) =>
-  buildQuotaBounds({
+  buildQuotaCounters({
     limits,
     usageSpenders: { userWorkspaceId: 'user-1' },
     workspaceId: 'workspace-1',
@@ -46,13 +46,13 @@ const buildBounds = ({
     allowanceMicro,
   });
 
-describe('buildQuotaBounds', () => {
-  it('builds one bound per matching limit with a period-scoped key', () => {
-    const bounds = buildBounds({
+describe('buildQuotaCounters', () => {
+  it('builds one counter per matching limit with a period-scoped key', () => {
+    const counters = buildCounters({
       limits: [buildLimit({ spenderType: 'workspace' })],
     });
 
-    expect(bounds).toEqual([
+    expect(counters).toEqual([
       {
         key: `{workspace-1}:quota:AI:AI_CHAT_TOKEN:workspace:-:billingPeriod:${BILLING_PERIOD.periodStart.getTime()}`,
         limitValue: 1_000_000,
@@ -67,44 +67,44 @@ describe('buildQuotaBounds', () => {
     ]);
   });
 
-  it('anchors each bound to its own period unit', () => {
-    const bounds = buildBounds({
+  it('anchors each counter to its own period unit', () => {
+    const counters = buildCounters({
       limits: [
         buildLimit({ id: 'monthly' }),
         buildLimit({ id: 'weekly', periodUnit: 'week' }),
       ],
     });
 
-    expect(bounds.map((bound) => bound.periodStart)).toEqual([
+    expect(counters.map((counter) => counter.periodStart)).toEqual([
       BILLING_PERIOD.periodStart,
       WEEK_PERIOD.periodStart,
     ]);
   });
 
   it('ignores limits for spenders absent from the call', () => {
-    const bounds = buildBounds({
+    const counters = buildCounters({
       limits: [buildLimit({ spenderType: 'apiKey', spenderId: 'key-1' })],
     });
 
-    expect(bounds).toEqual([]);
+    expect(counters).toEqual([]);
   });
 
   it('applies a wildcard-operation limit alongside the operation-scoped one', () => {
-    const bounds = buildBounds({
+    const counters = buildCounters({
       limits: [
         buildLimit({ id: 'all', operationType: UsageOperationType.ALL }),
         buildLimit({ id: 'chat' }),
       ],
     });
 
-    expect(bounds.map((bound) => bound.operationType)).toEqual([
+    expect(counters.map((counter) => counter.operationType)).toEqual([
       UsageOperationType.AI_CHAT_TOKEN,
       UsageOperationType.ALL,
     ]);
   });
 
-  it('ranks a named user bound before workspace bounds', () => {
-    const bounds = buildBounds({
+  it('ranks a named user counter before workspace counters', () => {
+    const counters = buildCounters({
       limits: [
         buildLimit({ spenderType: 'workspace' }),
         buildLimit({
@@ -115,45 +115,45 @@ describe('buildQuotaBounds', () => {
       ],
     });
 
-    expect(bounds.map((bound) => bound.spenderType)).toEqual([
+    expect(counters.map((counter) => counter.spenderType)).toEqual([
       'userWorkspace',
       'workspace',
     ]);
   });
 
   it('resolves a percent limit against the allowance', () => {
-    const bounds = buildBounds({
+    const counters = buildCounters({
       limits: [buildLimit({ limitValueType: 'percent', limitValue: 5_000 })],
       allowanceMicro: 2_000_000,
     });
 
-    expect(bounds[0].limitValue).toBe(1_000_000);
+    expect(counters[0].limitValue).toBe(1_000_000);
   });
 
   it('skips a percent limit when no allowance exists', () => {
-    const bounds = buildBounds({
+    const counters = buildCounters({
       limits: [buildLimit({ limitValueType: 'percent', limitValue: 5_000 })],
       allowanceMicro: null,
     });
 
-    expect(bounds).toEqual([]);
+    expect(counters).toEqual([]);
   });
 
   it('skips a limit whose period was not resolved', () => {
-    const bounds = buildBounds({
+    const counters = buildCounters({
       limits: [buildLimit({ periodUnit: 'day' })],
     });
 
-    expect(bounds).toEqual([]);
+    expect(counters).toEqual([]);
   });
 
   it('does not match a limit for another operation', () => {
-    const bounds = buildBounds({
+    const counters = buildCounters({
       limits: [
         buildLimit({ operationType: UsageOperationType.AI_WORKFLOW_TOKEN }),
       ],
     });
 
-    expect(bounds).toEqual([]);
+    expect(counters).toEqual([]);
   });
 });
