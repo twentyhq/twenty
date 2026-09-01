@@ -312,12 +312,8 @@ export class ApplicationInstallService {
     const shouldTransitionState =
       isVersionUpgrade && application.state === ApplicationState.INSTALLED;
 
-    if (shouldTransitionState) {
-      await this.applicationService.update(application.id, {
-        state: ApplicationState.UPGRADING,
-        workspaceId: params.workspaceId,
-      });
-    }
+    const isInterruptedInstallRetry =
+      isVersionUpgrade && application.state === ApplicationState.INSTALLING;
 
     const incomingVersion = resolvedPackage.packageJson.version;
 
@@ -325,6 +321,13 @@ export class ApplicationInstallService {
     // this catch means creation succeeded, so a fresh install (not an upgrade)
     // is the only case that needs uninstalling.
     try {
+      if (shouldTransitionState) {
+        await this.applicationService.update(application.id, {
+          state: ApplicationState.UPGRADING,
+          workspaceId: params.workspaceId,
+        });
+      }
+
       if (
         isVersionUpgrade &&
         isDefined(application.version) &&
@@ -421,19 +424,14 @@ export class ApplicationInstallService {
       );
 
       if (shouldTransitionState) {
-        try {
-          await this.applicationService.update(application.id, {
-            state: ApplicationState.INSTALLED,
-            workspaceId: params.workspaceId,
-          });
-        } catch (revertError) {
-          this.logger.warn(
-            `Failed to revert state of application ${universalIdentifier} in workspace ${params.workspaceId}: ${revertError instanceof Error ? revertError.message : String(revertError)}`,
-          );
-        }
+        await this.applicationService.revertStateToInstalledBestEffort({
+          applicationId: application.id,
+          universalIdentifier,
+          workspaceId: params.workspaceId,
+        });
       }
 
-      if (!isVersionUpgrade) {
+      if (!isVersionUpgrade || isInterruptedInstallRetry) {
         // Rollback of a failed fresh install: the app never finished
         // installing, so the uninstall hook must not run.
         await this.applicationSyncService.uninstallApplication({

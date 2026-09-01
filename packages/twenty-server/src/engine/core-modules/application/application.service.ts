@@ -17,6 +17,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -621,6 +622,27 @@ export class ApplicationService {
     }
 
     return updatedApplication;
+  }
+
+  async revertStateToInstalledBestEffort({
+    applicationId,
+    universalIdentifier,
+    workspaceId,
+  }: {
+    applicationId: string;
+    universalIdentifier: string;
+    workspaceId: string;
+  }): Promise<void> {
+    try {
+      await this.update(applicationId, {
+        state: ApplicationState.INSTALLED,
+        workspaceId,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to revert state of application ${universalIdentifier} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   }
 
   async delete(universalIdentifier: string, workspaceId: string) {

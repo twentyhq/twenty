@@ -354,14 +354,14 @@ export class ApplicationSyncService {
     const shouldTransitionState =
       application.state === ApplicationState.INSTALLED;
 
-    if (shouldTransitionState) {
-      await this.applicationService.update(application.id, {
-        state: ApplicationState.UNINSTALLING,
-        workspaceId,
-      });
-    }
-
     try {
+      if (shouldTransitionState) {
+        await this.applicationService.update(application.id, {
+          state: ApplicationState.UNINSTALLING,
+          workspaceId,
+        });
+      }
+
       return await this.runUninstall({
         application,
         workspaceId,
@@ -370,16 +370,11 @@ export class ApplicationSyncService {
       });
     } catch (error) {
       if (shouldTransitionState) {
-        try {
-          await this.applicationService.update(application.id, {
-            state: ApplicationState.INSTALLED,
-            workspaceId,
-          });
-        } catch (revertError) {
-          this.logger.warn(
-            `Failed to revert state of application ${applicationUniversalIdentifier} in workspace ${workspaceId}: ${revertError instanceof Error ? revertError.message : String(revertError)}`,
-          );
-        }
+        await this.applicationService.revertStateToInstalledBestEffort({
+          applicationId: application.id,
+          universalIdentifier: applicationUniversalIdentifier,
+          workspaceId,
+        });
       }
 
       throw error;
