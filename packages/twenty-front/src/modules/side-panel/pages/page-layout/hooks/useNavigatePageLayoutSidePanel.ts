@@ -1,4 +1,5 @@
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
+import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { type PageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/types/PageLayoutSidePanelPage';
 import { getPageLayoutIcon } from '@/side-panel/pages/page-layout/utils/getPageLayoutIcon';
 import { getPageLayoutPageTitle } from '@/side-panel/pages/page-layout/utils/getPageLayoutPageTitle';
@@ -16,6 +17,7 @@ type NavigatePageLayoutSidePanelProps = {
 
 export const useNavigatePageLayoutSidePanel = () => {
   const { navigateSidePanel } = useNavigateSidePanel();
+  const pageLayoutContext = usePageLayoutIdFromContextStore();
 
   const navigatePageLayoutSidePanel = useCallback(
     ({
@@ -35,9 +37,10 @@ export const useNavigatePageLayoutSidePanel = () => {
           : getPageLayoutIcon(sidePanelPage),
         focusTitleInput,
         resetNavigationStack,
+        pageLayoutContext,
       });
     },
-    [navigateSidePanel],
+    [navigateSidePanel, pageLayoutContext],
   );
 
   return {

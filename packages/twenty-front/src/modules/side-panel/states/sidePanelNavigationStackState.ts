@@ -1,4 +1,5 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { type PageLayoutSidePanelContext } from '@/side-panel/pages/page-layout/types/PageLayoutSidePanelContext';
 import { type PurposeBuiltSidePanelPage } from '@/side-panel/types/SidePanelPage';
 import { type Location } from 'react-router-dom';
 import type { SidePanelPages } from 'twenty-shared/types';
@@ -11,6 +12,7 @@ type SidePanelNavigationStackItemBase = {
   pageId: string;
   // Unlike pageId, this stays stable across routed stack entries in one flow.
   routedFlowStateScopeId?: string;
+  pageLayoutContext?: PageLayoutSidePanelContext;
 };
 
 export type SidePanelRoutedLocation = Pick<

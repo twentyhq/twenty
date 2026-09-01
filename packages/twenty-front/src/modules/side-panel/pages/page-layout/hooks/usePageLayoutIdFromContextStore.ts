@@ -4,6 +4,8 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { recordPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutByObjectMetadataIdFamilySelector';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -12,6 +14,17 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const usePageLayoutIdFromContextStore = () => {
+  const workspaceSurface = useWorkspaceSurface();
+
+  const sidePanelNavigationStack = useAtomStateValue(
+    sidePanelNavigationStackState,
+  );
+
+  const pageLayoutContext =
+    workspaceSurface.type === 'side-panel'
+      ? sidePanelNavigationStack.at(-1)?.pageLayoutContext
+      : undefined;
+
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
@@ -20,15 +33,20 @@ export const usePageLayoutIdFromContextStore = () => {
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 
-  if (!isDefined(contextStoreCurrentObjectMetadataItemId)) {
+  const objectMetadataItemId =
+    pageLayoutContext?.objectMetadataItemId ??
+    contextStoreCurrentObjectMetadataItemId;
+
+  if (!isDefined(objectMetadataItemId)) {
     throw new Error('Object metadata ID is not defined');
   }
 
   const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: contextStoreCurrentObjectMetadataItemId,
+    objectId: objectMetadataItemId,
   });
 
   if (
+    !isDefined(pageLayoutContext) &&
     !(
       contextStoreTargetedRecordsRule.mode === 'selection' &&
       contextStoreTargetedRecordsRule.selectedRecordIds.length === 1
@@ -37,7 +55,15 @@ export const usePageLayoutIdFromContextStore = () => {
     throw new Error('Only one record should be selected');
   }
 
-  const recordId: string = contextStoreTargetedRecordsRule.selectedRecordIds[0];
+  const recordId =
+    pageLayoutContext?.recordId ??
+    (contextStoreTargetedRecordsRule.mode === 'selection'
+      ? contextStoreTargetedRecordsRule.selectedRecordIds[0]
+      : undefined);
+
+  if (!isDefined(recordId)) {
+    throw new Error('Only one record should be selected');
+  }
 
   const isDashboardContext =
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Dashboard;
@@ -50,15 +76,19 @@ export const usePageLayoutIdFromContextStore = () => {
     { objectMetadataId: objectMetadataItem.id },
   );
 
-  const pageLayoutId = isDashboardContext
-    ? (recordStore?.pageLayoutId ?? currentPageLayoutId)
-    : isDefined(recordPageLayout)
-      ? recordPageLayout.id
-      : null;
+  const pageLayoutId = isDefined(pageLayoutContext)
+    ? pageLayoutContext.pageLayoutId
+    : isDashboardContext
+      ? (recordStore?.pageLayoutId ?? currentPageLayoutId)
+      : isDefined(recordPageLayout)
+        ? recordPageLayout.id
+        : null;
 
   return {
     pageLayoutId,
     recordId,
-    objectNameSingular: objectMetadataItem.nameSingular,
+    objectMetadataItemId,
+    objectNameSingular:
+      pageLayoutContext?.objectNameSingular ?? objectMetadataItem.nameSingular,
   };
 };
