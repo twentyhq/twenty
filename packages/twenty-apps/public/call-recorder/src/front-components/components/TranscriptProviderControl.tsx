@@ -7,6 +7,10 @@ import { FloatingMenu } from 'src/front-components/components/FloatingMenu';
 import { SettingsSelectControl } from 'src/front-components/components/SettingsSelectControl';
 import { EMPTY_OPTION_LABEL } from 'src/front-components/constants/empty-option-label.constant';
 import { type CallRecorderApplicationVariableOption } from 'src/front-components/types/call-recorder-application-variable.type';
+import {
+  getNextActiveOptionIndex,
+  type SettingsSelectNavigationKey,
+} from 'src/front-components/utils/get-next-active-option-index.util';
 
 const StyledListbox = styled.div`
   width: 100%;
@@ -53,16 +57,13 @@ export const TranscriptProviderControl = ({
   };
   const handleMenuClose = () => setIsMenuOpen(false);
 
-  const handleNavigate = (key: 'ArrowDown' | 'ArrowUp' | 'Home' | 'End') => {
+  const handleNavigate = (key: SettingsSelectNavigationKey) => {
     setActiveOptionIndex((currentIndex) =>
-      key === 'ArrowDown'
-        ? (currentIndex + 1) % selectableOptions.length
-        : key === 'ArrowUp'
-          ? (currentIndex - 1 + selectableOptions.length) %
-            selectableOptions.length
-          : key === 'Home'
-            ? 0
-            : selectableOptions.length - 1,
+      getNextActiveOptionIndex({
+        key,
+        currentIndex,
+        optionCount: selectableOptions.length,
+      }),
     );
   };
 

@@ -8,6 +8,8 @@ import { DropdownMenuOption } from 'src/front-components/components/DropdownMenu
 import { DropdownMenuSeparator } from 'src/front-components/components/DropdownMenuSeparator';
 
 const StyledListbox = styled.div`
+  min-height: 0;
+  overflow-y: auto;
   width: 100%;
 `;
 

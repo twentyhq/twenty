@@ -6,6 +6,8 @@ import { ICON } from 'twenty-ui/theme';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { type SettingsSelectNavigationKey } from 'src/front-components/utils/get-next-active-option-index.util';
+
 const StyledControlContainer = styled.button<{
   $hasAdornment: boolean;
 }>`
@@ -46,7 +48,7 @@ type SettingsSelectControlProps = {
   adornment?: ReactNode;
   disabled?: boolean;
   isExpanded: boolean;
-  onNavigate: (key: 'ArrowDown' | 'ArrowUp' | 'Home' | 'End') => void;
+  onNavigate: (key: SettingsSelectNavigationKey) => void;
   onSelectActive: () => void;
   onEscape: () => void;
   onClick: () => void;

@@ -7,6 +7,10 @@ import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
 import { FloatingMenu } from 'src/front-components/components/FloatingMenu';
 import { SettingsSelectControl } from 'src/front-components/components/SettingsSelectControl';
 import { ThemeColorPickerMenu } from 'src/front-components/components/ThemeColorPickerMenu';
+import {
+  getNextActiveOptionIndex,
+  type SettingsSelectNavigationKey,
+} from 'src/front-components/utils/get-next-active-option-index.util';
 
 // The control is capped at 120px, where "Custom hex" ellipsises to "Custom …".
 const CUSTOM_CONTROL_LABEL = 'Custom';
@@ -64,16 +68,13 @@ export const TileBackgroundControl = ({
   };
   const handleMenuClose = () => setIsMenuOpen(false);
 
-  const handleNavigate = (key: 'ArrowDown' | 'ArrowUp' | 'Home' | 'End') => {
+  const handleNavigate = (key: SettingsSelectNavigationKey) => {
     setActiveOptionIndex((currentIndex) =>
-      key === 'ArrowDown'
-        ? (currentIndex + 1) % TILE_BACKGROUND_OPTIONS.length
-        : key === 'ArrowUp'
-          ? (currentIndex - 1 + TILE_BACKGROUND_OPTIONS.length) %
-            TILE_BACKGROUND_OPTIONS.length
-          : key === 'Home'
-            ? 0
-            : TILE_BACKGROUND_OPTIONS.length - 1,
+      getNextActiveOptionIndex({
+        key,
+        currentIndex,
+        optionCount: TILE_BACKGROUND_OPTIONS.length,
+      }),
     );
   };
 
