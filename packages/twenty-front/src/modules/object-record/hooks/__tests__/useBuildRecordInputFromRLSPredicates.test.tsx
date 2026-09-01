@@ -75,10 +75,17 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
 });
 
 describe('useBuildRecordInputFromRLSPredicates', () => {
-  it('uses the object metadata provided for each builder call', () => {
-    const { result } = renderHook(
+  it('returns a stable builder for call-time object metadata', () => {
+    const { result, rerender } = renderHook(
       () => useBuildRecordInputFromRLSPredicates(),
       { wrapper: Wrapper },
+    );
+    const initialBuilder = result.current.buildRecordInputFromRLSPredicates;
+
+    rerender();
+
+    expect(result.current.buildRecordInputFromRLSPredicates).toBe(
+      initialBuilder,
     );
 
     expect(

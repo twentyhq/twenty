@@ -1,5 +1,7 @@
 /* @license Enterprise */
 
+import { useCallback } from 'react';
+
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { convertPredicateToRecordFilter } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/recordLevelPermissionPredicateConversion';
 
@@ -23,6 +25,16 @@ const mergeCompositeValues = (existingValue: unknown, incomingValue: unknown) =>
     ? { ...existingValue, ...incomingValue }
     : incomingValue;
 
+const getRecordInputFieldName = (fieldMetadataItem: {
+  name: string;
+  type: string;
+  settings?: { relationType?: RelationType };
+}) =>
+  fieldMetadataItem.type === 'RELATION' &&
+  fieldMetadataItem.settings?.relationType === RelationType.MANY_TO_ONE
+    ? `${fieldMetadataItem.name}Id`
+    : fieldMetadataItem.name;
+
 export const useBuildRecordInputFromRLSPredicates = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
@@ -39,163 +51,168 @@ export const useBuildRecordInputFromRLSPredicates = () => {
     });
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const getRecordInputFieldName = (fieldMetadataItem: {
-    name: string;
-    type: string;
-    settings?: { relationType?: RelationType };
-  }) =>
-    fieldMetadataItem.type === 'RELATION' &&
-    fieldMetadataItem.settings?.relationType === RelationType.MANY_TO_ONE
-      ? `${fieldMetadataItem.name}Id`
-      : fieldMetadataItem.name;
+  const getWorkspaceMemberFieldValue = useCallback(
+    ({
+      workspaceMemberFieldMetadataId,
+      workspaceMemberSubFieldName,
+    }: {
+      workspaceMemberFieldMetadataId?: string | null;
+      workspaceMemberSubFieldName?: string | null;
+    }) => {
+      const workspaceMemberFieldMetadataItem =
+        workspaceMemberObjectMetadataItem?.fields.find(
+          (field) => field.id === workspaceMemberFieldMetadataId,
+        );
 
-  const getWorkspaceMemberFieldValue = ({
-    workspaceMemberFieldMetadataId,
-    workspaceMemberSubFieldName,
-  }: {
-    workspaceMemberFieldMetadataId?: string | null;
-    workspaceMemberSubFieldName?: string | null;
-  }) => {
-    const workspaceMemberFieldMetadataItem =
-      workspaceMemberObjectMetadataItem?.fields.find(
-        (field) => field.id === workspaceMemberFieldMetadataId,
-      );
-
-    if (!isDefined(workspaceMemberFieldMetadataItem)) {
-      throw new Error(
-        `Workspace member field metadata item not found for id: ${workspaceMemberFieldMetadataId}`,
-      );
-    }
-
-    let workspaceMemberFieldValue =
-      currentWorkspaceMemberRecord?.[workspaceMemberFieldMetadataItem.name];
-
-    if (isCompositeFieldType(workspaceMemberFieldMetadataItem.type)) {
-      if (!workspaceMemberSubFieldName) {
+      if (!isDefined(workspaceMemberFieldMetadataItem)) {
         throw new Error(
-          `Workspace member subfield name not found for field: ${workspaceMemberFieldMetadataItem.name}`,
+          `Workspace member field metadata item not found for id: ${workspaceMemberFieldMetadataId}`,
         );
       }
 
-      const compositeValue = workspaceMemberFieldValue as
-        | Record<string, unknown>
-        | undefined;
-      workspaceMemberFieldValue = compositeValue?.[workspaceMemberSubFieldName];
-    }
+      let workspaceMemberFieldValue =
+        currentWorkspaceMemberRecord?.[workspaceMemberFieldMetadataItem.name];
 
-    if (isUndefined(workspaceMemberFieldValue)) {
-      throw new Error(
-        `Current workspace member field value not found for field: ${workspaceMemberFieldMetadataItem.name}`,
-      );
-    }
-
-    return workspaceMemberFieldValue;
-  };
-
-  const buildRecordInputFromRLSPredicates = ({
-    objectMetadataItem,
-  }: {
-    objectMetadataItem: EnrichedObjectMetadataItem;
-  }): Partial<ObjectRecord> => {
-    const objectPermissions = getObjectPermissionsForObject(
-      objectPermissionsByObjectMetadataId,
-      objectMetadataItem.id,
-    );
-
-    const rlsPredicates = objectPermissions.rowLevelPermissionPredicates.filter(
-      (predicate) => predicate.objectMetadataId === objectMetadataItem.id,
-    );
-
-    const fieldMetadataItemMap = new Map(
-      objectMetadataItem.fields.map((field) => [field.id, field]),
-    );
-
-    const rlsPredicatesAsRecordFilters = rlsPredicates
-      .map((predicate) =>
-        convertPredicateToRecordFilter(
-          predicate,
-          fieldMetadataItemMap.get(predicate.fieldMetadataId),
-        ),
-      )
-      .filter(isDefined);
-
-    const recordInputFromDynamicFilters: Partial<ObjectRecord> = {};
-
-    rlsPredicatesAsRecordFilters.forEach((filter) => {
-      const fieldMetadataItem = fieldMetadataItemMap.get(
-        filter.fieldMetadataId,
-      );
-
-      if (!isDefined(fieldMetadataItem)) {
-        return;
-      }
-
-      if (isDefined(filter.rlsDynamicValue)) {
-        const recordInputField = getRecordInputFieldName(fieldMetadataItem);
-        const currentWorkspaceMemberFieldValue = getWorkspaceMemberFieldValue({
-          workspaceMemberFieldMetadataId:
-            filter.rlsDynamicValue?.workspaceMemberFieldMetadataId,
-          workspaceMemberSubFieldName:
-            filter.rlsDynamicValue?.workspaceMemberSubFieldName,
-        });
-
-        if (isCompositeFieldType(fieldMetadataItem.type)) {
-          if (!filter.subFieldName) {
-            throw new Error(
-              `Subfield name not found for composite field: ${fieldMetadataItem.name}`,
-            );
-          }
-
-          const compositeValue = buildCompositeValueFromSubField({
-            compositeFieldType: fieldMetadataItem.type,
-            subFieldName: filter.subFieldName,
-            value: currentWorkspaceMemberFieldValue,
-          });
-
-          if (!compositeValue) {
-            throw new Error(
-              `Composite subfield not found for field: ${fieldMetadataItem.name}`,
-            );
-          }
-
-          recordInputFromDynamicFilters[recordInputField] =
-            mergeCompositeValues(
-              recordInputFromDynamicFilters[recordInputField],
-              compositeValue,
-            );
-        } else {
-          recordInputFromDynamicFilters[recordInputField] =
-            currentWorkspaceMemberFieldValue;
+      if (isCompositeFieldType(workspaceMemberFieldMetadataItem.type)) {
+        if (!workspaceMemberSubFieldName) {
+          throw new Error(
+            `Workspace member subfield name not found for field: ${workspaceMemberFieldMetadataItem.name}`,
+          );
         }
+
+        const compositeValue = workspaceMemberFieldValue as
+          | Record<string, unknown>
+          | undefined;
+        workspaceMemberFieldValue =
+          compositeValue?.[workspaceMemberSubFieldName];
       }
-    });
 
-    // Only process filters without rlsDynamicValue in buildRecordInputFromFilter
-    // Filters with rlsDynamicValue are already handled above
-    const staticFilters = rlsPredicatesAsRecordFilters.filter(
-      (filter) => !isDefined(filter.rlsDynamicValue),
-    );
+      if (isUndefined(workspaceMemberFieldValue)) {
+        throw new Error(
+          `Current workspace member field value not found for field: ${workspaceMemberFieldMetadataItem.name}`,
+        );
+      }
 
-    const recordInputFromStaticFilters = buildRecordInputFromFilter({
-      currentRecordFilters: staticFilters,
+      return workspaceMemberFieldValue;
+    },
+    [currentWorkspaceMemberRecord, workspaceMemberObjectMetadataItem],
+  );
+
+  const buildRecordInputFromRLSPredicates = useCallback(
+    ({
       objectMetadataItem,
-      currentWorkspaceMember: currentWorkspaceMember ?? undefined,
-      timeZone: userTimezone,
-    });
-
-    const mergedRecordInput: Partial<ObjectRecord> = {
-      ...recordInputFromDynamicFilters,
-    };
-
-    Object.entries(recordInputFromStaticFilters).forEach(([key, value]) => {
-      mergedRecordInput[key] = mergeCompositeValues(
-        mergedRecordInput[key],
-        value,
+    }: {
+      objectMetadataItem: EnrichedObjectMetadataItem;
+    }): Partial<ObjectRecord> => {
+      const objectPermissions = getObjectPermissionsForObject(
+        objectPermissionsByObjectMetadataId,
+        objectMetadataItem.id,
       );
-    });
 
-    return mergedRecordInput;
-  };
+      const rlsPredicates =
+        objectPermissions.rowLevelPermissionPredicates.filter(
+          (predicate) => predicate.objectMetadataId === objectMetadataItem.id,
+        );
+
+      const fieldMetadataItemMap = new Map(
+        objectMetadataItem.fields.map((field) => [field.id, field]),
+      );
+
+      const rlsPredicatesAsRecordFilters = rlsPredicates
+        .map((predicate) =>
+          convertPredicateToRecordFilter(
+            predicate,
+            fieldMetadataItemMap.get(predicate.fieldMetadataId),
+          ),
+        )
+        .filter(isDefined);
+
+      const recordInputFromDynamicFilters: Partial<ObjectRecord> = {};
+
+      rlsPredicatesAsRecordFilters.forEach((filter) => {
+        const fieldMetadataItem = fieldMetadataItemMap.get(
+          filter.fieldMetadataId,
+        );
+
+        if (!isDefined(fieldMetadataItem)) {
+          return;
+        }
+
+        if (isDefined(filter.rlsDynamicValue)) {
+          const recordInputField = getRecordInputFieldName(fieldMetadataItem);
+          const currentWorkspaceMemberFieldValue = getWorkspaceMemberFieldValue(
+            {
+              workspaceMemberFieldMetadataId:
+                filter.rlsDynamicValue?.workspaceMemberFieldMetadataId,
+              workspaceMemberSubFieldName:
+                filter.rlsDynamicValue?.workspaceMemberSubFieldName,
+            },
+          );
+
+          if (isCompositeFieldType(fieldMetadataItem.type)) {
+            if (!filter.subFieldName) {
+              throw new Error(
+                `Subfield name not found for composite field: ${fieldMetadataItem.name}`,
+              );
+            }
+
+            const compositeValue = buildCompositeValueFromSubField({
+              compositeFieldType: fieldMetadataItem.type,
+              subFieldName: filter.subFieldName,
+              value: currentWorkspaceMemberFieldValue,
+            });
+
+            if (!compositeValue) {
+              throw new Error(
+                `Composite subfield not found for field: ${fieldMetadataItem.name}`,
+              );
+            }
+
+            recordInputFromDynamicFilters[recordInputField] =
+              mergeCompositeValues(
+                recordInputFromDynamicFilters[recordInputField],
+                compositeValue,
+              );
+          } else {
+            recordInputFromDynamicFilters[recordInputField] =
+              currentWorkspaceMemberFieldValue;
+          }
+        }
+      });
+
+      // Only process filters without rlsDynamicValue in buildRecordInputFromFilter
+      // Filters with rlsDynamicValue are already handled above
+      const staticFilters = rlsPredicatesAsRecordFilters.filter(
+        (filter) => !isDefined(filter.rlsDynamicValue),
+      );
+
+      const recordInputFromStaticFilters = buildRecordInputFromFilter({
+        currentRecordFilters: staticFilters,
+        objectMetadataItem,
+        currentWorkspaceMember: currentWorkspaceMember ?? undefined,
+        timeZone: userTimezone,
+      });
+
+      const mergedRecordInput: Partial<ObjectRecord> = {
+        ...recordInputFromDynamicFilters,
+      };
+
+      Object.entries(recordInputFromStaticFilters).forEach(([key, value]) => {
+        mergedRecordInput[key] = mergeCompositeValues(
+          mergedRecordInput[key],
+          value,
+        );
+      });
+
+      return mergedRecordInput;
+    },
+    [
+      currentWorkspaceMember,
+      getWorkspaceMemberFieldValue,
+      objectPermissionsByObjectMetadataId,
+      userTimezone,
+    ],
+  );
 
   return { buildRecordInputFromRLSPredicates };
 };
