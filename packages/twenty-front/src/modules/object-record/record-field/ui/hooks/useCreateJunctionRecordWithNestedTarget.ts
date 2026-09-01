@@ -9,7 +9,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useBuildRecordInputFromRLSPredicates } from '@/object-record/hooks/useBuildRecordInputFromRLSPredicates';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { appendJunctionRecordToSourceRecordStore } from '@/object-record/record-field/ui/utils/junction/appendJunctionRecordToSourceRecordStore';
+import { upsertJunctionRecordInSourceRecordStore } from '@/object-record/record-field/ui/utils/junction/upsertJunctionRecordInSourceRecordStore';
 import { type ValidJunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/ValidJunctionConfig';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
@@ -123,7 +123,7 @@ export const useCreateJunctionRecordWithNestedTarget = ({
           [targetFieldInfo.fieldName]: targetRecord,
         };
 
-        appendJunctionRecordToSourceRecordStore({
+        upsertJunctionRecordInSourceRecordStore({
           store,
           sourceRecordId,
           sourceFieldName,

@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-export const appendJunctionRecordToSourceRecordStore = ({
+export const upsertJunctionRecordInSourceRecordStore = ({
   store,
   sourceRecordId,
   sourceFieldName,
@@ -22,23 +22,28 @@ export const appendJunctionRecordToSourceRecordStore = ({
         return currentRecord;
       }
 
-      const currentJunctionRecords = currentRecord[sourceFieldName];
+      const currentJunctionRecords = Array.isArray(
+        currentRecord[sourceFieldName],
+      )
+        ? currentRecord[sourceFieldName]
+        : [];
+      const existingJunctionIndex = currentJunctionRecords.findIndex(
+        ({ id }) => id === junctionRecord.id,
+      );
+      const nextJunctionRecords = [...currentJunctionRecords];
 
-      if (
-        Array.isArray(currentJunctionRecords) &&
-        currentJunctionRecords.some(({ id }) => id === junctionRecord.id)
-      ) {
-        return currentRecord;
+      if (existingJunctionIndex === -1) {
+        nextJunctionRecords.push(junctionRecord);
+      } else {
+        nextJunctionRecords[existingJunctionIndex] = {
+          ...nextJunctionRecords[existingJunctionIndex],
+          ...junctionRecord,
+        };
       }
 
       return {
         ...currentRecord,
-        [sourceFieldName]: [
-          ...(Array.isArray(currentJunctionRecords)
-            ? currentJunctionRecords
-            : []),
-          junctionRecord,
-        ],
+        [sourceFieldName]: nextJunctionRecords,
       } as ObjectRecord;
     },
   );

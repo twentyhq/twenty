@@ -15,7 +15,7 @@ import {
   type FieldRelationMetadata,
   type FieldRelationValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { appendJunctionRecordToSourceRecordStore } from '@/object-record/record-field/ui/utils/junction/appendJunctionRecordToSourceRecordStore';
+import { upsertJunctionRecordInSourceRecordStore } from '@/object-record/record-field/ui/utils/junction/upsertJunctionRecordInSourceRecordStore';
 import { findJunctionRecordByTargetId } from '@/object-record/record-field/ui/utils/junction/findJunctionRecordByTargetId';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
@@ -191,7 +191,7 @@ export const useUpdateJunctionRelationFromCell = ({
           [targetFieldName]: targetRecord,
         };
 
-        appendJunctionRecordToSourceRecordStore({
+        upsertJunctionRecordInSourceRecordStore({
           store,
           sourceRecordId: recordId,
           sourceFieldName: fieldName,
@@ -246,40 +246,16 @@ export const useUpdateJunctionRelationFromCell = ({
           recordNode: persistedJunctionRecordNode,
         });
 
-        store.set(
-          recordStoreFamilyState.atomFamily(recordId),
-          (currentRecord: Record<string, unknown> | null | undefined) => {
-            if (!isDefined(currentRecord)) {
-              return currentRecord;
-            }
-
-            const currentFieldValue = currentRecord[fieldName];
-
-            if (!Array.isArray(currentFieldValue)) {
-              return currentRecord as ObjectRecord;
-            }
-
-            const junctionRecordsWithoutOptimistic = currentFieldValue.filter(
-              (junctionRecord) => junctionRecord.id !== optimisticJunctionId,
-            );
-
-            const isPersistedJunctionRecordAlreadyInStore =
-              junctionRecordsWithoutOptimistic.some(
-                (junctionRecord) =>
-                  junctionRecord.id === persistedJunctionRecord.id,
-              );
-
-            return {
-              ...currentRecord,
-              [fieldName]: isPersistedJunctionRecordAlreadyInStore
-                ? junctionRecordsWithoutOptimistic
-                : [
-                    ...junctionRecordsWithoutOptimistic,
-                    { ...junctionRecordForStore, ...persistedJunctionRecord },
-                  ],
-            } as ObjectRecord;
+        removeOptimisticJunctionRecord();
+        upsertJunctionRecordInSourceRecordStore({
+          store,
+          sourceRecordId: recordId,
+          sourceFieldName: fieldName,
+          junctionRecord: {
+            ...junctionRecordForStore,
+            ...persistedJunctionRecord,
           },
-        );
+        });
       }
     },
     [
