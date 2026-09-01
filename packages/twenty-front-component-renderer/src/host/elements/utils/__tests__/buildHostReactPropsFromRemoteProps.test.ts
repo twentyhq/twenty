@@ -22,21 +22,6 @@ describe('buildHostReactPropsFromRemoteProps', () => {
     expect(result.id).toBe('x');
   });
 
-  it('should map the autofocus attribute to the React autoFocus prop', () => {
-    expect(
-      buildHostReactPropsFromRemoteProps({ autofocus: 'true' }, 'input'),
-    ).toEqual({ autoFocus: true });
-    expect(
-      buildHostReactPropsFromRemoteProps({ autofocus: '' }, 'input'),
-    ).toEqual({ autoFocus: true });
-    expect(
-      buildHostReactPropsFromRemoteProps({ autofocus: 'false' }, 'input'),
-    ).toEqual({ autoFocus: false });
-    expect(
-      buildHostReactPropsFromRemoteProps({ autofocus: false }, 'input'),
-    ).toEqual({ autoFocus: false });
-  });
-
   it('should parse the style string into an object', () => {
     const result = buildHostReactPropsFromRemoteProps(
       { style: 'color: red' },

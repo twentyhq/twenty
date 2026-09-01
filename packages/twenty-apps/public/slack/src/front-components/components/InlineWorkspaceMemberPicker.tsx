@@ -180,10 +180,6 @@ const InlineWorkspaceMemberPickerPanel = ({
           placeholder="Search members"
           aria-label="Search workspace members"
           autoFocus
-          // React consumes autoFocus by calling focus(), which does not exist
-          // in the worker DOM; the renderer forwards the raw attribute and
-          // focuses the host input when it mounts.
-          ref={(node) => node?.setAttribute('autofocus', 'true')}
         />
         <StyledOptions role="listbox" aria-label="Workspace members">
           {options.map((member) => (

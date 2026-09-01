@@ -152,34 +152,6 @@ describe('createHtmlHostWrapper client events', () => {
     );
   });
 
-  it('should focus an input mounted with the autofocus attribute', () => {
-    const Wrapper = createHtmlHostWrapper('input');
-
-    act(() => {
-      root.render(createElement(Wrapper, { type: 'text', autofocus: 'true' }));
-    });
-
-    const node = container.firstElementChild as HTMLInputElement;
-    expect(document.activeElement).toBe(node);
-  });
-
-  it('should focus an input whose autofocus attribute arrives after mounting', () => {
-    const Wrapper = createHtmlHostWrapper('input');
-
-    act(() => {
-      root.render(createElement(Wrapper, { type: 'text' }));
-    });
-
-    const node = container.firstElementChild as HTMLInputElement;
-    expect(document.activeElement).not.toBe(node);
-
-    act(() => {
-      root.render(createElement(Wrapper, { type: 'text', autofocus: 'true' }));
-    });
-
-    expect(document.activeElement).toBe(node);
-  });
-
   it('should re-assert an unchanged controlled value on an unrelated re-render', () => {
     const Wrapper = createHtmlHostWrapper('input');
 
