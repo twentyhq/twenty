@@ -5,6 +5,7 @@ import { useQuery } from '@apollo/client/react';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { buildCoreWorkflowFilterInput } from '@/object-core/workflows/utils/buildCoreWorkflowFilterInput';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -50,7 +51,11 @@ export const useCoreWorkflows = () => {
     coreWorkflowsFilterSettingsState,
   );
 
-  const filter = buildCoreWorkflowFilterInput(coreWorkflowsFilterSettings);
+  const { userTimezone } = useUserTimezone();
+  const filter = buildCoreWorkflowFilterInput(
+    coreWorkflowsFilterSettings,
+    userTimezone,
+  );
 
   const [isFetchingMore, setIsFetchingMore] = useState(false);
 

@@ -44,6 +44,7 @@ describe('buildCoreWorkflowFilterInput', () => {
           fieldKey: CoreWorkflowFilterFieldKey.NAME,
           operand: CoreWorkflowFilterOperand.CONTAINS,
           value: 'sync',
+          timezone: null,
         },
       ],
     });
@@ -71,7 +72,28 @@ describe('buildCoreWorkflowFilterInput', () => {
       fieldKey: CoreWorkflowFilterFieldKey.NAME,
       operand: CoreWorkflowFilterOperand.IS_EMPTY,
       value: null,
+      timezone: null,
     });
+  });
+
+  it('should stamp the timezone on date rules only', () => {
+    const rules = buildCoreWorkflowFilterInput(
+      {
+        stepFilters: [
+          buildStepFilter(),
+          buildStepFilter({
+            id: 'filter-2',
+            stepOutputKey: CoreWorkflowFilterFieldKey.UPDATED_AT,
+            operand: ViewFilterOperand.IS_TODAY,
+            value: '',
+          }),
+        ],
+      },
+      'Asia/Tokyo',
+    )?.rules;
+
+    expect(rules?.[0].timezone).toBeNull();
+    expect(rules?.[1].timezone).toBe('Asia/Tokyo');
   });
 
   it('should drop a rule whose multi select value has no option left', () => {

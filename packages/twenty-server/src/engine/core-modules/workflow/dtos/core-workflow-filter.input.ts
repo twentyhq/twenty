@@ -6,6 +6,7 @@ import {
   IsEnum,
   IsOptional,
   IsString,
+  IsTimeZone,
   ValidateNested,
 } from 'class-validator';
 
@@ -63,6 +64,11 @@ export class CoreWorkflowFilterRuleInput {
   @IsOptional()
   @IsString()
   value?: string | null;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsTimeZone()
+  timezone?: string | null;
 }
 
 @InputType()

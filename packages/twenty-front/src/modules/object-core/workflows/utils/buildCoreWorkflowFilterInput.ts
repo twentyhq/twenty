@@ -1,49 +1,22 @@
-import {
-  StepLogicalOperator,
-  ViewFilterOperand,
-  type StepFilter,
-} from 'twenty-shared/types';
+import { StepLogicalOperator, type StepFilter } from 'twenty-shared/types';
 import {
   isDefined,
   isRecordFilterOperandExpectingValue,
-  parseJson,
 } from 'twenty-shared/utils';
 
+import { CORE_WORKFLOW_FILTER_OPERAND_BY_VIEW_FILTER_OPERAND } from '@/object-core/workflows/constants/CoreWorkflowFilterOperandByViewFilterOperand';
 import { findCoreWorkflowFilterField } from '@/object-core/workflows/utils/findCoreWorkflowFilterField';
+import { isUsableCoreWorkflowFilterRule } from '@/object-core/workflows/utils/isUsableCoreWorkflowFilterRule';
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 import {
   CoreWorkflowFilterLogicalOperator,
-  CoreWorkflowFilterOperand,
   type CoreWorkflowFilterInput,
   type CoreWorkflowFilterRuleInput,
 } from '~/generated/graphql';
 
-const CORE_WORKFLOW_FILTER_OPERAND_BY_VIEW_FILTER_OPERAND: Partial<
-  Record<ViewFilterOperand, CoreWorkflowFilterOperand>
-> = {
-  [ViewFilterOperand.CONTAINS]: CoreWorkflowFilterOperand.CONTAINS,
-  [ViewFilterOperand.DOES_NOT_CONTAIN]:
-    CoreWorkflowFilterOperand.DOES_NOT_CONTAIN,
-  [ViewFilterOperand.IS]: CoreWorkflowFilterOperand.IS,
-  [ViewFilterOperand.IS_NOT]: CoreWorkflowFilterOperand.IS_NOT,
-  [ViewFilterOperand.IS_EMPTY]: CoreWorkflowFilterOperand.IS_EMPTY,
-  [ViewFilterOperand.IS_NOT_EMPTY]: CoreWorkflowFilterOperand.IS_NOT_EMPTY,
-  [ViewFilterOperand.IS_BEFORE]: CoreWorkflowFilterOperand.IS_BEFORE,
-  [ViewFilterOperand.IS_AFTER]: CoreWorkflowFilterOperand.IS_AFTER,
-  [ViewFilterOperand.IS_IN_PAST]: CoreWorkflowFilterOperand.IS_IN_PAST,
-  [ViewFilterOperand.IS_IN_FUTURE]: CoreWorkflowFilterOperand.IS_IN_FUTURE,
-  [ViewFilterOperand.IS_TODAY]: CoreWorkflowFilterOperand.IS_TODAY,
-  [ViewFilterOperand.IS_RELATIVE]: CoreWorkflowFilterOperand.IS_RELATIVE,
-};
-
-const isEmptyValue = (value: string): boolean => {
-  const parsedValue = parseJson<unknown>(value);
-
-  return Array.isArray(parsedValue) ? parsedValue.length === 0 : value === '';
-};
-
 const toCoreWorkflowFilterRule = (
   stepFilter: StepFilter,
+  timezone: string | undefined,
 ): CoreWorkflowFilterRuleInput | undefined => {
   const selectedField = findCoreWorkflowFilterField(stepFilter.stepOutputKey);
   const operand =
@@ -55,22 +28,24 @@ const toCoreWorkflowFilterRule = (
 
   const expectsValue = isRecordFilterOperandExpectingValue(stepFilter.operand);
 
-  if (expectsValue && isEmptyValue(stepFilter.value)) {
-    return undefined;
-  }
-
   return {
     fieldKey: selectedField.key,
     operand,
     value: expectsValue ? stepFilter.value : null,
+    timezone:
+      selectedField.filterType === 'DATE_TIME' && isDefined(timezone)
+        ? timezone
+        : null,
   };
 };
 
 export const buildCoreWorkflowFilterInput = (
   filterSettings: FilterSettings,
+  timezone?: string,
 ): CoreWorkflowFilterInput | undefined => {
   const rules = (filterSettings.stepFilters ?? [])
-    .map(toCoreWorkflowFilterRule)
+    .filter(isUsableCoreWorkflowFilterRule)
+    .map((stepFilter) => toCoreWorkflowFilterRule(stepFilter, timezone))
     .filter(isDefined);
 
   if (rules.length === 0) {

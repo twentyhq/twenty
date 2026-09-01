@@ -106,6 +106,7 @@ export enum CoreWorkflowFilterOperand {
 export type CoreWorkflowFilterRuleInput = {
   fieldKey: CoreWorkflowFilterFieldKey;
   operand: CoreWorkflowFilterOperand;
+  timezone?: InputMaybe<Scalars['String']['input']>;
   value?: InputMaybe<Scalars['String']['input']>;
 };
 

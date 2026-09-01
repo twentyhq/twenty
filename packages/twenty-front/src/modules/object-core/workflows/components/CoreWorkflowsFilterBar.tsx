@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -9,6 +8,7 @@ import { findCoreWorkflowFilterField } from '@/object-core/workflows/utils/findC
 import { useOpenCoreWorkflowFiltersSidePanel } from '@/object-core/workflows/hooks/useOpenCoreWorkflowFiltersSidePanel';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { getCoreWorkflowFilterChipLabel } from '@/object-core/workflows/utils/getCoreWorkflowFilterChipLabel';
+import { isUsableCoreWorkflowFilterRule } from '@/object-core/workflows/utils/isUsableCoreWorkflowFilterRule';
 import { removeCoreWorkflowFilterRule } from '@/object-core/workflows/utils/removeCoreWorkflowFilterRule';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
@@ -29,9 +29,7 @@ export const CoreWorkflowsFilterBar = () => {
 
   const appliedStepFilters = (
     coreWorkflowsFilterSettings.stepFilters ?? []
-  ).filter((stepFilter) =>
-    isDefined(findCoreWorkflowFilterField(stepFilter.stepOutputKey)),
-  );
+  ).filter(isUsableCoreWorkflowFilterRule);
 
   return (
     <StyledContainer>

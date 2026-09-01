@@ -311,7 +311,7 @@ describe('buildCoreWorkflowFilterPredicate', () => {
   });
 
   describe('UPDATED_AT rules', () => {
-    it('should bind the UTC day bounds for IS', () => {
+    it('should bind UTC day bounds for IS when no timezone travels with the rule', () => {
       expect(
         buildPredicate([
           {
@@ -322,7 +322,24 @@ describe('buildCoreWorkflowFilterPredicate', () => {
         ]),
       ).toEqual({
         predicate: `((c."updatedAt" >= $2::timestamptz AND c."updatedAt" < $3::timestamptz))`,
-        parameters: ['2026-08-31T00:00:00.000Z', '2026-09-01T00:00:00.000Z'],
+        parameters: ['2026-08-31T00:00:00Z', '2026-09-01T00:00:00Z'],
+      });
+    });
+
+    it('should bind the day bounds of the rule timezone for IS', () => {
+      // 2026-08-31T23:30Z is already Sept 1 in Tokyo
+      expect(
+        buildPredicate([
+          {
+            fieldKey: CoreWorkflowFilterFieldKey.UPDATED_AT,
+            operand: CoreWorkflowFilterOperand.IS,
+            value: JSON.stringify('2026-08-31T23:30:00.000Z'),
+            timezone: 'Asia/Tokyo',
+          },
+        ]),
+      ).toEqual({
+        predicate: `((c."updatedAt" >= $2::timestamptz AND c."updatedAt" < $3::timestamptz))`,
+        parameters: ['2026-08-31T15:00:00Z', '2026-09-01T15:00:00Z'],
       });
     });
 
@@ -351,7 +368,7 @@ describe('buildCoreWorkflowFilterPredicate', () => {
           },
         ]),
       ).toEqual({
-        predicate: `(c."updatedAt" > $2::timestamptz)`,
+        predicate: `(c."updatedAt" >= $2::timestamptz)`,
         parameters: ['2026-08-31T13:45:00.000Z'],
       });
     });
@@ -401,16 +418,26 @@ describe('buildCoreWorkflowFilterPredicate', () => {
         ]),
       ).toEqual({ predicate: `(c."updatedAt" > now())`, parameters: [] });
 
-      expect(
-        buildPredicate([
-          {
-            fieldKey: CoreWorkflowFilterFieldKey.UPDATED_AT,
-            operand: CoreWorkflowFilterOperand.IS_TODAY,
-          },
-        ]).predicate,
-      ).toBe(
-        `((c."updatedAt" >= date_trunc('day', now()) AND c."updatedAt" < date_trunc('day', now()) + interval '1 day'))`,
+      const todayPredicate = buildPredicate([
+        {
+          fieldKey: CoreWorkflowFilterFieldKey.UPDATED_AT,
+          operand: CoreWorkflowFilterOperand.IS_TODAY,
+          timezone: 'Asia/Tokyo',
+        },
+      ]);
+
+      expect(todayPredicate.predicate).toBe(
+        `((c."updatedAt" >= $2::timestamptz AND c."updatedAt" < $3::timestamptz))`,
       );
+
+      const [todayStart, tomorrowStart] = todayPredicate.parameters as string[];
+      const dayInMilliseconds = 24 * 60 * 60 * 1000;
+
+      expect(
+        new Date(tomorrowStart).getTime() - new Date(todayStart).getTime(),
+      ).toBe(dayInMilliseconds);
+      expect(new Date(todayStart).getTime()).toBeLessThanOrEqual(Date.now());
+      expect(new Date(tomorrowStart).getTime()).toBeGreaterThan(Date.now());
     });
 
     it('should resolve a relative date filter into a bound range', () => {
@@ -591,8 +618,8 @@ describe('buildCoreWorkflowFilterPredicate', () => {
         predicate: `(c.name ILIKE $5 ESCAPE '\\' OR (c."updatedAt" >= $6::timestamptz AND c."updatedAt" < $7::timestamptz) OR (coalesce(bool_or(v.status = 'ACTIVE'), false)) OR (c.name IS NULL OR c.name NOT ILIKE $8 ESCAPE '\\'))`,
         parameters: [
           '%invoice%',
-          '2026-08-31T00:00:00.000Z',
-          '2026-09-01T00:00:00.000Z',
+          '2026-08-31T00:00:00Z',
+          '2026-09-01T00:00:00Z',
           'Draft',
         ],
       });

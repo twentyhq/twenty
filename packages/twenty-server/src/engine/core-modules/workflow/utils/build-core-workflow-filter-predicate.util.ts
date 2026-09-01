@@ -2,6 +2,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { Temporal } from 'temporal-polyfill';
 import {
   escapeForIlike,
+  getNextPeriodStart,
+  getPeriodStart,
   isDefined,
   isNonEmptyArray,
   resolveRelativeDateTimeFilter,
@@ -24,7 +26,6 @@ import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/wor
 
 const NAME_COLUMN = 'c.name';
 const UPDATED_AT_COLUMN = 'c."updatedAt"';
-const ONE_DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 const CORE_WORKFLOW_STATUS_VALUES: WorkflowStatus[] =
   Object.values(WorkflowStatus);
 
@@ -118,22 +119,20 @@ const parseDateValue = (rule: CoreWorkflowFilterRuleInput): Date => {
   return date;
 };
 
-const computeUtcDayBounds = (
-  date: Date,
-): { dayStart: string; nextDayStart: string } => {
-  const dayStartTime = Date.UTC(
-    date.getUTCFullYear(),
-    date.getUTCMonth(),
-    date.getUTCDate(),
-  );
+const computeDayBounds = (
+  zonedDateTime: Temporal.ZonedDateTime,
+): { dayStart: string; nextDayStart: string } => ({
+  dayStart: getPeriodStart(zonedDateTime, 'DAY').toInstant().toString(),
+  nextDayStart: getNextPeriodStart(zonedDateTime, 'DAY').toInstant().toString(),
+});
 
-  return {
-    dayStart: new Date(dayStartTime).toISOString(),
-    nextDayStart: new Date(
-      dayStartTime + ONE_DAY_IN_MILLISECONDS,
-    ).toISOString(),
-  };
-};
+const toRuleZonedDateTime = (
+  date: Date,
+  rule: CoreWorkflowFilterRuleInput,
+): Temporal.ZonedDateTime =>
+  Temporal.Instant.fromEpochMilliseconds(date.getTime()).toZonedDateTimeISO(
+    rule.timezone ?? 'UTC',
+  );
 
 const parseRelativeDateRange = (
   rule: CoreWorkflowFilterRuleInput,
@@ -197,7 +196,7 @@ const buildUpdatedAtComparisonPredicate = ({
 }: {
   bindParameter: BindParameter;
   rule: CoreWorkflowFilterRuleInput;
-  sqlOperator: '<' | '>';
+  sqlOperator: '<' | '>=';
 }): string =>
   `${UPDATED_AT_COLUMN} ${sqlOperator} ${bindParameter(parseDateValue(rule).toISOString())}::timestamptz`;
 
@@ -263,8 +262,8 @@ const PREDICATE_BUILDER_BY_OPERAND_BY_FIELD_KEY: Record<
   },
   [CoreWorkflowFilterFieldKey.UPDATED_AT]: {
     [CoreWorkflowFilterOperand.IS]: ({ rule, bindParameter }) => {
-      const { dayStart, nextDayStart } = computeUtcDayBounds(
-        parseDateValue(rule),
+      const { dayStart, nextDayStart } = computeDayBounds(
+        toRuleZonedDateTime(parseDateValue(rule), rule),
       );
 
       return buildUpdatedAtRangePredicate({
@@ -283,14 +282,23 @@ const PREDICATE_BUILDER_BY_OPERAND_BY_FIELD_KEY: Record<
       buildUpdatedAtComparisonPredicate({
         bindParameter,
         rule,
-        sqlOperator: '>',
+        sqlOperator: '>=',
       }),
     [CoreWorkflowFilterOperand.IS_IN_PAST]: () =>
       `${UPDATED_AT_COLUMN} < now()`,
     [CoreWorkflowFilterOperand.IS_IN_FUTURE]: () =>
       `${UPDATED_AT_COLUMN} > now()`,
-    [CoreWorkflowFilterOperand.IS_TODAY]: () =>
-      `(${UPDATED_AT_COLUMN} >= date_trunc('day', now()) AND ${UPDATED_AT_COLUMN} < date_trunc('day', now()) + interval '1 day')`,
+    [CoreWorkflowFilterOperand.IS_TODAY]: ({ rule, bindParameter }) => {
+      const { dayStart, nextDayStart } = computeDayBounds(
+        Temporal.Now.zonedDateTimeISO(rule.timezone ?? 'UTC'),
+      );
+
+      return buildUpdatedAtRangePredicate({
+        bindParameter,
+        start: dayStart,
+        end: nextDayStart,
+      });
+    },
     [CoreWorkflowFilterOperand.IS_RELATIVE]: ({ rule, bindParameter }) => {
       const { start, end } = parseRelativeDateRange(rule);
 
