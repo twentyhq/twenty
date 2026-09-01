@@ -157,15 +157,15 @@ export const resolveJunctionRelationTargetShapeFromVisibleField = ({
     flatFieldMetadataMaps,
   });
 
-  return targetJoinColumns.length === 0
-    ? undefined
-    : {
-        ...validatedOwningShape,
-        junctionSourceJoinColumnName: computeMorphOrRelationFieldJoinColumnName(
-          {
-            name: visibleJunctionTargetFlatFieldMetadata.name,
-          },
-        ),
-        targetJoinColumns,
-      };
+  if (targetJoinColumns.length === 0) {
+    return undefined;
+  }
+
+  return {
+    ...validatedOwningShape,
+    junctionSourceJoinColumnName: computeMorphOrRelationFieldJoinColumnName({
+      name: visibleJunctionTargetFlatFieldMetadata.name,
+    }),
+    targetJoinColumns,
+  };
 };

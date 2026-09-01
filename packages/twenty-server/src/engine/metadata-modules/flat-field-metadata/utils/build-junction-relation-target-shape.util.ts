@@ -110,17 +110,17 @@ export const buildJunctionRelationTargetShape = ({
     flatFieldMetadataMaps,
   });
 
-  return targetJoinColumns.length === 0
-    ? undefined
-    : {
-        kind: 'JUNCTION',
-        junctionObjectMetadataId: junctionFlatObjectMetadata.id,
-        junctionObjectNameSingular: junctionFlatObjectMetadata.nameSingular,
-        junctionSourceJoinColumnName: computeMorphOrRelationFieldJoinColumnName(
-          {
-            name: junctionSourceFlatFieldMetadata.name,
-          },
-        ),
-        targetJoinColumns,
-      };
+  if (targetJoinColumns.length === 0) {
+    return undefined;
+  }
+
+  return {
+    kind: 'JUNCTION',
+    junctionObjectMetadataId: junctionFlatObjectMetadata.id,
+    junctionObjectNameSingular: junctionFlatObjectMetadata.nameSingular,
+    junctionSourceJoinColumnName: computeMorphOrRelationFieldJoinColumnName({
+      name: junctionSourceFlatFieldMetadata.name,
+    }),
+    targetJoinColumns,
+  };
 };
