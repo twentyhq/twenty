@@ -310,9 +310,7 @@ export class ApplicationInstallService {
     });
 
     const isUpgradeOfInstalledApplication =
-      isVersionUpgrade &&
-      (application.state === ApplicationState.INSTALLED ||
-        application.state === ApplicationState.UPGRADING);
+      isVersionUpgrade && application.state === ApplicationState.INSTALLED;
 
     const hasNeverCompletedInstall =
       isVersionUpgrade && application.state === ApplicationState.INSTALLING;
