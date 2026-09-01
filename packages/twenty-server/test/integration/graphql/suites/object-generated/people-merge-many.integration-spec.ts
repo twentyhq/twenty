@@ -348,38 +348,28 @@ describe('people merge resolvers (integration)', () => {
 
       expect(mergeResponse.body.errors).toBeUndefined();
 
-      const findRemainingResponse = await makeGraphqlAPIRequest(
+      const findMigratedResponse = await makeGraphqlAPIRequest(
         findManyOperationFactory({
           objectMetadataSingularName: 'timelineActivity',
           objectMetadataPluralName: 'timelineActivities',
-          gqlFields: 'id',
-          filter: { targetPersonId: { eq: duplicatePersonId } },
-        }),
-      );
-
-      expect(findRemainingResponse.body.errors).toBeUndefined();
-      expect(findRemainingResponse.body.data.timelineActivities.edges).toEqual(
-        [],
-      );
-
-      const findMigratedResponse = await makeGraphqlAPIRequest(
-        findOneOperationFactory({
-          objectMetadataSingularName: 'timelineActivity',
           gqlFields: 'id targetPersonId',
-          filter: {
-            id: {
-              eq: createdTimelineActivityIdsForCleaning[
-                timelineActivityCount - 1
-              ],
-            },
-          },
+          filter: { id: { in: createdTimelineActivityIdsForCleaning } },
+          first: timelineActivityCount,
         }),
       );
 
       expect(findMigratedResponse.body.errors).toBeUndefined();
-      expect(
-        findMigratedResponse.body.data.timelineActivity.targetPersonId,
-      ).toBe(priorityPersonId);
+
+      const migratedTargetPersonIds =
+        findMigratedResponse.body.data.timelineActivities.edges.map(
+          ({ node }: { node: { targetPersonId: string } }) =>
+            node.targetPersonId,
+        );
+
+      expect(migratedTargetPersonIds).toHaveLength(timelineActivityCount);
+      expect(new Set(migratedTargetPersonIds)).toEqual(
+        new Set([priorityPersonId]),
+      );
     });
   });
 
