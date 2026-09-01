@@ -169,6 +169,7 @@ export class ApplicationInstallResolver {
       app_name: application?.name ?? 'unknown',
       source_type: application?.sourceType ?? 'unknown',
       version: application?.version ?? 'unknown',
+      reason: 'user',
     };
 
     try {

@@ -45,6 +45,8 @@ import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logi
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
@@ -170,6 +172,7 @@ export class WorkspaceService {
     private readonly sdkClientGenerationService: SdkClientGenerationService,
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
     private readonly applicationUninstallService: ApplicationUninstallService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async updateWorkspaceById({
@@ -564,6 +567,12 @@ export class WorkspaceService {
 
     assert(workspace, 'Workspace not found');
 
+    // A workspace can be hard deleted after being soft deleted, so only the
+    // call that ends the installs emits, never both.
+    if (!isDefined(workspace.deletedAt)) {
+      await this.emitWorkspaceDeletionUninstallMetrics(workspace.id);
+    }
+
     if (!softDelete) {
       return this.hardDeleteWorkspaceWithApplicationUninstallLock(workspace);
     }
@@ -593,6 +602,34 @@ export class WorkspaceService {
     this.logger.log(`workspace ${id} soft deleted`);
 
     return workspace;
+  }
+
+  private async emitWorkspaceDeletionUninstallMetrics(
+    workspaceId: string,
+  ): Promise<void> {
+    try {
+      const applications =
+        await this.applicationService.findManyApplications(workspaceId);
+
+      for (const application of applications) {
+        this.metricsService.incrementCounterBy({
+          key: MetricsKeys.AppUninstallSucceeded,
+          amount: 1,
+          attributes: {
+            universal_identifier: application.universalIdentifier,
+            app_name: application.name,
+            source_type: application.sourceType,
+            version: application.version ?? 'unknown',
+            reason: 'workspace_deletion',
+          },
+        });
+      }
+    } catch (error) {
+      this.logger.error(
+        `Failed to emit uninstall metrics for workspace ${workspaceId}`,
+        error,
+      );
+    }
   }
 
   private async hardDeleteWorkspaceWithApplicationUninstallLock(
