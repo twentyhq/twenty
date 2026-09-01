@@ -37,4 +37,5 @@ export enum SidePanelPages {
   EmailBlockSettings = 'email-block-settings',
   SettingsMetadataTranslations = 'settings-metadata-translations',
   RoutedPage = 'routed-page',
+  WorkflowCoreFilters = 'workflow-core-filters',
 }

@@ -8,6 +8,7 @@ export const CAMPAIGN_MESSAGE_DELIVERY_STATUS = {
 } as const;
 
 export const MATERIALIZE_CAMPAIGN_JOB = 'MaterializeCampaignJob';
+export const MATERIALIZE_CAMPAIGN_CHUNK_JOB = 'MaterializeCampaignChunkJob';
 export const SEND_CAMPAIGN_EMAIL_JOB = 'SendCampaignEmailJob';
 export const REFRESH_CAMPAIGN_STATS_JOB = 'RefreshCampaignStatsJob';
 

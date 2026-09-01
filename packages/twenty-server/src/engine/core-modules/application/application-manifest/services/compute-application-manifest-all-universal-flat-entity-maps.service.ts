@@ -55,18 +55,24 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
   compute({
     manifest,
     ownerFlatApplication,
+    fromAllFlatEntityMaps,
+    isLogicFunctionPrebuiltModeEnabled,
     now,
     workspaceId,
   }: {
     manifest: Manifest;
     ownerFlatApplication: FlatApplication;
+    fromAllFlatEntityMaps: AllFlatEntityMaps;
+    isLogicFunctionPrebuiltModeEnabled: boolean;
     now: string;
     workspaceId: string;
   }): AllFlatEntityMaps {
     const allUniversalFlatEntityMaps = createEmptyAllFlatEntityMaps();
 
-    const { universalIdentifier: applicationUniversalIdentifier } =
-      ownerFlatApplication;
+    const {
+      universalIdentifier: applicationUniversalIdentifier,
+      sourceType: applicationSourceType,
+    } = ownerFlatApplication;
 
     for (const objectManifest of manifest.objects) {
       const flatObjectMetadata =
@@ -194,6 +200,10 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           fromLogicFunctionManifestToUniversalFlatLogicFunction({
             logicFunctionManifest,
             applicationUniversalIdentifier,
+            applicationSourceType,
+            existingFlatLogicFunctionMaps:
+              fromAllFlatEntityMaps.flatLogicFunctionMaps,
+            isPrebuiltModeEnabled: isLogicFunctionPrebuiltModeEnabled,
             now,
           }),
         universalFlatEntityMapsToMutate:

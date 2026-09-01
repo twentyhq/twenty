@@ -11,8 +11,10 @@ import { SnsSignatureVerifierService } from 'src/modules/messaging-webhooks/driv
 import { SnsSubscriptionConfirmerService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/sns-subscription-confirmer.service';
 import { InboundMailHandlerService } from 'src/modules/messaging-webhooks/handlers/inbound-mail-handler.service';
 import { InboundUnsubscribeHandlerService } from 'src/modules/messaging-webhooks/handlers/inbound-unsubscribe-handler.service';
+import { OutboundDeliveryEventHandlerService } from 'src/modules/messaging-webhooks/handlers/outbound-delivery-event-handler.service';
+import { OutboundDeliveryEventProcessorService } from 'src/modules/messaging-webhooks/handlers/outbound-delivery-event-processor.service';
 import { OutboundSendingStateHandlerService } from 'src/modules/messaging-webhooks/handlers/outbound-sending-state-handler.service';
-import { OutboundSuppressionHandlerService } from 'src/modules/messaging-webhooks/handlers/outbound-suppression-handler.service';
+import { MessagingOutboundDeliveryEventJob } from 'src/modules/messaging-webhooks/jobs/messaging-outbound-delivery-event.job';
 import { MessagingWebhooksController } from 'src/modules/messaging-webhooks/messaging-webhooks.controller';
 
 @Module({
@@ -21,8 +23,10 @@ import { MessagingWebhooksController } from 'src/modules/messaging-webhooks/mess
   providers: [
     InboundMailHandlerService,
     InboundUnsubscribeHandlerService,
+    OutboundDeliveryEventHandlerService,
+    OutboundDeliveryEventProcessorService,
     OutboundSendingStateHandlerService,
-    OutboundSuppressionHandlerService,
+    MessagingOutboundDeliveryEventJob,
     SnsSignatureVerifierService,
     SnsSubscriptionConfirmerService,
     SesInboundWebhookDriverService,
