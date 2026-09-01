@@ -1,11 +1,10 @@
 import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTitle';
 import { SettingsSecondaryBar } from '@/settings/components/layout/SettingsSecondaryBar';
-import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
-import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { useSyncSidePanelPageTitle } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { useEffect, useId, type JSX, type ReactNode } from 'react';
+import { useId, type JSX, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type SettingsPageLayoutProps = {
@@ -30,8 +29,6 @@ export const SettingsPageLayout = ({
   titleColor,
 }: SettingsPageLayoutProps) => {
   const titleInstanceId = useId();
-  const workspaceSurface = useWorkspaceSurface();
-  const { updateSidePanelPageInfo } = useUpdateSidePanelPageInfo();
 
   const pageTitle =
     typeof title === 'string'
@@ -39,14 +36,9 @@ export const SettingsPageLayout = ({
       : links.findLast(({ children }) => typeof children === 'string')
           ?.children;
 
-  useEffect(() => {
-    if (
-      workspaceSurface.type === 'side-panel' &&
-      typeof pageTitle === 'string'
-    ) {
-      updateSidePanelPageInfo({ pageTitle });
-    }
-  }, [pageTitle, updateSidePanelPageInfo, workspaceSurface.type]);
+  useSyncSidePanelPageTitle(
+    typeof pageTitle === 'string' ? pageTitle : undefined,
+  );
 
   const formattedTitle =
     typeof title === 'string' ? (

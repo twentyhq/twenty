@@ -19,6 +19,7 @@ import {
   FieldMetadataType,
   ObjectOpenRecordIn,
   OpenRecordIn,
+  SIDE_PANEL_APP_PATHS,
   SidePanelPages,
   type EnqueueSnackbarParams,
 } from 'twenty-shared/types';
@@ -65,18 +66,12 @@ const FRONT_COMPONENT_CLIPBOARD_PREVIEW_LENGTH = 30;
 
 const FRONT_COMPONENT_UPLOAD_FILE_NAME_MAX_LENGTH = 200;
 
-const FRONT_COMPONENT_ROUTED_SIDE_PANEL_PATHS = [
-  AppPath.RecordIndexPage,
-  AppPath.RecordShowPage,
-  AppPath.WorkflowCoreIndexPage,
-] as const;
-
 const isFrontComponentRoutedSidePanelPath = (path: string) => {
   const pathname = parsePath(path).pathname;
 
   return (
     isNonEmptyString(pathname) &&
-    FRONT_COMPONENT_ROUTED_SIDE_PANEL_PATHS.some((routePath) =>
+    SIDE_PANEL_APP_PATHS.some((routePath) =>
       matchPath({ path: routePath, end: true }, pathname),
     )
   );

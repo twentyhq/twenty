@@ -1,5 +1,6 @@
 import {
   type AppPath,
+  type SidePanelAppPath,
   type SidePanelPages,
   type EnqueueSnackbarParams,
   type NavigateOptions,
@@ -15,10 +16,7 @@ export type NavigateFunction = <T extends AppPath>(
   options?: NavigateOptions,
 ) => Promise<void>;
 
-export type SidePanelAppPath =
-  | AppPath.RecordIndexPage
-  | AppPath.RecordShowPage
-  | AppPath.WorkflowCoreIndexPage;
+export type { SidePanelAppPath } from 'twenty-shared/types';
 
 type OpenRoutedSidePanelPageParams<T extends SidePanelAppPath> = {
   to: T;

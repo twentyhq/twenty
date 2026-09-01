@@ -43,3 +43,11 @@ export enum AppPath {
   NotFoundWildcard = '*',
   NotFound = '/not-found',
 }
+
+export const SIDE_PANEL_APP_PATHS = [
+  AppPath.RecordIndexPage,
+  AppPath.RecordShowPage,
+  AppPath.WorkflowCoreIndexPage,
+] as const;
+
+export type SidePanelAppPath = (typeof SIDE_PANEL_APP_PATHS)[number];
