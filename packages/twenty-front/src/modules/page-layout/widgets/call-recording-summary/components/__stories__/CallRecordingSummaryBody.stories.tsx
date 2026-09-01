@@ -105,6 +105,18 @@ const unsummarizedCallRecording: WidgetCallRecordingCandidate = {
   summary: null,
 };
 
+const processingCallRecording: WidgetCallRecordingCandidate = {
+  ...unsummarizedCallRecording,
+  status: CallRecordingStatus.PROCESSING,
+  transcript: { status: 'PENDING' },
+};
+
+const failedCallRecording: WidgetCallRecordingCandidate = {
+  ...unsummarizedCallRecording,
+  status: CallRecordingStatus.FAILED,
+  transcript: { status: 'FAILED' },
+};
+
 const meta: Meta<typeof CallRecordingSummaryBody> = {
   title: 'Modules/PageLayout/Widgets/CallRecordingSummaryBody',
   component: CallRecordingSummaryBody,
@@ -158,7 +170,7 @@ export const Loading: Story = {
   },
 };
 
-export const NoSummary: Story = {
+export const SummaryNotAvailable: Story = {
   args: {
     callRecording: unsummarizedCallRecording,
     loading: false,
@@ -168,7 +180,35 @@ export const NoSummary: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('No Summary');
+    await canvas.findByText('Summary Not Available');
+  },
+};
+
+export const Processing: Story = {
+  args: {
+    callRecording: processingCallRecording,
+    loading: false,
+    error: undefined,
+    restriction: undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Processing Recording');
+  },
+};
+
+export const Failed: Story = {
+  args: {
+    callRecording: failedCallRecording,
+    loading: false,
+    error: undefined,
+    restriction: undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Recording Failed');
   },
 };
 

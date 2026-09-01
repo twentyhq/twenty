@@ -106,6 +106,18 @@ const completedCallRecording: WidgetCallRecordingCandidate = {
   video: null,
 };
 
+const pendingCallRecording: WidgetCallRecordingCandidate = {
+  ...completedCallRecording,
+  status: CallRecordingStatus.PROCESSING,
+  transcript: { status: 'PENDING' },
+};
+
+const failedCallRecording: WidgetCallRecordingCandidate = {
+  ...completedCallRecording,
+  status: CallRecordingStatus.FAILED,
+  transcript: { status: 'FAILED' },
+};
+
 const makeMockTranscriptEntry = ({
   speakerName,
   text,
@@ -576,6 +588,34 @@ export const Loading: Story = {
         canvasElement.querySelector('.react-loading-skeleton'),
       ).toBeVisible();
     });
+  },
+};
+
+export const Pending: Story = {
+  args: {
+    callRecording: pendingCallRecording,
+    loading: false,
+    error: undefined,
+    restriction: undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Preparing Transcript');
+  },
+};
+
+export const Failed: Story = {
+  args: {
+    callRecording: failedCallRecording,
+    loading: false,
+    error: undefined,
+    restriction: undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Transcript Failed');
   },
 };
 
