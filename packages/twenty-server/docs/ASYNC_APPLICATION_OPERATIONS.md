@@ -44,6 +44,20 @@ export enum ApplicationState {
 - **No `FAILED` state** (*from #24941*): a failed fresh install rolls back and deletes the row; a failed upgrade or uninstall reverts to `INSTALLED`. The failure reason lives in server logs and the failed job. A `FAILED` state would need retry/cleanup UX we don't want yet.
 - **Column default `'INSTALLED'`**, `NOT NULL`. This simplifies #24941's backfill-then-switch-default dance into nothing: existing rows get `INSTALLED` via the default at migration time, and every creation path that produces a ready-to-use row (twenty standard app, workspace-custom app, dev apps synced by the CLI watcher, bare OAuth installs) is correct without being touched. Only the managed install pipeline passes `INSTALLING` explicitly on create.
 
+### Lifecycle transitions
+
+The complete set of allowed transitions — the contract for PR 1's writes and PR 3's `transitionState` gate. Anything not in this table is a bug:
+
+```text
+fresh install: none -> INSTALLING -> INSTALLED
+upgrade:       INSTALLED -> UPGRADING -> INSTALLED
+uninstall:     INSTALLED -> UNINSTALLING -> deleted
+
+fresh install failure: INSTALLING -> deleted
+upgrade failure:       UPGRADING -> INSTALLED
+uninstall failure:     UNINSTALLING -> INSTALLED
+```
+
 ### Migration
 
 One fast instance command in the current `TWENTY_CURRENT_VERSION` directory (`2-38` at time of writing), generated with:
@@ -96,6 +110,7 @@ Metadata/broadcast events are delivered to every stream in the workspace uncondi
 
 - `ApplicationService.create` / `update` / `delete` broadcast `application` `created` / `updated` / `deleted` (*from #24941*). Best-effort: try/catch + `logger.warn`, as `broadcastSdkClientCoreChecksumUpdate` does — a broadcast failure never fails the operation.
 - **Payloads always carry the full serialized row the front holds** (`serializeApplicationForBroadcast`: `id`, `universalIdentifier`, `name`, `state`, `version`, ...) — never a partial `after` (*from #24941*: a partial `after` replaced the stored application with a stub mid-install; also note `turnSseMetadataEventsToMetadataOperationBrowserEvents` silently drops create/update events without `properties.after`). Fold `broadcastSdkClientCoreChecksumUpdate` into the same serializer.
+- **Broadcast ordering**: DB write, then workspace cache invalidation/recompute where the operation touches it (the flat application maps), then serialize the full row, then broadcast — the event is always the last step, so a client reacting to it never reads related data staler than the row it was told about.
 - `ApplicationRegistrationService` workspace-scoped mutations (`create`, `update`, `updateFromManifest`, `delete`, `setLatestAvailableVersionIfChanged`, ...) broadcast `applicationRegistration` events the same way, with a serialized summary payload matching what the front queries (`id`, `universalIdentifier`, `latestAvailableVersion`, `sourceType`, `name`, ...).
 - **Known limitation, accepted:** cross-workspace registration mutations (`updateGlobal`, `upsertFromCatalog`, admin-panel resolvers) have no `workspaceId` to broadcast into — there is no cross-workspace fan-out primitive. Admin panel keeps refreshing on query. Do not build a new channel for this.
 
@@ -148,13 +163,21 @@ Their outputs differ from the synchronous ones, because resolving means "operati
 | upgrade | `Application`, upgraded | `Application`, `state: UPGRADING` |
 | uninstall | `Boolean`, uninstall done | `Application`, `state: UNINSTALLING` — the front follows this row until it disappears |
 
-The async mutations:
+The async mutations follow one fixed ordering — DB state and the BullMQ job are not atomic together (no outbox, deliberately), so the reservation-then-compensate sequence is the contract:
 
-1. **Fail fast at enqueue time** (*from #24941*) so common errors still surface synchronously on the mutation: registration existence, tarball ownership/listing availability, `canBeUninstalled`, synchronous version-progression check, and the concurrent-operation guard.
-2. **Reserve the lifecycle atomically.** Every transition goes through `ApplicationService.transitionState`, a single conditional write: `UPDATE application SET state = $next WHERE id = $id AND state = $expected`, affected-rows-checked. The loser of a race gets a new `APPLICATION_OPERATION_IN_PROGRESS` exception code. Two concurrent *fresh* installs have no row to gate on; the partial unique index on `(universalIdentifier, workspaceId)` arbitrates and the losing insert maps to the same error. This must be atomic from the first commit — the read-then-check-then-update variant was #24941's main review finding.
-3. Install pre-creates the row (`INSTALLING` placeholder from registration data) or flips an installed row to `UPGRADING`; uninstall flips to `UNINSTALLING`; then enqueue, and return the row as claimed. **Enqueue failure compensates**: revert via `transitionStateBestEffort` (log, don't throw — a failed recovery must not mask the enqueue error) or delete the fresh placeholder.
+1. **Fail fast** (*from #24941*) so common errors still surface synchronously on the mutation: registration existence, tarball ownership/listing availability, `canBeUninstalled`, synchronous version-progression check.
+2. **Reserve the lifecycle atomically and commit.** Install pre-creates the row (`INSTALLING` placeholder from registration data) or flips an installed row to `UPGRADING`; uninstall flips to `UNINSTALLING`. Every flip goes through `ApplicationService.transitionState`, a single conditional write: `UPDATE application SET state = $next WHERE id = $id AND state = $expected`, affected-rows-checked. The loser of a race gets a new `APPLICATION_OPERATION_IN_PROGRESS` exception code. Two concurrent *fresh* installs have no row to gate on; the partial unique index on `(universalIdentifier, workspaceId)` arbitrates and the losing insert maps to the same error. This must be atomic from the first commit — the read-then-check-then-update variant was #24941's main review finding.
+3. **Enqueue the job** — only after the reservation is committed, so a worker can never pick up a job whose row it cannot see.
+4. **Return the claimed `Application` row** (transitional state, per the table above).
+5. **Enqueue failure compensates**: revert the reservation via `transitionStateBestEffort` (log, don't throw — a failed recovery must not mask the enqueue error) or delete the fresh placeholder.
+
+**Duplicate clicks and retries.** The mutation always throws `APPLICATION_OPERATION_IN_PROGRESS` when it loses the state gate — the API stays unambiguous, it never pretends a conflicting request was accepted (an install racing an uninstall must not look accepted). Retry tolerance lives in the frontend: transitional states disable the action buttons in the first place, and when the error still comes back (network retry, second tab) while the stored row is already in the transitional state the user asked for, the front swallows it and follows the existing row instead of showing a failure.
+
+**Service boundary.** The async resolvers (plus a thin orchestration service) own steps 1-5: claiming/creating the placeholder, enqueueing, compensating, returning the row. The existing `ApplicationInstallService` / upgrade service / `ApplicationSyncService.uninstallApplication` remain the execution path — invoked by the jobs and by the sync mutations — and own the terminal transition and rollback. Their signatures and return shapes do not change for async's sake.
 
 Because sync and async operations now coexist, the synchronous paths must claim the lifecycle through the same `transitionState` gate (they already write the states since PR 1 — this upgrades those writes to conditional ones), so a sync CLI install and an async UI install on the same app cannot run concurrently: the loser gets `APPLICATION_OPERATION_IN_PROGRESS` whichever side it is. The existing `app-install:` cache lock stays inside the service as the execution-time serializer; state gating is the request-time arbiter.
+
+**Observability.** The enqueue log line and the job's start/end/failure logs all carry `workspaceId`, `universalIdentifier` and the BullMQ job id, and the failure metrics keep their `error_code` attribute — one stable correlation key from mutation acceptance to worker execution to the failed job. The job id stays out of the GraphQL response: the front follows the row, and failure-reason surfacing is a non-goal.
 
 Failure handling in jobs (same model as PR 1): failed fresh install → rollback deletes the placeholder (broadcasts `deleted`); failed upgrade/uninstall → revert to `INSTALLED`. The jobs emit the same install/upgrade/uninstall metrics the synchronous paths do.
 
@@ -177,7 +200,11 @@ Unchanged. `app install` / `app uninstall` keep calling the synchronous mutation
 
 - Existing install/uninstall integration suites keep exercising the synchronous mutations unchanged.
 - New integration coverage for the async mutations: enqueue-time errors surface synchronously (version progression, registration not found, operation in progress), and the happy path reaches `INSTALLED` after draining the queues (the in-process test app runs the job workers; switch to real timers when jest fake timers are active — *from #24941*).
-- Unit tests: `transitionState` gating (winner/loser), enqueue-failure compensation. Nothing else.
+- Unit/integration tests for the highest-risk races, and nothing else:
+  - enqueue failure after state reservation compensates correctly (revert or placeholder delete);
+  - a sync operation loses to an async-claimed state, and an async operation loses to a sync-claimed state — both surface `APPLICATION_OPERATION_IN_PROGRESS`;
+  - duplicate fresh installs: the unique-index loser maps to `APPLICATION_OPERATION_IN_PROGRESS`;
+  - `transitionState` winner/loser on a plain concurrent flip.
 
 **Estimated size:** the biggest of the three, but bounded: jobs + new resolvers + `transitionState` + frontend flow changes, with no schema-breaking or transport changes and no CLI/CI changes.
 
