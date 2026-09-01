@@ -1,4 +1,5 @@
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 
 export const getWorkspaceSurfaceScopedComponentInstanceId = ({
@@ -12,8 +13,8 @@ export const getWorkspaceSurfaceScopedComponentInstanceId = ({
 }) => {
   if (
     surfaceType !== 'side-panel' ||
-    surfaceInstanceId.length === 0 ||
-    componentInstanceId.length === 0 ||
+    !isNonEmptyString(surfaceInstanceId) ||
+    !isNonEmptyString(componentInstanceId) ||
     componentInstanceId === surfaceInstanceId ||
     componentInstanceId.endsWith(`-${surfaceInstanceId}`)
   ) {
