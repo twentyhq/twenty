@@ -3,7 +3,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 const LINKS_PER_PAGE = 200;
-const MAX_PAGES = 5;
+const MAX_PAGES = 25;
 
 export const listLinkedSlackUserIds = async (
   client: CoreApiClient,
