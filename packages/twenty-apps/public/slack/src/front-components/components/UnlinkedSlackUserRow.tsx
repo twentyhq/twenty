@@ -26,7 +26,7 @@ const StyledIdentity = styled.div`
   min-width: 0;
 `;
 
-const StyledName = styled.span`
+const StyledName = styled.div`
   color: ${() => themeCssVariables.font.color.primary};
   min-width: 0;
 `;

@@ -195,6 +195,7 @@ export const SlackUserLinkForm = ({
             ) : (
               <StyledDisclosure>
                 <Button
+                  type="button"
                   title="Guest or Slack Connect user? Link by Slack ID instead"
                   size="small"
                   variant="tertiary"

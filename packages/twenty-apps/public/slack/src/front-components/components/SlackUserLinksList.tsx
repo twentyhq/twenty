@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-sdk/utils';
 import { Avatar, Tag } from 'twenty-ui/data-display';
 import {
@@ -27,6 +27,7 @@ import { isSlackUserLinkConsentState } from 'src/logic-functions/utils/is-slack-
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
 
 const LINKS_GRID_TEMPLATE_COLUMNS = '3fr 3fr 2fr 80px';
+const REMOVAL_CONFIRM_TIMEOUT_MS = 4000;
 
 const StyledIdentity = styled.div`
   align-items: center;
@@ -35,7 +36,7 @@ const StyledIdentity = styled.div`
   min-width: 0;
 `;
 
-const StyledName = styled.span`
+const StyledName = styled.div`
   color: ${() => themeCssVariables.font.color.primary};
   min-width: 0;
 `;
@@ -115,6 +116,21 @@ export const SlackUserLinksList = ({
   const [removalArmedLinkId, setRemovalArmedLinkId] = useState<string | null>(
     null,
   );
+
+  // The armed confirm button cannot listen for blur, so it disarms on its own
+  // before a later stray click on the same spot can remove the link.
+  useEffect(() => {
+    if (removalArmedLinkId === null) {
+      return undefined;
+    }
+
+    const disarmTimer = setTimeout(
+      () => setRemovalArmedLinkId(null),
+      REMOVAL_CONFIRM_TIMEOUT_MS,
+    );
+
+    return () => clearTimeout(disarmTimer);
+  }, [removalArmedLinkId]);
 
   const isActionInFlight =
     isDefined(removingLinkId) || isDefined(resendingLinkId);
