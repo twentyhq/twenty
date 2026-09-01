@@ -120,11 +120,17 @@ export const searchWorkflowVariables = ({
         return;
       }
 
-      const fields = isRecordOutputSchemaV2(outputSchema)
-        ? outputSchema.fields
-        : isBaseOutputSchemaV2(outputSchema)
-          ? outputSchema
-          : {};
+      const fields = (() => {
+        if (isRecordOutputSchemaV2(outputSchema)) {
+          return outputSchema.fields;
+        }
+
+        if (isBaseOutputSchemaV2(outputSchema)) {
+          return outputSchema;
+        }
+
+        return {};
+      })();
 
       for (const [key, field] of Object.entries(fields)) {
         if (!isObject(field)) {
