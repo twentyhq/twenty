@@ -5,5 +5,7 @@ export type SlackRosterMatchResult =
       linkedCount: number;
       alreadyLinkedCount: number;
       unmatchedCount: number;
+      failedCount: number;
+      isRosterTruncated: boolean;
     }
   | { success: false; message: string; error: string };
