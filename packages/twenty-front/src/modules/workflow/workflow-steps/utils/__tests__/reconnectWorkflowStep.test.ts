@@ -2,7 +2,7 @@ import {
   type WorkflowIfElseAction,
   type WorkflowIteratorAction,
 } from '@/workflow/types/Workflow';
-import { getReconnectedStepIds } from '@/workflow/workflow-diagram/utils/getReconnectedStepIds';
+import { getReconnectedStepIds } from '@/workflow/workflow-steps/utils/getReconnectedStepIds';
 import { reconnectWorkflowStep } from '@/workflow/workflow-steps/utils/reconnectWorkflowStep';
 
 const ifElseStep: WorkflowIfElseAction = {

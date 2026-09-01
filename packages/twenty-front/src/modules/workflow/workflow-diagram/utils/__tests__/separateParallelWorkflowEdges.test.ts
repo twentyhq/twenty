@@ -155,6 +155,7 @@ describe('parallel workflow branches', () => {
       4,
     );
     expect(diagram.edges[0].data?.parallelEdgeOffset).toBeUndefined();
+    expect(diagram.edges[0].data?.edgePathStrategy).toBeUndefined();
   });
 
   it('restores default routing once branches no longer share a destination', () => {

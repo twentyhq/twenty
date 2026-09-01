@@ -2,10 +2,10 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { assertWorkflowConnectionOrThrow } from '@/workflow/workflow-diagram/utils/assertWorkflowConnectionOrThrow';
-import { getReconnectedStepIds } from '@/workflow/workflow-diagram/utils/getReconnectedStepIds';
 import { wouldReconnectWorkflowEdgeCreateCycle } from '@/workflow/workflow-diagram/utils/wouldReconnectWorkflowEdgeCreateCycle';
 import { getConnectionOptionsForSourceHandle } from '@/workflow/workflow-diagram/workflow-edges/utils/getConnectionOptionsForSourceHandle';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
+import { getReconnectedStepIds } from '@/workflow/workflow-steps/utils/getReconnectedStepIds';
 import { reconnectWorkflowStep } from '@/workflow/workflow-steps/utils/reconnectWorkflowStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { type Connection } from '@xyflow/react';
