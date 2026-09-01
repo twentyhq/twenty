@@ -1,6 +1,6 @@
 import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTitle';
 import { SettingsSecondaryBar } from '@/settings/components/layout/SettingsSecondaryBar';
-import { useSyncSidePanelPageTitle } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
+import { SidePanelPageTitleSyncEffect } from '@/side-panel/components/SidePanelPageTitleSyncEffect';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
@@ -36,10 +36,6 @@ export const SettingsPageLayout = ({
       : links.findLast(({ children }) => typeof children === 'string')
           ?.children;
 
-  useSyncSidePanelPageTitle(
-    typeof pageTitle === 'string' ? pageTitle : undefined,
-  );
-
   const formattedTitle =
     typeof title === 'string' ? (
       <SettingsEditableTitle
@@ -53,25 +49,30 @@ export const SettingsPageLayout = ({
     );
 
   return (
-    <PageCardLayout
-      header={
-        <PageCardHeader
-          links={links}
-          title={formattedTitle}
-          icon={icon}
-          tag={tag}
-          actionButton={actionButton}
-          centerTitle
-          titleColor={titleColor}
-        />
-      }
-      secondaryBar={
-        isDefined(secondaryBar) ? (
-          <SettingsSecondaryBar>{secondaryBar}</SettingsSecondaryBar>
-        ) : undefined
-      }
-    >
-      {children}
-    </PageCardLayout>
+    <>
+      <SidePanelPageTitleSyncEffect
+        pageTitle={typeof pageTitle === 'string' ? pageTitle : undefined}
+      />
+      <PageCardLayout
+        header={
+          <PageCardHeader
+            links={links}
+            title={formattedTitle}
+            icon={icon}
+            tag={tag}
+            actionButton={actionButton}
+            centerTitle
+            titleColor={titleColor}
+          />
+        }
+        secondaryBar={
+          isDefined(secondaryBar) ? (
+            <SettingsSecondaryBar>{secondaryBar}</SettingsSecondaryBar>
+          ) : undefined
+        }
+      >
+        {children}
+      </PageCardLayout>
+    </>
   );
 };

@@ -1,6 +1,5 @@
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 import { useStore } from 'jotai';
 
@@ -44,15 +43,4 @@ export const useUpdateSidePanelPageInfo = () => {
   return {
     updateSidePanelPageInfo,
   };
-};
-
-export const useSyncSidePanelPageTitle = (pageTitle?: string) => {
-  const workspaceSurface = useWorkspaceSurface();
-  const { updateSidePanelPageInfo } = useUpdateSidePanelPageInfo();
-
-  useEffect(() => {
-    if (workspaceSurface.type === 'side-panel' && pageTitle !== undefined) {
-      updateSidePanelPageInfo({ pageTitle });
-    }
-  }, [pageTitle, updateSidePanelPageInfo, workspaceSurface.type]);
 };

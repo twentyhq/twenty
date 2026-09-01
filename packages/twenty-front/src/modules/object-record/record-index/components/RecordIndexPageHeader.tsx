@@ -6,8 +6,8 @@ import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { RecordIndexPageHeaderIcon } from '@/object-record/record-index/components/RecordIndexPageHeaderIcon';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { SidePanelPageTitleSyncEffect } from '@/side-panel/components/SidePanelPageTitleSyncEffect';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
-import { useSyncSidePanelPageTitle } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -52,8 +52,6 @@ export const RecordIndexPageHeader = () => {
 
   const label = objectMetadataItem?.labelPlural ?? objectNamePlural;
 
-  useSyncSidePanelPageTitle(label);
-
   const pageHeaderTitle =
     contextStoreNumberOfSelectedRecords > 0 ? (
       <StyledTitleWithSelectedRecords>
@@ -75,20 +73,23 @@ export const RecordIndexPageHeader = () => {
   );
 
   return (
-    <PageCardHeader
-      icon={
-        <RecordIndexPageHeaderIcon objectMetadataItem={objectMetadataItem} />
-      }
-      title={pageHeaderTitle}
-      actionButton={
-        isDefined(contextStoreCurrentViewId) ? (
-          <>
-            <RecordIndexCommandMenu />
-            {!isLayoutCustomizationModeEnabled &&
-              workspaceSurface.type === 'main' && <SidePanelToggleButton />}
-          </>
-        ) : undefined
-      }
-    />
+    <>
+      <SidePanelPageTitleSyncEffect pageTitle={label} />
+      <PageCardHeader
+        icon={
+          <RecordIndexPageHeaderIcon objectMetadataItem={objectMetadataItem} />
+        }
+        title={pageHeaderTitle}
+        actionButton={
+          isDefined(contextStoreCurrentViewId) ? (
+            <>
+              <RecordIndexCommandMenu />
+              {!isLayoutCustomizationModeEnabled &&
+                workspaceSurface.type === 'main' && <SidePanelToggleButton />}
+            </>
+          ) : undefined
+        }
+      />
+    </>
   );
 };
