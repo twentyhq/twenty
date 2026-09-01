@@ -1,12 +1,12 @@
 import { ChatReferenceChipDisplay } from '@/ai/components/ChatReferenceChipDisplay';
-import { useChatTargetNavigation } from '@/ai/hooks/useChatTargetNavigation';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { AppPath } from 'twenty-shared/types';
-import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useTheme } from 'twenty-ui/theme-constants';
-import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const PROPOSED_OBJECT_METADATA_ICON = 'IconListNumbers';
 
@@ -20,7 +20,9 @@ export const ObjectMetadataLink = ({
   displayName,
 }: ObjectMetadataLinkProps) => {
   const theme = useTheme();
-  const { openViewTarget } = useChatTargetNavigation();
+  const hasDataModelPermission = useHasPermissionFlag(
+    PermissionFlagType.DATA_MODEL,
+  );
 
   const objectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
@@ -30,25 +32,16 @@ export const ObjectMetadataLink = ({
     },
   );
 
-  const handleOpenViewTarget = isDefined(objectMetadataItem)
-    ? () => {
-        openViewTarget({
-          objectNameSingular: objectMetadataItem.nameSingular,
-        });
-      }
-    : undefined;
-
   return (
     <ChatReferenceChipDisplay
       displayName={displayName}
       to={
-        isDefined(objectMetadataItem)
-          ? getAppPath(AppPath.RecordIndexPage, {
+        isDefined(objectMetadataItem) && hasDataModelPermission
+          ? getSettingsPath(SettingsPath.ObjectDetail, {
               objectNamePlural: objectMetadataItem.namePlural,
             })
           : undefined
       }
-      onClick={isCurrentPathAiChatPage() ? handleOpenViewTarget : undefined}
       leftComponent={
         <ObjectMetadataIcon
           objectMetadataItem={
