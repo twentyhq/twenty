@@ -9,7 +9,10 @@ export const computeAutomatedTriggerFromWorkflowVersion = ({
   workflowVersion,
   workspaceWorkflowVersionId,
 }: {
-  workflowVersion: WorkflowVersionEntity;
+  workflowVersion: Pick<
+    WorkflowVersionEntity,
+    'id' | 'workflowId' | 'triggers'
+  >;
   workspaceWorkflowVersionId: string | null;
 }): CachedWorkflowAutomatedTrigger | null => {
   const trigger = workflowVersion.triggers?.[0] ?? null;

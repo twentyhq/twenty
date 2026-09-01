@@ -38,10 +38,10 @@ export class WorkspaceWorkflowAutomatedTriggerMapCacheService extends WorkspaceC
     );
 
     const workspaceVersionIdByCoreVersionId =
-      await this.findWorkspaceVersionIdByCoreVersionId(
+      await this.findWorkspaceVersionIdByCoreVersionId({
         workspaceId,
         activeWorkflowVersions,
-      );
+      });
 
     const byWorkflowId: WorkflowAutomatedTriggerMaps['byWorkflowId'] = {};
 
@@ -60,10 +60,13 @@ export class WorkspaceWorkflowAutomatedTriggerMapCacheService extends WorkspaceC
     return { byWorkflowId };
   }
 
-  private async findWorkspaceVersionIdByCoreVersionId(
-    workspaceId: string,
-    activeWorkflowVersions: WorkflowVersionEntity[],
-  ): Promise<Record<string, string>> {
+  private async findWorkspaceVersionIdByCoreVersionId({
+    workspaceId,
+    activeWorkflowVersions,
+  }: {
+    workspaceId: string;
+    activeWorkflowVersions: WorkflowVersionEntity[];
+  }): Promise<Record<string, string>> {
     if (activeWorkflowVersions.length === 0) {
       return {};
     }
@@ -96,18 +99,19 @@ export class WorkspaceWorkflowAutomatedTriggerMapCacheService extends WorkspaceC
       );
 
       return Object.fromEntries(
-        workspaceWorkflowVersions
-          .filter(
-            (workspaceWorkflowVersion) =>
-              isDefined(workspaceWorkflowVersion.coreWorkflowVersionId) &&
-              workflowIdByCoreVersionId[
-                workspaceWorkflowVersion.coreWorkflowVersionId
-              ] === workspaceWorkflowVersion.workflowId,
-          )
-          .map((workspaceWorkflowVersion) => [
-            workspaceWorkflowVersion.coreWorkflowVersionId as string,
-            workspaceWorkflowVersion.id,
-          ]),
+        workspaceWorkflowVersions.flatMap((workspaceWorkflowVersion) => {
+          const { coreWorkflowVersionId } = workspaceWorkflowVersion;
+
+          if (
+            !isDefined(coreWorkflowVersionId) ||
+            workflowIdByCoreVersionId[coreWorkflowVersionId] !==
+              workspaceWorkflowVersion.workflowId
+          ) {
+            return [];
+          }
+
+          return [[coreWorkflowVersionId, workspaceWorkflowVersion.id]];
+        }),
       );
     }, authContext);
   }

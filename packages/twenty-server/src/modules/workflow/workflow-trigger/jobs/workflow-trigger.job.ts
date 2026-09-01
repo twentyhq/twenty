@@ -18,6 +18,7 @@ import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standa
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 import { WorkflowTriggerExceptionCode } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
+import { shouldDispatchWorkflowTriggerFromCore } from 'src/modules/workflow/workflow-trigger/utils/should-dispatch-workflow-trigger-from-core.util';
 
 export type WorkflowTriggerJobData = {
   workspaceId: string;
@@ -42,10 +43,7 @@ export class WorkflowTriggerJob {
 
   @Process(WorkflowTriggerJob.name)
   async handle(data: WorkflowTriggerJobData): Promise<void> {
-    if (
-      isDefined(data.coreWorkflowVersionId) &&
-      isDefined(data.workspaceWorkflowVersionId)
-    ) {
+    if (shouldDispatchWorkflowTriggerFromCore(data)) {
       return this.handleFromCore({
         workspaceId: data.workspaceId,
         coreWorkflowVersionId: data.coreWorkflowVersionId,
