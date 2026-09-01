@@ -12,10 +12,12 @@ import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryptio
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { LogicFunctionLayerModule } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.module';
+import { ConvertApplicationLogicFunctionsToPrebuiltJob } from 'src/engine/metadata-modules/logic-function/jobs/convert-application-logic-functions-to-prebuilt.job';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionResolver } from 'src/engine/metadata-modules/logic-function/logic-function.resolver';
 import { LogicFunctionFromSourceHelperService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source-helper.service';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
+import { LogicFunctionPrebuiltConversionService } from 'src/engine/metadata-modules/logic-function/services/logic-function-prebuilt-conversion.service';
 import { WorkspaceFlatLogicFunctionMapCacheService } from 'src/engine/metadata-modules/logic-function/services/workspace-flat-logic-function-map-cache.service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
@@ -42,14 +44,17 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     SecretEncryptionModule,
   ],
   providers: [
+    ConvertApplicationLogicFunctionsToPrebuiltJob,
     LogicFunctionFromSourceHelperService,
     LogicFunctionFromSourceService,
+    LogicFunctionPrebuiltConversionService,
     LogicFunctionResolver,
     WorkspaceFlatLogicFunctionMapCacheService,
   ],
   exports: [
     LogicFunctionFromSourceService,
     LogicFunctionFromSourceHelperService,
+    LogicFunctionPrebuiltConversionService,
   ],
 })
 export class LogicFunctionModule {}
