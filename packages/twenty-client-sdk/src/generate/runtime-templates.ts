@@ -6,22 +6,22 @@
 // `?raw` only resolves under Vite. When this module runs outside a Vite bundle
 // — e.g. `tsx scripts/generate-metadata-client.ts`, which backs the
 // `generate-metadata-client` target and server-validation — the `?raw` imports
-// are `undefined`, so we fall back to reading the sibling source files from
+// are `undefined`, so we fall back to reading the source files from
 // disk. In the bundled build the imports are defined and the fallback is never
 // reached, so the shipped runtime is unchanged.
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import batcher from './runtime/batcher.ts?raw';
-import createClient from './runtime/createClient.ts?raw';
-import error from './runtime/error.ts?raw';
-import fetcher from './runtime/fetcher.ts?raw';
-import generateGraphqlOperation from './runtime/generateGraphqlOperation.ts?raw';
-import index from './runtime/index.ts?raw';
-import linkTypeMap from './runtime/linkTypeMap.ts?raw';
-import typeSelection from './runtime/typeSelection.ts?raw';
-import types from './runtime/types.ts?raw';
+import batcher from './genql/runtime/batcher.ts?raw';
+import createClient from './genql/runtime/createClient.ts?raw';
+import error from './genql/runtime/error.ts?raw';
+import fetcher from './genql/runtime/fetcher.ts?raw';
+import generateGraphqlOperation from './genql/runtime/generateGraphqlOperation.ts?raw';
+import index from './genql/runtime/index.ts?raw';
+import linkTypeMap from './genql/runtime/linkTypeMap.ts?raw';
+import typeSelection from './genql/runtime/typeSelection.ts?raw';
+import types from './genql/runtime/types.ts?raw';
 
 const readTemplate = (
   bundled: string | undefined,
@@ -29,7 +29,11 @@ const readTemplate = (
 ): string => {
   if (bundled !== undefined) return bundled;
 
-  const runtimeDir = join(dirname(fileURLToPath(import.meta.url)), 'runtime');
+  const runtimeDir = join(
+    dirname(fileURLToPath(import.meta.url)),
+    'genql',
+    'runtime',
+  );
 
   return readFileSync(join(runtimeDir, fileName), 'utf-8');
 };
