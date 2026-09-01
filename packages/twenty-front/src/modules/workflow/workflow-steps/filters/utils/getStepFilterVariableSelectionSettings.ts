@@ -27,11 +27,14 @@ export const getStepFilterVariableSelectionSettings = ({
   fieldMetadataType: FieldMetadataType | undefined;
   compositeFieldSubFieldName: string | undefined;
 }): StepFilterVariableSelectionSettings => {
-  const filterType = isDefined(fieldMetadataId)
-    ? isDefined(fieldMetadataType)
-      ? getFilterTypeFromFieldType(fieldMetadataType)
-      : 'unknown'
-    : (variableType ?? 'unknown');
+  let filterType = variableType ?? 'unknown';
+
+  if (isDefined(fieldMetadataId) && isDefined(fieldMetadataType)) {
+    filterType = getFilterTypeFromFieldType(fieldMetadataType);
+  } else if (isDefined(fieldMetadataId)) {
+    filterType = 'unknown';
+  }
+
   const [defaultOperand] = getStepFilterOperands({
     filterType,
     subFieldName: compositeFieldSubFieldName,
