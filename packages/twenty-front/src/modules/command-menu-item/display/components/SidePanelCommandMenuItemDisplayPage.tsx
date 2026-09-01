@@ -6,6 +6,8 @@ import { commandMenuPinnedInlineLayoutFamilyState } from '@/command-menu-item/di
 import { getVisibleCommandMenuItemCountForContainerWidth } from '@/command-menu-item/display/utils/getVisibleCommandMenuItemCountForContainerWidth';
 import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { CoreObjectsCommands } from '@/object-core/commands/components/CoreObjectsCommands';
+import { useCoreObjectsCommands } from '@/object-core/commands/hooks/useCoreObjectsCommands';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -27,6 +29,8 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
   const { commandMenuItems, commandMenuContextApi } =
     useContext(CommandMenuContext);
+
+  const { coreObjectsCommandIds } = useCoreObjectsCommands();
 
   // The command menu list surfaces whatever overflowed out of the page header.
   const commandMenuPinnedInlineLayout = useAtomFamilyStateValue(
@@ -103,7 +107,8 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const hasNoMatchingItems =
     !matchingPinnedItems.length &&
     !matchingOtherItems.length &&
-    appActions.length === 0;
+    appActions.length === 0 &&
+    coreObjectsCommandIds.length === 0;
 
   const shouldDisplayFallbackItems =
     hasNoMatchingItems && fallbackCommandMenuItems.length > 0;
@@ -115,6 +120,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     ...matchingPinnedItems.map((item) => item.id),
     ...matchingOtherItems.map((item) => item.id),
     ...appActions.map((item) => item.id),
+    ...coreObjectsCommandIds,
     ...(shouldDisplayFallbackItems
       ? fallbackCommandMenuItems.map((item) => item.id)
       : []),
@@ -132,7 +138,9 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
           ))}
         </SidePanelGroup>
       )}
-      {(matchingOtherItems.length > 0 || appActions.length > 0) && (
+      {(matchingOtherItems.length > 0 ||
+        appActions.length > 0 ||
+        coreObjectsCommandIds.length > 0) && (
         <SidePanelGroup heading={t`Other`}>
           {matchingOtherItems.map((item) => (
             <CommandMenuItemRenderer item={item} key={item.id} />
@@ -158,6 +166,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
               </SelectableListItem>
             );
           })}
+          <CoreObjectsCommands />
         </SidePanelGroup>
       )}
       {shouldDisplayFallbackItems && (
