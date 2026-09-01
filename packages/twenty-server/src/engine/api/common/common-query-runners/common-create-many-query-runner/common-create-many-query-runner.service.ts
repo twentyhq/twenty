@@ -50,6 +50,8 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-
 import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { containsNestedRelationCreate } from 'src/engine/twenty-orm/utils/contains-nested-relation-create.util';
 
+const MAX_NESTED_RELATION_CREATE_DEPTH = 5;
+
 @Injectable()
 export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerService<
   CreateManyQueryArgs,
@@ -552,9 +554,9 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         const nestedOperationDepth =
           (queryRunnerContext.nestedOperationDepth ?? 0) + 1;
 
-        if (nestedOperationDepth > 5) {
+        if (nestedOperationDepth > MAX_NESTED_RELATION_CREATE_DEPTH) {
           throw new CommonQueryRunnerException(
-            'Nested relation create depth cannot exceed 5',
+            `Nested relation create depth cannot exceed ${MAX_NESTED_RELATION_CREATE_DEPTH}`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
             { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
           );
