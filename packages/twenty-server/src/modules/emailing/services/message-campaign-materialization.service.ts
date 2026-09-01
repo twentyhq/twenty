@@ -7,9 +7,14 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 import chunk from 'lodash.chunk';
+import { In } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { SEND_CAMPAIGN_EMAIL_JOB } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import {
+  MATERIALIZE_CAMPAIGN_CHUNK_JOB,
+  SEND_CAMPAIGN_EMAIL_JOB,
+} from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { type MaterializeCampaignChunkJobData } from 'src/engine/core-modules/emailing-domain/types/materialize-campaign-chunk-job-data.type';
 import { type MaterializeCampaignJobData } from 'src/engine/core-modules/emailing-domain/types/materialize-campaign-job-data.type';
 import { type SendCampaignEmailJobData } from 'src/engine/core-modules/emailing-domain/types/send-campaign-email-job-data.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -33,17 +38,6 @@ import {
   MessageParticipantRole,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-
-type MaterializeMessagesArgs = {
-  workspaceId: string;
-  emailingDomainId: string;
-  campaignId: string;
-  messageChannelId: string;
-  fromAddress: string;
-  subjectTemplate: string;
-  bodyTemplate: string;
-  recipients: CampaignMessageRecipient[];
-};
 
 const MATERIALIZATION_CHUNK_SIZE = 500;
 
@@ -113,26 +107,132 @@ export class MessageCampaignMaterializationService {
         (recipient) => queuedMessageIds.has(recipient.messageId),
       );
 
-      await this.enqueueSendJobs({
-        workspaceId,
-        campaignId,
-        emailingDomainId,
-        recipients: recipientsStrandedByAnEarlierAttempt,
-      });
-
       const recipientsToCreate = uniqueRecipients.filter(
         (recipient) => !existingMessageIds.has(recipient.messageId),
       );
 
-      await this.materializeAndEnqueue({
+      const enqueuedChunkCount = await this.enqueueMaterializationChunks({
         workspaceId,
         campaignId,
         messageChannelId,
         emailingDomainId,
-        fromAddress: campaign.fromAddress?.primaryEmail ?? '',
-        subjectTemplate: campaign.subject ?? '',
-        bodyTemplate: campaign.bodyTemplate ?? '',
-        recipients: recipientsToCreate,
+        recipientsToCreate,
+        recipientsStrandedByAnEarlierAttempt,
+      });
+
+      // Only finalize here when there is no chunk left to run. Doing it while
+      // chunks are still pending would see zero deliveries and settle the
+      // campaign as SENT_WITH_ERRORS before a single message exists.
+      if (enqueuedChunkCount === 0) {
+        await this.messageCampaignLifecycleService.finalizeCampaignIfComplete({
+          workspaceId,
+          campaignId,
+        });
+      }
+    }, buildSystemAuthContext(workspaceId));
+  }
+
+  private async enqueueMaterializationChunks({
+    workspaceId,
+    campaignId,
+    messageChannelId,
+    emailingDomainId,
+    recipientsToCreate,
+    recipientsStrandedByAnEarlierAttempt,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+    messageChannelId: string;
+    emailingDomainId: string;
+    recipientsToCreate: CampaignMessageRecipient[];
+    recipientsStrandedByAnEarlierAttempt: CampaignMessageRecipient[];
+  }): Promise<number> {
+    const receivedAtIso = new Date().toISOString();
+
+    const chunks: MaterializeCampaignChunkJobData[] = [
+      ...chunk(recipientsToCreate, MATERIALIZATION_CHUNK_SIZE).map(
+        (recipients) => ({ recipients, shouldCreateMessages: true }),
+      ),
+      ...chunk(
+        recipientsStrandedByAnEarlierAttempt,
+        MATERIALIZATION_CHUNK_SIZE,
+      ).map((recipients) => ({ recipients, shouldCreateMessages: false })),
+    ].map(({ recipients, shouldCreateMessages }) => ({
+      workspaceId,
+      campaignId,
+      messageChannelId,
+      emailingDomainId,
+      receivedAtIso,
+      shouldCreateMessages,
+      recipients,
+    }));
+
+    if (chunks.length === 0) {
+      return 0;
+    }
+
+    await this.messageQueueService.bulkAdd<MaterializeCampaignChunkJobData>(
+      MATERIALIZE_CAMPAIGN_CHUNK_JOB,
+      chunks,
+      { retryLimit: 3, backoff: CAMPAIGN_SEND_RETRY_BACKOFF },
+    );
+
+    return chunks.length;
+  }
+
+  async processMaterializeChunkJob({
+    workspaceId,
+    campaignId,
+    messageChannelId,
+    emailingDomainId,
+    receivedAtIso,
+    shouldCreateMessages,
+    recipients,
+  }: MaterializeCampaignChunkJobData): Promise<void> {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const campaignRepository = this.workspaceOrmManager.getRepository(
+        MessageCampaignWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
+
+      const campaign = await campaignRepository.findOne({
+        where: { id: campaignId },
+      });
+
+      // A cancel between chunks stops the ones that have not run yet.
+      if (
+        !isDefined(campaign) ||
+        campaign.status !== MessageCampaignStatus.SENDING
+      ) {
+        return;
+      }
+
+      if (shouldCreateMessages) {
+        const { plainText: unrenderedText } = await compileCampaignEmailContent(
+          campaign.bodyTemplate ?? '',
+          null,
+        );
+
+        await this.insertMessagesBeforeTheirDeliveries({
+          workspaceId,
+          campaignId,
+          messageChannelId,
+          fromAddress: campaign.fromAddress?.primaryEmail ?? '',
+          subjectTemplate: campaign.subject ?? '',
+          text: unrenderedText,
+          now: new Date(receivedAtIso),
+          recipients: await this.rejectAlreadyMaterializedRecipients({
+            campaignId,
+            recipients,
+          }),
+        });
+      }
+
+      await this.enqueueSendJobs({
+        workspaceId,
+        campaignId,
+        emailingDomainId,
+        recipients,
       });
 
       await this.messageCampaignLifecycleService.finalizeCampaignIfComplete({
@@ -140,6 +240,46 @@ export class MessageCampaignMaterializationService {
         campaignId,
       });
     }, buildSystemAuthContext(workspaceId));
+  }
+
+  // A retried chunk job must not insert the rows its previous attempt already
+  // wrote: message ids are deterministic and would collide, and the thread,
+  // association and participant rows would be duplicated under fresh ids.
+  private async rejectAlreadyMaterializedRecipients({
+    campaignId,
+    recipients,
+  }: {
+    campaignId: string;
+    recipients: CampaignMessageRecipient[];
+  }): Promise<CampaignMessageRecipient[]> {
+    if (recipients.length === 0) {
+      return [];
+    }
+
+    const messageRepository = this.workspaceOrmManager.getRepository(
+      MessageWorkspaceEntity,
+      { shouldBypassPermissionChecks: true },
+    );
+
+    const alreadyMaterialized = await messageRepository.find({
+      where: {
+        messageCampaignId: campaignId,
+        id: In(recipients.map((recipient) => recipient.messageId)),
+      },
+      select: { id: true },
+    });
+
+    if (alreadyMaterialized.length === 0) {
+      return recipients;
+    }
+
+    const alreadyMaterializedIds = new Set(
+      alreadyMaterialized.map((message) => message.id),
+    );
+
+    return recipients.filter(
+      (recipient) => !alreadyMaterializedIds.has(recipient.messageId),
+    );
   }
 
   private deduplicateRecipientsByMessageId({
@@ -163,47 +303,6 @@ export class MessageCampaignMaterializationService {
     }
 
     return [...recipientsByMessageId.values()];
-  }
-
-  private async materializeAndEnqueue({
-    workspaceId,
-    campaignId,
-    messageChannelId,
-    emailingDomainId,
-    fromAddress,
-    subjectTemplate,
-    bodyTemplate,
-    recipients,
-  }: MaterializeMessagesArgs): Promise<void> {
-    const now = new Date();
-    const { plainText: unrenderedText } = await compileCampaignEmailContent(
-      bodyTemplate,
-      null,
-    );
-
-    const recipientChunks = chunk(recipients, MATERIALIZATION_CHUNK_SIZE);
-
-    for (const recipientsChunk of recipientChunks) {
-      await this.insertMessagesBeforeTheirDeliveries({
-        workspaceId,
-        campaignId,
-        messageChannelId,
-        fromAddress,
-        subjectTemplate,
-        text: unrenderedText,
-        now,
-        recipients: recipientsChunk,
-      });
-    }
-
-    for (const recipientsChunk of recipientChunks) {
-      await this.enqueueSendJobs({
-        workspaceId,
-        campaignId,
-        emailingDomainId,
-        recipients: recipientsChunk,
-      });
-    }
   }
 
   private async enqueueSendJobs({
