@@ -34,17 +34,14 @@ describe('isLogicFunctionEligibleForPrebuiltConversion', () => {
   it.each([
     ApplicationRegistrationSourceType.LOCAL,
     ApplicationRegistrationSourceType.OAUTH_ONLY,
-  ])(
-    'should not be eligible on a %s application',
-    (applicationSourceType) => {
-      expect(
-        isLogicFunctionEligibleForPrebuiltConversion({
-          flatLogicFunction: buildFlatLogicFunction(),
-          applicationSourceType,
-        }),
-      ).toBe(false);
-    },
-  );
+  ])('should not be eligible on a %s application', (applicationSourceType) => {
+    expect(
+      isLogicFunctionEligibleForPrebuiltConversion({
+        flatLogicFunction: buildFlatLogicFunction(),
+        applicationSourceType,
+      }),
+    ).toBe(false);
+  });
 
   it('should not be eligible when the function is already prebuilt', () => {
     expect(

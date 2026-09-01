@@ -140,8 +140,9 @@ export class LogicFunctionPrebuiltConversionService {
     }
 
     const universalIdentifiers =
-      flatLogicFunctionMaps.universalIdentifiersByApplicationId[applicationId] ??
-      [];
+      flatLogicFunctionMaps.universalIdentifiersByApplicationId[
+        applicationId
+      ] ?? [];
 
     return universalIdentifiers
       .map(
