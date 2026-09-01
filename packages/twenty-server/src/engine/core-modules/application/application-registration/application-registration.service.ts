@@ -7,6 +7,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import * as bcrypt from 'bcrypt';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IsNull, type FindOptionsWhere, type Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
@@ -868,33 +869,50 @@ export class ApplicationRegistrationService {
   private async computeStats(
     applicationRegistrationId: string,
   ): Promise<ApplicationRegistrationStatsDTO> {
-    const versionDistribution: { version: string; count: number }[] =
-      await this.applicationRepository
-        .createQueryBuilder('application')
-        .select("COALESCE(application.version, 'unknown')", 'version')
-        .addSelect('COUNT(*)::int', 'count')
-        .innerJoin('application.workspace', 'workspace')
-        .where(
-          'application."applicationRegistrationId" = :applicationRegistrationId',
-          { applicationRegistrationId },
-        )
-        .andWhere('application."deletedAt" IS NULL')
-        .andWhere('workspace."deletedAt" IS NULL')
-        .groupBy('version')
-        .orderBy('count', 'DESC')
-        .getRawMany();
+    const rawVersionDistribution: {
+      version: string;
+      count: number;
+      suspendedCount: number;
+    }[] = await this.applicationRepository
+      .createQueryBuilder('application')
+      .select("COALESCE(application.version, 'unknown')", 'version')
+      .addSelect('COUNT(*)::int', 'count')
+      .addSelect(
+        `COUNT(*) FILTER (WHERE workspace."activationStatus" = :suspendedStatus)::int`,
+        'suspendedCount',
+      )
+      .innerJoin('application.workspace', 'workspace')
+      .where(
+        'application."applicationRegistrationId" = :applicationRegistrationId',
+        { applicationRegistrationId },
+      )
+      .andWhere('application."deletedAt" IS NULL')
+      .andWhere('workspace."deletedAt" IS NULL')
+      .setParameter('suspendedStatus', WorkspaceActivationStatus.SUSPENDED)
+      .groupBy('version')
+      .orderBy('count', 'DESC')
+      .getRawMany();
 
-    const activeInstalls = versionDistribution.reduce(
+    const activeInstalls = rawVersionDistribution.reduce(
       (sum, entry) => sum + entry.count,
       0,
     );
 
-    const mostInstalledVersion = versionDistribution[0]?.version ?? null;
+    const suspendedInstalls = rawVersionDistribution.reduce(
+      (sum, entry) => sum + entry.suspendedCount,
+      0,
+    );
+
+    const mostInstalledVersion = rawVersionDistribution[0]?.version ?? null;
 
     return {
       activeInstalls,
+      suspendedInstalls,
       mostInstalledVersion,
-      versionDistribution,
+      versionDistribution: rawVersionDistribution.map((entry) => ({
+        version: entry.version,
+        count: entry.count,
+      })),
     };
   }
 
