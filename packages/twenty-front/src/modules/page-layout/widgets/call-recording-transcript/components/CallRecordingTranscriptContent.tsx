@@ -1,8 +1,8 @@
-import { CallRecordingStateDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingStateDisplay';
-import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
+import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetEmptyStateDisplay';
 import { CallRecordingTranscriptEntryList } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList';
 import { type CallRecordingTranscriptPlayback } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptPlayback';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { type CallRecordingParsedTranscriptEntry } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -12,13 +12,11 @@ const StyledEmptyStateScrollContainer = styled.div`
 `;
 
 type CallRecordingTranscriptContentProps = {
-  callRecording: WidgetCallRecordingCandidate;
   transcriptEntries: CallRecordingParsedTranscriptEntry[] | undefined;
   playback?: CallRecordingTranscriptPlayback;
 };
 
 export const CallRecordingTranscriptContent = ({
-  callRecording,
   transcriptEntries,
   playback,
 }: CallRecordingTranscriptContentProps) => {
@@ -33,9 +31,10 @@ export const CallRecordingTranscriptContent = ({
 
   return (
     <StyledEmptyStateScrollContainer>
-      <CallRecordingStateDisplay
-        callRecording={callRecording}
-        contentType="transcript"
+      <CallRecordingWidgetEmptyStateDisplay
+        animatedPlaceholderType="noMatchRecord"
+        title={t`No Transcript`}
+        subTitle={t`This call recording does not have a transcript.`}
       />
     </StyledEmptyStateScrollContainer>
   );

@@ -202,7 +202,7 @@ describe('callRecordingIdForCalendarEvent (integration)', () => {
     );
   });
 
-  it('falls back to the earliest in-progress recording', async () => {
+  it('returns null when no completed recording exists', async () => {
     await global.testDataSource.query(
       `UPDATE "${TEST_SCHEMA_NAME}"."callRecording"
        SET status = $1
@@ -210,25 +210,7 @@ describe('callRecordingIdForCalendarEvent (integration)', () => {
       [CallRecordingStatus.FAILED, completedCallRecordingId],
     );
 
-    await expect(queryCallRecordingIdForCalendarEvent()).resolves.toBe(
-      processingCallRecordingId,
-    );
-  });
-
-  it('falls back to the earliest recording of any status', async () => {
-    await global.testDataSource.query(
-      `UPDATE "${TEST_SCHEMA_NAME}"."callRecording"
-       SET status = $1
-       WHERE id = ANY($2::uuid[])`,
-      [
-        CallRecordingStatus.FAILED,
-        [processingCallRecordingId, completedCallRecordingId],
-      ],
-    );
-
-    await expect(queryCallRecordingIdForCalendarEvent()).resolves.toBe(
-      failedCallRecordingIds[0],
-    );
+    await expect(queryCallRecordingIdForCalendarEvent()).resolves.toBeNull();
   });
 
   it('skips a soft-deleted recording when selecting', async () => {
@@ -239,9 +221,7 @@ describe('callRecordingIdForCalendarEvent (integration)', () => {
       [completedCallRecordingId],
     );
 
-    await expect(queryCallRecordingIdForCalendarEvent()).resolves.toBe(
-      processingCallRecordingId,
-    );
+    await expect(queryCallRecordingIdForCalendarEvent()).resolves.toBeNull();
   });
 
   it('denies selection without call recording read permission', async () => {

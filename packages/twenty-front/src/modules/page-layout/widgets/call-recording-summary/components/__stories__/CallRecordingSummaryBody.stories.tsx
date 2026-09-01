@@ -13,7 +13,6 @@ import {
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
-import { CallRecordingStatus } from '~/generated/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
@@ -96,28 +95,12 @@ const summaryMarkdown = [
 const summarizedCallRecording: WidgetCallRecordingCandidate = {
   __typename: 'CallRecording',
   id: 'call-recording-id',
-  status: CallRecordingStatus.COMPLETED,
-  transcript: [],
   summary: { markdown: summaryMarkdown },
-  video: null,
-  createdAt: '2026-01-01T00:00:00Z',
 };
 
 const unsummarizedCallRecording: WidgetCallRecordingCandidate = {
   ...summarizedCallRecording,
   summary: null,
-};
-
-const processingCallRecording: WidgetCallRecordingCandidate = {
-  ...unsummarizedCallRecording,
-  status: CallRecordingStatus.PROCESSING,
-  transcript: { status: 'PENDING' },
-};
-
-const failedCallRecording: WidgetCallRecordingCandidate = {
-  ...unsummarizedCallRecording,
-  status: CallRecordingStatus.FAILED,
-  transcript: null,
 };
 
 const meta: Meta<typeof CallRecordingSummaryBody> = {
@@ -144,25 +127,6 @@ type Story = StoryObj<typeof CallRecordingSummaryBody>;
 export const Ready: Story = {
   args: {
     callRecording: summarizedCallRecording,
-    loading: false,
-    error: undefined,
-    restriction: undefined,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await canvas.findByText('Quarterly review call', undefined, {
-      timeout: 5000,
-    });
-  },
-};
-
-export const ReadyWhileCallRecordingIsProcessing: Story = {
-  args: {
-    callRecording: {
-      ...processingCallRecording,
-      summary: { markdown: summaryMarkdown },
-    },
     loading: false,
     error: undefined,
     restriction: undefined,
@@ -203,105 +167,6 @@ export const NoSummary: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByText('No Summary');
-  },
-};
-
-export const Processing: Story = {
-  args: {
-    callRecording: processingCallRecording,
-    loading: false,
-    error: undefined,
-    restriction: undefined,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await canvas.findByText('Generating Summary');
-  },
-};
-
-export const Scheduled: Story = {
-  args: {
-    callRecording: {
-      ...processingCallRecording,
-      status: CallRecordingStatus.SCHEDULED,
-      transcript: null,
-    },
-    loading: false,
-    error: undefined,
-    restriction: undefined,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await canvas.findByText('Recording Scheduled');
-  },
-};
-
-export const Joining: Story = {
-  args: {
-    callRecording: {
-      ...processingCallRecording,
-      status: CallRecordingStatus.JOINING,
-      transcript: null,
-    },
-    loading: false,
-    error: undefined,
-    restriction: undefined,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await canvas.findByText('Recorder Joining');
-  },
-};
-
-export const Recording: Story = {
-  args: {
-    callRecording: {
-      ...processingCallRecording,
-      status: CallRecordingStatus.RECORDING,
-      transcript: null,
-    },
-    loading: false,
-    error: undefined,
-    restriction: undefined,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await canvas.findByText('Recording');
-  },
-};
-
-export const Failed: Story = {
-  args: {
-    callRecording: failedCallRecording,
-    loading: false,
-    error: undefined,
-    restriction: undefined,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await canvas.findByText('Processing Failed');
-  },
-};
-
-export const NotRecorded: Story = {
-  args: {
-    callRecording: {
-      ...unsummarizedCallRecording,
-      status: CallRecordingStatus.NOT_RECORDED,
-    },
-    loading: false,
-    error: undefined,
-    restriction: undefined,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await canvas.findByText('Not Recorded');
   },
 };
 

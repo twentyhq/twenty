@@ -1,5 +1,4 @@
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
-import { CallRecordingStateDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingStateDisplay';
 import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetEmptyStateDisplay';
 import { CallRecordingWidgetForbiddenDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetForbiddenDisplay';
 import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
@@ -55,7 +54,7 @@ export const CallRecordingSummaryBody = ({
       <CallRecordingWidgetEmptyStateDisplay
         animatedPlaceholderType="noMatchRecord"
         title={t`No Call Recording`}
-        subTitle={t`No call recording exists for this calendar event yet.`}
+        subTitle={t`No completed call recording is available yet.`}
       />
     );
   }
@@ -71,9 +70,10 @@ export const CallRecordingSummaryBody = ({
   }
 
   return (
-    <CallRecordingStateDisplay
-      callRecording={callRecording}
-      contentType="summary"
+    <CallRecordingWidgetEmptyStateDisplay
+      animatedPlaceholderType="noMatchRecord"
+      title={t`No Summary`}
+      subTitle={t`This call recording does not have a summary.`}
     />
   );
 };

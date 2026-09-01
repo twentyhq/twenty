@@ -30,7 +30,6 @@ import {
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
-import { CallRecordingStatus } from '~/generated/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { MOCK_CALL_RECORDING_VIDEO_DATA_URI } from './mockCallRecordingVideo';
@@ -101,23 +100,8 @@ const pageLayoutWithTranscriptWidget: PageLayout = {
 const completedCallRecording: WidgetCallRecordingCandidate = {
   __typename: 'CallRecording',
   id: 'call-recording-id',
-  status: CallRecordingStatus.COMPLETED,
   transcript: [],
-  summary: null,
   video: null,
-  createdAt: '2026-01-01T00:00:00Z',
-};
-
-const processingCallRecording: WidgetCallRecordingCandidate = {
-  ...completedCallRecording,
-  status: CallRecordingStatus.PROCESSING,
-  transcript: { status: 'PENDING' },
-};
-
-const failedCallRecording: WidgetCallRecordingCandidate = {
-  ...completedCallRecording,
-  status: CallRecordingStatus.FAILED,
-  transcript: null,
 };
 
 const makeMockTranscriptEntry = ({
@@ -590,34 +574,6 @@ export const Loading: Story = {
         canvasElement.querySelector('.react-loading-skeleton'),
       ).toBeVisible();
     });
-  },
-};
-
-export const Processing: Story = {
-  args: {
-    callRecording: processingCallRecording,
-    loading: false,
-    error: undefined,
-    restriction: undefined,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await canvas.findByText('Preparing Transcript');
-  },
-};
-
-export const Failed: Story = {
-  args: {
-    callRecording: failedCallRecording,
-    loading: false,
-    error: undefined,
-    restriction: undefined,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await canvas.findByText('Transcript Failed');
   },
 };
 
