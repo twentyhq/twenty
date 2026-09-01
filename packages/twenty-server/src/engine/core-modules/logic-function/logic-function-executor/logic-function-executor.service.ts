@@ -23,33 +23,35 @@ import {
   type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
-import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/event-logs/producers/application-log/build-application-log-envelopes';
-import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
+import { isBillingExemptApplication } from 'src/engine/core-modules/application/application-marketplace/utils/is-billing-exempt-application.util';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
-import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/logic-function/logic-function-executed';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
-import { isBillingExemptApplication } from 'src/engine/core-modules/application/application-marketplace/utils/is-billing-exempt-application.util';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
+import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/logic-function/logic-function-executed';
+import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
+import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/event-logs/producers/application-log/build-application-log-envelopes';
+import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { computeLogicFunctionExecutionCreditsMicro } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/compute-logic-function-execution-credits-micro.util';
+import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/resolve-workspace-member-id-for-user.util';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
-import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
+import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
@@ -59,11 +61,7 @@ import {
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
-import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/resolve-workspace-member-id-for-user.util';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
 
 export class LogicFunctionExecutionException extends Error {
@@ -96,7 +94,7 @@ export class LogicFunctionExecutorService {
     private readonly subscriptionService: SubscriptionService,
     private readonly eventLogLiveService: EventLogLiveService,
     private readonly eventLogEmitterService: EventLogEmitterService,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly usageRecorderService: UsageRecorderService,
     private readonly billingService: BillingService,
     private readonly billingUsageService: BillingUsageService,
     private readonly featureFlagService: FeatureFlagService,
@@ -633,49 +631,47 @@ export class LogicFunctionExecutorService {
 
     const totalCreditsMicro = invocationCreditsMicro + durationCreditsMicro;
 
-    let periodStart: Date | undefined;
-
     if (this.billingService.isBillingEnabled()) {
       const { currentBillingSubscription } =
         await this.workspaceCacheService.getOrRecompute(workspaceId, [
           'currentBillingSubscription',
         ]);
 
-      if (currentBillingSubscription !== NO_BILLING_SUBSCRIPTION) {
-        periodStart = currentBillingSubscription.currentPeriodStart;
-
-        if (totalCreditsMicro > 0) {
-          await this.billingUsageService.decrementAvailableCreditsInCache({
-            workspaceId,
-            usedCredits: totalCreditsMicro,
-          });
-        }
+      if (
+        currentBillingSubscription !== NO_BILLING_SUBSCRIPTION &&
+        totalCreditsMicro > 0
+      ) {
+        await this.billingUsageService.decrementAvailableCreditsInCache({
+          workspaceId,
+          usedCredits: totalCreditsMicro,
+        });
       }
     }
 
-    this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
-      USAGE_RECORDED,
-      [
-        {
-          resourceType: UsageResourceType.LOGIC_FUNCTION,
-          operationType: UsageOperationType.CODE_EXECUTION,
-          creditsUsedMicro: invocationCreditsMicro,
-          quantity: 1,
-          unit: UsageUnit.INVOCATION,
-          resourceId: flatLogicFunction.id,
-          periodStart,
-        },
-        {
-          resourceType: UsageResourceType.LOGIC_FUNCTION,
-          operationType: UsageOperationType.CODE_EXECUTION,
-          creditsUsedMicro: durationCreditsMicro,
-          quantity: billedDurationMs,
-          unit: UsageUnit.MILLISECOND,
-          resourceId: flatLogicFunction.id,
-          periodStart,
-        },
-      ],
-      workspaceId,
-    );
+    const spenders = {
+      logicFunctionId: flatLogicFunction.id,
+      applicationId: flatApplication.id,
+    };
+
+    await this.usageRecorderService.record(workspaceId, [
+      {
+        resourceType: UsageResourceType.LOGIC_FUNCTION,
+        operationType: UsageOperationType.CODE_EXECUTION,
+        creditsUsedMicro: invocationCreditsMicro,
+        quantity: 1,
+        unit: UsageUnit.INVOCATION,
+        resourceId: flatLogicFunction.id,
+        spenders,
+      },
+      {
+        resourceType: UsageResourceType.LOGIC_FUNCTION,
+        operationType: UsageOperationType.CODE_EXECUTION,
+        creditsUsedMicro: durationCreditsMicro,
+        quantity: billedDurationMs,
+        unit: UsageUnit.MILLISECOND,
+        resourceId: flatLogicFunction.id,
+        spenders,
+      },
+    ]);
   }
 }
