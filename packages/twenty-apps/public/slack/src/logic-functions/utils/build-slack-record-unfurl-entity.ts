@@ -2,7 +2,7 @@ import { type EntityMetadata } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { type SlackUnfurlObjectName } from 'src/logic-functions/constants/slack-unfurl-object-names';
+import { type SlackUnfurlObjectName } from 'src/logic-functions/types/slack-unfurl-object-name.type';
 import { type SlackRecordLink } from 'src/logic-functions/types/slack-record-link.type';
 import { SLACK_RECORD_CONTENT_BUILDERS } from 'src/logic-functions/utils/build-slack-record-content';
 import { toEpochSeconds } from 'src/logic-functions/utils/to-epoch-seconds';

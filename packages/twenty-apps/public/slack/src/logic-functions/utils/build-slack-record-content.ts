@@ -2,7 +2,7 @@ import { type EntityCustomField } from '@slack/web-api';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_ENTITY_FIELD_TYPE } from 'src/logic-functions/constants/slack-entity-field-type';
-import { type SlackUnfurlObjectName } from 'src/logic-functions/constants/slack-unfurl-object-names';
+import { type SlackUnfurlObjectName } from 'src/logic-functions/types/slack-unfurl-object-name.type';
 import { asNonEmptyString } from 'src/logic-functions/utils/as-non-empty-string';
 import { asObject } from 'src/logic-functions/utils/as-object';
 import { buildFullName } from 'src/logic-functions/utils/build-full-name';

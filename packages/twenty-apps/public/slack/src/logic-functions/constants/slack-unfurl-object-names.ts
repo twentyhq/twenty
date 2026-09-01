@@ -5,5 +5,3 @@ export const SLACK_UNFURL_OBJECT_NAMES = [
   'note',
   'task',
 ] as const;
-
-export type SlackUnfurlObjectName = (typeof SLACK_UNFURL_OBJECT_NAMES)[number];

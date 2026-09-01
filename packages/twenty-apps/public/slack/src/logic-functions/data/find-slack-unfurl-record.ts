@@ -1,6 +1,6 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { type SlackUnfurlObjectName } from 'src/logic-functions/constants/slack-unfurl-object-names';
+import { type SlackUnfurlObjectName } from 'src/logic-functions/types/slack-unfurl-object-name.type';
 import { asObject } from 'src/logic-functions/utils/as-object';
 
 type SlackUnfurlRecordSelection = {
