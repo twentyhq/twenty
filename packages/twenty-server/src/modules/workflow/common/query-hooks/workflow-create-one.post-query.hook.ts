@@ -39,7 +39,7 @@ export class WorkflowCreateOnePostQueryHook implements WorkspacePostQueryHookIns
 
     await this.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
       workspace.id,
-      async (workflowVersionRepository) => {
+      async (workflowVersionRepository, activeTransactionScope) => {
         const position = await this.recordPositionService.buildRecordPosition({
           value: 'first',
           objectMetadata: {
@@ -47,7 +47,7 @@ export class WorkflowCreateOnePostQueryHook implements WorkspacePostQueryHookIns
             nameSingular: 'workflowVersion',
           },
           workspaceId: workspace.id,
-          transactionScope,
+          transactionScope: activeTransactionScope,
         });
 
         const insertResult = await workflowVersionRepository.insert({

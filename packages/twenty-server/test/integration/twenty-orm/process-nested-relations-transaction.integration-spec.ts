@@ -6,7 +6,6 @@ import { type ObjectRecord } from 'twenty-shared/types';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
 import { CommonCreateOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-one-query-runner.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -32,15 +31,15 @@ describe('ProcessNestedRelationsHelper transaction visibility', () => {
 
     await expect(
       workspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const {
-            flatObjectMetadataMaps,
-            flatFieldMetadataMaps,
-            objectIdByNameSingular,
-          } = getWorkspaceContext();
-
-          return workspaceOrmManager.runInWorkspaceTransaction(
+        async () =>
+          workspaceOrmManager.runInWorkspaceTransaction(
             async (transactionScope) => {
+              const personRepository = transactionScope.getRepository('person');
+              const {
+                flatObjectMetadataMaps,
+                flatFieldMetadataMaps,
+                objectIdByNameSingular,
+              } = personRepository.getInternalContext();
               const personObjectMetadata =
                 findFlatEntityByIdInFlatEntityMapsOrThrow({
                   flatEntityId: objectIdByNameSingular.person,
@@ -65,8 +64,7 @@ describe('ProcessNestedRelationsHelper transaction visibility', () => {
                 parentObjectRecords: [personRecord],
                 relations: { company: {} },
                 limit: QUERY_MAX_RECORDS_FROM_RELATION,
-                parentObjectRepository:
-                  transactionScope.getRepository('person'),
+                parentObjectRepository: personRepository,
                 selectedFields: {
                   company: {
                     id: true,
@@ -82,8 +80,7 @@ describe('ProcessNestedRelationsHelper transaction visibility', () => {
 
               throw new Error(ROLLBACK_TEST_TRANSACTION);
             },
-          );
-        },
+          ),
         buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
         { lite: true },
       ),
@@ -106,16 +103,20 @@ describe('CommonCreateOneQueryRunnerService transaction scope', () => {
 
     await expect(
       workspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const {
-            flatObjectMetadataMaps,
-            flatFieldMetadataMaps,
-            flatIndexMaps,
-            objectIdByNameSingular,
-          } = getWorkspaceContext();
-
-          return workspaceOrmManager.runInWorkspaceTransaction(
+        async () =>
+          workspaceOrmManager.runInWorkspaceTransaction(
             async (transactionScope) => {
+              const workflowRepository =
+                transactionScope.getRepository<WorkflowWorkspaceEntity>(
+                  'workflow',
+                  { shouldBypassPermissionChecks: true },
+                );
+              const {
+                flatObjectMetadataMaps,
+                flatFieldMetadataMaps,
+                flatIndexMaps,
+                objectIdByNameSingular,
+              } = workflowRepository.getInternalContext();
               const workflowObjectMetadata =
                 findFlatEntityByIdInFlatEntityMapsOrThrow({
                   flatEntityId: objectIdByNameSingular.workflow,
@@ -147,11 +148,9 @@ describe('CommonCreateOneQueryRunnerService transaction scope', () => {
                 name: workflowName,
               });
 
-              const workflowInTransaction = await transactionScope
-                .getRepository<WorkflowWorkspaceEntity>('workflow', {
-                  shouldBypassPermissionChecks: true,
-                })
-                .findOne({ where: { id: workflowId } });
+              const workflowInTransaction = await workflowRepository.findOne({
+                where: { id: workflowId },
+              });
               const workflowVersionsInTransaction = await transactionScope
                 .getRepository<WorkflowVersionWorkspaceEntity>(
                   'workflowVersion',
@@ -187,8 +186,7 @@ describe('CommonCreateOneQueryRunnerService transaction scope', () => {
 
               throw new Error(ROLLBACK_TEST_TRANSACTION);
             },
-          );
-        },
+          ),
         authContext,
         { lite: true },
       ),
