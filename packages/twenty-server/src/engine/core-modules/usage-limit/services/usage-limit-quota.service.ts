@@ -4,6 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -13,7 +15,7 @@ import {
   UsageLimitException,
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
-import { UsageAllowanceResolver } from 'src/engine/core-modules/usage-limit/interfaces/usage-allowance-resolver.interface';
+import { type UsagePoolAvailability } from 'src/engine/core-modules/usage-limit/types/usage-pool-availability.type';
 import { type ExhaustedScope } from 'src/engine/core-modules/usage-limit/types/exhausted-scope.type';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
@@ -55,7 +57,8 @@ export class UsageLimitQuotaService {
     private readonly cacheLockService: CacheLockService,
     private readonly clickHouseService: ClickHouseService,
     private readonly usagePeriodService: UsagePeriodService,
-    private readonly usageAllowanceResolver: UsageAllowanceResolver,
+    private readonly billingService: BillingService,
+    private readonly billingUsageService: BillingUsageService,
   ) {}
 
   async assertCanConsume(args: QuotaConsumeArgs): Promise<void> {
@@ -66,8 +69,7 @@ export class UsageLimitQuotaService {
       this.throwQuotaExhausted(exhaustedRuleScope);
     }
 
-    const poolAvailability =
-      await this.usageAllowanceResolver.getPoolAvailability(args.workspaceId);
+    const poolAvailability = await this.getPoolAvailability(args.workspaceId);
 
     if (poolAvailability === 'exhausted') {
       this.throwQuotaExhausted(await this.buildPoolExhaustedScope(args));
@@ -85,11 +87,10 @@ export class UsageLimitQuotaService {
       cost,
     });
 
-    const poolRemainingMicro =
-      await this.usageAllowanceResolver.consumeCreditsMicro(
-        args.workspaceId,
-        cost.creditsUsedMicro,
-      );
+    const poolRemainingMicro = await this.consumeCreditsMicro(
+      args.workspaceId,
+      cost.creditsUsedMicro,
+    );
 
     if (isDefined(exhaustedRuleScope)) {
       return { exhausted: exhaustedRuleScope };
@@ -200,7 +201,7 @@ export class UsageLimitQuotaService {
     resourceType,
   }: QuotaConsumeArgs): Promise<ExhaustedScope> {
     const [allowanceMicro, period] = await Promise.all([
-      this.usageAllowanceResolver.getAllowanceMicro(workspaceId),
+      this.getAllowanceMicro(workspaceId),
       this.usagePeriodService.getCurrentPeriod(workspaceId),
     ]);
 
@@ -273,7 +274,7 @@ export class UsageLimitQuotaService {
     );
 
     const allowanceMicro = hasPercentRule
-      ? await this.usageAllowanceResolver.getAllowanceMicro(workspaceId)
+      ? await this.getAllowanceMicro(workspaceId)
       : null;
 
     return buildQuotaBounds({
@@ -480,6 +481,37 @@ export class UsageLimitQuotaService {
         periodEnd: formatDateTimeForClickHouse(bound.periodEnd),
       },
     );
+  }
+
+  private async getPoolAvailability(
+    workspaceId: string,
+  ): Promise<UsagePoolAvailability> {
+    if (!this.billingService.isBillingEnabled()) {
+      return 'unlimited';
+    }
+
+    const hasAvailableCredits =
+      await this.billingUsageService.hasAvailableCredits(workspaceId);
+
+    return hasAvailableCredits ? 'available' : 'exhausted';
+  }
+
+  private getAllowanceMicro(workspaceId: string): Promise<number | null> {
+    return this.billingUsageService.getCurrentAllowanceMicro(workspaceId);
+  }
+
+  private async consumeCreditsMicro(
+    workspaceId: string,
+    costMicro: number,
+  ): Promise<number | null> {
+    if (!this.billingService.isBillingEnabled()) {
+      return null;
+    }
+
+    return this.billingUsageService.decrementAvailableCreditsInCache({
+      workspaceId,
+      usedCredits: costMicro,
+    });
   }
 }
 

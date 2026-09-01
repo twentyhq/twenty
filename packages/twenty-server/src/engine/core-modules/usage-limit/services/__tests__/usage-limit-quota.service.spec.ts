@@ -7,7 +7,8 @@ import {
   UsageLimitException,
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
-import { UsageAllowanceResolver } from 'src/engine/core-modules/usage-limit/interfaces/usage-allowance-resolver.interface';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -68,10 +69,14 @@ describe('UsageLimitQuotaService', () => {
     getCurrentPeriod: jest.fn(),
   };
 
-  const usageAllowanceResolver = {
-    getPoolAvailability: jest.fn().mockResolvedValue('unlimited'),
-    getAllowanceMicro: jest.fn().mockResolvedValue(null),
-    consumeCreditsMicro: jest.fn().mockResolvedValue(null),
+  const billingService = {
+    isBillingEnabled: jest.fn().mockReturnValue(false),
+  };
+
+  const billingUsageService = {
+    hasAvailableCredits: jest.fn().mockResolvedValue(true),
+    getCurrentAllowanceMicro: jest.fn().mockResolvedValue(null),
+    decrementAvailableCreditsInCache: jest.fn().mockResolvedValue(null),
   };
 
   const setRules = (rules: FlatUsageLimit[]) => {
@@ -108,9 +113,12 @@ describe('UsageLimitQuotaService', () => {
       async (_workspaceId: string, periodUnit = 'billingPeriod') =>
         periodUnit === 'week' ? WEEK_PERIOD : BILLING_PERIOD,
     );
-    usageAllowanceResolver.getPoolAvailability.mockResolvedValue('unlimited');
-    usageAllowanceResolver.getAllowanceMicro.mockResolvedValue(null);
-    usageAllowanceResolver.consumeCreditsMicro.mockResolvedValue(null);
+    billingService.isBillingEnabled.mockReturnValue(false);
+    billingUsageService.hasAvailableCredits.mockResolvedValue(true);
+    billingUsageService.getCurrentAllowanceMicro.mockResolvedValue(null);
+    billingUsageService.decrementAvailableCreditsInCache.mockResolvedValue(
+      null,
+    );
     workspaceCacheService.getOrRecompute.mockResolvedValue({
       usageLimitRules: { byResourceType: {} },
     });
@@ -126,7 +134,8 @@ describe('UsageLimitQuotaService', () => {
         { provide: CacheLockService, useValue: cacheLockService },
         { provide: ClickHouseService, useValue: clickHouseService },
         { provide: UsagePeriodService, useValue: usagePeriodService },
-        { provide: UsageAllowanceResolver, useValue: usageAllowanceResolver },
+        { provide: BillingService, useValue: billingService },
+        { provide: BillingUsageService, useValue: billingUsageService },
       ],
     }).compile();
 
@@ -227,7 +236,8 @@ describe('UsageLimitQuotaService', () => {
   });
 
   it('denies when the pool is exhausted with no rule configured', async () => {
-    usageAllowanceResolver.getPoolAvailability.mockResolvedValue('exhausted');
+    billingService.isBillingEnabled.mockReturnValue(true);
+    billingUsageService.hasAvailableCredits.mockResolvedValue(false);
 
     await expect(assertCanConsume()).rejects.toMatchObject({
       exhaustedScope: expect.objectContaining({
@@ -289,14 +299,17 @@ describe('UsageLimitQuotaService', () => {
   });
 
   it('consumes the pool on settle and reports its exhaustion', async () => {
-    usageAllowanceResolver.consumeCreditsMicro.mockResolvedValue(-5);
+    billingService.isBillingEnabled.mockReturnValue(true);
+    billingUsageService.decrementAvailableCreditsInCache.mockResolvedValue(-5);
 
     const { exhausted } = await settle(50);
 
-    expect(usageAllowanceResolver.consumeCreditsMicro).toHaveBeenCalledWith(
-      'workspace-1',
-      50,
-    );
+    expect(
+      billingUsageService.decrementAvailableCreditsInCache,
+    ).toHaveBeenCalledWith({
+      workspaceId: 'workspace-1',
+      usedCredits: 50,
+    });
     expect(exhausted).toMatchObject({
       spenderType: 'workspace',
       isDefault: true,
