@@ -1,5 +1,4 @@
 import { useCallback, useContext } from 'react';
-import { useStore } from 'jotai';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -15,15 +14,11 @@ import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/r
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
-import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
-import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
 export const RelationOneToManyFieldInput = () => {
-  const store = useStore();
   const { fieldDefinition, recordId } = useContext(FieldContext);
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
@@ -60,18 +55,6 @@ export const RelationOneToManyFieldInput = () => {
   const isJunctionRelation = junctionConfig?.isValid === true;
   const isInvalidJunctionRelation = junctionConfig?.isValid === false;
 
-  const junctionTargetObjectMetadata = (() => {
-    if (!junctionConfig || junctionConfig.isMorphRelation) {
-      return undefined;
-    }
-    const firstTargetField = junctionConfig.targetFields[0];
-    return objectMetadataItems.find(
-      (item) => item.id === firstTargetField?.relation?.targetObjectMetadata.id,
-    );
-  })();
-
-  const isMorphJunction = junctionConfig?.isMorphRelation ?? false;
-
   const { objectMetadataItem: relationObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular:
@@ -107,8 +90,6 @@ export const RelationOneToManyFieldInput = () => {
     useCreateAndConnectJunctionRecord({
       sourceRecordId: recordId,
       relationFieldMetadataId: fieldMetadataItem.id,
-      targetObjectMetadataItem:
-        junctionTargetObjectMetadata ?? relationObjectMetadataItem,
       junctionObjectMetadataItem,
     });
 
@@ -116,92 +97,40 @@ export const RelationOneToManyFieldInput = () => {
     recordFieldInputLayoutDirectionComponentState,
   );
 
-  const multipleRecordPickerPickableMorphItemsCallbackState =
-    useAtomComponentStateCallbackState(
-      multipleRecordPickerPickableMorphItemsComponentState,
-      instanceId,
-    );
-  const { performSearch: multipleRecordPickerPerformSearch } =
-    useMultipleRecordPickerPerformSearch();
-
   const handleCreateNew = useCallback(
-    async (searchInput?: string) => {
-      const updatePickerState = (
-        newRecordId: string,
-        targetObjectMetadataId: string,
-        searchableObjectMetadataItems: (typeof relationObjectMetadataItem)[],
-      ) => {
-        const currentMorphItems = store.get(
-          multipleRecordPickerPickableMorphItemsCallbackState,
-        );
-
-        const newMorphItems = currentMorphItems.concat({
-          recordId: newRecordId,
-          objectMetadataId: targetObjectMetadataId,
-          isSelected: true,
-          isMatchingSearchFilter: true,
+    async ({
+      searchInput,
+      objectMetadataItemId,
+    }: {
+      searchInput?: string;
+      objectMetadataItemId: string;
+    }) => {
+      if (isJunctionRelation) {
+        return createAndConnectJunctionRecord({
+          searchInput,
+          targetObjectMetadataItemId: objectMetadataItemId,
         });
-
-        store.set(
-          multipleRecordPickerPickableMorphItemsCallbackState,
-          newMorphItems,
-        );
-
-        multipleRecordPickerPerformSearch({
-          multipleRecordPickerInstanceId: instanceId,
-          forceSearchFilter: searchInput,
-          forceSearchableObjectMetadataItems: searchableObjectMetadataItems,
-          forcePickableMorphItems: newMorphItems,
-        });
-      };
-
-      if (
-        isJunctionRelation &&
-        isDefined(junctionConfig) &&
-        !isMorphJunction &&
-        isDefined(junctionTargetObjectMetadata)
-      ) {
-        const newTargetId = await createAndConnectJunctionRecord(searchInput);
-
-        if (isDefined(newTargetId)) {
-          updatePickerState(newTargetId, junctionTargetObjectMetadata.id, [
-            junctionTargetObjectMetadata,
-          ]);
-        }
-        return;
       }
 
       const newRecordId = await createNewRecordAndOpenSidePanel?.(searchInput);
 
       if (isDefined(newRecordId)) {
-        updatePickerState(newRecordId, relationObjectMetadataItem.id, [
-          relationObjectMetadataItem,
-        ]);
+        return {
+          recordId: newRecordId,
+          objectMetadataId: objectMetadataItemId,
+          isSelected: true,
+          isMatchingSearchFilter: true,
+        };
       }
+
+      return undefined;
     },
     [
       createNewRecordAndOpenSidePanel,
       createAndConnectJunctionRecord,
-      instanceId,
-      isMorphJunction,
       isJunctionRelation,
-      junctionConfig,
-      junctionTargetObjectMetadata,
-      multipleRecordPickerPickableMorphItemsCallbackState,
-      multipleRecordPickerPerformSearch,
-      relationObjectMetadataItem,
-      store,
     ],
   );
-
-  // For MORPH junctions, we don't know which object type to create.
-  const canCreateNew = !isMorphJunction;
-
-  // For junction relations, use the target object for "Add New", not the junction object
-  const objectMetadataItemIdForCreate =
-    isJunctionRelation && isDefined(junctionTargetObjectMetadata)
-      ? junctionTargetObjectMetadata.id
-      : relationObjectMetadataItem.id;
 
   if (isInvalidJunctionRelation) {
     return null;
@@ -221,9 +150,12 @@ export const RelationOneToManyFieldInput = () => {
           updateRelation(morphItem);
         }
       }}
-      onCreate={canCreateNew ? handleCreateNew : undefined}
+      onCreate={
+        isJunctionRelation || isDefined(createNewRecordAndOpenSidePanel)
+          ? handleCreateNew
+          : undefined
+      }
       isCreatePending={isCreatingJunctionRecord}
-      objectMetadataItemIdForCreate={objectMetadataItemIdForCreate}
       onClickOutside={handleSubmit}
       layoutDirection={
         recordFieldInputLayoutDirection === 'downward'

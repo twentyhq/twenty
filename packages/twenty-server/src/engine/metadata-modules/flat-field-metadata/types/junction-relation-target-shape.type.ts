@@ -5,6 +5,5 @@ export type JunctionRelationTargetShape = {
   junctionObjectMetadataId: string;
   junctionObjectNameSingular: string;
   junctionSourceJoinColumnName: string;
-  isTargetMorphRelation: boolean;
   targetJoinColumns: RelationTargetJoinColumn[];
 };

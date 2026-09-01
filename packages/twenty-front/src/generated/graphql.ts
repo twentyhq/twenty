@@ -91,6 +91,7 @@ export type CoreWorkflowPageInfo = {
 export type CreateAndConnectJunctionRecordInput = {
   relationFieldMetadataId: Scalars['UUID']['input'];
   sourceRecordId: Scalars['UUID']['input'];
+  targetObjectMetadataId: Scalars['UUID']['input'];
   targetRecordInput: Scalars['JSON']['input'];
 };
 

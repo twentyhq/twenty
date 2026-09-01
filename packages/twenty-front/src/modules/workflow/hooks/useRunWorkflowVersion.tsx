@@ -41,9 +41,7 @@ export const useRunWorkflowVersion = () => {
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const createOneRecordInCache = useCreateOneRecordInCache<WorkflowRun>({
-    objectMetadataItem,
-  });
+  const createOneRecordInCache = useCreateOneRecordInCache<WorkflowRun>();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const [mutate] = useMutation<
@@ -107,9 +105,12 @@ export const useRunWorkflowVersion = () => {
     });
 
     const recordCreatedInCache = createOneRecordInCache({
-      ...optimisticRecordInput,
-      id: workflowRunId,
-      __typename: getObjectTypename(objectMetadataItem.nameSingular),
+      objectMetadataItem,
+      record: {
+        ...optimisticRecordInput,
+        id: workflowRunId,
+        __typename: getObjectTypename(objectMetadataItem.nameSingular),
+      },
     });
 
     const recordNodeCreatedInCache = getRecordNodeFromRecord({

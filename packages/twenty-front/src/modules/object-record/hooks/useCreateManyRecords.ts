@@ -75,9 +75,7 @@ export const useCreateManyRecords = <
     recordGqlFields: computedRecordGqlFields,
   });
 
-  const createOneRecordInCache = useCreateOneRecordInCache<ObjectRecord>({
-    objectMetadataItem,
-  });
+  const createOneRecordInCache = useCreateOneRecordInCache<ObjectRecord>();
 
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
@@ -146,8 +144,11 @@ export const useCreateManyRecords = <
     const recordsCreatedInCache = recordOptimisticRecordsInput.flatMap(
       (recordToCreate) => {
         const created = createOneRecordInCache({
-          ...recordToCreate,
-          __typename: getObjectTypename(objectMetadataItem.nameSingular),
+          objectMetadataItem,
+          record: {
+            ...recordToCreate,
+            __typename: getObjectTypename(objectMetadataItem.nameSingular),
+          },
         });
 
         return created !== undefined && created !== null ? [created] : [];

@@ -12,6 +12,7 @@ import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
+import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelPayload';
@@ -28,14 +29,12 @@ import { isDefined } from 'twenty-shared/utils';
 type UseCreateAndConnectJunctionRecordArgs = {
   sourceRecordId: string;
   relationFieldMetadataId: string;
-  targetObjectMetadataItem: EnrichedObjectMetadataItem;
   junctionObjectMetadataItem: EnrichedObjectMetadataItem;
 };
 
 export const useCreateAndConnectJunctionRecord = ({
   sourceRecordId,
   relationFieldMetadataId,
-  targetObjectMetadataItem,
   junctionObjectMetadataItem,
 }: UseCreateAndConnectJunctionRecordArgs) => {
   const [loading, setLoading] = useState(false);
@@ -49,15 +48,16 @@ export const useCreateAndConnectJunctionRecord = ({
   const { refetchAggregateQueries } = useRefetchAggregateQueries();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const createTargetRecordInCache = useCreateOneRecordInCache<ObjectRecord>({
-    objectMetadataItem: targetObjectMetadataItem,
-  });
-  const createJunctionRecordInCache = useCreateOneRecordInCache<ObjectRecord>({
-    objectMetadataItem: junctionObjectMetadataItem,
-  });
+  const createOneRecordInCache = useCreateOneRecordInCache<ObjectRecord>();
 
   const createAndConnectJunctionRecord = useCallback(
-    async (searchInput?: string) => {
+    async ({
+      searchInput,
+      targetObjectMetadataItemId,
+    }: {
+      searchInput?: string;
+      targetObjectMetadataItemId: string;
+    }): Promise<RecordPickerPickableMorphItem | undefined> => {
       if (isCreatingRef.current) {
         return undefined;
       }
@@ -66,6 +66,15 @@ export const useCreateAndConnectJunctionRecord = ({
       setLoading(true);
 
       try {
+        const targetObjectMetadataItem = objectMetadataItems.find(
+          ({ id }) => id === targetObjectMetadataItemId,
+        );
+
+        if (!isDefined(targetObjectMetadataItem)) {
+          enqueueErrorSnackBar({});
+          return undefined;
+        }
+
         let mutationResult:
           | CreateAndConnectJunctionRecordMutation['createAndConnectJunctionRecord']
           | undefined;
@@ -93,6 +102,7 @@ export const useCreateAndConnectJunctionRecord = ({
               input: {
                 sourceRecordId,
                 relationFieldMetadataId,
+                targetObjectMetadataId: targetObjectMetadataItem.id,
                 targetRecordInput,
               },
             },
@@ -119,14 +129,15 @@ export const useCreateAndConnectJunctionRecord = ({
         const cacheCreatedRecord = ({
           objectMetadataItem,
           record,
-          createRecordInCache,
         }: {
           objectMetadataItem: EnrichedObjectMetadataItem;
           record: ObjectRecord;
-          createRecordInCache: (record: ObjectRecord) => ObjectRecord;
         }) => {
           try {
-            const cachedRecord = createRecordInCache(record);
+            const cachedRecord = createOneRecordInCache({
+              objectMetadataItem,
+              record,
+            });
             const recordNode = getRecordNodeFromRecord({
               objectMetadataItem,
               objectMetadataItems,
@@ -154,7 +165,6 @@ export const useCreateAndConnectJunctionRecord = ({
         cacheCreatedRecord({
           objectMetadataItem: targetObjectMetadataItem,
           record: createdTargetRecord,
-          createRecordInCache: createTargetRecordInCache,
         });
 
         const junctionRecordFromServer =
@@ -186,7 +196,6 @@ export const useCreateAndConnectJunctionRecord = ({
         cacheCreatedRecord({
           objectMetadataItem: junctionObjectMetadataItem,
           record: createdJunctionRecord,
-          createRecordInCache: createJunctionRecordInCache,
         });
 
         const createdRecords = [
@@ -229,7 +238,12 @@ export const useCreateAndConnectJunctionRecord = ({
           }
         }
 
-        return createdTargetRecord.id;
+        return {
+          recordId: createdTargetRecord.id,
+          objectMetadataId: targetObjectMetadataItem.id,
+          isSelected: true,
+          isMatchingSearchFilter: true,
+        };
       } finally {
         isCreatingRef.current = false;
         setLoading(false);
@@ -237,8 +251,7 @@ export const useCreateAndConnectJunctionRecord = ({
     },
     [
       apolloCoreClient,
-      createJunctionRecordInCache,
-      createTargetRecordInCache,
+      createOneRecordInCache,
       enqueueErrorSnackBar,
       junctionObjectMetadataItem,
       objectMetadataItems,
@@ -246,7 +259,6 @@ export const useCreateAndConnectJunctionRecord = ({
       refetchAggregateQueries,
       relationFieldMetadataId,
       sourceRecordId,
-      targetObjectMetadataItem,
       upsertRecordsInStore,
     ],
   );

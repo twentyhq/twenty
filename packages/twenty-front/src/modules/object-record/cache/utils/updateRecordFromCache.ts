@@ -36,7 +36,7 @@ export const updateRecordFromCache = <T extends ObjectRecord>({
   const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
 
   const cacheWriteFragment = gql`
-      fragment ${capitalizedObjectName}Fragment on ${capitalizedObjectName} ${mapObjectMetadataToGraphQLQuery(
+      fragment Update${capitalizedObjectName}Fragment on ${capitalizedObjectName} ${mapObjectMetadataToGraphQLQuery(
         {
           objectMetadataItems,
           objectMetadataItem,

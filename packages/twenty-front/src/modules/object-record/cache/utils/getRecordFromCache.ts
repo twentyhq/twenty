@@ -47,7 +47,7 @@ export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
   const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
 
   const cacheReadFragment = gql`
-      fragment ${capitalizedObjectName}Fragment on ${capitalizedObjectName} ${mapObjectMetadataToGraphQLQuery(
+      fragment Get${capitalizedObjectName}Fragment on ${capitalizedObjectName} ${mapObjectMetadataToGraphQLQuery(
         {
           objectMetadataItems,
           objectMetadataItem,

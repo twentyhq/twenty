@@ -12,9 +12,7 @@ export const useCreateManyRecordsInCache = <T extends ObjectRecord>({
     objectNameSingular,
   });
 
-  const createOneRecordInCache = useCreateOneRecordInCache({
-    objectMetadataItem,
-  });
+  const createOneRecordInCache = useCreateOneRecordInCache<T>();
 
   const createManyRecordsInCache = (recordsToCreate: Partial<T>[]) => {
     const recordsWithId = recordsToCreate
@@ -30,7 +28,7 @@ export const useCreateManyRecordsInCache = <T extends ObjectRecord>({
 
     for (const record of recordsWithId) {
       if (isDefined(record)) {
-        createOneRecordInCache(record);
+        createOneRecordInCache({ objectMetadataItem, record });
         createdRecordsInCache.push(record);
       }
     }

@@ -1,4 +1,3 @@
-import { useStore } from 'jotai';
 import { type ReactNode, useCallback, useContext } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -26,7 +25,6 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -41,7 +39,6 @@ type RecordDetailRelationSectionDropdownToManyProps = {
 export const RecordDetailRelationSectionDropdownToMany = ({
   dropdownTriggerClickableComponent,
 }: RecordDetailRelationSectionDropdownToManyProps) => {
-  const store = useStore();
   const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
   const { recordId, fieldDefinition } = useContext(FieldContext);
   const { fieldMetadataId } = fieldDefinition;
@@ -77,18 +74,6 @@ export const RecordDetailRelationSectionDropdownToMany = ({
   const isJunctionRelation = isUsableJunctionConfig(junctionConfig);
   const isInvalidJunctionRelation =
     isDefined(junctionConfig) && !isJunctionRelation;
-
-  const firstJunctionTargetField =
-    junctionConfig && !junctionConfig.isMorphRelation
-      ? junctionConfig.targetFields[0]
-      : undefined;
-
-  const junctionTargetObjectMetadata = objectMetadataItems.find(
-    (item) =>
-      item.id === firstJunctionTargetField?.relation?.targetObjectMetadata.id,
-  );
-
-  const isMorphJunction = junctionConfig?.isMorphRelation ?? false;
 
   const { objectMetadataItem: relationObjectMetadataItem } =
     useObjectMetadataItem({
@@ -159,12 +144,6 @@ export const RecordDetailRelationSectionDropdownToMany = ({
       dropdownId,
     );
 
-  const multipleRecordPickerPickableMorphItemsCallbackState =
-    useAtomComponentStateCallbackState(
-      multipleRecordPickerPickableMorphItemsComponentState,
-      dropdownId,
-    );
-
   const { performSearch: multipleRecordPickerPerformSearch } =
     useMultipleRecordPickerPerformSearch();
 
@@ -194,8 +173,6 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     useCreateAndConnectJunctionRecord({
       sourceRecordId: recordId,
       relationFieldMetadataId: fieldMetadataItem.id,
-      targetObjectMetadataItem:
-        junctionTargetObjectMetadata ?? relationObjectMetadataItem,
       junctionObjectMetadataItem,
     });
 
@@ -217,74 +194,33 @@ export const RecordDetailRelationSectionDropdownToMany = ({
   };
 
   const handleCreateNew = useCallback(
-    async (searchString?: string) => {
-      const updatePickerState = (
-        newRecordId: string,
-        targetObjectMetadataId: string,
-      ) => {
-        const currentMorphItems = store.get(
-          multipleRecordPickerPickableMorphItemsCallbackState,
-        );
-
-        const newMorphItems = currentMorphItems.concat({
-          recordId: newRecordId,
-          objectMetadataId: targetObjectMetadataId,
-          isSelected: true,
-          isMatchingSearchFilter: true,
+    async ({
+      searchInput,
+      objectMetadataItemId,
+    }: {
+      searchInput?: string;
+      objectMetadataItemId: string;
+    }) => {
+      if (isJunctionRelation) {
+        return createAndConnectJunctionRecord({
+          searchInput,
+          targetObjectMetadataItemId: objectMetadataItemId,
         });
-
-        store.set(
-          multipleRecordPickerPickableMorphItemsCallbackState,
-          newMorphItems,
-        );
-
-        multipleRecordPickerPerformSearch({
-          multipleRecordPickerInstanceId: dropdownId,
-          forceSearchFilter: searchString,
-          forceSearchableObjectMetadataItems: searchableObjectMetadataItems,
-          forcePickableMorphItems: newMorphItems,
-        });
-      };
-
-      if (
-        isJunctionRelation &&
-        isDefined(junctionConfig) &&
-        !isMorphJunction &&
-        isDefined(junctionTargetObjectMetadata)
-      ) {
-        const newTargetId = await createAndConnectJunctionRecord(searchString);
-
-        if (isDefined(newTargetId)) {
-          updatePickerState(newTargetId, junctionTargetObjectMetadata.id);
-        }
-        return;
       }
 
       closeDropdown(dropdownId);
-      createNewRecordAndOpenSidePanel?.(searchString);
+      await createNewRecordAndOpenSidePanel?.(searchInput);
+
+      return undefined;
     },
     [
       closeDropdown,
       createNewRecordAndOpenSidePanel,
       createAndConnectJunctionRecord,
       dropdownId,
-      isMorphJunction,
       isJunctionRelation,
-      junctionConfig,
-      junctionTargetObjectMetadata,
-      multipleRecordPickerPickableMorphItemsCallbackState,
-      multipleRecordPickerPerformSearch,
-      searchableObjectMetadataItems,
-      store,
     ],
   );
-
-  const canCreateNew = !isMorphJunction;
-
-  const objectMetadataItemIdForCreate =
-    isJunctionRelation && isDefined(junctionTargetObjectMetadata)
-      ? junctionTargetObjectMetadata.id
-      : relationObjectMetadataItem.id;
 
   const handleChange = useCallback(
     (morphItem: Parameters<typeof updateRelation>[0]) => {
@@ -320,9 +256,12 @@ export const RecordDetailRelationSectionDropdownToMany = ({
         <MultipleRecordPicker
           focusId={dropdownId}
           componentInstanceId={dropdownId}
-          onCreate={canCreateNew ? handleCreateNew : undefined}
+          onCreate={
+            isJunctionRelation || isDefined(createNewRecordAndOpenSidePanel)
+              ? handleCreateNew
+              : undefined
+          }
           isCreatePending={isCreatingJunctionRecord}
-          objectMetadataItemIdForCreate={objectMetadataItemIdForCreate}
           onChange={handleChange}
           onSubmit={() => {
             closeDropdown(dropdownId);

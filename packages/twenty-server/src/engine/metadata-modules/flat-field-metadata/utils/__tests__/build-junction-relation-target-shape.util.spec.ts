@@ -38,7 +38,6 @@ describe('buildJunctionRelationTargetShape', () => {
       junctionObjectMetadataId: NOTE_TARGET_OBJECT.id,
       junctionObjectNameSingular: 'noteTarget',
       junctionSourceJoinColumnName: 'noteId',
-      isTargetMorphRelation: true,
       targetJoinColumns: [
         {
           joinColumnName: 'targetPersonId',
@@ -82,7 +81,7 @@ describe('buildJunctionRelationTargetShape', () => {
       ],
     },
   ])(
-    'should preserve the morph target kind when $caseName',
+    'should keep the resolvable morph target column when $caseName',
     ({ junctionObject, objectMetadata, fieldMetadata }) => {
       expect(
         buildJunctionRelationTargetShape({
@@ -97,7 +96,6 @@ describe('buildJunctionRelationTargetShape', () => {
           ) as unknown as FlatEntityMaps<FlatFieldMetadata>,
         }),
       ).toMatchObject({
-        isTargetMorphRelation: true,
         targetJoinColumns: [
           {
             joinColumnName: 'targetPersonId',
@@ -236,7 +234,6 @@ describe('buildJunctionRelationTargetShape', () => {
       junctionObjectMetadataId: NOTE_TARGET_OBJECT.id,
       junctionObjectNameSingular: 'noteTarget',
       junctionSourceJoinColumnName: 'noteId',
-      isTargetMorphRelation: false,
       targetJoinColumns: [
         {
           joinColumnName: 'personId',

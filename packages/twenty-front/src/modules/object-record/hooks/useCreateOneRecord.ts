@@ -70,11 +70,8 @@ export const useCreateOneRecord = <
 
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
-  const createOneRecordInCache = useCreateOneRecordInCache<CreatedObjectRecord>(
-    {
-      objectMetadataItem,
-    },
-  );
+  const createOneRecordInCache =
+    useCreateOneRecordInCache<CreatedObjectRecord>();
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
@@ -106,9 +103,12 @@ export const useCreateOneRecord = <
       objectPermissionsByObjectMetadataId,
     });
     const recordCreatedInCache = createOneRecordInCache({
-      ...optimisticRecordInput,
-      id: idForCreation,
-      __typename: getObjectTypename(objectMetadataItem.nameSingular),
+      objectMetadataItem,
+      record: {
+        ...optimisticRecordInput,
+        id: idForCreation,
+        __typename: getObjectTypename(objectMetadataItem.nameSingular),
+      },
     });
 
     if (isDefined(recordCreatedInCache)) {

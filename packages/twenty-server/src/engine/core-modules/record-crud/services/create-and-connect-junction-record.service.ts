@@ -60,13 +60,15 @@ export class CreateAndConnectJunctionRecordService {
         flatFieldMetadataMaps: workspaceContext.flatFieldMetadataMaps,
       });
 
-      if (
-        !isDefined(junctionShape) ||
-        junctionShape.isTargetMorphRelation ||
-        junctionShape.targetJoinColumns.length !== 1
-      ) {
+      const matchingTargetJoinColumns =
+        junctionShape?.targetJoinColumns.filter(
+          ({ targetObjectMetadataId }) =>
+            targetObjectMetadataId === input.targetObjectMetadataId,
+        ) ?? [];
+
+      if (!isDefined(junctionShape) || matchingTargetJoinColumns.length !== 1) {
         throw new CommonQueryRunnerException(
-          'Create and connect only supports regular junction relations',
+          'Relation field and target object do not form an unambiguous junction',
           CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
           {
             userFriendlyMessage: getRecordCrudExceptionUserFriendlyMessage(
@@ -76,19 +78,13 @@ export class CreateAndConnectJunctionRecordService {
         );
       }
 
+      const [targetJoinColumn] = matchingTargetJoinColumns;
       const sourceFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: relationFlatFieldMetadata.objectMetadataId,
         flatEntityMaps: workspaceContext.flatObjectMetadataMaps,
       });
-      const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: junctionShape.targetJoinColumns[0].targetObjectMetadataId,
-        flatEntityMaps: workspaceContext.flatObjectMetadataMaps,
-      });
 
-      if (
-        !isDefined(sourceFlatObjectMetadata) ||
-        !isDefined(targetFlatObjectMetadata)
-      ) {
+      if (!isDefined(sourceFlatObjectMetadata)) {
         throw new CommonQueryRunnerException(
           'Junction relation object metadata is incomplete',
           CommonQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,
@@ -113,7 +109,7 @@ export class CreateAndConnectJunctionRecordService {
       const [targetApiContext, junctionApiContext] = await Promise.all([
         this.commonApiContextBuilderService.build({
           authContext,
-          objectName: targetFlatObjectMetadata.nameSingular,
+          objectName: targetJoinColumn.targetObjectNameSingular,
           rolePermissionConfig,
         }),
         this.commonApiContextBuilderService.build({
@@ -164,8 +160,7 @@ export class CreateAndConnectJunctionRecordService {
                   data: {
                     [junctionShape.junctionSourceJoinColumnName]:
                       input.sourceRecordId,
-                    [junctionShape.targetJoinColumns[0].joinColumnName]:
-                      targetRecord.id,
+                    [targetJoinColumn.joinColumnName]: targetRecord.id,
                   },
                   selectedFields: junctionApiContext.selectedFields,
                 },

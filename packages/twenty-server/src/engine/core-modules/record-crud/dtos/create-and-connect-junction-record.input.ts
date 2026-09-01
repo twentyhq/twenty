@@ -16,6 +16,11 @@ export class CreateAndConnectJunctionRecordInput {
   @IsUUID()
   relationFieldMetadataId: string;
 
+  @Field(() => UUIDScalarType)
+  @IsNotEmpty()
+  @IsUUID()
+  targetObjectMetadataId: string;
+
   @Field(() => GraphQLJSON)
   @IsObject()
   targetRecordInput: Record<string, unknown>;

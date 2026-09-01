@@ -166,8 +166,6 @@ export const resolveJunctionRelationTargetShapeFromVisibleField = ({
     junctionSourceJoinColumnName: computeMorphOrRelationFieldJoinColumnName({
       name: visibleJunctionTargetFlatFieldMetadata.name,
     }),
-    isTargetMorphRelation:
-      junctionSourceFlatFieldMetadata.type === FieldMetadataType.MORPH_RELATION,
     targetJoinColumns,
   };
 };

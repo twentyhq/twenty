@@ -25,9 +25,7 @@ export const useDuplicateDashboard = () => {
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const createOneRecordInCache = useCreateOneRecordInCache({
-    objectMetadataItem,
-  });
+  const createOneRecordInCache = useCreateOneRecordInCache();
 
   const [mutate] = useMutation(DuplicateDashboardDocument);
 
@@ -48,7 +46,10 @@ export const useDuplicateDashboard = () => {
             __typename: getObjectTypename(CoreObjectNameSingular.Dashboard),
           };
 
-          createOneRecordInCache(createdRecord);
+          createOneRecordInCache({
+            objectMetadataItem,
+            record: createdRecord,
+          });
 
           const recordNode = getRecordNodeFromRecord({
             objectMetadataItem,
