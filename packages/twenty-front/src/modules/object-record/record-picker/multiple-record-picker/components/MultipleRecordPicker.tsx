@@ -15,6 +15,7 @@ import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-r
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
+import { upsertMorphItem } from '@/object-record/record-picker/multiple-record-picker/utils/upsertMorphItem';
 import { type RecordPickerLayoutDirection } from '@/object-record/record-picker/types/RecordPickerLayoutDirection';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
@@ -44,14 +45,6 @@ type MultipleRecordPickerProps = {
   focusId: string;
   dropdownWidth?: number;
 };
-
-const upsertMorphItem = (
-  morphItems: RecordPickerPickableMorphItem[],
-  morphItem: RecordPickerPickableMorphItem,
-) => [
-  ...morphItems.filter(({ recordId }) => recordId !== morphItem.recordId),
-  morphItem,
-];
 
 export const MultipleRecordPicker = ({
   onChange,

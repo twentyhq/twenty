@@ -3,10 +3,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const containsNestedRelationCreate = (
   records: Record<string, unknown>[],
+  relationFieldNames: ReadonlySet<string>,
 ): boolean =>
   records.some((record) =>
-    Object.values(record).some(
-      (value) =>
+    Object.entries(record).some(
+      ([fieldName, value]) =>
+        relationFieldNames.has(fieldName) &&
         isDefined(value) &&
         typeof value === 'object' &&
         isDefined(

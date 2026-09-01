@@ -49,6 +49,7 @@ import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/obj
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { containsNestedRelationCreate } from 'src/engine/twenty-orm/utils/contains-nested-relation-create.util';
+import { getNestedRelationFieldNames } from 'src/engine/twenty-orm/utils/get-nested-relation-field-names.util';
 
 const MAX_NESTED_RELATION_CREATE_DEPTH = 5;
 
@@ -69,7 +70,13 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   ): Promise<ObjectRecord[]> {
     if (
       !isDefined(queryRunnerContext.transactionScope) &&
-      containsNestedRelationCreate(args.data)
+      containsNestedRelationCreate(
+        args.data,
+        getNestedRelationFieldNames({
+          flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
+          flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+        }),
+      )
     ) {
       return this.workspaceOrmManager.runInWorkspaceTransaction(
         (transactionScope) =>

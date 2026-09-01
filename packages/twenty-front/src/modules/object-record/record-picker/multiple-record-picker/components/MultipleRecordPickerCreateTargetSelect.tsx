@@ -4,6 +4,7 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
@@ -29,9 +30,11 @@ export const MultipleRecordPickerCreateTargetSelect = ({
   onBack,
   onSelect,
 }: MultipleRecordPickerCreateTargetSelectProps) => {
+  const scopedSelectableListInstanceId =
+    useWorkspaceSurfaceScopedComponentInstanceId(selectableListInstanceId);
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    selectableListInstanceId,
+    scopedSelectableListInstanceId,
   );
 
   const handleSelect = (objectMetadataItemId: string) => {

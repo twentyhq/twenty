@@ -1,4 +1,6 @@
 import { useCallback, useState } from 'react';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { v4 } from 'uuid';
 
@@ -73,7 +75,9 @@ export const useCreateJunctionRecordWithNestedTarget = ({
         !isDefined(targetFieldInfo) ||
         !isDefined(sourceJoinColumnName)
       ) {
-        enqueueErrorSnackBar({});
+        enqueueErrorSnackBar({
+          message: t`The relation configuration could not be resolved.`,
+        });
         return undefined;
       }
 
@@ -133,9 +137,9 @@ export const useCreateJunctionRecordWithNestedTarget = ({
           isMatchingSearchFilter: true,
         };
       } catch (error) {
-        enqueueErrorSnackBar(
-          error instanceof Error ? { apolloError: error } : {},
-        );
+        enqueueErrorSnackBar({
+          ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
+        });
         return undefined;
       } finally {
         setLoading(false);

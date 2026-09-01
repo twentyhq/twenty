@@ -94,6 +94,20 @@ describe('computeMetadataNameFromLabel', () => {
       },
     },
     {
+      title: 'should reserve the nested relation create keyword',
+      context: {
+        input: 'Create',
+        expected: 'createCustom',
+      },
+    },
+    {
+      title: 'should reserve the nested relation disconnect keyword',
+      context: {
+        input: 'Disconnect',
+        expected: 'disconnectCustom',
+      },
+    },
+    {
       title: 'should not modify non-reserved keywords',
       context: {
         input: 'Customer',

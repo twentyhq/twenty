@@ -50,6 +50,10 @@ const PET_GQL_FIELDS_WITH_OWNER = `
 `;
 
 describe('relation connect in workspace createOne/createMany resolvers  (e2e)', () => {
+  let generatedPersonIds: string[] = [];
+  let generatedCompanyIds: string[] = [];
+  let generatedPetIds: string[] = [];
+  let generatedTaskTargetIds: string[] = [];
   const [company1, company2] = [
     { id: TEST_COMPANY_1_ID, domainName: { primaryLinkUrl: 'company1.com' } },
     { id: TEST_COMPANY_2_ID, domainName: { primaryLinkUrl: 'company2.com' } },
@@ -92,6 +96,35 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     );
   });
 
+  afterEach(async () => {
+    const cleanupOperations = [
+      ['taskTarget', 'taskTargets', generatedTaskTargetIds],
+      ['pet', 'pets', generatedPetIds],
+      ['person', 'people', generatedPersonIds],
+      ['company', 'companies', generatedCompanyIds],
+    ] as const;
+
+    for (const [nameSingular, namePlural, ids] of cleanupOperations) {
+      if (ids.length === 0) {
+        continue;
+      }
+
+      await makeGraphqlAPIRequest(
+        destroyManyOperationFactory({
+          objectMetadataSingularName: nameSingular,
+          objectMetadataPluralName: namePlural,
+          gqlFields: 'id',
+          filter: { id: { in: ids } },
+        }),
+      );
+    }
+
+    generatedPersonIds = [];
+    generatedCompanyIds = [];
+    generatedPetIds = [];
+    generatedTaskTargetIds = [];
+  });
+
   afterAll(async () => {
     await makeGraphqlAPIRequest(
       destroyManyOperationFactory({
@@ -122,6 +155,8 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
   it('should create and connect a related record through a MANY-TO-ONE relation', async () => {
     const personId = v4();
     const companyId = v4();
+    generatedPersonIds.push(personId);
+    generatedCompanyIds.push(companyId);
     const response = await makeGraphqlAPIRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'person',
@@ -140,28 +175,13 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.createPerson.company.id).toBe(companyId);
-
-    await makeGraphqlAPIRequest(
-      destroyManyOperationFactory({
-        objectMetadataSingularName: 'person',
-        objectMetadataPluralName: 'people',
-        gqlFields: 'id',
-        filter: { id: { eq: personId } },
-      }),
-    );
-    await makeGraphqlAPIRequest(
-      destroyManyOperationFactory({
-        objectMetadataSingularName: 'company',
-        objectMetadataPluralName: 'companies',
-        gqlFields: 'id',
-        filter: { id: { eq: companyId } },
-      }),
-    );
   });
 
   it('should create and connect a concrete target through a MANY-TO-ONE morph relation', async () => {
     const taskTargetId = v4();
     const personId = v4();
+    generatedTaskTargetIds.push(taskTargetId);
+    generatedPersonIds.push(personId);
     const response = await makeGraphqlAPIRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'taskTarget',
@@ -177,28 +197,31 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.createTaskTarget.targetPerson.id).toBe(personId);
+  });
 
-    await makeGraphqlAPIRequest(
-      destroyManyOperationFactory({
-        objectMetadataSingularName: 'taskTarget',
-        objectMetadataPluralName: 'taskTargets',
-        gqlFields: 'id',
-        filter: { id: { eq: taskTargetId } },
+  it('should preserve create-shaped values in RAW_JSON fields', async () => {
+    const petId = v4();
+    const extraData = { create: { arbitrary: 'json' } };
+
+    generatedPetIds.push(petId);
+
+    const response = await makeGraphqlAPIRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'pet',
+        gqlFields: 'id extraData',
+        data: { id: petId, name: 'JSON nested-create regression', extraData },
       }),
     );
-    await makeGraphqlAPIRequest(
-      destroyManyOperationFactory({
-        objectMetadataSingularName: 'person',
-        objectMetadataPluralName: 'people',
-        gqlFields: 'id',
-        filter: { id: { eq: personId } },
-      }),
-    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.createPet.extraData).toEqual(extraData);
   });
 
   it('should roll back a nested create when the parent record cannot be created', async () => {
     const personId = v4();
     const companyId = v4();
+    generatedPersonIds.push(personId);
+    generatedCompanyIds.push(companyId);
 
     await makeGraphqlAPIRequest(
       createOneOperationFactory({
@@ -235,15 +258,6 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     );
 
     expect(companyResponse.body.data.company).toBeNull();
-
-    await makeGraphqlAPIRequest(
-      destroyManyOperationFactory({
-        objectMetadataSingularName: 'person',
-        objectMetadataPluralName: 'people',
-        gqlFields: 'id',
-        filter: { id: { eq: personId } },
-      }),
-    );
   });
 
   it('should not expose nested create in update relation inputs', async () => {

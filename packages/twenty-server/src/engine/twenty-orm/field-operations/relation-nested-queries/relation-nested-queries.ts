@@ -3,6 +3,7 @@ import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type EntityTarget, type ObjectLiteral } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { v4 } from 'uuid';
 
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
@@ -30,6 +31,7 @@ import { createSqlWhereTupleInClause } from 'src/engine/twenty-orm/utils/create-
 import { extractNestedRelationFieldsByEntityIndex } from 'src/engine/twenty-orm/utils/extract-nested-relation-fields-by-entity-index.util';
 import { getAssociatedRelationFieldName } from 'src/engine/twenty-orm/utils/get-associated-relation-field-name.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
+import { getNestedRelationFieldNames } from 'src/engine/twenty-orm/utils/get-nested-relation-field-names.util';
 
 export class RelationNestedQueries {
   private readonly internalContext: WorkspaceInternalContext;
@@ -53,12 +55,22 @@ export class RelationNestedQueries {
       ]
     | null {
     const entitiesArray = Array.isArray(entities) ? entities : [entities];
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      target,
+      this.internalContext,
+    );
 
     const {
       relationConnectQueryFieldsByEntityIndex,
       relationCreateQueryFieldsByEntityIndex,
       relationDisconnectQueryFieldsByEntityIndex,
-    } = extractNestedRelationFieldsByEntityIndex(entitiesArray);
+    } = extractNestedRelationFieldsByEntityIndex(
+      entitiesArray,
+      getNestedRelationFieldNames({
+        flatObjectMetadata: objectMetadata,
+        flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
+      }),
+    );
 
     const connectConfig = this.prepareRelationConnect(
       entitiesArray,
@@ -242,14 +254,7 @@ export class RelationNestedQueries {
           );
         }
 
-        const group: {
-          targetObjectMetadata: FlatObjectMetadata;
-          entries: {
-            entityIndex: number;
-            fieldName: string;
-            record: Partial<ObjectRecord>;
-          }[];
-        } = groups.get(targetObjectMetadata.id) ?? {
+        const group = groups.get(targetObjectMetadata.id) ?? {
           targetObjectMetadata,
           entries: [],
         };
@@ -266,9 +271,13 @@ export class RelationNestedQueries {
     const updatedEntities = entities.map((entity) => ({ ...entity }));
 
     for (const { targetObjectMetadata, entries } of groups.values()) {
+      const recordsWithIds = entries.map(({ record }) => ({
+        ...record,
+        id: record.id ?? v4(),
+      }));
       const createdRecords = await createRecords({
         targetObjectMetadata,
-        records: entries.map(({ record }) => record),
+        records: recordsWithIds,
       });
 
       if (createdRecords.length !== entries.length) {
@@ -278,12 +287,16 @@ export class RelationNestedQueries {
         );
       }
 
-      entries.forEach(({ entityIndex, fieldName }, index) => {
-        const createdRecordId = createdRecords[index]?.id;
+      const createdRecordIds = new Set(
+        createdRecords.map(({ id }) => id).filter(isDefined),
+      );
 
-        if (!isDefined(createdRecordId)) {
+      entries.forEach(({ entityIndex, fieldName }, index) => {
+        const createdRecordId = recordsWithIds[index].id;
+
+        if (!createdRecordIds.has(createdRecordId)) {
           throw new TwentyOrmException(
-            `Created ${targetObjectMetadata.nameSingular} record has no id`,
+            `Created ${targetObjectMetadata.nameSingular} record ${createdRecordId} was not returned`,
             TwentyOrmExceptionCode.INVALID_PARAMETER,
           );
         }

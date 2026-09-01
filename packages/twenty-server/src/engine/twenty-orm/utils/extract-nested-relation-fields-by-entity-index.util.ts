@@ -97,6 +97,7 @@ const hasRelationCreate = (value: unknown): value is CreateObject => {
 
 export const extractNestedRelationFieldsByEntityIndex = (
   entities: Record<string, unknown>[],
+  relationFieldNames: ReadonlySet<string>,
 ): {
   relationConnectQueryFieldsByEntityIndex: RelationConnectQueryFieldsByEntityIndex;
   relationCreateQueryFieldsByEntityIndex: RelationCreateQueryFieldsByEntityIndex;
@@ -111,6 +112,10 @@ export const extractNestedRelationFieldsByEntityIndex = (
 
   for (const [entityIndex, entity] of Object.entries(entities)) {
     for (const [key, value] of Object.entries(entity)) {
+      if (!relationFieldNames.has(key)) {
+        continue;
+      }
+
       const hasConnect = hasRelationConnect(value);
       const hasCreate = hasRelationCreate(value);
       const hasDisconnect = hasRelationDisconnect(value);

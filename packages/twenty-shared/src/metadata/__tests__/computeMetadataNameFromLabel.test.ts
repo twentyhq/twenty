@@ -30,9 +30,15 @@ describe('computeMetadataNameFromLabel', () => {
     expect(result.length).toBeGreaterThan(0);
   });
 
-  it('should reserve the nested relation connect keyword', () => {
+  it('should reserve nested relation keywords', () => {
     expect(computeMetadataNameFromLabel({ label: 'Connect' })).toBe(
       'connectCustom',
+    );
+    expect(computeMetadataNameFromLabel({ label: 'Create' })).toBe(
+      'createCustom',
+    );
+    expect(computeMetadataNameFromLabel({ label: 'Disconnect' })).toBe(
+      'disconnectCustom',
     );
   });
 
