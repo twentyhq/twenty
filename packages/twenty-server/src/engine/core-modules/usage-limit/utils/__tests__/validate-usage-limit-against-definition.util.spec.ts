@@ -4,7 +4,7 @@ import { type UpsertUsageLimitInput } from 'src/engine/core-modules/usage-limit/
 import { UsageLimitExceptionCode } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { validateUsageLimitAgainstDefinition } from 'src/engine/core-modules/usage-limit/utils/validate-usage-limit-against-definition.util';
 
-const validSpeedRule: UpsertUsageLimitInput = {
+const validSpeedLimit: UpsertUsageLimitInput = {
   resourceType: UsageResourceType.API,
   operationType: UsageOperationType.API_REQUEST,
   spenderType: 'apiKey',
@@ -17,7 +17,7 @@ const validSpeedRule: UpsertUsageLimitInput = {
   limitValue: 100,
 };
 
-const validQuotaRule: UpsertUsageLimitInput = {
+const validQuotaLimit: UpsertUsageLimitInput = {
   resourceType: UsageResourceType.AI,
   operationType: UsageOperationType.AI_CHAT_TOKEN,
   spenderType: 'workspace',
@@ -31,21 +31,21 @@ const validQuotaRule: UpsertUsageLimitInput = {
 };
 
 describe('validateUsageLimitAgainstDefinition', () => {
-  it('accepts a rule the definition allows', () => {
+  it('accepts a limit the definition allows', () => {
     expect(() =>
-      validateUsageLimitAgainstDefinition(validSpeedRule),
+      validateUsageLimitAgainstDefinition(validSpeedLimit),
     ).not.toThrow();
   });
 
   it('rejects a resource that has no definition', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
-        ...validSpeedRule,
+        ...validSpeedLimit,
         resourceType: UsageResourceType.STORAGE,
       }),
     ).toThrow(
       expect.objectContaining({
-        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+        code: UsageLimitExceptionCode.LIMIT_INVALID,
       }),
     );
   });
@@ -53,12 +53,12 @@ describe('validateUsageLimitAgainstDefinition', () => {
   it('rejects an operation the resource does not meter', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
-        ...validSpeedRule,
+        ...validSpeedLimit,
         operationType: UsageOperationType.EMAIL_SEND,
       }),
     ).toThrow(
       expect.objectContaining({
-        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+        code: UsageLimitExceptionCode.LIMIT_INVALID,
       }),
     );
   });
@@ -66,39 +66,39 @@ describe('validateUsageLimitAgainstDefinition', () => {
   it('refuses to rate-limit a human, because the definition does not allow that scope', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
-        ...validSpeedRule,
+        ...validSpeedLimit,
         spenderType: 'userWorkspace',
       }),
     ).toThrow(
       expect.objectContaining({
-        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+        code: UsageLimitExceptionCode.LIMIT_INVALID,
       }),
     );
   });
 
-  it('rejects a speed rule without a rolling window', () => {
+  it('rejects a speed limit without a rolling window', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
-        ...validSpeedRule,
+        ...validSpeedLimit,
         periodUnit: 'billingPeriod',
       }),
     ).toThrow(
       expect.objectContaining({
-        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+        code: UsageLimitExceptionCode.LIMIT_INVALID,
       }),
     );
   });
 
-  it('rejects a workspace rule, because the definition does not allow that scope', () => {
+  it('rejects a workspace limit, because the definition does not allow that scope', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
-        ...validSpeedRule,
+        ...validSpeedLimit,
         spenderType: 'workspace',
         spenderId: null,
       }),
     ).toThrow(
       expect.objectContaining({
-        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+        code: UsageLimitExceptionCode.LIMIT_INVALID,
       }),
     );
   });
@@ -106,20 +106,20 @@ describe('validateUsageLimitAgainstDefinition', () => {
   it('rejects a spender id that is not a uuid', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
-        ...validSpeedRule,
+        ...validSpeedLimit,
         spenderId: 'key-1',
       }),
     ).toThrow(
       expect.objectContaining({
-        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+        code: UsageLimitExceptionCode.LIMIT_INVALID,
       }),
     );
   });
 
-  it('accepts a rule targeting every spender of a type', () => {
+  it('accepts a limit targeting every spender of a type', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
-        ...validSpeedRule,
+        ...validSpeedLimit,
         spenderId: null,
       }),
     ).not.toThrow();
@@ -127,14 +127,14 @@ describe('validateUsageLimitAgainstDefinition', () => {
 
   it('accepts a percent quota on the workspace', () => {
     expect(() =>
-      validateUsageLimitAgainstDefinition(validQuotaRule),
+      validateUsageLimitAgainstDefinition(validQuotaLimit),
     ).not.toThrow();
   });
 
   it('accepts a quota covering every operation of the resource', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
-        ...validQuotaRule,
+        ...validQuotaLimit,
         operationType: UsageOperationType.ALL,
       }),
     ).not.toThrow();
@@ -143,13 +143,13 @@ describe('validateUsageLimitAgainstDefinition', () => {
   it('rejects a quota on a rolling window', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
-        ...validQuotaRule,
+        ...validQuotaLimit,
         periodUnit: 'second',
         periodCount: 60,
       }),
     ).toThrow(
       expect.objectContaining({
-        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+        code: UsageLimitExceptionCode.LIMIT_INVALID,
       }),
     );
   });
@@ -157,12 +157,12 @@ describe('validateUsageLimitAgainstDefinition', () => {
   it('rejects a quota with a burst value', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
-        ...validQuotaRule,
+        ...validQuotaLimit,
         burstValue: 200,
       }),
     ).toThrow(
       expect.objectContaining({
-        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+        code: UsageLimitExceptionCode.LIMIT_INVALID,
       }),
     );
   });
@@ -170,13 +170,13 @@ describe('validateUsageLimitAgainstDefinition', () => {
   it('rejects a percent speed limit', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
-        ...validSpeedRule,
+        ...validSpeedLimit,
         limitValueType: 'percent',
         limitValue: 5000,
       }),
     ).toThrow(
       expect.objectContaining({
-        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+        code: UsageLimitExceptionCode.LIMIT_INVALID,
       }),
     );
   });
@@ -184,12 +184,12 @@ describe('validateUsageLimitAgainstDefinition', () => {
   it('rejects a percent value outside basis points', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
-        ...validQuotaRule,
+        ...validQuotaLimit,
         limitValue: 10001,
       }),
     ).toThrow(
       expect.objectContaining({
-        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+        code: UsageLimitExceptionCode.LIMIT_INVALID,
       }),
     );
   });
@@ -197,7 +197,7 @@ describe('validateUsageLimitAgainstDefinition', () => {
   it('accepts an absolute weekly quota', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
-        ...validQuotaRule,
+        ...validQuotaLimit,
         periodUnit: 'week',
         limitValueType: 'absolute',
         limitValue: 5_000_000,
@@ -208,12 +208,12 @@ describe('validateUsageLimitAgainstDefinition', () => {
   it('rejects a percent quota outside the billing period', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
-        ...validQuotaRule,
+        ...validQuotaLimit,
         periodUnit: 'week',
       }),
     ).toThrow(
       expect.objectContaining({
-        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+        code: UsageLimitExceptionCode.LIMIT_INVALID,
       }),
     );
   });
@@ -221,14 +221,14 @@ describe('validateUsageLimitAgainstDefinition', () => {
   it('rejects a quota spanning several periods', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
-        ...validQuotaRule,
+        ...validQuotaLimit,
         periodUnit: 'week',
         limitValueType: 'absolute',
         periodCount: 2,
       }),
     ).toThrow(
       expect.objectContaining({
-        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+        code: UsageLimitExceptionCode.LIMIT_INVALID,
       }),
     );
   });
@@ -236,7 +236,7 @@ describe('validateUsageLimitAgainstDefinition', () => {
   it('accepts a token quota on one operation', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
-        ...validQuotaRule,
+        ...validQuotaLimit,
         meter: 'quantity',
         limitValueType: 'absolute',
         limitValue: 1_000_000,
@@ -247,7 +247,7 @@ describe('validateUsageLimitAgainstDefinition', () => {
   it('rejects a quantity quota covering every operation', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
-        ...validQuotaRule,
+        ...validQuotaLimit,
         operationType: UsageOperationType.ALL,
         meter: 'quantity',
         limitValueType: 'absolute',
@@ -255,7 +255,7 @@ describe('validateUsageLimitAgainstDefinition', () => {
       }),
     ).toThrow(
       expect.objectContaining({
-        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+        code: UsageLimitExceptionCode.LIMIT_INVALID,
       }),
     );
   });
@@ -263,12 +263,12 @@ describe('validateUsageLimitAgainstDefinition', () => {
   it('rejects a quota on a spender type the resource does not allow', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
-        ...validQuotaRule,
+        ...validQuotaLimit,
         spenderType: 'workflow',
       }),
     ).toThrow(
       expect.objectContaining({
-        code: UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+        code: UsageLimitExceptionCode.LIMIT_INVALID,
       }),
     );
   });

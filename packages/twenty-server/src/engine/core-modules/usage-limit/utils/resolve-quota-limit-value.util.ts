@@ -5,14 +5,14 @@ import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/f
 const BASIS_POINTS_DENOMINATOR = 10_000;
 
 export const resolveQuotaLimitValue = ({
-  rule,
+  limit,
   allowanceMicro,
 }: {
-  rule: FlatUsageLimit;
+  limit: FlatUsageLimit;
   allowanceMicro: number | null;
 }): number | null => {
-  if (rule.limitValueType === 'absolute') {
-    return rule.limitValue;
+  if (limit.limitValueType === 'absolute') {
+    return limit.limitValue;
   }
 
   if (!isDefined(allowanceMicro)) {
@@ -20,6 +20,6 @@ export const resolveQuotaLimitValue = ({
   }
 
   return Math.floor(
-    (allowanceMicro * rule.limitValue) / BASIS_POINTS_DENOMINATOR,
+    (allowanceMicro * limit.limitValue) / BASIS_POINTS_DENOMINATOR,
   );
 };

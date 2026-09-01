@@ -33,8 +33,8 @@ const SPEED_LIMIT_DEFAULTS: SpeedLimitDefault[] = [
   },
 ];
 
-const buildRule = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
-  id: 'rule-id',
+const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
+  id: 'limit-id',
   resourceType: UsageResourceType.API,
   operationType: UsageOperationType.API_REQUEST,
   spenderType: 'apiKey',
@@ -51,14 +51,14 @@ const buildRule = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
 
 const buildBuckets = ({
   authContext,
-  rules = [],
+  limits = [],
 }: {
   authContext: WorkspaceAuthContext;
-  rules?: FlatUsageLimit[];
+  limits?: FlatUsageLimit[];
 }) =>
   buildSpeedBuckets({
     speedLimitDefaults: SPEED_LIMIT_DEFAULTS,
-    rules,
+    limits,
     authContext,
     resourceType: UsageResourceType.API,
     operationType: UsageOperationType.API_REQUEST,
@@ -94,7 +94,7 @@ const systemContext = { type: 'system', workspace } as WorkspaceAuthContext;
 // Parity with the throttler this replaces: it metered API keys against a single
 // workspace-wide counter and applications against a cross-workspace one, and
 // left every other caller alone.
-describe('buildSpeedBuckets with no rules configured', () => {
+describe('buildSpeedBuckets with no limits configured', () => {
   it('meters an api key against one shared counter per window', () => {
     expect(buildBuckets({ authContext: apiKeyContext })).toEqual([
       expect.objectContaining({
@@ -135,11 +135,11 @@ describe('buildSpeedBuckets with no rules configured', () => {
   });
 });
 
-describe('buildSpeedBuckets with rules configured', () => {
-  it('shares one counter between every api key when the rule names none', () => {
+describe('buildSpeedBuckets with limits configured', () => {
+  it('shares one counter between every api key when the limit names none', () => {
     const [bucket] = buildBuckets({
       authContext: apiKeyContext,
-      rules: [buildRule({ spenderId: '', limitValue: 10, periodCount: 1 })],
+      limits: [buildLimit({ spenderId: '', limitValue: 10, periodCount: 1 })],
     });
 
     expect(bucket).toMatchObject({
@@ -152,9 +152,9 @@ describe('buildSpeedBuckets with rules configured', () => {
   it('gives a named api key its own counter on top of the shared one', () => {
     const buckets = buildBuckets({
       authContext: apiKeyContext,
-      rules: [
-        buildRule({ id: 'shared', spenderId: '', limitValue: 10 }),
-        buildRule({ id: 'own', spenderId: 'key-1', limitValue: 5 }),
+      limits: [
+        buildLimit({ id: 'shared', spenderId: '', limitValue: 10 }),
+        buildLimit({ id: 'own', spenderId: 'key-1', limitValue: 5 }),
       ],
     });
 
@@ -167,7 +167,7 @@ describe('buildSpeedBuckets with rules configured', () => {
   it('keeps a named api key charged for the defaults', () => {
     const buckets = buildBuckets({
       authContext: apiKeyContext,
-      rules: [buildRule({ spenderId: 'key-1', limitValue: 5 })],
+      limits: [buildLimit({ spenderId: 'key-1', limitValue: 5 })],
     });
 
     expect(buckets.map((bucket) => bucket.key)).toEqual([
@@ -177,10 +177,10 @@ describe('buildSpeedBuckets with rules configured', () => {
     ]);
   });
 
-  it('replaces every default once a rule covers the spender type', () => {
+  it('replaces every default once a limit covers the spender type', () => {
     const buckets = buildBuckets({
       authContext: apiKeyContext,
-      rules: [buildRule({ spenderId: '', periodCount: 60, limitValue: 10 })],
+      limits: [buildLimit({ spenderId: '', periodCount: 60, limitValue: 10 })],
     });
 
     expect(
@@ -188,10 +188,10 @@ describe('buildSpeedBuckets with rules configured', () => {
     ).toEqual([[60_000, 10]]);
   });
 
-  it('tells the platform default apart from a configured rule', () => {
+  it('tells the platform default apart from a configured limit', () => {
     const buckets = buildBuckets({
       authContext: apiKeyContext,
-      rules: [buildRule({ spenderId: 'key-1', limitValue: 5 })],
+      limits: [buildLimit({ spenderId: 'key-1', limitValue: 5 })],
     });
 
     expect(buckets.map((bucket) => bucket.isDefault)).toEqual([
@@ -204,7 +204,7 @@ describe('buildSpeedBuckets with rules configured', () => {
   it('keeps an application charged for the ceiling every workspace shares', () => {
     const buckets = buildBuckets({
       authContext: applicationContext,
-      rules: [buildRule({ spenderType: 'application', spenderId: '' })],
+      limits: [buildLimit({ spenderType: 'application', spenderId: '' })],
     });
 
     expect(buckets.map((bucket) => bucket.key)).toEqual([
@@ -213,11 +213,11 @@ describe('buildSpeedBuckets with rules configured', () => {
     ]);
   });
 
-  it('applies a workspace rule to a caller that no other rule covers', () => {
+  it('applies a workspace limit to a caller that no other limit covers', () => {
     const buckets = buildBuckets({
       authContext: userContext,
-      rules: [
-        buildRule({
+      limits: [
+        buildLimit({
           spenderType: 'workspace',
           spenderId: '',
           limitValue: 1000,

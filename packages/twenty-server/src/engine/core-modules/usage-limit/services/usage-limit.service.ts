@@ -83,7 +83,7 @@ export class UsageLimitService {
     );
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'usageLimitRules',
+      'usageLimits',
     ]);
 
     return this.usageLimitRepository.findOneOrFail(workspaceId, {
@@ -107,7 +107,7 @@ export class UsageLimitService {
     }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'usageLimitRules',
+      'usageLimits',
     ]);
 
     return true;
@@ -131,7 +131,7 @@ export class UsageLimitService {
     if (!spenderExists) {
       throw new UsageLimitException(
         `No ${spenderType} ${spenderId} in this workspace`,
-        UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+        UsageLimitExceptionCode.LIMIT_INVALID,
       );
     }
   }
@@ -165,7 +165,7 @@ export class UsageLimitService {
       default:
         throw new UsageLimitException(
           `A ${spenderType} spender id cannot be checked against the workspace`,
-          UsageLimitExceptionCode.LIMIT_RULE_INVALID,
+          UsageLimitExceptionCode.LIMIT_INVALID,
         );
     }
   }

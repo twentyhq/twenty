@@ -26,7 +26,7 @@ const WEEK_PERIOD = {
   periodEnd: new Date('2100-08-31T00:00:00.000Z'),
 };
 
-const buildRule = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
+const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   id: 'limit-1',
   resourceType: UsageResourceType.AI,
   operationType: UsageOperationType.AI_CHAT_TOKEN,
@@ -54,7 +54,7 @@ describe('UsageLimitQuotaService', () => {
   const workspaceCacheService = {
     getOrRecompute: jest
       .fn()
-      .mockResolvedValue({ usageLimitRules: { byResourceType: {} } }),
+      .mockResolvedValue({ usageLimits: { byResourceType: {} } }),
   };
 
   const cacheLockService = {
@@ -79,10 +79,10 @@ describe('UsageLimitQuotaService', () => {
     decrementAvailableCreditsInCache: jest.fn().mockResolvedValue(null),
   };
 
-  const setRules = (rules: FlatUsageLimit[]) => {
+  const setLimits = (limits: FlatUsageLimit[]) => {
     workspaceCacheService.getOrRecompute.mockResolvedValue({
-      usageLimitRules: {
-        byResourceType: { [UsageResourceType.AI]: rules },
+      usageLimits: {
+        byResourceType: { [UsageResourceType.AI]: limits },
       },
     });
   };
@@ -120,7 +120,7 @@ describe('UsageLimitQuotaService', () => {
       null,
     );
     workspaceCacheService.getOrRecompute.mockResolvedValue({
-      usageLimitRules: { byResourceType: {} },
+      usageLimits: { byResourceType: {} },
     });
 
     const module: TestingModule = await Test.createTestingModule({
@@ -142,13 +142,13 @@ describe('UsageLimitQuotaService', () => {
     service = module.get<UsageLimitQuotaService>(UsageLimitQuotaService);
   });
 
-  it('admits when no rule exists and the pool is unlimited', async () => {
+  it('admits when no limit exists and the pool is unlimited', async () => {
     await expect(assertCanConsume()).resolves.toBeUndefined();
     expect(cacheStorage.mget).not.toHaveBeenCalled();
   });
 
   it('admits on a warm counter with budget left', async () => {
-    setRules([buildRule({})]);
+    setLimits([buildLimit({})]);
     cacheStorage.mget.mockResolvedValue([250]);
 
     await expect(assertCanConsume()).resolves.toBeUndefined();
@@ -156,7 +156,7 @@ describe('UsageLimitQuotaService', () => {
   });
 
   it('denies on an exhausted warm counter', async () => {
-    setRules([buildRule({})]);
+    setLimits([buildLimit({})]);
     cacheStorage.mget.mockResolvedValue([0]);
 
     await expect(assertCanConsume()).rejects.toMatchObject({
@@ -170,7 +170,7 @@ describe('UsageLimitQuotaService', () => {
   });
 
   it('warms a cold billing-period counter by stamped period and denies when spent', async () => {
-    setRules([buildRule({ limitValue: 100 })]);
+    setLimits([buildLimit({ limitValue: 100 })]);
     cacheStorage.mget.mockResolvedValue([undefined]);
     clickHouseService.selectOrThrow.mockResolvedValue([
       {
@@ -194,7 +194,7 @@ describe('UsageLimitQuotaService', () => {
   });
 
   it('warms a calendar counter by timestamp range', async () => {
-    setRules([buildRule({ periodUnit: 'week' })]);
+    setLimits([buildLimit({ periodUnit: 'week' })]);
     cacheStorage.mget.mockResolvedValue([undefined]);
 
     await expect(assertCanConsume()).resolves.toBeUndefined();
@@ -205,9 +205,9 @@ describe('UsageLimitQuotaService', () => {
   });
 
   it('runs one warm query per distinct period', async () => {
-    setRules([
-      buildRule({ id: 'monthly' }),
-      buildRule({ id: 'weekly', periodUnit: 'week' }),
+    setLimits([
+      buildLimit({ id: 'monthly' }),
+      buildLimit({ id: 'weekly', periodUnit: 'week' }),
     ]);
     cacheStorage.mget.mockResolvedValue([undefined, undefined]);
 
@@ -217,9 +217,9 @@ describe('UsageLimitQuotaService', () => {
   });
 
   it('names the narrowest exhausted scope', async () => {
-    setRules([
-      buildRule({}),
-      buildRule({
+    setLimits([
+      buildLimit({}),
+      buildLimit({
         id: 'limit-2',
         spenderType: 'userWorkspace',
         spenderId: 'user-1',
@@ -235,7 +235,7 @@ describe('UsageLimitQuotaService', () => {
     });
   });
 
-  it('denies when the pool is exhausted with no rule configured', async () => {
+  it('denies when the pool is exhausted with no limit configured', async () => {
     billingService.isBillingEnabled.mockReturnValue(true);
     billingUsageService.hasAvailableCredits.mockResolvedValue(false);
 
@@ -248,14 +248,14 @@ describe('UsageLimitQuotaService', () => {
   });
 
   it('admits when the counters cannot be read', async () => {
-    setRules([buildRule({})]);
+    setLimits([buildLimit({})]);
     cacheStorage.mget.mockRejectedValue(new Error('Socket closed'));
 
     await expect(assertCanConsume()).resolves.toBeUndefined();
   });
 
   it('admits when the warm query fails instead of granting a fresh budget', async () => {
-    setRules([buildRule({})]);
+    setLimits([buildLimit({})]);
     cacheStorage.mget.mockResolvedValue([undefined]);
     clickHouseService.selectOrThrow.mockRejectedValue(
       new Error('clickhouse unreachable'),
@@ -266,9 +266,9 @@ describe('UsageLimitQuotaService', () => {
   });
 
   it('debits each counter in its own meter on settle', async () => {
-    setRules([
-      buildRule({ id: 'credits' }),
-      buildRule({ id: 'tokens', meter: 'quantity' }),
+    setLimits([
+      buildLimit({ id: 'credits' }),
+      buildLimit({ id: 'tokens', meter: 'quantity' }),
     ]);
     cacheStorage.runScript.mockResolvedValue([1, 500, 1, 900]);
 
@@ -281,7 +281,7 @@ describe('UsageLimitQuotaService', () => {
   });
 
   it('settles only warm counters and reports the exhausted one', async () => {
-    setRules([buildRule({})]);
+    setLimits([buildLimit({})]);
     cacheStorage.runScript.mockResolvedValue([1, -10]);
 
     const { exhausted } = await settle(50);
@@ -290,7 +290,7 @@ describe('UsageLimitQuotaService', () => {
   });
 
   it('reports nothing when a cold counter is skipped by settle', async () => {
-    setRules([buildRule({})]);
+    setLimits([buildLimit({})]);
     cacheStorage.runScript.mockResolvedValue([0, 0]);
 
     const { exhausted } = await settle(50);

@@ -13,7 +13,7 @@ const WEEK_PERIOD = {
   periodEnd: new Date('2026-08-31T00:00:00.000Z'),
 };
 
-const buildRule = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
+const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   id: 'limit-1',
   resourceType: UsageResourceType.AI,
   operationType: UsageOperationType.AI_CHAT_TOKEN,
@@ -30,14 +30,14 @@ const buildRule = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
 });
 
 const buildBounds = ({
-  rules,
+  limits,
   allowanceMicro = null,
 }: {
-  rules: FlatUsageLimit[];
+  limits: FlatUsageLimit[];
   allowanceMicro?: number | null;
 }) =>
   buildQuotaBounds({
-    rules,
+    limits,
     usageSpenders: { userWorkspaceId: 'user-1' },
     workspaceId: 'workspace-1',
     resourceType: UsageResourceType.AI,
@@ -47,9 +47,9 @@ const buildBounds = ({
   });
 
 describe('buildQuotaBounds', () => {
-  it('builds one bound per matching rule with a period-scoped key', () => {
+  it('builds one bound per matching limit with a period-scoped key', () => {
     const bounds = buildBounds({
-      rules: [buildRule({ spenderType: 'workspace' })],
+      limits: [buildLimit({ spenderType: 'workspace' })],
     });
 
     expect(bounds).toEqual([
@@ -69,9 +69,9 @@ describe('buildQuotaBounds', () => {
 
   it('anchors each bound to its own period unit', () => {
     const bounds = buildBounds({
-      rules: [
-        buildRule({ id: 'monthly' }),
-        buildRule({ id: 'weekly', periodUnit: 'week' }),
+      limits: [
+        buildLimit({ id: 'monthly' }),
+        buildLimit({ id: 'weekly', periodUnit: 'week' }),
       ],
     });
 
@@ -81,19 +81,19 @@ describe('buildQuotaBounds', () => {
     ]);
   });
 
-  it('ignores rules for spenders absent from the call', () => {
+  it('ignores limits for spenders absent from the call', () => {
     const bounds = buildBounds({
-      rules: [buildRule({ spenderType: 'apiKey', spenderId: 'key-1' })],
+      limits: [buildLimit({ spenderType: 'apiKey', spenderId: 'key-1' })],
     });
 
     expect(bounds).toEqual([]);
   });
 
-  it('applies a wildcard-operation rule alongside the operation-scoped one', () => {
+  it('applies a wildcard-operation limit alongside the operation-scoped one', () => {
     const bounds = buildBounds({
-      rules: [
-        buildRule({ id: 'all', operationType: UsageOperationType.ALL }),
-        buildRule({ id: 'chat' }),
+      limits: [
+        buildLimit({ id: 'all', operationType: UsageOperationType.ALL }),
+        buildLimit({ id: 'chat' }),
       ],
     });
 
@@ -105,9 +105,9 @@ describe('buildQuotaBounds', () => {
 
   it('ranks a named user bound before workspace bounds', () => {
     const bounds = buildBounds({
-      rules: [
-        buildRule({ spenderType: 'workspace' }),
-        buildRule({
+      limits: [
+        buildLimit({ spenderType: 'workspace' }),
+        buildLimit({
           id: 'limit-2',
           spenderType: 'userWorkspace',
           spenderId: 'user-1',
@@ -121,36 +121,36 @@ describe('buildQuotaBounds', () => {
     ]);
   });
 
-  it('resolves a percent rule against the allowance', () => {
+  it('resolves a percent limit against the allowance', () => {
     const bounds = buildBounds({
-      rules: [buildRule({ limitValueType: 'percent', limitValue: 5_000 })],
+      limits: [buildLimit({ limitValueType: 'percent', limitValue: 5_000 })],
       allowanceMicro: 2_000_000,
     });
 
     expect(bounds[0].limitValue).toBe(1_000_000);
   });
 
-  it('skips a percent rule when no allowance exists', () => {
+  it('skips a percent limit when no allowance exists', () => {
     const bounds = buildBounds({
-      rules: [buildRule({ limitValueType: 'percent', limitValue: 5_000 })],
+      limits: [buildLimit({ limitValueType: 'percent', limitValue: 5_000 })],
       allowanceMicro: null,
     });
 
     expect(bounds).toEqual([]);
   });
 
-  it('skips a rule whose period was not resolved', () => {
+  it('skips a limit whose period was not resolved', () => {
     const bounds = buildBounds({
-      rules: [buildRule({ periodUnit: 'day' })],
+      limits: [buildLimit({ periodUnit: 'day' })],
     });
 
     expect(bounds).toEqual([]);
   });
 
-  it('does not match a rule for another operation', () => {
+  it('does not match a limit for another operation', () => {
     const bounds = buildBounds({
-      rules: [
-        buildRule({ operationType: UsageOperationType.AI_WORKFLOW_TOKEN }),
+      limits: [
+        buildLimit({ operationType: UsageOperationType.AI_WORKFLOW_TOKEN }),
       ],
     });
 

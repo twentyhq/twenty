@@ -6,7 +6,7 @@ import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/perio
 import { type QuotaBound } from 'src/engine/core-modules/usage-limit/types/quota-bound.type';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
 import { buildSpendersFromUsageSpenders } from 'src/engine/core-modules/usage-limit/utils/build-spenders-from-usage-spenders.util';
-import { findRulesForSpender } from 'src/engine/core-modules/usage-limit/utils/find-rules-for-spender.util';
+import { findLimitsForSpender } from 'src/engine/core-modules/usage-limit/utils/find-limits-for-spender.util';
 import { resolveQuotaLimitValue } from 'src/engine/core-modules/usage-limit/utils/resolve-quota-limit-value.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -19,7 +19,7 @@ const boundSpecificity = (bound: QuotaBound): number =>
   (bound.operationType === UsageOperationType.ALL ? 1 : 0);
 
 export const buildQuotaBounds = ({
-  rules,
+  limits,
   usageSpenders,
   workspaceId,
   resourceType,
@@ -27,7 +27,7 @@ export const buildQuotaBounds = ({
   periodByUnit,
   allowanceMicro,
 }: {
-  rules: FlatUsageLimit[];
+  limits: FlatUsageLimit[];
   usageSpenders: UsageSpenders;
   workspaceId: string;
   resourceType: UsageResourceType;
@@ -38,36 +38,38 @@ export const buildQuotaBounds = ({
   const spenders = buildSpendersFromUsageSpenders(usageSpenders);
 
   const bounds = spenders.flatMap((spender) =>
-    findRulesForSpender({ rules, spender, operationType }).flatMap((rule) => {
-      const limitValue = resolveQuotaLimitValue({ rule, allowanceMicro });
-      const period = periodByUnit[rule.periodUnit];
+    findLimitsForSpender({ limits, spender, operationType }).flatMap(
+      (limit) => {
+        const limitValue = resolveQuotaLimitValue({ limit, allowanceMicro });
+        const period = periodByUnit[limit.periodUnit];
 
-      if (!isDefined(limitValue) || !isDefined(period)) {
-        return [];
-      }
+        if (!isDefined(limitValue) || !isDefined(period)) {
+          return [];
+        }
 
-      return [
-        {
-          key: buildQuotaCounterKey({
-            workspaceId,
-            resourceType,
-            operationType: rule.operationType,
-            spenderType: rule.spenderType,
-            spenderId: rule.spenderId || null,
-            periodUnit: rule.periodUnit,
+        return [
+          {
+            key: buildQuotaCounterKey({
+              workspaceId,
+              resourceType,
+              operationType: limit.operationType,
+              spenderType: limit.spenderType,
+              spenderId: limit.spenderId || null,
+              periodUnit: limit.periodUnit,
+              periodStart: period.periodStart,
+            }),
+            limitValue,
+            meter: limit.meter,
+            periodUnit: limit.periodUnit,
             periodStart: period.periodStart,
-          }),
-          limitValue,
-          meter: rule.meter,
-          periodUnit: rule.periodUnit,
-          periodStart: period.periodStart,
-          periodEnd: period.periodEnd,
-          spenderType: rule.spenderType,
-          spenderId: rule.spenderId === '' ? null : rule.spenderId,
-          operationType: rule.operationType,
-        },
-      ];
-    }),
+            periodEnd: period.periodEnd,
+            spenderType: limit.spenderType,
+            spenderId: limit.spenderId === '' ? null : limit.spenderId,
+            operationType: limit.operationType,
+          },
+        ];
+      },
+    ),
   );
 
   return bounds.sort((a, b) => boundSpecificity(a) - boundSpecificity(b));

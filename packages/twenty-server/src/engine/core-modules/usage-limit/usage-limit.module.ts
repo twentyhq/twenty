@@ -14,7 +14,7 @@ import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/
 import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
 import { UsageLimitResolver } from 'src/engine/core-modules/usage-limit/usage-limit.resolver';
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
-import { UsageLimitRulesCacheService } from 'src/engine/core-modules/usage-limit/services/usage-limit-rules-cache.service';
+import { UsageLimitsCacheService } from 'src/engine/core-modules/usage-limit/services/usage-limits-cache.service';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -40,7 +40,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   providers: [
     UsageLimitQuotaService,
     UsageLimitSpeedService,
-    UsageLimitRulesCacheService,
+    UsageLimitsCacheService,
     UsageLimitService,
     UsageLimitResolver,
     provideWorkspaceScopedRepository(UsageLimitEntity),
@@ -53,7 +53,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   exports: [
     UsageLimitQuotaService,
     UsageLimitSpeedService,
-    UsageLimitRulesCacheService,
+    UsageLimitsCacheService,
   ],
 })
 export class UsageLimitModule {}

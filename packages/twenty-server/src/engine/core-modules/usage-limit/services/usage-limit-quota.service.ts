@@ -62,11 +62,11 @@ export class UsageLimitQuotaService {
   ) {}
 
   async assertCanConsume(args: QuotaConsumeArgs): Promise<void> {
-    const exhaustedRuleScope =
-      await this.findExhaustedRuleScopeAdmittingOnFailure(args);
+    const exhaustedLimitScope =
+      await this.findExhaustedLimitScopeAdmittingOnFailure(args);
 
-    if (isDefined(exhaustedRuleScope)) {
-      this.throwQuotaExhausted(exhaustedRuleScope);
+    if (isDefined(exhaustedLimitScope)) {
+      this.throwQuotaExhausted(exhaustedLimitScope);
     }
 
     const poolAvailability = await this.getPoolAvailability(args.workspaceId);
@@ -82,18 +82,19 @@ export class UsageLimitQuotaService {
   }: QuotaConsumeArgs & { cost: QuotaCost }): Promise<{
     exhausted: ExhaustedScope | null;
   }> {
-    const exhaustedRuleScope = await this.settleRuleCountersAdmittingOnFailure({
-      ...args,
-      cost,
-    });
+    const exhaustedLimitScope =
+      await this.settleLimitCountersAdmittingOnFailure({
+        ...args,
+        cost,
+      });
 
     const poolRemainingMicro = await this.consumeCreditsMicro(
       args.workspaceId,
       cost.creditsUsedMicro,
     );
 
-    if (isDefined(exhaustedRuleScope)) {
-      return { exhausted: exhaustedRuleScope };
+    if (isDefined(exhaustedLimitScope)) {
+      return { exhausted: exhaustedLimitScope };
     }
 
     if (isDefined(poolRemainingMicro) && poolRemainingMicro <= 0) {
@@ -103,7 +104,7 @@ export class UsageLimitQuotaService {
     return { exhausted: null };
   }
 
-  private async findExhaustedRuleScopeAdmittingOnFailure(
+  private async findExhaustedLimitScopeAdmittingOnFailure(
     args: QuotaConsumeArgs,
   ): Promise<ExhaustedScope | null> {
     try {
@@ -129,7 +130,7 @@ export class UsageLimitQuotaService {
     }
   }
 
-  private async settleRuleCountersAdmittingOnFailure({
+  private async settleLimitCountersAdmittingOnFailure({
     cost,
     ...args
   }: QuotaConsumeArgs & { cost: QuotaCost }): Promise<ExhaustedScope | null> {
@@ -258,27 +259,30 @@ export class UsageLimitQuotaService {
       return [];
     }
 
-    const quotaRules = await this.findQuotaRules({ workspaceId, resourceType });
+    const quotaLimits = await this.findQuotaLimits({
+      workspaceId,
+      resourceType,
+    });
 
-    if (quotaRules.length === 0) {
+    if (quotaLimits.length === 0) {
       return [];
     }
 
     const periodByUnit = await this.resolvePeriodsByUnit({
       workspaceId,
-      quotaRules,
+      quotaLimits,
     });
 
-    const hasPercentRule = quotaRules.some(
-      (rule) => rule.limitValueType === 'percent',
+    const hasPercentLimit = quotaLimits.some(
+      (limit) => limit.limitValueType === 'percent',
     );
 
-    const allowanceMicro = hasPercentRule
+    const allowanceMicro = hasPercentLimit
       ? await this.getAllowanceMicro(workspaceId)
       : null;
 
     return buildQuotaBounds({
-      rules: quotaRules,
+      limits: quotaLimits,
       usageSpenders: spenders,
       workspaceId,
       resourceType,
@@ -290,15 +294,15 @@ export class UsageLimitQuotaService {
 
   private async resolvePeriodsByUnit({
     workspaceId,
-    quotaRules,
+    quotaLimits,
   }: {
     workspaceId: string;
-    quotaRules: FlatUsageLimit[];
+    quotaLimits: FlatUsageLimit[];
   }): Promise<Partial<Record<PeriodUnit, UsagePeriod>>> {
     const periodUnits = [
       ...new Set(
-        quotaRules
-          .map((rule) => rule.periodUnit)
+        quotaLimits
+          .map((limit) => limit.periodUnit)
           .filter(
             (periodUnit): periodUnit is AnchoredPeriodUnit =>
               periodUnit !== 'second',
@@ -317,20 +321,20 @@ export class UsageLimitQuotaService {
     );
   }
 
-  private async findQuotaRules({
+  private async findQuotaLimits({
     workspaceId,
     resourceType,
   }: {
     workspaceId: string;
     resourceType: UsageResourceType;
   }): Promise<FlatUsageLimit[]> {
-    const { usageLimitRules } = await this.workspaceCacheService.getOrRecompute(
+    const { usageLimits } = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
-      ['usageLimitRules'],
+      ['usageLimits'],
     );
 
-    return (usageLimitRules.byResourceType[resourceType] ?? []).filter(
-      (rule) => rule.limitKind === 'quota',
+    return (usageLimits.byResourceType[resourceType] ?? []).filter(
+      (limit) => limit.limitKind === 'quota',
     );
   }
 
