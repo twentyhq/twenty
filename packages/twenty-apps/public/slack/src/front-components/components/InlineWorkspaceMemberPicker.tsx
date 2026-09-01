@@ -75,6 +75,14 @@ const StyledChevron = styled.div`
   width: 5px;
 `;
 
+// Blur never fires in the front-component runtime because autofocus does not
+// reach the search input, so an invisible backdrop catches outside clicks.
+const StyledBackdrop = styled.div`
+  inset: 0;
+  position: fixed;
+  z-index: 1;
+`;
+
 const StyledDropdownPanel = styled.div`
   background: ${() => themeCssVariables.background.primary};
   border: 1px solid ${() => themeCssVariables.border.color.medium};
@@ -87,7 +95,7 @@ const StyledDropdownPanel = styled.div`
   position: absolute;
   top: 100%;
   width: 100%;
-  z-index: 1;
+  z-index: 2;
 `;
 
 const StyledSearchInput = styled.input`
@@ -146,55 +154,58 @@ const InlineWorkspaceMemberPickerPanel = ({
     useWorkspaceMemberSearch(searchTerm);
 
   return (
-    <StyledDropdownPanel onMouseDown={(event) => event.preventDefault()}>
-      <StyledSearchInput
-        value={searchTerm}
-        onChange={(event) => setSearchTerm(event.target.value)}
-        onBlur={onClose}
-        onKeyDown={(event) => {
-          if (event.key === 'Escape') {
-            event.preventDefault();
-            onClose();
+    <>
+      <StyledBackdrop onClick={onClose} />
+      <StyledDropdownPanel onMouseDown={(event) => event.preventDefault()}>
+        <StyledSearchInput
+          value={searchTerm}
+          onChange={(event) => setSearchTerm(event.target.value)}
+          onBlur={onClose}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') {
+              event.preventDefault();
+              onClose();
 
-            return;
-          }
-
-          if (event.key === 'Enter') {
-            event.preventDefault();
-
-            if (options.length > 0) {
-              onSelect(options[0]);
+              return;
             }
-          }
-        }}
-        placeholder="Search members"
-        aria-label="Search workspace members"
-        autoFocus
-      />
-      <StyledOptions role="listbox" aria-label="Workspace members">
-        {options.map((member) => (
-          <div key={member.id} role="option" aria-selected={false}>
-            <MenuItemAvatar
-              avatar={{
-                type: 'rounded',
-                size: 'md',
-                placeholder: getMemberDisplayName(member),
-                placeholderColorSeed: member.id,
-              }}
-              text={getMemberDisplayName(member)}
-              contextualText={member.userEmail ?? undefined}
-              onClick={() => onSelect(member)}
+
+            if (event.key === 'Enter') {
+              event.preventDefault();
+
+              if (options.length > 0) {
+                onSelect(options[0]);
+              }
+            }
+          }}
+          placeholder="Search members"
+          aria-label="Search workspace members"
+          autoFocus
+        />
+        <StyledOptions role="listbox" aria-label="Workspace members">
+          {options.map((member) => (
+            <div key={member.id} role="option" aria-selected={false}>
+              <MenuItemAvatar
+                avatar={{
+                  type: 'rounded',
+                  size: 'md',
+                  placeholder: getMemberDisplayName(member),
+                  placeholderColorSeed: member.id,
+                }}
+                text={getMemberDisplayName(member)}
+                contextualText={member.userEmail ?? undefined}
+                onClick={() => onSelect(member)}
+              />
+            </div>
+          ))}
+          {options.length === 0 && (
+            <MenuItem
+              disabled
+              text={getEmptyStateText({ isSearching, searchErrorMessage })}
             />
-          </div>
-        ))}
-        {options.length === 0 && (
-          <MenuItem
-            disabled
-            text={getEmptyStateText({ isSearching, searchErrorMessage })}
-          />
-        )}
-      </StyledOptions>
-    </StyledDropdownPanel>
+          )}
+        </StyledOptions>
+      </StyledDropdownPanel>
+    </>
   );
 };
 
