@@ -1,6 +1,5 @@
 import { createPath } from 'react-router-dom';
 import { SidePanelPages } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -10,8 +9,7 @@ export const useCurrentSidePanelRoutedLocation = () => {
     sidePanelNavigationStackState,
   ).at(-1);
 
-  return currentNavigationItem?.page === SidePanelPages.RoutedPage &&
-    isDefined(currentNavigationItem.routedLocation)
+  return currentNavigationItem?.page === SidePanelPages.RoutedPage
     ? currentNavigationItem.routedLocation
     : null;
 };

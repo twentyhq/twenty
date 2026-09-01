@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { openSidePanelPage, SidePanelPages } from 'twenty-sdk/front-component';
+import { AppPath, openSidePanelPage } from 'twenty-sdk/front-component';
 
 import { FrontComponentCard } from '@/__stories__/shared/front-components/front-component-card';
 import {
@@ -14,8 +14,11 @@ const HostApiSidePanelOpenFrontComponent = () => {
   const handleClick = async () => {
     try {
       await openSidePanelPage({
-        page: SidePanelPages.RoutedPage,
-        path: '/object/company/test-record-id',
+        to: AppPath.RecordShowPage,
+        params: {
+          objectNameSingular: 'company',
+          objectRecordId: 'test-record-id',
+        },
       });
       setStatus('sidePanel:success');
     } catch (error) {

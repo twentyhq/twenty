@@ -6,7 +6,7 @@ import { IconColumnInsertRight, IconPlus } from 'twenty-ui/icon';
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
-import { sidePanelPageSelector } from '@/side-panel/states/sidePanelPageSelector';
+import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -15,7 +15,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 export const WorkspaceSectionAddMenuItemButton = () => {
   const { t } = useLingui();
   const { navigateSidePanel } = useNavigateSidePanel();
-  const sidePanelPage = useAtomStateValue(sidePanelPageSelector);
+  const sidePanelPage = useAtomStateValue(sidePanelPageInfoSelector).page;
   const [
     pendingInsertionNavigationMenuItem,
     setPendingInsertionNavigationMenuItem,

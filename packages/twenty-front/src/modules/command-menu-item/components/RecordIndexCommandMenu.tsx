@@ -10,8 +10,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const RecordIndexCommandMenu = () => {
-  const workspaceSurface = useWorkspaceSurface();
-  const isInSidePanel = workspaceSurface.type === 'side-panel';
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -26,7 +25,6 @@ export const RecordIndexCommandMenu = () => {
       {contextStoreCurrentObjectMetadataItemId && (
         <>
           <CommandMenuContextProvider
-            isInSidePanel={isInSidePanel}
             displayType="button"
             containerType={CommandMenuItemContainerType.IndexPageHeader}
             isInPreviewMode={isLayoutCustomizationModeEnabled && !isInSidePanel}
@@ -34,7 +32,6 @@ export const RecordIndexCommandMenu = () => {
             <PinnedCommandMenuItemButtons />
           </CommandMenuContextProvider>
           <CommandMenuContextProvider
-            isInSidePanel={isInSidePanel}
             displayType="dropdownItem"
             containerType={CommandMenuItemContainerType.IndexPageDropdown}
           >

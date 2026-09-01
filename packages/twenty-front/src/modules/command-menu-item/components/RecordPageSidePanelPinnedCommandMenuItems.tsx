@@ -9,11 +9,7 @@ import { sidePanelWidgetFooterCommandMenuItemsState } from '@/ui/layout/side-pan
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export const RecordPageSidePanelPinnedCommandMenuItems = ({
-  pageLayoutId,
-}: {
-  pageLayoutId: string | null;
-}) => {
+export const RecordPageSidePanelPinnedCommandMenuItems = () => {
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
@@ -40,10 +36,8 @@ export const RecordPageSidePanelPinnedCommandMenuItems = ({
 
   return (
     <CommandMenuContextProvider
-      isInSidePanel={true}
       displayType="button"
       containerType={CommandMenuItemContainerType.SidePanelFooter}
-      pageLayoutIdOverride={pageLayoutId}
     >
       <PinnedCommandMenuItemButtons containerWidth={availableWidth} />
     </CommandMenuContextProvider>

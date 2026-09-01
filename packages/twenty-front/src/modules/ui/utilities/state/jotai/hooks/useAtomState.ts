@@ -1,9 +1,8 @@
 import { useAtom } from 'jotai';
 
-import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/hooks/useRoutedFlowStateScopeId';
+import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
 import { type State } from '@/ui/utilities/state/jotai/types/State';
 import { type WritableSelector } from '@/ui/utilities/state/jotai/types/WritableSelector';
-import { getRoutedFlowScopedStateAtom } from '@/ui/utilities/state/jotai/utils/getRoutedFlowScopedStateAtom';
 
 export const useAtomState = <ValueType>(
   state: State<ValueType> | WritableSelector<ValueType>,
@@ -13,9 +12,5 @@ export const useAtomState = <ValueType>(
 ] => {
   const scopeId = useRoutedFlowStateScopeId();
 
-  return useAtom(
-    state.type === 'State'
-      ? getRoutedFlowScopedStateAtom(state, scopeId)
-      : state.atom,
-  );
+  return useAtom(state.type === 'State' ? state.getAtom(scopeId) : state.atom);
 };

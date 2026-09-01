@@ -80,49 +80,45 @@ export const RecordIndexContainerGater = () => {
   );
 
   return (
-    <>
-      <RecordIndexContextProvider
-        value={{
-          objectPermissionsByObjectMetadataId,
-          recordIndexId,
-          viewBarInstanceId: recordIndexId,
-          objectNamePlural: objectMetadataItem.namePlural,
-          objectNameSingular: objectMetadataItem.nameSingular,
-          objectMetadataItem,
-          onIndexRecordsLoaded: handleIndexRecordsLoaded,
-          indexIdentifierUrl,
-          recordFieldByFieldMetadataItemId,
-          labelIdentifierFieldMetadataItem,
-          fieldMetadataItemByFieldMetadataItemId,
-          fieldDefinitionByFieldMetadataItemId,
-        }}
+    <RecordIndexContextProvider
+      value={{
+        objectPermissionsByObjectMetadataId,
+        recordIndexId,
+        viewBarInstanceId: recordIndexId,
+        objectNamePlural: objectMetadataItem.namePlural,
+        objectNameSingular: objectMetadataItem.nameSingular,
+        objectMetadataItem,
+        onIndexRecordsLoaded: handleIndexRecordsLoaded,
+        indexIdentifierUrl,
+        recordFieldByFieldMetadataItemId,
+        labelIdentifierFieldMetadataItem,
+        fieldMetadataItemByFieldMetadataItemId,
+        fieldDefinitionByFieldMetadataItemId,
+      }}
+    >
+      <ViewComponentInstanceContext.Provider
+        value={{ instanceId: recordIndexId }}
       >
-        <ViewComponentInstanceContext.Provider
-          value={{ instanceId: recordIndexId }}
+        <RecordComponentInstanceContextsWrapper
+          componentInstanceId={recordIndexId}
         >
-          <RecordComponentInstanceContextsWrapper
-            componentInstanceId={recordIndexId}
+          <CommandMenuComponentInstanceContext.Provider
+            value={{
+              instanceId: getCommandMenuIdFromRecordIndexId(recordIndexId),
+            }}
           >
-            <CommandMenuComponentInstanceContext.Provider
-              value={{
-                instanceId: getCommandMenuIdFromRecordIndexId(recordIndexId),
-              }}
+            <PageTitle title={objectMetadataItem.labelPlural} />
+            <PageCardLayout
+              header={<RecordIndexPageHeader />}
+              secondaryBar={hasObjectReadPermissions && <RecordIndexViewBar />}
             >
-              <PageTitle title={objectMetadataItem.labelPlural} />
-              <PageCardLayout
-                header={<RecordIndexPageHeader />}
-                secondaryBar={
-                  hasObjectReadPermissions && <RecordIndexViewBar />
-                }
-              >
-                {indexContent}
-              </PageCardLayout>
-            </CommandMenuComponentInstanceContext.Provider>
-          </RecordComponentInstanceContextsWrapper>
-          <RecordIndexLoadBaseOnContextStoreEffect />
-          <RecordIndexViewFieldsSSESyncEffect />
-        </ViewComponentInstanceContext.Provider>
-      </RecordIndexContextProvider>
-    </>
+              {indexContent}
+            </PageCardLayout>
+          </CommandMenuComponentInstanceContext.Provider>
+        </RecordComponentInstanceContextsWrapper>
+        <RecordIndexLoadBaseOnContextStoreEffect />
+        <RecordIndexViewFieldsSSESyncEffect />
+      </ViewComponentInstanceContext.Provider>
+    </RecordIndexContextProvider>
   );
 };

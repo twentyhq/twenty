@@ -14,7 +14,7 @@ import {
 import { AppPath, SidePanelPages } from 'twenty-shared/types';
 import { IconSettings } from 'twenty-ui/icon';
 
-import { WorkspaceRouteObjectsContext } from '@/app/routing/contexts/WorkspaceRouteObjectsContext';
+import { WorkspaceRouteObjectsContext } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { SidePanelRouteNavigatorProvider } from '@/side-panel/routing/components/SidePanelRouteNavigatorProvider';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';

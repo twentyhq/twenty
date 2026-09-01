@@ -113,7 +113,11 @@ export const createAtomState = <ValueType>({
     key,
     scope,
     atom: baseAtom,
-    atomForRoutedFlow: (scopeId: string) => {
+    getAtom: (scopeId: string | null) => {
+      if (scope !== 'routed-flow' || scopeId === null) {
+        return baseAtom;
+      }
+
       const existingAtom = scopedAtomCache.get(scopeId);
 
       if (isDefined(existingAtom)) {

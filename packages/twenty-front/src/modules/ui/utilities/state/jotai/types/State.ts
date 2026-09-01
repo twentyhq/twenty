@@ -9,8 +9,8 @@ export type State<ValueType> = {
     [ValueType | ((prev: ValueType) => ValueType)],
     void
   >;
-  atomForRoutedFlow: (
-    scopeId: string,
+  getAtom: (
+    scopeId: string | null,
   ) => WritableAtom<
     ValueType,
     [ValueType | ((prev: ValueType) => ValueType)],

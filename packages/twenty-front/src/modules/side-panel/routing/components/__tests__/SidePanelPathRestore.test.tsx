@@ -11,7 +11,7 @@ import {
 import { StrictMode, type ReactNode } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 
-import { WorkspaceRouteObjectsContext } from '@/app/routing/contexts/WorkspaceRouteObjectsContext';
+import { WorkspaceRouteObjectsContext } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
 import { SidePanelPathUrlSyncEffect } from '@/side-panel/routing/components/SidePanelPathUrlSyncEffect';

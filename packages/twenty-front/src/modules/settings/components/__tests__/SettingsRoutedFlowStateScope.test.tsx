@@ -1,8 +1,9 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 
-import { SettingsRouteOutlet } from '@/app/components/SettingsRoutes';
+import { WorkspaceRouteObjectsContext } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
+import { WorkspaceRoutes } from '@/app/routing/components/WorkspaceRoutes';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
@@ -14,7 +15,7 @@ import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpe
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { RoutedFlowStateScopeContext } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
-import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/hooks/useRoutedFlowStateScopeId';
+import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -259,11 +260,17 @@ describe('settings routed-flow state scope', () => {
           }}
         >
           <MemoryRouter initialEntries={['/settings/roles']}>
-            <Routes>
-              <Route path="/settings" element={<SettingsRouteOutlet />}>
-                <Route path="*" element={<ScopeIdProbe />} />
-              </Route>
-            </Routes>
+            <WorkspaceRouteObjectsContext.Provider
+              value={[
+                {
+                  path: '/settings/*',
+                  element: <ScopeIdProbe />,
+                  handle: { workspaceSurfaces: ['main', 'side-panel'] },
+                },
+              ]}
+            >
+              <WorkspaceRoutes surface="side-panel" />
+            </WorkspaceRouteObjectsContext.Provider>
           </MemoryRouter>
         </WorkspaceSurfaceContext.Provider>
       </JotaiProvider>,

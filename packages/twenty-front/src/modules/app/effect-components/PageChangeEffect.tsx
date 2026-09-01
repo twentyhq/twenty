@@ -1,5 +1,5 @@
 import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksOnAnyLocationChange';
-import { useWorkspaceRouteObjects } from '@/app/routing/hooks/useWorkspaceRouteObjects';
+import { useWorkspaceRouteObjects } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useReturnToPath } from '@/auth/hooks/useReturnToPath';
 import { useIsOnAuthOrOnboardingPage } from '@/auth/hooks/useIsOnAuthOrOnboardingPage';
@@ -7,7 +7,7 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { SIDE_PANEL_PATH_SEARCH_PARAM } from '@/side-panel/routing/constants/SidePanelPathSearchParam';
 import { isSidePanelRoutedLocation } from '@/side-panel/routing/utils/isSidePanelRoutedLocation';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
-import { sidePanelPageSelector } from '@/side-panel/states/sidePanelPageSelector';
+import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -116,7 +116,7 @@ export const PageChangeEffect = () => {
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
       if (!hasRoutedSidePanelTarget) {
-        const currentPage = store.get(sidePanelPageSelector.atom);
+        const currentPage = store.get(sidePanelPageInfoSelector.atom).page;
         const shouldKeepSidePanelOpen =
           currentPage === SidePanelPages.NavigationMenuItemEdit ||
           currentPage === SidePanelPages.AskAI;

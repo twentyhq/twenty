@@ -4,11 +4,7 @@ import { CommandMenuContextProvider } from '@/command-menu-item/contexts/Command
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-export const RecordPageSidePanelCommandMenu = ({
-  pageLayoutId,
-}: {
-  pageLayoutId: string | null;
-}) => {
+export const RecordPageSidePanelCommandMenu = () => {
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
@@ -17,12 +13,10 @@ export const RecordPageSidePanelCommandMenu = ({
     <>
       {contextStoreCurrentObjectMetadataItemId && (
         <CommandMenuContextProvider
-          isInSidePanel={true}
           displayType="dropdownItem"
           containerType={
             CommandMenuItemContainerType.CommandMenuShowPageDropdown
           }
-          pageLayoutIdOverride={pageLayoutId}
         >
           <RecordPageSidePanelCommandMenuDropdown />
         </CommandMenuContextProvider>

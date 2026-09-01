@@ -445,8 +445,10 @@ describe('useFrontComponentExecutionContext', () => {
       await act(async () => {
         await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
           {
-            page: SidePanelPages.RoutedPage,
-            path: '/objects/companies?viewId=view-id#table',
+            to: AppPath.RecordIndexPage,
+            params: { objectNamePlural: 'companies' },
+            queryParams: { viewId: 'view-id' },
+            hash: 'table',
             pageTitle: 'Companies',
             resetNavigationStack: true,
           },
@@ -469,10 +471,9 @@ describe('useFrontComponentExecutionContext', () => {
 
       await expect(
         result.current.frontComponentHostCommunicationApi.openSidePanelPage({
-          page: SidePanelPages.RoutedPage,
-          path: '/unsupported',
+          to: AppPath.Home,
         }),
-      ).rejects.toThrow('Unsupported side-panel route: /unsupported');
+      ).rejects.toThrow('Unsupported side-panel route: /home');
     });
 
     it('rejects legacy ViewRecords because it has no canonical route params', async () => {
@@ -486,7 +487,7 @@ describe('useFrontComponentExecutionContext', () => {
           pageTitle: 'Legacy records',
         } as never),
       ).rejects.toThrow(
-        'ViewRecords is no longer supported. Open a RoutedPage with the record index canonical path instead.',
+        'ViewRecords is no longer supported. Open AppPath.RecordIndexPage with typed params instead.',
       );
 
       expect(mockNavigateSidePanel).not.toHaveBeenCalled();

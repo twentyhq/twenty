@@ -1,7 +1,6 @@
 import { getRoleWithRemovedFieldPermission } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/utils/getRoleWithRemovedFieldPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/hooks/useRoutedFlowStateScopeId';
-import { getRoutedFlowScopedFamilyStateAtom } from '@/ui/utilities/state/jotai/utils/getRoutedFlowScopedFamilyStateAtom';
+import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -11,8 +10,7 @@ export const useRemoveFieldPermissionInDraftRole = () => {
 
   const removeFieldPermissionInDraftRole = useCallback(
     (roleId: string, fieldPermissionFieldMetadataId: string) => {
-      const draftRoleAtom = getRoutedFlowScopedFamilyStateAtom(
-        settingsDraftRoleFamilyState,
+      const draftRoleAtom = settingsDraftRoleFamilyState.getAtom(
         roleId,
         routedFlowStateScopeId,
       );

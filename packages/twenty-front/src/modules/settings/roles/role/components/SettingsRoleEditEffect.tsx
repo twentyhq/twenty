@@ -6,8 +6,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { getRoutedFlowScopedFamilyStateAtom } from '@/ui/utilities/state/jotai/utils/getRoutedFlowScopedFamilyStateAtom';
-import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/hooks/useRoutedFlowStateScopeId';
+import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
 import { useStore } from 'jotai';
 import { useCallback, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -43,8 +42,7 @@ export const SettingsRoleEditEffect = ({
 
   const reconcileDraftRole = useCallback(
     (newRole: RoleWithPartialMembers) => {
-      const draftRoleAtom = getRoutedFlowScopedFamilyStateAtom(
-        settingsDraftRoleFamilyState,
+      const draftRoleAtom = settingsDraftRoleFamilyState.getAtom(
         newRole.id,
         routedFlowStateScopeId,
       );

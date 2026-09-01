@@ -46,18 +46,4 @@ describe('getTabListInstanceIdFromPageLayoutAndRecord', () => {
 
     expect(result).toBe('my-custom-layout-tab-list');
   });
-
-  it('should isolate a record tab list on a secondary surface', () => {
-    const result = getTabListInstanceIdFromPageLayoutAndRecord({
-      pageLayoutId: 'layout-1',
-      layoutType: PageLayoutType.RECORD_PAGE,
-      targetRecordIdentifier: {
-        id: 'record-42',
-        targetObjectNameSingular: 'company',
-      },
-      surfaceInstanceId: 'side-panel-page-1',
-    });
-
-    expect(result).toBe('layout-1-tab-list-record-42-side-panel-page-1');
-  });
 });

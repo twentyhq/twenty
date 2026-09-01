@@ -1,6 +1,6 @@
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
-import { sidePanelPageSelector } from '@/side-panel/states/sidePanelPageSelector';
+import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
@@ -17,9 +17,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useOpenRecordFromIndexView = () => {
-  const { recordIndexId } = useRecordIndexContextOrThrow();
-
-  const { objectNameSingular } = useRecordIndexContextOrThrow();
+  const { recordIndexId, objectNameSingular } = useRecordIndexContextOrThrow();
 
   const navigate = useNavigateApp();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
@@ -101,7 +99,8 @@ export const useOpenRecordFromIndexView = () => {
         setParentViewOn(MAIN_CONTEXT_STORE_INSTANCE_ID);
 
         const isSidePanelAiChat =
-          store.get(sidePanelPageSelector.atom) === SidePanelPages.AskAI;
+          store.get(sidePanelPageInfoSelector.atom).page ===
+          SidePanelPages.AskAI;
 
         if (!isSidePanelAiChat) {
           closeSidePanelMenu();

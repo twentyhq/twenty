@@ -11,8 +11,8 @@ export type FamilyState<ValueType, FamilyKey> = {
   key: string;
   scope?: 'routed-flow';
   atomFamily: (key: FamilyKey) => JotaiWritableAtom<ValueType>;
-  atomFamilyForRoutedFlow: (
+  getAtom: (
     key: FamilyKey,
-    scopeId: string,
+    scopeId: string | null,
   ) => JotaiWritableAtom<ValueType>;
 } & ((key: FamilyKey) => JotaiWritableAtom<ValueType>);

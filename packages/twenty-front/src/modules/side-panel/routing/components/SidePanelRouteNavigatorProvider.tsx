@@ -1,4 +1,4 @@
-import { useWorkspaceRouteObjects } from '@/app/routing/hooks/useWorkspaceRouteObjects';
+import { useWorkspaceRouteObjects } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { type NavigateAppOptions } from '~/hooks/useNavigateApp';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';

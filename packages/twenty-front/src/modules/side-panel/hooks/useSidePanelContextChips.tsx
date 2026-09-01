@@ -31,10 +31,7 @@ export const useSidePanelContextChips = () => {
   const { navigateSidePanelHistory } = useSidePanelHistory();
 
   const routedRecordIds = sidePanelNavigationStack.flatMap((page) => {
-    if (
-      page.page !== SidePanelPages.RoutedPage ||
-      !isDefined(page.routedLocation)
-    ) {
+    if (page.page !== SidePanelPages.RoutedPage) {
       return [];
     }
 
@@ -69,8 +66,7 @@ export const useSidePanelContextChips = () => {
           visibleIndex === visibleSidePanelNavigationStack.length - 1;
 
         const routedRecordShowParams =
-          page.page === SidePanelPages.RoutedPage &&
-          isDefined(page.routedLocation)
+          page.page === SidePanelPages.RoutedPage
             ? getRecordShowParamsFromPath(createPath(page.routedLocation))
             : null;
 

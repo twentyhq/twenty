@@ -139,14 +139,14 @@ export const PageLayoutTabsRenderer = () => {
 
   const activeTabId = useAtomComponentStateValue(activeTabIdComponentState);
 
-  const scrollWrapperInstanceId =
+  const scrollWrapperInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
     getScrollWrapperInstanceIdFromPageLayoutAndRecord({
       pageLayoutId: currentPageLayout.id,
       layoutType,
       targetRecordIdentifier,
-      isInSidePanel,
       scrollWrapperArea: 'tab-content',
-    });
+    }),
+  );
 
   const tabListInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
     getTabListInstanceIdFromPageLayoutAndRecord({
@@ -206,7 +206,6 @@ export const PageLayoutTabsRenderer = () => {
       behaveAsLinks={
         workspaceSurface.type === 'main' && !isPageLayoutInEditMode
       }
-      isInSidePanel={isInSidePanel}
       componentInstanceId={tabListInstanceId}
       addTabStrategy={addTabStrategy}
       isReorderEnabled={canEnableTabEditing}

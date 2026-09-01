@@ -15,16 +15,18 @@ export type NavigateFunction = <T extends AppPath>(
   options?: NavigateOptions,
 ) => Promise<void>;
 
-export type OpenSidePanelPageParams =
+type OpenRoutedSidePanelPageParams<T extends AppPath> = {
+  to: T;
+  params?: Parameters<typeof getAppPath<T>>[1];
+  queryParams?: Record<string, any>;
+  hash?: string;
+  pageTitle?: string;
+  resetNavigationStack?: boolean;
+};
+
+type OpenPurposeBuiltSidePanelPageParams =
   | {
-      page: SidePanelPages.RoutedPage;
-      // Canonical in-app path, including any query string and hash.
-      path: string;
-      pageTitle?: string;
-      resetNavigationStack?: boolean;
-    }
-  | {
-      // Deprecated: use RoutedPage with the record's canonical path.
+      // Deprecated: use `to: AppPath.RecordShowPage` with typed `params`.
       page: SidePanelPages.ViewRecord;
       recordId: string;
       objectNameSingular: string;
@@ -84,8 +86,12 @@ export type OpenSidePanelPageParams =
       shouldResetSearchState?: boolean;
     };
 
-export type OpenSidePanelPageFunction = (
-  params: OpenSidePanelPageParams,
+export type OpenSidePanelPageParams<T extends AppPath = AppPath> =
+  | OpenRoutedSidePanelPageParams<T>
+  | OpenPurposeBuiltSidePanelPageParams;
+
+export type OpenSidePanelPageFunction = <T extends AppPath>(
+  params: OpenSidePanelPageParams<T>,
 ) => Promise<void>;
 
 export type CommandConfirmationModalResult = 'confirm' | 'cancel';

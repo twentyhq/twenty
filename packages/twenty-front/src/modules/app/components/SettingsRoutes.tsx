@@ -17,8 +17,6 @@ import {
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
-import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
-import { RoutedFlowStateScopeContext } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -1184,18 +1182,8 @@ export const createSettingsRouteObjects = (
     createSettingsRouteElements(args),
   ) as WorkspaceRouteObject[];
 
-export const SettingsRouteOutlet = () => {
-  const workspaceSurface = useWorkspaceSurface();
-  const routedFlowStateScopeId =
-    workspaceSurface.type === 'side-panel'
-      ? (workspaceSurface.routedFlowStateScopeId ?? workspaceSurface.instanceId)
-      : null;
-
-  return (
-    <RoutedFlowStateScopeContext.Provider value={routedFlowStateScopeId}>
-      <Suspense fallback={<SettingsSkeletonLoader />}>
-        <Outlet />
-      </Suspense>
-    </RoutedFlowStateScopeContext.Provider>
-  );
-};
+export const SettingsRouteOutlet = () => (
+  <Suspense fallback={<SettingsSkeletonLoader />}>
+    <Outlet />
+  </Suspense>
+);

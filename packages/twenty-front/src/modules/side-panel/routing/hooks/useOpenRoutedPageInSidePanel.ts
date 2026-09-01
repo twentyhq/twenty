@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
-import { useWorkspaceRouteObjects } from '@/app/routing/hooks/useWorkspaceRouteObjects';
+import { useWorkspaceRouteObjects } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { isSidePanelRoutedLocation } from '@/side-panel/routing/utils/isSidePanelRoutedLocation';
 import { toSidePanelLocation } from '@/side-panel/routing/utils/toSidePanelLocation';

@@ -8,22 +8,20 @@ import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
-type RecordPageTabListInstanceIdArgs = {
-  recordId: string;
-  objectNameSingular: string;
-  store: ReturnType<typeof getDefaultStore>;
-  surfaceInstanceId?: string;
-};
-
-export const getRecordPageTabListInstanceId = ({
+export const setRecordPageActiveTabId = ({
   recordId,
   objectNameSingular,
+  tabId,
   store,
-  surfaceInstanceId,
-}: RecordPageTabListInstanceIdArgs) => {
+}: {
+  recordId: string;
+  objectNameSingular: string;
+  tabId: string;
+  store: ReturnType<typeof getDefaultStore>;
+}) => {
   // Dashboards resolve their page layout from record data, not object metadata
   if (objectNameSingular === CoreObjectNameSingular.Dashboard) {
-    return undefined;
+    return;
   }
 
   const objectMetadataItem = store.get(
@@ -34,7 +32,7 @@ export const getRecordPageTabListInstanceId = ({
   );
 
   if (!isDefined(objectMetadataItem)) {
-    return undefined;
+    return;
   }
 
   const recordPageLayout = store.get(
@@ -44,39 +42,19 @@ export const getRecordPageTabListInstanceId = ({
   );
 
   if (!isDefined(recordPageLayout)) {
-    return undefined;
+    return;
   }
 
   const pageLayoutId = recordPageLayout.id;
 
-  return getTabListInstanceIdFromPageLayoutAndRecord({
+  const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
     pageLayoutId,
     layoutType: PageLayoutType.RECORD_PAGE,
     targetRecordIdentifier: {
       id: recordId,
       targetObjectNameSingular: objectNameSingular,
     },
-    surfaceInstanceId,
   });
-};
-
-export const setRecordPageActiveTabId = ({
-  recordId,
-  objectNameSingular,
-  tabId,
-  store,
-  surfaceInstanceId,
-}: RecordPageTabListInstanceIdArgs & { tabId: string }) => {
-  const tabListInstanceId = getRecordPageTabListInstanceId({
-    recordId,
-    objectNameSingular,
-    store,
-    surfaceInstanceId,
-  });
-
-  if (!isDefined(tabListInstanceId)) {
-    return;
-  }
 
   store.set(
     activeTabIdComponentState.atomFamily({ instanceId: tabListInstanceId }),

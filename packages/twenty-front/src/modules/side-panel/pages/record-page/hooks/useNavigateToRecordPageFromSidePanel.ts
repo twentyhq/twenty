@@ -9,7 +9,6 @@ import { computeRecordShowComponentInstanceId } from '@/object-record/record-sho
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { getRecordShowParamsFromPath } from '@/side-panel/routing/utils/getRecordShowParamsFromPath';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -40,13 +39,13 @@ export const useNavigateToRecordPageFromSidePanel = () => {
       const currentRoutedPath = isDefined(currentRoutedLocation)
         ? createPath(currentRoutedLocation)
         : undefined;
-      const currentRecordShowParams = isDefined(currentRoutedPath)
-        ? getRecordShowParamsFromPath(currentRoutedPath)
-        : null;
+      const recordPath = getAppPath(AppPath.RecordShowPage, {
+        objectNameSingular,
+        objectRecordId: recordId,
+      });
 
       const isExpandingCurrentRoutedRecord =
-        currentRecordShowParams?.objectRecordId === recordId &&
-        currentRecordShowParams.objectNameSingular === objectNameSingular;
+        currentRoutedLocation?.pathname === recordPath;
 
       const fallbackTabId =
         objectNameSingular === CoreObjectNameSingular.Note ||
@@ -56,10 +55,7 @@ export const useNavigateToRecordPageFromSidePanel = () => {
       const destinationPath =
         isExpandingCurrentRoutedRecord && isDefined(currentRoutedPath)
           ? currentRoutedPath
-          : `${getAppPath(AppPath.RecordShowPage, {
-              objectNameSingular,
-              objectRecordId: recordId,
-            })}#${encodeURIComponent(fallbackTabId)}`;
+          : `${recordPath}#${encodeURIComponent(fallbackTabId)}`;
 
       const panelParentViewState = isDefined(sidePanelPageInstanceId)
         ? contextStoreRecordShowParentViewComponentState.atomFamily({

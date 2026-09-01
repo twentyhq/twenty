@@ -8,9 +8,12 @@ import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/ut
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
 import { doesCommandMenuItemMatchPageType } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageType';
 import { doesCommandMenuItemMatchSelectionState } from '@/command-menu-item/utils/doesCommandMenuItemMatchSelectionState';
-import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
+import {
+  currentPageLayoutIdState,
+  PageLayoutIdContext,
+} from '@/page-layout/states/currentPageLayoutIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
 
@@ -20,7 +23,6 @@ type CommandMenuContextProviderContentProps = {
   children: React.ReactNode;
   commandMenuContextApi: CommandMenuContextApi;
   isInPreviewMode: boolean;
-  pageLayoutIdOverride?: string | null;
 };
 
 export const CommandMenuContextProviderContent = ({
@@ -29,15 +31,15 @@ export const CommandMenuContextProviderContent = ({
   children,
   commandMenuContextApi,
   isInPreviewMode,
-  pageLayoutIdOverride,
 }: CommandMenuContextProviderContentProps) => {
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const commandMenuItemsDraft = useAtomStateValue(commandMenuItemsDraftState);
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
+  const pageLayoutIdFromContext = useContext(PageLayoutIdContext);
   const effectivePageLayoutId =
-    pageLayoutIdOverride === undefined
+    pageLayoutIdFromContext === undefined
       ? currentPageLayoutId
-      : pageLayoutIdOverride;
+      : pageLayoutIdFromContext;
 
   const filteredCommandMenuItems = useMemo(() => {
     const currentObjectMetadataItemId =

@@ -71,16 +71,7 @@ jest.mock(
 jest.mock(
   '@/object-record/record-show/components/PageLayoutRecordPageRenderer',
   () => ({
-    PageLayoutRecordPageRenderer: ({
-      isInSidePanel,
-    }: {
-      isInSidePanel: boolean;
-    }) => (
-      <div
-        data-in-side-panel={String(isInSidePanel)}
-        data-testid="record-renderer"
-      />
-    ),
+    PageLayoutRecordPageRenderer: () => <div data-testid="record-renderer" />,
   }),
 );
 
@@ -146,10 +137,7 @@ describe('RecordShowPage workspace surface composition', () => {
     expect(screen.getByTestId('record-header')).toBeInTheDocument();
     expect(screen.getByTestId('main-command-menu')).toBeInTheDocument();
     expect(screen.getByTestId('side-panel-toggle')).toBeInTheDocument();
-    expect(screen.getByTestId('record-renderer')).toHaveAttribute(
-      'data-in-side-panel',
-      'false',
-    );
+    expect(screen.getByTestId('record-renderer')).toBeInTheDocument();
   });
 
   it('uses the canonical renderer and header on a secondary surface', () => {
@@ -176,10 +164,7 @@ describe('RecordShowPage workspace surface composition', () => {
     expect(screen.getByTestId('record-page-title')).toBeInTheDocument();
     expect(screen.queryByTestId('main-command-menu')).not.toBeInTheDocument();
     expect(screen.queryByTestId('side-panel-toggle')).not.toBeInTheDocument();
-    expect(screen.getByTestId('record-renderer')).toHaveAttribute(
-      'data-in-side-panel',
-      'true',
-    );
+    expect(screen.getByTestId('record-renderer')).toBeInTheDocument();
     expect(screen.getByTestId('record-sse')).toBeInTheDocument();
   });
 

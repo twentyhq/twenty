@@ -1,4 +1,5 @@
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { useCallback } from 'react';
 
 export const getWorkspaceSurfaceScopedComponentInstanceId = ({
   componentInstanceId,
@@ -29,4 +30,18 @@ export const useWorkspaceSurfaceScopedComponentInstanceId = (
     surfaceType: workspaceSurface.type,
     surfaceInstanceId: workspaceSurface.instanceId,
   });
+};
+
+export const useWorkspaceSurfaceScopedComponentInstanceIdResolver = () => {
+  const workspaceSurface = useWorkspaceSurface();
+
+  return useCallback(
+    (componentInstanceId: string) =>
+      getWorkspaceSurfaceScopedComponentInstanceId({
+        componentInstanceId,
+        surfaceType: workspaceSurface.type,
+        surfaceInstanceId: workspaceSurface.instanceId,
+      }),
+    [workspaceSurface.instanceId, workspaceSurface.type],
+  );
 };

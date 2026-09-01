@@ -1,6 +1,5 @@
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
-import { getRecordShowParamsFromPath } from '@/side-panel/routing/utils/getRecordShowParamsFromPath';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -13,7 +12,6 @@ import { useRunWorkflowRunOpeningInSidePanelEffects } from '@/workflow/hooks/use
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { createPath } from 'react-router-dom';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -105,26 +103,17 @@ export const useOpenRecordInSidePanel = () => {
 
       if (
         isDefined(currentNavigationStackItem) &&
-        isDefined(currentRoutedLocation)
+        currentRoutedLocation?.pathname === recordPath
       ) {
-        const currentRecordShowParams = getRecordShowParamsFromPath(
-          createPath(currentRoutedLocation),
-        );
-
-        if (
-          currentRecordShowParams?.objectRecordId === recordId &&
-          currentRecordShowParams.objectNameSingular === objectNameSingular
-        ) {
-          if (isDefined(tab)) {
-            openRoutedPageInSidePanel({
-              path: recordPathWithTab,
-              pageTitle: currentNavigationStackItem.pageTitle,
-              replaceCurrent: true,
-            });
-          }
-
-          return currentNavigationStackItem.pageId;
+        if (isDefined(tab)) {
+          openRoutedPageInSidePanel({
+            path: recordPathWithTab,
+            pageTitle: currentNavigationStackItem.pageTitle,
+            replaceCurrent: true,
+          });
         }
+
+        return currentNavigationStackItem.pageId;
       }
 
       const objectMetadataItem = store.get(

@@ -118,7 +118,6 @@ export const SidePanelRouter = () => {
           </motion.div>
           <StyledSidePanelContent>
             <CommandMenuContextProvider
-              isInSidePanel={true}
               displayType="listItem"
               containerType={CommandMenuItemContainerType.CommandMenuList}
             >

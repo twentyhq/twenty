@@ -46,7 +46,12 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useStore } from 'jotai';
-import { assertUnreachable, CustomError, isDefined } from 'twenty-shared/utils';
+import {
+  assertUnreachable,
+  CustomError,
+  getAppPath,
+  isDefined,
+} from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -70,6 +75,19 @@ type AskAiOpenSidePanelPageParams = Extract<
 
 // Runtime-only compatibility for front components built with older SDKs.
 type LegacyOpenSidePanelPageParams =
+  | {
+      page: SidePanelPages.RoutedPage;
+      path: string;
+      pageTitle?: string;
+      resetNavigationStack?: boolean;
+    }
+  | {
+      page: SidePanelPages.ViewRecord;
+      recordId: string;
+      objectNameSingular: string;
+      tab?: string;
+      resetNavigationStack?: boolean;
+    }
   | (Omit<AskAiOpenSidePanelPageParams, 'page'> & {
       page: SidePanelPages.Copilot;
     })
@@ -188,6 +206,24 @@ export const useFrontComponentExecutionContext = ({
 
   const openSidePanelPage: FrontComponentHostCommunicationApi['openSidePanelPage'] =
     async (params: OpenSidePanelPageParams | LegacyOpenSidePanelPageParams) => {
+      if ('to' in params) {
+        const path = getAppPath(params.to, params.params, params.queryParams);
+        const pathWithHash = isNonEmptyString(params.hash)
+          ? `${path}#${encodeURIComponent(params.hash)}`
+          : path;
+        const pageId = openRoutedPageInSidePanel({
+          path: pathWithHash,
+          pageTitle: params.pageTitle,
+          resetNavigationStack: params.resetNavigationStack,
+        });
+
+        if (!isDefined(pageId)) {
+          throw new Error(`Unsupported side-panel route: ${pathWithHash}`);
+        }
+
+        return;
+      }
+
       if (params.page === SidePanelPages.RoutedPage) {
         const pageId = openRoutedPageInSidePanel({
           path: params.path,
@@ -204,7 +240,7 @@ export const useFrontComponentExecutionContext = ({
 
       if (params.page === SidePanelPages.ViewRecords) {
         throw new Error(
-          'ViewRecords is no longer supported. Open a RoutedPage with the record index canonical path instead.',
+          'ViewRecords is no longer supported. Open AppPath.RecordIndexPage with typed params instead.',
         );
       }
 

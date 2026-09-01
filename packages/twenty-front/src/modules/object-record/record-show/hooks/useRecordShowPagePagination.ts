@@ -1,7 +1,6 @@
 import { useStore } from 'jotai';
 import { useState } from 'react';
 import {
-  createPath,
   parsePath,
   useLocation,
   useNavigate,
@@ -39,6 +38,9 @@ export const useRecordShowPagePagination = (
   const { navigateSidePanelHistory } = useSidePanelHistory();
   const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
   const workspaceSurface = useWorkspaceSurface();
+  const ownsSidePanelRoute =
+    workspaceSurface.type === 'side-panel' &&
+    workspaceSurface.ownsRouteLocation;
   const [searchParams] = useSearchParams();
   const viewIdQueryParam = searchParams.get('viewId');
 
@@ -190,10 +192,7 @@ export const useRecordShowPagePagination = (
 
     navigate(
       destinationPath,
-      workspaceSurface.type === 'side-panel' &&
-        workspaceSurface.ownsRouteLocation
-        ? { replace: true }
-        : undefined,
+      ownsSidePanelRoute ? { replace: true } : undefined,
     );
   };
 
@@ -228,25 +227,14 @@ export const useRecordShowPagePagination = (
       { viewId: viewIdQueryParam },
     );
 
-    if (
-      workspaceSurface.type === 'side-panel' &&
-      workspaceSurface.ownsRouteLocation
-    ) {
+    if (ownsSidePanelRoute) {
       const indexLocation = parsePath(indexPath);
       const navigationStack = store.get(sidePanelNavigationStackState.atom);
       const previousIndexPageIndex = navigationStack.findLastIndex(
         (navigationItem) =>
           navigationItem.page === SidePanelPages.RoutedPage &&
-          createPath({
-            pathname: navigationItem.routedLocation.pathname,
-            search: navigationItem.routedLocation.search,
-            hash: '',
-          }) ===
-            createPath({
-              pathname: indexLocation.pathname ?? '',
-              search: indexLocation.search ?? '',
-              hash: '',
-            }),
+          navigationItem.routedLocation.pathname === indexLocation.pathname &&
+          navigationItem.routedLocation.search === (indexLocation.search ?? ''),
       );
 
       if (previousIndexPageIndex >= 0) {

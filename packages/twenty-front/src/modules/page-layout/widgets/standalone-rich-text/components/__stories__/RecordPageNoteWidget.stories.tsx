@@ -25,7 +25,7 @@ import { RecordPageAddWidgetSection } from '@/page-layout/widgets/components/Rec
 import { WidgetCardShell } from '@/page-layout/widgets/components/WidgetCardShell';
 import { SidePanelPageLayoutRecordPageWidgetTypeSelect } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
-import { sidePanelPageSelector } from '@/side-panel/states/sidePanelPageSelector';
+import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
@@ -333,7 +333,7 @@ export const AddFromInlinePicker: Story = {
     const note = jotaiStore.get(DRAFT_ATOM).tabs[0].widgets[0];
     await expect(note.title).toBe('Note');
     await expect(jotaiStore.get(EDITING_WIDGET_ATOM)).toBe(note.id);
-    await expect(jotaiStore.get(sidePanelPageSelector.atom)).toBe(
+    await expect(jotaiStore.get(sidePanelPageInfoSelector.atom).page).toBe(
       SidePanelPages.PageLayoutWidgetSettings,
     );
   },
@@ -384,7 +384,7 @@ export const MoreWidgets: Story = {
     );
     await expect(jotaiStore.get(DRAFT_ATOM).tabs[0].widgets).toHaveLength(0);
     await expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(true);
-    await expect(jotaiStore.get(sidePanelPageSelector.atom)).toBe(
+    await expect(jotaiStore.get(sidePanelPageInfoSelector.atom).page).toBe(
       SidePanelPages.PageLayoutRecordPageWidgetTypeSelect,
     );
   },

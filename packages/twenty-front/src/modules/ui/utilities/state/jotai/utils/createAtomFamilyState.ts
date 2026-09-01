@@ -82,7 +82,10 @@ export const createAtomFamilyState = <ValueType, FamilyKey>({
     key,
     scope,
     atomFamily: familyFunction,
-    atomFamilyForRoutedFlow: (familyKey: FamilyKey, scopeId: string) =>
-      getAtomForCacheKey(familyKey, scopeId),
+    getAtom: (familyKey: FamilyKey, scopeId: string | null) =>
+      getAtomForCacheKey(
+        familyKey,
+        scope === 'routed-flow' ? (scopeId ?? undefined) : undefined,
+      ),
   });
 };

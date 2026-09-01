@@ -6,8 +6,10 @@ import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-r
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
 import { usePageLayoutIdForRecord } from '@/page-layout/hooks/usePageLayoutIdForRecord';
+import { PageLayoutIdContext } from '@/page-layout/states/currentPageLayoutIdState';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { styled } from '@linaria/react';
@@ -31,7 +33,7 @@ const StyledShowPageRightContainer = styled.div`
   width: 100%;
 `;
 
-const StyledContentContainer = styled.div<{ isInSidePanel: boolean }>`
+const StyledContentContainer = styled.div`
   background: ${themeCssVariables.background.primary};
   flex: 1;
   min-height: 0;
@@ -40,11 +42,10 @@ const StyledContentContainer = styled.div<{ isInSidePanel: boolean }>`
 
 export const PageLayoutRecordPageRenderer = ({
   targetRecordIdentifier,
-  isInSidePanel,
 }: {
   targetRecordIdentifier: TargetRecordIdentifier;
-  isInSidePanel: boolean;
 }) => {
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
   const recordDeletedAt = useAtomFamilySelectorValue(
     recordStoreFamilySelector,
     {
@@ -59,7 +60,7 @@ export const PageLayoutRecordPageRenderer = ({
   });
 
   return (
-    <>
+    <PageLayoutIdContext.Provider value={pageLayoutId}>
       <RecordShowContainerContextStoreTargetedRecordsEffect
         recordId={targetRecordIdentifier.id}
       />
@@ -74,7 +75,7 @@ export const PageLayoutRecordPageRenderer = ({
       )}
 
       <StyledShowPageRightContainer data-record-show-page-body="">
-        <StyledContentContainer isInSidePanel={isInSidePanel}>
+        <StyledContentContainer>
           <LayoutRenderingProvider
             value={{
               targetRecordIdentifier: {
@@ -99,19 +100,13 @@ export const PageLayoutRecordPageRenderer = ({
         {isInSidePanel && (
           <SidePanelFooter
             actions={[
-              <RecordPageSidePanelCommandMenu
-                key="options"
-                pageLayoutId={pageLayoutId}
-              />,
+              <RecordPageSidePanelCommandMenu key="options" />,
               <RecordPageSidePanelWidgetCommandMenuItems key="widget" />,
-              <RecordPageSidePanelPinnedCommandMenuItems
-                key="pinned"
-                pageLayoutId={pageLayoutId}
-              />,
+              <RecordPageSidePanelPinnedCommandMenuItems key="pinned" />,
             ]}
           />
         )}
       </StyledShowPageRightContainer>
-    </>
+    </PageLayoutIdContext.Provider>
   );
 };

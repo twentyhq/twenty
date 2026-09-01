@@ -4,7 +4,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
-import { sidePanelPageSelector } from '@/side-panel/states/sidePanelPageSelector';
+import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
 
 export const AiChatPageCloseAskAiPanelEffect = () => {
   const store = useStore();
@@ -12,7 +12,7 @@ export const AiChatPageCloseAskAiPanelEffect = () => {
 
   useEffect(() => {
     const isSidePanelOpened = store.get(isSidePanelOpenedState.atom);
-    const sidePanelPage = store.get(sidePanelPageSelector.atom);
+    const sidePanelPage = store.get(sidePanelPageInfoSelector.atom).page;
 
     if (isSidePanelOpened && sidePanelPage === SidePanelPages.AskAI) {
       void closeSidePanelMenu();

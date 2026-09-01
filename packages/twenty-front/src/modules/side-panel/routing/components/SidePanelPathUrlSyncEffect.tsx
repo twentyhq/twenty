@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useWorkspaceRouteObjects } from '@/app/routing/hooks/useWorkspaceRouteObjects';
+import { useWorkspaceRouteObjects } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { SIDE_PANEL_PATH_SEARCH_PARAM } from '@/side-panel/routing/constants/SidePanelPathSearchParam';
 import { useCurrentSidePanelRoutedPath } from '@/side-panel/routing/hooks/useCurrentSidePanelRoutedPath';

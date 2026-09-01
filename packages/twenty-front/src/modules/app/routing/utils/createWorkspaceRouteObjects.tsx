@@ -59,7 +59,6 @@ type CreateWorkspaceRouteObjectsArgs = {
   isWorkflowCoreIndexPageEnabled?: boolean;
 };
 
-const MAIN = ['main'] as const;
 const MAIN_AND_SIDE_PANEL = ['main', 'side-panel'] as const;
 const SETTINGS_ROOT_PATH = AppPath.SettingsCatchAll.replace('/*', '');
 
@@ -100,7 +99,6 @@ export const createWorkspaceRouteObjects = ({
     {
       path: indexAppPath.getIndexAppPath(),
       element: <RecordIndexSkeletonLoader />,
-      handle: { workspaceSurfaces: MAIN },
     },
     {
       path: AppPath.RecordIndexPage,
@@ -130,7 +128,6 @@ export const createWorkspaceRouteObjects = ({
           <StandalonePageLayoutPage />
         </LazyRoute>
       ),
-      handle: { workspaceSurfaces: MAIN },
     },
     {
       path: AppPath.AiChat,
@@ -139,7 +136,6 @@ export const createWorkspaceRouteObjects = ({
           <AiChatPage />
         </LazyRoute>
       ),
-      handle: { workspaceSurfaces: MAIN },
     },
     {
       path: AppPath.Home,
@@ -148,7 +144,6 @@ export const createWorkspaceRouteObjects = ({
           <MobileHomePage />
         </LazyRoute>
       ),
-      handle: { workspaceSurfaces: MAIN },
     },
     {
       path: SETTINGS_ROOT_PATH,
@@ -163,7 +158,6 @@ export const createWorkspaceRouteObjects = ({
     {
       path: AppPath.Dpa,
       element: <Navigate to={getSettingsPath(SettingsPath.LegalDpa)} replace />,
-      handle: { workspaceSurfaces: MAIN },
     },
     {
       path: AppPath.NotFoundWildcard,
@@ -172,7 +166,6 @@ export const createWorkspaceRouteObjects = ({
           <NotFound />
         </LazyRoute>
       ),
-      handle: { workspaceSurfaces: MAIN },
     },
   ];
 };

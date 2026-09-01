@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigate } from 'react-router-dom';
 
-import { useWorkspaceRouteObjects } from '@/app/routing/hooks/useWorkspaceRouteObjects';
+import { useWorkspaceRouteObjects } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { isWorkspaceLocationExpandableFromSidePanel } from '@/app/routing/utils/isWorkspaceLocationAvailableOnSurface';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useCurrentSidePanelRoutedPath } from '@/side-panel/routing/hooks/useCurrentSidePanelRoutedPath';

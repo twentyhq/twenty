@@ -28,11 +28,10 @@ type RecordShowPageParameters = {
 
 const RecordShowPageContent = ({
   parameters,
-  isInSidePanel,
 }: {
   parameters: RecordShowPageParameters;
-  isInSidePanel: boolean;
 }) => {
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -67,7 +66,6 @@ const RecordShowPageContent = ({
           id: objectRecordId,
           targetObjectNameSingular: objectNameSingular,
         }}
-        isInSidePanel={isInSidePanel}
       />
       <RecordShowPageSSESubscribeEffect
         objectNameSingular={objectNameSingular}
@@ -128,10 +126,5 @@ export const RecordShowPage = () => {
     return <WorkspaceRouteUnavailable />;
   }
 
-  return (
-    <RecordShowPageContent
-      parameters={parameters}
-      isInSidePanel={isInSidePanel}
-    />
-  );
+  return <RecordShowPageContent parameters={parameters} />;
 };
