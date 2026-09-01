@@ -165,9 +165,10 @@ export class LogicFunctionExecutorService {
     });
 
     if (effectiveExecutionMode === LogicFunctionExecutionMode.PREBUILT) {
-      await this.assertPrebuiltBundleInstalled({
+      await this.ensurePrebuiltBundleInstalled({
         driver,
         flatLogicFunction,
+        flatApplication,
       });
     }
 
@@ -233,21 +234,41 @@ export class LogicFunctionExecutorService {
     return flatLogicFunction.executionMode ?? LogicFunctionExecutionMode.LIVE;
   }
 
-  private async assertPrebuiltBundleInstalled({
+  private async ensurePrebuiltBundleInstalled({
     driver,
     flatLogicFunction,
+    flatApplication,
   }: {
     driver: ReturnType<LogicFunctionDriverFactory['getCurrentDriver']>;
     flatLogicFunction: FlatLogicFunction;
+    flatApplication: FlatApplication;
   }): Promise<void> {
     const installedChecksum =
       await driver.getInstalledBundleChecksum(flatLogicFunction);
 
-    if (installedChecksum !== flatLogicFunction.checksum) {
+    if (installedChecksum === flatLogicFunction.checksum) {
+      return;
+    }
+
+    try {
+      await driver.installPrebuiltBundle({
+        flatLogicFunction,
+        flatApplication,
+        applicationUniversalIdentifier: flatApplication.universalIdentifier,
+      });
+    } catch (error) {
+      const cause = error instanceof Error ? error.message : String(error);
+
+      this.logger.error(
+        `Failed to install prebuilt bundle on-demand for function '${flatLogicFunction.id}' ` +
+          `(installed=${installedChecksum ?? 'none'}, expected=${flatLogicFunction.checksum ?? 'none'}): ` +
+          `${cause}`,
+        error instanceof Error ? error.stack : undefined,
+      );
       throw new LogicFunctionException(
-        `Prebuilt bundle is not installed for function '${flatLogicFunction.id}' ` +
-          `(installed=${installedChecksum ?? 'none'}, expected=${flatLogicFunction.checksum ?? 'none'}). ` +
-          `Rebuild and try again.`,
+        `Failed to install the prebuilt bundle for function '${flatLogicFunction.id}' ` +
+          `(installed=${installedChecksum ?? 'none'}, expected=${flatLogicFunction.checksum ?? 'none'}): ` +
+          `${cause}`,
         LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
       );
     }

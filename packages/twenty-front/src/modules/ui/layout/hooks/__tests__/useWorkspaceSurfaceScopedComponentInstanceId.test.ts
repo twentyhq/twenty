@@ -11,7 +11,7 @@ describe('getWorkspaceSurfaceScopedComponentInstanceId', () => {
     ).toBe('table');
   });
 
-  it('scopes a component ID once per side-panel instance', () => {
+  it('scopes reusable component IDs once per side-panel instance', () => {
     const args = {
       surfaceType: 'side-panel' as const,
       surfaceInstanceId: 'panel-1',
