@@ -13,6 +13,7 @@ type UseFieldListFieldMetadataItemsProps = {
   excludeCreatedAtAndUpdatedAt?: boolean;
   showRelationSections?: boolean;
   includeSystemObjectRelations?: boolean;
+  includeNoteAndTaskBody?: boolean;
 };
 
 export const useFieldListFieldMetadataItems = ({
@@ -21,6 +22,7 @@ export const useFieldListFieldMetadataItems = ({
   showRelationSections = true,
   excludeCreatedAtAndUpdatedAt = true,
   includeSystemObjectRelations = false,
+  includeNoteAndTaskBody = false,
 }: UseFieldListFieldMetadataItemsProps) => {
   const { labelIdentifierFieldMetadataItem } =
     useLabelIdentifierFieldMetadataItem({
@@ -64,6 +66,7 @@ export const useFieldListFieldMetadataItems = ({
       .filter(
         (fieldMetadataItem) =>
           !(
+            !includeNoteAndTaskBody &&
             fieldMetadataItem.type === FieldMetadataType.RICH_TEXT &&
             fieldMetadataItem.name === 'bodyV2' &&
             (objectNameSingular === CoreObjectNameSingular.Note ||
