@@ -1,7 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
-import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import {
   UsageLimitException,
@@ -47,7 +46,7 @@ describe('UsageLimitQuotaService', () => {
 
   const cacheStorage = {
     mget: jest.fn().mockResolvedValue([]),
-    mset: jest.fn().mockResolvedValue(undefined),
+    setIfAbsent: jest.fn().mockResolvedValue(true),
     runScript: jest.fn().mockResolvedValue([]),
   };
 
@@ -55,10 +54,6 @@ describe('UsageLimitQuotaService', () => {
     getOrRecompute: jest
       .fn()
       .mockResolvedValue({ usageLimits: { byResourceType: {} } }),
-  };
-
-  const cacheLockService = {
-    withLock: jest.fn((fn: () => Promise<unknown>) => fn()),
   };
 
   const clickHouseService = {
@@ -107,6 +102,7 @@ describe('UsageLimitQuotaService', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     cacheStorage.mget.mockResolvedValue([]);
+    cacheStorage.setIfAbsent.mockResolvedValue(true);
     cacheStorage.runScript.mockResolvedValue([]);
     clickHouseService.selectOrThrow.mockResolvedValue([]);
     usagePeriodService.getCurrentPeriod.mockImplementation(
@@ -131,7 +127,6 @@ describe('UsageLimitQuotaService', () => {
           useValue: cacheStorage,
         },
         { provide: WorkspaceCacheService, useValue: workspaceCacheService },
-        { provide: CacheLockService, useValue: cacheLockService },
         { provide: ClickHouseService, useValue: clickHouseService },
         { provide: UsagePeriodService, useValue: usagePeriodService },
         { provide: BillingService, useValue: billingService },
@@ -171,7 +166,9 @@ describe('UsageLimitQuotaService', () => {
 
   it('warms a cold billing-period counter by stamped period and denies when spent', async () => {
     setLimits([buildLimit({ limitValue: 100 })]);
-    cacheStorage.mget.mockResolvedValue([undefined]);
+    cacheStorage.mget
+      .mockResolvedValueOnce([undefined])
+      .mockResolvedValueOnce([-50]);
     clickHouseService.selectOrThrow.mockResolvedValue([
       {
         operationType: UsageOperationType.AI_CHAT_TOKEN,
@@ -188,9 +185,31 @@ describe('UsageLimitQuotaService', () => {
       expect.stringContaining('periodStart = {periodStart:DateTime64(3)}'),
       expect.anything(),
     );
-    expect(cacheStorage.mset).toHaveBeenCalledWith([
-      expect.objectContaining({ value: -50 }),
+    expect(cacheStorage.setIfAbsent).toHaveBeenCalledWith(
+      expect.any(String),
+      -50,
+      expect.any(Number),
+    );
+  });
+
+  it('trusts the stored counter over its own computation when another warmer won', async () => {
+    setLimits([buildLimit({ limitValue: 100 })]);
+    cacheStorage.mget
+      .mockResolvedValueOnce([undefined])
+      .mockResolvedValueOnce([30]);
+    cacheStorage.setIfAbsent.mockResolvedValue(false);
+    clickHouseService.selectOrThrow.mockResolvedValue([
+      {
+        operationType: UsageOperationType.AI_CHAT_TOKEN,
+        userWorkspaceId: 'user-1',
+        apiKeyId: '',
+        applicationId: '',
+        creditsUsedMicro: '150',
+        quantity: '10',
+      },
     ]);
+
+    await expect(assertCanConsume()).resolves.toBeUndefined();
   });
 
   it('warms a calendar counter by timestamp range', async () => {
@@ -262,7 +281,7 @@ describe('UsageLimitQuotaService', () => {
     );
 
     await expect(assertCanConsume()).resolves.toBeUndefined();
-    expect(cacheStorage.mset).not.toHaveBeenCalled();
+    expect(cacheStorage.setIfAbsent).not.toHaveBeenCalled();
   });
 
   it('debits each counter in its own meter on settle', async () => {

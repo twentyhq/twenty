@@ -6,7 +6,6 @@ import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -23,7 +22,6 @@ import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quo
 import { type QuotaConsumptionRow } from 'src/engine/core-modules/usage-limit/types/quota-consumption-row.type';
 import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
 import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
-import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-warm-lock-key.util';
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -36,8 +34,6 @@ import { type UsagePeriod } from 'src/engine/core-modules/usage/types/usage-peri
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { WorkspaceCacheException } from 'src/engine/workspace-cache/exceptions/workspace-cache.exception';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
-const QUOTA_WARM_LOCK_OPTIONS = { ms: 50, maxRetries: 20, ttl: 10_000 };
 
 type QuotaConsumeArgs = {
   workspaceId: string;
@@ -54,7 +50,6 @@ export class UsageLimitQuotaService {
     @InjectCacheStorage(CacheStorageNamespace.EngineUsageLimit)
     private readonly cacheStorage: CacheStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly cacheLockService: CacheLockService,
     private readonly clickHouseService: ClickHouseService,
     private readonly usagePeriodService: UsagePeriodService,
     private readonly billingService: BillingService,
@@ -355,72 +350,66 @@ export class UsageLimitQuotaService {
       return remainings as number[];
     }
 
-    return this.warmColdCounters({ workspaceId, resourceType, counters });
+    return this.warmColdCounters({
+      workspaceId,
+      resourceType,
+      counters,
+      remainings,
+    });
   }
 
   private async warmColdCounters({
     workspaceId,
     resourceType,
     counters,
+    remainings,
   }: {
     workspaceId: string;
     resourceType: UsageResourceType;
     counters: QuotaCounter[];
+    remainings: (number | undefined)[];
   }): Promise<(number | null)[]> {
-    return this.cacheLockService.withLock(
-      async () => {
-        const remainings = await this.cacheStorage.mget<number>(
-          counters.map((counter) => counter.key),
-        );
-
-        if (remainings.every(isDefined)) {
-          return remainings as number[];
-        }
-
-        const coldCounters = counters.filter(
-          (_, index) => !isDefined(remainings[index]),
-        );
-
-        const rowsByPeriod = await this.fetchConsumptionRowsByPeriod({
-          workspaceId,
-          resourceType,
-          coldCounters,
-        });
-
-        const now = Date.now();
-
-        const warmedEntries = coldCounters.flatMap((counter) => {
-          const ttl = counter.periodEnd.getTime() - now;
-          const rows = rowsByPeriod.get(buildPeriodGroupKey(counter));
-
-          if (ttl <= 0 || !isDefined(rows)) {
-            return [];
-          }
-
-          return [
-            {
-              key: counter.key,
-              value:
-                counter.limitValue - computeQuotaConsumed({ rows, counter }),
-              ttl,
-            },
-          ];
-        });
-
-        await this.cacheStorage.mset(warmedEntries);
-
-        const warmedValueByKey = new Map(
-          warmedEntries.map((entry) => [entry.key, entry.value]),
-        );
-
-        return counters.map(
-          (counter, index) =>
-            remainings[index] ?? warmedValueByKey.get(counter.key) ?? null,
-        );
-      },
-      buildQuotaWarmLockKey(workspaceId),
-      QUOTA_WARM_LOCK_OPTIONS,
+    const coldCounters = counters.filter(
+      (_, index) => !isDefined(remainings[index]),
     );
+
+    const rowsByPeriod = await this.fetchConsumptionRowsByPeriod({
+      workspaceId,
+      resourceType,
+      coldCounters,
+    });
+
+    const now = Date.now();
+
+    const warmedEntries = coldCounters.flatMap((counter) => {
+      const ttl = counter.periodEnd.getTime() - now;
+      const rows = rowsByPeriod.get(buildPeriodGroupKey(counter));
+
+      if (ttl <= 0 || !isDefined(rows)) {
+        return [];
+      }
+
+      return [
+        {
+          key: counter.key,
+          value: counter.limitValue - computeQuotaConsumed({ rows, counter }),
+          ttl,
+        },
+      ];
+    });
+
+    // setIfAbsent: a value computed from lagging ClickHouse must never overwrite a counter a concurrent warmer created and settles already debited
+    await Promise.all(
+      warmedEntries.map((entry) =>
+        this.cacheStorage.setIfAbsent(entry.key, entry.value, entry.ttl),
+      ),
+    );
+
+    const warmedRemainings = await this.cacheStorage.mget<number>(
+      counters.map((counter) => counter.key),
+    );
+
+    return warmedRemainings.map((remaining) => remaining ?? null);
   }
 
   private async fetchConsumptionRowsByPeriod({
