@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { RestApiClient } from 'twenty-client-sdk/rest';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_USER_LINKS_UNLINKED_ROUTE_PATH } from 'src/constants/slack-user-links-route-path.constant';
 import { parseSlackUserSearchResponse } from 'src/front-components/utils/parse-slack-user-search-response.util';
@@ -53,7 +54,7 @@ export const useUnlinkedSlackUsers = ({
 
       const { options, errorMessage } = parseSlackUserSearchResponse(result);
 
-      if (errorMessage !== undefined) {
+      if (isDefined(errorMessage)) {
         setUnlinkedErrorMessage(errorMessage);
         setUnlinkedSlackUsers([]);
         setHasMoreUnlinkedSlackUsers(false);
