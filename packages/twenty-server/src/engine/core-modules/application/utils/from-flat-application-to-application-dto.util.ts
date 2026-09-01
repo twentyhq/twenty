@@ -1,4 +1,5 @@
 import { type ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 
 export const fromFlatApplicationToApplicationDto = ({
@@ -15,6 +16,7 @@ export const fromFlatApplicationToApplicationDto = ({
   availablePackages,
   universalIdentifier,
   version,
+  state,
   settingsCustomTabFrontComponentId,
 }: FlatApplication): ApplicationDTO => {
   return {
@@ -32,6 +34,7 @@ export const fromFlatApplicationToApplicationDto = ({
     availablePackages: availablePackages ?? {},
     universalIdentifier,
     version: version ?? undefined,
+    state: state ?? ApplicationState.INSTALLED,
     settingsCustomTabFrontComponentId:
       settingsCustomTabFrontComponentId ?? undefined,
   };

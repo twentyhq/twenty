@@ -114,7 +114,6 @@ describe('PageLayoutSingleTabRenderer', () => {
               targetObjectNameSingular: 'company',
             },
             layoutType: PageLayoutType.RECORD_PAGE,
-            isInSidePanel: true,
           }}
         >
           <I18nProvider i18n={i18n}>

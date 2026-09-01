@@ -57,11 +57,14 @@ export class WorkspaceDataSource {
   getRepository<T extends ObjectLiteral = ObjectRecord>(
     nameSingular: string,
     rolePermissionConfig?: RolePermissionConfig,
+    repositoryOptions?: { shouldSkipEventEmission?: boolean },
   ): WorkspaceRepository<T> {
     return this.buildRepository<T>({
       nameSingular,
       rolePermissionConfig,
       executor: new PoolQueryExecutor({ pool: this.pool }),
+      shouldSkipEventEmission:
+        repositoryOptions?.shouldSkipEventEmission ?? false,
     });
   }
 
@@ -73,12 +76,15 @@ export class WorkspaceDataSource {
         getRepository: <T extends ObjectLiteral = ObjectRecord>(
           nameSingular: string,
           rolePermissionConfig?: RolePermissionConfig,
+          repositoryOptions?: { shouldSkipEventEmission?: boolean },
         ) =>
           this.buildRepository<T>({
             nameSingular,
             rolePermissionConfig,
             executor,
             isTransactional: true,
+            shouldSkipEventEmission:
+              repositoryOptions?.shouldSkipEventEmission ?? false,
           }),
         executeRawQuery: (sql, parameters = []) =>
           executor.execute({ text: sql, values: parameters }),
@@ -100,11 +106,13 @@ export class WorkspaceDataSource {
     rolePermissionConfig,
     executor,
     isTransactional = false,
+    shouldSkipEventEmission = false,
   }: {
     nameSingular: string;
     rolePermissionConfig?: RolePermissionConfig;
     executor: QueryExecutor;
     isTransactional?: boolean;
+    shouldSkipEventEmission?: boolean;
   }): WorkspaceRepository<T> {
     const objectMetadataId =
       this.internalContext.objectIdByNameSingular[nameSingular];
@@ -121,6 +129,7 @@ export class WorkspaceDataSource {
       rolePermissionConfig,
       executor,
       isTransactional,
+      shouldSkipEventEmission,
     });
   }
 
@@ -131,11 +140,13 @@ export class WorkspaceDataSource {
     rolePermissionConfig,
     executor,
     isTransactional = false,
+    shouldSkipEventEmission = false,
   }: {
     objectMetadataId: string;
     rolePermissionConfig?: RolePermissionConfig;
     executor: QueryExecutor;
     isTransactional?: boolean;
+    shouldSkipEventEmission?: boolean;
   }): WorkspaceRepository<T> {
     const flatObjectMetadata =
       this.getFlatObjectMetadataOrThrow(objectMetadataId);
@@ -154,6 +165,7 @@ export class WorkspaceDataSource {
       executor,
       objectRecordsPermissions,
       shouldBypassPermissionChecks,
+      shouldSkipEventEmission: shouldSkipEventEmission ?? false,
       tableShapeByObjectMetadataId: (targetObjectMetadataId) =>
         this.getTableShape(targetObjectMetadataId),
       flatObjectMetadataByObjectMetadataId: (targetObjectMetadataId) =>
@@ -164,6 +176,7 @@ export class WorkspaceDataSource {
           rolePermissionConfig,
           executor,
           isTransactional,
+          shouldSkipEventEmission,
         }),
       isTransactional,
       runInNewTransaction: (work) =>
@@ -174,6 +187,7 @@ export class WorkspaceDataSource {
               rolePermissionConfig,
               executor: transactionExecutor,
               isTransactional: true,
+              shouldSkipEventEmission,
             }),
           ),
         ),

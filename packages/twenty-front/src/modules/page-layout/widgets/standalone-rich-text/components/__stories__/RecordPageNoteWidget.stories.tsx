@@ -25,7 +25,7 @@ import { RecordPageAddWidgetSection } from '@/page-layout/widgets/components/Rec
 import { WidgetCardShell } from '@/page-layout/widgets/components/WidgetCardShell';
 import { SidePanelPageLayoutRecordPageWidgetTypeSelect } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
@@ -206,7 +206,6 @@ const meta: Meta<typeof RecordPageNoteWidgetStory> = {
         <PageLayoutTestWrapper store={jotaiStore} layoutType={args.layoutType}>
           <LayoutRenderingProvider
             value={{
-              isInSidePanel: false,
               layoutType: args.layoutType,
               targetRecordIdentifier: {
                 id: 'company-record',
@@ -333,7 +332,7 @@ export const AddFromInlinePicker: Story = {
     const note = jotaiStore.get(DRAFT_ATOM).tabs[0].widgets[0];
     await expect(note.title).toBe('Note');
     await expect(jotaiStore.get(EDITING_WIDGET_ATOM)).toBe(note.id);
-    await expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
+    await expect(jotaiStore.get(sidePanelPageInfoSelector.atom).page).toBe(
       SidePanelPages.PageLayoutWidgetSettings,
     );
   },
@@ -384,7 +383,7 @@ export const MoreWidgets: Story = {
     );
     await expect(jotaiStore.get(DRAFT_ATOM).tabs[0].widgets).toHaveLength(0);
     await expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(true);
-    await expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
+    await expect(jotaiStore.get(sidePanelPageInfoSelector.atom).page).toBe(
       SidePanelPages.PageLayoutRecordPageWidgetTypeSelect,
     );
   },

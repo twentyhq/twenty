@@ -877,7 +877,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     position: 43,
     shortLabel: null,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-    conditionalAvailabilityExpression: 'permissionFlags.AI',
+    conditionalAvailabilityExpression:
+      'permissionFlags.AI and not isInSidePanel',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.ASK_AI,

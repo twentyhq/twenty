@@ -30,6 +30,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
@@ -308,12 +309,25 @@ export class ApplicationInstallService {
       sourceType: appRegistration.sourceType,
     });
 
+    const isUpgradeOfInstalledApplication =
+      isVersionUpgrade && application.state === ApplicationState.INSTALLED;
+
+    const hasNeverCompletedInstall =
+      isVersionUpgrade && application.state === ApplicationState.INSTALLING;
+
     const incomingVersion = resolvedPackage.packageJson.version;
 
     // Rollback is scoped to the work after the application row exists: reaching
-    // this catch means creation succeeded, so a fresh install (not an upgrade)
-    // is the only case that needs uninstalling.
+    // this catch means creation succeeded, so only an application that never
+    // finished installing needs uninstalling.
     try {
+      if (isUpgradeOfInstalledApplication) {
+        await this.applicationService.update(application.id, {
+          state: ApplicationState.UPGRADING,
+          workspaceId: params.workspaceId,
+        });
+      }
+
       if (
         isVersionUpgrade &&
         isDefined(application.version) &&
@@ -394,6 +408,11 @@ export class ApplicationInstallService {
         },
       );
 
+      await this.applicationService.update(application.id, {
+        state: ApplicationState.INSTALLED,
+        workspaceId: params.workspaceId,
+      });
+
       this.logger.log(
         `Successfully installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
       );
@@ -404,7 +423,15 @@ export class ApplicationInstallService {
         `Failed to install app ${appRegistration.universalIdentifier}: ${error}`,
       );
 
-      if (!isVersionUpgrade) {
+      if (isUpgradeOfInstalledApplication) {
+        await this.applicationService.revertStateToInstalledBestEffort({
+          applicationId: application.id,
+          universalIdentifier,
+          workspaceId: params.workspaceId,
+        });
+      }
+
+      if (!isVersionUpgrade || hasNeverCompletedInstall) {
         // Rollback of a failed fresh install: the app never finished
         // installing, so the uninstall hook must not run.
         await this.applicationSyncService.uninstallApplication({
@@ -741,6 +768,7 @@ export class ApplicationInstallService {
       sourceType: params.sourceType,
       applicationRegistrationId: params.applicationRegistrationId,
       workspaceId: params.workspaceId,
+      state: ApplicationState.INSTALLING,
     });
   }
 }

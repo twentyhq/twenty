@@ -1,11 +1,10 @@
 import { useCallback } from 'react';
 
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { releaseRemovedRoutedFlowStateScopes } from '@/side-panel/routing/utils/releaseRemovedRoutedFlowStateScopes';
 import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelSubPageStackComponentState } from '@/side-panel/states/sidePanelSubPageStackComponentState';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -58,46 +57,47 @@ export const useSidePanelHistory = () => {
   }, [store]);
 
   const goBackFromSidePanel = useCallback(() => {
-    cleanupCurrentPage();
-
     const currentNavigationStack = store.get(
       sidePanelNavigationStackState.atom,
     );
 
     const newNavigationStack = currentNavigationStack.slice(0, -1);
-    const lastNavigationStackItem = newNavigationStack.at(-1);
 
-    store.set(sidePanelNavigationStackState.atom, newNavigationStack);
-
-    if (!isDefined(lastNavigationStackItem)) {
+    if (newNavigationStack.length === 0) {
       closeSidePanelMenu();
       return;
     }
 
-    store.set(sidePanelPageState.atom, lastNavigationStackItem.page);
-
-    store.set(sidePanelPageInfoState.atom, {
-      title: lastNavigationStackItem.pageTitle,
-      Icon: lastNavigationStackItem.pageIcon,
-      instanceId: lastNavigationStackItem.pageId,
+    cleanupCurrentPage();
+    store.set(sidePanelNavigationStackState.atom, newNavigationStack);
+    releaseRemovedRoutedFlowStateScopes({
+      removedItems: currentNavigationStack.slice(-1),
+      remainingItems: newNavigationStack,
     });
 
     store.set(hasUserSelectedSidePanelListItemState.atom, false);
   }, [cleanupCurrentPage, closeSidePanelMenu, store]);
 
   const goBackOneSubPageOrMainPage = useCallback(() => {
-    const currentPageInfo = store.get(sidePanelPageInfoState.atom);
+    const currentNavigationItem = store
+      .get(sidePanelNavigationStackState.atom)
+      .at(-1);
+
+    if (!isDefined(currentNavigationItem)) {
+      goBackFromSidePanel();
+      return;
+    }
 
     const subPageStack = store.get(
       sidePanelSubPageStackComponentState.atomFamily({
-        instanceId: currentPageInfo.instanceId,
+        instanceId: currentNavigationItem.pageId,
       }),
     );
 
     if (isNonEmptyArray(subPageStack)) {
       store.set(
         sidePanelSubPageStackComponentState.atomFamily({
-          instanceId: currentPageInfo.instanceId,
+          instanceId: currentNavigationItem.pageId,
         }),
         subPageStack.slice(0, -1),
       );
@@ -114,8 +114,15 @@ export const useSidePanelHistory = () => {
       );
 
       const newNavigationStack = currentNavigationStack.slice(0, pageIndex + 1);
+      const removedNavigationItems = currentNavigationStack.slice(
+        pageIndex + 1,
+      );
 
       store.set(sidePanelNavigationStackState.atom, newNavigationStack);
+      releaseRemovedRoutedFlowStateScopes({
+        removedItems: removedNavigationItems,
+        remainingItems: newNavigationStack,
+      });
 
       const newNavigationStackItem = newNavigationStack.at(-1);
 
@@ -125,12 +132,6 @@ export const useSidePanelHistory = () => {
         );
       }
 
-      store.set(sidePanelPageState.atom, newNavigationStackItem.page);
-      store.set(sidePanelPageInfoState.atom, {
-        title: newNavigationStackItem.pageTitle,
-        Icon: newNavigationStackItem.pageIcon,
-        instanceId: newNavigationStackItem.pageId,
-      });
       const currentMorphItems = store.get(
         sidePanelNavigationMorphItemsByPageState.atom,
       );

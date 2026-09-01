@@ -314,6 +314,7 @@ export const SettingsApplicationDetails = () => {
             canBeUninstalled={application.canBeUninstalled}
             onUninstall={handleUninstall}
             isUninstalling={isUninstalling}
+            state={application.state}
           />
         );
       case 'content':

@@ -4,10 +4,11 @@ import { RecordTitleCell } from '@/object-record/record-title-cell/components/Re
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { styled } from '@linaria/react';
-import { useRef, type ChangeEvent } from 'react';
+import { useRef, type ChangeEvent, type MouseEvent } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledFileInput = styled.input`
@@ -18,12 +19,14 @@ type RecordIdentifierBarTitleProps = {
   objectNameSingular: string;
   objectRecordId: string;
   variant?: 'record-page' | 'side-panel';
+  recordLinkSurface?: 'main';
 };
 
 export const RecordIdentifierBarTitle = ({
   objectNameSingular,
   objectRecordId,
   variant = 'record-page',
+  recordLinkSurface,
 }: RecordIdentifierBarTitleProps) => {
   const { recordIdentifier, onUploadPicture, titleFieldContextValue } =
     useRecordIdentifierTitle({
@@ -32,6 +35,7 @@ export const RecordIdentifierBarTitle = ({
     });
 
   const inputFileRef = useRef<HTMLInputElement>(null);
+  const navigateApp = useNavigateApp();
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (isDefined(event.target.files)) {
@@ -41,6 +45,27 @@ export const RecordIdentifierBarTitle = ({
 
   const isAvatarEditable = isDefined(onUploadPicture);
   const isInSidePanel = variant === 'side-panel';
+
+  const handleRecordLinkClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (
+      recordLinkSurface !== 'main' ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    navigateApp(
+      AppPath.RecordShowPage,
+      { objectNameSingular, objectRecordId },
+      undefined,
+      { surface: 'main' },
+    );
+  };
 
   const title = (
     <FieldContext.Provider value={titleFieldContextValue}>
@@ -77,6 +102,7 @@ export const RecordIdentifierBarTitle = ({
                 objectNameSingular,
                 objectRecordId,
               })}
+              onClick={handleRecordLinkClick}
             >
               {title}
             </UndecoratedLink>
