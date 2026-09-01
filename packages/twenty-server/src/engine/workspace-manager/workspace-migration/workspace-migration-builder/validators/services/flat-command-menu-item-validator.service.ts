@@ -350,7 +350,7 @@ export class FlatCommandMenuItemValidatorService {
   }): void {
     // Pre-2-38 upgrade commands replayed during sequential upgrades still
     // produce the { objectMetadataItemId } shape, dual-written with the
-    // foreign key by the 2-35 backfill; the 2-38 payload rewrite nulls it.
+    // foreign key by the 2-35 backfill; the 2-38 slow migration erases it.
     if (isObjectMetadataCommandMenuItemPayload(payload)) {
       return;
     }

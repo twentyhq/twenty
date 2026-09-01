@@ -1,0 +1,51 @@
+import { type DataSource, type QueryRunner } from 'typeorm';
+
+import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
+import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
+
+const ENGINE_KEY_COHERENCE_CHECK_NAME = 'CHK_CMD_MENU_ITEM_ENGINE_KEY_COHERENCE';
+
+// The relaxed expression the same-version fast command applied, restored on down.
+const RELAXED_ENGINE_KEY_COHERENCE_CHECK = `("engineComponentKey" = 'TRIGGER_WORKFLOW_VERSION' AND "workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "payload" IS NULL AND "navigationTargetObjectMetadataId" IS NULL) OR ("engineComponentKey" = 'FRONT_COMPONENT_RENDERER' AND "frontComponentId" IS NOT NULL AND "workflowVersionId" IS NULL AND "payload" IS NULL AND "navigationTargetObjectMetadataId" IS NULL) OR ("engineComponentKey" = 'NAVIGATION' AND ("payload" IS NOT NULL OR "navigationTargetObjectMetadataId" IS NOT NULL) AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL) OR ("engineComponentKey" NOT IN ('TRIGGER_WORKFLOW_VERSION', 'FRONT_COMPONENT_RENDERER', 'NAVIGATION') AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "payload" IS NULL AND "navigationTargetObjectMetadataId" IS NULL)`;
+
+// A NAVIGATION row carries exactly one of a path payload or a
+// navigationTargetObjectMetadataId. Safe to enforce here: the data migration
+// below erased the payload of every targeted row first, and a row keeping a
+// legacy payload without a target (2-35 could not resolve its object) reads
+// as a path row.
+const EXCLUSIVE_ENGINE_KEY_COHERENCE_CHECK = `("engineComponentKey" = 'TRIGGER_WORKFLOW_VERSION' AND "workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "payload" IS NULL AND "navigationTargetObjectMetadataId" IS NULL) OR ("engineComponentKey" = 'FRONT_COMPONENT_RENDERER' AND "frontComponentId" IS NOT NULL AND "workflowVersionId" IS NULL AND "payload" IS NULL AND "navigationTargetObjectMetadataId" IS NULL) OR ("engineComponentKey" = 'NAVIGATION' AND (("payload" IS NOT NULL AND "navigationTargetObjectMetadataId" IS NULL) OR ("payload" IS NULL AND "navigationTargetObjectMetadataId" IS NOT NULL)) AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL) OR ("engineComponentKey" NOT IN ('TRIGGER_WORKFLOW_VERSION', 'FRONT_COMPONENT_RENDERER', 'NAVIGATION') AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "payload" IS NULL AND "navigationTargetObjectMetadataId" IS NULL)`;
+
+@RegisteredInstanceCommand('2.38.0', 1788255840847, { type: 'slow' })
+export class EraseObjectNavigationCommandMenuItemPayloadsSlowInstanceCommand
+  implements SlowInstanceCommand
+{
+  // The target is the sole source of truth since the 2-35 backfill; the
+  // dual-written { objectMetadataItemId } payload is dead weight.
+  async runDataMigration(dataSource: DataSource): Promise<void> {
+    await dataSource.query(`
+      UPDATE "core"."commandMenuItem"
+      SET "payload" = NULL
+      WHERE "engineComponentKey" = 'NAVIGATION'
+        AND "navigationTargetObjectMetadataId" IS NOT NULL
+        AND "payload" IS NOT NULL
+    `);
+  }
+
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE "core"."commandMenuItem" DROP CONSTRAINT IF EXISTS "${ENGINE_KEY_COHERENCE_CHECK_NAME}"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."commandMenuItem" ADD CONSTRAINT "${ENGINE_KEY_COHERENCE_CHECK_NAME}" CHECK (${EXCLUSIVE_ENGINE_KEY_COHERENCE_CHECK})`,
+    );
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE "core"."commandMenuItem" DROP CONSTRAINT IF EXISTS "${ENGINE_KEY_COHERENCE_CHECK_NAME}"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."commandMenuItem" ADD CONSTRAINT "${ENGINE_KEY_COHERENCE_CHECK_NAME}" CHECK (${RELAXED_ENGINE_KEY_COHERENCE_CHECK})`,
+    );
+  }
+}
