@@ -55,4 +55,24 @@ describe('categorizeRelationFields', () => {
       boxedRelationFields: [],
     });
   });
+
+  it('categorizes an editable inverse junction as an inline junction', () => {
+    const rocketMetadata = getMockObjectMetadataItemOrThrow('rocket');
+    const taskTargetsField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: rocketMetadata,
+      fieldName: 'taskTargets',
+    });
+
+    expect(
+      categorizeRelationFields({
+        relationFields: [taskTargetsField],
+        objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
+        objectPermissionsByObjectMetadataId: {},
+      }),
+    ).toEqual({
+      inlineRelationFields: [taskTargetsField],
+      junctionRelationFields: [taskTargetsField],
+      boxedRelationFields: [],
+    });
+  });
 });

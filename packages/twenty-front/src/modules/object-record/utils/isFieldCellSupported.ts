@@ -2,8 +2,8 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
+import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -30,7 +30,7 @@ export const isFieldCellSupported = (
 
     // A junction object is a system object on purpose, so the relation holding its records
     // is still cell-supported even though relations to system objects are not.
-    const junctionConfig = getJunctionConfig({
+    const junctionConfig = resolveJunctionConfig({
       settings: fieldMetadataItem.settings,
       relationObjectMetadataId: relationObjectMetadataItemId ?? '',
       relationTargetFieldMetadataId:

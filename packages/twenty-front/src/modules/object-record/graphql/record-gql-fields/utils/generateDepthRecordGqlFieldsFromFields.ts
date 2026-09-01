@@ -3,9 +3,7 @@ import { type GenerateDepthRecordGqlFieldsFromFields } from '@/object-record/gra
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
 import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
-import { getReverseJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getReverseJunctionConfig';
-import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
+import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import {
   computeMorphRelationGqlFieldName,
   isDefined,
@@ -40,45 +38,22 @@ export const generateDepthRecordGqlFieldsFromFields = ({
           );
         }
 
-        const junctionConfig = getJunctionConfig({
+        const junctionConfig = resolveJunctionConfig({
           settings: fieldMetadata.settings,
           relationObjectMetadataId: targetObjectMetadataItem.id,
           relationTargetFieldMetadataId:
             fieldMetadata.relation?.targetFieldMetadata.id,
           sourceObjectMetadataId:
+            sourceObjectMetadataItem?.id ??
             fieldMetadata.relation?.sourceObjectMetadata.id,
           objectMetadataItems,
         });
 
-        if (
-          isDefined(junctionConfig) &&
-          !isUsableJunctionConfig(junctionConfig)
-        ) {
+        if (isDefined(junctionConfig) && !junctionConfig.isValid) {
           return recordGqlFields;
         }
 
-        const reverseJunctionConfig = getReverseJunctionConfig({
-          junctionObjectMetadataId: targetObjectMetadataItem.id,
-          sourceObjectMetadataId: sourceObjectMetadataItem?.id,
-          objectMetadataItems,
-        });
-
-        if (isDefined(reverseJunctionConfig) && depth === 1) {
-          return {
-            ...recordGqlFields,
-            [fieldMetadata.name]: {
-              ...buildIdentifierGqlFields(
-                reverseJunctionConfig.junctionObjectMetadata,
-              ),
-              [reverseJunctionConfig.relationFieldName]:
-                buildIdentifierGqlFields(
-                  reverseJunctionConfig.relatedObjectMetadata,
-                ),
-            },
-          };
-        }
-
-        if (isUsableJunctionConfig(junctionConfig) && depth === 1) {
+        if (junctionConfig?.isValid === true && depth === 1) {
           return {
             ...recordGqlFields,
             [fieldMetadata.name]: generateJunctionRelationGqlFields({

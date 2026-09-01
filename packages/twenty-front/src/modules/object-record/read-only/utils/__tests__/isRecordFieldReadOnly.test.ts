@@ -1,5 +1,5 @@
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 describe('isRecordFieldReadOnly', () => {
   const mockObjectPermissions = {
@@ -122,6 +122,54 @@ describe('isRecordFieldReadOnly', () => {
       fieldMetadataItem: {
         id: 'field-123',
         isUIEditable: true,
+      },
+    });
+
+    expect(result).toBe(true);
+  });
+
+  it('should return false for a junction target field on a system object', () => {
+    const result = isRecordFieldReadOnly({
+      ...mockParams,
+      isSystemObject: true,
+      isFieldFromStandardApplication: true,
+      fieldMetadataItem: {
+        id: 'field-123',
+        isUIEditable: true,
+        type: FieldMetadataType.RELATION,
+        settings: { junctionTargetFieldId: 'target-field-123' },
+      },
+    });
+
+    expect(result).toBe(false);
+  });
+
+  it('should return true for a plain relation field on a system object', () => {
+    const result = isRecordFieldReadOnly({
+      ...mockParams,
+      isSystemObject: true,
+      isFieldFromStandardApplication: true,
+      fieldMetadataItem: {
+        id: 'field-123',
+        isUIEditable: true,
+        type: FieldMetadataType.RELATION,
+        settings: { relationType: RelationType.ONE_TO_MANY },
+      },
+    });
+
+    expect(result).toBe(true);
+  });
+
+  it('should keep a junction target field read-only when the record is read-only', () => {
+    const result = isRecordFieldReadOnly({
+      ...mockParams,
+      isRecordReadOnly: true,
+      isSystemObject: true,
+      fieldMetadataItem: {
+        id: 'field-123',
+        isUIEditable: true,
+        type: FieldMetadataType.RELATION,
+        settings: { junctionTargetFieldId: 'target-field-123' },
       },
     });
 

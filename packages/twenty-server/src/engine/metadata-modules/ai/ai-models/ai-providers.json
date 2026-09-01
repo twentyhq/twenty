@@ -785,17 +785,6 @@
         "supportsReasoning": true
       },
       {
-        "name": "gemini-robotics-er-1.6-preview",
-        "label": "Gemini Robotics-ER 1.6 Preview",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 1,
-        "outputCostPerMillionTokens": 5,
-        "contextWindowTokens": 131072,
-        "maxOutputTokens": 65536,
-        "modalities": ["image", "video", "audio"],
-        "supportsReasoning": true
-      },
-      {
         "name": "gemini-2.5-computer-use-preview-10-2025",
         "label": "Gemini 2.5 Computer Use Preview 10-2025",
         "modelFamily": "GEMINI",

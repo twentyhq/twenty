@@ -7,6 +7,7 @@ import { IconLink } from 'twenty-ui/icon';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
+import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { isValidJunctionTargetField } from '@/object-record/record-field/ui/utils/junction/isValidJunctionTargetField';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
@@ -14,7 +15,7 @@ import { Select } from '@/ui/input/components/Select';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { RelationType } from '~/generated-metadata/graphql';
-import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
+import { type SettingsDataModelFieldEditFormValues } from '@/settings/data-model/types/SettingsDataModelFieldEditFormValues';
 
 type SettingsDataModelFieldRelationJunctionFormProps = {
   objectNameSingular: string;
@@ -101,8 +102,14 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
   }
 
   const isJunctionConfigEnabled = isDefined(junctionTargetFieldId);
+  const selectedJunctionTargetFieldId = isDefined(junctionTargetFieldId)
+    ? (findFieldMetadataItemByFieldMetadataId({
+        fieldMetadataItems: junctionObjectMetadataItem.fields,
+        fieldMetadataId: junctionTargetFieldId,
+      })?.id ?? junctionTargetFieldId)
+    : undefined;
   const isConfiguredTargetValid = junctionFieldOptions.some(
-    ({ value }) => value === junctionTargetFieldId,
+    ({ value }) => value === selectedJunctionTargetFieldId,
   );
 
   if (junctionFieldOptions.length === 0 && !isJunctionConfigEnabled) {
@@ -169,12 +176,12 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
             dropdownId="junction-target-field-select"
             selectSizeVariant="small"
             dropdownWidth={120}
-            value={junctionTargetFieldId}
+            value={selectedJunctionTargetFieldId}
             emptyOption={
               !isConfiguredTargetValid && isDefined(junctionTargetFieldId)
                 ? {
                     label: t`Select a valid target`,
-                    value: junctionTargetFieldId,
+                    value: selectedJunctionTargetFieldId,
                   }
                 : undefined
             }

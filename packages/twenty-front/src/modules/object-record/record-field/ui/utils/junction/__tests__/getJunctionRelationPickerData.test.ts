@@ -1,6 +1,7 @@
 import { getJunctionRelationPickerData } from '@/object-record/record-field/ui/utils/junction/getJunctionRelationPickerData';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { getObjectMorphJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getObjectMorphJunctionConfig';
+import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
@@ -125,5 +126,61 @@ describe('getJunctionRelationPickerData', () => {
     expect(searchableObjectMetadataItems.map(({ id }) => id)).toEqual([
       companyObjectMetadata.id,
     ]);
+  });
+
+  it('uses terminal records when editing the inverse side of a junction', () => {
+    const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
+    const rocketObjectMetadata = getMockObjectMetadataItemOrThrow('rocket');
+    const taskObjectMetadata = getMockObjectMetadataItemOrThrow('task');
+    const taskTargetObjectMetadata =
+      getMockObjectMetadataItemOrThrow('taskTarget');
+    const taskTargetsField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: rocketObjectMetadata,
+      fieldName: 'taskTargets',
+    });
+
+    const junctionConfig = resolveJunctionConfig({
+      settings: taskTargetsField.settings,
+      relationObjectMetadataId:
+        taskTargetsField.relation?.targetObjectMetadata.id ?? '',
+      relationTargetFieldMetadataId:
+        taskTargetsField.relation?.targetFieldMetadata.id,
+      sourceObjectMetadataId: rocketObjectMetadata.id,
+      objectMetadataItems,
+    });
+
+    expect(junctionConfig?.direction).toBe('reverse');
+
+    if (junctionConfig === null) {
+      throw new Error('Reverse task junction config not found');
+    }
+
+    const { pickableMorphItems, searchableObjectMetadataItems } =
+      getJunctionRelationPickerData({
+        junctionRecords: [
+          {
+            id: 'task-target-id',
+            __typename: 'TaskTarget',
+            task: { id: 'task-id' },
+          },
+        ],
+        targetFields: junctionConfig.targetFields,
+        objectMetadataItems,
+      });
+
+    expect(pickableMorphItems).toEqual([
+      {
+        recordId: 'task-id',
+        objectMetadataId: taskObjectMetadata.id,
+        isSelected: true,
+        isMatchingSearchFilter: true,
+      },
+    ]);
+    expect(searchableObjectMetadataItems.map(({ id }) => id)).toEqual([
+      taskObjectMetadata.id,
+    ]);
+    expect(searchableObjectMetadataItems.map(({ id }) => id)).not.toContain(
+      taskTargetObjectMetadata.id,
+    );
   });
 });

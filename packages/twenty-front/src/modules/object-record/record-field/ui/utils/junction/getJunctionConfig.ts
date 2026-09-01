@@ -1,4 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { type JunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/JunctionConfig';
 import { type JunctionObjectMetadataItem } from '@/object-record/record-field/ui/utils/junction/types/JunctionObjectMetadataItem';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -60,14 +61,16 @@ export const getJunctionConfig = ({
 
   const hasConfiguredTargetField = hasJunctionTargetFieldId(settings);
   const configuredTargetField = hasConfiguredTargetField
-    ? junctionObjectMetadata.fields.find(
-        (field) => field.id === settings.junctionTargetFieldId,
-      )
+    ? findFieldMetadataItemByFieldMetadataId({
+        fieldMetadataItems: junctionObjectMetadata.fields,
+        fieldMetadataId: settings.junctionTargetFieldId,
+      })
     : undefined;
   const relationSourceField = isDefined(relationTargetFieldMetadataId)
-    ? junctionObjectMetadata.fields.find(
-        (field) => field.id === relationTargetFieldMetadataId,
-      )
+    ? findFieldMetadataItemByFieldMetadataId({
+        fieldMetadataItems: junctionObjectMetadata.fields,
+        fieldMetadataId: relationTargetFieldMetadataId,
+      })
     : undefined;
   const sourceField =
     relationSourceField ?? findSourceField(configuredTargetField?.id);

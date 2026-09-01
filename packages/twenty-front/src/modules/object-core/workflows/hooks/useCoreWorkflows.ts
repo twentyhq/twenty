@@ -6,6 +6,7 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import {
   CoreWorkflowOrderByDirection,
   CoreWorkflowOrderByField,
@@ -25,12 +26,17 @@ const ORDER_BY_FIELD_BY_FIELD_NAME: Record<string, CoreWorkflowOrderByField> = {
   updatedAt: CoreWorkflowOrderByField.UPDATED_AT,
 };
 
-export const useCoreWorkflows = () => {
+export const useCoreWorkflows = ({
+  tableId = CORE_WORKFLOWS_TABLE_ID,
+}: {
+  tableId?: string;
+} = {}) => {
   const apolloCoreClient = useApolloCoreClient();
+  const scopedTableId = useWorkspaceSurfaceScopedComponentInstanceId(tableId);
 
   const sortedFieldByTable = useAtomFamilyStateValue(
     sortedFieldByTableFamilyState,
-    { tableId: CORE_WORKFLOWS_TABLE_ID },
+    { tableId: scopedTableId },
   );
 
   const sortValue = sortedFieldByTable ?? CORE_WORKFLOWS_INITIAL_SORT;

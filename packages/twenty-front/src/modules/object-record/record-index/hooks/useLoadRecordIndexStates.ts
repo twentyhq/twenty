@@ -94,8 +94,6 @@ export const useLoadRecordIndexStates = () => {
       objectMetadataItem: EnrichedObjectMetadataItem,
       options?: { skipGlobalIndexStates?: boolean; recordIndexId?: string },
     ) => {
-      const skipGlobalIndexStates = options?.skipGlobalIndexStates ?? false;
-
       const activeFieldMetadataItems = objectMetadataItem.fields.filter(
         (field) => field.isActive && !isHiddenSystemField(field),
       );
@@ -151,10 +149,16 @@ export const useLoadRecordIndexStates = () => {
 
       const recordIndexId =
         options?.recordIndexId ??
+        ambientViewInstanceId ??
         getRecordIndexIdFromObjectNamePluralAndViewId(
           objectMetadataItem.namePlural,
           view.id,
         );
+
+      const recordIndexFieldDefinitionsAtom =
+        recordIndexFieldDefinitionsState.atomFamily({
+          instanceId: recordIndexId,
+        });
 
       const currentRecordFieldsAtom =
         currentRecordFieldsComponentState.atomFamily({
@@ -169,17 +173,10 @@ export const useLoadRecordIndexStates = () => {
 
       store.set(
         atom(null, (get, batchSet) => {
-          if (!skipGlobalIndexStates) {
-            const existingFieldDefs = get(
-              recordIndexFieldDefinitionsState.atom,
-            );
+          const existingFieldDefs = get(recordIndexFieldDefinitionsAtom);
 
-            if (!isDeeplyEqual(existingFieldDefs, newFieldDefinitions)) {
-              batchSet(
-                recordIndexFieldDefinitionsState.atom,
-                newFieldDefinitions,
-              );
-            }
+          if (!isDeeplyEqual(existingFieldDefs, newFieldDefinitions)) {
+            batchSet(recordIndexFieldDefinitionsAtom, newFieldDefinitions);
           }
 
           for (const viewField of view.viewFields) {
@@ -222,7 +219,7 @@ export const useLoadRecordIndexStates = () => {
         }),
       );
     },
-    [store],
+    [ambientViewInstanceId, store],
   );
 
   const loadRecordIndexStates = useCallback(
@@ -231,8 +228,6 @@ export const useLoadRecordIndexStates = () => {
       objectMetadataItem: EnrichedObjectMetadataItem,
       options?: { skipGlobalIndexStates?: boolean; recordIndexId?: string },
     ) => {
-      const skipGlobalIndexStates = options?.skipGlobalIndexStates ?? false;
-
       const flattenedFieldMetadataItems = store.get(
         flattenedFieldMetadataItemsSelector.atom,
       );
@@ -274,10 +269,15 @@ export const useLoadRecordIndexStates = () => {
 
       const recordIndexId =
         options?.recordIndexId ??
+        ambientViewInstanceId ??
         getRecordIndexIdFromObjectNamePluralAndViewId(
           objectMetadataItem.namePlural,
           view.id,
         );
+
+      const recordIndexViewTypeAtom = recordIndexViewTypeState.atomFamily({
+        instanceId: recordIndexId,
+      });
 
       const currentRecordFiltersAtom =
         currentRecordFiltersComponentState.atomFamily({
@@ -308,8 +308,7 @@ export const useLoadRecordIndexStates = () => {
         });
 
       syncRecordIndexViewFields(view, objectMetadataItem, {
-        skipGlobalIndexStates,
-        recordIndexId: options?.recordIndexId,
+        recordIndexId,
       });
 
       store.set(
@@ -328,12 +327,9 @@ export const useLoadRecordIndexStates = () => {
             filters: contextStoreFilters,
           });
 
-          if (!skipGlobalIndexStates) {
-            batchSet(recordIndexViewTypeState.atom, view.type);
-          }
+          batchSet(recordIndexViewTypeAtom, view.type);
 
-          const recordCalendarInstanceId =
-            options?.recordIndexId ?? ambientViewInstanceId;
+          const recordCalendarInstanceId = recordIndexId;
 
           if (isDefined(recordCalendarInstanceId)) {
             batchSet(
@@ -390,7 +386,7 @@ export const useLoadRecordIndexStates = () => {
         mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId ?? '',
         viewGroups: view.viewGroups,
         objectMetadataItem,
-        recordIndexId: options?.recordIndexId,
+        recordIndexId,
       });
     },
     [

@@ -7,8 +7,10 @@ import { MemoryRouter } from 'react-router-dom';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
-import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import {
+  type SidePanelNavigationStackItem,
+  sidePanelNavigationStackState,
+} from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderSidePanelButtonClickOutsideId';
@@ -34,20 +36,13 @@ jest.mock('twenty-ui/surfaces', () => ({
 
 const renderSidePanelToggleButton = ({
   isSidePanelOpened = false,
-  sidePanelPage = SidePanelPages.CommandMenuDisplay,
   sidePanelNavigationStack = [],
   sidePanelSearch = '',
   sidePanelSearchObjectFilter = null,
   isLayoutCustomizationModeEnabled = false,
 }: {
   isSidePanelOpened?: boolean;
-  sidePanelPage?: SidePanelPages;
-  sidePanelNavigationStack?: Array<{
-    page: SidePanelPages;
-    pageTitle: string;
-    pageIcon: typeof IconDotsVertical;
-    pageId: string;
-  }>;
+  sidePanelNavigationStack?: SidePanelNavigationStackItem[];
   sidePanelSearch?: string;
   sidePanelSearchObjectFilter?: string | null;
   isLayoutCustomizationModeEnabled?: boolean;
@@ -55,7 +50,6 @@ const renderSidePanelToggleButton = ({
   const store = createStore();
 
   store.set(isSidePanelOpenedState.atom, isSidePanelOpened);
-  store.set(sidePanelPageState.atom, sidePanelPage);
   store.set(sidePanelNavigationStackState.atom, sidePanelNavigationStack);
   store.set(sidePanelSearchState.atom, sidePanelSearch);
   store.set(sidePanelSearchObjectFilterState.atom, sidePanelSearchObjectFilter);
@@ -94,16 +88,14 @@ describe('SidePanelToggleButton', () => {
     fireEvent.click(screen.getByTestId('page-header-side-panel-button'));
 
     expect(store.get(isSidePanelOpenedState.atom)).toBe(true);
-    expect(store.get(sidePanelPageState.atom)).toBe(
-      SidePanelPages.CommandMenuDisplay,
-    );
-    expect(store.get(sidePanelNavigationStackState.atom)).toHaveLength(1);
+    expect(store.get(sidePanelNavigationStackState.atom)).toMatchObject([
+      { page: SidePanelPages.CommandMenuDisplay },
+    ]);
   });
 
   it('hides the navbar command menu button while the command menu is open', () => {
     renderSidePanelToggleButton({
       isSidePanelOpened: true,
-      sidePanelPage: SidePanelPages.CommandMenuDisplay,
       sidePanelNavigationStack: [
         {
           page: SidePanelPages.CommandMenuDisplay,
@@ -122,7 +114,6 @@ describe('SidePanelToggleButton', () => {
   it('hides the navbar command menu button when the side panel has command-menu history', () => {
     renderSidePanelToggleButton({
       isSidePanelOpened: true,
-      sidePanelPage: SidePanelPages.ViewRecord,
       sidePanelNavigationStack: [
         {
           page: SidePanelPages.CommandMenuDisplay,
@@ -131,10 +122,17 @@ describe('SidePanelToggleButton', () => {
           pageId: 'command-menu',
         },
         {
-          page: SidePanelPages.ViewRecord,
+          page: SidePanelPages.RoutedPage,
           pageTitle: 'Company',
           pageIcon: IconDotsVertical,
           pageId: 'view-record',
+          routedLocation: {
+            pathname: '/object/company/record-id',
+            search: '',
+            hash: '',
+            state: null,
+            key: 'routed-page',
+          },
         },
       ],
     });
@@ -147,7 +145,6 @@ describe('SidePanelToggleButton', () => {
   it('keeps the navbar command menu button on unrelated side-panel drill-down pages', () => {
     renderSidePanelToggleButton({
       isSidePanelOpened: true,
-      sidePanelPage: SidePanelPages.WorkflowStepCreate,
       sidePanelNavigationStack: [
         {
           page: SidePanelPages.WorkflowStepEdit,
@@ -172,7 +169,6 @@ describe('SidePanelToggleButton', () => {
 
     renderSidePanelToggleButton({
       isSidePanelOpened: true,
-      sidePanelPage: SidePanelPages.AskAI,
       sidePanelNavigationStack: [
         {
           page: SidePanelPages.AskAI,
@@ -193,7 +189,6 @@ describe('SidePanelToggleButton', () => {
 
     renderSidePanelToggleButton({
       isSidePanelOpened: true,
-      sidePanelPage: SidePanelPages.AskAI,
       isLayoutCustomizationModeEnabled: true,
       sidePanelNavigationStack: [
         {
@@ -211,7 +206,6 @@ describe('SidePanelToggleButton', () => {
   it('keeps the navbar command menu button on desktop while the AI chat is open', () => {
     renderSidePanelToggleButton({
       isSidePanelOpened: true,
-      sidePanelPage: SidePanelPages.AskAI,
       sidePanelNavigationStack: [
         {
           page: SidePanelPages.AskAI,
@@ -251,15 +245,21 @@ describe('SidePanelToggleButton', () => {
   it('replaces a directly opened side-panel page with the root command menu', () => {
     const { store } = renderSidePanelToggleButton({
       isSidePanelOpened: true,
-      sidePanelPage: SidePanelPages.ViewRecord,
       sidePanelSearch: 'acme',
       sidePanelSearchObjectFilter: 'company',
       sidePanelNavigationStack: [
         {
-          page: SidePanelPages.ViewRecord,
+          page: SidePanelPages.RoutedPage,
           pageTitle: 'Company',
           pageIcon: IconDotsVertical,
           pageId: 'view-record',
+          routedLocation: {
+            pathname: '/object/company/record-id',
+            search: '',
+            hash: '',
+            state: null,
+            key: 'routed-page',
+          },
         },
       ],
     });
@@ -267,9 +267,6 @@ describe('SidePanelToggleButton', () => {
     fireEvent.click(screen.getByTestId('page-header-side-panel-button'));
 
     expect(store.get(isSidePanelOpenedState.atom)).toBe(true);
-    expect(store.get(sidePanelPageState.atom)).toBe(
-      SidePanelPages.CommandMenuDisplay,
-    );
     expect(store.get(sidePanelNavigationStackState.atom)).toMatchObject([
       {
         page: SidePanelPages.CommandMenuDisplay,

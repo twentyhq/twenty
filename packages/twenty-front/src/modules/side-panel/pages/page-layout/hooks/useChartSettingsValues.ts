@@ -1,9 +1,9 @@
+import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { CHART_NUMBER_FORMAT_DEFAULT } from '@/page-layout/widgets/graph/constants/ChartNumberFormatDefault';
 import { useGraphGroupBySortOptionLabels } from '@/side-panel/pages/page-layout/hooks/useGraphGroupBySortOptionLabels';
 import { useGraphXSortOptionLabels } from '@/side-panel/pages/page-layout/hooks/useGraphXSortOptionLabels';
 import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
-import { findChartGroupByFieldMetadataItem } from '@/side-panel/pages/page-layout/utils/findChartGroupByFieldMetadataItem';
 import { getChartAxisNameDisplayOptions } from '@/side-panel/pages/page-layout/utils/getChartAxisNameDisplayOptions';
 import { getChartFilterRulesCount } from '@/side-panel/pages/page-layout/utils/getChartFilterRulesCount';
 import { getChartNumberFormatLabel } from '@/side-panel/pages/page-layout/utils/getChartNumberFormatLabel';
@@ -77,15 +77,15 @@ export const useChartSettingsValues = ({
   }
 
   const groupByFieldX = isDefined(groupByFieldXId)
-    ? findChartGroupByFieldMetadataItem({
-        fields: objectMetadataItem?.fields,
+    ? findFieldMetadataItemByFieldMetadataId({
+        fieldMetadataItems: objectMetadataItem?.fields,
         fieldMetadataId: groupByFieldXId,
       })
     : undefined;
 
   const groupByFieldY = isDefined(groupByFieldYId)
-    ? findChartGroupByFieldMetadataItem({
-        fields: objectMetadataItem?.fields,
+    ? findFieldMetadataItemByFieldMetadataId({
+        fieldMetadataItems: objectMetadataItem?.fields,
         fieldMetadataId: groupByFieldYId,
       })
     : undefined;
@@ -208,8 +208,8 @@ export const useChartSettingsValues = ({
       }
       case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_PIE_CHART: {
         const pieChartGroupByField = isDefined(finalGroupByFieldYId)
-          ? findChartGroupByFieldMetadataItem({
-              fields: objectMetadataItem?.fields,
+          ? findFieldMetadataItemByFieldMetadataId({
+              fieldMetadataItems: objectMetadataItem?.fields,
               fieldMetadataId: finalGroupByFieldYId,
             })
           : undefined;

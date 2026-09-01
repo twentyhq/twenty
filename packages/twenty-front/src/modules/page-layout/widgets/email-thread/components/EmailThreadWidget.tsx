@@ -15,8 +15,9 @@ import {
 } from '@/ui/layout/components/WidgetContentContainer';
 import { EmailThreadComposer } from '@/page-layout/widgets/email-thread/components/EmailThreadComposer';
 import { EmailThreadIntermediaryMessages } from '@/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { WidgetRelationsHeader } from '@/page-layout/widgets/components/WidgetRelationsHeader';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -28,7 +29,7 @@ export const EmailThreadWidget = ({
   widget: _widget,
 }: EmailThreadWidgetProps) => {
   const targetRecord = useTargetRecord();
-  const { isInSidePanel } = useLayoutRenderingContext();
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 
   const { thread, messages, fetchMoreMessages, threadLoading } = useEmailThread(
     targetRecord.id,
@@ -93,6 +94,7 @@ export const EmailThreadWidget = ({
   if (threadLoading || !thread || !messages.length) {
     return (
       <StyledWidgetContentContainer>
+        <WidgetRelationsHeader />
         <StyledWidgetScrollContainer>
           <EmailLoader loadingText={t`Loading thread`} />
         </StyledWidgetScrollContainer>
@@ -102,6 +104,7 @@ export const EmailThreadWidget = ({
 
   return (
     <StyledWidgetContentContainer>
+      <WidgetRelationsHeader />
       <StyledWidgetScrollContainer>
         {firstMessages.map((message) => (
           <EmailThreadMessage
