@@ -17,21 +17,16 @@ type CampaignSendFailure = {
   shouldRetry: boolean;
 };
 
-const failed = (
-  failureReason: CampaignFailureReason,
-  shouldRetry: boolean,
-): CampaignSendFailure => ({
-  state: CAMPAIGN_DELIVERY_STATE.FAILED,
-  skipReason: null,
-  failureReason,
-  shouldRetry,
-});
-
 export const resolveCampaignSendFailure = (
   error: unknown,
 ): CampaignSendFailure => {
   if (!(error instanceof EmailingDomainDriverException)) {
-    return failed(CAMPAIGN_FAILURE_REASON.UNKNOWN, true);
+    return {
+      state: CAMPAIGN_DELIVERY_STATE.FAILED,
+      skipReason: null,
+      failureReason: CAMPAIGN_FAILURE_REASON.UNKNOWN,
+      shouldRetry: true,
+    };
   }
 
   switch (error.code) {
@@ -43,22 +38,64 @@ export const resolveCampaignSendFailure = (
         shouldRetry: false,
       };
     case EmailingDomainDriverExceptionCode.TEMPORARY_ERROR:
-      return failed(CAMPAIGN_FAILURE_REASON.TEMPORARY_ERROR, true);
+      return {
+        state: CAMPAIGN_DELIVERY_STATE.FAILED,
+        skipReason: null,
+        failureReason: CAMPAIGN_FAILURE_REASON.TEMPORARY_ERROR,
+        shouldRetry: true,
+      };
     case EmailingDomainDriverExceptionCode.UNKNOWN:
-      return failed(CAMPAIGN_FAILURE_REASON.UNKNOWN, true);
+      return {
+        state: CAMPAIGN_DELIVERY_STATE.FAILED,
+        skipReason: null,
+        failureReason: CAMPAIGN_FAILURE_REASON.UNKNOWN,
+        shouldRetry: true,
+      };
     case EmailingDomainDriverExceptionCode.SENDING_SUSPENDED:
-      return failed(CAMPAIGN_FAILURE_REASON.SENDING_SUSPENDED, true);
+      return {
+        state: CAMPAIGN_DELIVERY_STATE.FAILED,
+        skipReason: null,
+        failureReason: CAMPAIGN_FAILURE_REASON.SENDING_SUSPENDED,
+        shouldRetry: true,
+      };
     case EmailingDomainDriverExceptionCode.UNSUBSCRIBE_NOT_READY:
-      return failed(CAMPAIGN_FAILURE_REASON.UNSUBSCRIBE_NOT_READY, true);
+      return {
+        state: CAMPAIGN_DELIVERY_STATE.FAILED,
+        skipReason: null,
+        failureReason: CAMPAIGN_FAILURE_REASON.UNSUBSCRIBE_NOT_READY,
+        shouldRetry: true,
+      };
     case EmailingDomainDriverExceptionCode.NOT_FOUND:
-      return failed(CAMPAIGN_FAILURE_REASON.CONFIGURATION_ERROR, false);
-    case EmailingDomainDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
-      return failed(CAMPAIGN_FAILURE_REASON.INSUFFICIENT_PERMISSIONS, false);
     case EmailingDomainDriverExceptionCode.CONFIGURATION_ERROR:
-      return failed(CAMPAIGN_FAILURE_REASON.CONFIGURATION_ERROR, false);
+      return {
+        state: CAMPAIGN_DELIVERY_STATE.FAILED,
+        skipReason: null,
+        failureReason: CAMPAIGN_FAILURE_REASON.CONFIGURATION_ERROR,
+        shouldRetry: false,
+      };
+    case EmailingDomainDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
+      return {
+        state: CAMPAIGN_DELIVERY_STATE.FAILED,
+        skipReason: null,
+        failureReason: CAMPAIGN_FAILURE_REASON.INSUFFICIENT_PERMISSIONS,
+        shouldRetry: false,
+      };
     case EmailingDomainDriverExceptionCode.SANDBOX_ACCOUNT:
-      return failed(CAMPAIGN_FAILURE_REASON.SANDBOX_ACCOUNT, false);
-    default:
+      return {
+        state: CAMPAIGN_DELIVERY_STATE.FAILED,
+        skipReason: null,
+        failureReason: CAMPAIGN_FAILURE_REASON.SANDBOX_ACCOUNT,
+        shouldRetry: false,
+      };
+    case EmailingDomainDriverExceptionCode.UNSUBSCRIBE_MULTIPLE_RECIPIENTS:
+      return {
+        state: CAMPAIGN_DELIVERY_STATE.FAILED,
+        skipReason: null,
+        failureReason: CAMPAIGN_FAILURE_REASON.UNSUBSCRIBE_MULTIPLE_RECIPIENTS,
+        shouldRetry: false,
+      };
+    default: {
       return assertUnreachable(error.code);
+    }
   }
 };

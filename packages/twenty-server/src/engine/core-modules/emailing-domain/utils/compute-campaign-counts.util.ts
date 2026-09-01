@@ -14,7 +14,9 @@ const EMPTY_CAMPAIGN_COUNTS: CampaignCounts = {
 };
 
 const countFailedInGroup = (group: CampaignCountGroup): number =>
-  group.state === CAMPAIGN_DELIVERY_STATE.FAILED ? Number(group.total) : 0;
+  group.state === CAMPAIGN_DELIVERY_STATE.FAILED
+    ? Number(group.total)
+    : Number(group.providerFailedCount);
 
 export const computeCampaignCounts = ({
   groups,
