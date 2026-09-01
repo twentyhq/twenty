@@ -6,6 +6,7 @@ import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
 import { type Note } from '@/activities/types/Note';
 import { type Task } from '@/activities/types/Task';
+import { shouldRedirectSidePanelTextToRichTextEditor } from '@/activities/utils/shouldRedirectSidePanelTextToRichTextEditor';
 import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants/BlockEditorGlobalHotkeysConfig';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
@@ -19,9 +20,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { Key } from 'ts-key-enum';
 import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -131,16 +130,7 @@ export const ActivityRichTextEditor = ({
   const focusRichTextEditorWhenFocusOnSidePanel = (
     keyboardEvent: KeyboardEvent,
   ) => {
-    if (keyboardEvent.key === Key.Escape) {
-      return;
-    }
-
-    const isWritingText =
-      !isNonTextWritingKey(keyboardEvent.key) &&
-      !keyboardEvent.ctrlKey &&
-      !keyboardEvent.metaKey;
-
-    if (!isWritingText) {
+    if (!shouldRedirectSidePanelTextToRichTextEditor(keyboardEvent)) {
       return;
     }
 
@@ -173,6 +163,9 @@ export const ActivityRichTextEditor = ({
     callback: focusRichTextEditorWhenFocusOnSidePanel,
     focusId: SIDE_PANEL_FOCUS_ID,
     dependencies: [focusRichTextEditorWhenFocusOnSidePanel],
+    options: {
+      preventDefault: false,
+    },
   });
 
   return (
