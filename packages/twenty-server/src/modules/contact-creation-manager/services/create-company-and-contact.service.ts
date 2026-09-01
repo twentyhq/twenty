@@ -56,13 +56,23 @@ export class CreateCompanyAndPersonService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
-  async createCompaniesAndPeople(
-    connectedAccount: ConnectedAccountEntity,
-    contactsToCreate: Contact[],
-    workspaceId: string,
-    source: FieldActorSource,
-    accountOwner: WorkspaceMemberWorkspaceEntity | null,
-  ): Promise<DeepPartial<PersonWorkspaceEntity>[]> {
+  async createCompaniesAndPeople({
+    connectedAccount,
+    contactsToCreate,
+    workspaceId,
+    source,
+    accountOwner,
+    workspaceMembers,
+    isInternalMessagesImportEnabled,
+  }: {
+    connectedAccount: ConnectedAccountEntity;
+    contactsToCreate: Contact[];
+    workspaceId: string;
+    source: FieldActorSource;
+    accountOwner: WorkspaceMemberWorkspaceEntity | null;
+    workspaceMembers: WorkspaceMemberWorkspaceEntity[];
+    isInternalMessagesImportEnabled: boolean;
+  }): Promise<DeepPartial<PersonWorkspaceEntity>[]> {
     if (!contactsToCreate || contactsToCreate.length === 0) {
       return [];
     }
@@ -77,24 +87,12 @@ export class CreateCompanyAndPersonService {
         },
       );
 
-      const workspaceMemberRepository = this.workspaceOrmManager.getRepository(
-        WorkspaceMemberWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
-
-      const workspaceMembers = await workspaceMemberRepository.find();
-
-      const workspace = await this.workspaceRepository.findOne({
-        where: { id: workspaceId },
-        select: ['id', 'isInternalMessagesImportEnabled'],
-      });
-
       const peopleToCreateFromOtherCompanies =
         filterOutContactsThatBelongToSelfOrWorkspaceMembers(
           contactsToCreate,
           connectedAccount,
           workspaceMembers,
-          workspace?.isInternalMessagesImportEnabled ?? false,
+          isInternalMessagesImportEnabled,
         );
 
       const { uniqueContacts, uniqueHandles } = getUniqueContactsAndHandles(
@@ -184,8 +182,6 @@ export class CreateCompanyAndPersonService {
       CONTACTS_CREATION_BATCH_SIZE,
     );
 
-    const authContext = buildSystemAuthContext(workspaceId);
-
     const userWorkspace = await this.userWorkspaceRepository.findOne({
       where: { id: connectedAccount.userWorkspaceId },
     });
@@ -198,28 +194,29 @@ export class CreateCompanyAndPersonService {
       return;
     }
 
-    const accountOwner =
-      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-        const workspaceMemberRepository =
-          this.workspaceOrmManager.getRepository(
-            WorkspaceMemberWorkspaceEntity,
-            { shouldBypassPermissionChecks: true },
-          );
+    const contactCreationContext = await this.getContactCreationContext({
+      workspaceId,
+      userId: userWorkspace.userId,
+    });
 
-        return workspaceMemberRepository.findOne({
-          where: { userId: userWorkspace.userId },
-        });
-      }, authContext);
+    if (!isDefined(contactCreationContext)) {
+      return;
+    }
+
+    const { accountOwner, workspaceMembers, isInternalMessagesImportEnabled } =
+      contactCreationContext;
 
     for (const contactsBatch of contactsBatches) {
       try {
-        await this.createCompaniesAndPeople(
+        await this.createCompaniesAndPeople({
           connectedAccount,
-          contactsBatch,
+          contactsToCreate: contactsBatch,
           workspaceId,
           source,
           accountOwner,
-        );
+          workspaceMembers,
+          isInternalMessagesImportEnabled,
+        });
       } catch (error) {
         // Concurrent imports for the same workspace can insert the same company
         // domain or person email, and the loser hits the unique index. The
@@ -234,6 +231,57 @@ export class CreateCompanyAndPersonService {
           },
         });
       }
+    }
+  }
+
+  private async getContactCreationContext({
+    workspaceId,
+    userId,
+  }: {
+    workspaceId: string;
+    userId: string;
+  }): Promise<
+    | {
+        accountOwner: WorkspaceMemberWorkspaceEntity | null;
+        workspaceMembers: WorkspaceMemberWorkspaceEntity[];
+        isInternalMessagesImportEnabled: boolean;
+      }
+    | undefined
+  > {
+    try {
+      const workspace = await this.workspaceRepository.findOne({
+        where: { id: workspaceId },
+        select: ['id', 'isInternalMessagesImportEnabled'],
+      });
+      const authContext = buildSystemAuthContext(workspaceId);
+      const { accountOwner, workspaceMembers } =
+        await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+          const workspaceMemberRepository =
+            this.workspaceOrmManager.getRepository(
+              WorkspaceMemberWorkspaceEntity,
+              { shouldBypassPermissionChecks: true },
+            );
+
+          const accountOwner = await workspaceMemberRepository.findOne({
+            where: { userId },
+          });
+          const workspaceMembers = await workspaceMemberRepository.find();
+
+          return { accountOwner, workspaceMembers };
+        }, authContext);
+
+      return {
+        accountOwner,
+        workspaceMembers,
+        isInternalMessagesImportEnabled:
+          workspace?.isInternalMessagesImportEnabled ?? false,
+      };
+    } catch (error) {
+      this.exceptionHandlerService.captureExceptions([error], {
+        workspace: { id: workspaceId },
+      });
+
+      return undefined;
     }
   }
 

@@ -69,11 +69,20 @@ export class ApplyMessagesVisibilityRestrictionsService {
           messageChannelsFromCore.map((ch) => [ch.id, ch]),
         );
 
-        const workspaceMemberRepository =
-          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            'workspaceMember',
-            { shouldBypassPermissionChecks: true },
-          );
+        const hasRestrictedMessageChannel = messageChannelsFromCore.some(
+          (messageChannel) =>
+            messageChannel.visibility !==
+            MessageChannelVisibility.SHARE_EVERYTHING,
+        );
+
+        const accessibleMessageChannelIds =
+          isDefined(userId) && hasRestrictedMessageChannel
+            ? await this.getAccessibleMessageChannelIds({
+                userId,
+                workspaceId,
+                messageChannelIds,
+              })
+            : new Set<string>();
 
         for (let i = messages.length - 1; i >= 0; i--) {
           const associations = messageChannelMessagesAssociations.filter(
@@ -104,33 +113,12 @@ export class ApplyMessagesVisibilityRestrictionsService {
             continue;
           }
 
-          if (isDefined(userId)) {
-            const workspaceMember =
-              await workspaceMemberRepository.findOneByOrFail({
-                userId,
-              });
-
-            const userWorkspace = await this.userWorkspaceRepository.findOne({
-              where: { userId: workspaceMember.userId, workspaceId },
-            });
-
-            if (userWorkspace) {
-              const connectedAccounts =
-                await this.connectedAccountRepository.find({
-                  where: {
-                    userWorkspaceId: userWorkspace.id,
-                    workspaceId,
-                    messageChannels: {
-                      id: In(messageChannels.map((channel) => channel.id)),
-                    },
-                  },
-                  relations: { messageChannels: true },
-                });
-
-              if (connectedAccounts.length > 0) {
-                continue;
-              }
-            }
+          if (
+            messageChannels.some((messageChannel) =>
+              accessibleMessageChannelIds.has(messageChannel.id),
+            )
+          ) {
+            continue;
           }
 
           if (
@@ -156,6 +144,51 @@ export class ApplyMessagesVisibilityRestrictionsService {
       },
       authContext,
       { lite: true },
+    );
+  }
+
+  private async getAccessibleMessageChannelIds({
+    userId,
+    workspaceId,
+    messageChannelIds,
+  }: {
+    userId: string;
+    workspaceId: string;
+    messageChannelIds: string[];
+  }): Promise<Set<string>> {
+    const workspaceMemberRepository =
+      this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        'workspaceMember',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const workspaceMember = await workspaceMemberRepository.findOneByOrFail({
+      userId,
+    });
+
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { userId: workspaceMember.userId, workspaceId },
+    });
+
+    if (!isDefined(userWorkspace)) {
+      return new Set<string>();
+    }
+
+    const connectedAccounts = await this.connectedAccountRepository.find({
+      where: {
+        userWorkspaceId: userWorkspace.id,
+        workspaceId,
+        messageChannels: { id: In(messageChannelIds) },
+      },
+      relations: { messageChannels: true },
+    });
+
+    return new Set(
+      connectedAccounts.flatMap((connectedAccount) =>
+        (connectedAccount.messageChannels ?? []).map(
+          (messageChannel) => messageChannel.id,
+        ),
+      ),
     );
   }
 }

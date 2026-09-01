@@ -70,6 +70,21 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
           calendarChannelsFromCore.map((channel) => [channel.id, channel]),
         );
 
+        const hasRestrictedCalendarChannel = calendarChannelsFromCore.some(
+          (calendarChannel) =>
+            calendarChannel.visibility !==
+            CalendarChannelVisibility.SHARE_EVERYTHING,
+        );
+
+        const accessibleCalendarChannelIds =
+          isDefined(userId) && hasRestrictedCalendarChannel
+            ? await this.getAccessibleCalendarChannelIds({
+                userId,
+                workspaceId,
+                calendarChannelIds,
+              })
+            : new Set<string>();
+
         for (let i = calendarEvents.length - 1; i >= 0; i--) {
           const associations = calendarChannelCalendarEventsAssociations.filter(
             (association) =>
@@ -95,28 +110,12 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
             continue;
           }
 
-          if (isDefined(userId)) {
-            const userWorkspace = await this.userWorkspaceRepository.findOne({
-              where: { userId, workspaceId },
-              select: ['id'],
-            });
-
-            if (userWorkspace) {
-              const connectedAccounts =
-                await this.connectedAccountRepository.find({
-                  where: {
-                    calendarChannels: {
-                      id: In(calendarChannels.map((channel) => channel.id)),
-                    },
-                    userWorkspaceId: userWorkspace.id,
-                    workspaceId,
-                  },
-                });
-
-              if (connectedAccounts.length > 0) {
-                continue;
-              }
-            }
+          if (
+            calendarChannels.some((calendarChannel) =>
+              accessibleCalendarChannelIds.has(calendarChannel.id),
+            )
+          ) {
+            continue;
           }
 
           if (
@@ -138,6 +137,42 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
       },
       authContext,
       { lite: true },
+    );
+  }
+
+  private async getAccessibleCalendarChannelIds({
+    userId,
+    workspaceId,
+    calendarChannelIds,
+  }: {
+    userId: string;
+    workspaceId: string;
+    calendarChannelIds: string[];
+  }): Promise<Set<string>> {
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { userId, workspaceId },
+      select: ['id'],
+    });
+
+    if (!isDefined(userWorkspace)) {
+      return new Set<string>();
+    }
+
+    const connectedAccounts = await this.connectedAccountRepository.find({
+      where: {
+        calendarChannels: { id: In(calendarChannelIds) },
+        userWorkspaceId: userWorkspace.id,
+        workspaceId,
+      },
+      relations: { calendarChannels: true },
+    });
+
+    return new Set(
+      connectedAccounts.flatMap((connectedAccount) =>
+        (connectedAccount.calendarChannels ?? []).map(
+          (calendarChannel) => calendarChannel.id,
+        ),
+      ),
     );
   }
 }

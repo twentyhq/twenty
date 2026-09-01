@@ -1,7 +1,8 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
+import chunk from 'lodash.chunk';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Not, Repository } from 'typeorm';
 
@@ -53,101 +54,105 @@ export class MessagingMessagesImportCronJob {
       },
     });
 
-    for (const activeWorkspace of activeWorkspaces) {
-      try {
-        const pendingMessageChannels = await this.messageChannelRepository.find(
-          {
-            where: {
-              workspaceId: activeWorkspace.id,
-              isSyncEnabled: true,
-              syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
-              type: Not(MessageChannelType.EMAIL_GROUP),
-            },
-          },
-        );
+    const activeWorkspaceIds = activeWorkspaces.map(
+      (workspace) => workspace.id,
+    );
 
-        const messageChannelsToSchedule = pendingMessageChannels.filter(
-          (messageChannel) =>
-            !isThrottled(
-              toIsoStringOrNull(messageChannel.syncStageStartedAt),
-              messageChannel.throttleFailureCount,
-              toIsoStringOrNull(messageChannel.throttleRetryAfter),
-            ),
-        );
+    if (activeWorkspaceIds.length === 0) {
+      return;
+    }
 
-        const throttledCount =
-          pendingMessageChannels.length - messageChannelsToSchedule.length;
+    const pendingMessageChannels = await this.messageChannelRepository
+      .find({
+        where: {
+          workspaceId: In(activeWorkspaceIds),
+          isSyncEnabled: true,
+          syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
+          type: Not(MessageChannelType.EMAIL_GROUP),
+        },
+      })
+      .catch((error): MessageChannelEntity[] => {
+        this.exceptionHandlerService.captureExceptions([error]);
 
-        if (throttledCount > 0) {
-          this.logger.log(
-            `Skipped ${throttledCount} throttled message channels for workspace ${activeWorkspace.id}`,
-          );
-        }
-
-        if (messageChannelsToSchedule.length === 0) {
-          continue;
-        }
-
-        const messageChannelIdsToSchedule = messageChannelsToSchedule.map(
-          (messageChannel) => messageChannel.id,
-        );
-
-        const updateResult = await this.messageChannelRepository
-          .createQueryBuilder()
-          .update()
-          .set({
-            syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
-            syncStageStartedAt: new Date(),
-          })
-          .where({
-            id: In(messageChannelIdsToSchedule),
-            workspaceId: activeWorkspace.id,
-            isSyncEnabled: true,
-            syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
-          })
-          .returning('id')
-          .execute();
-
-        const updatedIds = updateResult.raw.map(
-          (row: { id: string }) => row.id,
-        );
-
-        for (const messageChannelId of updatedIds) {
-          await this.messageQueueService.add<MessagingMessagesImportJobData>(
-            MessagingMessagesImportJob.name,
-            {
-              workspaceId: activeWorkspace.id,
-              messageChannelId,
-            },
-          );
-        }
-      } catch (error) {
         if (
           error.code === '42P01' &&
           error.message.includes('messageChannel" does not exist')
         ) {
-          const refetchedWorkspace = await this.workspaceRepository.findOneBy({
-            id: activeWorkspace.id,
-          });
-
-          if (isDefined(refetchedWorkspace)) {
-            this.exceptionHandlerService.captureExceptions([error], {
-              workspace: {
-                id: activeWorkspace.id,
-              },
-            });
-            throw new Error(
+          throw Object.assign(
+            new Error(
               'Workspace schema not found while the workspace is still active',
-            );
-          }
-        } else {
-          this.exceptionHandlerService.captureExceptions([error], {
-            workspace: {
-              id: activeWorkspace.id,
-            },
-          });
+            ),
+            { cause: error },
+          );
         }
+
+        return [];
+      });
+
+    const messageChannelsToSchedule = pendingMessageChannels.filter(
+      (messageChannel) =>
+        !isThrottled(
+          toIsoStringOrNull(messageChannel.syncStageStartedAt),
+          messageChannel.throttleFailureCount,
+          toIsoStringOrNull(messageChannel.throttleRetryAfter),
+        ),
+    );
+
+    const throttledCount =
+      pendingMessageChannels.length - messageChannelsToSchedule.length;
+
+    if (throttledCount > 0) {
+      this.logger.log(`Skipped ${throttledCount} throttled message channels`);
+    }
+
+    if (messageChannelsToSchedule.length === 0) {
+      return;
+    }
+
+    for (const messageChannelsBatch of chunk(
+      messageChannelsToSchedule,
+      QUERY_MAX_RECORDS,
+    )) {
+      const updateResult = await this.messageChannelRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
+          syncStageStartedAt: new Date(),
+        })
+        .where({
+          id: In(messageChannelsBatch.map(({ id }) => id)),
+          isSyncEnabled: true,
+          syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
+        })
+        .returning('id')
+        .execute()
+        .catch((error): { raw: { id: string }[] } => {
+          this.exceptionHandlerService.captureExceptions([error]);
+
+          return { raw: [] };
+        });
+
+      const updatedIds = updateResult.raw.map((row: { id: string }) => row.id);
+      const jobs = messageChannelsBatch
+        .filter(({ id }) => updatedIds.includes(id))
+        .map(({ id: messageChannelId, workspaceId }) => ({
+          workspaceId,
+          messageChannelId,
+        }));
+
+      if (jobs.length === 0) {
+        continue;
       }
+
+      await this.messageQueueService
+        .bulkAdd<MessagingMessagesImportJobData>(
+          MessagingMessagesImportJob.name,
+          jobs,
+        )
+        .catch((error) => {
+          this.exceptionHandlerService.captureExceptions([error]);
+        });
     }
   }
 }

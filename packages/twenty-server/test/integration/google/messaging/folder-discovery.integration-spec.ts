@@ -1,6 +1,7 @@
 import {
   ConnectedAccountProvider,
   MessageFolderImportPolicy,
+  MessageFolderPendingSyncAction,
 } from 'twenty-shared/types';
 
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
@@ -75,5 +76,42 @@ describe('Gmail folder discovery (integration)', () => {
       Work: true,
       Archive: false,
     });
+  }, 60000);
+
+  it('updates a renamed folder in place by id and marks a removed folder for deletion', async () => {
+    const foldersBeforeChange = await queryMessageFolders(channel.channelId);
+    const workFolderId = foldersBeforeChange.find(
+      (folder) => folder.name === 'Work',
+    )?.id;
+    const sentFolderId = foldersBeforeChange.find(
+      (folder) => folder.name === 'SENT',
+    )?.id;
+
+    if (!workFolderId || !sentFolderId) {
+      throw new Error(
+        'Expected the Work and SENT folders to already be synced from earlier in this suite',
+      );
+    }
+
+    gmail.labels.remove('Label_Work');
+    gmail.labels.add({ id: 'Label_Work', name: 'Engineering' });
+    gmail.labels.remove('SENT');
+
+    await runMessageChannelSync(channel.channelId);
+
+    const foldersAfterChange = await queryMessageFolders(channel.channelId);
+
+    const renamedFolder = foldersAfterChange.find(
+      (folder) => folder.id === workFolderId,
+    );
+    const deletedFolder = foldersAfterChange.find(
+      (folder) => folder.id === sentFolderId,
+    );
+
+    expect(renamedFolder?.name).toBe('Engineering');
+    expect(renamedFolder?.isSynced).toBe(true);
+    expect(deletedFolder?.pendingSyncAction).toBe(
+      MessageFolderPendingSyncAction.FOLDER_DELETION,
+    );
   }, 60000);
 });

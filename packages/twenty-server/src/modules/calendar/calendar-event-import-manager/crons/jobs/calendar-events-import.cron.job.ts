@@ -1,6 +1,8 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import chunk from 'lodash.chunk';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
@@ -51,80 +53,91 @@ export class CalendarEventsImportCronJob {
       },
     });
 
-    for (const activeWorkspace of activeWorkspaces) {
-      try {
-        const pendingCalendarChannels =
-          await this.calendarChannelRepository.find({
-            where: {
-              workspaceId: activeWorkspace.id,
-              isSyncEnabled: true,
-              syncStage:
-                CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
-            },
-          });
+    const activeWorkspaceIds = activeWorkspaces.map(
+      (workspace) => workspace.id,
+    );
 
-        const calendarChannelsToSchedule = pendingCalendarChannels.filter(
-          (calendarChannel) =>
-            !isThrottled(
-              toIsoStringOrNull(calendarChannel.syncStageStartedAt),
-              calendarChannel.throttleFailureCount,
-            ),
-        );
+    if (activeWorkspaceIds.length === 0) {
+      return;
+    }
 
-        const throttledCount =
-          pendingCalendarChannels.length - calendarChannelsToSchedule.length;
+    const pendingCalendarChannels = await this.calendarChannelRepository
+      .find({
+        where: {
+          workspaceId: In(activeWorkspaceIds),
+          isSyncEnabled: true,
+          syncStage: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
+        },
+      })
+      .catch((error): CalendarChannelEntity[] => {
+        this.exceptionHandlerService.captureExceptions([error]);
 
-        if (throttledCount > 0) {
-          this.logger.log(
-            `Skipped ${throttledCount} throttled calendar channels for workspace ${activeWorkspace.id}`,
-          );
-        }
+        return [];
+      });
 
-        if (calendarChannelsToSchedule.length === 0) {
-          continue;
-        }
+    const calendarChannelsToSchedule = pendingCalendarChannels.filter(
+      (calendarChannel) =>
+        !isThrottled(
+          toIsoStringOrNull(calendarChannel.syncStageStartedAt),
+          calendarChannel.throttleFailureCount,
+        ),
+    );
 
-        const calendarChannelIds = calendarChannelsToSchedule.map(
-          (calendarChannel) => calendarChannel.id,
-        );
+    const throttledCount =
+      pendingCalendarChannels.length - calendarChannelsToSchedule.length;
 
-        const updateResult = await this.calendarChannelRepository
-          .createQueryBuilder()
-          .update()
-          .set({
-            syncStage:
-              CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED,
-            syncStageStartedAt: new Date(),
-          })
-          .where({
-            id: In(calendarChannelIds),
-            workspaceId: activeWorkspace.id,
-            isSyncEnabled: true,
-            syncStage: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
-          })
-          .returning('id')
-          .execute();
+    if (throttledCount > 0) {
+      this.logger.log(`Skipped ${throttledCount} throttled calendar channels`);
+    }
 
-        const updatedIds = updateResult.raw.map(
-          (row: { id: string }) => row.id,
-        );
+    if (calendarChannelsToSchedule.length === 0) {
+      return;
+    }
 
-        for (const calendarChannelId of updatedIds) {
-          await this.messageQueueService.add<CalendarEventsImportJobData>(
-            CalendarEventsImportJob.name,
-            {
-              calendarChannelId,
-              workspaceId: activeWorkspace.id,
-            },
-          );
-        }
-      } catch (error) {
-        this.exceptionHandlerService.captureExceptions([error], {
-          workspace: {
-            id: activeWorkspace.id,
-          },
+    for (const calendarChannelsBatch of chunk(
+      calendarChannelsToSchedule,
+      QUERY_MAX_RECORDS,
+    )) {
+      const updateResult = await this.calendarChannelRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          syncStage: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED,
+          syncStageStartedAt: new Date(),
+        })
+        .where({
+          id: In(calendarChannelsBatch.map(({ id }) => id)),
+          isSyncEnabled: true,
+          syncStage: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
+        })
+        .returning('id')
+        .execute()
+        .catch((error): { raw: { id: string }[] } => {
+          this.exceptionHandlerService.captureExceptions([error]);
+
+          return { raw: [] };
         });
+
+      const updatedIds = updateResult.raw.map((row: { id: string }) => row.id);
+      const jobs = calendarChannelsBatch
+        .filter(({ id }) => updatedIds.includes(id))
+        .map(({ id: calendarChannelId, workspaceId }) => ({
+          calendarChannelId,
+          workspaceId,
+        }));
+
+      if (jobs.length === 0) {
+        continue;
       }
+
+      await this.messageQueueService
+        .bulkAdd<CalendarEventsImportJobData>(
+          CalendarEventsImportJob.name,
+          jobs,
+        )
+        .catch((error) => {
+          this.exceptionHandlerService.captureExceptions([error]);
+        });
     }
   }
 }
