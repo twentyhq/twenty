@@ -10,6 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 type SettingsPageLayoutProps = {
   links: BreadcrumbProps['links'];
   title?: ReactNode;
+  pageTitle?: string;
   icon?: ReactNode;
   actionButton?: ReactNode;
   secondaryBar?: ReactNode;
@@ -21,6 +22,7 @@ type SettingsPageLayoutProps = {
 export const SettingsPageLayout = ({
   links,
   title,
+  pageTitle,
   icon,
   actionButton,
   secondaryBar,
@@ -30,11 +32,12 @@ export const SettingsPageLayout = ({
 }: SettingsPageLayoutProps) => {
   const titleInstanceId = useId();
 
-  const pageTitle =
-    typeof title === 'string'
+  const sidePanelPageTitle =
+    pageTitle ??
+    (typeof title === 'string'
       ? title
       : links.findLast(({ children }) => typeof children === 'string')
-          ?.children;
+          ?.children);
 
   const formattedTitle =
     typeof title === 'string' ? (
@@ -51,7 +54,11 @@ export const SettingsPageLayout = ({
   return (
     <>
       <SidePanelPageTitleSyncEffect
-        pageTitle={typeof pageTitle === 'string' ? pageTitle : undefined}
+        pageTitle={
+          typeof sidePanelPageTitle === 'string'
+            ? sidePanelPageTitle
+            : undefined
+        }
       />
       <PageCardLayout
         header={

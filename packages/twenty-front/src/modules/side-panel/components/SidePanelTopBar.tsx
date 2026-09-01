@@ -87,9 +87,17 @@ const StyledHeaderTitleContainer = styled.div`
 
 const StyledHeaderTitlePortal = styled.div`
   align-items: center;
-  display: flex;
-  flex: 1;
+  display: none;
   min-width: 0;
+
+  &:not(:empty) {
+    display: flex;
+    flex: 1;
+  }
+
+  &:not(:empty) + [data-side-panel-page-info] {
+    display: none;
+  }
 `;
 
 const StyledHeaderActionsPortal = styled.div`
@@ -225,10 +233,12 @@ export const SidePanelTopBar = ({
         </AnimatePresence>
         {!COMMAND_MENU_SIDE_PANEL_PAGES.includes(sidePanelPage) && (
           <StyledHeaderTitleContainer>
-            {sidePanelPage !== SidePanelPages.RoutedPage && lastChip && (
-              <SidePanelPageInfo pageChip={lastChip} />
-            )}
             <StyledHeaderTitlePortal ref={setHeaderTitlePortal} />
+            {lastChip && (
+              <div data-side-panel-page-info="">
+                <SidePanelPageInfo pageChip={lastChip} />
+              </div>
+            )}
           </StyledHeaderTitleContainer>
         )}
         {COMMAND_MENU_SIDE_PANEL_PAGES.includes(sidePanelPage) && (

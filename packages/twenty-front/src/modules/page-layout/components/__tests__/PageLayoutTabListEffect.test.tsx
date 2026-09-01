@@ -2,6 +2,7 @@ import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabL
 import { makeTab } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
+import { getWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
@@ -118,8 +119,13 @@ describe('PageLayoutTabListEffect', () => {
       expectedNavigationType,
     }) => {
       const store = createStore();
+      const surfaceInstanceId = isInSidePanel ? 'side-panel-page-1' : 'main';
       const activeTabAtom = activeTabIdComponentState.atomFamily({
-        instanceId: TAB_LIST_INSTANCE_ID,
+        instanceId: getWorkspaceSurfaceScopedComponentInstanceId({
+          componentInstanceId: TAB_LIST_INSTANCE_ID,
+          surfaceType: isInSidePanel ? 'side-panel' : 'main',
+          surfaceInstanceId,
+        }),
       });
       store.set(activeTabAtom, activeTabId);
 
@@ -133,7 +139,7 @@ describe('PageLayoutTabListEffect', () => {
             <WorkspaceSurfaceContext.Provider
               value={{
                 type: isInSidePanel ? 'side-panel' : 'main',
-                instanceId: isInSidePanel ? 'side-panel-page-1' : 'main',
+                instanceId: surfaceInstanceId,
                 ownsRouteLocation,
               }}
             >

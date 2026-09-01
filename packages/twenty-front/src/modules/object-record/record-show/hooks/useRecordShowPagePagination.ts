@@ -234,9 +234,9 @@ export const useRecordShowPagePagination = (
         (navigationItem) =>
           navigationItem.page === SidePanelPages.RoutedPage &&
           navigationItem.routedLocation.pathname === indexLocation.pathname &&
-          new URLSearchParams(navigationItem.routedLocation.search).get(
+          (new URLSearchParams(navigationItem.routedLocation.search).get(
             'viewId',
-          ) === viewIdQueryParam,
+          ) ?? '') === (viewIdQueryParam ?? ''),
       );
 
       if (previousIndexPageIndex >= 0) {
