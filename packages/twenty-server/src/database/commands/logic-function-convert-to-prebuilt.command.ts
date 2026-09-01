@@ -105,23 +105,21 @@ export class LogicFunctionConvertToPrebuiltCommand extends WorkspaceCommandRunne
       return;
     }
 
-    for (const applicationId of applicationIdsToConvert) {
-      await this.messageQueueService.add<ConvertApplicationLogicFunctionsToPrebuiltJobData>(
-        ConvertApplicationLogicFunctionsToPrebuiltJob.name,
-        { workspaceId, applicationId },
-        {
-          id: `convert-application-logic-functions-to-prebuilt-${workspaceId}-${applicationId}`,
-          priority: LOGIC_FUNCTION_PREBUILT_CONVERSION_JOB_PRIORITY,
-        },
-      );
+    await this.messageQueueService.bulkAdd<ConvertApplicationLogicFunctionsToPrebuiltJobData>(
+      ConvertApplicationLogicFunctionsToPrebuiltJob.name,
+      applicationIdsToConvert.map((applicationId) => ({
+        workspaceId,
+        applicationId,
+      })),
+      { priority: LOGIC_FUNCTION_PREBUILT_CONVERSION_JOB_PRIORITY },
+    );
 
-      if (options.verbose) {
-        this.logger.log(
-          chalk.yellow(
-            `Enqueued conversion of application ${applicationId} on workspace ${workspaceId}`,
-          ),
-        );
-      }
+    if (options.verbose) {
+      this.logger.log(
+        chalk.yellow(
+          `Enqueued conversion of applications ${applicationIdsToConvert.join(', ')} on workspace ${workspaceId}`,
+        ),
+      );
     }
   }
 }
