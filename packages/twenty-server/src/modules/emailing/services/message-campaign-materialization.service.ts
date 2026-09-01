@@ -41,6 +41,11 @@ import { isDefined } from 'twenty-shared/utils';
 
 const MATERIALIZATION_CHUNK_SIZE = 500;
 
+// Campaign rows are machine-generated and nothing subscribes to them: no
+// webhook, workflow trigger or timeline activity. Emitting would cost a
+// snapshot SELECT of every row written plus a timeline row per recipient.
+const SKIP_EVENT_EMISSION = { shouldSkipEventEmission: true };
+
 type CampaignMessageRow = {
   recipient: CampaignMessageRecipient;
   messageId: string;
@@ -401,15 +406,19 @@ export class MessageCampaignMaterializationService {
     await this.workspaceOrmManager.runInWorkspaceTransaction(
       async (transactionScope) => {
         await transactionScope
-          .getRepository<MessageThreadWorkspaceEntity>('messageThread', {
-            shouldBypassPermissionChecks: true,
-          })
+          .getRepository<MessageThreadWorkspaceEntity>(
+            'messageThread',
+            { shouldBypassPermissionChecks: true },
+            SKIP_EVENT_EMISSION,
+          )
           .insert(rows.map((row) => ({ id: row.threadId })));
 
         await transactionScope
-          .getRepository<MessageWorkspaceEntity>('message', {
-            shouldBypassPermissionChecks: true,
-          })
+          .getRepository<MessageWorkspaceEntity>(
+            'message',
+            { shouldBypassPermissionChecks: true },
+            SKIP_EVENT_EMISSION,
+          )
           .insert(
             rows.map((row) => ({
               id: row.messageId,
@@ -426,6 +435,7 @@ export class MessageCampaignMaterializationService {
           .getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
             'messageChannelMessageAssociation',
             { shouldBypassPermissionChecks: true },
+            SKIP_EVENT_EMISSION,
           )
           .insert(
             rows.map((row) => ({
@@ -442,6 +452,7 @@ export class MessageCampaignMaterializationService {
           .getRepository<MessageParticipantWorkspaceEntity>(
             'messageParticipant',
             { shouldBypassPermissionChecks: true },
+            SKIP_EVENT_EMISSION,
           )
           .insert(
             rows.flatMap((row) => [
