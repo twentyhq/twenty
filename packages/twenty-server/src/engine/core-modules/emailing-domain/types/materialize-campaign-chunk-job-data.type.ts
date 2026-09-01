@@ -5,6 +5,7 @@ export type MaterializeCampaignChunkJobData = {
   campaignId: string;
   messageChannelId: string;
   emailingDomainId: string;
+  userWorkspaceId: string;
   // Stamped once by the planning job so every chunk shares one receivedAt,
   // the way a single looping job used to.
   receivedAtIso: string;

@@ -13,4 +13,5 @@ export const sendableDraftCampaignSchema = z.object({
   }),
   fromAddress: z.object({ primaryEmail: z.email() }),
   listId: z.string().min(1),
+  unsubscribeTopicId: z.string().nullish(),
 });

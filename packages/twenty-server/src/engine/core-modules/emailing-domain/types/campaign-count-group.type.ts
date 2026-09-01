@@ -6,4 +6,5 @@ export type CampaignCountGroup = {
   deliveredCount: string;
   bouncedCount: string;
   complainedCount: string;
+  providerFailedCount: string;
 };
