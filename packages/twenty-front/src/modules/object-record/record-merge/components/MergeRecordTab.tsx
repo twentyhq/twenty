@@ -27,7 +27,6 @@ export const MergeRecordTab = ({
           targetObjectNameSingular: objectNameSingular,
         },
         layoutType: PageLayoutType.RECORD_PAGE,
-        isInSidePanel: true,
       }}
     >
       <RecordShowEffect

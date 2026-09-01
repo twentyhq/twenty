@@ -130,8 +130,7 @@ export const PageLayoutTabsRenderer = () => {
   const workspaceSurface = useWorkspaceSurface();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
-  const { isInSidePanel, layoutType, targetRecordIdentifier } =
-    useLayoutRenderingContext();
+  const { layoutType, targetRecordIdentifier } = useLayoutRenderingContext();
 
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
@@ -192,7 +191,7 @@ export const PageLayoutTabsRenderer = () => {
   const shouldRenderRecordIdentifierBar =
     currentPageLayout.type === PageLayoutType.RECORD_PAGE &&
     isDefined(targetRecordIdentifier) &&
-    !isInSidePanel &&
+    workspaceSurface.type !== 'side-panel' &&
     !isMobile;
 
   const tabList = (sortedTabs.length > 1 || isPageLayoutInEditMode) && (

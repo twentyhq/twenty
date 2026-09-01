@@ -88,7 +88,6 @@ export const PageLayoutRecordPageRenderer = ({
                 CoreObjectNameSingular.Dashboard
                   ? PageLayoutType.DASHBOARD
                   : PageLayoutType.RECORD_PAGE,
-              isInSidePanel,
             }}
           >
             {isDefined(pageLayoutId) && (

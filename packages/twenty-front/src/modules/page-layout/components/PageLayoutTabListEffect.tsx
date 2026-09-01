@@ -1,6 +1,5 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { getPageLayoutTabListInitialActiveTabId } from '@/page-layout/utils/getPageLayoutTabListInitialActiveTabId';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
@@ -30,8 +29,8 @@ export const PageLayoutTabListEffect = ({
   );
 
   const isMobile = useIsMobile();
-  const { isInSidePanel } = useLayoutRenderingContext();
   const workspaceSurface = useWorkspaceSurface();
+  const isInSidePanel = workspaceSurface.type === 'side-panel';
   const { hash, search, state } = useLocation();
   const navigate = useNavigate();
 

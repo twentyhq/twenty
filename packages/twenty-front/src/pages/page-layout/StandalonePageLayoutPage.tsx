@@ -41,7 +41,6 @@ export const StandalonePageLayoutPage = () => {
           value={{
             targetRecordIdentifier: undefined,
             layoutType: PageLayoutType.STANDALONE_PAGE,
-            isInSidePanel: false,
           }}
         >
           <StyledPageLayoutContainer>

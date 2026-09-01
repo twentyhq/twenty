@@ -150,7 +150,6 @@ const meta: Meta<typeof SidePanelPageLayoutTabSettingsContent> = {
       >
         <LayoutRenderingProvider
           value={{
-            isInSidePanel: false,
             layoutType: PageLayoutType.RECORD_PAGE,
             targetRecordIdentifier: {
               id: RECORD_ID,

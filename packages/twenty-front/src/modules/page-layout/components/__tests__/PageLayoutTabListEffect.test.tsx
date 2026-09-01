@@ -141,7 +141,6 @@ describe('PageLayoutTabListEffect', () => {
             >
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: 'record-id',

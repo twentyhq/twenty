@@ -19,8 +19,8 @@ import { FieldWidgetRelationEditAction } from '@/page-layout/widgets/field/compo
 import { useFieldWidgetFieldDefinition } from '@/page-layout/widgets/field/hooks/useFieldWidgetFieldDefinition';
 import { generateFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/generateFieldWidgetInstanceId';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 type WidgetActionFieldEditProps = {
@@ -31,7 +31,7 @@ export const WidgetActionFieldEdit = ({
   widget,
 }: WidgetActionFieldEditProps) => {
   const targetRecord = useTargetRecord();
-  const { isInSidePanel } = useLayoutRenderingContext();
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 
   const { objectMetadataItem, fieldMetadataItem, fieldDefinition } =
     useFieldWidgetFieldDefinition(widget);

@@ -101,7 +101,6 @@ jest.mock('@/page-layout/PageLayoutMainContent', () => ({
 
 jest.mock('@/ui/layout/contexts/LayoutRenderingContext', () => ({
   useLayoutRenderingContext: () => ({
-    isInSidePanel: mockIsInSidePanel,
     layoutType: PageLayoutType.RECORD_PAGE,
     targetRecordIdentifier: {
       id: mockTargetRecordId,
