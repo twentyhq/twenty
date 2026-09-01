@@ -25,7 +25,7 @@ export class CalendarSaveEventsService {
     calendarChannel: CalendarChannelEntity,
     connectedAccount: ConnectedAccountEntity,
     workspaceId: string,
-  ): Promise<void> {
+  ): Promise<{ calendarEventIds: string[] }> {
     const authContext = buildSystemAuthContext(workspaceId);
 
     const { savedParticipantIds, calendarEventIds } =
@@ -146,5 +146,7 @@ export class CalendarSaveEventsService {
         workspaceId,
       },
     );
+
+    return { calendarEventIds };
   }
 }

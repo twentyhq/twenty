@@ -227,6 +227,7 @@ export const STANDARD_OBJECTS = {
           'conferenceLink',
           'location',
           'description',
+          'calendarEventTargets',
           'externalCreatedAt',
           'externalUpdatedAt',
           'iCalUid',

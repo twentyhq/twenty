@@ -3,7 +3,6 @@ import omit from 'lodash.omit';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { type z } from 'zod';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -14,7 +13,7 @@ import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFiel
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
-import { getReverseJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getReverseJunctionConfig';
+import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
@@ -23,6 +22,7 @@ import { SettingsTranslationsButton } from '@/settings/translations/components/S
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
+import { type SettingsDataModelFieldEditFormValues } from '@/settings/data-model/types/SettingsDataModelFieldEditFormValues';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -45,12 +45,6 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getFieldMetadataItemInitialValues } from '~/pages/settings/data-model/utils/getFieldMetadataItemInitialValues';
-
-//TODO: fix this type
-export type SettingsDataModelFieldEditFormValues = z.infer<
-  ReturnType<typeof settingsFieldFormSchema>
-> &
-  any;
 
 const DELETE_FIELD_MODAL_ID = 'delete-field-confirmation-modal';
 const StyledDangerButtons = styled.div`
@@ -109,14 +103,16 @@ export const SettingsObjectFieldEdit = () => {
       fieldMetadataItem.name === newNameDuringSave,
   );
 
-  const isReverseJunctionRelation = isDefined(
-    getReverseJunctionConfig({
-      junctionObjectMetadataId:
-        fieldMetadataItem?.relation?.targetObjectMetadata.id,
+  const isReverseJunctionRelation =
+    resolveJunctionConfig({
+      settings: fieldMetadataItem?.settings,
+      relationObjectMetadataId:
+        fieldMetadataItem?.relation?.targetObjectMetadata.id ?? '',
+      relationTargetFieldMetadataId:
+        fieldMetadataItem?.relation?.targetFieldMetadata.id,
       sourceObjectMetadataId: objectMetadataItem?.id,
       objectMetadataItems,
-    }),
-  );
+    })?.direction === 'reverse';
 
   const getRelationMetadata = useGetRelationMetadata();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();

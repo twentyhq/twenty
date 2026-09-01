@@ -29,7 +29,7 @@ type CallRecordingTranscriptBodyProps = {
   loading: boolean;
   error: Error | undefined;
   restriction: WidgetAccessDenialInfo | undefined;
-  refetchCallRecording: () => Promise<unknown>;
+  refetchCallRecording: () => Promise<void>;
 };
 
 export const CallRecordingTranscriptBody = ({

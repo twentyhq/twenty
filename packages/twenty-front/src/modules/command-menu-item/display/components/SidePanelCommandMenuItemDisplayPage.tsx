@@ -1,56 +1,32 @@
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
 import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/constants/PinnedCommandMenuItemsGap';
+import { useCommandMenuAppActions } from '@/command-menu-item/display/hooks/useCommandMenuAppActions';
 import { commandMenuPinnedInlineLayoutFamilyState } from '@/command-menu-item/display/states/commandMenuPinnedInlineLayoutFamilyState';
 import { getVisibleCommandMenuItemCountForContainerWidth } from '@/command-menu-item/display/utils/getVisibleCommandMenuItemCountForContainerWidth';
 import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
-import { useNavigationDrawerTogglePresentation } from '@/navigation/hooks/useNavigationDrawerTogglePresentation';
-import { useToggleNavigationDrawer } from '@/navigation/hooks/useToggleNavigationDrawer';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useFilterCommandMenuItemsWithSidePanelSearch } from '@/side-panel/pages/root/hooks/useFilterCommandMenuItemsWithSidePanelSearch';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { useContext, useMemo } from 'react';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
-
-const TOGGLE_NAVIGATION_DRAWER_COMMAND_ID = 'toggle-navigation-drawer';
 
 export const SidePanelCommandMenuItemDisplayPage = () => {
   const { t } = useLingui();
-  const isMobile = useIsMobile();
-  const isSettingsDrawer = useIsSettingsDrawer();
-  const { isNavigationDrawerExpanded, toggleNavigationDrawer } =
-    useToggleNavigationDrawer();
+  const { appActions } = useCommandMenuAppActions();
   const { closeSidePanelMenu } = useSidePanelMenu();
 
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
-  const { commandMenuItems, commandMenuContextApi, isInPreviewMode } =
+  const { commandMenuItems, commandMenuContextApi } =
     useContext(CommandMenuContext);
-
-  const { label: navigationDrawerCommandLabel, Icon: NavigationDrawerIcon } =
-    useNavigationDrawerTogglePresentation(isNavigationDrawerExpanded);
-  const shouldDisplayNavigationDrawerCommand =
-    !isMobile &&
-    !isSettingsDrawer &&
-    !isInPreviewMode &&
-    normalizeSearchText(navigationDrawerCommandLabel).includes(
-      normalizeSearchText(sidePanelSearch.trim()),
-    );
-
-  const handleToggleNavigationDrawer = () => {
-    toggleNavigationDrawer();
-    closeSidePanelMenu();
-  };
 
   // The command menu list surfaces whatever overflowed out of the page header.
   const commandMenuPinnedInlineLayout = useAtomFamilyStateValue(
@@ -127,7 +103,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const hasNoMatchingItems =
     !matchingPinnedItems.length &&
     !matchingOtherItems.length &&
-    !shouldDisplayNavigationDrawerCommand;
+    appActions.length === 0;
 
   const shouldDisplayFallbackItems =
     hasNoMatchingItems && fallbackCommandMenuItems.length > 0;
@@ -138,9 +114,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const selectableItemIds = [
     ...matchingPinnedItems.map((item) => item.id),
     ...matchingOtherItems.map((item) => item.id),
-    ...(shouldDisplayNavigationDrawerCommand
-      ? [TOGGLE_NAVIGATION_DRAWER_COMMAND_ID]
-      : []),
+    ...appActions.map((item) => item.id),
     ...(shouldDisplayFallbackItems
       ? fallbackCommandMenuItems.map((item) => item.id)
       : []),
@@ -158,25 +132,32 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
           ))}
         </SidePanelGroup>
       )}
-      {(matchingOtherItems.length > 0 ||
-        shouldDisplayNavigationDrawerCommand) && (
+      {(matchingOtherItems.length > 0 || appActions.length > 0) && (
         <SidePanelGroup heading={t`Other`}>
           {matchingOtherItems.map((item) => (
             <CommandMenuItemRenderer item={item} key={item.id} />
           ))}
-          {shouldDisplayNavigationDrawerCommand && (
-            <SelectableListItem
-              itemId={TOGGLE_NAVIGATION_DRAWER_COMMAND_ID}
-              onEnter={handleToggleNavigationDrawer}
-            >
-              <CommandMenuItem
-                id={TOGGLE_NAVIGATION_DRAWER_COMMAND_ID}
-                label={navigationDrawerCommandLabel}
-                Icon={NavigationDrawerIcon}
-                onClick={handleToggleNavigationDrawer}
-              />
-            </SelectableListItem>
-          )}
+          {appActions.map((item) => {
+            const handleClick = () => {
+              item.onClick();
+              closeSidePanelMenu();
+            };
+
+            return (
+              <SelectableListItem
+                key={item.id}
+                itemId={item.id}
+                onEnter={handleClick}
+              >
+                <CommandMenuItem
+                  id={item.id}
+                  label={item.label}
+                  Icon={item.Icon}
+                  onClick={handleClick}
+                />
+              </SelectableListItem>
+            );
+          })}
         </SidePanelGroup>
       )}
       {shouldDisplayFallbackItems && (
