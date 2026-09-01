@@ -181,7 +181,7 @@ const filterRecordOutputSchemaFieldsByType = ({
   };
 };
 
-const filterNonRecordOutputSchemaFieldsByType = <
+function filterNonRecordOutputSchemaFieldsByType<
   TOutputSchema extends OutputSchemaV2,
 >({
   outputSchema,
@@ -189,7 +189,14 @@ const filterNonRecordOutputSchemaFieldsByType = <
 }: {
   outputSchema: TOutputSchema;
   fieldTypesToExclude: InputSchemaPropertyType[];
-}): TOutputSchema => {
+}): TOutputSchema;
+function filterNonRecordOutputSchemaFieldsByType({
+  outputSchema,
+  fieldTypesToExclude,
+}: {
+  outputSchema: OutputSchemaV2;
+  fieldTypesToExclude: InputSchemaPropertyType[];
+}): OutputSchemaV2 {
   const filteredEntries = Object.entries(outputSchema)
     .map(([key, field]) => {
       if (!isObject(field)) {
@@ -230,8 +237,8 @@ const filterNonRecordOutputSchemaFieldsByType = <
     })
     .filter(isDefined);
 
-  return Object.fromEntries(filteredEntries) as TOutputSchema;
-};
+  return Object.fromEntries(filteredEntries);
+}
 
 const filterOutputSchemaFieldsByType = ({
   outputSchema,
