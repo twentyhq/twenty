@@ -1,15 +1,8 @@
 import { isNumber } from '@sniptt/guards';
 
+import { type SlackRosterMatchOutcome } from 'src/front-components/types/slack-roster-match-outcome.type';
 import { parseSlackToolResult } from 'src/front-components/utils/parse-slack-tool-result.util';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
-
-export type SlackRosterMatchOutcome = {
-  success: boolean;
-  message: string;
-  error?: string;
-  linkedCount: number;
-  unmatchedCount: number;
-};
 
 export const parseSlackRosterMatchResult = ({
   value,

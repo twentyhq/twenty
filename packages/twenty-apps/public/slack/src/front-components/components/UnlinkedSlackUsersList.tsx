@@ -38,10 +38,12 @@ export const UnlinkedSlackUsersList = ({
   hasMore,
   onLinkSaved,
 }: UnlinkedSlackUsersListProps) => {
-  if (unlinkedSlackUsers.length === 0 && !hasMore) {
+  if (unlinkedSlackUsers.length === 0) {
     return (
       <StyledEmptyState>
-        Everyone in the Slack workspace is linked.
+        {hasMore
+          ? 'The Slack roster is too large to scan in one pass. Find a specific person with the search below.'
+          : 'Everyone in the Slack workspace is linked.'}
       </StyledEmptyState>
     );
   }

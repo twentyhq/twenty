@@ -180,6 +180,31 @@ describe('createHtmlHostWrapper client events', () => {
     expect(document.activeElement).toBe(node);
   });
 
+  it('should not take focus back when the guest toggles the autofocus attribute again', () => {
+    const Wrapper = createHtmlHostWrapper('input');
+    const otherInput = document.createElement('input');
+
+    document.body.appendChild(otherInput);
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'text', autofocus: 'true' }));
+    });
+
+    otherInput.focus();
+    expect(document.activeElement).toBe(otherInput);
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'text' }));
+    });
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'text', autofocus: 'true' }));
+    });
+
+    expect(document.activeElement).toBe(otherInput);
+
+    otherInput.remove();
+  });
+
   it('should re-assert an unchanged controlled value on an unrelated re-render', () => {
     const Wrapper = createHtmlHostWrapper('input');
 

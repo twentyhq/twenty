@@ -1,18 +1,14 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { listLinkedSlackUserIds } from 'src/logic-functions/data/list-linked-slack-user-ids';
 import { type SlackUnlinkedUsersResult } from 'src/logic-functions/types/slack-unlinked-users.type';
-import { type SlackUserSearchOption } from 'src/logic-functions/types/slack-user-search.type';
 import { currentUserHasRolesPermission } from 'src/logic-functions/utils/current-user-has-roles-permission';
+import { collectSlackRosterMembers } from 'src/logic-functions/utils/collect-slack-roster-members';
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
-import {
-  getRosterMemberDisplayName,
-  getVouchedRosterEmail,
-  walkSlackRoster,
-} from 'src/logic-functions/utils/slack-roster';
+import { getSlackRosterMemberDisplayName } from 'src/logic-functions/utils/get-slack-roster-member-display-name';
+import { getVouchedSlackRosterEmail } from 'src/logic-functions/utils/get-vouched-slack-roster-email';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 const MAX_UNLINKED_RESULTS = 20;
@@ -59,36 +55,25 @@ export const slackListUnlinkedUsersHandler =
         { slackTeamId: installedTeamId },
       );
 
-      const slackUsers: SlackUserSearchOption[] = [];
+      const { members, isTruncated } = await collectSlackRosterMembers({
+        slackClient,
+        shouldCollectMember: (member) => !linkedSlackUserIds.has(member.id),
+        maxMembers: MAX_UNLINKED_RESULTS,
+      });
 
-      const { isTruncated } = await walkSlackRoster(slackClient, (member) => {
-        const slackUserId = member.id;
-
-        if (
-          !isNonEmptyString(slackUserId) ||
-          linkedSlackUserIds.has(slackUserId)
-        ) {
-          return undefined;
-        }
-
-        if (slackUsers.length >= MAX_UNLINKED_RESULTS) {
-          return 'stop';
-        }
-
-        slackUsers.push({
-          slackUserId,
+      return {
+        success: true,
+        slackUsers: members.map((member) => ({
+          slackUserId: member.id,
           slackTeamId: installedTeamId,
-          displayName: getRosterMemberDisplayName(member),
-          email: getVouchedRosterEmail({
+          displayName: getSlackRosterMemberDisplayName(member),
+          email: getVouchedSlackRosterEmail({
             member,
             installedSlackTeamId: installedTeamId,
           }),
-        });
-
-        return undefined;
-      });
-
-      return { success: true, slackUsers, hasMore: isTruncated };
+        })),
+        hasMore: isTruncated,
+      };
     } catch (error) {
       return {
         success: false,

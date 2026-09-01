@@ -1,26 +1,46 @@
 import { type WebClient } from '@slack/web-api';
-import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_USER_LINK_CONSENT_STATE } from 'src/logic-functions/constants/slack-user-link-consent-state';
 import { SLACK_USER_LINK_SOURCE } from 'src/logic-functions/constants/slack-user-link-source';
 import { listLinkedSlackUserIds } from 'src/logic-functions/data/list-linked-slack-user-ids';
 import { listWorkspaceMemberEmails } from 'src/logic-functions/data/list-workspace-member-emails';
-import { persistSlackUserLink } from 'src/logic-functions/utils/persist-slack-user-link';
-import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 import {
-  getRosterMemberDisplayName,
-  getVouchedRosterEmail,
-  walkSlackRoster,
-} from 'src/logic-functions/utils/slack-roster';
+  type SlackRosterMatchCandidate,
+  type SlackRosterMatchSummary,
+} from 'src/logic-functions/types/slack-roster-match.type';
+import { collectSlackRosterMembers } from 'src/logic-functions/utils/collect-slack-roster-members';
+import { persistSlackUserLink } from 'src/logic-functions/utils/persist-slack-user-link';
+import { planSlackRosterMatch } from 'src/logic-functions/utils/plan-slack-roster-match';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
-export type SlackRosterMatchSummary = {
-  linkedCount: number;
-  alreadyLinkedCount: number;
-  unmatchedCount: number;
-  failedCount: number;
-  isRosterTruncated: boolean;
+const linkRosterCandidate = async (
+  client: CoreApiClient,
+  {
+    candidate,
+    slackTeamId,
+  }: { candidate: SlackRosterMatchCandidate; slackTeamId: string },
+): Promise<boolean> => {
+  try {
+    await persistSlackUserLink(client, {
+      existingLink: undefined,
+      isSameMemberRelink: false,
+      slackTeamId,
+      slackUserId: candidate.slackUserId,
+      workspaceMemberId: candidate.workspaceMemberId,
+      name: candidate.displayName,
+      source: SLACK_USER_LINK_SOURCE.AUTO,
+      consentState: SLACK_USER_LINK_CONSENT_STATE.ACTIVE,
+    });
+
+    return true;
+  } catch (error) {
+    console.warn(
+      `[slack] roster match could not link ${candidate.slackUserId}: ${toErrorMessage(error)}`,
+    );
+
+    return false;
+  }
 };
 
 export const matchSlackRosterByEmail = async ({
@@ -32,84 +52,34 @@ export const matchSlackRosterByEmail = async ({
 }): Promise<SlackRosterMatchSummary> => {
   const client = new CoreApiClient({ runAs: 'application' });
 
-  const [memberIdByEmail, linkedSlackUserIds] = await Promise.all([
-    listWorkspaceMemberEmails(client),
-    listLinkedSlackUserIds(client, { slackTeamId }),
-  ]);
+  const [workspaceMemberIdByEmail, linkedSlackUserIds, roster] =
+    await Promise.all([
+      listWorkspaceMemberEmails(client),
+      listLinkedSlackUserIds(client, { slackTeamId }),
+      collectSlackRosterMembers({ slackClient }),
+    ]);
 
-  const candidates: {
-    slackUserId: string;
-    workspaceMemberId: string;
-    displayName: string | undefined;
-  }[] = [];
-  let alreadyLinkedCount = 0;
-  let unmatchedCount = 0;
-
-  const { isTruncated } = await walkSlackRoster(slackClient, (member) => {
-    const slackUserId = member.id;
-
-    if (!isNonEmptyString(slackUserId)) {
-      return undefined;
-    }
-
-    if (linkedSlackUserIds.has(slackUserId)) {
-      alreadyLinkedCount += 1;
-
-      return undefined;
-    }
-
-    const email = getVouchedRosterEmail({
-      member,
+  const { candidates, alreadyLinkedCount, unmatchedCount } =
+    planSlackRosterMatch({
+      members: roster.members,
+      workspaceMemberIdByEmail,
+      linkedSlackUserIds,
       installedSlackTeamId: slackTeamId,
     });
-    const workspaceMemberId = isNonEmptyString(email)
-      ? memberIdByEmail.get(email.toLowerCase())
-      : undefined;
 
-    if (!isDefined(workspaceMemberId)) {
-      unmatchedCount += 1;
-
-      return undefined;
-    }
-
-    candidates.push({
-      slackUserId,
-      workspaceMemberId,
-      displayName: getRosterMemberDisplayName(member),
-    });
-
-    return undefined;
-  });
-
-  let linkedCount = 0;
-  let failedCount = 0;
+  const linkOutcomes: boolean[] = [];
 
   for (const candidate of candidates) {
-    try {
-      await persistSlackUserLink(client, {
-        existingLink: undefined,
-        isSameMemberRelink: false,
-        slackTeamId,
-        slackUserId: candidate.slackUserId,
-        workspaceMemberId: candidate.workspaceMemberId,
-        name: candidate.displayName,
-        source: SLACK_USER_LINK_SOURCE.AUTO,
-        consentState: SLACK_USER_LINK_CONSENT_STATE.ACTIVE,
-      });
-      linkedCount += 1;
-    } catch (error) {
-      failedCount += 1;
-      console.warn(
-        `[slack] roster match could not link ${candidate.slackUserId}: ${toErrorMessage(error)}`,
-      );
-    }
+    linkOutcomes.push(
+      await linkRosterCandidate(client, { candidate, slackTeamId }),
+    );
   }
 
   return {
-    linkedCount,
+    linkedCount: linkOutcomes.filter((isLinked) => isLinked).length,
     alreadyLinkedCount,
     unmatchedCount,
-    failedCount,
-    isRosterTruncated: isTruncated,
+    failedCount: linkOutcomes.filter((isLinked) => !isLinked).length,
+    isRosterTruncated: roster.isTruncated,
   };
 };

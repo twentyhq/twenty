@@ -2,7 +2,7 @@ import { type WebClient } from '@slack/web-api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { matchSlackRosterByEmail } from 'src/logic-functions/utils/match-slack-roster-by-email';
-import { type SlackRosterMember } from 'src/logic-functions/utils/slack-roster';
+import { type SlackRosterMember } from 'src/logic-functions/types/slack-roster-member.type';
 
 const {
   coreApiClientMock,

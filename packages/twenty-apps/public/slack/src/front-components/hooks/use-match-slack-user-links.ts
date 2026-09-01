@@ -2,10 +2,8 @@ import { useRef, useState } from 'react';
 import { RestApiClient } from 'twenty-client-sdk/rest';
 
 import { SLACK_USER_LINKS_MATCH_ROUTE_PATH } from 'src/constants/slack-user-links-route-path.constant';
-import {
-  parseSlackRosterMatchResult,
-  type SlackRosterMatchOutcome,
-} from 'src/front-components/utils/parse-slack-roster-match-result.util';
+import { type SlackRosterMatchOutcome } from 'src/front-components/types/slack-roster-match-outcome.type';
+import { parseSlackRosterMatchResult } from 'src/front-components/utils/parse-slack-roster-match-result.util';
 
 const FALLBACK_MATCH_ERROR_MESSAGE =
   'Could not match Slack users. Please try again.';
