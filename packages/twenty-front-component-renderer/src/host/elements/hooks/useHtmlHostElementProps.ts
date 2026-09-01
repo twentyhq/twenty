@@ -2,6 +2,7 @@ import { useContext } from 'react';
 
 import { FrontComponentInputFocusContext } from '@/host/caret/contexts/FrontComponentInputFocusContext';
 import { type SetEditableFocused } from '@/host/caret/types/SetEditableFocused';
+import { useAutoFocusElementRef } from '@/host/elements/hooks/useAutoFocusElementRef';
 import { useComposedElementRef } from '@/host/elements/hooks/useComposedElementRef';
 import { useGeometryNodeRef } from '@/host/geometry/hooks/useGeometryNodeRef';
 import { useReactUnsupportedEventListenerRef } from '@/host/events/hooks/useReactUnsupportedEventListenerRef';
@@ -39,9 +40,14 @@ export const useHtmlHostElementProps = (
 
   const geometryNodeRef = useGeometryNodeRef(remoteElementId);
 
+  const autoFocusElementRef = useAutoFocusElementRef(
+    reactBindableProps.autoFocus === true,
+  );
+
   const composedElementRef = useComposedElementRef([
     reactUnsupportedEventListenerRef,
     geometryNodeRef,
+    autoFocusElementRef,
   ]);
 
   const hostEnforcedProps: Record<string, unknown> = {
