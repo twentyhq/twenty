@@ -28,12 +28,12 @@ describe('resolveWorkflowTriggerDispatchMode', () => {
     expect(
       resolveWorkflowTriggerDispatchMode({
         coreWorkflowVersionId: 'core-version-1',
-      } as never),
+      }),
     ).toEqual({ mode: 'INCOMPLETE' });
     expect(
       resolveWorkflowTriggerDispatchMode({
         workspaceWorkflowVersionId: 'workspace-version-1',
-      } as never),
+      }),
     ).toEqual({ mode: 'INCOMPLETE' });
   });
 });

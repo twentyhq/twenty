@@ -1,8 +1,5 @@
 import { Logger, Scope } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
-import isEmpty from 'lodash.isempty';
-import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -19,6 +16,7 @@ import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standa
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 import { WorkflowTriggerExceptionCode } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
+import { buildWorkflowRunSource } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-source.util';
 import { resolveWorkflowTriggerDispatchMode } from 'src/modules/workflow/workflow-trigger/utils/resolve-workflow-trigger-dispatch-mode.util';
 
 export type WorkflowTriggerJobData = {
@@ -26,8 +24,6 @@ export type WorkflowTriggerJobData = {
   workflowId: string;
   payload: object;
 } & CoreDispatchIds;
-
-const DEFAULT_WORKFLOW_NAME = 'Workflow';
 
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
 export class WorkflowTriggerJob {
@@ -129,14 +125,7 @@ export class WorkflowTriggerJob {
       workspaceId,
       workflowVersionId: workspaceWorkflowVersionId,
       payload,
-      source: {
-        source: FieldActorSource.WORKFLOW,
-        name: isNonEmptyString(workspaceWorkflow?.name)
-          ? workspaceWorkflow.name
-          : DEFAULT_WORKFLOW_NAME,
-        context: {},
-        workspaceMemberId: null,
-      },
+      source: buildWorkflowRunSource(workspaceWorkflow?.name),
     });
   }
 
@@ -193,15 +182,7 @@ export class WorkflowTriggerJob {
         workspaceId: data.workspaceId,
         workflowVersionId: workflow.lastPublishedVersionId,
         payload: data.payload,
-        source: {
-          source: FieldActorSource.WORKFLOW,
-          name:
-            isDefined(workflow.name) && !isEmpty(workflow.name)
-              ? workflow.name
-              : DEFAULT_WORKFLOW_NAME,
-          context: {},
-          workspaceMemberId: null,
-        },
+        source: buildWorkflowRunSource(workflow.name),
       });
     }, authContext);
   }

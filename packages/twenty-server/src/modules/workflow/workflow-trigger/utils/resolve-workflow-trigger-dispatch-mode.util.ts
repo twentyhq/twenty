@@ -1,6 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type CoreDispatchIds } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
+export type QueuedWorkflowTriggerDispatchIds = Partial<
+  Record<'coreWorkflowVersionId' | 'workspaceWorkflowVersionId', string | null>
+>;
 
 export type WorkflowTriggerDispatchMode =
   | {
@@ -11,11 +13,10 @@ export type WorkflowTriggerDispatchMode =
   | { mode: 'LEGACY' }
   | { mode: 'INCOMPLETE' };
 
-export const resolveWorkflowTriggerDispatchMode = (
-  dispatchIds: CoreDispatchIds,
-): WorkflowTriggerDispatchMode => {
-  const { coreWorkflowVersionId, workspaceWorkflowVersionId } = dispatchIds;
-
+export const resolveWorkflowTriggerDispatchMode = ({
+  coreWorkflowVersionId,
+  workspaceWorkflowVersionId,
+}: QueuedWorkflowTriggerDispatchIds): WorkflowTriggerDispatchMode => {
   if (
     isDefined(coreWorkflowVersionId) &&
     isDefined(workspaceWorkflowVersionId)
