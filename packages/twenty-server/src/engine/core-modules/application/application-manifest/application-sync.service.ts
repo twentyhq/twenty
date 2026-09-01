@@ -351,9 +351,6 @@ export class ApplicationSyncService {
       );
     }
 
-    // A rolled-back fresh install reaches here while still INSTALLING: only an
-    // application that finished installing can be reverted to INSTALLED, so the
-    // transitional flip is scoped to that case.
     const shouldTransitionState =
       application.state === ApplicationState.INSTALLED;
 
@@ -373,7 +370,6 @@ export class ApplicationSyncService {
       });
     } catch (error) {
       if (shouldTransitionState) {
-        // Reverting must never replace the uninstall error the caller needs
         await this.applicationService
           .update(application.id, {
             state: ApplicationState.INSTALLED,

@@ -104,7 +104,6 @@ export const SettingsApplicationsTable = ({
                 application={application}
                 hasUpdate={hasUpdate}
                 sourceType={application.applicationRegistration?.sourceType}
-                state={application.state}
                 action={
                   <IconChevronRight
                     size={theme.icon.size.md}
