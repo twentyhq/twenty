@@ -16,6 +16,7 @@ import { extractICalData } from 'src/modules/calendar/calendar-event-import-mana
 import { isCalDavCollectionHref } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-caldav-collection-href.util';
 import { isEventInTimeRange } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-event-in-time-range.util';
 import { isInvalidSyncTokenResponse } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-invalid-sync-token-response.util';
+import { isSameCalDavResource } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-same-caldav-resource.util';
 import { isValidCalDavHref } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-valid-caldav-href.util';
 import { mapCalDavStatusToExceptionCode } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/map-caldav-status-to-exception-code.util';
 import { parseICalEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/parse-ical-event.util';
@@ -147,8 +148,10 @@ export class CalDavFetchEventsService {
       (response) => isDefined(response.status) && response.status >= 400,
     );
 
-    const failedRequest = unreadableResponses.find((response) =>
-      this.isCollectionResponse(response, collectionUrl),
+    const failedRequest = unreadableResponses.find(
+      (response) =>
+        !isNonEmptyString(response.href) ||
+        isSameCalDavResource(response.href, collectionUrl),
     );
 
     if (isDefined(failedRequest)) {
@@ -181,20 +184,6 @@ export class CalDavFetchEventsService {
 
     return responses.filter(
       (response) => !isDefined(response.status) || response.status < 400,
-    );
-  }
-
-  private isCollectionResponse(
-    response: DAVResponse,
-    collectionUrl: string,
-  ): boolean {
-    if (!isNonEmptyString(response.href)) {
-      return true;
-    }
-
-    return (
-      new URL(response.href, collectionUrl).href.replace(/\/$/, '') ===
-      new URL(collectionUrl).href.replace(/\/$/, '')
     );
   }
 
