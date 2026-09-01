@@ -10,19 +10,21 @@ import {
 const FALLBACK_MATCH_ERROR_MESSAGE =
   'Could not match Slack users. Please try again.';
 
+const buildFailureOutcome = (error: string): SlackRosterMatchOutcome => ({
+  success: false,
+  message: FALLBACK_MATCH_ERROR_MESSAGE,
+  error,
+  linkedCount: 0,
+  unmatchedCount: 0,
+});
+
 export const useMatchSlackUserLinks = () => {
   const isMatchingRef = useRef(false);
   const [isMatching, setIsMatching] = useState(false);
 
   const matchSlackUserLinks = async (): Promise<SlackRosterMatchOutcome> => {
     if (isMatchingRef.current) {
-      return {
-        success: false,
-        message: FALLBACK_MATCH_ERROR_MESSAGE,
-        error: 'A match is already running.',
-        linkedCount: 0,
-        unmatchedCount: 0,
-      };
+      return buildFailureOutcome('A match is already running.');
     }
 
     isMatchingRef.current = true;
@@ -39,13 +41,7 @@ export const useMatchSlackUserLinks = () => {
         fallbackMessage: FALLBACK_MATCH_ERROR_MESSAGE,
       });
     } catch {
-      return {
-        success: false,
-        message: FALLBACK_MATCH_ERROR_MESSAGE,
-        error: FALLBACK_MATCH_ERROR_MESSAGE,
-        linkedCount: 0,
-        unmatchedCount: 0,
-      };
+      return buildFailureOutcome(FALLBACK_MATCH_ERROR_MESSAGE);
     } finally {
       isMatchingRef.current = false;
       setIsMatching(false);

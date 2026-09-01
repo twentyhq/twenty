@@ -250,7 +250,7 @@ export const SlackUserLinksList = ({
                         disabled={isActionInFlight}
                         onClick={() => onResend(slackUserLink)}
                       >
-                        <IconSend />
+                        <IconSend size={ACTION_ICON_SIZE} />
                       </StyledActionIconButton>
                     )}
                     {removalArmedLinkId === slackUserLink.id ? (
@@ -277,7 +277,7 @@ export const SlackUserLinksList = ({
                         disabled={isActionInFlight}
                         onClick={() => setRemovalArmedLinkId(slackUserLink.id)}
                       >
-                        <IconTrash />
+                        <IconTrash size={ACTION_ICON_SIZE} />
                       </StyledActionIconButton>
                     )}
                   </>

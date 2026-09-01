@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-sdk/utils';
 import { Avatar } from 'twenty-ui/data-display';
@@ -10,6 +9,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useWorkspaceMemberSearch } from 'src/front-components/hooks/use-workspace-member-search';
 import { type WorkspaceMemberOption } from 'src/front-components/types/workspace-member-option.type';
+import { getMemberDisplayName } from 'src/front-components/utils/get-member-display-name.util';
 
 const StyledContainer = styled.div`
   min-width: 0;
@@ -110,12 +110,10 @@ const InlineWorkspaceMemberPickerPanel = ({
             avatar={{
               type: 'rounded',
               size: 'md',
-              placeholder: isNonEmptyString(member.name)
-                ? member.name
-                : (member.userEmail ?? member.id),
+              placeholder: getMemberDisplayName(member),
               placeholderColorSeed: member.id,
             }}
-            text={isNonEmptyString(member.name) ? member.name : member.id}
+            text={getMemberDisplayName(member)}
             contextualText={member.userEmail ?? undefined}
             onClick={() => onSelect(member)}
           />
@@ -142,9 +140,7 @@ export const InlineWorkspaceMemberPicker = ({
   const [isOpen, setIsOpen] = useState(false);
 
   const selectedName = isDefined(selectedMember)
-    ? isNonEmptyString(selectedMember.name)
-      ? selectedMember.name
-      : (selectedMember.userEmail ?? selectedMember.id)
+    ? getMemberDisplayName(selectedMember)
     : undefined;
 
   return (
