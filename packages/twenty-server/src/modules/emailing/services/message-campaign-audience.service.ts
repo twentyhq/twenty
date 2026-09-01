@@ -1,40 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
+import { type CampaignAudienceResolution } from 'src/engine/core-modules/emailing-domain/types/campaign-audience-resolution.type';
+import { resolveCampaignAudience } from 'src/engine/core-modules/emailing-domain/utils/resolve-campaign-audience.util';
+import { HARD_SUPPRESSION_REASONS } from 'src/engine/core-modules/emailing-domain/constants/hard-suppression-reasons.constant';
 import { MAX_CAMPAIGN_RECIPIENTS } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
-import { type CampaignSkippedBreakdown } from 'src/engine/core-modules/emailing-domain/types/campaign-skipped-breakdown.type';
-import { type CampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/campaign-recipient.type';
 import { type RawCampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/raw-campaign-recipient.type';
-import { normalizeCampaignRecipients } from 'src/engine/core-modules/emailing-domain/utils/normalize-campaign-recipients.util';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
-
-type CampaignAudiencePreview = {
-  totalMembers: number;
-  withoutEmail: number;
-  duplicateEmails: number;
-  globallyUnsubscribed: number;
-  topicUnsubscribed: number;
-  sendable: number;
-};
-
-type NormalizedAudience = {
-  recipients: CampaignRecipient[];
-  skipped: CampaignSkippedBreakdown;
-};
-
-const toRawRecipient = (person: {
-  id: string;
-  emails?: { primaryEmail?: string | null } | null;
-}): RawCampaignRecipient => ({
-  personId: person.id,
-  email: person.emails?.primaryEmail ?? null,
-});
 
 @Injectable()
 export class MessageCampaignAudienceService {
@@ -48,21 +27,76 @@ export class MessageCampaignAudienceService {
     workspaceId,
     listId,
     roleId,
+    unsubscribeTopicId,
   }: {
     workspaceId: string;
     listId: string;
     roleId: string;
-  }): Promise<NormalizedAudience> {
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const rawRecipients = await this.resolveRecipientsFromList({
+    unsubscribeTopicId?: string;
+  }): Promise<CampaignAudienceResolution> {
+    return this.workspaceOrmManager.executeInWorkspaceContext(() =>
+      this.resolveAudience({
+        workspaceId,
+        listId,
+        roleId,
+        unsubscribeTopicId,
+      }),
+    );
+  }
+
+  private async resolveAudience({
+    workspaceId,
+    listId,
+    roleId,
+    unsubscribeTopicId,
+  }: {
+    workspaceId: string;
+    listId: string;
+    roleId: string;
+    unsubscribeTopicId?: string;
+  }): Promise<CampaignAudienceResolution> {
+    const { rawRecipients, totalMemberCount } =
+      await this.resolveRecipientsFromList({
         listId,
         roleId,
       });
 
-      return normalizeCampaignRecipients(
-        rawRecipients,
-        MAX_CAMPAIGN_RECIPIENTS,
-      );
+    const emailAddresses = rawRecipients
+      .map((rawRecipient) => rawRecipient.email)
+      .filter(isNonEmptyString);
+
+    const suppressions =
+      await this.messageSuppressionService.findApplicableSuppressions({
+        workspaceId,
+        emailAddresses,
+        unsubscribeTopicId,
+      });
+
+    const hardSuppressedEmails = new Set<string>();
+    const globallySuppressedEmails = new Set<string>();
+    const topicSuppressedEmails = new Set<string>();
+
+    for (const suppression of suppressions) {
+      if (isDefined(suppression.unsubscribeTopicId)) {
+        topicSuppressedEmails.add(suppression.emailAddress);
+        continue;
+      }
+
+      if (HARD_SUPPRESSION_REASONS.includes(suppression.reason)) {
+        hardSuppressedEmails.add(suppression.emailAddress);
+        continue;
+      }
+
+      globallySuppressedEmails.add(suppression.emailAddress);
+    }
+
+    return resolveCampaignAudience({
+      rawRecipients,
+      totalMemberCount,
+      maxRecipients: MAX_CAMPAIGN_RECIPIENTS,
+      hardSuppressedEmails,
+      globallySuppressedEmails,
+      topicSuppressedEmails,
     });
   }
 
@@ -76,69 +110,23 @@ export class MessageCampaignAudienceService {
     userWorkspaceId: string;
     listId: string;
     unsubscribeTopicId?: string;
-  }): Promise<CampaignAudiencePreview> {
+  }): Promise<CampaignAudienceResolution['audience']> {
     const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
       workspaceId,
       userWorkspaceId,
     });
 
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const rawRecipients = await this.resolveRecipientsFromList({
-        listId,
-        roleId,
-      });
-
-      const { recipients, skipped } = normalizeCampaignRecipients(
-        rawRecipients,
-        MAX_CAMPAIGN_RECIPIENTS,
+    const { audience } =
+      await this.workspaceOrmManager.executeInWorkspaceContext(() =>
+        this.resolveAudience({
+          workspaceId,
+          listId,
+          roleId,
+          unsubscribeTopicId,
+        }),
       );
 
-      const emails = recipients.map((recipient) => recipient.email);
-
-      const globallySuppressed =
-        await this.messageSuppressionService.getSuppressedAddresses(
-          workspaceId,
-          emails,
-        );
-      const topicSuppressed = isNonEmptyString(unsubscribeTopicId)
-        ? await this.messageSuppressionService.getTopicSuppressedAddresses(
-            workspaceId,
-            emails,
-            unsubscribeTopicId,
-          )
-        : new Set<string>();
-
-      const resolveSuppressionOutcome = (recipient: CampaignRecipient) => {
-        const normalizedEmail = recipient.email.trim().toLowerCase();
-
-        if (globallySuppressed.has(normalizedEmail)) {
-          return 'GLOBALLY_UNSUBSCRIBED';
-        }
-
-        if (topicSuppressed.has(normalizedEmail)) {
-          return 'TOPIC_UNSUBSCRIBED';
-        }
-
-        return 'SENDABLE';
-      };
-
-      const suppressionOutcomes = recipients.map(resolveSuppressionOutcome);
-
-      return {
-        totalMembers: rawRecipients.length,
-        withoutEmail: skipped.noEmail,
-        duplicateEmails: skipped.deduped,
-        globallyUnsubscribed: suppressionOutcomes.filter(
-          (outcome) => outcome === 'GLOBALLY_UNSUBSCRIBED',
-        ).length,
-        topicUnsubscribed: suppressionOutcomes.filter(
-          (outcome) => outcome === 'TOPIC_UNSUBSCRIBED',
-        ).length,
-        sendable: suppressionOutcomes.filter(
-          (outcome) => outcome === 'SENDABLE',
-        ).length,
-      };
-    });
+    return audience;
   }
 
   private async resolveRecipientsFromList({
@@ -147,7 +135,10 @@ export class MessageCampaignAudienceService {
   }: {
     listId: string;
     roleId: string;
-  }): Promise<RawCampaignRecipient[]> {
+  }): Promise<{
+    rawRecipients: RawCampaignRecipient[];
+    totalMemberCount: number;
+  }> {
     const listMemberRepository = this.workspaceOrmManager.getRepository(
       MessageListMemberWorkspaceEntity,
       { unionOf: [roleId] },
@@ -157,7 +148,7 @@ export class MessageCampaignAudienceService {
     const personIds = members.map((member) => member.personId);
 
     if (personIds.length === 0) {
-      return [];
+      return { rawRecipients: [], totalMemberCount: members.length };
     }
 
     const personRepository = this.workspaceOrmManager.getRepository(
@@ -169,6 +160,12 @@ export class MessageCampaignAudienceService {
       where: { id: In(personIds) },
     });
 
-    return people.map(toRawRecipient);
+    return {
+      rawRecipients: people.map((person) => ({
+        personId: person.id,
+        email: person.emails?.primaryEmail ?? null,
+      })),
+      totalMemberCount: members.length,
+    };
   }
 }
