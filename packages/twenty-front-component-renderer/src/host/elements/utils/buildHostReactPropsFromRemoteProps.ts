@@ -41,7 +41,8 @@ export const buildHostReactPropsFromRemoteProps = (
     }
 
     if (remotePropName === 'autofocus') {
-      hostReactProps.autoFocus = String(remotePropValue) !== 'false';
+      hostReactProps.autoFocus =
+        isDefined(remotePropValue) && String(remotePropValue) !== 'false';
       continue;
     }
 
