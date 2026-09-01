@@ -2826,6 +2826,7 @@ type CampaignAudiencePreviewDTO {
   withoutEmail: Int!
   duplicateEmails: Int!
   overCap: Int!
+  hardSuppressed: Int!
   globallyUnsubscribed: Int!
   topicUnsubscribed: Int!
   sendable: Int!

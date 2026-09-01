@@ -2427,6 +2427,7 @@ export interface CampaignAudiencePreviewDTO {
     withoutEmail: Scalars['Int']
     duplicateEmails: Scalars['Int']
     overCap: Scalars['Int']
+    hardSuppressed: Scalars['Int']
     globallyUnsubscribed: Scalars['Int']
     topicUnsubscribed: Scalars['Int']
     sendable: Scalars['Int']
@@ -5910,6 +5911,7 @@ export interface CampaignAudiencePreviewDTOGenqlSelection{
     withoutEmail?: boolean | number
     duplicateEmails?: boolean | number
     overCap?: boolean | number
+    hardSuppressed?: boolean | number
     globallyUnsubscribed?: boolean | number
     topicUnsubscribed?: boolean | number
     sendable?: boolean | number
