@@ -206,7 +206,7 @@ describe('computeRecordFormWidgetForExistingObject', () => {
     expect(result).toBeUndefined();
   });
 
-  it('should noop when the field has a soft deleted widget, whose identifier is still taken', () => {
+  it('should ignore a soft deleted widget for both idempotency and indexing', () => {
     const result = computeRecordFormWidgetForExistingObject({
       sourceFlatFieldMetadata,
       recordFormPageLayoutTabUniversalIdentifier:
@@ -227,7 +227,10 @@ describe('computeRecordFormWidgetForExistingObject', () => {
       }),
     });
 
-    expect(result).toBeUndefined();
+    expect(result?.position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      index: 0,
+    });
   });
 
   it('should not count another field soft deleted widget toward the append index', () => {

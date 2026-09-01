@@ -9,6 +9,7 @@ const buildFlatFieldMetadata = ({
   name,
   type = FieldMetadataType.TEXT,
   isSystem = false,
+  isSystemSideEffect = false,
   isUIEditable = true,
   isActive = true,
   universalSettings = null,
@@ -17,6 +18,7 @@ const buildFlatFieldMetadata = ({
   name: string;
   type?: FieldMetadataType;
   isSystem?: boolean;
+  isSystemSideEffect?: boolean;
   isUIEditable?: boolean;
   isActive?: boolean;
   universalSettings?: Record<string, unknown> | null;
@@ -26,6 +28,7 @@ const buildFlatFieldMetadata = ({
     name,
     type,
     isSystem,
+    isSystemSideEffect,
     isUIEditable,
     isActive,
     universalSettings,
@@ -55,6 +58,7 @@ describe('computeRecordFormFlatFieldMetadatas', () => {
 
   it.each([
     ['system', { isSystem: true }],
+    ['engine owned', { isSystemSideEffect: true }],
     ['not UI editable', { isUIEditable: false }],
     ['inactive', { isActive: false }],
     ['of an unsupported type', { type: FieldMetadataType.POSITION }],

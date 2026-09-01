@@ -55,13 +55,11 @@ export const computeRecordFormWidgetForExistingObject = ({
       .filter(isDefined)
       .filter(
         (flatPageLayoutWidget) =>
+          !isDefined(flatPageLayoutWidget.deletedAt) &&
           flatPageLayoutWidget.universalConfiguration?.configurationType ===
-          WidgetConfigurationType.FORM_FIELD,
+            WidgetConfigurationType.FORM_FIELD,
       );
 
-  // A soft-deleted widget keeps its row, and the unique index on
-  // (workspaceId, universalIdentifier) has no deletedAt clause, so its
-  // identifier stays taken.
   const pairAlreadySynced = tabFormFieldWidgets.some(
     (flatPageLayoutWidget) =>
       flatPageLayoutWidget.universalConfiguration.configurationType ===
@@ -74,18 +72,14 @@ export const computeRecordFormWidgetForExistingObject = ({
     return undefined;
   }
 
-  const lastExistingIndex = tabFormFieldWidgets
-    .filter(
-      (flatPageLayoutWidget) => !isDefined(flatPageLayoutWidget.deletedAt),
-    )
-    .reduce(
-      (maxIndex, flatPageLayoutWidget) =>
-        flatPageLayoutWidget.position?.layoutMode ===
-        PageLayoutTabLayoutMode.VERTICAL_LIST
-          ? Math.max(maxIndex, flatPageLayoutWidget.position.index)
-          : maxIndex,
-      -1,
-    );
+  const lastExistingIndex = tabFormFieldWidgets.reduce(
+    (maxIndex, flatPageLayoutWidget) =>
+      flatPageLayoutWidget.position?.layoutMode ===
+      PageLayoutTabLayoutMode.VERTICAL_LIST
+        ? Math.max(maxIndex, flatPageLayoutWidget.position.index)
+        : maxIndex,
+    -1,
+  );
 
   const rankInBatch = orderedFormFlatFieldMetadatasInBatch.findIndex(
     (flatFieldMetadata) =>
