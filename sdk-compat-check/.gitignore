@@ -2,3 +2,4 @@ node_modules/
 package-lock.json
 results-*.json
 schema-*.graphql
+*.tgz

@@ -20,6 +20,9 @@ their results are compared:
 - `local-consumer/`: `twenty-client-sdk` built from this branch, core client
   generated from the **post-PR** schema, selecting the sub-fields as typed
   objects.
+- `npm-consumer-regen/` (bonus path): the npm-published SDK's generator run
+  against the **post-PR** schema, i.e. an app on the old SDK version that
+  regenerates after the server upgrade (`twenty app dev`).
 
 ## How to run
 

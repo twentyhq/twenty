@@ -1,1 +1,1 @@
-{"name":"local-consumer","private":true,"type":"module"}
+{"name":"local-consumer","private":true,"type":"module","dependencies":{"twenty-client-sdk":"file:../twenty-client-sdk-2.38.0.tgz"}}
