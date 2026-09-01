@@ -97,7 +97,7 @@ export const PageLayoutRecordIdentifierBar = ({
   const { t } = useLingui();
   const { openTabSettings } = useOpenPageLayoutTabSettings();
   const hasPinnedTab = isDefined(pinnedTab);
-  const hasTabList = isDefined(tabList);
+  const hasTabList = Boolean(tabList);
   const createdAt = (
     <RecordIdentifierBarCreatedAt objectRecordId={targetRecordIdentifier.id} />
   );

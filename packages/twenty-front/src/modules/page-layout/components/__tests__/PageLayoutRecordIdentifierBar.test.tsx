@@ -173,10 +173,11 @@ describe('PageLayoutRecordIdentifierBar', () => {
     expect(screen.getByText('Created 2 days ago')).toBeVisible();
   });
 
-  it('does not render an empty tab cell when there are no tabs', () => {
+  it('does not render an empty tab cell when the tab list is false', () => {
     render(
       <PageLayoutRecordIdentifierBar
         targetRecordIdentifier={TARGET_RECORD_IDENTIFIER}
+        tabList={false}
       />,
       { wrapper: Wrapper },
     );
