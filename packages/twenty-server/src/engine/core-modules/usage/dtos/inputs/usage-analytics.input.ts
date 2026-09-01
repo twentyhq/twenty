@@ -19,8 +19,6 @@ export class UsageAnalyticsInput {
 
   @Field(() => [UsageOperationType], { nullable: true })
   @IsOptional()
-  // ALL scopes limit rules; no usage event carries it, so filtering on it
-  // would silently match nothing.
   @ArrayNotContains([UsageOperationType.ALL])
   operationTypes?: UsageOperationType[];
 }
