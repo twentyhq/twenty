@@ -3,7 +3,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 const MEMBERS_PER_PAGE = 100;
-const MAX_PAGES = 10;
+const MAX_PAGES = 50;
 
 export const listWorkspaceMemberEmails = async (
   client: CoreApiClient,
