@@ -2,25 +2,26 @@ import { t } from '@lingui/core/macro';
 
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
-
-// The name the engine stores for every object's INDEX view (see
-// compute-system-view-to-create.util.ts). It is a literal in the database, so it reaches the
-// UI in English no matter which locale the user picked: "All Companies", "All Empresas".
-const SYSTEM_INDEX_VIEW_NAME = 'All {objectLabelPlural}';
+import { ViewKey } from 'twenty-shared/types';
 
 export const resolveViewNamePlaceholders = (
   viewName: string | undefined,
   objectMetadataItem: FlatObjectMetadataItem | undefined,
+  viewKey?: ViewKey | null,
 ): string => {
   if (!isDefined(viewName) || !isDefined(objectMetadataItem)) {
     return viewName ?? '';
   }
 
-  // Translate the engine-provisioned name instead of interpolating it verbatim. Every object
-  // gets this view — standard ones and every application's — so on a non-English workspace
-  // the "All" prefix showed up untranslated across the whole app. The object label itself is
-  // already localized by whoever authored the object, so only the wrapper needs translating.
-  if (viewName === SYSTEM_INDEX_VIEW_NAME) {
+  // The engine stores one name for every object's INDEX view (see
+  // compute-system-view-to-create.util.ts). It is a literal in the database, so without
+  // translating it the "All" prefix reaches every non-English workspace in English. The object
+  // label is already localized by whoever authored the object; only the wrapper needs it.
+  //
+  // Keyed on `ViewKey.INDEX` rather than on the name: the name is a string a user can also
+  // type, and translating a view because it happens to match would rewrite wording its author
+  // chose. The key is what actually says "the engine made this one".
+  if (viewKey === ViewKey.INDEX) {
     return t`All ${objectMetadataItem.labelPlural}`;
   }
 

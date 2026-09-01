@@ -95,6 +95,7 @@ export const viewsSelector = createAtomSelector<ViewWithRelations[]>({
       name: resolveViewNamePlaceholders(
         view.name,
         objectMetadataItemsById.get(view.objectMetadataId),
+        view.key,
       ),
       viewFields: viewFieldsByViewId.get(view.id) ?? [],
       viewFilters: viewFiltersByViewId.get(view.id) ?? [],
