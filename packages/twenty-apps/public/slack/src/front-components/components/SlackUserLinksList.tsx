@@ -3,7 +3,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-sdk/utils';
 import { Avatar, Tag } from 'twenty-ui/data-display';
-import { IconSend, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -21,7 +20,7 @@ import { type SlackUserLinkConsentState } from 'src/logic-functions/types/slack-
 import { isSlackUserLinkConsentState } from 'src/logic-functions/utils/is-slack-user-link-consent-state';
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
 
-const LINKS_GRID_TEMPLATE_COLUMNS = 'minmax(0, 2fr) minmax(0, 2fr) 252px 120px';
+const LINKS_GRID_TEMPLATE_COLUMNS = 'minmax(0, 2fr) minmax(0, 2fr) 252px 156px';
 const REMOVAL_CONFIRM_TIMEOUT_MS = 4000;
 
 const StyledIdentity = styled.div`
@@ -57,40 +56,6 @@ const StyledEmptyState = styled.div`
   font-family: ${() => themeCssVariables.font.family};
   font-size: ${() => themeCssVariables.font.size.sm};
   padding: ${() => themeCssVariables.spacing[2]};
-`;
-
-// LightIconButton's box styles do not apply inside the app renderer, so the
-// row actions use a self-contained icon button instead.
-const ACTION_ICON_SIZE = 16;
-
-const StyledActionIconButton = styled.button`
-  align-items: center;
-  background: transparent;
-  border: none;
-  border-radius: ${() => themeCssVariables.border.radius.sm};
-  color: ${() => themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  display: inline-flex;
-  flex-shrink: 0;
-  height: 24px;
-  justify-content: center;
-  padding: 0;
-  width: 24px;
-
-  &:hover:enabled {
-    background: ${() => themeCssVariables.background.transparent.light};
-    color: ${() => themeCssVariables.font.color.secondary};
-  }
-
-  &:disabled {
-    color: ${() => themeCssVariables.font.color.light};
-    cursor: default;
-  }
-
-  & svg {
-    height: ${ACTION_ICON_SIZE}px;
-    width: ${ACTION_ICON_SIZE}px;
-  }
 `;
 
 type TagColor = 'blue' | 'green' | 'orange' | 'red' | 'gray';
@@ -239,19 +204,17 @@ export const SlackUserLinksList = ({
                 {canManage && (
                   <>
                     {isPending && removalArmedLinkId !== slackUserLink.id && (
-                      <StyledActionIconButton
-                        type="button"
+                      <Button
                         title={
                           resendingLinkId === slackUserLink.id
                             ? 'Resending…'
-                            : 'Resend the approval request'
+                            : 'Resend'
                         }
-                        aria-label="Resend the approval request"
+                        size="small"
+                        variant="secondary"
                         disabled={isActionInFlight}
                         onClick={() => onResend(slackUserLink)}
-                      >
-                        <IconSend size={ACTION_ICON_SIZE} />
-                      </StyledActionIconButton>
+                      />
                     )}
                     {removalArmedLinkId === slackUserLink.id ? (
                       <Button
@@ -270,15 +233,13 @@ export const SlackUserLinksList = ({
                         }}
                       />
                     ) : (
-                      <StyledActionIconButton
-                        type="button"
-                        title="Remove the link"
-                        aria-label="Remove the link"
+                      <Button
+                        title="Remove"
+                        size="small"
+                        variant="secondary"
                         disabled={isActionInFlight}
                         onClick={() => setRemovalArmedLinkId(slackUserLink.id)}
-                      >
-                        <IconTrash size={ACTION_ICON_SIZE} />
-                      </StyledActionIconButton>
+                      />
                     )}
                   </>
                 )}
