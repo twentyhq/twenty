@@ -1,6 +1,7 @@
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { ComposerHeader } from '@/activities/components/ComposerHeader';
 import { StyledComposerTextInput } from '@/activities/components/ComposerTextInput';
+import { CalendarEventComposerTargetsInput } from '@/activities/calendar/components/CalendarEventComposerTargetsInput';
 import { CalendarEventLocationInput } from '@/activities/calendar/components/CalendarEventLocationInput';
 import { type useCalendarEventComposer } from '@/activities/calendar/hooks/useCalendarEventComposer';
 import { EmailRecipientsFieldInput } from '@/activities/emails/recipients/components/EmailRecipientsFieldInput';
@@ -83,8 +84,7 @@ export const CalendarEventComposerFields = ({
     composerState.accountOptions.length === 0 ||
     composerState.missingScopes.length > 0 ||
     !composerState.hasValidDateRange ||
-    composerState.hasTooManyAttendees ||
-    !composerState.hasTargetAssociation;
+    composerState.hasTooManyAttendees;
 
   return (
     <StyledFieldsContainer>
@@ -125,6 +125,17 @@ export const CalendarEventComposerFields = ({
                 contextRecord={contextRecord}
               />
             </ComposerFieldRow>
+            {composerState.canPickTargets && (
+              <ComposerFieldRow
+                label={t`Relations`}
+                labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
+              >
+                <CalendarEventComposerTargetsInput
+                  targets={composerState.targets}
+                  onTargetChange={composerState.handleTargetChange}
+                />
+              </ComposerFieldRow>
+            )}
             <ComposerFieldRow
               label={t`Title`}
               labelMinWidth={COMPOSER_LABEL_MIN_WIDTH}
@@ -325,13 +336,6 @@ export const CalendarEventComposerFields = ({
               variant="warning"
               title={t`Too many guests`}
               description={t`Remove some guests before creating this event.`}
-            />
-          )}
-          {!composerState.hasTargetAssociation && (
-            <Callout
-              variant="warning"
-              title={t`Keep this event related`}
-              description={t`Keep the current record in the guest list and leave invitations on so the event remains visible on this record.`}
             />
           )}
         </StyledNoticesContainer>

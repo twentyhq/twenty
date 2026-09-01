@@ -6,6 +6,7 @@ export const settingsValidateRoleFamilyState = createAtomFamilyState<
   string
 >({
   key: 'settingsValidateRoleFamilyState',
+  scope: 'routed-flow',
   defaultValue: {
     label: false,
   },

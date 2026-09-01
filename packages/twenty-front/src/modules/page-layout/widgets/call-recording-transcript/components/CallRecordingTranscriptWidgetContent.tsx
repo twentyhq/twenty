@@ -1,8 +1,7 @@
 import { useCallRecordingWidgetTarget } from '@/page-layout/widgets/call-recording/hooks/useCallRecordingWidgetTarget';
-import { useWidgetCallRecording } from '@/page-layout/widgets/call-recording/hooks/useWidgetCallRecording';
 import { getCallRecordingVideoFileUrl } from '@/page-layout/widgets/call-recording/utils/getCallRecordingVideoFileUrl';
 import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody';
-import { CallRecordingTranscriptHeaderDataEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptHeaderDataEffect';
+import { useCallRecordingTranscriptWidgetData } from '@/page-layout/widgets/call-recording-transcript/hooks/useCallRecordingTranscriptWidgetData';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { useMemo } from 'react';
 import {
@@ -18,27 +17,25 @@ export const CallRecordingTranscriptWidgetContent = () => {
     loading,
     error,
     restriction,
-    refetch,
-  } = useWidgetCallRecording({
-    queryScope: 'call-recording-transcript',
-  });
+    refetchCallRecordingWidget,
+  } = useCallRecordingTranscriptWidgetData();
 
-  const canExposeCallRecordingHeaderData =
+  const canExposeCallRecordingData =
     !loading && !isDefined(error) && !isDefined(restriction);
 
-  const callRecordingForHeader = canExposeCallRecordingHeaderData
+  const callRecordingForDisplay = canExposeCallRecordingData
     ? callRecording
     : undefined;
 
   const transcriptEntries = useMemo(
     () =>
-      parseCallRecordingTranscriptEntries(callRecordingForHeader?.transcript),
-    [callRecordingForHeader?.transcript],
+      parseCallRecordingTranscriptEntries(callRecordingForDisplay?.transcript),
+    [callRecordingForDisplay?.transcript],
   );
 
-  const videoFileUrl = getCallRecordingVideoFileUrl(callRecordingForHeader);
+  const videoFileUrl = getCallRecordingVideoFileUrl(callRecordingForDisplay);
 
-  const calendarEventHeaderCount = canExposeCallRecordingHeaderData
+  const calendarEventHeaderCount = canExposeCallRecordingData
     ? callRecordingsCount
     : 0;
 
@@ -50,10 +47,6 @@ export const CallRecordingTranscriptWidgetContent = () => {
   return (
     <>
       <WidgetHeaderCountEffect count={headerCount} />
-      <CallRecordingTranscriptHeaderDataEffect
-        transcriptEntries={transcriptEntries}
-        videoFileUrl={videoFileUrl}
-      />
       <CallRecordingTranscriptBody
         callRecording={callRecording}
         transcriptEntries={transcriptEntries}
@@ -61,7 +54,7 @@ export const CallRecordingTranscriptWidgetContent = () => {
         loading={loading}
         error={error}
         restriction={restriction}
-        refetchCallRecording={refetch}
+        refetchCallRecording={refetchCallRecordingWidget}
       />
     </>
   );

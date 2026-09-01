@@ -16,6 +16,7 @@ import { applyTypeOptionsForUpdateInput } from 'src/engine/api/graphql/workspace
 import { computeCompositeFieldTypeOptions } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-composite-field-type-options.util';
 import { computeCompositeFieldEnumTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-enum-type-key.util';
 import { computeCompositeFieldInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-composite-field-input-type-key.util';
+import { getCompositeSubFieldGqlTypes } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-composite-sub-field-gql-types.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 
@@ -71,12 +72,19 @@ export class CompositeFieldMetadataUpdateGqlInputTypeGenerator {
 
       const typeOptions = computeCompositeFieldTypeOptions(property);
 
-      const type = isEnumFieldMetadataType(property.type)
-        ? this.gqlTypesStorage.getGqlTypeByKey<GraphQLEnumType>(key)
-        : this.typeMapperService.mapToPreBuiltGraphQLInputType({
-            fieldMetadataType: property.type,
-            typeOptions,
-          });
+      const compositeSubFieldGqlTypes = getCompositeSubFieldGqlTypes(
+        compositeType.type,
+        property.name,
+      );
+
+      const type =
+        compositeSubFieldGqlTypes?.input ??
+        (isEnumFieldMetadataType(property.type)
+          ? this.gqlTypesStorage.getGqlTypeByKey<GraphQLEnumType>(key)
+          : this.typeMapperService.mapToPreBuiltGraphQLInputType({
+              fieldMetadataType: property.type,
+              typeOptions,
+            }));
 
       if (!isDefined(type) || isObjectType(type)) {
         const message = `Could not find a GraphQL input type for ${compositeType.type} ${property.name}`;

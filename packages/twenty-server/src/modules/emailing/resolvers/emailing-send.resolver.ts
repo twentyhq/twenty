@@ -6,6 +6,8 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { CampaignAudiencePreviewDTO } from 'src/engine/core-modules/emailing-domain/dtos/campaign-audience-preview.dto';
+import { CancelMessageCampaignInput } from 'src/engine/core-modules/emailing-domain/dtos/cancel-message-campaign.input';
+import { CancelMessageCampaignOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/cancel-message-campaign-output.dto';
 import { EmailGroupAccessGraphqlApiExceptionFilter } from 'src/engine/core-modules/emailing-domain/filters/email-group-access-graphql-api-exception.filter';
 import { EmailingDomainGraphqlApiExceptionFilter } from 'src/engine/core-modules/emailing-domain/filters/emailing-domain-graphql-api-exception.filter';
 import { PreviewMessageCampaignAudienceInput } from 'src/engine/core-modules/emailing-domain/dtos/preview-message-campaign-audience.input';
@@ -27,6 +29,8 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
+import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
+import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 
 @UseGuards(
@@ -44,6 +48,8 @@ export class EmailingSendResolver {
   constructor(
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly messageCampaignService: MessageCampaignService,
+    private readonly messageCampaignAudienceService: MessageCampaignAudienceService,
+    private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly emailGroupAccessService: EmailGroupAccessService,
     private readonly emailBillingService: EmailBillingService,
   ) {}
@@ -93,6 +99,22 @@ export class EmailingSendResolver {
     });
   }
 
+  @Mutation(() => CancelMessageCampaignOutputDTO)
+  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
+  async cancelMessageCampaign(
+    @Args('input') input: CancelMessageCampaignInput,
+    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<CancelMessageCampaignOutputDTO> {
+    this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
+
+    return this.messageCampaignLifecycleService.cancelCampaignOrThrow({
+      workspaceId: currentWorkspace.id,
+      userWorkspaceId,
+      campaignId: input.campaignId,
+    });
+  }
+
   @Mutation(() => SendEmailViaDomainOutputDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
   async sendMessageCampaignTest(
@@ -125,7 +147,7 @@ export class EmailingSendResolver {
   ): Promise<CampaignAudiencePreviewDTO> {
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
 
-    return this.messageCampaignService.previewAudience({
+    return this.messageCampaignAudienceService.previewAudience({
       workspaceId: currentWorkspace.id,
       userWorkspaceId,
       listId: input.listId,

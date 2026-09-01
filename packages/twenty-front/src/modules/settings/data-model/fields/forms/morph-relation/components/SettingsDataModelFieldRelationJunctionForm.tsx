@@ -7,7 +7,7 @@ import { IconLink } from 'twenty-ui/icon';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
-import { doesFieldMetadataItemMatchFieldMetadataId } from '@/object-metadata/utils/doesFieldMetadataItemMatchFieldMetadataId';
+import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { isValidJunctionTargetField } from '@/object-record/record-field/ui/utils/junction/isValidJunctionTargetField';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
@@ -103,12 +103,10 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
 
   const isJunctionConfigEnabled = isDefined(junctionTargetFieldId);
   const selectedJunctionTargetFieldId = isDefined(junctionTargetFieldId)
-    ? (junctionObjectMetadataItem.fields.find((fieldMetadataItem) =>
-        doesFieldMetadataItemMatchFieldMetadataId({
-          fieldMetadataItem,
-          fieldMetadataId: junctionTargetFieldId,
-        }),
-      )?.id ?? junctionTargetFieldId)
+    ? (findFieldMetadataItemByFieldMetadataId({
+        fieldMetadataItems: junctionObjectMetadataItem.fields,
+        fieldMetadataId: junctionTargetFieldId,
+      })?.id ?? junctionTargetFieldId)
     : undefined;
   const isConfiguredTargetValid = junctionFieldOptions.some(
     ({ value }) => value === selectedJunctionTargetFieldId,

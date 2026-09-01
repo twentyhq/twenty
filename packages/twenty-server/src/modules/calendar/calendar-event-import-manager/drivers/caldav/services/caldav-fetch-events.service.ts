@@ -13,8 +13,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type CalDavSyncCursor } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/types/caldav-sync-cursor';
 import { extractICalData } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/extract-ical-data.util';
+import { isCalDavCollectionHref } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-caldav-collection-href.util';
 import { isEventInTimeRange } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-event-in-time-range.util';
 import { isInvalidSyncTokenResponse } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-invalid-sync-token-response.util';
+import { isSameCalDavResource } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-same-caldav-resource.util';
 import { isValidCalDavHref } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-valid-caldav-href.util';
 import { mapCalDavStatusToExceptionCode } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/map-caldav-status-to-exception-code.util';
 import { parseICalEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/parse-ical-event.util';
@@ -146,8 +148,10 @@ export class CalDavFetchEventsService {
       (response) => isDefined(response.status) && response.status >= 400,
     );
 
-    const failedRequest = unreadableResponses.find((response) =>
-      this.isCollectionResponse(response, collectionUrl),
+    const failedRequest = unreadableResponses.find(
+      (response) =>
+        !isNonEmptyString(response.href) ||
+        isSameCalDavResource(response.href, collectionUrl),
     );
 
     if (isDefined(failedRequest)) {
@@ -180,20 +184,6 @@ export class CalDavFetchEventsService {
 
     return responses.filter(
       (response) => !isDefined(response.status) || response.status < 400,
-    );
-  }
-
-  private isCollectionResponse(
-    response: DAVResponse,
-    collectionUrl: string,
-  ): boolean {
-    if (!isNonEmptyString(response.href)) {
-      return true;
-    }
-
-    return (
-      new URL(response.href, collectionUrl).href.replace(/\/$/, '') ===
-      new URL(collectionUrl).href.replace(/\/$/, '')
     );
   }
 
@@ -244,7 +234,9 @@ export class CalDavFetchEventsService {
 
     const memberResponses = syncResult.filter(
       (entry): entry is DAVResponse & { href: string } =>
-        isNonEmptyString(entry.href) && isValidCalDavHref(entry.href),
+        isNonEmptyString(entry.href) &&
+        isValidCalDavHref(entry.href) &&
+        !isCalDavCollectionHref(entry.href, calendar.url),
     );
 
     const changedHrefs = memberResponses
@@ -326,7 +318,8 @@ export class CalDavFetchEventsService {
       (href) => storedEtags[href] !== currentEtags[href],
     );
     const cancelledHrefs = Object.keys(storedEtags).filter(
-      (href) => !(href in currentEtags),
+      (href) =>
+        !(href in currentEtags) && !isCalDavCollectionHref(href, calendar.url),
     );
 
     return {
@@ -374,7 +367,8 @@ export class CalDavFetchEventsService {
       if (
         !isNonEmptyString(href) ||
         !isNonEmptyString(etag) ||
-        !isValidCalDavHref(href)
+        !isValidCalDavHref(href) ||
+        isCalDavCollectionHref(href, calendarUrl)
       ) {
         return map;
       }
