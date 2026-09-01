@@ -8,7 +8,7 @@ Logic functions run sandboxed in short-lived Node.js processes — once a run fi
 
 Every application gets its own isolated namespace: entries are keyed by the authenticated app, so your keys can never collide with — or be read by — another application.
 
-The store is **persistent**: entries are stored in the instance's PostgreSQL database — not in an in-memory cache like Redis — so they survive server restarts, deployments, and app updates, and stay around until you delete them. This makes it safe for durable state like API keys, sync cursors, or per-user configuration, not just short-lived caches.
+The store is **persistent**: entries are stored in the instance's PostgreSQL database — not in an in-memory cache like Redis — so they survive server restarts, deployments, and app updates, and stay around until you delete them. This makes it reliable for durable state like sync cursors or per-user configuration, not just short-lived caches. Values are stored as plain JSON without application-level encryption, so don't put secrets in it — keep API keys and other credentials in secret [application or server variables](/developers/extend/apps/config/application), which are encrypted at rest.
 
 ```text
   ┌─────────────────┐   kv.set(key, value)   ┌──────────────────────────┐
