@@ -53,7 +53,7 @@ export const scheduleRecallBot = async ({
       }),
     botName: configResult.config.botName,
   });
-  const chat = getRecallBotChatConfig({ meetingUrl });
+  const chat = getRecallBotChatConfig();
 
   const result = await recallBotApiRequest<RecallBotResponse>({
     config: configResult.config,

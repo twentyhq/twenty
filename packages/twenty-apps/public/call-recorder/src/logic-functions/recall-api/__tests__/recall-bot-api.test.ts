@@ -180,17 +180,6 @@ describe('recall bot api', () => {
     ).toBe(`${'a'.repeat(CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH - 1)}👋`);
   });
 
-  it('omits unsupported chat configuration for Webex meetings', async () => {
-    await scheduleRecallBot({
-      meetingUrl: 'https://company.webex.com/meet/customer-sync',
-      meetingStartsAt: MEETING_STARTS_AT,
-      joinAt: '2026-01-01T13:00:00.000Z',
-      metadata: RECALL_ROUTING_METADATA,
-    });
-
-    expect(JSON.parse(fetchMock.mock.calls[0][1].body).chat).toBeUndefined();
-  });
-
   it('uses the configured Recall recording retention hours when scheduling a bot', async () => {
     process.env[CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME] = '240';
 
