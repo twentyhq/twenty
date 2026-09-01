@@ -97,6 +97,12 @@ type WorkspaceRepositoryOptions = {
   executor: QueryExecutor;
   objectRecordsPermissions: ObjectsPermissions;
   shouldBypassPermissionChecks: boolean;
+  // Suppresses the CREATED/UPDATED/DELETED database events this repository
+  // would otherwise emit, and with them the snapshot SELECT that reads every
+  // written row back to build the event payload. Only for bulk system writes
+  // whose rows no subscriber cares about (campaign materialisation, backfills):
+  // webhooks, workflow triggers and timeline activities will NOT fire.
+  shouldSkipEventEmission: boolean;
   tableShapeByObjectMetadataId: (
     objectMetadataId: string,
   ) => WorkspaceTableShape;
@@ -1048,11 +1054,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
       generatedMaps.push(...(result.generatedMaps as ObjectRecord[]));
 
-      const recordsAfterWrite = await this.buildIdsEventSnapshotQueryBuilder([
-        input.id,
-      ]).getMany<ObjectRecord>({
-        noFormatting: true,
-      });
+      const recordsAfterWrite = this.options.shouldSkipEventEmission
+        ? []
+        : await this.buildIdsEventSnapshotQueryBuilder([
+            input.id,
+          ]).getMany<ObjectRecord>({
+            noFormatting: true,
+          });
 
       recordsAfter.push(
         ...mergeReturnedUpdateTimestamps(
@@ -1140,7 +1148,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   private async emitCreateEvents(insertedIds: string[]): Promise<void> {
-    if (insertedIds.length === 0) {
+    if (insertedIds.length === 0 || this.options.shouldSkipEventEmission) {
       return;
     }
 
@@ -1302,7 +1310,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     const recordsAfterWrite =
-      kind === 'delete'
+      kind === 'delete' || this.options.shouldSkipEventEmission
         ? undefined
         : await eventSelectQueryBuilder.getMany<ObjectRecord>({
             noFormatting: true,
@@ -1413,6 +1421,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     recordsBefore: ObjectRecord[];
     recordsAfter?: ObjectRecord[];
   }): void {
+    if (this.options.shouldSkipEventEmission) {
+      return;
+    }
+
     const actions = MUTATION_EVENT_ACTIONS_BY_KIND[kind];
 
     const formattedBefore = this.formatResult<ObjectRecord[]>(recordsBefore);
