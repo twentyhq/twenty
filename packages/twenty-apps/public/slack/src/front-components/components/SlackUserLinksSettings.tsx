@@ -99,6 +99,7 @@ export const SlackUserLinksSettings = () => {
     const result = await matchSlackUserLinks();
 
     if (!result.success) {
+      setMatchSummary(undefined);
       enqueueSnackbar({
         message: isNonEmptyString(result.error) ? result.error : result.message,
         variant: 'error',
