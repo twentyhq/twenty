@@ -168,8 +168,7 @@ import { AddTimelineActivityHappensAtFieldFastInstanceCommand } from 'src/databa
 import { AddPageLayoutIsFirstTabPinnedFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787929843737-add-page-layout-is-first-tab-pinned';
 import { CreateCampaignDeliveryFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788200700000-create-campaign-delivery';
 import { AddStateToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788260646460-add-state-to-application';
-import { AddUsageLimitPeriodColumnsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788198642266-add-usage-limit-period-columns';
-import { ReshapeUsageLimitPeriodSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-slow-1788198642267-reshape-usage-limit-period';
+import { ReshapeUsageLimitPeriodFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788198642266-reshape-usage-limit-period';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -340,6 +339,5 @@ export const INSTANCE_COMMANDS = [
   AddPageLayoutIsFirstTabPinnedFastInstanceCommand,
   CreateCampaignDeliveryFastInstanceCommand,
   AddStateToApplicationFastInstanceCommand,
-  AddUsageLimitPeriodColumnsFastInstanceCommand,
-  ReshapeUsageLimitPeriodSlowInstanceCommand,
+  ReshapeUsageLimitPeriodFastInstanceCommand,
 ];

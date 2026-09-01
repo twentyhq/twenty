@@ -178,16 +178,16 @@ export class UsageLimitSpeedService {
     }
 
     return buildSpeedBuckets({
-      resolvedSpeedLimitDefaults: definition.defaults.map(
-        (speedLimitDefault) => ({
-          spenderType: speedLimitDefault.spenderType,
-          counterScope: speedLimitDefault.counterScope,
-          isOverridable: speedLimitDefault.isOverridable,
+      speedLimitDefaults: definition.defaults.map(
+        (speedLimitDefaultDefinition) => ({
+          spenderType: speedLimitDefaultDefinition.spenderType,
+          counterScope: speedLimitDefaultDefinition.counterScope,
+          isOverridable: speedLimitDefaultDefinition.isOverridable,
           maxTokens: this.twentyConfigService.get(
-            speedLimitDefault.limitValueConfigVariable,
+            speedLimitDefaultDefinition.limitValueConfigVariable,
           ),
           windowMs: this.twentyConfigService.get(
-            speedLimitDefault.windowMsConfigVariable,
+            speedLimitDefaultDefinition.windowMsConfigVariable,
           ),
         }),
       ),

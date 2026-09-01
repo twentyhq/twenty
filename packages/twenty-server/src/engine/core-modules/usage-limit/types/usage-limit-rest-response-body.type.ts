@@ -15,6 +15,5 @@ export type UsageLimitRestResponseBody = {
   remaining: number;
   periodCount: number;
   periodUnit: PeriodUnit;
-  windowSeconds: number;
   retryAfterSeconds: number;
 };

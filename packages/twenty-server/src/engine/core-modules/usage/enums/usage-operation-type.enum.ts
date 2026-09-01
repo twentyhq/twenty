@@ -3,7 +3,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 export enum UsageOperationType {
-  // limit-scope wildcard covering every operation of a resource; never emitted on a usage event
   ALL = 'ALL',
   AI_CHAT_TOKEN = 'AI_CHAT_TOKEN',
   AI_WORKFLOW_TOKEN = 'AI_WORKFLOW_TOKEN',

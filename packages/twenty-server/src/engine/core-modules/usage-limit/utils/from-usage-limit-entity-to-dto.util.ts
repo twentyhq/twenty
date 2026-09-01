@@ -11,8 +11,6 @@ export const fromUsageLimitEntityToDto = (
   spenderId: usageLimit.spenderId,
   limitKind: usageLimit.limitKind,
   periodCount: usageLimit.periodCount,
-  windowSeconds:
-    usageLimit.periodUnit === 'second' ? usageLimit.periodCount : 0,
   periodUnit: usageLimit.periodUnit,
   meter: usageLimit.meter,
   limitValueType: usageLimit.limitValueType,

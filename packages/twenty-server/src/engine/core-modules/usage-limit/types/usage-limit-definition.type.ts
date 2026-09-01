@@ -1,12 +1,12 @@
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
-import { type SpeedLimitDefault } from 'src/engine/core-modules/usage-limit/types/speed-limit-default.type';
+import { type SpeedLimitDefaultDefinition } from 'src/engine/core-modules/usage-limit/types/speed-limit-default-definition.type';
 import { type UsageMeter } from 'src/engine/core-modules/usage-limit/types/usage-meter.type';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
 export type SpeedLimitDefinition = {
   allowedOperationTypes: UsageOperationType[];
   allowedSpenderTypes: SpenderType[];
-  defaults: SpeedLimitDefault[];
+  defaults: SpeedLimitDefaultDefinition[];
 };
 
 export type QuotaLimitDefinition = {

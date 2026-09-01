@@ -30,10 +30,9 @@ export class UpsertUsageLimitInput {
   @IsEnum(UsageResourceType)
   resourceType: UsageResourceType;
 
-  @Field(() => UsageOperationType, { nullable: true })
+  @Field(() => UsageOperationType)
   @IsEnum(UsageOperationType)
-  @IsOptional()
-  operationType?: UsageOperationType | null;
+  operationType: UsageOperationType;
 
   @Field(() => String)
   @IsIn(SPENDER_TYPES)
@@ -56,15 +55,6 @@ export class UpsertUsageLimitInput {
   @Field(() => String, { defaultValue: 'billingPeriod' })
   @IsIn(PERIOD_UNITS)
   periodUnit: PeriodUnit;
-
-  @Field(() => Int, {
-    nullable: true,
-    description: 'Deprecated: use periodCount and periodUnit',
-  })
-  @IsInt()
-  @Min(0)
-  @IsOptional()
-  windowSeconds?: number | null;
 
   @Field(() => String, { defaultValue: 'creditsUsedMicro' })
   @IsIn(USAGE_METERS)

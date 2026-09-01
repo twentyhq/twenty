@@ -33,8 +33,6 @@ export const usageLimitToRestApiExceptionHandler = (
       remaining: exhaustedScope.remaining,
       periodCount: exhaustedScope.periodCount,
       periodUnit: exhaustedScope.periodUnit,
-      windowSeconds:
-        exhaustedScope.periodUnit === 'second' ? exhaustedScope.periodCount : 0,
       retryAfterSeconds,
     },
     buildRateLimitResponseHeaders({ exhaustedScope, retryAfterSeconds }),

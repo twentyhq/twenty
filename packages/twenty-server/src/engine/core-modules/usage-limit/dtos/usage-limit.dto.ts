@@ -34,11 +34,6 @@ export class UsageLimitDTO {
   @Field(() => Int)
   periodCount: number;
 
-  @Field(() => Int, {
-    deprecationReason: 'Use periodCount and periodUnit',
-  })
-  windowSeconds: number;
-
   @Field(() => String)
   periodUnit: PeriodUnit;
 
