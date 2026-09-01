@@ -336,7 +336,7 @@ describe('SidePanelTopBar', () => {
     ).toBe(true);
   });
 
-  it('shows routed page info while its header title is loading', () => {
+  it('shows routed page info when the header title portal is empty', () => {
     const store = createSidePanelTopBarStore({
       sidePanelNavigationStack: [
         {

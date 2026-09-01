@@ -5,7 +5,6 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
 import { useRef } from 'react';
-import { matchPath, parsePath } from 'react-router-dom';
 import {
   buildFrontComponentStorageNamespace,
   clearFrontComponentStorage,
@@ -19,7 +18,6 @@ import {
   FieldMetadataType,
   ObjectOpenRecordIn,
   OpenRecordIn,
-  SIDE_PANEL_APP_PATHS,
   SidePanelPages,
   type EnqueueSnackbarParams,
 } from 'twenty-shared/types';
@@ -65,17 +63,6 @@ const FRONT_COMPONENT_CLIPBOARD_RATE_LIMIT_MS = 1000;
 const FRONT_COMPONENT_CLIPBOARD_PREVIEW_LENGTH = 30;
 
 const FRONT_COMPONENT_UPLOAD_FILE_NAME_MAX_LENGTH = 200;
-
-const isFrontComponentRoutedSidePanelPath = (path: string) => {
-  const pathname = parsePath(path).pathname;
-
-  return (
-    isNonEmptyString(pathname) &&
-    SIDE_PANEL_APP_PATHS.some((routePath) =>
-      matchPath({ path: routePath, end: true }, pathname),
-    )
-  );
-};
 
 type OpenSidePanelPageParams = Parameters<
   FrontComponentHostCommunicationApi['openSidePanelPage']
@@ -236,13 +223,6 @@ export const useFrontComponentExecutionContext = ({
           ? `${path}#${encodeURIComponent(params.hash)}`
           : path;
 
-        if (!isFrontComponentRoutedSidePanelPath(pathWithHash)) {
-          throw new CustomError(
-            `Unsupported side-panel route for an app: ${pathWithHash}`,
-            'FRONT_COMPONENT_UNSUPPORTED_SIDE_PANEL_ROUTE',
-          );
-        }
-
         const pageId = openRoutedPageInSidePanel({
           path: pathWithHash,
           pageTitle: params.pageTitle,
@@ -260,13 +240,6 @@ export const useFrontComponentExecutionContext = ({
       }
 
       if (params.page === SidePanelPages.RoutedPage) {
-        if (!isFrontComponentRoutedSidePanelPath(params.path)) {
-          throw new CustomError(
-            `Unsupported side-panel route for an app: ${params.path}`,
-            'FRONT_COMPONENT_UNSUPPORTED_SIDE_PANEL_ROUTE',
-          );
-        }
-
         const pageId = openRoutedPageInSidePanel({
           path: params.path,
           pageTitle: params.pageTitle,

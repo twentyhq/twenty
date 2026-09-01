@@ -1,6 +1,5 @@
 import {
   type AppPath,
-  type SidePanelAppPath,
   type SidePanelPages,
   type EnqueueSnackbarParams,
   type NavigateOptions,
@@ -16,9 +15,7 @@ export type NavigateFunction = <T extends AppPath>(
   options?: NavigateOptions,
 ) => Promise<void>;
 
-export type { SidePanelAppPath } from 'twenty-shared/types';
-
-type OpenRoutedSidePanelPageParams<T extends SidePanelAppPath> = {
+type OpenRoutedSidePanelPageParams<T extends AppPath> = {
   to: T;
   queryParams?: Record<string, any>;
   hash?: string;
@@ -90,11 +87,11 @@ type OpenPurposeBuiltSidePanelPageParams =
       shouldResetSearchState?: boolean;
     };
 
-export type OpenSidePanelPageParams<
-  T extends SidePanelAppPath = SidePanelAppPath,
-> = OpenRoutedSidePanelPageParams<T> | OpenPurposeBuiltSidePanelPageParams;
+export type OpenSidePanelPageParams<T extends AppPath = AppPath> =
+  | OpenRoutedSidePanelPageParams<T>
+  | OpenPurposeBuiltSidePanelPageParams;
 
-export type OpenSidePanelPageFunction = <T extends SidePanelAppPath>(
+export type OpenSidePanelPageFunction = <T extends AppPath>(
   params: OpenSidePanelPageParams<T>,
 ) => Promise<void>;
 
