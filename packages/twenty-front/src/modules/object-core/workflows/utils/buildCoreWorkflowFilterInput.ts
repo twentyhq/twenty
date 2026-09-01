@@ -1,3 +1,4 @@
+import { MAX_CORE_WORKFLOW_FILTER_RULES } from 'twenty-shared/constants';
 import { StepLogicalOperator, type StepFilter } from 'twenty-shared/types';
 import {
   isDefined,
@@ -13,8 +14,6 @@ import {
   type CoreWorkflowFilterInput,
   type CoreWorkflowFilterRuleInput,
 } from '~/generated/graphql';
-
-export const MAX_CORE_WORKFLOW_FILTER_RULES = 50;
 
 const toCoreWorkflowFilterRule = ({
   stepFilter,

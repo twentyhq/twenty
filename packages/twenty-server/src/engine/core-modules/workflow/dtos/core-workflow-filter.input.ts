@@ -10,8 +10,8 @@ import {
   MaxLength,
   ValidateNested,
 } from 'class-validator';
+import { MAX_CORE_WORKFLOW_FILTER_RULES } from 'twenty-shared/constants';
 
-export const MAX_CORE_WORKFLOW_FILTER_RULES = 50;
 export const MAX_CORE_WORKFLOW_FILTER_VALUE_LENGTH = 2000;
 
 export enum CoreWorkflowFilterFieldKey {
