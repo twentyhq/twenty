@@ -3,9 +3,7 @@ import { getCallRecordingVideoFileUrl } from '@/page-layout/widgets/call-recordi
 
 const makeCallRecording = (
   video: WidgetCallRecordingCandidate['video'],
-): WidgetCallRecordingCandidate => ({
-  __typename: 'CallRecording',
-  id: 'call-recording-id',
+): Pick<WidgetCallRecordingCandidate, 'video'> => ({
   video,
 });
 

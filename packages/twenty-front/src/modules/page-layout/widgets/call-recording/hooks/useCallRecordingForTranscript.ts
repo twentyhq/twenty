@@ -12,6 +12,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 const CALL_RECORDING_TRANSCRIPT_RECORD_FIELDS = {
   id: true,
+  status: true,
   transcript: true,
 } as const satisfies RecordGqlOperationGqlRecordFields;
 
@@ -28,7 +29,7 @@ export const useCallRecordingForTranscript = (): {
   refetchCallRecording: () => Promise<void>;
 } => {
   const { restriction, isFieldRestricted } = useCallRecordingWidgetRestriction({
-    requiredFieldNames: ['transcript'],
+    requiredFieldNames: ['status', 'transcript'],
   });
   const shouldSkipQuery = isDefined(restriction);
 

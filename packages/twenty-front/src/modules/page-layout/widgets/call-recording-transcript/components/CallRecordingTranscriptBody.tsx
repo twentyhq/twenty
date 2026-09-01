@@ -67,14 +67,17 @@ export const CallRecordingTranscriptBody = ({
       <CallRecordingWidgetEmptyStateDisplay
         animatedPlaceholderType="noMatchRecord"
         title={t`No Call Recording`}
-        subTitle={t`No completed call recording is available yet.`}
+        subTitle={t`No call recording exists for this calendar event yet.`}
       />
     );
   }
 
   if (!isDefined(videoFileUrl)) {
     return (
-      <CallRecordingTranscriptContent transcriptEntries={transcriptEntries} />
+      <CallRecordingTranscriptContent
+        callRecording={callRecording}
+        transcriptEntries={transcriptEntries}
+      />
     );
   }
 
@@ -102,6 +105,7 @@ export const CallRecordingTranscriptBody = ({
         onRetry={refetchCallRecording}
       />
       <CallRecordingTranscriptContent
+        callRecording={callRecording}
         transcriptEntries={transcriptEntries}
         playback={playback}
       />

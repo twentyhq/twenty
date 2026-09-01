@@ -3,9 +3,7 @@ import { getCallRecordingSummaryMarkdown } from '@/page-layout/widgets/call-reco
 
 const makeCallRecording = (
   summary: WidgetCallRecordingCandidate['summary'],
-): WidgetCallRecordingCandidate => ({
-  __typename: 'CallRecording',
-  id: 'call-recording-id',
+): Pick<WidgetCallRecordingCandidate, 'summary'> => ({
   summary,
 });
 

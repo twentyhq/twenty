@@ -1,8 +1,10 @@
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type CallRecordingStatus } from '~/generated/graphql';
 
 export type WidgetCallRecordingCandidate = {
   __typename: 'CallRecording';
   id: string;
+  status: CallRecordingStatus;
   transcript?: unknown;
   summary?: { markdown: string | null } | null;
   video?: FieldFilesValue[] | null;

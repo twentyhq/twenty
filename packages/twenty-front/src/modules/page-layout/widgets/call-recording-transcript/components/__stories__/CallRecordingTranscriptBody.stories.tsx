@@ -30,6 +30,7 @@ import {
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
+import { CallRecordingStatus } from '~/generated/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { MOCK_CALL_RECORDING_VIDEO_DATA_URI } from './mockCallRecordingVideo';
@@ -100,6 +101,7 @@ const pageLayoutWithTranscriptWidget: PageLayout = {
 const completedCallRecording: WidgetCallRecordingCandidate = {
   __typename: 'CallRecording',
   id: 'call-recording-id',
+  status: CallRecordingStatus.COMPLETED,
   transcript: [],
   video: null,
 };
