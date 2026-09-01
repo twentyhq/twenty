@@ -79,8 +79,7 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
   const isSearching = debouncedSearchTerm.trim() !== '';
   const hasFailed = isDefined(error);
 
-  // The app is installed nowhere (as opposed to a search yielding no matches,
-  // or a failed query we cannot tell apart from an empty one)
+  // The app is installed nowhere (as opposed to a search yielding no matches)
   const hasNoInstalls =
     totalCount === 0 && !isSearching && !loading && !hasFailed;
 

@@ -71,8 +71,6 @@ const FIND_ALL_REGISTRATIONS = gql`
 
 const REGISTRATION_NAME = 'admin-panel-stats-integration-test-registration';
 
-// Only ever installed on the soft-deleted workspace, so a search for it must
-// come back empty rather than surfacing an install nobody can reach.
 const DELETED_WORKSPACE_ONLY_VERSION = '9.9.9';
 
 type SeededApplication = {
@@ -157,17 +155,13 @@ describe('Admin panel application registration stats and installed workspaces (i
 
     deletedWorkspaceId = randomUUID();
 
-    // workspace."workspaceCustomApplicationId" is NOT NULL with an FK to
-    // application, and application."workspaceId" points back, so a standalone
-    // workspace row can only be inserted by borrowing an existing application.
+    // Circular FK: a workspace requires an application, which requires a workspace.
     const [{ workspaceCustomApplicationId }] = await dataSource.query(
       `SELECT "workspaceCustomApplicationId" FROM core."workspace" WHERE id = $1`,
       [SEED_APPLE_WORKSPACE_ID],
     );
 
-    // PENDING_CREATION is the only activationStatus that satisfies the
-    // workspace CHECK constraints without a defaultRoleId and databaseSchema;
-    // deletedAt is what this fixture actually exercises.
+    // PENDING_CREATION exempts this row from the defaultRoleId and databaseSchema checks.
     await dataSource.query(
       `INSERT INTO core."workspace"
         (id, "displayName", subdomain, "activationStatus",
