@@ -17,12 +17,10 @@ import { mockedCommandMenuItems } from '~/testing/mock-data/generated/metadata/c
 import {
   mockCurrentWorkspace,
   mockedLimitedPermissionsUserData,
-  mockedUserData,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 import { sleep } from '~/utils/sleep';
 
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -89,10 +87,6 @@ const meta: Meta<typeof SidePanelCommandMenuItemDisplayPage> = {
       jotaiStore.set(
         currentWorkspaceMemberState.atom,
         mockedWorkspaceMemberData,
-      );
-      jotaiStore.set(
-        currentUserWorkspaceState.atom,
-        mockedUserData.currentUserWorkspace,
       );
       jotaiStore.set(isSidePanelOpenedState.atom, true);
       jotaiStore.set(sidePanelNavigationStackState.atom, [
@@ -162,6 +156,9 @@ export const DefaultWithoutSearch: Story = {
 };
 
 export const LimitedPermissions: Story = {
+  parameters: {
+    currentUserWorkspace: mockedLimitedPermissionsUserData.currentUserWorkspace,
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     expect(await canvas.findByText('Go to People')).toBeVisible();
@@ -172,16 +169,6 @@ export const LimitedPermissions: Story = {
     expect(await canvas.findByText('Go to Settings')).toBeVisible();
     expect(await canvas.findByText('Go to Notes')).toBeVisible();
   },
-  decorators: [
-    (Story) => {
-      jotaiStore.set(
-        currentUserWorkspaceState.atom,
-        mockedLimitedPermissionsUserData.currentUserWorkspace,
-      );
-
-      return <Story />;
-    },
-  ],
 };
 
 export const MatchingNavigate: Story = {
