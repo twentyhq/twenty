@@ -22,9 +22,6 @@ export const fromFlatCommandMenuItemToCommandMenuItemDto = (
     shortLabel: effectiveFlatCommandMenuItem.shortLabel ?? undefined,
     position: effectiveFlatCommandMenuItem.position,
     isPinned: effectiveFlatCommandMenuItem.isPinned,
-    // A legacy { objectMetadataItemId } payload not yet erased by the 2-38
-    // slow migration is served as if it already were: its target reaches the
-    // client through navigationTargetObjectMetadataId.
     payload: isObjectMetadataCommandMenuItemPayload(
       effectiveFlatCommandMenuItem.payload,
     )

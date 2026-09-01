@@ -32,9 +32,6 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
     createCommandMenuItemInput.engineComponentKey ===
     EngineComponentKey.NAVIGATION;
 
-  // Clients predating the navigationTargetObjectMetadataId input sent the
-  // target inside the payload; fold it into the foreign key so the legacy
-  // shape never reaches the column again.
   const navigationTargetObjectMetadataId = isNavigation
     ? (createCommandMenuItemInput.navigationTargetObjectMetadataId ??
       (isObjectMetadataCommandMenuItemPayload(
@@ -44,8 +41,6 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
         : null))
     : null;
 
-  // Object navigation rows carry their target in the foreign key only and no
-  // payload; a payload is a path payload.
   const payload =
     !isNavigation || isDefined(navigationTargetObjectMetadataId)
       ? null
