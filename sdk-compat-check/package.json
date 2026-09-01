@@ -1,0 +1,9 @@
+{
+  "name": "sdk-compat-check",
+  "private": true,
+  "type": "module",
+  "description": "Harness verifying PR #25116's composite-field schema change against twenty-client-sdk consumers",
+  "dependencies": {
+    "graphql": "^16.8.1"
+  }
+}
