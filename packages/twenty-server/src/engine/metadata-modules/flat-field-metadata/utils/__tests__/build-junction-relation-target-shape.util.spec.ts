@@ -1,5 +1,6 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildJunctionRelationTargetShape } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-junction-relation-target-shape.util';
 import { junctionRelationTargetShapeTestFixtures } from 'src/engine/metadata-modules/flat-field-metadata/utils/__tests__/junction-relation-target-shape.test-fixtures';
