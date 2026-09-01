@@ -108,7 +108,7 @@ const unsummarizedCallRecording: WidgetCallRecordingCandidate = {
   summary: null,
 };
 
-const pendingCallRecording: WidgetCallRecordingCandidate = {
+const processingCallRecording: WidgetCallRecordingCandidate = {
   ...unsummarizedCallRecording,
   status: CallRecordingStatus.PROCESSING,
   transcript: { status: 'PENDING' },
@@ -157,10 +157,10 @@ export const Ready: Story = {
   },
 };
 
-export const ReadyWhileRecordingIsPending: Story = {
+export const ReadyWhileCallRecordingIsProcessing: Story = {
   args: {
     callRecording: {
-      ...pendingCallRecording,
+      ...processingCallRecording,
       summary: { markdown: summaryMarkdown },
     },
     loading: false,
@@ -206,9 +206,9 @@ export const NoSummary: Story = {
   },
 };
 
-export const Pending: Story = {
+export const Processing: Story = {
   args: {
-    callRecording: pendingCallRecording,
+    callRecording: processingCallRecording,
     loading: false,
     error: undefined,
     restriction: undefined,
@@ -223,7 +223,7 @@ export const Pending: Story = {
 export const Scheduled: Story = {
   args: {
     callRecording: {
-      ...pendingCallRecording,
+      ...processingCallRecording,
       status: CallRecordingStatus.SCHEDULED,
       transcript: null,
     },
@@ -241,7 +241,7 @@ export const Scheduled: Story = {
 export const Joining: Story = {
   args: {
     callRecording: {
-      ...pendingCallRecording,
+      ...processingCallRecording,
       status: CallRecordingStatus.JOINING,
       transcript: null,
     },
@@ -259,7 +259,7 @@ export const Joining: Story = {
 export const Recording: Story = {
   args: {
     callRecording: {
-      ...pendingCallRecording,
+      ...processingCallRecording,
       status: CallRecordingStatus.RECORDING,
       transcript: null,
     },
@@ -285,6 +285,23 @@ export const Failed: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByText('Processing Failed');
+  },
+};
+
+export const NotRecorded: Story = {
+  args: {
+    callRecording: {
+      ...unsummarizedCallRecording,
+      status: CallRecordingStatus.NOT_RECORDED,
+    },
+    loading: false,
+    error: undefined,
+    restriction: undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Not Recorded');
   },
 };
 

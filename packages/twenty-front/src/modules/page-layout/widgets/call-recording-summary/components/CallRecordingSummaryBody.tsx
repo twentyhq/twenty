@@ -1,11 +1,9 @@
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
-import { CallRecordingPendingStateDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingPendingStateDisplay';
+import { CallRecordingStateDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingStateDisplay';
 import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetEmptyStateDisplay';
 import { CallRecordingWidgetForbiddenDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetForbiddenDisplay';
 import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
 import { getCallRecordingSummaryMarkdown } from '@/page-layout/widgets/call-recording-summary/utils/getCallRecordingSummaryMarkdown';
-import { isCallRecordingSummaryFailed } from '@/page-layout/widgets/call-recording-summary/utils/isCallRecordingSummaryFailed';
-import { isCallRecordingSummaryPending } from '@/page-layout/widgets/call-recording-summary/utils/isCallRecordingSummaryPending';
 import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
@@ -72,31 +70,10 @@ export const CallRecordingSummaryBody = ({
     );
   }
 
-  if (isCallRecordingSummaryPending(callRecording)) {
-    return (
-      <CallRecordingPendingStateDisplay
-        callRecording={callRecording}
-        generatingTitle={t`Generating Summary`}
-        generatingSubTitle={t`The summary is being generated…`}
-      />
-    );
-  }
-
-  if (isCallRecordingSummaryFailed(callRecording)) {
-    return (
-      <CallRecordingWidgetEmptyStateDisplay
-        animatedPlaceholderType="errorIndex"
-        title={t`Processing Failed`}
-        subTitle={t`The call recording could not be processed.`}
-      />
-    );
-  }
-
   return (
-    <CallRecordingWidgetEmptyStateDisplay
-      animatedPlaceholderType="noMatchRecord"
-      title={t`No Summary`}
-      subTitle={t`No summary has been generated for this call recording yet.`}
+    <CallRecordingStateDisplay
+      callRecording={callRecording}
+      contentType="summary"
     />
   );
 };

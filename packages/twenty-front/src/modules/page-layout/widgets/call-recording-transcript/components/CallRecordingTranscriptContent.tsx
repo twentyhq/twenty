@@ -1,12 +1,8 @@
-import { CallRecordingPendingStateDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingPendingStateDisplay';
-import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetEmptyStateDisplay';
+import { CallRecordingStateDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingStateDisplay';
 import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
-import { isCallRecordingTranscriptFailed } from '@/page-layout/widgets/call-recording/utils/isCallRecordingTranscriptFailed';
-import { isCallRecordingTranscriptPending } from '@/page-layout/widgets/call-recording/utils/isCallRecordingTranscriptPending';
 import { CallRecordingTranscriptEntryList } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList';
 import { type CallRecordingTranscriptPlayback } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptPlayback';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { type CallRecordingParsedTranscriptEntry } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -35,36 +31,11 @@ export const CallRecordingTranscriptContent = ({
     );
   }
 
-  if (isCallRecordingTranscriptPending(callRecording)) {
-    return (
-      <StyledEmptyStateScrollContainer>
-        <CallRecordingPendingStateDisplay
-          callRecording={callRecording}
-          generatingTitle={t`Preparing Transcript`}
-          generatingSubTitle={t`Transcript is being prepared…`}
-        />
-      </StyledEmptyStateScrollContainer>
-    );
-  }
-
-  if (isCallRecordingTranscriptFailed(callRecording)) {
-    return (
-      <StyledEmptyStateScrollContainer>
-        <CallRecordingWidgetEmptyStateDisplay
-          animatedPlaceholderType="errorIndex"
-          title={t`Transcript Failed`}
-          subTitle={t`The transcript could not be generated.`}
-        />
-      </StyledEmptyStateScrollContainer>
-    );
-  }
-
   return (
     <StyledEmptyStateScrollContainer>
-      <CallRecordingWidgetEmptyStateDisplay
-        animatedPlaceholderType="noMatchRecord"
-        title={t`No Transcript`}
-        subTitle={t`No transcript is available for this recording.`}
+      <CallRecordingStateDisplay
+        callRecording={callRecording}
+        contentType="transcript"
       />
     </StyledEmptyStateScrollContainer>
   );
