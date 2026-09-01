@@ -122,8 +122,7 @@ export const buildJunctionRelationTargetShape = ({
       name: junctionSourceFlatFieldMetadata.name,
     }),
     isTargetMorphRelation:
-      junctionTargetFlatFieldMetadata.type ===
-      FieldMetadataType.MORPH_RELATION,
+      junctionTargetFlatFieldMetadata.type === FieldMetadataType.MORPH_RELATION,
     targetJoinColumns,
   };
 };

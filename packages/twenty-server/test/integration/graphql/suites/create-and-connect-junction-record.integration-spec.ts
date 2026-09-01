@@ -6,9 +6,14 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+
 const SOURCE_MESSAGE_LIST_ID = '20202020-a710-4000-8000-000000000001';
 const TARGET_PERSON_ID = '20202020-a710-4000-8000-000000000002';
-const BLOCKING_MEMBERSHIP_ID = '20202020-a710-4000-8000-000000000003';
+const PIVOT_FAILURE_CONSTRAINT_NAME =
+  'create_and_connect_junction_record_failure_test';
+const WORKSPACE_SCHEMA_NAME = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
 const CREATE_AND_CONNECT_JUNCTION_RECORD = gql`
   mutation CreateAndConnectJunctionRecord(
@@ -21,16 +26,13 @@ const CREATE_AND_CONNECT_JUNCTION_RECORD = gql`
   }
 `;
 
-const destroyFixtures = async () => {
-  await makeGraphqlAPIRequest(
-    destroyManyOperationFactory({
-      objectMetadataSingularName: 'messageListMember',
-      objectMetadataPluralName: 'messageListMembers',
-      gqlFields: 'id',
-      filter: { id: { in: [BLOCKING_MEMBERSHIP_ID] } },
-    }),
+const dropPivotFailureConstraint = () =>
+  global.testDataSource.query(
+    `ALTER TABLE "${WORKSPACE_SCHEMA_NAME}"."messageListMember"
+      DROP CONSTRAINT IF EXISTS "${PIVOT_FAILURE_CONSTRAINT_NAME}"`,
   );
 
+const destroyFixtures = async () => {
   await makeGraphqlAPIRequest(
     destroyManyOperationFactory({
       objectMetadataSingularName: 'person',
@@ -80,7 +82,21 @@ describe('createAndConnectJunctionRecord (integration)', () => {
     }
 
     membersFieldMetadataId = membersFieldMetadata.id;
+
+    // PostgreSQL still enforces a NOT VALID constraint on new rows. Limiting
+    // it to this test pair makes the pivot fail after the target is inserted.
+    await dropPivotFailureConstraint();
+    await global.testDataSource.query(
+      `ALTER TABLE "${WORKSPACE_SCHEMA_NAME}"."messageListMember"
+        ADD CONSTRAINT "${PIVOT_FAILURE_CONSTRAINT_NAME}"
+        CHECK (
+          "personId" <> '${TARGET_PERSON_ID}'
+          OR "listId" <> '${SOURCE_MESSAGE_LIST_ID}'
+        ) NOT VALID`,
+    );
   });
+
+  afterAll(dropPivotFailureConstraint);
 
   beforeEach(async () => {
     await destroyFixtures();
@@ -97,23 +113,6 @@ describe('createAndConnectJunctionRecord (integration)', () => {
     );
 
     expect(messageListResponse.body.errors).toBeUndefined();
-
-    // Workspace relation columns intentionally have no foreign keys. This
-    // orphan row occupies the regular junction's unique (person, list) pair,
-    // so the mutation's second INSERT fails only after its target INSERT.
-    const membershipResponse = await makeGraphqlAPIRequest(
-      createOneOperationFactory({
-        objectMetadataSingularName: 'messageListMember',
-        gqlFields: 'id',
-        data: {
-          id: BLOCKING_MEMBERSHIP_ID,
-          listId: SOURCE_MESSAGE_LIST_ID,
-          personId: TARGET_PERSON_ID,
-        },
-      }),
-    );
-
-    expect(membershipResponse.body.errors).toBeUndefined();
   });
 
   afterEach(destroyFixtures);
@@ -138,9 +137,7 @@ describe('createAndConnectJunctionRecord (integration)', () => {
 
     expect(mutationResponse.body.errors).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({
-          message: 'A duplicate entry was detected',
-        }),
+        expect.objectContaining({ message: expect.any(String) }),
       ]),
     );
 
@@ -161,20 +158,16 @@ describe('createAndConnectJunctionRecord (integration)', () => {
         objectMetadataSingularName: 'messageListMember',
         objectMetadataPluralName: 'messageListMembers',
         gqlFields: 'id listId personId',
-        filter: { id: { eq: BLOCKING_MEMBERSHIP_ID } },
+        filter: {
+          listId: { eq: SOURCE_MESSAGE_LIST_ID },
+          personId: { eq: TARGET_PERSON_ID },
+        },
       }),
     );
 
     expect(membershipResponse.body.errors).toBeUndefined();
-    expect(membershipResponse.body.data.messageListMembers.edges).toEqual([
-      {
-        cursor: expect.any(String),
-        node: {
-          id: BLOCKING_MEMBERSHIP_ID,
-          listId: SOURCE_MESSAGE_LIST_ID,
-          personId: TARGET_PERSON_ID,
-        },
-      },
-    ]);
+    expect(membershipResponse.body.data.messageListMembers.edges).toHaveLength(
+      0,
+    );
   });
 });
