@@ -15,7 +15,12 @@ export const WorkflowVariableSearchResultItems = ({
 
   return searchResults.map((result) => (
     <MenuItemSelect
-      key={JSON.stringify([result.stepId, result.path, result.isFullRecord])}
+      key={JSON.stringify([
+        result.stepId,
+        result.path,
+        result.isLeaf,
+        result.isFullRecord,
+      ])}
       selected={false}
       focused={false}
       onClick={() => onSelect(result)}

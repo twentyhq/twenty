@@ -42,6 +42,24 @@ describe('getStepFilterVariableSelectionSettings', () => {
     });
   });
 
+  it('normalizes morph relations to relation filters', () => {
+    expect(
+      getStepFilterVariableSelectionSettings({
+        rawVariableName: '{{trigger.people.id}}',
+        isFullRecord: false,
+        variableType: 'string',
+        fieldMetadataId: 'people',
+        fieldMetadataType: FieldMetadataType.MORPH_RELATION,
+        compositeFieldSubFieldName: undefined,
+      }),
+    ).toEqual(
+      expect.objectContaining({
+        type: FieldMetadataType.RELATION,
+        operand: ViewFilterOperand.IS,
+      }),
+    );
+  });
+
   it('retains whole-record selection', () => {
     expect(
       getStepFilterVariableSelectionSettings({

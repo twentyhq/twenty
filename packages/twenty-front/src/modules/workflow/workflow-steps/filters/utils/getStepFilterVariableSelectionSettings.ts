@@ -1,6 +1,6 @@
 import { getStepFilterOperands } from '@/workflow/workflow-steps/filters/utils/getStepFilterOperands';
-import { type StepFilter } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { type FieldMetadataType, type StepFilter } from 'twenty-shared/types';
+import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 
 type StepFilterVariableSelectionSettings = Pick<
   StepFilter,
@@ -24,11 +24,13 @@ export const getStepFilterVariableSelectionSettings = ({
   isFullRecord: boolean;
   variableType: string | undefined;
   fieldMetadataId: string | undefined;
-  fieldMetadataType: string | undefined;
+  fieldMetadataType: FieldMetadataType | undefined;
   compositeFieldSubFieldName: string | undefined;
 }): StepFilterVariableSelectionSettings => {
   const filterType = isDefined(fieldMetadataId)
-    ? (fieldMetadataType ?? 'unknown')
+    ? isDefined(fieldMetadataType)
+      ? getFilterTypeFromFieldType(fieldMetadataType)
+      : 'unknown'
     : (variableType ?? 'unknown');
   const [defaultOperand] = getStepFilterOperands({
     filterType,

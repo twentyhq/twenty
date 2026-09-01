@@ -46,12 +46,16 @@ export const useUpdateStepFilterFromVariable = ({
       }),
     );
 
+    if (!isDefined(currentStepOutputSchema)) {
+      return;
+    }
+
     const { variableType, fieldMetadataId, compositeFieldSubFieldName } =
       searchVariableThroughOutputSchemaV2({
         stepOutputSchema: currentStepOutputSchema,
         stepType,
         rawVariableName,
-        isFullRecord: false,
+        isFullRecord,
       });
     const { fieldMetadataItem: filterFieldMetadataItem } = isDefined(
       fieldMetadataId,
