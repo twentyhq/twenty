@@ -1,6 +1,6 @@
 import { type WorkflowAction } from '@/workflow/types/Workflow';
-import { getReconnectedStepIds } from '@/workflow/workflow-diagram/utils/getReconnectedStepIds';
 import { type WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/types/WorkflowStepConnectionOptions';
+import { getReconnectedStepIds } from '@/workflow/workflow-steps/utils/getReconnectedStepIds';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
