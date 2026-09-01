@@ -14,7 +14,11 @@ export const buildSlackRecordEntitiesForMessage = async (
   try {
     const urls = extractHttpUrls(messageText);
 
-    if (urls.length === 0) {
+    // every record link carries this segment, so checking it first keeps the
+    // workspace URL query off the post path for unrelated links
+    const recordUrls = urls.filter((url) => url.includes('/object/'));
+
+    if (recordUrls.length === 0) {
       return [];
     }
 
@@ -26,7 +30,7 @@ export const buildSlackRecordEntitiesForMessage = async (
 
     const recordLinks = parseTwentyRecordLinks({
       workspaceBaseUrl,
-      urls,
+      urls: recordUrls,
     }).slice(0, SLACK_UNFURL_MAX_ENTITIES);
 
     if (recordLinks.length === 0) {

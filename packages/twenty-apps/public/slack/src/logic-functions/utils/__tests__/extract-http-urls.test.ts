@@ -21,6 +21,24 @@ describe('extractHttpUrls', () => {
     ]);
   });
 
+  it('should keep query punctuation that belongs to the URL', () => {
+    expect(extractHttpUrls('https://acme.dev/a?q=hi!')).toEqual([
+      'https://acme.dev/a?q=hi!',
+    ]);
+  });
+
+  it('should not keep wrapping delimiters', () => {
+    expect(extractHttpUrls('"https://acme.dev/a"')).toEqual([
+      'https://acme.dev/a',
+    ]);
+    expect(extractHttpUrls('*https://acme.dev/a*')).toEqual([
+      'https://acme.dev/a',
+    ]);
+    expect(extractHttpUrls('(https://acme.dev/a)')).toEqual([
+      'https://acme.dev/a',
+    ]);
+  });
+
   it('should return an empty list when there is no URL', () => {
     expect(extractHttpUrls('no links here')).toEqual([]);
   });
