@@ -34,7 +34,8 @@ const StyledMatchAction = styled.div`
   align-items: center;
   display: flex;
   gap: ${() => themeCssVariables.spacing[3]};
-  padding-bottom: ${() => themeCssVariables.spacing[3]};
+  justify-content: flex-end;
+  padding-top: ${() => themeCssVariables.spacing[2]};
 `;
 
 const StyledMatchSummary = styled.span`
@@ -167,16 +168,6 @@ export const SlackUserLinksSettings = () => {
             title="Unlinked Slack users"
             description="These Slack users talk to the assistant with its default role. Pick a workspace member on a row to link them in place, or rerun the email match."
           />
-          <StyledMatchAction>
-            <Button
-              title={isMatching ? 'Matching…' : 'Match by email'}
-              disabled={isMatching}
-              onClick={handleMatchByEmail}
-            />
-            {isDefined(matchSummary) && (
-              <StyledMatchSummary>{matchSummary}</StyledMatchSummary>
-            )}
-          </StyledMatchAction>
           {isUnlinkedSlackUsersLoading && unlinkedSlackUsers.length === 0 ? (
             <StyledCenteredState>
               Loading unlinked Slack users…
@@ -190,6 +181,18 @@ export const SlackUserLinksSettings = () => {
               onLinkSaved={handleLinkSaved}
             />
           )}
+          <StyledMatchAction>
+            {isDefined(matchSummary) && (
+              <StyledMatchSummary>{matchSummary}</StyledMatchSummary>
+            )}
+            <Button
+              title={isMatching ? 'Matching…' : 'Match by email'}
+              size="small"
+              variant="secondary"
+              disabled={isMatching}
+              onClick={handleMatchByEmail}
+            />
+          </StyledMatchAction>
         </Section>
       )}
       <Section>
