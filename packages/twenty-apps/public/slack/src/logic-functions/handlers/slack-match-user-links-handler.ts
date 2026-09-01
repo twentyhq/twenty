@@ -49,13 +49,25 @@ export const slackMatchUserLinksHandler =
         slackTeamId: installedTeamId,
       });
 
-      const matchedMessage = `Matched ${summary.linkedCount} Slack ${summary.linkedCount === 1 ? 'user' : 'users'} by email.`;
+      const messageParts = [
+        `Matched ${summary.linkedCount} Slack ${summary.linkedCount === 1 ? 'user' : 'users'} by email.`,
+      ];
+
+      if (summary.failedCount > 0) {
+        messageParts.push(
+          `${summary.failedCount} could not be linked; try the match again.`,
+        );
+      }
+
+      if (summary.isRosterTruncated) {
+        messageParts.push(
+          'The Slack roster is too large to scan in one pass, so some users were not checked.',
+        );
+      }
 
       return {
         success: true,
-        message: summary.isRosterTruncated
-          ? `${matchedMessage} The Slack roster is too large to scan in one pass, so some users were not checked.`
-          : matchedMessage,
+        message: messageParts.join(' '),
         ...summary,
       };
     } catch (error) {

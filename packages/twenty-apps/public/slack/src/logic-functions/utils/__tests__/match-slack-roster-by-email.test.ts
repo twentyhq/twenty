@@ -91,6 +91,7 @@ describe('matchSlackRosterByEmail', () => {
       linkedCount: 1,
       alreadyLinkedCount: 0,
       unmatchedCount: 0,
+      failedCount: 0,
       isRosterTruncated: false,
     });
   });
@@ -121,6 +122,7 @@ describe('matchSlackRosterByEmail', () => {
       linkedCount: 0,
       alreadyLinkedCount: 1,
       unmatchedCount: 0,
+      failedCount: 0,
       isRosterTruncated: false,
     });
   });
@@ -192,8 +194,33 @@ describe('matchSlackRosterByEmail', () => {
       linkedCount: 2,
       alreadyLinkedCount: 1,
       unmatchedCount: 2,
+      failedCount: 0,
       isRosterTruncated: false,
     });
+  });
+
+  it('should keep linking after one candidate fails and count the failure', async () => {
+    listWorkspaceMemberEmailsMock.mockResolvedValue(
+      new Map([
+        ['ada@twenty.com', 'member-ada'],
+        ['grace@twenty.com', 'member-grace'],
+      ]),
+    );
+    persistSlackUserLinkMock
+      .mockRejectedValueOnce(new Error('write failed'))
+      .mockResolvedValueOnce('link-new');
+
+    const summary = await matchSlackRosterByEmail({
+      slackClient: buildSlackClient([
+        fullMember({ id: 'U1', email: 'ada@twenty.com' }),
+        fullMember({ id: 'U2', email: 'grace@twenty.com' }),
+      ]),
+      slackTeamId: SLACK_TEAM_ID,
+    });
+
+    expect(persistSlackUserLinkMock).toHaveBeenCalledTimes(2);
+    expect(summary.linkedCount).toBe(1);
+    expect(summary.failedCount).toBe(1);
   });
 
   it('should report truncation when the roster exceeds the page cap', async () => {

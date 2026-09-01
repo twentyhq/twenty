@@ -8,6 +8,7 @@ import { SLACK_USER_LINK_SOURCE } from 'src/logic-functions/constants/slack-user
 import { listLinkedSlackUserIds } from 'src/logic-functions/data/list-linked-slack-user-ids';
 import { listWorkspaceMemberEmails } from 'src/logic-functions/data/list-workspace-member-emails';
 import { persistSlackUserLink } from 'src/logic-functions/utils/persist-slack-user-link';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 import {
   getRosterMemberDisplayName,
   isRosterEmailVouchedForOwner,
@@ -18,6 +19,7 @@ export type SlackRosterMatchSummary = {
   linkedCount: number;
   alreadyLinkedCount: number;
   unmatchedCount: number;
+  failedCount: number;
   isRosterTruncated: boolean;
 };
 
@@ -78,23 +80,35 @@ export const matchSlackRosterByEmail = async ({
     return undefined;
   });
 
+  let linkedCount = 0;
+  let failedCount = 0;
+
   for (const candidate of candidates) {
-    await persistSlackUserLink(client, {
-      existingLink: undefined,
-      isSameMemberRelink: false,
-      slackTeamId,
-      slackUserId: candidate.slackUserId,
-      workspaceMemberId: candidate.workspaceMemberId,
-      name: candidate.displayName,
-      source: SLACK_USER_LINK_SOURCE.AUTO,
-      consentState: SLACK_USER_LINK_CONSENT_STATE.ACTIVE,
-    });
+    try {
+      await persistSlackUserLink(client, {
+        existingLink: undefined,
+        isSameMemberRelink: false,
+        slackTeamId,
+        slackUserId: candidate.slackUserId,
+        workspaceMemberId: candidate.workspaceMemberId,
+        name: candidate.displayName,
+        source: SLACK_USER_LINK_SOURCE.AUTO,
+        consentState: SLACK_USER_LINK_CONSENT_STATE.ACTIVE,
+      });
+      linkedCount += 1;
+    } catch (error) {
+      failedCount += 1;
+      console.warn(
+        `[slack] roster match could not link ${candidate.slackUserId}: ${toErrorMessage(error)}`,
+      );
+    }
   }
 
   return {
-    linkedCount: candidates.length,
+    linkedCount,
     alreadyLinkedCount,
     unmatchedCount,
+    failedCount,
     isRosterTruncated: isTruncated,
   };
 };
