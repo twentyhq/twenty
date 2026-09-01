@@ -14,8 +14,7 @@ export const isWorkspaceLocationAvailableOnSurface = (
 
   return (
     canonicalMatch !== undefined &&
-    (routeHandle?.workspaceSurfaces.includes(surface) ?? surface === 'main') &&
-    (routeHandle?.isLocationAvailableOnSurface?.({ surface, location }) ?? true)
+    (routeHandle?.workspaceSurfaces.includes(surface) ?? surface === 'main')
   );
 };
 
