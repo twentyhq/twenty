@@ -94,7 +94,7 @@ export const buildObjectNavigationUniversalFlatCommandMenuItem = ({
     conditionalAvailabilityExpression,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATION,
-    payload: { path: null },
+    payload: null,
     navigationTargetObjectMetadataUniversalIdentifier:
       objectMetadata.universalIdentifier,
     hotKeys: isDefined(objectMetadata.shortcut)

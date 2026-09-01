@@ -71,10 +71,10 @@ describe('buildObjectNavigationFlatCommandMenuItem', () => {
     expect(result.icon).toBe(NAVIGATION_INTERPOLATED_ICON);
   });
 
-  it('should set a null-path payload', () => {
+  it('should set a null payload', () => {
     const result = buildObjectNavigationFlatCommandMenuItem(baseArgs);
 
-    expect(result.payload).toEqual({ path: null });
+    expect(result.payload).toBeNull();
   });
 
   it('should set the target object metadata foreign key', () => {

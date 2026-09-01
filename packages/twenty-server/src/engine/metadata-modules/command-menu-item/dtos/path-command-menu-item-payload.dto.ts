@@ -9,7 +9,7 @@ export class PathCommandMenuItemPayloadDTO {
   @Field(() => String, {
     nullable: true,
     description:
-      'Null on object navigation items, whose target is CommandMenuItem.navigationTargetObjectMetadataId',
+      'Null only on legacy rows not yet rewritten onto CommandMenuItem.navigationTargetObjectMetadataId; object navigation items carry no payload at all',
   })
   path: string | null;
 }

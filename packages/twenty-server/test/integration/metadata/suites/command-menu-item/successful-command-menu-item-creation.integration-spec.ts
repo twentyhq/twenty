@@ -213,9 +213,7 @@ describe('CommandMenuItem creation should succeed', () => {
       engineComponentKey: EngineComponentKey.NAVIGATION,
       label: 'Go to Companies',
       navigationTargetObjectMetadataId: companyObjectMetadataId,
-      payload: {
-        path: null,
-      },
+      payload: null,
     });
   });
 

@@ -145,7 +145,7 @@ describe('ObjectNavigationCommandOnCreateSideEffectHandlerService', () => {
     expect(navigationCommand.engineComponentKey).toBe(
       EngineComponentKey.NAVIGATION,
     );
-    expect(navigationCommand.payload).toEqual({ path: null });
+    expect(navigationCommand.payload).toBeNull();
     expect(navigationCommand.hotKeys).toEqual(['G', 'T']);
     expect(navigationCommand.conditionalAvailabilityExpression).toBe(
       'targetObjectReadPermissions.ticket',

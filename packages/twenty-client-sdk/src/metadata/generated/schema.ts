@@ -134,7 +134,7 @@ export type CommandMenuItemAvailabilityType = 'GLOBAL' | 'GLOBAL_OBJECT_CONTEXT'
 export type CommandMenuItemPayload = (PathCommandMenuItemPayload) & { __isUnion?: true }
 
 export interface PathCommandMenuItemPayload {
-    /** Null on object navigation items, whose target is CommandMenuItem.navigationTargetObjectMetadataId */
+    /** Null only on legacy rows not yet rewritten onto CommandMenuItem.navigationTargetObjectMetadataId; object navigation items carry no payload at all */
     path?: Scalars['String']
     __typename: 'PathCommandMenuItemPayload'
 }
@@ -3516,7 +3516,7 @@ export interface CommandMenuItemPayloadGenqlSelection{
 }
 
 export interface PathCommandMenuItemPayloadGenqlSelection{
-    /** Null on object navigation items, whose target is CommandMenuItem.navigationTargetObjectMetadataId */
+    /** Null only on legacy rows not yet rewritten onto CommandMenuItem.navigationTargetObjectMetadataId; object navigation items carry no payload at all */
     path?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number

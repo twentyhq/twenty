@@ -6,7 +6,7 @@ import { type PathCommandMenuItemPayload } from 'src/engine/metadata-modules/com
 
 // The legacy { objectMetadataItemId } variant stays in the column type because
 // pre-2-38 upgrade commands replayed during sequential upgrades still write it;
-// the 2-38 payload rewrite converges every row onto { path } plus
+// the 2-38 payload rewrite nulls it in favour of
 // navigationTargetObjectMetadataId, and nothing outside upgrade commands may
 // read the legacy shape.
 export type CommandMenuItemPayload =
@@ -16,8 +16,8 @@ export type CommandMenuItemPayload =
 export const CommandMenuItemPayloadUnion = createUnionType({
   name: 'CommandMenuItemPayload',
   types: () => [PathCommandMenuItemPayloadDTO],
-  // A legacy payload not yet rewritten by the 2-38 command degrades to
-  // { path: null }: its target is already served by
+  // A legacy payload not yet nulled by the 2-38 command degrades to a
+  // { path: null } reading: its target is already served by
   // navigationTargetObjectMetadataId since the 2-35 backfill.
   resolveType() {
     return PathCommandMenuItemPayloadDTO;

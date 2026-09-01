@@ -55,7 +55,7 @@ const makeNavigationRecord = (
   label: NAVIGATION_INTERPOLATED_LABEL,
   shortLabel: NAVIGATION_INTERPOLATED_SHORT_LABEL,
   icon: NAVIGATION_INTERPOLATED_ICON,
-  payload: { path: null },
+  payload: null,
   navigationTargetObjectMetadataId: OBJECT_METADATA_ID,
   position: 1,
   isPinned: false,

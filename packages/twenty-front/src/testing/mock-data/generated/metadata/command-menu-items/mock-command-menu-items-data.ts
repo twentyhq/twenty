@@ -1638,10 +1638,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 71,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": [
       "G",
       "C"
@@ -1666,10 +1663,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 72,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": [
       "G",
       "D"
@@ -1694,10 +1688,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 73,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": [
       "G",
       "N"
@@ -1722,10 +1713,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 74,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": [
       "G",
       "O"
@@ -1750,10 +1738,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 75,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": [
       "G",
       "P"
@@ -1778,10 +1763,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 76,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": [
       "G",
       "T"
@@ -1806,10 +1788,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 77,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": [
       "G",
       "W"
@@ -1834,10 +1813,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 78,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.attachment",
     "availabilityType": "GLOBAL",
@@ -1859,10 +1835,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 79,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.blocklist",
     "availabilityType": "GLOBAL",
@@ -1884,10 +1857,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 80,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.calendarChannelEventAssociation",
     "availabilityType": "GLOBAL",
@@ -1909,10 +1879,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 81,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.calendarEventParticipant",
     "availabilityType": "GLOBAL",
@@ -1934,10 +1901,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 82,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.calendarEvent",
     "availabilityType": "GLOBAL",
@@ -1959,10 +1923,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 83,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.callRecording",
     "availabilityType": "GLOBAL",
@@ -1984,10 +1945,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 84,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "featureFlags.IS_EMAIL_GROUP_ENABLED and targetObjectReadPermissions.messageCampaign",
     "availabilityType": "GLOBAL",
@@ -2009,10 +1967,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 85,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "featureFlags.IS_EMAIL_GROUP_ENABLED and targetObjectReadPermissions.messageList",
     "availabilityType": "GLOBAL",
@@ -2034,10 +1989,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 86,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.messageListMember",
     "availabilityType": "GLOBAL",
@@ -2059,10 +2011,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 87,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.messageChannelMessageAssociation",
     "availabilityType": "GLOBAL",
@@ -2084,10 +2033,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 88,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.messageChannelMessageAssociationMessageFolder",
     "availabilityType": "GLOBAL",
@@ -2109,10 +2055,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 89,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.messageParticipant",
     "availabilityType": "GLOBAL",
@@ -2134,10 +2077,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 90,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.messageThread",
     "availabilityType": "GLOBAL",
@@ -2159,10 +2099,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 91,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.message",
     "availabilityType": "GLOBAL",
@@ -2184,10 +2121,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 92,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.noteTarget",
     "availabilityType": "GLOBAL",
@@ -2209,10 +2143,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 93,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.taskTarget",
     "availabilityType": "GLOBAL",
@@ -2234,10 +2165,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 94,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.timelineActivity",
     "availabilityType": "GLOBAL",
@@ -2259,10 +2187,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 95,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.workflowAutomatedTrigger",
     "availabilityType": "GLOBAL",
@@ -2284,10 +2209,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 96,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.workflowRun",
     "availabilityType": "GLOBAL",
@@ -2309,10 +2231,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 97,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.workflowVersion",
     "availabilityType": "GLOBAL",
@@ -2334,10 +2253,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 98,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.workspaceMember",
     "availabilityType": "GLOBAL",
@@ -2359,10 +2275,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 99,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.rocket",
     "availabilityType": "GLOBAL",
@@ -2406,10 +2319,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 100,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.pet",
     "availabilityType": "GLOBAL",
@@ -2431,10 +2341,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 101,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.surveyResult",
     "availabilityType": "GLOBAL",
@@ -2456,10 +2363,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 102,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.employmentHistory",
     "availabilityType": "GLOBAL",
@@ -2481,10 +2385,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "engineComponentKey": "NAVIGATION",
     "position": 103,
     "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": null
-    },
+    "payload": null,
     "hotKeys": null,
     "conditionalAvailabilityExpression": "targetObjectReadPermissions.petCareAgreement",
     "availabilityType": "GLOBAL",

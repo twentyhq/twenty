@@ -348,50 +348,40 @@ export class FlatCommandMenuItemValidatorService {
       'create' | 'update'
     >;
   }): void {
-    if (!isDefined(payload)) {
-      validationResult.errors.push({
-        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
-        message: t`payload is required when engineComponentKey is NAVIGATION`,
-        userFriendlyMessage: msg`Payload is required for navigation items`,
-      });
-
-      return;
-    }
-
     // Pre-2-38 upgrade commands replayed during sequential upgrades still
-    // produce the { objectMetadataItemId } shape; the 2-38 payload rewrite
-    // converges those rows onto { path: null } plus the foreign key.
+    // produce the { objectMetadataItemId } shape, dual-written with the
+    // foreign key by the 2-35 backfill; the 2-38 payload rewrite nulls it.
     if (isObjectMetadataCommandMenuItemPayload(payload)) {
       return;
     }
 
-    if (!('path' in payload)) {
-      validationResult.errors.push({
-        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
-        message: t`payload must contain a "path" property`,
-        userFriendlyMessage: msg`Payload must contain a path`,
-      });
-
-      return;
-    }
-
-    if (payload.path === null) {
+    if (!isDefined(payload)) {
       if (!isDefined(navigationTargetObjectMetadataUniversalIdentifier)) {
         validationResult.errors.push({
           code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
-          message: t`navigationTargetObjectMetadataId is required when payload path is null`,
-          userFriendlyMessage: msg`A navigation target object is required when no path is provided`,
+          message: t`either a path payload or navigationTargetObjectMetadataId is required when engineComponentKey is NAVIGATION`,
+          userFriendlyMessage: msg`A path or a navigation target object is required for navigation items`,
         });
       }
 
       return;
     }
 
-    if (!isNonEmptyString(payload.path)) {
+    if (isDefined(navigationTargetObjectMetadataUniversalIdentifier)) {
       validationResult.errors.push({
         code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
-        message: t`payload path must be a non-empty string or null`,
-        userFriendlyMessage: msg`Payload path must be a non-empty string or null`,
+        message: t`payload and navigationTargetObjectMetadataId are mutually exclusive`,
+        userFriendlyMessage: msg`A navigation item cannot carry both a path and a navigation target object`,
+      });
+
+      return;
+    }
+
+    if (!('path' in payload) || !isNonEmptyString(payload.path)) {
+      validationResult.errors.push({
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+        message: t`payload must contain a non-empty "path" property`,
+        userFriendlyMessage: msg`Payload must contain a path`,
       });
     }
   }

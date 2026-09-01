@@ -50,7 +50,7 @@ const flatObjectMetadataMaps = {
 } as unknown as FlatEntityMaps<FlatObjectMetadata>;
 
 describe('computeObjectNavigationPayloadRewrite', () => {
-  it('rewrites a legacy object payload to { path: null }', () => {
+  it('nulls a legacy object payload', () => {
     const rewrite = computeObjectNavigationPayloadRewrite({
       flatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([
         buildFlatCommandMenuItem({ id: 'command-1' }),
@@ -62,7 +62,7 @@ describe('computeObjectNavigationPayloadRewrite', () => {
     expect(rewrite.flatCommandMenuItemsToUpdate).toHaveLength(1);
     expect(rewrite.flatCommandMenuItemsToUpdate[0]).toMatchObject({
       id: 'command-1',
-      payload: { path: null },
+      payload: null,
       navigationTargetObjectMetadataId: COMPANY_OBJECT_ID,
       updatedAt: NOW,
     });
@@ -72,7 +72,7 @@ describe('computeObjectNavigationPayloadRewrite', () => {
   it('is idempotent once the payload is rewritten', () => {
     const rewrite = computeObjectNavigationPayloadRewrite({
       flatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([
-        buildFlatCommandMenuItem({ id: 'command-1', payload: { path: null } }),
+        buildFlatCommandMenuItem({ id: 'command-1', payload: null }),
       ]),
       flatObjectMetadataMaps,
       now: NOW,
@@ -131,7 +131,7 @@ describe('computeObjectNavigationPayloadRewrite', () => {
     expect(rewrite.flatCommandMenuItemsToUpdate).toHaveLength(1);
     expect(rewrite.flatCommandMenuItemsToUpdate[0]).toMatchObject({
       id: 'command-1',
-      payload: { path: null },
+      payload: null,
       navigationTargetObjectMetadataId: COMPANY_OBJECT_ID,
       navigationTargetObjectMetadataUniversalIdentifier:
         COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,

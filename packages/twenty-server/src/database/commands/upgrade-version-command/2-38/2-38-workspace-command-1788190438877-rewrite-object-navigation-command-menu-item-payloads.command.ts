@@ -13,7 +13,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Command({
   name: 'upgrade:2-38:rewrite-object-navigation-command-menu-item-payloads',
   description:
-    'Rewrite legacy { objectMetadataItemId } navigation payloads to { path: null }, the target being carried by navigationTargetObjectMetadataId since the 2-35 backfill',
+    'Null legacy { objectMetadataItemId } navigation payloads, the target being carried by navigationTargetObjectMetadataId since the 2-35 backfill',
 })
 export class RewriteObjectNavigationCommandMenuItemPayloadsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(

@@ -37,19 +37,19 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   // shape never reaches the column again.
   const navigationTargetObjectMetadataId = isNavigation
     ? (createCommandMenuItemInput.navigationTargetObjectMetadataId ??
-      (isObjectMetadataCommandMenuItemPayload(createCommandMenuItemInput.payload)
+      (isObjectMetadataCommandMenuItemPayload(
+        createCommandMenuItemInput.payload,
+      )
         ? createCommandMenuItemInput.payload.objectMetadataItemId
         : null))
     : null;
 
-  // Object navigation rows carry their target in the foreign key only; the
-  // payload stays present to satisfy the NAVIGATION payload requirement.
-  const payload = !isNavigation
-    ? null
-    : isObjectMetadataCommandMenuItemPayload(createCommandMenuItemInput.payload)
-      ? { path: null }
-      : (createCommandMenuItemInput.payload ??
-        (isDefined(navigationTargetObjectMetadataId) ? { path: null } : null));
+  // Object navigation rows carry their target in the foreign key only and no
+  // payload; a payload is a path payload.
+  const payload =
+    !isNavigation || isDefined(navigationTargetObjectMetadataId)
+      ? null
+      : (createCommandMenuItemInput.payload ?? null);
 
   const {
     availabilityObjectMetadataUniversalIdentifier,

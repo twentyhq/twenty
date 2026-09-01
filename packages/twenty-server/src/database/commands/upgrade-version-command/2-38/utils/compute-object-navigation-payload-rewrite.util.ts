@@ -12,12 +12,11 @@ export type ObjectNavigationPayloadRewrite = {
   flatCommandMenuItemsToDelete: FlatCommandMenuItem[];
 };
 
-// Rewrites legacy { objectMetadataItemId } navigation payloads to
-// { path: null }: the target now lives solely in
-// navigationTargetObjectMetadataId, backfilled by the 2-35 command. Rows the
-// 2-35 backfill could not reach (created legacy mid-upgrade) get their target
-// derived here the same way, and orphans pointing at a missing object are
-// deleted for the same reason 2-35 deleted them.
+// Nulls legacy { objectMetadataItemId } navigation payloads: the target now
+// lives solely in navigationTargetObjectMetadataId, backfilled by the 2-35
+// command. Rows the 2-35 backfill could not reach (created legacy mid-upgrade)
+// get their target derived here the same way, and orphans pointing at a
+// missing object are deleted for the same reason 2-35 deleted them.
 export const computeObjectNavigationPayloadRewrite = ({
   flatCommandMenuItemMaps,
   flatObjectMetadataMaps,
@@ -46,7 +45,7 @@ export const computeObjectNavigationPayloadRewrite = ({
     if (isDefined(flatCommandMenuItem.navigationTargetObjectMetadataId)) {
       rewrite.flatCommandMenuItemsToUpdate.push({
         ...flatCommandMenuItem,
-        payload: { path: null },
+        payload: null,
         updatedAt: now,
       });
       continue;
@@ -64,7 +63,7 @@ export const computeObjectNavigationPayloadRewrite = ({
 
     rewrite.flatCommandMenuItemsToUpdate.push({
       ...flatCommandMenuItem,
-      payload: { path: null },
+      payload: null,
       navigationTargetObjectMetadataId: flatObjectMetadata.id,
       navigationTargetObjectMetadataUniversalIdentifier:
         flatObjectMetadata.universalIdentifier,

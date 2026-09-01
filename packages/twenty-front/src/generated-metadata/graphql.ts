@@ -4574,7 +4574,7 @@ export type PageLayoutWidgetVerticalListPosition = {
 
 export type PathCommandMenuItemPayload = {
   __typename?: 'PathCommandMenuItemPayload';
-  /** Null on object navigation items, whose target is CommandMenuItem.navigationTargetObjectMetadataId */
+  /** Null only on legacy rows not yet rewritten onto CommandMenuItem.navigationTargetObjectMetadataId; object navigation items carry no payload at all */
   path?: Maybe<Scalars['String']['output']>;
 };
 
