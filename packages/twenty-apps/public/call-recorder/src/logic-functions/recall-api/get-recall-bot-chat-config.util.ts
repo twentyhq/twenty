@@ -14,6 +14,10 @@ type RecallBotChatConfig = {
   };
 };
 
+const recordingNoticeGraphemeSegmenter = new Intl.Segmenter(undefined, {
+  granularity: 'grapheme',
+});
+
 export const getRecallBotChatConfig = (): RecallBotChatConfig | undefined => {
   if (!isRecordingNoticeEnabled()) {
     return undefined;
@@ -44,7 +48,26 @@ const getRecordingNoticeMessage = (): string => {
     ? configuredMessage
     : DEFAULT_CALL_RECORDER_RECORDING_NOTICE_MESSAGE;
 
-  return Array.from(message)
-    .slice(0, CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH)
-    .join('');
+  return truncateRecordingNoticeMessage(message);
+};
+
+const truncateRecordingNoticeMessage = (message: string): string => {
+  let truncatedMessage = '';
+  let unicodeCodePointCount = 0;
+
+  for (const { segment } of recordingNoticeGraphemeSegmenter.segment(message)) {
+    const segmentUnicodeCodePointCount = Array.from(segment).length;
+
+    if (
+      unicodeCodePointCount + segmentUnicodeCodePointCount >
+      CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH
+    ) {
+      break;
+    }
+
+    truncatedMessage += segment;
+    unicodeCodePointCount += segmentUnicodeCodePointCount;
+  }
+
+  return truncatedMessage;
 };

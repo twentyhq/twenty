@@ -164,9 +164,9 @@ describe('recall bot api', () => {
     expect(JSON.parse(fetchMock.mock.calls[0][1].body).chat).toBeUndefined();
   });
 
-  it('truncates custom recording notices without splitting Unicode characters', async () => {
+  it('truncates custom recording notices without splitting grapheme clusters', async () => {
     process.env[CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME] =
-      `${'a'.repeat(CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH - 1)}👋extra`;
+      `${'a'.repeat(CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH - 1)}🇫🇷extra`;
 
     await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
@@ -177,7 +177,7 @@ describe('recall bot api', () => {
 
     expect(
       JSON.parse(fetchMock.mock.calls[0][1].body).chat.on_bot_join.message,
-    ).toBe(`${'a'.repeat(CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH - 1)}👋`);
+    ).toBe('a'.repeat(CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH - 1));
   });
 
   it('uses the configured Recall recording retention hours when scheduling a bot', async () => {
