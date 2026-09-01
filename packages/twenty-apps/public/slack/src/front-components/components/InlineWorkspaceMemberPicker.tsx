@@ -75,8 +75,9 @@ const StyledChevron = styled.div`
   width: 5px;
 `;
 
-// Blur never fires in the front-component runtime because autofocus does not
-// reach the search input, so an invisible backdrop catches outside clicks.
+// Closing on the search input blur would race the option click: preventDefault
+// from the worker reaches the host too late to keep focus, so the panel would
+// unmount before the click lands. An invisible backdrop catches outside clicks.
 const StyledBackdrop = styled.div`
   inset: 0;
   position: fixed;
@@ -156,11 +157,10 @@ const InlineWorkspaceMemberPickerPanel = ({
   return (
     <>
       <StyledBackdrop onClick={onClose} />
-      <StyledDropdownPanel onMouseDown={(event) => event.preventDefault()}>
+      <StyledDropdownPanel>
         <StyledSearchInput
           value={searchTerm}
           onChange={(event) => setSearchTerm(event.target.value)}
-          onBlur={onClose}
           onKeyDown={(event) => {
             if (event.key === 'Escape') {
               event.preventDefault();
