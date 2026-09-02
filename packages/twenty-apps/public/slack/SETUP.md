@@ -76,7 +76,7 @@ The assistant reuses the same Slack connection — no second bot identity.
 
    Invite the bot to any channel where it should follow threads. Slack may ask you to reinstall after changing subscriptions.
 
-   Event subscriptions added in app upgrades must be added here by hand on existing installs — the Slack app only reads the manifest at creation. Upgrading from any version before 0.4.1 adds `app_uninstalled` and `tokens_revoked`; without them the team claim of a Slack-side removal is never released. No new scopes are involved, so the connection itself needs no re-authorization. Upgrading from any version before 0.6.0 adds `link_shared`, `entity_details_requested` and the `links:read` / `links:write` scopes for the record link previews; that one does need a reconnect (see the Record link previews section).
+   Event subscriptions added in app upgrades must be added here by hand on existing installs — the Slack app only reads the manifest at creation. Upgrading from any version before 0.4.1 adds `app_uninstalled` and `tokens_revoked`; without them the team claim of a Slack-side removal is never released. No new scopes are involved, so the connection itself needs no re-authorization. Upgrading from any version before 0.7.0 adds `link_shared`, `entity_details_requested` and the `links:read` / `links:write` scopes for the record link previews; that one does need a reconnect (see the Record link previews section).
 
 3. **Interactivity.** On the Slack app, enable **Interactivity & Shortcuts** and set the Request URL to:
 
