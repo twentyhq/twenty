@@ -43,8 +43,6 @@ const renderProtectedRoute = (surface: 'main' | 'side-panel') =>
         type: surface,
         instanceId: surface === 'main' ? 'main' : 'panel-page-1',
         ownsRouteLocation: true,
-        headerTitlePortal: null,
-        headerActionsPortal: null,
       }}
     >
       <I18nProvider i18n={i18n}>

@@ -7,7 +7,6 @@ import {
   type ObjectRecord,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type ObjectLiteral } from 'typeorm';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -141,7 +140,9 @@ export abstract class CommonBaseQueryRunnerService<
       flatFieldMetadataMaps,
     } = queryRunnerContext;
 
-    await this.throttleQueryExecution(authContext);
+    if ((queryRunnerContext.nestedOperationDepth ?? 0) === 0) {
+      await this.throttleQueryExecution(authContext);
+    }
 
     this.recordApiUsage(authContext);
 
@@ -268,6 +269,7 @@ export abstract class CommonBaseQueryRunnerService<
       flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
       flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
       flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+      transactionScope: queryRunnerContext.transactionScope,
     });
   }
 
@@ -278,6 +280,7 @@ export abstract class CommonBaseQueryRunnerService<
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
+    transactionScope,
   }: {
     results: Output;
     operationName: CommonQueryNames;
@@ -285,6 +288,7 @@ export abstract class CommonBaseQueryRunnerService<
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    transactionScope: CommonBaseQueryRunnerContext['transactionScope'];
   }): Promise<Output> {
     const resultWithGetters = await this.processQueryResult(
       results,
@@ -294,12 +298,19 @@ export abstract class CommonBaseQueryRunnerService<
       authContext,
     );
 
-    await this.workspaceQueryHookService.executePostQueryHooks(
-      authContext,
-      flatObjectMetadata.nameSingular,
-      operationName,
-      resultWithGetters as QueryResultFieldValue,
-    );
+    const executePostQueryHooks = () =>
+      this.workspaceQueryHookService.executePostQueryHooks(
+        authContext,
+        flatObjectMetadata.nameSingular,
+        operationName,
+        resultWithGetters as QueryResultFieldValue,
+      );
+
+    if (isDefined(transactionScope)) {
+      transactionScope.afterCommit(executePostQueryHooks);
+    } else {
+      await executePostQueryHooks();
+    }
 
     return resultWithGetters as Output;
   }
@@ -364,11 +375,16 @@ export abstract class CommonBaseQueryRunnerService<
       );
     }
 
-    const repository = this.workspaceOrmManager.getRepository<ObjectLiteral>(
-      queryRunnerContext.flatObjectMetadata.nameSingular,
-      rolePermissionConfig,
-      { useReplica: this.isReadOnly },
-    );
+    const repository = isDefined(queryRunnerContext.transactionScope)
+      ? queryRunnerContext.transactionScope.getRepository<ObjectRecord>(
+          queryRunnerContext.flatObjectMetadata.nameSingular,
+          rolePermissionConfig,
+        )
+      : this.workspaceOrmManager.getRepository<ObjectRecord>(
+          queryRunnerContext.flatObjectMetadata.nameSingular,
+          rolePermissionConfig,
+          { useReplica: this.isReadOnly },
+        );
 
     return {
       ...queryRunnerContext,
@@ -383,11 +399,10 @@ export abstract class CommonBaseQueryRunnerService<
   // and everything else the primary, keeping root read and nested-relation
   // loading consistent.
   protected getReadRepository({
-    rolePermissionConfig,
-    flatObjectMetadata,
+    repository,
   }: Pick<
     CommonExtendedQueryRunnerContext,
-    'rolePermissionConfig' | 'flatObjectMetadata'
+    'repository'
   >): WorkspaceRepository {
     this.metricsService.incrementCounterBy({
       key: MetricsKeys.OrmV2ReadPathUsed,
@@ -395,20 +410,14 @@ export abstract class CommonBaseQueryRunnerService<
       attributes: { operation: this.operationName },
     });
 
-    return this.workspaceOrmManager.getRepository(
-      flatObjectMetadata.nameSingular,
-      rolePermissionConfig,
-      { useReplica: this.isReadOnly },
-    );
+    return repository;
   }
 
-  // Writes always hit the primary, so useReplica is pinned false regardless of isReadOnly.
   protected getWriteRepository({
-    rolePermissionConfig,
-    flatObjectMetadata,
+    repository,
   }: Pick<
     CommonExtendedQueryRunnerContext,
-    'rolePermissionConfig' | 'flatObjectMetadata'
+    'repository'
   >): WorkspaceRepository {
     this.metricsService.incrementCounterBy({
       key: MetricsKeys.OrmV2WritePathUsed,
@@ -416,10 +425,7 @@ export abstract class CommonBaseQueryRunnerService<
       attributes: { operation: this.operationName },
     });
 
-    return this.workspaceOrmManager.getRepository(
-      flatObjectMetadata.nameSingular,
-      rolePermissionConfig,
-    );
+    return repository;
   }
 
   protected async runFilteredMutation({
@@ -480,20 +486,20 @@ export abstract class CommonBaseQueryRunnerService<
     records,
     queryRunnerContext,
     writeRepository,
+    createRecords,
   }: {
     records: Partial<ObjectRecord>[];
     queryRunnerContext: CommonExtendedQueryRunnerContext;
     writeRepository: WorkspaceRepository;
+    createRecords?: (options: {
+      targetObjectMetadata: FlatObjectMetadata;
+      records: Partial<ObjectRecord>[];
+    }) => Promise<ObjectRecord[]>;
   }): Promise<Partial<ObjectRecord>[]> {
-    const { flatObjectMetadata, flatFieldMetadataMaps, rolePermissionConfig } =
-      queryRunnerContext;
+    const { flatObjectMetadata, flatFieldMetadataMaps } = queryRunnerContext;
     const nameSingular = flatObjectMetadata.nameSingular;
 
-    const relationNestedQueries = new RelationNestedQueries(
-      writeRepository.getInternalContext(),
-      this.workspaceOrmManager,
-      rolePermissionConfig,
-    );
+    const relationNestedQueries = new RelationNestedQueries(writeRepository);
 
     const relationNestedConfig =
       relationNestedQueries.prepareNestedRelationQueries(records, nameSingular);
@@ -506,6 +512,8 @@ export abstract class CommonBaseQueryRunnerService<
       await relationNestedQueries.processRelationNestedQueries({
         entities: records,
         relationNestedConfig,
+        target: nameSingular,
+        createRecords,
       });
 
     const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(

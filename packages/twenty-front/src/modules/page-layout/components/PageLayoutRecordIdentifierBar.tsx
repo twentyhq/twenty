@@ -18,7 +18,10 @@ const SIDE_TRACK = `min(${PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH}px, calc(100% /
 
 // Equal side tracks center the tabs independently of the record name. Their
 // width stays independent of visible tabs so overflow can recover on resize.
-const StyledBar = styled.div<{ hasPinnedTab: boolean }>`
+const StyledBar = styled.div<{
+  hasPinnedTab: boolean;
+  hasTabList: boolean;
+}>`
   align-items: stretch;
   background: ${themeCssVariables.background.secondary};
   // The bottom line sits inside the box so the tab strip can fill the whole row
@@ -26,10 +29,12 @@ const StyledBar = styled.div<{ hasPinnedTab: boolean }>`
   box-shadow: inset 0 -1px 0 ${themeCssVariables.border.color.light};
   box-sizing: border-box;
   display: grid;
-  grid-template-columns: ${({ hasPinnedTab }) =>
+  grid-template-columns: ${({ hasPinnedTab, hasTabList }) =>
     hasPinnedTab
       ? `${PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH}px minmax(0, 1fr)`
-      : `${SIDE_TRACK} minmax(0, 1fr) ${SIDE_TRACK}`};
+      : hasTabList
+        ? `${SIDE_TRACK} minmax(0, 1fr) ${SIDE_TRACK}`
+        : 'minmax(0, 1fr) auto'};
   height: ${PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_HEIGHT}px;
   width: 100%;
 `;
@@ -92,19 +97,18 @@ export const PageLayoutRecordIdentifierBar = ({
   const { t } = useLingui();
   const { openTabSettings } = useOpenPageLayoutTabSettings();
   const hasPinnedTab = isDefined(pinnedTab);
+  const hasTabList = Boolean(tabList);
   const createdAt = (
     <RecordIdentifierBarCreatedAt objectRecordId={targetRecordIdentifier.id} />
   );
 
   return (
-    <StyledBar hasPinnedTab={hasPinnedTab}>
+    <StyledBar hasPinnedTab={hasPinnedTab} hasTabList={hasTabList}>
       <StyledIdentifierCell hasPinnedTab={hasPinnedTab}>
         <RecordIdentifierBarTitle
           objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
           objectRecordId={targetRecordIdentifier.id}
         />
-
-        {hasPinnedTab && createdAt}
 
         {isPinnedTabEditable && isDefined(pinnedTab) && (
           <StyledPinnedTab>
@@ -121,7 +125,9 @@ export const PageLayoutRecordIdentifierBar = ({
         )}
       </StyledIdentifierCell>
 
-      <StyledTabsCell>{tabList}</StyledTabsCell>
+      {(hasPinnedTab || hasTabList) && (
+        <StyledTabsCell>{tabList}</StyledTabsCell>
+      )}
 
       {!hasPinnedTab && <StyledCreatedAtCell>{createdAt}</StyledCreatedAtCell>}
     </StyledBar>

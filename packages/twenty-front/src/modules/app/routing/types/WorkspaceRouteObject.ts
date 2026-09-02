@@ -4,13 +4,9 @@ export type WorkspaceSurfaceType = 'main' | 'side-panel';
 
 export type WorkspaceRouteHandle = {
   workspaceSurfaces: readonly WorkspaceSurfaceType[];
-  isLocationAvailableOnSurface?: (args: {
-    surface: WorkspaceSurfaceType;
-    location: Partial<Location> | string;
-  }) => boolean;
-  isLocationExpandableFromSidePanel?: (args: {
-    location: Partial<Location> | string;
-  }) => boolean;
+  isLocationExpandableFromSidePanel?:
+    | boolean
+    | ((args: { location: Partial<Location> | string }) => boolean);
 };
 
 export type WorkspaceRouteObject = Omit<
