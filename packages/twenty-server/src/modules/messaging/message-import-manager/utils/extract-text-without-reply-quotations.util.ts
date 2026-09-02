@@ -1,9 +1,13 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import EmailReplyParser from 'email-reply-parser';
 
+import { stripReplyQuotations } from 'src/modules/messaging/message-import-manager/utils/strip-reply-quotations.util';
+
 export const extractTextWithoutReplyQuotations = (text: string): string => {
+  const withoutSplitters = stripReplyQuotations(text);
+
   const textWithoutQuotations = new EmailReplyParser()
-    .read(text)
+    .read(withoutSplitters)
     .getFragments()
     .filter((fragment) => !fragment.isQuoted())
     .map((fragment) => fragment.getContent())
@@ -11,5 +15,5 @@ export const extractTextWithoutReplyQuotations = (text: string): string => {
 
   return isNonEmptyString(textWithoutQuotations.trim())
     ? textWithoutQuotations
-    : text;
+    : withoutSplitters;
 };

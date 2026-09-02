@@ -3,10 +3,74 @@ import sanitizeHtml from 'sanitize-html';
 
 import { normalizeMessageText } from 'src/modules/messaging/message-import-manager/utils/normalize-message-text.util';
 
+const QUOTE_MARKER = '\uE000';
+const REPEATED_QUOTE_MARKER = '\uE001';
+const ALL_QUOTE_MARKERS = /[\uE000\uE001]/g;
+
+const QUOTE_SELECTORS = [
+  'div.gmail_quote',
+  'div#divRplyFwdMsg',
+  'div#OLK_SRC_BODY_SECTION',
+];
+
+const REPEATED_QUOTE_SELECTORS = [
+  "div[style='border:none;border-top:solid #B5C4DF 1.0pt;padding:3.0pt 0cm 0cm 0cm']",
+  "div[style='border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm 0cm 0cm']",
+  "div[style='padding-top: 5px; border-top-color: rgb(229, 229, 229); border-top-width: 1px; border-top-style: solid;']",
+];
+
+const buildMarkerFormatter =
+  (marker: string) =>
+  (
+    element: { children: unknown[] },
+    walk: (children: unknown[], builder: unknown) => void,
+    builder: { addInline: (text: string) => void },
+  ): void => {
+    builder.addInline(marker);
+    walk(element.children, builder);
+  };
+
 const CONVERT_OPTIONS = {
   wordwrap: false,
   preserveNewlines: true,
-} satisfies HtmlToTextOptions;
+  selectors: [
+    ...QUOTE_SELECTORS.map((selector) => ({ selector, format: 'quoteMarker' })),
+    ...REPEATED_QUOTE_SELECTORS.map((selector) => ({
+      selector,
+      format: 'repeatedQuoteMarker',
+    })),
+  ],
+  formatters: {
+    quoteMarker: buildMarkerFormatter(QUOTE_MARKER),
+    repeatedQuoteMarker: buildMarkerFormatter(REPEATED_QUOTE_MARKER),
+  },
+} as HtmlToTextOptions;
+
+const findQuoteSplitterIndex = (text: string): number => {
+  const firstQuote = text.indexOf(QUOTE_MARKER);
+  const firstRepeated = text.indexOf(REPEATED_QUOTE_MARKER);
+  const secondRepeated =
+    firstRepeated === -1
+      ? -1
+      : text.indexOf(REPEATED_QUOTE_MARKER, firstRepeated + 1);
+
+  const candidates = [firstQuote, secondRepeated].filter(
+    (index) => index !== -1,
+  );
+
+  return candidates.length === 0 ? -1 : Math.min(...candidates);
+};
+
+const cutAtQuoteSplitter = (text: string): string => {
+  const splitterIndex = findQuoteSplitterIndex(text);
+  const beforeSplitter =
+    splitterIndex === -1 ? text : text.slice(0, splitterIndex);
+
+  return (beforeSplitter.trim() === '' ? text : beforeSplitter).replace(
+    ALL_QUOTE_MARKERS,
+    '',
+  );
+};
 
 const TEXT_SHAPING_TAGS = [
   'a',
@@ -74,26 +138,21 @@ const NON_TEXT_TAGS = [
   'title',
 ];
 
-const QUOTE_CONTAINER_IDS = ['OLK_SRC_BODY_SECTION'];
-
-const markQuoteContainersAsBlockquotes = (
-  tagName: string,
-  attribs: Record<string, string>,
-): sanitizeHtml.Tag =>
-  QUOTE_CONTAINER_IDS.includes(attribs.id)
-    ? { tagName: 'blockquote', attribs: {} }
-    : { tagName, attribs };
-
 const SANITIZE_OPTIONS = {
   allowedTags: TEXT_SHAPING_TAGS,
-  allowedAttributes: { a: ['href'], img: ['src', 'alt'], '*': ['title'] },
+  allowedAttributes: {
+    a: ['href'],
+    img: ['src', 'alt'],
+    '*': ['title', 'class', 'id', 'style'],
+  },
   allowedSchemes: ['http', 'https', 'mailto', 'tel'],
   disallowedTagsMode: 'discard',
   nonTextTags: NON_TEXT_TAGS,
-  transformTags: { '*': markQuoteContainersAsBlockquotes },
 } satisfies sanitizeHtml.IOptions;
 
 export const convertHtmlToText = (html: string): string =>
   normalizeMessageText(
-    convert(sanitizeHtml(html, SANITIZE_OPTIONS), CONVERT_OPTIONS),
+    cutAtQuoteSplitter(
+      convert(sanitizeHtml(html, SANITIZE_OPTIONS), CONVERT_OPTIONS),
+    ),
   );

@@ -344,7 +344,7 @@ Developer Support`);
       html: '<div id="OLK_SRC_BODY_SECTION"><div dir="ltr"><p>The entire forwarded body.</p></div></div>',
     });
 
-    expect(result).toBe('> The entire forwarded body.');
+    expect(result).toBe('The entire forwarded body.');
   });
 
   it('should keep a forward whose whole body is a blockquote', () => {
