@@ -38,10 +38,10 @@ No per-seat or per-message charge, but the app's runs are metered like any other
 
 Every Slack event the bot is subscribed to costs an invocation, including messages it never answers: `message.channels` and `message.groups` deliver every message posted in the channels the bot belongs to, which is what makes un-mentioned thread follow-ups work. Drop those two subscriptions to limit the bot to explicit mentions and DMs. Each workflow step run costs an invocation too.
 
-Answering costs AI credits on top, billed on the model's token usage — the whole prompt as well as the reply — so cost tracks how much conversation context and how many records the bot reads to answer, not how long the answer is.
+Answering costs AI credits on top, billed on the model's token usage — the whole prompt as well as the reply — so cost tracks the conversation context, the records the bot reads and the length of its answer.
 
 ## 📌 Heads up
 
 - **You create the Slack app** — Twenty connects to a Slack app you own, so an admin has to create it and set its credentials before anyone can connect. The assistant needs a signing secret and event subscriptions on top. See [SETUP.md](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/slack/SETUP.md).
-- **One Slack workspace per Twenty workspace** — connecting claims that Slack team. Removing the connection releases it, so another Twenty workspace can then connect the same team.
+- **One Slack workspace per Twenty workspace** — connecting claims that Slack team. Removing the last connection using it releases the claim, so another Twenty workspace can then connect the same team.
 - **Private channels need membership** — public channels are covered by `chat:write.public`; anywhere else, invite the bot.

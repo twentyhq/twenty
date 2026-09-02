@@ -193,8 +193,10 @@ member of the installed Slack workspace, never a guest, a Slack Connect user or
 a bot; it skips any Slack account that already has a link, whatever its state,
 so it cannot revive a declined consent or overwrite a hand-made mapping; and it
 treats an email shared by two workspace members as ambiguous and links neither.
-Slack rate-limits the roster listing, so a large workspace may be read only in
-part, and the result says so when it was cut short.
+Slack rate-limits the roster listing, so the sweep reads at most 5 pages of 200
+accounts. A larger workspace is read only in part and the result says when it
+was cut short; a rerun starts from the same place, so the remainder has to be
+linked by hand.
 
 A link matched on email is re-verified on every request: the bot rechecks that
 the Slack account's current verified email still points at the same member, and
@@ -225,8 +227,10 @@ Whether a manual link needs the person's approval depends on who it points at:
   (shown as *Awaiting consent*) until they approve, and a decline keeps it off.
   Sending that DM needs the `im:write` scope, so reconnect after upgrading from
   a version that did not request it.
-- **Guests and Slack Connect users cannot be DMed** this way, so their link is
-  admin-set and active on save, labelled as such.
+- **Slack Connect users from another workspace cannot be DMed** this way, so
+  their link is admin-set and active on save, labelled as such. A guest of the
+  installed workspace can be DMed, so they get the normal consent request even
+  though the sweep never matches them automatically.
 
 A consented or admin-set manual link wins over email matching. Slack User Link
 records can only be written by the app itself, never directly through the API or
@@ -278,9 +282,9 @@ re-fire) and people who joined Slack after connection.
   silently.
 - **One Slack workspace per Twenty workspace.** Connecting Slack claims that
   Slack team for the connecting Twenty workspace, and on the same server a
-  second Twenty workspace connecting the same team is rejected. Removing the
-  connection releases the claim, and so does uninstalling the app or removing it
-  on the Slack side — with `app_uninstalled` and `tokens_revoked` subscribed,
+  second Twenty workspace connecting the same team is rejected. Removing the last
+  connection using it releases the claim, and so does uninstalling the app or
+  removing it on the Slack side — with `app_uninstalled` and `tokens_revoked` subscribed,
   Slack reports the removal and the claim is released. The dead connection still
   shows under **Connections** until you remove it; reconnecting means removing
   it and adding a new one.
