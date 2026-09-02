@@ -1,3 +1,5 @@
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -37,22 +39,23 @@ describe('SettingsProfileDevicesSection', () => {
   // of the section would hand React a new component type and remount the row,
   // so its DOM node would not survive a re-render.
   it('keeps a session row mounted across a re-render of the section', async () => {
-    const { rerender } = render(
-      <MemoryRouter>
-        <SettingsProfileDevicesSection />
-      </MemoryRouter>,
-      { wrapper: Wrapper },
+    const tree = (
+      <I18nProvider i18n={i18n}>
+        <MemoryRouter>
+          <SettingsProfileDevicesSection />
+        </MemoryRouter>
+      </I18nProvider>
     );
+
+    const { rerender } = render(tree, { wrapper: Wrapper });
 
     expect(await screen.findByText('This device')).toBeVisible();
-    const rowDropdownTrigger = screen.getByRole('button');
+    // The dropdown trigger carries role="button" and wraps the icon button,
+    // so take the outermost one: it is the floating-ui reference element.
+    const [rowDropdownTrigger] = screen.getAllByRole('button');
 
-    rerender(
-      <MemoryRouter>
-        <SettingsProfileDevicesSection />
-      </MemoryRouter>,
-    );
+    rerender(tree);
 
-    expect(screen.getByRole('button')).toBe(rowDropdownTrigger);
+    expect(screen.getAllByRole('button')[0]).toBe(rowDropdownTrigger);
   });
 });
