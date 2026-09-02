@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { buildFlatSearchFieldMetadataForField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/build-flat-search-field-metadata-for-field.util';
 import { findTsVectorFlatFieldMetadataForObject } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/find-ts-vector-flat-field-metadata-for-object.util';
+import { buildSearchVectorFlatFieldMetadataForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-search-vector-flat-field-metadata-for-custom-object.util';
 import { buildFieldSideEffectParentNotFoundFailure } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-field-side-effect-parent-not-found-failure.util';
 import { getPendingFlatSearchFieldMetadataCreatesForObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/get-pending-flat-search-field-metadata-creates-for-object.util';
 import { resolveParentFlatObjectMetadataAfterStateForFieldSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/resolve-parent-flat-object-metadata-after-state-for-field-side-effect.util';
@@ -98,15 +99,36 @@ export class FieldSearchFieldMetadataOnCreateSideEffectHandlerService extends Me
       }
     }
 
-    const tsVectorFlatFieldMetadata = findTsVectorFlatFieldMetadataForObject({
-      fieldUniversalIdentifiers:
-        parentFlatObjectMetadata.fieldUniversalIdentifiers,
-      flatFieldMetadataMaps: {
-        byUniversalIdentifier: fieldByUniversalIdentifier,
-      },
-    });
+    const parentIsPendingCreate = isDefined(
+      allFlatEntityOperationRecordByMetadataName.objectMetadata
+        ?.flatEntityToCreate[parentFlatObjectMetadata.universalIdentifier],
+    );
 
-    if (!isDefined(tsVectorFlatFieldMetadata)) {
+    // When the object is created in the same batch, the object-create side
+    // effect provisions its searchVector field, but handler ordering within
+    // the batch is unspecified: that pending create may not be visible here
+    // yet. Its universal identifier is deterministic, so reference it instead
+    // of losing the row to the race (it no-ops into the same field once both
+    // operations land).
+    const tsVectorFieldMetadataUniversalIdentifier =
+      findTsVectorFlatFieldMetadataForObject({
+        fieldUniversalIdentifiers:
+          parentFlatObjectMetadata.fieldUniversalIdentifiers,
+        flatFieldMetadataMaps: {
+          byUniversalIdentifier: fieldByUniversalIdentifier,
+        },
+      })?.universalIdentifier ??
+      (parentIsPendingCreate && parentFlatObjectMetadata.isSearchable === true
+        ? buildSearchVectorFlatFieldMetadataForCustomObject({
+            flatObjectMetadata: {
+              applicationUniversalIdentifier:
+                parentFlatObjectMetadata.applicationUniversalIdentifier,
+              universalIdentifier: parentFlatObjectMetadata.universalIdentifier,
+            },
+          }).universalIdentifier
+        : undefined);
+
+    if (!isDefined(tsVectorFieldMetadataUniversalIdentifier)) {
       return { status: 'noop' };
     }
 
@@ -119,6 +141,20 @@ export class FieldSearchFieldMetadataOnCreateSideEffectHandlerService extends Me
         )
         .filter(isDefined);
 
+    // Same-batch object creation may still owe the label identifier its row
+    // (position 0, created by the object-create side effect); leave that slot
+    // free when it has not been accumulated yet.
+    const labelIdentifierRowIsStillPending =
+      parentIsPendingCreate &&
+      isDefined(
+        parentFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
+      ) &&
+      !pendingFlatSearchFieldMetadatas.some(
+        (pendingFlatSearchFieldMetadata) =>
+          pendingFlatSearchFieldMetadata.fieldMetadataUniversalIdentifier ===
+          parentFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
+      );
+
     const position =
       [
         ...existingSearchFieldMetadatas,
@@ -126,19 +162,23 @@ export class FieldSearchFieldMetadataOnCreateSideEffectHandlerService extends Me
       ].reduce(
         (maxPosition, searchFieldMetadata) =>
           Math.max(maxPosition, searchFieldMetadata.position),
-        -1,
+        labelIdentifierRowIsStillPending ? 0 : -1,
       ) + 1;
 
+    // isSystemSideEffect: true (the util's default): the row is the engine's
+    // backing materialization of the field-level flag, like the unique
+    // backing index. A false here would let the app-sync deletion sweep
+    // collect the row on the next sync, since manifests declare the flag,
+    // not the row.
     const searchFieldMetadata = buildFlatSearchFieldMetadataForField({
       flatObjectMetadata: parentFlatObjectMetadata,
       flatFieldMetadata: {
         universalIdentifier: flatFieldMetadata.universalIdentifier,
       },
       tsVectorFlatFieldMetadata: {
-        universalIdentifier: tsVectorFlatFieldMetadata.universalIdentifier,
+        universalIdentifier: tsVectorFieldMetadataUniversalIdentifier,
       },
       position,
-      isSystemSideEffect: false,
     });
 
     return {

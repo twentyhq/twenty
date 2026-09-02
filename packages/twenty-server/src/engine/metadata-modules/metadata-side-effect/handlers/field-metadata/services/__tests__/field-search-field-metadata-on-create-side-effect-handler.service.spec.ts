@@ -1,3 +1,4 @@
+import { getFieldUniversalIdentifier } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldSearchFieldMetadataOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-search-field-metadata-on-create-side-effect-handler.service';
@@ -16,6 +17,7 @@ const buildArgs = ({
   isSystemBuild = false,
   isLabelIdentifier = false,
   hasTsVectorField = true,
+  parentIsPendingCreate = false,
   objectSearchFieldMetadatas = {},
   pendingSearchFieldMetadataCreatesByFieldUniversalIdentifier = {},
 }: {
@@ -23,6 +25,7 @@ const buildArgs = ({
   isSystemBuild?: boolean;
   isLabelIdentifier?: boolean;
   hasTsVectorField?: boolean;
+  parentIsPendingCreate?: boolean;
   objectSearchFieldMetadatas?: Record<string, { position: number }>;
   pendingSearchFieldMetadataCreatesByFieldUniversalIdentifier?: Record<
     string,
@@ -39,6 +42,25 @@ const buildArgs = ({
       isSearchable,
     },
     allFlatEntityOperationRecordByMetadataName: {
+      ...(parentIsPendingCreate
+        ? {
+            objectMetadata: {
+              flatEntityToCreate: {
+                [OBJECT_UNIVERSAL_IDENTIFIER]: {
+                  universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+                  applicationUniversalIdentifier:
+                    APPLICATION_UNIVERSAL_IDENTIFIER,
+                  isSearchable: true,
+                  labelIdentifierFieldMetadataUniversalIdentifier: undefined,
+                  fieldUniversalIdentifiers: [FIELD_UNIVERSAL_IDENTIFIER],
+                  searchFieldMetadataUniversalIdentifiers: [],
+                },
+              },
+              flatEntityToUpdate: {},
+              flatEntityToDelete: {},
+            },
+          }
+        : {}),
       searchFieldMetadata: {
         flatEntityToCreate: Object.fromEntries(
           Object.entries(
@@ -142,7 +164,7 @@ describe('FieldSearchFieldMetadataOnCreateSideEffectHandlerService', () => {
         TS_VECTOR_FIELD_UNIVERSAL_IDENTIFIER,
       objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
       position: 3,
-      isSystemSideEffect: false,
+      isSystemSideEffect: true,
     });
   });
 
@@ -208,5 +230,35 @@ describe('FieldSearchFieldMetadataOnCreateSideEffectHandlerService', () => {
     );
 
     expect(result.status).toBe('noop');
+  });
+
+  // Handler ordering within a batch is unspecified: the searchVector field
+  // provisioned by the object-create side effect may not be accumulated yet
+  // when this handler runs for a sibling field.
+  it('should reference the deterministic searchVector field when the object is created in the same batch', () => {
+    const result = handler.buildSideEffects(
+      buildArgs({
+        isSearchable: true,
+        parentIsPendingCreate: true,
+        hasTsVectorField: false,
+      }),
+    );
+
+    if (result.status !== 'success') {
+      throw new Error('expected success');
+    }
+
+    expect(
+      Object.values(
+        result.operations.searchFieldMetadata?.flatEntityToCreate ?? {},
+      )[0],
+    ).toMatchObject({
+      fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+      tsVectorFieldMetadataUniversalIdentifier: getFieldUniversalIdentifier({
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+        name: 'searchVector',
+      }),
+    });
   });
 });

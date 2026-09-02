@@ -150,6 +150,11 @@ export class FieldSearchFieldMetadataOnUpdateSideEffectHandlerService extends Me
         -1,
       ) + 1;
 
+    // isSystemSideEffect: true (the util's default): the row is the engine's
+    // backing materialization of the field-level flag, like the unique
+    // backing index. A false here would let the app-sync deletion sweep
+    // collect the row on the next sync, since manifests declare the flag,
+    // not the row.
     const searchFieldMetadata = buildFlatSearchFieldMetadataForField({
       flatObjectMetadata: existingFlatObjectMetadata,
       flatFieldMetadata: {
@@ -159,7 +164,6 @@ export class FieldSearchFieldMetadataOnUpdateSideEffectHandlerService extends Me
         universalIdentifier: tsVectorFlatFieldMetadata.universalIdentifier,
       },
       position,
-      isSystemSideEffect: false,
     });
 
     return {

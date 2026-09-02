@@ -146,7 +146,7 @@ describe('FieldSearchFieldMetadataOnUpdateSideEffectHandlerService', () => {
         TS_VECTOR_FIELD_UNIVERSAL_IDENTIFIER,
       objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
       position: 5,
-      isSystemSideEffect: false,
+      isSystemSideEffect: true,
     });
   });
 
