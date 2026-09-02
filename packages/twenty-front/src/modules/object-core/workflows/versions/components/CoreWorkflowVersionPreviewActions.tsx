@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { CoreWorkflowVersionPreviewActionsContent } from '@/object-core/workflows/versions/components/CoreWorkflowVersionPreviewActionsContent';
@@ -5,15 +6,19 @@ import { CoreWorkflowVersionPreviewActionsContent } from '@/object-core/workflow
 export const CoreWorkflowVersionPreviewActions = ({
   objectNameSingular,
   objectRecordId,
+  children,
 }: {
   objectNameSingular: string;
   objectRecordId: string;
+  children: ReactNode;
 }) => {
   if (objectNameSingular !== CoreObjectNameSingular.Workflow) {
-    return null;
+    return children;
   }
 
   return (
-    <CoreWorkflowVersionPreviewActionsContent workflowId={objectRecordId} />
+    <CoreWorkflowVersionPreviewActionsContent workflowId={objectRecordId}>
+      {children}
+    </CoreWorkflowVersionPreviewActionsContent>
   );
 };

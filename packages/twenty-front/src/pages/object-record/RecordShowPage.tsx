@@ -112,8 +112,9 @@ const RecordShowPageContent = ({
                   <CoreWorkflowVersionPreviewActions
                     objectNameSingular={objectNameSingular}
                     objectRecordId={objectRecordId}
-                  />
-                  <RecordShowCommandMenu />
+                  >
+                    <RecordShowCommandMenu />
+                  </CoreWorkflowVersionPreviewActions>
                   {!isLayoutCustomizationModeEnabled && (
                     <SidePanelToggleButton />
                   )}

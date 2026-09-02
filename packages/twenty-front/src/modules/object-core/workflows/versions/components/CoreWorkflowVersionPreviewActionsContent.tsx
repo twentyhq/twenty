@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
@@ -18,8 +19,10 @@ const StyledContainer = styled.div`
 
 export const CoreWorkflowVersionPreviewActionsContent = ({
   workflowId,
+  children,
 }: {
   workflowId: string;
+  children: ReactNode;
 }) => {
   const { t } = useLingui();
   const { openModal } = useModal();
@@ -29,7 +32,7 @@ export const CoreWorkflowVersionPreviewActionsContent = ({
     useRestoreWorkflowVersionAsDraft(workflowId);
 
   if (!isDefined(previewedWorkflowVersion)) {
-    return null;
+    return children;
   }
 
   const handleRestoreClick = () => {
