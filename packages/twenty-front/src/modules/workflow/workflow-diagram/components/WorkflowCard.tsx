@@ -27,7 +27,9 @@ export const WorkflowCard = () => {
     <WorkflowVisualizerComponentInstanceContext.Provider
       value={{
         instanceId: getWorkflowVisualizerComponentInstanceId({
-          recordId: targetRecord.id,
+          recordId:
+            previewedWorkflowVersionOnMainSurface?.workspaceWorkflowVersionId ??
+            targetRecord.id,
         }),
       }}
     >
