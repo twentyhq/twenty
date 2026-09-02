@@ -13,6 +13,11 @@ import { useSavedResponseDataSource } from '@/advanced-text-editor/extensions/sl
 
 jest.mock(
   '@/advanced-text-editor/extensions/slash-command/data-sources/SavedResponseDataSource',
+  () => ({
+    SavedResponseDataSourceProvider: ({ children }: { children: ReactNode }) =>
+      children,
+    useSavedResponseDataSource: jest.fn(),
+  }),
 );
 
 const mockedUseSavedResponseDataSource = jest.mocked(

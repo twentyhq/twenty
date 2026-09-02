@@ -3,7 +3,10 @@ import { forwardRef } from 'react';
 import { MenuItemSuggestion } from 'twenty-ui/navigation';
 
 import { SlashCommandPicker } from '@/advanced-text-editor/extensions/slash-command/SlashCommandPicker';
-import { useSavedResponseDataSource } from '@/advanced-text-editor/extensions/slash-command/data-sources/SavedResponseDataSource';
+import {
+  SavedResponseDataSourceProvider,
+  useSavedResponseDataSource,
+} from '@/advanced-text-editor/extensions/slash-command/data-sources/SavedResponseDataSource';
 import {
   type SlashCommandPickerComponentProps,
   type SlashCommandPickerRef,
@@ -18,7 +21,7 @@ type SavedResponsePickerItem = {
   selectable: boolean;
 };
 
-export const SavedResponsePicker = forwardRef<
+const SavedResponsePickerContent = forwardRef<
   SlashCommandPickerRef,
   SlashCommandPickerComponentProps
 >(({ editor, range, onComplete, searchQuery, savedResponseSubject }, ref) => {
@@ -108,3 +111,12 @@ export const SavedResponsePicker = forwardRef<
     />
   );
 });
+
+export const SavedResponsePicker = forwardRef<
+  SlashCommandPickerRef,
+  SlashCommandPickerComponentProps
+>((props, ref) => (
+  <SavedResponseDataSourceProvider>
+    <SavedResponsePickerContent ref={ref} {...props} />
+  </SavedResponseDataSourceProvider>
+));
