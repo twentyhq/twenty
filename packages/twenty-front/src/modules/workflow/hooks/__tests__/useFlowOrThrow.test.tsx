@@ -2,6 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
@@ -23,7 +24,10 @@ const buildWrapper =
       <WorkspaceSurfaceContext.Provider
         value={{
           type: surfaceType,
-          instanceId: surfaceType === 'side-panel' ? 'side-panel-page' : 'main',
+          instanceId:
+            surfaceType === 'side-panel'
+              ? 'side-panel-page'
+              : MAIN_CONTEXT_STORE_INSTANCE_ID,
           ownsRouteLocation: surfaceType === 'main',
         }}
       >

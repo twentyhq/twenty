@@ -4,6 +4,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -315,7 +316,7 @@ const FieldsWidgetStoryRenderer = ({
                       instanceId:
                         surfaceType === 'side-panel'
                           ? SIDE_PANEL_SURFACE_INSTANCE_ID
-                          : 'main',
+                          : MAIN_CONTEXT_STORE_INSTANCE_ID,
                       ownsRouteLocation: surfaceType === 'main',
                     }}
                   >

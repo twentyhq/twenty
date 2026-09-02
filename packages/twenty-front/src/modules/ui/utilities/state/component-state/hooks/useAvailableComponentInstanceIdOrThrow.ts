@@ -20,11 +20,13 @@ export const useAvailableComponentInstanceIdOrThrow = <
 
   if (isNonEmptyString(instanceIdFromProps)) {
     return instanceIdFromProps;
-  } else if (isNonEmptyString(instanceIdFromContext)) {
-    return instanceIdFromContext;
-  } else {
-    throw new Error(
-      'Instance id is not provided and cannot be found in context.',
-    );
   }
+
+  if (isNonEmptyString(instanceIdFromContext)) {
+    return instanceIdFromContext;
+  }
+
+  throw new Error(
+    'Instance id is not provided and cannot be found in context.',
+  );
 };

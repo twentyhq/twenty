@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
 import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
@@ -21,7 +22,10 @@ const buildWrapper =
     <WorkspaceSurfaceContext.Provider
       value={{
         type: surfaceType,
-        instanceId: surfaceType === 'side-panel' ? 'side-panel-page' : 'main',
+        instanceId:
+          surfaceType === 'side-panel'
+            ? 'side-panel-page'
+            : MAIN_CONTEXT_STORE_INSTANCE_ID,
         ownsRouteLocation: surfaceType === 'main',
       }}
     >
