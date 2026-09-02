@@ -14,12 +14,14 @@ type SlackConnectionStatusState = ParsedSlackConnectionStatus & {
 const LOADING_STATE: SlackConnectionStatusState = {
   isSlackConnected: false,
   connectionHealth: undefined,
+  hasRosterMatchFailed: false,
   isConnectionStatusLoading: true,
 };
 
 const DISCONNECTED_STATUS: ParsedSlackConnectionStatus = {
   isSlackConnected: false,
   connectionHealth: undefined,
+  hasRosterMatchFailed: false,
 };
 
 export const useSlackConnectionStatus = (): SlackConnectionStatusState => {

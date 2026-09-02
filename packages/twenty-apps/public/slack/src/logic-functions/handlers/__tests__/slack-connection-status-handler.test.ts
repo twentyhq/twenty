@@ -4,6 +4,7 @@ import { slackConnectionStatusHandler } from 'src/logic-functions/handlers/slack
 import { fetchCurrentWorkspaceId } from 'src/logic-functions/utils/fetch-current-workspace-id';
 import { findClaimedWorkspaceId } from 'src/logic-functions/utils/find-claimed-workspace-id';
 import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
+import { readSlackRosterMatchOutcome } from 'src/logic-functions/utils/read-slack-roster-match-outcome';
 
 const authTest = vi.fn();
 
@@ -25,6 +26,10 @@ vi.mock('src/logic-functions/utils/fetch-current-workspace-id', () => ({
   fetchCurrentWorkspaceId: vi.fn(),
 }));
 
+vi.mock('src/logic-functions/utils/read-slack-roster-match-outcome', () => ({
+  readSlackRosterMatchOutcome: vi.fn(),
+}));
+
 describe('slackConnectionStatusHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -35,6 +40,7 @@ describe('slackConnectionStatusHandler', () => {
     authTest.mockResolvedValue({ ok: true, team_id: 'T1' });
     vi.mocked(findClaimedWorkspaceId).mockResolvedValue('workspace-1');
     vi.mocked(fetchCurrentWorkspaceId).mockResolvedValue('workspace-1');
+    vi.mocked(readSlackRosterMatchOutcome).mockResolvedValue(undefined);
   });
 
   it('should report a missing connection without failing', async () => {
@@ -54,6 +60,21 @@ describe('slackConnectionStatusHandler', () => {
       success: true,
       isConnected: true,
       connectionHealth: 'ok',
+      hasRosterMatchFailed: false,
+    });
+  });
+
+  it('should flag a recorded roster match failure', async () => {
+    vi.mocked(readSlackRosterMatchOutcome).mockResolvedValue({
+      isSuccessful: false,
+      errorMessage: 'kaboom',
+    });
+
+    await expect(slackConnectionStatusHandler()).resolves.toEqual({
+      success: true,
+      isConnected: true,
+      connectionHealth: 'ok',
+      hasRosterMatchFailed: true,
     });
   });
 
@@ -106,6 +127,7 @@ describe('slackConnectionStatusHandler', () => {
       success: true,
       isConnected: true,
       connectionHealth: 'ok',
+      hasRosterMatchFailed: false,
     });
   });
 });

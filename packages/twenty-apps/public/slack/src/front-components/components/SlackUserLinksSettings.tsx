@@ -88,8 +88,12 @@ const StyledCenteredState = styled.div`
 
 export const SlackUserLinksSettings = () => {
   const { canManage, isPermissionLoading } = useCanManageSlackUserLinks();
-  const { isSlackConnected, connectionHealth, isConnectionStatusLoading } =
-    useSlackConnectionStatus();
+  const {
+    isSlackConnected,
+    connectionHealth,
+    hasRosterMatchFailed,
+    isConnectionStatusLoading,
+  } = useSlackConnectionStatus();
   const {
     slackUserLinks,
     isSlackUserLinksLoading,
@@ -212,6 +216,13 @@ export const SlackUserLinksSettings = () => {
           variant="warning"
           title="You need the roles permission"
           description="Only members with the roles permission can create or change Slack user links. You can review the existing links below."
+        />
+      )}
+      {canManage && hasRosterMatchFailed && !isDefined(matchSummary) && (
+        <Callout
+          variant="warning"
+          title="Email auto-link did not finish"
+          description="The last automatic email match failed before linking everyone. Press Auto-link by email below to run it again."
         />
       )}
       {canManage && (

@@ -7,6 +7,7 @@ import { asRecord } from 'src/logic-functions/utils/as-record.util';
 export type ParsedSlackConnectionStatus = {
   isSlackConnected: boolean;
   connectionHealth: SlackConnectionHealth | undefined;
+  hasRosterMatchFailed: boolean;
 };
 
 const KNOWN_HEALTH_VALUES: string[] = Object.values(SLACK_CONNECTION_HEALTH);
@@ -26,5 +27,6 @@ export const parseSlackConnectionStatus = (
     connectionHealth: isSlackConnectionHealth(record?.connectionHealth)
       ? record.connectionHealth
       : undefined,
+    hasRosterMatchFailed: record?.hasRosterMatchFailed === true,
   };
 };

@@ -10,7 +10,11 @@ describe('parseSlackConnectionStatus', () => {
         isConnected: true,
         connectionHealth: 'ok',
       }),
-    ).toEqual({ isSlackConnected: true, connectionHealth: 'ok' });
+    ).toEqual({
+      isSlackConnected: true,
+      connectionHealth: 'ok',
+      hasRosterMatchFailed: false,
+    });
   });
 
   it('should parse a broken connection health', () => {
@@ -23,6 +27,7 @@ describe('parseSlackConnectionStatus', () => {
     ).toEqual({
       isSlackConnected: true,
       connectionHealth: 'team_claimed_by_another_workspace',
+      hasRosterMatchFailed: false,
     });
   });
 
@@ -32,13 +37,32 @@ describe('parseSlackConnectionStatus', () => {
         isConnected: true,
         connectionHealth: 'exploded',
       }),
-    ).toEqual({ isSlackConnected: true, connectionHealth: undefined });
+    ).toEqual({
+      isSlackConnected: true,
+      connectionHealth: undefined,
+      hasRosterMatchFailed: false,
+    });
+  });
+
+  it('should surface a recorded roster match failure', () => {
+    expect(
+      parseSlackConnectionStatus({
+        isConnected: true,
+        connectionHealth: 'ok',
+        hasRosterMatchFailed: true,
+      }),
+    ).toEqual({
+      isSlackConnected: true,
+      connectionHealth: 'ok',
+      hasRosterMatchFailed: true,
+    });
   });
 
   it('should treat a malformed payload as disconnected', () => {
     expect(parseSlackConnectionStatus('nope')).toEqual({
       isSlackConnected: false,
       connectionHealth: undefined,
+      hasRosterMatchFailed: false,
     });
   });
 });

@@ -9,6 +9,7 @@ import {
 import { fetchCurrentWorkspaceId } from 'src/logic-functions/utils/fetch-current-workspace-id';
 import { findClaimedWorkspaceId } from 'src/logic-functions/utils/find-claimed-workspace-id';
 import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
+import { readSlackRosterMatchOutcome } from 'src/logic-functions/utils/read-slack-roster-match-outcome';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 const SLACK_AUTH_ERROR_CODES = [
@@ -23,6 +24,7 @@ type SlackConnectionStatusResult = {
   success: true;
   isConnected: boolean;
   connectionHealth?: SlackConnectionHealth;
+  hasRosterMatchFailed?: boolean;
 };
 
 export const slackConnectionStatusHandler =
@@ -59,10 +61,12 @@ export const slackConnectionStatusHandler =
       return { success: true, isConnected: true };
     }
 
-    const [claimedWorkspaceId, currentWorkspaceId] = await Promise.all([
-      findClaimedWorkspaceId(installedTeamId),
-      fetchCurrentWorkspaceId(),
-    ]);
+    const [claimedWorkspaceId, currentWorkspaceId, rosterMatchOutcome] =
+      await Promise.all([
+        findClaimedWorkspaceId(installedTeamId),
+        fetchCurrentWorkspaceId(),
+        readSlackRosterMatchOutcome(),
+      ]);
 
     if (!isDefined(claimedWorkspaceId)) {
       return {
@@ -88,5 +92,6 @@ export const slackConnectionStatusHandler =
       success: true,
       isConnected: true,
       connectionHealth: SLACK_CONNECTION_HEALTH.OK,
+      hasRosterMatchFailed: rosterMatchOutcome?.isSuccessful === false,
     };
   };
