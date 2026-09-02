@@ -118,8 +118,6 @@ const WROTE_VERBS = [
   'wrote',
 ].join('|');
 
-// Scripts that end an attribution with a fullwidth colon, and that do not open
-// the line with one of the latin keywords above.
 const LOCALIZED_ATTRIBUTION_LINES = [
   /^\s*在[\s\S]{0,200}?写道[:：]\s*(?:\n|$)/,
   /^\s*[^\n]{0,200}?於[\s\S]{0,80}?寫道[:：]\s*(?:\n|$)/,
@@ -132,6 +130,7 @@ const LOCALIZED_ATTRIBUTION_LINES = [
 ];
 
 export const QUOTE_HEADER_PATTERNS = {
+  caretLine: /^\s*>/,
   headerField: new RegExp(
     `^\\s*[*]?(${HEADER_FIELD_NAMES})\\s?[:：][*]?(\\s|$)`,
     'i',
