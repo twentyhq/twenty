@@ -174,6 +174,11 @@ const nextConfig: LinariaConfig = {
         permanent: true,
       },
       {
+        source: '/docs',
+        destination: 'https://docs.twenty.com/',
+        permanent: true,
+      },
+      {
         source: '/resources/why-twenty',
         destination: '/why-twenty',
         permanent: true,
