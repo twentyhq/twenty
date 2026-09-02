@@ -3,13 +3,13 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { SLACK_USER_LINK_CONSENT_STATE } from 'src/logic-functions/constants/slack-user-link-consent-state';
 import { SLACK_USER_LINK_SOURCE } from 'src/logic-functions/constants/slack-user-link-source';
+import { createSlackUserLink } from 'src/logic-functions/data/create-slack-user-link';
 import { createSlackUserLinks } from 'src/logic-functions/data/create-slack-user-links';
 import { destroySlackUserLinks } from 'src/logic-functions/data/destroy-slack-user-links';
 import { findDeletedSlackUserLinkIds } from 'src/logic-functions/data/find-deleted-slack-user-link-ids';
 import { listLinkedSlackUserIds } from 'src/logic-functions/data/list-linked-slack-user-ids';
 import { type SlackRosterMatchCandidate } from 'src/logic-functions/types/slack-roster-match.type';
 import { type SlackUserLinkDraft } from 'src/logic-functions/types/slack-user-link-draft.type';
-import { persistSlackUserLink } from 'src/logic-functions/utils/persist-slack-user-link';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 const CANDIDATES_PER_CREATE = 200;
@@ -38,7 +38,15 @@ const toSlackUserLinkDraft = ({
   consentState: SLACK_USER_LINK_CONSENT_STATE.ACTIVE,
 });
 
-const splitCandidatesTheBatchAlreadyWrote = async (
+const dedupeCandidatesBySlackUserId = (
+  candidates: SlackRosterMatchCandidate[],
+): SlackRosterMatchCandidate[] => [
+  ...new Map(
+    candidates.map((candidate) => [candidate.slackUserId, candidate]),
+  ).values(),
+];
+
+const partitionWrittenCandidates = async (
   client: CoreApiClient,
   {
     candidates,
@@ -63,7 +71,7 @@ const splitCandidatesTheBatchAlreadyWrote = async (
   };
 };
 
-const persistCandidatesOneByOne = async (
+const createCandidatesOneByOne = async (
   client: CoreApiClient,
   {
     candidates,
@@ -74,16 +82,10 @@ const persistCandidatesOneByOne = async (
 
   for (const candidate of candidates) {
     try {
-      await persistSlackUserLink(client, {
-        existingLink: undefined,
-        isSameMemberRelink: false,
-        slackTeamId,
-        slackUserId: candidate.slackUserId,
-        workspaceMemberId: candidate.workspaceMemberId,
-        name: candidate.displayName,
-        source: SLACK_USER_LINK_SOURCE.AUTO,
-        consentState: SLACK_USER_LINK_CONSENT_STATE.ACTIVE,
-      });
+      await createSlackUserLink(
+        client,
+        toSlackUserLinkDraft({ candidate, slackTeamId }),
+      );
       outcomes.push(true);
     } catch (error) {
       console.warn(
@@ -110,7 +112,7 @@ const recoverFailedBatch = async (
 ): Promise<SlackRosterLinkOutcome> => {
   try {
     const { writtenCount, unwrittenCandidates } =
-      await splitCandidatesTheBatchAlreadyWrote(client, {
+      await partitionWrittenCandidates(client, {
         candidates,
         slackTeamId,
       });
@@ -122,14 +124,14 @@ const recoverFailedBatch = async (
       };
     }
 
-    const persistedCount = await persistCandidatesOneByOne(client, {
+    const createdCount = await createCandidatesOneByOne(client, {
       candidates: unwrittenCandidates,
       slackTeamId,
     });
 
     return {
-      linkedCount: writtenCount + persistedCount,
-      failedCount: unwrittenCandidates.length - persistedCount,
+      linkedCount: writtenCount + createdCount,
+      failedCount: unwrittenCandidates.length - createdCount,
     };
   } catch (error) {
     console.warn(
@@ -147,13 +149,15 @@ export const linkSlackRosterCandidates = async (
     slackTeamId,
   }: { candidates: SlackRosterMatchCandidate[]; slackTeamId: string },
 ): Promise<SlackRosterLinkOutcome> => {
-  if (candidates.length === 0) {
+  const uniqueCandidates = dedupeCandidatesBySlackUserId(candidates);
+
+  if (uniqueCandidates.length === 0) {
     return { linkedCount: 0, failedCount: 0 };
   }
 
   const deletedLinkIds = await findDeletedSlackUserLinkIds(client, {
     slackTeamId,
-    slackUserIds: candidates.map((candidate) => candidate.slackUserId),
+    slackUserIds: uniqueCandidates.map((candidate) => candidate.slackUserId),
   });
 
   if (deletedLinkIds.length > 0) {
@@ -165,10 +169,10 @@ export const linkSlackRosterCandidates = async (
 
   for (
     let batchStart = 0;
-    batchStart < candidates.length;
+    batchStart < uniqueCandidates.length;
     batchStart += CANDIDATES_PER_CREATE
   ) {
-    const batchCandidates = candidates.slice(
+    const batchCandidates = uniqueCandidates.slice(
       batchStart,
       batchStart + CANDIDATES_PER_CREATE,
     );

@@ -9,13 +9,13 @@ const {
   destroySlackUserLinksMock,
   findDeletedSlackUserLinkIdsMock,
   listLinkedSlackUserIdsMock,
-  persistSlackUserLinkMock,
+  createSlackUserLinkMock,
 } = vi.hoisted(() => ({
   createSlackUserLinksMock: vi.fn(),
   destroySlackUserLinksMock: vi.fn(),
   findDeletedSlackUserLinkIdsMock: vi.fn(),
   listLinkedSlackUserIdsMock: vi.fn(),
-  persistSlackUserLinkMock: vi.fn(),
+  createSlackUserLinkMock: vi.fn(),
 }));
 
 vi.mock('src/logic-functions/data/create-slack-user-links', () => ({
@@ -34,8 +34,8 @@ vi.mock('src/logic-functions/data/list-linked-slack-user-ids', () => ({
   listLinkedSlackUserIds: listLinkedSlackUserIdsMock,
 }));
 
-vi.mock('src/logic-functions/utils/persist-slack-user-link', () => ({
-  persistSlackUserLink: persistSlackUserLinkMock,
+vi.mock('src/logic-functions/data/create-slack-user-link', () => ({
+  createSlackUserLink: createSlackUserLinkMock,
 }));
 
 const SLACK_TEAM_ID = 'T-installed';
@@ -55,7 +55,7 @@ describe('linkSlackRosterCandidates', () => {
     vi.clearAllMocks();
     findDeletedSlackUserLinkIdsMock.mockResolvedValue([]);
     listLinkedSlackUserIdsMock.mockResolvedValue(new Set());
-    persistSlackUserLinkMock.mockResolvedValue('link-new');
+    createSlackUserLinkMock.mockResolvedValue('link-new');
   });
 
   it('should create every candidate in one call', async () => {
@@ -136,7 +136,7 @@ describe('linkSlackRosterCandidates', () => {
 
   it('should link one at a time and count the failure when the batch fails', async () => {
     createSlackUserLinksMock.mockRejectedValue(new Error('batch failed'));
-    persistSlackUserLinkMock
+    createSlackUserLinkMock
       .mockRejectedValueOnce(new Error('write failed'))
       .mockResolvedValueOnce('link-new');
 
@@ -145,7 +145,7 @@ describe('linkSlackRosterCandidates', () => {
       slackTeamId: SLACK_TEAM_ID,
     });
 
-    expect(persistSlackUserLinkMock).toHaveBeenCalledTimes(2);
+    expect(createSlackUserLinkMock).toHaveBeenCalledTimes(2);
     expect(outcome).toEqual({ linkedCount: 1, failedCount: 1 });
   });
 
@@ -158,8 +158,8 @@ describe('linkSlackRosterCandidates', () => {
       slackTeamId: SLACK_TEAM_ID,
     });
 
-    expect(persistSlackUserLinkMock).toHaveBeenCalledTimes(1);
-    expect(persistSlackUserLinkMock).toHaveBeenCalledWith(
+    expect(createSlackUserLinkMock).toHaveBeenCalledTimes(1);
+    expect(createSlackUserLinkMock).toHaveBeenCalledWith(
       client,
       expect.objectContaining({ slackUserId: 'U2' }),
     );
@@ -168,7 +168,7 @@ describe('linkSlackRosterCandidates', () => {
 
   it('should stop retrying one at a time once a second batch fails', async () => {
     createSlackUserLinksMock.mockRejectedValue(new Error('batch failed'));
-    persistSlackUserLinkMock.mockRejectedValue(new Error('write failed'));
+    createSlackUserLinkMock.mockRejectedValue(new Error('write failed'));
 
     const candidates = Array.from({ length: 400 }, (_, index) =>
       candidate(`U${index}`),
@@ -180,7 +180,7 @@ describe('linkSlackRosterCandidates', () => {
     });
 
     expect(createSlackUserLinksMock).toHaveBeenCalledTimes(2);
-    expect(persistSlackUserLinkMock).toHaveBeenCalledTimes(200);
+    expect(createSlackUserLinkMock).toHaveBeenCalledTimes(200);
     expect(outcome).toEqual({ linkedCount: 0, failedCount: 400 });
   });
 
@@ -198,13 +198,13 @@ describe('linkSlackRosterCandidates', () => {
       slackTeamId: SLACK_TEAM_ID,
     });
 
-    expect(persistSlackUserLinkMock).toHaveBeenCalledTimes(200);
+    expect(createSlackUserLinkMock).toHaveBeenCalledTimes(200);
     expect(outcome).toEqual({ linkedCount: 400, failedCount: 0 });
   });
 
   it('should count rows a given-up batch already wrote as linked', async () => {
     createSlackUserLinksMock.mockRejectedValue(new Error('batch failed'));
-    persistSlackUserLinkMock.mockRejectedValue(new Error('write failed'));
+    createSlackUserLinkMock.mockRejectedValue(new Error('write failed'));
     listLinkedSlackUserIdsMock.mockImplementation(
       async (_client, { slackUserIds }) =>
         new Set(
@@ -221,7 +221,7 @@ describe('linkSlackRosterCandidates', () => {
       slackTeamId: SLACK_TEAM_ID,
     });
 
-    expect(persistSlackUserLinkMock).toHaveBeenCalledTimes(200);
+    expect(createSlackUserLinkMock).toHaveBeenCalledTimes(200);
     expect(outcome).toEqual({ linkedCount: 1, failedCount: 399 });
   });
 
@@ -241,6 +241,20 @@ describe('linkSlackRosterCandidates', () => {
     });
 
     expect(outcome).toEqual({ linkedCount: 200, failedCount: 200 });
+  });
+
+  it('should write a Slack user repeated by the roster only once', async () => {
+    const outcome = await linkSlackRosterCandidates(client, {
+      candidates: [candidate('U1', 'Ada'), candidate('U1', 'Ada')],
+      slackTeamId: SLACK_TEAM_ID,
+    });
+
+    expect(createSlackUserLinksMock.mock.calls[0][1].drafts).toHaveLength(1);
+    expect(findDeletedSlackUserLinkIdsMock).toHaveBeenCalledWith(client, {
+      slackTeamId: SLACK_TEAM_ID,
+      slackUserIds: ['U1'],
+    });
+    expect(outcome).toEqual({ linkedCount: 1, failedCount: 0 });
   });
 
   it('should never upsert, so a declined or manual link is never overwritten', async () => {
