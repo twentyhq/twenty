@@ -2,7 +2,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
-const EMAILS_PER_QUERY = 200;
+import { escapeSqlLikePattern } from 'src/logic-functions/utils/escape-sql-like-pattern.util';
+
+const EMAILS_PER_QUERY = 50;
 const MEMBERS_PER_PAGE = 200;
 const MAX_PAGES_PER_QUERY = 5;
 
@@ -16,7 +18,7 @@ export const findWorkspaceMemberIdsByEmails = async (
   { emails }: { emails: string[] },
 ): Promise<WorkspaceMemberEmailLookup> => {
   const lookedUpEmails = [
-    ...new Set(emails.flatMap((email) => [email, email.toLowerCase()])),
+    ...new Set(emails.map((email) => email.toLowerCase())),
   ];
   const workspaceMemberIdByEmail = new Map<string, string>();
   const ambiguousEmails = new Set<string>();
@@ -37,7 +39,11 @@ export const findWorkspaceMemberIdsByEmails = async (
       const queryResult = await client.query({
         workspaceMembers: {
           __args: {
-            filter: { userEmail: { in: queriedEmails } },
+            filter: {
+              or: queriedEmails.map((email) => ({
+                userEmail: { ilike: escapeSqlLikePattern(email) },
+              })),
+            },
             first: MEMBERS_PER_PAGE,
             ...(isDefined(after) ? { after } : {}),
           },

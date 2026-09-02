@@ -50,7 +50,7 @@ describe('findWorkspaceMemberIdsByEmails', () => {
     expect(ambiguousEmailCount).toBe(0);
   });
 
-  it('should ask only for the roster emails, in both the given and the lowercased form', async () => {
+  it('should ask only for the roster emails through case-insensitive matches', async () => {
     const { client, queryMock } = buildClient([{ edges: [] }]);
 
     await findWorkspaceMemberIdsByEmails(client, {
@@ -59,9 +59,22 @@ describe('findWorkspaceMemberIdsByEmails', () => {
 
     expect(queryMock).toHaveBeenCalledTimes(1);
     expect(queryMock.mock.calls[0][0].workspaceMembers.__args.filter).toEqual({
-      userEmail: {
-        in: ['Ada@Twenty.com', 'ada@twenty.com', 'bob@twenty.com'],
-      },
+      or: [
+        { userEmail: { ilike: 'ada@twenty.com' } },
+        { userEmail: { ilike: 'bob@twenty.com' } },
+      ],
+    });
+  });
+
+  it('should escape like wildcards inside the looked up emails', async () => {
+    const { client, queryMock } = buildClient([{ edges: [] }]);
+
+    await findWorkspaceMemberIdsByEmails(client, {
+      emails: ['john_doe@twenty.com'],
+    });
+
+    expect(queryMock.mock.calls[0][0].workspaceMembers.__args.filter).toEqual({
+      or: [{ userEmail: { ilike: 'john\\_doe@twenty.com' } }],
     });
   });
 
