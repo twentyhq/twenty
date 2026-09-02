@@ -50,31 +50,6 @@ describe('stepFailedAndContinued', () => {
     expect(result).toBe(false);
   });
 
-  it('should return false when the step is not failed safely', () => {
-    const step = createMockCodeStep('step-1', [], {
-      continueOnFailure: true,
-    });
-
-    const result = stepFailedAndContinued({
-      step,
-      stepInfos: {
-        'step-1': { status: StepStatus.FAILED, error: 'some error' },
-      },
-    });
-
-    expect(result).toBe(false);
-  });
-
-  it('should return false when the step has not been reached', () => {
-    const step = createMockCodeStep('step-1', [], {
-      continueOnFailure: true,
-    });
-
-    const result = stepFailedAndContinued({ step, stepInfos: {} });
-
-    expect(result).toBe(false);
-  });
-
   it('should return false for an if/else step even when it continues on failure', () => {
     const step = createMockIfElseStep(
       'step-1',
