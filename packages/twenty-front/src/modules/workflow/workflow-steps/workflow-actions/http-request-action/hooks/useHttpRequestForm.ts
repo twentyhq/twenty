@@ -78,6 +78,7 @@ export const useHttpRequestForm = ({
   };
   return {
     formData,
+    errorHandlingOptions,
     handleFieldChange,
     saveAction,
     handleErrorHandlingOptionsChange,

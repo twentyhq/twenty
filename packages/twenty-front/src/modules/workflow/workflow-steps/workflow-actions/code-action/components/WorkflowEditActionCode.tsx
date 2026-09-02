@@ -257,6 +257,10 @@ export const WorkflowEditActionCode = ({
     });
   };
 
+  const [errorHandlingOptions, setErrorHandlingOptions] = useState(
+    action.settings.errorHandlingOptions
+  );
+
   const updateAction = useDebouncedCallback(
     (actionUpdate: Partial<WorkflowCodeAction>) => {
       if (actionOptions.readonly === true) {
@@ -265,6 +269,10 @@ export const WorkflowEditActionCode = ({
 
       actionOptions.onActionUpdate({
         ...action,
+        settings: {
+          ...action.settings,
+          errorHandlingOptions,
+        },
         ...actionUpdate,
       });
     },
@@ -425,16 +433,17 @@ export const WorkflowEditActionCode = ({
                 readonly={actionOptions.readonly}
               />
               <WorkflowErrorHandlingOptions
-                errorHandlingOptions={action.settings.errorHandlingOptions}
-                onChange={(errorHandlingOptions) => {
+                errorHandlingOptions={errorHandlingOptions}
+                onChange={(newErrorHandlingOptions) => {
                   if (actionOptions.readonly === true) {
                     return;
                   }
+                  setErrorHandlingOptions(newErrorHandlingOptions);
                   actionOptions.onActionUpdate?.({
                     ...action,
                     settings: {
                       ...action.settings,
-                      errorHandlingOptions,
+                      errorHandlingOptions: newErrorHandlingOptions,
                     },
                   });
                 }}

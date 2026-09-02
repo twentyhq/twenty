@@ -95,7 +95,7 @@ export const WorkflowEditActionHttpRequest = ({
     WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID,
   );
 
-  const { formData, handleFieldChange, handleErrorHandlingOptionsChange, saveAction } = useHttpRequestForm({
+  const { formData, errorHandlingOptions, handleFieldChange, handleErrorHandlingOptionsChange, saveAction } = useHttpRequestForm({
     action,
     onActionUpdate: actionOptions.onActionUpdate,
     readonly: actionOptions.readonly === true,
@@ -193,7 +193,7 @@ export const WorkflowEditActionHttpRequest = ({
             </StyledFullHeightFormRawJsonFieldInputContainer>
 
             <WorkflowErrorHandlingOptions
-              errorHandlingOptions={action.settings.errorHandlingOptions}
+              errorHandlingOptions={errorHandlingOptions}
               onChange={(errorHandlingOptions) => {
                 if (actionOptions.readonly === true) {
                   return;

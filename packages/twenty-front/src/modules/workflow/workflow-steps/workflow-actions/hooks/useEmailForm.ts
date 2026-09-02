@@ -85,6 +85,7 @@ export const useEmailForm = ({
 
   return {
     formData,
+    errorHandlingOptions,
     handleFieldChange,
     handleFieldsChange,
     saveAction,

@@ -66,7 +66,7 @@ export const WorkflowEditActionEmailBase = ({
 
   const redirectUrl = `/object/workflow/${workflowVisualizerWorkflowId}`;
 
-  const { formData, handleFieldChange, handleFieldsChange, handleErrorHandlingOptionsChange, saveAction } =
+  const { formData, errorHandlingOptions, handleFieldChange, handleFieldsChange, handleErrorHandlingOptionsChange, saveAction } =
     useEmailForm({
       action,
       onActionUpdate:
@@ -406,7 +406,7 @@ export const WorkflowEditActionEmailBase = ({
             VariablePicker={WorkflowVariablePicker}
           />
           <WorkflowErrorHandlingOptions
-            errorHandlingOptions={action.settings.errorHandlingOptions}
+            errorHandlingOptions={errorHandlingOptions}
             onChange={(errorHandlingOptions) => {
               if (actionOptions.readonly === true) {
                 return;

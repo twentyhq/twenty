@@ -77,6 +77,7 @@ export const useCalendarEventForm = ({
 
   return {
     formData,
+    errorHandlingOptions,
     handleFieldChange,
     saveAction,
     handleErrorHandlingOptionsChange,

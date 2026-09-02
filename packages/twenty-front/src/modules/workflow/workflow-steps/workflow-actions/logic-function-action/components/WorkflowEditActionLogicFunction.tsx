@@ -22,7 +22,7 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isObject } from '@sniptt/guards';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
@@ -149,12 +149,17 @@ export const WorkflowEditActionLogicFunction = ({
     oldInput: logicFunctionTestData.input,
   });
 
+  const [errorHandlingOptions, setErrorHandlingOptions] = useState(
+    action.settings.errorHandlingOptions
+  );
+
   const handleInputChange = (value: unknown, path: string[]) => {
     const updatedFunctionInput = setNestedValue(functionInput, path, value);
 
     updateAction({
       settings: {
         ...action.settings,
+        errorHandlingOptions,
         input: {
           ...action.settings.input,
           logicFunctionInput: updatedFunctionInput,
@@ -284,15 +289,16 @@ export const WorkflowEditActionLogicFunction = ({
               readonly={actionOptions.readonly}
             />
             <WorkflowErrorHandlingOptions
-              errorHandlingOptions={action.settings.errorHandlingOptions}
-              onChange={(errorHandlingOptions) => {
+              errorHandlingOptions={errorHandlingOptions}
+              onChange={(newErrorHandlingOptions) => {
                 if (actionOptions.readonly === true) {
                   return;
                 }
+                setErrorHandlingOptions(newErrorHandlingOptions);
                 updateAction({
                   settings: {
                     ...action.settings,
-                    errorHandlingOptions,
+                    errorHandlingOptions: newErrorHandlingOptions,
                   },
                 });
               }}

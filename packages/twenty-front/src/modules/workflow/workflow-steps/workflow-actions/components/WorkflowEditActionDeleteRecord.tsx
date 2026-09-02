@@ -160,7 +160,7 @@ export const WorkflowEditActionDeleteRecord = ({
         )}
 
         <WorkflowErrorHandlingOptions
-          errorHandlingOptions={action.settings.errorHandlingOptions}
+          errorHandlingOptions={errorHandlingOptions}
           onChange={(options) => {
             if (actionOptions.readonly === true) {
               return;
