@@ -1,6 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { CoreWorkflowVersionPreviewEffect } from '@/object-core/workflows/versions/components/CoreWorkflowVersionPreviewEffect';
 import { usePreviewWorkflowVersion } from '@/object-core/workflows/versions/hooks/usePreviewWorkflowVersion';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { WorkflowDiagramCanvasEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditable';
@@ -13,9 +15,13 @@ import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-
 
 export const WorkflowCard = () => {
   const targetRecord = useTargetRecord();
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
   const { previewedWorkflowVersion } = usePreviewWorkflowVersion(
     targetRecord.id,
   );
+  const previewedWorkflowVersionOnMainSurface = isInSidePanel
+    ? undefined
+    : previewedWorkflowVersion;
 
   return (
     <WorkflowVisualizerComponentInstanceContext.Provider
@@ -25,16 +31,17 @@ export const WorkflowCard = () => {
         }),
       }}
     >
-      {isDefined(previewedWorkflowVersion) ? (
+      <CoreWorkflowVersionPreviewEffect workflowId={targetRecord.id} />
+      {isDefined(previewedWorkflowVersionOnMainSurface) ? (
         <>
           <WorkflowVersionVisualizerEffect
             workflowVersionId={
-              previewedWorkflowVersion.workspaceWorkflowVersionId
+              previewedWorkflowVersionOnMainSurface.workspaceWorkflowVersionId
             }
           />
           <WorkflowVersionVisualizer
             workflowVersionId={
-              previewedWorkflowVersion.workspaceWorkflowVersionId
+              previewedWorkflowVersionOnMainSurface.workspaceWorkflowVersionId
             }
           />
         </>

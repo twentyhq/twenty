@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CoreWorkflowVersionsListItem } from '@/object-core/workflows/versions/components/CoreWorkflowVersionsListItem';
 import { useCoreWorkflowVersions } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersions';
@@ -31,6 +32,9 @@ export const SidePanelCoreWorkflowVersionsPage = () => {
               previewedWorkflowVersion?.coreWorkflowVersionId ===
               coreWorkflowVersion.id
             }
+            isSelectable={isDefined(
+              coreWorkflowVersion.workspaceWorkflowVersionId,
+            )}
             onSelect={() => previewWorkflowVersion(coreWorkflowVersion)}
           />
         ))}

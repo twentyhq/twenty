@@ -6,13 +6,15 @@ import { GetCoreWorkflowVersionsDocument } from '~/generated/graphql';
 export const useCoreWorkflowVersions = (workflowId: string) => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const { data, loading } = useQuery(GetCoreWorkflowVersionsDocument, {
+  const { data, loading, refetch } = useQuery(GetCoreWorkflowVersionsDocument, {
     client: apolloCoreClient,
+    fetchPolicy: 'cache-and-network',
     variables: { workflowId },
   });
 
   return {
     coreWorkflowVersions: data?.coreWorkflowVersions ?? [],
     loading,
+    refetchCoreWorkflowVersions: refetch,
   };
 };

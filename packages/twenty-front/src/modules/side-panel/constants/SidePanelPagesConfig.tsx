@@ -102,4 +102,5 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   ],
   [SidePanelPages.RoutedPage, <SidePanelRoutedPage />],
   [SidePanelPages.WorkflowCoreFilters, <SidePanelCoreWorkflowFiltersPage />],
+  [SidePanelPages.WorkflowVersions, <SidePanelCoreWorkflowVersionsPage />],
 ]);
