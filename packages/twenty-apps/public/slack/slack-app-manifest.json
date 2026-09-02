@@ -25,6 +25,7 @@
         "chat:write",
         "chat:write.public",
         "groups:read",
+        "im:write",
         "reactions:write",
         "app_mentions:read",
         "channels:history",

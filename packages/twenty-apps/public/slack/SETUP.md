@@ -18,6 +18,7 @@ Two parts: a **Slack app** you create, and the **Twenty side** where you paste i
    | `chat:write` | post, update, delete, ephemeral |
    | `chat:write.public` | post to public channels without the bot joining |
    | `groups:read` | list private channels the bot is in |
+   | `im:write` | open a DM with a member to ask for their consent to a manual link |
    | `reactions:write` | add reactions |
    | `app_mentions:read` | assistant: mentions of the bot |
    | `channels:history` | assistant: thread follow-ups in public channels |
