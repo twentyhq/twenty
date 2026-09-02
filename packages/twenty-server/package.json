@@ -98,7 +98,7 @@
     "digest-fetch": "^3.1.1",
     "dompurify": "^3.4.11",
     "dotenv": "16.4.5",
-    "email-reply-parser": "^2.3.5",
+    "email-reply-parser": "patch:email-reply-parser@npm%3A2.3.5#~/.yarn/patches/email-reply-parser-npm-2.3.5-c11cf92562.patch",
     "express": "5.2.1",
     "express-session": "^1.18.2",
     "file-type": "^21.3.2",

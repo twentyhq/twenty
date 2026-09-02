@@ -1,0 +1,21 @@
+diff --git a/dist/parser/emailparser.js b/dist/parser/emailparser.js
+index 53eebf770e489d3c18b20ae08906efb73cbcd7c1..11a49d45e78feb8389023409007b7be9e6d192d5 100644
+--- a/dist/parser/emailparser.js
++++ b/dist/parser/emailparser.js
+@@ -145,13 +145,10 @@ class EmailParser {
+      * Check if the line is a quote header
+      */
+     isQuoteHeader(line) {
+-        let hasHeader = false;
+-        RegexList.quoteHeadersRegex.forEach((regex) => {
+-            if (regex.test(this.stringReverse(line))) {
+-                hasHeader = true;
+-            }
++        const reversedLine = this.stringReverse(line);
++        return RegexList.quoteHeadersRegex.some((regex) => {
++            return regex.test(reversedLine);
+         });
+-        return hasHeader;
+     }
+     /**
+      * Check if the line is a signature

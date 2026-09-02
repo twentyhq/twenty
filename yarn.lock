@@ -29424,7 +29424,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"email-reply-parser@npm:^2.3.5":
+"email-reply-parser@npm:2.3.5":
   version: 2.3.5
   resolution: "email-reply-parser@npm:2.3.5"
   peerDependencies:
@@ -29433,6 +29433,18 @@ __metadata:
     re2:
       optional: true
   checksum: 10c0/1ab770b3d90cfb917dc347001db92b01916b5ee47ca7029eae39c6588458cd93c5ebe26c354c47b1052f5b7d6966e196eb893d729bf7b7c92ce546b9e6df9430
+  languageName: node
+  linkType: hard
+
+"email-reply-parser@patch:email-reply-parser@npm%3A2.3.5#~/.yarn/patches/email-reply-parser-npm-2.3.5-c11cf92562.patch":
+  version: 2.3.5
+  resolution: "email-reply-parser@patch:email-reply-parser@npm%3A2.3.5#~/.yarn/patches/email-reply-parser-npm-2.3.5-c11cf92562.patch::version=2.3.5&hash=4d5373"
+  peerDependencies:
+    re2: 1.22.1
+  peerDependenciesMeta:
+    re2:
+      optional: true
+  checksum: 10c0/2f057a53a1fdf0c86e89f0b5150d187b844c10579df7e7ca36f1761e816128080ccf57abdf4f64b747df2efad2b59ade76d5f3ed98575996fb6e9b83897737ab
   languageName: node
   linkType: hard
 
@@ -49941,7 +49953,7 @@ __metadata:
     digest-fetch: "npm:^3.1.1"
     dompurify: "npm:^3.4.11"
     dotenv: "npm:16.4.5"
-    email-reply-parser: "npm:^2.3.5"
+    email-reply-parser: "patch:email-reply-parser@npm%3A2.3.5#~/.yarn/patches/email-reply-parser-npm-2.3.5-c11cf92562.patch"
     express: "npm:5.2.1"
     express-session: "npm:^1.18.2"
     file-type: "npm:^21.3.2"
