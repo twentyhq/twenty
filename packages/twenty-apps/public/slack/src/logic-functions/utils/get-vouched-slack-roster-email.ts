@@ -2,8 +2,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { type SlackRosterMember } from 'src/logic-functions/types/slack-roster-member.type';
 
-// A guest or Slack Connect address is vouched for by another workspace's admin,
-// so it must never drive an automatic link.
 const isEmailVouchedForByInstalledWorkspace = ({
   member,
   installedSlackTeamId,

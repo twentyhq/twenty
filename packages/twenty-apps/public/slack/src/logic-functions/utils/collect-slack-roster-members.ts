@@ -13,8 +13,6 @@ type CollectSlackRosterMembersResult = {
   isTruncated: boolean;
 };
 
-// users.list is Tier 2 rate limited, so the walk is capped and reports back when
-// it stopped before the end of the roster.
 export const collectSlackRosterMembers = async ({
   slackClient,
   shouldCollectMember,
