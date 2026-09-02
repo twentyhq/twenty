@@ -111,7 +111,6 @@ export const InlineWorkspaceMemberPickerPanel = ({
           placeholder="Search members"
           aria-label="Search workspace members"
           autoFocus
-          ref={(node) => node?.setAttribute('autofocus', 'true')}
         />
         <StyledOptions role="listbox" aria-label="Workspace members">
           {options.map((member) => (

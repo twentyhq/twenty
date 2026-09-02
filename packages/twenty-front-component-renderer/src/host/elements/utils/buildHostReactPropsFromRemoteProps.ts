@@ -40,12 +40,6 @@ export const buildHostReactPropsFromRemoteProps = (
       continue;
     }
 
-    if (remotePropName === 'autofocus') {
-      hostReactProps.autoFocus =
-        isDefined(remotePropValue) && String(remotePropValue) !== 'false';
-      continue;
-    }
-
     // A guest can put any property name on the wire, and React binds every on*
     // prop it recognizes, so unmapped handler names are dropped.
     if (isEventHandlerKey(remotePropName)) {

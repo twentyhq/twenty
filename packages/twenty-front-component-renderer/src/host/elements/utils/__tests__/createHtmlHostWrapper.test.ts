@@ -152,65 +152,6 @@ describe('createHtmlHostWrapper client events', () => {
     );
   });
 
-  it('should focus an input mounted with the autofocus attribute', () => {
-    const Wrapper = createHtmlHostWrapper('input');
-
-    act(() => {
-      root.render(createElement(Wrapper, { type: 'text', autofocus: 'true' }));
-    });
-
-    const node = container.firstElementChild as HTMLInputElement;
-    expect(document.activeElement).toBe(node);
-  });
-
-  it('should focus an input whose autofocus attribute arrives after mounting', () => {
-    const Wrapper = createHtmlHostWrapper('input');
-
-    act(() => {
-      root.render(createElement(Wrapper, { type: 'text' }));
-    });
-
-    const node = container.firstElementChild as HTMLInputElement;
-    expect(document.activeElement).not.toBe(node);
-
-    act(() => {
-      root.render(createElement(Wrapper, { type: 'text', autofocus: 'true' }));
-    });
-
-    expect(document.activeElement).toBe(node);
-  });
-
-  it('should not take focus back when the guest toggles the autofocus attribute again', () => {
-    const Wrapper = createHtmlHostWrapper('input');
-    const otherInput = document.createElement('input');
-
-    document.body.appendChild(otherInput);
-
-    try {
-      act(() => {
-        root.render(
-          createElement(Wrapper, { type: 'text', autofocus: 'true' }),
-        );
-      });
-
-      otherInput.focus();
-      expect(document.activeElement).toBe(otherInput);
-
-      act(() => {
-        root.render(createElement(Wrapper, { type: 'text' }));
-      });
-      act(() => {
-        root.render(
-          createElement(Wrapper, { type: 'text', autofocus: 'true' }),
-        );
-      });
-
-      expect(document.activeElement).toBe(otherInput);
-    } finally {
-      otherInput.remove();
-    }
-  });
-
   it('should re-assert an unchanged controlled value on an unrelated re-render', () => {
     const Wrapper = createHtmlHostWrapper('input');
 
