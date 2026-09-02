@@ -43,7 +43,14 @@ const getWorkspaceRouteObjects = (
     ];
   });
 
+// The main surface hosts its route context store once, above the page
+// transition, in MainAppLayoutWithSidePanel: the transition keeps the page
+// being left mounted while the next one enters, and a provider inside each
+// page would leave two of them writing the same store from different routes.
+// The side panel renders its routes against its own location, which only the
+// routed tree can read, and it remounts per location, so its provider lives
+// inside the tree.
 export const getWorkspaceRouteObjectsForSurface = (
   routeObjects: WorkspaceRouteObject[],
   surface: WorkspaceSurfaceType,
-) => getWorkspaceRouteObjects(routeObjects, surface, true);
+) => getWorkspaceRouteObjects(routeObjects, surface, surface === 'side-panel');
