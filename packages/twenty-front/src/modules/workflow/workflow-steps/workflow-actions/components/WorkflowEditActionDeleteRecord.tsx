@@ -10,6 +10,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { WorkflowErrorHandlingOptions } from '@/workflow/workflow-steps/components/WorkflowErrorHandlingOptions';
 import { isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 import { HorizontalSeparator } from 'twenty-ui/layout';
@@ -152,6 +153,23 @@ export const WorkflowEditActionDeleteRecord = ({
             VariablePicker={WorkflowVariablePicker}
           />
         )}
+
+        <WorkflowErrorHandlingOptions
+          errorHandlingOptions={action.settings.errorHandlingOptions}
+          onChange={(errorHandlingOptions) => {
+            if (actionOptions.readonly === true) {
+              return;
+            }
+            actionOptions.onActionUpdate({
+              ...action,
+              settings: {
+                ...action.settings,
+                errorHandlingOptions,
+              },
+            });
+          }}
+          readonly={isFormDisabled}
+        />
       </WorkflowStepBody>
       {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
     </>

@@ -17,6 +17,7 @@ import {
 } from '@/workflow/workflow-steps/workflow-actions/utils/buildUpdatedRecordActionFormData';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { WorkflowErrorHandlingOptions } from '@/workflow/workflow-steps/components/WorkflowErrorHandlingOptions';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -244,6 +245,23 @@ export const WorkflowEditActionCreateRecord = ({
             />
           );
         })}
+
+        <WorkflowErrorHandlingOptions
+          errorHandlingOptions={action.settings.errorHandlingOptions}
+          onChange={(errorHandlingOptions) => {
+            if (actionOptions.readonly === true) {
+              return;
+            }
+            actionOptions.onActionUpdate({
+              ...action,
+              settings: {
+                ...action.settings,
+                errorHandlingOptions,
+              },
+            });
+          }}
+          readonly={isFormDisabled}
+        />
       </WorkflowStepBody>
       {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
     </>

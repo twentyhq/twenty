@@ -15,6 +15,7 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { useCalendarEventForm } from '@/workflow/workflow-steps/workflow-actions/hooks/useCalendarEventForm';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { WorkflowErrorHandlingOptions } from '@/workflow/workflow-steps/components/WorkflowErrorHandlingOptions';
 import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
@@ -220,6 +221,22 @@ export const WorkflowEditActionCreateCalendarEvent = ({
           value={formData.addConferencing}
           onChange={(value) => handleFieldChange('addConferencing', value)}
           disabled={actionOptions.readonly}
+        />
+        <WorkflowErrorHandlingOptions
+          errorHandlingOptions={action.settings.errorHandlingOptions}
+          onChange={(errorHandlingOptions) => {
+            if (actionOptions.readonly === true) {
+              return;
+            }
+            actionOptions.onActionUpdate({
+              ...action,
+              settings: {
+                ...action.settings,
+                errorHandlingOptions,
+              },
+            });
+          }}
+          readonly={actionOptions.readonly}
         />
       </WorkflowStepBody>
       {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}

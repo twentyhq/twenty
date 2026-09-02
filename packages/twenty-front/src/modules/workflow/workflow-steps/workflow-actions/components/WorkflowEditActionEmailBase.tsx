@@ -25,6 +25,7 @@ import { WorkflowSendEmailAttachments } from '@/workflow/workflow-steps/workflow
 import { WORKFLOW_EMAIL_BODY_EDITOR_PROFILE } from '@/workflow/workflow-steps/workflow-actions/constants/WorkflowEmailBodyEditorProfile';
 import { useEmailForm } from '@/workflow/workflow-steps/workflow-actions/hooks/useEmailForm';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { WorkflowErrorHandlingOptions } from '@/workflow/workflow-steps/components/WorkflowErrorHandlingOptions';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
@@ -382,6 +383,22 @@ export const WorkflowEditActionEmailBase = ({
               handleFieldChange('files', files);
             }}
             VariablePicker={WorkflowVariablePicker}
+          />
+          <WorkflowErrorHandlingOptions
+            errorHandlingOptions={action.settings.errorHandlingOptions}
+            onChange={(errorHandlingOptions) => {
+              if (actionOptions.readonly === true) {
+                return;
+              }
+              actionOptions.onActionUpdate?.({
+                ...action,
+                settings: {
+                  ...action.settings,
+                  errorHandlingOptions,
+                },
+              });
+            }}
+            readonly={actionOptions.readonly}
           />
         </WorkflowStepBody>
         {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}

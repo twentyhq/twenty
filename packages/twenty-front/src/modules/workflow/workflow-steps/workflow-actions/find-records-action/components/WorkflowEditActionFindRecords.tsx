@@ -35,6 +35,7 @@ import { WorkflowFindRecordsSorts } from '@/workflow/workflow-steps/workflow-act
 import { WorkflowObjectDropdownContent } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdownContent';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { WorkflowErrorHandlingOptions } from '@/workflow/workflow-steps/components/WorkflowErrorHandlingOptions';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledLabel = styled.span`
@@ -409,6 +410,23 @@ export const WorkflowEditActionFindRecords = ({
 
             saveAction(newFormData);
           }}
+        />
+
+        <WorkflowErrorHandlingOptions
+          errorHandlingOptions={action.settings.errorHandlingOptions}
+          onChange={(errorHandlingOptions) => {
+            if (actionOptions.readonly === true) {
+              return;
+            }
+            actionOptions.onActionUpdate({
+              ...action,
+              settings: {
+                ...action.settings,
+                errorHandlingOptions,
+              },
+            });
+          }}
+          readonly={isFormDisabled}
         />
       </WorkflowStepBody>
       {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}

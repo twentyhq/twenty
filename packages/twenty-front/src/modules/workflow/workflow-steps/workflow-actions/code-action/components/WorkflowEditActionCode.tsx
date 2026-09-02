@@ -26,6 +26,7 @@ import { WorkflowLogicFunctionTabId } from '@/workflow/workflow-steps/workflow-a
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { WorkflowErrorHandlingOptions } from '@/workflow/workflow-steps/components/WorkflowErrorHandlingOptions';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
@@ -422,6 +423,22 @@ export const WorkflowEditActionCode = ({
               <WorkflowExpectedOutputBodyInput
                 defaultValue={action.settings.expectedOutputSchema}
                 onChange={handleExpectedOutputBodyChange}
+                readonly={actionOptions.readonly}
+              />
+              <WorkflowErrorHandlingOptions
+                errorHandlingOptions={action.settings.errorHandlingOptions}
+                onChange={(errorHandlingOptions) => {
+                  if (actionOptions.readonly === true) {
+                    return;
+                  }
+                  actionOptions.onActionUpdate?.({
+                    ...action,
+                    settings: {
+                      ...action.settings,
+                      errorHandlingOptions,
+                    },
+                  });
+                }}
                 readonly={actionOptions.readonly}
               />
             </>

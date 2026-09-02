@@ -30,6 +30,7 @@ import { BodyInput } from './BodyInput';
 import { HttpRequestExecutionResult } from './HttpRequestExecutionResult';
 import { HttpRequestTestVariableInput } from './HttpRequestTestVariableInput';
 import { KeyValuePairInput } from './KeyValuePairInput';
+import { WorkflowErrorHandlingOptions } from '@/workflow/workflow-steps/components/WorkflowErrorHandlingOptions';
 import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 type WorkflowEditActionHttpRequestProps = {
   action: WorkflowHttpRequestAction;
@@ -190,6 +191,23 @@ export const WorkflowEditActionHttpRequest = ({
                 error={error}
               />
             </StyledFullHeightFormRawJsonFieldInputContainer>
+
+            <WorkflowErrorHandlingOptions
+              errorHandlingOptions={action.settings.errorHandlingOptions}
+              onChange={(errorHandlingOptions) => {
+                if (actionOptions.readonly === true) {
+                  return;
+                }
+                actionOptions.onActionUpdate?.({
+                  ...action,
+                  settings: {
+                    ...action.settings,
+                    errorHandlingOptions,
+                  },
+                });
+              }}
+              readonly={actionOptions.readonly}
+            />
           </StyledConfigurationTabContent>
         )}
         {activeTabId === WorkflowHttpRequestTabId.TEST && (
