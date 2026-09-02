@@ -2,7 +2,7 @@ import { IconChevronRight } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { useLingui } from '@lingui/react/macro';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -13,7 +13,6 @@ import {
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
 import { useContext, useState } from 'react';
 import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
-import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 import { Section } from 'twenty-ui/layout';
 import { SearchInput } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -84,40 +83,23 @@ export const SettingsApplicationsTable = ({
           <TableHeader />
         </TableRow>
         <StyledTableRowsContainer>
-          {filteredApplications.map((application) => {
-            const isNpmApp =
-              application.applicationRegistration?.sourceType ===
-              ApplicationRegistrationSourceType.NPM;
-
-            const latestVersion =
-              application.applicationRegistration?.latestAvailableVersion;
-
-            const hasUpdate =
-              isNpmApp &&
-              isDefined(latestVersion) &&
-              isDefined(application.version) &&
-              isNewerSemver(latestVersion, application.version);
-
-            return (
-              <SettingsApplicationTableRow
-                key={application.id}
-                application={application}
-                hasUpdate={hasUpdate}
-                sourceType={application.applicationRegistration?.sourceType}
-                state={application.state}
-                action={
-                  <IconChevronRight
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.sm}
-                    color={theme.font.color.light}
-                  />
-                }
-                link={getSettingsPath(SettingsPath.ApplicationDetail, {
-                  applicationId: application.id,
-                })}
-              />
-            );
-          })}
+          {filteredApplications.map((application) => (
+            <SettingsApplicationTableRow
+              key={application.id}
+              application={application}
+              sourceType={application.applicationRegistration?.sourceType}
+              action={
+                <IconChevronRight
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.sm}
+                  color={theme.font.color.light}
+                />
+              }
+              link={getSettingsPath(SettingsPath.ApplicationDetail, {
+                applicationId: application.id,
+              })}
+            />
+          ))}
         </StyledTableRowsContainer>
       </Table>
     </Section>

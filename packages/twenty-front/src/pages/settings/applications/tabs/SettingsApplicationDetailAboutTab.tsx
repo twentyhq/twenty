@@ -131,11 +131,11 @@ export const SettingsApplicationDetailAboutTab = ({
   const getTransitionalAction = () => {
     switch (state) {
       case ApplicationState.INSTALLING:
-        return { Icon: IconDownload, title: t`Installing...` };
+        return { Icon: IconDownload, title: t`Installing` };
       case ApplicationState.UPGRADING:
-        return { Icon: IconUpload, title: t`Upgrading...` };
+        return { Icon: IconUpload, title: t`Upgrading` };
       case ApplicationState.UNINSTALLING:
-        return { Icon: IconTrash, title: t`Uninstalling...` };
+        return { Icon: IconTrash, title: t`Uninstalling` };
       default:
         return null;
     }
@@ -156,6 +156,7 @@ export const SettingsApplicationDetailAboutTab = ({
           variant={'secondary'}
           accent={'blue'}
           disabled={true}
+          isLoading={true}
         />
       );
     }
@@ -164,11 +165,12 @@ export const SettingsApplicationDetailAboutTab = ({
       return (
         <Button
           Icon={IconDownload}
-          title={isInstalling ? t`Installing...` : t`Install`}
+          title={isInstalling ? t`Installing` : t`Install`}
           variant={'primary'}
           accent={'blue'}
           onClick={onInstall}
           disabled={isInstalling}
+          isLoading={isInstalling}
         />
       );
     }
@@ -179,13 +181,14 @@ export const SettingsApplicationDetailAboutTab = ({
           Icon={IconUpload}
           title={
             isUpgrading
-              ? t`Upgrading...`
+              ? t`Upgrading`
               : t`Upgrade to ${latestAvailableVersion ?? ''}`
           }
           variant={'secondary'}
           accent={'blue'}
           onClick={onUpgrade}
           disabled={isUpgrading}
+          isLoading={isUpgrading}
         />
       );
     }
@@ -194,11 +197,12 @@ export const SettingsApplicationDetailAboutTab = ({
       return (
         <Button
           Icon={IconTrash}
-          title={isUninstalling ? t`Uninstalling...` : t`Uninstall`}
+          title={isUninstalling ? t`Uninstalling` : t`Uninstall`}
           variant={'secondary'}
           accent={'danger'}
           onClick={() => openModal(UNINSTALL_APPLICATION_MODAL_ID)}
           disabled={isUninstalling}
+          isLoading={isUninstalling}
         />
       );
     }

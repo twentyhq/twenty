@@ -114,13 +114,14 @@ export const SettingsApplicationVersionContainer = ({
           Icon={IconUpload}
           title={
             isUpgradeOngoing
-              ? t`Upgrading...`
+              ? t`Upgrading`
               : t`Upgrade to ${latestAvailableVersion}`
           }
           variant="secondary"
           accent="blue"
           onClick={handleUpgrade}
           disabled={isUpgradeOngoing}
+          isLoading={isUpgradeOngoing}
         />
       )}
     </StyledContainer>

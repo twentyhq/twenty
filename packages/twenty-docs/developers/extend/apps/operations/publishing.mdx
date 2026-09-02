@@ -288,6 +288,7 @@ The server enforces semver versioning on install, mirroring the rules on deploy:
 
 - Installing the same version that is already installed in your workspace is rejected with an `APP_ALREADY_INSTALLED` error.
 - Installing a lower version than the one currently installed is rejected with a `CANNOT_DOWNGRADE_APPLICATION` error.
+- Installing, upgrading or uninstalling while another operation is already running on the same app is rejected with an `APPLICATION_OPERATION_IN_PROGRESS` error; wait for it to complete.
 
 To install a newer version, deploy or publish it first, then re-run `yarn twenty app:install`.
 </Note>
