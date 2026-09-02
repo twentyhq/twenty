@@ -212,9 +212,7 @@ describe('ApplicationAsyncOperationService', () => {
           workspaceId: WORKSPACE_ID,
         }),
       ).rejects.toThrow('queue unreachable');
-      expect(
-        applicationService.transitionStateBestEffort,
-      ).toHaveBeenCalledWith(
+      expect(applicationService.transitionStateBestEffort).toHaveBeenCalledWith(
         expect.objectContaining({
           expectedState: ApplicationState.UPGRADING,
           nextState: ApplicationState.INSTALLED,
@@ -223,7 +221,9 @@ describe('ApplicationAsyncOperationService', () => {
     });
 
     it('rejects an upgrade of an application that is not installed', async () => {
-      applicationService.findByApplicationRegistrationId.mockResolvedValue(null);
+      applicationService.findByApplicationRegistrationId.mockResolvedValue(
+        null,
+      );
 
       await expect(
         service.enqueueUpgrade({
@@ -285,9 +285,7 @@ describe('ApplicationAsyncOperationService', () => {
           workspaceId: WORKSPACE_ID,
         }),
       ).rejects.toThrow('queue unreachable');
-      expect(
-        applicationService.transitionStateBestEffort,
-      ).toHaveBeenCalledWith(
+      expect(applicationService.transitionStateBestEffort).toHaveBeenCalledWith(
         expect.objectContaining({
           expectedState: ApplicationState.UNINSTALLING,
           nextState: ApplicationState.INSTALLED,

@@ -106,9 +106,11 @@ export class ApplicationAsyncOperationService {
     targetVersion: string;
     workspaceId: string;
   }): Promise<ApplicationEntity> {
-    const application = await this.applicationService.findByApplicationRegistrationId(
-      { applicationRegistrationId: appRegistrationId, workspaceId },
-    );
+    const application =
+      await this.applicationService.findByApplicationRegistrationId({
+        applicationRegistrationId: appRegistrationId,
+        workspaceId,
+      });
 
     if (!isDefined(application)) {
       throw new ApplicationException(
@@ -317,8 +319,7 @@ export class ApplicationAsyncOperationService {
       compensate: () =>
         this.applicationSyncService
           .uninstallApplication({
-            applicationUniversalIdentifier:
-              appRegistration.universalIdentifier,
+            applicationUniversalIdentifier: appRegistration.universalIdentifier,
             workspaceId,
             shouldRunUninstallHook: false,
           })
