@@ -1,42 +1,25 @@
-import { type WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { type SlackRouteBody } from 'src/logic-functions/types/slack-route-body.type';
-import {
-  type SlackUserSearchOption,
-  type SlackUserSearchResult,
-} from 'src/logic-functions/types/slack-user-search.type';
+import { type LinkableSlackRosterMember } from 'src/logic-functions/types/slack-roster-member.type';
+import { type SlackUserSearchResult } from 'src/logic-functions/types/slack-user-search.type';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
+import { collectSlackRosterMembers } from 'src/logic-functions/utils/collect-slack-roster-members';
 import { currentUserHasRolesPermission } from 'src/logic-functions/utils/current-user-has-roles-permission';
 import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
+import { toSlackUserSearchOption } from 'src/logic-functions/utils/to-slack-user-search-option';
 
-const SLACKBOT_USER_ID = 'USLACKBOT';
 const MAX_RESULTS = 10;
-const PAGE_SIZE = 200;
 const MAX_PAGES = 3;
 
-type SlackRosterMember = {
-  id?: string;
-  is_bot?: boolean;
-  deleted?: boolean;
-  is_restricted?: boolean;
-  is_ultra_restricted?: boolean;
-  is_email_confirmed?: boolean;
-  real_name?: string;
-  profile?: { display_name?: string; email?: string };
-};
-
-const isLinkableRosterMember = (member: SlackRosterMember): boolean =>
-  isNonEmptyString(member.id) &&
-  member.id !== SLACKBOT_USER_ID &&
-  member.is_bot !== true &&
-  member.deleted !== true;
-
-const matchesQuery = (member: SlackRosterMember, query: string): boolean =>
+const matchesQuery = (
+  member: LinkableSlackRosterMember,
+  query: string,
+): boolean =>
   [
     member.real_name,
     member.profile?.display_name,
@@ -45,60 +28,6 @@ const matchesQuery = (member: SlackRosterMember, query: string): boolean =>
   ].some(
     (value) => isNonEmptyString(value) && value.toLowerCase().includes(query),
   );
-
-const isEmailVouchedForOwner = (member: SlackRosterMember): boolean =>
-  member.is_restricted !== true &&
-  member.is_ultra_restricted !== true &&
-  member.is_email_confirmed === true;
-
-const toSearchOption = (
-  member: SlackRosterMember,
-  slackTeamId: string,
-): SlackUserSearchOption => ({
-  slackUserId: member.id ?? '',
-  slackTeamId,
-  displayName: [member.profile?.display_name, member.real_name].find(
-    isNonEmptyString,
-  ),
-  email:
-    isEmailVouchedForOwner(member) && isNonEmptyString(member.profile?.email)
-      ? member.profile.email
-      : undefined,
-});
-
-const collectMatches = async (
-  slackClient: WebClient,
-  query: string,
-  slackTeamId: string,
-): Promise<SlackUserSearchOption[]> => {
-  const matches: SlackUserSearchOption[] = [];
-  let cursor: string | undefined;
-
-  for (let page = 0; page < MAX_PAGES; page += 1) {
-    const response = await slackClient.users.list({
-      limit: PAGE_SIZE,
-      cursor,
-    });
-
-    for (const member of response.members ?? []) {
-      if (isLinkableRosterMember(member) && matchesQuery(member, query)) {
-        matches.push(toSearchOption(member, slackTeamId));
-
-        if (matches.length >= MAX_RESULTS) {
-          return matches;
-        }
-      }
-    }
-
-    cursor = response.response_metadata?.next_cursor;
-
-    if (!isNonEmptyString(cursor)) {
-      break;
-    }
-  }
-
-  return matches;
-};
 
 export const slackSearchUsersHandler = async (
   payload: SlackRouteBody,
@@ -143,9 +72,21 @@ export const slackSearchUsersHandler = async (
   }
 
   try {
+    const { members } = await collectSlackRosterMembers({
+      slackClient,
+      shouldCollectMember: (member) => matchesQuery(member, query),
+      maxMembers: MAX_RESULTS,
+      maxPages: MAX_PAGES,
+    });
+
     return {
       success: true,
-      slackUsers: await collectMatches(slackClient, query, installedTeamId),
+      slackUsers: members.map((member) =>
+        toSlackUserSearchOption({
+          member,
+          installedSlackTeamId: installedTeamId,
+        }),
+      ),
     };
   } catch (error) {
     return {

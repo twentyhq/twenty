@@ -17,10 +17,11 @@ const LEGACY_COMMAND_MENU_ITEM: FlatCommandMenuItem = Object.freeze({
   }),
   isPinned: false,
   shortLabel: 'Ask AI',
+  icon: 'IconSparkles',
 });
 
 describe('buildPinAskAiCommandMenuItemUpdate', () => {
-  it('pins the command and drops its short label without changing other fields', () => {
+  it('pins the command, drops its short label, and updates its icon', () => {
     expect(
       buildPinAskAiCommandMenuItemUpdate({
         existingCommandMenuItem: LEGACY_COMMAND_MENU_ITEM,
@@ -30,6 +31,7 @@ describe('buildPinAskAiCommandMenuItemUpdate', () => {
       ...LEGACY_COMMAND_MENU_ITEM,
       isPinned: true,
       shortLabel: null,
+      icon: 'IconMessageCirclePlus',
       updatedAt: NOW,
     });
   });
@@ -51,6 +53,13 @@ describe('buildPinAskAiCommandMenuItemUpdate', () => {
       },
     },
     {
+      name: 'custom icon',
+      existingCommandMenuItem: {
+        ...LEGACY_COMMAND_MENU_ITEM,
+        icon: 'IconRobot',
+      },
+    },
+    {
       name: 'workspace pinning override',
       existingCommandMenuItem: {
         ...LEGACY_COMMAND_MENU_ITEM,
@@ -62,6 +71,13 @@ describe('buildPinAskAiCommandMenuItemUpdate', () => {
       existingCommandMenuItem: {
         ...LEGACY_COMMAND_MENU_ITEM,
         overrides: { shortLabel: 'Ask AI' },
+      },
+    },
+    {
+      name: 'workspace icon override',
+      existingCommandMenuItem: {
+        ...LEGACY_COMMAND_MENU_ITEM,
+        overrides: { icon: 'IconSparkles' },
       },
     },
   ])('skips $name', ({ existingCommandMenuItem }) => {

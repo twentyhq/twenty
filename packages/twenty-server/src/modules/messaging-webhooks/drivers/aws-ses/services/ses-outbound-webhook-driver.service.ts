@@ -1,11 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
-import type SnsPayloadValidator from 'sns-payload-validator';
-import { isDefined, parseJson } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { SnsSignatureVerifierService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/sns-signature-verifier.service';
-import { SnsSubscriptionConfirmerService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/sns-subscription-confirmer.service';
+import { SnsEnvelopeService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/sns-envelope.service';
 import { type SesOutboundNotification } from 'src/modules/messaging-webhooks/drivers/aws-ses/types/ses-outbound-notification.type';
 import { normalizeSesOutboundEvent } from 'src/modules/messaging-webhooks/drivers/aws-ses/utils/normalize-ses-outbound-event.util';
 import { OutboundDeliveryEventHandlerService } from 'src/modules/messaging-webhooks/handlers/outbound-delivery-event-handler.service';
@@ -13,51 +11,28 @@ import { OutboundSendingStateHandlerService } from 'src/modules/messaging-webhoo
 import { MessagingWebhookExceptionCode } from 'src/modules/messaging-webhooks/messaging-webhook-exception-code.enum';
 import { MessagingWebhookException } from 'src/modules/messaging-webhooks/messaging-webhook.exception';
 
-type SnsPayload = SnsPayloadValidator.SnsPayload;
-
 @Injectable()
 export class SesOutboundWebhookDriverService {
+  private readonly logger = new Logger(SesOutboundWebhookDriverService.name);
+
   constructor(
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    private readonly snsSignatureVerifierService: SnsSignatureVerifierService,
-    private readonly snsSubscriptionConfirmerService: SnsSubscriptionConfirmerService,
+    private readonly snsEnvelopeService: SnsEnvelopeService,
     private readonly outboundDeliveryEventHandlerService: OutboundDeliveryEventHandlerService,
     private readonly outboundSendingStateHandlerService: OutboundSendingStateHandlerService,
   ) {}
 
   async handle(rawBody: Buffer): Promise<void> {
-    const payload = parseJson<SnsPayload>(rawBody.toString('utf8'));
-
-    if (!isDefined(payload)) {
-      throw new MessagingWebhookException(
-        'Invalid SNS payload',
-        MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_INVALID_PAYLOAD,
+    const envelope =
+      await this.snsEnvelopeService.openNotification<SesOutboundNotification>(
+        rawBody,
       );
-    }
 
-    await this.snsSignatureVerifierService.assertAllowedAndSigned(payload);
-
-    if (
-      payload.Type === 'SubscriptionConfirmation' ||
-      payload.Type === 'UnsubscribeConfirmation'
-    ) {
-      await this.snsSubscriptionConfirmerService.confirm(payload.SubscribeURL);
-
+    if (!isDefined(envelope)) {
       return;
     }
 
-    if (payload.Type !== 'Notification') {
-      return;
-    }
-
-    const notification = parseJson<SesOutboundNotification>(payload.Message);
-
-    if (!isDefined(notification)) {
-      throw new MessagingWebhookException(
-        'Invalid SNS notification message',
-        MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_INVALID_PAYLOAD,
-      );
-    }
+    const { notification, messageId } = envelope;
 
     const event = normalizeSesOutboundEvent(notification);
 
@@ -65,7 +40,7 @@ export class SesOutboundWebhookDriverService {
       case 'DELIVERY':
         await this.outboundDeliveryEventHandlerService.handle({
           ...event.delivery,
-          dedupeKey: payload.MessageId,
+          dedupeKey: messageId,
         });
 
         return;
@@ -76,6 +51,12 @@ export class SesOutboundWebhookDriverService {
 
         return;
       case 'UNPROCESSABLE':
+        if (event.reason === 'UNSUPPORTED_EVENT_NAME') {
+          this.logger.log(`Ignored SES outbound event ${event.eventName}`);
+
+          return;
+        }
+
         this.exceptionHandlerService.captureExceptions([
           new MessagingWebhookException(
             `Dropped SES outbound event ${event.eventName}: ${event.reason}`,

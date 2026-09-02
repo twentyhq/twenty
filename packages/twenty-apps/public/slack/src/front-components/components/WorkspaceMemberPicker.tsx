@@ -6,6 +6,7 @@ import { SearchDropdownPicker } from 'src/front-components/components/SearchDrop
 import { SlackPickedEntityButton } from 'src/front-components/components/SlackPickedEntityButton';
 import { useWorkspaceMemberSearch } from 'src/front-components/hooks/use-workspace-member-search';
 import { type WorkspaceMemberOption } from 'src/front-components/types/workspace-member-option.type';
+import { getMemberDisplayName } from 'src/front-components/utils/get-member-display-name.util';
 
 type WorkspaceMemberPickerProps = {
   selectedMember: WorkspaceMemberOption | null;
@@ -22,17 +23,14 @@ export const WorkspaceMemberPicker = ({
 }: WorkspaceMemberPickerProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isReopening, setIsReopening] = useState(false);
-  const { options, isSearching, searchErrorMessage } =
-    useWorkspaceMemberSearch(searchTerm);
+  const { options, isSearching, searchErrorMessage } = useWorkspaceMemberSearch(
+    { searchTerm },
+  );
 
   if (isDefined(selectedMember)) {
     return (
       <SlackPickedEntityButton
-        name={
-          isNonEmptyString(selectedMember.name)
-            ? selectedMember.name
-            : (selectedMember.userEmail ?? selectedMember.id)
-        }
+        name={getMemberDisplayName(selectedMember)}
         changeLabel="Change the workspace member"
         onChangeRequest={() => {
           setIsReopening(true);

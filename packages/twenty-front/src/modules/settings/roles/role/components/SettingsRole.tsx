@@ -141,6 +141,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   return (
     <SettingsPageLayout
       title={<SettingsRoleLabelContainer roleId={roleId} />}
+      pageTitle={settingsDraftRole.label}
       secondaryBar={
         <SettingsTabBar
           tabs={tabs}

@@ -2,19 +2,25 @@ import 'twenty-ui/style.css';
 
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useState } from 'react';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
 import { Callout } from 'twenty-ui/feedback';
+import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
 import { SlackUserLinkForm } from 'src/front-components/components/SlackUserLinkForm';
 import { SlackUserLinksList } from 'src/front-components/components/SlackUserLinksList';
+import { UnlinkedSlackUsersList } from 'src/front-components/components/UnlinkedSlackUsersList';
 import { useCanManageSlackUserLinks } from 'src/front-components/hooks/use-can-manage-slack-user-links';
+import { useMatchSlackUserLinks } from 'src/front-components/hooks/use-match-slack-user-links';
+import { useSlackConnectionStatus } from 'src/front-components/hooks/use-slack-connection-status';
 import { useRemoveSlackUserLink } from 'src/front-components/hooks/use-remove-slack-user-link';
 import { useResendSlackUserLinkConsent } from 'src/front-components/hooks/use-resend-slack-user-link-consent';
 import { useSlackUserLinks } from 'src/front-components/hooks/use-slack-user-links';
+import { useUnlinkedSlackUsers } from 'src/front-components/hooks/use-unlinked-slack-users';
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
 
 const StyledContainer = styled.div`
@@ -23,6 +29,24 @@ const StyledContainer = styled.div`
   flex-direction: column;
   gap: ${() => themeCssVariables.spacing[8]};
   width: 100%;
+`;
+
+const StyledMatchAction = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${() => themeCssVariables.spacing[3]};
+  justify-content: flex-end;
+  padding-top: ${() => themeCssVariables.spacing[2]};
+`;
+
+const StyledMatchSummary = styled.span`
+  color: ${() => themeCssVariables.font.color.secondary};
+  font-family: ${() => themeCssVariables.font.family};
+  font-size: ${() => themeCssVariables.font.size.xs};
+`;
+
+const StyledDisclosure = styled.div`
+  align-self: flex-start;
 `;
 
 const StyledCenteredState = styled.div`
@@ -40,6 +64,8 @@ const StyledCenteredState = styled.div`
 
 export const SlackUserLinksSettings = () => {
   const { canManage, isPermissionLoading } = useCanManageSlackUserLinks();
+  const { isSlackConnected, isConnectionStatusLoading } =
+    useSlackConnectionStatus();
   const {
     slackUserLinks,
     isSlackUserLinksLoading,
@@ -49,6 +75,44 @@ export const SlackUserLinksSettings = () => {
   } = useSlackUserLinks();
   const { removeSlackUserLink, removingLinkId } = useRemoveSlackUserLink();
   const { resendConsent, resendingLinkId } = useResendSlackUserLinkConsent();
+  const {
+    unlinkedSlackUsers,
+    hasMoreUnlinkedSlackUsers,
+    isUnlinkedSlackUsersLoading,
+    unlinkedErrorMessage,
+    refetchUnlinkedSlackUsers,
+  } = useUnlinkedSlackUsers({ isEnabled: canManage && isSlackConnected });
+  const { matchSlackUserLinks, isMatching } = useMatchSlackUserLinks();
+  const [matchSummary, setMatchSummary] = useState<string | undefined>(
+    undefined,
+  );
+  const [isManualFormOpen, setIsManualFormOpen] = useState(false);
+
+  const handleLinkSaved = async () => {
+    await Promise.all([refetchSlackUserLinks(), refetchUnlinkedSlackUsers()]);
+  };
+
+  const handleManualLinkSaved = async () => {
+    setIsManualFormOpen(false);
+    await handleLinkSaved();
+  };
+
+  const handleMatchByEmail = async () => {
+    const result = await matchSlackUserLinks();
+
+    if (!result.success) {
+      setMatchSummary(undefined);
+      enqueueSnackbar({
+        message: isNonEmptyString(result.error) ? result.error : result.message,
+        variant: 'error',
+      });
+
+      return;
+    }
+
+    setMatchSummary(result.message);
+    await handleLinkSaved();
+  };
 
   const handleRemove = async (slackUserLink: SlackUserLinkRecord) => {
     const result = await removeSlackUserLink(slackUserLink.id);
@@ -59,7 +123,7 @@ export const SlackUserLinksSettings = () => {
     });
 
     if (result.success) {
-      await refetchSlackUserLinks();
+      await handleLinkSaved();
     }
   };
 
@@ -93,6 +157,10 @@ export const SlackUserLinksSettings = () => {
     }
   };
 
+  if (isConnectionStatusLoading || !isSlackConnected) {
+    return null;
+  }
+
   if (isPermissionLoading) {
     return <StyledCenteredState>Loading Slack user links…</StyledCenteredState>;
   }
@@ -107,10 +175,38 @@ export const SlackUserLinksSettings = () => {
         />
       )}
       {canManage && (
-        <SlackUserLinkForm
-          existingLinks={slackUserLinks}
-          onLinkSaved={refetchSlackUserLinks}
-        />
+        <Section>
+          <H2Title
+            title="Unlinked Slack users"
+            description="These Slack users talk to the assistant with its default role. Pick a workspace member on a row to link them in place, or auto-link everyone whose Slack email matches a workspace member."
+          />
+          {isUnlinkedSlackUsersLoading && unlinkedSlackUsers.length === 0 ? (
+            <StyledCenteredState>
+              Loading unlinked Slack users…
+            </StyledCenteredState>
+          ) : isDefined(unlinkedErrorMessage) ? (
+            <StyledCenteredState>{unlinkedErrorMessage}</StyledCenteredState>
+          ) : (
+            <UnlinkedSlackUsersList
+              unlinkedSlackUsers={unlinkedSlackUsers}
+              hasMore={hasMoreUnlinkedSlackUsers}
+              onLinkSaved={handleLinkSaved}
+            />
+          )}
+          <StyledMatchAction>
+            {isDefined(matchSummary) && (
+              <StyledMatchSummary>{matchSummary}</StyledMatchSummary>
+            )}
+            <Button
+              type="button"
+              title={isMatching ? 'Auto-linking…' : 'Auto-link by email'}
+              size="small"
+              variant="secondary"
+              disabled={isMatching}
+              onClick={handleMatchByEmail}
+            />
+          </StyledMatchAction>
+        </Section>
       )}
       <Section>
         <H2Title
@@ -133,6 +229,23 @@ export const SlackUserLinksSettings = () => {
           />
         )}
       </Section>
+      {canManage &&
+        (isManualFormOpen ? (
+          <SlackUserLinkForm
+            existingLinks={slackUserLinks}
+            onLinkSaved={handleManualLinkSaved}
+          />
+        ) : (
+          <StyledDisclosure>
+            <Button
+              type="button"
+              title="Link someone not listed above"
+              size="small"
+              variant="secondary"
+              onClick={() => setIsManualFormOpen(true)}
+            />
+          </StyledDisclosure>
+        ))}
     </StyledContainer>
   );
 };

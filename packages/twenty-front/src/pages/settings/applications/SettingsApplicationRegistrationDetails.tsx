@@ -1,3 +1,4 @@
+import { useRefetchOnApplicationRegistrationChange } from '@/applications/hooks/useRefetchOnApplicationRegistrationChange';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useQuery } from '@apollo/client/react';
 import { useParams } from 'react-router-dom';
@@ -37,9 +38,17 @@ export const SettingsApplicationRegistrationDetails = () => {
     applicationRegistrationId: string;
   }>();
 
-  const { data, loading } = useQuery(FindOneApplicationRegistrationDocument, {
-    variables: { id: applicationRegistrationId },
-    skip: !applicationRegistrationId,
+  const { data, loading, refetch } = useQuery(
+    FindOneApplicationRegistrationDocument,
+    {
+      variables: { id: applicationRegistrationId },
+      skip: !applicationRegistrationId,
+    },
+  );
+
+  useRefetchOnApplicationRegistrationChange({
+    applicationRegistrationId,
+    refetch,
   });
 
   const registration = data?.findOneApplicationRegistration;

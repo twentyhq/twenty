@@ -168,6 +168,9 @@ import { AddTimelineActivityHappensAtFieldFastInstanceCommand } from 'src/databa
 import { AddPageLayoutIsFirstTabPinnedFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1787929843737-add-page-layout-is-first-tab-pinned';
 import { CreateCampaignDeliveryFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788200700000-create-campaign-delivery';
 import { AddStateToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788260646460-add-state-to-application';
+import { RenameEmailingDomainPermanentlySuspendedToSandboxFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788272351966-rename-emailing-domain-permanently-suspended-to-sandbox';
+import { RelaxNavigationPayloadCheckFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-fast-1788272351970-relax-navigation-payload-check';
+import { EraseObjectNavigationCommandMenuItemPayloadsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-instance-command-slow-1788272351971-erase-object-navigation-command-menu-item-payloads';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -338,4 +341,7 @@ export const INSTANCE_COMMANDS = [
   AddPageLayoutIsFirstTabPinnedFastInstanceCommand,
   CreateCampaignDeliveryFastInstanceCommand,
   AddStateToApplicationFastInstanceCommand,
+  RenameEmailingDomainPermanentlySuspendedToSandboxFastInstanceCommand,
+  RelaxNavigationPayloadCheckFastInstanceCommand,
+  EraseObjectNavigationCommandMenuItemPayloadsSlowInstanceCommand,
 ];

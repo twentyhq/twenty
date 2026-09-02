@@ -10,6 +10,7 @@ const buildGroup = (
   deliveredCount: '0',
   bouncedCount: '0',
   complainedCount: '0',
+  providerFailedCount: '0',
   ...overrides,
 });
 
@@ -81,6 +82,29 @@ describe('computeCampaignCounts', () => {
 
     expect(counts.totalCount).toBe(605);
     expect(counts.sentCount).toBe(600);
+  });
+
+  it('counts a rejected send as failed while still counting it as sent', () => {
+    const counts = computeCampaignCounts({
+      groups: [buildGroup({ total: '10', providerFailedCount: '2' })],
+    });
+
+    expect(counts.sentCount).toBe(10);
+    expect(counts.failedCount).toBe(2);
+  });
+
+  it('counts a failed row once even when the provider also refused it', () => {
+    const counts = computeCampaignCounts({
+      groups: [
+        buildGroup({
+          state: CAMPAIGN_DELIVERY_STATE.FAILED,
+          total: '3',
+          providerFailedCount: '3',
+        }),
+      ],
+    });
+
+    expect(counts.failedCount).toBe(3);
   });
 
   it('reads an empty campaign as all zeroes', () => {

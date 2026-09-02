@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
-
 import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
 import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-state.constant';
 import { CAMPAIGN_FAILURE_REASON } from 'src/engine/core-modules/emailing-domain/constants/campaign-failure-reason.constant';
@@ -12,20 +10,9 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { type FindOptionsWhere, In, LessThan } from 'typeorm';
 
 import {
-  CAMPAIGN_STATS_REFRESH_DELAY_MS,
-  REFRESH_CAMPAIGN_STATS_JOB,
-} from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
-import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
-import { type RefreshCampaignStatsJobData } from 'src/engine/core-modules/emailing-domain/types/refresh-campaign-stats-job-data.type';
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -51,10 +38,6 @@ export class MessageCampaignLifecycleService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly userRoleService: UserRoleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
-    @InjectMessageQueue(MessageQueue.campaignQueue)
-    private readonly messageQueueService: MessageQueueService,
-    @InjectCacheStorage(CacheStorageNamespace.ModuleEmailing)
-    private readonly cacheStorageService: CacheStorageService,
   ) {}
 
   async transitionCampaignStatus({
@@ -125,7 +108,10 @@ export class MessageCampaignLifecycleService {
       },
     });
 
-    await this.scheduleStatsRefresh({ workspaceId, campaignId });
+    await this.messageCampaignStatisticsService.scheduleRefresh({
+      workspaceId,
+      campaignId,
+    });
 
     return { campaignId, canceledMessageCount };
   }
@@ -160,7 +146,16 @@ export class MessageCampaignLifecycleService {
   }: {
     workspaceId: string;
     criteria: FindOptionsWhere<CampaignDeliveryEntity>;
-    update: QueryDeepPartialEntity<CampaignDeliveryEntity>;
+    update: Partial<
+      Pick<
+        CampaignDeliveryEntity,
+        | 'state'
+        | 'skipReason'
+        | 'failureReason'
+        | 'claimToken'
+        | 'claimExpiresAt'
+      >
+    >;
   }): Promise<number> {
     const { affected } = await this.campaignDeliveryRepository.update(
       workspaceId,
@@ -178,6 +173,22 @@ export class MessageCampaignLifecycleService {
     workspaceId: string;
     campaignId: string;
   }): Promise<void> {
+    // Every settled delivery calls this, so the check must not scale with the
+    // campaign. Counting reads every unfinished row only to compare it against
+    // zero; the probe stops at the first row the partial index yields.
+    const hasUnfinishedDelivery =
+      await this.campaignDeliveryRepository.existsBy(workspaceId, {
+        campaignId,
+        state: In([
+          CAMPAIGN_DELIVERY_STATE.QUEUED,
+          CAMPAIGN_DELIVERY_STATE.SENDING,
+        ]),
+      });
+
+    if (hasUnfinishedDelivery) {
+      return;
+    }
+
     const counts =
       await this.messageCampaignStatisticsService.countDeliveriesByState({
         workspaceId,
@@ -210,29 +221,10 @@ export class MessageCampaignLifecycleService {
       );
     }, buildSystemAuthContext(workspaceId));
 
-    await this.scheduleStatsRefresh({ workspaceId, campaignId });
-  }
-
-  async scheduleStatsRefresh({
-    workspaceId,
-    campaignId,
-  }: {
-    workspaceId: string;
-    campaignId: string;
-  }): Promise<void> {
-    const acquired = await this.cacheStorageService.acquireLock(
-      `campaign-stats-refresh:${workspaceId}:${campaignId}`,
-      CAMPAIGN_STATS_REFRESH_DELAY_MS,
-    );
-
-    if (!acquired) {
-      return;
-    }
-
-    await this.messageQueueService.add<RefreshCampaignStatsJobData>(
-      REFRESH_CAMPAIGN_STATS_JOB,
-      { workspaceId, campaignId },
-      { delay: CAMPAIGN_STATS_REFRESH_DELAY_MS },
-    );
+    await this.messageCampaignStatisticsService.persistCampaignCounts({
+      workspaceId,
+      campaignId,
+      counts,
+    });
   }
 }

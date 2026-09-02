@@ -24,9 +24,12 @@ export const useNavigateSettings = () => {
     ) => {
       const path = getSettingsPath(to, params, queryParams, hash);
 
+      // A routed side-panel owns its location, and its navigator already opens
+      // the settings shell when a path escapes to main. Every other surface
+      // navigates the main router directly, so the shell has to be opened here.
       if (
         workspaceSurface.type === 'main' ||
-        (options?.surface === 'main' && !workspaceSurface.ownsRouteLocation)
+        !workspaceSurface.ownsRouteLocation
       ) {
         openSettingsMenu();
       }

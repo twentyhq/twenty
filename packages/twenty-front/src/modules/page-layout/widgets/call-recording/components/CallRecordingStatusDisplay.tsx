@@ -21,7 +21,7 @@ export const CallRecordingStatusDisplay = ({
 
   return (
     <CallRecordingWidgetEmptyStateDisplay
-      animatedPlaceholderType="noMatchRecord"
+      animatedPlaceholderType="noCallRecording"
       title={title}
       subTitle={subTitle}
     />
