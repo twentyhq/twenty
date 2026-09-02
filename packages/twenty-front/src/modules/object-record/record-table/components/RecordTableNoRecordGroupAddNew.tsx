@@ -2,6 +2,8 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { RecordCreationFormModal } from '@/object-record/record-form/components/RecordCreationFormModal';
+import { useStartRecordCreation } from '@/object-record/record-form/hooks/useStartRecordCreation';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
@@ -72,6 +74,12 @@ export const RecordTableNoRecordGroupAddNew = () => {
     ],
   );
 
+  const { startRecordCreation, shouldOpenRecordCreationForm } =
+    useStartRecordCreation({
+      objectMetadataItem,
+      onCreateRecord: handleCreateRecord,
+    });
+
   if (isRecordTableCellsNonEditable) {
     return null;
   }
@@ -95,7 +103,7 @@ export const RecordTableNoRecordGroupAddNew = () => {
         dropdownId={`${recordTableId}-nested-relation-add-new`}
         nestedRelationCreateThrough={nestedRelationCreateThrough}
         onRelationRecordSelected={(relationRecordId) =>
-          handleCreateRecord({
+          startRecordCreation({
             [nestedRelationCreateThrough.nestedRelationJoinColumnName]:
               relationRecordId,
           })
@@ -105,10 +113,18 @@ export const RecordTableNoRecordGroupAddNew = () => {
   }
 
   return (
-    <RecordTableActionRow
-      onClick={() => handleCreateRecord()}
-      LeftIcon={IconPlus}
-      text={t`Add New`}
-    />
+    <>
+      {shouldOpenRecordCreationForm && (
+        <RecordCreationFormModal
+          objectMetadataItem={objectMetadataItem}
+          onSubmit={handleCreateRecord}
+        />
+      )}
+      <RecordTableActionRow
+        onClick={() => startRecordCreation()}
+        LeftIcon={IconPlus}
+        text={t`Add New`}
+      />
+    </>
   );
 };

@@ -1,20 +1,21 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { RECORD_CREATION_FORM_MODAL_ID } from '@/object-record/record-form/components/RecordCreationFormModal';
 import { useRecordFormFieldMetadataItems } from '@/object-record/record-form/hooks/useRecordFormFieldMetadataItems';
-import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback } from 'react';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { isNonEmptyArray } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
+// The caller keeps ownership of what happens after creation, so deferring the
+// save behind a form must not swallow its continuation.
 export const useStartRecordCreation = ({
   objectMetadataItem,
-  instanceId,
+  onCreateRecord,
 }: {
   objectMetadataItem: EnrichedObjectMetadataItem;
-  instanceId?: string;
+  onCreateRecord: (recordInput?: Partial<ObjectRecord>) => Promise<void>;
 }) => {
   const { openModal } = useModal();
 
@@ -24,11 +25,6 @@ export const useStartRecordCreation = ({
 
   const { recordFormFieldMetadataItems } = useRecordFormFieldMetadataItems({
     objectMetadataItem,
-  });
-
-  const { createNewIndexRecord } = useCreateNewIndexRecord({
-    objectMetadataItem,
-    instanceId,
   });
 
   const shouldOpenRecordCreationForm =
@@ -43,14 +39,10 @@ export const useStartRecordCreation = ({
         return;
       }
 
-      await createNewIndexRecord(recordInput);
+      await onCreateRecord(recordInput);
     },
-    [createNewIndexRecord, openModal, shouldOpenRecordCreationForm],
+    [onCreateRecord, openModal, shouldOpenRecordCreationForm],
   );
 
-  return {
-    startRecordCreation,
-    shouldOpenRecordCreationForm,
-    createNewIndexRecord,
-  };
+  return { startRecordCreation, shouldOpenRecordCreationForm };
 };
