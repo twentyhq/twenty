@@ -9,6 +9,7 @@ import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetA
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { getWidgetContentPadding } from '@/page-layout/widgets/utils/getWidgetContentPadding';
 import { isWidgetCardFlushInViewMode } from '@/page-layout/widgets/utils/isWidgetCardFlushInViewMode';
+import { shouldUseSoloCanvasContentPadding } from '@/page-layout/widgets/utils/shouldUseSoloCanvasContentPadding';
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
@@ -61,7 +62,7 @@ export const WidgetCardShell = ({
   onMouseLeave,
 }: WidgetCardShellProps) => {
   const { theme } = useContext(ThemeContext);
-  const { layoutMode } = usePageLayoutContentContext();
+  const { layoutMode, presentation } = usePageLayoutContentContext();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
   const isVerticalList = layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
@@ -69,12 +70,14 @@ export const WidgetCardShell = ({
     currentPageLayout.type === PageLayoutType.RECORD_PAGE &&
     isVerticalList &&
     widget.type === WidgetType.IFRAME;
-  const contentPadding = isWidgetCardFlushInViewMode({
-    isEditable,
-    variant,
+  const contentPadding = shouldUseSoloCanvasContentPadding({
+    presentation,
+    layoutMode,
   })
-    ? getWidgetContentPadding(widget.type)
-    : 'default';
+    ? 'none'
+    : isWidgetCardFlushInViewMode({ isEditable, variant })
+      ? getWidgetContentPadding(widget.type)
+      : 'default';
 
   const dataTestId =
     widget.type === WidgetType.FIELDS ? 'record-fields-widget' : widget.id;
