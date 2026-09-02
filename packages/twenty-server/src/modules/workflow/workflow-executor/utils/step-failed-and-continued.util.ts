@@ -15,7 +15,7 @@ export const stepFailedAndContinued = ({
 
   return (
     stepInfo?.status === StepStatus.FAILED_SAFELY &&
-    isDefined(stepInfo?.error) &&
+    isDefined(stepInfo.error) &&
     stepShouldContinueOnFailure(step)
   );
 };

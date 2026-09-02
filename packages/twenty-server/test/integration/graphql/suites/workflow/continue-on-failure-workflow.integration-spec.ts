@@ -222,20 +222,22 @@ describe('Continue on failure workflow (e2e)', () => {
       workflowVersionId: createdWorkflowVersionId!,
     });
 
-    const workflowRun = await waitForWorkflowCompletion(workflowRunId);
+    try {
+      const workflowRun = await waitForWorkflowCompletion(workflowRunId);
 
-    expect(workflowRun?.status).toBe('COMPLETED');
+      expect(workflowRun?.status).toBe('COMPLETED');
 
-    const httpRequestStepInfo =
-      workflowRun?.state?.stepInfos?.[httpRequestStepId!];
+      const httpRequestStepInfo =
+        workflowRun?.state?.stepInfos?.[httpRequestStepId!];
 
-    expect(httpRequestStepInfo?.status).toBe('FAILED_SAFELY');
-    expect(httpRequestStepInfo?.error).toBeDefined();
-    expect(workflowRun?.state?.stepInfos?.[filterStepId!]?.status).toBe(
-      'SUCCESS',
-    );
-
-    await destroyWorkflowRun(workflowRunId);
+      expect(httpRequestStepInfo?.status).toBe('FAILED_SAFELY');
+      expect(httpRequestStepInfo?.error).toBeDefined();
+      expect(workflowRun?.state?.stepInfos?.[filterStepId!]?.status).toBe(
+        'SUCCESS',
+      );
+    } finally {
+      await destroyWorkflowRun(workflowRunId);
+    }
   });
 
   it('should fail the run and leave the next step not started when the failing step does not continue on failure', async () => {
@@ -245,16 +247,18 @@ describe('Continue on failure workflow (e2e)', () => {
       workflowVersionId: createdWorkflowVersionId!,
     });
 
-    const workflowRun = await waitForWorkflowCompletion(workflowRunId);
+    try {
+      const workflowRun = await waitForWorkflowCompletion(workflowRunId);
 
-    expect(workflowRun?.status).toBe('FAILED');
-    expect(workflowRun?.state?.stepInfos?.[httpRequestStepId!]?.status).toBe(
-      'FAILED',
-    );
-    expect(workflowRun?.state?.stepInfos?.[filterStepId!]?.status).toBe(
-      'NOT_STARTED',
-    );
-
-    await destroyWorkflowRun(workflowRunId);
+      expect(workflowRun?.status).toBe('FAILED');
+      expect(workflowRun?.state?.stepInfos?.[httpRequestStepId!]?.status).toBe(
+        'FAILED',
+      );
+      expect(workflowRun?.state?.stepInfos?.[filterStepId!]?.status).toBe(
+        'NOT_STARTED',
+      );
+    } finally {
+      await destroyWorkflowRun(workflowRunId);
+    }
   });
 });
