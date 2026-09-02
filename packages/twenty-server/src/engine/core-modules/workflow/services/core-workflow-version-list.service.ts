@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
@@ -86,7 +87,7 @@ export class CoreWorkflowVersionListService {
 
       return Object.fromEntries(
         workspaceWorkflowVersions.flatMap((workspaceWorkflowVersion) =>
-          workspaceWorkflowVersion.coreWorkflowVersionId
+          isDefined(workspaceWorkflowVersion.coreWorkflowVersionId)
             ? [
                 [
                   workspaceWorkflowVersion.coreWorkflowVersionId,

@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { type ReactNode, useEffect } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
@@ -25,13 +25,25 @@ export const CoreWorkflowVersionPreviewActionsContent = ({
   children: ReactNode;
 }) => {
   const { t } = useLingui();
-  const { openModal } = useModal();
+  const { openModal, closeModal } = useModal();
   const { previewedWorkflowVersion, cancelWorkflowVersionPreview } =
     usePreviewWorkflowVersion(workflowId);
   const { restoreWorkflowVersionAsDraft, isRestoring, hasExistingDraft } =
     useRestoreWorkflowVersionAsDraft(workflowId);
 
-  if (!isDefined(previewedWorkflowVersion)) {
+  const isPreviewingWorkflowVersion = isDefined(previewedWorkflowVersion);
+
+  useEffect(() => {
+    if (!isPreviewingWorkflowVersion) {
+      return;
+    }
+
+    return () => {
+      closeModal(RESTORE_WORKFLOW_VERSION_MODAL_ID);
+    };
+  }, [closeModal, isPreviewingWorkflowVersion]);
+
+  if (!isPreviewingWorkflowVersion) {
     return children;
   }
 

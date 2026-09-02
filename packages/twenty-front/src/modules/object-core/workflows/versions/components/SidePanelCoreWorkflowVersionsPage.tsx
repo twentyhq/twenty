@@ -24,9 +24,15 @@ export const SidePanelCoreWorkflowVersionsPage = () => {
   const { previewedWorkflowVersion, previewWorkflowVersion } =
     usePreviewWorkflowVersion(workflowId);
 
+  const selectableCoreWorkflowVersionIds = coreWorkflowVersions
+    .filter(({ workspaceWorkflowVersionId }) =>
+      isDefined(workspaceWorkflowVersionId),
+    )
+    .map(({ id }) => id);
+
   return (
     <SidePanelList
-      selectableItemIds={coreWorkflowVersions.map(({ id }) => id)}
+      selectableItemIds={selectableCoreWorkflowVersionIds}
       loading={loading}
       noResults={
         !loading && !isDefined(error) && coreWorkflowVersions.length === 0

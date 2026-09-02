@@ -1,13 +1,13 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { previewedWorkflowVersionFamilyState } from '@/object-core/workflows/versions/states/previewedWorkflowVersionFamilyState';
+import { type CoreWorkflowVersionDto } from '~/generated/graphql';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 
-type SelectableCoreWorkflowVersion = {
-  id: string;
-  label: string;
-  workspaceWorkflowVersionId?: string | null;
-};
+type SelectableCoreWorkflowVersion = Pick<
+  CoreWorkflowVersionDto,
+  'id' | 'label' | 'workspaceWorkflowVersionId'
+>;
 
 export const usePreviewWorkflowVersion = (workflowId: string) => {
   const [previewedWorkflowVersion, setPreviewedWorkflowVersion] =

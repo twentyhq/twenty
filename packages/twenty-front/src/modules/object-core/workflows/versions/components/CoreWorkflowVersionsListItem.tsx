@@ -22,7 +22,10 @@ const StyledRow = styled.div<{ isSelected: boolean; isSelectable: boolean }>`
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 
   &:hover {
-    background-color: ${themeCssVariables.background.transparent.light};
+    background-color: ${({ isSelected, isSelectable }) =>
+      isSelectable || isSelected
+        ? themeCssVariables.background.transparent.light
+        : 'transparent'};
   }
 `;
 
