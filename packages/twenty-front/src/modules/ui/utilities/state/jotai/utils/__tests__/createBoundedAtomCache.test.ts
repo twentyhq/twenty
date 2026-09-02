@@ -28,9 +28,7 @@ describe('createBoundedAtomCache', () => {
       cache.set(`key-${index}`, atom(index));
     }
 
-    expect(cache.size()).toBeLessThanOrEqual(
-      2 * (maxCachedAtomsPerGeneration + 1),
-    );
+    expect(cache.size()).toBeLessThanOrEqual(2 * maxCachedAtomsPerGeneration);
   });
 
   it('drops the coldest keys and keeps the most recently written ones', () => {

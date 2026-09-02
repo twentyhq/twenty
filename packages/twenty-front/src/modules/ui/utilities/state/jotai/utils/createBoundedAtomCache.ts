@@ -21,12 +21,12 @@ export const createBoundedAtomCache = <TAtom>(
   // Rotating whole generations keeps a cache hit a single Map lookup. An LRU would have
   // to delete and re-insert on every hit, which measured 4x slower on the cell path.
   const setInCurrentGeneration = (cacheKey: string, atomToCache: TAtom) => {
-    currentGeneration.set(cacheKey, atomToCache);
-
-    if (currentGeneration.size > maxCachedAtomsPerGeneration) {
+    if (currentGeneration.size >= maxCachedAtomsPerGeneration) {
       previousGeneration = currentGeneration;
       currentGeneration = new Map();
     }
+
+    currentGeneration.set(cacheKey, atomToCache);
   };
 
   return {
