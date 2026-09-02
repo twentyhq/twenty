@@ -33,7 +33,7 @@ export class InstallApplicationJob {
         appRegistrationId,
         version,
         workspaceId,
-        hasPreClaimedState: true,
+        isStateAlreadyTransitioned: true,
       });
     } catch (error) {
       this.logger.error(

@@ -337,11 +337,11 @@ export class ApplicationSyncService {
   public async uninstallApplicationWithMetrics({
     workspaceId,
     applicationUniversalIdentifier,
-    hasPreClaimedState = false,
+    isStateAlreadyTransitioned = false,
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
-    hasPreClaimedState?: boolean;
+    isStateAlreadyTransitioned?: boolean;
   }): Promise<WorkspaceMigration> {
     const application = await this.applicationService.findByUniversalIdentifier(
       { universalIdentifier: applicationUniversalIdentifier, workspaceId },
@@ -358,7 +358,7 @@ export class ApplicationSyncService {
       const workspaceMigration = await this.uninstallApplication({
         workspaceId,
         applicationUniversalIdentifier,
-        hasPreClaimedState,
+        isStateAlreadyTransitioned,
       });
 
       this.metricsService.incrementCounterBy({
@@ -387,12 +387,12 @@ export class ApplicationSyncService {
     workspaceId,
     applicationUniversalIdentifier,
     shouldRunUninstallHook = true,
-    hasPreClaimedState = false,
+    isStateAlreadyTransitioned = false,
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
     shouldRunUninstallHook?: boolean;
-    hasPreClaimedState?: boolean;
+    isStateAlreadyTransitioned?: boolean;
   }): Promise<WorkspaceMigration> {
     const application = await this.applicationService.findOneApplicationOrThrow(
       { universalIdentifier: applicationUniversalIdentifier, workspaceId },
@@ -405,12 +405,13 @@ export class ApplicationSyncService {
       );
     }
 
-    const isStateClaimedByCaller =
-      hasPreClaimedState && application.state === ApplicationState.UNINSTALLING;
+    const isStateTransitionedByCaller =
+      isStateAlreadyTransitioned &&
+      application.state === ApplicationState.UNINSTALLING;
 
     const ownsLifecycle =
       application.state === ApplicationState.INSTALLED ||
-      isStateClaimedByCaller;
+      isStateTransitionedByCaller;
 
     if (!ownsLifecycle && application.state !== ApplicationState.INSTALLING) {
       throw new ApplicationException(
@@ -420,7 +421,7 @@ export class ApplicationSyncService {
     }
 
     try {
-      if (ownsLifecycle && !isStateClaimedByCaller) {
+      if (ownsLifecycle && !isStateTransitionedByCaller) {
         await this.applicationService.transitionState({
           applicationId: application.id,
           universalIdentifier: applicationUniversalIdentifier,

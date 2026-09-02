@@ -118,12 +118,12 @@ export const SettingsAvailableApplicationDetails = () => {
       return;
     }
 
-    const claimedApplication = await install({
+    const requestedApplication = await install({
       universalIdentifier: detail.universalIdentifier,
     });
 
-    if (isDefined(claimedApplication)) {
-      followApplicationInstallation(claimedApplication);
+    if (isDefined(requestedApplication)) {
+      followApplicationInstallation(requestedApplication);
     }
   };
 

@@ -93,7 +93,7 @@ describe('Async application operations', () => {
     jest.useFakeTimers();
   });
 
-  it('claims the row, then installs it in a worker job', async () => {
+  it('transitions the row to INSTALLING, then installs it in a worker job', async () => {
     const { data, errors } = await installAsync();
 
     expect(errors).toBeUndefined();
@@ -141,7 +141,7 @@ describe('Async application operations', () => {
     await setApplicationState('INSTALLED');
   });
 
-  it('claims the row, then uninstalls it in a worker job', async () => {
+  it('transitions the row to UNINSTALLING, then uninstalls it in a worker job', async () => {
     const { data, errors } = await uninstallAsync();
 
     expect(errors).toBeUndefined();

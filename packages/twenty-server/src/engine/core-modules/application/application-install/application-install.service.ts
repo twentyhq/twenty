@@ -73,7 +73,7 @@ export class ApplicationInstallService {
     version?: string;
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
-    hasPreClaimedState?: boolean;
+    isStateAlreadyTransitioned?: boolean;
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOne({
       where: { id: params.appRegistrationId },
@@ -116,7 +116,7 @@ export class ApplicationInstallService {
           workspaceId: params.workspaceId,
           skipWorkspaceCompatibilityCheck:
             params.skipWorkspaceCompatibilityCheck,
-          hasPreClaimedState: params.hasPreClaimedState,
+          isStateAlreadyTransitioned: params.isStateAlreadyTransitioned,
         }),
       lockKey,
       { ttl: 60_000, ms: 500, maxRetries: 120 },
@@ -129,7 +129,7 @@ export class ApplicationInstallService {
       version?: string;
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
-      hasPreClaimedState?: boolean;
+      isStateAlreadyTransitioned?: boolean;
     },
   ): Promise<boolean> {
     // Re-read inside the lock so the authorization below cannot act on stale
@@ -201,7 +201,7 @@ export class ApplicationInstallService {
       version?: string;
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
-      hasPreClaimedState?: boolean;
+      isStateAlreadyTransitioned?: boolean;
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
@@ -260,7 +260,7 @@ export class ApplicationInstallService {
       version?: string;
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
-      hasPreClaimedState?: boolean;
+      isStateAlreadyTransitioned?: boolean;
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
@@ -315,14 +315,14 @@ export class ApplicationInstallService {
       sourceType: appRegistration.sourceType,
     });
 
-    const isStateClaimedByCaller =
-      params.hasPreClaimedState === true &&
+    const isStateTransitionedByCaller =
+      params.isStateAlreadyTransitioned === true &&
       application.state === ApplicationState.UPGRADING;
 
     const isUpgradeOfInstalledApplication =
       isVersionUpgrade &&
       (application.state === ApplicationState.INSTALLED ||
-        isStateClaimedByCaller);
+        isStateTransitionedByCaller);
 
     if (isVersionUpgrade && !isUpgradeOfInstalledApplication) {
       throw new ApplicationException(
@@ -337,7 +337,7 @@ export class ApplicationInstallService {
     // this catch means creation succeeded, so only an application that never
     // finished installing needs uninstalling.
     try {
-      if (isUpgradeOfInstalledApplication && !isStateClaimedByCaller) {
+      if (isUpgradeOfInstalledApplication && !isStateTransitionedByCaller) {
         await this.applicationService.transitionState({
           applicationId: application.id,
           universalIdentifier,

@@ -94,7 +94,7 @@ describe('ApplicationAsyncOperationService', () => {
   });
 
   describe('enqueueInstall', () => {
-    it('returns the placeholder it claimed for a fresh install', async () => {
+    it('returns the placeholder it reserved for a fresh install', async () => {
       const application = await service.enqueueInstall({
         universalIdentifier: UNIVERSAL_IDENTIFIER,
         workspaceId: WORKSPACE_ID,
@@ -108,7 +108,7 @@ describe('ApplicationAsyncOperationService', () => {
       );
     });
 
-    it('claims an installed application as UPGRADING', async () => {
+    it('transitions an installed application to UPGRADING', async () => {
       applicationService.findByUniversalIdentifier.mockResolvedValue(
         INSTALLED_APPLICATION,
       );
@@ -157,7 +157,7 @@ describe('ApplicationAsyncOperationService', () => {
       });
     });
 
-    it('rejects an install of an unpublishable registration before claiming anything', async () => {
+    it('rejects an install of an unpublishable registration before touching the row', async () => {
       marketplaceQueryService.findRegistrationByUniversalIdentifier.mockResolvedValue(
         {
           ...APP_REGISTRATION,
@@ -176,7 +176,7 @@ describe('ApplicationAsyncOperationService', () => {
       expect(applicationService.create).not.toHaveBeenCalled();
     });
 
-    it('surfaces a version progression failure before claiming anything', async () => {
+    it('surfaces a version progression failure before touching the row', async () => {
       applicationService.findByUniversalIdentifier.mockResolvedValue(
         INSTALLED_APPLICATION,
       );
@@ -202,7 +202,7 @@ describe('ApplicationAsyncOperationService', () => {
   });
 
   describe('enqueueUpgrade', () => {
-    it('reverts the claimed state when the enqueue fails', async () => {
+    it('reverts the state it transitioned when the enqueue fails', async () => {
       messageQueueService.add.mockRejectedValue(new Error('queue unreachable'));
 
       await expect(
@@ -238,7 +238,7 @@ describe('ApplicationAsyncOperationService', () => {
   });
 
   describe('enqueueUninstall', () => {
-    it('claims the application as UNINSTALLING', async () => {
+    it('transitions the application to UNINSTALLING', async () => {
       applicationService.findByUniversalIdentifier.mockResolvedValue(
         INSTALLED_APPLICATION,
       );
@@ -273,7 +273,7 @@ describe('ApplicationAsyncOperationService', () => {
       expect(applicationService.transitionState).not.toHaveBeenCalled();
     });
 
-    it('reverts the claimed state when the enqueue fails', async () => {
+    it('reverts the state it transitioned when the enqueue fails', async () => {
       applicationService.findByUniversalIdentifier.mockResolvedValue(
         INSTALLED_APPLICATION,
       );

@@ -74,7 +74,7 @@ export class ApplicationAsyncOperationService {
       universalIdentifier,
     });
 
-    const { application, compensate } = await this.claimInstall({
+    const { application, compensate } = await this.requestInstall({
       existingApplication,
       appRegistration,
       workspaceId,
@@ -125,7 +125,7 @@ export class ApplicationAsyncOperationService {
       universalIdentifier: application.universalIdentifier,
     });
 
-    const claimedApplication = await this.applicationService.transitionState({
+    const requestedApplication = await this.applicationService.transitionState({
       applicationId: application.id,
       universalIdentifier: application.universalIdentifier,
       workspaceId,
@@ -136,25 +136,25 @@ export class ApplicationAsyncOperationService {
     await this.enqueueOrCompensate<UpgradeApplicationJobData>({
       jobName: UPGRADE_APPLICATION_JOB_NAME,
       data: {
-        applicationId: claimedApplication.id,
+        applicationId: requestedApplication.id,
         appRegistrationId,
-        universalIdentifier: claimedApplication.universalIdentifier,
+        universalIdentifier: requestedApplication.universalIdentifier,
         targetVersion,
         workspaceId,
       },
-      universalIdentifier: claimedApplication.universalIdentifier,
+      universalIdentifier: requestedApplication.universalIdentifier,
       workspaceId,
       compensate: () =>
         this.applicationService.transitionStateBestEffort({
-          applicationId: claimedApplication.id,
-          universalIdentifier: claimedApplication.universalIdentifier,
+          applicationId: requestedApplication.id,
+          universalIdentifier: requestedApplication.universalIdentifier,
           workspaceId,
           expectedState: ApplicationState.UPGRADING,
           nextState: ApplicationState.INSTALLED,
         }),
     });
 
-    return claimedApplication;
+    return requestedApplication;
   }
 
   async enqueueUninstall({
@@ -182,7 +182,7 @@ export class ApplicationAsyncOperationService {
       );
     }
 
-    const claimedApplication = await this.applicationService.transitionState({
+    const requestedApplication = await this.applicationService.transitionState({
       applicationId: application.id,
       universalIdentifier,
       workspaceId,
@@ -193,7 +193,7 @@ export class ApplicationAsyncOperationService {
     await this.enqueueOrCompensate<UninstallApplicationJobData>({
       jobName: UNINSTALL_APPLICATION_JOB_NAME,
       data: {
-        applicationId: claimedApplication.id,
+        applicationId: requestedApplication.id,
         universalIdentifier,
         workspaceId,
       },
@@ -201,7 +201,7 @@ export class ApplicationAsyncOperationService {
       workspaceId,
       compensate: () =>
         this.applicationService.transitionStateBestEffort({
-          applicationId: claimedApplication.id,
+          applicationId: requestedApplication.id,
           universalIdentifier,
           workspaceId,
           expectedState: ApplicationState.UNINSTALLING,
@@ -209,7 +209,7 @@ export class ApplicationAsyncOperationService {
         }),
     });
 
-    return claimedApplication;
+    return requestedApplication;
   }
 
   private assertRegistrationIsInstallable({
@@ -275,7 +275,7 @@ export class ApplicationAsyncOperationService {
     }
   }
 
-  private async claimInstall({
+  private async requestInstall({
     existingApplication,
     appRegistration,
     workspaceId,

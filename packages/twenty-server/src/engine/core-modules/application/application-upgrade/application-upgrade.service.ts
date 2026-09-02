@@ -250,7 +250,7 @@ export class ApplicationUpgradeService {
     targetVersion: string;
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
-    hasPreClaimedState?: boolean;
+    isStateAlreadyTransitioned?: boolean;
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: params.appRegistrationId },
@@ -261,7 +261,7 @@ export class ApplicationUpgradeService {
       targetVersion: params.targetVersion,
       workspaceId: params.workspaceId,
       skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
-      hasPreClaimedState: params.hasPreClaimedState,
+      isStateAlreadyTransitioned: params.isStateAlreadyTransitioned,
     });
   }
 
@@ -270,7 +270,7 @@ export class ApplicationUpgradeService {
     targetVersion: string;
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
-    hasPreClaimedState?: boolean;
+    isStateAlreadyTransitioned?: boolean;
   }): Promise<boolean> {
     const { appRegistration } = params;
 
@@ -293,7 +293,7 @@ export class ApplicationUpgradeService {
         version: params.targetVersion,
         workspaceId: params.workspaceId,
         skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
-        hasPreClaimedState: params.hasPreClaimedState,
+        isStateAlreadyTransitioned: params.isStateAlreadyTransitioned,
       });
     } catch (error) {
       const appName =

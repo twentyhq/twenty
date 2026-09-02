@@ -1,5 +1,5 @@
 import { applicationsSelector } from '@/applications/states/applicationsSelector';
-import { type ClaimedApplication } from '@/applications/types/claimedApplication.type';
+import { type RequestedApplication } from '@/applications/types/requestedApplication.type';
 import { isApplicationOperationInProgressError } from '@/applications/utils/isApplicationOperationInProgressError';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -22,7 +22,7 @@ export const useInstallMarketplaceApp = () => {
 
   const findOngoingInstall = (
     universalIdentifier: string,
-  ): ClaimedApplication | null => {
+  ): RequestedApplication | null => {
     const application = applications.find(
       (storedApplication) =>
         storedApplication.universalIdentifier === universalIdentifier,
@@ -41,7 +41,7 @@ export const useInstallMarketplaceApp = () => {
   const install = async (variables: {
     universalIdentifier: string;
     version?: string;
-  }): Promise<ClaimedApplication | null> => {
+  }): Promise<RequestedApplication | null> => {
     setIsInstalling(true);
 
     try {

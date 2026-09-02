@@ -1,5 +1,5 @@
 import { applicationsSelector } from '@/applications/states/applicationsSelector';
-import { type ClaimedApplication } from '@/applications/types/claimedApplication.type';
+import { type RequestedApplication } from '@/applications/types/requestedApplication.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
@@ -10,8 +10,8 @@ import { ApplicationState } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const useFollowApplicationInstallation = () => {
-  const [claimedApplication, setClaimedApplication] =
-    useState<ClaimedApplication | null>(null);
+  const [requestedApplication, setRequestedApplication] =
+    useState<RequestedApplication | null>(null);
   const [hasSeenTransitionalState, setHasSeenTransitionalState] =
     useState(false);
 
@@ -19,18 +19,18 @@ export const useFollowApplicationInstallation = () => {
   const navigateSettings = useNavigateSettings();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
-  const followApplicationInstallation = (application: ClaimedApplication) => {
+  const followApplicationInstallation = (application: RequestedApplication) => {
     setHasSeenTransitionalState(false);
-    setClaimedApplication(application);
+    setRequestedApplication(application);
   };
 
   useEffect(() => {
-    if (!isDefined(claimedApplication)) {
+    if (!isDefined(requestedApplication)) {
       return;
     }
 
     const application = applications.find(
-      ({ id }) => id === claimedApplication.id,
+      ({ id }) => id === requestedApplication.id,
     );
 
     if (!isDefined(application)) {
@@ -38,7 +38,7 @@ export const useFollowApplicationInstallation = () => {
         return;
       }
 
-      setClaimedApplication(null);
+      setRequestedApplication(null);
       enqueueErrorSnackBar({
         message: t`Failed to install the application.`,
       });
@@ -54,13 +54,13 @@ export const useFollowApplicationInstallation = () => {
 
     const hasSettled =
       hasSeenTransitionalState ||
-      application.version !== claimedApplication.version;
+      application.version !== requestedApplication.version;
 
     if (!hasSettled) {
       return;
     }
 
-    setClaimedApplication(null);
+    setRequestedApplication(null);
     enqueueSuccessSnackBar({
       message: t`Application installed successfully.`,
     });
@@ -69,7 +69,7 @@ export const useFollowApplicationInstallation = () => {
     });
   }, [
     applications,
-    claimedApplication,
+    requestedApplication,
     hasSeenTransitionalState,
     enqueueErrorSnackBar,
     enqueueSuccessSnackBar,

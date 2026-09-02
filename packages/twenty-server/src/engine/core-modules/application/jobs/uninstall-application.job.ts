@@ -30,7 +30,7 @@ export class UninstallApplicationJob {
       await this.applicationSyncService.uninstallApplicationWithMetrics({
         applicationUniversalIdentifier: universalIdentifier,
         workspaceId,
-        hasPreClaimedState: true,
+        isStateAlreadyTransitioned: true,
       });
     } catch (error) {
       this.logger.error(

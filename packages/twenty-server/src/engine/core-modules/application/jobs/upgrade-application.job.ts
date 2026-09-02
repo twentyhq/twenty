@@ -33,7 +33,7 @@ export class UpgradeApplicationJob {
         appRegistrationId,
         targetVersion,
         workspaceId,
-        hasPreClaimedState: true,
+        isStateAlreadyTransitioned: true,
       });
     } catch (error) {
       this.logger.error(
