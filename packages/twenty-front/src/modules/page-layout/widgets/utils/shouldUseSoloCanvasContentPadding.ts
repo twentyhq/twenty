@@ -1,4 +1,4 @@
-import { type TabPresentation } from '@/page-layout/types/TabPresentations';
+import { type TabPresentation } from '@/page-layout/types/TabPresentation';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 type ShouldUseSoloCanvasContentPaddingParams = {
