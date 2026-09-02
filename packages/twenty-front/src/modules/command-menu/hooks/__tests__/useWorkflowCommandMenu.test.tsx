@@ -3,6 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { sidePanelWorkflowIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowIdComponentState';
+import { sidePanelWorkflowVisualizerComponentInstanceIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowVisualizerComponentInstanceIdComponentState';
 import { sidePanelWorkflowVersionIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowVersionIdComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -90,6 +91,11 @@ const renderHooks = () => {
         sidePanelWorkflowVersionIdComponentState,
         'mocked-uuid',
       );
+      const sidePanelWorkflowVisualizerComponentInstanceId =
+        useAtomComponentStateValue(
+          sidePanelWorkflowVisualizerComponentInstanceIdComponentState,
+          'mocked-uuid',
+        );
       const { getIcon } = useIcons();
 
       return {
@@ -100,6 +106,7 @@ const renderHooks = () => {
         openWorkflowViewStepInSidePanel,
         sidePanelWorkflowId,
         sidePanelWorkflowVersionId,
+        sidePanelWorkflowVisualizerComponentInstanceId,
         contextStoreCurrentObjectMetadataItemId,
         contextStoreTargetedRecordsRule,
         contextStoreNumberOfSelectedRecords,
@@ -127,6 +134,9 @@ describe('useSidePanelWorkflowNavigation', () => {
     });
 
     expect(result.current.sidePanelWorkflowId).toBe('test-workflow-id');
+    expect(result.current.sidePanelWorkflowVisualizerComponentInstanceId).toBe(
+      'test-workflow-id',
+    );
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
       page: SidePanelPages.WorkflowTriggerSelectType,
@@ -205,6 +215,9 @@ describe('useSidePanelWorkflowNavigation', () => {
 
     expect(result.current.sidePanelWorkflowId).toBe('test-workflow-id');
     expect(result.current.sidePanelWorkflowVersionId).toBe(
+      'test-workflow-version-id',
+    );
+    expect(result.current.sidePanelWorkflowVisualizerComponentInstanceId).toBe(
       'test-workflow-version-id',
     );
 
