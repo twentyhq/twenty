@@ -1,58 +1,64 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { applicationsSelector } from '@/applications/states/applicationsSelector';
+import { type ClaimedApplication } from '@/applications/types/claimedApplication.type';
+import { isApplicationOperationInProgressError } from '@/applications/utils/isApplicationOperationInProgressError';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  InstallApplicationDocument,
-  type InstallApplicationMutation,
+  ApplicationState,
+  InstallApplicationAsyncDocument,
 } from '~/generated-metadata/graphql';
 
 export const useInstallMarketplaceApp = () => {
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const [isInstalling, setIsInstalling] = useState(false);
-  const [installApplicationMutation] = useMutation(InstallApplicationDocument);
-  const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
+  const [installApplicationMutation] = useMutation(
+    InstallApplicationAsyncDocument,
+  );
+  const applications = useAtomStateValue(applicationsSelector);
+
+  const findOngoingInstall = (
+    universalIdentifier: string,
+  ): ClaimedApplication | null => {
+    const application = applications.find(
+      (storedApplication) =>
+        storedApplication.universalIdentifier === universalIdentifier,
+    );
+
+    if (
+      !isDefined(application) ||
+      application.state === ApplicationState.INSTALLED
+    ) {
+      return null;
+    }
+
+    return application;
+  };
 
   const install = async (variables: {
     universalIdentifier: string;
     version?: string;
-  }): Promise<InstallApplicationMutation | null> => {
+  }): Promise<ClaimedApplication | null> => {
     setIsInstalling(true);
 
     try {
       const result = await installApplicationMutation({ variables });
 
-      if (isDefined(result.data)) {
-        const installedApplication = result.data.installApplication;
+      return result.data?.installApplicationAsync ?? null;
+    } catch (error) {
+      // A duplicate request loses the state gate. When the operation already
+      // running is the one the user asked for, follow it instead of failing.
+      if (isApplicationOperationInProgressError(error)) {
+        const ongoingInstall = findOngoingInstall(variables.universalIdentifier);
 
-        // the workspace carries the applications app chips resolve their logo
-        // from, so the freshly installed one has to be added to it
-        setCurrentWorkspace((currentWorkspace) =>
-          isDefined(currentWorkspace)
-            ? {
-                ...currentWorkspace,
-                installedApplications: [
-                  ...currentWorkspace.installedApplications.filter(
-                    (application) => application.id !== installedApplication.id,
-                  ),
-                  installedApplication,
-                ],
-              }
-            : currentWorkspace,
-        );
-
-        enqueueSuccessSnackBar({
-          message: t`Application installed successfully.`,
-        });
-
-        return result.data;
+        if (isDefined(ongoingInstall)) {
+          return ongoingInstall;
+        }
       }
 
-      return null;
-    } catch (error) {
       const graphqlMessage = error instanceof Error ? error.message : undefined;
 
       enqueueErrorSnackBar({

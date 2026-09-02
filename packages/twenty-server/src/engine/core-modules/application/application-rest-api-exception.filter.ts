@@ -29,6 +29,8 @@ const applicationExceptionCodeToHttpStatus = (
       return 404;
     case ApplicationExceptionCode.FORBIDDEN:
       return 403;
+    case ApplicationExceptionCode.APPLICATION_OPERATION_IN_PROGRESS:
+      return 409;
     case ApplicationExceptionCode.INVALID_INPUT:
     case ApplicationExceptionCode.SOURCE_CHANNEL_MISMATCH:
     case ApplicationExceptionCode.APP_ALREADY_INSTALLED:

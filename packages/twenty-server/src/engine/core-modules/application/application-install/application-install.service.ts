@@ -10,6 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { buildApplicationFileList } from 'src/engine/core-modules/application/application-install/utils/build-application-file-list.util';
+import { isVersionUpgradeOfApplication } from 'src/engine/core-modules/application/application-install/utils/is-version-upgrade-of-application.util';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import {
@@ -72,6 +73,7 @@ export class ApplicationInstallService {
     version?: string;
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
+    hasPreClaimedState?: boolean;
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOne({
       where: { id: params.appRegistrationId },
@@ -114,6 +116,7 @@ export class ApplicationInstallService {
           workspaceId: params.workspaceId,
           skipWorkspaceCompatibilityCheck:
             params.skipWorkspaceCompatibilityCheck,
+          hasPreClaimedState: params.hasPreClaimedState,
         }),
       lockKey,
       { ttl: 60_000, ms: 500, maxRetries: 120 },
@@ -126,6 +129,7 @@ export class ApplicationInstallService {
       version?: string;
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
+      hasPreClaimedState?: boolean;
     },
   ): Promise<boolean> {
     // Re-read inside the lock so the authorization below cannot act on stale
@@ -197,11 +201,12 @@ export class ApplicationInstallService {
       version?: string;
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
+      hasPreClaimedState?: boolean;
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
   }): Promise<boolean> {
-    const isVersionUpgrade = isDefined(existingApplication);
+    const isVersionUpgrade = isVersionUpgradeOfApplication(existingApplication);
 
     const attributes = {
       universal_identifier: appRegistration.universalIdentifier,
@@ -255,6 +260,7 @@ export class ApplicationInstallService {
       version?: string;
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
+      hasPreClaimedState?: boolean;
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
@@ -283,7 +289,7 @@ export class ApplicationInstallService {
       }
     }
 
-    const isVersionUpgrade = isDefined(existingApplication);
+    const isVersionUpgrade = isVersionUpgradeOfApplication(existingApplication);
 
     const previousVersion = existingApplication?.version ?? undefined;
 
@@ -309,11 +315,21 @@ export class ApplicationInstallService {
       sourceType: appRegistration.sourceType,
     });
 
-    const isUpgradeOfInstalledApplication =
-      isVersionUpgrade && application.state === ApplicationState.INSTALLED;
+    const isStateClaimedByCaller =
+      params.hasPreClaimedState === true &&
+      application.state === ApplicationState.UPGRADING;
 
-    const hasNeverCompletedInstall =
-      isVersionUpgrade && application.state === ApplicationState.INSTALLING;
+    const isUpgradeOfInstalledApplication =
+      isVersionUpgrade &&
+      (application.state === ApplicationState.INSTALLED ||
+        isStateClaimedByCaller);
+
+    if (isVersionUpgrade && !isUpgradeOfInstalledApplication) {
+      throw new ApplicationException(
+        `Application ${universalIdentifier} is in state ${application.state} in workspace ${params.workspaceId}, another operation is already running`,
+        ApplicationExceptionCode.APPLICATION_OPERATION_IN_PROGRESS,
+      );
+    }
 
     const incomingVersion = resolvedPackage.packageJson.version;
 
@@ -321,10 +337,13 @@ export class ApplicationInstallService {
     // this catch means creation succeeded, so only an application that never
     // finished installing needs uninstalling.
     try {
-      if (isUpgradeOfInstalledApplication) {
-        await this.applicationService.update(application.id, {
-          state: ApplicationState.UPGRADING,
+      if (isUpgradeOfInstalledApplication && !isStateClaimedByCaller) {
+        await this.applicationService.transitionState({
+          applicationId: application.id,
+          universalIdentifier,
           workspaceId: params.workspaceId,
+          expectedState: ApplicationState.INSTALLED,
+          nextState: ApplicationState.UPGRADING,
         });
       }
 
@@ -424,14 +443,16 @@ export class ApplicationInstallService {
       );
 
       if (isUpgradeOfInstalledApplication) {
-        await this.applicationService.revertStateToInstalledBestEffort({
+        await this.applicationService.transitionStateBestEffort({
           applicationId: application.id,
           universalIdentifier,
           workspaceId: params.workspaceId,
+          expectedState: ApplicationState.UPGRADING,
+          nextState: ApplicationState.INSTALLED,
         });
       }
 
-      if (!isVersionUpgrade || hasNeverCompletedInstall) {
+      if (!isVersionUpgrade) {
         // Rollback of a failed fresh install: the app never finished
         // installing, so the uninstall hook must not run.
         await this.applicationSyncService.uninstallApplication({
@@ -756,8 +777,24 @@ export class ApplicationInstallService {
     applicationRegistrationId: string;
     sourceType: ApplicationRegistrationSourceType;
   }): Promise<ApplicationEntity> {
-    if (isDefined(params.existingApplication)) {
-      return params.existingApplication;
+    const { existingApplication } = params;
+
+    if (isDefined(existingApplication)) {
+      // A row claimed before the package was resolved carries the registration
+      // name and logo, so the manifest values only land here.
+      if (
+        existingApplication.state === ApplicationState.INSTALLING &&
+        (existingApplication.name !== params.name ||
+          existingApplication.logo !== params.logo)
+      ) {
+        return await this.applicationService.update(existingApplication.id, {
+          name: params.name,
+          logo: params.logo,
+          workspaceId: params.workspaceId,
+        });
+      }
+
+      return existingApplication;
     }
 
     return await this.applicationService.create({

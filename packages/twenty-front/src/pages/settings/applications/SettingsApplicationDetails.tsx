@@ -1,6 +1,9 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { AppChip } from '@/applications/components/AppChip';
+import { useApplicationLifecycleState } from '@/applications/hooks/useApplicationLifecycleState';
+import { useRedirectOnApplicationUninstalled } from '@/applications/hooks/useRedirectOnApplicationUninstalled';
 import { useRefetchOnApplicationLifecycleSettled } from '@/applications/hooks/useRefetchOnApplicationLifecycleSettled';
+import { isApplicationOperationInProgressError } from '@/applications/utils/isApplicationOperationInProgressError';
 import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
@@ -41,10 +44,9 @@ import {
   FindOneApplicationDocument,
   IsApplicationStoppedDocument,
   PermissionFlagType,
-  UninstallApplicationDocument,
+  UninstallApplicationAsyncDocument,
 } from '~/generated-metadata/graphql';
 import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
@@ -73,8 +75,10 @@ export const SettingsApplicationDetails = () => {
   });
 
   useRefetchOnApplicationLifecycleSettled({ applicationId, refetch });
+  useRedirectOnApplicationUninstalled({ applicationId, refetch });
 
   const application = data?.findOneApplication;
+  const lifecycleState = useApplicationLifecycleState({ applicationId });
 
   const { connectionProviders } =
     useFindApplicationConnectionProviders(applicationId);
@@ -160,10 +164,9 @@ export const SettingsApplicationDetails = () => {
     });
   };
 
-  const [uninstallApplication] = useMutation(UninstallApplicationDocument);
+  const [uninstallApplication] = useMutation(UninstallApplicationAsyncDocument);
   const [isUninstalling, setIsUninstalling] = useState(false);
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
-  const navigate = useNavigateSettings();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const handleUninstall = async () => {
     if (!isDefined(application)) return;
@@ -173,12 +176,12 @@ export const SettingsApplicationDetails = () => {
       await uninstallApplication({
         variables: { universalIdentifier: application.universalIdentifier },
       });
-      enqueueSuccessSnackBar({
-        message: t`Application successfully uninstalled.`,
-      });
-      navigate(SettingsPath.Applications);
-    } catch {
-      enqueueErrorSnackBar({ message: t`Error uninstalling application.` });
+    } catch (error) {
+      // The uninstall the conflict names is the one the user asked for, so the
+      // page keeps following the row instead of reporting a failure.
+      if (!isApplicationOperationInProgressError(error)) {
+        enqueueErrorSnackBar({ message: t`Error uninstalling application.` });
+      }
     } finally {
       setIsUninstalling(false);
     }
@@ -317,7 +320,7 @@ export const SettingsApplicationDetails = () => {
             canBeUninstalled={application.canBeUninstalled}
             onUninstall={handleUninstall}
             isUninstalling={isUninstalling}
-            state={application.state}
+            state={lifecycleState ?? application.state}
           />
         );
       case 'content':

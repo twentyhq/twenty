@@ -8,6 +8,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import {
   BaseGraphQLError,
+  ConflictError,
   ErrorCode,
   ForbiddenError,
   InternalServerError,
@@ -29,6 +30,8 @@ export class ApplicationExceptionFilter implements ExceptionFilter {
         throw new NotFoundError(exception);
       case ApplicationExceptionCode.FORBIDDEN:
         throw new ForbiddenError(exception);
+      case ApplicationExceptionCode.APPLICATION_OPERATION_IN_PROGRESS:
+        throw new ConflictError(exception);
       case ApplicationExceptionCode.INVALID_INPUT:
       case ApplicationExceptionCode.SOURCE_CHANNEL_MISMATCH:
       case ApplicationExceptionCode.APP_ALREADY_INSTALLED:

@@ -10263,6 +10263,40 @@ export default {
                     ]
                 }
             ],
+            "installApplicationAsync": [
+                47,
+                {
+                    "universalIdentifier": [
+                        1,
+                        "String!"
+                    ],
+                    "version": [
+                        1
+                    ]
+                }
+            ],
+            "upgradeApplicationAsync": [
+                47,
+                {
+                    "appRegistrationId": [
+                        1,
+                        "String!"
+                    ],
+                    "targetVersion": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "uninstallApplicationAsync": [
+                47,
+                {
+                    "universalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "revokeApplicationAuthorization": [
                 8,
                 {

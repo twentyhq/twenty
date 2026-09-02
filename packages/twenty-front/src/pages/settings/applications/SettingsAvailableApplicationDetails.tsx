@@ -1,5 +1,7 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { AppChip } from '@/applications/components/AppChip';
+import { useApplicationLifecycleState } from '@/applications/hooks/useApplicationLifecycleState';
+import { useFollowApplicationInstallation } from '@/applications/hooks/useFollowApplicationInstallation';
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
@@ -13,7 +15,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -50,9 +51,9 @@ export const SettingsAvailableApplicationDetails = () => {
     availableApplicationId: string;
   }>();
 
-  const navigateSettings = useNavigateSettings();
   const { requestInstall, install, isInstalling, modalInstanceId } =
     useInstallMarketplaceAppWithPermissionValidation();
+  const { followApplicationInstallation } = useFollowApplicationInstallation();
   const { upgrade, isUpgrading } = useUpgradeApplication();
 
   const canInstallMarketplaceApps = useHasPermissionFlag(
@@ -78,6 +79,9 @@ export const SettingsAvailableApplicationDetails = () => {
   });
 
   const application = applicationData?.findOneApplication;
+  const lifecycleState = useApplicationLifecycleState({
+    universalIdentifier: availableApplicationId,
+  });
 
   const detail = detailData?.findMarketplaceAppDetail;
   const manifest = manifestData?.findMarketplaceAppDetail?.manifest as
@@ -110,18 +114,16 @@ export const SettingsAvailableApplicationDetails = () => {
     isNewerSemver(latestAvailableVersion, currentVersion);
 
   const handleInstall = async () => {
-    if (isDefined(detail)) {
-      const data = await install({
-        universalIdentifier: detail.universalIdentifier,
-      });
+    if (!isDefined(detail)) {
+      return;
+    }
 
-      const applicationId = data?.installApplication?.id;
+    const claimedApplication = await install({
+      universalIdentifier: detail.universalIdentifier,
+    });
 
-      if (isDefined(applicationId)) {
-        navigateSettings(SettingsPath.ApplicationDetail, {
-          applicationId,
-        });
-      }
+    if (isDefined(claimedApplication)) {
+      followApplicationInstallation(claimedApplication);
     }
   };
 
@@ -246,7 +248,7 @@ export const SettingsAvailableApplicationDetails = () => {
             hasUpdate={hasUpdate}
             onUpgrade={handleUpgrade}
             isUpgrading={isUpgrading}
-            state={application?.state}
+            state={lifecycleState ?? application?.state}
           />
         );
       case 'content':

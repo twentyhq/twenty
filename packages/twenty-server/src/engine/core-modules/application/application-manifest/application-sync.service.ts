@@ -27,6 +27,8 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
@@ -54,6 +56,7 @@ export class ApplicationSyncService {
     @InjectRepository(FrontComponentEntity)
     private readonly frontComponentRepository: Repository<FrontComponentEntity>,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
+    private readonly metricsService: MetricsService,
   ) {}
 
   public async synchronizeFromManifest({
@@ -331,14 +334,65 @@ export class ApplicationSyncService {
     }
   }
 
+  public async uninstallApplicationWithMetrics({
+    workspaceId,
+    applicationUniversalIdentifier,
+    hasPreClaimedState = false,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+    hasPreClaimedState?: boolean;
+  }): Promise<WorkspaceMigration> {
+    const application = await this.applicationService.findByUniversalIdentifier(
+      { universalIdentifier: applicationUniversalIdentifier, workspaceId },
+    );
+
+    const attributes = {
+      universal_identifier: applicationUniversalIdentifier,
+      app_name: application?.name ?? 'unknown',
+      source_type: application?.sourceType ?? 'unknown',
+      version: application?.version ?? 'unknown',
+    };
+
+    try {
+      const workspaceMigration = await this.uninstallApplication({
+        workspaceId,
+        applicationUniversalIdentifier,
+        hasPreClaimedState,
+      });
+
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.AppUninstallSucceeded,
+        amount: 1,
+        attributes,
+      });
+
+      return workspaceMigration;
+    } catch (error) {
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.AppUninstallFailed,
+        amount: 1,
+        attributes: {
+          ...attributes,
+          error_code:
+            error instanceof ApplicationException ? error.code : 'UNKNOWN',
+        },
+      });
+
+      throw error;
+    }
+  }
+
   public async uninstallApplication({
     workspaceId,
     applicationUniversalIdentifier,
     shouldRunUninstallHook = true,
+    hasPreClaimedState = false,
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
     shouldRunUninstallHook?: boolean;
+    hasPreClaimedState?: boolean;
   }): Promise<WorkspaceMigration> {
     const application = await this.applicationService.findOneApplicationOrThrow(
       { universalIdentifier: applicationUniversalIdentifier, workspaceId },
@@ -351,14 +405,30 @@ export class ApplicationSyncService {
       );
     }
 
-    const shouldTransitionState =
-      application.state === ApplicationState.INSTALLED;
+    const isStateClaimedByCaller =
+      hasPreClaimedState && application.state === ApplicationState.UNINSTALLING;
+
+    // An install rollback tears down a row still in INSTALLING, which no
+    // completed operation owns, so it has no lifecycle to claim.
+    const ownsLifecycle =
+      application.state === ApplicationState.INSTALLED ||
+      isStateClaimedByCaller;
+
+    if (!ownsLifecycle && application.state !== ApplicationState.INSTALLING) {
+      throw new ApplicationException(
+        `Application ${applicationUniversalIdentifier} is in state ${application.state} in workspace ${workspaceId}, another operation is already running`,
+        ApplicationExceptionCode.APPLICATION_OPERATION_IN_PROGRESS,
+      );
+    }
 
     try {
-      if (shouldTransitionState) {
-        await this.applicationService.update(application.id, {
-          state: ApplicationState.UNINSTALLING,
+      if (ownsLifecycle && !isStateClaimedByCaller) {
+        await this.applicationService.transitionState({
+          applicationId: application.id,
+          universalIdentifier: applicationUniversalIdentifier,
           workspaceId,
+          expectedState: ApplicationState.INSTALLED,
+          nextState: ApplicationState.UNINSTALLING,
         });
       }
 
@@ -369,11 +439,13 @@ export class ApplicationSyncService {
         shouldRunUninstallHook,
       });
     } catch (error) {
-      if (shouldTransitionState) {
-        await this.applicationService.revertStateToInstalledBestEffort({
+      if (ownsLifecycle) {
+        await this.applicationService.transitionStateBestEffort({
           applicationId: application.id,
           universalIdentifier: applicationUniversalIdentifier,
           workspaceId,
+          expectedState: ApplicationState.UNINSTALLING,
+          nextState: ApplicationState.INSTALLED,
         });
       }
 

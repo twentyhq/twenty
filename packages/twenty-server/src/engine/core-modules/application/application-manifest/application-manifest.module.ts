@@ -14,6 +14,7 @@ import { ApplicationVariableEntityModule } from 'src/engine/core-modules/applica
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { LogicFunctionExecutorModule } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.module';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
@@ -31,6 +32,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     FeatureFlagModule,
     FileStorageModule,
     LogicFunctionExecutorModule,
+    MetricsModule,
     PermissionsModule,
     SecretEncryptionModule,
     SdkClientModule,

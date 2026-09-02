@@ -3906,6 +3906,9 @@ type Mutation {
   uploadApplicationFile(file: Upload!, applicationUniversalIdentifier: String!, fileFolder: FileFolder!, filePath: String!): File!
   createApplicationFileUploads(applicationUniversalIdentifier: String!, files: [ApplicationFileUploadRequestInput!]!): CreateApplicationFileUploadsResult!
   completeApplicationFileUploads(applicationUniversalIdentifier: String!, fileIds: [UUID!]!): CompleteApplicationFileUploadsResult!
+  installApplicationAsync(universalIdentifier: String!, version: String): Application!
+  upgradeApplicationAsync(appRegistrationId: String!, targetVersion: String!): Application!
+  uninstallApplicationAsync(universalIdentifier: String!): Application!
   revokeApplicationAuthorization(applicationAuthorizationId: UUID!): Boolean!
   generateApplicationToken(applicationId: UUID!): ApplicationTokenPair!
   renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!

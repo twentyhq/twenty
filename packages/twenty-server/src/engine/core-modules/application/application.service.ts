@@ -302,6 +302,21 @@ export class ApplicationService {
     });
   }
 
+  async findByApplicationRegistrationId({
+    applicationRegistrationId,
+    workspaceId,
+  }: {
+    applicationRegistrationId: string;
+    workspaceId: string;
+  }) {
+    return this.applicationRepository.findOne({
+      where: {
+        applicationRegistrationId,
+        workspaceId,
+      },
+    });
+  }
+
   // Number of workspaces each external (non-LOCAL) application is installed in,
   // ranked by install count. Powers the "most installed apps" gauge/leaderboard.
   // LOCAL apps (built-in Standard/Custom) exist in every workspace and are not
@@ -655,12 +670,93 @@ export class ApplicationService {
       data,
     );
 
-    await this.workspaceCacheService.invalidateAndRecompute(data.workspaceId, [
+    return this.invalidateCacheAndBroadcastUpdate({
+      id,
+      workspaceId: data.workspaceId,
+      updatedFields: Object.keys(data).filter(
+        (field) => field !== 'workspaceId',
+      ),
+    });
+  }
+
+  // Single conditional write: the operation that flips the state away from
+  // `expectedState` owns the application until it writes a terminal state, so
+  // concurrent install/upgrade/uninstall requests cannot interleave.
+  async transitionState({
+    applicationId,
+    universalIdentifier,
+    workspaceId,
+    expectedState,
+    nextState,
+  }: {
+    applicationId: string;
+    universalIdentifier: string;
+    workspaceId: string;
+    expectedState: ApplicationState;
+    nextState: ApplicationState;
+  }): Promise<ApplicationEntity> {
+    const updateResult = await this.applicationRepository.update(
+      { id: applicationId, workspaceId, state: expectedState },
+      { state: nextState },
+    );
+
+    if (updateResult.affected === 0) {
+      throw new ApplicationException(
+        `Application ${universalIdentifier} is not in state ${expectedState} in workspace ${workspaceId}, another operation is already running`,
+        ApplicationExceptionCode.APPLICATION_OPERATION_IN_PROGRESS,
+      );
+    }
+
+    return this.invalidateCacheAndBroadcastUpdate({
+      id: applicationId,
+      workspaceId,
+      updatedFields: ['state'],
+    });
+  }
+
+  async transitionStateBestEffort({
+    applicationId,
+    universalIdentifier,
+    workspaceId,
+    expectedState,
+    nextState,
+  }: {
+    applicationId: string;
+    universalIdentifier: string;
+    workspaceId: string;
+    expectedState: ApplicationState;
+    nextState: ApplicationState;
+  }): Promise<void> {
+    try {
+      await this.transitionState({
+        applicationId,
+        universalIdentifier,
+        workspaceId,
+        expectedState,
+        nextState,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `State transition from ${expectedState} to ${nextState} did not complete for application ${universalIdentifier} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  private async invalidateCacheAndBroadcastUpdate({
+    id,
+    workspaceId,
+    updatedFields,
+  }: {
+    id: string;
+    workspaceId: string;
+    updatedFields: string[];
+  }): Promise<ApplicationEntity> {
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'flatApplicationMaps',
     ]);
 
     const updatedApplication = await this.applicationRepository.findOne({
-      where: { id, workspaceId: data.workspaceId },
+      where: { id, workspaceId },
     });
 
     if (!isDefined(updatedApplication)) {
@@ -673,33 +769,10 @@ export class ApplicationService {
     await this.broadcastApplicationEvent({
       type: 'updated',
       application: updatedApplication,
-      updatedFields: Object.keys(data).filter(
-        (field) => field !== 'workspaceId',
-      ),
+      updatedFields,
     });
 
     return updatedApplication;
-  }
-
-  async revertStateToInstalledBestEffort({
-    applicationId,
-    universalIdentifier,
-    workspaceId,
-  }: {
-    applicationId: string;
-    universalIdentifier: string;
-    workspaceId: string;
-  }): Promise<void> {
-    try {
-      await this.update(applicationId, {
-        state: ApplicationState.INSTALLED,
-        workspaceId,
-      });
-    } catch (error) {
-      this.logger.warn(
-        `State revert to INSTALLED did not complete for application ${universalIdentifier} in workspace ${workspaceId}, the row may or may not have been updated: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
   }
 
   async delete(universalIdentifier: string, workspaceId: string) {

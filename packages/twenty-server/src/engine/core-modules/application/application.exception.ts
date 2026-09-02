@@ -23,6 +23,7 @@ export enum ApplicationExceptionCode {
   POST_INSTALL_ERROR = 'POST_INSTALL_ERROR',
   UNINSTALL_ERROR = 'UNINSTALL_ERROR',
   APP_ALREADY_INSTALLED = 'APP_ALREADY_INSTALLED',
+  APPLICATION_OPERATION_IN_PROGRESS = 'APPLICATION_OPERATION_IN_PROGRESS',
   CANNOT_DOWNGRADE_APPLICATION = 'CANNOT_DOWNGRADE_APPLICATION',
   SERVER_VERSION_INCOMPATIBLE = 'SERVER_VERSION_INCOMPATIBLE',
   WORKSPACE_VERSION_INCOMPATIBLE = 'WORKSPACE_VERSION_INCOMPATIBLE',
@@ -71,6 +72,8 @@ const getApplicationExceptionUserFriendlyMessage = (
       return msg`Application uninstall logic function failed.`;
     case ApplicationExceptionCode.APP_ALREADY_INSTALLED:
       return msg`This version of the application is already installed in this workspace.`;
+    case ApplicationExceptionCode.APPLICATION_OPERATION_IN_PROGRESS:
+      return msg`Another operation is already running on this application. Please wait for it to complete.`;
     case ApplicationExceptionCode.CANNOT_DOWNGRADE_APPLICATION:
       return msg`A higher version of this application is already installed. Downgrading is not allowed.`;
     case ApplicationExceptionCode.SERVER_VERSION_INCOMPATIBLE:

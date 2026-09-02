@@ -2,12 +2,13 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { SettingsAdminVersionDisplay } from '@/settings/admin-panel/components/SettingsAdminVersionDisplay';
+import { useApplicationLifecycleState } from '@/applications/hooks/useApplicationLifecycleState';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCircleDot, IconUpload, IconVersions } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
-import { type Application } from '~/generated-metadata/graphql';
+import { ApplicationState, type Application } from '~/generated-metadata/graphql';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 
@@ -48,6 +49,15 @@ export const SettingsApplicationVersionContainer = ({
     isNewerSemver(latestAvailableVersion, currentVersion);
 
   const { upgrade, isUpgrading } = useUpgradeApplication();
+
+  const lifecycleState = useApplicationLifecycleState({
+    applicationId: application?.id,
+  });
+
+  const isUpgradeOngoing =
+    isUpgrading ||
+    (isDefined(lifecycleState) &&
+      lifecycleState !== ApplicationState.INSTALLED);
 
   const handleUpgrade = async () => {
     if (!isDefined(appRegistrationId) || !isDefined(latestAvailableVersion)) {
@@ -100,14 +110,14 @@ export const SettingsApplicationVersionContainer = ({
         <Button
           Icon={IconUpload}
           title={
-            isUpgrading
+            isUpgradeOngoing
               ? t`Upgrading...`
               : t`Upgrade to ${latestAvailableVersion}`
           }
           variant="secondary"
           accent="blue"
           onClick={handleUpgrade}
-          disabled={isUpgrading}
+          disabled={isUpgradeOngoing}
         />
       )}
     </StyledContainer>

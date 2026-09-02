@@ -5,13 +5,17 @@ import { useResolvedApplicationDescription } from '@/applications/hooks/useResol
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { t } from '@lingui/core/macro';
-import { Tag } from 'twenty-ui/data-display';
+import { isDefined } from 'twenty-shared/utils';
+import { Status, Tag } from 'twenty-ui/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
 import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
 import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
-import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
+import {
+  ApplicationRegistrationSourceType,
+  ApplicationState,
+} from '~/generated-metadata/graphql';
 
 export type SettingsApplicationTableRowProps = {
   action: ReactNode;
@@ -21,10 +25,24 @@ export type SettingsApplicationTableRowProps = {
   hasUpdate?: boolean;
   link?: string;
   sourceType?: ApplicationRegistrationSourceType;
+  state?: ApplicationState;
 };
 
 export const APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
   '164px 80px minmax(0, 1fr) 36px';
+
+const getTransitionalStateLabel = (state?: ApplicationState) => {
+  switch (state) {
+    case ApplicationState.INSTALLING:
+      return t`Installing`;
+    case ApplicationState.UPGRADING:
+      return t`Upgrading`;
+    case ApplicationState.UNINSTALLING:
+      return t`Uninstalling`;
+    default:
+      return undefined;
+  }
+};
 
 const SOURCE_TYPE_LABELS: Record<ApplicationRegistrationSourceType, string> = {
   [ApplicationRegistrationSourceType.LOCAL]: 'Local',
@@ -39,10 +57,13 @@ export const SettingsApplicationTableRow = ({
   hasUpdate,
   link,
   sourceType,
+  state,
 }: SettingsApplicationTableRowProps) => {
   const resolvedDescription = useResolvedApplicationDescription(application);
   const descriptionSummary =
     getApplicationDescriptionSummary(resolvedDescription);
+
+  const transitionalStateLabel = getTransitionalStateLabel(state);
 
   return (
     <TableRow
@@ -58,8 +79,17 @@ export const SettingsApplicationTableRow = ({
       </TableCell>
       <TableCell gap={themeCssVariables.spacing[2]} minWidth="0">
         <OverflowingTextWithTooltip text={descriptionSummary} />
-        {hasUpdate === true && (
-          <Tag color="blue" text={t`Update`} weight="medium" />
+        {isDefined(transitionalStateLabel) ? (
+          <Status
+            color="blue"
+            text={transitionalStateLabel}
+            isLoaderVisible
+            weight="medium"
+          />
+        ) : (
+          hasUpdate === true && (
+            <Tag color="blue" text={t`Update`} weight="medium" />
+          )
         )}
       </TableCell>
       <TableCell

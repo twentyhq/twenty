@@ -3369,6 +3369,9 @@ export interface Mutation {
     uploadApplicationFile: File
     createApplicationFileUploads: CreateApplicationFileUploadsResult
     completeApplicationFileUploads: CompleteApplicationFileUploadsResult
+    installApplicationAsync: Application
+    upgradeApplicationAsync: Application
+    uninstallApplicationAsync: Application
     revokeApplicationAuthorization: Scalars['Boolean']
     generateApplicationToken: ApplicationTokenPair
     renewApplicationToken: ApplicationTokenPair
@@ -6928,6 +6931,9 @@ export interface MutationGenqlSelection{
     uploadApplicationFile?: (FileGenqlSelection & { __args: {file: Scalars['Upload'], applicationUniversalIdentifier: Scalars['String'], fileFolder: FileFolder, filePath: Scalars['String']} })
     createApplicationFileUploads?: (CreateApplicationFileUploadsResultGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String'], files: ApplicationFileUploadRequestInput[]} })
     completeApplicationFileUploads?: (CompleteApplicationFileUploadsResultGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String'], fileIds: Scalars['UUID'][]} })
+    installApplicationAsync?: (ApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} })
+    upgradeApplicationAsync?: (ApplicationGenqlSelection & { __args: {appRegistrationId: Scalars['String'], targetVersion: Scalars['String']} })
+    uninstallApplicationAsync?: (ApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
     revokeApplicationAuthorization?: { __args: {applicationAuthorizationId: Scalars['UUID']} }
     generateApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     renewApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationRefreshToken: Scalars['String']} })

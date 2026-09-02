@@ -1,36 +1,34 @@
+import { isApplicationOperationInProgressError } from '@/applications/utils/isApplicationOperationInProgressError';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { useMutation } from '@apollo/client/react';
-import { UpgradeApplicationDocument } from '~/generated-metadata/graphql';
+import { UpgradeApplicationAsyncDocument } from '~/generated-metadata/graphql';
 
 export const useUpgradeApplication = () => {
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
-  const [upgradeApplicationMutation] = useMutation(UpgradeApplicationDocument);
+  const { enqueueErrorSnackBar } = useSnackBar();
+  const [upgradeApplicationMutation] = useMutation(
+    UpgradeApplicationAsyncDocument,
+  );
   const [isUpgrading, setIsUpgrading] = useState(false);
 
   const upgrade = async (params: {
     appRegistrationId: string;
     targetVersion: string;
-  }) => {
+  }): Promise<boolean> => {
     setIsUpgrading(true);
 
     try {
-      const result = await upgradeApplicationMutation({
-        variables: params,
-      });
+      await upgradeApplicationMutation({ variables: params });
 
-      if (isDefined(result.data)) {
-        enqueueSuccessSnackBar({
-          message: t`Application upgraded successfully.`,
-        });
-
+      return true;
+    } catch (error) {
+      // An upgrade is already running on this application, which is what the
+      // user asked for.
+      if (isApplicationOperationInProgressError(error)) {
         return true;
       }
 
-      return false;
-    } catch (error) {
       const graphqlMessage = error instanceof Error ? error.message : undefined;
 
       enqueueErrorSnackBar({
