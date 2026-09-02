@@ -82,13 +82,15 @@ describe('BillingUsageService', () => {
       await expect(decrement(1_000_000)).resolves.toBe(4_000_000);
     });
 
-    // A negative decrement adds to the counter, handing the workspace credits
-    // it never bought.
+    // A negative decrement adds to the counter, handing the workspace credits it
+    // never bought, and INCRBY rejects anything that is not an integer.
     it.each([
       ['a negative amount', -1_000_000],
       ['negative infinity', Number.NEGATIVE_INFINITY],
       ['positive infinity', Number.POSITIVE_INFINITY],
       ['NaN', Number.NaN],
+      ['a fractional amount', 1_000.5],
+      ['an amount beyond the safe integer range', Number.MAX_SAFE_INTEGER + 2],
     ])('should leave the counter untouched for %s', async (_case, amount) => {
       await expect(decrement(amount)).resolves.toBe(WARM_AVAILABLE_CREDITS);
     });

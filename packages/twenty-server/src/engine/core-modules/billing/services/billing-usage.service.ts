@@ -251,11 +251,11 @@ export class BillingUsageService {
     currentBillingSubscription?: CurrentBillingSubscription;
   }): Promise<number> {
     // The counter is authoritative between ledger reads, so a negative
-    // decrement would credit the workspace. Callers derive this from durations
-    // and token counts; clamp at the one place that writes rather than trusting
-    // each of them.
+    // decrement would credit the workspace, and INCRBY rejects anything that is
+    // not an integer. Callers derive this from durations and token counts;
+    // clamp at the one place that writes rather than trusting each of them.
     const creditsToDecrement =
-      Number.isFinite(usedCredits) && usedCredits > 0 ? usedCredits : 0;
+      Number.isSafeInteger(usedCredits) && usedCredits > 0 ? usedCredits : 0;
 
     if (creditsToDecrement !== usedCredits) {
       this.logger.error(
