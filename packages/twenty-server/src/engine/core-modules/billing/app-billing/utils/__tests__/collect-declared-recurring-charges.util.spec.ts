@@ -38,7 +38,7 @@ const collectOne = (charge: unknown) =>
   collectDeclaredRecurringCharges({
     flatApplicationMaps: buildFlatApplicationMaps([
       { id: APPLICATION_ID, billing: { recurring: { fee: charge } } },
-    ] as Array<Partial<FlatApplication> & { id: string }>),
+    ] as unknown as Array<Partial<FlatApplication> & { id: string }>),
   });
 
 describe('collectDeclaredRecurringCharges', () => {
@@ -159,21 +159,49 @@ describe('collectDeclaredRecurringCharges', () => {
   });
 
   it('should reject a zero amount', () => {
-    const { declaredCharges } = collectOne({
+    const { declaredCharges, rejectedCharges } = collectOne({
       ...PLATFORM_FEE,
       amountMicroCredits: 0,
     });
 
     expect(declaredCharges).toEqual([]);
+    expect(rejectedCharges).toEqual([
+      {
+        applicationId: APPLICATION_ID,
+        chargeKey: 'fee',
+        reason: 'malformed or out-of-bounds recurring charge declaration',
+      },
+    ]);
   });
 
   it('should reject an amount above the per-unit maximum', () => {
-    const { declaredCharges } = collectOne({
+    const { declaredCharges, rejectedCharges } = collectOne({
       ...PLATFORM_FEE,
       amountMicroCredits: MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT + 1,
     });
 
     expect(declaredCharges).toEqual([]);
+    expect(rejectedCharges).toEqual([
+      {
+        applicationId: APPLICATION_ID,
+        chargeKey: 'fee',
+        reason: 'malformed or out-of-bounds recurring charge declaration',
+      },
+    ]);
+  });
+
+  // An array is typeof 'object', so without an explicit check Object.entries
+  // would bill each element under its numeric index.
+  it('should ignore a recurring block that is an array rather than a map', () => {
+    const { declaredCharges, rejectedCharges } =
+      collectDeclaredRecurringCharges({
+        flatApplicationMaps: buildFlatApplicationMaps([
+          { id: APPLICATION_ID, billing: { recurring: [PLATFORM_FEE] } },
+        ] as unknown as Array<Partial<FlatApplication> & { id: string }>),
+      });
+
+    expect(declaredCharges).toEqual([]);
+    expect(rejectedCharges).toEqual([]);
   });
 
   it('should accept an amount exactly at the per-unit maximum', () => {

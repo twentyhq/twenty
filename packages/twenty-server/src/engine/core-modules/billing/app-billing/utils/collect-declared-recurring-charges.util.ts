@@ -57,7 +57,13 @@ export const collectDeclaredRecurringCharges = ({
     const billing: ApplicationBilling = application.billing ?? {};
     const recurring = billing.recurring;
 
-    if (!isDefined(recurring) || typeof recurring !== 'object') {
+    // An array is typeof 'object', and Object.entries would then bill each
+    // element under its numeric index as if it were a charge name.
+    if (
+      !isDefined(recurring) ||
+      typeof recurring !== 'object' ||
+      Array.isArray(recurring)
+    ) {
       continue;
     }
 
