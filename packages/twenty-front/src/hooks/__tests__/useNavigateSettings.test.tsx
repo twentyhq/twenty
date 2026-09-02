@@ -45,8 +45,6 @@ const RoutedSidePanelWrapper = ({
         type: 'side-panel',
         instanceId: 'side-panel-page',
         ownsRouteLocation: true,
-        headerTitlePortal: null,
-        headerActionsPortal: null,
       }}
     >
       {children}
@@ -139,5 +137,35 @@ describe('useNavigateSettings', () => {
       '/settings/accounts/new',
       undefined,
     );
+  });
+
+  it('opens settings when a legacy side-panel page escapes to main', () => {
+    const { result } = renderHook(() => useNavigateSettings(), {
+      wrapper: SidePanelWrapper,
+    });
+
+    result.current(SettingsPath.NewAccount, undefined, undefined, {
+      surface: 'main',
+    });
+
+    expect(openSettingsMenuMock).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith('/settings/accounts/new', {
+      surface: 'main',
+    });
+  });
+
+  it('leaves the shell to the navigator when a routed page escapes to main', () => {
+    const { result } = renderHook(() => useNavigateSettings(), {
+      wrapper: RoutedSidePanelWrapper,
+    });
+
+    result.current(SettingsPath.NewAccount, undefined, undefined, {
+      surface: 'main',
+    });
+
+    expect(openSettingsMenuMock).not.toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith('/settings/accounts/new', {
+      surface: 'main',
+    });
   });
 });
