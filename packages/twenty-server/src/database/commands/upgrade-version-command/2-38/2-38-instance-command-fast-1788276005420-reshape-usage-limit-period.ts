@@ -7,19 +7,25 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 export class ReshapeUsageLimitPeriodFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."usageLimit" ADD COLUMN IF NOT EXISTS "periodCount" integer NOT NULL`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."usageLimit" ADD COLUMN IF NOT EXISTS "periodUnit" character varying NOT NULL`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."usageLimit" ADD COLUMN IF NOT EXISTS "meter" character varying NOT NULL`,
-    );
-    await queryRunner.query(
       `ALTER TABLE "core"."usageLimit" DROP CONSTRAINT "UQ_USAGE_LIMIT_SCOPE"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."usageLimit" DROP COLUMN "windowSeconds"`,
+      `ALTER TABLE "core"."usageLimit" RENAME COLUMN "windowSeconds" TO "periodCount"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."usageLimit" ALTER COLUMN "periodCount" DROP DEFAULT`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."usageLimit" ADD COLUMN "periodUnit" character varying NOT NULL DEFAULT 'second'`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."usageLimit" ALTER COLUMN "periodUnit" DROP DEFAULT`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."usageLimit" ADD COLUMN "meter" character varying NOT NULL DEFAULT 'quantity'`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."usageLimit" ALTER COLUMN "meter" DROP DEFAULT`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."usageLimit" ADD CONSTRAINT "UQ_USAGE_LIMIT_SCOPE" UNIQUE ("workspaceId", "resourceType", "operationType", "spenderType", "spenderId", "limitKind", "periodCount", "periodUnit", "meter")`,
@@ -31,16 +37,19 @@ export class ReshapeUsageLimitPeriodFastInstanceCommand implements FastInstanceC
       `ALTER TABLE "core"."usageLimit" DROP CONSTRAINT "UQ_USAGE_LIMIT_SCOPE"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."usageLimit" ADD COLUMN IF NOT EXISTS "windowSeconds" integer NOT NULL DEFAULT 0`,
+      `DELETE FROM "core"."usageLimit" WHERE "limitKind" = 'quota'`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."usageLimit" DROP COLUMN IF EXISTS "periodCount"`,
+      `ALTER TABLE "core"."usageLimit" DROP COLUMN "periodUnit"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."usageLimit" DROP COLUMN IF EXISTS "periodUnit"`,
+      `ALTER TABLE "core"."usageLimit" DROP COLUMN "meter"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."usageLimit" DROP COLUMN IF EXISTS "meter"`,
+      `ALTER TABLE "core"."usageLimit" ALTER COLUMN "periodCount" SET DEFAULT 0`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."usageLimit" RENAME COLUMN "periodCount" TO "windowSeconds"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."usageLimit" ADD CONSTRAINT "UQ_USAGE_LIMIT_SCOPE" UNIQUE ("workspaceId", "resourceType", "operationType", "spenderType", "spenderId", "limitKind", "windowSeconds")`,

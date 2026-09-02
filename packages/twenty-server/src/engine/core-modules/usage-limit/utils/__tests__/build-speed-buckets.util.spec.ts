@@ -295,6 +295,24 @@ describe('buildSpeedBuckets with rules configured', () => {
     ]);
   });
 
+  it('ignores a quota rule covering every spender', () => {
+    const buckets = buildBuckets({
+      authContext: apiKeyContext,
+      rules: [
+        buildRule({
+          id: 'quota',
+          limitKind: 'quota',
+          spenderId: '',
+          periodCount: 1,
+          periodUnit: 'billingPeriod',
+          meter: 'creditsUsedMicro',
+        }),
+      ],
+    });
+
+    expect(buckets.map((bucket) => bucket.isDefault)).toEqual([true, true]);
+  });
+
   it('applies a workspace rule to a caller that no other rule covers', () => {
     const buckets = buildBuckets({
       authContext: userContext,
