@@ -1,4 +1,5 @@
 import { CommandMenuForMobile } from '@/command-menu/components/CommandMenuForMobile';
+import { RouteContextStoreProvider } from '@/context-store/components/RouteContextStoreProvider';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop';
 import { SidePanelPathUrlSyncEffect } from '@/side-panel/routing/components/SidePanelPathUrlSyncEffect';
@@ -129,6 +130,7 @@ export const MainAppLayoutWithSidePanel = () => {
 
   return (
     <StyledRow>
+      <RouteContextStoreProvider />
       <SidePanelPathUrlSyncEffect />
       <StyledContent>
         <MainAppLayoutOutlet />
