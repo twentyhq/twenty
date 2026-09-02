@@ -353,6 +353,7 @@ export class GoogleAPIsService {
               await this.enqueueWebhookSubscriptionCreation({
                 channelType: WebhookSubscriptionChannelType.MESSAGING,
                 channelId: messageChannel.id,
+                isSyncEnabled: messageChannel.isSyncEnabled,
                 workspaceId,
               });
               this.onboardingRecentMessagesImportService
@@ -398,6 +399,7 @@ export class GoogleAPIsService {
               await this.enqueueWebhookSubscriptionCreation({
                 channelType: WebhookSubscriptionChannelType.CALENDAR,
                 channelId: calendarChannel.id,
+                isSyncEnabled: calendarChannel.isSyncEnabled,
                 workspaceId,
               });
             }
@@ -412,13 +414,16 @@ export class GoogleAPIsService {
   private async enqueueWebhookSubscriptionCreation({
     channelType,
     channelId,
+    isSyncEnabled,
     workspaceId,
   }: {
     channelType: WebhookSubscriptionChannelType;
     channelId: string;
+    isSyncEnabled: boolean;
     workspaceId: string;
   }): Promise<void> {
     if (
+      !isSyncEnabled ||
       !this.twentyConfigService.get(
         'IS_CONNECTED_ACCOUNT_WEBHOOK_SUBSCRIPTION_ENABLED',
       )
