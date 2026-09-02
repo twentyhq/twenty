@@ -4,6 +4,7 @@ export const buildSlackRosterMatchMessage = ({
   linkedCount,
   alreadyLinkedCount,
   unmatchedCount,
+  ambiguousEmailCount,
   failedCount,
   isRosterTruncated,
 }: SlackRosterMatchSummary): string => {
@@ -17,6 +18,12 @@ export const buildSlackRosterMatchMessage = ({
 
   if (unmatchedCount > 0) {
     messageParts.push(`${unmatchedCount} without a matching member email.`);
+  }
+
+  if (ambiguousEmailCount > 0) {
+    messageParts.push(
+      `${ambiguousEmailCount} skipped because their email belongs to more than one workspace member.`,
+    );
   }
 
   if (failedCount > 0) {

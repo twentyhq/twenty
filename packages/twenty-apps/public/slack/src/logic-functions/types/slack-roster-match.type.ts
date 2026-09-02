@@ -14,6 +14,7 @@ export type SlackRosterMatchSummary = {
   linkedCount: number;
   alreadyLinkedCount: number;
   unmatchedCount: number;
+  ambiguousEmailCount: number;
   failedCount: number;
   isRosterTruncated: boolean;
 };

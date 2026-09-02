@@ -6,12 +6,12 @@ import { type SlackRosterMember } from 'src/logic-functions/types/slack-roster-m
 
 const {
   coreApiClientMock,
-  listWorkspaceMemberEmailsMock,
+  findWorkspaceMemberIdsByEmailsMock,
   listLinkedSlackUserIdsMock,
   persistSlackUserLinkMock,
 } = vi.hoisted(() => ({
   coreApiClientMock: vi.fn(),
-  listWorkspaceMemberEmailsMock: vi.fn(),
+  findWorkspaceMemberIdsByEmailsMock: vi.fn(),
   listLinkedSlackUserIdsMock: vi.fn(),
   persistSlackUserLinkMock: vi.fn(),
 }));
@@ -20,8 +20,8 @@ vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: coreApiClientMock,
 }));
 
-vi.mock('src/logic-functions/data/list-workspace-member-emails', () => ({
-  listWorkspaceMemberEmails: listWorkspaceMemberEmailsMock,
+vi.mock('src/logic-functions/data/find-workspace-member-ids-by-emails', () => ({
+  findWorkspaceMemberIdsByEmails: findWorkspaceMemberIdsByEmailsMock,
 }));
 
 vi.mock('src/logic-functions/data/list-linked-slack-user-ids', () => ({
@@ -63,9 +63,10 @@ const fullMember = ({
 describe('matchSlackRosterByEmail', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    listWorkspaceMemberEmailsMock.mockResolvedValue(
-      new Map([['ada@twenty.com', 'member-ada']]),
-    );
+    findWorkspaceMemberIdsByEmailsMock.mockResolvedValue({
+      workspaceMemberIdByEmail: new Map([['ada@twenty.com', 'member-ada']]),
+      ambiguousEmailCount: 0,
+    });
     listLinkedSlackUserIdsMock.mockResolvedValue(new Set());
     persistSlackUserLinkMock.mockResolvedValue('link-new');
   });
@@ -92,6 +93,7 @@ describe('matchSlackRosterByEmail', () => {
       linkedCount: 1,
       alreadyLinkedCount: 0,
       unmatchedCount: 0,
+      ambiguousEmailCount: 0,
       failedCount: 0,
       isRosterTruncated: false,
     });
@@ -123,6 +125,7 @@ describe('matchSlackRosterByEmail', () => {
       linkedCount: 0,
       alreadyLinkedCount: 1,
       unmatchedCount: 0,
+      ambiguousEmailCount: 0,
       failedCount: 0,
       isRosterTruncated: false,
     });
@@ -185,14 +188,46 @@ describe('matchSlackRosterByEmail', () => {
     expect(summary.unmatchedCount).toBe(1);
   });
 
+  it('should carry the shared-email skip count into the summary', async () => {
+    findWorkspaceMemberIdsByEmailsMock.mockResolvedValue({
+      workspaceMemberIdByEmail: new Map(),
+      ambiguousEmailCount: 2,
+    });
+
+    const summary = await matchSlackRosterByEmail({
+      slackClient: buildSlackClient([
+        fullMember({ id: 'U1', email: 'shared@twenty.com' }),
+      ]),
+      slackTeamId: SLACK_TEAM_ID,
+    });
+
+    expect(summary.ambiguousEmailCount).toBe(2);
+  });
+
+  it('should look up only the emails the roster vouches for', async () => {
+    await matchSlackRosterByEmail({
+      slackClient: buildSlackClient([
+        fullMember({ id: 'U1', email: 'ada@twenty.com' }),
+        { id: 'U2', team_id: SLACK_TEAM_ID, profile: { email: 'guest@x.com' } },
+      ]),
+      slackTeamId: SLACK_TEAM_ID,
+    });
+
+    expect(findWorkspaceMemberIdsByEmailsMock).toHaveBeenCalledWith(
+      expect.anything(),
+      { emails: ['ada@twenty.com'] },
+    );
+  });
+
   it('should summarize a mixed roster', async () => {
     listLinkedSlackUserIdsMock.mockResolvedValue(new Set(['U-linked']));
-    listWorkspaceMemberEmailsMock.mockResolvedValue(
-      new Map([
+    findWorkspaceMemberIdsByEmailsMock.mockResolvedValue({
+      workspaceMemberIdByEmail: new Map([
         ['ada@twenty.com', 'member-ada'],
         ['grace@twenty.com', 'member-grace'],
       ]),
-    );
+      ambiguousEmailCount: 0,
+    });
 
     const summary = await matchSlackRosterByEmail({
       slackClient: buildSlackClient([
@@ -210,18 +245,20 @@ describe('matchSlackRosterByEmail', () => {
       linkedCount: 2,
       alreadyLinkedCount: 1,
       unmatchedCount: 2,
+      ambiguousEmailCount: 0,
       failedCount: 0,
       isRosterTruncated: false,
     });
   });
 
   it('should keep linking after one candidate fails and count the failure', async () => {
-    listWorkspaceMemberEmailsMock.mockResolvedValue(
-      new Map([
+    findWorkspaceMemberIdsByEmailsMock.mockResolvedValue({
+      workspaceMemberIdByEmail: new Map([
         ['ada@twenty.com', 'member-ada'],
         ['grace@twenty.com', 'member-grace'],
       ]),
-    );
+      ambiguousEmailCount: 0,
+    });
     persistSlackUserLinkMock
       .mockRejectedValueOnce(new Error('write failed'))
       .mockResolvedValueOnce('link-new');

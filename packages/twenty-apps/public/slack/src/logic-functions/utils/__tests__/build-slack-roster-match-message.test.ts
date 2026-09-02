@@ -9,6 +9,7 @@ const buildSummary = (
   linkedCount: 0,
   alreadyLinkedCount: 0,
   unmatchedCount: 0,
+  ambiguousEmailCount: 0,
   failedCount: 0,
   isRosterTruncated: false,
   ...summary,
@@ -34,11 +35,12 @@ describe('buildSlackRosterMatchMessage', () => {
           linkedCount: 3,
           alreadyLinkedCount: 4,
           unmatchedCount: 5,
+          ambiguousEmailCount: 2,
           failedCount: 1,
         }),
       ),
     ).toBe(
-      'Matched 3 Slack users by email. 4 already linked. 5 without a matching member email. 1 could not be linked; try the match again.',
+      'Matched 3 Slack users by email. 4 already linked. 5 without a matching member email. 2 skipped because their email belongs to more than one workspace member. 1 could not be linked; try the match again.',
     );
   });
 

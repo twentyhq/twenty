@@ -1,15 +1,17 @@
 import { type WebClient } from '@slack/web-api';
+import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { SLACK_USER_LINK_CONSENT_STATE } from 'src/logic-functions/constants/slack-user-link-consent-state';
 import { SLACK_USER_LINK_SOURCE } from 'src/logic-functions/constants/slack-user-link-source';
 import { listLinkedSlackUserIds } from 'src/logic-functions/data/list-linked-slack-user-ids';
-import { listWorkspaceMemberEmails } from 'src/logic-functions/data/list-workspace-member-emails';
+import { findWorkspaceMemberIdsByEmails } from 'src/logic-functions/data/find-workspace-member-ids-by-emails';
 import {
   type SlackRosterMatchCandidate,
   type SlackRosterMatchSummary,
 } from 'src/logic-functions/types/slack-roster-match.type';
 import { collectSlackRosterMembers } from 'src/logic-functions/utils/collect-slack-roster-members';
+import { getVouchedSlackRosterEmail } from 'src/logic-functions/utils/get-vouched-slack-roster-email';
 import { persistSlackUserLink } from 'src/logic-functions/utils/persist-slack-user-link';
 import { planSlackRosterMatch } from 'src/logic-functions/utils/plan-slack-roster-match';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
@@ -52,12 +54,24 @@ export const matchSlackRosterByEmail = async ({
 }): Promise<SlackRosterMatchSummary> => {
   const client = new CoreApiClient({ runAs: 'application' });
 
-  const [workspaceMemberIdByEmail, linkedSlackUserIds, roster] =
-    await Promise.all([
-      listWorkspaceMemberEmails(client),
-      listLinkedSlackUserIds(client, { slackTeamId }),
-      collectSlackRosterMembers({ slackClient }),
-    ]);
+  const [linkedSlackUserIds, roster] = await Promise.all([
+    listLinkedSlackUserIds(client, { slackTeamId }),
+    collectSlackRosterMembers({ slackClient }),
+  ]);
+
+  const vouchedRosterEmails = roster.members
+    .map((member) =>
+      getVouchedSlackRosterEmail({
+        member,
+        installedSlackTeamId: slackTeamId,
+      }),
+    )
+    .filter(isNonEmptyString);
+
+  const { workspaceMemberIdByEmail, ambiguousEmailCount } =
+    await findWorkspaceMemberIdsByEmails(client, {
+      emails: vouchedRosterEmails,
+    });
 
   const { candidates, alreadyLinkedCount, unmatchedCount } =
     planSlackRosterMatch({
@@ -79,6 +93,7 @@ export const matchSlackRosterByEmail = async ({
     linkedCount: linkOutcomes.filter((isLinked) => isLinked).length,
     alreadyLinkedCount,
     unmatchedCount,
+    ambiguousEmailCount,
     failedCount: linkOutcomes.filter((isLinked) => !isLinked).length,
     isRosterTruncated: roster.isTruncated,
   };
