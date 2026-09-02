@@ -257,6 +257,25 @@ describe('linkSlackRosterCandidates', () => {
     expect(outcome).toEqual({ linkedCount: 1, failedCount: 0 });
   });
 
+  it('should clear soft-deleted links per batch, not for the whole set up front', async () => {
+    findDeletedSlackUserLinkIdsMock.mockResolvedValue(['deleted-link']);
+
+    const candidates = Array.from({ length: 400 }, (_, index) =>
+      candidate(`U${index}`),
+    );
+
+    await linkSlackRosterCandidates(client, {
+      candidates,
+      slackTeamId: SLACK_TEAM_ID,
+    });
+
+    expect(findDeletedSlackUserLinkIdsMock).toHaveBeenCalledTimes(2);
+    expect(
+      findDeletedSlackUserLinkIdsMock.mock.calls[0][1].slackUserIds,
+    ).toHaveLength(200);
+    expect(destroySlackUserLinksMock).toHaveBeenCalledTimes(2);
+  });
+
   it('should never upsert, so a declined or manual link is never overwritten', async () => {
     await linkSlackRosterCandidates(client, {
       candidates: [candidate('U1')],

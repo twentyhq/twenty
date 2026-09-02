@@ -12,9 +12,9 @@ import { type SlackRosterMatchCandidate } from 'src/logic-functions/types/slack-
 import { type SlackUserLinkDraft } from 'src/logic-functions/types/slack-user-link-draft.type';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
-const CANDIDATES_PER_CREATE = 200;
+const CORE_API_QUERY_MAX_RECORDS = 200;
 
-const MAX_FALLBACK_CANDIDATES = CANDIDATES_PER_CREATE;
+const MAX_FALLBACK_CANDIDATES = CORE_API_QUERY_MAX_RECORDS;
 
 type SlackRosterLinkOutcome = {
   linkedCount: number;
@@ -37,6 +37,23 @@ const toSlackUserLinkDraft = ({
   source: SLACK_USER_LINK_SOURCE.AUTO,
   consentState: SLACK_USER_LINK_CONSENT_STATE.ACTIVE,
 });
+
+const clearSoftDeletedLinks = async (
+  client: CoreApiClient,
+  {
+    candidates,
+    slackTeamId,
+  }: { candidates: SlackRosterMatchCandidate[]; slackTeamId: string },
+): Promise<void> => {
+  const deletedLinkIds = await findDeletedSlackUserLinkIds(client, {
+    slackTeamId,
+    slackUserIds: candidates.map((candidate) => candidate.slackUserId),
+  });
+
+  if (deletedLinkIds.length > 0) {
+    await destroySlackUserLinks(client, { ids: deletedLinkIds });
+  }
+};
 
 const dedupeCandidatesBySlackUserId = (
   candidates: SlackRosterMatchCandidate[],
@@ -155,29 +172,25 @@ export const linkSlackRosterCandidates = async (
     return { linkedCount: 0, failedCount: 0 };
   }
 
-  const deletedLinkIds = await findDeletedSlackUserLinkIds(client, {
-    slackTeamId,
-    slackUserIds: uniqueCandidates.map((candidate) => candidate.slackUserId),
-  });
-
-  if (deletedLinkIds.length > 0) {
-    await destroySlackUserLinks(client, { ids: deletedLinkIds });
-  }
-
   const batchOutcomes: SlackRosterLinkOutcome[] = [];
   let remainingFallbackCandidates = MAX_FALLBACK_CANDIDATES;
 
   for (
     let batchStart = 0;
     batchStart < uniqueCandidates.length;
-    batchStart += CANDIDATES_PER_CREATE
+    batchStart += CORE_API_QUERY_MAX_RECORDS
   ) {
     const batchCandidates = uniqueCandidates.slice(
       batchStart,
-      batchStart + CANDIDATES_PER_CREATE,
+      batchStart + CORE_API_QUERY_MAX_RECORDS,
     );
 
     try {
+      await clearSoftDeletedLinks(client, {
+        candidates: batchCandidates,
+        slackTeamId,
+      });
+
       await createSlackUserLinks(client, {
         drafts: batchCandidates.map((candidate) =>
           toSlackUserLinkDraft({ candidate, slackTeamId }),
