@@ -171,7 +171,7 @@ export const SlackUserLinksSettings = () => {
         <Section>
           <H2Title
             title="Unlinked Slack users"
-            description="These Slack users talk to the assistant with its default role. Pick a workspace member on a row to link them in place, or rerun the email match."
+            description="These Slack users talk to the assistant with its default role. Pick a workspace member on a row to link them in place, or auto-link everyone whose Slack email matches a workspace member."
           />
           {isUnlinkedSlackUsersLoading && unlinkedSlackUsers.length === 0 ? (
             <StyledCenteredState>
@@ -192,7 +192,7 @@ export const SlackUserLinksSettings = () => {
             )}
             <Button
               type="button"
-              title={isMatching ? 'Matching…' : 'Match by email'}
+              title={isMatching ? 'Auto-linking…' : 'Auto-link by email'}
               size="small"
               variant="secondary"
               disabled={isMatching}
