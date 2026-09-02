@@ -1,11 +1,12 @@
 import { isUndefined } from '@sniptt/guards';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { ColorSample } from 'twenty-ui/data-display';
 import { DEFAULT_COLOR_LABELS } from 'twenty-ui/navigation';
 import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
 
-import { FloatingMenu } from 'src/front-components/components/FloatingMenu';
 import { SettingsSelectControl } from 'src/front-components/components/SettingsSelectControl';
+import { SettingsSelectMenu } from 'src/front-components/components/SettingsSelectMenu';
+import { StyledSettingsSelectAnchor } from 'src/front-components/components/StyledSettingsSelectAnchor';
 import { ThemeColorPickerMenu } from 'src/front-components/components/ThemeColorPickerMenu';
 import {
   getNextActiveOptionIndex,
@@ -47,7 +48,6 @@ export const TileBackgroundControl = ({
   onSelectColor,
   onSelectCustom,
 }: TileBackgroundControlProps) => {
-  const anchorRef = useRef<HTMLDivElement | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeOptionIndex, setActiveOptionIndex] = useState(0);
 
@@ -95,7 +95,7 @@ export const TileBackgroundControl = ({
   };
 
   return (
-    <div ref={anchorRef}>
+    <StyledSettingsSelectAnchor>
       <SettingsSelectControl
         label={label}
         ariaLabel="Tile background"
@@ -117,7 +117,7 @@ export const TileBackgroundControl = ({
         onClick={handleMenuToggle}
       />
       {isMenuOpen && (
-        <FloatingMenu anchorRef={anchorRef} onClose={handleMenuClose}>
+        <SettingsSelectMenu onClose={handleMenuClose}>
           <ThemeColorPickerMenu
             listboxId={TILE_BACKGROUND_LISTBOX_ID}
             selectedColor={selectedColor}
@@ -135,8 +135,8 @@ export const TileBackgroundControl = ({
               handleMenuClose();
             }}
           />
-        </FloatingMenu>
+        </SettingsSelectMenu>
       )}
-    </div>
+    </StyledSettingsSelectAnchor>
   );
 };

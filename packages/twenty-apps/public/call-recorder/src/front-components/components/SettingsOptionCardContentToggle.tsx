@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { useId } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
-import { Toggle } from 'twenty-ui/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -13,6 +12,7 @@ import {
   StyledSettingsCardTitle,
 } from 'src/front-components/components/SettingsCardContentBase';
 import { SettingsOptionIconCustomizer } from 'src/front-components/components/SettingsOptionIconCustomizer';
+import { Toggle } from 'src/front-components/components/Toggle';
 
 const StyledSettingsCardToggleContent = styled.div<{ $disabled?: boolean }>`
   align-items: center;
@@ -48,7 +48,6 @@ type SettingsOptionCardContentToggleProps = {
   description?: string;
   divider?: boolean;
   disabled?: boolean;
-  toggleCentered?: boolean;
   checked: boolean;
   onChange: (checked: boolean) => void;
 };
@@ -59,7 +58,6 @@ export const SettingsOptionCardContentToggle = ({
   description,
   divider,
   disabled = false,
-  toggleCentered = true,
   checked,
   onChange,
 }: SettingsOptionCardContentToggleProps) => {
@@ -89,12 +87,10 @@ export const SettingsOptionCardContentToggle = ({
         <StyledSettingsCardToggleButtonContainer>
           <Toggle
             id={toggleId}
-            value={checked}
-            onChange={onChange}
+            checked={checked}
             disabled={disabled}
             toggleSize="small"
-            color={themeCssVariables.color.blue}
-            centered={toggleCentered}
+            onChange={onChange}
           />
         </StyledSettingsCardToggleButtonContainer>
       </StyledSettingsCardToggleContent>

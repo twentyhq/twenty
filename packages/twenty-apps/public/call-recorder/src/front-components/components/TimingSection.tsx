@@ -1,7 +1,7 @@
 import { Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
 import { H2Title } from 'twenty-ui/typography';
 
+import { StyledSettingsCard } from 'src/front-components/components/StyledSettingsCard';
 import { StyledSettingsSectionStack } from 'src/front-components/components/StyledSettingsSectionStack';
 import { TimingCounterRow } from 'src/front-components/components/TimingCounterRow';
 import { CALL_RECORDER_TIMING_ROWS } from 'src/front-components/constants/call-recorder-settings-layout.constant';
@@ -32,7 +32,7 @@ export const TimingSection = ({
       description="When the recorder joins your meetings, gives up, or stops."
     />
     <StyledSettingsSectionStack>
-      <Card rounded fullWidth>
+      <StyledSettingsCard>
         {CALL_RECORDER_TIMING_ROWS.map((row, rowIndex) => (
           <TimingCounterRow
             key={row.variableKey}
@@ -49,7 +49,7 @@ export const TimingSection = ({
             onDraftValueChange={onDraftValueChange}
           />
         ))}
-      </Card>
+      </StyledSettingsCard>
     </StyledSettingsSectionStack>
   </Section>
 );

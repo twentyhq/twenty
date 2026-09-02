@@ -38,12 +38,6 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledToolbar = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  min-height: ${() => themeCssVariables.spacing[8]};
-`;
-
 const StyledSettingsFieldset = styled.fieldset`
   border: none;
   display: flex;
@@ -236,18 +230,26 @@ export const CallRecorderSettings = () => {
       }}
     >
       <StyledContainer>
-        <StyledToolbar>
-          <Button
-            title="Save"
-            variant="primary"
-            size="small"
-            accent="blue"
-            Icon={IconDeviceFloppy}
-            disabled={draftEntries.length === 0 || hasInvalidDraft || isSaving}
-            isLoading={isSaving}
-            onClick={handleSave}
+        <Section>
+          <H2Title
+            title="Configuration"
+            description="Changes take effect once saved."
+            adornment={
+              <Button
+                title="Save"
+                variant="primary"
+                size="small"
+                accent="blue"
+                Icon={IconDeviceFloppy}
+                disabled={
+                  draftEntries.length === 0 || hasInvalidDraft || isSaving
+                }
+                isLoading={isSaving}
+                onClick={handleSave}
+              />
+            }
           />
-        </StyledToolbar>
+        </Section>
         <StyledSettingsFieldset disabled={isSaving}>
           <TimingSection
             applicationVariables={currentApplicationVariables}

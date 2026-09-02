@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 
 import { DropdownMenuItemsContainer } from 'src/front-components/components/DropdownMenuItemsContainer';
 import { DropdownMenuOption } from 'src/front-components/components/DropdownMenuOption';
-import { FloatingMenu } from 'src/front-components/components/FloatingMenu';
 import { SettingsSelectControl } from 'src/front-components/components/SettingsSelectControl';
+import { SettingsSelectMenu } from 'src/front-components/components/SettingsSelectMenu';
+import { StyledSettingsSelectAnchor } from 'src/front-components/components/StyledSettingsSelectAnchor';
 import { EMPTY_OPTION_LABEL } from 'src/front-components/constants/empty-option-label.constant';
 import { type CallRecorderApplicationVariableOption } from 'src/front-components/types/call-recorder-application-variable.type';
 import {
@@ -13,6 +14,9 @@ import {
 } from 'src/front-components/utils/get-next-active-option-index.util';
 
 const StyledListbox = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
   width: 100%;
 `;
 
@@ -32,7 +36,6 @@ export const TranscriptProviderControl = ({
   options,
   onChange,
 }: TranscriptProviderControlProps) => {
-  const anchorRef = useRef<HTMLDivElement | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeOptionIndex, setActiveOptionIndex] = useState(0);
 
@@ -77,7 +80,7 @@ export const TranscriptProviderControl = ({
   };
 
   return (
-    <div ref={anchorRef}>
+    <StyledSettingsSelectAnchor>
       <SettingsSelectControl
         label={selectedOption?.label ?? EMPTY_OPTION_LABEL}
         ariaLabel="Transcript provider"
@@ -90,7 +93,7 @@ export const TranscriptProviderControl = ({
         onClick={handleMenuToggle}
       />
       {isMenuOpen && (
-        <FloatingMenu anchorRef={anchorRef} onClose={handleMenuClose}>
+        <SettingsSelectMenu onClose={handleMenuClose}>
           <StyledListbox
             id={TRANSCRIPT_PROVIDER_LISTBOX_ID}
             role="listbox"
@@ -112,8 +115,8 @@ export const TranscriptProviderControl = ({
               ))}
             </DropdownMenuItemsContainer>
           </StyledListbox>
-        </FloatingMenu>
+        </SettingsSelectMenu>
       )}
-    </div>
+    </StyledSettingsSelectAnchor>
   );
 };

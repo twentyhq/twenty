@@ -1393,7 +1393,6 @@ __metadata:
   dependencies:
     "@emotion/react": "npm:^11.14.0"
     "@emotion/styled": "npm:^11.14.0"
-    "@floating-ui/core": "npm:^1.8.0"
     "@sniptt/guards": "npm:^0.2.0"
     "@types/node": "npm:^24.7.2"
     "@types/react": "npm:^19.0.0"
