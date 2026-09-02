@@ -22,6 +22,7 @@ import {
   CalendarEventListFetchJob,
   type CalendarEventListFetchJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
+import { WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-creation-retry-limit.constant';
 import {
   CreateWebhookSubscriptionJob,
   type CreateWebhookSubscriptionJobData,
@@ -110,6 +111,7 @@ export class ChannelSyncService {
               channelId: messageChannel.id,
               workspaceId,
             },
+            { retryLimit: WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT },
           );
         } catch (error) {
           this.logger.warn(
@@ -170,6 +172,7 @@ export class ChannelSyncService {
               channelId: calendarChannel.id,
               workspaceId,
             },
+            { retryLimit: WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT },
           );
         } catch (error) {
           this.logger.warn(

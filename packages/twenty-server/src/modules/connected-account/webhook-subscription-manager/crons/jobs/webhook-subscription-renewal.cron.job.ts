@@ -2,6 +2,8 @@ import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
+  CalendarChannelSyncStage,
+  MessageChannelSyncStage,
   WebhookSubscriptionChannelType,
   WebhookSubscriptionStatus,
 } from 'twenty-shared/types';
@@ -11,6 +13,7 @@ import {
   In,
   IsNull,
   LessThanOrEqual,
+  Not,
   Repository,
 } from 'typeorm';
 
@@ -20,11 +23,17 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { WEBHOOK_CAPABLE_PROVIDERS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-capable-providers.constant';
+import { WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-creation-retry-limit.constant';
+import { WEBHOOK_SUBSCRIPTION_RENEWAL_BATCH_SIZE } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-renewal-batch-size.constant';
 import { WEBHOOK_SUBSCRIPTION_RENEWAL_BUFFER_MS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-renewal-buffer-ms.constant';
 import { WEBHOOK_SUBSCRIPTION_RENEWAL_CRON_PATTERN } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-renewal-cron-pattern.constant';
+import { WEBHOOK_SUBSCRIPTION_RENEWAL_MAX_TOTAL_DELAY_MS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-renewal-max-total-delay-ms.constant';
+import { WEBHOOK_SUBSCRIPTION_RENEWAL_SPACING_MS } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-renewal-spacing-ms.constant';
 import {
   RenewWebhookSubscriptionJob,
   type RenewWebhookSubscriptionJobData,
@@ -33,6 +42,11 @@ import {
 type WebhookSubscribableChannel = MessageChannelEntity | CalendarChannelEntity;
 
 type StaleChannel = Pick<WebhookSubscribableChannel, 'id' | 'workspaceId'>;
+
+type StaleChannelToEnqueue = {
+  channelType: WebhookSubscriptionChannelType;
+  channel: StaleChannel;
+};
 
 @Processor(MessageQueue.cronQueue)
 export class WebhookSubscriptionRenewalCronJob {
@@ -47,6 +61,7 @@ export class WebhookSubscriptionRenewalCronJob {
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly webhookQueueService: MessageQueueService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   @Process(WebhookSubscriptionRenewalCronJob.name)
@@ -55,6 +70,14 @@ export class WebhookSubscriptionRenewalCronJob {
     WEBHOOK_SUBSCRIPTION_RENEWAL_CRON_PATTERN,
   )
   async handle(): Promise<void> {
+    if (
+      !this.twentyConfigService.get(
+        'IS_CONNECTED_ACCOUNT_WEBHOOK_SUBSCRIPTION_ENABLED',
+      )
+    ) {
+      return;
+    }
+
     const activeWorkspaces = await this.workspaceRepository.find({
       where: { activationStatus: WorkspaceActivationStatus.ACTIVE },
       select: { id: true },
@@ -68,69 +91,155 @@ export class WebhookSubscriptionRenewalCronJob {
       return;
     }
 
-    const [messageChannels, calendarChannels] = await Promise.all([
-      this.findStaleChannels(this.messageChannelRepository, activeWorkspaceIds),
-      this.findStaleChannels(
+    const [
+      expiringMessageChannels,
+      expiringCalendarChannels,
+      missingMessageChannels,
+      missingCalendarChannels,
+    ] = await Promise.all([
+      this.findExpiringSubscriptions(
+        this.messageChannelRepository,
+        activeWorkspaceIds,
+      ),
+      this.findExpiringSubscriptions(
         this.calendarChannelRepository,
         activeWorkspaceIds,
       ),
+      this.findMessageChannelsMissingSubscription(activeWorkspaceIds),
+      this.findCalendarChannelsMissingSubscription(activeWorkspaceIds),
     ]);
 
-    if (messageChannels.length === 0 && calendarChannels.length === 0) {
+    const staleChannels: StaleChannelToEnqueue[] = [
+      ...this.toEnqueueEntries(
+        WebhookSubscriptionChannelType.MESSAGING,
+        expiringMessageChannels,
+      ),
+      ...this.toEnqueueEntries(
+        WebhookSubscriptionChannelType.CALENDAR,
+        expiringCalendarChannels,
+      ),
+      ...this.toEnqueueEntries(
+        WebhookSubscriptionChannelType.MESSAGING,
+        missingMessageChannels,
+      ),
+      ...this.toEnqueueEntries(
+        WebhookSubscriptionChannelType.CALENDAR,
+        missingCalendarChannels,
+      ),
+    ];
+
+    if (staleChannels.length === 0) {
       return;
     }
 
-    await Promise.all([
-      this.enqueueRenewals(
-        WebhookSubscriptionChannelType.MESSAGING,
-        messageChannels,
-      ),
-      this.enqueueRenewals(
-        WebhookSubscriptionChannelType.CALENDAR,
-        calendarChannels,
-      ),
-    ]);
+    const spacingMs = await this.enqueueRenewals(staleChannels);
 
     this.logger.log(
-      `Enqueued webhook subscription renewals: ${messageChannels.length} messaging, ${calendarChannels.length} calendar`,
+      `Enqueued webhook subscription renewals: ${expiringMessageChannels.length + expiringCalendarChannels.length} expiring, ${missingMessageChannels.length + missingCalendarChannels.length} missing, spaced ${spacingMs}ms apart`,
     );
   }
 
-  private findStaleChannels<TChannel extends WebhookSubscribableChannel>(
+  private toEnqueueEntries(
+    channelType: WebhookSubscriptionChannelType,
+    channels: StaleChannel[],
+  ): StaleChannelToEnqueue[] {
+    return channels.map((channel) => ({ channelType, channel }));
+  }
+
+  private buildStaleChannelScope(activeWorkspaceIds: string[]) {
+    return {
+      workspaceId: In(activeWorkspaceIds),
+      isSyncEnabled: true,
+      connectedAccount: {
+        authFailedAt: IsNull(),
+        provider: In(WEBHOOK_CAPABLE_PROVIDERS),
+      },
+    };
+  }
+
+  private findExpiringSubscriptions<
+    TChannel extends WebhookSubscribableChannel,
+  >(
     repository: Repository<TChannel>,
     activeWorkspaceIds: string[],
   ): Promise<StaleChannel[]> {
-    const workspaceScope = {
-      workspaceId: In(activeWorkspaceIds),
-      connectedAccount: { authFailedAt: IsNull() },
-    };
-    const renewalThreshold = new Date(
-      Date.now() + WEBHOOK_SUBSCRIPTION_RENEWAL_BUFFER_MS,
-    );
-
     const options: FindManyOptions<WebhookSubscribableChannel> = {
-      where: [
-        {
-          ...workspaceScope,
-          webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
-        },
-        {
-          ...workspaceScope,
-          webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
-          webhookSubscriptionExpiresAt: LessThanOrEqual(renewalThreshold),
-        },
-      ],
+      where: {
+        ...this.buildStaleChannelScope(activeWorkspaceIds),
+        webhookSubscriptionStatus: WebhookSubscriptionStatus.ACTIVE,
+        webhookSubscriptionExpiresAt: LessThanOrEqual(
+          new Date(Date.now() + WEBHOOK_SUBSCRIPTION_RENEWAL_BUFFER_MS),
+        ),
+      },
       select: { id: true, workspaceId: true },
     };
 
     return repository.find(options as FindManyOptions<TChannel>);
   }
 
+  private findMessageChannelsMissingSubscription(
+    activeWorkspaceIds: string[],
+  ): Promise<StaleChannel[]> {
+    const scope = this.buildStaleChannelScope(activeWorkspaceIds);
+
+    return this.messageChannelRepository.find({
+      where: [
+        {
+          ...scope,
+          webhookSubscriptionStatus: IsNull(),
+          syncStage: Not(MessageChannelSyncStage.PENDING_CONFIGURATION),
+        },
+        {
+          ...scope,
+          webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
+        },
+        {
+          ...scope,
+          webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED,
+        },
+      ],
+      order: { updatedAt: 'ASC' },
+      take: WEBHOOK_SUBSCRIPTION_RENEWAL_BATCH_SIZE,
+      select: { id: true, workspaceId: true, updatedAt: true },
+    });
+  }
+
+  private findCalendarChannelsMissingSubscription(
+    activeWorkspaceIds: string[],
+  ): Promise<StaleChannel[]> {
+    const scope = this.buildStaleChannelScope(activeWorkspaceIds);
+
+    return this.calendarChannelRepository.find({
+      where: [
+        {
+          ...scope,
+          webhookSubscriptionStatus: IsNull(),
+          syncStage: Not(CalendarChannelSyncStage.PENDING_CONFIGURATION),
+        },
+        {
+          ...scope,
+          webhookSubscriptionStatus: WebhookSubscriptionStatus.FAILED,
+        },
+        {
+          ...scope,
+          webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED,
+        },
+      ],
+      order: { updatedAt: 'ASC' },
+      take: WEBHOOK_SUBSCRIPTION_RENEWAL_BATCH_SIZE,
+      select: { id: true, workspaceId: true, updatedAt: true },
+    });
+  }
+
   private async enqueueRenewals(
-    channelType: WebhookSubscriptionChannelType,
-    channels: StaleChannel[],
-  ): Promise<void> {
-    for (const channel of channels) {
+    staleChannels: StaleChannelToEnqueue[],
+  ): Promise<number> {
+    const spacingMs = Math.min(
+      WEBHOOK_SUBSCRIPTION_RENEWAL_SPACING_MS,
+      WEBHOOK_SUBSCRIPTION_RENEWAL_MAX_TOTAL_DELAY_MS / staleChannels.length,
+    );
+
+    for (const [index, { channelType, channel }] of staleChannels.entries()) {
       await this.webhookQueueService.add<RenewWebhookSubscriptionJobData>(
         RenewWebhookSubscriptionJob.name,
         {
@@ -139,10 +248,12 @@ export class WebhookSubscriptionRenewalCronJob {
           workspaceId: channel.workspaceId,
         },
         {
-          id: `${RenewWebhookSubscriptionJob.name}:${channelType}:${channel.id}`,
-          retryLimit: 3,
+          retryLimit: WEBHOOK_SUBSCRIPTION_CREATION_RETRY_LIMIT,
+          delay: Math.round(index * spacingMs),
         },
       );
     }
+
+    return spacingMs;
   }
 }
