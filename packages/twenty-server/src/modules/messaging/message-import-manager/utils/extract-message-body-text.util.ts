@@ -7,6 +7,7 @@ import { stripQuotedHistory } from 'src/modules/messaging/message-import-manager
 export const extractMessageBodyText = (body: MessageBody): string => {
   const bodyAsText = readBodyAsText(body);
   const withoutQuotedHistory = stripQuotedHistory(bodyAsText);
+  const withoutNullCharacters = sanitizeString(withoutQuotedHistory);
 
-  return normalizeMessageText(sanitizeString(withoutQuotedHistory));
+  return normalizeMessageText(withoutNullCharacters);
 };
