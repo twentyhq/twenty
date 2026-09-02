@@ -255,47 +255,45 @@ describe('enqueueJob (e2e)', () => {
     appendingLogicFunctionUniversalIdentifier =
       appendingCreateData.createOneLogicFunction.universalIdentifier!;
 
-    await Promise.all([
-      updateLogicFunctionSource({
-        input: {
-          id: retryableLogicFunctionId,
-          update: { sourceHandlerCode: RETRYABLE_TARGET_SOURCE_CODE },
-        },
-        expectToFail: false,
-      }),
-      updateLogicFunctionSource({
-        input: {
-          id: appendingLogicFunctionId,
-          update: { sourceHandlerCode: APPENDING_TARGET_SOURCE_CODE },
-        },
-        expectToFail: false,
-      }),
-    ]);
+    await updateLogicFunctionSource({
+      input: {
+        id: retryableLogicFunctionId,
+        update: { sourceHandlerCode: RETRYABLE_TARGET_SOURCE_CODE },
+      },
+      expectToFail: false,
+    });
 
-    const [{ data: retryableBuildData }, { data: appendingBuildData }] =
-      await Promise.all([
-        executeLogicFunction({
-          input: {
-            id: retryableLogicFunctionId,
-            payload: {
-              markerPath: join(MARKER_DIRECTORY, 'retryable-build.txt'),
-              shouldRetry: false,
-            },
-          },
-          expectToFail: false,
-        }),
-        executeLogicFunction({
-          input: {
-            id: appendingLogicFunctionId,
-            payload: {
-              markerPath: join(MARKER_DIRECTORY, 'appending-build.txt'),
-            },
-          },
-          expectToFail: false,
-        }),
-      ]);
+    await updateLogicFunctionSource({
+      input: {
+        id: appendingLogicFunctionId,
+        update: { sourceHandlerCode: APPENDING_TARGET_SOURCE_CODE },
+      },
+      expectToFail: false,
+    });
+
+    const { data: retryableBuildData } = await executeLogicFunction({
+      input: {
+        id: retryableLogicFunctionId,
+        payload: {
+          markerPath: join(MARKER_DIRECTORY, 'retryable-build.txt'),
+          shouldRetry: false,
+        },
+      },
+      expectToFail: false,
+    });
 
     expect(retryableBuildData.executeOneLogicFunction.error).toBeNull();
+
+    const { data: appendingBuildData } = await executeLogicFunction({
+      input: {
+        id: appendingLogicFunctionId,
+        payload: {
+          markerPath: join(MARKER_DIRECTORY, 'appending-build.txt'),
+        },
+      },
+      expectToFail: false,
+    });
+
     expect(appendingBuildData.executeOneLogicFunction.error).toBeNull();
   });
 
@@ -641,6 +639,10 @@ describe('enqueueJob (e2e)', () => {
     expect(enqueueResponse.body.errors).toBeUndefined();
 
     await waitForAllJobsToFinish();
+
+    await expectEventually(() => {
+      expect(existsSync(markerPath)).toBe(true);
+    });
 
     const ownWorkspaceResponse = await makeMetadataAPIRequest(
       { query: GET_JOBS, variables: { jobIds: [jobId] } },
