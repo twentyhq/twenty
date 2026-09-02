@@ -3,6 +3,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { styled } from '@linaria/react';
 import { type JsonValue } from 'type-fest';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -16,7 +17,7 @@ const StyledFieldList = styled.div`
 type RecordFormFieldInputsProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
   fieldMetadataItems: FieldMetadataItem[];
-  draftRecord: Record<string, JsonValue>;
+  draftRecord: Partial<ObjectRecord>;
   onFieldValueChange: (gqlFieldName: string, value: JsonValue) => void;
   onFieldValueClear: (gqlFieldName: string) => void;
 };

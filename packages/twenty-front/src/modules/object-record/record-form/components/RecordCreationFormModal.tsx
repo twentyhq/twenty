@@ -34,8 +34,8 @@ export const RecordCreationFormModal = ({
 }: RecordCreationFormModalProps) => {
   const { t } = useLingui();
   const { closeModal } = useModal();
-  const [draftRecord, setDraftRecord] = useState<Record<string, JsonValue>>(
-    (initialDraftRecord ?? {}) as Record<string, JsonValue>,
+  const [draftRecord, setDraftRecord] = useState<Partial<ObjectRecord>>(
+    initialDraftRecord ?? {},
   );
 
   const { recordFormFieldMetadataItems } = useRecordFormFieldMetadataItems({
@@ -62,7 +62,7 @@ export const RecordCreationFormModal = ({
 
   const handleCreateClick = () => {
     closeModal(RECORD_CREATION_FORM_MODAL_ID);
-    onSubmit(draftRecord as Partial<ObjectRecord>);
+    onSubmit(draftRecord);
   };
 
   return (
