@@ -42,6 +42,23 @@ describe('createBoundedAtomCache', () => {
     expect(cache.get('key-99')).toBeDefined();
   });
 
+  it('does not count an atom twice when reading it promotes it', () => {
+    const maxCachedAtomsPerGeneration = 10;
+    const cache = createBoundedAtomCache<ReturnType<typeof atom<number>>>(
+      maxCachedAtomsPerGeneration,
+    );
+
+    for (let index = 0; index <= maxCachedAtomsPerGeneration; index++) {
+      cache.set(`key-${index}`, atom(index));
+    }
+
+    const sizeBeforePromotion = cache.size();
+
+    cache.get('key-0');
+
+    expect(cache.size()).toBe(sizeBeforePromotion);
+  });
+
   it('keeps an atom that is read again before its generation rotates out', () => {
     const cache = createBoundedAtomCache<ReturnType<typeof atom<number>>>(10);
     const survivingAtom = atom(0);

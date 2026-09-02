@@ -40,6 +40,7 @@ export const createBoundedAtomCache = <TAtom>(
       const atomFromPreviousGeneration = previousGeneration.get(cacheKey);
 
       if (atomFromPreviousGeneration !== undefined) {
+        previousGeneration.delete(cacheKey);
         setInCurrentGeneration(cacheKey, atomFromPreviousGeneration);
       }
 
