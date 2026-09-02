@@ -153,7 +153,7 @@ export const WorkflowEditActionCreateRecord = ({
 
     setFormData(newFormData);
 
-    saveAction(newFormData);
+    saveAction(newFormData, errorHandlingOptions);
   };
 
   const handleFieldClear = (fieldName: keyof CreateRecordFormData) => {
@@ -162,11 +162,15 @@ export const WorkflowEditActionCreateRecord = ({
 
     setFormData(newFormData);
 
-    saveAction(newFormData);
+    saveAction(newFormData, errorHandlingOptions);
   };
 
+  const [errorHandlingOptions, setErrorHandlingOptions] = useState(
+    action.settings.errorHandlingOptions,
+  );
+
   const saveAction = useDebouncedCallback(
-    async (formData: CreateRecordFormData) => {
+    async (formData: CreateRecordFormData, options: typeof errorHandlingOptions) => {
       if (actionOptions.readonly === true) {
         return;
       }
@@ -177,6 +181,7 @@ export const WorkflowEditActionCreateRecord = ({
         ...action,
         settings: {
           ...action.settings,
+          errorHandlingOptions: options,
           input: {
             objectName: updatedObjectName,
             objectRecord: updatedOtherFields,
@@ -211,7 +216,7 @@ export const WorkflowEditActionCreateRecord = ({
 
             setFormData(newFormData);
 
-            saveAction(newFormData);
+            saveAction(newFormData, errorHandlingOptions);
           }}
           withSearchInput
           dropdownOffset={{ y: 4 }}
@@ -248,17 +253,12 @@ export const WorkflowEditActionCreateRecord = ({
 
         <WorkflowErrorHandlingOptions
           errorHandlingOptions={action.settings.errorHandlingOptions}
-          onChange={(errorHandlingOptions) => {
+          onChange={(options) => {
             if (actionOptions.readonly === true) {
               return;
             }
-            actionOptions.onActionUpdate({
-              ...action,
-              settings: {
-                ...action.settings,
-                errorHandlingOptions,
-              },
-            });
+            setErrorHandlingOptions(options);
+            saveAction(formData, options);
           }}
           readonly={isFormDisabled}
         />

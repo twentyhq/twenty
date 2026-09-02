@@ -78,7 +78,7 @@ export const WorkflowEditActionUpdateRecord = ({
 
     setFormData(newFormData);
 
-    saveAction(newFormData);
+    saveAction(newFormData, errorHandlingOptions);
   };
 
   const handleFieldClear = (fieldName: keyof UpdateRecordFormData) => {
@@ -87,7 +87,7 @@ export const WorkflowEditActionUpdateRecord = ({
 
     setFormData(newFormData);
 
-    saveAction(newFormData);
+    saveAction(newFormData, errorHandlingOptions);
   };
 
   const selectedObjectMetadataItem = activeNonSystemObjectMetadataItems.find(
@@ -118,8 +118,12 @@ export const WorkflowEditActionUpdateRecord = ({
       )
     : [];
 
+  const [errorHandlingOptions, setErrorHandlingOptions] = useState(
+    action.settings.errorHandlingOptions,
+  );
+
   const saveAction = useDebouncedCallback(
-    async (formData: UpdateRecordFormData) => {
+    async (formData: UpdateRecordFormData, options: typeof errorHandlingOptions) => {
       if (actionOptions.readonly === true) {
         return;
       }
@@ -135,6 +139,7 @@ export const WorkflowEditActionUpdateRecord = ({
         ...action,
         settings: {
           ...action.settings,
+          errorHandlingOptions: options,
           input: {
             objectName: updatedObjectName,
             objectRecordId: updatedObjectRecordId ?? '',
@@ -173,7 +178,7 @@ export const WorkflowEditActionUpdateRecord = ({
 
             setFormData(newFormData);
 
-            saveAction(newFormData);
+            saveAction(newFormData, errorHandlingOptions);
           }}
           withSearchInput
           dropdownOffset={{ y: 4 }}
@@ -250,17 +255,12 @@ export const WorkflowEditActionUpdateRecord = ({
 
         <WorkflowErrorHandlingOptions
           errorHandlingOptions={action.settings.errorHandlingOptions}
-          onChange={(errorHandlingOptions) => {
+          onChange={(options) => {
             if (actionOptions.readonly === true) {
               return;
             }
-            actionOptions.onActionUpdate({
-              ...action,
-              settings: {
-                ...action.settings,
-                errorHandlingOptions,
-              },
-            });
+            setErrorHandlingOptions(options);
+            saveAction(formData, options);
           }}
           readonly={isFormDisabled}
         />

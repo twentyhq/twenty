@@ -12,6 +12,7 @@ import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowOutputSchemaBuilder } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { WorkflowErrorHandlingOptions } from '@/workflow/workflow-steps/components/WorkflowErrorHandlingOptions';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -167,6 +168,23 @@ export const WorkflowAiAgentPromptTab = ({
       <WorkflowOutputSchemaBuilder
         fields={outputSchemaFields}
         onChange={handleOutputSchemaChange}
+        readonly={readonly}
+      />
+
+      <WorkflowErrorHandlingOptions
+        errorHandlingOptions={action.settings.errorHandlingOptions}
+        onChange={(errorHandlingOptions) => {
+          if (readonly) {
+            return;
+          }
+          onActionUpdate?.({
+            ...action,
+            settings: {
+              ...action.settings,
+              errorHandlingOptions,
+            },
+          });
+        }}
         readonly={readonly}
       />
     </>

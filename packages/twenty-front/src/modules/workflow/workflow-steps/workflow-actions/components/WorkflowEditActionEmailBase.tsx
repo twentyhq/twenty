@@ -63,7 +63,7 @@ export const WorkflowEditActionEmailBase = ({
 
   const redirectUrl = `/object/workflow/${workflowVisualizerWorkflowId}`;
 
-  const { formData, handleFieldChange, saveAction } = useEmailForm({
+  const { formData, handleFieldChange, handleErrorHandlingOptionsChange, saveAction } = useEmailForm({
     action,
     onActionUpdate:
       actionOptions.readonly === true
@@ -390,13 +390,7 @@ export const WorkflowEditActionEmailBase = ({
               if (actionOptions.readonly === true) {
                 return;
               }
-              actionOptions.onActionUpdate?.({
-                ...action,
-                settings: {
-                  ...action.settings,
-                  errorHandlingOptions,
-                },
-              });
+              handleErrorHandlingOptionsChange(errorHandlingOptions);
             }}
             readonly={actionOptions.readonly}
           />

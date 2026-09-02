@@ -71,6 +71,7 @@ export const WorkflowErrorHandlingOptions = ({
           disabled={readonly}
           toggleSize="small"
           color={theme.color.blue}
+          aria-label={t`Retry on failure`}
         />
         <StyledLabel>{t`Retry on failure`}</StyledLabel>
       </StyledRow>
@@ -81,6 +82,7 @@ export const WorkflowErrorHandlingOptions = ({
           disabled={readonly}
           toggleSize="small"
           color={theme.color.blue}
+          aria-label={t`Continue on failure`}
         />
         <StyledLabel>{t`Continue on failure`}</StyledLabel>
       </StyledRow>

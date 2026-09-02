@@ -141,8 +141,12 @@ export const WorkflowEditActionFindRecords = ({
     instanceId,
   );
 
+  const [errorHandlingOptions, setErrorHandlingOptions] = useState(
+    action.settings.errorHandlingOptions,
+  );
+
   const saveAction = useDebouncedCallback(
-    async (formData: FindRecordsFormData) => {
+    async (formData: FindRecordsFormData, options: typeof errorHandlingOptions) => {
       if (actionOptions.readonly === true) {
         return;
       }
@@ -159,6 +163,7 @@ export const WorkflowEditActionFindRecords = ({
         ...action,
         settings: {
           ...action.settings,
+          errorHandlingOptions: options,
           input: {
             objectName: updatedObjectName,
             limit: updatedLimit ?? 1,
@@ -192,7 +197,7 @@ export const WorkflowEditActionFindRecords = ({
     };
 
     setFormData(newFormData);
-    saveAction(newFormData);
+    saveAction(newFormData, errorHandlingOptions);
     closeDropdown(dropdownId);
   };
 
@@ -362,7 +367,7 @@ export const WorkflowEditActionFindRecords = ({
 
             setFormData(newFormData);
 
-            saveAction(newFormData);
+            saveAction(newFormData, errorHandlingOptions);
           }}
         />
 
@@ -388,7 +393,7 @@ export const WorkflowEditActionFindRecords = ({
               };
 
               setFormData(newFormData);
-              saveAction(newFormData);
+              saveAction(newFormData, errorHandlingOptions);
               return;
             }
 
@@ -408,23 +413,18 @@ export const WorkflowEditActionFindRecords = ({
 
             setFormData(newFormData);
 
-            saveAction(newFormData);
+            saveAction(newFormData, errorHandlingOptions);
           }}
         />
 
         <WorkflowErrorHandlingOptions
           errorHandlingOptions={action.settings.errorHandlingOptions}
-          onChange={(errorHandlingOptions) => {
+          onChange={(options) => {
             if (actionOptions.readonly === true) {
               return;
             }
-            actionOptions.onActionUpdate({
-              ...action,
-              settings: {
-                ...action.settings,
-                errorHandlingOptions,
-              },
-            });
+            setErrorHandlingOptions(options);
+            saveAction(formData, options);
           }}
           readonly={isFormDisabled}
         />

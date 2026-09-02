@@ -32,7 +32,11 @@ export const useEmailForm = ({
     };
   });
 
-  const saveAction = useDebouncedCallback((formData: EmailFormData) => {
+  const [errorHandlingOptions, setErrorHandlingOptions] = useState(
+    action.settings.errorHandlingOptions,
+  );
+
+  const saveAction = useDebouncedCallback((formData: EmailFormData, options: typeof errorHandlingOptions) => {
     if (readonly) {
       return;
     }
@@ -41,6 +45,7 @@ export const useEmailForm = ({
       ...action,
       settings: {
         ...action.settings,
+        errorHandlingOptions: options,
         input: {
           connectedAccountId: formData.connectedAccountId,
           recipients: formData.recipients,
@@ -63,12 +68,20 @@ export const useEmailForm = ({
     };
 
     setFormData(newFormData);
-    saveAction(newFormData);
+    saveAction(newFormData, errorHandlingOptions);
+  };
+
+  const handleErrorHandlingOptionsChange = (
+    options: typeof errorHandlingOptions,
+  ) => {
+    setErrorHandlingOptions(options);
+    saveAction(formData, options);
   };
 
   return {
     formData,
     handleFieldChange,
     saveAction,
+    handleErrorHandlingOptionsChange,
   };
 };

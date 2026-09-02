@@ -25,7 +25,11 @@ export const useHttpRequestForm = ({
     body: action.settings.input.body,
   });
 
-  const saveAction = useDebouncedCallback((formData: HttpRequestFormData) => {
+  const [errorHandlingOptions, setErrorHandlingOptions] = useState(
+    action.settings.errorHandlingOptions,
+  );
+
+  const saveAction = useDebouncedCallback((formData: HttpRequestFormData, options: typeof errorHandlingOptions) => {
     if (readonly) {
       return;
     }
@@ -34,6 +38,7 @@ export const useHttpRequestForm = ({
       ...action,
       settings: {
         ...action.settings,
+        errorHandlingOptions: options,
         input: {
           url: formData.url,
           method: formData.method,
@@ -62,11 +67,19 @@ export const useHttpRequestForm = ({
       newFormData = { ...newFormData, body: undefined };
     }
     setFormData(newFormData);
-    saveAction(newFormData);
+    saveAction(newFormData, errorHandlingOptions);
+  };
+
+  const handleErrorHandlingOptionsChange = (
+    options: typeof errorHandlingOptions,
+  ) => {
+    setErrorHandlingOptions(options);
+    saveAction(formData, options);
   };
   return {
     formData,
     handleFieldChange,
     saveAction,
+    handleErrorHandlingOptionsChange,
   };
 };

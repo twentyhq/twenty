@@ -74,15 +74,19 @@ export const WorkflowEditActionDeleteRecord = ({
 
     setFormData(newFormData);
 
-    saveAction(newFormData);
+    saveAction(newFormData, errorHandlingOptions);
   };
 
   const objectNameSingular = activeNonSystemObjectMetadataItems.find(
     (item) => item.nameSingular === formData.objectNameSingular,
   )?.nameSingular;
 
+  const [errorHandlingOptions, setErrorHandlingOptions] = useState(
+    action.settings.errorHandlingOptions,
+  );
+
   const saveAction = useDebouncedCallback(
-    async (formData: DeleteRecordFormData) => {
+    async (formData: DeleteRecordFormData, options: typeof errorHandlingOptions) => {
       if (actionOptions.readonly === true) {
         return;
       }
@@ -96,6 +100,7 @@ export const WorkflowEditActionDeleteRecord = ({
         ...action,
         settings: {
           ...action.settings,
+          errorHandlingOptions: options,
           input: {
             objectName: updatedObjectName,
             objectRecordId: updatedObjectRecordId ?? '',
@@ -131,7 +136,7 @@ export const WorkflowEditActionDeleteRecord = ({
 
             setFormData(newFormData);
 
-            saveAction(newFormData);
+            saveAction(newFormData, errorHandlingOptions);
           }}
           withSearchInput
           dropdownOffset={{ y: 4 }}
@@ -156,17 +161,12 @@ export const WorkflowEditActionDeleteRecord = ({
 
         <WorkflowErrorHandlingOptions
           errorHandlingOptions={action.settings.errorHandlingOptions}
-          onChange={(errorHandlingOptions) => {
+          onChange={(options) => {
             if (actionOptions.readonly === true) {
               return;
             }
-            actionOptions.onActionUpdate({
-              ...action,
-              settings: {
-                ...action.settings,
-                errorHandlingOptions,
-              },
-            });
+            setErrorHandlingOptions(options);
+            saveAction(formData, options);
           }}
           readonly={isFormDisabled}
         />

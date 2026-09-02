@@ -11,6 +11,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { type WorkflowLogicFunctionAction } from '@/workflow/types/Workflow';
 import { WorkflowExpectedOutputBodyInput } from '@/workflow/workflow-steps/components/WorkflowExpectedOutputBodyInput';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { WorkflowErrorHandlingOptions } from '@/workflow/workflow-steps/components/WorkflowErrorHandlingOptions';
 import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components/WorkflowStepCmdEnterButton';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowEditActionCodeFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields';
@@ -280,6 +281,21 @@ export const WorkflowEditActionLogicFunction = ({
             <WorkflowExpectedOutputBodyInput
               defaultValue={action.settings.expectedOutputSchema}
               onChange={handleExpectedOutputBodyChange}
+              readonly={actionOptions.readonly}
+            />
+            <WorkflowErrorHandlingOptions
+              errorHandlingOptions={action.settings.errorHandlingOptions}
+              onChange={(errorHandlingOptions) => {
+                if (actionOptions.readonly === true) {
+                  return;
+                }
+                updateAction({
+                  settings: {
+                    ...action.settings,
+                    errorHandlingOptions,
+                  },
+                });
+              }}
               readonly={actionOptions.readonly}
             />
           </StyledContainer>

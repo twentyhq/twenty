@@ -33,8 +33,12 @@ export const useCalendarEventForm = ({
     };
   });
 
+  const [errorHandlingOptions, setErrorHandlingOptions] = useState(
+    action.settings.errorHandlingOptions,
+  );
+
   const saveAction = useDebouncedCallback(
-    (nextFormData: CalendarEventFormData) => {
+    (nextFormData: CalendarEventFormData, options: typeof errorHandlingOptions) => {
       if (readonly) {
         return;
       }
@@ -43,6 +47,7 @@ export const useCalendarEventForm = ({
         ...action,
         settings: {
           ...action.settings,
+          errorHandlingOptions: options,
           input: { ...nextFormData },
         },
       });
@@ -60,12 +65,20 @@ export const useCalendarEventForm = ({
     };
 
     setFormData(newFormData);
-    saveAction(newFormData);
+    saveAction(newFormData, errorHandlingOptions);
+  };
+
+  const handleErrorHandlingOptionsChange = (
+    options: typeof errorHandlingOptions,
+  ) => {
+    setErrorHandlingOptions(options);
+    saveAction(formData, options);
   };
 
   return {
     formData,
     handleFieldChange,
     saveAction,
+    handleErrorHandlingOptionsChange,
   };
 };

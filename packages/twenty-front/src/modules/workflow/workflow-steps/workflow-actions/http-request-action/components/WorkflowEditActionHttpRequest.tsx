@@ -95,7 +95,7 @@ export const WorkflowEditActionHttpRequest = ({
     WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID,
   );
 
-  const { formData, handleFieldChange, saveAction } = useHttpRequestForm({
+  const { formData, handleFieldChange, handleErrorHandlingOptionsChange, saveAction } = useHttpRequestForm({
     action,
     onActionUpdate: actionOptions.onActionUpdate,
     readonly: actionOptions.readonly === true,
@@ -198,13 +198,7 @@ export const WorkflowEditActionHttpRequest = ({
                 if (actionOptions.readonly === true) {
                   return;
                 }
-                actionOptions.onActionUpdate?.({
-                  ...action,
-                  settings: {
-                    ...action.settings,
-                    errorHandlingOptions,
-                  },
-                });
+                handleErrorHandlingOptionsChange(errorHandlingOptions);
               }}
               readonly={actionOptions.readonly}
             />

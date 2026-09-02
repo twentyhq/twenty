@@ -46,7 +46,7 @@ export const WorkflowEditActionCreateCalendarEvent = ({
   action,
   actionOptions,
 }: WorkflowEditActionCreateCalendarEventProps) => {
-  const { formData, handleFieldChange, saveAction } = useCalendarEventForm({
+  const { formData, handleFieldChange, handleErrorHandlingOptionsChange, saveAction } = useCalendarEventForm({
     action,
     onActionUpdate:
       actionOptions.readonly === true
@@ -228,13 +228,7 @@ export const WorkflowEditActionCreateCalendarEvent = ({
             if (actionOptions.readonly === true) {
               return;
             }
-            actionOptions.onActionUpdate({
-              ...action,
-              settings: {
-                ...action.settings,
-                errorHandlingOptions,
-              },
-            });
+            handleErrorHandlingOptionsChange(errorHandlingOptions);
           }}
           readonly={actionOptions.readonly}
         />
