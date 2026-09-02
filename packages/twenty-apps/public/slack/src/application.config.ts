@@ -14,6 +14,7 @@ export default defineApplication({
   termsUrl: 'https://www.twenty.com/terms',
   emailSupport: 'contact@twenty.com',
   issueReportUrl: 'https://github.com/twentyhq/twenty/issues',
+  galleryImages: [],
   serverVariables: {
     SLACK_CLIENT_ID: {
       description:
