@@ -4,13 +4,13 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { recordPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutByObjectMetadataIdFamilySelector';
+import { getPageLayoutIdFromContext } from '@/side-panel/pages/page-layout/utils/getPageLayoutIdFromContext';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const usePageLayoutIdFromContextStore = () => {
@@ -65,9 +65,6 @@ export const usePageLayoutIdFromContextStore = () => {
     throw new Error('Only one record should be selected');
   }
 
-  const isDashboardContext =
-    objectMetadataItem.nameSingular === CoreObjectNameSingular.Dashboard;
-
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
 
@@ -78,11 +75,16 @@ export const usePageLayoutIdFromContextStore = () => {
 
   const pageLayoutId = isDefined(pageLayoutContext)
     ? pageLayoutContext.pageLayoutId
-    : isDashboardContext
-      ? (recordStore?.pageLayoutId ?? currentPageLayoutId)
-      : isDefined(recordPageLayout)
-        ? recordPageLayout.id
-        : null;
+    : getPageLayoutIdFromContext({
+        objectNameSingular: objectMetadataItem.nameSingular,
+        dashboardPageLayoutId: recordStore?.pageLayoutId,
+        currentPageLayoutId,
+        recordPageLayoutId: recordPageLayout?.id,
+      });
+
+  if (!isDefined(pageLayoutId)) {
+    throw new Error('Page layout ID is not defined');
+  }
 
   return {
     pageLayoutId,

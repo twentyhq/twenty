@@ -6,9 +6,9 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { recordPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutByObjectMetadataIdFamilySelector';
 import { type PageLayoutSidePanelContext } from '@/side-panel/pages/page-layout/types/PageLayoutSidePanelContext';
+import { getPageLayoutIdFromContext } from '@/side-panel/pages/page-layout/utils/getPageLayoutIdFromContext';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import type { Store } from 'jotai/vanilla/store';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getPageLayoutSidePanelContext = ({
@@ -56,16 +56,18 @@ export const getPageLayoutSidePanelContext = ({
   }
 
   const recordId = targetedRecordsRule.selectedRecordIds[0];
-  const isDashboardContext =
-    objectMetadataItem.nameSingular === CoreObjectNameSingular.Dashboard;
-  const pageLayoutId = isDashboardContext
-    ? (store.get(recordStoreFamilyState.atomFamily(recordId))?.pageLayoutId ??
-      store.get(currentPageLayoutIdState.atom))
-    : (store.get(
-        recordPageLayoutByObjectMetadataIdFamilySelector.selectorFamily({
-          objectMetadataId: objectMetadataItemId,
-        }),
-      )?.id ?? null);
+  const pageLayoutId = getPageLayoutIdFromContext({
+    objectNameSingular: objectMetadataItem.nameSingular,
+    dashboardPageLayoutId: store.get(
+      recordStoreFamilyState.atomFamily(recordId),
+    )?.pageLayoutId,
+    currentPageLayoutId: store.get(currentPageLayoutIdState.atom),
+    recordPageLayoutId: store.get(
+      recordPageLayoutByObjectMetadataIdFamilySelector.selectorFamily({
+        objectMetadataId: objectMetadataItemId,
+      }),
+    )?.id,
+  });
 
   return {
     pageLayoutId,
