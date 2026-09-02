@@ -17,10 +17,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import {
-  LogicFunctionEntity,
-  LogicFunctionExecutionMode,
-} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type FlatLogicFunctionMaps } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function-maps.type';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { isLogicFunctionEligibleForPrebuiltConversion } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-eligible-for-prebuilt-conversion.util';
@@ -57,8 +54,6 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
   }: RunOnWorkspaceArgs): Promise<void> {
     const dryRun = options.dryRun ?? false;
 
-    // Enabling is skipped when already on: enableFeatureFlags invalidates and
-    // recomputes the workspace cache, which is wasteful across every workspace
     const isPrebuiltModeEnabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED,
@@ -72,8 +67,6 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
       );
     }
 
-    // The action handler resolves the row it updates out of these maps, so the
-    // snapshot read here is what it diffs against for every conversion
     const allFlatEntityMaps =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         { workspaceId },
@@ -131,9 +124,6 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
       conversionTargets,
       LOGIC_FUNCTION_PREBUILT_CONVERSION_BATCH_SIZE,
     )) {
-      // One connection per batch, no transaction: the bundle install is a
-      // remote call a rollback could not undo, so a batch transaction would
-      // only risk reverting rows whose lambda was already updated
       const queryRunner = this.coreDataSource.createQueryRunner();
 
       await queryRunner.connect();
@@ -174,8 +164,6 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
       }
     }
 
-    // A conversion failure must not fail the upgrade: prebuilt mode is an
-    // optimization, and a function left behind installs its bundle on demand
     this.logger.log(
       `Converted ${convertedCount} logic function(s) on workspace ${workspaceId}` +
         (failedLogicFunctionIds.length > 0
@@ -197,63 +185,24 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
     allFlatEntityMaps: AllFlatEntityMaps;
     queryRunner: QueryRunner;
   }): Promise<void> {
-    try {
-      await this.updateLogicFunctionActionHandlerService.executeForMetadata({
-        queryRunner,
-        workspaceId,
-        allFlatEntityMaps,
-        flatApplication,
-        action: {
-          type: 'update',
-          metadataName: 'logicFunction',
-          universalIdentifier: flatLogicFunction.universalIdentifier,
-          update: { executionMode: LogicFunctionExecutionMode.PREBUILT },
-        },
-        flatAction: {
-          type: 'update',
-          metadataName: 'logicFunction',
-          entityId: flatLogicFunction.id,
-          update: { executionMode: LogicFunctionExecutionMode.PREBUILT },
-        },
-      });
-    } catch (error) {
-      await this.revertLogicFunctionToLive({
-        flatLogicFunction,
-        workspaceId,
-        queryRunner,
-      });
-
-      throw error;
-    }
-  }
-
-  // The handler writes the row before installing the bundle, so a failed
-  // install would otherwise leave a PREBUILT row that no rerun reconsiders
-  private async revertLogicFunctionToLive({
-    flatLogicFunction,
-    workspaceId,
-    queryRunner,
-  }: {
-    flatLogicFunction: FlatLogicFunction;
-    workspaceId: string;
-    queryRunner: QueryRunner;
-  }): Promise<void> {
-    try {
-      await queryRunner.manager
-        .getRepository<LogicFunctionEntity>(LogicFunctionEntity)
-        .update(
-          { id: flatLogicFunction.id, workspaceId },
-          { executionMode: LogicFunctionExecutionMode.LIVE },
-        );
-    } catch (revertError) {
-      this.logger.error(
-        `Failed to revert logic function '${flatLogicFunction.id}' to LIVE on workspace ${workspaceId}: ${
-          revertError instanceof Error
-            ? revertError.message
-            : String(revertError)
-        }`,
-      );
-    }
+    await this.updateLogicFunctionActionHandlerService.executeForMetadata({
+      queryRunner,
+      workspaceId,
+      allFlatEntityMaps,
+      flatApplication,
+      action: {
+        type: 'update',
+        metadataName: 'logicFunction',
+        universalIdentifier: flatLogicFunction.universalIdentifier,
+        update: { executionMode: LogicFunctionExecutionMode.PREBUILT },
+      },
+      flatAction: {
+        type: 'update',
+        metadataName: 'logicFunction',
+        entityId: flatLogicFunction.id,
+        update: { executionMode: LogicFunctionExecutionMode.PREBUILT },
+      },
+    });
   }
 
   private findLogicFunctionsToConvert({
