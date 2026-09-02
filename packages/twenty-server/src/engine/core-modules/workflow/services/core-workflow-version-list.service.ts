@@ -58,11 +58,53 @@ export class CoreWorkflowVersionListService {
         status: coreWorkflowVersion.status,
         workspaceWorkflowVersionId:
           workspaceVersionIdByCoreVersionId[coreWorkflowVersion.id] ?? null,
+        workspaceWorkflowId,
         trigger: coreWorkflowVersion.triggers?.[0] ?? null,
         steps: coreWorkflowVersion.steps,
         createdAt: coreWorkflowVersion.createdAt.toISOString(),
       }))
       .reverse();
+  }
+
+  async findOneByWorkspaceWorkflowVersionId({
+    workspaceId,
+    workspaceWorkflowVersionId,
+  }: {
+    workspaceId: string;
+    workspaceWorkflowVersionId: string;
+  }): Promise<CoreWorkflowVersionDTO | null> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    const workspaceWorkflowVersion =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        async () =>
+          this.workspaceOrmManager
+            .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
+              shouldBypassPermissionChecks: true,
+            })
+            .findOne({
+              where: { id: workspaceWorkflowVersionId },
+              select: { id: true, workflowId: true },
+            }),
+        authContext,
+      );
+
+    if (!isDefined(workspaceWorkflowVersion)) {
+      return null;
+    }
+
+    const coreWorkflowVersions = await this.findManyByWorkspaceWorkflowId({
+      workspaceId,
+      workspaceWorkflowId: workspaceWorkflowVersion.workflowId,
+    });
+
+    return (
+      coreWorkflowVersions.find(
+        (coreWorkflowVersion) =>
+          coreWorkflowVersion.workspaceWorkflowVersionId ===
+          workspaceWorkflowVersionId,
+      ) ?? null
+    );
   }
 
   private async findWorkspaceVersionIdByCoreVersionId({

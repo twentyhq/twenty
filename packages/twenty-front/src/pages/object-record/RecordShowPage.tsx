@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom';
+import { CoreObjectNameSingular, FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
@@ -19,6 +20,8 @@ import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { CoreWorkflowVersionShowPage } from '~/pages/object-core/CoreWorkflowVersionShowPage';
 import { RecordShowPageHeader } from '~/pages/object-record/RecordShowPageHeader';
 import { RecordShowPageTitle } from '~/pages/object-record/RecordShowPageTitle';
 
@@ -128,6 +131,9 @@ export const RecordShowPage = () => {
   const parameters = useParams<RecordShowPageParameters>();
   const workspaceSurface = useWorkspaceSurface();
   const { objectMetadataItems } = useObjectMetadataItems();
+  const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
+  );
 
   const isInSidePanel = workspaceSurface.type === 'side-panel';
   const isRouteObjectMetadataAvailable =
@@ -139,6 +145,18 @@ export const RecordShowPage = () => {
 
   if (isInSidePanel && !isRouteObjectMetadataAvailable) {
     return <WorkspaceRouteUnavailable />;
+  }
+
+  if (
+    isWorkflowCoreIndexPageEnabled &&
+    parameters.objectNameSingular === CoreObjectNameSingular.WorkflowVersion &&
+    isDefined(parameters.objectRecordId)
+  ) {
+    return (
+      <CoreWorkflowVersionShowPage
+        workspaceWorkflowVersionId={parameters.objectRecordId}
+      />
+    );
   }
 
   return <RecordShowPageContent parameters={parameters} />;

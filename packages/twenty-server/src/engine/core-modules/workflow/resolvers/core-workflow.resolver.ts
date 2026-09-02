@@ -8,6 +8,7 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { CoreWorkflowConnectionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-connection.dto';
 import { CoreWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.dto';
+import { CoreWorkflowVersionArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.input';
 import { CoreWorkflowVersionsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-versions.input';
 import { CoreWorkflowsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflows.input';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
@@ -56,5 +57,18 @@ export class CoreWorkflowResolver {
       workspaceId,
       workspaceWorkflowId,
     });
+  }
+
+  @Query(() => CoreWorkflowVersionDTO, { nullable: true })
+  async coreWorkflowVersion(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args() { workspaceWorkflowVersionId }: CoreWorkflowVersionArgs,
+  ): Promise<CoreWorkflowVersionDTO | null> {
+    return this.coreWorkflowVersionListService.findOneByWorkspaceWorkflowVersionId(
+      {
+        workspaceId,
+        workspaceWorkflowVersionId,
+      },
+    );
   }
 }

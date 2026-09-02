@@ -1,8 +1,11 @@
 import { useEffect } from 'react';
 
-import { type PreviewedCoreWorkflowVersion } from '@/object-core/workflows/versions/states/previewedCoreWorkflowVersionFamilyState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
+import {
+  type WorkflowAction,
+  type WorkflowTrigger,
+} from '@/workflow/types/Workflow';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
@@ -10,10 +13,14 @@ import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/gener
 
 export const CoreWorkflowVersionDiagramEffect = ({
   workflowId,
-  previewedCoreWorkflowVersion,
+  workspaceWorkflowVersionId,
+  trigger,
+  steps,
 }: {
   workflowId: string;
-  previewedCoreWorkflowVersion: PreviewedCoreWorkflowVersion;
+  workspaceWorkflowVersionId: string;
+  trigger: WorkflowTrigger | null;
+  steps: WorkflowAction[] | null;
 }) => {
   const setFlow = useSetAtomComponentState(flowComponentState);
   const setWorkflowDiagram = useSetAtomComponentState(
@@ -25,9 +32,6 @@ export const CoreWorkflowVersionDiagramEffect = ({
   const setWorkflowVisualizerWorkflowVersionId = useSetAtomComponentState(
     workflowVisualizerWorkflowVersionIdComponentState,
   );
-
-  const { trigger, steps, workspaceWorkflowVersionId } =
-    previewedCoreWorkflowVersion;
 
   useEffect(() => {
     setFlow({

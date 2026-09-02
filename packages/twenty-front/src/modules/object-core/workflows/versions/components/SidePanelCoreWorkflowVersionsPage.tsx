@@ -3,8 +3,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CoreWorkflowVersionsListItem } from '@/object-core/workflows/versions/components/CoreWorkflowVersionsListItem';
 import { useCoreWorkflowVersions } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersions';
-import { usePreviewCoreWorkflowVersion } from '@/object-core/workflows/versions/hooks/usePreviewCoreWorkflowVersion';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { styled } from '@linaria/react';
@@ -21,8 +22,7 @@ export const SidePanelCoreWorkflowVersionsPage = () => {
   const workflowId = useSidePanelWorkflowIdOrThrow();
   const { coreWorkflowVersions, loading, error } =
     useCoreWorkflowVersions(workflowId);
-  const { previewedCoreWorkflowVersion, previewCoreWorkflowVersion } =
-    usePreviewCoreWorkflowVersion(workflowId);
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const selectableCoreWorkflowVersionIds = coreWorkflowVersions
     .filter(({ workspaceWorkflowVersionId }) =>
@@ -51,14 +51,19 @@ export const SidePanelCoreWorkflowVersionsPage = () => {
             label={coreWorkflowVersion.label}
             createdAt={coreWorkflowVersion.createdAt}
             status={coreWorkflowVersion.status}
-            isSelected={
-              previewedCoreWorkflowVersion?.coreWorkflowVersionId ===
-              coreWorkflowVersion.id
-            }
             isSelectable={isDefined(
               coreWorkflowVersion.workspaceWorkflowVersionId,
             )}
-            onSelect={() => previewCoreWorkflowVersion(coreWorkflowVersion)}
+            onSelect={() => {
+              if (!isDefined(coreWorkflowVersion.workspaceWorkflowVersionId)) {
+                return;
+              }
+
+              openRecordInSidePanel({
+                objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
+                recordId: coreWorkflowVersion.workspaceWorkflowVersionId,
+              });
+            }}
           />
         ))}
       </SidePanelGroup>

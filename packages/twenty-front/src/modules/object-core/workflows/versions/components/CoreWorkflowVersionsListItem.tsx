@@ -7,12 +7,8 @@ import { CORE_WORKFLOW_VERSION_STATUS_TAG_PROPS } from '@/object-core/workflows/
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { type CoreWorkflowVersionStatus } from '~/generated/graphql';
 
-const StyledRow = styled.div<{ isSelected: boolean; isSelectable: boolean }>`
+const StyledRow = styled.div<{ isSelectable: boolean }>`
   align-items: center;
-  background-color: ${({ isSelected }) =>
-    isSelected
-      ? themeCssVariables.background.transparent.light
-      : 'transparent'};
   border-radius: ${themeCssVariables.border.radius.sm};
   cursor: ${({ isSelectable }) => (isSelectable ? 'pointer' : 'default')};
   display: flex;
@@ -22,8 +18,8 @@ const StyledRow = styled.div<{ isSelected: boolean; isSelectable: boolean }>`
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 
   &:hover {
-    background-color: ${({ isSelected, isSelectable }) =>
-      isSelectable || isSelected
+    background-color: ${({ isSelectable }) =>
+      isSelectable
         ? themeCssVariables.background.transparent.light
         : 'transparent'};
   }
@@ -46,7 +42,6 @@ type CoreWorkflowVersionsListItemProps = {
   label: string;
   createdAt: string;
   status: CoreWorkflowVersionStatus;
-  isSelected: boolean;
   isSelectable: boolean;
   onSelect: () => void;
 };
@@ -56,7 +51,6 @@ export const CoreWorkflowVersionsListItem = ({
   label,
   createdAt,
   status,
-  isSelected,
   isSelectable,
   onSelect,
 }: CoreWorkflowVersionsListItemProps) => {
@@ -66,7 +60,6 @@ export const CoreWorkflowVersionsListItem = ({
   return (
     <SelectableListItem itemId={id} onEnter={onSelect}>
       <StyledRow
-        isSelected={isSelected}
         isSelectable={isSelectable}
         onClick={isSelectable ? onSelect : undefined}
       >
