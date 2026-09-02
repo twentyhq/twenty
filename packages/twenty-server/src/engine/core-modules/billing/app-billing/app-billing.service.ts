@@ -3,6 +3,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isUsageOperationTypeValue } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
@@ -127,9 +128,20 @@ export class AppBillingService {
       );
     }
 
-    // Indexing the enum by the manifest literal is what stops twenty-shared's
-    // USAGE_OPERATION_TYPES from promising apps a category the platform does
-    // not meter: a drifted value fails to compile here.
+    // `operations` is jsonb, so the declaration is untrusted at the point it is
+    // used however the manifest typed it. An unknown value indexes the enum to
+    // undefined and records a row with no category and no unit, and a
+    // platform-only value like SUBSCRIPTION would let the declared-operation
+    // path raise what ChargeDto's @IsIn stops an app raising directly.
+    if (!isUsageOperationTypeValue(billableOperation.operationType)) {
+      throw new BadRequestException(
+        `Billable operation "${charge.operation}" declares an unknown operationType.`,
+      );
+    }
+
+    // Indexing the enum by the manifest literal is also what stops
+    // twenty-shared's USAGE_OPERATION_TYPES from promising apps a category the
+    // platform does not meter: a drifted value fails to compile here.
     return UsageOperationType[billableOperation.operationType];
   }
 
