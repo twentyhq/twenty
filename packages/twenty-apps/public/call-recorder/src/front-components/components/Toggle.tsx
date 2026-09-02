@@ -3,7 +3,8 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 // twenty-ui's Toggle is a base-ui Switch whose click handler constructs a
 // PointerEvent, which the front component sandbox does not provide. This is
-// the same control as a plain button, styled after twenty-ui's Toggle.
+// the same control as a plain button, styled after twenty-ui's Toggle. The
+// host theme squircles every corner, so the capsule and thumb opt out.
 export type ToggleSize = 'small' | 'medium';
 
 type ToggleDimensions = {
@@ -36,6 +37,7 @@ const StyledToggle = styled.button<{
       : themeCssVariables.background.transparent.medium};
   border: none;
   border-radius: ${() => themeCssVariables.border.radius.pill};
+  corner-shape: round;
   cursor: pointer;
   display: flex;
   flex-shrink: 0;
@@ -58,6 +60,7 @@ const StyledThumb = styled.span<{
 }>`
   background-color: ${() => themeCssVariables.background.primary};
   border-radius: 50%;
+  corner-shape: round;
   display: block;
   height: ${({ $toggleSize }) =>
     TOGGLE_DIMENSIONS_BY_SIZE[$toggleSize].thumbSize}px;
