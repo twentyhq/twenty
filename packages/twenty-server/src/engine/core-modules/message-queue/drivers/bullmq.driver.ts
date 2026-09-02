@@ -4,6 +4,8 @@ import {
   type OnModuleInit,
 } from '@nestjs/common';
 
+import v8 from 'v8';
+
 import * as Sentry from '@sentry/node';
 import {
   type JobsOptions,
@@ -213,7 +215,7 @@ export class BullMQDriver
           // TODO: diagnostic only — remove once the worker OOM root cause is
           // confirmed. Attribute heap growth to job types, including jobs that
           // throw under memory pressure (logged from the finally below).
-          const heapUsedBeforeBytes = process.memoryUsage().heapUsed;
+          const heapUsedBeforeBytes = v8.getHeapStatistics().used_heap_size;
           const workspaceId = job.data?.workspaceId;
           const workspaceSuffix = workspaceId
             ? ` [workspace=${workspaceId}]`
@@ -237,7 +239,7 @@ export class BullMQDriver
             jobSucceeded = true;
           } finally {
             const executionTime = performance.now() - timeStart;
-            const heapUsedAfterBytes = process.memoryUsage().heapUsed;
+            const heapUsedAfterBytes = v8.getHeapStatistics().used_heap_size;
             const heapDeltaMegabytes =
               (heapUsedAfterBytes - heapUsedBeforeBytes) / BYTES_PER_MEGABYTE;
             const heapUsedMegabytes = heapUsedAfterBytes / BYTES_PER_MEGABYTE;

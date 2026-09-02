@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import v8 from 'v8';
+
 import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -164,7 +166,7 @@ export class ParticipantTargetReconciliationService {
     // TODO: diagnostic only — remove once the worker OOM root cause is confirmed.
     // Size what one reconcile loads and how much heap it retains, to confirm
     // whether this path (added in #24778) drives worker memory.
-    const heapUsedBeforeBytes = process.memoryUsage().heapUsed;
+    const heapUsedBeforeBytes = v8.getHeapStatistics().used_heap_size;
     let messagesLoaded = 0;
     let participantsLoaded = 0;
 
@@ -223,7 +225,7 @@ export class ParticipantTargetReconciliationService {
     }
 
     const heapDeltaMegabytes =
-      (process.memoryUsage().heapUsed - heapUsedBeforeBytes) /
+      (v8.getHeapStatistics().used_heap_size - heapUsedBeforeBytes) /
       BYTES_PER_MEGABYTE;
 
     this.logger.log(
