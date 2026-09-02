@@ -17,7 +17,6 @@ Two parts: a **Slack app** you create, and the **Twenty side** where you paste i
    | `channels:read` | `conversations.list` and the channel picker (public channels) |
    | `chat:write` | post, update, delete, ephemeral |
    | `chat:write.public` | post to public channels without the bot joining |
-   | `im:write` | `conversations.open`, to send a workspace member the Slack-account link consent DM |
    | `groups:read` | list private channels the bot is in |
    | `im:write` | open a DM with a member to ask for their consent to a manual link |
    | `reactions:write` | add reactions |
@@ -74,7 +73,7 @@ The assistant reuses the same Slack connection — no second bot identity.
 
    Invite the bot to any channel where it should follow threads. Slack may ask you to reinstall after changing subscriptions.
 
-   Event subscriptions added in app upgrades must be added here by hand on existing installs — the Slack app only reads the manifest at creation. Upgrading from any version before 0.4.1 adds `app_uninstalled` and `tokens_revoked`; without them the team claim of a Slack-side removal is never released. No new scopes are involved, so the connection itself needs no re-authorization. Upgrading from any version before 0.6.1 adds the `im:write` scope, without which the link consent DM fails; that one does need a reconnect (disconnect and **Add connection** again).
+   Event subscriptions added in app upgrades must be added here by hand on existing installs — the Slack app only reads the manifest at creation. Upgrading from any version before 0.4.1 adds `app_uninstalled` and `tokens_revoked`; without them the team claim of a Slack-side removal is never released. No new scopes are involved, so the connection itself needs no re-authorization.
 
 3. **Interactivity.** On the Slack app, enable **Interactivity & Shortcuts** and set the Request URL to:
 

@@ -24,7 +24,6 @@
         "channels:read",
         "chat:write",
         "chat:write.public",
-        "im:write",
         "groups:read",
         "im:write",
         "reactions:write",
