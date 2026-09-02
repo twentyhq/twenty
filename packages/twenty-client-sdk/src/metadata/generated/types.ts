@@ -3575,6 +3575,9 @@ export default {
             "usageByOperationType": [
                 181
             ],
+            "usageByApplication": [
+                181
+            ],
             "usageByModel": [
                 181
             ],
@@ -4504,6 +4507,9 @@ export default {
                 1
             ],
             "aboutDescription": [
+                1
+            ],
+            "pricingDescription": [
                 1
             ],
             "termsUrl": [

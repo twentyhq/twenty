@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { buildRecurringChargeUsageEvents } from 'src/engine/core-modules/billing/app-billing/utils/build-recurring-charge-usage-events.util';
 import { type DueRecurringCharge } from 'src/engine/core-modules/billing/app-billing/utils/collect-due-recurring-charges.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -45,7 +47,7 @@ describe('buildRecurringChargeUsageEvents', () => {
         unit: UsageUnit.CREDIT,
         resourceId: APPLICATION_ID,
         resourceContext: 'platformFee',
-        userWorkspaceId: null,
+        spenders: { applicationId: APPLICATION_ID },
         periodStart: PERIOD_START,
       },
     ]);
@@ -67,7 +69,7 @@ describe('buildRecurringChargeUsageEvents', () => {
         unit: UsageUnit.SEAT,
         resourceId: APPLICATION_ID,
         resourceContext: 'seat',
-        userWorkspaceId: null,
+        spenders: { applicationId: APPLICATION_ID },
         periodStart: PERIOD_START,
       },
     ]);
@@ -102,7 +104,12 @@ describe('buildRecurringChargeUsageEvents', () => {
       periodStart: PERIOD_START,
     });
 
-    expect(result.every((event) => event.userWorkspaceId === null)).toBe(true);
+    expect(
+      result.every((event) => !isDefined(event.spenders?.userWorkspaceId)),
+    ).toBe(true);
+    expect(
+      result.every((event) => event.spenders?.applicationId === APPLICATION_ID),
+    ).toBe(true);
     expect(result.every((event) => event.resourceId === APPLICATION_ID)).toBe(
       true,
     );

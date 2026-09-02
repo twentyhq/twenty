@@ -7,19 +7,17 @@ import { collectDueRecurringCharges } from 'src/engine/core-modules/billing/app-
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
-import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
+import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 // Flat fees and per-seat fees an app declares in its manifest, raised by the
-// platform once per billing period as ordinary credit usage. Charging through
-// the same USAGE_RECORDED path as app-initiated charges is what makes them show
-// up in Usage by App and on the credit meter without any separate plumbing.
+// platform once per billing period as ordinary credit usage. Recording through
+// the same usage path as app-initiated charges is what makes them show up in
+// Usage by App and on the credit meter without any separate plumbing.
 @Injectable()
 export class ApplicationRecurringChargeService {
   private readonly logger = new Logger(ApplicationRecurringChargeService.name);
@@ -28,7 +26,7 @@ export class ApplicationRecurringChargeService {
     private readonly billingService: BillingService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly usageRecorderService: UsageRecorderService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
@@ -86,11 +84,7 @@ export class ApplicationRecurringChargeService {
       return 0;
     }
 
-    this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
-      USAGE_RECORDED,
-      events,
-      workspaceId,
-    );
+    await this.usageRecorderService.record(workspaceId, events);
 
     this.logger.log(
       `Raised ${events.length} recurring app charge(s) for workspace ${workspaceId}`,

@@ -37,7 +37,7 @@ export const buildRecurringChargeUsageEvents = ({
         unit: isPerMember ? UsageUnit.SEAT : UsageUnit.CREDIT,
         resourceId: applicationId,
         resourceContext: chargeKey,
-        userWorkspaceId: null,
+        spenders: { applicationId },
         periodStart,
       } satisfies UsageEvent,
     ];
