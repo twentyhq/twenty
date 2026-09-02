@@ -114,6 +114,7 @@ export const SlackUserLinksSettings = () => {
   const [matchSummary, setMatchSummary] = useState<string | undefined>(
     undefined,
   );
+  const [hasMatchRunCleanly, setHasMatchRunCleanly] = useState(false);
   const [isManualFormOpen, setIsManualFormOpen] = useState(false);
 
   const handleLinkSaved = async () => {
@@ -130,6 +131,7 @@ export const SlackUserLinksSettings = () => {
 
     if (!result.success) {
       setMatchSummary(undefined);
+      setHasMatchRunCleanly(false);
       enqueueSnackbar({
         message: isNonEmptyString(result.error) ? result.error : result.message,
         variant: 'error',
@@ -139,6 +141,7 @@ export const SlackUserLinksSettings = () => {
     }
 
     setMatchSummary(result.message);
+    setHasMatchRunCleanly(result.failedCount === 0);
     await handleLinkSaved();
   };
 
@@ -218,7 +221,7 @@ export const SlackUserLinksSettings = () => {
           description="Only members with the roles permission can create or change Slack user links. You can review the existing links below."
         />
       )}
-      {canManage && hasRosterMatchFailed && !isDefined(matchSummary) && (
+      {canManage && hasRosterMatchFailed && !hasMatchRunCleanly && (
         <Callout
           variant="warning"
           title="Email auto-link did not finish"
