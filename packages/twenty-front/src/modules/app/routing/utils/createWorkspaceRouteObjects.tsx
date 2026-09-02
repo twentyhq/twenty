@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { type Location, Navigate, parsePath } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
@@ -62,15 +62,6 @@ type CreateWorkspaceRouteObjectsArgs = {
 const MAIN_AND_SIDE_PANEL = ['main', 'side-panel'] as const;
 const SETTINGS_ROOT_PATH = AppPath.SettingsCatchAll.replace('/*', '');
 
-const isSettingsRootLocation = (location: Partial<Location> | string) => {
-  const pathname =
-    typeof location === 'string'
-      ? parsePath(location).pathname
-      : location.pathname;
-
-  return pathname?.replace(/\/$/, '') === SETTINGS_ROOT_PATH;
-};
-
 export const createWorkspaceRouteObjects = ({
   isAdminPageEnabled,
   isWorkflowCoreIndexPageEnabled,
@@ -91,7 +82,7 @@ export const createWorkspaceRouteObjects = ({
             ),
             handle: {
               workspaceSurfaces: MAIN_AND_SIDE_PANEL,
-              isLocationExpandableFromSidePanel: () => true,
+              isLocationExpandableFromSidePanel: true,
             },
           } satisfies WorkspaceRouteObject,
         ]
@@ -109,7 +100,7 @@ export const createWorkspaceRouteObjects = ({
       ),
       handle: {
         workspaceSurfaces: MAIN_AND_SIDE_PANEL,
-        isLocationExpandableFromSidePanel: () => true,
+        isLocationExpandableFromSidePanel: true,
       },
     },
     {
@@ -149,11 +140,6 @@ export const createWorkspaceRouteObjects = ({
       path: SETTINGS_ROOT_PATH,
       element: <SettingsRouteOutlet />,
       children: settingsRouteObjects,
-      handle: {
-        workspaceSurfaces: MAIN_AND_SIDE_PANEL,
-        isLocationAvailableOnSurface: ({ location }) =>
-          !isSettingsRootLocation(location),
-      },
     },
     {
       path: AppPath.Dpa,

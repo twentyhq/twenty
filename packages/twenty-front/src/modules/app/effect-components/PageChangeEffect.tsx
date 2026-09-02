@@ -5,7 +5,7 @@ import { useReturnToPath } from '@/auth/hooks/useReturnToPath';
 import { useIsOnAuthOrOnboardingPage } from '@/auth/hooks/useIsOnAuthOrOnboardingPage';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { SIDE_PANEL_PATH_SEARCH_PARAM } from '@/side-panel/routing/constants/SidePanelPathSearchParam';
-import { isSidePanelRoutedLocation } from '@/side-panel/routing/utils/isSidePanelRoutedLocation';
+import { isWorkspaceLocationAvailableOnSurface } from '@/app/routing/utils/isWorkspaceLocationAvailableOnSurface';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -29,6 +29,7 @@ import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useRes
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isSafeInternalPath } from '@/ui/navigation/utils/isSafeInternalPath';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { useStore } from 'jotai';
 import { useEffect, useState } from 'react';
@@ -57,8 +58,12 @@ export const PageChangeEffect = () => {
 
   const hasRoutedSidePanelTarget =
     isDefined(sidePanelPathFromUrl) &&
-    sidePanelPathFromUrl.startsWith('/') &&
-    isSidePanelRoutedLocation(workspaceRouteObjects, sidePanelPathFromUrl);
+    isSafeInternalPath(sidePanelPathFromUrl) &&
+    isWorkspaceLocationAvailableOnSurface(
+      workspaceRouteObjects,
+      'side-panel',
+      sidePanelPathFromUrl,
+    );
 
   const pageChangeEffectNavigateLocation =
     usePageChangeEffectNavigateLocation();
@@ -119,7 +124,8 @@ export const PageChangeEffect = () => {
         const currentPage = store.get(sidePanelPageInfoSelector.atom).page;
         const shouldKeepSidePanelOpen =
           currentPage === SidePanelPages.NavigationMenuItemEdit ||
-          currentPage === SidePanelPages.AskAI;
+          currentPage === SidePanelPages.AskAI ||
+          currentPage === SidePanelPages.RoutedPage;
 
         if (!shouldKeepSidePanelOpen) {
           closeSidePanelMenu();

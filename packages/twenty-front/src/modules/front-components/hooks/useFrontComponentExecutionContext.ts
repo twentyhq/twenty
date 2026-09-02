@@ -222,6 +222,7 @@ export const useFrontComponentExecutionContext = ({
         const pathWithHash = isNonEmptyString(params.hash)
           ? `${path}#${encodeURIComponent(params.hash)}`
           : path;
+
         const pageId = openRoutedPageInSidePanel({
           path: pathWithHash,
           pageTitle: params.pageTitle,

@@ -11,6 +11,7 @@ import { isPageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/utils/
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
+import { WorkspaceSurfaceHeaderPortalContext } from '@/ui/layout/contexts/WorkspaceSurfaceHeaderPortalContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -84,16 +85,17 @@ export const SidePanelRouter = () => {
             sidePanelPageInstanceId)
           : undefined,
       ownsRouteLocation: false,
-      headerTitlePortal,
-      headerActionsPortal,
     }),
     [
       currentNavigationItem?.routedFlowStateScopeId,
-      headerActionsPortal,
-      headerTitlePortal,
       sidePanelPage,
       sidePanelPageInstanceId,
     ],
+  );
+
+  const headerPortal = useMemo(
+    () => ({ title: headerTitlePortal, actions: headerActionsPortal }),
+    [headerActionsPortal, headerTitlePortal],
   );
 
   return (
@@ -102,30 +104,32 @@ export const SidePanelRouter = () => {
         value={{ instanceId: sidePanelPageInstanceId }}
       >
         <WorkspaceSurfaceContext.Provider value={workspaceSurface}>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{
-              duration: theme.animation.duration.instant,
-              delay: 0.1,
-            }}
-          >
-            <SidePanelTopBar
-              setHeaderTitlePortal={setHeaderTitlePortal}
-              setHeaderActionsPortal={setHeaderActionsPortal}
-            />
-          </motion.div>
-          <StyledSidePanelContent>
-            <CommandMenuContextProvider
-              displayType="listItem"
-              containerType={CommandMenuItemContainerType.CommandMenuList}
+          <WorkspaceSurfaceHeaderPortalContext.Provider value={headerPortal}>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{
+                duration: theme.animation.duration.instant,
+                delay: 0.1,
+              }}
             >
-              <SidePanelSubPageRouter>
-                {sidePanelPageComponent}
-              </SidePanelSubPageRouter>
-            </CommandMenuContextProvider>
-          </StyledSidePanelContent>
+              <SidePanelTopBar
+                setHeaderTitlePortal={setHeaderTitlePortal}
+                setHeaderActionsPortal={setHeaderActionsPortal}
+              />
+            </motion.div>
+            <StyledSidePanelContent>
+              <CommandMenuContextProvider
+                displayType="listItem"
+                containerType={CommandMenuItemContainerType.CommandMenuList}
+              >
+                <SidePanelSubPageRouter>
+                  {sidePanelPageComponent}
+                </SidePanelSubPageRouter>
+              </CommandMenuContextProvider>
+            </StyledSidePanelContent>
+          </WorkspaceSurfaceHeaderPortalContext.Provider>
         </WorkspaceSurfaceContext.Provider>
       </SidePanelPageComponentInstanceContext.Provider>
     </SidePanelContainer>

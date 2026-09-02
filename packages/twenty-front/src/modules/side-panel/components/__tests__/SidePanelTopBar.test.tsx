@@ -6,6 +6,7 @@ import { createStore, Provider as JotaiProvider } from 'jotai';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { type SidePanelContextChipProps } from '@/side-panel/components/SidePanelContextChip';
 import { SidePanelTopBar } from '@/side-panel/components/SidePanelTopBar';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import {
@@ -35,8 +36,10 @@ jest.mock('@/side-panel/components/SidePanelExpandButton', () => ({
 
 const mockCloseSidePanelMenu = jest.fn();
 
+let mockContextChips: SidePanelContextChipProps[] = [];
+
 jest.mock('@/side-panel/hooks/useSidePanelContextChips', () => ({
-  useSidePanelContextChips: () => ({ contextChips: [] }),
+  useSidePanelContextChips: () => ({ contextChips: mockContextChips }),
 }));
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
@@ -108,6 +111,7 @@ describe('SidePanelTopBar', () => {
   beforeEach(() => {
     mockCloseSidePanelMenu.mockClear();
     mockIsMobile = false;
+    mockContextChips = [];
   });
 
   it('keeps the command menu search input focused while arrowing through items', async () => {
@@ -330,6 +334,37 @@ describe('SidePanelTopBar', () => {
         Node.DOCUMENT_POSITION_FOLLOWING,
       ),
     ).toBe(true);
+  });
+
+  it('shows routed page info when the header title portal is empty', () => {
+    const store = createSidePanelTopBarStore({
+      sidePanelNavigationStack: [
+        {
+          page: SidePanelPages.RoutedPage,
+          pageTitle: 'Companies',
+          pageIcon: IconDotsVertical,
+          pageId: 'companies',
+          routedLocation: {
+            pathname: '/objects/companies',
+            search: '',
+            hash: '',
+            state: null,
+            key: 'companies',
+          },
+        },
+      ],
+    });
+    mockContextChips = [{ Icons: [], text: 'Companies' }];
+
+    render(
+      <I18nProvider i18n={i18n}>
+        <JotaiProvider store={store}>
+          <SidePanelTopBar />
+        </JotaiProvider>
+      </I18nProvider>,
+    );
+
+    expect(screen.getByText('Companies')).toBeInTheDocument();
   });
 
   it('shows the close button on mobile when there is no back button to dismiss the panel', () => {

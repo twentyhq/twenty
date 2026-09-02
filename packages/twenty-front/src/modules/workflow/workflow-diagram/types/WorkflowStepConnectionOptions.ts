@@ -7,5 +7,13 @@ type WorkflowIteratorStepConnectionOptions = {
   };
 };
 
+type WorkflowIfElseStepConnectionOptions = {
+  connectedStepType: Extract<WorkflowActionType, 'IF_ELSE'>;
+  settings: {
+    branchId: string;
+  };
+};
+
 export type WorkflowStepConnectionOptions =
-  WorkflowIteratorStepConnectionOptions;
+  | WorkflowIteratorStepConnectionOptions
+  | WorkflowIfElseStepConnectionOptions;

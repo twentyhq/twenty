@@ -174,8 +174,6 @@ const meta: Meta<EmailThreadStoryArgs> = {
           type: 'side-panel',
           instanceId: 'story-side-panel',
           ownsRouteLocation: true,
-          headerTitlePortal: null,
-          headerActionsPortal: null,
         }}
       >
         <CommandMenuComponentInstanceContext.Provider

@@ -91,8 +91,6 @@ describe('RecordShowPageHeader workspace surface composition', () => {
           type: 'side-panel',
           instanceId: 'side-panel-page-1',
           ownsRouteLocation: true,
-          headerTitlePortal: null,
-          headerActionsPortal: null,
         }}
       >
         {header}
@@ -103,7 +101,9 @@ describe('RecordShowPageHeader workspace surface composition', () => {
       'data-record-link-surface',
       'main',
     );
-    expect(screen.getByTestId('panel-record-created-at')).toBeInTheDocument();
+    expect(
+      screen.queryByTestId('panel-record-created-at'),
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByTestId('main-record-breadcrumb'),
     ).not.toBeInTheDocument();

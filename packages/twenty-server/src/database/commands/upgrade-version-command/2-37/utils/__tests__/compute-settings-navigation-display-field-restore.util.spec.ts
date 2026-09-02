@@ -79,7 +79,9 @@ describe('computeSettingsNavigationDisplayFieldRestore', () => {
       flatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([
         buildFlatCommandMenuItem({
           id: 'command-1',
-          payload: { objectMetadataItemId: 'object-1' },
+          payload: {
+            objectMetadataItemId: 'object-1',
+          } as unknown as FlatCommandMenuItem['payload'],
         }),
       ]),
       now: NOW,
