@@ -10,9 +10,9 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { LOGIC_FUNCTION_PREBUILT_CONVERSION_BATCH_SIZE } from 'src/engine/metadata-modules/logic-function/constants/logic-function-prebuilt-conversion-batch-size.constant';
 import { LogicFunctionPrebuiltConversionService } from 'src/engine/metadata-modules/logic-function/services/logic-function-prebuilt-conversion.service';
 
-@RegisteredWorkspaceCommand('2.38.0', 1788338950836)
+@RegisteredWorkspaceCommand('2.39.0', 1788338950836)
 @Command({
-  name: 'upgrade:2-38:convert-logic-functions-to-prebuilt',
+  name: 'upgrade:2-39:convert-logic-functions-to-prebuilt',
   description:
     'Convert packaged application logic functions from LIVE to PREBUILT execution mode. Idempotent.',
 })
@@ -57,7 +57,7 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
 
     if (dryRun) {
       this.logger.log(
-        `Would enable ${FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED} and convert logic functions of ${applicationIdsToConvert.length} application(s) on workspace ${workspaceId}`,
+        `Would ensure ${FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED} is enabled and convert logic functions of ${applicationIdsToConvert.length} application(s) on workspace ${workspaceId}`,
       );
 
       return;
