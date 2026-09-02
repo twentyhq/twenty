@@ -12,6 +12,7 @@ import { PageFocusId } from '@/types/PageFocusId';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { styled } from '@linaria/react';
+import { useCallback } from 'react';
 
 const StyledRecordTablePrintBoundary = styled.div`
   display: contents;
@@ -60,11 +61,14 @@ export const RecordTableWithWrappers = ({
   const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
-  const handleRecordIdentifierClick = (rowIndex: number, recordId: string) => {
-    activateRecordTableRow(rowIndex);
-    unfocusRecordTableRow();
-    openRecordFromIndexView({ recordId });
-  };
+  const handleRecordIdentifierClick = useCallback(
+    (rowIndex: number, recordId: string) => {
+      activateRecordTableRow(rowIndex);
+      unfocusRecordTableRow();
+      openRecordFromIndexView({ recordId });
+    },
+    [activateRecordTableRow, unfocusRecordTableRow, openRecordFromIndexView],
+  );
 
   const { deleteOneRecord } = useDeleteOneRecord({ objectNameSingular });
 
