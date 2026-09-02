@@ -47,20 +47,20 @@ export class UpsertUsageLimitInput {
   @IsIn(LIMIT_KINDS)
   limitKind: LimitKind;
 
-  @Field(() => Int, { defaultValue: 1 })
+  @Field(() => Int)
   @IsInt()
   @Min(1)
   periodCount: number;
 
-  @Field(() => String, { defaultValue: 'billingPeriod' })
+  @Field(() => String)
   @IsIn(PERIOD_UNITS)
   periodUnit: PeriodUnit;
 
-  @Field(() => String, { defaultValue: 'creditsUsedMicro' })
+  @Field(() => String)
   @IsIn(USAGE_METERS)
   meter: UsageMeter;
 
-  @Field(() => String, { defaultValue: 'absolute' })
+  @Field(() => String)
   @IsIn(LIMIT_VALUE_TYPES)
   limitValueType: LimitValueType;
 
