@@ -296,6 +296,27 @@ describe('linkSlackRosterCandidates', () => {
     expect(outcome).toEqual({ linkedCount: 200, failedCount: 200 });
   });
 
+  it('should credit a concurrent sweep when the cleanup fails', async () => {
+    findDeletedSlackUserLinkIdsMock.mockRejectedValue(
+      new Error('cleanup failed'),
+    );
+    listLinkedSlackUserIdsMock.mockImplementation(
+      async (_client, { slackUserIds }) =>
+        new Set(
+          slackUserIds.filter((slackUserId: string) => slackUserId === 'U1'),
+        ),
+    );
+
+    const outcome = await linkSlackRosterCandidates(client, {
+      candidates: [candidate('U1'), candidate('U2')],
+      slackTeamId: SLACK_TEAM_ID,
+    });
+
+    expect(createSlackUserLinksMock).not.toHaveBeenCalled();
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(outcome).toEqual({ linkedCount: 1, failedCount: 1 });
+  });
+
   it('should never upsert, so a declined or manual link is never overwritten', async () => {
     await linkSlackRosterCandidates(client, {
       candidates: [candidate('U1')],

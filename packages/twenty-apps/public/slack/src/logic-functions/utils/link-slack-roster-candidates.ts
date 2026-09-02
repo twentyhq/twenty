@@ -195,10 +195,13 @@ export const linkSlackRosterCandidates = async (
         `[slack] roster match could not clear the soft-deleted links of ${batchCandidates.length} candidates: ${toErrorMessage(error)}`,
       );
 
-      batchOutcomes.push({
-        linkedCount: 0,
-        failedCount: batchCandidates.length,
-      });
+      batchOutcomes.push(
+        await recoverFailedBatch(client, {
+          candidates: batchCandidates,
+          slackTeamId,
+          canRetryOneByOne: false,
+        }),
+      );
       continue;
     }
 
