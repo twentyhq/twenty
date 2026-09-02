@@ -1,6 +1,11 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { useEffect } from 'react';
-import { createMemoryRouter, RouterProvider } from 'react-router-dom';
+import {
+  MemoryRouter,
+  type NavigateFunction,
+  useNavigate,
+  useRoutes,
+} from 'react-router-dom';
 
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { getWorkspaceRouteObjectsForSurface } from '@/app/routing/utils/getWorkspaceRouteObjectsForSurface';
@@ -55,28 +60,39 @@ const routeObjects: WorkspaceRouteObject[] = [
   },
 ];
 
+const navigateRef: { current: NavigateFunction | null } = { current: null };
+
+const NavigateProbe = () => {
+  navigateRef.current = useNavigate();
+
+  return null;
+};
+
+const MainSurfaceRoutes = () =>
+  useRoutes([
+    {
+      element: <MainAppLayoutWithSidePanel />,
+      children: getWorkspaceRouteObjectsForSurface(routeObjects, 'main'),
+    },
+  ]);
+
 describe('MainAppLayoutWithSidePanel', () => {
   // Switching between the app and settings sections keeps the page being left
   // mounted while the next one animates in. If each page carried its own route
   // context store provider, the stale one would keep writing the main store
   // from a route that no longer matches the location, fighting the new one.
   it('keeps a single route context store provider on the main surface across a section switch', async () => {
-    const router = createMemoryRouter(
-      [
-        {
-          element: <MainAppLayoutWithSidePanel />,
-          children: getWorkspaceRouteObjectsForSurface(routeObjects, 'main'),
-        },
-      ],
-      { initialEntries: ['/objects/companies'] },
+    render(
+      <MemoryRouter initialEntries={['/objects/companies']}>
+        <NavigateProbe />
+        <MainSurfaceRoutes />
+      </MemoryRouter>,
     );
-
-    render(<RouterProvider router={router} />);
 
     expect(await screen.findByText('record index page')).toBeInTheDocument();
 
-    await act(async () => {
-      await router.navigate('/settings/profile');
+    act(() => {
+      navigateRef.current?.('/settings/profile');
     });
 
     await waitFor(() => {
