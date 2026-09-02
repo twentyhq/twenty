@@ -254,10 +254,15 @@ export class ConnectedAccountMetadataService {
       });
     }
 
-    // The hook may have refreshed the tokens through getConnection.
-    await this.appOAuthRevokeService.revokeIfApp(
-      await this.repository.findOneOrFail({ where: { id, workspaceId } }),
-    );
+    // The hook may have refreshed the tokens through getConnection, and an
+    // overlapping delete may already have removed the row.
+    const latestConnectedAccount = await this.repository.findOne({
+      where: { id, workspaceId },
+    });
+
+    if (isDefined(latestConnectedAccount)) {
+      await this.appOAuthRevokeService.revokeIfApp(latestConnectedAccount);
+    }
 
     await this.repository.delete({ id, workspaceId });
 

@@ -157,7 +157,7 @@ type OnDisconnectPayload = {
 };
 ```
 
-The `ConnectedAccount` is already gone when the hook runs, so `getConnection(connectedAccountId)` no longer resolves. Anything the cleanup needs (a `team_id`, an external subscription id) must have been written to the [key-value store](/developers/extend/apps/logic/key-value-store) at connect time, keyed by `connectedAccountId`.
+The `ConnectedAccount` and its token are still present when the hook runs, so `getConnection(connectedAccountId)` resolves with a fresh access token and the handler can delete whatever it registered remotely. State the provider cannot give back (a `team_id`, an external subscription id) still belongs in the [key-value store](/developers/extend/apps/logic/key-value-store), written at connect time and keyed by `connectedAccountId`. Keep the handler short: it runs inside the disconnect request, so its `timeoutSeconds` is the upper bound on how long that request can take.
 
 The hook fires when a connection is removed on its own. Uninstalling the app drops its connections through a database cascade instead, so the hook does not run there. Declare an `uninstallLogicFunction` on `defineApplication` for that path: it runs before the app's metadata is deleted, so it can still call `listConnections` and clean up whatever is left.
 
