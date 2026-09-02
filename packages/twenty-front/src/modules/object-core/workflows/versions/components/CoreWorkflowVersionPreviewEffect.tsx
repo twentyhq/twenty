@@ -14,6 +14,8 @@ export const CoreWorkflowVersionPreviewEffect = ({
   );
 
   useEffect(() => {
+    setPreviewedWorkflowVersion(null);
+
     return () => {
       setPreviewedWorkflowVersion(null);
     };
