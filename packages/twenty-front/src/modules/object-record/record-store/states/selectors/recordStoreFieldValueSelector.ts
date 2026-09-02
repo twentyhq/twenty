@@ -11,6 +11,7 @@ import {
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
+import { createBoundedAtomCache } from '@/ui/utilities/state/jotai/utils/createBoundedAtomCache';
 import { RelationType } from 'twenty-shared/types';
 import {
   computeMorphRelationGqlFieldName,
@@ -28,7 +29,7 @@ const simpleFieldValueSelector = createAtomFamilySelector<
       get(recordStoreFamilyState, recordId)?.[fieldName],
 });
 
-const morphAtomCache = new Map<string, Atom<unknown>>();
+const morphAtomCache = createBoundedAtomCache<Atom<unknown>>();
 
 const getMorphRelationFieldValueAtom = (
   recordId: string,

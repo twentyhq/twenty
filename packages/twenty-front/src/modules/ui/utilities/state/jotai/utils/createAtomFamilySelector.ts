@@ -4,6 +4,7 @@ import { selectAtom } from 'jotai/utils';
 import { type FamilySelector } from '@/ui/utilities/state/jotai/types/FamilySelector';
 import { type SelectorGetter } from '@/ui/utilities/state/jotai/types/SelectorCallbacks';
 import { buildGetHelper } from '@/ui/utilities/state/jotai/utils/buildGetHelper';
+import { createBoundedAtomCache } from '@/ui/utilities/state/jotai/utils/createBoundedAtomCache';
 import { isDefined } from 'twenty-shared/utils';
 
 export const createAtomFamilySelector = <ValueType, FamilyKey>({
@@ -15,7 +16,7 @@ export const createAtomFamilySelector = <ValueType, FamilyKey>({
   get: (familyKey: FamilyKey) => (callbacks: SelectorGetter) => ValueType;
   areEqual?: (previous: ValueType, next: ValueType) => boolean;
 }): FamilySelector<ValueType, FamilyKey> => {
-  const atomCache = new Map<string, Atom<ValueType>>();
+  const atomCache = createBoundedAtomCache<Atom<ValueType>>();
 
   const selectorFamily = (familyKey: FamilyKey): Atom<ValueType> => {
     const cacheKey =

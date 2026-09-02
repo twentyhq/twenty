@@ -6,6 +6,7 @@ import {
 } from '@/ui/utilities/state/jotai/types/SelectorCallbacks';
 import { type WritableFamilySelector } from '@/ui/utilities/state/jotai/types/WritableFamilySelector';
 import { buildGetHelper } from '@/ui/utilities/state/jotai/utils/buildGetHelper';
+import { createBoundedAtomCache } from '@/ui/utilities/state/jotai/utils/createBoundedAtomCache';
 import { buildSetHelper } from '@/ui/utilities/state/jotai/utils/buildSetHelper';
 
 export const createAtomWritableFamilySelector = <ValueType, FamilyKey>({
@@ -19,14 +20,14 @@ export const createAtomWritableFamilySelector = <ValueType, FamilyKey>({
     familyKey: FamilyKey,
   ) => (callbacks: SelectorSetter, newValue: ValueType) => void;
 }): WritableFamilySelector<ValueType, FamilyKey> => {
-  const atomCache = new Map<
-    string,
-    WritableAtom<
-      ValueType,
-      [ValueType | ((prev: ValueType) => ValueType)],
-      void
-    >
-  >();
+  const atomCache =
+    createBoundedAtomCache<
+      WritableAtom<
+        ValueType,
+        [ValueType | ((prev: ValueType) => ValueType)],
+        void
+      >
+    >();
 
   const selectorFamily = (
     familyKey: FamilyKey,

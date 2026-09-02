@@ -7,6 +7,7 @@ import { type ComponentFamilySelector } from '@/ui/utilities/state/jotai/types/C
 import { type ComponentFamilyStateKey } from '@/ui/utilities/state/jotai/types/ComponentFamilyState';
 import { type SelectorGetter } from '@/ui/utilities/state/jotai/types/SelectorCallbacks';
 import { buildGetHelper } from '@/ui/utilities/state/jotai/utils/buildGetHelper';
+import { createBoundedAtomCache } from '@/ui/utilities/state/jotai/utils/createBoundedAtomCache';
 import { isDefined } from 'twenty-shared/utils';
 
 export const createAtomComponentFamilySelector = <ValueType, FamilyKey>({
@@ -26,7 +27,7 @@ export const createAtomComponentFamilySelector = <ValueType, FamilyKey>({
     globalComponentInstanceContextMap.set(key, componentInstanceContext);
   }
 
-  const atomCache = new Map<string, Atom<ValueType>>();
+  const atomCache = createBoundedAtomCache<Atom<ValueType>>();
 
   const selectorFamily = (
     componentFamilyStateKey: ComponentFamilyStateKey<FamilyKey>,
