@@ -76,7 +76,7 @@ The assistant reuses the same Slack connection — no second bot identity.
 
    Invite the bot to any channel where it should follow threads. Slack may ask you to reinstall after changing subscriptions.
 
-   Event subscriptions added in app upgrades must be added here by hand on existing installs — the Slack app only reads the manifest at creation. Upgrading from any version before 0.4.1 adds `app_uninstalled` and `tokens_revoked`; without them the team claim of a Slack-side removal is never released. No new scopes are involved, so the connection itself needs no re-authorization. Upgrading from any version before 0.7.0 adds `link_shared`, `entity_details_requested` and the `links:read` / `links:write` scopes for the record link previews; that one does need a reconnect (see the Record link previews section).
+   Event subscriptions added in app upgrades must be added here by hand on existing installs — the Slack app only reads the manifest at creation. Upgrading from any version before 0.4.1 adds `app_uninstalled` and `tokens_revoked`; without them the team claim of a Slack-side removal is never released. No new scopes are involved, so the connection itself needs no re-authorization. Upgrading from any version before 0.7.0 adds `link_shared`, `entity_details_requested` and the `links:read` / `links:write` scopes for the record link previews; that one does need a reconnect, and the Work Object Previews toggle has to be enabled by hand as well (see the Record link previews section).
 
 3. **Interactivity.** On the Slack app, enable **Interactivity & Shortcuts** and set the Request URL to:
 
@@ -98,7 +98,7 @@ Pasting a link to a Twenty person, company, opportunity, note or task in Slack r
 
 1. **Unfurl domain.** On the Slack app, under **Event Subscriptions → App unfurl domains**, register the domain of your Twenty **front** URL (the workspace URL members open, without the scheme — for example `crm.example.com`). Apps created from the manifest have `<YOUR_TWENTY_FRONT_DOMAIN>` preconfigured; replace it before pasting. Slack only sends `link_shared` events for registered domains.
 
-2. **Work Object Previews.** In the Slack app settings, open **Work Object Previews** in the left sidebar, enable the toggle, and select the **Item** entity type. Without it, Slack falls back to ignoring the unfurl metadata.
+2. **Work Object Previews.** The manifest turns these on (`features.rich_previews`, with the `slack#/entities/item` entity type these previews use). On an app created by hand, or one created from a manifest older than 0.7.0, open **Work Object Previews** in the left sidebar of the app settings, enable the toggle and select the **Item** entity type — without it Slack ignores the unfurl metadata and no card ever renders, with nothing in the logs to say why.
 
 3. **Scopes and events.** The previews need the `links:read` and `links:write` scopes plus the `link_shared` and `entity_details_requested` event subscriptions from the lists above. On an existing install, add them and reconnect (disconnect and **Add connection** again) so the token picks up the scopes.
 

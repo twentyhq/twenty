@@ -16,7 +16,11 @@
     "agent_view": {
       "agent_description": "Ask about your CRM: look up people, companies and opportunities, create and update records, and capture notes and tasks."
     },
-    "unfurl_domains": ["<YOUR_TWENTY_FRONT_DOMAIN>"]
+    "unfurl_domains": ["<YOUR_TWENTY_FRONT_DOMAIN>"],
+    "rich_previews": {
+      "is_active": true,
+      "entity_types": ["slack#/entities/item"]
+    }
   },
   "oauth_config": {
     "redirect_urls": ["<YOUR_TWENTY_SERVER_URL>/auth/apps/callback"],
