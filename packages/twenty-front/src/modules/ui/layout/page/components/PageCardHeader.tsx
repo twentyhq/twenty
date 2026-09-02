@@ -1,6 +1,7 @@
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
 import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { useWorkspaceSurfaceHeaderPortal } from '@/ui/layout/hooks/useWorkspaceSurfaceHeaderPortal';
 import {
   Breadcrumb,
   type BreadcrumbProps,
@@ -106,6 +107,7 @@ export const PageCardHeader = ({
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
   const workspaceSurface = useWorkspaceSurface();
+  const workspaceSurfaceHeaderPortal = useWorkspaceSurfaceHeaderPortal();
 
   const hasTitleContent = isDefined(icon) || isDefined(title) || isDefined(tag);
   const shouldCenterTitle = centerTitle && hasTitleContent;
@@ -129,15 +131,15 @@ export const PageCardHeader = ({
   if (workspaceSurface.type === 'side-panel') {
     return (
       <>
-        {isDefined(workspaceSurface.headerTitlePortal) &&
+        {isDefined(workspaceSurfaceHeaderPortal.title) &&
           isDefined(surfaceTitleContent) &&
           createPortal(
             <StyledSurfaceTitle titleColor={titleColor}>
               {surfaceTitleContent}
             </StyledSurfaceTitle>,
-            workspaceSurface.headerTitlePortal,
+            workspaceSurfaceHeaderPortal.title,
           )}
-        {isDefined(workspaceSurface.headerActionsPortal) &&
+        {isDefined(workspaceSurfaceHeaderPortal.actions) &&
           isDefined(actionButton) &&
           createPortal(
             <StyledSurfaceActions
@@ -145,7 +147,7 @@ export const PageCardHeader = ({
             >
               {actionButton}
             </StyledSurfaceActions>,
-            workspaceSurface.headerActionsPortal,
+            workspaceSurfaceHeaderPortal.actions,
           )}
       </>
     );

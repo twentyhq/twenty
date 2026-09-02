@@ -171,8 +171,6 @@ const renderNavigationProbe = () => {
                     type: 'side-panel',
                     instanceId: 'panel-page-1',
                     ownsRouteLocation: true,
-                    headerTitlePortal: null,
-                    headerActionsPortal: null,
                   }}
                 >
                   <SidePanelRouteNavigatorProvider>

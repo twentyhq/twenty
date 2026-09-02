@@ -14,8 +14,7 @@ export const isWorkspaceLocationAvailableOnSurface = (
 
   return (
     canonicalMatch !== undefined &&
-    (routeHandle?.workspaceSurfaces.includes(surface) ?? surface === 'main') &&
-    (routeHandle?.isLocationAvailableOnSurface?.({ surface, location }) ?? true)
+    (routeHandle?.workspaceSurfaces.includes(surface) ?? surface === 'main')
   );
 };
 
@@ -23,16 +22,17 @@ export const isWorkspaceLocationExpandableFromSidePanel = (
   routeObjects: WorkspaceRouteObject[],
   location: Partial<Location> | string,
 ) => {
-  const canonicalMatch = matchRoutes(routeObjects, location)?.at(-1);
-  const routeHandle = canonicalMatch?.route.handle;
+  if (
+    !isWorkspaceLocationAvailableOnSurface(routeObjects, 'side-panel', location)
+  ) {
+    return false;
+  }
 
-  return (
-    !!routeHandle?.workspaceSurfaces.includes('side-panel') &&
-    (routeHandle.isLocationAvailableOnSurface?.({
-      surface: 'side-panel',
-      location,
-    }) ??
-      true) &&
-    (routeHandle.isLocationExpandableFromSidePanel?.({ location }) ?? false)
-  );
+  const canonicalMatch = matchRoutes(routeObjects, location)?.at(-1);
+  const expandable =
+    canonicalMatch?.route.handle?.isLocationExpandableFromSidePanel;
+
+  return typeof expandable === 'function'
+    ? expandable({ location })
+    : (expandable ?? false);
 };

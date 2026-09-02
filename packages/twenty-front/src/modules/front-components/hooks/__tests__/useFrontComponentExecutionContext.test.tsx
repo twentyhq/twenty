@@ -472,8 +472,29 @@ describe('useFrontComponentExecutionContext', () => {
       await expect(
         result.current.frontComponentHostCommunicationApi.openSidePanelPage({
           to: AppPath.Home,
-        }),
+        } as never),
       ).rejects.toThrow('Unsupported side-panel route: /home');
+    });
+
+    it('lets the workspace route registry decide whether a settings route can render', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            to: AppPath.SettingsCatchAll,
+            params: { '*': 'objects/companies/name' },
+          },
+        );
+      });
+
+      expect(mockOpenRoutedPageInSidePanel).toHaveBeenCalledWith({
+        path: '/settings/objects/companies/name',
+        pageTitle: undefined,
+        resetNavigationStack: undefined,
+      });
     });
 
     it('rejects legacy ViewRecords because it has no canonical route params', async () => {

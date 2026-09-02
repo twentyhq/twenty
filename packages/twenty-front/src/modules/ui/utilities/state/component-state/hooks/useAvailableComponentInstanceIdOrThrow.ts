@@ -1,5 +1,6 @@
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const useAvailableComponentInstanceIdOrThrow = <
@@ -11,14 +12,17 @@ export const useAvailableComponentInstanceIdOrThrow = <
   const instanceStateContext = useComponentInstanceStateContext(Context);
 
   const instanceIdFromContext = instanceStateContext?.instanceId;
+  const availableInstanceId = isNonEmptyString(instanceIdFromProps)
+    ? instanceIdFromProps
+    : (instanceIdFromContext ?? '');
+  const scopedInstanceId =
+    useWorkspaceSurfaceScopedComponentInstanceId(availableInstanceId);
 
-  if (isNonEmptyString(instanceIdFromProps)) {
-    return instanceIdFromProps;
-  } else if (isNonEmptyString(instanceIdFromContext)) {
-    return instanceIdFromContext;
-  } else {
-    throw new Error(
-      'Instance id is not provided and cannot be found in context.',
-    );
+  if (isNonEmptyString(scopedInstanceId)) {
+    return scopedInstanceId;
   }
+
+  throw new Error(
+    'Instance id is not provided and cannot be found in context.',
+  );
 };
