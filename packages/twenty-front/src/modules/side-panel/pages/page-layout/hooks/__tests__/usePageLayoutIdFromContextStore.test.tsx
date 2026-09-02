@@ -62,8 +62,6 @@ describe('usePageLayoutIdFromContextStore', () => {
               type: 'side-panel',
               instanceId: 'side-panel-page-id',
               ownsRouteLocation: false,
-              headerTitlePortal: null,
-              headerActionsPortal: null,
             }}
           >
             {children}

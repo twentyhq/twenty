@@ -45,8 +45,6 @@ const RoutedSidePanelWrapper = ({
         type: 'side-panel',
         instanceId: 'side-panel-page',
         ownsRouteLocation: true,
-        headerTitlePortal: null,
-        headerActionsPortal: null,
       }}
     >
       {children}
