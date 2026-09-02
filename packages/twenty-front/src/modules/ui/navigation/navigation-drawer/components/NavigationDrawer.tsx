@@ -50,23 +50,36 @@ const StyledAnimatedContainer = styled.div<{
   }
 `;
 
+// 4px above the 32px header plus a 4px gap puts the mode switcher row exactly
+// where the 40px page card header ends, so both columns share the same rows.
 const StyledContainer = styled.div<{
   isExpanded?: boolean;
 }>`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
+  gap: ${themeCssVariables.spacing[1]};
   height: 100%;
-  padding: ${themeCssVariables.spacing[2]} 0 ${themeCssVariables.spacing[4]}
+  padding: ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[4]}
     ${themeCssVariables.spacing[2]};
   width: ${({ isExpanded }) =>
     isExpanded ? `var(${NAVIGATION_DRAWER_WIDTH_VAR})` : '100%'};
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    gap: ${themeCssVariables.spacing[4]};
     width: 100%;
     padding-left: ${themeCssVariables.spacing[2]};
     padding-right: ${themeCssVariables.spacing[2]};
+  }
+`;
+
+const StyledContent = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
+  min-height: 0;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    gap: ${themeCssVariables.spacing[4]};
   }
 `;
 
@@ -122,7 +135,7 @@ export const NavigationDrawer = ({
           <NavigationDrawerHeader
             showCollapseButton={isMobile || !isSettingsDrawer}
           />
-          {children}
+          <StyledContent>{children}</StyledContent>
         </StyledContainer>
 
         {isNavigationDrawerExpanded && !isMobile && !isSettingsDrawer && (
