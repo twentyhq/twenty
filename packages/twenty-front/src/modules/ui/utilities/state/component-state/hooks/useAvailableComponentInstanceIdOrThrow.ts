@@ -1,10 +1,11 @@
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
+import { type ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const useAvailableComponentInstanceIdOrThrow = <
-  T extends { instanceId: string },
+  T extends ComponentStateKey,
 >(
   Context: ComponentInstanceStateContext<T>,
   instanceIdFromProps?: string,
@@ -12,16 +13,19 @@ export const useAvailableComponentInstanceIdOrThrow = <
   const instanceStateContext = useComponentInstanceStateContext(Context);
 
   const instanceIdFromContext = instanceStateContext?.instanceId;
-  const scopedInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
-    instanceIdFromContext ?? '',
-  );
+  const availableInstanceId = isNonEmptyString(instanceIdFromProps)
+    ? instanceIdFromProps
+    : (instanceIdFromContext ?? '');
+  const scopedInstanceId =
+    useWorkspaceSurfaceScopedComponentInstanceId(availableInstanceId);
 
-  if (isNonEmptyString(instanceIdFromProps)) {
-    return instanceIdFromProps;
-  }
+  const resolvedInstanceId =
+    instanceStateContext?.shouldScopeToWorkspaceSurface === false
+      ? availableInstanceId
+      : scopedInstanceId;
 
-  if (isNonEmptyString(scopedInstanceId)) {
-    return scopedInstanceId;
+  if (isNonEmptyString(resolvedInstanceId)) {
+    return resolvedInstanceId;
   }
 
   throw new Error(

@@ -14,7 +14,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-export const usePageLayoutIdFromContextStore = () => {
+export const usePageLayoutIdFromContextStoreOrNull = () => {
   const workspaceSurface = useWorkspaceSurface();
 
   const sidePanelNavigationStack = useAtomStateValue(
@@ -92,5 +92,18 @@ export const usePageLayoutIdFromContextStore = () => {
     objectMetadataItemId,
     objectNameSingular:
       pageLayoutContext?.objectNameSingular ?? objectMetadataItem.nameSingular,
+  };
+};
+
+export const usePageLayoutIdFromContextStore = () => {
+  const pageLayoutContext = usePageLayoutIdFromContextStoreOrNull();
+
+  if (!isDefined(pageLayoutContext.pageLayoutId)) {
+    throw new Error('Page layout ID is not defined');
+  }
+
+  return {
+    ...pageLayoutContext,
+    pageLayoutId: pageLayoutContext.pageLayoutId,
   };
 };

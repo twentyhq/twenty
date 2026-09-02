@@ -21,7 +21,7 @@ const SidePanelWrapper = ({ children }: { children: ReactNode }) => (
 );
 
 describe('useAvailableComponentInstanceIdOrThrow', () => {
-  it('keeps an explicitly provided instance ID unchanged', () => {
+  it('scopes an explicitly provided instance ID to the workspace surface', () => {
     const { result } = renderHook(
       () =>
         useAvailableComponentInstanceIdOrThrow(
@@ -31,7 +31,7 @@ describe('useAvailableComponentInstanceIdOrThrow', () => {
       { wrapper: SidePanelWrapper },
     );
 
-    expect(result.current).toBe('explicit-id');
+    expect(result.current).toBe('explicit-id-side-panel-page-id');
   });
 
   it('scopes a context instance ID to the workspace surface', () => {
@@ -41,5 +41,37 @@ describe('useAvailableComponentInstanceIdOrThrow', () => {
     );
 
     expect(result.current).toBe('context-id-side-panel-page-id');
+  });
+
+  it('keeps an instance ID unchanged when the context disables surface scoping', () => {
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <WorkspaceSurfaceContext.Provider
+        value={{
+          type: 'side-panel',
+          instanceId: 'side-panel-page-id',
+          ownsRouteLocation: false,
+        }}
+      >
+        <ComponentInstanceContext.Provider
+          value={{
+            instanceId: 'context-id',
+            shouldScopeToWorkspaceSurface: false,
+          }}
+        >
+          {children}
+        </ComponentInstanceContext.Provider>
+      </WorkspaceSurfaceContext.Provider>
+    );
+
+    const { result } = renderHook(
+      () =>
+        useAvailableComponentInstanceIdOrThrow(
+          ComponentInstanceContext,
+          'explicit-id',
+        ),
+      { wrapper },
+    );
+
+    expect(result.current).toBe('explicit-id');
   });
 });

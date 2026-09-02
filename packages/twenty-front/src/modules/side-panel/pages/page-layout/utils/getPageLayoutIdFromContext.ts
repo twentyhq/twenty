@@ -1,11 +1,11 @@
-export const getPageLayoutIdFromContext = <TDashboardPageLayoutId>({
+export const getPageLayoutIdFromContext = ({
   isDashboardContext,
   dashboardPageLayoutId,
   currentPageLayoutId,
   recordPageLayoutId,
 }: {
   isDashboardContext: boolean;
-  dashboardPageLayoutId: TDashboardPageLayoutId;
+  dashboardPageLayoutId: string | null | undefined;
   currentPageLayoutId: string | null;
   recordPageLayoutId: string | undefined;
 }) => {

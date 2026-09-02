@@ -7,6 +7,7 @@ import { SidePanelContainer } from '@/side-panel/components/SidePanelContainer';
 import { SidePanelSubPageRouter } from '@/side-panel/components/SidePanelSubPageRouter';
 import { SidePanelTopBar } from '@/side-panel/components/SidePanelTopBar';
 import { SIDE_PANEL_PAGES_CONFIG } from '@/side-panel/constants/SidePanelPagesConfig';
+import { PageLayoutSidePanelStateProvider } from '@/side-panel/pages/page-layout/components/PageLayoutSidePanelStateProvider';
 import { isPageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/utils/isPageLayoutSidePanelPage';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
@@ -72,6 +73,16 @@ export const SidePanelRouter = () => {
         })
       : rawPageComponent;
 
+  const pageComponent =
+    isDefined(sidePanelPageComponent) &&
+    isPageLayoutSidePanelPage(sidePanelPage) ? (
+      <PageLayoutSidePanelStateProvider>
+        {sidePanelPageComponent}
+      </PageLayoutSidePanelStateProvider>
+    ) : (
+      sidePanelPageComponent
+    );
+
   const { theme } = useContext(ThemeContext);
 
   const [headerTitlePortal, setHeaderTitlePortal] =
@@ -128,9 +139,7 @@ export const SidePanelRouter = () => {
                 displayType="listItem"
                 containerType={CommandMenuItemContainerType.CommandMenuList}
               >
-                <SidePanelSubPageRouter>
-                  {sidePanelPageComponent}
-                </SidePanelSubPageRouter>
+                <SidePanelSubPageRouter>{pageComponent}</SidePanelSubPageRouter>
               </CommandMenuContextProvider>
             </StyledSidePanelContent>
           </WorkspaceSurfaceHeaderPortalContext.Provider>
