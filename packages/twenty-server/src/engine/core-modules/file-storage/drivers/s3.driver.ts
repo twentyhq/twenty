@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 
 import fs from 'fs';
+import { type Agent } from 'http';
 import { readdir, readFile } from 'fs/promises';
 import { dirname, join } from 'path';
 import { Readable } from 'stream';
@@ -35,6 +36,7 @@ import {
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { type ByteRange } from 'src/engine/core-modules/file-storage/types/byte-range.type';
+import { describeHttpAgents } from 'src/engine/core-modules/file-storage/utils/describe-http-agents.util';
 import { buildAwsRequestHandlerOptions } from 'src/utils/aws-request-handler.util';
 
 export interface S3DriverOptions extends S3ClientConfig {
@@ -90,6 +92,32 @@ export class S3Driver implements StorageDriver {
     return this.s3Client;
   }
 
+  private async runWithAgentDiagnostics<TResult>(
+    operation: string,
+    run: () => Promise<TResult>,
+  ): Promise<TResult> {
+    try {
+      return await run();
+    } catch (error) {
+      if (error instanceof Error && error.name === 'TimeoutError') {
+        const requestHandler = this.s3Client.config.requestHandler as
+          | { config?: { httpAgent?: Agent; httpsAgent?: Agent } }
+          | undefined;
+
+        this.logger.error(
+          `S3 ${operation} timed out; agent pool: ${JSON.stringify(
+            describeHttpAgents([
+              requestHandler?.config?.httpAgent,
+              requestHandler?.config?.httpsAgent,
+            ]),
+          )}`,
+        );
+      }
+
+      throw error;
+    }
+  }
+
   async readFile(params: {
     filePath: string;
     byteRange?: ByteRange;
@@ -103,7 +131,9 @@ export class S3Driver implements StorageDriver {
     });
 
     try {
-      const file = await this.s3Client.send(command);
+      const file = await this.runWithAgentDiagnostics('GetObject', () =>
+        this.s3Client.send(command),
+      );
 
       if (!file || !file.Body || !(file.Body instanceof Readable)) {
         throw new Error('Unable to get file stream');
@@ -134,7 +164,9 @@ export class S3Driver implements StorageDriver {
       Bucket: this.bucketName,
     });
 
-    await this.s3Client.send(command);
+    await this.runWithAgentDiagnostics('PutObject', () =>
+      this.s3Client.send(command),
+    );
   }
 
   async writeFileStream(params: {
@@ -161,11 +193,13 @@ export class S3Driver implements StorageDriver {
     filePath: string;
   }): Promise<{ size: number } | null> {
     try {
-      const head = await this.s3Client.send(
-        new HeadObjectCommand({
-          Bucket: this.bucketName,
-          Key: params.filePath,
-        }),
+      const head = await this.runWithAgentDiagnostics('HeadObject', () =>
+        this.s3Client.send(
+          new HeadObjectCommand({
+            Bucket: this.bucketName,
+            Key: params.filePath,
+          }),
+        ),
       );
 
       return { size: head.ContentLength ?? 0 };
