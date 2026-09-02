@@ -15,8 +15,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
-import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -97,8 +96,10 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
     const convertedCount = await this.convertLogicFunctionsInBatches({
       conversionTargets,
       workspaceId,
-      allFlatEntityMaps:
-        this.buildLogicFunctionOnlyFlatEntityMaps(flatLogicFunctionMaps),
+      allFlatEntityMaps: {
+        ...createEmptyAllFlatEntityMaps(),
+        flatLogicFunctionMaps,
+      },
     });
 
     if (convertedCount > 0) {
@@ -208,20 +209,6 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
     } finally {
       await queryRunner.release();
     }
-  }
-
-  private buildLogicFunctionOnlyFlatEntityMaps(
-    flatLogicFunctionMaps: FlatLogicFunctionMaps,
-  ): AllFlatEntityMaps {
-    const emptyFlatEntityMaps = ALL_FLAT_ENTITY_MAPS_PROPERTIES.reduce(
-      (flatEntityMaps, flatEntityMapsKey) => ({
-        ...flatEntityMaps,
-        [flatEntityMapsKey]: createEmptyFlatEntityMaps(),
-      }),
-      {} as AllFlatEntityMaps,
-    );
-
-    return { ...emptyFlatEntityMaps, flatLogicFunctionMaps };
   }
 
   private findLogicFunctionsToConvert({
