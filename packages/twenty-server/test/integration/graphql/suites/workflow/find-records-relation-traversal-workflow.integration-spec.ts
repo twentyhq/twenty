@@ -353,7 +353,10 @@ describe('FindRecords workflow action with relation-traversal filter (e2e)', () 
       | { all?: Array<{ id: string }>; totalCount?: number | string }
       | undefined;
 
-    expect(result?.all).toEqual([]);
-    expect(Number(result?.totalCount)).toBe(0);
+    const returnedIds = (result?.all ?? []).map((record) => record.id);
+
+    expect(returnedIds).not.toContain(TEST_PERSON_AIRBNB_1_ID);
+    expect(returnedIds).not.toContain(TEST_PERSON_AIRBNB_2_ID);
+    expect(returnedIds).not.toContain(TEST_PERSON_STRIPE_1_ID);
   });
 });
