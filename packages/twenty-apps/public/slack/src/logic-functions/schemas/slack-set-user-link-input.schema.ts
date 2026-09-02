@@ -3,16 +3,23 @@ import { type InputJsonSchema } from 'twenty-sdk/logic-function';
 export const slackSetUserLinkInputSchema: InputJsonSchema = {
   type: 'object',
   properties: {
-    slackUserId: {
-      type: 'string',
-      label: 'Slack user ID',
-      description: 'Slack account to link (Slack member ID like U…).',
-    },
     workspaceMemberId: {
       type: 'string',
       label: 'Workspace member ID',
       description:
         'Workspace member whose permissions the assistant borrows when this Slack user talks to it.',
+    },
+    email: {
+      type: 'string',
+      label: 'Slack email',
+      description:
+        'Email of the Slack account to link. Resolved to a Slack user in the installed workspace. Use slackUserId instead for guests or Slack Connect users from another workspace.',
+    },
+    slackUserId: {
+      type: 'string',
+      label: 'Slack user ID',
+      description:
+        'Slack account to link (Slack member ID like U…). Provide this instead of email for guests or Slack Connect users; it takes precedence over email when both are given.',
     },
     slackTeamId: {
       type: 'string',
@@ -24,9 +31,9 @@ export const slackSetUserLinkInputSchema: InputJsonSchema = {
       type: 'string',
       label: 'Display name',
       description:
-        'Slack display name to store on the link. Defaults to the Slack user ID.',
+        'Slack display name to store on the link. Defaults to the resolved Slack name or the Slack user ID.',
     },
   },
-  required: ['slackUserId', 'workspaceMemberId'],
+  required: ['workspaceMemberId'],
   additionalProperties: false,
 };

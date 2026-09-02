@@ -22,9 +22,7 @@ export class EmailingDomainTenantStatusService {
   ): Promise<void> {
     const { affected } = await this.emailingDomainRepository.update(
       workspaceId,
-      {
-        tenantStatus: Not(EmailingDomainTenantStatus.PERMANENTLY_SUSPENDED),
-      },
+      { tenantStatus: Not(EmailingDomainTenantStatus.SANDBOX) },
       { tenantStatus },
     );
 

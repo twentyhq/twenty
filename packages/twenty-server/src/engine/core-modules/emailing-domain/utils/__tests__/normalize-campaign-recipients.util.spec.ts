@@ -9,10 +9,10 @@ describe('normalizeCampaignRecipients', () => {
       { personId: 'p3', email: '   ' },
     ];
 
-    const { recipients, skipped } = normalizeCampaignRecipients(raw, 100);
+    const { recipients, skipped } = normalizeCampaignRecipients(raw);
 
     expect(recipients).toEqual([{ personId: 'p1', email: 'a@example.com' }]);
-    expect(skipped).toEqual({ noEmail: 2, deduped: 0, overCap: 0 });
+    expect(skipped).toEqual({ noEmail: 2, deduped: 0 });
   });
 
   it('dedupes by lowercased email, keeping the first occurrence', () => {
@@ -21,29 +21,16 @@ describe('normalizeCampaignRecipients', () => {
       { personId: 'p2', email: 'a@example.com' },
     ];
 
-    const { recipients, skipped } = normalizeCampaignRecipients(raw, 100);
+    const { recipients, skipped } = normalizeCampaignRecipients(raw);
 
     expect(recipients).toEqual([{ personId: 'p1', email: 'a@example.com' }]);
     expect(skipped.deduped).toBe(1);
   });
 
-  it('caps the recipient count and reports the overflow', () => {
-    const raw: RawCampaignRecipient[] = [
-      { personId: 'p1', email: 'a@example.com' },
-      { personId: 'p2', email: 'b@example.com' },
-      { personId: 'p3', email: 'c@example.com' },
-    ];
-
-    const { recipients, skipped } = normalizeCampaignRecipients(raw, 2);
-
-    expect(recipients).toHaveLength(2);
-    expect(skipped.overCap).toBe(1);
-  });
-
   it('returns an empty result for no input', () => {
-    expect(normalizeCampaignRecipients([], 100)).toEqual({
+    expect(normalizeCampaignRecipients([])).toEqual({
       recipients: [],
-      skipped: { noEmail: 0, deduped: 0, overCap: 0 },
+      skipped: { noEmail: 0, deduped: 0 },
     });
   });
 });

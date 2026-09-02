@@ -1,13 +1,21 @@
 import { type WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { type CachedWorkflowAutomatedTrigger } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
+import { buildCoreDispatchIds } from 'src/engine/core-modules/workflow/utils/build-core-dispatch-ids.util';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { type DatabaseEventTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
 
-export const computeAutomatedTriggerFromWorkflowVersion = (
-  workflowVersion: WorkflowVersionEntity,
-): CachedWorkflowAutomatedTrigger | null => {
+export const computeAutomatedTriggerFromWorkflowVersion = ({
+  workflowVersion,
+  workspaceWorkflowVersionId,
+}: {
+  workflowVersion: Pick<
+    WorkflowVersionEntity,
+    'id' | 'workflowId' | 'triggers'
+  >;
+  workspaceWorkflowVersionId: string | null;
+}): CachedWorkflowAutomatedTrigger | null => {
   const trigger = workflowVersion.triggers?.[0] ?? null;
 
   if (trigger === null) {
@@ -18,14 +26,20 @@ export const computeAutomatedTriggerFromWorkflowVersion = (
     case WorkflowTriggerType.DATABASE_EVENT:
       return {
         workflowId: workflowVersion.workflowId,
-        workflowVersionId: workflowVersion.id,
+        ...buildCoreDispatchIds({
+          coreWorkflowVersionId: workflowVersion.id,
+          workspaceWorkflowVersionId,
+        }),
         type: AutomatedTriggerType.DATABASE_EVENT,
         settings: trigger.settings as DatabaseEventTriggerSettings,
       };
     case WorkflowTriggerType.CRON:
       return {
         workflowId: workflowVersion.workflowId,
-        workflowVersionId: workflowVersion.id,
+        ...buildCoreDispatchIds({
+          coreWorkflowVersionId: workflowVersion.id,
+          workspaceWorkflowVersionId,
+        }),
         type: AutomatedTriggerType.CRON,
         settings: { pattern: computeCronPatternFromSchedule(trigger) },
       };

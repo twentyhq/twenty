@@ -4,7 +4,7 @@ import {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
 
-import { CALL_RECORDING_ARTIFACTS_IMPORT_CLAIMED_AT_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-artifacts-import-claimed-at-field-universal-identifier';
+import { CALL_RECORDING_ARTIFACTS_IMPORT_CLAIMED_AT_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
 export default defineField({
   universalIdentifier:

@@ -3,12 +3,13 @@ import { RecordPageSidePanelPinnedCommandMenuItems } from '@/command-menu-item/c
 import { RecordPageSidePanelWidgetCommandMenuItems } from '@/command-menu-item/components/RecordPageSidePanelWidgetCommandMenuItems';
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
 import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
-import { RecordShowEffect } from '@/object-record/record-show/components/RecordShowEffect';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
 import { usePageLayoutIdForRecord } from '@/page-layout/hooks/usePageLayoutIdForRecord';
+import { PageLayoutIdContext } from '@/page-layout/states/currentPageLayoutIdState';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { styled } from '@linaria/react';
@@ -18,31 +19,33 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledShowPageBannerContainer = styled.div`
+  flex-shrink: 0;
   z-index: 1;
 `;
 
 const StyledShowPageRightContainer = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
-  height: 100%;
   justify-content: start;
-  overflow: auto;
+  min-height: 0;
+  overflow: hidden;
   width: 100%;
 `;
 
-const StyledContentContainer = styled.div<{ isInSidePanel: boolean }>`
+const StyledContentContainer = styled.div`
   background: ${themeCssVariables.background.primary};
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
 `;
 
 export const PageLayoutRecordPageRenderer = ({
   targetRecordIdentifier,
-  isInSidePanel,
 }: {
   targetRecordIdentifier: TargetRecordIdentifier;
-  isInSidePanel: boolean;
 }) => {
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
   const recordDeletedAt = useAtomFamilySelectorValue(
     recordStoreFamilySelector,
     {
@@ -57,12 +60,7 @@ export const PageLayoutRecordPageRenderer = ({
   });
 
   return (
-    <>
-      <RecordShowEffect
-        objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
-        recordId={targetRecordIdentifier.id}
-      />
-
+    <PageLayoutIdContext.Provider value={pageLayoutId}>
       <RecordShowContainerContextStoreTargetedRecordsEffect
         recordId={targetRecordIdentifier.id}
       />
@@ -76,8 +74,8 @@ export const PageLayoutRecordPageRenderer = ({
         </StyledShowPageBannerContainer>
       )}
 
-      <StyledShowPageRightContainer>
-        <StyledContentContainer isInSidePanel={isInSidePanel}>
+      <StyledShowPageRightContainer data-record-show-page-body="">
+        <StyledContentContainer>
           <LayoutRenderingProvider
             value={{
               targetRecordIdentifier: {
@@ -90,7 +88,6 @@ export const PageLayoutRecordPageRenderer = ({
                 CoreObjectNameSingular.Dashboard
                   ? PageLayoutType.DASHBOARD
                   : PageLayoutType.RECORD_PAGE,
-              isInSidePanel,
             }}
           >
             {isDefined(pageLayoutId) && (
@@ -109,6 +106,6 @@ export const PageLayoutRecordPageRenderer = ({
           />
         )}
       </StyledShowPageRightContainer>
-    </>
+    </PageLayoutIdContext.Provider>
   );
 };

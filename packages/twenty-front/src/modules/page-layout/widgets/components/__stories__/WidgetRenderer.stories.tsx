@@ -33,6 +33,8 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
+import { getWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import {
   AggregateOperations,
   AxisNameDisplay,
@@ -84,6 +86,13 @@ const WIDGET_ID_MANY_TO_ONE_RELATION = 'widget-relation-field';
 const WIDGET_ID_ONE_TO_MANY_RELATION = 'widget-one-to-many-relation-field';
 const WIDGET_ID_CATALOG = 'catalog-widget';
 const TAB_ID_OVERVIEW = 'tab-overview';
+const SIDE_PANEL_INSTANCE_ID = 'widget-side-panel';
+const SIDE_PANEL_PAGE_LAYOUT_INSTANCE_ID =
+  getWorkspaceSurfaceScopedComponentInstanceId({
+    componentInstanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+    surfaceType: 'side-panel',
+    surfaceInstanceId: SIDE_PANEL_INSTANCE_ID,
+  });
 
 const mockPersonRecord: ObjectRecord = {
   __typename: 'Person',
@@ -311,7 +320,6 @@ export const WithNumberChart: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: PageLayoutType.DASHBOARD,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -407,7 +415,6 @@ export const WithBarChart: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: PageLayoutType.DASHBOARD,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -506,7 +513,6 @@ export const SmallWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: PageLayoutType.DASHBOARD,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -609,7 +615,6 @@ export const MediumWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: PageLayoutType.DASHBOARD,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -712,7 +717,6 @@ export const LargeWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: PageLayoutType.DASHBOARD,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -811,7 +815,6 @@ export const WideWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: PageLayoutType.DASHBOARD,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -914,7 +917,6 @@ export const TallWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: PageLayoutType.DASHBOARD,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,
@@ -1037,7 +1039,6 @@ export const WithManyToOneRelationFieldWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -1153,7 +1154,6 @@ export const WithOneToManyRelationFieldWidget: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -1276,7 +1276,6 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -1410,7 +1409,6 @@ export const OnMobile: Story = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: PageLayoutType.RECORD_PAGE,
                   targetRecordIdentifier: {
                     id: TEST_RECORD_ID,
@@ -1488,56 +1486,63 @@ export const InSidePanel: Story = {
       getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
-    const pageLayoutData = createPageLayoutWithWidget(
+    const sidePanelPageLayoutData = createPageLayoutWithWidget(
       widget,
       PageLayoutType.RECORD_PAGE,
     );
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
-        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        instanceId: SIDE_PANEL_PAGE_LAYOUT_INSTANCE_ID,
       }),
-      pageLayoutData,
+      sidePanelPageLayoutData,
     );
     jotaiStore.set(
       pageLayoutDraftComponentState.atomFamily({
-        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        instanceId: SIDE_PANEL_PAGE_LAYOUT_INSTANCE_ID,
       }),
-      pageLayoutData,
+      sidePanelPageLayoutData,
     );
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper store={jotaiStore}>
-              <LayoutRenderingProvider
-                value={{
-                  isInSidePanel: true,
-                  layoutType: PageLayoutType.RECORD_PAGE,
-                  targetRecordIdentifier: {
-                    id: TEST_RECORD_ID,
-                    targetObjectNameSingular:
-                      companyObjectMetadataItem.nameSingular,
-                  },
-                }}
-              >
-                <PageLayoutContentProvider
+            <WorkspaceSurfaceContext.Provider
+              value={{
+                type: 'side-panel',
+                instanceId: SIDE_PANEL_INSTANCE_ID,
+                ownsRouteLocation: false,
+              }}
+            >
+              <PageLayoutTestWrapper store={jotaiStore}>
+                <LayoutRenderingProvider
                   value={{
-                    layoutMode: PageLayoutTabLayoutMode.GRID,
-                    presentation: 'stack',
-                    tabId: TAB_ID_OVERVIEW,
+                    layoutType: PageLayoutType.RECORD_PAGE,
+                    targetRecordIdentifier: {
+                      id: TEST_RECORD_ID,
+                      targetObjectNameSingular:
+                        companyObjectMetadataItem.nameSingular,
+                    },
                   }}
                 >
-                  <WidgetComponentInstanceContext.Provider
+                  <PageLayoutContentProvider
                     value={{
-                      instanceId: 'widget-side-panel',
+                      layoutMode: PageLayoutTabLayoutMode.GRID,
+                      presentation: 'stack',
+                      tabId: TAB_ID_OVERVIEW,
                     }}
                   >
-                    <WidgetRenderer widget={widget} />
-                  </WidgetComponentInstanceContext.Provider>
-                </PageLayoutContentProvider>
-              </LayoutRenderingProvider>
-            </PageLayoutTestWrapper>
+                    <WidgetComponentInstanceContext.Provider
+                      value={{
+                        instanceId: SIDE_PANEL_INSTANCE_ID,
+                      }}
+                    >
+                      <WidgetRenderer widget={widget} />
+                    </WidgetComponentInstanceContext.Provider>
+                  </PageLayoutContentProvider>
+                </LayoutRenderingProvider>
+              </PageLayoutTestWrapper>
+            </WorkspaceSurfaceContext.Provider>
           </CoreClientProviderWrapper>
         </JestMetadataAndApolloMocksWrapper>
       </div>
@@ -1813,7 +1818,6 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
             <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
-                  isInSidePanel: false,
                   layoutType: pageLayoutType,
                   targetRecordIdentifier: {
                     id: companyObjectMetadataItem.id,

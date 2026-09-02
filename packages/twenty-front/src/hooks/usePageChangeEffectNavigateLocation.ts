@@ -17,7 +17,7 @@ import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsW
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
 import { useQuery } from '@apollo/client/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useLocation, useParams } from 'react-router-dom';
+import { matchPath, useLocation } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { isDefined, getAppPath } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -50,16 +50,17 @@ export const usePageChangeEffectNavigateLocation = () => {
   const someMatchingLocationOf = (appPaths: AppPath[]): boolean =>
     appPaths.some((appPath) => isMatchingLocation(location, appPath));
 
-  const params = useParams();
-
-  const objectNamePlural = params.objectNamePlural ?? '';
+  const objectNamePlural =
+    matchPath(AppPath.RecordIndexPage, location.pathname)?.params
+      .objectNamePlural ?? '';
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const objectMetadataItem = objectMetadataItems?.find(
     (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
   );
   const isMinimalMetadataReady = useAtomStateValue(isMinimalMetadataReadyState);
 
-  const pageLayoutId = params.pageLayoutId;
+  const pageLayoutId = matchPath(AppPath.PageLayoutPage, location.pathname)
+    ?.params.pageLayoutId;
   const isOnPageLayoutPage = isMatchingLocation(
     location,
     AppPath.PageLayoutPage,

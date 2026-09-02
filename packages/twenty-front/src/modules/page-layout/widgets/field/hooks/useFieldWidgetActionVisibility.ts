@@ -4,8 +4,8 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
+import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useFieldWidgetFieldDefinition } from '@/page-layout/widgets/field/hooks/useFieldWidgetFieldDefinition';
@@ -62,7 +62,7 @@ export const useFieldWidgetActionVisibility = ({
   );
 
   const junctionConfig = isDefined(relationMetadata)
-    ? getJunctionConfig({
+    ? resolveJunctionConfig({
         settings: relationMetadata.settings,
         relationObjectMetadataId: relationMetadata.relationObjectMetadataId,
         relationTargetFieldMetadataId: relationMetadata.relationFieldMetadataId,
@@ -84,10 +84,7 @@ export const useFieldWidgetActionVisibility = ({
     }),
     isFieldFromStandardApplication:
       getIsMetadataItemFromStandardApplication(fieldMetadataItem),
-    fieldMetadataItem: {
-      id: fieldMetadataItem.id,
-      isUIEditable: fieldMetadataItem.isUIEditable ?? true,
-    },
+    fieldMetadataItem,
     fieldDefinition,
     objectPermissionsByObjectMetadataId,
   });

@@ -1,6 +1,7 @@
 export type SlackSetUserLinkInput = {
-  slackUserId: string;
   workspaceMemberId: string;
+  slackUserId?: string;
+  email?: string;
   slackTeamId?: string;
   name?: string;
 };

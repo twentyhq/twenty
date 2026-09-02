@@ -4,8 +4,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
+import { CheckEmailingDomainVerificationCronCommand } from 'src/engine/core-modules/emailing-domain/crons/commands/check-emailing-domain-verification.cron.command';
+import { CheckEmailingDomainVerificationCronJob } from 'src/engine/core-modules/emailing-domain/crons/jobs/check-emailing-domain-verification.cron.job';
 import { AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
+import { AwsSesAccountService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-account.service';
 import { AwsSesObservabilityService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-observability.service';
+import { AwsSesOutboundEventDestinationService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-outbound-event-destination.service';
 import { AwsSesRegisterDomainService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-register-domain.service';
 import { AwsSesHandleErrorService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-handle-error.service';
 import { AwsSesSendEmailService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-send-email.service';
@@ -45,8 +49,11 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     EmailingDomainDriverFactory,
     UnsubscribeTokenService,
     EmailGroupAccessService,
+    CheckEmailingDomainVerificationCronCommand,
   ],
   providers: [
+    CheckEmailingDomainVerificationCronCommand,
+    CheckEmailingDomainVerificationCronJob,
     EmailGroupAccessService,
     EmailingDomainService,
     EmailingDomainTenantStatusService,
@@ -57,8 +64,10 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     EmailingDomainDriverFactory,
     EmailingDomainWorkspaceCleanupJob,
     AwsSesClientProvider,
+    AwsSesAccountService,
     AwsSesHandleErrorService,
     AwsSesObservabilityService,
+    AwsSesOutboundEventDestinationService,
     AwsSesRegisterDomainService,
     AwsSesSendEmailService,
     LogEmailingDomainDriver,

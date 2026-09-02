@@ -5,7 +5,7 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { categorizeRelationFields } from '@/object-record/record-field-list/utils/categorizeRelationFields';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import groupBy from 'lodash.groupby';
-import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 type UseFieldListFieldMetadataItemsProps = {
   objectNameSingular: string;
@@ -55,21 +55,11 @@ export const useFieldListFieldMetadataItems = ({
     );
 
   const { inlineFieldMetadataItems, relationFieldMetadataItems } = groupBy(
-    availableFieldMetadataItems
-      .filter(
-        (fieldMetadataItem) =>
-          fieldMetadataItem.name !== 'createdAt' &&
-          fieldMetadataItem.name !== 'deletedAt',
-      )
-      .filter(
-        (fieldMetadataItem) =>
-          !(
-            fieldMetadataItem.type === FieldMetadataType.RICH_TEXT &&
-            fieldMetadataItem.name === 'bodyV2' &&
-            (objectNameSingular === CoreObjectNameSingular.Note ||
-              objectNameSingular === CoreObjectNameSingular.Task)
-          ),
-      ),
+    availableFieldMetadataItems.filter(
+      (fieldMetadataItem) =>
+        fieldMetadataItem.name !== 'createdAt' &&
+        fieldMetadataItem.name !== 'deletedAt',
+    ),
     (fieldMetadataItem) =>
       fieldMetadataItem.type === FieldMetadataType.RELATION ||
       fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION
