@@ -97,6 +97,51 @@ lives in `src/__tests__/helpers/`.
   domain, or hoist the shared ID into `shared/`.
 - One domain per commit when migrating (`git mv` only, imports fixed in the same commit).
 
+## Application review playbook
+
+The Matching Admin Workspace playbook is a standalone page in
+`src/modules/partner/application-intake/` (front-component + page layout +
+nav item). It must stay in lockstep with real behaviour. When you change any
+of the following, update the playbook in the same change:
+
+- Website form fields that land on Partner
+- The Partner Applications view (filter, columns, sort)
+- `validationStage` values used as the review decision
+- Intake side effects the reviewer needs to know (Discord on create;
+  welcome email on `VALIDATED`, linked from
+  `WELCOME_EMAIL_WORKFLOW_URL`)
+- Marketplace ranking bonuses in
+  `packages/twenty-website/src/partners-marketplace/completeness-score.ts`
+  (case study, cover, introduction, service, picture, calendar, rate,
+  category, ghost rule)
+
+Facts on the page come from the same constants the view and intake use. Do
+not leave stale steps. Do not keep a second copy on twenty.com or in a Note.
+
+## Opportunity process playbooks
+
+How to process (Matching Admin) and How to apply (Partner Workspace) are
+standalone pages under `src/modules/opportunity/how-to-process/`. They must
+stay in lockstep with real operator behaviour. Update the matching page and
+its copy test in the same change when you change any of:
+
+- Intake (marketplace brief already Listed + Discord; Twenty Internal
+  unlisted; `/twenty-lead-brief` writes Design Doc URL)
+- Listing (`Listed` flip → Discord; daily digest; Open Briefs membership)
+- Intro (`Intro Sent At` turns Listed off; Invited applications)
+- Win (set Partner → Won / Declined; Backup stays; unassign reopens Won
+  to Applied; Deals stages New → Screening → Meeting → Proposal → Customer)
+- Apply (Open Briefs listed-only; pitch minimum; one pitch; state meaning)
+- Bundled skills (`twenty-lead-brief`, `twenty-partner-shortlist`,
+  `twenty-partner-intro`): local run, expected output, GitHub URL of
+  `SKILL.md`
+- Match via MCP: the operator can ask the agent to write CRM changes
+
+Pages stay operator language. Skill names, slash triggers, and GitHub URLs
+of those bundled skills are allowed on How to process. Open Briefs and
+My Applications links are required on How to apply. Do not open Apply
+from the standalone page — Apply is pinned on the brief record.
+
 ## Where does new code go?
 
 External API call → `connector/`. Raw query/mutation → `graphql/`. Any logic →

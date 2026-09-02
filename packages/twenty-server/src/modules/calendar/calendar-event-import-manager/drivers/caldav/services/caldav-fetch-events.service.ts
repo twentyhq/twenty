@@ -5,16 +5,22 @@ import {
   type DAVCalendar,
   type DAVClient,
   type DAVResponse,
+  DAVNamespace,
   DAVNamespaceShort,
+  getDAVAttribute,
 } from 'tsdav';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CalDavSyncCursor } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/types/caldav-sync-cursor';
 import { extractICalData } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/extract-ical-data.util';
+import { isCalDavCollectionHref } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-caldav-collection-href.util';
 import { isEventInTimeRange } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-event-in-time-range.util';
 import { isInvalidSyncTokenResponse } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-invalid-sync-token-response.util';
+import { isSameCalDavResource } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-same-caldav-resource.util';
 import { isValidCalDavHref } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-valid-caldav-href.util';
+import { mapCalDavStatusToExceptionCode } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/map-caldav-status-to-exception-code.util';
 import { parseICalEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/parse-ical-event.util';
+import { CalendarEventImportDriverException } from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 
 type CalendarSyncResult = {
@@ -88,18 +94,14 @@ export class CalDavFetchEventsService {
     const calendarObjects = (
       await Promise.all(
         collectionUrls.map((collectionUrl) =>
-          client.calendarMultiGet({
-            url: collectionUrl,
-            props: {
-              [`${DAVNamespaceShort.DAV}:getetag`]: {},
-              [`${DAVNamespaceShort.CALDAV}:calendar-data`]: {},
-            },
-            objectUrls: eventHrefs.filter(
+          this.fetchCalendarObjects(
+            client,
+            collectionUrl,
+            eventHrefs.filter(
               (href) =>
                 this.resolveCollectionUrl(client, href) === collectionUrl,
             ),
-            depth: '1',
-          }),
+          ),
         ),
       )
     ).flat();
@@ -113,6 +115,76 @@ export class CalDavFetchEventsService {
         isEventInTimeRange(event, startDate, endDate),
       );
     });
+  }
+
+  private async fetchCalendarObjects(
+    client: DAVClient,
+    collectionUrl: string,
+    objectUrls: string[],
+  ): Promise<DAVResponse[]> {
+    const responses = await client.davRequest({
+      url: collectionUrl,
+      init: {
+        method: 'REPORT',
+        namespace: DAVNamespaceShort.CALDAV,
+        headers: { depth: '1' },
+        body: {
+          'calendar-multiget': {
+            _attributes: getDAVAttribute([
+              DAVNamespace.DAV,
+              DAVNamespace.CALDAV,
+            ]),
+            [`${DAVNamespaceShort.DAV}:prop`]: {
+              [`${DAVNamespaceShort.DAV}:getetag`]: {},
+              [`${DAVNamespaceShort.CALDAV}:calendar-data`]: {},
+            },
+            [`${DAVNamespaceShort.DAV}:href`]: objectUrls,
+          },
+        },
+      },
+    });
+
+    const unreadableResponses = responses.filter(
+      (response) => isDefined(response.status) && response.status >= 400,
+    );
+
+    const failedRequest = unreadableResponses.find(
+      (response) =>
+        !isNonEmptyString(response.href) ||
+        isSameCalDavResource(response.href, collectionUrl),
+    );
+
+    if (isDefined(failedRequest)) {
+      throw new CalendarEventImportDriverException(
+        `calendar-multiget on ${collectionUrl} failed: ${failedRequest.status} ${failedRequest.statusText}`,
+        mapCalDavStatusToExceptionCode(failedRequest.status),
+      );
+    }
+
+    const removedResponses = unreadableResponses.filter(
+      (response) => response.status === 404 || response.status === 410,
+    );
+    const unexpectedResponses = unreadableResponses.filter(
+      (response) => response.status !== 404 && response.status !== 410,
+    );
+
+    if (removedResponses.length > 0) {
+      this.logger.debug(
+        `Skipping ${removedResponses.length} calendar events removed from ${collectionUrl} since the last list fetch`,
+      );
+    }
+
+    if (unexpectedResponses.length > 0) {
+      this.logger.warn(
+        `Skipping ${unexpectedResponses.length} unreadable calendar events in ${collectionUrl}: ${unexpectedResponses
+          .map((response) => `${response.href} ${response.status}`)
+          .join(', ')}`,
+      );
+    }
+
+    return responses.filter(
+      (response) => !isDefined(response.status) || response.status < 400,
+    );
   }
 
   private resolveCollectionUrl(client: DAVClient, href: string): string {
@@ -162,7 +234,9 @@ export class CalDavFetchEventsService {
 
     const memberResponses = syncResult.filter(
       (entry): entry is DAVResponse & { href: string } =>
-        isNonEmptyString(entry.href) && isValidCalDavHref(entry.href),
+        isNonEmptyString(entry.href) &&
+        isValidCalDavHref(entry.href) &&
+        !isCalDavCollectionHref(entry.href, calendar.url),
     );
 
     const changedHrefs = memberResponses
@@ -173,8 +247,8 @@ export class CalDavFetchEventsService {
       .map((entry) => entry.href);
 
     const rawSyncToken = syncResult[0]?.raw?.multistatus?.syncToken;
-    const newSyncToken = isNonEmptyString(rawSyncToken)
-      ? rawSyncToken
+    const newSyncToken = isDefined(rawSyncToken)
+      ? String(rawSyncToken)
       : previousSyncToken;
 
     return {
@@ -244,7 +318,8 @@ export class CalDavFetchEventsService {
       (href) => storedEtags[href] !== currentEtags[href],
     );
     const cancelledHrefs = Object.keys(storedEtags).filter(
-      (href) => !(href in currentEtags),
+      (href) =>
+        !(href in currentEtags) && !isCalDavCollectionHref(href, calendar.url),
     );
 
     return {
@@ -292,7 +367,8 @@ export class CalDavFetchEventsService {
       if (
         !isNonEmptyString(href) ||
         !isNonEmptyString(etag) ||
-        !isValidCalDavHref(href)
+        !isValidCalDavHref(href) ||
+        isCalDavCollectionHref(href, calendarUrl)
       ) {
         return map;
       }

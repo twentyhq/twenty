@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
   isDefined,
@@ -25,6 +26,7 @@ import { isWorkflowFindRecordsAction } from 'src/modules/workflow/workflow-execu
 import { type WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 import { resolveLimitInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-limit-input.util';
 import { resolveOffsetInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-offset-input.util';
+import { resolveRecordFilters } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-record-filters.util';
 
 @Injectable()
 export class FindRecordsWorkflowAction implements WorkflowAction {
@@ -52,6 +54,11 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       );
     }
 
+    const recordFilters = resolveRecordFilters({
+      unresolvedRecordFilters: step.settings.input.filter?.recordFilters,
+      context,
+    });
+
     const workflowActionInput = resolveInput(
       step.settings.input,
       context,
@@ -68,8 +75,8 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
         workspaceId,
       );
 
-    if (workflowActionInput.filter?.recordFilters) {
-      for (const filter of workflowActionInput.filter.recordFilters) {
+    if (recordFilters) {
+      for (const filter of recordFilters) {
         if (!isRecordFilterValueValid(filter)) {
           throw new WorkflowStepExecutorException(
             `Filter condition has an empty value after variable resolution. This likely means a workflow variable could not be resolved. Filter field: ${filter.fieldMetadataId}, operand: ${filter.operand}`,
@@ -79,21 +86,28 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       }
     }
 
-    const recordFilters = workflowActionInput.filter?.recordFilters;
+    let gqlOperationFilter: RecordGqlOperationFilter;
 
-    const gqlOperationFilter = isDefined(recordFilters)
-      ? computeRecordGqlOperationFilter({
-          fieldMetadataItems: Object.values(
-            flatFieldMetadataMaps.byUniversalIdentifier,
-          ).filter(isDefined),
-          recordFilters,
-          recordFilterGroups:
-            workflowActionInput.filter?.recordFilterGroups ?? [],
-          filterValueDependencies: {
-            timeZone: 'UTC',
-          },
-        })
-      : {};
+    try {
+      gqlOperationFilter = isDefined(recordFilters)
+        ? computeRecordGqlOperationFilter({
+            fieldMetadataItems: Object.values(
+              flatFieldMetadataMaps.byUniversalIdentifier,
+            ).filter(isDefined),
+            recordFilters,
+            recordFilterGroups:
+              workflowActionInput.filter?.recordFilterGroups ?? [],
+            filterValueDependencies: {
+              timeZone: 'UTC',
+            },
+          })
+        : {};
+    } catch (error) {
+      throw new WorkflowStepExecutorException(
+        `Filter could not be computed: ${error.message}`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
 
     if (isNonEmptyArray(recordFilters) && isEmptyObject(gqlOperationFilter)) {
       throw new WorkflowStepExecutorException(

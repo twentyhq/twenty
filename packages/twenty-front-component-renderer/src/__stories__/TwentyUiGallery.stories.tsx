@@ -120,16 +120,9 @@ export const IconPreact: Story = createGalleryStory(
   'preact',
 );
 
-// KNOWN ISSUE (TDD): base-ui radio internals call MutationObserver.observe,
-// shipped as an empty stub class by @remote-dom/polyfill.
-const INPUT_EXPECTED_FAILURES = ['Radio', 'RadioGroup', 'CardPicker'];
-export const InputReact: Story = createKnownFailureGalleryStory(
+export const InputReact: Story = createGalleryStory('twenty-ui-input-gallery');
+export const InputPreact: Story = createGalleryStory(
   'twenty-ui-input-gallery',
-  INPUT_EXPECTED_FAILURES,
-);
-export const InputPreact: Story = createKnownFailureGalleryStory(
-  'twenty-ui-input-gallery',
-  INPUT_EXPECTED_FAILURES,
   'preact',
 );
 
@@ -161,15 +154,11 @@ export const NavigationPreact: Story = createKnownFailureGalleryStory(
   'preact',
 );
 
-// KNOWN ISSUE (TDD): AppTooltip observes document.body with the stubbed-out
-// MutationObserver.
-export const SurfacesReact: Story = createKnownFailureGalleryStory(
+export const SurfacesReact: Story = createGalleryStory(
   'twenty-ui-surfaces-gallery',
-  ['AppTooltip'],
 );
-export const SurfacesPreact: Story = createKnownFailureGalleryStory(
+export const SurfacesPreact: Story = createGalleryStory(
   'twenty-ui-surfaces-gallery',
-  ['AppTooltip'],
   'preact',
 );
 
@@ -245,3 +234,31 @@ export const TypographyPreact: Story = createGalleryStory(
   'twenty-ui-typography-gallery',
   'preact',
 );
+
+const themeTokenTest: Story['play'] = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+
+  const iconWrapper = await canvas.findByTestId(
+    'theme-token-icon-wrapper',
+    {},
+    { timeout: 30000 },
+  );
+
+  await waitFor(() => {
+    const iconBox = iconWrapper.getBoundingClientRect();
+
+    expect(Math.round(iconBox.width)).toBe(16);
+    expect(Math.round(iconBox.height)).toBe(16);
+  });
+
+  expect(errorHandler).not.toHaveBeenCalled();
+};
+
+export const ThemeTokensReact: Story = {
+  ...createGalleryStory('twenty-ui-theme-tokens'),
+  play: themeTokenTest,
+};
+export const ThemeTokensPreact: Story = {
+  ...createGalleryStory('twenty-ui-theme-tokens', 'preact'),
+  play: themeTokenTest,
+};

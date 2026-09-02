@@ -8,6 +8,7 @@ import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
+import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
@@ -18,6 +19,7 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
     BillingModule,
     ThrottlerModule,
     TwentyConfigModule,
+    UsageModule,
     WorkspaceCacheModule,
     WorkspaceCacheStorageModule,
     WorkspaceEventEmitterModule,

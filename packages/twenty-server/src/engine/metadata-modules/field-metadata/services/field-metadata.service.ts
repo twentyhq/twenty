@@ -23,13 +23,11 @@ import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/met
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
 import { fromUpdateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util';
 import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-modules/flat-field-metadata/utils/throw-on-field-input-transpilations-error.util';
-import { computeFlatViewFieldsFromFieldsWidgets } from 'src/engine/metadata-modules/flat-view-field/utils/compute-flat-view-fields-from-fields-widgets.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
 @Injectable()
 export class FieldMetadataService {
@@ -390,17 +388,9 @@ export class FieldMetadataService {
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-      flatPageLayoutWidgetMaps: existingFlatPageLayoutWidgetMaps,
-      flatViewFieldMaps: existingFlatViewFieldMaps,
-      flatViewMaps: existingFlatViewMaps,
-      flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
-      'flatPageLayoutWidgetMaps',
-      'flatViewFieldMaps',
-      'flatViewMaps',
-      'flatViewFieldGroupMaps',
     ]);
 
     const allTranspiledTranspilationInputs: Awaited<
@@ -437,22 +427,6 @@ export class FieldMetadataService {
       { flatFieldMetadatas: [], indexMetadatas: [] },
     );
 
-    const flatViewFieldsToCreate: UniversalFlatViewField[] =
-      computeFlatViewFieldsFromFieldsWidgets({
-        fieldsToCreate: flatFieldMetadatasToCreate.map((flatFieldMetadata) => ({
-          objectMetadataUniversalIdentifier:
-            flatFieldMetadata.objectMetadataUniversalIdentifier,
-          fieldMetadataUniversalIdentifier:
-            flatFieldMetadata.universalIdentifier,
-        })),
-        flatPageLayoutWidgetMaps: existingFlatPageLayoutWidgetMaps,
-        flatViewFieldMaps: existingFlatViewFieldMaps,
-        flatViewMaps: existingFlatViewMaps,
-        flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
-        applicationUniversalIdentifier:
-          resolvedOwnerFlatApplication.universalIdentifier,
-      });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -464,11 +438,6 @@ export class FieldMetadataService {
             },
             index: {
               flatEntityToCreate: flatIndexMetadatasToCreate,
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-            viewField: {
-              flatEntityToCreate: flatViewFieldsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },

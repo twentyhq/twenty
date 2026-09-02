@@ -3,14 +3,17 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { CompanyEnrichmentResolver } from 'src/engine/core-modules/company-enrichment/resolvers/company-enrichment.resolver';
 import { CompanyEnrichmentService } from 'src/engine/core-modules/company-enrichment/services/company-enrichment.service';
+import { PersonEnrichmentService } from 'src/engine/core-modules/company-enrichment/services/person-enrichment.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 describe('CompanyEnrichmentResolver', () => {
   let resolver: CompanyEnrichmentResolver;
   let companyEnrichmentService: { enrichCompanyForWorkspaceCreator: jest.Mock };
+  let personEnrichmentService: { enrichPersonForWorkspaceCreator: jest.Mock };
   let onboardingService: {
     setOnboardingBookCallPendingIfQualified: jest.Mock;
+    creditEnrichmentQualificationReward: jest.Mock;
     isOnboardingBookCallPending: jest.Mock;
   };
 
@@ -21,8 +24,14 @@ describe('CompanyEnrichmentResolver', () => {
     companyEnrichmentService = {
       enrichCompanyForWorkspaceCreator: jest.fn(),
     };
+    personEnrichmentService = {
+      enrichPersonForWorkspaceCreator: jest
+        .fn()
+        .mockResolvedValue({ outcome: 'unavailable', enrichment: null }),
+    };
     onboardingService = {
       setOnboardingBookCallPendingIfQualified: jest.fn(),
+      creditEnrichmentQualificationReward: jest.fn(),
       isOnboardingBookCallPending: jest.fn().mockResolvedValue(false),
     };
 
@@ -32,6 +41,10 @@ describe('CompanyEnrichmentResolver', () => {
         {
           provide: CompanyEnrichmentService,
           useValue: companyEnrichmentService,
+        },
+        {
+          provide: PersonEnrichmentService,
+          useValue: personEnrichmentService,
         },
         {
           provide: OnboardingService,
@@ -67,6 +80,27 @@ describe('CompanyEnrichmentResolver', () => {
     });
   });
 
+  it('should hand the enriched employee count to the credit reward on a match', async () => {
+    companyEnrichmentService.enrichCompanyForWorkspaceCreator.mockResolvedValue(
+      {
+        outcome: 'matched',
+        enrichment: { domain: 'acme.com', employeeCount: 320 },
+      },
+    );
+
+    await resolver.enrichWorkspaceCompany(user, workspace);
+
+    expect(
+      onboardingService.creditEnrichmentQualificationReward,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      onboardingService.creditEnrichmentQualificationReward,
+    ).toHaveBeenCalledWith({
+      workspaceId: workspace.id,
+      employeeCount: 320,
+    });
+  });
+
   it.each(['unavailable', 'transientError'])(
     'should not qualify for the book-call step on outcome %s',
     async (outcome) => {
@@ -78,6 +112,9 @@ describe('CompanyEnrichmentResolver', () => {
 
       expect(
         onboardingService.setOnboardingBookCallPendingIfQualified,
+      ).not.toHaveBeenCalled();
+      expect(
+        onboardingService.creditEnrichmentQualificationReward,
       ).not.toHaveBeenCalled();
     },
   );
@@ -104,5 +141,46 @@ describe('CompanyEnrichmentResolver', () => {
     const result = await resolver.enrichWorkspaceCompany(user, workspace);
 
     expect(result.isBookCallOnboardingStepPending).toBe(false);
+  });
+
+  it('should enrich the person alongside the company with the signup email', async () => {
+    companyEnrichmentService.enrichCompanyForWorkspaceCreator.mockResolvedValue(
+      { outcome: 'unavailable', enrichment: null },
+    );
+    personEnrichmentService.enrichPersonForWorkspaceCreator.mockResolvedValue({
+      outcome: 'matched',
+      enrichment: { email: 'foo@acme.com', fullName: 'Ada Lovelace' },
+    });
+
+    const result = await resolver.enrichWorkspaceCompany(user, workspace);
+
+    expect(
+      personEnrichmentService.enrichPersonForWorkspaceCreator,
+    ).toHaveBeenCalledWith({
+      userId: user.id,
+      email: user.email,
+      workspaceId: workspace.id,
+    });
+    expect(result.personOutcome).toBe('matched');
+    expect(result.personEnrichment).toEqual({
+      email: 'foo@acme.com',
+      fullName: 'Ada Lovelace',
+    });
+  });
+
+  it('should never qualify the book-call step from the person outcome', async () => {
+    companyEnrichmentService.enrichCompanyForWorkspaceCreator.mockResolvedValue(
+      { outcome: 'unavailable', enrichment: null },
+    );
+    personEnrichmentService.enrichPersonForWorkspaceCreator.mockResolvedValue({
+      outcome: 'matched',
+      enrichment: { email: 'foo@acme.com' },
+    });
+
+    await resolver.enrichWorkspaceCompany(user, workspace);
+
+    expect(
+      onboardingService.setOnboardingBookCallPendingIfQualified,
+    ).not.toHaveBeenCalled();
   });
 });

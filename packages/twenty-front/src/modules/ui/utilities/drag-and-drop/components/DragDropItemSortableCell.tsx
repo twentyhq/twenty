@@ -2,7 +2,7 @@ import {
   RestrictToHorizontalAxis,
   RestrictToVerticalAxis,
 } from '@dnd-kit/abstract/modifiers';
-import { useSortable } from '@dnd-kit/react/sortable';
+import { type UseSortableInput, useSortable } from '@dnd-kit/react/sortable';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -55,7 +55,8 @@ const StyledSortableRoot = styled.div<{
 `;
 
 type DragDropItemSortableCellProps = {
-  accept?: string;
+  accept?: UseSortableInput['accept'];
+  allowNativeDragWhenDisabled?: boolean;
   children: ReactNode;
   data?: Record<string, unknown>;
   disabled?: boolean;
@@ -75,6 +76,7 @@ type DragDropItemSortableCellProps = {
 
 export const DragDropItemSortableCell = ({
   accept,
+  allowNativeDragWhenDisabled = false,
   children,
   data,
   disabled = false,
@@ -122,7 +124,17 @@ export const DragDropItemSortableCell = ({
         $fill={fill}
         $isDragSourceFaded={fadeSourceWhileDragging && isDragSource}
         $isDraggingHighlighted={highlightWhileDragging && isDragging}
-        onDragStart={preventNativeDragStart}
+        // dnd-kit's accessibility plugin stamps role="button" and tabindex on
+        // any registered draggable that declares neither, so a disabled cell
+        // would join the tab order and make pointer automation resolve clicks
+        // on its content to a disabled button. Declaring both opts out.
+        role={disabled ? 'none' : undefined}
+        tabIndex={disabled ? -1 : undefined}
+        onDragStart={
+          disabled && allowNativeDragWhenDisabled
+            ? undefined
+            : preventNativeDragStart
+        }
       >
         {children}
       </StyledSortableRoot>

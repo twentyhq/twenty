@@ -5,10 +5,14 @@ export const SEND_MESSAGE_CAMPAIGN = gql`
     sendMessageCampaign(input: $input) {
       campaignId
       queuedCount
-      skipped {
-        noEmail
-        deduped
+      audience {
+        totalMembers
+        withoutEmail
+        duplicateEmails
         overCap
+        globallyUnsubscribed
+        topicUnsubscribed
+        sendable
       }
     }
   }

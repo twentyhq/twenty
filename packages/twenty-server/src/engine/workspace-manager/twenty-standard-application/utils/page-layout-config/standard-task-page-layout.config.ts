@@ -3,7 +3,7 @@ import {
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
 
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { PageLayoutType } from 'twenty-shared/types';
 import {
   CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP,
   CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE,
@@ -36,7 +36,6 @@ const TASK_PAGE_TABS = {
             .widgets.taskRichText.universalIdentifier,
         title: WIDGET_PROPS.taskRichText.title,
         type: WIDGET_PROPS.taskRichText.type,
-        gridPosition: WIDGET_PROPS.taskRichText.gridPosition,
         position: { layoutMode: TAB_PROPS.home.layoutMode, index: 1 },
         conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_MOBILE,
         conditionalAvailabilityExpression:
@@ -58,34 +57,6 @@ const TASK_PAGE_TABS = {
         conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_DESKTOP,
         conditionalAvailabilityExpression:
           CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP,
-      },
-    },
-  },
-  timeline: {
-    universalIdentifier:
-      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.timeline
-        .universalIdentifier,
-    ...TAB_PROPS.timeline,
-    widgets: {
-      timeline: {
-        universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs
-            .timeline.widgets.timeline.universalIdentifier,
-        ...WIDGET_PROPS.timeline,
-      },
-    },
-  },
-  files: {
-    universalIdentifier:
-      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.files
-        .universalIdentifier,
-    ...TAB_PROPS.files,
-    widgets: {
-      files: {
-        universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.files
-            .widgets.files.universalIdentifier,
-        ...WIDGET_PROPS.files,
       },
     },
   },

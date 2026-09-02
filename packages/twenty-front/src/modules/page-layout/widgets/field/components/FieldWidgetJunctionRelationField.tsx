@@ -1,9 +1,7 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
-import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
-import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { type ValidResolvedJunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/ValidResolvedJunctionConfig';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,32 +20,17 @@ const StyledRelationChipsContainer = styled.div`
 `;
 
 type FieldWidgetJunctionRelationFieldProps = {
-  fieldDefinition: FieldDefinition<FieldRelationMetadata>;
   relationValue: any;
   isInSidePanel: boolean;
-  sourceObjectMetadataId: string;
+  junctionConfig: ValidResolvedJunctionConfig;
 };
 
 export const FieldWidgetJunctionRelationField = ({
-  fieldDefinition,
   relationValue,
   isInSidePanel,
-  sourceObjectMetadataId,
+  junctionConfig,
 }: FieldWidgetJunctionRelationFieldProps) => {
   const { objectMetadataItems } = useObjectMetadataItems();
-
-  const fieldMetadata = fieldDefinition.metadata;
-
-  const junctionConfig = getJunctionConfig({
-    settings: fieldMetadata.settings,
-    relationObjectMetadataId: fieldMetadata.relationObjectMetadataId,
-    sourceObjectMetadataId,
-    objectMetadataItems,
-  });
-
-  if (!isDefined(junctionConfig)) {
-    return null;
-  }
 
   const junctionRecords = Array.isArray(relationValue) ? relationValue : [];
 

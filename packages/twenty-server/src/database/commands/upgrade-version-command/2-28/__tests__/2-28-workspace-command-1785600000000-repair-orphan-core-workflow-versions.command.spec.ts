@@ -1,8 +1,13 @@
 import { type DataSource, type QueryRunner } from 'typeorm';
-import { EntityMetadataNotFoundError } from 'typeorm/error/EntityMetadataNotFoundError';
+
+import {
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { RepairOrphanCoreWorkflowVersionsCommand } from 'src/database/commands/upgrade-version-command/2-28/2-28-workspace-command-1785600000000-repair-orphan-core-workflow-versions.command';
+import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
@@ -49,20 +54,28 @@ const setup = ({
   } as unknown as QueryRunner;
 
   const count = objectMissing
-    ? jest
-        .fn()
-        .mockRejectedValue(new EntityMetadataNotFoundError('workflowVersion'))
+    ? jest.fn().mockRejectedValue(
+        new TwentyOrmException(
+          'Object "workflowVersion" does not exist in this workspace',
+          TwentyOrmExceptionCode.UNKNOWN_OBJECT,
+        ),
+      )
     : jest.fn().mockResolvedValue(0);
 
   const dataSource = {
-    getRepository: () => ({ count }),
     createQueryRunner: () => queryRunner,
   } as unknown as DataSource;
+
+  const workspaceOrmManager = {
+    executeInWorkspaceContext: (fn: () => Promise<unknown>) => fn(),
+    getRepository: () => ({ count }),
+  } as unknown as WorkspaceOrmManager;
 
   const recompute = jest.fn();
   const command = new RepairOrphanCoreWorkflowVersionsCommand(
     {} as WorkspaceIteratorService,
     { invalidateAndRecompute: recompute } as unknown as WorkspaceCacheService,
+    workspaceOrmManager,
   );
 
   const run = (dryRun = false) =>

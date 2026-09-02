@@ -7,7 +7,7 @@ import { RecordTableWidthEffect } from '@/object-record/record-table/components/
 import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidth';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
-import { isRecordTableCheckboxColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableCheckboxColumnHiddenComponentState';
+import { useIsRecordTableCheckboxColumnHidden } from '@/object-record/record-table/hooks/useIsRecordTableCheckboxColumnHidden';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { getRecordTableHtmlId } from '@/object-record/record-table/utils/getRecordTableHtmlId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -16,18 +16,24 @@ import { RecordTableHeader } from '@/object-record/record-table/record-table-hea
 import { recordTableWidthComponentState } from '@/object-record/record-table/states/recordTableWidthComponentState';
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
-import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-record/record-table/states/shouldCompactRecordTableFirstColumnComponentState';
+import { useRecordTableFirstColumnWidthOverride } from '@/object-record/record-table/hooks/useRecordTableFirstColumnWidthOverride';
 import { computeVisibleRecordFieldsWidthOnTable } from '@/object-record/record-table/utils/computeVisibleRecordFieldsWidthOnTable';
 import { RecordTableVirtualizedDataChangedEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedDataChangedEffect';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledEmptyStateContainer = styled.div<{ width: number }>`
   height: 100%;
   overflow: hidden;
   width: ${({ width }) => width}px;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    width: 100%;
+  }
 `;
 
 export interface RecordTableEmptyProps {
@@ -37,13 +43,14 @@ export interface RecordTableEmptyProps {
 export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
   const { visibleRecordFields, recordTableId } = useRecordTableContextOrThrow();
 
+  const isMobile = useIsMobile();
+
   const isRecordTableDragColumnHidden = useAtomComponentStateValue(
     isRecordTableDragColumnHiddenComponentState,
   );
 
-  const isRecordTableCheckboxColumnHidden = useAtomComponentStateValue(
-    isRecordTableCheckboxColumnHiddenComponentState,
-  );
+  const isRecordTableCheckboxColumnHidden =
+    useIsRecordTableCheckboxColumnHidden();
 
   const recordTableWidth = useAtomComponentStateValue(
     recordTableWidthComponentState,
@@ -59,9 +66,7 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
 
   const isResizing = isDefined(resizedFieldMetadataId);
 
-  const shouldCompactRecordTableFirstColumn = useAtomComponentStateValue(
-    shouldCompactRecordTableFirstColumnComponentState,
-  );
+  const firstColumnWidthOverride = useRecordTableFirstColumnWidthOverride();
 
   const resizeOffsetToAddOnlyIfItMakesTableContainerGrow = isResizing
     ? resizeFieldOffset > 0
@@ -72,7 +77,7 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
   const totalColumnsBorderWidth = visibleRecordFields.length;
 
   const { visibleRecordFieldsWidth } = computeVisibleRecordFieldsWidthOnTable({
-    shouldCompactFirstColumn: shouldCompactRecordTableFirstColumn,
+    firstColumnWidthOverride,
     visibleRecordFields,
   });
 
@@ -99,8 +104,17 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
   );
 
   const columnWidthStyles = useMemo(
-    () => getRecordTableColumnWidthInlineStyles({ visibleRecordFields }),
-    [visibleRecordFields],
+    () =>
+      getRecordTableColumnWidthInlineStyles({
+        visibleRecordFields,
+        isDragColumnHidden: isRecordTableDragColumnHidden,
+        isCheckboxColumnHidden: isRecordTableCheckboxColumnHidden,
+      }),
+    [
+      visibleRecordFields,
+      isRecordTableDragColumnHidden,
+      isRecordTableCheckboxColumnHidden,
+    ],
   );
 
   return (
@@ -110,7 +124,9 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
         style={columnWidthStyles}
         id={getRecordTableHtmlId(recordTableId)}
       >
-        <RecordTableHeader />
+        {/* An empty table has no cells to reveal, so the header would only add
+            a horizontal scroll to a screen with nothing to scroll to. */}
+        {!isMobile && <RecordTableHeader />}
       </RecordTableStyleWrapper>
       <RecordTableEmptyState />
       <RecordTableColumnWidthEffect />

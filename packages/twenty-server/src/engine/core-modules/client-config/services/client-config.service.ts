@@ -220,6 +220,9 @@ export class ClientConfigService {
         environment: this.twentyConfigService.get('SENTRY_ENVIRONMENT'),
         release: this.twentyConfigService.get('APP_VERSION'),
         dsn: this.twentyConfigService.get('SENTRY_FRONT_DSN'),
+        tracesSampleRate: this.twentyConfigService.get(
+          'SENTRY_FRONT_TRACES_SAMPLE_RATE',
+        ),
       },
       captcha: {
         provider: captchaProvider ? captchaProvider : undefined,
@@ -264,9 +267,7 @@ export class ClientConfigService {
         isBillingEnabled ||
         this.twentyConfigService.get('IS_FEATURE_FLAG_MANAGEMENT_ENABLED'),
       publicFeatureFlags: PUBLIC_FEATURE_FLAGS,
-      isCookieSessionEnabled: this.twentyConfigService.get(
-        'AUTH_COOKIE_SESSIONS_ENABLED',
-      ),
+      isCookieSessionEnabled: true,
       isMicrosoftMessagingEnabled: this.twentyConfigService.get(
         'MESSAGING_PROVIDER_MICROSOFT_ENABLED',
       ),

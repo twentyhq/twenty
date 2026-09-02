@@ -1,35 +1,29 @@
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelector';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FieldWidgetShowMoreButton } from '@/page-layout/widgets/field/components/FieldWidgetShowMoreButton';
-import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
+import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { SIDE_PANEL_SEARCH_RECORD_PREVIEW_MAX_COLLAPSED_FIELDS } from '@/side-panel/pages/search/constants/SidePanelSearchRecordPreviewMaxCollapsedFields';
 import { SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH } from '@/side-panel/pages/search/constants/SidePanelSearchRecordPreviewWidth';
 import { useSidePanelSearchRecordPreviewFields } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecordPreviewFields';
 import { useSidePanelSearchRecordPreviewRecord } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecordPreviewRecord';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { styled } from '@linaria/react';
-import { Trans } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useState } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { Avatar } from 'twenty-ui/data-display';
 import { useIcons } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const SKELETON_HEIGHT = SKELETON_LOADER_HEIGHT_SIZES.standard.s;
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 // Pinned width so the card keeps its shape across records of different objects
 const StyledCard = styled.div`
@@ -61,7 +55,7 @@ const StyledFieldList = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  max-height: 50dvh;
+  max-height: calc(50dvh / var(--t-zoom, 1));
   overflow-y: auto;
   padding: ${themeCssVariables.spacing[3]};
 `;
@@ -144,17 +138,6 @@ export const SidePanelSearchRecordPreviewCard = ({
     { recordId, allowRequestsToTwentyIcons },
   );
 
-  const recordCreatedAt = useAtomFamilySelectorValue(
-    recordStoreFamilySelector,
-    { recordId, fieldName: 'createdAt' },
-  ) as string | null;
-
-  const { localeCatalog } = useAtomStateValue(dateLocaleState);
-
-  const beautifiedCreatedAt = isNonEmptyString(recordCreatedAt)
-    ? beautifyPastDateRelativeToNow(recordCreatedAt, localeCatalog)
-    : '';
-
   // Collapsed shows at most a handful of the view's visible columns; everything
   // past that, plus the view's hidden columns, sits behind the expander
   const collapsedFields = visibleFields.slice(
@@ -231,29 +214,17 @@ export const SidePanelSearchRecordPreviewCard = ({
     >
       <StyledCard>
         <StyledHeader>
-          <SidePanelPageInfoLayout
-            icon={
-              <Avatar
-                avatarUrl={getAbsoluteImageUrl(recordIdentifier?.avatarUrl)}
-                placeholder={recordIdentifier?.name ?? label}
-                placeholderColorSeed={recordId}
-                size="md"
-                type={recordIdentifier?.avatarType ?? 'rounded'}
-              />
-            }
+          <HeaderIdentifier
+            avatar={{
+              avatarUrl: getAbsoluteImageUrl(recordIdentifier?.avatarUrl),
+              placeholder: recordIdentifier?.name ?? label,
+              placeholderColorSeed: recordId,
+              type: recordIdentifier?.avatarType ?? 'rounded',
+            }}
             title={
               <StyledTitleText>
                 {recordIdentifier?.name ?? label}
               </StyledTitleText>
-            }
-            label={
-              isRecordLoaded ? (
-                beautifiedCreatedAt ? (
-                  <Trans>Created {beautifiedCreatedAt}</Trans>
-                ) : undefined
-              ) : (
-                <Skeleton width={92} height={SKELETON_HEIGHT} />
-              )
             }
           />
         </StyledHeader>

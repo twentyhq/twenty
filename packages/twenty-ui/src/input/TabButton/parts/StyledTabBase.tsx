@@ -1,6 +1,6 @@
 import { clsx } from 'clsx';
 import { type ComponentPropsWithoutRef, forwardRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, type To } from 'react-router-dom';
 
 import styles from './StyledTabBase.module.scss';
 
@@ -10,11 +10,16 @@ import styles from './StyledTabBase.module.scss';
 type StyledTabButtonProps = {
   active?: boolean;
   disabled?: boolean;
-  to?: string;
+  to?: To;
+  state?: unknown;
+  replace?: boolean;
 } & ComponentPropsWithoutRef<'button'>;
 
 export const StyledTabButton = forwardRef<HTMLElement, StyledTabButtonProps>(
-  ({ active, disabled, to, className, children, ...rest }, ref) => {
+  (
+    { active, disabled, to, state, replace, className, children, ...rest },
+    ref,
+  ) => {
     // Replaces the legacy Linaria `as` polymorphism: react-router Link when a
     // `to` is provided, a native button otherwise. Typed as any to forward all
     // props untyped, exactly like the legacy `as` prop did.
@@ -25,11 +30,12 @@ export const StyledTabButton = forwardRef<HTMLElement, StyledTabButtonProps>(
       <TabButtonComponent
         ref={ref}
         to={to}
+        state={to ? state : undefined}
+        replace={to ? replace : undefined}
         disabled={to ? undefined : disabled}
         className={clsx(styles.tabButton, className)}
         data-active={active || undefined}
         data-disabled={disabled || undefined}
-        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...rest}
       >
         {children}
@@ -54,7 +60,6 @@ export const StyledTabContainer = forwardRef<
     className={clsx(styles.tabContainer, className)}
     data-active={active || undefined}
     data-disabled={disabled || undefined}
-    // oxlint-disable-next-line react/jsx-props-no-spreading
     {...rest}
   >
     {children}
@@ -73,7 +78,6 @@ export const StyledTabHover = forwardRef<HTMLSpanElement, StyledTabHoverProps>(
       ref={ref}
       className={clsx(styles.tabHover, className)}
       data-content-size={contentSize}
-      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...rest}
     >
       {children}

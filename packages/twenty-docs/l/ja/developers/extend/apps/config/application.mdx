@@ -37,6 +37,7 @@ export default defineApplication({
 * プレインストール関数、ポストインストール関数、およびアンインストール関数は、マニフェストのビルド中に自動的に検出されるため、`defineApplication()` で参照する必要はありません。
 * 後方互換性のために `defaultRoleUniversalIdentifier` を明示的に渡すことも依然としてサポートされていますが、`defineApplicationRole()` が推奨されるため、非推奨となっています。
 * `serverVariables` はインスタンス単位の構成およびシークレット（例: API キー）です。 `applicationVariables` と異なり、マニフェスト内で値は宣言されません。ワークスペースのオペレーターがアプリの設定からそれらを入力し、設定された時点でのみロジック関数に注入されます。
+* どちらの種類の変数も `isDeprecated: true` を受け付けます。 変数を削除する代わりに廃止するためにこれを使用します。キーの宣言を残しておくことで保存されている値が保持されます（削除するとオペレーターが入力した値は失われます）。また、その変数は依然としてインジェクトされるため、コードは `process.env.NEW_API_KEY ?? process.env.API_KEY` にフォールバックできます。 非推奨の変数は値がなくなるとアプリの設定から消え、アプリの構成チェックにも一切カウントされません。そのため、`isDeprecated` は `isRequired` より優先されます。
 * アプリの **Settings** タブ内で（デフォルトの変数設定セクションの代わりに）カスタム設定 UI をレンダーするには、専用のファイル内で [`defineSettingsFrontComponent()`](/l/ja/developers/extend/apps/layout/front-components#custom-settings-component) を使用してフロントコンポーネントを宣言します。 アプリごとに 1 つのみ許可されています。 システム管理のセクション（自動アップグレード、App URL、接続）は常に表示されます。
 
 ## 変数の型
@@ -96,7 +97,7 @@ const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3
 
 [`defineApplicationRole()`](/l/ja/developers/extend/apps/config/roles) で宣言されたロールは、アプリのロジック関数とフロントコンポーネントがアクセスできる内容を制御します。
 
-* `TWENTY_APP_ACCESS_TOKEN` として注入される実行時トークンは、このロールに基づいて生成されます。
+* ロジック関数に注入される実行時トークンは、このロールに基づいて生成されます。 人物として動作する呼び出しは、その人物が実行できる範囲によってさらに制限されるため、どちらか一方の権限を超えることはありません。 [呼び出しで使用されるアクセス権](/l/ja/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses)を参照してください。
 * 型付き API クライアントは、そのロールに付与された権限に制限されます。
 * 最小権限の原則に従い、関数に必要な権限のみを宣言してください。
 

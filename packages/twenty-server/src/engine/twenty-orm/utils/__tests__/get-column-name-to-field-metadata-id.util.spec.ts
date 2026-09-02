@@ -1,4 +1,8 @@
-import { FieldMetadataType, ObjectOpenRecordIn } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  MetadataWritability,
+  ObjectOpenRecordIn,
+} from 'twenty-shared/types';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -26,10 +30,12 @@ describe('getColumnNameToFieldMetadataIdMap', () => {
     universalIdentifier: 'test-object-id',
     indexMetadataIds: [],
     searchFieldMetadataIds: [],
+    commandMenuItemIds: [],
     objectPermissionIds: [],
     fieldPermissionIds: [],
     fieldIds,
     viewIds: [],
+    pageLayoutIds: [],
     applicationId: 'test-application-id',
     isLabelSyncedWithName: false,
     createdAt: new Date().toISOString(),
@@ -39,6 +45,7 @@ describe('getColumnNameToFieldMetadataIdMap', () => {
     overrides: null,
     isUIEditable: true,
     isUICreatable: true,
+    writability: MetadataWritability.OPEN,
     openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
     labelIdentifierFieldMetadataId: null,
     imageIdentifierFieldMetadataId: null,
@@ -48,8 +55,10 @@ describe('getColumnNameToFieldMetadataIdMap', () => {
     objectPermissionUniversalIdentifiers: [],
     fieldPermissionUniversalIdentifiers: [],
     viewUniversalIdentifiers: [],
+    pageLayoutUniversalIdentifiers: [],
     indexMetadataUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
+    commandMenuItemUniversalIdentifiers: [],
     labelIdentifierFieldMetadataUniversalIdentifier: null,
     imageIdentifierFieldMetadataUniversalIdentifier: null,
   });

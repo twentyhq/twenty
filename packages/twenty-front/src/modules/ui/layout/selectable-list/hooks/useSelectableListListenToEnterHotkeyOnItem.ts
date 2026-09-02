@@ -38,6 +38,6 @@ export const useSelectableListListenToEnterHotkeyOnItem = ({
     keys: Key.Enter,
     callback: handleEnterKey,
     focusId,
-    dependencies: [itemId, onEnter],
+    dependencies: [handleEnterKey],
   });
 };

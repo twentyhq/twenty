@@ -1,0 +1,40 @@
+import { SidePanelPages } from 'twenty-shared/types';
+import { useIsMobile } from 'twenty-ui/utilities';
+
+import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
+import { useExpandAskAiSidePanelPage } from '@/side-panel/pages/ask-ai/hooks/useExpandAskAiSidePanelPage';
+import { useExpandRecordSidePanelPage } from '@/side-panel/routing/hooks/useExpandRecordSidePanelPage';
+import { useExpandRichTextSidePanelPage } from '@/side-panel/pages/rich-text-page/hooks/useExpandRichTextSidePanelPage';
+import { useExpandRoutedSidePanelPage } from '@/side-panel/routing/hooks/useExpandRoutedSidePanelPage';
+import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
+import { type SidePanelExpandTarget } from '@/side-panel/types/SidePanelExpandTarget';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+
+export const useSidePanelExpandTarget = (): SidePanelExpandTarget | null => {
+  const sidePanelPage = useAtomStateValue(sidePanelPageInfoSelector).page;
+  const { hasSidePanelSubPages } = useSidePanelSubPageHistory();
+  const isMobile = useIsMobile();
+
+  const askAiExpandTarget = useExpandAskAiSidePanelPage();
+  const recordExpandTarget = useExpandRecordSidePanelPage();
+  const richTextExpandTarget = useExpandRichTextSidePanelPage();
+  const routedExpandTarget = useExpandRoutedSidePanelPage();
+
+  // On mobile the panel already fills the viewport, so there is nothing to
+  // expand into. A sub page has taken over the panel content, so expanding the
+  // page underneath it would discard what the user is currently doing.
+  if (isMobile || hasSidePanelSubPages) {
+    return null;
+  }
+
+  switch (sidePanelPage) {
+    case SidePanelPages.AskAI:
+      return askAiExpandTarget;
+    case SidePanelPages.EditRichText:
+      return richTextExpandTarget;
+    case SidePanelPages.RoutedPage:
+      return recordExpandTarget ?? routedExpandTarget;
+    default:
+      return null;
+  }
+};

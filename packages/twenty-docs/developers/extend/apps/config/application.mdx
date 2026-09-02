@@ -21,6 +21,7 @@ export default defineApplication({
   applicationVariables: {
     DEFAULT_RECIPIENT_NAME: {
       universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      label: 'Default recipient name',
       description: 'Default recipient name for postcards',
       value: 'Jane Doe',
       isSecret: false,
@@ -31,11 +32,13 @@ export default defineApplication({
 
 Notes:
 - `universalIdentifier` fields are deterministic IDs you own. Generate them once and keep them stable across syncs.
+- `applicationVariables` accept an optional `label` — a user-friendly name displayed in the app's settings page instead of the raw variable key.
 - `applicationVariables` become environment variables for your functions and front components. In logic functions (server-side), they are available as `process.env.VARIABLE_NAME`. In front components, use `getApplicationVariable('VARIABLE_NAME')` from `twenty-sdk/front-component`. Variables marked with `isSecret: true` are only injected into logic functions. Front components receive only non-secret variables.
 - The default role is detected automatically from the role file marked with [`defineApplicationRole()`](/developers/extend/apps/config/roles) — you do not need to reference it from `defineApplication()`.
 - Pre-install, post-install, and uninstall functions are detected automatically during the manifest build — you do not need to reference them in `defineApplication()`.
 - Passing `defaultRoleUniversalIdentifier` explicitly is still supported for backward compatibility, but is deprecated in favor of `defineApplicationRole()`.
 - `serverVariables` are instance-scoped configuration and secrets (e.g. API keys). Unlike `applicationVariables`, they declare no value in the manifest — the workspace operator fills them in from the app's settings, and they are injected into logic functions only once set.
+- Both kinds of variable accept `isDeprecated: true`. Use it to retire a variable instead of deleting it: keeping the key declared preserves the stored value (deleting it destroys the value the operator entered), and the variable is still injected, so your code can fall back to it — `process.env.NEW_API_KEY ?? process.env.API_KEY`. A deprecated variable disappears from the app's settings once it has no value, and never counts toward the app's configuration check, so `isDeprecated` beats `isRequired`.
 - To render a custom configuration UI inside the app's **Settings** tab (in place of the default variable configuration section), declare a front component with [`defineSettingsFrontComponent()`](/developers/extend/apps/layout/front-components#custom-settings-component) in its own file. Only one is allowed per app. System-managed sections (auto-upgrade, App URL, connections) always remain visible.
 
 ## Variable types
@@ -95,7 +98,7 @@ The same applies to front components reading values via `getApplicationVariable(
 
 The role declared with [`defineApplicationRole()`](/developers/extend/apps/config/roles) controls what the app's logic functions and front components can access:
 
-- The runtime token injected as `TWENTY_APP_ACCESS_TOKEN` is derived from this role.
+- The runtime tokens injected into your logic functions are derived from this role. A call acting as a person is further narrowed to what that person can do, so it can never exceed either one. See [Whose access a call uses](/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 - The typed API client is restricted to the permissions granted to that role.
 - Follow least-privilege: declare only the permissions your functions need.
 

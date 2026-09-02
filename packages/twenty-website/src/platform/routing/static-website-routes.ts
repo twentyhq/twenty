@@ -86,21 +86,12 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
   },
   {
     changeFrequency: 'monthly',
-    description: msg`Find a certified Twenty partner to migrate, customise, and operate your open source CRM, or join the ecosystem and grow your practice with us.`,
+    description: msg`Tell us what you need and get matched with a certified Twenty partner in 48 hours, or browse the directory of agencies and consultants who migrate, customise, and operate the open source CRM.`,
     id: 'partners',
     indexed: true,
     path: '/partners',
     priority: 0.7,
-    title: msg`Twenty Partners — Certified Open Source CRM Implementers`,
-  },
-  {
-    changeFrequency: 'weekly',
-    description: msg`Browse Twenty's certified partners — the agencies and individuals who migrate, customise, host, and support the open source CRM across regions, languages, and deployment models.`,
-    id: 'partnersList',
-    indexed: true,
-    path: '/partners/list',
-    priority: 0.6,
-    title: msg`Find a Twenty Partner — Open Source CRM Marketplace`,
+    title: msg`Find a Twenty Partner — Certified Open Source CRM Experts`,
   },
   {
     // The application form: noindex (a utility route, excluded from the
@@ -112,6 +103,15 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     path: '/partners/apply',
     priority: 0.3,
     title: msg`Become a Twenty Partner — Apply`,
+  },
+  {
+    changeFrequency: 'monthly',
+    description: msg`Join the Twenty partner ecosystem: implement, migrate, and support the #1 open source CRM, and grow your practice with the teams building it.`,
+    id: 'partnersBecome',
+    indexed: true,
+    path: '/partners/become',
+    priority: 0.6,
+    title: msg`Become a Twenty Partner — Join the Open Source CRM Ecosystem`,
   },
   {
     changeFrequency: 'yearly',

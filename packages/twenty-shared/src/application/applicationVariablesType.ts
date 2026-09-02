@@ -32,8 +32,10 @@ export type ApplicationVariableValue =
   | null;
 
 type TypedApplicationVariable = {
+  label?: string;
   type?: ApplicationVariableType;
   options?: ApplicationVariableOption[];
+  isDeprecated?: boolean;
 };
 
 type SecretApplicationVariable = SyncableEntityOptions &

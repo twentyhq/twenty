@@ -1,5 +1,6 @@
 import {
   FieldMetadataType,
+  MetadataWritability,
   ObjectOpenRecordIn,
   type ObjectRecord,
 } from 'twenty-shared/types';
@@ -30,10 +31,12 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     universalIdentifier: 'test-object-id',
     indexMetadataIds: [],
     searchFieldMetadataIds: [],
+    commandMenuItemIds: [],
     objectPermissionIds: [],
     fieldPermissionIds: [],
     fieldIds,
     viewIds: [],
+    pageLayoutIds: [],
     applicationId: 'test-application-id',
     isLabelSyncedWithName: false,
     createdAt: new Date().toISOString(),
@@ -43,6 +46,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     overrides: null,
     isUIEditable: true,
     isUICreatable: true,
+    writability: MetadataWritability.OPEN,
     openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
     labelIdentifierFieldMetadataId: null,
     imageIdentifierFieldMetadataId: null,
@@ -52,8 +56,10 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     objectPermissionUniversalIdentifiers: [],
     fieldPermissionUniversalIdentifiers: [],
     viewUniversalIdentifiers: [],
+    pageLayoutUniversalIdentifiers: [],
     indexMetadataUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
+    commandMenuItemUniversalIdentifiers: [],
     labelIdentifierFieldMetadataUniversalIdentifier: null,
     imageIdentifierFieldMetadataUniversalIdentifier: null,
   });

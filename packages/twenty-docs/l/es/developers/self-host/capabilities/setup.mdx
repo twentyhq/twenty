@@ -393,17 +393,23 @@ Solo es relevante si no permites que el back-end sirva el front-end. Las impleme
 no necesitan nada aquí.
 
 Declara cada origen de navegador que se comunique con la API, separados por comas. `SERVER_URL`
-y `FRONTEND_URL` ya son de confianza.
+y `FRONTEND_URL` ya son de confianza. El servidor registra una advertencia cuando un navegador
+lo llama desde un origen no declarado.
 
 ```bash
 AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
 ```
 
 <Warning>
-Actualizar a una versión con sesiones mediante cookies hace que esto sea obligatorio. El front-end
-ahora envía credenciales en cada solicitud, y los navegadores rechazan una respuesta con credenciales
-desde un origen no declarado, por lo que la aplicación no se carga hasta que configures esto.
+El front-end envía credenciales en cada solicitud, y los navegadores rechazan una
+respuesta con credenciales desde un origen no declarado, por lo que la aplicación no se carga hasta
+que configures esto.
 </Warning>
 
 Si los dos hosts están en dominios registrables diferentes (no solo en
 subdominios distintos), también establece `AUTH_COOKIE_SAME_SITE=none`, lo cual requiere HTTPS.
+
+Con varios espacios de trabajo habilitados, no listes aquí todos los subdominios de los espacios de trabajo.
+En su lugar, enruta las rutas de la API (`/graphql`, `/metadata`, `/rest`, `/auth/`,
+`/client-config`, `/file`) al back-end en cada nombre de host de cada espacio de trabajo, de modo que cada
+espacio de trabajo permanezca en el mismo origen — así es como funciona Twenty Cloud.

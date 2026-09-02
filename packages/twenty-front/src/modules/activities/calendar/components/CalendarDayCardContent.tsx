@@ -13,7 +13,7 @@ type CalendarDayCardContentProps = {
 };
 
 const StyledCardContentContainer = styled.div`
-  > * {
+  > div {
     align-items: flex-start;
     display: flex;
     flex-direction: row;

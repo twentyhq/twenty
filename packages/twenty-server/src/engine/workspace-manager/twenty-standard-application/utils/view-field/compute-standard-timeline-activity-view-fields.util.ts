@@ -8,18 +8,19 @@ export const computeStandardTimelineActivityViewFields = (
   args: Omit<CreateStandardViewFieldArgs<'timelineActivity'>, 'context'>,
 ): Record<string, FlatViewField> => {
   return {
-    allTimelineActivitiesName: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'timelineActivity',
-      context: {
-        viewName: 'allTimelineActivities',
-        viewFieldName: 'name',
-        fieldName: 'name',
-        position: 0,
-        isVisible: true,
-        size: 210,
-      },
-    }),
+    allTimelineActivitiesLinkedRecordCachedName:
+      createStandardViewFieldFlatMetadata({
+        ...args,
+        objectName: 'timelineActivity',
+        context: {
+          viewName: 'allTimelineActivities',
+          viewFieldName: 'linkedRecordCachedName',
+          fieldName: 'linkedRecordCachedName',
+          position: 0,
+          isVisible: true,
+          size: 210,
+        },
+      }),
     allTimelineActivitiesHappensAt: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'timelineActivity',

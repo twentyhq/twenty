@@ -6,6 +6,8 @@ import {
 } from 'twenty-shared/types';
 import { type getAppPath } from 'twenty-shared/utils';
 
+import { type FrontComponentStorageType } from '../types/FrontComponentStorageType';
+
 export type NavigateFunction = <T extends AppPath>(
   to: T,
   params?: Parameters<typeof getAppPath<T>>[1],
@@ -13,8 +15,19 @@ export type NavigateFunction = <T extends AppPath>(
   options?: NavigateOptions,
 ) => Promise<void>;
 
-export type OpenSidePanelPageParams =
+type OpenRoutedSidePanelPageParams<T extends AppPath> = {
+  to: T;
+  queryParams?: Record<string, any>;
+  hash?: string;
+  pageTitle?: string;
+  resetNavigationStack?: boolean;
+} & (T extends `${string}:${string}`
+  ? { params: NonNullable<Parameters<typeof getAppPath<T>>[1]> }
+  : { params?: Parameters<typeof getAppPath<T>>[1] });
+
+type OpenPurposeBuiltSidePanelPageParams =
   | {
+      // Deprecated: use `to: AppPath.RecordShowPage` with typed `params`.
       page: SidePanelPages.ViewRecord;
       recordId: string;
       objectNameSingular: string;
@@ -60,19 +73,26 @@ export type OpenSidePanelPageParams =
   | {
       page: Exclude<
         SidePanelPages,
+        | SidePanelPages.RoutedPage
         | SidePanelPages.ViewRecord
         | SidePanelPages.EditRichText
         | SidePanelPages.ComposeEmail
         | SidePanelPages.ViewFrontComponent
         | SidePanelPages.AskAI
+        | SidePanelPages.ViewRecords
+        | SidePanelPages.Copilot
       >;
       pageTitle: string;
       pageIcon?: string;
       shouldResetSearchState?: boolean;
     };
 
-export type OpenSidePanelPageFunction = (
-  params: OpenSidePanelPageParams,
+export type OpenSidePanelPageParams<T extends AppPath = AppPath> =
+  | OpenRoutedSidePanelPageParams<T>
+  | OpenPurposeBuiltSidePanelPageParams;
+
+export type OpenSidePanelPageFunction = <T extends AppPath>(
+  params: OpenSidePanelPageParams<T>,
 ) => Promise<void>;
 
 export type CommandConfirmationModalResult = 'confirm' | 'cancel';
@@ -100,9 +120,50 @@ export type RequestAccessTokenRefreshFunction = () => Promise<string>;
 
 export type CopyToClipboardFunction = (text: string) => Promise<void>;
 
+export type UploadedFrontComponentFile = {
+  fileId: string;
+  path: string;
+  url: string;
+  size: number;
+  mimeType: string;
+};
+
+export type UploadFileParams = {
+  // Uploads target a FILES field so the file can be attached to a record;
+  // anything else would strand it as a temporary orphan.
+  fieldMetadataId: string;
+  fileName?: string;
+};
+
+export type UploadFileFailureReason = 'invalid-params' | 'upload-failed';
+
+export type UploadFileResult =
+  | { status: 'uploaded'; file: UploadedFrontComponentFile }
+  | { status: 'failed'; reason: UploadFileFailureReason };
+
+export type UploadFileFunction = (
+  file: Blob,
+  params: UploadFileParams,
+) => Promise<UploadFileResult>;
+
 export type OpenCommandConfirmationModalHostFunction = (
   params: Parameters<OpenCommandConfirmationModalFunction>[0],
 ) => Promise<void>;
+
+export type StorageSetFunction = (params: {
+  storageType: FrontComponentStorageType;
+  key: string;
+  serializedValue: string;
+}) => Promise<void>;
+
+export type StorageDeleteFunction = (params: {
+  storageType: FrontComponentStorageType;
+  key: string;
+}) => Promise<void>;
+
+export type StorageClearFunction = (params: {
+  storageType: FrontComponentStorageType;
+}) => Promise<void>;
 
 export type FrontComponentHostCommunicationApiStore = {
   navigate?: NavigateFunction;
@@ -114,6 +175,10 @@ export type FrontComponentHostCommunicationApiStore = {
   closeSidePanel?: CloseSidePanelFunction;
   updateProgress?: UpdateProgressFunction;
   copyToClipboard?: CopyToClipboardFunction;
+  uploadFile?: UploadFileFunction;
+  storageSet?: StorageSetFunction;
+  storageDelete?: StorageDeleteFunction;
+  storageClear?: StorageClearFunction;
 };
 
 import { FRONT_COMPONENT_HOST_COMMUNICATION_API_KEY } from '../constants/front-component-host-communication-api-key';

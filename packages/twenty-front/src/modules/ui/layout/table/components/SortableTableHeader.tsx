@@ -4,6 +4,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { IconArrowDown, IconArrowUp, type IconComponent } from 'twenty-ui/icon';
@@ -29,38 +30,31 @@ export const SortableTableHeader = ({
   initialSort?: TableSortValue;
   Icon?: IconComponent;
 }) => {
+  const scopedTableId = useWorkspaceSurfaceScopedComponentInstanceId(tableId);
   const sortedFieldByTable = useAtomFamilyStateValue(
     sortedFieldByTableFamilyState,
     {
-      tableId,
+      tableId: scopedTableId,
     },
   );
   const setSortedFieldByTable = useSetAtomFamilyState(
     sortedFieldByTableFamilyState,
-    { tableId },
+    { tableId: scopedTableId },
   );
 
   const sortValue = sortedFieldByTable ?? initialSort;
 
   const isSortOnThisField = sortValue?.fieldName === fieldName;
 
-  const sortDirection = isSortOnThisField ? sortValue.orderBy : null;
+  const isAsc = isSortOnThisField && sortValue.direction === 'asc';
+  const isDesc = isSortOnThisField && sortValue.direction === 'desc';
 
-  const isAsc =
-    sortDirection === 'AscNullsLast' || sortDirection === 'AscNullsFirst';
-  const isDesc =
-    sortDirection === 'DescNullsLast' || sortDirection === 'DescNullsFirst';
-
-  const isSortActive = isAsc || isDesc;
+  const isSortActive = isSortOnThisField;
 
   const handleClick = () => {
     setSortedFieldByTable({
       fieldName,
-      orderBy: isSortOnThisField
-        ? sortValue.orderBy === 'AscNullsLast'
-          ? 'DescNullsLast'
-          : 'AscNullsLast'
-        : 'DescNullsLast',
+      direction: isDesc ? 'asc' : 'desc',
     });
   };
 

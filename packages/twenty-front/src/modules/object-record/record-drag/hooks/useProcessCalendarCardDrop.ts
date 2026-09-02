@@ -7,25 +7,25 @@ import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar
 import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
 
 import { extractRecordPositions } from '@/object-record/record-drag/utils/extractRecordPositions';
-import { getShiftedRecordCalendarDateTime } from '@/object-record/record-drag/utils/getShiftedRecordCalendarDateTime';
-import { recordIndexCalendarEndFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarEndFieldMetadataIdComponentState';
+import { getShiftedRecordCalendarDateTimeUpdateInput } from '@/object-record/record-drag/utils/getShiftedRecordCalendarDateTimeUpdateInput';
+import { getShiftedRecordCalendarDateUpdateInput } from '@/object-record/record-drag/utils/getShiftedRecordCalendarDateUpdateInput';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { computeNewPositionOfDraggedRecord } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorCallbackState';
-import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
 import { Temporal } from 'temporal-polyfill';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { getDragOperationType } from '@/object-record/record-drag/utils/getDragOperationType';
 
 export const useProcessCalendarCardDrop = () => {
   const store = useStore();
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
-  const { currentView } = useGetCurrentViewOnly();
-  const { updateOneRecord } = useUpdateOneRecord();
-  const recordIndexCalendarEndFieldMetadataId = useAtomComponentStateValue(
-    recordIndexCalendarEndFieldMetadataIdComponentState,
+  const recordIndexCalendarFieldMetadataId = useAtomComponentStateValue(
+    recordIndexCalendarFieldMetadataIdComponentState,
   );
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const { userTimezone } = useUserTimezone();
 
@@ -40,26 +40,26 @@ export const useProcessCalendarCardDrop = () => {
       sourceDate,
       destinationDate,
       destinationIndex,
+      selectedRecordIds,
     }: {
       recordId: string;
       sourceDate: string;
       destinationDate: string;
       destinationIndex: number;
+      selectedRecordIds: string[];
     }) => {
-      if (!currentView?.calendarFieldMetadataId) return;
+      if (!recordIndexCalendarFieldMetadataId) return;
+
+      const dragOperationType = getDragOperationType({
+        draggedRecordId: recordId,
+        selectedRecordIds,
+      });
 
       const destinationPlainDate = Temporal.PlainDate.from(destinationDate);
       const sourcePlainDate = Temporal.PlainDate.from(sourceDate);
 
-      const record = store.get(recordStoreFamilyState.atomFamily(recordId));
-
-      if (!record) return;
-
       const calendarFieldMetadata = objectMetadataItem.fields.find(
-        (field) => field.id === currentView.calendarFieldMetadataId,
-      );
-      const calendarEndFieldMetadata = objectMetadataItem.fields.find(
-        (field) => field.id === recordIndexCalendarEndFieldMetadataId,
+        (field) => field.id === recordIndexCalendarFieldMetadataId,
       );
 
       if (!calendarFieldMetadata) return;
@@ -125,108 +125,56 @@ export const useProcessCalendarCardDrop = () => {
         });
       }
 
-      const currentFieldValue = record[calendarFieldMetadata.name] as
-        | string
-        | undefined;
+      const dayOffset = sourcePlainDate.until(destinationPlainDate).days;
 
-      if (calendarFieldMetadata.type === FieldMetadataType.DATE) {
-        let shiftedStartDate = destinationPlainDate.toString();
-        let shiftedEndDate: string | undefined;
+      const recordIdsToShift =
+        dragOperationType === 'single' ? [recordId] : selectedRecordIds;
 
-        if (isDefined(currentFieldValue)) {
-          try {
-            const currentStartDate = Temporal.PlainDate.from(currentFieldValue);
-            const dayOffset = sourcePlainDate.until(destinationPlainDate).days;
+      for (const idToUpdate of recordIdsToShift) {
+        const recordToShift = store.get(
+          recordStoreFamilyState.atomFamily(idToUpdate),
+        );
 
-            shiftedStartDate = currentStartDate
-              .add({ days: dayOffset })
-              .toString();
-
-            if (calendarEndFieldMetadata?.type === FieldMetadataType.DATE) {
-              const currentEndFieldValue = record[
-                calendarEndFieldMetadata.name
-              ] as string | undefined;
-
-              if (isDefined(currentEndFieldValue)) {
-                const currentEndDate =
-                  Temporal.PlainDate.from(currentEndFieldValue);
-
-                if (
-                  Temporal.PlainDate.compare(
-                    currentEndDate,
-                    currentStartDate,
-                  ) >= 0
-                ) {
-                  shiftedEndDate = currentEndDate
-                    .add({ days: dayOffset })
-                    .toString();
-                }
-              }
-            }
-          } catch {
-            shiftedStartDate = destinationPlainDate.toString();
-            shiftedEndDate = undefined;
-          }
+        if (!isDefined(recordToShift)) {
+          continue;
         }
+        const updateOneRecordInput =
+          calendarFieldMetadata.type === FieldMetadataType.DATE
+            ? getShiftedRecordCalendarDateUpdateInput({
+                record: recordToShift,
+                calendarFieldName: calendarFieldMetadata.name,
+                dayOffset,
+                fallbackStartDate: destinationPlainDate.toString(),
+              })
+            : getShiftedRecordCalendarDateTimeUpdateInput({
+                record: recordToShift,
+                calendarFieldName: calendarFieldMetadata.name,
+                dayOffset,
+                timeZone: userTimezone,
+                fallbackStartDateTime: destinationPlainDate
+                  .toZonedDateTime({ timeZone: userTimezone })
+                  .toInstant()
+                  .toString(),
+              });
 
         await updateOneRecord({
           objectNameSingular: objectMetadataItem.nameSingular,
-          idToUpdate: recordId,
+          idToUpdate,
           updateOneRecordInput: {
-            [calendarFieldMetadata.name]: shiftedStartDate,
-            ...(isDefined(calendarEndFieldMetadata) &&
-              isDefined(shiftedEndDate) && {
-                [calendarEndFieldMetadata.name]: shiftedEndDate,
-              }),
-            position: newPosition,
-          },
-        });
-      } else if (calendarFieldMetadata.type === FieldMetadataType.DATE_TIME) {
-        let shiftedDateTime = null;
-
-        if (isDefined(currentFieldValue)) {
-          shiftedDateTime = getShiftedRecordCalendarDateTime({
-            sourceDay: sourcePlainDate,
-            destinationDay: destinationPlainDate,
-            startDateTime: currentFieldValue,
-            endDateTime:
-              calendarEndFieldMetadata?.type === FieldMetadataType.DATE_TIME
-                ? record[calendarEndFieldMetadata.name]
-                : undefined,
-            timeZone: userTimezone,
-          });
-        }
-
-        const shiftedStartDateTime =
-          shiftedDateTime?.startDateTime ??
-          destinationPlainDate
-            .toZonedDateTime({ timeZone: userTimezone })
-            .toInstant()
-            .toString();
-
-        await updateOneRecord({
-          objectNameSingular: objectMetadataItem.nameSingular,
-          idToUpdate: recordId,
-          updateOneRecordInput: {
-            [calendarFieldMetadata.name]: shiftedStartDateTime,
-            ...(isDefined(calendarEndFieldMetadata) &&
-              isDefined(shiftedDateTime?.endDateTime) && {
-                [calendarEndFieldMetadata.name]: shiftedDateTime.endDateTime,
-              }),
-            position: newPosition,
+            ...updateOneRecordInput,
+            ...(idToUpdate === recordId && { position: newPosition }),
           },
         });
       }
     },
     [
       store,
-      currentView,
+      recordIndexCalendarFieldMetadataId,
       objectMetadataItem.nameSingular,
       objectMetadataItem.fields,
       calendarDayRecordIdsSelector,
       userTimezone,
       updateOneRecord,
-      recordIndexCalendarEndFieldMetadataId,
     ],
   );
 

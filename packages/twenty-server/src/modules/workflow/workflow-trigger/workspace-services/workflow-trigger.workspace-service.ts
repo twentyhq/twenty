@@ -1,19 +1,22 @@
 import { msg } from '@lingui/core/macro';
 import { Injectable, Logger } from '@nestjs/common';
-import { type ActorMetadata } from 'twenty-shared/types';
+import {
+  type ActorMetadata,
+  CommandMenuItemAvailabilityType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { buildCoreDispatchIds } from 'src/engine/core-modules/workflow/utils/build-core-dispatch-ids.util';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
-import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
@@ -55,7 +58,7 @@ export class WorkflowTriggerWorkspaceService {
   private readonly logger = new Logger(WorkflowTriggerWorkspaceService.name);
 
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly codeStepBuildService: CodeStepBuildService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
@@ -100,73 +103,65 @@ export class WorkflowTriggerWorkspaceService {
   ) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const workflowVersionRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspaceId,
-            'workflowVersion',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        const workflowVersionNullable = await workflowVersionRepository.findOne(
-          {
-            where: { id: workflowVersionId },
-          },
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowVersionRepository =
+        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          'workflowVersion',
+          { shouldBypassPermissionChecks: true },
         );
 
-        const workflowVersion =
-          await this.workflowCommonWorkspaceService.getValidWorkflowVersionOrFail(
-            workflowVersionNullable,
-          );
+      const workflowVersionNullable = await workflowVersionRepository.findOne({
+        where: { id: workflowVersionId },
+      });
 
-        const workflowRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-            workspaceId,
-            'workflow',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        const workflow = await workflowRepository.findOne({
-          where: { id: workflowVersion.workflowId },
-        });
-
-        if (!workflow) {
-          throw new WorkflowTriggerException(
-            'No workflow found',
-            WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
-          );
-        }
-
-        assertVersionCanBeActivated(workflowVersion, workflow);
-
-        await this.assertPickRecordLoadBalanceConfigIsValid({
-          steps: workflowVersion.steps ?? [],
-          workspaceId,
-        });
-
-        await this.codeStepBuildService.buildCodeStepsFromSourceForSteps({
-          workspaceId,
-          steps: workflowVersion.steps ?? [],
-        });
-
-        await this.codeStepBuildService.switchCodeStepLogicFunctionsToPrebuilt({
-          workspaceId,
-          steps: workflowVersion.steps ?? [],
-        });
-
-        await this.performActivationSteps(
-          workflow,
-          workflowVersion,
-          workflowRepository,
-          workflowVersionRepository,
-          workspaceId,
+      const workflowVersion =
+        await this.workflowCommonWorkspaceService.getValidWorkflowVersionOrFail(
+          workflowVersionNullable,
         );
 
-        return true;
-      },
-      authContext,
-    );
+      const workflowRepository =
+        this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+          'workflow',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const workflow = await workflowRepository.findOne({
+        where: { id: workflowVersion.workflowId },
+      });
+
+      if (!workflow) {
+        throw new WorkflowTriggerException(
+          'No workflow found',
+          WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
+        );
+      }
+
+      assertVersionCanBeActivated(workflowVersion, workflow);
+
+      await this.assertPickRecordLoadBalanceConfigIsValid({
+        steps: workflowVersion.steps ?? [],
+        workspaceId,
+      });
+
+      await this.codeStepBuildService.buildCodeStepsFromSourceForSteps({
+        workspaceId,
+        steps: workflowVersion.steps ?? [],
+      });
+
+      await this.codeStepBuildService.switchCodeStepLogicFunctionsToPrebuilt({
+        workspaceId,
+        steps: workflowVersion.steps ?? [],
+      });
+
+      await this.performActivationSteps(
+        workflow,
+        workflowVersion,
+        workflowVersionRepository,
+        workspaceId,
+      );
+
+      return true;
+    }, authContext);
   }
 
   private async assertPickRecordLoadBalanceConfigIsValid({
@@ -210,25 +205,21 @@ export class WorkflowTriggerWorkspaceService {
   ) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const workflowVersionRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspaceId,
-            'workflowVersion',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        await this.performDeactivationSteps(
-          workflowVersionId,
-          workflowVersionRepository,
-          workspaceId,
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowVersionRepository =
+        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          'workflowVersion',
+          { shouldBypassPermissionChecks: true },
         );
 
-        return true;
-      },
-      authContext,
-    );
+      await this.performDeactivationSteps(
+        workflowVersionId,
+        workflowVersionRepository,
+        workspaceId,
+      );
+
+      return true;
+    }, authContext);
   }
 
   async stopWorkflowRun(workflowRunId: string, workspaceId: string) {
@@ -248,29 +239,35 @@ export class WorkflowTriggerWorkspaceService {
   private async mirrorVersionStatusChangeInTransaction(
     workflowVersionId: string,
     workspaceId: string,
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
-    entityManager: WorkspaceEntityManager,
-  ): Promise<void> {
-    const workflowVersion = await workflowVersionRepository.findOne(
-      { where: { id: workflowVersionId } },
-      entityManager,
-    );
+    transactionScope: WorkspaceTransactionScope,
+  ): Promise<string | null> {
+    const workflowVersion = await transactionScope
+      .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
+        shouldBypassPermissionChecks: true,
+      })
+      .findOne({ where: { id: workflowVersionId } });
 
     if (!isDefined(workflowVersion)) {
-      return;
+      return null;
     }
 
-    await this.workflowVersionCoreSyncService.mirrorWorkflowVersionWrite({
-      workspaceId,
-      entityManager,
-      workflowVersion,
-    });
+    const mirrorResult =
+      await this.workflowVersionCoreSyncService.mirrorWorkflowVersionWrite({
+        workspaceId,
+        transactionScope,
+        workflowVersion,
+      });
+
+    return (
+      mirrorResult?.coreWorkflowVersionId ??
+      workflowVersion.coreWorkflowVersionId ??
+      null
+    );
   }
 
   private async performActivationSteps(
     workflow: WorkflowWorkspaceEntity,
     workflowVersion: WorkflowVersionWorkspaceEntity,
-    workflowRepository: WorkspaceRepository<WorkflowWorkspaceEntity>,
     workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
     workspaceId: string,
   ) {
@@ -293,88 +290,74 @@ export class WorkflowTriggerWorkspaceService {
       workspaceId,
     );
 
-    const workspaceDataSource =
-      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
-
-    const queryRunner = workspaceDataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      if (workflow.lastPublishedVersionId !== workflowVersion.id) {
-        if (workflow.lastPublishedVersionId) {
-          await workflowVersionRepository.update(
-            { id: workflow.lastPublishedVersionId },
-            { status: WorkflowVersionStatus.ARCHIVED },
-            undefined,
-            queryRunner.manager,
+    await this.workspaceOrmManager.runInWorkspaceTransaction(
+      async (transactionScope) => {
+        const transactionalWorkflowRepository =
+          transactionScope.getRepository<WorkflowWorkspaceEntity>('workflow', {
+            shouldBypassPermissionChecks: true,
+          });
+        const transactionalWorkflowVersionRepository =
+          transactionScope.getRepository<WorkflowVersionWorkspaceEntity>(
+            'workflowVersion',
+            { shouldBypassPermissionChecks: true },
           );
 
-          await this.mirrorVersionStatusChangeInTransaction(
-            workflow.lastPublishedVersionId,
-            workspaceId,
-            workflowVersionRepository,
-            queryRunner.manager,
+        if (workflow.lastPublishedVersionId !== workflowVersion.id) {
+          if (workflow.lastPublishedVersionId) {
+            await transactionalWorkflowVersionRepository.update(
+              { id: workflow.lastPublishedVersionId },
+              { status: WorkflowVersionStatus.ARCHIVED },
+            );
+
+            await this.mirrorVersionStatusChangeInTransaction(
+              workflow.lastPublishedVersionId,
+              workspaceId,
+              transactionScope,
+            );
+          }
+
+          await transactionalWorkflowRepository.update(
+            { id: workflow.id },
+            { lastPublishedVersionId: workflowVersion.id },
           );
         }
 
-        await workflowRepository.update(
-          { id: workflow.id },
-          { lastPublishedVersionId: workflowVersion.id },
-          undefined,
-          queryRunner.manager,
+        const activeWorkflowVersions =
+          await transactionalWorkflowVersionRepository.find({
+            where: {
+              workflowId: workflowVersion.workflowId,
+              status: WorkflowVersionStatus.ACTIVE,
+            },
+          });
+
+        if (activeWorkflowVersions.length > 0) {
+          throw new WorkflowTriggerException(
+            'Cannot have more than one active workflow version',
+            WorkflowTriggerExceptionCode.FORBIDDEN,
+            {
+              userFriendlyMessage: msg`Cannot have more than one active workflow version`,
+            },
+          );
+        }
+
+        await transactionalWorkflowVersionRepository.update(
+          { id: workflowVersion.id },
+          { status: WorkflowVersionStatus.ACTIVE },
         );
-      }
 
-      const activeWorkflowVersions = await workflowVersionRepository.find(
-        {
-          where: {
-            workflowId: workflowVersion.workflowId,
-            status: WorkflowVersionStatus.ACTIVE,
-          },
-        },
-        queryRunner.manager,
-      );
+        const mirroredCoreWorkflowVersionId =
+          await this.mirrorVersionStatusChangeInTransaction(
+            workflowVersion.id,
+            workspaceId,
+            transactionScope,
+          );
 
-      if (activeWorkflowVersions.length > 0) {
-        throw new WorkflowTriggerException(
-          'Cannot have more than one active workflow version',
-          WorkflowTriggerExceptionCode.FORBIDDEN,
-          {
-            userFriendlyMessage: msg`Cannot have more than one active workflow version`,
-          },
-        );
-      }
-
-      await workflowVersionRepository.update(
-        { id: workflowVersion.id },
-        { status: WorkflowVersionStatus.ACTIVE },
-        undefined,
-        queryRunner.manager,
-      );
-
-      await this.mirrorVersionStatusChangeInTransaction(
-        workflowVersion.id,
-        workspaceId,
-        workflowVersionRepository,
-        queryRunner.manager,
-      );
-
-      await this.enableAutomatedTrigger(workflowVersion, workspaceId, {
-        entityManager: queryRunner.manager,
-      });
-
-      await queryRunner.commitTransaction();
-    } catch (error) {
-      if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
-      }
-
-      throw error;
-    } finally {
-      await queryRunner.release();
-    }
+        await this.enableAutomatedTrigger(workflowVersion, workspaceId, {
+          transactionScope,
+          coreWorkflowVersionId: mirroredCoreWorkflowVersionId,
+        });
+      },
+    );
 
     await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
       workspaceId,
@@ -407,43 +390,28 @@ export class WorkflowTriggerWorkspaceService {
 
     await this.deleteCommandMenuItem(workflowVersion, workspaceId);
 
-    const workspaceDataSource =
-      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+    await this.workspaceOrmManager.runInWorkspaceTransaction(
+      async (transactionScope) => {
+        await transactionScope
+          .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
+            shouldBypassPermissionChecks: true,
+          })
+          .update(
+            { id: workflowVersion.id },
+            { status: WorkflowVersionStatus.DEACTIVATED },
+          );
 
-    const queryRunner = workspaceDataSource.createQueryRunner();
+        await this.mirrorVersionStatusChangeInTransaction(
+          workflowVersion.id,
+          workspaceId,
+          transactionScope,
+        );
 
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      await workflowVersionRepository.update(
-        { id: workflowVersion.id },
-        { status: WorkflowVersionStatus.DEACTIVATED },
-        undefined,
-        queryRunner.manager,
-      );
-
-      await this.mirrorVersionStatusChangeInTransaction(
-        workflowVersion.id,
-        workspaceId,
-        workflowVersionRepository,
-        queryRunner.manager,
-      );
-
-      await this.disableAutomatedTrigger(workflowVersion, workspaceId, {
-        entityManager: queryRunner.manager,
-      });
-
-      await queryRunner.commitTransaction();
-    } catch (error) {
-      if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
-      }
-
-      throw error;
-    } finally {
-      await queryRunner.release();
-    }
+        await this.disableAutomatedTrigger(workflowVersion, workspaceId, {
+          transactionScope,
+        });
+      },
+    );
 
     await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
       workspaceId,
@@ -583,7 +551,8 @@ export class WorkflowTriggerWorkspaceService {
     workflowVersion: WorkflowVersionWorkspaceEntity,
     workspaceId: string,
     transactionContext?: {
-      entityManager: WorkspaceEntityManager;
+      transactionScope: WorkspaceTransactionScope;
+      coreWorkflowVersionId?: string | null;
     },
   ) {
     assertWorkflowVersionTriggerIsDefined(workflowVersion);
@@ -601,7 +570,7 @@ export class WorkflowTriggerWorkspaceService {
           type: AutomatedTriggerType.DATABASE_EVENT,
           settings,
           workspaceId,
-          entityManager: transactionContext?.entityManager,
+          transactionScope: transactionContext?.transactionScope,
         });
 
         return;
@@ -614,13 +583,19 @@ export class WorkflowTriggerWorkspaceService {
           type: AutomatedTriggerType.CRON,
           settings: { pattern },
           workspaceId,
-          entityManager: transactionContext?.entityManager,
+          transactionScope: transactionContext?.transactionScope,
         });
 
         const cachedTrigger: CachedCronTrigger = {
           workspaceId,
           workflowId: workflowVersion.workflowId,
           pattern,
+          ...buildCoreDispatchIds({
+            coreWorkflowVersionId:
+              transactionContext?.coreWorkflowVersionId ??
+              workflowVersion.coreWorkflowVersionId,
+            workspaceWorkflowVersionId: workflowVersion.id,
+          }),
         };
 
         await this.cacheStorageService.hashSetIfExists({
@@ -640,7 +615,7 @@ export class WorkflowTriggerWorkspaceService {
     workflowVersion: WorkflowVersionWorkspaceEntity,
     workspaceId: string,
     transactionContext?: {
-      entityManager: WorkspaceEntityManager;
+      transactionScope: WorkspaceTransactionScope;
     },
   ) {
     assertWorkflowVersionTriggerIsDefined(workflowVersion);
@@ -650,7 +625,7 @@ export class WorkflowTriggerWorkspaceService {
         await this.automatedTriggerWorkspaceService.deleteAutomatedTrigger({
           workflowId: workflowVersion.workflowId,
           workspaceId,
-          entityManager: transactionContext?.entityManager,
+          transactionScope: transactionContext?.transactionScope,
         });
 
         return;
@@ -658,7 +633,7 @@ export class WorkflowTriggerWorkspaceService {
         await this.automatedTriggerWorkspaceService.deleteAutomatedTrigger({
           workflowId: workflowVersion.workflowId,
           workspaceId,
-          entityManager: transactionContext?.entityManager,
+          transactionScope: transactionContext?.transactionScope,
         });
 
         await this.cacheStorageService.hashDelete({

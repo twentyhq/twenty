@@ -19,6 +19,8 @@ import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
+import { useIsRecordTableWidgetAggregateNonInteractive } from '@/object-record/record-table-widget/hooks/useIsRecordTableWidgetAggregateNonInteractive';
+import { isRecordBoardCellsNonEditableComponentState } from '@/object-record/record-board/states/isRecordBoardCellsNonEditableComponentState';
 import { isRecordBoardViewSettingsReadOnlyComponentState } from '@/object-record/record-board/states/isRecordBoardViewSettingsReadOnlyComponentState';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -32,9 +34,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 
-const StyledHeader = styled.div`
+const StyledHeader = styled.div<{ isReadOnly: boolean }>`
   align-items: center;
-  cursor: pointer;
+  cursor: ${({ isReadOnly }) => (isReadOnly ? 'default' : 'pointer')};
   display: flex;
   flex-direction: row;
   height: 100%;
@@ -146,18 +148,31 @@ export const RecordBoardColumnHeader = () => {
     objectMetadataItem.id,
   );
 
+  const recordTableWidgetContext = useContext(RecordTableWidgetContext);
+
   // Creating in a nested relation widget requires picking the related record
   // to create through, which only the table layout offers today.
-  const nestedRelationCreateThrough = useContext(
-    RecordTableWidgetContext,
-  )?.nestedRelationCreateThrough;
+  const nestedRelationCreateThrough =
+    recordTableWidgetContext?.nestedRelationCreateThrough;
+
+  const isRecordBoardCellsNonEditable = useAtomComponentStateValue(
+    isRecordBoardCellsNonEditableComponentState,
+  );
 
   const canCreateRecords =
     !isDefined(nestedRelationCreateThrough) &&
+    !isRecordBoardCellsNonEditable &&
     canCreateRecordsForObjectMetadataItem({
       objectPermissions,
       objectMetadataItem,
     });
+
+  const isAggregateDropdownNonInteractive =
+    useIsRecordTableWidgetAggregateNonInteractive() ?? false;
+
+  const isColumnResizable = isDefined(recordTableWidgetContext)
+    ? recordTableWidgetContext.isPageLayoutInEditMode
+    : !isRecordBoardViewSettingsReadOnly;
 
   const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
     hasAnySoftDeleteFilterOnViewComponentSelector,
@@ -196,8 +211,12 @@ export const RecordBoardColumnHeader = () => {
 
   return (
     <StyledColumn data-has-left-border={columnIndex > 0 ? 'true' : undefined}>
-      <DragDropItemSortableHandle fill>
+      <DragDropItemSortableHandle
+        fill
+        disabled={isRecordBoardViewSettingsReadOnly}
+      >
         <StyledHeader
+          isReadOnly={isRecordBoardViewSettingsReadOnly}
           onPointerCancel={handlePointerCancel}
           onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}
@@ -234,8 +253,8 @@ export const RecordBoardColumnHeader = () => {
               </StyledDropdownContainer>
 
               <StyledAggregateDropdownContainer
-                isNonInteractive={isRecordBoardViewSettingsReadOnly}
-                inert={isRecordBoardViewSettingsReadOnly || undefined}
+                isNonInteractive={isAggregateDropdownNonInteractive}
+                inert={isAggregateDropdownNonInteractive || undefined}
               >
                 <RecordGroupAggregateDropdown
                   aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
@@ -272,7 +291,7 @@ export const RecordBoardColumnHeader = () => {
           </StyledHeaderContainer>
         </StyledHeader>
       </DragDropItemSortableHandle>
-      {!isRecordBoardViewSettingsReadOnly && <RecordBoardColumnResizeHandler />}
+      {isColumnResizable && <RecordBoardColumnResizeHandler />}
     </StyledColumn>
   );
 };

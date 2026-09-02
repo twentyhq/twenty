@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { resolveInput } from 'twenty-shared/utils';
-
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import {
@@ -12,6 +10,7 @@ import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowIfElseAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/guards/is-workflow-if-else-action.guard';
+import { resolveStepFilters } from 'src/modules/workflow/workflow-executor/utils/resolve-step-filters.util';
 import { findMatchingBranch } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/utils/find-matching-branch.util';
 
 @Injectable()
@@ -47,11 +46,7 @@ export class IfElseWorkflowAction implements WorkflowAction {
       );
     }
 
-    const resolvedFilters = stepFilters.map((filter) => ({
-      ...filter,
-      rightOperand: resolveInput(filter.value, context),
-      leftOperand: resolveInput(filter.stepOutputKey, context),
-    }));
+    const resolvedFilters = resolveStepFilters({ stepFilters, context });
 
     const matchingBranch = findMatchingBranch({
       branches,

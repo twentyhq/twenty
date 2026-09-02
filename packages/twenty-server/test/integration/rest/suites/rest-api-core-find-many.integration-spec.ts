@@ -7,7 +7,7 @@ import {
 } from 'test/integration/constants/test-person-ids.constants';
 import {
   TEST_PRIMARY_LINK_URL,
-  TEST_PRIMARY_LINK_URL_WIITHOUT_TRAILING_SLASH,
+  TEST_PRIMARY_LINK_URL_AS_DOMAIN,
 } from 'test/integration/constants/test-primary-link-url.constant';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
@@ -74,7 +74,6 @@ describe('Core REST API Find Many endpoint', () => {
     expect(Array.isArray(people)).toBe(true);
     expect(people.length).toBeGreaterThanOrEqual(testPersonIds.length);
 
-    // Check that our test people are included in the results
     for (const personId of testPersonIds) {
       // @ts-expect-error legacy noImplicitAny
       const person = people.find((p) => p.id === personId);
@@ -83,7 +82,6 @@ describe('Core REST API Find Many endpoint', () => {
       expect(person.jobTitle).toBe(testPersonJobTitles[personId]);
     }
 
-    // Check pagination metadata
     expect(pageInfo).toBeDefined();
     expect(pageInfo.startCursor).toBeDefined();
     expect(pageInfo.endCursor).toBeDefined();
@@ -216,12 +214,6 @@ describe('Core REST API Find Many endpoint', () => {
 
   // TODO: Refacto-common - Uncomment this after https://github.com/twentyhq/core-team-issues/issues/1627
 
-  //   it('should fail to filter on a relation field name', async () => {
-  //     const response = await makeRestAPIRequest({
-  //       method: 'get',
-  //       path: `/people?filter=company[in]:["${TEST_COMPANY_1_ID}"]`,
-  //     });
-
   //     expect(response.body).toMatchInlineSnapshot(`
   // {
   //   "error": "BadRequestException",
@@ -310,9 +302,6 @@ describe('Core REST API Find Many endpoint', () => {
 
   // TODO: Uncomment this test when we support composite fields ordering in the rest api
 
-  // it('should support pagination with fullName composite field ordering', async () => {
-  //   await deleteAllRecords('person');
-
   //   const testPeople = [
   //     {
   //       id: TEST_PERSON_1_ID,
@@ -346,123 +335,6 @@ describe('Core REST API Find Many endpoint', () => {
   //     },
   //   ];
 
-  //   for (const person of testPeople) {
-  //     await makeRestAPIRequest({
-  //       method: 'post',
-  //       path: '/people',
-  //       body: {
-  //         id: person.id,
-  //         name: {
-  //           firstName: person.firstName,
-  //           lastName: person.lastName,
-  //         },
-  //       },
-  //     });
-  //   }
-
-  //   const firstPageResponse = await makeRestAPIRequest({
-  //     method: 'get',
-  //     path: '/people?order_by=name[AscNullsLast]&limit=2',
-  //   }).expect(200);
-
-  //   const firstPagePeople = firstPageResponse.body.data.people;
-  //   const firstPageCursor = firstPageResponse.body.pageInfo.endCursor;
-
-  //   expect(firstPagePeople).toHaveLength(2);
-  //   expect(firstPageResponse.body.pageInfo.hasNextPage).toBe(true);
-
-  //   expect(firstPagePeople[0].name.firstName).toBe('Alice');
-  //   expect(firstPagePeople[0].name.lastName).toBe('Brown');
-  //   expect(firstPagePeople[1].name.firstName).toBe('Alice');
-  //   expect(firstPagePeople[1].name.lastName).toBe('Smith');
-
-  //   const secondPageResponse = await makeRestAPIRequest({
-  //     method: 'get',
-  //     path: `/people?order_by=name[AscNullsLast]&limit=2&starting_after=${firstPageCursor}`,
-  //   }).expect(200);
-
-  //   const secondPagePeople = secondPageResponse.body.data.people;
-
-  //   expect(secondPagePeople).toHaveLength(2);
-
-  //   expect(secondPagePeople[0].name.firstName).toBe('Bob');
-  //   expect(secondPagePeople[0].name.lastName).toBe('Johnson');
-  //   expect(secondPagePeople[1].name.firstName).toBe('Bob');
-  //   expect(secondPagePeople[1].name.lastName).toBe('Williams');
-
-  //   const firstPageIds = firstPagePeople.map((p: { id: string }) => p.id);
-  //   const secondPageIds = secondPagePeople.map((p: { id: string }) => p.id);
-  //   const intersection = firstPageIds.filter((id: string) =>
-  //     secondPageIds.includes(id),
-  //   );
-
-  //   expect(intersection).toHaveLength(0);
-
-  //   const thirdPageResponse = await makeRestAPIRequest({
-  //     method: 'get',
-  //     path: `/people?order_by=name[AscNullsLast]&limit=2&starting_after=${secondPageResponse.body.pageInfo.endCursor}`,
-  //   }).expect(200);
-
-  //   const thirdPagePeople = thirdPageResponse.body.data.people;
-
-  //   expect(thirdPagePeople).toHaveLength(1);
-  //   expect(thirdPagePeople[0].name.firstName).toBe('Charlie');
-  //   expect(thirdPagePeople[0].name.lastName).toBe('Davis');
-  //   expect(thirdPageResponse.body.pageInfo.hasNextPage).toBe(false);
-  // });
-
-  // it('should support cursor-based pagination with fullName descending order', async () => {
-  //   const firstPageResponse = await makeRestAPIRequest({
-  //     method: 'get',
-  //     path: '/people?order_by=name[DescNullsLast]&limit=2',
-  //   }).expect(200);
-
-  //   const firstPagePeople = firstPageResponse.body.data.people;
-
-  //   expect(firstPagePeople).toHaveLength(2);
-
-  //   expect(firstPagePeople[0].name.firstName).toBe('Charlie');
-  //   expect(firstPagePeople[0].name.lastName).toBe('Davis');
-  //   expect(firstPagePeople[1].name.firstName).toBe('Bob');
-  //   expect(firstPagePeople[1].name.lastName).toBe('Williams');
-
-  //   const secondPageResponse = await makeRestAPIRequest({
-  //     method: 'get',
-  //     path: `/people?order_by=name[DescNullsLast]&limit=2&starting_after=${firstPageResponse.body.pageInfo.endCursor}`,
-  //   }).expect(200);
-
-  //   const secondPagePeople = secondPageResponse.body.data.people;
-
-  //   expect(secondPagePeople).toHaveLength(2);
-
-  //   expect(secondPagePeople[0].name.firstName).toBe('Bob');
-  //   expect(secondPagePeople[0].name.lastName).toBe('Johnson');
-  //   expect(secondPagePeople[1].name.firstName).toBe('Alice');
-  //   expect(secondPagePeople[1].name.lastName).toBe('Smith');
-  // });
-
-  // it('should support backward pagination with fullName composite field', async () => {
-  //   const allPeopleResponse = await makeRestAPIRequest({
-  //     method: 'get',
-  //     path: '/people?order_by=name.firstName[AscNullsLast],name.lastName[AscNullsLast]',
-  //   }).expect(200);
-
-  //   const allPeople = allPeopleResponse.body.data.people;
-  //   const lastPersonCursor = allPeopleResponse.body.pageInfo.endCursor;
-
-  //   const backwardPageResponse = await makeRestAPIRequest({
-  //     method: 'get',
-  //     path: `/people?order_by=name[AscNullsLast]&limit=2&ending_before=${lastPersonCursor}`,
-  //   }).expect(200);
-
-  //   const backwardPagePeople = backwardPageResponse.body.data.people;
-
-  //   expect(backwardPagePeople).toHaveLength(2);
-
-  //   expect(backwardPagePeople[0].id).toBe(allPeople[allPeople.length - 3].id);
-  //   expect(backwardPagePeople[1].id).toBe(allPeople[allPeople.length - 2].id);
-  // });
-
   it('should support depth 0 parameter', async () => {
     const response = await makeRestAPIRequest({
       method: 'get',
@@ -492,7 +364,7 @@ describe('Core REST API Find Many endpoint', () => {
 
     expect(person.company).toBeDefined();
     expect(person.company.domainName.primaryLinkUrl).toBe(
-      TEST_PRIMARY_LINK_URL_WIITHOUT_TRAILING_SLASH,
+      TEST_PRIMARY_LINK_URL_AS_DOMAIN,
     );
 
     expect(person.company.people).not.toBeDefined();
@@ -503,5 +375,132 @@ describe('Core REST API Find Many endpoint', () => {
       method: 'get',
       path: '/people?depth=2',
     }).expect(400);
+  });
+
+  describe('cursor pagination ordered by a relation field', () => {
+    it('should continue past the first page when depth loads the ordered relation', async () => {
+      const ids: string[] = [];
+      let startingAfter: string | undefined = undefined;
+
+      for (let iteration = 0; iteration < 10; iteration++) {
+        const path: string =
+          '/people?order_by=company.name[AscNullsLast]&limit=2&depth=1' +
+          (startingAfter ? `&starting_after=${startingAfter}` : '');
+        const response = await makeRestAPIRequest({
+          method: 'get',
+          path,
+        }).expect(200);
+
+        ids.push(
+          ...response.body.data.people.map(
+            (person: { id: string }) => person.id,
+          ),
+        );
+
+        if (!response.body.pageInfo.hasNextPage) {
+          break;
+        }
+
+        startingAfter = response.body.pageInfo.endCursor;
+      }
+
+      expect(ids).toHaveLength(testPersonIds.length);
+      expect(new Set(ids).size).toBe(testPersonIds.length);
+    });
+
+    // Cursors read relation orderBy values from the ordering join itself, so
+    // continuation must not require any depth (issue #24333)
+    it('should continue past the first page at depth 0', async () => {
+      const ids: string[] = [];
+      let startingAfter: string | undefined = undefined;
+
+      for (let iteration = 0; iteration < 10; iteration++) {
+        const path: string =
+          '/people?order_by=company.name[AscNullsLast]&limit=2&depth=0' +
+          (startingAfter ? `&starting_after=${startingAfter}` : '');
+        const response = await makeRestAPIRequest({
+          method: 'get',
+          path,
+        }).expect(200);
+
+        ids.push(
+          ...response.body.data.people.map(
+            (person: { id: string }) => person.id,
+          ),
+        );
+
+        if (!response.body.pageInfo.hasNextPage) {
+          break;
+        }
+
+        startingAfter = response.body.pageInfo.endCursor;
+      }
+
+      expect(ids).toHaveLength(testPersonIds.length);
+      expect(new Set(ids).size).toBe(testPersonIds.length);
+    });
+  });
+
+  describe('cursor pagination ordered by a nullable field', () => {
+    const datedOpportunityCloseDates = [
+      '2026-03-01T00:00:00.000Z',
+      '2026-03-02T00:00:00.000Z',
+      '2026-03-03T00:00:00.000Z',
+    ];
+    const opportunityCount = datedOpportunityCloseDates.length + 2;
+
+    beforeAll(async () => {
+      await deleteAllRecords('opportunity');
+
+      for (const [index, closeDate] of datedOpportunityCloseDates.entries()) {
+        await makeRestAPIRequest({
+          method: 'post',
+          path: '/opportunities',
+          body: { name: `REST dated opportunity ${index + 1}`, closeDate },
+        });
+      }
+
+      for (const index of [1, 2]) {
+        await makeRestAPIRequest({
+          method: 'post',
+          path: '/opportunities',
+          body: { name: `REST undated opportunity ${index}` },
+        });
+      }
+    });
+
+    afterAll(async () => {
+      await deleteAllRecords('opportunity');
+    });
+
+    it('should return every record when paginating with starting_after', async () => {
+      const ids: string[] = [];
+      let startingAfter: string | undefined = undefined;
+
+      for (let iteration = 0; iteration < 10; iteration++) {
+        const path: string =
+          '/opportunities?order_by=closeDate[AscNullsLast]&limit=2' +
+          (startingAfter ? `&starting_after=${startingAfter}` : '');
+        const response = await makeRestAPIRequest({
+          method: 'get',
+          path,
+        }).expect(200);
+
+        ids.push(
+          ...response.body.data.opportunities.map(
+            (opportunity: { id: string }) => opportunity.id,
+          ),
+        );
+
+        if (!response.body.pageInfo.hasNextPage) {
+          break;
+        }
+
+        startingAfter = response.body.pageInfo.endCursor;
+      }
+
+      expect(ids).toHaveLength(opportunityCount);
+      expect(new Set(ids).size).toBe(opportunityCount);
+    });
   });
 });

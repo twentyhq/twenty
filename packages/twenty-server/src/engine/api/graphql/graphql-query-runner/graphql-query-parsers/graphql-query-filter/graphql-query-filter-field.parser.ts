@@ -1,9 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import {
-  Brackets,
-  type ObjectLiteral,
-  type WhereExpressionBuilder,
-} from 'typeorm';
+import { Brackets, type WhereExpressionBuilder } from 'typeorm';
 import { compositeTypeDefinitions, RelationType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
@@ -14,6 +10,7 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
+import { assertFieldIsReadableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-field-is-readable-or-throw.util';
 import { resolveFilterKeyFieldMetadata } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/resolve-filter-key-field-metadata.util';
 import { assertArrayOperatorValueIsNonEmptyArray } from 'src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util';
 import { computeWhereConditionParts } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-where-condition-parts';
@@ -21,7 +18,7 @@ import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/fie
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -30,13 +27,13 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 
 import { GraphqlQueryFilterConditionParser } from './graphql-query-filter-condition.parser';
+import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
 export class GraphqlQueryFilterFieldParser {
   private flatObjectMetadata: FlatObjectMetadata;
-  private flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  private flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   private flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
   private fieldIdByName: Record<string, string>;
   private fieldIdByJoinColumnName: Record<string, string>;
@@ -44,7 +41,7 @@ export class GraphqlQueryFilterFieldParser {
 
   constructor(
     flatObjectMetadata: FlatObjectMetadata,
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>,
     depth = 0,
   ) {
@@ -64,7 +61,7 @@ export class GraphqlQueryFilterFieldParser {
 
   public parse(
     queryBuilder: WhereExpressionBuilder,
-    outerQueryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>,
+    outerQueryBuilder: WorkspaceSelectQueryBuilder,
     objectNameSingular: string,
     key: string,
     // oxlint-disable-next-line typescript/no-explicit-any
@@ -87,15 +84,18 @@ export class GraphqlQueryFilterFieldParser {
     const objectPermissions =
       outerQueryBuilder.objectRecordsPermissions[this.flatObjectMetadata.id];
 
-    if (
-      objectPermissions?.canReadObjectRecords === false ||
-      objectPermissions?.restrictedFields[fieldMetadata.id]?.canRead === false
-    ) {
+    if (objectPermissions?.canReadObjectRecords === false) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,
       );
     }
+
+    assertFieldIsReadableOrThrow({
+      objectsPermissions: outerQueryBuilder.objectRecordsPermissions,
+      objectMetadataId: this.flatObjectMetadata.id,
+      fieldMetadataId: fieldMetadata.id,
+    });
 
     if (
       isReferencedByFieldName &&
@@ -144,9 +144,9 @@ export class GraphqlQueryFilterFieldParser {
 
   private parseRelationSubFilter(
     queryBuilder: WhereExpressionBuilder,
-    outerQueryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>,
+    outerQueryBuilder: WorkspaceSelectQueryBuilder,
     parentAlias: string,
-    fieldMetadata: FlatFieldMetadata,
+    fieldMetadata: OrmFlatFieldMetadata,
     filterValue: Partial<ObjectRecordFilter>,
     isFirst: boolean,
   ): void {
@@ -223,7 +223,7 @@ export class GraphqlQueryFilterFieldParser {
 
   private parseCompositeFieldForFilter(
     queryBuilder: WhereExpressionBuilder,
-    fieldMetadata: FlatFieldMetadata,
+    fieldMetadata: OrmFlatFieldMetadata,
     objectNameSingular: string,
     // oxlint-disable-next-line typescript/no-explicit-any
     fieldValue: any,

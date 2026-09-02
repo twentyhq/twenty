@@ -144,23 +144,26 @@ Assim como acontece com campos de sistema escalares, o id resolvido funciona em 
   estão disponíveis a partir da versão 2.26 do `twenty-sdk` e requerem um servidor Twenty na versão 2.26 ou posterior.
 </Note>
 
-O servidor também provisiona uma **visualização de sistema** em cada objeto: a visualização principal de lista (`All {objectLabelPlural}`, com chave `ViewKey.INDEX`), com uma coluna por campo exibível. Assim como os campos de relação de sistema, seus identificadores são derivados **sem usar nomes**, então renomear um objeto ou um campo nunca os altera.
+O servidor também provisiona uma **visualização de sistema** em cada objeto: a visualização principal de lista (`All {objectLabelPlural}`, com chave `ViewKey.INDEX` (derivada com `SYSTEM_VIEW_KEYS.INDEX`)), com uma coluna por campo exibível. Assim como os campos de relação de sistema, seus identificadores são derivados **sem usar nomes**, então renomear um objeto ou um campo nunca os altera.
 
 Use `getSystemViewUniversalIdentifier` para resolvê‑la:
 
 ```ts
-import { getSystemViewUniversalIdentifier, ViewKey } from 'twenty-sdk/define';
+import {
+  getSystemViewUniversalIdentifier,
+  SYSTEM_VIEW_KEYS,
+} from 'twenty-sdk/define';
 
 const rocketIndexViewId = getSystemViewUniversalIdentifier({
   objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
-  viewKey: ViewKey.INDEX,
+  viewKey: SYSTEM_VIEW_KEYS.INDEX,
 });
 ```
 
 * `objectMetadataApplicationUniversalIdentifier` é o aplicativo proprietário do **objeto**, que define o namespace da visualização.
 * `objectUniversalIdentifier` é o objeto que a visualização lista.
-* `viewKey` é a chave da visualização de sistema, hoje `ViewKey.INDEX`.
+* `viewKey` é o discriminador de visualização de sistema: `SYSTEM_VIEW_KEYS.INDEX` para a visualização principal de lista, `SYSTEM_VIEW_KEYS.FIELDS_WIDGET` para a visualização do widget de campos da página de registro. Ele é a chave da derivação; apenas `INDEX` também é armazenado na linha da visualização.
 
 O id resolvido funciona em qualquer lugar em que um `viewUniversalIdentifier` seja esperado, como uma entrada de barra lateral [`NavigationMenuItemType.VIEW`](/l/pt/developers/extend/apps/layout/navigation-menu-items). Para simplesmente abrir a lista principal de um objeto, prefira `NavigationMenuItemType.OBJECT` com `targetObjectUniversalIdentifier`: isso não precisa de derivação.
 

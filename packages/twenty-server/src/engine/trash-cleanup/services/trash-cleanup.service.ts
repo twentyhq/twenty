@@ -6,7 +6,7 @@ import { In, LessThan } from 'typeorm';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { TRASH_CLEANUP_BATCH_SIZE } from 'src/engine/trash-cleanup/constants/trash-cleanup-batch-size.constant';
 import { TRASH_CLEANUP_MAX_RECORDS_PER_WORKSPACE } from 'src/engine/trash-cleanup/constants/trash-cleanup-max-records-per-workspace.constant';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 export type TrashCleanupInput = {
@@ -23,7 +23,7 @@ export class TrashCleanupService {
 
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   async cleanupWorkspaceTrash(input: TrashCleanupInput): Promise<number> {
@@ -101,45 +101,39 @@ export class TrashCleanupService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const repository = await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          objectName,
-          { shouldBypassPermissionChecks: true },
-        );
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const repository = this.workspaceOrmManager.getRepository(objectName, {
+        shouldBypassPermissionChecks: true,
+      });
 
-        let deleted = 0;
+      let deleted = 0;
 
-        while (deleted < remainingQuota) {
-          const take = Math.min(this.batchSize, remainingQuota - deleted);
+      while (deleted < remainingQuota) {
+        const take = Math.min(this.batchSize, remainingQuota - deleted);
 
-          const recordsToDelete = await repository.find({
-            withDeleted: true,
-            select: ['id'],
-            where: {
-              deletedAt: LessThan(cutoffDate),
-            },
-            order: { deletedAt: 'ASC' },
-            take,
-            loadEagerRelations: false,
-          });
+        const recordsToDelete = await repository.find({
+          withDeleted: true,
+          select: ['id'],
+          where: {
+            deletedAt: LessThan(cutoffDate),
+          },
+          order: { deletedAt: 'ASC' },
+          take,
+        });
 
-          if (recordsToDelete.length === 0) {
-            break;
-          }
-
-          await repository.delete({
-            id: In(recordsToDelete.map((record) => record.id)),
-          });
-
-          deleted += recordsToDelete.length;
+        if (recordsToDelete.length === 0) {
+          break;
         }
 
-        return deleted;
-      },
-      authContext,
-    );
+        await repository.delete({
+          id: In(recordsToDelete.map((record) => record.id)),
+        });
+
+        deleted += recordsToDelete.length;
+      }
+
+      return deleted;
+    }, authContext);
   }
 
   private calculateCutoffDate(trashRetentionDays: number): Date {

@@ -72,9 +72,9 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { assertIssuerIsPublishedOrThrow } from 'src/engine/core-modules/auth/utils/assert-issuer-is-published.util';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
-// import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
+import { isEmailInApprovedAccessDomains } from 'src/engine/core-modules/approved-access-domain/utils/is-email-in-approved-access-domains.util';
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
@@ -506,11 +506,17 @@ export class AuthService {
     return { isValid: !!workspace };
   }
 
-  async generateAuthorizationCode(
-    authorizeAppInput: AuthorizeAppInput,
-    user: AuthContextUser,
-    workspace: WorkspaceEntity,
-  ): Promise<AuthorizeAppDTO> {
+  async generateAuthorizationCode({
+    authorizeAppInput,
+    user,
+    workspace,
+    requestBaseUrl,
+  }: {
+    authorizeAppInput: AuthorizeAppInput;
+    user: AuthContextUser;
+    workspace: WorkspaceEntity;
+    requestBaseUrl: string;
+  }): Promise<AuthorizeAppDTO> {
     const { clientId, codeChallenge } = authorizeAppInput;
 
     const applicationRegistration =
@@ -584,7 +590,6 @@ export class AuthService {
       }
     }
 
-    // Validate requested scopes are a subset of the registration's allowed scopes
     const parsedScopes = authorizeAppInput.scope
       ? authorizeAppInput.scope.split(' ').filter(Boolean)
       : [];
@@ -643,6 +648,16 @@ export class AuthService {
     await this.appTokenRepository.save(token);
 
     redirectUriValidation.parsed.searchParams.set('code', authorizationCode);
+
+    const issuer = authorizeAppInput.issuer ?? requestBaseUrl;
+
+    assertIssuerIsPublishedOrThrow({
+      issuer,
+      requestBaseUrl,
+      serverUrl: this.twentyConfigService.get('SERVER_URL'),
+    });
+
+    redirectUriValidation.parsed.searchParams.set('iss', issuer);
 
     if (authorizeAppInput.state) {
       redirectUriValidation.parsed.searchParams.set(
@@ -704,7 +719,6 @@ export class AuthService {
       passwordHash: newPasswordHash,
     });
 
-    // Invalidate all existing refresh tokens for this user across all workspaces
     await this.appTokenRepository.update(
       {
         userId,
@@ -819,7 +833,7 @@ export class AuthService {
     }
 
     if ('email' in params) {
-      qr.andWhere('"appToken".context->>\'email\' = :email', {
+      qr.andWhere('lower("appToken".context->>\'email\') = lower(:email)', {
         email: params.email,
       });
     }
@@ -907,11 +921,14 @@ export class AuthService {
         : userData.existingUser.email;
 
     if (
-      workspace?.approvedAccessDomains.some(
-        (trustDomain) =>
-          trustDomain.isValidated &&
-          trustDomain.domain === getDomainFromEmail(email),
-      )
+      isDefined(workspace) &&
+      isEmailInApprovedAccessDomains({
+        email,
+        approvedAccessDomains: workspace.approvedAccessDomains,
+        isEmailVerificationRequired: this.twentyConfigService.get(
+          'IS_EMAIL_VERIFICATION_REQUIRED',
+        ),
+      })
     ) {
       return;
     }

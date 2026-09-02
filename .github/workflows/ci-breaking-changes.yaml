@@ -544,10 +544,10 @@ jobs:
                   "## 🚨 Removed Endpoints (" + (.missingEndpoints | length | tostring) + ")\n" +
                   (.missingEndpoints | map("- **" + .method + " " + .pathUrl + "**: " + (.summary // "")) | join("\n"))
                 else "" end,
-                if (.changedOperations | length) > 0 then
-                  "\n## ⚠️ Changed Operations (" + (.changedOperations | length | tostring) + ")\n" +
-                  (.changedOperations | map("- **" + .method + " " + .pathUrl + "**: " + (.summary // "Modified operation")) | join("\n"))
-                else "" end,
+                ([(.changedOperations // [])[] | select(.incompatible)] | if length > 0 then
+                  "\n## ⚠️ Incompatible Operations (" + (length | tostring) + ")\n" +
+                  (map("- **" + .httpMethod + " " + .pathUrl + "**: " + (.summary // "Modified operation")) | join("\n"))
+                else "" end),
                 if (.newEndpoints | length) > 0 then
                   "\n## ✅ New Endpoints (" + (.newEndpoints | length | tostring) + ")\n" +
                   (.newEndpoints | map("- " + .method + " " + .pathUrl + ": " + (.summary // "")) | join("\n"))
@@ -615,10 +615,10 @@ jobs:
                   "## 🚨 Removed Endpoints (" + (.missingEndpoints | length | tostring) + ")\n" +
                   (.missingEndpoints | map("- **" + .method + " " + .pathUrl + "**: " + (.summary // "")) | join("\n"))
                 else "" end,
-                if (.changedOperations | length) > 0 then
-                  "\n## ⚠️ Changed Operations (" + (.changedOperations | length | tostring) + ")\n" +
-                  (.changedOperations | map("- **" + .method + " " + .pathUrl + "**: " + (.summary // "Modified operation")) | join("\n"))
-                else "" end,
+                ([(.changedOperations // [])[] | select(.incompatible)] | if length > 0 then
+                  "\n## ⚠️ Incompatible Operations (" + (length | tostring) + ")\n" +
+                  (map("- **" + .httpMethod + " " + .pathUrl + "**: " + (.summary // "Modified operation")) | join("\n"))
+                else "" end),
                 if (.newEndpoints | length) > 0 then
                   "\n## ✅ New Endpoints (" + (.newEndpoints | length | tostring) + ")\n" +
                   (.newEndpoints | map("- " + .method + " " + .pathUrl + ": " + (.summary // "")) | join("\n"))
@@ -682,9 +682,9 @@ jobs:
                   "  Removed endpoints:\n" +
                   (.missingEndpoints | map("    - " + (.method // "?") + " " + (.pathUrl // "?")) | join("\n"))
                 else "" end),
-                (if (.changedOperations | length) > 0 then
-                  "  Changed operations:\n" +
-                  (.changedOperations | map("    - " + (.method // "?") + " " + (.pathUrl // "?")) | join("\n"))
+                ([(.changedOperations // [])[] | select(.incompatible)] | if length > 0 then
+                  "  Incompatible operations:\n" +
+                  (map("    - " + (.httpMethod // "?") + " " + (.pathUrl // "?")) | join("\n"))
                 else "" end)
               ' rest-api-diff.json | sed '/^$/d'
               echo ""
@@ -701,9 +701,9 @@ jobs:
                   "  Removed endpoints:\n" +
                   (.missingEndpoints | map("    - " + (.method // "?") + " " + (.pathUrl // "?")) | join("\n"))
                 else "" end),
-                (if (.changedOperations | length) > 0 then
-                  "  Changed operations:\n" +
-                  (.changedOperations | map("    - " + (.method // "?") + " " + (.pathUrl // "?")) | join("\n"))
+                ([(.changedOperations // [])[] | select(.incompatible)] | if length > 0 then
+                  "  Incompatible operations:\n" +
+                  (map("    - " + (.httpMethod // "?") + " " + (.pathUrl // "?")) | join("\n"))
                 else "" end)
               ' rest-metadata-api-diff.json | sed '/^$/d'
               echo ""

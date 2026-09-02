@@ -20,7 +20,6 @@ type BrandedObjectWithRelation = JsonbProperty<ObjectWithRelation>;
 
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type ObjectAssertions = [
-  // Object with SerializedRelation: Id suffix renamed to UniversalIdentifier, value becomes nullable
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<ObjectWithRelation>,
@@ -31,7 +30,6 @@ type ObjectAssertions = [
     >
   >,
 
-  // Branded object with SerializedRelation: renames property, preserves brand key, value becomes nullable
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<BrandedObjectWithRelation>,
@@ -43,7 +41,6 @@ type ObjectAssertions = [
     >
   >,
 
-  // Object without SerializedRelation: no changes
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<ObjectWithoutRelation>,
@@ -54,11 +51,9 @@ type ObjectAssertions = [
 
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type PrimitiveAssertions = [
-  // Primitives pass through unchanged
   Expect<Equal<FormatRecordSerializedRelationProperties<string>, string>>,
   Expect<Equal<FormatRecordSerializedRelationProperties<number>, number>>,
   Expect<Equal<FormatRecordSerializedRelationProperties<null>, null>>,
-  // SerializedRelation becomes nullable
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<SerializedRelation>,
@@ -69,7 +64,6 @@ type PrimitiveAssertions = [
 
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type ArrayAssertions = [
-  // Array of objects with relation: transforms each element
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<ObjectWithRelation[]>,
@@ -80,7 +74,6 @@ type ArrayAssertions = [
     >
   >,
 
-  // Array of objects without relation: passes through unchanged
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<ObjectWithoutRelation[]>,
@@ -88,10 +81,8 @@ type ArrayAssertions = [
     >
   >,
 
-  // Array of primitives: passes through unchanged
   Expect<Equal<FormatRecordSerializedRelationProperties<string[]>, string[]>>,
 
-  // Nested array of objects: transforms innermost elements
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<ObjectWithRelation[][]>,
@@ -105,7 +96,6 @@ type ArrayAssertions = [
 
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type UnionAssertions = [
-  // Union with null: transforms object, keeps null
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<ObjectWithRelation | null>,
@@ -116,7 +106,6 @@ type UnionAssertions = [
     >
   >,
 
-  // Array of union: transforms elements appropriately
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<(ObjectWithRelation | null)[]>,
@@ -137,7 +126,6 @@ type MultipleRelationsObject = {
 
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type MultipleRelationsAssertions = [
-  // Multiple SerializedRelation properties: all get renamed and become nullable
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<MultipleRelationsObject>,
@@ -192,7 +180,6 @@ type NestedWithArrayOfObjects = {
 
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type NestedObjectAssertions = [
-  // Simple nested object: transforms relation inside nested object
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<NestedObjectWithRelation>,
@@ -205,7 +192,6 @@ type NestedObjectAssertions = [
     >
   >,
 
-  // Deeply nested object: transforms relation at any depth
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<DeeplyNestedObjectWithRelation>,
@@ -220,7 +206,6 @@ type NestedObjectAssertions = [
     >
   >,
 
-  // Mixed: transforms both direct and nested relations
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<MixedNestedObject>,
@@ -235,7 +220,6 @@ type NestedObjectAssertions = [
     >
   >,
 
-  // Nullable nested object: transforms relation inside, preserves union with null
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<NullableNestedObject>,
@@ -248,7 +232,6 @@ type NestedObjectAssertions = [
     >
   >,
 
-  // Nested with array of objects: transforms relations inside array elements
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<NestedWithArrayOfObjects>,
@@ -294,7 +277,6 @@ type RecordPropertyAssertions = [
     >
   >,
 
-  // Union type with JSON schema: properties inside schema should stay as 'properties'
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<JsonSchemaUnion>,
@@ -310,7 +292,6 @@ type RecordPropertyAssertions = [
     >
   >,
 
-  // Branded JSON schema union: should preserve structure, only add brand
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<BrandedJsonSchemaUnion>,
@@ -327,7 +308,6 @@ type RecordPropertyAssertions = [
     >
   >,
 
-  // Plain Record<string, X> should pass through unchanged
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<

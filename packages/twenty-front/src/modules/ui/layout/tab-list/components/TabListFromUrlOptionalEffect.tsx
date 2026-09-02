@@ -1,4 +1,5 @@
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useEffect } from 'react';
@@ -6,13 +7,12 @@ import { useLocation } from 'react-router-dom';
 
 type TabListFromUrlOptionalEffectProps = {
   tabListIds: string[];
-  isInSidePanel: boolean;
 };
 
 export const TabListFromUrlOptionalEffect = ({
   tabListIds,
-  isInSidePanel,
 }: TabListFromUrlOptionalEffectProps) => {
+  const workspaceSurface = useWorkspaceSurface();
   const location = useLocation();
   const activeTabId = useAtomComponentStateValue(activeTabIdComponentState);
   const setActiveTabId = useSetAtomComponentState(activeTabIdComponentState);
@@ -20,7 +20,7 @@ export const TabListFromUrlOptionalEffect = ({
   const hash = location.hash.replace('#', '');
 
   useEffect(() => {
-    if (isInSidePanel) {
+    if (!workspaceSurface.ownsRouteLocation) {
       return;
     }
 
@@ -31,7 +31,13 @@ export const TabListFromUrlOptionalEffect = ({
     if (tabListIds.includes(hash)) {
       setActiveTabId(hash);
     }
-  }, [hash, activeTabId, setActiveTabId, tabListIds, isInSidePanel]);
+  }, [
+    hash,
+    activeTabId,
+    setActiveTabId,
+    tabListIds,
+    workspaceSurface.ownsRouteLocation,
+  ]);
 
   return <></>;
 };

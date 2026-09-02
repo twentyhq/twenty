@@ -18,11 +18,23 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   }),
 }));
 
+jest.mock('@/object-metadata/utils/getFieldMetadataItemById', () => ({
+  getFieldMetadataItemById: (parameters: { fieldMetadataId: string }) => ({
+    fieldMetadataItem:
+      parameters.fieldMetadataId === 'files-field-id'
+        ? { id: 'files-field-id', type: 'FILES' }
+        : parameters.fieldMetadataId === 'text-field-id'
+          ? { id: 'text-field-id', type: 'TEXT' }
+          : undefined,
+  }),
+}));
+
 const mockNavigateApp = jest.fn();
 const mockRequestAccessTokenRefresh = jest.fn();
 const mockOpenConfirmationModal = jest.fn();
 const mockNavigateSidePanel = jest.fn();
 const mockOpenRecordInSidePanel = jest.fn();
+const mockOpenRoutedPageInSidePanel = jest.fn(() => 'routed-page-id');
 const mockOpenRichTextInSidePanel = jest.fn();
 const mockOpenComposeEmailInSidePanel = jest.fn();
 const mockOpenFrontComponentInSidePanel = jest.fn();
@@ -36,7 +48,11 @@ const mockEnqueueWarningSnackBar = jest.fn();
 const mockCloseSidePanelMenu = jest.fn();
 const mockSetCommandMenuItemProgress = jest.fn();
 const mockCopyToClipboard = jest.fn();
+const mockDirectUploadFile = jest.fn();
 const mockSetRecordPageActiveTabId = jest.fn();
+const mockStorageSet = jest.fn();
+const mockStorageDelete = jest.fn();
+const mockStorageClear = jest.fn();
 
 let mockCurrentUser: { id: string } | null = { id: 'user-123' };
 let mockIsMobile = false;
@@ -69,6 +85,12 @@ jest.mock('@/side-panel/hooks/useNavigateSidePanel', () => ({
 jest.mock('@/side-panel/hooks/useOpenRecordInSidePanel', () => ({
   useOpenRecordInSidePanel: () => ({
     openRecordInSidePanel: mockOpenRecordInSidePanel,
+  }),
+}));
+
+jest.mock('@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel', () => ({
+  useOpenRoutedPageInSidePanel: () => ({
+    openRoutedPageInSidePanel: mockOpenRoutedPageInSidePanel,
   }),
 }));
 
@@ -140,6 +162,26 @@ jest.mock('~/hooks/useCopyToClipboard', () => ({
   }),
 }));
 
+jest.mock('@/file/hooks/useDirectFileUpload', () => ({
+  useDirectFileUpload: () => ({
+    uploadFile: mockDirectUploadFile,
+  }),
+}));
+
+jest.mock('twenty-front-component-renderer', () => ({
+  buildFrontComponentStorageNamespace: ({
+    applicationId,
+    userId,
+  }: {
+    applicationId: string;
+    userId: string;
+  }) => `frontComponentStorage:${applicationId}:${userId}:`,
+  setFrontComponentStorageItem: (...args: unknown[]) => mockStorageSet(...args),
+  deleteFrontComponentStorageItem: (...args: unknown[]) =>
+    mockStorageDelete(...args),
+  clearFrontComponentStorage: (...args: unknown[]) => mockStorageClear(...args),
+}));
+
 jest.mock('@/page-layout/utils/setRecordPageActiveTabId', () => ({
   setRecordPageActiveTabId: (params: unknown) =>
     mockSetRecordPageActiveTabId(params),
@@ -148,18 +190,24 @@ jest.mock('@/page-layout/utils/setRecordPageActiveTabId', () => ({
 const renderUseFrontComponentExecutionContext = (
   params: Omit<
     Parameters<typeof useFrontComponentExecutionContext>[0],
-    'colorScheme'
-  > & { colorScheme?: 'light' | 'dark' },
+    'colorScheme' | 'applicationId'
+  > & { colorScheme?: 'light' | 'dark'; applicationId?: string },
 ) =>
   renderHook(
     () =>
-      useFrontComponentExecutionContext({ colorScheme: 'light', ...params }),
+      useFrontComponentExecutionContext({
+        colorScheme: 'light',
+        applicationId: APPLICATION_ID,
+        ...params,
+      }),
     {
       wrapper: ({ children }) => I18nProvider({ i18n, children }),
     },
   );
 
 const FRONT_COMPONENT_ID = 'fc-test-id';
+const APPLICATION_ID = 'application-test-id';
+const STORAGE_NAMESPACE = `frontComponentStorage:${APPLICATION_ID}:user-123:`;
 const COMMAND_MENU_ITEM_ID = 'cmd-item-1';
 
 const parentViewAtom =
@@ -195,6 +243,7 @@ describe('useFrontComponentExecutionContext', () => {
         userId: 'user-123',
         recordId: 'record-456',
         selectedRecordIds: ['record-456'],
+        timelineActivityId: null,
         colorScheme: 'light',
         locale: i18n.locale as AppLocale,
       });
@@ -211,6 +260,7 @@ describe('useFrontComponentExecutionContext', () => {
         userId: 'user-123',
         recordId: null,
         selectedRecordIds: ['record-1', 'record-2', 'record-3'],
+        timelineActivityId: null,
         colorScheme: 'light',
         locale: i18n.locale as AppLocale,
       });
@@ -382,6 +432,109 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
+      expect(mockSetSidePanelSearch).toHaveBeenCalledWith('');
+    });
+  });
+
+  describe('openSidePanelPage with a routed page', () => {
+    it('should open a canonical app path in the secondary surface', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            to: AppPath.RecordIndexPage,
+            params: { objectNamePlural: 'companies' },
+            queryParams: { viewId: 'view-id' },
+            hash: 'table',
+            pageTitle: 'Companies',
+            resetNavigationStack: true,
+          },
+        );
+      });
+
+      expect(mockOpenRoutedPageInSidePanel).toHaveBeenCalledWith({
+        path: '/objects/companies?viewId=view-id#table',
+        pageTitle: 'Companies',
+        resetNavigationStack: true,
+      });
+    });
+
+    it('should reject a path the secondary route tree cannot render', async () => {
+      mockOpenRoutedPageInSidePanel.mockReturnValueOnce(null as never);
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await expect(
+        result.current.frontComponentHostCommunicationApi.openSidePanelPage({
+          to: AppPath.Home,
+        } as never),
+      ).rejects.toThrow('Unsupported side-panel route: /home');
+    });
+
+    it('lets the workspace route registry decide whether a settings route can render', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            to: AppPath.SettingsCatchAll,
+            params: { '*': 'objects/companies/name' },
+          },
+        );
+      });
+
+      expect(mockOpenRoutedPageInSidePanel).toHaveBeenCalledWith({
+        path: '/settings/objects/companies/name',
+        pageTitle: undefined,
+        resetNavigationStack: undefined,
+      });
+    });
+
+    it('rejects legacy ViewRecords because it has no canonical route params', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await expect(
+        result.current.frontComponentHostCommunicationApi.openSidePanelPage({
+          page: SidePanelPages.ViewRecords,
+          pageTitle: 'Legacy records',
+        } as never),
+      ).rejects.toThrow(
+        'ViewRecords is no longer supported. Open AppPath.RecordIndexPage with typed params instead.',
+      );
+
+      expect(mockNavigateSidePanel).not.toHaveBeenCalled();
+    });
+
+    it('maps legacy Copilot calls to AskAI', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            page: SidePanelPages.Copilot,
+            pageTitle: 'Legacy AI',
+            pageIcon: 'IconSparkles',
+            shouldResetSearchState: true,
+          } as never,
+        );
+      });
+
+      expect(mockNavigateSidePanel).toHaveBeenCalledWith({
+        page: SidePanelPages.AskAI,
+        pageTitle: 'Legacy AI',
+        pageIcon: 'icon-IconSparkles',
+      });
       expect(mockSetSidePanelSearch).toHaveBeenCalledWith('');
     });
   });
@@ -786,6 +939,156 @@ describe('useFrontComponentExecutionContext', () => {
     });
   });
 
+  describe('uploadFile', () => {
+    const buildRecordedBlob = () =>
+      new Blob(['recorded-bytes'], { type: 'audio/webm' });
+
+    beforeEach(() => {
+      // clearAllMocks keeps implementations; drop resolved/rejected values
+      // so these tests stay order-independent.
+      mockDirectUploadFile.mockReset();
+    });
+
+    it('should upload a blob into a FILES field and return the stored file', async () => {
+      mockDirectUploadFile.mockResolvedValue({
+        id: 'file-1',
+        path: 'files-field/file-1.webm',
+        url: 'https://example.com/files/file-1.webm',
+        size: 14,
+      });
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      const uploadResult =
+        await result.current.frontComponentHostCommunicationApi.uploadFile(
+          buildRecordedBlob(),
+          { fieldMetadataId: 'files-field-id', fileName: 'note.webm' },
+        );
+
+      expect(mockDirectUploadFile).toHaveBeenCalledWith(
+        expect.any(File),
+        expect.objectContaining({ fieldMetadataId: 'files-field-id' }),
+      );
+      expect(uploadResult).toEqual({
+        status: 'uploaded',
+        file: {
+          fileId: 'file-1',
+          path: 'files-field/file-1.webm',
+          url: 'https://example.com/files/file-1.webm',
+          size: 14,
+          mimeType: 'audio/webm',
+        },
+      });
+
+      const [uploadedFile] = mockDirectUploadFile.mock.calls[0];
+      expect(uploadedFile.name).toBe('note.webm');
+    });
+
+    it('should reject non-FILES fields without uploading', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      const uploadResult =
+        await result.current.frontComponentHostCommunicationApi.uploadFile(
+          buildRecordedBlob(),
+          { fieldMetadataId: 'text-field-id' },
+        );
+
+      expect(uploadResult).toEqual({
+        status: 'failed',
+        reason: 'invalid-params',
+      });
+      expect(mockDirectUploadFile).not.toHaveBeenCalled();
+    });
+
+    it('should reject malformed arguments without uploading', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      const emptyBlobResult =
+        await result.current.frontComponentHostCommunicationApi.uploadFile(
+          new Blob([], { type: 'audio/webm' }),
+          { fieldMetadataId: 'files-field-id' },
+        );
+      const missingFieldResult =
+        await result.current.frontComponentHostCommunicationApi.uploadFile(
+          buildRecordedBlob(),
+          { fieldMetadataId: '' },
+        );
+      const nonBlobResult =
+        await result.current.frontComponentHostCommunicationApi.uploadFile(
+          'not-a-blob' as unknown as Blob,
+          { fieldMetadataId: 'files-field-id' },
+        );
+
+      expect(emptyBlobResult).toEqual({
+        status: 'failed',
+        reason: 'invalid-params',
+      });
+      expect(missingFieldResult).toEqual({
+        status: 'failed',
+        reason: 'invalid-params',
+      });
+      expect(nonBlobResult).toEqual({
+        status: 'failed',
+        reason: 'invalid-params',
+      });
+      expect(mockDirectUploadFile).not.toHaveBeenCalled();
+    });
+
+    it('should strip path separators from the file name and fall back when empty', async () => {
+      mockDirectUploadFile.mockResolvedValue({
+        id: 'file-2',
+        path: 'files-field/file-2.webm',
+        url: 'https://example.com/files/file-2.webm',
+        size: 14,
+      });
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await result.current.frontComponentHostCommunicationApi.uploadFile(
+        buildRecordedBlob(),
+        { fieldMetadataId: 'files-field-id', fileName: '../../etc/passwd' },
+      );
+
+      const [traversalFile] = mockDirectUploadFile.mock.calls[0];
+      expect(traversalFile.name).toBe('....etcpasswd');
+
+      await result.current.frontComponentHostCommunicationApi.uploadFile(
+        buildRecordedBlob(),
+        { fieldMetadataId: 'files-field-id', fileName: '///' },
+      );
+
+      const [fallbackFile] = mockDirectUploadFile.mock.calls[1];
+      expect(fallbackFile.name).toMatch(/^upload-.*\.webm$/);
+    });
+
+    it('should report upload failures as upload-failed', async () => {
+      mockDirectUploadFile.mockRejectedValue(new Error('network down'));
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      const uploadResult =
+        await result.current.frontComponentHostCommunicationApi.uploadFile(
+          buildRecordedBlob(),
+          { fieldMetadataId: 'files-field-id' },
+        );
+
+      expect(uploadResult).toEqual({
+        status: 'failed',
+        reason: 'upload-failed',
+      });
+    });
+  });
+
   describe('copyToClipboard', () => {
     it('should call useCopyToClipboard with the provided text and a preview message', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
@@ -917,6 +1220,76 @@ describe('useFrontComponentExecutionContext', () => {
       );
 
       dateNowSpy.mockRestore();
+    });
+  });
+
+  describe('storage', () => {
+    it('should namespace writes by application, user and storage type', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.storageSet({
+          storageType: 'localStorage',
+          key: 'theme',
+          serializedValue: '"dark"',
+        });
+      });
+
+      expect(mockStorageSet).toHaveBeenCalledWith({
+        namespace: STORAGE_NAMESPACE,
+        storageType: 'localStorage',
+        key: 'theme',
+        serializedValue: '"dark"',
+      });
+      expect(result.current.storageNamespace).toBe(STORAGE_NAMESPACE);
+    });
+
+    it('should forward delete and clear with the namespace applied', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.storageDelete({
+          storageType: 'localStorage',
+          key: 'theme',
+        });
+        await result.current.frontComponentHostCommunicationApi.storageClear({
+          storageType: 'sessionStorage',
+        });
+      });
+
+      expect(mockStorageDelete).toHaveBeenCalledWith({
+        namespace: STORAGE_NAMESPACE,
+        storageType: 'localStorage',
+        key: 'theme',
+      });
+      expect(mockStorageClear).toHaveBeenCalledWith({
+        namespace: STORAGE_NAMESPACE,
+        storageType: 'sessionStorage',
+      });
+    });
+
+    it('should reject writes and expose no namespace when signed out', async () => {
+      mockCurrentUser = null;
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      expect(result.current.storageNamespace).toBeUndefined();
+
+      await expect(
+        result.current.frontComponentHostCommunicationApi.storageSet({
+          storageType: 'localStorage',
+          key: 'theme',
+          serializedValue: '"dark"',
+        }),
+      ).rejects.toThrow('Device storage requires a signed-in user');
+
+      expect(mockStorageSet).not.toHaveBeenCalled();
     });
   });
 });

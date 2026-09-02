@@ -2,17 +2,21 @@ import { defineApplication, FieldType } from 'twenty-sdk/define';
 
 import { APP_DESCRIPTION } from 'src/constants/app-description';
 import { APP_DISPLAY_NAME } from 'src/constants/app-display-name';
-import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/application-universal-identifier';
-import { CALL_RECORDER_BOT_IMAGE_BACKGROUND_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-bot-image-background-app-variable-universal-identifier';
-import { CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-everyone-left-timeout-seconds-app-variable-universal-identifier';
-import { CALL_RECORDER_JOIN_EARLY_MINUTES_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-join-early-minutes-app-variable-universal-identifier';
-import { CALL_RECORDER_NAME_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-name-app-variable-universal-identifier';
-import { CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-noone-joined-timeout-seconds-app-variable-universal-identifier';
-import { CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-additional-summary-prompt-app-variable-universal-identifier';
-import { CALL_RECORDER_SUMMARY_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-summary-enabled-app-variable-universal-identifier';
-import { CALL_RECORDER_TRANSCRIPT_PROVIDER_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-transcript-provider-app-variable-universal-identifier';
-import { CALL_RECORDER_USE_WORKSPACE_LOGO_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-use-workspace-logo-app-variable-universal-identifier';
-import { CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-waiting-room-timeout-seconds-app-variable-universal-identifier';
+import {
+  APPLICATION_UNIVERSAL_IDENTIFIER,
+  CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+  CALL_RECORDER_BOT_IMAGE_BACKGROUND_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+  CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+  CALL_RECORDER_JOIN_EARLY_MINUTES_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+  CALL_RECORDER_NAME_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+  CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+  CALL_RECORDER_RECORDING_NOTICE_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+  CALL_RECORDER_RECORDING_NOTICE_MESSAGE_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+  CALL_RECORDER_SUMMARY_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+  CALL_RECORDER_TRANSCRIPT_PROVIDER_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+  CALL_RECORDER_USE_WORKSPACE_LOGO_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+  CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
 import { CALL_RECORDER_BOT_IMAGE_BACKGROUND_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-bot-image-background-env-var-name';
 import { CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS } from 'src/logic-functions/constants/call-recorder-everyone-left-timeout-seconds';
 import { CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-everyone-left-timeout-seconds-env-var-name';
@@ -20,6 +24,9 @@ import { CALL_RECORDER_JOIN_EARLY_MINUTES_ENV_VAR_NAME } from 'src/logic-functio
 import { CALL_RECORDER_NAME_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-name-env-var-name';
 import { CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS } from 'src/logic-functions/constants/call-recorder-noone-joined-timeout-seconds';
 import { CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-noone-joined-timeout-seconds-env-var-name';
+import { CALL_RECORDER_RECORDING_NOTICE_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-notice-enabled-env-var-name';
+import { CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH } from 'src/logic-functions/constants/call-recorder-recording-notice-max-length';
+import { CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-notice-message-env-var-name';
 import { CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-retention-hours-env-var-name';
 import { CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-additional-summary-prompt-env-var-name';
 import { CALL_RECORDER_SUMMARY_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-summary-enabled-env-var-name';
@@ -30,6 +37,8 @@ import { CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/log
 import { DEFAULT_CALL_RECORDER_BOT_IMAGE_BACKGROUND } from 'src/logic-functions/constants/default-call-recorder-bot-image-background';
 import { DEFAULT_CALL_RECORDER_JOIN_EARLY_MINUTES } from 'src/logic-functions/constants/default-call-recorder-join-early-minutes';
 import { DEFAULT_CALL_RECORDER_NAME } from 'src/logic-functions/constants/default-call-recorder-name';
+import { DEFAULT_CALL_RECORDER_RECORDING_NOTICE_ENABLED } from 'src/logic-functions/constants/default-call-recorder-recording-notice-enabled';
+import { DEFAULT_CALL_RECORDER_RECORDING_NOTICE_MESSAGE } from 'src/logic-functions/constants/default-call-recorder-recording-notice-message';
 import { DEFAULT_CALL_RECORDER_RECORDING_RETENTION_HOURS } from 'src/logic-functions/constants/default-call-recorder-recording-retention-hours';
 import { DEFAULT_CALL_RECORDER_SUMMARY_ENABLED } from 'src/logic-functions/constants/default-call-recorder-summary-enabled';
 import { DEFAULT_CALL_RECORDER_TRANSCRIPT_PROVIDER } from 'src/logic-functions/constants/default-call-recorder-transcript-provider';
@@ -50,14 +59,35 @@ export default defineApplication({
   applicationVariables: {
     [CALL_RECORDER_NAME_ENV_VAR_NAME]: {
       universalIdentifier: CALL_RECORDER_NAME_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Recorder name',
       description: 'Display name the call recorder uses when it joins a call.',
       isSecret: false,
       type: FieldType.TEXT,
       value: DEFAULT_CALL_RECORDER_NAME,
     },
+    [CALL_RECORDER_RECORDING_NOTICE_ENABLED_ENV_VAR_NAME]: {
+      universalIdentifier:
+        CALL_RECORDER_RECORDING_NOTICE_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Send recording notice',
+      description:
+        'Whether the bot sends a recording notice in supported meeting chats when it joins.',
+      isSecret: false,
+      type: FieldType.BOOLEAN,
+      value: DEFAULT_CALL_RECORDER_RECORDING_NOTICE_ENABLED,
+    },
+    [CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME]: {
+      universalIdentifier:
+        CALL_RECORDER_RECORDING_NOTICE_MESSAGE_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Recording notice message',
+      description: `Message sent in supported meeting chats. Limited to ${CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH} characters for Google Meet compatibility; longer values are truncated.`,
+      isSecret: false,
+      type: FieldType.TEXT,
+      value: DEFAULT_CALL_RECORDER_RECORDING_NOTICE_MESSAGE,
+    },
     [CALL_RECORDER_JOIN_EARLY_MINUTES_ENV_VAR_NAME]: {
       universalIdentifier:
         CALL_RECORDER_JOIN_EARLY_MINUTES_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Join early (minutes)',
       description:
         'How many minutes before the meeting start time the bot should join. Set to 0 to join at the scheduled start time.',
       isSecret: false,
@@ -67,6 +97,7 @@ export default defineApplication({
     [CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME]: {
       universalIdentifier:
         CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Waiting room timeout (seconds)',
       description:
         'How many seconds the bot waits in a meeting lobby before giving up and leaving.',
       isSecret: false,
@@ -76,6 +107,7 @@ export default defineApplication({
     [CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME]: {
       universalIdentifier:
         CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'No-one joined timeout (seconds)',
       description:
         'How many seconds the bot stays in an empty meeting when no one else ever joins.',
       isSecret: false,
@@ -85,6 +117,7 @@ export default defineApplication({
     [CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME]: {
       universalIdentifier:
         CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Everyone left timeout (seconds)',
       description:
         'How many seconds the bot keeps recording after everyone else leaves the meeting.',
       isSecret: false,
@@ -94,6 +127,7 @@ export default defineApplication({
     [CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME]: {
       universalIdentifier:
         CALL_RECORDER_TRANSCRIPT_PROVIDER_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Transcript provider',
       description:
         'Speech-to-text provider used to transcribe recordings once the call ends. Recall.ai transcription needs no extra setup. Gladia re-detects the spoken language per utterance, which transcribes mixed-language calls more accurately, but requires a Gladia API key in the Recall.ai dashboard (Transcription > Gladia) for each region in use.',
       isSecret: false,
@@ -107,6 +141,7 @@ export default defineApplication({
     [CALL_RECORDER_SUMMARY_ENABLED_ENV_VAR_NAME]: {
       universalIdentifier:
         CALL_RECORDER_SUMMARY_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'AI summaries',
       description:
         'Whether AI summaries are generated for call recordings. Set to false to disable and avoid AI credit usage.',
       isSecret: false,
@@ -116,6 +151,7 @@ export default defineApplication({
     [CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT_ENV_VAR_NAME]: {
       universalIdentifier:
         CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Additional summary prompt',
       description:
         'Extra instructions appended to the built-in summary prompt (tone, language, focus areas). Leave empty to use the built-in prompt alone.',
       isSecret: false,
@@ -124,6 +160,7 @@ export default defineApplication({
     [CALL_RECORDER_USE_WORKSPACE_LOGO_ENV_VAR_NAME]: {
       universalIdentifier:
         CALL_RECORDER_USE_WORKSPACE_LOGO_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Use workspace logo',
       description:
         'Whether the bot displays the workspace logo on its camera tile while in a call. Set to false to disable.',
       isSecret: false,
@@ -133,6 +170,7 @@ export default defineApplication({
     [CALL_RECORDER_BOT_IMAGE_BACKGROUND_ENV_VAR_NAME]: {
       universalIdentifier:
         CALL_RECORDER_BOT_IMAGE_BACKGROUND_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Bot camera background color',
       description:
         'Hex color (e.g. #ffffff) drawn behind the workspace logo on the bot camera tile. Defaults to dark gray when unset or invalid.',
       isSecret: false,

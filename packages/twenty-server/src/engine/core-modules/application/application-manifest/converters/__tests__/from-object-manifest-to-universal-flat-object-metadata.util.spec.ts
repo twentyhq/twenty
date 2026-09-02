@@ -1,4 +1,5 @@
 import { type ObjectManifest } from 'twenty-shared/application';
+import { MetadataWritability } from 'twenty-shared/types';
 
 import { fromObjectManifestToUniversalFlatObjectMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-object-manifest-to-universal-flat-object-metadata.util';
 
@@ -57,6 +58,30 @@ describe('fromObjectManifestToUniversalFlatObjectMetadata', () => {
 
       expect(result.isUICreatable).toBe(false);
       expect(result.isUIEditable).toBe(true);
+    });
+  });
+
+  describe('writability', () => {
+    it('defaults to OPEN when omitted from the manifest', () => {
+      const result = fromObjectManifestToUniversalFlatObjectMetadata({
+        objectManifest: buildObjectManifest({}),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.writability).toBe(MetadataWritability.OPEN);
+    });
+
+    it('carries the manifest value through', () => {
+      const result = fromObjectManifestToUniversalFlatObjectMetadata({
+        objectManifest: buildObjectManifest({
+          writability: MetadataWritability.APPLICATION,
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.writability).toBe(MetadataWritability.APPLICATION);
     });
   });
 });

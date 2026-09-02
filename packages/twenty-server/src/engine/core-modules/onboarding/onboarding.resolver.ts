@@ -5,6 +5,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { InviteSuggestionDTO } from 'src/engine/core-modules/onboarding/dtos/invite-suggestion.dto';
+import { OnboardingStepNavigationDTO } from 'src/engine/core-modules/onboarding/dtos/onboarding-step-navigation.dto';
 import { OnboardingStepSuccessDTO } from 'src/engine/core-modules/onboarding/dtos/onboarding-step-success.dto';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -46,11 +47,13 @@ export class OnboardingResolver {
   async skipSyncEmailOnboardingStep(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args({ name: 'isAutoSkipped', type: () => Boolean, defaultValue: false })
+    isAutoSkipped: boolean,
   ): Promise<OnboardingStepSuccessDTO> {
-    await this.onboardingService.setOnboardingConnectAccountPending({
+    await this.onboardingService.skipOnboardingConnectAccountStep({
       userId: user.id,
       workspaceId: workspace.id,
-      value: false,
+      isAutoSkipped,
     });
 
     return { success: true };
@@ -61,11 +64,16 @@ export class OnboardingResolver {
   async completeBookCallOnboardingStep(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args({ name: 'hasBookedCall', type: () => Boolean, defaultValue: false })
+    hasBookedCall: boolean,
+    @Args({ name: 'isAutoSkipped', type: () => Boolean, defaultValue: false })
+    isAutoSkipped: boolean,
   ): Promise<OnboardingStepSuccessDTO> {
-    await this.onboardingService.setOnboardingBookCallPending({
+    await this.onboardingService.completeOnboardingBookCallStep({
       userId: user.id,
       workspaceId: workspace.id,
-      value: false,
+      hasBookedCall,
+      isAutoSkipped,
     });
 
     return { success: true };
@@ -78,13 +86,28 @@ export class OnboardingResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args({ name: 'universalIdentifiers', type: () => [String] })
     universalIdentifiers: string[],
+    @Args({ name: 'isAutoSkipped', type: () => Boolean, defaultValue: false })
+    isAutoSkipped: boolean,
   ): Promise<OnboardingStepSuccessDTO> {
     await this.onboardingService.triggerInstallAppsOnboardingStep({
       userId: user.id,
       workspaceId: workspace.id,
       universalIdentifiers,
+      isAutoSkipped,
     });
 
     return { success: true };
+  }
+
+  @Mutation(() => OnboardingStepNavigationDTO)
+  @UseGuards(NoPermissionGuard)
+  async goBackToPreviousOnboardingStep(
+    @AuthUser() user: AuthContextUser,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<OnboardingStepNavigationDTO> {
+    return this.onboardingService.goBackToPreviousOnboardingStep({
+      userId: user.id,
+      workspaceId: workspace.id,
+    });
   }
 }

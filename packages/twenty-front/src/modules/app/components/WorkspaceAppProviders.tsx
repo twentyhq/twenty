@@ -13,7 +13,8 @@ import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
 import { RequestFreshCaptchaTokenEffect } from '@/captcha/components/RequestFreshCaptchaTokenEffect';
 import { CommandMenuConfirmationModalManager } from '@/command-menu-item/confirmation-modal/components/CommandMenuConfirmationModalManager';
 import { CommandRunner } from '@/command-menu-item/engine-command/components/CommandRunner';
-import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ErrorMessageEffect } from '@/error-handler/components/ErrorMessageEffect';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
 import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components/IsMinimalMetadataReadyEffect';
@@ -31,6 +32,7 @@ import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/con
 import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
 import { GlobalFilePreviewModal } from '@/ui/field/display/components/GlobalFilePreviewModal';
 import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProviderEffect';
+import { UserUiScaleProviderEffect } from '@/ui/theme/components/UserUiScaleProviderEffect';
 import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { UserContextProvider } from '@/users/components/UserContextProvider';
@@ -54,29 +56,33 @@ export const WorkspaceAppProviders = () => {
               <ApolloAdminProvider>
                 <SSEProvider>
                   <UserThemeProviderEffect />
-                  <SnackBarProvider>
-                    <ErrorMessageEffect />
-                    <AgentChatProvider>
-                      <DialogComponentInstanceContext.Provider
-                        value={{ instanceId: 'dialog-manager' }}
-                      >
-                        <DialogManager>
-                          <StrictMode>
-                            <PromiseRejectionEffect />
-                            <EndTrialAfterPaymentMethodGater />
-                            <GotoHotkeysEffectsProvider />
-                            <PageTitle title={pageTitle} />
-                            <PageFavicon />
-                            <Outlet />
-                            <GlobalFilePreviewModal />
-                            <CommandMenuConfirmationModalManager />
-                            <CommandRunner />
-                          </StrictMode>
-                        </DialogManager>
-                      </DialogComponentInstanceContext.Provider>
-                    </AgentChatProvider>
-                  </SnackBarProvider>
-                  <MainContextStoreProvider />
+                  <UserUiScaleProviderEffect />
+                  <ContextStoreComponentInstanceContext.Provider
+                    value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
+                  >
+                    <SnackBarProvider>
+                      <ErrorMessageEffect />
+                      <AgentChatProvider>
+                        <DialogComponentInstanceContext.Provider
+                          value={{ instanceId: 'dialog-manager' }}
+                        >
+                          <DialogManager>
+                            <StrictMode>
+                              <PromiseRejectionEffect />
+                              <EndTrialAfterPaymentMethodGater />
+                              <GotoHotkeysEffectsProvider />
+                              <PageTitle title={pageTitle} />
+                              <PageFavicon />
+                              <Outlet />
+                              <GlobalFilePreviewModal />
+                              <CommandMenuConfirmationModalManager />
+                              <CommandRunner />
+                            </StrictMode>
+                          </DialogManager>
+                        </DialogComponentInstanceContext.Provider>
+                      </AgentChatProvider>
+                    </SnackBarProvider>
+                  </ContextStoreComponentInstanceContext.Provider>
                   <SupportChatEffect />
                   <InitializeQueryParamStateEffect />
                   <TrackPageViewEffect />

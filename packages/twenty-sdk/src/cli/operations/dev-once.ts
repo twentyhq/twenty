@@ -13,6 +13,7 @@ import { promptForReauthentication } from '@/cli/utilities/auth/reauth-helper';
 import { buildApplication } from '@/cli/utilities/build/common/build-application';
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
+import { compileApplicationTranslations } from '@/cli/utilities/translations/compile-application-translations';
 import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { ClientService } from '@/cli/utilities/client/client-service';
@@ -202,10 +203,15 @@ const innerAppDevOnce = async (
     };
   }
 
-  const manifest: Manifest = manifestUpdateChecksums({
-    manifest: manifestResult.manifest,
-    builtFileInfos: buildResult.builtFileInfos,
-  });
+  const translations = await compileApplicationTranslations(appPath);
+
+  const manifest: Manifest = {
+    ...manifestUpdateChecksums({
+      manifest: manifestResult.manifest,
+      builtFileInfos: buildResult.builtFileInfos,
+    }),
+    translations,
+  };
 
   await writeManifestToOutput(appPath, manifest);
 
@@ -305,35 +311,24 @@ const innerAppDevOnce = async (
     applicationUniversalIdentifier: manifest.application.universalIdentifier,
   });
 
-  const uploadErrors: string[] = [];
-
-  const uploadPromises = Array.from(buildResult.builtFileInfos.values()).map(
-    async (builtFileInfo) => {
-      if (verbose) {
-        onProgress?.(`Uploading ${builtFileInfo.builtPath}`);
-      }
-
-      const result = await fileUploader.uploadFile({
-        builtPath: builtFileInfo.builtPath,
-        fileFolder: builtFileInfo.fileFolder,
-      });
-
-      if (!result.success) {
-        uploadErrors.push(
-          `Failed to upload ${builtFileInfo.builtPath}: ${serializeError(result.error)}`,
-        );
-      }
-    },
+  const uploadFailures = await fileUploader.uploadFiles(
+    Array.from(buildResult.builtFileInfos.values()).map((builtFileInfo) => ({
+      builtPath: builtFileInfo.builtPath,
+      fileFolder: builtFileInfo.fileFolder,
+    })),
   );
 
-  await Promise.all(uploadPromises);
-
-  if (uploadErrors.length > 0) {
+  if (uploadFailures.length > 0) {
     return {
       success: false,
       error: {
         code: APP_ERROR_CODES.SYNC_FAILED,
-        message: uploadErrors.join('\n'),
+        message: uploadFailures
+          .map(
+            (failure) =>
+              `Failed to upload ${failure.builtPath}: ${failure.error}`,
+          )
+          .join('\n'),
       },
     };
   }

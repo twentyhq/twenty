@@ -1,9 +1,13 @@
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { ObjectSystemSideEffectsOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-side-effects-on-delete-side-effect-handler.service';
 import { type BuildSideEffectsArgs } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 
+const APPLICATION_UNIVERSAL_IDENTIFIER = 'a0a0a0a0-a0a0-4000-8000-000000000001';
+const OBJECT_ID = 'b0b0b0b0-b0b0-4000-8000-000000000001';
 const OBJECT_UNIVERSAL_IDENTIFIER = 'b1b2b3b4-b5b6-4000-8000-000000000001';
 const OTHER_OBJECT_UNIVERSAL_IDENTIFIER =
   'c1c2c3c4-c5c6-4000-8000-000000000001';
+const OTHER_OBJECT_ID = 'b0b0b0b0-b0b0-4000-8000-000000000002';
 
 const SYSTEM_FIELD_UNIVERSAL_IDENTIFIER =
   'd1d2d3d4-d5d6-4000-8000-000000000001';
@@ -37,6 +41,7 @@ type ViewFixture = {
   universalIdentifier: string;
   isSystemSideEffect: boolean;
   viewFieldUniversalIdentifiers?: string[];
+  viewFieldGroupUniversalIdentifiers?: string[];
 };
 
 const buildFieldMetadataMaps = (fields: FieldFixture[]) => ({
@@ -58,21 +63,29 @@ const buildArgs = ({
   indexMetadataUniversalIdentifiers = [],
   searchFieldMetadataUniversalIdentifiers = [],
   viewUniversalIdentifiers = [],
+  pageLayoutUniversalIdentifiers = [],
+  commandMenuItemUniversalIdentifiers = [],
   relatedFlatEntityMaps = {},
 }: {
   fieldUniversalIdentifiers?: string[];
   indexMetadataUniversalIdentifiers?: string[];
   searchFieldMetadataUniversalIdentifiers?: string[];
   viewUniversalIdentifiers?: string[];
+  pageLayoutUniversalIdentifiers?: string[];
+  commandMenuItemUniversalIdentifiers?: string[];
   relatedFlatEntityMaps?: object;
 }): BuildSideEffectsArgs<'objectMetadata'> =>
   ({
     flatEntity: {
+      id: OBJECT_ID,
       universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
       fieldUniversalIdentifiers,
       indexMetadataUniversalIdentifiers,
       searchFieldMetadataUniversalIdentifiers,
       viewUniversalIdentifiers,
+      pageLayoutUniversalIdentifiers,
+      commandMenuItemUniversalIdentifiers,
     },
     allFlatEntityOperationRecordByMetadataName: {},
     relatedFlatEntityMaps: {
@@ -82,6 +95,11 @@ const buildArgs = ({
       flatSearchFieldMetadataMaps: { byUniversalIdentifier: {} },
       flatViewMaps: { byUniversalIdentifier: {} },
       flatViewFieldMaps: { byUniversalIdentifier: {} },
+      flatViewFieldGroupMaps: { byUniversalIdentifier: {} },
+      flatPageLayoutMaps: { byUniversalIdentifier: {} },
+      flatPageLayoutTabMaps: { byUniversalIdentifier: {} },
+      flatPageLayoutWidgetMaps: { byUniversalIdentifier: {} },
+      flatCommandMenuItemMaps: { byUniversalIdentifier: {} },
       ...relatedFlatEntityMaps,
     },
     context: {},
@@ -272,7 +290,10 @@ describe('ObjectSystemSideEffectsOnDeleteSideEffectHandlerService', () => {
                     ],
                   },
                 ] satisfies ViewFixture[]
-              ).map((view) => [view.universalIdentifier, view]),
+              ).map((view) => [
+                view.universalIdentifier,
+                { viewFieldGroupUniversalIdentifiers: [], ...view },
+              ]),
             ),
           },
           flatViewFieldMaps: {
@@ -353,5 +374,88 @@ describe('ObjectSystemSideEffectsOnDeleteSideEffectHandlerService', () => {
     expect(
       Object.keys(result.operations.viewField?.flatEntityToDelete ?? {}),
     ).toEqual([OTHER_OBJECT_VIEW_FIELD_UNIVERSAL_IDENTIFIER]);
+  });
+
+  it('should cascade-delete the engine-owned navigation command from the object aggregator, whatever its identifier', () => {
+    const result = handler.buildSideEffects(
+      buildArgs({
+        commandMenuItemUniversalIdentifiers: [
+          'legacy-navigation-command-identifier',
+        ],
+        relatedFlatEntityMaps: {
+          flatCommandMenuItemMaps: {
+            byUniversalIdentifier: {
+              'legacy-navigation-command-identifier': {
+                universalIdentifier: 'legacy-navigation-command-identifier',
+                isSystemSideEffect: true,
+                engineComponentKey: EngineComponentKey.NAVIGATION,
+                payload: { objectMetadataItemId: OBJECT_ID },
+              },
+            },
+          },
+        },
+      }),
+    );
+
+    expect(result.status).toBe('success');
+
+    if (result.status !== 'success') {
+      throw new Error('expected success');
+    }
+
+    expect(
+      Object.keys(result.operations.commandMenuItem?.flatEntityToDelete ?? {}),
+    ).toEqual(['legacy-navigation-command-identifier']);
+  });
+
+  it('should spare a non-system command menu item held by the object aggregator', () => {
+    const result = handler.buildSideEffects(
+      buildArgs({
+        commandMenuItemUniversalIdentifiers: [
+          'caller-authored-navigation-identifier',
+        ],
+        relatedFlatEntityMaps: {
+          flatCommandMenuItemMaps: {
+            byUniversalIdentifier: {
+              'caller-authored-navigation-identifier': {
+                universalIdentifier: 'caller-authored-navigation-identifier',
+                isSystemSideEffect: false,
+                engineComponentKey: EngineComponentKey.NAVIGATION,
+                payload: { objectMetadataItemId: OBJECT_ID },
+              },
+            },
+          },
+        },
+      }),
+    );
+
+    expect(result.status).toBe('noop');
+  });
+
+  it('should spare command menu items the object aggregator does not reference', () => {
+    const result = handler.buildSideEffects(
+      buildArgs({
+        relatedFlatEntityMaps: {
+          flatCommandMenuItemMaps: {
+            byUniversalIdentifier: {
+              'go-to-settings-identifier': {
+                universalIdentifier: 'go-to-settings-identifier',
+                isSystemSideEffect: true,
+                engineComponentKey: EngineComponentKey.NAVIGATION,
+                payload: { path: '/settings/profile' },
+              },
+              'other-object-navigation-identifier': {
+                universalIdentifier: 'other-object-navigation-identifier',
+                isSystemSideEffect: true,
+                engineComponentKey: EngineComponentKey.NAVIGATION,
+                payload: { objectMetadataItemId: OTHER_OBJECT_ID },
+              },
+            },
+          },
+        },
+      }),
+    );
+
+    expect(result.status).toBe('noop');
   });
 });

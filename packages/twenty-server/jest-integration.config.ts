@@ -5,7 +5,6 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 
 import testTokens from './test/integration/constants/test-tokens.json';
 
-// Load .env vars at jest boot time
 if (process.env.NODE_ENV === 'test') {
   dotenv.config({ path: '.env.test', override: true });
 } else {

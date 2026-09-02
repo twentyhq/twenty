@@ -84,6 +84,29 @@ export default defineField({
 **الاستيرادات الدائرية:** كلا حقلي العلاقة يُشير كلٌّ منهما إلى `universalIdentifier` الخاص بالآخر. لتجنّب مشكلات الاستيراد الدائري، صدِّر معرّفات الحقول كثوابت مسمّاة من كل ملف، واستورِدها في الملف الآخر. يقوم نظام البناء بحلّها في وقت التجميع.
 </Note>
 
+## علاقات الربط
+
+يربط كائن الربط سجل مصدر واحدًا بسجل هدف واحد أو أكثر. على سبيل المثال، يمكن أن يحتوي `PostCardRecipient` على كلٍّ من علاقة `postCard` وعلاقة `recipient`. في حقل `ONE_TO_MANY` الخاص بالكائن المصدر، عيّن `junctionTargetFieldUniversalIdentifier` إلى حقل العلاقة في كائن الربط الذي يشير إلى الهدف:
+
+```ts
+export default defineField({
+  universalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCardRecipients',
+  label: 'Post Card Recipients',
+  relationTargetObjectMetadataUniversalIdentifier:
+    POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+    junctionTargetFieldUniversalIdentifier: RECIPIENT_FIELD_ID,
+  },
+});
+```
+
+يجب أن يحدد `RECIPIENT_FIELD_ID` علاقة `MANY_TO_ONE` أو علاقة morph في كائن الربط. يخبر Twenty بالسجل المرتبط الذي يمثل الهدف عندما تعبر ميزة مثل [توزيع نشاط المخطط الزمني](/l/ar/developers/extend/apps/data/timeline-activity-types#automatic-and-explicit-events) كائن الربط.
+
 ## الربط مع الكائنات القياسية
 
 لإنشاء علاقة مع كائن Twenty مضمّن (Person, Company, etc.)، استخدم `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
@@ -122,14 +145,15 @@ export default defineField({
 
 ## خصائص حقل العلاقة
 
-| الخاصية                                           | مطلوب           | الوصف                                                                                  |
-| ------------------------------------------------- | --------------- | -------------------------------------------------------------------------------------- |
-| `type`                                            | نعم             | يجب أن يكون `FieldType.RELATION`                                                       |
-| `relationTargetObjectMetadataUniversalIdentifier` | نعم             | قيمة `universalIdentifier` للكائن الهدف                                                |
-| `relationTargetFieldMetadataUniversalIdentifier`  | نعم             | قيمة `universalIdentifier` للحقل المطابق على الكائن الهدف                              |
-| `universalSettings.relationType`                  | نعم             | `RelationType.MANY_TO_ONE` أو `RelationType.ONE_TO_MANY`                               |
-| `universalSettings.onDelete`                      | MANY_TO_ONE فقط | ماذا يحدث عند حذف السجل المشار إليه: `CASCADE`، `SET_NULL`، `RESTRICT`، أو `NO_ACTION` |
-| `universalSettings.joinColumnName`                | MANY_TO_ONE فقط | اسم عمود قاعدة البيانات للمفتاح الخارجي (مثل `postCardId`)                             |
+| الخاصية                                                    | مطلوب                   | الوصف                                                                                  |
+| ---------------------------------------------------------- | ----------------------- | -------------------------------------------------------------------------------------- |
+| `type`                                                     | نعم                     | يجب أن يكون `FieldType.RELATION`                                                       |
+| `relationTargetObjectMetadataUniversalIdentifier`          | نعم                     | قيمة `universalIdentifier` للكائن الهدف                                                |
+| `relationTargetFieldMetadataUniversalIdentifier`           | نعم                     | قيمة `universalIdentifier` للحقل المطابق على الكائن الهدف                              |
+| `universalSettings.relationType`                           | نعم                     | `RelationType.MANY_TO_ONE` أو `RelationType.ONE_TO_MANY`                               |
+| `universalSettings.onDelete`                               | MANY_TO_ONE فقط         | ماذا يحدث عند حذف السجل المشار إليه: `CASCADE`، `SET_NULL`، `RESTRICT`، أو `NO_ACTION` |
+| `universalSettings.joinColumnName`                         | MANY_TO_ONE فقط         | اسم عمود قاعدة البيانات للمفتاح الخارجي (مثل `postCardId`)                             |
+| `universalSettings.junctionTargetFieldUniversalIdentifier` | `ONE_TO_MANY` للربط فقط | حقل العلاقة في كائن الربط الذي يشير إلى هدف التوزيع                                    |
 
 ## حقول العلاقات المضمَّنة
 

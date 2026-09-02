@@ -317,13 +317,10 @@ export class RoleResolver {
     @Parent() role: RoleDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<WorkspaceMemberWorkspaceEntity[]> {
-    const workspaceMembers =
-      await this.userRoleService.getWorkspaceMembersAssignedToRole(
-        role.id,
-        workspace.id,
-      );
-
-    return workspaceMembers;
+    return await this.userRoleService.getWorkspaceMembersAssignedToRole(
+      role.id,
+      workspace.id,
+    );
   }
 
   @ResolveField('agents', () => [AgentDTO])

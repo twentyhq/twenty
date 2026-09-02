@@ -36,6 +36,12 @@ export const EmailToolInputZodSchema = z.object({
       'The UUID of the connected account to send the email from. Provide this only if you have it; otherwise, leave blank.',
     )
     .optional(),
+  fromHandle: z
+    .string()
+    .describe(
+      'The address to send from. Must be the connected account handle or one of its verified aliases. Leave blank to send from the connected account handle.',
+    )
+    .optional(),
   files: z
     .array(workflowFileSchema)
     .describe('Array of file objects to attach to the email')

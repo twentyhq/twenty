@@ -136,7 +136,6 @@ describe('View Group REST API', () => {
       // For a nullable field with three options, we expect groups for OPTION_1, OPTION_2, OPTION_3, and '' (empty string)
       const expectedFieldValues = ['OPTION_1', 'OPTION_2', 'OPTION_3', ''];
 
-      // Check structure and visibility for each group
       expectedFieldValues.forEach((expectedFieldValue) => {
         const group = returnedViewGroups.find(
           (group) => group.fieldValue === expectedFieldValue,

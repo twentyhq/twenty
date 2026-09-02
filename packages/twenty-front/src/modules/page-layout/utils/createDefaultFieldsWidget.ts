@@ -22,6 +22,8 @@ export const createDefaultFieldsWidget = ({
     __typename: 'PageLayoutWidget',
     id,
     applicationId: '',
+    universalIdentifier: id,
+    isSystemSideEffect: false,
     pageLayoutTabId,
     title: 'Fields',
     isActive: true,
@@ -31,13 +33,6 @@ export const createDefaultFieldsWidget = ({
       configurationType: WidgetConfigurationType.FIELDS,
       viewId,
       newFieldDefaultVisibility: true,
-    },
-    gridPosition: {
-      __typename: 'GridPosition',
-      row: 0,
-      column: 0,
-      rowSpan: 1,
-      columnSpan: 12,
     },
     position: {
       __typename: 'PageLayoutWidgetVerticalListPosition',

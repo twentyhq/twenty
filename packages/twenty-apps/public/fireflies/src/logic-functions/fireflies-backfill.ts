@@ -6,10 +6,11 @@ import {
   FIREFLIES_BACKFILL_WORKER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { FIREFLIES_BACKFILL_ROUTE_PATH } from 'src/constants/fireflies-backfill-route-path.constant';
-import { FIREFLIES_BACKFILL_MAX_WINDOW_DAYS } from 'src/logic-functions/constants/fireflies-backfill-max-window-days.constant';
-import { FIREFLIES_BACKFILL_OUTCOME } from 'src/logic-functions/constants/fireflies-backfill-outcome.constant';
+import { FIREFLIES_BACKFILL_MAX_WINDOW_DAYS } from 'src/constants/fireflies-backfill-max-window-days.constant';
+import { FIREFLIES_BACKFILL_OUTCOME } from 'src/constants/fireflies-backfill-outcome.constant';
 import { FIREFLIES_BACKFILL_TIMEOUT_SECONDS } from 'src/logic-functions/constants/fireflies-backfill-timeout-seconds.constant';
 import { firefliesBackfillRequestBodySchema } from 'src/logic-functions/schemas/fireflies-backfill-request-body.schema';
+import { getFirefliesApiKey } from 'src/logic-functions/utils/get-fireflies-api-key';
 
 const firefliesBackfillRequestHandler = async (
   payload: RoutePayload<unknown>,
@@ -22,6 +23,15 @@ const firefliesBackfillRequestHandler = async (
     return {
       outcome: FIREFLIES_BACKFILL_OUTCOME.INVALID_REQUEST,
       error: `Fireflies backfill requires a days window between 1 and ${FIREFLIES_BACKFILL_MAX_WINDOW_DAYS}`,
+    };
+  }
+
+  const apiKeyResult = getFirefliesApiKey();
+
+  if (!apiKeyResult.success) {
+    return {
+      outcome: FIREFLIES_BACKFILL_OUTCOME.NOT_CONFIGURED,
+      error: apiKeyResult.error,
     };
   }
 

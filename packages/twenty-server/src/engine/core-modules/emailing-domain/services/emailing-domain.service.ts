@@ -70,15 +70,13 @@ export class EmailingDomainService {
     const isVerifiedOnCreation =
       verificationResult.status === EmailingDomainStatus.VERIFIED;
 
-    const emailingDomain = await this.emailingDomainRepository.save(
-      workspaceId,
-      {
+    const emailingDomain =
+      await this.emailingDomainRepository.insertAndReturnOne(workspaceId, {
         domain,
         status: verificationResult.status,
         verificationRecords: verificationResult.verificationRecords,
         verifiedAt: isVerifiedOnCreation ? new Date() : null,
-      },
-    );
+      });
 
     await this.unsubscribeHostnameService.sync(workspaceId, emailingDomain.id, {
       provision: true,
@@ -186,12 +184,15 @@ export class EmailingDomainService {
     );
   }
 
-  async verifyEmailingDomain(
-    workspace: WorkspaceEntity,
-    emailingDomainId: string,
-  ): Promise<EmailingDomainEntity> {
+  async verifyEmailingDomain({
+    workspaceId,
+    emailingDomainId,
+  }: {
+    workspaceId: string;
+    emailingDomainId: string;
+  }): Promise<EmailingDomainEntity> {
     const emailingDomain = await this.findEmailingDomainByIdOrThrow(
-      workspace.id,
+      workspaceId,
       emailingDomainId,
     );
 
@@ -208,7 +209,7 @@ export class EmailingDomainService {
       verificationResult.status === EmailingDomainStatus.VERIFIED;
 
     await this.emailingDomainRepository.update(
-      workspace.id,
+      workspaceId,
       { id: emailingDomain.id },
       {
         status: verificationResult.status,
@@ -217,16 +218,12 @@ export class EmailingDomainService {
       },
     );
 
-    await this.unsubscribeHostnameService.sync(
-      workspace.id,
-      emailingDomain.id,
-      {
-        provision: true,
-      },
-    );
+    await this.unsubscribeHostnameService.sync(workspaceId, emailingDomain.id, {
+      provision: true,
+    });
 
     return this.unsubscribeHostnameService.withDnsRecords(
-      await this.emailingDomainRepository.findOneOrFail(workspace.id, {
+      await this.emailingDomainRepository.findOneOrFail(workspaceId, {
         where: { id: emailingDomain.id },
       }),
     );

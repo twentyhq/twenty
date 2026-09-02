@@ -4,7 +4,7 @@ import { LogicFunctionLogs } from '@/logic-functions/components/LogicFunctionLog
 import { LogicFunctionTestInputInitEffect } from '@/logic-functions/components/LogicFunctionTestInputInitEffect';
 import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
 import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import { InputLabel } from 'twenty-ui/input';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';

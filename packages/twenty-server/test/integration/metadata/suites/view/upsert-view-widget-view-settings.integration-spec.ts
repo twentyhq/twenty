@@ -12,17 +12,16 @@ import { findViewGroups } from 'test/integration/metadata/suites/view-group/util
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { upsertViewWidget } from 'test/integration/metadata/suites/view/utils/upsert-view-widget.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import {
-  FeatureFlagKey,
   FieldMetadataType,
+  PageLayoutTabLayoutMode,
   ViewCalendarLayout,
   ViewType,
+  WidgetType,
 } from 'twenty-shared/types';
 
 import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 
 const VIEW_SETTINGS_GQL_FIELDS = `
   id
@@ -138,7 +137,13 @@ describe('upsertViewWidget view settings', () => {
         type: WidgetType.RECORD_TABLE,
         pageLayoutTabId,
         objectMetadataId,
-        gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.GRID,
+          row: 0,
+          column: 0,
+          rowSpan: 1,
+          columnSpan: 1,
+        },
         configuration: {
           configurationType: WidgetConfigurationType.RECORD_TABLE,
           viewId,
@@ -276,50 +281,16 @@ describe('upsertViewWidget view settings', () => {
     );
   });
 
-  it('should reject a non-month calendar layout on a CALENDAR_WIDGET view', async () => {
-    // This suite shares its workspace with the rest of the shard, and the
-    // "allow non-month" test below flips IS_CALENDAR_WEEK_VIEW_ENABLED on. Pin
-    // it off here so the rejection path is exercised deterministically, whatever
-    // the test/retry ordering leaves behind in the workspace.
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
-
-    const { errors } = await upsertViewWidget({
-      expectToFail: true,
-      input: {
-        widgetId,
-        view: {
-          type: ViewType.CALENDAR_WIDGET,
-          calendarLayout: ViewCalendarLayout.DAY,
-          calendarFieldMetadataId: dateFieldMetadataId,
-          mainGroupByFieldMetadataId: null,
-        },
-      },
-    });
-
-    expect(JSON.stringify(errors)).toContain(
-      'Calendar widget views only support the month layout',
-    );
-  });
-
-  it('should allow a non-month calendar layout on a CALENDAR_WIDGET view when the week/day calendar feature is enabled', async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
-    try {
+  it.each([ViewCalendarLayout.DAY, ViewCalendarLayout.WEEK])(
+    'should allow the %s layout on a CALENDAR_WIDGET view',
+    async (calendarLayout) => {
       const { data } = await upsertViewWidget({
         expectToFail: false,
         input: {
           widgetId,
           view: {
             type: ViewType.CALENDAR_WIDGET,
-            calendarLayout: ViewCalendarLayout.WEEK,
+            calendarLayout,
             calendarFieldMetadataId: dateFieldMetadataId,
             mainGroupByFieldMetadataId: null,
           },
@@ -328,17 +299,9 @@ describe('upsertViewWidget view settings', () => {
       });
 
       expect(data.upsertViewWidget.type).toBe(ViewType.CALENDAR_WIDGET);
-      expect(data.upsertViewWidget.calendarLayout).toBe(
-        ViewCalendarLayout.WEEK,
-      );
-    } finally {
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
-        value: false,
-        expectToFail: false,
-      });
-    }
-  });
+      expect(data.upsertViewWidget.calendarLayout).toBe(calendarLayout);
+    },
+  );
 
   it('should switch the widget view to CALENDAR_WIDGET with a date field and layout', async () => {
     const { data } = await upsertViewWidget({
@@ -445,7 +408,13 @@ describe('upsertViewWidget view settings', () => {
           type: WidgetType.FIELD,
           pageLayoutTabId,
           objectMetadataId,
-          gridPosition: { row: 1, column: 0, rowSpan: 1, columnSpan: 1 },
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            row: 1,
+            column: 0,
+            rowSpan: 1,
+            columnSpan: 1,
+          },
           configuration: {
             configurationType: WidgetConfigurationType.FIELD,
             fieldMetadataId: selectFieldMetadataId,

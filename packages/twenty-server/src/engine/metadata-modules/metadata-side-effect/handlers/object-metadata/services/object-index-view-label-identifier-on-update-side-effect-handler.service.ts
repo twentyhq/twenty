@@ -1,8 +1,10 @@
 import { msg, t } from '@lingui/core/macro';
 import { Injectable } from '@nestjs/common';
 
-import { getSystemViewUniversalIdentifier } from 'twenty-shared/application';
-import { ViewKey } from 'twenty-shared/types';
+import {
+  SYSTEM_VIEW_KEYS,
+  getSystemViewUniversalIdentifier,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
@@ -12,7 +14,6 @@ import {
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
-import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
 @Injectable()
@@ -26,11 +27,9 @@ export class ObjectIndexViewLabelIdentifierOnUpdateSideEffectHandlerService exte
   },
 ) {
   buildSideEffects({
-    flatEntity,
+    flatEntity: updatedFlatObjectMetadata,
     relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'objectMetadata'>): MetadataSideEffectResult {
-    const updatedFlatObjectMetadata = flatEntity as UniversalFlatObjectMetadata;
-
     const existingFlatObjectMetadata =
       relatedFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
         updatedFlatObjectMetadata.universalIdentifier
@@ -69,7 +68,7 @@ export class ObjectIndexViewLabelIdentifierOnUpdateSideEffectHandlerService exte
       objectMetadataApplicationUniversalIdentifier:
         updatedFlatObjectMetadata.applicationUniversalIdentifier,
       objectUniversalIdentifier: updatedFlatObjectMetadata.universalIdentifier,
-      viewKey: ViewKey.INDEX,
+      viewKey: SYSTEM_VIEW_KEYS.INDEX,
     });
 
     const indexFlatView =

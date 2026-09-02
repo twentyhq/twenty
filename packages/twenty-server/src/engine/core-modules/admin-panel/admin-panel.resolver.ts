@@ -20,6 +20,9 @@ import { AdminPanelRecentUserDTO } from 'src/engine/core-modules/admin-panel/dto
 import { PaginatedAdminChatThreadsDTO } from 'src/engine/core-modules/admin-panel/dtos/paginated-admin-chat-threads.dto';
 import { AdminPanelTopWorkspaceDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-top-workspace.dto';
 import { AdminPanelWorkspaceBillingDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-billing.dto';
+import { AdminPanelWorkspaceCreditGrantDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-credit-grant.dto';
+import { GrantWorkspaceCreditsInput } from 'src/engine/core-modules/admin-panel/dtos/grant-workspace-credits.input';
+import { RevokeWorkspaceCreditGrantInput } from 'src/engine/core-modules/admin-panel/dtos/revoke-workspace-credit-grant.input';
 import { AdminWorkspaceChatThreadDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-workspace-chat-thread.dto';
 import { ConfigVariableDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
 import { ConfigVariablesDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variables.dto';
@@ -58,6 +61,7 @@ import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modu
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { AdminApplicationRegistrationClaimDTO } from 'src/engine/core-modules/application/application-registration/dtos/admin-application-registration-claim.dto';
 import { ApplicationRegistrationInstalledWorkspacesDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-installed-workspaces.dto';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
@@ -95,17 +99,10 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
 import { AiModelPreferencesService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-preferences.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { DefaultAiCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/default-ai-catalog.service';
-import { ModelsDevCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/models-dev-catalog.service';
 import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
-import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
-import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
-import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
 
 import { AdminPanelHealthServiceDataDTO } from './dtos/admin-panel-health-service-data.dto';
 import { MaintenanceModeDTO } from './dtos/maintenance-mode.dto';
-import { ModelsDevModelSuggestionDTO } from './dtos/models-dev-model-suggestion.dto';
-import { ModelsDevProviderSuggestionDTO } from './dtos/models-dev-provider-suggestion.dto';
 import { QueueMetricsDataDTO } from './dtos/queue-metrics-data.dto';
 import { SetMaintenanceModeInput } from './dtos/set-maintenance-mode.input';
 
@@ -142,8 +139,6 @@ export class AdminPanelResolver {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly aiModelPreferencesService: AiModelPreferencesService,
-    private readonly defaultAiCatalogService: DefaultAiCatalogService,
-    private readonly modelsDevCatalogService: ModelsDevCatalogService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
     private readonly maintenanceModeService: MaintenanceModeService,
     private readonly upgradeStatusService: UpgradeStatusService,
@@ -492,12 +487,24 @@ export class AdminPanelResolver {
     searchTerm?: string,
     @Args('isPreInstalledOnly', { type: () => Boolean, nullable: true })
     isPreInstalledOnly?: boolean,
+    @Args('sourceTypes', {
+      type: () => [ApplicationRegistrationSourceType],
+      nullable: true,
+    })
+    sourceTypes?: ApplicationRegistrationSourceType[],
+    @Args('isListed', { type: () => Boolean, nullable: true })
+    isListed?: boolean,
+    @Args('isConfigured', { type: () => Boolean, nullable: true })
+    isConfigured?: boolean,
   ): Promise<PaginatedApplicationRegistrationsDTO> {
     return this.applicationRegistrationService.findAll({
       limit,
       offset,
       searchTerm,
       isPreInstalledOnly,
+      sourceTypes,
+      isListed,
+      isConfigured,
     });
   }
 
@@ -529,165 +536,6 @@ export class AdminPanelResolver {
     @Args('input') input: UpdateApplicationRegistrationInput,
   ): Promise<ApplicationRegistrationEntity> {
     return this.applicationRegistrationService.updateGlobal(input);
-  }
-
-  @UseGuards(AdminPanelGuard)
-  @Query(() => GraphQLJSON)
-  async getAiProviders(): Promise<Record<string, unknown>> {
-    const providers =
-      this.aiModelRegistryService.getResolvedProvidersForAdmin();
-    const catalogNames = this.aiModelRegistryService.getCatalogProviderNames();
-    const rawCatalog = this.defaultAiCatalogService.getDefaultAiCatalog();
-    const masked: Record<string, Record<string, unknown>> = {};
-
-    for (const [key, config] of Object.entries(providers)) {
-      const isCatalog = catalogNames.has(key);
-      const rawConfig = isCatalog ? rawCatalog[key] : undefined;
-      const apiKeyConfigVariable = rawConfig
-        ? extractConfigVariableName(rawConfig.apiKey)
-        : undefined;
-
-      masked[key] = {
-        npm: config.npm,
-        label: config.label ?? key,
-        source: isCatalog ? 'catalog' : 'custom',
-        ...(config.authType && { authType: config.authType }),
-        ...(config.name && { name: config.name }),
-        ...(config.baseUrl && { baseUrl: config.baseUrl }),
-        ...(config.region && { region: config.region }),
-        ...(config.dataResidency && { dataResidency: config.dataResidency }),
-        ...(config.apiKey && {
-          apiKey: `${config.apiKey.substring(0, 8)}...`,
-        }),
-        ...(apiKeyConfigVariable && { apiKeyConfigVariable }),
-        hasAccessKey: !!(config.accessKeyId && config.secretAccessKey),
-      };
-    }
-
-    return masked;
-  }
-
-  @UseGuards(AdminPanelGuard)
-  @Mutation(() => Boolean)
-  async addAiProvider(
-    @Args('providerName', { type: () => String }) providerName: string,
-    @Args('providerConfig', { type: () => GraphQLJSON })
-    providerConfig: AiProviderConfig,
-  ): Promise<boolean> {
-    if (!/^[a-zA-Z0-9_-]+$/.test(providerName)) {
-      throw new UserInputError('Invalid provider name');
-    }
-
-    const customProviders = {
-      ...this.twentyConfigService.get('AI_PROVIDERS'),
-    };
-
-    customProviders[providerName] = providerConfig;
-    await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
-
-    return true;
-  }
-
-  @UseGuards(AdminPanelGuard)
-  @Mutation(() => Boolean)
-  async removeAiProvider(
-    @Args('providerName', { type: () => String })
-    providerName: string,
-  ): Promise<boolean> {
-    const customProviders = {
-      ...this.twentyConfigService.get('AI_PROVIDERS'),
-    };
-
-    delete customProviders[providerName];
-    await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
-
-    return true;
-  }
-
-  @UseGuards(AdminPanelGuard)
-  @Query(() => [ModelsDevProviderSuggestionDTO])
-  async getModelsDevProviders(): Promise<ModelsDevProviderSuggestionDTO[]> {
-    return this.modelsDevCatalogService.getProviderSuggestions();
-  }
-
-  @UseGuards(AdminPanelGuard)
-  @Query(() => [ModelsDevModelSuggestionDTO])
-  async getModelsDevSuggestions(
-    @Args('providerType', { type: () => String }) providerType: string,
-  ): Promise<ModelsDevModelSuggestionDTO[]> {
-    return this.modelsDevCatalogService.getModelSuggestions(providerType);
-  }
-
-  @UseGuards(AdminPanelGuard)
-  @Mutation(() => Boolean)
-  async addModelToProvider(
-    @Args('providerName', { type: () => String }) providerName: string,
-    @Args('modelConfig', { type: () => GraphQLJSON })
-    modelConfig: AiProviderModelConfig,
-  ): Promise<boolean> {
-    const customProviders = {
-      ...this.twentyConfigService.get('AI_PROVIDERS'),
-    };
-
-    const existing = customProviders[providerName];
-
-    if (!existing) {
-      throw new UserInputError(
-        `Provider "${providerName}" not found in custom providers`,
-      );
-    }
-
-    const existingModels = existing.models ?? [];
-    const alreadyExists = existingModels.some(
-      (model: AiProviderModelConfig) => model.name === modelConfig.name,
-    );
-
-    if (alreadyExists) {
-      throw new UserInputError(
-        `Model "${modelConfig.name}" already exists on provider "${providerName}"`,
-      );
-    }
-
-    customProviders[providerName] = {
-      ...existing,
-      models: [...existingModels, { ...modelConfig, source: 'manual' }],
-    };
-
-    await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
-
-    return true;
-  }
-
-  @UseGuards(AdminPanelGuard)
-  @Mutation(() => Boolean)
-  async removeModelFromProvider(
-    @Args('providerName', { type: () => String }) providerName: string,
-    @Args('modelName', { type: () => String }) modelName: string,
-  ): Promise<boolean> {
-    const customProviders = {
-      ...this.twentyConfigService.get('AI_PROVIDERS'),
-    };
-
-    const existing = customProviders[providerName];
-
-    if (!existing) {
-      throw new UserInputError(
-        `Provider "${providerName}" not found in custom providers`,
-      );
-    }
-
-    const existingModels = existing.models ?? [];
-
-    customProviders[providerName] = {
-      ...existing,
-      models: existingModels.filter(
-        (model: AiProviderModelConfig) => model.name !== modelName,
-      ),
-    };
-
-    await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
-
-    return true;
   }
 
   @UseGuards(AdminPanelGuard)
@@ -785,6 +633,35 @@ export class AdminPanelResolver {
     @Args('workspaceId', { type: () => UUIDScalarType }) workspaceId: string,
   ): Promise<AdminPanelWorkspaceBillingDTO | null> {
     return this.adminBillingService.getWorkspaceBilling(workspaceId);
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => AdminPanelWorkspaceCreditGrantDTO)
+  async grantWorkspaceCredits(
+    @Args() input: GrantWorkspaceCreditsInput,
+    @AuthUser() actor: AuthContextUser,
+  ): Promise<AdminPanelWorkspaceCreditGrantDTO> {
+    return this.adminBillingService.grantWorkspaceCredits({
+      workspaceId: input.workspaceId,
+      amount: input.amount,
+      type: input.type,
+      reason: input.reason,
+      clientOperationId: input.clientOperationId,
+      grantedByUserId: actor.id,
+    });
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => AdminPanelWorkspaceCreditGrantDTO)
+  async revokeWorkspaceCreditGrant(
+    @Args() input: RevokeWorkspaceCreditGrantInput,
+    @AuthUser() actor: AuthContextUser,
+  ): Promise<AdminPanelWorkspaceCreditGrantDTO> {
+    return this.adminBillingService.revokeWorkspaceCreditGrant({
+      workspaceId: input.workspaceId,
+      creditGrantId: input.creditGrantId,
+      revokedByUserId: actor.id,
+    });
   }
 
   @UseGuards(ServerLevelImpersonateGuard)

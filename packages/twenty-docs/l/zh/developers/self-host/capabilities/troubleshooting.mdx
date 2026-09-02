@@ -233,6 +233,10 @@ add_header X-Accel-Buffering no always;
 
 将主机上的数据文件夹所有权从 root 切换到其他用户和组可以解决此问题。
 
+#### 在工作流中测试 Logic 函数时出现“找不到文件”错误
+
+在您的 twenty-server 容器中运行 `yarn command:prod application:rebuild-default-deps` 命令，以修复缺少依赖项的问题。
+
 ## 获取帮助
 
 如果您遇到本指南未涵盖的问题：

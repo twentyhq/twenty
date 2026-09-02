@@ -37,6 +37,7 @@ Notes :
 * Les fonctions de pré-installation, de post-installation et de désinstallation sont détectées automatiquement lors de la construction du manifeste — vous n'avez pas besoin de les référencer dans `defineApplication()`.
 * Le passage explicite de `defaultRoleUniversalIdentifier` est toujours pris en charge pour des raisons de rétrocompatibilité, mais il est obsolète au profit de `defineApplicationRole()`.
 * `serverVariables` sont des configurations et des secrets au niveau de l’instance (par exemple des clés d’API). Contrairement à `applicationVariables`, ils ne déclarent aucune valeur dans le manifeste — l’opérateur de l’espace de travail les renseigne dans les paramètres de l’application, et ils sont injectés dans les fonctions logiques uniquement une fois définis.
+* Les deux types de variable acceptent `isDeprecated: true`. Utilisez-la pour mettre une variable hors service plutôt que de la supprimer : garder la clé déclarée préserve la valeur stockée (la supprimer détruit la valeur saisie par l’utilisateur), et la variable est toujours injectée, de sorte que votre code peut s’y rabattre — `process.env.NEW_API_KEY ?? process.env.API_KEY`. Une variable dépréciée disparaît des paramètres de l'application lorsqu'elle n'a plus de valeur et n'est jamais prise en compte dans la vérification de la configuration de l'application, donc `isDeprecated` l'emporte sur `isRequired`.
 * Pour afficher une interface utilisateur de configuration personnalisée dans l’onglet **Settings** de l’application (à la place de la section de configuration des variables par défaut), déclarez un composant frontal avec [`defineSettingsFrontComponent()`](/l/fr/developers/extend/apps/layout/front-components#custom-settings-component) dans son propre fichier. Un seul est autorisé par application. Les sections gérées par le système (mise à niveau automatique, App URL, connexions) restent toujours visibles.
 
 ## Types de variables
@@ -96,7 +97,7 @@ Il en va de même pour les composants front qui lisent les valeurs via `getAppli
 
 Le rôle déclaré avec [`defineApplicationRole()`](/l/fr/developers/extend/apps/config/roles) contrôle ce à quoi les fonctions logiques de l’application et les composants front peuvent accéder :
 
-* Le jeton d'exécution injecté sous `TWENTY_APP_ACCESS_TOKEN` est dérivé de ce rôle.
+* Les jetons d'exécution injectés dans vos fonctions logiques sont dérivés de ce rôle. Un appel agissant en tant que personne est davantage limité par ce que cette personne peut faire, de sorte qu'il ne peut jamais dépasser l'un ou l'autre. Voir [Les accès qu'un appel utilise](/l/fr/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 * Le client d'API typé est limité aux autorisations accordées à ce rôle.
 * Appliquez le principe du moindre privilège : déclarez uniquement les autorisations dont vos fonctions ont besoin.
 

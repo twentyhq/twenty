@@ -2,8 +2,11 @@ import { type CoreSchema } from 'twenty-client-sdk/core';
 
 import { stripMarkdown } from 'src/modules/shared/utils/strip-markdown.util';
 
-import { isCaseStudy } from 'src/modules/partner/utils/content-type';
-import { firstFileUrl, resolvePartnerPictureUrl } from 'src/modules/partner/utils/profile-picture';
+import { isApprovedCaseStudy } from 'src/modules/partner/utils/content-type';
+import {
+  resolveCoverUrl,
+  resolvePartnerPictureUrl,
+} from 'src/modules/partner/utils/profile-picture';
 
 export type MapPartnerDetail = 'list' | 'profile';
 
@@ -60,6 +63,7 @@ export type PartnerMarketplaceQueryNode = {
   skills: string[] | null;
   city: string | null;
   country: string | null;
+  superPartner?: boolean | null;
   partnerLinks?: { edges: ReadonlyArray<PartnerLinkEdge> } | null;
   partnerServices?: { edges: ReadonlyArray<PartnerServiceEdge> } | null;
   partnerContents?: { edges: ReadonlyArray<PartnerContentEdge> } | null;
@@ -82,6 +86,7 @@ export type MarketplaceListPartner = {
   skills: string[] | null;
   city: string | null;
   country: string | null;
+  superPartner: boolean;
 };
 
 export type MarketplaceProfilePartner = MarketplaceListPartner & {
@@ -141,7 +146,9 @@ const sortBySortOrderAscNullsLast = <
     return leftOrder - rightOrder;
   });
 
-const sortByPositionAscNullsLast = <T extends { node: { position: number | null } }>(
+const sortByPositionAscNullsLast = <
+  T extends { node: { position: number | null } },
+>(
   edges: ReadonlyArray<T>,
 ): T[] =>
   [...edges].sort((left, right) => {
@@ -177,8 +184,9 @@ const dedupeUrls = (urls: ReadonlyArray<string | null>): string[] => {
 };
 
 const mapProfileLinks = (node: PartnerMarketplaceQueryNode): PrimaryLink[] => {
-  const partnerLinkUrls = sortBySortOrderAscNullsLast(node.partnerLinks?.edges ?? [])
-    .map((edge) => edge.node.url?.primaryLinkUrl ?? null);
+  const partnerLinkUrls = sortBySortOrderAscNullsLast(
+    node.partnerLinks?.edges ?? [],
+  ).map((edge) => edge.node.url?.primaryLinkUrl ?? null);
 
   const legacyUrls = [
     node.website?.primaryLinkUrl ?? null,
@@ -202,12 +210,12 @@ const mapPortfolio = (
   edges: ReadonlyArray<PartnerContentEdge>,
 ): MarketplaceProfilePartner['portfolio'] =>
   sortByPositionAscNullsLast(edges)
-    .filter(({ node }) => isCaseStudy(node.contentType) && node.status === 'APPROVED')
+    .filter(({ node }) => isApprovedCaseStudy(node))
     .map(({ node }) => ({
       client: node.clientName ?? '',
       title: node.headline ?? '',
       body: node.body?.markdown ?? '',
-      imageUrl: node.coverImageUrl ?? firstFileUrl(node.coverImage),
+      imageUrl: resolveCoverUrl(node.coverImageUrl, node.coverImage),
       link: node.caseStudyLink?.primaryLinkUrl ?? null,
     }));
 
@@ -237,6 +245,7 @@ const mapBasePartner = (
   skills: node.skills,
   city: node.city,
   country: node.country,
+  superPartner: node.superPartner === true,
 });
 
 export function mapPartnerForMarketplace(

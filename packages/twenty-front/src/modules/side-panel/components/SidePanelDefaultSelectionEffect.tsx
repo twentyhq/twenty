@@ -15,7 +15,6 @@ export const SidePanelDefaultSelectionEffect = ({
   const { setSelectedItemId } = useSelectableList(
     SIDE_PANEL_SELECTABLE_LIST_ID,
   );
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     SIDE_PANEL_SELECTABLE_LIST_ID,

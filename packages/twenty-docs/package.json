@@ -11,10 +11,12 @@
     "lint": "npx oxlint -c .oxlintrc.json ."
   },
   "dependencies": {
-    "mintlify": "^4.2.594"
+    "mintlify": "^4.2.790"
   },
   "devDependencies": {
-    "twenty-shared": "workspace:*"
+    "tsx": "^4.19.3",
+    "twenty-shared": "workspace:*",
+    "vitest": "^4.1.0"
   },
   "engines": {
     "node": "^24.5.0",

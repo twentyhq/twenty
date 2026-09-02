@@ -4,9 +4,13 @@ import { act, renderHook } from '@testing-library/react';
 import { createOneActivityOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/createOneActivityOperationSignatureFactory';
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
 import { type Task } from '@/activities/types/Task';
+import { getObjectMorphJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getObjectMorphJunctionConfig';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { generateCreateOneRecordMutation } from '@/object-metadata/utils/generateCreateOneRecordMutation';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { mockedTaskRecords } from '~/testing/mock-data/generated/data/tasks/mock-tasks-data';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
@@ -21,6 +25,9 @@ const toISOStringMock = jest.fn(() => mockedDate);
 global.Date.prototype.toISOString = toISOStringMock;
 
 const { id, title, bodyV2, status, dueAt } = mockedTasks[0];
+const bodyV2WithoutTypename = isDefined(bodyV2)
+  ? { blocknote: bodyV2.blocknote, markdown: bodyV2.markdown }
+  : bodyV2;
 const mockedActivity = {
   id,
   title,
@@ -31,6 +38,15 @@ const mockedActivity = {
 };
 
 const taskMetadataItem = getMockObjectMetadataItemOrThrow('task');
+const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
+const activityTargetFieldName = getObjectMorphJunctionConfig({
+  objectMetadata: taskMetadataItem,
+  objectMetadataItems,
+})?.junctionField.name;
+
+if (!isDefined(activityTargetFieldName)) {
+  throw new Error('Task target junction metadata is missing');
+}
 
 const operationSignature = createOneActivityOperationSignatureFactory({
   objectNameSingular: CoreObjectNameSingular.Task,
@@ -38,7 +54,7 @@ const operationSignature = createOneActivityOperationSignatureFactory({
 
 const createOneTaskMutation = generateCreateOneRecordMutation({
   objectMetadataItem: taskMetadataItem,
-  objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
+  objectMetadataItems,
   recordGqlFields: operationSignature.fields,
   objectPermissionsByObjectMetadataId: {},
 });
@@ -61,7 +77,10 @@ const mocks: MockedResponse[] = [
     request: {
       query: createOneTaskMutation,
       variables: {
-        input: mockedActivity,
+        input: {
+          ...mockedActivity,
+          bodyV2: bodyV2WithoutTypename,
+        },
       },
     },
     result: mockResult,
@@ -91,5 +110,10 @@ describe('useCreateActivityInDB', () => {
     });
 
     expect(mockResult).toHaveBeenCalled();
+    expect(jotaiStore.get(recordStoreFamilyState.atomFamily(id))).toMatchObject(
+      {
+        [activityTargetFieldName]: [],
+      },
+    );
   });
 });

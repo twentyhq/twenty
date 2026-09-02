@@ -4,6 +4,7 @@ import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -18,7 +19,7 @@ import {
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 export type UserContext = {
@@ -43,7 +44,7 @@ export class AgentActorContextService {
   constructor(
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly userRoleService: UserRoleService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   async buildUserAndAgentActorContext(
@@ -63,23 +64,18 @@ export class AgentActorContextService {
     }
 
     const workspaceMember =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const workspaceMemberRepository =
-            await this.globalWorkspaceOrmManager.getRepository(
-              workspaceId,
-              'workspaceMember',
-              { shouldBypassPermissionChecks: true },
-            );
-
-          return workspaceMemberRepository.findOne({
-            where: {
-              userId: userWorkspace.userId,
-            },
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workspaceMemberRepository =
+          this.workspaceOrmManager.getRepository('workspaceMember', {
+            shouldBypassPermissionChecks: true,
           });
-        },
-        authContext,
-      );
+
+        return workspaceMemberRepository.findOne({
+          where: {
+            userId: userWorkspace.userId,
+          },
+        });
+      }, authContext);
 
     if (!workspaceMember) {
       throw new AiException(
@@ -126,9 +122,11 @@ export class AgentActorContextService {
   async buildRunAsWorkspaceMemberContext({
     workspaceMemberId,
     workspaceId,
+    viaApplication,
   }: {
     workspaceMemberId: string;
     workspaceId: string;
+    viaApplication?: FlatApplication;
   }): Promise<RunAsWorkspaceMemberContext> {
     const workspaceMember = await this.userWorkspaceService.getWorkspaceMember({
       workspaceMemberId,
@@ -174,6 +172,7 @@ export class AgentActorContextService {
         user: fromUserEntityToFlat(userWorkspace.user),
         workspaceMemberId: workspaceMember.id,
         workspaceMember,
+        viaApplication,
       }),
       roleId,
     };

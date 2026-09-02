@@ -28,6 +28,7 @@ import { BillingUsageCacheService } from 'src/engine/core-modules/billing/servic
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
+import { resolveBillingPeriodBoundaryUpdate } from 'src/engine/core-modules/billing/utils/resolve-billing-period-boundary-update.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -132,11 +133,33 @@ export class BillingWebhookSubscriptionService {
       ? liveCustomerSubscriptions
       : [...liveCustomerSubscriptions, subscriptionWithSchedule];
 
-    await this.billingSubscriptionRepository.upsert(
+    const incomingSubscription =
       transformStripeSubscriptionEventToDatabaseSubscription(
         workspaceId,
         subscriptionWithSchedule,
-      ),
+      );
+
+    const storedSubscription = await this.billingSubscriptionRepository.findOne(
+      {
+        where: {
+          stripeSubscriptionId: incomingSubscription.stripeSubscriptionId,
+        },
+        select: {
+          id: true,
+          currentPeriodStart: true,
+          currentPeriodEnd: true,
+        },
+      },
+    );
+
+    await this.billingSubscriptionRepository.upsert(
+      {
+        ...incomingSubscription,
+        ...resolveBillingPeriodBoundaryUpdate({
+          incomingPeriodStart: incomingSubscription.currentPeriodStart,
+          storedSubscription,
+        }),
+      },
       {
         conflictPaths: ['stripeSubscriptionId'],
         skipUpdateIfNoValuesChanged: true,
@@ -194,7 +217,7 @@ export class BillingWebhookSubscriptionService {
       if (!isDefined(refreshedWorkspace.deletedAt)) {
         switch (refreshedWorkspace.activationStatus) {
           case WorkspaceActivationStatus.PENDING_CREATION:
-            await this.workspaceService.deleteWorkspace(workspaceId);
+            await this.workspaceService.deleteWorkspace(workspaceId, true);
             break;
           case WorkspaceActivationStatus.ACTIVE:
             await this.workspaceService.suspendWorkspace(workspaceId);

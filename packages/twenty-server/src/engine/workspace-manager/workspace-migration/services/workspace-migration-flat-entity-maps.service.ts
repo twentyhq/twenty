@@ -20,6 +20,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { WORKSPACE_MIGRATION_ADDITIONAL_CACHE_DATA_MAPS_KEY } from 'src/engine/workspace-manager/workspace-migration/constant/workspace-migration-additional-cache-data-maps-key.constant';
 import { IdByUniversalIdentifierByMetadataName } from 'src/engine/workspace-manager/workspace-migration/services/utils/enrich-create-workspace-migration-action-with-ids.util';
+import { getTimelineActivityTypeTargetRelationApplicationIds } from 'src/engine/workspace-manager/workspace-migration/services/utils/get-timeline-activity-type-target-relation-application-ids.util';
 import { WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-builder-additional-cache-data-maps.type';
 import { FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { computeUniversalFlatEntityMapsFromToThroughMutation } from 'src/engine/workspace-manager/workspace-migration/utils/compute-universal-flat-entity-maps-from-to-through-mutation.util';
@@ -264,6 +265,16 @@ export class WorkspaceMigrationFlatEntityMapsService {
 
     if (!isBuildingTwentyStandardApplication) {
       applicationIds.add(twentyStandardApplicationId);
+    }
+
+    for (const targetRelationApplicationId of getTimelineActivityTypeTargetRelationApplicationIds(
+      {
+        timelineActivityTypeOperations:
+          allFlatEntityOperationRecordByMetadataName.timelineActivityType,
+        flatFieldMetadataMaps: allRelatedFlatEntityMaps.flatFieldMetadataMaps,
+      },
+    )) {
+      applicationIds.add(targetRelationApplicationId);
     }
 
     for (const metadataName of Object.keys(

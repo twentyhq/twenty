@@ -1,5 +1,12 @@
+import { useStore } from 'jotai';
 import { useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import {
+  parsePath,
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -7,11 +14,14 @@ import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/state
 import { computeCursorArgFilter } from '@/object-record/graphql/utils/computeCursorArgFilter';
 import { extractOrderByFieldNames } from '@/object-record/graphql/utils/extractOrderByFieldNames';
 import { reverseOrderBy } from '@/object-record/graphql/utils/reverseOrderBy';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
+import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useQueryVariablesFromParentView } from '@/views/hooks/useQueryVariablesFromParentView';
-import { AppPath } from 'twenty-shared/types';
-import { combineFilters, isDefined } from 'twenty-shared/utils';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { AppPath, SidePanelPages } from 'twenty-shared/types';
+import { combineFilters, getAppPath, isDefined } from 'twenty-shared/utils';
 
 export const useRecordShowPagePagination = (
   propsObjectNameSingular: string,
@@ -22,11 +32,21 @@ export const useRecordShowPagePagination = (
     objectRecordId: paramObjectRecordId,
   } = useParams();
 
-  const navigate = useNavigateApp();
+  const store = useStore();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { navigateSidePanelHistory } = useSidePanelHistory();
+  const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
+  const workspaceSurface = useWorkspaceSurface();
+  const ownsSidePanelRoute =
+    workspaceSurface.type === 'side-panel' &&
+    workspaceSurface.ownsRouteLocation;
   const [searchParams] = useSearchParams();
   const viewIdQueryParam = searchParams.get('viewId');
 
-  const setLastShowPageRecordId = useSetAtomState(lastShowPageRecordIdState);
+  const setLastShowPageRecordId = useSetAtomComponentState(
+    lastShowPageRecordIdState,
+  );
 
   const objectNameSingular = propsObjectNameSingular || paramObjectNameSingular;
   const objectRecordId = propsObjectRecordId || paramObjectRecordId;
@@ -164,10 +184,15 @@ export const useRecordShowPagePagination = (
 
   // oxlint-disable-next-line twenty/no-navigate-prefer-link
   const navigateToRecord = (targetRecordId: string) => {
-    navigate(
+    const destinationPath = `${getAppPath(
       AppPath.RecordShowPage,
       { objectNameSingular, objectRecordId: targetRecordId },
       { viewId: viewIdQueryParam },
+    )}${location.hash}`;
+
+    navigate(
+      destinationPath,
+      ownsSidePanelRoute ? { replace: true } : undefined,
     );
   };
 
@@ -196,11 +221,55 @@ export const useRecordShowPagePagination = (
   };
 
   const navigateToIndexView = () => {
-    navigate(
+    const indexPath = getAppPath(
       AppPath.RecordIndexPage,
       { objectNamePlural: objectMetadataItem.namePlural },
       { viewId: viewIdQueryParam },
     );
+
+    if (ownsSidePanelRoute) {
+      const indexLocation = parsePath(indexPath);
+      const navigationStack = store.get(sidePanelNavigationStackState.atom);
+      const previousIndexPageIndex = navigationStack.findLastIndex(
+        (navigationItem) =>
+          navigationItem.page === SidePanelPages.RoutedPage &&
+          navigationItem.routedLocation.pathname === indexLocation.pathname &&
+          (new URLSearchParams(navigationItem.routedLocation.search).get(
+            'viewId',
+          ) ?? '') === (viewIdQueryParam ?? ''),
+      );
+
+      if (previousIndexPageIndex >= 0) {
+        const previousIndexPage = navigationStack[previousIndexPageIndex];
+
+        store.set(
+          lastShowPageRecordIdState.atomFamily({
+            instanceId: previousIndexPage.pageId,
+          }),
+          objectRecordId,
+        );
+        navigateSidePanelHistory(previousIndexPageIndex);
+        return;
+      }
+
+      const destinationPageInstanceId = openRoutedPageInSidePanel({
+        path: indexPath,
+        resetNavigationStack: false,
+      });
+
+      if (isDefined(destinationPageInstanceId)) {
+        store.set(
+          lastShowPageRecordIdState.atomFamily({
+            instanceId: destinationPageInstanceId,
+          }),
+          objectRecordId,
+        );
+      }
+
+      return;
+    }
+
+    navigate(indexPath);
     setLastShowPageRecordId(objectRecordId);
   };
 

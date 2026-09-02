@@ -35,38 +35,42 @@ export { defineCommandMenuItem } from '@/sdk/define/command-menu-items/define-co
 export type { CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
 export type { CommandMenuItemManifest } from 'twenty-shared/application';
 
+export { defineTimelineActivityType } from '@/sdk/define/timeline-activity-types/define-timeline-activity-type';
+export type { TimelineActivityTypeConfig } from '@/sdk/define/timeline-activity-types/timeline-activity-type-config';
+export type { TimelineActivityTypeManifest } from 'twenty-shared/application';
+
 export {
-  pageType,
-  isInSidePanel,
-  isDashboardPageLayoutInEditMode,
-  isLayoutCustomizationModeEnabled,
-  favoriteRecordIds,
-  isSelectAll,
-  hasAnySoftDeleteFilterOnView,
-  numberOfSelectedRecords,
-  objectPermissions,
-  selectedRecords,
-  featureFlags,
-  targetObjectReadPermissions,
-  targetObjectWritePermissions,
-  canImpersonate,
   canAccessFullAdminPanel,
-  isDefined,
-  isNonEmptyString,
-  includes,
+  canImpersonate,
   every,
   everyDefined,
   everyEquals,
-  some,
-  someDefined,
-  someEquals,
+  favoriteRecordIds,
+  featureFlags,
+  hasAnySoftDeleteFilterOnView,
+  includes,
+  includesEvery,
+  isDashboardPageLayoutInEditMode,
+  isDefined,
+  isInSidePanel,
+  isLayoutCustomizationModeEnabled,
+  isNonEmptyString,
+  isSelectAll,
   none,
   noneDefined,
   noneEquals,
-  someNonEmptyString,
-  includesEvery,
+  numberOfSelectedRecords,
   objectMetadataItem,
   objectMetadataLabel,
+  objectPermissions,
+  pageType,
+  selectedRecords,
+  some,
+  someDefined,
+  someEquals,
+  someNonEmptyString,
+  targetObjectReadPermissions,
+  targetObjectWritePermissions,
 } from '@/sdk/define/conditional-availability/conditional-availability-variables';
 
 export { defineFrontComponent } from '@/sdk/define/front-component/define-front-component';
@@ -168,6 +172,8 @@ export { defineViewField } from '@/sdk/define/view-fields/define-view-field';
 export {
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
+  SYSTEM_VIEW_KEYS,
+  type SystemViewKey,
 } from 'twenty-shared/application';
 export type { ViewConfig } from '@/sdk/define/views/view-config';
 export { ViewKey } from '@/sdk/define/views/view-key';
@@ -184,9 +190,12 @@ export type {
 
 export {
   AggregateOperations,
+  CommandMenuItemAvailabilityType,
   DateDisplayFormat,
   FieldMetadataSettingsOnClickAction,
   HTTPMethod,
+  IndexType,
+  MetadataWritability,
   NavigationMenuItemType,
   NumberDataType,
   ObjectOpenRecordIn,
@@ -200,9 +209,13 @@ export {
   ViewSortDirection,
   ViewType,
   ViewVisibility,
+  WidgetType,
 } from 'twenty-shared/types';
 export type {
-  GridPosition,
+  PageLayoutWidgetCanvasPosition,
   PageLayoutWidgetConditionalDisplay,
+  PageLayoutWidgetGridPosition,
+  PageLayoutWidgetPosition,
   PageLayoutWidgetUniversalConfiguration,
+  PageLayoutWidgetVerticalListPosition,
 } from 'twenty-shared/types';

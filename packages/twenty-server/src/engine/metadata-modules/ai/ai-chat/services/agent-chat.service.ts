@@ -88,11 +88,14 @@ export class AgentChatService {
     id?: string;
     title?: string;
   }) {
-    const savedThread = await this.threadRepository.save(workspaceId, {
-      ...(isDefined(id) ? { id } : {}),
-      ...(isDefined(title) ? { title } : {}),
-      userWorkspaceId,
-    });
+    const savedThread = await this.threadRepository.insertAndReturnOne(
+      workspaceId,
+      {
+        ...(isDefined(id) ? { id } : {}),
+        ...(isDefined(title) ? { title } : {}),
+        userWorkspaceId,
+      },
+    );
 
     await this.workspaceEventBroadcaster.broadcast({
       workspaceId,
@@ -161,8 +164,6 @@ export class AgentChatService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<(AgentChatThreadEntity & { lastMessageAt: Date | null })[]> {
-    // Query builder uses the scoped wrapper's escape hatch; we add the
-    // workspaceId predicate manually below.
     const rankedThreads = await this.threadRepository
       .createQueryBuilder('thread')
       .select('thread.id', 'id')
@@ -613,6 +614,16 @@ export class AgentChatService {
     return (result.affected ?? 0) > 0;
   }
 
+  async deleteMessage({
+    messageId,
+    workspaceId,
+  }: {
+    messageId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.messageRepository.delete(workspaceId, { id: messageId });
+  }
+
   async promoteQueuedMessage({
     messageId,
     threadId,
@@ -702,14 +713,27 @@ export class AgentChatService {
     const claim = await this.threadRepository.update(
       workspaceId,
       { id: threadId, pendingQuestionMessageId: messageId },
-      { pendingQuestionMessageId: null, activeStreamId: streamId },
+      {
+        pendingQuestionMessageId: null,
+        activeStreamId: streamId,
+        lastStreamError: null,
+      },
     );
 
     if ((claim.affected ?? 0) === 0) {
-      throw new AiException(
-        'No pending question to answer',
-        AiExceptionCode.QUESTION_NOT_PENDING,
-      );
+      const adopted = await this.claimOrphanedQuestion({
+        threadId,
+        messageId,
+        streamId,
+        workspaceId,
+      });
+
+      if (!adopted) {
+        throw new AiException(
+          'No pending question to answer',
+          AiExceptionCode.QUESTION_NOT_PENDING,
+        );
+      }
     }
 
     try {
@@ -744,6 +768,47 @@ export class AgentChatService {
       turnId: message.turnId,
       rollback: { partId: pendingPart.id, previousOutput },
     };
+  }
+
+  private async claimOrphanedQuestion({
+    threadId,
+    messageId,
+    streamId,
+    workspaceId,
+  }: {
+    threadId: string;
+    messageId: string;
+    streamId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const latestAssistantMessage = await this.messageRepository.findOne(
+      workspaceId,
+      {
+        where: { threadId, role: AgentMessageRole.ASSISTANT },
+        order: {
+          processedAt: { direction: 'DESC', nulls: 'LAST' },
+          createdAt: 'DESC',
+          id: 'DESC',
+        },
+        select: ['id'],
+      },
+    );
+
+    if (latestAssistantMessage?.id !== messageId) {
+      return false;
+    }
+
+    const claim = await this.threadRepository.update(
+      workspaceId,
+      {
+        id: threadId,
+        pendingQuestionMessageId: IsNull(),
+        activeStreamId: IsNull(),
+      },
+      { activeStreamId: streamId, lastStreamError: null },
+    );
+
+    return (claim.affected ?? 0) > 0;
   }
 
   async restorePendingQuestion({

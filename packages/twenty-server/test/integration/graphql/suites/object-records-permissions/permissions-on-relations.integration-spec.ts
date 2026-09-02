@@ -10,6 +10,7 @@ import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one
 import { makeGraphqlAPIRequestWithMemberRole as makeGraphqlAPIRequestWithJony } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
+import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -20,10 +21,11 @@ const client = request(`http://localhost:${APP_PORT}`);
 describe('permissionsOnRelations', () => {
   let originalMemberRoleId: string;
   let customRoleId: string;
+  let generatedPersonIds: string[] = [];
+  let generatedCompanyIds: string[] = [];
   const personId = randomUUID();
 
   beforeAll(async () => {
-    // Get the original Member role ID for restoration later
     const getRolesQuery = {
       query: `
         query GetRoles {
@@ -44,7 +46,6 @@ describe('permissionsOnRelations', () => {
       (role: any) => role.label === 'Member',
     ).id;
 
-    // Create a person record
     const companyId = randomUUID();
     const graphqlOperationForCompanyCreation = createOneOperationFactory({
       objectMetadataSingularName: 'company',
@@ -96,11 +97,14 @@ describe('permissionsOnRelations', () => {
   });
 
   afterEach(async () => {
+    await deleteRecordsByIds('person', generatedPersonIds);
+    await deleteRecordsByIds('company', generatedCompanyIds);
+    generatedPersonIds = [];
+    generatedCompanyIds = [];
     await deleteRole(client, customRoleId);
   });
 
   it('should throw permission error when querying person with company relation without company read permission', async () => {
-    // Create a role with person read permission but no company read permission
     const { roleId } = await createCustomRoleWithObjectPermissions({
       label: 'PersonOnlyRole',
       canReadPerson: true,
@@ -115,7 +119,6 @@ describe('permissionsOnRelations', () => {
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     });
 
-    // Create GraphQL query that includes company relation
     const graphqlOperation = findManyOperationFactory({
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',
@@ -131,7 +134,6 @@ describe('permissionsOnRelations', () => {
 
     const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
 
-    // The query should fail when trying to access company relation without permission
     expect(response.body.errors[0].message).toBe(
       PermissionsExceptionMessage.PERMISSION_DENIED,
     );
@@ -139,7 +141,6 @@ describe('permissionsOnRelations', () => {
   });
 
   it('should successfully query person with company relation when having both permissions', async () => {
-    // Create a role with both person and company read permissions
     const { roleId } = await createCustomRoleWithObjectPermissions({
       label: 'PersonAndCompanyRole',
       canReadPerson: true,
@@ -154,7 +155,6 @@ describe('permissionsOnRelations', () => {
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     });
 
-    // Create GraphQL query that includes company relation
     const graphqlOperation = findManyOperationFactory({
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',
@@ -170,7 +170,6 @@ describe('permissionsOnRelations', () => {
 
     const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
 
-    // The query should succeed
     expect(response.body.data).toBeDefined();
     expect(response.body.data.people).toBeDefined();
     const person = response.body.data.people.edges[0].node;
@@ -179,9 +178,74 @@ describe('permissionsOnRelations', () => {
     expect(response.body.error).toBeUndefined();
   });
 
-  it('nested relations - should throw permission error when querying nested opportunity relation without opportunity read permission', async () => {
-    // Where user has person and company read permissions but not opportunity read permission
+  it('should reject a nested create when the target object is not writable', async () => {
+    const { roleId } = await createCustomRoleWithObjectPermissions({
+      label: 'WritablePersonReadOnlyCompanyRole',
+      canReadPerson: true,
+      canUpdatePerson: true,
+      canReadCompany: true,
+      canUpdateCompany: false,
+      hasAllObjectRecordsReadPermission: false,
+    });
 
+    customRoleId = roleId;
+
+    await updateWorkspaceMemberRole({
+      client,
+      roleId: customRoleId,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    });
+
+    const nestedPersonId = randomUUID();
+    const nestedCompanyId = randomUUID();
+
+    generatedPersonIds.push(nestedPersonId);
+    generatedCompanyIds.push(nestedCompanyId);
+
+    const response = await makeGraphqlAPIRequestWithJony(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: 'id company { id }',
+        data: {
+          id: nestedPersonId,
+          company: {
+            create: {
+              id: nestedCompanyId,
+              name: 'Forbidden nested company',
+            },
+          },
+        },
+      }),
+    );
+
+    expect(response.body.data).toStrictEqual({ createPerson: null });
+    expect(response.body.errors?.[0]).toMatchObject({
+      message: PermissionsExceptionMessage.PERMISSION_DENIED,
+      extensions: { code: ErrorCode.FORBIDDEN },
+    });
+
+    const [personResponse, companyResponse] = await Promise.all([
+      makeGraphqlAPIRequest(
+        findOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: 'id',
+          filter: { id: { eq: nestedPersonId } },
+        }),
+      ),
+      makeGraphqlAPIRequest(
+        findOneOperationFactory({
+          objectMetadataSingularName: 'company',
+          gqlFields: 'id',
+          filter: { id: { eq: nestedCompanyId } },
+        }),
+      ),
+    ]);
+
+    expect(personResponse.body.data.person).toBeNull();
+    expect(companyResponse.body.data.company).toBeNull();
+  });
+
+  it('nested relations - should throw permission error when querying nested opportunity relation without opportunity read permission', async () => {
     const { roleId } = await createCustomRoleWithObjectPermissions({
       label: 'PersonCompanyOnlyRole',
       canReadPerson: true,
@@ -197,7 +261,6 @@ describe('permissionsOnRelations', () => {
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     });
 
-    // Create a query with nested relations
     const graphqlOperation = findOneOperationFactory({
       objectMetadataSingularName: 'person',
       gqlFields: `

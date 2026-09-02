@@ -1,15 +1,21 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { resolveOpenRecordIn } from '@/object-record/record-index/utils/resolveOpenRecordIn';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
 import { useRef } from 'react';
 import {
+  buildFrontComponentStorageNamespace,
+  clearFrontComponentStorage,
+  deleteFrontComponentStorageItem,
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
+  setFrontComponentStorageItem,
 } from 'twenty-front-component-renderer';
 import {
   AppPath,
+  FieldMetadataType,
   ObjectOpenRecordIn,
   OpenRecordIn,
   SidePanelPages,
@@ -24,12 +30,15 @@ import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useU
 import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
+import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
+import { getMediaFileExtension } from '@/front-components/media-session/utils/getMediaFileExtension';
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenComposeEmailInSidePanel';
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useOpenRichTextInSidePanel } from '@/side-panel/hooks/useOpenRichTextInSidePanel';
+import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { setRecordPageActiveTabId } from '@/page-layout/utils/setRecordPageActiveTabId';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -37,29 +46,91 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useStore } from 'jotai';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import {
+  assertUnreachable,
+  CustomError,
+  getAppPath,
+  isDefined,
+} from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { FileFolder } from '~/generated-metadata/graphql';
 
 const FRONT_COMPONENT_CLIPBOARD_MAX_LENGTH = 64 * 1024;
 const FRONT_COMPONENT_CLIPBOARD_RATE_LIMIT_MS = 1000;
 const FRONT_COMPONENT_CLIPBOARD_PREVIEW_LENGTH = 30;
 
+const FRONT_COMPONENT_UPLOAD_FILE_NAME_MAX_LENGTH = 200;
+
+type OpenSidePanelPageParams = Parameters<
+  FrontComponentHostCommunicationApi['openSidePanelPage']
+>[0];
+
+type AskAiOpenSidePanelPageParams = Extract<
+  OpenSidePanelPageParams,
+  { page: SidePanelPages.AskAI }
+>;
+
+// Runtime-only compatibility for front components built with older SDKs.
+type LegacyOpenSidePanelPageParams =
+  | {
+      page: SidePanelPages.RoutedPage;
+      path: string;
+      pageTitle?: string;
+      resetNavigationStack?: boolean;
+    }
+  | {
+      page: SidePanelPages.ViewRecord;
+      recordId: string;
+      objectNameSingular: string;
+      tab?: string;
+      resetNavigationStack?: boolean;
+    }
+  | (Omit<AskAiOpenSidePanelPageParams, 'page'> & {
+      page: SidePanelPages.Copilot;
+    })
+  | {
+      page: SidePanelPages.ViewRecords;
+      pageTitle?: string;
+      pageIcon?: string;
+      shouldResetSearchState?: boolean;
+    };
+
+const sanitizeUploadFileName = (fileName: string, mimeType: string): string => {
+  const withoutSeparators = fileName.replace(/[/\\\u0000-\u001f]/g, '').trim();
+
+  if (withoutSeparators === '') {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+
+    return `upload-${timestamp}.${getMediaFileExtension(mimeType)}`;
+  }
+
+  return withoutSeparators.slice(
+    0,
+    FRONT_COMPONENT_UPLOAD_FILE_NAME_MAX_LENGTH,
+  );
+};
+
 export const useFrontComponentExecutionContext = ({
   frontComponentId,
+  applicationId,
   commandMenuItemId,
   selectedRecordIds,
+  timelineActivityId,
   colorScheme,
 }: {
   frontComponentId: string;
+  applicationId: string;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
+  timelineActivityId?: string;
   colorScheme: 'light' | 'dark';
 }): {
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
+  storageNamespace?: string;
 } => {
   const currentUser = useAtomStateValue(currentUserState);
   const navigateApp = useNavigateApp();
@@ -72,6 +143,7 @@ export const useFrontComponentExecutionContext = ({
   const { navigateSidePanel } = useNavigateSidePanel();
   const { openRecordInSidePanel: openRecordInSidePanelInternal } =
     useOpenRecordInSidePanel();
+  const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
   const { openRichTextInSidePanel } = useOpenRichTextInSidePanel();
   const { openComposeEmailInSidePanel } = useOpenComposeEmailInSidePanel();
   const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
@@ -88,6 +160,7 @@ export const useFrontComponentExecutionContext = ({
   } = useSnackBar();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { copyToClipboard: copyToClipboardWithSnackbar } = useCopyToClipboard();
+  const { uploadFile: uploadFileToFilesField } = useDirectFileUpload();
   const { t, i18n } = useLingui();
   // oxlint-disable-next-line twenty/no-state-useref
   const lastCopyToClipboardCallAtRef = useRef<number>(Number.NEGATIVE_INFINITY);
@@ -132,7 +205,71 @@ export const useFrontComponentExecutionContext = ({
   };
 
   const openSidePanelPage: FrontComponentHostCommunicationApi['openSidePanelPage'] =
-    async (params) => {
+    async (params: OpenSidePanelPageParams | LegacyOpenSidePanelPageParams) => {
+      if ('to' in params) {
+        if (params.to.includes(':') && !isDefined(params.params)) {
+          throw new CustomError(
+            `Missing params for side-panel route: ${params.to}`,
+            'FRONT_COMPONENT_SIDE_PANEL_ROUTE_PARAMS_REQUIRED',
+          );
+        }
+
+        const path = getAppPath(
+          params.to,
+          params.params as never,
+          params.queryParams,
+        );
+        const pathWithHash = isNonEmptyString(params.hash)
+          ? `${path}#${encodeURIComponent(params.hash)}`
+          : path;
+
+        const pageId = openRoutedPageInSidePanel({
+          path: pathWithHash,
+          pageTitle: params.pageTitle,
+          resetNavigationStack: params.resetNavigationStack,
+        });
+
+        if (!isDefined(pageId)) {
+          throw new CustomError(
+            `Unsupported side-panel route: ${pathWithHash}`,
+            'FRONT_COMPONENT_UNSUPPORTED_SIDE_PANEL_ROUTE',
+          );
+        }
+
+        return;
+      }
+
+      if (params.page === SidePanelPages.RoutedPage) {
+        const pageId = openRoutedPageInSidePanel({
+          path: params.path,
+          pageTitle: params.pageTitle,
+          resetNavigationStack: params.resetNavigationStack,
+        });
+
+        if (!isDefined(pageId)) {
+          throw new CustomError(
+            `Unsupported side-panel route: ${params.path}`,
+            'FRONT_COMPONENT_UNSUPPORTED_SIDE_PANEL_ROUTE',
+          );
+        }
+
+        return;
+      }
+
+      if (params.page === SidePanelPages.ViewRecords) {
+        throw new CustomError(
+          'ViewRecords is no longer supported. Open AppPath.RecordIndexPage with typed params instead.',
+          'FRONT_COMPONENT_VIEW_RECORDS_UNSUPPORTED',
+        );
+      }
+
+      if (params.page === SidePanelPages.Copilot) {
+        return openSidePanelPage({
+          ...params,
+          page: SidePanelPages.AskAI,
+        });
+      }
+
       if (params.page === SidePanelPages.ViewRecord) {
         const { recordId, objectNameSingular, tab, resetNavigationStack } =
           params;
@@ -304,6 +441,7 @@ export const useFrontComponentExecutionContext = ({
     userId: currentUser?.id ?? null,
     recordId: selectedRecordIds?.length === 1 ? selectedRecordIds[0] : null,
     selectedRecordIds: selectedRecordIds ?? [],
+    timelineActivityId: timelineActivityId ?? null,
     colorScheme,
     // i18n.locale is a Lingui string; the host is always configured with the
     // APP_LOCALES set, so it is a valid AppLocale.
@@ -361,6 +499,110 @@ export const useFrontComponentExecutionContext = ({
       );
     };
 
+  const hostUploadFile: FrontComponentHostCommunicationApi['uploadFile'] =
+    async (file, params) => {
+      // Arguments come from sandboxed application code: reject malformed
+      // shapes here. fieldMetadataId is mandatory — a file uploaded outside
+      // a FILES field could never be attached to a record and would leak.
+      if (
+        !(file instanceof Blob) ||
+        file.size === 0 ||
+        !isDefined(params) ||
+        !isNonEmptyString(params.fieldMetadataId)
+      ) {
+        return { status: 'failed', reason: 'invalid-params' };
+      }
+
+      // A non-FILES target would upload fine and then fail at attach time,
+      // stranding the file; reject it before uploading anything.
+      const { fieldMetadataItem } = getFieldMetadataItemById({
+        fieldMetadataId: params.fieldMetadataId,
+        objectMetadataItems,
+      });
+
+      if (fieldMetadataItem?.type !== FieldMetadataType.FILES) {
+        return { status: 'failed', reason: 'invalid-params' };
+      }
+
+      const fileName = sanitizeUploadFileName(
+        isNonEmptyString(params.fileName) ? params.fileName : '',
+        file.type,
+      );
+
+      try {
+        const uploadedFile = await uploadFileToFilesField(
+          new File([file], fileName, { type: file.type }),
+          {
+            fileFolder: FileFolder.FilesField,
+            fieldMetadataId: params.fieldMetadataId,
+          },
+        );
+
+        return {
+          status: 'uploaded',
+          file: {
+            fileId: uploadedFile.id,
+            path: uploadedFile.path,
+            url: uploadedFile.url,
+            size: uploadedFile.size,
+            mimeType: file.type.split(';')[0],
+          },
+        };
+      } catch {
+        return { status: 'failed', reason: 'upload-failed' };
+      }
+    };
+
+  const currentUserId = currentUser?.id;
+
+  const storageNamespace = isDefined(currentUserId)
+    ? buildFrontComponentStorageNamespace({
+        applicationId,
+        userId: currentUserId,
+      })
+    : undefined;
+
+  const requireStorageNamespace = (): string => {
+    if (!isDefined(storageNamespace)) {
+      throw new CustomError(
+        'Device storage requires a signed-in user',
+        'FRONT_COMPONENT_STORAGE_REQUIRES_SIGNED_IN_USER',
+      );
+    }
+
+    return storageNamespace;
+  };
+
+  const storageSet: FrontComponentHostCommunicationApi['storageSet'] = async ({
+    storageType,
+    key,
+    serializedValue,
+  }) => {
+    setFrontComponentStorageItem({
+      namespace: requireStorageNamespace(),
+      storageType,
+      key,
+      serializedValue,
+    });
+  };
+
+  const storageDelete: FrontComponentHostCommunicationApi['storageDelete'] =
+    async ({ storageType, key }) => {
+      deleteFrontComponentStorageItem({
+        namespace: requireStorageNamespace(),
+        storageType,
+        key,
+      });
+    };
+
+  const storageClear: FrontComponentHostCommunicationApi['storageClear'] =
+    async ({ storageType }) => {
+      clearFrontComponentStorage({
+        namespace: requireStorageNamespace(),
+        storageType,
+      });
+    };
+
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
       navigate,
@@ -372,10 +614,15 @@ export const useFrontComponentExecutionContext = ({
       closeSidePanel,
       updateProgress,
       copyToClipboard,
+      uploadFile: hostUploadFile,
+      storageSet,
+      storageDelete,
+      storageClear,
     };
 
   return {
     executionContext,
     frontComponentHostCommunicationApi,
+    storageNamespace,
   };
 };

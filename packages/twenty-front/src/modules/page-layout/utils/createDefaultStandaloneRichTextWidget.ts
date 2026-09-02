@@ -1,40 +1,47 @@
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPosition';
 import {
-  type GridPosition,
-  PageLayoutTabLayoutMode,
-  type PageLayoutWidget,
+  type PageLayoutWidgetGridPosition,
+  type PageLayoutWidgetVerticalListPosition,
   type RichTextBody,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 
-export const createDefaultStandaloneRichTextWidget = (
-  id: string,
-  pageLayoutTabId: string,
-  body: RichTextBody,
-  gridPosition: GridPosition,
-  objectMetadataId?: string | null,
-): PageLayoutWidget => {
+type CreateDefaultStandaloneRichTextWidgetParams = {
+  id: string;
+  pageLayoutTabId: string;
+  body: RichTextBody;
+  position: PageLayoutWidgetGridPosition | PageLayoutWidgetVerticalListPosition;
+  objectMetadataId?: string | null;
+  title?: string;
+};
+
+export const createDefaultStandaloneRichTextWidget = ({
+  id,
+  pageLayoutTabId,
+  body,
+  position,
+  objectMetadataId,
+  title = 'Untitled Rich Text',
+}: CreateDefaultStandaloneRichTextWidgetParams): PageLayoutWidget => {
   return {
     __typename: 'PageLayoutWidget',
     id,
     applicationId: '',
+    universalIdentifier: id,
+    isSystemSideEffect: false,
     pageLayoutTabId,
-    title: 'Untitled Rich Text',
+    title,
     isActive: true,
     type: WidgetType.STANDALONE_RICH_TEXT,
     configuration: {
       configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
       body,
     },
-    gridPosition,
-    position: {
-      __typename: 'PageLayoutWidgetGridPosition',
-      layoutMode: PageLayoutTabLayoutMode.GRID,
-      row: gridPosition.row,
-      column: gridPosition.column,
-      rowSpan: gridPosition.rowSpan,
-      columnSpan: gridPosition.columnSpan,
-    },
+    position: isVerticalListPosition(position)
+      ? { ...position, __typename: 'PageLayoutWidgetVerticalListPosition' }
+      : { ...position, __typename: 'PageLayoutWidgetGridPosition' },
     objectMetadataId: objectMetadataId ?? null,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),

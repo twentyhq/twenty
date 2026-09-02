@@ -45,6 +45,7 @@ export { GROUP_BY_DATE_GRANULARITY_THAT_REQUIRE_TIME_ZONE } from './GroupByDateG
 export { IANA_TIME_ZONES } from './IanaTimeZones';
 export { IMAGE_IDENTIFIER_FIELD_METADATA_TYPES } from './ImageIdentifierFieldMetadataTypes';
 export { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from './LabelIdentifierFieldMetadataTypes';
+export { MAX_CORE_WORKFLOW_FILTER_RULES } from './MaxCoreWorkflowFilterRules';
 export { MAX_CUSTOM_INDEXES_PER_OBJECT } from './MaxCustomIndexesPerObject';
 export { MAX_EMAIL_RECIPIENTS } from './MaxEmailRecipients';
 export { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from './MultiItemFieldDefaultMaxValues';
@@ -65,4 +66,6 @@ export { SUBDOMAIN_PATTERN } from './SubdomainPattern';
 export { SystemPermissionFlag } from './SystemPermissionFlag';
 export { TWENTY_COMPANIES_BASE_URL } from './TwentyCompaniesBaseUrl';
 export { TWENTY_ICONS_BASE_URL } from './TwentyIconsBaseUrl';
+export { UI_SCALE_VALUES } from './UiScaleValues';
 export { VIEW_GROUP_VISIBLE_OPTIONS_MAX } from './ViewGroupVisibleOptionsMax';
+export { VIEW_TYPE_DEFAULT_ICONS } from './ViewTypeDefaultIcons';

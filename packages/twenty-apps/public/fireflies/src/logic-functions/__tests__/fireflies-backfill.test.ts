@@ -1,8 +1,9 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type RoutePayload } from 'twenty-sdk/define';
 
 import { FIREFLIES_BACKFILL_WORKER_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import firefliesBackfillLogicFunction from 'src/logic-functions/fireflies-backfill';
+import { LOGIC_FUNCTION_EXECUTION_CONTEXT } from 'src/logic-functions/__tests__/logic-function-execution-context.test-support';
 
 const enqueueJobMock = vi.hoisted(() => vi.fn());
 
@@ -24,7 +25,12 @@ const buildRoutePayload = (body: object | null): RoutePayload<unknown> => ({
 describe('firefliesBackfillLogicFunction', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.stubEnv('FIREFLIES_API_KEY', 'fireflies-api-key');
     enqueueJobMock.mockResolvedValue({ enqueued: true });
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   it('is configured as an authenticated backfill route', () => {
@@ -44,6 +50,7 @@ describe('firefliesBackfillLogicFunction', () => {
   it('rejects an empty route body', async () => {
     const result = await firefliesBackfillLogicFunction.config.handler(
       buildRoutePayload(null),
+      LOGIC_FUNCTION_EXECUTION_CONTEXT,
     );
 
     expect(result).toEqual({
@@ -53,9 +60,25 @@ describe('firefliesBackfillLogicFunction', () => {
     expect(enqueueJobMock).not.toHaveBeenCalled();
   });
 
+  it('returns not-configured without enqueueing when the API key is missing', async () => {
+    vi.stubEnv('FIREFLIES_API_KEY', '');
+
+    const result = await firefliesBackfillLogicFunction.config.handler(
+      buildRoutePayload({ days: 30 }),
+      LOGIC_FUNCTION_EXECUTION_CONTEXT,
+    );
+
+    expect(result).toEqual({
+      outcome: 'not-configured',
+      error: expect.stringContaining('Fireflies is not configured'),
+    });
+    expect(enqueueJobMock).not.toHaveBeenCalled();
+  });
+
   it('enqueues discovery instead of listing transcripts in the route', async () => {
     const result = await firefliesBackfillLogicFunction.config.handler(
       buildRoutePayload({ days: 30 }),
+      LOGIC_FUNCTION_EXECUTION_CONTEXT,
     );
 
     expect(result).toEqual({ outcome: 'started' });

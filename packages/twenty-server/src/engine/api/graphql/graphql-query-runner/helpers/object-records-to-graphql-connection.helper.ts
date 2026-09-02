@@ -15,6 +15,7 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import { type OrderByValuesByRecordId } from 'src/engine/api/utils/build-order-by-values-by-record-id.util';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -23,19 +24,19 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 // TODO: Refacto-common - Rename CommonRecordsToGraphqlConnectionHelper
 export class ObjectRecordsToGraphqlConnectionHelper {
   private flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  private flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  private flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   private objectIdByNameSingular: Record<string, string>;
 
   constructor(
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     objectIdByNameSingular: Record<string, string>,
   ) {
     this.flatObjectMetadataMaps = flatObjectMetadataMaps;
@@ -55,6 +56,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     hasNextPage,
     hasPreviousPage,
     depth = 0,
+    orderByValuesByRecordId,
   }: {
     objectRecords: T[];
     parentObjectRecord?: T;
@@ -64,11 +66,12 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     selectedAggregatedFields?: Record<string, any>;
     objectName: string;
     take: number;
-    totalCount: number;
+    totalCount: number | undefined;
     order?: ObjectRecordOrderBy;
     hasNextPage: boolean;
     hasPreviousPage: boolean;
     depth?: number;
+    orderByValuesByRecordId?: OrderByValuesByRecordId;
   }): IConnection<T> {
     const objectMetadataId = this.objectIdByNameSingular[objectName];
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -91,7 +94,9 @@ export class ObjectRecordsToGraphqlConnectionHelper {
         objectRecord,
         order,
         flatObjectMetadata,
+        flatObjectMetadataMaps: this.flatObjectMetadataMaps,
         flatFieldMetadataMaps: this.flatFieldMetadataMaps,
+        orderByValuesFromScan: orderByValuesByRecordId?.[objectRecord.id],
       }),
     }));
 
@@ -164,7 +169,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     // oxlint-disable-next-line typescript/no-explicit-any
     selectedAggregatedFields?: Record<string, any>;
     take: number;
-    totalCount: number;
+    totalCount: number | undefined;
     order?: ObjectRecordOrderBy;
     depth?: number;
   }): T {
@@ -290,7 +295,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
   }
 
   private processCompositeField(
-    fieldMetadata: FlatFieldMetadata,
+    fieldMetadata: OrmFlatFieldMetadata,
     // oxlint-disable-next-line typescript/no-explicit-any
     fieldValue: any,
     // oxlint-disable-next-line typescript/no-explicit-any

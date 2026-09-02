@@ -427,7 +427,8 @@
                       "developers/extend/apps/data/objects",
                       "developers/extend/apps/data/extending-objects",
                       "developers/extend/apps/data/system-fields",
-                      "developers/extend/apps/data/relations"
+                      "developers/extend/apps/data/relations",
+                      "developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -894,7 +895,8 @@
                       "l/fr/developers/extend/apps/data/objects",
                       "l/fr/developers/extend/apps/data/extending-objects",
                       "l/fr/developers/extend/apps/data/system-fields",
-                      "l/fr/developers/extend/apps/data/relations"
+                      "l/fr/developers/extend/apps/data/relations",
+                      "l/fr/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -1361,7 +1363,8 @@
                       "l/ar/developers/extend/apps/data/objects",
                       "l/ar/developers/extend/apps/data/extending-objects",
                       "l/ar/developers/extend/apps/data/system-fields",
-                      "l/ar/developers/extend/apps/data/relations"
+                      "l/ar/developers/extend/apps/data/relations",
+                      "l/ar/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -1828,7 +1831,8 @@
                       "l/cs/developers/extend/apps/data/objects",
                       "l/cs/developers/extend/apps/data/extending-objects",
                       "l/cs/developers/extend/apps/data/system-fields",
-                      "l/cs/developers/extend/apps/data/relations"
+                      "l/cs/developers/extend/apps/data/relations",
+                      "l/cs/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -2295,7 +2299,8 @@
                       "l/de/developers/extend/apps/data/objects",
                       "l/de/developers/extend/apps/data/extending-objects",
                       "l/de/developers/extend/apps/data/system-fields",
-                      "l/de/developers/extend/apps/data/relations"
+                      "l/de/developers/extend/apps/data/relations",
+                      "l/de/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -2762,7 +2767,8 @@
                       "l/es/developers/extend/apps/data/objects",
                       "l/es/developers/extend/apps/data/extending-objects",
                       "l/es/developers/extend/apps/data/system-fields",
-                      "l/es/developers/extend/apps/data/relations"
+                      "l/es/developers/extend/apps/data/relations",
+                      "l/es/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -3229,7 +3235,8 @@
                       "l/it/developers/extend/apps/data/objects",
                       "l/it/developers/extend/apps/data/extending-objects",
                       "l/it/developers/extend/apps/data/system-fields",
-                      "l/it/developers/extend/apps/data/relations"
+                      "l/it/developers/extend/apps/data/relations",
+                      "l/it/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -3696,7 +3703,8 @@
                       "l/ja/developers/extend/apps/data/objects",
                       "l/ja/developers/extend/apps/data/extending-objects",
                       "l/ja/developers/extend/apps/data/system-fields",
-                      "l/ja/developers/extend/apps/data/relations"
+                      "l/ja/developers/extend/apps/data/relations",
+                      "l/ja/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -4163,7 +4171,8 @@
                       "l/ko/developers/extend/apps/data/objects",
                       "l/ko/developers/extend/apps/data/extending-objects",
                       "l/ko/developers/extend/apps/data/system-fields",
-                      "l/ko/developers/extend/apps/data/relations"
+                      "l/ko/developers/extend/apps/data/relations",
+                      "l/ko/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -4630,7 +4639,8 @@
                       "l/pt/developers/extend/apps/data/objects",
                       "l/pt/developers/extend/apps/data/extending-objects",
                       "l/pt/developers/extend/apps/data/system-fields",
-                      "l/pt/developers/extend/apps/data/relations"
+                      "l/pt/developers/extend/apps/data/relations",
+                      "l/pt/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -4639,6 +4649,7 @@
                       "l/pt/developers/extend/apps/logic/overview",
                       "l/pt/developers/extend/apps/logic/logic-functions",
                       "l/pt/developers/extend/apps/logic/key-value-store",
+                      "l/pt/developers/extend/apps/logic/background-jobs",
                       "l/pt/developers/extend/apps/logic/skills-and-agents",
                       "l/pt/developers/extend/apps/logic/connections"
                     ]
@@ -5096,7 +5107,8 @@
                       "l/ro/developers/extend/apps/data/objects",
                       "l/ro/developers/extend/apps/data/extending-objects",
                       "l/ro/developers/extend/apps/data/system-fields",
-                      "l/ro/developers/extend/apps/data/relations"
+                      "l/ro/developers/extend/apps/data/relations",
+                      "l/ro/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -5484,13 +5496,27 @@
                       "l/ru/user-guide/settings/capabilities/member-management",
                       "l/ru/user-guide/settings/capabilities/profile-settings",
                       "l/ru/user-guide/settings/capabilities/experience-settings",
-                      "l/ru/user-guide/settings/capabilities/domains-settings"
+                      "l/ru/user-guide/settings/capabilities/domains-settings",
+                      "l/ru/user-guide/settings/capabilities/community-settings"
                     ]
                   },
                   {
                     "group": "Инструкции",
                     "pages": [
                       "l/ru/user-guide/settings/how-tos/settings-faq"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Юридическая информация",
+                "icon": "book",
+                "pages": [
+                  "l/ru/user-guide/legal/overview",
+                  {
+                    "group": "Инструкции",
+                    "pages": [
+                      "l/ru/user-guide/legal/how-tos/legal-faq"
                     ]
                   }
                 ]
@@ -5521,6 +5547,18 @@
                     ]
                   },
                   {
+                    "group": "Обучение",
+                    "pages": [
+                      "l/ru/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/ru/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/ru/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/ru/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/ru/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/ru/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/ru/developers/extend/apps/tutorials/document-generator/publishing"
+                    ]
+                  },
+                  {
                     "group": "Конфигурация",
                     "pages": [
                       "l/ru/developers/extend/apps/config/overview",
@@ -5536,7 +5574,9 @@
                       "l/ru/developers/extend/apps/data/overview",
                       "l/ru/developers/extend/apps/data/objects",
                       "l/ru/developers/extend/apps/data/extending-objects",
-                      "l/ru/developers/extend/apps/data/relations"
+                      "l/ru/developers/extend/apps/data/system-fields",
+                      "l/ru/developers/extend/apps/data/relations",
+                      "l/ru/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -5545,6 +5585,7 @@
                       "l/ru/developers/extend/apps/logic/overview",
                       "l/ru/developers/extend/apps/logic/logic-functions",
                       "l/ru/developers/extend/apps/logic/key-value-store",
+                      "l/ru/developers/extend/apps/logic/background-jobs",
                       "l/ru/developers/extend/apps/logic/skills-and-agents",
                       "l/ru/developers/extend/apps/logic/connections"
                     ]
@@ -5568,6 +5609,12 @@
                       "l/ru/developers/extend/apps/operations/sync-and-recovery",
                       "l/ru/developers/extend/apps/operations/testing",
                       "l/ru/developers/extend/apps/operations/publishing"
+                    ]
+                  },
+                  {
+                    "group": "Переводы",
+                    "pages": [
+                      "l/ru/developers/extend/apps/translations/overview"
                     ]
                   }
                 ]
@@ -5996,7 +6043,8 @@
                       "l/tr/developers/extend/apps/data/objects",
                       "l/tr/developers/extend/apps/data/extending-objects",
                       "l/tr/developers/extend/apps/data/system-fields",
-                      "l/tr/developers/extend/apps/data/relations"
+                      "l/tr/developers/extend/apps/data/relations",
+                      "l/tr/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -6463,7 +6511,8 @@
                       "l/zh/developers/extend/apps/data/objects",
                       "l/zh/developers/extend/apps/data/extending-objects",
                       "l/zh/developers/extend/apps/data/system-fields",
-                      "l/zh/developers/extend/apps/data/relations"
+                      "l/zh/developers/extend/apps/data/relations",
+                      "l/zh/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -6472,6 +6521,7 @@
                       "l/zh/developers/extend/apps/logic/overview",
                       "l/zh/developers/extend/apps/logic/logic-functions",
                       "l/zh/developers/extend/apps/logic/key-value-store",
+                      "l/zh/developers/extend/apps/logic/background-jobs",
                       "l/zh/developers/extend/apps/logic/skills-and-agents",
                       "l/zh/developers/extend/apps/logic/connections"
                     ]

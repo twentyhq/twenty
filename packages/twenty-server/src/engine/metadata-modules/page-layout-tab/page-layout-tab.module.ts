@@ -1,3 +1,4 @@
+import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -12,7 +13,6 @@ import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab
 import { PageLayoutTabResolver } from 'src/engine/metadata-modules/page-layout-tab/resolvers/page-layout-tab.resolver';
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -20,8 +20,8 @@ import { DashboardSyncModule } from 'src/modules/dashboard-sync/dashboard-sync.m
 
 @Module({
   imports: [
+    ApplicationTranslationCatalogModule,
     TypeOrmModule.forFeature([PageLayoutTabEntity, WorkspaceEntity]),
-    TwentyORMModule,
     PermissionsModule,
     FeatureFlagModule,
     WorkspaceCacheStorageModule,

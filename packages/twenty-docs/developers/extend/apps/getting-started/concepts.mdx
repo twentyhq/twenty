@@ -49,13 +49,14 @@ your-app/
 | **Navigation Menu Item** | Custom sidebar entries | [Navigation Menu Items](/developers/extend/apps/layout/navigation-menu-items) |
 | **Page Layout** | Tabs and widgets on a record's detail page | [Page Layouts](/developers/extend/apps/layout/page-layouts) |
 | **Front Component** | Sandboxed React UI inside Twenty | [Front Components](/developers/extend/apps/layout/front-components) |
+| **Shared Dependencies** | Dependencies shared by the app's front components, declared in package.json | [Shared Dependencies](/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components) |
 | **Command Menu Item** | Quick actions and Cmd+K entries | [Command Menu Items](/developers/extend/apps/layout/command-menu-items) |
 
 ## Sandboxing
 
-- **Logic functions** run in isolated Node.js processes on the server. They only access data through the typed API client, scoped to the app's role permissions.
+- **Logic functions** run in isolated Node.js processes on the server. They only access data through the typed API client, which acts either as the person who triggered the run or as the app itself. See [Whose access a call uses](/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 - **Front components** run in Web Workers using Remote DOM — sandboxed from the main page but rendering native DOM elements (not iframes). They communicate with Twenty via a message-passing host API.
-- **Permissions** are enforced at the API level. The runtime token (`TWENTY_APP_ACCESS_TOKEN`) is derived from the role defined in `defineApplication()`.
+- **Permissions** are enforced at the API level. Two runtime tokens are injected, both derived from the role declared with `defineApplicationRole()`; the default one is narrowed further to what the triggering person can do whenever someone is behind the run.
 
 ## App lifecycle
 
