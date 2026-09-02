@@ -22,6 +22,7 @@ import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
+import { isValidCreditAmountMicro } from 'src/engine/core-modules/billing/utils/is-valid-credit-amount-micro.util';
 import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -250,12 +251,11 @@ export class BillingUsageService {
     usedCredits: number;
     currentBillingSubscription?: CurrentBillingSubscription;
   }): Promise<number> {
-    // The counter is authoritative between ledger reads, so a negative
-    // decrement would credit the workspace, and INCRBY rejects anything that is
-    // not an integer. Callers derive this from durations and token counts;
-    // clamp at the one place that writes rather than trusting each of them.
-    const creditsToDecrement =
-      Number.isSafeInteger(usedCredits) && usedCredits > 0 ? usedCredits : 0;
+    // Callers derive this from durations and token counts, so clamp at the one
+    // place that writes the counter rather than trusting each of them.
+    const creditsToDecrement = isValidCreditAmountMicro(usedCredits)
+      ? usedCredits
+      : 0;
 
     if (creditsToDecrement !== usedCredits) {
       this.logger.error(
