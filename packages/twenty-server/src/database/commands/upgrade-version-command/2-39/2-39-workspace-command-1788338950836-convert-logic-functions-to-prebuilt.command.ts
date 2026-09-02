@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { LOGIC_FUNCTION_PREBUILT_CONVERSION_BATCH_SIZE } from 'src/database/commands/upgrade-version-command/2-39/constants/convert-logic-functions-to-prebuilt-batch-size.constant';
+import { LOGIC_FUNCTION_PREBUILT_CONVERSION_BATCH_SIZE } from 'src/database/commands/upgrade-version-command/2-39/2-39-upgrade-version-command.module';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';

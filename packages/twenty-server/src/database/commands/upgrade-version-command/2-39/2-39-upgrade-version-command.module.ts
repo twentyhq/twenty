@@ -6,6 +6,8 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
+export const LOGIC_FUNCTION_PREBUILT_CONVERSION_BATCH_SIZE = 10;
+
 @Module({
   imports: [
     FeatureFlagModule,
