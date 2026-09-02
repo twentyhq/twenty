@@ -1,3 +1,5 @@
+import { MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT } from 'twenty-shared/application';
+
 import { defineApplication } from '@/sdk/define';
 
 describe('defineApplication', () => {
@@ -250,6 +252,47 @@ describe('defineApplication', () => {
     expect(result.errors).toContain(
       'Recurring charge "platformFee" must have a positive integer amountMicroCredits',
     );
+  });
+
+  it('should return error when a recurring charge amount exceeds the per unit maximum', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      billing: {
+        recurring: {
+          platformFee: {
+            period: 'MONTH',
+            amountMicroCredits: MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT + 1,
+            label: 'Platform fee',
+          },
+        },
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors?.[0]).toContain(
+      'exceeds the maximum amountMicroCredits',
+    );
+  });
+
+  it('should accept a recurring charge amount exactly at the per unit maximum', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      billing: {
+        recurring: {
+          platformFee: {
+            period: 'MONTH',
+            amountMicroCredits: MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT,
+            label: 'Platform fee',
+          },
+        },
+      },
+    });
+
+    expect(result.success).toBe(true);
   });
 
   it('should return error when a name is both a recurring charge and a billable operation', () => {

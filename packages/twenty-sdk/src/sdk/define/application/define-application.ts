@@ -5,6 +5,7 @@ import {
   isRecurringChargePeriod,
   isRecurringChargeUnit,
   isUsageOperationTypeValue,
+  MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT,
   RECURRING_CHARGE_PERIODS,
   RECURRING_CHARGE_UNITS,
   USAGE_OPERATION_TYPES,
@@ -100,6 +101,13 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
     ) {
       errors.push(
         `Recurring charge "${chargeName}" must have a positive integer amountMicroCredits`,
+      );
+    } else if (
+      recurringCharge.amountMicroCredits >
+      MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT
+    ) {
+      errors.push(
+        `Recurring charge "${chargeName}" exceeds the maximum amountMicroCredits of ${MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT}. A per-member charge declares the rate per member, not the total.`,
       );
     }
 

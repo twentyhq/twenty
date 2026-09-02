@@ -23,6 +23,10 @@ export {
   isRecurringChargePeriod,
   RECURRING_CHARGE_UNITS,
   isRecurringChargeUnit,
+  MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT,
+  MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_PERIOD,
+  isRecurringChargeAmount,
+  isRecurringCharge,
 } from './applicationBillingType';
 export type {
   KnownApplicationCategory,
@@ -62,6 +66,11 @@ export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
 export { TWENTY_STANDARD_APPLICATION_NAME } from './constants/TwentyStandardApplicationName';
 export { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/TwentyStandardApplicationUniversalIdentifier';
+export type {
+  CreditUnavailableReason,
+  CreditAvailability,
+} from './creditAvailabilityType';
+export { CREDIT_UNAVAILABLE_REASONS } from './creditAvailabilityType';
 export { computeDeterministicUuid } from './deterministic-identifier/compute-deterministic-uuid.util';
 export type { DeterministicEntityNamespace } from './deterministic-identifier/deterministic-entity-namespace.type';
 export { getAgentUniversalIdentifier } from './deterministic-identifier/get-agent-universal-identifier.util';

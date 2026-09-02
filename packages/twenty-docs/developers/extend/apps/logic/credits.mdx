@@ -65,7 +65,7 @@ billing: {
 | Field | Description |
 |-------|-------------|
 | `period` | `MONTH` — the only period today |
-| `amountMicroCredits` | Amount in micro-credits (1 USD = 1,000,000), a positive integer |
+| `amountMicroCredits` | Amount in micro-credits (1 USD = 1,000,000), a positive integer up to 100,000,000 ($100). For a `WORKSPACE_MEMBER` charge this is the rate **per member**, not the total |
 | `per` | Omit for a flat fee. `WORKSPACE_MEMBER` multiplies the amount by the number of members in the workspace when the period is charged |
 | `label` | What admins read for that line in Usage |
 
@@ -75,6 +75,7 @@ How they are raised:
 - Not prorated. An app installed mid-period is charged the full amount for that period; uninstalling stops the next period, it does not refund the current one.
 - Per-member charges count all workspace members at the moment the charge is raised, so a workspace that grows mid-period pays the higher count from the next period.
 - Only on monthly subscriptions. A workspace on a yearly plan is not charged a `MONTH` fee, rather than being charged once for the whole year.
+- Bounded. A declared rate above $100, or a per-member charge whose rate multiplied by the member count would exceed $1,000 for the period, is refused and not raised. The platform raises these itself, so it will not write a debit it cannot justify.
 
 ## Billable operations
 
@@ -122,6 +123,30 @@ Notes:
 - Several operations may share one `operationType`. Two enrichment operations both metered as `CODE_EXECUTION` still show as two labelled slices.
 - Without `operation`, name the billing category directly with `operationType`, optionally with a free-form `resourceContext`. The two forms are mutually exclusive: `operation` carries the label, `operationType` does not.
 - Charging never fails your function. A billing error is logged and swallowed, and the call no-ops outside the logic function runtime so local runs and tests do not crash.
+
+## Checking before you spend
+
+A workspace can run out of credits. Your app is not stopped when that happens, but the platform's own work is: AI calls, workflow runs and outbound email are refused once the balance is gone. So an app that does expensive work first and calls `runAgent` at the end will fail late, on a call it did not write.
+
+Ask first:
+
+```ts
+import { getCreditAvailability } from 'twenty-sdk/billing';
+
+const { hasAvailableCredits } = await getCreditAvailability();
+
+if (!hasAvailableCredits) {
+  return;
+}
+```
+
+When credits are unavailable a `reason` comes with it: `no-credits`, `no-subscription`, or `workspace-suspended`.
+
+Notes:
+
+- It answers whether the workspace may spend, not how much it has left. Your app does not see the balance or the plan.
+- It fails open. If the check times out or the server is unreachable it reports credits available, so an infrastructure hiccup does not stop your app. Treat it as a hint worth honouring, not as an authorization decision.
+- It is a snapshot. Credits can run out between the check and the work.
 
 ## Telling people what it costs
 

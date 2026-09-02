@@ -1,6 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildRecurringChargeUsageEvents } from 'src/engine/core-modules/billing/app-billing/utils/build-recurring-charge-usage-events.util';
+import { MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_PERIOD } from 'twenty-shared/application';
+
 import { type DeclaredRecurringCharge } from 'src/engine/core-modules/billing/app-billing/utils/collect-declared-recurring-charges.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -37,7 +39,7 @@ describe('buildRecurringChargeUsageEvents', () => {
         dueCharges: [FLAT_CHARGE],
         workspaceMemberCount: 3,
         periodStart: PERIOD_START,
-      }),
+      }).events,
     ).toEqual([
       {
         resourceType: UsageResourceType.APP,
@@ -59,7 +61,7 @@ describe('buildRecurringChargeUsageEvents', () => {
         dueCharges: [SEAT_CHARGE],
         workspaceMemberCount: 3,
         periodStart: PERIOD_START,
-      }),
+      }).events,
     ).toEqual([
       {
         resourceType: UsageResourceType.APP,
@@ -81,12 +83,12 @@ describe('buildRecurringChargeUsageEvents', () => {
         dueCharges: [SEAT_CHARGE],
         workspaceMemberCount: 0,
         periodStart: PERIOD_START,
-      }),
+      }).events,
     ).toEqual([]);
   });
 
   it('should still raise the flat charge when a per member charge is dropped', () => {
-    const result = buildRecurringChargeUsageEvents({
+    const { events: result } = buildRecurringChargeUsageEvents({
       dueCharges: [FLAT_CHARGE, SEAT_CHARGE],
       workspaceMemberCount: 0,
       periodStart: PERIOD_START,
@@ -98,7 +100,7 @@ describe('buildRecurringChargeUsageEvents', () => {
   });
 
   it('should attribute to the application only, never to a member', () => {
-    const result = buildRecurringChargeUsageEvents({
+    const { events: result } = buildRecurringChargeUsageEvents({
       dueCharges: [FLAT_CHARGE, SEAT_CHARGE],
       workspaceMemberCount: 2,
       periodStart: PERIOD_START,
@@ -121,7 +123,59 @@ describe('buildRecurringChargeUsageEvents', () => {
         dueCharges: [],
         workspaceMemberCount: 5,
         periodStart: PERIOD_START,
-      }),
+      }).events,
     ).toEqual([]);
+  });
+
+  // The declared rate is bounded per member, but the member count is not, so a
+  // legitimate rate can still multiply past what the platform will debit.
+  it('should drop a per member charge whose multiplied total exceeds the period maximum', () => {
+    const { events, rejectedCharges } = buildRecurringChargeUsageEvents({
+      dueCharges: [SEAT_CHARGE],
+      workspaceMemberCount:
+        MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_PERIOD /
+          SEAT_CHARGE.charge.amountMicroCredits +
+        1,
+      periodStart: PERIOD_START,
+    });
+
+    expect(events).toEqual([]);
+    expect(rejectedCharges).toHaveLength(1);
+    expect(rejectedCharges[0]).toMatchObject({
+      applicationId: APPLICATION_ID,
+      chargeKey: 'seat',
+    });
+  });
+
+  it('should keep a charge whose total lands exactly on the period maximum', () => {
+    const { events, rejectedCharges } = buildRecurringChargeUsageEvents({
+      dueCharges: [SEAT_CHARGE],
+      workspaceMemberCount:
+        MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_PERIOD /
+        SEAT_CHARGE.charge.amountMicroCredits,
+      periodStart: PERIOD_START,
+    });
+
+    expect(events).toHaveLength(1);
+    expect(events[0].creditsUsedMicro).toBe(
+      MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_PERIOD,
+    );
+    expect(rejectedCharges).toEqual([]);
+  });
+
+  it('should still raise a charge under the cap when a sibling is dropped over it', () => {
+    const { events, rejectedCharges } = buildRecurringChargeUsageEvents({
+      dueCharges: [FLAT_CHARGE, SEAT_CHARGE],
+      workspaceMemberCount:
+        MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_PERIOD /
+          SEAT_CHARGE.charge.amountMicroCredits +
+        1,
+      periodStart: PERIOD_START,
+    });
+
+    expect(events).toEqual([
+      expect.objectContaining({ resourceContext: 'platformFee' }),
+    ]);
+    expect(rejectedCharges).toHaveLength(1);
   });
 });

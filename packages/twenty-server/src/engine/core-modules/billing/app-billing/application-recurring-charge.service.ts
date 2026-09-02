@@ -3,7 +3,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { buildRecurringChargeUsageEvents } from 'src/engine/core-modules/billing/app-billing/utils/build-recurring-charge-usage-events.util';
-import { collectDeclaredRecurringCharges } from 'src/engine/core-modules/billing/app-billing/utils/collect-declared-recurring-charges.util';
+import {
+  collectDeclaredRecurringCharges,
+  type RejectedRecurringCharge,
+} from 'src/engine/core-modules/billing/app-billing/utils/collect-declared-recurring-charges.util';
 import { collectDueRecurringCharges } from 'src/engine/core-modules/billing/app-billing/utils/collect-due-recurring-charges.util';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
@@ -54,9 +57,10 @@ export class ApplicationRecurringChargeService {
 
     const periodStart = currentBillingSubscription.currentPeriodStart;
 
-    const declaredCharges = collectDeclaredRecurringCharges({
-      flatApplicationMaps,
-    });
+    const { declaredCharges, rejectedCharges: malformedCharges } =
+      collectDeclaredRecurringCharges({ flatApplicationMaps });
+
+    this.reportRejectedCharges(workspaceId, malformedCharges);
 
     // Reading what the period already carries costs a ClickHouse query per
     // workspace per day, so it waits until an app actually declares something.
@@ -85,11 +89,14 @@ export class ApplicationRecurringChargeService {
       ? await this.countWorkspaceMembers(workspaceId)
       : 0;
 
-    const events = buildRecurringChargeUsageEvents({
-      dueCharges,
-      workspaceMemberCount,
-      periodStart,
-    });
+    const { events, rejectedCharges: overCapCharges } =
+      buildRecurringChargeUsageEvents({
+        dueCharges,
+        workspaceMemberCount,
+        periodStart,
+      });
+
+    this.reportRejectedCharges(workspaceId, overCapCharges);
 
     if (events.length === 0) {
       return 0;
@@ -102,6 +109,19 @@ export class ApplicationRecurringChargeService {
     );
 
     return events.length;
+  }
+
+  // A refused charge means an installed app is not being billed for the period,
+  // which is invisible to everyone unless it is said out loud.
+  private reportRejectedCharges(
+    workspaceId: string,
+    rejectedCharges: RejectedRecurringCharge[],
+  ): void {
+    for (const { applicationId, chargeKey, reason } of rejectedCharges) {
+      this.logger.error(
+        `Refused recurring charge "${chargeKey}" from application ${applicationId} in workspace ${workspaceId}: ${reason}`,
+      );
+    }
   }
 
   private async countWorkspaceMembers(workspaceId: string): Promise<number> {
