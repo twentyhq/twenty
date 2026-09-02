@@ -26,6 +26,8 @@ type SlackInboundEvent = {
   tab?: string;
   tokens?: SlackRevokedTokens;
   message_ts?: string;
+  unfurl_id?: string;
+  source?: string;
   links?: SlackSharedLink[];
   trigger_id?: string;
   external_ref?: { id?: string; type?: string };

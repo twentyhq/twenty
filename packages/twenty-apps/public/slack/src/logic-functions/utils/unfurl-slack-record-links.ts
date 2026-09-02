@@ -27,8 +27,7 @@ export const unfurlSlackRecordLinks = async (
     return { ok: true, skipped: parsed.skipReason };
   }
 
-  const { slackChannelId, messageTimestamp, slackUserId, urls } =
-    parsed.linkShared;
+  const { unfurlTarget, slackUserId, urls } = parsed.linkShared;
 
   const workspaceBaseUrls = await fetchWorkspaceBaseUrls();
 
@@ -83,14 +82,27 @@ export const unfurlSlackRecordLinks = async (
   }
 
   try {
-    await slackClient.chat.unfurl({
-      channel: slackChannelId,
-      ts: messageTimestamp,
-      metadata: { entities },
-    });
+    await slackClient.chat.unfurl(
+      unfurlTarget.source === 'composer'
+        ? {
+            source: unfurlTarget.source,
+            unfurl_id: unfurlTarget.unfurlId,
+            metadata: { entities },
+          }
+        : {
+            channel: unfurlTarget.slackChannelId,
+            ts: unfurlTarget.messageTimestamp,
+            metadata: { entities },
+          },
+    );
   } catch (error) {
+    const targetLabel =
+      unfurlTarget.source === 'composer'
+        ? 'the message composer'
+        : `channel ${unfurlTarget.slackChannelId}`;
+
     console.warn(
-      `[slack] chat.unfurl failed in channel ${slackChannelId}: ${error instanceof Error ? error.message : String(error)}`,
+      `[slack] chat.unfurl failed in ${targetLabel}: ${error instanceof Error ? error.message : String(error)}`,
     );
 
     return { ok: false, error: 'chat.unfurl failed' };

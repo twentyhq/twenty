@@ -18,16 +18,54 @@ const buildLinkSharedBody = ({
   },
 });
 
+const buildComposerLinkSharedBody = ({
+  eventOverrides = {},
+}: { eventOverrides?: Record<string, unknown> } = {}) =>
+  buildLinkSharedBody({
+    eventOverrides: {
+      channel: undefined,
+      channel_id: 'COMPOSER',
+      source: 'composer',
+      unfurl_id: 'gryl3kb80b3wm49ihzoo35fyqoq08n2y',
+      message_ts: 'gryl3kb80b3wm49ihzoo35fyqoq08n2y',
+      ...eventOverrides,
+    },
+  });
+
 describe('parseSlackLinkSharedEvent', () => {
   it('should parse a link_shared event', () => {
     expect(parseSlackLinkSharedEvent(buildLinkSharedBody())).toEqual({
       linkShared: {
-        slackChannelId: 'C123',
-        messageTimestamp: '1700000000.000100',
+        unfurlTarget: {
+          source: 'conversations_history',
+          slackChannelId: 'C123',
+          messageTimestamp: '1700000000.000100',
+        },
         slackUserId: 'U123',
         urls: ['https://acme.twenty.com/object/person/abc'],
       },
     });
+  });
+
+  it('should parse a composer link_shared event', () => {
+    expect(parseSlackLinkSharedEvent(buildComposerLinkSharedBody())).toEqual({
+      linkShared: {
+        unfurlTarget: {
+          source: 'composer',
+          unfurlId: 'gryl3kb80b3wm49ihzoo35fyqoq08n2y',
+        },
+        slackUserId: 'U123',
+        urls: ['https://acme.twenty.com/object/person/abc'],
+      },
+    });
+  });
+
+  it('should skip a composer event missing its unfurl id', () => {
+    const result = parseSlackLinkSharedEvent(
+      buildComposerLinkSharedBody({ eventOverrides: { unfurl_id: undefined } }),
+    );
+
+    expect(result.linkShared).toBeNull();
   });
 
   it('should skip other body types', () => {
