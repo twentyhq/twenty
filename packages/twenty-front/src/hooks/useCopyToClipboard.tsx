@@ -1,5 +1,6 @@
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { IconCopy, IconExclamationCircle } from 'twenty-ui/icon';
 import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme-constants';
@@ -27,7 +28,7 @@ export const useCopyToClipboard = () => {
     try {
       await navigator.clipboard.writeText(valueAsString);
 
-      if (successMessage === null) {
+      if (!isDefined(successMessage)) {
         return;
       }
 
