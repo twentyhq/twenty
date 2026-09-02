@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -27,16 +28,23 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   const id = uuidv4();
   const now = new Date().toISOString();
 
-  const payload =
+  const isNavigation =
     createCommandMenuItemInput.engineComponentKey ===
-    EngineComponentKey.NAVIGATION
-      ? (createCommandMenuItemInput.payload ?? null)
-      : null;
+    EngineComponentKey.NAVIGATION;
 
-  const navigationTargetObjectMetadataId =
-    isObjectMetadataCommandMenuItemPayload(payload)
-      ? payload.objectMetadataItemId
-      : null;
+  const navigationTargetObjectMetadataId = isNavigation
+    ? (createCommandMenuItemInput.navigationTargetObjectMetadataId ??
+      (isObjectMetadataCommandMenuItemPayload(
+        createCommandMenuItemInput.payload,
+      )
+        ? createCommandMenuItemInput.payload.objectMetadataItemId
+        : null))
+    : null;
+
+  const payload =
+    !isNavigation || isDefined(navigationTargetObjectMetadataId)
+      ? null
+      : (createCommandMenuItemInput.payload ?? null);
 
   const {
     availabilityObjectMetadataUniversalIdentifier,

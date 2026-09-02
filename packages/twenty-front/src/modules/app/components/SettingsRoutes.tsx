@@ -690,7 +690,7 @@ const MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE: SettingsRouteHandle = {
 
 const EXPANDABLE_SETTINGS_ROUTE_HANDLE: SettingsRouteHandle = {
   ...MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE,
-  isLocationExpandableFromSidePanel: () => true,
+  isLocationExpandableFromSidePanel: true,
 };
 
 const MEMBERS_LIST_SETTINGS_ROUTE_HANDLE: SettingsRouteHandle = {

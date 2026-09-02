@@ -34,8 +34,8 @@ jest.mock('@/side-panel/hooks/useNavigateSidePanel', () => ({
   }),
 }));
 
-jest.mock('@/side-panel/routing/utils/isSidePanelRoutedLocation', () => ({
-  isSidePanelRoutedLocation: () => true,
+jest.mock('@/app/routing/utils/isWorkspaceLocationAvailableOnSurface', () => ({
+  isWorkspaceLocationAvailableOnSurface: () => true,
 }));
 
 const mockOpenNewRecordTitleCell = jest.fn();

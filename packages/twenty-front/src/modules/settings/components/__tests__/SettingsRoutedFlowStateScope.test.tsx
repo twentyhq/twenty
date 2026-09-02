@@ -41,8 +41,6 @@ const ScopedStateProbe = ({
 }: {
   name: 'main' | 'panel' | 'panel-second';
 }) => {
-  const modalId = useWorkspaceSurfaceScopedComponentInstanceId(MODAL_ID);
-  const dropdownId = useWorkspaceSurfaceScopedComponentInstanceId(DROPDOWN_ID);
   const tableId = useWorkspaceSurfaceScopedComponentInstanceId('role-table');
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
@@ -62,12 +60,12 @@ const ScopedStateProbe = ({
   );
   const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,
-    modalId,
+    MODAL_ID,
   );
   const { openModal, toggleModal } = useModal();
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
-    dropdownId,
+    DROPDOWN_ID,
   );
   const { openDropdown } = useOpenDropdown();
   const sortedFieldByTable = useAtomFamilyStateValue(
@@ -163,8 +161,6 @@ describe('settings routed-flow state scope', () => {
             type: 'main',
             instanceId: 'main',
             ownsRouteLocation: true,
-            headerTitlePortal: null,
-            headerActionsPortal: null,
           }}
         >
           <RoutedFlowStateScopeContext.Provider value={null}>
@@ -177,8 +173,6 @@ describe('settings routed-flow state scope', () => {
             instanceId: 'panel-page-1',
             routedFlowStateScopeId: 'panel-flow-1',
             ownsRouteLocation: true,
-            headerTitlePortal: null,
-            headerActionsPortal: null,
           }}
         >
           <RoutedFlowStateScopeContext.Provider value="panel-flow-1">
@@ -191,8 +185,6 @@ describe('settings routed-flow state scope', () => {
             instanceId: 'panel-page-2',
             routedFlowStateScopeId: 'panel-flow-1',
             ownsRouteLocation: true,
-            headerTitlePortal: null,
-            headerActionsPortal: null,
           }}
         >
           <RoutedFlowStateScopeContext.Provider value="panel-flow-1">
@@ -261,8 +253,6 @@ describe('settings routed-flow state scope', () => {
             instanceId: 'panel-page-42',
             routedFlowStateScopeId: 'panel-flow-7',
             ownsRouteLocation: true,
-            headerTitlePortal: null,
-            headerActionsPortal: null,
           }}
         >
           <MemoryRouter initialEntries={['/settings/roles']}>
@@ -275,7 +265,7 @@ describe('settings routed-flow state scope', () => {
                 },
               ]}
             >
-              <WorkspaceRoutes surface="side-panel" />
+              <WorkspaceRoutes />
             </WorkspaceRouteObjectsContext.Provider>
           </MemoryRouter>
         </WorkspaceSurfaceContext.Provider>

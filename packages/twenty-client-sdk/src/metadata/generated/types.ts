@@ -11757,6 +11757,9 @@ export default {
             "payload": [
                 9
             ],
+            "navigationTargetObjectMetadataId": [
+                3
+            ],
             "pageLayoutId": [
                 3
             ],

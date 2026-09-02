@@ -1,4 +1,5 @@
 import { type CommandMenuItemDTO } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item.dto';
+import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 
 export const fromFlatCommandMenuItemToCommandMenuItemDto = (
@@ -21,7 +22,11 @@ export const fromFlatCommandMenuItemToCommandMenuItemDto = (
     shortLabel: effectiveFlatCommandMenuItem.shortLabel ?? undefined,
     position: effectiveFlatCommandMenuItem.position,
     isPinned: effectiveFlatCommandMenuItem.isPinned,
-    payload: effectiveFlatCommandMenuItem.payload ?? undefined,
+    payload: isObjectMetadataCommandMenuItemPayload(
+      effectiveFlatCommandMenuItem.payload,
+    )
+      ? undefined
+      : (effectiveFlatCommandMenuItem.payload ?? undefined),
     hotKeys: effectiveFlatCommandMenuItem.hotKeys ?? undefined,
     availabilityType: effectiveFlatCommandMenuItem.availabilityType,
     conditionalAvailabilityExpression:
