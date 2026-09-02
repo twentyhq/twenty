@@ -4,6 +4,7 @@ import {
   IconDoorEnter,
   IconHourglassHigh,
   IconLanguage,
+  IconMessage,
   IconPhoto,
   IconPlayerStop,
   IconSparkles,
@@ -16,6 +17,9 @@ import { CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/lo
 import { CALL_RECORDER_JOIN_EARLY_MINUTES_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-join-early-minutes-env-var-name';
 import { CALL_RECORDER_NAME_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-name-env-var-name';
 import { CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-noone-joined-timeout-seconds-env-var-name';
+import { CALL_RECORDER_RECORDING_NOTICE_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-notice-enabled-env-var-name';
+import { CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH } from 'src/logic-functions/constants/call-recorder-recording-notice-max-length';
+import { CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-notice-message-env-var-name';
 import { CALL_RECORDER_SUMMARY_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-summary-enabled-env-var-name';
 import { CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-transcript-provider-env-var-name';
 import { CALL_RECORDER_USE_WORKSPACE_LOGO_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-use-workspace-logo-env-var-name';
@@ -26,6 +30,21 @@ export type CallRecorderCounterRow = {
   title: string;
   description: string;
   Icon: IconComponent;
+};
+
+export const CALL_RECORDER_RECORDING_NOTICE_ROW = {
+  variableKey: CALL_RECORDER_RECORDING_NOTICE_ENABLED_ENV_VAR_NAME,
+  title: 'Send recording notice',
+  description:
+    'Post a notice in the meeting chat when the recorder joins. Zoom, Google Meet and Microsoft Teams only.',
+  Icon: IconMessage,
+};
+
+export const CALL_RECORDER_RECORDING_NOTICE_MESSAGE_FIELD = {
+  variableKey: CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME,
+  label: 'Recording notice message',
+  hint: `Truncated to ${CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH} characters for Google Meet.`,
+  maxLength: CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH,
 };
 
 export const CALL_RECORDER_TIMING_ROWS: CallRecorderCounterRow[] = [
@@ -99,6 +118,8 @@ export const CALL_RECORDER_SUMMARY_PROMPT_FIELD = {
 // generic rows, so a new server-side variable never disappears from the tab.
 export const CALL_RECORDER_MAPPED_VARIABLE_KEYS: string[] = [
   CALL_RECORDER_NAME_FIELD.variableKey,
+  CALL_RECORDER_RECORDING_NOTICE_ROW.variableKey,
+  CALL_RECORDER_RECORDING_NOTICE_MESSAGE_FIELD.variableKey,
   ...CALL_RECORDER_TIMING_ROWS.map((row) => row.variableKey),
   CALL_RECORDER_TRANSCRIPT_PROVIDER_ROW.variableKey,
   CALL_RECORDER_SUMMARY_ENABLED_ROW.variableKey,

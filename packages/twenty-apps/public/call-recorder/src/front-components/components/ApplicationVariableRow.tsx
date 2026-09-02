@@ -61,6 +61,7 @@ export const ApplicationVariableRow = ({
     <StyledRow>
       <ApplicationVariableLabelRow
         variableKey={variable.key}
+        label={variable.label}
         isDeprecated={variable.isDeprecated}
         inputId={inputId}
       />

@@ -16,9 +16,9 @@ import {
 import { H2Title } from 'twenty-ui/typography';
 
 import { ApplicationVariableRow } from 'src/front-components/components/ApplicationVariableRow';
+import { InCallSection } from 'src/front-components/components/InCallSection';
 import { RecorderSection } from 'src/front-components/components/RecorderSection';
 import { StyledSettingsSectionStack } from 'src/front-components/components/StyledSettingsSectionStack';
-import { TimingSection } from 'src/front-components/components/TimingSection';
 import { TranscriptionSection } from 'src/front-components/components/TranscriptionSection';
 import { CALL_RECORDER_MAPPED_VARIABLE_KEYS } from 'src/front-components/constants/call-recorder-settings-layout.constant';
 import { useCallRecorderApplicationVariables } from 'src/front-components/hooks/use-call-recorder-application-variables';
@@ -34,7 +34,7 @@ const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: ${() => themeCssVariables.spacing[8]};
+  gap: ${() => themeCssVariables.spacing[4]};
   width: 100%;
 `;
 
@@ -251,7 +251,7 @@ export const CallRecorderSettings = () => {
           />
         </Section>
         <StyledSettingsFieldset disabled={isSaving}>
-          <TimingSection
+          <InCallSection
             applicationVariables={currentApplicationVariables}
             draftValueByVariableKey={draftValueByVariableKey}
             onDraftValueChange={handleDraftValueChange}

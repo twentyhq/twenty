@@ -70,6 +70,7 @@ export const useCallRecorderApplicationVariables =
               __args: { id: applicationId },
               applicationVariables: {
                 key: true,
+                label: true,
                 value: true,
                 description: true,
                 isSecret: true,

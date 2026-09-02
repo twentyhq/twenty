@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { Pill } from 'twenty-ui/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -18,17 +19,21 @@ const StyledLabel = styled.label`
 
 type ApplicationVariableLabelRowProps = {
   variableKey: string;
+  label: string;
   isDeprecated: boolean;
   inputId: string;
 };
 
 export const ApplicationVariableLabelRow = ({
   variableKey,
+  label,
   isDeprecated,
   inputId,
 }: ApplicationVariableLabelRowProps) => (
   <StyledLabelRow>
-    <StyledLabel htmlFor={inputId}>{variableKey}</StyledLabel>
+    <StyledLabel htmlFor={inputId}>
+      {isNonEmptyString(label) ? label : variableKey}
+    </StyledLabel>
     {isDeprecated && <Pill label="Deprecated" />}
   </StyledLabelRow>
 );

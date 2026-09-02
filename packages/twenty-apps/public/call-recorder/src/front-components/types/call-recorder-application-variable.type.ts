@@ -5,6 +5,7 @@ export type CallRecorderApplicationVariableOption = {
 
 export type CallRecorderApplicationVariable = {
   key: string;
+  label: string;
   value: string;
   description: string;
   isSecret: boolean;
