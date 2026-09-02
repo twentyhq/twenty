@@ -8,7 +8,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { bullMQToJobStateEnum } from 'src/engine/core-modules/admin-panel/enums/job-state.enum';
+import { bullMQToJobStateEnum } from 'src/engine/core-modules/message-queue/enums/job-state.enum';
 import {
   ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
   ENQUEUE_JOB_PRIORITY,

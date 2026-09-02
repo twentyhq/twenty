@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
-import { JobStateEnum } from 'src/engine/core-modules/admin-panel/enums/job-state.enum';
+import { JobStateEnum } from 'src/engine/core-modules/message-queue/enums/job-state.enum';
 
 @ObjectType('JobStatus')
 export class JobStatusDTO {
