@@ -1,65 +1,51 @@
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
-
 import { extractMessageBodyText } from 'src/modules/messaging/message-import-manager/utils/extract-message-body-text.util';
 
-const FIXTURE_DIR = join(__dirname, 'fixtures', 'real-world');
+import { PRODUCTION_EMAILS } from './production-emails.fixture';
 
-const fixtureNames = readdirSync(FIXTURE_DIR)
-  .filter((file) => file.endsWith('.html'))
-  .map((file) => file.replace('.html', ''))
-  .sort();
-
-const readFixture = (name: string): { html: string; text: string | null } => {
-  const textPath = join(FIXTURE_DIR, `${name}.txt`);
-
-  return {
-    html: readFileSync(join(FIXTURE_DIR, `${name}.html`), 'utf8'),
-    text: existsSync(textPath) ? readFileSync(textPath, 'utf8') : null,
-  };
-};
+const REAL_TAG =
+  /<\/?(div|span|p|br|table|tbody|tr|td|a|img|b|i|u|strong|em|ul|ol|li|blockquote|font|h[1-6]|style|script|html|body|head|meta)[\s/>]/i;
 
 describe('extractMessageBodyText on redacted production emails', () => {
-  it('should have fixtures to run', () => {
-    expect(fixtureNames.length).toBeGreaterThan(0);
-  });
+  describe.each(PRODUCTION_EMAILS.map((email) => [email.name, email] as const))(
+    '%s',
+    (_name, email) => {
+      const output = extractMessageBodyText({
+        html: email.html,
+        text: email.text,
+      });
 
-  describe.each(fixtureNames)('%s', (name) => {
-    const output = extractMessageBodyText(readFixture(name));
+      it('should produce the recorded body', () => {
+        expect(output).toBe(email.expected);
+      });
 
-    it('should produce the recorded body', () => {
-      expect(output).toBe(
-        readFileSync(join(FIXTURE_DIR, `${name}.expected.txt`), 'utf8'),
-      );
-    });
+      it('should produce a non empty body', () => {
+        expect(output.trim().length).toBeGreaterThan(0);
+      });
 
-    it('should produce a non empty body', () => {
-      expect(output.trim().length).toBeGreaterThan(0);
-    });
+      it('should not leak inline image references into the body', () => {
+        expect(output).not.toMatch(/\b(cid|data):/i);
+      });
 
-    it('should not leak inline image references into the body', () => {
-      expect(output).not.toMatch(/\b(cid|data):/i);
-    });
+      it('should not leak quoted headers into the body', () => {
+        expect(output).not.toMatch(
+          /^\s*(From|Von|De|Van|Fra|Fr\u00e5n|Sent|Gesendet|Verzonden|Skickat)\s?:\s/im,
+        );
+        expect(output).not.toMatch(
+          /^\s*-{2,}\s*(Original Message|Urspr\u00fcngliche Nachricht)/im,
+        );
+        expect(output).not.toMatch(
+          /[^\n]{0,140}(wrote|schrieb|a \u00e9crit|escribi\u00f3|skrev|geschreven)\s*:\s*$/im,
+        );
+      });
 
-    it('should not leak quoted headers into the body', () => {
-      expect(output).not.toMatch(
-        /^\s*(From|Von|De|Van|Fra|Från|Sent|Gesendet|Verzonden|Skickat)\s?:\s/im,
-      );
-      expect(output).not.toMatch(
-        /^\s*-{2,}\s*(Original Message|Ursprüngliche Nachricht)/im,
-      );
-      expect(output).not.toMatch(
-        /[^\n]{0,140}(wrote|schrieb|a écrit|escribió|skrev|geschreven)\s*:\s*$/im,
-      );
-    });
+      it('should not leave caret quoting in the body', () => {
+        expect(output).not.toMatch(/^\s*>/m);
+      });
 
-    it('should not leave caret quoting in the body', () => {
-      expect(output).not.toMatch(/^\s*>/m);
-    });
-
-    it('should not leave markup or private use markers in the body', () => {
-      expect(output).not.toMatch(/<\/?[a-z][^>]*>/i);
-      expect(output).not.toMatch(/[-]/);
-    });
-  });
+      it('should not leave markup or private use markers in the body', () => {
+        expect(output).not.toMatch(REAL_TAG);
+        expect(output).not.toMatch(/[\uE000-\uF8FF]/);
+      });
+    },
+  );
 });
