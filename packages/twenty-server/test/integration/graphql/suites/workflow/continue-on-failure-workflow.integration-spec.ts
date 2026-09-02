@@ -13,7 +13,7 @@ import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/wo
 
 const client = request(`http://localhost:${APP_PORT}`);
 
-const UNREACHABLE_URL = 'http://127.0.0.1:1/';
+const BLOCKED_REQUEST_URL = 'http://127.0.0.1:1/';
 
 describe('Continue on failure workflow (e2e)', () => {
   let createdWorkflowId: string | null = null;
@@ -104,7 +104,7 @@ describe('Continue on failure workflow (e2e)', () => {
                 ...httpRequestStep.settings,
                 input: {
                   ...httpRequestStep.settings.input,
-                  url: UNREACHABLE_URL,
+                  url: BLOCKED_REQUEST_URL,
                 },
                 errorHandlingOptions: {
                   ...httpRequestStep.settings.errorHandlingOptions,
@@ -184,7 +184,7 @@ describe('Continue on failure workflow (e2e)', () => {
       stepsAfterHttpRequestCreation.find((step) => step.type === 'HTTP_REQUEST')
         ?.id ?? null;
 
-    expect(httpRequestStepId).toBeDefined();
+    expect(httpRequestStepId).not.toBeNull();
 
     await createStep({ stepType: 'FILTER', parentStepId: httpRequestStepId! });
 
@@ -194,7 +194,7 @@ describe('Continue on failure workflow (e2e)', () => {
       stepsAfterFilterCreation.find((step) => step.type === 'FILTER')?.id ??
       null;
 
-    expect(filterStepId).toBeDefined();
+    expect(filterStepId).not.toBeNull();
   });
 
   afterAll(async () => {

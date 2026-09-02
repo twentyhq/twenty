@@ -22,7 +22,7 @@ export const shouldExecuteChildStep = ({
     failedAndContinued: stepFailedAndContinued({ step: parentStep, stepInfos }),
   }));
 
-  const hasSuccessfulParentStep = parentOutcomes.some(
+  const hasSuccessfulOrContinuedParentStep = parentOutcomes.some(
     ({ status, failedAndContinued }) =>
       status === StepStatus.SUCCESS || failedAndContinued,
   );
@@ -35,5 +35,5 @@ export const shouldExecuteChildStep = ({
       failedAndContinued,
   );
 
-  return hasSuccessfulParentStep && areAllParentsCompleted;
+  return hasSuccessfulOrContinuedParentStep && areAllParentsCompleted;
 };

@@ -390,7 +390,6 @@ export class WorkflowExecutorWorkspaceService {
     } else if (isFailedSafely) {
       stepInfo = {
         status: StepStatus.FAILED_SAFELY,
-        result: actionOutput?.result,
         error: actionOutput?.error,
       };
     } else if (isSuccess) {
