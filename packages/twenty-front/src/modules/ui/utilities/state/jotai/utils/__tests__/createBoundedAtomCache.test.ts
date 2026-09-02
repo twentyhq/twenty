@@ -54,7 +54,7 @@ describe('createBoundedAtomCache', () => {
 
     const sizeBeforePromotion = cache.size();
 
-    cache.get('key-0');
+    expect(cache.get('key-0')).toBeDefined();
 
     expect(cache.size()).toBe(sizeBeforePromotion);
   });
