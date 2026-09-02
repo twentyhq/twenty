@@ -129,7 +129,7 @@ From there use `getConnection(connectedAccountId)` to read the fresh access toke
 
 <Accordion title="Run a logic function on disconnect" description="Clean up when a connection is removed">
 
-Anything an app claims at connect time has to be released when the connection goes away. A Slack integration that claims a `team_id` on connect, for instance, has to release that claim so another workspace can connect the same Slack team. Set `onDisconnectLogicFunction` to reference a logic function in the same app, and it runs right after the `ConnectedAccount` is deleted.
+Anything an app claims at connect time has to be released when the connection goes away. A Slack integration that claims a `team_id` on connect, for instance, has to release that claim so another workspace can connect the same Slack team. Set `onDisconnectLogicFunction` to reference a logic function in the same app, and it runs right before the `ConnectedAccount` and its token are deleted, so the handler can still call the provider with `getConnection` to release anything the on-connect hook set up remotely.
 
 ```ts src/connection-providers/slack-connection.ts
 export default defineConnectionProvider({
@@ -147,7 +147,7 @@ export default defineConnectionProvider({
 });
 ```
 
-Like the on-connect hook it runs **asynchronously in the disconnecting workspace** and never blocks the disconnect. The handler receives the same payload shape:
+Unlike the on-connect hook it runs **inline in the disconnecting workspace**, once, without retries: a failure is captured and the disconnect still completes. The handler receives the same payload shape:
 
 ```ts
 type OnDisconnectPayload = {
@@ -157,7 +157,7 @@ type OnDisconnectPayload = {
 };
 ```
 
-The `ConnectedAccount` is already gone when the hook runs, so `getConnection(connectedAccountId)` no longer resolves. Anything the cleanup needs (a `team_id`, an external subscription id) must have been written to the [key-value store](/developers/extend/apps/logic/key-value-store) at connect time, keyed by `connectedAccountId`.
+The `ConnectedAccount` and its token are still present when the hook runs, so `getConnection(connectedAccountId)` resolves with a fresh access token and the handler can delete whatever it registered remotely. State the provider cannot give back (a `team_id`, an external subscription id) still belongs in the [key-value store](/developers/extend/apps/logic/key-value-store), written at connect time and keyed by `connectedAccountId`. Keep the handler short: it runs inside the disconnect request, so its `timeoutSeconds` is the upper bound on how long that request can take.
 
 The hook fires when a connection is removed on its own. Uninstalling the app drops its connections through a database cascade instead, so the hook does not run there. Declare an `uninstallLogicFunction` on `defineApplication` for that path: it runs before the app's metadata is deleted, so it can still call `listConnections` and clean up whatever is left.
 
