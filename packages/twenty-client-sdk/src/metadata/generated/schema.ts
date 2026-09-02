@@ -2843,6 +2843,7 @@ export interface WorkspaceAiStats {
 export interface EnqueueJobResult {
     enqueued: Scalars['Boolean']
     logicFunctionUniversalIdentifier: Scalars['String']
+    jobId: Scalars['String']
     __typename: 'EnqueueJobResult'
 }
 
@@ -2850,8 +2851,24 @@ export interface EnqueueJobsResult {
     enqueued: Scalars['Boolean']
     logicFunctionUniversalIdentifier: Scalars['String']
     enqueuedJobsCount: Scalars['Int']
+    jobIds: Scalars['String'][]
     __typename: 'EnqueueJobsResult'
 }
+
+export interface JobStatus {
+    jobId: Scalars['String']
+    state: JobState
+    attemptsMade: Scalars['Int']
+    failedReason?: Scalars['String']
+    enqueuedAt: Scalars['Float']
+    startedAt?: Scalars['Float']
+    finishedAt?: Scalars['Float']
+    __typename: 'JobStatus'
+}
+
+
+/** Job state in the queue */
+export type JobState = 'COMPLETED' | 'FAILED' | 'ACTIVE' | 'WAITING' | 'DELAYED' | 'PRIORITIZED' | 'WAITING_CHILDREN'
 
 export interface AppKeyValue {
     key: Scalars['String']
@@ -3084,6 +3101,7 @@ export interface Query {
     myCalendarChannels: CalendarChannel[]
     minimalMetadata: MinimalMetadata
     appKeyValue?: AppKeyValue
+    getJobs: JobStatus[]
     appConnections: AppConnection[]
     appConnection: AppConnection
     findWorkspaceAiStats: WorkspaceAiStats
@@ -6366,6 +6384,7 @@ export interface WorkspaceAiStatsGenqlSelection{
 export interface EnqueueJobResultGenqlSelection{
     enqueued?: boolean | number
     logicFunctionUniversalIdentifier?: boolean | number
+    jobId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6374,6 +6393,19 @@ export interface EnqueueJobsResultGenqlSelection{
     enqueued?: boolean | number
     logicFunctionUniversalIdentifier?: boolean | number
     enqueuedJobsCount?: boolean | number
+    jobIds?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface JobStatusGenqlSelection{
+    jobId?: boolean | number
+    state?: boolean | number
+    attemptsMade?: boolean | number
+    failedReason?: boolean | number
+    enqueuedAt?: boolean | number
+    startedAt?: boolean | number
+    finishedAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6612,6 +6644,7 @@ export interface QueryGenqlSelection{
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     minimalMetadata?: MinimalMetadataGenqlSelection
     appKeyValue?: (AppKeyValueGenqlSelection & { __args: {key: Scalars['String'], scope?: (AppKeyValueScope | null)} })
+    getJobs?: (JobStatusGenqlSelection & { __args: {jobIds: Scalars['String'][]} })
     appConnections?: (AppConnectionGenqlSelection & { __args?: {filter?: (ListAppConnectionsInput | null)} })
     appConnection?: (AppConnectionGenqlSelection & { __args: {id: Scalars['ID']} })
     findWorkspaceAiStats?: WorkspaceAiStatsGenqlSelection
@@ -7311,9 +7344,11 @@ export interface UpdateCalendarChannelInputUpdates {visibility?: (CalendarChanne
 
 export interface SetAppKeyValueInput {key: Scalars['String'],value?: (Scalars['JSON'] | null),scope?: (AppKeyValueScope | null)}
 
-export interface EnqueueJobInput {logicFunctionUniversalIdentifier: Scalars['String'],payload?: (Scalars['JSON'] | null),retryLimit?: (Scalars['Int'] | null),delayMs?: (Scalars['Int'] | null)}
+export interface EnqueueJobInput {logicFunctionUniversalIdentifier: Scalars['String'],payload?: (Scalars['JSON'] | null),jobId?: (Scalars['String'] | null),retryLimit?: (Scalars['Int'] | null),delayMs?: (Scalars['Int'] | null)}
 
-export interface EnqueueJobsInput {logicFunctionUniversalIdentifier: Scalars['String'],payloads: Scalars['JSON'][],retryLimit?: (Scalars['Int'] | null),delayMs?: (Scalars['Int'] | null)}
+export interface EnqueueJobsInput {logicFunctionUniversalIdentifier: Scalars['String'],payloads?: (Scalars['JSON'][] | null),jobs?: (EnqueueJobItemInput[] | null),retryLimit?: (Scalars['Int'] | null),delayMs?: (Scalars['Int'] | null)}
+
+export interface EnqueueJobItemInput {payload?: (Scalars['JSON'] | null),jobId?: (Scalars['String'] | null)}
 
 export interface FileAttachmentInput {id: Scalars['UUID'],filename: Scalars['String']}
 
@@ -9517,6 +9552,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const JobStatus_possibleTypes: string[] = ['JobStatus']
+    export const isJobStatus = (obj?: { __typename?: any } | null): obj is JobStatus => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isJobStatus"')
+      return JobStatus_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const AppKeyValue_possibleTypes: string[] = ['AppKeyValue']
     export const isAppKeyValue = (obj?: { __typename?: any } | null): obj is AppKeyValue => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAppKeyValue"')
@@ -10333,6 +10376,16 @@ export const enumWorkspaceSetupChatOutcome = {
    STARTED: 'STARTED' as const,
    ALREADY_STARTED: 'ALREADY_STARTED' as const,
    UNAVAILABLE: 'UNAVAILABLE' as const
+}
+
+export const enumJobState = {
+   COMPLETED: 'COMPLETED' as const,
+   FAILED: 'FAILED' as const,
+   ACTIVE: 'ACTIVE' as const,
+   WAITING: 'WAITING' as const,
+   DELAYED: 'DELAYED' as const,
+   PRIORITIZED: 'PRIORITIZED' as const,
+   WAITING_CHILDREN: 'WAITING_CHILDREN' as const
 }
 
 export const enumAppKeyValueScope = {

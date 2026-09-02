@@ -24,19 +24,69 @@ import { enqueueJobs } from 'twenty-sdk/logic-function';
 
 await enqueueJobs({
   logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
-  payloads: [{ page: 1 }],
+  jobs: [{ payload: { page: 1 } }],
 });
 ```
 
-Each run receives its payload as the handler argument, exactly like any other trigger. The target must belong to the **same application** as the caller — enqueuing another app's function is rejected with `Logic function not found` and nothing is enqueued. A single call accepts up to `200` payloads.
+Each run receives its payload as the handler argument, exactly like any other trigger. The target must belong to the **same application** as the caller — enqueuing another app's function is rejected with `Logic function not found` and nothing is enqueued. A single call accepts up to `200` jobs.
 
 <Note>
-`enqueueJobs` returns as soon as the jobs are accepted, not when they have run. It does not return the targets' results — have each target write what it produces to the [key-value store](/developers/extend/apps/logic/key-value-store) or to a workspace record if you need to read it back.
+`enqueueJobs` returns as soon as the jobs are accepted, not when they have run. It does not return the targets' results — have each target write what it produces to the [key-value store](/developers/extend/apps/logic/key-value-store) or to a workspace record if you need to read it back. To find out whether a run finished, poll its [job status](#poll-jobs).
 </Note>
 
 <Note>
-The older `enqueueJob` helper, which enqueues a single job per call, is deprecated. Use `enqueueJobs` with a one-element `payloads` list instead.
+The older `enqueueJob` helper, which enqueues a single job per call, is deprecated. Use `enqueueJobs` with a one-element `jobs` list instead. The `payloads` argument is deprecated too — pass `jobs` instead, which takes the same payload per run and lets you name each one.
 </Note>
+
+## Poll jobs
+
+`enqueueJobs` returns one `jobId` per enqueued run, in the same order as the jobs you passed. `getJobs` reads back where those runs got to, in one call.
+
+```ts
+import { enqueueJobs, getJobs } from 'twenty-sdk/logic-function';
+
+const { jobIds } = await enqueueJobs({
+  logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+  jobs: [{ payload: { companyId: 'abc' } }],
+});
+
+const statuses = await getJobs(jobIds);
+```
+
+A single `getJobs` call reads at most `200` ids, the same ceiling `enqueueJobs` applies to a batch.
+
+Each entry carries the id you asked for:
+
+| Field | What it holds |
+|-------|---------------|
+| `jobId` | The id you polled with. |
+| `state` | `WAITING`, `PRIORITIZED`, `DELAYED`, `ACTIVE`, `WAITING_CHILDREN`, `COMPLETED` or `FAILED`. |
+| `attemptsMade` | Queue attempts made so far, including the current one. |
+| `failedReason` | The error message of the last failed attempt, otherwise `null`. |
+| `enqueuedAt` | When the job was accepted, in epoch milliseconds. |
+| `startedAt` | When a worker picked it up, `null` while it is still waiting. |
+| `finishedAt` | When it completed or failed, `null` while it is still running. |
+
+A job that has not been picked up yet normally reads as `PRIORITIZED` rather than `WAITING`, because application jobs are queued at a fixed low priority. `COMPLETED` and `FAILED` are the terminal states. A poll loop should also give up on its own after a bounded number of attempts rather than waiting forever, since a run is only readable for as long as the queue retains it: 4 hours after completing, 7 days after failing, and in both cases only the most recent 1000 jobs in that state.
+
+`getJobs` returns only the jobs it still holds, so an id that has been evicted — or never existed — is simply absent from the result rather than erroring the whole batch. Compare what you get back against what you asked for to spot those, and treat a missing id as "no longer known", which is not the same answer as "it never ran".
+
+Statuses are scoped to the workspace the call is made from, so one workspace can never read another workspace's job.
+
+## Choose your own job id
+
+Pass `jobs` instead of `payloads` to name each run yourself. The id you pass is the one `getJobs` takes, so a caller can poll a job without having to store what `enqueueJobs` returned.
+
+```ts
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+  jobs: [{ payload: { companyId: 'abc' }, jobId: 'enrich-abc' }],
+});
+```
+
+An id is at most 128 characters of letters, digits, `_`, `.` or `-`, and no two jobs in one call may share one. Pass either `payloads` or `jobs`, never both. When you omit `jobId`, Twenty generates one.
+
+A `jobId` is also an idempotency key: enqueuing an id that the queue still holds is accepted but does **not** start a second run, and `getJobs` keeps reporting the first one. This makes a retried enqueue safe. Two caveats: the guarantee only lasts as long as the job is retained, so the same id can start a fresh run once the original has been evicted, and ids are shared by every app in a workspace, so prefix yours if a collision would matter.
 
 ## Job options
 
@@ -50,7 +100,7 @@ Options apply to every run in the batch.
 ```ts
 await enqueueJobs({
   logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
-  payloads: [{ page: 1 }],
+  jobs: [{ payload: { page: 1 } }],
   retryLimit: 3,
   delayMs: 60_000,
 });
@@ -114,7 +164,7 @@ const handler = async (params: { cursor?: string }) => {
   if (nextCursor) {
     await enqueueJobs({
       logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
-      payloads: [{ cursor: nextCursor }],
+      jobs: [{ payload: { cursor: nextCursor } }],
       delayMs: 2_000,
     });
   }
@@ -139,7 +189,7 @@ const companies = await listCompaniesToEnrich();
 
 await enqueueJobs({
   logicFunctionUniversalIdentifier: ENRICH_COMPANY,
-  payloads: companies.map((company) => ({ companyId: company.id })),
+  jobs: companies.map((company) => ({ payload: { companyId: company.id } })),
   retryLimit: 2,
 });
 ```
@@ -173,7 +223,7 @@ const handler = async (params: { offset?: number }) => {
   if (companies.length === CHUNK_SIZE) {
     await enqueueJobs({
       logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
-      payloads: [{ offset: offset + CHUNK_SIZE }],
+      jobs: [{ payload: { offset: offset + CHUNK_SIZE } }],
     });
   }
 
