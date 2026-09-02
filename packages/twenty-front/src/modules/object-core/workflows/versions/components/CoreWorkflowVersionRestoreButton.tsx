@@ -15,11 +15,15 @@ export const CoreWorkflowVersionRestoreButton = ({
 }) => {
   const { t } = useLingui();
   const { openModal } = useModal();
-  const { restoreCoreWorkflowVersionAsDraft, isRestoring, hasExistingDraft } =
-    useRestoreCoreWorkflowVersionAsDraft({
-      workflowId,
-      workspaceWorkflowVersionId,
-    });
+  const {
+    restoreCoreWorkflowVersionAsDraft,
+    isRestoring,
+    hasExistingDraft,
+    isLoadingCoreWorkflowVersions,
+  } = useRestoreCoreWorkflowVersionAsDraft({
+    workflowId,
+    workspaceWorkflowVersionId,
+  });
 
   const handleRestoreClick = () => {
     if (hasExistingDraft) {
@@ -38,7 +42,7 @@ export const CoreWorkflowVersionRestoreButton = ({
         variant="primary"
         accent="blue"
         size="small"
-        disabled={isRestoring}
+        disabled={isRestoring || isLoadingCoreWorkflowVersions}
         onClick={handleRestoreClick}
       />
       <ConfirmationModal

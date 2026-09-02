@@ -8,8 +8,6 @@ export const GET_CORE_WORKFLOW_VERSIONS = gql`
       status
       workspaceWorkflowVersionId
       workspaceWorkflowId
-      trigger
-      steps
       createdAt
     }
   }

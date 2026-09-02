@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useCoreWorkflowVersions } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersions';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -17,7 +18,8 @@ export const useRestoreCoreWorkflowVersionAsDraft = ({
 }) => {
   const { t } = useLingui();
   const [isRestoring, setIsRestoring] = useState(false);
-  const { coreWorkflowVersions } = useCoreWorkflowVersions(workflowId);
+  const { coreWorkflowVersions, loading: isLoadingCoreWorkflowVersions } =
+    useCoreWorkflowVersions(workflowId);
   const { createDraftFromWorkflowVersion } =
     useCreateDraftFromWorkflowVersion();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -36,10 +38,18 @@ export const useRestoreCoreWorkflowVersionAsDraft = ({
     setIsRestoring(true);
 
     try {
-      await createDraftFromWorkflowVersion({
+      const draftWorkflowVersionId = await createDraftFromWorkflowVersion({
         workflowId,
         workflowVersionIdToCopy: workspaceWorkflowVersionId,
       });
+
+      if (!isDefined(draftWorkflowVersionId)) {
+        enqueueErrorSnackBar({
+          message: t`Could not restore this version as draft.`,
+        });
+
+        return;
+      }
 
       navigate(AppPath.RecordShowPage, {
         objectNameSingular: CoreObjectNameSingular.Workflow,
@@ -58,5 +68,6 @@ export const useRestoreCoreWorkflowVersionAsDraft = ({
     restoreCoreWorkflowVersionAsDraft,
     isRestoring,
     hasExistingDraft,
+    isLoadingCoreWorkflowVersions,
   };
 };
