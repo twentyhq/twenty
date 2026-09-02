@@ -4,6 +4,7 @@ import { meetingFromJSON } from 'fathom-typescript/sdk/models/shared';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { kv } from 'twenty-sdk/logic-function';
+import { isDefined } from 'src/utils/is-defined';
 
 import {
   FATHOM_WEBHOOK_CONNECTION_QUERY_PARAMETER,
@@ -40,7 +41,7 @@ export const fathomWebhookHandler = async (
     getFathomWebhookRegistrationKey(connectedAccountId),
   );
 
-  if (!registration) {
+  if (!isDefined(registration)) {
     return { success: false, error: 'Unknown Fathom webhook registration' };
   }
 

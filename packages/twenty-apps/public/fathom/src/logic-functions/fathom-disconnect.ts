@@ -1,5 +1,6 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { kv } from 'twenty-sdk/logic-function';
+import { isDefined } from 'src/utils/is-defined';
 
 import { FATHOM_DISCONNECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type FathomConnectionHookPayload } from 'src/logic-functions/types/fathom-connection-hook-payload.type';
@@ -14,7 +15,7 @@ export const fathomDisconnectHandler = async (
   );
   const registration = await kv.get<FathomWebhookRegistration>(registrationKey);
 
-  if (registration) {
+  if (isDefined(registration)) {
     // Twenty runs onDisconnect after deleting the token, so retain the secret only
     // to authenticate and acknowledge any Fathom deliveries still in flight.
     // TODO(@ehconitin): once the release carrying twentyhq/twenty#25215 is out,

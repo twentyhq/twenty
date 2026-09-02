@@ -21,7 +21,7 @@ export const formatFathomSummary = ({
   const sections: string[] = [];
   const trimmedSummary = summaryMarkdown?.trim();
 
-  if (trimmedSummary) {
+  if (isNonEmptyString(trimmedSummary)) {
     sections.push(trimmedSummary);
   }
 

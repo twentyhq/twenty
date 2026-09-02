@@ -12,7 +12,7 @@ export const normalizeMeetingUrl = (
 
     parsedUrl.hash = '';
     parsedUrl.search = '';
-    parsedUrl.hostname = parsedUrl.hostname.toLowerCase();
+    parsedUrl.hostname = parsedUrl.hostname.toLowerCase().replace(/^www\./, '');
     parsedUrl.pathname = parsedUrl.pathname.replace(/\/+$/, '');
 
     return parsedUrl.toString();

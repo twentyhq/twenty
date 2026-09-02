@@ -2,6 +2,7 @@ import { type Meeting } from 'fathom-typescript/sdk/models/shared';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { describe, expect, it, vi } from 'vitest';
 
+import { MAX_CALENDAR_EVENT_PAGES } from 'src/constants/fathom.constant';
 import { findMatchingCalendarEvent } from 'src/logic-functions/utils/find-matching-calendar-event.util';
 
 const buildMeeting = (overrides: Partial<Meeting> = {}): Meeting => ({
@@ -62,7 +63,7 @@ const EXACT_EVENT: CalendarEventCandidateFixture = {
 };
 
 describe('findMatchingCalendarEvent', () => {
-  it('queries a five minute window around the scheduled start as and-ed bounds', async () => {
+  it('queries live events in a five minute window around the scheduled start', async () => {
     const coreApiClient = buildCoreApiClient([]);
 
     await findMatchingCalendarEvent({ coreApiClient, meeting: buildMeeting() });
@@ -75,6 +76,7 @@ describe('findMatchingCalendarEvent', () => {
               and: [
                 { startsAt: { gte: '2026-01-01T09:55:00.000Z' } },
                 { startsAt: { lte: '2026-01-01T10:05:00.000Z' } },
+                { isCanceled: { eq: false } },
               ],
             },
           }),
@@ -101,14 +103,14 @@ describe('findMatchingCalendarEvent', () => {
     expect(calendarEventId).toBe('exact-event');
   });
 
-  it('ignores query strings, fragments and trailing slashes when comparing URLs', async () => {
+  it('ignores www, case, query strings, fragments and trailing slashes when comparing URLs', async () => {
     const calendarEventId = await findMatchingCalendarEvent({
       coreApiClient: buildCoreApiClient([
         {
           ...EXACT_EVENT,
           conferenceLink: {
             primaryLinkUrl:
-              'https://MEET.google.com/abc-defg-hij//?authuser=1#details',
+              'https://WWW.meet.google.com/abc-defg-hij//?authuser=1#details',
           },
         },
       ]),
@@ -191,6 +193,7 @@ describe('findMatchingCalendarEvent', () => {
         meeting: buildMeeting(),
       }),
     ).toBeUndefined();
+    expect(query).toHaveBeenCalledTimes(MAX_CALENDAR_EVENT_PAGES);
   });
 
   it('does not guess when a page claims more results but carries no cursor', async () => {

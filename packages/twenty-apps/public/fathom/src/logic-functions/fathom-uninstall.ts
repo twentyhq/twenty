@@ -4,6 +4,7 @@ import {
   kv,
   listConnections,
 } from 'twenty-sdk/logic-function';
+import { isDefined } from 'src/utils/is-defined';
 
 import { FATHOM_PROVIDER_NAME } from 'src/constants/fathom.constant';
 import { FATHOM_UNINSTALL_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -19,7 +20,7 @@ const deleteWebhookForConnection = async (
   const registrationKey = getFathomWebhookRegistrationKey(connection.id);
   const registration = await kv.get<FathomWebhookRegistration>(registrationKey);
 
-  if (!registration) {
+  if (!isDefined(registration)) {
     return false;
   }
 

@@ -1,10 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import {
+  CALENDAR_EVENT_PAGE_SIZE,
+  MAX_CALENDAR_EVENT_PAGES,
+} from 'src/constants/fathom.constant';
 import { type CalendarEventCandidate } from 'src/logic-functions/types/calendar-event-candidate.type';
-
-const CALENDAR_EVENT_PAGE_SIZE = 200;
-const MAX_CALENDAR_EVENT_PAGES = 10;
 
 type CalendarEventsPage = {
   calendarEvents?: {
@@ -36,6 +37,7 @@ export const listCalendarEventsInWindow = async ({
             and: [
               { startsAt: { gte: earliestStart } },
               { startsAt: { lte: latestStart } },
+              { isCanceled: { eq: false } },
             ],
           },
           first: CALENDAR_EVENT_PAGE_SIZE,

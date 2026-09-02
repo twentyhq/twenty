@@ -1,14 +1,16 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { getConnection, kv } from 'twenty-sdk/logic-function';
+import { isDefined } from 'src/utils/is-defined';
 
 import { FATHOM_REGISTER_CONNECTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type FathomConnectionHookPayload } from 'src/logic-functions/types/fathom-connection-hook-payload.type';
 import { type FathomWebhookRegistration } from 'src/logic-functions/types/fathom-webhook-registration.type';
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
+import { deleteStaleFathomWebhook } from 'src/logic-functions/utils/delete-stale-fathom-webhook.util';
 import { getFathomWebhookDestinationUrl } from 'src/logic-functions/utils/get-fathom-webhook-destination-url.util';
 import { getFathomWebhookRegistrationKey } from 'src/logic-functions/utils/get-fathom-webhook-registration-key.util';
-import { isFathomNotFoundError } from 'src/logic-functions/utils/is-fathom-not-found-error.util';
+import { storeFathomWebhookRegistration } from 'src/logic-functions/utils/store-fathom-webhook-registration.util';
 
 export const fathomRegisterConnectionHandler = async (
   payload: FathomConnectionHookPayload,
@@ -39,16 +41,11 @@ export const fathomRegisterConnectionHandler = async (
     return { success: true, webhookId: existingRegistration.webhookId };
   }
 
-  if (existingRegistration) {
-    try {
-      await fathomClient.deleteWebhook({ id: existingRegistration.webhookId });
-    } catch (error) {
-      // A webhook Fathom already dropped is the only failure safe to move past:
-      // anything else would orphan the old webhook once it is replaced.
-      if (!isFathomNotFoundError(error)) {
-        throw error;
-      }
-    }
+  if (isDefined(existingRegistration)) {
+    await deleteStaleFathomWebhook({
+      fathomClient,
+      webhookId: existingRegistration.webhookId,
+    });
   }
 
   const webhook = await fathomClient.createWebhook({
@@ -65,37 +62,17 @@ export const fathomRegisterConnectionHandler = async (
     includeSummary: true,
     includeActionItems: true,
   });
-  const registration: FathomWebhookRegistration = {
-    webhookId: webhook.id,
-    secret: webhook.secret,
-    isActive: true,
-  };
 
-  try {
-    await kv.set(registrationKey, registration);
-  } catch (error) {
-    // A write whose response was lost may still have committed.
-    const storedRegistration = await kv
-      .get<FathomWebhookRegistration>(registrationKey)
-      .catch(() => null);
-
-    if (storedRegistration?.webhookId === webhook.id) {
-      return { success: true, webhookId: webhook.id };
-    }
-
-    // Fathom has no webhook listing endpoint, so a webhook this app never
-    // recorded can never be found again: undo it before the retry creates
-    // a second one against the same destination.
-    try {
-      await fathomClient.deleteWebhook({ id: webhook.id });
-    } catch {
-      console.error(
-        `[fathom] leaked webhook ${webhook.id} for connected account ${payload.connectedAccountId}`,
-      );
-    }
-
-    throw error;
-  }
+  await storeFathomWebhookRegistration({
+    fathomClient,
+    connectedAccountId: payload.connectedAccountId,
+    registrationKey,
+    registration: {
+      webhookId: webhook.id,
+      secret: webhook.secret,
+      isActive: true,
+    },
+  });
 
   return { success: true, webhookId: webhook.id };
 };
