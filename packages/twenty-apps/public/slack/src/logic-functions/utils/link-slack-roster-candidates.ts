@@ -14,6 +14,11 @@ import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util'
 
 const CANDIDATES_PER_CREATE = 200;
 
+// One batch of one-at-a-time retries is enough to isolate a single bad row. A
+// second failing batch means something systemic, where retrying every remaining
+// candidate would only spend the runner's budget without linking anyone.
+const MAX_FALLBACK_CANDIDATES = CANDIDATES_PER_CREATE;
+
 type SlackRosterLinkOutcome = {
   linkedCount: number;
   failedCount: number;
@@ -36,7 +41,7 @@ const toSlackUserLinkDraft = ({
   consentState: SLACK_USER_LINK_CONSENT_STATE.ACTIVE,
 });
 
-const linkCandidateOneByOne = async (
+const linkCandidatesOneByOne = async (
   client: CoreApiClient,
   {
     candidates,
@@ -48,7 +53,7 @@ const linkCandidateOneByOne = async (
     slackUserIds: candidates.map((candidate) => candidate.slackUserId),
   });
 
-  const outcomes = [];
+  const outcomes: boolean[] = [];
 
   for (const candidate of candidates) {
     if (alreadyLinkedSlackUserIds.has(candidate.slackUserId)) {
@@ -82,30 +87,6 @@ const linkCandidateOneByOne = async (
   };
 };
 
-const linkCandidateBatch = async (
-  client: CoreApiClient,
-  {
-    candidates,
-    slackTeamId,
-  }: { candidates: SlackRosterMatchCandidate[]; slackTeamId: string },
-): Promise<SlackRosterLinkOutcome> => {
-  try {
-    await createSlackUserLinks(client, {
-      drafts: candidates.map((candidate) =>
-        toSlackUserLinkDraft({ candidate, slackTeamId }),
-      ),
-    });
-
-    return { linkedCount: candidates.length, failedCount: 0 };
-  } catch (error) {
-    console.warn(
-      `[slack] roster match batch failed, linking one at a time: ${toErrorMessage(error)}`,
-    );
-
-    return linkCandidateOneByOne(client, { candidates, slackTeamId });
-  }
-};
-
 export const linkSlackRosterCandidates = async (
   client: CoreApiClient,
   {
@@ -127,21 +108,55 @@ export const linkSlackRosterCandidates = async (
   }
 
   const batchOutcomes: SlackRosterLinkOutcome[] = [];
+  let remainingFallbackCandidates = MAX_FALLBACK_CANDIDATES;
 
   for (
     let batchStart = 0;
     batchStart < candidates.length;
     batchStart += CANDIDATES_PER_CREATE
   ) {
-    batchOutcomes.push(
-      await linkCandidateBatch(client, {
-        candidates: candidates.slice(
-          batchStart,
-          batchStart + CANDIDATES_PER_CREATE,
-        ),
-        slackTeamId,
-      }),
+    const batchCandidates = candidates.slice(
+      batchStart,
+      batchStart + CANDIDATES_PER_CREATE,
     );
+
+    try {
+      await createSlackUserLinks(client, {
+        drafts: batchCandidates.map((candidate) =>
+          toSlackUserLinkDraft({ candidate, slackTeamId }),
+        ),
+      });
+
+      batchOutcomes.push({
+        linkedCount: batchCandidates.length,
+        failedCount: 0,
+      });
+    } catch (error) {
+      if (remainingFallbackCandidates < batchCandidates.length) {
+        console.warn(
+          `[slack] roster match gave up on ${batchCandidates.length} candidates after repeated batch failures: ${toErrorMessage(error)}`,
+        );
+
+        batchOutcomes.push({
+          linkedCount: 0,
+          failedCount: batchCandidates.length,
+        });
+        continue;
+      }
+
+      console.warn(
+        `[slack] roster match batch failed, linking one at a time: ${toErrorMessage(error)}`,
+      );
+
+      remainingFallbackCandidates -= batchCandidates.length;
+
+      batchOutcomes.push(
+        await linkCandidatesOneByOne(client, {
+          candidates: batchCandidates,
+          slackTeamId,
+        }),
+      );
+    }
   }
 
   return {

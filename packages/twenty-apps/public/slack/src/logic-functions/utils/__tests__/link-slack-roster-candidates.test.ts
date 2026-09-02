@@ -166,6 +166,42 @@ describe('linkSlackRosterCandidates', () => {
     expect(outcome).toEqual({ linkedCount: 2, failedCount: 0 });
   });
 
+  it('should stop retrying one at a time once a second batch fails', async () => {
+    createSlackUserLinksMock.mockRejectedValue(new Error('batch failed'));
+    persistSlackUserLinkMock.mockRejectedValue(new Error('write failed'));
+
+    const candidates = Array.from({ length: 400 }, (_, index) =>
+      candidate(`U${index}`),
+    );
+
+    const outcome = await linkSlackRosterCandidates(client, {
+      candidates,
+      slackTeamId: SLACK_TEAM_ID,
+    });
+
+    expect(createSlackUserLinksMock).toHaveBeenCalledTimes(2);
+    expect(persistSlackUserLinkMock).toHaveBeenCalledTimes(200);
+    expect(outcome).toEqual({ linkedCount: 0, failedCount: 400 });
+  });
+
+  it('should keep the one-at-a-time budget when the first batches succeed', async () => {
+    createSlackUserLinksMock
+      .mockResolvedValueOnce(undefined)
+      .mockRejectedValueOnce(new Error('batch failed'));
+
+    const candidates = Array.from({ length: 400 }, (_, index) =>
+      candidate(`U${index}`),
+    );
+
+    const outcome = await linkSlackRosterCandidates(client, {
+      candidates,
+      slackTeamId: SLACK_TEAM_ID,
+    });
+
+    expect(persistSlackUserLinkMock).toHaveBeenCalledTimes(200);
+    expect(outcome).toEqual({ linkedCount: 400, failedCount: 0 });
+  });
+
   it('should never upsert, so a declined or manual link is never overwritten', async () => {
     await linkSlackRosterCandidates(client, {
       candidates: [candidate('U1')],

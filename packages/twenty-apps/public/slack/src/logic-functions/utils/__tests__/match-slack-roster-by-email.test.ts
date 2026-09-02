@@ -87,13 +87,19 @@ describe('matchSlackRosterByEmail', () => {
       slackTeamId: SLACK_TEAM_ID,
     });
 
-    expect(linkedCandidates()).toEqual([
+    expect(linkSlackRosterCandidatesMock).toHaveBeenCalledWith(
+      expect.anything(),
       {
-        slackUserId: 'U1',
-        workspaceMemberId: 'member-ada',
-        displayName: 'Ada',
+        slackTeamId: SLACK_TEAM_ID,
+        candidates: [
+          {
+            slackUserId: 'U1',
+            workspaceMemberId: 'member-ada',
+            displayName: 'Ada',
+          },
+        ],
       },
-    ]);
+    );
     expect(summary).toEqual({
       linkedCount: 1,
       alreadyLinkedCount: 0,
