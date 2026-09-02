@@ -47,7 +47,7 @@ const mockEnqueueInfoSnackBar = jest.fn();
 const mockEnqueueWarningSnackBar = jest.fn();
 const mockCloseSidePanelMenu = jest.fn();
 const mockSetCommandMenuItemProgress = jest.fn();
-const mockCopyToClipboard = jest.fn();
+const mockCopyToClipboardWithoutSuccessSnackBar = jest.fn();
 const mockDirectUploadFile = jest.fn();
 const mockSetRecordPageActiveTabId = jest.fn();
 const mockStorageSet = jest.fn();
@@ -158,7 +158,8 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState', () => ({
 
 jest.mock('~/hooks/useCopyToClipboard', () => ({
   useCopyToClipboard: () => ({
-    copyToClipboard: mockCopyToClipboard,
+    copyToClipboardWithoutSuccessSnackBar:
+      mockCopyToClipboardWithoutSuccessSnackBar,
   }),
 }));
 
@@ -1090,7 +1091,7 @@ describe('useFrontComponentExecutionContext', () => {
   });
 
   describe('copyToClipboard', () => {
-    it('should call useCopyToClipboard with the provided text and a preview message', async () => {
+    it('should copy the provided text through the silent clipboard helper', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
       });
@@ -1101,28 +1102,8 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(mockCopyToClipboard).toHaveBeenCalledWith(
+      expect(mockCopyToClipboardWithoutSuccessSnackBar).toHaveBeenCalledWith(
         'hello clipboard',
-        'Application copied "hello clipboard" to your clipboard',
-      );
-    });
-
-    it('should truncate the preview when the text is longer than the preview length', async () => {
-      const { result } = renderUseFrontComponentExecutionContext({
-        frontComponentId: FRONT_COMPONENT_ID,
-      });
-
-      const longText = 'a'.repeat(50);
-
-      await act(async () => {
-        await result.current.frontComponentHostCommunicationApi.copyToClipboard(
-          longText,
-        );
-      });
-
-      expect(mockCopyToClipboard).toHaveBeenCalledWith(
-        longText,
-        `Application copied "${'a'.repeat(30)}…" to your clipboard`,
       );
     });
 
@@ -1143,7 +1124,7 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(mockCopyToClipboard).not.toHaveBeenCalled();
+      expect(mockCopyToClipboardWithoutSuccessSnackBar).not.toHaveBeenCalled();
     });
 
     it('should silently drop payloads exceeding the maximum length', async () => {
@@ -1159,7 +1140,7 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(mockCopyToClipboard).not.toHaveBeenCalled();
+      expect(mockCopyToClipboardWithoutSuccessSnackBar).not.toHaveBeenCalled();
     });
 
     it('should rate-limit consecutive calls within one second', async () => {
@@ -1176,10 +1157,11 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(mockCopyToClipboard).toHaveBeenCalledTimes(1);
-      expect(mockCopyToClipboard).toHaveBeenCalledWith(
+      expect(mockCopyToClipboardWithoutSuccessSnackBar).toHaveBeenCalledTimes(
+        1,
+      );
+      expect(mockCopyToClipboardWithoutSuccessSnackBar).toHaveBeenCalledWith(
         'first',
-        expect.stringContaining('first'),
       );
     });
 
@@ -1207,16 +1189,16 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(mockCopyToClipboard).toHaveBeenCalledTimes(2);
-      expect(mockCopyToClipboard).toHaveBeenNthCalledWith(
+      expect(mockCopyToClipboardWithoutSuccessSnackBar).toHaveBeenCalledTimes(
+        2,
+      );
+      expect(mockCopyToClipboardWithoutSuccessSnackBar).toHaveBeenNthCalledWith(
         1,
         'first',
-        expect.stringContaining('first'),
       );
-      expect(mockCopyToClipboard).toHaveBeenNthCalledWith(
+      expect(mockCopyToClipboardWithoutSuccessSnackBar).toHaveBeenNthCalledWith(
         2,
         'second',
-        expect.stringContaining('second'),
       );
 
       dateNowSpy.mockRestore();

@@ -15,6 +15,7 @@ export const enqueueJobs = async (
       enqueued: true,
       logicFunctionUniversalIdentifier: true,
       enqueuedJobsCount: true,
+      jobIds: true,
     },
   });
 
