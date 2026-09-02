@@ -1,0 +1,85 @@
+[
+  {
+    "name": "microsoft-01",
+    "provider": "microsoft",
+    "sizeKb": 17,
+    "hasText": false,
+    "features": [
+      "cidImage",
+      "deepTable",
+      "divRplyFwdMsg",
+      "fromHeaderBlock",
+      "horizontalRule",
+      "list",
+      "outlookDivider",
+      "styleBlock"
+    ]
+  },
+  {
+    "name": "google-02",
+    "provider": "google",
+    "sizeKb": 7,
+    "hasText": true,
+    "features": [
+      "blockquote",
+      "fromHeaderBlock",
+      "gmailQuote",
+      "wroteAttribution"
+    ]
+  },
+  {
+    "name": "google-03",
+    "provider": "google",
+    "sizeKb": 11,
+    "hasText": true,
+    "features": [
+      "deepTable",
+      "msoConditional",
+      "msoNamespaces",
+      "styleBlock"
+    ]
+  },
+  {
+    "name": "microsoft-04",
+    "provider": "microsoft",
+    "sizeKb": 4,
+    "hasText": false,
+    "features": [
+      "horizontalRule",
+      "underscoreRule"
+    ]
+  },
+  {
+    "name": "microsoft-05",
+    "provider": "microsoft",
+    "sizeKb": 59,
+    "hasText": false,
+    "features": [
+      "bigBody",
+      "cidImage",
+      "deepTable",
+      "divRplyFwdMsg",
+      "fromHeaderBlock",
+      "horizontalRule",
+      "outlookDivider",
+      "styleBlock",
+      "underscoreRule"
+    ]
+  },
+  {
+    "name": "google-06",
+    "provider": "google",
+    "sizeKb": 1,
+    "hasText": true,
+    "features": [
+      "styleBlock"
+    ]
+  },
+  {
+    "name": "google-07",
+    "provider": "google",
+    "sizeKb": 1,
+    "hasText": true,
+    "features": []
+  }
+]
