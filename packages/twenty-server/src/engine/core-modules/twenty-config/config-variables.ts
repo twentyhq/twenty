@@ -1486,6 +1486,7 @@ export class ConfigVariables {
     isEnvOnly: true,
   })
   @IsUrl({ require_tld: false, require_protocol: true })
+  @IsValidServerUrlForMultiWorkspace()
   @IsOptional()
   SERVER_URL = 'http://localhost:3000';
 
