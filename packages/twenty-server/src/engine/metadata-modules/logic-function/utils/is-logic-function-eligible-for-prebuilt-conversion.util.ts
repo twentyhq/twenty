@@ -16,5 +16,5 @@ export const isLogicFunctionEligibleForPrebuiltConversion = ({
   !isDefined(flatLogicFunction.deletedAt) &&
   flatLogicFunction.executionMode === LogicFunctionExecutionMode.LIVE &&
   isPackagedApplicationSource(applicationSourceType) &&
-  flatLogicFunction.isBuildUpToDate === true &&
+  flatLogicFunction.isBuildUpToDate &&
   isNonEmptyString(flatLogicFunction.checksum);

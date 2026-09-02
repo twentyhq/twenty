@@ -28,7 +28,7 @@ import { LogicFunctionPrebuiltConversionService } from 'src/engine/metadata-modu
     'Enqueue the conversion of application logic functions from LIVE to PREBUILT execution mode, one job per application. Idempotent.',
 })
 export class LogicFunctionConvertToPrebuiltCommand extends WorkspaceCommandRunner {
-  private updateFeatureFlag = false;
+  private shouldUpdateFeatureFlag = false;
 
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
@@ -46,7 +46,7 @@ export class LogicFunctionConvertToPrebuiltCommand extends WorkspaceCommandRunne
     required: false,
   })
   parseUpdateFeatureFlag(): boolean {
-    this.updateFeatureFlag = true;
+    this.shouldUpdateFeatureFlag = true;
 
     return true;
   }
@@ -66,7 +66,7 @@ export class LogicFunctionConvertToPrebuiltCommand extends WorkspaceCommandRunne
         workspaceId,
       );
 
-    if (!isPrebuiltModeEnabled && !this.updateFeatureFlag) {
+    if (!isPrebuiltModeEnabled && !this.shouldUpdateFeatureFlag) {
       this.logger.log(
         `Skipping workspace ${workspaceId} (${index + 1}/${total}): ${FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED} is disabled`,
       );
