@@ -1,16 +1,15 @@
 import { styled } from '@linaria/react';
-import { type ReactNode, useEffect } from 'react';
+import { type ReactNode } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { RESTORE_WORKFLOW_VERSION_MODAL_ID } from '@/object-core/workflows/versions/constants/RestoreWorkflowVersionModalId';
 import { usePreviewWorkflowVersion } from '@/object-core/workflows/versions/hooks/usePreviewWorkflowVersion';
 import { useRestoreWorkflowVersionAsDraft } from '@/object-core/workflows/versions/hooks/useRestoreWorkflowVersionAsDraft';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-
-const RESTORE_WORKFLOW_VERSION_MODAL_ID = 'restore-workflow-version-modal';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -25,25 +24,13 @@ export const CoreWorkflowVersionPreviewActionsContent = ({
   children: ReactNode;
 }) => {
   const { t } = useLingui();
-  const { openModal, closeModal } = useModal();
+  const { openModal } = useModal();
   const { previewedWorkflowVersion, cancelWorkflowVersionPreview } =
     usePreviewWorkflowVersion(workflowId);
   const { restoreWorkflowVersionAsDraft, isRestoring, hasExistingDraft } =
     useRestoreWorkflowVersionAsDraft(workflowId);
 
-  const isPreviewingWorkflowVersion = isDefined(previewedWorkflowVersion);
-
-  useEffect(() => {
-    if (!isPreviewingWorkflowVersion) {
-      return;
-    }
-
-    return () => {
-      closeModal(RESTORE_WORKFLOW_VERSION_MODAL_ID);
-    };
-  }, [closeModal, isPreviewingWorkflowVersion]);
-
-  if (!isPreviewingWorkflowVersion) {
+  if (!isDefined(previewedWorkflowVersion)) {
     return children;
   }
 
