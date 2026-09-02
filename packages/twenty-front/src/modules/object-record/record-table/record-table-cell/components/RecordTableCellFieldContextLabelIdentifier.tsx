@@ -10,6 +10,7 @@ import { RecordTableUpdateContext } from '@/object-record/record-table/contexts/
 import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext, type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordTableCellFieldContextLabelIdentifierProps = {
   children: ReactNode;
@@ -20,6 +21,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
 }: RecordTableCellFieldContextLabelIdentifierProps) => {
   const {
     objectPermissionsByObjectMetadataId,
+    fieldMetadataItemByFieldMetadataItemId,
     fieldDefinitionByFieldMetadataItemId,
   } = useRecordIndexContextOrThrow();
   const { recordId, isRecordReadOnly, rowIndex } =
@@ -46,6 +48,12 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
 
   const fieldDefinition =
     fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
+  const fieldMetadataItem =
+    fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
+
+  if (!isDefined(fieldMetadataItem)) {
+    return null;
+  }
 
   const handleChipClick = () => {
     onRecordIdentifierClick?.(rowIndex, recordId);
@@ -69,10 +77,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
                 applicationId: fieldDefinition.metadata.applicationId,
               }),
             objectPermissions,
-            fieldMetadataItem: {
-              id: recordField.fieldMetadataItemId,
-              isUIEditable: fieldDefinition.metadata.isUIEditable ?? true,
-            },
+            fieldMetadataItem,
             fieldDefinition,
             objectPermissionsByObjectMetadataId,
           }),
