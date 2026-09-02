@@ -1,11 +1,10 @@
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
-import { type ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const useAvailableComponentInstanceIdOrThrow = <
-  T extends ComponentStateKey,
+  T extends { instanceId: string },
 >(
   Context: ComponentInstanceStateContext<T>,
   instanceIdFromProps?: string,
@@ -19,13 +18,8 @@ export const useAvailableComponentInstanceIdOrThrow = <
   const scopedInstanceId =
     useWorkspaceSurfaceScopedComponentInstanceId(availableInstanceId);
 
-  const resolvedInstanceId =
-    instanceStateContext?.shouldScopeToWorkspaceSurface === false
-      ? availableInstanceId
-      : scopedInstanceId;
-
-  if (isNonEmptyString(resolvedInstanceId)) {
-    return resolvedInstanceId;
+  if (isNonEmptyString(scopedInstanceId)) {
+    return scopedInstanceId;
   }
 
   throw new Error(

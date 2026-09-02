@@ -116,9 +116,11 @@ const StyledRightControlsContainer = styled.div`
 export const SidePanelTopBar = ({
   setHeaderTitlePortal,
   setHeaderActionsPortal,
+  shouldRenderPageInfo = true,
 }: {
   setHeaderTitlePortal?: (element: HTMLElement | null) => void;
   setHeaderActionsPortal?: (element: HTMLElement | null) => void;
+  shouldRenderPageInfo?: boolean;
 }) => {
   const [sidePanelSearch, setSidePanelSearch] =
     useAtomState(sidePanelSearchState);
@@ -234,7 +236,7 @@ export const SidePanelTopBar = ({
         {!COMMAND_MENU_SIDE_PANEL_PAGES.includes(sidePanelPage) && (
           <StyledHeaderTitleContainer>
             <StyledHeaderTitlePortal ref={setHeaderTitlePortal} />
-            {lastChip && (
+            {shouldRenderPageInfo && lastChip && (
               <div data-side-panel-page-info="">
                 <SidePanelPageInfo pageChip={lastChip} />
               </div>

@@ -7,7 +7,6 @@ import { SidePanelContainer } from '@/side-panel/components/SidePanelContainer';
 import { SidePanelSubPageRouter } from '@/side-panel/components/SidePanelSubPageRouter';
 import { SidePanelTopBar } from '@/side-panel/components/SidePanelTopBar';
 import { SIDE_PANEL_PAGES_CONFIG } from '@/side-panel/constants/SidePanelPagesConfig';
-import { PageLayoutSidePanelStateProvider } from '@/side-panel/pages/page-layout/components/PageLayoutSidePanelStateProvider';
 import { isPageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/utils/isPageLayoutSidePanelPage';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
@@ -50,14 +49,10 @@ export const SidePanelRouter = () => {
   const hasSingleTargetedRecord =
     contextStoreTargetedRecordsRule.mode === 'selection' &&
     contextStoreTargetedRecordsRule.selectedRecordIds.length === 1;
-  const hasPageLayoutContext = isDefined(
-    currentNavigationItem?.pageLayoutContext,
-  );
 
   const shouldSkipPageLayoutPage =
     isDefined(sidePanelPage) &&
     isPageLayoutSidePanelPage(sidePanelPage) &&
-    !hasPageLayoutContext &&
     (!isDefined(contextStoreCurrentObjectMetadataItemId) ||
       !hasSingleTargetedRecord);
 
@@ -72,16 +67,6 @@ export const SidePanelRouter = () => {
           key: sidePanelPageInstanceId,
         })
       : rawPageComponent;
-
-  const pageComponent =
-    isDefined(sidePanelPageComponent) &&
-    isPageLayoutSidePanelPage(sidePanelPage) ? (
-      <PageLayoutSidePanelStateProvider>
-        {sidePanelPageComponent}
-      </PageLayoutSidePanelStateProvider>
-    ) : (
-      sidePanelPageComponent
-    );
 
   const { theme } = useContext(ThemeContext);
 
@@ -132,6 +117,7 @@ export const SidePanelRouter = () => {
               <SidePanelTopBar
                 setHeaderTitlePortal={setHeaderTitlePortal}
                 setHeaderActionsPortal={setHeaderActionsPortal}
+                shouldRenderPageInfo={!shouldSkipPageLayoutPage}
               />
             </motion.div>
             <StyledSidePanelContent>
@@ -139,7 +125,9 @@ export const SidePanelRouter = () => {
                 displayType="listItem"
                 containerType={CommandMenuItemContainerType.CommandMenuList}
               >
-                <SidePanelSubPageRouter>{pageComponent}</SidePanelSubPageRouter>
+                <SidePanelSubPageRouter>
+                  {sidePanelPageComponent}
+                </SidePanelSubPageRouter>
               </CommandMenuContextProvider>
             </StyledSidePanelContent>
           </WorkspaceSurfaceHeaderPortalContext.Provider>

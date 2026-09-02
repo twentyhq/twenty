@@ -4,9 +4,6 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { recordPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutByObjectMetadataIdFamilySelector';
-import { getPageLayoutIdFromContext } from '@/side-panel/pages/page-layout/utils/getPageLayoutIdFromContext';
-import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -14,18 +11,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-export const usePageLayoutIdFromContextStoreOrNull = () => {
-  const workspaceSurface = useWorkspaceSurface();
-
-  const sidePanelNavigationStack = useAtomStateValue(
-    sidePanelNavigationStackState,
-  );
-
-  const pageLayoutContext =
-    workspaceSurface.type === 'side-panel'
-      ? sidePanelNavigationStack.at(-1)?.pageLayoutContext
-      : undefined;
-
+export const usePageLayoutIdFromContextStore = () => {
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
@@ -34,20 +20,15 @@ export const usePageLayoutIdFromContextStoreOrNull = () => {
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 
-  const objectMetadataItemId =
-    pageLayoutContext?.objectMetadataItemId ??
-    contextStoreCurrentObjectMetadataItemId;
-
-  if (!isDefined(objectMetadataItemId)) {
+  if (!isDefined(contextStoreCurrentObjectMetadataItemId)) {
     throw new Error('Object metadata ID is not defined');
   }
 
   const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: objectMetadataItemId,
+    objectId: contextStoreCurrentObjectMetadataItemId,
   });
 
   if (
-    !isDefined(pageLayoutContext) &&
     !(
       contextStoreTargetedRecordsRule.mode === 'selection' &&
       contextStoreTargetedRecordsRule.selectedRecordIds.length === 1
@@ -56,15 +37,7 @@ export const usePageLayoutIdFromContextStoreOrNull = () => {
     throw new Error('Only one record should be selected');
   }
 
-  const recordId =
-    pageLayoutContext?.recordId ??
-    (contextStoreTargetedRecordsRule.mode === 'selection'
-      ? contextStoreTargetedRecordsRule.selectedRecordIds[0]
-      : undefined);
-
-  if (!isDefined(recordId)) {
-    throw new Error('Only one record should be selected');
-  }
+  const recordId: string = contextStoreTargetedRecordsRule.selectedRecordIds[0];
 
   const isDashboardContext =
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Dashboard;
@@ -77,33 +50,15 @@ export const usePageLayoutIdFromContextStoreOrNull = () => {
     { objectMetadataId: objectMetadataItem.id },
   );
 
-  const pageLayoutId = isDefined(pageLayoutContext)
-    ? pageLayoutContext.pageLayoutId
-    : getPageLayoutIdFromContext({
-        isDashboardContext,
-        dashboardPageLayoutId: recordStore?.pageLayoutId,
-        currentPageLayoutId,
-        recordPageLayoutId: recordPageLayout?.id,
-      });
+  const pageLayoutId = isDashboardContext
+    ? (recordStore?.pageLayoutId ?? currentPageLayoutId)
+    : isDefined(recordPageLayout)
+      ? recordPageLayout.id
+      : null;
 
   return {
     pageLayoutId,
     recordId,
-    objectMetadataItemId,
-    objectNameSingular:
-      pageLayoutContext?.objectNameSingular ?? objectMetadataItem.nameSingular,
-  };
-};
-
-export const usePageLayoutIdFromContextStore = () => {
-  const pageLayoutContext = usePageLayoutIdFromContextStoreOrNull();
-
-  if (!isDefined(pageLayoutContext.pageLayoutId)) {
-    throw new Error('Page layout ID is not defined');
-  }
-
-  return {
-    ...pageLayoutContext,
-    pageLayoutId: pageLayoutContext.pageLayoutId,
+    objectNameSingular: objectMetadataItem.nameSingular,
   };
 };
