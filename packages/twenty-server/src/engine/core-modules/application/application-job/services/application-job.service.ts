@@ -9,11 +9,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { bullMQToJobStateEnum } from 'src/engine/core-modules/message-queue/enums/job-state.enum';
-import {
-  ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
-  ENQUEUE_JOB_PRIORITY,
-  MAX_JOBS_PER_STATUS_READ,
-} from 'src/engine/core-modules/application/application-job/constants/enqueue-job.constant';
+import { ENQUEUE_JOB_DEFAULT_RETRY_LIMIT } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-default-retry-limit.constant';
+import { ENQUEUE_JOB_PRIORITY } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-priority.constant';
+import { MAX_JOBS_PER_STATUS_READ } from 'src/engine/core-modules/application/application-job/constants/max-jobs-per-status-read.constant';
 import { type EnqueueJobInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-job.input';
 import { type EnqueueJobsInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-jobs.input';
 import { type JobStatusDTO } from 'src/engine/core-modules/application/application-job/dtos/job-status.dto';

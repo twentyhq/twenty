@@ -14,15 +14,13 @@ import {
 import GraphQLJSON from 'graphql-type-json';
 import { type EnqueueJobInput } from 'twenty-shared/application';
 
-import {
-  ENQUEUE_JOB_ID_MAX_LENGTH,
-  ENQUEUE_JOB_ID_MIN_LENGTH,
-  ENQUEUE_JOB_ID_PATTERN,
-  ENQUEUE_JOB_MAX_DELAY_MS,
-  ENQUEUE_JOB_MAX_RETRY_LIMIT,
-  ENQUEUE_JOB_MIN_DELAY_MS,
-  ENQUEUE_JOB_MIN_RETRY_LIMIT,
-} from 'src/engine/core-modules/application/application-job/constants/enqueue-job.constant';
+import { ENQUEUE_JOB_ID_MAX_LENGTH } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-id-max-length.constant';
+import { ENQUEUE_JOB_ID_MIN_LENGTH } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-id-min-length.constant';
+import { ENQUEUE_JOB_ID_PATTERN } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-id-pattern.constant';
+import { ENQUEUE_JOB_MAX_DELAY_MS } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-max-delay-ms.constant';
+import { ENQUEUE_JOB_MAX_RETRY_LIMIT } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-max-retry-limit.constant';
+import { ENQUEUE_JOB_MIN_DELAY_MS } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-min-delay-ms.constant';
+import { ENQUEUE_JOB_MIN_RETRY_LIMIT } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-min-retry-limit.constant';
 
 @InputType('EnqueueJobInput')
 export class EnqueueJobInputDTO implements EnqueueJobInput {
