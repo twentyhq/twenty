@@ -1230,14 +1230,6 @@ export interface EnterpriseSubscriptionStatusDTO {
     __typename: 'EnterpriseSubscriptionStatusDTO'
 }
 
-export interface ApprovedAccessDomain {
-    id: Scalars['UUID']
-    domain: Scalars['String']
-    isValidated: Scalars['Boolean']
-    createdAt: Scalars['DateTime']
-    __typename: 'ApprovedAccessDomain'
-}
-
 export interface FileWithSignedUrl {
     id: Scalars['UUID']
     path: Scalars['String']
@@ -1400,6 +1392,45 @@ export interface BillingUpdate {
     __typename: 'BillingUpdate'
 }
 
+export interface UsageBreakdownItem {
+    key: Scalars['String']
+    label?: Scalars['String']
+    creditsUsed: Scalars['Float']
+    __typename: 'UsageBreakdownItem'
+}
+
+export interface UsageTimeSeries {
+    date: Scalars['String']
+    creditsUsed: Scalars['Float']
+    __typename: 'UsageTimeSeries'
+}
+
+export interface UsageUserDaily {
+    userWorkspaceId: Scalars['String']
+    dailyUsage: UsageTimeSeries[]
+    __typename: 'UsageUserDaily'
+}
+
+export interface UsageAnalytics {
+    usageByUser: UsageBreakdownItem[]
+    usageByOperationType: UsageBreakdownItem[]
+    usageByApplication: UsageBreakdownItem[]
+    usageByModel: UsageBreakdownItem[]
+    timeSeries: UsageTimeSeries[]
+    periodStart: Scalars['DateTime']
+    periodEnd: Scalars['DateTime']
+    userDailyUsage?: UsageUserDaily
+    __typename: 'UsageAnalytics'
+}
+
+export interface ApprovedAccessDomain {
+    id: Scalars['UUID']
+    domain: Scalars['String']
+    isValidated: Scalars['Boolean']
+    createdAt: Scalars['DateTime']
+    __typename: 'ApprovedAccessDomain'
+}
+
 export interface InviteSuggestion {
     email: Scalars['String']
     displayName?: Scalars['String']
@@ -1472,37 +1503,6 @@ export interface ConnectedAccountPublicDTO {
     updatedAt: Scalars['DateTime']
     connectionParameters?: PublicImapSmtpCaldavConnectionParameters
     __typename: 'ConnectedAccountPublicDTO'
-}
-
-export interface UsageBreakdownItem {
-    key: Scalars['String']
-    label?: Scalars['String']
-    creditsUsed: Scalars['Float']
-    __typename: 'UsageBreakdownItem'
-}
-
-export interface UsageTimeSeries {
-    date: Scalars['String']
-    creditsUsed: Scalars['Float']
-    __typename: 'UsageTimeSeries'
-}
-
-export interface UsageUserDaily {
-    userWorkspaceId: Scalars['String']
-    dailyUsage: UsageTimeSeries[]
-    __typename: 'UsageUserDaily'
-}
-
-export interface UsageAnalytics {
-    usageByUser: UsageBreakdownItem[]
-    usageByOperationType: UsageBreakdownItem[]
-    usageByApplication: UsageBreakdownItem[]
-    usageByModel: UsageBreakdownItem[]
-    timeSeries: UsageTimeSeries[]
-    periodStart: Scalars['DateTime']
-    periodEnd: Scalars['DateTime']
-    userDailyUsage?: UsageUserDaily
-    __typename: 'UsageAnalytics'
 }
 
 export interface FeatureFlag {
@@ -3022,10 +3022,10 @@ export interface Query {
     currentUserSessions: UserSession[]
     myConnectedAccounts: ConnectedAccountPublicDTO[]
     applicationConnectionProviders: ApplicationConnectionProvider[]
-    getInviteSuggestions: InviteSuggestion[]
     billingPortalSession: BillingSession
     listPlans: BillingPlan[]
     getResourceCreditUsage: BillingResourceCreditUsage[]
+    getInviteSuggestions: InviteSuggestion[]
     findWorkspaceInvitations: WorkspaceInvitation[]
     getApprovedAccessDomains: ApprovedAccessDomain[]
     getPageLayoutTabs: PageLayoutTab[]
@@ -3179,10 +3179,6 @@ export interface Mutation {
     revokeAllOtherUserSessions: Scalars['Int']
     deleteConnectedAccount: ConnectedAccountPublicDTO
     updateOneApplicationVariable: Scalars['Boolean']
-    skipSyncEmailOnboardingStep: OnboardingStepSuccess
-    completeBookCallOnboardingStep: OnboardingStepSuccess
-    triggerInstallAppsOnboardingStep: OnboardingStepSuccess
-    goBackToPreviousOnboardingStep: OnboardingStepNavigation
     checkoutSession: BillingSession
     createSubscriptionPaymentIntent: BillingPaymentIntent
     createBillingPaymentMethodSetupIntent: BillingPaymentIntent
@@ -3193,6 +3189,10 @@ export interface Mutation {
     setResourceCreditSubscriptionPrice: BillingUpdate
     endSubscriptionTrialPeriod: BillingEndTrialPeriod
     cancelSwitchResourceCreditPrice: BillingUpdate
+    skipSyncEmailOnboardingStep: OnboardingStepSuccess
+    completeBookCallOnboardingStep: OnboardingStepSuccess
+    triggerInstallAppsOnboardingStep: OnboardingStepSuccess
+    goBackToPreviousOnboardingStep: OnboardingStepNavigation
     deleteWorkspaceInvitation: Scalars['String']
     resendWorkspaceInvitation: SendInvitations
     sendInvitations: SendInvitations
@@ -4651,15 +4651,6 @@ export interface EnterpriseSubscriptionStatusDTOGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface ApprovedAccessDomainGenqlSelection{
-    id?: boolean | number
-    domain?: boolean | number
-    isValidated?: boolean | number
-    createdAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface FileWithSignedUrlGenqlSelection{
     id?: boolean | number
     path?: boolean | number
@@ -4828,6 +4819,50 @@ export interface BillingUpdateGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface UsageBreakdownItemGenqlSelection{
+    key?: boolean | number
+    label?: boolean | number
+    creditsUsed?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageTimeSeriesGenqlSelection{
+    date?: boolean | number
+    creditsUsed?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageUserDailyGenqlSelection{
+    userWorkspaceId?: boolean | number
+    dailyUsage?: UsageTimeSeriesGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageAnalyticsGenqlSelection{
+    usageByUser?: UsageBreakdownItemGenqlSelection
+    usageByOperationType?: UsageBreakdownItemGenqlSelection
+    usageByApplication?: UsageBreakdownItemGenqlSelection
+    usageByModel?: UsageBreakdownItemGenqlSelection
+    timeSeries?: UsageTimeSeriesGenqlSelection
+    periodStart?: boolean | number
+    periodEnd?: boolean | number
+    userDailyUsage?: UsageUserDailyGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApprovedAccessDomainGenqlSelection{
+    id?: boolean | number
+    domain?: boolean | number
+    isValidated?: boolean | number
+    createdAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface InviteSuggestionGenqlSelection{
     email?: boolean | number
     displayName?: boolean | number
@@ -4904,41 +4939,6 @@ export interface ConnectedAccountPublicDTOGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     connectionParameters?: PublicImapSmtpCaldavConnectionParametersGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UsageBreakdownItemGenqlSelection{
-    key?: boolean | number
-    label?: boolean | number
-    creditsUsed?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UsageTimeSeriesGenqlSelection{
-    date?: boolean | number
-    creditsUsed?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UsageUserDailyGenqlSelection{
-    userWorkspaceId?: boolean | number
-    dailyUsage?: UsageTimeSeriesGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UsageAnalyticsGenqlSelection{
-    usageByUser?: UsageBreakdownItemGenqlSelection
-    usageByOperationType?: UsageBreakdownItemGenqlSelection
-    usageByApplication?: UsageBreakdownItemGenqlSelection
-    usageByModel?: UsageBreakdownItemGenqlSelection
-    timeSeries?: UsageTimeSeriesGenqlSelection
-    periodStart?: boolean | number
-    periodEnd?: boolean | number
-    userDailyUsage?: UsageUserDailyGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6538,10 +6538,10 @@ export interface QueryGenqlSelection{
     currentUserSessions?: UserSessionGenqlSelection
     myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
     applicationConnectionProviders?: (ApplicationConnectionProviderGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
-    getInviteSuggestions?: InviteSuggestionGenqlSelection
     billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {returnUrlPath?: (Scalars['String'] | null), forPaymentMethodUpdate?: (Scalars['Boolean'] | null)} })
     listPlans?: BillingPlanGenqlSelection
     getResourceCreditUsage?: BillingResourceCreditUsageGenqlSelection
+    getInviteSuggestions?: InviteSuggestionGenqlSelection
     findWorkspaceInvitations?: WorkspaceInvitationGenqlSelection
     getApprovedAccessDomains?: ApprovedAccessDomainGenqlSelection
     getPageLayoutTabs?: (PageLayoutTabGenqlSelection & { __args: {pageLayoutId: Scalars['String']} })
@@ -6740,10 +6740,6 @@ export interface MutationGenqlSelection{
     revokeAllOtherUserSessions?: boolean | number
     deleteConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
     updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId: Scalars['UUID']} }
-    skipSyncEmailOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {isAutoSkipped: Scalars['Boolean']} })
-    completeBookCallOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {hasBookedCall: Scalars['Boolean'], isAutoSkipped: Scalars['Boolean']} })
-    triggerInstallAppsOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {universalIdentifiers: Scalars['String'][], isAutoSkipped: Scalars['Boolean']} })
-    goBackToPreviousOnboardingStep?: OnboardingStepNavigationGenqlSelection
     checkoutSession?: (BillingSessionGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null)} })
     createSubscriptionPaymentIntent?: (BillingPaymentIntentGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null), idempotencyKey: Scalars['String']} })
     createBillingPaymentMethodSetupIntent?: BillingPaymentIntentGenqlSelection
@@ -6754,6 +6750,10 @@ export interface MutationGenqlSelection{
     setResourceCreditSubscriptionPrice?: (BillingUpdateGenqlSelection & { __args: {priceId: Scalars['String']} })
     endSubscriptionTrialPeriod?: BillingEndTrialPeriodGenqlSelection
     cancelSwitchResourceCreditPrice?: BillingUpdateGenqlSelection
+    skipSyncEmailOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {isAutoSkipped: Scalars['Boolean']} })
+    completeBookCallOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {hasBookedCall: Scalars['Boolean'], isAutoSkipped: Scalars['Boolean']} })
+    triggerInstallAppsOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {universalIdentifiers: Scalars['String'][], isAutoSkipped: Scalars['Boolean']} })
+    goBackToPreviousOnboardingStep?: OnboardingStepNavigationGenqlSelection
     deleteWorkspaceInvitation?: { __args: {appTokenId: Scalars['String']} }
     resendWorkspaceInvitation?: (SendInvitationsGenqlSelection & { __args: {appTokenId: Scalars['String']} })
     sendInvitations?: (SendInvitationsGenqlSelection & { __args: {emails: Scalars['String'][], roleId?: (Scalars['UUID'] | null)} })
@@ -8109,14 +8109,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const ApprovedAccessDomain_possibleTypes: string[] = ['ApprovedAccessDomain']
-    export const isApprovedAccessDomain = (obj?: { __typename?: any } | null): obj is ApprovedAccessDomain => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApprovedAccessDomain"')
-      return ApprovedAccessDomain_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const FileWithSignedUrl_possibleTypes: string[] = ['FileWithSignedUrl']
     export const isFileWithSignedUrl = (obj?: { __typename?: any } | null): obj is FileWithSignedUrl => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isFileWithSignedUrl"')
@@ -8245,6 +8237,46 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const UsageBreakdownItem_possibleTypes: string[] = ['UsageBreakdownItem']
+    export const isUsageBreakdownItem = (obj?: { __typename?: any } | null): obj is UsageBreakdownItem => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageBreakdownItem"')
+      return UsageBreakdownItem_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageTimeSeries_possibleTypes: string[] = ['UsageTimeSeries']
+    export const isUsageTimeSeries = (obj?: { __typename?: any } | null): obj is UsageTimeSeries => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageTimeSeries"')
+      return UsageTimeSeries_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageUserDaily_possibleTypes: string[] = ['UsageUserDaily']
+    export const isUsageUserDaily = (obj?: { __typename?: any } | null): obj is UsageUserDaily => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageUserDaily"')
+      return UsageUserDaily_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageAnalytics_possibleTypes: string[] = ['UsageAnalytics']
+    export const isUsageAnalytics = (obj?: { __typename?: any } | null): obj is UsageAnalytics => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageAnalytics"')
+      return UsageAnalytics_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApprovedAccessDomain_possibleTypes: string[] = ['ApprovedAccessDomain']
+    export const isApprovedAccessDomain = (obj?: { __typename?: any } | null): obj is ApprovedAccessDomain => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApprovedAccessDomain"')
+      return ApprovedAccessDomain_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const InviteSuggestion_possibleTypes: string[] = ['InviteSuggestion']
     export const isInviteSuggestion = (obj?: { __typename?: any } | null): obj is InviteSuggestion => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isInviteSuggestion"')
@@ -8305,38 +8337,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isConnectedAccountPublicDTO = (obj?: { __typename?: any } | null): obj is ConnectedAccountPublicDTO => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isConnectedAccountPublicDTO"')
       return ConnectedAccountPublicDTO_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const UsageBreakdownItem_possibleTypes: string[] = ['UsageBreakdownItem']
-    export const isUsageBreakdownItem = (obj?: { __typename?: any } | null): obj is UsageBreakdownItem => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageBreakdownItem"')
-      return UsageBreakdownItem_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const UsageTimeSeries_possibleTypes: string[] = ['UsageTimeSeries']
-    export const isUsageTimeSeries = (obj?: { __typename?: any } | null): obj is UsageTimeSeries => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageTimeSeries"')
-      return UsageTimeSeries_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const UsageUserDaily_possibleTypes: string[] = ['UsageUserDaily']
-    export const isUsageUserDaily = (obj?: { __typename?: any } | null): obj is UsageUserDaily => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageUserDaily"')
-      return UsageUserDaily_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const UsageAnalytics_possibleTypes: string[] = ['UsageAnalytics']
-    export const isUsageAnalytics = (obj?: { __typename?: any } | null): obj is UsageAnalytics => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageAnalytics"')
-      return UsageAnalytics_possibleTypes.includes(obj.__typename)
     }
     
 

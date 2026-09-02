@@ -1587,13 +1587,6 @@ type EnterpriseSubscriptionStatusDTO {
   isCancellationScheduled: Boolean!
 }
 
-type ApprovedAccessDomain {
-  id: UUID!
-  domain: String!
-  isValidated: Boolean!
-  createdAt: DateTime!
-}
-
 type FileWithSignedUrl {
   id: UUID!
   path: String!
@@ -1763,6 +1756,40 @@ type BillingUpdate {
   billingSubscriptions: [BillingSubscription!]!
 }
 
+type UsageBreakdownItem {
+  key: String!
+  label: String
+  creditsUsed: Float!
+}
+
+type UsageTimeSeries {
+  date: String!
+  creditsUsed: Float!
+}
+
+type UsageUserDaily {
+  userWorkspaceId: String!
+  dailyUsage: [UsageTimeSeries!]!
+}
+
+type UsageAnalytics {
+  usageByUser: [UsageBreakdownItem!]!
+  usageByOperationType: [UsageBreakdownItem!]!
+  usageByApplication: [UsageBreakdownItem!]!
+  usageByModel: [UsageBreakdownItem!]!
+  timeSeries: [UsageTimeSeries!]!
+  periodStart: DateTime!
+  periodEnd: DateTime!
+  userDailyUsage: UsageUserDaily
+}
+
+type ApprovedAccessDomain {
+  id: UUID!
+  domain: String!
+  isValidated: Boolean!
+  createdAt: DateTime!
+}
+
 type InviteSuggestion {
   email: String!
   displayName: String
@@ -1832,33 +1859,6 @@ type ConnectedAccountPublicDTO {
   createdAt: DateTime!
   updatedAt: DateTime!
   connectionParameters: PublicImapSmtpCaldavConnectionParameters
-}
-
-type UsageBreakdownItem {
-  key: String!
-  label: String
-  creditsUsed: Float!
-}
-
-type UsageTimeSeries {
-  date: String!
-  creditsUsed: Float!
-}
-
-type UsageUserDaily {
-  userWorkspaceId: String!
-  dailyUsage: [UsageTimeSeries!]!
-}
-
-type UsageAnalytics {
-  usageByUser: [UsageBreakdownItem!]!
-  usageByOperationType: [UsageBreakdownItem!]!
-  usageByApplication: [UsageBreakdownItem!]!
-  usageByModel: [UsageBreakdownItem!]!
-  timeSeries: [UsageTimeSeries!]!
-  periodStart: DateTime!
-  periodEnd: DateTime!
-  userDailyUsage: UsageUserDaily
 }
 
 type FeatureFlag {
@@ -3444,10 +3444,10 @@ type Query {
   currentUserSessions: [UserSession!]!
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
-  getInviteSuggestions: [InviteSuggestion!]!
   billingPortalSession(returnUrlPath: String, forPaymentMethodUpdate: Boolean): BillingSession!
   listPlans: [BillingPlan!]!
   getResourceCreditUsage: [BillingResourceCreditUsage!]!
+  getInviteSuggestions: [InviteSuggestion!]!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
   getApprovedAccessDomains: [ApprovedAccessDomain!]!
   getPageLayoutTabs(pageLayoutId: String!): [PageLayoutTab!]!
@@ -3719,10 +3719,6 @@ type Mutation {
   revokeAllOtherUserSessions: Int!
   deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
-  skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
-  completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
-  triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
-  goBackToPreviousOnboardingStep: OnboardingStepNavigation!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!
   createBillingPaymentMethodSetupIntent: BillingPaymentIntent!
@@ -3733,6 +3729,10 @@ type Mutation {
   setResourceCreditSubscriptionPrice(priceId: String!): BillingUpdate!
   endSubscriptionTrialPeriod: BillingEndTrialPeriod!
   cancelSwitchResourceCreditPrice: BillingUpdate!
+  skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
+  completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
+  triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
+  goBackToPreviousOnboardingStep: OnboardingStepNavigation!
   deleteWorkspaceInvitation(appTokenId: String!): String!
   resendWorkspaceInvitation(appTokenId: String!): SendInvitations!
   sendInvitations(emails: [String!]!, roleId: UUID): SendInvitations!
