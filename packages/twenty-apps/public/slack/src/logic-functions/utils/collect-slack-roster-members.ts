@@ -25,6 +25,7 @@ export const collectSlackRosterMembers = async ({
   maxPages?: number;
 }): Promise<CollectSlackRosterMembersResult> => {
   const members: LinkableSlackRosterMember[] = [];
+  const seenSlackUserIds = new Set<string>();
   let cursor: string | undefined;
 
   for (let page = 0; page < maxPages; page += 1) {
@@ -43,10 +44,15 @@ export const collectSlackRosterMembers = async ({
     cursor = response.response_metadata?.next_cursor;
 
     for (const member of collectiblePageMembers) {
+      if (seenSlackUserIds.has(member.id)) {
+        continue;
+      }
+
       if (isDefined(maxMembers) && members.length >= maxMembers) {
         return { members, isTruncated: true };
       }
 
+      seenSlackUserIds.add(member.id);
       members.push(member);
     }
 

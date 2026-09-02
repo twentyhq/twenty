@@ -56,6 +56,17 @@ describe('collectSlackRosterMembers', () => {
     expect(members.map((member) => member.id)).toEqual(['U1', 'U3']);
   });
 
+  it('should keep a member Slack repeats across pages only once', async () => {
+    const { slackClient } = buildSlackClient([
+      { members: [{ id: 'U1' }, { id: 'U2' }], nextCursor: 'cursor-2' },
+      { members: [{ id: 'U2' }, { id: 'U3' }] },
+    ]);
+
+    const { members } = await collectSlackRosterMembers({ slackClient });
+
+    expect(members.map((member) => member.id)).toEqual(['U1', 'U2', 'U3']);
+  });
+
   it('should follow pagination cursors', async () => {
     const { slackClient, usersListMock } = buildSlackClient([
       { members: [{ id: 'U1' }], nextCursor: 'cursor-2' },

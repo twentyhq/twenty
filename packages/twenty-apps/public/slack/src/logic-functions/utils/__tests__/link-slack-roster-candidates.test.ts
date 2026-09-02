@@ -276,6 +276,26 @@ describe('linkSlackRosterCandidates', () => {
     expect(destroySlackUserLinksMock).toHaveBeenCalledTimes(2);
   });
 
+  it('should not attempt creates or spend the retry budget when the cleanup fails', async () => {
+    findDeletedSlackUserLinkIdsMock
+      .mockRejectedValueOnce(new Error('cleanup failed'))
+      .mockResolvedValue([]);
+    createSlackUserLinksMock.mockRejectedValueOnce(new Error('batch failed'));
+
+    const candidates = Array.from({ length: 400 }, (_, index) =>
+      candidate(`U${index}`),
+    );
+
+    const outcome = await linkSlackRosterCandidates(client, {
+      candidates,
+      slackTeamId: SLACK_TEAM_ID,
+    });
+
+    expect(createSlackUserLinksMock).toHaveBeenCalledTimes(1);
+    expect(createSlackUserLinkMock).toHaveBeenCalledTimes(200);
+    expect(outcome).toEqual({ linkedCount: 200, failedCount: 200 });
+  });
+
   it('should never upsert, so a declined or manual link is never overwritten', async () => {
     await linkSlackRosterCandidates(client, {
       candidates: [candidate('U1')],
