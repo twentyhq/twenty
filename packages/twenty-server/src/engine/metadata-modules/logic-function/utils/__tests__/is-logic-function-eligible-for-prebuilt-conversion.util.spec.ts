@@ -1,19 +1,19 @@
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { isLogicFunctionEligibleForPrebuiltConversion } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-eligible-for-prebuilt-conversion.util';
+import {
+  isLogicFunctionEligibleForPrebuiltConversion,
+  type LogicFunctionPrebuiltConversionFields,
+} from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-eligible-for-prebuilt-conversion.util';
 
 const buildFlatLogicFunction = (
-  overrides: Partial<FlatLogicFunction> = {},
-): FlatLogicFunction =>
-  ({
-    id: 'a2f1d0c6-1a0e-4f5f-9f22-5a5a9d0f0001',
-    executionMode: LogicFunctionExecutionMode.LIVE,
-    isBuildUpToDate: true,
-    checksum: 'checksum-1',
-    deletedAt: null,
-    ...overrides,
-  }) as FlatLogicFunction;
+  overrides: Partial<LogicFunctionPrebuiltConversionFields> = {},
+): LogicFunctionPrebuiltConversionFields => ({
+  executionMode: LogicFunctionExecutionMode.LIVE,
+  isBuildUpToDate: true,
+  checksum: 'checksum-1',
+  deletedAt: null,
+  ...overrides,
+});
 
 describe('isLogicFunctionEligibleForPrebuiltConversion', () => {
   it.each([

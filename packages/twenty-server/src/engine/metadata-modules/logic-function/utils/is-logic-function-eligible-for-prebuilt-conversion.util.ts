@@ -6,11 +6,16 @@ import { isPackagedApplicationSource } from 'src/engine/core-modules/application
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
+export type LogicFunctionPrebuiltConversionFields = Pick<
+  FlatLogicFunction,
+  'executionMode' | 'isBuildUpToDate' | 'checksum' | 'deletedAt'
+>;
+
 export const isLogicFunctionEligibleForPrebuiltConversion = ({
   flatLogicFunction,
   applicationSourceType,
 }: {
-  flatLogicFunction: FlatLogicFunction;
+  flatLogicFunction: LogicFunctionPrebuiltConversionFields;
   applicationSourceType: ApplicationRegistrationSourceType;
 }): boolean =>
   !isDefined(flatLogicFunction.deletedAt) &&
