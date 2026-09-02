@@ -563,6 +563,10 @@ export class ChatExecutionService {
               ),
             },
             workspace.id,
+            {
+              operationType: UsageOperationType.AI_CHAT_TOKEN,
+              spenders: { userWorkspaceId },
+            },
           );
 
         if (stepHasNoMoreAvailableCredits) {

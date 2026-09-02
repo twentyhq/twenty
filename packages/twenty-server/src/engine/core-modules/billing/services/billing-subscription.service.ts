@@ -94,6 +94,7 @@ export class BillingSubscriptionService {
       relations: [
         'billingSubscriptionItems',
         'billingSubscriptionItems.billingProduct',
+        'billingSubscriptionItems.billingProduct.billingPrices',
       ],
     };
 

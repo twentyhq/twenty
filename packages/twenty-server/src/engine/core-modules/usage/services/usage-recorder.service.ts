@@ -63,7 +63,7 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
       return;
     }
 
-    const periodStart = await this.resolvePeriodStart(workspaceId);
+    const periodStart = await this.getBillingPeriodStart(workspaceId);
 
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
       USAGE_RECORDED,
@@ -133,7 +133,7 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     usageEvents: UsageEvent[],
   ): Promise<void> {
-    const periodStart = await this.resolvePeriodStart(workspaceId);
+    const periodStart = await this.getBillingPeriodStart(workspaceId);
 
     return this.eventLogEmitterService.dispatch(
       buildUsageEventEnvelopes(
@@ -150,7 +150,7 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
     return { ...input, creditsUsedMicro: input.creditsUsedMicro ?? 0 };
   }
 
-  private async resolvePeriodStart(
+  private async getBillingPeriodStart(
     workspaceId: string,
   ): Promise<Date | undefined> {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {

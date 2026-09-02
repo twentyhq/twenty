@@ -241,6 +241,22 @@ export class BillingUsageService {
     return Number(resourceCreditPrice.metadata?.credit_amount ?? 0);
   }
 
+  async getCurrentAllowanceMicro(workspaceId: string): Promise<number | null> {
+    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+      return null;
+    }
+
+    const currentBillingSubscription =
+      await this.getCachedCurrentBillingSubscription(workspaceId);
+
+    if (currentBillingSubscription === NO_BILLING_SUBSCRIPTION) {
+      return null;
+    }
+
+    // ?? null covers entries cached before allowanceMicro existed.
+    return currentBillingSubscription.allowanceMicro ?? null;
+  }
+
   async decrementAvailableCreditsInCache({
     workspaceId,
     usedCredits,
@@ -251,10 +267,8 @@ export class BillingUsageService {
     currentBillingSubscription?: CurrentBillingSubscription;
   }): Promise<number> {
     const currentBillingSubscription =
-      await this.resolveCurrentBillingSubscription({
-        workspaceId,
-        providedCurrentBillingSubscription,
-      });
+      providedCurrentBillingSubscription ??
+      (await this.getCachedCurrentBillingSubscription(workspaceId));
 
     if (currentBillingSubscription === NO_BILLING_SUBSCRIPTION) {
       return 0;
@@ -384,10 +398,8 @@ export class BillingUsageService {
     }
 
     const currentBillingSubscription =
-      await this.resolveCurrentBillingSubscription({
-        workspaceId,
-        providedCurrentBillingSubscription,
-      });
+      providedCurrentBillingSubscription ??
+      (await this.getCachedCurrentBillingSubscription(workspaceId));
 
     if (currentBillingSubscription === NO_BILLING_SUBSCRIPTION) {
       return { hasAvailableCredits: false, reason: 'no-subscription' };
@@ -491,20 +503,14 @@ export class BillingUsageService {
     return usedMicro ?? 0;
   }
 
-  async resolveCurrentBillingSubscription({
-    workspaceId,
-    providedCurrentBillingSubscription,
-  }: {
-    workspaceId: string;
-    providedCurrentBillingSubscription?: CurrentBillingSubscription;
-  }): Promise<CurrentBillingSubscription> {
-    return (
-      providedCurrentBillingSubscription ??
-      (
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'currentBillingSubscription',
-        ])
-      ).currentBillingSubscription
-    );
+  async getCachedCurrentBillingSubscription(
+    workspaceId: string,
+  ): Promise<CurrentBillingSubscription> {
+    const { currentBillingSubscription } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'currentBillingSubscription',
+      ]);
+
+    return currentBillingSubscription;
   }
 }

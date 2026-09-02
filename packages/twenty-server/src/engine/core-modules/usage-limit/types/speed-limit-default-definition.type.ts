@@ -2,7 +2,7 @@ import { type NumericConfigVariableKey } from 'src/engine/core-modules/twenty-co
 import { type CounterScope } from 'src/engine/core-modules/usage-limit/types/counter-scope.type';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 
-export type UsageLimitFallback = {
+export type SpeedLimitDefaultDefinition = {
   spenderType: SpenderType;
   counterScope: CounterScope;
   isOverridable: boolean;

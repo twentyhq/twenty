@@ -2,6 +2,7 @@ import {
   BaseGraphQLError,
   ErrorCode,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import {
   UsageLimitException,
@@ -18,11 +19,13 @@ const buildExhaustedScope = (
   limitKind: 'speed',
   spenderType: 'apiKey',
   spenderId: 'key-1',
+  operationType: UsageOperationType.API_REQUEST,
   limitValue: 3,
   remaining: 0,
-  windowSeconds: 60,
+  periodCount: 60,
+  periodUnit: 'second',
   retryAfterMs: 11983,
-  isFallback: true,
+  isDefault: true,
   ...overrides,
 });
 
@@ -61,7 +64,8 @@ describe('usageLimitToGraphqlApiExceptionHandler', () => {
       limitKind: 'speed',
       limit: 3,
       remaining: 0,
-      windowSeconds: 60,
+      periodCount: 60,
+      periodUnit: 'second',
       retryAfterMs: 11983,
       scope: { spenderType: 'apiKey', spenderId: 'key-1' },
     });

@@ -2,6 +2,8 @@
 
 import { Field, InputType } from '@nestjs/graphql';
 
+import { ArrayNotContains, IsOptional } from 'class-validator';
+
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
 @InputType()
@@ -16,5 +18,7 @@ export class UsageAnalyticsInput {
   userWorkspaceId?: string;
 
   @Field(() => [UsageOperationType], { nullable: true })
+  @IsOptional()
+  @ArrayNotContains([UsageOperationType.ALL])
   operationTypes?: UsageOperationType[];
 }

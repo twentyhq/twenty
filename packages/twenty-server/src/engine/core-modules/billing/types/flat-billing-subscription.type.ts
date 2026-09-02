@@ -22,6 +22,9 @@ export type FlatBillingSubscription = {
   trialStart: Date | null;
   trialEnd: Date | null;
   collectionMethod: BillingSubscriptionCollectionMethod;
+  // Usage cap plus active credit grants; grant writes and subscription syncs
+  // invalidate this cache key, keeping it fresh without a per-read query.
+  allowanceMicro: number | null;
 };
 
 export type CurrentBillingSubscription =
