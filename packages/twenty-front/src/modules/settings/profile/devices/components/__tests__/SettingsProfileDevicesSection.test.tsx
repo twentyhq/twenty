@@ -34,10 +34,6 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
 });
 
 describe('SettingsProfileDevicesSection', () => {
-  // Every non-current row renders a Dropdown whose floating-ui reference ref
-  // sets state on mount. If the row component were defined inline, each render
-  // of the section would hand React a new component type and remount the row,
-  // so its DOM node would not survive a re-render.
   it('keeps a session row mounted across a re-render of the section', async () => {
     const tree = (
       <I18nProvider i18n={i18n}>
@@ -50,12 +46,12 @@ describe('SettingsProfileDevicesSection', () => {
     const { rerender } = render(tree, { wrapper: Wrapper });
 
     expect(await screen.findByText('This device')).toBeVisible();
-    // The dropdown trigger carries role="button" and wraps the icon button,
-    // so take the outermost one: it is the floating-ui reference element.
-    const [rowDropdownTrigger] = screen.getAllByRole('button');
+    const rowDropdownTrigger = screen.getByRole('button', { expanded: false });
 
     rerender(tree);
 
-    expect(screen.getAllByRole('button')[0]).toBe(rowDropdownTrigger);
+    expect(screen.getByRole('button', { expanded: false })).toBe(
+      rowDropdownTrigger,
+    );
   });
 });

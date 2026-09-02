@@ -28,7 +28,6 @@ export const SettingsDeviceSessionRowDropdownMenu = ({
 
   const [revokeUserSession] = useMutation(RevokeUserSessionDocument, {
     refetchQueries: [CurrentUserSessionsDocument],
-    awaitRefetchQueries: true,
   });
 
   const handleRevokeSession = async () => {
