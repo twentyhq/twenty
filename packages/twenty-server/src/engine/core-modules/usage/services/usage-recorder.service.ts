@@ -146,8 +146,24 @@ export class UsageRecorderService implements OnModuleInit, OnModuleDestroy {
     );
   }
 
+  // Available credits are a plain sum over usageEvent with no sign filter, and
+  // the column is a signed Int64, so a negative row hands the workspace credits
+  // rather than charging it. Every recorded row funnels through here, so the
+  // invariant holds for any caller rather than each one clamping its own
+  // arithmetic. The event is still recorded, at zero credits, so the activity
+  // stays visible in the breakdown.
   private withDefaults(input: RecordUsageInput): UsageEvent {
-    return { ...input, creditsUsedMicro: input.creditsUsedMicro ?? 0 };
+    const creditsUsedMicro = input.creditsUsedMicro ?? 0;
+
+    if (!Number.isFinite(creditsUsedMicro) || creditsUsedMicro < 0) {
+      this.logger.error(
+        `Refusing to record ${creditsUsedMicro} creditsUsedMicro on a ${input.operationType} usage event; recording 0 instead`,
+      );
+
+      return { ...input, creditsUsedMicro: 0 };
+    }
+
+    return { ...input, creditsUsedMicro };
   }
 
   private async resolvePeriodStart(

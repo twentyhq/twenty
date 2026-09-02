@@ -250,6 +250,19 @@ export class BillingUsageService {
     usedCredits: number;
     currentBillingSubscription?: CurrentBillingSubscription;
   }): Promise<number> {
+    // The counter is authoritative between ledger reads, so a negative
+    // decrement would credit the workspace. Callers derive this from durations
+    // and token counts; clamp at the one place that writes rather than trusting
+    // each of them.
+    const creditsToDecrement =
+      Number.isFinite(usedCredits) && usedCredits > 0 ? usedCredits : 0;
+
+    if (creditsToDecrement !== usedCredits) {
+      this.logger.error(
+        `Refusing to decrement ${usedCredits} credits for workspace ${workspaceId}; treating as 0`,
+      );
+    }
+
     const currentBillingSubscription =
       await this.resolveCurrentBillingSubscription({
         workspaceId,
@@ -277,9 +290,9 @@ export class BillingUsageService {
       ? await this.billingUsageCacheService.adjustAvailableCredits(
           workspaceId,
           currentPeriodStart,
-          -usedCredits,
+          -creditsToDecrement,
         )
-      : availableCredits - usedCredits;
+      : availableCredits - creditsToDecrement;
   }
 
   // Warming is a read of the ledger followed by a write of what it implies, so

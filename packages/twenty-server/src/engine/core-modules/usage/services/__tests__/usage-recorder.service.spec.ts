@@ -95,4 +95,44 @@ describe('UsageRecorderService', () => {
       expect.objectContaining({ workspaceId: 'ws-1', quantity: 2 }),
     );
   });
+
+  // Available credits are a plain sum over a signed column, so any of these
+  // would hand the workspace credits rather than charging it.
+  it.each([
+    ['a negative amount', -1_000_000],
+    ['negative infinity', Number.NEGATIVE_INFINITY],
+    ['NaN', Number.NaN],
+  ])('records zero credits rather than %s', async (_case, creditsUsedMicro) => {
+    recorder.accumulate('ws-1', { ...API_REQUEST, creditsUsedMicro });
+
+    await recorder.onModuleDestroy();
+
+    expect(dispatchedRows()).toEqual([
+      expect.objectContaining({ workspaceId: 'ws-1', creditsUsedMicro: 0 }),
+    ]);
+  });
+
+  it('keeps the event so the activity stays visible when its credits are refused', async () => {
+    recorder.accumulate('ws-1', { ...API_REQUEST, creditsUsedMicro: -5 });
+
+    await recorder.onModuleDestroy();
+
+    expect(dispatchedRows()).toEqual([
+      expect.objectContaining({
+        operationType: UsageOperationType.API_REQUEST,
+        quantity: 1,
+        creditsUsedMicro: 0,
+      }),
+    ]);
+  });
+
+  it('records a positive amount unchanged', async () => {
+    recorder.accumulate('ws-1', { ...API_REQUEST, creditsUsedMicro: 1_234 });
+
+    await recorder.onModuleDestroy();
+
+    expect(dispatchedRows()).toEqual([
+      expect.objectContaining({ creditsUsedMicro: 1_234 }),
+    ]);
+  });
 });
