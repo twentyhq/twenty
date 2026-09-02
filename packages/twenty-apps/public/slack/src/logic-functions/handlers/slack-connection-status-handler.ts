@@ -1,4 +1,3 @@
-import { WebClient } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
@@ -9,7 +8,7 @@ import {
 import { fetchCurrentWorkspaceId } from 'src/logic-functions/utils/fetch-current-workspace-id';
 import { findClaimedWorkspaceId } from 'src/logic-functions/utils/find-claimed-workspace-id';
 import { getSlackApiErrorCode } from 'src/logic-functions/utils/get-slack-api-error-code';
-import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
+import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { readSlackRosterMatchOutcome } from 'src/logic-functions/utils/read-slack-roster-match-outcome';
 
 const SLACK_AUTH_ERROR_CODES = [
@@ -29,18 +28,16 @@ type SlackConnectionStatusResult = {
 
 export const slackConnectionStatusHandler =
   async (): Promise<SlackConnectionStatusResult> => {
-    const connection = await getSlackConnection();
+    const slackClientResult = await getSlackClient();
 
-    if (!connection.success) {
+    if (!slackClientResult.success) {
       return { success: true, isConnected: false };
     }
 
     let installedTeamId: string | undefined;
 
     try {
-      const authResult = await new WebClient(
-        connection.accessToken,
-      ).auth.test();
+      const authResult = await slackClientResult.client.auth.test();
 
       installedTeamId = authResult.team_id;
     } catch (error) {

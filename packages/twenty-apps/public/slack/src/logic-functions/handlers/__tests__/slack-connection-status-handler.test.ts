@@ -1,21 +1,16 @@
+import { type WebClient } from '@slack/web-api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { slackConnectionStatusHandler } from 'src/logic-functions/handlers/slack-connection-status-handler';
 import { fetchCurrentWorkspaceId } from 'src/logic-functions/utils/fetch-current-workspace-id';
 import { findClaimedWorkspaceId } from 'src/logic-functions/utils/find-claimed-workspace-id';
-import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
+import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { readSlackRosterMatchOutcome } from 'src/logic-functions/utils/read-slack-roster-match-outcome';
 
 const authTest = vi.fn();
 
-vi.mock('@slack/web-api', () => ({
-  WebClient: class {
-    auth = { test: authTest };
-  },
-}));
-
-vi.mock('src/logic-functions/utils/get-slack-connection', () => ({
-  getSlackConnection: vi.fn(),
+vi.mock('src/logic-functions/utils/get-slack-client', () => ({
+  getSlackClient: vi.fn(),
 }));
 
 vi.mock('src/logic-functions/utils/find-claimed-workspace-id', () => ({
@@ -33,9 +28,9 @@ vi.mock('src/logic-functions/utils/read-slack-roster-match-outcome', () => ({
 describe('slackConnectionStatusHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(getSlackConnection).mockResolvedValue({
+    vi.mocked(getSlackClient).mockResolvedValue({
       success: true,
-      accessToken: 'xoxb-token',
+      client: { auth: { test: authTest } } as unknown as WebClient,
     });
     authTest.mockResolvedValue({ ok: true, team_id: 'T1' });
     vi.mocked(findClaimedWorkspaceId).mockResolvedValue('workspace-1');
@@ -44,7 +39,7 @@ describe('slackConnectionStatusHandler', () => {
   });
 
   it('should report a missing connection without failing', async () => {
-    vi.mocked(getSlackConnection).mockResolvedValue({
+    vi.mocked(getSlackClient).mockResolvedValue({
       success: false,
       error: 'Slack is not connected.',
     });
@@ -52,6 +47,15 @@ describe('slackConnectionStatusHandler', () => {
     await expect(slackConnectionStatusHandler()).resolves.toEqual({
       success: true,
       isConnected: false,
+    });
+  });
+
+  it('should not claim any health when auth.test returns no team id', async () => {
+    authTest.mockResolvedValue({ ok: true });
+
+    await expect(slackConnectionStatusHandler()).resolves.toEqual({
+      success: true,
+      isConnected: true,
     });
   });
 
