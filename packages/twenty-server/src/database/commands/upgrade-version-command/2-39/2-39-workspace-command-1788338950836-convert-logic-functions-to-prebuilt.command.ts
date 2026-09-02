@@ -10,7 +10,6 @@ import { DataSource, type QueryRunner } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { LOGIC_FUNCTION_PREBUILT_CONVERSION_BATCH_SIZE } from 'src/database/commands/upgrade-version-command/2-39/2-39-upgrade-version-command.module';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
@@ -26,6 +25,8 @@ import { type FlatLogicFunctionMaps } from 'src/engine/metadata-modules/logic-fu
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { isLogicFunctionEligibleForPrebuiltConversion } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-eligible-for-prebuilt-conversion.util';
 import { UpdateLogicFunctionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/logic-function/services/update-logic-function-action-handler.service';
+
+const LOGIC_FUNCTION_PREBUILT_CONVERSION_BATCH_SIZE = 100;
 
 type LogicFunctionConversionTarget = {
   flatLogicFunction: FlatLogicFunction;
