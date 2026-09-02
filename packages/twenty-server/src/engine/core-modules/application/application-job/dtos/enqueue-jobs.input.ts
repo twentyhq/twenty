@@ -1,5 +1,6 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 
+import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
   ArrayMinSize,
@@ -10,6 +11,7 @@ import {
   IsUUID,
   Max,
   Min,
+  ValidateNested,
 } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 import { type EnqueueJobsInput } from 'twenty-shared/application';
@@ -21,6 +23,7 @@ import {
   ENQUEUE_JOB_MIN_RETRY_LIMIT,
   MAX_JOBS_PER_ENQUEUE,
 } from 'src/engine/core-modules/application/application-job/constants/enqueue-job.constant';
+import { EnqueueJobItemInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-job-item.input';
 
 @InputType('EnqueueJobsInput')
 export class EnqueueJobsInputDTO implements EnqueueJobsInput {
@@ -32,8 +35,17 @@ export class EnqueueJobsInputDTO implements EnqueueJobsInput {
   @IsObject({ each: true })
   @ArrayMinSize(1)
   @ArrayMaxSize(MAX_JOBS_PER_ENQUEUE)
-  @Field(() => [GraphQLJSON])
-  payloads: Record<string, unknown>[];
+  @IsOptional()
+  @Field(() => [GraphQLJSON], { nullable: true })
+  payloads?: Record<string, unknown>[];
+
+  @ValidateNested({ each: true })
+  @Type(() => EnqueueJobItemInputDTO)
+  @ArrayMinSize(1)
+  @ArrayMaxSize(MAX_JOBS_PER_ENQUEUE)
+  @IsOptional()
+  @Field(() => [EnqueueJobItemInputDTO], { nullable: true })
+  jobs?: EnqueueJobItemInputDTO[];
 
   @IsInt()
   @Min(ENQUEUE_JOB_MIN_RETRY_LIMIT)

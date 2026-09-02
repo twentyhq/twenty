@@ -1,17 +1,22 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  type EnqueueJobItem,
   type EnqueueJobResult,
   type EnqueueJobsResult,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
+import { bullMQToJobStateEnum } from 'src/engine/core-modules/admin-panel/enums/job-state.enum';
 import {
   ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
   ENQUEUE_JOB_PRIORITY,
 } from 'src/engine/core-modules/application/application-job/constants/enqueue-job.constant';
 import { type EnqueueJobInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-job.input';
 import { type EnqueueJobsInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-jobs.input';
+import { type JobStatusDTO } from 'src/engine/core-modules/application/application-job/dtos/job-status.dto';
+import { buildQueueJobId } from 'src/engine/core-modules/application/application-job/utils/build-queue-job-id.util';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -48,7 +53,7 @@ export class ApplicationJobService {
     userWorkspaceId: string | null;
     input: EnqueueJobInputDTO;
   }): Promise<EnqueueJobResult> {
-    const { enqueued, logicFunctionUniversalIdentifier } =
+    const { enqueued, logicFunctionUniversalIdentifier, jobIds } =
       await this.enqueueJobs({
         applicationId,
         workspaceId,
@@ -57,13 +62,13 @@ export class ApplicationJobService {
         input: {
           logicFunctionUniversalIdentifier:
             input.logicFunctionUniversalIdentifier,
-          payloads: [input.payload ?? {}],
+          jobs: [{ payload: input.payload ?? {}, jobId: input.jobId }],
           retryLimit: input.retryLimit,
           delayMs: input.delayMs,
         },
       });
 
-    return { enqueued, logicFunctionUniversalIdentifier };
+    return { enqueued, logicFunctionUniversalIdentifier, jobId: jobIds[0] };
   }
 
   async enqueueJobs({
@@ -80,6 +85,8 @@ export class ApplicationJobService {
     input: EnqueueJobsInputDTO;
   }): Promise<EnqueueJobsResult> {
     const { logicFunctionUniversalIdentifier } = input;
+
+    const jobItems = this.getJobItems(input);
 
     const { flatLogicFunctionMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -102,14 +109,19 @@ export class ApplicationJobService {
       );
     }
 
+    const jobIds = jobItems.map((jobItem) => jobItem.jobId ?? v4());
+
     await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
       LogicFunctionTriggerJob.name,
-      input.payloads.map((payload) => ({
-        logicFunctionId: flatLogicFunction.id,
-        workspaceId,
-        payload,
-        ...(isDefined(userId) ? { userId } : {}),
-        ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
+      jobItems.map((jobItem, index) => ({
+        data: {
+          logicFunctionId: flatLogicFunction.id,
+          workspaceId,
+          payload: jobItem.payload ?? {},
+          ...(isDefined(userId) ? { userId } : {}),
+          ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
+        },
+        jobId: buildQueueJobId({ workspaceId, jobId: jobIds[index] }),
       })),
       {
         retryLimit: input.retryLimit ?? ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
@@ -122,7 +134,59 @@ export class ApplicationJobService {
     return {
       enqueued: true,
       logicFunctionUniversalIdentifier,
-      enqueuedJobsCount: input.payloads.length,
+      enqueuedJobsCount: jobItems.length,
+      jobIds,
     };
+  }
+
+  async getJobStatus({
+    workspaceId,
+    jobId,
+  }: {
+    workspaceId: string;
+    jobId: string;
+  }): Promise<JobStatusDTO> {
+    const job = await this.messageQueueService.getJob(
+      buildQueueJobId({ workspaceId, jobId }),
+    );
+
+    if (!isDefined(job)) {
+      throw new ApplicationException(
+        `Job ${jobId} not found`,
+        ApplicationExceptionCode.JOB_NOT_FOUND,
+      );
+    }
+
+    return {
+      jobId,
+      state: bullMQToJobStateEnum[job.state],
+      attemptsMade: job.attemptsMade,
+      failedReason: job.failedReason,
+      enqueuedAt: job.timestamp,
+      startedAt: job.processedOn,
+      finishedAt: job.finishedOn,
+    };
+  }
+
+  private getJobItems(input: EnqueueJobsInputDTO): EnqueueJobItem[] {
+    if (isDefined(input.jobs) && isDefined(input.payloads)) {
+      throw new ApplicationException(
+        'Provide either jobs or payloads, not both',
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    if (isDefined(input.jobs)) {
+      return input.jobs;
+    }
+
+    if (isDefined(input.payloads)) {
+      return input.payloads.map((payload) => ({ payload }));
+    }
+
+    throw new ApplicationException(
+      'Either jobs or payloads must be provided',
+      ApplicationExceptionCode.INVALID_INPUT,
+    );
   }
 }

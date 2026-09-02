@@ -31,6 +31,7 @@ export enum ApplicationExceptionCode {
   INVALID_WORKSPACE_VERSION = 'INVALID_WORKSPACE_VERSION',
   APPLICATION_INSTALLATION_FAILED = 'APPLICATION_INSTALLATION_FAILED',
   KEY_VALUE_PERSISTENCE_FAILED = 'KEY_VALUE_PERSISTENCE_FAILED',
+  JOB_NOT_FOUND = 'JOB_NOT_FOUND',
 }
 
 const getApplicationExceptionUserFriendlyMessage = (
@@ -43,6 +44,8 @@ const getApplicationExceptionUserFriendlyMessage = (
       return msg`Field not found.`;
     case ApplicationExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
       return msg`Logic function not found.`;
+    case ApplicationExceptionCode.JOB_NOT_FOUND:
+      return msg`Job not found.`;
     case ApplicationExceptionCode.FRONT_COMPONENT_NOT_FOUND:
       return msg`Front component not found.`;
     case ApplicationExceptionCode.ENTITY_NOT_FOUND:

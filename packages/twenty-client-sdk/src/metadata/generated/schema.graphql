@@ -3208,12 +3208,35 @@ type WorkspaceAiStats {
 type EnqueueJobResult {
   enqueued: Boolean!
   logicFunctionUniversalIdentifier: String!
+  jobId: String!
 }
 
 type EnqueueJobsResult {
   enqueued: Boolean!
   logicFunctionUniversalIdentifier: String!
   enqueuedJobsCount: Int!
+  jobIds: [String!]!
+}
+
+type JobStatus {
+  jobId: String!
+  state: JobState!
+  attemptsMade: Int!
+  failedReason: String
+  enqueuedAt: Float!
+  startedAt: Float
+  finishedAt: Float
+}
+
+"""Job state in the queue"""
+enum JobState {
+  COMPLETED
+  FAILED
+  ACTIVE
+  WAITING
+  DELAYED
+  PRIORITIZED
+  WAITING_CHILDREN
 }
 
 type AppKeyValue {
@@ -3521,6 +3544,7 @@ type Query {
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   minimalMetadata: MinimalMetadata!
   appKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): AppKeyValue
+  jobStatus(jobId: String!): JobStatus!
   appConnections(filter: ListAppConnectionsInput): [AppConnection!]!
   appConnection(id: ID!): AppConnection!
   findWorkspaceAiStats: WorkspaceAiStats!
@@ -5021,15 +5045,22 @@ input SetAppKeyValueInput {
 input EnqueueJobInput {
   logicFunctionUniversalIdentifier: String!
   payload: JSON
+  jobId: String
   retryLimit: Int
   delayMs: Int
 }
 
 input EnqueueJobsInput {
   logicFunctionUniversalIdentifier: String!
-  payloads: [JSON!]!
+  payloads: [JSON!]
+  jobs: [EnqueueJobItemInput!]
   retryLimit: Int
   delayMs: Int
+}
+
+input EnqueueJobItemInput {
+  payload: JSON
+  jobId: String
 }
 
 input FileAttachmentInput {

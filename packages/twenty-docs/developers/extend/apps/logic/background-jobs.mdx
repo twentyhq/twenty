@@ -31,12 +31,56 @@ await enqueueJobs({
 Each run receives its payload as the handler argument, exactly like any other trigger. The target must belong to the **same application** as the caller — enqueuing another app's function is rejected with `Logic function not found` and nothing is enqueued. A single call accepts up to `200` payloads.
 
 <Note>
-`enqueueJobs` returns as soon as the jobs are accepted, not when they have run. It does not return the targets' results — have each target write what it produces to the [key-value store](/developers/extend/apps/logic/key-value-store) or to a workspace record if you need to read it back.
+`enqueueJobs` returns as soon as the jobs are accepted, not when they have run. It does not return the targets' results — have each target write what it produces to the [key-value store](/developers/extend/apps/logic/key-value-store) or to a workspace record if you need to read it back. To find out whether a run finished, poll its [job status](#poll-a-job).
 </Note>
 
 <Note>
 The older `enqueueJob` helper, which enqueues a single job per call, is deprecated. Use `enqueueJobs` with a one-element `payloads` list instead.
 </Note>
+
+## Poll a job
+
+`enqueueJobs` returns one `jobId` per enqueued run, in the same order as the payloads. `getJobStatus` reads back where a run got to.
+
+```ts
+import { enqueueJobs, getJobStatus } from 'twenty-sdk/logic-function';
+
+const { jobIds } = await enqueueJobs({
+  logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+  payloads: [{ companyId: 'abc' }],
+});
+
+const status = await getJobStatus(jobIds[0]);
+```
+
+| Field | What it holds |
+|-------|---------------|
+| `jobId` | The id you polled with. |
+| `state` | `WAITING`, `PRIORITIZED`, `DELAYED`, `ACTIVE`, `WAITING_CHILDREN`, `COMPLETED` or `FAILED`. |
+| `attemptsMade` | Queue attempts made so far, including the current one. |
+| `failedReason` | The error message of the last failed attempt, otherwise `null`. |
+| `enqueuedAt` | When the job was accepted, in epoch milliseconds. |
+| `startedAt` | When a worker picked it up, `null` while it is still waiting. |
+| `finishedAt` | When it completed or failed, `null` while it is still running. |
+
+`COMPLETED` and `FAILED` are the terminal states. A poll loop should also give up on its own after a bounded number of attempts rather than waiting forever, since a run is only readable for as long as the queue retains it: 4 hours after completing, 7 days after failing, and in both cases only the most recent 1000 jobs in that state. Past that, `getJobStatus` reports that the job is not found — which is not the same answer as "it never ran".
+
+Statuses are scoped to the workspace the call is made from, so one workspace can never read another workspace's job.
+
+## Choose your own job id
+
+Pass `jobs` instead of `payloads` to name each run yourself. The id you pass is the one `getJobStatus` takes, so a caller can poll a job without having to store what `enqueueJobs` returned.
+
+```ts
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+  jobs: [{ payload: { companyId: 'abc' }, jobId: 'enrich-abc' }],
+});
+```
+
+An id is at most 128 characters of letters, digits, `_`, `.` or `-`. Pass either `payloads` or `jobs`, never both. When you omit `jobId`, Twenty generates one.
+
+A job id is also an idempotency key: enqueuing an id that the queue still holds is accepted but does **not** start a second run, and `getJobStatus` keeps reporting the first one. This makes a retried enqueue safe. Two caveats: the guarantee only lasts as long as the job is retained, so the same id can start a fresh run once the original has been evicted, and ids are shared by every app in a workspace, so prefix yours if a collision would matter.
 
 ## Job options
 

@@ -65,6 +65,7 @@ const ENQUEUE_JOB = gql`
     enqueueJob(input: $input) {
       enqueued
       logicFunctionUniversalIdentifier
+      jobId
     }
   }
 `;
@@ -75,6 +76,21 @@ const ENQUEUE_JOBS = gql`
       enqueued
       logicFunctionUniversalIdentifier
       enqueuedJobsCount
+      jobIds
+    }
+  }
+`;
+
+const JOB_STATUS = gql`
+  query JobStatus($jobId: String!) {
+    jobStatus(jobId: $jobId) {
+      jobId
+      state
+      attemptsMade
+      failedReason
+      enqueuedAt
+      startedAt
+      finishedAt
     }
   }
 `;
@@ -229,6 +245,7 @@ describe('enqueueJob (e2e)', () => {
     expect(response.body.data.enqueueJob).toEqual({
       enqueued: true,
       logicFunctionUniversalIdentifier,
+      jobId: expect.any(String),
     });
 
     await waitForAllJobsToFinish();
@@ -352,6 +369,7 @@ describe('enqueueJob (e2e)', () => {
       enqueued: true,
       logicFunctionUniversalIdentifier,
       enqueuedJobsCount: markerPaths.length,
+      jobIds: markerPaths.map(() => expect.any(String)),
     });
 
     await waitForAllJobsToFinish();
@@ -394,6 +412,69 @@ describe('enqueueJob (e2e)', () => {
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toContain('payloads');
+  });
+
+  it('reports a caller-supplied job id as completed once the worker ran it', async () => {
+    const markerPath = join(MARKER_DIRECTORY, 'job-status.txt');
+    const jobId = `job-status-${uuidv4()}`;
+
+    const enqueueResponse = await makeMetadataAPIRequest(
+      {
+        query: ENQUEUE_JOBS,
+        variables: {
+          input: {
+            logicFunctionUniversalIdentifier,
+            jobs: [{ payload: { markerPath }, jobId }],
+          },
+        },
+      },
+      customApplicationToken,
+    );
+
+    expect(enqueueResponse.body.errors).toBeUndefined();
+    expect(enqueueResponse.body.data.enqueueJobs.jobIds).toEqual([jobId]);
+
+    await waitForAllJobsToFinish();
+
+    const statusResponse = await makeMetadataAPIRequest(
+      { query: JOB_STATUS, variables: { jobId } },
+      customApplicationToken,
+    );
+
+    expect(statusResponse.body.errors).toBeUndefined();
+    expect(statusResponse.body.data.jobStatus).toMatchObject({
+      jobId,
+      state: 'COMPLETED',
+    });
+  });
+
+  it('rejects a status read for an unknown job id', async () => {
+    const response = await makeMetadataAPIRequest(
+      { query: JOB_STATUS, variables: { jobId: uuidv4() } },
+      customApplicationToken,
+    );
+
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].message).toContain('not found');
+  });
+
+  it('rejects a batch that sets both payloads and jobs', async () => {
+    const response = await makeMetadataAPIRequest(
+      {
+        query: ENQUEUE_JOBS,
+        variables: {
+          input: {
+            logicFunctionUniversalIdentifier,
+            payloads: [{}],
+            jobs: [{ payload: {} }],
+          },
+        },
+      },
+      customApplicationToken,
+    );
+
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].message).toContain('not both');
   });
 
   it('rejects job options outside of their allowed range', async () => {

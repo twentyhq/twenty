@@ -6,6 +6,8 @@ import {
   IsObject,
   IsOptional,
   IsUUID,
+  Length,
+  Matches,
   Max,
   Min,
 } from 'class-validator';
@@ -13,6 +15,9 @@ import GraphQLJSON from 'graphql-type-json';
 import { type EnqueueJobInput } from 'twenty-shared/application';
 
 import {
+  ENQUEUE_JOB_ID_MAX_LENGTH,
+  ENQUEUE_JOB_ID_MIN_LENGTH,
+  ENQUEUE_JOB_ID_PATTERN,
   ENQUEUE_JOB_MAX_DELAY_MS,
   ENQUEUE_JOB_MAX_RETRY_LIMIT,
   ENQUEUE_JOB_MIN_DELAY_MS,
@@ -30,6 +35,12 @@ export class EnqueueJobInputDTO implements EnqueueJobInput {
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   payload?: Record<string, unknown>;
+
+  @Matches(ENQUEUE_JOB_ID_PATTERN)
+  @Length(ENQUEUE_JOB_ID_MIN_LENGTH, ENQUEUE_JOB_ID_MAX_LENGTH)
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  jobId?: string;
 
   @IsInt()
   @Min(ENQUEUE_JOB_MIN_RETRY_LIMIT)

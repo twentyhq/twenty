@@ -1770,21 +1770,29 @@ export enum EngineComponentKey {
 
 export type EnqueueJobInput = {
   delayMs?: InputMaybe<Scalars['Int']['input']>;
+  jobId?: InputMaybe<Scalars['String']['input']>;
   logicFunctionUniversalIdentifier: Scalars['String']['input'];
   payload?: InputMaybe<Scalars['JSON']['input']>;
   retryLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type EnqueueJobItemInput = {
+  jobId?: InputMaybe<Scalars['String']['input']>;
+  payload?: InputMaybe<Scalars['JSON']['input']>;
+};
+
 export type EnqueueJobResult = {
   __typename?: 'EnqueueJobResult';
   enqueued: Scalars['Boolean']['output'];
+  jobId: Scalars['String']['output'];
   logicFunctionUniversalIdentifier: Scalars['String']['output'];
 };
 
 export type EnqueueJobsInput = {
   delayMs?: InputMaybe<Scalars['Int']['input']>;
+  jobs?: InputMaybe<Array<EnqueueJobItemInput>>;
   logicFunctionUniversalIdentifier: Scalars['String']['input'];
-  payloads: Array<Scalars['JSON']['input']>;
+  payloads?: InputMaybe<Array<Scalars['JSON']['input']>>;
   retryLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -1792,6 +1800,7 @@ export type EnqueueJobsResult = {
   __typename?: 'EnqueueJobsResult';
   enqueued: Scalars['Boolean']['output'];
   enqueuedJobsCount: Scalars['Int']['output'];
+  jobIds: Array<Scalars['String']['output']>;
   logicFunctionUniversalIdentifier: Scalars['String']['output'];
 };
 
@@ -2277,6 +2286,28 @@ export type InviteSuggestion = {
   __typename?: 'InviteSuggestion';
   displayName?: Maybe<Scalars['String']['output']>;
   email: Scalars['String']['output'];
+};
+
+/** Job state in the queue */
+export enum JobState {
+  ACTIVE = 'ACTIVE',
+  COMPLETED = 'COMPLETED',
+  DELAYED = 'DELAYED',
+  FAILED = 'FAILED',
+  PRIORITIZED = 'PRIORITIZED',
+  WAITING = 'WAITING',
+  WAITING_CHILDREN = 'WAITING_CHILDREN'
+}
+
+export type JobStatus = {
+  __typename?: 'JobStatus';
+  attemptsMade: Scalars['Int']['output'];
+  enqueuedAt: Scalars['Float']['output'];
+  failedReason?: Maybe<Scalars['String']['output']>;
+  finishedAt?: Maybe<Scalars['Float']['output']>;
+  jobId: Scalars['String']['output'];
+  startedAt?: Maybe<Scalars['Float']['output']>;
+  state: JobState;
 };
 
 export type LineChartConfiguration = {
@@ -4829,6 +4860,7 @@ export type Query = {
   getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDto;
   githubClaimAuthorizationUrl: Scalars['String']['output'];
   isApplicationStopped: Scalars['Boolean']['output'];
+  jobStatus: JobStatus;
   lineChartData: LineChartData;
   listPlans: Array<BillingPlan>;
   messageSuppressions: MessageSuppressionList;
@@ -5203,6 +5235,11 @@ export type QueryGithubClaimAuthorizationUrlArgs = {
 
 export type QueryIsApplicationStoppedArgs = {
   applicationUniversalIdentifier: Scalars['String']['input'];
+};
+
+
+export type QueryJobStatusArgs = {
+  jobId: Scalars['String']['input'];
 };
 
 

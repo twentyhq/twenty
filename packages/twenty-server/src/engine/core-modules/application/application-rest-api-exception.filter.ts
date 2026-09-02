@@ -26,6 +26,7 @@ const applicationExceptionCodeToHttpStatus = (
     case ApplicationExceptionCode.APP_NOT_INSTALLED:
     case ApplicationExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
     case ApplicationExceptionCode.FRONT_COMPONENT_NOT_FOUND:
+    case ApplicationExceptionCode.JOB_NOT_FOUND:
       return 404;
     case ApplicationExceptionCode.FORBIDDEN:
       return 403;

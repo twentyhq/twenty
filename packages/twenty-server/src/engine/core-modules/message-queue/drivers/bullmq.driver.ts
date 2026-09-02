@@ -22,6 +22,8 @@ import {
 import {
   type InFlightQueueJob,
   type MessageQueueDriver,
+  type QueueJobDetails,
+  type QueueJobToAdd,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 import {
   type MessageQueueJob,
@@ -366,7 +368,7 @@ export class BullMQDriver
     jobName: string,
     data: T,
     options?: QueueJobOptions,
-  ): Promise<void> {
+  ): Promise<string | undefined> {
     if (!this.queueMap[queueName]) {
       throw new Error(
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
@@ -388,39 +390,78 @@ export class BullMQDriver
 
     const queueOptions = this.buildJobsOptions({ queueName, options });
 
-    await this.queueMap[queueName].add(jobName, data, queueOptions);
+    const job = await this.queueMap[queueName].add(jobName, data, queueOptions);
+
+    return job.id;
   }
 
-  async bulkAdd<T>(
+  async bulkAdd<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     jobName: string,
-    dataItems: T[],
+    jobs: QueueJobToAdd<T>[],
     options?: QueueJobOptions,
-  ): Promise<void> {
+  ): Promise<string[]> {
     if (!this.queueMap[queueName]) {
       throw new Error(
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
       );
     }
 
-    if (dataItems.length === 0) {
-      return;
+    if (jobs.length === 0) {
+      return [];
     }
 
     const queueOptions = this.buildJobsOptions({ queueName, options });
 
-    await this.queueMap[queueName].addBulk(
-      dataItems.map((data, index) => ({
+    const addedJobs = await this.queueMap[queueName].addBulk(
+      jobs.map(({ data, jobId }, index) => ({
         name: jobName,
         data,
         opts: {
           ...queueOptions,
-          jobId: queueOptions.jobId
-            ? `${queueOptions.jobId}-${index}`
-            : undefined,
+          jobId:
+            jobId ??
+            (queueOptions.jobId ? `${queueOptions.jobId}-${index}` : undefined),
         },
       })),
     );
+
+    return addedJobs.map((job) => job.id).filter(isDefined);
+  }
+
+  async getJob<T extends MessageQueueJobData>(
+    queueName: MessageQueue,
+    jobId: string,
+  ): Promise<QueueJobDetails<T> | null> {
+    if (!this.queueMap[queueName]) {
+      throw new Error(
+        `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
+      );
+    }
+
+    const job = await this.queueMap[queueName].getJob(jobId);
+
+    if (!isDefined(job) || !isDefined(job.id)) {
+      return null;
+    }
+
+    const state = await job.getState();
+
+    // BullMQ reports 'unknown' for a job whose record was evicted by retention
+    if (state === 'unknown') {
+      return null;
+    }
+
+    return {
+      id: job.id,
+      data: job.data,
+      state,
+      attemptsMade: job.attemptsMade,
+      failedReason: job.failedReason,
+      timestamp: job.timestamp,
+      processedOn: job.processedOn,
+      finishedOn: job.finishedOn,
+    };
   }
 
   async getInFlightJobs<T extends MessageQueueJobData>(
