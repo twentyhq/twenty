@@ -1,8 +1,11 @@
-import { type ReactNode, useCallback } from 'react';
+import { type ReactNode, useCallback, useMemo } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { RecordTableContextProvider as RecordTableContextInternalProvider } from '@/object-record/record-table/contexts/RecordTableContext';
+import {
+  RecordTableContextProvider as RecordTableContextInternalProvider,
+  type RecordTableContextValue,
+} from '@/object-record/record-table/contexts/RecordTableContext';
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -16,6 +19,10 @@ import { RecordTableUpdateContext } from '@/object-record/record-table/contexts/
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useIsTouchDevice } from 'twenty-ui/utilities';
 import { OpenRecordIn } from 'twenty-shared/types';
+
+const RECORD_FIELDS_SCOPE_CONTEXT_VALUE = {
+  scopeInstanceId: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+};
 
 type RecordTableContextProviderProps = {
   viewBarId: string;
@@ -46,6 +53,15 @@ export const RecordTableContextProvider = ({
     visibleRecordFieldsComponentSelector,
   );
 
+  const visibleRecordFieldsWithMinWidth = useMemo(
+    () =>
+      visibleRecordFields.map((field) => ({
+        ...field,
+        size: Math.max(field.size, RECORD_TABLE_COLUMN_MIN_WIDTH),
+      })),
+    [visibleRecordFields],
+  );
+
   const { updateOneRecord } = useUpdateOneRecord();
 
   const updateRecord = useCallback(
@@ -70,26 +86,34 @@ export const RecordTableContextProvider = ({
       ? 'CLICK'
       : 'MOUSE_DOWN';
 
+  const recordTableContextValue: RecordTableContextValue = useMemo(
+    () => ({
+      viewBarId,
+      objectMetadataItem,
+      objectMetadataItems,
+      recordTableId,
+      objectNameSingular,
+      objectPermissions,
+      visibleRecordFields: visibleRecordFieldsWithMinWidth,
+      onRecordIdentifierClick,
+      triggerEvent,
+    }),
+    [
+      viewBarId,
+      objectMetadataItem,
+      objectMetadataItems,
+      recordTableId,
+      objectNameSingular,
+      objectPermissions,
+      visibleRecordFieldsWithMinWidth,
+      onRecordIdentifierClick,
+      triggerEvent,
+    ],
+  );
+
   return (
-    <RecordFieldsScopeContextProvider
-      value={{ scopeInstanceId: RECORD_TABLE_CELL_INPUT_ID_PREFIX }}
-    >
-      <RecordTableContextInternalProvider
-        value={{
-          viewBarId,
-          objectMetadataItem,
-          objectMetadataItems,
-          recordTableId,
-          objectNameSingular,
-          objectPermissions,
-          visibleRecordFields: visibleRecordFields.map((field) => ({
-            ...field,
-            size: Math.max(field.size, RECORD_TABLE_COLUMN_MIN_WIDTH),
-          })),
-          onRecordIdentifierClick,
-          triggerEvent,
-        }}
-      >
+    <RecordFieldsScopeContextProvider value={RECORD_FIELDS_SCOPE_CONTEXT_VALUE}>
+      <RecordTableContextInternalProvider value={recordTableContextValue}>
         <RecordTableUpdateContext.Provider value={updateRecord}>
           {children}
         </RecordTableUpdateContext.Provider>

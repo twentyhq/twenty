@@ -3,7 +3,7 @@ import { type RecordField } from '@/object-record/record-field/types/RecordField
 import { type ObjectPermission } from '~/generated-metadata/graphql';
 import { createRequiredContext } from '~/utils/createRequiredContext';
 
-type RecordTableContextValue = {
+export type RecordTableContextValue = {
   recordTableId: string;
   viewBarId: string;
   objectNameSingular: string;

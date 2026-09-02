@@ -1,8 +1,10 @@
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
+import {
+  RecordTableCellContext,
+  type RecordTableCellContextValue,
+} from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
-import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useMemo } from 'react';
 
 export const RecordTableCellWrapper = ({
@@ -16,20 +18,20 @@ export const RecordTableCellWrapper = ({
 }) => {
   const { rowIndex } = useRecordTableRowContextOrThrow();
 
-  const currentTableCellPosition: TableCellPosition = useMemo(
+  const cellContextValue: RecordTableCellContextValue = useMemo(
     () => ({
-      column: recordFieldIndex,
-      row: rowIndex,
+      recordField,
+      cellPosition: {
+        column: recordFieldIndex,
+        row: rowIndex,
+      },
     }),
-    [recordFieldIndex, rowIndex],
+    [recordField, recordFieldIndex, rowIndex],
   );
 
   return (
     <RecordTableCellContext.Provider
-      value={{
-        recordField,
-        cellPosition: currentTableCellPosition,
-      }}
+      value={cellContextValue}
       key={recordField.fieldMetadataItemId}
     >
       <RecordTableCellFieldContextWrapper recordField={recordField}>
