@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import v8 from 'v8';
+
 import { type Histogram } from '@opentelemetry/api';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -29,8 +31,17 @@ const CACHE_DURATION_BUCKETS_SECONDS = [
 const STATS_TTL_MS = 5_000;
 const SIZE_REFRESH_MS = 5 * 60 * 1000;
 const SIZE_STARTUP_DELAY_MS = 30 * 1000;
-const SIZE_SAMPLE_PER_PROVIDER = 3;
+// Sized off the hot path every SIZE_REFRESH_MS. 50 keeps the extrapolated byte
+// estimate accurate enough to tell a cache-dominated heap from one that is not;
+// the byte-heavy providers are entry-capped well under this, so they get sized
+// in full.
+const SIZE_SAMPLE_PER_PROVIDER = 50;
 const SIZE_WALK_NODE_CAP = 300_000;
+const MEMORY_REPORT_INTERVAL_MS = 60 * 1000;
+const BYTES_PER_MEGABYTE = 1024 * 1024;
+
+const toMegabytes = (bytes: number): number =>
+  Math.round(bytes / BYTES_PER_MEGABYTE);
 
 // Cache observability, split from WorkspaceCacheService (which drives it via start()/stop()).
 @Injectable()
@@ -46,6 +57,7 @@ export class WorkspaceCacheMetricsService {
   private cacheSizeTotalBytes = 0;
   private sizeSampler?: ReturnType<typeof setInterval>;
   private sizeStartupTimer?: ReturnType<typeof setTimeout>;
+  private memoryReportTimer?: ReturnType<typeof setInterval>;
   private statsCache?: { computedAt: number } & LocalCacheStats;
   private sizeSampleInFlight = false;
   private packingBacklog = 0;
@@ -94,6 +106,7 @@ export class WorkspaceCacheMetricsService {
     this.localCache = localCache;
     this.registerGauges();
     this.scheduleSizeSampler();
+    this.scheduleMemoryReport();
   }
 
   stop(): void {
@@ -103,6 +116,46 @@ export class WorkspaceCacheMetricsService {
     if (isDefined(this.sizeSampler)) {
       clearInterval(this.sizeSampler);
     }
+    if (isDefined(this.memoryReportTimer)) {
+      clearInterval(this.memoryReportTimer);
+    }
+  }
+
+  // Diagnostic: correlate process/V8 memory with the cache's own size in one log
+  // line so we can tell whether the metadata cache tracks the heap climb to OOM
+  // (retained, old-space) versus per-job allocation spikes (transient, new-space).
+  private scheduleMemoryReport(): void {
+    const report = (): void => {
+      const memoryUsage = process.memoryUsage();
+      const heapSpaces = v8.getHeapSpaceStatistics();
+      const oldSpaceUsedBytes =
+        heapSpaces.find((space) => space.space_name === 'old_space')
+          ?.space_used_size ?? 0;
+      const newSpaceUsedBytes =
+        heapSpaces.find((space) => space.space_name === 'new_space')
+          ?.space_used_size ?? 0;
+
+      const topProviders = Object.entries(this.cacheSizeByKeyName)
+        .sort(([, bytesA], [, bytesB]) => bytesB - bytesA)
+        .slice(0, 3)
+        .map(([keyName, bytes]) => `${keyName}:${toMegabytes(bytes)}MB`)
+        .join(',');
+
+      this.logger.log(
+        `[WorkspaceCacheMemReport] ` +
+          `heapUsedMB=${toMegabytes(memoryUsage.heapUsed)} ` +
+          `rssMB=${toMegabytes(memoryUsage.rss)} ` +
+          `externalMB=${toMegabytes(memoryUsage.external)} ` +
+          `oldSpaceMB=${toMegabytes(oldSpaceUsedBytes)} ` +
+          `newSpaceMB=${toMegabytes(newSpaceUsedBytes)} ` +
+          `cacheEntries=${this.getStats().entries} ` +
+          `cacheBytesEstimateMB=${toMegabytes(this.cacheSizeTotalBytes)} ` +
+          `top=${topProviders}`,
+      );
+    };
+
+    this.memoryReportTimer = setInterval(report, MEMORY_REPORT_INTERVAL_MS);
+    this.memoryReportTimer.unref();
   }
 
   recordRecompute(seconds: number, cacheKey: WorkspaceCacheKeyName): void {

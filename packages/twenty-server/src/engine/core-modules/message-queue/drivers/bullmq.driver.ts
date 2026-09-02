@@ -41,6 +41,7 @@ import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/
 export type BullMQDriverOptions = QueueOptions;
 
 const V4_LENGTH = 36;
+const BYTES_PER_MEGABYTE = 1024 * 1024;
 
 export class BullMQDriver
   implements MessageQueueDriver, OnModuleDestroy, OnModuleInit
@@ -209,6 +210,9 @@ export class BullMQDriver
 
           // TODO: Correctly support for job.id
           const timeStart = performance.now();
+          // Diagnostic: attribute heap growth to job types to tell whether
+          // per-job allocations (e.g. thread reconciliation) drive the OOM loop.
+          const heapUsedBeforeBytes = process.memoryUsage().heapUsed;
           const workspaceId = job.data?.workspaceId;
           const workspaceSuffix = workspaceId
             ? ` [workspace=${workspaceId}]`
@@ -227,9 +231,13 @@ export class BullMQDriver
           });
           const timeEnd = performance.now();
           const executionTime = timeEnd - timeStart;
+          const heapUsedAfterBytes = process.memoryUsage().heapUsed;
+          const heapDeltaMegabytes =
+            (heapUsedAfterBytes - heapUsedBeforeBytes) / BYTES_PER_MEGABYTE;
+          const heapUsedMegabytes = heapUsedAfterBytes / BYTES_PER_MEGABYTE;
 
           this.logger.log(
-            `Job ${job.id} with name ${job.name} processed on queue ${queueName} in ${executionTime.toFixed(2)}ms${workspaceSuffix}`,
+            `Job ${job.id} with name ${job.name} processed on queue ${queueName} in ${executionTime.toFixed(2)}ms${workspaceSuffix} heapDeltaMB=${heapDeltaMegabytes.toFixed(1)} heapUsedMB=${heapUsedMegabytes.toFixed(0)}`,
           );
         }),
       workerOptions,
