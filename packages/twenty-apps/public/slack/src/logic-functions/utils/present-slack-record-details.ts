@@ -8,7 +8,7 @@ import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-eve
 import { type SlackRecordLink } from 'src/logic-functions/types/slack-record-link.type';
 import { buildSlackRecordUnfurlEntity } from 'src/logic-functions/utils/build-slack-record-unfurl-entity';
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
-import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
+import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspace-base-urls';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { parseSlackEntityDetailsEvent } from 'src/logic-functions/utils/parse-slack-entity-details-event';
 import { parseTwentyRecordLinks } from 'src/logic-functions/utils/parse-twenty-record-links';
@@ -43,22 +43,22 @@ const presentDetailsError = async ({
 };
 
 const resolveRecordLink = ({
-  workspaceBaseUrl,
+  workspaceBaseUrls,
   entityUrl,
   externalRef,
 }: {
-  workspaceBaseUrl: string;
+  workspaceBaseUrls: string[];
   entityUrl: string | undefined;
   externalRef: { id: string; type: string | undefined } | undefined;
 }): SlackRecordLink | undefined => {
   const candidateUrls = [
     entityUrl,
     isDefined(externalRef?.type)
-      ? `${workspaceBaseUrl}/object/${externalRef.type}/${externalRef.id}`
+      ? `${workspaceBaseUrls[0]}/object/${externalRef.type}/${externalRef.id}`
       : undefined,
   ].filter(isDefined);
 
-  return parseTwentyRecordLinks({ workspaceBaseUrl, urls: candidateUrls })[0];
+  return parseTwentyRecordLinks({ workspaceBaseUrls, urls: candidateUrls })[0];
 };
 
 export const presentSlackRecordDetails = async (
@@ -103,9 +103,9 @@ export const presentSlackRecordDetails = async (
     return { ok: true, skipped: 'Viewer does not map to a workspace member' };
   }
 
-  const workspaceBaseUrl = await fetchWorkspaceBaseUrl();
+  const workspaceBaseUrls = await fetchWorkspaceBaseUrls();
 
-  if (!isDefined(workspaceBaseUrl)) {
+  if (workspaceBaseUrls.length === 0) {
     await presentDetailsError({
       slackClient,
       triggerId,
@@ -116,7 +116,7 @@ export const presentSlackRecordDetails = async (
   }
 
   const recordLink = resolveRecordLink({
-    workspaceBaseUrl,
+    workspaceBaseUrls,
     entityUrl,
     externalRef,
   });
@@ -151,7 +151,7 @@ export const presentSlackRecordDetails = async (
     ? buildSlackRecordUnfurlEntity({
         recordLink,
         record,
-        workspaceBaseUrl,
+        workspaceBaseUrls,
         includeDetails: true,
       })
     : undefined;

@@ -9,11 +9,11 @@ import { buildSlackRecordUnfurlEntity } from 'src/logic-functions/utils/build-sl
 export const fetchSlackRecordEntities = async ({
   client,
   recordLinks,
-  workspaceBaseUrl,
+  workspaceBaseUrls,
 }: {
   client: CoreApiClient;
   recordLinks: SlackRecordLink[];
-  workspaceBaseUrl: string;
+  workspaceBaseUrls: string[];
 }): Promise<EntityMetadata[]> => {
   const entities = await Promise.all(
     recordLinks.map(async (recordLink) => {
@@ -33,7 +33,7 @@ export const fetchSlackRecordEntities = async ({
         ? buildSlackRecordUnfurlEntity({
             recordLink,
             record,
-            workspaceBaseUrl,
+            workspaceBaseUrls,
           })
         : undefined;
     }),

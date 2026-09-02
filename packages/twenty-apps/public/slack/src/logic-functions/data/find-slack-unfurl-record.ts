@@ -1,7 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type SlackUnfurlObjectName } from 'src/logic-functions/types/slack-unfurl-object-name.type';
-import { asObject } from 'src/logic-functions/utils/as-object';
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
 
 type SlackUnfurlRecordSelection = {
   queryField: 'people' | 'companies' | 'opportunities' | 'notes' | 'tasks';
@@ -100,5 +100,5 @@ export const findSlackUnfurlRecord = async ({
 
   const record = queryResult?.[queryField]?.edges?.[0]?.node;
 
-  return asObject(record);
+  return asRecord(record);
 };

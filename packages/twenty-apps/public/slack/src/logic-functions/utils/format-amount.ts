@@ -1,7 +1,7 @@
 import { isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { asNonEmptyString } from 'src/logic-functions/utils/as-non-empty-string';
+import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
 
 export const formatAmount = (
   amount: Record<string, unknown> | undefined,
@@ -13,7 +13,7 @@ export const formatAmount = (
   }
 
   const value = amountMicros / 1_000_000;
-  const currencyCode = asNonEmptyString(amount?.currencyCode);
+  const currencyCode = readOptionalString(amount?.currencyCode);
 
   if (isDefined(currencyCode)) {
     try {

@@ -23,17 +23,17 @@ const DISPLAY_TYPE_BY_OBJECT: Record<SlackUnfurlObjectName, string> = {
 export const buildSlackRecordUnfurlEntity = ({
   recordLink,
   record,
-  workspaceBaseUrl,
+  workspaceBaseUrls,
   includeDetails = false,
 }: {
   recordLink: SlackRecordLink;
   record: Record<string, unknown>;
-  workspaceBaseUrl: string;
+  workspaceBaseUrls: string[];
   includeDetails?: boolean;
 }): EntityMetadata | undefined => {
   const { title, customFields, iconUrl } = SLACK_RECORD_CONTENT_BUILDERS[
     recordLink.objectNameSingular
-  ]({ record, workspaceBaseUrl, includeDetails });
+  ]({ record, workspaceBaseUrls, includeDetails });
 
   if (!isNonEmptyString(title)) {
     return undefined;

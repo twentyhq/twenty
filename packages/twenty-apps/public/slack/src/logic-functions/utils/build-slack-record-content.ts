@@ -3,8 +3,7 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_ENTITY_FIELD_TYPE } from 'src/logic-functions/constants/slack-entity-field-type';
 import { type SlackUnfurlObjectName } from 'src/logic-functions/types/slack-unfurl-object-name.type';
-import { asNonEmptyString } from 'src/logic-functions/utils/as-non-empty-string';
-import { asObject } from 'src/logic-functions/utils/as-object';
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { buildFullName } from 'src/logic-functions/utils/build-full-name';
 import { buildSlackBodyPreviewField } from 'src/logic-functions/utils/build-slack-body-preview-field';
 import { buildSlackCompanyRefField } from 'src/logic-functions/utils/build-slack-company-ref-field';
@@ -17,11 +16,12 @@ import { formatAmount } from 'src/logic-functions/utils/format-amount';
 import { getCompanyLogoUrl } from 'src/logic-functions/utils/get-company-logo-url';
 import { getPublicAvatarUrl } from 'src/logic-functions/utils/get-public-avatar-url';
 import { humanizeSelectValue } from 'src/logic-functions/utils/humanize-select-value';
+import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
 import { toAbsoluteHttpUrl } from 'src/logic-functions/utils/to-absolute-http-url';
 
 type SlackUnfurlContentArgs = {
   record: Record<string, unknown>;
-  workspaceBaseUrl: string;
+  workspaceBaseUrls: string[];
   includeDetails: boolean;
 };
 
@@ -33,12 +33,12 @@ type SlackUnfurlContent = {
 
 const buildPersonContent = ({
   record,
-  workspaceBaseUrl,
+  workspaceBaseUrls,
   includeDetails,
 }: SlackUnfurlContentArgs): SlackUnfurlContent => {
-  const phones = asObject(record.phones);
-  const phoneNumber = asNonEmptyString(phones?.primaryPhoneNumber);
-  const phoneCallingCode = asNonEmptyString(phones?.primaryPhoneCallingCode);
+  const phones = asRecord(record.phones);
+  const phoneNumber = readOptionalString(phones?.primaryPhoneNumber);
+  const phoneCallingCode = readOptionalString(phones?.primaryPhoneCallingCode);
   const phone = isDefined(phoneNumber)
     ? [phoneCallingCode, phoneNumber].filter(isDefined).join(' ')
     : undefined;
@@ -47,27 +47,33 @@ const buildPersonContent = ({
     title: buildFullName(record.name) ?? '',
     iconUrl: getPublicAvatarUrl({
       avatarUrl: record.avatarUrl,
-      workspaceBaseUrl,
+      workspaceBaseUrls,
     }),
     customFields: [
       buildSlackCompanyRefField({
-        company: asObject(record.company),
-        workspaceBaseUrl,
+        company: asRecord(record.company),
+        workspaceBaseUrl: workspaceBaseUrls[0],
       }),
-      buildSlackStringField({
-        key: 'email',
-        label: 'Email',
-        value: asNonEmptyString(asObject(record.emails)?.primaryEmail),
-        type: SLACK_ENTITY_FIELD_TYPE.EMAIL,
-      }),
-      buildSlackStringField({ key: 'phone', label: 'Phone', value: phone }),
       buildSlackStringField({
         key: 'jobTitle',
         label: 'Job title',
-        value: asNonEmptyString(record.jobTitle),
+        value: readOptionalString(record.jobTitle),
       }),
+      // the card is visible to everyone in the channel, Slack Connect guests
+      // included, so contact details stay in the member-gated flexpane
       ...(includeDetails
         ? [
+            buildSlackStringField({
+              key: 'email',
+              label: 'Email',
+              value: readOptionalString(asRecord(record.emails)?.primaryEmail),
+              type: SLACK_ENTITY_FIELD_TYPE.EMAIL,
+            }),
+            buildSlackStringField({
+              key: 'phone',
+              label: 'Phone',
+              value: phone,
+            }),
             buildSlackLinkedinField(record),
             ...buildSlackTimestampDetailFields(record),
           ]
@@ -80,13 +86,13 @@ const buildCompanyContent = ({
   record,
   includeDetails,
 }: SlackUnfurlContentArgs): SlackUnfurlContent => {
-  const domainUrl = asNonEmptyString(
-    asObject(record.domainName)?.primaryLinkUrl,
+  const domainUrl = readOptionalString(
+    asRecord(record.domainName)?.primaryLinkUrl,
   );
-  const address = asObject(record.address);
+  const address = asRecord(record.address);
 
   return {
-    title: asNonEmptyString(record.name) ?? '',
+    title: readOptionalString(record.name) ?? '',
     iconUrl: getCompanyLogoUrl(domainUrl),
     customFields: [
       buildSlackStringField({
@@ -98,24 +104,24 @@ const buildCompanyContent = ({
       buildSlackStringField({
         key: 'city',
         label: 'City',
-        value: asNonEmptyString(address?.addressCity),
+        value: readOptionalString(address?.addressCity),
       }),
       ...(includeDetails
         ? [
             buildSlackStringField({
               key: 'country',
               label: 'Country',
-              value: asNonEmptyString(address?.addressCountry),
+              value: readOptionalString(address?.addressCountry),
             }),
             buildSlackStringField({
               key: 'annualRevenue',
               label: 'Annual revenue',
-              value: formatAmount(asObject(record.annualRevenue)),
+              value: formatAmount(asRecord(record.annualRevenue)),
             }),
             buildSlackStringField({
               key: 'accountOwner',
               label: 'Account owner',
-              value: buildFullName(asObject(record.accountOwner)?.name),
+              value: buildFullName(asRecord(record.accountOwner)?.name),
             }),
             buildSlackLinkedinField(record),
             ...buildSlackTimestampDetailFields(record),
@@ -127,22 +133,25 @@ const buildCompanyContent = ({
 
 const buildOpportunityContent = ({
   record,
-  workspaceBaseUrl,
+  workspaceBaseUrls,
   includeDetails,
 }: SlackUnfurlContentArgs): SlackUnfurlContent => {
-  const stage = asNonEmptyString(record.stage);
-  const company = asObject(record.company);
-  const pointOfContact = asObject(record.pointOfContact);
-  const pointOfContactId = asNonEmptyString(pointOfContact?.id);
+  const stage = readOptionalString(record.stage);
+  const company = asRecord(record.company);
+  const pointOfContact = asRecord(record.pointOfContact);
+  const pointOfContactId = readOptionalString(pointOfContact?.id);
   const pointOfContactName = buildFullName(pointOfContact?.name);
 
   return {
-    title: asNonEmptyString(record.name) ?? '',
+    title: readOptionalString(record.name) ?? '',
     iconUrl: getCompanyLogoUrl(
-      asNonEmptyString(asObject(company?.domainName)?.primaryLinkUrl),
+      readOptionalString(asRecord(company?.domainName)?.primaryLinkUrl),
     ),
     customFields: [
-      buildSlackCompanyRefField({ company, workspaceBaseUrl }),
+      buildSlackCompanyRefField({
+        company,
+        workspaceBaseUrl: workspaceBaseUrls[0],
+      }),
       buildSlackStringField({
         key: 'stage',
         label: 'Stage',
@@ -151,7 +160,7 @@ const buildOpportunityContent = ({
       buildSlackStringField({
         key: 'amount',
         label: 'Amount',
-        value: formatAmount(asObject(record.amount)),
+        value: formatAmount(asRecord(record.amount)),
       }),
       buildSlackTimestampField({
         key: 'closeDate',
@@ -167,7 +176,7 @@ const buildOpportunityContent = ({
                   objectNameSingular: 'person',
                   recordId: pointOfContactId,
                   title: pointOfContactName,
-                  workspaceBaseUrl,
+                  workspaceBaseUrl: workspaceBaseUrls[0],
                 })
               : undefined,
             ...buildSlackTimestampDetailFields(record),
@@ -181,7 +190,7 @@ const buildNoteContent = ({
   record,
   includeDetails,
 }: SlackUnfurlContentArgs): SlackUnfurlContent => ({
-  title: asNonEmptyString(record.title) ?? '',
+  title: readOptionalString(record.title) ?? '',
   customFields: includeDetails
     ? [
         buildSlackBodyPreviewField(record.bodyV2),
@@ -200,10 +209,10 @@ const buildTaskContent = ({
   record,
   includeDetails,
 }: SlackUnfurlContentArgs): SlackUnfurlContent => {
-  const status = asNonEmptyString(record.status);
+  const status = readOptionalString(record.status);
 
   return {
-    title: asNonEmptyString(record.title) ?? '',
+    title: readOptionalString(record.title) ?? '',
     customFields: [
       buildSlackStringField({
         key: 'status',
@@ -220,7 +229,7 @@ const buildTaskContent = ({
             buildSlackStringField({
               key: 'assignee',
               label: 'Assignee',
-              value: buildFullName(asObject(record.assignee)?.name),
+              value: buildFullName(asRecord(record.assignee)?.name),
             }),
             buildSlackBodyPreviewField(record.bodyV2),
             ...buildSlackTimestampDetailFields(record),

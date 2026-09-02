@@ -12,19 +12,23 @@ const isSupportedObjectName = (
   SLACK_UNFURL_OBJECT_NAMES.some((objectName) => objectName === value);
 
 const parseRecordLink = ({
-  workspaceBaseUrl,
+  workspaceBaseUrls,
   url,
 }: {
-  workspaceBaseUrl: string;
+  workspaceBaseUrls: string[];
   url: string;
 }): SlackRecordLink | undefined => {
   const normalizedUrl = url.replace(/&amp;/g, '&');
 
-  if (!normalizedUrl.startsWith(`${workspaceBaseUrl}/`)) {
+  const matchedBaseUrl = workspaceBaseUrls.find((baseUrl) =>
+    normalizedUrl.startsWith(`${baseUrl}/`),
+  );
+
+  if (!isDefined(matchedBaseUrl)) {
     return undefined;
   }
 
-  const path = normalizedUrl.slice(workspaceBaseUrl.length);
+  const path = normalizedUrl.slice(matchedBaseUrl.length);
   const match = path.match(/^\/object\/([^/]+)\/([^/?#]+)\/?(?:[?#]|$)/);
 
   if (!match) {
@@ -42,24 +46,24 @@ const parseRecordLink = ({
 
   return {
     sharedUrl: url,
-    canonicalUrl: `${workspaceBaseUrl}/object/${objectNameSingular}/${recordId}`,
+    canonicalUrl: `${workspaceBaseUrls[0]}/object/${objectNameSingular}/${recordId}`,
     objectNameSingular,
     recordId,
   };
 };
 
 export const parseTwentyRecordLinks = ({
-  workspaceBaseUrl,
+  workspaceBaseUrls,
   urls,
 }: {
-  workspaceBaseUrl: string;
+  workspaceBaseUrls: string[];
   urls: string[];
 }): SlackRecordLink[] => {
   const seenRecords = new Set<string>();
   const recordLinks: SlackRecordLink[] = [];
 
   for (const url of urls) {
-    const recordLink = parseRecordLink({ workspaceBaseUrl, url });
+    const recordLink = parseRecordLink({ workspaceBaseUrls, url });
 
     if (!isDefined(recordLink)) {
       continue;

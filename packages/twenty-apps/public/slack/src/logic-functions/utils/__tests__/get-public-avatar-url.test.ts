@@ -9,7 +9,7 @@ describe('getPublicAvatarUrl', () => {
     expect(
       getPublicAvatarUrl({
         avatarUrl: 'https://cdn.example.com/ada.png',
-        workspaceBaseUrl: WORKSPACE_BASE_URL,
+        workspaceBaseUrls: [WORKSPACE_BASE_URL],
       }),
     ).toBe('https://cdn.example.com/ada.png');
   });
@@ -18,7 +18,16 @@ describe('getPublicAvatarUrl', () => {
     expect(
       getPublicAvatarUrl({
         avatarUrl: `${WORKSPACE_BASE_URL}/files/avatar.png`,
-        workspaceBaseUrl: WORKSPACE_BASE_URL,
+        workspaceBaseUrls: [WORKSPACE_BASE_URL],
+      }),
+    ).toBeUndefined();
+  });
+
+  it('should drop an instance-hosted avatar served from the other workspace host', () => {
+    expect(
+      getPublicAvatarUrl({
+        avatarUrl: 'https://acme.twenty.com/files/avatar.png',
+        workspaceBaseUrls: ['https://crm.acme.com', 'https://acme.twenty.com'],
       }),
     ).toBeUndefined();
   });
@@ -27,13 +36,13 @@ describe('getPublicAvatarUrl', () => {
     expect(
       getPublicAvatarUrl({
         avatarUrl: '/files/avatar.png',
-        workspaceBaseUrl: WORKSPACE_BASE_URL,
+        workspaceBaseUrls: [WORKSPACE_BASE_URL],
       }),
     ).toBeUndefined();
     expect(
       getPublicAvatarUrl({
         avatarUrl: null,
-        workspaceBaseUrl: WORKSPACE_BASE_URL,
+        workspaceBaseUrls: [WORKSPACE_BASE_URL],
       }),
     ).toBeUndefined();
   });

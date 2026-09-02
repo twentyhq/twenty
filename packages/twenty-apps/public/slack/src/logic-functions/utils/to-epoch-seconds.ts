@@ -1,9 +1,9 @@
 import { isDefined } from 'twenty-sdk/utils';
 
-import { asNonEmptyString } from 'src/logic-functions/utils/as-non-empty-string';
+import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
 
 export const toEpochSeconds = (value: unknown): number | undefined => {
-  const text = asNonEmptyString(value);
+  const text = readOptionalString(value);
 
   if (!isDefined(text)) {
     return undefined;

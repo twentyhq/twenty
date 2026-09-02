@@ -34,7 +34,7 @@ describe('buildSlackRecordUnfurlEntity', () => {
     const entity = buildSlackRecordUnfurlEntity({
       recordLink: buildPersonRecordLink(),
       record: buildPersonRecord(),
-      workspaceBaseUrl: WORKSPACE_BASE_URL,
+      workspaceBaseUrls: [WORKSPACE_BASE_URL],
     });
 
     expect(entity).toMatchObject({
@@ -59,19 +59,34 @@ describe('buildSlackRecordUnfurlEntity', () => {
     const entity = buildSlackRecordUnfurlEntity({
       recordLink: buildPersonRecordLink(),
       record: buildPersonRecord(),
-      workspaceBaseUrl: WORKSPACE_BASE_URL,
+      workspaceBaseUrls: [WORKSPACE_BASE_URL],
     });
 
     expect(
       entity?.entity_payload.custom_fields?.map((field) => field.key),
-    ).toEqual(['company', 'email', 'phone', 'jobTitle']);
+    ).toEqual(['company', 'jobTitle']);
+  });
+
+  it('should keep contact details off the channel-visible card', () => {
+    const entity = buildSlackRecordUnfurlEntity({
+      recordLink: buildPersonRecordLink(),
+      record: buildPersonRecord(),
+      workspaceBaseUrls: [WORKSPACE_BASE_URL],
+    });
+
+    expect(
+      entity?.entity_payload.custom_fields?.map((field) => field.key),
+    ).not.toContain('email');
+    expect(
+      entity?.entity_payload.custom_fields?.map((field) => field.key),
+    ).not.toContain('phone');
   });
 
   it('should add the detail fields for the flexpane', () => {
     const entity = buildSlackRecordUnfurlEntity({
       recordLink: buildPersonRecordLink(),
       record: buildPersonRecord(),
-      workspaceBaseUrl: WORKSPACE_BASE_URL,
+      workspaceBaseUrls: [WORKSPACE_BASE_URL],
       includeDetails: true,
     });
 
@@ -79,9 +94,9 @@ describe('buildSlackRecordUnfurlEntity', () => {
       entity?.entity_payload.custom_fields?.map((field) => field.key),
     ).toEqual([
       'company',
+      'jobTitle',
       'email',
       'phone',
-      'jobTitle',
       'linkedin',
       'createdAt',
       'updatedAt',
@@ -92,7 +107,7 @@ describe('buildSlackRecordUnfurlEntity', () => {
     const entity = buildSlackRecordUnfurlEntity({
       recordLink: buildPersonRecordLink(),
       record: buildPersonRecord(),
-      workspaceBaseUrl: WORKSPACE_BASE_URL,
+      workspaceBaseUrls: [WORKSPACE_BASE_URL],
     });
 
     expect(entity?.entity_payload.custom_fields?.[0]).toEqual({
@@ -117,7 +132,7 @@ describe('buildSlackRecordUnfurlEntity', () => {
         recordId: COMPANY_ID,
       },
       record: { name: 'ACME', domainName: { primaryLinkUrl: 'acme.dev' } },
-      workspaceBaseUrl: WORKSPACE_BASE_URL,
+      workspaceBaseUrls: [WORKSPACE_BASE_URL],
     });
 
     expect(entity?.entity_payload.custom_fields).toContainEqual({
@@ -137,7 +152,7 @@ describe('buildSlackRecordUnfurlEntity', () => {
         recordId: PERSON_ID,
       },
       record: { title: 'Kickoff notes' },
-      workspaceBaseUrl: WORKSPACE_BASE_URL,
+      workspaceBaseUrls: [WORKSPACE_BASE_URL],
     });
 
     expect(
@@ -150,7 +165,7 @@ describe('buildSlackRecordUnfurlEntity', () => {
       buildSlackRecordUnfurlEntity({
         recordLink: buildPersonRecordLink(),
         record: { name: {} },
-        workspaceBaseUrl: WORKSPACE_BASE_URL,
+        workspaceBaseUrls: [WORKSPACE_BASE_URL],
       }),
     ).toBeUndefined();
   });

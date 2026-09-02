@@ -1,19 +1,21 @@
 import { isDefined } from 'twenty-sdk/utils';
 
-import { asNonEmptyString } from 'src/logic-functions/utils/as-non-empty-string';
+import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
 
 export const getPublicAvatarUrl = ({
   avatarUrl,
-  workspaceBaseUrl,
+  workspaceBaseUrls,
 }: {
   avatarUrl: unknown;
-  workspaceBaseUrl: string;
+  workspaceBaseUrls: string[];
 }): string | undefined => {
-  const url = asNonEmptyString(avatarUrl);
+  const url = readOptionalString(avatarUrl);
 
   if (!isDefined(url) || !/^https?:\/\//i.test(url)) {
     return undefined;
   }
 
-  return url.startsWith(workspaceBaseUrl) ? undefined : url;
+  return workspaceBaseUrls.some((baseUrl) => url.startsWith(baseUrl))
+    ? undefined
+    : url;
 };

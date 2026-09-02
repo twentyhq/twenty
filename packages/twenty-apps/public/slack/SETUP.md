@@ -4,7 +4,7 @@ Two parts: a **Slack app** you create, and the **Twenty side** where you paste i
 
 ## 1. Slack app
 
-1. Create a Slack app at [api.slack.com/apps](https://api.slack.com/apps) → **Create New App → From a manifest**, pasting [`slack-app-manifest.json`](./slack-app-manifest.json) with all `<YOUR_TWENTY_SERVER_URL>` placeholders replaced. The manifest is the source of truth for scopes, event subscriptions and the agent surface — the steps below describe what it configures, so an app created from it only needs credentials copied (step 4). Use a dedicated app — do not reuse one across Twenty apps.
+1. Create a Slack app at [api.slack.com/apps](https://api.slack.com/apps) → **Create New App → From a manifest**, pasting [`slack-app-manifest.json`](./slack-app-manifest.json) with all `<YOUR_TWENTY_SERVER_URL>` placeholders replaced, and `<YOUR_TWENTY_FRONT_DOMAIN>` under `unfurl_domains` set to the domain your workspace URLs use (see the Record link previews section). The manifest is the source of truth for scopes, event subscriptions and the agent surface — the steps below describe what it configures, so an app created from it only needs credentials copied (step 4). Use a dedicated app — do not reuse one across Twenty apps.
 
    The manifest enables `agent_view` (Slack's Agent messaging experience): the app is listed as an agent in Slack's UI, shows clickable suggested prompts at the top of its Messages tab, and replies show a native thinking status instead of placeholder messages, in DMs and channel threads alike. On an app configured by hand instead, enable **Agents & AI Apps** in the app settings, which also adds the `assistant:write` scope.
 

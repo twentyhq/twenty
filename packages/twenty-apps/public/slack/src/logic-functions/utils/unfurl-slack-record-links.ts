@@ -1,12 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_UNFURL_MAX_ENTITIES } from 'src/logic-functions/constants/slack-unfurl-max-entities';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { fetchSlackRecordEntities } from 'src/logic-functions/utils/fetch-slack-record-entities';
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
-import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
+import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspace-base-urls';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { parseSlackLinkSharedEvent } from 'src/logic-functions/utils/parse-slack-link-shared-event';
 import { parseTwentyRecordLinks } from 'src/logic-functions/utils/parse-twenty-record-links';
@@ -31,13 +30,13 @@ export const unfurlSlackRecordLinks = async (
   const { slackChannelId, messageTimestamp, slackUserId, urls } =
     parsed.linkShared;
 
-  const workspaceBaseUrl = await fetchWorkspaceBaseUrl();
+  const workspaceBaseUrls = await fetchWorkspaceBaseUrls();
 
-  if (!isDefined(workspaceBaseUrl)) {
+  if (workspaceBaseUrls.length === 0) {
     return { ok: true, skipped: 'Workspace URL is unavailable' };
   }
 
-  const recordLinks = parseTwentyRecordLinks({ workspaceBaseUrl, urls }).slice(
+  const recordLinks = parseTwentyRecordLinks({ workspaceBaseUrls, urls }).slice(
     0,
     SLACK_UNFURL_MAX_ENTITIES,
   );
@@ -76,7 +75,7 @@ export const unfurlSlackRecordLinks = async (
   const entities = await fetchSlackRecordEntities({
     client,
     recordLinks,
-    workspaceBaseUrl,
+    workspaceBaseUrls,
   });
 
   if (entities.length === 0) {
