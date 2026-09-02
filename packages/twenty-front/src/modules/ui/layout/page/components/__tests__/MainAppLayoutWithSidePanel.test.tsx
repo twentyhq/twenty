@@ -69,7 +69,7 @@ const routeObjects: WorkspaceRouteObject[] = [
 
 const navigateRef: { current: NavigateFunction | null } = { current: null };
 
-const NavigateProbe = () => {
+const NavigateProbeEffect = () => {
   navigateRef.current = useNavigate();
 
   return null;
@@ -91,7 +91,7 @@ describe('MainAppLayoutWithSidePanel', () => {
   it('keeps a single route context store provider on the main surface across a section switch', async () => {
     render(
       <MemoryRouter initialEntries={['/objects/companies']}>
-        <NavigateProbe />
+        <NavigateProbeEffect />
         <MainSurfaceRoutes />
       </MemoryRouter>,
     );
