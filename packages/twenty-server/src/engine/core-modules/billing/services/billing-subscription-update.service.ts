@@ -207,17 +207,17 @@ export class BillingSubscriptionUpdateService {
     const resourceCreditItem =
       getCurrentResourceCreditSubscriptionItemOrThrow(subscription);
 
-    const workspaceMembersCount = await this.countWorkspaceMembers(workspaceId);
+    const seats =
+      subscriptionUpdate.type === SubscriptionUpdateType.SEATS
+        ? subscriptionUpdate.newSeats
+        : await this.countWorkspaceMembers(workspaceId);
 
     const toUpdateCurrentPrices = await this.computeSubscriptionPricesUpdate(
       subscriptionUpdate,
       {
         licensedPriceId: licensedItem.stripePriceId,
         resourceCreditPriceId: resourceCreditItem.stripePriceId,
-        seats:
-          workspaceMembersCount > 0
-            ? workspaceMembersCount
-            : licensedItem.quantity,
+        seats: seats > 0 ? seats : licensedItem.quantity,
       },
     );
 
