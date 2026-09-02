@@ -71,10 +71,6 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
         ? existingLink.workspaceMemberId
         : undefined;
     }
-
-    if (existingLink?.consentState === SLACK_USER_LINK_CONSENT_STATE.DECLINED) {
-      return undefined;
-    }
   }
 
   const linkableEmail = await resolveLinkableEmail({ slackClient, identity });
