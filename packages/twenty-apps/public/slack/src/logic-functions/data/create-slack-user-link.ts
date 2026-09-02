@@ -1,39 +1,15 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { type SlackUserLinkConsentState } from 'src/logic-functions/types/slack-user-link-consent-state.type';
-import { type SlackUserLinkSource } from 'src/logic-functions/types/slack-user-link-source.type';
+import { type SlackUserLinkDraft } from 'src/logic-functions/types/slack-user-link-draft.type';
 
 export const createSlackUserLink = async (
   client: CoreApiClient,
-  {
-    slackTeamId,
-    slackUserId,
-    workspaceMemberId,
-    name,
-    source,
-    consentState,
-  }: {
-    slackTeamId: string;
-    slackUserId: string;
-    workspaceMemberId: string;
-    name: string;
-    source: SlackUserLinkSource;
-    consentState: SlackUserLinkConsentState;
-  },
+  draft: SlackUserLinkDraft,
 ): Promise<string> => {
   const result = await client.mutation({
     createSlackUserLink: {
-      __args: {
-        data: {
-          slackTeamId,
-          slackUserId,
-          workspaceMemberId,
-          name,
-          source,
-          consentState,
-        },
-      },
+      __args: { data: draft },
       id: true,
     },
   });
