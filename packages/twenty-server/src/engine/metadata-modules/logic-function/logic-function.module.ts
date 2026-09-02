@@ -12,7 +12,6 @@ import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryptio
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { LogicFunctionLayerModule } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.module';
-import { ConvertApplicationLogicFunctionsToPrebuiltJob } from 'src/engine/metadata-modules/logic-function/jobs/convert-application-logic-functions-to-prebuilt.job';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionResolver } from 'src/engine/metadata-modules/logic-function/logic-function.resolver';
 import { LogicFunctionFromSourceHelperService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source-helper.service';
@@ -44,7 +43,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     SecretEncryptionModule,
   ],
   providers: [
-    ConvertApplicationLogicFunctionsToPrebuiltJob,
     LogicFunctionFromSourceHelperService,
     LogicFunctionFromSourceService,
     LogicFunctionPrebuiltConversionService,

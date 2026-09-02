@@ -9,7 +9,6 @@ import { GenerateInstanceCommandCommand } from 'src/database/commands/generate-i
 import { InstallPreInstalledAppsCommand } from 'src/database/commands/install-pre-installed-apps.command';
 import { InstanceCommandGenerationService } from 'src/database/commands/instance-command-generation.service';
 import { ListOrphanedWorkspaceEntitiesCommand } from 'src/database/commands/list-and-delete-orphaned-workspace-entities.command';
-import { LogicFunctionConvertToPrebuiltCommand } from 'src/database/commands/logic-function-convert-to-prebuilt.command';
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
 import { RebuildApplicationDefaultDepsCommand } from 'src/database/commands/rebuild-application-default-deps.command';
 import { RunInstanceCommandsCommand } from 'src/database/commands/run-instance-commands.command';
@@ -41,7 +40,6 @@ import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/em
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
-import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { CodeInterpreterSessionCleanupModule } from 'src/engine/core-modules/code-interpreter/crons/code-interpreter-session-cleanup.module';
@@ -99,7 +97,6 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     PreInstalledAppsModule,
     WorkspaceIteratorModule,
     ApplicationModule,
-    LogicFunctionModule,
     WorkspaceCacheModule,
     WorkspaceVersionModule,
     UpgradeModule,
@@ -115,7 +112,6 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     InstanceCommandGenerationService,
     RunInstanceCommandsCommand,
     ListOrphanedWorkspaceEntitiesCommand,
-    LogicFunctionConvertToPrebuiltCommand,
     EnterpriseKeyValidationCronCommand,
     RotateSigningKeysCronCommand,
     GenerateApiKeyCommand,
