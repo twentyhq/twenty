@@ -92,8 +92,11 @@ export type {
   EnqueueJobOptions,
   EnqueueJobInput,
   EnqueueJobResult,
+  EnqueueJobItem,
   EnqueueJobsInput,
   EnqueueJobsResult,
+  JobStatusState,
+  JobStatusResult,
 } from './enqueueJobType';
 export { SyncableEntity } from './enums/syncable-entities.enum';
 export type {
