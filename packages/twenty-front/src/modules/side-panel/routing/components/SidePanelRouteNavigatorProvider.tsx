@@ -3,8 +3,7 @@ import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
-import { isSidePanelRoutedLocation } from '@/side-panel/routing/utils/isSidePanelRoutedLocation';
-import { toSidePanelLocation } from '@/side-panel/routing/utils/toSidePanelLocation';
+import { isWorkspaceLocationAvailableOnSurface } from '@/app/routing/utils/isWorkspaceLocationAvailableOnSurface';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useStore } from 'jotai';
 import { type ReactNode, useContext, useMemo } from 'react';
@@ -43,11 +42,10 @@ export const SidePanelRouteNavigatorProvider = ({
     ) => {
       const shouldNavigateMain = options?.surface === 'main';
       const path = getPathFromTo(to);
-      const location = toSidePanelLocation(path, state);
 
       if (
         !shouldNavigateMain &&
-        isSidePanelRoutedLocation(routeObjects, location)
+        isWorkspaceLocationAvailableOnSurface(routeObjects, 'side-panel', path)
       ) {
         const currentNavigationItem = store
           .get(sidePanelNavigationStackState.atom)
@@ -65,17 +63,14 @@ export const SidePanelRouteNavigatorProvider = ({
       }
 
       void closeSidePanelMenu();
-      if (location.pathname.startsWith('/settings')) {
+      if (path.startsWith('/settings')) {
         openSettingsMenu();
       }
       parentNavigator[method](to, state, options);
     };
 
     return {
-      createHref: (to) => parentNavigator.createHref(to),
-      encodeLocation: parentNavigator.encodeLocation
-        ? (to) => parentNavigator.encodeLocation!(to)
-        : undefined,
+      ...parentNavigator,
       push: (to, state, options) => navigate('push', to, state, options),
       replace: (to, state, options) => navigate('replace', to, state, options),
       go: (delta) => {

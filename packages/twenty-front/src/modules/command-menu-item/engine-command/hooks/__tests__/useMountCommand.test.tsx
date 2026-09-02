@@ -32,6 +32,7 @@ const baseContextApi: HeadlessEngineCommandContextApi = {
   selectedRecords: [],
   graphqlFilter: null,
   payload: null,
+  navigationTargetObjectMetadataId: null,
 };
 
 jest.mock(
