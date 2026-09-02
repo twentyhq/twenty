@@ -29,13 +29,21 @@ const StyledRow = styled.div<{ isSelected: boolean; isSelectable: boolean }>`
   }
 `;
 
-const StyledDate = styled.span`
+const StyledLabel = styled.span`
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.md};
 `;
 
+const StyledDate = styled.span`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.md};
+  margin-left: ${themeCssVariables.spacing[2]};
+  margin-right: auto;
+`;
+
 type CoreWorkflowVersionsListItemProps = {
   id: string;
+  label: string;
   createdAt: string;
   status: CoreWorkflowVersionStatus;
   isSelected: boolean;
@@ -45,6 +53,7 @@ type CoreWorkflowVersionsListItemProps = {
 
 export const CoreWorkflowVersionsListItem = ({
   id,
+  label,
   createdAt,
   status,
   isSelected,
@@ -55,15 +64,13 @@ export const CoreWorkflowVersionsListItem = ({
   const tagProps = CORE_WORKFLOW_VERSION_STATUS_TAG_PROPS[status];
 
   return (
-    <SelectableListItem
-      itemId={id}
-      onEnter={isSelectable ? onSelect : () => {}}
-    >
+    <SelectableListItem itemId={id} onEnter={onSelect}>
       <StyledRow
         isSelected={isSelected}
         isSelectable={isSelectable}
         onClick={isSelectable ? onSelect : undefined}
       >
+        <StyledLabel>{label}</StyledLabel>
         <StyledDate>
           {new Date(createdAt).toLocaleDateString(undefined, {
             year: 'numeric',

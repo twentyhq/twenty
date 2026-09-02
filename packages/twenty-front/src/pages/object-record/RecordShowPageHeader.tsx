@@ -1,4 +1,3 @@
-import { CoreWorkflowVersionBreadcrumbSuffix } from '@/object-core/workflows/versions/components/CoreWorkflowVersionBreadcrumbSuffix';
 import { getObjectMetadataIdentifierFields } from '@/object-metadata/utils/getObjectMetadataIdentifierFields';
 import { ObjectRecordShowPageBreadcrumb } from '@/object-record/record-show/components/ObjectRecordShowPageBreadcrumb';
 import { RecordIdentifierBarCreatedAt } from '@/object-record/record-show/components/RecordIdentifierBarCreatedAt';
@@ -49,12 +48,6 @@ const RecordShowPageMainHeader = ({
           objectRecordId={objectRecordId}
           objectLabel={objectMetadataItem.labelPlural}
           labelIdentifierFieldMetadataItem={labelIdentifierFieldMetadataItem}
-          titleSuffix={
-            <CoreWorkflowVersionBreadcrumbSuffix
-              objectNameSingular={objectNameSingular}
-              objectRecordId={objectRecordId}
-            />
-          }
         />
       }
       actionButton={children}

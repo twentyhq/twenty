@@ -3,16 +3,18 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useCoreWorkflowVersions } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersions';
-import { usePreviewWorkflowVersion } from '@/object-core/workflows/versions/hooks/usePreviewWorkflowVersion';
+import { usePreviewCoreWorkflowVersion } from '@/object-core/workflows/versions/hooks/usePreviewCoreWorkflowVersion';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
 import { CoreWorkflowVersionStatus } from '~/generated/graphql';
 
-export const useRestoreWorkflowVersionAsDraft = (workflowId: string) => {
+export const useRestoreCoreWorkflowVersionAsDraft = (workflowId: string) => {
   const { t } = useLingui();
   const [isRestoring, setIsRestoring] = useState(false);
-  const { previewedWorkflowVersion, cancelWorkflowVersionPreviewIfStillOn } =
-    usePreviewWorkflowVersion(workflowId);
+  const {
+    previewedCoreWorkflowVersion,
+    cancelCoreWorkflowVersionPreviewIfStillOn,
+  } = usePreviewCoreWorkflowVersion(workflowId);
   const { coreWorkflowVersions } = useCoreWorkflowVersions(workflowId);
   const { createDraftFromWorkflowVersion } =
     useCreateDraftFromWorkflowVersion();
@@ -23,13 +25,13 @@ export const useRestoreWorkflowVersionAsDraft = (workflowId: string) => {
       coreWorkflowVersion.status === CoreWorkflowVersionStatus.DRAFT,
   );
 
-  const restoreWorkflowVersionAsDraft = async () => {
-    if (!isDefined(previewedWorkflowVersion) || isRestoring) {
+  const restoreCoreWorkflowVersionAsDraft = async () => {
+    if (!isDefined(previewedCoreWorkflowVersion) || isRestoring) {
       return;
     }
 
-    const restoredWorkflowVersionId =
-      previewedWorkflowVersion.coreWorkflowVersionId;
+    const restoredCoreWorkflowVersionId =
+      previewedCoreWorkflowVersion.coreWorkflowVersionId;
 
     setIsRestoring(true);
 
@@ -37,10 +39,10 @@ export const useRestoreWorkflowVersionAsDraft = (workflowId: string) => {
       await createDraftFromWorkflowVersion({
         workflowId,
         workflowVersionIdToCopy:
-          previewedWorkflowVersion.workspaceWorkflowVersionId,
+          previewedCoreWorkflowVersion.workspaceWorkflowVersionId,
       });
 
-      cancelWorkflowVersionPreviewIfStillOn(restoredWorkflowVersionId);
+      cancelCoreWorkflowVersionPreviewIfStillOn(restoredCoreWorkflowVersionId);
     } catch {
       enqueueErrorSnackBar({
         message: t`Could not restore this version as draft.`,
@@ -50,5 +52,9 @@ export const useRestoreWorkflowVersionAsDraft = (workflowId: string) => {
     }
   };
 
-  return { restoreWorkflowVersionAsDraft, isRestoring, hasExistingDraft };
+  return {
+    restoreCoreWorkflowVersionAsDraft,
+    isRestoring,
+    hasExistingDraft,
+  };
 };

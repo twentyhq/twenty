@@ -32,7 +32,13 @@ export class CoreWorkflowVersionListService {
       {
         where: { workflowId: workspaceWorkflowId },
         order: { createdAt: 'ASC', id: 'ASC' },
-        select: { id: true, status: true, createdAt: true },
+        select: {
+          id: true,
+          status: true,
+          createdAt: true,
+          triggers: true,
+          steps: true,
+        },
       },
     );
 
@@ -52,6 +58,8 @@ export class CoreWorkflowVersionListService {
         status: coreWorkflowVersion.status,
         workspaceWorkflowVersionId:
           workspaceVersionIdByCoreVersionId[coreWorkflowVersion.id] ?? null,
+        trigger: coreWorkflowVersion.triggers?.[0] ?? null,
+        steps: coreWorkflowVersion.steps,
         createdAt: coreWorkflowVersion.createdAt.toISOString(),
       }))
       .reverse();

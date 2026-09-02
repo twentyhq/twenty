@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CoreWorkflowVersionsListItem } from '@/object-core/workflows/versions/components/CoreWorkflowVersionsListItem';
 import { useCoreWorkflowVersions } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersions';
-import { usePreviewWorkflowVersion } from '@/object-core/workflows/versions/hooks/usePreviewWorkflowVersion';
+import { usePreviewCoreWorkflowVersion } from '@/object-core/workflows/versions/hooks/usePreviewCoreWorkflowVersion';
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -21,8 +21,8 @@ export const SidePanelCoreWorkflowVersionsPage = () => {
   const workflowId = useSidePanelWorkflowIdOrThrow();
   const { coreWorkflowVersions, loading, error } =
     useCoreWorkflowVersions(workflowId);
-  const { previewedWorkflowVersion, previewWorkflowVersion } =
-    usePreviewWorkflowVersion(workflowId);
+  const { previewedCoreWorkflowVersion, previewCoreWorkflowVersion } =
+    usePreviewCoreWorkflowVersion(workflowId);
 
   const selectableCoreWorkflowVersionIds = coreWorkflowVersions
     .filter(({ workspaceWorkflowVersionId }) =>
@@ -43,21 +43,22 @@ export const SidePanelCoreWorkflowVersionsPage = () => {
           <StyledError>{t`Could not load versions.`}</StyledError>
         </SidePanelGroup>
       )}
-      <SidePanelGroup heading={t`Date`}>
+      <SidePanelGroup heading={t`Versions`}>
         {coreWorkflowVersions.map((coreWorkflowVersion) => (
           <CoreWorkflowVersionsListItem
             key={coreWorkflowVersion.id}
             id={coreWorkflowVersion.id}
+            label={coreWorkflowVersion.label}
             createdAt={coreWorkflowVersion.createdAt}
             status={coreWorkflowVersion.status}
             isSelected={
-              previewedWorkflowVersion?.coreWorkflowVersionId ===
+              previewedCoreWorkflowVersion?.coreWorkflowVersionId ===
               coreWorkflowVersion.id
             }
             isSelectable={isDefined(
               coreWorkflowVersion.workspaceWorkflowVersionId,
             )}
-            onSelect={() => previewWorkflowVersion(coreWorkflowVersion)}
+            onSelect={() => previewCoreWorkflowVersion(coreWorkflowVersion)}
           />
         ))}
       </SidePanelGroup>

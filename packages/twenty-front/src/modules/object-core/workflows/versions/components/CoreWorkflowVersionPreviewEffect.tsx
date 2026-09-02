@@ -1,10 +1,6 @@
 import { useEffect } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
-import { RESTORE_WORKFLOW_VERSION_MODAL_ID } from '@/object-core/workflows/versions/constants/RestoreWorkflowVersionModalId';
-import { previewedWorkflowVersionFamilyState } from '@/object-core/workflows/versions/states/previewedWorkflowVersionFamilyState';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { previewedCoreWorkflowVersionFamilyState } from '@/object-core/workflows/versions/states/previewedCoreWorkflowVersionFamilyState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
 export const CoreWorkflowVersionPreviewEffect = ({
@@ -12,35 +8,18 @@ export const CoreWorkflowVersionPreviewEffect = ({
 }: {
   workflowId: string;
 }) => {
-  const setPreviewedWorkflowVersion = useSetAtomFamilyState(
-    previewedWorkflowVersionFamilyState,
+  const setPreviewedCoreWorkflowVersion = useSetAtomFamilyState(
+    previewedCoreWorkflowVersionFamilyState,
     { workflowId },
   );
-  const previewedWorkflowVersion = useAtomFamilyStateValue(
-    previewedWorkflowVersionFamilyState,
-    { workflowId },
-  );
-  const { closeModal } = useModal();
 
   useEffect(() => {
-    setPreviewedWorkflowVersion(null);
+    setPreviewedCoreWorkflowVersion(null);
 
     return () => {
-      setPreviewedWorkflowVersion(null);
+      setPreviewedCoreWorkflowVersion(null);
     };
-  }, [setPreviewedWorkflowVersion]);
-
-  const isPreviewingWorkflowVersion = isDefined(previewedWorkflowVersion);
-
-  useEffect(() => {
-    if (!isPreviewingWorkflowVersion) {
-      return;
-    }
-
-    return () => {
-      closeModal(RESTORE_WORKFLOW_VERSION_MODAL_ID);
-    };
-  }, [closeModal, isPreviewingWorkflowVersion]);
+  }, [setPreviewedCoreWorkflowVersion]);
 
   return null;
 };

@@ -17,7 +17,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { type ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
@@ -77,13 +77,11 @@ export const ObjectRecordShowPageBreadcrumb = ({
   objectRecordId,
   objectLabel,
   labelIdentifierFieldMetadataItem,
-  titleSuffix,
 }: {
   objectNameSingular: string;
   objectRecordId: string;
   objectLabel: string;
   labelIdentifierFieldMetadataItem?: FieldMetadataItem;
-  titleSuffix?: ReactNode;
 }) => {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
@@ -208,7 +206,6 @@ export const ObjectRecordShowPageBreadcrumb = ({
           />
         </FieldContext.Provider>
       </StyledTitle>
-      {titleSuffix}
       {!isMobile && (
         <StyledPaginationInformation>
           {paginationInformation}

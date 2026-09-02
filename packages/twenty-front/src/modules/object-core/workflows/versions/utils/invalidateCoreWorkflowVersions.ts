@@ -9,8 +9,6 @@ export const invalidateCoreWorkflowVersions = async (
     id: 'ROOT_QUERY',
     fieldName: 'coreWorkflowVersions',
   });
-  apolloCoreClient.cache.gc();
-
   await apolloCoreClient.refetchQueries({
     include: [GetCoreWorkflowVersionsDocument],
   });
