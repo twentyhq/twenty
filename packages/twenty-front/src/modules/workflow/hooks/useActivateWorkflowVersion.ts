@@ -17,6 +17,7 @@ import {
 } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  GetCoreWorkflowVersionsDocument,
   type ActivateWorkflowVersionMutation,
   type ActivateWorkflowVersionMutationVariables,
 } from '~/generated/graphql';
@@ -161,6 +162,10 @@ export const useActivateWorkflowVersion = () => {
           });
         }
       },
+    });
+
+    await apolloCoreClient.refetchQueries({
+      include: [GetCoreWorkflowVersionsDocument],
     });
   };
 
