@@ -74,12 +74,23 @@ const NON_TEXT_TAGS = [
   'title',
 ];
 
+const QUOTE_CONTAINER_IDS = ['OLK_SRC_BODY_SECTION'];
+
+const markQuoteContainersAsBlockquotes = (
+  tagName: string,
+  attribs: Record<string, string>,
+): sanitizeHtml.Tag =>
+  QUOTE_CONTAINER_IDS.includes(attribs.id)
+    ? { tagName: 'blockquote', attribs: {} }
+    : { tagName, attribs };
+
 const SANITIZE_OPTIONS = {
   allowedTags: TEXT_SHAPING_TAGS,
   allowedAttributes: { a: ['href'], img: ['src', 'alt'], '*': ['title'] },
   allowedSchemes: ['http', 'https', 'mailto', 'tel'],
   disallowedTagsMode: 'discard',
   nonTextTags: NON_TEXT_TAGS,
+  transformTags: { '*': markQuoteContainersAsBlockquotes },
 } satisfies sanitizeHtml.IOptions;
 
 export const convertHtmlToText = (html: string): string =>

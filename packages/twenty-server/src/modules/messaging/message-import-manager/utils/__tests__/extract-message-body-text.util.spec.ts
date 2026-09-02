@@ -331,6 +331,54 @@ Developer Support`);
     expect(result).toBe('Plain text content');
   });
 
+  it('should strip an Outlook for Mac quote container, which carries no text marker', () => {
+    const result = extractMessageBodyText({
+      html: '<div>My actual reply.</div><div id="OLK_SRC_BODY_SECTION"><div dir="ltr"><p>The older message body.</p></div></div>',
+    });
+
+    expect(result).toBe('My actual reply.');
+  });
+
+  it('should keep a forward whose whole body is an Outlook for Mac quote container', () => {
+    const result = extractMessageBodyText({
+      html: '<div id="OLK_SRC_BODY_SECTION"><div dir="ltr"><p>The entire forwarded body.</p></div></div>',
+    });
+
+    expect(result).toBe('> The entire forwarded body.');
+  });
+
+  it('should keep a forward whose whole body is a blockquote', () => {
+    const result = extractMessageBodyText({
+      html: '<blockquote type="cite"><p>The entire forwarded body.</p></blockquote>',
+    });
+
+    expect(result).toBe('> The entire forwarded body.');
+  });
+
+  it('should strip an Outlook desktop From block', () => {
+    const result = extractMessageBodyText({
+      html: '<p class="MsoNormal">My actual reply.</p><p class="MsoNormal">&nbsp;</p><p class="MsoNormal"><b>From:</b> Bob &lt;bob@example.com&gt;<br><b>Sent:</b> Monday, August 4, 2026 09:14<br><b>Subject:</b> RE: hi</p><p class="MsoNormal">&nbsp;</p><p class="MsoNormal">The older message body.</p>',
+    });
+
+    expect(result).toBe('My actual reply.');
+  });
+
+  it('should strip an Outlook Web From block separated by empty divs', () => {
+    const result = extractMessageBodyText({
+      html: '<div>My actual reply.</div><div><br></div><div>From: Bob &lt;bob@example.com&gt;</div><div>Sent: Monday, August 4, 2026</div><div><br></div><div>The older message body.</div>',
+    });
+
+    expect(result).toBe('My actual reply.');
+  });
+
+  it('should strip an Original Message splitter', () => {
+    const result = extractMessageBodyText({
+      html: '<p>My actual reply.</p><p>-----Original Message-----<br>From: Bob &lt;bob@example.com&gt;<br>Sent: Monday, August 4, 2026 09:14</p><p>The older message body.</p>',
+    });
+
+    expect(result).toBe('My actual reply.');
+  });
+
   it('should preserve percent sequences instead of URI-decoding the body', () => {
     const parsed: ParsedMail = {
       text: 'See https://example.com/path%2Fto%2Ffile and a 100%20 budget cut',
