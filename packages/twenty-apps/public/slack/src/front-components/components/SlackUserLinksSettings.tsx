@@ -114,7 +114,9 @@ export const SlackUserLinksSettings = () => {
   const [matchSummary, setMatchSummary] = useState<string | undefined>(
     undefined,
   );
-  const [hasMatchRunCleanly, setHasMatchRunCleanly] = useState(false);
+  const [lastMatchRunOutcome, setLastMatchRunOutcome] = useState<
+    'clean' | 'dirty' | undefined
+  >(undefined);
   const [isManualFormOpen, setIsManualFormOpen] = useState(false);
 
   const handleLinkSaved = async () => {
@@ -131,7 +133,7 @@ export const SlackUserLinksSettings = () => {
 
     if (!result.success) {
       setMatchSummary(undefined);
-      setHasMatchRunCleanly(false);
+      setLastMatchRunOutcome('dirty');
       enqueueSnackbar({
         message: isNonEmptyString(result.error) ? result.error : result.message,
         variant: 'error',
@@ -141,7 +143,7 @@ export const SlackUserLinksSettings = () => {
     }
 
     setMatchSummary(result.message);
-    setHasMatchRunCleanly(result.failedCount === 0);
+    setLastMatchRunOutcome(result.failedCount === 0 ? 'clean' : 'dirty');
     await handleLinkSaved();
   };
 
@@ -221,13 +223,15 @@ export const SlackUserLinksSettings = () => {
           description="Only members with the roles permission can create or change Slack user links. You can review the existing links below."
         />
       )}
-      {canManage && hasRosterMatchFailed && !hasMatchRunCleanly && (
-        <Callout
-          variant="warning"
-          title="Email auto-link did not finish"
-          description="The last automatic email match failed before linking everyone. Press Auto-link by email below to run it again."
-        />
-      )}
+      {canManage &&
+        (lastMatchRunOutcome === 'dirty' ||
+          (hasRosterMatchFailed && lastMatchRunOutcome !== 'clean')) && (
+          <Callout
+            variant="warning"
+            title="Email auto-link did not finish"
+            description="The last automatic email match failed before linking everyone. Press Auto-link by email below to run it again."
+          />
+        )}
       {canManage && (
         <Section>
           <H2Title
